@@ -80,7 +80,6 @@ namespace
     // Logbook table
     constexpr int InvalidRowIndex {-1};
     constexpr int InvalidColumnIndex {-1};
-    constexpr int FlightIdColumnIndex {0};
 
     // Date selection tree view
     constexpr int DateColumnIndex {0};
@@ -105,9 +104,8 @@ namespace
     constexpr int RecordingInProgressId = std::numeric_limits<int>::max();
 }
 
-class LogbookWidgetPrivate
+struct LogbookWidgetPrivate
 {
-public:
     LogbookWidgetPrivate(FlightService &theFlightService) noexcept
         : flightService(theFlightService)
     {
@@ -119,9 +117,13 @@ public:
     std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>()};
     FlightService &flightService;
 
-    int idColumnIndex {::InvalidColumnIndex};
+    // Flight table columns
+    int flightIdColumnIndex {::InvalidColumnIndex};
+    int userAircraftColumnIndex {::InvalidColumnIndex};
     int titleColumnIndex {::InvalidColumnIndex};
     int selectedRow {::InvalidRowIndex};
+
+
     std::int64_t selectedFlightId {Flight::InvalidId};
     std::int64_t flightInMemoryId {Flight::InvalidId};
     Unit unit;
@@ -179,6 +181,10 @@ void LogbookWidget::initUi() noexcept
     ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 
     const QStringList headers {tr("Flight"), tr("Title"), tr("User Aircraft"), tr("Number of Aircraft"), tr("Date"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight")};
+    d->flightIdColumnIndex = headers.indexOf(tr("Flight"));
+    d->userAircraftColumnIndex = headers.indexOf(tr("User Aircraft"));
+    d->titleColumnIndex = headers.indexOf(tr("Title"));
+
     ui->logTableWidget->setColumnCount(headers.count());
     ui->logTableWidget->setHorizontalHeaderLabels(headers);
     ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -186,7 +192,7 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->verticalHeader()->hide();
     ui->logTableWidget->setMinimumWidth(::MinimumTableWidth);
     ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
-    ui->logTableWidget->sortByColumn(::FlightIdColumnIndex, Qt::SortOrder::DescendingOrder);
+    ui->logTableWidget->sortByColumn(d->flightIdColumnIndex, Qt::SortOrder::DescendingOrder);
     ui->logTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->logTableWidget->setAlternatingRowColors(true);
 
@@ -263,8 +269,8 @@ void LogbookWidget::updateFlightTable() noexcept
         if (!d->columnsAutoResized) {
             ui->logTableWidget->resizeColumnsToContents();
             // Reserve some space for the aircraft icon
-            const int idColumnWidth = static_cast<int>(std::round(1.25 * ui->logTableWidget->columnWidth(d->idColumnIndex)));
-            ui->logTableWidget->setColumnWidth(d->idColumnIndex, idColumnWidth);
+            const int idColumnWidth = static_cast<int>(std::round(1.25 * ui->logTableWidget->columnWidth(d->flightIdColumnIndex)));
+            ui->logTableWidget->setColumnWidth(d->flightIdColumnIndex, idColumnWidth);
             d->columnsAutoResized = true;
         }
         ui->logTableWidget->blockSignals(false);
@@ -278,51 +284,6 @@ void LogbookWidget::updateFlightTable() noexcept
     ui->flightCountLabel->setText(tr("%1 flights", "Number of flights selected in the logbook", flightCount).arg(flightCount));
 
     updateEditUi();
-}
-
-void LogbookWidget::updateDateSelectorUi() noexcept
-{
-    if (LogbookManager::getInstance().isConnected()) {
-        // Sorted by year, month, day
-        std::forward_list<FlightDate> flightDates = d->logbookService->getFlightDates();
-        ui->logTreeWidget->blockSignals(true);
-        ui->logTreeWidget->clear();
-
-        QTreeWidgetItem *logbookItem = new QTreeWidgetItem(ui->logTreeWidget, QStringList(tr("Logbook")));
-
-        int totalFlights = 0;
-        while (!flightDates.empty()) {
-            std::forward_list<FlightDate>::const_iterator first = flightDates.cbegin();
-            std::forward_list<FlightDate>::const_iterator last = first;
-
-            // Group by year
-            int currentYear = first->year;
-            int nofFlightsPerYear = 0;
-            while (last != flightDates.end() && last->year == currentYear) {
-                nofFlightsPerYear += last->nofFlights;
-                ++last;
-            }
-            std::forward_list<FlightDate> flightDatesByYear = {};
-            flightDatesByYear.splice_after(flightDatesByYear.cbefore_begin(), flightDates, flightDates.cbefore_begin(), last);
-            insertYear(logbookItem, flightDatesByYear, nofFlightsPerYear);
-
-            totalFlights += nofFlightsPerYear;
-        }
-        logbookItem->setData(::NofFlightsColumnIndex, Qt::DisplayRole, totalFlights);
-
-        // Adjust column size when all items are expanded
-        ui->logTreeWidget->expandAll();
-        ui->logTreeWidget->resizeColumnToContents(::DateColumnIndex);
-        ui->logTreeWidget->collapseAll();
-
-        // Expand all "first" children (only)
-        QTreeWidgetItem *item = logbookItem;
-        while (item->childCount() > 0) {
-            item->setExpanded(true);
-            item = item->child(0);
-        }
-        ui->logTreeWidget->blockSignals(false);
-    }
 }
 
 inline void LogbookWidget::updateFlightSummary(const FlightSummary &summary, int rowIndex) noexcept
@@ -345,7 +306,6 @@ inline void LogbookWidget::updateFlightSummary(const FlightSummary &summary, int
     newItem->setToolTip(tr("Double-click to load flight."));
     // Transfer ownership of newItem to table widget
     ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
-    d->idColumnIndex = columnIndex;
     ++columnIndex;
 
     // Title
@@ -353,7 +313,6 @@ inline void LogbookWidget::updateFlightSummary(const FlightSummary &summary, int
     newItem->setToolTip(tr("Double-click to edit title."));
     newItem->setBackground(Platform::getEditableTableCellBGColor());
     ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
-    d->titleColumnIndex = columnIndex;
     ++columnIndex;
 
     // Aircraft type
@@ -411,6 +370,51 @@ inline void LogbookWidget::updateFlightSummary(const FlightSummary &summary, int
     ++columnIndex;
 }
 
+void LogbookWidget::updateDateSelectorUi() noexcept
+{
+    if (LogbookManager::getInstance().isConnected()) {
+        // Sorted by year, month, day
+        std::forward_list<FlightDate> flightDates = d->logbookService->getFlightDates();
+        ui->logTreeWidget->blockSignals(true);
+        ui->logTreeWidget->clear();
+
+        QTreeWidgetItem *logbookItem = new QTreeWidgetItem(ui->logTreeWidget, QStringList(tr("Logbook")));
+
+        int totalFlights = 0;
+        while (!flightDates.empty()) {
+            std::forward_list<FlightDate>::const_iterator first = flightDates.cbegin();
+            std::forward_list<FlightDate>::const_iterator last = first;
+
+            // Group by year
+            int currentYear = first->year;
+            int nofFlightsPerYear = 0;
+            while (last != flightDates.end() && last->year == currentYear) {
+                nofFlightsPerYear += last->nofFlights;
+                ++last;
+            }
+            std::forward_list<FlightDate> flightDatesByYear = {};
+            flightDatesByYear.splice_after(flightDatesByYear.cbefore_begin(), flightDates, flightDates.cbefore_begin(), last);
+            insertYear(logbookItem, flightDatesByYear, nofFlightsPerYear);
+
+            totalFlights += nofFlightsPerYear;
+        }
+        logbookItem->setData(::NofFlightsColumnIndex, Qt::DisplayRole, totalFlights);
+
+        // Adjust column size when all items are expanded
+        ui->logTreeWidget->expandAll();
+        ui->logTreeWidget->resizeColumnToContents(::DateColumnIndex);
+        ui->logTreeWidget->collapseAll();
+
+        // Expand all "first" children (only)
+        QTreeWidgetItem *item = logbookItem;
+        while (item->childCount() > 0) {
+            item->setExpanded(true);
+            item = item->child(0);
+        }
+        ui->logTreeWidget->blockSignals(false);
+    }
+}
+
 void LogbookWidget::updateEditUi() noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
@@ -436,6 +440,8 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::updateAircraftIcons);
     connect(&flight, &Flight::aircraftStored,
             this, &LogbookWidget::updateUi);
+    connect(&flight, &Flight::aircraftInfoChanged,
+            this, &LogbookWidget::onAircraftInfoChanged);
 
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
@@ -589,11 +595,23 @@ void LogbookWidget::updateAircraftIcons() noexcept
     const std::int64_t flightInMemoryId = flight.getId();
 
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
-        QTableWidgetItem *item = ui->logTableWidget->item(row, FlightIdColumnIndex);
+        QTableWidgetItem *item = ui->logTableWidget->item(row, d->flightIdColumnIndex);
         if (item->data(Qt::DisplayRole).toLongLong() == flightInMemoryId) {
             item->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
         } else {
             item->setIcon(QIcon());
+        }
+    }
+}
+
+void LogbookWidget::onAircraftInfoChanged(Aircraft &aircraft)
+{
+    for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
+        QTableWidgetItem *item = ui->logTableWidget->item(row, d->flightIdColumnIndex);
+        if (item->data(Qt::DisplayRole).toString() == tr("REC")) {
+            item = ui->logTableWidget->item(row, d->userAircraftColumnIndex);
+            item->setData(Qt::DisplayRole, aircraft.getAircraftInfo().aircraftType.type);
+            break;
         }
     }
 }
@@ -660,7 +678,7 @@ void LogbookWidget::searchText() noexcept
 void LogbookWidget::onSelectionChanged() noexcept
 {
     QItemSelectionModel *select = ui->logTableWidget->selectionModel();
-    QModelIndexList modelIndices = select->selectedRows(::FlightIdColumnIndex);
+    QModelIndexList modelIndices = select->selectedRows(d->flightIdColumnIndex);
     if (modelIndices.count() > 0) {
         QModelIndex modelIndex = modelIndices.at(0);
         d->selectedRow = modelIndex.row();

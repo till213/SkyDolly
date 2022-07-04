@@ -4,6 +4,7 @@
 
 ### Improvements
 - Renamed 'velocity' (= a vector) to 'speed' (= a value) where appropriate
+- When starting a new recording the user aircraft is now updated in the logbook as soon as it becomes available
 
 ### Bug Fixes
 - The window is properly resized when in minimal mode and the default non-essential button visibility is changed in the settings
