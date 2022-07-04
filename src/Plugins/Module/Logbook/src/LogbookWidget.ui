@@ -130,13 +130,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="deletePushButton">
-           <property name="text">
-            <string>&amp;Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -159,6 +152,13 @@
            </property>
            <property name="text">
             <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="deletePushButton">
+           <property name="text">
+            <string>&amp;Delete</string>
            </property>
           </widget>
          </item>
