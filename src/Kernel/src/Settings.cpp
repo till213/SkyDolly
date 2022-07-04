@@ -84,6 +84,7 @@ public:
 
     bool deleteFlightConfirmation;
     bool deleteAircraftConfirmation;
+    bool deleteLocationConfirmation;
     bool resetTimeOffsetConfirmation;
 
     bool defaultMinimalUiButtonTextVisible;
@@ -116,6 +117,7 @@ public:
     static constexpr bool DefaultRelativePositionPlacement {true};
     static constexpr bool DefaultDeleteFlightConfirmation  {true};
     static constexpr bool DefaultDeleteAircraftConfirmation  {true};
+    static constexpr bool DefaultDeleteLocationConfirmation  {true};
     static constexpr bool DefaultResetTimeOffsetConfirmation  {true};
 
     static constexpr bool DefaultMinimalUiButtonTextVisible {false};
@@ -453,6 +455,19 @@ void Settings::setDeleteAircraftConfirmationEnabled(bool enable) noexcept
     }
 }
 
+bool Settings::isDeleteLocationConfirmationEnabled() const noexcept
+{
+    return d->deleteLocationConfirmation;
+}
+
+void Settings::setDeleteLocationConfirmationEnabled(bool enable) noexcept
+{
+    if (d->deleteLocationConfirmation != enable) {
+        d->deleteLocationConfirmation = enable;
+        emit changed();
+    }
+}
+
 bool Settings::isResetTimeOffsetConfirmationEnabled() const noexcept
 {
     return d->resetTimeOffsetConfirmation;
@@ -625,6 +640,7 @@ void Settings::store() const noexcept
         // Confirmations
         d->settings.setValue("DeleteFlightConfirmation", d->deleteFlightConfirmation);
         d->settings.setValue("DeleteAircraftConfirmation", d->deleteAircraftConfirmation);
+        d->settings.setValue("DeleteLocationConfirmation", d->deleteLocationConfirmation);
         d->settings.setValue("ResetTimeOffsetConfirmation", d->resetTimeOffsetConfirmation);
 
         // Minimal UI
@@ -744,6 +760,7 @@ void Settings::restore() noexcept
         // Confirmations
         d->deleteFlightConfirmation = d->settings.value("DeleteFlightConfirmation", SettingsPrivate::DefaultDeleteFlightConfirmation).toBool();
         d->deleteAircraftConfirmation = d->settings.value("DeleteAircraftConfirmation", SettingsPrivate::DefaultDeleteAircraftConfirmation).toBool();
+        d->deleteLocationConfirmation = d->settings.value("DeleteLocationConfirmation", SettingsPrivate::DefaultDeleteLocationConfirmation).toBool();
         d->resetTimeOffsetConfirmation = d->settings.value("ResetTimeOffsetConfirmation", SettingsPrivate::DefaultResetTimeOffsetConfirmation).toBool();
 
         d->defaultMinimalUiButtonTextVisible = d->settings.value("DefaultMinimalUiButtonTextVisible", SettingsPrivate::DefaultMinimalUiButtonTextVisible).toBool();

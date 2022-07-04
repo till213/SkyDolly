@@ -29,6 +29,7 @@
 #include <QStringList>
 #include <QByteArray>
 #include <QItemSelectionModel>
+#include <QMessageBox>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -406,13 +407,35 @@ void LocationWidget::onTeleportToSelectedLocation() noexcept
 
 void LocationWidget::onDeleteLocation() noexcept
 {
-    // TODO IMPLEMENT ME
     if (d->selectedLocationId != ::Location::InvalidId) {
-        d->locationService->deleteById(d->selectedLocationId);
-        int lastSelectedRow = d->selectedRow;
-        updateUi();
-        int selectedRow = std::min(lastSelectedRow, ui->locationTableWidget->rowCount() - 1);
-        ui->locationTableWidget->selectRow(selectedRow);
-        ui->locationTableWidget->setFocus(Qt::NoFocusReason);
+        Settings &settings = Settings::getInstance();
+        bool doDelete {true};
+        if (settings.isDeleteLocationConfirmationEnabled()) {
+            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
+            QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
+
+            // Sequence numbers start at 1
+            messageBox->setWindowTitle(tr("Delete Aircraft"));
+            messageBox->setText(tr("The location with ID %1 is about to be deleted. Do you want to delete the location?").arg(d->selectedLocationId));
+            messageBox->setInformativeText(tr("Deletion cannot be undone."));
+            QPushButton *deleteButton = messageBox->addButton(tr("&Delete"), QMessageBox::AcceptRole);
+            QPushButton *keepButton = messageBox->addButton(tr("&Keep"), QMessageBox::RejectRole);
+            messageBox->setDefaultButton(keepButton);
+            messageBox->setCheckBox(dontAskAgainCheckBox);
+            messageBox->setIcon(QMessageBox::Icon::Question);
+
+            messageBox->exec();
+            doDelete = messageBox->clickedButton() == deleteButton;
+            settings.setDeleteLocationConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
+        }
+
+        if (doDelete) {
+            d->locationService->deleteById(d->selectedLocationId);
+            int lastSelectedRow = d->selectedRow;
+            updateUi();
+            int selectedRow = std::min(lastSelectedRow, ui->locationTableWidget->rowCount() - 1);
+            ui->locationTableWidget->selectRow(selectedRow);
+            ui->locationTableWidget->setFocus(Qt::NoFocusReason);
+        }
     }
 }

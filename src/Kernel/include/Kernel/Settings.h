@@ -458,6 +458,23 @@ public:
     void setDeleteAircraftConfirmationEnabled(bool enable) noexcept;
 
     /*!
+     * Returns whether the location deletion confirmation is enabled or not.
+     *
+     * \return \c true if the location deletion confirmation is enabled; \c false else
+     */
+    bool isDeleteLocationConfirmationEnabled() const noexcept;
+
+    /*!
+     * Enables the location deletion confirmation.
+     *
+     * \param enable
+     *        set to \c true to set the location deletion confirmation enabled;
+     *        \c false else
+     * \sa changed
+     */
+    void setDeleteLocationConfirmationEnabled(bool enable) noexcept;
+
+    /*!
      * Returns whether the reset time offset confirmation is enabled or not.
      *
      * \return \c true if the reset time offset confirmation is enabled; \c false else
