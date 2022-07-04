@@ -37,14 +37,14 @@ namespace SimConnectType
         SimulationTime,
         InitialPosition,
         Location,
-        AircraftPositionReply,
-        AircraftPositionRequest,
-        AircraftEngineReply,
-        AircraftEngineRequest,
-        AircraftPrimaryFlightControl,
-        AircraftSecondaryFlightControl,
-        AircraftHandle,
-        AircraftLight
+        PositionReply,
+        PositionRequest,
+        EngineReply,
+        EngineRequest,
+        PrimaryFlightControl,
+        SecondaryFlightControl,
+        Handle,
+        Light
     };
 
     enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {

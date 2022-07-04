@@ -35,6 +35,6 @@
 
 void SimConnectLight::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftLight), SimVar::LightStates, "Mask", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::Light), SimVar::LightStates, "Mask", ::SIMCONNECT_DATATYPE_INT32);
 }
 
