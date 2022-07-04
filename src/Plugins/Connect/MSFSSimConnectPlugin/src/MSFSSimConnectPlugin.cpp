@@ -487,7 +487,7 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
         setupRequestData();
     }
 #ifdef DEBUG
-    qDebug() << "MSFSSimConnectPlugin::connectWithSim: CONNECT with SIM, handle: " << d->simConnectHandle << " success: " << (result == S_OK);
+    qDebug() << "MSFSSimConnectPlugin::connectWithSim: CONNECT with SIM, handle:" << d->simConnectHandle << "success:" << (result == S_OK);
 #endif
     const bool ok = result == S_OK;
     if (ok) {
@@ -757,7 +757,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 
         case Event::Pause:
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatchSIMCONNECT_RECV_ID_EVENT: PAUSE event: " << evt->dwData;
+            qDebug() << "MSFSSimConnectPlugin::dispatchSIMCONNECT_RECV_ID_EVENT: PAUSE event:" << evt->dwData;
 #endif
             // It seems that the pause event is currently only triggered by selecting "Pause Simulation"
             // in the developer mode (FS 2020), but neither when "active pause" is selected nor when ESC
@@ -989,8 +989,8 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             // just generated AI object again
             skyConnect->d->simConnectAi->removeByObjectId(objectData->dwObjectID);
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: orphaned AI object response for original request: " <<  objectData->dwRequestID
-                     << " DESTROYING AI Object again: " << objectData->dwObjectID;
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: orphaned AI object response for original request:" <<  objectData->dwRequestID
+                     << "DESTROYING AI Object again:" << objectData->dwObjectID;
 #endif
         }
         break;
@@ -1013,10 +1013,10 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 #ifdef DEBUG
     {
         SIMCONNECT_RECV_EXCEPTION *exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
-        qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EXCEPTION: A server exception "
-                 << " happened: sender ID: " << exception->dwSendID
-                 << " index: " << exception->dwIndex
-                 << " data: " << cbData;
+        qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EXCEPTION: A server exception" << exception->dwException
+                 << "happened: sender ID:" << exception->dwSendID
+                 << "index:" << exception->dwIndex
+                 << "data:" << cbData;
     }
 #endif
         break;

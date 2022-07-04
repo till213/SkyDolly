@@ -84,7 +84,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         location.id = id;
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLiteLocationDao::add: SQL error: " << qPrintable(query.lastError().databaseText())  << " - error code: " << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteLocationDao::add: SQL error:" << qPrintable(query.lastError().databaseText()) << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -110,10 +110,9 @@ bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteLocationDao::deleteById: SQL error: " << qPrintable(query.lastError().databaseText())  << " - error code: " << query.lastError().nativeErrorCode();
-#endif
+        qDebug() << "SQLiteLocationDao::deleteById: SQL error:" << qPrintable(query.lastError().databaseText())  << "- error code:" << query.lastError().nativeErrorCode();
     }
-
+#endif
     return ok;
 }
 
@@ -158,7 +157,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
     }
 #ifdef DEBUG
     else {
-        qDebug("SQLiteLocationDao::getAll: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug("SQLiteLocationDao::getAll: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code:" + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;

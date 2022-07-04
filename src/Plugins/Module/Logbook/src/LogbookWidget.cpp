@@ -101,7 +101,8 @@ namespace
         FourHours = 240
     };
 
-    constexpr int RecordingInProgressId = std::numeric_limits<int>::max();
+    constexpr int RecordingInProgressId {std::numeric_limits<int>::max()};
+    constexpr bool RecordingInProgress {true};
 }
 
 struct LogbookWidgetPrivate
@@ -300,6 +301,7 @@ inline void LogbookWidget::updateFlightSummary(const FlightSummary &summary, int
         // Note: alphabetical characters (a-zA-Z) will be > numerical characters (0-9),
         //       so the flight being recorded will be properly sorted in the table
         flightId = QVariant::fromValue(tr("REC"));
+        newItem->setData(Qt::UserRole, ::RecordingInProgress);
     }
     newItem->setData(Qt::DisplayRole, flightId);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -578,8 +580,13 @@ void LogbookWidget::onRecordingStarted() noexcept
         FlightSummary summary = flight.getFlightSummary();
         summary.flightId = ::RecordingInProgressId;
         const int rowIndex = ui->logTableWidget->rowCount();
+        ui->logTableWidget->blockSignals(true);
+        ui->logTableWidget->setSortingEnabled(false);
         ui->logTableWidget->insertRow(rowIndex);
         updateFlightSummary(summary, rowIndex);
+        updateAircraftIcons();
+        ui->logTableWidget->setSortingEnabled(true);
+        ui->logTableWidget->blockSignals(false);
     }
 }
 
@@ -598,6 +605,8 @@ void LogbookWidget::updateAircraftIcons() noexcept
         QTableWidgetItem *item = ui->logTableWidget->item(row, d->flightIdColumnIndex);
         if (item->data(Qt::DisplayRole).toLongLong() == flightInMemoryId) {
             item->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
+        } else if (item->data(Qt::UserRole).toBool() == ::RecordingInProgress) {
+            item->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
         } else {
             item->setIcon(QIcon());
         }
@@ -606,14 +615,16 @@ void LogbookWidget::updateAircraftIcons() noexcept
 
 void LogbookWidget::onAircraftInfoChanged(Aircraft &aircraft)
 {
+    ui->logTableWidget->setSortingEnabled(false);
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
-        QTableWidgetItem *item = ui->logTableWidget->item(row, d->flightIdColumnIndex);
-        if (item->data(Qt::DisplayRole).toString() == tr("REC")) {
+        QTableWidgetItem *item = ui->logTableWidget->item(row, d->userAircraftColumnIndex);
+        if (item->data(Qt::DisplayRole).toString().isEmpty()) {
             item = ui->logTableWidget->item(row, d->userAircraftColumnIndex);
             item->setData(Qt::DisplayRole, aircraft.getAircraftInfo().aircraftType.type);
             break;
         }
     }
+     ui->logTableWidget->setSortingEnabled(true);
 }
 
 void LogbookWidget::loadFlight() noexcept

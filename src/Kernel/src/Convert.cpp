@@ -49,7 +49,7 @@ Convert::Convert() noexcept
         } catch (const std::exception &ex) {
             m_egm = nullptr;
 #ifdef DEBUG
-            qDebug() << "Convert::Convert: caught exception: " << ex.what();
+            qDebug() << "Convert::Convert: caught exception:" << ex.what();
 #endif
         }
     } else {
