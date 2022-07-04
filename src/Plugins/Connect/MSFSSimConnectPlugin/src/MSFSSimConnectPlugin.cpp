@@ -71,6 +71,7 @@
 #include "SimConnectLight.h"
 #include "SimConnectFlightPlan.h"
 #include "SimConnectSimulationTime.h"
+#include "SimConnectLocation.h"
 #include "SimConnectAi.h"
 #include "EventWidget.h"
 #include "MSFSSimConnectPlugin.h"
@@ -173,10 +174,10 @@ bool MSFSSimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRa
 
 bool MSFSSimConnectPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
 {
-    HRESULT result;
     SIMCONNECT_DATA_INITPOSITION initialSimConnectPosition = SimConnectPositionRequest::toInitialPosition(initialPosition);
-    result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInitialPosition),
-                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialSimConnectPosition);
+    HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::InitialPosition),
+                                                     ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION),
+                                                     &initialSimConnectPosition);
     return result == S_OK;
 }
 
@@ -514,10 +515,10 @@ void MSFSSimConnectPlugin::onRemoveAllAiObjects() noexcept
     }
 }
 
-bool MSFSSimConnectPlugin::onRequestInitialPosition() noexcept
+bool MSFSSimConnectPlugin::onRequestLocation() noexcept
 {
-    const HRESULT res = ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::AircraftPosition),
-                                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionReply),
+    const HRESULT res = ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::Location),
+                                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::Location),
                                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, 0);
     return res == S_OK;
 }
@@ -624,8 +625,9 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
     SimConnectLight::addToDataDefinition(d->simConnectHandle);
     SimConnectFlightPlan::addToDataDefinition(d->simConnectHandle);
     SimConnectSimulationTime::addToDataDefinition(d->simConnectHandle);
+    SimConnectLocation::addToDataDefinition(d->simConnectHandle);
 
-    ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
+    ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::InitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
     // System event subscription
     ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::SimStart), "SimStart");
@@ -943,6 +945,13 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
                 }
             }
             break;
+        }
+        case SimConnectType::DataRequest::Location:
+        {
+            const SimConnectLocation *simConnectLocation = reinterpret_cast<const SimConnectLocation *>(&objectData->dwData);
+            emit skyConnect->locationReceived(simConnectLocation->toLocation());
+            break;
+
         }
         default:
             break;

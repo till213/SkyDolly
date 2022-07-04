@@ -22,19 +22,51 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef SIMCONNECTLOCATION_H
+#define SIMCONNECTLOCATION_H
+
 #include <windows.h>
 
-#include <SimConnect.h>
+#include <Model/Location.h>
+#include <Model/SimType.h>
+#include <Model/LightData.h>
 
-#include <Kernel/Enum.h>
-#include <Model/SimVar.h>
-#include "SimConnectType.h"
-#include "SimConnectLight.h"
-
-// PUBLIC
-
-void SimConnectLight::addToDataDefinition(HANDLE simConnectHandle) noexcept
+/*!
+ * The location response structure. It essentially contains the same information like the
+ * predefined data structure SIMCONNECT_DATA_INITPOSITION, however the later cannot be
+ * used as part of data requests.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(push, 1)
+struct SimConnectLocation
 {
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftLight), SimVar::LightStates, "Mask", ::SIMCONNECT_DATATYPE_INT32);
-}
+    double latitude;
+    double longitude;
+    double altitude;
+    double pitch;
+    double bank;
+    double heading;
+    int indicatedAirspeed;
+    int onGround;
 
+    inline Location toLocation() const noexcept
+    {
+        Location location;
+        location.latitude = latitude;
+        location.longitude = longitude;
+        location.altitude = altitude;
+        location.pitch = pitch;
+        location.bank = bank;
+        location.heading = heading;
+        location.indicatedAirspeed = indicatedAirspeed;
+        location.onGround = (onGround != 0);
+
+        return location;
+    }
+
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+};
+#pragma pack(pop)
+
+#endif // SIMCONNECTLOCATION_H

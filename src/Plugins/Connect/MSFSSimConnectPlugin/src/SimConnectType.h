@@ -24,6 +24,7 @@
  */
 #ifndef SIMCONNECTTYPE_H
 #define SIMCONNECTTYPE_H
+
 #include <windows.h>
 
 #include <SimConnect.h>
@@ -34,6 +35,8 @@ namespace SimConnectType
         FlightInformation,
         FlightPlan,
         SimulationTime,
+        InitialPosition,
+        Location,
         AircraftPositionReply,
         AircraftPositionRequest,
         AircraftEngineReply,
@@ -41,13 +44,14 @@ namespace SimConnectType
         AircraftPrimaryFlightControl,
         AircraftSecondaryFlightControl,
         AircraftHandle,
-        AircraftLight,
-        AircraftInitialPosition
+        AircraftLight
     };
 
     enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
         AircraftInfo,
         FlightPlan,
+        InitialPosition,
+        Location,
         SimulationTime,
         AircraftPosition,
         Engine,

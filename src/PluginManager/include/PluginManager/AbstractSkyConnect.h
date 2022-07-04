@@ -93,7 +93,7 @@ public:
     void setReplaySpeedFactor(double factor) noexcept override;
 
     double calculateRecordedSamplesPerSecond() const noexcept override;
-    bool requestInitialPosition() noexcept override;
+    bool requestLocation() noexcept override;
 
 public slots:
     void addAiObject(const Aircraft &aircraft) noexcept override;
@@ -139,7 +139,7 @@ protected:
     virtual void onRemoveAiObject(std::int64_t aircraftId) noexcept = 0;
     virtual void onRemoveAllAiObjects() noexcept = 0;
 
-    virtual bool onRequestInitialPosition() noexcept = 0;
+    virtual bool onRequestLocation() noexcept = 0;
 
 protected slots:
     std::int64_t updateCurrentTimestamp() noexcept;

@@ -109,6 +109,7 @@ namespace SimVar
     constexpr char SimOnGround[] = "Sim On Ground";
     constexpr char PlaneAltAboveGround[] = "Plane Alt Above Ground";
     constexpr char AirspeedTrue[] = "Airspeed True";
+    constexpr char AirspeedIndicated[] = "Airspeed Indicated";
     constexpr char SurfaceType[] = "Surface Type";
     constexpr char WingSpan[] = "Wing Span";
     constexpr char NumberOfEngines[] = "Number Of Engines";

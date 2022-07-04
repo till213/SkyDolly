@@ -347,7 +347,7 @@ bool SkyConnectManager::isAtEnd() const noexcept
 bool SkyConnectManager::requestInitialPosition() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().requestInitialPosition() : false;
+    return skyConnect ? skyConnect->get().requestLocation() : false;
 }
 
 // PUBLIC SLOTS
@@ -374,8 +374,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     this, &SkyConnectManager::recordingStarted);
             connect(skyPlugin, &SkyConnectIntf::recordingStopped,
                     this, &SkyConnectManager::recordingStopped);
-            connect(skyPlugin, &SkyConnectIntf::initialPositionReceived,
-                    this, &SkyConnectManager::initialPositionReceived);
+            connect(skyPlugin, &SkyConnectIntf::locationReceived,
+                    this, &SkyConnectManager::locationReceived);
 
             // Flight
             const Logbook &logbook = Logbook::getInstance();

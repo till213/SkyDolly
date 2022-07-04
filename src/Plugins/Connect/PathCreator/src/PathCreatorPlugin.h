@@ -76,7 +76,7 @@ protected:
     void onRemoveAiObject(std::int64_t aircraftId) noexcept override;
     void onRemoveAllAiObjects() noexcept override;
 
-    bool onRequestInitialPosition() noexcept override;
+    bool onRequestLocation() noexcept override;
 
 protected slots:
     void recordData() noexcept override;

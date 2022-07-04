@@ -193,12 +193,12 @@ public:
 
     /*!
      * Requests the current position of the user aircraft whcich is asynchronously
-     * returned as InitialPosition.
+     * returned as Location.
      *
      * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
-     * \sa initialPositionReceived
+     * \sa locationReceived
      */
-    virtual bool requestInitialPosition() noexcept = 0;
+    virtual bool requestLocation() noexcept = 0;
 
 public slots:
     virtual void addAiObject(const Aircraft &aircraft) noexcept = 0;
@@ -273,12 +273,12 @@ signals:
     void recordingStopped();
 
     /*!
-     * Emitted whenever the response to the initial position request has been received.
+     * Emitted whenever the response to the Location request has been received.
      *
-     * \param initialPosition
-     *        the received initial position
+     * \param location
+     *        the received Location
      */
-    void initialPositionReceived(InitialPosition initialPosition);
+    void locationReceived(Location location);
 
 private:
     Q_DISABLE_COPY(SkyConnectIntf)

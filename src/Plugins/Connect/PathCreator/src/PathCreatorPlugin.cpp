@@ -43,6 +43,7 @@
 #include <Model/AircraftType.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Location.h>
 #include <Model/InitialPosition.h>
 #include <Model/Engine.h>
 #include <Model/EngineData.h>
@@ -226,19 +227,19 @@ void PathCreatorPlugin::onRemoveAllAiObjects() noexcept
 #endif
 }
 
-bool PathCreatorPlugin::onRequestInitialPosition() noexcept
+bool PathCreatorPlugin::onRequestLocation() noexcept
 {
-    InitialPosition initialPosition {
+    Location location {
         -90.0 + d->randomGenerator->bounded(180),
         -180.0 + d->randomGenerator->bounded(360.0),
         d->randomGenerator->bounded(60000.0)
     };
-    initialPosition.pitch = -90.0 + d->randomGenerator->bounded(180.0);
-    initialPosition.bank = -180.0 + d->randomGenerator->bounded(360.0);
-    initialPosition.heading = -180.0 + d->randomGenerator->bounded(360.0);
-    initialPosition.indicatedAirspeed = d->randomGenerator->bounded(400);
-    initialPosition.onGround = false;
-    emit initialPositionReceived(initialPosition);
+    location.pitch = -90.0 + d->randomGenerator->bounded(180.0);
+    location.bank = -180.0 + d->randomGenerator->bounded(360.0);
+    location.heading = -180.0 + d->randomGenerator->bounded(360.0);
+    location.indicatedAirspeed = d->randomGenerator->bounded(400);
+    location.onGround = false;
+    emit locationReceived(location);
 
     return true;
 }

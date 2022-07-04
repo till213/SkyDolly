@@ -78,8 +78,8 @@ void LocationPlugin::frenchConnection() noexcept
 {
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    connect(&skyConnectManager, &SkyConnectManager::initialPositionReceived,
-            this, &LocationPlugin::initialPositionReceived);
+    connect(&skyConnectManager, &SkyConnectManager::locationReceived,
+            this, &LocationPlugin::onLocationReceived);
 
     // Location widget
     connect(d->locationWidget.get(), &LocationWidget::captureLocation,
@@ -101,8 +101,7 @@ void LocationPlugin::teleportTo(const Location &location) noexcept
     SkyConnectManager::getInstance().setUserAircraftInitialPosition(initialPosition);
 }
 
-void LocationPlugin::initialPositionReceived(const InitialPosition &initialPosition) noexcept
+void LocationPlugin::onLocationReceived(Location location) noexcept
 {
-    Location location {initialPosition};
     d->locationWidget->addLocation(std::move(location));
 }

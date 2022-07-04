@@ -39,8 +39,6 @@ struct AircraftInfo;
 
 struct MODEL_API InitialPosition
 {
-    static constexpr int InvalidIndicatedAirspeed = std::numeric_limits<int>::min();
-
     double latitude;
     double longitude;
     double altitude;
@@ -76,6 +74,7 @@ struct MODEL_API InitialPosition
     }
 
     static const InitialPosition NullData;
+    static constexpr int InvalidIndicatedAirspeed = std::numeric_limits<int>::min();
 };
 
 #endif // INITIALPOSITION_H

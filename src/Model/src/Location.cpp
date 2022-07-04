@@ -26,6 +26,17 @@
 
 // PUBLIC
 
+Location::Location(double theLatitude, double theLongitude, double theAltitude) noexcept
+    : latitude(theLatitude),
+      longitude(theLongitude),
+      altitude(theAltitude),
+      pitch(0.0),
+      bank(0.0),
+      heading(0.0),
+      indicatedAirspeed(InvalidIndicatedAirspeed),
+      onGround(false)
+{}
+
 Location::Location(const InitialPosition &initialPosition) noexcept
     : latitude(initialPosition.latitude),
       longitude(initialPosition.longitude),

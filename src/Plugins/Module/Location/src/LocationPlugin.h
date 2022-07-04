@@ -56,7 +56,7 @@ private:
 private slots:
     void captureLocation() noexcept;
     void teleportTo(const Location &location) noexcept;
-    void initialPositionReceived(const InitialPosition &initialPosition) noexcept;
+    void onLocationReceived(Location location) noexcept;
 };
 
 #endif // LOCATIONPLUGIN_H

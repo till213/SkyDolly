@@ -45,15 +45,13 @@ struct MODEL_API Location
 
     QString description;
 
+    explicit Location(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
     explicit Location(const InitialPosition &initialPosition) noexcept;
-    Location() noexcept = default;
     Location(Location &other) = default;
     Location(Location &&other) = default;
     ~Location() noexcept = default;
     Location &operator=(const Location &rhs) = default;
     Location &operator=(Location &&rhs) = default;
-
-    static constexpr std::int64_t InvalidId {-1};
 
     inline InitialPosition toInitialPosition() const noexcept {
         InitialPosition initialPosition {latitude, longitude, altitude};
@@ -65,6 +63,9 @@ struct MODEL_API Location
 
         return initialPosition;
     }
+
+    static constexpr std::int64_t InvalidId {-1};
+    static constexpr int InvalidIndicatedAirspeed = std::numeric_limits<int>::min();
 };
 
 #endif // LOCATION_H

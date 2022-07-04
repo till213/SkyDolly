@@ -490,7 +490,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
     return samplesPerSecond;
 }
 
-bool AbstractSkyConnect::requestInitialPosition() noexcept
+bool AbstractSkyConnect::requestLocation() noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -498,7 +498,7 @@ bool AbstractSkyConnect::requestInitialPosition() noexcept
 
     bool ok = isConnectedWithSim();
     if (ok) {
-        ok = retryWithReconnect([this]() -> bool { return onRequestInitialPosition(); });
+        ok = retryWithReconnect([this]() -> bool { return onRequestLocation(); });
     }
     return ok;
 }

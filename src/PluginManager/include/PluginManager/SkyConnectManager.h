@@ -162,11 +162,11 @@ signals:
     void recordingStopped();
 
     /*!
-     * Relay of the SkyConnectIntf#initialPositionReceived signal.
+     * Relay of the SkyConnectIntf#locationReceived signal.
      *
-     * \sa SkyConnectIntf#initialPositionReceived
+     * \sa SkyConnectIntf#locationReceived
      */
-    void initialPositionReceived(InitialPosition initialPosition);
+    void locationReceived(Location location);
 
 protected:
     ~SkyConnectManager() noexcept override;
