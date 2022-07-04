@@ -47,6 +47,19 @@ namespace
 {
     constexpr int InvalidRowIndex {-1};
     constexpr int InvalidColumnIndex {-1};
+
+    constexpr double DefaultAltitude = 5000;
+    // Dead Sea Depression - The lowest point on Earth: -413 meters
+    // https://geology.com/below-sea-level/
+    constexpr double MinimumAltitude = -1500;
+    // https://www.reddit.com/r/flightsim/comments/ibstui/turns_out_the_maximum_altitude_in_fs2020_275000/
+    constexpr double MaximumAltitude = 275000;
+    constexpr int DefaultIndicatedAirspeed = 120;
+    constexpr int MinimumIndicatedAirspeed = 0;
+    // NASA X-43 (Mach 9.6)
+    // https://internationalaviationhq.com/2020/06/27/17-fastest-aircraft/
+    constexpr int MaximumIndicatedAirspeed = 6350;
+    constexpr bool DefaultOnGround = false;
 }
 
 class LocationWidgetPrivate
@@ -138,6 +151,14 @@ void LocationWidget::initUi() noexcept
 
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
+
+    ui->altitudeSpinBox->setMinimum(::MinimumAltitude);
+    ui->altitudeSpinBox->setMaximum(::MaximumAltitude);
+    ui->altitudeSpinBox->setValue(::DefaultAltitude);
+    ui->indicatedAirspeedSpinBox->setMinimum(::MinimumIndicatedAirspeed);
+    ui->indicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
+    ui->indicatedAirspeedSpinBox->setValue(::DefaultIndicatedAirspeed);
+    ui->onGroundCheckBox->setChecked(::DefaultOnGround);
 }
 
 void LocationWidget::frenchConnection() noexcept
@@ -355,6 +376,9 @@ void LocationWidget::onSelectionChanged() noexcept
 void LocationWidget::onAddLocation() noexcept
 {
     Location location;
+    location.altitude = ui->altitudeSpinBox->value();
+    location.indicatedAirspeed = ui->indicatedAirspeedSpinBox->value();
+    location.onGround = ui->onGroundCheckBox->isChecked();
     if (d->locationService->store(location)) {
         ui->locationTableWidget->blockSignals(true);
         ui->locationTableWidget->setSortingEnabled(false);
