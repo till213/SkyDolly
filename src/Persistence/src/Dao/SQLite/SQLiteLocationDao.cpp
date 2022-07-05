@@ -82,8 +82,8 @@ bool SQLiteLocationDao::add(Location &location) noexcept
 
     query.bindValue(":title", location.title);
     query.bindValue(":description", location.description);
-    query.bindValue(":type_id", location.typeId);
-    query.bindValue(":category_id", location.categoryId);
+    query.bindValue(":type_id", QVariant::fromValue(location.typeId));
+    query.bindValue(":category_id", QVariant::fromValue(location.categoryId));
     query.bindValue(":identifier", location.identifier);
     query.bindValue(":latitude", location.latitude);
     query.bindValue(":longitude", location.longitude);
@@ -125,14 +125,13 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
         "       heading = :heading,"
         "       indicated_airspeed = :indicated_airspeed,"
         "       on_ground = :on_ground"
-
         "where id = :id;"
     );
 
     query.bindValue(":title", location.title);
     query.bindValue(":description", location.description);
-    query.bindValue(":type_id", location.typeId);
-    query.bindValue(":category_id", location.categoryId);
+    query.bindValue(":type_id", QVariant::fromValue(location.typeId));
+    query.bindValue(":category_id", QVariant::fromValue(location.categoryId));
     query.bindValue(":identifier", location.identifier);
     query.bindValue(":latitude", location.latitude);
     query.bindValue(":longitude", location.longitude);
@@ -142,8 +141,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     query.bindValue(":heading", location.heading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
-
-    query.bindValue(":id", location.id);
+    query.bindValue(":id", QVariant::fromValue(location.id));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

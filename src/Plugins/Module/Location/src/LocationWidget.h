@@ -59,7 +59,7 @@ private:
     void updateInfoUi() noexcept;
 
     void updateLocationTable() noexcept;
-    inline void updateLocation(const Location &location, int rowIndex) noexcept;
+    inline void updateLocationItems(const Location &location, int rowIndex) noexcept;
 
     void teleportToLocation(int row) noexcept;
     Location getLocationByRow(int row) const noexcept;

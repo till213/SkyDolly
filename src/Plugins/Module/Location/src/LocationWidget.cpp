@@ -124,7 +124,7 @@ void LocationWidget::addLocation(Location newLocation)
         const int rowCount = ui->locationTableWidget->rowCount();
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->insertRow(rowCount);
-        updateLocation(location, rowCount);
+        updateLocationItems(location, rowCount);
         ui->locationTableWidget->setSortingEnabled(true);
     }
 }
@@ -147,7 +147,6 @@ void LocationWidget::initUi() noexcept
     d->headingColumnIndex = headers.indexOf(tr("Heading"));
     d->indicatedAirspeedColumnIndex = headers.indexOf(tr("Indicated Airspeed"));
     d->onGroundColumnIndex = headers.indexOf(tr("On Ground"));
-
 
     ui->locationTableWidget->setColumnCount(headers.count());
     ui->locationTableWidget->setHorizontalHeaderLabels(headers);
@@ -233,7 +232,7 @@ void LocationWidget::updateLocationTable() noexcept
 
         int rowIndex {0};
         for (const Location &location : locations) {
-            updateLocation(location, rowIndex);
+            updateLocationItems(location, rowIndex);
             ++rowIndex;
         }
 
@@ -250,7 +249,7 @@ void LocationWidget::updateLocationTable() noexcept
     }
 }
 
-inline void LocationWidget::updateLocation(const Location &location, int rowIndex) noexcept
+inline void LocationWidget::updateLocationItems(const Location &location, int rowIndex) noexcept
 {
     int columnIndex {0};
 
@@ -278,14 +277,14 @@ inline void LocationWidget::updateLocation(const Location &location, int rowInde
 
     // Type
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::EditRole, location.typeId);
+    newItem->setData(Qt::EditRole, QVariant::fromValue(location.typeId));
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Category
     newItem = std::make_unique<QTableWidgetItem>();
     // TODO IMPLEMENT ME Custom Category dropdown widget
-    newItem->setData(Qt::EditRole, location.categoryId);
+    newItem->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
@@ -361,17 +360,17 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
     item = ui->locationTableWidget->item(row, d->titleColumnIndex);
     location.title = item->data(Qt::EditRole).toString();
 
+    item = ui->locationTableWidget->item(row, d->descriptionColumnIndex);
+    location.description = item->data(Qt::EditRole).toString();
+
     item = ui->locationTableWidget->item(row, d->typeColumnIndex);
     location.typeId = item->data(Qt::EditRole).toLongLong();
 
     item = ui->locationTableWidget->item(row, d->categoryColumnIndex);
     location.categoryId = item->data(Qt::EditRole).toLongLong();
 
-    item = ui->locationTableWidget->item(row, d->titleColumnIndex);
-    location.title = item->data(Qt::EditRole).toString();
-
-    item = ui->locationTableWidget->item(row, d->titleColumnIndex);
-    location.title = item->data(Qt::EditRole).toString();
+    item = ui->locationTableWidget->item(row, d->identifierColumnIndex);
+    location.identifier = item->data(Qt::EditRole).toString();
 
     item = ui->locationTableWidget->item(row, d->positionColumnIndex);
     const QStringList coordinates = item->data(Qt::EditRole).toString().split(',');
@@ -459,7 +458,7 @@ void LocationWidget::onAddLocation() noexcept
         ui->locationTableWidget->setSortingEnabled(false);
         const int rowIndex = ui->locationTableWidget->rowCount();
         ui->locationTableWidget->insertRow(rowIndex);
-        updateLocation(location, rowIndex);
+        updateLocationItems(location, rowIndex);
         ui->locationTableWidget->setSortingEnabled(true);
         ui->locationTableWidget->blockSignals(false);
     }
