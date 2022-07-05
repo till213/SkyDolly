@@ -112,18 +112,28 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     QSqlQuery query;
     query.prepare(
         "update location "
-        "set    latitude           = :latitude,"
-        "       longitude          = :longitude,"
-        "       altitude           = :altitude,"
-        "       pitch              = :pitch,"
-        "       bank               = :bank,"
-        "       heading            = :heading,"
+        "set    title = :title,"
+        "       description = :description,"
+        "       type_id = :type_id,"
+        "       category_id = :category_id,"
+        "       identifier = :identifier,"
+        "       latitude = :latitude,"
+        "       longitude = :longitude,"
+        "       altitude = :altitude,"
+        "       pitch = :pitch,"
+        "       bank = :bank,"
+        "       heading = :heading,"
         "       indicated_airspeed = :indicated_airspeed,"
-        "       on_ground          = :on_ground,"
-        "       description        = :description "
+        "       on_ground = :on_ground"
+
         "where id = :id;"
     );
 
+    query.bindValue(":title", location.title);
+    query.bindValue(":description", location.description);
+    query.bindValue(":type_id", location.typeId);
+    query.bindValue(":category_id", location.categoryId);
+    query.bindValue(":identifier", location.identifier);
     query.bindValue(":latitude", location.latitude);
     query.bindValue(":longitude", location.longitude);
     query.bindValue(":altitude", location.altitude);
@@ -132,7 +142,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     query.bindValue(":heading", location.heading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
-    query.bindValue(":description", location.description);
+
     query.bindValue(":id", location.id);
     bool ok = query.exec();
 #ifdef DEBUG
@@ -177,6 +187,11 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
     if (ok) {
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
+        const int titleIdx = record.indexOf("title");
+        const int descriptionIdx = record.indexOf("description");
+        const int typeIdx = record.indexOf("type_id");
+        const int categoryIdx = record.indexOf("category_id");
+        const int identifierIdx = record.indexOf("identifier");
         const int latitudeIdx = record.indexOf("latitude");
         const int longitudeIdx = record.indexOf("longitude");
         const int altitudeIdx = record.indexOf("altitude");
@@ -185,11 +200,16 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
         const int headingIdx = record.indexOf("heading");
         const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
         const int onGroundIdx = record.indexOf("on_ground");
-        const int descriptionIdx = record.indexOf("description");
+
 
         while (ok && query.next()) {
             Location location;
             location.id = query.value(idIdx).toLongLong();
+            location.title = query.value(titleIdx).toString();
+            location.description = query.value(descriptionIdx).toString();
+            location.typeId = query.value(typeIdx).toLongLong();
+            location.categoryId = query.value(categoryIdx).toLongLong();
+            location.identifier = query.value(identifierIdx).toString();
             location.latitude = query.value(latitudeIdx).toDouble();
             location.longitude = query.value(longitudeIdx).toDouble();
             location.altitude = query.value(altitudeIdx).toDouble();
@@ -198,7 +218,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
             location.heading = query.value(headingIdx).toDouble();
             location.indicatedAirspeed = query.value(indicatedAirspeedIdx).toInt();
             location.onGround = query.value(onGroundIdx).toBool();
-            location.description = query.value(descriptionIdx).toString();
+
             backInsertIterator = std::move(location);
         }
     }

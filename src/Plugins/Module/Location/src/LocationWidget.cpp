@@ -78,14 +78,18 @@ public:
     std::int64_t selectedLocationId {Location::InvalidId};
 
     int idColumnIndex {InvalidColumnIndex};
+    int titleColumnIndex {InvalidColumnIndex};
+    int descriptionColumnIndex {InvalidColumnIndex};
+    int typeColumnIndex {InvalidColumnIndex};
+    int categoryColumnIndex {InvalidColumnIndex};
+    int identifierColumnIndex {InvalidColumnIndex};
     int positionColumnIndex {InvalidColumnIndex};
     int altitudeColumnIndex {InvalidColumnIndex};
     int pitchColumnIndex {InvalidColumnIndex};
     int bankColumnIndex {InvalidColumnIndex};
     int headingColumnIndex {InvalidColumnIndex};
     int indicatedAirspeedColumnIndex {InvalidColumnIndex};
-    int onGroundColumnIndex {InvalidColumnIndex};
-    int descriptionColumnIndex {InvalidColumnIndex};
+    int onGroundColumnIndex {InvalidColumnIndex};    
 };
 
 // PUBLIC
@@ -129,8 +133,13 @@ void LocationWidget::addLocation(Location newLocation)
 
 void LocationWidget::initUi() noexcept
 {
-    const QStringList headers {tr("ID"), tr("Position"), tr("Altitude"), tr("Pitch"), tr("Bank"), tr("Heading"), tr("Indicated Airspeed"), tr("On Ground"), tr("Description")};
+    const QStringList headers {tr("ID"), tr("Title"), tr("Description"), tr("Type"), tr("Category"), tr("Identifer"), tr("Position"), tr("Altitude"), tr("Pitch"), tr("Bank"), tr("Heading"), tr("Indicated Airspeed"), tr("On Ground"), };
     d->idColumnIndex = headers.indexOf(tr("ID"));
+    d->titleColumnIndex = headers.indexOf(tr("Title"));
+    d->descriptionColumnIndex = headers.indexOf(tr("Description"));
+    d->typeColumnIndex = headers.indexOf(tr("Type"));
+    d->categoryColumnIndex = headers.indexOf(tr("Category"));
+    d->identifierColumnIndex = headers.indexOf(tr("Identifer"));
     d->positionColumnIndex = headers.indexOf(tr("Position"));
     d->altitudeColumnIndex = headers.indexOf(tr("Altitude"));
     d->pitchColumnIndex = headers.indexOf(tr("Pitch"));
@@ -138,7 +147,7 @@ void LocationWidget::initUi() noexcept
     d->headingColumnIndex = headers.indexOf(tr("Heading"));
     d->indicatedAirspeedColumnIndex = headers.indexOf(tr("Indicated Airspeed"));
     d->onGroundColumnIndex = headers.indexOf(tr("On Ground"));
-    d->descriptionColumnIndex = headers.indexOf(tr("Description"));
+
 
     ui->locationTableWidget->setColumnCount(headers.count());
     ui->locationTableWidget->setHorizontalHeaderLabels(headers);
@@ -149,6 +158,7 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->sortByColumn(d->idColumnIndex, Qt::SortOrder::DescendingOrder);
     ui->locationTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->locationTableWidget->setAlternatingRowColors(true);
+    ui->locationTableWidget->setColumnHidden(d->typeColumnIndex, true);
     ui->locationTableWidget->setColumnHidden(d->descriptionColumnIndex, true);
 
     QByteArray tableState = Settings::getInstance().getLocationTableState();
@@ -255,10 +265,41 @@ inline void LocationWidget::updateLocation(const Location &location, int rowInde
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
+    // Title
+    newItem = std::make_unique<QTableWidgetItem>(location.title);
+    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Description
+    newItem = std::make_unique<QTableWidgetItem>(location.description);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Type
+    newItem = std::make_unique<QTableWidgetItem>();
+    newItem->setData(Qt::EditRole, location.typeId);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Category
+    newItem = std::make_unique<QTableWidgetItem>();
+    // TODO IMPLEMENT ME Custom Category dropdown widget
+    newItem->setData(Qt::EditRole, location.categoryId);
+    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Identifier
+    newItem = std::make_unique<QTableWidgetItem>(location.identifier);
+    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
     // Position
     newItem = std::make_unique<PositionWidgetItem>();
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     newItem->setData(Qt::ItemDataRole::EditRole, Unit::formatCoordinates(location.latitude, location.longitude));
+    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);    
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
@@ -302,12 +343,6 @@ inline void LocationWidget::updateLocation(const Location &location, int rowInde
     newItem->setCheckState(location.onGround ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
-
-    // Description
-    newItem = std::make_unique<QTableWidgetItem>(location.description);
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
-    ++columnIndex;
 }
 
 void LocationWidget::teleportToLocation(int row) noexcept
@@ -322,6 +357,21 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
 
     QTableWidgetItem *item = ui->locationTableWidget->item(row, d->idColumnIndex);
     location.id = item->data(Qt::EditRole).toLongLong();
+
+    item = ui->locationTableWidget->item(row, d->titleColumnIndex);
+    location.title = item->data(Qt::EditRole).toString();
+
+    item = ui->locationTableWidget->item(row, d->typeColumnIndex);
+    location.typeId = item->data(Qt::EditRole).toLongLong();
+
+    item = ui->locationTableWidget->item(row, d->categoryColumnIndex);
+    location.categoryId = item->data(Qt::EditRole).toLongLong();
+
+    item = ui->locationTableWidget->item(row, d->titleColumnIndex);
+    location.title = item->data(Qt::EditRole).toString();
+
+    item = ui->locationTableWidget->item(row, d->titleColumnIndex);
+    location.title = item->data(Qt::EditRole).toString();
 
     item = ui->locationTableWidget->item(row, d->positionColumnIndex);
     const QStringList coordinates = item->data(Qt::EditRole).toString().split(',');
