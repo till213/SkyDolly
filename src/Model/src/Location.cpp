@@ -22,12 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include "Data.h"
 #include "Location.h"
 
 // PUBLIC
 
 Location::Location(double theLatitude, double theLongitude, double theAltitude) noexcept
-    : latitude(theLatitude),
+    : Data(),
+      latitude(theLatitude),
       longitude(theLongitude),
       altitude(theAltitude)
 {}

@@ -41,7 +41,7 @@ class PERSISTENCE_API LogbookService
 {
 public:
     LogbookService() noexcept;
-    virtual ~LogbookService() noexcept;
+    ~LogbookService() noexcept;
 
     bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept;
     std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept;

@@ -36,7 +36,7 @@
 class SQLiteHandleDao : public HandleDaoIntf
 {
 public:
-    explicit SQLiteHandleDao() noexcept;
+    SQLiteHandleDao() noexcept;
     ~SQLiteHandleDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const AircraftHandleData &data) noexcept override;

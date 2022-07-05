@@ -36,7 +36,7 @@
 class SQLitePositionDao : public PositionDaoIntf
 {
 public:
-    explicit SQLitePositionDao() noexcept;
+    SQLitePositionDao() noexcept;
     ~SQLitePositionDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const PositionData &data) noexcept override;

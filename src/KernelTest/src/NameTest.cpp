@@ -22,35 +22,47 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ENGINEDAOINTF_H
-#define ENGINEDAOINTF_H
+#include <QTest>
+#include <QString>
 
-#include <vector>
-#include <iterator>
-#include <cstdint>
+#include <Kernel/Name.h>
+#include "NameTest.h"
 
-#include <QtGlobal>
+// PRIVATE SLOTS
 
-struct EngineData;
+void NameTest::initTestCase()
+{}
 
-class EngineDaoIntf
+void NameTest::cleanupTestCase()
+{}
+
+void NameTest::nameTest_data()
 {
-public:
-    virtual ~EngineDaoIntf() = default;
+    QTest::addColumn<QString>("camelCase");
+    QTest::addColumn<QString>("expected");
 
-    /*!
-     * Persists the \c data.
-     *
-     * \param aircraftId
-     *        the aircraft the \c data belongs to
-     * \param data
-     *        the EngineData to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool add(std::int64_t aircraftId, const EngineData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<EngineData>> backInsertIterator) const noexcept = 0;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
-};
+    QTest::newRow("camelCase") << "camelCase" << "camel_case";
+    QTest::newRow("longerCamelCase") << "longerCamelCase" << "longer_camel_case";
+    QTest::newRow("LongerTitleCase") << "LongerTitleCase" << "longer_title_case";
+    QTest::newRow("simple") << "simple" << "simple";
+    QTest::newRow("Simple") << "Simple" << "simple";
+    QTest::newRow("snake_case_remains") << "snake_case_remains" << "snake_case_remains";
+    QTest::newRow("A") << "A" << "a";
+    QTest::newRow("a") << "a" << "a";
+    QTest::newRow("empty") << QString() << QString();
+}
 
-#endif // ENGINEDAOINTF_H
+void NameTest::nameTest()
+{
+    // Setup
+    QFETCH(QString, camelCase);
+    QFETCH(QString, expected);
+
+    // Exercise
+    QString result = Name::fromCamelCase(camelCase);
+
+    // Verify
+    QCOMPARE(result, expected);
+}
+
+QTEST_MAIN(NameTest)

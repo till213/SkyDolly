@@ -22,35 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ENGINEDAOINTF_H
-#define ENGINEDAOINTF_H
+#ifndef NAMETEST_H
+#define NAMETEST_H
 
-#include <vector>
-#include <iterator>
-#include <cstdint>
+#include <QObject>
 
-#include <QtGlobal>
-
-struct EngineData;
-
-class EngineDaoIntf
+/*!
+ * Test cases for the Name module.
+ */
+class NameTest : public QObject
 {
-public:
-    virtual ~EngineDaoIntf() = default;
+    Q_OBJECT
+private slots:
+    void initTestCase();
+    void cleanupTestCase();
 
-    /*!
-     * Persists the \c data.
-     *
-     * \param aircraftId
-     *        the aircraft the \c data belongs to
-     * \param data
-     *        the EngineData to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool add(std::int64_t aircraftId, const EngineData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<EngineData>> backInsertIterator) const noexcept = 0;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
+    void nameTest_data();
+    void nameTest();
 };
 
-#endif // ENGINEDAOINTF_H
+#endif // NAMETEST_H

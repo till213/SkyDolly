@@ -41,7 +41,7 @@ struct FlightSummary;
 class SQLiteLogbookDao : public LogbookDaoIntf
 {
 public:
-    explicit SQLiteLogbookDao() noexcept;
+    SQLiteLogbookDao() noexcept;
     ~SQLiteLogbookDao() noexcept override;
 
     bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept override;

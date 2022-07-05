@@ -41,7 +41,7 @@ class SQLiteAircraftDaoPrivate;
 class SQLiteAircraftDao : public AircraftDaoIntf
 {
 public:
-    explicit SQLiteAircraftDao() noexcept;
+    SQLiteAircraftDao() noexcept;
     ~SQLiteAircraftDao() noexcept override;
 
     bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;

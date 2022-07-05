@@ -34,7 +34,8 @@ struct Location;
 class SQLiteLocationDao : public LocationDaoIntf
 {
 public:
-    SQLiteLocationDao();
+    SQLiteLocationDao() noexcept;
+    ~SQLiteLocationDao() noexcept override;
 
     bool add(Location &location) noexcept override;
     bool update(const Location &location) noexcept override;

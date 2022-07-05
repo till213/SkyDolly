@@ -37,6 +37,7 @@
 #include "SQLite/SQLiteLightDao.h"
 #include "SQLite/SQLiteWaypointDao.h"
 #include "SQLite/SQLiteLocationDao.h"
+#include "SQLite/SQLiteEnumerationDao.h"
 #include "FlightDaoIntf.h"
 #include "AircraftDaoIntf.h"
 #include "AircraftTypeDaoIntf.h"
@@ -47,6 +48,8 @@
 #include "HandleDaoIntf.h"
 #include "LightDaoIntf.h"
 #include "WaypointDaoIntf.h"
+#include "LocationDaoIntf.h"
+#include "EnumerationDaoIntf.h"
 #include "DaoFactory.h"
 
 class DaoFactoryPrivate
@@ -206,6 +209,18 @@ std::unique_ptr<LocationDaoIntf> DaoFactory::createLocationDao() noexcept
     switch (d->dbType) {
     case DbType::SQLite:
         dao = std::make_unique<SQLiteLocationDao>();
+        break;
+    }
+    return dao;
+}
+
+
+std::unique_ptr<EnumerationDaoIntf> DaoFactory::createEnumerationDao() noexcept
+{
+    std::unique_ptr<EnumerationDaoIntf> dao {nullptr};
+    switch (d->dbType) {
+    case DbType::SQLite:
+        dao = std::make_unique<SQLiteEnumerationDao>();
         break;
     }
     return dao;

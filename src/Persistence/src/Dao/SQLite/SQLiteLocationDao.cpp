@@ -39,7 +39,10 @@
 
 // PUBIC
 
-SQLiteLocationDao::SQLiteLocationDao()
+SQLiteLocationDao::SQLiteLocationDao() noexcept
+{}
+
+SQLiteLocationDao::~SQLiteLocationDao() noexcept
 {}
 
 bool SQLiteLocationDao::add(Location &location) noexcept
@@ -47,6 +50,11 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     QSqlQuery query;
     query.prepare(
         "insert into location ("
+        "  title,"
+        "  description,"
+        "  type_id,"
+        "  category_id,"
+        "  identifier,"
         "  latitude,"
         "  longitude,"
         "  altitude,"
@@ -54,9 +62,13 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  bank,"
         "  heading,"
         "  indicated_airspeed,"
-        "  on_ground,"
-        "  description"
+        "  on_ground"
         ") values ("
+        "  :title,"
+        "  :description,"
+        "  :type_id,"
+        "  :category_id,"
+        "  :identifier,"
         "  :latitude,"
         "  :longitude,"
         "  :altitude,"
@@ -64,11 +76,15 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  :bank,"
         "  :heading,"
         "  :indicated_airspeed,"
-        "  :on_ground,"
-        "  :description"
+        "  :on_ground"
         ");"
     );
 
+    query.bindValue(":title", location.title);
+    query.bindValue(":description", location.description);
+    query.bindValue(":type_id", location.typeId);
+    query.bindValue(":category_id", location.categoryId);
+    query.bindValue(":identifier", location.identifier);
     query.bindValue(":latitude", location.latitude);
     query.bindValue(":longitude", location.longitude);
     query.bindValue(":altitude", location.altitude);
@@ -77,7 +93,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     query.bindValue(":heading", location.heading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
-    query.bindValue(":description", location.description);
+
     bool ok = query.exec();
     if (ok) {
         std::int64_t id = query.lastInsertId().toLongLong(&ok);

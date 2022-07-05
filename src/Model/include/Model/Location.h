@@ -28,12 +28,16 @@
 #include <QString>
 
 #include "InitialPosition.h"
+#include "Data.h"
 #include "ModelLib.h"
 
-struct MODEL_API Location
+struct MODEL_API Location : public Data
 {
-    std::int64_t id {InvalidId};
-
+    QString title;
+    QString description;
+    std::int64_t typeId {InvalidId};
+    std::int64_t categoryId {InvalidId};
+    QString identifier;
     double latitude {0.0};
     double longitude {0.0};
     double altitude {0.0};
@@ -43,13 +47,11 @@ struct MODEL_API Location
     int indicatedAirspeed {0};
     bool onGround {false};
 
-    QString description;
-
     explicit Location(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
     explicit Location(const InitialPosition &initialPosition) noexcept;
     Location(Location &other) = default;
     Location(Location &&other) = default;
-    ~Location() noexcept = default;
+     ~Location() noexcept override = default;
     Location &operator=(const Location &rhs) = default;
     Location &operator=(Location &&rhs) = default;
 
@@ -63,8 +65,6 @@ struct MODEL_API Location
 
         return initialPosition;
     }
-
-    static constexpr std::int64_t InvalidId {-1};
 };
 
 #endif // LOCATION_H

@@ -22,35 +22,40 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ENGINEDAOINTF_H
-#define ENGINEDAOINTF_H
+#ifndef ENUMERATIONSERVICE_H
+#define ENUMERATIONSERVICE_H
 
-#include <vector>
-#include <iterator>
-#include <cstdint>
+#include <memory>
 
-#include <QtGlobal>
+#include <QString>
 
-struct EngineData;
+#include <Model/Enumeration.h>
+#include "../PersistenceLib.h"
 
-class EngineDaoIntf
+struct EnumerationServicePrivate;
+
+class PERSISTENCE_API EnumerationService
 {
 public:
-    virtual ~EngineDaoIntf() = default;
+    EnumerationService() noexcept;
+    ~EnumerationService() noexcept;
 
-    /*!
-     * Persists the \c data.
-     *
-     * \param aircraftId
-     *        the aircraft the \c data belongs to
-     * \param data
-     *        the EngineData to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool add(std::int64_t aircraftId, const EngineData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<EngineData>> backInsertIterator) const noexcept = 0;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
+    bool getEnumerationByName(Enumeration &enumeration);
+
+    // Implementation note:
+    // Well-known database enumerations: TitleCase name must match with corresponding
+    // snake_case name (without the "enum_" prefix) of the corresponding "enumeration table".
+    static inline const QString BackupPeriod {QStringLiteral("BackupPeriod")};
+    static inline const QString LocationType {QStringLiteral("LocationType")};
+    static inline const QString LocationCategory {QStringLiteral("LocationCategory")};
+
+    // Well-known internal IDs
+    static inline const QString LocationTypeSystemIntlId {QStringLiteral("S")};
+    static inline const QString LocationTypeImportIntlId {QStringLiteral("I")};
+    static inline const QString LocationTypeUserIntlId {QStringLiteral("U")};
+
+private:
+    std::unique_ptr<EnumerationServicePrivate> d;
 };
 
-#endif // ENGINEDAOINTF_H
+#endif // ENUMERATIONSERVICE_H

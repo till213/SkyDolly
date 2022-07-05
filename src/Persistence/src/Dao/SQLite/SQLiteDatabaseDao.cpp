@@ -166,7 +166,7 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
         "       m.backup_directory_path,"
         "       ebp.intl_id "
         "from metadata m "
-        "left join enum_backup_period ebp "
+        "join enum_backup_period ebp "
         "on m.backup_period_id = ebp.id;"
     );
     if (ok && query.next()) {

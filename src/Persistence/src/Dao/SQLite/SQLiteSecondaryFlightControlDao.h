@@ -36,7 +36,7 @@
 class SQLiteSecondaryFlightControlDao : public SecondaryFlightControlDaoIntf
 {
 public:
-    explicit SQLiteSecondaryFlightControlDao() noexcept;
+    SQLiteSecondaryFlightControlDao() noexcept;
     ~SQLiteSecondaryFlightControlDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const SecondaryFlightControlData &data) noexcept override;

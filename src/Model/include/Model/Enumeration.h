@@ -22,35 +22,57 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ENGINEDAOINTF_H
-#define ENGINEDAOINTF_H
+#ifndef ENUMERATION_H
+#define ENUMERATION_H
 
+#include <memory>
 #include <vector>
-#include <iterator>
-#include <cstdint>
+#include <unordered_map>
 
-#include <QtGlobal>
+#include <QString>
 
-struct EngineData;
+#include "InitialPosition.h"
+#include "Data.h"
+#include "ModelLib.h"
 
-class EngineDaoIntf
+struct EnumerationPrivate;
+
+/*!
+ * The model for the corresonding database enumeration tables.
+ *
+ * For C++ enumeration class support also refer to Enum.h
+ *
+ * \sa Enum#toUnderlyingType
+ */
+class MODEL_API Enumeration
 {
 public:
-    virtual ~EngineDaoIntf() = default;
 
-    /*!
-     * Persists the \c data.
-     *
-     * \param aircraftId
-     *        the aircraft the \c data belongs to
-     * \param data
-     *        the EngineData to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool add(std::int64_t aircraftId, const EngineData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<EngineData>> backInsertIterator) const noexcept = 0;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
+    Enumeration(QString name) noexcept;
+    Enumeration(Enumeration &&other) noexcept = default;
+    ~Enumeration() noexcept;
+    Enumeration &operator=(Enumeration &&rhs) noexcept = default;
+
+    using Item = struct Item_ : public Data
+    {
+        Item_() noexcept
+            : Data()
+        {}
+
+        Item_(std::atomic_int64_t id, QString theTntlId, QString theName) noexcept
+            : Data(id), intlId(theTntlId), name(theName)
+        {}
+        QString intlId;
+        QString name;
+    };
+
+    QString getName() const noexcept;
+    void addItem(Item item) noexcept;
+    const std::vector<Item> &items() const noexcept;
+    Item itemByIntlId(QString intlId) const noexcept;
+
+private:
+    std::unique_ptr<EnumerationPrivate> d;
 };
 
-#endif // ENGINEDAOINTF_H
+#endif // ENUMERATION_H

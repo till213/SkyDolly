@@ -7,7 +7,7 @@ create table enum_backup_interval (
 );
 create unique index enum_backup_interval_idx1 on enum_backup_interval (intl_id);
 
-@migr(id = "a0209e1d-4d7b-4b29-b359-1d2dfd65126e", descn = "Create backup interval enumeration table", step = 2)
+@migr(id = "a0209e1d-4d7b-4b29-b359-1d2dfd65126e", descn = "Insert backup intervals", step = 2)
 insert into enum_backup_interval (intl_id, name, desc)
 values
   ('NOW', 'Now', 'The backup is created only this time (now)'),

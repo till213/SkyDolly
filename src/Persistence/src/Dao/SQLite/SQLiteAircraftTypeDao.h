@@ -38,7 +38,7 @@ struct AircraftType;
 class SQLiteAircraftTypeDao : public AircraftTypeDaoIntf
 {
 public:
-    explicit SQLiteAircraftTypeDao() noexcept;
+    SQLiteAircraftTypeDao() noexcept;
     ~SQLiteAircraftTypeDao() noexcept override;
 
     bool upsert(const AircraftType &aircraftType) noexcept override;

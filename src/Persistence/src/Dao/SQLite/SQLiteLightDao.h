@@ -36,7 +36,7 @@
 class SQLiteLightDao : public LightDaoIntf
 {
 public:
-    explicit SQLiteLightDao() noexcept;
+    SQLiteLightDao() noexcept;
     ~SQLiteLightDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const LightData &data) noexcept override;

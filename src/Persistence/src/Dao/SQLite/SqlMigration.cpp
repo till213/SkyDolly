@@ -29,11 +29,14 @@
 #include <QSqlQuery>
 #include <QDir>
 #include <QCoreApplication>
+#include <QTextCodec>
 #ifdef DEBUG
 #include <QDebug>
 #endif
 
+#include <Kernel/Const.h>
 #include <Model/Location.h>
+#include <Service/EnumerationService.h>
 #include "SQLiteLocationDao.h"
 #include "SqlMigrationStep.h"
 #include "SqlMigration.h"
@@ -42,15 +45,19 @@ namespace
 {
     constexpr char MigrationDirectory[] = "Resources/migr";
 
-    constexpr int LatitudeIndex = 1;
-    constexpr int LongitudeIndex = 2;
-    constexpr int AltitudeIndex = 3;
-    constexpr int PitchIndex = 4;
-    constexpr int BankIndex = 5;
-    constexpr int HeadingIndex = 6;
-    constexpr int IndicatedAirspeedIndex = 7;
-    constexpr int OnGroundIndex = 8;
-    constexpr int DescriptionIndex = 9;
+    // Also refer to Locations.csv
+    constexpr int TitleIndex = 1;
+    constexpr int DescriptionIndex = 2;
+    constexpr int CategoryIndex = 3;
+    constexpr int IdentifierIndex = 4;
+    constexpr int LatitudeIndex = 5;
+    constexpr int LongitudeIndex = 6;
+    constexpr int AltitudeIndex = 7;
+    constexpr int PitchIndex = 8;
+    constexpr int BankIndex = 9;
+    constexpr int HeadingIndex = 10;
+    constexpr int IndicatedAirspeedIndex = 11;
+    constexpr int OnGroundIndex = 12;
 }
 
 class SqlMigrationPrivate
@@ -60,6 +67,7 @@ public:
     {}
 
     SQLiteLocationDao locationDao;
+    EnumerationService enumerationService;
 };
 
 // PUBLIC
@@ -117,8 +125,6 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
             QTextStream textStream(&migrationFile);
             const QString migration = textStream.readAll();
 
-
-
             QStringList sqlStatements = migration.split(migrRegExp);
             QRegularExpressionMatchIterator it = migrRegExp.globalMatch(migration);
 
@@ -151,23 +157,29 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
     // https://regex101.com/
     static const QRegularExpression uuidRegExp {"[\"]?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})[\"]?"};
     static const QRegularExpression csvRegExp {
+        "[\"]?([^\"]+)[\"]?,"      // Title
+        "[\"]?([^\"]*)[\"]?,"      // Description (optional)
+        "[\"]?([^\"]*)[\"]?,"      // Category (INTL_ID) (optional)
+        "[\"]?([^\"]*)[\"]?,"      // Identifier (optional)
         "([+-]?[0-9]*[.]?[0-9]+)," // Latitude
         "([+-]?[0-9]*[.]?[0-9]+)," // Longitude
-        "([+-]?[0-9]*[.]?[0-9]+)," // Altitude
-        "([+-]?[0-9]*[.]?[0-9]+)," // Pitch
-        "([+-]?[0-9]*[.]?[0-9]+)," // Bank
-        "([+-]?[0-9]*[.]?[0-9]+)," // Heading
-        "([+-]?[\\d]+),"           // Indicated airspeed
-        "[\"]?(false|true)[\"]?,"  // On Ground
-        "[\"]?([^\"]+)[\"]?$"      // Description
+        "([+-]?[0-9]*[.]?[0-9]+)," // Altitude (optional)
+        "([+-]?[0-9]*[.]?[0-9]+)," // Pitch (optional)
+        "([+-]?[0-9]*[.]?[0-9]+)," // Bank (optional)
+        "([+-]?[0-9]*[.]?[0-9]+)," // Heading (optional)
+        "([+-]?[\\d]*),"           // Indicated airspeed (optional)
+        "[\"]?(false|true)*[\"]?$"  // On Ground (optional)
+
     };
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
+        migrationFile.setTextModeEnabled(true);
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
         if (ok) {
             QTextStream textStream(&migrationFile);
+            textStream.setCodec(QTextCodec::codecForName("UTF-8"));
             QString csv = textStream.readLine();
             if (csv.startsWith("\"MigrationId\"")) {
                 // Skip column names
@@ -206,7 +218,25 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
 {
     bool ok {true};
     Location location;
-    location.latitude = locationMatch.captured(::LatitudeIndex).toDouble(&ok);
+    location.title = locationMatch.captured(::TitleIndex);
+    location.description = locationMatch.captured(::DescriptionIndex);
+    Enumeration locationType(EnumerationService::LocationType);
+    ok = d->enumerationService.getEnumerationByName(locationType);
+    if (ok) {
+        location.typeId = locationType.itemByIntlId(EnumerationService::LocationTypeSystemIntlId).id;
+    }
+    Enumeration locationCategory(EnumerationService::LocationCategory);
+    ok = d->enumerationService.getEnumerationByName(locationCategory);
+    if (ok) {
+        const QString categoryIntlId = locationMatch.captured(::CategoryIndex);
+        location.categoryId = locationCategory.itemByIntlId(categoryIntlId).id;
+    }
+    if (ok) {
+        location.identifier = locationMatch.captured(::IdentifierIndex);
+    }
+    if (ok) {
+        location.latitude = locationMatch.captured(::LatitudeIndex).toDouble(&ok);
+    }
     if (ok) {
         location.longitude = locationMatch.captured(::LongitudeIndex).toDouble(&ok);
     }
@@ -227,9 +257,6 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
     }
     if (ok) {
         location.onGround = locationMatch.captured(::OnGroundIndex).toLower() == "true" ? true : false;
-    }
-    if (ok) {
-        location.description = locationMatch.captured(::DescriptionIndex);
     }
     if (ok) {
         ok = d->locationDao.add(location);

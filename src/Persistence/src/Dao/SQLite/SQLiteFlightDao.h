@@ -38,7 +38,7 @@ class SQLiteFlightDaoPrivate;
 class SQLiteFlightDao : public FlightDaoIntf
 {
 public:
-    explicit SQLiteFlightDao() noexcept;
+    SQLiteFlightDao() noexcept;
     ~SQLiteFlightDao() noexcept override;
 
     bool add(Flight &flight)  noexcept override;

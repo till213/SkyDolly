@@ -22,35 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ENGINEDAOINTF_H
-#define ENGINEDAOINTF_H
+#ifndef NAME_H
+#define NAME_H
 
-#include <vector>
-#include <iterator>
-#include <cstdint>
+#include <QString>
+#include <QRegularExpression>
 
-#include <QtGlobal>
-
-struct EngineData;
-
-class EngineDaoIntf
+/*!
+ * Conversion between various naming schemes: camelCase, snake_case.
+ *
+ * https://wiki.qt.io/Converting_Strings_from_and_to_Camel_Case
+ */
+namespace Name
 {
-public:
-    virtual ~EngineDaoIntf() = default;
-
     /*!
-     * Persists the \c data.
+     * Converts the string \c camelCase from camelCase to snake_case.
      *
-     * \param aircraftId
-     *        the aircraft the \c data belongs to
-     * \param data
-     *        the EngineData to be persisted
-     * \return \c true on success; \c false else
+     * \param camelCase
+     *        the string to be converted to snake_case
+     * \return the string \c s in snake_case
      */
-    virtual bool add(std::int64_t aircraftId, const EngineData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<EngineData>> backInsertIterator) const noexcept = 0;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
-};
+    QString fromCamelCase(const QString &camelCase)
+    {
+        static QRegularExpression regExp1 {"(.)([A-Z][a-z]+)"};
+        static QRegularExpression regExp2 {"([a-z0-9])([A-Z])"};
 
-#endif // ENGINEDAOINTF_H
+        QString snake_case = camelCase;
+        snake_case.replace(regExp1, "\\1_\\2");
+        snake_case.replace(regExp2, "\\1_\\2");
+
+        return snake_case.toLower();
+    }
+}
+
+#endif // NAME_H

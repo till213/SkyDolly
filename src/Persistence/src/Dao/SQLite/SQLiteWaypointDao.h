@@ -36,7 +36,7 @@ class FlightPlan;
 class SQLiteWaypointDao : public WaypointDaoIntf
 {
 public:
-    explicit SQLiteWaypointDao() noexcept;
+    SQLiteWaypointDao() noexcept;
     ~SQLiteWaypointDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept override;

@@ -40,6 +40,7 @@ class LightDaoIntf;
 class WaypointDaoIntf;
 class DatabaseDaoIntf;
 class LocationDaoIntf;
+class EnumerationDaoIntf;
 
 class DaoFactoryPrivate;
 
@@ -68,6 +69,7 @@ public:
     std::unique_ptr<LightDaoIntf> createLightDao() noexcept;
     std::unique_ptr<WaypointDaoIntf> createFlightPlanDao() noexcept;
     std::unique_ptr<LocationDaoIntf> createLocationDao() noexcept;
+    std::unique_ptr<EnumerationDaoIntf> createEnumerationDao() noexcept;
 
 private:
     std::unique_ptr<DaoFactoryPrivate> d;

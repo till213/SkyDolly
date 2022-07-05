@@ -22,35 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ENGINEDAOINTF_H
-#define ENGINEDAOINTF_H
+#ifndef ENUMERATIONDAOINTF_H
+#define ENUMERATIONDAOINTF_H
 
-#include <vector>
-#include <iterator>
-#include <cstdint>
+#include <QString>
 
-#include <QtGlobal>
+class Enumeration;
 
-struct EngineData;
-
-class EngineDaoIntf
+/*!
+ * Database access to enumeration data objects.
+ */
+class EnumerationDaoIntf
 {
 public:
-    virtual ~EngineDaoIntf() = default;
+    virtual ~EnumerationDaoIntf() = default;
 
     /*!
-     * Persists the \c data.
+     * Returns the enumeration given by its \c name. The name is to be given in camelCase,
+     * without the "enum_" prefix.
+     * \p
+     * Examples:
      *
-     * \param aircraftId
-     *        the aircraft the \c data belongs to
-     * \param data
-     *        the EngineData to be persisted
-     * \return \c true on success; \c false else
+     * | "Enumeration Name" | "Table Name"           |
+     * | ----               | ----                   |
+     * | BackupPeriod       | enum_backup_period     |
+     * | LocationCategory   | enum_location_category |
+     *
+     * \param enumeration
+     *        the Enumeration as defined on the database, with an already assigned name (camelCase)
+     * \return \c true if successful; \c false else (enumeration does not exist; no DB connection)
      */
-    virtual bool add(std::int64_t aircraftId, const EngineData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<EngineData>> backInsertIterator) const noexcept = 0;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
+    virtual bool get(Enumeration &enumeration) const noexcept = 0;
 };
 
-#endif // ENGINEDAOINTF_H
+#endif // ENUMERATIONDAOINTF_H

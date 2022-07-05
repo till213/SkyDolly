@@ -37,46 +37,6 @@
 #include <Model/SecondaryFlightControlData.h>
 #include "SQLiteSecondaryFlightControlDao.h"
 
-class SQLiteSecondaryFlightControlDaoPrivate
-{
-public:
-    SQLiteSecondaryFlightControlDaoPrivate() noexcept
-    {}
-
-    std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByFlightIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByIdQuery;
-
-    void initQueries()
-    {
-        if (insertQuery == nullptr) {
-            insertQuery = std::make_unique<QSqlQuery>();
-
-        }
-        if (selectByAircraftIdQuery == nullptr) {
-            selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
-
-        }
-        if (deleteByFlightIdQuery == nullptr) {
-            deleteByFlightIdQuery = std::make_unique<QSqlQuery>();
-
-        }
-        if (deleteByIdQuery == nullptr) {
-            deleteByIdQuery = std::make_unique<QSqlQuery>();
-
-        }
-    }
-
-    void resetQueries() noexcept
-    {
-        insertQuery = nullptr;
-        selectByAircraftIdQuery = nullptr;
-        deleteByFlightIdQuery = nullptr;
-        deleteByIdQuery = nullptr;
-    }
-};
-
 // PUBLIC
 
 SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao() noexcept

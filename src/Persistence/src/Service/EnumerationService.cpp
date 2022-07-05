@@ -22,35 +22,52 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ENGINEDAOINTF_H
-#define ENGINEDAOINTF_H
+#include <memory>
 
-#include <vector>
-#include <iterator>
-#include <cstdint>
+#include <QSqlDatabase>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
-#include <QtGlobal>
+#include <Model/Enumeration.h>
+#include "../Dao/DaoFactory.h"
+#include "../Dao/EnumerationDaoIntf.h"
+#include <Service/EnumerationService.h>
 
-struct EngineData;
-
-class EngineDaoIntf
+struct EnumerationServicePrivate
 {
-public:
-    virtual ~EngineDaoIntf() = default;
+    EnumerationServicePrivate() noexcept
+        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          enumerationDao(daoFactory->createEnumerationDao())
+    {}
 
-    /*!
-     * Persists the \c data.
-     *
-     * \param aircraftId
-     *        the aircraft the \c data belongs to
-     * \param data
-     *        the EngineData to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool add(std::int64_t aircraftId, const EngineData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<EngineData>> backInsertIterator) const noexcept = 0;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
+    std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<EnumerationDaoIntf> enumerationDao;
 };
 
-#endif // ENGINEDAOINTF_H
+// PUBLIC
+
+EnumerationService::EnumerationService() noexcept
+    : d(std::make_unique<EnumerationServicePrivate>())
+{
+#ifdef DEBUG
+    qDebug() << "EnumerationService::EnumerationService: CREATED.";
+#endif
+}
+
+EnumerationService::~EnumerationService() noexcept
+{
+#ifdef DEBUG
+    qDebug() << "EnumerationService::~EnumerationService: DELETED.";
+#endif
+}
+
+bool EnumerationService::getEnumerationByName(Enumeration &enumeration)
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->enumerationDao->get(enumeration);
+    }
+    QSqlDatabase::database().rollback();
+    return ok;
+}

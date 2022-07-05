@@ -36,7 +36,7 @@
 class SQLiteEngineDao : public EngineDaoIntf
 {
 public:
-    explicit SQLiteEngineDao() noexcept;
+    SQLiteEngineDao() noexcept;
     ~SQLiteEngineDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const EngineData &data) noexcept override;
