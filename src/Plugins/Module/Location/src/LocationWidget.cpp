@@ -32,9 +32,15 @@
 #include <QTextEdit>
 #include <QItemSelectionModel>
 #include <QMessageBox>
+#include <QKeyEvent>
+#include <QKeySequence>
+#include <QClipboard>
+#include <QApplication>
 #ifdef DEBUG
 #include <QDebug>
 #endif
+
+#include <GeographicLib/DMS.hpp>
 
 #include <Kernel/Settings.h>
 #include <Persistence/LogbookManager.h>
@@ -129,6 +135,17 @@ void LocationWidget::addLocation(Location newLocation)
     }
 }
 
+// PROTECTED
+
+void LocationWidget::keyPressEvent(QKeyEvent *event) noexcept
+{
+    if (event->matches(QKeySequence::Paste)) {
+        tryPasteLocation();
+    } else {
+        QWidget::keyPressEvent(event);
+    }
+}
+
 // PRIVATE
 
 void LocationWidget::initUi() noexcept
@@ -178,6 +195,8 @@ void LocationWidget::initUi() noexcept
     ui->splitter->setSizes({height() - infoGroupBoxHeight, infoGroupBoxHeight});
     ui->splitter->setStretchFactor(0, 1);
     ui->splitter->setStretchFactor(1, 0);
+
+    setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
 void LocationWidget::frenchConnection() noexcept
@@ -396,6 +415,38 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
     location.onGround = item->checkState() == Qt::CheckState::Checked;
 
     return location;
+}
+
+void LocationWidget::tryPasteLocation() noexcept
+{
+    QString text = QApplication::clipboard()->text();
+    if (!text.isEmpty()) {
+        // TODO IMPLEMENT ME Try to aslo support non-comma separated coordinates like:
+        // 46° 56' 52.519" N 7° 26' 40.589" E
+
+        // DMS does not like whitespace in between coordinates
+        QStringList values = text.replace(' ', "").split(',');
+        try {
+            double latitude;
+            double longitude;
+            const std::string first = values.first().toStdString();
+            const std::string second = values.last().trimmed().toStdString();
+            GeographicLib::DMS::flag flag;
+            latitude = GeographicLib::DMS::Decode(first, flag);
+            longitude = GeographicLib::DMS::Decode(second, flag);
+            GeographicLib::DMS::DecodeLatLon(first,
+                                             second,
+                                             latitude,
+                                             longitude);
+            qDebug() << "Latitude" << latitude << "Longitude" << longitude;
+            Location location;
+            location.latitude = latitude;
+            location.longitude = longitude;
+            addLocation(location);
+        } catch (GeographicLib::GeographicErr err ) {
+qDebug() << "Not a coordinate" << err.what();
+        }
+    }
 }
 
 // PRIVATE SLOTS

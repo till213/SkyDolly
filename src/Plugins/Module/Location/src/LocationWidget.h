@@ -31,6 +31,8 @@
 
 #include <QWidget>
 
+class QKeyEvent;
+
 #include <PluginManager/ModuleIntf.h>
 #include <PluginManager/AbstractModule.h>
 
@@ -50,6 +52,12 @@ public:
 
     void addLocation(Location location);
 
+    void keyPressEvent(QKeyEvent *event) noexcept override;
+
+signals:
+    void captureLocation();
+    void teleportTo(Location location);
+
 private:
     std::unique_ptr<Ui::LocationWidget> ui;
     std::unique_ptr<LocationWidgetPrivate> d;
@@ -64,9 +72,7 @@ private:
     void teleportToLocation(int row) noexcept;
     Location getLocationByRow(int row) const noexcept;
 
-signals:
-    void captureLocation();
-    void teleportTo(Location location);
+    void tryPasteLocation() noexcept;
 
 private slots:
     void updateUi() noexcept;
