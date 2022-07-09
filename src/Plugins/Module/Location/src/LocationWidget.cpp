@@ -30,6 +30,8 @@
 #include <QStringList>
 #include <QByteArray>
 #include <QTextEdit>
+#include <QDoubleSpinBox>
+#include <QSpinBox>
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <QKeyEvent>
@@ -60,18 +62,25 @@ namespace
     constexpr int InvalidRowIndex {-1};
     constexpr int InvalidColumnIndex {-1};
 
-    constexpr double DefaultAltitude = 5000;
+    constexpr double DefaultAltitude {5000};
     // Dead Sea Depression - The lowest point on Earth: -413 meters
     // https://geology.com/below-sea-level/
-    constexpr double MinimumAltitude = -1500;
+    constexpr double MinimumAltitude {-1500};
     // https://www.reddit.com/r/flightsim/comments/ibstui/turns_out_the_maximum_altitude_in_fs2020_275000/
-    constexpr double MaximumAltitude = 275000;
-    constexpr int DefaultIndicatedAirspeed = 120;
-    constexpr int MinimumIndicatedAirspeed = 0;
+    constexpr double MaximumAltitude {275000};
+    constexpr int DefaultIndicatedAirspeed {120};
+    constexpr int MinimumIndicatedAirspeed {0};
     // NASA X-43 (Mach 9.6)
     // https://internationalaviationhq.com/2020/06/27/17-fastest-aircraft/
-    constexpr int MaximumIndicatedAirspeed = 6350;
-    constexpr bool DefaultOnGround = false;
+    constexpr int MaximumIndicatedAirspeed {6350};
+    constexpr bool DefaultOnGround {false};
+
+    constexpr double MinimumPitch {-180.0};
+    constexpr double MaximumPitch {180.0};
+    constexpr double MinimumBank {-180.0};
+    constexpr double MaximumBank {180.0};
+    constexpr double MinimumHeading {0.0};
+    constexpr double MaximumHeading {360.0};
 }
 
 class LocationWidgetPrivate
@@ -201,6 +210,10 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setAlternatingRowColors(true);
     ui->locationTableWidget->setColumnHidden(d->typeColumnIndex, true);
     ui->locationTableWidget->setColumnHidden(d->descriptionColumnIndex, true);
+    ui->locationTableWidget->setColumnHidden(d->pitchColumnIndex, true);
+    ui->locationTableWidget->setColumnHidden(d->bankColumnIndex, true);
+    ui->locationTableWidget->setColumnHidden(d->headingColumnIndex, true);
+    ui->locationTableWidget->setColumnHidden(d->indicatedAirspeedColumnIndex, true);
 
     QByteArray tableState = Settings::getInstance().getLocationTableState();
     ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
@@ -215,6 +228,15 @@ void LocationWidget::initUi() noexcept
     ui->defaultIndicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
     ui->defaultIndicatedAirspeedSpinBox->setValue(::DefaultIndicatedAirspeed);
     ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);
+
+    ui->pitchSpinBox->setMinimum(::MinimumPitch);
+    ui->pitchSpinBox->setMaximum(::MaximumPitch);
+    ui->bankSpinBox->setMinimum(::MinimumBank);
+    ui->bankSpinBox->setMaximum(::MaximumBank);
+    ui->headingSpinBox->setMinimum(::MinimumHeading);
+    ui->headingSpinBox->setMaximum(::MaximumHeading);
+    ui->indicatedAirspeedSpinBox->setMinimum(::MinimumIndicatedAirspeed);
+    ui->indicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
 
     const int infoGroupBoxHeight = ui->informationGroupBox->minimumHeight();
     ui->splitter->setSizes({height() - infoGroupBoxHeight, infoGroupBoxHeight});
@@ -250,16 +272,48 @@ void LocationWidget::frenchConnection() noexcept
     // Information group
     connect(ui->descriptionPlainTextEdit, &FocusPlainTextEdit::focusLost,
             this, &LocationWidget::onDescriptionChanged);
+    connect(ui->pitchSpinBox, &QDoubleSpinBox::valueChanged,
+            this, &LocationWidget::onPitchChanged);
+    connect(ui->bankSpinBox, &QDoubleSpinBox::valueChanged,
+            this, &LocationWidget::onBankChanged);
+    connect(ui->headingSpinBox, &QDoubleSpinBox::valueChanged,
+            this, &LocationWidget::onHeadingChanged);
+    connect(ui->indicatedAirspeedSpinBox, &QSpinBox::valueChanged,
+            this, &LocationWidget::onIndicatedAirspeedChanged);
 }
 
 void LocationWidget::updateInfoUi() noexcept
 {
+    const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
     if (d->selectedRow != ::InvalidRowIndex) {
         QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->descriptionColumnIndex);
         ui->descriptionPlainTextEdit->setPlainText(item->text());
+        item = ui->locationTableWidget->item(d->selectedRow, d->pitchColumnIndex);
+        ui->pitchSpinBox->setValue(item->text().toDouble());
+        item = ui->locationTableWidget->item(d->selectedRow, d->bankColumnIndex);
+        ui->bankSpinBox->setValue(item->text().toDouble());
+        item = ui->locationTableWidget->item(d->selectedRow, d->headingColumnIndex);
+        ui->headingSpinBox->setValue(item->text().toDouble());
+        item = ui->locationTableWidget->item(d->selectedRow, d->indicatedAirspeedColumnIndex);
+        ui->indicatedAirspeedSpinBox->setValue(item->text().toDouble());
     } else {
         ui->descriptionPlainTextEdit->clear();
+        ui->pitchSpinBox->clear();
+        ui->bankSpinBox->clear();
+        ui->headingSpinBox->clear();
+        ui->indicatedAirspeedSpinBox->clear();
     }
+
+    bool systemRow {false};
+    if (hasSelection) {
+        Location location =  getLocationByRow(d->selectedRow);
+        systemRow = location.typeId == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemInternalId).id();
+    }
+    ui->descriptionPlainTextEdit->setReadOnly(systemRow);
+    ui->pitchSpinBox->setReadOnly(systemRow);
+    ui->bankSpinBox->setReadOnly(systemRow);
+    ui->headingSpinBox->setReadOnly(systemRow);
+    ui->indicatedAirspeedSpinBox->setReadOnly(systemRow);
 }
 
 void LocationWidget::updateLocationTable() noexcept
@@ -295,6 +349,7 @@ void LocationWidget::updateLocationTable() noexcept
 
 inline void LocationWidget::updateLocationRow(const Location &location, int rowIndex) noexcept
 {
+    const bool isSystemLocation = location.typeId == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemInternalId).id();
     int columnIndex {0};
 
     // ID
@@ -311,17 +366,28 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     // Title
     newItem = std::make_unique<QTableWidgetItem>(location.title);
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    } else {
+        newItem->setToolTip(tr("Double-click to edit title."));
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Description
     newItem = std::make_unique<QTableWidgetItem>(location.description);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Type
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.typeId));
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
@@ -330,19 +396,34 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     // TODO IMPLEMENT ME Custom Category dropdown widget
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    } else {
+        newItem->setToolTip(tr("Double-click to edit category."));
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Identifier
     newItem = std::make_unique<QTableWidgetItem>(location.identifier);
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    } else {
+        newItem->setToolTip(tr("Double-click to edit identifier."));
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Position
     newItem = std::make_unique<PositionWidgetItem>();
     newItem->setData(Qt::ItemDataRole::EditRole, Unit::formatCoordinates(location.latitude, location.longitude));
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);    
+    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    } else {
+        newItem->setToolTip(tr("Double-click to edit position."));
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
@@ -350,6 +431,11 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, location.altitude);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    } else {
+        newItem->setToolTip(tr("Double-click to edit altitude."));
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
@@ -357,6 +443,9 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, location.pitch);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
@@ -364,6 +453,9 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, location.bank);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
@@ -371,6 +463,9 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, location.heading);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
@@ -378,12 +473,20 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, location.indicatedAirspeed);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // On Ground
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setCheckState(location.onGround ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+    if (isSystemLocation) {
+        newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    } else {
+        newItem->setToolTip(tr("Click to toggle on ground."));
+    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 }
@@ -463,16 +566,17 @@ void LocationWidget::tryPasteLocation() noexcept
             } else {
                 longitude = value;
             }
-            longitude = GeographicLib::DMS::Decode(second, flag);
+            value = GeographicLib::DMS::Decode(second, flag);
             if (flag == GeographicLib::DMS::LONGITUDE || flag == GeographicLib::DMS::NONE) {
                 longitude = value;
             } else {
                 latitude = value;
             }
             addUserLocation(latitude, longitude);
-
         } catch (GeographicLib::GeographicErr err) {
-qDebug() << "Not a coordinate" << err.what();
+#ifdef DEBUG
+            qDebug() << "LocationWidget::tryPasteLocation: Not a coordinate" << err.what();
+#endif
         }
     }
 }
@@ -491,12 +595,12 @@ void LocationWidget::updateEditUi() noexcept
     const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
 
     ui->teleportPushButton->setEnabled(hasSelection && !isActive);
-    bool deletableLocation {false};
+    bool editableRow {false};
     if (hasSelection) {
         Location location =  getLocationByRow(d->selectedRow);
-        deletableLocation = location.typeId != PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemInternalId).id();
+        editableRow = location.typeId != PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemInternalId).id();
     }
-    ui->deletePushButton->setEnabled(deletableLocation);
+    ui->deletePushButton->setEnabled(editableRow);
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
@@ -594,6 +698,62 @@ void LocationWidget::onDescriptionChanged() noexcept
             ui->locationTableWidget->blockSignals(true);
             QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->descriptionColumnIndex);
             item->setData(Qt::EditRole, location.description);
+            ui->locationTableWidget->blockSignals(false);
+        }
+    }
+}
+
+void LocationWidget::onPitchChanged(double value) noexcept
+{
+    if (d->selectedRow != ::InvalidRowIndex) {
+        Location location = getLocationByRow(d->selectedRow);
+        location.pitch = value;
+        if (d->locationService->update(location)) {
+            ui->locationTableWidget->blockSignals(true);
+            QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->pitchColumnIndex);
+            item->setData(Qt::EditRole, location.pitch);
+            ui->locationTableWidget->blockSignals(false);
+        }
+    }
+}
+
+void LocationWidget::onBankChanged(double value) noexcept
+{
+    if (d->selectedRow != ::InvalidRowIndex) {
+        Location location = getLocationByRow(d->selectedRow);
+        location.bank = value;
+        if (d->locationService->update(location)) {
+            ui->locationTableWidget->blockSignals(true);
+            QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->bankColumnIndex);
+            item->setData(Qt::EditRole, location.bank);
+            ui->locationTableWidget->blockSignals(false);
+        }
+    }
+}
+
+void LocationWidget::onHeadingChanged(double value) noexcept
+{
+    if (d->selectedRow != ::InvalidRowIndex) {
+        Location location = getLocationByRow(d->selectedRow);
+        location.heading = value;
+        if (d->locationService->update(location)) {
+            ui->locationTableWidget->blockSignals(true);
+            QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->headingColumnIndex);
+            item->setData(Qt::EditRole, location.heading);
+            ui->locationTableWidget->blockSignals(false);
+        }
+    }
+}
+
+void LocationWidget::onIndicatedAirspeedChanged(int value) noexcept
+{
+    if (d->selectedRow != ::InvalidRowIndex) {
+        Location location = getLocationByRow(d->selectedRow);
+        location.indicatedAirspeed = value;
+        if (d->locationService->update(location)) {
+            ui->locationTableWidget->blockSignals(true);
+            QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->indicatedAirspeedColumnIndex);
+            item->setData(Qt::EditRole, location.indicatedAirspeed);
             ui->locationTableWidget->blockSignals(false);
         }
     }

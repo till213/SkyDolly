@@ -89,6 +89,10 @@ private slots:
     void onDeleteLocation() noexcept;
 
     void onDescriptionChanged() noexcept;
+    void onPitchChanged(double value) noexcept;
+    void onBankChanged(double value) noexcept;
+    void onHeadingChanged(double value) noexcept;
+    void onIndicatedAirspeedChanged(int value) noexcept;
 };
 
 #endif // LOCATIONWIDGET_H
