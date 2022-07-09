@@ -22,57 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ENUMERATION_H
-#define ENUMERATION_H
+#ifndef PERSISTEDENUMERATIONITEM_H
+#define PERSISTEDENUMERATIONITEM_H
 
 #include <memory>
-#include <vector>
-#include <unordered_map>
+#include <cstdint>
 
 #include <QString>
 
-#include "InitialPosition.h"
-#include "Data.h"
-#include "ModelLib.h"
+#include <Model/SimType.h>
+#include "PersistenceLib.h"
 
-struct EnumerationPrivate;
+struct PersistedEnumerationItemPrivate;
 
-/*!
- * The model for the corresonding database enumeration tables.
- *
- * For C++ enumeration class support also refer to Enum.h
- *
- * \sa Enum#toUnderlyingType
- */
-class MODEL_API Enumeration
+class PERSISTENCE_API PersistedEnumerationItem
 {
 public:
+    PersistedEnumerationItem(QString enumerationName, QString internalId) noexcept;
+    ~PersistedEnumerationItem() noexcept;
 
-    Enumeration(QString name) noexcept;
-    Enumeration(Enumeration &&other) noexcept = default;
-    ~Enumeration() noexcept;
-    Enumeration &operator=(Enumeration &&rhs) noexcept = default;
-
-    using Item = struct Item_ : public Data
-    {
-        Item_() noexcept
-            : Data()
-        {}
-
-        Item_(std::atomic_int64_t id, QString theInternalId, QString theName) noexcept
-            : Data(id), internalId(theInternalId), name(theName)
-        {}
-        QString internalId;
-        QString name;
-    };
-
-    QString getName() const noexcept;
-    void addItem(Item item) noexcept;
-    const std::vector<Item> &items() const noexcept;
-    Item itemByInternalId(QString internalId) const noexcept;
+    std::int64_t id() const noexcept;
 
 private:
-    std::unique_ptr<EnumerationPrivate> d;
+    std::unique_ptr<PersistedEnumerationItemPrivate> d;
 };
 
-#endif // ENUMERATION_H
+#endif // PERSISTEDENUMERATIONITEM_H

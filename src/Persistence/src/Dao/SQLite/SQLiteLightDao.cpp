@@ -62,7 +62,7 @@ bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData)  n
     query.bindValue(":timestamp", QVariant::fromValue(lightData.timestamp));
     query.bindValue(":light_states", static_cast<int>(lightData.lightStates));
 
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteLightDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -83,7 +83,7 @@ bool SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, std::back_insert_i
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();
         const int timestampIdx = record.indexOf("timestamp");
@@ -117,7 +117,7 @@ bool SQLiteLightDao::deleteByFlightId(std::int64_t flightId) noexcept
         "                      );"
     );
     query.bindValue(":flight_id", QVariant::fromValue(flightId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteLightDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -135,7 +135,7 @@ bool SQLiteLightDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
         "where  aircraft_id = :aircraft_id;"
     );
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteLightDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));

@@ -279,7 +279,7 @@ bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) noexcep
 
     query.bindValue(":title", title);
     query.bindValue(":id", QVariant::fromValue(id));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteFlightDao::updateTitleQuery: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -322,7 +322,7 @@ bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index) noexce
     // Sequence number starts at 1
     query.bindValue(":user_aircraft_seq_nr", index + 1);
     query.bindValue(":id", QVariant::fromValue(id));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteFlightDao::updateUserAircraftIndex: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));

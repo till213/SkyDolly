@@ -40,6 +40,13 @@ public:
     EnumerationService() noexcept;
     ~EnumerationService() noexcept;
 
+    /*!
+     * Gets the persisted Enumeration by its \c enumeration.name.
+     *
+     * \param enumeration
+     *        the persisted Enumeration to get, identified by its \c name member
+     * \return \c true if successful; \c false else (unknown Enumeration name, no database connection)
+     */
     bool getEnumerationByName(Enumeration &enumeration);
 
     // Implementation note:
@@ -50,9 +57,14 @@ public:
     static inline const QString LocationCategory {QStringLiteral("LocationCategory")};
 
     // Well-known internal IDs
-    static inline const QString LocationTypeSystemIntlId {QStringLiteral("S")};
-    static inline const QString LocationTypeImportIntlId {QStringLiteral("I")};
-    static inline const QString LocationTypeUserIntlId {QStringLiteral("U")};
+
+    // Location type
+    static inline const QString LocationTypeSystemInternalId {QStringLiteral("S")};
+    static inline const QString LocationTypeImportInternalId {QStringLiteral("I")};
+    static inline const QString LocationTypeUserInternalId {QStringLiteral("U")};
+
+    // Location category
+    static inline const QString LocationCategoryNoneInternalId {QStringLiteral("00")};
 
 private:
     std::unique_ptr<EnumerationServicePrivate> d;

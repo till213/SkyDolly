@@ -44,7 +44,9 @@
 
 #include <Kernel/Settings.h>
 #include <Persistence/LogbookManager.h>
+#include <Persistence/PersistedEnumerationItem.h>
 #include <Persistence/Service/LocationService.h>
+#include <Persistence/Service/EnumerationService.h>
 #include <Widget/FocusPlainTextEdit.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
@@ -123,15 +125,38 @@ LocationWidget::~LocationWidget() noexcept
 #endif
 }
 
+void LocationWidget::addUserLocation(double latitude, double longitude)
+{
+    Location location;
+    location.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserInternalId).id();
+    location.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneInternalId).id();
+    location.latitude = latitude;
+    location.longitude = longitude;
+    location.altitude = ui->defaultAltitudeSpinBox->value();
+    location.indicatedAirspeed = ui->defaultIndicatedAirspeedSpinBox->value();
+    location.onGround = ui->defaultOnGroundCheckBox->isChecked();
+    if (d->locationService->store(location)) {
+        ui->locationTableWidget->blockSignals(true);
+        ui->locationTableWidget->setSortingEnabled(false);
+        const int rowIndex = ui->locationTableWidget->rowCount();
+        ui->locationTableWidget->insertRow(rowIndex);
+        updateLocationRow(location, rowIndex);
+        ui->locationTableWidget->setSortingEnabled(true);
+        ui->locationTableWidget->blockSignals(false);
+    }
+}
+
 void LocationWidget::addLocation(Location newLocation)
 {
     Location location {newLocation};
     if (d->locationService->store(location)) {
         const int rowCount = ui->locationTableWidget->rowCount();
+        ui->locationTableWidget->blockSignals(true);
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->insertRow(rowCount);
-        updateLocationItems(location, rowCount);
+        updateLocationRow(location, rowCount);
         ui->locationTableWidget->setSortingEnabled(true);
+        ui->locationTableWidget->blockSignals(false);
     }
 }
 
@@ -183,13 +208,13 @@ void LocationWidget::initUi() noexcept
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
 
-    ui->altitudeSpinBox->setMinimum(::MinimumAltitude);
-    ui->altitudeSpinBox->setMaximum(::MaximumAltitude);
-    ui->altitudeSpinBox->setValue(::DefaultAltitude);
-    ui->indicatedAirspeedSpinBox->setMinimum(::MinimumIndicatedAirspeed);
-    ui->indicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
-    ui->indicatedAirspeedSpinBox->setValue(::DefaultIndicatedAirspeed);
-    ui->onGroundCheckBox->setChecked(::DefaultOnGround);
+    ui->defaultAltitudeSpinBox->setMinimum(::MinimumAltitude);
+    ui->defaultAltitudeSpinBox->setMaximum(::MaximumAltitude);
+    ui->defaultAltitudeSpinBox->setValue(::DefaultAltitude);
+    ui->defaultIndicatedAirspeedSpinBox->setMinimum(::MinimumIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setValue(::DefaultIndicatedAirspeed);
+    ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);
 
     const int infoGroupBoxHeight = ui->informationGroupBox->minimumHeight();
     ui->splitter->setSizes({height() - infoGroupBoxHeight, infoGroupBoxHeight});
@@ -251,7 +276,7 @@ void LocationWidget::updateLocationTable() noexcept
 
         int rowIndex {0};
         for (const Location &location : locations) {
-            updateLocationItems(location, rowIndex);
+            updateLocationRow(location, rowIndex);
             ++rowIndex;
         }
 
@@ -268,7 +293,7 @@ void LocationWidget::updateLocationTable() noexcept
     }
 }
 
-inline void LocationWidget::updateLocationItems(const Location &location, int rowIndex) noexcept
+inline void LocationWidget::updateLocationRow(const Location &location, int rowIndex) noexcept
 {
     int columnIndex {0};
 
@@ -427,23 +452,26 @@ void LocationWidget::tryPasteLocation() noexcept
         // DMS does not like whitespace in between coordinates
         QStringList values = text.replace(' ', "").split(',');
         try {
-            double latitude;
-            double longitude;
+            double latitude {0.0};
+            double longitude {0.0};
             const std::string first = values.first().toStdString();
             const std::string second = values.last().trimmed().toStdString();
             GeographicLib::DMS::flag flag;
-            latitude = GeographicLib::DMS::Decode(first, flag);
+            double value = GeographicLib::DMS::Decode(first, flag);
+            if (flag == GeographicLib::DMS::LATITUDE || flag == GeographicLib::DMS::NONE) {
+                latitude = value;
+            } else {
+                longitude = value;
+            }
             longitude = GeographicLib::DMS::Decode(second, flag);
-            GeographicLib::DMS::DecodeLatLon(first,
-                                             second,
-                                             latitude,
-                                             longitude);
-            qDebug() << "Latitude" << latitude << "Longitude" << longitude;
-            Location location;
-            location.latitude = latitude;
-            location.longitude = longitude;
-            addLocation(location);
-        } catch (GeographicLib::GeographicErr err ) {
+            if (flag == GeographicLib::DMS::LONGITUDE || flag == GeographicLib::DMS::NONE) {
+                longitude = value;
+            } else {
+                latitude = value;
+            }
+            addUserLocation(latitude, longitude);
+
+        } catch (GeographicLib::GeographicErr err) {
 qDebug() << "Not a coordinate" << err.what();
         }
     }
@@ -476,7 +504,7 @@ void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexce
     }
 }
 
-void LocationWidget::onCellChanged(int row, int column) noexcept
+void LocationWidget::onCellChanged(int row, [[maybe_unused]]int column) noexcept
 {
     Location location = getLocationByRow(row);
     d->locationService->update(location);
@@ -500,24 +528,12 @@ void LocationWidget::onSelectionChanged() noexcept
 
 void LocationWidget::onAddLocation() noexcept
 {
-    Location location;
-    location.altitude = ui->altitudeSpinBox->value();
-    location.indicatedAirspeed = ui->indicatedAirspeedSpinBox->value();
-    location.onGround = ui->onGroundCheckBox->isChecked();
-    if (d->locationService->store(location)) {
-        ui->locationTableWidget->blockSignals(true);
-        ui->locationTableWidget->setSortingEnabled(false);
-        const int rowIndex = ui->locationTableWidget->rowCount();
-        ui->locationTableWidget->insertRow(rowIndex);
-        updateLocationItems(location, rowIndex);
-        ui->locationTableWidget->setSortingEnabled(true);
-        ui->locationTableWidget->blockSignals(false);
-    }
+    addUserLocation(0.0, 0.0);
 }
 
 void LocationWidget::onCaptureLocation() noexcept
 {
-    emit captureLocation();
+    emit doCaptureLocation();
 }
 
 void LocationWidget::onTeleportToSelectedLocation() noexcept

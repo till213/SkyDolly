@@ -56,17 +56,17 @@ bool SQLiteEnumerationDao::get(Enumeration &enumeration) const noexcept
         "order by e.id asc;"
     );
 
-    bool ok = query.exec();
+    const bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
-        const int intlIdIdx = record.indexOf("intl_id");
+        const int internalIdIdx = record.indexOf("intl_id");
         const int nameIdx = record.indexOf("name");
         while (query.next()) {
             const std::int64_t id = query.value(idIdx).toLongLong();
-            const QString intlId = query.value(intlIdIdx).toString();
+            const QString internalId = query.value(internalIdIdx).toString();
             const QString name = query.value(nameIdx).toString();
-            enumeration.addItem({id, intlId, name});
+            enumeration.addItem({id, internalId, name});
         }
 #ifdef DEBUG
     } else {

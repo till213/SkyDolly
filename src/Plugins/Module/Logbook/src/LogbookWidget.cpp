@@ -263,7 +263,7 @@ void LogbookWidget::updateFlightTable() noexcept
 
         int rowIndex {0};
         for (const FlightSummary &summary : summaries) {
-            updateFlightSummary(summary, rowIndex);
+            updateFlightSummaryRow(summary, rowIndex);
             ++rowIndex;
         }
 
@@ -288,7 +288,7 @@ void LogbookWidget::updateFlightTable() noexcept
     updateEditUi();
 }
 
-inline void LogbookWidget::updateFlightSummary(const FlightSummary &summary, int rowIndex) noexcept
+inline void LogbookWidget::updateFlightSummaryRow(const FlightSummary &summary, int rowIndex) noexcept
 {
     int columnIndex {0};
 
@@ -585,7 +585,7 @@ void LogbookWidget::onRecordingStarted() noexcept
         ui->logTableWidget->setSortingEnabled(false);
         const int rowIndex = ui->logTableWidget->rowCount();
         ui->logTableWidget->insertRow(rowIndex);
-        updateFlightSummary(summary, rowIndex);
+        updateFlightSummaryRow(summary, rowIndex);
         updateAircraftIcons();
         ui->logTableWidget->setSortingEnabled(true);
         ui->logTableWidget->blockSignals(false);

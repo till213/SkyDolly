@@ -70,7 +70,7 @@ bool SQLitePrimaryFlightControlDao::add(std::int64_t aircraftId, const PrimaryFl
     query.bindValue(":elevator_position", primaryFlightControlData.elevatorPosition);
     query.bindValue(":aileron_position", primaryFlightControlData.aileronPosition);
 
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLitePrimaryFlightControlDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -91,7 +91,7 @@ bool SQLitePrimaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, std
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();
         const int timestampIdx = record.indexOf("timestamp");
@@ -131,7 +131,7 @@ bool SQLitePrimaryFlightControlDao::deleteByFlightId(std::int64_t flightId) noex
     );
 
     query.bindValue(":flight_id", QVariant::fromValue(flightId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLitePrimaryFlightControlDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -150,7 +150,7 @@ bool SQLitePrimaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId) 
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLitePrimaryFlightControlDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));

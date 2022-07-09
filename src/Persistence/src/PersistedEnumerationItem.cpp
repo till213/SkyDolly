@@ -22,67 +22,52 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
-#include <vector>
-#include <unordered_map>
+#include <memory.h>
+#include <cstdint>
 
 #include <QString>
 #ifdef DEBUG
 #include <QDebug>
 #endif
 
-#include "Enumeration.h"
+#include <Model/Data.h>
+#include <Model/Enumeration.h>
+#include "Service/EnumerationService.h"
+#include "PersistedEnumerationItem.h"
 
-struct EnumerationPrivate
+struct PersistedEnumerationItemPrivate
 {
-    EnumerationPrivate(QString theName) noexcept
-        : name(theName)
-    {}
+    PersistedEnumerationItemPrivate(QString enumerationName, QString internalId)
+        : enumeration(enumerationName)
+    {
+        if (enumerationService.getEnumerationByName(enumeration)) {
+            id = enumeration.itemByInternalId(internalId).id;
+        }
+    }
 
-    QString name;
-    std::vector<Enumeration::Item> items;
-    // Stores the index into items, indexed by the internal ID
-    std::unordered_map<QString, std::size_t> itemsByInternalId;
+    Enumeration enumeration;
+    std::int64_t id {Data::InvalidId};
+    EnumerationService enumerationService;
 };
 
 // PUBLIC
 
-Enumeration::Enumeration(QString name) noexcept
-    : d(std::make_unique<EnumerationPrivate>(name))
+PersistedEnumerationItem::PersistedEnumerationItem(QString enumerationName, QString internalId) noexcept
+    : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, internalId))
 {
 #ifdef DEBUG
-    qDebug() << "Enumeration::Enumeration: CREATED, name:" << d->name;
+    qDebug() << "PersistedEnumerationItem::PersistedEnumerationItem: CREATED, name:" << enumerationName << "ID:" << d->id;
 #endif
 }
 
-Enumeration::~Enumeration() noexcept
+PersistedEnumerationItem::~PersistedEnumerationItem() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "Enumeration::Enumeration: DELETED, name:" << d->name;
+    qDebug() << "PersistedEnumerationItem::~PersistedEnumerationItem: DELETED, name:" << d->enumeration.getName() << "ID:" << d->id;
 #endif
 }
 
-QString Enumeration::getName() const noexcept
+std::int64_t PersistedEnumerationItem::id() const noexcept
 {
-    return d->name;
-}
-
-void Enumeration::addItem(Item item) noexcept
-{
-    d->items.push_back(item);
-    d->itemsByInternalId[item.internalId] = d->items.size() - 1;
-}
-
-const std::vector<Enumeration::Item> &Enumeration::items() const noexcept
-{
-    return d->items;
-}
-
-Enumeration::Item Enumeration::itemByInternalId(QString internalId) const noexcept
-{
-    auto it = d->itemsByInternalId.find(internalId);
-    if (it != d->itemsByInternalId.end()) {
-        return d->items[it->second];
-    }
-    return Enumeration::Item();
+    return d->id;
 }

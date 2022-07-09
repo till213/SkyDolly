@@ -26,6 +26,7 @@ create unique index enum_location_category_idx1 on enum_location_category(intl_i
 @migr(id = "ccf35c93-6d55-49c6-83ff-c35bb8468044", descn = "Insert location categories", step = 2)
 insert into enum_location_category(intl_id, name, desc)
 values
+  ('00', 'No category', 'Uncategorised'),
   ('AP', 'Airport', 'Airport'),
   ('AS', 'Airstrip', 'Airstrip'),
   ('BR', 'Bridge', 'Bridge'),

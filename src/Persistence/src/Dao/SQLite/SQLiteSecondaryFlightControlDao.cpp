@@ -79,7 +79,7 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
     query.bindValue(":spoilers_handle_position", secondaryFlightControlData.spoilersHandlePosition);
     query.bindValue(":flaps_handle_index", secondaryFlightControlData.flapsHandleIndex);
 
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteSecondaryFlightControlDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -100,7 +100,7 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, s
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();
         const int timestampIdx = record.indexOf("timestamp");
@@ -111,9 +111,7 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, s
         const int spoilersHandlePositionIdx = record.indexOf("spoilers_handle_position");
         const int flapsHandleIndexIdx = record.indexOf("flaps_handle_index");
         while (query.next()) {
-
             SecondaryFlightControlData data;
-
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.leadingEdgeFlapsLeftPosition = query.value(leadingEdgeFlapsLeftPercentIdx).toInt();
             data.leadingEdgeFlapsRightPosition = query.value(leadingEdgeFlapsRightPercentIdx).toInt();
@@ -146,7 +144,7 @@ bool SQLiteSecondaryFlightControlDao::deleteByFlightId(std::int64_t flightId) no
     );
 
     query.bindValue(":flight_id", QVariant::fromValue(flightId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteSecondaryFlightControlDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -165,7 +163,7 @@ bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteSecondaryFlightControlDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));

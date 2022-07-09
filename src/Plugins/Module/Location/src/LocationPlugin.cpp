@@ -82,7 +82,7 @@ void LocationPlugin::frenchConnection() noexcept
             this, &LocationPlugin::onLocationReceived);
 
     // Location widget
-    connect(d->locationWidget.get(), &LocationWidget::captureLocation,
+    connect(d->locationWidget.get(), &LocationWidget::doCaptureLocation,
             this, &LocationPlugin::captureLocation);
     connect(d->locationWidget.get(), &LocationWidget::teleportTo,
             this, &LocationPlugin::teleportTo);

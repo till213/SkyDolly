@@ -94,10 +94,9 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
 
-    bool ok = query.exec();
+    const bool ok = query.exec();
     if (ok) {
-        std::int64_t id = query.lastInsertId().toLongLong(&ok);
-        location.id = id;
+        location.id = query.lastInsertId().toLongLong();
 #ifdef DEBUG
     } else {
         qDebug() << "SQLiteLocationDao::add: SQL error:" << qPrintable(query.lastError().databaseText()) << "- error code:" << query.lastError().nativeErrorCode();
@@ -124,7 +123,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
         "       bank = :bank,"
         "       heading = :heading,"
         "       indicated_airspeed = :indicated_airspeed,"
-        "       on_ground = :on_ground"
+        "       on_ground = :on_ground "
         "where id = :id;"
     );
 
@@ -142,10 +141,10 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
     query.bindValue(":id", QVariant::fromValue(location.id));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteLocationDao::add: SQL error:" << qPrintable(query.lastError().databaseText()) << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteLocationDao::update: SQL error:" << qPrintable(query.lastError().databaseText()) << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
 
@@ -162,7 +161,7 @@ bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
     );
     query.bindValue(":id", QVariant::fromValue(id));
 
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug() << "SQLiteLocationDao::deleteById: SQL error:" << qPrintable(query.lastError().databaseText())  << "- error code:" << query.lastError().nativeErrorCode();
@@ -181,7 +180,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
         "order by l.id;"
     );
 
-    bool ok = query.exec();
+    const bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");

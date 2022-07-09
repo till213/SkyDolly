@@ -50,12 +50,13 @@ public:
     explicit LocationWidget(QWidget *parent = nullptr) noexcept;
     ~LocationWidget() noexcept override;
 
+    void addUserLocation(double latitude, double longitude);
     void addLocation(Location location);
 
     void keyPressEvent(QKeyEvent *event) noexcept override;
 
 signals:
-    void captureLocation();
+    void doCaptureLocation();
     void teleportTo(Location location);
 
 private:
@@ -67,7 +68,7 @@ private:
     void updateInfoUi() noexcept;
 
     void updateLocationTable() noexcept;
-    inline void updateLocationItems(const Location &location, int rowIndex) noexcept;
+    inline void updateLocationRow(const Location &location, int rowIndex) noexcept;
 
     void teleportToLocation(int row) noexcept;
     Location getLocationByRow(int row) const noexcept;

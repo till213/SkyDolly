@@ -334,7 +334,7 @@ void FormationWidget::updateAircraftTable() noexcept
 
     int rowIndex {0};
     for (const auto &aircraft : flight) {
-        updateAircraft(*aircraft, rowIndex);
+        updateAircraftRow(*aircraft, rowIndex);
         rowIndex++;
     }
 
@@ -513,10 +513,8 @@ void FormationWidget::updateToolTips() noexcept
 
 // PRIVATE SLOTS
 
-void FormationWidget::updateAircraft(const Aircraft &aircraft, int rowIndex) noexcept
+void FormationWidget::updateAircraftRow(const Aircraft &aircraft, int rowIndex) noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    const bool recording = skyConnectManager.isInRecordingState();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
     const QString tooltip = tr("Double-click to change user aircraft.");
     int columnIndex = 0;

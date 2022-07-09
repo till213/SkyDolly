@@ -71,7 +71,7 @@ bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPla
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = true;
+    bool ok {true};
     for (const Waypoint &waypoint : flightPlan) {
         query.bindValue(":timestamp", QVariant::fromValue(waypoint.timestamp));
         query.bindValue(":ident", waypoint.identifier);
@@ -106,7 +106,7 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
     if (ok) {
         flightPlan.clear();
         QSqlRecord record = query.record();
@@ -150,7 +150,7 @@ bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) noexcept
     );
 
     query.bindValue(":flight_id", QVariant::fromValue(flightId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteWaypointDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -169,7 +169,7 @@ bool SQLiteWaypointDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteWaypointDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
