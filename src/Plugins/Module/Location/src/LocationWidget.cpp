@@ -490,8 +490,13 @@ void LocationWidget::updateEditUi() noexcept
     const bool isActive = SkyConnectManager::getInstance().isActive();
     const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
 
-    ui->teleportPushButton->setEnabled(!isActive);
-    ui->deletePushButton->setEnabled(hasSelection);
+    ui->teleportPushButton->setEnabled(hasSelection && !isActive);
+    bool deletableLocation {false};
+    if (hasSelection) {
+        Location location =  getLocationByRow(d->selectedRow);
+        deletableLocation = location.typeId != PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemInternalId).id();
+    }
+    ui->deletePushButton->setEnabled(deletableLocation);
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
