@@ -31,6 +31,9 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QSqlDatabase>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Const.h>
 #include <Kernel/Settings.h>
@@ -284,7 +287,7 @@ LogbookManager::~LogbookManager() noexcept
 {
     disconnectFromLogbook();
 #ifdef DEBUG
-    qDebug("LogbookManager::LogbookManager: DELETED");
+    qDebug() << "LogbookManager::~LogbookManager: DELETED";
 #endif
 }
 
@@ -295,7 +298,7 @@ LogbookManager::LogbookManager() noexcept
       d(std::make_unique<LogbookManagerPrivate>())
 {
 #ifdef DEBUG
-    qDebug("LogbookManager::LogbookManager: CREATED");
+    qDebug() << "LogbookManager::LogbookManager: CREATED";
 #endif
 }
 

@@ -57,8 +57,8 @@ public:
     int getDefaultAltitude() const noexcept;
     void setDefaultAltitude(int altitude) noexcept;
 
-    int getDefaultVelocity() const noexcept;
-    void setDefaultVelocity(int velocity) noexcept;
+    int getDefaultSpeed() const noexcept;
+    void setDefaultSpeed(int speed) noexcept;
 
     bool isConvertAltitudeEnabled() const noexcept;
     void setConvertAltitudeEnabled(bool enable) noexcept;

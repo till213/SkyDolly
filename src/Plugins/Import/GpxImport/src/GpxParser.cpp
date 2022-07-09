@@ -181,15 +181,15 @@ void GpxParser::parseWaypoint() noexcept
             }
         }
 
-        // We ignore waypoint timestamps for positions; always calculated based on default velocity and distance
+        // We ignore waypoint timestamps for positions; always calculated based on default speed and distance
         if (position.count() > 0) {
             const PositionData &previousPositionData = position.getLast();
             const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
             const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
             // In meters
             const double distance = SkyMath::geodesicDistance(start, end);
-            const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultVelocity());
-            const double seconds = distance / velocityMetersPerSecond;
+            const double speedMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultSpeed());
+            const double seconds = distance / speedMetersPerSecond;
             // Milliseconds
             positionData.timestamp = previousPositionData.timestamp + static_cast<std::int64_t>(std::round(seconds * 1000.0));
         } else {
@@ -251,15 +251,15 @@ void GpxParser::parseRoutePoint() noexcept
             }
         }
 
-        // We ignore route point timestamps for positions; always calculated based on default velocity and distance
+        // We ignore route point timestamps for positions; always calculated based on default speed and distance
         if (position.count() > 0) {
             const PositionData &previousPositionData = position.getLast();
             const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
             const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
             // In meters
             const double distance = SkyMath::geodesicDistance(start, end);
-            const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultVelocity());
-            const double seconds = distance / velocityMetersPerSecond;
+            const double speedMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultSpeed());
+            const double seconds = distance / speedMetersPerSecond;
             // Milliseconds
             positionData.timestamp = previousPositionData.timestamp + static_cast<std::int64_t>(std::round(seconds * 1000.0));
         } else {
@@ -332,15 +332,15 @@ inline void GpxParser::parseTrackPoint() noexcept
         if (currentDateTimeUtc.isValid()) {
             positionData.timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
         } else {
-            // No timestamp available, so calculate timestamp based on default velocity and distance
+            // No timestamp available, so calculate timestamp based on default speed and distance
             if (position.count() > 0) {
                 const PositionData &previousPositionData = position.getLast();
                 const SkyMath::Coordinate start {previousPositionData.latitude, previousPositionData.longitude};
                 const SkyMath::Coordinate end {positionData.latitude, positionData.longitude};
                 // In meters
                 const double distance = SkyMath::geodesicDistance(start, end);
-                const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultVelocity());
-                const double seconds = distance / velocityMetersPerSecond;
+                const double speedMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultSpeed());
+                const double seconds = distance / speedMetersPerSecond;
                 // Milliseconds
                 positionData.timestamp = previousPositionData.timestamp + static_cast<std::int64_t>(std::round(seconds * 1000.0));
             } else {

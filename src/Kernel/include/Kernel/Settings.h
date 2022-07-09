@@ -271,6 +271,21 @@ public:
     void setFormationAircraftTableState(const QByteArray &layout) noexcept;
 
     /*!
+     * Returns the saved location table state.
+     *
+     * \return the location table state; a \e null QByteArray if not saved before
+     */
+    QByteArray getLocationTableState() const;
+
+    /*!
+     * Stores the location table state.
+     *
+     * \param state
+     *        the location table state encoded in the QByteAarray
+     */
+    void setLocationTableState(const QByteArray &layout) noexcept;
+
+    /*!
      * Returns the path of the directory which was last accessed during export or import.
      *
      * \return the path of the last export / import directory
@@ -441,6 +456,23 @@ public:
      * \sa changed
      */
     void setDeleteAircraftConfirmationEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns whether the location deletion confirmation is enabled or not.
+     *
+     * \return \c true if the location deletion confirmation is enabled; \c false else
+     */
+    bool isDeleteLocationConfirmationEnabled() const noexcept;
+
+    /*!
+     * Enables the location deletion confirmation.
+     *
+     * \param enable
+     *        set to \c true to set the location deletion confirmation enabled;
+     *        \c false else
+     * \sa changed
+     */
+    void setDeleteLocationConfirmationEnabled(bool enable) noexcept;
 
     /*!
      * Returns whether the reset time offset confirmation is enabled or not.

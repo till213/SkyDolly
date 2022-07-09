@@ -524,13 +524,23 @@ void MainWindow::initModuleSelectorUi() noexcept
         ui->moduleGroupBox->setTitle(activeModule->get().getModuleName());
     }
 
+    int moduleCount {0};
     for (const auto &item : d->moduleManager->getActionRegistry()) {
+        if (moduleCount > 0) {
+            QFrame *verticalLine = new QFrame(this);
+            verticalLine->setFrameShape(QFrame::VLine);
+            verticalLine->setFrameShadow(QFrame::Sunken);
+            ui->moduleSelectorLayout->addWidget(verticalLine);
+        }
+
         QAction *moduleAction = item.second;
         ui->moduleMenu->addAction(moduleAction);
         ActionButton *actionButton = new ActionButton(this, ActionButton::Capitalisation::AllCaps);
         actionButton->setAction(moduleAction);
         actionButton->setFlat(true);
         ui->moduleSelectorLayout->addWidget(actionButton);
+
+        ++moduleCount;
     }
 }
 

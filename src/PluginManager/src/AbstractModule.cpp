@@ -53,6 +53,11 @@ AbstractModule::AbstractModule(QObject *parent) noexcept
 AbstractModule::~AbstractModule() noexcept
 {}
 
+ModuleIntf::RecordIconId AbstractModule::getRecordIconId() const noexcept
+{
+    return ModuleIntf::RecordIconId::Normal;
+}
+
 void AbstractModule::setRecording(bool enable) noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();

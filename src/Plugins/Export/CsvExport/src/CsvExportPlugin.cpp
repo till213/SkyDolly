@@ -80,7 +80,7 @@ QString CsvExportPlugin::getFileSuffix() const noexcept
 
 QString CsvExportPlugin::getFileFilter() const noexcept
 {
-    return tr("Comma-separated values (*.%1)").arg(getFileSuffix());
+    return QObject::tr("Comma-separated values (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept
@@ -110,7 +110,7 @@ bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
     case CsvExportSettings::Format::FlightRadar24:
         writer = std::make_unique<FlightRadar24CsvWriter>(d->pluginSettings);
         break;
-    case CsvExportSettings::Format::PositionAndVelocity:
+    case CsvExportSettings::Format::PositionAndAttitude:
         writer = std::make_unique<PositionAndAttitudeCsvWriter>(d->pluginSettings);
         break;
     }

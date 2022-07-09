@@ -27,6 +27,9 @@
 #include <vector>
 
 #include <QSqlDatabase>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
@@ -53,25 +56,26 @@ LogbookService::LogbookService() noexcept
     : d(std::make_unique<LogbookServicePrivate>())
 {
 #ifdef DEBUG
-    qDebug("LogbookService::LogbookService: CREATED.");
+    qDebug() << "LogbookService::LogbookService: CREATED.";
 #endif
 }
 
 LogbookService::~LogbookService() noexcept
 {
 #ifdef DEBUG
-    qDebug("LogbookService::~LogbookService: DELETED.");
+    qDebug() << "LogbookService::~LogbookService: DELETED.";
 #endif
 }
 
-std::forward_list<FlightDate> LogbookService::getFlightDates() const noexcept
+bool LogbookService::getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept
 {
     std::forward_list<FlightDate> flightDates;
-    if (QSqlDatabase::database().transaction()) {
-        flightDates = d->logbookDao->getFlightDates();
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->logbookDao->getFlightDates(frontInsertIterator);
         QSqlDatabase::database().rollback();
     }
-    return flightDates;
+    return ok;
 }
 
 std::vector<FlightSummary> LogbookService::getFlightSummaries(const FlightSelector &flightSelector) const noexcept

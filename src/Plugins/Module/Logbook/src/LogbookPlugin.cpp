@@ -77,11 +77,6 @@ QWidget *LogbookPlugin::getWidget() const noexcept
     return d->logbookWidget.get();
 }
 
-ModuleIntf::RecordIconId LogbookPlugin::getRecordIconId() const noexcept
-{
-    return ModuleIntf::RecordIconId::Normal;
-}
-
 // PROTECTED SLOTS
 
 void LogbookPlugin::onRecordingStopped() noexcept

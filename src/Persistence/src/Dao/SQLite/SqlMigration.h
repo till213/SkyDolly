@@ -29,6 +29,8 @@
 
 #include <QString>
 
+class QRegularExpressionMatch;
+
 class SqlMigrationPrivate;
 
 class SqlMigration
@@ -42,7 +44,9 @@ public:
 private:
     std::unique_ptr<SqlMigrationPrivate> d;
 
-    bool migrate(const QString &migration) noexcept;
+    bool migrateSql(const QString &migrationFilePath) noexcept;
+    bool migrateCsv(const QString &migrationFilePath) noexcept;
+    bool migrateLocation(const QRegularExpressionMatch &locationMatch) noexcept;
 };
 
 #endif // SQLMIGRATION_H

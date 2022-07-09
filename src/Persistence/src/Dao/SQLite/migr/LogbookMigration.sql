@@ -7,7 +7,7 @@ create table enum_backup_interval (
 );
 create unique index enum_backup_interval_idx1 on enum_backup_interval (intl_id);
 
-@migr(id = "a0209e1d-4d7b-4b29-b359-1d2dfd65126e", descn = "Create backup interval enumeration table", step = 2)
+@migr(id = "a0209e1d-4d7b-4b29-b359-1d2dfd65126e", descn = "Insert backup intervals", step = 2)
 insert into enum_backup_interval (intl_id, name, desc)
 values
   ('NOW', 'Now', 'The backup is created only this time (now)'),
@@ -42,11 +42,11 @@ create table flight (
     title text,
     description text,
     surface_type integer,
-    ground_altitude real,    
+    ground_altitude real,
     ambient_temperature real,
     total_air_temperature real,
     wind_velocity real,
-    wind_direction real,   
+    wind_direction real,
     visibility real,
     sea_level_pressure real,
     pitot_icing real,
@@ -169,7 +169,7 @@ create table handle (
     canopy_open integer,
     left_wing_folding integer,
     right_wing_folding integer,
-    gear_handle_position integer,    
+    gear_handle_position integer,
     primary key(aircraft_id, timestamp),
     foreign key(aircraft_id) references aircraft(id)
 );
@@ -662,3 +662,10 @@ insert into aircraft_type values
 @migr(id = "d794cc76-3bae-41d6-8219-64f405379c45", descn = "Update application version to 0.11", step = 1)
 update metadata
 set app_version = '0.11.0';
+
+@migr(id = "00c67a6f-b124-4147-8c97-6f99d814e3cc", descn = "Flight rename wind_velocity to wind_speed", step_cnt = 1)
+alter table flight rename column wind_velocity to wind_speed;
+
+@migr(id = "c94c121e-3d93-44e4-a747-6db2b5e3b45b", descn = "Update application version to 0.12", step = 1)
+update metadata
+set app_version = '0.12.0';

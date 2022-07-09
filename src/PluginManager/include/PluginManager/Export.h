@@ -57,15 +57,6 @@ public:
     static QString suggestFilePath(const Flight &flight, QStringView suffix) noexcept;
 
     /*!
-     * Formats the GNSS \c coordinate (latitude or longitude) with the appropriate decimal point precision.
-     *
-     * \param coordinate
-     *        the coordinate to be formatted as QString
-     * \return the text representation of \c coordinate
-     */
-    static QString formatCoordinate(double coordinate) noexcept;
-
-    /*!
      * Formats the general \c number (e.g. altitude or heading) with the appropriate decimal point precision.
      *
      * Note that in case the \c number should be displayed as text to a user, according to local settings, then

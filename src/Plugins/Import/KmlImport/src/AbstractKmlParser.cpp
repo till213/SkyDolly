@@ -30,7 +30,6 @@
 #include <QTimeZone>
 #include <QDateTime>
 #include <QXmlStreamReader>
-#include <QRegularExpression>
 
 #include <Kernel/Convert.h>
 #include <Model/Flight.h>

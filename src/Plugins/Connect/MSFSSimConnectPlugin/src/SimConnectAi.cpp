@@ -94,7 +94,7 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
             d->requestByAircraftId[aircraft.getId()] = requestId;
             ++d->lastAiCreateRequestId;
 #ifdef DEBUG
-        qDebug() << "SimConnectAi::addObject: pending CreateNonATCAircraft request:" << requestId << "for aircraft ID: " << aircraft.getId();
+        qDebug() << "SimConnectAi::addObject: pending CreateNonATCAircraft request:" << requestId << "for aircraft ID:" << aircraft.getId();
 #endif
         }
     }
@@ -115,7 +115,7 @@ void SimConnectAi::removeByAircraftId(std::int64_t aircraftId) noexcept
             const ::SIMCONNECT_OBJECT_ID objectId = it2->second;
             removeByObjectId(objectId);
 #ifdef DEBUG
-        qDebug() << "SimConnectAi::removeByAircraftId: removing simulation object:" << objectId << "for aircraft ID: " << aircraftId;
+        qDebug() << "SimConnectAi::removeByAircraftId: removing simulation object:" << objectId << "for aircraft ID:" << aircraftId;
 #endif
             d->simulatedObjectByRequestId.erase(it2);
             d->requestByAircraftId.erase(it);
@@ -146,13 +146,13 @@ bool SimConnectAi::registerObjectId(::SIMCONNECT_DATA_REQUEST_ID requestId, ::SI
     if (hasRequest(requestId)) {
         d->simulatedObjectByRequestId[requestId] = objectId;
 #ifdef DEBUG
-        qDebug() << "SimConnectAi::registerObjectId: registering simulation object ID:" << objectId << "for original request ID: " << requestId;
+        qDebug() << "SimConnectAi::registerObjectId: registering simulation object ID:" << objectId << "for original request ID:" << requestId;
 #endif
         ok = true;
     }
 #ifdef DEBUG
     else {
-        qDebug() << "SimConnectAi::registerObjectId: original request ID:" << requestId << "has already been discarded -> remove simulated object again, ID: " << objectId;
+        qDebug() << "SimConnectAi::registerObjectId: original request ID:" << requestId << "has already been discarded -> remove simulated object again, ID:" << objectId;
     }
 #endif
     return ok;

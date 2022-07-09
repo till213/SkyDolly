@@ -68,6 +68,12 @@ public:
 
     std::int64_t getTimeOffset() const noexcept;
     void setTimeOffset(std::int64_t timeOffset) noexcept;
+
+    /*!
+     * Returns the duration of this Aircraft's flight.
+     *
+     * \return the flight duartion [ms]
+     */
     std::int64_t getDurationMSec() const noexcept;
 
     /*!

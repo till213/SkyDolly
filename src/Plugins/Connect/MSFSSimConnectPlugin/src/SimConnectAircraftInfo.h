@@ -160,7 +160,7 @@ struct SimConnectAircraftInfo
         flightCondition.groundAltitude = groundAltitude;
         flightCondition.ambientTemperature = ambientTemperature;
         flightCondition.totalAirTemperature = totalAirTemperature;
-        flightCondition.windVelocity = ambientWindVelocity;
+        flightCondition.windSpeed = ambientWindVelocity;
         flightCondition.windDirection = ambientWindDirection;
         flightCondition.visibility = ambientVisibility;
         flightCondition.seaLevelPressure = seaLevelPressure;

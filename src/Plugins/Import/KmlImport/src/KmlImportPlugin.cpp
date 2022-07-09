@@ -94,7 +94,7 @@ QString KmlImportPlugin::getFileSuffix() const noexcept
 
 QString KmlImportPlugin::getFileFilter() const noexcept
 {
-    return tr("Keyhole markup language (*.%1)").arg(getFileSuffix());
+    return QObject::tr("Keyhole markup language (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> KmlImportPlugin::createOptionWidget() const noexcept
@@ -196,7 +196,7 @@ void KmlImportPlugin::parseKML() noexcept
         d->firstDateTimeUtc = parser->getFirstDateTimeUtc();
         d->title = parser->getDocumentName();
         if (d->title.isEmpty()) {
-            d->title = tr("KML import");
+            d->title = QObject::tr("KML import");
         }
         d->flightNumber = parser->getFlightNumber();
     }

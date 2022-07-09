@@ -32,6 +32,7 @@
 #include <QStringBuilder>
 
 #include <Kernel/Enum.h>
+#include <Kernel/Unit.h>
 #include <Kernel/SampleRate.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -126,5 +127,5 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
 
 inline QString FlightRadar24CsvWriter::formatPosition(const PositionData &positionData) noexcept
 {
-    return CsvConst::DoubleQuote % Export::formatCoordinate(positionData.latitude) % "," % Export::formatCoordinate(positionData.longitude) % CsvConst::DoubleQuote;
+    return CsvConst::DoubleQuote % Unit::formatCoordinate(positionData.latitude) % "," % Unit::formatCoordinate(positionData.longitude) % CsvConst::DoubleQuote;
 }

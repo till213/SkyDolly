@@ -44,7 +44,7 @@ public:
     enum struct Format {
         SkyDolly = 0,
         FlightRadar24 = 1,
-        PositionAndVelocity = 2
+        PositionAndAttitude = 2
     };
 
     CsvExportSettings() noexcept;

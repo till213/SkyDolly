@@ -84,7 +84,7 @@ QString CsvImportPlugin::getFileSuffix() const noexcept
 
 QString CsvImportPlugin::getFileFilter() const noexcept
 {
-    return tr("Comma-separated values (*.%1)").arg(getFileSuffix());
+    return QObject::tr("Comma-separated values (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
@@ -166,14 +166,14 @@ QString CsvImportPlugin::getTitle() const noexcept
     QString title;
     switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
-        title = tr("Sky Dolly CSV import");
+        title = QObject::tr("Sky Dolly CSV import");
         break;
     case CsvImportSettings::Format::FlightRadar24:
         // Do not augment heading and velocity
-        title = tr("Flightradar24 CSV import");
+        title = QObject::tr("Flightradar24 CSV import");
         break;
     case CsvImportSettings::Format::FlightRecorder:
-        title = tr("Flight Recorder CSV import");
+        title = QObject::tr("Flight Recorder CSV import");
         break;
     }
     return title;

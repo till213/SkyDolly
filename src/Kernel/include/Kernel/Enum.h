@@ -28,7 +28,7 @@
 #include <type_traits>
 
 /*!
- * Enumeration support functionality.
+ * C++ enumeration support functionality.
  */
 namespace Enum
 {

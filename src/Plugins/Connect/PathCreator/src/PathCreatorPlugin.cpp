@@ -43,6 +43,7 @@
 #include <Model/AircraftType.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Location.h>
 #include <Model/InitialPosition.h>
 #include <Model/Engine.h>
 #include <Model/EngineData.h>
@@ -226,6 +227,23 @@ void PathCreatorPlugin::onRemoveAllAiObjects() noexcept
 #endif
 }
 
+bool PathCreatorPlugin::onRequestLocation() noexcept
+{
+    Location location {
+        -90.0 + d->randomGenerator->bounded(180),
+        -180.0 + d->randomGenerator->bounded(360.0),
+        d->randomGenerator->bounded(60000.0)
+    };
+    location.pitch = -90.0 + d->randomGenerator->bounded(180.0);
+    location.bank = -180.0 + d->randomGenerator->bounded(360.0);
+    location.heading = -180.0 + d->randomGenerator->bounded(360.0);
+    location.indicatedAirspeed = d->randomGenerator->bounded(400);
+    location.onGround = false;
+    emit locationReceived(location);
+
+    return true;
+}
+
 // PROTECTED SLOTS
 
 void PathCreatorPlugin::recordData() noexcept
@@ -259,7 +277,7 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     PositionData aircraftData;
     aircraftData.latitude = -90.0 + d->randomGenerator->bounded(180);
     aircraftData.longitude = -180.0 + d->randomGenerator->bounded(360.0);
-    aircraftData.altitude = d->randomGenerator->bounded(20000.0);
+    aircraftData.altitude = d->randomGenerator->bounded(60000.0);
     aircraftData.indicatedAltitude = d->randomGenerator->bounded(20000.0);
     aircraftData.pitch = -90.0 + d->randomGenerator->bounded(180.0);
     aircraftData.bank = -180.0 + d->randomGenerator->bounded(360.0);
@@ -397,7 +415,7 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->randomGenerator->bounded(26));
     flightCondition.ambientTemperature = d->randomGenerator->bounded(80.0) - 40.0;
     flightCondition.totalAirTemperature = d->randomGenerator->bounded(80.0) - 40.0;
-    flightCondition.windVelocity = d->randomGenerator->bounded(30.0);
+    flightCondition.windSpeed = d->randomGenerator->bounded(30.0);
     flightCondition.windDirection = d->randomGenerator->bounded(360);
     flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(d->randomGenerator->bounded(4));
     flightCondition.visibility = d->randomGenerator->bounded(10000.0);

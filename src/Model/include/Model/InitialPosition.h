@@ -37,20 +37,17 @@
 
 struct AircraftInfo;
 
-class MODEL_API InitialPosition
+struct MODEL_API InitialPosition
 {
-public:
-    static constexpr int InvalidAirspeed = std::numeric_limits<int>::min();
-
     double latitude;
     double longitude;
     double altitude;
     double pitch;
     double bank;
     double heading;
-    bool onGround;
     // Indicated airspeed [knots]
     int indicatedAirspeed;
+    bool onGround;    
 
     explicit InitialPosition(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
     InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept;
@@ -61,7 +58,7 @@ public:
     InitialPosition &operator=(InitialPosition &&rhs) = default;
 
     inline bool isNull() const noexcept {
-        return (indicatedAirspeed == InvalidAirspeed);
+        return (indicatedAirspeed == InvalidIndicatedAirspeed);
     }
 
     inline void fromPositionData(const PositionData &positionData) {
@@ -73,9 +70,11 @@ public:
         heading = positionData.heading;
         const double trueAirspeed = Convert::feetPerSecondToKnots(positionData.velocityBodyZ);
         indicatedAirspeed = static_cast<int>(std::round(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude)));
+        onGround = false;
     }
 
     static const InitialPosition NullData;
+    static constexpr int InvalidIndicatedAirspeed = std::numeric_limits<int>::min();
 };
 
 #endif // INITIALPOSITION_H

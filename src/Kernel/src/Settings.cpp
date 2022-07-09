@@ -68,6 +68,7 @@ public:
     QByteArray windowState;
     QByteArray logbookState;
     QByteArray formationAircraftTableState;
+    QByteArray locationTableState;
     QString exportPath;
     QString defaultExportPath;
     QString defaultLogbookPath;
@@ -83,6 +84,7 @@ public:
 
     bool deleteFlightConfirmation;
     bool deleteAircraftConfirmation;
+    bool deleteLocationConfirmation;
     bool resetTimeOffsetConfirmation;
 
     bool defaultMinimalUiButtonTextVisible;
@@ -115,6 +117,7 @@ public:
     static constexpr bool DefaultRelativePositionPlacement {true};
     static constexpr bool DefaultDeleteFlightConfirmation  {true};
     static constexpr bool DefaultDeleteAircraftConfirmation  {true};
+    static constexpr bool DefaultDeleteLocationConfirmation  {true};
     static constexpr bool DefaultResetTimeOffsetConfirmation  {true};
 
     static constexpr bool DefaultMinimalUiButtonTextVisible {false};
@@ -325,6 +328,16 @@ void Settings::setFormationAircraftTableState(const QByteArray &state) noexcept
     d->formationAircraftTableState = state;
 }
 
+QByteArray Settings::getLocationTableState() const
+{
+    return d->locationTableState;
+}
+
+void Settings::setLocationTableState(const QByteArray &state) noexcept
+{
+    d->locationTableState = state;
+}
+
 bool Settings::isAbsoluteSeekEnabled() const noexcept
 {
     return d->absoluteSeek;
@@ -438,6 +451,19 @@ void Settings::setDeleteAircraftConfirmationEnabled(bool enable) noexcept
 {
     if (d->deleteAircraftConfirmation != enable) {
         d->deleteAircraftConfirmation = enable;
+        emit changed();
+    }
+}
+
+bool Settings::isDeleteLocationConfirmationEnabled() const noexcept
+{
+    return d->deleteLocationConfirmation;
+}
+
+void Settings::setDeleteLocationConfirmationEnabled(bool enable) noexcept
+{
+    if (d->deleteLocationConfirmation != enable) {
+        d->deleteLocationConfirmation = enable;
         emit changed();
     }
 }
@@ -614,6 +640,7 @@ void Settings::store() const noexcept
         // Confirmations
         d->settings.setValue("DeleteFlightConfirmation", d->deleteFlightConfirmation);
         d->settings.setValue("DeleteAircraftConfirmation", d->deleteAircraftConfirmation);
+        d->settings.setValue("DeleteLocationConfirmation", d->deleteLocationConfirmation);
         d->settings.setValue("ResetTimeOffsetConfirmation", d->resetTimeOffsetConfirmation);
 
         // Minimal UI
@@ -636,6 +663,7 @@ void Settings::store() const noexcept
         d->settings.setValue("State", d->windowState);
         d->settings.setValue("LogbookState", d->logbookState);
         d->settings.setValue("FormationAircraftTableState", d->formationAircraftTableState);
+        d->settings.setValue("LocationTableState", d->locationTableState);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");
@@ -732,6 +760,7 @@ void Settings::restore() noexcept
         // Confirmations
         d->deleteFlightConfirmation = d->settings.value("DeleteFlightConfirmation", SettingsPrivate::DefaultDeleteFlightConfirmation).toBool();
         d->deleteAircraftConfirmation = d->settings.value("DeleteAircraftConfirmation", SettingsPrivate::DefaultDeleteAircraftConfirmation).toBool();
+        d->deleteLocationConfirmation = d->settings.value("DeleteLocationConfirmation", SettingsPrivate::DefaultDeleteLocationConfirmation).toBool();
         d->resetTimeOffsetConfirmation = d->settings.value("ResetTimeOffsetConfirmation", SettingsPrivate::DefaultResetTimeOffsetConfirmation).toBool();
 
         d->defaultMinimalUiButtonTextVisible = d->settings.value("DefaultMinimalUiButtonTextVisible", SettingsPrivate::DefaultMinimalUiButtonTextVisible).toBool();
@@ -753,6 +782,7 @@ void Settings::restore() noexcept
         d->windowState = d->settings.value("State").toByteArray();
         d->logbookState = d->settings.value("LogbookState").toByteArray();
         d->formationAircraftTableState = d->settings.value("FormationAircraftTableState").toByteArray();
+        d->locationTableState = d->settings.value("LocationTableState").toByteArray();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");

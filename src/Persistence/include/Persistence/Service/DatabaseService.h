@@ -43,7 +43,7 @@ class PERSISTENCE_API DatabaseService
 {
 public:
     DatabaseService() noexcept;
-    virtual ~DatabaseService() noexcept;
+    ~DatabaseService() noexcept;
 
     bool backup() noexcept;
 

@@ -136,12 +136,12 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
             const SkyMath::Coordinate endPosition(endPositionData.latitude, endPositionData.longitude);
             const std::int64_t endTimestamp = endPositionData.timestamp;
 
-            const auto [distance, velocity] = SkyMath::distanceAndVelocity(startPosition, startTimestamp, endPosition, endTimestamp);
+            const auto [distance, speed] = SkyMath::distanceAndSpeed(startPosition, startTimestamp, endPosition, endTimestamp);
             // Velocity
             if (d->aspects.testFlag(Aspect::Velocity)) {
                 startPositionData.velocityBodyX = 0.0;
                 startPositionData.velocityBodyY = 0.0;
-                startPositionData.velocityBodyZ = Convert::metersPerSecondToFeetPerSecond(velocity);
+                startPositionData.velocityBodyZ = Convert::metersPerSecondToFeetPerSecond(speed);
             }
 
             // Attitude
@@ -149,7 +149,7 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
                 if (startPositionData.timestamp > firstMovementTimestamp) {
                     const double deltaAltitude = Convert::feetToMeters(endPositionData.altitude - startPositionData.altitude);
                     // SimConnect: positive pitch values "point downwards", negative pitch values "upwards"
-                    // -> so switch the sign
+                    // -> switch the sign
                     if (d->aspects.testFlag(Aspect::Pitch)) {
                         startPositionData.pitch = -SkyMath::approximatePitch(distance, deltaAltitude);
                     }
