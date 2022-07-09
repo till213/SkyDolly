@@ -41,6 +41,7 @@
   * Geographic.dll
 - Ensure that the following dependencies are removed from the package folder:
   * Plugins/Connect/PathCreator.dll
+  * Plugins/Module/Template.dll
   * SkyMathTest.exe, SkySearchTest.exe, ...
 - Ensure that the resources files are in the package folder:
   * Resources/geoids/egm2008-5.wld, egm2008-5.pgm. egm2008-5.pgm.aux.xml

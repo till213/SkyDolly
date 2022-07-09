@@ -34,7 +34,7 @@ namespace
     constexpr char WaypointSelectionKey[] {"WaypointSelection"};
     constexpr char PositionSelectionKey[] {"PositionSelection"};
     constexpr char DefaultAltitudeKey[] {"DefaultAltitude"};
-    constexpr char DefaultVelocityKey[] {"DefaultVelocity"};
+    constexpr char DefaultSpeedKey[] {"DefaultSpeed"};
     constexpr char ConvertAltitudeKey[] {"ConvertAltitude"};
 
     // Defaults
@@ -43,7 +43,7 @@ namespace
     // In feet
     constexpr int DefaultAltitude {1000};
     // In knots
-    constexpr int DefaultVelocity {120};
+    constexpr int DefaultSpeed {120};
     constexpr bool DefaultConvertAltitude {true};
 }
 
@@ -54,14 +54,14 @@ public:
         : waypointSelection(::DefaultWaypointSelection),
           positionSelection(::DefaultPositionSelection),
           defaultAltitude(::DefaultAltitude),
-          defaultVelocity(::DefaultVelocity),
+          defaultSpeed(::DefaultSpeed),
           convertAltitude(::DefaultConvertAltitude)
     {}
 
     GpxImportSettings::GPXElement waypointSelection;
     GpxImportSettings::GPXElement positionSelection;
     int defaultAltitude;
-    int defaultVelocity;
+    int defaultSpeed;
     bool convertAltitude;
 };
 
@@ -121,15 +121,15 @@ void GpxImportSettings::setDefaultAltitude(int altitude) noexcept
     }
 }
 
-int GpxImportSettings::getDefaultVelocity() const noexcept
+int GpxImportSettings::getDefaultSpeed() const noexcept
 {
-    return d->defaultVelocity;
+    return d->defaultSpeed;
 }
 
-void GpxImportSettings::setDefaultVelocity(int velocity) noexcept
+void GpxImportSettings::setDefaultSpeed(int speed) noexcept
 {
-    if (d->defaultVelocity != velocity) {
-        d->defaultVelocity = velocity;
+    if (d->defaultSpeed != speed) {
+        d->defaultSpeed = speed;
         emit extendedSettingsChanged();
     }
 }
@@ -165,8 +165,8 @@ void GpxImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     keyValue.second = d->defaultAltitude;
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::DefaultVelocityKey;
-    keyValue.second = d->defaultVelocity;
+    keyValue.first = ::DefaultSpeedKey;
+    keyValue.second = d->defaultSpeed;
     keyValues.push_back(keyValue);
 
     keyValue.first = ::ConvertAltitudeKey;
@@ -190,8 +190,8 @@ void GpxImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     keyValue.second = ::DefaultAltitude;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::DefaultVelocityKey;
-    keyValue.second = ::DefaultVelocity;
+    keyValue.first = ::DefaultSpeedKey;
+    keyValue.second = ::DefaultSpeed;
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::ConvertAltitudeKey;
@@ -223,11 +223,11 @@ void GpxImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
         d->defaultAltitude = DefaultAltitude;
     }
 
-    const int velocity = valuesByKey.at(::DefaultVelocityKey).toInt(&ok);
+    const int speed = valuesByKey.at(::DefaultSpeedKey).toInt(&ok);
     if (ok) {
-        d->defaultVelocity = velocity;
+        d->defaultSpeed = speed;
     } else {
-        d->defaultVelocity = DefaultVelocity;
+        d->defaultSpeed = DefaultSpeed;
     }
 
     d->convertAltitude = valuesByKey.at(::ConvertAltitudeKey).toBool();
@@ -240,7 +240,7 @@ void GpxImportSettings::restoreDefaultsExtn() noexcept
     d->waypointSelection = ::DefaultWaypointSelection;
     d->positionSelection = ::DefaultPositionSelection;
     d->defaultAltitude = ::DefaultAltitude;
-    d->defaultVelocity = ::DefaultVelocity;
+    d->defaultSpeed = ::DefaultSpeed;
     d->convertAltitude = ::DefaultConvertAltitude;
 
     emit extendedSettingsChanged();

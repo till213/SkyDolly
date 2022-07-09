@@ -163,7 +163,7 @@ QString IgcExportPlugin::getFileSuffix() const noexcept
 
 QString IgcExportPlugin::getFileFilter() const noexcept
 {
-    return tr("International gliding commission (*.%1)").arg(getFileSuffix());
+    return QObject::tr("International gliding commission (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> IgcExportPlugin::createOptionWidget() const noexcept

@@ -91,8 +91,8 @@ void WaypointWidget::initUi() noexcept
 
 void WaypointWidget::updateUi() noexcept
 {
-    ui->latitudeLineEdit->setText(d->unit.formatLatitude(d->waypoint.latitude));
-    ui->longitudeLineEdit->setText(d->unit.formatLongitude(d->waypoint.longitude));
+    ui->latitudeLineEdit->setText(d->unit.formatLatitudeDMS(d->waypoint.latitude));
+    ui->longitudeLineEdit->setText(d->unit.formatLongitudeDMS(d->waypoint.longitude));
     ui->altitudeLineEdit->setText(d->unit.formatFeet(d->waypoint.altitude));
     ui->localSimulationTimeLineEdit->setText(d->unit.formatDateTime(d->waypoint.localTime));
     ui->localSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(d->waypoint.zuluTime) + "Z");

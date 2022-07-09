@@ -39,7 +39,7 @@ struct MODEL_API FlightCondition
     SimType::SurfaceType surfaceType;
     float ambientTemperature;
     float totalAirTemperature;
-    float windVelocity;
+    float windSpeed;
     float windDirection;
     SimType::PrecipitationState precipitationState;
     float visibility;

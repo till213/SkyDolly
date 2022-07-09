@@ -53,5 +53,4 @@ public:
     virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
 };
 
-
 #endif // ENGINEDAOINTF_H

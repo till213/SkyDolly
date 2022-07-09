@@ -41,21 +41,21 @@ class SQLiteDatabaseDao : public DatabaseDaoIntf
 {
 public:
     SQLiteDatabaseDao() noexcept;
-    virtual ~SQLiteDatabaseDao() noexcept;
+    ~SQLiteDatabaseDao() noexcept override;
 
-    virtual bool connectDb(const QString &logbookPath) noexcept override;
-    virtual void disconnectDb() noexcept override;
+    bool connectDb(const QString &logbookPath) noexcept override;
+    void disconnectDb() noexcept override;
 
-    virtual bool migrate() noexcept override;
-    virtual bool optimise() noexcept override;
-    virtual bool backup(const QString &backupFilePath) noexcept override;
-    virtual bool updateBackupPeriod(const QString &backupPeriodIntlId) noexcept override;
-    virtual bool updateNextBackupDate(const QDateTime &date) noexcept override;
-    virtual bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept override;
+    bool migrate() noexcept override;
+    bool optimise() noexcept override;
+    bool backup(const QString &backupFilePath) noexcept override;
+    bool updateBackupPeriod(const QString &backupPeriodIntlId) noexcept override;
+    bool updateNextBackupDate(const QDateTime &date) noexcept override;
+    bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept override;
 
-    virtual bool getMetadata(Metadata &metadata) const noexcept override;
-    virtual bool getDatabaseVersion(Version &databaseVersion) const noexcept override;
-    virtual bool getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept override;
+    bool getMetadata(Metadata &metadata) const noexcept override;
+    bool getDatabaseVersion(Version &databaseVersion) const noexcept override;
+    bool getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept override;
 
 private:
     Q_DISABLE_COPY(SQLiteDatabaseDao)

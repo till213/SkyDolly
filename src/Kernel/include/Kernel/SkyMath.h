@@ -340,7 +340,7 @@ namespace SkyMath
             geodesic.Inverse(startPosition.first, startPosition.second, endPosition.first, endPosition.second, distance);
         } catch (const std::exception &ex) {
 #ifdef DEBUG
-            qDebug() << "SkyMath::sphericalDistance: caught exception: " << ex.what();
+            qDebug() << "SkyMath::sphericalDistance: caught exception:" << ex.what();
 #endif
             distance = std::numeric_limits<double>::max();
         }
@@ -349,7 +349,7 @@ namespace SkyMath
 
     /*!
      * Calculates the geodesic distance between the \c startPoint and the \c endPoint and the
-     * velocity [meters per second] it takes to travel that distance, taking the timestamps \c startTimestamp
+     * speed [meters per second] it takes to travel that distance, taking the timestamps \c startTimestamp
      * and \c endTimestamp into account.
      *
      * \param startPosition
@@ -363,11 +363,11 @@ namespace SkyMath
      * \return the distance (first value) and required speed [m/s] (second value)
      * \sa sphericalDistance
      */
-    inline std::pair<double, double> distanceAndVelocity(Coordinate startPosition, std::int64_t startTimestamp,
-                                                         Coordinate endPosition, std::int64_t endTimestamp) noexcept
+    inline std::pair<double, double> distanceAndSpeed(Coordinate startPosition, std::int64_t startTimestamp,
+                                                      Coordinate endPosition, std::int64_t endTimestamp) noexcept
     {
         const double distance = geodesicDistance(startPosition, endPosition);
-        const double deltaT = (endTimestamp - startTimestamp) / 1000.0;
+        const double deltaT = static_cast<double>(endTimestamp - startTimestamp) / 1000.0;
 
         return std::pair(distance, distance / deltaT);
     }
@@ -391,7 +391,7 @@ namespace SkyMath
             geodesic.Inverse(startPosition.first, startPosition.second, endPosition.first, endPosition.second, azimuth1, azimuth2);
         } catch (const std::exception &ex) {
 #ifdef DEBUG
-            qDebug() << "SkyMath::initialBearing: caught exception: " << ex.what();
+            qDebug() << "SkyMath::initialBearing: caught exception:" << ex.what();
 #endif
             azimuth1 = 0.0;
         }
@@ -533,7 +533,7 @@ namespace SkyMath
             geodesic.Direct(position.first, position.second, bearing, distance, destination.first, destination.second);
         } catch (const std::exception &ex) {
 #ifdef DEBUG
-            qDebug() << "SkyMath::relativePosition: caught exception: " << ex.what();
+            qDebug() << "SkyMath::relativePosition: caught exception:" << ex.what();
 #endif
             destination.first = 0.0;
             destination.second = 0.0;

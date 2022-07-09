@@ -35,7 +35,7 @@
 
 void SimConnectPositionRequest::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    addToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionRequestDefinition));
+    addToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::PositionRequest));
 }
 
 // PROTECTED

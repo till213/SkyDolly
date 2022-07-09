@@ -26,24 +26,26 @@
 #define SQLITELOGBOOKDAO_H
 
 #include <memory>
+#include <forward_list>
 #include <vector>
+#include <iterator>
 
 #include <QtGlobal>
 
 #include <FlightSelector.h>
 #include "../LogbookDaoIntf.h"
 
-class FlightDate;
-class FlightSummary;
+struct FlightDate;
+struct FlightSummary;
 
 class SQLiteLogbookDao : public LogbookDaoIntf
 {
 public:
-    explicit SQLiteLogbookDao() noexcept;
-    virtual ~SQLiteLogbookDao() noexcept;
+    SQLiteLogbookDao() noexcept;
+    ~SQLiteLogbookDao() noexcept override;
 
-    virtual std::forward_list<FlightDate> getFlightDates() const noexcept override;
-    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept override;
+    bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept override;
+    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept override;
 };
 
 #endif // SQLITELOGBOOKDAO_H

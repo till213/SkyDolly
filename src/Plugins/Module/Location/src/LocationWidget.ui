@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LocationWidget</class>
+ <widget class="QWidget" name="LocationWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>455</width>
+    <height>317</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QTableWidget" name="locationTableWidget"/>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Default Values</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Altitude:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="defaultAltitudeSpinBox">
+            <property name="suffix">
+             <string> feet</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Indicated airspeed:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="defaultIndicatedAirspeedSpinBox">
+            <property name="suffix">
+             <string> knots</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="defaultOnGroundCheckBox">
+            <property name="text">
+             <string>On ground</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QGroupBox" name="informationGroupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>120</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Information</string>
+      </property>
+      <layout class="QFormLayout" name="formLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Description:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="FocusPlainTextEdit" name="descriptionPlainTextEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>320</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="addPushButton">
+       <property name="toolTip">
+        <string>Add a new location entry.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="capturePushButton">
+       <property name="toolTip">
+        <string>Capture the current location from the flight simulator.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Capture</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="teleportPushButton">
+       <property name="toolTip">
+        <string>Teleport the aircraft to the selected location.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Teleport</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deletePushButton">
+       <property name="toolTip">
+        <string>Delete the selected location.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Delete</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FocusPlainTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">Widget/FocusPlainTextEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

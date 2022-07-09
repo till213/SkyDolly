@@ -14,6 +14,7 @@ target_compile_definitions(${LIBRARY_NAME}
 target_sources(${LIBRARY_NAME}
     PRIVATE
         include/Model/ModelLib.h
+        include/Model/Data.h src/Data.cpp
         include/Model/Logbook.h src/Logbook.cpp
         include/Model/AbstractComponent.h
         include/Model/Flight.h src/Flight.cpp
@@ -42,6 +43,8 @@ target_sources(${LIBRARY_NAME}
         include/Model/SimType.h
         include/Model/SimVar.h
         include/Model/SkySearch.h src/SkySearch.cpp
+        include/Model/Location.h src/Location.cpp
+        include/Model/Enumeration.h src/Enumeration.cpp
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE

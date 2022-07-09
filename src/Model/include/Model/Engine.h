@@ -34,8 +34,8 @@ class MODEL_API Engine : public AbstractComponent<EngineData>
 {
 public:
     explicit Engine(const AircraftInfo &aircraftInfo) noexcept;
-    Engine(Engine &aircraftHandle) = default;
-    Engine(Engine &&aircraftHandle) = default;
+    Engine(Engine &other) = default;
+    Engine(Engine &&other) = default;
     ~Engine() noexcept override;
     Engine &operator=(const Engine &rhs) = default;
     Engine &operator=(Engine &&rhs) = default;

@@ -32,6 +32,7 @@
 #include <Kernel/SampleRate.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
+#include <Model/Location.h>
 #include "Connect.h"
 #include "PluginManagerLib.h"
 
@@ -190,6 +191,15 @@ public:
 
     virtual double calculateRecordedSamplesPerSecond() const noexcept = 0;
 
+    /*!
+     * Requests the current position of the user aircraft whcich is asynchronously
+     * returned as Location.
+     *
+     * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
+     * \sa locationReceived
+     */
+    virtual bool requestLocation() noexcept = 0;
+
 public slots:
     virtual void addAiObject(const Aircraft &aircraft) noexcept = 0;
     virtual void removeAiObjects() noexcept = 0;
@@ -261,6 +271,14 @@ signals:
      * \sa stateChanged
      */
     void recordingStopped();
+
+    /*!
+     * Emitted whenever the response to the Location request has been received.
+     *
+     * \param location
+     *        the received Location
+     */
+    void locationReceived(Location location);
 
 private:
     Q_DISABLE_COPY(SkyConnectIntf)

@@ -44,7 +44,8 @@ class DatabaseService;
 class FlightService;
 class FlightDate;
 class FlightSummary;
-class LogbookWidgetPrivate;
+class Aircraft;
+struct LogbookWidgetPrivate;
 
 namespace Ui {
     class LogbookWidget;
@@ -67,8 +68,8 @@ private:
     void initUi() noexcept;
     void initFilterUi() noexcept;
     void updateFlightTable() noexcept;
-    void updateDateSelectorUi() noexcept;
-    inline void addFlightSummary(FlightSummary summary, int rowIndex) noexcept;
+    inline void updateFlightSummaryRow(const FlightSummary &summary, int rowIndex) noexcept;
+    void updateDateSelectorUi() noexcept;    
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
     inline void insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept;
@@ -76,12 +77,11 @@ private:
     inline void insertDay(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByDayOfMonth) noexcept;
     inline void updateSelectionDateRange(QTreeWidgetItem *item) const noexcept;
 
-    static const QString getName() noexcept;
-
 private slots:
     void onRecordingStarted() noexcept;
     void updateUi() noexcept;
     void updateAircraftIcons() noexcept;
+    void onAircraftInfoChanged(Aircraft &aircraft);
 
     void loadFlight() noexcept;
     void deleteFlight() noexcept;

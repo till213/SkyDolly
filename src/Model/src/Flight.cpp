@@ -31,6 +31,9 @@
 
 #include <QDateTime>
 #include <QString>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include "FlightCondition.h"
 #include "Aircraft.h"
@@ -86,14 +89,14 @@ Flight::Flight(QObject *parent) noexcept
     // A flight always has at least one (user) aircraft
     addUserAircraft();
 #ifdef DEBUG
-    qDebug("Flight::Flight: CREATED, ID: %" PRId64, d->id);
+    qDebug() << "Flight::Flight: CREATED, ID:" << d->id;
 #endif
 }
 
 Flight::~Flight() noexcept
 {
 #ifdef DEBUG
-    qDebug("Flight::~Flight: DELETED, ID: %" PRId64, d->id);
+    qDebug() << "Flight::~Flight: DELETED, ID:" << d->id;
 #endif
 }
 

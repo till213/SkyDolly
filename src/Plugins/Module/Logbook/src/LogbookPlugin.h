@@ -45,7 +45,6 @@ public:
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
-    RecordIconId getRecordIconId() const noexcept override;
 
 protected slots:
     void onRecordingStopped() noexcept override;

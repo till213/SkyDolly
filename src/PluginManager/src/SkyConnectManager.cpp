@@ -61,14 +61,14 @@ struct skyConnectManagerPrivate
     skyConnectManagerPrivate(QObject *parent) noexcept
         : pluginLoader(new QPluginLoader(parent))
     {
-        pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
+        pluginsDirectory = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
-        if (pluginsDirectoryPath.dirName() == "MacOS") {
+        if (pluginsDirectory.dirName() == "MacOS") {
             // Navigate up the app bundle structure, into the Contents folder
-            pluginsDirectoryPath.cdUp();
+            pluginsDirectory.cdUp();
         }
 #endif
-        pluginsDirectoryPath.cd(PluginDirectoryName);
+        pluginsDirectory.cd(PluginDirectoryName);
     }
 
     ~skyConnectManagerPrivate() noexcept
@@ -76,7 +76,7 @@ struct skyConnectManagerPrivate
         pluginLoader->unload();
     }
 
-    QDir pluginsDirectoryPath;
+    QDir pluginsDirectory;
     // Plugin UUID / plugin path
     QMap<QUuid, QString> pluginRegistry;
     std::vector<SkyConnectManager::Handle> pluginHandles;
@@ -232,6 +232,12 @@ bool SkyConnectManager::isInReplayState() const noexcept
     return skyConnect ? skyConnect->get().isInReplayState() : false;
 }
 
+bool SkyConnectManager::isActive() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().isInRecordingState() || skyConnect->get().isInReplayState(): false;
+}
+
 void SkyConnectManager::stop() noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
@@ -338,6 +344,12 @@ bool SkyConnectManager::isAtEnd() const noexcept
     return skyConnect ? skyConnect->get().isAtEnd() : false;
 }
 
+bool SkyConnectManager::requestInitialPosition() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().requestLocation() : false;
+}
+
 // PUBLIC SLOTS
 
 bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
@@ -362,6 +374,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     this, &SkyConnectManager::recordingStarted);
             connect(skyPlugin, &SkyConnectIntf::recordingStopped,
                     this, &SkyConnectManager::recordingStopped);
+            connect(skyPlugin, &SkyConnectIntf::locationReceived,
+                    this, &SkyConnectManager::locationReceived);
 
             // Flight
             const Logbook &logbook = Logbook::getInstance();
@@ -422,11 +436,11 @@ void SkyConnectManager::frenchConnection() noexcept
 void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) noexcept
 {
     d->pluginRegistry.clear();
-    if (d->pluginsDirectoryPath.exists(pluginDirectoryName)) {
-        d->pluginsDirectoryPath.cd(pluginDirectoryName);
-        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
+    if (d->pluginsDirectory.exists(pluginDirectoryName)) {
+        d->pluginsDirectory.cd(pluginDirectoryName);
+        const QStringList entryList = d->pluginsDirectory.entryList(QDir::Files);
         for (const QString &fileName : entryList) {
-            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
+            const QString pluginPath = d->pluginsDirectory.absoluteFilePath(fileName);
             QPluginLoader loader(pluginPath);
 
             const QJsonObject metaData = loader.metaData();
@@ -442,6 +456,6 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
                 d->pluginRegistry.insert(uuid, pluginPath);
             }
         }
-        d->pluginsDirectoryPath.cdUp();
+        d->pluginsDirectory.cdUp();
     }
 }

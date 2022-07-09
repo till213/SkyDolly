@@ -106,7 +106,15 @@ AbstractSkyConnect::~AbstractSkyConnect() noexcept
 
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
-    return onInitialPositionSetup(initialPosition);
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this, initialPosition]() -> bool { return onInitialPositionSetup(initialPosition); });
+    }
+    return ok;
 }
 
 bool AbstractSkyConnect::freezeUserAircraft(bool enable) noexcept
@@ -185,7 +193,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         }
         ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
-            ok = onStartRecording();
+            ok = retryWithReconnect([this]() -> bool { return onStartRecording(); });
         }
     }
 
@@ -280,11 +288,6 @@ void AbstractSkyConnect::stop() noexcept
     } else {
         stopReplay();
     }
-}
-
-bool AbstractSkyConnect::isActive() const noexcept
-{
-    return d->state != Connect::State::Disconnected && d->state != Connect::State::Connected;
 }
 
 void AbstractSkyConnect::setPaused(bool enabled) noexcept
@@ -430,6 +433,11 @@ bool AbstractSkyConnect::isIdle() const noexcept
     return d->state == Connect::State::Connected || d->state == Connect::State::Disconnected;
 }
 
+bool AbstractSkyConnect::isActive() const noexcept
+{
+    return !isIdle();
+}
+
 std::int64_t AbstractSkyConnect::getCurrentTimestamp() const noexcept
 {
     return d->currentTimestamp;
@@ -480,6 +488,19 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
         }
     }
     return samplesPerSecond;
+}
+
+bool AbstractSkyConnect::requestLocation() noexcept
+{
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this]() -> bool { return onRequestLocation(); });
+    }
+    return ok;
 }
 
 // PUBLIC SLOTS
@@ -659,8 +680,8 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
 
 bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
 {
-    int nofAttempts = 2;
-    bool ok = true;
+    int nofAttempts {2};
+    bool ok {true};
     while (nofAttempts > 0) {
         ok = func();
         --nofAttempts;

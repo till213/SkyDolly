@@ -27,7 +27,6 @@
 #include <cstdint>
 #include <cmath>
 
-#include <QCoreApplication>
 #include <QByteArray>
 #include <QDoubleValidator>
 #include <QWidget>
@@ -40,8 +39,6 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QComboBox>
-#include <QShowEvent>
-#include <QHideEvent>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -59,7 +56,6 @@
 #include <Model/AircraftInfo.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
-#include <Model/InitialPosition.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
@@ -73,9 +69,9 @@
 namespace
 {
     constexpr int MinimumTableWidth {120};
-    constexpr int InvalidSelection {-1};
-    constexpr int InvalidColumn {-1};
-    constexpr int SequenceNumberColumn {0};
+    constexpr int InvalidRowIndex {-1};
+    constexpr int InvalidColumnIndex {-1};
+    constexpr int SequenceNumberColumnIndex {0};
 
     enum ReplayModeIndex {
         Normal,
@@ -123,10 +119,10 @@ struct FormationWidgetPrivate
     FlightService &flightService;
     AircraftService &aircraftService;
 
-    int tailNumberColumnIndex {InvalidColumn};
-    int timeOffsetColumnIndex {InvalidColumn};
+    int tailNumberColumnIndex {::InvalidColumnIndex};
+    int timeOffsetColumnIndex {::InvalidColumnIndex};
     QButtonGroup *positionButtonGroup;
-    int selectedRow {InvalidSelection};
+    int selectedRowIndex {::InvalidRowIndex};
     std::int64_t selectedAircraftIndex {Flight::InvalidId};
     QDoubleValidator *timeOffsetValidator {nullptr};
     Unit unit;
@@ -195,7 +191,7 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->verticalHeader()->hide();
     ui->aircraftTableWidget->setMinimumWidth(::MinimumTableWidth);
     ui->aircraftTableWidget->horizontalHeader()->setStretchLastSection(true);
-    ui->aircraftTableWidget->sortByColumn(::SequenceNumberColumn, Qt::SortOrder::AscendingOrder);
+    ui->aircraftTableWidget->sortByColumn(::SequenceNumberColumnIndex, Qt::SortOrder::AscendingOrder);
     ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->aircraftTableWidget->setAlternatingRowColors(true);
 
@@ -338,7 +334,7 @@ void FormationWidget::updateAircraftTable() noexcept
 
     int rowIndex {0};
     for (const auto &aircraft : flight) {
-        addAircraft(*aircraft, rowIndex);
+        updateAircraftRow(*aircraft, rowIndex);
         rowIndex++;
     }
 
@@ -346,9 +342,9 @@ void FormationWidget::updateAircraftTable() noexcept
     ui->aircraftTableWidget->resizeColumnsToContents();
     ui->aircraftTableWidget->blockSignals(false);
 
-    if (d->selectedRow != InvalidSelection) {
-        d->selectedRow = std::min(d->selectedRow, ui->aircraftTableWidget->rowCount() - 1);
-        ui->aircraftTableWidget->selectRow(d->selectedRow);
+    if (d->selectedRowIndex != ::InvalidRowIndex) {
+        d->selectedRowIndex = std::min(d->selectedRowIndex, ui->aircraftTableWidget->rowCount() - 1);
+        ui->aircraftTableWidget->selectRow(d->selectedRowIndex);
     }
 
     updateAircraftIcons();
@@ -363,7 +359,7 @@ void FormationWidget::updateAircraftIcons() noexcept
     const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
 
     for (int row = 0; row < ui->aircraftTableWidget->rowCount(); ++row) {
-        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, ::SequenceNumberColumn);
+        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, ::SequenceNumberColumnIndex);
         if (row == userAircraftIndex) {
             if (recording) {
                 item->setIcon(FormationWidgetPrivate::recordingAircraftIcon);
@@ -517,10 +513,8 @@ void FormationWidget::updateToolTips() noexcept
 
 // PRIVATE SLOTS
 
-void FormationWidget::addAircraft(const Aircraft &aircraft, int rowIndex) noexcept
+void FormationWidget::updateAircraftRow(const Aircraft &aircraft, int rowIndex) noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    const bool recording = skyConnectManager.isInRecordingState();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
     const QString tooltip = tr("Double-click to change user aircraft.");
     int columnIndex = 0;
@@ -719,14 +713,14 @@ void FormationWidget::onCellChanged(int row, int column) noexcept
 void FormationWidget::onSelectionChanged() noexcept
 {
     QItemSelectionModel *select = ui->aircraftTableWidget->selectionModel();
-    QModelIndexList modelIndices = select->selectedRows(::SequenceNumberColumn);
+    QModelIndexList modelIndices = select->selectedRows(::SequenceNumberColumnIndex);
     if (modelIndices.count() > 0) {
         QModelIndex modelIndex = modelIndices.at(0);
-        d->selectedRow = modelIndex.row();
+        d->selectedRowIndex = modelIndex.row();
         // Index starts at 0
         d->selectedAircraftIndex = ui->aircraftTableWidget->model()->data(modelIndex).toInt() - 1;
     } else {
-        d->selectedRow = InvalidSelection;
+        d->selectedRowIndex = ::InvalidRowIndex;
         d->selectedAircraftIndex = Flight::InvalidId;
     }
     updateEditUi();
@@ -743,8 +737,8 @@ void FormationWidget::updateUserAircraftIndex() noexcept
 {
     if (!SkyConnectManager::getInstance().isInRecordingState()) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
-        if (d->selectedRow != flight.getUserAircraftIndex()) {
-            d->flightService.updateUserAircraftIndex(flight, d->selectedRow);
+        if (d->selectedRowIndex != flight.getUserAircraftIndex()) {
+            d->flightService.updateUserAircraftIndex(flight, d->selectedRowIndex);
         }
     }
 }
@@ -759,7 +753,7 @@ void FormationWidget::deleteAircraft() noexcept
 
         // Sequence numbers start at 1
         messageBox->setWindowTitle(tr("Delete Aircraft"));
-        messageBox->setText(tr("The aircraft with sequence number %1 is about to be deleted. Do you want to delete the aircraft?").arg(d->selectedRow + 1));
+        messageBox->setText(tr("The aircraft with sequence number %1 is about to be deleted. Do you want to delete the aircraft?").arg(d->selectedRowIndex + 1));
         messageBox->setInformativeText(tr("Deletion cannot be undone."));
         QPushButton *deleteButton = messageBox->addButton(tr("&Delete"), QMessageBox::AcceptRole);
         QPushButton *keepButton = messageBox->addButton(tr("&Keep"), QMessageBox::RejectRole);
@@ -773,7 +767,7 @@ void FormationWidget::deleteAircraft() noexcept
     }
 
     if (doDelete) {
-        d->aircraftService.deleteByIndex(d->selectedRow);
+        d->aircraftService.deleteByIndex(d->selectedRowIndex);
         ui->aircraftTableWidget->setFocus(Qt::NoFocusReason);
     }
 }

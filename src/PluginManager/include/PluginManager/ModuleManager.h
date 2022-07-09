@@ -81,9 +81,9 @@ signals:
     void activated(QString title, QUuid moduleUuid);
 
 private:
-    using Sort = Sort<QUuid, QUuidHasher>;
-    using Graph = Sort::Graph;
-    using Vertex = Sort::Vertex;
+    using UuidSort = Sort<QUuid, QUuidHasher>;
+    using Graph = UuidSort::Graph;
+    using Vertex = UuidSort::Vertex;
     // First: module name - second: path
     using ModuleInfo = std::pair<QString, QString>;
 

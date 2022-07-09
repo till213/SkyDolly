@@ -28,6 +28,9 @@
 #include <cinttypes>
 
 #include <QObject>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include "TimeVariableData.h"
 #include "SkySearch.h"
@@ -76,13 +79,15 @@ Aircraft::Aircraft(QObject *parent) noexcept
       d(std::make_unique<AircraftPrivate>())
 {
     frenchConnection();
+#ifdef DEBUG
+    qDebug() << "Aircraft::Aircraft: CREATED, ID:" << d->id;
+#endif
 }
 
 Aircraft::~Aircraft() noexcept
 {
-    // https://stackoverflow.com/questions/31534474/format-lld-expects-type-long-long-int-but-argument-4-has-type-int64-t
 #ifdef DEBUG
-    qDebug("Aircraft::~Aircraft: DELETED, ID: %" PRId64, d->id);
+    qDebug() << "Aircraft::~Aircraft: DELETED, ID:" << d->id;
 #endif
 }
 

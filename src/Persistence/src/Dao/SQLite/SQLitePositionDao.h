@@ -36,13 +36,13 @@
 class SQLitePositionDao : public PositionDaoIntf
 {
 public:
-    explicit SQLitePositionDao() noexcept;
-    virtual ~SQLitePositionDao() noexcept;
+    SQLitePositionDao() noexcept;
+    ~SQLitePositionDao() noexcept override;
 
-    virtual bool add(std::int64_t aircraftId, const PositionData &data) noexcept override;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept override;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept override;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+    bool add(std::int64_t aircraftId, const PositionData &data) noexcept override;
+    bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept override;
+    bool deleteByFlightId(std::int64_t flightId) noexcept override;
+    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };
 
 #endif // SQLITEPOSITIONDAO_H

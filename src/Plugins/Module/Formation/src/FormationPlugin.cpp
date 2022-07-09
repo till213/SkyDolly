@@ -108,8 +108,8 @@ void FormationPlugin::onStartReplay() noexcept
     const Formation::RelativePosition relativePosition {d->formationWidget->getRelativePosition()};
     const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
     const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ?
-                Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp) :
-                InitialPosition::NullData;
+        Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp) :
+        InitialPosition::NullData;
     skyConnectManager.startReplay(fromStart, initialPosition);
 }
 

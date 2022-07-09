@@ -44,8 +44,8 @@ struct MODEL_API PrimaryFlightControlData : public TimeVariableData
     PrimaryFlightControlData(const PrimaryFlightControlData &other) = default;
     PrimaryFlightControlData(PrimaryFlightControlData &&other) = default;
     ~PrimaryFlightControlData() override = default;
-    PrimaryFlightControlData &operator=(const PrimaryFlightControlData &) = default;
-    PrimaryFlightControlData &operator=(PrimaryFlightControlData &&) = default;
+    PrimaryFlightControlData &operator=(const PrimaryFlightControlData &rhs) = default;
+    PrimaryFlightControlData &operator=(PrimaryFlightControlData &&rhs) = default;
 
     static const PrimaryFlightControlData NullData;
 };

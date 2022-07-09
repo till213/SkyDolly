@@ -254,7 +254,7 @@ bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t fli
 
     query.bindValue(":flight_id", QVariant::fromValue(flightId));
     query.bindValue(":seq_nr", QVariant::fromValue(sequenceNumber));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteAircraftDao::adjustAircraftSequenceNumbersByIndex: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -409,7 +409,7 @@ bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffse
 
     query.bindValue(":time_offset", QVariant::fromValue(timeOffset));
     query.bindValue(":id", QVariant::fromValue(id));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteAircraftDao::updateTimeOffset: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -429,7 +429,7 @@ bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNum
 
     query.bindValue(":tail_number", tailNumber);
     query.bindValue(":id", QVariant::fromValue(id));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteAircraftDao::updateTailNumber: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));

@@ -57,9 +57,7 @@ public:
 
     FlightRadar24KmlParserPrivate() noexcept
         : flight(nullptr),
-          xml(nullptr),
-          speedRegExp(FlightRadar24KmlParserPrivate::SpeedPattern),
-          headingRegExp(FlightRadar24KmlParserPrivate::HeadingPattern)
+          xml(nullptr)
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
@@ -70,13 +68,16 @@ public:
     QString flightNumber;
     QDateTime firstDateTimeUtc;
 
-    QRegularExpression speedRegExp;
-    QRegularExpression headingRegExp;
+    static const QRegularExpression speedRegExp;
+    static const QRegularExpression headingRegExp;
 
 private:
     static inline const QString SpeedPattern {QStringLiteral("<b>Speed:<\\/b><\\/span> <span>(\\d+) kt<\\/span>")};
     static inline const QString HeadingPattern {QStringLiteral("<b>Heading:<\\/b><\\/span> <span>(\\d+)&deg;<\\/span>")};
 };
+
+const QRegularExpression FlightRadar24KmlParserPrivate::speedRegExp {FlightRadar24KmlParserPrivate::SpeedPattern};
+const QRegularExpression FlightRadar24KmlParserPrivate::headingRegExp {FlightRadar24KmlParserPrivate::HeadingPattern};
 
 // PUBLIC
 

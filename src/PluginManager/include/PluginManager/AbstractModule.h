@@ -45,6 +45,7 @@ public:
     explicit AbstractModule(QObject *parent = nullptr) noexcept;
     ~AbstractModule() noexcept override;
 
+    ModuleIntf::RecordIconId getRecordIconId() const noexcept override;
     void setRecording(bool enable) noexcept override;
     void setPaused(bool enable) noexcept override;
     void setPlaying(bool enable) noexcept override;

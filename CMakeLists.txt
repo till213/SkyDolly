@@ -109,13 +109,13 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${APP_NAME})
     qt_create_translation(QM_FILES
-        ${CMAKE_SOURCE_DIR}/src
+        src
         i18n/${APP_NAME}_de_DE.ts
     )
 else()
     add_executable(${APP_NAME})
     qt5_create_translation(QM_FILES
-        ${CMAKE_SOURCE_DIR}/src
+        src
         i18n/${APP_NAME}_de_DE.ts
     )
 endif()
@@ -129,10 +129,12 @@ set_target_properties(${APP_NAME}
 
 # Resource (data) files
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
+include(src/Persistence/cmake/Locations.cmake)
 if(${PLATFORM_IS_MACOS})
     target_link_libraries(${APP_NAME}
         PRIVATE
             Geoids
+            Locations
     )
     include(CreateAppIconOnMacOS)
     create_app_icon_on_macos(INPUT "res/SkyDolly.png" OUTPUT APP_ICON_PATH)
@@ -173,6 +175,7 @@ target_sources(${APP_NAME}
         doc/SkyDolly.simvars
         res/Info.plist.in
         res/SkyDolly.rc.in
+        ${QM_FILES}
 )
 
 target_include_directories(${APP_NAME}

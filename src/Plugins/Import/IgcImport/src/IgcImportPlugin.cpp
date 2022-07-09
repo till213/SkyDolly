@@ -121,7 +121,7 @@ QString IgcImportPlugin::getFileSuffix() const noexcept
 
 QString IgcImportPlugin::getFileFilter() const noexcept
 {
-    return tr("International gliding commission (*.%1)").arg(getFileSuffix());
+    return QObject::tr("International gliding commission (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept
@@ -297,10 +297,10 @@ void IgcImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
     const IgcParser::Header &header = d->igcParser.getHeader();
     Unit unit;
     const QString description = flight.getDescription() % "\n\n" %
-                                tr("Glider type:") % " " % header.gliderType % "\n" %
-                                tr("Pilot:") % " " % header.pilotName % "\n" %
-                                tr("Co-Pilot:") % " " % header.coPilotName % "\n" %
-                                tr("Flight date:") % " " % unit.formatDateTime(header.flightDateTimeUtc);
+                                QObject::tr("Glider type:") % " " % header.gliderType % "\n" %
+                                QObject::tr("Pilot:") % " " % header.pilotName % "\n" %
+                                QObject::tr("Co-Pilot:") % " " % header.coPilotName % "\n" %
+                                QObject::tr("Flight date:") % " " % unit.formatDateTime(header.flightDateTimeUtc);
     flight.setDescription(description);
 }
 

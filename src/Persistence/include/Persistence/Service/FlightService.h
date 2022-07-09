@@ -41,7 +41,7 @@ class PERSISTENCE_API FlightService
 {
 public:
     FlightService() noexcept;
-    virtual ~FlightService() noexcept;
+    ~FlightService() noexcept;
 
     bool store(Flight &flight) noexcept;
     bool restore(std::int64_t id, Flight &flight) noexcept;
