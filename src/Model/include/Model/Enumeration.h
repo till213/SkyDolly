@@ -71,6 +71,13 @@ public:
     const std::vector<Item> &items() const noexcept;
     Item itemByInternalId(QString internalId) const noexcept;
 
+    using Iterator = std::vector<Item>::iterator;
+
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    const Iterator begin() const noexcept;
+    const Iterator end() const noexcept;
+
 private:
     std::unique_ptr<EnumerationPrivate> d;
 };

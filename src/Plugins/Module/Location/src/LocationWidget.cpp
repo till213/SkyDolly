@@ -50,10 +50,12 @@
 #include <Persistence/Service/LocationService.h>
 #include <Persistence/Service/EnumerationService.h>
 #include <Widget/FocusPlainTextEdit.h>
+#include <Widget/EnumerationComboBox.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/AbstractModule.h>
 #include "LocationWidget.h"
+#include "EnumerationItemDelegate.h"
 #include "PositionWidgetItem.h"
 #include "ui_LocationWidget.h"
 
@@ -93,6 +95,8 @@ public:
     bool columnsAutoResized {false};
     int selectedRow {::InvalidRowIndex};
     std::int64_t selectedLocationId {Location::InvalidId};
+
+    std::unique_ptr<EnumerationItemDelegate> enumerationItemDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
 
     int idColumnIndex {InvalidColumnIndex};
     int titleColumnIndex {InvalidColumnIndex};
@@ -333,6 +337,7 @@ void LocationWidget::updateLocationTable() noexcept
             updateLocationRow(location, rowIndex);
             ++rowIndex;
         }
+        ui->locationTableWidget->setItemDelegateForColumn(d->categoryColumnIndex, d->enumerationItemDelegate.get());
 
         ui->locationTableWidget->setSortingEnabled(true);
         if (!d->columnsAutoResized) {
@@ -392,6 +397,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     ++columnIndex;
 
     // Category
+    std::unique_ptr<EnumerationComboBox> enumerationWidget = std::make_unique<EnumerationComboBox>(EnumerationService::LocationCategory);
     newItem = std::make_unique<QTableWidgetItem>();
     // TODO IMPLEMENT ME Custom Category dropdown widget
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));

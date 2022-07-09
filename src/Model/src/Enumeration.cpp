@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Enumeration Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -85,4 +85,24 @@ Enumeration::Item Enumeration::itemByInternalId(QString internalId) const noexce
         return d->items[it->second];
     }
     return Enumeration::Item();
+}
+
+Enumeration::Iterator Enumeration::begin() noexcept
+{
+    return d->items.begin();
+}
+
+Enumeration::Iterator Enumeration::end() noexcept
+{
+    return d->items.end();
+}
+
+const Enumeration::Iterator Enumeration::begin() const noexcept
+{
+    return d->items.begin();
+}
+
+const Enumeration::Iterator Enumeration::end() const noexcept
+{
+    return d->items.end();
 }
