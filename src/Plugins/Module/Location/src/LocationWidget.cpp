@@ -557,8 +557,6 @@ QStringList LocationWidget::parseCoordinates(QString value)
     static QRegularExpression numberRexExp("^([+-]?[0-9]*[.]?[0-9]+)[,]?[\\s]*([+-]?[0-9]*[.]?[0-9]+)$");
     static QRegularExpression dmsRegExp("^([\\d\\W]+[N|S|E|W])[,]?([\\d\\W]+[E|W|N|S])$");
     QStringList values;
-    // TODO IMPLEMENT ME Try to aslo support non-comma separated coordinates like:
-    // 46° 56' 52.519" N 7° 26' 40.589" E
 
     // GeographicLib DMS does not like whitespace in dms strings
     const QString trimmedValue = value.trimmed().replace(" ","");
