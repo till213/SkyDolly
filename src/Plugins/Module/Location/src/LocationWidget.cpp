@@ -37,6 +37,7 @@
 #include <QKeyEvent>
 #include <QKeySequence>
 #include <QClipboard>
+#include <QRegularExpression>
 #include <QApplication>
 #ifdef DEBUG
 #include <QDebug>
@@ -553,11 +554,29 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
 
 QStringList LocationWidget::parseCoordinates(QString value)
 {
+    static QRegularExpression numberRexExp("^([+-]?[0-9]*[.]?[0-9]+)[,]?[\\s]*([+-]?[0-9]*[.]?[0-9]+)$");
+    static QRegularExpression dmsRegExp("^([\\d\\W]+[N|S|E|W])[,]?([\\d\\W]+[E|W|N|S])$");
+    QStringList values;
     // TODO IMPLEMENT ME Try to aslo support non-comma separated coordinates like:
     // 46° 56' 52.519" N 7° 26' 40.589" E
 
-    // DMS does not like whitespace in between coordinates
-    QStringList values = value.replace(' ', "").split(',');
+    // GeographicLib DMS does not like whitespace in dms strings
+    const QString trimmedValue = value.trimmed().replace(" ","");
+    // First try to match comma-separated floating point numbers
+    // (e.g. 46.94697890467696, 7.444134280004356)
+    QRegularExpressionMatch match = numberRexExp.match(trimmedValue);
+    if (match.hasMatch() && match.lastCapturedIndex() == 2) {
+        values << match.captured(1).trimmed();
+        values << match.captured(2).trimmed();
+    } else {
+        // Try parsing latitude/longitude DMS values
+        // (e.g. 46° 56' 52.519" N 7° 26' 40.589" E or 7° 26' 40.589" E, 46° 56' 52.519" N)
+        match = dmsRegExp.match(trimmedValue);
+        if (match.hasMatch() && match.lastCapturedIndex() == 2) {
+            values << match.captured(1).trimmed();
+            values << match.captured(2).trimmed();
+        }
+    }
     return values;
 }
 
