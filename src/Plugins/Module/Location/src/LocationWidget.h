@@ -30,6 +30,7 @@
 #include <cstdint>
 
 #include <QWidget>
+#include <QStringList>
 
 class QKeyEvent;
 
@@ -73,6 +74,7 @@ private:
     void teleportToLocation(int row) noexcept;
     Location getLocationByRow(int row) const noexcept;
 
+    QStringList parseCoordinates(QString value);
     void tryPasteLocation() noexcept;
 
 private slots:

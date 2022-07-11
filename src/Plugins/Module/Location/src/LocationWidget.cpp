@@ -551,15 +551,21 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
     return location;
 }
 
+QStringList LocationWidget::parseCoordinates(QString value)
+{
+    // TODO IMPLEMENT ME Try to aslo support non-comma separated coordinates like:
+    // 46° 56' 52.519" N 7° 26' 40.589" E
+
+    // DMS does not like whitespace in between coordinates
+    QStringList values = value.replace(' ', "").split(',');
+    return values;
+}
+
 void LocationWidget::tryPasteLocation() noexcept
 {
-    QString text = QApplication::clipboard()->text();
-    if (!text.isEmpty()) {
-        // TODO IMPLEMENT ME Try to aslo support non-comma separated coordinates like:
-        // 46° 56' 52.519" N 7° 26' 40.589" E
-
-        // DMS does not like whitespace in between coordinates
-        QStringList values = text.replace(' ', "").split(',');
+    const QString text = QApplication::clipboard()->text();
+    QStringList values = parseCoordinates(text);
+    if (values.count() == 2) {
         try {
             double latitude {0.0};
             double longitude {0.0};
@@ -581,7 +587,7 @@ void LocationWidget::tryPasteLocation() noexcept
             addUserLocation(latitude, longitude);
         } catch (GeographicLib::GeographicErr err) {
 #ifdef DEBUG
-            qDebug() << "LocationWidget::tryPasteLocation: Not a coordinate" << err.what();
+        qDebug() << "LocationWidget::tryPasteLocation: Not a coordinate:" << err.what();
 #endif
         }
     }
