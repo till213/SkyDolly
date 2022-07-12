@@ -58,6 +58,7 @@
 #include "LocationWidget.h"
 #include "EnumerationItemDelegate.h"
 #include "PositionWidgetItem.h"
+#include "EnumerationWidgetItem.h"
 #include "ui_LocationWidget.h"
 
 namespace
@@ -389,7 +390,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     ++columnIndex;
 
     // Type
-    newItem = std::make_unique<QTableWidgetItem>();
+    newItem = std::make_unique<EnumerationWidgetItem>();
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.typeId));
     if (isSystemLocation) {
         newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
@@ -399,7 +400,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
 
     // Category
     std::unique_ptr<EnumerationComboBox> enumerationWidget = std::make_unique<EnumerationComboBox>(EnumerationService::LocationCategory);
-    newItem = std::make_unique<QTableWidgetItem>();
+    newItem = std::make_unique<EnumerationWidgetItem>();
     // TODO IMPLEMENT ME Custom Category dropdown widget
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
