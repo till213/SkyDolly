@@ -290,9 +290,18 @@ void LocationWidget::frenchConnection() noexcept
 
 void LocationWidget::updateInfoUi() noexcept
 {
+    ui->descriptionPlainTextEdit->blockSignals(true);
+    ui->pitchSpinBox->blockSignals(true);
+    ui->bankSpinBox->blockSignals(true);
+    ui->headingSpinBox->blockSignals(true);
+    ui->indicatedAirspeedSpinBox->blockSignals(true);
+
     const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
-    if (d->selectedRow != ::InvalidRowIndex) {
-        QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->descriptionColumnIndex);
+    bool readOnly {true};
+    if (hasSelection) {
+        QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->typeColumnIndex);
+        readOnly = item->data(Qt::EditRole).toLongLong() == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemInternalId).id();
+        item = ui->locationTableWidget->item(d->selectedRow, d->descriptionColumnIndex);
         ui->descriptionPlainTextEdit->setPlainText(item->text());
         item = ui->locationTableWidget->item(d->selectedRow, d->pitchColumnIndex);
         ui->pitchSpinBox->setValue(item->text().toDouble());
@@ -310,16 +319,17 @@ void LocationWidget::updateInfoUi() noexcept
         ui->indicatedAirspeedSpinBox->clear();
     }
 
-    bool systemRow {false};
-    if (hasSelection) {
-        Location location =  getLocationByRow(d->selectedRow);
-        systemRow = location.typeId == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemInternalId).id();
-    }
-    ui->descriptionPlainTextEdit->setReadOnly(systemRow);
-    ui->pitchSpinBox->setReadOnly(systemRow);
-    ui->bankSpinBox->setReadOnly(systemRow);
-    ui->headingSpinBox->setReadOnly(systemRow);
-    ui->indicatedAirspeedSpinBox->setReadOnly(systemRow);
+    ui->descriptionPlainTextEdit->setReadOnly(readOnly);
+    ui->pitchSpinBox->setReadOnly(readOnly);
+    ui->bankSpinBox->setReadOnly(readOnly);
+    ui->headingSpinBox->setReadOnly(readOnly);
+    ui->indicatedAirspeedSpinBox->setReadOnly(readOnly);
+
+    ui->descriptionPlainTextEdit->blockSignals(false);
+    ui->pitchSpinBox->blockSignals(false);
+    ui->bankSpinBox->blockSignals(false);
+    ui->headingSpinBox->blockSignals(false);
+    ui->indicatedAirspeedSpinBox->blockSignals(false);
 }
 
 void LocationWidget::updateLocationTable() noexcept
@@ -615,6 +625,7 @@ void LocationWidget::updateUi() noexcept
 {
     updateLocationTable();
     updateEditUi();
+    updateInfoUi();
 }
 
 void LocationWidget::updateEditUi() noexcept
