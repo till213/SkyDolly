@@ -220,6 +220,7 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setColumnHidden(d->bankColumnIndex, true);
     ui->locationTableWidget->setColumnHidden(d->headingColumnIndex, true);
     ui->locationTableWidget->setColumnHidden(d->indicatedAirspeedColumnIndex, true);
+    ui->locationTableWidget->setItemDelegateForColumn(d->categoryColumnIndex, d->enumerationItemDelegate.get());
 
     QByteArray tableState = Settings::getInstance().getLocationTableState();
     ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
@@ -339,7 +340,6 @@ void LocationWidget::updateLocationTable() noexcept
             updateLocationRow(location, rowIndex);
             ++rowIndex;
         }
-        ui->locationTableWidget->setItemDelegateForColumn(d->categoryColumnIndex, d->enumerationItemDelegate.get());
 
         ui->locationTableWidget->setSortingEnabled(true);
         if (!d->columnsAutoResized) {
