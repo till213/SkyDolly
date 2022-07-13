@@ -51,7 +51,6 @@
 #include <Persistence/Service/LocationService.h>
 #include <Persistence/Service/EnumerationService.h>
 #include <Widget/FocusPlainTextEdit.h>
-#include <Widget/EnumerationComboBox.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/AbstractModule.h>
@@ -399,7 +398,6 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     ++columnIndex;
 
     // Category
-    std::unique_ptr<EnumerationComboBox> enumerationWidget = std::make_unique<EnumerationComboBox>(EnumerationService::LocationCategory);
     newItem = std::make_unique<EnumerationWidgetItem>();
     // TODO IMPLEMENT ME Custom Category dropdown widget
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
