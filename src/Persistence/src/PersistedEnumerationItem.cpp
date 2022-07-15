@@ -37,11 +37,11 @@
 
 struct PersistedEnumerationItemPrivate
 {
-    PersistedEnumerationItemPrivate(QString enumerationName, QString internalId)
+    PersistedEnumerationItemPrivate(QString enumerationName, QString symbolicId)
         : enumeration(enumerationName)
     {
         if (enumerationService.getEnumerationByName(enumeration)) {
-            id = enumeration.itemByInternalId(internalId).id;
+            id = enumeration.getItemBySymbolicId(symbolicId).id;
         }
     }
 
@@ -52,8 +52,8 @@ struct PersistedEnumerationItemPrivate
 
 // PUBLIC
 
-PersistedEnumerationItem::PersistedEnumerationItem(QString enumerationName, QString internalId) noexcept
-    : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, internalId))
+PersistedEnumerationItem::PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept
+    : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, symbolicId))
 {
 #ifdef DEBUG
     qDebug() << "PersistedEnumerationItem::PersistedEnumerationItem: CREATED, name:" << enumerationName << "ID:" << d->id;

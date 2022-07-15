@@ -38,7 +38,7 @@ class QKeyEvent;
 #include <PluginManager/AbstractModule.h>
 
 #include <Model/Location.h>
-class LocationWidgetPrivate;
+struct LocationWidgetPrivate;
 
 namespace Ui {
     class LocationWidget;

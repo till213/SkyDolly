@@ -223,13 +223,13 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
     Enumeration locationType(EnumerationService::LocationType);
     ok = d->enumerationService.getEnumerationByName(locationType);
     if (ok) {
-        location.typeId = locationType.itemByInternalId(EnumerationService::LocationTypeSystemInternalId).id;
+        location.typeId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id;
     }
     Enumeration locationCategory(EnumerationService::LocationCategory);
     ok = d->enumerationService.getEnumerationByName(locationCategory);
     if (ok) {
-        const QString categoryInternalId = locationMatch.captured(::CategoryIndex);
-        location.categoryId = locationCategory.itemByInternalId(categoryInternalId).id;
+        const QString categorySymbolicId = locationMatch.captured(::CategoryIndex);
+        location.categoryId = locationCategory.getItemBySymbolicId(categorySymbolicId).id;
     }
     if (ok) {
         location.identifier = locationMatch.captured(::IdentifierIndex);

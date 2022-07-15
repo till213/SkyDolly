@@ -1,14 +1,14 @@
 @migr(id = "c5d3e046-9efb-4f65-ab77-2981c06ef3f8", descn = "Create location type enumeration table", step_cnt = 2)
 create table enum_location_type(
     id integer primary key,
-    intl_id text not null,
+    sym_id text not null,
     name text,
     desc text
 );
-create unique index enum_location_type_idx1 on enum_location_type(intl_id);
+create unique index enum_location_type_idx1 on enum_location_type(sym_id);
 
 @migr(id = "c5d3e046-9efb-4f65-ab77-2981c06ef3f8", descn = "Insert location types", step = 2)
-insert into enum_location_type(intl_id, name, desc)
+insert into enum_location_type(sym_id, name, desc)
 values
   ('S', 'System', 'Default locations provided by the system (Sky Dolly)'),
   ('I', 'Imported', 'Locations imported by a location import plugin'),
@@ -17,14 +17,14 @@ values
 @migr(id = "ccf35c93-6d55-49c6-83ff-c35bb8468044", descn = "Create location category enumeration table", step_cnt = 2)
 create table enum_location_category(
     id integer primary key,
-    intl_id text not null,
+    sym_id text not null,
     name text,
     desc text
 );
-create unique index enum_location_category_idx1 on enum_location_category(intl_id);
+create unique index enum_location_category_idx1 on enum_location_category(sym_id);
 
 @migr(id = "ccf35c93-6d55-49c6-83ff-c35bb8468044", descn = "Insert location categories", step = 2)
-insert into enum_location_category(intl_id, name, desc)
+insert into enum_location_category(sym_id, name, desc)
 values
   ('00', 'No category', 'Uncategorised'),
   ('AP', 'Airport', 'Airport'),
@@ -62,4 +62,6 @@ create table location(
 );
 create index location_idx1 on location(title collate nocase);
 create index location_idx2 on location(description collate nocase);
-create index location_idx3 on location(identifier collate nocase);
+create index location_idx3 on location(category_id);
+create index location_idx4 on location(identifier collate nocase);
+create index location_idx5 on location(on_ground);

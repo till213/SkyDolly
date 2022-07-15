@@ -56,15 +56,15 @@ public:
     static inline const QString LocationType {QStringLiteral("LocationType")};
     static inline const QString LocationCategory {QStringLiteral("LocationCategory")};
 
-    // Well-known internal IDs
+    // Well-known symbolic IDs
 
     // Location type
-    static inline const QString LocationTypeSystemInternalId {QStringLiteral("S")};
-    static inline const QString LocationTypeImportInternalId {QStringLiteral("I")};
-    static inline const QString LocationTypeUserInternalId {QStringLiteral("U")};
+    static inline const QString LocationTypeSystemSymbolicId {QStringLiteral("S")};
+    static inline const QString LocationTypeImportSymbolicId {QStringLiteral("I")};
+    static inline const QString LocationTypeUserSymbolicId {QStringLiteral("U")};
 
     // Location category
-    static inline const QString LocationCategoryNoneInternalId {QStringLiteral("00")};
+    static inline const QString LocationCategoryNoneSymbolicId {QStringLiteral("00")};
 
 private:
     std::unique_ptr<EnumerationServicePrivate> d;

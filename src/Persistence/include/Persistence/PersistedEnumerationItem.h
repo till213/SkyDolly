@@ -38,7 +38,7 @@ struct PersistedEnumerationItemPrivate;
 class PERSISTENCE_API PersistedEnumerationItem
 {
 public:
-    PersistedEnumerationItem(QString enumerationName, QString internalId) noexcept;
+    PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept;
     ~PersistedEnumerationItem() noexcept;
 
     std::int64_t id() const noexcept;

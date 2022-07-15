@@ -27,12 +27,14 @@
 #include <QTableWidgetItem>
 #include <QStringBuilder>
 
+#include <Model/Enumeration.h>
 #include "EnumerationWidgetItem.h"
 
 // PUBLIC
 
-EnumerationWidgetItem::EnumerationWidgetItem()
-    : QTableWidgetItem(QTableWidgetItem::UserType)
+EnumerationWidgetItem::EnumerationWidgetItem(const Enumeration &enumeration)
+    : QTableWidgetItem(QTableWidgetItem::UserType),
+      m_enumeration(enumeration)
 {}
 
 QVariant EnumerationWidgetItem::data(int role) const
@@ -64,7 +66,7 @@ void EnumerationWidgetItem::setData(int role, const QVariant &value)
     case Qt::EditRole:
     {
         m_id = value.toLongLong();
-        m_symbolicId = "TODO Symbolic ID";
+        m_symbolicId = m_enumeration.getSymbolicIdById(m_id);
         break;
     }
     default:

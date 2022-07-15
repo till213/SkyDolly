@@ -30,10 +30,12 @@
 #include <QTableWidgetItem>
 #include <QVariant>
 
+class Enumeration;
+
 class EnumerationWidgetItem : public QTableWidgetItem
 {
 public:
-    EnumerationWidgetItem();
+    EnumerationWidgetItem(const Enumeration &enumeration);
 
     QVariant data(int role) const override;
     void setData(int role, const QVariant &value) override;
@@ -41,6 +43,7 @@ public:
 private:
     std::int64_t m_id;
     QString m_symbolicId;
+    const Enumeration &m_enumeration;
 };
 
 #endif // ENUMERATIONWIDGETITEM_H

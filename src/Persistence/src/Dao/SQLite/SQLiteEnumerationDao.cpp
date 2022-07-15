@@ -60,13 +60,13 @@ bool SQLiteEnumerationDao::get(Enumeration &enumeration) const noexcept
     if (ok) {
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
-        const int internalIdIdx = record.indexOf("intl_id");
+        const int symbolicIdIdx = record.indexOf("intl_id");
         const int nameIdx = record.indexOf("name");
         while (query.next()) {
             const std::int64_t id = query.value(idIdx).toLongLong();
-            const QString internalId = query.value(internalIdIdx).toString();
+            const QString symbolicId = query.value(symbolicIdIdx).toString();
             const QString name = query.value(nameIdx).toString();
-            enumeration.addItem({id, internalId, name});
+            enumeration.addItem({id, symbolicId, name});
         }
 #ifdef DEBUG
     } else {

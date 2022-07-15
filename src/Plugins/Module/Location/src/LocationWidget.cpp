@@ -86,18 +86,26 @@ namespace
     constexpr double MaximumHeading {360.0};
 }
 
-class LocationWidgetPrivate
+struct LocationWidgetPrivate
 {
-public:
     LocationWidgetPrivate() noexcept
-    {}
+    {
+        if (typeEnumeration.count() == 0) {
+            enumerationService->getEnumerationByName(typeEnumeration);
+        }
+        if (categoryEnumeration.count() == 0) {
+            enumerationService->getEnumerationByName(categoryEnumeration);
+        }
+    }
 
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
+    std::unique_ptr<EnumerationService> enumerationService {std::make_unique<EnumerationService>()};
+    std::unique_ptr<EnumerationItemDelegate> enumerationItemDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
+
     bool columnsAutoResized {false};
     int selectedRow {::InvalidRowIndex};
     std::int64_t selectedLocationId {Location::InvalidId};
 
-    std::unique_ptr<EnumerationItemDelegate> enumerationItemDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
 
     int idColumnIndex {InvalidColumnIndex};
     int titleColumnIndex {InvalidColumnIndex};
@@ -111,7 +119,10 @@ public:
     int bankColumnIndex {InvalidColumnIndex};
     int headingColumnIndex {InvalidColumnIndex};
     int indicatedAirspeedColumnIndex {InvalidColumnIndex};
-    int onGroundColumnIndex {InvalidColumnIndex};    
+    int onGroundColumnIndex {InvalidColumnIndex};
+
+    static inline Enumeration typeEnumeration {EnumerationService::LocationType};
+    static inline Enumeration categoryEnumeration {EnumerationService::LocationCategory};
 };
 
 // PUBLIC
@@ -142,8 +153,8 @@ LocationWidget::~LocationWidget() noexcept
 void LocationWidget::addUserLocation(double latitude, double longitude)
 {
     Location location;
-    location.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserInternalId).id();
-    location.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneInternalId).id();
+    location.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymbolicId).id();
+    location.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymbolicId).id();
     location.latitude = latitude;
     location.longitude = longitude;
     location.altitude = ui->defaultAltitudeSpinBox->value();
@@ -300,7 +311,7 @@ void LocationWidget::updateInfoUi() noexcept
     bool readOnly {true};
     if (hasSelection) {
         QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->typeColumnIndex);
-        readOnly = item->data(Qt::EditRole).toLongLong() == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemInternalId).id();
+        readOnly = item->data(Qt::EditRole).toLongLong() == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id();
         item = ui->locationTableWidget->item(d->selectedRow, d->descriptionColumnIndex);
         ui->descriptionPlainTextEdit->setPlainText(item->text());
         item = ui->locationTableWidget->item(d->selectedRow, d->pitchColumnIndex);
@@ -365,7 +376,7 @@ void LocationWidget::updateLocationTable() noexcept
 
 inline void LocationWidget::updateLocationRow(const Location &location, int rowIndex) noexcept
 {
-    const bool isSystemLocation = location.typeId == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemInternalId).id();
+    const bool isSystemLocation = location.typeId == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id();
     int columnIndex {0};
 
     // ID
@@ -399,7 +410,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     ++columnIndex;
 
     // Type
-    newItem = std::make_unique<EnumerationWidgetItem>();
+    newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::typeEnumeration);
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.typeId));
     if (isSystemLocation) {
         newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
@@ -408,7 +419,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     ++columnIndex;
 
     // Category
-    newItem = std::make_unique<EnumerationWidgetItem>();
+    newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::categoryEnumeration);
     // TODO IMPLEMENT ME Custom Category dropdown widget
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -637,7 +648,7 @@ void LocationWidget::updateEditUi() noexcept
     bool editableRow {false};
     if (hasSelection) {
         Location location =  getLocationByRow(d->selectedRow);
-        editableRow = location.typeId != PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemInternalId).id();
+        editableRow = location.typeId != PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id();
     }
     ui->deletePushButton->setEnabled(editableRow);
 }
