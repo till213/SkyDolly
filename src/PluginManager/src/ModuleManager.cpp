@@ -268,6 +268,7 @@ void ModuleManager::initModule(const QString fileName, std::unordered_map<QUuid,
         } else {
             vertex = it->second;
         }
+        vertex->edges.reserve(afterArray.count());
         for (const auto &json : afterArray) {
             const QString uuidString = json.toString();
             const QUuid uuid {uuidString};

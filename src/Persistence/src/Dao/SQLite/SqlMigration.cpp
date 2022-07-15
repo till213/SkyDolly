@@ -49,15 +49,17 @@ namespace
     constexpr int TitleIndex = 1;
     constexpr int DescriptionIndex = 2;
     constexpr int CategoryIndex = 3;
-    constexpr int IdentifierIndex = 4;
-    constexpr int LatitudeIndex = 5;
-    constexpr int LongitudeIndex = 6;
-    constexpr int AltitudeIndex = 7;
-    constexpr int PitchIndex = 8;
-    constexpr int BankIndex = 9;
-    constexpr int HeadingIndex = 10;
-    constexpr int IndicatedAirspeedIndex = 11;
-    constexpr int OnGroundIndex = 12;
+    constexpr int CountryIndex = 4;
+    constexpr int IdentifierIndex = 5;
+    constexpr int LatitudeIndex = 6;
+    constexpr int LongitudeIndex = 7;
+    constexpr int AltitudeIndex = 8;
+    constexpr int PitchIndex = 9;
+    constexpr int BankIndex = 10;
+    constexpr int HeadingIndex = 11;
+    constexpr int IndicatedAirspeedIndex = 12;
+    constexpr int OnGroundIndex = 13;
+    constexpr int AttributesIndex = 14;
 }
 
 class SqlMigrationPrivate
@@ -159,7 +161,8 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
     static const QRegularExpression csvRegExp {
         "[\"]?([^\"]+)[\"]?,"      // Title
         "[\"]?([^\"]*)[\"]?,"      // Description (optional)
-        "[\"]?([^\"]*)[\"]?,"      // Category (INTL_ID) (optional)
+        "[\"]?([^\"]*)[\"]?,"      // Category (symbolic ID) (optional)
+        "[\"]?([^\"]*)[\"]?,"      // Country (symbolic ID) (optional)
         "[\"]?([^\"]*)[\"]?,"      // Identifier (optional)
         "([+-]?[0-9]*[.]?[0-9]+)," // Latitude
         "([+-]?[0-9]*[.]?[0-9]+)," // Longitude
@@ -168,16 +171,16 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
         "([+-]?[0-9]*[.]?[0-9]+)," // Bank (optional)
         "([+-]?[0-9]*[.]?[0-9]+)," // Heading (optional)
         "([+-]?[\\d]*),"           // Indicated airspeed (optional)
-        "[\"]?(false|true)*[\"]?$"  // On Ground (optional)
-
+        "[\"]?(false|true)*[\"]?," // On Ground (optional)
+        "([+-]?[\\d]*)$"           // Attributes (optional)
     };
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
-        migrationFile.setTextModeEnabled(true);
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
         if (ok) {
+            migrationFile.setTextModeEnabled(true);
             QTextStream textStream(&migrationFile);
             textStream.setCodec(QTextCodec::codecForName("UTF-8"));
             QString csv = textStream.readLine();
@@ -231,6 +234,12 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
         const QString categorySymbolicId = locationMatch.captured(::CategoryIndex);
         location.categoryId = locationCategory.getItemBySymbolicId(categorySymbolicId).id;
     }
+    Enumeration country(EnumerationService::Country);
+    ok = d->enumerationService.getEnumerationByName(country);
+    if (ok) {
+        const QString countrySymbolicId = locationMatch.captured(::CountryIndex);
+        location.countryId = country.getItemBySymbolicId(countrySymbolicId).id;
+    }
     if (ok) {
         location.identifier = locationMatch.captured(::IdentifierIndex);
     }
@@ -254,6 +263,9 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
     }
     if (ok) {
         location.indicatedAirspeed = locationMatch.captured(::IndicatedAirspeedIndex).toInt(&ok);
+    }
+    if (ok) {
+        location.attributes = locationMatch.captured(::AttributesIndex).toLongLong(&ok);
     }
     if (ok) {
         location.onGround = locationMatch.captured(::OnGroundIndex).toLower() == "true" ? true : false;

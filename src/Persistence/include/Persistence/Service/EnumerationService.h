@@ -55,6 +55,7 @@ public:
     static inline const QString BackupPeriod {QStringLiteral("BackupPeriod")};
     static inline const QString LocationType {QStringLiteral("LocationType")};
     static inline const QString LocationCategory {QStringLiteral("LocationCategory")};
+    static inline const QString Country {QStringLiteral("Country")};
 
     // Well-known symbolic IDs
 
