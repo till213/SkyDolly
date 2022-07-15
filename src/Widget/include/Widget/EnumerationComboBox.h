@@ -26,6 +26,7 @@
 #define ENUMERATIONCOMBOBOX_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QComboBox>
 
@@ -35,9 +36,13 @@ struct EnumerationComboBoxPrivate;
 
 class WIDGET_API EnumerationComboBox : public QComboBox
 {
+    Q_OBJECT
 public:
     explicit EnumerationComboBox(QString enumerationName, QWidget *parent = nullptr) noexcept;
     ~EnumerationComboBox() noexcept override;
+
+    std::int64_t getCurrentId() const noexcept;
+    void setCurrentId(std::int64_t id) noexcept;
 
 private:
     std::unique_ptr<EnumerationComboBoxPrivate> d;

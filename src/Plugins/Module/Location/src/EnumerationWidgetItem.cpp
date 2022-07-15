@@ -42,7 +42,7 @@ QVariant EnumerationWidgetItem::data(int role) const
     switch (role)
     {
     case Qt::DisplayRole:
-        return m_symbolicId;
+        return m_name;
         break;
     case Qt::EditRole:
     {
@@ -61,12 +61,12 @@ void EnumerationWidgetItem::setData(int role, const QVariant &value)
     switch (role)
     {
     case Qt::DisplayRole:
-        m_symbolicId = value.toString();
+        m_name = m_enumeration.getItemById(value.toLongLong()).name;
         break;
     case Qt::EditRole:
     {
         m_id = value.toLongLong();
-        m_symbolicId = m_enumeration.getSymbolicIdById(m_id);
+        m_name = m_enumeration.getItemById(m_id).name;
         break;
     }
     default:

@@ -62,10 +62,26 @@ EnumerationComboBox::~ EnumerationComboBox() noexcept
 #endif
 }
 
+std::int64_t EnumerationComboBox::getCurrentId() const noexcept
+{
+    return currentData().toLongLong();
+}
+
+void EnumerationComboBox::setCurrentId(std::int64_t id) noexcept
+{
+    for (int index = 0; index < count(); ++index) {
+        if (itemData(index).toLongLong() == id) {
+            setCurrentIndex(index);
+            break;
+        }
+    }
+}
+
 // PRIVATE
 
 void EnumerationComboBox::initUi() noexcept
 {
+    setAutoFillBackground(true);
     if (d->enumerationService.getEnumerationByName(d->enumeration))  {
         for (const auto &item : d->enumeration) {
             this->addItem(item.name, item.id);

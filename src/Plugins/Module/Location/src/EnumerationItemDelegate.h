@@ -28,6 +28,9 @@
 #include <memory>
 
 #include <QStyledItemDelegate>
+#include <QModelIndex>
+
+class QWidget;
 
 struct EnumerationItemDelegatePrivate;
 
@@ -35,12 +38,17 @@ class EnumerationItemDelegate : public QStyledItemDelegate
 {
 public:
     EnumerationItemDelegate(QString enumerationName) noexcept;
-    ~EnumerationItemDelegate() noexcept;
+    ~EnumerationItemDelegate() noexcept override;
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const noexcept override;
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const noexcept override;
 
 private:
     std::unique_ptr<EnumerationItemDelegatePrivate> d;
+
+private slots:
+    void commitAndCloseEditor() noexcept;
 };
 
 #endif // ENUMERATIONITEMDELETAGE_H

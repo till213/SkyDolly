@@ -42,7 +42,7 @@ public:
 
 private:
     std::int64_t m_id;
-    QString m_symbolicId;
+    QString m_name;
     const Enumeration &m_enumeration;
 };
 
