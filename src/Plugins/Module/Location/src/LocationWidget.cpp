@@ -103,7 +103,8 @@ struct LocationWidgetPrivate
 
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
     std::unique_ptr<EnumerationService> enumerationService {std::make_unique<EnumerationService>()};
-    std::unique_ptr<EnumerationItemDelegate> enumerationItemDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
+    std::unique_ptr<EnumerationItemDelegate> locationCategoryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
+    std::unique_ptr<EnumerationItemDelegate> countryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::Country)};
 
     bool columnsAutoResized {false};
     int selectedRow {::InvalidRowIndex};
@@ -172,6 +173,8 @@ void LocationWidget::addUserLocation(double latitude, double longitude)
         const int rowIndex = ui->locationTableWidget->rowCount();
         ui->locationTableWidget->insertRow(rowIndex);
         updateLocationRow(location, rowIndex);
+        // Automatically select newly inserted item
+        ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
         ui->locationTableWidget->setSortingEnabled(true);
         ui->locationTableWidget->blockSignals(false);
     }
@@ -244,7 +247,8 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setColumnHidden(d->headingColumnIndex, true);
     ui->locationTableWidget->setColumnHidden(d->indicatedAirspeedColumnIndex, true);
     ui->locationTableWidget->setColumnHidden(d->attributesColumnIndex, true);
-    ui->locationTableWidget->setItemDelegateForColumn(d->categoryColumnIndex, d->enumerationItemDelegate.get());
+    ui->locationTableWidget->setItemDelegateForColumn(d->categoryColumnIndex, d->locationCategoryDelegate.get());
+    ui->locationTableWidget->setItemDelegateForColumn(d->countryColumnIndex, d->countryDelegate.get());
 
     QByteArray tableState = Settings::getInstance().getLocationTableState();
     ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
@@ -575,6 +579,9 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
     item = ui->locationTableWidget->item(row, d->categoryColumnIndex);
     location.categoryId = item->data(Qt::EditRole).toLongLong();
 
+    item = ui->locationTableWidget->item(row, d->countryColumnIndex);
+    location.countryId = item->data(Qt::EditRole).toLongLong();
+
     item = ui->locationTableWidget->item(row, d->identifierColumnIndex);
     location.identifier = item->data(Qt::EditRole).toString();
 
@@ -600,6 +607,9 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
 
     item = ui->locationTableWidget->item(row, d->onGroundColumnIndex);
     location.onGround = item->checkState() == Qt::CheckState::Checked;
+
+    item = ui->locationTableWidget->item(row, d->attributesColumnIndex);
+    location.attributes = item->data(Qt::EditRole).toLongLong();
 
     return location;
 }

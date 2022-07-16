@@ -130,7 +130,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
         "       bank = :bank,"
         "       heading = :heading,"
         "       indicated_airspeed = :indicated_airspeed,"
-        "       on_ground = :on_ground "
+        "       on_ground = :on_ground,"
         "       attributes = :attributes "
         "where id = :id;"
     );
