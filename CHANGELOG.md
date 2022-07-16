@@ -15,6 +15,7 @@
 
 ### Bug Fixes
 - The window is properly resized when in minimal mode and the default non-essential button visibility is changed in the settings
+- Selection in the logbook and formation modules is now properly taking reordering of the table into account
 
 ### Under The Hood
 - The modules (Logbook, Formation, Location) are now implemented as plugins

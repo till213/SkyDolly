@@ -58,8 +58,6 @@ public:
     explicit LogbookWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
     ~LogbookWidget() noexcept override;
 
-    std::int64_t getSelectedFlightId() const noexcept;
-
 private:
     Q_DISABLE_COPY(LogbookWidget)
     std::unique_ptr<Ui::LogbookWidget> ui;
@@ -76,6 +74,9 @@ private:
     inline void insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth, int nofFlightsPerMonth) noexcept;
     inline void insertDay(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByDayOfMonth) noexcept;
     inline void updateSelectionDateRange(QTreeWidgetItem *item) const noexcept;
+
+    int getSelectedRow() const noexcept;
+    std::int64_t getSelectedFlightId() const noexcept;
 
 private slots:
     void onRecordingStarted() noexcept;

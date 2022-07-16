@@ -119,14 +119,6 @@ struct LogbookWidgetPrivate
     std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>()};
     FlightService &flightService;
 
-    // Flight table columns
-    int flightIdColumnIndex {::InvalidColumnIndex};
-    int userAircraftColumnIndex {::InvalidColumnIndex};
-    int titleColumnIndex {::InvalidColumnIndex};
-    int selectedRow {::InvalidRowIndex};
-
-
-    std::int64_t selectedFlightId {Flight::InvalidId};
     std::int64_t flightInMemoryId {Flight::InvalidId};
     Unit unit;
     FlightSelector flightSelector;
@@ -134,6 +126,11 @@ struct LogbookWidgetPrivate
     // Columns are only auto-resized the first time the table is loaded
     // After that manual column resizes are kept
     bool columnsAutoResized {false};
+
+    // Flight table columns
+    static inline int flightIdColumnIndex {::InvalidColumnIndex};
+    static inline int userAircraftColumnIndex {::InvalidColumnIndex};
+    static inline int titleColumnIndex {::InvalidColumnIndex};
 };
 
 // PUBLIC
@@ -162,11 +159,6 @@ LogbookWidget::~LogbookWidget() noexcept
 #endif
 }
 
-std::int64_t LogbookWidget::getSelectedFlightId() const noexcept
-{
-    return d->selectedFlightId;
-}
-
 // PRIVATE
 
 void LogbookWidget::initUi() noexcept
@@ -183,7 +175,7 @@ void LogbookWidget::initUi() noexcept
     ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 
     const QStringList headers {tr("Flight"), tr("Title"), tr("User Aircraft"), tr("Number of Aircraft"), tr("Date"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight")};
-    d->flightIdColumnIndex = headers.indexOf(tr("Flight"));
+    LogbookWidgetPrivate::flightIdColumnIndex = headers.indexOf(tr("Flight"));
     d->userAircraftColumnIndex = headers.indexOf(tr("User Aircraft"));
     d->titleColumnIndex = headers.indexOf(tr("Title"));
 
@@ -194,7 +186,7 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->verticalHeader()->hide();
     ui->logTableWidget->setMinimumWidth(::MinimumTableWidth);
     ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
-    ui->logTableWidget->sortByColumn(d->flightIdColumnIndex, Qt::SortOrder::DescendingOrder);
+    ui->logTableWidget->sortByColumn(LogbookWidgetPrivate::flightIdColumnIndex, Qt::SortOrder::DescendingOrder);
     ui->logTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->logTableWidget->setAlternatingRowColors(true);
 
@@ -242,7 +234,6 @@ void LogbookWidget::initFilterUi() noexcept
 
 void LogbookWidget::updateFlightTable() noexcept
 {
-    d->selectedFlightId = Flight::InvalidId;
     if (LogbookManager::getInstance().isConnected()) {
 
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -271,8 +262,8 @@ void LogbookWidget::updateFlightTable() noexcept
         if (!d->columnsAutoResized) {
             ui->logTableWidget->resizeColumnsToContents();
             // Reserve some space for the aircraft icon
-            const int idColumnWidth = static_cast<int>(std::round(1.25 * ui->logTableWidget->columnWidth(d->flightIdColumnIndex)));
-            ui->logTableWidget->setColumnWidth(d->flightIdColumnIndex, idColumnWidth);
+            const int idColumnWidth = static_cast<int>(std::round(1.25 * ui->logTableWidget->columnWidth(LogbookWidgetPrivate::flightIdColumnIndex)));
+            ui->logTableWidget->setColumnWidth(LogbookWidgetPrivate::flightIdColumnIndex, idColumnWidth);
             d->columnsAutoResized = true;
         }
         ui->logTableWidget->blockSignals(false);
@@ -423,8 +414,9 @@ void LogbookWidget::updateEditUi() noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool active = skyConnect && skyConnect->get().isActive();
-    ui->loadPushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
-    ui->deletePushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
+    const std::int64_t selectedFlightId = getSelectedFlightId();
+    ui->loadPushButton->setEnabled(!active && selectedFlightId != Flight::InvalidId);
+    ui->deletePushButton->setEnabled(!active && selectedFlightId != Flight::InvalidId);
 }
 
 void LogbookWidget::frenchConnection() noexcept
@@ -573,6 +565,28 @@ inline void LogbookWidget::updateSelectionDateRange(QTreeWidgetItem *item) const
     }
 }
 
+int LogbookWidget::getSelectedRow() const noexcept
+{
+    int selectedRow {::InvalidRowIndex};
+    const QItemSelectionModel *select = ui->logTableWidget->selectionModel();
+    const QModelIndexList modelIndices = select->selectedRows(LogbookWidgetPrivate::flightIdColumnIndex);
+    if (modelIndices.count() > 0) {
+        QModelIndex modelIndex = modelIndices.at(0);
+        selectedRow = modelIndex.row();
+    }
+    return selectedRow;
+}
+
+std::int64_t LogbookWidget::getSelectedFlightId() const noexcept
+{
+    std::int64_t selectedFlightId {::Flight::InvalidId};
+    const int selectedRow = getSelectedRow();
+    if (selectedRow != ::InvalidRowIndex) {
+        selectedFlightId = ui->logTableWidget->item(selectedRow, LogbookWidgetPrivate::flightIdColumnIndex)->data(Qt::EditRole).toLongLong();
+    }
+    return selectedFlightId;
+}
+
 // PRIVATE SLOTS
 
 void LogbookWidget::onRecordingStarted() noexcept
@@ -604,7 +618,7 @@ void LogbookWidget::updateAircraftIcons() noexcept
     const std::int64_t flightInMemoryId = flight.getId();
 
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
-        QTableWidgetItem *item = ui->logTableWidget->item(row, d->flightIdColumnIndex);
+        QTableWidgetItem *item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightIdColumnIndex);
         if (item->data(Qt::DisplayRole).toLongLong() == flightInMemoryId) {
             item->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
         } else if (item->data(Qt::UserRole).toBool() == ::RecordingInProgress) {
@@ -632,7 +646,7 @@ void LogbookWidget::onAircraftInfoChanged(Aircraft &aircraft)
 void LogbookWidget::loadFlight() noexcept
 {
     if (!SkyConnectManager::getInstance().isInRecordingState()) {
-        std::int64_t selectedFlightId = d->selectedFlightId;
+        const std::int64_t selectedFlightId = getSelectedFlightId();
         if (selectedFlightId != Flight::InvalidId) {
             const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
             if (!ok) {
@@ -644,7 +658,8 @@ void LogbookWidget::loadFlight() noexcept
 
 void LogbookWidget::deleteFlight() noexcept
 {
-    if (d->selectedFlightId != Flight::InvalidId) {
+    const std::int64_t selectedFlightId = getSelectedFlightId();
+    if (selectedFlightId != Flight::InvalidId) {
 
         Settings &settings = Settings::getInstance();
         bool doDelete {true};
@@ -653,7 +668,7 @@ void LogbookWidget::deleteFlight() noexcept
             QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
             messageBox->setWindowTitle(tr("Delete Flight"));
-            messageBox->setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedFlightId));
+            messageBox->setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(selectedFlightId));
             messageBox->setInformativeText(tr("Do you want to delete the flight?"));
             QPushButton *deleteButton = messageBox->addButton(tr("&Delete"), QMessageBox::AcceptRole);
             QPushButton *keepButton = messageBox->addButton(tr("&Keep"), QMessageBox::RejectRole);
@@ -667,10 +682,10 @@ void LogbookWidget::deleteFlight() noexcept
         }
 
         if (doDelete) {
-            d->flightService.deleteById(d->selectedFlightId);
-            int lastSelectedRow = d->selectedRow;
+            const int lastSelectedRow = getSelectedRow();
+            d->flightService.deleteById(selectedFlightId);
             updateUi();
-            int selectedRow = std::min(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
+            const int selectedRow = std::min(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
             ui->logTableWidget->selectRow(selectedRow);
             ui->logTableWidget->setFocus(Qt::NoFocusReason);
         }
@@ -690,16 +705,6 @@ void LogbookWidget::searchText() noexcept
 
 void LogbookWidget::onSelectionChanged() noexcept
 {
-    QItemSelectionModel *select = ui->logTableWidget->selectionModel();
-    QModelIndexList modelIndices = select->selectedRows(d->flightIdColumnIndex);
-    if (modelIndices.count() > 0) {
-        QModelIndex modelIndex = modelIndices.at(0);
-        d->selectedRow = modelIndex.row();
-        d->selectedFlightId = ui->logTableWidget->model()->data(modelIndex).toLongLong();
-    } else {
-        d->selectedRow = ::InvalidRowIndex;
-        d->selectedFlightId = Flight::InvalidId;
-    }
     updateEditUi();
 }
 
@@ -720,11 +725,12 @@ void LogbookWidget::onCellChanged(int row, int column) noexcept
         const QString title = item->data(Qt::EditRole).toString();
 
         Flight &flight = Logbook::getInstance().getCurrentFlight();
-        if (flight.getId() == d->selectedFlightId) {
+        const std::int64_t selectedFlightId = getSelectedFlightId();
+        if (flight.getId() == selectedFlightId) {
             // Also update the current flight, if in memory
             d->flightService.updateTitle(flight, title);
         } else {
-            d->flightService.updateTitle(d->selectedFlightId, title);
+            d->flightService.updateTitle(selectedFlightId, title);
         }
     }
 }
