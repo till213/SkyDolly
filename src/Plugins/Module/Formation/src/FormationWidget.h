@@ -112,7 +112,7 @@ private slots:
     void onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode);
 
     void changeTimeOffset(const std::int64_t timeOffset) noexcept;
-    void onTimeOffsetEditingFinished() noexcept;
+    void onTimeOffsetValueChanged() noexcept;
     void resetAllTimeOffsets() noexcept;
 };
 

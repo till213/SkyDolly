@@ -36,7 +36,7 @@
 #include <QButtonGroup>
 #include <QMessageBox>
 #include <QCheckBox>
-#include <QLineEdit>
+#include <QDoubleSpinBox>
 #include <QPushButton>
 #include <QComboBox>
 #ifdef DEBUG
@@ -86,7 +86,6 @@ namespace
     // Seconds
     constexpr double TimeOffsetMax = 24.0 * 60.0 * 60.0;
     constexpr double TimeOffsetMin = -TimeOffsetMax;
-    constexpr double TimeOffsetDecimalPlaces = 2;
 }
 
 struct FormationWidgetPrivate
@@ -119,7 +118,6 @@ struct FormationWidgetPrivate
     FlightService &flightService;
     AircraftService &aircraftService;
     QButtonGroup *positionButtonGroup;
-    QDoubleValidator *timeOffsetValidator {nullptr};
     Unit unit;
 
     static inline int sequenceNumberColumnIndex {::InvalidColumnIndex};
@@ -267,8 +265,7 @@ void FormationWidget::initUi() noexcept
 void FormationWidget::initTimeOffsetUi() noexcept
 {
     // Validation
-    d->timeOffsetValidator = new QDoubleValidator(ui->timeOffsetLineEdit);
-    d->timeOffsetValidator->setRange(::TimeOffsetMin, ::TimeOffsetMax, ::TimeOffsetDecimalPlaces);
+    ui->timeOffsetSpinBox->setRange(::TimeOffsetMin, ::TimeOffsetMax);
 }
 
 void FormationWidget::frenchConnection() noexcept
@@ -324,8 +321,8 @@ void FormationWidget::frenchConnection() noexcept
             this, [&] { changeTimeOffset(+ ::SmallTimeOffset);});
     connect(ui->fastForwardOffsetPushButton, &QPushButton::clicked,
             this, [&] { changeTimeOffset(+ ::LargeTimeOffset);});
-    connect(ui->timeOffsetLineEdit, &QLineEdit::editingFinished,
-            this, &FormationWidget::onTimeOffsetEditingFinished);
+    connect(ui->timeOffsetSpinBox, &QDoubleSpinBox::valueChanged,
+            this, &FormationWidget::onTimeOffsetValueChanged);
     connect(ui->resetAllTimeOffsetPushButton, &QPushButton::clicked,
             this, &FormationWidget::resetAllTimeOffsets);
 }
@@ -366,6 +363,7 @@ void FormationWidget::updateAircraftIcons() noexcept
     const bool recording = skyConnectManager.isInRecordingState();
     const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
 
+    ui->aircraftTableWidget->blockSignals(true);
     for (int row = 0; row < ui->aircraftTableWidget->rowCount(); ++row) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::sequenceNumberColumnIndex);
         // Index starts at 0
@@ -387,6 +385,7 @@ void FormationWidget::updateAircraftIcons() noexcept
             item->setIcon(QIcon());
         }
     }
+    ui->aircraftTableWidget->blockSignals(false);
 }
 
 void FormationWidget::updateRelativePositionUi() noexcept
@@ -446,20 +445,21 @@ void FormationWidget::updateTimeOffsetUi() noexcept
 
     ui->fastBackwardOffsetPushButton->setEnabled(enabled);
     ui->backwardOffsetPushButton->setEnabled(enabled);
-    ui->timeOffsetLineEdit->setEnabled(enabled);
+    ui->timeOffsetSpinBox->setEnabled(enabled);
     ui->forwardOffsetPushButton->setEnabled(enabled);
     ui->fastBackwardOffsetPushButton->setEnabled(enabled);
 
+    ui->timeOffsetSpinBox->blockSignals(true);
     if (enabled) {
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         const Aircraft &aircraft = flight[selectedAircraftIndex];
         const std::int64_t timeOffset = aircraft.getAircraftInfo().timeOffset;
         const double timeOffsetSec = static_cast<double>(timeOffset) / 1000.0;
-        QString offsetString = d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces);
-        ui->timeOffsetLineEdit->setText(offsetString);
+        ui->timeOffsetSpinBox->setValue(timeOffsetSec);
     } else {
-        ui->timeOffsetLineEdit->setText("");
+        ui->timeOffsetSpinBox->clear();
     }
+    ui->timeOffsetSpinBox->blockSignals(false);
 }
 
 void FormationWidget::updateReplayUi() noexcept
@@ -499,11 +499,11 @@ void FormationWidget::updateToolTips() noexcept
 
         const std::int64_t timeOffset = aircraft.getTimeOffset();
         if (timeOffset < 0) {
-            ui->timeOffsetLineEdit->setToolTip(tr("The aircraft is %1 behind its recorded schedule.").arg(d->unit.formatElapsedTime(timeOffset)));
+            ui->timeOffsetSpinBox->setToolTip(tr("The aircraft is %1 behind its recorded schedule.").arg(d->unit.formatElapsedTime(timeOffset)));
         } else if (timeOffset > 0) {
-            ui->timeOffsetLineEdit->setToolTip(tr("The aircraft is %1 ahead its recorded schedule.").arg(d->unit.formatElapsedTime(timeOffset)));
+            ui->timeOffsetSpinBox->setToolTip(tr("The aircraft is %1 ahead its recorded schedule.").arg(d->unit.formatElapsedTime(timeOffset)));
         } else {
-            ui->timeOffsetLineEdit->setToolTip(tr("Positive values [seconds] put the aircraft ahead, negative values put the aircraft behind its recorded schedule."));
+            ui->timeOffsetSpinBox->setToolTip(tr("Positive values [seconds] put the aircraft ahead, negative values put the aircraft behind its recorded schedule."));
         }
     }
 
@@ -588,7 +588,7 @@ void FormationWidget::updateAircraftRow(const Aircraft &aircraft, int rowIndex) 
 
     // Time offset
     const double timeOffsetSec = static_cast<double>(aircraftInfo.timeOffset) / 1000.0;
-    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatNumber(timeOffsetSec, ::TimeOffsetDecimalPlaces));
+    newItem = std::make_unique<QTableWidgetItem>(timeOffsetSec);
     newItem->setToolTip(tr("Double-click to edit time offset [seconds]."));
     newItem->setBackground(Platform::getEditableTableCellBGColor());
     ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
@@ -859,20 +859,17 @@ void FormationWidget::changeTimeOffset(const std::int64_t timeOffset) noexcept
     }
 }
 
-void FormationWidget::onTimeOffsetEditingFinished() noexcept
+void FormationWidget::onTimeOffsetValueChanged() noexcept
 {
     const int selectedAircraftIndex = getSelectedAircraftIndex();
     if (selectedAircraftIndex != Flight::InvalidAircraftIndex) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[selectedAircraftIndex];
 
-        bool ok {false};
-        const double timeOffsetSec = ui->timeOffsetLineEdit->text().toDouble(&ok);
-        if (ok) {
-            const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
-            d->aircraftService.changeTimeOffset(aircraft, timeOffset);
-            updateToolTips();
-        }
+        const double timeOffsetSec = ui->timeOffsetSpinBox->value();
+        const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
+        d->aircraftService.changeTimeOffset(aircraft, timeOffset);
+        updateToolTips();
     }
 }
 

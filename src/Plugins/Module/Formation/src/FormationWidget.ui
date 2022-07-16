@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
-    <height>468</height>
+    <width>858</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -730,7 +730,7 @@
                   </size>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The horizontal distance, calculated in multiples of the wingspan of the current user aircraft.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>The horizontal distance, calculated in multiples of the wingspan of the current user aircraft.</string>
                  </property>
                  <property name="maximum">
                   <number>4</number>
@@ -779,7 +779,7 @@
                   </size>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The vertical distance, calculated in multiples of the wingspan of the current user aircraft.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>The vertical distance, calculated in multiples of the wingspan of the current user aircraft.</string>
                  </property>
                  <property name="maximum">
                   <number>4</number>
@@ -896,7 +896,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decrease the time offset by 1 second.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Decrease the time offset by 1 second.</string>
             </property>
             <property name="text">
              <string/>
@@ -923,7 +923,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decrease the time offset by 0.1 second.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Decrease the time offset by 0.1 second.</string>
             </property>
             <property name="text">
              <string/>
@@ -949,26 +949,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="timeOffsetLineEdit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>40</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>140</width>
-              <height>16777215</height>
-             </size>
-            </property>
-           </widget>
+           <widget class="QDoubleSpinBox" name="timeOffsetSpinBox"/>
           </item>
           <item>
            <widget class="ActiveButton" name="forwardOffsetPushButton">
@@ -979,7 +960,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Increase the time offset by 0.1 second.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Increase the time offset by 0.1 second.</string>
             </property>
             <property name="text">
              <string/>
@@ -1006,7 +987,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Increase the time offset by 1 second.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>ncrease the time offset by 1 second.</string>
             </property>
             <property name="text">
              <string/>
@@ -1029,7 +1010,7 @@
         <item>
          <widget class="QPushButton" name="resetAllTimeOffsetPushButton">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reset the time offsets of all formation aircraft.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>Reset the time offsets of all formation aircraft.</string>
           </property>
           <property name="text">
            <string>&amp;Reset All</string>
@@ -1069,7 +1050,7 @@
         <item row="0" column="1">
          <widget class="QPushButton" name="userAircraftPushButton">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The aircraft being followed by the virtual camera in the flight simulator. It can also be changed during replay.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>The aircraft being followed by the virtual camera in the flight simulator. It can also be changed during replay.</string>
           </property>
           <property name="text">
            <string>&amp;Set User Aircraft</string>
@@ -1084,7 +1065,7 @@
         <item row="0" column="3">
          <widget class="QPushButton" name="deletePushButton">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Permanently deletes the currently selected aircraft from the formation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>Permanently deletes the currently selected aircraft from the formation.</string>
           </property>
           <property name="text">
            <string>&amp;Delete</string>
