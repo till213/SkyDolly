@@ -84,7 +84,7 @@ void EnumerationComboBox::initUi() noexcept
     setAutoFillBackground(true);
     if (d->enumerationService.getEnumerationByName(d->enumeration))  {
         for (const auto &item : d->enumeration) {
-            this->addItem(item.name, item.id);
+            addItem(item.name, QVariant::fromValue(item.id));
         }
     }
 }
