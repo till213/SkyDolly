@@ -6,7 +6,8 @@
 
 - Location module
   * Capture and teleport to locations in the flight simulator
-  * Manually and and edit locations
+  * Manually add and edit locations
+  * Country list according to [List of Country Codes [Wikipedia]](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes)
 
 ### Improvements
 - Renamed 'velocity' (= a vector) to 'speed' (= a value) where appropriate
