@@ -64,6 +64,12 @@ public:
     void setAircraft(std::vector<std::unique_ptr<Aircraft>> aircraft) noexcept;
     Aircraft &addUserAircraft() noexcept;
     Aircraft &getUserAircraft() const noexcept;
+
+    /*!
+     * Returns the index of the user aircraft.
+     *
+     * \return the index of the user aircraft; indexing starts at 0
+     */
     int getUserAircraftIndex() const noexcept;
 
     /*!
@@ -146,8 +152,8 @@ public:
      * The initial ID for every newly created flight. An invalid ID indicates that this
      * flight has not yet been (successfully) persisted.
      */
-    static constexpr int InvalidId = -1;
-    static constexpr int InvalidAircraftIndex = -1;
+    static constexpr int InvalidId {-1};
+    static constexpr int InvalidAircraftIndex {-1};
 
 signals:
     void flightStored(std::int64_t id);

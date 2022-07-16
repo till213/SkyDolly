@@ -82,6 +82,16 @@ private:
     void updateAndSendUserAircraftPosition() const noexcept;
     void updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept;
 
+    int getSelectedRow() const noexcept;
+
+    /*!
+     * Returns the index of the selected aircraft.
+     *
+     * \return the index of the selected aircraft; Flight::InvalidAircraftIndex if
+     *         no aircraft is selected; indexing starts at 0
+     */
+    int getSelectedAircraftIndex() const noexcept;
+
 private slots:
     void updateUi() noexcept;
 
