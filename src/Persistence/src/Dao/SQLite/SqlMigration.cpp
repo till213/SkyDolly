@@ -122,7 +122,6 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
     if (ok) {
         QFile migrationFile(migrationFilePath);
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
-
         if (ok) {
             QTextStream textStream(&migrationFile);
             const QString migration = textStream.readAll();
@@ -180,7 +179,6 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
         QFile migrationFile(migrationFilePath);
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
         if (ok) {
-            migrationFile.setTextModeEnabled(true);
             QTextStream textStream(&migrationFile);
             textStream.setCodec(QTextCodec::codecForName("UTF-8"));
             QString csv = textStream.readLine();

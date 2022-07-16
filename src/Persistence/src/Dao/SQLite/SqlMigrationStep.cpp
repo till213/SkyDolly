@@ -118,7 +118,7 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
 {
     QString errorMessage;
     // Match SQL statements terminated with a semicolon
-    static const QRegularExpression sqlRegExp("([\\w\\s\\(\\),\\*=:$@#|\\/\\<\\>\\~!\\^\\-'\\+\\.]+);");
+    static const QRegularExpression sqlRegExp(R"(([\w|\W]+?);)");
 
     // Note that DDL statements do not require transactions; but for
     // now we execute all queries within a transaction

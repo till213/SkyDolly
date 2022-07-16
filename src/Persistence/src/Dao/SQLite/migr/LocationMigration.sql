@@ -55,7 +55,7 @@ insert into enum_country(sym_id, name)
 values
   ('00', 'World'),
   ('AF', 'Afghanistan'),
-  ('AX', 'Aland Islands'),
+  ('AX', 'Åland Islands'),
   ('AL', 'Albania'),
   ('DZ', 'Algeria'),
   ('AS', 'American Samoa');
