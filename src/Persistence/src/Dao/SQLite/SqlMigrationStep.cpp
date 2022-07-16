@@ -70,7 +70,7 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
 
     // Match the tag's content, e.g. id = 42, descn = "The description", step = 1
     // https://regex101.com/
-    static const QRegularExpression tagRegExp("([\\w]+)\\s*=\\s*[\"]*([\\w\\s\\-]+)[\"]*");
+    static const QRegularExpression tagRegExp(R"(([\w]+)\s*=\s*["]*([\w\s\-]+)["]*)");
 
     QRegularExpressionMatchIterator it = tagRegExp.globalMatch(tag);
     ok = true;

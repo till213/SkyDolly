@@ -116,7 +116,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 {
     // https://regex101.com/
     // @migr(...)
-    static const QRegularExpression migrRegExp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
+    static const QRegularExpression migrRegExp(R"(@migr\(([\w="\-,.\s]+)\))");
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
     bool ok = query.exec();
     if (ok) {
@@ -156,22 +156,22 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
 {
     // https://regex101.com/
-    static const QRegularExpression uuidRegExp {"[\"]?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})[\"]?"};
+    static const QRegularExpression uuidRegExp {R"(["]?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})["]?)"};
     static const QRegularExpression csvRegExp {
-        "[\"|,]?([^\"]+)[\"]?,"    // Title
-        "[\"]?([^\"]*)[\"]?,"      // Description (optional)
-        "[\"]?([^\"]*)[\"]?,"      // Category (symbolic ID) (optional)
-        "[\"]?([^\"]*)[\"]?,"      // Country (symbolic ID) (optional)
-        "[\"]?([^\"]*)[\"]?,"      // Identifier (optional)
-        "([+-]?[0-9]*[.]?[0-9]+)," // Latitude
-        "([+-]?[0-9]*[.]?[0-9]+)," // Longitude
-        "([+-]?[0-9]*[.]?[0-9]+)," // Altitude (optional)
-        "([+-]?[0-9]*[.]?[0-9]+)," // Pitch (optional)
-        "([+-]?[0-9]*[.]?[0-9]+)," // Bank (optional)
-        "([+-]?[0-9]*[.]?[0-9]+)," // Heading (optional)
-        "([+-]?[\\d]*),"           // Indicated airspeed (optional)
-        "[\"]?(false|true)*[\"]?," // On Ground (optional)
-        "([+-]?[\\d]*)$"           // Attributes (optional)
+        R"(["|,]?([^"]+)["]?,)"       // Title
+        R"(["]?([^"]*)["]?,)"         // Description (optional)
+        R"(["]?([^"]*)["]?,)"         // Category (symbolic ID) (optional)
+        R"(["]?([^"]*)["]?,)"         // Country (symbolic ID) (optional)
+        R"(["]?([^"]*)["]?,)"         // Identifier (optional)
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Latitude
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Longitude
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Altitude (optional)
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Pitch (optional)
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Bank (optional)
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Heading (optional)
+        R"(([+-]?[\d]*),)"            // Indicated airspeed (optional)
+        R"(["]?(false|true)*["]?,)"   // On Ground (optional)
+        R"(([+-]?[\d]*)$)"            // Attributes (optional)
     };
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
     bool ok = query.exec();

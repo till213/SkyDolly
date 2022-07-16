@@ -616,8 +616,8 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
 
 QStringList LocationWidget::parseCoordinates(QString value)
 {
-    static QRegularExpression numberRexExp("^([+-]?[0-9]*[.]?[0-9]+)[,]?[\\s]*([+-]?[0-9]*[.]?[0-9]+)$");
-    static QRegularExpression dmsRegExp("^([\\d\\W]+[N|S|E|W])[,]?([\\d\\W]+[E|W|N|S])$");
+    static QRegularExpression numberRexExp(R"(^([+-]?[0-9]*[.]?[0-9]+)[,]?[\s]*([+-]?[0-9]*[.]?[0-9]+)$)");
+    static QRegularExpression dmsRegExp(R"(^([\d\W]+[N|S|E|W])[,]?([\d\W]+[E|W|N|S])$)");
     QStringList values;
 
     // GeographicLib DMS does not like whitespace in dms strings
