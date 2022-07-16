@@ -908,7 +908,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/Plugins/Module/Formation/src/FormationWidget.ui" line="1090"/>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="760"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="758"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1102,78 +1102,78 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="521"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="519"/>
         <source>Double-click to change user aircraft.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="559"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="557"/>
         <source>Altitude above ground.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="567"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="565"/>
         <source>Recording duration.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="573"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="571"/>
         <source>Double-click to edit tail number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="582"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="580"/>
         <source>Double-click to edit time offset [seconds].</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="754"/>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="854"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="752"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="852"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="757"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="755"/>
         <source>Delete Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="758"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="756"/>
         <source>The aircraft with sequence number %1 is about to be deleted. Do you want to delete the aircraft?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="759"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="757"/>
         <source>Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="761"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="759"/>
         <source>&amp;Keep</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="856"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="854"/>
         <source>Reset Time Offsets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="857"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="855"/>
         <source>Do you want to reset all time offsets to 0?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="858"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="856"/>
         <source>The time offsets of all aircraft in this formation will be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="859"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="857"/>
         <source>&amp;Reset Time Offsets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="860"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="858"/>
         <source>Do &amp;Not Change</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1566,191 +1566,250 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="30"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="120"/>
         <source>Default Values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="36"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="126"/>
         <source>Altitude:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="43"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="133"/>
         <source> feet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="50"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="96"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="140"/>
         <source>Indicated airspeed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="57"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="147"/>
         <source> knots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="64"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="154"/>
         <source>On ground</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="87"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="40"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="93"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="48"/>
         <source>Description:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="122"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="75"/>
+        <source>Pitch:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="82"/>
+        <source>Bank:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="89"/>
+        <source>Heading:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="170"/>
         <source>Add a new location entry.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="125"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="173"/>
         <source>&amp;Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="132"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="180"/>
         <source>Capture the current location from the flight simulator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="135"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="183"/>
         <source>&amp;Capture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="142"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="190"/>
         <source>Teleport the aircraft to the selected location.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="145"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="193"/>
         <source>&amp;Teleport</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="165"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="213"/>
         <source>Delete the selected location.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="168"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="494"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="216"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="762"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="137"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="213"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="218"/>
         <source>ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="143"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="214"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="225"/>
         <source>Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="144"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="214"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="226"/>
         <source>Altitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="145"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="215"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="227"/>
         <source>Pitch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="146"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="215"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="228"/>
         <source>Bank</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="147"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="215"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="229"/>
         <source>Heading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="139"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="213"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="220"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="148"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="215"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="230"/>
         <source>Indicated Airspeed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="149"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="216"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="231"/>
         <source>On Ground</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="138"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="213"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="219"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="140"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="213"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="221"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="141"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="213"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="222"/>
         <source>Category</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="136"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="142"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="214"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="224"/>
         <source>Identifer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="262"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="214"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="223"/>
+        <source>Country</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="216"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="232"/>
+        <source>Attributes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="407"/>
         <source>Double-click to teleport to location.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="488"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="418"/>
+        <source>Double-click to edit title.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="447"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="459"/>
+        <source>Double-click to edit category.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="470"/>
+        <source>Double-click to edit identifier.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="482"/>
+        <source>Double-click to edit position.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="494"/>
+        <source>Double-click to edit altitude.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="545"/>
+        <source>Click to toggle on ground.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="756"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="491"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="759"/>
         <source>Delete Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="492"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="760"/>
         <source>The location with ID %1 is about to be deleted. Do you want to delete the location?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="493"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="761"/>
         <source>Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="495"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="763"/>
         <source>&amp;Keep</source>
         <translation type="unfinished"></translation>
     </message>

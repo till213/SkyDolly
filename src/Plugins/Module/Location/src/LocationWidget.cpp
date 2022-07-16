@@ -549,7 +549,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
 
     // Attributes
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::EditRole, location.attributes);
+    newItem->setData(Qt::EditRole, QVariant::fromValue(location.attributes));
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 }

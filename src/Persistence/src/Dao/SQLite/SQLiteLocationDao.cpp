@@ -98,7 +98,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     query.bindValue(":heading", location.heading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
-    query.bindValue(":attributes", location.attributes);
+    query.bindValue(":attributes", QVariant::fromValue(location.attributes));
 
     const bool ok = query.exec();
     if (ok) {
@@ -149,7 +149,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     query.bindValue(":heading", location.heading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
-    query.bindValue(":attributes", location.attributes);
+    query.bindValue(":attributes", QVariant::fromValue(location.attributes));
     query.bindValue(":id", QVariant::fromValue(location.id));
     const bool ok = query.exec();
 #ifdef DEBUG
