@@ -217,6 +217,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
             location.description = query.value(descriptionIdx).toString();
             location.typeId = query.value(typeIdx).toLongLong();
             location.categoryId = query.value(categoryIdx).toLongLong();
+            location.countryId = query.value(countryIdx).toLongLong();
             location.identifier = query.value(identifierIdx).toString();
             location.latitude = query.value(latitudeIdx).toDouble();
             location.longitude = query.value(longitudeIdx).toDouble();

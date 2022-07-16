@@ -53,6 +53,7 @@ create unique index enum_country_idx1 on enum_country(sym_id);
 @migr(id = "38e58cbe-0e0c-47d5-88ae-1bd7295d15cc", descn = "Insert countries", step = 2)
 insert into enum_country(sym_id, name)
 values
+  ('00', 'World'),
   ('AF', 'Afghanistan'),
   ('AX', 'Aland Islands'),
   ('AL', 'Albania'),

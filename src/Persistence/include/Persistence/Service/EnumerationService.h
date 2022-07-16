@@ -67,6 +67,9 @@ public:
     // Location category
     static inline const QString LocationCategoryNoneSymbolicId {QStringLiteral("00")};
 
+    // Country
+    static inline const QString CountryWorldSymbolicId {QStringLiteral("00")};
+
 private:
     std::unique_ptr<EnumerationServicePrivate> d;
 };

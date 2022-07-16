@@ -159,7 +159,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
     // https://regex101.com/
     static const QRegularExpression uuidRegExp {"[\"]?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})[\"]?"};
     static const QRegularExpression csvRegExp {
-        "[\"]?([^\"]+)[\"]?,"      // Title
+        "[\"|,]?([^\"]+)[\"]?,"    // Title
         "[\"]?([^\"]*)[\"]?,"      // Description (optional)
         "[\"]?([^\"]*)[\"]?,"      // Category (symbolic ID) (optional)
         "[\"]?([^\"]*)[\"]?,"      // Country (symbolic ID) (optional)
@@ -184,7 +184,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
             QTextStream textStream(&migrationFile);
             textStream.setCodec(QTextCodec::codecForName("UTF-8"));
             QString csv = textStream.readLine();
-            if (csv.startsWith("\"MigrationId\"")) {
+            if (csv.startsWith("\"MigrationId\"") || csv.startsWith("MigrationId")) {
                 // Skip column names
                 csv = textStream.readLine();
             }
