@@ -794,7 +794,10 @@ void FormationWidget::deleteAircraft() noexcept
         }
 
         if (doDelete) {
+            const int lastSelectedRow = getSelectedRow();
             d->aircraftService.deleteByIndex(selectedAircraftIndex);
+            const int selectedRow = std::min(lastSelectedRow, ui->aircraftTableWidget->rowCount() - 1);
+            ui->aircraftTableWidget->selectRow(selectedRow);
             ui->aircraftTableWidget->setFocus(Qt::NoFocusReason);
         }
     }
