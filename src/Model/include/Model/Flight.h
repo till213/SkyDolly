@@ -163,7 +163,7 @@ signals:
     void descriptionOrTitleChanged();
     void flightConditionChanged();
 
-    void aircraftAdded(Aircraft &newAircraft);
+    void aircraftAdded(const Aircraft &newAircraft);
     void aircraftRemoved(std::int64_t removedAircraftId);
 
     /*!
@@ -177,8 +177,8 @@ signals:
      */
     void userAircraftChanged(int newUserAircraftIndex, int previousUserAircraftIndex);
 
-    void aircraftInfoChanged(Aircraft &aircraft);
-    void tailNumberChanged(Aircraft &aircraft);
+    void aircraftInfoChanged(const Aircraft &aircraft);
+    void tailNumberChanged(const Aircraft &aircraft);
 
     /*!
      * Emitted whenever the time offset of the \c aircraft has changed.
@@ -186,12 +186,11 @@ signals:
      * \param aircraft
      *        the aircraft whose time offset has changed
      */
-    void timeOffsetChanged(Aircraft &aircraft);
+    void timeOffsetChanged(const Aircraft &aircraft);
 
-    void aircraftStored(Aircraft &aircraft);
+    void aircraftStored(const Aircraft &aircraft);
 
 private:
-    Q_DISABLE_COPY(Flight)
     std::unique_ptr<FlightPrivate> d;
 
     inline void connectWithAircraftSignals(Aircraft &aircraft);

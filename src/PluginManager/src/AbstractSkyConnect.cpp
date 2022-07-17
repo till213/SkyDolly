@@ -560,7 +560,7 @@ void AbstractSkyConnect::onTimeOffsetChanged() noexcept
     }
 }
 
-void AbstractSkyConnect::onTailNumberChanged(Aircraft &aircraft) noexcept
+void AbstractSkyConnect::onTailNumberChanged(const Aircraft &aircraft) noexcept
 {
     onRemoveAiObject(aircraft.getId());
     onAddAiObject(aircraft);

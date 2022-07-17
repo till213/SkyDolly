@@ -250,7 +250,7 @@ void LogbookWidget::updateFlightTable() noexcept
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
         ui->logTableWidget->clearContents();
-        ui->logTableWidget->setRowCount(summaries.size());
+        ui->logTableWidget->setRowCount(static_cast<int>(summaries.size()));
 
         int rowIndex {0};
         for (const FlightSummary &summary : summaries) {
@@ -629,7 +629,7 @@ void LogbookWidget::updateAircraftIcons() noexcept
     }
 }
 
-void LogbookWidget::onAircraftInfoChanged(Aircraft &aircraft)
+void LogbookWidget::onAircraftInfoChanged(const Aircraft &aircraft)
 {
     ui->logTableWidget->setSortingEnabled(false);
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {

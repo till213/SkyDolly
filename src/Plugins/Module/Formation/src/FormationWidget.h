@@ -41,14 +41,13 @@ class QAction;
 
 class Aircraft;
 struct PositionData;
+class FlightService;
+class AircraftService;
+struct FormationWidgetPrivate;
 
 namespace Ui {
     class FormationWidget;
 }
-
-class FlightService;
-class AircraftService;
-struct FormationWidgetPrivate;
 
 class FormationWidget : public QWidget
 {
@@ -62,7 +61,6 @@ public:
     Formation::RelativePosition getRelativePosition() const noexcept;
 
 private:
-    Q_DISABLE_COPY(FormationWidget)
     std::unique_ptr<Ui::FormationWidget> ui;
     std::unique_ptr<FormationWidgetPrivate> d;
 
@@ -71,6 +69,7 @@ private:
     void frenchConnection() noexcept;
 
     void updateAircraftTable() noexcept;
+    void updateAircraftInfo(const Aircraft &aircraft) noexcept;
     void updateAircraftIcons() noexcept;
     void updateRelativePositionUi() noexcept;
     void updateEditUi() noexcept;
@@ -83,6 +82,7 @@ private:
     void updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept;
 
     int getSelectedRow() const noexcept;
+    int getRowById(std::int64_t id) const noexcept;
 
     /*!
      * Returns the index of the selected aircraft.
@@ -91,13 +91,14 @@ private:
      *         no aircraft is selected; indexing starts at 0
      */
     int getSelectedAircraftIndex() const noexcept;
+    std::int64_t getSelectedAircraftId() const noexcept;
 
 private slots:
     void updateUi() noexcept;
 
     void onRelativePositionChanged() noexcept;
     void onUserAircraftChanged() noexcept;
-    void onAircraftInfoChanged() noexcept;
+    void onAircraftInfoChanged(const Aircraft &aircraft) noexcept;
 
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;

@@ -82,7 +82,7 @@ private slots:
     void onRecordingStarted() noexcept;
     void updateUi() noexcept;
     void updateAircraftIcons() noexcept;
-    void onAircraftInfoChanged(Aircraft &aircraft);
+    void onAircraftInfoChanged(const Aircraft &aircraft);
 
     void loadFlight() noexcept;
     void deleteFlight() noexcept;

@@ -106,7 +106,7 @@ signals:
     /*!
      * Emitted whenever the aircraft info has changed.
      */
-    void infoChanged(Aircraft &aircraft);
+    void infoChanged(const Aircraft &aircraft);
 
     /*!
      * Emitted whenever the tail number has changed.
@@ -114,7 +114,7 @@ signals:
      * \param aircraft
      *        the aircraft whose tail number has changed
      */
-    void tailNumberChanged(Aircraft &aircraft);
+    void tailNumberChanged(const Aircraft &aircraft);
 
     /*!
      * Emitted whenever the aircraft's time offset has changed.
@@ -122,10 +122,9 @@ signals:
      * \param aircraft
      *        the aircraft whose time offset has changed
      */
-    void timeOffsetChanged(Aircraft &aircraft);
+    void timeOffsetChanged(const Aircraft &aircraft);
 
 private:
-    Q_DISABLE_COPY(Aircraft)
     std::unique_ptr<AircraftPrivate> d;
 
     void frenchConnection(); 
