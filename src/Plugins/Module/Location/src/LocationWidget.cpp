@@ -46,6 +46,7 @@
 #include <GeographicLib/DMS.hpp>
 
 #include <Kernel/Settings.h>
+#include <Model/Logbook.h>
 #include <Persistence/LogbookManager.h>
 #include <Persistence/PersistedEnumerationItem.h>
 #include <Persistence/Service/LocationService.h>
@@ -289,6 +290,11 @@ void LocationWidget::initUi() noexcept
 
 void LocationWidget::frenchConnection() noexcept
 {
+    // Logbook
+    const Logbook &logbook = Logbook::getInstance();
+    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
+            this, &LocationWidget::updateUi);
+
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
