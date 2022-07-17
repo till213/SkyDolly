@@ -20,7 +20,7 @@
       <enum>Qt::Vertical</enum>
      </property>
      <widget class="QTableWidget" name="locationTableWidget"/>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QGroupBox" name="informationGroupBox">
@@ -37,7 +37,7 @@
           </size>
          </property>
          <property name="title">
-          <string>Information</string>
+          <string>Details</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>

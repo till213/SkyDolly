@@ -78,10 +78,13 @@ namespace
     constexpr int MaximumIndicatedAirspeed {6350};
     constexpr bool DefaultOnGround {false};
 
+    constexpr double DefaultPitch {0.0};
     constexpr double MinimumPitch {-180.0};
     constexpr double MaximumPitch {180.0};
+    constexpr double DefaultBank {0.0};
     constexpr double MinimumBank {-180.0};
     constexpr double MaximumBank {180.0};
+    constexpr double DefaultHeading {0.0};
     constexpr double MinimumHeading {0.0};
     constexpr double MaximumHeading {360.0};
 }
@@ -265,12 +268,16 @@ void LocationWidget::initUi() noexcept
 
     ui->pitchSpinBox->setMinimum(::MinimumPitch);
     ui->pitchSpinBox->setMaximum(::MaximumPitch);
+    ui->pitchSpinBox->setSuffix("°");
     ui->bankSpinBox->setMinimum(::MinimumBank);
     ui->bankSpinBox->setMaximum(::MaximumBank);
+    ui->bankSpinBox->setSuffix("°");
     ui->headingSpinBox->setMinimum(::MinimumHeading);
     ui->headingSpinBox->setMaximum(::MaximumHeading);
+    ui->headingSpinBox->setSuffix("°");
     ui->indicatedAirspeedSpinBox->setMinimum(::MinimumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
+    ui->indicatedAirspeedSpinBox->setSuffix(tr(" knots"));
 
     const int infoGroupBoxHeight = ui->informationGroupBox->minimumHeight();
     ui->splitter->setSizes({height() - infoGroupBoxHeight, infoGroupBoxHeight});
@@ -342,10 +349,10 @@ void LocationWidget::updateInfoUi() noexcept
         ui->indicatedAirspeedSpinBox->setValue(item->text().toInt());
     } else {
         ui->descriptionPlainTextEdit->clear();
-        ui->pitchSpinBox->clear();
-        ui->bankSpinBox->clear();
-        ui->headingSpinBox->clear();
-        ui->indicatedAirspeedSpinBox->clear();
+        ui->pitchSpinBox->setValue(::DefaultPitch);
+        ui->bankSpinBox->setValue(::DefaultBank);
+        ui->headingSpinBox->setValue(::DefaultHeading);
+        ui->indicatedAirspeedSpinBox->setValue(ui->defaultIndicatedAirspeedSpinBox->value());
     }
 
     ui->descriptionPlainTextEdit->setReadOnly(readOnly);
