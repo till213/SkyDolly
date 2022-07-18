@@ -61,19 +61,9 @@ struct MODEL_API TimeVariableData
         return (timestamp == InvalidTime);
     }
 
-    inline bool operator==(const TimeVariableData &rhs) noexcept
+    friend inline bool operator==(const TimeVariableData &lhs, const TimeVariableData &rhs) noexcept
     {
-        return timestamp == rhs.timestamp;
-    }
-
-    inline bool operator>=(const TimeVariableData &rhs) noexcept
-    {
-        return timestamp >= rhs.timestamp;
-    }
-
-    inline bool operator<(const TimeVariableData &rhs) noexcept
-    {
-        return !(*this >= rhs);
+        return lhs.timestamp == rhs.timestamp;
     }
 
     friend inline bool operator>=(const TimeVariableData &lhs, const TimeVariableData &rhs) noexcept

@@ -69,6 +69,13 @@ public:
     static void destroyInstance() noexcept;
 
     /*!
+     * Returns the version of the application (Sky Dolly) that wrote these settings last.
+     *
+     * \return the version of the application that wrote these settings last
+     */
+    const Version &getVersion() const noexcept;
+
+    /*!
      * Returns the logbook path.
      *
      * \return the path of the logbook (database)
@@ -792,11 +799,9 @@ signals:
     void changed();
 
 protected:
-    ~Settings() override;
-    const Version &getVersion() const;
+    ~Settings() noexcept override;
 
 private:
-    Q_DISABLE_COPY(Settings)
     std::unique_ptr<SettingsPrivate> d;
 
     Settings() noexcept;

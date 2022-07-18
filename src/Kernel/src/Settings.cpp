@@ -32,11 +32,15 @@
 #include <QVariant>
 #include <QDir>
 #include <QFileInfo>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include "Enum.h"
 #include "Const.h"
 #include "SampleRate.h"
 #include "Version.h"
+#include "SettingsConverter.h"
 #include "Settings.h"
 
 namespace
@@ -163,6 +167,11 @@ void Settings::destroyInstance() noexcept
         delete SettingsPrivate::instance;
         SettingsPrivate::instance = nullptr;
     }
+}
+
+const Version &Settings::getVersion() const noexcept
+{
+    return d->version;
 }
 
 QString Settings::getLogbookPath() const noexcept
@@ -683,24 +692,23 @@ void Settings::store() const noexcept
     d->settings.endGroup();
 }
 
-/*! \todo Settings conversion as necessary */
 void Settings::restore() noexcept
 {
-    QString version;
-    version = d->settings.value("Version", getVersion().toString()).toString();
-    Version settingsVersion(version);
+    QString versionString;
+    versionString = d->settings.value("Version", getVersion().toString()).toString();
+    Version settingsVersion(versionString);
     if (settingsVersion < getVersion()) {
 #ifdef DEBUG
-        qDebug("Settings::restore: app version: %s, settings version: %s, conversion might be necessary!",
-               qPrintable(getVersion().toString()), qPrintable(settingsVersion.toString()));
+        qDebug() << "Settings::restore: app version:" << getVersion().toString() << "settings version:" << settingsVersion.toString() << "converting...";
 #endif
+        SettingsConverter::convertToCurrent(settingsVersion, d->settings);
     }
 
 #ifdef DEBUG
-    qDebug("Settings::restore: RESTORE: app name %s, organisation name: %s", qPrintable(d->settings.applicationName()), qPrintable(d->settings.organizationName()));
+    qDebug() << "Settings::restore: RESTORE: app name:" << d->settings.applicationName() <<  "organisation name:" << d->settings.organizationName();
 #endif
 
-    bool ok;
+    bool ok {true};
     d->settings.beginGroup("Logbook");
     {
         d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
@@ -810,17 +818,12 @@ void Settings::restore() noexcept
 
 // PROTECTED
 
-Settings::~Settings()
+Settings::~Settings() noexcept
 {
 #ifdef DEBUG
-    qDebug("Settings::~Settings: DELETED");
+    qDebug() << "Settings::~Settings: DELETED";
 #endif
     store();
-}
-
-const Version &Settings::getVersion() const
-{
-    return d->version;
 }
 
 // PRIVATE
@@ -829,7 +832,7 @@ Settings::Settings() noexcept
     : d(std::make_unique<SettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("Settings::Settings: CREATED");
+    qDebug() << "Settings::Settings: CREATED";
 #endif
     restore();
     frenchConnection();
