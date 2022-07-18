@@ -33,7 +33,7 @@ class QString;
 
 #include "KernelLib.h"
 
-class KERNEL_API File
+class KERNEL_API File final
 {
 public:
 

@@ -46,19 +46,21 @@
 #include <GeographicLib/DMS.hpp>
 
 #include <Kernel/Settings.h>
+#include <Kernel/Unit.h>
 #include <Model/Logbook.h>
 #include <Persistence/LogbookManager.h>
 #include <Persistence/PersistedEnumerationItem.h>
 #include <Persistence/Service/LocationService.h>
 #include <Persistence/Service/EnumerationService.h>
 #include <Widget/FocusPlainTextEdit.h>
+#include <Widget/EnumerationWidgetItem.h>
+#include <Widget/UnitWidgetItem.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/AbstractModule.h>
 #include "LocationWidget.h"
 #include "EnumerationItemDelegate.h"
 #include "PositionWidgetItem.h"
-#include "EnumerationWidgetItem.h"
 #include "ui_LocationWidget.h"
 
 namespace
@@ -110,6 +112,7 @@ struct LocationWidgetPrivate
     std::unique_ptr<EnumerationItemDelegate> locationCategoryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
     std::unique_ptr<EnumerationItemDelegate> countryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::Country)};
 
+    Unit unit;
     bool columnsAutoResized {false};
 
     static inline int idColumnIndex {InvalidColumnIndex};
@@ -498,7 +501,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     ++columnIndex;
 
     // Altitude
-    newItem = std::make_unique<QTableWidgetItem>();
+    newItem = std::make_unique<UnitWidgetItem>(d->unit, Unit::Name::Feet);
     newItem->setData(Qt::EditRole, location.altitude);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     if (isSystemLocation) {

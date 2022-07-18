@@ -49,7 +49,7 @@ class Version;
  * The application settings. These settings are persisted to user configuration
  * files.
  */
-class KERNEL_API Settings : public QObject
+class KERNEL_API Settings final : public QObject
 {
     Q_OBJECT
 public:

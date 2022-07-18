@@ -39,9 +39,17 @@ class QTime;
 
 class UnitPrivate;
 
-class KERNEL_API Unit
+class KERNEL_API Unit final
 {
 public:
+
+    enum struct Name
+    {
+        Second,
+        Feet,
+        Knot
+    };
+
     Unit();
     ~Unit();
 
@@ -117,6 +125,15 @@ public:
 
     QString formatNumber(double number, int precision) const noexcept;
     double toNumber(const QString &value, bool *ok = nullptr) const noexcept;
+
+    /*!
+     * Formats the \c second, with local thousands separator and unit.
+     *
+     * \param second
+     *        the second to format
+     * \return the formatted seconds
+     */
+    QString formatSeconds(double seconds) const noexcept;
 
     /*!
      * Formats the \c milliseconds as number, with local thousands separators.
