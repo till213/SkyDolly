@@ -53,7 +53,8 @@ struct VersionPrivate
     int minor {VersionConfig::Minor};
     int patch {VersionConfig::Patch};
 
-    static inline const QString CodeName {QStringLiteral("Blissful Boeing")};
+    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/adjectives-that-start-with-c.html
+    static inline const QString CodeName {QStringLiteral("Celestial Cessna")};
 };
 
 // PUBLIC
