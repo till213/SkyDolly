@@ -7,6 +7,7 @@
 - Location module
   * Capture and teleport to locations in the flight simulator
   * Manually add and edit locations
+  * Comes with an intial set of "system" locations (currently non-deleteable by design)
   * Stores also pitch, bank, heading and initial speed
   * Country list according to [List of Country Codes [Wikipedia]](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes)
 
