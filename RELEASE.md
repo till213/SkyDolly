@@ -13,6 +13,9 @@
 - Adjust the _Latest (pre-)release: Sky Dolly 0.12.0_ in [README.md](README.md)
 - Adjust the supported versions in [SECURITY.md](SECURITY.md)
 
+### Settings
+- Ensure that settings are converted to latest version (-> SettingsConverter)
+
 ### Git
 - Push all changes
 - Merge all feature / bug fix branches into main  (https://github.com/till213/SkyDolly/pulls)
