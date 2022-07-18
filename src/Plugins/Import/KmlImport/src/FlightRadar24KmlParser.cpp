@@ -72,8 +72,8 @@ public:
     static const QRegularExpression headingRegExp;
 
 private:
-    static inline const QString SpeedPattern {QStringLiteral("<b>Speed:<\\/b><\\/span> <span>(\\d+) kt<\\/span>")};
-    static inline const QString HeadingPattern {QStringLiteral("<b>Heading:<\\/b><\\/span> <span>(\\d+)&deg;<\\/span>")};
+    static inline const QString SpeedPattern {QStringLiteral(R"(<b>Speed:<\/b><\/span> <span>(\d+) kt<\/span>)")};
+    static inline const QString HeadingPattern {QStringLiteral(R"(<b>Heading:<\/b><\/span> <span>(\d+)&deg;<\/span>)")};
 };
 
 const QRegularExpression FlightRadar24KmlParserPrivate::speedRegExp {FlightRadar24KmlParserPrivate::SpeedPattern};

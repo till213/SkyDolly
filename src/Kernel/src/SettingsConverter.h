@@ -22,29 +22,16 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PERSISTEDENUMERATIONITEM_H
-#define PERSISTEDENUMERATIONITEM_H
+#ifndef SETTINGSCONVERTER_H
+#define SETTINGSCONVERTER_H
 
-#include <memory>
-#include <cstdint>
+#include <QSettings>
 
-#include <QString>
+#include <Version.h>
 
-#include <Model/SimType.h>
-#include "PersistenceLib.h"
-
-struct PersistedEnumerationItemPrivate;
-
-class PERSISTENCE_API PersistedEnumerationItem
+namespace SettingsConverter
 {
-public:
-    PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept;
-    ~PersistedEnumerationItem() noexcept;
-
-    std::int64_t id() const noexcept;
-
-private:
-    std::unique_ptr<PersistedEnumerationItemPrivate> d;
+    void convertToCurrent(Version settingsVersion, QSettings &settings);
 };
 
-#endif // PERSISTEDENUMERATIONITEM_H
+#endif // SETTINGSCONVERTER_H

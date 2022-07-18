@@ -71,9 +71,9 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
     LogbookManager &logbookManager = LogbookManager::getInstance();
     Metadata metadata;
     if (logbookManager.getMetadata(metadata)) {
-        d->originalBackupPeriodIntlId = metadata.backupPeriodIntlId;
+        d->originalBackupPeriodIntlId = metadata.backupPeriodSymId;
     } else {
-        d->originalBackupPeriodIntlId = Const::BackupNeverIntlId;
+        d->originalBackupPeriodIntlId = Const::BackupNeverSymId;
     }
 #ifdef DEBUG
     qDebug() << "LogbookSettingsDialog::LogbookSettingsDialog: CREATED";
@@ -128,35 +128,35 @@ void LogbookSettingsDialog::updateUi() noexcept
     Metadata metadata;
     const bool ok = logbookManager.getMetadata(metadata);
     if (ok) {
-        QString logbookPath = logbookManager.getLogbookPath();
+        const QString logbookPath = logbookManager.getLogbookPath();
         QFileInfo fileInfo = QFileInfo(logbookPath);
 
-        QString logbookDirectoryPath = QDir::toNativeSeparators(fileInfo.absolutePath());
+        const QString logbookDirectoryPath = QDir::toNativeSeparators(fileInfo.absolutePath());
         ui->directoryPathLineEdit->setText(logbookDirectoryPath);
 
-        QString logbookName = fileInfo.fileName();
+        const QString logbookName = fileInfo.fileName();
         ui->logbookNameLineEdit->setText(logbookName);
 
         Unit unit;
-        QString createdDate = unit.formatDateTime(metadata.creationDate);
+        const QString createdDate = unit.formatDateTime(metadata.creationDate);
         ui->createdDateLineEdit->setText(createdDate);
-        QString lastOptimisationDate = unit.formatDateTime(metadata.lastOptimisationDate);
+        const QString lastOptimisationDate = unit.formatDateTime(metadata.lastOptimisationDate);
         ui->lastOptimisationDateLineEdit->setText(lastOptimisationDate);
-        QString lastBackupDate = unit.formatDateTime(metadata.lastBackupDate);
+        const QString lastBackupDate = unit.formatDateTime(metadata.lastBackupDate);
         ui->lastBackupDateLineEdit->setText(lastBackupDate);
 
-        std::int64_t fileSize = fileInfo.size();
+        const std::int64_t fileSize = fileInfo.size();
         ui->logbookSizeLineEdit->setText(unit.formatMemory(fileSize));
 
-        if (metadata.backupPeriodIntlId == Const::BackupNeverIntlId) {
+        if (metadata.backupPeriodSymId == Const::BackupNeverSymId) {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));
-        } else if (metadata.backupPeriodIntlId == Const::BackupMonthlyIntlId) {
+        } else if (metadata.backupPeriodSymId == Const::BackupMonthlySymId) {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Monthly));
-        } else if (metadata.backupPeriodIntlId == Const::BackupWeeklyIntlId) {
+        } else if (metadata.backupPeriodSymId == Const::BackupWeeklySymId) {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Weekly));
-        } else if (metadata.backupPeriodIntlId == Const::BackupDailyIntlId) {
+        } else if (metadata.backupPeriodSymId == Const::BackupDailySymId) {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Daily));
-        } else if (metadata.backupPeriodIntlId == Const::BackupAlwaysIntlId) {
+        } else if (metadata.backupPeriodSymId == Const::BackupAlwaysSymId) {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Always));
         } else {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));

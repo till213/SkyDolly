@@ -207,7 +207,7 @@ public slots:
     virtual void syncAiObjectsWithFlight() noexcept = 0;
     virtual void updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept = 0;
     virtual void onTimeOffsetChanged() noexcept = 0;
-    virtual void onTailNumberChanged(Aircraft &aircraft) noexcept = 0;
+    virtual void onTailNumberChanged(const Aircraft &aircraft) noexcept = 0;
 
 protected:
     SkyConnectIntf(QObject *parent = nullptr) noexcept

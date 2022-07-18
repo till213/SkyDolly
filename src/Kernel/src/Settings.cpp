@@ -32,11 +32,15 @@
 #include <QVariant>
 #include <QDir>
 #include <QFileInfo>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include "Enum.h"
 #include "Const.h"
 #include "SampleRate.h"
 #include "Version.h"
+#include "SettingsConverter.h"
 #include "Settings.h"
 
 namespace
@@ -163,6 +167,11 @@ void Settings::destroyInstance() noexcept
         delete SettingsPrivate::instance;
         SettingsPrivate::instance = nullptr;
     }
+}
+
+const Version &Settings::getVersion() const noexcept
+{
+    return d->version;
 }
 
 QString Settings::getLogbookPath() const noexcept
@@ -683,24 +692,23 @@ void Settings::store() const noexcept
     d->settings.endGroup();
 }
 
-/*! \todo Settings conversion as necessary */
 void Settings::restore() noexcept
 {
-    QString version;
-    version = d->settings.value("Version", getVersion().toString()).toString();
-    Version settingsVersion(version);
+    QString versionString;
+    versionString = d->settings.value("Version", getVersion().toString()).toString();
+    Version settingsVersion(versionString);
     if (settingsVersion < getVersion()) {
 #ifdef DEBUG
-        qDebug("Settings::restore: app version: %s, settings version: %s, conversion might be necessary!",
-               qPrintable(getVersion().toString()), qPrintable(settingsVersion.toString()));
+        qDebug() << "Settings::restore: app version:" << getVersion().toString() << "settings version:" << settingsVersion.toString() << "converting...";
 #endif
+        SettingsConverter::convertToCurrent(settingsVersion, d->settings);
     }
 
 #ifdef DEBUG
-    qDebug("Settings::restore: RESTORE: app name %s, organisation name: %s", qPrintable(d->settings.applicationName()), qPrintable(d->settings.organizationName()));
+    qDebug() << "Settings::restore: RESTORE: app name:" << d->settings.applicationName() <<  "organisation name:" << d->settings.organizationName();
 #endif
 
-    bool ok;
+    bool ok {true};
     d->settings.beginGroup("Logbook");
     {
         d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
@@ -725,7 +733,7 @@ void Settings::restore() noexcept
     {
         d->recordingSampleRateValue = d->settings.value("RecordingSampleRate", SettingsPrivate::DefaultRecordingSampleRate).toDouble(&ok);
         if (!ok) {
-            qWarning("The recording sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultRecordingSampleRate);
+            qWarning() << "The recording sample rate in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultRecordingSampleRate;
             d->recordingSampleRateValue = SettingsPrivate::DefaultRecordingSampleRate;
         }
     }
@@ -735,12 +743,12 @@ void Settings::restore() noexcept
         d->absoluteSeek = d->settings.value("AbsoluteSeek", SettingsPrivate::DefaultAbsoluteSeek).toBool();
         d->seekIntervalSeconds = d->settings.value("SeekIntervalSeconds", SettingsPrivate::DefaultSeekIntervalSeconds).toDouble(&ok);
         if (!ok) {
-            qWarning("The seek interval [seconds] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalSeconds);
+            qWarning() << "The seek interval [seconds] in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultSeekIntervalSeconds;
             d->seekIntervalSeconds = SettingsPrivate::DefaultSeekIntervalSeconds;
         }
         d->seekIntervalPercent = d->settings.value("SeekIntervalPercent", SettingsPrivate::DefaultSeekIntervalPercent).toDouble(&ok);
         if (!ok) {
-            qWarning("The seek interval [percent] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalPercent);
+            qWarning() << "The seek interval [percent] in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultSeekIntervalPercent;
             d->seekIntervalPercent = SettingsPrivate::DefaultSeekIntervalPercent;
         }
         d->replayLoop = d->settings.value("ReplayLoop", SettingsPrivate::DefaultReplayLoop).toBool();
@@ -748,7 +756,7 @@ void Settings::restore() noexcept
         if (ok) {
             d->replaySpeedUnit = static_cast<Replay::SpeedUnit>(replaySpeedUnitValue);
         } else {
-            qWarning("The replay speed unit in the settings coul dnot be parsed, so setting value to default value %d", Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit));
+            qWarning() << "The replay speed unit in the settings coul dnot be parsed, so setting value to default value:" << Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit);
             d->replaySpeedUnit = SettingsPrivate::DefaultReplaySpeedUnit;
         }
         d->repeatFlapsHandleIndex = d->settings.value("RepeatFlapsHandleIndex", SettingsPrivate::DefaultRepeatFlapsHandleIndex).toBool();
@@ -810,17 +818,12 @@ void Settings::restore() noexcept
 
 // PROTECTED
 
-Settings::~Settings()
+Settings::~Settings() noexcept
 {
 #ifdef DEBUG
-    qDebug("Settings::~Settings: DELETED");
+    qDebug() << "Settings::~Settings: DELETED";
 #endif
     store();
-}
-
-const Version &Settings::getVersion() const
-{
-    return d->version;
 }
 
 // PRIVATE
@@ -829,7 +832,7 @@ Settings::Settings() noexcept
     : d(std::make_unique<SettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("Settings::Settings: CREATED");
+    qDebug() << "Settings::Settings: CREATED";
 #endif
     restore();
     frenchConnection();

@@ -30,6 +30,7 @@
 #include <cstdint>
 
 #include <QWidget>
+#include <QStringList>
 
 class QKeyEvent;
 
@@ -37,7 +38,7 @@ class QKeyEvent;
 #include <PluginManager/AbstractModule.h>
 
 #include <Model/Location.h>
-class LocationWidgetPrivate;
+struct LocationWidgetPrivate;
 
 namespace Ui {
     class LocationWidget;
@@ -73,7 +74,11 @@ private:
     void teleportToLocation(int row) noexcept;
     Location getLocationByRow(int row) const noexcept;
 
+    QStringList parseCoordinates(QString value);
     void tryPasteLocation() noexcept;
+
+    int getSelectedRow() const noexcept;
+    std::int64_t getSelectedLocationId() const noexcept;
 
 private slots:
     void updateUi() noexcept;
@@ -89,6 +94,10 @@ private slots:
     void onDeleteLocation() noexcept;
 
     void onDescriptionChanged() noexcept;
+    void onPitchChanged(double value) noexcept;
+    void onBankChanged(double value) noexcept;
+    void onHeadingChanged(double value) noexcept;
+    void onIndicatedAirspeedChanged(int value) noexcept;
 };
 
 #endif // LOCATIONWIDGET_H

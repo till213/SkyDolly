@@ -22,29 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PERSISTEDENUMERATIONITEM_H
-#define PERSISTEDENUMERATIONITEM_H
+#include <QSettings>
+#include <QByteArray>
 
-#include <memory>
-#include <cstdint>
+#include <Version.h>
+#include "SettingsConverter.h"
 
-#include <QString>
-
-#include <Model/SimType.h>
-#include "PersistenceLib.h"
-
-struct PersistedEnumerationItemPrivate;
-
-class PERSISTENCE_API PersistedEnumerationItem
+namespace
 {
-public:
-    PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept;
-    ~PersistedEnumerationItem() noexcept;
+    void convertToV12(Version settingsVersion, QSettings &settings)
+    {
+        settings.beginGroup("Window");
+        {
+            // New hidden "ID" column has been added -> clear layout
+            settings.setValue("FormationAircraftTableState", QByteArray());
+        }
+        settings.endGroup();
+    }
+}
 
-    std::int64_t id() const noexcept;
+// PUBLIC
 
-private:
-    std::unique_ptr<PersistedEnumerationItemPrivate> d;
-};
-
-#endif // PERSISTEDENUMERATIONITEM_H
+void SettingsConverter::convertToCurrent(Version settingsVersion, QSettings &settings)
+{
+    const Version currentVersion;
+    if (settingsVersion < currentVersion) {
+        ::convertToV12(settingsVersion, settings);
+    }
+}

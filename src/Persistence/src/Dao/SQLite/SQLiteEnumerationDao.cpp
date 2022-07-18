@@ -46,12 +46,12 @@ SQLiteEnumerationDao::~SQLiteEnumerationDao() noexcept
 
 bool SQLiteEnumerationDao::get(Enumeration &enumeration) const noexcept
 {
-    QString enumerationTableName = QStringLiteral("enum_") % Name::fromCamelCase(enumeration.getName());
+    const QString enumerationTableName = QStringLiteral("enum_") % Name::fromCamelCase(enumeration.getName());
 
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
-        "select e.id, e.intl_id, e.name "
+        "select e.id, e.sym_id, e.name "
         "from   " % enumerationTableName % " e "
         "order by e.id asc;"
     );
@@ -60,13 +60,13 @@ bool SQLiteEnumerationDao::get(Enumeration &enumeration) const noexcept
     if (ok) {
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
-        const int internalIdIdx = record.indexOf("intl_id");
+        const int symbolicIdIdx = record.indexOf("sym_id");
         const int nameIdx = record.indexOf("name");
         while (query.next()) {
             const std::int64_t id = query.value(idIdx).toLongLong();
-            const QString internalId = query.value(internalIdIdx).toString();
+            const QString symbolicId = query.value(symbolicIdIdx).toString();
             const QString name = query.value(nameIdx).toString();
-            enumeration.addItem({id, internalId, name});
+            enumeration.addItem({id, symbolicId, name});
         }
 #ifdef DEBUG
     } else {

@@ -54,6 +54,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  description,"
         "  type_id,"
         "  category_id,"
+        "  country_id,"
         "  identifier,"
         "  latitude,"
         "  longitude,"
@@ -62,12 +63,14 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  bank,"
         "  heading,"
         "  indicated_airspeed,"
-        "  on_ground"
+        "  on_ground,"
+        "  attributes"
         ") values ("
         "  :title,"
         "  :description,"
         "  :type_id,"
         "  :category_id,"
+        "  :country_id,"
         "  :identifier,"
         "  :latitude,"
         "  :longitude,"
@@ -76,7 +79,8 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  :bank,"
         "  :heading,"
         "  :indicated_airspeed,"
-        "  :on_ground"
+        "  :on_ground,"
+        "  :attributes"
         ");"
     );
 
@@ -84,6 +88,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     query.bindValue(":description", location.description);
     query.bindValue(":type_id", QVariant::fromValue(location.typeId));
     query.bindValue(":category_id", QVariant::fromValue(location.categoryId));
+    query.bindValue(":country_id", QVariant::fromValue(location.countryId));
     query.bindValue(":identifier", location.identifier);
     query.bindValue(":latitude", location.latitude);
     query.bindValue(":longitude", location.longitude);
@@ -93,6 +98,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     query.bindValue(":heading", location.heading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
+    query.bindValue(":attributes", QVariant::fromValue(location.attributes));
 
     const bool ok = query.exec();
     if (ok) {
@@ -115,6 +121,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
         "       description = :description,"
         "       type_id = :type_id,"
         "       category_id = :category_id,"
+        "       country_id = :country_id,"
         "       identifier = :identifier,"
         "       latitude = :latitude,"
         "       longitude = :longitude,"
@@ -123,7 +130,8 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
         "       bank = :bank,"
         "       heading = :heading,"
         "       indicated_airspeed = :indicated_airspeed,"
-        "       on_ground = :on_ground "
+        "       on_ground = :on_ground,"
+        "       attributes = :attributes "
         "where id = :id;"
     );
 
@@ -131,6 +139,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     query.bindValue(":description", location.description);
     query.bindValue(":type_id", QVariant::fromValue(location.typeId));
     query.bindValue(":category_id", QVariant::fromValue(location.categoryId));
+    query.bindValue(":country_id", QVariant::fromValue(location.countryId));
     query.bindValue(":identifier", location.identifier);
     query.bindValue(":latitude", location.latitude);
     query.bindValue(":longitude", location.longitude);
@@ -140,6 +149,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     query.bindValue(":heading", location.heading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
+    query.bindValue(":attributes", QVariant::fromValue(location.attributes));
     query.bindValue(":id", QVariant::fromValue(location.id));
     const bool ok = query.exec();
 #ifdef DEBUG
@@ -188,6 +198,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
         const int descriptionIdx = record.indexOf("description");
         const int typeIdx = record.indexOf("type_id");
         const int categoryIdx = record.indexOf("category_id");
+        const int countryIdx = record.indexOf("country_id");
         const int identifierIdx = record.indexOf("identifier");
         const int latitudeIdx = record.indexOf("latitude");
         const int longitudeIdx = record.indexOf("longitude");
@@ -197,7 +208,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
         const int headingIdx = record.indexOf("heading");
         const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
         const int onGroundIdx = record.indexOf("on_ground");
-
+        const int attributesIdx = record.indexOf("attributes");
 
         while (ok && query.next()) {
             Location location;
@@ -206,6 +217,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
             location.description = query.value(descriptionIdx).toString();
             location.typeId = query.value(typeIdx).toLongLong();
             location.categoryId = query.value(categoryIdx).toLongLong();
+            location.countryId = query.value(countryIdx).toLongLong();
             location.identifier = query.value(identifierIdx).toString();
             location.latitude = query.value(latitudeIdx).toDouble();
             location.longitude = query.value(longitudeIdx).toDouble();
@@ -215,6 +227,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
             location.heading = query.value(headingIdx).toDouble();
             location.indicatedAirspeed = query.value(indicatedAirspeedIdx).toInt();
             location.onGround = query.value(onGroundIdx).toBool();
+            location.attributes = query.value(attributesIdx).toLongLong();
 
             backInsertIterator = std::move(location);
         }

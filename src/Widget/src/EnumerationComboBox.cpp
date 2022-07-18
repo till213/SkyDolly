@@ -22,52 +22,69 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory.h>
-#include <cstdint>
+#include <memory>
 
-#include <QString>
+#include <QComboBox>
 #ifdef DEBUG
 #include <QDebug>
 #endif
 
-#include <Model/Data.h>
 #include <Model/Enumeration.h>
-#include "Service/EnumerationService.h"
-#include "PersistedEnumerationItem.h"
+#include <Persistence/Service/EnumerationService.h>
+#include "EnumerationComboBox.h"
 
-struct PersistedEnumerationItemPrivate
+struct EnumerationComboBoxPrivate
 {
-    PersistedEnumerationItemPrivate(QString enumerationName, QString symbolicId)
+    EnumerationComboBoxPrivate(QString enumerationName)
         : enumeration(enumerationName)
-    {
-        if (enumerationService.getEnumerationByName(enumeration)) {
-            id = enumeration.getItemBySymbolicId(symbolicId).id;
-        }
-    }
+    {}
 
     Enumeration enumeration;
-    std::int64_t id {Data::InvalidId};
     EnumerationService enumerationService;
 };
 
 // PUBLIC
 
-PersistedEnumerationItem::PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept
-    : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, symbolicId))
+EnumerationComboBox::EnumerationComboBox(QString enumerationName, QWidget *parent) noexcept
+    : QComboBox(parent),
+      d(std::make_unique<EnumerationComboBoxPrivate>(enumerationName))
 {
+    initUi();
 #ifdef DEBUG
-    qDebug() << "PersistedEnumerationItem::PersistedEnumerationItem: CREATED, name:" << enumerationName << "ID:" << d->id;
+    qDebug() << "EnumerationComboBox::EnumerationComboBox: CREATED, enumeration name:" << enumerationName;
 #endif
 }
 
-PersistedEnumerationItem::~PersistedEnumerationItem() noexcept
+EnumerationComboBox::~ EnumerationComboBox() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "PersistedEnumerationItem::~PersistedEnumerationItem: DELETED, name:" << d->enumeration.getName() << "ID:" << d->id;
+    qDebug() << "EnumerationComboBox::~EnumerationComboBox: DELETED.";
 #endif
 }
 
-std::int64_t PersistedEnumerationItem::id() const noexcept
+std::int64_t EnumerationComboBox::getCurrentId() const noexcept
 {
-    return d->id;
+    return currentData().toLongLong();
+}
+
+void EnumerationComboBox::setCurrentId(std::int64_t id) noexcept
+{
+    for (int index = 0; index < count(); ++index) {
+        if (itemData(index).toLongLong() == id) {
+            setCurrentIndex(index);
+            break;
+        }
+    }
+}
+
+// PRIVATE
+
+void EnumerationComboBox::initUi() noexcept
+{
+    setAutoFillBackground(true);
+    if (d->enumerationService.getEnumerationByName(d->enumeration))  {
+        for (const auto &item : d->enumeration) {
+            addItem(item.name, QVariant::fromValue(item.id));
+        }
+    }
 }

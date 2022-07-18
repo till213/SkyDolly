@@ -102,7 +102,7 @@ public slots:
     void syncAiObjectsWithFlight() noexcept override;
     void updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept override;
     void onTimeOffsetChanged() noexcept override;
-    void onTailNumberChanged(Aircraft &aircraft) noexcept override;
+    void onTailNumberChanged(const Aircraft &aircraft) noexcept override;
 
 protected:
     void setState(Connect::State state) noexcept override;

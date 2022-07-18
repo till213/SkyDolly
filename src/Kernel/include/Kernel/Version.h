@@ -33,7 +33,7 @@
 
 #include "KernelLib.h"
 
-class VersionPrivate;
+struct VersionPrivate;
 
 /*!
  * The default constructor creates an instance which represents the current \e application version.
@@ -72,6 +72,8 @@ public:
      * \sa #operator<()
      */
     Version(QStringView version) noexcept;
+    Version(const Version &other) noexcept;
+    Version(Version &&other) noexcept;
     ~Version() noexcept;
 
     void fromString(QStringView version) noexcept;
@@ -129,7 +131,7 @@ public:
      * \return \c true if this Version is equal with the \c rhs version;
      *         \c false else
      */
-    bool operator==(const Version &rhs) noexcept;
+    bool operator==(const Version &rhs) const noexcept;
 
     /*!
      * Compares this Version against \c rhs for greater or equal.
@@ -139,7 +141,7 @@ public:
      * \return \c true if this Version is equal or greater than the \c rhs version;
      *         \c false else
      */
-    bool operator>=(const Version &rhs) noexcept;
+    bool operator>=(const Version &rhs) const noexcept;
 
     /*!
      * Compares this Version against \c rhs for smaller.
@@ -149,14 +151,14 @@ public:
      * \return \c true if this Version is smaller than the \c rhs version;
      *         \c false else
      */
-    bool operator<(const Version &rhs) noexcept;
+    bool operator<(const Version &rhs) const noexcept;
 
     /*!
      * A cool code name - every application needs this ;)
      *
      * \return a QString containing a cool code name
      */
-    static const QString getCodeName() noexcept;
+    static QString getCodeName() noexcept;
 
     /*!
      * A "fancy user readable version" which follows the pattern yy.mm.
@@ -165,7 +167,7 @@ public:
      *
      * \return a QString containing the "user readable version"
      */
-    static const QString getUserVersion() noexcept;
+    static QString getUserVersion() noexcept;
 
     /*!
      * The version number which follows the pattern version.minor.patch.
@@ -174,21 +176,21 @@ public:
      *
      * \return a QString containing the application version.
      */
-    static const QString getApplicationVersion() noexcept;
+    static QString getApplicationVersion() noexcept;
 
     /*!
      * Returns the organisation name.
      *
      * \return a QString the name of the organisation
      */
-    static const QString getOrganisationName() noexcept;
+    static QString getOrganisationName() noexcept;
 
     /*!
      * Returns the application name which can be displayed in dialog captions.
      *
      * \return a QString containing the application name
      */
-    static const QString getApplicationName() noexcept;
+    static QString getApplicationName() noexcept;
 
     static QLatin1String getGitHash() noexcept;
 

@@ -117,11 +117,11 @@ bool SQLiteDatabaseDao::updateBackupPeriod(const QString &backupPeriodIntlId) no
         "update metadata "
         "set    backup_period_id = (select ebp.id"
         "                           from enum_backup_period ebp"
-        "                           where ebp.intl_id = :intl_id"
+        "                           where ebp.sym_id = :sym_id"
         "                          );"
     );
 
-    query.bindValue(":intl_id", backupPeriodIntlId);
+    query.bindValue(":sym_id", backupPeriodIntlId);
     return query.exec();
 }
 
@@ -161,7 +161,7 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
         "       m.last_backup_date,"
         "       m.next_backup_date,"
         "       m.backup_directory_path,"
-        "       ebp.intl_id "
+        "       ebp.sym_id "
         "from metadata m "
         "join enum_backup_period ebp "
         "on m.backup_period_id = ebp.id;"
@@ -187,7 +187,7 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
         metadata.nextBackupDate = dateTime.toLocalTime();
 
         metadata.backupDirectoryPath = query.value(5).toString();
-        metadata.backupPeriodIntlId = query.value(6).toString();
+        metadata.backupPeriodSymId = query.value(6).toString();
     }
     return ok;
 };

@@ -4,12 +4,12 @@
 namespace Const {
     constexpr char LogbookExtension[] = ".sdlog";
 
-    constexpr char BackupNeverIntlId[] = "NEVER";
-    constexpr char BackupNowIntlId[] = "NOW";
-    constexpr char BackupMonthlyIntlId[] = "MONTH";
-    constexpr char BackupWeeklyIntlId[] = "WEEK";
-    constexpr char BackupDailyIntlId[] = "DAY";
-    constexpr char BackupAlwaysIntlId[] = "ALWAYS";
+    constexpr char BackupNeverSymId[] = "NEVER";
+    constexpr char BackupNowSymId[] = "NOW";
+    constexpr char BackupMonthlySymId[] = "MONTH";
+    constexpr char BackupWeeklySymId[] = "WEEK";
+    constexpr char BackupDailySymId[] = "DAY";
+    constexpr char BackupAlwaysSymId[] = "ALWAYS";
 }
 
 #endif // CONST_H

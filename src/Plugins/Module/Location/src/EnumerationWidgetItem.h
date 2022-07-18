@@ -22,29 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PERSISTEDENUMERATIONITEM_H
-#define PERSISTEDENUMERATIONITEM_H
+#ifndef ENUMERATIONWIDGETITEM_H
+#define ENUMERATIONWIDGETITEM_H
 
-#include <memory>
 #include <cstdint>
 
-#include <QString>
+#include <QTableWidgetItem>
+#include <QVariant>
 
-#include <Model/SimType.h>
-#include "PersistenceLib.h"
+class Enumeration;
 
-struct PersistedEnumerationItemPrivate;
-
-class PERSISTENCE_API PersistedEnumerationItem
+class EnumerationWidgetItem : public QTableWidgetItem
 {
 public:
-    PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept;
-    ~PersistedEnumerationItem() noexcept;
+    EnumerationWidgetItem(const Enumeration &enumeration);
 
-    std::int64_t id() const noexcept;
+    QVariant data(int role) const override;
+    void setData(int role, const QVariant &value) override;
 
 private:
-    std::unique_ptr<PersistedEnumerationItemPrivate> d;
+    std::int64_t m_id;
+    QString m_name;
+    const Enumeration &m_enumeration;
 };
 
-#endif // PERSISTEDENUMERATIONITEM_H
+#endif // ENUMERATIONWIDGETITEM_H

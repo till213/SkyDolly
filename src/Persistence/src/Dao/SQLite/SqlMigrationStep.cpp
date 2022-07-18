@@ -70,7 +70,7 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
 
     // Match the tag's content, e.g. id = 42, descn = "The description", step = 1
     // https://regex101.com/
-    static const QRegularExpression tagRegExp("([\\w]+)\\s*=\\s*[\"]*([\\w\\s\\-]+)[\"]*");
+    static const QRegularExpression tagRegExp(R"(([\w]+)\s*=\s*["]*([\w\s\-]+)["]*)");
 
     QRegularExpressionMatchIterator it = tagRegExp.globalMatch(tag);
     ok = true;
@@ -118,7 +118,7 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
 {
     QString errorMessage;
     // Match SQL statements terminated with a semicolon
-    static const QRegularExpression sqlRegExp("([\\w\\s\\(\\),\\*=:$@#|\\/\\<\\>\\~!\\^\\-'\\+\\.]+);");
+    static const QRegularExpression sqlRegExp(R"(([\w|\W]+?);)");
 
     // Note that DDL statements do not require transactions; but for
     // now we execute all queries within a transaction
