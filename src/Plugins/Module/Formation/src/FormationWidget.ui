@@ -944,7 +944,7 @@
           <item>
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>Seconds:</string>
+             <string>Offset:</string>
             </property>
            </widget>
           </item>

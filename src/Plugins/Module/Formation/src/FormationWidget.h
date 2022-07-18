@@ -69,7 +69,6 @@ private:
     void frenchConnection() noexcept;
 
     void updateAircraftTable() noexcept;
-    void updateAircraftInfo(const Aircraft &aircraft) noexcept;
     void updateAircraftIcons() noexcept;
     void updateRelativePositionUi() noexcept;
     void updateEditUi() noexcept;
@@ -98,7 +97,7 @@ private slots:
 
     void onRelativePositionChanged() noexcept;
     void onUserAircraftChanged() noexcept;
-    void onAircraftInfoChanged(const Aircraft &aircraft) noexcept;
+    void onTimeOffsetChanged(const Aircraft &aircraft) noexcept;
 
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;

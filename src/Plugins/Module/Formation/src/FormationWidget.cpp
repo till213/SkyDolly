@@ -85,8 +85,9 @@ namespace
     constexpr std::int64_t LargeTimeOffset = 1000;
 
     // Seconds
-    constexpr double TimeOffsetMax = 24.0 * 60.0 * 60.0;
-    constexpr double TimeOffsetMin = -TimeOffsetMax;
+    constexpr double DefaultTimeOffsetSec = 0.0;
+    constexpr double TimeOffsetMaxSec = 24.0 * 60.0 * 60.0;
+    constexpr double TimeOffsetMinSec = -TimeOffsetMaxSec;
 }
 
 struct FormationWidgetPrivate
@@ -269,7 +270,8 @@ void FormationWidget::initUi() noexcept
 void FormationWidget::initTimeOffsetUi() noexcept
 {
     // Validation
-    ui->timeOffsetSpinBox->setRange(::TimeOffsetMin, ::TimeOffsetMax);
+    ui->timeOffsetSpinBox->setRange(::TimeOffsetMinSec, ::TimeOffsetMaxSec);
+    ui->timeOffsetSpinBox->setSuffix(tr(" s"));
 }
 
 void FormationWidget::frenchConnection() noexcept
@@ -288,7 +290,7 @@ void FormationWidget::frenchConnection() noexcept
     connect(&flight, &Flight::flightStored,
             this, &FormationWidget::updateUi);
     connect(&flight, &Flight::aircraftInfoChanged,
-            this, &FormationWidget::onAircraftInfoChanged);
+            this, &FormationWidget::onTimeOffsetChanged);
 
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
@@ -356,17 +358,6 @@ void FormationWidget::updateAircraftTable() noexcept
     ui->aircraftTableWidget->blockSignals(false);
 
     updateAircraftIcons();
-}
-
-void FormationWidget::updateAircraftInfo(const Aircraft &aircraft) noexcept
-{
-    int row {::InvalidRowIndex};
-    if (getSelectedAircraftId() == aircraft.getId()) {
-        row = getSelectedRow();
-    } else {
-        row = getRowById(aircraft.getId());
-    }
-    // TODO IMPLEMENT ME!!!
 }
 
 void FormationWidget::updateAircraftIcons() noexcept
@@ -471,7 +462,7 @@ void FormationWidget::updateTimeOffsetUi() noexcept
         const double timeOffsetSec = static_cast<double>(timeOffset) / 1000.0;
         ui->timeOffsetSpinBox->setValue(timeOffsetSec);
     } else {
-        ui->timeOffsetSpinBox->clear();
+        ui->timeOffsetSpinBox->setValue(::DefaultTimeOffsetSec);
     }
     ui->timeOffsetSpinBox->blockSignals(false);
 }
@@ -698,7 +689,7 @@ int FormationWidget::getRowById(std::int64_t id) const noexcept
     int row {::InvalidRowIndex};
     int currentRow {0};
     while (row == ::InvalidRowIndex && currentRow < ui->aircraftTableWidget->rowCount()) {
-        if (id == ui->aircraftTableWidget->item(row, FormationWidgetPrivate::idColumnIndex)->data(Qt::EditRole).toLongLong()) {
+        if (id == ui->aircraftTableWidget->item(currentRow, FormationWidgetPrivate::idColumnIndex)->data(Qt::EditRole).toLongLong()) {
             row = currentRow;
         } else {
             ++currentRow;
@@ -723,7 +714,7 @@ std::int64_t FormationWidget::getSelectedAircraftId() const noexcept
     std::int64_t id {Aircraft::InvalidId};
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRowIndex) {
-        id = ui->aircraftTableWidget->item(selectedRow, FormationWidgetPrivate::idColumnIndex)->data(Qt::EditRole).toInt() - 1;
+        id = ui->aircraftTableWidget->item(selectedRow, FormationWidgetPrivate::idColumnIndex)->data(Qt::EditRole).toInt();
     }
     return id;
 }
@@ -753,9 +744,26 @@ void FormationWidget::onUserAircraftChanged() noexcept
     updateAndSendUserAircraftPosition();
 }
 
-void FormationWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
+void FormationWidget::onTimeOffsetChanged(const Aircraft &aircraft) noexcept
 {
-    updateAircraftInfo(aircraft);
+    const double timeOffsetSec = static_cast<double>(aircraft.getAircraftInfo().timeOffset) / 1000.0;
+    int row {::InvalidRowIndex};
+    if (getSelectedAircraftId() == aircraft.getId()) {
+        row = getSelectedRow();
+    } else {
+        row = getRowById(aircraft.getId());
+    }
+    // Update aircraft table
+    if (row != ::InvalidRowIndex) {
+        ui->aircraftTableWidget->blockSignals(true);
+        ui->aircraftTableWidget->setSortingEnabled(false);
+        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::timeOffsetColumnIndex);
+        item->setData(Qt::EditRole, timeOffsetSec);
+        ui->aircraftTableWidget->selectRow(row);
+        ui->aircraftTableWidget->setSortingEnabled(true);
+        ui->aircraftTableWidget->blockSignals(false);
+    }
+    updateTimeOffsetUi();
 }
 
 void FormationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept

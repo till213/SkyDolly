@@ -407,7 +407,7 @@ void LocationWidget::updateLocationTable() noexcept
 
 inline void LocationWidget::updateLocationRow(const Location &location, int rowIndex) noexcept
 {
-    const bool isSystemLocation = location.typeId == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id();
+    const bool isSystemLocation {location.typeId == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id()};
     const Qt::ItemFlags systemFlags {Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled};
     int columnIndex {0};
 
