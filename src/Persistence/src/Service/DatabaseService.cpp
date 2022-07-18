@@ -145,13 +145,13 @@ bool DatabaseService::updateBackupDate() noexcept
     if (ok) {
         const QDateTime today = QDateTime::currentDateTime();
         QDateTime nextBackupDate = metaData.lastBackupDate.isNull() ? today : metaData.lastBackupDate;
-        if (metaData.backupPeriodIntlId == Const::BackupNeverIntlId) {
+        if (metaData.backupPeriodSymId == Const::BackupNeverSymId) {
             nextBackupDate = nextBackupDate.addYears(BackupPeriodYearsNever);
-        } else if (metaData.backupPeriodIntlId == Const::BackupMonthlyIntlId) {
+        } else if (metaData.backupPeriodSymId == Const::BackupMonthlySymId) {
             nextBackupDate = nextBackupDate.addMonths(BackupPeriodOneMonth);
-        } else if (metaData.backupPeriodIntlId == Const::BackupWeeklyIntlId) {
+        } else if (metaData.backupPeriodSymId == Const::BackupWeeklySymId) {
             nextBackupDate = nextBackupDate.addDays(BackupPeriodSevenDays);
-        } else if (metaData.backupPeriodIntlId == Const::BackupDailyIntlId) {
+        } else if (metaData.backupPeriodSymId == Const::BackupDailySymId) {
             nextBackupDate = nextBackupDate.addDays(BackupPeriodOneDay);
         }
         if (nextBackupDate < today) {

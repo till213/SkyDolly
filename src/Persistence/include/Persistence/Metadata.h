@@ -37,7 +37,7 @@ struct Metadata
     QDateTime lastBackupDate;
     QDateTime nextBackupDate;
     QString backupDirectoryPath;
-    QString backupPeriodIntlId;
+    QString backupPeriodSymId;
 };
 
 #endif // METADATA_H

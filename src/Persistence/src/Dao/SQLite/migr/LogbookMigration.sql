@@ -511,7 +511,7 @@ alter table aircraft add column time_offset integer;
 update aircraft
 set    time_offset = 0;
 
-@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Metadata rename interval to period", step_cnt = 5)
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Rename column metadata.interval to period", step_cnt = 5)
 alter table metadata rename column backup_interval_id to backup_period_id;
 
 @migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Rename interval enumeration table to period", step = 2)
@@ -604,7 +604,7 @@ create unique index aircraft_idx1 on aircraft (flight_id, seq_nr);
 @migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Create case-insensitive index on type in aircraft table", step = 6)
 create index aircraft_idx2 on aircraft (type collate nocase);
 
-@migr(id = "50d25b69-7410-4777-9b17-1e16c4ea4867", descn = "Rename column creation_date to creation_time", step_cnt = 1)
+@migr(id = "50d25b69-7410-4777-9b17-1e16c4ea4867", descn = "Rename column flight.creation_date to creation_time", step_cnt = 1)
 alter table flight rename creation_date to creation_time;
 
 @migr(id = "3813896d-82a4-4ae1-ad10-c349ea0df073", descn = "Add additional aircraft types from sim update 7", step = 1)
@@ -663,8 +663,11 @@ insert into aircraft_type values
 update metadata
 set app_version = '0.11.0';
 
-@migr(id = "00c67a6f-b124-4147-8c97-6f99d814e3cc", descn = "Flight rename wind_velocity to wind_speed", step_cnt = 1)
+@migr(id = "00c67a6f-b124-4147-8c97-6f99d814e3cc", descn = "Rename column flight.wind_velocity to wind_speed", step_cnt = 1)
 alter table flight rename column wind_velocity to wind_speed;
+
+@migr(id = "07cd96ff-e33f-45ca-a29d-2efdfe519409", descn = "Rename column enum_backup_period.intl_id to sym_id", step_cnt = 1)
+alter table enum_backup_period rename intl_id to sym_id;
 
 @migr(id = "c94c121e-3d93-44e4-a747-6db2b5e3b45b", descn = "Update application version to 0.12", step = 1)
 update metadata
