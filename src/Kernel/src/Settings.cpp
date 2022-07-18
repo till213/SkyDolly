@@ -733,7 +733,7 @@ void Settings::restore() noexcept
     {
         d->recordingSampleRateValue = d->settings.value("RecordingSampleRate", SettingsPrivate::DefaultRecordingSampleRate).toDouble(&ok);
         if (!ok) {
-            qWarning("The recording sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultRecordingSampleRate);
+            qWarning() << "The recording sample rate in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultRecordingSampleRate;
             d->recordingSampleRateValue = SettingsPrivate::DefaultRecordingSampleRate;
         }
     }
@@ -743,12 +743,12 @@ void Settings::restore() noexcept
         d->absoluteSeek = d->settings.value("AbsoluteSeek", SettingsPrivate::DefaultAbsoluteSeek).toBool();
         d->seekIntervalSeconds = d->settings.value("SeekIntervalSeconds", SettingsPrivate::DefaultSeekIntervalSeconds).toDouble(&ok);
         if (!ok) {
-            qWarning("The seek interval [seconds] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalSeconds);
+            qWarning() << "The seek interval [seconds] in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultSeekIntervalSeconds;
             d->seekIntervalSeconds = SettingsPrivate::DefaultSeekIntervalSeconds;
         }
         d->seekIntervalPercent = d->settings.value("SeekIntervalPercent", SettingsPrivate::DefaultSeekIntervalPercent).toDouble(&ok);
         if (!ok) {
-            qWarning("The seek interval [percent] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalPercent);
+            qWarning() << "The seek interval [percent] in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultSeekIntervalPercent;
             d->seekIntervalPercent = SettingsPrivate::DefaultSeekIntervalPercent;
         }
         d->replayLoop = d->settings.value("ReplayLoop", SettingsPrivate::DefaultReplayLoop).toBool();
@@ -756,7 +756,7 @@ void Settings::restore() noexcept
         if (ok) {
             d->replaySpeedUnit = static_cast<Replay::SpeedUnit>(replaySpeedUnitValue);
         } else {
-            qWarning("The replay speed unit in the settings coul dnot be parsed, so setting value to default value %d", Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit));
+            qWarning() << "The replay speed unit in the settings coul dnot be parsed, so setting value to default value:" << Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit);
             d->replaySpeedUnit = SettingsPrivate::DefaultReplaySpeedUnit;
         }
         d->repeatFlapsHandleIndex = d->settings.value("RepeatFlapsHandleIndex", SettingsPrivate::DefaultRepeatFlapsHandleIndex).toBool();
