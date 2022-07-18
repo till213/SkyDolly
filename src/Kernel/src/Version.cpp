@@ -36,20 +36,22 @@
 #include <VersionConfig.h>
 #include "Version.h"
 
-class VersionPrivate
+struct VersionPrivate
 {
-public:
     VersionPrivate() noexcept
-        : major(VersionConfig::Major), minor(VersionConfig::Minor), patch(VersionConfig::Patch)
     {}
 
     VersionPrivate(int theMajor, int theMinor, int thePatch) noexcept
         : major(theMajor), minor(theMinor), patch(thePatch)
     {}
 
-    int major;
-    int minor;
-    int patch;
+    VersionPrivate(const VersionPrivate &other)
+        : major(other.major), minor(other.minor), patch(other.patch)
+    {}
+
+    int major {VersionConfig::Major};
+    int minor {VersionConfig::Minor};
+    int patch {VersionConfig::Patch};
 
     static inline const QString CodeName {QStringLiteral("Blissful Boeing")};
 };
@@ -70,9 +72,17 @@ Version::Version(QStringView version) noexcept
     fromString(version);
 }
 
+Version::Version(const Version &other) noexcept
+    : d(std::make_unique<VersionPrivate>(other.d->major, other.d->minor, other.d->patch))
+{}
+
+Version::Version(Version &&other) noexcept
+    : d(std::move(other.d))
+{}
+
 void Version::fromString(QStringView version) noexcept
 {
-    QRegularExpression versionRegExp("^(\\d+)\\.(\\d+)\\.(\\d+)$");
+    static QRegularExpression versionRegExp(R"(^(\d+)\.(\d+)\.(\d+)$)");
     QRegularExpressionMatch match = versionRegExp.match(version);
     if (match.isValid()) {
         d->major = match.captured(1).toInt();
@@ -114,14 +124,14 @@ void Version::operator=(const Version &rhs) noexcept
     d = std::make_unique<VersionPrivate>(rhs.d->major, rhs.d->minor, rhs.d->patch);
 }
 
-bool Version::operator==(const Version &rhs) noexcept
+bool Version::operator==(const Version &rhs) const noexcept
 {
     bool result;
     result = d->major == rhs.d->major && d->minor == rhs.d->minor && d->patch == rhs.d->patch;
     return result;
 }
 
-bool Version::operator>=(const Version &rhs) noexcept
+bool Version::operator>=(const Version &rhs) const noexcept
 {
     bool result;
     if (d->major > rhs.d->major) {
@@ -144,17 +154,17 @@ bool Version::operator>=(const Version &rhs) noexcept
     return result;
 }
 
-bool Version::operator<(const Version &rhs) noexcept
+bool Version::operator<(const Version &rhs) const noexcept
 {
     return !(*this >= rhs);
 }
 
-const QString Version::getCodeName() noexcept
+QString Version::getCodeName() noexcept
 {
     return VersionPrivate::CodeName;
 }
 
-const QString Version::getUserVersion() noexcept
+QString Version::getUserVersion() noexcept
 {
     QString userVersion;
     const QDate gitDate = getGitDate().date();
@@ -164,18 +174,18 @@ const QString Version::getUserVersion() noexcept
     return userVersion;
 }
 
-const QString Version::getApplicationVersion() noexcept
+QString Version::getApplicationVersion() noexcept
 {
     Version version;
     return version.toString();
 }
 
-const QString Version::getOrganisationName() noexcept
+QString Version::getOrganisationName() noexcept
 {
     return VersionConfig::OrganisationName;
 }
 
-const QString Version::getApplicationName() noexcept
+QString Version::getApplicationName() noexcept
 {
     return VersionConfig::ApplicationName;
 }

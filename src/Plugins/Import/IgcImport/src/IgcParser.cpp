@@ -71,11 +71,11 @@ namespace
     constexpr char DateFormat[] = "HHmmss";
 
     // H (header) record
-    constexpr char HRecordDatePattern[] = "^HFDTE(?:DATE:)?(\\d{2})(\\d{2})(\\d{2})(?:,?(\\d{2}))?";
-    constexpr char HRecordPilotPattern[] = "^H(\\w)PLT(?:.{0,}?:(.*)|(.*))$";
-    constexpr char HRecordCoPilotPattern[] = "^H(\\w)CM2(?:.{0,}?:(.*)|(.*))$";
-    constexpr char HRecordGliderTypePattern[] = "^H(\\w)GTY(?:.{0,}?:(.*)|(.*))$";
-    constexpr char HRecordGliderIdPattern[] = "^H(\\w)GID(?:.{0,}?:(.*)|(.*))$";
+    constexpr char HRecordDatePattern[] = R"(^HFDTE(?:DATE:)?(\d{2})(\d{2})(\d{2})(?:,?(\d{2}))?)";
+    constexpr char HRecordPilotPattern[] = R"(^H(\w)PLT(?:.{0,}?:(.*)|(.*))$)";
+    constexpr char HRecordCoPilotPattern[] = R"(^H(\w)CM2(?:.{0,}?:(.*)|(.*))$)";
+    constexpr char HRecordGliderTypePattern[] = R"(^H(\w)GTY(?:.{0,}?:(.*)|(.*))$)";
+    constexpr char HRecordGliderIdPattern[] = R"(^H(\w)GID(?:.{0,}?:(.*)|(.*))$)";
 
     constexpr int HRecordDayIndex = 1;
     constexpr int HRecordMonthIndex = 2;
@@ -83,15 +83,15 @@ namespace
     constexpr int HRecordFlightNumberIndex = 4;
 
     // I (addition definition) record
-    constexpr char IRecordPattern[] = "^[I](\\d{2})((?:\\d{4}[A-Z]{3})+)";
+    constexpr char IRecordPattern[] = R"(^[I](\d{2})((?:\d{4}[A-Z]{3})+))";
     constexpr int IRecordNofAdditionsIndex = 1;
     constexpr int IRecordAdditionsDefinitionsIndex = 2;
     // Length of addition definition [bytes]
     constexpr int IRecordAdditionDefinitionLength = 7;
 
     // C (task) record
-    constexpr char CRecordTaskDefinitionPattern[] = "^C(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{4})([-\\d]{2})(.*)";
-    constexpr char CRecordTaskPattern[] = "^C(\\d{2})(\\d{5})([NS])(\\d{3})(\\d{5})([EW])(.*)";
+    constexpr char CRecordTaskDefinitionPattern[] = R"(^C(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{4})([-\d]{2})(.*))";
+    constexpr char CRecordTaskPattern[] = R"(^C(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*))";
 
     constexpr int CRecordLatitudeDegreesIndex = 1;
     // MMmmm - minutes (MM) with fractional (mmm) part: by dividing by 1000 we get the proper float value
@@ -108,7 +108,7 @@ namespace
     constexpr int CRecordTaskIndex = 7;
 
     // B (fix) record
-    constexpr char BRecordPattern[] = "^B(\\d{6})(\\d{2})(\\d{5})([NS])(\\d{3})(\\d{5})([EW])([AV])(-\\d{4}|\\d{5})(-\\d{4}|\\d{5})";
+    constexpr char BRecordPattern[] = R"(^B(\d{6})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])(-\d{4}|\d{5})(-\d{4}|\d{5}))";
     // HHMMSS
     constexpr int BRecordDateIndex = 1;
 
@@ -136,17 +136,12 @@ namespace
     constexpr char DirectionTypeWest = 'W';
 }
 
-class IgcParserPrivate
+struct IgcParserPrivate
 {
-public:
     IgcParserPrivate() noexcept
-        : file(nullptr),
-          enlAddition(false),
-          enlStartOffset(::InvalidOffset),
-          enlLength(0)
     {}
 
-    QFile *file;
+    QFile *file {nullptr};
 
     // Fix timestamps
     QTime previousTime;
@@ -157,10 +152,10 @@ public:
     // Altitude in meters
     std::vector<IgcParser::Fix> fixes;
 
-    bool enlAddition;
-    int enlStartOffset;
-    int enlLength;
-    double maxEnlValue;
+    bool enlAddition {false};
+    int enlStartOffset {::InvalidOffset};
+    int enlLength {0};
+    double maxEnlValue {0.0};
 
     static const QRegularExpression hRecordDateRegExp;
     static const QRegularExpression hRecordPilotRegExp;

@@ -59,17 +59,27 @@ public:
             : Data()
         {}
 
-        Item_(std::atomic_int64_t id, QString theInternalId, QString theName) noexcept
-            : Data(id), internalId(theInternalId), name(theName)
+        Item_(std::atomic_int64_t id, QString thesymbolicId, QString theName) noexcept
+            : Data(id), symbolicId(thesymbolicId), name(theName)
         {}
-        QString internalId;
+        QString symbolicId;
         QString name;
     };
 
     QString getName() const noexcept;
     void addItem(Item item) noexcept;
     const std::vector<Item> &items() const noexcept;
-    Item itemByInternalId(QString internalId) const noexcept;
+    Item getItemBySymbolicId(QString symbolicId) const noexcept;
+    Item getItemById(std::int64_t id) const noexcept;
+    QString getSymbolicIdById(std::int64_t id) const noexcept;
+
+    std::size_t count() const noexcept;
+
+    using Iterator = std::vector<Item>::iterator;
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    const Iterator begin() const noexcept;
+    const Iterator end() const noexcept;
 
 private:
     std::unique_ptr<EnumerationPrivate> d;

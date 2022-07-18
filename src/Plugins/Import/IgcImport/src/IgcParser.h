@@ -37,7 +37,7 @@
 class QFile;
 class QByteArray;
 
-class IgcParserPrivate;
+struct IgcParserPrivate;
 
 /*!
  * Parses flight recorder files in the IGC (International Gliding Association) format.

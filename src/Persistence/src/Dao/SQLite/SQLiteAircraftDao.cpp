@@ -32,6 +32,10 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QTimeZone>
+#ifdef DEBUG
+#include <QDebug>
+#endif
+#include <QSqlDriver>
 
 #include <Kernel/Enum.h>
 #include <Model/Aircraft.h>
@@ -371,15 +375,19 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(std::int64_t flightId, std::v
         const int initialAirspeedIdx = record.indexOf("initial_airspeed");
         const int airCraftAltitudeAboveGroundIdx = record.indexOf("altitude_above_ground");
         const int startOnGroundIdx = record.indexOf("start_on_ground");
+        const int size = query.size();
+        if (size > 0) {
+            aircraftInfos.reserve(size);
+        }
         while (ok && query.next()) {
             AircraftInfo info(query.value(idIdx).toLongLong());
             const QString &type = query.value(typeIdx).toString();
-            info.timeOffset = query.value(timeOffsetIdx).toULongLong();
+            info.timeOffset = query.value(timeOffsetIdx).toLongLong();
             info.tailNumber = query.value(tailNumberIdx).toString();
             info.airline = query.value(airlineIdx).toString();
             info.flightNumber = query.value(flightNumberIdx).toString();
             info.initialAirspeed = query.value(initialAirspeedIdx).toInt();
-            info.altitudeAboveGround = query.value(airCraftAltitudeAboveGroundIdx).toInt();
+            info.altitudeAboveGround = query.value(airCraftAltitudeAboveGroundIdx).toFloat();
             info.startOnGround = query.value(startOnGroundIdx).toBool();
 
             AircraftType aircraftType;

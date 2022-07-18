@@ -22,29 +22,32 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PERSISTEDENUMERATIONITEM_H
-#define PERSISTEDENUMERATIONITEM_H
+#ifndef ENUMERATIONCOMBOBOX_H
+#define ENUMERATIONCOMBOBOX_H
 
 #include <memory>
 #include <cstdint>
 
-#include <QString>
+#include <QComboBox>
 
-#include <Model/SimType.h>
-#include "PersistenceLib.h"
+#include "WidgetLib.h"
 
-struct PersistedEnumerationItemPrivate;
+struct EnumerationComboBoxPrivate;
 
-class PERSISTENCE_API PersistedEnumerationItem
+class WIDGET_API EnumerationComboBox : public QComboBox
 {
+    Q_OBJECT
 public:
-    PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept;
-    ~PersistedEnumerationItem() noexcept;
+    explicit EnumerationComboBox(QString enumerationName, QWidget *parent = nullptr) noexcept;
+    ~EnumerationComboBox() noexcept override;
 
-    std::int64_t id() const noexcept;
+    std::int64_t getCurrentId() const noexcept;
+    void setCurrentId(std::int64_t id) noexcept;
 
 private:
-    std::unique_ptr<PersistedEnumerationItemPrivate> d;
+    std::unique_ptr<EnumerationComboBoxPrivate> d;
+
+    void initUi() noexcept;
 };
 
-#endif // PERSISTEDENUMERATIONITEM_H
+#endif // ENUMERATIONCOMBOBOX_H

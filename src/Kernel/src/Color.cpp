@@ -59,6 +59,7 @@ std::vector<QRgb> Color::createColorRamp(QRgb startColor, QRgb endColor, int nof
         const double deltaGreen = (endGreen - startGreen) / static_cast<double>(nofIntervals);
         const double deltaBlue = (endBlue - startBlue) / static_cast<double>(nofIntervals);
 
+        colorRamp.reserve(nofTotalColors);
         // First color
         colorRamp.push_back(startColor);
         // Color ramp

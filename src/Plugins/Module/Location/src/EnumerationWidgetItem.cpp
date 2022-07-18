@@ -22,29 +22,55 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PERSISTEDENUMERATIONITEM_H
-#define PERSISTEDENUMERATIONITEM_H
-
-#include <memory>
 #include <cstdint>
 
-#include <QString>
+#include <QTableWidgetItem>
+#include <QStringBuilder>
 
-#include <Model/SimType.h>
-#include "PersistenceLib.h"
+#include <Model/Enumeration.h>
+#include "EnumerationWidgetItem.h"
 
-struct PersistedEnumerationItemPrivate;
+// PUBLIC
 
-class PERSISTENCE_API PersistedEnumerationItem
+EnumerationWidgetItem::EnumerationWidgetItem(const Enumeration &enumeration)
+    : QTableWidgetItem(QTableWidgetItem::UserType),
+      m_enumeration(enumeration)
+{}
+
+QVariant EnumerationWidgetItem::data(int role) const
 {
-public:
-    PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept;
-    ~PersistedEnumerationItem() noexcept;
+    switch (role)
+    {
+    case Qt::DisplayRole:
+        return m_name;
+        break;
+    case Qt::EditRole:
+    {
+        return QVariant::fromValue(m_id);
+        break;
+    }
+    default:
+        return QTableWidgetItem::data(role);
+        break;
+    }
+    return QVariant();
+}
 
-    std::int64_t id() const noexcept;
-
-private:
-    std::unique_ptr<PersistedEnumerationItemPrivate> d;
-};
-
-#endif // PERSISTEDENUMERATIONITEM_H
+void EnumerationWidgetItem::setData(int role, const QVariant &value)
+{
+    switch (role)
+    {
+    case Qt::DisplayRole:
+        m_name = m_enumeration.getItemById(value.toLongLong()).name;
+        break;
+    case Qt::EditRole:
+    {
+        m_id = value.toLongLong();
+        m_name = m_enumeration.getItemById(m_id).name;
+        break;
+    }
+    default:
+        break;
+    }
+    QTableWidgetItem::setData(role, value);
+}

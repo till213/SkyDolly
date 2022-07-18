@@ -67,11 +67,11 @@ void BackupPeriodComboBox::setSelection(Selection selection) noexcept
 
 void BackupPeriodComboBox::initUi() noexcept
 {
-    insertItem(Enum::toUnderlyingType(Index::Never), tr("Never"), Const::BackupNeverIntlId);
-    insertItem(Enum::toUnderlyingType(Index::Monthly), tr("Once a month, when exiting Sky Dolly"), Const::BackupMonthlyIntlId);
-    insertItem(Enum::toUnderlyingType(Index::Weekly), tr("Once a week, when exiting Sky Dolly"), Const::BackupWeeklyIntlId);
-    insertItem(Enum::toUnderlyingType(Index::Daily), tr("Daily, when exiting Sky Dolly"), Const::BackupDailyIntlId);
-    insertItem(Enum::toUnderlyingType(Index::Always), tr("Always, when exiting Sky Dolly"), Const::BackupAlwaysIntlId);
+    insertItem(Enum::toUnderlyingType(Index::Never), tr("Never"), Const::BackupNeverSymId);
+    insertItem(Enum::toUnderlyingType(Index::Monthly), tr("Once a month, when exiting Sky Dolly"), Const::BackupMonthlySymId);
+    insertItem(Enum::toUnderlyingType(Index::Weekly), tr("Once a week, when exiting Sky Dolly"), Const::BackupWeeklySymId);
+    insertItem(Enum::toUnderlyingType(Index::Daily), tr("Daily, when exiting Sky Dolly"), Const::BackupDailySymId);
+    insertItem(Enum::toUnderlyingType(Index::Always), tr("Always, when exiting Sky Dolly"), Const::BackupAlwaysSymId);
     if (d->selection == Selection::IncludingNextTime) {
         insertItem(Enum::toUnderlyingType(Index::NextTime), tr("Next time, when exiting Sky Dolly"));
     }

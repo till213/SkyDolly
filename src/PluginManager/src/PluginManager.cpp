@@ -189,6 +189,7 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
     if (d->pluginsDirectory.exists(pluginDirectoryName)) {
         d->pluginsDirectory.cd(pluginDirectoryName);
         const QStringList entryList = d->pluginsDirectory.entryList(QDir::Files);
+        pluginHandles.reserve(entryList.count());
         for (const QString &fileName : entryList) {
             const QString pluginPath = d->pluginsDirectory.absoluteFilePath(fileName);
             QPluginLoader loader(pluginPath);

@@ -439,6 +439,7 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
     if (d->pluginsDirectory.exists(pluginDirectoryName)) {
         d->pluginsDirectory.cd(pluginDirectoryName);
         const QStringList entryList = d->pluginsDirectory.entryList(QDir::Files);
+        d->pluginHandles.reserve(entryList.count());
         for (const QString &fileName : entryList) {
             const QString pluginPath = d->pluginsDirectory.absoluteFilePath(fileName);
             QPluginLoader loader(pluginPath);

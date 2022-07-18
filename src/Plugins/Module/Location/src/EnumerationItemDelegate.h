@@ -22,29 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PERSISTEDENUMERATIONITEM_H
-#define PERSISTEDENUMERATIONITEM_H
+#ifndef ENUMERATIONITEMDELETAGE_H
+#define ENUMERATIONITEMDELETAGE_H
 
 #include <memory>
-#include <cstdint>
 
-#include <QString>
+#include <QStyledItemDelegate>
+#include <QModelIndex>
 
-#include <Model/SimType.h>
-#include "PersistenceLib.h"
+class QWidget;
 
-struct PersistedEnumerationItemPrivate;
+struct EnumerationItemDelegatePrivate;
 
-class PERSISTENCE_API PersistedEnumerationItem
+class EnumerationItemDelegate : public QStyledItemDelegate
 {
 public:
-    PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept;
-    ~PersistedEnumerationItem() noexcept;
+    EnumerationItemDelegate(QString enumerationName) noexcept;
+    ~EnumerationItemDelegate() noexcept override;
 
-    std::int64_t id() const noexcept;
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const noexcept override;
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const noexcept override;
 
 private:
-    std::unique_ptr<PersistedEnumerationItemPrivate> d;
+    std::unique_ptr<EnumerationItemDelegatePrivate> d;
+
+private slots:
+    void commitAndCloseEditor() noexcept;
 };
 
-#endif // PERSISTEDENUMERATIONITEM_H
+#endif // ENUMERATIONITEMDELETAGE_H

@@ -254,13 +254,16 @@ QString Unit::formatElapsedTime(std::int64_t milliSeconds) const noexcept
 {
     QString elapsedTime;
     if (qAbs(milliSeconds) < ::MillisecondsPerSecond) {
-        elapsedTime = QString("%1 ms").arg(milliSeconds);
+        elapsedTime = QCoreApplication::translate("Unit", "%1 milliseconds", nullptr, static_cast<int>(milliSeconds)).arg(milliSeconds);
     } else if (qAbs(milliSeconds) < ::MillisecondsPerSecond * ::SecondsPerMinute) {
-        elapsedTime = QString("%1 s").arg(QString::number(static_cast<double>(milliSeconds) / ::MillisecondsPerSecond, 'f', 1));
+        const double seconds = static_cast<double>(milliSeconds) / ::MillisecondsPerSecond;
+        elapsedTime = QCoreApplication::translate("Unit", "%1 seconds", nullptr, static_cast<int>(seconds)).arg(QString::number(seconds, 'f', 1));
     } else if (qAbs(milliSeconds) < ::MillisecondsPerSecond * ::SecondsPerMinute * ::MinutesPerHour) {
-        elapsedTime = QString("%1 min").arg(QString::number(static_cast<double>(milliSeconds) / (::MillisecondsPerSecond * ::SecondsPerMinute), 'f', 1));
+        const double minutes = static_cast<double>(milliSeconds) / (::MillisecondsPerSecond * ::SecondsPerMinute);
+        elapsedTime = QCoreApplication::translate("Unit", "%1 minutes", nullptr, static_cast<int>(minutes)).arg(QString::number(minutes, 'f', 1));
     } else {
-        elapsedTime = QString("%1 hours").arg(QString::number(static_cast<double>(milliSeconds) / (::MillisecondsPerSecond * ::SecondsPerMinute * ::MinutesPerHour), 'f', 1));
+        const double hours = static_cast<double>(milliSeconds) / (::MillisecondsPerSecond * ::SecondsPerMinute * ::MinutesPerHour);
+        elapsedTime = QCoreApplication::translate("Unit", "%1 hours", nullptr, static_cast<int>(hours)).arg(QString::number(hours, 'f', 1));
     }
 
     return elapsedTime;

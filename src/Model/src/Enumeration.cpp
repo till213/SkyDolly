@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Enumeration Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -41,8 +41,10 @@ struct EnumerationPrivate
 
     QString name;
     std::vector<Enumeration::Item> items;
+    // Stores the index into items, indexed by the symbolic ID
+    std::unordered_map<QString, std::size_t> itemsBySymbolicId;
     // Stores the index into items, indexed by the internal ID
-    std::unordered_map<QString, std::size_t> itemsByInternalId;
+    std::unordered_map<std::int64_t, std::size_t> itemsById;
 };
 
 // PUBLIC
@@ -70,7 +72,9 @@ QString Enumeration::getName() const noexcept
 void Enumeration::addItem(Item item) noexcept
 {
     d->items.push_back(item);
-    d->itemsByInternalId[item.internalId] = d->items.size() - 1;
+    const std::size_t index = d->items.size() - 1;
+    d->itemsBySymbolicId[item.symbolicId] = index;
+    d->itemsById[item.id] = index;
 }
 
 const std::vector<Enumeration::Item> &Enumeration::items() const noexcept
@@ -78,11 +82,50 @@ const std::vector<Enumeration::Item> &Enumeration::items() const noexcept
     return d->items;
 }
 
-Enumeration::Item Enumeration::itemByInternalId(QString internalId) const noexcept
+Enumeration::Item Enumeration::getItemBySymbolicId(QString symbolicId) const noexcept
 {
-    auto it = d->itemsByInternalId.find(internalId);
-    if (it != d->itemsByInternalId.end()) {
+    auto it = d->itemsBySymbolicId.find(symbolicId);
+    if (it != d->itemsBySymbolicId.end()) {
         return d->items[it->second];
     }
     return Enumeration::Item();
+}
+
+Enumeration::Item Enumeration::getItemById(std::int64_t id) const noexcept
+{
+    auto it = d->itemsById.find(id);
+    if (it != d->itemsById.end()) {
+        return d->items[it->second];
+    }
+    return Enumeration::Item();
+}
+
+QString Enumeration::getSymbolicIdById(std::int64_t id) const noexcept
+{
+    return getItemById(id).symbolicId;
+}
+
+std::size_t Enumeration::count() const noexcept
+{
+    return d->items.size();
+}
+
+Enumeration::Iterator Enumeration::begin() noexcept
+{
+    return d->items.begin();
+}
+
+Enumeration::Iterator Enumeration::end() noexcept
+{
+    return d->items.end();
+}
+
+const Enumeration::Iterator Enumeration::begin() const noexcept
+{
+    return d->items.begin();
+}
+
+const Enumeration::Iterator Enumeration::end() const noexcept
+{
+    return d->items.end();
 }

@@ -49,15 +49,17 @@ namespace
     constexpr int TitleIndex = 1;
     constexpr int DescriptionIndex = 2;
     constexpr int CategoryIndex = 3;
-    constexpr int IdentifierIndex = 4;
-    constexpr int LatitudeIndex = 5;
-    constexpr int LongitudeIndex = 6;
-    constexpr int AltitudeIndex = 7;
-    constexpr int PitchIndex = 8;
-    constexpr int BankIndex = 9;
-    constexpr int HeadingIndex = 10;
-    constexpr int IndicatedAirspeedIndex = 11;
-    constexpr int OnGroundIndex = 12;
+    constexpr int CountryIndex = 4;
+    constexpr int IdentifierIndex = 5;
+    constexpr int LatitudeIndex = 6;
+    constexpr int LongitudeIndex = 7;
+    constexpr int AltitudeIndex = 8;
+    constexpr int PitchIndex = 9;
+    constexpr int BankIndex = 10;
+    constexpr int HeadingIndex = 11;
+    constexpr int IndicatedAirspeedIndex = 12;
+    constexpr int OnGroundIndex = 13;
+    constexpr int AttributesIndex = 14;
 }
 
 class SqlMigrationPrivate
@@ -114,13 +116,12 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 {
     // https://regex101.com/
     // @migr(...)
-    static const QRegularExpression migrRegExp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
+    static const QRegularExpression migrRegExp(R"(@migr\(([\w="\-,.\s]+)\))");
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
-
         if (ok) {
             QTextStream textStream(&migrationFile);
             const QString migration = textStream.readAll();
@@ -155,33 +156,33 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
 {
     // https://regex101.com/
-    static const QRegularExpression uuidRegExp {"[\"]?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})[\"]?"};
+    static const QRegularExpression uuidRegExp {R"(["]?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})["]?)"};
     static const QRegularExpression csvRegExp {
-        "[\"]?([^\"]+)[\"]?,"      // Title
-        "[\"]?([^\"]*)[\"]?,"      // Description (optional)
-        "[\"]?([^\"]*)[\"]?,"      // Category (INTL_ID) (optional)
-        "[\"]?([^\"]*)[\"]?,"      // Identifier (optional)
-        "([+-]?[0-9]*[.]?[0-9]+)," // Latitude
-        "([+-]?[0-9]*[.]?[0-9]+)," // Longitude
-        "([+-]?[0-9]*[.]?[0-9]+)," // Altitude (optional)
-        "([+-]?[0-9]*[.]?[0-9]+)," // Pitch (optional)
-        "([+-]?[0-9]*[.]?[0-9]+)," // Bank (optional)
-        "([+-]?[0-9]*[.]?[0-9]+)," // Heading (optional)
-        "([+-]?[\\d]*),"           // Indicated airspeed (optional)
-        "[\"]?(false|true)*[\"]?$"  // On Ground (optional)
-
+        R"(["|,]?([^"]+)["]?,)"       // Title
+        R"(["]?([^"]*)["]?,)"         // Description (optional)
+        R"(["]?([^"]*)["]?,)"         // Category (symbolic ID) (optional)
+        R"(["]?([^"]*)["]?,)"         // Country (symbolic ID) (optional)
+        R"(["]?([^"]*)["]?,)"         // Identifier (optional)
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Latitude
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Longitude
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Altitude (optional)
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Pitch (optional)
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Bank (optional)
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Heading (optional)
+        R"(([+-]?[\d]*),)"            // Indicated airspeed (optional)
+        R"(["]?(false|true)*["]?,)"   // On Ground (optional)
+        R"(([+-]?[\d]*)$)"            // Attributes (optional)
     };
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
-        migrationFile.setTextModeEnabled(true);
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
         if (ok) {
             QTextStream textStream(&migrationFile);
             textStream.setCodec(QTextCodec::codecForName("UTF-8"));
             QString csv = textStream.readLine();
-            if (csv.startsWith("\"MigrationId\"")) {
+            if (csv.startsWith("\"MigrationId\"") || csv.startsWith("MigrationId")) {
                 // Skip column names
                 csv = textStream.readLine();
             }
@@ -223,13 +224,19 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
     Enumeration locationType(EnumerationService::LocationType);
     ok = d->enumerationService.getEnumerationByName(locationType);
     if (ok) {
-        location.typeId = locationType.itemByInternalId(EnumerationService::LocationTypeSystemInternalId).id;
+        location.typeId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id;
     }
     Enumeration locationCategory(EnumerationService::LocationCategory);
     ok = d->enumerationService.getEnumerationByName(locationCategory);
     if (ok) {
-        const QString categoryInternalId = locationMatch.captured(::CategoryIndex);
-        location.categoryId = locationCategory.itemByInternalId(categoryInternalId).id;
+        const QString categorySymbolicId = locationMatch.captured(::CategoryIndex);
+        location.categoryId = locationCategory.getItemBySymbolicId(categorySymbolicId).id;
+    }
+    Enumeration country(EnumerationService::Country);
+    ok = d->enumerationService.getEnumerationByName(country);
+    if (ok) {
+        const QString countrySymbolicId = locationMatch.captured(::CountryIndex);
+        location.countryId = country.getItemBySymbolicId(countrySymbolicId).id;
     }
     if (ok) {
         location.identifier = locationMatch.captured(::IdentifierIndex);
@@ -254,6 +261,9 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
     }
     if (ok) {
         location.indicatedAirspeed = locationMatch.captured(::IndicatedAirspeedIndex).toInt(&ok);
+    }
+    if (ok) {
+        location.attributes = locationMatch.captured(::AttributesIndex).toLongLong(&ok);
     }
     if (ok) {
         location.onGround = locationMatch.captured(::OnGroundIndex).toLower() == "true" ? true : false;

@@ -120,6 +120,7 @@ void SortTest::topologicalSort()
         int nodeId = l.first;
         std::vector<ID> edgeList = l.second;
         std::shared_ptr<Vertex> sourceVertex = graph.at(nodeId);
+        sourceVertex->edges.reserve(edgeList.size());
         for (const int id : edgeList) {
             sourceVertex->edges.push_back(graph.at(id));
         }

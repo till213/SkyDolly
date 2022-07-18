@@ -65,9 +65,9 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
     LogbookManager &logbookManager = LogbookManager::getInstance();
     Metadata metadata;
     if (logbookManager.getMetadata(metadata)) {
-        d->originalBackupPeriodIntlId = metadata.backupPeriodIntlId;
+        d->originalBackupPeriodIntlId = metadata.backupPeriodSymId;
     } else {
-        d->originalBackupPeriodIntlId = Const::BackupNeverIntlId;
+        d->originalBackupPeriodIntlId = Const::BackupNeverSymId;
     }
 #ifdef DEBUG
     qDebug() << "LogbookBackupDialog::LogbookBackupDialog: CREATED";
@@ -92,7 +92,7 @@ void LogbookBackupDialog::accept() noexcept
 
     // First update the backup period, as this influences...
     const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
-    if (ok && backupPeriodIntlId != Const::BackupNowIntlId) {
+    if (ok && backupPeriodIntlId != Const::BackupNowSymId) {
         ok = d->databaseService->setBackupPeriod(backupPeriodIntlId);
     }
 
@@ -114,7 +114,7 @@ void LogbookBackupDialog::reject() noexcept
    const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
    if (backupPeriodIntlId != d->originalBackupPeriodIntlId) {
        // ... as this influences...
-       if (backupPeriodIntlId != Const::BackupNowIntlId) {
+       if (backupPeriodIntlId != Const::BackupNowSymId) {
            d->databaseService->setBackupPeriod(backupPeriodIntlId);
            // ... the next backup date
            d->databaseService->updateBackupDate();
@@ -153,15 +153,15 @@ void LogbookBackupDialog::updateUi() noexcept
         ui->backupDirectoryLineEdit->setText(QDir::toNativeSeparators(backupDirectoryPath));
 
         // Backup period
-        if (metadata.backupPeriodIntlId == Const::BackupNeverIntlId) {
+        if (metadata.backupPeriodSymId == Const::BackupNeverSymId) {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));
-        } else if (metadata.backupPeriodIntlId == Const::BackupMonthlyIntlId) {
+        } else if (metadata.backupPeriodSymId == Const::BackupMonthlySymId) {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Monthly));
-        } else if (metadata.backupPeriodIntlId == Const::BackupWeeklyIntlId) {
+        } else if (metadata.backupPeriodSymId == Const::BackupWeeklySymId) {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Weekly));
-        } else if (metadata.backupPeriodIntlId == Const::BackupDailyIntlId) {
+        } else if (metadata.backupPeriodSymId == Const::BackupDailySymId) {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Daily));
-        } else if (metadata.backupPeriodIntlId == Const::BackupAlwaysIntlId) {
+        } else if (metadata.backupPeriodSymId == Const::BackupAlwaysSymId) {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Always));
         } else {
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));
