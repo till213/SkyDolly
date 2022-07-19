@@ -131,7 +131,7 @@ public:
     static inline const QString DefaultImportAircraftType {QLatin1String("")};
 
     static constexpr int DefaultPreviewInfoDialogCount {3};
-    static constexpr int PreviewInfoDialogBase {90};
+    static constexpr int PreviewInfoDialogBase {100};
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
