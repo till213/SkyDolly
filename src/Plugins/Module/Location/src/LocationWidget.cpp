@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
+#include <functional>
 
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -32,6 +33,7 @@
 #include <QTextEdit>
 #include <QDoubleSpinBox>
 #include <QSpinBox>
+#include <QHBoxLayout>
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <QKeyEvent>
@@ -411,7 +413,6 @@ void LocationWidget::updateLocationTable() noexcept
 inline void LocationWidget::updateLocationRow(const Location &location, int rowIndex) noexcept
 {
     const bool isSystemLocation {location.typeId == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id()};
-    const Qt::ItemFlags systemFlags {Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled};
     int columnIndex {0};
 
     // ID
@@ -419,7 +420,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     QVariant locationId = QVariant::fromValue(location.id);
     newItem->setData(Qt::DisplayRole, locationId);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    newItem->setFlags(systemFlags);
+    newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     newItem->setToolTip(tr("Double-click to teleport to location."));
     // Transfer ownership of newItem to table widget
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
@@ -429,7 +430,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem = std::make_unique<QTableWidgetItem>(location.title);
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit title."));
     }
@@ -439,7 +440,9 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     // Description
     newItem = std::make_unique<QTableWidgetItem>(location.description);
     if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+    } else {
+        newItem->setToolTip(tr("Double-click to edit description."));
     }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
@@ -447,9 +450,6 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     // Type
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::typeEnumeration);
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.typeId));
-    if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
-    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
@@ -458,7 +458,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit category."));
     }
@@ -470,7 +470,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.countryId));
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit category."));
     }
@@ -481,7 +481,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem = std::make_unique<QTableWidgetItem>(location.identifier);
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit identifier."));
     }
@@ -493,7 +493,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem->setData(Qt::ItemDataRole::EditRole, Unit::formatCoordinates(location.latitude, location.longitude));
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit position."));
     }
@@ -505,7 +505,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem->setData(Qt::EditRole, location.altitude);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit altitude."));
     }
@@ -515,40 +515,24 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     // Pitch
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, location.pitch);
-    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
-    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Bank
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, location.bank);
-    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
-    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Heading
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, location.heading);
-    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
-    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Indicated airspeed
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, location.indicatedAirspeed);
-    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
-    }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
@@ -556,9 +540,10 @@ inline void LocationWidget::updateLocationRow(const Location &location, int rowI
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setCheckState(location.onGround ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     if (isSystemLocation) {
-        newItem->setFlags(systemFlags);
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsUserCheckable);
     } else {
         newItem->setToolTip(tr("Click to toggle on ground."));
+        newItem->setFlags((newItem->flags() | Qt::ItemIsUserCheckable) & ~Qt::ItemIsEditable);
     }
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
