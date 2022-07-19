@@ -10,6 +10,15 @@
   * Comes with an intial set of "system" locations (currently non-deleteable by design)
   * Stores also pitch, bank, heading and initial speed
   * Country list according to [List of Country Codes [Wikipedia]](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes)
+  * Copy coordinates e.g. from Google maps and paste them (CTRL + V) into the Location module
+    - Various supported formats, e.g.
+      * 46.94809 7.44744
+      * 46.94809, 7.44744
+      * 46°56'53.12" N 7°26'50.78" E
+      * 46°56'53.12" N, 7°26'50.78" E
+      * 7°26'50.78" E 46°56'53.12" N
+      * 7°26'50.78" E, 46°56'53.12" N
+      * And other variants of the DMS notation
 
 ### Improvements
 - Renamed 'velocity' (= a vector) to 'speed' (= a value) where appropriate
