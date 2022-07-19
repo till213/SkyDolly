@@ -74,11 +74,12 @@ private:
     void teleportToLocation(int row) noexcept;
     Location getLocationByRow(int row) const noexcept;
 
-    QStringList parseCoordinates(QString value);
     void tryPasteLocation() noexcept;
 
     int getSelectedRow() const noexcept;
     std::int64_t getSelectedLocationId() const noexcept;
+
+    static QStringList parseCoordinates(QString value);
 
 private slots:
     void updateUi() noexcept;
