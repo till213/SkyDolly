@@ -1673,7 +1673,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
     </message>
     <message>
         <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="216"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="777"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="778"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1809,27 +1809,27 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="771"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="772"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="774"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="775"/>
         <source>Delete Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="775"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="776"/>
         <source>The location with ID %1 is about to be deleted. Do you want to delete the location?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="776"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="777"/>
         <source>Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="778"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="779"/>
         <source>&amp;Keep</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2509,7 +2509,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="657"/>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="660"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1451"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1450"/>
         <source>Optimise Logbook</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2560,8 +2560,8 @@ or choose another reference aircraft (marked in green) in the formation.</source
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="224"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1428"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1473"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1427"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1472"/>
         <source>Logbook error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2571,122 +2571,122 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="709"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="708"/>
         <source>Factor [f]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="710"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="709"/>
         <source>Percent [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="794"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="793"/>
         <source>No valid connection plugin found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="794"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="793"/>
         <source>No valid connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="900"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="899"/>
         <source>Custom replay speed factor in [%L1, %L2].</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="904"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="903"/>
         <source>Custom replay speed % in [%L1%, %L2%].</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="930"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="929"/>
         <source>Recording</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="937"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="936"/>
         <source>%1 ms (%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1390"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1389"/>
         <source>Record [@%1 Hz].</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1392"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1391"/>
         <source>Record [auto sample rate].</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1397"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1396"/>
         <source>Fast forward [%1 sec].</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1398"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1397"/>
         <source>Rewind [%1 sec].</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1401"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1400"/>
         <source>Fast forward [%1 %].</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1402"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1401"/>
         <source>Rewind [%1 %].</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1406"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1405"/>
         <source>Hide modules.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1408"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1407"/>
         <source>Show modules.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1428"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1427"/>
         <source>The logbook %1 could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1450"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1449"/>
         <source>&amp;Optimise</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1452"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1451"/>
         <source>Logbook optimisation will regain unused space. The current %1 size is %2. Do you want to optimise the logbook?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1453"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1452"/>
         <source>The optimisation operation may take a while, depending on the logbook file size.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1467"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1466"/>
         <source>Success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1468"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1467"/>
         <source>The logbook %1 optimisation was successful.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1469"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1468"/>
         <source>The new file size is: %1 (previous size: %2).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1473"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1472"/>
         <source>The logbook could not be optimised.</source>
         <translation type="unfinished"></translation>
     </message>
