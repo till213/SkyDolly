@@ -22,35 +22,36 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef UNITWIDGETITEM_H
+#define UNITWIDGETITEM_H
 
-#include <vector>
+#include <cstdint>
 
-#include <QColor>
+#include <QTableWidgetItem>
+#include <QVariant>
 
-#include "KernelLib.h"
+#include <Kernel/Unit.h>
+#include "WidgetLib.h"
 
-class KERNEL_API Color final
+class Unit;
+
+/*!
+ * The UnitWidgetItem stores values  of the given \c enumeration and displays
+ * their names in table cells.
+ */
+class WIDGET_API UnitWidgetItem : public QTableWidgetItem
 {
 public:
-    static std::vector<QRgb> createColorRamp(QColor startColor, QColor endColor, int nofTotalColors) noexcept;
-    static std::vector<QRgb> createColorRamp(QRgb start, QRgb end, int nofTotalColors) noexcept;
+    UnitWidgetItem(const Unit &unit, Unit::Name name);
 
-    /*!
-     * Converts the \c color from format AARRGGBB to the KML format AABBGGRR.
-     *
-     * \param color
-     *        the color in format AARRGGBB to be converted
-     * \return the converted color in format AABBGGRR
-     */
-    inline static QRgb convertRgbToKml(QRgb color) {
-        const QRgb alpha = qAlpha(color);
-        const QRgb red = qRed(color);
-        const QRgb green = qGreen(color);
-        const QRgb blue = qBlue(color);
-        return alpha << 24 | blue << 16 | green << 8 | red;
-    }
+    QVariant data(int role) const override;
+    void setData(int role, const QVariant &value) override;
+
+private:
+    QVariant m_value;
+    QString m_displayValue;
+    Unit::Name m_unitName;
+    const Unit &m_unit;
 };
 
-#endif // COLOR_H
+#endif // UNITWIDGETITEM_H

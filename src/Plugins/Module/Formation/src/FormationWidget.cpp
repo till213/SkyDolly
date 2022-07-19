@@ -63,6 +63,7 @@
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/Connect.h>
 #include <Widget/Platform.h>
+#include <Widget/UnitWidgetItem.h>
 #include "Formation.h"
 #include "FormationWidget.h"
 #include "ui_FormationWidget.h"
@@ -597,7 +598,7 @@ void FormationWidget::updateAircraftRow(const Aircraft &aircraft, int rowIndex) 
 
     // Time offset
     const double timeOffsetSec = static_cast<double>(aircraftInfo.timeOffset) / 1000.0;
-    newItem = std::make_unique<QTableWidgetItem>();
+    newItem = std::make_unique<UnitWidgetItem>(d->unit, Unit::Name::Second);
     newItem->setData(Qt::EditRole, timeOffsetSec);
     newItem->setToolTip(tr("Double-click to edit time offset [seconds]."));
     newItem->setBackground(Platform::getEditableTableCellBGColor());

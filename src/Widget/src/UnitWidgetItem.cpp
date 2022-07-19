@@ -22,31 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
 #include <cstdint>
 
 #include <QTableWidgetItem>
 #include <QStringBuilder>
+#include <QVariant>
 
-#include <Model/Enumeration.h>
-#include "EnumerationWidgetItem.h"
+#include <Kernel/Unit.h>
+#include "UnitWidgetItem.h"
 
 // PUBLIC
 
-EnumerationWidgetItem::EnumerationWidgetItem(const Enumeration &enumeration)
+UnitWidgetItem::UnitWidgetItem(const Unit &unit, Unit::Name name)
     : QTableWidgetItem(QTableWidgetItem::UserType),
-      m_enumeration(enumeration)
+      m_unit(unit),
+      m_unitName(name)
 {}
 
-QVariant EnumerationWidgetItem::data(int role) const
+QVariant UnitWidgetItem::data(int role) const
 {
-    switch (role)
-    {
+    switch (role) {
     case Qt::DisplayRole:
-        return m_name;
+        return m_displayValue;
         break;
     case Qt::EditRole:
     {
-        return QVariant::fromValue(m_id);
+        return m_value;
         break;
     }
     default:
@@ -56,17 +58,33 @@ QVariant EnumerationWidgetItem::data(int role) const
     return QVariant();
 }
 
-void EnumerationWidgetItem::setData(int role, const QVariant &value)
+void UnitWidgetItem::setData(int role, const QVariant &value)
 {
-    switch (role)
-    {
+    switch (role) {
     case Qt::DisplayRole:
-        m_name = m_enumeration.getItemById(value.toLongLong()).name;
+        m_displayValue = value.toString();
         break;
     case Qt::EditRole:
     {
-        m_id = value.toLongLong();
-        m_name = m_enumeration.getItemById(m_id).name;
+        m_value = value;
+        switch (m_unitName) {
+        case Unit::Name::Second:
+        {
+            const double seconds = m_value.toDouble();
+            m_displayValue = m_unit.formatSeconds(seconds);
+            break;
+        }
+        case Unit::Name::Feet:
+        {
+            const double feet = m_value.toDouble();
+            m_displayValue = m_unit.formatFeet(feet);
+            break;
+        }
+        case Unit::Name::Knot:
+            const double knots = m_value.toDouble();
+            m_displayValue = m_unit.formatKnots(knots);
+            break;
+        }
         break;
     }
     default:

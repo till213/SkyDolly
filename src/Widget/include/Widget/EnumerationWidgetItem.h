@@ -30,9 +30,15 @@
 #include <QTableWidgetItem>
 #include <QVariant>
 
+#include "WidgetLib.h"
+
 class Enumeration;
 
-class EnumerationWidgetItem : public QTableWidgetItem
+/*!
+ * The EnumerationWidgetItem stores enumeration IDs of the given \c enumeration and displays
+ * their names in table cells.
+ */
+class WIDGET_API EnumerationWidgetItem : public QTableWidgetItem
 {
 public:
     EnumerationWidgetItem(const Enumeration &enumeration);

@@ -428,12 +428,11 @@ void MainWindow::initUi() noexcept
             --currentPreviewInfoCount;
             QMessageBox::information(this, "Preview",
                 QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                "This release v%2 focuses on \"quality of life\" issues, including reducing memory (RAM) usage, code refactoring and on improving existing functionality "
-                "such as a truly minimal user interface mode (configurable in the settings).\n\n"
-                "It also provides an improved \"AI object management\" in the formation module, resulting in less aircraft flickering when e.g. changing the user aircraft. "
-                "The formation module now also provides a new \"set relative position\" option which (when unchecked) allows to record the user aircraft starting from its current position.\n\n"
-                "The newly introduced GeographicLib (third-party, open source) provides functionality to properly calculate the altitude differences (\"undulation\") between the WGS84 reference "
-                "ellipsoid and the EGM2008 geoid, specifically in the IGN and GPX import/export plugins.\n\n"
+                "This release v%2 also implements the modules as plugins, reducing memory (RAM) usage even further.\n\n"
+                "At the same time a new Locations module is introduced, allowing to quickly teleport to the selected location."
+                "It comes with an initial set of default (system) locations that are neither editable nor deletable."
+                "But own user locations can either be captured from a running flight simulator, or copy&pasted.\n\n"
+                "Note that the Locations module is work in progress: filtering and additional attributes are yet to be implemented.\n\n"
                 "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
                 QMessageBox::StandardButton::Ok);            
             settings.setPreviewInfoDialogCount(currentPreviewInfoCount);

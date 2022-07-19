@@ -26,6 +26,8 @@ target_sources(${LIBRARY_NAME}
         include/Widget/TableTimeItem.h src/TableTimeItem.cpp
         include/Widget/HyperlinkTextEdit.h src/HyperlinkTextEdit.cpp
         include/Widget/EnumerationComboBox.h src/EnumerationComboBox.cpp
+        include/Widget/EnumerationWidgetItem.h src/EnumerationWidgetItem.cpp
+        include/Widget/UnitWidgetItem.h src/UnitWidgetItem.cpp
 )
 if(${PLATFORM_IS_WINDOWS})
     target_sources(${LIBRARY_NAME}

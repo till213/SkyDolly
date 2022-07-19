@@ -245,6 +245,11 @@ double Unit::toNumber(const QString &value, bool *ok) const noexcept
     return d->locale.toDouble(value, ok);
 }
 
+QString Unit::formatSeconds(double seconds) const noexcept
+{
+    return QCoreApplication::translate("Unit", "%1 seconds", nullptr, static_cast<int>(seconds)).arg(formatNumber(seconds, 2));
+}
+
 QString Unit::formatTimestamp(std::int64_t milliseconds) const noexcept
 {
     return d->locale.toString(milliseconds);
