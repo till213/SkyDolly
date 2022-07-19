@@ -615,32 +615,6 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
     return location;
 }
 
-QStringList LocationWidget::parseCoordinates(QString value)
-{
-    static QRegularExpression numberRexExp(R"(^([+-]?[0-9]*[.]?[0-9]+)[,]?[\s]*([+-]?[0-9]*[.]?[0-9]+)$)");
-    static QRegularExpression dmsRegExp(R"(^([\d\W]+[N|S|E|W])[,]?([\d\W]+[E|W|N|S])$)");
-    QStringList values;
-
-    // GeographicLib DMS does not like whitespace in dms strings
-    const QString trimmedValue = value.trimmed().replace(" ","");
-    // First try to match comma-separated floating point numbers
-    // (e.g. 46.94697890467696, 7.444134280004356)
-    QRegularExpressionMatch match = numberRexExp.match(trimmedValue);
-    if (match.hasMatch() && match.lastCapturedIndex() == 2) {
-        values << match.captured(1).trimmed();
-        values << match.captured(2).trimmed();
-    } else {
-        // Try parsing latitude/longitude DMS values
-        // (e.g. 46° 56' 52.519" N 7° 26' 40.589" E or 7° 26' 40.589" E, 46° 56' 52.519" N)
-        match = dmsRegExp.match(trimmedValue);
-        if (match.hasMatch() && match.lastCapturedIndex() == 2) {
-            values << match.captured(1).trimmed();
-            values << match.captured(2).trimmed();
-        }
-    }
-    return values;
-}
-
 void LocationWidget::tryPasteLocation() noexcept
 {
     const QString text = QApplication::clipboard()->text();
@@ -693,6 +667,33 @@ std::int64_t LocationWidget::getSelectedLocationId() const noexcept
         selectedLocationId = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::idColumnIndex)->data(Qt::EditRole).toLongLong();
     }
     return selectedLocationId;
+}
+
+QStringList LocationWidget::parseCoordinates(QString value)
+{
+    static QRegularExpression numberRexExp(R"(^([+-]?[0-9]*[.]?[0-9]+)[,]?[\s]*([+-]?[0-9]*[.]?[0-9]+)$)");
+    static QRegularExpression dmsRegExp(R"(^([\d\W]+[N|S|E|W])[,]?([\d\W]+[E|W|N|S])$)");
+    QStringList values;
+
+    QString trimmedValue = value.trimmed();
+    // First try to match (possibly comma-separated) floating point numbers
+    // (e.g. 46.94697890467696, 7.444134280004356)
+    QRegularExpressionMatch match = numberRexExp.match(trimmedValue);
+    if (match.hasMatch() && match.lastCapturedIndex() == 2) {
+        values << match.captured(1).trimmed();
+        values << match.captured(2).trimmed();
+    } else {
+        // GeographicLib DMS does not like whitespace in dms strings
+        trimmedValue.replace(" ","");
+        // Try parsing latitude/longitude DMS values
+        // (e.g. 46° 56' 52.519" N 7° 26' 40.589" E or 7° 26' 40.589" E, 46° 56' 52.519" N)
+        match = dmsRegExp.match(trimmedValue);
+        if (match.hasMatch() && match.lastCapturedIndex() == 2) {
+            values << match.captured(1).trimmed();
+            values << match.captured(2).trimmed();
+        }
+    }
+    return values;
 }
 
 // PRIVATE SLOTS
