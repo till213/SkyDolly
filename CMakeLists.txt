@@ -10,7 +10,7 @@ set(APP_NAME "SkyDolly")
 project(
     ${APP_NAME}
     VERSION 0.12.0
-    DESCRIPTION "Sky Dolly - The Black Sheep for your Flight Recordings"
+    DESCRIPTION "Sky Dolly - The Black Sheep for Your Flight Recordings"
     HOMEPAGE_URL "https://github.com/till213/SkyDolly"
     LANGUAGES CXX    
 )
