@@ -29,7 +29,7 @@
 
 #include "KernelLib.h"
 
-class KERNEL_API System
+class KERNEL_API System final
 {
 public:
 

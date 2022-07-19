@@ -30,7 +30,7 @@
 
 #include "KernelLib.h"
 
-class KERNEL_API FlightSimulator
+class KERNEL_API FlightSimulator final
 {
 public:
     FlightSimulator() noexcept;

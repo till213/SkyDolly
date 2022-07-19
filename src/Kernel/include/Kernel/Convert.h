@@ -40,7 +40,7 @@
  * - https://www.metric-conversions.org/length/feet-to-meters.htm
  * - https://www.omnicalculator.com/conversion/coordinates-converter#how-to-convert-latitude-and-longitude-coordinates
  */
-class KERNEL_API Convert
+class KERNEL_API Convert final
 {
 public:
 

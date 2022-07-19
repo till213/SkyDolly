@@ -131,7 +131,7 @@ public:
     static inline const QString DefaultImportAircraftType {QLatin1String("")};
 
     static constexpr int DefaultPreviewInfoDialogCount {3};
-    static constexpr int PreviewInfoDialogBase {90};
+    static constexpr int PreviewInfoDialogBase {100};
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
@@ -733,7 +733,9 @@ void Settings::restore() noexcept
     {
         d->recordingSampleRateValue = d->settings.value("RecordingSampleRate", SettingsPrivate::DefaultRecordingSampleRate).toDouble(&ok);
         if (!ok) {
+#ifdef DEBUG
             qWarning() << "The recording sample rate in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultRecordingSampleRate;
+#endif
             d->recordingSampleRateValue = SettingsPrivate::DefaultRecordingSampleRate;
         }
     }
@@ -743,12 +745,16 @@ void Settings::restore() noexcept
         d->absoluteSeek = d->settings.value("AbsoluteSeek", SettingsPrivate::DefaultAbsoluteSeek).toBool();
         d->seekIntervalSeconds = d->settings.value("SeekIntervalSeconds", SettingsPrivate::DefaultSeekIntervalSeconds).toDouble(&ok);
         if (!ok) {
+#ifdef DEBUG
             qWarning() << "The seek interval [seconds] in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultSeekIntervalSeconds;
+#endif
             d->seekIntervalSeconds = SettingsPrivate::DefaultSeekIntervalSeconds;
         }
         d->seekIntervalPercent = d->settings.value("SeekIntervalPercent", SettingsPrivate::DefaultSeekIntervalPercent).toDouble(&ok);
         if (!ok) {
+#ifdef DEBUG
             qWarning() << "The seek interval [percent] in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultSeekIntervalPercent;
+#endif
             d->seekIntervalPercent = SettingsPrivate::DefaultSeekIntervalPercent;
         }
         d->replayLoop = d->settings.value("ReplayLoop", SettingsPrivate::DefaultReplayLoop).toBool();
@@ -756,7 +762,9 @@ void Settings::restore() noexcept
         if (ok) {
             d->replaySpeedUnit = static_cast<Replay::SpeedUnit>(replaySpeedUnitValue);
         } else {
-            qWarning() << "The replay speed unit in the settings coul dnot be parsed, so setting value to default value:" << Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit);
+#ifdef DEBUG
+            qWarning() << "The replay speed unit in the settings could not be parsed, so setting value to default value:" << Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit);
+#endif
             d->replaySpeedUnit = SettingsPrivate::DefaultReplaySpeedUnit;
         }
         d->repeatFlapsHandleIndex = d->settings.value("RepeatFlapsHandleIndex", SettingsPrivate::DefaultRepeatFlapsHandleIndex).toBool();

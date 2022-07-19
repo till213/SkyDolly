@@ -22,35 +22,53 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef COLOR_H
-#define COLOR_H
+#include <cstdint>
 
-#include <vector>
+#include <QTableWidgetItem>
+#include <QStringBuilder>
 
-#include <QColor>
+#include <Model/Enumeration.h>
+#include "EnumerationWidgetItem.h"
 
-#include "KernelLib.h"
+// PUBLIC
 
-class KERNEL_API Color final
+EnumerationWidgetItem::EnumerationWidgetItem(const Enumeration &enumeration)
+    : QTableWidgetItem(QTableWidgetItem::UserType),
+      m_enumeration(enumeration)
+{}
+
+QVariant EnumerationWidgetItem::data(int role) const
 {
-public:
-    static std::vector<QRgb> createColorRamp(QColor startColor, QColor endColor, int nofTotalColors) noexcept;
-    static std::vector<QRgb> createColorRamp(QRgb start, QRgb end, int nofTotalColors) noexcept;
-
-    /*!
-     * Converts the \c color from format AARRGGBB to the KML format AABBGGRR.
-     *
-     * \param color
-     *        the color in format AARRGGBB to be converted
-     * \return the converted color in format AABBGGRR
-     */
-    inline static QRgb convertRgbToKml(QRgb color) {
-        const QRgb alpha = qAlpha(color);
-        const QRgb red = qRed(color);
-        const QRgb green = qGreen(color);
-        const QRgb blue = qBlue(color);
-        return alpha << 24 | blue << 16 | green << 8 | red;
+    switch (role) {
+    case Qt::DisplayRole:
+        return m_name;
+        break;
+    case Qt::EditRole:
+    {
+        return QVariant::fromValue(m_id);
+        break;
     }
-};
+    default:
+        return QTableWidgetItem::data(role);
+        break;
+    }
+    return QVariant();
+}
 
-#endif // COLOR_H
+void EnumerationWidgetItem::setData(int role, const QVariant &value)
+{
+    switch (role) {
+    case Qt::DisplayRole:
+        m_name = m_enumeration.getItemById(value.toLongLong()).name;
+        break;
+    case Qt::EditRole:
+    {
+        m_id = value.toLongLong();
+        m_name = m_enumeration.getItemById(m_id).name;
+        break;
+    }
+    default:
+        break;
+    }
+    QTableWidgetItem::setData(role, value);
+}

@@ -42,7 +42,7 @@ struct VersionPrivate;
  *
  * The version string has the form "[major].[minor].[patch]", for example "1.2.3".
  */
-class KERNEL_API Version
+class KERNEL_API Version final
 {
 public:
     /*!
