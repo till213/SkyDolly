@@ -66,7 +66,7 @@ private:
     void initUi() noexcept;
     void initFilterUi() noexcept;
     void updateFlightTable() noexcept;
-    inline void updateFlightSummaryRow(const FlightSummary &summary, int rowIndex) noexcept;
+    inline void updateFlightSummaryRow(const FlightSummary &summary, int row) noexcept;
     void updateDateSelectorUi() noexcept;    
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
