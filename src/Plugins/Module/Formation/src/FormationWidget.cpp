@@ -286,11 +286,16 @@ void FormationWidget::frenchConnection() noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &FormationWidget::onUserAircraftChanged);
+    connect(&flight, &Flight::aircraftAdded,
+            this, &FormationWidget::updateUi);
     connect(&flight, &Flight::aircraftRemoved,
             this, &FormationWidget::updateUi);
     connect(&flight, &Flight::flightStored,
             this, &FormationWidget::updateUi);
+    // @todo FIXME Only update aircraft line, otherwise we loose focus on time offset buttons
     connect(&flight, &Flight::aircraftInfoChanged,
+            this, &FormationWidget::updateUi);
+    connect(&flight, &Flight::timeOffsetChanged,
             this, &FormationWidget::onTimeOffsetChanged);
 
     // Connection
