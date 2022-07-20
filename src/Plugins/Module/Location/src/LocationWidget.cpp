@@ -49,6 +49,7 @@
 
 #include <Kernel/Settings.h>
 #include <Kernel/Unit.h>
+#include <Kernel/PositionParser.h>
 #include <Model/Logbook.h>
 #include <Persistence/LogbookManager.h>
 #include <Persistence/PersistedEnumerationItem.h>
@@ -618,32 +619,10 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
 void LocationWidget::tryPasteLocation() noexcept
 {
     const QString text = QApplication::clipboard()->text();
-    QStringList values = parseCoordinates(text);
-    if (values.count() == 2) {
-        try {
-            double latitude {0.0};
-            double longitude {0.0};
-            const std::string first = values.first().toStdString();
-            const std::string second = values.last().trimmed().toStdString();
-            GeographicLib::DMS::flag flag {GeographicLib::DMS::NONE};
-            double value = GeographicLib::DMS::Decode(first, flag);
-            if (flag == GeographicLib::DMS::LATITUDE || flag == GeographicLib::DMS::NONE) {
-                latitude = value;
-            } else {
-                longitude = value;
-            }
-            value = GeographicLib::DMS::Decode(second, flag);
-            if (flag == GeographicLib::DMS::LONGITUDE || flag == GeographicLib::DMS::NONE) {
-                longitude = value;
-            } else {
-                latitude = value;
-            }
-            addUserLocation(latitude, longitude);
-        } catch (GeographicLib::GeographicErr err) {
-#ifdef DEBUG
-        qDebug() << "LocationWidget::tryPasteLocation: Not a coordinate:" << err.what();
-#endif
-        }
+    bool ok {false};
+    PositionParser::Coordinate coordinate = PositionParser::parse(text, &ok);
+    if (ok) {
+        addUserLocation(coordinate.first, coordinate.second);
     }
 }
 
@@ -667,33 +646,6 @@ std::int64_t LocationWidget::getSelectedLocationId() const noexcept
         selectedLocationId = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::idColumnIndex)->data(Qt::EditRole).toLongLong();
     }
     return selectedLocationId;
-}
-
-QStringList LocationWidget::parseCoordinates(QString value)
-{
-    static QRegularExpression numberRexExp(R"(^([+-]?[0-9]*[.]?[0-9]+)[,]?[\s]*([+-]?[0-9]*[.]?[0-9]+)$)");
-    static QRegularExpression dmsRegExp(R"(^([\d\W]+[N|S|E|W])[,]?([\d\W]+[E|W|N|S])$)");
-    QStringList values;
-
-    QString trimmedValue = value.trimmed();
-    // First try to match (possibly comma-separated) floating point numbers
-    // (e.g. 46.94697890467696, 7.444134280004356)
-    QRegularExpressionMatch match = numberRexExp.match(trimmedValue);
-    if (match.hasMatch() && match.lastCapturedIndex() == 2) {
-        values << match.captured(1).trimmed();
-        values << match.captured(2).trimmed();
-    } else {
-        // GeographicLib DMS does not like whitespace in dms strings
-        trimmedValue.replace(" ","");
-        // Try parsing latitude/longitude DMS values
-        // (e.g. 46° 56' 52.519" N 7° 26' 40.589" E or 7° 26' 40.589" E, 46° 56' 52.519" N)
-        match = dmsRegExp.match(trimmedValue);
-        if (match.hasMatch() && match.lastCapturedIndex() == 2) {
-            values << match.captured(1).trimmed();
-            values << match.captured(2).trimmed();
-        }
-    }
-    return values;
 }
 
 // PRIVATE SLOTS

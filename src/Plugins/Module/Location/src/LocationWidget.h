@@ -79,8 +79,6 @@ private:
     int getSelectedRow() const noexcept;
     std::int64_t getSelectedLocationId() const noexcept;
 
-    static QStringList parseCoordinates(QString value);
-
 private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;

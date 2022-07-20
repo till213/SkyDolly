@@ -33,6 +33,7 @@
 ### Under The Hood
 - The modules (Logbook, Formation, Location) are now implemented as plugins
 - The modules are [topologically sorted](https://en.wikipedia.org/wiki/Topological_sorting), based on their defined dependencies
+- "Persisted enumerations": dropdown comboboxes are automatically populated based on the persisted enumeration values
 - Sky Dolly now also compiles and links with the Microsoft Visual Studio 2022 C++ compiler (MSVC)
 - The code is now also [analysed](https://github.com/till213/SkyDolly/actions) for programming / security flaws with the [Microsoft C++ Code Analysis Action](https://github.com/marketplace/actions/microsoft-c-code-analysis-action)
 
