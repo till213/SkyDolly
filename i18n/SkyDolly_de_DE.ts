@@ -938,7 +938,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/Plugins/Module/Formation/src/FormationWidget.ui" line="1071"/>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="837"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="842"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1023,171 +1023,171 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="401"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="406"/>
         <source>Very close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="404"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="409"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="407"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="412"/>
         <source>Nearby</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="410"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="415"/>
         <source>Far</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="413"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="418"/>
         <source>Very far</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="419"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="424"/>
         <source>Below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="422"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="427"/>
         <source>Just below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="425"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="430"/>
         <source>Level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="428"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="433"/>
         <source>Just above</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="431"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="436"/>
         <source>Above</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="494"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="499"/>
         <source>Selected aircraft position for next recording.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="496"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="501"/>
         <source>Select aircraft position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="508"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="513"/>
         <source>The aircraft is %1 behind its recorded schedule.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="510"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="515"/>
         <source>The aircraft is %1 ahead its recorded schedule.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="512"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="517"/>
         <source>Positive values [seconds] put the aircraft ahead, negative values put the aircraft behind its recorded schedule.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="519"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="524"/>
         <source>%1 controls all recorded aircraft.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="522"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="527"/>
         <source>Take control of the recorded user aircraft of the formation.
 The user aircraft (marked in blue) can be changed during replay.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="526"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="531"/>
         <source>Fly with the currently loaded aircraft along with the entire formation.
 Reposition your user aircraft at any time, by either changing its relative position
 or choose another reference aircraft (marked in green) in the formation.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="538"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="543"/>
         <source>Double-click to change user aircraft.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="580"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="585"/>
         <source>Altitude above ground.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="588"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="593"/>
         <source>Recording duration.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="594"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="599"/>
         <source>Double-click to edit tail number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="603"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="608"/>
         <source>Double-click to edit time offset [seconds].</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="831"/>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="934"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="836"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="939"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="834"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="839"/>
         <source>Delete Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="835"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="840"/>
         <source>The aircraft with sequence number %1 is about to be deleted. Do you want to delete the aircraft?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="836"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="841"/>
         <source>Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="838"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="843"/>
         <source>&amp;Keep</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="936"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="941"/>
         <source>Reset Time Offsets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="937"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="942"/>
         <source>Do you want to reset all time offsets to 0?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="938"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="943"/>
         <source>The time offsets of all aircraft in this formation will be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="939"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="944"/>
         <source>&amp;Reset Time Offsets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="940"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="945"/>
         <source>Do &amp;Not Change</source>
         <translation type="unfinished"></translation>
     </message>

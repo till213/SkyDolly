@@ -313,7 +313,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
     for (auto &aircraft : flight) {
 
         // Replay AI aircraft - if any - during recording (if all aircraft are selected for replay)
-        const bool isUserAircraft = aircraft->getId() == userAircraftId;
+        const bool isUserAircraft = aircraft.getId() == userAircraftId;
         if (isUserAircraft && getReplayMode() == ReplayMode::UserAircraftManualControl) {
             // The user aircraft (of the formation) is manually flown
             continue;
@@ -327,11 +327,11 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
         // When recording (a formation flight) we send the already recorded aircraft, except the
         // user aircraft (which is currently being recorded)
         if (isConnectedWithSim() &&  getState() != Connect::State::Recording || !isUserAircraft) {
-            const std::int64_t objectId = isUserAircraft ? ::SIMCONNECT_OBJECT_ID_USER : d->simConnectAi->getSimulatedObjectByAircraftId(aircraft->getId());
+            const std::int64_t objectId = isUserAircraft ? ::SIMCONNECT_OBJECT_ID_USER : d->simConnectAi->getSimulatedObjectByAircraftId(aircraft.getId());
             if (objectId != SimConnectAi::InvalidObjectId) {
 
                 ok = true;
-                const PositionData &positionData = aircraft->getPosition().interpolate(currentTimestamp, access);
+                const PositionData &positionData = aircraft.getPosition().interpolate(currentTimestamp, access);
                 if (!positionData.isNull()) {
                     SimConnectPositionRequest simConnnectPositionRequest;
                     simConnnectPositionRequest.fromPositionData(positionData);
@@ -343,7 +343,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
                 // Engine
                 if (ok) {
-                    const EngineData &engineData = aircraft->getEngine().interpolate(currentTimestamp, access);
+                    const EngineData &engineData = aircraft.getEngine().interpolate(currentTimestamp, access);
                     if (!engineData.isNull()) {
                         SimConnectEngineRequest simConnectEngineRequest;
                         simConnectEngineRequest.fromEngineData(engineData);
@@ -359,7 +359,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
                 // Primary flight controls
                 if (ok) {
-                    const PrimaryFlightControlData &primaryFlightControlData = aircraft->getPrimaryFlightControl().interpolate(currentTimestamp, access);
+                    const PrimaryFlightControlData &primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(currentTimestamp, access);
                     if (!primaryFlightControlData.isNull()) {
                         SimConnectPrimaryFlightControl simConnectPrimaryFlightControl;
                         simConnectPrimaryFlightControl.fromPrimaryFlightControlData(primaryFlightControlData);
@@ -372,7 +372,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
                 // Secondary flight controls
                 if (ok) {
-                    const SecondaryFlightControlData &secondaryFlightControlData = aircraft->getSecondaryFlightControl().interpolate(currentTimestamp, access);
+                    const SecondaryFlightControlData &secondaryFlightControlData = aircraft.getSecondaryFlightControl().interpolate(currentTimestamp, access);
                     if (!secondaryFlightControlData.isNull()) {
                         SimConnectSecondaryFlightControl simConnectSecondaryFlightControl;
                         simConnectSecondaryFlightControl.fromSecondaryFlightControlData(secondaryFlightControlData);
@@ -385,7 +385,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
                 // Aircraft handles & brakes
                 if (ok) {
-                    const AircraftHandleData aircraftHandleData = aircraft->getAircraftHandle().interpolate(currentTimestamp, access);
+                    const AircraftHandleData aircraftHandleData = aircraft.getAircraftHandle().interpolate(currentTimestamp, access);
                     if (!aircraftHandleData.isNull()) {
                         SimConnectAircraftHandle simConnectAircraftHandle;
                         simConnectAircraftHandle.fromAircraftHandleData(aircraftHandleData);
@@ -398,7 +398,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
                 // Lights
                 if (ok) {
-                    const LightData &lightData = aircraft->getLight().interpolate(currentTimestamp, access);
+                    const LightData &lightData = aircraft.getLight().interpolate(currentTimestamp, access);
                     if (!lightData.isNull()) {
                         SimConnectLight simConnectLight;
                         simConnectLight.fromLightData(lightData);

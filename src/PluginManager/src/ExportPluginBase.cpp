@@ -212,7 +212,7 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
         QFile file(sequencedFilePath);
         ok = file.open(QIODevice::WriteOnly);
         if (ok) {
-            ok = exportAircraft(flight, *aircraft, file);
+            ok = exportAircraft(flight, aircraft, file);
             d->exportedFilePaths.push_back(sequencedFilePath);
         }
         file.close();

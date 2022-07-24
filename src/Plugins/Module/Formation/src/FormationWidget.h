@@ -81,7 +81,7 @@ private:
     void updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept;
 
     int getSelectedRow() const noexcept;
-    int getRowById(std::int64_t id) const noexcept;
+    int getRowBySequenceNumber(int sequenceNumber) const noexcept;
 
     /*!
      * Returns the index of the selected aircraft.
@@ -90,14 +90,13 @@ private:
      *         no aircraft is selected; indexing starts at 0
      */
     int getSelectedAircraftIndex() const noexcept;
-    std::int64_t getSelectedAircraftId() const noexcept;
 
 private slots:
     void updateUi() noexcept;
 
-    void onRelativePositionChanged() noexcept;
     void onUserAircraftChanged() noexcept;
-    void onTimeOffsetChanged(const Aircraft &aircraft) noexcept;
+    void onAircraftAdded(const Aircraft &aircraft) noexcept;
+    void onAircraftInfoChanged(const Aircraft &aircraft) noexcept;
 
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;
@@ -107,6 +106,7 @@ private slots:
     void updateUserAircraftIndex() noexcept;
     void deleteAircraft() noexcept;
 
+    void onRelativePositionChanged() noexcept;
     void onRelativeDistanceChanged() noexcept;
     void updateReplayMode(int index) noexcept;
     void onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode);

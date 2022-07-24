@@ -53,7 +53,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept = 0;
-    virtual bool getByFlightId(std::int64_t flightId, std::back_insert_iterator<std::vector<std::unique_ptr<Aircraft>>> backInsertIterator) const noexcept = 0;
+    virtual bool getByFlightId(std::int64_t flightId, std::back_insert_iterator<std::vector<Aircraft>> backInsertIterator) const noexcept = 0;
     virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t id, std::size_t sequenceNumber) noexcept = 0;
     virtual bool deleteAllByFlightId(std::int64_t flightId) noexcept = 0;
     virtual bool deleteById(std::int64_t id) noexcept = 0;

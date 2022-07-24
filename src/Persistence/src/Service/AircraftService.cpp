@@ -92,7 +92,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t aircraftId = flight.deleteAircraftByIndex(index);
-    bool ok;
+    bool ok {true};
     if (aircraftId != Aircraft::InvalidId) {
         ok = QSqlDatabase::database().transaction();
         if (ok) {
@@ -110,8 +110,6 @@ bool AircraftService::deleteByIndex(int index) noexcept
                 QSqlDatabase::database().rollback();
             }
         }
-    } else {
-        ok = true;
     }
     return ok;
 }

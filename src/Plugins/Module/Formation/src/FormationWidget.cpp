@@ -121,9 +121,9 @@ struct FormationWidgetPrivate
     FlightService &flightService;
     AircraftService &aircraftService;
     QButtonGroup *positionButtonGroup;
+    int selectedAircraftIndex;
     Unit unit;
 
-    static inline int idColumn {::InvalidColumn};
     static inline int sequenceNumberColumn {::InvalidColumn};
     static inline int tailNumberColumn {::InvalidColumn};
     static inline int timeOffsetColumn {::InvalidColumn};
@@ -185,11 +185,10 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     const QStringList headers {
-        tr("ID"), tr("Sequence"), tr("Aircraft"), tr("Engine Type"),
+        tr("Sequence"), tr("Aircraft"), tr("Engine Type"),
         tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude"),
         tr("Duration"), tr("Tail Number"), tr("Time Offset")
     };
-    FormationWidgetPrivate::idColumn = headers.indexOf(tr("ID"));
     FormationWidgetPrivate::sequenceNumberColumn = headers.indexOf(tr("Sequence"));
     FormationWidgetPrivate::tailNumberColumn = headers.indexOf(tr("Tail Number"));
     FormationWidgetPrivate::timeOffsetColumn = headers.indexOf(tr("Time Offset"));
@@ -204,7 +203,6 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->sortByColumn(FormationWidgetPrivate::sequenceNumberColumn, Qt::SortOrder::AscendingOrder);
     ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->aircraftTableWidget->setAlternatingRowColors(true);
-    ui->aircraftTableWidget->setColumnHidden(FormationWidgetPrivate::idColumn, true);
 
     QByteArray tableState = Settings::getInstance().getFormationAircraftTableState();
     ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
@@ -286,17 +284,14 @@ void FormationWidget::frenchConnection() noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &FormationWidget::onUserAircraftChanged);
-    connect(&flight, &Flight::aircraftAdded,
-            this, &FormationWidget::updateUi);
-    connect(&flight, &Flight::aircraftRemoved,
-            this, &FormationWidget::updateUi);
     connect(&flight, &Flight::flightStored,
             this, &FormationWidget::updateUi);
-    // @todo FIXME Only update aircraft line, otherwise we loose focus on time offset buttons
-    connect(&flight, &Flight::aircraftInfoChanged,
+    connect(&flight, &Flight::aircraftAdded,
+            this, &FormationWidget::onAircraftAdded);
+    connect(&flight, &Flight::aircraftRemoved,
             this, &FormationWidget::updateUi);
-    connect(&flight, &Flight::timeOffsetChanged,
-            this, &FormationWidget::onTimeOffsetChanged);
+    connect(&flight, &Flight::aircraftInfoChanged,
+            this, &FormationWidget::onAircraftInfoChanged);
 
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
@@ -355,7 +350,7 @@ void FormationWidget::updateAircraftTable() noexcept
 
     int row {0};
     for (const auto &aircraft : flight) {
-        updateAircraftRow(*aircraft, row);
+        updateAircraftRow(aircraft, row);
         row++;
     }
 
@@ -535,23 +530,14 @@ void FormationWidget::updateToolTips() noexcept
     }
 }
 
-// PRIVATE SLOTS
-
 void FormationWidget::updateAircraftRow(const Aircraft &aircraft, int row) noexcept
 {
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
     const QString tooltip = tr("Double-click to change user aircraft.");
     int column = 0;
 
-    // ID
-    std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::DisplayRole, QVariant::fromValue(aircraft.getId()));
-    // Transfer ownership of newItem to table widget
-    ui->aircraftTableWidget->setItem(row, column, newItem.release());
-    ++column;
-
     // Sequence numbers start at 1
-    newItem = std::make_unique<QTableWidgetItem>();
+    std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::DisplayRole, row + 1);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     newItem->setToolTip(tooltip);
@@ -612,6 +598,8 @@ void FormationWidget::updateAircraftRow(const Aircraft &aircraft, int row) noexc
 
     ++row;
 }
+
+// PRIVATE SLOTS
 
 void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
 {
@@ -690,12 +678,12 @@ int FormationWidget::getSelectedRow() const noexcept
     return selectedRow;
 }
 
-int FormationWidget::getRowById(std::int64_t id) const noexcept
+int FormationWidget::getRowBySequenceNumber(int sequence) const noexcept
 {
     int row {::InvalidRow};
     int currentRow {0};
     while (row == ::InvalidRow && currentRow < ui->aircraftTableWidget->rowCount()) {
-        if (id == ui->aircraftTableWidget->item(currentRow, FormationWidgetPrivate::idColumn)->data(Qt::EditRole).toLongLong()) {
+        if (sequence == ui->aircraftTableWidget->item(currentRow, FormationWidgetPrivate::sequenceNumberColumn)->data(Qt::EditRole).toInt()) {
             row = currentRow;
         } else {
             ++currentRow;
@@ -715,16 +703,6 @@ int FormationWidget::getSelectedAircraftIndex() const noexcept
     return index;
 }
 
-std::int64_t FormationWidget::getSelectedAircraftId() const noexcept
-{
-    std::int64_t id {Aircraft::InvalidId};
-    const int selectedRow = getSelectedRow();
-    if (selectedRow != ::InvalidRow) {
-        id = ui->aircraftTableWidget->item(selectedRow, FormationWidgetPrivate::idColumn)->data(Qt::EditRole).toInt();
-    }
-    return id;
-}
-
 // PRIVATE SLOTS
 
 void FormationWidget::updateUi() noexcept
@@ -737,12 +715,6 @@ void FormationWidget::updateUi() noexcept
     updateToolTips();
 }
 
-void FormationWidget::onRelativePositionChanged() noexcept
-{
-    updateToolTips();
-    updateAndSendUserAircraftPosition();
-}
-
 void FormationWidget::onUserAircraftChanged() noexcept
 {
     updateAircraftIcons();
@@ -750,24 +722,32 @@ void FormationWidget::onUserAircraftChanged() noexcept
     updateAndSendUserAircraftPosition();
 }
 
-void FormationWidget::onTimeOffsetChanged(const Aircraft &aircraft) noexcept
+void FormationWidget::onAircraftAdded(const Aircraft &aircraft) noexcept
 {
-    const double timeOffsetSec = static_cast<double>(aircraft.getAircraftInfo().timeOffset) / 1000.0;
+    ui->aircraftTableWidget->blockSignals(true);
+    ui->aircraftTableWidget->setSortingEnabled(false);
+    const int row = ui->aircraftTableWidget->rowCount();
+    ui->aircraftTableWidget->insertRow(row);
+    updateAircraftRow(aircraft, row);
+    ui->aircraftTableWidget->blockSignals(false);
+    // Automatically select newly inserted item (make sure that signals are emitted
+    // again)
+    ui->aircraftTableWidget->selectRow(ui->aircraftTableWidget->rowCount() - 1);
+    ui->aircraftTableWidget->setSortingEnabled(true);
+    updateTimeOffsetUi();
+}
+
+void FormationWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
+{
     int row {::InvalidRow};
-    if (getSelectedAircraftId() == aircraft.getId()) {
+    if (getSelectedAircraftIndex() == aircraft.getId()) {
         row = getSelectedRow();
     } else {
-        row = getRowById(aircraft.getId());
+        row = getRowBySequenceNumber(aircraft.getId());
     }
     // Update aircraft table
     if (row != ::InvalidRow) {
-        ui->aircraftTableWidget->blockSignals(true);
-        ui->aircraftTableWidget->setSortingEnabled(false);
-        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::timeOffsetColumn);
-        item->setData(Qt::EditRole, timeOffsetSec);
-        ui->aircraftTableWidget->selectRow(row);
-        ui->aircraftTableWidget->setSortingEnabled(true);
-        ui->aircraftTableWidget->blockSignals(false);
+        updateAircraftRow(aircraft, row);
     }
     updateTimeOffsetUi();
 }
@@ -858,6 +838,12 @@ void FormationWidget::deleteAircraft() noexcept
             ui->aircraftTableWidget->setFocus(Qt::NoFocusReason);
         }
     }
+}
+
+void FormationWidget::onRelativePositionChanged() noexcept
+{
+    updateToolTips();
+    updateAndSendUserAircraftPosition();
 }
 
 void FormationWidget::onRelativeDistanceChanged() noexcept
@@ -955,7 +941,7 @@ void FormationWidget::resetAllTimeOffsets() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         bool ok = true;
         for (auto &aircraft : flight) {
-            ok = d->aircraftService.changeTimeOffset(*aircraft.get(), 0);
+            ok = d->aircraftService.changeTimeOffset(aircraft, 0);
             if (!ok) {
                 break;
             }

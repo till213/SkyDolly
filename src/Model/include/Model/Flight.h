@@ -46,6 +46,8 @@ class MODEL_API Flight : public QObject
 {
     Q_OBJECT
 public:
+    static constexpr int InvalidIndex {-1};
+
     explicit Flight(QObject *parent = nullptr) noexcept;
     ~Flight() noexcept override;
 
@@ -61,9 +63,16 @@ public:
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;
 
-    void setAircraft(std::vector<std::unique_ptr<Aircraft>> aircraft) noexcept;
+    void setAircraft(std::vector<Aircraft> aircraft) noexcept;
     Aircraft &addUserAircraft() noexcept;
     Aircraft &getUserAircraft() const noexcept;
+
+    /*!
+     * Returns the index of the \c aircraft.
+     *
+     * \return the index of the \c aircraft; indexing starts at 0
+     */
+    int getAircraftIndex(const Aircraft &aircraft) const noexcept;
 
     /*!
      * Returns the index of the user aircraft.
@@ -138,7 +147,7 @@ public:
 
     void clear(bool withOneAircraft) noexcept;
 
-    using Iterator = std::vector<std::unique_ptr<Aircraft>>::iterator;
+    using Iterator = std::vector<Aircraft>::iterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
@@ -177,6 +186,15 @@ signals:
      */
     void userAircraftChanged(int newUserAircraftIndex, int previousUserAircraftIndex);
 
+    /*!
+     * Emited whenever any of the aircraft info data has changed, including the tail number and
+     * time offset.
+     *
+     * \param aircraft
+     *        the Aircraft of which the info has changed
+     * \sa tailNumberChanged
+     * \sa timeOffsettChanged
+     */
     void aircraftInfoChanged(const Aircraft &aircraft);
     void tailNumberChanged(const Aircraft &aircraft);
 
