@@ -41,20 +41,20 @@
 struct SimConnectPositionRequest
 {
     // Aircraft position
-    double latitude;
-    double longitude;
-    double altitude;
-    double pitch;
-    double bank;
-    double heading;
+    double latitude {0.0};
+    double longitude {0.0};
+    double altitude {0.0};
+    double pitch {0.0};
+    double bank {0.0};
+    double heading {0.0};
 
     // Velocity
-    double velocityBodyX;
-    double velocityBodyY;
-    double velocityBodyZ;
-    double rotationVelocityBodyX;
-    double rotationVelocityBodyY;
-    double rotationVelocityBodyZ;
+    double velocityBodyX {0.0};
+    double velocityBodyY {0.0};
+    double velocityBodyZ {0.0};
+    double rotationVelocityBodyX {0.0};
+    double rotationVelocityBodyY {0.0};
+    double rotationVelocityBodyZ {0.0};
 
     inline void fromPositionData(const PositionData &positionData) noexcept
     {
