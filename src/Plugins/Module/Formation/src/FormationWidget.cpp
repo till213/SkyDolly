@@ -123,6 +123,9 @@ struct FormationWidgetPrivate
     QButtonGroup *positionButtonGroup;
     int selectedAircraftIndex {Flight::InvalidAircraftIndex};
     Unit unit;
+    // Columns are only auto-resized the first time the table is loaded
+    // After that manual column resizes are kept
+    bool columnsAutoResized {false};
 
     static inline int sequenceNumberColumn {::InvalidColumn};
     static inline int aircraftTypeColumn {::InvalidColumn};
@@ -362,7 +365,10 @@ void FormationWidget::updateAircraftTable() noexcept
     }
 
     ui->aircraftTableWidget->setSortingEnabled(true);
-    ui->aircraftTableWidget->resizeColumnsToContents();
+    if (!d->columnsAutoResized) {
+        ui->aircraftTableWidget->resizeColumnsToContents();
+        d->columnsAutoResized = true;
+    }
     ui->aircraftTableWidget->blockSignals(false);
 }
 

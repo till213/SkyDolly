@@ -116,6 +116,8 @@ struct LocationWidgetPrivate
     std::unique_ptr<EnumerationItemDelegate> countryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::Country)};
 
     Unit unit;
+    // Columns are only auto-resized the first time the table is loaded
+    // After that manual column resizes are kept
     bool columnsAutoResized {false};
 
     static inline int idColumn {InvalidColumn};

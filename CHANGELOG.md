@@ -29,6 +29,7 @@
 - The window is properly resized when in minimal mode and the default non-essential button visibility is changed in the settings
 - Selection in the Logbook and Formation modules is now properly taking table reordering into account
 - The Formation module is properly updated when a new logbook is opened or created
+- Formation module: manually adjusted table column is kept when recording a new aircraft
 
 ### Under The Hood
 - The modules (Logbook, Formation, Location) are now implemented as plugins
