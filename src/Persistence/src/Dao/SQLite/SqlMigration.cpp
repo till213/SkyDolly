@@ -124,6 +124,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
         if (ok) {
             QTextStream textStream(&migrationFile);
+            textStream.setCodec(QTextCodec::codecForName("UTF-8"));
             const QString migration = textStream.readAll();
 
             QStringList sqlStatements = migration.split(migrRegExp);
