@@ -193,6 +193,15 @@ void LocationWidget::addUserLocation(double latitude, double longitude)
 
 void LocationWidget::addLocation(Location newLocation)
 {
+    if (newLocation.typeId == Location::InvalidId) {
+        newLocation.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymbolicId).id();
+    }
+    if (newLocation.categoryId == Location::InvalidId) {
+        newLocation.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymbolicId).id();
+    }
+    if (newLocation.countryId == Location::InvalidId) {
+        newLocation.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymbolicId).id();
+    }
     Location location {newLocation};
     if (d->locationService->store(location)) {
         const int rowCount = ui->locationTableWidget->rowCount();
