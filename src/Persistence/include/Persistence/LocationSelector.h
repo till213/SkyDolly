@@ -31,12 +31,11 @@
 #include <Model/SimType.h>
 #include "PersistenceLib.h"
 
+/// \todo IMPLEMENT ME
 struct PERSISTENCE_API LocationSelector
 {
 public:
     LocationSelector();
-
-    // TODO IMPLEMENT ME
 };
 
 #endif // LOCATIONSELECTOR_H

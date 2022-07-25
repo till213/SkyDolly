@@ -38,7 +38,7 @@ struct MODEL_API Location : public Data
     std::int64_t typeId {InvalidId};
     std::int64_t categoryId {InvalidId};
     std::int64_t countryId {InvalidId};
-    // TODO Use QFlags
+    /// \todo Use QFlags
     std::int64_t attributes {0};
     QString identifier;
     double latitude {0.0};
