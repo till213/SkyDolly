@@ -49,7 +49,6 @@ class MODEL_API Aircraft : public QObject
     Q_OBJECT
 public:
     explicit Aircraft(QObject *parent = nullptr) noexcept;
-    explicit Aircraft(Aircraft &&other);
     ~Aircraft() noexcept override;
 
     std::int64_t getId() const noexcept;
@@ -86,7 +85,6 @@ public:
 
     void clear() noexcept;
 
-    Aircraft &operator=(Aircraft &&rhs);
     bool operator==(const Aircraft &rhs) const noexcept;
     bool operator!=(const Aircraft &rhs) const noexcept;
 

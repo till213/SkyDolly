@@ -621,8 +621,8 @@ void AbstractSkyConnect::createAiObjects() noexcept
         const bool includingUserAircraft = getReplayMode() == ReplayMode::FlyWithFormation;
         const std::int64_t userAircraftId = d->currentFlight.getUserAircraft().getId();
         for (const auto &aircraft : d->currentFlight) {
-            if (aircraft.getId() != userAircraftId || includingUserAircraft) {
-                onAddAiObject(aircraft);
+            if (aircraft->getId() != userAircraftId || includingUserAircraft) {
+                onAddAiObject(*aircraft);
             }
         }
     }

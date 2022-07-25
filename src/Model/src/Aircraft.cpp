@@ -84,14 +84,6 @@ Aircraft::Aircraft(QObject *parent) noexcept
 #endif
 }
 
-Aircraft::Aircraft(Aircraft &&other)
-{
-// TODO IMPLEMENT ME
-#ifdef DEBUG
-    qDebug() << "Aircraft::Aircraft: MOVED, ID:" << d->id;
-#endif
-}
-
 Aircraft::~Aircraft() noexcept
 {
 #ifdef DEBUG
@@ -223,11 +215,6 @@ void Aircraft::clear() noexcept
     d->light.clear();
     d->flightPlan.clear();
     invalidateDuration();
-}
-
-Aircraft &Aircraft::operator=(Aircraft &&rhs)
-{
-    // TODO IMPLEMENT ME!!!
 }
 
 bool Aircraft::operator==(const Aircraft &rhs) const noexcept

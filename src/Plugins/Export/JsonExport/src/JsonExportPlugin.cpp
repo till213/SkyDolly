@@ -172,7 +172,7 @@ bool JsonExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
     bool ok = true;
     std::size_t i = 0;
     for (const auto &aircraft : *d->flight) {
-        ok = exportAircraft(aircraft, io);
+        ok = exportAircraft(*aircraft, io);
         if (ok) {
             if (i < d->flight->count() - 1) {
                 ok = io.write(",\n");

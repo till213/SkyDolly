@@ -40,14 +40,12 @@ class QString;
 #include "FlightCondition.h"
 #include "ModelLib.h"
 
-class FlightPrivate;
+struct FlightPrivate;
 
 class MODEL_API Flight : public QObject
 {
     Q_OBJECT
 public:
-    static constexpr int InvalidIndex {-1};
-
     explicit Flight(QObject *parent = nullptr) noexcept;
     ~Flight() noexcept override;
 
@@ -63,7 +61,7 @@ public:
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;
 
-    void setAircraft(std::vector<Aircraft> aircraft) noexcept;
+    void setAircraft(std::vector<std::unique_ptr<Aircraft>> aircraft) noexcept;
     Aircraft &addUserAircraft() noexcept;
     Aircraft &getUserAircraft() const noexcept;
 
@@ -147,7 +145,7 @@ public:
 
     void clear(bool withOneAircraft) noexcept;
 
-    using Iterator = std::vector<Aircraft>::iterator;
+    using Iterator = std::vector<std::unique_ptr<Aircraft>>::iterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
@@ -161,7 +159,7 @@ public:
      * The initial ID for every newly created flight. An invalid ID indicates that this
      * flight has not yet been (successfully) persisted.
      */
-    static constexpr int InvalidId {-1};
+    static constexpr std::int64_t InvalidId {-1};
     static constexpr int InvalidAircraftIndex {-1};
 
 signals:
@@ -219,7 +217,7 @@ private:
      * is deleted and hence the user aircraft index must be re-assigned, but without actually
      * switching the user aircraft to a previous AI object.
      */
-    void reassignUserAircraftIndex(int index) noexcept;
+    void reassignUserAircraftIndex(std::int64_t index) noexcept;
 };
 
 #endif // FLIGHT_H
