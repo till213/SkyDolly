@@ -357,40 +357,31 @@ void FormationWidget::updateAircraftTable() noexcept
     ui->aircraftTableWidget->setSortingEnabled(true);
     ui->aircraftTableWidget->resizeColumnsToContents();
     ui->aircraftTableWidget->blockSignals(false);
-
-    updateAircraftIcons();
 }
 
 void FormationWidget::updateAircraftIcons() noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const int userAircraftIndex = flight.getUserAircraftIndex();
     const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    const bool recording = skyConnectManager.isInRecordingState();
     const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
+    if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
+        ui->referenceAircraftLabel->setPixmap(d->referenceAircraftPixmap);
+    } else {
+        ui->referenceAircraftLabel->setPixmap(d->userAircraftPixmap);
+    }
 
     ui->aircraftTableWidget->blockSignals(true);
+
+    // Reset all icons
     for (int row = 0; row < ui->aircraftTableWidget->rowCount(); ++row) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::sequenceNumberColumn);
-        // Index starts at 0
-        const int aircraftIndex = item->data(Qt::EditRole).toInt() - 1;
-        if (aircraftIndex == userAircraftIndex) {
-            if (recording) {
-                item->setIcon(FormationWidgetPrivate::recordingAircraftIcon);
-            } else if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
-                item->setIcon(FormationWidgetPrivate::referenceAircraftIcon);
-            } else {
-                item->setIcon(FormationWidgetPrivate::normalAircraftIcon);
-            }
-            if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
-                ui->referenceAircraftLabel->setPixmap(d->referenceAircraftPixmap);
-            } else {
-                ui->referenceAircraftLabel->setPixmap(d->userAircraftPixmap);
-            }
-        } else {
-            item->setIcon(QIcon());
-        }
+        item->setIcon(QIcon());
     }
+    // Update user aircraft icon
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const int userAircraftIndex = flight.getUserAircraftIndex();
+    const int row = getRowByAircraftIndex(userAircraftIndex);
+    updateAircraftRow(flight.getUserAircraft(), row);
+
     ui->aircraftTableWidget->blockSignals(false);
 }
 
@@ -529,6 +520,7 @@ void FormationWidget::updateToolTips() noexcept
 
 void FormationWidget::updateAircraftRow(const Aircraft &aircraft, int row) noexcept
 {
+    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
     const QString tooltip = tr("Double-click to change user aircraft.");
     int column = 0;
@@ -539,6 +531,22 @@ void FormationWidget::updateAircraftRow(const Aircraft &aircraft, int row) noexc
     newItem->setData(Qt::DisplayRole, row + 1);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     newItem->setToolTip(tooltip);
+    // Icon
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const int userAircraftIndex = flight.getUserAircraftIndex();
+    const bool recording = skyConnectManager.isInRecordingState();
+    const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
+    if (row == userAircraftIndex) {
+        if (recording) {
+            newItem->setIcon(FormationWidgetPrivate::recordingAircraftIcon);
+        } else if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
+            newItem->setIcon(FormationWidgetPrivate::referenceAircraftIcon);
+        } else {
+            newItem->setIcon(FormationWidgetPrivate::normalAircraftIcon);
+        }
+    } else {
+        newItem->setIcon(QIcon());
+    }
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
     ++column;
 
@@ -687,6 +695,12 @@ int FormationWidget::getRowBySequenceNumber(int sequence) const noexcept
     return row;
 }
 
+int FormationWidget::getRowByAircraftIndex(int index) const noexcept
+{
+    // Sequence number starts at 1
+    return getRowBySequenceNumber(index + 1);
+}
+
 // PRIVATE SLOTS
 
 void FormationWidget::updateUi() noexcept
@@ -726,7 +740,7 @@ void FormationWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
         row = getSelectedRow();
     } else {
         // Sequence number starts at 1
-        row = getRowBySequenceNumber(index + 1);
+        row = getRowByAircraftIndex(index);
     }
     // Update aircraft table
     if (row != ::InvalidRow) {
