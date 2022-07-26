@@ -29,10 +29,12 @@
 - The window is properly resized when in minimal mode and the default non-essential button visibility is changed in the settings
 - Selection in the Logbook and Formation modules is now properly taking table reordering into account
 - The Formation module is properly updated when a new logbook is opened or created
+- Formation module: manually adjusted table column is kept when recording a new aircraft
 
 ### Under The Hood
 - The modules (Logbook, Formation, Location) are now implemented as plugins
 - The modules are [topologically sorted](https://en.wikipedia.org/wiki/Topological_sorting), based on their defined dependencies
+- "Persisted enumerations": dropdown comboboxes are automatically populated based on the persisted enumeration values
 - Sky Dolly now also compiles and links with the Microsoft Visual Studio 2022 C++ compiler (MSVC)
 - The code is now also [analysed](https://github.com/till213/SkyDolly/actions) for programming / security flaws with the [Microsoft C++ Code Analysis Action](https://github.com/marketplace/actions/microsoft-c-code-analysis-action)
 

@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,20 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOCATIONSELECTOR_H
-#define LOCATIONSELECTOR_H
+#ifndef POSITIONPARSER_H
+#define POSITIONPARSER_H
 
-#include <QDate>
-#include <QString>
+#include <utility>
 
-#include <Model/SimType.h>
-#include "PersistenceLib.h"
+#include <QStringList>
+#include <QStringView>
 
-/// \todo IMPLEMENT ME
-struct PERSISTENCE_API LocationSelector
+#include "KernelLib.h"
+
+namespace PositionParser
 {
-public:
-    LocationSelector();
-};
+    using Coordinate = std::pair<double, double>;
+    KERNEL_API Coordinate parse(QStringView position, bool *ok = nullptr) noexcept;
+}
 
-#endif // LOCATIONSELECTOR_H
+#endif // POSITIONPARSER_H

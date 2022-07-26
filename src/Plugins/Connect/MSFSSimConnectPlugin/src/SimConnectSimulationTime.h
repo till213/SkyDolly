@@ -41,14 +41,14 @@
 #pragma pack(push, 1)
 struct SimConnectSimulationTime
 {
-    qint32 localTime;
-    qint32 localYear;
-    qint32 localMonth;
-    qint32 localDay;
-    qint32 zuluTime;
-    qint32 zuluYear;
-    qint32 zuluMonth;
-    qint32 zuluDay;
+    qint32 localTime {0};
+    qint32 localYear {0};
+    qint32 localMonth {0};
+    qint32 localDay {0};
+    qint32 zuluTime {0};
+    qint32 zuluYear {0};
+    qint32 zuluMonth {0};
+    qint32 zuluDay {0};
 
     inline QDateTime toLocalDateTime() const noexcept
     {

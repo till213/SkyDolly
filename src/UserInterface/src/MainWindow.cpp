@@ -429,9 +429,9 @@ void MainWindow::initUi() noexcept
             QMessageBox::information(this, "Preview",
                 QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
                 "This release v%2 also implements the modules as plugins, reducing memory (RAM) usage even further.\n\n"
-                "At the same time a new Locations module is introduced, allowing to quickly teleport to the selected location."
-                "It comes with an initial set of default (system) locations that are neither editable nor deletable."
-                "But own user locations can either be captured from a running flight simulator, or copy&pasted.\n\n"
+                "At the same time a new Locations module is introduced, allowing to quickly teleport to the selected location. "
+                "It comes with an initial set of default (system) locations that are neither editable nor deletable. "
+                "But own user locations can either be captured from a running flight simulator, or copy & pasted from the system clipboard.\n\n"
                 "Note that the Locations module is work in progress: filtering and additional attributes are yet to be implemented.\n\n"
                 "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
                 QMessageBox::StandardButton::Ok);            

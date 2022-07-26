@@ -39,9 +39,9 @@
 #pragma pack(push, 1)
 struct SimConnectPrimaryFlightControl
 {
-    float rudderPosition;
-    float elevatorPosition;
-    float aileronPosition;
+    float rudderPosition {0.0f};
+    float elevatorPosition {0.0f};
+    float aileronPosition {0.0f};
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {

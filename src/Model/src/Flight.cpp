@@ -42,24 +42,20 @@
 #include "FlightSummary.h"
 #include "Flight.h"
 
-class FlightPrivate
+struct FlightPrivate
 {
-public:
-
     FlightPrivate() noexcept
-        : creationTime(QDateTime::currentDateTime()),
-          userAircraftIndex(Flight::InvalidAircraftIndex)
     {
         clear(true);
     }
 
-    std::int64_t id;
-    QDateTime creationTime;
+    std::int64_t id {Flight::InvalidId};
+    QDateTime creationTime {QDateTime::currentDateTime()};
     QString title;
     QString description;
     FlightCondition flightCondition;
     std::vector<std::unique_ptr<Aircraft>> aircraft;
-    int userAircraftIndex;
+    int userAircraftIndex {Flight::InvalidAircraftIndex};
 
     inline void clear(bool withOneAircraft) noexcept {
         id = Flight::InvalidId;
@@ -161,7 +157,7 @@ Aircraft &Flight::addUserAircraft() noexcept
     connectWithAircraftSignals(*aircraft.get());
 
     d->aircraft.push_back(std::move(aircraft));
-    switchUserAircraftIndex(d->aircraft.size() - 1);
+    switchUserAircraftIndex(static_cast<int>(d->aircraft.size()) - 1);
     emit aircraftAdded(*d->aircraft.back().get());
     return *d->aircraft.back().get();
 }
@@ -169,6 +165,17 @@ Aircraft &Flight::addUserAircraft() noexcept
 Aircraft &Flight::getUserAircraft() const noexcept
 {
     return *d->aircraft.at(d->userAircraftIndex);
+}
+
+int Flight::getAircraftIndex(const Aircraft &aircraft) const noexcept
+{
+    std::int64_t index {InvalidAircraftIndex};
+    const auto it = std::find_if(d->aircraft.cbegin(), d->aircraft.cend(),
+                                 [&aircraft](const std::unique_ptr<Aircraft> &a) { return a->getId() == aircraft.getId(); });
+    if (it != d->aircraft.cend()) {
+        index = static_cast<int>(std::distance(d->aircraft.cbegin(), it));
+    }
+    return index;
 }
 
 int Flight::getUserAircraftIndex() const noexcept
@@ -341,7 +348,7 @@ inline void Flight::connectWithAircraftSignals(Aircraft &aircraft)
             this, &Flight::timeOffsetChanged);
 }
 
-void Flight::reassignUserAircraftIndex(int index) noexcept
+void Flight::reassignUserAircraftIndex(std::int64_t index) noexcept
 {
     d->userAircraftIndex = index;
 }
