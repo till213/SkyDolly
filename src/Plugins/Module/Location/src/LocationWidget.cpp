@@ -85,8 +85,8 @@ namespace
     constexpr bool DefaultOnGround {false};
 
     constexpr double DefaultPitch {0.0};
-    constexpr double MinimumPitch {-180.0};
-    constexpr double MaximumPitch {180.0};
+    constexpr double MinimumPitch {-90.0};
+    constexpr double MaximumPitch {90.0};
     constexpr double DefaultBank {0.0};
     constexpr double MinimumBank {-180.0};
     constexpr double MaximumBank {180.0};
