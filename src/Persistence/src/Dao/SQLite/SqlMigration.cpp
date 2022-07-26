@@ -221,7 +221,7 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
     bool ok {true};
     Location location;
     location.title = locationMatch.captured(::TitleIndex);
-    location.description = locationMatch.captured(::DescriptionIndex);
+    location.description = locationMatch.captured(::DescriptionIndex).replace("\\n", "\n");
     Enumeration locationType(EnumerationService::LocationType);
     ok = d->enumerationService.getEnumerationByName(locationType);
     if (ok) {
