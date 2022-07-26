@@ -41,7 +41,7 @@
 struct SimConnectPositionReply : public SimConnectPositionRequest
 {
     // Extended aircraft position
-    double indicatedAltitude;
+    double indicatedAltitude {0.0};
 
     inline PositionData toPositionData() const noexcept
     {

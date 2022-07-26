@@ -40,30 +40,30 @@
 #pragma pack(push, 1)
 struct SimConnectEngineRequest
 {
-    float throttleLeverPosition1;
-    float throttleLeverPosition2;
-    float throttleLeverPosition3;
-    float throttleLeverPosition4;
-    float propellerLeverPosition1;
-    float propellerLeverPosition2;
-    float propellerLeverPosition3;
-    float propellerLeverPosition4;
-    float mixtureLeverPosition1;
-    float mixtureLeverPosition2;
-    float mixtureLeverPosition3;
-    float mixtureLeverPosition4;
-    float recipEngineCowlFlapPosition1;
-    float recipEngineCowlFlapPosition2;
-    float recipEngineCowlFlapPosition3;
-    float recipEngineCowlFlapPosition4;
-    qint32 electricalMasterBattery1;
-    qint32 electricalMasterBattery2;
-    qint32 electricalMasterBattery3;
-    qint32 electricalMasterBattery4;
-    qint32 generalEngineStarter1;
-    qint32 generalEngineStarter2;
-    qint32 generalEngineStarter3;
-    qint32 generalEngineStarter4;
+    float throttleLeverPosition1 {0.0f};
+    float throttleLeverPosition2 {0.0f};
+    float throttleLeverPosition3 {0.0f};
+    float throttleLeverPosition4 {0.0f};
+    float propellerLeverPosition1 {0.0f};
+    float propellerLeverPosition2 {0.0f};
+    float propellerLeverPosition3 {0.0f};
+    float propellerLeverPosition4 {0.0f};
+    float mixtureLeverPosition1 {0.0f};
+    float mixtureLeverPosition2 {0.0f};
+    float mixtureLeverPosition3 {0.0f};
+    float mixtureLeverPosition4 {0.0f};
+    float recipEngineCowlFlapPosition1 {0.0f};
+    float recipEngineCowlFlapPosition2 {0.0f};
+    float recipEngineCowlFlapPosition3 {0.0f};
+    float recipEngineCowlFlapPosition4 {0.0f};
+    qint32 electricalMasterBattery1 {0};
+    qint32 electricalMasterBattery2 {0};
+    qint32 electricalMasterBattery3 {0};
+    qint32 electricalMasterBattery4 {0};
+    qint32 generalEngineStarter1 {0};
+    qint32 generalEngineStarter2 {0};
+    qint32 generalEngineStarter3 {0};
+    qint32 generalEngineStarter4 {0};
 
     inline void fromEngineData(const EngineData &engineData) noexcept
     {

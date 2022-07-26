@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,20 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOCATIONSELECTOR_H
-#define LOCATIONSELECTOR_H
+#ifndef POSITIONPARSERTEST_H
+#define POSITIONPARSERTEST_H
 
-#include <QDate>
-#include <QString>
+#include <QObject>
 
-#include <Model/SimType.h>
-#include "PersistenceLib.h"
-
-/// \todo IMPLEMENT ME
-struct PERSISTENCE_API LocationSelector
+/*!
+ * Test cases for the Name module.
+ */
+class PositionParserTest : public QObject
 {
-public:
-    LocationSelector();
+    Q_OBJECT
+private slots:
+    void initTestCase();
+    void cleanupTestCase();
+
+    void parseTest_data();
+    void parseTest();
 };
 
-#endif // LOCATIONSELECTOR_H
+#endif // POSITIONPARSERTEST_H

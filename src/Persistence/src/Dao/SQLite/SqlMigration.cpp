@@ -124,6 +124,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
         if (ok) {
             QTextStream textStream(&migrationFile);
+            textStream.setCodec(QTextCodec::codecForName("UTF-8"));
             const QString migration = textStream.readAll();
 
             QStringList sqlStatements = migration.split(migrRegExp);
@@ -220,7 +221,7 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
     bool ok {true};
     Location location;
     location.title = locationMatch.captured(::TitleIndex);
-    location.description = locationMatch.captured(::DescriptionIndex);
+    location.description = locationMatch.captured(::DescriptionIndex).replace("\\n", "\n");
     Enumeration locationType(EnumerationService::LocationType);
     ok = d->enumerationService.getEnumerationByName(locationType);
     if (ok) {

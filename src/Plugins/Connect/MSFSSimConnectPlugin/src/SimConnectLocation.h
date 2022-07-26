@@ -41,14 +41,14 @@
 #pragma pack(push, 1)
 struct SimConnectLocation
 {
-    double latitude;
-    double longitude;
-    double altitude;
-    double pitch;
-    double bank;
-    double heading;
-    int indicatedAirspeed;
-    int onGround;
+    double latitude {0.0};
+    double longitude {0.0};
+    double altitude {0.0};
+    double pitch {0.0};
+    double bank {0.0};
+    double heading {0.0};
+    int indicatedAirspeed {0};
+    int onGround {false};
 
     inline Location toLocation() const noexcept
     {

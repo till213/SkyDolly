@@ -240,8 +240,8 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
     return ok;
 }
 
+/// \todo IMPLEMENT ME
 bool SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
 {
-    // TODO IMPLEMENT ME
     return true;
 }

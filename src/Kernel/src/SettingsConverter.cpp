@@ -32,12 +32,7 @@ namespace
 {
     void convertToV12(Version settingsVersion, QSettings &settings)
     {
-        settings.beginGroup("Window");
-        {
-            // New hidden "ID" column has been added -> clear layout
-            settings.setValue("FormationAircraftTableState", QByteArray());
-        }
-        settings.endGroup();
+        // Nothing to convert yet
     }
 }
 
