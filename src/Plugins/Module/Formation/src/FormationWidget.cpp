@@ -360,8 +360,10 @@ void FormationWidget::updateAircraftTable() noexcept
     ui->aircraftTableWidget->setSortingEnabled(false);
     ui->aircraftTableWidget->setRowCount(0);
 
+    int aircraftIndex {0};
     for (const auto &aircraft : flight) {
-        createRow(*aircraft);
+        createRow(*aircraft, aircraftIndex);
+        ++aircraftIndex;
     }
 
     ui->aircraftTableWidget->setSortingEnabled(true);
@@ -394,7 +396,7 @@ void FormationWidget::updateAircraftIcons() noexcept
     const int userAircraftIndex = flight.getUserAircraftIndex();
     const int row = getRowByAircraftIndex(userAircraftIndex);
     if (row != ::InvalidRow) {
-        updateRow(flight.getUserAircraft(), row);
+        updateRow(flight.getUserAircraft(), row, userAircraftIndex);
     }
 
     ui->aircraftTableWidget->blockSignals(false);
@@ -533,7 +535,7 @@ void FormationWidget::updateToolTips() noexcept
     }
 }
 
-void FormationWidget::createRow(const Aircraft &aircraft) noexcept
+void FormationWidget::createRow(const Aircraft &aircraft, int aircraftIndex) noexcept
 {
     const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
@@ -545,7 +547,7 @@ void FormationWidget::createRow(const Aircraft &aircraft) noexcept
     // Sequence number
     std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
     // Sequence numbers start at 1
-    newItem->setData(Qt::DisplayRole, row + 1);
+    newItem->setData(Qt::DisplayRole, aircraftIndex + 1);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     newItem->setToolTip(tr("Double-click to change user aircraft."));
     // Icon
@@ -553,7 +555,7 @@ void FormationWidget::createRow(const Aircraft &aircraft) noexcept
     const int userAircraftIndex = flight.getUserAircraftIndex();
     const bool recording = skyConnectManager.isInRecordingState();
     const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
-    if (row == userAircraftIndex) {
+    if (aircraftIndex == userAircraftIndex) {
         if (recording) {
             newItem->setIcon(FormationWidgetPrivate::recordingAircraftIcon);
         } else if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
@@ -619,7 +621,7 @@ void FormationWidget::createRow(const Aircraft &aircraft) noexcept
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
 }
 
-void FormationWidget::updateRow(const Aircraft &aircraft, int row) noexcept
+void FormationWidget::updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept
 {
     const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
@@ -628,13 +630,13 @@ void FormationWidget::updateRow(const Aircraft &aircraft, int row) noexcept
     // Sequence number
     QTableWidgetItem *item = ui->aircraftTableWidget->item(row, d->sequenceNumberColumn);
     // Sequence numbers start at 1
-    item->setData(Qt::DisplayRole, row + 1);
+    item->setData(Qt::DisplayRole, aircraftIndex + 1);
     // Icon
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const int userAircraftIndex = flight.getUserAircraftIndex();
     const bool recording = skyConnectManager.isInRecordingState();
     const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
-    if (row == userAircraftIndex) {
+    if (aircraftIndex == userAircraftIndex) {
         if (recording) {
             item->setIcon(FormationWidgetPrivate::recordingAircraftIcon);
         } else if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
@@ -809,9 +811,12 @@ void FormationWidget::onUserAircraftChanged() noexcept
 
 void FormationWidget::onAircraftAdded(const Aircraft &aircraft) noexcept
 {
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const int aircraftIndex = flight.getAircraftIndex(aircraft);
+
     ui->aircraftTableWidget->blockSignals(true);
     ui->aircraftTableWidget->setSortingEnabled(false);
-    createRow(aircraft);
+    createRow(aircraft, aircraftIndex);
     ui->aircraftTableWidget->blockSignals(false);
     ui->aircraftTableWidget->setSortingEnabled(true);
     updateTimeOffsetUi();
@@ -820,18 +825,18 @@ void FormationWidget::onAircraftAdded(const Aircraft &aircraft) noexcept
 void FormationWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
 {
     int row {::InvalidRow};
-    const int index = Logbook::getInstance().getCurrentFlight().getAircraftIndex(aircraft);
-    if (d->selectedAircraftIndex == index) {
+    const int aircraftIndex = Logbook::getInstance().getCurrentFlight().getAircraftIndex(aircraft);
+    if (d->selectedAircraftIndex == aircraftIndex) {
         row = getSelectedRow();
     } else {
         // Sequence number starts at 1
-        row = getRowByAircraftIndex(index);
+        row = getRowByAircraftIndex(aircraftIndex);
     }
     // Update aircraft table
     if (row != ::InvalidRow) {
         ui->aircraftTableWidget->blockSignals(true);
         ui->aircraftTableWidget->setSortingEnabled(false);
-        updateRow(aircraft, row);
+        updateRow(aircraft, row, aircraftIndex);
         ui->aircraftTableWidget->blockSignals(false);
         ui->aircraftTableWidget->setSortingEnabled(true);
     }

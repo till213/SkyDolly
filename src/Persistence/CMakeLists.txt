@@ -62,6 +62,7 @@ target_sources(${LIBRARY_NAME}
         src/Dao/SQLite/migr/Migration.qrc
         res/migr/Locations.csv
         res/migr/Locations.ods
+        res/migr/README.md
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
