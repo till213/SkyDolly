@@ -31,6 +31,7 @@ values
   ('AS', 'Airstrip', 'Airstrip'),
   ('BR', 'Bridge', 'Bridge'),
   ('BU', 'Building', 'Building'),
+  ('CA', 'Canyon', 'Canyon'),
   ('CI', 'City', 'City'),
   ('DA', 'Dam', 'Dam'),
   ('DE', 'Desert', 'Desert'),
