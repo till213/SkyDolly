@@ -4,14 +4,14 @@
 Sky Dolly comes with a set of default locations (also known as "system locations" - also refer to table ENUM_LOCATION_TYPE). Those default locations are imported ("migrated") at application start as needed, based on the CSV file Locations.csv.
 
 ## Locations.ods
-The _master_ file is the Locations.ods, a LibreOffice Calc file (note: Excel is also able to open/store _Open Document Spreadsheet_ files).
+The _master_ file is the [Locations.ods](Locations.ods), an _Open Document Spreadsheet_ file which can be edited with e.g. LibreOffice Calc and Excel.
 
 The spreadsheet contains a formula that re-generates a UUID each time a new row is added and/or the document is saved. This UUID can be used for newly added location rows and serves as "migration ID".
 
 The first spreadsheet tab contains the locations, the second tab contains the _categories_ which are helpful to choose the proper symbolic ID for the _Category_ column.
 
 ## Locations.csv
-This CSV file is embedded in the executable (Persistence library) with the Qt resource system and is read at each application start and used as migration source.
+The [Locations.csv](Locations.csv) file is embedded in the executable (Persistence library) with the Qt resource system and is read at each application start and used as migration source.
 
 The separator is expected to be a comma (,) and strings (like in the _description_ column) are optionally to be put between double quotes ("), especially if they contain commas themselves. Likewise floating point numbers must use the decimal point (.).
 
