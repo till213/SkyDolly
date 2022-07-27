@@ -33,8 +33,10 @@ values
   ('BU', 'Building', 'Building'),
   ('CI', 'City', 'City'),
   ('DA', 'Dam', 'Dam'),
+  ('DE', 'Desert', 'Desert'),
   ('GL', 'Glacier', 'Glacier'),
   ('HP', 'Helipad', 'Helipad'),
+  ('IS', 'Island', 'Island'),
   ('LA', 'Lake', 'Lake'),
   ('LM', 'Landmark', 'Landmark'),
   ('LH', 'Lighthouse', 'Lighthouse'),
@@ -46,7 +48,8 @@ values
   ('SP', 'Seaport', 'Seaport'),
   ('TO', 'Town', 'Town'),
   ('RI', 'River', 'River'),
-  ('VA', 'Valley', 'Valley');
+  ('VA', 'Valley', 'Valley'),
+  ('WA', 'Waterfall', 'Waterfall');
 
 @migr(id = "38e58cbe-0e0c-47d5-88ae-1bd7295d15cc", descn = "Create country enumeration table", step_cnt = 2)
 create table enum_country(
