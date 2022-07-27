@@ -51,9 +51,6 @@ jobs:
       - name: Build CMake
         run: cmake --build ${{ env.build }} --verbose
 
-      - name: Show environment
-        run: env
-
       - name: Initialize MSVC Code Analysis
         uses: microsoft/msvc-code-analysis-action@v0.1.0
         # Provide a unique ID to access the sarif output path
@@ -63,7 +60,7 @@ jobs:
           buildConfiguration: ${{ env.config }}
           # Ruleset file that will determine what checks will be run
           ruleset: NativeRecommendedRules.ruleset
-          ignoredPaths: ${{ github.workspace }}/3rdParty;${{ env.Qt5_DIR }}/include
+          ignoredPaths: ${{ github.workspace }}/3rdParty;${{ github.workspace }}/build;${{ env.Qt5_DIR }}/include
 
       # Upload SARIF file to GitHub Code Scanning Alerts
       - name: Upload SARIF to GitHub
