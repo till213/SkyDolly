@@ -40,7 +40,7 @@ Location::Location(const InitialPosition &initialPosition) noexcept
       altitude(initialPosition.altitude),
       pitch(initialPosition.pitch),
       bank(initialPosition.bank),
-      heading(initialPosition.heading),
+      trueHeading(initialPosition.trueHeading),
       indicatedAirspeed(initialPosition.indicatedAirspeed),
       onGround(initialPosition.onGround)
 {}

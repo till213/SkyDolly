@@ -61,7 +61,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  altitude,"
         "  pitch,"
         "  bank,"
-        "  heading,"
+        "  true_heading,"
         "  indicated_airspeed,"
         "  on_ground,"
         "  attributes"
@@ -77,7 +77,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  :altitude,"
         "  :pitch,"
         "  :bank,"
-        "  :heading,"
+        "  :true_heading,"
         "  :indicated_airspeed,"
         "  :on_ground,"
         "  :attributes"
@@ -95,7 +95,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     query.bindValue(":altitude", location.altitude);
     query.bindValue(":pitch", location.pitch);
     query.bindValue(":bank", location.bank);
-    query.bindValue(":heading", location.heading);
+    query.bindValue(":true_heading", location.trueHeading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
     query.bindValue(":attributes", QVariant::fromValue(location.attributes));
@@ -128,7 +128,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
         "       altitude = :altitude,"
         "       pitch = :pitch,"
         "       bank = :bank,"
-        "       heading = :heading,"
+        "       true_heading = :true_heading,"
         "       indicated_airspeed = :indicated_airspeed,"
         "       on_ground = :on_ground,"
         "       attributes = :attributes "
@@ -146,7 +146,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     query.bindValue(":altitude", location.altitude);
     query.bindValue(":pitch", location.pitch);
     query.bindValue(":bank", location.bank);
-    query.bindValue(":heading", location.heading);
+    query.bindValue(":true_heading", location.trueHeading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
     query.bindValue(":attributes", QVariant::fromValue(location.attributes));
@@ -205,7 +205,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
         const int altitudeIdx = record.indexOf("altitude");
         const int pitchIdx = record.indexOf("pitch");
         const int bankIdx = record.indexOf("bank");
-        const int headingIdx = record.indexOf("heading");
+        const int trueHeadingIdx = record.indexOf("true_heading");
         const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
         const int onGroundIdx = record.indexOf("on_ground");
         const int attributesIdx = record.indexOf("attributes");
@@ -224,7 +224,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
             location.altitude = query.value(altitudeIdx).toDouble();
             location.pitch = query.value(pitchIdx).toDouble();
             location.bank = query.value(bankIdx).toDouble();
-            location.heading = query.value(headingIdx).toDouble();
+            location.trueHeading = query.value(trueHeadingIdx).toDouble();
             location.indicatedAirspeed = query.value(indicatedAirspeedIdx).toInt();
             location.onGround = query.value(onGroundIdx).toBool();
             location.attributes = query.value(attributesIdx).toLongLong();

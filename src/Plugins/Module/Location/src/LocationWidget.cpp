@@ -131,7 +131,7 @@ struct LocationWidgetPrivate
     static inline int altitudeColumn {InvalidColumn};
     static inline int pitchColumn {InvalidColumn};
     static inline int bankColumn {InvalidColumn};
-    static inline int headingColumn {InvalidColumn};
+    static inline int trueHeadingColumn {InvalidColumn};
     static inline int indicatedAirspeedColumn {InvalidColumn};
     static inline int onGroundColumn {InvalidColumn};
     static inline int attributesColumn {InvalidColumn};
@@ -232,7 +232,7 @@ void LocationWidget::initUi() noexcept
     const QStringList headers {
         tr("ID"), tr("Title"), tr("Description"), tr("Type"), tr("Category"),
         tr("Country"), tr("Identifer"), tr("Position"), tr("Altitude"),
-        tr("Pitch"), tr("Bank"), tr("Heading"), tr("Indicated Airspeed"),
+        tr("Pitch"), tr("Bank"), tr("True Heading"), tr("Indicated Airspeed"),
         tr("On Ground"), tr("Attributes")
     };
     LocationWidgetPrivate::idColumn = headers.indexOf(tr("ID"));
@@ -246,7 +246,7 @@ void LocationWidget::initUi() noexcept
     LocationWidgetPrivate::altitudeColumn = headers.indexOf(tr("Altitude"));
     LocationWidgetPrivate::pitchColumn = headers.indexOf(tr("Pitch"));
     LocationWidgetPrivate::bankColumn = headers.indexOf(tr("Bank"));
-    LocationWidgetPrivate::headingColumn = headers.indexOf(tr("Heading"));
+    LocationWidgetPrivate::trueHeadingColumn = headers.indexOf(tr("True Heading"));
     LocationWidgetPrivate::indicatedAirspeedColumn = headers.indexOf(tr("Indicated Airspeed"));
     LocationWidgetPrivate::onGroundColumn = headers.indexOf(tr("On Ground"));
     LocationWidgetPrivate::attributesColumn = headers.indexOf(tr("Attributes"));
@@ -264,7 +264,7 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::descriptionColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::pitchColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::bankColumn, true);
-    ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::headingColumn, true);
+    ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::trueHeadingColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::indicatedAirspeedColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::attributesColumn, true);
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::categoryColumn, d->locationCategoryDelegate.get());
@@ -290,9 +290,9 @@ void LocationWidget::initUi() noexcept
     ui->bankSpinBox->setMinimum(::MinimumBank);
     ui->bankSpinBox->setMaximum(::MaximumBank);
     ui->bankSpinBox->setSuffix("°");
-    ui->headingSpinBox->setMinimum(::MinimumHeading);
-    ui->headingSpinBox->setMaximum(::MaximumHeading);
-    ui->headingSpinBox->setSuffix("°");
+    ui->trueHeadingSpinBox->setMinimum(::MinimumHeading);
+    ui->trueHeadingSpinBox->setMaximum(::MaximumHeading);
+    ui->trueHeadingSpinBox->setSuffix("°");
     ui->indicatedAirspeedSpinBox->setMinimum(::MinimumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setSuffix(tr(" knots"));
@@ -340,7 +340,7 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::onPitchChanged);
     connect(ui->bankSpinBox, &QDoubleSpinBox::valueChanged,
             this, &LocationWidget::onBankChanged);
-    connect(ui->headingSpinBox, &QDoubleSpinBox::valueChanged,
+    connect(ui->trueHeadingSpinBox, &QDoubleSpinBox::valueChanged,
             this, &LocationWidget::onHeadingChanged);
     connect(ui->indicatedAirspeedSpinBox, &QSpinBox::valueChanged,
             this, &LocationWidget::onIndicatedAirspeedChanged);
@@ -351,7 +351,7 @@ void LocationWidget::updateInfoUi() noexcept
     ui->descriptionPlainTextEdit->blockSignals(true);
     ui->pitchSpinBox->blockSignals(true);
     ui->bankSpinBox->blockSignals(true);
-    ui->headingSpinBox->blockSignals(true);
+    ui->trueHeadingSpinBox->blockSignals(true);
     ui->indicatedAirspeedSpinBox->blockSignals(true);
 
     const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
@@ -366,28 +366,28 @@ void LocationWidget::updateInfoUi() noexcept
         ui->pitchSpinBox->setValue(item->text().toDouble());
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::bankColumn);
         ui->bankSpinBox->setValue(item->text().toDouble());
-        item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::headingColumn);
-        ui->headingSpinBox->setValue(item->text().toDouble());
+        item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::trueHeadingColumn);
+        ui->trueHeadingSpinBox->setValue(item->text().toDouble());
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::indicatedAirspeedColumn);
         ui->indicatedAirspeedSpinBox->setValue(item->text().toInt());
     } else {
         ui->descriptionPlainTextEdit->clear();
         ui->pitchSpinBox->setValue(::DefaultPitch);
         ui->bankSpinBox->setValue(::DefaultBank);
-        ui->headingSpinBox->setValue(::DefaultHeading);
+        ui->trueHeadingSpinBox->setValue(::DefaultHeading);
         ui->indicatedAirspeedSpinBox->setValue(ui->defaultIndicatedAirspeedSpinBox->value());
     }
 
     ui->descriptionPlainTextEdit->setReadOnly(readOnly);
     ui->pitchSpinBox->setReadOnly(readOnly);
     ui->bankSpinBox->setReadOnly(readOnly);
-    ui->headingSpinBox->setReadOnly(readOnly);
+    ui->trueHeadingSpinBox->setReadOnly(readOnly);
     ui->indicatedAirspeedSpinBox->setReadOnly(readOnly);
 
     ui->descriptionPlainTextEdit->blockSignals(false);
     ui->pitchSpinBox->blockSignals(false);
     ui->bankSpinBox->blockSignals(false);
-    ui->headingSpinBox->blockSignals(false);
+    ui->trueHeadingSpinBox->blockSignals(false);
     ui->indicatedAirspeedSpinBox->blockSignals(false);
 }
 
@@ -538,7 +538,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int row)
 
     // Heading
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::EditRole, location.heading);
+    newItem->setData(Qt::EditRole, location.trueHeading);
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
@@ -612,8 +612,8 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::bankColumn);
     location.bank = item->data(Qt::EditRole).toDouble();
 
-    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::headingColumn);
-    location.heading = item->data(Qt::EditRole).toDouble();
+    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::trueHeadingColumn);
+    location.trueHeading = item->data(Qt::EditRole).toDouble();
 
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::indicatedAirspeedColumn);
     location.indicatedAirspeed = item->data(Qt::EditRole).toInt();
@@ -810,11 +810,11 @@ void LocationWidget::onHeadingChanged(double value) noexcept
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         Location location = getLocationByRow(selectedRow);
-        location.heading = value;
+        location.trueHeading = value;
         if (d->locationService->update(location)) {
             ui->locationTableWidget->blockSignals(true);
-            QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::headingColumn);
-            item->setData(Qt::EditRole, location.heading);
+            QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::trueHeadingColumn);
+            item->setData(Qt::EditRole, location.trueHeading);
             ui->locationTableWidget->blockSignals(false);
         }
     }

@@ -381,7 +381,7 @@ inline bool KmlExportPlugin::exportPlacemark(QIODevice &io, KmlStyleExport::Icon
     bool ok = !positionData.isNull();
     if (ok) {
         ok = exportPlacemark(io, icon, name, description,
-                             positionData.longitude, positionData.latitude, positionData.altitude, positionData.heading);
+                             positionData.longitude, positionData.latitude, positionData.altitude, positionData.trueHeading);
     }
     return ok;
 }

@@ -121,7 +121,7 @@ bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QSt
                 positionData.velocityBodyZ = match.capturedView(::SpeedIndex).toDouble(&ok);
             }
             if (ok) {
-                positionData.heading = match.capturedView(::HeadingIndex).toDouble(&ok);
+                positionData.trueHeading = match.capturedView(::HeadingIndex).toDouble(&ok);
             }
             if (ok) {
                 position.upsertLast(positionData);

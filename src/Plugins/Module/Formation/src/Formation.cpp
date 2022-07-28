@@ -166,7 +166,7 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
             bearing = 337.5;
             break;
         }
-        bearing += positionData.heading;
+        bearing += positionData.trueHeading;
         SkyMath::Coordinate initial = SkyMath::relativePosition(sourcePosition, SkyMath::feetToMeters(altitude), bearing, SkyMath::feetToMeters(distance));
 
         initialPosition.latitude = initial.first;

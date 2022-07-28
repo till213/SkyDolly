@@ -329,7 +329,7 @@ create table location(
     altitude real,
     pitch real,
     bank real,
-    heading real,
+    true_heading real,
     indicated_airspeed integer,
     on_ground integer,
     attributes integer,

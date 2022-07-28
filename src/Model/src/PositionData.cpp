@@ -37,7 +37,7 @@ PositionData::PositionData(double theLatitude, double theLongitude, double theAl
       indicatedAltitude(theAltitdue),
       pitch(0.0),
       bank(0.0),
-      heading(0.0),
+      trueHeading(0.0),
       velocityBodyX(0.0),
       velocityBodyY(0.0),
       velocityBodyZ(0.0),

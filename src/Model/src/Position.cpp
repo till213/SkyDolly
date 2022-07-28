@@ -100,7 +100,7 @@ const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableDa
             // Bank: [-180, 180] - discontinuity at +/- 180
             m_currentPositionData.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, ::Tension);
             // Heading: [0, 360] - discontinuity at 0/360
-            m_currentPositionData.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, ::Tension);
+            m_currentPositionData.trueHeading = SkyMath::interpolateHermite360(p0->trueHeading, p1->trueHeading, p2->trueHeading, p3->trueHeading, tn, ::Tension);
 
             // Velocity
             m_currentPositionData.velocityBodyX = SkyMath::interpolateLinear(p1->velocityBodyX, p2->velocityBodyX, tn);
