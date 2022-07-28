@@ -669,6 +669,9 @@ alter table flight rename column wind_velocity to wind_speed;
 @migr(id = "07cd96ff-e33f-45ca-a29d-2efdfe519409", descn = "Rename column enum_backup_period.intl_id to sym_id", step_cnt = 1)
 alter table enum_backup_period rename intl_id to sym_id;
 
+@migr(id = "38c50df7-836c-4b33-b8cc-bbcfbe4aaab4", descn = "Rename column position.heading to true_heading", step_cnt = 1)
+alter table position rename heading to true_heading;
+
 @migr(id = "c94c121e-3d93-44e4-a747-6db2b5e3b45b", descn = "Update application version to 0.12", step = 1)
 update metadata
 set app_version = '0.12.0';

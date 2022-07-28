@@ -302,7 +302,7 @@ inline QString SkyDollyCsvWriter::getPositionHeader() noexcept
            QString(SimVar::IndicatedAltitude) % CsvConst::TabSep %
            QString(SimVar::Pitch) % CsvConst::TabSep %
            QString(SimVar::Bank) % CsvConst::TabSep %
-           QString(SimVar::Heading) % CsvConst::TabSep %
+           QString(SimVar::TrueHeading) % CsvConst::TabSep %
            QString(SimVar::VelocityBodyX) % CsvConst::TabSep %
            QString(SimVar::VelocityBodyY) % CsvConst::TabSep %
            QString(SimVar::VelocityBodyZ) % CsvConst::TabSep %

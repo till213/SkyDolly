@@ -234,7 +234,7 @@ bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
         ok = ok && importValue(values, ::Altitude, altitdueIdx, positionData.altitude);
         ok = ok && importValue(values, ::Pitch, pitchIdx, positionData.pitch);
         ok = ok && importValue(values, ::Bank, bankIdx, positionData.bank);
-        ok = ok && importValue(values, ::TrueHeading, trueHeadingIdx, positionData.heading);
+        ok = ok && importValue(values, ::TrueHeading, trueHeadingIdx, positionData.trueHeading);
         ok = ok && importValue(values, ::VelocityBodyX, velocityBodyXIdx, positionData.velocityBodyX);
         ok = ok && importValue(values, ::VelocityBodyY, velocityBodyYIdx, positionData.velocityBodyY);
         ok = ok && importValue(values, ::VelocityBodyZ, velocityBodyZIdx, positionData.velocityBodyZ);

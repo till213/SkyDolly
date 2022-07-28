@@ -328,7 +328,7 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
                 const double indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
                 const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
                                            formatTime(currentTime) %
-                                           formatNumber(std::round(positionData.heading), 3) %
+                                           formatNumber(std::round(positionData.trueHeading), 3) %
                                            // IAS: km/h
                                            formatNumber(std::round(indicatedAirspeed), 3) %
                                            ::LineEnd;
