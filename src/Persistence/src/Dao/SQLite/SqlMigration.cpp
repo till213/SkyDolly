@@ -56,7 +56,7 @@ namespace
     constexpr int AltitudeIndex = 8;
     constexpr int PitchIndex = 9;
     constexpr int BankIndex = 10;
-    constexpr int HeadingIndex = 11;
+    constexpr int TrueHeadingIndex = 11;
     constexpr int IndicatedAirspeedIndex = 12;
     constexpr int OnGroundIndex = 13;
     constexpr int AttributesIndex = 14;
@@ -169,7 +169,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
         R"(([+-]?[0-9]*[.]?[0-9]+),)" // Altitude (optional)
         R"(([+-]?[0-9]*[.]?[0-9]+),)" // Pitch (optional)
         R"(([+-]?[0-9]*[.]?[0-9]+),)" // Bank (optional)
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Heading (optional)
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // True Heading (optional)
         R"(([+-]?[\d]*),)"            // Indicated airspeed (optional)
         R"(["]?(false|true)*["]?,)"   // On Ground (optional)
         R"(([+-]?[\d]*)$)"            // Attributes (optional)
@@ -258,7 +258,7 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
         location.bank = locationMatch.captured(::BankIndex).toDouble(&ok);
     }
     if (ok) {
-        location.heading = locationMatch.captured(::HeadingIndex).toDouble(&ok);
+        location.trueHeading = locationMatch.captured(::TrueHeadingIndex).toDouble(&ok);
     }
     if (ok) {
         location.indicatedAirspeed = locationMatch.captured(::IndicatedAirspeedIndex).toInt(&ok);

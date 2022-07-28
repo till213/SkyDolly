@@ -155,12 +155,12 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
                     }
                     const double initialBearing = SkyMath::initialBearing(startPosition, endPosition);
                     if (d->aspects.testFlag(Aspect::Heading)) {
-                        startPositionData.heading = initialBearing;
+                        startPositionData.trueHeading = initialBearing;
                     }
                     if (d->aspects.testFlag(Aspect::Bank)) {
                         if (i > 0) {
                             // [-180, 180]
-                            const double headingChange = SkyMath::headingChange(position[i - 1].heading, startPositionData.heading);
+                            const double headingChange = SkyMath::headingChange(position[i - 1].trueHeading, startPositionData.trueHeading);
                             // We go into maximum bank angle of 30 degrees with a heading change of 45 degrees
                             // SimConnect: negative values are a "right" turn, positive values a left turn
                             startPositionData.bank = SkyMath::bankAngle(headingChange, 45.0, ::MaxBankAngle);
@@ -174,7 +174,7 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
                         startPositionData.pitch = 0.0;
                     }
                     if (d->aspects.testFlag(Aspect::Heading)) {
-                        startPositionData.heading = firstMovementHeading;
+                        startPositionData.trueHeading = firstMovementHeading;
                     }
                     if (d->aspects.testFlag(Aspect::Bank)) {
                         startPositionData.bank = 0.0;
@@ -203,7 +203,7 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
                     lastPositionData.bank = 0.0;
                 }
                 if (d->aspects.testFlag(Aspect::Heading)) {
-                    lastPositionData.heading = previousPositionData.heading;
+                    lastPositionData.trueHeading = previousPositionData.trueHeading;
                 }
             }
         } else {
@@ -226,7 +226,7 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
                     lastPositionData.bank = 0.0;
                 }
                 if (d->aspects.testFlag(Aspect::Heading)) {
-                    lastPositionData.heading = 0.0;
+                    lastPositionData.trueHeading = 0.0;
                 }
             }
         }

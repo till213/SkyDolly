@@ -44,7 +44,7 @@ struct MODEL_API InitialPosition
     double altitude;
     double pitch;
     double bank;
-    double heading;
+    double trueHeading;
     // Indicated airspeed [knots]
     int indicatedAirspeed;
     bool onGround;    
@@ -67,7 +67,7 @@ struct MODEL_API InitialPosition
         altitude = positionData.altitude;
         pitch = positionData.pitch;
         bank = positionData.bank;
-        heading = positionData.heading;
+        trueHeading = positionData.trueHeading;
         const double trueAirspeed = Convert::feetPerSecondToKnots(positionData.velocityBodyZ);
         indicatedAirspeed = static_cast<int>(std::round(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude)));
         onGround = false;

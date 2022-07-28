@@ -119,7 +119,7 @@ bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &a
                                     QString::number(static_cast<int>(std::round(positionData.velocityBodyZ))) % CsvConst::CommaSep %
                                     QString::number(static_cast<int>(std::round(positionData.pitch))) % CsvConst::CommaSep %
                                     QString::number(static_cast<int>(std::round(positionData.bank))) % CsvConst::CommaSep %
-                                    QString::number(static_cast<int>(std::round(positionData.heading))) % CsvConst::Ln;
+                                    QString::number(static_cast<int>(std::round(positionData.trueHeading))) % CsvConst::Ln;
                 ok = io.write(csv.toUtf8());
             }
             if (!ok) {

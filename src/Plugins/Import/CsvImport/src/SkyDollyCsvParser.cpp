@@ -192,10 +192,10 @@ inline bool SkyDollyCsvParser::importPositionData(const QList<QByteArray> &heade
             if (ok) {
                 data.bank = doubleValue;
             }
-        } else if (header == SimVar::Heading) {
+        } else if (header == SimVar::TrueHeading) {
             doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {
-                data.heading = doubleValue;
+                data.trueHeading = doubleValue;
             }
             // Velocity
         } else if (header == SimVar::VelocityBodyX) {

@@ -302,7 +302,7 @@ inline QString SkyDollyCsvWriter::getPositionHeader() noexcept
            QString(SimVar::IndicatedAltitude) % CsvConst::TabSep %
            QString(SimVar::Pitch) % CsvConst::TabSep %
            QString(SimVar::Bank) % CsvConst::TabSep %
-           QString(SimVar::Heading) % CsvConst::TabSep %
+           QString(SimVar::TrueHeading) % CsvConst::TabSep %
            QString(SimVar::VelocityBodyX) % CsvConst::TabSep %
            QString(SimVar::VelocityBodyY) % CsvConst::TabSep %
            QString(SimVar::VelocityBodyZ) % CsvConst::TabSep %
@@ -321,7 +321,7 @@ inline QString SkyDollyCsvWriter::getPositionData(const PositionData &data) noex
               QString::number(data.indicatedAltitude, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.pitch, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.bank, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.heading, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.trueHeading, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.velocityBodyX, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.velocityBodyY, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.velocityBodyZ, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %

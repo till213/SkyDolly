@@ -83,7 +83,7 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
         ui->indicatedAltitudeLineEdit->setText(d->unit.formatFeet(positionData.indicatedAltitude));
         ui->pitchLineEdit->setText(d->unit.formatDegrees(positionData.pitch));
         ui->bankLineEdit->setText(d->unit.formatDegrees(positionData.bank));
-        ui->headingLineEdit->setText(d->unit.formatDegrees(positionData.heading));
+        ui->headingLineEdit->setText(d->unit.formatDegrees(positionData.trueHeading));
 
         // Velocity
         double speedFeetPerSec = positionData.velocityBodyX;
@@ -132,7 +132,7 @@ void AircraftWidget::initUi() noexcept
     ui->indicatedAltitudeLineEdit->setToolTip(SimVar::IndicatedAltitude);
     ui->pitchLineEdit->setToolTip(SimVar::Pitch);
     ui->bankLineEdit->setToolTip(SimVar::Bank);
-    ui->headingLineEdit->setToolTip(SimVar::Heading);
+    ui->headingLineEdit->setToolTip(SimVar::TrueHeading);
 
     // Velocity
     ui->velocityXLineEdit->setToolTip(SimVar::VelocityBodyX);

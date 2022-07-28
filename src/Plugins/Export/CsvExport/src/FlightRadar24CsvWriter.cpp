@@ -111,7 +111,7 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
                                     formatPosition(positionData) % CsvConst::CommaSep %
                                     QString::number(static_cast<int>(std::round(positionData.altitude))) % CsvConst::CommaSep %
                                     QString::number(static_cast<int>(std::round(positionData.velocityBodyZ))) % CsvConst::CommaSep %
-                                    QString::number(static_cast<int>(std::round(positionData.heading))) % CsvConst::Ln;
+                                    QString::number(static_cast<int>(std::round(positionData.trueHeading))) % CsvConst::Ln;
                 ok = io.write(csv.toUtf8());
             }
             if (!ok) {
