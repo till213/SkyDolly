@@ -321,7 +321,7 @@ inline QString SkyDollyCsvWriter::getPositionData(const PositionData &data) noex
               QString::number(data.indicatedAltitude, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.pitch, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.bank, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.heading, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.trueHeading, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.velocityBodyX, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.velocityBodyY, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.velocityBodyZ, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %

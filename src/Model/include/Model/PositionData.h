@@ -42,7 +42,7 @@ struct MODEL_API PositionData : public TimeVariableData
     double indicatedAltitude;
     double pitch;
     double bank;
-    double heading;
+    double trueHeading;
 
     // Velocity
     double velocityBodyX;

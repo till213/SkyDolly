@@ -131,7 +131,7 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
     query.bindValue(":indicated_altitude", position.indicatedAltitude);
     query.bindValue(":pitch", position.pitch);
     query.bindValue(":bank", position.bank);
-    query.bindValue(":heading", position.heading);
+    query.bindValue(":heading", position.trueHeading);
     query.bindValue(":velocity_x", position.velocityBodyX);
     query.bindValue(":velocity_y", position.velocityBodyY);
     query.bindValue(":velocity_z", position.velocityBodyZ);
@@ -189,7 +189,7 @@ bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::back_inser
             data.indicatedAltitude = query.value(indicatedAltitudeIdx).toDouble();
             data.pitch = query.value(pitchIdx).toDouble();
             data.bank = query.value(bankIdx).toDouble();
-            data.heading = query.value(headingIdx).toDouble();
+            data.trueHeading = query.value(headingIdx).toDouble();
             data.velocityBodyX = query.value(velocitXIdx).toDouble();
             data.velocityBodyY = query.value(velocitYIdx).toDouble();
             data.velocityBodyZ = query.value(velocitZIdx).toDouble();

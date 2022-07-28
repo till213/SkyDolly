@@ -46,7 +46,7 @@ struct MODEL_API Location : public Data
     double altitude {0.0};
     double pitch {0.0};
     double bank {0.0};
-    double heading {0.0};
+    double trueHeading {0.0};
     int indicatedAirspeed {0};
     bool onGround {false};
 
@@ -62,7 +62,7 @@ struct MODEL_API Location : public Data
         InitialPosition initialPosition {latitude, longitude, altitude};
         initialPosition.pitch = pitch;
         initialPosition.bank = bank;
-        initialPosition.heading = heading;
+        initialPosition.trueHeading = trueHeading;
         initialPosition.indicatedAirspeed = indicatedAirspeed;
         initialPosition.onGround = onGround;
 
