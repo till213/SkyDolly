@@ -52,7 +52,7 @@ struct SimConnectPositionReply : public SimConnectPositionRequest
         positionData.indicatedAltitude = indicatedAltitude;
         positionData.pitch = pitch;
         positionData.bank = bank;
-        positionData.heading = heading;
+        positionData.trueHeading = trueHeading;
 
         positionData.velocityBodyX = velocityBodyX;
         positionData.velocityBodyY = velocityBodyY;

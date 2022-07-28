@@ -46,7 +46,7 @@ struct SimConnectPositionRequest
     double altitude {0.0};
     double pitch {0.0};
     double bank {0.0};
-    double heading {0.0};
+    double trueHeading {0.0};
 
     // Velocity
     double velocityBodyX {0.0};
@@ -63,7 +63,7 @@ struct SimConnectPositionRequest
         altitude = positionData.altitude;
         pitch = positionData.pitch;
         bank = positionData.bank;
-        heading = positionData.heading;
+        trueHeading = positionData.trueHeading;
 
         velocityBodyX = positionData.velocityBodyX;
         velocityBodyY = positionData.velocityBodyY;
@@ -82,7 +82,7 @@ struct SimConnectPositionRequest
         initialPosition.Altitude = positionData.altitude;
         initialPosition.Pitch = positionData.pitch;
         initialPosition.Bank = positionData.bank;
-        initialPosition.Heading = positionData.heading;
+        initialPosition.Heading = positionData.trueHeading;
         initialPosition.OnGround = onGround ? 1 : 0;
         initialPosition.Airspeed = initialAirspeed;
 
@@ -98,7 +98,7 @@ struct SimConnectPositionRequest
         initialSimConnnectPosition.Altitude = initialPosition.altitude;
         initialSimConnnectPosition.Pitch = initialPosition.pitch;
         initialSimConnnectPosition.Bank = initialPosition.bank;
-        initialSimConnnectPosition.Heading = initialPosition.heading;
+        initialSimConnnectPosition.Heading = initialPosition.trueHeading;
         initialSimConnnectPosition.OnGround = initialPosition.onGround ? 1 : 0;
         initialSimConnnectPosition.Airspeed = initialPosition.indicatedAirspeed;
 

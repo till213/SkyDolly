@@ -46,7 +46,7 @@ struct SimConnectLocation
     double altitude {0.0};
     double pitch {0.0};
     double bank {0.0};
-    double heading {0.0};
+    double trueHeading {0.0};
     int indicatedAirspeed {0};
     int onGround {false};
 
@@ -58,7 +58,7 @@ struct SimConnectLocation
         location.altitude = altitude;
         location.pitch = pitch;
         location.bank = bank;
-        location.heading = heading;
+        location.trueHeading = trueHeading;
         location.indicatedAirspeed = indicatedAirspeed;
         location.onGround = (onGround != 0);
 
