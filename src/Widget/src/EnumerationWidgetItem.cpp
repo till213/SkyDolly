@@ -34,6 +34,7 @@
 
 EnumerationWidgetItem::EnumerationWidgetItem(const Enumeration &enumeration)
     : QTableWidgetItem(QTableWidgetItem::UserType),
+      m_id(Enumeration::InvalidId),
       m_enumeration(enumeration)
 {}
 

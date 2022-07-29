@@ -102,7 +102,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
             }
             if (ok) {
                 // Sequence numbers start at 1
-                ok = d->aircraftDao->adjustAircraftSequenceNumbersByFlightId(flight.getId(), index + 1);
+                ok = d->aircraftDao->adjustAircraftSequenceNumbersByFlightId(flight.getId(), static_cast<std::int64_t>(index) + 1);
             }
             if (ok) {
                 ok = QSqlDatabase::database().commit();

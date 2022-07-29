@@ -81,6 +81,8 @@ public:
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
 
+    static constexpr std::int64_t InvalidId {-1};
+
 private:
     std::unique_ptr<EnumerationPrivate> d;
 };

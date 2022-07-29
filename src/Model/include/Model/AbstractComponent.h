@@ -49,9 +49,9 @@ public:
     explicit AbstractComponent(const AircraftInfo &aircraftInfo) noexcept
         : m_aircraftInfo(aircraftInfo)
     {}
-    virtual ~AbstractComponent() = default;
-    AbstractComponent(const AbstractComponent &) = default;
-    AbstractComponent(AbstractComponent &&other)
+    virtual ~AbstractComponent() noexcept = default;
+    AbstractComponent(const AbstractComponent &) noexcept = default;
+    AbstractComponent(AbstractComponent &&other) noexcept
         : m_data (std::move(other.m_data)),
           m_aircraftInfo(std::move(other.m_aircraftInfo)),
           m_currentTimestamp(other.m_currentTimestamp),
@@ -59,7 +59,7 @@ public:
           m_currentAccess(other.m_currentAccess)
     {}
 
-    AbstractComponent &operator=(const AbstractComponent &rhs)
+    AbstractComponent &operator=(const AbstractComponent &rhs) noexcept
     {
         if (this != &rhs) {
             // Don't copy the reference member
@@ -71,7 +71,7 @@ public:
         return *this;
     }
 
-    AbstractComponent &operator=(AbstractComponent &&rhs)
+    AbstractComponent &operator=(AbstractComponent &&rhs) noexcept
     {
         if (this != &rhs) {
             // Don't copy the reference member

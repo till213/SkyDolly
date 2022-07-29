@@ -1118,7 +1118,7 @@ void MainWindow::onTimestampChanged(std::int64_t timestamp) noexcept
 void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
 {
     ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(ReplaySpeedProperty).toInt());
-    double replaySpeedFactor;
+    double replaySpeedFactor {1.0};
     switch (replaySpeed) {
     case ReplaySpeed::Slow10:
         replaySpeedFactor = 0.1;
