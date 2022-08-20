@@ -51,13 +51,41 @@ struct MODEL_API TimeVariableData
 
     TimeVariableData() noexcept;
     TimeVariableData(const TimeVariableData &other) = default;
-    TimeVariableData(TimeVariableData &&other) = default;
+
+    /*!
+     * Move constructor. The \c other data will be considered \e null data afterwards
+     *
+     * \param other
+     *        the other data to be moved; will be considered \e null data afterwards
+     * \sa isNull
+     */
+    TimeVariableData(TimeVariableData &&other)
+        : timestamp(other.timestamp)
+    {
+        other.timestamp = InvalidTime;
+    };
     virtual ~TimeVariableData() noexcept;
     TimeVariableData &operator=(const TimeVariableData &rhs) = default;
     TimeVariableData &operator=(TimeVariableData &&rhs) = default;
 
+    /*!
+     * Returns whether this data is considered \enull data.
+     *
+     * \return \c true if this data is \enull (invalid) data; \c false else
+     * \sa reset
+     */
     inline bool isNull() const noexcept {
         return (timestamp == InvalidTime);
+    }
+
+    /*!
+     * Resets this data such that it is considered \e null data afterwards.
+     *
+     * \sa isNull
+     */
+    inline void reset() noexcept
+    {
+        timestamp = InvalidTime;
     }
 
     friend inline bool operator==(const TimeVariableData &lhs, const TimeVariableData &rhs) noexcept

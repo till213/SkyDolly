@@ -536,37 +536,31 @@ void MSFSSimConnectPlugin::recordData() noexcept
         userAircraft.getPosition().upsertLast(std::move(d->currentPositionData));
         // Processed
         dataStored = true;
-        d->currentPositionData = PositionData::NullData;
     }
     if (!d->currentEngineData.isNull()) {
         userAircraft.getEngine().upsertLast(std::move(d->currentEngineData));
         // Processed
         dataStored = true;
-        d->currentEngineData = EngineData::NullData;
     }
     if (!d->currentPrimaryFlightControlData.isNull()) {
         userAircraft.getPrimaryFlightControl().upsertLast(std::move(d->currentPrimaryFlightControlData));
         // Processed
         dataStored = true;
-        d->currentPrimaryFlightControlData = PrimaryFlightControlData::NullData;
     }
     if (!d->currentSecondaryFlightControlData.isNull()) {
         userAircraft.getSecondaryFlightControl().upsertLast(std::move(d->currentSecondaryFlightControlData));
         // Processed
         dataStored = true;
-        d->currentSecondaryFlightControlData = SecondaryFlightControlData::NullData;
     }
     if (!d->currentAircraftHandleData.isNull()) {
         userAircraft.getAircraftHandle().upsertLast(std::move(d->currentAircraftHandleData));
         // Processed
         dataStored = true;
-        d->currentAircraftHandleData = AircraftHandleData::NullData;
     }
     if (!d->currentLightData.isNull()) {
         userAircraft.getLight().upsertLast(std::move(d->currentLightData));
         // Processed
         dataStored = true;
-        d->currentLightData = LightData::NullData;
     }
     if (dataStored) {
         if (!isElapsedTimerRunning()) {
@@ -587,12 +581,12 @@ void MSFSSimConnectPlugin::frenchConnection() noexcept
 
 void MSFSSimConnectPlugin::resetCurrentSampleData() noexcept
 {
-    d->currentPositionData = PositionData::NullData;
-    d->currentEngineData = EngineData::NullData;
-    d->currentPrimaryFlightControlData = PrimaryFlightControlData::NullData;
-    d->currentSecondaryFlightControlData = SecondaryFlightControlData::NullData;
-    d->currentAircraftHandleData = AircraftHandleData::NullData;
-    d->currentLightData = LightData::NullData;
+    d->currentPositionData.reset();
+    d->currentEngineData.reset();
+    d->currentPrimaryFlightControlData.reset();
+    d->currentSecondaryFlightControlData.reset();
+    d->currentAircraftHandleData.reset();
+    d->currentLightData.reset();
 }
 
 bool MSFSSimConnectPlugin::reconnectWithSim() noexcept
