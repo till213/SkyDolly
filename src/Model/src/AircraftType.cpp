@@ -34,6 +34,10 @@ AircraftType::AircraftType() noexcept
       numberOfEngines(0)
 {}
 
+AircraftType::AircraftType(QString type, QString category, int wingSpan, SimType::EngineType engineType, int numberOfEngines) noexcept
+    : type(type), category(category), wingSpan(wingSpan), engineType(engineType), numberOfEngines(numberOfEngines)
+{};
+
 AircraftType::AircraftType(AircraftType &&other) noexcept
     : type(std::move(other.type)),
       category(std::move(other.category)),

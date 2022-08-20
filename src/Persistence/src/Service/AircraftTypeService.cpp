@@ -75,14 +75,18 @@ bool AircraftTypeService::getByType(const QString &type, AircraftType &aircraftT
     return ok;
 }
 
-bool AircraftTypeService::getAll(std::back_insert_iterator<std::vector<AircraftType>> backInsertIterator) const noexcept
+std::vector<AircraftType> AircraftTypeService::getAll(bool *ok) const noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->aircraftTypeDao->getAll(backInsertIterator);
+    std::vector<AircraftType> aircraftTypes;
+    bool success = QSqlDatabase::database().transaction();
+    if (success) {
+        aircraftTypes = d->aircraftTypeDao->getAll(&success);
         QSqlDatabase::database().rollback();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return aircraftTypes;
 }
 
 bool AircraftTypeService::exists(const QString &type) const noexcept
