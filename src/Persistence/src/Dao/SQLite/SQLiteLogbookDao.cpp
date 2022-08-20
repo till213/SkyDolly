@@ -33,6 +33,7 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QSqlDriver>
 #include <QDateTime>
 #include <QTimeZone>
 #ifdef DEBUG
@@ -46,6 +47,14 @@
 #include <Model/FlightCondition.h>
 #include <FlightSelector.h>
 #include "SQLiteLogbookDao.h"
+
+namespace
+{
+    // The initial capacity of the logbook summaries vector (e.g. SQLite does not support returning
+    // the result count for the given SELECT query)
+    // Assume 50 entries per logbook
+    constexpr int DefaultSummaryCapacity = 50;
+}
 
 // PUBLIC
 
@@ -88,13 +97,13 @@ bool SQLiteLogbookDao::getFlightDates(std::front_insert_iterator<std::forward_li
     return ok;
 }
 
-std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSelector &flightSelector) const noexcept
+std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSelector &flightSelector, bool *ok) const noexcept
 {
-    const QString LikeOperatorPlaceholder("%");
-
     std::vector<FlightSummary> summaries;
+
     QString searchKeyword;
     if (!flightSelector.searchKeyword.isEmpty()) {
+        const QString LikeOperatorPlaceholder {"%"};
         // Add like operator placeholders
         searchKeyword = LikeOperatorPlaceholder  % flightSelector.searchKeyword % LikeOperatorPlaceholder;
     }
@@ -138,8 +147,14 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     const QVariant engineTypeVariant = flightSelector.engineType != SimType::EngineType::All ? Enum::toUnderlyingType(flightSelector.engineType) : QVariant();
     query.bindValue(":engine_type", engineTypeVariant);
     query.bindValue(":duration", flightSelector.mininumDurationMinutes);
-    const bool ok = query.exec();
-    if (ok) {
+    const bool success = query.exec();
+    if (success) {
+        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        if (querySizeFeature) {
+            summaries.reserve(query.size());
+        } else {
+            summaries.reserve(::DefaultSummaryCapacity);
+        }
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
         const int creationTimeIdx = record.indexOf("creation_time");
@@ -172,7 +187,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
             summary.endLocation = query.value(endWaypointIdx).toString();
             summary.title = query.value(titleIdx).toString();
 
-            summaries.push_back(summary);
+            summaries.push_back(std::move(summary));
         }
 #ifdef DEBUG
     } else {
@@ -180,5 +195,8 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
 #endif
     }
 
+    if (ok != nullptr) {
+        *ok = success;
+    }
     return summaries;
 }

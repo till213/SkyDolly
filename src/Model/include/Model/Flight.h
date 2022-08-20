@@ -61,7 +61,7 @@ public:
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;
 
-    void setAircraft(std::vector<std::unique_ptr<Aircraft>> aircraft) noexcept;
+    void setAircraft(std::vector<std::unique_ptr<Aircraft>> &&aircraft) noexcept;
     Aircraft &addUserAircraft() noexcept;
     Aircraft &getUserAircraft() const noexcept;
 

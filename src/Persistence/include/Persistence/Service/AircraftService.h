@@ -44,7 +44,7 @@ public:
 
     bool store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept;
     bool deleteByIndex(int index) noexcept;
-    bool getAircraftInfos(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept;
+    std::vector<AircraftInfo> getAircraftInfos(std::int64_t flightId, bool *ok = nullptr) const noexcept;
 
     bool changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset) noexcept;
     bool changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept;

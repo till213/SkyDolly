@@ -233,8 +233,7 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
 
             flight.setFlightCondition(flightCondition);
         }
-        std::vector<std::unique_ptr<Aircraft>> aircraft;
-        ok = d->aircraftDao->getByFlightId(id, std::back_inserter(aircraft));
+        std::vector<std::unique_ptr<Aircraft>> aircraft = d->aircraftDao->getByFlightId(id, &ok);
         flight.setAircraft(std::move(aircraft));
         if (ok) {
             // Index starts at 0

@@ -44,7 +44,7 @@ public:
     virtual ~LogbookDaoIntf() = default;
 
     virtual bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept = 0;
-    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept = 0;
+    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // LOGBOOKDAO_H

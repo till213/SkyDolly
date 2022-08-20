@@ -45,7 +45,7 @@ public:
     ~SQLiteLogbookDao() noexcept override;
 
     bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept override;
-    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept override;
+    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok) const noexcept override;
 };
 
 #endif // SQLITELOGBOOKDAO_H

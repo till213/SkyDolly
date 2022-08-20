@@ -142,7 +142,7 @@ void Flight::setDescription(const QString &description) noexcept
     }
 }
 
-void Flight::setAircraft(std::vector<std::unique_ptr<Aircraft>> aircraft) noexcept
+void Flight::setAircraft(std::vector<std::unique_ptr<Aircraft>> &&aircraft) noexcept
 {
     d->aircraft = std::move(aircraft);
     for (auto &aircraft : d->aircraft) {

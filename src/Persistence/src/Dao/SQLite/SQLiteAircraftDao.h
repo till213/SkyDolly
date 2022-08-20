@@ -28,7 +28,6 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
-#include <iterator>
 #include <cstddef>
 
 #include <QtGlobal>
@@ -45,11 +44,11 @@ public:
     ~SQLiteAircraftDao() noexcept override;
 
     bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
-    bool getByFlightId(std::int64_t flightId, std::back_insert_iterator<std::vector<std::unique_ptr<Aircraft>>> backInsertIterator) const noexcept override;
+    std::vector<std::unique_ptr<Aircraft>> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
     bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept override;
     bool deleteAllByFlightId(std::int64_t flightId) noexcept override;
     bool deleteById(std::int64_t id) noexcept override;
-    bool getAircraftInfosByFlightId(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept override;
+    std::vector<AircraftInfo> getAircraftInfosByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
     bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept override;
     bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept override;
 

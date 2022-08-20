@@ -117,14 +117,18 @@ bool AircraftService::deleteByIndex(int index) noexcept
     return ok;
 }
 
-bool AircraftService::getAircraftInfos(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
+std::vector<AircraftInfo> AircraftService::getAircraftInfos(std::int64_t flightId, bool *ok) const noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->aircraftDao->getAircraftInfosByFlightId(flightId, aircraftInfos);
+    std::vector<AircraftInfo> aircraftInfos;
+    bool success = QSqlDatabase::database().transaction();
+    if (success) {
+        aircraftInfos = d->aircraftDao->getAircraftInfosByFlightId(flightId, &success);
         QSqlDatabase::database().rollback();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return aircraftInfos;
 }
 
 bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset) noexcept

@@ -27,7 +27,6 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 #include <cstddef>
 
@@ -53,11 +52,11 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept = 0;
-    virtual bool getByFlightId(std::int64_t flightId, std::back_insert_iterator<std::vector<std::unique_ptr<Aircraft>>> backInsertIterator) const noexcept = 0;
+    virtual std::vector<std::unique_ptr<Aircraft>> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept = 0;
     virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t id, std::size_t sequenceNumber) noexcept = 0;
     virtual bool deleteAllByFlightId(std::int64_t flightId) noexcept = 0;
     virtual bool deleteById(std::int64_t id) noexcept = 0;
-    virtual bool getAircraftInfosByFlightId(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept = 0;
+    virtual std::vector<AircraftInfo> getAircraftInfosByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept = 0;
     virtual bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept = 0;
     virtual bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept = 0;
 };
