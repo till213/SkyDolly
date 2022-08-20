@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.0
+
+### Improvements
+- Additional system locations
+- The system locations migration file, located at *[Sky Dolly installation directory]/Resources/migr/Locations.csv*, is now optional and can be deleted
+
 ## 0.12.0
 
 ### New Features

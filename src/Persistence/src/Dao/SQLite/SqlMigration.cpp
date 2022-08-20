@@ -105,7 +105,9 @@ bool SqlMigration::migrate() noexcept
         }
 #endif
         const QString locationsFilePath = migrationDirectory.absolutePath().append("/Resources/migr/Locations.csv");
-        ok = migrateCsv(locationsFilePath);
+        if (QFileInfo::exists(locationsFilePath)) {
+            ok = migrateCsv(locationsFilePath);
+        }
     }
     return ok;
 }
