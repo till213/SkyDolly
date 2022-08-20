@@ -51,14 +51,14 @@ EnumerationItemDelegate::EnumerationItemDelegate(QString enumerationName) noexce
       d(std::make_unique<EnumerationItemDelegatePrivate>(enumerationName))
 {
 #ifdef DEBUG
-    qDebug() << "EnumerationItemDelegate::EnumerationItemDelegate: CREATED.";
+    qDebug() << "EnumerationItemDelegate::EnumerationItemDelegate: CREATED";
 #endif
 }
 
 EnumerationItemDelegate::~EnumerationItemDelegate() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "EnumerationItemDelegate::~EnumerationItemDelegate: DELETED.";
+    qDebug() << "EnumerationItemDelegate::~EnumerationItemDelegate: DELETED";
 #endif
 }
 

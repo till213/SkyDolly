@@ -27,6 +27,9 @@
 #include <cstdint>
 
 #include <QtGlobal>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/SkyMath.h>
 #include <Kernel/Convert.h>
@@ -65,14 +68,14 @@ Analytics::Analytics(const Aircraft &aircraft)
     : d(std::make_unique<AnalyticsPrivate>(aircraft))
 {
 #ifdef DEBUG
-    qDebug("Analytics::~Analytics: CREATED");
+    qDebug() << "Analytics::~Analytics: CREATED";
 #endif
 }
 
 Analytics::~Analytics()
 {
 #ifdef DEBUG
-    qDebug("Analytics::~Analytics: DELETED");
+    qDebug() << "Analytics::~Analytics: DELETED";
 #endif
 }
 

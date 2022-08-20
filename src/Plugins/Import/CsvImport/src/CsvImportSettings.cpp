@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
@@ -52,14 +55,14 @@ CsvImportSettings::CsvImportSettings() noexcept
     : d(std::make_unique<CsvImportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("CsvImportSettings::CsvImportSettings: CREATED");
+    qDebug() << "CsvImportSettings::CsvImportSettings: CREATED";
 #endif
 }
 
 CsvImportSettings::~CsvImportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("CsvImportSettings::~CsvImportSettings: DELETED");
+    qDebug() << "CsvImportSettings::~CsvImportSettings: DELETED";
 #endif
 }
 

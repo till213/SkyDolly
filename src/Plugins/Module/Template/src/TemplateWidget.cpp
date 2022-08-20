@@ -50,14 +50,14 @@ TemplateWidget::TemplateWidget(QWidget *parent) noexcept
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug() << "TemplateWidget::TemplateWidget: CREATED.";
+    qDebug() << "TemplateWidget::TemplateWidget: CREATED";
 #endif
 }
 
 TemplateWidget::~TemplateWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "TemplateWidget::~TemplateWidget: DELETED.";
+    qDebug() << "TemplateWidget::~TemplateWidget: DELETED";
 #endif
 }
 

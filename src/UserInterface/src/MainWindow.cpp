@@ -213,7 +213,7 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
 MainWindow::~MainWindow() noexcept
 {
 #ifdef DEBUG
-    qDebug("MainWindow::~MainWindow: DELETED");
+    qDebug() << "MainWindow::~MainWindow: DELETED";
 #endif
 }
 

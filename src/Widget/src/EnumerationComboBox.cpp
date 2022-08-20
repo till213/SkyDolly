@@ -58,7 +58,7 @@ EnumerationComboBox::EnumerationComboBox(QString enumerationName, QWidget *paren
 EnumerationComboBox::~ EnumerationComboBox() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "EnumerationComboBox::~EnumerationComboBox: DELETED.";
+    qDebug() << "EnumerationComboBox::~EnumerationComboBox: DELETED";
 #endif
 }
 

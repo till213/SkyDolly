@@ -28,6 +28,10 @@
 #include <memory>
 #include <exception>
 
+#ifdef DEBUG
+#include <QDebug>
+#endif
+
 #include <GeographicLib/Geoid.hpp>
 
 #include "KernelLib.h"
@@ -79,7 +83,7 @@ public:
             catch (const std::exception &ex) {
                 heightAboveGeoid = height;
 #ifdef DEBUG
-                qDebug("Convert::wgs84ToEgmGeoid: caught exception: %s", ex.what());
+                qDebug() << "Convert::wgs84ToEgmGeoid: caught exception: %s", ex.what();
 #endif
             }
         } else {
@@ -120,7 +124,7 @@ public:
             catch (const std::exception &ex) {
                 heightAboveEllipsoid = height;
 #ifdef DEBUG
-                qDebug("Convert::egmToWgs84Ellipsoid: caught exception: %s", ex.what());
+                qDebug() << "Convert::egmToWgs84Ellipsoid: caught exception:" << ex.what();
 #endif
             }
         } else {

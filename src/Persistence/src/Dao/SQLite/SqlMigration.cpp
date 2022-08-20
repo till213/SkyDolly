@@ -134,7 +134,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
                 const QRegularExpressionMatch tagMatch = it.next();
                 QString tag = tagMatch.captured(1);
 #ifdef DEBUG
-                qDebug("SqlMigration::migrate: %s", qPrintable(tag));
+                qDebug() << "SqlMigration::migrate:" << tag;
 #endif
                 SqlMigrationStep step;
                 ok = step.parseTag(tagMatch);

@@ -71,14 +71,14 @@ GpxParser::GpxParser(Flight &flight, QXmlStreamReader &xmlStreamReader, const Gp
     : d(std::make_unique<GpxParserPrivate>(flight, xmlStreamReader, thePluginSettings))
 {
 #ifdef DEBUG
-    qDebug("GpxParser::~GpxParser: CREATED");
+    qDebug() << "GpxParser::~GpxParser: CREATED";
 #endif
 }
 
 GpxParser::~GpxParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("GpxParser::~GpxParser: DELETED");
+    qDebug() << "GpxParser::~GpxParser: DELETED";
 #endif
 }
 
@@ -86,7 +86,7 @@ void GpxParser::parse() noexcept
 {
     if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
-        qDebug("GpxParser::parse: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug() << "GpxParser::parse: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::gpx) {
             parseGPX();
@@ -117,7 +117,7 @@ void GpxParser::parseGPX() noexcept
 {
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
-        qDebug("GpxParser::parseGPX: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug() << "GpxParser::parseGPX: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::metadata) {
             parseMetadata();
@@ -137,7 +137,7 @@ void GpxParser::parseMetadata() noexcept
 {
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
-        qDebug("GpxParser::parseMetadata: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug() << "GpxParser::parseMetadata: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::name) {
             d->documentName = d->xml.readElementText();
@@ -203,7 +203,7 @@ void GpxParser::parseRoute() noexcept
 {    
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
-        qDebug("GpxParser::parseRoute: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug() << "GpxParser::parseRoute: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::name) {
             // The route name takes precedence over the name given in the metadata
@@ -273,7 +273,7 @@ void GpxParser::parseTrack() noexcept
 {
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
-        qDebug("GpxParser::parseTrack: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug() << "GpxParser::parseTrack: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::trkseg) {
             parseTrackSegment();
@@ -287,7 +287,7 @@ void GpxParser::parseTrackSegment() noexcept
 {
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
-        qDebug("GpxParser::parseTrackSegment: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug() << "GpxParser::parseTrackSegment: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::trkpt) {
             parseTrackPoint();

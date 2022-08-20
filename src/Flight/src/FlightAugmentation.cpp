@@ -75,14 +75,14 @@ FlightAugmentation::FlightAugmentation(Procedures procedures, Aspects aspects) n
     : d(std::make_unique<FlightAugmentationPrivate>(procedures, aspects))
 {
 #ifdef DEBUG
-    qDebug("FlightAugmentation::~FlightAugmentation: CREATED");
+    qDebug() << "FlightAugmentation::~FlightAugmentation: CREATED";
 #endif
 }
 
 FlightAugmentation::~FlightAugmentation() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightAugmentation::~FlightAugmentation: DELETED");
+    qDebug() << "FlightAugmentation::~FlightAugmentation: DELETED";
 #endif
 }
 

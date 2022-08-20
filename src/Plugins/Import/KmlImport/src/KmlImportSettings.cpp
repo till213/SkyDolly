@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
@@ -52,14 +55,14 @@ KmlImportSettings::KmlImportSettings() noexcept
     : d(std::make_unique<KmlImportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("KmlImportSettings::KmlImportSettings: CREATED");
+    qDebug() << "KmlImportSettings::KmlImportSettings: CREATED";
 #endif
 }
 
 KmlImportSettings::~KmlImportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("KmlImportSettings::~KmlImportSettings: DELETED");
+    qDebug() << "KmlImportSettings::~KmlImportSettings: DELETED";
 #endif
 }
 

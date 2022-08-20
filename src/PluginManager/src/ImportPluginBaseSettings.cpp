@@ -24,6 +24,10 @@
  */
 #include <memory>
 
+#ifdef DEBUG
+#include <QDebug>
+#endif
+
 #include <Kernel/Settings.h>
 #include "ImportPluginBaseSettings.h"
 
@@ -55,14 +59,14 @@ ImportPluginBaseSettings::ImportPluginBaseSettings() noexcept
     : d(std::make_unique<ImportPluginBaseSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("ImportPluginBaseSettings::ImportPluginBaseSettings: CREATED");
+    qDebug() << "ImportPluginBaseSettings::ImportPluginBaseSettings: CREATED";
 #endif
 }
 
 ImportPluginBaseSettings::~ImportPluginBaseSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("ImportPluginBaseSettings::~ImportPluginBaseSettings: DELETED");
+    qDebug() << "ImportPluginBaseSettings::~ImportPluginBaseSettings: DELETED";
 #endif
 }
 

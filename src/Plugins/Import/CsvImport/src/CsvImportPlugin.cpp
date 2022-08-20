@@ -58,14 +58,14 @@ CsvImportPlugin::CsvImportPlugin() noexcept
     : d(std::make_unique<CsvImportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("CsvImportPlugin::CsvImportPlugin: PLUGIN LOADED");
+    qDebug() << "CsvImportPlugin::CsvImportPlugin: PLUGIN LOADED";
 #endif
 }
 
 CsvImportPlugin::~CsvImportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("CsvImportPlugin::~CsvImportPlugin: PLUGIN UNLOADED");
+    qDebug() << "CsvImportPlugin::~CsvImportPlugin: PLUGIN UNLOADED";
 #endif
 }
 

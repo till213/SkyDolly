@@ -86,14 +86,14 @@ KmlExportPlugin::KmlExportPlugin() noexcept
     : d(std::make_unique<KmlExportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("KmlExportPlugin::KmlExportPlugin: PLUGIN LOADED");
+    qDebug() << "KmlExportPlugin::KmlExportPlugin: PLUGIN LOADED";
 #endif
 }
 
 KmlExportPlugin::~KmlExportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("KmlExportPlugin::~KmlExportPlugin: PLUGIN UNLOADED");
+    qDebug() << "KmlExportPlugin::~KmlExportPlugin: PLUGIN UNLOADED";
 #endif
 }
 

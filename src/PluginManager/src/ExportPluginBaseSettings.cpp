@@ -24,6 +24,10 @@
  */
 #include <memory>
 
+#ifdef DEBUG
+#include <QDebug>
+#endif
+
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SampleRate.h>
@@ -63,14 +67,14 @@ ExportPluginBaseSettings::ExportPluginBaseSettings() noexcept
     : d(std::make_unique<ExportPluginBaseSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("ExportPluginBaseSettings::ExportPluginBaseSettings: CREATED");
+    qDebug() << "ExportPluginBaseSettings::ExportPluginBaseSettings: CREATED";
 #endif
 }
 
 ExportPluginBaseSettings::~ExportPluginBaseSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("ExportPluginBaseSettings::~ExportPluginBaseSettings: DELETED");
+    qDebug() << "ExportPluginBaseSettings::~ExportPluginBaseSettings: DELETED";
 #endif
 }
 

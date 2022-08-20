@@ -31,6 +31,9 @@
 #include <QTimeZone>
 #include <QDateTime>
 #include <QXmlStreamReader>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Convert.h>
 #include <Model/Flight.h>
@@ -58,14 +61,14 @@ AbstractKmlTrackParser::AbstractKmlTrackParser() noexcept
       d(std::make_unique<AbstractKmlTrackParserPrivate>())
 {
 #ifdef DEBUG
-    qDebug("AbstractKmlTrackParser::AbstractKmlTrackParser: CREATED");
+    qDebug() << "AbstractKmlTrackParser::AbstractKmlTrackParser: CREATED";
 #endif
 }
 
 AbstractKmlTrackParser::~AbstractKmlTrackParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("AbstractKmlTrackParser::~AbstractKmlTrackParser: DELETED");
+    qDebug() << "AbstractKmlTrackParser::~AbstractKmlTrackParser: DELETED";
 #endif
 }
 
@@ -98,7 +101,7 @@ void AbstractKmlTrackParser::parseTrack() noexcept
         while (xml->readNextStartElement()) {
             const QStringRef xmlName = xml->name();
 #ifdef DEBUG
-        qDebug("AbstractKmlTrackParser::parseTrack: XML start element: %s", qPrintable(xmlName.toString()));
+            qDebug() << "AbstractKmlTrackParser::parseTrack: XML start element:" << xmlName.toString();
 #endif
             if (xmlName == Kml::when) {
                 const QString dateTimeText = xml->readElementText();

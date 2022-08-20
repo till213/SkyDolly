@@ -32,6 +32,9 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/LightData.h>
 #include "SQLiteLightDao.h"
@@ -65,7 +68,7 @@ bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData)  n
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteLightDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteLightDao::add: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -98,7 +101,7 @@ bool SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, std::back_insert_i
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteLightDao::getByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteLightDao::getByAircraftId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -120,7 +123,7 @@ bool SQLiteLightDao::deleteByFlightId(std::int64_t flightId) noexcept
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteLightDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteLightDao::deleteByFlightId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -138,7 +141,7 @@ bool SQLiteLightDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteLightDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteLightDao::deleteByAircraftId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return true;

@@ -55,14 +55,14 @@ LogbookService::LogbookService() noexcept
     : d(std::make_unique<LogbookServicePrivate>())
 {
 #ifdef DEBUG
-    qDebug() << "LogbookService::LogbookService: CREATED.";
+    qDebug() << "LogbookService::LogbookService: CREATED";
 #endif
 }
 
 LogbookService::~LogbookService() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "LogbookService::~LogbookService: DELETED.";
+    qDebug() << "LogbookService::~LogbookService: DELETED";
 #endif
 }
 

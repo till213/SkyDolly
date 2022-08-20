@@ -32,6 +32,9 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Model/PrimaryFlightControlData.h>
@@ -73,7 +76,7 @@ bool SQLitePrimaryFlightControlDao::add(std::int64_t aircraftId, const PrimaryFl
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLitePrimaryFlightControlDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLitePrimaryFlightControlDao::add: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -111,7 +114,7 @@ bool SQLitePrimaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, std
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLitePrimaryFlightControlDao::getByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLitePrimaryFlightControlDao::getByAircraftId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -134,7 +137,7 @@ bool SQLitePrimaryFlightControlDao::deleteByFlightId(std::int64_t flightId) noex
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLitePrimaryFlightControlDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLitePrimaryFlightControlDao::deleteByFlightId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -153,7 +156,7 @@ bool SQLitePrimaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId) 
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLitePrimaryFlightControlDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLitePrimaryFlightControlDao::deleteByAircraftId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return true;

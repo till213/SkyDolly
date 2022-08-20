@@ -23,6 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <QComboBox>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Version.h>
@@ -51,14 +54,14 @@ CsvImportOptionWidget::CsvImportOptionWidget(CsvImportSettings &settings, QWidge
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug("CsvImportOptionWidget::CsvImportOptionWidget: CREATED");
+    qDebug() << "CsvImportOptionWidget::CsvImportOptionWidget: CREATED";
 #endif
 }
 
 CsvImportOptionWidget::~CsvImportOptionWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug("CsvImportOptionWidget::~CsvImportOptionWidget: DELETED");
+    qDebug() << "CsvImportOptionWidget::~CsvImportOptionWidget: DELETED";
 #endif
 }
 

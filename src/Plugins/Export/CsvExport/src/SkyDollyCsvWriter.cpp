@@ -28,6 +28,9 @@
 #include <QChar>
 #include <QString>
 #include <QStringBuilder>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/SampleRate.h>
@@ -66,14 +69,14 @@ SkyDollyCsvWriter::SkyDollyCsvWriter(const CsvExportSettings &pluginSettings) no
     : d(std::make_unique<SkyDollyCsvWriterPrivate>(pluginSettings))
 {
 #ifdef DEBUG
-    qDebug("SkyDollyCsvWriter::SkyDollyCsvWriter: CREATED");
+    qDebug() << "SkyDollyCsvWriter::SkyDollyCsvWriter: CREATED";
 #endif
 }
 
 SkyDollyCsvWriter::~SkyDollyCsvWriter() noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyDollyCsvWriter::~SkyDollyCsvWriter: DELETED");
+    qDebug() << "SkyDollyCsvWriter::~SkyDollyCsvWriter: DELETED";
 #endif
 }
 

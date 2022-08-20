@@ -28,6 +28,9 @@
 
 #include <QSqlDatabase>
 #include <QStringView>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/AircraftType.h>
 #include "../Dao/DaoFactory.h"
@@ -51,14 +54,14 @@ AircraftTypeService::AircraftTypeService() noexcept
     : d(std::make_unique<AircraftTypeServicePrivate>())
 {
 #ifdef DEBUG
-    qDebug("AircraftTypeService::AircraftTypeService: CREATED.");
+    qDebug() << "AircraftTypeService::AircraftTypeService: CREATED";
 #endif
 }
 
 AircraftTypeService::~AircraftTypeService() noexcept
 {
 #ifdef DEBUG
-    qDebug("AircraftTypeService::~AircraftTypeService: DELETED.");
+    qDebug() << "AircraftTypeService::~AircraftTypeService: DELETED";
 #endif
 }
 

@@ -146,7 +146,7 @@ LogbookWidget::LogbookWidget(FlightService &flightService, QWidget *parent) noex
     onSelectionChanged();
     frenchConnection();
 #ifdef DEBUG
-    qDebug() << "LogbookWidget::LogbookWidget: CREATED.";
+    qDebug() << "LogbookWidget::LogbookWidget: CREATED";
 #endif
 }
 
@@ -155,7 +155,7 @@ LogbookWidget::~LogbookWidget() noexcept
     const QByteArray logbookState = ui->logTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setLogbookState(logbookState);
 #ifdef DEBUG
-    qDebug() << "LogbookWidget::~LogbookWidget: DELETED.";
+    qDebug() << "LogbookWidget::~LogbookWidget: DELETED";
 #endif
 }
 

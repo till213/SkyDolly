@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
@@ -60,14 +63,14 @@ IgcImportSettings::IgcImportSettings() noexcept
     : d(std::make_unique<IgcImportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("IgcImportSettings::IgcImportSettings: CREATED");
+    qDebug() << "IgcImportSettings::IgcImportSettings: CREATED";
 #endif
 }
 
 IgcImportSettings::~IgcImportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("IgcImportSettings::~IgcImportSettings: DELETED");
+    qDebug() << "IgcImportSettings::~IgcImportSettings: DELETED";
 #endif
 }
 

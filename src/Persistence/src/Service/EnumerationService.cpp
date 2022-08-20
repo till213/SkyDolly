@@ -51,14 +51,14 @@ EnumerationService::EnumerationService() noexcept
     : d(std::make_unique<EnumerationServicePrivate>())
 {
 #ifdef DEBUG
-    qDebug() << "EnumerationService::EnumerationService: CREATED.";
+    qDebug() << "EnumerationService::EnumerationService: CREATED";
 #endif
 }
 
 EnumerationService::~EnumerationService() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "EnumerationService::~EnumerationService: DELETED.";
+    qDebug() << "EnumerationService::~EnumerationService: DELETED";
 #endif
 }
 

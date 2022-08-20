@@ -126,7 +126,7 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
     }
     frenchConnection();
 #ifdef DEBUG
-    qDebug() << "ModuleManager::ModuleManager: CREATED.";
+    qDebug() << "ModuleManager::ModuleManager: CREATED";
 #endif
 }
 
@@ -134,7 +134,7 @@ ModuleManager::~ModuleManager() noexcept
 {
     d->pluginLoader->unload();
 #ifdef DEBUG
-    qDebug() << "ModuleManager::~ModuleManager: DELETED.";
+    qDebug() << "ModuleManager::~ModuleManager: DELETED";
 #endif
 }
 

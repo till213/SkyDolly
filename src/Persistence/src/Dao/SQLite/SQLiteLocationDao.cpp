@@ -234,7 +234,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
     }
 #ifdef DEBUG
     else {
-        qDebug("SQLiteLocationDao::getAll: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code:" + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteLocationDao::getAll: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;

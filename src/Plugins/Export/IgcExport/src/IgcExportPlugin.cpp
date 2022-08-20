@@ -137,14 +137,14 @@ IgcExportPlugin::IgcExportPlugin() noexcept
     : d(std::make_unique<IgcExportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("IgcExportPlugin::IgcExportPlugin: PLUGIN LOADED");
+    qDebug() << "IgcExportPlugin::IgcExportPlugin: PLUGIN LOADED";
 #endif
 }
 
 IgcExportPlugin::~IgcExportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("IgcExportPlugin::~IgcExportPlugin: PLUGIN UNLOADED");
+    qDebug() << "IgcExportPlugin::~IgcExportPlugin: PLUGIN UNLOADED";
 #endif
 }
 

@@ -26,6 +26,9 @@
 #include <vector>
 
 #include <QObject>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include "Logbook.h"
 
@@ -72,7 +75,7 @@ Flight &Logbook::getCurrentFlight() const noexcept
 Logbook::~Logbook() noexcept
 {
 #ifdef DEBUG
-    qDebug("Logbook::~Logbook: DELETED");
+    qDebug() << "Logbook::~Logbook: DELETED";
 #endif
 }
 
@@ -83,7 +86,7 @@ Logbook::Logbook() noexcept
       d(std::make_unique<LogbookPrivate>())
 {
 #ifdef DEBUG
-    qDebug("Logbook::Logbook: CREATED");
+    qDebug() << "Logbook::Logbook: CREATED";
 #endif
     // Logbook may support several flights, but for now there will be always
     // exactly one

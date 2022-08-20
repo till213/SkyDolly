@@ -28,6 +28,9 @@
 #include <QString>
 #include <QStringLiteral>
 #include <QXmlStreamReader>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Convert.h>
 #include <Model/Flight.h>
@@ -54,14 +57,14 @@ FlightAwareKmlParser::FlightAwareKmlParser() noexcept
       d(std::make_unique<FlightAwareKmlParserPrivate>())
 {
 #ifdef DEBUG
-    qDebug("FlightAwareKmlParser::FlightAwareKmlParser: CREATED");
+    qDebug() << "FlightAwareKmlParser::FlightAwareKmlParser: CREATED";
 #endif
 }
 
 FlightAwareKmlParser::~FlightAwareKmlParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightAwareKmlParser::~FlightAwareKmlParser: DELETED");
+    qDebug() << "FlightAwareKmlParser::~FlightAwareKmlParser: DELETED";
 #endif
 }
 
@@ -90,7 +93,7 @@ void FlightAwareKmlParser::parsePlacemark() noexcept
     while (xml->readNextStartElement()) {
         const QStringRef xmlName = xml->name();
 #ifdef DEBUG
-        qDebug("FlightAwareKmlParser::parsePlacemark: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug() << "FlightAwareKmlParser::parsePlacemark: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::name) {
             placemarkName = xml->readElementText();
@@ -118,7 +121,7 @@ void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
     while (xml->readNextStartElement()) {
         const QStringRef xmlName = xml->name();
 #ifdef DEBUG
-        qDebug("FlightAwareKmlParser::parseWaypoint: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug() << "FlightAwareKmlParser::parseWaypoint: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == QStringLiteral("coordinates")) {
             const QString coordinatesText = xml->readElementText();

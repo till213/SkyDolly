@@ -30,6 +30,9 @@
 #include <QChar>
 #include <QString>
 #include <QStringBuilder>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Unit.h>
@@ -71,14 +74,14 @@ FlightRadar24CsvWriter::FlightRadar24CsvWriter(const CsvExportSettings &pluginSe
     : d(std::make_unique<FlightRadar24CsvWriterPrivate>(pluginSettings))
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24CsvWriter::FlightRadar24CsvWriter: CREATED");
+    qDebug() << "FlightRadar24CsvWriter::FlightRadar24CsvWriter: CREATED";
 #endif
 }
 
 FlightRadar24CsvWriter::~FlightRadar24CsvWriter() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24CsvWriter::~FlightRadar24CsvWriter: DELETED");
+    qDebug() << "FlightRadar24CsvWriter::~FlightRadar24CsvWriter: DELETED";
 #endif
 }
 

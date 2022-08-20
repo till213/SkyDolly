@@ -57,14 +57,14 @@ namespace
 FlightRadar24CsvParser::FlightRadar24CsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24CsvParser::~FlightRadar24CsvParser: CREATED");
+    qDebug() << "FlightRadar24CsvParser::~FlightRadar24CsvParser: CREATED";
 #endif
 }
 
 FlightRadar24CsvParser::~FlightRadar24CsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24CsvParser::~FlightRadar24CsvParser: DELETED");
+    qDebug() << "FlightRadar24CsvParser::~FlightRadar24CsvParser: DELETED";
 #endif
 }
 

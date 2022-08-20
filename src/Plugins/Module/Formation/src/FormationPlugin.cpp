@@ -58,14 +58,14 @@ FormationPlugin::FormationPlugin(QObject *parent) noexcept
 {
      Q_INIT_RESOURCE(FormationPlugin);
 #ifdef DEBUG
-    qDebug() << "FormationPlugin::FormationPlugin: CREATED.";
+    qDebug() << "FormationPlugin::FormationPlugin: CREATED";
 #endif
 }
 
 FormationPlugin::~FormationPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "FormationPlugin::~FormationPlugin: DELETED.";
+    qDebug() << "FormationPlugin::~FormationPlugin: DELETED";
 #endif
 }
 

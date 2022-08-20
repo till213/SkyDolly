@@ -133,14 +133,14 @@ FlightRecorderCsvParser::FlightRecorderCsvParser() noexcept
     : d(std::make_unique<FlightRecorderCsvParserPrivate>())
 {
 #ifdef DEBUG
-    qDebug("FlightRecorderCsvParser::~FlightRecorderCsvParser: CREATED");
+    qDebug() << "FlightRecorderCsvParser::~FlightRecorderCsvParser: CREATED";
 #endif
 }
 
 FlightRecorderCsvParser::~FlightRecorderCsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRecorderCsvParser::~FlightRecorderCsvParser: DELETED");
+    qDebug() << "FlightRecorderCsvParser::~FlightRecorderCsvParser: DELETED";
 #endif
 }
 

@@ -60,14 +60,14 @@ ExportPluginBase::ExportPluginBase() noexcept
     : d(std::make_unique<ExportPluginBasePrivate>())
 {
 #ifdef DEBUG
-    qDebug("ExportPluginBase::ExportPluginBase: CREATED");
+    qDebug() << "ExportPluginBase::ExportPluginBase: CREATED";
 #endif
 }
 
 ExportPluginBase::~ExportPluginBase() noexcept
 {
 #ifdef DEBUG
-    qDebug("ExportPluginBase::~ExportPluginBase: DELETED");
+    qDebug() << "ExportPluginBase::~ExportPluginBase: DELETED";
 #endif
 }
 
@@ -159,7 +159,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
     }
     QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
-    qDebug("%s export %s in %lld ms", qPrintable(QFileInfo(filePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
+    qDebug() << QFileInfo(filePath).fileName() << "export" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
 #endif
 
     if (ok) {

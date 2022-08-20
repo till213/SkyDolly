@@ -54,14 +54,14 @@ LocationService::LocationService() noexcept
     : d(std::make_unique<LocationServicePrivate>())
 {
 #ifdef DEBUG
-    qDebug() << "LocationService::LocationService: CREATED.";
+    qDebug() << "LocationService::LocationService: CREATED";
 #endif
 }
 
 LocationService::~LocationService() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "LocationService::~LocationService: DELETED.";
+    qDebug() << "LocationService::~LocationService: DELETED";
 #endif
 }
 

@@ -55,14 +55,14 @@
 SkyDollyCsvParser::SkyDollyCsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyDollyCsvParser::~SkyDollyCsvParser: CREATED");
+    qDebug() << "SkyDollyCsvParser::~SkyDollyCsvParser: CREATED";
 #endif
 }
 
 SkyDollyCsvParser::~SkyDollyCsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyDollyCsvParser::~SkyDollyCsvParser: DELETED");
+    qDebug() << "SkyDollyCsvParser::~SkyDollyCsvParser: DELETED";
 #endif
 }
 

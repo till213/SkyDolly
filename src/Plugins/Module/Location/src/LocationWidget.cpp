@@ -153,7 +153,7 @@ LocationWidget::LocationWidget(QWidget *parent) noexcept
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug() << "LocationWidget::LocationWidget: CREATED.";
+    qDebug() << "LocationWidget::LocationWidget: CREATED";
 #endif
 }
 
@@ -162,7 +162,7 @@ LocationWidget::~LocationWidget() noexcept
     const QByteArray tableState = ui->locationTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setLocationTableState(tableState);
 #ifdef DEBUG
-    qDebug() << "LocationWidget::~LocationWidget: DELETED.";
+    qDebug() << "LocationWidget::~LocationWidget: DELETED";
 #endif
 }
 

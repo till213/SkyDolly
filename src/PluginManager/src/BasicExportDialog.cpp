@@ -36,6 +36,9 @@
 #include <QFileDialog>
 #include <QComboBox>
 #include <QCheckBox>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Settings.h>
 #include <Kernel/SampleRate.h>
@@ -82,14 +85,14 @@ BasicExportDialog::BasicExportDialog(const Flight &flight, const QString &fileSu
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug("BasicExportDialog::BasicExportDialog: CREATED");
+    qDebug() << "BasicExportDialog::BasicExportDialog: CREATED";
 #endif
 }
 
 BasicExportDialog::~BasicExportDialog() noexcept
 {
 #ifdef DEBUG
-    qDebug("BasicExportDialog::~BasicExportDialog: DELETED");
+    qDebug() << "BasicExportDialog::~BasicExportDialog: DELETED";
 #endif
 }
 

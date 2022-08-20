@@ -26,6 +26,9 @@
 #include <memory>
 
 #include <QString>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -56,14 +59,14 @@ CsvExportSettings::CsvExportSettings() noexcept
       d(std::make_unique<CsvExportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("CsvExportSettings::CsvExportSettings: CREATED");
+    qDebug() << "CsvExportSettings::CsvExportSettings: CREATED";
 #endif
 }
 
 CsvExportSettings::~CsvExportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("CsvExportSettings::~CsvExportSettings: DELETED");
+    qDebug() << "CsvExportSettings::~CsvExportSettings: DELETED";
 #endif
 }
 

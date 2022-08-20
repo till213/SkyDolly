@@ -34,6 +34,9 @@
 #include <QSqlRecord>
 #include <QDateTime>
 #include <QTimeZone>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Model/Flight.h>
@@ -146,7 +149,7 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
         flight.setId(id);
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteFlightDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteFlightDao::add: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
     if (ok) {
@@ -240,7 +243,7 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteFlightDao::get: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteFlightDao::get: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
     return ok;
@@ -261,7 +264,7 @@ bool SQLiteFlightDao::deleteById(std::int64_t id) noexcept
         ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
-            qDebug("SQLiteFlightDao::deleteById: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+            qDebug() << "SQLiteFlightDao::deleteById: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
         }
 #endif
     }
@@ -282,7 +285,7 @@ bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) noexcep
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightDao::updateTitleQuery: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteFlightDao::updateTitleQuery: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -304,7 +307,7 @@ bool SQLiteFlightDao::updateTitleAndDescription(std::int64_t id, const QString &
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightDao::updateTitleAndDescription: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteFlightDao::updateTitleAndDescription: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -325,7 +328,7 @@ bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index) noexce
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightDao::updateUserAircraftIndex: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteFlightDao::updateUserAircraftIndex: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;

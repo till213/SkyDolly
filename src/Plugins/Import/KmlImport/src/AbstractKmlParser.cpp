@@ -30,6 +30,9 @@
 #include <QTimeZone>
 #include <QDateTime>
 #include <QXmlStreamReader>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Convert.h>
 #include <Model/Flight.h>
@@ -60,14 +63,14 @@ AbstractKmlParser::AbstractKmlParser() noexcept
     : d(std::make_unique<AbstractKmlParserPrivate>())
 {
 #ifdef DEBUG
-    qDebug("AbstractKmlParser::AbstractKmlParser: CREATED");
+    qDebug() << "AbstractKmlParser::AbstractKmlParser: CREATED";
 #endif
 }
 
 AbstractKmlParser::~AbstractKmlParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("AbstractKmlParser::~AbstractKmlParser: DELETED");
+    qDebug() << "AbstractKmlParser::~AbstractKmlParser: DELETED";
 #endif
 }
 
@@ -115,7 +118,7 @@ void AbstractKmlParser::parseDocument() noexcept
     while (d->xml->readNextStartElement()) {
         const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG
-        qDebug("AbstractKmlParser::parseDocument: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug() << "AbstractKmlParser::parseDocument: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::name) {
             parseDocumentName();
@@ -134,7 +137,7 @@ void AbstractKmlParser::parseFolder() noexcept
     while (d->xml->readNextStartElement()) {
         const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG
-        qDebug("AbstractKmlParser::parseFolder: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug() << "AbstractKmlParser::parseFolder: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::Placemark) {
             parsePlacemark();
@@ -151,7 +154,7 @@ void AbstractKmlParser::parsePlacemark() noexcept
     while (d->xml->readNextStartElement()) {
         const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG
-        qDebug("AbstractKmlParser::parsePlacemark: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug() << "AbstractKmlParser::parsePlacemark: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::Track) {
             parseTrack();

@@ -36,6 +36,9 @@
 #include <QDate>
 #include <QDateTime>
 #include <QEasingCurve>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <GeographicLib/Geoid.hpp>
 
@@ -95,14 +98,14 @@ IgcImportPlugin::IgcImportPlugin() noexcept
     : d(std::make_unique<IgcImportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("IgcImportPlugin::IgcImportPlugin: PLUGIN LOADED");
+    qDebug() << "IgcImportPlugin::IgcImportPlugin: PLUGIN LOADED";
 #endif
 }
 
 IgcImportPlugin::~IgcImportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("IgcImportPlugin::~IgcImportPlugin: PLUGIN UNLOADED");
+    qDebug() << "IgcImportPlugin::~IgcImportPlugin: PLUGIN UNLOADED";
 #endif
 }
 
@@ -197,7 +200,7 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
                     engine.upsertLast(engineData);
                     engineState = loudNoise ? IgcImportPluginPrivate::EngineState::Running : IgcImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
-    qDebug("IgcImportPlugin::readFile: engine INITIALISED, current ENL: %f threshold %f, engine RUNNING: %d", enl, enlThresholdNorm, loudNoise);
+                    qDebug() << "IgcImportPlugin::readFile: engine INITIALISED, current ENL:" << enl << " threshold:" << enlThresholdNorm << "engine RUNNING:" << loudNoise;
 #endif
                     break;
 
@@ -219,7 +222,7 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
                         engine.upsertLast(engineData);
                         engineState = IgcImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
-    qDebug("IgcImportPlugin::readFile: engine now SHUTDOWN, current ENL: %f < %f", enl, enlThresholdNorm);
+                        qDebug() << "IgcImportPlugin::readFile: engine now SHUTDOWN, current ENL:" << enl << " threshold:" << enlThresholdNorm;
 #endif
                     }
                     break;
@@ -242,7 +245,7 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
                         engine.upsertLast(engineData);
                         engineState = IgcImportPluginPrivate::EngineState::Running;
 #ifdef DEBUG
-    qDebug("IgcImportPlugin::readFile: engine now RUNNING, current ENL: %f > %f", enl, enlThresholdNorm);
+                        qDebug() << "IgcImportPlugin::readFile: engine now RUNNING, current ENL:" << enl << " threshold:" << enlThresholdNorm;
 #endif
                     }
                     break;

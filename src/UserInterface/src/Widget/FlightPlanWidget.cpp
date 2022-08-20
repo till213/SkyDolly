@@ -25,6 +25,9 @@
 #include <memory>
 
 #include <QDialog>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/SimVar.h>
 #include <Model/Logbook.h>
@@ -53,14 +56,14 @@ FlightPlanWidget::FlightPlanWidget(QWidget *parent) noexcept :
 {
     ui->setupUi(this);
 #ifdef DEBUG
-    qDebug("FlightPlanWidget::FlightPlanWidget: CREATED");
+    qDebug() << "FlightPlanWidget::FlightPlanWidget: CREATED";
 #endif
 }
 
 FlightPlanWidget::~FlightPlanWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightPlanWidget::~FlightPlanWidget: DELETED");
+    qDebug() << "FlightPlanWidget::~FlightPlanWidget: DELETED";
 #endif
 }
 

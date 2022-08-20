@@ -26,6 +26,9 @@
 #include <memory>
 
 #include <QString>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -57,14 +60,14 @@ GpxExportSettings::GpxExportSettings() noexcept
       d(std::make_unique<GpxExportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("GpxExportSettings::GpxExportSettings: CREATED");
+    qDebug() << "GpxExportSettings::GpxExportSettings: CREATED";
 #endif
 }
 
 GpxExportSettings::~GpxExportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("GpxExportSettings::~GpxExportSettings: DELETED");
+    qDebug() << "GpxExportSettings::~GpxExportSettings: DELETED";
 #endif
 }
 

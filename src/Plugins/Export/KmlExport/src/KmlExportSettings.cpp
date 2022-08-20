@@ -26,6 +26,9 @@
 #include <memory>
 
 #include <QColor>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -107,14 +110,14 @@ KmlExportSettings::KmlExportSettings() noexcept
       d(std::make_unique<KmlExportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("KmlExportSettings::KmlExportSettings: CREATED");
+    qDebug() << "KmlExportSettings::KmlExportSettings: CREATED";
 #endif
 }
 
 KmlExportSettings::~KmlExportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("KmlExportSettings::~KmlExportSettings: DELETED");
+    qDebug() << "KmlExportSettings::~KmlExportSettings: DELETED";
 #endif
 }
 

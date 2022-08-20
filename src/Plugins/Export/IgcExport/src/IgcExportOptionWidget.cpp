@@ -24,6 +24,9 @@
  */
 #include <QLineEdit>
 #include <QString>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include "IgcExportOptionWidget.h"
 #include "IgcExportSettings.h"
@@ -50,14 +53,14 @@ IgcExportOptionWidget::IgcExportOptionWidget(IgcExportSettings &settings, QWidge
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug("IgcExportOptionWidget::IgcExportOptionWidget: CREATED");
+    qDebug() << "IgcExportOptionWidget::IgcExportOptionWidget: CREATED";
 #endif
 }
 
 IgcExportOptionWidget::~IgcExportOptionWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug("IgcExportOptionWidget::~IgcExportOptionWidget: DELETED");
+    qDebug() << "IgcExportOptionWidget::~IgcExportOptionWidget: DELETED";
 #endif
 }
 

@@ -35,6 +35,9 @@
 #include <QSqlRecord>
 #include <QDateTime>
 #include <QTimeZone>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Model/Logbook.h>
@@ -74,11 +77,11 @@ bool SQLiteLogbookDao::getFlightDates(std::front_insert_iterator<std::forward_li
             const int month = query.value(monthIdx).toInt();
             const int day = query.value(dayIdx).toInt();
             const int nofFlights = query.value(nofFlightIdx).toInt();
-            frontInsertIterator = std::move(FlightDate(year, month, day, nofFlights));
+            frontInsertIterator = FlightDate(year, month, day, nofFlights);
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteLogbookDao::getFlightDates: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteLogbookDao::getFlightDates: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -173,7 +176,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteLogbookDao::getFlightSummaries: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteLogbookDao::getFlightSummaries: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 

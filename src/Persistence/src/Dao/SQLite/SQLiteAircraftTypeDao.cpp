@@ -30,6 +30,9 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Model/AircraftType.h>
@@ -66,7 +69,7 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteAircraftTypeDao::upsert: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteAircraftTypeDao::upsert: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -101,7 +104,7 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
     }
 #ifdef DEBUG
     else {
-        qDebug("SQLiteAircraftTypeDao::getByType: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteAircraftTypeDao::getByType: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -137,7 +140,7 @@ bool SQLiteAircraftTypeDao::getAll(std::back_insert_iterator<std::vector<Aircraf
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLitePositionDao::getAll: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLitePositionDao::getAll: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -164,7 +167,7 @@ bool SQLiteAircraftTypeDao::exists(const QString &type) const noexcept
     } else {
         exists = false;
 #ifdef DEBUG
-        qDebug("SQLitePositionDao::exists: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLitePositionDao::exists: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 

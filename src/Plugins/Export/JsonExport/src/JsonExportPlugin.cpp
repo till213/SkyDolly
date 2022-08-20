@@ -74,14 +74,14 @@ JsonExportPlugin::JsonExportPlugin() noexcept
     : d(std::make_unique<JsonExportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("JsonExportPlugin::JsonExportPlugin: PLUGIN LOADED");
+    qDebug() << "JsonExportPlugin::JsonExportPlugin: PLUGIN LOADED";
 #endif
 }
 
 JsonExportPlugin::~JsonExportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("JsonExportPlugin::~JsonExportPlugin: PLUGIN UNLOADED");
+    qDebug() << "JsonExportPlugin::~JsonExportPlugin: PLUGIN UNLOADED";
 #endif
 }
 

@@ -56,14 +56,14 @@ FlightService::FlightService() noexcept
     : d(std::make_unique<FlightServicePrivate>())
 {
 #ifdef DEBUG
-    qDebug() << "FlightService::FlightService: CREATED.";
+    qDebug() << "FlightService::FlightService: CREATED";
 #endif
 }
 
 FlightService::~FlightService() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "FlightService::~FlightService: DELETED.";
+    qDebug() << "FlightService::~FlightService: DELETED";
 #endif
 }
 

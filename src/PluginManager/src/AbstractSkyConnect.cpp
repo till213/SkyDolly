@@ -687,7 +687,7 @@ bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
         --nofAttempts;
         if (!ok && nofAttempts > 0) {
 #ifdef DEBUG
-            qDebug("AbstractSkyConnect::retryWithReconnect: previous connection is stale, RETRY with reconnect %d more time(s)...", nofAttempts);
+            qDebug() << "AbstractSkyConnect::retryWithReconnect: previous connection is stale, RETRY with reconnect" << nofAttempts << "more time(s)...";
 #endif
             // Automatically reconnect in case the server crashed
             // previously (without sending a "quit" message)

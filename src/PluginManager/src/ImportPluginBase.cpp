@@ -36,6 +36,9 @@
 #include <QElapsedTimer>
 #include <QCursor>
 #include <QGuiApplication>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/File.h>
 #include <Kernel/Unit.h>
@@ -80,14 +83,14 @@ ImportPluginBase::ImportPluginBase() noexcept
     : d(std::make_unique<ImportPluginBasePrivate>())
 {
 #ifdef DEBUG
-    qDebug("ImportPluginBase::ImportPluginBase: CREATED");
+    qDebug() << "ImportPluginBase::ImportPluginBase: CREATED";
 #endif
 }
 
 ImportPluginBase::~ImportPluginBase() noexcept
 {
 #ifdef DEBUG
-    qDebug("ImportPluginBase::~ImportPluginBase: DELETED");
+    qDebug() << "ImportPluginBase::~ImportPluginBase: DELETED";
 #endif
 }
 
@@ -124,7 +127,7 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
             ok = importFlights(selectedFilePaths, flightService, flight);
             QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
-            qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(selectedPath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
+            qDebug() << QFileInfo(selectedPath).fileName() << "import" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
 #endif
             if (!ok && !baseSettings.isImportDirectoryEnabled()) {
                 QMessageBox::warning(PluginBase::getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
