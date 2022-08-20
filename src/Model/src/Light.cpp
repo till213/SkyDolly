@@ -54,8 +54,9 @@ Light::~Light() noexcept
 #endif
 }
 
-const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+const LightData Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
+    LightData lightData;
     const LightData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
     const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
@@ -84,18 +85,15 @@ const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Ac
 
         if (p1 != nullptr) {
             // No interpolation for light states
-            m_currentLightData.lightStates = p1->lightStates;
-            m_currentLightData.timestamp = adjustedTimestamp;
-        } else {
-            // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            m_currentLightData = LightData::NullData;
+            lightData.lightStates = p1->lightStates;
+            lightData.timestamp = adjustedTimestamp;
         }
 
         setCurrentIndex(currentIndex);
         setCurrentTimestamp(adjustedTimestamp);
         setCurrentAccess(access);
     }
-    return m_currentLightData;
+    return lightData;
 }
 
 template class AbstractComponent<LightData>;

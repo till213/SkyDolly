@@ -45,5 +45,3 @@ PositionData::PositionData(double theLatitude, double theLongitude, double theAl
       rotationVelocityBodyY(0.0),
       rotationVelocityBodyZ(0.0)
 {}
-
-const PositionData PositionData::NullData = PositionData(0.0, 0.0, 0.0);

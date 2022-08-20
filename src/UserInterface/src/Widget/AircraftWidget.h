@@ -58,7 +58,7 @@ private:
     std::unique_ptr<Ui::AircraftWidget> ui;
 
     void initUi() noexcept;
-    const PositionData &getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    PositionData getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // AIRCRAFTVARIABLESWIDGET_H

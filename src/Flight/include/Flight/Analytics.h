@@ -54,8 +54,7 @@ public:
      * still on the ground). The movement is purely calculated based on the distance
      * between the positions.
      *
-     * \return the heading of the first aircraft movement; PositionData::NullData if
-     *         no positions exist
+     * \return the heading of the first aircraft movement
      */
     const std::pair<std::int64_t, double> firstMovementHeading() const noexcept;
 

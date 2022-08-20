@@ -73,7 +73,6 @@ struct MODEL_API InitialPosition
         onGround = false;
     }
 
-    static const InitialPosition NullData;
     static constexpr int InvalidIndicatedAirspeed = std::numeric_limits<int>::min();
 };
 

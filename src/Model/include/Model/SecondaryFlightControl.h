@@ -40,10 +40,9 @@ public:
     SecondaryFlightControl &operator=(const SecondaryFlightControl &rhs) = default;
     SecondaryFlightControl &operator=(SecondaryFlightControl &&rhs) = default;
 
-    const SecondaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    const SecondaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    SecondaryFlightControlData m_currentSecondaryFlightControlData;
     SecondaryFlightControlData m_previousSecondaryFlightControlData;
 };
 

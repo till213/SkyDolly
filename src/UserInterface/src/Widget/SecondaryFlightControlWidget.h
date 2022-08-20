@@ -58,7 +58,7 @@ private:
     std::unique_ptr<Ui::SecondaryFlightControlWidget> ui;
 
     void initUi() noexcept;    
-    const SecondaryFlightControlData &getCurrentSecondaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    SecondaryFlightControlData getCurrentSecondaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // SECONDARYFLIGHTCONTROLWIDGET_H

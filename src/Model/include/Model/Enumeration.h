@@ -31,7 +31,6 @@
 
 #include <QString>
 
-#include "InitialPosition.h"
 #include "Data.h"
 #include "ModelLib.h"
 

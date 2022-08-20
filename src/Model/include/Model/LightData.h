@@ -42,8 +42,6 @@ struct MODEL_API LightData : public TimeVariableData
     ~LightData() override = default;
     LightData &operator=(const LightData &rhs) = default;
     LightData &operator=(LightData &&rhs) = default;
-
-    static const LightData NullData;
 };
 
 #endif // LIGHTDATA_H

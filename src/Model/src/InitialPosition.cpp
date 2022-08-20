@@ -44,5 +44,3 @@ InitialPosition::InitialPosition(const PositionData &positionData, const Aircraf
     fromPositionData(positionData);
     onGround = aircraftInfo.startOnGround;
 }
-
-const InitialPosition InitialPosition::NullData = InitialPosition(0.0, 0.0, 0.0);

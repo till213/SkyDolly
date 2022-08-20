@@ -118,6 +118,6 @@ const PositionData &Analytics::closestPosition(double latitude, double longitude
     if (closestPositionData != nullptr) {
         return *closestPositionData;
     } else {
-        return PositionData::NullData;
+        return PositionData();
     }
 }

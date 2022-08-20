@@ -60,5 +60,3 @@ EngineData::EngineData(std::int16_t theThrottleLeverPosition1, std::int16_t theP
       generalEngineCombustion3(false),
       generalEngineCombustion4(false)
 {}
-
-const EngineData EngineData::NullData = EngineData();

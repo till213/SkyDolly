@@ -56,7 +56,7 @@ private:
     std::unique_ptr<Ui::EngineWidget> ui;
 
     void initUi() noexcept;
-    const EngineData &getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    EngineData getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // ENGINEWIDGET_H

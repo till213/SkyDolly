@@ -36,7 +36,7 @@
 #include "Waypoint.h"
 #include "ModelLib.h"
 
-class Waypoint;
+struct Waypoint;
 class FlightPlanPrivate;
 
 class MODEL_API FlightPlan : public QObject

@@ -30,7 +30,6 @@
 #include <QtGlobal>
 #include <QFlags>
 
-#include "SimType.h"
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
@@ -84,8 +83,6 @@ struct MODEL_API EngineData : public TimeVariableData
     {
         return (generalEngineCombustion1 || generalEngineCombustion2 || generalEngineCombustion3 || generalEngineCombustion4);
     }
-
-    static const EngineData NullData;
 };
 
 #endif // ENGINEDATA_H

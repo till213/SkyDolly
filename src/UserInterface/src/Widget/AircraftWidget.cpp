@@ -143,8 +143,9 @@ void AircraftWidget::initUi() noexcept
     ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
 }
 
-const PositionData &AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+PositionData AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
+    PositionData positionData;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
@@ -152,12 +153,11 @@ const PositionData &AircraftWidget::getCurrentPositionData(std::int64_t timestam
             return aircraft.getPosition().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getPosition().interpolate(timestamp, access);
+                positionData = aircraft.getPosition().interpolate(timestamp, access);
             } else {
-                return aircraft.getPosition().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                positionData = aircraft.getPosition().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
-    } else {
-        return PositionData::NullData;
     }
+    return positionData;
 }

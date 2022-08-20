@@ -27,6 +27,7 @@
 #include <unordered_map>
 
 #include <QString>
+#include <QHash>
 #ifdef DEBUG
 #include <QDebug>
 #endif

@@ -28,7 +28,6 @@
 #include <limits>
 #include <cstdint>
 
-#include "SimType.h"
 #include "ModelLib.h"
 
 struct MODEL_API TimeVariableData

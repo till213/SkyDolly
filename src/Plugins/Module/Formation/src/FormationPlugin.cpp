@@ -95,7 +95,7 @@ void FormationPlugin::onStartRecording() noexcept
     // The initial recording position is calculated for timestamp = 0 ("at the beginning")
     const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ?
                 Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, 0) :
-                InitialPosition::NullData;
+                InitialPosition();
     skyConnectManager.startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
 }
 
@@ -109,7 +109,7 @@ void FormationPlugin::onStartReplay() noexcept
     const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
     const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ?
         Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp) :
-        InitialPosition::NullData;
+        InitialPosition();
     skyConnectManager.startReplay(fromStart, initialPosition);
 }
 

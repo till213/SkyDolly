@@ -30,5 +30,3 @@ LightData::LightData(SimType::LightStates theLightStates) noexcept
     : TimeVariableData(),
       lightStates(theLightStates)
 {}
-
-const LightData LightData::NullData = LightData();

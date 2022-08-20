@@ -38,7 +38,7 @@
 
 class Flight;
 class Aircraft;
-class AbstractSkyConnectPrivate;
+struct AbstractSkyConnectPrivate;
 
 class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf
 {
@@ -53,18 +53,18 @@ public:
     AbstractSkyConnect(QObject *parent = nullptr) noexcept;
     ~AbstractSkyConnect() noexcept override;
 
-    bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
+    bool setUserAircraftInitialPosition(InitialPosition initialPosition) noexcept override;
     bool freezeUserAircraft(bool enable) noexcept override;
 
     ReplayMode getReplayMode() const noexcept override;
     void setReplayMode(ReplayMode replayMode) noexcept override;
 
-    void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition::NullData) noexcept override;
+    void startRecording(RecordingMode recordingMode, InitialPosition initialPosition = InitialPosition()) noexcept override;
     void stopRecording() noexcept override;
     bool isRecording() const noexcept override;
     bool isInRecordingState() const noexcept override;
 
-    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition::NullData) noexcept override;
+    void startReplay(bool fromStart, InitialPosition flyWithFormationPosition = InitialPosition()) noexcept override;
     void stopReplay() noexcept override;
     bool isReplaying() const noexcept override;
     bool isInReplayState() const noexcept override;
@@ -117,7 +117,7 @@ protected:
 
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
 
-    virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
+    virtual bool onInitialPositionSetup(InitialPosition initialPosition) noexcept = 0;
     virtual bool onFreezeUserAircraft(bool enable) noexcept = 0;
 
     virtual bool onStartRecording() noexcept = 0;
@@ -155,8 +155,8 @@ private:
 
     inline bool retryWithReconnect(std::function<bool()> func);
 
-    bool setupInitialRecordingPosition(const InitialPosition &initialPosition) noexcept;
-    bool setupInitialReplayPosition(const InitialPosition &flyWithFormationPosition) noexcept;
+    bool setupInitialRecordingPosition(InitialPosition initialPosition) noexcept;
+    bool setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept;
     bool updateUserAircraftFreeze() noexcept;
 
 private slots:

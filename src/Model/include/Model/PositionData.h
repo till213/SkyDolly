@@ -58,8 +58,6 @@ struct MODEL_API PositionData : public TimeVariableData
     ~PositionData() override = default;
     PositionData &operator=(const PositionData &rhs) = default;
     PositionData &operator=(PositionData &&rhs) = default;
-
-    static const PositionData NullData;
 };
 
 #endif // POSITIONDATA_H

@@ -127,22 +127,26 @@ public:
         }
     }
 
+    /*!
+     * Returns the first data element. The collection must have at least one element,
+     * otherwise the behaviour is undefined.
+     *
+     * \return the first element T of the collection
+     */
     const T &getFirst() const noexcept
     {
-        if (!m_data.empty()) {
-            return m_data.front();
-        } else {
-            return T::NullData;
-        }
+        return m_data.front();
     }
 
+    /*!
+     * Returns the last data element. The collection must have at least one element,
+     * otherwise the behaviour is undefined.
+     *
+     * \return the last element T of the collection
+     */
     const T &getLast() const noexcept
     {
-        if (!m_data.empty()) {
-            return m_data.back();
-        } else {
-            return T::NullData;
-        }
+        return m_data.back();
     }
 
     [[nodiscard]]
@@ -193,7 +197,7 @@ public:
         return m_data[index];
     }
 
-    virtual const T &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
+    virtual const T interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
 
 protected:
     [[nodiscard]]
@@ -209,7 +213,7 @@ protected:
     }
 
     [[nodiscard]]
-    inline const std::int64_t getCurrentTimestamp() const noexcept
+    inline std::int64_t getCurrentTimestamp() const noexcept
     {
         return m_currentTimestamp;
     }
@@ -219,7 +223,7 @@ protected:
     }
 
     [[nodiscard]]
-    inline const int getCurrentIndex() const noexcept
+    inline int getCurrentIndex() const noexcept
     {
         return m_currentIndex;
     }
@@ -229,7 +233,7 @@ protected:
     }
 
     [[nodiscard]]
-    inline const TimeVariableData::Access getCurrentAccess() const noexcept
+    inline TimeVariableData::Access getCurrentAccess() const noexcept
     {
         return m_currentAccess;
     }

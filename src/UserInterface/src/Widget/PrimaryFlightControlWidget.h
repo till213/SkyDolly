@@ -58,7 +58,7 @@ private:
     std::unique_ptr<Ui::PrimaryFlightControlWidget> ui;
 
     void initUi();    
-    const PrimaryFlightControlData &getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    PrimaryFlightControlData getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // PRIMARYFLIGHTCONTROLWIDGET_H

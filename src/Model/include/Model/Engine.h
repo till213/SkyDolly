@@ -40,10 +40,7 @@ public:
     Engine &operator=(const Engine &rhs) = default;
     Engine &operator=(Engine &&rhs) = default;
 
-    const EngineData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
-
-private:
-    EngineData m_currentEngineData;
+    const EngineData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 };
 
 #endif // ENGINE_H

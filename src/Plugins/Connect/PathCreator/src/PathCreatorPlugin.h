@@ -37,7 +37,7 @@
 class Flight;
 class Aircraft;
 struct PositionData;
-class InitialPosition;
+struct InitialPosition;
 class PathCreatorPluginPrivate;
 
 class PathCreatorPlugin : public AbstractSkyConnect
@@ -49,12 +49,12 @@ public:
     PathCreatorPlugin(QObject *parent = nullptr) noexcept;
     ~PathCreatorPlugin() noexcept override;
 
-    bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
+    bool setUserAircraftPosition(PositionData positionData) noexcept override;
 
 protected:
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 
-    bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
+    bool onInitialPositionSetup(InitialPosition initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) noexcept override;
 
     bool onStartRecording() noexcept override;

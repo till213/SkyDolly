@@ -103,22 +103,21 @@ void PrimaryFlightControlWidget::initUi()
     ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
 }
 
-const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+PrimaryFlightControlData PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
+    PrimaryFlightControlData primaryFlightControlData;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
             return aircraft.getPrimaryFlightControl().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getPrimaryFlightControl().interpolate(timestamp, access);
+                primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(timestamp, access);
             } else {
-                return aircraft.getPrimaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
-    } else {
-        return PrimaryFlightControlData::NullData;
     }
+    return primaryFlightControlData;
 }

@@ -39,5 +39,3 @@ AircraftHandleData::AircraftHandleData() noexcept
       gearHandlePosition(false),
       smokeEnabled(false)
 {}
-
-const AircraftHandleData AircraftHandleData::NullData = AircraftHandleData();

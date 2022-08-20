@@ -104,7 +104,7 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 AbstractSkyConnect::~AbstractSkyConnect() noexcept
 {}
 
-bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
+bool AbstractSkyConnect::setUserAircraftInitialPosition(InitialPosition initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -157,7 +157,7 @@ void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
     }
 }
 
-void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition) noexcept
+void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const InitialPosition initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -228,7 +228,7 @@ bool AbstractSkyConnect::isInRecordingState() const noexcept
     return isRecording() || d->state == Connect::State::RecordingPaused;
 }
 
-void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
+void AbstractSkyConnect::startReplay(bool fromStart, InitialPosition flyWithFormationPosition) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -701,7 +701,7 @@ bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
     return ok;
 }
 
-bool AbstractSkyConnect::setupInitialRecordingPosition(const InitialPosition &initialPosition) noexcept
+bool AbstractSkyConnect::setupInitialRecordingPosition(InitialPosition initialPosition) noexcept
 {
     bool ok {true};
     if (!initialPosition.isNull()) {
@@ -711,7 +711,7 @@ bool AbstractSkyConnect::setupInitialRecordingPosition(const InitialPosition &in
     return ok;
 }
 
-bool AbstractSkyConnect::setupInitialReplayPosition(const InitialPosition &flyWithFormationPosition) noexcept
+bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept
 {
     bool ok {true};
     switch (d->replayMode) {

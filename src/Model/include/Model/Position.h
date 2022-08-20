@@ -40,10 +40,7 @@ public:
     Position &operator=(const Position &rhs) = default;
     Position &operator=(Position &&rhs) = default;
 
-    const PositionData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
-
-private:
-    PositionData m_currentPositionData;
+    const PositionData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 };
 
 #endif // POSITION_H

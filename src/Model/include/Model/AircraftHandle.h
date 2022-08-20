@@ -44,10 +44,9 @@ public:
     AircraftHandle &operator=(const AircraftHandle &rhs) = default;
     AircraftHandle &operator=(AircraftHandle &&rhs) = default;
 
-    const AircraftHandleData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    const AircraftHandleData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    AircraftHandleData m_currentAircraftHandleData;
     AircraftHandleData m_previousAircraftHandleData;
 };
 

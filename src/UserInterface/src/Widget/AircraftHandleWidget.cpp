@@ -86,8 +86,9 @@ void AircraftHandleWidget::initUi() noexcept
     ui->rightWingFoldingLineEdit->setToolTip(SimVar::FoldingWingRightPercent);
 }
 
-const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+AircraftHandleData AircraftHandleWidget::getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
+    AircraftHandleData aircraftHandleData;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
@@ -95,14 +96,13 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(std
             return aircraft.getAircraftHandle().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getAircraftHandle().interpolate(timestamp, access);
+                aircraftHandleData = aircraft.getAircraftHandle().interpolate(timestamp, access);
             } else {
-                return aircraft.getAircraftHandle().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                aircraftHandleData = aircraft.getAircraftHandle().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
-    } else {
-        return AircraftHandleData::NullData;
     }
+    return aircraftHandleData;
 }
 
 // PRIVATE SLOTS

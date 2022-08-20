@@ -35,5 +35,3 @@ SecondaryFlightControlData::SecondaryFlightControlData() noexcept
       spoilersHandlePosition(0),
       flapsHandleIndex(0)
 {}
-
-const SecondaryFlightControlData SecondaryFlightControlData::NullData = SecondaryFlightControlData();
