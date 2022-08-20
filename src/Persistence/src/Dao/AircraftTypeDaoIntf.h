@@ -38,7 +38,7 @@ public:
     virtual ~AircraftTypeDaoIntf() = default;
 
     virtual bool upsert(const AircraftType &aircraftType) noexcept = 0;
-    virtual bool getByType(const QString &type, AircraftType &aircraftType) const noexcept = 0;
+    virtual AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept = 0;
     virtual std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept = 0;
     virtual bool exists(const QString &type) const noexcept = 0;
 };

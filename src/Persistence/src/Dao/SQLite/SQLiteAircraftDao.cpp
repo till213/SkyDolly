@@ -215,7 +215,7 @@ bool SQLiteAircraftDao::getByFlightId(std::int64_t flightId, std::back_insert_it
             std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
             aircraft->setId(info.aircraftId);
             aircraft->setAircraftInfo(info);
-            ok = d->positionDao->getByAircraftId(aircraft->getId(), aircraft->getPosition().backInsertIterator());
+            aircraft->getPosition().setData(d->positionDao->getByAircraftId(aircraft->getId(), &ok));
             if (ok) {
                 ok = d->engineDao->getByAircraftId(aircraft->getId(), aircraft->getEngine().backInsertIterator());
             }
@@ -387,8 +387,7 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(std::int64_t flightId, std::v
             info.altitudeAboveGround = query.value(airCraftAltitudeAboveGroundIdx).toFloat();
             info.startOnGround = query.value(startOnGroundIdx).toBool();
 
-            AircraftType aircraftType;
-            ok = d->aircraftTypeDao->getByType(type, aircraftType);
+            AircraftType aircraftType = d->aircraftTypeDao->getByType(type, &ok);
             if (ok) {
                 info.aircraftType = std::move(aircraftType);
                 aircraftInfos.push_back(info);

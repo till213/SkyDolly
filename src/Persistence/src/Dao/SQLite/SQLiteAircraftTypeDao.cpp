@@ -83,8 +83,9 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
     return ok;
 }
 
-bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraftType) const noexcept
+AircraftType SQLiteAircraftTypeDao::getByType(const QString &type, bool *ok) const noexcept
 {
+    AircraftType aircraftType;
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -95,11 +96,11 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
 
     query.bindValue(":type", type);
     aircraftType.type = type;
-    bool ok = query.exec();
-    if (ok) {
+    bool success = query.exec();
+    if (success) {
         const QSqlRecord record = query.record();
-        ok = query.next();
-        if (ok) {
+        success = query.next();
+        if (success) {
             const int categoryIdx = record.indexOf("category");
             const int wingSpanIdx = record.indexOf("wing_span");
             const int engineTypeIdx = record.indexOf("engine_type");
@@ -115,7 +116,10 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
         qDebug() << "SQLiteAircraftTypeDao::getByType: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return aircraftType;
 }
 
 std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept

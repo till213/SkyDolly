@@ -32,6 +32,7 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QSqlDriver>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -39,6 +40,14 @@
 #include <Kernel/Enum.h>
 #include <Model/PositionData.h>
 #include "SQLitePositionDao.h"
+
+namespace
+{
+    // The initial capacity of the position vector (e.g. SQLite does not support returning
+    // the result count for the given SELECT query)
+    // Samples at 30 Hz for an assumed flight duration of 2 * 60 seconds = 2 minutes
+    constexpr int DefaultCapacity = 30 * 2 * 60;
+}
 
 // PUBLIC
 
@@ -112,8 +121,9 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
     return ok;
 }
 
-bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept
+std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
+    std::vector<PositionData> positionData;
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -124,8 +134,14 @@ bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::back_inser
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    const bool ok = query.exec();
-    if (ok) {
+    const bool success = query.exec();
+    if (success) {
+        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        if (querySizeFeature) {
+            positionData.reserve(query.size());
+        } else {
+            positionData.reserve(::DefaultCapacity);
+        }
         QSqlRecord record = query.record();
         const int timestampIdx = record.indexOf("timestamp");
         const int latitudeIdx = record.indexOf("latitude");
@@ -144,7 +160,6 @@ bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::back_inser
         while (query.next()) {
 
             PositionData data;
-
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.latitude = query.value(latitudeIdx).toDouble();
             data.longitude = query.value(longitudeIdx).toDouble();
@@ -160,7 +175,7 @@ bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::back_inser
             data.rotationVelocityBodyY = query.value(rotationVelocityYIdx).toDouble();
             data.rotationVelocityBodyZ = query.value(rotationVelocityZIdx).toDouble();
 
-            backInsertIterator = std::move(data);
+            positionData.push_back(std::move(data));
         }
 #ifdef DEBUG
     } else {
@@ -168,7 +183,10 @@ bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::back_inser
 #endif
     }
 
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return positionData;
 }
 
 bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) noexcept

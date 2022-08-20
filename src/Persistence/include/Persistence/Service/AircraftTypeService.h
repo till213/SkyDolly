@@ -42,7 +42,7 @@ public:
     AircraftTypeService() noexcept;
     ~AircraftTypeService() noexcept;
 
-    bool getByType(const QString &type, AircraftType &aircraftType) const noexcept;
+    AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept;
     std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept;
     bool exists(const QString &type) const noexcept;
 

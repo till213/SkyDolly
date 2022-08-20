@@ -42,7 +42,7 @@ public:
     ~SQLiteAircraftTypeDao() noexcept override;
 
     bool upsert(const AircraftType &aircraftType) noexcept override;
-    bool getByType(const QString &type, AircraftType &aircraftType) const noexcept override;
+    AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept override;
     std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept override;
     bool exists(const QString &type) const noexcept override;
 };

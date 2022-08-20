@@ -92,9 +92,9 @@ QString BasicImportDialog::getSelectedPath() const noexcept
     return ui->pathLineEdit->text();
 }
 
-bool BasicImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const noexcept
+AircraftType BasicImportDialog::getSelectedAircraftType(bool *ok) const noexcept
 {
-    return d->aircraftTypeService->getByType(ui->aircraftSelectionComboBox->currentText(), aircraftType);
+    return d->aircraftTypeService->getByType(ui->aircraftSelectionComboBox->currentText(), ok);
 }
 
 QString BasicImportDialog::getFileFilter() const noexcept

@@ -27,7 +27,6 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
 #include <Model/PositionData.h>
@@ -40,7 +39,7 @@ public:
     ~SQLitePositionDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const PositionData &data) noexcept override;
-    bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept override;
+    std::vector<PositionData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };

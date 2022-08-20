@@ -83,6 +83,16 @@ public:
         return *this;
     }
 
+    void setData(const Data &data) noexcept
+    {
+        m_data = data;
+    }
+
+    void setData(Data &&data) noexcept
+    {
+        m_data = std::move(data);
+    }
+
     /*!
      * Inserts \c data at the end, or updates the \e last element (only) if
      * the data items have the same timestamp.

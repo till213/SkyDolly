@@ -65,14 +65,18 @@ AircraftTypeService::~AircraftTypeService() noexcept
 #endif
 }
 
-bool AircraftTypeService::getByType(const QString &type, AircraftType &aircraftType) const noexcept
+AircraftType AircraftTypeService::getByType(const QString &type, bool *ok) const noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->aircraftTypeDao->getByType(type, aircraftType);
+    AircraftType aircraftType;
+    bool success = QSqlDatabase::database().transaction();
+    if (success) {
+        aircraftType = d->aircraftTypeDao->getByType(type, &success);
         QSqlDatabase::database().rollback();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return aircraftType;
 }
 
 std::vector<AircraftType> AircraftTypeService::getAll(bool *ok) const noexcept

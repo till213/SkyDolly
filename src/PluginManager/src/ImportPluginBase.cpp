@@ -116,7 +116,7 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
             Settings::getInstance().setExportPath(directoryPath);
             selectedFilePaths.append(selectedPath);
         }
-        ok = importDialog->getSelectedAircraftType(d->aircraftType);
+        d->aircraftType = importDialog->getSelectedAircraftType(&ok);
         if (ok) {
 #ifdef DEBUG
             QElapsedTimer timer;

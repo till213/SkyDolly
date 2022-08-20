@@ -104,7 +104,7 @@ PathCreatorPlugin::~PathCreatorPlugin() noexcept
 #endif
 }
 
-bool PathCreatorPlugin::setUserAircraftPosition([[maybe_unused]] PositionData positionData) noexcept
+bool PathCreatorPlugin::setUserAircraftPosition([[maybe_unused]] const PositionData &positionData) noexcept
 {
     return true;
 }
@@ -116,7 +116,7 @@ bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::Sampl
     return true;
 }
 
-bool PathCreatorPlugin::onInitialPositionSetup([[maybe_unused]] InitialPosition initialPosition) noexcept
+bool PathCreatorPlugin::onInitialPositionSetup([[maybe_unused]] const InitialPosition &initialPosition) noexcept
 {
     return true;
 }
@@ -205,7 +205,7 @@ bool PathCreatorPlugin::connectWithSim() noexcept
     return true;
 }
 
-void PathCreatorPlugin::onAddAiObject(const Aircraft &aircraft) noexcept
+void PathCreatorPlugin::onAddAiObject([[maybe_unused]] const Aircraft &aircraft) noexcept
 {
 #ifdef DEBUG
     qDebug() << "PathCreatorPlugin::onAddAiObject: CALLED";

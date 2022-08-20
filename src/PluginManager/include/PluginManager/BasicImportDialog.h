@@ -32,10 +32,10 @@
 
 class QWidget;
 
+#include <Model/AircraftType.h>
 #include "PluginManagerLib.h"
 
 class Flight;
-struct AircraftType;
 class ImportPluginBaseSettings;
 struct BasicImportDialogPrivate;
 
@@ -50,7 +50,7 @@ public:
     explicit BasicImportDialog(const Flight &flight, const QString &fileExtension, ImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     virtual ~BasicImportDialog() noexcept;
 
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
+    AircraftType getSelectedAircraftType(bool *ok = nullptr) const noexcept;
     QString getSelectedPath() const noexcept;
 
     QString getFileFilter() const noexcept;
