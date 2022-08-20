@@ -35,7 +35,7 @@
 
 class Flight;
 class ExportPluginBaseSettings;
-class BasicExportDialogPrivate;
+struct BasicExportDialogPrivate;
 
 namespace Ui {
     class BasicExportDialog;

@@ -29,7 +29,6 @@
 #include <QString>
 #include <QDateTime>
 
-#include "SimType.h"
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 

@@ -58,9 +58,8 @@ namespace {
     constexpr double MaxBankAngle = 25;
 }
 
-class FlightAugmentationPrivate
+struct FlightAugmentationPrivate
 {
-public:
     FlightAugmentationPrivate(FlightAugmentation::Procedures theProcedures, FlightAugmentation::Aspects theAspects)
         : procedures(theProcedures),
           aspects(theAspects)

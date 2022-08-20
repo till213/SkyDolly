@@ -33,7 +33,7 @@ class QXmlStreamReader;
 
 #include "KmlParserIntf.h"
 
-class AbstractKmlParserPrivate;
+struct AbstractKmlParserPrivate;
 
 class AbstractKmlParser : public KmlParserIntf
 {

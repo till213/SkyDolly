@@ -50,9 +50,8 @@
 #include "BasicExportDialog.h"
 #include "ui_BasicExportDialog.h"
 
-class BasicExportDialogPrivate
+struct BasicExportDialogPrivate
 {
-public:
     BasicExportDialogPrivate(const Flight &theFlight, const QString &theFileSuffix, const QString &theFileFilter, ExportPluginBaseSettings &thePluginSettings) noexcept
         : flight(theFlight),
           fileSuffix(theFileSuffix),

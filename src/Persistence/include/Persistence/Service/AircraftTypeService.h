@@ -36,7 +36,7 @@ class QString;
 #include <Model/AircraftInfo.h>
 #include "../PersistenceLib.h"
 
-class AircraftTypeServicePrivate;
+struct AircraftTypeServicePrivate;
 
 class PERSISTENCE_API AircraftTypeService
 {

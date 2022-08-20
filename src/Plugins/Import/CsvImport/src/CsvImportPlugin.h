@@ -42,7 +42,7 @@ class Flight;
 struct AircraftInfo;
 struct FlightCondition;
 class ImportPluginBaseSettings;
-class CsvImportPluginPrivate;
+struct CsvImportPluginPrivate;
 
 class CsvImportPlugin : public ImportPluginBase
 {

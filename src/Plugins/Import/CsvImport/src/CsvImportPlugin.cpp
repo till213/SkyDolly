@@ -40,9 +40,8 @@
 #include "CsvImportOptionWidget.h"
 #include "CsvImportPlugin.h"
 
-class CsvImportPluginPrivate
+struct CsvImportPluginPrivate
 {
-public:
     CsvImportPluginPrivate()
     {}
 

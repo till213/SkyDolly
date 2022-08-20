@@ -64,9 +64,8 @@ namespace
     constexpr int HeadingNorth = 0;
 }
 
-class KmlExportPluginPrivate
+struct KmlExportPluginPrivate
 {
-public:
     KmlExportPluginPrivate() noexcept
         : flight(nullptr),
           styleExport(std::make_unique<KmlStyleExport>(pluginSettings))

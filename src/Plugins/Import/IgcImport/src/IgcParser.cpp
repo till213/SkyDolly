@@ -130,9 +130,7 @@ namespace
     constexpr int BRecordGNSSAltitudeIndex = 10;
 
     // Values
-    constexpr char DirectionTypeNorth = 'N';
     constexpr char DirectionTypeSouth = 'S';
-    constexpr char DirectionTypeEast = 'E';
     constexpr char DirectionTypeWest = 'W';
 }
 

@@ -50,9 +50,8 @@ namespace  {
     };
 }
 
-class AnalyticsPrivate
+struct AnalyticsPrivate
 {
-public:
     AnalyticsPrivate(const Aircraft &theAircraft)
         : aircraft(theAircraft)
     {}
@@ -101,23 +100,19 @@ const std::pair<std::int64_t, double> Analytics::firstMovementHeading() const no
     return result;
 }
 
-const PositionData &Analytics::closestPosition(double latitude, double longitude) const noexcept
+const PositionData Analytics::closestPosition(double latitude, double longitude) const noexcept
 {
+    PositionData positionData;
     double minimumDistance = std::numeric_limits<double>::max();
-    const PositionData *closestPositionData {nullptr};
 
     Position &position = d->aircraft.getPosition();
     for (const PositionData &pos : position) {
         const double distance = SkyMath::geodesicDistance(SkyMath::Coordinate(latitude, longitude),
                                                           SkyMath::Coordinate(pos.latitude, pos.longitude));
         if (minimumDistance > distance) {
-            closestPositionData = &pos;
+            positionData = pos;
             minimumDistance = distance;
         }
     }
-    if (closestPositionData != nullptr) {
-        return *closestPositionData;
-    } else {
-        return PositionData();
-    }
+    return positionData;
 }

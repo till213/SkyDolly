@@ -32,8 +32,8 @@
 class QShowEvent;
 class QHideEvent;
 
-class Waypoint;
-class WaypointWidgetPrivate;
+struct Waypoint;
+struct WaypointWidgetPrivate;
 
 namespace Ui {
     class WaypointWidget;

@@ -42,9 +42,8 @@
 #include "BasicImportDialog.h"
 #include "ui_BasicImportDialog.h"
 
-class BasicImportDialogPrivate
+struct BasicImportDialogPrivate
 {
-public:
     BasicImportDialogPrivate(const Flight &theFlight, const QString &theFileFilter, ImportPluginBaseSettings &pluginSettings) noexcept
         : flight(theFlight),
           aircraftTypeService(std::make_unique<AircraftTypeService>()),

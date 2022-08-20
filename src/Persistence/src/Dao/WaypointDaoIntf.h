@@ -28,7 +28,7 @@
 #include <cstdint>
 
 class FlightPlan;
-class Waypoint;
+struct Waypoint;
 
 class WaypointDaoIntf
 {

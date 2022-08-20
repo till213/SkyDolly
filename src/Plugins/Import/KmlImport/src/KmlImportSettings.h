@@ -33,7 +33,7 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/ImportPluginBaseSettings.h>
 
-class KmlImportSettingsPrivate;
+struct KmlImportSettingsPrivate;
 
 class KmlImportSettings : public ImportPluginBaseSettings
 {

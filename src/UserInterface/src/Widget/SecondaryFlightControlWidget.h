@@ -37,7 +37,7 @@ class QHideEvent;
 
 class SkyConnectIntf;
 struct SecondaryFlightControlData;
-class SecondaryFlightControlWidgetPrivate;
+struct SecondaryFlightControlWidgetPrivate;
 
 namespace Ui {
     class SecondaryFlightControlWidget;

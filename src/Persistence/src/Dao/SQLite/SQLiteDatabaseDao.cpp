@@ -40,9 +40,8 @@
 
 constexpr char DbName[] = "QSQLITE";
 
-class DatabaseDaoPrivate
+struct DatabaseDaoPrivate
 {
-public:
     DatabaseDaoPrivate()
     {}
 

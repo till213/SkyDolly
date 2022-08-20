@@ -45,7 +45,7 @@ struct PositionData;
 class FLight;
 class Aircraft;
 class ExportPluginBaseSettings;
-class ExportPluginBasePrivate;
+struct ExportPluginBasePrivate;
 
 class PLUGINMANAGER_API ExportPluginBase : public PluginBase, public ExportIntf
 {

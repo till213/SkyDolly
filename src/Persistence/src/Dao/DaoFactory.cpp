@@ -52,9 +52,8 @@
 #include "EnumerationDaoIntf.h"
 #include "DaoFactory.h"
 
-class DaoFactoryPrivate
+struct DaoFactoryPrivate
 {
-public:
     DaoFactoryPrivate(DaoFactory::DbType theDbType)
         : dbType(theDbType)
     {}

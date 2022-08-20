@@ -46,9 +46,8 @@
 #include "LogbookSettingsDialog.h"
 #include "ui_LogbookSettingsDialog.h"
 
-class LogbookSettingsDialogPrivate
+struct LogbookSettingsDialogPrivate
 {
-public:
     LogbookSettingsDialogPrivate() noexcept
         : databaseService(std::make_unique<DatabaseService>())
     {}

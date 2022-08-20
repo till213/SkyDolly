@@ -34,7 +34,7 @@ namespace Ui {
 }
 
 class IgcExportSettings;
-class IgcExportOptionWidgetPrivate;
+struct IgcExportOptionWidgetPrivate;
 
 class IgcExportOptionWidget : public QWidget
 {

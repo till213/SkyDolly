@@ -60,9 +60,8 @@ namespace
     inline const QString HeadingColumn = QStringLiteral("Heading");
 }
 
-class PositionAndAttitudeCsvWriterPrivate
+struct PositionAndAttitudeCsvWriterPrivate
 {
-public:
     PositionAndAttitudeCsvWriterPrivate(const CsvExportSettings &thePluginSettings) noexcept
         : pluginSettings(thePluginSettings)
     {}

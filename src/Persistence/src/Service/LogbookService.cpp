@@ -38,9 +38,8 @@
 #include <FlightSelector.h>
 #include <Service/LogbookService.h>
 
-class LogbookServicePrivate
+struct LogbookServicePrivate
 {
-public:
     LogbookServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           logbookDao(daoFactory->createLogbookDao())

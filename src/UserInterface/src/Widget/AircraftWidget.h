@@ -37,7 +37,7 @@ class QHideEvent;
 
 class SkyConnectIntf;
 struct PositionData;
-class AircraftWidgetPrivate;
+struct AircraftWidgetPrivate;
 
 namespace Ui {
     class AircraftWidget;

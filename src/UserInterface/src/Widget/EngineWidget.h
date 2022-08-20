@@ -35,7 +35,7 @@ class QHideEvent;
 
 class SkyConnectIntf;
 struct EngineData;
-class EngineWidgetPrivate;
+struct EngineWidgetPrivate;
 
 namespace Ui {
     class EngineWidget;

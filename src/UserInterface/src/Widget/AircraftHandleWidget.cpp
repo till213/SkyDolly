@@ -44,9 +44,8 @@
 #include "AircraftHandleWidget.h"
 #include "ui_AircraftHandleWidget.h"
 
-class AircraftHandleWidgetPrivate
+struct AircraftHandleWidgetPrivate
 {
-public:
     AircraftHandleWidgetPrivate(const QWidget &widget) noexcept
         : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))

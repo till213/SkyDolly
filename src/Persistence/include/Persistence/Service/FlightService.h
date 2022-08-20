@@ -35,7 +35,7 @@
 #include "../PersistenceLib.h"
 
 class SkyConnectIntf;
-class FlightServicePrivate;
+struct FlightServicePrivate;
 
 class PERSISTENCE_API FlightService
 {

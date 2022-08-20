@@ -31,7 +31,7 @@
 
 #include <Model/Waypoint.h>
 
-class FlightPlanWidgetPrivate;
+struct FlightPlanWidgetPrivate;
 
 namespace Ui {
     class FlightPlanWidget;

@@ -29,9 +29,8 @@
 
 #include "Logbook.h"
 
-class LogbookPrivate
+struct LogbookPrivate
 {
-public:
     LogbookPrivate() noexcept
     {}
 

@@ -71,9 +71,8 @@ namespace
 
 }
 
-class KmlExportSettingsPrivate
+struct KmlExportSettingsPrivate
 {
-public:
     KmlExportSettingsPrivate()
         : colorStyle(::DefaultColorStyle),
           nofColorsPerRamp(::DefaultNofColorsPerRamp),

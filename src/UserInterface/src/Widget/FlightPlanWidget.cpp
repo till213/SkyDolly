@@ -37,9 +37,8 @@
 #include "FlightPlanWidget.h"
 #include "ui_FlightPlanWidget.h"
 
-class FlightPlanWidgetPrivate
+struct FlightPlanWidgetPrivate
 {
-public:
     FlightPlanWidgetPrivate() noexcept
     {}
 

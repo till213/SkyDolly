@@ -34,7 +34,7 @@ namespace Ui {
 }
 
 class CsvExportSettings;
-class CsvExportOptionWidgetPrivate;
+struct CsvExportOptionWidgetPrivate;
 
 class CsvExportOptionWidget : public QWidget
 {

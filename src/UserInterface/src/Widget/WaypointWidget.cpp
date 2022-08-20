@@ -30,9 +30,8 @@
 #include "WaypointWidget.h"
 #include "ui_WaypointWidget.h"
 
-class WaypointWidgetPrivate
+struct WaypointWidgetPrivate
 {
-public:
     WaypointWidgetPrivate(const Waypoint &theWaypoint) noexcept
         : waypoint(theWaypoint)
     {}

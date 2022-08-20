@@ -48,7 +48,7 @@ class SettingsDialog;
 class FlightDialog;
 class SimulationVariablesDialog;
 class StatisticsDialog;
-class MainWindowPrivate;
+struct MainWindowPrivate;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
 {

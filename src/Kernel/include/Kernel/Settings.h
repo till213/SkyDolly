@@ -42,8 +42,8 @@
 #include "SampleRate.h"
 #include "KernelLib.h"
 
-class SettingsPrivate;
 class Version;
+struct SettingsPrivate;
 
 /*!
  * The application settings. These settings are persisted to user configuration

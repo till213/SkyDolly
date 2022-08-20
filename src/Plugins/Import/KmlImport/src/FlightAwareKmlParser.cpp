@@ -39,9 +39,8 @@
 #include "AbstractKmlTrackParser.h"
 #include "FlightAwareKmlParser.h"
 
-class FlightAwareKmlParserPrivate
+struct FlightAwareKmlParserPrivate
 {
-public:
     FlightAwareKmlParserPrivate() noexcept
     {}
 

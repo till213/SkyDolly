@@ -44,7 +44,7 @@ class DatabaseService;
 class FlightService;
 class FlightDate;
 class FlightSummary;
-class TemplateWidgetPrivate;
+struct TemplateWidgetPrivate;
 
 namespace Ui {
     class TemplateWidget;

@@ -36,7 +36,7 @@ namespace Ui {
     class LogbookBackupDialog;
 }
 
-class LogbookBackupDialogPrivate;
+struct LogbookBackupDialogPrivate;
 
 class LogbookBackupDialog : public QDialog
 {

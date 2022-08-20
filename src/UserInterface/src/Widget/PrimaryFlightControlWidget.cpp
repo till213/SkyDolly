@@ -44,9 +44,8 @@
 #include "PrimaryFlightControlWidget.h"
 #include "ui_PrimaryFlightControlWidget.h"
 
-class PrimaryFlightControlWidgetPrivate
+struct PrimaryFlightControlWidgetPrivate
 {
-public:
     PrimaryFlightControlWidgetPrivate(const QWidget &widget) noexcept
         : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))

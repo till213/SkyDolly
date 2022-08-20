@@ -37,7 +37,7 @@ class QTime;
 
 #include "KernelLib.h"
 
-class UnitPrivate;
+struct UnitPrivate;
 
 class KERNEL_API Unit final
 {

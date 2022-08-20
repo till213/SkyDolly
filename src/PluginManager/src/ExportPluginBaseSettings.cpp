@@ -42,9 +42,8 @@ namespace
     constexpr bool DefaultOpenExportedFilesEnabled = false;
 }
 
-class ExportPluginBaseSettingsPrivate
+struct ExportPluginBaseSettingsPrivate
 {
-public:
     ExportPluginBaseSettingsPrivate()
         : resamplingPeriod(::DefaultResamplingPeriod),
           formationExport(::DefaultFormationExport),

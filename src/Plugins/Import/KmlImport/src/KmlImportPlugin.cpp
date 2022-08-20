@@ -46,9 +46,8 @@
 #include "KmlImportOptionWidget.h"
 #include "KmlImportPlugin.h"
 
-class KmlImportPluginPrivate
+struct KmlImportPluginPrivate
 {
-public:
     KmlImportPluginPrivate()
         : flight(nullptr)
     {}

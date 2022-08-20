@@ -34,7 +34,7 @@
 #include "PluginIntf.h"
 #include "PluginManagerLib.h"
 
-class PluginBasePrivate;
+struct PluginBasePrivate;
 
 class PLUGINMANAGER_API PluginBase : public QObject, public PluginIntf
 {

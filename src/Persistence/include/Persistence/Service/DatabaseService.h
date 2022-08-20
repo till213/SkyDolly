@@ -33,11 +33,10 @@ class QString;
 class QWidget;
 class QDateTime;
 
-#include "../Metadata.h"
 #include "../PersistenceLib.h"
 
 class Version;
-class DatabaseServicePrivate;
+struct DatabaseServicePrivate;
 
 class PERSISTENCE_API DatabaseService
 {

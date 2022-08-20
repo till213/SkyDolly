@@ -32,12 +32,10 @@
 #include <PluginManager/ExportPluginBaseSettings.h>
 #include "JsonExportSettings.h"
 
-class JsonExportSettingsPrivate
+struct JsonExportSettingsPrivate
 {
-public:
     JsonExportSettingsPrivate()
     {}
-
 };
 
 // PUBLIC

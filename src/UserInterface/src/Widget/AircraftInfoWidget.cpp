@@ -38,9 +38,8 @@
 #include "AircraftInfoWidget.h"
 #include "ui_AircraftInfoWidget.h"
 
-class AircraftInfoWidgetPrivate
+struct AircraftInfoWidgetPrivate
 {
-public:
     AircraftInfoWidgetPrivate() noexcept
     {}
 

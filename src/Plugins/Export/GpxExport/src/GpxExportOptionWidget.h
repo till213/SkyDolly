@@ -34,7 +34,7 @@ namespace Ui {
 }
 
 class GpxExportSettings;
-class GpxExportOptionWidgetPrivate;
+struct GpxExportOptionWidgetPrivate;
 
 class GpxExportOptionWidget : public QWidget
 {

@@ -35,7 +35,7 @@
 #include "../PersistenceLib.h"
 
 class FlightSelector;
-class LogbookServicePrivate;
+struct LogbookServicePrivate;
 
 class PERSISTENCE_API LogbookService
 {

@@ -33,7 +33,7 @@ class QShowEvent;
 class QHideEvent;
 
 class FlightService;
-class FlightDialogPrivate;
+struct FlightDialogPrivate;
 
 namespace Ui {
     class FlightDialog;

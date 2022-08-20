@@ -38,7 +38,7 @@
 #include "PositionAndAttitudeCsvWriter.h"
 #include "CsvExportPlugin.h"
 
-class CsvExportPluginPrivate
+struct CsvExportPluginPrivate
 {
 public:
     CsvExportPluginPrivate() noexcept

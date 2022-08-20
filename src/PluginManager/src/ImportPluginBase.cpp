@@ -57,9 +57,8 @@
 #include "ImportPluginBaseSettings.h"
 #include "ImportPluginBase.h"
 
-class ImportPluginBasePrivate
+struct ImportPluginBasePrivate
 {
-public:
     ImportPluginBasePrivate()
         : flight(nullptr),
           aircraftService(std::make_unique<AircraftService>()),

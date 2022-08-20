@@ -34,7 +34,7 @@
 #include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
-class ExportPluginBaseSettingsPrivate;
+struct ExportPluginBaseSettingsPrivate;
 
 class PLUGINMANAGER_API ExportPluginBaseSettings : public QObject
 {

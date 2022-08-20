@@ -42,7 +42,7 @@ class SecondaryFlightControl;
 class AircraftHandle;
 class Light;
 class FlightPlan;
-class AircraftPrivate;
+struct AircraftPrivate;
 
 class MODEL_API Aircraft : public QObject
 {

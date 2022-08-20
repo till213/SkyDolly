@@ -34,7 +34,7 @@ namespace Ui {
 }
 
 class KmlImportSettings;
-class KmlImportOptionWidgetPrivate;
+struct KmlImportOptionWidgetPrivate;
 
 class KmlImportOptionWidget : public QWidget
 {

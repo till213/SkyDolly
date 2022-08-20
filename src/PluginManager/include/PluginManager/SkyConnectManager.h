@@ -43,7 +43,7 @@ class QUuid;
 #include "SkyConnectIntf.h"
 #include "PluginManagerLib.h"
 
-class skyConnectManagerPrivate;
+struct skyConnectManagerPrivate;
 
 /// \todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
 class PLUGINMANAGER_API SkyConnectManager : public QObject

@@ -58,9 +58,8 @@
 #include "StatisticsDialog.h"
 #include "ui_StatisticsDialog.h"
 
-class StatisticsDialogPrivate
+struct StatisticsDialogPrivate
 {
-public:
     StatisticsDialogPrivate() noexcept
         : closeDialogShortcut(nullptr)
     {}

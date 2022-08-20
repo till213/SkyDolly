@@ -39,7 +39,7 @@ class QString;
 class Flight;
 struct EngineData;
 struct AircraftHandleData;
-class FlightRecorderCsvParserPrivate;
+struct FlightRecorderCsvParserPrivate;
 
 class FlightRecorderCsvParser : public CsvParserIntf
 {

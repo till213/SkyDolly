@@ -34,7 +34,7 @@
 #include "../PersistenceLib.h"
 
 struct LocationSelector;
-class LocationServicePrivate;
+struct LocationServicePrivate;
 
 class PERSISTENCE_API LocationService
 {

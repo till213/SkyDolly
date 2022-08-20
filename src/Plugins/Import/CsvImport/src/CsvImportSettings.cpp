@@ -37,9 +37,8 @@ namespace
     constexpr CsvImportSettings::Format DefaultFormat {CsvImportSettings::Format::SkyDolly};
 }
 
-class CsvImportSettingsPrivate
+struct CsvImportSettingsPrivate
 {
-public:
     CsvImportSettingsPrivate()
         : format(::DefaultFormat)
     {}

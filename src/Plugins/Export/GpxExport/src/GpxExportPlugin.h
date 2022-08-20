@@ -42,7 +42,7 @@ class Flight;
 class Aircraft;
 struct PositionData;
 struct Waypoint;
-class GpxExportPluginPrivate;
+struct GpxExportPluginPrivate;
 
 class GpxExportPlugin : public ExportPluginBase
 {

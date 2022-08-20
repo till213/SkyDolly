@@ -33,7 +33,7 @@
 
 #include "WidgetLib.h"
 
-class TableDateItemPrivate;
+struct TableDateItemPrivate;
 
 /*!
  * Sortable QTableWidgetItem displaying a QDate.

@@ -39,9 +39,8 @@ namespace
     constexpr char CoPilotNameKey[] {"CoPilotName"};
 }
 
-class IgcExportSettingsPrivate
+struct IgcExportSettingsPrivate
 {
-public:
     IgcExportSettingsPrivate()
         : pilotName(DefaultPilotName),
           coPilotName(DefaultCoPilotName)

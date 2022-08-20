@@ -32,7 +32,7 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/ExportPluginBaseSettings.h>
 
-class GpxExportSettingsPrivate;
+struct GpxExportSettingsPrivate;
 
 class GpxExportSettings : public ExportPluginBaseSettings
 {

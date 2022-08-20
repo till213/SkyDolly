@@ -108,9 +108,8 @@ namespace
     constexpr int KRecordIntervalSec {20};
 }
 
-class IgcExportPluginPrivate
+struct IgcExportPluginPrivate
 {
-public:
     IgcExportPluginPrivate() noexcept
         : flight(nullptr)
     {}

@@ -32,9 +32,8 @@
 #include "TemplateWidget.h"
 #include "ui_TemplateWidget.h"
 
-class TemplateWidgetPrivate
+struct TemplateWidgetPrivate
 {
-public:
     TemplateWidgetPrivate() noexcept
     {}
 };

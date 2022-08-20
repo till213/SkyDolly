@@ -32,7 +32,7 @@
 #include "Flight.h"
 #include "ModelLib.h"
 
-class LogbookPrivate;
+struct LogbookPrivate;
 
 class MODEL_API Logbook : public QObject
 {

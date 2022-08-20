@@ -53,9 +53,8 @@
 #include "SimulationVariablesDialog.h"
 #include "ui_SimulationVariablesDialog.h"
 
-class SimulationVariablesDialogPrivate
+struct SimulationVariablesDialogPrivate
 {
-public:
     SimulationVariablesDialogPrivate() noexcept
         : closeDialogShortcut(nullptr)
     {}

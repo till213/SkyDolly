@@ -32,7 +32,7 @@
 
 #include "WidgetLib.h"
 
-class ActionRadioButtonPrivate;
+struct ActionRadioButtonPrivate;
 
 /*!
  * An extension of a QRadioButton that supports QAction.

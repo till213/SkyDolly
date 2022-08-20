@@ -32,7 +32,7 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/ExportPluginBaseSettings.h>
 
-class CsvExportSettingsPrivate;
+struct CsvExportSettingsPrivate;
 
 class CsvExportSettings : public ExportPluginBaseSettings
 {

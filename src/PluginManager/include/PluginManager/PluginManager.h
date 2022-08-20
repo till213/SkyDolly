@@ -36,13 +36,12 @@ class QUuid;
 class QWidget;
 class QString;
 
-#include "ExportIntf.h"
 #include "PluginManagerLib.h"
 
 class SkyConnectIntf;
 class Flight;
 class FlightService;
-class PluginManagerPrivate;
+struct PluginManagerPrivate;
 
 class PLUGINMANAGER_API PluginManager : public QObject
 {

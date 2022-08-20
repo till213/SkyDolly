@@ -30,9 +30,8 @@
 #include "CsvImportSettings.h"
 #include "ui_CsvImportOptionWidget.h"
 
-class CsvImportOptionWidgetPrivate
+struct CsvImportOptionWidgetPrivate
 {
-public:
     CsvImportOptionWidgetPrivate(CsvImportSettings &theImportSettings) noexcept
         : settings(theImportSettings)
     {}

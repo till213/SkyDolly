@@ -33,7 +33,7 @@
 
 #include "WidgetLib.h"
 
-class TableTimeItemPrivate;
+struct TableTimeItemPrivate;
 
 /*!
  * Sortable QTableWidgetItem displaying time.

@@ -41,9 +41,8 @@ namespace
     constexpr CsvExportSettings::Format DefaultFormat = CsvExportSettings::Format::SkyDolly;
 }
 
-class CsvExportSettingsPrivate
+struct CsvExportSettingsPrivate
 {
-public:
     CsvExportSettingsPrivate()
     {}
 

@@ -67,9 +67,8 @@ namespace
     constexpr double SameWaypointDistanceThreshold {500};
 }
 
-class IgcImportPluginPrivate
+struct IgcImportPluginPrivate
 {
-public:
     IgcImportPluginPrivate()
         : flight(nullptr),
           throttleResponseCurve(QEasingCurve::OutExpo)

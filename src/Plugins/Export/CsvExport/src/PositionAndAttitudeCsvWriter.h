@@ -33,7 +33,7 @@ class Flight;
 class Aircraft;
 class CsvExportSettings;
 class PositionData;
-class PositionAndAttitudeCsvWriterPrivate;
+struct PositionAndAttitudeCsvWriterPrivate;
 
 class PositionAndAttitudeCsvWriter : public CsvWriterIntf
 {

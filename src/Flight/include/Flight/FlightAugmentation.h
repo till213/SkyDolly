@@ -33,7 +33,7 @@
 #include "FlightLib.h"
 
 class Aircraft;
-class FlightAugmentationPrivate;
+struct FlightAugmentationPrivate;
 
 /*!
  * Augments flight data with attitude and velocity, for instance.

@@ -41,9 +41,8 @@
 #include "Kml.h"
 #include "FlightRadar24KmlParser.h"
 
-class FlightRadar24KmlParserPrivate
+struct FlightRadar24KmlParserPrivate
 {
-public:
     using TrackItem = struct {
         std::int64_t timestamp;
         double latitude;

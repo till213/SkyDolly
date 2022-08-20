@@ -51,7 +51,7 @@ namespace
     constexpr int BackupPeriodOneDay = 1;
 }
 
-class DatabaseServicePrivate
+struct DatabaseServicePrivate
 {
 public:
     DatabaseServicePrivate() noexcept

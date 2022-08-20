@@ -34,9 +34,8 @@
 #include "../Dao/AircraftTypeDaoIntf.h"
 #include <Service/AircraftTypeService.h>
 
-class AircraftTypeServicePrivate
+struct AircraftTypeServicePrivate
 {
-public:
     AircraftTypeServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           aircraftTypeDao(daoFactory->createAircraftTypeDao())

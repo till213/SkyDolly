@@ -33,7 +33,7 @@
 class QShowEvent;
 class QHideEvent;
 
-class StatisticsDialogPrivate;
+struct StatisticsDialogPrivate;
 
 namespace Ui {
     class StatisticsDialog;

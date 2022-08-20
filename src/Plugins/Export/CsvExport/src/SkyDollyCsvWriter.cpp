@@ -49,9 +49,8 @@
 #include "CsvExportSettings.h"
 #include "SkyDollyCsvWriter.h"
 
-class SkyDollyCsvWriterPrivate
+struct SkyDollyCsvWriterPrivate
 {
-public:
     SkyDollyCsvWriterPrivate(const CsvExportSettings &thePluginSettings) noexcept
         : pluginSettings(thePluginSettings)
     {}

@@ -34,7 +34,7 @@
 #include <Model/AircraftInfo.h>
 #include "../PersistenceLib.h"
 
-class AircraftServicePrivate;
+struct AircraftServicePrivate;
 
 class PERSISTENCE_API AircraftService
 {

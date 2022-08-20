@@ -27,9 +27,8 @@
 #include <Kernel/Unit.h>
 #include "TableTimeItem.h"
 
-class TableTimeItemPrivate
+struct TableTimeItemPrivate
 {
-public:
     TableTimeItemPrivate(const QTime &theTime) noexcept
         : time(theTime)
     {}

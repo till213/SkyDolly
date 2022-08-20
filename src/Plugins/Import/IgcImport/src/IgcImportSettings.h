@@ -33,7 +33,7 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/ImportPluginBaseSettings.h>
 
-class IgcImportSettingsPrivate;
+struct IgcImportSettingsPrivate;
 
 class IgcImportSettings : public ImportPluginBaseSettings
 {

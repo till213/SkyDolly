@@ -34,7 +34,7 @@
 class QRegularExpressionMatch;
 class QStringRef;
 
-class SqlMigrationStepPrivate;
+struct SqlMigrationStepPrivate;
 
 class SqlMigrationStep
 {

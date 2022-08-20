@@ -42,9 +42,8 @@
 #include "LightWidget.h"
 #include "ui_LightWidget.h"
 
-class LightWidgetPrivate
+struct LightWidgetPrivate
 {
-public:
     LightWidgetPrivate(const QWidget &widget) noexcept
         : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))

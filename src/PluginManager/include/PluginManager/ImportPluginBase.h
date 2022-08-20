@@ -46,7 +46,7 @@ struct AircraftType;
 struct AircraftInfo;
 struct FlightCondition;
 class ImportPluginBaseSettings;
-class ImportPluginBasePrivate;
+struct ImportPluginBasePrivate;
 
 class PLUGINMANAGER_API ImportPluginBase : public PluginBase, public ImportIntf
 {

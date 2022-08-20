@@ -42,7 +42,7 @@ class Flight;
 class Aircraft;
 struct PositionData;
 struct Waypoint;
-class JsonExportPluginPrivate;
+struct JsonExportPluginPrivate;
 
 class JsonExportPlugin : public ExportPluginBase
 {

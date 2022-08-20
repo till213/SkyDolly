@@ -50,9 +50,8 @@ namespace {
     constexpr int MaxBackupIndex = 1024;
 }
 
-class LogbookManagerPrivate
+struct LogbookManagerPrivate
 {
-public:
     LogbookManagerPrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           databaseDao(daoFactory->createDatabaseDao()),

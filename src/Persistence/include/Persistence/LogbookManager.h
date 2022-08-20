@@ -39,7 +39,7 @@ class Version;
 
 class Metadata;
 class Version;
-class LogbookManagerPrivate;
+struct LogbookManagerPrivate;
 
 class PERSISTENCE_API LogbookManager : public QObject
 {

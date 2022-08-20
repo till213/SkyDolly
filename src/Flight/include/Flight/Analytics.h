@@ -36,7 +36,7 @@
 class Aircraft;
 struct PositionData;
 
-class AnalyticsPrivate;
+struct AnalyticsPrivate;
 
 /*!
  * Provides basic flight path & events analytics.
@@ -58,7 +58,7 @@ public:
      */
     const std::pair<std::int64_t, double> firstMovementHeading() const noexcept;
 
-    const PositionData &closestPosition(double latitude, double longitude) const noexcept;
+    const PositionData closestPosition(double latitude, double longitude) const noexcept;
 
 private:
     std::unique_ptr<AnalyticsPrivate> d;

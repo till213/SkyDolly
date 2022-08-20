@@ -42,7 +42,7 @@ class Flight;
 struct AircraftInfo;
 struct FlightCondition;
 class ImportPluginBaseSettings;
-class KmlImportPluginPrivate;
+struct KmlImportPluginPrivate;
 
 class KmlImportPlugin : public ImportPluginBase
 {

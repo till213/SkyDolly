@@ -55,9 +55,8 @@ namespace
     constexpr char PluginNameKey[] = "name";
 }
 
-class PluginManagerPrivate
+struct PluginManagerPrivate
 {
-public:
     PluginManagerPrivate() noexcept
         : parentWidget(nullptr)
     {

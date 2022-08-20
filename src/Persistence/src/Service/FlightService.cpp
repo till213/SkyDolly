@@ -37,12 +37,10 @@
 #include <Model/Aircraft.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/FlightDaoIntf.h"
-#include "../Dao/AircraftDaoIntf.h"
 #include <Service/FlightService.h>
 
-class FlightServicePrivate
+struct FlightServicePrivate
 {
-public:
     FlightServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           flightDao(daoFactory->createFlightDao())

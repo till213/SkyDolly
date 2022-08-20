@@ -33,7 +33,7 @@ class QWidget;
 
 #include "WidgetLib.h"
 
-class AircraftSelectionComboBoxPrivate;
+struct AircraftSelectionComboBoxPrivate;
 
 class WIDGET_API AircraftSelectionComboBox : public QComboBox
 {

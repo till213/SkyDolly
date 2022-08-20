@@ -37,9 +37,8 @@
 #include "FlightDescriptionWidget.h"
 #include "ui_FlightDescriptionWidget.h"
 
-class FlightDescriptionWidgetPrivate
+struct FlightDescriptionWidgetPrivate
 {
-public:
     FlightDescriptionWidgetPrivate(FlightService &theFlightService) noexcept
         : flightService(theFlightService)
     {}

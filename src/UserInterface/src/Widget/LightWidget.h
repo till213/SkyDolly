@@ -37,7 +37,7 @@ class QHideEvent;
 
 class SkyConnectIntf;
 struct LightData;
-class LightWidgetPrivate;
+struct LightWidgetPrivate;
 
 namespace Ui {
     class LightWidget;

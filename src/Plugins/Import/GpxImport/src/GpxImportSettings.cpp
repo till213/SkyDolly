@@ -47,9 +47,8 @@ namespace
     constexpr bool DefaultConvertAltitude {true};
 }
 
-class GpxImportSettingsPrivate
+struct GpxImportSettingsPrivate
 {
-public:
     GpxImportSettingsPrivate()
         : waypointSelection(::DefaultWaypointSelection),
           positionSelection(::DefaultPositionSelection),

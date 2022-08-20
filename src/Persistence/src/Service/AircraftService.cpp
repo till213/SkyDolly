@@ -36,7 +36,7 @@
 #include "../Dao/AircraftDaoIntf.h"
 #include <Service/AircraftService.h>
 
-class AircraftServicePrivate
+struct AircraftServicePrivate
 {
 public:
     AircraftServicePrivate() noexcept

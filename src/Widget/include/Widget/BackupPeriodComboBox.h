@@ -32,7 +32,7 @@
 
 #include "WidgetLib.h"
 
-class BackupPeriodComboBoxPrivate;
+struct BackupPeriodComboBoxPrivate;
 
 class WIDGET_API BackupPeriodComboBox : public QComboBox
 {

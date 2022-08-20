@@ -35,7 +35,7 @@ class QDateTime;
 
 class Flight;
 class GpxImportSettings;
-class GpxParserPrivate;
+struct GpxParserPrivate;
 
 class GpxParser
 {

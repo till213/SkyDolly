@@ -74,6 +74,7 @@
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/LogbookManager.h>
+#include "Persistence/Metadata.h"
 #include <Widget/ActionButton.h>
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
@@ -127,9 +128,8 @@ namespace
     };
 }
 
-class MainWindowPrivate
+struct MainWindowPrivate
 {
-public:
     MainWindowPrivate() noexcept
         : previousState(Connect::State::Connected),
           connectedWithLogbook(false),

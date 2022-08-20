@@ -44,9 +44,8 @@
 #include "SecondaryFlightControlWidget.h"
 #include "ui_SecondaryFlightControlWidget.h"
 
-class SecondaryFlightControlWidgetPrivate
+struct SecondaryFlightControlWidgetPrivate
 {
-public:
     SecondaryFlightControlWidgetPrivate(const QWidget &widget) noexcept
         : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))

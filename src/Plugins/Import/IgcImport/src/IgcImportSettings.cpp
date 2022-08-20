@@ -41,9 +41,8 @@ namespace
     constexpr bool DefaultConvertAltitude {true};
 }
 
-class IgcImportSettingsPrivate
+struct IgcImportSettingsPrivate
 {
-public:
     IgcImportSettingsPrivate()
         : altitudeMode(::DefaultAltitudeMode),
           enlThresholdPercent(::DefaultEnlThresholdPercent),

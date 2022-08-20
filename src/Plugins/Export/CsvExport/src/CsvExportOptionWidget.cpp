@@ -30,9 +30,8 @@
 #include "CsvExportSettings.h"
 #include "ui_CsvExportOptionWidget.h"
 
-class CsvExportOptionWidgetPrivate
+struct CsvExportOptionWidgetPrivate
 {
-public:
     CsvExportOptionWidgetPrivate(CsvExportSettings &theSettings) noexcept
         : settings(theSettings)
     {}

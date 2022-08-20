@@ -33,7 +33,7 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/ImportPluginBaseSettings.h>
 
-class GpxImportSettingsPrivate;
+struct GpxImportSettingsPrivate;
 
 class GpxImportSettings : public ImportPluginBaseSettings
 {

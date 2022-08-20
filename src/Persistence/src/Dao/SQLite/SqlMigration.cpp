@@ -43,8 +43,6 @@
 
 namespace
 {
-    constexpr char MigrationDirectory[] = "Resources/migr";
-
     // Also refer to Locations.csv
     constexpr int TitleIndex = 1;
     constexpr int DescriptionIndex = 2;
@@ -62,9 +60,8 @@ namespace
     constexpr int AttributesIndex = 14;
 }
 
-class SqlMigrationPrivate
+struct SqlMigrationPrivate
 {
-public:
     SqlMigrationPrivate()
     {}
 

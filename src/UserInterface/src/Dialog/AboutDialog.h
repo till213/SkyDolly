@@ -31,7 +31,7 @@
 
 class QMousePressEvent;
 
-class AboutDialogPrivate;
+struct AboutDialogPrivate;
 
 namespace Ui {
     class AboutDialog;

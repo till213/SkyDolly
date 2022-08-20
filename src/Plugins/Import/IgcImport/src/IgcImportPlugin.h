@@ -42,7 +42,7 @@ class Flight;
 struct AircraftInfo;
 struct FlightCondition;
 class ImportPluginBaseSettings;
-class IgcImportPluginPrivate;
+struct IgcImportPluginPrivate;
 
 class IgcImportPlugin : public ImportPluginBase
 {

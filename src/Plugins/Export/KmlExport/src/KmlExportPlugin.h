@@ -43,7 +43,7 @@ class Flight;
 class Aircraft;
 struct PositionData;
 struct Waypoint;
-class KmlExportPluginPrivate;
+struct KmlExportPluginPrivate;
 
 class KmlExportPlugin : public ExportPluginBase
 {

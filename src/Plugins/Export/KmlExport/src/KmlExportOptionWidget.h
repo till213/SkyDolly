@@ -34,7 +34,7 @@ namespace Ui {
 }
 
 class KmlExportSettings;
-class KmlExportOptionWidgetPrivate;
+struct KmlExportOptionWidgetPrivate;
 
 class KmlExportOptionWidget : public QWidget
 {

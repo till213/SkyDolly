@@ -55,9 +55,8 @@
 #include "JsonExportSettings.h"
 #include "JsonExportPlugin.h"
 
-class JsonExportPluginPrivate
+struct JsonExportPluginPrivate
 {
-public:
     JsonExportPluginPrivate() noexcept
         : flight(nullptr)
     {}

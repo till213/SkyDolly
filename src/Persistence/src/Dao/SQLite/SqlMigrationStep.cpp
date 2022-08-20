@@ -35,9 +35,8 @@
 
 #include "SqlMigrationStep.h"
 
-class SqlMigrationStepPrivate
+struct SqlMigrationStepPrivate
 {
-public:
     SqlMigrationStepPrivate()
     {}
 

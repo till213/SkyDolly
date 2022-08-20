@@ -37,9 +37,8 @@
 #include <LocationSelector.h>
 #include <Service/LocationService.h>
 
-class LocationServicePrivate
+struct LocationServicePrivate
 {
-public:
     LocationServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           locationDao(daoFactory->createLocationDao())

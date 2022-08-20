@@ -32,10 +32,10 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QTimeZone>
+#include <QSqlDriver>
 #ifdef DEBUG
 #include <QDebug>
 #endif
-#include <QSqlDriver>
 
 #include <Kernel/Enum.h>
 #include <Model/Aircraft.h>
@@ -54,9 +54,7 @@
 #include <Model/LightData.h>
 #include <Model/FlightPlan.h>
 #include <Model/Waypoint.h>
-#include "../../Dao/FlightDaoIntf.h"
 #include "../../Dao/AircraftTypeDaoIntf.h"
-#include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/PositionDaoIntf.h"
 #include "../../Dao/EngineDaoIntf.h"
 #include "../../Dao/PrimaryFlightControlDaoIntf.h"
@@ -67,9 +65,8 @@
 #include "../../Dao/DaoFactory.h"
 #include "SQLiteAircraftDao.h"
 
-class SQLiteAircraftDaoPrivate
+struct SQLiteAircraftDaoPrivate
 {
-public:
     SQLiteAircraftDaoPrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           aircraftTypeDao(daoFactory->createAircraftTypeDao()),

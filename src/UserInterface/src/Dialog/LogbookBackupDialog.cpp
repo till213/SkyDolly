@@ -40,9 +40,8 @@
 #include "LogbookBackupDialog.h"
 #include "ui_LogbookBackupDialog.h"
 
-class LogbookBackupDialogPrivate
+struct LogbookBackupDialogPrivate
 {
-public:
     LogbookBackupDialogPrivate()
         : databaseService(std::make_unique<DatabaseService>())
     {}

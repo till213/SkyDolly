@@ -41,7 +41,7 @@ class QDateTime;
 
 class Aircraft;
 
-class CsvExportPluginPrivate;
+struct CsvExportPluginPrivate;
 
 class CsvExportPlugin : public ExportPluginBase
 {

@@ -46,9 +46,8 @@
  *      - if the timestamp is greater than the last timestamp -> continue the existing track (keep adding to current Positions)
  *      - else start a new track (add a new Position list entry) -> new aircraft
  */
-class GpxParserPrivate
+struct GpxParserPrivate
 {
-public:
     GpxParserPrivate(Flight &theFlight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &thePluginSettings) noexcept
         : flight(theFlight),
           xml(xmlStreamReader),

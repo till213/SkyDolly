@@ -49,12 +49,11 @@ namespace
     constexpr char DisabledColor[] = "#aaa";
 }
 
-class KmlExportOptionWidgetPrivate
+struct KmlExportOptionWidgetPrivate
 {
-public:
     KmlExportOptionWidgetPrivate(KmlExportSettings &theSettings) noexcept
-        : settings(theSettings),
-          colorButtonGroup(std::make_unique<QButtonGroup>())
+        : colorButtonGroup(std::make_unique<QButtonGroup>()),
+          settings(theSettings)
     {}
 
     std::unique_ptr<QButtonGroup> colorButtonGroup;

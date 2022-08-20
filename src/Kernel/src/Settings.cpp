@@ -54,9 +54,8 @@ namespace
     constexpr char DefaultEgmFileName[] = "egm2008-5.pgm";
 }
 
-class SettingsPrivate
+struct SettingsPrivate
 {
-public:
     QSettings settings;
     Version version;
 

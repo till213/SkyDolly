@@ -35,7 +35,7 @@ class QXmlStreamReader;
 #include "AbstractKmlTrackParser.h"
 
 class Flight;
-class FlightAwareKmlParserPrivate;
+struct FlightAwareKmlParserPrivate;
 
 class FlightAwareKmlParser : public AbstractKmlTrackParser
 {

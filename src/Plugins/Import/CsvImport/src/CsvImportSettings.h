@@ -33,7 +33,7 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/ImportPluginBaseSettings.h>
 
-class CsvImportSettingsPrivate;
+struct CsvImportSettingsPrivate;
 
 class CsvImportSettings : public ImportPluginBaseSettings
 {

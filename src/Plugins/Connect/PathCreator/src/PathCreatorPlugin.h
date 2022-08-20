@@ -38,7 +38,7 @@ class Flight;
 class Aircraft;
 struct PositionData;
 struct InitialPosition;
-class PathCreatorPluginPrivate;
+struct PathCreatorPluginPrivate;
 
 class PathCreatorPlugin : public AbstractSkyConnect
 {

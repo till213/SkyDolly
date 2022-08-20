@@ -36,9 +36,8 @@
 #include "FlightConditionWidget.h"
 #include "ui_FlightConditionWidget.h"
 
-class FlightConditionWidgetPrivate
+struct FlightConditionWidgetPrivate
 {
-public:
     FlightConditionWidgetPrivate() noexcept
     {}
 

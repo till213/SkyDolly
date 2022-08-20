@@ -35,10 +35,9 @@ class QHideEvent;
 #include <Model/TimeVariableData.h>
 #include "AbstractSimulationVariableWidget.h"
 
-
 class SkyConnectIntf;
 struct AircraftHandleData;
-class AircraftHandleWidgetPrivate;
+struct AircraftHandleWidgetPrivate;
 
 namespace Ui {
     class AircraftHandleWidget;

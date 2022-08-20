@@ -37,9 +37,8 @@ namespace
     constexpr KmlImportSettings::Format DefaultFormat {KmlImportSettings::Format::FlightAware};
 }
 
-class KmlImportSettingsPrivate
+struct KmlImportSettingsPrivate
 {
-public:
     KmlImportSettingsPrivate()
         : format(::DefaultFormat)
     {}

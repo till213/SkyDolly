@@ -39,7 +39,6 @@
 #include <QDate>
 #include <QTime>
 
-#include "Convert.h"
 #include "Unit.h"
 
 namespace {
@@ -59,7 +58,7 @@ namespace {
     constexpr int CoordinatePrecision = 6;
 }
 
-class UnitPrivate {
+struct UnitPrivate {
 public:
     UnitPrivate()
     {}

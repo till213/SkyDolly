@@ -28,9 +28,8 @@
 #include <Kernel/Settings.h>
 #include "PluginBase.h"
 
-class PluginBasePrivate
+struct PluginBasePrivate
 {
-public:
     PluginBasePrivate()
         : parent(nullptr)
     {}

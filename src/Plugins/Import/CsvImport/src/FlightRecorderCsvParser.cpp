@@ -115,9 +115,8 @@ namespace
     constexpr int InvalidIdx = std::numeric_limits<int>::max();
 }
 
-class FlightRecorderCsvParserPrivate
+struct FlightRecorderCsvParserPrivate
 {
-public:
     FlightRecorderCsvParserPrivate()
         : flight(nullptr)
     {
@@ -145,7 +144,7 @@ FlightRecorderCsvParser::~FlightRecorderCsvParser() noexcept
 #endif
 }
 
-bool FlightRecorderCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept
+bool FlightRecorderCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
 {
     d->flight = &flight;
     firstDateTimeUtc = QFileInfo(file).birthTime().toUTC();

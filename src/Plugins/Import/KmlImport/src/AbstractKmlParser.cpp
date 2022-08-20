@@ -39,9 +39,8 @@
 #include "Kml.h"
 #include "AbstractKmlParser.h"
 
-class AbstractKmlParserPrivate
+struct AbstractKmlParserPrivate
 {
-public:
     AbstractKmlParserPrivate() noexcept
         : flight(nullptr),
           xml(nullptr)

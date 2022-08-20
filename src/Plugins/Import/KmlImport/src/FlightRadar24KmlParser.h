@@ -35,7 +35,7 @@ class QXmlStreamReader;
 #include "KmlParserIntf.h"
 
 class Flight;
-class FlightRadar24KmlParserPrivate;
+struct FlightRadar24KmlParserPrivate;
 
 class FlightRadar24KmlParser : public KmlParserIntf
 {

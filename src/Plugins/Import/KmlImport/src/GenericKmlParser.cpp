@@ -27,16 +27,13 @@
 #include <QString>
 #include <QXmlStreamReader>
 
-#include "Kml.h"
 #include "AbstractKmlTrackParser.h"
 #include "GenericKmlParser.h"
 
-class GenericKmlParserPrivate
+struct GenericKmlParserPrivate
 {
-public:
     GenericKmlParserPrivate() noexcept
     {}
-
 };
 
 // PUBLIC

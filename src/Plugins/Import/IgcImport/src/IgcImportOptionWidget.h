@@ -34,7 +34,7 @@ namespace Ui {
 }
 
 class IgcImportSettings;
-class IgcImportOptionWidgetPrivate;
+struct IgcImportOptionWidgetPrivate;
 
 class IgcImportOptionWidget : public QWidget
 {

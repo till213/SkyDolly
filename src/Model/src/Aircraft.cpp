@@ -33,7 +33,6 @@
 #endif
 
 #include "TimeVariableData.h"
-#include "SkySearch.h"
 #include "AircraftInfo.h"
 #include "Position.h"
 #include "PositionData.h"
@@ -50,7 +49,7 @@
 #include "FlightPlan.h"
 #include "Aircraft.h"
 
-class AircraftPrivate
+struct AircraftPrivate
 {
 public:
     AircraftPrivate() noexcept

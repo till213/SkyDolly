@@ -44,9 +44,8 @@
 #include "EngineWidget.h"
 #include "ui_EngineWidget.h"
 
-class EngineWidgetPrivate
+struct EngineWidgetPrivate
 {
-public:
     EngineWidgetPrivate(const QWidget &widget) noexcept
         : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))

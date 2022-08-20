@@ -35,7 +35,7 @@ class QDateTime;
 #include <Metadata.h>
 #include "../DatabaseDaoIntf.h"
 
-class DatabaseDaoPrivate;
+struct DatabaseDaoPrivate;
 
 class SQLiteDatabaseDao : public DatabaseDaoIntf
 {

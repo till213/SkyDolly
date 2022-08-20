@@ -54,9 +54,8 @@ namespace
     inline const QString DirectionColumn = QStringLiteral("Direction");
 }
 
-class FlightRadar24CsvWriterPrivate
+struct FlightRadar24CsvWriterPrivate
 {
-public:
     FlightRadar24CsvWriterPrivate(const CsvExportSettings &thePluginSettings) noexcept
         : pluginSettings(thePluginSettings)
     {}

@@ -38,9 +38,8 @@ namespace
     constexpr bool DefaultAddToFlightEnabled = false;
 }
 
-class ImportPluginBaseSettingsPrivate
+struct ImportPluginBaseSettingsPrivate
 {
-public:
     ImportPluginBaseSettingsPrivate()
         : importDirectoryEnabled(::DefaultImportDirectoryEnabled),
           addToFlightEnabled(::DefaultAddToFlightEnabled)

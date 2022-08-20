@@ -32,7 +32,7 @@
 class QShowEvent;
 class QHideEvent;
 
-class FlightConditionWidgetPrivate;
+struct FlightConditionWidgetPrivate;
 
 namespace Ui {
     class FlightConditionWidget;

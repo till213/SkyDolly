@@ -52,9 +52,8 @@
 #include "GpxParser.h"
 #include "GpxImportPlugin.h"
 
-class GpxImportPluginPrivate
+struct GpxImportPluginPrivate
 {
-public:
     GpxImportPluginPrivate()
         : flight(nullptr)
     {}

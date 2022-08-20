@@ -42,7 +42,7 @@ class DatabaseDaoIntf;
 class LocationDaoIntf;
 class EnumerationDaoIntf;
 
-class DaoFactoryPrivate;
+struct DaoFactoryPrivate;
 
 class DaoFactory
 {

@@ -52,9 +52,8 @@ namespace
     constexpr char AllStyleMapId[] = "sm_all_style";
 }
 
-class KmlStyleExportPrivate
+struct KmlStyleExportPrivate
 {
-public:
     KmlStyleExportPrivate(const KmlExportSettings &theExportSettings) noexcept
         : settings(theExportSettings),
           jetColorRampIndex(0),

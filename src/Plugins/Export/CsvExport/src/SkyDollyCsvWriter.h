@@ -43,7 +43,7 @@ struct SecondaryFlightControlData;
 struct AircraftHandleData;
 struct LightData;
 class CsvExportSettings;
-class SkyDollyCsvWriterPrivate;
+struct SkyDollyCsvWriterPrivate;
 
 class SkyDollyCsvWriter : public CsvWriterIntf
 {

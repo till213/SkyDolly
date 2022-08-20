@@ -29,9 +29,8 @@
 #include "KmlImportSettings.h"
 #include "ui_KmlImportOptionWidget.h"
 
-class KmlImportOptionWidgetPrivate
+struct KmlImportOptionWidgetPrivate
 {
-public:
     KmlImportOptionWidgetPrivate(KmlImportSettings &theImportSettings) noexcept
         : settings(theImportSettings)
     {}

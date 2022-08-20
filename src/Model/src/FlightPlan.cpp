@@ -32,9 +32,8 @@
 #include "Waypoint.h"
 #include "FlightPlan.h"
 
-class FlightPlanPrivate
+struct FlightPlanPrivate
 {
-public:
     FlightPlanPrivate() noexcept
     {}
 

@@ -32,7 +32,7 @@
 class QShowEvent;
 class QHideEvent;
 
-class SimulationVariablesDialogPrivate;
+struct SimulationVariablesDialogPrivate;
 
 namespace Ui {
     class SimulationVariablesDialog;

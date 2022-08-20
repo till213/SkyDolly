@@ -29,9 +29,8 @@
 #include "IgcExportSettings.h"
 #include "ui_IgcExportOptionWidget.h"
 
-class IgcExportOptionWidgetPrivate
+struct IgcExportOptionWidgetPrivate
 {
-public:
     IgcExportOptionWidgetPrivate(IgcExportSettings &theSettings) noexcept
         : settings(theSettings)
     {}

@@ -37,7 +37,7 @@ class QWidget;
 class Flight;
 struct AircraftType;
 class ImportPluginBaseSettings;
-class BasicImportDialogPrivate;
+struct BasicImportDialogPrivate;
 
 namespace Ui {
     class BasicImportDialog;

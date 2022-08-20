@@ -38,9 +38,8 @@ namespace
     constexpr int MaximumSpeed = 999;
 }
 
-class GpxImportOptionWidgetPrivate
+struct GpxImportOptionWidgetPrivate
 {
-public:
     GpxImportOptionWidgetPrivate(GpxImportSettings &theImportSettings) noexcept
         : settings(theImportSettings)
     {}

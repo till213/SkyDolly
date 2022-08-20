@@ -41,9 +41,8 @@ namespace
     constexpr GpxExportSettings::TimestampMode DefaultTimestampMode {GpxExportSettings::TimestampMode::Simulation};
 }
 
-class GpxExportSettingsPrivate
+struct GpxExportSettingsPrivate
 {
-public:
     GpxExportSettingsPrivate()
     : timestampMode(::DefaultTimestampMode)
     {}

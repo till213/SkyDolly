@@ -32,7 +32,7 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/ExportPluginBaseSettings.h>
 
-class JsonExportSettingsPrivate;
+struct JsonExportSettingsPrivate;
 
 class JsonExportSettings : public ExportPluginBaseSettings
 {

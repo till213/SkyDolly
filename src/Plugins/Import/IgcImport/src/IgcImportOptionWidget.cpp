@@ -32,9 +32,8 @@
 #include "IgcImportSettings.h"
 #include "ui_IgcImportOptionWidget.h"
 
-class IgcImportOptionWidgetPrivate
+struct IgcImportOptionWidgetPrivate
 {
-public:
     IgcImportOptionWidgetPrivate(IgcImportSettings &theImportSettings) noexcept
         : settings(theImportSettings)
     {}

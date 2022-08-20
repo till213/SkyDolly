@@ -41,9 +41,8 @@
 #include "AbstractKmlParser.h"
 #include "AbstractKmlTrackParser.h"
 
-class AbstractKmlTrackParserPrivate
+struct AbstractKmlTrackParserPrivate
 {
-public:
     AbstractKmlTrackParserPrivate() noexcept
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());

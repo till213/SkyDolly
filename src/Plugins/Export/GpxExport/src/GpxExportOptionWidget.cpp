@@ -30,9 +30,8 @@
 #include "GpxExportSettings.h"
 #include "ui_GpxExportOptionWidget.h"
 
-class GpxExportOptionWidgetPrivate
+struct GpxExportOptionWidgetPrivate
 {
-public:
     GpxExportOptionWidgetPrivate(GpxExportSettings &theSettings) noexcept
         : settings(theSettings)
     {}

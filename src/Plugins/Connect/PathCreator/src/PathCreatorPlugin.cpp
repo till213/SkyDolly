@@ -69,9 +69,8 @@ namespace {
     const int ReplayPeriod = static_cast<int>(std::round(1000.0 / ReplayRate));
 }
 
-class PathCreatorPluginPrivate
+struct PathCreatorPluginPrivate
 {
-public:
     PathCreatorPluginPrivate() noexcept
         : randomGenerator(QRandomGenerator::global())
     {

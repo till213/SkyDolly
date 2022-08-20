@@ -34,9 +34,8 @@
 #include <Persistence/Service/AircraftTypeService.h>
 #include "AircraftSelectionComboBox.h"
 
-class AircraftSelectionComboBoxPrivate
+struct AircraftSelectionComboBoxPrivate
 {
-public:
     AircraftSelectionComboBoxPrivate() noexcept
         : aircraftTypeService(std::make_unique<AircraftTypeService>())
     {}

@@ -46,9 +46,8 @@
 #include "ExportPluginBaseSettings.h"
 #include "ExportPluginBase.h"
 
-class ExportPluginBasePrivate
+struct ExportPluginBasePrivate
 {
-public:
     ExportPluginBasePrivate()
     {}
 

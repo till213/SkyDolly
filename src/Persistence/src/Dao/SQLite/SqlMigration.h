@@ -31,7 +31,7 @@
 
 class QRegularExpressionMatch;
 
-class SqlMigrationPrivate;
+struct SqlMigrationPrivate;
 
 class SqlMigration
 {

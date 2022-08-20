@@ -44,7 +44,7 @@ class Flight;
 class Aircraft;
 struct EngineData;
 struct Waypoint;
-class IgcExportPluginPrivate;
+struct IgcExportPluginPrivate;
 
 class IgcExportPlugin : public ExportPluginBase
 {
