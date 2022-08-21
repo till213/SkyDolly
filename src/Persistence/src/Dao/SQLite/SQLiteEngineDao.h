@@ -40,7 +40,7 @@ public:
     ~SQLiteEngineDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const EngineData &data) noexcept override;
-    bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<EngineData>> backInsertIterator) const noexcept override;
+    std::vector<EngineData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };

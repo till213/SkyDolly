@@ -27,11 +27,11 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
-#include <Model/AircraftHandleData.h>
 #include "../HandleDaoIntf.h"
+
+struct AircraftHandleData;
 
 class SQLiteHandleDao : public HandleDaoIntf
 {
@@ -40,7 +40,7 @@ public:
     ~SQLiteHandleDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const AircraftHandleData &data) noexcept override;
-    bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<AircraftHandleData>> backInsertIterator) const noexcept override;
+    std::vector<AircraftHandleData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };

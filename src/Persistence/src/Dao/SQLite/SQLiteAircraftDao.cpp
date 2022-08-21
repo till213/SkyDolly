@@ -227,22 +227,22 @@ std::vector<std::unique_ptr<Aircraft>> SQLiteAircraftDao::getByFlightId(std::int
             aircraft->setAircraftInfo(info);
             aircraft->getPosition().setData(d->positionDao->getByAircraftId(aircraft->getId(), &success));
             if (success) {
-                success = d->engineDao->getByAircraftId(aircraft->getId(), aircraft->getEngine().backInsertIterator());
+                aircraft->getEngine().setData(d->engineDao->getByAircraftId(aircraft->getId(), &success));
             }
             if (success) {
-                success = d->primaryFlightControlDao->getByAircraftId(aircraft->getId(), aircraft->getPrimaryFlightControl().backInsertIterator());
+                aircraft->getPrimaryFlightControl().setData(d->primaryFlightControlDao->getByAircraftId(aircraft->getId(), &success));
             }
             if (success) {
-                success = d->secondaryFlightControlDao->getByAircraftId(aircraft->getId(), aircraft->getSecondaryFlightControl().backInsertIterator());
+                aircraft->getSecondaryFlightControl().setData(d->secondaryFlightControlDao->getByAircraftId(aircraft->getId(), &success));
             }
             if (success) {
-                success = d->handleDao->getByAircraftId(aircraft->getId(), aircraft->getAircraftHandle().backInsertIterator());
+                aircraft->getAircraftHandle().setData(d->handleDao->getByAircraftId(aircraft->getId(), &success));
             }
             if (success) {
-                success = d->lightDao->getByAircraftId(aircraft->getId(), aircraft->getLight().backInsertIterator());
+                aircraft->getLight().setData(d->lightDao->getByAircraftId(aircraft->getId(), &success));
             }
             if (success) {
-                success = d->waypointDao->getByAircraftId(aircraft->getId(), aircraft->getFlightPlan());
+                aircraft->getFlightPlan().setData(d->waypointDao->getByAircraftId(aircraft->getId(), &success));
             }
             if (success) {
                 aircraftList.push_back(std::move(aircraft));

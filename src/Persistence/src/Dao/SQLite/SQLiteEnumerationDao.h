@@ -27,9 +27,8 @@
 
 #include <QString>
 
+#include <Model/Enumeration.h>
 #include "../EnumerationDaoIntf.h"
-
-class Enumeration;
 
 class SQLiteEnumerationDao : public EnumerationDaoIntf
 {
@@ -37,7 +36,7 @@ public:
     SQLiteEnumerationDao() noexcept;
     ~SQLiteEnumerationDao() noexcept override;
 
-    bool get(Enumeration &enumeration) const noexcept override;
+    Enumeration get(bool *ok = nullptr) const noexcept override;
 };
 
 #endif // SQLITEENUMERATIONDAO_H

@@ -26,7 +26,6 @@
 #define PRIMARYFLIGHTCONTROLDAOINTF_H
 
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
 struct PrimaryFlightControlData;
@@ -46,7 +45,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(std::int64_t aircraftId, const PrimaryFlightControlData &primaryFlightControlData) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<PrimaryFlightControlData>> backInsertIterator) const noexcept = 0;
+    virtual std::vector<PrimaryFlightControlData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept = 0;
     virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
     virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
 };

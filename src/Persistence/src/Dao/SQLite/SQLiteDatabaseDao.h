@@ -53,9 +53,9 @@ public:
     bool updateNextBackupDate(const QDateTime &date) noexcept override;
     bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept override;
 
-    bool getMetadata(Metadata &metadata) const noexcept override;
-    bool getDatabaseVersion(Version &databaseVersion) const noexcept override;
-    bool getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept override;
+    Metadata getMetadata(bool *ok = nullptr) const noexcept override;
+    Version getDatabaseVersion(bool *ok = nullptr) const noexcept override;
+    QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept override;
 
 private:
     Q_DISABLE_COPY(SQLiteDatabaseDao)
