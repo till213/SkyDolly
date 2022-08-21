@@ -25,12 +25,12 @@
 #ifndef DATABASEDAOINTF_H
 #define DATABASEDAOINTF_H
 
-#include <QString>;
+#include <QString>
 
 class QDateTime;
 
 #include <Kernel/Version.h>
-#include <Metadata.h>
+#include "Metadata.h"
 
 class DatabaseDaoIntf
 {
@@ -47,8 +47,8 @@ public:
     virtual bool updateNextBackupDate(const QDateTime &date) noexcept = 0;
     virtual bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept = 0;
 
-    virtual Metadata getMetadata(bool *ok = nullptr const noexcept = 0;
-    virtual Version getDatabaseVersion(bool *ok = nullptr const noexcept = 0;
+    virtual Metadata getMetadata(bool *ok = nullptr) const noexcept = 0;
+    virtual Version getDatabaseVersion(bool *ok = nullptr) const noexcept = 0;
     virtual QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept = 0;
 };
 

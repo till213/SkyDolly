@@ -29,8 +29,9 @@
 #include <vector>
 #include <cstdint>
 
-#include <Model/PositionData.h>
 #include "../PositionDaoIntf.h"
+
+struct PositionData;
 
 class SQLitePositionDao : public PositionDaoIntf
 {

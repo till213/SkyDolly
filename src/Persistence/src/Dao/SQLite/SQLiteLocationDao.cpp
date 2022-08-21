@@ -37,6 +37,13 @@
 #include <LocationSelector.h>
 #include "SQLiteLocationDao.h"
 
+namespace
+{
+    // The initial capacity of the location vector (e.g. SQLite does not support returning
+    // the result count for the given SELECT query)
+    constexpr int DefaultCapacity = 25;
+}
+
 // PUBIC
 
 SQLiteLocationDao::SQLiteLocationDao() noexcept
@@ -180,8 +187,9 @@ bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
     return ok;
 }
 
-bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
+std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
 {
+    std::vector<Location> location;
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -190,8 +198,14 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
         "order by l.id;"
     );
 
-    const bool ok = query.exec();
-    if (ok) {
+    const bool success = query.exec();
+    if (success) {
+        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        if (querySizeFeature) {
+            location.reserve(query.size());
+        } else {
+            location.reserve(::DefaultCapacity);
+        }
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
         const int titleIdx = record.indexOf("title");
@@ -237,7 +251,10 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
         qDebug() << "SQLiteLocationDao::getAll: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return location;
 }
 
 /// \todo IMPLEMENT ME

@@ -48,11 +48,13 @@ public:
      * | BackupPeriod       | enum_backup_period     |
      * | LocationCategory   | enum_location_category |
      *
+     * \param name
+     *        the name of the enumeration; in camelCase
      * \param ok
      *        if provided, set to \c true if successful; \c false else (enumeration does not exist; no DB connection)
-     * \return the Enumeration as defined on the database, with an already assigned name (camelCase)
+     * \return the Enumeration as defined on the database
      */
-    virtual Enumeration get(bool *ok = nullptr) const noexcept = 0;
+    virtual Enumeration get(const QString &name, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // ENUMERATIONDAOINTF_H

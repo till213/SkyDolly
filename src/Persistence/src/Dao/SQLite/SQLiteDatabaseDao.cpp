@@ -151,12 +151,13 @@ bool SQLiteDatabaseDao::updateBackupDirectoryPath(const QString &backupDirectory
     return query.exec();
 }
 
-bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
+Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
 {
+    Metadata metadata;
     QSqlQuery query;
     query.setForwardOnly(true);
 
-    const bool ok = query.exec(
+    const bool success = query.exec(
         "select m.creation_date,"
         "       m.app_version,"
         "       m.last_optim_date,"
@@ -168,7 +169,7 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
         "join enum_backup_period ebp "
         "on m.backup_period_id = ebp.id;"
     );
-    if (ok && query.next()) {
+    if (success && query.next()) {
         QDateTime dateTime = query.value(0).toDateTime();
         dateTime.setTimeZone(QTimeZone::utc());
         metadata.creationDate = dateTime.toLocalTime();
@@ -191,28 +192,39 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
         metadata.backupDirectoryPath = query.value(5).toString();
         metadata.backupPeriodSymId = query.value(6).toString();
     }
-    return ok;
-};
-
-bool SQLiteDatabaseDao::getDatabaseVersion(Version &databaseVersion) const noexcept
-{
-    QSqlQuery query;
-    const bool ok = query.exec("select m.app_version from metadata m;");
-    if (ok && query.next()) {
-        QString appVersion = query.value(0).toString();
-        databaseVersion.fromString(appVersion);
+    if (ok != nullptr) {
+        *ok = success;
     }
-    return ok;
+    return metadata;
 };
 
-bool SQLiteDatabaseDao::getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept
+Version SQLiteDatabaseDao::getDatabaseVersion(bool *ok) const noexcept
 {
+    Version version;
     QSqlQuery query;
-    const bool ok = query.exec("select m.backup_directory_path from metadata m;");
+    const bool success = query.exec("select m.app_version from metadata m;");
+    if (success && query.next()) {
+        QString appVersion = query.value(0).toString();
+        version.fromString(appVersion);
+    }
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return version;
+};
+
+QString SQLiteDatabaseDao::getBackupDirectoryPath(bool *ok) const noexcept
+{
+    QString backupDirectoryPath;
+    QSqlQuery query;
+    const bool success = query.exec("select m.backup_directory_path from metadata m;");
     if (ok && query.next()) {
         backupDirectoryPath = query.value(0).toString();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return backupDirectoryPath;
 };
 
 // PRIVATE

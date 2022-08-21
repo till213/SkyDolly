@@ -27,11 +27,11 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
-#include <Model/SecondaryFlightControlData.h>
 #include "../SecondaryFlightControlDaoIntf.h"
+
+struct SecondaryFlightControlData;
 
 class SQLiteSecondaryFlightControlDao : public SecondaryFlightControlDaoIntf
 {
@@ -40,7 +40,7 @@ public:
     ~SQLiteSecondaryFlightControlDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const SecondaryFlightControlData &data) noexcept override;
-    bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<SecondaryFlightControlData>> backInsertIterator) const noexcept override;
+    std::vector<SecondaryFlightControlData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };

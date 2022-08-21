@@ -27,11 +27,11 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
-#include <Model/PrimaryFlightControlData.h>
 #include "../PrimaryFlightControlDaoIntf.h"
+
+struct PrimaryFlightControlData;
 
 class SQLitePrimaryFlightControlDao : public PrimaryFlightControlDaoIntf
 {
@@ -40,7 +40,7 @@ public:
     ~SQLitePrimaryFlightControlDao() noexcept override;
 
     bool add(std::int64_t aircraftId, const PrimaryFlightControlData &data) noexcept override;
-    bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<PrimaryFlightControlData>> backInsertIterator) const noexcept override;
+    std::vector<PrimaryFlightControlData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };

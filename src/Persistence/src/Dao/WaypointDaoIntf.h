@@ -28,7 +28,7 @@
 #include <cstdint>
 
 class FlightPlan;
-struct Waypoint;
+class Waypoint;
 
 class WaypointDaoIntf
 {
@@ -45,7 +45,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept = 0;
-    virtual FlightPlan getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept = 0;
+    virtual bool getByAircraftId(std::int64_t aircraftId, FlightPlan &flightPlan) const noexcept = 0;
     virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
     virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
 };

@@ -27,11 +27,11 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
-#include <Model/EngineData.h>
 #include "../EngineDaoIntf.h"
+
+struct EngineData;
 
 class SQLiteEngineDao : public EngineDaoIntf
 {

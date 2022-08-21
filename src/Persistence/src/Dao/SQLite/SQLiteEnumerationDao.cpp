@@ -44,8 +44,9 @@ SQLiteEnumerationDao::SQLiteEnumerationDao() noexcept
 SQLiteEnumerationDao::~SQLiteEnumerationDao() noexcept
 {}
 
-bool SQLiteEnumerationDao::get(Enumeration &enumeration) const noexcept
+Enumeration SQLiteEnumerationDao::get(const QString &name, bool *ok) const noexcept
 {
+    Enumeration enumeration {name};
     const QString enumerationTableName = QStringLiteral("enum_") % Name::fromCamelCase(enumeration.getName());
 
     QSqlQuery query;
@@ -56,8 +57,8 @@ bool SQLiteEnumerationDao::get(Enumeration &enumeration) const noexcept
         "order by e.id asc;"
     );
 
-    const bool ok = query.exec();
-    if (ok) {
+    const bool success = query.exec();
+    if (success) {
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
         const int symbolicIdIdx = record.indexOf("sym_id");
@@ -74,5 +75,8 @@ bool SQLiteEnumerationDao::get(Enumeration &enumeration) const noexcept
 #endif
     }
 
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return enumeration;
 }

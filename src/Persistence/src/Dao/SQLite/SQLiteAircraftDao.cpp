@@ -95,7 +95,7 @@ namespace
     // The initial capacity of the position vector (e.g. SQLite does not support returning
     // the result count for the given SELECT query)
     // Most flighs have only one aircraft
-    constexpr int DefaultAircraftInfoCapacity = 1;
+    constexpr int DefaultCapacity = 1;
 }
 
 // PUBLIC
@@ -242,7 +242,7 @@ std::vector<std::unique_ptr<Aircraft>> SQLiteAircraftDao::getByFlightId(std::int
                 aircraft->getLight().setData(d->lightDao->getByAircraftId(aircraft->getId(), &success));
             }
             if (success) {
-                aircraft->getFlightPlan().setData(d->waypointDao->getByAircraftId(aircraft->getId(), &success));
+                success = d->waypointDao->getByAircraftId(aircraft->getId(), aircraft->getFlightPlan());
             }
             if (success) {
                 aircraftList.push_back(std::move(aircraft));
@@ -379,7 +379,7 @@ std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int
         if (querySizeFeature) {
             aircraftInfos.reserve(query.size());
         } else {
-            aircraftInfos.reserve(::DefaultAircraftInfoCapacity);
+            aircraftInfos.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");

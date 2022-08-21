@@ -30,11 +30,10 @@
 #include <cstdint>
 #include <cstddef>
 
-#include <QtGlobal>
-
-#include <Model/Aircraft.h>
 #include "../AircraftDaoIntf.h"
 
+class Aircraft;
+struct AircraftInfo;
 struct SQLiteAircraftDaoPrivate;
 
 class SQLiteAircraftDao : public AircraftDaoIntf

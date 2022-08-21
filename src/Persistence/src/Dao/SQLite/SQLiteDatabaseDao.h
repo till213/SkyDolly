@@ -27,13 +27,13 @@
 
 #include <memory>
 
-#include <QtGlobal>
+#include <QString>
 
-class QString;
 class QDateTime;
 
-#include <Metadata.h>
+#include <Kernel/Version.h>
 #include "../DatabaseDaoIntf.h"
+#include "Metadata.h"
 
 struct DatabaseDaoPrivate;
 

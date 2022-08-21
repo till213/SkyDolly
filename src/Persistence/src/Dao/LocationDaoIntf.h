@@ -40,7 +40,7 @@ public:
     virtual bool update(const Location &location) noexcept = 0;
     virtual bool deleteById(std::int64_t id) noexcept = 0;
     virtual std::vector<Location> getAll(bool *ok = nullptr) const noexcept = 0;
-    virtual std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) noexcept = 0;
+    virtual std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // LOCATIONDAOINTF_H

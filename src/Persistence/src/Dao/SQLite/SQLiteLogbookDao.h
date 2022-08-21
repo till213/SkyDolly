@@ -28,13 +28,10 @@
 #include <memory>
 #include <forward_list>
 #include <vector>
-#include <iterator>
 
-#include <QtGlobal>
-
-#include <FlightSelector.h>
 #include "../LogbookDaoIntf.h"
 
+struct FlightSelector;
 struct FlightDate;
 struct FlightSummary;
 

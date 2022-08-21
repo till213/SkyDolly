@@ -25,7 +25,7 @@
 #ifndef SQLITEENUMERATIONDAO_H
 #define SQLITEENUMERATIONDAO_H
 
-#include <QString>
+class QString;
 
 #include <Model/Enumeration.h>
 #include "../EnumerationDaoIntf.h"
@@ -36,7 +36,7 @@ public:
     SQLiteEnumerationDao() noexcept;
     ~SQLiteEnumerationDao() noexcept override;
 
-    Enumeration get(bool *ok = nullptr) const noexcept override;
+    Enumeration get(const QString &name, bool *ok = nullptr) const noexcept override;
 };
 
 #endif // SQLITEENUMERATIONDAO_H
