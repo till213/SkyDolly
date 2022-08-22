@@ -60,8 +60,8 @@ struct SecondaryFlightControlWidgetPrivate
 
 SecondaryFlightControlWidget::SecondaryFlightControlWidget(QWidget *parent) noexcept :
     AbstractSimulationVariableWidget(parent),
-    d(std::make_unique<SecondaryFlightControlWidgetPrivate>(*this)),
-    ui(std::make_unique<Ui::SecondaryFlightControlWidget>())
+    ui(std::make_unique<Ui::SecondaryFlightControlWidget>()),
+    d(std::make_unique<SecondaryFlightControlWidgetPrivate>(*this))
 {
     ui->setupUi(this);
     initUi();

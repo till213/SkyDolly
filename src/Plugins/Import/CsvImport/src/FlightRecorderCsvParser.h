@@ -45,9 +45,9 @@ class FlightRecorderCsvParser : public CsvParserIntf
 {
 public:
     FlightRecorderCsvParser() noexcept;
-    virtual ~FlightRecorderCsvParser() noexcept;
+    ~FlightRecorderCsvParser() noexcept override;
 
-    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+    bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
 
 private:
     std::unique_ptr<FlightRecorderCsvParserPrivate> d;

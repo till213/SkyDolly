@@ -53,7 +53,7 @@ public:
     static QString getStyleUrl(Icon icon) noexcept;
 
 private:
-    std::unique_ptr<KmlStyleExportPrivate> d;
+    const std::unique_ptr<KmlStyleExportPrivate> d;
 
     void initialiseColorRamps() noexcept;
     bool exportHighlightLineStyle(QIODevice &io) const noexcept;

@@ -44,7 +44,7 @@ public:
     };
 
     GpxExportSettings() noexcept;
-    virtual ~GpxExportSettings() noexcept;
+    ~GpxExportSettings() noexcept override;
 
     TimestampMode getTimestampMode() const noexcept;
     void setTimestampMode(TimestampMode timestampMode) noexcept;
@@ -56,13 +56,13 @@ signals:
     void extendedSettingsChanged();
 
 protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
 
 private:
-    std::unique_ptr<GpxExportSettingsPrivate> d;
+    const std::unique_ptr<GpxExportSettingsPrivate> d;
 };
 
 #endif // GPXEXPORTSETTINGS_H

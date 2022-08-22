@@ -78,8 +78,9 @@ Version::Version(const Version &other) noexcept
 {}
 
 Version::Version(Version &&other) noexcept
-    : d(std::move(other.d))
-{}
+{
+    *d = std::move(*other.d);
+}
 
 void Version::fromString(QStringView version) noexcept
 {
@@ -120,9 +121,10 @@ bool Version::isNull() const noexcept
     return d->major == 0 && d->minor == 0 && d->patch == 0;
 }
 
-void Version::operator=(const Version &rhs) noexcept
+Version &Version::operator=(const Version &rhs) noexcept
 {
-    d = std::make_unique<VersionPrivate>(rhs.d->major, rhs.d->minor, rhs.d->patch);
+    *d = *rhs.d;
+    return *this;
 }
 
 bool Version::operator==(const Version &rhs) const noexcept

@@ -81,7 +81,7 @@ public:
     void augmentProcedures(Aircraft &aircraft) noexcept;
 
 private:
-    std::unique_ptr<FlightAugmentationPrivate> d;
+    const std::unique_ptr<FlightAugmentationPrivate> d;
 
     void augmentStartProcedure(Aircraft &aircraft) noexcept;
     void augmentLandingProcedure(Aircraft &aircraft) noexcept;

@@ -47,7 +47,7 @@ public:
     std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept;
 
 private:
-    std::unique_ptr<LogbookServicePrivate> d;
+    const std::unique_ptr<LogbookServicePrivate> d;
 };
 
 #endif // LOGBOOKSERVICE_H

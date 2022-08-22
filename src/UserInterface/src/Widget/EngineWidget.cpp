@@ -60,8 +60,8 @@ struct EngineWidgetPrivate
 
 EngineWidget::EngineWidget(QWidget *parent) noexcept :
     AbstractSimulationVariableWidget(parent),
-    d(std::make_unique<EngineWidgetPrivate>(*this)),
-    ui(std::make_unique<Ui::EngineWidget>())
+    ui(std::make_unique<Ui::EngineWidget>()),
+    d(std::make_unique<EngineWidgetPrivate>(*this))
 {
     ui->setupUi(this);
     initUi();

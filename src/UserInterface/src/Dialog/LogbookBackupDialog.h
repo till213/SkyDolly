@@ -43,19 +43,18 @@ class LogbookBackupDialog : public QDialog
     Q_OBJECT
 public:
     explicit LogbookBackupDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~LogbookBackupDialog() noexcept;
+    ~LogbookBackupDialog() noexcept override;
 
 public slots:
-    virtual void accept() noexcept override;
-    virtual void reject() noexcept override;
+    void accept() noexcept override;
+    void reject() noexcept override;
 
 protected:
-    virtual void showEvent(QShowEvent *event) noexcept override;
+    void showEvent(QShowEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(LogbookBackupDialog)
     std::unique_ptr<Ui::LogbookBackupDialog> ui;
-    std::unique_ptr<LogbookBackupDialogPrivate> d;
+    const std::unique_ptr<LogbookBackupDialogPrivate> d;
 
     void initUi() noexcept;
     void updateUi() noexcept;

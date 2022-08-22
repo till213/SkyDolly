@@ -53,7 +53,7 @@ public:
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
 private:
-    std::unique_ptr<FlightServicePrivate> d;
+    const std::unique_ptr<FlightServicePrivate> d;
 };
 
 #endif // FLIGHTSERVICE_H

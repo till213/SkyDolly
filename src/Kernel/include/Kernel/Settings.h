@@ -802,7 +802,7 @@ protected:
     ~Settings() noexcept override;
 
 private:
-    std::unique_ptr<SettingsPrivate> d;
+    const std::unique_ptr<SettingsPrivate> d;
 
     Settings() noexcept;
 

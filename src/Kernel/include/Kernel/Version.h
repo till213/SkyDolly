@@ -121,7 +121,7 @@ public:
      * \param rhs
      *        the other Version to assign from
      */
-    void operator=(const Version &rhs) noexcept;
+    Version &operator=(const Version &rhs) noexcept;
 
     /*!
      * Compares this Version against \c rhs for equality.
@@ -197,7 +197,7 @@ public:
     static QDateTime getGitDate() noexcept;
 
 private:
-    std::unique_ptr<VersionPrivate> d;
+    const std::unique_ptr<VersionPrivate> d;
 };
 
 #endif // VERSION_H

@@ -49,7 +49,7 @@ public:
     QString getDescription() const noexcept;
 
 private:
-    std::unique_ptr<GpxParserPrivate> d;
+    const std::unique_ptr<GpxParserPrivate> d;
 
     void parseGPX() noexcept;
     void parseMetadata() noexcept;

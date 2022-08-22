@@ -62,7 +62,7 @@ signals:
 
 private:
     std::unique_ptr<Ui::LocationWidget> ui;
-    std::unique_ptr<LocationWidgetPrivate> d;
+    const std::unique_ptr<LocationWidgetPrivate> d;
 
     void initUi() noexcept;
     void frenchConnection() noexcept;

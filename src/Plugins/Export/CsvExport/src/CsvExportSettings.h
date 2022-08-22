@@ -66,7 +66,7 @@ protected:
     virtual void restoreDefaultsExtn() noexcept override;
 
 private:
-    std::unique_ptr<CsvExportSettingsPrivate> d;
+    const std::unique_ptr<CsvExportSettingsPrivate> d;
 };
 
 #endif // CSVEXPORTSETTINGS_H

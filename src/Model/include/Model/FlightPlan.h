@@ -69,8 +69,7 @@ signals:
     void waypointsCleared();
 
 private:
-    Q_DISABLE_COPY(FlightPlan)
-    std::unique_ptr<FlightPlanPrivate> d;
+    const std::unique_ptr<FlightPlanPrivate> d;
 };
 
 #endif // FLIGHTPLAN_H

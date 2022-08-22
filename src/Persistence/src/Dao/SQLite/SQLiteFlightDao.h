@@ -49,7 +49,7 @@ public:
     bool updateUserAircraftIndex(std::int64_t id, int index) noexcept override;
 
 private:
-    std::unique_ptr<SQLiteFlightDaoPrivate> d;
+    const std::unique_ptr<SQLiteFlightDaoPrivate> d;
 };
 
 #endif // SQLITEFLIGHTDAO_H

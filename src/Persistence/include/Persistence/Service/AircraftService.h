@@ -50,7 +50,7 @@ public:
     bool changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept;
 
 private:
-    std::unique_ptr<AircraftServicePrivate> d;
+    const std::unique_ptr<AircraftServicePrivate> d;
 };
 
 #endif // AIRCRAFTSERVICE_H

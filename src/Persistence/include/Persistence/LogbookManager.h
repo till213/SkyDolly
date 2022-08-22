@@ -89,8 +89,7 @@ protected:
     ~LogbookManager() noexcept override;
 
 private:
-    Q_DISABLE_COPY(LogbookManager)
-    std::unique_ptr<LogbookManagerPrivate> d;
+    const std::unique_ptr<LogbookManagerPrivate> d;
 
     LogbookManager() noexcept;
 

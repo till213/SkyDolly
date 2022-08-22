@@ -82,7 +82,7 @@ public:
     static constexpr std::int64_t InvalidId {-1};
 
 private:
-    std::unique_ptr<EnumerationPrivate> d;
+    const std::unique_ptr<EnumerationPrivate> d;
 };
 
 #endif // ENUMERATION_H

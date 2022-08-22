@@ -95,7 +95,7 @@ protected:
     virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept = 0;
 
 private:
-    std::unique_ptr<ExportPluginBasePrivate> d;
+    const std::unique_ptr<ExportPluginBasePrivate> d;
 
     bool exportFlight(const Flight &flight, const QString &filePath) noexcept;
     // Exports all aircraft into separate files, given the 'baseFilePath'

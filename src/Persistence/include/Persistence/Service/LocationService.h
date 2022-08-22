@@ -49,7 +49,7 @@ public:
     bool getSelectedLocations(const LocationSelector &locationSelector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept;
 
 private:
-    std::unique_ptr<LocationServicePrivate> d;
+    const std::unique_ptr<LocationServicePrivate> d;
 };
 
 #endif // LOCATIONSERVICE_H

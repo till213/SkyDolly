@@ -51,19 +51,19 @@ class GpxExportPlugin : public ExportPluginBase
     Q_INTERFACES(ExportIntf)
 public:
     GpxExportPlugin() noexcept;
-    virtual ~GpxExportPlugin() noexcept;
+    ~GpxExportPlugin() noexcept override;
 
 protected:
-    virtual ExportPluginBaseSettings &getPluginSettings() const noexcept override;
-    virtual QString getFileSuffix() const noexcept override;
-    virtual QString getFileFilter() const noexcept override;
-    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    virtual bool hasMultiAircraftSupport() const noexcept override;
-    virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
-    virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
+    ExportPluginBaseSettings &getPluginSettings() const noexcept override;
+    QString getFileSuffix() const noexcept override;
+    QString getFileFilter() const noexcept override;
+    std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    bool hasMultiAircraftSupport() const noexcept override;
+    bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
+    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
 
 private:
-    std::unique_ptr<GpxExportPluginPrivate> d;
+    const std::unique_ptr<GpxExportPluginPrivate> d;
 
     bool exportHeader(QIODevice &io) const noexcept;
     bool exportFlightInfo(QIODevice &io) const noexcept;

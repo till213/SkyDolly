@@ -87,7 +87,7 @@ private:
     // First: module name - second: path
     using ModuleInfo = std::pair<QString, QString>;
 
-    std::unique_ptr<ModuleManagerPrivate> d;
+    const std::unique_ptr<ModuleManagerPrivate> d;
 
     void initModules() noexcept;
     void frenchConnection() noexcept;

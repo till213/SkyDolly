@@ -97,7 +97,7 @@ protected:
     virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept = 0;
 
 private:
-    std::unique_ptr<ImportPluginBasePrivate> d;
+    const std::unique_ptr<ImportPluginBasePrivate> d;
 
     virtual void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;

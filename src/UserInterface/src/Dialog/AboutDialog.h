@@ -49,9 +49,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(AboutDialog)
     std::unique_ptr<AboutDialogPrivate> d;
-    std::unique_ptr<Ui::AboutDialog> ui;
+    const std::unique_ptr<Ui::AboutDialog> ui;
 
     void initUi() noexcept;
     void updateUi() noexcept;

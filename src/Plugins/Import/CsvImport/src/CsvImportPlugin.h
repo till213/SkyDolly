@@ -69,7 +69,7 @@ protected:
     void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 private:
-    std::unique_ptr<CsvImportPluginPrivate> d;
+    const std::unique_ptr<CsvImportPluginPrivate> d;
 };
 
 #endif // CSVIMPORTPLUGIN_H

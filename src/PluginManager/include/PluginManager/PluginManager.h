@@ -66,8 +66,7 @@ protected:
     virtual ~PluginManager() noexcept;
 
 private:
-    Q_DISABLE_COPY(PluginManager)
-    std::unique_ptr<PluginManagerPrivate> d;
+    const std::unique_ptr<PluginManagerPrivate> d;
 
     PluginManager() noexcept;
 

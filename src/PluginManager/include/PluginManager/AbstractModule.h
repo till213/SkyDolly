@@ -61,7 +61,7 @@ protected slots:
     void onRecordingStopped() noexcept override;
 
 private:
-    std::unique_ptr<AbstractModulePrivate> d;
+    const std::unique_ptr<AbstractModulePrivate> d;
 
     void frenchConnection() noexcept;
 };

@@ -50,7 +50,7 @@ class WIDGET_API ActionCheckBox : public QCheckBox
     Q_OBJECT
 public:
     explicit ActionCheckBox(bool withText, QWidget *parent = nullptr) noexcept;
-    virtual ~ActionCheckBox() noexcept;
+    ~ActionCheckBox() noexcept override;
 
     /*!
      * Sets the action to be associated with this radio button. This radio button is
@@ -64,8 +64,7 @@ public:
     void setAction(const QAction *action) noexcept;
 
 private:
-    Q_DISABLE_COPY(ActionCheckBox)
-    std::unique_ptr<ActionCheckBoxPrivate> d;
+    const std::unique_ptr<ActionCheckBoxPrivate> d;
 
 private slots:
 

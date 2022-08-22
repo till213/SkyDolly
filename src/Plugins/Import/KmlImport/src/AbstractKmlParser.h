@@ -39,9 +39,9 @@ class AbstractKmlParser : public KmlParserIntf
 {
 public:
     AbstractKmlParser() noexcept;
-    virtual ~AbstractKmlParser() noexcept;
+    ~AbstractKmlParser() noexcept override;
 
-    virtual QString getDocumentName() const noexcept override;
+    QString getDocumentName() const noexcept override;
 
 protected:
     void initialise(Flight *flight, QXmlStreamReader *xml) noexcept;
@@ -57,7 +57,7 @@ protected:
     virtual void parseTrack() noexcept = 0;
 
 private:
-    std::unique_ptr<AbstractKmlParserPrivate> d;
+    const std::unique_ptr<AbstractKmlParserPrivate> d;
 };
 
 #endif // ABSTRACTKMLPARSER_H

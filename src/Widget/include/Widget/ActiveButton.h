@@ -56,7 +56,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *e) noexcept override;
 
 private:
-    std::unique_ptr<ActiveButtonPrivate> d;
+    const std::unique_ptr<ActiveButtonPrivate> d;
 };
 
 #endif // ACTIVEBUTTON_H

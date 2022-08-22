@@ -41,11 +41,11 @@ class GpxImportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit GpxImportOptionWidget(GpxImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~GpxImportOptionWidget() noexcept;
+    ~GpxImportOptionWidget() noexcept override;
 
 private:
     std::unique_ptr<Ui::GpxImportOptionWidget> ui;
-    std::unique_ptr<GpxImportOptionWidgetPrivate> d;
+    const std::unique_ptr<GpxImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;

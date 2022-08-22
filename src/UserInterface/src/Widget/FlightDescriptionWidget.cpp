@@ -54,8 +54,8 @@ struct FlightDescriptionWidgetPrivate
 
 FlightDescriptionWidget::FlightDescriptionWidget(FlightService &flightService, QWidget *parent) :
     QWidget(parent),
-    d(std::make_unique<FlightDescriptionWidgetPrivate>(flightService)),
-    ui(std::make_unique<Ui::FlightDescriptionWidget>())
+    ui(std::make_unique<Ui::FlightDescriptionWidget>()),
+    d(std::make_unique<FlightDescriptionWidgetPrivate>(flightService))
 {
     ui->setupUi(this);
     initUi();

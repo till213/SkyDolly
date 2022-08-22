@@ -50,8 +50,8 @@ struct AircraftInfoWidgetPrivate
 
 AircraftInfoWidget::AircraftInfoWidget(QWidget *parent) noexcept :
     QWidget(parent),
-    d(std::make_unique<AircraftInfoWidgetPrivate>()),
-    ui(std::make_unique<Ui::AircraftInfoWidget>())
+    ui(std::make_unique<Ui::AircraftInfoWidget>()),
+    d(std::make_unique<AircraftInfoWidgetPrivate>())
 {
     ui->setupUi(this);
     initUi();

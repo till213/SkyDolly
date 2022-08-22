@@ -61,7 +61,7 @@ public:
     const PositionData closestPosition(double latitude, double longitude) const noexcept;
 
 private:
-    std::unique_ptr<AnalyticsPrivate> d;
+    const std::unique_ptr<AnalyticsPrivate> d;
 };
 
 #endif // ANALYTICS_H

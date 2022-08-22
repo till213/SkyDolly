@@ -39,7 +39,7 @@ class JsonExportSettings : public ExportPluginBaseSettings
     Q_OBJECT
 public:
     JsonExportSettings() noexcept;
-    virtual ~JsonExportSettings() noexcept;
+    ~JsonExportSettings() noexcept override;
 
 signals:
     /*!
@@ -48,13 +48,13 @@ signals:
     void extendedSettingsChanged();
 
 protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
 
 private:
-    std::unique_ptr<JsonExportSettingsPrivate> d;
+    const std::unique_ptr<JsonExportSettingsPrivate> d;
 };
 
 #endif // JSONEXPORTSETTINGS_H

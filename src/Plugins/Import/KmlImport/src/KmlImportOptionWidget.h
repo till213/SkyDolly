@@ -41,11 +41,11 @@ class KmlImportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit KmlImportOptionWidget(KmlImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~KmlImportOptionWidget() noexcept;
+    ~KmlImportOptionWidget() noexcept override;
 
 private:
     std::unique_ptr<Ui::KmlImportOptionWidget> ui;
-    std::unique_ptr<KmlImportOptionWidgetPrivate> d;
+    const std::unique_ptr<KmlImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;

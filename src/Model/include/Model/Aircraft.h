@@ -125,7 +125,7 @@ signals:
     void timeOffsetChanged(const Aircraft &aircraft);
 
 private:
-    std::unique_ptr<AircraftPrivate> d;
+    const std::unique_ptr<AircraftPrivate> d;
 
     void frenchConnection(); 
 };

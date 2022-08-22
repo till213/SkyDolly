@@ -44,12 +44,12 @@ class WIDGET_API TableTimeItem : public QTableWidgetItem
 {
 public:
     TableTimeItem(const QString &timeString, const QTime &time) noexcept;
-    virtual ~TableTimeItem() noexcept;
+    ~TableTimeItem() noexcept override;
 
-    virtual bool operator<(const QTableWidgetItem &rhs) const noexcept override;
+    bool operator<(const QTableWidgetItem &rhs) const noexcept override;
 
 private:
-    std::unique_ptr<TableTimeItemPrivate> d;
+    const std::unique_ptr<TableTimeItemPrivate> d;
 };
 
 #endif // TABLETIMEITEM_H

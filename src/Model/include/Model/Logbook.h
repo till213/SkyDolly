@@ -49,8 +49,7 @@ protected:
     ~Logbook() noexcept override;
 
 private:
-    Q_DISABLE_COPY(Logbook)
-    std::unique_ptr<LogbookPrivate> d;
+    const std::unique_ptr<LogbookPrivate> d;
 
     Logbook() noexcept;
 };

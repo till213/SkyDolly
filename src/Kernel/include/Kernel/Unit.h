@@ -195,7 +195,7 @@ public:
     static QString formatCoordinates(double latitude, double longitude) noexcept;
 
 private:
-    std::unique_ptr<UnitPrivate> d;
+    const std::unique_ptr<UnitPrivate> d;
 };
 
 #endif // UNIT_H

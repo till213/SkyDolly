@@ -44,7 +44,7 @@ public:
     virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
 
 private:
-    std::unique_ptr<FlightRadar24CsvWriterPrivate> d;
+    const std::unique_ptr<FlightRadar24CsvWriterPrivate> d;
 
     static inline QString formatPosition(const PositionData &positionData) noexcept;
 };

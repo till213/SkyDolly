@@ -46,14 +46,14 @@ class EngineWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit EngineWidget(QWidget *parent) noexcept;
-    virtual ~EngineWidget() noexcept;
+    ~EngineWidget() noexcept override;
 
 protected slots:
-    virtual void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    std::unique_ptr<EngineWidgetPrivate> d;
     std::unique_ptr<Ui::EngineWidget> ui;
+    const std::unique_ptr<EngineWidgetPrivate> d;
 
     void initUi() noexcept;
     EngineData getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;

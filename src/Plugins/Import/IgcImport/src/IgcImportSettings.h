@@ -45,7 +45,7 @@ public:
     };
 
     IgcImportSettings() noexcept;
-    virtual ~IgcImportSettings() noexcept;
+    ~IgcImportSettings() noexcept override;
 
     AltitudeMode getAltitudeMode() const noexcept;
     void setAltitudeMode(AltitudeMode altitudeMode) noexcept;
@@ -63,10 +63,10 @@ signals:
     void extendedSettingsChanged();
 
 protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
 
 private:
     std::unique_ptr<IgcImportSettingsPrivate> d;

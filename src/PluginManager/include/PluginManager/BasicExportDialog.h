@@ -56,7 +56,7 @@ public:
 
 private:
     std::unique_ptr<Ui::BasicExportDialog> ui;
-    std::unique_ptr<BasicExportDialogPrivate> d;
+    const std::unique_ptr<BasicExportDialogPrivate> d;
 
     void initUi() noexcept;
     void initBasicUi() noexcept;

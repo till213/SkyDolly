@@ -52,9 +52,8 @@ protected:
     void showEvent(QShowEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(LogbookSettingsDialog)
     std::unique_ptr<Ui::LogbookSettingsDialog> ui;
-    std::unique_ptr<LogbookSettingsDialogPrivate> d;
+    const std::unique_ptr<LogbookSettingsDialogPrivate> d;
 
     void initUi() noexcept;
     void updateUi() noexcept;

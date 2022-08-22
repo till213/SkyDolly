@@ -75,7 +75,7 @@ protected:
     virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept;
 
 private:
-    std::unique_ptr<PluginBasePrivate> d;
+    const std::unique_ptr<PluginBasePrivate> d;
 };
 
 #endif // PLUGINBASE_H

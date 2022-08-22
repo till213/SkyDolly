@@ -59,7 +59,7 @@ public:
     void setStepCount(int count) noexcept;
 
 private:
-    std::unique_ptr<SqlMigrationStepPrivate> d;
+    const std::unique_ptr<SqlMigrationStepPrivate> d;
 
     bool hasPreviousAttempt() const noexcept;
 };

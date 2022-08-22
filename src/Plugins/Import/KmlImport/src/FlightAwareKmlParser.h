@@ -41,13 +41,13 @@ class FlightAwareKmlParser : public AbstractKmlTrackParser
 {
 public:
     FlightAwareKmlParser() noexcept;
-    virtual ~FlightAwareKmlParser() noexcept;
+    ~FlightAwareKmlParser() noexcept override;
 
-    virtual void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
-    virtual QString getFlightNumber() const noexcept override;
+    void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
+    QString getFlightNumber() const noexcept override;
 
 private:
-    std::unique_ptr<FlightAwareKmlParserPrivate> d;
+    const std::unique_ptr<FlightAwareKmlParserPrivate> d;
 
     void parsePlacemark() noexcept override;
     void parseWaypoint(const QString &name) noexcept;

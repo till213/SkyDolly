@@ -44,7 +44,7 @@ public:
     std::int64_t id() const noexcept;
 
 private:
-    std::unique_ptr<PersistedEnumerationItemPrivate> d;
+    const std::unique_ptr<PersistedEnumerationItemPrivate> d;
 };
 
 #endif // PERSISTEDENUMERATIONITEM_H

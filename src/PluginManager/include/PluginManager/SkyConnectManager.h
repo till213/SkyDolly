@@ -172,8 +172,7 @@ protected:
     ~SkyConnectManager() noexcept override;
 
 private:
-    Q_DISABLE_COPY(SkyConnectManager)
-    std::unique_ptr<skyConnectManagerPrivate> d;
+    const std::unique_ptr<skyConnectManagerPrivate> d;
 
     SkyConnectManager() noexcept;
 

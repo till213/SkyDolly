@@ -97,7 +97,7 @@ protected:
     virtual void restoreDefaultsExtn() noexcept = 0;
 
 private:
-    std::unique_ptr<ExportPluginBaseSettingsPrivate> d;
+    const std::unique_ptr<ExportPluginBaseSettingsPrivate> d;
 };
 
 #endif // EXPORTPLUGINBASESETTINGS_H

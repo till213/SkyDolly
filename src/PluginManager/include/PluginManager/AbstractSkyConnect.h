@@ -146,8 +146,7 @@ protected slots:
     virtual void recordData() noexcept = 0;
 
 private:
-    Q_DISABLE_COPY(AbstractSkyConnect)
-    std::unique_ptr<AbstractSkyConnectPrivate> d;
+    const std::unique_ptr<AbstractSkyConnectPrivate> d;
 
     void frenchConnection() noexcept;
     bool hasRecordingStarted() const noexcept;

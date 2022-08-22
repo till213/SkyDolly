@@ -64,9 +64,8 @@ protected:
     void closeEvent(QCloseEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(MainWindow)
     std::unique_ptr<Ui::MainWindow> ui;
-    std::unique_ptr<MainWindowPrivate> d;
+    const std::unique_ptr<MainWindowPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;

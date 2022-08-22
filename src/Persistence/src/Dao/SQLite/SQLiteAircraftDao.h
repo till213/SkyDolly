@@ -52,7 +52,7 @@ public:
     bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept override;
 
 private:
-    std::unique_ptr<SQLiteAircraftDaoPrivate> d;
+    const std::unique_ptr<SQLiteAircraftDaoPrivate> d;
 };
 
 #endif // SQLITEAIRCRAFTDAO_H

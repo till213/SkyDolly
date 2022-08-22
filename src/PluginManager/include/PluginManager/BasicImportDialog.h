@@ -60,7 +60,7 @@ public:
 
 private:
     std::unique_ptr<Ui::BasicImportDialog> ui;
-    std::unique_ptr<BasicImportDialogPrivate> d;
+    const std::unique_ptr<BasicImportDialogPrivate> d;
 
     void initUi() noexcept;
     void initBasicUi() noexcept;

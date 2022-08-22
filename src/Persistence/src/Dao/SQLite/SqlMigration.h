@@ -42,7 +42,7 @@ public:
     bool migrate() noexcept;
 
 private:
-    std::unique_ptr<SqlMigrationPrivate> d;
+    const std::unique_ptr<SqlMigrationPrivate> d;
 
     bool migrateSql(const QString &migrationFilePath) noexcept;
     bool migrateCsv(const QString &migrationFilePath) noexcept;

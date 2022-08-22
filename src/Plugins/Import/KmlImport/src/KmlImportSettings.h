@@ -49,7 +49,7 @@ public:
     };
 
     KmlImportSettings() noexcept;
-    virtual ~KmlImportSettings() noexcept;
+    ~KmlImportSettings() noexcept override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;
@@ -61,13 +61,13 @@ signals:
     void extendedSettingsChanged();
 
 protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
 
 private:
-    std::unique_ptr<KmlImportSettingsPrivate> d;
+    const std::unique_ptr<KmlImportSettingsPrivate> d;
 };
 
 #endif // KMLIMPORTSETTINGS_H

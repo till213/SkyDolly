@@ -58,8 +58,7 @@ public:
     QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept override;
 
 private:
-    Q_DISABLE_COPY(SQLiteDatabaseDao)
-    std::unique_ptr<DatabaseDaoPrivate> d;
+    const std::unique_ptr<DatabaseDaoPrivate> d;
 
     void disconnectSQLite() noexcept;
     bool createMigrationTable() noexcept;

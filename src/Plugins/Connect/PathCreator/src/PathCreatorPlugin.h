@@ -82,7 +82,7 @@ protected slots:
     void recordData() noexcept override;
 
 private:
-    std::unique_ptr<PathCreatorPluginPrivate> d;
+    const std::unique_ptr<PathCreatorPluginPrivate> d;
 
     void frenchConnection() noexcept;
     void recordPositionData(std::int64_t timestamp) noexcept;

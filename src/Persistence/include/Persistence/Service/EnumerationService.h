@@ -71,7 +71,7 @@ public:
     static inline const QString CountryWorldSymbolicId {QStringLiteral("00")};
 
 private:
-    std::unique_ptr<EnumerationServicePrivate> d;
+    const std::unique_ptr<EnumerationServicePrivate> d;
 };
 
 #endif // ENUMERATIONSERVICE_H

@@ -72,7 +72,7 @@ public:
     std::unique_ptr<EnumerationDaoIntf> createEnumerationDao() noexcept;
 
 private:
-    std::unique_ptr<DaoFactoryPrivate> d;
+    const std::unique_ptr<DaoFactoryPrivate> d;
 };
 
 #endif // DAOFACTORY_H

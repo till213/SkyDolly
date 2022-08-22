@@ -55,7 +55,7 @@ public:
     static QString getNewLogbookPath(QWidget *parent) noexcept;
 
 private:
-    std::unique_ptr<DatabaseServicePrivate> d;
+    const std::unique_ptr<DatabaseServicePrivate> d;
 };
 
 #endif // DATABASESERVICE_H

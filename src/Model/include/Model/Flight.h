@@ -207,7 +207,7 @@ signals:
     void aircraftStored(const Aircraft &aircraft);
 
 private:
-    std::unique_ptr<FlightPrivate> d;
+    const std::unique_ptr<FlightPrivate> d;
 
     inline void connectWithAircraftSignals(Aircraft &aircraft);
 

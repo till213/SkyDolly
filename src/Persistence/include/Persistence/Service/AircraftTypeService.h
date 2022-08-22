@@ -47,7 +47,7 @@ public:
     bool exists(const QString &type) const noexcept;
 
 private:
-    std::unique_ptr<AircraftTypeServicePrivate> d;
+    const std::unique_ptr<AircraftTypeServicePrivate> d;
 };
 
 #endif // AIRCRAFTTYPESERVICE_H
