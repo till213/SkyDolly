@@ -66,8 +66,8 @@ Enumeration SQLiteEnumerationDao::get(const QString &name, bool *ok) const noexc
         while (query.next()) {
             const std::int64_t id = query.value(idIdx).toLongLong();
             const QString symbolicId = query.value(symbolicIdIdx).toString();
-            const QString name = query.value(nameIdx).toString();
-            enumeration.addItem({id, symbolicId, name});
+            const QString itemName = query.value(nameIdx).toString();
+            enumeration.addItem({id, symbolicId, itemName});
         }
 #ifdef DEBUG
     } else {

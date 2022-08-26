@@ -62,12 +62,13 @@ EnumerationService::~EnumerationService() noexcept
 #endif
 }
 
-bool EnumerationService::getEnumerationByName(Enumeration &enumeration)
+Enumeration EnumerationService::getEnumerationByName(const QString &name, bool *ok)
 {
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->enumerationDao->get(enumeration);
+    Enumeration enumeration;
+    bool success = QSqlDatabase::database().transaction();
+    if (success) {
+        enumeration = d->enumerationDao->get(name, &success);
     }
     QSqlDatabase::database().rollback();
-    return ok;
+    return enumeration;
 }

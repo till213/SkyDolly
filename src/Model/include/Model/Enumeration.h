@@ -46,10 +46,11 @@ class MODEL_API Enumeration
 {
 public:
 
-    Enumeration(QString name) noexcept;
-    Enumeration(Enumeration &&other) noexcept = default;
+    Enumeration() noexcept;
+    Enumeration(const QString &name) noexcept;
+    Enumeration(Enumeration &&other) noexcept;
     ~Enumeration() noexcept;
-    Enumeration &operator=(Enumeration &&rhs) noexcept = default;
+    Enumeration &operator=(Enumeration &&rhs) noexcept;
 
     using Item = struct Item_ : public Data
     {

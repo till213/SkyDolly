@@ -41,13 +41,15 @@ public:
     ~EnumerationService() noexcept;
 
     /*!
-     * Gets the persisted Enumeration by its \c enumeration.name.
+     * Gets the persisted Enumeration by its enumeration \c name.
      *
-     * \param enumeration
-     *        the persisted Enumeration to get, identified by its \c name member
-     * \return \c true if successful; \c false else (unknown Enumeration name, no database connection)
+     * \param name
+     *        the name of the enumeration
+     * \param ok
+     *        if set, \c true if successful; \c false else (unknown Enumeration name, no database connection)
+     * \return the persisted Enumeration to get, identified by the \c name
      */
-    bool getEnumerationByName(Enumeration &enumeration);
+    Enumeration getEnumerationByName(const QString &name, bool *ok = nullptr);
 
     // Implementation note:
     // Well-known database enumerations: TitleCase name must match with corresponding

@@ -45,9 +45,10 @@ struct VersionPrivate
         : major(theMajor), minor(theMinor), patch(thePatch)
     {}
 
-    VersionPrivate(const VersionPrivate &other)
-        : major(other.major), minor(other.minor), patch(other.patch)
-    {}
+    VersionPrivate(const VersionPrivate &other) = default;
+    VersionPrivate(VersionPrivate &&other) = default;
+    VersionPrivate &operator=(const VersionPrivate &rhs) = default;
+    VersionPrivate &operator=(VersionPrivate &&rhs) = default;
 
     int major {VersionConfig::Major};
     int minor {VersionConfig::Minor};

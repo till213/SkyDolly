@@ -36,7 +36,7 @@
 
 struct EnumerationPrivate
 {
-    EnumerationPrivate(QString theName) noexcept
+    EnumerationPrivate(const QString &theName) noexcept
         : name(theName)
     {}
 
@@ -50,7 +50,15 @@ struct EnumerationPrivate
 
 // PUBLIC
 
-Enumeration::Enumeration(QString name) noexcept
+Enumeration::Enumeration() noexcept
+    : d(std::make_unique<EnumerationPrivate>(QString()))
+{
+#ifdef DEBUG
+    qDebug() << "Enumeration::Enumeration: CREATED";
+#endif
+}
+
+Enumeration::Enumeration(const QString &name) noexcept
     : d(std::make_unique<EnumerationPrivate>(name))
 {
 #ifdef DEBUG
@@ -58,11 +66,22 @@ Enumeration::Enumeration(QString name) noexcept
 #endif
 }
 
+Enumeration::Enumeration(Enumeration &&other) noexcept
+{
+    *d = std::move(*other.d);
+}
+
 Enumeration::~Enumeration() noexcept
 {
 #ifdef DEBUG
     qDebug() << "Enumeration::Enumeration: DELETED, name:" << d->name;
 #endif
+}
+
+Enumeration &Enumeration::operator=(Enumeration &&rhs) noexcept
+{
+    *d = std::move(*rhs.d);
+    return *this;
 }
 
 QString Enumeration::getName() const noexcept
