@@ -371,7 +371,7 @@ void KmlExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void KmlExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     const int enumeration = valuesByKey.at(::ColorStyleKey).toInt(&ok);
     if (ok) {
         d->colorStyle = static_cast<KmlExportSettings::ColorStyle >(enumeration);

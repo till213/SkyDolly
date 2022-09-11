@@ -204,7 +204,6 @@ bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
         lightNavIdx {InvalidIdx}, lightWingIdx {InvalidIdx}, lightLogoIdx {InvalidIdx}, lightRecognitionIdx {InvalidIdx},
         lightCabinIdx {InvalidIdx};
 
-    bool ok;
     Aircraft &aircraft = d->flight->getUserAircraft();
     Position &position = aircraft.getPosition();
     Engine &engine = aircraft.getEngine();
@@ -215,7 +214,7 @@ bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
 
     QByteArray data = file.readLine();
     // At least one data row expected
-    ok = !data.isNull();
+    bool ok = !data.isNull();
     bool firstRow {true};
     std::int64_t timestampDelta {0};
     while (ok && !data.isNull()) {

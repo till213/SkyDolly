@@ -26,6 +26,7 @@
 #define LOGBOOKMANAGER_H
 
 #include <memory>
+#include <utility>
 
 #include <QObject>
 
@@ -75,9 +76,9 @@ public:
     bool optimise() noexcept;
     bool backup(const QString &backupLogbookPath) noexcept;
 
-    bool getMetadata(Metadata &metadata) const noexcept;
-    bool getDatabaseVersion(Version &databaseVersion) const noexcept;
-    bool getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept;
+    Metadata getMetadata(bool *ok = nullptr) const noexcept;
+    Version getDatabaseVersion(bool *ok = nullptr) const noexcept;
+    QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept;
 
     QString getBackupFileName(const QString &backupDirectoryPath) const noexcept;
     static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
@@ -94,7 +95,7 @@ private:
     LogbookManager() noexcept;
 
     bool connectDb(const QString &logbookPath) noexcept;
-    bool checkDatabaseVersion(Version &databaseVersion) const noexcept;
+    std::pair<bool, Version> checkDatabaseVersion() const noexcept;
 };
 
 #endif // LOGBOOKMANAGER_H

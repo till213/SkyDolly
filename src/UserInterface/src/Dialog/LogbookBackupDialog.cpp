@@ -62,8 +62,9 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
     frenchConnection();
 
     LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metadata;
-    if (logbookManager.getMetadata(metadata)) {
+    bool ok {true};
+    const Metadata metadata = logbookManager.getMetadata(&ok);
+    if (ok) {
         d->originalBackupPeriodIntlId = metadata.backupPeriodSymId;
     } else {
         d->originalBackupPeriodIntlId = Const::BackupNeverSymId;
@@ -144,8 +145,8 @@ void LogbookBackupDialog::initUi() noexcept
 void LogbookBackupDialog::updateUi() noexcept
 {
     LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metadata;
-    const bool ok = logbookManager.getMetadata(metadata);
+    bool ok {true};
+    const Metadata metadata = logbookManager.getMetadata(&ok);
     if (ok) {
         // Backup folder
         const QString backupDirectoryPath = LogbookManager::createBackupPathIfNotExists(metadata.backupDirectoryPath);

@@ -105,7 +105,7 @@ void CsvExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void CsvExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
     if (ok) {
         d->format = static_cast<Format >(enumeration);

@@ -167,7 +167,7 @@ void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
 
 void ExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     int enumeration = valuesByKey.at(::ResamplingPeriodKey).toInt(&ok);
     if (ok) {
         d->resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);

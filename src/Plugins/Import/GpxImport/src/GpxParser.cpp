@@ -353,8 +353,7 @@ inline void GpxParser::parseTrackPoint() noexcept
 
 bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &altitude, QString &identifier, QDateTime &dateTime) noexcept
 {
-    bool ok;
-
+    bool ok {true};
     const QXmlStreamAttributes attributes = d->xml.attributes();
     latitude = attributes.value(Gpx::lat).toDouble(&ok);
     if (ok) {

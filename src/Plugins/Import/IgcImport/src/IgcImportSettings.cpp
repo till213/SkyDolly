@@ -151,7 +151,7 @@ void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void IgcImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     const int enumeration = valuesByKey.at(::AltitudeKey).toInt(&ok);
     if (ok) {
         d->altitudeMode = static_cast<AltitudeMode >(enumeration);

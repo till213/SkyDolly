@@ -38,9 +38,10 @@
 struct PersistedEnumerationItemPrivate
 {
     PersistedEnumerationItemPrivate(QString enumerationName, QString symbolicId)
-        : enumeration(enumerationName)
     {
-        if (enumerationService.getEnumerationByName(enumeration)) {
+        bool ok {false};
+        enumeration = enumerationService.getEnumerationByName(enumerationName, &ok);
+        if (ok) {
             id = enumeration.getItemBySymbolicId(symbolicId).id;
         }
     }

@@ -67,7 +67,7 @@ bool SqlMigrationStep::isValid() const noexcept
 
 bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcept
 {
-    bool ok;
+
     const QString tag = tagMatch.captured(1);
 
     // Match the tag's content, e.g. id = 42, descn = "The description", step = 1
@@ -75,7 +75,7 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
     static const QRegularExpression tagRegExp(R"(([\w]+)\s*=\s*["]*([\w\s\-]+)["]*)");
 
     QRegularExpressionMatchIterator it = tagRegExp.globalMatch(tag);
-    ok = true;
+    bool ok {true};
     while (ok && it.hasNext()) {
         QRegularExpressionMatch match = it.next();
 

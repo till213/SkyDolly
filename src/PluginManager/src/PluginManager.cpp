@@ -118,7 +118,7 @@ std::vector<PluginManager::Handle> PluginManager::initialiseImportPlugins() noex
 
 bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept
 {
-    bool ok;
+    bool ok {false};
     if (d->importPluginRegistry.contains(pluginUuid)) {
         const QString pluginPath = d->importPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
@@ -133,15 +133,13 @@ bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightS
             ok = false;
         }
         loader.unload();
-    } else {
-        ok = false;
     }
     return ok;
 }
 
 bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept
 {
-    bool ok;
+    bool ok {false};
     if (d->exportPluginRegistry.contains(pluginUuid)) {
         const QString pluginPath = d->exportPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
@@ -156,8 +154,6 @@ bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) 
             ok = false;
         }
         loader.unload();
-    } else {
-        ok = false;
     }
     return ok;
 }

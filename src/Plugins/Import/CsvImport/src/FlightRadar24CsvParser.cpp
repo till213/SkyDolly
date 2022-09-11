@@ -70,13 +70,12 @@ FlightRadar24CsvParser::~FlightRadar24CsvParser() noexcept
 
 bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept
 {
-    bool ok;
     Aircraft &aircraft = flight.getUserAircraft();
     static const QRegularExpression regexp(::FlightRadar24CSVPattern);
 
     // Headers
     const QByteArray header = file.readLine();
-    ok = !header.isNull();
+    bool ok = !header.isNull();
 
     firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     QDateTime currentDateTimeUtc;

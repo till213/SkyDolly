@@ -672,7 +672,7 @@ inline bool SkyDollyCsvParser::importLightData(const QList<QByteArray> &headers,
 
 inline bool SkyDollyCsvParser::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
 {
-    bool ok;
+    bool ok {true};
     timestamp = values.at(columnIndex).toLongLong(&ok);
     if (ok) {
         if (!firstRow) {

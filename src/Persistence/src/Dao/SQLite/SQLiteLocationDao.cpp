@@ -29,6 +29,7 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QSqlDriver>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -189,7 +190,7 @@ bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
 
 std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
 {
-    std::vector<Location> location;
+    std::vector<Location> locations;
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -202,9 +203,9 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
     if (success) {
         const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
-            location.reserve(query.size());
+            locations.reserve(query.size());
         } else {
-            location.reserve(::DefaultCapacity);
+            locations.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
@@ -243,7 +244,7 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
             location.onGround = query.value(onGroundIdx).toBool();
             location.attributes = query.value(attributesIdx).toLongLong();
 
-            backInsertIterator = std::move(location);
+            locations.push_back(std::move(location));
         }
     }
 #ifdef DEBUG
@@ -254,11 +255,15 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
     if (ok != nullptr) {
         *ok = success;
     }
-    return location;
+    return locations;
 }
 
 /// \todo IMPLEMENT ME
-bool SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
+std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, bool *ok) const noexcept
 {
-    return true;
+    std::vector<Location> locations;
+    if (ok != nullptr) {
+        *ok = true;
+    }
+    return locations;
 }

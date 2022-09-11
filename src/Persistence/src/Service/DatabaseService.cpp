@@ -88,8 +88,8 @@ bool DatabaseService::backup() noexcept
     QString backupDirectoryPath;
 
     LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metaData;
-    bool ok = logbookManager.getMetadata(metaData);
+    bool ok {true};
+    const Metadata metaData = logbookManager.getMetadata(&ok);
     if (ok) {
         backupDirectoryPath = LogbookManager::createBackupPathIfNotExists(metaData.backupDirectoryPath);
     }
@@ -143,8 +143,8 @@ bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
 
 bool DatabaseService::updateBackupDate() noexcept
 {
-    Metadata metaData;
-    bool ok = LogbookManager::getInstance().getMetadata(metaData);
+    bool ok {true};
+    const Metadata metaData = LogbookManager::getInstance().getMetadata(&ok);
     if (ok) {
         const QDateTime today = QDateTime::currentDateTime();
         QDateTime nextBackupDate = metaData.lastBackupDate.isNull() ? today : metaData.lastBackupDate;

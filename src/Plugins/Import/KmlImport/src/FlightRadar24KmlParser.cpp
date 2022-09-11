@@ -223,7 +223,7 @@ void FlightRadar24KmlParser::parsePlacemark() noexcept
 
 bool FlightRadar24KmlParser::parseDescription() noexcept
 {
-    bool ok;
+    bool ok {false};
     const QString description = d->xml->readElementText();
 #ifdef DEBUG
     qDebug() << "FlightRadar24KmlParser::parseDescription: description:" << description;
@@ -241,8 +241,6 @@ bool FlightRadar24KmlParser::parseDescription() noexcept
         } else {
             ok = false;
         }
-    } else {
-        ok = false;
     }
 
     return ok;

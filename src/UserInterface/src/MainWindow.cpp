@@ -239,8 +239,9 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
 {
     QMainWindow::closeEvent(event);
 
-    Metadata metaData;
-    if (LogbookManager::getInstance().getMetadata(metaData)) {
+    bool ok {true};
+    const Metadata metaData = LogbookManager::getInstance().getMetadata(&ok);
+    if (ok) {
         if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
             std::unique_ptr<LogbookBackupDialog> backupDialog = std::make_unique<LogbookBackupDialog>(this);
             backupDialog->exec();

@@ -100,13 +100,13 @@ struct LocationWidgetPrivate
     LocationWidgetPrivate() noexcept
     {
         if (typeEnumeration.count() == 0) {
-            enumerationService->getEnumerationByName(typeEnumeration);
+            typeEnumeration = enumerationService->getEnumerationByName(EnumerationService::LocationType);
         }
         if (categoryEnumeration.count() == 0) {
-            enumerationService->getEnumerationByName(categoryEnumeration);
+            categoryEnumeration = enumerationService->getEnumerationByName(EnumerationService::LocationCategory);
         }
         if (countryEnumeration.count() == 0) {
-            enumerationService->getEnumerationByName(countryEnumeration);
+            countryEnumeration = enumerationService->getEnumerationByName(EnumerationService::Country);
         }
     }
 
@@ -136,9 +136,9 @@ struct LocationWidgetPrivate
     static inline int onGroundColumn {InvalidColumn};
     static inline int attributesColumn {InvalidColumn};
 
-    static inline Enumeration typeEnumeration {EnumerationService::LocationType};
-    static inline Enumeration categoryEnumeration {EnumerationService::LocationCategory};
-    static inline Enumeration countryEnumeration {EnumerationService::Country};
+    static inline Enumeration typeEnumeration;
+    static inline Enumeration categoryEnumeration;
+    static inline Enumeration countryEnumeration;
 };
 
 // PUBLIC
@@ -308,7 +308,6 @@ void LocationWidget::initUi() noexcept
 void LocationWidget::frenchConnection() noexcept
 {
     // Logbook
-    const Logbook &logbook = Logbook::getInstance();
     connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
             this, &LocationWidget::updateUi);
 
@@ -395,8 +394,7 @@ void LocationWidget::updateLocationTable() noexcept
 {
     if (LogbookManager::getInstance().isConnected()) {
 
-        std::vector<Location> locations;
-        d->locationService->getAll(std::back_inserter(locations));
+        std::vector<Location> locations = d->locationService->getAll();
 
         ui->locationTableWidget->blockSignals(true);
         ui->locationTableWidget->setSortingEnabled(false);

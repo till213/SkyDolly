@@ -82,7 +82,9 @@ void EnumerationComboBox::setCurrentId(std::int64_t id) noexcept
 void EnumerationComboBox::initUi() noexcept
 {
     setAutoFillBackground(true);
-    if (d->enumerationService.getEnumerationByName(d->enumeration))  {
+    bool ok {true};
+    d->enumeration = d->enumerationService.getEnumerationByName(d->enumeration.getName(), &ok);
+    if (ok)  {
         for (const auto &item : d->enumeration) {
             addItem(item.name, QVariant::fromValue(item.id));
         }

@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 
 #include <QString>
 #include <QFileInfo>
@@ -105,8 +106,8 @@ bool LogbookManager::connectWithLogbook(const QString &logbookPath, QWidget *par
             }
             ok = connectDb(currentLogbookPath);
             if (ok) {
-                Version databaseVersion;
-                ok = checkDatabaseVersion(databaseVersion);
+                const auto & [success, databaseVersion] = checkDatabaseVersion();
+                ok = success;
                 if (ok) {
                     Settings &settings = Settings::getInstance();
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -114,8 +115,7 @@ bool LogbookManager::connectWithLogbook(const QString &logbookPath, QWidget *par
                     // Create a backup before migration of existing logbooks
                     Version appVersion;
                     if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < appVersion) {
-                        QString backupDirectoryPath;
-                        ok = d->databaseDao->getBackupDirectoryPath(backupDirectoryPath);
+                        QString backupDirectoryPath = d->databaseDao->getBackupDirectoryPath(&ok);
                         if (ok) {
                             if (backupDirectoryPath.isNull()) {
                                 // Default backup location, relative to logbook path
@@ -219,24 +219,28 @@ bool LogbookManager::backup(const QString &backupLogbookPath) noexcept
     return d->databaseDao->backup(backupLogbookPath);
 }
 
-bool LogbookManager::getMetadata(Metadata &metadata) const noexcept
+Metadata LogbookManager::getMetadata(bool *ok) const noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->databaseDao->getMetadata(metadata);
+    Metadata metadata;
+    bool success = QSqlDatabase::database().transaction();
+    if (success) {
+        metadata = d->databaseDao->getMetadata(&success);
         QSqlDatabase::database().rollback();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return metadata;
 }
 
-bool LogbookManager::getDatabaseVersion(Version &databaseVersion) const noexcept
+Version LogbookManager::getDatabaseVersion(bool *ok) const noexcept
 {
-    return d->databaseDao->getDatabaseVersion(databaseVersion);
+    return d->databaseDao->getDatabaseVersion(ok);
 }
 
-bool LogbookManager::getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept
+QString LogbookManager::getBackupDirectoryPath(bool *ok) const noexcept
 {
-    return d->databaseDao->getBackupDirectoryPath(backupDirectoryPath);
+    return d->databaseDao->getBackupDirectoryPath(ok);
 }
 
 QString LogbookManager::getBackupFileName(const QString &backupDirectoryPath) const noexcept
@@ -303,26 +307,25 @@ LogbookManager::LogbookManager() noexcept
 
 bool LogbookManager::connectDb(const QString &logbookPath) noexcept
 {
-    bool ok;
+    bool ok {true};
     if (d->logbookPath != logbookPath) {
         ok = d->databaseDao->connectDb(logbookPath);
         d->logbookPath = logbookPath;
-    } else {
-        ok = false;
     }
     return ok;
 }
 
-bool LogbookManager::checkDatabaseVersion(Version &databaseVersion) const noexcept
+std::pair<bool, Version>  LogbookManager::checkDatabaseVersion() const noexcept
 {
-    Version currentAppVersion;
-    bool ok = getDatabaseVersion(databaseVersion);
-    if (ok) {
-        ok = currentAppVersion >= databaseVersion;
+    std::pair<bool, Version> result;
+    result.second = getDatabaseVersion(&result.first);
+    if (result.first) {
+        Version currentAppVersion;
+        result.first = currentAppVersion >= result.second;
     } else {
         // New database - no metadata exists yet
-        ok = true;
-        databaseVersion = Version(0, 0, 0);
+        result.first = true;
+        result.second = Version(0, 0, 0);
     }
-    return ok;
+    return result;
 }

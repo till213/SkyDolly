@@ -117,7 +117,7 @@ void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
 {
     Flight *flight = getFlight();
     QXmlStreamReader *xml = getXmlStreamReader();
-    bool ok;
+    bool ok {true};
     while (xml->readNextStartElement()) {
         const QStringRef xmlName = xml->name();
 #ifdef DEBUG

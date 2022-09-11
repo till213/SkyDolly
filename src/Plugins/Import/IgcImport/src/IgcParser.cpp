@@ -366,7 +366,7 @@ bool IgcParser::parseHeaderGliderId(const QByteArray &line) noexcept
 
 bool IgcParser::parseFixAdditions(const QByteArray &line) noexcept
 {
-    bool ok;
+    bool ok {false};
     QRegularExpressionMatch match = d->iRecordRegExp.match(line);
     if (match.hasMatch()) {
         const int nofAdditions = match.capturedView(::IRecordNofAdditionsIndex).toInt();
@@ -388,20 +388,15 @@ bool IgcParser::parseFixAdditions(const QByteArray &line) noexcept
         } else {
             ok = false;
         }
-    } else {
-        // No pattern match
-        ok = false;
     }
     return ok;
 }
 
 bool IgcParser::parseTask(const QByteArray &line) noexcept
 {
-    bool ok;
+    bool ok {true};
     QRegularExpressionMatch match = d->cRecordTaskDefinitionRegExp.match(line);
-    if (match.hasMatch()) {
-        ok = true;
-    } else {
+    if (!match.hasMatch()) {
         match = d->cRecordTaskRegExp.match(line);
         if (match.hasMatch()) {
             // Latitude
@@ -432,7 +427,7 @@ bool IgcParser::parseTask(const QByteArray &line) noexcept
 
 bool IgcParser::parseFix(const QByteArray &line) noexcept
 {
-    bool ok;
+    bool ok {false};
     QRegularExpressionMatch match = d->bRecordRegExp.match(line);
     if (match.hasMatch()) {
 
@@ -499,9 +494,6 @@ bool IgcParser::parseFix(const QByteArray &line) noexcept
             // Invalid timestamp
             ok = false;
         }
-    } else {
-        // No pattern match
-        ok = false;
     }
     return ok;
 }

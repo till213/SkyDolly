@@ -203,7 +203,7 @@ void GpxImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void GpxImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     int enumeration = valuesByKey.at(::WaypointSelectionKey).toInt(&ok);
     if (ok) {
         d->waypointSelection = static_cast<GPXElement >(enumeration);

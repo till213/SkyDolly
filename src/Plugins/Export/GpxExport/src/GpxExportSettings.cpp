@@ -106,7 +106,7 @@ void GpxExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void GpxExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     const int enumeration = valuesByKey.at(::TimestampModeKey).toInt(&ok);
     if (ok) {
         d->timestampMode = static_cast<GpxExportSettings::TimestampMode >(enumeration);
