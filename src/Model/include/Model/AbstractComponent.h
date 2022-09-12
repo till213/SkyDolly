@@ -207,7 +207,7 @@ public:
         return m_data[index];
     }
 
-    virtual const T interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
+    virtual T interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
 
 protected:
     [[nodiscard]]

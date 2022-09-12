@@ -40,7 +40,7 @@ public:
     PrimaryFlightControl &operator=(const PrimaryFlightControl &rhs) = default;
     PrimaryFlightControl &operator=(PrimaryFlightControl &&rhs) = default;
 
-    const PrimaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    PrimaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 };
 
 #endif // PRIMARYFLIGHTCONTROL_H

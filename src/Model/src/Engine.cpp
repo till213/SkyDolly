@@ -53,7 +53,7 @@ Engine::~Engine() noexcept
 #endif
 }
 
-const EngineData Engine::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+EngineData Engine::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     EngineData engineData;
     const EngineData *p1 {nullptr}, *p2 {nullptr};

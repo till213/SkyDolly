@@ -56,9 +56,9 @@ public:
      *
      * \return the heading of the first aircraft movement
      */
-    const std::pair<std::int64_t, double> firstMovementHeading() const noexcept;
+    std::pair<std::int64_t, double> firstMovementHeading() const noexcept;
 
-    const PositionData closestPosition(double latitude, double longitude) const noexcept;
+    PositionData closestPosition(double latitude, double longitude) const noexcept;
 
 private:
     const std::unique_ptr<AnalyticsPrivate> d;

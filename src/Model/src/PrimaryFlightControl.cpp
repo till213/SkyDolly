@@ -36,10 +36,6 @@
 #include "PrimaryFlightControlData.h"
 #include "PrimaryFlightControl.h"
 
-namespace
-{
-    constexpr double Tension = 0.0;
-}
 
 // PUBLIC
 
@@ -58,7 +54,7 @@ PrimaryFlightControl::~PrimaryFlightControl() noexcept
 #endif
 }
 
-const PrimaryFlightControlData PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+PrimaryFlightControlData PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     PrimaryFlightControlData primaryFlightControlData;
     const PrimaryFlightControlData *p1 {nullptr}, *p2 {nullptr};

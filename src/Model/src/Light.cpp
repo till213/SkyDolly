@@ -54,7 +54,7 @@ Light::~Light() noexcept
 #endif
 }
 
-const LightData Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+LightData Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     LightData lightData;
     const LightData *p1 {nullptr}, *p2 {nullptr};

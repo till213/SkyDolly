@@ -37,11 +37,6 @@
 #include "SecondaryFlightControlData.h"
 #include "SecondaryFlightControl.h"
 
-namespace
-{
-    constexpr double Tension = 0.0;
-}
-
 // PUBLIC
 
 SecondaryFlightControl::SecondaryFlightControl(const AircraftInfo &aircraftInfo) noexcept
@@ -59,7 +54,7 @@ SecondaryFlightControl::~SecondaryFlightControl() noexcept
 #endif
 }
 
-const SecondaryFlightControlData SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+SecondaryFlightControlData SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     SecondaryFlightControlData secondaryFlightControlData;
     const SecondaryFlightControlData *p1 {nullptr}, *p2 {nullptr};

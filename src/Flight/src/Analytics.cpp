@@ -79,7 +79,7 @@ Analytics::~Analytics()
 #endif
 }
 
-const std::pair<std::int64_t, double> Analytics::firstMovementHeading() const noexcept
+std::pair<std::int64_t, double> Analytics::firstMovementHeading() const noexcept
 {
     std::pair<std::int64_t, double> result;
     Position &position = d->aircraft.getPosition();
@@ -103,7 +103,7 @@ const std::pair<std::int64_t, double> Analytics::firstMovementHeading() const no
     return result;
 }
 
-const PositionData Analytics::closestPosition(double latitude, double longitude) const noexcept
+PositionData Analytics::closestPosition(double latitude, double longitude) const noexcept
 {
     PositionData positionData;
     double minimumDistance = std::numeric_limits<double>::max();

@@ -54,7 +54,7 @@ AircraftHandle::~AircraftHandle() noexcept
 #endif
 }
 
-const AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     AircraftHandleData aircraftHandleData;
     const AircraftHandleData *p1 {nullptr}, *p2 {nullptr};
