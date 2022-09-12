@@ -34,26 +34,32 @@
 
 struct FlightPlanPrivate
 {
-    FlightPlanPrivate() noexcept
-    {}
-
     std::vector<Waypoint> waypoints;
 };
 
 // PUBLIC
 
-FlightPlan::FlightPlan(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<FlightPlanPrivate>())
+FlightPlan::FlightPlan()
+    : d(std::make_unique<FlightPlanPrivate>())
 {}
 
-FlightPlan::~FlightPlan() noexcept
+FlightPlan::FlightPlan(FlightPlan &&rhs) noexcept
+{
+    *d = std::move(*rhs.d);
+}
+
+FlightPlan::~FlightPlan()
 {}
+
+FlightPlan &FlightPlan::operator=(FlightPlan &&rhs) noexcept
+{
+    *d = std::move(*rhs.d);
+    return *this;
+}
 
 void FlightPlan::add(const Waypoint &waypoint) noexcept
 {
     d->waypoints.push_back(waypoint);
-    emit waypointAdded(waypoint);
 }
 
 void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
@@ -88,7 +94,6 @@ void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
     }
     if (changed) {
         d->waypoints[index] = currentWaypoint;
-        emit waypointUpdated(index, currentWaypoint);
     }
 }
 
@@ -100,7 +105,6 @@ std::size_t FlightPlan::count() const noexcept
 void FlightPlan::clear() noexcept
 {
     d->waypoints.clear();
-    emit waypointsCleared();
 }
 
 FlightPlan::Iterator FlightPlan::begin() noexcept

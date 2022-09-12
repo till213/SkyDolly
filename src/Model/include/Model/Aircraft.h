@@ -28,8 +28,6 @@
 #include <memory>
 #include <cstdint>
 
-#include <QObject>
-
 class QDateTime;
 
 #include "ModelLib.h"
@@ -44,12 +42,16 @@ class Light;
 class FlightPlan;
 struct AircraftPrivate;
 
-class MODEL_API Aircraft : public QObject
+class MODEL_API Aircraft
 {
-    Q_OBJECT
 public:
-    explicit Aircraft(QObject *parent = nullptr) noexcept;
-    ~Aircraft() noexcept override;
+
+    Aircraft();
+    ~Aircraft();
+    Aircraft(const Aircraft &rhs) = delete;
+    Aircraft(const Aircraft &&rhs) noexcept;
+    Aircraft &operator=(const Aircraft &rhs) = delete;
+    Aircraft &operator=(Aircraft &&rhs) noexcept;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
@@ -90,7 +92,6 @@ public:
 
     static constexpr std::int64_t InvalidId {-1};
 
-public slots:
     /*!
      * Invalidates the duration, such that it gets updated the next time
      * #getDurationMSec is called.
@@ -102,32 +103,8 @@ public slots:
      */
     void invalidateDuration() noexcept;
 
-signals:
-    /*!
-     * Emitted whenever the aircraft info has changed.
-     */
-    void infoChanged(const Aircraft &aircraft);
-
-    /*!
-     * Emitted whenever the tail number has changed.
-     *
-     * \param aircraft
-     *        the aircraft whose tail number has changed
-     */
-    void tailNumberChanged(const Aircraft &aircraft);
-
-    /*!
-     * Emitted whenever the aircraft's time offset has changed.
-     *
-     * \param aircraft
-     *        the aircraft whose time offset has changed
-     */
-    void timeOffsetChanged(const Aircraft &aircraft);
-
 private:
     const std::unique_ptr<AircraftPrivate> d;
-
-    void frenchConnection(); 
 };
 
 #endif // AIRCRAFT_H

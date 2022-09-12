@@ -27,7 +27,6 @@
 #include <cstdint>
 #include <cinttypes>
 
-#include <QObject>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -52,14 +51,15 @@
 struct AircraftPrivate
 {
 public:
-    AircraftPrivate() noexcept
-        : id(Aircraft::InvalidId),
-          aircraftInfo(id),
-          duration(TimeVariableData::InvalidTime)
-    {}
+    AircraftPrivate() = default;
+    AircraftPrivate(const AircraftPrivate &rhs) = delete;
+    AircraftPrivate(AircraftPrivate &&rhs) = default;
+    ~AircraftPrivate() = default;
+    AircraftPrivate &operator=(const AircraftPrivate &rhs) = delete;
+    AircraftPrivate &operator=(AircraftPrivate &&rhs) = default;
 
-    std::int64_t id;
-    AircraftInfo aircraftInfo;
+    std::int64_t id {Aircraft::InvalidId};
+    AircraftInfo aircraftInfo {id};
     Position position{aircraftInfo};
     Engine engine{aircraftInfo};
     PrimaryFlightControl primaryFlightControl{aircraftInfo};
@@ -68,26 +68,38 @@ public:
     Light light{aircraftInfo};
     FlightPlan flightPlan;
 
-    mutable std::int64_t duration;
+    mutable std::int64_t duration {TimeVariableData::InvalidTime};
 };
 
 // PUBLIC
 
-Aircraft::Aircraft(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<AircraftPrivate>())
+Aircraft::Aircraft()
+    : d(std::make_unique<AircraftPrivate>())
 {
-    frenchConnection();
 #ifdef DEBUG
     qDebug() << "Aircraft::Aircraft: CREATED, ID:" << d->id;
 #endif
 }
 
-Aircraft::~Aircraft() noexcept
+Aircraft::~Aircraft()
 {
 #ifdef DEBUG
     qDebug() << "Aircraft::~Aircraft: DELETED, ID:" << d->id;
 #endif
+}
+
+Aircraft::Aircraft(const Aircraft &&rhs) noexcept
+{
+    *d = std::move(*rhs.d);
+#ifdef DEBUG
+    qDebug() << "Aircraft::Aircraft: MOVED, ID:" << d->id;
+#endif
+}
+
+Aircraft &Aircraft::operator=(Aircraft &&rhs) noexcept
+{
+    *d = std::move(*rhs.d);
+    return *this;
 }
 
 std::int64_t Aircraft::getId() const noexcept
@@ -143,17 +155,11 @@ const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
 
 void Aircraft::setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept
 {
-    if (d->aircraftInfo != aircraftInfo) {
-        d->aircraftInfo = aircraftInfo;
-        emit infoChanged(*this);
-    }
+    d->aircraftInfo = aircraftInfo;
 }
 
 void Aircraft::setTailNumber(const QString &tailNumber) noexcept {
-    if (d->aircraftInfo.tailNumber != tailNumber) {
-        d->aircraftInfo.tailNumber = tailNumber;
-        emit tailNumberChanged(*this);
-    }
+    d->aircraftInfo.tailNumber = tailNumber;
 }
 
 std::int64_t Aircraft::getTimeOffset() const noexcept
@@ -162,10 +168,8 @@ std::int64_t Aircraft::getTimeOffset() const noexcept
 }
 
 void Aircraft::setTimeOffset(std::int64_t timeOffset) noexcept {
-    if (d->aircraftInfo.timeOffset != timeOffset) {
-        d->aircraftInfo.timeOffset = timeOffset;
-        emit timeOffsetChanged(*this);
-    }
+    d->aircraftInfo.timeOffset = timeOffset;
+    invalidateDuration();
 }
 
 std::int64_t Aircraft::getDurationMSec() const noexcept
@@ -231,18 +235,4 @@ bool Aircraft::operator!=(const Aircraft &rhs) const noexcept
 void Aircraft::invalidateDuration() noexcept
 {
     d->duration = TimeVariableData::InvalidTime;
-}
-
-// PRIVATE
-
-void Aircraft::frenchConnection()
-{
-    // Tail number
-    connect(this, &Aircraft::tailNumberChanged,
-            this, &Aircraft::infoChanged);
-    // Timestamp offset
-    connect(this, &Aircraft::timeOffsetChanged,
-            this, &Aircraft::invalidateDuration);
-    connect(this, &Aircraft::timeOffsetChanged,
-            this, &Aircraft::infoChanged);
 }

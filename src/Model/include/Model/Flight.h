@@ -61,7 +61,7 @@ public:
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;
 
-    void setAircraft(std::vector<std::unique_ptr<Aircraft>> &&aircraft) noexcept;
+    void setAircraft(std::vector<Aircraft> &&aircraft) noexcept;
     Aircraft &addUserAircraft() noexcept;
     Aircraft &getUserAircraft() const noexcept;
 
@@ -145,7 +145,7 @@ public:
 
     void clear(bool withOneAircraft) noexcept;
 
-    using Iterator = std::vector<std::unique_ptr<Aircraft>>::iterator;
+    using Iterator = std::vector<Aircraft>::iterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
@@ -208,8 +208,6 @@ signals:
 
 private:
     const std::unique_ptr<FlightPrivate> d;
-
-    inline void connectWithAircraftSignals(Aircraft &aircraft);
 
     /*
      * Re-assigns the user aircraft \c index, but without emitting the \c userAircraftChanged signal.

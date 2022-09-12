@@ -214,35 +214,35 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, A
     return ok;
 }
 
-std::vector<std::unique_ptr<Aircraft>> SQLiteAircraftDao::getByFlightId(std::int64_t flightId, bool *ok) const noexcept
+std::vector<Aircraft> SQLiteAircraftDao::getByFlightId(std::int64_t flightId, bool *ok) const noexcept
 {
-    std::vector<std::unique_ptr<Aircraft>> aircraftList;
+    std::vector<Aircraft> aircraftList;
     bool success {true};
     std::vector<AircraftInfo> aircraftInfos = getAircraftInfosByFlightId(flightId, &success);
     if (success) {
         aircraftList.reserve(aircraftInfos.size());
         for (const AircraftInfo &info: aircraftInfos) {
-            std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
-            aircraft->setId(info.aircraftId);
-            aircraft->setAircraftInfo(info);
-            aircraft->getPosition().setData(d->positionDao->getByAircraftId(aircraft->getId(), &success));
+            Aircraft aircraft;
+            aircraft.setId(info.aircraftId);
+            aircraft.setAircraftInfo(info);
+            aircraft.getPosition().setData(d->positionDao->getByAircraftId(aircraft.getId(), &success));
             if (success) {
-                aircraft->getEngine().setData(d->engineDao->getByAircraftId(aircraft->getId(), &success));
+                aircraft.getEngine().setData(d->engineDao->getByAircraftId(aircraft.getId(), &success));
             }
             if (success) {
-                aircraft->getPrimaryFlightControl().setData(d->primaryFlightControlDao->getByAircraftId(aircraft->getId(), &success));
+                aircraft.getPrimaryFlightControl().setData(d->primaryFlightControlDao->getByAircraftId(aircraft.getId(), &success));
             }
             if (success) {
-                aircraft->getSecondaryFlightControl().setData(d->secondaryFlightControlDao->getByAircraftId(aircraft->getId(), &success));
+                aircraft.getSecondaryFlightControl().setData(d->secondaryFlightControlDao->getByAircraftId(aircraft.getId(), &success));
             }
             if (success) {
-                aircraft->getAircraftHandle().setData(d->handleDao->getByAircraftId(aircraft->getId(), &success));
+                aircraft.getAircraftHandle().setData(d->handleDao->getByAircraftId(aircraft.getId(), &success));
             }
             if (success) {
-                aircraft->getLight().setData(d->lightDao->getByAircraftId(aircraft->getId(), &success));
+                aircraft.getLight().setData(d->lightDao->getByAircraftId(aircraft.getId(), &success));
             }
             if (success) {
-                success = d->waypointDao->getByAircraftId(aircraft->getId(), aircraft->getFlightPlan());
+                success = d->waypointDao->getByAircraftId(aircraft.getId(), aircraft.getFlightPlan());
             }
             if (success) {
                 aircraftList.push_back(std::move(aircraft));

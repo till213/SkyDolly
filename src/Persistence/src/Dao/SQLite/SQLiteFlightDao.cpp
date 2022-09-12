@@ -155,8 +155,8 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
     if (ok) {
         // Starts at 1
         std::size_t sequenceNumber = 1;
-        for (auto &it : flight) {
-            ok = d->aircraftDao->add(flight.getId(), sequenceNumber, *it.get());
+        for (auto &aircaft : flight) {
+            ok = d->aircraftDao->add(flight.getId(), sequenceNumber, aircaft);
             if (ok) {
                 ++sequenceNumber;
             } else {
@@ -233,7 +233,7 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
 
             flight.setFlightCondition(flightCondition);
         }
-        std::vector<std::unique_ptr<Aircraft>> aircraft = d->aircraftDao->getByFlightId(id, &ok);
+        std::vector<Aircraft> aircraft = d->aircraftDao->getByFlightId(id, &ok);
         flight.setAircraft(std::move(aircraft));
         if (ok) {
             // Index starts at 0

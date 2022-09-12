@@ -43,7 +43,7 @@ public:
     ~SQLiteAircraftDao() noexcept override;
 
     bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
-    std::vector<std::unique_ptr<Aircraft>> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
+    std::vector<Aircraft> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
     bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept override;
     bool deleteAllByFlightId(std::int64_t flightId) noexcept override;
     bool deleteById(std::int64_t id) noexcept override;

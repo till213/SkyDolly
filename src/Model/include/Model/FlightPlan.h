@@ -30,21 +30,21 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
-#include <QVector>
-
 #include "Waypoint.h"
 #include "ModelLib.h"
 
 struct Waypoint;
 struct FlightPlanPrivate;
 
-class MODEL_API FlightPlan : public QObject
+class MODEL_API FlightPlan
 {
-    Q_OBJECT
 public:
-    explicit FlightPlan(QObject *parent = nullptr) noexcept;
-    ~FlightPlan() noexcept override;
+    FlightPlan();
+    FlightPlan(const FlightPlan &rhs) = delete;
+    FlightPlan(FlightPlan &&rhs) noexcept;
+    ~FlightPlan();
+    FlightPlan &operator=(const FlightPlan &rhs) = delete;
+    FlightPlan &operator=(FlightPlan &&rhs) noexcept;
 
     void add(const Waypoint &waypoint) noexcept;
     void update(int index, const Waypoint &waypoint) noexcept;
@@ -62,11 +62,6 @@ public:
 
     Waypoint &operator[](std::size_t index) noexcept;
     const Waypoint &operator[](std::size_t index) const noexcept;
-
-signals:
-    void waypointAdded(const Waypoint &waypoint);
-    void waypointUpdated(int index, const Waypoint &waypoint);
-    void waypointsCleared();
 
 private:
     const std::unique_ptr<FlightPlanPrivate> d;

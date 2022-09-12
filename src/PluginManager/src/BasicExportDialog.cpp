@@ -211,7 +211,7 @@ std::int64_t BasicExportDialog::estimateNofSamplePoints() const noexcept
             nofSamplePoints += static_cast<std::int64_t>(std::round(static_cast<double>(duration) / static_cast<double>(period))) + 1;
         } else {
             for (const auto &aircraft : d->flight) {
-                std::int64_t duration = aircraft->getDurationMSec();
+                std::int64_t duration = aircraft.getDurationMSec();
                 nofSamplePoints += static_cast<std::int64_t>(std::round(static_cast<double>(duration) / static_cast<double>(period))) + 1;
             }
         }
@@ -221,7 +221,7 @@ std::int64_t BasicExportDialog::estimateNofSamplePoints() const noexcept
             nofSamplePoints += d->flight.getUserAircraft().getPosition().count();
         } else {
             for (const auto &aircraft : d->flight) {
-                nofSamplePoints += aircraft->getPosition().count();
+                nofSamplePoints += aircraft.getPosition().count();
             }
         }
     }
