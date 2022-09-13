@@ -184,7 +184,7 @@ bool GpxExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
     bool ok = true;
     for (const auto &aircraft : *d->flight) {
-        ok = exportAircraft(*aircraft, io);
+        ok = exportAircraft(aircraft, io);
         if (!ok) {
             break;
         }

@@ -40,6 +40,7 @@ class QString;
 #include "FlightCondition.h"
 #include "ModelLib.h"
 
+struct Waypoint;
 struct FlightPrivate;
 
 class MODEL_API Flight : public QObject
@@ -172,6 +173,11 @@ signals:
 
     void aircraftAdded(const Aircraft &newAircraft);
     void aircraftRemoved(std::int64_t removedAircraftId);
+    void infoChanged(const Aircraft &aircraft);
+
+    void waypointAdded(const Waypoint &waypoint);
+    void waypointUpdated(int index, const Waypoint &waypoint);
+    void waypointsCleared(const Aircraft &aircraft);
 
     /*!
      * Emitted whenever the user aircraft index is changed to \c newUserAircraftIndex. In case a previous user aircraft

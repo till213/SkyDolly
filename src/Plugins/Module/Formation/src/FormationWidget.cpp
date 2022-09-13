@@ -362,7 +362,7 @@ void FormationWidget::updateAircraftTable() noexcept
 
     int aircraftIndex {0};
     for (const auto &aircraft : flight) {
-        createRow(*aircraft, aircraftIndex);
+        createRow(aircraft, aircraftIndex);
         ++aircraftIndex;
     }
 
@@ -1036,7 +1036,7 @@ void FormationWidget::resetAllTimeOffsets() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         bool ok = true;
         for (auto &aircraft : flight) {
-            ok = d->aircraftService.changeTimeOffset(*aircraft, 0);
+            ok = d->aircraftService.changeTimeOffset(aircraft, 0);
             if (!ok) {
                 break;
             }
