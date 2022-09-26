@@ -56,8 +56,8 @@ struct MODEL_API AircraftType
     AircraftType() noexcept;
     AircraftType(QString type, QString category, int wingSpan, SimType::EngineType engineType, int numberOfEngines) noexcept;
     ~AircraftType() = default;
-    AircraftType(const AircraftType &other) = default;
-    AircraftType(AircraftType &&other) noexcept;
+    AircraftType(const AircraftType &rhs) = default;
+    AircraftType(AircraftType &&rhs) noexcept;
     AircraftType &operator=(const AircraftType &rhs) = default;
     AircraftType &operator=(AircraftType &&rhs) noexcept;
 

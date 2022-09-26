@@ -51,12 +51,12 @@ public:
     {}
     virtual ~AbstractComponent() noexcept = default;
     AbstractComponent(const AbstractComponent &) noexcept = default;
-    AbstractComponent(AbstractComponent &&other) noexcept
-        : m_data (std::move(other.m_data)),
-          m_aircraftInfo(std::move(other.m_aircraftInfo)),
-          m_currentTimestamp(other.m_currentTimestamp),
-          m_currentIndex(other.m_currentIndex),
-          m_currentAccess(other.m_currentAccess)
+    AbstractComponent(AbstractComponent &&rhs) noexcept
+        : m_data (std::move(rhs.m_data)),
+          m_aircraftInfo(std::move(rhs.m_aircraftInfo)),
+          m_currentTimestamp(rhs.m_currentTimestamp),
+          m_currentIndex(rhs.m_currentIndex),
+          m_currentAccess(rhs.m_currentAccess)
     {}
 
     AbstractComponent &operator=(const AbstractComponent &rhs) noexcept

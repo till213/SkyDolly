@@ -30,7 +30,6 @@
 #include <QtGlobal>
 #include <QFlags>
 
-#include "SimType.h"
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
@@ -41,8 +40,8 @@ struct MODEL_API PrimaryFlightControlData : public TimeVariableData
     std::int16_t aileronPosition;
 
     PrimaryFlightControlData() noexcept;
-    PrimaryFlightControlData(const PrimaryFlightControlData &other) = default;
-    PrimaryFlightControlData(PrimaryFlightControlData &&other) = default;
+    PrimaryFlightControlData(const PrimaryFlightControlData &rhs) = default;
+    PrimaryFlightControlData(PrimaryFlightControlData &&rhs) = default;
     ~PrimaryFlightControlData() override = default;
     PrimaryFlightControlData &operator=(const PrimaryFlightControlData &rhs) = default;
     PrimaryFlightControlData &operator=(PrimaryFlightControlData &&rhs) = default;

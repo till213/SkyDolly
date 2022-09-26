@@ -72,8 +72,8 @@ public:
      * \sa #operator<()
      */
     Version(QStringView version) noexcept;
-    Version(const Version &other) noexcept;
-    Version(Version &&other) noexcept;
+    Version(const Version &rhs) noexcept;
+    Version(Version &&rhs) noexcept;
     ~Version() noexcept;
 
     void fromString(QStringView version) noexcept;

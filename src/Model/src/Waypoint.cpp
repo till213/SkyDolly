@@ -24,7 +24,6 @@
  */
 #include <utility>
 
-#include "LightData.h"
 #include "Waypoint.h"
 
 // PUBLIC

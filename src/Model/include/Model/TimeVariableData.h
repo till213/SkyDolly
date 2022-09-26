@@ -50,7 +50,7 @@ struct MODEL_API TimeVariableData
     std::int64_t timestamp;
 
     TimeVariableData() noexcept;
-    TimeVariableData(const TimeVariableData &other) = default;
+    TimeVariableData(const TimeVariableData &rhs) = default;
 
     /*!
      * Move constructor. The \c other data will be considered \e null data afterwards
@@ -59,10 +59,10 @@ struct MODEL_API TimeVariableData
      *        the other data to be moved; will be considered \e null data afterwards
      * \sa isNull
      */
-    TimeVariableData(TimeVariableData &&other)
-        : timestamp(other.timestamp)
+    TimeVariableData(TimeVariableData &&rhs)
+        : timestamp(rhs.timestamp)
     {
-        other.timestamp = InvalidTime;
+        rhs.timestamp = InvalidTime;
     };
     virtual ~TimeVariableData() noexcept;
     TimeVariableData &operator=(const TimeVariableData &rhs) = default;

@@ -45,8 +45,8 @@ struct MODEL_API SecondaryFlightControlData : public TimeVariableData
     std::int8_t flapsHandleIndex;
 
     SecondaryFlightControlData() noexcept;
-    SecondaryFlightControlData(const SecondaryFlightControlData &other) = default;
-    SecondaryFlightControlData(SecondaryFlightControlData &&other) = default;
+    SecondaryFlightControlData(const SecondaryFlightControlData &rhs) = default;
+    SecondaryFlightControlData(SecondaryFlightControlData &&rhs) = default;
     SecondaryFlightControlData &operator=(const SecondaryFlightControlData &) = default;
 };
 

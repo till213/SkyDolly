@@ -53,8 +53,8 @@ struct MODEL_API FlightCondition
     QDateTime endZuluTime;
 
     FlightCondition() noexcept;
-    FlightCondition(const FlightCondition &other) = default;
-    FlightCondition(FlightCondition &&other) noexcept;
+    FlightCondition(const FlightCondition &rhs) = default;
+    FlightCondition(FlightCondition &&rhs) noexcept;
     ~FlightCondition() = default;
     FlightCondition &operator=(const FlightCondition &rhs) = default;
     FlightCondition &operator=(FlightCondition &&rhs) noexcept;

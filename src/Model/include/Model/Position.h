@@ -34,8 +34,8 @@ class MODEL_API Position : public AbstractComponent<PositionData>
 {
 public:
     explicit Position(const AircraftInfo &aircraftInfo) noexcept;
-    Position(Position &other) = default;
-    Position(Position &&other) = default;
+    Position(Position &rhs) = default;
+    Position(Position &&rhs) = default;
     ~Position() noexcept override;
     Position &operator=(const Position &rhs) = default;
     Position &operator=(Position &&rhs) = default;

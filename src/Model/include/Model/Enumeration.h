@@ -48,7 +48,7 @@ public:
 
     Enumeration() noexcept;
     Enumeration(const QString &name) noexcept;
-    Enumeration(Enumeration &&other) noexcept;
+    Enumeration(Enumeration &&rhs) noexcept;
     ~Enumeration() noexcept;
     Enumeration &operator=(Enumeration &&rhs) noexcept;
 
