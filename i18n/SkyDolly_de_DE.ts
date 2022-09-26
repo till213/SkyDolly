@@ -1885,32 +1885,32 @@ or choose another reference aircraft (marked in green) in the formation.</source
 <context>
     <name>LogbookManager</name>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="136"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="150"/>
         <source>Newer Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="137"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="151"/>
         <source>The logbook %1 has been created with a newer version %2. Do you want to create a new logbook?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="138"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="152"/>
         <source>Logbooks created with newer %1 versions cannot be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="139"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="153"/>
         <source>Create &amp;New Logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="140"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="154"/>
         <source>&amp;Open Another Logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="141"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="155"/>
         <source>&amp;Cancel</source>
         <translation type="unfinished"></translation>
     </message>

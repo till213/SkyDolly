@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <mutex>
 
 #include <QCoreApplication>
 #include <QPluginLoader>
@@ -78,18 +79,19 @@ struct PluginManagerPrivate
     // Plugin UUID / plugin path
     QMap<QUuid, QString> exportPluginRegistry;
     QMap<QUuid, QString> importPluginRegistry;
-    static PluginManager *instance;
+
+    static inline std::once_flag onceFlag;
+    static inline PluginManager *instance;
 };
 
-PluginManager *PluginManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
 PluginManager &PluginManager::getInstance() noexcept
 {
-    if (PluginManagerPrivate::instance == nullptr) {
+    std::call_once(PluginManagerPrivate::onceFlag, []() {
         PluginManagerPrivate::instance = new PluginManager();
-    }
+    });
     return *PluginManagerPrivate::instance;
 }
 

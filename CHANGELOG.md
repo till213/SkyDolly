@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13.0
+
+### Under The Hood
+- Thread-safe access to singletons [[Back to Basics: Concurrency](https://www.youtube.com/watch?v=F6Ipn7gCOsY)]
+
 ## 0.12.0
 
 ### New Features

@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <utility>
+#include <mutex>
 
 #include <QString>
 #include <QFileInfo>
@@ -64,18 +65,18 @@ struct LogbookManagerPrivate
     QString logbookPath;
     bool connected;
 
-    static LogbookManager *instance;
+    static inline std::once_flag onceFlag;
+    static inline LogbookManager *instance;
 };
 
-LogbookManager *LogbookManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
 LogbookManager &LogbookManager::getInstance() noexcept
 {
-    if (LogbookManagerPrivate::instance == nullptr) {
+    std::call_once(LogbookManagerPrivate::onceFlag, []() {
         LogbookManagerPrivate::instance = new LogbookManager();
-    }
+    });
     return *LogbookManagerPrivate::instance;
 }
 

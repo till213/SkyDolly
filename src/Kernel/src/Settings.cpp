@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <mutex>
+
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QSettings>
@@ -100,7 +102,8 @@ struct SettingsPrivate
 
     int previewInfoDialogCount;
 
-    static Settings *instance;
+    static inline std::once_flag onceFlag;
+    static inline Settings *instance {nullptr};
 
     static constexpr QUuid DefaultSkyConnectPluginUuid {};
     static constexpr double DefaultRecordingSampleRate {SampleRate::toValue(SampleRate::SampleRate::Auto)};
@@ -148,15 +151,14 @@ struct SettingsPrivate
     {}
 };
 
-Settings *SettingsPrivate::instance = nullptr;
 
 // PUBLIC
 
 Settings &Settings::getInstance() noexcept
 {
-    if (SettingsPrivate::instance == nullptr) {
+    std::call_once(SettingsPrivate::onceFlag, []() {
         SettingsPrivate::instance = new Settings();
-    }
+    });
     return *SettingsPrivate::instance;
 }
 

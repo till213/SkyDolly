@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <optional>
+#include <mutex>
 
 #include <QCoreApplication>
 #include <QPluginLoader>
@@ -83,18 +84,17 @@ struct skyConnectManagerPrivate
     QPluginLoader *pluginLoader;
     QUuid currentPluginUuid;
 
-    static SkyConnectManager *instance;
+    static inline std::once_flag onceFlag;
+    static inline SkyConnectManager *instance;
 };
-
-SkyConnectManager *skyConnectManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
 SkyConnectManager &SkyConnectManager::getInstance() noexcept
 {
-    if (skyConnectManagerPrivate::instance == nullptr) {
+    std::call_once(skyConnectManagerPrivate::onceFlag, []() {
         skyConnectManagerPrivate::instance = new SkyConnectManager();
-    }
+    });
     return *skyConnectManagerPrivate::instance;
 }
 
