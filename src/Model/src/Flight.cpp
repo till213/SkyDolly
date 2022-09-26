@@ -296,6 +296,7 @@ void Flight::clear(bool withOneAircraft) noexcept
         // Only emit the signals if the flight has at least one aircraft
         // (but e.g. not shortly before loading a new flight from the logbook)
         emit cleared();
+        emit waypointsCleared(getUserAircraft());
         emit descriptionOrTitleChanged();
     }
 }

@@ -111,7 +111,7 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool ok = query.exec();
     if (ok) {
-        flightPlan.clear();
+        flightPlan.clear2();
         QSqlRecord record = query.record();
         const int identifierIdx = record.indexOf("ident");
         const int latitudeIdx = record.indexOf("latitude");
@@ -129,7 +129,7 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
             data.localTime = query.value(localSimulationTimeIdx).toDateTime();
             // UTC equals zulu time, so no conversion necessary
             data.zuluTime = query.value(zuluSimulationTimeIdx).toDateTime();
-            flightPlan.add(std::move(data));
+            flightPlan.add2(std::move(data));
         }
 #ifdef DEBUG
     } else {

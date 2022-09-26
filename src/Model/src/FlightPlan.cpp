@@ -57,12 +57,12 @@ FlightPlan &FlightPlan::operator=(FlightPlan &&rhs) noexcept
     return *this;
 }
 
-void FlightPlan::add(const Waypoint &waypoint) noexcept
+void FlightPlan::add2(const Waypoint &waypoint) noexcept
 {
     d->waypoints.push_back(waypoint);
 }
 
-void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
+void FlightPlan::update2(int index, const Waypoint &waypoint) noexcept
 {
     Waypoint currentWaypoint = d->waypoints.at(index);
     bool changed = false;
@@ -102,7 +102,7 @@ std::size_t FlightPlan::count() const noexcept
     return d->waypoints.size();
 }
 
-void FlightPlan::clear() noexcept
+void FlightPlan::clear2() noexcept
 {
     d->waypoints.clear();
 }
@@ -125,11 +125,6 @@ const FlightPlan::Iterator FlightPlan::begin() const noexcept
 const FlightPlan::Iterator FlightPlan::end() const noexcept
 {
     return Iterator(d->waypoints.end());
-}
-
-FlightPlan::BackInsertIterator FlightPlan::backInsertIterator() noexcept
-{
-    return std::back_inserter(d->waypoints);
 }
 
 // OPERATORS

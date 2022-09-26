@@ -44,7 +44,6 @@ public:
     using Data = typename std::vector<T>;
     using Iterator = typename Data::iterator;
     using ConstIterator = typename Data::const_iterator;
-    using BackInsertIterator = typename std::back_insert_iterator<Data>;
 
     explicit AbstractComponent(const AircraftInfo &aircraftInfo) noexcept
         : m_aircraftInfo(aircraftInfo)
@@ -190,11 +189,6 @@ public:
     ConstIterator cend() const noexcept
     {
         return m_data.cend();
-    }
-
-    BackInsertIterator backInsertIterator() noexcept
-    {
-        return std::back_inserter(m_data);
     }
 
     T &operator[](std::size_t index) noexcept

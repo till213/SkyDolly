@@ -46,19 +46,18 @@ public:
     FlightPlan &operator=(const FlightPlan &rhs) = delete;
     FlightPlan &operator=(FlightPlan &&rhs) noexcept;
 
-    void add(const Waypoint &waypoint) noexcept;
-    void update(int index, const Waypoint &waypoint) noexcept;
+    // TODO rename back to original names (drop the 2 suffix)
+    void add2(const Waypoint &waypoint) noexcept;
+    void update2(int index, const Waypoint &waypoint) noexcept;
     std::size_t count() const noexcept;
-    void clear() noexcept;
+    void clear2() noexcept;
 
     using Iterator = std::vector<Waypoint>::iterator;
-    using BackInsertIterator = std::back_insert_iterator<std::vector<Waypoint>>;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
-    BackInsertIterator backInsertIterator() noexcept;
 
     Waypoint &operator[](std::size_t index) noexcept;
     const Waypoint &operator[](std::size_t index) const noexcept;

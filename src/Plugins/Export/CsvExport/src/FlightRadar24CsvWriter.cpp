@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
 #include <cstdint>
 #include <cmath>
 
@@ -101,9 +102,8 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
     if (ok) {
         const QDateTime startDateTimeUtc = flight.getAircraftStartZuluTime(aircraft);
         const QString callSign = aircraft.getAircraftInfo().flightNumber;
-        std::vector<PositionData> interpolatedPositionData;
-        Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
-        for (PositionData &positionData : interpolatedPositionData) {
+        const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+        for (const PositionData &positionData : interpolatedPositionData) {
             if (!positionData.isNull()) {
                 const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
                 const std::int64_t secsSinceEpoch = dateTimeUtc.toSecsSinceEpoch();

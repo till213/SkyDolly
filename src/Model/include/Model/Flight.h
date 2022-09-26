@@ -117,6 +117,10 @@ public:
     std::int64_t deleteAircraftByIndex(int index) noexcept;
     std::size_t count() const noexcept;
 
+    void addWaypoint(Aircraft &aircraft, const Waypoint &waypoint) noexcept;
+    void updateWaypoint(Aircraft &aircraft, int index, const Waypoint &waypoint) noexcept;
+    void clearWaypoints(Aircraft &aircraft) noexcept;
+
     const FlightCondition &getFlightCondition() const noexcept;
     void setFlightCondition(FlightCondition flightCondition) noexcept;
 
