@@ -1885,32 +1885,32 @@ or choose another reference aircraft (marked in green) in the formation.</source
 <context>
     <name>LogbookManager</name>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="150"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="136"/>
         <source>Newer Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="151"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="137"/>
         <source>The logbook %1 has been created with a newer version %2. Do you want to create a new logbook?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="152"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="138"/>
         <source>Logbooks created with newer %1 versions cannot be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="153"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="139"/>
         <source>Create &amp;New Logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="154"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="140"/>
         <source>&amp;Open Another Logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="155"/>
+        <location filename="../src/Persistence/src/LogbookManager.cpp" line="141"/>
         <source>&amp;Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3535,7 +3535,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/StatisticsDialog.cpp" line="151"/>
+        <location filename="../src/UserInterface/src/Dialog/StatisticsDialog.cpp" line="150"/>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
