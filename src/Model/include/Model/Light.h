@@ -34,8 +34,8 @@ class MODEL_API Light : public AbstractComponent<LightData>
 {
 public:
     explicit Light(const AircraftInfo &aircraftInfo) noexcept;
-    Light(Light &other) = default;
-    Light(Light &&other) = default;
+    Light(Light &rhs) = default;
+    Light(Light &&rhs) = default;
     ~Light() noexcept override;
     Light &operator=(const Light &rhs) = default;
     Light &operator=(Light &&rhs) = default;

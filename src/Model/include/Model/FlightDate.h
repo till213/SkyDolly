@@ -13,8 +13,8 @@ struct MODEL_API FlightDate
 {
     FlightDate() noexcept = default;
     FlightDate(int year, int month, int dayOfMonth, int nofFlights) noexcept;
-    FlightDate(const FlightDate &other) = default;
-    FlightDate(FlightDate &&other) = default;
+    FlightDate(const FlightDate &rhs) = default;
+    FlightDate(FlightDate &&rhs) = default;
     ~FlightDate() = default;
     FlightDate &operator=(const FlightDate &rhs) = default;
     FlightDate &operator=(FlightDate &&rhs) = default;

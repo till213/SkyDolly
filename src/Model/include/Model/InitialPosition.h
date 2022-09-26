@@ -51,8 +51,8 @@ struct MODEL_API InitialPosition
 
     explicit InitialPosition(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
     InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept;
-    InitialPosition(const InitialPosition &other) = default;
-    InitialPosition(InitialPosition &&other) = default;
+    InitialPosition(const InitialPosition &rhs) = default;
+    InitialPosition(InitialPosition &&rhs) = default;
     ~InitialPosition() = default;
     InitialPosition &operator=(const InitialPosition &rhs) = default;
     InitialPosition &operator=(InitialPosition &&rhs) = default;

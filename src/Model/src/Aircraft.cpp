@@ -89,6 +89,7 @@ Aircraft::~Aircraft()
 }
 
 Aircraft::Aircraft(const Aircraft &&rhs) noexcept
+    : d(std::make_unique<AircraftPrivate>())
 {
     *d = std::move(*rhs.d);
 #ifdef DEBUG

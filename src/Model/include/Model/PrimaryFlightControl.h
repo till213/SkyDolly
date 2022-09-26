@@ -34,8 +34,8 @@ class MODEL_API PrimaryFlightControl : public AbstractComponent<PrimaryFlightCon
 {
 public:
     explicit PrimaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
-    PrimaryFlightControl(PrimaryFlightControl &other) = default;
-    PrimaryFlightControl(PrimaryFlightControl &&other) = default;
+    PrimaryFlightControl(PrimaryFlightControl &rhs) = default;
+    PrimaryFlightControl(PrimaryFlightControl &&rhs) = default;
     ~PrimaryFlightControl() noexcept override;
     PrimaryFlightControl &operator=(const PrimaryFlightControl &rhs) = default;
     PrimaryFlightControl &operator=(PrimaryFlightControl &&rhs) = default;

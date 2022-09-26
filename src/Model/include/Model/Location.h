@@ -52,8 +52,8 @@ struct MODEL_API Location : public Data
 
     explicit Location(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
     explicit Location(const InitialPosition &initialPosition) noexcept;
-    Location(Location &other) = default;
-    Location(Location &&other) = default;
+    Location(Location &rhs) = default;
+    Location(Location &&rhs) = default;
      ~Location() noexcept override = default;
     Location &operator=(const Location &rhs) = default;
     Location &operator=(Location &&rhs) = default;

@@ -44,6 +44,7 @@ FlightPlan::FlightPlan()
 {}
 
 FlightPlan::FlightPlan(FlightPlan &&rhs) noexcept
+    : d(std::make_unique<FlightPlanPrivate>())
 {
     *d = std::move(*rhs.d);
 }

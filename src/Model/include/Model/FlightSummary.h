@@ -35,8 +35,8 @@
 struct MODEL_API FlightSummary
 {
     FlightSummary() noexcept;
-    FlightSummary(const FlightSummary &other) = default;
-    FlightSummary(FlightSummary &&other) noexcept;
+    FlightSummary(const FlightSummary &rhs) = default;
+    FlightSummary(FlightSummary &&rhs) noexcept;
     ~FlightSummary() noexcept;
     FlightSummary &operator=(const FlightSummary &rhs) = default;
     FlightSummary &operator=(FlightSummary &&rhs) noexcept;

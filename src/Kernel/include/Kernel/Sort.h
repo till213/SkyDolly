@@ -55,18 +55,18 @@ public:
 
     struct Vertex
     {
-        Vertex()
+        Vertex() noexcept
             : id(T())
         {};
 
-        explicit Vertex(T theId)
+        explicit Vertex(T theId) noexcept
             : id(theId)
         {};
 
-        explicit Vertex(const Vertex &other)
-            : id(other.id),
-              edges(other.edges),
-              state(other.state)
+        Vertex(const Vertex &rhs) noexcept
+            : id(rhs.id),
+              edges(rhs.edges),
+              state(rhs.state)
         {};
 
         T id;
