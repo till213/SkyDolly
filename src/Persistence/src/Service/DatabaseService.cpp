@@ -41,7 +41,7 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Const.h>
 #include <Model/Logbook.h>
-#include <LogbookManager.h>
+#include <PersistenceManager.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/DatabaseDaoIntf.h"
 #include <Service/DatabaseService.h>
@@ -87,18 +87,18 @@ bool DatabaseService::backup() noexcept
 {
     QString backupDirectoryPath;
 
-    LogbookManager &logbookManager = LogbookManager::getInstance();
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
     bool ok {true};
-    const Metadata metaData = logbookManager.getMetadata(&ok);
+    const Metadata metaData = persistenceManager.getMetadata(&ok);
     if (ok) {
-        backupDirectoryPath = LogbookManager::createBackupPathIfNotExists(metaData.backupDirectoryPath);
+        backupDirectoryPath = PersistenceManager::createBackupPathIfNotExists(metaData.backupDirectoryPath);
     }
     ok = !backupDirectoryPath.isNull();
     if (ok) {
-        const QString backupFileName = logbookManager.getBackupFileName(backupDirectoryPath);
+        const QString backupFileName = persistenceManager.getBackupFileName(backupDirectoryPath);
         if (!backupFileName.isNull()) {
             const QString backupFilePath = backupDirectoryPath + "/" + backupFileName;
-            ok = logbookManager.backup(backupFilePath);
+            ok = persistenceManager.backup(backupFilePath);
             if (ok) {
                 ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
             }
@@ -144,7 +144,7 @@ bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
 bool DatabaseService::updateBackupDate() noexcept
 {
     bool ok {true};
-    const Metadata metaData = LogbookManager::getInstance().getMetadata(&ok);
+    const Metadata metaData = PersistenceManager::getInstance().getMetadata(&ok);
     if (ok) {
         const QDateTime today = QDateTime::currentDateTime();
         QDateTime nextBackupDate = metaData.lastBackupDate.isNull() ? today : metaData.lastBackupDate;

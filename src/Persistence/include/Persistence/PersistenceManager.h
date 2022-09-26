@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOGBOOKMANAGER_H
-#define LOGBOOKMANAGER_H
+#ifndef PERSISTENCEMANAGER_H
+#define PERSISTENCEMANAGER_H
 
 #include <memory>
 #include <utility>
@@ -40,13 +40,13 @@ class Version;
 
 class Metadata;
 class Version;
-struct LogbookManagerPrivate;
+struct PersistenceManagerPrivate;
 
-class PERSISTENCE_API LogbookManager : public QObject
+class PERSISTENCE_API PersistenceManager : public QObject
 {
     Q_OBJECT
 public:
-    static LogbookManager &getInstance() noexcept;
+    static PersistenceManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
     /*!
@@ -87,15 +87,15 @@ signals:
     void connectionChanged(bool connected);
 
 protected:
-    ~LogbookManager() noexcept override;
+    ~PersistenceManager() noexcept override;
 
 private:
-    const std::unique_ptr<LogbookManagerPrivate> d;
+    const std::unique_ptr<PersistenceManagerPrivate> d;
 
-    LogbookManager() noexcept;
+    PersistenceManager() noexcept;
 
     bool connectDb(const QString &logbookPath) noexcept;
     std::pair<bool, Version> checkDatabaseVersion() const noexcept;
 };
 
-#endif // LOGBOOKMANAGER_H
+#endif // PERSISTENCEMANAGER_H

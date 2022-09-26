@@ -51,7 +51,7 @@
 #include <Kernel/Unit.h>
 #include <Kernel/PositionParser.h>
 #include <Model/Logbook.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/PersistenceManager.h>
 #include <Persistence/PersistedEnumerationItem.h>
 #include <Persistence/Service/LocationService.h>
 #include <Persistence/Service/EnumerationService.h>
@@ -308,7 +308,7 @@ void LocationWidget::initUi() noexcept
 void LocationWidget::frenchConnection() noexcept
 {
     // Logbook
-    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
+    connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &LocationWidget::updateUi);
 
     // Connection
@@ -392,7 +392,7 @@ void LocationWidget::updateInfoUi() noexcept
 
 void LocationWidget::updateLocationTable() noexcept
 {
-    if (LogbookManager::getInstance().isConnected()) {
+    if (PersistenceManager::getInstance().isConnected()) {
 
         std::vector<Location> locations = d->locationService->getAll();
 

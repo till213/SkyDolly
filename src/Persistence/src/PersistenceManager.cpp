@@ -46,15 +46,15 @@
 #include "Dao/DaoFactory.h"
 #include "Dao/DatabaseDaoIntf.h"
 #include "Service/DatabaseService.h"
-#include "LogbookManager.h"
+#include "PersistenceManager.h"
 
 namespace {
     constexpr int MaxBackupIndex = 1024;
 }
 
-struct LogbookManagerPrivate
+struct PersistenceManagerPrivate
 {
-    LogbookManagerPrivate() noexcept
+    PersistenceManagerPrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           databaseDao(daoFactory->createDatabaseDao()),
           connected(false)
@@ -66,29 +66,29 @@ struct LogbookManagerPrivate
     bool connected;
 
     static inline std::once_flag onceFlag;
-    static inline LogbookManager *instance;
+    static inline PersistenceManager *instance;
 };
 
 
 // PUBLIC
 
-LogbookManager &LogbookManager::getInstance() noexcept
+PersistenceManager &PersistenceManager::getInstance() noexcept
 {
-    std::call_once(LogbookManagerPrivate::onceFlag, []() {
-        LogbookManagerPrivate::instance = new LogbookManager();
+    std::call_once(PersistenceManagerPrivate::onceFlag, []() {
+        PersistenceManagerPrivate::instance = new PersistenceManager();
     });
-    return *LogbookManagerPrivate::instance;
+    return *PersistenceManagerPrivate::instance;
 }
 
-void LogbookManager::destroyInstance() noexcept
+void PersistenceManager::destroyInstance() noexcept
 {
-    if (LogbookManagerPrivate::instance != nullptr) {
-        delete LogbookManagerPrivate::instance;
-        LogbookManagerPrivate::instance = nullptr;
+    if (PersistenceManagerPrivate::instance != nullptr) {
+        delete PersistenceManagerPrivate::instance;
+        PersistenceManagerPrivate::instance = nullptr;
     }
 }
 
-bool LogbookManager::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
+bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
 {
     QString currentLogbookPath = logbookPath;
     bool ok = true;
@@ -187,7 +187,7 @@ bool LogbookManager::connectWithLogbook(const QString &logbookPath, QWidget *par
     return ok;
 }
 
-void LogbookManager::disconnectFromLogbook() noexcept
+void PersistenceManager::disconnectFromLogbook() noexcept
 {
     d->databaseDao->disconnectDb();
     d->logbookPath.clear();
@@ -195,32 +195,32 @@ void LogbookManager::disconnectFromLogbook() noexcept
     emit connectionChanged(d->connected);
 }
 
-bool LogbookManager::isConnected() const noexcept
+bool PersistenceManager::isConnected() const noexcept
 {
     return d->connected;
 }
 
-const QString &LogbookManager::getLogbookPath() const noexcept
+const QString &PersistenceManager::getLogbookPath() const noexcept
 {
     return d->logbookPath;
 }
 
-bool LogbookManager::migrate() noexcept
+bool PersistenceManager::migrate() noexcept
 {
     return d->databaseDao->migrate();
 }
 
-bool LogbookManager::optimise() noexcept
+bool PersistenceManager::optimise() noexcept
 {
     return d->databaseDao->optimise();
 }
 
-bool LogbookManager::backup(const QString &backupLogbookPath) noexcept
+bool PersistenceManager::backup(const QString &backupLogbookPath) noexcept
 {
     return d->databaseDao->backup(backupLogbookPath);
 }
 
-Metadata LogbookManager::getMetadata(bool *ok) const noexcept
+Metadata PersistenceManager::getMetadata(bool *ok) const noexcept
 {
     Metadata metadata;
     bool success = QSqlDatabase::database().transaction();
@@ -234,17 +234,17 @@ Metadata LogbookManager::getMetadata(bool *ok) const noexcept
     return metadata;
 }
 
-Version LogbookManager::getDatabaseVersion(bool *ok) const noexcept
+Version PersistenceManager::getDatabaseVersion(bool *ok) const noexcept
 {
     return d->databaseDao->getDatabaseVersion(ok);
 }
 
-QString LogbookManager::getBackupDirectoryPath(bool *ok) const noexcept
+QString PersistenceManager::getBackupDirectoryPath(bool *ok) const noexcept
 {
     return d->databaseDao->getBackupDirectoryPath(ok);
 }
 
-QString LogbookManager::getBackupFileName(const QString &backupDirectoryPath) const noexcept
+QString PersistenceManager::getBackupFileName(const QString &backupDirectoryPath) const noexcept
 {
     QDir backupDir(backupDirectoryPath);
     const QString &logbookPath = getLogbookPath();
@@ -264,12 +264,12 @@ QString LogbookManager::getBackupFileName(const QString &backupDirectoryPath) co
     }
 }
 
-QString LogbookManager::createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
+QString PersistenceManager::createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
 {
     QString existingBackupPath;
     if (QDir::isRelativePath(relativeOrAbsoluteBackupDirectoryPath)) {
-        const LogbookManager &LogbookManager = LogbookManager::getInstance();
-        const QString &logbookDirectoryPath = QFileInfo(LogbookManager.getLogbookPath()).absolutePath();
+        const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+        const QString &logbookDirectoryPath = QFileInfo(persistenceManager.getLogbookPath()).absolutePath();
         existingBackupPath = logbookDirectoryPath + "/" + QFileInfo(relativeOrAbsoluteBackupDirectoryPath).fileName();
     } else {
         existingBackupPath = relativeOrAbsoluteBackupDirectoryPath;
@@ -287,26 +287,26 @@ QString LogbookManager::createBackupPathIfNotExists(const QString &relativeOrAbs
 
 // PROTECTED
 
-LogbookManager::~LogbookManager() noexcept
+PersistenceManager::~PersistenceManager() noexcept
 {
     disconnectFromLogbook();
 #ifdef DEBUG
-    qDebug() << "LogbookManager::~LogbookManager: DELETED";
+    qDebug() << "PersistenceManager::~PersistenceManager: DELETED";
 #endif
 }
 
 // PRIVATE
 
-LogbookManager::LogbookManager() noexcept
+PersistenceManager::PersistenceManager() noexcept
     : QObject(),
-      d(std::make_unique<LogbookManagerPrivate>())
+      d(std::make_unique<PersistenceManagerPrivate>())
 {
 #ifdef DEBUG
-    qDebug() << "LogbookManager::LogbookManager: CREATED";
+    qDebug() << "PersistenceManager::PersistenceManager: CREATED";
 #endif
 }
 
-bool LogbookManager::connectDb(const QString &logbookPath) noexcept
+bool PersistenceManager::connectDb(const QString &logbookPath) noexcept
 {
     bool ok {true};
     if (d->logbookPath != logbookPath) {
@@ -316,7 +316,7 @@ bool LogbookManager::connectDb(const QString &logbookPath) noexcept
     return ok;
 }
 
-std::pair<bool, Version>  LogbookManager::checkDatabaseVersion() const noexcept
+std::pair<bool, Version>  PersistenceManager::checkDatabaseVersion() const noexcept
 {
     std::pair<bool, Version> result;
     result.second = getDatabaseVersion(&result.first);

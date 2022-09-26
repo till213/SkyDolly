@@ -1883,39 +1883,6 @@ or choose another reference aircraft (marked in green) in the formation.</source
     </message>
 </context>
 <context>
-    <name>LogbookManager</name>
-    <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="150"/>
-        <source>Newer Version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="151"/>
-        <source>The logbook %1 has been created with a newer version %2. Do you want to create a new logbook?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="152"/>
-        <source>Logbooks created with newer %1 versions cannot be opened.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="153"/>
-        <source>Create &amp;New Logbook</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="154"/>
-        <source>&amp;Open Another Logbook</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Persistence/src/LogbookManager.cpp" line="155"/>
-        <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>LogbookPlugin</name>
     <message>
         <location filename="../src/Plugins/Module/Logbook/src/LogbookPlugin.cpp" line="72"/>
@@ -2688,6 +2655,39 @@ or choose another reference aircraft (marked in green) in the formation.</source
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="1473"/>
         <source>The logbook could not be optimised.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PersistenceManager</name>
+    <message>
+        <location filename="../src/Persistence/src/PersistenceManager.cpp" line="151"/>
+        <source>Newer Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Persistence/src/PersistenceManager.cpp" line="152"/>
+        <source>The logbook %1 has been created with a newer version %2. Do you want to create a new logbook?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Persistence/src/PersistenceManager.cpp" line="153"/>
+        <source>Logbooks created with newer %1 versions cannot be opened.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Persistence/src/PersistenceManager.cpp" line="154"/>
+        <source>Create &amp;New Logbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Persistence/src/PersistenceManager.cpp" line="155"/>
+        <source>&amp;Open Another Logbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Persistence/src/PersistenceManager.cpp" line="156"/>
+        <source>&amp;Cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

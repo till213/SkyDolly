@@ -65,7 +65,7 @@
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/LogbookService.h>
 #include <Persistence/Service/FlightService.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/PersistenceManager.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <Widget/Platform.h>
@@ -234,7 +234,7 @@ void LogbookWidget::initFilterUi() noexcept
 
 void LogbookWidget::updateFlightTable() noexcept
 {
-    if (LogbookManager::getInstance().isConnected()) {
+    if (PersistenceManager::getInstance().isConnected()) {
 
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         d->flightInMemoryId = flight.getId();
@@ -366,7 +366,7 @@ inline void LogbookWidget::updateFlightSummaryRow(const FlightSummary &summary, 
 
 void LogbookWidget::updateDateSelectorUi() noexcept
 {
-    if (LogbookManager::getInstance().isConnected()) {
+    if (PersistenceManager::getInstance().isConnected()) {
         // Sorted by year, month, day
         std::forward_list<FlightDate> flightDates;
         d->logbookService->getFlightDates(std::front_insert_iterator(flightDates));
@@ -423,7 +423,7 @@ void LogbookWidget::frenchConnection() noexcept
 {
     // Logbook
     const Logbook &logbook = Logbook::getInstance();
-    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
+    connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &LogbookWidget::updateUi);
     connect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
             this, &LogbookWidget::updateUi);
