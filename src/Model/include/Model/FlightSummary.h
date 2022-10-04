@@ -44,7 +44,7 @@ struct MODEL_API FlightSummary
     std::int64_t flightId;
     QDateTime creationDate;
     QString aircraftType;
-    int aircraftCount;
+    std::size_t aircraftCount;
     QDateTime startSimulationLocalTime;
     QDateTime startSimulationZuluTime;
     QDateTime endSimulationLocalTime;

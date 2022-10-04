@@ -117,9 +117,32 @@ public:
     std::int64_t deleteAircraftByIndex(int index) noexcept;
     std::size_t count() const noexcept;
 
-    void addWaypoint(Aircraft &aircraft, const Waypoint &waypoint) noexcept;
-    void updateWaypoint(Aircraft &aircraft, int index, const Waypoint &waypoint) noexcept;
-    void clearWaypoints(Aircraft &aircraft) noexcept;
+    /*!
+     * Adds the \c waypoint to the flight plan of the user aircraft.
+     *
+     * \param waypoint
+     *        the waypoint to be added to the flight plan of the user aircraft
+     * \sa waypointAdded
+     */
+    void addWaypoint(const Waypoint &waypoint) noexcept;
+
+    /*!
+     * Updates the waypoint at \c index with the given \c waypoint.
+     *
+     * \param index
+     *        the index of the waypoint to be updated
+     * \param waypoint
+     *        the waypoint data to update with
+     * \sa waypointUpdated
+     */
+    void updateWaypoint(int index, const Waypoint &waypoint) noexcept;
+
+    /*!
+     * Clears all waypoints of the flight plan of the user aircraft.
+     *
+     * \sa waypointsCleared
+     */
+    void clearWaypoints() noexcept;
 
     const FlightCondition &getFlightCondition() const noexcept;
     void setFlightCondition(FlightCondition flightCondition) noexcept;
@@ -179,9 +202,28 @@ signals:
     void aircraftRemoved(std::int64_t removedAircraftId);
     void infoChanged(const Aircraft &aircraft);
 
+    /*!
+     * Emitted whenever a new \c waypoint has been added to the user aircraft.
+     *
+     * \param waypoint
+     *        the newly added waypoint
+     */
     void waypointAdded(const Waypoint &waypoint);
+
+    /*!
+     * Emitted whenever the \c waypoint of the user aircraft at \c index has been udpated.
+     *
+     * \param index
+     *        the index of the updated waypoint
+     * \param waypoint
+     *        the updated waypoint
+     */
     void waypointUpdated(int index, const Waypoint &waypoint);
-    void waypointsCleared(const Aircraft &aircraft);
+
+    /*!
+     * Emitted whenever all waypoints of the user aircraft have been cleared.
+     */
+    void waypointsCleared();
 
     /*!
      * Emitted whenever the user aircraft index is changed to \c newUserAircraftIndex. In case a previous user aircraft

@@ -25,7 +25,6 @@
 #include <algorithm>
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <unordered_map>
 #include <cstdint>
 
@@ -212,7 +211,7 @@ bool KmlExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 
 bool KmlExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
-    bool ok = true;
+    bool ok {true};
     for (const auto &aircraft : *d->flight) {
         d->aircraftTypeCount[aircraft.getAircraftInfo().aircraftType.type] += 1;
         ok = exportAircraft(aircraft, io);
@@ -236,9 +235,8 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 "          </coordinates>\n"
 "        </LineString>\n");
 
-    std::vector<PositionData> interpolatedPositionData;
-    Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
-    bool ok = true;
+    std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    bool ok {true};
     if (interpolatedPositionData.size() > 0) {
 
         const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfo().aircraftType.type];
@@ -309,7 +307,7 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 
 bool KmlExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
-    bool ok = true;
+    bool ok {true};
 
     const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlan();
     for (const Waypoint &waypoint : flightPlan) {

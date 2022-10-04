@@ -1416,7 +1416,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/ImportPluginBase.cpp" line="302"/>
+        <location filename="../src/PluginManager/src/ImportPluginBase.cpp" line="301"/>
         <source>Aircraft imported on %1 from file: %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2728,120 +2728,120 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="104"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="103"/>
         <source>GPS exchange format (*.%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="266"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="264"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="336"/>
         <source>Creation date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="267"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="265"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="337"/>
         <source>Start (local time)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="268"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="266"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="338"/>
         <source>End (local time)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="269"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="267"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="339"/>
         <source>Ambient temperature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="270"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="268"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="340"/>
         <source>Total air temperature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="271"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="269"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="341"/>
         <source>Precipitation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="272"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="270"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="342"/>
         <source>Wind direction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="273"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="271"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="343"/>
         <source>Wind speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="274"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="272"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="344"/>
         <source>Visibility</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="275"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="273"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="345"/>
         <source>In clouds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="285"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="283"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="355"/>
         <source>Category</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="286"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="284"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="356"/>
         <source>Engine type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="287"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="285"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="357"/>
         <source>Number of engines</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="288"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="286"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="358"/>
         <source>Wingspan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="290"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="288"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="360"/>
         <source>Initial altitude above ground</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="291"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="289"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="361"/>
         <source>Initial airspeed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="292"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="290"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="362"/>
         <source>Airline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="293"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="291"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="363"/>
         <source>Flight number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="294"/>
+        <location filename="../src/Plugins/Export/GpxExport/src/GpxExportPlugin.cpp" line="292"/>
         <location filename="../src/Plugins/Export/KmlExport/src/KmlExportPlugin.cpp" line="364"/>
         <source>Tail number</source>
         <translation type="unfinished"></translation>

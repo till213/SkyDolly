@@ -1034,7 +1034,7 @@ void FormationWidget::resetAllTimeOffsets() noexcept
     }
     if (doReset) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
-        bool ok = true;
+        bool ok {true};
         for (auto &aircraft : flight) {
             ok = d->aircraftService.changeTimeOffset(aircraft, 0);
             if (!ok) {

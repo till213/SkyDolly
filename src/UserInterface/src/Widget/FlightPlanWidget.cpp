@@ -83,6 +83,10 @@ void FlightPlanWidget::showEvent(QShowEvent *event) noexcept
             this, &FlightPlanWidget::clear);
     connect(&flight, &Flight::userAircraftChanged,
             this, &FlightPlanWidget::updateUi);
+    connect(&flight, &Flight::flightStored,
+            this, &FlightPlanWidget::updateUi);
+    connect(&flight, &Flight::flightRestored,
+            this, &FlightPlanWidget::updateUi);
 
 }
 
@@ -97,6 +101,10 @@ void FlightPlanWidget::hideEvent(QHideEvent *event) noexcept
     disconnect(&flight, &Flight::waypointsCleared,
                this, &FlightPlanWidget::clear);
     disconnect(&flight, &Flight::userAircraftChanged,
+               this, &FlightPlanWidget::updateUi);
+    disconnect(&flight, &Flight::flightStored,
+               this, &FlightPlanWidget::updateUi);
+    disconnect(&flight, &Flight::flightRestored,
                this, &FlightPlanWidget::updateUi);
 }
 

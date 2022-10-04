@@ -151,7 +151,7 @@ inline bool SkyDollyCsvParser::importPositionData(const QList<QByteArray> &heade
     PositionData data;
     int columnIndex = 0;
     std::int64_t timestampDelta = 0;
-    bool ok = false;
+    bool ok {false};
     for (const QByteArray &header : headers) {
 
         if (columnIndex >= values.count()) {
@@ -255,7 +255,7 @@ inline bool SkyDollyCsvParser::importEngineData(const QList<QByteArray> &headers
     EngineData data;
     int columnIndex = 0;
     std::int64_t timestampDelta = 0;
-    bool ok = false;
+    bool ok {false};
     for (const QByteArray &header : headers) {
 
         if (columnIndex >= values.count()) {
@@ -432,7 +432,7 @@ inline bool SkyDollyCsvParser::importPrimaryFlightControlData(const QList<QByteA
     PrimaryFlightControlData data;
     int columnIndex = 0;
     std::int64_t timestampDelta = 0;
-    bool ok = false;
+    bool ok {false};
     for (const QByteArray &header : headers) {
 
         if (columnIndex >= values.count()) {
@@ -484,7 +484,7 @@ inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const QList<QByt
     SecondaryFlightControlData data;
     int columnIndex = 0;
     std::int64_t timestampDelta = 0;
-    bool ok = false;
+    bool ok {false};
     for (const QByteArray &header : headers) {
 
         if (columnIndex >= values.count()) {
@@ -551,7 +551,7 @@ inline bool SkyDollyCsvParser::importAircraftHandleData(const QList<QByteArray> 
     AircraftHandleData data;
     int columnIndex = 0;
     std::int64_t timestampDelta = 0;
-    bool ok = false;
+    bool ok {false};
     for (const QByteArray &header : headers) {
 
         if (columnIndex >= values.count()) {
@@ -633,7 +633,7 @@ inline bool SkyDollyCsvParser::importLightData(const QList<QByteArray> &headers,
     LightData data;
     int columnIndex = 0;
     std::int64_t timestampDelta = 0;
-    bool ok = false;
+    bool ok {false};
     for (const QByteArray &header : headers) {
 
         if (columnIndex >= values.count()) {

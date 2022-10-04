@@ -165,7 +165,7 @@ Aircraft &Flight::getUserAircraft() const noexcept
 
 int Flight::getAircraftIndex(const Aircraft &aircraft) const noexcept
 {
-    std::int64_t index {InvalidAircraftIndex};
+    int index {InvalidAircraftIndex};
     const auto it = std::find_if(d->aircraft.cbegin(), d->aircraft.cend(),
                                  [&aircraft](const Aircraft &a) { return a.getId() == aircraft.getId(); });
     if (it != d->aircraft.cend()) {
@@ -220,6 +220,24 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
 std::size_t Flight::count() const noexcept
 {
     return d->aircraft.size();
+}
+
+void Flight::addWaypoint(const Waypoint &waypoint) noexcept
+{
+    getUserAircraft().getFlightPlan().add2(waypoint);
+    emit waypointAdded(waypoint);
+}
+
+void Flight::updateWaypoint(int index, const Waypoint &waypoint) noexcept
+{
+    getUserAircraft().getFlightPlan().update2(index, waypoint);
+    emit waypointUpdated(index, waypoint);
+}
+
+void Flight::clearWaypoints() noexcept
+{
+    getUserAircraft().getFlightPlan().clear2();
+    emit waypointsCleared();
 }
 
 const FlightCondition &Flight::getFlightCondition() const noexcept
@@ -296,7 +314,7 @@ void Flight::clear(bool withOneAircraft) noexcept
         // Only emit the signals if the flight has at least one aircraft
         // (but e.g. not shortly before loading a new flight from the logbook)
         emit cleared();
-        emit waypointsCleared(getUserAircraft());
+        emit waypointsCleared();
         emit descriptionOrTitleChanged();
     }
 }

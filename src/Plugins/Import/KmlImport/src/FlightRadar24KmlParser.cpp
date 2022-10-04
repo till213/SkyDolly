@@ -277,7 +277,7 @@ void FlightRadar24KmlParser::parseTimestamp() noexcept
 
 void FlightRadar24KmlParser::parsePoint() noexcept
 {
-    bool ok = true;
+    bool ok {true};
     while (d->xml->readNextStartElement()) {
         const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG

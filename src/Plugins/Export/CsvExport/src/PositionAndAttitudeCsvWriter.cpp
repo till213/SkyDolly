@@ -25,6 +25,7 @@
 #include <memory>
 #include <cstdint>
 #include <cmath>
+#include <vector>
 
 #include <QIODevice>
 #include <QChar>
@@ -105,9 +106,8 @@ bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &a
     bool ok = io.write(csv.toUtf8());
     if (ok) {
         const QDateTime startDateTimeUtc = flight.getAircraftStartZuluTime(aircraft);
-        std::vector<PositionData> interpolatedPositionData;
-        Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
-        for (PositionData &positionData : interpolatedPositionData) {
+        const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+        for (const PositionData &positionData : interpolatedPositionData) {
             if (!positionData.isNull()) {
                 const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
                 const QString csv = QString::number(positionData.timestamp) % CsvConst::CommaSep %

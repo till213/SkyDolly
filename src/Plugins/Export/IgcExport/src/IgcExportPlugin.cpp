@@ -294,10 +294,9 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
 
     Convert convert;
     Engine &engine = aircraft.getEngine();
-    std::vector<PositionData> interpolatedPositionData;
-    Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
-    bool ok = true;
-    for (PositionData &positionData : interpolatedPositionData) {
+    const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    bool ok {true};
+    for (const PositionData &positionData : interpolatedPositionData) {
         if (!positionData.isNull()) {
 
             // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]

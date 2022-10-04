@@ -2,6 +2,9 @@
 
 ## 0.13.0
 
+### Bug Fixes
+- The various tabs in the Flight information dialog (Description, Aircraft, Conditions and Flight Plan) are now properly updated when importing a flight or loading a flight from the logbook
+
 ### Under The Hood
 - Thread-safe access to singletons [[Back to Basics: Concurrency](https://www.youtube.com/watch?v=F6Ipn7gCOsY)]
 

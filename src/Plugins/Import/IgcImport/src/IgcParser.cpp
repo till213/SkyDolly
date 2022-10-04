@@ -244,7 +244,7 @@ bool IgcParser::readManufacturer() noexcept
 
 bool IgcParser::readRecords() noexcept
 {
-    bool ok = true;
+    bool ok {true};
     QByteArray line = d->file->readLine();
     while (ok && !line.isEmpty()) {
         switch (line.at(0)) {
@@ -275,7 +275,7 @@ bool IgcParser::readRecords() noexcept
 
 bool IgcParser::parseHeader(const QByteArray &line) noexcept
 {
-    bool ok = true;
+    bool ok {true};
 
     const QByteArray type = line.mid(2, 3);
     if (type == ::TLCDate) {
@@ -294,7 +294,7 @@ bool IgcParser::parseHeader(const QByteArray &line) noexcept
 
 bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
 {
-    bool ok = true;
+    bool ok {true};
     QRegularExpressionMatch match = d->hRecordDateRegExp.match(line);
     if (match.hasMatch()) {
         int year;
@@ -331,7 +331,7 @@ bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
 
 bool IgcParser::parseHeaderText(const QByteArray &line, const QRegularExpression &regExp, QString &text) noexcept
 {
-    bool ok = true;
+    bool ok {true};
     QRegularExpressionMatch match = regExp.match(line);
     if (match.hasMatch()) {
         // Ignore the data source for now (F: flight recorder, O: observer, P: pilot)

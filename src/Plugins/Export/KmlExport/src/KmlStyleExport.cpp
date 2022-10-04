@@ -221,7 +221,7 @@ bool KmlStyleExport::exportHighlightLineStyle(QIODevice &io) const noexcept
 bool KmlStyleExport::exportNormalLineStyles(QIODevice &io) const noexcept
 {
     const float lineWidth = d->settings.getLineWidth();
-    bool ok = true;
+    bool ok {true};
     if (d->settings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
         // Per engine type (one color or ramp)
         ok = exportNormalLineStylesPerEngineType(SimType::EngineType::Jet, d->jetColorRamp, lineWidth, io);
@@ -240,7 +240,7 @@ bool KmlStyleExport::exportNormalLineStyles(QIODevice &io) const noexcept
 
 bool KmlStyleExport::exportLineStyleMaps(QIODevice &io) const noexcept
 {
-    bool ok = true;
+    bool ok {true};
 
     // Jet style map
     if (d->settings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
@@ -396,7 +396,7 @@ bool KmlStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType eng
         break;
     }
 
-    bool ok = true;
+    bool ok {true};
     int index = 0;
     const QRgb polygonColorKml = Color::convertRgbToKml(PolygonColor);
 

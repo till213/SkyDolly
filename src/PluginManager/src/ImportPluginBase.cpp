@@ -267,7 +267,6 @@ void ImportPluginBase::updateAircraftInfo() noexcept
         FlightPlan &flightPlan = aircraft.getFlightPlan();
         int waypointCount = flightPlan.count();
         if (waypointCount == 0) {
-
             Waypoint departure;
             departure.identifier = Waypoint::CustomDepartureIdentifier;
             departure.latitude = static_cast<float>(firstPositionData.latitude);
@@ -276,7 +275,7 @@ void ImportPluginBase::updateAircraftInfo() noexcept
             departure.localTime = startDateTimeUtc.toLocalTime();
             departure.zuluTime = startDateTimeUtc;
             departure.timestamp = firstPositionData.timestamp;
-            flightPlan.add(std::move(departure));
+            flightPlan.add2(std::move(departure));
 
             Waypoint arrival;
             arrival.identifier = Waypoint::CustomArrivalIdentifier;
@@ -286,7 +285,7 @@ void ImportPluginBase::updateAircraftInfo() noexcept
             arrival.localTime = endDateTimeUtc.toLocalTime();
             arrival.zuluTime = endDateTimeUtc;
             arrival.timestamp = lastPositionData.timestamp;
-            flightPlan.add(std::move(arrival));
+            flightPlan.add2(std::move(arrival));
         }
     } else {
         aircraftInfo.initialAirspeed = 0.0;

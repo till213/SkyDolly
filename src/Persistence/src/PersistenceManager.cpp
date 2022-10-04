@@ -91,7 +91,7 @@ void PersistenceManager::destroyInstance() noexcept
 bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
 {
     QString currentLogbookPath = logbookPath;
-    bool ok = true;
+    bool ok {true};
     bool retry = true;
     while (retry && ok) {
         const QString logbookDirectoryPath = QFileInfo(currentLogbookPath).absolutePath();

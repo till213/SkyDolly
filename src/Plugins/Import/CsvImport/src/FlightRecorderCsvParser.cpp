@@ -385,7 +385,7 @@ bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
 inline bool FlightRecorderCsvParser::importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
 {
     static int timestampIdx = ::InvalidIdx;
-    bool ok = true;
+    bool ok {true};
     if (timestampIdx == ::InvalidIdx) {
         auto it = d->columnIndexes.find(::Milliseconds);
         if (it != d->columnIndexes.end()) {
@@ -415,7 +415,7 @@ inline bool FlightRecorderCsvParser::importTimestamp(const QList<QByteArray> &va
 template <typename T>
 inline bool FlightRecorderCsvParser::importValue(const QList<QByteArray> &values, const char *name, int &idx, T &value) noexcept
 {
-    bool ok = true;
+    bool ok {true};
     if (idx == ::InvalidIdx) {
         auto it = d->columnIndexes.find(name);
         if (it != d->columnIndexes.end()) {

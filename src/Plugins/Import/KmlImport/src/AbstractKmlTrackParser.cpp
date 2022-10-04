@@ -96,7 +96,7 @@ void AbstractKmlTrackParser::parseTrack() noexcept
         QDateTime currentDateTimeUtc;
         currentDateTimeUtc.setTimeZone(QTimeZone::utc());
 
-        bool ok = true;
+        bool ok {true};
         int currentTrackDataIndex = 0;
         while (xml->readNextStartElement()) {
             const QStringRef xmlName = xml->name();
