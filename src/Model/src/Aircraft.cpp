@@ -217,7 +217,7 @@ void Aircraft::clear() noexcept
     d->secondaryFlightControl.clear();
     d->aircraftHandle.clear();
     d->light.clear();
-    d->flightPlan.clear2();
+    d->flightPlan.clear();
     invalidateDuration();
 }
 

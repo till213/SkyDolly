@@ -275,7 +275,7 @@ void ImportPluginBase::updateAircraftInfo() noexcept
             departure.localTime = startDateTimeUtc.toLocalTime();
             departure.zuluTime = startDateTimeUtc;
             departure.timestamp = firstPositionData.timestamp;
-            flightPlan.add2(std::move(departure));
+            flightPlan.add(std::move(departure));
 
             Waypoint arrival;
             arrival.identifier = Waypoint::CustomArrivalIdentifier;
@@ -285,7 +285,7 @@ void ImportPluginBase::updateAircraftInfo() noexcept
             arrival.localTime = endDateTimeUtc.toLocalTime();
             arrival.zuluTime = endDateTimeUtc;
             arrival.timestamp = lastPositionData.timestamp;
-            flightPlan.add2(std::move(arrival));
+            flightPlan.add(std::move(arrival));
         }
     } else {
         aircraftInfo.initialAirspeed = 0.0;

@@ -224,19 +224,19 @@ std::size_t Flight::count() const noexcept
 
 void Flight::addWaypoint(const Waypoint &waypoint) noexcept
 {
-    getUserAircraft().getFlightPlan().add2(waypoint);
+    getUserAircraft().getFlightPlan().add(waypoint);
     emit waypointAdded(waypoint);
 }
 
 void Flight::updateWaypoint(int index, const Waypoint &waypoint) noexcept
 {
-    getUserAircraft().getFlightPlan().update2(index, waypoint);
+    getUserAircraft().getFlightPlan().update(index, waypoint);
     emit waypointUpdated(index, waypoint);
 }
 
 void Flight::clearWaypoints() noexcept
 {
-    getUserAircraft().getFlightPlan().clear2();
+    getUserAircraft().getFlightPlan().clear();
     emit waypointsCleared();
 }
 

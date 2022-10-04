@@ -168,7 +168,7 @@ void GpxParser::parseWaypoint() noexcept
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Waypoint) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = identifier;
-        flightPlan.add2(waypoint);
+        flightPlan.add(waypoint);
     }
     if (ok && d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Waypoint) {
         PositionData positionData {latitude, longitude, altitude};
@@ -238,7 +238,7 @@ void GpxParser::parseRoutePoint() noexcept
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Route) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = identifier;
-        flightPlan.add2(waypoint);
+        flightPlan.add(waypoint);
     }
     if (ok && d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Route) {
         PositionData positionData {latitude, longitude, altitude};
@@ -316,7 +316,7 @@ inline void GpxParser::parseTrackPoint() noexcept
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Track) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = identifier;
-        flightPlan.add2(waypoint);
+        flightPlan.add(waypoint);
     }
     if (ok && d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Track) {
         PositionData positionData {latitude, longitude, altitude};

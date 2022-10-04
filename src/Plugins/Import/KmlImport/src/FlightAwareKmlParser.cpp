@@ -146,7 +146,7 @@ void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
                 // gx:Track data has been parsed
                 waypoint.timestamp = TimeVariableData::InvalidTime;
 
-                flight->getUserAircraft().getFlightPlan().add2(std::move(waypoint));
+                flight->getUserAircraft().getFlightPlan().add(std::move(waypoint));
             } else {
                 xml->raiseError("Invalid GPS coordinate.");
             }

@@ -424,7 +424,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
                 timestamps.insert(uniqueTimestamp);
             }
 
-            flightPlan.add2(std::move(waypoint));
+            flightPlan.add(std::move(waypoint));
         }
     } else {
         // No positions - use timestamps 0, 1, 2, ...
@@ -436,7 +436,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
             waypoint.identifier = item.description;
             waypoint.timestamp = currentWaypointTimestamp;
             ++currentWaypointTimestamp;
-            flightPlan.add2(std::move(waypoint));
+            flightPlan.add(std::move(waypoint));
         }
     }
 }
