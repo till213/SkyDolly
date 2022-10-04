@@ -48,9 +48,9 @@ namespace SimVar
     constexpr char RotationVelocityBodyY[] = "Rotation Velocity Body Y";
     constexpr char RotationVelocityBodyZ[] = "Rotation Velocity Body Z";
 
-    constexpr char RudderPosition[] = "Rudder Position";
-    constexpr char ElevatorPosition[] = "Elevator Position";
-    constexpr char AileronPosition[] = "Aileron Position";
+    constexpr char RudderPosition[] = "Rudder Pedal Position";
+    constexpr char ElevatorPosition[] = "Yoke Y Position";
+    constexpr char AileronPosition[] = "Yoke X Position";
 
     constexpr char ThrottleLeverPosition1[] = "General Eng Throttle Lever Position:1";
     constexpr char ThrottleLeverPosition2[] = "General Eng Throttle Lever Position:2";

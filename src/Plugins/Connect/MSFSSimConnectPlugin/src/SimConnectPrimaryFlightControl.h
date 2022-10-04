@@ -56,9 +56,9 @@ struct SimConnectPrimaryFlightControl
 
     inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
     {
-        rudderPosition = SkyMath::toPosition(primaryFlightControlData.rudderPosition);
-        elevatorPosition = SkyMath::toPosition(primaryFlightControlData.elevatorPosition);
-        aileronPosition = SkyMath::toPosition(primaryFlightControlData.aileronPosition);
+        rudderPosition = static_cast<float>(SkyMath::toPosition(primaryFlightControlData.rudderPosition));
+        elevatorPosition = static_cast<float>(SkyMath::toPosition(primaryFlightControlData.elevatorPosition));
+        aileronPosition = static_cast<float>(SkyMath::toPosition(primaryFlightControlData.aileronPosition));
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
