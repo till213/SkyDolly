@@ -38,15 +38,14 @@
 
 struct VersionPrivate
 {
-    VersionPrivate() noexcept
-    {}
-
     VersionPrivate(int theMajor, int theMinor, int thePatch) noexcept
         : major(theMajor), minor(theMinor), patch(thePatch)
     {}
 
-    VersionPrivate(const VersionPrivate &other) = default;
-    VersionPrivate(VersionPrivate &&other) = default;
+    VersionPrivate() = default;
+    ~VersionPrivate() = default;
+    VersionPrivate(const VersionPrivate &rhs) = default;
+    VersionPrivate(VersionPrivate &&rhs) = default;
     VersionPrivate &operator=(const VersionPrivate &rhs) = default;
     VersionPrivate &operator=(VersionPrivate &&rhs) = default;
 
@@ -54,8 +53,8 @@ struct VersionPrivate
     int minor {VersionConfig::Minor};
     int patch {VersionConfig::Patch};
 
-    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/adjectives-that-start-with-c.html
-    static inline const QString CodeName {QStringLiteral("Celestial Cessna")};
+    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/adjectives-that-start-with-d.html
+    static inline const QString CodeName {QStringLiteral("Dapper Daher")};
 };
 
 // PUBLIC
@@ -74,13 +73,13 @@ Version::Version(QStringView version) noexcept
     fromString(version);
 }
 
-Version::Version(const Version &other) noexcept
-    : d(std::make_unique<VersionPrivate>(other.d->major, other.d->minor, other.d->patch))
+Version::Version(const Version &rhs) noexcept
+    : d(std::make_unique<VersionPrivate>(rhs.d->major, rhs.d->minor, rhs.d->patch))
 {}
 
-Version::Version(Version &&other) noexcept
+Version::Version(Version &&rhs) noexcept
 {
-    *d = std::move(*other.d);
+    *d = std::move(*rhs.d);
 }
 
 void Version::fromString(QStringView version) noexcept

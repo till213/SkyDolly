@@ -35,18 +35,18 @@ FlightSummary::FlightSummary() noexcept
 FlightSummary::~FlightSummary() noexcept
 {}
 
-FlightSummary::FlightSummary(FlightSummary &&other) noexcept
-    : flightId(other.flightId),
-      creationDate(std::move(other.creationDate)),
-      aircraftType(std::move(other.aircraftType)),
-      aircraftCount(other.aircraftCount),
-      startSimulationLocalTime(std::move(other.startSimulationLocalTime)),
-      startSimulationZuluTime(std::move(other.startSimulationZuluTime)),
-      endSimulationLocalTime(std::move(other.endSimulationLocalTime)),
-      endSimulationZuluTime(std::move(other.endSimulationZuluTime)),
-      startLocation(std::move(other.startLocation)),
-      endLocation(std::move(other.endLocation)),
-      title(std::move(other.title))
+FlightSummary::FlightSummary(FlightSummary &&rhs) noexcept
+    : flightId(rhs.flightId),
+      creationDate(std::move(rhs.creationDate)),
+      aircraftType(std::move(rhs.aircraftType)),
+      aircraftCount(rhs.aircraftCount),
+      startSimulationLocalTime(std::move(rhs.startSimulationLocalTime)),
+      startSimulationZuluTime(std::move(rhs.startSimulationZuluTime)),
+      endSimulationLocalTime(std::move(rhs.endSimulationLocalTime)),
+      endSimulationZuluTime(std::move(rhs.endSimulationZuluTime)),
+      startLocation(std::move(rhs.startLocation)),
+      endLocation(std::move(rhs.endLocation)),
+      title(std::move(rhs.title))
 {}
 
 FlightSummary &FlightSummary::operator=(FlightSummary &&rhs) noexcept

@@ -44,23 +44,23 @@ FlightCondition::FlightCondition() noexcept
       inClouds{false}
 {}
 
-FlightCondition::FlightCondition(FlightCondition &&other) noexcept
-    : groundAltitude(other.groundAltitude),
-      surfaceType(other.surfaceType),
-      ambientTemperature(other.ambientTemperature),
-      totalAirTemperature(other.totalAirTemperature),
-      windSpeed(other.windSpeed),
-      windDirection(other.windDirection),
-      precipitationState(other.precipitationState),
-      visibility(other.visibility),
-      seaLevelPressure(other.seaLevelPressure),
-      pitotIcingPercent(other.pitotIcingPercent),
-      structuralIcingPercent(other.structuralIcingPercent),
-      inClouds(other.inClouds),
-      startLocalTime(std::move(other.startLocalTime)),
-      startZuluTime(std::move(other.startZuluTime)),
-      endLocalTime(std::move(other.endLocalTime)),
-      endZuluTime(std::move(other.endZuluTime))
+FlightCondition::FlightCondition(FlightCondition &&rhs) noexcept
+    : groundAltitude(rhs.groundAltitude),
+      surfaceType(rhs.surfaceType),
+      ambientTemperature(rhs.ambientTemperature),
+      totalAirTemperature(rhs.totalAirTemperature),
+      windSpeed(rhs.windSpeed),
+      windDirection(rhs.windDirection),
+      precipitationState(rhs.precipitationState),
+      visibility(rhs.visibility),
+      seaLevelPressure(rhs.seaLevelPressure),
+      pitotIcingPercent(rhs.pitotIcingPercent),
+      structuralIcingPercent(rhs.structuralIcingPercent),
+      inClouds(rhs.inClouds),
+      startLocalTime(std::move(rhs.startLocalTime)),
+      startZuluTime(std::move(rhs.startZuluTime)),
+      endLocalTime(std::move(rhs.endLocalTime)),
+      endZuluTime(std::move(rhs.endZuluTime))
 {}
 
 FlightCondition &FlightCondition::operator=(FlightCondition &&rhs) noexcept

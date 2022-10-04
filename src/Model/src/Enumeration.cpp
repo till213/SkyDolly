@@ -66,9 +66,9 @@ Enumeration::Enumeration(const QString &name) noexcept
 #endif
 }
 
-Enumeration::Enumeration(Enumeration &&other) noexcept
+Enumeration::Enumeration(Enumeration &&rhs) noexcept
 {
-    *d = std::move(*other.d);
+    *d = std::move(*rhs.d);
 }
 
 Enumeration::~Enumeration() noexcept

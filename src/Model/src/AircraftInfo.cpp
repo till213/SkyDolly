@@ -40,16 +40,16 @@ AircraftInfo::AircraftInfo(std::int64_t theAircraftId) noexcept
       initialAirspeed(0)
 {}
 
-AircraftInfo::AircraftInfo(AircraftInfo &&other) noexcept
-    : aircraftId(other.aircraftId),
-      aircraftType(std::move(other.aircraftType)),
-      timeOffset(other.timeOffset),
-      tailNumber(std::move(other.tailNumber)),
-      airline(std::move(other.airline)),
-      flightNumber(std::move(other.flightNumber)),
-      altitudeAboveGround(other.altitudeAboveGround),
-      startOnGround(other.startOnGround),
-      initialAirspeed(other.initialAirspeed)
+AircraftInfo::AircraftInfo(AircraftInfo &&rhs) noexcept
+    : aircraftId(rhs.aircraftId),
+      aircraftType(std::move(rhs.aircraftType)),
+      timeOffset(rhs.timeOffset),
+      tailNumber(std::move(rhs.tailNumber)),
+      airline(std::move(rhs.airline)),
+      flightNumber(std::move(rhs.flightNumber)),
+      altitudeAboveGround(rhs.altitudeAboveGround),
+      startOnGround(rhs.startOnGround),
+      initialAirspeed(rhs.initialAirspeed)
 {}
 
 AircraftInfo &AircraftInfo::operator=(AircraftInfo &&rhs) noexcept

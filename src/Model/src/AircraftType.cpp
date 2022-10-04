@@ -38,12 +38,12 @@ AircraftType::AircraftType(QString type, QString category, int wingSpan, SimType
     : type(type), category(category), wingSpan(wingSpan), engineType(engineType), numberOfEngines(numberOfEngines)
 {};
 
-AircraftType::AircraftType(AircraftType &&other) noexcept
-    : type(std::move(other.type)),
-      category(std::move(other.category)),
-      wingSpan(other.wingSpan),
-      engineType(other.engineType),
-      numberOfEngines(other.numberOfEngines)
+AircraftType::AircraftType(AircraftType &&rhs) noexcept
+    : type(std::move(rhs.type)),
+      category(std::move(rhs.category)),
+      wingSpan(rhs.wingSpan),
+      engineType(rhs.engineType),
+      numberOfEngines(rhs.numberOfEngines)
 {}
 
 AircraftType &AircraftType::operator=(AircraftType &&rhs) noexcept
