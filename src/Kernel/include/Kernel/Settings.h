@@ -54,6 +54,11 @@ class KERNEL_API Settings final : public QObject
     Q_OBJECT
 public:
 
+    Settings(const Settings &rhs) = delete;
+    Settings(Settings &&rhs) = delete;
+    Settings &operator=(const Settings &rhs) = delete;
+    Settings &operator=(Settings &&rhs) = delete;
+
     /*!
      * Returns the singleton Settings instance.
      *
@@ -799,7 +804,7 @@ signals:
     void changed();
 
 protected:
-    ~Settings() noexcept override;
+    ~Settings() override;
 
 private:
     const std::unique_ptr<SettingsPrivate> d;

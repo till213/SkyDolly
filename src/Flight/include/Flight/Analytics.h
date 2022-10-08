@@ -1,4 +1,4 @@
-/**
+    /**
  * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
@@ -46,6 +46,10 @@ class FLIGHT_API Analytics
 public:
 
     Analytics(const Aircraft &aircraft);
+    Analytics(const Analytics &rhs) = delete;
+    Analytics(Analytics &&rhs);
+    Analytics &operator=(const Analytics &rhs) = delete;
+    Analytics &operator=(Analytics &&rhs);
     ~Analytics();
 
     /*!
@@ -61,7 +65,7 @@ public:
     PositionData closestPosition(double latitude, double longitude) const noexcept;
 
 private:
-    const std::unique_ptr<AnalyticsPrivate> d;
+    std::unique_ptr<AnalyticsPrivate> d;
 };
 
 #endif // ANALYTICS_H

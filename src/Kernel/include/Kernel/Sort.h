@@ -55,19 +55,19 @@ public:
 
     struct Vertex
     {
-        Vertex() noexcept
-            : id(T())
-        {};
-
         explicit Vertex(T theId) noexcept
             : id(theId)
         {};
 
-        Vertex(const Vertex &rhs) noexcept
-            : id(rhs.id),
-              edges(rhs.edges),
-              state(rhs.state)
+        Vertex() noexcept
+            : id(T())
         {};
+
+        Vertex(const Vertex &rhs) = delete;
+        Vertex(Vertex &&rhs) = default;
+        Vertex &operator=(const Vertex &rhs) = delete;
+        Vertex &operator=(Vertex &&rhs) = default;
+        ~Vertex() = default;
 
         T id;
 

@@ -25,10 +25,6 @@
 #include <algorithm>
 #include <cstdint>
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include "TimeVariableData.h"
@@ -41,18 +37,7 @@
 
 AircraftHandle::AircraftHandle(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
-{
-#ifdef DEBUG
-    qDebug() << "AircraftHandle::AircraftHandle: CREATED";
-#endif
-}
-
-AircraftHandle::~AircraftHandle() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "AircraftHandle::AircraftHandle: DELETED";
-#endif
-}
+{}
 
 AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {

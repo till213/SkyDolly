@@ -48,39 +48,12 @@ public:
     explicit AbstractComponent(const AircraftInfo &aircraftInfo) noexcept
         : m_aircraftInfo(aircraftInfo)
     {}
-    virtual ~AbstractComponent() noexcept = default;
-    AbstractComponent(const AbstractComponent &) noexcept = default;
-    AbstractComponent(AbstractComponent &&rhs) noexcept
-        : m_data (std::move(rhs.m_data)),
-          m_aircraftInfo(std::move(rhs.m_aircraftInfo)),
-          m_currentTimestamp(rhs.m_currentTimestamp),
-          m_currentIndex(rhs.m_currentIndex),
-          m_currentAccess(rhs.m_currentAccess)
-    {}
-
-    AbstractComponent &operator=(const AbstractComponent &rhs) noexcept
-    {
-        if (this != &rhs) {
-            // Don't copy the reference member
-            m_data = rhs.m_data;
-            m_currentTimestamp = rhs.m_currentTimestamp;
-            m_currentIndex = rhs.m_currentIndex;
-            m_currentAccess = rhs.m_currentAccess;
-        }
-        return *this;
-    }
-
-    AbstractComponent &operator=(AbstractComponent &&rhs) noexcept
-    {
-        if (this != &rhs) {
-            // Don't copy the reference member
-            m_data = std::move(rhs.m_data);
-            m_currentTimestamp = rhs.m_currentTimestamp;
-            m_currentIndex = rhs.m_currentIndex;
-            m_currentAccess = rhs.m_currentAccess;
-        }
-        return *this;
-    }
+    AbstractComponent() noexcept;
+    AbstractComponent(const AbstractComponent &rhs) = default;
+    AbstractComponent(AbstractComponent &&rhs) = default;
+    AbstractComponent &operator=(const AbstractComponent &rhs) = default;
+    AbstractComponent &operator=(AbstractComponent &&rhs) = default;
+    virtual ~AbstractComponent() = default;
 
     void setData(const Data &data) noexcept
     {

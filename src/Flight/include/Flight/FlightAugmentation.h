@@ -69,7 +69,11 @@ public:
     Q_DECLARE_FLAGS(Aspects, Aspect)
 
     FlightAugmentation(Procedures procedures = Procedure::All, Aspects aspects = Aspect::All) noexcept;
-    ~FlightAugmentation() noexcept;
+    FlightAugmentation(const FlightAugmentation &rhs) = delete;
+    FlightAugmentation(FlightAugmentation &&rhs);
+    FlightAugmentation &operator=(const  FlightAugmentation &rhs) = delete;
+    FlightAugmentation &operator=(FlightAugmentation &&rhs);
+    ~FlightAugmentation();
 
     void setProcedures(Procedures procedures) noexcept;
     Procedures getProcedures() const noexcept;
@@ -81,7 +85,7 @@ public:
     void augmentProcedures(Aircraft &aircraft) noexcept;
 
 private:
-    const std::unique_ptr<FlightAugmentationPrivate> d;
+    std::unique_ptr<FlightAugmentationPrivate> d;
 
     void augmentStartProcedure(Aircraft &aircraft) noexcept;
     void augmentLandingProcedure(Aircraft &aircraft) noexcept;

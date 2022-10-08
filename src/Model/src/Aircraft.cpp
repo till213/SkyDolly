@@ -27,10 +27,6 @@
 #include <cstdint>
 #include <cinttypes>
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include "TimeVariableData.h"
 #include "AircraftInfo.h"
 #include "Position.h"
@@ -51,13 +47,6 @@
 struct AircraftPrivate
 {
 public:
-    AircraftPrivate() = default;
-    AircraftPrivate(const AircraftPrivate &rhs) = delete;
-    AircraftPrivate(AircraftPrivate &&rhs) = default;
-    ~AircraftPrivate() = default;
-    AircraftPrivate &operator=(const AircraftPrivate &rhs) = delete;
-    AircraftPrivate &operator=(AircraftPrivate &&rhs) = default;
-
     std::int64_t id {Aircraft::InvalidId};
     AircraftInfo aircraftInfo {id};
     Position position{aircraftInfo};
@@ -73,35 +62,13 @@ public:
 
 // PUBLIC
 
-Aircraft::Aircraft()
+Aircraft::Aircraft() noexcept
     : d(std::make_unique<AircraftPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "Aircraft::Aircraft: CREATED, ID:" << d->id;
-#endif
-}
+{}
 
-Aircraft::~Aircraft()
-{
-#ifdef DEBUG
-    qDebug() << "Aircraft::~Aircraft: DELETED, ID:" << d->id;
-#endif
-}
-
-Aircraft::Aircraft(const Aircraft &&rhs) noexcept
-    : d(std::make_unique<AircraftPrivate>())
-{
-    *d = std::move(*rhs.d);
-#ifdef DEBUG
-    qDebug() << "Aircraft::Aircraft: MOVED, ID:" << d->id;
-#endif
-}
-
-Aircraft &Aircraft::operator=(Aircraft &&rhs) noexcept
-{
-    *d = std::move(*rhs.d);
-    return *this;
-}
+Aircraft::Aircraft(Aircraft &&rhs) = default;
+Aircraft &Aircraft::operator=(Aircraft &&rhs) = default;
+Aircraft::~Aircraft() = default;
 
 std::int64_t Aircraft::getId() const noexcept
 {

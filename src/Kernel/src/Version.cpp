@@ -73,14 +73,9 @@ Version::Version(QStringView version) noexcept
     fromString(version);
 }
 
-Version::Version(const Version &rhs) noexcept
-    : d(std::make_unique<VersionPrivate>(rhs.d->major, rhs.d->minor, rhs.d->patch))
-{}
-
-Version::Version(Version &&rhs) noexcept
-{
-    *d = std::move(*rhs.d);
-}
+Version::Version(Version &&rhs) = default;
+Version &Version::operator=(Version &&rhs) = default;
+Version::~Version() = default;
 
 void Version::fromString(QStringView version) noexcept
 {
@@ -92,9 +87,6 @@ void Version::fromString(QStringView version) noexcept
         d->patch = match.captured(3).toInt();
     }
 }
-
-Version::~Version() noexcept
-{}
 
 int Version::getMajor() const noexcept
 {
@@ -119,12 +111,6 @@ QString Version::toString() const noexcept
 bool Version::isNull() const noexcept
 {
     return d->major == 0 && d->minor == 0 && d->patch == 0;
-}
-
-Version &Version::operator=(const Version &rhs) noexcept
-{
-    *d = *rhs.d;
-    return *this;
 }
 
 bool Version::operator==(const Version &rhs) const noexcept

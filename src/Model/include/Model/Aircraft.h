@@ -46,12 +46,12 @@ class MODEL_API Aircraft
 {
 public:
 
-    Aircraft();
-    ~Aircraft();
+    Aircraft() noexcept;
     Aircraft(const Aircraft &rhs) = delete;
-    Aircraft(const Aircraft &&rhs) noexcept;
+    Aircraft(Aircraft &&rhs);
     Aircraft &operator=(const Aircraft &rhs) = delete;
-    Aircraft &operator=(Aircraft &&rhs) noexcept;
+    Aircraft &operator=(Aircraft &&rhs);
+    ~Aircraft();
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
@@ -104,7 +104,7 @@ public:
     void invalidateDuration() noexcept;
 
 private:
-    const std::unique_ptr<AircraftPrivate> d;
+    std::unique_ptr<AircraftPrivate> d;
 };
 
 #endif // AIRCRAFT_H

@@ -28,6 +28,7 @@
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
+#include <QStringBuilder>
 #include <QLatin1String>
 #include <QUuid>
 #include <QByteArray>
@@ -47,8 +48,6 @@
 
 namespace
 {
-    constexpr bool DefaultBackupBeforeMigration {true};
-
     constexpr char ResourceDirectoryName[] = "Resources";
     // This happens to be the same directory name as when unzipping the downloaded EGM data
     // from https://geographiclib.sourceforge.io/html/geoid.html#geoidinst
@@ -58,6 +57,24 @@ namespace
 
 struct SettingsPrivate
 {
+    SettingsPrivate() noexcept
+        : version(QCoreApplication::instance()->applicationVersion()),
+          backupBeforeMigration(DefaultBackupBeforeMigration),
+          recordingSampleRateValue(DefaultRecordingSampleRate),
+          windowStayOnTop(DefaultWindowStayOnTop),
+          minimalUi(DefaultMinimalUi),
+          moduleSelectorVisible(DefaultModuleSelectorVisible),
+          replaySpeedVisible(DefaultReplaySpeedVisible)
+    {
+        QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
+        if (standardLocations.count() > 0) {
+            defaultExportPath = standardLocations.first();
+            defaultLogbookPath = standardLocations.first() % "/" % Version::getApplicationName() % "/" % Version::getApplicationName() % Const::LogbookExtension.data();
+        } else {
+            defaultExportPath = ".";
+        }
+    }
+
     QSettings settings;
     Version version;
 
@@ -106,6 +123,7 @@ struct SettingsPrivate
     static inline Settings *instance {nullptr};
 
     static constexpr QUuid DefaultSkyConnectPluginUuid {};
+    static constexpr bool DefaultBackupBeforeMigration {true};
     static constexpr double DefaultRecordingSampleRate {SampleRate::toValue(SampleRate::SampleRate::Auto)};
     static constexpr bool DefaultWindowStayOnTop {false};
     static constexpr bool DefaultMinimalUi {false};
@@ -134,21 +152,6 @@ struct SettingsPrivate
 
     static constexpr int DefaultPreviewInfoDialogCount {3};
     static constexpr int PreviewInfoDialogBase {100};
-
-    SettingsPrivate() noexcept
-        : version(QCoreApplication::instance()->applicationVersion())
-    {
-        QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
-        if (standardLocations.count() > 0) {
-            defaultExportPath = standardLocations.first();
-            defaultLogbookPath = standardLocations.first() + "/" + Version::getApplicationName() + "/" + Version::getApplicationName() + Const::LogbookExtension;
-        } else {
-            defaultExportPath = ".";
-        }
-    }
-
-    ~SettingsPrivate() noexcept
-    {}
 };
 
 
@@ -713,7 +716,7 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Logbook");
     {
         d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
-        d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", ::DefaultBackupBeforeMigration).toBool();
+        d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", SettingsPrivate::DefaultBackupBeforeMigration).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Plugins");
@@ -827,7 +830,7 @@ void Settings::restore() noexcept
 
 // PROTECTED
 
-Settings::~Settings() noexcept
+Settings::~Settings()
 {
 #ifdef DEBUG
     qDebug() << "Settings::~Settings: DELETED";

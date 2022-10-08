@@ -49,7 +49,11 @@ class KERNEL_API Convert final
 public:
 
     Convert() noexcept;
-    ~Convert() noexcept;
+    Convert(const Convert &rhs) = delete;
+    Convert(Convert &&rhs);
+    Convert &operator=(const Convert &rhs) = delete;
+    Convert &operator=(Convert &&rhs);
+    ~Convert();
 
     /*!
      * Converts the \c height height above WGS84 reference ellipsoid to height above the earth

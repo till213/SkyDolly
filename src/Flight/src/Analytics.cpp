@@ -66,18 +66,11 @@ struct AnalyticsPrivate
 
 Analytics::Analytics(const Aircraft &aircraft)
     : d(std::make_unique<AnalyticsPrivate>(aircraft))
-{
-#ifdef DEBUG
-    qDebug() << "Analytics::~Analytics: CREATED";
-#endif
-}
+{}
 
-Analytics::~Analytics()
-{
-#ifdef DEBUG
-    qDebug() << "Analytics::~Analytics: DELETED";
-#endif
-}
+Analytics::Analytics(Analytics &&rhs) = default;
+Analytics &Analytics::operator=(Analytics &&rhs) = default;
+Analytics::~Analytics() = default;
 
 std::pair<std::int64_t, double> Analytics::firstMovementHeading() const noexcept
 {

@@ -31,7 +31,7 @@
 
 namespace SettingsConverter
 {
-    void convertToCurrent(Version settingsVersion, QSettings &settings);
+    void convertToCurrent(const Version &settingsVersion, QSettings &settings) noexcept;
 };
 
 #endif // SETTINGSCONVERTER_H

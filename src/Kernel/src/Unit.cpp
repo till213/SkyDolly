@@ -65,7 +65,7 @@ public:
 
     QLocale locale;
 
-    static inline QLatin1Char NumberPadding {QLatin1Char('0')};
+    static constexpr QLatin1Char NumberPadding {'0'};
 };
 
 // PUBLIC
@@ -74,8 +74,9 @@ Unit::Unit()
     : d(std::make_unique<UnitPrivate>())
 {}
 
-Unit::~Unit()
-{}
+Unit::Unit(Unit &&rhs) = default;
+Unit &Unit::operator=(Unit &&rhs) = default;
+Unit::~Unit() = default;
 
 QString Unit::formatLatitudeDMS(double latitude) const noexcept
 {

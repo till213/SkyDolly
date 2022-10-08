@@ -316,7 +316,7 @@ inline void LogbookWidget::updateFlightSummaryRow(const FlightSummary &summary, 
 
     // Aircraft count
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::DisplayRole, summary.aircraftCount);
+    newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.aircraftCount));
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->logTableWidget->setItem(row, column, newItem.release());
     ++column;

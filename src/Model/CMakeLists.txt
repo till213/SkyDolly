@@ -33,7 +33,7 @@ target_sources(${LIBRARY_NAME}
         include/Model/SecondaryFlightControl.h src/SecondaryFlightControl.cpp
         include/Model/SecondaryFlightControlData.h src/SecondaryFlightControlData.cpp
         include/Model/AircraftHandle.h src/AircraftHandle.cpp
-        include/Model/AircraftHandleData.h src/AircraftHandleData.cpp
+        include/Model/AircraftHandleData.h
         include/Model/Light.h src/Light.cpp
         include/Model/LightData.h src/LightData.cpp
         include/Model/AircraftType.h src/AircraftType.cpp

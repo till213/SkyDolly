@@ -51,6 +51,10 @@ public:
     };
 
     Unit();
+    Unit(const Unit &rhs) = delete;
+    Unit(Unit &&rhs);
+    Unit &operator=(const Unit &rhs) = delete;
+    Unit &operator=(Unit &&rhs);
     ~Unit();
 
     /*!
@@ -195,7 +199,7 @@ public:
     static QString formatCoordinates(double latitude, double longitude) noexcept;
 
 private:
-    const std::unique_ptr<UnitPrivate> d;
+    std::unique_ptr<UnitPrivate> d;
 };
 
 #endif // UNIT_H

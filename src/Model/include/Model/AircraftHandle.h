@@ -38,11 +38,6 @@ class MODEL_API AircraftHandle : public AbstractComponent<AircraftHandleData>
 {
 public:
     explicit AircraftHandle(const AircraftInfo &aircraftInfo) noexcept;
-    AircraftHandle(AircraftHandle &rhs) = default;
-    AircraftHandle(AircraftHandle &&rhs) = default;
-    ~AircraftHandle() noexcept override;
-    AircraftHandle &operator=(const AircraftHandle &rhs) = default;
-    AircraftHandle &operator=(AircraftHandle &&rhs) = default;
 
     AircraftHandleData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 

@@ -1,8 +1,10 @@
 #ifndef CONST_H
 #define CONST_H
 
+#include <string_view>
+
 namespace Const {
-    constexpr char LogbookExtension[] = ".sdlog";
+    constexpr std::string_view LogbookExtension {".sdlog"};
 
     constexpr char BackupNeverSymId[] = "NEVER";
     constexpr char BackupNowSymId[] = "NOW";
