@@ -24,7 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
-#include <iterator>
+#include <vector>
 
 #include <QString>
 #include <QSqlQuery>

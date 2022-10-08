@@ -25,7 +25,6 @@
 #include <cstddef>
 #include <memory>
 #include <vector>
-#include <iterator>
 
 #include <QObject>
 

@@ -368,8 +368,7 @@ void LogbookWidget::updateDateSelectorUi() noexcept
 {
     if (PersistenceManager::getInstance().isConnected()) {
         // Sorted by year, month, day
-        std::forward_list<FlightDate> flightDates;
-        d->logbookService->getFlightDates(std::front_insert_iterator(flightDates));
+        std::forward_list<FlightDate> flightDates = d->logbookService->getFlightDates();
         ui->logTreeWidget->blockSignals(true);
         ui->logTreeWidget->clear();
 

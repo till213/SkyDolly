@@ -27,7 +27,6 @@
 
 #include <forward_list>
 #include <vector>
-#include <iterator>
 
 #include <QtGlobal>
 
@@ -48,7 +47,7 @@ public:
     LogbookDaoIntf &operator=(LogbookDaoIntf &&rhs) = default;
     virtual ~LogbookDaoIntf() = default;
 
-    virtual bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept = 0;
+    virtual std::forward_list<FlightDate> getFlightDates(bool *ok = nullptr) const noexcept = 0;
     virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept = 0;
 };
 

@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <vector>
-#include <iterator>
 
 #include <QSqlQuery>
 #include <QVariant>
