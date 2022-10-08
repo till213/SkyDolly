@@ -51,7 +51,11 @@ public:
     };
 
     AbstractSkyConnect(QObject *parent = nullptr) noexcept;
-    ~AbstractSkyConnect() noexcept override;
+    AbstractSkyConnect(const AbstractSkyConnect &rhs) = delete;
+    AbstractSkyConnect(AbstractSkyConnect &&rhs) = delete;
+    AbstractSkyConnect &operator=(const AbstractSkyConnect &rhs) = delete;
+    AbstractSkyConnect &operator=(AbstractSkyConnect &&rhs) = delete;
+    ~AbstractSkyConnect() override;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
     bool freezeUserAircraft(bool enable) noexcept override;

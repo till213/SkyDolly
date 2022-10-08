@@ -53,15 +53,15 @@
 
 namespace
 {
-    constexpr char ModuleDirectoryName[] = "Module";
+    constexpr const char *ModuleDirectoryName {"Module"};
 #if defined(Q_OS_MAC)
-    constexpr char PluginDirectoryName[] = "PlugIns";
+    constexpr const char *PluginDirectoryName {"PlugIns"};
 #else
-    constexpr char PluginDirectoryName[] = "Plugins";
+    constexpr const char *PluginDirectoryName {"Plugins"};
 #endif
-    constexpr char PluginUuidKey[] = "uuid";
-    constexpr char PluginNameKey[] = "name";
-    constexpr char PluginAfter[] = "after";
+    constexpr const char *PluginUuidKey {"uuid"};
+    constexpr const char *PluginNameKey {"name"};
+    constexpr const char *PluginAfter {"after"};
 }
 
 struct ModuleManagerPrivate
@@ -125,17 +125,11 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
         activateModule(d->moduleRegistry.begin()->first);
     }
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "ModuleManager::ModuleManager: CREATED";
-#endif
 }
 
-ModuleManager::~ModuleManager() noexcept
+ModuleManager::~ModuleManager()
 {
     d->pluginLoader->unload();
-#ifdef DEBUG
-    qDebug() << "ModuleManager::~ModuleManager: DELETED";
-#endif
 }
 
 const ModuleManager::ActionRegistry &ModuleManager::getActionRegistry() const noexcept

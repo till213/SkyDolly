@@ -54,7 +54,11 @@ public:
     };
 
     ExportPluginBaseSettings() noexcept;
-    virtual ~ExportPluginBaseSettings() noexcept;
+    ExportPluginBaseSettings(const ExportPluginBaseSettings &rhs) = delete;
+    ExportPluginBaseSettings(ExportPluginBaseSettings &&rhs) = delete;
+    ExportPluginBaseSettings &operator=(const ExportPluginBaseSettings &rhs) = delete;
+    ExportPluginBaseSettings &operator=(ExportPluginBaseSettings &&rhs) = delete;
+    ~ExportPluginBaseSettings() override;
 
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;

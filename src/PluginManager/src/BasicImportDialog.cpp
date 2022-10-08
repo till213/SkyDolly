@@ -31,9 +31,6 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QCompleter>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Settings.h>
 #include <Model/Aircraft.h>
@@ -75,17 +72,9 @@ BasicImportDialog::BasicImportDialog(const Flight &flight, const QString &fileSu
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "BasicImportDialog::BasicImportDialog: CREATED";
-#endif
 }
 
-BasicImportDialog::~BasicImportDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "BasicImportDialog::~BasicImportDialog: DELETED";
-#endif
-}
+BasicImportDialog::~BasicImportDialog() = default;
 
 QString BasicImportDialog::getSelectedPath() const noexcept
 {

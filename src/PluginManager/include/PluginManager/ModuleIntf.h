@@ -39,6 +39,11 @@ public:
         Add
     };
 
+    ModuleIntf() = default;
+    ModuleIntf(const ModuleIntf &rhs) = delete;
+    ModuleIntf(ModuleIntf &&rhs) = default;
+    ModuleIntf &operator=(const ModuleIntf &rhs) = delete;
+    ModuleIntf &operator=(ModuleIntf &&rhs) = default;
     virtual ~ModuleIntf() = default;
 
     virtual QString getModuleName() const noexcept = 0;

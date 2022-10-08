@@ -54,7 +54,11 @@ class PLUGINMANAGER_API ImportPluginBase : public PluginBase, public ImportIntf
     Q_INTERFACES(ImportIntf)
 public:
     ImportPluginBase() noexcept;
-    ~ImportPluginBase() noexcept override;
+    ImportPluginBase(const ImportPluginBase &rhs) = delete;
+    ImportPluginBase(ImportPluginBase &&rhs) = delete;
+    ImportPluginBase &operator=(const ImportPluginBase &rhs) = delete;
+    ImportPluginBase &operator=(ImportPluginBase &&rhs) = delete;
+    ~ImportPluginBase() override;
 
     QWidget *getParentWidget() const noexcept final
     {

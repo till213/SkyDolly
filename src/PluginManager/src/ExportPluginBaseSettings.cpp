@@ -24,10 +24,6 @@
  */
 #include <memory>
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SampleRate.h>
@@ -65,18 +61,9 @@ struct ExportPluginBaseSettingsPrivate
 
 ExportPluginBaseSettings::ExportPluginBaseSettings() noexcept
     : d(std::make_unique<ExportPluginBaseSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "ExportPluginBaseSettings::ExportPluginBaseSettings: CREATED";
-#endif
-}
+{}
 
-ExportPluginBaseSettings::~ExportPluginBaseSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "ExportPluginBaseSettings::~ExportPluginBaseSettings: DELETED";
-#endif
-}
+ExportPluginBaseSettings::~ExportPluginBaseSettings() = default;
 
 SampleRate::ResamplingPeriod ExportPluginBaseSettings::getResamplingPeriod() const noexcept
 {

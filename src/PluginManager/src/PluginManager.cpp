@@ -160,15 +160,6 @@ bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) 
     return ok;
 }
 
-// PROTECTED
-
-PluginManager::~PluginManager() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "PluginManager::~PluginManager: DELETED";
-#endif
-}
-
 // PRIVATE
 
 PluginManager::PluginManager() noexcept
@@ -176,6 +167,13 @@ PluginManager::PluginManager() noexcept
 {
 #ifdef DEBUG
     qDebug() << "PluginManager::PluginManager: CREATED";
+#endif
+}
+
+PluginManager::~PluginManager()
+{
+#ifdef DEBUG
+    qDebug() << "PluginManager::~PluginManager: DELETED";
 #endif
 }
 

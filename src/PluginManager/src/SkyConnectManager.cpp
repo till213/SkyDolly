@@ -405,15 +405,6 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
     return ok;
 }
 
-// PROTECTED
-
-SkyConnectManager::~SkyConnectManager() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "SkyConnectManager::~SkyConnectManager: DELETED";
-#endif
-}
-
 // PRIVATE
 
 SkyConnectManager::SkyConnectManager() noexcept
@@ -424,6 +415,14 @@ SkyConnectManager::SkyConnectManager() noexcept
     qDebug() << "SkyConnectManager::SkyConnectManager: CREATED";
 #endif
 }
+
+SkyConnectManager::~SkyConnectManager()
+{
+#ifdef DEBUG
+    qDebug() << "SkyConnectManager::~SkyConnectManager: DELETED";
+#endif
+}
+
 
 void SkyConnectManager::frenchConnection() noexcept
 {

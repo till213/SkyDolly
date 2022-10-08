@@ -41,13 +41,17 @@ class PLUGINMANAGER_API PluginBase : public QObject, public PluginIntf
     Q_OBJECT
 public:
     PluginBase();
-    virtual ~PluginBase();
+    PluginBase(const PluginBase &rhs) = delete;
+    PluginBase(PluginBase &&rhs) = delete;
+    PluginBase &operator=(const PluginBase &rhs) = delete;
+    PluginBase &operator=(PluginBase &&rhs) = delete;
+    ~PluginBase() override;
 
-    virtual QWidget *getParentWidget() const noexcept override;
-    virtual void setParentWidget(QWidget *parent) noexcept override;
+    QWidget *getParentWidget() const noexcept override;
+    void setParentWidget(QWidget *parent) noexcept override;
 
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override;
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override;
+    void storeSettings(const QUuid &pluginUuid) const noexcept override;
+    void restoreSettings(const QUuid &pluginUuid) noexcept override;
 
 protected:
     /*!

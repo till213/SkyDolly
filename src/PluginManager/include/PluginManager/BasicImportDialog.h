@@ -48,7 +48,11 @@ class PLUGINMANAGER_API BasicImportDialog : public QDialog
     Q_OBJECT
 public:
     explicit BasicImportDialog(const Flight &flight, const QString &fileExtension, ImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
-    virtual ~BasicImportDialog() noexcept;
+    BasicImportDialog(const BasicImportDialog &rhs) = delete;
+    BasicImportDialog(BasicImportDialog &&rhs) = delete;
+    BasicImportDialog &operator=(const BasicImportDialog &rhs) = delete;
+    BasicImportDialog &operator=(BasicImportDialog &&rhs) = delete;
+    ~BasicImportDialog() override;
 
     AircraftType getSelectedAircraftType(bool *ok = nullptr) const noexcept;
     QString getSelectedPath() const noexcept;
@@ -59,7 +63,7 @@ public:
     void setOptionWidget(QWidget *widget) noexcept;
 
 private:
-    std::unique_ptr<Ui::BasicImportDialog> ui;
+    const std::unique_ptr<Ui::BasicImportDialog> ui;
     const std::unique_ptr<BasicImportDialogPrivate> d;
 
     void initUi() noexcept;

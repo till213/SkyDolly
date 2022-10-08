@@ -41,5 +41,3 @@ bool Waypoint::isValid() const noexcept
 }
 
 const Waypoint Waypoint::NullWaypoint = Waypoint();
-const char Waypoint::CustomDepartureIdentifier[] = "CUSTD";
-const char Waypoint::CustomArrivalIdentifier[] = "CUSTA";

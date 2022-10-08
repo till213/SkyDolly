@@ -23,10 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-
-#ifdef DEBUG
-#include <QDebug>
-#endif
+#include <string_view>
 
 #include <Kernel/Settings.h>
 #include "ImportPluginBaseSettings.h"
@@ -34,8 +31,8 @@
 namespace
 {
     // Keys
-    constexpr char ImportDirectoryEnabledKey[] = "ImportDirectoryEnabled";
-    constexpr char AddToFlightEnabledKey[] = "AddToFlightEnabled";
+    constexpr const char *ImportDirectoryEnabledKey {"ImportDirectoryEnabled"};
+    constexpr const char *AddToFlightEnabledKey {"AddToFlightEnabled"};
 
     // Defaults
     constexpr bool DefaultImportDirectoryEnabled = false;
@@ -57,18 +54,9 @@ struct ImportPluginBaseSettingsPrivate
 
 ImportPluginBaseSettings::ImportPluginBaseSettings() noexcept
     : d(std::make_unique<ImportPluginBaseSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "ImportPluginBaseSettings::ImportPluginBaseSettings: CREATED";
-#endif
-}
+{}
 
-ImportPluginBaseSettings::~ImportPluginBaseSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "ImportPluginBaseSettings::~ImportPluginBaseSettings: DELETED";
-#endif
-}
+ImportPluginBaseSettings::~ImportPluginBaseSettings() = default;
 
 bool ImportPluginBaseSettings::isImportDirectoryEnabled() const noexcept
 {

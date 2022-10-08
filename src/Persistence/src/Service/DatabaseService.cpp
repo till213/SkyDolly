@@ -175,7 +175,7 @@ QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
 {
     Settings &settings = Settings::getInstance();
     QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
-    QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open Logbook"), existingLogbookPath, QString("*") % Const::LogbookExtension.data());
+    QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open Logbook"), existingLogbookPath, QString("*") % Const::LogbookExtension);
     return logbookPath;
 }
 
@@ -196,7 +196,7 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
         if (!logbookDirectoryPath.isEmpty()) {
             QFileInfo info = QFileInfo(logbookDirectoryPath);
             if (!info.exists()) {
-                newLogbookPath = logbookDirectoryPath + "/" % info.fileName() % Const::LogbookExtension.data();
+                newLogbookPath = logbookDirectoryPath + "/" % info.fileName() % Const::LogbookExtension;
                 retry = false;
             } else {
                 QMessageBox::information(parent, QCoreApplication::translate("DatabaseService", "Database exists"),

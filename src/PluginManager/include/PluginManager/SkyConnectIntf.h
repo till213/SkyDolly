@@ -65,6 +65,14 @@ public:
         FlyWithFormation
     };
 
+    SkyConnectIntf(QObject *parent = nullptr) noexcept
+        : QObject(parent)
+    {}
+
+    SkyConnectIntf(const SkyConnectIntf &rhs) = delete;
+    SkyConnectIntf(SkyConnectIntf &&rhs) = delete;
+    SkyConnectIntf &operator=(const SkyConnectIntf &rhs) = delete;
+    SkyConnectIntf &operator=(SkyConnectIntf &&rhs) = delete;
     ~SkyConnectIntf() override = default;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
@@ -210,10 +218,6 @@ public slots:
     virtual void onTailNumberChanged(const Aircraft &aircraft) noexcept = 0;
 
 protected:
-    SkyConnectIntf(QObject *parent = nullptr) noexcept
-        : QObject(parent)
-    {}
-
     /*!
      * Sets the new connection \c state. This method will also emit the
      * signal #recordingStarted and #recordingStopped when the state changes
@@ -279,9 +283,6 @@ signals:
      *        the received Location
      */
     void locationReceived(Location location);
-
-private:
-    Q_DISABLE_COPY(SkyConnectIntf)
 };
 
 #define SKYCONNECT_INTERFACE_IID "com.github.till213.SkyDolly.SkyConnectInterface/1.0"

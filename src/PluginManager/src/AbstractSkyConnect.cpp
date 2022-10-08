@@ -102,8 +102,7 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
     frenchConnection();
 }
 
-AbstractSkyConnect::~AbstractSkyConnect() noexcept
-{}
+AbstractSkyConnect::~AbstractSkyConnect() = default;
 
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {

@@ -252,10 +252,10 @@ QString PersistenceManager::getBackupFileName(const QString &backupDirectoryPath
     const QFileInfo logbookInfo = QFileInfo(logbookPath);
     const QString baseName = logbookInfo.completeBaseName();
     const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
-    QString backupLogbookName = baseBackupLogbookName % Const::LogbookExtension.data();
+    QString backupLogbookName = baseBackupLogbookName % Const::LogbookExtension;
     int index = 1;
     while (backupDir.exists(backupLogbookName) && index <= MaxBackupIndex) {
-        backupLogbookName = baseBackupLogbookName % QString("-%1").arg(index) % Const::LogbookExtension.data();
+        backupLogbookName = baseBackupLogbookName % QString("-%1").arg(index) % Const::LogbookExtension;
         ++index;
     }
     if (index <= MaxBackupIndex) {

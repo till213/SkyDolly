@@ -50,11 +50,11 @@ struct MODEL_API Waypoint final : public TimeVariableData
      */
     bool isValid() const noexcept;
 
-    // Note: declaring the constants as "inline" (with initialisation in the header)
-    // apparently won't make them accessible from outside this library (DLL)
+    // Note: declaring the constant as "inline" (with initialisation in the header)
+    // apparently won't make the Waypoint accessible from outside this library (DLL)
     static const Waypoint NullWaypoint;
-    static const char CustomDepartureIdentifier[];
-    static const char CustomArrivalIdentifier[];
+    static constexpr const char *CustomDepartureIdentifier {"CUSTD"};
+    static constexpr const char *CustomArrivalIdentifier {"CUSTA"};
 };
 
 #endif // WAYPOINT_H

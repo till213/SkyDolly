@@ -53,7 +53,11 @@ class PLUGINMANAGER_API ModuleManager : public QObject
     Q_OBJECT
 public:
     explicit ModuleManager(QLayout &layout, QObject *parent = nullptr) noexcept;
-    ~ModuleManager() noexcept override;
+    ModuleManager(const ModuleManager &rhs) = delete;
+    ModuleManager(ModuleManager &&rhs) = delete;
+    ModuleManager &operator=(const ModuleManager &rhs) = delete;
+    ModuleManager &operator=(ModuleManager &&rhs) = delete;
+    ~ModuleManager() override;
 
     using ActionRegistry = tsl::ordered_map<QUuid, QAction *, QUuidHasher>;
     const ActionRegistry &getActionRegistry() const noexcept;

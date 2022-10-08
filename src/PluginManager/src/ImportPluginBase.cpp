@@ -36,9 +36,6 @@
 #include <QElapsedTimer>
 #include <QCursor>
 #include <QGuiApplication>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/File.h>
 #include <Kernel/Unit.h>
@@ -81,18 +78,9 @@ struct ImportPluginBasePrivate
 
 ImportPluginBase::ImportPluginBase() noexcept
     : d(std::make_unique<ImportPluginBasePrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "ImportPluginBase::ImportPluginBase: CREATED";
-#endif
-}
+{}
 
-ImportPluginBase::~ImportPluginBase() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "ImportPluginBase::~ImportPluginBase: DELETED";
-#endif
-}
+ImportPluginBase::~ImportPluginBase() = default;
 
 bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight) noexcept
 {

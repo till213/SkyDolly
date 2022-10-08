@@ -58,18 +58,9 @@ struct ExportPluginBasePrivate
 
 ExportPluginBase::ExportPluginBase() noexcept
     : d(std::make_unique<ExportPluginBasePrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "ExportPluginBase::ExportPluginBase: CREATED";
-#endif
-}
+{}
 
-ExportPluginBase::~ExportPluginBase() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "ExportPluginBase::~ExportPluginBase: DELETED";
-#endif
-}
+ExportPluginBase::~ExportPluginBase() = default;
 
 bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
 {

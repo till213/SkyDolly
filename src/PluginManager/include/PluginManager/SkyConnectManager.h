@@ -46,10 +46,15 @@ class QUuid;
 struct skyConnectManagerPrivate;
 
 /// \todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
-class PLUGINMANAGER_API SkyConnectManager : public QObject
+class PLUGINMANAGER_API SkyConnectManager final : public QObject
 {
     Q_OBJECT
 public:
+    SkyConnectManager(const SkyConnectManager &rhs) = delete;
+    SkyConnectManager(SkyConnectManager &&rhs) = delete;
+    SkyConnectManager &operator=(const SkyConnectManager &rhs) = delete;
+    SkyConnectManager &operator=(SkyConnectManager &&rhs) = delete;
+
     static SkyConnectManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
@@ -168,13 +173,11 @@ signals:
      */
     void locationReceived(Location location);
 
-protected:
-    ~SkyConnectManager() noexcept override;
-
 private:
     const std::unique_ptr<skyConnectManagerPrivate> d;
 
     SkyConnectManager() noexcept;
+    ~SkyConnectManager() override;
 
     void frenchConnection() noexcept;
     void initialisePlugins(const QString &pluginDirectoryName) noexcept;
