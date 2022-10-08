@@ -122,7 +122,7 @@ struct SettingsPrivate
     static inline std::once_flag onceFlag;
     static inline Settings *instance {nullptr};
 
-    static constexpr QUuid DefaultSkyConnectPluginUuid;
+    static constexpr QUuid DefaultSkyConnectPluginUuid {};
     static constexpr bool DefaultBackupBeforeMigration {true};
     static constexpr double DefaultRecordingSampleRate {SampleRate::toValue(SampleRate::SampleRate::Auto)};
     static constexpr bool DefaultWindowStayOnTop {false};

@@ -40,6 +40,7 @@
 
 #include <tsl/ordered_map.h>
 
+#include <Kernel/Const.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -308,7 +309,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
     // In case of "fly with formation" always send all formation aircraft (as AI aircraft): we simply do this
     // by setting the userAircraftId to an invalid ID, so no aircraft in the Flight is considered the "user aircraft"
     // (which is really being controlled by the user as an "additional aircraft", next to the formation)
-    const std::int64_t userAircraftId = getReplayMode() != ReplayMode::FlyWithFormation ?  flight.getUserAircraft().getId() : Aircraft::InvalidId;
+    const std::int64_t userAircraftId = getReplayMode() != ReplayMode::FlyWithFormation ?  flight.getUserAircraft().getId() : Const::InvalidId;
     bool ok {true};
     for (auto &aircraft : flight) {
 

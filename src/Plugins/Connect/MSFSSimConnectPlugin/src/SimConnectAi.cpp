@@ -32,6 +32,7 @@
 #include <windows.h>
 #include <SimConnect.h>
 
+#include <Kernel/Const.h>
 #include <Kernel/Enum.h>
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
@@ -82,7 +83,7 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
 {
     // Check if the newly added aircraft has any recording yet
     // (otherwise it is the new user aircraft being added for a new recording)
-    if (aircraft.getId() != Aircraft::InvalidId) {
+    if (aircraft.getId() != Const::InvalidId) {
         const AircraftInfo aircraftInfo = aircraft.getAircraftInfo();
         Position &position = aircraft.getPosition();
         const PositionData positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
