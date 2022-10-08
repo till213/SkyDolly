@@ -51,8 +51,7 @@ AircraftSelectionComboBox::AircraftSelectionComboBox(QWidget *parent) noexcept
     initialise();
 }
 
-AircraftSelectionComboBox::~AircraftSelectionComboBox() noexcept
-{}
+AircraftSelectionComboBox::~AircraftSelectionComboBox() = default;
 
 // PRIVATE
 
