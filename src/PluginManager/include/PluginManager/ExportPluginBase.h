@@ -27,7 +27,6 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 
 #include <QObject>
 #include <QtPlugin>

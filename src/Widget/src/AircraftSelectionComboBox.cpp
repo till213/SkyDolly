@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <vector>
-#include <iterator>
 
 #include <QWidget>
 #include <QComboBox>
@@ -52,8 +51,7 @@ AircraftSelectionComboBox::AircraftSelectionComboBox(QWidget *parent) noexcept
     initialise();
 }
 
-AircraftSelectionComboBox::~AircraftSelectionComboBox() noexcept
-{}
+AircraftSelectionComboBox::~AircraftSelectionComboBox() = default;
 
 // PRIVATE
 

@@ -35,7 +35,7 @@ class WIDGET_API FocusPlainTextEdit : public QPlainTextEdit
 {
     Q_OBJECT
 public:
-    FocusPlainTextEdit(QWidget *parent = nullptr) noexcept;
+    explicit FocusPlainTextEdit(QWidget *parent = nullptr) noexcept;
 
 protected:
     void focusOutEvent(QFocusEvent *event) noexcept override;

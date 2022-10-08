@@ -54,7 +54,7 @@ public:
         IncludingNextTime
     };
 
-    BackupPeriodComboBox(QWidget *parent = nullptr, Selection selection = Selection::BackupPeriod) noexcept;
+    explicit BackupPeriodComboBox(QWidget *parent = nullptr, Selection selection = Selection::BackupPeriod) noexcept;
     ~BackupPeriodComboBox() noexcept override;
 
     Selection getSelection() const noexcept;

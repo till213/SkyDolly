@@ -26,7 +26,6 @@
 #include <cstdint>
 #include <cmath>
 #include <vector>
-#include <iterator>
 
 #include <QtGlobal>
 #include <QIODevice>

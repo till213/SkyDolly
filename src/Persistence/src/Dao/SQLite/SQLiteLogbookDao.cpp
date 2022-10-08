@@ -25,7 +25,6 @@
 #include <memory>
 #include <vector>
 #include <forward_list>
-#include <iterator>
 
 #include <QString>
 #include <QStringBuilder>
@@ -62,8 +61,10 @@ SQLiteLogbookDao::SQLiteLogbookDao(SQLiteLogbookDao &&rhs) = default;
 SQLiteLogbookDao &SQLiteLogbookDao::operator=(SQLiteLogbookDao &&rhs) = default;
 SQLiteLogbookDao::~SQLiteLogbookDao() = default;
 
-bool SQLiteLogbookDao::getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept
+std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates(bool *ok) const noexcept
 {
+    std::forward_list<FlightDate> flightDates;
+
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -72,8 +73,8 @@ bool SQLiteLogbookDao::getFlightDates(std::front_insert_iterator<std::forward_li
         "group by year, month, day"
     );
 
-    const bool ok = query.exec();
-    if (ok) {
+    const bool success = query.exec();
+    if (success) {
         QSqlRecord record = query.record();
         const int yearIdx = record.indexOf("year");
         const int monthIdx = record.indexOf("month");
@@ -84,7 +85,7 @@ bool SQLiteLogbookDao::getFlightDates(std::front_insert_iterator<std::forward_li
             const int month = query.value(monthIdx).toInt();
             const int day = query.value(dayIdx).toInt();
             const int nofFlights = query.value(nofFlightIdx).toInt();
-            frontInsertIterator = FlightDate(year, month, day, nofFlights);
+            flightDates.emplace_front(year, month, day, nofFlights);
         }
 #ifdef DEBUG
     } else {
@@ -92,7 +93,10 @@ bool SQLiteLogbookDao::getFlightDates(std::front_insert_iterator<std::forward_li
 #endif
     }
 
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return flightDates;
 }
 
 std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSelector &flightSelector, bool *ok) const noexcept
