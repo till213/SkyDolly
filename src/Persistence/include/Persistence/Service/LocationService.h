@@ -40,7 +40,11 @@ class PERSISTENCE_API LocationService
 {
 public:
     LocationService() noexcept;
-    ~LocationService() noexcept;
+    LocationService(const LocationService &rhs) = delete;
+    LocationService(LocationService &&rhs);
+    LocationService &operator=(const LocationService &rhs) = delete;
+    LocationService &operator=(LocationService &&rhs);
+    ~LocationService();
 
     bool store(Location &location) noexcept;
     bool update(const Location &location) noexcept;
@@ -49,7 +53,7 @@ public:
     std::vector<Location> getSelectedLocations(const LocationSelector &locationSelector, bool *ok = nullptr) const noexcept;
 
 private:
-    const std::unique_ptr<LocationServicePrivate> d;
+    std::unique_ptr<LocationServicePrivate> d;
 };
 
 #endif // LOCATIONSERVICE_H

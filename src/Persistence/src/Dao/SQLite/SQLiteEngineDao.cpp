@@ -49,11 +49,9 @@ namespace
 
 // PUBLIC
 
-SQLiteEngineDao::SQLiteEngineDao() noexcept
-{}
-
-SQLiteEngineDao::~SQLiteEngineDao() noexcept
-{}
+SQLiteEngineDao::SQLiteEngineDao(SQLiteEngineDao &&rhs) = default;
+SQLiteEngineDao &SQLiteEngineDao::operator=(SQLiteEngineDao &&rhs) = default;
+SQLiteEngineDao::~SQLiteEngineDao() = default;
 
 bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data)  noexcept
 {

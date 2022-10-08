@@ -35,6 +35,11 @@ class QDateTime;
 class DatabaseDaoIntf
 {
 public:
+    DatabaseDaoIntf() = default;
+    DatabaseDaoIntf(const DatabaseDaoIntf &rhs) = delete;
+    DatabaseDaoIntf(DatabaseDaoIntf &&rhs) = default;
+    DatabaseDaoIntf &operator=(const DatabaseDaoIntf &rhs) = delete;
+    DatabaseDaoIntf &operator=(DatabaseDaoIntf &&rhs) = default;
     virtual ~DatabaseDaoIntf() = default;
 
     virtual bool connectDb(const QString &logbookPath) noexcept = 0;

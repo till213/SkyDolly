@@ -36,8 +36,12 @@ struct PositionData;
 class SQLitePositionDao : public PositionDaoIntf
 {
 public:
-    SQLitePositionDao() noexcept;
-    ~SQLitePositionDao() noexcept override;
+    SQLitePositionDao() = default;
+    SQLitePositionDao(const SQLitePositionDao &rhs) = delete;
+    SQLitePositionDao(SQLitePositionDao &&rhs);
+    SQLitePositionDao &operator=(const SQLitePositionDao &rhs) = delete;
+    SQLitePositionDao &operator=(SQLitePositionDao &&rhs);
+    ~SQLitePositionDao() override;
 
     bool add(std::int64_t aircraftId, const PositionData &data) noexcept override;
     std::vector<PositionData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;

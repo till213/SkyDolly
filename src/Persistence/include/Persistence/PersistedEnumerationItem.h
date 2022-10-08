@@ -39,12 +39,17 @@ class PERSISTENCE_API PersistedEnumerationItem
 {
 public:
     PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept;
-    ~PersistedEnumerationItem() noexcept;
+    PersistedEnumerationItem() = default;
+    PersistedEnumerationItem(const PersistedEnumerationItem &rhs) = delete;
+    PersistedEnumerationItem(PersistedEnumerationItem &&rhs);
+    PersistedEnumerationItem &operator=(const PersistedEnumerationItem &rhs) = delete;
+    PersistedEnumerationItem &operator=(PersistedEnumerationItem &&rhs);
+    ~PersistedEnumerationItem();
 
     std::int64_t id() const noexcept;
 
 private:
-    const std::unique_ptr<PersistedEnumerationItemPrivate> d;
+    std::unique_ptr<PersistedEnumerationItemPrivate> d;
 };
 
 #endif // PERSISTEDENUMERATIONITEM_H

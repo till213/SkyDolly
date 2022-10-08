@@ -28,9 +28,6 @@
 #include <cstdint>
 
 #include <QSqlDatabase>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Const.h>
 #include <Model/Aircraft.h>
@@ -58,18 +55,11 @@ public:
 
 AircraftService::AircraftService() noexcept
     : d(std::make_unique<AircraftServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "AircraftService::AircraftService: CREATED";
-#endif
-}
+{}
 
-AircraftService::~AircraftService() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "AircraftService::~AircraftService: DELETED";
-#endif
-}
+AircraftService::AircraftService(AircraftService &&rhs) = default;
+AircraftService &AircraftService::operator=(AircraftService &&rhs) = default;
+AircraftService::~AircraftService() = default;
 
 bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept
 {

@@ -36,8 +36,12 @@ struct EngineData;
 class SQLiteEngineDao : public EngineDaoIntf
 {
 public:
-    SQLiteEngineDao() noexcept;
-    ~SQLiteEngineDao() noexcept override;
+    SQLiteEngineDao() = default;
+    SQLiteEngineDao(const SQLiteEngineDao &rhs) = delete;
+    SQLiteEngineDao(SQLiteEngineDao &&rhs);
+    SQLiteEngineDao &operator=(const SQLiteEngineDao &rhs) = delete;
+    SQLiteEngineDao &operator=(SQLiteEngineDao &&rhs);
+    ~SQLiteEngineDao() override;
 
     bool add(std::int64_t aircraftId, const EngineData &data) noexcept override;
     std::vector<EngineData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;

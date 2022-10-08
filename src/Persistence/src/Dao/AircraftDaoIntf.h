@@ -38,6 +38,11 @@ struct AircraftInfo;
 class AircraftDaoIntf
 {
 public:
+    AircraftDaoIntf() = default;
+    AircraftDaoIntf(const AircraftDaoIntf &rhs) = delete;
+    AircraftDaoIntf(AircraftDaoIntf &&rhs) = default;
+    AircraftDaoIntf &operator=(const AircraftDaoIntf &rhs) = delete;
+    AircraftDaoIntf &operator=(AircraftDaoIntf &&rhs) = default;
     virtual ~AircraftDaoIntf() = default;
 
     /*!

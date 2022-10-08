@@ -54,7 +54,12 @@ public:
     };
 
     DaoFactory(DbType dbType);
-    ~DaoFactory();
+    DaoFactory() = default;
+    DaoFactory(const DaoFactory &rhs) = delete;
+    DaoFactory(DaoFactory &&rhs);
+    DaoFactory &operator=(const DaoFactory &rhs) = delete;
+    DaoFactory &operator=(DaoFactory &&rhs);
+    virtual ~DaoFactory();
 
     std::unique_ptr<DatabaseDaoIntf> createDatabaseDao() noexcept;
     std::unique_ptr<LogbookDaoIntf> createLogbookDao() noexcept;
@@ -72,7 +77,7 @@ public:
     std::unique_ptr<EnumerationDaoIntf> createEnumerationDao() noexcept;
 
 private:
-    const std::unique_ptr<DaoFactoryPrivate> d;
+    std::unique_ptr<DaoFactoryPrivate> d;
 };
 
 #endif // DAOFACTORY_H

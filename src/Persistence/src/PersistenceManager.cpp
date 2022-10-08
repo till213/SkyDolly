@@ -286,16 +286,6 @@ QString PersistenceManager::createBackupPathIfNotExists(const QString &relativeO
     return existingBackupPath;
 }
 
-// PROTECTED
-
-PersistenceManager::~PersistenceManager() noexcept
-{
-    disconnectFromLogbook();
-#ifdef DEBUG
-    qDebug() << "PersistenceManager::~PersistenceManager: DELETED";
-#endif
-}
-
 // PRIVATE
 
 PersistenceManager::PersistenceManager() noexcept
@@ -304,6 +294,14 @@ PersistenceManager::PersistenceManager() noexcept
 {
 #ifdef DEBUG
     qDebug() << "PersistenceManager::PersistenceManager: CREATED";
+#endif
+}
+
+PersistenceManager::~PersistenceManager()
+{
+    disconnectFromLogbook();
+#ifdef DEBUG
+    qDebug() << "PersistenceManager::~PersistenceManager: DELETED";
 #endif
 }
 

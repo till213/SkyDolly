@@ -41,7 +41,11 @@ class PERSISTENCE_API FlightService
 {
 public:
     FlightService() noexcept;
-    ~FlightService() noexcept;
+    FlightService(const FlightService &rhs) = delete;
+    FlightService(FlightService &&rhs);
+    FlightService &operator=(const FlightService &rhs) = delete;
+    FlightService &operator=(FlightService &&rhs);
+    ~FlightService();
 
     bool store(Flight &flight) noexcept;
     bool restore(std::int64_t id, Flight &flight) noexcept;
@@ -53,7 +57,7 @@ public:
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
 private:
-    const std::unique_ptr<FlightServicePrivate> d;
+    std::unique_ptr<FlightServicePrivate> d;
 };
 
 #endif // FLIGHTSERVICE_H

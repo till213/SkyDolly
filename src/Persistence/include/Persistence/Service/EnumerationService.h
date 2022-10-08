@@ -38,7 +38,11 @@ class PERSISTENCE_API EnumerationService
 {
 public:
     EnumerationService() noexcept;
-    ~EnumerationService() noexcept;
+    EnumerationService(const EnumerationService &rhs) = delete;
+    EnumerationService(EnumerationService &&rhs);
+    EnumerationService &operator=(const EnumerationService &rhs) = delete;
+    EnumerationService &operator=(EnumerationService &&rhs);
+    ~EnumerationService();
 
     /*!
      * Gets the persisted Enumeration by its enumeration \c name.
@@ -73,7 +77,7 @@ public:
     static inline const QString CountryWorldSymbolicId {QStringLiteral("00")};
 
 private:
-    const std::unique_ptr<EnumerationServicePrivate> d;
+    std::unique_ptr<EnumerationServicePrivate> d;
 };
 
 #endif // ENUMERATIONSERVICE_H

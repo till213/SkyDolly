@@ -40,14 +40,18 @@ class PERSISTENCE_API AircraftTypeService
 {
 public:
     AircraftTypeService() noexcept;
-    ~AircraftTypeService() noexcept;
+    AircraftTypeService(const AircraftTypeService &rhs) = delete;
+    AircraftTypeService(AircraftTypeService &&rhs);
+    AircraftTypeService &operator=(const AircraftTypeService &rhs) = delete;
+    AircraftTypeService &operator=(AircraftTypeService &&rhs);
+    ~AircraftTypeService();
 
     AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept;
     std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept;
     bool exists(const QString &type) const noexcept;
 
 private:
-    const std::unique_ptr<AircraftTypeServicePrivate> d;
+    std::unique_ptr<AircraftTypeServicePrivate> d;
 };
 
 #endif // AIRCRAFTTYPESERVICE_H

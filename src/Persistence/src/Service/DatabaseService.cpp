@@ -36,9 +36,6 @@
 #include <QCoreApplication>
 #include <QSqlDatabase>
 #include <QDateTime>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Settings.h>
 #include <Kernel/Const.h>
@@ -72,18 +69,11 @@ public:
 
 DatabaseService::DatabaseService() noexcept
     : d(std::make_unique<DatabaseServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "DatabaseService::DatabaseService: CREATED";
-#endif
-}
+{}
 
-DatabaseService::~DatabaseService() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "DatabaseService::~DatabaseService: DELETED";
-#endif
-}
+DatabaseService::DatabaseService(DatabaseService &&rhs) = default;
+DatabaseService &DatabaseService::operator=(DatabaseService &&rhs) = default;
+DatabaseService::~DatabaseService() = default;
 
 bool DatabaseService::backup() noexcept
 {

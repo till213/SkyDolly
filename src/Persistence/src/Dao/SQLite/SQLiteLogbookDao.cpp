@@ -58,11 +58,9 @@ namespace
 
 // PUBLIC
 
-SQLiteLogbookDao::SQLiteLogbookDao() noexcept
-{}
-
-SQLiteLogbookDao::~SQLiteLogbookDao() noexcept
-{}
+SQLiteLogbookDao::SQLiteLogbookDao(SQLiteLogbookDao &&rhs) = default;
+SQLiteLogbookDao &SQLiteLogbookDao::operator=(SQLiteLogbookDao &&rhs) = default;
+SQLiteLogbookDao::~SQLiteLogbookDao() = default;
 
 bool SQLiteLogbookDao::getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept
 {

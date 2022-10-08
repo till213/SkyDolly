@@ -30,9 +30,6 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <QTextCodec>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Const.h>
 #include <Model/Location.h>
@@ -71,21 +68,15 @@ struct SqlMigrationPrivate
 
 // PUBLIC
 
-SqlMigration::SqlMigration()
+SqlMigration::SqlMigration() noexcept
     : d(std::make_unique<SqlMigrationPrivate>())
 {
      Q_INIT_RESOURCE(Migration);
-#ifdef DEBUG
-    qDebug() << "SqlMigration::SqlMigration: CREATED";
-#endif
 }
 
-SqlMigration::~SqlMigration()
-{
-#ifdef DEBUG
-    qDebug() << "SqlMigration::~SqlMigration: DELETED";
-#endif
-}
+SqlMigration::SqlMigration(SqlMigration &&rhs) = default;
+SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) = default;
+SqlMigration::~SqlMigration() = default;
 
 bool SqlMigration::migrate() noexcept
 {

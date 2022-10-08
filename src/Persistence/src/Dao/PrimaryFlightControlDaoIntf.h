@@ -33,6 +33,11 @@ struct PrimaryFlightControlData;
 class PrimaryFlightControlDaoIntf
 {
 public:
+    PrimaryFlightControlDaoIntf() = default;
+    PrimaryFlightControlDaoIntf(const PrimaryFlightControlDaoIntf &rhs) = delete;
+    PrimaryFlightControlDaoIntf(PrimaryFlightControlDaoIntf &&rhs) = default;
+    PrimaryFlightControlDaoIntf &operator=(const PrimaryFlightControlDaoIntf &rhs) = delete;
+    PrimaryFlightControlDaoIntf &operator=(PrimaryFlightControlDaoIntf &&rhs) = default;
     virtual ~PrimaryFlightControlDaoIntf() = default;
 
     /*!

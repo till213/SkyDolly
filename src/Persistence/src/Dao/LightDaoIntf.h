@@ -33,6 +33,11 @@ struct LightData;
 class LightDaoIntf
 {
 public:
+    LightDaoIntf() = default;
+    LightDaoIntf(const LightDaoIntf &rhs) = delete;
+    LightDaoIntf(LightDaoIntf &&rhs) = default;
+    LightDaoIntf &operator=(const LightDaoIntf &rhs) = delete;
+    LightDaoIntf &operator=(LightDaoIntf &&rhs) = default;
     virtual ~LightDaoIntf() = default;
 
     /*!

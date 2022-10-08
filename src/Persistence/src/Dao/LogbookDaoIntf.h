@@ -41,6 +41,11 @@ class FlightSummary;
 class LogbookDaoIntf
 {
 public:
+    LogbookDaoIntf() = default;
+    LogbookDaoIntf(const LogbookDaoIntf &rhs) = delete;
+    LogbookDaoIntf(LogbookDaoIntf &&rhs) = default;
+    LogbookDaoIntf &operator=(const LogbookDaoIntf &rhs) = delete;
+    LogbookDaoIntf &operator=(LogbookDaoIntf &&rhs) = default;
     virtual ~LogbookDaoIntf() = default;
 
     virtual bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept = 0;

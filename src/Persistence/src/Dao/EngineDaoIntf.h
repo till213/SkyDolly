@@ -33,6 +33,11 @@ struct EngineData;
 class EngineDaoIntf
 {
 public:
+    EngineDaoIntf() = default;
+    EngineDaoIntf(const EngineDaoIntf &rhs) = delete;
+    EngineDaoIntf(EngineDaoIntf &&rhs) = default;
+    EngineDaoIntf &operator=(const EngineDaoIntf &rhs) = delete;
+    EngineDaoIntf &operator=(EngineDaoIntf &&rhs) = default;
     virtual ~EngineDaoIntf() = default;
 
     /*!

@@ -35,6 +35,11 @@ struct AircraftType;
 class AircraftTypeDaoIntf
 {
 public:
+    AircraftTypeDaoIntf() = default;
+    AircraftTypeDaoIntf(const AircraftTypeDaoIntf &rhs) = delete;
+    AircraftTypeDaoIntf(AircraftTypeDaoIntf &&rhs) = default;
+    AircraftTypeDaoIntf &operator=(const AircraftTypeDaoIntf &rhs) = delete;
+    AircraftTypeDaoIntf &operator=(AircraftTypeDaoIntf &&rhs) = default;
     virtual ~AircraftTypeDaoIntf() = default;
 
     virtual bool upsert(const AircraftType &aircraftType) noexcept = 0;

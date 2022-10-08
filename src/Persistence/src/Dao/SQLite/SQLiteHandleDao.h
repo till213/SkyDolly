@@ -36,14 +36,17 @@ struct AircraftHandleData;
 class SQLiteHandleDao : public HandleDaoIntf
 {
 public:
-    SQLiteHandleDao() noexcept;
-    ~SQLiteHandleDao() noexcept override;
+    SQLiteHandleDao() = default;
+    SQLiteHandleDao(const SQLiteHandleDao &rhs) = delete;
+    SQLiteHandleDao(SQLiteHandleDao &&rhs);
+    SQLiteHandleDao &operator=(const SQLiteHandleDao &rhs) = delete;
+    SQLiteHandleDao &operator=(SQLiteHandleDao &&rhs);
+    ~SQLiteHandleDao() override;
 
     bool add(std::int64_t aircraftId, const AircraftHandleData &data) noexcept override;
     std::vector<AircraftHandleData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };
-
 
 #endif // SQLITEHANDLEDAO_H

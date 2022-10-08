@@ -57,6 +57,9 @@ SQLiteDatabaseDao::SQLiteDatabaseDao() noexcept
     : d(std::make_unique<DatabaseDaoPrivate>())
 {}
 
+SQLiteDatabaseDao::SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) = default;
+SQLiteDatabaseDao &SQLiteDatabaseDao::operator=(SQLiteDatabaseDao &&rhs) = default;
+
 SQLiteDatabaseDao::~SQLiteDatabaseDao() noexcept
 {
     disconnectSQLite();

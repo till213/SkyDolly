@@ -40,7 +40,11 @@ class SQLiteAircraftDao : public AircraftDaoIntf
 {
 public:
     SQLiteAircraftDao() noexcept;
-    ~SQLiteAircraftDao() noexcept override;
+    SQLiteAircraftDao(const SQLiteAircraftDao &rhs) = delete;
+    SQLiteAircraftDao(SQLiteAircraftDao &&rhs);
+    SQLiteAircraftDao &operator=(const SQLiteAircraftDao &rhs) = delete;
+    SQLiteAircraftDao &operator=(SQLiteAircraftDao &&rhs);
+    ~SQLiteAircraftDao() override;
 
     bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
     std::vector<Aircraft> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
@@ -52,7 +56,7 @@ public:
     bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept override;
 
 private:
-    const std::unique_ptr<SQLiteAircraftDaoPrivate> d;
+    std::unique_ptr<SQLiteAircraftDaoPrivate> d;
 };
 
 #endif // SQLITEAIRCRAFTDAO_H

@@ -47,11 +47,9 @@ namespace
 
 // PUBIC
 
-SQLiteLocationDao::SQLiteLocationDao() noexcept
-{}
-
-SQLiteLocationDao::~SQLiteLocationDao() noexcept
-{}
+SQLiteLocationDao::SQLiteLocationDao(SQLiteLocationDao &&rhs) = default;
+SQLiteLocationDao &SQLiteLocationDao::operator=(SQLiteLocationDao &&rhs) = default;
+SQLiteLocationDao::~SQLiteLocationDao() = default;
 
 bool SQLiteLocationDao::add(Location &location) noexcept
 {

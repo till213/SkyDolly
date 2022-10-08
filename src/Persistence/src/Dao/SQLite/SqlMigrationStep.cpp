@@ -53,12 +53,13 @@ struct SqlMigrationStepPrivate
 
 // PUBLIC
 
-SqlMigrationStep::SqlMigrationStep()
+SqlMigrationStep::SqlMigrationStep() noexcept
     : d(std::make_unique<SqlMigrationStepPrivate>())
 {}
 
-SqlMigrationStep::~SqlMigrationStep()
-{}
+SqlMigrationStep::SqlMigrationStep(SqlMigrationStep &&rhs) = default;
+SqlMigrationStep &SqlMigrationStep::operator=(SqlMigrationStep &&rhs) = default;
+SqlMigrationStep::~SqlMigrationStep() = default;
 
 bool SqlMigrationStep::isValid() const noexcept
 {

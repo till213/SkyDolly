@@ -36,8 +36,12 @@ struct SecondaryFlightControlData;
 class SQLiteSecondaryFlightControlDao : public SecondaryFlightControlDaoIntf
 {
 public:
-    SQLiteSecondaryFlightControlDao() noexcept;
-    ~SQLiteSecondaryFlightControlDao() noexcept override;
+    SQLiteSecondaryFlightControlDao() = default;
+    SQLiteSecondaryFlightControlDao(const SQLiteSecondaryFlightControlDao &rhs) = delete;
+    SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs);
+    SQLiteSecondaryFlightControlDao &operator=(const SQLiteSecondaryFlightControlDao &rhs) = delete;
+    SQLiteSecondaryFlightControlDao &operator=(SQLiteSecondaryFlightControlDao &&rhs);
+    ~SQLiteSecondaryFlightControlDao() override;
 
     bool add(std::int64_t aircraftId, const SecondaryFlightControlData &data) noexcept override;
     std::vector<SecondaryFlightControlData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;

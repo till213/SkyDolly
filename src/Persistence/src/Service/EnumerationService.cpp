@@ -25,9 +25,6 @@
 #include <memory>
 
 #include <QSqlDatabase>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Model/Enumeration.h>
 #include "../Dao/DaoFactory.h"
@@ -49,18 +46,11 @@ struct EnumerationServicePrivate
 
 EnumerationService::EnumerationService() noexcept
     : d(std::make_unique<EnumerationServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "EnumerationService::EnumerationService: CREATED";
-#endif
-}
+{}
 
-EnumerationService::~EnumerationService() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "EnumerationService::~EnumerationService: DELETED";
-#endif
-}
+EnumerationService::EnumerationService(EnumerationService &&rhs) = default;
+EnumerationService &EnumerationService::operator=(EnumerationService &&rhs) = default;
+EnumerationService::~EnumerationService() = default;
 
 Enumeration EnumerationService::getEnumerationByName(const QString &name, bool *ok)
 {

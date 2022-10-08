@@ -48,11 +48,9 @@ namespace
 
 // PUBLIC
 
-SQLiteHandleDao::SQLiteHandleDao() noexcept
-{}
-
-SQLiteHandleDao::~SQLiteHandleDao() noexcept
-{}
+SQLiteHandleDao::SQLiteHandleDao(SQLiteHandleDao &&rhs) = default;
+SQLiteHandleDao &SQLiteHandleDao::operator=(SQLiteHandleDao &&rhs) = default;
+SQLiteHandleDao::~SQLiteHandleDao() = default;
 
 bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &aircraftHandleData)  noexcept
 {

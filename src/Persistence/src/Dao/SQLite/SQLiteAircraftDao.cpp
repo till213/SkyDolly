@@ -104,8 +104,9 @@ SQLiteAircraftDao::SQLiteAircraftDao() noexcept
     : d(std::make_unique<SQLiteAircraftDaoPrivate>())
 {}
 
-SQLiteAircraftDao::~SQLiteAircraftDao() noexcept
-{}
+SQLiteAircraftDao::SQLiteAircraftDao(SQLiteAircraftDao &&rhs) = default;
+SQLiteAircraftDao &SQLiteAircraftDao::operator=(SQLiteAircraftDao &&rhs) = default;
+SQLiteAircraftDao::~SQLiteAircraftDao() = default;
 
 bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft)  noexcept
 {

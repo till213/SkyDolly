@@ -33,6 +33,11 @@ struct AircraftHandleData;
 class HandleDaoIntf
 {
 public:
+    HandleDaoIntf() = default;
+    HandleDaoIntf(const HandleDaoIntf &rhs) = delete;
+    HandleDaoIntf(HandleDaoIntf &&rhs) = default;
+    HandleDaoIntf &operator=(const HandleDaoIntf &rhs) = delete;
+    HandleDaoIntf &operator=(HandleDaoIntf &&rhs) = default;
     virtual ~HandleDaoIntf() = default;
 
     /*!

@@ -33,6 +33,11 @@ class Waypoint;
 class WaypointDaoIntf
 {
 public:
+    WaypointDaoIntf() = default;
+    WaypointDaoIntf(const WaypointDaoIntf &rhs) = delete;
+    WaypointDaoIntf(WaypointDaoIntf &&rhs) = default;
+    WaypointDaoIntf &operator=(const WaypointDaoIntf &rhs) = delete;
+    WaypointDaoIntf &operator=(WaypointDaoIntf &&rhs) = default;
     virtual ~WaypointDaoIntf() = default;
 
     /*!

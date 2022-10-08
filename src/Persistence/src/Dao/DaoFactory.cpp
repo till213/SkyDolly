@@ -67,8 +67,9 @@ DaoFactory::DaoFactory(DbType dbType)
     : d(std::make_unique<DaoFactoryPrivate>(dbType))
 {}
 
-DaoFactory::~DaoFactory()
-{}
+DaoFactory::DaoFactory(DaoFactory &&rhs) = default;
+DaoFactory &DaoFactory::operator=(DaoFactory &&rhs) = default;
+DaoFactory::~DaoFactory() = default;
 
 std::unique_ptr<DatabaseDaoIntf> DaoFactory::createDatabaseDao() noexcept
 {

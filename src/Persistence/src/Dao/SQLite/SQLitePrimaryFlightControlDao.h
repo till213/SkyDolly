@@ -36,8 +36,12 @@ struct PrimaryFlightControlData;
 class SQLitePrimaryFlightControlDao : public PrimaryFlightControlDaoIntf
 {
 public:
-    SQLitePrimaryFlightControlDao() noexcept;
-    ~SQLitePrimaryFlightControlDao() noexcept override;
+    SQLitePrimaryFlightControlDao() = default;
+    SQLitePrimaryFlightControlDao(const SQLitePrimaryFlightControlDao &rhs) = delete;
+    SQLitePrimaryFlightControlDao(SQLitePrimaryFlightControlDao &&rhs);
+    SQLitePrimaryFlightControlDao &operator=(const SQLitePrimaryFlightControlDao &rhs) = delete;
+    SQLitePrimaryFlightControlDao &operator=(SQLitePrimaryFlightControlDao &&rhs);
+    ~SQLitePrimaryFlightControlDao() override;
 
     bool add(std::int64_t aircraftId, const PrimaryFlightControlData &data) noexcept override;
     std::vector<PrimaryFlightControlData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;

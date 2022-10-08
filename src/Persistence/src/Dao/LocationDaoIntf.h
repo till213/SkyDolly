@@ -34,6 +34,11 @@ struct Location;
 class LocationDaoIntf
 {
 public:
+    LocationDaoIntf() = default;
+    LocationDaoIntf(const LocationDaoIntf &rhs) = delete;
+    LocationDaoIntf(LocationDaoIntf &&rhs) = default;
+    LocationDaoIntf &operator=(const LocationDaoIntf &rhs) = delete;
+    LocationDaoIntf &operator=(LocationDaoIntf &&rhs) = default;
     virtual ~LocationDaoIntf() = default;
 
     virtual bool add(Location &location) noexcept = 0;

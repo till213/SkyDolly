@@ -42,10 +42,15 @@ class Metadata;
 class Version;
 struct PersistenceManagerPrivate;
 
-class PERSISTENCE_API PersistenceManager : public QObject
+class PERSISTENCE_API PersistenceManager final : public QObject
 {
     Q_OBJECT
 public:
+    PersistenceManager(const PersistenceManager &rhs) = delete;
+    PersistenceManager(PersistenceManager &&rhs) = delete;
+    PersistenceManager &operator=(const PersistenceManager &rhs) = delete;
+    PersistenceManager &operator=(PersistenceManager &&rhs) = delete;
+
     static PersistenceManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
@@ -58,12 +63,12 @@ public:
      * paths (or to quit the application altogether).
      *
      * The actual logbook path (which is usually the given \c logbookPath)
-     * is stored in the Settings.
+     * is stored in the PersistenceManager.
      *
      * \param logbookPath
      *        the path of the logbook (database) file to connect with
      * \return \c true if the connection succeeded; \c false else
-     * \sa Settings#setLogbookPath
+     * \sa PersistenceManager#setLogbookPath
      * \sa connectionChanged
      */
     bool connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept;
@@ -86,13 +91,11 @@ public:
 signals:
     void connectionChanged(bool connected);
 
-protected:
-    ~PersistenceManager() noexcept override;
-
 private:
     const std::unique_ptr<PersistenceManagerPrivate> d;
 
     PersistenceManager() noexcept;
+    ~PersistenceManager() override;
 
     bool connectDb(const QString &logbookPath) noexcept;
     std::pair<bool, Version> checkDatabaseVersion() const noexcept;

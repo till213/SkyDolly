@@ -27,9 +27,6 @@
 #include <vector>
 
 #include <QSqlDatabase>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Model/Location.h>
 #include "../Dao/DaoFactory.h"
@@ -52,18 +49,11 @@ struct LocationServicePrivate
 
 LocationService::LocationService() noexcept
     : d(std::make_unique<LocationServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "LocationService::LocationService: CREATED";
-#endif
-}
+{}
 
-LocationService::~LocationService() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "LocationService::~LocationService: DELETED";
-#endif
-}
+LocationService::LocationService(LocationService &&rhs) = default;
+LocationService &LocationService::operator=(LocationService &&rhs) = default;
+LocationService::~LocationService() = default;
 
 bool LocationService::store(Location &location) noexcept
 {

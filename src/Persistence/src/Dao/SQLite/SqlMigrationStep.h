@@ -39,7 +39,11 @@ struct SqlMigrationStepPrivate;
 class SqlMigrationStep
 {
 public:
-    SqlMigrationStep();
+    SqlMigrationStep() noexcept;
+    SqlMigrationStep(const SqlMigrationStep &rhs) = delete;
+    SqlMigrationStep(SqlMigrationStep &&rhs);
+    SqlMigrationStep &operator=(const SqlMigrationStep &rhs) = delete;
+    SqlMigrationStep &operator=(SqlMigrationStep &&rhs);
     ~SqlMigrationStep();
 
     bool isValid() const noexcept;
@@ -59,7 +63,7 @@ public:
     void setStepCount(int count) noexcept;
 
 private:
-    const std::unique_ptr<SqlMigrationStepPrivate> d;
+    std::unique_ptr<SqlMigrationStepPrivate> d;
 
     bool hasPreviousAttempt() const noexcept;
 };

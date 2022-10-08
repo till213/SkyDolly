@@ -35,6 +35,11 @@ class Enumeration;
 class EnumerationDaoIntf
 {
 public:
+    EnumerationDaoIntf() = default;
+    EnumerationDaoIntf(const EnumerationDaoIntf &rhs) = delete;
+    EnumerationDaoIntf(EnumerationDaoIntf &&rhs) = default;
+    EnumerationDaoIntf &operator=(const EnumerationDaoIntf &rhs) = delete;
+    EnumerationDaoIntf &operator=(EnumerationDaoIntf &&rhs) = default;
     virtual ~EnumerationDaoIntf() = default;
 
     /*!

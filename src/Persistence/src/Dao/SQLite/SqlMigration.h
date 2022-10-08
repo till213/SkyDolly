@@ -36,13 +36,17 @@ struct SqlMigrationPrivate;
 class SqlMigration
 {
 public:
-    SqlMigration();
+    SqlMigration() noexcept;
+    SqlMigration(const SqlMigration &rhs) = delete;
+    SqlMigration(SqlMigration &&rhs);
+    SqlMigration &operator=(const SqlMigration &rhs) = delete;
+    SqlMigration &operator=(SqlMigration &&rhs);
     ~SqlMigration();
 
     bool migrate() noexcept;
 
 private:
-    const std::unique_ptr<SqlMigrationPrivate> d;
+    std::unique_ptr<SqlMigrationPrivate> d;
 
     bool migrateSql(const QString &migrationFilePath) noexcept;
     bool migrateCsv(const QString &migrationFilePath) noexcept;

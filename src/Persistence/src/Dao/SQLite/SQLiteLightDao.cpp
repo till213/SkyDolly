@@ -48,11 +48,9 @@ namespace
 
 // PUBLIC
 
-SQLiteLightDao::SQLiteLightDao() noexcept
-{}
-
-SQLiteLightDao::~SQLiteLightDao() noexcept
-{}
+SQLiteLightDao::SQLiteLightDao(SQLiteLightDao &&rhs) = default;
+SQLiteLightDao &SQLiteLightDao::operator=(SQLiteLightDao &&rhs) = default;
+SQLiteLightDao::~SQLiteLightDao() = default;
 
 bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData)  noexcept
 {

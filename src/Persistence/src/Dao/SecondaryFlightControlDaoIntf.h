@@ -33,6 +33,11 @@ struct SecondaryFlightControlData;
 class SecondaryFlightControlDaoIntf
 {
 public:
+    SecondaryFlightControlDaoIntf() = default;
+    SecondaryFlightControlDaoIntf(const SecondaryFlightControlDaoIntf &rhs) = delete;
+    SecondaryFlightControlDaoIntf(SecondaryFlightControlDaoIntf &&rhs) = default;
+    SecondaryFlightControlDaoIntf &operator=(const SecondaryFlightControlDaoIntf &rhs) = delete;
+    SecondaryFlightControlDaoIntf &operator=(SecondaryFlightControlDaoIntf &&rhs) = default;
     virtual ~SecondaryFlightControlDaoIntf() = default;
 
     /*!

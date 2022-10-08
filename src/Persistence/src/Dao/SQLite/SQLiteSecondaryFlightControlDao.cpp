@@ -51,11 +51,9 @@ namespace
 
 // PUBLIC
 
-SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao() noexcept
-{}
-
-SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() noexcept
-{}
+SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs) = default;
+SQLiteSecondaryFlightControlDao &SQLiteSecondaryFlightControlDao::operator=(SQLiteSecondaryFlightControlDao &&rhs) = default;
+SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() = default;
 
 bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
 {

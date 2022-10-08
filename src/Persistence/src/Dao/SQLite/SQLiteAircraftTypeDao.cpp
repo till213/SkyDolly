@@ -48,11 +48,9 @@ namespace
 
 // PUBLIC
 
-SQLiteAircraftTypeDao::SQLiteAircraftTypeDao() noexcept
-{}
-
-SQLiteAircraftTypeDao::~SQLiteAircraftTypeDao() noexcept
-{}
+SQLiteAircraftTypeDao::SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) = default;
+SQLiteAircraftTypeDao &SQLiteAircraftTypeDao::operator=(SQLiteAircraftTypeDao &&rhs) = default;
+SQLiteAircraftTypeDao::~SQLiteAircraftTypeDao() = default;
 
 bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
 {

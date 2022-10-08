@@ -36,8 +36,12 @@ struct LightData;
 class SQLiteLightDao : public LightDaoIntf
 {
 public:
-    SQLiteLightDao() noexcept;
-    ~SQLiteLightDao() noexcept override;
+    SQLiteLightDao() = default;
+    SQLiteLightDao(const SQLiteLightDao &rhs) = delete;
+    SQLiteLightDao(SQLiteLightDao &&rhs);
+    SQLiteLightDao &operator=(const SQLiteLightDao &rhs) = delete;
+    SQLiteLightDao &operator=(SQLiteLightDao &&rhs);
+    ~SQLiteLightDao() override;
 
     bool add(std::int64_t aircraftId, const LightData &data) noexcept override;
     std::vector<LightData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;

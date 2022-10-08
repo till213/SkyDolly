@@ -42,7 +42,11 @@ class PERSISTENCE_API DatabaseService
 {
 public:
     DatabaseService() noexcept;
-    ~DatabaseService() noexcept;
+    DatabaseService(const DatabaseService &rhs) = delete;
+    DatabaseService(DatabaseService &&rhs);
+    DatabaseService &operator=(const DatabaseService &rhs) = delete;
+    DatabaseService &operator=(DatabaseService &&rhs);
+    ~DatabaseService();
 
     bool backup() noexcept;
 
@@ -55,7 +59,7 @@ public:
     static QString getNewLogbookPath(QWidget *parent) noexcept;
 
 private:
-    const std::unique_ptr<DatabaseServicePrivate> d;
+    std::unique_ptr<DatabaseServicePrivate> d;
 };
 
 #endif // DATABASESERVICE_H

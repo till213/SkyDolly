@@ -40,7 +40,11 @@ class PERSISTENCE_API AircraftService
 {
 public:
     AircraftService() noexcept;
-    ~AircraftService() noexcept;
+    AircraftService(const AircraftService &rhs) = delete;
+    AircraftService(AircraftService &&rhs);
+    AircraftService &operator=(const AircraftService &rhs) = delete;
+    AircraftService &operator=(AircraftService &&rhs);
+    ~AircraftService();
 
     bool store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept;
     bool deleteByIndex(int index) noexcept;
@@ -50,7 +54,7 @@ public:
     bool changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept;
 
 private:
-    const std::unique_ptr<AircraftServicePrivate> d;
+    std::unique_ptr<AircraftServicePrivate> d;
 };
 
 #endif // AIRCRAFTSERVICE_H

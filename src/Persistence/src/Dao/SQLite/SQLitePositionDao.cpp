@@ -51,11 +51,9 @@ namespace
 
 // PUBLIC
 
-SQLitePositionDao::SQLitePositionDao() noexcept
-{}
-
-SQLitePositionDao::~SQLitePositionDao() noexcept
-{}
+SQLitePositionDao::SQLitePositionDao(SQLitePositionDao &&rhs) = default;
+SQLitePositionDao &SQLitePositionDao::operator=(SQLitePositionDao &&rhs) = default;
+SQLitePositionDao::~SQLitePositionDao() = default;
 
 bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &position)  noexcept
 {

@@ -41,7 +41,11 @@ class SQLiteDatabaseDao : public DatabaseDaoIntf
 {
 public:
     SQLiteDatabaseDao() noexcept;
-    ~SQLiteDatabaseDao() noexcept override;
+    SQLiteDatabaseDao(const SQLiteDatabaseDao &rhs) = delete;
+    SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs);
+    SQLiteDatabaseDao &operator=(const SQLiteDatabaseDao &rhs) = delete;
+    SQLiteDatabaseDao &operator=(SQLiteDatabaseDao &&rhs);
+    ~SQLiteDatabaseDao() override;
 
     bool connectDb(const QString &logbookPath) noexcept override;
     void disconnectDb() noexcept override;
@@ -58,7 +62,7 @@ public:
     QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept override;
 
 private:
-    const std::unique_ptr<DatabaseDaoPrivate> d;
+    std::unique_ptr<DatabaseDaoPrivate> d;
 
     void disconnectSQLite() noexcept;
     bool createMigrationTable() noexcept;

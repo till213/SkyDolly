@@ -33,6 +33,11 @@ struct PositionData;
 class PositionDaoIntf
 {
 public:
+    PositionDaoIntf() = default;
+    PositionDaoIntf(const PositionDaoIntf &rhs) = delete;
+    PositionDaoIntf(PositionDaoIntf &&rhs) = default;
+    PositionDaoIntf &operator=(const PositionDaoIntf &rhs) = delete;
+    PositionDaoIntf &operator=(PositionDaoIntf &&rhs) = default;
     virtual ~PositionDaoIntf() = default;
 
     /*!

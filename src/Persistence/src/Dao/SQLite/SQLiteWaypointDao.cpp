@@ -42,11 +42,9 @@
 
 // PUBLIC
 
-SQLiteWaypointDao::SQLiteWaypointDao() noexcept
-{}
-
-SQLiteWaypointDao::~SQLiteWaypointDao() noexcept
-{}
+SQLiteWaypointDao::SQLiteWaypointDao(SQLiteWaypointDao &&rhs) = default;
+SQLiteWaypointDao &SQLiteWaypointDao::operator=(SQLiteWaypointDao &&rhs) = default;
+SQLiteWaypointDao::~SQLiteWaypointDao() = default;
 
 bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPlan)  noexcept
 {
