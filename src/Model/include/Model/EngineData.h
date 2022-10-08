@@ -33,46 +33,41 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API EngineData : public TimeVariableData
+struct MODEL_API EngineData final : public TimeVariableData
 {
     // Implementation note: the throttle and propeller levers can also yield
     // negative thrust, hence the type std::int16_t (position) which also supports negative values
-    std::int16_t throttleLeverPosition1;
-    std::int16_t throttleLeverPosition2;
-    std::int16_t throttleLeverPosition3;
-    std::int16_t throttleLeverPosition4;
-    std::int16_t propellerLeverPosition1;
-    std::int16_t propellerLeverPosition2;
-    std::int16_t propellerLeverPosition3;
-    std::int16_t propellerLeverPosition4;
-    std::uint8_t mixtureLeverPosition1;
-    std::uint8_t mixtureLeverPosition2;
-    std::uint8_t mixtureLeverPosition3;
-    std::uint8_t mixtureLeverPosition4;
-    std::uint8_t cowlFlapPosition1;
-    std::uint8_t cowlFlapPosition2;
-    std::uint8_t cowlFlapPosition3;
-    std::uint8_t cowlFlapPosition4;
+    std::int16_t throttleLeverPosition1 {0};
+    std::int16_t throttleLeverPosition2 {0};
+    std::int16_t throttleLeverPosition3 {0};
+    std::int16_t throttleLeverPosition4 {0};
+    std::int16_t propellerLeverPosition1 {0};
+    std::int16_t propellerLeverPosition2 {0};
+    std::int16_t propellerLeverPosition3 {0};
+    std::int16_t propellerLeverPosition4 {0};
+    std::uint8_t mixtureLeverPosition1 {0};
+    std::uint8_t mixtureLeverPosition2 {0};
+    std::uint8_t mixtureLeverPosition3 {0};
+    std::uint8_t mixtureLeverPosition4 {0};
+    std::uint8_t cowlFlapPosition1 {0};
+    std::uint8_t cowlFlapPosition2 {0};
+    std::uint8_t cowlFlapPosition3 {0};
+    std::uint8_t cowlFlapPosition4 {0};
 
-    bool electricalMasterBattery1;
-    bool electricalMasterBattery2;
-    bool electricalMasterBattery3;
-    bool electricalMasterBattery4;
-    bool generalEngineStarter1;
-    bool generalEngineStarter2;
-    bool generalEngineStarter3;
-    bool generalEngineStarter4;
-    bool generalEngineCombustion1;
-    bool generalEngineCombustion2;
-    bool generalEngineCombustion3;
-    bool generalEngineCombustion4;
+    bool electricalMasterBattery1 {false};
+    bool electricalMasterBattery2 {false};
+    bool electricalMasterBattery3 {false};
+    bool electricalMasterBattery4 {false};
+    bool generalEngineStarter1 {false};
+    bool generalEngineStarter2 {false};
+    bool generalEngineStarter3 {false};
+    bool generalEngineStarter4 {false};
+    bool generalEngineCombustion1 {false};
+    bool generalEngineCombustion2 {false};
+    bool generalEngineCombustion3 {false};
+    bool generalEngineCombustion4 {false};
 
     explicit EngineData(std::int16_t throttleLeverPosition1 = 0, std::int16_t propellerLeverPosition1 = 0, std::uint8_t mixtureLeverPosition1 = 0, std::uint8_t cowlFlapPosition1 = 0) noexcept;
-    EngineData(const EngineData &rhs) = default;
-    EngineData(EngineData &&rhs) = default;
-    ~EngineData() override = default;
-    EngineData &operator=(const EngineData &rhs) = default;
-    EngineData &operator=(EngineData &&rhs) = default;
 
     inline bool hasEngineStarterEnabled() const noexcept
     {

@@ -25,8 +25,6 @@
 #ifndef SIMVAR_H
 #define SIMVAR_H
 
-#include "ModelLib.h"
-
 /*!
  * Constants related to simulation variable names.
  */

@@ -30,24 +30,18 @@
 #include <QtGlobal>
 #include <QFlags>
 
-#include "SimType.h"
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API SecondaryFlightControlData : public TimeVariableData
+struct MODEL_API SecondaryFlightControlData final : public TimeVariableData
 {
     // Flaps & speed brakes
-    std::int16_t leadingEdgeFlapsLeftPosition;
-    std::int16_t leadingEdgeFlapsRightPosition;
-    std::int16_t trailingEdgeFlapsLeftPosition;
-    std::int16_t trailingEdgeFlapsRightPosition;
-    std::int16_t spoilersHandlePosition;
-    std::int8_t flapsHandleIndex;
-
-    SecondaryFlightControlData() noexcept;
-    SecondaryFlightControlData(const SecondaryFlightControlData &rhs) = default;
-    SecondaryFlightControlData(SecondaryFlightControlData &&rhs) = default;
-    SecondaryFlightControlData &operator=(const SecondaryFlightControlData &) = default;
+    std::int16_t leadingEdgeFlapsLeftPosition {0};
+    std::int16_t leadingEdgeFlapsRightPosition {0};
+    std::int16_t trailingEdgeFlapsLeftPosition {0};
+    std::int16_t trailingEdgeFlapsRightPosition {0};
+    std::int16_t spoilersHandlePosition {0};
+    std::int8_t flapsHandleIndex {0};
 };
 
 #endif // SECONDARYFLIGHTCONTROLDATA_H

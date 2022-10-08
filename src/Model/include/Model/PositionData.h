@@ -31,33 +31,28 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API PositionData : public TimeVariableData
+struct MODEL_API PositionData final : public TimeVariableData
 {
     // Position
-    double latitude;
-    double longitude;
+    double latitude {0.0};
+    double longitude {0.0};
     // GPS altitude
-    double altitude;
+    double altitude {0.0};
     // Indicated pressure altitude (analytical purposes only)
-    double indicatedAltitude;
-    double pitch;
-    double bank;
-    double trueHeading;
+    double indicatedAltitude {0.0};
+    double pitch {0.0};
+    double bank {0.0};
+    double trueHeading {0.0};
 
     // Velocity
-    double velocityBodyX;
-    double velocityBodyY;
-    double velocityBodyZ;
-    double rotationVelocityBodyX;
-    double rotationVelocityBodyY;
-    double rotationVelocityBodyZ;
+    double velocityBodyX {0.0};
+    double velocityBodyY {0.0};
+    double velocityBodyZ {0.0};
+    double rotationVelocityBodyX {0.0};
+    double rotationVelocityBodyY {0.0};
+    double rotationVelocityBodyZ {0.0};
 
     explicit PositionData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
-    PositionData(const PositionData &rhs) = default;
-    PositionData(PositionData &&rhs) = default;
-    ~PositionData() override = default;
-    PositionData &operator=(const PositionData &rhs) = default;
-    PositionData &operator=(PositionData &&rhs) = default;
 };
 
 #endif // POSITIONDATA_H

@@ -76,11 +76,11 @@ public:
      *        the data to be upserted
      * \sa upsert
      */
-    void upsertLast(const T data) noexcept
+    void upsertLast(const T &data) noexcept
     {
         if (m_data.size() > 0 && m_data.back() == data)  {
             // Same timestamp -> replace
-            m_data[m_data.size() - 1] = std::move(data);
+            m_data.back() = data;
         } else {
             m_data.push_back(std::move(data));
         }
@@ -97,7 +97,7 @@ public:
      *        the data to be upserted
      * \sa upsertLast
      */
-    void upsert(const T data) noexcept
+    void upsert(const T &data) noexcept
     {
         auto result = std::find_if(m_data.begin(), m_data.end(),
                                   [&data] (const TimeVariableData &d) { return d.timestamp == data.timestamp; });

@@ -803,13 +803,11 @@ signals:
      */
     void changed();
 
-protected:
-    ~Settings() override;
-
 private:
     const std::unique_ptr<SettingsPrivate> d;
 
     Settings() noexcept;
+    ~Settings() final;
 
     void frenchConnection() noexcept;
 

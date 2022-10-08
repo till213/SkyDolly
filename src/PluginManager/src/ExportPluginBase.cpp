@@ -180,7 +180,7 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
 {
     bool ok {true};
     bool replaceAll {false};
-    int i = 1;
+    int i {1};
     for (const auto &aircraft : flight) {
         // Don't append sequence numbers if flight has only one aircraft
         const QString sequencedFilePath = flight.count() > 1 ? File::getSequenceFilePath(filePath, i) : filePath;
@@ -208,7 +208,7 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
             QGuiApplication::processEvents();
         }
 
-        QFile file(sequencedFilePath);
+        QFile file {sequencedFilePath};
         ok = file.open(QIODevice::WriteOnly);
         if (ok) {
             ok = exportAircraft(flight, aircraft, file);

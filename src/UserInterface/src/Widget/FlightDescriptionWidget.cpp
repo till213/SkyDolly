@@ -29,6 +29,7 @@
 #include <QPlainTextEdit>
 #include <QTextCursor>
 
+#include <Kernel/Const.h>
 #include <Kernel/Unit.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
@@ -115,7 +116,7 @@ void FlightDescriptionWidget::updateUi() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
 
-    bool enabled = flight.getId() != Flight::InvalidId;
+    bool enabled = flight.getId() != Const::InvalidId;
     ui->titleLineEdit->blockSignals(true);
     ui->focusPlainTextEdit->blockSignals(true);
     ui->titleLineEdit->setText(flight.getTitle());

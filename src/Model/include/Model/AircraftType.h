@@ -31,7 +31,7 @@
 #include "SimType.h"
 #include "ModelLib.h"
 
-struct MODEL_API AircraftType
+struct MODEL_API AircraftType final
 {
     /*!
      * The aircraft type, e.g. "Pitts Special". This is really the SimConnect "container title"
@@ -49,17 +49,17 @@ struct MODEL_API AircraftType
      */
     QString category;
     // Feet
-    int wingSpan;
-    SimType::EngineType engineType;
-    int numberOfEngines;
+    int wingSpan {0};
+    SimType::EngineType engineType {SimType::EngineType::Unknown};
+    int numberOfEngines {0};
 
-    AircraftType() noexcept;
     AircraftType(QString type, QString category, int wingSpan, SimType::EngineType engineType, int numberOfEngines) noexcept;
-    ~AircraftType() = default;
+    AircraftType() = default;
     AircraftType(const AircraftType &rhs) = default;
-    AircraftType(AircraftType &&rhs) noexcept;
+    AircraftType(AircraftType &&rhs) = default;
     AircraftType &operator=(const AircraftType &rhs) = default;
-    AircraftType &operator=(AircraftType &&rhs) noexcept;
+    AircraftType &operator=(AircraftType &&rhs) = default;
+    ~AircraftType() = default;
 
     void clear() noexcept;
 };

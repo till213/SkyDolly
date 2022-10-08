@@ -47,6 +47,7 @@
 
 #include <GeographicLib/DMS.hpp>
 
+#include <Kernel/Const.h>
 #include <Kernel/Settings.h>
 #include <Kernel/Unit.h>
 #include <Kernel/PositionParser.h>
@@ -193,13 +194,13 @@ void LocationWidget::addUserLocation(double latitude, double longitude)
 
 void LocationWidget::addLocation(Location newLocation)
 {
-    if (newLocation.typeId == Location::InvalidId) {
+    if (newLocation.typeId == Const::InvalidId) {
         newLocation.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymbolicId).id();
     }
-    if (newLocation.categoryId == Location::InvalidId) {
+    if (newLocation.categoryId == Const::InvalidId) {
         newLocation.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymbolicId).id();
     }
-    if (newLocation.countryId == Location::InvalidId) {
+    if (newLocation.countryId == Const::InvalidId) {
         newLocation.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymbolicId).id();
     }
     Location location {newLocation};
@@ -649,7 +650,7 @@ int LocationWidget::getSelectedRow() const noexcept
 
 std::int64_t LocationWidget::getSelectedLocationId() const noexcept
 {
-    std::int64_t selectedLocationId {::Location::InvalidId};
+    std::int64_t selectedLocationId {Const::InvalidId};
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         selectedLocationId = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::idColumn)->data(Qt::EditRole).toLongLong();
@@ -725,7 +726,7 @@ void LocationWidget::onTeleportToSelectedLocation() noexcept
 void LocationWidget::onDeleteLocation() noexcept
 {
     const std::int64_t selectedLocationId = getSelectedLocationId();
-    if (selectedLocationId != ::Location::InvalidId) {
+    if (selectedLocationId != Const::InvalidId) {
         Settings &settings = Settings::getInstance();
         bool doDelete {true};
         if (settings.isDeleteLocationConfirmationEnabled()) {

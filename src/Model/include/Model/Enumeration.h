@@ -42,15 +42,16 @@ struct EnumerationPrivate;
  *
  * \sa Enum#toUnderlyingType
  */
-class MODEL_API Enumeration
+class MODEL_API Enumeration final
 {
 public:
-
-    Enumeration() noexcept;
     Enumeration(const QString &name) noexcept;
-    Enumeration(Enumeration &&rhs) noexcept;
-    ~Enumeration() noexcept;
-    Enumeration &operator=(Enumeration &&rhs) noexcept;
+    Enumeration() noexcept;
+    Enumeration(const Enumeration &rhs) = delete;
+    Enumeration(Enumeration &&rhs);
+    Enumeration &operator=(const Enumeration &rhs) = delete;
+    Enumeration &operator=(Enumeration &&rhs);
+    ~Enumeration();
 
     using Item = struct Item_ : public Data
     {
@@ -80,10 +81,8 @@ public:
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
 
-    static constexpr std::int64_t InvalidId {-1};
-
 private:
-    const std::unique_ptr<EnumerationPrivate> d;
+    std::unique_ptr<EnumerationPrivate> d;
 };
 
 #endif // ENUMERATION_H

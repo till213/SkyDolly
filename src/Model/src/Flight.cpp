@@ -35,6 +35,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/Const.h>
 #include "FlightCondition.h"
 #include "Aircraft.h"
 #include "FlightPlan.h"
@@ -49,7 +50,7 @@ struct FlightPrivate
         clear(true);
     }
 
-    std::int64_t id {Flight::InvalidId};
+    std::int64_t id {Const::InvalidId};
     QDateTime creationTime {QDateTime::currentDateTime()};
     QString title;
     QString description;
@@ -58,7 +59,7 @@ struct FlightPrivate
     int userAircraftIndex {Flight::InvalidAircraftIndex};
 
     inline void clear(bool withOneAircraft) noexcept {
-        id = Flight::InvalidId;
+        id = Const::InvalidId;
         title.clear();
         description.clear();
         flightCondition.clear();
@@ -84,17 +85,9 @@ Flight::Flight(QObject *parent) noexcept
 {
     // A flight always has at least one (user) aircraft
     addUserAircraft();
-#ifdef DEBUG
-    qDebug() << "Flight::Flight: CREATED, ID:" << d->id;
-#endif
 }
 
-Flight::~Flight() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "Flight::~Flight: DELETED, ID:" << d->id;
-#endif
-}
+Flight::~Flight() = default;
 
 void Flight::setId(std::int64_t id) noexcept
 {
@@ -198,7 +191,7 @@ void Flight::switchUserAircraftIndex(int index) noexcept
 
 std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
 {
-    std::int64_t aircraftId {Aircraft::InvalidId};
+    std::int64_t aircraftId {Const::InvalidId};
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
         aircraftId = d->aircraft.at(index).getId();

@@ -119,7 +119,7 @@ struct LogbookWidgetPrivate
     std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>()};
     FlightService &flightService;
 
-    std::int64_t flightInMemoryId {Flight::InvalidId};
+    std::int64_t flightInMemoryId {Const::InvalidId};
     Unit unit;
     FlightSelector flightSelector;
     std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
@@ -415,8 +415,8 @@ void LogbookWidget::updateEditUi() noexcept
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool active = skyConnect && skyConnect->get().isActive();
     const std::int64_t selectedFlightId = getSelectedFlightId();
-    ui->loadPushButton->setEnabled(!active && selectedFlightId != Flight::InvalidId);
-    ui->deletePushButton->setEnabled(!active && selectedFlightId != Flight::InvalidId);
+    ui->loadPushButton->setEnabled(!active && selectedFlightId != Const::InvalidId);
+    ui->deletePushButton->setEnabled(!active && selectedFlightId != Const::InvalidId);
 }
 
 void LogbookWidget::frenchConnection() noexcept
@@ -579,7 +579,7 @@ int LogbookWidget::getSelectedRow() const noexcept
 
 std::int64_t LogbookWidget::getSelectedFlightId() const noexcept
 {
-    std::int64_t selectedFlightId {::Flight::InvalidId};
+    std::int64_t selectedFlightId {Const::InvalidId};
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         selectedFlightId = ui->logTableWidget->item(selectedRow, LogbookWidgetPrivate::flightIdColumn)->data(Qt::EditRole).toLongLong();
@@ -647,7 +647,7 @@ void LogbookWidget::loadFlight() noexcept
 {
     if (!SkyConnectManager::getInstance().isInRecordingState()) {
         const std::int64_t selectedFlightId = getSelectedFlightId();
-        if (selectedFlightId != Flight::InvalidId) {
+        if (selectedFlightId != Const::InvalidId) {
             const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
             if (!ok) {
                 QMessageBox::critical(this, tr("Logbook error"), tr("The flight %1 could not be read from the logbook.").arg(selectedFlightId));
@@ -659,7 +659,7 @@ void LogbookWidget::loadFlight() noexcept
 void LogbookWidget::deleteFlight() noexcept
 {
     const std::int64_t selectedFlightId = getSelectedFlightId();
-    if (selectedFlightId != Flight::InvalidId) {
+    if (selectedFlightId != Const::InvalidId) {
 
         Settings &settings = Settings::getInstance();
         bool doDelete {true};

@@ -33,31 +33,24 @@
 #include "SimType.h"
 #include "ModelLib.h"
 
-struct MODEL_API FlightCondition
+struct MODEL_API FlightCondition final
 {
-    float groundAltitude;
-    SimType::SurfaceType surfaceType;
-    float ambientTemperature;
-    float totalAirTemperature;
-    float windSpeed;
-    float windDirection;
-    SimType::PrecipitationState precipitationState;
-    float visibility;
-    float seaLevelPressure;
-    std::uint8_t pitotIcingPercent;
-    std::uint8_t structuralIcingPercent;
-    bool inClouds;
+    float groundAltitude {0.0f};
+    SimType::SurfaceType surfaceType {SimType::SurfaceType::Unknown};
+    float ambientTemperature {0.0f};
+    float totalAirTemperature {0.0f};
+    float windSpeed {0.0f};
+    float windDirection {0.0f};
+    SimType::PrecipitationState precipitationState {SimType::PrecipitationState::None};
+    float visibility {0.0f};
+    float seaLevelPressure {0.0f};
+    std::uint8_t pitotIcingPercent {0};
+    std::uint8_t structuralIcingPercent {0};
+    bool inClouds {false};
     QDateTime startLocalTime;
     QDateTime startZuluTime;
     QDateTime endLocalTime;
     QDateTime endZuluTime;
-
-    FlightCondition() noexcept;
-    FlightCondition(const FlightCondition &rhs) = default;
-    FlightCondition(FlightCondition &&rhs) noexcept;
-    ~FlightCondition() = default;
-    FlightCondition &operator=(const FlightCondition &rhs) = default;
-    FlightCondition &operator=(FlightCondition &&rhs) noexcept;
 
     void clear() noexcept;
 };

@@ -25,10 +25,6 @@
 #include <algorithm>
 #include <cstdint>
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/SkyMath.h>
 #include "TimeVariableData.h"
 #include "SkySearch.h"
@@ -41,18 +37,7 @@
 
 PrimaryFlightControl::PrimaryFlightControl(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
-{
-#ifdef DEBUG
-    qDebug() << "PrimaryFlightControl::PrimaryFlightControl: CREATED";
-#endif
-}
-
-PrimaryFlightControl::~PrimaryFlightControl() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "PrimaryFlightControl::PrimaryFlightControl: DELETED";
-#endif
-}
+{}
 
 PrimaryFlightControlData PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {

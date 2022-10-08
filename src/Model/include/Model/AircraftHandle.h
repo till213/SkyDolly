@@ -34,7 +34,7 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API AircraftHandle : public AbstractComponent<AircraftHandleData>
+class MODEL_API AircraftHandle final : public AbstractComponent<AircraftHandleData>
 {
 public:
     explicit AircraftHandle(const AircraftInfo &aircraftInfo) noexcept;

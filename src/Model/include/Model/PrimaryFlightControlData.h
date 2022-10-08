@@ -33,18 +33,11 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API PrimaryFlightControlData : public TimeVariableData
+struct MODEL_API PrimaryFlightControlData final : public TimeVariableData
 {
-    std::int16_t rudderPosition;
-    std::int16_t elevatorPosition;
-    std::int16_t aileronPosition;
-
-    PrimaryFlightControlData() noexcept;
-    PrimaryFlightControlData(const PrimaryFlightControlData &rhs) = default;
-    PrimaryFlightControlData(PrimaryFlightControlData &&rhs) = default;
-    ~PrimaryFlightControlData() override = default;
-    PrimaryFlightControlData &operator=(const PrimaryFlightControlData &rhs) = default;
-    PrimaryFlightControlData &operator=(PrimaryFlightControlData &&rhs) = default;
+    std::int16_t rudderPosition {0};
+    std::int16_t elevatorPosition {0};
+    std::int16_t aileronPosition {0};
 };
 
 #endif // PRIMARYFLIGHTCONTROLDATA_H

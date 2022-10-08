@@ -30,6 +30,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/Const.h>
 #include <Model/Data.h>
 #include <Model/Enumeration.h>
 #include "Service/EnumerationService.h"
@@ -47,7 +48,7 @@ struct PersistedEnumerationItemPrivate
     }
 
     Enumeration enumeration;
-    std::int64_t id {Data::InvalidId};
+    std::int64_t id {Const::InvalidId};
     EnumerationService enumerationService;
 };
 

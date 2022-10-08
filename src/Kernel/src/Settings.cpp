@@ -828,16 +828,6 @@ void Settings::restore() noexcept
     d->settings.endGroup();
 }
 
-// PROTECTED
-
-Settings::~Settings()
-{
-#ifdef DEBUG
-    qDebug() << "Settings::~Settings: DELETED";
-#endif
-    store();
-}
-
 // PRIVATE
 
 Settings::Settings() noexcept
@@ -849,6 +839,14 @@ Settings::Settings() noexcept
     restore();
     frenchConnection();
     updateEgmFilePath();
+}
+
+Settings::~Settings()
+{
+#ifdef DEBUG
+    qDebug() << "Settings::~Settings: DELETED";
+#endif
+    store();
 }
 
 void Settings::frenchConnection() noexcept

@@ -27,6 +27,7 @@
 #include <cstdint>
 #include <cinttypes>
 
+#include <Kernel/Const.h>
 #include "TimeVariableData.h"
 #include "AircraftInfo.h"
 #include "Position.h"
@@ -47,7 +48,7 @@
 struct AircraftPrivate
 {
 public:
-    std::int64_t id {Aircraft::InvalidId};
+    std::int64_t id {Const::InvalidId};
     AircraftInfo aircraftInfo {id};
     Position position{aircraftInfo};
     Engine engine{aircraftInfo};

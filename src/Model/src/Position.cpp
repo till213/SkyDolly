@@ -45,18 +45,7 @@ namespace
 
 Position::Position(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
-{
-#ifdef DEBUG
-    qDebug() << "Position::Position: CREATED";
-#endif
-}
-
-Position::~Position() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "Position::Position: DELETED";
-#endif
-}
+{}
 
 PositionData Position::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {

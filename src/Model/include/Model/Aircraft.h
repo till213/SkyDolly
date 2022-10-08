@@ -42,7 +42,7 @@ class Light;
 class FlightPlan;
 struct AircraftPrivate;
 
-class MODEL_API Aircraft
+class MODEL_API Aircraft final
 {
 public:
 
@@ -89,8 +89,6 @@ public:
 
     bool operator==(const Aircraft &rhs) const noexcept;
     bool operator!=(const Aircraft &rhs) const noexcept;
-
-    static constexpr std::int64_t InvalidId {-1};
 
     /*!
      * Invalidates the duration, such that it gets updated the next time

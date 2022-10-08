@@ -504,7 +504,7 @@ void FormationWidget::updateToolTips() noexcept
     }
 
     // Time offset
-    if (d->selectedAircraftIndex != Flight::InvalidId) {
+    if (d->selectedAircraftIndex != Const::InvalidId) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 

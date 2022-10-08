@@ -36,15 +36,15 @@
 struct Waypoint;
 struct FlightPlanPrivate;
 
-class MODEL_API FlightPlan
+class MODEL_API FlightPlan final
 {
 public:
-    FlightPlan();
+    FlightPlan() noexcept;
     FlightPlan(const FlightPlan &rhs) = delete;
-    FlightPlan(FlightPlan &&rhs) noexcept;
-    ~FlightPlan();
+    FlightPlan(FlightPlan &&rhs);
     FlightPlan &operator=(const FlightPlan &rhs) = delete;
-    FlightPlan &operator=(FlightPlan &&rhs) noexcept;
+    FlightPlan &operator=(FlightPlan &&rhs);
+    ~FlightPlan();
 
     void add(const Waypoint &waypoint) noexcept;
     void update(int index, const Waypoint &waypoint) noexcept;
@@ -62,7 +62,7 @@ public:
     const Waypoint &operator[](std::size_t index) const noexcept;
 
 private:
-    const std::unique_ptr<FlightPlanPrivate> d;
+    std::unique_ptr<FlightPlanPrivate> d;
 };
 
 #endif // FLIGHTPLAN_H

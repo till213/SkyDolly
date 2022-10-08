@@ -28,9 +28,6 @@
 
 #include <QString>
 #include <QHash>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include "Enumeration.h"
 
@@ -52,37 +49,15 @@ struct EnumerationPrivate
 
 Enumeration::Enumeration() noexcept
     : d(std::make_unique<EnumerationPrivate>(QString()))
-{
-#ifdef DEBUG
-    qDebug() << "Enumeration::Enumeration: CREATED";
-#endif
-}
+{}
 
 Enumeration::Enumeration(const QString &name) noexcept
     : d(std::make_unique<EnumerationPrivate>(name))
-{
-#ifdef DEBUG
-    qDebug() << "Enumeration::Enumeration: CREATED, name:" << d->name;
-#endif
-}
+{}
 
-Enumeration::Enumeration(Enumeration &&rhs) noexcept
-{
-    *d = std::move(*rhs.d);
-}
-
-Enumeration::~Enumeration() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "Enumeration::Enumeration: DELETED, name:" << d->name;
-#endif
-}
-
-Enumeration &Enumeration::operator=(Enumeration &&rhs) noexcept
-{
-    *d = std::move(*rhs.d);
-    return *this;
-}
+Enumeration::Enumeration(Enumeration &&rhs) = default;
+Enumeration &Enumeration::operator=(Enumeration &&rhs) = default;
+Enumeration::~Enumeration() = default;
 
 QString Enumeration::getName() const noexcept
 {

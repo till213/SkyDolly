@@ -32,21 +32,16 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API Waypoint : public TimeVariableData
+struct MODEL_API Waypoint final : public TimeVariableData
 {
     QString identifier;
-    float latitude;
-    float longitude;
-    float altitude;
     QDateTime localTime;
     QDateTime zuluTime;
+    float latitude {0.0};
+    float longitude {0.0};
+    float altitude {0.0};
 
     explicit Waypoint(float latitude = 0.0f, float longitude = 0.0f, float altitude = 0.0f) noexcept;
-    Waypoint(const Waypoint &rhs) = default;
-    Waypoint(Waypoint &&rhs) noexcept;
-    ~Waypoint() override = default;
-    Waypoint &operator=(const Waypoint &rhs) = default;
-    Waypoint &operator=(Waypoint &&rhs) noexcept;
 
     /*!
      * Returns whether this waypoint is valid or not.

@@ -30,15 +30,10 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API PrimaryFlightControl : public AbstractComponent<PrimaryFlightControlData>
+class MODEL_API PrimaryFlightControl final : public AbstractComponent<PrimaryFlightControlData>
 {
 public:
     explicit PrimaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
-    PrimaryFlightControl(PrimaryFlightControl &rhs) = default;
-    PrimaryFlightControl(PrimaryFlightControl &&rhs) = default;
-    ~PrimaryFlightControl() noexcept override;
-    PrimaryFlightControl &operator=(const PrimaryFlightControl &rhs) = default;
-    PrimaryFlightControl &operator=(PrimaryFlightControl &&rhs) = default;
 
     PrimaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 };

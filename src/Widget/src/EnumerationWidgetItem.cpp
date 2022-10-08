@@ -27,6 +27,7 @@
 #include <QTableWidgetItem>
 #include <QStringBuilder>
 
+#include <Kernel/Const.h>
 #include <Model/Enumeration.h>
 #include "EnumerationWidgetItem.h"
 
@@ -34,7 +35,7 @@
 
 EnumerationWidgetItem::EnumerationWidgetItem(const Enumeration &enumeration)
     : QTableWidgetItem(QTableWidgetItem::UserType),
-      m_id(Enumeration::InvalidId),
+      m_id(Const::InvalidId),
       m_enumeration(enumeration)
 {}
 

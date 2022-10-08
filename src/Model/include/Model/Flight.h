@@ -43,12 +43,16 @@ class QString;
 struct Waypoint;
 struct FlightPrivate;
 
-class MODEL_API Flight : public QObject
+class MODEL_API Flight final : public QObject
 {
     Q_OBJECT
 public:
     explicit Flight(QObject *parent = nullptr) noexcept;
-    ~Flight() noexcept override;
+    Flight(const Flight &rhs) = delete;
+    Flight(Flight &&rhs) = delete;
+    Flight &operator=(const Flight &rhs) = delete;
+    Flight &operator=(Flight &&rhs) = delete;
+    ~Flight() override;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
@@ -183,11 +187,6 @@ public:
     Aircraft &operator[](std::size_t index) noexcept;
     const Aircraft &operator[](std::size_t index) const noexcept;
 
-    /*!
-     * The initial ID for every newly created flight. An invalid ID indicates that this
-     * flight has not yet been (successfully) persisted.
-     */
-    static constexpr std::int64_t InvalidId {-1};
     static constexpr int InvalidAircraftIndex {-1};
 
 signals:
@@ -259,7 +258,7 @@ signals:
     void aircraftStored(const Aircraft &aircraft);
 
 private:
-    const std::unique_ptr<FlightPrivate> d;
+    std::unique_ptr<FlightPrivate> d;
 
     /*
      * Re-assigns the user aircraft \c index, but without emitting the \c userAircraftChanged signal.

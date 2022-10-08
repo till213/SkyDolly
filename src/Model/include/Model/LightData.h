@@ -32,16 +32,9 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API LightData : public TimeVariableData
+struct MODEL_API LightData final : public TimeVariableData
 {
-    SimType::LightStates lightStates;
-
-    explicit LightData(SimType::LightStates lightStates = SimType::LightState::None) noexcept;
-    LightData(const LightData &rhs) = default;
-    LightData(LightData &&rhs) = default;
-    ~LightData() override = default;
-    LightData &operator=(const LightData &rhs) = default;
-    LightData &operator=(LightData &&rhs) = default;
+    SimType::LightStates lightStates {SimType::LightState::None};
 };
 
 #endif // LIGHTDATA_H

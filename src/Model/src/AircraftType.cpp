@@ -28,35 +28,9 @@
 
 // PUBLIC
 
-AircraftType::AircraftType() noexcept
-    : wingSpan(0),
-      engineType(SimType::EngineType::Unknown),
-      numberOfEngines(0)
-{}
-
 AircraftType::AircraftType(QString type, QString category, int wingSpan, SimType::EngineType engineType, int numberOfEngines) noexcept
     : type(type), category(category), wingSpan(wingSpan), engineType(engineType), numberOfEngines(numberOfEngines)
 {};
-
-AircraftType::AircraftType(AircraftType &&rhs) noexcept
-    : type(std::move(rhs.type)),
-      category(std::move(rhs.category)),
-      wingSpan(rhs.wingSpan),
-      engineType(rhs.engineType),
-      numberOfEngines(rhs.numberOfEngines)
-{}
-
-AircraftType &AircraftType::operator=(AircraftType &&rhs) noexcept
-{
-    if (this != &rhs) {
-        type = std::move(rhs.type);
-        category = std::move(rhs.category);
-        wingSpan = rhs.wingSpan;
-        engineType = rhs.engineType;
-        numberOfEngines = rhs.numberOfEngines;
-    }
-    return *this;
-}
 
 void AircraftType::clear() noexcept
 {

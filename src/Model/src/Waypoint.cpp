@@ -35,30 +35,6 @@ Waypoint::Waypoint(float theLatitude, float theLongitude, float theAltitude) noe
       altitude(theAltitude)
 {}
 
-Waypoint::Waypoint(Waypoint &&rhs) noexcept
-    : TimeVariableData(std::move(rhs)),
-      identifier(std::move(rhs.identifier)),
-      latitude(rhs.latitude),
-      longitude(rhs.longitude),
-      altitude(rhs.altitude),
-      localTime(std::move(rhs.localTime)),
-      zuluTime(std::move(rhs.zuluTime))
-{}
-
-Waypoint &Waypoint::operator=(Waypoint &&rhs) noexcept
-{
-    if (this != &rhs) {
-        TimeVariableData::operator=(rhs);
-        identifier = std::move(rhs.identifier);
-        latitude = rhs.latitude;
-        longitude = rhs.longitude;
-        altitude = rhs.altitude;
-        localTime = std::move(rhs.localTime);
-        zuluTime = std::move(rhs.zuluTime);
-    }
-    return *this;
-}
-
 bool Waypoint::isValid() const noexcept
 {
     return !identifier.isEmpty();

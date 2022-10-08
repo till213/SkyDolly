@@ -32,7 +32,12 @@
 
 struct MODEL_API TimeVariableData
 {
-    static constexpr std::int64_t InvalidTime = std::numeric_limits<std::int64_t>::min();
+    TimeVariableData() = default;
+    TimeVariableData(const TimeVariableData &rhs) = default;
+    TimeVariableData(TimeVariableData &&rhs) = default;
+    TimeVariableData &operator=(const TimeVariableData &rhs) = default;
+    TimeVariableData &operator=(TimeVariableData &&rhs) = default;
+    virtual ~TimeVariableData() = default;
 
     /*!
      * Defines the way (use case) the sampled data is accessed.
@@ -47,26 +52,7 @@ struct MODEL_API TimeVariableData
     };
 
     // In milliseconds since the start of recording
-    std::int64_t timestamp;
-
-    TimeVariableData() noexcept;
-    TimeVariableData(const TimeVariableData &rhs) = default;
-
-    /*!
-     * Move constructor. The \c other data will be considered \e null data afterwards
-     *
-     * \param other
-     *        the other data to be moved; will be considered \e null data afterwards
-     * \sa isNull
-     */
-    TimeVariableData(TimeVariableData &&rhs)
-        : timestamp(rhs.timestamp)
-    {
-        rhs.timestamp = InvalidTime;
-    };
-    virtual ~TimeVariableData() noexcept;
-    TimeVariableData &operator=(const TimeVariableData &rhs) = default;
-    TimeVariableData &operator=(TimeVariableData &&rhs) = default;
+    std::int64_t timestamp {InvalidTime};
 
     /*!
      * Returns whether this data is considered \enull data.
@@ -102,6 +88,9 @@ struct MODEL_API TimeVariableData
     {
         return !(lhs >= rhs);
     }
+
+    static constexpr std::int64_t InvalidTime = std::numeric_limits<std::int64_t>::min();
+
 };
 
 #endif // TIMEVARIABLEDATA_H

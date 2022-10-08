@@ -27,17 +27,18 @@
 
 #include <QString>
 
+#include <Kernel/Const.h>
 #include "InitialPosition.h"
 #include "Data.h"
 #include "ModelLib.h"
 
-struct MODEL_API Location : public Data
+struct MODEL_API Location final : public Data
 {
     QString title;
     QString description;
-    std::int64_t typeId {InvalidId};
-    std::int64_t categoryId {InvalidId};
-    std::int64_t countryId {InvalidId};
+    std::int64_t typeId {Const::InvalidId};
+    std::int64_t categoryId {Const::InvalidId};
+    std::int64_t countryId {Const::InvalidId};
     /// \todo Use QFlags
     std::int64_t attributes {0};
     QString identifier;
@@ -52,11 +53,6 @@ struct MODEL_API Location : public Data
 
     explicit Location(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
     explicit Location(const InitialPosition &initialPosition) noexcept;
-    Location(Location &rhs) = default;
-    Location(Location &&rhs) = default;
-     ~Location() noexcept override = default;
-    Location &operator=(const Location &rhs) = default;
-    Location &operator=(Location &&rhs) = default;
 
     inline InitialPosition toInitialPosition() const noexcept {
         InitialPosition initialPosition {latitude, longitude, altitude};

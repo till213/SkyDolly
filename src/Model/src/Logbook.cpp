@@ -71,15 +71,6 @@ Flight &Logbook::getCurrentFlight() const noexcept
     return *(*d->flights.cbegin());
 }
 
-// PROTECTED
-
-Logbook::~Logbook() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "Logbook::~Logbook: DELETED";
-#endif
-}
-
 // PRIVATE
 
 Logbook::Logbook() noexcept
@@ -92,4 +83,11 @@ Logbook::Logbook() noexcept
     // Logbook may support several flights, but for now there will be always
     // exactly one
     d->flights.push_back(std::make_unique<Flight>());
+}
+
+Logbook::~Logbook()
+{
+#ifdef DEBUG
+    qDebug() << "Logbook::~Logbook: DELETED";
+#endif
 }

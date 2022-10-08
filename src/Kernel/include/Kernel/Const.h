@@ -4,6 +4,12 @@
 #include <string_view>
 
 namespace Const {
+
+    /*!
+     * An invalid ID indicates that the object has not yet been (successfully) persisted.
+     */
+    constexpr std::int64_t InvalidId {-1};
+
     constexpr std::string_view LogbookExtension {".sdlog"};
 
     constexpr char BackupNeverSymId[] = "NEVER";

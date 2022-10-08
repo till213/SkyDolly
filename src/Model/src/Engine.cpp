@@ -25,10 +25,6 @@
 #include <algorithm>
 #include <cstdint>
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/SkyMath.h>
 #include "TimeVariableData.h"
 #include "SkySearch.h"
@@ -40,18 +36,7 @@
 
 Engine::Engine(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
-{
-#ifdef DEBUG
-    qDebug() << "Engine::Engine: CREATED";
-#endif
-}
-
-Engine::~Engine() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "Engine::Engine: DELETED";
-#endif
-}
+{}
 
 EngineData Engine::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {

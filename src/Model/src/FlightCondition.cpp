@@ -22,69 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <utility>
-
-#include "SimType.h"
 #include "FlightCondition.h"
 
 // PUBLIC
-
-FlightCondition::FlightCondition() noexcept
-    : groundAltitude{0.0f},
-      surfaceType{SimType::SurfaceType::Unknown},
-      ambientTemperature{0.0f},
-      totalAirTemperature{0.0f},
-      windSpeed{0.0f},
-      windDirection{0.0f},
-      precipitationState{SimType::PrecipitationState::None},
-      visibility{0.0f},
-      seaLevelPressure{0.0f},
-      pitotIcingPercent{0},
-      structuralIcingPercent{0},
-      inClouds{false}
-{}
-
-FlightCondition::FlightCondition(FlightCondition &&rhs) noexcept
-    : groundAltitude(rhs.groundAltitude),
-      surfaceType(rhs.surfaceType),
-      ambientTemperature(rhs.ambientTemperature),
-      totalAirTemperature(rhs.totalAirTemperature),
-      windSpeed(rhs.windSpeed),
-      windDirection(rhs.windDirection),
-      precipitationState(rhs.precipitationState),
-      visibility(rhs.visibility),
-      seaLevelPressure(rhs.seaLevelPressure),
-      pitotIcingPercent(rhs.pitotIcingPercent),
-      structuralIcingPercent(rhs.structuralIcingPercent),
-      inClouds(rhs.inClouds),
-      startLocalTime(std::move(rhs.startLocalTime)),
-      startZuluTime(std::move(rhs.startZuluTime)),
-      endLocalTime(std::move(rhs.endLocalTime)),
-      endZuluTime(std::move(rhs.endZuluTime))
-{}
-
-FlightCondition &FlightCondition::operator=(FlightCondition &&rhs) noexcept
-{
-    if (this != &rhs) {
-        groundAltitude = rhs.groundAltitude;
-        surfaceType = rhs.surfaceType;
-        ambientTemperature = rhs.ambientTemperature;
-        totalAirTemperature = rhs.totalAirTemperature;
-        windSpeed = rhs.windSpeed;
-        windDirection = rhs.windDirection;
-        precipitationState = rhs.precipitationState;
-        visibility = rhs.visibility;
-        seaLevelPressure = rhs.seaLevelPressure;
-        pitotIcingPercent = rhs.pitotIcingPercent;
-        structuralIcingPercent = rhs.structuralIcingPercent;
-        inClouds = rhs.inClouds;
-        startLocalTime = std::move(rhs.startLocalTime);
-        startZuluTime = std::move(rhs.startZuluTime);
-        endLocalTime = std::move(rhs.endLocalTime);
-        endZuluTime = std::move(rhs.endZuluTime);
-    }
-    return *this;
-}
 
 void FlightCondition::clear() noexcept
 {

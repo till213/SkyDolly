@@ -34,10 +34,15 @@
 
 struct LogbookPrivate;
 
-class MODEL_API Logbook : public QObject
+class MODEL_API Logbook final : public QObject
 {
     Q_OBJECT
 public:
+    Logbook(const Logbook &rhs) = delete;
+    Logbook(Logbook &&rhs) = delete;
+    Logbook &operator=(const Logbook &rhs) = delete;
+    Logbook &operator=(Logbook &&rhs) = delete;
+
     static Logbook &getInstance() noexcept;
     static void destroyInstance() noexcept;
     Flight &getCurrentFlight() const noexcept;
@@ -45,13 +50,11 @@ public:
 signals:
     void flightTitleOrDescriptionChanged(std::int64_t id);
 
-protected:
-    ~Logbook() noexcept override;
-
 private:
     const std::unique_ptr<LogbookPrivate> d;
 
     Logbook() noexcept;
+    ~Logbook() override;
 };
 
 #endif // LOGBOOK_H

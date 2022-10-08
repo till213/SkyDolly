@@ -32,6 +32,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/Const.h>
 #include <Model/Aircraft.h>
 #include <Model/Logbook.h>
 #include "../Dao/FlightDaoIntf.h"
@@ -96,7 +97,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t aircraftId = flight.deleteAircraftByIndex(index);
     bool ok {true};
-    if (aircraftId != Aircraft::InvalidId) {
+    if (aircraftId != Const::InvalidId) {
         ok = QSqlDatabase::database().transaction();
         if (ok) {
             ok = d->aircraftDao->deleteById(aircraftId);

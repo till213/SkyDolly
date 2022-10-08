@@ -33,6 +33,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/Const.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
@@ -541,7 +542,7 @@ void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previo
         // by an invalid ID (= it has never been persisted). In such a case it does not
         // have an associated AI object either
         const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
-        if (userAircraft.getId() != Aircraft::InvalidId) {
+        if (userAircraft.getId() != Const::InvalidId) {
             removeAiObject(userAircraft.getId());
         }
         if (previousUserAircraftIndex != Flight::InvalidAircraftIndex) {

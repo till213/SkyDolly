@@ -39,24 +39,13 @@ struct FlightPlanPrivate
 
 // PUBLIC
 
-FlightPlan::FlightPlan()
+FlightPlan::FlightPlan() noexcept
     : d(std::make_unique<FlightPlanPrivate>())
 {}
 
-FlightPlan::FlightPlan(FlightPlan &&rhs) noexcept
-    : d(std::make_unique<FlightPlanPrivate>())
-{
-    *d = std::move(*rhs.d);
-}
-
-FlightPlan::~FlightPlan()
-{}
-
-FlightPlan &FlightPlan::operator=(FlightPlan &&rhs) noexcept
-{
-    *d = std::move(*rhs.d);
-    return *this;
-}
+FlightPlan::FlightPlan(FlightPlan &&rhs) = default;
+FlightPlan &FlightPlan::operator=(FlightPlan &&rhs) = default;
+FlightPlan::~FlightPlan() = default;
 
 void FlightPlan::add(const Waypoint &waypoint) noexcept
 {

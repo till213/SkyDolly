@@ -32,7 +32,7 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API AircraftHandleData : public TimeVariableData
+struct MODEL_API AircraftHandleData final : public TimeVariableData
 {
     std::int16_t brakeLeftPosition {0};
     std::int16_t brakeRightPosition {0};

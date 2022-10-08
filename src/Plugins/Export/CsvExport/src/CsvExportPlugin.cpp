@@ -31,7 +31,6 @@
 #include <QDebug>
 #endif
 
-
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
 #include "CsvExportSettings.h"
@@ -105,7 +104,6 @@ bool CsvExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[mayb
 
 bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
-
     std::unique_ptr<CsvWriterIntf> writer;
     switch (d->pluginSettings.getFormat()) {
     case CsvExportSettings::Format::SkyDolly:
