@@ -65,10 +65,18 @@ public:
         FlyWithFormation
     };
 
+    SkyConnectIntf(QObject *parent = nullptr) noexcept
+        : QObject(parent)
+    {}
+
+    SkyConnectIntf(const SkyConnectIntf &rhs) = delete;
+    SkyConnectIntf(SkyConnectIntf &&rhs) = delete;
+    SkyConnectIntf &operator=(const SkyConnectIntf &rhs) = delete;
+    SkyConnectIntf &operator=(SkyConnectIntf &&rhs) = delete;
     ~SkyConnectIntf() override = default;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
-    virtual bool setUserAircraftPosition(const PositionData & positionData) noexcept = 0;
+    virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) noexcept = 0;
 
     /*!
@@ -99,7 +107,7 @@ public:
      *        the optional initial position where the current user aircraft is placed before recording;
      *        set to a \e null position if the user aircraft should keep its current initial position
      */
-    virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition::NullData) noexcept = 0;
+    virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept = 0;
     virtual void stopRecording() noexcept = 0;
 
     /*!
@@ -125,7 +133,7 @@ public:
      */
     virtual bool isInRecordingState() const noexcept = 0;
 
-    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition::NullData) noexcept = 0;
+    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept = 0;
     virtual void stopReplay() noexcept = 0;
 
     /*!
@@ -210,10 +218,6 @@ public slots:
     virtual void onTailNumberChanged(const Aircraft &aircraft) noexcept = 0;
 
 protected:
-    SkyConnectIntf(QObject *parent = nullptr) noexcept
-        : QObject(parent)
-    {}
-
     /*!
      * Sets the new connection \c state. This method will also emit the
      * signal #recordingStarted and #recordingStopped when the state changes
@@ -246,7 +250,7 @@ signals:
      * \param replayMode
      *        the current replay mode
      */
-    void replayModeChanged(ReplayMode replayMode);
+    void replayModeChanged(SkyConnectIntf::ReplayMode replayMode);
 
     /*!
      * Emitted whenever recording has been started, that is when the
@@ -279,9 +283,6 @@ signals:
      *        the received Location
      */
     void locationReceived(Location location);
-
-private:
-    Q_DISABLE_COPY(SkyConnectIntf)
 };
 
 #define SKYCONNECT_INTERFACE_IID "com.github.till213.SkyDolly.SkyConnectInterface/1.0"

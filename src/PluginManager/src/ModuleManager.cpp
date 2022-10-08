@@ -53,15 +53,15 @@
 
 namespace
 {
-    constexpr char ModuleDirectoryName[] = "Module";
+    constexpr const char *ModuleDirectoryName {"Module"};
 #if defined(Q_OS_MAC)
-    constexpr char PluginDirectoryName[] = "PlugIns";
+    constexpr const char *PluginDirectoryName {"PlugIns"};
 #else
-    constexpr char PluginDirectoryName[] = "Plugins";
+    constexpr const char *PluginDirectoryName {"Plugins"};
 #endif
-    constexpr char PluginUuidKey[] = "uuid";
-    constexpr char PluginNameKey[] = "name";
-    constexpr char PluginAfter[] = "after";
+    constexpr const char *PluginUuidKey {"uuid"};
+    constexpr const char *PluginNameKey {"name"};
+    constexpr const char *PluginAfter {"after"};
 }
 
 struct ModuleManagerPrivate
@@ -125,17 +125,11 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
         activateModule(d->moduleRegistry.begin()->first);
     }
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "ModuleManager::ModuleManager: CREATED.";
-#endif
 }
 
-ModuleManager::~ModuleManager() noexcept
+ModuleManager::~ModuleManager()
 {
     d->pluginLoader->unload();
-#ifdef DEBUG
-    qDebug() << "ModuleManager::~ModuleManager: DELETED.";
-#endif
 }
 
 const ModuleManager::ActionRegistry &ModuleManager::getActionRegistry() const noexcept
@@ -282,14 +276,14 @@ void ModuleManager::initModule(const QString fileName, std::unordered_map<QUuid,
             } else {
                 afterVertex = it->second;
             }
-            vertex->edges.push_back(afterVertex);
+            vertex->edges.push_back(afterVertex.get());
         }
     }
 }
 
 void ModuleManager::initModuleActions(const std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept
 {
-    std::deque<std::shared_ptr<Vertex>> sortedModules;
+    std::deque<Vertex *> sortedModules;
     // Reverse sorting, because the "after" edge (directed from A to B: A --- after ---> B) really means that
     // "first B, then A" (= reversed topological sorting)
     sortedModules = UuidSort::topologicalSort(graph, UuidSort::Sorting::Reverse);

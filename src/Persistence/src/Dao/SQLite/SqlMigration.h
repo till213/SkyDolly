@@ -31,12 +31,16 @@
 
 class QRegularExpressionMatch;
 
-class SqlMigrationPrivate;
+struct SqlMigrationPrivate;
 
 class SqlMigration
 {
 public:
-    SqlMigration();
+    SqlMigration() noexcept;
+    SqlMigration(const SqlMigration &rhs) = delete;
+    SqlMigration(SqlMigration &&rhs);
+    SqlMigration &operator=(const SqlMigration &rhs) = delete;
+    SqlMigration &operator=(SqlMigration &&rhs);
     ~SqlMigration();
 
     bool migrate() noexcept;

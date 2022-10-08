@@ -51,14 +51,14 @@ LocationPlugin::LocationPlugin(QObject *parent) noexcept
 {
     frenchConnection();
 #ifdef DEBUG
-    qDebug() << "LocationPlugin::LocationPlugin: CREATED.";
+    qDebug() << "LocationPlugin::LocationPlugin: CREATED";
 #endif
 }
 
 LocationPlugin::~LocationPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "LocationPlugin::~LocationPlugin: DELETED.";
+    qDebug() << "LocationPlugin::~LocationPlugin: DELETED";
 #endif
 }
 

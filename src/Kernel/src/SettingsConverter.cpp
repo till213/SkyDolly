@@ -30,7 +30,7 @@
 
 namespace
 {
-    void convertToV12(Version settingsVersion, QSettings &settings)
+    void convertToV13(const Version &settingsVersion, QSettings &settings) noexcept
     {
         // Nothing to convert yet
     }
@@ -38,10 +38,10 @@ namespace
 
 // PUBLIC
 
-void SettingsConverter::convertToCurrent(Version settingsVersion, QSettings &settings)
+void SettingsConverter::convertToCurrent(const Version &settingsVersion, QSettings &settings) noexcept
 {
     const Version currentVersion;
     if (settingsVersion < currentVersion) {
-        ::convertToV12(settingsVersion, settings);
+        ::convertToV13(settingsVersion, settings);
     }
 }

@@ -25,6 +25,9 @@
 #include <memory>
 
 #include <QDialog>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/SimVar.h>
 #include <Model/Logbook.h>
@@ -37,9 +40,8 @@
 #include "FlightPlanWidget.h"
 #include "ui_FlightPlanWidget.h"
 
-class FlightPlanWidgetPrivate
+struct FlightPlanWidgetPrivate
 {
-public:
     FlightPlanWidgetPrivate() noexcept
     {}
 
@@ -54,14 +56,14 @@ FlightPlanWidget::FlightPlanWidget(QWidget *parent) noexcept :
 {
     ui->setupUi(this);
 #ifdef DEBUG
-    qDebug("FlightPlanWidget::FlightPlanWidget: CREATED");
+    qDebug() << "FlightPlanWidget::FlightPlanWidget: CREATED";
 #endif
 }
 
 FlightPlanWidget::~FlightPlanWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightPlanWidget::~FlightPlanWidget: DELETED");
+    qDebug() << "FlightPlanWidget::~FlightPlanWidget: DELETED";
 #endif
 }
 
@@ -73,14 +75,17 @@ void FlightPlanWidget::showEvent(QShowEvent *event) noexcept
     updateUi();
 
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
-    connect(&flightPlan, &FlightPlan::waypointAdded,
+    connect(&flight, &Flight::waypointAdded,
             this, &FlightPlanWidget::addWaypoint);
-    connect(&flightPlan, &FlightPlan::waypointUpdated,
+    connect(&flight, &Flight::waypointUpdated,
             this, &FlightPlanWidget::updateWaypoint);
-    connect(&flightPlan, &FlightPlan::waypointsCleared,
+    connect(&flight, &Flight::waypointsCleared,
             this, &FlightPlanWidget::clear);
     connect(&flight, &Flight::userAircraftChanged,
+            this, &FlightPlanWidget::updateUi);
+    connect(&flight, &Flight::flightStored,
+            this, &FlightPlanWidget::updateUi);
+    connect(&flight, &Flight::flightRestored,
             this, &FlightPlanWidget::updateUi);
 
 }
@@ -89,14 +94,17 @@ void FlightPlanWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
-    disconnect(&flightPlan, &FlightPlan::waypointAdded,
+    disconnect(&flight, &Flight::waypointAdded,
                this, &FlightPlanWidget::addWaypoint);
-    disconnect(&flightPlan, &FlightPlan::waypointUpdated,
+    disconnect(&flight, &Flight::waypointUpdated,
                this, &FlightPlanWidget::updateWaypoint);
-    disconnect(&flightPlan, &FlightPlan::waypointsCleared,
+    disconnect(&flight, &Flight::waypointsCleared,
                this, &FlightPlanWidget::clear);
     disconnect(&flight, &Flight::userAircraftChanged,
+               this, &FlightPlanWidget::updateUi);
+    disconnect(&flight, &Flight::flightStored,
+               this, &FlightPlanWidget::updateUi);
+    disconnect(&flight, &Flight::flightRestored,
                this, &FlightPlanWidget::updateUi);
 }
 

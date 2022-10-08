@@ -26,18 +26,19 @@
 #include <memory>
 
 #include <QString>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <PluginManager/ExportPluginBaseSettings.h>
 #include "JsonExportSettings.h"
 
-class JsonExportSettingsPrivate
+struct JsonExportSettingsPrivate
 {
-public:
     JsonExportSettingsPrivate()
     {}
-
 };
 
 // PUBLIC
@@ -47,14 +48,14 @@ JsonExportSettings::JsonExportSettings() noexcept
       d(std::make_unique<JsonExportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("JsonExportSettings::JsonExportSettings: CREATED");
+    qDebug() << "JsonExportSettings::JsonExportSettings: CREATED";
 #endif
 }
 
 JsonExportSettings::~JsonExportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("JsonExportSettings::~JsonExportSettings: DELETED");
+    qDebug() << "JsonExportSettings::~JsonExportSettings: DELETED";
 #endif
 }
 

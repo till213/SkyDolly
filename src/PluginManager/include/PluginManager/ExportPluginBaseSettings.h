@@ -34,7 +34,7 @@
 #include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
-class ExportPluginBaseSettingsPrivate;
+struct ExportPluginBaseSettingsPrivate;
 
 class PLUGINMANAGER_API ExportPluginBaseSettings : public QObject
 {
@@ -54,7 +54,11 @@ public:
     };
 
     ExportPluginBaseSettings() noexcept;
-    virtual ~ExportPluginBaseSettings() noexcept;
+    ExportPluginBaseSettings(const ExportPluginBaseSettings &rhs) = delete;
+    ExportPluginBaseSettings(ExportPluginBaseSettings &&rhs) = delete;
+    ExportPluginBaseSettings &operator=(const ExportPluginBaseSettings &rhs) = delete;
+    ExportPluginBaseSettings &operator=(ExportPluginBaseSettings &&rhs) = delete;
+    ~ExportPluginBaseSettings() override;
 
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
@@ -97,7 +101,7 @@ protected:
     virtual void restoreDefaultsExtn() noexcept = 0;
 
 private:
-    std::unique_ptr<ExportPluginBaseSettingsPrivate> d;
+    const std::unique_ptr<ExportPluginBaseSettingsPrivate> d;
 };
 
 #endif // EXPORTPLUGINBASESETTINGS_H

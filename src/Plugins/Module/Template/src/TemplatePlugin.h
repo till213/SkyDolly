@@ -47,7 +47,7 @@ public:
     QWidget *getWidget() const noexcept override;
 
 private:
-    std::unique_ptr<TemplatePluginPrivate> d;
+    const std::unique_ptr<TemplatePluginPrivate> d;
 };
 
 #endif // LOCATIONPLUGIN_H

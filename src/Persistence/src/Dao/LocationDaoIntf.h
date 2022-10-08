@@ -26,7 +26,6 @@
 #define LOCATIONDAOINTF_H
 
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
 struct LocationSelector;
@@ -35,13 +34,18 @@ struct Location;
 class LocationDaoIntf
 {
 public:
+    LocationDaoIntf() = default;
+    LocationDaoIntf(const LocationDaoIntf &rhs) = delete;
+    LocationDaoIntf(LocationDaoIntf &&rhs) = default;
+    LocationDaoIntf &operator=(const LocationDaoIntf &rhs) = delete;
+    LocationDaoIntf &operator=(LocationDaoIntf &&rhs) = default;
     virtual ~LocationDaoIntf() = default;
 
     virtual bool add(Location &location) noexcept = 0;
     virtual bool update(const Location &location) noexcept = 0;
     virtual bool deleteById(std::int64_t id) noexcept = 0;
-    virtual bool getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept = 0;
-    virtual bool getSelectedLocations(const LocationSelector &selector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept = 0;
+    virtual std::vector<Location> getAll(bool *ok = nullptr) const noexcept = 0;
+    virtual std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // LOCATIONDAOINTF_H

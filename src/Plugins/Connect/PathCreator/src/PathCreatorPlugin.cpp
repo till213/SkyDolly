@@ -69,9 +69,8 @@ namespace {
     const int ReplayPeriod = static_cast<int>(std::round(1000.0 / ReplayRate));
 }
 
-class PathCreatorPluginPrivate
+struct PathCreatorPluginPrivate
 {
-public:
     PathCreatorPluginPrivate() noexcept
         : randomGenerator(QRandomGenerator::global())
     {
@@ -145,13 +144,14 @@ void PathCreatorPlugin::onStopRecording() noexcept
     flightCondition.endZuluTime = QDateTime::currentDateTimeUtc();
     flight.setFlightCondition(flightCondition);
 
-    FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
+    Aircraft &aircraft = flight.getUserAircraft();
+    FlightPlan &flightPlan = aircraft.getFlightPlan();
     int waypointCount = flightPlan.count();
     if (waypointCount > 1) {
         Waypoint waypoint = flightPlan[waypointCount - 1];
         waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
-        flightPlan.update(waypointCount - 1, waypoint);
+        flight.updateWaypoint(waypointCount - 1, waypoint);
     }
 }
 
@@ -206,7 +206,7 @@ bool PathCreatorPlugin::connectWithSim() noexcept
     return true;
 }
 
-void PathCreatorPlugin::onAddAiObject(const Aircraft &aircraft) noexcept
+void PathCreatorPlugin::onAddAiObject([[maybe_unused]] const Aircraft &aircraft) noexcept
 {
 #ifdef DEBUG
     qDebug() << "PathCreatorPlugin::onAddAiObject: CALLED";
@@ -402,8 +402,8 @@ void PathCreatorPlugin::recordWaypoint() noexcept
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
         waypoint.timestamp = getCurrentTimestamp();
 
-        Aircraft &aircraft = getCurrentFlight().getUserAircraft();
-        aircraft.getFlightPlan().add(waypoint);
+        Flight &flight = getCurrentFlight();
+        flight.addWaypoint(waypoint);
     }
 }
 

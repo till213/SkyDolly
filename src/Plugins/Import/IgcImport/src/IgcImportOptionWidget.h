@@ -34,7 +34,7 @@ namespace Ui {
 }
 
 class IgcImportSettings;
-class IgcImportOptionWidgetPrivate;
+struct IgcImportOptionWidgetPrivate;
 
 class IgcImportOptionWidget : public QWidget
 {
@@ -45,7 +45,7 @@ public:
 
 private:
     std::unique_ptr<Ui::IgcImportOptionWidget> ui;
-    std::unique_ptr<IgcImportOptionWidgetPrivate> d;
+    const std::unique_ptr<IgcImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;

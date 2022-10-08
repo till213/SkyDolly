@@ -33,7 +33,7 @@ class Flight;
 class Aircraft;
 class CsvExportSettings;
 class PositionData;
-class FlightRadar24CsvWriterPrivate;
+struct FlightRadar24CsvWriterPrivate;
 
 class FlightRadar24CsvWriter : public CsvWriterIntf
 {
@@ -44,7 +44,7 @@ public:
     virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
 
 private:
-    std::unique_ptr<FlightRadar24CsvWriterPrivate> d;
+    const std::unique_ptr<FlightRadar24CsvWriterPrivate> d;
 
     static inline QString formatPosition(const PositionData &positionData) noexcept;
 };

@@ -31,6 +31,9 @@
 #include <QDateTime>
 #include <QXmlStreamReader>
 #include <QRegularExpression>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Convert.h>
 #include <Model/Flight.h>
@@ -41,9 +44,8 @@
 #include "Kml.h"
 #include "FlightRadar24KmlParser.h"
 
-class FlightRadar24KmlParserPrivate
+struct FlightRadar24KmlParserPrivate
 {
-public:
     using TrackItem = struct {
         std::int64_t timestamp;
         double latitude;
@@ -85,14 +87,14 @@ FlightRadar24KmlParser::FlightRadar24KmlParser() noexcept
     : d(std::make_unique<FlightRadar24KmlParserPrivate>())
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24KmlParser::FlightRadar24KmlParser: CREATED");
+    qDebug() << "FlightRadar24KmlParser::FlightRadar24KmlParser: CREATED";
 #endif
 }
 
 FlightRadar24KmlParser::~FlightRadar24KmlParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24KmlParser::~FlightRadar24KmlParser: DELETED");
+    qDebug() << "FlightRadar24KmlParser::~FlightRadar24KmlParser: DELETED";
 #endif
 }
 
@@ -108,7 +110,7 @@ void FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &fl
 
     if (d->xml->readNextStartElement()) {
 #ifdef DEBUG
-        qDebug("FlightRadar24KmlParser::readKML: XML start element: %s", qPrintable(d->xml->name().toString()));
+        qDebug() << "FlightRadar24KmlParser::readKML: XML start element:" << d->xml->name().toString();
 #endif
         if (d->xml->name() == Kml::Document) {
             parseName();
@@ -153,7 +155,7 @@ void FlightRadar24KmlParser::parseName() noexcept
 {
     if (d->xml->readNextStartElement()) {
 #ifdef DEBUG
-        qDebug("FlightAwareKmlParser::readDocument: XML start element: %s", qPrintable(d->xml->name().toString()));
+        qDebug() << "FlightAwareKmlParser::readDocument: XML start element:" << d->xml->name().toString();
 #endif
         if (d->xml->name() == Kml::name) {
             d->documentName = d->xml->readElementText();
@@ -182,7 +184,7 @@ void FlightRadar24KmlParser::parseFolder() noexcept
     while (d->xml->readNextStartElement()) {
         const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG
-        qDebug("FlightRadar24KmlParser::readDocument: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug() << "FlightRadar24KmlParser::readDocument: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::name) {
             name = d->xml->readElementText();
@@ -203,7 +205,7 @@ void FlightRadar24KmlParser::parsePlacemark() noexcept
     while (d->xml->readNextStartElement()) {
         const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG
-        qDebug("FlightRadar24KmlParser::readDocument: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug() << "FlightRadar24KmlParser::readDocument: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::description) {
             if (!parseDescription()) {
@@ -221,10 +223,10 @@ void FlightRadar24KmlParser::parsePlacemark() noexcept
 
 bool FlightRadar24KmlParser::parseDescription() noexcept
 {
-    bool ok;
+    bool ok {false};
     const QString description = d->xml->readElementText();
 #ifdef DEBUG
-        qDebug("FlightRadar24KmlParser::parseDescription: description %s", qPrintable(description));
+    qDebug() << "FlightRadar24KmlParser::parseDescription: description:" << description;
 #endif
     QRegularExpressionMatch match = d->speedRegExp.match(description);
     if (match.hasMatch()) {
@@ -239,8 +241,6 @@ bool FlightRadar24KmlParser::parseDescription() noexcept
         } else {
             ok = false;
         }
-    } else {
-        ok = false;
     }
 
     return ok;
@@ -254,7 +254,7 @@ void FlightRadar24KmlParser::parseTimestamp() noexcept
     while (d->xml->readNextStartElement()) {
         const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG
-        qDebug("FlightRadar24KmlParser::parseTimestamp: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug() << "FlightRadar24KmlParser::parseTimestamp: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::when) {
             const QString dateTimeText = d->xml->readElementText();
@@ -277,11 +277,11 @@ void FlightRadar24KmlParser::parseTimestamp() noexcept
 
 void FlightRadar24KmlParser::parsePoint() noexcept
 {
-    bool ok = true;
+    bool ok {true};
     while (d->xml->readNextStartElement()) {
         const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG
-        qDebug("FlightRadar24KmlParser::parsePoint: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug() << "FlightRadar24KmlParser::parsePoint: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::coordinates) {
             const QString coordinatesText = d->xml->readElementText();

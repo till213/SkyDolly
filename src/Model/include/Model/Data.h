@@ -27,6 +27,7 @@
 
 #include <cstdint>
 
+#include <Kernel/Const.h>
 /*!
  * The base data object for all non-time variant data objects which are persisted,
  * identified by their \c id.
@@ -35,14 +36,16 @@
  */
 struct Data
 {
-    explicit Data(std::int64_t id = InvalidId)
+    explicit Data(std::int64_t id = Const::InvalidId)
         : id(id)
     {}
+    Data(const Data &rhs) = default;
+    Data(Data &&rhs) = default;
+    Data &operator=(const Data &rhs) = default;
+    Data &operator=(Data &&rhs) = default;
     virtual ~Data() = default;
 
-    std::int64_t id {InvalidId};
-
-    static constexpr std::int64_t InvalidId {-1};
+    std::int64_t id {Const::InvalidId};
 };
 
 #endif // DATA_H

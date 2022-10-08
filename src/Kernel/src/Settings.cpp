@@ -22,10 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <mutex>
+
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
+#include <QStringBuilder>
 #include <QLatin1String>
 #include <QUuid>
 #include <QByteArray>
@@ -45,18 +48,33 @@
 
 namespace
 {
-    constexpr bool DefaultBackupBeforeMigration {true};
-
-    constexpr char ResourceDirectoryName[] = "Resources";
+    constexpr const char *ResourceDirectoryName {"Resources"};
     // This happens to be the same directory name as when unzipping the downloaded EGM data
     // from https://geographiclib.sourceforge.io/html/geoid.html#geoidinst
-    constexpr char EgmDirectoryName[] = "geoids";
-    constexpr char DefaultEgmFileName[] = "egm2008-5.pgm";
+    constexpr const char *EgmDirectoryName {"geoids"};
+    constexpr const char *DefaultEgmFileName {"egm2008-5.pgm"};
 }
 
-class SettingsPrivate
+struct SettingsPrivate
 {
-public:
+    SettingsPrivate() noexcept
+        : version(QCoreApplication::instance()->applicationVersion()),
+          backupBeforeMigration(DefaultBackupBeforeMigration),
+          recordingSampleRateValue(DefaultRecordingSampleRate),
+          windowStayOnTop(DefaultWindowStayOnTop),
+          minimalUi(DefaultMinimalUi),
+          moduleSelectorVisible(DefaultModuleSelectorVisible),
+          replaySpeedVisible(DefaultReplaySpeedVisible)
+    {
+        QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
+        if (standardLocations.count() > 0) {
+            defaultExportPath = standardLocations.first();
+            defaultLogbookPath = standardLocations.first() % "/" % Version::getApplicationName() % "/" % Version::getApplicationName() % Const::LogbookExtension;
+        } else {
+            defaultExportPath = ".";
+        }
+    }
+
     QSettings settings;
     Version version;
 
@@ -101,15 +119,17 @@ public:
 
     int previewInfoDialogCount;
 
-    static Settings *instance;
+    static inline std::once_flag onceFlag;
+    static inline Settings *instance {nullptr};
 
     static constexpr QUuid DefaultSkyConnectPluginUuid {};
+    static constexpr bool DefaultBackupBeforeMigration {true};
     static constexpr double DefaultRecordingSampleRate {SampleRate::toValue(SampleRate::SampleRate::Auto)};
     static constexpr bool DefaultWindowStayOnTop {false};
     static constexpr bool DefaultMinimalUi {false};
-    static constexpr bool DefaultModuleSelectorVisible  {true};
-    static constexpr bool DefaultReplaySpeedVisible  {true};
-    static constexpr bool DefaultAbsoluteSeek  {true};
+    static constexpr bool DefaultModuleSelectorVisible {true};
+    static constexpr bool DefaultReplaySpeedVisible {true};
+    static constexpr bool DefaultAbsoluteSeek {true};
     static constexpr double DefaultSeekIntervalSeconds {1.0};
     static constexpr double DefaultSeekIntervalPercent {0.5};
     static constexpr bool DefaultReplayLoop {false};
@@ -117,12 +137,12 @@ public:
     static constexpr double DefaultRepeatFlapsHandleIndex {false};
     // For now the default value is true, as no known aircraft exists where the canopy values would not
     // have to be repeated
-    static constexpr bool DefaultRepeatCanopyOpen  {true};
+    static constexpr bool DefaultRepeatCanopyOpen {true};
     static constexpr bool DefaultRelativePositionPlacement {true};
-    static constexpr bool DefaultDeleteFlightConfirmation  {true};
-    static constexpr bool DefaultDeleteAircraftConfirmation  {true};
-    static constexpr bool DefaultDeleteLocationConfirmation  {true};
-    static constexpr bool DefaultResetTimeOffsetConfirmation  {true};
+    static constexpr bool DefaultDeleteFlightConfirmation {true};
+    static constexpr bool DefaultDeleteAircraftConfirmation {true};
+    static constexpr bool DefaultDeleteLocationConfirmation {true};
+    static constexpr bool DefaultResetTimeOffsetConfirmation {true};
 
     static constexpr bool DefaultMinimalUiButtonTextVisible {false};
     static constexpr bool DefaultMinimalUiNonEssentialButtonVisible {false};
@@ -132,32 +152,16 @@ public:
 
     static constexpr int DefaultPreviewInfoDialogCount {3};
     static constexpr int PreviewInfoDialogBase {100};
-
-    SettingsPrivate() noexcept
-        : version(QCoreApplication::instance()->applicationVersion())
-    {
-        QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
-        if (standardLocations.count() > 0) {
-            defaultExportPath = standardLocations.first();
-            defaultLogbookPath = standardLocations.first() + "/" + Version::getApplicationName() + "/" + Version::getApplicationName() + Const::LogbookExtension;
-        } else {
-            defaultExportPath = ".";
-        }
-    }
-
-    ~SettingsPrivate() noexcept
-    {}
 };
 
-Settings *SettingsPrivate::instance = nullptr;
 
 // PUBLIC
 
 Settings &Settings::getInstance() noexcept
 {
-    if (SettingsPrivate::instance == nullptr) {
+    std::call_once(SettingsPrivate::onceFlag, []() {
         SettingsPrivate::instance = new Settings();
-    }
+    });
     return *SettingsPrivate::instance;
 }
 
@@ -712,7 +716,7 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Logbook");
     {
         d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
-        d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", ::DefaultBackupBeforeMigration).toBool();
+        d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", SettingsPrivate::DefaultBackupBeforeMigration).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Plugins");
@@ -824,16 +828,6 @@ void Settings::restore() noexcept
     d->settings.endGroup();
 }
 
-// PROTECTED
-
-Settings::~Settings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "Settings::~Settings: DELETED";
-#endif
-    store();
-}
-
 // PRIVATE
 
 Settings::Settings() noexcept
@@ -845,6 +839,14 @@ Settings::Settings() noexcept
     restore();
     frenchConnection();
     updateEgmFilePath();
+}
+
+Settings::~Settings()
+{
+#ifdef DEBUG
+    qDebug() << "Settings::~Settings: DELETED";
+#endif
+    store();
 }
 
 void Settings::frenchConnection() noexcept

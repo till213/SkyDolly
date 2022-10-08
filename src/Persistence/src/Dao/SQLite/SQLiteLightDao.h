@@ -27,20 +27,24 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
-#include <Model/LightData.h>
 #include "../LightDaoIntf.h"
+
+struct LightData;
 
 class SQLiteLightDao : public LightDaoIntf
 {
 public:
-    SQLiteLightDao() noexcept;
-    ~SQLiteLightDao() noexcept override;
+    SQLiteLightDao() = default;
+    SQLiteLightDao(const SQLiteLightDao &rhs) = delete;
+    SQLiteLightDao(SQLiteLightDao &&rhs);
+    SQLiteLightDao &operator=(const SQLiteLightDao &rhs) = delete;
+    SQLiteLightDao &operator=(SQLiteLightDao &&rhs);
+    ~SQLiteLightDao() override;
 
     bool add(std::int64_t aircraftId, const LightData &data) noexcept override;
-    bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<LightData>> backInsertIterator) const noexcept override;
+    std::vector<LightData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };

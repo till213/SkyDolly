@@ -108,9 +108,8 @@ namespace
     constexpr int KRecordIntervalSec {20};
 }
 
-class IgcExportPluginPrivate
+struct IgcExportPluginPrivate
 {
-public:
     IgcExportPluginPrivate() noexcept
         : flight(nullptr)
     {}
@@ -138,14 +137,14 @@ IgcExportPlugin::IgcExportPlugin() noexcept
     : d(std::make_unique<IgcExportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("IgcExportPlugin::IgcExportPlugin: PLUGIN LOADED");
+    qDebug() << "IgcExportPlugin::IgcExportPlugin: PLUGIN LOADED";
 #endif
 }
 
 IgcExportPlugin::~IgcExportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("IgcExportPlugin::~IgcExportPlugin: PLUGIN UNLOADED");
+    qDebug() << "IgcExportPlugin::~IgcExportPlugin: PLUGIN UNLOADED";
 #endif
 }
 
@@ -295,10 +294,9 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
 
     Convert convert;
     Engine &engine = aircraft.getEngine();
-    std::vector<PositionData> interpolatedPositionData;
-    Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
-    bool ok = true;
-    for (PositionData &positionData : interpolatedPositionData) {
+    const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    bool ok {true};
+    for (const PositionData &positionData : interpolatedPositionData) {
         if (!positionData.isNull()) {
 
             // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]

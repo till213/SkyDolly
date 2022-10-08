@@ -36,9 +36,8 @@
 #include "FlightConditionWidget.h"
 #include "ui_FlightConditionWidget.h"
 
-class FlightConditionWidgetPrivate
+struct FlightConditionWidgetPrivate
 {
-public:
     FlightConditionWidgetPrivate() noexcept
     {}
 
@@ -49,8 +48,8 @@ public:
 
 FlightConditionWidget::FlightConditionWidget(QWidget *parent) noexcept :
     QWidget(parent),
-    d(std::make_unique<FlightConditionWidgetPrivate>()),
-    ui(std::make_unique<Ui::FlightConditionWidget>())
+    ui(std::make_unique<Ui::FlightConditionWidget>()),
+    d(std::make_unique<FlightConditionWidgetPrivate>())
 {
     ui->setupUi(this);
     initUi();
@@ -69,6 +68,10 @@ void FlightConditionWidget::showEvent(QShowEvent *event) noexcept
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::flightConditionChanged,
             this, &FlightConditionWidget::updateUi);
+    connect(&flight, &Flight::flightStored,
+            this, &FlightConditionWidget::updateUi);
+    connect(&flight, &Flight::flightRestored,
+            this, &FlightConditionWidget::updateUi);
 }
 
 void FlightConditionWidget::hideEvent(QHideEvent *event) noexcept
@@ -76,7 +79,11 @@ void FlightConditionWidget::hideEvent(QHideEvent *event) noexcept
     QWidget::hideEvent(event);
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::flightConditionChanged,
-            this, &FlightConditionWidget::updateUi);
+               this, &FlightConditionWidget::updateUi);
+    disconnect(&flight, &Flight::flightStored,
+               this, &FlightConditionWidget::updateUi);
+    disconnect(&flight, &Flight::flightRestored,
+               this, &FlightConditionWidget::updateUi);
 }
 
 // PRIVATE

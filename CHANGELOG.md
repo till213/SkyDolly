@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.13.0
+
+### Bug Fixes
+- The various tabs in the Flight information dialog (Description, Aircraft, Conditions and Flight Plan) are now properly updated when importing a flight or loading a flight from the logbook
+
+### Under The Hood
+- Rule of Zero, copy-and-swap [[Back to Basics: RAII and the Rule of Zero - Arthur O'Dwyer - CppCon 2019](https://www.youtube.com/watch?v=7Qgd9B1KuMQ)]
+- Thread-safe access to singletons [[Back to Basics: Concurrency - Arthur O'Dwyer - CppCon 2020](https://www.youtube.com/watch?v=F6Ipn7gCOsY)]
+- Value-based aircraft list (CPU cache optimisation)
+- Small performance optimisations (e.g. return value optimisation)
+
 ## 0.12.0
 
 ### New Features

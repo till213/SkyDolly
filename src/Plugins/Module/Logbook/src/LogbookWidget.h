@@ -59,9 +59,8 @@ public:
     ~LogbookWidget() noexcept override;
 
 private:
-    Q_DISABLE_COPY(LogbookWidget)
     std::unique_ptr<Ui::LogbookWidget> ui;
-    std::unique_ptr<LogbookWidgetPrivate> d;
+    const std::unique_ptr<LogbookWidgetPrivate> d;
 
     void initUi() noexcept;
     void initFilterUi() noexcept;

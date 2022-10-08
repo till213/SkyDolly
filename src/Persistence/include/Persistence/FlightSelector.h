@@ -34,14 +34,12 @@
 struct PERSISTENCE_API FlightSelector
 {
 public:
-    FlightSelector();
-
-    QDate fromDate;
-    QDate toDate;
+    QDate fromDate {MinDate};
+    QDate toDate {MaxDate};
     QString searchKeyword;
-    bool hasFormation;
-    SimType::EngineType engineType;
-    int mininumDurationMinutes;
+    bool hasFormation {false};
+    SimType::EngineType engineType {SimType::EngineType::All};
+    int mininumDurationMinutes {0};
 
     // The release date of MSFS ;)
     static inline const QDate MinDate {2020, 8, 18};

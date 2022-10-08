@@ -121,7 +121,7 @@ public:
     bool hasEnvironmentalNoiseLevel() const noexcept;
 
 private:
-    std::unique_ptr<IgcParserPrivate> d;
+    const std::unique_ptr<IgcParserPrivate> d;
 
     void init() noexcept;
 

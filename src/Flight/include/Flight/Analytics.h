@@ -1,4 +1,4 @@
-/**
+    /**
  * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
@@ -36,7 +36,7 @@
 class Aircraft;
 struct PositionData;
 
-class AnalyticsPrivate;
+struct AnalyticsPrivate;
 
 /*!
  * Provides basic flight path & events analytics.
@@ -46,6 +46,10 @@ class FLIGHT_API Analytics
 public:
 
     Analytics(const Aircraft &aircraft);
+    Analytics(const Analytics &rhs) = delete;
+    Analytics(Analytics &&rhs);
+    Analytics &operator=(const Analytics &rhs) = delete;
+    Analytics &operator=(Analytics &&rhs);
     ~Analytics();
 
     /*!
@@ -54,12 +58,11 @@ public:
      * still on the ground). The movement is purely calculated based on the distance
      * between the positions.
      *
-     * \return the heading of the first aircraft movement; PositionData::NullData if
-     *         no positions exist
+     * \return the heading of the first aircraft movement
      */
-    const std::pair<std::int64_t, double> firstMovementHeading() const noexcept;
+    std::pair<std::int64_t, double> firstMovementHeading() const noexcept;
 
-    const PositionData &closestPosition(double latitude, double longitude) const noexcept;
+    PositionData closestPosition(double latitude, double longitude) const noexcept;
 
 private:
     std::unique_ptr<AnalyticsPrivate> d;

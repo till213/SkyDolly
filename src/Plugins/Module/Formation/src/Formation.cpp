@@ -115,7 +115,7 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
         const double altitude = positionData.altitude + deltaAltitude;
 
         // Degrees
-        double bearing;
+        double bearing {0.0};
         switch (relativePosition) {
         case RelativePosition::North:
             bearing = 0.0;

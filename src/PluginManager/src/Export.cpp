@@ -74,8 +74,9 @@ QString Export::formatNumber(double number) noexcept
     return QString::number(number, 'f', ::NumberPrecision);
 }
 
-void Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) noexcept
+std::vector<PositionData> Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept
 {
+    std::vector<PositionData> interpolatedPositionData;
     // Position data
     Position &position = aircraft.getPosition();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
@@ -85,12 +86,14 @@ void Export::resamplePositionDataForExport(const Aircraft &aircraft, const Sampl
         while (timestamp <= duration) {
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Export);
             if (!positionData.isNull()) {
-                backInsertIterator = positionData;
+                interpolatedPositionData.push_back(positionData);
             }
             timestamp += deltaTime;
         }
     } else {
         // Original data requested
-        std::copy(position.begin(), position.end(), backInsertIterator);
+        interpolatedPositionData.reserve(position.count());
+        std::copy(position.begin(), position.end(), std::back_inserter(interpolatedPositionData));
     }
+    return interpolatedPositionData;
 }

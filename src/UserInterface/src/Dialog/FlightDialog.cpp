@@ -51,9 +51,8 @@
 #include "FlightDialog.h"
 #include "ui_FlightDialog.h"
 
-class FlightDialogPrivate
+struct FlightDialogPrivate
 {
-public:
     FlightDialogPrivate(FlightService &theFlightService) noexcept
         : flightService(theFlightService),
           closeDialogShortcut(nullptr)

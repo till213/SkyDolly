@@ -38,23 +38,23 @@
 
 struct VersionPrivate
 {
-    VersionPrivate() noexcept
-    {}
-
     VersionPrivate(int theMajor, int theMinor, int thePatch) noexcept
         : major(theMajor), minor(theMinor), patch(thePatch)
     {}
 
-    VersionPrivate(const VersionPrivate &other)
-        : major(other.major), minor(other.minor), patch(other.patch)
-    {}
+    VersionPrivate() = default;
+    ~VersionPrivate() = default;
+    VersionPrivate(const VersionPrivate &rhs) = default;
+    VersionPrivate(VersionPrivate &&rhs) = default;
+    VersionPrivate &operator=(const VersionPrivate &rhs) = default;
+    VersionPrivate &operator=(VersionPrivate &&rhs) = default;
 
     int major {VersionConfig::Major};
     int minor {VersionConfig::Minor};
     int patch {VersionConfig::Patch};
 
-    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/adjectives-that-start-with-c.html
-    static inline const QString CodeName {QStringLiteral("Celestial Cessna")};
+    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/adjectives-that-start-with-d.html
+    static inline const QString CodeName {QStringLiteral("Dapper Daher")};
 };
 
 // PUBLIC
@@ -73,13 +73,9 @@ Version::Version(QStringView version) noexcept
     fromString(version);
 }
 
-Version::Version(const Version &other) noexcept
-    : d(std::make_unique<VersionPrivate>(other.d->major, other.d->minor, other.d->patch))
-{}
-
-Version::Version(Version &&other) noexcept
-    : d(std::move(other.d))
-{}
+Version::Version(Version &&rhs) = default;
+Version &Version::operator=(Version &&rhs) = default;
+Version::~Version() = default;
 
 void Version::fromString(QStringView version) noexcept
 {
@@ -91,9 +87,6 @@ void Version::fromString(QStringView version) noexcept
         d->patch = match.captured(3).toInt();
     }
 }
-
-Version::~Version() noexcept
-{}
 
 int Version::getMajor() const noexcept
 {
@@ -118,11 +111,6 @@ QString Version::toString() const noexcept
 bool Version::isNull() const noexcept
 {
     return d->major == 0 && d->minor == 0 && d->patch == 0;
-}
-
-void Version::operator=(const Version &rhs) noexcept
-{
-    d = std::make_unique<VersionPrivate>(rhs.d->major, rhs.d->minor, rhs.d->patch);
 }
 
 bool Version::operator==(const Version &rhs) const noexcept

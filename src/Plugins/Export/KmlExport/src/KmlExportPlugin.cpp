@@ -25,7 +25,6 @@
 #include <algorithm>
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <unordered_map>
 #include <cstdint>
 
@@ -59,14 +58,13 @@ namespace
     constexpr int MaxLineSegments = 16384;
 
     // Placemark "look at" direction
-    constexpr char LookAtTilt[] = "50";
-    constexpr char LookAtRange[] = "4000";
+    constexpr const char *LookAtTilt {"50"};
+    constexpr const char *LookAtRange {"4000"};
     constexpr int HeadingNorth = 0;
 }
 
-class KmlExportPluginPrivate
+struct KmlExportPluginPrivate
 {
-public:
     KmlExportPluginPrivate() noexcept
         : flight(nullptr),
           styleExport(std::make_unique<KmlStyleExport>(pluginSettings))
@@ -87,14 +85,14 @@ KmlExportPlugin::KmlExportPlugin() noexcept
     : d(std::make_unique<KmlExportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("KmlExportPlugin::KmlExportPlugin: PLUGIN LOADED");
+    qDebug() << "KmlExportPlugin::KmlExportPlugin: PLUGIN LOADED";
 #endif
 }
 
 KmlExportPlugin::~KmlExportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("KmlExportPlugin::~KmlExportPlugin: PLUGIN UNLOADED");
+    qDebug() << "KmlExportPlugin::~KmlExportPlugin: PLUGIN UNLOADED";
 #endif
 }
 
@@ -213,10 +211,10 @@ bool KmlExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 
 bool KmlExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
-    bool ok = true;
+    bool ok {true};
     for (const auto &aircraft : *d->flight) {
-        d->aircraftTypeCount[aircraft->getAircraftInfo().aircraftType.type] += 1;
-        ok = exportAircraft(*aircraft, io);
+        d->aircraftTypeCount[aircraft.getAircraftInfo().aircraftType.type] += 1;
+        ok = exportAircraft(aircraft, io);
         if (!ok) {
             break;
         }
@@ -237,9 +235,8 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 "          </coordinates>\n"
 "        </LineString>\n");
 
-    std::vector<PositionData> interpolatedPositionData;
-    Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
-    bool ok = true;
+    std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    bool ok {true};
     if (interpolatedPositionData.size() > 0) {
 
         const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfo().aircraftType.type];
@@ -310,7 +307,7 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 
 bool KmlExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
-    bool ok = true;
+    bool ok {true};
 
     const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlan();
     for (const Waypoint &waypoint : flightPlan) {
