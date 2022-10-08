@@ -36,18 +36,22 @@ class QUuid;
 class QWidget;
 class QString;
 
-#include "ExportIntf.h"
 #include "PluginManagerLib.h"
 
 class SkyConnectIntf;
 class Flight;
 class FlightService;
-class PluginManagerPrivate;
+struct PluginManagerPrivate;
 
-class PLUGINMANAGER_API PluginManager : public QObject
+class PLUGINMANAGER_API PluginManager final : public QObject
 {
     Q_OBJECT
 public:
+    PluginManager(const PluginManager &rhs) = delete;
+    PluginManager(PluginManager &&rhs) = delete;
+    PluginManager &operator=(const PluginManager &rhs) = delete;
+    PluginManager &operator=(PluginManager &&rhs) = delete;
+
     static PluginManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
@@ -63,14 +67,11 @@ public:
     bool importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept;
     bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;
 
-protected:
-    virtual ~PluginManager() noexcept;
-
 private:
-    Q_DISABLE_COPY(PluginManager)
-    std::unique_ptr<PluginManagerPrivate> d;
+    const std::unique_ptr<PluginManagerPrivate> d;
 
     PluginManager() noexcept;
+    ~PluginManager() override;
 
     std::vector<PluginManager::Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &plugins) noexcept;
 };

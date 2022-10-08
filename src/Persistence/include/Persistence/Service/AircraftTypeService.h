@@ -28,24 +28,26 @@
 #include <memory>
 #include <vector>
 
-#include <QtGlobal>
-
 class QString;
 
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
 #include "../PersistenceLib.h"
 
-class AircraftTypeServicePrivate;
+struct AircraftTypeServicePrivate;
 
 class PERSISTENCE_API AircraftTypeService
 {
 public:
     AircraftTypeService() noexcept;
-    ~AircraftTypeService() noexcept;
+    AircraftTypeService(const AircraftTypeService &rhs) = delete;
+    AircraftTypeService(AircraftTypeService &&rhs);
+    AircraftTypeService &operator=(const AircraftTypeService &rhs) = delete;
+    AircraftTypeService &operator=(AircraftTypeService &&rhs);
+    ~AircraftTypeService();
 
-    bool getByType(const QString &type, AircraftType &aircraftType) const noexcept;
-    bool getAll(std::back_insert_iterator<std::vector<AircraftType>> backInsertIterator) const noexcept;
+    AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept;
+    std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept;
     bool exists(const QString &type) const noexcept;
 
 private:

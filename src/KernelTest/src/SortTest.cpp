@@ -122,12 +122,12 @@ void SortTest::topologicalSort()
         std::shared_ptr<Vertex> sourceVertex = graph.at(nodeId);
         sourceVertex->edges.reserve(edgeList.size());
         for (const int id : edgeList) {
-            sourceVertex->edges.push_back(graph.at(id));
+            sourceVertex->edges.push_back(graph.at(id).get());
         }
     }
 
     // Exercise
-    std::deque<std::shared_ptr<Vertex>> sorted = Sort<ID>::topologicalSort(graph, sorting);
+    std::deque<Vertex *> sorted = Sort<ID>::topologicalSort(graph, sorting);
 
     // Verify
     int i {0};

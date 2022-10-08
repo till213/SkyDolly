@@ -34,18 +34,18 @@ namespace Ui {
 }
 
 class KmlExportSettings;
-class KmlExportOptionWidgetPrivate;
+struct KmlExportOptionWidgetPrivate;
 
 class KmlExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit KmlExportOptionWidget(KmlExportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~KmlExportOptionWidget() noexcept;
+    ~KmlExportOptionWidget() noexcept override;
 
 private:
     std::unique_ptr<Ui::KmlExportOptionWidget> ui;
-    std::unique_ptr<KmlExportOptionWidgetPrivate> d;
+    const std::unique_ptr<KmlExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;

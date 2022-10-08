@@ -33,21 +33,21 @@ class QXmlStreamReader;
 
 #include "AbstractKmlParser.h"
 
-class AbstractKmlTrackParserPrivate;
+struct AbstractKmlTrackParserPrivate;
 
 class AbstractKmlTrackParser : public AbstractKmlParser
 {
 public:
     AbstractKmlTrackParser() noexcept;
-    virtual ~AbstractKmlTrackParser() noexcept;
+    ~AbstractKmlTrackParser() noexcept override;
 
-    virtual QDateTime getFirstDateTimeUtc() const noexcept override;
+    QDateTime getFirstDateTimeUtc() const noexcept override;
 
 protected:
-    virtual void parseTrack() noexcept override;
+    void parseTrack() noexcept override;
 
 private:
-    std::unique_ptr<AbstractKmlTrackParserPrivate> d;
+    const std::unique_ptr<AbstractKmlTrackParserPrivate> d;
 };
 
 #endif // ABSTRACTKMLTRACKPARSER_H

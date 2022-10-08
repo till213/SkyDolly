@@ -35,13 +35,17 @@
 #include "../PersistenceLib.h"
 
 class FlightSelector;
-class LogbookServicePrivate;
+struct LogbookServicePrivate;
 
 class PERSISTENCE_API LogbookService
 {
 public:
     LogbookService() noexcept;
-    ~LogbookService() noexcept;
+    LogbookService(const LogbookService &rhs) = delete;
+    LogbookService(LogbookService &&rhs);
+    LogbookService &operator=(const LogbookService &rhs) = delete;
+    LogbookService &operator=(LogbookService &&rhs);
+    ~LogbookService();
 
     bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept;
     std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept;

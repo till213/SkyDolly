@@ -24,15 +24,18 @@
  */
 #include <memory>
 
+#ifdef DEBUG
+#include <QDebug>
+#endif
+
 #include <Kernel/Unit.h>
 #include <Model/Waypoint.h>
 #include <Model/SimVar.h>
 #include "WaypointWidget.h"
 #include "ui_WaypointWidget.h"
 
-class WaypointWidgetPrivate
+struct WaypointWidgetPrivate
 {
-public:
     WaypointWidgetPrivate(const Waypoint &theWaypoint) noexcept
         : waypoint(theWaypoint)
     {}
@@ -50,12 +53,15 @@ WaypointWidget::WaypointWidget(const Waypoint &waypoint, QWidget *parent) noexce
 {
     ui->setupUi(this);
     initUi();
+#ifdef DEBUG
+    qDebug() << "WaypointWidget::WaypointWidget(): CREATED";
+#endif
 }
 
 WaypointWidget::~WaypointWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug("WaypointWidget::~WaypointWidget(): DELETED");
+    qDebug() << "WaypointWidget::~WaypointWidget(): DELETED";
 #endif
 }
 

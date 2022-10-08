@@ -45,10 +45,6 @@ struct VersionPrivate;
 class KERNEL_API Version final
 {
 public:
-    /*!
-     * Creates this Version with the current values of the application version.
-     */
-    Version() noexcept;
 
     /*!
      * Creates this Version with \p majorNo, \p minorNo and \p patchNo values. This
@@ -72,9 +68,13 @@ public:
      * \sa #operator<()
      */
     Version(QStringView version) noexcept;
-    Version(const Version &other) noexcept;
-    Version(Version &&other) noexcept;
-    ~Version() noexcept;
+
+    Version() noexcept;
+    Version(const Version &rhs) = delete;
+    Version(Version &&rhs);
+    Version &operator=(const Version &rhs) = delete;
+    Version &operator=(Version &&rhs);
+    ~Version();
 
     void fromString(QStringView version) noexcept;
 
@@ -114,14 +114,6 @@ public:
      * \return \c true if all major, minor and patch numbers are zero (0.0.0); \c false else
      */
     bool isNull() const noexcept;
-
-    /*!
-     * Assignmnent operator.
-     *
-     * \param rhs
-     *        the other Version to assign from
-     */
-    void operator=(const Version &rhs) noexcept;
 
     /*!
      * Compares this Version against \c rhs for equality.

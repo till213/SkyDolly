@@ -44,9 +44,8 @@
 #include "SecondaryFlightControlWidget.h"
 #include "ui_SecondaryFlightControlWidget.h"
 
-class SecondaryFlightControlWidgetPrivate
+struct SecondaryFlightControlWidgetPrivate
 {
-public:
     SecondaryFlightControlWidgetPrivate(const QWidget &widget) noexcept
         : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -61,8 +60,8 @@ public:
 
 SecondaryFlightControlWidget::SecondaryFlightControlWidget(QWidget *parent) noexcept :
     AbstractSimulationVariableWidget(parent),
-    d(std::make_unique<SecondaryFlightControlWidgetPrivate>(*this)),
-    ui(std::make_unique<Ui::SecondaryFlightControlWidget>())
+    ui(std::make_unique<Ui::SecondaryFlightControlWidget>()),
+    d(std::make_unique<SecondaryFlightControlWidgetPrivate>(*this))
 {
     ui->setupUi(this);
     initUi();
@@ -113,22 +112,21 @@ void SecondaryFlightControlWidget::initUi() noexcept
     ui->spoilerLineEdit->setToolTip(SimVar::SpoilersHandlePosition);
 }
 
-const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+SecondaryFlightControlData SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
+    SecondaryFlightControlData secondaryFlightControlData;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
             return aircraft.getSecondaryFlightControl().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getSecondaryFlightControl().interpolate(timestamp, access);
+                secondaryFlightControlData = aircraft.getSecondaryFlightControl().interpolate(timestamp, access);
             } else {
-                return aircraft.getSecondaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                secondaryFlightControlData = aircraft.getSecondaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
-    } else {
-        return SecondaryFlightControlData::NullData;
     }
+    return secondaryFlightControlData;
 }

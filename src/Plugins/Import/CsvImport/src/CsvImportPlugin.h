@@ -42,7 +42,7 @@ class Flight;
 struct AircraftInfo;
 struct FlightCondition;
 class ImportPluginBaseSettings;
-class CsvImportPluginPrivate;
+struct CsvImportPluginPrivate;
 
 class CsvImportPlugin : public ImportPluginBase
 {
@@ -69,7 +69,7 @@ protected:
     void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 private:
-    std::unique_ptr<CsvImportPluginPrivate> d;
+    const std::unique_ptr<CsvImportPluginPrivate> d;
 };
 
 #endif // CSVIMPORTPLUGIN_H

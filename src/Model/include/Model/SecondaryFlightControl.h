@@ -30,20 +30,14 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API SecondaryFlightControl : public AbstractComponent<SecondaryFlightControlData>
+class MODEL_API SecondaryFlightControl final : public AbstractComponent<SecondaryFlightControlData>
 {
 public:
     explicit SecondaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
-    SecondaryFlightControl(SecondaryFlightControl &other) = default;
-    SecondaryFlightControl(SecondaryFlightControl &&other) = default;
-    ~SecondaryFlightControl() noexcept override;
-    SecondaryFlightControl &operator=(const SecondaryFlightControl &rhs) = default;
-    SecondaryFlightControl &operator=(SecondaryFlightControl &&rhs) = default;
 
-    const SecondaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    SecondaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    SecondaryFlightControlData m_currentSecondaryFlightControlData;
     SecondaryFlightControlData m_previousSecondaryFlightControlData;
 };
 

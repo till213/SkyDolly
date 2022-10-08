@@ -50,9 +50,8 @@
 #include "BasicExportDialog.h"
 #include "ui_BasicExportDialog.h"
 
-class BasicExportDialogPrivate
+struct BasicExportDialogPrivate
 {
-public:
     BasicExportDialogPrivate(const Flight &theFlight, const QString &theFileSuffix, const QString &theFileFilter, ExportPluginBaseSettings &thePluginSettings) noexcept
         : flight(theFlight),
           fileSuffix(theFileSuffix),
@@ -82,17 +81,9 @@ BasicExportDialog::BasicExportDialog(const Flight &flight, const QString &fileSu
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug("BasicExportDialog::BasicExportDialog: CREATED");
-#endif
 }
 
-BasicExportDialog::~BasicExportDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug("BasicExportDialog::~BasicExportDialog: DELETED");
-#endif
-}
+BasicExportDialog::~BasicExportDialog() = default;
 
 QString BasicExportDialog::getSelectedFilePath() const noexcept
 {
@@ -206,11 +197,11 @@ std::int64_t BasicExportDialog::estimateNofSamplePoints() const noexcept
     if (period != 0) {
         if (isExportUserAircraftOnly()) {
             std::int64_t duration = d->flight.getUserAircraft().getDurationMSec();
-            nofSamplePoints += static_cast<int>(std::round(static_cast<double>(duration) / static_cast<double>(period))) + 1;
+            nofSamplePoints += static_cast<std::int64_t>(std::round(static_cast<double>(duration) / static_cast<double>(period))) + 1;
         } else {
             for (const auto &aircraft : d->flight) {
-                std::int64_t duration = aircraft->getDurationMSec();
-                nofSamplePoints += static_cast<int>(std::round(static_cast<double>(duration) / static_cast<double>(period))) + 1;
+                std::int64_t duration = aircraft.getDurationMSec();
+                nofSamplePoints += static_cast<std::int64_t>(std::round(static_cast<double>(duration) / static_cast<double>(period))) + 1;
             }
         }
     } else {
@@ -219,7 +210,7 @@ std::int64_t BasicExportDialog::estimateNofSamplePoints() const noexcept
             nofSamplePoints += d->flight.getUserAircraft().getPosition().count();
         } else {
             for (const auto &aircraft : d->flight) {
-                nofSamplePoints += aircraft->getPosition().count();
+                nofSamplePoints += aircraft.getPosition().count();
             }
         }
     }

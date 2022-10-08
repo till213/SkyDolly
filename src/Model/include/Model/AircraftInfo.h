@@ -32,27 +32,29 @@
 #include "AircraftType.h"
 #include "ModelLib.h"
 
-struct MODEL_API AircraftInfo
+struct MODEL_API AircraftInfo final
 {
-    std::int64_t aircraftId;
+    std::int64_t aircraftId {0};
     AircraftType aircraftType;
     // Milliseconds
-    std::int64_t timeOffset;
+    std::int64_t timeOffset {0};
     QString tailNumber;
     QString airline;
     QString flightNumber;    
 
     // Feet
-    float altitudeAboveGround;
-    bool startOnGround;
+    float altitudeAboveGround {0.0f};
+    bool startOnGround {false};
     // Knots (TAS)
-    int initialAirspeed;
+    int initialAirspeed {0};
 
     AircraftInfo(std::int64_t aircraftId) noexcept;
-    AircraftInfo(const AircraftInfo &other) = default;
-    AircraftInfo(AircraftInfo &&other) noexcept;
+    AircraftInfo() noexcept;
+    AircraftInfo(const AircraftInfo &rhs) = default;
+    AircraftInfo(AircraftInfo &&rhs) = default;
     AircraftInfo &operator=(const AircraftInfo &rhs) = default;
-    AircraftInfo &operator=(AircraftInfo &&rhs) noexcept;
+    AircraftInfo &operator=(AircraftInfo &&rhs) = default;
+    ~AircraftInfo() = default;
 
     void clear() noexcept;
 };

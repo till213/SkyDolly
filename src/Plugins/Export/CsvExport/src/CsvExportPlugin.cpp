@@ -27,6 +27,9 @@
 // Implements the % operator for string concatenation
 #include <QStringBuilder>
 #include <QString>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -38,7 +41,7 @@
 #include "PositionAndAttitudeCsvWriter.h"
 #include "CsvExportPlugin.h"
 
-class CsvExportPluginPrivate
+struct CsvExportPluginPrivate
 {
 public:
     CsvExportPluginPrivate() noexcept
@@ -55,14 +58,14 @@ CsvExportPlugin::CsvExportPlugin() noexcept
     : d(std::make_unique<CsvExportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("CsvExportPlugin::CsvExportPlugin: PLUGIN LOADED");
+    qDebug() << "CsvExportPlugin::CsvExportPlugin: PLUGIN LOADED";
 #endif
 }
 
 CsvExportPlugin::~CsvExportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("CsvExportPlugin::~CsvExportPlugin: PLUGIN UNLOADED");
+    qDebug() << "CsvExportPlugin::~CsvExportPlugin: PLUGIN UNLOADED";
 #endif
 }
 
@@ -101,7 +104,6 @@ bool CsvExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[mayb
 
 bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
-    bool ok;
     std::unique_ptr<CsvWriterIntf> writer;
     switch (d->pluginSettings.getFormat()) {
     case CsvExportSettings::Format::SkyDolly:
@@ -115,10 +117,9 @@ bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
         break;
     }
 
+    bool ok {false};
     if (writer != nullptr) {
         ok = writer->write(flight, aircraft, io);
-    } else {
-        ok = false;
     }
 
     return ok;

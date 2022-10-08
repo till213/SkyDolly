@@ -24,15 +24,17 @@
  */
 #include <QComboBox>
 #include <QString>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include "CsvExportOptionWidget.h"
 #include "CsvExportSettings.h"
 #include "ui_CsvExportOptionWidget.h"
 
-class CsvExportOptionWidgetPrivate
+struct CsvExportOptionWidgetPrivate
 {
-public:
     CsvExportOptionWidgetPrivate(CsvExportSettings &theSettings) noexcept
         : settings(theSettings)
     {}
@@ -52,14 +54,14 @@ CsvExportOptionWidget::CsvExportOptionWidget(CsvExportSettings &settings, QWidge
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug("CsvExportOptionWidget::CsvExportOptionWidget: CREATED");
+    qDebug() << "CsvExportOptionWidget::CsvExportOptionWidget: CREATED";
 #endif
 }
 
 CsvExportOptionWidget::~CsvExportOptionWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug("CsvExportOptionWidget::~CsvExportOptionWidget: DELETED");
+    qDebug() << "CsvExportOptionWidget::~CsvExportOptionWidget: DELETED";
 #endif
 }
 

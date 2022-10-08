@@ -58,24 +58,24 @@ namespace
     constexpr char BRecord = 'B';
 
     // Three letter codes (TLC)
-    constexpr char TLCDate[] = "DTE";
-    constexpr char TLCPilot[] = "PLT";
-    constexpr char TLCCoPilot[] = "CM2";
-    constexpr char TLCGliderType[] = "GTY";
-    constexpr char TLCGliderId[] = "GID";
+    constexpr const char *TLCDate {"DTE"};
+    constexpr const char *TLCPilot {"PLT"};
+    constexpr const char *TLCCoPilot {"CM2"};
+    constexpr const char *TLCGliderType {"GTY"};
+    constexpr const char *TLCGliderId {"GID"};
 
     // Offsets
     constexpr int InvalidOffset = -1;
 
     // Formats
-    constexpr char DateFormat[] = "HHmmss";
+    constexpr const char *DateFormat {"HHmmss"};
 
     // H (header) record
-    constexpr char HRecordDatePattern[] = R"(^HFDTE(?:DATE:)?(\d{2})(\d{2})(\d{2})(?:,?(\d{2}))?)";
-    constexpr char HRecordPilotPattern[] = R"(^H(\w)PLT(?:.{0,}?:(.*)|(.*))$)";
-    constexpr char HRecordCoPilotPattern[] = R"(^H(\w)CM2(?:.{0,}?:(.*)|(.*))$)";
-    constexpr char HRecordGliderTypePattern[] = R"(^H(\w)GTY(?:.{0,}?:(.*)|(.*))$)";
-    constexpr char HRecordGliderIdPattern[] = R"(^H(\w)GID(?:.{0,}?:(.*)|(.*))$)";
+    constexpr const char *HRecordDatePattern {R"(^HFDTE(?:DATE:)?(\d{2})(\d{2})(\d{2})(?:,?(\d{2}))?)"};
+    constexpr const char *HRecordPilotPattern {R"(^H(\w)PLT(?:.{0,}?:(.*)|(.*))$)"};
+    constexpr const char *HRecordCoPilotPattern {R"(^H(\w)CM2(?:.{0,}?:(.*)|(.*))$)"};
+    constexpr const char *HRecordGliderTypePattern {R"(^H(\w)GTY(?:.{0,}?:(.*)|(.*))$)"};
+    constexpr const char *HRecordGliderIdPattern {R"(^H(\w)GID(?:.{0,}?:(.*)|(.*))$)"};
 
     constexpr int HRecordDayIndex = 1;
     constexpr int HRecordMonthIndex = 2;
@@ -83,15 +83,15 @@ namespace
     constexpr int HRecordFlightNumberIndex = 4;
 
     // I (addition definition) record
-    constexpr char IRecordPattern[] = R"(^[I](\d{2})((?:\d{4}[A-Z]{3})+))";
+    constexpr const char *IRecordPattern {R"(^[I](\d{2})((?:\d{4}[A-Z]{3})+))"};
     constexpr int IRecordNofAdditionsIndex = 1;
     constexpr int IRecordAdditionsDefinitionsIndex = 2;
     // Length of addition definition [bytes]
     constexpr int IRecordAdditionDefinitionLength = 7;
 
     // C (task) record
-    constexpr char CRecordTaskDefinitionPattern[] = R"(^C(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{4})([-\d]{2})(.*))";
-    constexpr char CRecordTaskPattern[] = R"(^C(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*))";
+    constexpr const char *CRecordTaskDefinitionPattern {R"(^C(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{4})([-\d]{2})(.*))"};
+    constexpr const char *CRecordTaskPattern {R"(^C(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*))"};
 
     constexpr int CRecordLatitudeDegreesIndex = 1;
     // MMmmm - minutes (MM) with fractional (mmm) part: by dividing by 1000 we get the proper float value
@@ -108,7 +108,7 @@ namespace
     constexpr int CRecordTaskIndex = 7;
 
     // B (fix) record
-    constexpr char BRecordPattern[] = R"(^B(\d{6})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])(-\d{4}|\d{5})(-\d{4}|\d{5}))";
+    constexpr const char *BRecordPattern {R"(^B(\d{6})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])(-\d{4}|\d{5})(-\d{4}|\d{5}))"};
     // HHMMSS
     constexpr int BRecordDateIndex = 1;
 
@@ -130,9 +130,7 @@ namespace
     constexpr int BRecordGNSSAltitudeIndex = 10;
 
     // Values
-    constexpr char DirectionTypeNorth = 'N';
     constexpr char DirectionTypeSouth = 'S';
-    constexpr char DirectionTypeEast = 'E';
     constexpr char DirectionTypeWest = 'W';
 }
 
@@ -246,7 +244,7 @@ bool IgcParser::readManufacturer() noexcept
 
 bool IgcParser::readRecords() noexcept
 {
-    bool ok = true;
+    bool ok {true};
     QByteArray line = d->file->readLine();
     while (ok && !line.isEmpty()) {
         switch (line.at(0)) {
@@ -277,7 +275,7 @@ bool IgcParser::readRecords() noexcept
 
 bool IgcParser::parseHeader(const QByteArray &line) noexcept
 {
-    bool ok = true;
+    bool ok {true};
 
     const QByteArray type = line.mid(2, 3);
     if (type == ::TLCDate) {
@@ -296,7 +294,7 @@ bool IgcParser::parseHeader(const QByteArray &line) noexcept
 
 bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
 {
-    bool ok = true;
+    bool ok {true};
     QRegularExpressionMatch match = d->hRecordDateRegExp.match(line);
     if (match.hasMatch()) {
         int year;
@@ -333,7 +331,7 @@ bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
 
 bool IgcParser::parseHeaderText(const QByteArray &line, const QRegularExpression &regExp, QString &text) noexcept
 {
-    bool ok = true;
+    bool ok {true};
     QRegularExpressionMatch match = regExp.match(line);
     if (match.hasMatch()) {
         // Ignore the data source for now (F: flight recorder, O: observer, P: pilot)
@@ -368,7 +366,7 @@ bool IgcParser::parseHeaderGliderId(const QByteArray &line) noexcept
 
 bool IgcParser::parseFixAdditions(const QByteArray &line) noexcept
 {
-    bool ok;
+    bool ok {false};
     QRegularExpressionMatch match = d->iRecordRegExp.match(line);
     if (match.hasMatch()) {
         const int nofAdditions = match.capturedView(::IRecordNofAdditionsIndex).toInt();
@@ -390,20 +388,15 @@ bool IgcParser::parseFixAdditions(const QByteArray &line) noexcept
         } else {
             ok = false;
         }
-    } else {
-        // No pattern match
-        ok = false;
     }
     return ok;
 }
 
 bool IgcParser::parseTask(const QByteArray &line) noexcept
 {
-    bool ok;
+    bool ok {true};
     QRegularExpressionMatch match = d->cRecordTaskDefinitionRegExp.match(line);
-    if (match.hasMatch()) {
-        ok = true;
-    } else {
+    if (!match.hasMatch()) {
         match = d->cRecordTaskRegExp.match(line);
         if (match.hasMatch()) {
             // Latitude
@@ -434,7 +427,7 @@ bool IgcParser::parseTask(const QByteArray &line) noexcept
 
 bool IgcParser::parseFix(const QByteArray &line) noexcept
 {
-    bool ok;
+    bool ok {false};
     QRegularExpressionMatch match = d->bRecordRegExp.match(line);
     if (match.hasMatch()) {
 
@@ -501,9 +494,6 @@ bool IgcParser::parseFix(const QByteArray &line) noexcept
             // Invalid timestamp
             ok = false;
         }
-    } else {
-        // No pattern match
-        ok = false;
     }
     return ok;
 }

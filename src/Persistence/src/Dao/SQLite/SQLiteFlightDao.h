@@ -39,7 +39,11 @@ class SQLiteFlightDao : public FlightDaoIntf
 {
 public:
     SQLiteFlightDao() noexcept;
-    ~SQLiteFlightDao() noexcept override;
+    SQLiteFlightDao(const SQLiteFlightDao &rhs) = delete;
+    SQLiteFlightDao(SQLiteFlightDao &&rhs);
+    SQLiteFlightDao &operator=(const SQLiteFlightDao &rhs) = delete;
+    SQLiteFlightDao &operator=(SQLiteFlightDao &&rhs);
+    ~SQLiteFlightDao() override;
 
     bool add(Flight &flight)  noexcept override;
     bool get(std::int64_t id, Flight &flight) const noexcept override;

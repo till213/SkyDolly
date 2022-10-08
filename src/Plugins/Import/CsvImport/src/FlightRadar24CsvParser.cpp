@@ -42,7 +42,7 @@
 
 namespace
 {
-    constexpr char FlightRadar24CSVPattern[] = R"(^(\d*),(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z),([\w]*|[\d]*),\"([-]?\d{1,2}.\d+),([-]?\d{1,3}.\d+)\",(\d+),(\d+),(\d+))";
+    constexpr const char *FlightRadar24CSVPattern {R"(^(\d*),(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z),([\w]*|[\d]*),\"([-]?\d{1,2}.\d+),([-]?\d{1,3}.\d+)\",(\d+),(\d+),(\d+))"};
     constexpr int UnixTimestampIndex = 1;
     constexpr int CallsignIndex = 2;
     constexpr int LatitudeIndex = 3;
@@ -57,26 +57,25 @@ namespace
 FlightRadar24CsvParser::FlightRadar24CsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24CsvParser::~FlightRadar24CsvParser: CREATED");
+    qDebug() << "FlightRadar24CsvParser::~FlightRadar24CsvParser: CREATED";
 #endif
 }
 
 FlightRadar24CsvParser::~FlightRadar24CsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24CsvParser::~FlightRadar24CsvParser: DELETED");
+    qDebug() << "FlightRadar24CsvParser::~FlightRadar24CsvParser: DELETED";
 #endif
 }
 
 bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept
 {
-    bool ok;
     Aircraft &aircraft = flight.getUserAircraft();
     static const QRegularExpression regexp(::FlightRadar24CSVPattern);
 
     // Headers
     const QByteArray header = file.readLine();
-    ok = !header.isNull();
+    bool ok = !header.isNull();
 
     firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     QDateTime currentDateTimeUtc;

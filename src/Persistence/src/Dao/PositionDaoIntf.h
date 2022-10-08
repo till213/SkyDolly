@@ -26,7 +26,6 @@
 #define POSITIONDAOINTF_H
 
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
 struct PositionData;
@@ -34,6 +33,11 @@ struct PositionData;
 class PositionDaoIntf
 {
 public:
+    PositionDaoIntf() = default;
+    PositionDaoIntf(const PositionDaoIntf &rhs) = delete;
+    PositionDaoIntf(PositionDaoIntf &&rhs) = default;
+    PositionDaoIntf &operator=(const PositionDaoIntf &rhs) = delete;
+    PositionDaoIntf &operator=(PositionDaoIntf &&rhs) = default;
     virtual ~PositionDaoIntf() = default;
 
     /*!
@@ -46,7 +50,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(std::int64_t aircraftId, const PositionData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept = 0;
+    virtual std::vector<PositionData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept = 0;
     virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
     virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
 };

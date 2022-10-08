@@ -25,19 +25,22 @@
 #ifndef SQLITEENUMERATIONDAO_H
 #define SQLITEENUMERATIONDAO_H
 
-#include <QString>
+class QString;
 
+#include <Model/Enumeration.h>
 #include "../EnumerationDaoIntf.h"
-
-class Enumeration;
 
 class SQLiteEnumerationDao : public EnumerationDaoIntf
 {
 public:
-    SQLiteEnumerationDao() noexcept;
-    ~SQLiteEnumerationDao() noexcept override;
+    SQLiteEnumerationDao() = default;
+    SQLiteEnumerationDao(const SQLiteEnumerationDao &rhs) = delete;
+    SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs);
+    SQLiteEnumerationDao &operator=(const SQLiteEnumerationDao &rhs) = delete;
+    SQLiteEnumerationDao &operator=(SQLiteEnumerationDao &&rhs);
+    ~SQLiteEnumerationDao() override;
 
-    bool get(Enumeration &enumeration) const noexcept override;
+    Enumeration get(const QString &name, bool *ok = nullptr) const noexcept override;
 };
 
 #endif // SQLITEENUMERATIONDAO_H

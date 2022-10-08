@@ -31,6 +31,11 @@ class QUuid;
 class PluginIntf
 {
 public:
+    PluginIntf() = default;
+    PluginIntf(const PluginIntf &rhs) = delete;
+    PluginIntf(PluginIntf &&rhs) = default;
+    PluginIntf &operator=(const PluginIntf &rhs) = delete;
+    PluginIntf &operator=(PluginIntf &&rhs) = default;
     virtual ~PluginIntf() = default;
 
     virtual QWidget *getParentWidget() const noexcept = 0;

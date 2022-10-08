@@ -26,7 +26,6 @@
 #define EXPORT_H
 
 #include <vector>
-#include <iterator>
 
 #include <QStringView>
 #include <QString>
@@ -68,7 +67,7 @@ public:
      */
     static QString formatNumber(double number) noexcept;
 
-    static void resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) noexcept;
+    static std::vector<PositionData> resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 };
 
 #endif // EXPORT_H

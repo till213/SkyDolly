@@ -28,9 +28,8 @@
 #include <Kernel/Settings.h>
 #include "PluginBase.h"
 
-class PluginBasePrivate
+struct PluginBasePrivate
 {
-public:
     PluginBasePrivate()
         : parent(nullptr)
     {}
@@ -44,8 +43,7 @@ PluginBase::PluginBase()
     : d(std::make_unique<PluginBasePrivate>())
 {}
 
-PluginBase::~PluginBase()
-{}
+PluginBase::~PluginBase() = default;
 
 QWidget *PluginBase::getParentWidget() const noexcept
 {

@@ -34,20 +34,14 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API AircraftHandle : public AbstractComponent<AircraftHandleData>
+class MODEL_API AircraftHandle final : public AbstractComponent<AircraftHandleData>
 {
 public:
     explicit AircraftHandle(const AircraftInfo &aircraftInfo) noexcept;
-    AircraftHandle(AircraftHandle &other) = default;
-    AircraftHandle(AircraftHandle &&other) = default;
-    ~AircraftHandle() noexcept override;
-    AircraftHandle &operator=(const AircraftHandle &rhs) = default;
-    AircraftHandle &operator=(AircraftHandle &&rhs) = default;
 
-    const AircraftHandleData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    AircraftHandleData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    AircraftHandleData m_currentAircraftHandleData;
     AircraftHandleData m_previousAircraftHandleData;
 };
 

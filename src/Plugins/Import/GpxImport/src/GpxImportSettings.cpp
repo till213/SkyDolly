@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
@@ -47,9 +50,8 @@ namespace
     constexpr bool DefaultConvertAltitude {true};
 }
 
-class GpxImportSettingsPrivate
+struct GpxImportSettingsPrivate
 {
-public:
     GpxImportSettingsPrivate()
         : waypointSelection(::DefaultWaypointSelection),
           positionSelection(::DefaultPositionSelection),
@@ -71,14 +73,14 @@ GpxImportSettings::GpxImportSettings() noexcept
     : d(std::make_unique<GpxImportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("GpxImportSettings::GpxImportSettings: CREATED");
+    qDebug() << "GpxImportSettings::GpxImportSettings: CREATED";
 #endif
 }
 
 GpxImportSettings::~GpxImportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("GpxImportSettings::~GpxImportSettings: DELETED");
+    qDebug() << "GpxImportSettings::~GpxImportSettings: DELETED";
 #endif
 }
 
@@ -201,7 +203,7 @@ void GpxImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void GpxImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     int enumeration = valuesByKey.at(::WaypointSelectionKey).toInt(&ok);
     if (ok) {
         d->waypointSelection = static_cast<GPXElement >(enumeration);

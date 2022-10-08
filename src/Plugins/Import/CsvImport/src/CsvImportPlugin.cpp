@@ -40,9 +40,8 @@
 #include "CsvImportOptionWidget.h"
 #include "CsvImportPlugin.h"
 
-class CsvImportPluginPrivate
+struct CsvImportPluginPrivate
 {
-public:
     CsvImportPluginPrivate()
     {}
 
@@ -59,14 +58,14 @@ CsvImportPlugin::CsvImportPlugin() noexcept
     : d(std::make_unique<CsvImportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("CsvImportPlugin::CsvImportPlugin: PLUGIN LOADED");
+    qDebug() << "CsvImportPlugin::CsvImportPlugin: PLUGIN LOADED";
 #endif
 }
 
 CsvImportPlugin::~CsvImportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("CsvImportPlugin::~CsvImportPlugin: PLUGIN UNLOADED");
+    qDebug() << "CsvImportPlugin::~CsvImportPlugin: PLUGIN UNLOADED";
 #endif
 }
 
@@ -94,8 +93,6 @@ std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
 
 bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
 {
-    bool ok;
-
     std::unique_ptr<CsvParserIntf> parser;
     switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
@@ -108,10 +105,9 @@ bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
         parser = std::make_unique<FlightRecorderCsvParser>();
         break;
     }
+    bool ok {false};
     if (parser != nullptr) {
         ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber, flight);
-    } else {
-        ok = false;
     }
     return ok;
 }

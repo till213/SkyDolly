@@ -26,6 +26,9 @@
 #include <memory>
 
 #include <QColor>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -71,9 +74,8 @@ namespace
 
 }
 
-class KmlExportSettingsPrivate
+struct KmlExportSettingsPrivate
 {
-public:
     KmlExportSettingsPrivate()
         : colorStyle(::DefaultColorStyle),
           nofColorsPerRamp(::DefaultNofColorsPerRamp),
@@ -108,14 +110,14 @@ KmlExportSettings::KmlExportSettings() noexcept
       d(std::make_unique<KmlExportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("KmlExportSettings::KmlExportSettings: CREATED");
+    qDebug() << "KmlExportSettings::KmlExportSettings: CREATED";
 #endif
 }
 
 KmlExportSettings::~KmlExportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("KmlExportSettings::~KmlExportSettings: DELETED");
+    qDebug() << "KmlExportSettings::~KmlExportSettings: DELETED";
 #endif
 }
 
@@ -369,7 +371,7 @@ void KmlExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void KmlExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     const int enumeration = valuesByKey.at(::ColorStyleKey).toInt(&ok);
     if (ok) {
         d->colorStyle = static_cast<KmlExportSettings::ColorStyle >(enumeration);

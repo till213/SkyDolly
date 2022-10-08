@@ -38,9 +38,8 @@
 #include "AircraftInfoWidget.h"
 #include "ui_AircraftInfoWidget.h"
 
-class AircraftInfoWidgetPrivate
+struct AircraftInfoWidgetPrivate
 {
-public:
     AircraftInfoWidgetPrivate() noexcept
     {}
 
@@ -51,8 +50,8 @@ public:
 
 AircraftInfoWidget::AircraftInfoWidget(QWidget *parent) noexcept :
     QWidget(parent),
-    d(std::make_unique<AircraftInfoWidgetPrivate>()),
-    ui(std::make_unique<Ui::AircraftInfoWidget>())
+    ui(std::make_unique<Ui::AircraftInfoWidget>()),
+    d(std::make_unique<AircraftInfoWidgetPrivate>())
 {
     ui->setupUi(this);
     initUi();
@@ -69,10 +68,13 @@ void AircraftInfoWidget::showEvent(QShowEvent *event) noexcept
     updateUi();
 
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &aircraft = flight.getUserAircraft();
-    connect(&aircraft, &Aircraft::infoChanged,
+    connect(&flight, &Flight::infoChanged,
             this, &AircraftInfoWidget::updateUi);
     connect(&flight, &Flight::userAircraftChanged,
+            this, &AircraftInfoWidget::updateUi);
+    connect(&flight, &Flight::flightStored,
+            this, &AircraftInfoWidget::updateUi);
+    connect(&flight, &Flight::flightRestored,
             this, &AircraftInfoWidget::updateUi);
 }
 
@@ -80,10 +82,13 @@ void AircraftInfoWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &aircraft = flight.getUserAircraft();
-    disconnect(&aircraft, &Aircraft::infoChanged,
-            this, &AircraftInfoWidget::updateUi);
+    disconnect(&flight, &Flight::infoChanged,
+               this, &AircraftInfoWidget::updateUi);
     disconnect(&flight, &Flight::userAircraftChanged,
+               this, &AircraftInfoWidget::updateUi);
+    disconnect(&flight, &Flight::flightStored,
+               this, &AircraftInfoWidget::updateUi);
+    disconnect(&flight, &Flight::flightRestored,
                this, &AircraftInfoWidget::updateUi);
 }
 

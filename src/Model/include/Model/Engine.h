@@ -30,20 +30,12 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API Engine : public AbstractComponent<EngineData>
+class MODEL_API Engine final : public AbstractComponent<EngineData>
 {
 public:
     explicit Engine(const AircraftInfo &aircraftInfo) noexcept;
-    Engine(Engine &other) = default;
-    Engine(Engine &&other) = default;
-    ~Engine() noexcept override;
-    Engine &operator=(const Engine &rhs) = default;
-    Engine &operator=(Engine &&rhs) = default;
 
-    const EngineData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
-
-private:
-    EngineData m_currentEngineData;
+    EngineData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 };
 
 #endif // ENGINE_H

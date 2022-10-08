@@ -43,7 +43,11 @@ class PLUGINMANAGER_API AbstractModule : public QObject, public ModuleIntf
     Q_INTERFACES(ModuleIntf)
 public:
     explicit AbstractModule(QObject *parent = nullptr) noexcept;
-    ~AbstractModule() noexcept override;
+    AbstractModule(const AbstractModule &rhs) = delete;
+    AbstractModule(AbstractModule &&rhs) = delete;
+    AbstractModule &operator=(const AbstractModule &rhs) = delete;
+    AbstractModule &operator=(AbstractModule &&rhs) = delete;
+    ~AbstractModule() override;
 
     ModuleIntf::RecordIconId getRecordIconId() const noexcept override;
     void setRecording(bool enable) noexcept override;
@@ -61,7 +65,7 @@ protected slots:
     void onRecordingStopped() noexcept override;
 
 private:
-    std::unique_ptr<AbstractModulePrivate> d;
+    const std::unique_ptr<AbstractModulePrivate> d;
 
     void frenchConnection() noexcept;
 };

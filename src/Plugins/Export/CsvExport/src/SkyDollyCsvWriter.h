@@ -43,18 +43,18 @@ struct SecondaryFlightControlData;
 struct AircraftHandleData;
 struct LightData;
 class CsvExportSettings;
-class SkyDollyCsvWriterPrivate;
+struct SkyDollyCsvWriterPrivate;
 
 class SkyDollyCsvWriter : public CsvWriterIntf
 {
 public:
     SkyDollyCsvWriter(const CsvExportSettings &pluginSettings) noexcept;
-    virtual ~SkyDollyCsvWriter() noexcept;
+    ~SkyDollyCsvWriter() noexcept override;
 
-    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
+    bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
 
 private:
-    std::unique_ptr<SkyDollyCsvWriterPrivate> d;
+    const std::unique_ptr<SkyDollyCsvWriterPrivate> d;
 
     static QString getPositionHeader() noexcept;
     static QString getPositionData(const PositionData &data) noexcept;

@@ -35,7 +35,7 @@
 
 class Flight;
 class ExportPluginBaseSettings;
-class BasicExportDialogPrivate;
+struct BasicExportDialogPrivate;
 
 namespace Ui {
     class BasicExportDialog;
@@ -47,7 +47,11 @@ class PLUGINMANAGER_API BasicExportDialog : public QDialog
 public:
 
     explicit BasicExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, ExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
-    virtual ~BasicExportDialog() noexcept;
+    BasicExportDialog(const BasicExportDialog &rhs) = delete;
+    BasicExportDialog(BasicExportDialog &&rhs) = delete;
+    BasicExportDialog &operator=(const BasicExportDialog &rhs) = delete;
+    BasicExportDialog &operator=(BasicExportDialog &&rhs) = delete;
+    ~BasicExportDialog() override;
 
     QString getSelectedFilePath() const noexcept;
     void setSelectedFilePath(const QString &filePath) noexcept;
@@ -55,8 +59,8 @@ public:
     void setOptionWidget(QWidget *widget) noexcept;
 
 private:
-    std::unique_ptr<Ui::BasicExportDialog> ui;
-    std::unique_ptr<BasicExportDialogPrivate> d;
+    const std::unique_ptr<Ui::BasicExportDialog> ui;
+    const std::unique_ptr<BasicExportDialogPrivate> d;
 
     void initUi() noexcept;
     void initBasicUi() noexcept;

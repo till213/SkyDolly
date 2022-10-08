@@ -26,17 +26,17 @@
 
 #include <QString>
 #include <QXmlStreamReader>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
-#include "Kml.h"
 #include "AbstractKmlTrackParser.h"
 #include "GenericKmlParser.h"
 
-class GenericKmlParserPrivate
+struct GenericKmlParserPrivate
 {
-public:
     GenericKmlParserPrivate() noexcept
     {}
-
 };
 
 // PUBLIC
@@ -46,14 +46,14 @@ GenericKmlParser::GenericKmlParser() noexcept
       d(std::make_unique<GenericKmlParserPrivate>())
 {
 #ifdef DEBUG
-    qDebug("GenericKmlParser::GenericKmlParser: CREATED");
+    qDebug() << "GenericKmlParser::GenericKmlParser: CREATED";
 #endif
 }
 
 GenericKmlParser::~GenericKmlParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("GenericKmlParser::~GenericKmlParser: DELETED");
+    qDebug() << "GenericKmlParser::~GenericKmlParser: DELETED";
 #endif
 }
 

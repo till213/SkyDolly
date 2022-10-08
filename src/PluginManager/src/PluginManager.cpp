@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <mutex>
 
 #include <QCoreApplication>
 #include <QPluginLoader>
@@ -44,20 +45,19 @@
 
 namespace
 {
-    constexpr char ExportDirectoryName[] = "Export";
-    constexpr char ImportDirectoryName[] = "Import";
+    constexpr const char *ExportDirectoryName {"Export"};
+    constexpr const char *ImportDirectoryName {"Import"};
 #if defined(Q_OS_MAC)
-    constexpr char PluginDirectoryName[] = "PlugIns";
+    constexpr const char *PluginDirectoryName {"PlugIns"};
 #else
-    constexpr char PluginDirectoryName[] = "Plugins";
+    constexpr const char *PluginDirectoryName {"Plugins"};
 #endif
-    constexpr char PluginUuidKey[] = "uuid";
-    constexpr char PluginNameKey[] = "name";
+    constexpr const char *PluginUuidKey {"uuid"};
+    constexpr const char *PluginNameKey {"name"};
 }
 
-class PluginManagerPrivate
+struct PluginManagerPrivate
 {
-public:
     PluginManagerPrivate() noexcept
         : parentWidget(nullptr)
     {
@@ -71,26 +71,26 @@ public:
         pluginsDirectory.cd(PluginDirectoryName);
     }
 
-    ~PluginManagerPrivate() noexcept
-    {}
+    ~PluginManagerPrivate() = default;
 
     QWidget *parentWidget;
     QDir pluginsDirectory;
     // Plugin UUID / plugin path
     QMap<QUuid, QString> exportPluginRegistry;
     QMap<QUuid, QString> importPluginRegistry;
-    static PluginManager *instance;
+
+    static inline std::once_flag onceFlag;
+    static inline PluginManager *instance;
 };
 
-PluginManager *PluginManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
 PluginManager &PluginManager::getInstance() noexcept
 {
-    if (PluginManagerPrivate::instance == nullptr) {
+    std::call_once(PluginManagerPrivate::onceFlag, []() {
         PluginManagerPrivate::instance = new PluginManager();
-    }
+    });
     return *PluginManagerPrivate::instance;
 }
 
@@ -119,7 +119,7 @@ std::vector<PluginManager::Handle> PluginManager::initialiseImportPlugins() noex
 
 bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept
 {
-    bool ok;
+    bool ok {false};
     if (d->importPluginRegistry.contains(pluginUuid)) {
         const QString pluginPath = d->importPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
@@ -134,15 +134,13 @@ bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightS
             ok = false;
         }
         loader.unload();
-    } else {
-        ok = false;
     }
     return ok;
 }
 
 bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept
 {
-    bool ok;
+    bool ok {false};
     if (d->exportPluginRegistry.contains(pluginUuid)) {
         const QString pluginPath = d->exportPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
@@ -157,19 +155,8 @@ bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) 
             ok = false;
         }
         loader.unload();
-    } else {
-        ok = false;
     }
     return ok;
-}
-
-// PROTECTED
-
-PluginManager::~PluginManager() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "PluginManager::~PluginManager: DELETED";
-#endif
 }
 
 // PRIVATE
@@ -179,6 +166,13 @@ PluginManager::PluginManager() noexcept
 {
 #ifdef DEBUG
     qDebug() << "PluginManager::PluginManager: CREATED";
+#endif
+}
+
+PluginManager::~PluginManager()
+{
+#ifdef DEBUG
+    qDebug() << "PluginManager::~PluginManager: DELETED";
 #endif
 }
 

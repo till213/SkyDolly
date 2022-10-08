@@ -41,20 +41,19 @@ namespace
     constexpr QRgb PolygonHighlightColor = 0xcc7ed5c9;
     constexpr QRgb PolygonColor = 0x337ed5c9;
 
-    constexpr char JetStyleId[] = "s_jet_style";
-    constexpr char TurbopropStyleId[] = "s_turbo_prop_style";
-    constexpr char PistonStyleId[] = "s_piston_style";
-    constexpr char AllStyleId[] = "s_all_style";
+    constexpr const char *JetStyleId {"s_jet_style"};
+    constexpr const char *TurbopropStyleId {"s_turbo_prop_style"};
+    constexpr const char *PistonStyleId {"s_piston_style"};
+    constexpr const char *AllStyleId {"s_all_style"};
 
-    constexpr char JetStyleMapId[] = "sm_jet_style";
-    constexpr char TurbopropStyleMapId[] = "sm_turbo_prop_style";
-    constexpr char PistonStyleMapId[] = "sm_piston_style";
-    constexpr char AllStyleMapId[] = "sm_all_style";
+    constexpr const char *JetStyleMapId {"sm_jet_style"};
+    constexpr const char *TurbopropStyleMapId {"sm_turbo_prop_style"};
+    constexpr const char *PistonStyleMapId {"sm_piston_style"};
+    constexpr const char *AllStyleMapId {"sm_all_style"};
 }
 
-class KmlStyleExportPrivate
+struct KmlStyleExportPrivate
 {
-public:
     KmlStyleExportPrivate(const KmlExportSettings &theExportSettings) noexcept
         : settings(theExportSettings),
           jetColorRampIndex(0),
@@ -222,7 +221,7 @@ bool KmlStyleExport::exportHighlightLineStyle(QIODevice &io) const noexcept
 bool KmlStyleExport::exportNormalLineStyles(QIODevice &io) const noexcept
 {
     const float lineWidth = d->settings.getLineWidth();
-    bool ok = true;
+    bool ok {true};
     if (d->settings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
         // Per engine type (one color or ramp)
         ok = exportNormalLineStylesPerEngineType(SimType::EngineType::Jet, d->jetColorRamp, lineWidth, io);
@@ -241,7 +240,7 @@ bool KmlStyleExport::exportNormalLineStyles(QIODevice &io) const noexcept
 
 bool KmlStyleExport::exportLineStyleMaps(QIODevice &io) const noexcept
 {
-    bool ok = true;
+    bool ok {true};
 
     // Jet style map
     if (d->settings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
@@ -397,7 +396,7 @@ bool KmlStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType eng
         break;
     }
 
-    bool ok = true;
+    bool ok {true};
     int index = 0;
     const QRgb polygonColorKml = Color::convertRgbToKml(PolygonColor);
 

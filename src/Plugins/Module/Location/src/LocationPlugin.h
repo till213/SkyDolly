@@ -49,7 +49,7 @@ public:
     QWidget *getWidget() const noexcept override;
 
 private:
-    std::unique_ptr<LocationPluginPrivate> d;
+    const std::unique_ptr<LocationPluginPrivate> d;
 
     void frenchConnection() noexcept;
 

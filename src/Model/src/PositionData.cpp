@@ -34,16 +34,5 @@ PositionData::PositionData(double theLatitude, double theLongitude, double theAl
       latitude(theLatitude),
       longitude(theLongitude),
       altitude(theAltitdue),
-      indicatedAltitude(theAltitdue),
-      pitch(0.0),
-      bank(0.0),
-      trueHeading(0.0),
-      velocityBodyX(0.0),
-      velocityBodyY(0.0),
-      velocityBodyZ(0.0),
-      rotationVelocityBodyX(0.0),
-      rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0)
+      indicatedAltitude(theAltitdue)
 {}
-
-const PositionData PositionData::NullData = PositionData(0.0, 0.0, 0.0);
