@@ -26,6 +26,7 @@
 #define SQLITELOCATIONDAO_H
 
 #include <cstdint>
+#include <vector>
 
 #include "../LocationDaoIntf.h"
 
