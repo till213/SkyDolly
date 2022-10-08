@@ -60,7 +60,7 @@ SQLiteDatabaseDao::SQLiteDatabaseDao() noexcept
 SQLiteDatabaseDao::SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) = default;
 SQLiteDatabaseDao &SQLiteDatabaseDao::operator=(SQLiteDatabaseDao &&rhs) = default;
 
-SQLiteDatabaseDao::~SQLiteDatabaseDao() noexcept
+SQLiteDatabaseDao::~SQLiteDatabaseDao()
 {
     disconnectSQLite();
 }
