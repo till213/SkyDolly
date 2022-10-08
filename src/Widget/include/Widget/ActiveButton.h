@@ -48,7 +48,7 @@ class WIDGET_API ActiveButton : public QPushButton
 {
     Q_OBJECT
 public:
-    ActiveButton(QWidget *parent) noexcept;
+    explicit ActiveButton(QWidget *parent) noexcept;
     ~ActiveButton() noexcept override;
 
 protected:

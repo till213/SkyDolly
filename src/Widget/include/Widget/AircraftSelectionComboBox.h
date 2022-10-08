@@ -39,8 +39,8 @@ class WIDGET_API AircraftSelectionComboBox : public QComboBox
 {
     Q_OBJECT
 public:
-    AircraftSelectionComboBox(QWidget *parent = nullptr) noexcept;
-    ~AircraftSelectionComboBox() noexcept override;
+    explicit AircraftSelectionComboBox(QWidget *parent = nullptr) noexcept;
+    ~AircraftSelectionComboBox() override;
 
 private:
     const std::unique_ptr<AircraftSelectionComboBoxPrivate> d;
