@@ -41,7 +41,7 @@ class QDateTime;
 
 class Aircraft;
 
-class CsvExportPluginPrivate;
+struct CsvExportPluginPrivate;
 
 class CsvExportPlugin : public ExportPluginBase
 {
@@ -62,7 +62,7 @@ protected:
     virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
 
 private:
-    std::unique_ptr<CsvExportPluginPrivate> d;
+    const std::unique_ptr<CsvExportPluginPrivate> d;
 };
 
 #endif // CSVEXPORTPLUGIN_H

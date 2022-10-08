@@ -35,13 +35,17 @@
 #include "../PersistenceLib.h"
 
 class SkyConnectIntf;
-class FlightServicePrivate;
+struct FlightServicePrivate;
 
 class PERSISTENCE_API FlightService
 {
 public:
     FlightService() noexcept;
-    ~FlightService() noexcept;
+    FlightService(const FlightService &rhs) = delete;
+    FlightService(FlightService &&rhs);
+    FlightService &operator=(const FlightService &rhs) = delete;
+    FlightService &operator=(FlightService &&rhs);
+    ~FlightService();
 
     bool store(Flight &flight) noexcept;
     bool restore(std::int64_t id, Flight &flight) noexcept;

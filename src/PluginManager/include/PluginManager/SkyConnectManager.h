@@ -43,13 +43,18 @@ class QUuid;
 #include "SkyConnectIntf.h"
 #include "PluginManagerLib.h"
 
-class skyConnectManagerPrivate;
+struct skyConnectManagerPrivate;
 
 /// \todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
-class PLUGINMANAGER_API SkyConnectManager : public QObject
+class PLUGINMANAGER_API SkyConnectManager final : public QObject
 {
     Q_OBJECT
 public:
+    SkyConnectManager(const SkyConnectManager &rhs) = delete;
+    SkyConnectManager(SkyConnectManager &&rhs) = delete;
+    SkyConnectManager &operator=(const SkyConnectManager &rhs) = delete;
+    SkyConnectManager &operator=(SkyConnectManager &&rhs) = delete;
+
     static SkyConnectManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
@@ -79,21 +84,21 @@ public:
     SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
     void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;
 
-    void startRecording(SkyConnectIntf::RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition::NullData) noexcept;
+    void startRecording(SkyConnectIntf::RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept;
     void stopRecording() noexcept;
     bool isRecording() const noexcept;
     bool isInRecordingState() const noexcept;
 
-    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition::NullData) noexcept;
+    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept;
     void stopReplay() noexcept;
     bool isReplaying() const noexcept;
     bool isInReplayState() const noexcept;
 
     /*!
-     * Returns \c true in case the SkyConnect connection is \em active, that is either
+     * Returns \c true in case the SkyConnect connection is \eactive, that is either
      * a replay or recording (including paused states) is taking place.
      *
-     * \return \c true if the SkyConnect connection is \em active; \c false else
+     * \return \c true if the SkyConnect connection is \eactive; \c false else
      * \sa isInRecordingState
      * \sa isInReplayState
      */
@@ -168,14 +173,11 @@ signals:
      */
     void locationReceived(Location location);
 
-protected:
-    ~SkyConnectManager() noexcept override;
-
 private:
-    Q_DISABLE_COPY(SkyConnectManager)
-    std::unique_ptr<skyConnectManagerPrivate> d;
+    const std::unique_ptr<skyConnectManagerPrivate> d;
 
     SkyConnectManager() noexcept;
+    ~SkyConnectManager() override;
 
     void frenchConnection() noexcept;
     void initialisePlugins(const QString &pluginDirectoryName) noexcept;

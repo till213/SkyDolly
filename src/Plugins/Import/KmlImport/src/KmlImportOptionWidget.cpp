@@ -23,15 +23,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <QComboBox>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include "KmlImportOptionWidget.h"
 #include "KmlImportSettings.h"
 #include "ui_KmlImportOptionWidget.h"
 
-class KmlImportOptionWidgetPrivate
+struct KmlImportOptionWidgetPrivate
 {
-public:
     KmlImportOptionWidgetPrivate(KmlImportSettings &theImportSettings) noexcept
         : settings(theImportSettings)
     {}
@@ -51,14 +53,14 @@ KmlImportOptionWidget::KmlImportOptionWidget(KmlImportSettings &settings, QWidge
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug("KmlImportOptionWidget::KmlImportOptionWidget: CREATED");
+    qDebug() << "KmlImportOptionWidget::KmlImportOptionWidget: CREATED";
 #endif
 }
 
 KmlImportOptionWidget::~KmlImportOptionWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug("KmlImportOptionWidget::~KmlImportOptionWidget: DELETED");
+    qDebug() << "KmlImportOptionWidget::~KmlImportOptionWidget: DELETED";
 #endif
 }
 

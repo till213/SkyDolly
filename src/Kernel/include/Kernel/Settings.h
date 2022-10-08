@@ -42,8 +42,8 @@
 #include "SampleRate.h"
 #include "KernelLib.h"
 
-class SettingsPrivate;
 class Version;
+struct SettingsPrivate;
 
 /*!
  * The application settings. These settings are persisted to user configuration
@@ -53,6 +53,11 @@ class KERNEL_API Settings final : public QObject
 {
     Q_OBJECT
 public:
+
+    Settings(const Settings &rhs) = delete;
+    Settings(Settings &&rhs) = delete;
+    Settings &operator=(const Settings &rhs) = delete;
+    Settings &operator=(Settings &&rhs) = delete;
 
     /*!
      * Returns the singleton Settings instance.
@@ -798,13 +803,11 @@ signals:
      */
     void changed();
 
-protected:
-    ~Settings() noexcept override;
-
 private:
-    std::unique_ptr<SettingsPrivate> d;
+    const std::unique_ptr<SettingsPrivate> d;
 
     Settings() noexcept;
+    ~Settings() final;
 
     void frenchConnection() noexcept;
 

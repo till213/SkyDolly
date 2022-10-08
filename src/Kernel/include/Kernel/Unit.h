@@ -37,7 +37,7 @@ class QTime;
 
 #include "KernelLib.h"
 
-class UnitPrivate;
+struct UnitPrivate;
 
 class KERNEL_API Unit final
 {
@@ -51,6 +51,10 @@ public:
     };
 
     Unit();
+    Unit(const Unit &rhs) = delete;
+    Unit(Unit &&rhs);
+    Unit &operator=(const Unit &rhs) = delete;
+    Unit &operator=(Unit &&rhs);
     ~Unit();
 
     /*!

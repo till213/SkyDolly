@@ -23,8 +23,11 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
+#include <mutex>
 
 #include <QString>
+#include <QStringBuilder>
 #include <QFileInfo>
 #include <QDir>
 #include <QMessageBox>
@@ -44,16 +47,15 @@
 #include "Dao/DaoFactory.h"
 #include "Dao/DatabaseDaoIntf.h"
 #include "Service/DatabaseService.h"
-#include "LogbookManager.h"
+#include "PersistenceManager.h"
 
 namespace {
     constexpr int MaxBackupIndex = 1024;
 }
 
-class LogbookManagerPrivate
+struct PersistenceManagerPrivate
 {
-public:
-    LogbookManagerPrivate() noexcept
+    PersistenceManagerPrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           databaseDao(daoFactory->createDatabaseDao()),
           connected(false)
@@ -64,33 +66,33 @@ public:
     QString logbookPath;
     bool connected;
 
-    static LogbookManager *instance;
+    static inline std::once_flag onceFlag;
+    static inline PersistenceManager *instance;
 };
 
-LogbookManager *LogbookManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
-LogbookManager &LogbookManager::getInstance() noexcept
+PersistenceManager &PersistenceManager::getInstance() noexcept
 {
-    if (LogbookManagerPrivate::instance == nullptr) {
-        LogbookManagerPrivate::instance = new LogbookManager();
-    }
-    return *LogbookManagerPrivate::instance;
+    std::call_once(PersistenceManagerPrivate::onceFlag, []() {
+        PersistenceManagerPrivate::instance = new PersistenceManager();
+    });
+    return *PersistenceManagerPrivate::instance;
 }
 
-void LogbookManager::destroyInstance() noexcept
+void PersistenceManager::destroyInstance() noexcept
 {
-    if (LogbookManagerPrivate::instance != nullptr) {
-        delete LogbookManagerPrivate::instance;
-        LogbookManagerPrivate::instance = nullptr;
+    if (PersistenceManagerPrivate::instance != nullptr) {
+        delete PersistenceManagerPrivate::instance;
+        PersistenceManagerPrivate::instance = nullptr;
     }
 }
 
-bool LogbookManager::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
+bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
 {
     QString currentLogbookPath = logbookPath;
-    bool ok = true;
+    bool ok {true};
     bool retry = true;
     while (retry && ok) {
         const QString logbookDirectoryPath = QFileInfo(currentLogbookPath).absolutePath();
@@ -106,8 +108,8 @@ bool LogbookManager::connectWithLogbook(const QString &logbookPath, QWidget *par
             }
             ok = connectDb(currentLogbookPath);
             if (ok) {
-                Version databaseVersion;
-                ok = checkDatabaseVersion(databaseVersion);
+                const auto & [success, databaseVersion] = checkDatabaseVersion();
+                ok = success;
                 if (ok) {
                     Settings &settings = Settings::getInstance();
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -115,8 +117,7 @@ bool LogbookManager::connectWithLogbook(const QString &logbookPath, QWidget *par
                     // Create a backup before migration of existing logbooks
                     Version appVersion;
                     if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < appVersion) {
-                        QString backupDirectoryPath;
-                        ok = d->databaseDao->getBackupDirectoryPath(backupDirectoryPath);
+                        QString backupDirectoryPath = d->databaseDao->getBackupDirectoryPath(&ok);
                         if (ok) {
                             if (backupDirectoryPath.isNull()) {
                                 // Default backup location, relative to logbook path
@@ -187,7 +188,7 @@ bool LogbookManager::connectWithLogbook(const QString &logbookPath, QWidget *par
     return ok;
 }
 
-void LogbookManager::disconnectFromLogbook() noexcept
+void PersistenceManager::disconnectFromLogbook() noexcept
 {
     d->databaseDao->disconnectDb();
     d->logbookPath.clear();
@@ -195,62 +196,66 @@ void LogbookManager::disconnectFromLogbook() noexcept
     emit connectionChanged(d->connected);
 }
 
-bool LogbookManager::isConnected() const noexcept
+bool PersistenceManager::isConnected() const noexcept
 {
     return d->connected;
 }
 
-const QString &LogbookManager::getLogbookPath() const noexcept
+const QString &PersistenceManager::getLogbookPath() const noexcept
 {
     return d->logbookPath;
 }
 
-bool LogbookManager::migrate() noexcept
+bool PersistenceManager::migrate() noexcept
 {
     return d->databaseDao->migrate();
 }
 
-bool LogbookManager::optimise() noexcept
+bool PersistenceManager::optimise() noexcept
 {
     return d->databaseDao->optimise();
 }
 
-bool LogbookManager::backup(const QString &backupLogbookPath) noexcept
+bool PersistenceManager::backup(const QString &backupLogbookPath) noexcept
 {
     return d->databaseDao->backup(backupLogbookPath);
 }
 
-bool LogbookManager::getMetadata(Metadata &metadata) const noexcept
+Metadata PersistenceManager::getMetadata(bool *ok) const noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->databaseDao->getMetadata(metadata);
+    Metadata metadata;
+    bool success = QSqlDatabase::database().transaction();
+    if (success) {
+        metadata = d->databaseDao->getMetadata(&success);
         QSqlDatabase::database().rollback();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return metadata;
 }
 
-bool LogbookManager::getDatabaseVersion(Version &databaseVersion) const noexcept
+Version PersistenceManager::getDatabaseVersion(bool *ok) const noexcept
 {
-    return d->databaseDao->getDatabaseVersion(databaseVersion);
+    return d->databaseDao->getDatabaseVersion(ok);
 }
 
-bool LogbookManager::getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept
+QString PersistenceManager::getBackupDirectoryPath(bool *ok) const noexcept
 {
-    return d->databaseDao->getBackupDirectoryPath(backupDirectoryPath);
+    return d->databaseDao->getBackupDirectoryPath(ok);
 }
 
-QString LogbookManager::getBackupFileName(const QString &backupDirectoryPath) const noexcept
+QString PersistenceManager::getBackupFileName(const QString &backupDirectoryPath) const noexcept
 {
     QDir backupDir(backupDirectoryPath);
     const QString &logbookPath = getLogbookPath();
     const QFileInfo logbookInfo = QFileInfo(logbookPath);
     const QString baseName = logbookInfo.completeBaseName();
     const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
-    QString backupLogbookName = baseBackupLogbookName + Const::LogbookExtension;
+    QString backupLogbookName = baseBackupLogbookName % Const::LogbookExtension;
     int index = 1;
     while (backupDir.exists(backupLogbookName) && index <= MaxBackupIndex) {
-        backupLogbookName = baseBackupLogbookName + QString("-%1").arg(index) + Const::LogbookExtension;
+        backupLogbookName = baseBackupLogbookName % QString("-%1").arg(index) % Const::LogbookExtension;
         ++index;
     }
     if (index <= MaxBackupIndex) {
@@ -260,12 +265,12 @@ QString LogbookManager::getBackupFileName(const QString &backupDirectoryPath) co
     }
 }
 
-QString LogbookManager::createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
+QString PersistenceManager::createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
 {
     QString existingBackupPath;
     if (QDir::isRelativePath(relativeOrAbsoluteBackupDirectoryPath)) {
-        const LogbookManager &LogbookManager = LogbookManager::getInstance();
-        const QString &logbookDirectoryPath = QFileInfo(LogbookManager.getLogbookPath()).absolutePath();
+        const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+        const QString &logbookDirectoryPath = QFileInfo(persistenceManager.getLogbookPath()).absolutePath();
         existingBackupPath = logbookDirectoryPath + "/" + QFileInfo(relativeOrAbsoluteBackupDirectoryPath).fileName();
     } else {
         existingBackupPath = relativeOrAbsoluteBackupDirectoryPath;
@@ -281,49 +286,46 @@ QString LogbookManager::createBackupPathIfNotExists(const QString &relativeOrAbs
     return existingBackupPath;
 }
 
-// PROTECTED
+// PRIVATE
 
-LogbookManager::~LogbookManager() noexcept
+PersistenceManager::PersistenceManager() noexcept
+    : QObject(),
+      d(std::make_unique<PersistenceManagerPrivate>())
+{
+#ifdef DEBUG
+    qDebug() << "PersistenceManager::PersistenceManager: CREATED";
+#endif
+}
+
+PersistenceManager::~PersistenceManager()
 {
     disconnectFromLogbook();
 #ifdef DEBUG
-    qDebug() << "LogbookManager::~LogbookManager: DELETED";
+    qDebug() << "PersistenceManager::~PersistenceManager: DELETED";
 #endif
 }
 
-// PRIVATE
-
-LogbookManager::LogbookManager() noexcept
-    : QObject(),
-      d(std::make_unique<LogbookManagerPrivate>())
+bool PersistenceManager::connectDb(const QString &logbookPath) noexcept
 {
-#ifdef DEBUG
-    qDebug() << "LogbookManager::LogbookManager: CREATED";
-#endif
-}
-
-bool LogbookManager::connectDb(const QString &logbookPath) noexcept
-{
-    bool ok;
+    bool ok {true};
     if (d->logbookPath != logbookPath) {
         ok = d->databaseDao->connectDb(logbookPath);
         d->logbookPath = logbookPath;
-    } else {
-        ok = false;
     }
     return ok;
 }
 
-bool LogbookManager::checkDatabaseVersion(Version &databaseVersion) const noexcept
+std::pair<bool, Version>  PersistenceManager::checkDatabaseVersion() const noexcept
 {
-    Version currentAppVersion;
-    bool ok = getDatabaseVersion(databaseVersion);
-    if (ok) {
-        ok = currentAppVersion >= databaseVersion;
+    std::pair<bool, Version> result;
+    result.second = getDatabaseVersion(&result.first);
+    if (result.first) {
+        Version currentAppVersion;
+        result.first = currentAppVersion >= result.second;
     } else {
         // New database - no metadata exists yet
-        ok = true;
-        databaseVersion = Version(0, 0, 0);
+        result.first = true;
+        result.second = Version(0, 0, 0);
     }
-    return ok;
+    return result;
 }

@@ -46,9 +46,8 @@
 #include "ExportPluginBaseSettings.h"
 #include "ExportPluginBase.h"
 
-class ExportPluginBasePrivate
+struct ExportPluginBasePrivate
 {
-public:
     ExportPluginBasePrivate()
     {}
 
@@ -59,18 +58,9 @@ public:
 
 ExportPluginBase::ExportPluginBase() noexcept
     : d(std::make_unique<ExportPluginBasePrivate>())
-{
-#ifdef DEBUG
-    qDebug("ExportPluginBase::ExportPluginBase: CREATED");
-#endif
-}
+{}
 
-ExportPluginBase::~ExportPluginBase() noexcept
-{
-#ifdef DEBUG
-    qDebug("ExportPluginBase::~ExportPluginBase: DELETED");
-#endif
-}
+ExportPluginBase::~ExportPluginBase() = default;
 
 bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
 {
@@ -160,7 +150,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
     }
     QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
-    qDebug("%s export %s in %lld ms", qPrintable(QFileInfo(filePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
+    qDebug() << QFileInfo(filePath).fileName() << "export" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
 #endif
 
     if (ok) {
@@ -181,7 +171,7 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
 {
     bool ok {true};
     bool replaceAll {false};
-    int i = 1;
+    int i {1};
     for (const auto &aircraft : flight) {
         // Don't append sequence numbers if flight has only one aircraft
         const QString sequencedFilePath = flight.count() > 1 ? File::getSequenceFilePath(filePath, i) : filePath;
@@ -209,10 +199,10 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
             QGuiApplication::processEvents();
         }
 
-        QFile file(sequencedFilePath);
+        QFile file {sequencedFilePath};
         ok = file.open(QIODevice::WriteOnly);
         if (ok) {
-            ok = exportAircraft(flight, *aircraft, file);
+            ok = exportAircraft(flight, aircraft, file);
             d->exportedFilePaths.push_back(sequencedFilePath);
         }
         file.close();

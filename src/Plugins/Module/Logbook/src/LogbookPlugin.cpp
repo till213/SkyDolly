@@ -56,14 +56,14 @@ LogbookPlugin::LogbookPlugin(QObject *parent) noexcept
       d(std::make_unique<LogbookPluginPrivate>(getFlightService()))
 {
 #ifdef DEBUG
-    qDebug() << "LogbookPlugin::LogbookPlugin: CREATED.";
+    qDebug() << "LogbookPlugin::LogbookPlugin: CREATED";
 #endif
 }
 
 LogbookPlugin::~LogbookPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "LogbookPlugin::~LogbookPlugin: DELETED.";
+    qDebug() << "LogbookPlugin::~LogbookPlugin: DELETED";
 #endif
 }
 

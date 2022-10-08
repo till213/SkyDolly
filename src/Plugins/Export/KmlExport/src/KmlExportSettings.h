@@ -33,7 +33,7 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/ExportPluginBaseSettings.h>
 
-class KmlExportSettingsPrivate;
+struct KmlExportSettingsPrivate;
 
 class KmlExportSettings : public ExportPluginBaseSettings
 {
@@ -47,7 +47,7 @@ public:
     };
 
     KmlExportSettings() noexcept;
-    virtual ~KmlExportSettings() noexcept;
+    ~KmlExportSettings() noexcept override;
 
     ColorStyle getColorStyle() const noexcept;
     void setColorStyle(ColorStyle colorStyle) noexcept;
@@ -85,13 +85,13 @@ signals:
     void extendedSettingsChanged();
 
 protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
 
 private:
-    std::unique_ptr<KmlExportSettingsPrivate> d;
+   const std::unique_ptr<KmlExportSettingsPrivate> d;
 };
 
 #endif // KMLEXPORTSETTINGS_H

@@ -73,7 +73,8 @@
 #include <Model/Logbook.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/DatabaseService.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/PersistenceManager.h>
+#include "Persistence/Metadata.h"
 #include <Widget/ActionButton.h>
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
@@ -127,9 +128,8 @@ namespace
     };
 }
 
-class MainWindowPrivate
+struct MainWindowPrivate
 {
-public:
     MainWindowPrivate() noexcept
         : previousState(Connect::State::Connected),
           connectedWithLogbook(false),
@@ -213,13 +213,13 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
 MainWindow::~MainWindow() noexcept
 {
 #ifdef DEBUG
-    qDebug("MainWindow::~MainWindow: DELETED");
+    qDebug() << "MainWindow::~MainWindow: DELETED";
 #endif
 }
 
 bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 {
-    bool ok = LogbookManager::getInstance().connectWithLogbook(filePath, this);
+    bool ok = PersistenceManager::getInstance().connectWithLogbook(filePath, this);
     if (!ok) {
         QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
     }
@@ -239,8 +239,9 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
 {
     QMainWindow::closeEvent(event);
 
-    Metadata metaData;
-    if (LogbookManager::getInstance().getMetadata(metaData)) {
+    bool ok {true};
+    const Metadata metaData = PersistenceManager::getInstance().getMetadata(&ok);
+    if (ok) {
         if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
             std::unique_ptr<LogbookBackupDialog> backupDialog = std::make_unique<LogbookBackupDialog>(this);
             backupDialog->exec();
@@ -293,7 +294,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onReplayLoopChanged);
 
     // Logbook connection
-    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
+    connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &MainWindow::onLogbookConnectionChanged);
 
     // Ui elements
@@ -1118,7 +1119,7 @@ void MainWindow::onTimestampChanged(std::int64_t timestamp) noexcept
 void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
 {
     ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(ReplaySpeedProperty).toInt());
-    double replaySpeedFactor;
+    double replaySpeedFactor {1.0};
     switch (replaySpeed) {
     case ReplaySpeed::Slow10:
         replaySpeedFactor = 0.1;
@@ -1422,7 +1423,7 @@ void MainWindow::createNewLogbook() noexcept
 {
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
-        const bool ok = LogbookManager::getInstance().connectWithLogbook(logbookPath, this);
+        const bool ok = PersistenceManager::getInstance().connectWithLogbook(logbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be created.").arg(QDir::toNativeSeparators(logbookPath)));
         }
@@ -1439,8 +1440,8 @@ void MainWindow::openLogbook() noexcept
 
 void MainWindow::optimiseLogbook() noexcept
 {
-    LogbookManager &logbookManager = LogbookManager::getInstance();
-    QString logbookPath = logbookManager.getLogbookPath();
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    QString logbookPath = persistenceManager.getLogbookPath();
     QFileInfo fileInfo = QFileInfo(logbookPath);
 
     std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
@@ -1457,7 +1458,7 @@ void MainWindow::optimiseLogbook() noexcept
     const QAbstractButton *clickedButton = messageBox->clickedButton();
     if (clickedButton == optimiseButton) {
         QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-        const bool ok = LogbookManager::getInstance().optimise();
+        const bool ok = persistenceManager.optimise();
         QGuiApplication::restoreOverrideCursor();
         if (ok) {
             fileInfo.refresh();

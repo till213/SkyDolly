@@ -27,9 +27,8 @@
 #include <Kernel/Unit.h>
 #include "TableDateItem.h"
 
-class TableDateItemPrivate
+struct TableDateItemPrivate
 {
-public:
     TableDateItemPrivate(const QDate &theDate) noexcept
         : date(theDate)
     {}

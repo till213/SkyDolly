@@ -35,10 +35,9 @@ class QHideEvent;
 #include <Model/TimeVariableData.h>
 #include "AbstractSimulationVariableWidget.h"
 
-
 class SkyConnectIntf;
 struct AircraftHandleData;
-class AircraftHandleWidgetPrivate;
+struct AircraftHandleWidgetPrivate;
 
 namespace Ui {
     class AircraftHandleWidget;
@@ -49,17 +48,17 @@ class AircraftHandleWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit AircraftHandleWidget(QWidget *parent) noexcept;
-    virtual ~AircraftHandleWidget() noexcept;
+    ~AircraftHandleWidget() noexcept override;
 
 protected slots:
-    virtual void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    std::unique_ptr<AircraftHandleWidgetPrivate> d;
     std::unique_ptr<Ui::AircraftHandleWidget> ui;
+    const std::unique_ptr<AircraftHandleWidgetPrivate> d;
 
     void initUi() noexcept;
-    const AircraftHandleData &getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    AircraftHandleData getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // AIRCRAFTHANDLEWIDGET_H

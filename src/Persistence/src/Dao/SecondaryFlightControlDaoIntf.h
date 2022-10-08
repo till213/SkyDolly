@@ -26,7 +26,6 @@
 #define SECONDARYFLIGHTCONTROLDAOINTF_H
 
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
 struct SecondaryFlightControlData;
@@ -34,6 +33,11 @@ struct SecondaryFlightControlData;
 class SecondaryFlightControlDaoIntf
 {
 public:
+    SecondaryFlightControlDaoIntf() = default;
+    SecondaryFlightControlDaoIntf(const SecondaryFlightControlDaoIntf &rhs) = delete;
+    SecondaryFlightControlDaoIntf(SecondaryFlightControlDaoIntf &&rhs) = default;
+    SecondaryFlightControlDaoIntf &operator=(const SecondaryFlightControlDaoIntf &rhs) = delete;
+    SecondaryFlightControlDaoIntf &operator=(SecondaryFlightControlDaoIntf &&rhs) = default;
     virtual ~SecondaryFlightControlDaoIntf() = default;
 
     /*!
@@ -46,7 +50,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(std::int64_t aircraftId, const SecondaryFlightControlData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<SecondaryFlightControlData>> backInsertIterator) const noexcept = 0;
+    virtual std::vector<SecondaryFlightControlData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept = 0;
     virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
     virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
 };

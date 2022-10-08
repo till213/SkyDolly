@@ -26,7 +26,7 @@
 #define LOCATIONSERVICE_H
 
 #include <memory>
-#include <iterator>
+#include <vector>
 #include <cstdint>
 #include <cstddef>
 
@@ -34,19 +34,23 @@
 #include "../PersistenceLib.h"
 
 struct LocationSelector;
-class LocationServicePrivate;
+struct LocationServicePrivate;
 
 class PERSISTENCE_API LocationService
 {
 public:
     LocationService() noexcept;
-    ~LocationService() noexcept;
+    LocationService(const LocationService &rhs) = delete;
+    LocationService(LocationService &&rhs);
+    LocationService &operator=(const LocationService &rhs) = delete;
+    LocationService &operator=(LocationService &&rhs);
+    ~LocationService();
 
     bool store(Location &location) noexcept;
     bool update(const Location &location) noexcept;
     bool deleteById(std::int64_t id) noexcept;
-    bool getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept;
-    bool getSelectedLocations(const LocationSelector &locationSelector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept;
+    std::vector<Location> getAll(bool *ok = nullptr) const noexcept;
+    std::vector<Location> getSelectedLocations(const LocationSelector &locationSelector, bool *ok = nullptr) const noexcept;
 
 private:
     std::unique_ptr<LocationServicePrivate> d;

@@ -32,7 +32,7 @@
 
 #include "WidgetLib.h"
 
-class BackupPeriodComboBoxPrivate;
+struct BackupPeriodComboBoxPrivate;
 
 class WIDGET_API BackupPeriodComboBox : public QComboBox
 {
@@ -55,13 +55,13 @@ public:
     };
 
     BackupPeriodComboBox(QWidget *parent = nullptr, Selection selection = Selection::BackupPeriod) noexcept;
-    virtual ~BackupPeriodComboBox() noexcept;
+    ~BackupPeriodComboBox() noexcept override;
 
     Selection getSelection() const noexcept;
     void setSelection(Selection selection) noexcept;
 
 private:
-    std::unique_ptr<BackupPeriodComboBoxPrivate> d;
+    const std::unique_ptr<BackupPeriodComboBoxPrivate> d;
     void initUi() noexcept;
     void updateUi() noexcept;
 };

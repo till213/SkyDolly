@@ -25,6 +25,8 @@
 #include <memory>
 
 #include <QCoreApplication>
+#include <QString>
+#include <QStringBuilder>
 #include <QWidget>
 #include <QFileInfo>
 #include <QDir>
@@ -38,7 +40,7 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Const.h>
 #include <Model/Logbook.h>
-#include <LogbookManager.h>
+#include <PersistenceManager.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/DatabaseDaoIntf.h"
 #include <Service/DatabaseService.h>
@@ -51,7 +53,7 @@ namespace
     constexpr int BackupPeriodOneDay = 1;
 }
 
-class DatabaseServicePrivate
+struct DatabaseServicePrivate
 {
 public:
     DatabaseServicePrivate() noexcept
@@ -67,35 +69,28 @@ public:
 
 DatabaseService::DatabaseService() noexcept
     : d(std::make_unique<DatabaseServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug("DatabaseService::DatabaseService: CREATED.");
-#endif
-}
+{}
 
-DatabaseService::~DatabaseService() noexcept
-{
-#ifdef DEBUG
-    qDebug("DatabaseService::~DatabaseService: DELETED.");
-#endif
-}
+DatabaseService::DatabaseService(DatabaseService &&rhs) = default;
+DatabaseService &DatabaseService::operator=(DatabaseService &&rhs) = default;
+DatabaseService::~DatabaseService() = default;
 
 bool DatabaseService::backup() noexcept
 {
     QString backupDirectoryPath;
 
-    LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metaData;
-    bool ok = logbookManager.getMetadata(metaData);
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    bool ok {true};
+    const Metadata metaData = persistenceManager.getMetadata(&ok);
     if (ok) {
-        backupDirectoryPath = LogbookManager::createBackupPathIfNotExists(metaData.backupDirectoryPath);
+        backupDirectoryPath = PersistenceManager::createBackupPathIfNotExists(metaData.backupDirectoryPath);
     }
     ok = !backupDirectoryPath.isNull();
     if (ok) {
-        const QString backupFileName = logbookManager.getBackupFileName(backupDirectoryPath);
+        const QString backupFileName = persistenceManager.getBackupFileName(backupDirectoryPath);
         if (!backupFileName.isNull()) {
             const QString backupFilePath = backupDirectoryPath + "/" + backupFileName;
-            ok = logbookManager.backup(backupFilePath);
+            ok = persistenceManager.backup(backupFilePath);
             if (ok) {
                 ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
             }
@@ -140,8 +135,8 @@ bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
 
 bool DatabaseService::updateBackupDate() noexcept
 {
-    Metadata metaData;
-    bool ok = LogbookManager::getInstance().getMetadata(metaData);
+    bool ok {true};
+    const Metadata metaData = PersistenceManager::getInstance().getMetadata(&ok);
     if (ok) {
         const QDateTime today = QDateTime::currentDateTime();
         QDateTime nextBackupDate = metaData.lastBackupDate.isNull() ? today : metaData.lastBackupDate;
@@ -180,7 +175,7 @@ QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
 {
     Settings &settings = Settings::getInstance();
     QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
-    QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open Logbook"), existingLogbookPath, QString("*") + Const::LogbookExtension);
+    QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open Logbook"), existingLogbookPath, QString("*") % Const::LogbookExtension);
     return logbookPath;
 }
 
@@ -201,7 +196,7 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
         if (!logbookDirectoryPath.isEmpty()) {
             QFileInfo info = QFileInfo(logbookDirectoryPath);
             if (!info.exists()) {
-                newLogbookPath = logbookDirectoryPath + "/" + info.fileName() + Const::LogbookExtension;
+                newLogbookPath = logbookDirectoryPath + "/" % info.fileName() % Const::LogbookExtension;
                 retry = false;
             } else {
                 QMessageBox::information(parent, QCoreApplication::translate("DatabaseService", "Database exists"),

@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
 #include <cstdint>
 #include <cmath>
 
@@ -30,6 +31,9 @@
 #include <QChar>
 #include <QString>
 #include <QStringBuilder>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Unit.h>
@@ -54,9 +58,8 @@ namespace
     inline const QString DirectionColumn = QStringLiteral("Direction");
 }
 
-class FlightRadar24CsvWriterPrivate
+struct FlightRadar24CsvWriterPrivate
 {
-public:
     FlightRadar24CsvWriterPrivate(const CsvExportSettings &thePluginSettings) noexcept
         : pluginSettings(thePluginSettings)
     {}
@@ -72,14 +75,14 @@ FlightRadar24CsvWriter::FlightRadar24CsvWriter(const CsvExportSettings &pluginSe
     : d(std::make_unique<FlightRadar24CsvWriterPrivate>(pluginSettings))
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24CsvWriter::FlightRadar24CsvWriter: CREATED");
+    qDebug() << "FlightRadar24CsvWriter::FlightRadar24CsvWriter: CREATED";
 #endif
 }
 
 FlightRadar24CsvWriter::~FlightRadar24CsvWriter() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24CsvWriter::~FlightRadar24CsvWriter: DELETED");
+    qDebug() << "FlightRadar24CsvWriter::~FlightRadar24CsvWriter: DELETED";
 #endif
 }
 
@@ -99,9 +102,8 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
     if (ok) {
         const QDateTime startDateTimeUtc = flight.getAircraftStartZuluTime(aircraft);
         const QString callSign = aircraft.getAircraftInfo().flightNumber;
-        std::vector<PositionData> interpolatedPositionData;
-        Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
-        for (PositionData &positionData : interpolatedPositionData) {
+        const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+        for (const PositionData &positionData : interpolatedPositionData) {
             if (!positionData.isNull()) {
                 const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
                 const std::int64_t secsSinceEpoch = dateTimeUtc.toSecsSinceEpoch();

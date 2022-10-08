@@ -32,7 +32,7 @@
 
 #include "WidgetLib.h"
 
-class ActionRadioButtonPrivate;
+struct ActionRadioButtonPrivate;
 
 /*!
  * An extension of a QRadioButton that supports QAction.
@@ -50,7 +50,7 @@ class WIDGET_API ActionRadioButton : public QRadioButton
     Q_OBJECT
 public:
     explicit ActionRadioButton(QWidget *parent = nullptr) noexcept;
-    virtual ~ActionRadioButton() noexcept;
+    ~ActionRadioButton() noexcept override;
 
     /*!
      * Sets the action to be associated with this radio button. This radio button is
@@ -64,8 +64,7 @@ public:
     void setAction(const QAction *action) noexcept;
 
 private:
-    Q_DISABLE_COPY(ActionRadioButton)
-    std::unique_ptr<ActionRadioButtonPrivate> d;
+    const std::unique_ptr<ActionRadioButtonPrivate> d;
 
 private slots:
 

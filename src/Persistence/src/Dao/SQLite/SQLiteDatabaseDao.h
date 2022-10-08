@@ -27,21 +27,25 @@
 
 #include <memory>
 
-#include <QtGlobal>
+#include <QString>
 
-class QString;
 class QDateTime;
 
-#include <Metadata.h>
+#include <Kernel/Version.h>
 #include "../DatabaseDaoIntf.h"
+#include "Metadata.h"
 
-class DatabaseDaoPrivate;
+struct DatabaseDaoPrivate;
 
 class SQLiteDatabaseDao : public DatabaseDaoIntf
 {
 public:
     SQLiteDatabaseDao() noexcept;
-    ~SQLiteDatabaseDao() noexcept override;
+    SQLiteDatabaseDao(const SQLiteDatabaseDao &rhs) = delete;
+    SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs);
+    SQLiteDatabaseDao &operator=(const SQLiteDatabaseDao &rhs) = delete;
+    SQLiteDatabaseDao &operator=(SQLiteDatabaseDao &&rhs);
+    ~SQLiteDatabaseDao() override;
 
     bool connectDb(const QString &logbookPath) noexcept override;
     void disconnectDb() noexcept override;
@@ -53,12 +57,11 @@ public:
     bool updateNextBackupDate(const QDateTime &date) noexcept override;
     bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept override;
 
-    bool getMetadata(Metadata &metadata) const noexcept override;
-    bool getDatabaseVersion(Version &databaseVersion) const noexcept override;
-    bool getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept override;
+    Metadata getMetadata(bool *ok = nullptr) const noexcept override;
+    Version getDatabaseVersion(bool *ok = nullptr) const noexcept override;
+    QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept override;
 
 private:
-    Q_DISABLE_COPY(SQLiteDatabaseDao)
     std::unique_ptr<DatabaseDaoPrivate> d;
 
     void disconnectSQLite() noexcept;

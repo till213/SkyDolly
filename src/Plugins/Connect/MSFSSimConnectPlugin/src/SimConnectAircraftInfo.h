@@ -33,6 +33,7 @@
 #include <QDate>
 #include <QTime>
 
+#include <Kernel/Const.h>
 #include <Kernel/SkyMath.h>
 #include <Model/SimType.h>
 #include <Model/Aircraft.h>
@@ -122,7 +123,7 @@ struct SimConnectAircraftInfo
 
     inline AircraftInfo toAircraftInfo() const noexcept
     {
-        AircraftInfo aircraftInfo(Aircraft::InvalidId);
+        AircraftInfo aircraftInfo(Const::InvalidId);
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&title[0], sizeof(title), nullptr))) {

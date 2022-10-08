@@ -26,6 +26,9 @@
 #include <memory>
 
 #include <QString>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -41,9 +44,8 @@ namespace
     constexpr GpxExportSettings::TimestampMode DefaultTimestampMode {GpxExportSettings::TimestampMode::Simulation};
 }
 
-class GpxExportSettingsPrivate
+struct GpxExportSettingsPrivate
 {
-public:
     GpxExportSettingsPrivate()
     : timestampMode(::DefaultTimestampMode)
     {}
@@ -58,14 +60,14 @@ GpxExportSettings::GpxExportSettings() noexcept
       d(std::make_unique<GpxExportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("GpxExportSettings::GpxExportSettings: CREATED");
+    qDebug() << "GpxExportSettings::GpxExportSettings: CREATED";
 #endif
 }
 
 GpxExportSettings::~GpxExportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("GpxExportSettings::~GpxExportSettings: DELETED");
+    qDebug() << "GpxExportSettings::~GpxExportSettings: DELETED";
 #endif
 }
 
@@ -104,7 +106,7 @@ void GpxExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void GpxExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     const int enumeration = valuesByKey.at(::TimestampModeKey).toInt(&ok);
     if (ok) {
         d->timestampMode = static_cast<GpxExportSettings::TimestampMode >(enumeration);

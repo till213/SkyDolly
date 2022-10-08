@@ -32,6 +32,9 @@
 #include <QSqlRecord>
 #include <QDateTime>
 #include <QTimeZone>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/FlightPlan.h>
 #include <Model/Waypoint.h>
@@ -39,11 +42,9 @@
 
 // PUBLIC
 
-SQLiteWaypointDao::SQLiteWaypointDao() noexcept
-{}
-
-SQLiteWaypointDao::~SQLiteWaypointDao() noexcept
-{}
+SQLiteWaypointDao::SQLiteWaypointDao(SQLiteWaypointDao &&rhs) = default;
+SQLiteWaypointDao &SQLiteWaypointDao::operator=(SQLiteWaypointDao &&rhs) = default;
+SQLiteWaypointDao::~SQLiteWaypointDao() = default;
 
 bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPlan)  noexcept
 {
@@ -86,7 +87,7 @@ bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPla
         ok = query.exec();
         if (!ok) {
 #ifdef DEBUG
-            qDebug("SQLiteWaypointDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+            qDebug() << "SQLiteWaypointDao::add: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
             break;
         }
@@ -130,7 +131,7 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteWaypointDao::getByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteWaypointDao::getByAircraftId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -153,7 +154,7 @@ bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) noexcept
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteWaypointDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteWaypointDao::deleteByFlightId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -172,7 +173,7 @@ bool SQLiteWaypointDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteWaypointDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteWaypointDao::deleteByAircraftId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return true;

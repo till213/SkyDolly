@@ -24,15 +24,17 @@
  */
 #include <QComboBox>
 #include <QString>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include "GpxExportOptionWidget.h"
 #include "GpxExportSettings.h"
 #include "ui_GpxExportOptionWidget.h"
 
-class GpxExportOptionWidgetPrivate
+struct GpxExportOptionWidgetPrivate
 {
-public:
     GpxExportOptionWidgetPrivate(GpxExportSettings &theSettings) noexcept
         : settings(theSettings)
     {}
@@ -52,14 +54,14 @@ GpxExportOptionWidget::GpxExportOptionWidget(GpxExportSettings &settings, QWidge
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug("GpxExportOptionWidget::GpxExportOptionWidget: CREATED");
+    qDebug() << "GpxExportOptionWidget::GpxExportOptionWidget: CREATED";
 #endif
 }
 
 GpxExportOptionWidget::~GpxExportOptionWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug("GpxExportOptionWidget::~GpxExportOptionWidget: DELETED");
+    qDebug() << "GpxExportOptionWidget::~GpxExportOptionWidget: DELETED";
 #endif
 }
 

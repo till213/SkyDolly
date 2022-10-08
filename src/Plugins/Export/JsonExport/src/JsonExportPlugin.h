@@ -42,7 +42,7 @@ class Flight;
 class Aircraft;
 struct PositionData;
 struct Waypoint;
-class JsonExportPluginPrivate;
+struct JsonExportPluginPrivate;
 
 class JsonExportPlugin : public ExportPluginBase
 {
@@ -51,19 +51,19 @@ class JsonExportPlugin : public ExportPluginBase
     Q_INTERFACES(ExportIntf)
 public:
     JsonExportPlugin() noexcept;
-    virtual ~JsonExportPlugin() noexcept;
+    ~JsonExportPlugin() noexcept override;
 
 protected:
-    virtual ExportPluginBaseSettings &getPluginSettings() const noexcept override;
-    virtual QString getFileSuffix() const noexcept override;
-    virtual QString getFileFilter() const noexcept override;
-    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    virtual bool hasMultiAircraftSupport() const noexcept override;
-    virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
-    virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
+    ExportPluginBaseSettings &getPluginSettings() const noexcept override;
+    QString getFileSuffix() const noexcept override;
+    QString getFileFilter() const noexcept override;
+    std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    bool hasMultiAircraftSupport() const noexcept override;
+    bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
+    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
 
 private:
-    std::unique_ptr<JsonExportPluginPrivate> d;
+    const std::unique_ptr<JsonExportPluginPrivate> d;
 
     bool exportHeader(QIODevice &io) const noexcept;
     bool exportAllAircraft(QIODevice &io) const noexcept;

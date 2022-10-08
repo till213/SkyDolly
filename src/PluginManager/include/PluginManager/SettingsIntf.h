@@ -34,8 +34,12 @@ class PLUGINMANAGER_API SettingsIntf : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~SettingsIntf()
-    {}
+    SettingsIntf() = default;
+    SettingsIntf(const SettingsIntf &rhs) = delete;
+    SettingsIntf(SettingsIntf &&rhs) = delete;
+    SettingsIntf &operator=(const SettingsIntf &rhs) = delete;
+    SettingsIntf &operator=(SettingsIntf &&rhs) = delete;
+    ~SettingsIntf() override = default;
 
     virtual Settings::KeyValues getSettings() const noexcept = 0;
     virtual Settings::KeysWithDefaults getKeysWithDefault() const noexcept = 0;

@@ -28,9 +28,8 @@
 
 #include "ActiveButton.h"
 
-class ActiveButtonPrivate
+struct ActiveButtonPrivate
 {
-public:
     ActiveButtonPrivate()
     {}
 

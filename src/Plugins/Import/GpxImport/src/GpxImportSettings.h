@@ -33,7 +33,7 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/ImportPluginBaseSettings.h>
 
-class GpxImportSettingsPrivate;
+struct GpxImportSettingsPrivate;
 
 class GpxImportSettings : public ImportPluginBaseSettings
 {
@@ -46,7 +46,7 @@ public:
     };
 
     GpxImportSettings() noexcept;
-    virtual ~GpxImportSettings() noexcept;
+    ~GpxImportSettings() noexcept override;
 
     GPXElement getWaypointSelection() const noexcept;
     void setWaypointSelection(GPXElement selection) noexcept;
@@ -70,13 +70,13 @@ signals:
     void extendedSettingsChanged();
 
 protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
 
 private:
-    std::unique_ptr<GpxImportSettingsPrivate> d;
+    const std::unique_ptr<GpxImportSettingsPrivate> d;
 };
 
 #endif // GPXIMPORTSETTINGS_H

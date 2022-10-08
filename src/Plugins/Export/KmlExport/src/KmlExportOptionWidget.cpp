@@ -27,6 +27,9 @@
 #include <QString>
 #include <QStringBuilder>
 #include <QColorDialog>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include "KmlExportOptionWidget.h"
@@ -46,15 +49,14 @@ namespace
         AllEndColor
     };
 
-    constexpr char DisabledColor[] = "#aaa";
+    constexpr const char *DisabledColor {"#aaa"};
 }
 
-class KmlExportOptionWidgetPrivate
+struct KmlExportOptionWidgetPrivate
 {
-public:
     KmlExportOptionWidgetPrivate(KmlExportSettings &theSettings) noexcept
-        : settings(theSettings),
-          colorButtonGroup(std::make_unique<QButtonGroup>())
+        : colorButtonGroup(std::make_unique<QButtonGroup>()),
+          settings(theSettings)
     {}
 
     std::unique_ptr<QButtonGroup> colorButtonGroup;
@@ -73,14 +75,14 @@ KmlExportOptionWidget::KmlExportOptionWidget(KmlExportSettings &settings, QWidge
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug("KmlExportOptionWidget::KmlExportOptionWidget: CREATED");
+    qDebug() << "KmlExportOptionWidget::KmlExportOptionWidget: CREATED";
 #endif
 }
 
 KmlExportOptionWidget::~KmlExportOptionWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug("KmlExportOptionWidget::~KmlExportOptionWidget: DELETED");
+    qDebug() << "KmlExportOptionWidget::~KmlExportOptionWidget: DELETED";
 #endif
 }
 

@@ -28,24 +28,25 @@
 #include <memory>
 #include <forward_list>
 #include <vector>
-#include <iterator>
 
-#include <QtGlobal>
-
-#include <FlightSelector.h>
 #include "../LogbookDaoIntf.h"
 
+struct FlightSelector;
 struct FlightDate;
 struct FlightSummary;
 
 class SQLiteLogbookDao : public LogbookDaoIntf
 {
 public:
-    SQLiteLogbookDao() noexcept;
-    ~SQLiteLogbookDao() noexcept override;
+    SQLiteLogbookDao() = default;
+    SQLiteLogbookDao(const SQLiteLogbookDao &rhs) = delete;
+    SQLiteLogbookDao(SQLiteLogbookDao &&rhs);
+    SQLiteLogbookDao &operator=(const SQLiteLogbookDao &rhs) = delete;
+    SQLiteLogbookDao &operator=(SQLiteLogbookDao &&rhs);
+    ~SQLiteLogbookDao() override;
 
     bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept override;
-    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept override;
+    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok) const noexcept override;
 };
 
 #endif // SQLITELOGBOOKDAO_H

@@ -25,7 +25,6 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
-#include <iterator>
 #include <unordered_map>
 #include <cstdint>
 
@@ -76,14 +75,14 @@ GpxExportPlugin::GpxExportPlugin() noexcept
     : d(std::make_unique<GpxExportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("GpxExportPlugin::GpxExportPlugin: PLUGIN LOADED");
+    qDebug() << "GpxExportPlugin::GpxExportPlugin: PLUGIN LOADED";
 #endif
 }
 
 GpxExportPlugin::~GpxExportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("GpxExportPlugin::~GpxExportPlugin: PLUGIN UNLOADED");
+    qDebug() << "GpxExportPlugin::~GpxExportPlugin: PLUGIN UNLOADED";
 #endif
 }
 
@@ -182,9 +181,9 @@ bool GpxExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 
 bool GpxExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
-    bool ok = true;
+    bool ok {true};
     for (const auto &aircraft : *d->flight) {
-        ok = exportAircraft(*aircraft, io);
+        ok = exportAircraft(aircraft, io);
         if (!ok) {
             break;
         }
@@ -203,9 +202,8 @@ bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
         break;
     }
 
-    std::vector<PositionData> interpolatedPositionData;
-    Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
-    bool ok = true;
+    const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    bool ok {true};
     if (interpolatedPositionData.size() > 0) {
 
         const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
@@ -218,7 +216,7 @@ bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 
         ok = io.write(trackBegin.toUtf8());
         if (ok) {
-            for (PositionData &positionData : interpolatedPositionData) {
+            for (const PositionData &positionData : interpolatedPositionData) {
                 ok = exportTrackPoint(positionData, io);
                 if (!ok) {
                     break;
@@ -239,7 +237,7 @@ bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 
 bool GpxExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
-    bool ok = true;
+    bool ok {true};
     const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlan();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);

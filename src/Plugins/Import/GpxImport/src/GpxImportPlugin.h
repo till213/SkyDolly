@@ -42,7 +42,7 @@ class Flight;
 struct AircraftInfo;
 struct FlightCondition;
 class ImportPluginBaseSettings;
-class GpxImportPluginPrivate;
+struct GpxImportPluginPrivate;
 
 class GpxImportPlugin : public ImportPluginBase
 {
@@ -51,25 +51,25 @@ class GpxImportPlugin : public ImportPluginBase
     Q_INTERFACES(ImportIntf)
 public:
     GpxImportPlugin() noexcept;
-    virtual ~GpxImportPlugin() noexcept;
+    ~GpxImportPlugin() noexcept override;
 
 protected:
-    virtual ImportPluginBaseSettings &getPluginSettings() const noexcept override;
-    virtual QString getFileSuffix() const noexcept override;
-    virtual QString getFileFilter() const noexcept override;
-    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    virtual bool importFlight(QFile &file, Flight &flight) noexcept override;
+    ImportPluginBaseSettings &getPluginSettings() const noexcept override;
+    QString getFileSuffix() const noexcept override;
+    QString getFileFilter() const noexcept override;
+    std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    bool importFlight(QFile &file, Flight &flight) noexcept override;
 
-    virtual FlightAugmentation::Procedures getProcedures() const noexcept override;
-    virtual FlightAugmentation::Aspects getAspects() const noexcept override;
-    virtual QDateTime getStartDateTimeUtc() noexcept override;
-    virtual QString getTitle() const noexcept override;
-    virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    virtual void updateExtendedFlightInfo(Flight &flight) noexcept override;
-    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
+    FlightAugmentation::Procedures getProcedures() const noexcept override;
+    FlightAugmentation::Aspects getAspects() const noexcept override;
+    QDateTime getStartDateTimeUtc() noexcept override;
+    QString getTitle() const noexcept override;
+    void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
+    void updateExtendedFlightInfo(Flight &flight) noexcept override;
+    void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 private:
-    std::unique_ptr<GpxImportPluginPrivate> d;
+    const std::unique_ptr<GpxImportPluginPrivate> d;
 
     void parseGPX() noexcept;
     void updateWaypoints() noexcept;

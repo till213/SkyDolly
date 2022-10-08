@@ -39,7 +39,6 @@
 #include <QDate>
 #include <QTime>
 
-#include "Convert.h"
 #include "Unit.h"
 
 namespace {
@@ -59,14 +58,14 @@ namespace {
     constexpr int CoordinatePrecision = 6;
 }
 
-class UnitPrivate {
+struct UnitPrivate {
 public:
     UnitPrivate()
     {}
 
     QLocale locale;
 
-    static inline QLatin1Char NumberPadding {QLatin1Char('0')};
+    static constexpr QLatin1Char NumberPadding {'0'};
 };
 
 // PUBLIC
@@ -75,8 +74,9 @@ Unit::Unit()
     : d(std::make_unique<UnitPrivate>())
 {}
 
-Unit::~Unit()
-{}
+Unit::Unit(Unit &&rhs) = default;
+Unit &Unit::operator=(Unit &&rhs) = default;
+Unit::~Unit() = default;
 
 QString Unit::formatLatitudeDMS(double latitude) const noexcept
 {
@@ -261,13 +261,13 @@ QString Unit::formatElapsedTime(std::int64_t milliSeconds) const noexcept
     if (qAbs(milliSeconds) < ::MillisecondsPerSecond) {
         elapsedTime = QCoreApplication::translate("Unit", "%1 milliseconds", nullptr, static_cast<int>(milliSeconds)).arg(milliSeconds);
     } else if (qAbs(milliSeconds) < ::MillisecondsPerSecond * ::SecondsPerMinute) {
-        const double seconds = static_cast<double>(milliSeconds) / ::MillisecondsPerSecond;
+        const double seconds = static_cast<double>(milliSeconds) / static_cast<double>(::MillisecondsPerSecond);
         elapsedTime = QCoreApplication::translate("Unit", "%1 seconds", nullptr, static_cast<int>(seconds)).arg(QString::number(seconds, 'f', 1));
     } else if (qAbs(milliSeconds) < ::MillisecondsPerSecond * ::SecondsPerMinute * ::MinutesPerHour) {
-        const double minutes = static_cast<double>(milliSeconds) / (::MillisecondsPerSecond * ::SecondsPerMinute);
+        const double minutes = static_cast<double>(milliSeconds) / static_cast<double>(::MillisecondsPerSecond * ::SecondsPerMinute);
         elapsedTime = QCoreApplication::translate("Unit", "%1 minutes", nullptr, static_cast<int>(minutes)).arg(QString::number(minutes, 'f', 1));
     } else {
-        const double hours = static_cast<double>(milliSeconds) / (::MillisecondsPerSecond * ::SecondsPerMinute * ::MinutesPerHour);
+        const double hours = static_cast<double>(milliSeconds) / static_cast<double>(::MillisecondsPerSecond * ::SecondsPerMinute * ::MinutesPerHour);
         elapsedTime = QCoreApplication::translate("Unit", "%1 hours", nullptr, static_cast<int>(hours)).arg(QString::number(hours, 'f', 1));
     }
 

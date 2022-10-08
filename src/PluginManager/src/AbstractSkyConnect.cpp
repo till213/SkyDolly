@@ -33,6 +33,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/Const.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
@@ -101,8 +102,7 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
     frenchConnection();
 }
 
-AbstractSkyConnect::~AbstractSkyConnect() noexcept
-{}
+AbstractSkyConnect::~AbstractSkyConnect() = default;
 
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
@@ -541,7 +541,7 @@ void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previo
         // by an invalid ID (= it has never been persisted). In such a case it does not
         // have an associated AI object either
         const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
-        if (userAircraft.getId() != Aircraft::InvalidId) {
+        if (userAircraft.getId() != Const::InvalidId) {
             removeAiObject(userAircraft.getId());
         }
         if (previousUserAircraftIndex != Flight::InvalidAircraftIndex) {
@@ -621,8 +621,8 @@ void AbstractSkyConnect::createAiObjects() noexcept
         const bool includingUserAircraft = getReplayMode() == ReplayMode::FlyWithFormation;
         const std::int64_t userAircraftId = d->currentFlight.getUserAircraft().getId();
         for (const auto &aircraft : d->currentFlight) {
-            if (aircraft->getId() != userAircraftId || includingUserAircraft) {
-                onAddAiObject(*aircraft);
+            if (aircraft.getId() != userAircraftId || includingUserAircraft) {
+                onAddAiObject(aircraft);
             }
         }
     }
@@ -687,7 +687,7 @@ bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
         --nofAttempts;
         if (!ok && nofAttempts > 0) {
 #ifdef DEBUG
-            qDebug("AbstractSkyConnect::retryWithReconnect: previous connection is stale, RETRY with reconnect %d more time(s)...", nofAttempts);
+            qDebug() << "AbstractSkyConnect::retryWithReconnect: previous connection is stale, RETRY with reconnect" << nofAttempts << "more time(s)...";
 #endif
             // Automatically reconnect in case the server crashed
             // previously (without sending a "quit" message)
@@ -701,7 +701,7 @@ bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
     return ok;
 }
 
-bool AbstractSkyConnect::setupInitialRecordingPosition(const InitialPosition &initialPosition) noexcept
+bool AbstractSkyConnect::setupInitialRecordingPosition(InitialPosition initialPosition) noexcept
 {
     bool ok {true};
     if (!initialPosition.isNull()) {
@@ -711,7 +711,7 @@ bool AbstractSkyConnect::setupInitialRecordingPosition(const InitialPosition &in
     return ok;
 }
 
-bool AbstractSkyConnect::setupInitialReplayPosition(const InitialPosition &flyWithFormationPosition) noexcept
+bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept
 {
     bool ok {true};
     switch (d->replayMode) {

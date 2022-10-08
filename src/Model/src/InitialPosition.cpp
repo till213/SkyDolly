@@ -31,12 +31,7 @@
 InitialPosition::InitialPosition(double theLatitude, double theLongitude, double theAltitude) noexcept
     : latitude(theLatitude),
       longitude(theLongitude),
-      altitude(theAltitude),
-      pitch(0.0),
-      bank(0.0),
-      trueHeading(0.0),
-      indicatedAirspeed(InvalidIndicatedAirspeed),
-      onGround(false)
+      altitude(theAltitude)
 {}
 
 InitialPosition::InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept
@@ -44,5 +39,3 @@ InitialPosition::InitialPosition(const PositionData &positionData, const Aircraf
     fromPositionData(positionData);
     onGround = aircraftInfo.startOnGround;
 }
-
-const InitialPosition InitialPosition::NullData = InitialPosition(0.0, 0.0, 0.0);

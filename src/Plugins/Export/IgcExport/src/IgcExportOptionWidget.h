@@ -34,18 +34,18 @@ namespace Ui {
 }
 
 class IgcExportSettings;
-class IgcExportOptionWidgetPrivate;
+struct IgcExportOptionWidgetPrivate;
 
 class IgcExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit IgcExportOptionWidget(IgcExportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~IgcExportOptionWidget() noexcept;
+    ~IgcExportOptionWidget() noexcept override;
 
 private:
     std::unique_ptr<Ui::IgcExportOptionWidget> ui;
-    std::unique_ptr<IgcExportOptionWidgetPrivate> d;
+    const std::unique_ptr<IgcExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;

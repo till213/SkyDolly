@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
@@ -37,9 +40,8 @@ namespace
     constexpr KmlImportSettings::Format DefaultFormat {KmlImportSettings::Format::FlightAware};
 }
 
-class KmlImportSettingsPrivate
+struct KmlImportSettingsPrivate
 {
-public:
     KmlImportSettingsPrivate()
         : format(::DefaultFormat)
     {}
@@ -53,14 +55,14 @@ KmlImportSettings::KmlImportSettings() noexcept
     : d(std::make_unique<KmlImportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("KmlImportSettings::KmlImportSettings: CREATED");
+    qDebug() << "KmlImportSettings::KmlImportSettings: CREATED";
 #endif
 }
 
 KmlImportSettings::~KmlImportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("KmlImportSettings::~KmlImportSettings: DELETED");
+    qDebug() << "KmlImportSettings::~KmlImportSettings: DELETED";
 #endif
 }
 
@@ -99,7 +101,7 @@ void KmlImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void KmlImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
     if (ok) {
         d->format = static_cast<Format >(enumeration);
