@@ -32,9 +32,9 @@
 namespace
 {
     // Keys
-    constexpr char ResamplingPeriodKey[] = "ResamplingPeriod";
-    constexpr char FormationExportKey[] = "FormationExport";
-    constexpr char OpenExportedFilesEnabledKey[] = "OpenExportedFilesEnabled";
+    constexpr const char *ResamplingPeriodKey {"ResamplingPeriod"};
+    constexpr const char *FormationExportKey {"FormationExport"};
+    constexpr const char *OpenExportedFilesEnabledKey {"OpenExportedFilesEnabled"};
 
     // Defaults
     constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;

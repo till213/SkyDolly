@@ -46,15 +46,15 @@
 
 namespace
 {
-    constexpr char ConnectPluginDirectoryName[] = "Connect";
+    constexpr const char *ConnectPluginDirectoryName {"Connect"};
 #if defined(Q_OS_MAC)
-    constexpr char PluginDirectoryName[] = "PlugIns";
+    constexpr const char *PluginDirectoryName {"PlugIns"};
 #else
-    constexpr char PluginDirectoryName[] = "Plugins";
+    constexpr const char *PluginDirectoryName {"Plugins"};
 #endif
-    constexpr char PluginUuidKey[] = "uuid";
-    constexpr char PluginNameKey[] = "name";
-    constexpr char PluginFlightSimulatorNameKey[] = "flightSimulator";
+    constexpr const char *PluginUuidKey {"uuid"};
+    constexpr const char *PluginNameKey {"name"};
+    constexpr const char *PluginFlightSimulatorNameKey {"flightSimulator"};
 }
 
 struct skyConnectManagerPrivate

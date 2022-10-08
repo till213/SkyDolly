@@ -78,17 +78,9 @@ StatisticsDialog::StatisticsDialog(QWidget *parent) noexcept :
     ui->setupUi(this);
     initUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "StatisticsDialog::StatisticsDialog: CREATED";
-#endif
 }
 
-StatisticsDialog::~StatisticsDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "StatisticsDialog::~StatisticsDialog: DELETED";
-#endif
-}
+StatisticsDialog::~StatisticsDialog() = default;
 
 // PROTECTED
 

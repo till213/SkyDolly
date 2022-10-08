@@ -62,55 +62,55 @@ namespace
     // Column names
 
     // Position
-    constexpr char Milliseconds[] = "Milliseconds";
-    constexpr char Latitude[] = "Latitude";
-    constexpr char Longitude[] = "Longitude";
-    constexpr char Altitude[] = "Altitude";
-    constexpr char Pitch[] = "Pitch";
-    constexpr char Bank[] = "Bank";
-    constexpr char TrueHeading[] = "TrueHeading";
-    constexpr char VelocityBodyX[] = "VelocityBodyX";
-    constexpr char VelocityBodyY[] = "VelocityBodyY";
-    constexpr char VelocityBodyZ[] = "VelocityBodyZ";
-    constexpr char RotationVelocityBodyX[] = "RotationVelocityBodyX";
-    constexpr char RotationVelocityBodyY[] = "RotationVelocityBodyY";
-    constexpr char RotationVelocityBodyZ[] = "RotationVelocityBodyZ";
+    constexpr const char *Milliseconds {"Milliseconds"};
+    constexpr const char *Latitude {"Latitude"};
+    constexpr const char *Longitude {"Longitude"};
+    constexpr const char *Altitude {"Altitude"};
+    constexpr const char *Pitch {"Pitch"};
+    constexpr const char *Bank {"Bank"};
+    constexpr const char *TrueHeading {"TrueHeading"};
+    constexpr const char *VelocityBodyX {"VelocityBodyX"};
+    constexpr const char *VelocityBodyY {"VelocityBodyY"};
+    constexpr const char *VelocityBodyZ {"VelocityBodyZ"};
+    constexpr const char *RotationVelocityBodyX {"RotationVelocityBodyX"};
+    constexpr const char *RotationVelocityBodyY {"RotationVelocityBodyY"};
+    constexpr const char *RotationVelocityBodyZ {"RotationVelocityBodyZ"};
 
     // Engine
-    constexpr char ThrottleLeverPosition1[] = "ThrottleLeverPosition1";
-    constexpr char ThrottleLeverPosition2[] = "ThrottleLeverPosition2";
-    constexpr char ThrottleLeverPosition3[] = "ThrottleLeverPosition3";
-    constexpr char ThrottleLeverPosition4[] = "ThrottleLeverPosition4";
+    constexpr const char *ThrottleLeverPosition1 {"ThrottleLeverPosition1"};
+    constexpr const char *ThrottleLeverPosition2 {"ThrottleLeverPosition2"};
+    constexpr const char *ThrottleLeverPosition3 {"ThrottleLeverPosition3"};
+    constexpr const char *ThrottleLeverPosition4 {"ThrottleLeverPosition4"};
 
     // Primary flight controls
-    constexpr char RudderPosition[] = "RudderPosition";
-    constexpr char ElevatorPosition[] = "ElevatorPosition";
-    constexpr char AileronPosition[] = "AileronPosition";
+    constexpr const char *RudderPosition {"RudderPosition"};
+    constexpr const char *ElevatorPosition {"ElevatorPosition"};
+    constexpr const char *AileronPosition {"AileronPosition"};
 
     // Secondary flight controls
-    constexpr char LeadingEdgeFlapsLeftPercent[] = "LeadingEdgeFlapsLeftPercent";
-    constexpr char LeadingEdgeFlapsRightPercent[] = "LeadingEdgeFlapsRightPercent";
-    constexpr char TrailingEdgeFlapsLeftPercent[] = "TrailingEdgeFlapsLeftPercent";
-    constexpr char TrailingEdgeFlapsRightPercent[] = "TrailingEdgeFlapsRightPercent";
-    constexpr char SpoilerHandlePosition[] = "SpoilerHandlePosition";
-    constexpr char FlapsHandleIndex[] = "FlapsHandleIndex";
+    constexpr const char *LeadingEdgeFlapsLeftPercent {"LeadingEdgeFlapsLeftPercent"};
+    constexpr const char *LeadingEdgeFlapsRightPercent {"LeadingEdgeFlapsRightPercent"};
+    constexpr const char *TrailingEdgeFlapsLeftPercent {"TrailingEdgeFlapsLeftPercent"};
+    constexpr const char *TrailingEdgeFlapsRightPercent {"TrailingEdgeFlapsRightPercent"};
+    constexpr const char *SpoilerHandlePosition {"SpoilerHandlePosition"};
+    constexpr const char *FlapsHandleIndex {"FlapsHandleIndex"};
 
     // Aircraft handles
-    constexpr char BrakeLeftPosition[] = "BrakeLeftPosition";
-    constexpr char BrakeRightPosition[] = "BrakeRightPosition";
-    constexpr char WaterRudderHandlePosition[] = "WaterRudderHandlePosition";
-    constexpr char GearHandlePosition[] = "GearHandlePosition";
+    constexpr const char *BrakeLeftPosition {"BrakeLeftPosition"};
+    constexpr const char *BrakeRightPosition {"BrakeRightPosition"};
+    constexpr const char *WaterRudderHandlePosition {"WaterRudderHandlePosition"};
+    constexpr const char *GearHandlePosition {"GearHandlePosition"};
 
     // Lights
-    constexpr char LightTaxi[] = "LightTaxi";
-    constexpr char LightLanding[] = "LightLanding";
-    constexpr char LightStrobe[] = "LightStrobe";
-    constexpr char LightBeacon[] = "LightBeacon";
-    constexpr char LightNav[] = "LightNav";
-    constexpr char LightWing[] = "LightWing";
-    constexpr char LightLogo[] = "LightLogo";
-    constexpr char LightRecognition[] = "LightRecognition";
-    constexpr char LightCabin[] = "LightCabin";
+    constexpr const char *LightTaxi {"LightTaxi"};
+    constexpr const char *LightLanding {"LightLanding"};
+    constexpr const char *LightStrobe {"LightStrobe"};
+    constexpr const char *LightBeacon {"LightBeacon"};
+    constexpr const char *LightNav {"LightNav"};
+    constexpr const char *LightWing {"LightWing"};
+    constexpr const char *LightLogo {"LightLogo"};
+    constexpr const char *LightRecognition {"LightRecognition"};
+    constexpr const char *LightCabin {"LightCabin"};
 
     constexpr int InvalidIdx = std::numeric_limits<int>::max();
 }

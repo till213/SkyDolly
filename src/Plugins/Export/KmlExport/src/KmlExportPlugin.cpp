@@ -58,8 +58,8 @@ namespace
     constexpr int MaxLineSegments = 16384;
 
     // Placemark "look at" direction
-    constexpr char LookAtTilt[] = "50";
-    constexpr char LookAtRange[] = "4000";
+    constexpr const char *LookAtTilt {"50"};
+    constexpr const char *LookAtRange {"4000"};
     constexpr int HeadingNorth = 0;
 }
 

@@ -41,15 +41,15 @@ namespace
     constexpr QRgb PolygonHighlightColor = 0xcc7ed5c9;
     constexpr QRgb PolygonColor = 0x337ed5c9;
 
-    constexpr char JetStyleId[] = "s_jet_style";
-    constexpr char TurbopropStyleId[] = "s_turbo_prop_style";
-    constexpr char PistonStyleId[] = "s_piston_style";
-    constexpr char AllStyleId[] = "s_all_style";
+    constexpr const char *JetStyleId {"s_jet_style"};
+    constexpr const char *TurbopropStyleId {"s_turbo_prop_style"};
+    constexpr const char *PistonStyleId {"s_piston_style"};
+    constexpr const char *AllStyleId {"s_all_style"};
 
-    constexpr char JetStyleMapId[] = "sm_jet_style";
-    constexpr char TurbopropStyleMapId[] = "sm_turbo_prop_style";
-    constexpr char PistonStyleMapId[] = "sm_piston_style";
-    constexpr char AllStyleMapId[] = "sm_all_style";
+    constexpr const char *JetStyleMapId {"sm_jet_style"};
+    constexpr const char *TurbopropStyleMapId {"sm_turbo_prop_style"};
+    constexpr const char *PistonStyleMapId {"sm_piston_style"};
+    constexpr const char *AllStyleMapId {"sm_all_style"};
 }
 
 struct KmlStyleExportPrivate

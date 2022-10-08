@@ -42,7 +42,7 @@
 
 namespace
 {
-    constexpr char FlightRadar24CSVPattern[] = R"(^(\d*),(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z),([\w]*|[\d]*),\"([-]?\d{1,2}.\d+),([-]?\d{1,3}.\d+)\",(\d+),(\d+),(\d+))";
+    constexpr const char *FlightRadar24CSVPattern {R"(^(\d*),(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z),([\w]*|[\d]*),\"([-]?\d{1,2}.\d+),([-]?\d{1,3}.\d+)\",(\d+),(\d+),(\d+))"};
     constexpr int UnixTimestampIndex = 1;
     constexpr int CallsignIndex = 2;
     constexpr int LatitudeIndex = 3;

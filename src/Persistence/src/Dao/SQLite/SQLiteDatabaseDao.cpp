@@ -41,7 +41,7 @@
 #include "SqlMigration.h"
 #include "SQLiteDatabaseDao.h"
 
-constexpr char DbName[] = "QSQLITE";
+constexpr const char *DbName {"QSQLITE"};
 
 struct DatabaseDaoPrivate
 {

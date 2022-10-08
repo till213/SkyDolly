@@ -44,7 +44,7 @@ class StatisticsDialog : public QDialog
     Q_OBJECT
 public:
     explicit StatisticsDialog(QWidget *parent = nullptr) noexcept;
-    ~StatisticsDialog() noexcept override;
+    ~StatisticsDialog() override;
 
 signals:
     void visibilityChanged(bool visible);

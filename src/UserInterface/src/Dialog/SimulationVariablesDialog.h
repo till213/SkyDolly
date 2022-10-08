@@ -43,7 +43,7 @@ class SimulationVariablesDialog : public QDialog
     Q_OBJECT
 public:
     explicit SimulationVariablesDialog(QWidget *parent = nullptr) noexcept;
-    ~SimulationVariablesDialog() noexcept override;
+    ~SimulationVariablesDialog() override;
 
 signals:
     void visibilityChanged(bool visible);

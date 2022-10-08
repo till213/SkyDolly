@@ -45,15 +45,15 @@
 
 namespace
 {
-    constexpr char ExportDirectoryName[] = "Export";
-    constexpr char ImportDirectoryName[] = "Import";
+    constexpr const char *ExportDirectoryName {"Export"};
+    constexpr const char *ImportDirectoryName {"Import"};
 #if defined(Q_OS_MAC)
-    constexpr char PluginDirectoryName[] = "PlugIns";
+    constexpr const char *PluginDirectoryName {"PlugIns"};
 #else
-    constexpr char PluginDirectoryName[] = "Plugins";
+    constexpr const char *PluginDirectoryName {"Plugins"};
 #endif
-    constexpr char PluginUuidKey[] = "uuid";
-    constexpr char PluginNameKey[] = "name";
+    constexpr const char *PluginUuidKey {"uuid"};
+    constexpr const char *PluginNameKey {"name"};
 }
 
 struct PluginManagerPrivate
@@ -71,8 +71,7 @@ struct PluginManagerPrivate
         pluginsDirectory.cd(PluginDirectoryName);
     }
 
-    ~PluginManagerPrivate() noexcept
-    {}
+    ~PluginManagerPrivate() = default;
 
     QWidget *parentWidget;
     QDir pluginsDirectory;

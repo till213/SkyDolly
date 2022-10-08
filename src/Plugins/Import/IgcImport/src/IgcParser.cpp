@@ -58,24 +58,24 @@ namespace
     constexpr char BRecord = 'B';
 
     // Three letter codes (TLC)
-    constexpr char TLCDate[] = "DTE";
-    constexpr char TLCPilot[] = "PLT";
-    constexpr char TLCCoPilot[] = "CM2";
-    constexpr char TLCGliderType[] = "GTY";
-    constexpr char TLCGliderId[] = "GID";
+    constexpr const char *TLCDate {"DTE"};
+    constexpr const char *TLCPilot {"PLT"};
+    constexpr const char *TLCCoPilot {"CM2"};
+    constexpr const char *TLCGliderType {"GTY"};
+    constexpr const char *TLCGliderId {"GID"};
 
     // Offsets
     constexpr int InvalidOffset = -1;
 
     // Formats
-    constexpr char DateFormat[] = "HHmmss";
+    constexpr const char *DateFormat {"HHmmss"};
 
     // H (header) record
-    constexpr char HRecordDatePattern[] = R"(^HFDTE(?:DATE:)?(\d{2})(\d{2})(\d{2})(?:,?(\d{2}))?)";
-    constexpr char HRecordPilotPattern[] = R"(^H(\w)PLT(?:.{0,}?:(.*)|(.*))$)";
-    constexpr char HRecordCoPilotPattern[] = R"(^H(\w)CM2(?:.{0,}?:(.*)|(.*))$)";
-    constexpr char HRecordGliderTypePattern[] = R"(^H(\w)GTY(?:.{0,}?:(.*)|(.*))$)";
-    constexpr char HRecordGliderIdPattern[] = R"(^H(\w)GID(?:.{0,}?:(.*)|(.*))$)";
+    constexpr const char *HRecordDatePattern {R"(^HFDTE(?:DATE:)?(\d{2})(\d{2})(\d{2})(?:,?(\d{2}))?)"};
+    constexpr const char *HRecordPilotPattern {R"(^H(\w)PLT(?:.{0,}?:(.*)|(.*))$)"};
+    constexpr const char *HRecordCoPilotPattern {R"(^H(\w)CM2(?:.{0,}?:(.*)|(.*))$)"};
+    constexpr const char *HRecordGliderTypePattern {R"(^H(\w)GTY(?:.{0,}?:(.*)|(.*))$)"};
+    constexpr const char *HRecordGliderIdPattern {R"(^H(\w)GID(?:.{0,}?:(.*)|(.*))$)"};
 
     constexpr int HRecordDayIndex = 1;
     constexpr int HRecordMonthIndex = 2;
@@ -83,15 +83,15 @@ namespace
     constexpr int HRecordFlightNumberIndex = 4;
 
     // I (addition definition) record
-    constexpr char IRecordPattern[] = R"(^[I](\d{2})((?:\d{4}[A-Z]{3})+))";
+    constexpr const char *IRecordPattern {R"(^[I](\d{2})((?:\d{4}[A-Z]{3})+))"};
     constexpr int IRecordNofAdditionsIndex = 1;
     constexpr int IRecordAdditionsDefinitionsIndex = 2;
     // Length of addition definition [bytes]
     constexpr int IRecordAdditionDefinitionLength = 7;
 
     // C (task) record
-    constexpr char CRecordTaskDefinitionPattern[] = R"(^C(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{4})([-\d]{2})(.*))";
-    constexpr char CRecordTaskPattern[] = R"(^C(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*))";
+    constexpr const char *CRecordTaskDefinitionPattern {R"(^C(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{4})([-\d]{2})(.*))"};
+    constexpr const char *CRecordTaskPattern {R"(^C(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*))"};
 
     constexpr int CRecordLatitudeDegreesIndex = 1;
     // MMmmm - minutes (MM) with fractional (mmm) part: by dividing by 1000 we get the proper float value
@@ -108,7 +108,7 @@ namespace
     constexpr int CRecordTaskIndex = 7;
 
     // B (fix) record
-    constexpr char BRecordPattern[] = R"(^B(\d{6})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])(-\d{4}|\d{5})(-\d{4}|\d{5}))";
+    constexpr const char *BRecordPattern {R"(^B(\d{6})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])(-\d{4}|\d{5})(-\d{4}|\d{5}))"};
     // HHMMSS
     constexpr int BRecordDateIndex = 1;
 

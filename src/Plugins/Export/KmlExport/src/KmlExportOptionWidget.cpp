@@ -49,7 +49,7 @@ namespace
         AllEndColor
     };
 
-    constexpr char DisabledColor[] = "#aaa";
+    constexpr const char *DisabledColor {"#aaa"};
 }
 
 struct KmlExportOptionWidgetPrivate
