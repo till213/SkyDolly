@@ -42,9 +42,8 @@
 #include "BasicImportDialog.h"
 #include "ui_BasicImportDialog.h"
 
-class BasicImportDialogPrivate
+struct BasicImportDialogPrivate
 {
-public:
     BasicImportDialogPrivate(const Flight &theFlight, const QString &theFileFilter, ImportPluginBaseSettings &pluginSettings) noexcept
         : flight(theFlight),
           aircraftTypeService(std::make_unique<AircraftTypeService>()),
@@ -73,26 +72,18 @@ BasicImportDialog::BasicImportDialog(const Flight &flight, const QString &fileSu
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug("BasicImportDialog::BasicImportDialog: CREATED");
-#endif
 }
 
-BasicImportDialog::~BasicImportDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug("BasicImportDialog::~BasicImportDialog: DELETED");
-#endif
-}
+BasicImportDialog::~BasicImportDialog() = default;
 
 QString BasicImportDialog::getSelectedPath() const noexcept
 {
     return ui->pathLineEdit->text();
 }
 
-bool BasicImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const noexcept
+AircraftType BasicImportDialog::getSelectedAircraftType(bool *ok) const noexcept
 {
-    return d->aircraftTypeService->getByType(ui->aircraftSelectionComboBox->currentText(), aircraftType);
+    return d->aircraftTypeService->getByType(ui->aircraftSelectionComboBox->currentText(), ok);
 }
 
 QString BasicImportDialog::getFileFilter() const noexcept

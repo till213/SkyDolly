@@ -27,15 +27,13 @@
 #include <unordered_map>
 
 #include <QString>
-#ifdef DEBUG
-#include <QDebug>
-#endif
+#include <QHash>
 
 #include "Enumeration.h"
 
 struct EnumerationPrivate
 {
-    EnumerationPrivate(QString theName) noexcept
+    EnumerationPrivate(const QString &theName) noexcept
         : name(theName)
     {}
 
@@ -49,20 +47,17 @@ struct EnumerationPrivate
 
 // PUBLIC
 
-Enumeration::Enumeration(QString name) noexcept
-    : d(std::make_unique<EnumerationPrivate>(name))
-{
-#ifdef DEBUG
-    qDebug() << "Enumeration::Enumeration: CREATED, name:" << d->name;
-#endif
-}
+Enumeration::Enumeration() noexcept
+    : d(std::make_unique<EnumerationPrivate>(QString()))
+{}
 
-Enumeration::~Enumeration() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "Enumeration::Enumeration: DELETED, name:" << d->name;
-#endif
-}
+Enumeration::Enumeration(const QString &name) noexcept
+    : d(std::make_unique<EnumerationPrivate>(name))
+{}
+
+Enumeration::Enumeration(Enumeration &&rhs) = default;
+Enumeration &Enumeration::operator=(Enumeration &&rhs) = default;
+Enumeration::~Enumeration() = default;
 
 QString Enumeration::getName() const noexcept
 {

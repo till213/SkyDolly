@@ -33,7 +33,7 @@ class QShowEvent;
 class QHideEvent;
 
 class FlightService;
-class FlightDescriptionWidgetPrivate;
+struct FlightDescriptionWidgetPrivate;
 
 namespace Ui {
     class FlightDescriptionWidget;
@@ -51,9 +51,8 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(FlightDescriptionWidget)
-    std::unique_ptr<FlightDescriptionWidgetPrivate> d;
     std::unique_ptr<Ui::FlightDescriptionWidget> ui;
+    const std::unique_ptr<FlightDescriptionWidgetPrivate> d;
 
     void initUi() noexcept;
     void frenchConnection() noexcept;

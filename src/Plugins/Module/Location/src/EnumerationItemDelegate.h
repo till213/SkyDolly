@@ -45,7 +45,7 @@ public:
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const noexcept override;
 
 private:
-    std::unique_ptr<EnumerationItemDelegatePrivate> d;
+    const std::unique_ptr<EnumerationItemDelegatePrivate> d;
 
 private slots:
     void commitAndCloseEditor() noexcept;

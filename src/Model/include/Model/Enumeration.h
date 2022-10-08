@@ -27,11 +27,9 @@
 
 #include <memory>
 #include <vector>
-#include <unordered_map>
 
 #include <QString>
 
-#include "InitialPosition.h"
 #include "Data.h"
 #include "ModelLib.h"
 
@@ -44,14 +42,16 @@ struct EnumerationPrivate;
  *
  * \sa Enum#toUnderlyingType
  */
-class MODEL_API Enumeration
+class MODEL_API Enumeration final
 {
 public:
-
-    Enumeration(QString name) noexcept;
-    Enumeration(Enumeration &&other) noexcept = default;
-    ~Enumeration() noexcept;
-    Enumeration &operator=(Enumeration &&rhs) noexcept = default;
+    Enumeration(const QString &name) noexcept;
+    Enumeration() noexcept;
+    Enumeration(const Enumeration &rhs) = delete;
+    Enumeration(Enumeration &&rhs);
+    Enumeration &operator=(const Enumeration &rhs) = delete;
+    Enumeration &operator=(Enumeration &&rhs);
+    ~Enumeration();
 
     using Item = struct Item_ : public Data
     {

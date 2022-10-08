@@ -33,17 +33,20 @@ class QString;
 class QWidget;
 class QDateTime;
 
-#include "../Metadata.h"
 #include "../PersistenceLib.h"
 
 class Version;
-class DatabaseServicePrivate;
+struct DatabaseServicePrivate;
 
 class PERSISTENCE_API DatabaseService
 {
 public:
     DatabaseService() noexcept;
-    ~DatabaseService() noexcept;
+    DatabaseService(const DatabaseService &rhs) = delete;
+    DatabaseService(DatabaseService &&rhs);
+    DatabaseService &operator=(const DatabaseService &rhs) = delete;
+    DatabaseService &operator=(DatabaseService &&rhs);
+    ~DatabaseService();
 
     bool backup() noexcept;
 

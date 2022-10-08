@@ -32,6 +32,9 @@
 #include <QDateTime>
 #include <QTimeZone>
 #include <QFlags>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Unit.h>
 #include <Model/Flight.h>
@@ -46,9 +49,8 @@
 #include "KmlImportOptionWidget.h"
 #include "KmlImportPlugin.h"
 
-class KmlImportPluginPrivate
+struct KmlImportPluginPrivate
 {
-public:
     KmlImportPluginPrivate()
         : flight(nullptr)
     {}
@@ -69,14 +71,14 @@ KmlImportPlugin::KmlImportPlugin() noexcept
     : d(std::make_unique<KmlImportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("KmlImportPlugin::KmlImportPlugin: PLUGIN LOADED");
+    qDebug() << "KmlImportPlugin::KmlImportPlugin: PLUGIN LOADED";
 #endif
 }
 
 KmlImportPlugin::~KmlImportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("KmlImportPlugin::~KmlImportPlugin: PLUGIN UNLOADED");
+    qDebug() << "KmlImportPlugin::~KmlImportPlugin: PLUGIN UNLOADED";
 #endif
 }
 
@@ -108,7 +110,7 @@ bool KmlImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
     d->xml.setDevice(&file);
     if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
-        qDebug("KmlImportPlugin::readFile: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug() << "KmlImportPlugin::readFile: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == QStringLiteral("kml")) {
             parseKML();
@@ -120,7 +122,7 @@ bool KmlImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
     bool ok = !d->xml.hasError();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("KmlImportPlugin::readFile: XML error: %s", qPrintable(d->xml.errorString()));
+        qDebug() << "KmlImportPlugin::readFile: XML error:" << d->xml.errorString();
     }
 #endif
     // We are done with the import

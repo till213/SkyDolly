@@ -34,14 +34,18 @@ struct Location;
 class SQLiteLocationDao : public LocationDaoIntf
 {
 public:
-    SQLiteLocationDao() noexcept;
-    ~SQLiteLocationDao() noexcept override;
+    SQLiteLocationDao() = default;
+    SQLiteLocationDao(const SQLiteLocationDao &rhs) = delete;
+    SQLiteLocationDao(SQLiteLocationDao &&rhs);
+    SQLiteLocationDao &operator=(const SQLiteLocationDao &rhs) = delete;
+    SQLiteLocationDao &operator=(SQLiteLocationDao &&rhs);
+    ~SQLiteLocationDao() override;
 
     bool add(Location &location) noexcept override;
     bool update(const Location &location) noexcept override;
     bool deleteById(std::int64_t id) noexcept override;
-    bool getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept override;
-    bool getSelectedLocations(const LocationSelector &selector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept override;
+    std::vector<Location> getAll(bool *ok = nullptr) const noexcept override;
+    std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) const noexcept override;
 };
 
 #endif // SQLITELOCATIONDAO_H

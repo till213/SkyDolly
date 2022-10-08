@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
@@ -41,9 +44,8 @@ namespace
     constexpr bool DefaultConvertAltitude {true};
 }
 
-class IgcImportSettingsPrivate
+struct IgcImportSettingsPrivate
 {
-public:
     IgcImportSettingsPrivate()
         : altitudeMode(::DefaultAltitudeMode),
           enlThresholdPercent(::DefaultEnlThresholdPercent),
@@ -61,14 +63,14 @@ IgcImportSettings::IgcImportSettings() noexcept
     : d(std::make_unique<IgcImportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("IgcImportSettings::IgcImportSettings: CREATED");
+    qDebug() << "IgcImportSettings::IgcImportSettings: CREATED";
 #endif
 }
 
 IgcImportSettings::~IgcImportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("IgcImportSettings::~IgcImportSettings: DELETED");
+    qDebug() << "IgcImportSettings::~IgcImportSettings: DELETED";
 #endif
 }
 
@@ -149,7 +151,7 @@ void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void IgcImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     const int enumeration = valuesByKey.at(::AltitudeKey).toInt(&ok);
     if (ok) {
         d->altitudeMode = static_cast<AltitudeMode >(enumeration);

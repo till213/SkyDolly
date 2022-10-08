@@ -30,9 +30,6 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <QTextCodec>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Const.h>
 #include <Model/Location.h>
@@ -43,8 +40,6 @@
 
 namespace
 {
-    constexpr char MigrationDirectory[] = "Resources/migr";
-
     // Also refer to Locations.csv
     constexpr int TitleIndex = 1;
     constexpr int DescriptionIndex = 2;
@@ -62,9 +57,8 @@ namespace
     constexpr int AttributesIndex = 14;
 }
 
-class SqlMigrationPrivate
+struct SqlMigrationPrivate
 {
-public:
     SqlMigrationPrivate()
     {}
 
@@ -74,21 +68,15 @@ public:
 
 // PUBLIC
 
-SqlMigration::SqlMigration()
+SqlMigration::SqlMigration() noexcept
     : d(std::make_unique<SqlMigrationPrivate>())
 {
      Q_INIT_RESOURCE(Migration);
-#ifdef DEBUG
-    qDebug() << "SqlMigration::SqlMigration: CREATED";
-#endif
 }
 
-SqlMigration::~SqlMigration()
-{
-#ifdef DEBUG
-    qDebug() << "SqlMigration::~SqlMigration: DELETED";
-#endif
-}
+SqlMigration::SqlMigration(SqlMigration &&rhs) = default;
+SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) = default;
+SqlMigration::~SqlMigration() = default;
 
 bool SqlMigration::migrate() noexcept
 {
@@ -137,7 +125,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
                 const QRegularExpressionMatch tagMatch = it.next();
                 QString tag = tagMatch.captured(1);
 #ifdef DEBUG
-                qDebug("SqlMigration::migrate: %s", qPrintable(tag));
+                qDebug() << "SqlMigration::migrate:" << tag;
 #endif
                 SqlMigrationStep step;
                 ok = step.parseTag(tagMatch);
@@ -222,19 +210,16 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
     Location location;
     location.title = locationMatch.captured(::TitleIndex);
     location.description = locationMatch.captured(::DescriptionIndex).replace("\\n", "\n");
-    Enumeration locationType(EnumerationService::LocationType);
-    ok = d->enumerationService.getEnumerationByName(locationType);
+    Enumeration locationType = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
     if (ok) {
         location.typeId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id;
     }
-    Enumeration locationCategory(EnumerationService::LocationCategory);
-    ok = d->enumerationService.getEnumerationByName(locationCategory);
+    Enumeration locationCategory = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
     if (ok) {
         const QString categorySymbolicId = locationMatch.captured(::CategoryIndex);
         location.categoryId = locationCategory.getItemBySymbolicId(categorySymbolicId).id;
     }
-    Enumeration country(EnumerationService::Country);
-    ok = d->enumerationService.getEnumerationByName(country);
+    Enumeration country = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
     if (ok) {
         const QString countrySymbolicId = locationMatch.captured(::CountryIndex);
         location.countryId = country.getItemBySymbolicId(countrySymbolicId).id;

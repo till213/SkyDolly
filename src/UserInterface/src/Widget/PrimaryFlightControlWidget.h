@@ -37,7 +37,7 @@ class QHideEvent;
 
 class SkyConnectIntf;
 struct PrimaryFlightControlData;
-class PrimaryFlightControlWidgetPrivate;
+struct PrimaryFlightControlWidgetPrivate;
 
 namespace Ui {
     class PrimaryFlightControlWidget;
@@ -48,17 +48,17 @@ class PrimaryFlightControlWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit PrimaryFlightControlWidget(QWidget *parent) noexcept;
-    virtual ~PrimaryFlightControlWidget() noexcept;
+    ~PrimaryFlightControlWidget() noexcept override;
 
 protected slots:
-    virtual void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    std::unique_ptr<PrimaryFlightControlWidgetPrivate> d;
     std::unique_ptr<Ui::PrimaryFlightControlWidget> ui;
+    const std::unique_ptr<PrimaryFlightControlWidgetPrivate> d;
 
     void initUi();    
-    const PrimaryFlightControlData &getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    PrimaryFlightControlData getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // PRIMARYFLIGHTCONTROLWIDGET_H

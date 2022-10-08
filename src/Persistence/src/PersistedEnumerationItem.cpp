@@ -26,10 +26,8 @@
 #include <cstdint>
 
 #include <QString>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
+#include <Kernel/Const.h>
 #include <Model/Data.h>
 #include <Model/Enumeration.h>
 #include "Service/EnumerationService.h"
@@ -38,34 +36,28 @@
 struct PersistedEnumerationItemPrivate
 {
     PersistedEnumerationItemPrivate(QString enumerationName, QString symbolicId)
-        : enumeration(enumerationName)
     {
-        if (enumerationService.getEnumerationByName(enumeration)) {
+        bool ok {false};
+        enumeration = enumerationService.getEnumerationByName(enumerationName, &ok);
+        if (ok) {
             id = enumeration.getItemBySymbolicId(symbolicId).id;
         }
     }
 
     Enumeration enumeration;
-    std::int64_t id {Data::InvalidId};
+    std::int64_t id {Const::InvalidId};
     EnumerationService enumerationService;
 };
 
 // PUBLIC
 
+PersistedEnumerationItem::PersistedEnumerationItem(PersistedEnumerationItem &&rhs) = default;
+PersistedEnumerationItem &PersistedEnumerationItem::operator=(PersistedEnumerationItem &&rhs) = default;
+PersistedEnumerationItem::~PersistedEnumerationItem() = default;
+
 PersistedEnumerationItem::PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept
     : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, symbolicId))
-{
-#ifdef DEBUG
-    qDebug() << "PersistedEnumerationItem::PersistedEnumerationItem: CREATED, name:" << enumerationName << "ID:" << d->id;
-#endif
-}
-
-PersistedEnumerationItem::~PersistedEnumerationItem() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "PersistedEnumerationItem::~PersistedEnumerationItem: DELETED, name:" << d->enumeration.getName() << "ID:" << d->id;
-#endif
-}
+{}
 
 std::int64_t PersistedEnumerationItem::id() const noexcept
 {

@@ -45,7 +45,7 @@ public:
     void setCurrentId(std::int64_t id) noexcept;
 
 private:
-    std::unique_ptr<EnumerationComboBoxPrivate> d;
+    const std::unique_ptr<EnumerationComboBoxPrivate> d;
 
     void initUi() noexcept;
 };

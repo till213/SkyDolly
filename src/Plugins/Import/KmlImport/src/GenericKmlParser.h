@@ -35,19 +35,19 @@ class QXmlStreamReader;
 #include "AbstractKmlTrackParser.h"
 
 class Flight;
-class GenericKmlParserPrivate;
+struct GenericKmlParserPrivate;
 
 class GenericKmlParser : public AbstractKmlTrackParser
 {
 public:
     GenericKmlParser() noexcept;
-    virtual ~GenericKmlParser() noexcept;
+    ~GenericKmlParser() noexcept override;
 
-    virtual void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
-    virtual QString getFlightNumber() const noexcept override;
+    void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
+    QString getFlightNumber() const noexcept override;
 
 private:
-    std::unique_ptr<GenericKmlParserPrivate> d;
+    const std::unique_ptr<GenericKmlParserPrivate> d;
 };
 
 #endif // GENERICKMLPARSER_H

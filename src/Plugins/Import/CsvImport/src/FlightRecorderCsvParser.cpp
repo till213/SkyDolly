@@ -62,62 +62,61 @@ namespace
     // Column names
 
     // Position
-    constexpr char Milliseconds[] = "Milliseconds";
-    constexpr char Latitude[] = "Latitude";
-    constexpr char Longitude[] = "Longitude";
-    constexpr char Altitude[] = "Altitude";
-    constexpr char Pitch[] = "Pitch";
-    constexpr char Bank[] = "Bank";
-    constexpr char TrueHeading[] = "TrueHeading";
-    constexpr char VelocityBodyX[] = "VelocityBodyX";
-    constexpr char VelocityBodyY[] = "VelocityBodyY";
-    constexpr char VelocityBodyZ[] = "VelocityBodyZ";
-    constexpr char RotationVelocityBodyX[] = "RotationVelocityBodyX";
-    constexpr char RotationVelocityBodyY[] = "RotationVelocityBodyY";
-    constexpr char RotationVelocityBodyZ[] = "RotationVelocityBodyZ";
+    constexpr const char *Milliseconds {"Milliseconds"};
+    constexpr const char *Latitude {"Latitude"};
+    constexpr const char *Longitude {"Longitude"};
+    constexpr const char *Altitude {"Altitude"};
+    constexpr const char *Pitch {"Pitch"};
+    constexpr const char *Bank {"Bank"};
+    constexpr const char *TrueHeading {"TrueHeading"};
+    constexpr const char *VelocityBodyX {"VelocityBodyX"};
+    constexpr const char *VelocityBodyY {"VelocityBodyY"};
+    constexpr const char *VelocityBodyZ {"VelocityBodyZ"};
+    constexpr const char *RotationVelocityBodyX {"RotationVelocityBodyX"};
+    constexpr const char *RotationVelocityBodyY {"RotationVelocityBodyY"};
+    constexpr const char *RotationVelocityBodyZ {"RotationVelocityBodyZ"};
 
     // Engine
-    constexpr char ThrottleLeverPosition1[] = "ThrottleLeverPosition1";
-    constexpr char ThrottleLeverPosition2[] = "ThrottleLeverPosition2";
-    constexpr char ThrottleLeverPosition3[] = "ThrottleLeverPosition3";
-    constexpr char ThrottleLeverPosition4[] = "ThrottleLeverPosition4";
+    constexpr const char *ThrottleLeverPosition1 {"ThrottleLeverPosition1"};
+    constexpr const char *ThrottleLeverPosition2 {"ThrottleLeverPosition2"};
+    constexpr const char *ThrottleLeverPosition3 {"ThrottleLeverPosition3"};
+    constexpr const char *ThrottleLeverPosition4 {"ThrottleLeverPosition4"};
 
     // Primary flight controls
-    constexpr char RudderPosition[] = "RudderPosition";
-    constexpr char ElevatorPosition[] = "ElevatorPosition";
-    constexpr char AileronPosition[] = "AileronPosition";
+    constexpr const char *RudderPosition {"RudderPosition"};
+    constexpr const char *ElevatorPosition {"ElevatorPosition"};
+    constexpr const char *AileronPosition {"AileronPosition"};
 
     // Secondary flight controls
-    constexpr char LeadingEdgeFlapsLeftPercent[] = "LeadingEdgeFlapsLeftPercent";
-    constexpr char LeadingEdgeFlapsRightPercent[] = "LeadingEdgeFlapsRightPercent";
-    constexpr char TrailingEdgeFlapsLeftPercent[] = "TrailingEdgeFlapsLeftPercent";
-    constexpr char TrailingEdgeFlapsRightPercent[] = "TrailingEdgeFlapsRightPercent";
-    constexpr char SpoilerHandlePosition[] = "SpoilerHandlePosition";
-    constexpr char FlapsHandleIndex[] = "FlapsHandleIndex";
+    constexpr const char *LeadingEdgeFlapsLeftPercent {"LeadingEdgeFlapsLeftPercent"};
+    constexpr const char *LeadingEdgeFlapsRightPercent {"LeadingEdgeFlapsRightPercent"};
+    constexpr const char *TrailingEdgeFlapsLeftPercent {"TrailingEdgeFlapsLeftPercent"};
+    constexpr const char *TrailingEdgeFlapsRightPercent {"TrailingEdgeFlapsRightPercent"};
+    constexpr const char *SpoilerHandlePosition {"SpoilerHandlePosition"};
+    constexpr const char *FlapsHandleIndex {"FlapsHandleIndex"};
 
     // Aircraft handles
-    constexpr char BrakeLeftPosition[] = "BrakeLeftPosition";
-    constexpr char BrakeRightPosition[] = "BrakeRightPosition";
-    constexpr char WaterRudderHandlePosition[] = "WaterRudderHandlePosition";
-    constexpr char GearHandlePosition[] = "GearHandlePosition";
+    constexpr const char *BrakeLeftPosition {"BrakeLeftPosition"};
+    constexpr const char *BrakeRightPosition {"BrakeRightPosition"};
+    constexpr const char *WaterRudderHandlePosition {"WaterRudderHandlePosition"};
+    constexpr const char *GearHandlePosition {"GearHandlePosition"};
 
     // Lights
-    constexpr char LightTaxi[] = "LightTaxi";
-    constexpr char LightLanding[] = "LightLanding";
-    constexpr char LightStrobe[] = "LightStrobe";
-    constexpr char LightBeacon[] = "LightBeacon";
-    constexpr char LightNav[] = "LightNav";
-    constexpr char LightWing[] = "LightWing";
-    constexpr char LightLogo[] = "LightLogo";
-    constexpr char LightRecognition[] = "LightRecognition";
-    constexpr char LightCabin[] = "LightCabin";
+    constexpr const char *LightTaxi {"LightTaxi"};
+    constexpr const char *LightLanding {"LightLanding"};
+    constexpr const char *LightStrobe {"LightStrobe"};
+    constexpr const char *LightBeacon {"LightBeacon"};
+    constexpr const char *LightNav {"LightNav"};
+    constexpr const char *LightWing {"LightWing"};
+    constexpr const char *LightLogo {"LightLogo"};
+    constexpr const char *LightRecognition {"LightRecognition"};
+    constexpr const char *LightCabin {"LightCabin"};
 
     constexpr int InvalidIdx = std::numeric_limits<int>::max();
 }
 
-class FlightRecorderCsvParserPrivate
+struct FlightRecorderCsvParserPrivate
 {
-public:
     FlightRecorderCsvParserPrivate()
         : flight(nullptr)
     {
@@ -134,18 +133,18 @@ FlightRecorderCsvParser::FlightRecorderCsvParser() noexcept
     : d(std::make_unique<FlightRecorderCsvParserPrivate>())
 {
 #ifdef DEBUG
-    qDebug("FlightRecorderCsvParser::~FlightRecorderCsvParser: CREATED");
+    qDebug() << "FlightRecorderCsvParser::~FlightRecorderCsvParser: CREATED";
 #endif
 }
 
 FlightRecorderCsvParser::~FlightRecorderCsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRecorderCsvParser::~FlightRecorderCsvParser: DELETED");
+    qDebug() << "FlightRecorderCsvParser::~FlightRecorderCsvParser: DELETED";
 #endif
 }
 
-bool FlightRecorderCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept
+bool FlightRecorderCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
 {
     d->flight = &flight;
     firstDateTimeUtc = QFileInfo(file).birthTime().toUTC();
@@ -205,7 +204,6 @@ bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
         lightNavIdx {InvalidIdx}, lightWingIdx {InvalidIdx}, lightLogoIdx {InvalidIdx}, lightRecognitionIdx {InvalidIdx},
         lightCabinIdx {InvalidIdx};
 
-    bool ok;
     Aircraft &aircraft = d->flight->getUserAircraft();
     Position &position = aircraft.getPosition();
     Engine &engine = aircraft.getEngine();
@@ -216,7 +214,7 @@ bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
 
     QByteArray data = file.readLine();
     // At least one data row expected
-    ok = !data.isNull();
+    bool ok = !data.isNull();
     bool firstRow {true};
     std::int64_t timestampDelta {0};
     while (ok && !data.isNull()) {
@@ -387,7 +385,7 @@ bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
 inline bool FlightRecorderCsvParser::importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
 {
     static int timestampIdx = ::InvalidIdx;
-    bool ok = true;
+    bool ok {true};
     if (timestampIdx == ::InvalidIdx) {
         auto it = d->columnIndexes.find(::Milliseconds);
         if (it != d->columnIndexes.end()) {
@@ -417,7 +415,7 @@ inline bool FlightRecorderCsvParser::importTimestamp(const QList<QByteArray> &va
 template <typename T>
 inline bool FlightRecorderCsvParser::importValue(const QList<QByteArray> &values, const char *name, int &idx, T &value) noexcept
 {
-    bool ok = true;
+    bool ok {true};
     if (idx == ::InvalidIdx) {
         auto it = d->columnIndexes.find(name);
         if (it != d->columnIndexes.end()) {

@@ -31,7 +31,7 @@
 
 #include <Model/Waypoint.h>
 
-class FlightPlanWidgetPrivate;
+struct FlightPlanWidgetPrivate;
 
 namespace Ui {
     class FlightPlanWidget;
@@ -42,16 +42,15 @@ class FlightPlanWidget : public QWidget
     Q_OBJECT
 public:
     explicit FlightPlanWidget(QWidget *parent = nullptr) noexcept;
-    virtual ~FlightPlanWidget() noexcept;
+    ~FlightPlanWidget() noexcept override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
     void hideEvent(QHideEvent *event) noexcept override;
 
-private:
-    Q_DISABLE_COPY(FlightPlanWidget)    
+private: 
     std::unique_ptr<Ui::FlightPlanWidget> ui;
-    std::unique_ptr<FlightPlanWidgetPrivate> d;
+    const std::unique_ptr<FlightPlanWidgetPrivate> d;
 
     void initUi() noexcept;
 

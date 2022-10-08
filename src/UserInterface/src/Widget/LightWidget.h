@@ -37,7 +37,7 @@ class QHideEvent;
 
 class SkyConnectIntf;
 struct LightData;
-class LightWidgetPrivate;
+struct LightWidgetPrivate;
 
 namespace Ui {
     class LightWidget;
@@ -48,17 +48,17 @@ class LightWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit LightWidget(QWidget *parent) noexcept;
-    virtual ~LightWidget() noexcept;
+    ~LightWidget() noexcept override;
 
 protected slots:
-    virtual void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    std::unique_ptr<LightWidgetPrivate> d;
     std::unique_ptr<Ui::LightWidget> ui;
+    const std::unique_ptr<LightWidgetPrivate> d;
 
     void initUi() noexcept;    
-    const LightData &getCurrentLightData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    LightData getCurrentLightData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // LIGHTWIDGET_H

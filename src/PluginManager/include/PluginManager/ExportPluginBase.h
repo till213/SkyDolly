@@ -45,7 +45,7 @@ struct PositionData;
 class FLight;
 class Aircraft;
 class ExportPluginBaseSettings;
-class ExportPluginBasePrivate;
+struct ExportPluginBasePrivate;
 
 class PLUGINMANAGER_API ExportPluginBase : public PluginBase, public ExportIntf
 {
@@ -53,7 +53,11 @@ class PLUGINMANAGER_API ExportPluginBase : public PluginBase, public ExportIntf
     Q_INTERFACES(ExportIntf)
 public:
     ExportPluginBase() noexcept;
-    ~ExportPluginBase() noexcept override;
+    ExportPluginBase(const ExportPluginBase &rhs) = delete;
+    ExportPluginBase(ExportPluginBase &&rhs) = delete;
+    ExportPluginBase &operator=(const ExportPluginBase &rhs) = delete;
+    ExportPluginBase &operator=(ExportPluginBase &&rhs) = delete;
+    ~ExportPluginBase() override;
 
     QWidget *getParentWidget() const noexcept final
     {
@@ -95,15 +99,15 @@ protected:
     virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept = 0;
 
 private:
-    std::unique_ptr<ExportPluginBasePrivate> d;
+    const std::unique_ptr<ExportPluginBasePrivate> d;
 
     bool exportFlight(const Flight &flight, const QString &filePath) noexcept;
     // Exports all aircraft into separate files, given the 'baseFilePath'
     bool exportAllAircraft(const Flight &flight, const QString &baseFilePath) noexcept;
 
-    virtual void addSettings(Settings::KeyValues &keyValues) const noexcept final;
-    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;
+    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
+    void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;
 };
 
 #endif // EXPORTPLUGINBASE_H

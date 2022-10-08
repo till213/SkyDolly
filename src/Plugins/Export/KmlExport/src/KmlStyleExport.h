@@ -34,7 +34,7 @@ class QIODevice;
 #include <Model/SimType.h>
 #include "KmlExportSettings.h"
 
-class KmlStyleExportPrivate;
+struct KmlStyleExportPrivate;
 
 class KmlStyleExport
 {
@@ -53,7 +53,7 @@ public:
     static QString getStyleUrl(Icon icon) noexcept;
 
 private:
-    std::unique_ptr<KmlStyleExportPrivate> d;
+    const std::unique_ptr<KmlStyleExportPrivate> d;
 
     void initialiseColorRamps() noexcept;
     bool exportHighlightLineStyle(QIODevice &io) const noexcept;

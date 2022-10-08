@@ -34,6 +34,8 @@ class QIcon;
 
 #include "WidgetLib.h"
 
+struct ActiveButtonPrivate;
+
 /*!
  * Displays the \e active icon when the button is pressed.
  *
@@ -42,8 +44,6 @@ class QIcon;
  * to:
  * https://stackoverflow.com/questions/40318759/change-qpushbutton-icon-on-hover-and-pressed
  */
-class ActiveButtonPrivate;
-
 class WIDGET_API ActiveButton : public QPushButton
 {
     Q_OBJECT
@@ -56,7 +56,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *e) noexcept override;
 
 private:
-    std::unique_ptr<ActiveButtonPrivate> d;
+    const std::unique_ptr<ActiveButtonPrivate> d;
 };
 
 #endif // ACTIVEBUTTON_H

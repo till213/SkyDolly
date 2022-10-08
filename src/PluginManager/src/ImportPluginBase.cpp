@@ -57,9 +57,8 @@
 #include "ImportPluginBaseSettings.h"
 #include "ImportPluginBase.h"
 
-class ImportPluginBasePrivate
+struct ImportPluginBasePrivate
 {
-public:
     ImportPluginBasePrivate()
         : flight(nullptr),
           aircraftService(std::make_unique<AircraftService>()),
@@ -79,18 +78,9 @@ public:
 
 ImportPluginBase::ImportPluginBase() noexcept
     : d(std::make_unique<ImportPluginBasePrivate>())
-{
-#ifdef DEBUG
-    qDebug("ImportPluginBase::ImportPluginBase: CREATED");
-#endif
-}
+{}
 
-ImportPluginBase::~ImportPluginBase() noexcept
-{
-#ifdef DEBUG
-    qDebug("ImportPluginBase::~ImportPluginBase: DELETED");
-#endif
-}
+ImportPluginBase::~ImportPluginBase() = default;
 
 bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight) noexcept
 {
@@ -114,7 +104,7 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
             Settings::getInstance().setExportPath(directoryPath);
             selectedFilePaths.append(selectedPath);
         }
-        ok = importDialog->getSelectedAircraftType(d->aircraftType);
+        d->aircraftType = importDialog->getSelectedAircraftType(&ok);
         if (ok) {
 #ifdef DEBUG
             QElapsedTimer timer;
@@ -125,7 +115,7 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
             ok = importFlights(selectedFilePaths, flightService, flight);
             QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
-            qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(selectedPath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
+            qDebug() << QFileInfo(selectedPath).fileName() << "import" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
 #endif
             if (!ok && !baseSettings.isImportDirectoryEnabled()) {
                 QMessageBox::warning(PluginBase::getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
@@ -265,7 +255,6 @@ void ImportPluginBase::updateAircraftInfo() noexcept
         FlightPlan &flightPlan = aircraft.getFlightPlan();
         int waypointCount = flightPlan.count();
         if (waypointCount == 0) {
-
             Waypoint departure;
             departure.identifier = Waypoint::CustomDepartureIdentifier;
             departure.latitude = static_cast<float>(firstPositionData.latitude);

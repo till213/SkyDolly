@@ -32,7 +32,7 @@
 class QShowEvent;
 class QHideEvent;
 
-class SimulationVariablesDialogPrivate;
+struct SimulationVariablesDialogPrivate;
 
 namespace Ui {
     class SimulationVariablesDialog;
@@ -43,19 +43,18 @@ class SimulationVariablesDialog : public QDialog
     Q_OBJECT
 public:
     explicit SimulationVariablesDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~SimulationVariablesDialog() noexcept;
+    ~SimulationVariablesDialog() override;
 
 signals:
     void visibilityChanged(bool visible);
 
 protected:
-    virtual void showEvent(QShowEvent *event) noexcept override;
-    virtual void hideEvent(QHideEvent *event) noexcept override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(SimulationVariablesDialog)
     std::unique_ptr<SimulationVariablesDialogPrivate> d;
-    std::unique_ptr<Ui::SimulationVariablesDialog> ui;
+    const std::unique_ptr<Ui::SimulationVariablesDialog> ui;
 
     void initUi() noexcept;
     void updateUi() noexcept;

@@ -34,14 +34,18 @@
 #include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
-class ImportPluginBaseSettingsPrivate;
+struct ImportPluginBaseSettingsPrivate;
 
 class PLUGINMANAGER_API ImportPluginBaseSettings : public QObject
 {
     Q_OBJECT
 public:
     ImportPluginBaseSettings() noexcept;
-    virtual ~ImportPluginBaseSettings() noexcept;
+    ImportPluginBaseSettings(const ImportPluginBaseSettings &rhs) = delete;
+    ImportPluginBaseSettings(ImportPluginBaseSettings &&rhs) = delete;
+    ImportPluginBaseSettings &operator=(const ImportPluginBaseSettings &rhs) = delete;
+    ImportPluginBaseSettings &operator=(ImportPluginBaseSettings &&rhs) = delete;
+    ~ImportPluginBaseSettings() override;
 
     bool isImportDirectoryEnabled() const noexcept;
     void setImportDirectoryEnabled(bool enabled) noexcept;
@@ -67,7 +71,7 @@ protected:
     virtual void restoreDefaultsExtn() noexcept = 0;
 
 private:
-    std::unique_ptr<ImportPluginBaseSettingsPrivate> d;
+    const std::unique_ptr<ImportPluginBaseSettingsPrivate> d;
 };
 
 #endif // IMPORTPLUGINBASESETTINGS_H

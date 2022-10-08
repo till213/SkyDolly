@@ -32,8 +32,8 @@
 class QShowEvent;
 class QHideEvent;
 
-class AircraftInfoWidgetPrivate;
 struct PositionData;
+struct AircraftInfoWidgetPrivate;
 
 namespace Ui {
     class AircraftInfoWidget;
@@ -51,9 +51,8 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(AircraftInfoWidget)
-    std::unique_ptr<AircraftInfoWidgetPrivate> d;
     std::unique_ptr<Ui::AircraftInfoWidget> ui;
+    const std::unique_ptr<AircraftInfoWidgetPrivate> d;
 
     void initUi() noexcept;
 

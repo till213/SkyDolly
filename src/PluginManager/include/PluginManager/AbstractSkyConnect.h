@@ -38,7 +38,7 @@
 
 class Flight;
 class Aircraft;
-class AbstractSkyConnectPrivate;
+struct AbstractSkyConnectPrivate;
 
 class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf
 {
@@ -51,7 +51,11 @@ public:
     };
 
     AbstractSkyConnect(QObject *parent = nullptr) noexcept;
-    ~AbstractSkyConnect() noexcept override;
+    AbstractSkyConnect(const AbstractSkyConnect &rhs) = delete;
+    AbstractSkyConnect(AbstractSkyConnect &&rhs) = delete;
+    AbstractSkyConnect &operator=(const AbstractSkyConnect &rhs) = delete;
+    AbstractSkyConnect &operator=(AbstractSkyConnect &&rhs) = delete;
+    ~AbstractSkyConnect() override;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
     bool freezeUserAircraft(bool enable) noexcept override;
@@ -59,12 +63,12 @@ public:
     ReplayMode getReplayMode() const noexcept override;
     void setReplayMode(ReplayMode replayMode) noexcept override;
 
-    void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition::NullData) noexcept override;
+    void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept override;
     void stopRecording() noexcept override;
     bool isRecording() const noexcept override;
     bool isInRecordingState() const noexcept override;
 
-    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition::NullData) noexcept override;
+    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept override;
     void stopReplay() noexcept override;
     bool isReplaying() const noexcept override;
     bool isInReplayState() const noexcept override;
@@ -146,8 +150,7 @@ protected slots:
     virtual void recordData() noexcept = 0;
 
 private:
-    Q_DISABLE_COPY(AbstractSkyConnect)
-    std::unique_ptr<AbstractSkyConnectPrivate> d;
+    const std::unique_ptr<AbstractSkyConnectPrivate> d;
 
     void frenchConnection() noexcept;
     bool hasRecordingStarted() const noexcept;
@@ -155,8 +158,8 @@ private:
 
     inline bool retryWithReconnect(std::function<bool()> func);
 
-    bool setupInitialRecordingPosition(const InitialPosition &initialPosition) noexcept;
-    bool setupInitialReplayPosition(const InitialPosition &flyWithFormationPosition) noexcept;
+    bool setupInitialRecordingPosition(InitialPosition initialPosition) noexcept;
+    bool setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept;
     bool updateUserAircraftFreeze() noexcept;
 
 private slots:

@@ -34,9 +34,8 @@
 #include <Persistence/Service/AircraftTypeService.h>
 #include "AircraftSelectionComboBox.h"
 
-class AircraftSelectionComboBoxPrivate
+struct AircraftSelectionComboBoxPrivate
 {
-public:
     AircraftSelectionComboBoxPrivate() noexcept
         : aircraftTypeService(std::make_unique<AircraftTypeService>())
     {}
@@ -60,14 +59,10 @@ AircraftSelectionComboBox::~AircraftSelectionComboBox() noexcept
 
 void AircraftSelectionComboBox::initialise() noexcept
 {
-    std::vector<AircraftType> aircraftTypes;
-    const bool ok = d->aircraftTypeService->getAll(std::back_inserter(aircraftTypes));
-    if (ok) {
-        for (AircraftType &aircraftType : aircraftTypes) {
-            this->addItem(aircraftType.type);
-        }
+    const std::vector<AircraftType> aircraftTypes = d->aircraftTypeService->getAll();
+    for (const AircraftType &aircraftType : aircraftTypes) {
+        this->addItem(aircraftType.type);
     }
-
     setEditable(true);
     setInsertPolicy(QComboBox::NoInsert);
     QCompleter *autoCompleter = completer();

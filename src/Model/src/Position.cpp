@@ -45,21 +45,11 @@ namespace
 
 Position::Position(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
-{
-#ifdef DEBUG
-    qDebug() << "Position::Position: CREATED";
-#endif
-}
+{}
 
-Position::~Position() noexcept
+PositionData Position::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
-#ifdef DEBUG
-    qDebug() << "Position::Position: DELETED";
-#endif
-}
-
-const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
-{
+    PositionData positionData;
     const PositionData *p0 {nullptr}, *p1 {nullptr}, *p2 {nullptr}, *p3 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
     const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
@@ -87,41 +77,37 @@ const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableDa
             // Aircraft position & attitude
 
             // Latitude: [-90, 90] - no discontinuity at +/- 90
-            m_currentPositionData.latitude  = SkyMath::interpolateHermite(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn);
+            positionData.latitude  = SkyMath::interpolateHermite(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn);
             // Longitude: [-180, 180] - discontinuity at the +/- 180 meridian
-            m_currentPositionData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn);
+            positionData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn);
             // Altitude [open range]
-            m_currentPositionData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn);
+            positionData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn);
             // The indicated altitude is not used for replay - only for display and analytical purposes,
             // so linear interpolation is sufficient
-            m_currentPositionData.indicatedAltitude  = SkyMath::interpolateLinear(p1->indicatedAltitude, p2->indicatedAltitude, tn);
+            positionData.indicatedAltitude  = SkyMath::interpolateLinear(p1->indicatedAltitude, p2->indicatedAltitude, tn);
             // Pitch: [-90, 90] - no discontinuity at +/- 90
-            m_currentPositionData.pitch = SkyMath::interpolateHermite(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, ::Tension);
+            positionData.pitch = SkyMath::interpolateHermite(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, ::Tension);
             // Bank: [-180, 180] - discontinuity at +/- 180
-            m_currentPositionData.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, ::Tension);
+            positionData.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, ::Tension);
             // Heading: [0, 360] - discontinuity at 0/360
-            m_currentPositionData.trueHeading = SkyMath::interpolateHermite360(p0->trueHeading, p1->trueHeading, p2->trueHeading, p3->trueHeading, tn, ::Tension);
+            positionData.trueHeading = SkyMath::interpolateHermite360(p0->trueHeading, p1->trueHeading, p2->trueHeading, p3->trueHeading, tn, ::Tension);
 
             // Velocity
-            m_currentPositionData.velocityBodyX = SkyMath::interpolateLinear(p1->velocityBodyX, p2->velocityBodyX, tn);
-            m_currentPositionData.velocityBodyY = SkyMath::interpolateLinear(p1->velocityBodyY, p2->velocityBodyY, tn);
-            m_currentPositionData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);
-            m_currentPositionData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
-            m_currentPositionData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
-            m_currentPositionData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
+            positionData.velocityBodyX = SkyMath::interpolateLinear(p1->velocityBodyX, p2->velocityBodyX, tn);
+            positionData.velocityBodyY = SkyMath::interpolateLinear(p1->velocityBodyY, p2->velocityBodyY, tn);
+            positionData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);
+            positionData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
+            positionData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
+            positionData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
 
-            m_currentPositionData.timestamp = adjustedTimestamp;
-
-        } else {
-            // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            m_currentPositionData = PositionData::NullData;
+            positionData.timestamp = adjustedTimestamp;
         }
 
         setCurrentIndex(currentIndex);
         setCurrentTimestamp(adjustedTimestamp);
         setCurrentAccess(access);
     }
-    return m_currentPositionData;
+    return positionData;
 }
 
 template class AbstractComponent<PositionData>;

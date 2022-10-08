@@ -22,10 +22,11 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOGBOOKMANAGER_H
-#define LOGBOOKMANAGER_H
+#ifndef PERSISTENCEMANAGER_H
+#define PERSISTENCEMANAGER_H
 
 #include <memory>
+#include <utility>
 
 #include <QObject>
 
@@ -39,13 +40,18 @@ class Version;
 
 class Metadata;
 class Version;
-class LogbookManagerPrivate;
+struct PersistenceManagerPrivate;
 
-class PERSISTENCE_API LogbookManager : public QObject
+class PERSISTENCE_API PersistenceManager final : public QObject
 {
     Q_OBJECT
 public:
-    static LogbookManager &getInstance() noexcept;
+    PersistenceManager(const PersistenceManager &rhs) = delete;
+    PersistenceManager(PersistenceManager &&rhs) = delete;
+    PersistenceManager &operator=(const PersistenceManager &rhs) = delete;
+    PersistenceManager &operator=(PersistenceManager &&rhs) = delete;
+
+    static PersistenceManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
     /*!
@@ -57,12 +63,12 @@ public:
      * paths (or to quit the application altogether).
      *
      * The actual logbook path (which is usually the given \c logbookPath)
-     * is stored in the Settings.
+     * is stored in the PersistenceManager.
      *
      * \param logbookPath
      *        the path of the logbook (database) file to connect with
      * \return \c true if the connection succeeded; \c false else
-     * \sa Settings#setLogbookPath
+     * \sa PersistenceManager#setLogbookPath
      * \sa connectionChanged
      */
     bool connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept;
@@ -75,9 +81,9 @@ public:
     bool optimise() noexcept;
     bool backup(const QString &backupLogbookPath) noexcept;
 
-    bool getMetadata(Metadata &metadata) const noexcept;
-    bool getDatabaseVersion(Version &databaseVersion) const noexcept;
-    bool getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept;
+    Metadata getMetadata(bool *ok = nullptr) const noexcept;
+    Version getDatabaseVersion(bool *ok = nullptr) const noexcept;
+    QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept;
 
     QString getBackupFileName(const QString &backupDirectoryPath) const noexcept;
     static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
@@ -85,17 +91,14 @@ public:
 signals:
     void connectionChanged(bool connected);
 
-protected:
-    ~LogbookManager() noexcept override;
-
 private:
-    Q_DISABLE_COPY(LogbookManager)
-    std::unique_ptr<LogbookManagerPrivate> d;
+    const std::unique_ptr<PersistenceManagerPrivate> d;
 
-    LogbookManager() noexcept;
+    PersistenceManager() noexcept;
+    ~PersistenceManager() override;
 
     bool connectDb(const QString &logbookPath) noexcept;
-    bool checkDatabaseVersion(Version &databaseVersion) const noexcept;
+    std::pair<bool, Version> checkDatabaseVersion() const noexcept;
 };
 
-#endif // LOGBOOKMANAGER_H
+#endif // PERSISTENCEMANAGER_H

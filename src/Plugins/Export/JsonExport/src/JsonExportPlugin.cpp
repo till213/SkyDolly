@@ -55,9 +55,8 @@
 #include "JsonExportSettings.h"
 #include "JsonExportPlugin.h"
 
-class JsonExportPluginPrivate
+struct JsonExportPluginPrivate
 {
-public:
     JsonExportPluginPrivate() noexcept
         : flight(nullptr)
     {}
@@ -75,14 +74,14 @@ JsonExportPlugin::JsonExportPlugin() noexcept
     : d(std::make_unique<JsonExportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("JsonExportPlugin::JsonExportPlugin: PLUGIN LOADED");
+    qDebug() << "JsonExportPlugin::JsonExportPlugin: PLUGIN LOADED";
 #endif
 }
 
 JsonExportPlugin::~JsonExportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("JsonExportPlugin::~JsonExportPlugin: PLUGIN UNLOADED");
+    qDebug() << "JsonExportPlugin::~JsonExportPlugin: PLUGIN UNLOADED";
 #endif
 }
 
@@ -169,10 +168,10 @@ bool JsonExportPlugin::exportHeader(QIODevice &io) const noexcept
 
 bool JsonExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
-    bool ok = true;
+    bool ok {true};
     std::size_t i = 0;
     for (const auto &aircraft : *d->flight) {
-        ok = exportAircraft(*aircraft, io);
+        ok = exportAircraft(aircraft, io);
         if (ok) {
             if (i < d->flight->count() - 1) {
                 ok = io.write(",\n");
@@ -189,9 +188,8 @@ bool JsonExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 
 bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    std::vector<PositionData> interpolatedPositionData;
-    Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
-    bool ok = true;
+    const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    bool ok {true};
 
     const AircraftInfo &info = aircraft.getAircraftInfo();
     const AircraftType &type = info.aircraftType;
@@ -204,7 +202,7 @@ bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) c
     ok = io.write(trackBegin.toUtf8());
     if (ok) {
         std::size_t i = 0;
-        for (PositionData &positionData : interpolatedPositionData) {
+        for (const PositionData &positionData : interpolatedPositionData) {
             ok = exportTrackPoint(positionData, io);
             if (ok) {
                 if (i < interpolatedPositionData.size() - 1) {
@@ -246,7 +244,7 @@ bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) c
 
 bool JsonExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
-    bool ok = true;
+    bool ok {true};
     const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlan();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);

@@ -46,7 +46,7 @@ struct AircraftType;
 struct AircraftInfo;
 struct FlightCondition;
 class ImportPluginBaseSettings;
-class ImportPluginBasePrivate;
+struct ImportPluginBasePrivate;
 
 class PLUGINMANAGER_API ImportPluginBase : public PluginBase, public ImportIntf
 {
@@ -54,7 +54,11 @@ class PLUGINMANAGER_API ImportPluginBase : public PluginBase, public ImportIntf
     Q_INTERFACES(ImportIntf)
 public:
     ImportPluginBase() noexcept;
-    ~ImportPluginBase() noexcept override;
+    ImportPluginBase(const ImportPluginBase &rhs) = delete;
+    ImportPluginBase(ImportPluginBase &&rhs) = delete;
+    ImportPluginBase &operator=(const ImportPluginBase &rhs) = delete;
+    ImportPluginBase &operator=(ImportPluginBase &&rhs) = delete;
+    ~ImportPluginBase() override;
 
     QWidget *getParentWidget() const noexcept final
     {
@@ -97,7 +101,7 @@ protected:
     virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept = 0;
 
 private:
-    std::unique_ptr<ImportPluginBasePrivate> d;
+    const std::unique_ptr<ImportPluginBasePrivate> d;
 
     virtual void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;

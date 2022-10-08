@@ -50,8 +50,7 @@ AbstractModule::AbstractModule(QObject *parent) noexcept
     frenchConnection();
 }
 
-AbstractModule::~AbstractModule() noexcept
-{}
+AbstractModule::~AbstractModule() = default;
 
 ModuleIntf::RecordIconId AbstractModule::getRecordIconId() const noexcept
 {

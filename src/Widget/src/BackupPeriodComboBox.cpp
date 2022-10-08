@@ -29,9 +29,8 @@
 #include <Kernel/Enum.h>
 #include "BackupPeriodComboBox.h"
 
-class BackupPeriodComboBoxPrivate
+struct BackupPeriodComboBoxPrivate
 {
-public:
     BackupPeriodComboBoxPrivate(BackupPeriodComboBox::Selection theSelection)
         : selection(theSelection)
     {}

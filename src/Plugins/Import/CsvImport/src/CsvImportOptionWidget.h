@@ -34,18 +34,18 @@ namespace Ui {
 }
 
 class CsvImportSettings;
-class CsvImportOptionWidgetPrivate;
+struct CsvImportOptionWidgetPrivate;
 
 class CsvImportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit CsvImportOptionWidget(CsvImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~CsvImportOptionWidget() noexcept;
+    ~CsvImportOptionWidget() noexcept override;
 
 private:
     std::unique_ptr<Ui::CsvImportOptionWidget> ui;
-    std::unique_ptr<CsvImportOptionWidgetPrivate> d;
+    const std::unique_ptr<CsvImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;

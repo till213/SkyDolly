@@ -24,14 +24,17 @@
  */
 #include <memory>
 #include <vector>
+#include <mutex>
 
 #include <QObject>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include "Logbook.h"
 
-class LogbookPrivate
+struct LogbookPrivate
 {
-public:
     LogbookPrivate() noexcept
     {}
 
@@ -40,18 +43,18 @@ public:
 
     std::vector<std::unique_ptr<Flight>> flights;
 
-    static Logbook *instance;
+    static inline std::once_flag onceFlag;
+    static inline Logbook *instance;
 };
 
-Logbook *LogbookPrivate::instance = nullptr;
 
 // PUBLIC
 
 Logbook &Logbook::getInstance() noexcept
 {
-    if (LogbookPrivate::instance == nullptr) {
+    std::call_once(LogbookPrivate::onceFlag, []() {
         LogbookPrivate::instance = new Logbook();
-    }
+    });
     return *LogbookPrivate::instance;
 }
 
@@ -68,15 +71,6 @@ Flight &Logbook::getCurrentFlight() const noexcept
     return *(*d->flights.cbegin());
 }
 
-// PROTECTED
-
-Logbook::~Logbook() noexcept
-{
-#ifdef DEBUG
-    qDebug("Logbook::~Logbook: DELETED");
-#endif
-}
-
 // PRIVATE
 
 Logbook::Logbook() noexcept
@@ -84,10 +78,16 @@ Logbook::Logbook() noexcept
       d(std::make_unique<LogbookPrivate>())
 {
 #ifdef DEBUG
-    qDebug("Logbook::Logbook: CREATED");
+    qDebug() << "Logbook::Logbook: CREATED";
 #endif
     // Logbook may support several flights, but for now there will be always
     // exactly one
-    std::unique_ptr<Flight> defaultFlight = std::make_unique<Flight>();
-    d->flights.push_back(std::move(defaultFlight));
+    d->flights.push_back(std::make_unique<Flight>());
+}
+
+Logbook::~Logbook()
+{
+#ifdef DEBUG
+    qDebug() << "Logbook::~Logbook: DELETED";
+#endif
 }

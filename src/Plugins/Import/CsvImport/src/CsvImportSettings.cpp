@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
@@ -37,9 +40,8 @@ namespace
     constexpr CsvImportSettings::Format DefaultFormat {CsvImportSettings::Format::SkyDolly};
 }
 
-class CsvImportSettingsPrivate
+struct CsvImportSettingsPrivate
 {
-public:
     CsvImportSettingsPrivate()
         : format(::DefaultFormat)
     {}
@@ -53,14 +55,14 @@ CsvImportSettings::CsvImportSettings() noexcept
     : d(std::make_unique<CsvImportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("CsvImportSettings::CsvImportSettings: CREATED");
+    qDebug() << "CsvImportSettings::CsvImportSettings: CREATED";
 #endif
 }
 
 CsvImportSettings::~CsvImportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("CsvImportSettings::~CsvImportSettings: DELETED");
+    qDebug() << "CsvImportSettings::~CsvImportSettings: DELETED";
 #endif
 }
 
@@ -99,7 +101,7 @@ void CsvImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void CsvImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
     if (ok) {
         d->format = static_cast<CsvImportSettings::Format >(enumeration);

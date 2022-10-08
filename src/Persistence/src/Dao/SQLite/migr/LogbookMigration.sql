@@ -675,3 +675,7 @@ alter table position rename heading to true_heading;
 @migr(id = "c94c121e-3d93-44e4-a747-6db2b5e3b45b", descn = "Update application version to 0.12", step = 1)
 update metadata
 set app_version = '0.12.0';
+
+@migr(id = "d7f115b0-8bd1-40f7-9098-5481878f5f6d", descn = "Update application version to 0.13", step = 1)
+update metadata
+set app_version = '0.13.0';

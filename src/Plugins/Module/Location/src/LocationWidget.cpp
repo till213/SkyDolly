@@ -47,11 +47,12 @@
 
 #include <GeographicLib/DMS.hpp>
 
+#include <Kernel/Const.h>
 #include <Kernel/Settings.h>
 #include <Kernel/Unit.h>
 #include <Kernel/PositionParser.h>
 #include <Model/Logbook.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/PersistenceManager.h>
 #include <Persistence/PersistedEnumerationItem.h>
 #include <Persistence/Service/LocationService.h>
 #include <Persistence/Service/EnumerationService.h>
@@ -100,13 +101,13 @@ struct LocationWidgetPrivate
     LocationWidgetPrivate() noexcept
     {
         if (typeEnumeration.count() == 0) {
-            enumerationService->getEnumerationByName(typeEnumeration);
+            typeEnumeration = enumerationService->getEnumerationByName(EnumerationService::LocationType);
         }
         if (categoryEnumeration.count() == 0) {
-            enumerationService->getEnumerationByName(categoryEnumeration);
+            categoryEnumeration = enumerationService->getEnumerationByName(EnumerationService::LocationCategory);
         }
         if (countryEnumeration.count() == 0) {
-            enumerationService->getEnumerationByName(countryEnumeration);
+            countryEnumeration = enumerationService->getEnumerationByName(EnumerationService::Country);
         }
     }
 
@@ -136,9 +137,9 @@ struct LocationWidgetPrivate
     static inline int onGroundColumn {InvalidColumn};
     static inline int attributesColumn {InvalidColumn};
 
-    static inline Enumeration typeEnumeration {EnumerationService::LocationType};
-    static inline Enumeration categoryEnumeration {EnumerationService::LocationCategory};
-    static inline Enumeration countryEnumeration {EnumerationService::Country};
+    static inline Enumeration typeEnumeration;
+    static inline Enumeration categoryEnumeration;
+    static inline Enumeration countryEnumeration;
 };
 
 // PUBLIC
@@ -153,7 +154,7 @@ LocationWidget::LocationWidget(QWidget *parent) noexcept
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug() << "LocationWidget::LocationWidget: CREATED.";
+    qDebug() << "LocationWidget::LocationWidget: CREATED";
 #endif
 }
 
@@ -162,7 +163,7 @@ LocationWidget::~LocationWidget() noexcept
     const QByteArray tableState = ui->locationTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setLocationTableState(tableState);
 #ifdef DEBUG
-    qDebug() << "LocationWidget::~LocationWidget: DELETED.";
+    qDebug() << "LocationWidget::~LocationWidget: DELETED";
 #endif
 }
 
@@ -193,13 +194,13 @@ void LocationWidget::addUserLocation(double latitude, double longitude)
 
 void LocationWidget::addLocation(Location newLocation)
 {
-    if (newLocation.typeId == Location::InvalidId) {
+    if (newLocation.typeId == Const::InvalidId) {
         newLocation.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymbolicId).id();
     }
-    if (newLocation.categoryId == Location::InvalidId) {
+    if (newLocation.categoryId == Const::InvalidId) {
         newLocation.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymbolicId).id();
     }
-    if (newLocation.countryId == Location::InvalidId) {
+    if (newLocation.countryId == Const::InvalidId) {
         newLocation.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymbolicId).id();
     }
     Location location {newLocation};
@@ -308,8 +309,7 @@ void LocationWidget::initUi() noexcept
 void LocationWidget::frenchConnection() noexcept
 {
     // Logbook
-    const Logbook &logbook = Logbook::getInstance();
-    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
+    connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &LocationWidget::updateUi);
 
     // Connection
@@ -393,10 +393,9 @@ void LocationWidget::updateInfoUi() noexcept
 
 void LocationWidget::updateLocationTable() noexcept
 {
-    if (LogbookManager::getInstance().isConnected()) {
+    if (PersistenceManager::getInstance().isConnected()) {
 
-        std::vector<Location> locations;
-        d->locationService->getAll(std::back_inserter(locations));
+        std::vector<Location> locations = d->locationService->getAll();
 
         ui->locationTableWidget->blockSignals(true);
         ui->locationTableWidget->setSortingEnabled(false);
@@ -651,7 +650,7 @@ int LocationWidget::getSelectedRow() const noexcept
 
 std::int64_t LocationWidget::getSelectedLocationId() const noexcept
 {
-    std::int64_t selectedLocationId {::Location::InvalidId};
+    std::int64_t selectedLocationId {Const::InvalidId};
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         selectedLocationId = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::idColumn)->data(Qt::EditRole).toLongLong();
@@ -727,7 +726,7 @@ void LocationWidget::onTeleportToSelectedLocation() noexcept
 void LocationWidget::onDeleteLocation() noexcept
 {
     const std::int64_t selectedLocationId = getSelectedLocationId();
-    if (selectedLocationId != ::Location::InvalidId) {
+    if (selectedLocationId != Const::InvalidId) {
         Settings &settings = Settings::getInstance();
         bool doDelete {true};
         if (settings.isDeleteLocationConfirmationEnabled()) {

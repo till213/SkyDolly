@@ -32,28 +32,19 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API AircraftHandleData : public TimeVariableData
+struct MODEL_API AircraftHandleData final : public TimeVariableData
 {
-    std::int16_t brakeLeftPosition;
-    std::int16_t brakeRightPosition;
+    std::int16_t brakeLeftPosition {0};
+    std::int16_t brakeRightPosition {0};
     // Implementation note: the water rudder can also have negative (-100.0) values,
     // hence hence the type std::int16_t (position) which also supports negative values
-    std::int16_t waterRudderHandlePosition;
-    std::uint8_t tailhookPosition;
-    std::uint8_t canopyOpen;
-    std::uint8_t leftWingFolding;
-    std::uint8_t rightWingFolding;
-    bool gearHandlePosition;
-    bool smokeEnabled;
-
-    AircraftHandleData() noexcept;
-    AircraftHandleData(const AircraftHandleData &other) = default;
-    AircraftHandleData(AircraftHandleData &&other) = default;
-    ~AircraftHandleData() override = default;
-    AircraftHandleData &operator=(const AircraftHandleData &rhs) = default;
-    AircraftHandleData &operator=(AircraftHandleData &&rhs) = default;
-
-    static const AircraftHandleData NullData;
+    std::int16_t waterRudderHandlePosition {0};
+    std::uint8_t tailhookPosition {0};
+    std::uint8_t canopyOpen {0};
+    std::uint8_t leftWingFolding {0};
+    std::uint8_t rightWingFolding {0};
+    bool gearHandlePosition {false};
+    bool smokeEnabled {false};
 };
 
 #endif // AIRCRAFTHANDLEDATA_H

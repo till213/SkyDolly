@@ -56,7 +56,7 @@
 #include <Model/AircraftInfo.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/PersistenceManager.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
@@ -159,7 +159,7 @@ FormationWidget::FormationWidget(FlightService &flightService, AircraftService &
     updateUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug() << "FormationWidget::FormationWidget: CREATED.";
+    qDebug() << "FormationWidget::FormationWidget: CREATED";
 #endif
 }
 
@@ -168,7 +168,7 @@ FormationWidget::~FormationWidget() noexcept
     const QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setFormationAircraftTableState(tableState);
 #ifdef DEBUG
-    qDebug() << "FormationWidget::~FormationWidget: DELETED.";
+    qDebug() << "FormationWidget::~FormationWidget: DELETED";
 #endif
 }
 
@@ -292,7 +292,7 @@ void FormationWidget::frenchConnection() noexcept
 {
     // Logbook
     const Logbook &logbook = Logbook::getInstance();
-    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
+    connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &FormationWidget::updateUi);
 
     // Flight
@@ -362,7 +362,7 @@ void FormationWidget::updateAircraftTable() noexcept
 
     int aircraftIndex {0};
     for (const auto &aircraft : flight) {
-        createRow(*aircraft, aircraftIndex);
+        createRow(aircraft, aircraftIndex);
         ++aircraftIndex;
     }
 
@@ -504,7 +504,7 @@ void FormationWidget::updateToolTips() noexcept
     }
 
     // Time offset
-    if (d->selectedAircraftIndex != Flight::InvalidId) {
+    if (d->selectedAircraftIndex != Const::InvalidId) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
@@ -1034,9 +1034,9 @@ void FormationWidget::resetAllTimeOffsets() noexcept
     }
     if (doReset) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
-        bool ok = true;
+        bool ok {true};
         for (auto &aircraft : flight) {
-            ok = d->aircraftService.changeTimeOffset(*aircraft, 0);
+            ok = d->aircraftService.changeTimeOffset(aircraft, 0);
             if (!ok) {
                 break;
             }

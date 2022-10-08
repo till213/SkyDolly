@@ -52,9 +52,8 @@
 #include "GpxParser.h"
 #include "GpxImportPlugin.h"
 
-class GpxImportPluginPrivate
+struct GpxImportPluginPrivate
 {
-public:
     GpxImportPluginPrivate()
         : flight(nullptr)
     {}
@@ -73,14 +72,14 @@ GpxImportPlugin::GpxImportPlugin() noexcept
     : d(std::make_unique<GpxImportPluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug("GpxImportPlugin::GpxImportPlugin: PLUGIN LOADED");
+    qDebug() << "GpxImportPlugin::GpxImportPlugin: PLUGIN LOADED";
 #endif
 }
 
 GpxImportPlugin::~GpxImportPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("GpxImportPlugin::~GpxImportPlugin: PLUGIN UNLOADED");
+    qDebug() << "GpxImportPlugin::~GpxImportPlugin: PLUGIN UNLOADED";
 #endif
 }
 
@@ -115,7 +114,7 @@ bool GpxImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
     bool ok = !d->xml.hasError();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("GpxImportPlugin::import: XML error: %s", qPrintable(d->xml.errorString()));
+        qDebug() << "GpxImportPlugin::import: XML error" << d->xml.errorString();
     }
 #endif
     // We are done with the import

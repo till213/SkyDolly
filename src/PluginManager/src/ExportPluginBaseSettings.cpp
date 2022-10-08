@@ -32,9 +32,9 @@
 namespace
 {
     // Keys
-    constexpr char ResamplingPeriodKey[] = "ResamplingPeriod";
-    constexpr char FormationExportKey[] = "FormationExport";
-    constexpr char OpenExportedFilesEnabledKey[] = "OpenExportedFilesEnabled";
+    constexpr const char *ResamplingPeriodKey {"ResamplingPeriod"};
+    constexpr const char *FormationExportKey {"FormationExport"};
+    constexpr const char *OpenExportedFilesEnabledKey {"OpenExportedFilesEnabled"};
 
     // Defaults
     constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
@@ -42,9 +42,8 @@ namespace
     constexpr bool DefaultOpenExportedFilesEnabled = false;
 }
 
-class ExportPluginBaseSettingsPrivate
+struct ExportPluginBaseSettingsPrivate
 {
-public:
     ExportPluginBaseSettingsPrivate()
         : resamplingPeriod(::DefaultResamplingPeriod),
           formationExport(::DefaultFormationExport),
@@ -62,18 +61,9 @@ public:
 
 ExportPluginBaseSettings::ExportPluginBaseSettings() noexcept
     : d(std::make_unique<ExportPluginBaseSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug("ExportPluginBaseSettings::ExportPluginBaseSettings: CREATED");
-#endif
-}
+{}
 
-ExportPluginBaseSettings::~ExportPluginBaseSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug("ExportPluginBaseSettings::~ExportPluginBaseSettings: DELETED");
-#endif
-}
+ExportPluginBaseSettings::~ExportPluginBaseSettings() = default;
 
 SampleRate::ResamplingPeriod ExportPluginBaseSettings::getResamplingPeriod() const noexcept
 {
@@ -164,7 +154,7 @@ void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
 
 void ExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {true};
     int enumeration = valuesByKey.at(::ResamplingPeriodKey).toInt(&ok);
     if (ok) {
         d->resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);

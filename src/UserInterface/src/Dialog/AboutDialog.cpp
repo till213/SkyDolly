@@ -45,9 +45,8 @@
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 
-class AboutDialogPrivate
+struct AboutDialogPrivate
 {
-public:
     AboutDialogPrivate(QWidget &parent) noexcept
     {
         if (parent.devicePixelRatioF() >= 1.5) {

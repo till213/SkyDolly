@@ -33,14 +33,14 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/ExportPluginBaseSettings.h>
 
-class IgcExportSettingsPrivate;
+struct IgcExportSettingsPrivate;
 
 class IgcExportSettings : public ExportPluginBaseSettings
 {
     Q_OBJECT
 public:
     IgcExportSettings() noexcept;
-    virtual ~IgcExportSettings() noexcept;
+    ~IgcExportSettings() noexcept override;
 
     QString getPilotName() const noexcept;
     void setPilotName(const QString &pilotName) noexcept;
@@ -58,13 +58,13 @@ signals:
     void extendedSettingsChanged();
 
 protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
 
 private:
-    std::unique_ptr<IgcExportSettingsPrivate> d;
+    const std::unique_ptr<IgcExportSettingsPrivate> d;
 };
 
 #endif // IGCEXPORTSETTINGS_H
