@@ -56,15 +56,14 @@ LogbookService::LogbookService(LogbookService &&rhs) = default;
 LogbookService &LogbookService::operator=(LogbookService &&rhs) = default;
 LogbookService::~LogbookService() = default;
 
-bool LogbookService::getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept
+std::forward_list<FlightDate> LogbookService::getFlightDates() const noexcept
 {
     std::forward_list<FlightDate> flightDates;
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->logbookDao->getFlightDates(frontInsertIterator);
+    if (QSqlDatabase::database().transaction()) {
+        flightDates = d->logbookDao->getFlightDates();
         QSqlDatabase::database().rollback();
     }
-    return ok;
+    return flightDates;
 }
 
 std::vector<FlightSummary> LogbookService::getFlightSummaries(const FlightSelector &flightSelector) const noexcept

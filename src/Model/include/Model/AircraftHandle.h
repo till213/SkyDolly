@@ -25,8 +25,6 @@
 #ifndef AIRCRAFTHANDLE_H
 #define AIRCRAFTHANDLE_H
 
-#include <vector>
-#include <iterator>
 #include <cstdint>
 
 #include "AircraftHandleData.h"

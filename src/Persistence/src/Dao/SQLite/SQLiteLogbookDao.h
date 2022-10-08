@@ -29,11 +29,10 @@
 #include <forward_list>
 #include <vector>
 
+#include <Model/FlightDate.h>
+#include <Model/FlightSummary.h>
+#include <FlightSelector.h>
 #include "../LogbookDaoIntf.h"
-
-struct FlightSelector;
-struct FlightDate;
-struct FlightSummary;
 
 class SQLiteLogbookDao : public LogbookDaoIntf
 {
@@ -45,8 +44,8 @@ public:
     SQLiteLogbookDao &operator=(SQLiteLogbookDao &&rhs);
     ~SQLiteLogbookDao() override;
 
-    bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept override;
-    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok) const noexcept override;
+    std::forward_list<FlightDate> getFlightDates(bool *ok = nullptr) const noexcept override;
+    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept override;
 };
 
 #endif // SQLITELOGBOOKDAO_H

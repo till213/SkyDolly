@@ -25,8 +25,6 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
-#include <iterator>
-#include <unordered_map>
 #include <cstdint>
 
 #include <QIODevice>
