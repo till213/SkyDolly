@@ -38,15 +38,16 @@ class QDateTime;
 
 #include <Kernel/Settings.h>
 #include <PluginManager/ExportIntf.h>
-#include <PluginManager/ExportPluginBase.h>
+#include <PluginManager/FlightExportPluginBase.h>
 
 class Flight;
 class Aircraft;
 struct EngineData;
 struct Waypoint;
+class FlightExportPluginBaseSettings;
 struct IgcExportPluginPrivate;
 
-class IgcExportPlugin : public ExportPluginBase
+class IgcExportPlugin : public FlightExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "IgcExportPlugin.json")
@@ -56,7 +57,7 @@ public:
     ~IgcExportPlugin() noexcept override;
 
 protected:
-    ExportPluginBaseSettings &getPluginSettings() const noexcept override;
+    FlightExportPluginBaseSettings &getPluginSettings() const noexcept override;
     QString getFileSuffix() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;

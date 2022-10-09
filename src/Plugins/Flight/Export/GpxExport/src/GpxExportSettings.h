@@ -30,11 +30,11 @@
 #include <QObject>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportPluginBaseSettings.h>
+#include <PluginManager/FlightExportPluginBaseSettings.h>
 
 struct GpxExportSettingsPrivate;
 
-class GpxExportSettings : public ExportPluginBaseSettings
+class GpxExportSettings : public FlightExportPluginBaseSettings
 {
     Q_OBJECT
 public:

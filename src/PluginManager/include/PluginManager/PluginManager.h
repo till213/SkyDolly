@@ -63,6 +63,7 @@ public:
     using Handle = std::pair<QUuid, QString>;
     std::vector<Handle> initialiseFlightExportPlugins() noexcept;
     std::vector<Handle> initialiseFlightImportPlugins() noexcept;
+    std::vector<Handle> initialiseLocationImportPlugins() noexcept;
 
     bool importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept;
     bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;

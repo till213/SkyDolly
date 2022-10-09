@@ -26,7 +26,7 @@
 #include <string_view>
 
 #include <Kernel/Settings.h>
-#include "ImportPluginBaseSettings.h"
+#include "FlightImportPluginBaseSettings.h"
 
 namespace
 {
@@ -39,9 +39,9 @@ namespace
     constexpr bool DefaultAddToFlightEnabled = false;
 }
 
-struct ImportPluginBaseSettingsPrivate
+struct FlightImportPluginBaseSettingsPrivate
 {
-    ImportPluginBaseSettingsPrivate()
+    FlightImportPluginBaseSettingsPrivate()
         : importDirectoryEnabled(::DefaultImportDirectoryEnabled),
           addToFlightEnabled(::DefaultAddToFlightEnabled)
     {}
@@ -52,18 +52,18 @@ struct ImportPluginBaseSettingsPrivate
 
 // PUBLIC
 
-ImportPluginBaseSettings::ImportPluginBaseSettings() noexcept
-    : d(std::make_unique<ImportPluginBaseSettingsPrivate>())
+FlightImportPluginBaseSettings::FlightImportPluginBaseSettings() noexcept
+    : d(std::make_unique<FlightImportPluginBaseSettingsPrivate>())
 {}
 
-ImportPluginBaseSettings::~ImportPluginBaseSettings() = default;
+FlightImportPluginBaseSettings::~FlightImportPluginBaseSettings() = default;
 
-bool ImportPluginBaseSettings::isImportDirectoryEnabled() const noexcept
+bool FlightImportPluginBaseSettings::isImportDirectoryEnabled() const noexcept
 {
     return d->importDirectoryEnabled;
 }
 
-void ImportPluginBaseSettings::setImportDirectoryEnabled(bool enabled) noexcept
+void FlightImportPluginBaseSettings::setImportDirectoryEnabled(bool enabled) noexcept
 {
     if (d->importDirectoryEnabled != enabled) {
         d->importDirectoryEnabled = enabled;
@@ -71,12 +71,12 @@ void ImportPluginBaseSettings::setImportDirectoryEnabled(bool enabled) noexcept
     }
 }
 
-bool ImportPluginBaseSettings::isAddToFlightEnabled() const noexcept
+bool FlightImportPluginBaseSettings::isAddToFlightEnabled() const noexcept
 {
     return d->addToFlightEnabled;
 }
 
-void ImportPluginBaseSettings::setAddToFlightEnabled(bool enabled) noexcept
+void FlightImportPluginBaseSettings::setAddToFlightEnabled(bool enabled) noexcept
 {
     if (d->addToFlightEnabled != enabled) {
         d->addToFlightEnabled = enabled;
@@ -84,7 +84,7 @@ void ImportPluginBaseSettings::setAddToFlightEnabled(bool enabled) noexcept
     }
 }
 
-void ImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
+void FlightImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
@@ -99,7 +99,7 @@ void ImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const
     addSettingsExtn(keyValues);
 }
 
-void ImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void FlightImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     Settings::KeyValue keyValue;
 
@@ -114,7 +114,7 @@ void ImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
     addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
-void ImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
+void FlightImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->importDirectoryEnabled = valuesByKey.at(::ImportDirectoryEnabledKey).toBool();
     d->addToFlightEnabled = valuesByKey.at(::AddToFlightEnabledKey).toBool();
@@ -123,7 +123,7 @@ void ImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valu
     restoreSettingsExtn(valuesByKey);
 }
 
-void ImportPluginBaseSettings::restoreDefaults() noexcept
+void FlightImportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
     d->addToFlightEnabled = ::DefaultAddToFlightEnabled;

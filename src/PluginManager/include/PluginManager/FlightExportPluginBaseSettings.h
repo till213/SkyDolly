@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef EXPORTPLUGINBASESETTINGS_H
-#define EXPORTPLUGINBASESETTINGS_H
+#ifndef FLIGHTEXPORTPLUGINBASESETTINGS_H
+#define FLIGHTEXPORTPLUGINBASESETTINGS_H
 
 #include <memory>
 
@@ -34,9 +34,9 @@
 #include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
-struct ExportPluginBaseSettingsPrivate;
+struct FlightExportPluginBaseSettingsPrivate;
 
-class PLUGINMANAGER_API ExportPluginBaseSettings : public QObject
+class PLUGINMANAGER_API FlightExportPluginBaseSettings : public QObject
 {
     Q_OBJECT
 public:
@@ -53,12 +53,12 @@ public:
         AllAircraftSeparateFiles
     };
 
-    ExportPluginBaseSettings() noexcept;
-    ExportPluginBaseSettings(const ExportPluginBaseSettings &rhs) = delete;
-    ExportPluginBaseSettings(ExportPluginBaseSettings &&rhs) = delete;
-    ExportPluginBaseSettings &operator=(const ExportPluginBaseSettings &rhs) = delete;
-    ExportPluginBaseSettings &operator=(ExportPluginBaseSettings &&rhs) = delete;
-    ~ExportPluginBaseSettings() override;
+    FlightExportPluginBaseSettings() noexcept;
+    FlightExportPluginBaseSettings(const FlightExportPluginBaseSettings &rhs) = delete;
+    FlightExportPluginBaseSettings(FlightExportPluginBaseSettings &&rhs) = delete;
+    FlightExportPluginBaseSettings &operator=(const FlightExportPluginBaseSettings &rhs) = delete;
+    FlightExportPluginBaseSettings &operator=(FlightExportPluginBaseSettings &&rhs) = delete;
+    ~FlightExportPluginBaseSettings() override;
 
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
@@ -101,7 +101,7 @@ protected:
     virtual void restoreDefaultsExtn() noexcept = 0;
 
 private:
-    const std::unique_ptr<ExportPluginBaseSettingsPrivate> d;
+    const std::unique_ptr<FlightExportPluginBaseSettingsPrivate> d;
 };
 
-#endif // EXPORTPLUGINBASESETTINGS_H
+#endif // FLIGHTEXPORTPLUGINBASESETTINGS_H

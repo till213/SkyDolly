@@ -32,7 +32,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportPluginBaseSettings.h>
+#include <PluginManager/FlightExportPluginBaseSettings.h>
 #include "GpxExportSettings.h"
 
 namespace
@@ -56,7 +56,7 @@ struct GpxExportSettingsPrivate
 // PUBLIC
 
 GpxExportSettings::GpxExportSettings() noexcept
-    : ExportPluginBaseSettings(),
+    : FlightExportPluginBaseSettings(),
       d(std::make_unique<GpxExportSettingsPrivate>())
 {
 #ifdef DEBUG

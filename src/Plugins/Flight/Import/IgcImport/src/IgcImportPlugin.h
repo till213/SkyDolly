@@ -36,15 +36,15 @@ class QRegularExpression;
 
 #include <Flight/FlightAugmentation.h>
 #include <PluginManager/ImportIntf.h>
-#include <PluginManager/ImportPluginBase.h>
+#include <PluginManager/FlightImportPluginBase.h>
 
 class Flight;
 struct AircraftInfo;
 struct FlightCondition;
-class ImportPluginBaseSettings;
+class FlightImportPluginBaseSettings;
 struct IgcImportPluginPrivate;
 
-class IgcImportPlugin : public ImportPluginBase
+class IgcImportPlugin : public FlightImportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "IgcImportPlugin.json")
@@ -54,7 +54,7 @@ public:
     ~IgcImportPlugin() noexcept override;
 
 protected:
-    ImportPluginBaseSettings &getPluginSettings() const noexcept override;
+    FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;
     QString getFileSuffix() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;

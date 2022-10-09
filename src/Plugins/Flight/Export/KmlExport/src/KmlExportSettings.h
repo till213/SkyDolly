@@ -31,11 +31,11 @@
 #include <QColor>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportPluginBaseSettings.h>
+#include <PluginManager/FlightExportPluginBaseSettings.h>
 
 struct KmlExportSettingsPrivate;
 
-class KmlExportSettings : public ExportPluginBaseSettings
+class KmlExportSettings : public FlightExportPluginBaseSettings
 {
     Q_OBJECT
 public:

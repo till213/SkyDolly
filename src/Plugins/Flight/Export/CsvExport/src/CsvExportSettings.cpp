@@ -32,7 +32,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportPluginBaseSettings.h>
+#include <PluginManager/FlightExportPluginBaseSettings.h>
 #include "CsvExportSettings.h"
 
 namespace
@@ -55,7 +55,7 @@ struct CsvExportSettingsPrivate
 // PUBLIC
 
 CsvExportSettings::CsvExportSettings() noexcept
-    : ExportPluginBaseSettings(),
+    : FlightExportPluginBaseSettings(),
       d(std::make_unique<CsvExportSettingsPrivate>())
 {
 #ifdef DEBUG

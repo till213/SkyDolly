@@ -32,7 +32,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportPluginBaseSettings.h>
+#include <PluginManager/FlightExportPluginBaseSettings.h>
 #include "JsonExportSettings.h"
 
 struct JsonExportSettingsPrivate
@@ -44,7 +44,7 @@ struct JsonExportSettingsPrivate
 // PUBLIC
 
 JsonExportSettings::JsonExportSettings() noexcept
-    : ExportPluginBaseSettings(),
+    : FlightExportPluginBaseSettings(),
       d(std::make_unique<JsonExportSettingsPrivate>())
 {
 #ifdef DEBUG

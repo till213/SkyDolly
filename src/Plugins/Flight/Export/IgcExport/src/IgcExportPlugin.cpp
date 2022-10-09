@@ -149,7 +149,7 @@ IgcExportPlugin::~IgcExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &IgcExportPlugin::getPluginSettings() const noexcept
+FlightExportPluginBaseSettings &IgcExportPlugin::getPluginSettings() const noexcept
 {
     return d->pluginSettings;
 }

@@ -62,7 +62,7 @@ CsvExportPlugin::CsvExportPlugin() noexcept
 #endif
 }
 
-CsvExportPlugin::~CsvExportPlugin() noexcept
+CsvExportPlugin::~CsvExportPlugin()
 {
 #ifdef DEBUG
     qDebug() << "CsvExportPlugin::~CsvExportPlugin: PLUGIN UNLOADED";
@@ -71,7 +71,7 @@ CsvExportPlugin::~CsvExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &CsvExportPlugin::getPluginSettings() const noexcept
+FlightExportPluginBaseSettings &CsvExportPlugin::getPluginSettings() const noexcept
 {
     return d->pluginSettings;
 }

@@ -31,11 +31,11 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/ImportPluginBaseSettings.h>
+#include <PluginManager/FlightImportPluginBaseSettings.h>
 
 struct GpxImportSettingsPrivate;
 
-class GpxImportSettings : public ImportPluginBaseSettings
+class GpxImportSettings : public FlightImportPluginBaseSettings
 {
     Q_OBJECT
 public:

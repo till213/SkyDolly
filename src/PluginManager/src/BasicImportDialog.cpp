@@ -38,13 +38,13 @@
 #include <Model/Flight.h>
 #include <Persistence/Service/AircraftTypeService.h>
 #include <Kernel/Settings.h>
-#include "ImportPluginBaseSettings.h"
+#include "FlightImportPluginBaseSettings.h"
 #include "BasicImportDialog.h"
 #include "ui_BasicImportDialog.h"
 
 struct BasicImportDialogPrivate
 {
-    BasicImportDialogPrivate(const Flight &theFlight, const QString &theFileFilter, ImportPluginBaseSettings &pluginSettings) noexcept
+    BasicImportDialogPrivate(const Flight &theFlight, const QString &theFileFilter, FlightImportPluginBaseSettings &pluginSettings) noexcept
         : flight(theFlight),
           aircraftTypeService(std::make_unique<AircraftTypeService>()),
           fileFilter(theFileFilter),
@@ -56,14 +56,14 @@ struct BasicImportDialogPrivate
     const Flight &flight;
     std::unique_ptr<AircraftTypeService> aircraftTypeService;
     QString fileFilter;
-    ImportPluginBaseSettings &pluginSettings;
+    FlightImportPluginBaseSettings &pluginSettings;
     QPushButton *importButton;
     QWidget *optionWidget;
 };
 
 // PUBLIC
 
-BasicImportDialog::BasicImportDialog(const Flight &flight, const QString &fileSuffix, ImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
+BasicImportDialog::BasicImportDialog(const Flight &flight, const QString &fileSuffix, FlightImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicImportDialog>()),
       d(std::make_unique<BasicImportDialogPrivate>(flight, fileSuffix, pluginSettings))
@@ -156,7 +156,7 @@ void BasicImportDialog::frenchConnection() noexcept
             this, &BasicImportDialog::onImportDirectoryChanged);
     connect(ui->addToFlightCheckBox, &QCheckBox::toggled,
             this, &BasicImportDialog::onAddToExistingFlightChanged);
-    connect(&d->pluginSettings, &ImportPluginBaseSettings::baseSettingsChanged,
+    connect(&d->pluginSettings, &FlightImportPluginBaseSettings::baseSettingsChanged,
             this, &BasicImportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,

@@ -46,13 +46,13 @@
 #include <Model/Position.h>
 #include <Model/SimType.h>
 #include "Export.h"
-#include "ExportPluginBaseSettings.h"
+#include "FlightExportPluginBaseSettings.h"
 #include "BasicExportDialog.h"
 #include "ui_BasicExportDialog.h"
 
 struct BasicExportDialogPrivate
 {
-    BasicExportDialogPrivate(const Flight &theFlight, const QString &theFileSuffix, const QString &theFileFilter, ExportPluginBaseSettings &thePluginSettings) noexcept
+    BasicExportDialogPrivate(const Flight &theFlight, const QString &theFileSuffix, const QString &theFileFilter, FlightExportPluginBaseSettings &thePluginSettings) noexcept
         : flight(theFlight),
           fileSuffix(theFileSuffix),
           fileFilter(theFileFilter),
@@ -64,7 +64,7 @@ struct BasicExportDialogPrivate
     const Flight &flight;
     QString fileSuffix;
     QString fileFilter;
-    ExportPluginBaseSettings &pluginSettings;
+    FlightExportPluginBaseSettings &pluginSettings;
     QPushButton *exportButton;
     QWidget *optionWidget;
     Unit unit;
@@ -72,7 +72,7 @@ struct BasicExportDialogPrivate
 
 // PUBLIC
 
-BasicExportDialog::BasicExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, ExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
+BasicExportDialog::BasicExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicExportDialog>()),
       d(std::make_unique<BasicExportDialogPrivate>(flight, fileSuffix, fileFilter, pluginSettings))
@@ -117,9 +117,9 @@ void BasicExportDialog::initBasicUi() noexcept
     ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->flight, d->fileSuffix)));
 
     // Formation export
-    ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::UserAircraftOnly));
-    ui->formationExportComboBox->addItem(tr("All aircraft (single file)"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::AllAircraftOneFile));
-    ui->formationExportComboBox->addItem(tr("All aircraft (separate files)"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles));
+    ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::toUnderlyingType(FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly));
+    ui->formationExportComboBox->addItem(tr("All aircraft (single file)"), Enum::toUnderlyingType(FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile));
+    ui->formationExportComboBox->addItem(tr("All aircraft (separate files)"), Enum::toUnderlyingType(FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles));
 
     // Resampling
     ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
@@ -178,7 +178,7 @@ void BasicExportDialog::frenchConnection() noexcept
             this, &BasicExportDialog::onResamplingOptionChanged);
     connect(ui->openExportCheckBox, &QCheckBox::toggled,
             this, &BasicExportDialog::onDoOpenExportedFilesChanged);
-    connect(&d->pluginSettings, &ExportPluginBaseSettings::baseSettingsChanged,
+    connect(&d->pluginSettings, &FlightExportPluginBaseSettings::baseSettingsChanged,
             this, &BasicExportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,
@@ -187,7 +187,7 @@ void BasicExportDialog::frenchConnection() noexcept
 
 inline bool BasicExportDialog::isExportUserAircraftOnly() const noexcept
 {
-    return d->pluginSettings.getFormationExport() == ExportPluginBaseSettings::FormationExport::UserAircraftOnly;
+    return d->pluginSettings.getFormationExport() == FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly;
 }
 
 std::int64_t BasicExportDialog::estimateNofSamplePoints() const noexcept
@@ -234,22 +234,22 @@ void BasicExportDialog::updateUi() noexcept
     }
     ui->resamplingComboBox->setCurrentIndex(currentIndex);
 
-    const ExportPluginBaseSettings::FormationExport formationExport = d->pluginSettings.getFormationExport();
+    const FlightExportPluginBaseSettings::FormationExport formationExport = d->pluginSettings.getFormationExport();
     currentIndex = 0;
     while (currentIndex < ui->formationExportComboBox->count() &&
-           static_cast<ExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->itemData(currentIndex).toInt()) != formationExport) {
+           static_cast<FlightExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->itemData(currentIndex).toInt()) != formationExport) {
         ++currentIndex;
     }
     ui->formationExportComboBox->setCurrentIndex(currentIndex);
 
     switch (formationExport) {
-    case ExportPluginBaseSettings::FormationExport::UserAircraftOnly:
+    case FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly:
         ui->formationExportComboBox->setToolTip(tr("Only the currently selected user aircraft is exported."));
         break;
-    case ExportPluginBaseSettings::FormationExport::AllAircraftOneFile:
+    case FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile:
         ui->formationExportComboBox->setToolTip(tr("All aircraft are exported, into a single file (if supported by the format; otherwise separate files)."));
         break;
-    case ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
+    case FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
         ui->formationExportComboBox->setToolTip(tr("All aircraft are exported, into separate files."));
         break;
     }
@@ -277,7 +277,7 @@ void BasicExportDialog::onFilePathChanged()
 
 void BasicExportDialog::onFormationExportChanged() noexcept
 {
-    d->pluginSettings.setFormationExport(static_cast<ExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->currentData().toInt()));
+    d->pluginSettings.setFormationExport(static_cast<FlightExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->currentData().toInt()));
 }
 
 void BasicExportDialog::onResamplingOptionChanged() noexcept

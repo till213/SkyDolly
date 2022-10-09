@@ -31,11 +31,11 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/ImportPluginBaseSettings.h>
+#include <PluginManager/FlightImportPluginBaseSettings.h>
 
 struct IgcImportSettingsPrivate;
 
-class IgcImportSettings : public ImportPluginBaseSettings
+class IgcImportSettings : public FlightImportPluginBaseSettings
 {
     Q_OBJECT
 public:

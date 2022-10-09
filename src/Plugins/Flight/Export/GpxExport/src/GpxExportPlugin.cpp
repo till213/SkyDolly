@@ -88,7 +88,7 @@ GpxExportPlugin::~GpxExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &GpxExportPlugin::getPluginSettings() const noexcept
+FlightExportPluginBaseSettings &GpxExportPlugin::getPluginSettings() const noexcept
 {
     return d->pluginSettings;
 }

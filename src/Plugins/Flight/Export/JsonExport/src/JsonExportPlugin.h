@@ -36,15 +36,16 @@ class QString;
 
 #include <Kernel/Settings.h>
 #include <PluginManager/ExportIntf.h>
-#include <PluginManager/ExportPluginBase.h>
+#include <PluginManager/FlightExportPluginBase.h>
 
 class Flight;
 class Aircraft;
 struct PositionData;
 struct Waypoint;
+class FlightExportPluginBaseSettings;
 struct JsonExportPluginPrivate;
 
-class JsonExportPlugin : public ExportPluginBase
+class JsonExportPlugin : public FlightExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "JsonExportPlugin.json")
@@ -54,7 +55,7 @@ public:
     ~JsonExportPlugin() noexcept override;
 
 protected:
-    ExportPluginBaseSettings &getPluginSettings() const noexcept override;
+    FlightExportPluginBaseSettings &getPluginSettings() const noexcept override;
     QString getFileSuffix() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;

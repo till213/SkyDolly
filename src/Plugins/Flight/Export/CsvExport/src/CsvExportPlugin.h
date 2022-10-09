@@ -37,29 +37,30 @@ class QDateTime;
 
 #include <Kernel/Settings.h>
 #include <PluginManager/ExportIntf.h>
-#include <PluginManager/ExportPluginBase.h>
+#include <PluginManager/FlightExportPluginBase.h>
 
 class Aircraft;
 
+class FlightExportPluginBaseSettings;
 struct CsvExportPluginPrivate;
 
-class CsvExportPlugin : public ExportPluginBase
+class CsvExportPlugin : public FlightExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "CsvExportPlugin.json")
     Q_INTERFACES(ExportIntf)
 public:
     CsvExportPlugin() noexcept;
-    virtual ~CsvExportPlugin() noexcept;
+    ~CsvExportPlugin() override;
 
 protected:
-    virtual ExportPluginBaseSettings &getPluginSettings() const noexcept override;
-    virtual QString getFileSuffix() const noexcept override;
-    virtual QString getFileFilter() const noexcept override;
-    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    virtual bool hasMultiAircraftSupport() const noexcept override;
-    virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
-    virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
+    FlightExportPluginBaseSettings &getPluginSettings() const noexcept override;
+    QString getFileSuffix() const noexcept override;
+    QString getFileFilter() const noexcept override;
+    std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    bool hasMultiAircraftSupport() const noexcept override;
+    bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
+    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
 
 private:
     const std::unique_ptr<CsvExportPluginPrivate> d;

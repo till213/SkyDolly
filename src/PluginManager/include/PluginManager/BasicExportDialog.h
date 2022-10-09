@@ -34,7 +34,7 @@
 #include "PluginManagerLib.h"
 
 class Flight;
-class ExportPluginBaseSettings;
+class FlightExportPluginBaseSettings;
 struct BasicExportDialogPrivate;
 
 namespace Ui {
@@ -46,7 +46,7 @@ class PLUGINMANAGER_API BasicExportDialog : public QDialog
     Q_OBJECT
 public:
 
-    explicit BasicExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, ExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    explicit BasicExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     BasicExportDialog(const BasicExportDialog &rhs) = delete;
     BasicExportDialog(BasicExportDialog &&rhs) = delete;
     BasicExportDialog &operator=(const BasicExportDialog &rhs) = delete;

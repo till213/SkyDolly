@@ -32,7 +32,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportPluginBaseSettings.h>
+#include <PluginManager/FlightExportPluginBaseSettings.h>
 #include "KmlExportSettings.h"
 
 namespace
@@ -106,7 +106,7 @@ struct KmlExportSettingsPrivate
 // PUBLIC
 
 KmlExportSettings::KmlExportSettings() noexcept
-    : ExportPluginBaseSettings(),
+    : FlightExportPluginBaseSettings(),
       d(std::make_unique<KmlExportSettingsPrivate>())
 {
 #ifdef DEBUG

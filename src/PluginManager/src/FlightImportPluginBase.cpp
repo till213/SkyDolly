@@ -54,12 +54,12 @@
 #include <Persistence/Service/AircraftService.h>
 #include <Persistence/Service/AircraftTypeService.h>
 #include "BasicImportDialog.h"
-#include "ImportPluginBaseSettings.h"
-#include "ImportPluginBase.h"
+#include "FlightImportPluginBaseSettings.h"
+#include "FlightImportPluginBase.h"
 
-struct ImportPluginBasePrivate
+struct FlightImportPluginBasePrivate
 {
-    ImportPluginBasePrivate()
+    FlightImportPluginBasePrivate()
         : flight(nullptr),
           aircraftService(std::make_unique<AircraftService>()),
           aircraftTypeService(std::make_unique<AircraftTypeService>())
@@ -76,17 +76,17 @@ struct ImportPluginBasePrivate
 
 // PUBLIC
 
-ImportPluginBase::ImportPluginBase() noexcept
-    : d(std::make_unique<ImportPluginBasePrivate>())
+FlightImportPluginBase::FlightImportPluginBase() noexcept
+    : d(std::make_unique<FlightImportPluginBasePrivate>())
 {}
 
-ImportPluginBase::~ImportPluginBase() = default;
+FlightImportPluginBase::~FlightImportPluginBase() = default;
 
-bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight) noexcept
+bool FlightImportPluginBase::importFlight(FlightService &flightService, Flight &flight) noexcept
 {
     bool ok {false};
     d->flight = &flight;
-    ImportPluginBaseSettings &baseSettings = getPluginSettings();
+    FlightImportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(flight, getFileFilter(), baseSettings, PluginBase::getParentWidget());
     // Transfer ownership to importDialog
@@ -137,31 +137,31 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
 
 // PROTECTED
 
-AircraftType &ImportPluginBase::getSelectedAircraftType() const noexcept
+AircraftType &FlightImportPluginBase::getSelectedAircraftType() const noexcept
 {
     return d->aircraftType;
 }
 
 // PRIVATE
 
-void ImportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
+void FlightImportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     getPluginSettings().addSettings(keyValues);
 }
 
-void ImportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void FlightImportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     getPluginSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
-void ImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void FlightImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }
 
-bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept
+bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept
 {
-    const ImportPluginBaseSettings &pluginSettings = getPluginSettings();
+    const FlightImportPluginBaseSettings &pluginSettings = getPluginSettings();
     const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
     const bool addToCurrentFlight = pluginSettings.isAddToFlightEnabled();
 
@@ -236,7 +236,7 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
     return ok;
 }
 
-void ImportPluginBase::updateAircraftInfo() noexcept
+void FlightImportPluginBase::updateAircraftInfo() noexcept
 {
     Aircraft &aircraft = d->flight->getUserAircraft();
     AircraftInfo aircraftInfo(aircraft.getId());
@@ -282,7 +282,7 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     aircraft.setAircraftInfo(aircraftInfo);
 }
 
-void ImportPluginBase::updateFlightInfo() noexcept
+void FlightImportPluginBase::updateFlightInfo() noexcept
 {
     d->flight->setTitle(getTitle());
 
@@ -292,7 +292,7 @@ void ImportPluginBase::updateFlightInfo() noexcept
     updateExtendedFlightInfo(*d->flight);
 }
 
-void ImportPluginBase::updateFlightCondition() noexcept
+void FlightImportPluginBase::updateFlightCondition() noexcept
 {
     FlightCondition flightCondition;
 

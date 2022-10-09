@@ -36,15 +36,15 @@ class QFile;
 
 #include <Flight/FlightAugmentation.h>
 #include <PluginManager/ImportIntf.h>
-#include <PluginManager/ImportPluginBase.h>
+#include <PluginManager/FlightImportPluginBase.h>
 
 class Flight;
 struct AircraftInfo;
 struct FlightCondition;
-class ImportPluginBaseSettings;
+class FlightImportPluginBaseSettings;
 struct GpxImportPluginPrivate;
 
-class GpxImportPlugin : public ImportPluginBase
+class GpxImportPlugin : public FlightImportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "GpxImportPlugin.json")
@@ -54,7 +54,7 @@ public:
     ~GpxImportPlugin() noexcept override;
 
 protected:
-    ImportPluginBaseSettings &getPluginSettings() const noexcept override;
+    FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;
     QString getFileSuffix() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;

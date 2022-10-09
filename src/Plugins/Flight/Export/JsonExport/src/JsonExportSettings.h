@@ -30,11 +30,11 @@
 #include <QObject>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportPluginBaseSettings.h>
+#include <PluginManager/FlightExportPluginBaseSettings.h>
 
 struct JsonExportSettingsPrivate;
 
-class JsonExportSettings : public ExportPluginBaseSettings
+class JsonExportSettings : public FlightExportPluginBaseSettings
 {
     Q_OBJECT
 public:

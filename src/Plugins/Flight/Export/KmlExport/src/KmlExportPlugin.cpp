@@ -98,7 +98,7 @@ KmlExportPlugin::~KmlExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &KmlExportPlugin::getPluginSettings() const noexcept
+FlightExportPluginBaseSettings &KmlExportPlugin::getPluginSettings() const noexcept
 {
     return d->pluginSettings;
 }

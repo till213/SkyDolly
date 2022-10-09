@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef EXPORTPLUGINBASE_H
-#define EXPORTPLUGINBASE_H
+#ifndef FLIGHTEXPORTPLUGINBASE_H
+#define FLIGHTEXPORTPLUGINBASE_H
 
 #include <memory>
 #include <vector>
@@ -43,20 +43,20 @@ class QIODevice;
 struct PositionData;
 class FLight;
 class Aircraft;
-class ExportPluginBaseSettings;
+class FlightExportPluginBaseSettings;
 struct ExportPluginBasePrivate;
 
-class PLUGINMANAGER_API ExportPluginBase : public PluginBase, public ExportIntf
+class PLUGINMANAGER_API FlightExportPluginBase : public PluginBase, public ExportIntf
 {
     Q_OBJECT
     Q_INTERFACES(ExportIntf)
 public:
-    ExportPluginBase() noexcept;
-    ExportPluginBase(const ExportPluginBase &rhs) = delete;
-    ExportPluginBase(ExportPluginBase &&rhs) = delete;
-    ExportPluginBase &operator=(const ExportPluginBase &rhs) = delete;
-    ExportPluginBase &operator=(ExportPluginBase &&rhs) = delete;
-    ~ExportPluginBase() override;
+    FlightExportPluginBase() noexcept;
+    FlightExportPluginBase(const FlightExportPluginBase &rhs) = delete;
+    FlightExportPluginBase(FlightExportPluginBase &&rhs) = delete;
+    FlightExportPluginBase &operator=(const FlightExportPluginBase &rhs) = delete;
+    FlightExportPluginBase &operator=(FlightExportPluginBase &&rhs) = delete;
+    ~FlightExportPluginBase() override;
 
     QWidget *getParentWidget() const noexcept final
     {
@@ -82,7 +82,7 @@ public:
 
 protected:
     // Re-implement
-    virtual ExportPluginBaseSettings &getPluginSettings() const noexcept = 0;
+    virtual FlightExportPluginBaseSettings &getPluginSettings() const noexcept = 0;
     virtual QString getFileSuffix() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
@@ -109,4 +109,4 @@ private:
     void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;
 };
 
-#endif // EXPORTPLUGINBASE_H
+#endif // FLIGHTEXPORTPLUGINBASE_H

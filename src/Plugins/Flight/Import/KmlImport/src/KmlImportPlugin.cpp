@@ -84,7 +84,7 @@ KmlImportPlugin::~KmlImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &KmlImportPlugin::getPluginSettings() const noexcept
+FlightImportPluginBaseSettings &KmlImportPlugin::getPluginSettings() const noexcept
 {
     return d->pluginSettings;
 }

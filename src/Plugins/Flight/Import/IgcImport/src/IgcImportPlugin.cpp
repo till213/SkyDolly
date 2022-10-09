@@ -111,7 +111,7 @@ IgcImportPlugin::~IgcImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &IgcImportPlugin::getPluginSettings() const noexcept
+FlightImportPluginBaseSettings &IgcImportPlugin::getPluginSettings() const noexcept
 {
     return d->pluginSettings;
 }

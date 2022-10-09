@@ -43,8 +43,8 @@
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
 #include "BasicExportDialog.h"
-#include "ExportPluginBaseSettings.h"
-#include "ExportPluginBase.h"
+#include "FlightExportPluginBaseSettings.h"
+#include "FlightExportPluginBase.h"
 
 struct ExportPluginBasePrivate
 {
@@ -56,16 +56,16 @@ struct ExportPluginBasePrivate
 
 // PUBLIC
 
-ExportPluginBase::ExportPluginBase() noexcept
+FlightExportPluginBase::FlightExportPluginBase() noexcept
     : d(std::make_unique<ExportPluginBasePrivate>())
 {}
 
-ExportPluginBase::~ExportPluginBase() = default;
+FlightExportPluginBase::~FlightExportPluginBase() = default;
 
-bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
+bool FlightExportPluginBase::exportFlight(const Flight &flight) noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    ExportPluginBaseSettings &baseSettings = getPluginSettings();
+    FlightExportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(flight, getFileSuffix(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
     // Transfer ownership to exportDialog
     exportDialog->setOptionWidget(optionWidget.release());
@@ -80,8 +80,8 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
 
-            const ExportPluginBaseSettings::FormationExport formationExport = getPluginSettings().getFormationExport();
-            if (formationExport == ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
+            const FlightExportPluginBaseSettings::FormationExport formationExport = getPluginSettings().getFormationExport();
+            if (formationExport == FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportFlight(flight, filePath);
             } else {
                 std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
@@ -111,7 +111,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
 
 // PRIVATE
 
-bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePath) noexcept
+bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &filePath) noexcept
 {
     d->exportedFilePaths.clear();
     QFile file(filePath);
@@ -122,9 +122,9 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
 #endif
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     QGuiApplication::processEvents();
-    const ExportPluginBaseSettings &settings = getPluginSettings();
+    const FlightExportPluginBaseSettings &settings = getPluginSettings();
     switch (settings.getFormationExport()) {
-    case ExportPluginBaseSettings::FormationExport::UserAircraftOnly:
+    case FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly:
         ok = file.open(QIODevice::WriteOnly);
         if (ok) {
             ok = exportAircraft(flight, flight.getUserAircraft(), file);
@@ -132,7 +132,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
         }
         file.close();
         break;
-    case ExportPluginBaseSettings::FormationExport::AllAircraftOneFile:
+    case FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile:
         if (hasMultiAircraftSupport()) {
             ok = file.open(QIODevice::WriteOnly);
             if (ok) {
@@ -144,7 +144,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
             ok = exportAllAircraft(flight, filePath);
         }
         break;
-    case ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
+    case FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
         ok = exportAllAircraft(flight, filePath);
         break;
     }
@@ -167,7 +167,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
     return ok;
 }
 
-bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &filePath) noexcept
+bool FlightExportPluginBase::exportAllAircraft(const Flight &flight, const QString &filePath) noexcept
 {
     bool ok {true};
     bool replaceAll {false};
@@ -215,17 +215,17 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
     return ok;
 }
 
-void ExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
+void FlightExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     getPluginSettings().addSettings(keyValues);
 }
 
-void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void FlightExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     getPluginSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
-void ExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void FlightExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }

@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IMPORTPLUGINBASE_H
-#define IMPORTPLUGINBASE_H
+#ifndef FLIGHTIMPORTPLUGINBASE_H
+#define FLIGHTIMPORTPLUGINBASE_H
 
 #include <memory>
 
@@ -45,20 +45,20 @@ class Flight;
 struct AircraftType;
 struct AircraftInfo;
 struct FlightCondition;
-class ImportPluginBaseSettings;
-struct ImportPluginBasePrivate;
+class FlightImportPluginBaseSettings;
+struct FlightImportPluginBasePrivate;
 
-class PLUGINMANAGER_API ImportPluginBase : public PluginBase, public ImportIntf
+class PLUGINMANAGER_API FlightImportPluginBase : public PluginBase, public ImportIntf
 {
     Q_OBJECT
     Q_INTERFACES(ImportIntf)
 public:
-    ImportPluginBase() noexcept;
-    ImportPluginBase(const ImportPluginBase &rhs) = delete;
-    ImportPluginBase(ImportPluginBase &&rhs) = delete;
-    ImportPluginBase &operator=(const ImportPluginBase &rhs) = delete;
-    ImportPluginBase &operator=(ImportPluginBase &&rhs) = delete;
-    ~ImportPluginBase() override;
+    FlightImportPluginBase() noexcept;
+    FlightImportPluginBase(const FlightImportPluginBase &rhs) = delete;
+    FlightImportPluginBase(FlightImportPluginBase &&rhs) = delete;
+    FlightImportPluginBase &operator=(const FlightImportPluginBase &rhs) = delete;
+    FlightImportPluginBase &operator=(FlightImportPluginBase &&rhs) = delete;
+    ~FlightImportPluginBase() override;
 
     QWidget *getParentWidget() const noexcept final
     {
@@ -86,7 +86,7 @@ protected:
     AircraftType &getSelectedAircraftType() const noexcept;
 
     // Re-implement
-    virtual ImportPluginBaseSettings &getPluginSettings() const noexcept = 0;
+    virtual FlightImportPluginBaseSettings &getPluginSettings() const noexcept = 0;
     virtual QString getFileSuffix() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
@@ -101,7 +101,7 @@ protected:
     virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept = 0;
 
 private:
-    const std::unique_ptr<ImportPluginBasePrivate> d;
+    const std::unique_ptr<FlightImportPluginBasePrivate> d;
 
     virtual void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
@@ -113,4 +113,4 @@ private:
     void updateFlightCondition() noexcept;
 };
 
-#endif // IMPORTPLUGINBASE_H
+#endif // FLIGHTIMPORTPLUGINBASE_H

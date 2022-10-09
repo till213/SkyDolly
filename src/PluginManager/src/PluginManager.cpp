@@ -46,6 +46,7 @@
 namespace
 {
     constexpr const char *FlightDirectoryName {"Flight"};
+    constexpr const char *LocationDirectoryName {"Location"};
     constexpr const char *ExportDirectoryName {"Export"};
     constexpr const char *ImportDirectoryName {"Import"};
 #if defined(Q_OS_MAC)
@@ -77,8 +78,9 @@ struct PluginManagerPrivate
     QWidget *parentWidget;
     QDir pluginsDirectory;
     // Plugin UUID / plugin path
-    QMap<QUuid, QString> exportPluginRegistry;
-    QMap<QUuid, QString> importPluginRegistry;
+    QMap<QUuid, QString> flightExportPluginRegistry;
+    QMap<QUuid, QString> flightImportPluginRegistry;
+    QMap<QUuid, QString> locationImportPluginRegistry;
 
     static inline std::once_flag onceFlag;
     static inline PluginManager *instance;
@@ -113,7 +115,7 @@ std::vector<PluginManager::Handle> PluginManager::initialiseFlightExportPlugins(
     std::vector<PluginManager::Handle> pluginHandles;
     if (d->pluginsDirectory.exists(FlightDirectoryName)) {
         d->pluginsDirectory.cd(FlightDirectoryName);
-        pluginHandles = enumeratePlugins(::ExportDirectoryName, d->exportPluginRegistry);
+        pluginHandles = enumeratePlugins(::ExportDirectoryName, d->flightExportPluginRegistry);
         d->pluginsDirectory.cdUp();
     }
     return pluginHandles;
@@ -124,7 +126,18 @@ std::vector<PluginManager::Handle> PluginManager::initialiseFlightImportPlugins(
     std::vector<PluginManager::Handle> pluginHandles;
     if (d->pluginsDirectory.exists(FlightDirectoryName)) {
         d->pluginsDirectory.cd(FlightDirectoryName);
-        pluginHandles = enumeratePlugins(::ImportDirectoryName, d->importPluginRegistry);
+        pluginHandles = enumeratePlugins(::ImportDirectoryName, d->flightImportPluginRegistry);
+        d->pluginsDirectory.cdUp();
+    }
+    return pluginHandles;
+}
+
+std::vector<PluginManager::Handle> PluginManager::initialiseLocationImportPlugins() noexcept
+{
+    std::vector<PluginManager::Handle> pluginHandles;
+    if (d->pluginsDirectory.exists(LocationDirectoryName)) {
+        d->pluginsDirectory.cd(LocationDirectoryName);
+        pluginHandles = enumeratePlugins(::ImportDirectoryName, d->locationImportPluginRegistry);
         d->pluginsDirectory.cdUp();
     }
     return pluginHandles;
@@ -133,8 +146,8 @@ std::vector<PluginManager::Handle> PluginManager::initialiseFlightImportPlugins(
 bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept
 {
     bool ok {false};
-    if (d->importPluginRegistry.contains(pluginUuid)) {
-        const QString pluginPath = d->importPluginRegistry.value(pluginUuid);
+    if (d->flightImportPluginRegistry.contains(pluginUuid)) {
+        const QString pluginPath = d->flightImportPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
         const QObject *plugin = loader.instance();
         ImportIntf *importPlugin = qobject_cast<ImportIntf *>(plugin);
@@ -154,8 +167,8 @@ bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightS
 bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept
 {
     bool ok {false};
-    if (d->exportPluginRegistry.contains(pluginUuid)) {
-        const QString pluginPath = d->exportPluginRegistry.value(pluginUuid);
+    if (d->flightExportPluginRegistry.contains(pluginUuid)) {
+        const QString pluginPath = d->flightExportPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
         QObject *plugin = loader.instance();
         ExportIntf *exportPlugin = qobject_cast<ExportIntf *>(plugin);

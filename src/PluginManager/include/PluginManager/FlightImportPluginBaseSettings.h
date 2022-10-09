@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IMPORTPLUGINBASESETTINGS_H
-#define IMPORTPLUGINBASESETTINGS_H
+#ifndef FLIGHTIMPORTPLUGINBASESETTINGS_H
+#define FLIGHTIMPORTPLUGINBASESETTINGS_H
 
 #include <memory>
 
@@ -34,18 +34,18 @@
 #include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
-struct ImportPluginBaseSettingsPrivate;
+struct FlightImportPluginBaseSettingsPrivate;
 
-class PLUGINMANAGER_API ImportPluginBaseSettings : public QObject
+class PLUGINMANAGER_API FlightImportPluginBaseSettings : public QObject
 {
     Q_OBJECT
 public:
-    ImportPluginBaseSettings() noexcept;
-    ImportPluginBaseSettings(const ImportPluginBaseSettings &rhs) = delete;
-    ImportPluginBaseSettings(ImportPluginBaseSettings &&rhs) = delete;
-    ImportPluginBaseSettings &operator=(const ImportPluginBaseSettings &rhs) = delete;
-    ImportPluginBaseSettings &operator=(ImportPluginBaseSettings &&rhs) = delete;
-    ~ImportPluginBaseSettings() override;
+    FlightImportPluginBaseSettings() noexcept;
+    FlightImportPluginBaseSettings(const FlightImportPluginBaseSettings &rhs) = delete;
+    FlightImportPluginBaseSettings(FlightImportPluginBaseSettings &&rhs) = delete;
+    FlightImportPluginBaseSettings &operator=(const FlightImportPluginBaseSettings &rhs) = delete;
+    FlightImportPluginBaseSettings &operator=(FlightImportPluginBaseSettings &&rhs) = delete;
+    ~FlightImportPluginBaseSettings() override;
 
     bool isImportDirectoryEnabled() const noexcept;
     void setImportDirectoryEnabled(bool enabled) noexcept;
@@ -71,7 +71,7 @@ protected:
     virtual void restoreDefaultsExtn() noexcept = 0;
 
 private:
-    const std::unique_ptr<ImportPluginBaseSettingsPrivate> d;
+    const std::unique_ptr<FlightImportPluginBaseSettingsPrivate> d;
 };
 
-#endif // IMPORTPLUGINBASESETTINGS_H
+#endif // FLIGHTIMPORTPLUGINBASESETTINGS_H

@@ -27,7 +27,7 @@
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SampleRate.h>
-#include "ExportPluginBaseSettings.h"
+#include "FlightExportPluginBaseSettings.h"
 
 namespace
 {
@@ -38,13 +38,13 @@ namespace
 
     // Defaults
     constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
-    constexpr ExportPluginBaseSettings::FormationExport DefaultFormationExport = ExportPluginBaseSettings::FormationExport::AllAircraftOneFile;
+    constexpr FlightExportPluginBaseSettings::FormationExport DefaultFormationExport = FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile;
     constexpr bool DefaultOpenExportedFilesEnabled = false;
 }
 
-struct ExportPluginBaseSettingsPrivate
+struct FlightExportPluginBaseSettingsPrivate
 {
-    ExportPluginBaseSettingsPrivate()
+    FlightExportPluginBaseSettingsPrivate()
         : resamplingPeriod(::DefaultResamplingPeriod),
           formationExport(::DefaultFormationExport),
           openExportedFilesEnabled(::DefaultOpenExportedFilesEnabled),
@@ -52,25 +52,25 @@ struct ExportPluginBaseSettingsPrivate
     {}
 
     SampleRate::ResamplingPeriod resamplingPeriod;
-    ExportPluginBaseSettings::FormationExport formationExport;
+    FlightExportPluginBaseSettings::FormationExport formationExport;
     bool openExportedFilesEnabled;
     bool fileDialogSelectedFile;
 };
 
 // PUBLIC
 
-ExportPluginBaseSettings::ExportPluginBaseSettings() noexcept
-    : d(std::make_unique<ExportPluginBaseSettingsPrivate>())
+FlightExportPluginBaseSettings::FlightExportPluginBaseSettings() noexcept
+    : d(std::make_unique<FlightExportPluginBaseSettingsPrivate>())
 {}
 
-ExportPluginBaseSettings::~ExportPluginBaseSettings() = default;
+FlightExportPluginBaseSettings::~FlightExportPluginBaseSettings() = default;
 
-SampleRate::ResamplingPeriod ExportPluginBaseSettings::getResamplingPeriod() const noexcept
+SampleRate::ResamplingPeriod FlightExportPluginBaseSettings::getResamplingPeriod() const noexcept
 {
     return d->resamplingPeriod;
 }
 
-void ExportPluginBaseSettings::setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept
+void FlightExportPluginBaseSettings::setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept
 {
     if (d->resamplingPeriod != resamplingPeriod) {
         d->resamplingPeriod = resamplingPeriod;
@@ -78,12 +78,12 @@ void ExportPluginBaseSettings::setResamplingPeriod(SampleRate::ResamplingPeriod 
     }
 }
 
-ExportPluginBaseSettings::FormationExport ExportPluginBaseSettings::getFormationExport() const noexcept
+FlightExportPluginBaseSettings::FormationExport FlightExportPluginBaseSettings::getFormationExport() const noexcept
 {
     return d->formationExport;
 }
 
-void ExportPluginBaseSettings::setFormationExport(FormationExport formationExport) noexcept
+void FlightExportPluginBaseSettings::setFormationExport(FormationExport formationExport) noexcept
 {
     if (d->formationExport != formationExport) {
         d->formationExport = formationExport;
@@ -91,12 +91,12 @@ void ExportPluginBaseSettings::setFormationExport(FormationExport formationExpor
     }
 }
 
-bool ExportPluginBaseSettings::isOpenExportedFilesEnabled() const noexcept
+bool FlightExportPluginBaseSettings::isOpenExportedFilesEnabled() const noexcept
 {
     return d->openExportedFilesEnabled;
 }
 
-void ExportPluginBaseSettings::setOpenExportedFilesEnabled(bool enabled) noexcept
+void FlightExportPluginBaseSettings::setOpenExportedFilesEnabled(bool enabled) noexcept
 {
     if (d->openExportedFilesEnabled != enabled) {
         d->openExportedFilesEnabled = enabled;
@@ -104,17 +104,17 @@ void ExportPluginBaseSettings::setOpenExportedFilesEnabled(bool enabled) noexcep
     }
 }
 
-bool ExportPluginBaseSettings::isFileDialogSelectedFile() const noexcept
+bool FlightExportPluginBaseSettings::isFileDialogSelectedFile() const noexcept
 {
     return d->fileDialogSelectedFile;
 }
 
-void ExportPluginBaseSettings::setFileDialogSelectedFile(bool fileDialogSelected) noexcept
+void FlightExportPluginBaseSettings::setFileDialogSelectedFile(bool fileDialogSelected) noexcept
 {
     d->fileDialogSelectedFile = fileDialogSelected;
 }
 
-void ExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
+void FlightExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
@@ -133,7 +133,7 @@ void ExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const
     addSettingsExtn(keyValues);
 }
 
-void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void FlightExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     Settings::KeyValue keyValue;
 
@@ -152,7 +152,7 @@ void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
     addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
-void ExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
+void FlightExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
     int enumeration = valuesByKey.at(::ResamplingPeriodKey).toInt(&ok);
@@ -173,7 +173,7 @@ void ExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valu
     restoreSettingsExtn(valuesByKey);
 }
 
-void ExportPluginBaseSettings::restoreDefaults() noexcept
+void FlightExportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->resamplingPeriod = ::DefaultResamplingPeriod;
     d->formationExport = ::DefaultFormationExport;

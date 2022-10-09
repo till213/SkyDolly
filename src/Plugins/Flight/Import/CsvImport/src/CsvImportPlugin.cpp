@@ -71,7 +71,7 @@ CsvImportPlugin::~CsvImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &CsvImportPlugin::getPluginSettings() const noexcept
+FlightImportPluginBaseSettings &CsvImportPlugin::getPluginSettings() const noexcept
 {
     return d->pluginSettings;
 }

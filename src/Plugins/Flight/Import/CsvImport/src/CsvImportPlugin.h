@@ -36,15 +36,15 @@ class QFile;
 
 #include <Flight/FlightAugmentation.h>
 #include <PluginManager/ImportIntf.h>
-#include <PluginManager/ImportPluginBase.h>
+#include <PluginManager/FlightImportPluginBase.h>
 
 class Flight;
 struct AircraftInfo;
 struct FlightCondition;
-class ImportPluginBaseSettings;
+class FlightImportPluginBaseSettings;
 struct CsvImportPluginPrivate;
 
-class CsvImportPlugin : public ImportPluginBase
+class CsvImportPlugin : public FlightImportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CsvImportPlugin.json")
@@ -54,7 +54,7 @@ public:
     ~CsvImportPlugin() noexcept override;
 
 protected:
-    ImportPluginBaseSettings &getPluginSettings() const noexcept override;
+    FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;
     QString getFileSuffix() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;

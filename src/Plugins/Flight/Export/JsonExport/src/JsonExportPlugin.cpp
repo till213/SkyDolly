@@ -85,7 +85,7 @@ JsonExportPlugin::~JsonExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &JsonExportPlugin::getPluginSettings() const noexcept
+FlightExportPluginBaseSettings &JsonExportPlugin::getPluginSettings() const noexcept
 {
     return d->pluginSettings;
 }

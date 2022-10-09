@@ -36,16 +36,17 @@ class QString;
 
 #include <Kernel/Settings.h>
 #include <PluginManager/ExportIntf.h>
-#include <PluginManager/ExportPluginBase.h>
+#include <PluginManager/FlightExportPluginBase.h>
 #include "KmlStyleExport.h"
 
 class Flight;
 class Aircraft;
 struct PositionData;
 struct Waypoint;
+class FlightExportPluginBaseSettings;
 struct KmlExportPluginPrivate;
 
-class KmlExportPlugin : public ExportPluginBase
+class KmlExportPlugin : public FlightExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "KmlExportPlugin.json")
@@ -55,7 +56,7 @@ public:
     ~KmlExportPlugin() noexcept override;
 
 protected:
-    ExportPluginBaseSettings &getPluginSettings() const noexcept override;
+    FlightExportPluginBaseSettings &getPluginSettings() const noexcept override;
     QString getFileSuffix() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;

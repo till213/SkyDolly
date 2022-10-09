@@ -26,11 +26,11 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/PluginManager.h src/PluginManager.cpp
         include/PluginManager/Export.h src/Export.cpp
         include/PluginManager/PluginBase.h src/PluginBase.cpp
-        include/PluginManager/ImportPluginBase.h src/ImportPluginBase.cpp
-        include/PluginManager/ImportPluginBaseSettings.h src/ImportPluginBaseSettings.cpp
+        include/PluginManager/FlightImportPluginBase.h src/FlightImportPluginBase.cpp
+        include/PluginManager/FlightImportPluginBaseSettings.h src/FlightImportPluginBaseSettings.cpp
         include/PluginManager/BasicImportDialog.h src/BasicImportDialog.cpp src/BasicImportDialog.ui
-        include/PluginManager/ExportPluginBase.h src/ExportPluginBase.cpp
-        include/PluginManager/ExportPluginBaseSettings.h src/ExportPluginBaseSettings.cpp
+        include/PluginManager/FlightExportPluginBase.h src/FlightExportPluginBase.cpp
+        include/PluginManager/FlightExportPluginBaseSettings.h src/FlightExportPluginBaseSettings.cpp
         include/PluginManager/BasicExportDialog.h src/BasicExportDialog.cpp src/BasicExportDialog.ui
         include/PluginManager/ModuleIntf.h
         include/PluginManager/AbstractModule.h src/AbstractModule.cpp

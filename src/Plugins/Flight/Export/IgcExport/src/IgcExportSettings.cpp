@@ -32,7 +32,7 @@
 
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportPluginBaseSettings.h>
+#include <PluginManager/FlightExportPluginBaseSettings.h>
 #include "IgcExportSettings.h"
 
 namespace
@@ -59,7 +59,7 @@ struct IgcExportSettingsPrivate
 // PUBLIC
 
 IgcExportSettings::IgcExportSettings() noexcept
-    : ExportPluginBaseSettings(),
+    : FlightExportPluginBaseSettings(),
       d(std::make_unique<IgcExportSettingsPrivate>())
 {
 #ifdef DEBUG

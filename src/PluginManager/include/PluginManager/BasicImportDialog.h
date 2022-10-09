@@ -36,7 +36,7 @@ class QWidget;
 #include "PluginManagerLib.h"
 
 class Flight;
-class ImportPluginBaseSettings;
+class FlightImportPluginBaseSettings;
 struct BasicImportDialogPrivate;
 
 namespace Ui {
@@ -47,7 +47,7 @@ class PLUGINMANAGER_API BasicImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicImportDialog(const Flight &flight, const QString &fileExtension, ImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    explicit BasicImportDialog(const Flight &flight, const QString &fileExtension, FlightImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     BasicImportDialog(const BasicImportDialog &rhs) = delete;
     BasicImportDialog(BasicImportDialog &&rhs) = delete;
     BasicImportDialog &operator=(const BasicImportDialog &rhs) = delete;

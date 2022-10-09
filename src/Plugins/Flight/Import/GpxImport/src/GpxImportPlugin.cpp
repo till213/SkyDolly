@@ -85,7 +85,7 @@ GpxImportPlugin::~GpxImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &GpxImportPlugin::getPluginSettings() const noexcept
+FlightImportPluginBaseSettings &GpxImportPlugin::getPluginSettings() const noexcept
 {
     return d->pluginSettings;
 }
