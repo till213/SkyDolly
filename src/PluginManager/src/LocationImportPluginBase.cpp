@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Location Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,22 +22,44 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef EXPORTINTF_H
-#define EXPORTINTF_H
+#include "LocationImportPluginBaseSettings.h"
+#include "LocationImportPluginBase.h"
 
-#include <QtPlugin>
-
-#include "PluginIntf.h"
-
-class Flight;
-
-class ExportIntf : public PluginIntf
+struct LocationImportPluginBasePrivate
 {
-public:
-    virtual bool exportFlight(const Flight &flight) noexcept = 0;
+    LocationImportPluginBasePrivate()
+    {}
 };
 
-#define EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.ExportInterface/1.0"
-Q_DECLARE_INTERFACE(ExportIntf, EXPORT_INTERFACE_IID)
+// PUBLIC
 
-#endif // EXPORTINTF_H
+LocationImportPluginBase::LocationImportPluginBase() noexcept
+    : d(std::make_unique<LocationImportPluginBasePrivate>())
+{}
+
+LocationImportPluginBase::~LocationImportPluginBase() = default;
+
+bool LocationImportPluginBase::importLocation(LocationService &locationService) noexcept
+{
+    bool ok {true};
+
+    return ok;
+}
+
+
+// PRIVATE
+
+void LocationImportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
+{
+    getPluginSettings().addSettings(keyValues);
+}
+
+void LocationImportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
+}
+
+void LocationImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    getPluginSettings().restoreSettings(valuesByKey);
+}
