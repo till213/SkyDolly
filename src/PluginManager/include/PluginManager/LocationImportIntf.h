@@ -37,7 +37,7 @@ public:
     virtual bool importLocation(LocationService &locationService) noexcept = 0;
 };
 
-#define IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationImportInterface/1.0"
-Q_DECLARE_INTERFACE(LocationImportIntf, IMPORT_INTERFACE_IID)
+#define LOCATION_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationImportInterface/1.0"
+Q_DECLARE_INTERFACE(LocationImportIntf, LOCATION_IMPORT_INTERFACE_IID)
 
 #endif // LOCATIONIMPORTINTF_H

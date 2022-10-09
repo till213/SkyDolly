@@ -37,7 +37,7 @@ public:
     virtual bool exportFlight(const Flight &flight) noexcept = 0;
 };
 
-#define EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightExportInterface/1.0"
-Q_DECLARE_INTERFACE(FlightExportIntf, EXPORT_INTERFACE_IID)
+#define FLIGHT_EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightExportInterface/1.0"
+Q_DECLARE_INTERFACE(FlightExportIntf, FLIGHT_EXPORT_INTERFACE_IID)
 
 #endif // FLIGHTEXPORTINTF_H

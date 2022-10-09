@@ -38,7 +38,7 @@ public:
     virtual bool importFlight(FlightService &flightService, Flight &flight) noexcept = 0;
 };
 
-#define IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightImportInterface/1.0"
-Q_DECLARE_INTERFACE(FlightImportIntf, IMPORT_INTERFACE_IID)
+#define FLIGHT_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightImportInterface/1.0"
+Q_DECLARE_INTERFACE(FlightImportIntf, FLIGHT_IMPORT_INTERFACE_IID)
 
 #endif // FLIGHTIMPORTINTF_H
