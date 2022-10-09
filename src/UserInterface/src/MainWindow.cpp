@@ -453,7 +453,7 @@ void MainWindow::initPlugins() noexcept
     pluginManager.initialise(this);
 
     // Import
-    importPlugins = PluginManager::getInstance().initialiseImportPlugins();
+    importPlugins = PluginManager::getInstance().initialiseFlightImportPlugins();
     d->hasImportPlugins = importPlugins.size() > 0;
     if (d->hasImportPlugins) {
         ui->importMenu->setEnabled(true);
@@ -471,7 +471,7 @@ void MainWindow::initPlugins() noexcept
     }
 
     // Export
-    exportPlugins = PluginManager::getInstance().initialiseExportPlugins();
+    exportPlugins = PluginManager::getInstance().initialiseFlightExportPlugins();
     d->hasExportPlugins = exportPlugins.size() > 0;
     if (d->hasExportPlugins) {
         ui->exportMenu->setEnabled(true);

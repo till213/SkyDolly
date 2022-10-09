@@ -41,7 +41,7 @@ namespace
     constexpr const char *FormatKey {"Format"};
 
     // Defaults
-    constexpr CsvExportSettings::Format DefaultFormat = CsvExportSettings::Format::SkyDolly;
+    constexpr CsvExportSettings::Format DefaultFormat {CsvExportSettings::Format::SkyDolly};
 }
 
 struct CsvExportSettingsPrivate
@@ -49,7 +49,7 @@ struct CsvExportSettingsPrivate
     CsvExportSettingsPrivate()
     {}
 
-    CsvExportSettings::Format format;
+    CsvExportSettings::Format format {::DefaultFormat};
 };
 
 // PUBLIC
@@ -63,7 +63,7 @@ CsvExportSettings::CsvExportSettings() noexcept
 #endif
 }
 
-CsvExportSettings::~CsvExportSettings() noexcept
+CsvExportSettings::~CsvExportSettings()
 {
 #ifdef DEBUG
     qDebug() << "CsvExportSettings::~CsvExportSettings: DELETED";

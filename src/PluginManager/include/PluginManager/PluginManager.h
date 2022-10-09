@@ -61,8 +61,8 @@ public:
      * The plugin UUID and (non-translated) name of the plugin.
      */
     using Handle = std::pair<QUuid, QString>;
-    std::vector<Handle> initialiseExportPlugins() noexcept;
-    std::vector<Handle> initialiseImportPlugins() noexcept;
+    std::vector<Handle> initialiseFlightExportPlugins() noexcept;
+    std::vector<Handle> initialiseFlightImportPlugins() noexcept;
 
     bool importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept;
     bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;

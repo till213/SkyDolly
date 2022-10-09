@@ -48,7 +48,7 @@ public:
     };
 
     CsvExportSettings() noexcept;
-    virtual ~CsvExportSettings() noexcept;
+    ~CsvExportSettings() override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;
@@ -60,10 +60,10 @@ signals:
     void extendedSettingsChanged();
 
 protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
 
 private:
     const std::unique_ptr<CsvExportSettingsPrivate> d;

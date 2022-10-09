@@ -45,6 +45,7 @@
 
 namespace
 {
+    constexpr const char *FlightDirectoryName {"Flight"};
     constexpr const char *ExportDirectoryName {"Export"};
     constexpr const char *ImportDirectoryName {"Import"};
 #if defined(Q_OS_MAC)
@@ -107,14 +108,26 @@ void PluginManager::initialise(QWidget *parentWidget) noexcept
     d->parentWidget = parentWidget;
 }
 
-std::vector<PluginManager::Handle> PluginManager::initialiseExportPlugins() noexcept
+std::vector<PluginManager::Handle> PluginManager::initialiseFlightExportPlugins() noexcept
 {
-    return enumeratePlugins(::ExportDirectoryName, d->exportPluginRegistry);
+    std::vector<PluginManager::Handle> pluginHandles;
+    if (d->pluginsDirectory.exists(FlightDirectoryName)) {
+        d->pluginsDirectory.cd(FlightDirectoryName);
+        pluginHandles = enumeratePlugins(::ExportDirectoryName, d->exportPluginRegistry);
+        d->pluginsDirectory.cdUp();
+    }
+    return pluginHandles;
 }
 
-std::vector<PluginManager::Handle> PluginManager::initialiseImportPlugins() noexcept
+std::vector<PluginManager::Handle> PluginManager::initialiseFlightImportPlugins() noexcept
 {
-    return enumeratePlugins(::ImportDirectoryName, d->importPluginRegistry);
+    std::vector<PluginManager::Handle> pluginHandles;
+    if (d->pluginsDirectory.exists(FlightDirectoryName)) {
+        d->pluginsDirectory.cd(FlightDirectoryName);
+        pluginHandles = enumeratePlugins(::ImportDirectoryName, d->importPluginRegistry);
+        d->pluginsDirectory.cdUp();
+    }
+    return pluginHandles;
 }
 
 bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept
