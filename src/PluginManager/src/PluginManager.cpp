@@ -41,6 +41,7 @@
 #include <Persistence/Service/FlightService.h>
 #include "FlightExportIntf.h"
 #include "FlightImportIntf.h"
+#include "LocationImportIntf.h"
 #include "PluginManager.h"
 
 namespace
@@ -177,6 +178,27 @@ bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) 
             exportPlugin->restoreSettings(pluginUuid);
             ok = exportPlugin->exportFlight(flight);
             exportPlugin->storeSettings(pluginUuid);
+        } else {
+            ok = false;
+        }
+        loader.unload();
+    }
+    return ok;
+}
+
+bool PluginManager::importLocation(const QUuid &pluginUuid, LocationService &locationService) const noexcept
+{
+    bool ok {false};
+    if (d->locationImportPluginRegistry.contains(pluginUuid)) {
+        const QString pluginPath = d->locationImportPluginRegistry.value(pluginUuid);
+        QPluginLoader loader(pluginPath);
+        const QObject *plugin = loader.instance();
+        LocationImportIntf *importPlugin = qobject_cast<LocationImportIntf *>(plugin);
+        if (importPlugin != nullptr) {
+            importPlugin->setParentWidget(d->parentWidget);
+            importPlugin->restoreSettings(pluginUuid);
+            ok = importPlugin->importLocation(locationService);
+            importPlugin->storeSettings(pluginUuid);
         } else {
             ok = false;
         }

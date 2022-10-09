@@ -41,6 +41,7 @@ class QString;
 class SkyConnectIntf;
 class Flight;
 class FlightService;
+class LocationService;
 struct PluginManagerPrivate;
 
 class PLUGINMANAGER_API PluginManager final : public QObject
@@ -67,6 +68,7 @@ public:
 
     bool importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept;
     bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;
+    bool importLocation(const QUuid &pluginUuid, LocationService &locationService) const noexcept;
 
 private:
     const std::unique_ptr<PluginManagerPrivate> d;

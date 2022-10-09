@@ -217,8 +217,9 @@ private slots:
     void onLogbookConnectionChanged(bool connected) noexcept;
 
     // Import / export
-    void onImport(QAction *action) noexcept;
-    void onExport(QAction *action) noexcept;
+    void onFlightImport(QAction *action) noexcept;
+    void onFlightExport(QAction *action) noexcept;
+    void onLocationImport(QAction *action) noexcept;
 
     // Settings
     void onReplayLoopChanged() noexcept;

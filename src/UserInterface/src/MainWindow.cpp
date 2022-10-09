@@ -72,6 +72,7 @@
 #include <Model/AircraftInfo.h>
 #include <Model/Logbook.h>
 #include <Persistence/Service/FlightService.h>
+#include <Persistence/Service/LocationService.h>
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/PersistenceManager.h>
 #include "Persistence/Metadata.h"
@@ -130,57 +131,37 @@ namespace
 
 struct MainWindowPrivate
 {
-    MainWindowPrivate() noexcept
-        : previousState(Connect::State::Connected),
-          connectedWithLogbook(false),
-          flightDialog(nullptr),
-          simulationVariablesDialog(nullptr),
-          statisticsDialog(nullptr),
-          flightService(std::make_unique<FlightService>()),
-          databaseService(std::make_unique<DatabaseService>()),
-          replaySpeedActionGroup(nullptr),
-          customSpeedRadioButton(nullptr),
-          lastCustomReplaySpeedFactor(1.0),
-          customSpeedLineEdit(nullptr),
-          replaySpeedUnitComboBox(nullptr),
-          customReplaySpeedFactorValidator(nullptr),
-          customReplaySpeedPercentValidator(nullptr),
-          importQActionGroup(nullptr),
-          exportQActionGroup(nullptr),
-          hasImportPlugins(false),
-          hasExportPlugins(false),
-          moduleManager(nullptr)
-    {}
+    Connect::State previousState {Connect::State::Connected};
+    bool connectedWithLogbook {false};
 
-    Connect::State previousState;
-    bool connectedWithLogbook;
-
-    FlightDialog *flightDialog;
-    SimulationVariablesDialog *simulationVariablesDialog;
-    StatisticsDialog *statisticsDialog;    
+    FlightDialog *flightDialog {nullptr};
+    SimulationVariablesDialog *simulationVariablesDialog {nullptr};
+    StatisticsDialog *statisticsDialog {nullptr};
 
     Unit unit;
 
     // Services
-    std::unique_ptr<FlightService> flightService;
-    std::unique_ptr<DatabaseService> databaseService;
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
 
     QSize lastNormalUiSize;
 
     // Replay speed
-    QActionGroup *replaySpeedActionGroup;
-    ActionRadioButton *customSpeedRadioButton;
-    double lastCustomReplaySpeedFactor;
-    QLineEdit *customSpeedLineEdit;
-    QComboBox *replaySpeedUnitComboBox;
-    QDoubleValidator *customReplaySpeedFactorValidator;
-    QDoubleValidator *customReplaySpeedPercentValidator;
+    QActionGroup *replaySpeedActionGroup {nullptr};
+    ActionRadioButton *customSpeedRadioButton {nullptr};
+    double lastCustomReplaySpeedFactor {1.0};
+    QLineEdit *customSpeedLineEdit {nullptr};
+    QComboBox *replaySpeedUnitComboBox {nullptr};
+    QDoubleValidator *customReplaySpeedFactorValidator {nullptr};
+    QDoubleValidator *customReplaySpeedPercentValidator {nullptr};
 
     // Import / export
-    QActionGroup *importQActionGroup;
-    QActionGroup *exportQActionGroup;
-    bool hasImportPlugins;
-    bool hasExportPlugins;
+    QActionGroup *flightImportQActionGroup {nullptr};
+    QActionGroup *flightExportQActionGroup {nullptr};
+    QActionGroup *locationImportQActionGroup {nullptr};
+    bool hasFlightImportPlugins {false};
+    bool hasFlightExportPlugins {false};
+    bool hasLocationImportPlugins {false};
 
     std::unique_ptr<ModuleManager> moduleManager;
 };
@@ -360,10 +341,12 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::quit);
 
     // Menu actions
-    connect(d->importQActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::onImport);
-    connect(d->exportQActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::onExport);
+    connect(d->flightImportQActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::onFlightImport);
+    connect(d->flightExportQActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::onFlightExport);
+    connect(d->locationImportQActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::onLocationImport);
 
     // View menu
     // Note: we explicitly connect to signal triggered - and not toggled - also in
@@ -443,49 +426,66 @@ void MainWindow::initUi() noexcept
 
 void MainWindow::initPlugins() noexcept
 {
-    std::vector<PluginManager::Handle> importPlugins;
-    std::vector<PluginManager::Handle> exportPlugins;
+    std::vector<PluginManager::Handle> flightImportPlugins;
+    std::vector<PluginManager::Handle> flightExportPlugins;
+    std::vector<PluginManager::Handle> locationImportPlugins;
 
-    d->importQActionGroup = new QActionGroup(this);
-    d->exportQActionGroup = new QActionGroup(this);
+    d->flightImportQActionGroup = new QActionGroup(this);
+    d->flightExportQActionGroup = new QActionGroup(this);
+    d->locationImportQActionGroup = new QActionGroup(this);
 
     PluginManager &pluginManager = PluginManager::getInstance();
     pluginManager.initialise(this);
 
-    // Import
-    importPlugins = PluginManager::getInstance().initialiseFlightImportPlugins();
-    d->hasImportPlugins = importPlugins.size() > 0;
-    if (d->hasImportPlugins) {
-        ui->importMenu->setEnabled(true);
+    // Flight import
+    flightImportPlugins = pluginManager.initialiseFlightImportPlugins();
+    d->hasFlightImportPlugins = flightImportPlugins.size() > 0;
+    if (d->hasFlightImportPlugins) {
+        ui->flightImportMenu->setEnabled(true);
 
-        for (const PluginManager::Handle &handle : importPlugins) {
-            QAction *importAction = new QAction(handle.second, ui->importMenu);
+        for (const PluginManager::Handle &handle : flightImportPlugins) {
+            QAction *flightImportAction = new QAction(handle.second, ui->flightImportMenu);
             // First: plugin uuid
-            importAction->setData(handle.first);
-            d->importQActionGroup->addAction(importAction);
-            ui->importMenu->addAction(importAction);
+            flightImportAction->setData(handle.first);
+            d->flightImportQActionGroup->addAction(flightImportAction);
+            ui->flightImportMenu->addAction(flightImportAction);
         }
-
     } else {
-        ui->importMenu->setEnabled(false);
+        ui->flightImportMenu->setEnabled(false);
     }
 
-    // Export
-    exportPlugins = PluginManager::getInstance().initialiseFlightExportPlugins();
-    d->hasExportPlugins = exportPlugins.size() > 0;
-    if (d->hasExportPlugins) {
-        ui->exportMenu->setEnabled(true);
+    // Flight export
+    flightExportPlugins = pluginManager.initialiseFlightExportPlugins();
+    d->hasFlightExportPlugins = flightExportPlugins.size() > 0;
+    if (d->hasFlightExportPlugins) {
+        ui->flightExportMenu->setEnabled(true);
 
-        for (const PluginManager::Handle &handle : exportPlugins) {
-            QAction *exportAction = new QAction(handle.second, ui->exportMenu);
+        for (const PluginManager::Handle &handle : flightExportPlugins) {
+            QAction *flightExportAction = new QAction(handle.second, ui->flightExportMenu);
             // First: plugin uuid
-            exportAction->setData(handle.first);
-            d->exportQActionGroup->addAction(exportAction);
-            ui->exportMenu->addAction(exportAction);
+            flightExportAction->setData(handle.first);
+            d->flightExportQActionGroup->addAction(flightExportAction);
+            ui->flightExportMenu->addAction(flightExportAction);
         }
-
     } else {
-        ui->exportMenu->setEnabled(false);
+        ui->flightExportMenu->setEnabled(false);
+    }
+
+    // Location import
+    locationImportPlugins = pluginManager.initialiseLocationImportPlugins();
+    d->hasLocationImportPlugins = locationImportPlugins.size() > 0;
+    if (d->hasLocationImportPlugins) {
+        ui->locationImportMenu->setEnabled(true);
+
+        for (const PluginManager::Handle &handle : locationImportPlugins) {
+            QAction *locationImportAction = new QAction(handle.second, ui->locationImportMenu);
+            // First: plugin uuid
+            locationImportAction->setData(handle.first);
+            d->locationImportQActionGroup->addAction(locationImportAction);
+            ui->locationImportMenu->addAction(locationImportAction);
+        }
+    } else {
+        ui->locationImportMenu->setEnabled(false);
     }
 
     initSkyConnectPlugin();
@@ -1340,14 +1340,15 @@ void MainWindow::updateFileMenu() noexcept
     if (SkyConnectManager::getInstance().isInRecordingState()) {
         ui->newLogbookAction->setEnabled(false);
         ui->openLogbookAction->setEnabled(false);
-        ui->importMenu->setEnabled(false);
-        ui->exportMenu->setEnabled(false);
+        ui->flightImportMenu->setEnabled(false);
+        ui->flightExportMenu->setEnabled(false);
         ui->optimiseLogbookAction->setEnabled(false);
     } else {
         ui->newLogbookAction->setEnabled(true);
         ui->openLogbookAction->setEnabled(true);
-        ui->importMenu->setEnabled(d->hasImportPlugins && d->connectedWithLogbook);
-        ui->exportMenu->setEnabled(d->hasExportPlugins && hasRecording);
+        ui->flightImportMenu->setEnabled(d->hasFlightImportPlugins && d->connectedWithLogbook);
+        ui->flightExportMenu->setEnabled(d->hasFlightExportPlugins && hasRecording);
+        ui->locationImportMenu->setEnabled(d->hasFlightImportPlugins && d->connectedWithLogbook);
         ui->optimiseLogbookAction->setEnabled(d->connectedWithLogbook);
     }
 }
@@ -1643,7 +1644,7 @@ void MainWindow::onLogbookConnectionChanged(bool connected) noexcept
     updateUi();
 }
 
-void MainWindow::onImport(QAction *action) noexcept
+void MainWindow::onFlightImport(QAction *action) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const QUuid pluginUuid = action->data().toUuid();
@@ -1659,11 +1660,17 @@ void MainWindow::onImport(QAction *action) noexcept
     }
 }
 
-void MainWindow::onExport(QAction *action) noexcept
+void MainWindow::onFlightExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     PluginManager::getInstance().exportFlight(flight, pluginUuid);
+}
+
+void MainWindow::onLocationImport(QAction *action) noexcept
+{
+    const QUuid pluginUuid = action->data().toUuid();
+    PluginManager::getInstance().importLocation(pluginUuid, *d->locationService);
 }
 
 void MainWindow::onReplayLoopChanged() noexcept
