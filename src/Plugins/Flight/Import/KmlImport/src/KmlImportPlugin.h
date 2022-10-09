@@ -47,7 +47,7 @@ struct KmlImportPluginPrivate;
 class KmlImportPlugin : public FlightImportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "KmlImportPlugin.json")
+    Q_PLUGIN_METADATA(IID FLIGHT_IMPORT_INTERFACE_IID FILE "KmlImportPlugin.json")
     Q_INTERFACES(FlightImportIntf)
 public:
     KmlImportPlugin() noexcept;

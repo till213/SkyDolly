@@ -47,7 +47,7 @@ struct IgcImportPluginPrivate;
 class IgcImportPlugin : public FlightImportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "IgcImportPlugin.json")
+    Q_PLUGIN_METADATA(IID FLIGHT_IMPORT_INTERFACE_IID FILE "IgcImportPlugin.json")
     Q_INTERFACES(FlightImportIntf)
 public:
     IgcImportPlugin() noexcept;

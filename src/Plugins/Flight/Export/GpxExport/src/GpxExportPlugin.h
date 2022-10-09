@@ -48,7 +48,7 @@ struct GpxExportPluginPrivate;
 class GpxExportPlugin : public FlightExportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "GpxExportPlugin.json")
+    Q_PLUGIN_METADATA(IID FLIGHT_EXPORT_INTERFACE_IID FILE "GpxExportPlugin.json")
     Q_INTERFACES(FlightExportIntf)
 public:
     GpxExportPlugin() noexcept;

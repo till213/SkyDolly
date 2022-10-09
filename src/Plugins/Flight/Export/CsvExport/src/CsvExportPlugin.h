@@ -47,7 +47,7 @@ struct CsvExportPluginPrivate;
 class CsvExportPlugin : public FlightExportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "CsvExportPlugin.json")
+    Q_PLUGIN_METADATA(IID FLIGHT_EXPORT_INTERFACE_IID FILE "CsvExportPlugin.json")
     Q_INTERFACES(FlightExportIntf)
 public:
     CsvExportPlugin() noexcept;

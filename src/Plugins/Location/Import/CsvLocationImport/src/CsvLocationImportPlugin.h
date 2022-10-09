@@ -42,7 +42,7 @@ struct CsvLocationImportPluginPrivate;
 class CsvLocationImportPlugin : public LocationImportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CsvLocationImportPlugin.json")
+    Q_PLUGIN_METADATA(IID LOCATION_IMPORT_INTERFACE_IID FILE "CsvLocationImportPlugin.json")
     Q_INTERFACES(LocationImportIntf)
 public: 
     CsvLocationImportPlugin() noexcept;

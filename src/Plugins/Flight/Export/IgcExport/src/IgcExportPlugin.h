@@ -50,7 +50,7 @@ struct IgcExportPluginPrivate;
 class IgcExportPlugin : public FlightExportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "IgcExportPlugin.json")
+    Q_PLUGIN_METADATA(IID FLIGHT_EXPORT_INTERFACE_IID FILE "IgcExportPlugin.json")
     Q_INTERFACES(FlightExportIntf)
 public:
     IgcExportPlugin() noexcept;
