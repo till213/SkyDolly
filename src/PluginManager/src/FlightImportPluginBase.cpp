@@ -53,7 +53,7 @@
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
 #include <Persistence/Service/AircraftTypeService.h>
-#include "BasicImportDialog.h"
+#include "BasicFlightImportDialog.h"
 #include "FlightImportPluginBaseSettings.h"
 #include "FlightImportPluginBase.h"
 
@@ -88,7 +88,7 @@ bool FlightImportPluginBase::importFlight(FlightService &flightService, Flight &
     d->flight = &flight;
     FlightImportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(flight, getFileFilter(), baseSettings, PluginBase::getParentWidget());
+    std::unique_ptr<BasicFlightImportDialog> importDialog = std::make_unique<BasicFlightImportDialog>(flight, getFileFilter(), baseSettings, PluginBase::getParentWidget());
     // Transfer ownership to importDialog
     importDialog->setOptionWidget(optionWidget.release());
     const int choice = importDialog->exec();

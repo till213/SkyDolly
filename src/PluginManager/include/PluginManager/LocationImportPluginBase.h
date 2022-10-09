@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Location Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,41 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTEXPORTPLUGINBASE_H
-#define FLIGHTEXPORTPLUGINBASE_H
+#ifndef LOCATIONIMPORTPLUGINBASE_H
+#define LOCATIONIMPORTPLUGINBASE_H
 
 #include <memory>
-#include <vector>
 
 #include <QObject>
 #include <QtPlugin>
-#include <QStringView>
 
-class QIODevice;
-
-#include <Flight/FlightAugmentation.h>
-#include <Kernel/Settings.h>
-#include "FlightExportIntf.h"
+#include "LocationImportIntf.h"
 #include "PluginBase.h"
 #include "PluginManagerLib.h"
 
-struct PositionData;
-class FLight;
-class Aircraft;
-class FlightExportPluginBaseSettings;
-struct ExportPluginBasePrivate;
+class LocationService;
+class Location;
+struct AircraftType;
+struct AircraftInfo;
+struct LocationCondition;
+class LocationImportPluginBaseSettings;
+struct LocationImportPluginBasePrivate;
 
-class PLUGINMANAGER_API FlightExportPluginBase : public PluginBase, public FlightExportIntf
+class PLUGINMANAGER_API LocationImportPluginBase : public PluginBase, public LocationImportIntf
 {
     Q_OBJECT
-    Q_INTERFACES(FlightExportIntf)
+    Q_INTERFACES(LocationImportIntf)
 public:
-    FlightExportPluginBase() noexcept;
-    FlightExportPluginBase(const FlightExportPluginBase &rhs) = delete;
-    FlightExportPluginBase(FlightExportPluginBase &&rhs) = delete;
-    FlightExportPluginBase &operator=(const FlightExportPluginBase &rhs) = delete;
-    FlightExportPluginBase &operator=(FlightExportPluginBase &&rhs) = delete;
-    ~FlightExportPluginBase() override;
+    LocationImportPluginBase() noexcept;
+    LocationImportPluginBase(const LocationImportPluginBase &rhs) = delete;
+    LocationImportPluginBase(LocationImportPluginBase &&rhs) = delete;
+    LocationImportPluginBase &operator=(const LocationImportPluginBase &rhs) = delete;
+    LocationImportPluginBase &operator=(LocationImportPluginBase &&rhs) = delete;
+    ~LocationImportPluginBase() override;
 
     QWidget *getParentWidget() const noexcept final
     {
@@ -78,35 +74,22 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    bool exportFlight(const Flight &flight) noexcept final;
+    bool importLocation(LocationService &locationService) noexcept final;
 
 protected:
     // Re-implement
-    virtual FlightExportPluginBaseSettings &getPluginSettings() const noexcept = 0;
+    virtual LocationImportPluginBaseSettings &getPluginSettings() const noexcept = 0;
     virtual QString getFileSuffix() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-
-    /*!
-     * Returns whether the plugin (file format) supports export of multiple aircraft into a single file.
-     * Examples are the KML or GPX format which both may have multiple \e tracks.
-     *
-     * \return \c true if the file format supports multiple aircraft tracks; \c false else
-     */
-    virtual bool hasMultiAircraftSupport() const noexcept = 0;
-    virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept = 0;
-    virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept = 0;
+    virtual bool importLocation(QFile &file) noexcept = 0;
 
 private:
-    const std::unique_ptr<ExportPluginBasePrivate> d;
-
-    bool exportFlight(const Flight &flight, const QString &filePath) noexcept;
-    // Exports all aircraft into separate files, given the 'baseFilePath'
-    bool exportAllAircraft(const Flight &flight, const QString &baseFilePath) noexcept;
+    const std::unique_ptr<LocationImportPluginBasePrivate> d;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
     void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;
 };
 
-#endif // FLIGHTEXPORTPLUGINBASE_H
+#endif // LOCATIONIMPORTPLUGINBASE_H

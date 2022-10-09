@@ -35,7 +35,7 @@ class QIODevice;
 class QString;
 
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportIntf.h>
+#include <PluginManager/FlightExportIntf.h>
 #include <PluginManager/FlightExportPluginBase.h>
 #include "KmlStyleExport.h"
 
@@ -50,7 +50,7 @@ class KmlExportPlugin : public FlightExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "KmlExportPlugin.json")
-    Q_INTERFACES(ExportIntf)
+    Q_INTERFACES(FlightExportIntf)
 public:
     KmlExportPlugin() noexcept;
     ~KmlExportPlugin() noexcept override;

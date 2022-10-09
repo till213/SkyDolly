@@ -25,11 +25,42 @@
 #ifndef CSVLOCATIONIMPORTPLUGIN_H
 #define CSVLOCATIONIMPORTPLUGIN_H
 
+#include <memory>
 
-class CsvLocationImportPlugin
+#include <QtPlugin>
+#include <QString>
+
+class QFile;
+class QWidget;
+
+#include <PluginManager/LocationImportIntf.h>
+#include <PluginManager/LocationImportPluginBase.h>
+
+class LocationImportPluginBaseSettings;
+struct CsvLocationImportPluginPrivate;
+
+class CsvLocationImportPlugin : public LocationImportPluginBase
 {
-public:
-    CsvLocationImportPlugin();
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CsvLocationImportPlugin.json")
+    Q_INTERFACES(LocationImportIntf)
+public: 
+    CsvLocationImportPlugin() noexcept;
+    CsvLocationImportPlugin(const CsvLocationImportPlugin &rhs) = delete;
+    CsvLocationImportPlugin(CsvLocationImportPlugin &&rhs) = delete;
+    CsvLocationImportPlugin &operator=(const CsvLocationImportPlugin &rhs) = delete;
+    CsvLocationImportPlugin &operator=(CsvLocationImportPlugin &&rhs) = delete;
+    ~CsvLocationImportPlugin() override;
+
+protected:
+    LocationImportPluginBaseSettings &getPluginSettings() const noexcept override;
+    QString getFileSuffix() const noexcept override;
+    QString getFileFilter() const noexcept override;
+    std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    bool importLocation(QFile &file) noexcept override;
+
+private:
+    const std::unique_ptr<CsvLocationImportPluginPrivate> d;
 };
 
 #endif // CSVLOCATIONIMPORTPLUGIN_H

@@ -35,7 +35,7 @@ class QIODevice;
 class QString;
 
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportIntf.h>
+#include <PluginManager/FlightExportIntf.h>
 #include <PluginManager/FlightExportPluginBase.h>
 
 class Flight;
@@ -49,7 +49,7 @@ class JsonExportPlugin : public FlightExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "JsonExportPlugin.json")
-    Q_INTERFACES(ExportIntf)
+    Q_INTERFACES(FlightExportIntf)
 public:
     JsonExportPlugin() noexcept;
     ~JsonExportPlugin() noexcept override;

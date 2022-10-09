@@ -42,7 +42,7 @@
 #include <Kernel/File.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
-#include "BasicExportDialog.h"
+#include "BasicFlightExportDialog.h"
 #include "FlightExportPluginBaseSettings.h"
 #include "FlightExportPluginBase.h"
 
@@ -66,7 +66,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight) noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     FlightExportPluginBaseSettings &baseSettings = getPluginSettings();
-    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(flight, getFileSuffix(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
+    std::unique_ptr<BasicFlightExportDialog> exportDialog = std::make_unique<BasicFlightExportDialog>(flight, getFileSuffix(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
     // Transfer ownership to exportDialog
     exportDialog->setOptionWidget(optionWidget.release());
     bool ok {true};

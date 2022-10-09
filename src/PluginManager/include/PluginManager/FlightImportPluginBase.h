@@ -36,7 +36,7 @@ class QStringList;
 
 #include <Kernel/Settings.h>
 #include <Flight/FlightAugmentation.h>
-#include "ImportIntf.h"
+#include "FlightImportIntf.h"
 #include "PluginBase.h"
 #include "PluginManagerLib.h"
 
@@ -48,10 +48,10 @@ struct FlightCondition;
 class FlightImportPluginBaseSettings;
 struct FlightImportPluginBasePrivate;
 
-class PLUGINMANAGER_API FlightImportPluginBase : public PluginBase, public ImportIntf
+class PLUGINMANAGER_API FlightImportPluginBase : public PluginBase, public FlightImportIntf
 {
     Q_OBJECT
-    Q_INTERFACES(ImportIntf)
+    Q_INTERFACES(FlightImportIntf)
 public:
     FlightImportPluginBase() noexcept;
     FlightImportPluginBase(const FlightImportPluginBase &rhs) = delete;

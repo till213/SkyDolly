@@ -35,7 +35,7 @@
 class QFile;
 
 #include <Flight/FlightAugmentation.h>
-#include <PluginManager/ImportIntf.h>
+#include <PluginManager/FlightImportIntf.h>
 #include <PluginManager/FlightImportPluginBase.h>
 
 class Flight;
@@ -48,10 +48,14 @@ class CsvImportPlugin : public FlightImportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CsvImportPlugin.json")
-    Q_INTERFACES(ImportIntf)
+    Q_INTERFACES(FlightImportIntf)
 public:
     CsvImportPlugin() noexcept;
-    ~CsvImportPlugin() noexcept override;
+    CsvImportPlugin(const CsvImportPlugin &rhs) = delete;
+    CsvImportPlugin(CsvImportPlugin &&rhs) = delete;
+    CsvImportPlugin &operator=(const CsvImportPlugin &rhs) = delete;
+    CsvImportPlugin &operator=(CsvImportPlugin &&rhs) = delete;
+    ~CsvImportPlugin() override;
 
 protected:
     FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;

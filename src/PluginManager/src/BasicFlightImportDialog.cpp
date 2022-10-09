@@ -39,12 +39,12 @@
 #include <Persistence/Service/AircraftTypeService.h>
 #include <Kernel/Settings.h>
 #include "FlightImportPluginBaseSettings.h"
-#include "BasicImportDialog.h"
-#include "ui_BasicImportDialog.h"
+#include "BasicFlightImportDialog.h"
+#include "ui_BasicFlightImportDialog.h"
 
-struct BasicImportDialogPrivate
+struct BasicFlightImportDialogPrivate
 {
-    BasicImportDialogPrivate(const Flight &theFlight, const QString &theFileFilter, FlightImportPluginBaseSettings &pluginSettings) noexcept
+    BasicFlightImportDialogPrivate(const Flight &theFlight, const QString &theFileFilter, FlightImportPluginBaseSettings &pluginSettings) noexcept
         : flight(theFlight),
           aircraftTypeService(std::make_unique<AircraftTypeService>()),
           fileFilter(theFileFilter),
@@ -63,10 +63,10 @@ struct BasicImportDialogPrivate
 
 // PUBLIC
 
-BasicImportDialog::BasicImportDialog(const Flight &flight, const QString &fileSuffix, FlightImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
+BasicFlightImportDialog::BasicFlightImportDialog(const Flight &flight, const QString &fileSuffix, FlightImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
-      ui(std::make_unique<Ui::BasicImportDialog>()),
-      d(std::make_unique<BasicImportDialogPrivate>(flight, fileSuffix, pluginSettings))
+      ui(std::make_unique<Ui::BasicFlightImportDialog>()),
+      d(std::make_unique<BasicFlightImportDialogPrivate>(flight, fileSuffix, pluginSettings))
 {
     ui->setupUi(this);    
     initUi();
@@ -74,29 +74,29 @@ BasicImportDialog::BasicImportDialog(const Flight &flight, const QString &fileSu
     frenchConnection();
 }
 
-BasicImportDialog::~BasicImportDialog() = default;
+BasicFlightImportDialog::~BasicFlightImportDialog() = default;
 
-QString BasicImportDialog::getSelectedPath() const noexcept
+QString BasicFlightImportDialog::getSelectedPath() const noexcept
 {
     return ui->pathLineEdit->text();
 }
 
-AircraftType BasicImportDialog::getSelectedAircraftType(bool *ok) const noexcept
+AircraftType BasicFlightImportDialog::getSelectedAircraftType(bool *ok) const noexcept
 {
     return d->aircraftTypeService->getByType(ui->aircraftSelectionComboBox->currentText(), ok);
 }
 
-QString BasicImportDialog::getFileFilter() const noexcept
+QString BasicFlightImportDialog::getFileFilter() const noexcept
 {
     return d->fileFilter;
 }
 
-void BasicImportDialog::setFileFilter(const QString &fileFilter) noexcept
+void BasicFlightImportDialog::setFileFilter(const QString &fileFilter) noexcept
 {
     d->fileFilter = fileFilter;
 }
 
-void BasicImportDialog::setOptionWidget(QWidget *widget) noexcept
+void BasicFlightImportDialog::setOptionWidget(QWidget *widget) noexcept
 {
     d->optionWidget = widget;
     initOptionUi();
@@ -104,7 +104,7 @@ void BasicImportDialog::setOptionWidget(QWidget *widget) noexcept
 
 // PRIVATE
 
-void BasicImportDialog::initUi() noexcept
+void BasicFlightImportDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
@@ -113,7 +113,7 @@ void BasicImportDialog::initUi() noexcept
     initOptionUi();
 }
 
-void BasicImportDialog::initBasicUi() noexcept
+void BasicFlightImportDialog::initBasicUi() noexcept
 {
     Settings &settings = Settings::getInstance();
     ui->pathLineEdit->setText(QDir::toNativeSeparators(settings.getExportPath()));
@@ -129,7 +129,7 @@ void BasicImportDialog::initBasicUi() noexcept
     ui->addToFlightCheckBox->setChecked(d->pluginSettings.isAddToFlightEnabled());
 }
 
-void BasicImportDialog::initOptionUi() noexcept
+void BasicFlightImportDialog::initOptionUi() noexcept
 {
     if (d->optionWidget != nullptr) {
         ui->optionGroupBox->setHidden(false);
@@ -144,30 +144,30 @@ void BasicImportDialog::initOptionUi() noexcept
     }
 }
 
-void BasicImportDialog::frenchConnection() noexcept
+void BasicFlightImportDialog::frenchConnection() noexcept
 {
     connect(ui->pathLineEdit, &QLineEdit::textChanged,
-            this, &BasicImportDialog::updateUi);
+            this, &BasicFlightImportDialog::updateUi);
     connect(ui->fileSelectionPushButton, &QPushButton::clicked,
-            this, &BasicImportDialog::onFileSelectionChanged);
+            this, &BasicFlightImportDialog::onFileSelectionChanged);
     connect(ui->aircraftSelectionComboBox, &QComboBox::currentTextChanged,
-            this, &BasicImportDialog::updateUi);
+            this, &BasicFlightImportDialog::updateUi);
     connect(ui->importDirectoryCheckBox, &QCheckBox::toggled,
-            this, &BasicImportDialog::onImportDirectoryChanged);
+            this, &BasicFlightImportDialog::onImportDirectoryChanged);
     connect(ui->addToFlightCheckBox, &QCheckBox::toggled,
-            this, &BasicImportDialog::onAddToExistingFlightChanged);
+            this, &BasicFlightImportDialog::onAddToExistingFlightChanged);
     connect(&d->pluginSettings, &FlightImportPluginBaseSettings::baseSettingsChanged,
-            this, &BasicImportDialog::updateUi);
+            this, &BasicFlightImportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,
-            this, &BasicImportDialog::onRestoreDefaults);
+            this, &BasicFlightImportDialog::onRestoreDefaults);
     connect(ui->defaultButtonBox, &QDialogButtonBox::accepted,
-            this, &BasicImportDialog::onAccepted);
+            this, &BasicFlightImportDialog::onAccepted);
 }
 
 // PRIVATE SLOTS
 
-void BasicImportDialog::updateUi() noexcept
+void BasicFlightImportDialog::updateUi() noexcept
 {
     const QString filePath = ui->pathLineEdit->text();
     QFileInfo fileInfo {filePath};
@@ -203,7 +203,7 @@ void BasicImportDialog::updateUi() noexcept
     ui->addToFlightCheckBox->setChecked(d->pluginSettings.isAddToFlightEnabled());
 }
 
-void BasicImportDialog::onFileSelectionChanged() noexcept
+void BasicFlightImportDialog::onFileSelectionChanged() noexcept
 {
     // Start with the last export path
     QString exportPath;
@@ -233,22 +233,22 @@ void BasicImportDialog::onFileSelectionChanged() noexcept
     }
 }
 
-void BasicImportDialog::onImportDirectoryChanged(bool enable) noexcept
+void BasicFlightImportDialog::onImportDirectoryChanged(bool enable) noexcept
 {
     d->pluginSettings.setImportDirectoryEnabled(enable);
 }
 
-void BasicImportDialog::onAddToExistingFlightChanged(bool enable) noexcept
+void BasicFlightImportDialog::onAddToExistingFlightChanged(bool enable) noexcept
 {
     d->pluginSettings.setAddToFlightEnabled(enable);
 }
 
-void BasicImportDialog::onRestoreDefaults() noexcept
+void BasicFlightImportDialog::onRestoreDefaults() noexcept
 {
     d->pluginSettings.restoreDefaults();
 }
 
-void BasicImportDialog::onAccepted() noexcept
+void BasicFlightImportDialog::onAccepted() noexcept
 {
     const QString type = ui->aircraftSelectionComboBox->currentText();
     Settings::getInstance().setImportAircraftType(type);

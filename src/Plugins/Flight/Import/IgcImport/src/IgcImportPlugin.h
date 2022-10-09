@@ -35,7 +35,7 @@
 class QRegularExpression;
 
 #include <Flight/FlightAugmentation.h>
-#include <PluginManager/ImportIntf.h>
+#include <PluginManager/FlightImportIntf.h>
 #include <PluginManager/FlightImportPluginBase.h>
 
 class Flight;
@@ -48,7 +48,7 @@ class IgcImportPlugin : public FlightImportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "IgcImportPlugin.json")
-    Q_INTERFACES(ImportIntf)
+    Q_INTERFACES(FlightImportIntf)
 public:
     IgcImportPlugin() noexcept;
     ~IgcImportPlugin() noexcept override;

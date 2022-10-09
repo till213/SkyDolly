@@ -35,7 +35,7 @@ class QIODevice;
 class QString;
 
 #include <Kernel/Settings.h>
-#include <PluginManager/ExportIntf.h>
+#include <PluginManager/FlightExportIntf.h>
 #include <PluginManager/FlightExportPluginBase.h>
 
 class Flight;
@@ -49,7 +49,7 @@ class GpxExportPlugin : public FlightExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "GpxExportPlugin.json")
-    Q_INTERFACES(ExportIntf)
+    Q_INTERFACES(FlightExportIntf)
 public:
     GpxExportPlugin() noexcept;
     ~GpxExportPlugin() noexcept override;

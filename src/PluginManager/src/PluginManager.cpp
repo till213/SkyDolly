@@ -39,8 +39,8 @@
 
 #include <Model/Flight.h>
 #include <Persistence/Service/FlightService.h>
-#include "ExportIntf.h"
-#include "ImportIntf.h"
+#include "FlightExportIntf.h"
+#include "FlightImportIntf.h"
 #include "PluginManager.h"
 
 namespace
@@ -150,7 +150,7 @@ bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightS
         const QString pluginPath = d->flightImportPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
         const QObject *plugin = loader.instance();
-        ImportIntf *importPlugin = qobject_cast<ImportIntf *>(plugin);
+        FlightImportIntf *importPlugin = qobject_cast<FlightImportIntf *>(plugin);
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
             importPlugin->restoreSettings(pluginUuid);
@@ -171,7 +171,7 @@ bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) 
         const QString pluginPath = d->flightExportPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
         QObject *plugin = loader.instance();
-        ExportIntf *exportPlugin = qobject_cast<ExportIntf *>(plugin);
+        FlightExportIntf *exportPlugin = qobject_cast<FlightExportIntf *>(plugin);
         if (exportPlugin != nullptr) {
             exportPlugin->setParentWidget(d->parentWidget);
             exportPlugin->restoreSettings(pluginUuid);

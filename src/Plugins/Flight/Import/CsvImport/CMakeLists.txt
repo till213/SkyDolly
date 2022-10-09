@@ -10,8 +10,8 @@ add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 target_sources(${MODULE_NAME}
     PRIVATE
         src/CsvImportPlugin.h src/CsvImportPlugin.cpp
-        src/CsvImportOptionWidget.h src/CsvImportOptionWidget.cpp src/CsvImportOptionWidget.ui
         src/CsvImportSettings.h src/CsvImportSettings.cpp
+        src/CsvImportOptionWidget.h src/CsvImportOptionWidget.cpp src/CsvImportOptionWidget.ui
         src/CsvParserIntf.h
         src/SkyDollyCsvParser.h src/SkyDollyCsvParser.cpp
         src/FlightRadar24CsvParser.h src/FlightRadar24CsvParser.cpp

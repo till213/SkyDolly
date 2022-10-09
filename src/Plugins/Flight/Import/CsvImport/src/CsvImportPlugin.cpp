@@ -42,9 +42,6 @@
 
 struct CsvImportPluginPrivate
 {
-    CsvImportPluginPrivate()
-    {}
-
     CsvImportSettings pluginSettings;
     QDateTime firstDateTimeUtc;
     QString flightNumber;
@@ -56,18 +53,9 @@ struct CsvImportPluginPrivate
 
 CsvImportPlugin::CsvImportPlugin() noexcept
     : d(std::make_unique<CsvImportPluginPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "CsvImportPlugin::CsvImportPlugin: PLUGIN LOADED";
-#endif
-}
+{}
 
-CsvImportPlugin::~CsvImportPlugin() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "CsvImportPlugin::~CsvImportPlugin: PLUGIN UNLOADED";
-#endif
-}
+CsvImportPlugin::~CsvImportPlugin() = default;
 
 // PROTECTED
 

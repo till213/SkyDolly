@@ -22,63 +22,63 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef BASICIMPORTDIALOG_H
-#define BASICIMPORTDIALOG_H
+#ifndef BASICFLIGHTEXPORTDIALOG_H
+#define BASICFLIGHTEXPORTDIALOG_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QDialog>
-#include <QString>
 
-class QWidget;
-
-#include <Model/AircraftType.h>
+#include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
 class Flight;
-class FlightImportPluginBaseSettings;
-struct BasicImportDialogPrivate;
+class FlightExportPluginBaseSettings;
+struct BasicFlightExportDialogPrivate;
 
 namespace Ui {
-    class BasicImportDialog;
+    class BasicFlightExportDialog;
 }
 
-class PLUGINMANAGER_API BasicImportDialog : public QDialog
+class PLUGINMANAGER_API BasicFlightExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicImportDialog(const Flight &flight, const QString &fileExtension, FlightImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
-    BasicImportDialog(const BasicImportDialog &rhs) = delete;
-    BasicImportDialog(BasicImportDialog &&rhs) = delete;
-    BasicImportDialog &operator=(const BasicImportDialog &rhs) = delete;
-    BasicImportDialog &operator=(BasicImportDialog &&rhs) = delete;
-    ~BasicImportDialog() override;
 
-    AircraftType getSelectedAircraftType(bool *ok = nullptr) const noexcept;
-    QString getSelectedPath() const noexcept;
+    explicit BasicFlightExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    BasicFlightExportDialog(const BasicFlightExportDialog &rhs) = delete;
+    BasicFlightExportDialog(BasicFlightExportDialog &&rhs) = delete;
+    BasicFlightExportDialog &operator=(const BasicFlightExportDialog &rhs) = delete;
+    BasicFlightExportDialog &operator=(BasicFlightExportDialog &&rhs) = delete;
+    ~BasicFlightExportDialog() override;
 
-    QString getFileFilter() const noexcept;
-    void setFileFilter(const QString &fileFilter) noexcept;
+    QString getSelectedFilePath() const noexcept;
+    void setSelectedFilePath(const QString &filePath) noexcept;
 
     void setOptionWidget(QWidget *widget) noexcept;
 
 private:
-    const std::unique_ptr<Ui::BasicImportDialog> ui;
-    const std::unique_ptr<BasicImportDialogPrivate> d;
+    const std::unique_ptr<Ui::BasicFlightExportDialog> ui;
+    const std::unique_ptr<BasicFlightExportDialogPrivate> d;
 
     void initUi() noexcept;
     void initBasicUi() noexcept;
     void initOptionUi() noexcept;
+    void updateDataGroupBox() noexcept;
     void frenchConnection() noexcept;
+    inline bool isExportUserAircraftOnly() const noexcept;
+    std::int64_t estimateNofSamplePoints() const noexcept;
 
 private slots:
     void updateUi() noexcept;
 
-    void onFileSelectionChanged() noexcept;
-    void onImportDirectoryChanged(bool enable) noexcept;
-    void onAddToExistingFlightChanged(bool enable) noexcept;
+    void onFileSelectionButtonClicked() noexcept;
+    void onFilePathChanged();
+    void onFormationExportChanged() noexcept;
+    void onResamplingOptionChanged() noexcept;
+    void onDoOpenExportedFilesChanged(bool enable) noexcept;
     void onRestoreDefaults() noexcept;
-    void onAccepted() noexcept;    
 };
 
-#endif // BASICIMPORTDIALOG_H
+#endif // BASICFLIGHTEXPORTDIALOG_H

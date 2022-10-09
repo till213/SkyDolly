@@ -22,48 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVEXPORTPLUGIN_H
-#define CSVEXPORTPLUGIN_H
+#ifndef FLIGHTIMPORTINTF_H
+#define FLIGHTIMPORTINTF_H
 
-#include <memory>
-
-#include <QObject>
 #include <QtPlugin>
-#include <QWidget>
 
-class QIODevice;
-class QString;
-class QDateTime;
+#include "PluginIntf.h"
 
-#include <Kernel/Settings.h>
-#include <PluginManager/FlightExportIntf.h>
-#include <PluginManager/FlightExportPluginBase.h>
+class Flight;
+class FlightService;
 
-class Aircraft;
-
-class FlightExportPluginBaseSettings;
-struct CsvExportPluginPrivate;
-
-class CsvExportPlugin : public FlightExportPluginBase
+class FlightImportIntf : public PluginIntf
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "CsvExportPlugin.json")
-    Q_INTERFACES(FlightExportIntf)
 public:
-    CsvExportPlugin() noexcept;
-    ~CsvExportPlugin() override;
-
-protected:
-    FlightExportPluginBaseSettings &getPluginSettings() const noexcept override;
-    QString getFileSuffix() const noexcept override;
-    QString getFileFilter() const noexcept override;
-    std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool hasMultiAircraftSupport() const noexcept override;
-    bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
-    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
-
-private:
-    const std::unique_ptr<CsvExportPluginPrivate> d;
+    virtual bool importFlight(FlightService &flightService, Flight &flight) noexcept = 0;
 };
 
-#endif // CSVEXPORTPLUGIN_H
+#define IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightImportInterface/1.0"
+Q_DECLARE_INTERFACE(FlightImportIntf, IMPORT_INTERFACE_IID)
+
+#endif // FLIGHTIMPORTINTF_H
