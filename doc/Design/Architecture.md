@@ -29,7 +29,7 @@ Sky Dolly's architecture is a monolithic, modular architecture extendable by plu
       Model-->Kernel;
 ```
 
-## Plugin Dependnencies
+## Plugin Dependencies
 ### Connect Plugins
 #### MSFSSimConnect
 ```mermaid
