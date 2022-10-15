@@ -35,6 +35,7 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/LocationImportIntf.h
         include/PluginManager/LocationImportPluginBase.h src/LocationImportPluginBase.cpp
         include/PluginManager/LocationImportPluginBaseSettings.h src/LocationImportPluginBaseSettings.cpp
+        include/PluginManager/BasicLocationImportDialog.h src/BasicLocationImportDialog.cpp src/BasicLocationImportDialog.ui
         include/PluginManager/ModuleIntf.h
         include/PluginManager/AbstractModule.h src/AbstractModule.cpp
         include/PluginManager/ModuleManager.h src/ModuleManager.cpp
