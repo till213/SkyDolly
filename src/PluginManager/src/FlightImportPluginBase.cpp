@@ -59,15 +59,9 @@
 
 struct FlightImportPluginBasePrivate
 {
-    FlightImportPluginBasePrivate()
-        : flight(nullptr),
-          aircraftService(std::make_unique<AircraftService>()),
-          aircraftTypeService(std::make_unique<AircraftTypeService>())
-    {}
-
-    Flight *flight;
-    std::unique_ptr<AircraftService> aircraftService;
-    std::unique_ptr<AircraftTypeService> aircraftTypeService;
+    Flight *flight {nullptr};
+    std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
+    std::unique_ptr<AircraftTypeService> aircraftTypeService {std::make_unique<AircraftTypeService>()};
     QFile file;
     Unit unit;
     AircraftType aircraftType;

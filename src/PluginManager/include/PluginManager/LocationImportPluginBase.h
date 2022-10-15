@@ -87,6 +87,7 @@ protected:
 private:
     const std::unique_ptr<LocationImportPluginBasePrivate> d;
 
+    bool importLocations(const QStringList &filePaths, LocationService &locationService) noexcept;
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
     void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;

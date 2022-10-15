@@ -22,13 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
+#include <QWidget>
+#include <QIODevice>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QDateTime>
+#include <QElapsedTimer>
+#include <QCursor>
+#include <QGuiApplication>
+
+#include <Kernel/File.h>
+#include "BasicLocationImportDialog.h"
 #include "LocationImportPluginBaseSettings.h"
 #include "LocationImportPluginBase.h"
 
 struct LocationImportPluginBasePrivate
 {
-    LocationImportPluginBasePrivate()
-    {}
+    QFile file;
 };
 
 // PUBLIC
@@ -41,10 +56,10 @@ LocationImportPluginBase::~LocationImportPluginBase() = default;
 
 bool LocationImportPluginBase::importLocation(LocationService &locationService) noexcept
 {
-    bool ok {false};
+    bool ok {true};
     LocationImportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicLocationImportDialog> importDialog = std::make_unique<BasicLocationImportDialog>(flight, getFileFilter(), baseSettings, PluginBase::getParentWidget());
+    std::unique_ptr<BasicLocationImportDialog> importDialog = std::make_unique<BasicLocationImportDialog>(getFileFilter(), baseSettings, PluginBase::getParentWidget());
     // Transfer ownership to importDialog
     importDialog->setOptionWidget(optionWidget.release());
     const int choice = importDialog->exec();
@@ -60,33 +75,23 @@ bool LocationImportPluginBase::importLocation(LocationService &locationService) 
             Settings::getInstance().setExportPath(directoryPath);
             selectedFilePaths.append(selectedPath);
         }
-        d->aircraftType = importDialog->getSelectedAircraftType(&ok);
-        if (ok) {
-#ifdef DEBUG
-            QElapsedTimer timer;
-            timer.start();
-#endif
-            QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-            QGuiApplication::processEvents();
-            ok = importFlights(selectedFilePaths, flightService, flight);
-            QGuiApplication::restoreOverrideCursor();
-#ifdef DEBUG
-            qDebug() << QFileInfo(selectedPath).fileName() << "import" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
-#endif
-            if (!ok && !baseSettings.isImportDirectoryEnabled()) {
-                QMessageBox::warning(PluginBase::getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
-            }
-        } else {
-            QMessageBox::warning(PluginBase::getParentWidget(), tr("Import error"),
-                                 tr("The selected aircraft '%1' is not a known aircraft in the logbook. "
-                                    "Check for spelling errors or record a flight with this aircraft first.").arg(d->aircraftType.type));
-        }
-    } else {
-        ok = true;
-    }
 
-    // We are done with the export
-    d->flight = nullptr;
+#ifdef DEBUG
+        QElapsedTimer timer;
+        timer.start();
+#endif
+        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+        QGuiApplication::processEvents();
+        ok = importLocations(selectedFilePaths, locationService);
+        QGuiApplication::restoreOverrideCursor();
+#ifdef DEBUG
+        qDebug() << QFileInfo(selectedPath).fileName() << "import" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
+#endif
+        if (!ok && !baseSettings.isImportDirectoryEnabled()) {
+            QMessageBox::warning(PluginBase::getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
+        }
+
+    }
 
     return ok;
 }
@@ -107,4 +112,48 @@ void LocationImportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &k
 void LocationImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     getPluginSettings().restoreSettings(valuesByKey);
+}
+
+bool LocationImportPluginBase::importLocations(const QStringList &filePaths, LocationService &locationService) noexcept
+{
+    const LocationImportPluginBaseSettings &pluginSettings = getPluginSettings();
+    const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
+
+    bool ok {true};
+    bool ignoreFailures {false};
+    for (const QString &filePath : filePaths) {
+        d->file.setFileName(filePath);
+        ok = d->file.open(QIODevice::ReadOnly);
+        if (ok) {
+            ok = importLocation(d->file);
+            d->file.close();
+        }
+
+        if (!ok && importDirectory && !ignoreFailures) {
+            QGuiApplication::restoreOverrideCursor();
+            QFileInfo fileInfo {filePath};
+            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
+            messageBox->setIcon(QMessageBox::Warning);
+            QPushButton *proceedButton = messageBox->addButton(tr("&Proceed"), QMessageBox::AcceptRole);
+            QPushButton *ignoreAllButton = messageBox->addButton(tr("&Ignore All Failures"), QMessageBox::YesRole);
+            messageBox->setWindowTitle(tr("Import Failure"));
+            messageBox->setText(tr("The file %1 could not be imported. Do you want to proceed with the remaining files in directory %2?").arg(fileInfo.fileName(), fileInfo.dir().dirName()));
+            messageBox->setInformativeText(tr("Aborting will keep the already successfully imported flights and aircraft."));
+            messageBox->setStandardButtons(QMessageBox::Cancel);
+            messageBox->setDefaultButton(proceedButton);
+
+            messageBox->exec();
+            const QAbstractButton *clickedButton = messageBox->clickedButton();
+            if (clickedButton == ignoreAllButton) {
+                ignoreFailures = true;
+            } else if (clickedButton != proceedButton) {
+                break;
+            }
+            QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+            QGuiApplication::processEvents();
+        }
+
+    } // All files
+
+    return ok;
 }

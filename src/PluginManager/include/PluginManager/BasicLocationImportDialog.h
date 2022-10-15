@@ -74,7 +74,6 @@ private slots:
     void onFileSelectionChanged() noexcept;
     void onImportDirectoryChanged(bool enable) noexcept;
     void onRestoreDefaults() noexcept;
-    void onAccepted() noexcept;
 };
 
 #endif // BASICLOCATIONIMPORTDIALOG_H

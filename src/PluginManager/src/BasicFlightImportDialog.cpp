@@ -37,7 +37,6 @@
 #include <Model/AircraftType.h>
 #include <Model/Flight.h>
 #include <Persistence/Service/AircraftTypeService.h>
-#include <Kernel/Settings.h>
 #include "FlightImportPluginBaseSettings.h"
 #include "BasicFlightImportDialog.h"
 #include "ui_BasicFlightImportDialog.h"
@@ -46,19 +45,16 @@ struct BasicFlightImportDialogPrivate
 {
     BasicFlightImportDialogPrivate(const Flight &theFlight, const QString &theFileFilter, FlightImportPluginBaseSettings &pluginSettings) noexcept
         : flight(theFlight),
-          aircraftTypeService(std::make_unique<AircraftTypeService>()),
           fileFilter(theFileFilter),
-          pluginSettings(pluginSettings),
-          importButton(nullptr),
-          optionWidget(nullptr)
+          pluginSettings(pluginSettings)
     {}
 
     const Flight &flight;
-    std::unique_ptr<AircraftTypeService> aircraftTypeService;
+    std::unique_ptr<AircraftTypeService> aircraftTypeService {std::make_unique<AircraftTypeService>()};
     QString fileFilter;
     FlightImportPluginBaseSettings &pluginSettings;
-    QPushButton *importButton;
-    QWidget *optionWidget;
+    QPushButton *importButton {nullptr};
+    QWidget *optionWidget {nullptr};
 };
 
 // PUBLIC
