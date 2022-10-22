@@ -28,7 +28,7 @@
 #include <QByteArray>
 #include <QList>
 
-class QFile;
+class QIODevice;
 class QDateTime;
 class QString;
 
@@ -45,10 +45,7 @@ class Light;
 class SkyDollyCsvParser : public CsvParserIntf
 {
 public:
-    SkyDollyCsvParser() noexcept;
-    virtual ~SkyDollyCsvParser() noexcept;
-
-    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+    virtual bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
 
 private:
     static inline bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;

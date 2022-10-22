@@ -59,9 +59,6 @@ namespace
 
 struct SqlMigrationPrivate
 {
-    SqlMigrationPrivate()
-    {}
-
     SQLiteLocationDao locationDao;
     EnumerationService enumerationService;
 };

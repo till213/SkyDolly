@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,21 +22,21 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTRADAR24CSVPARSER_H
-#define FLIGHTRADAR24CSVPARSER_H
+#ifndef CSVLOCATIONPARSERINTF_H
+#define CSVLOCATIONPARSERINTF_H
 
-class QIODevice;
-class QDateTime;
-class QString;
+#include <memory>
 
-#include "CsvParserIntf.h"
+class QTextStream;
 
-class Flight;
+class Location;
 
-class FlightRadar24CsvParser : public CsvParserIntf
+class CsvLocationParserIntf
 {
 public:
-    virtual bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+    virtual ~CsvLocationParserIntf() = default;
+
+    virtual std::vector<Location> parse(QTextStream &textStream, bool *ok = nullptr) noexcept = 0;
 };
 
-#endif // FLIGHTRADAR24CSVPARSER_H
+#endif // CSVLOCATIONPARSERINTF_H

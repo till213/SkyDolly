@@ -29,7 +29,7 @@
 #include <QString>
 #include <QDateTime>
 #include <QTimeZone>
-#include <QFile>
+#include <QIODevice>
 #include <QFileInfo>
 #include <QRegularExpression>
 
@@ -54,27 +54,13 @@ namespace
 
 // PUBLIC
 
-FlightRadar24CsvParser::FlightRadar24CsvParser() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FlightRadar24CsvParser::~FlightRadar24CsvParser: CREATED";
-#endif
-}
-
-FlightRadar24CsvParser::~FlightRadar24CsvParser() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FlightRadar24CsvParser::~FlightRadar24CsvParser: DELETED";
-#endif
-}
-
-bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept
+bool FlightRadar24CsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept
 {
     Aircraft &aircraft = flight.getUserAircraft();
     static const QRegularExpression regexp(::FlightRadar24CSVPattern);
 
     // Headers
-    const QByteArray header = file.readLine();
+    const QByteArray header = io.readLine();
     bool ok = !header.isNull();
 
     firstDateTimeUtc.setTimeZone(QTimeZone::utc());
@@ -85,7 +71,7 @@ bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QSt
     Position &position = aircraft.getPosition();
 
     // CSV data
-    QByteArray data = file.readLine();
+    QByteArray data = io.readLine();
     while (ok && !data.isNull()) {
         const QRegularExpressionMatch match = regexp.match(data);
         if (match.hasMatch()) {
@@ -127,7 +113,7 @@ bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QSt
             }
 
         }
-        data = file.readLine();
+        data = io.readLine();
     }
 
     return ok;

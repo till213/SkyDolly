@@ -28,6 +28,7 @@
 #include <QList>
 #include <QString>
 #include <QDateTime>
+#include <QIODevice>
 #include <QFile>
 #include <QFileInfo>
 
@@ -52,28 +53,15 @@
 
 // PUBLIC
 
-SkyDollyCsvParser::SkyDollyCsvParser() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "SkyDollyCsvParser::~SkyDollyCsvParser: CREATED";
-#endif
-}
-
-SkyDollyCsvParser::~SkyDollyCsvParser() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "SkyDollyCsvParser::~SkyDollyCsvParser: DELETED";
-#endif
-}
-
-bool SkyDollyCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
+bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
 {
     Aircraft &aircraft = flight.getUserAircraft();
 
-    firstDateTimeUtc = QFileInfo(file).birthTime().toUTC();
+    QFile *file = qobject_cast<QFile *>(&io);
+    firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
 
     // Headers
-    QByteArray line = file.readLine();
+    QByteArray line = io.readLine();
     // Trim away line endings (\r\n for instance)
     QByteArray data = line.trimmed();
 
@@ -84,7 +72,7 @@ bool SkyDollyCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[maybe_
             headers.removeFirst();
 
             // CSV data
-            data = file.readLine();
+            data = io.readLine();
             bool firstPositionData = true;
             bool firstEngineData = true;
             bool firstPrimaryFlightControlData = true;
@@ -131,7 +119,7 @@ bool SkyDollyCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[maybe_
 
                 // Read next line
                 if (ok) {
-                    data = file.readLine();
+                    data = io.readLine();
                 } else {
                     break;
                 }

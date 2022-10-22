@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,21 +22,35 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTRADAR24CSVPARSER_H
-#define FLIGHTRADAR24CSVPARSER_H
+#ifndef LITTLENAVMAPCSVPARSER_H
+#define LITTLENAVMAPCSVPARSER_H
 
-class QIODevice;
-class QDateTime;
-class QString;
+#include <memory>
 
-#include "CsvParserIntf.h"
+class QTextStream;
+class QRegularExpressionMatch;
 
-class Flight;
+#include "CsvLocationParserIntf.h"
 
-class FlightRadar24CsvParser : public CsvParserIntf
+class Location;
+struct LittleNavmapCsvParserPrivate;
+
+class LittleNavmapCsvParser : public CsvLocationParserIntf
 {
 public:
-    virtual bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+    LittleNavmapCsvParser() noexcept;
+    LittleNavmapCsvParser(const LittleNavmapCsvParser &rhs) = delete;
+    LittleNavmapCsvParser(LittleNavmapCsvParser &&rhs);
+    LittleNavmapCsvParser &operator=(const LittleNavmapCsvParser &rhs) = delete;
+    LittleNavmapCsvParser &operator=(LittleNavmapCsvParser &&rhs);
+    ~LittleNavmapCsvParser();
+
+    virtual std::vector<Location> parse(QTextStream &textStream, bool *ok = nullptr) noexcept override;
+
+private:
+    std::unique_ptr<LittleNavmapCsvParserPrivate> d;
+
+    Location parseLocation(QRegularExpressionMatch locationMatch, bool &ok) noexcept;
 };
 
-#endif // FLIGHTRADAR24CSVPARSER_H
+#endif // LITTLENAVMAPCSVPARSER_H

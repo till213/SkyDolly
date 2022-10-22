@@ -24,8 +24,15 @@
  */
 #include <memory.h>
 
+#include <QFile>
+#include <QTextStream>
+#include <QTextCodec>
+
+#include <Model/Location.h>
 #include "CsvLocationImportOptionWidget.h"
 #include "CsvLocationImportSettings.h"
+#include "CsvLocationParserIntf.h"
+#include "LittleNavmapCsvParser.h"
 #include "CsvLocationImportPlugin.h"
 
 struct CsvLocationImportPluginPrivate
@@ -67,6 +74,17 @@ std::unique_ptr<QWidget> CsvLocationImportPlugin::createOptionWidget() const noe
 
 bool CsvLocationImportPlugin::importLocation(QFile &file) noexcept
 {
-    bool ok {true};
+    std::unique_ptr<CsvLocationParserIntf> parser;
+    switch (d->pluginSettings.getFormat()) {
+    case CsvLocationImportSettings::Format::LittleNavmap:
+        parser = std::make_unique<LittleNavmapCsvParser>();
+        break;
+    }
+    bool ok {false};
+    if (parser != nullptr) {
+        QTextStream textStream(&file);
+        textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+        std::vector<Location> locations = parser->parse(textStream, &ok);
+    }
     return ok;
 }

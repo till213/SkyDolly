@@ -30,7 +30,7 @@
 #include <QByteArray>
 #include <QList>
 
-class QFile;
+class QIODevice;
 class QDateTime;
 class QString;
 
@@ -45,15 +45,15 @@ class FlightRecorderCsvParser : public CsvParserIntf
 {
 public:
     FlightRecorderCsvParser() noexcept;
-    ~FlightRecorderCsvParser() noexcept override;
+    ~FlightRecorderCsvParser() override;
 
-    bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
 
 private:
     std::unique_ptr<FlightRecorderCsvParserPrivate> d;
 
-    bool parseHeader(QFile &file) noexcept;
-    bool parseData(QFile &file) noexcept;
+    bool parseHeader(QIODevice &io) noexcept;
+    bool parseData(QIODevice &io) noexcept;
     inline bool importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept;
     template <typename T>
     inline bool importValue(const QList<QByteArray> &values, const char *name, int &index, T &value) noexcept;

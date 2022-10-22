@@ -33,6 +33,7 @@
 #include <QString>
 #include <QDateTime>
 #include <QTimeZone>
+#include <QIODevice>
 #include <QFile>
 #include <QFileInfo>
 
@@ -118,11 +119,11 @@ namespace
 struct FlightRecorderCsvParserPrivate
 {
     FlightRecorderCsvParserPrivate()
-        : flight(nullptr)
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
-    Flight *flight;
+
+    Flight *flight {nullptr};
     std::unordered_map<QByteArray, int> columnIndexes;
     QDateTime firstDateTimeUtc;
 };
@@ -131,26 +132,18 @@ struct FlightRecorderCsvParserPrivate
 
 FlightRecorderCsvParser::FlightRecorderCsvParser() noexcept
     : d(std::make_unique<FlightRecorderCsvParserPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "FlightRecorderCsvParser::~FlightRecorderCsvParser: CREATED";
-#endif
-}
+{}
 
-FlightRecorderCsvParser::~FlightRecorderCsvParser() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FlightRecorderCsvParser::~FlightRecorderCsvParser: DELETED";
-#endif
-}
+FlightRecorderCsvParser::~FlightRecorderCsvParser() = default;
 
-bool FlightRecorderCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
+bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
 {
     d->flight = &flight;
-    firstDateTimeUtc = QFileInfo(file).birthTime().toUTC();
-    bool ok = parseHeader(file);
+    QFile *file = qobject_cast<QFile *>(&io);
+    firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
+    bool ok = parseHeader(io);
     if (ok) {
-        ok = parseData(file);
+        ok = parseData(io);
     }
     // We are done with the export
     d->flight = nullptr;
@@ -159,10 +152,10 @@ bool FlightRecorderCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[
 
 // PRIVATE
 
-bool FlightRecorderCsvParser::parseHeader(QFile &file) noexcept
+bool FlightRecorderCsvParser::parseHeader(QIODevice &io) noexcept
 {
     // Headers
-    const QByteArray header = file.readLine();
+    const QByteArray header = io.readLine();
     bool ok = !header.isNull();
 
     if (ok) {
@@ -180,7 +173,7 @@ bool FlightRecorderCsvParser::parseHeader(QFile &file) noexcept
     return ok;
 }
 
-bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
+bool FlightRecorderCsvParser::parseData(QIODevice &io) noexcept
 {
     // Position
     int latitudeIdx {InvalidIdx}, longitudeIdx {InvalidIdx}, altitdueIdx = {InvalidIdx};
@@ -212,7 +205,7 @@ bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
     AircraftHandle &aircraftHandle = aircraft.getAircraftHandle();
     Light &light = aircraft.getLight();
 
-    QByteArray data = file.readLine();
+    QByteArray data = io.readLine();
     // At least one data row expected
     bool ok = !data.isNull();
     bool firstRow {true};
@@ -375,7 +368,7 @@ bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
             break;
         }
 
-        data = file.readLine();
+        data = io.readLine();
         firstRow = false;
     }
 
