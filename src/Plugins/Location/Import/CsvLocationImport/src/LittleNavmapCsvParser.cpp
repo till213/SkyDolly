@@ -70,26 +70,26 @@ LittleNavmapCsvParser::~LittleNavmapCsvParser() = default;
 
 std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool *ok) noexcept
 {
+    // https://regex101.com/
     static const QRegularExpression csvRegExp {
-        R"(["|,]?([^"]+)["]?,)"       // Title
-        R"(["]?([^"]*)["]?,)"         // Description (optional)
-        R"(["]?([^"]*)["]?,)"         // Category (symbolic ID) (optional)
-        R"(["]?([^"]*)["]?,)"         // Country (symbolic ID) (optional)
-        R"(["]?([^"]*)["]?,)"         // Identifier (optional)
+        R"(["]?([^"]*)["]?,)"         // Type
+        R"(["]?([^"]*)["]?,)"         // Name
+        R"(["]?([^"]*)["]?,)"         // Ident
         R"(([+-]?[0-9]*[.]?[0-9]+),)" // Latitude
         R"(([+-]?[0-9]*[.]?[0-9]+),)" // Longitude
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Altitude (optional)
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Pitch (optional)
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Bank (optional)
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // True Heading (optional)
-        R"(([+-]?[\d]*),)"            // Indicated airspeed (optional)
-        R"(["]?(false|true)*["]?,)"   // On Ground (optional)
-        R"(([+-]?[\d]*)$)"            // Attributes (optional)
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Elevation
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Magnetic declanation
+        R"(["]?([^"]*)["]?,)"         // Tags
+        R"(["]?([^"]*)["]?,)"         // Description
+        R"(["]?([^"]*)["]?,)"         // Region
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Visible from
+        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Last edit
+        R"(["]?([^"]*)["]?,)$)"       // Import filename
     };
     std::vector<Location> locations;
 
     QString csv = textStream.readLine();
-    if (csv.startsWith("\"Type\"") || csv.startsWith("Type")) {
+    if (csv.startsWith("Type,Name,Ident")) {
         // Skip column names
         csv = textStream.readLine();
     }
