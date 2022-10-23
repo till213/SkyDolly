@@ -26,6 +26,7 @@
 #define CSVLOCATIONPARSERINTF_H
 
 #include <memory>
+#include <vector>
 
 class QTextStream;
 

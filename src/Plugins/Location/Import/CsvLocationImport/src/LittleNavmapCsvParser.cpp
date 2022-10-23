@@ -23,12 +23,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
+#include <unordered_map>
 
 #include <QIODevice>
 #include <QTextStream>
 #include <QTextCodec>
-#include <QRegularExpression>
 
+#include <Kernel/CsvParser.h>
 #include <Model/Location.h>
 #include <Model/Enumeration.h>
 #include <Persistence/Service/EnumerationService.h>
@@ -37,25 +39,52 @@
 namespace
 {
     // Also refer to Locations.csv
+    constexpr int TypeIndex = 0;
     constexpr int TitleIndex = 1;
-    constexpr int DescriptionIndex = 2;
-    constexpr int CategoryIndex = 3;
-    constexpr int CountryIndex = 4;
-    constexpr int IdentifierIndex = 5;
-    constexpr int LatitudeIndex = 6;
-    constexpr int LongitudeIndex = 7;
-    constexpr int AltitudeIndex = 8;
-    constexpr int PitchIndex = 9;
-    constexpr int BankIndex = 10;
-    constexpr int TrueHeadingIndex = 11;
-    constexpr int IndicatedAirspeedIndex = 12;
-    constexpr int OnGroundIndex = 13;
-    constexpr int AttributesIndex = 14;
+    constexpr int IdentIndex = 2;
+    constexpr int LatitudeIndex = 3;
+    constexpr int LongitudeIndex = 3;
+    constexpr int ElevationIndex = 4;
+    constexpr int DescriptionIndex = 8;
+
+    constexpr const char *LittleNavmapCsvHeader {"type,name,ident,latitude,longitude,elevation"};
 }
 
 struct LittleNavmapCsvParserPrivate
 {
+public:
+    LittleNavmapCsvParserPrivate() noexcept
+    {
+        initTypeToSymbolicIdMap();
+        Enumeration locationType = enumerationService.getEnumerationByName(EnumerationService::LocationType);
+        locationTypeImportId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id;
+    }
+
     EnumerationService enumerationService;
+    // Key: Litte Navmap userpoint type, value: symbolic category ID
+    std::unordered_map<QString, QString> typeToSymbolicId;
+    std::int64_t locationTypeImportId;
+
+private:
+    inline void initTypeToSymbolicIdMap() {
+        typeToSymbolicId["airprort"] = "AP";
+        typeToSymbolicId["airstrip"] = "AS";
+        typeToSymbolicId["building"] = "BU";
+        typeToSymbolicId["helipad"] = "HP";
+        typeToSymbolicId["history"] = "PO";
+        typeToSymbolicId["landform"] = "LM";
+        typeToSymbolicId["lighthouse"] = "LH";
+        typeToSymbolicId["location"] = "PO";
+        typeToSymbolicId["marker"] = "PO";
+        typeToSymbolicId["mountain"] = "MO";
+        typeToSymbolicId["other"] = "OT";
+        typeToSymbolicId["park"] = "PA";
+        typeToSymbolicId["pin"] = "PO";
+        typeToSymbolicId["poi"] = "PO";
+        typeToSymbolicId["seaport"] = "SP";
+        typeToSymbolicId["settlement"] = "CI";
+        typeToSymbolicId["water"] = "LA";
+    }
 };
 
 // PUBLIC
@@ -70,96 +99,76 @@ LittleNavmapCsvParser::~LittleNavmapCsvParser() = default;
 
 std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool *ok) noexcept
 {
-    // https://regex101.com/
-    static const QRegularExpression csvRegExp {
-        R"(["]?([^"]*)["]?,)"         // Type
-        R"(["]?([^"]*)["]?,)"         // Name
-        R"(["]?([^"]*)["]?,)"         // Ident
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Latitude
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Longitude
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Elevation
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Magnetic declanation
-        R"(["]?([^"]*)["]?,)"         // Tags
-        R"(["]?([^"]*)["]?,)"         // Description
-        R"(["]?([^"]*)["]?,)"         // Region
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Visible from
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Last edit
-        R"(["]?([^"]*)["]?,)$)"       // Import filename
-    };
     std::vector<Location> locations;
-
-    QString csv = textStream.readLine();
-    if (csv.startsWith("Type,Name,Ident")) {
-        // Skip column names
-        csv = textStream.readLine();
-    }
+    CsvParser csvParser;
 
     bool success {true};
-    while (success && !csv.isNull()) {
-        QRegularExpressionMatch match = csvRegExp.match(csv);
-        if (match.hasMatch()) {
-            Location location = parseLocation(match, success);
-
+    CsvParser::Rows rows = csvParser.parse(textStream, ::LittleNavmapCsvHeader);
+    locations.reserve(rows.size());
+    for (const auto &columns : rows) {
+        const Location location = parseLocation(columns, success);
+        if (success) {
+            locations.push_back(location);
+        } else {
+            break;
         }
-        csv = textStream.readLine();
     }
 
     if (ok != nullptr) {
         *ok = success;
     }
+
     return locations;
 }
 
-Location LittleNavmapCsvParser::parseLocation(QRegularExpressionMatch locationMatch, bool &ok) noexcept
+Location LittleNavmapCsvParser::parseLocation(CsvParser::Columns columns, bool &ok) const noexcept
 {
-    ok = true;
     Location location;
-    location.title = locationMatch.captured(::TitleIndex);
-    location.description = locationMatch.captured(::DescriptionIndex).replace("\\n", "\n");
-    Enumeration locationType = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
+
+    ok = true;
+    location.title = columns.at(::TitleIndex);
+    location.typeId = d->locationTypeImportId;
     if (ok) {
-        location.typeId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id;
-    }
-    Enumeration locationCategory = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
-    if (ok) {
-        const QString categorySymbolicId = locationMatch.captured(::CategoryIndex);
-        location.categoryId = locationCategory.getItemBySymbolicId(categorySymbolicId).id;
-    }
-    Enumeration country = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
-    if (ok) {
-        const QString countrySymbolicId = locationMatch.captured(::CountryIndex);
-        location.countryId = country.getItemBySymbolicId(countrySymbolicId).id;
+        const QString type = columns.at(::TypeIndex);
+        location.categoryId = mapTypeToCategoryId(type);
     }
     if (ok) {
-        location.identifier = locationMatch.captured(::IdentifierIndex);
+        location.identifier = columns.at(::IdentIndex);
     }
     if (ok) {
-        location.latitude = locationMatch.captured(::LatitudeIndex).toDouble(&ok);
+        const double latitude = columns.at(::LatitudeIndex).toDouble(&ok);
+        if (ok) {
+            location.latitude = latitude;
+        }
     }
     if (ok) {
-        location.longitude = locationMatch.captured(::LongitudeIndex).toDouble(&ok);
+        const double longitude = columns.at(::LongitudeIndex).toDouble(&ok);
+        if (ok) {
+            location.longitude = longitude;
+        }
     }
     if (ok) {
-        location.altitude = locationMatch.captured(::AltitudeIndex).toDouble(&ok);
+        const double altitude = columns.at(::ElevationIndex).toDouble(&ok);
+        if (ok) {
+            location.altitude = altitude;
+        }
     }
     if (ok) {
-        location.pitch = locationMatch.captured(::PitchIndex).toDouble(&ok);
-    }
-    if (ok) {
-        location.bank = locationMatch.captured(::BankIndex).toDouble(&ok);
-    }
-    if (ok) {
-        location.trueHeading = locationMatch.captured(::TrueHeadingIndex).toDouble(&ok);
-    }
-    if (ok) {
-        location.indicatedAirspeed = locationMatch.captured(::IndicatedAirspeedIndex).toInt(&ok);
-    }
-    if (ok) {
-        location.attributes = locationMatch.captured(::AttributesIndex).toLongLong(&ok);
-    }
-    if (ok) {
-        location.onGround = locationMatch.captured(::OnGroundIndex).toLower() == "true" ? true : false;
+        location.description = columns.at(::DescriptionIndex);
     }
 
     return location;
+}
+
+inline std::int64_t LittleNavmapCsvParser::mapTypeToCategoryId(const QString &type) const noexcept
+{
+    Enumeration locationCategory = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
+    QString categorySymbolicId;
+    const auto it = d->typeToSymbolicId.find(type.toLower());
+    if (it != d->typeToSymbolicId.end()) {
+       categorySymbolicId = it->second;
+    } else {
+        categorySymbolicId = EnumerationService::LocationCategoryNoneSymbolicId;
+    }
+    return locationCategory.getItemBySymbolicId(categorySymbolicId).id;
 }

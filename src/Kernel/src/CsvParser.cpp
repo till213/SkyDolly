@@ -25,7 +25,6 @@
 
 #include <memory>
 
-#include <QIODevice>
 #include <QTextStream>
 #include <QTextCodec>
 
@@ -63,19 +62,18 @@ CsvParser::CsvParser(CsvParser &&rhs) = default;
 CsvParser &CsvParser::operator=(CsvParser &&rhs) = default;
 CsvParser::~CsvParser() = default;
 
-CsvParser::Rows CsvParser::parse(QIODevice &io, const QString &header) noexcept
+CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header) noexcept
 {
     Rows rows;
-    QTextStream stream(&io);
-    stream.setCodec("UTF-8");
 
     int row {0};
-    while (!stream.atEnd())
+    while (!textStream.atEnd())
     {
-        const QString line = stream.readLine();
+        const QString line = textStream.readLine();
 
         if (row == 0 && !header.isNull()) {
-            if (header.startsWith(header)) {
+            // Compare header (case-insensitive)
+            if (line.startsWith(header, Qt::CaseInsensitive)) {
                 ++row;
                 // Skip header
                 continue;

@@ -30,7 +30,8 @@
 
 #include <QString>
 #include <QChar>
-#include <QIODevice>
+
+class QTextStream;
 
 #include "KernelLib.h"
 
@@ -52,7 +53,7 @@ public:
     CsvParser &operator=(CsvParser &&rhs);
     ~CsvParser();
 
-    Rows parse(QIODevice &io, const QString &header = QString()) noexcept;
+    Rows parse(QTextStream &textStream, const QString &header = QString()) noexcept;
 
 private:
     std::unique_ptr<CsvParserPrivate> d;

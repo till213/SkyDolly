@@ -60,5 +60,8 @@ Enumeration EnumerationService::getEnumerationByName(const QString &name, bool *
         enumeration = d->enumerationDao->get(name, &success);
     }
     QSqlDatabase::database().rollback();
+    if (ok != nullptr) {
+        *ok = success;
+    }
     return enumeration;
 }

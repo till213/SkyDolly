@@ -30,6 +30,7 @@
 class QTextStream;
 class QRegularExpressionMatch;
 
+#include <Kernel/CsvParser.h>
 #include "CsvLocationParserIntf.h"
 
 class Location;
@@ -50,7 +51,9 @@ public:
 private:
     std::unique_ptr<LittleNavmapCsvParserPrivate> d;
 
-    Location parseLocation(QRegularExpressionMatch locationMatch, bool &ok) noexcept;
+    Location parseLocation(CsvParser::Columns values, bool &ok) const noexcept;
+    inline std::int64_t mapTypeToCategoryId(const QString &type) const noexcept;
+
 };
 
 #endif // LITTLENAVMAPCSVPARSER_H

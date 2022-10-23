@@ -24,7 +24,9 @@
  */
 #include <QtTest/QtTest>
 #include <QBuffer>
+#include <QTextStream>
 #include <QString>
+#include <QTextCodec>
 #include <QStringBuilder>
 
 #include <Kernel/CsvParser.h>
@@ -68,6 +70,7 @@ void CsvParserTest::parseCsv_data() noexcept
     QTest::addColumn<QString>("header");
     QTest::addColumn<CsvParser::Rows>("expectedRows");
 
+    // Single row
     CsvParser::Columns expectedColumns;
     expectedColumns.push_back("a");
     expectedColumns.push_back("b");
@@ -82,6 +85,7 @@ void CsvParserTest::parseCsv_data() noexcept
                                 << header
                                 << expectedRows;
 
+    // Two rows
     expectedRows.clear();
     expectedColumns.clear();
     expectedColumns.push_back("a");
@@ -100,7 +104,7 @@ void CsvParserTest::parseCsv_data() noexcept
                               << header
                               << expectedRows;
 
-
+    // Comma-separated, multiline, quoted
     expectedRows.clear();
     expectedColumns.clear();
     expectedColumns.push_back("11");
@@ -136,7 +140,7 @@ non-trimmed, "quoted" and comma-separated keyword 6    )");
                                                         << header
                                                         << expectedRows;
 
-
+    // UTF-8
     expectedColumns.clear();
     expectedColumns.push_back("祝你好运");
     expectedColumns.push_back("飞行");
@@ -160,13 +164,12 @@ void CsvParserTest::parseCsv() noexcept
     QFETCH(CsvParser::Rows, expectedRows);
 
     CsvParser csvParser;
-    QBuffer buffer;
     QByteArray data = csv.toUtf8();
-    buffer.setBuffer(&data);
-    buffer.open(QBuffer::ReadOnly | QBuffer::Text);
+    QTextStream textStream {data};
+    textStream.setCodec("UTF-8");
 
     // Exercise
-    const CsvParser::Rows rows = csvParser.parse(buffer, header);
+    const CsvParser::Rows rows = csvParser.parse(textStream, header);
 
     // Verify
     QCOMPARE(rows.size(), expectedRows.size());
