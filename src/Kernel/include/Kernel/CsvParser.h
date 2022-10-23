@@ -25,4 +25,33 @@
 #ifndef CSVPARSER_H
 #define CSVPARSER_H
 
+#include <memory>
+#include <vector>
+
+#include <QString>
+#include <QChar>
+#include <QIODevice>
+
+struct CsvParserPrivate;
+
+/*
+ * Provides functionality to read CSV files including escaped lines with linefeeds and more.
+ */
+class CsvParser final
+{
+public:
+    using Columns = std::vector<QString>;
+    using Rows = std::vector<Columns>;
+
+    explicit CsvParser(QChar separatorChar = ',', QChar escapeChar = '"', bool trimValues = true);
+
+    Rows parse(QIODevice &io, const QString &header = QString()) noexcept;
+
+private:
+    std::unique_ptr<CsvParserPrivate> d;
+
+    void parseLine(const QString &line) noexcept;
+    void reset() noexcept;
+};
+
 #endif // CSVPARSER_H
