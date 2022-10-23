@@ -32,26 +32,35 @@
 #include <QChar>
 #include <QIODevice>
 
+#include "KernelLib.h"
+
 struct CsvParserPrivate;
 
 /*
  * Provides functionality to read CSV files including escaped lines with linefeeds and more.
  */
-class CsvParser final
+class KERNEL_API CsvParser final
 {
 public:
     using Columns = std::vector<QString>;
     using Rows = std::vector<Columns>;
 
     explicit CsvParser(QChar separatorChar = ',', QChar escapeChar = '"', bool trimValues = true);
+    CsvParser(const CsvParser &rhs) = delete;
+    CsvParser(CsvParser &&rhs);
+    CsvParser &operator=(const CsvParser &rhs) = delete;
+    CsvParser &operator=(CsvParser &&rhs);
+    ~CsvParser();
 
     Rows parse(QIODevice &io, const QString &header = QString()) noexcept;
 
 private:
     std::unique_ptr<CsvParserPrivate> d;
 
-    void parseLine(const QString &line) noexcept;
-    void reset() noexcept;
+    inline void parseLine(const QString &line) noexcept;
+    inline void parseQuote() noexcept;
+    inline void parseSeparator() noexcept;
+    inline void reset() noexcept;
 };
 
 #endif // CSVPARSER_H

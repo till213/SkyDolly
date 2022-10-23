@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,45 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOGBOOKSETTINGSDIALOG_H
-#define LOGBOOKSETTINGSDIALOG_H
+#ifndef CSVPARSERTEST_H
+#define CSVPARSERTEST_H
 
-#include <memory>
+#include <QObject>
 
-#include <QDialog>
+#include <Kernel/CsvParser.h>
 
-class QWidget;
-class QShowEvent;
-
-namespace Ui {
-    class LogbookSettingsDialog;
-}
-
-struct LogbookSettingsDialogPrivate;
-
-class LogbookSettingsDialog : public QDialog
+/*!
+ * Test cases for the CsvParser.
+ */
+class CsvParserTest : public QObject
 {
     Q_OBJECT
-public:
-    explicit LogbookSettingsDialog(QWidget *parent = nullptr) noexcept;
-    ~LogbookSettingsDialog() override;
-
-public slots:
-    void accept() noexcept override;
-
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-
 private:
-    std::unique_ptr<Ui::LogbookSettingsDialog> ui;
-    const std::unique_ptr<LogbookSettingsDialogPrivate> d;
-
-    void initUi() noexcept;
-    void updateUi() noexcept;
-    void frenchConnection() noexcept;
+    static QString createCsv(const QString &header, const CsvParser::Rows &rows, bool quotedValues) noexcept;
 
 private slots:
-    void openLogbookDirectory() noexcept;
+    void initTestCase() noexcept;
+    void cleanupTestCase() noexcept;
+
+    void parseCsv_data() noexcept;
+    void parseCsv() noexcept;
 };
 
-#endif // LOGBOOKSETTINGSDIALOG_H
+#endif // CSVPARSERTEST_H

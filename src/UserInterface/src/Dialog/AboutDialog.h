@@ -42,7 +42,7 @@ class AboutDialog : public QDialog
     Q_OBJECT
 public:
     explicit AboutDialog(QWidget *parent = nullptr) noexcept;
-    ~AboutDialog() noexcept override;
+    ~AboutDialog() override;
 
 protected:
     void mousePressEvent(QMouseEvent *event) noexcept override;

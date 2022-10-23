@@ -43,7 +43,7 @@ class LogbookBackupDialog : public QDialog
     Q_OBJECT
 public:
     explicit LogbookBackupDialog(QWidget *parent = nullptr) noexcept;
-    ~LogbookBackupDialog() noexcept override;
+    ~LogbookBackupDialog() override;
 
 public slots:
     void accept() noexcept override;

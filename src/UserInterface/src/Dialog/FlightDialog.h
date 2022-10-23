@@ -44,7 +44,7 @@ class FlightDialog : public QDialog
     Q_OBJECT
 public:
     explicit FlightDialog(FlightService &flightService, QWidget *parent = nullptr) noexcept;
-    ~FlightDialog() noexcept override;
+    ~FlightDialog() override;
 
 signals:
     void visibilityChanged(bool visible);
