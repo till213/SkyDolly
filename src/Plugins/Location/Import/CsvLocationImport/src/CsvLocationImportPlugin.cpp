@@ -72,19 +72,23 @@ std::unique_ptr<QWidget> CsvLocationImportPlugin::createOptionWidget() const noe
     return std::make_unique<CsvLocationImportOptionWidget>(d->pluginSettings);
 }
 
-bool CsvLocationImportPlugin::importLocation(QFile &file) noexcept
+std::vector<Location> CsvLocationImportPlugin::importLocation(QFile &file, bool *ok) noexcept
 {
+    std::vector<Location> locations;
     std::unique_ptr<CsvLocationParserIntf> parser;
     switch (d->pluginSettings.getFormat()) {
     case CsvLocationImportSettings::Format::LittleNavmap:
         parser = std::make_unique<LittleNavmapCsvParser>();
         break;
     }
-    bool ok {false};
+    bool success {false};
     if (parser != nullptr) {
         QTextStream textStream(&file);
         textStream.setCodec(QTextCodec::codecForName("UTF-8"));
-        std::vector<Location> locations = parser->parse(textStream, &ok);
+        locations = parser->parse(textStream, &success);
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return locations;
 }

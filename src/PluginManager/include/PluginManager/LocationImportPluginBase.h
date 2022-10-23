@@ -26,6 +26,7 @@
 #define LOCATIONIMPORTPLUGINBASE_H
 
 #include <memory>
+#include <vector>
 
 #include <QObject>
 #include <QtPlugin>
@@ -82,12 +83,13 @@ protected:
     virtual QString getFileSuffix() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-    virtual bool importLocation(QFile &file) noexcept = 0;
+    virtual std::vector<Location> importLocation(QFile &file, bool *ok = nullptr) noexcept = 0;
 
 private:
     const std::unique_ptr<LocationImportPluginBasePrivate> d;
 
     bool importLocations(const QStringList &filePaths, LocationService &locationService) noexcept;
+    bool storeLocations(std::vector<Location> &locations, LocationService &locationService) const noexcept;
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
     void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;

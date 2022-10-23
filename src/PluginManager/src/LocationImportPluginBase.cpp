@@ -37,6 +37,7 @@
 #include <QGuiApplication>
 
 #include <Kernel/File.h>
+#include <Persistence/Service/LocationService.h>
 #include "BasicLocationImportDialog.h"
 #include "LocationImportPluginBaseSettings.h"
 #include "LocationImportPluginBase.h"
@@ -125,8 +126,9 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths, Loc
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
         if (ok) {
-            ok = importLocation(d->file);
+            std::vector<Location> locations = importLocation(d->file, &ok);
             d->file.close();
+            ok = storeLocations(locations, locationService);
         }
 
         if (!ok && importDirectory && !ignoreFailures) {
@@ -157,3 +159,16 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths, Loc
 
     return ok;
 }
+
+ bool LocationImportPluginBase::storeLocations(std::vector<Location> &locations, LocationService &locationService) const noexcept
+ {
+     bool ok {true};
+
+     for (Location &location : locations) {
+        ok = locationService.store(location);
+        if (!ok) {
+            break;
+        }
+     }
+     return ok;
+ }

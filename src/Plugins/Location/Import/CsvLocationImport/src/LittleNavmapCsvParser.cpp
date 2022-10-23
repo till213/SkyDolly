@@ -58,12 +58,15 @@ public:
         initTypeToSymbolicIdMap();
         Enumeration locationType = enumerationService.getEnumerationByName(EnumerationService::LocationType);
         locationTypeImportId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id;
+        Enumeration country = enumerationService.getEnumerationByName(EnumerationService::Country);
+        worldId = country.getItemBySymbolicId(EnumerationService::CountryWorldSymbolicId).id;
     }
 
     EnumerationService enumerationService;
     // Key: Litte Navmap userpoint type, value: symbolic category ID
     std::unordered_map<QString, QString> typeToSymbolicId;
     std::int64_t locationTypeImportId;
+    std::int64_t worldId;
 
 private:
     inline void initTypeToSymbolicIdMap() {
@@ -127,6 +130,7 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Columns columns, bool &
 
     ok = true;
     location.title = columns.at(::TitleIndex);
+    location.countryId = d->worldId;
     location.typeId = d->locationTypeImportId;
     if (ok) {
         const QString type = columns.at(::TypeIndex);

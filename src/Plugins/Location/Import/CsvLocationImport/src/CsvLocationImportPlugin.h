@@ -26,6 +26,7 @@
 #define CSVLOCATIONIMPORTPLUGIN_H
 
 #include <memory>
+#include <vector>
 
 #include <QtPlugin>
 #include <QString>
@@ -36,6 +37,7 @@ class QWidget;
 #include <PluginManager/LocationImportIntf.h>
 #include <PluginManager/LocationImportPluginBase.h>
 
+class Location;
 class LocationImportPluginBaseSettings;
 struct CsvLocationImportPluginPrivate;
 
@@ -57,7 +59,7 @@ protected:
     QString getFileSuffix() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool importLocation(QFile &file) noexcept override;
+    std::vector<Location> importLocation(QFile &file, bool *ok = nullptr) noexcept override;
 
 private:
     const std::unique_ptr<CsvLocationImportPluginPrivate> d;
