@@ -128,7 +128,9 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths, Loc
         if (ok) {
             std::vector<Location> locations = importLocation(d->file, &ok);
             d->file.close();
-            ok = storeLocations(locations, locationService);
+            if (ok) {
+                ok = storeLocations(locations, locationService);
+            }
         }
 
         if (!ok && importDirectory && !ignoreFailures) {

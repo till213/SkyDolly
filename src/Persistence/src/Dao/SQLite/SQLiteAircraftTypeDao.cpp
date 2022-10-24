@@ -74,7 +74,7 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteAircraftTypeDao::upsert: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAircraftTypeDao::upsert: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -110,7 +110,7 @@ AircraftType SQLiteAircraftTypeDao::getByType(const QString &type, bool *ok) con
     }
 #ifdef DEBUG
     else {
-        qDebug() << "SQLiteAircraftTypeDao::getByType: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAircraftTypeDao::getByType: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     if (ok != nullptr) {
@@ -154,7 +154,7 @@ std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
         }
 #ifdef DEBUG
     } else {
-            qDebug() << "SQLitePositionDao::getAll: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+            qDebug() << "SQLitePositionDao::getAll: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -184,7 +184,7 @@ bool SQLiteAircraftTypeDao::exists(const QString &type) const noexcept
     } else {
         exists = false;
 #ifdef DEBUG
-        qDebug() << "SQLitePositionDao::exists: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLitePositionDao::exists: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 

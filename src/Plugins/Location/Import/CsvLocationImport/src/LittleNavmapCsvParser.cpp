@@ -43,8 +43,8 @@ namespace
     constexpr int TitleIndex = 1;
     constexpr int IdentIndex = 2;
     constexpr int LatitudeIndex = 3;
-    constexpr int LongitudeIndex = 3;
-    constexpr int ElevationIndex = 4;
+    constexpr int LongitudeIndex = 4;
+    constexpr int ElevationIndex = 5;
     constexpr int DescriptionIndex = 8;
 
     constexpr const char *LittleNavmapCsvHeader {"type,name,ident,latitude,longitude,elevation"};
@@ -152,9 +152,16 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Columns columns, bool &
         }
     }
     if (ok) {
-        const double altitude = columns.at(::ElevationIndex).toDouble(&ok);
-        if (ok) {
-            location.altitude = altitude;
+        const QVariant data = columns.at(::ElevationIndex);
+        if (!data.isNull()) {
+            const double altitude = data.toDouble(&ok);
+            if (ok) {
+                location.altitude = altitude;
+            }
+        } else {
+            // Default altitude
+            // TODO Make this a plugin setting
+            location.altitude = 3000.0;
         }
     }
     if (ok) {

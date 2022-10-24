@@ -53,6 +53,32 @@ SQLiteLocationDao::~SQLiteLocationDao() = default;
 
 bool SQLiteLocationDao::add(Location &location) noexcept
 {
+    // TODO REMOVE ME!!!
+    // TODO We need to activate the "math extensions" for SQLite - the version shipping with Qt does not seem to know about power, sin and cos
+    // https://jonisalonen.com/2014/computing-distance-between-coordinates-can-be-simple-and-fast/
+//    QSqlQuery query1;
+//    query1.prepare(
+//        "select power(l.latitude-:lat, 2) + power((l.longitude-:lng)*cos(radians(:lat)), 2) dist "
+//        "from   location l"
+//    );
+
+//    query1.bindValue(":lat", 47.0);
+//    query1.bindValue(":lng", 8.0);
+//    const bool success = query1.exec();
+//    if (success) {
+
+//        QSqlRecord record = query1.record();
+//        const int distIdx = record.indexOf("dist");
+
+//        while (success && query1.next()) {
+
+//            const double distance = query1.value(distIdx).toDouble();
+//            qDebug() << "SQLiteLocationDao::add: Distance:" << distance;
+//        }
+//    } else {
+//        qDebug() << "SQLiteLocationDao::add: SQL error:" << query1.lastError().text() << "- error code:" << query1.lastError().nativeErrorCode();
+//    }
+
     QSqlQuery query;
     query.prepare(
         "insert into location ("
@@ -111,7 +137,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         location.id = query.lastInsertId().toLongLong();
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLiteLocationDao::add: SQL error:" << qPrintable(query.lastError().databaseText()) << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteLocationDao::add: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -160,7 +186,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteLocationDao::update: SQL error:" << qPrintable(query.lastError().databaseText()) << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteLocationDao::update: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
 
@@ -180,7 +206,7 @@ bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteLocationDao::deleteById: SQL error:" << qPrintable(query.lastError().databaseText())  << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteLocationDao::deleteById: SQL error:" << query.lastError().text()  << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -223,7 +249,7 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
         const int onGroundIdx = record.indexOf("on_ground");
         const int attributesIdx = record.indexOf("attributes");
 
-        while (ok && query.next()) {
+        while (query.next()) {
             Location location;
             location.id = query.value(idIdx).toLongLong();
             location.title = query.value(titleIdx).toString();
@@ -247,7 +273,7 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
     }
 #ifdef DEBUG
     else {
-        qDebug() << "SQLiteLocationDao::getAll: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteLocationDao::getAll: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     if (ok != nullptr) {
