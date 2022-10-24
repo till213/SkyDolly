@@ -57,13 +57,14 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     // TODO We need to activate the "math extensions" for SQLite - the version shipping with Qt does not seem to know about power, sin and cos
     // https://jonisalonen.com/2014/computing-distance-between-coordinates-can-be-simple-and-fast/
 //    QSqlQuery query1;
+//    query1.setForwardOnly(true);
 //    query1.prepare(
-//        "select power(l.latitude-:lat, 2) + power((l.longitude-:lng)*cos(radians(:lat)), 2) dist "
-//        "from   location l"
+//        "select power(l.latitude - 48.0, 2) + power((l.longitude - 8.0) * cos(radians( 48.0 )), 2) dist "
+//        "from   location l;"
 //    );
 
-//    query1.bindValue(":lat", 47.0);
-//    query1.bindValue(":lng", 8.0);
+////    query1.bindValue(":latitude", 47.0);
+////    query1.bindValue(":longitude", 8.0);
 //    const bool success = query1.exec();
 //    if (success) {
 
