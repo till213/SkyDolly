@@ -31,6 +31,7 @@
 #include <Model/Location.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/LocationDaoIntf.h"
+#include <PersistenceManager.h>
 #include <LocationSelector.h>
 #include <Service/LocationService.h>
 
@@ -65,6 +66,33 @@ bool LocationService::store(Location &location) noexcept
         } else {
             QSqlDatabase::database().rollback();
         }
+    }
+    return ok;
+}
+
+bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    auto it = locations.begin();
+    while (it != locations.end() && ok) {
+        if (mode != Mode::Insert) {
+            const std::vector<Location> neighbours = d->locationDao->getByPosition(it->latitude, it->longitude, 0.0, &ok);
+            if (neighbours.size() == 0) {
+                ok = d->locationDao->add(*it);
+            } else if (mode == Mode::Update) {
+                it->id = neighbours.cbegin()->id;
+                d->locationDao->update(*it);
+            }
+        } else {
+            // Unconditional insert
+            ok = d->locationDao->add(*it);
+        }
+        ++it;
+    }
+    if (ok) {
+        ok = QSqlDatabase::database().commit();
+    } else {
+        QSqlDatabase::database().rollback();
     }
     return ok;
 }

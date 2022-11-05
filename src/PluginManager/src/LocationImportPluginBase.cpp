@@ -38,6 +38,7 @@
 
 #include <Kernel/File.h>
 #include <Persistence/Service/LocationService.h>
+#include <Persistence/PersistenceManager.h>
 #include "BasicLocationImportDialog.h"
 #include "LocationImportPluginBaseSettings.h"
 #include "LocationImportPluginBase.h"
@@ -162,15 +163,12 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths, Loc
     return ok;
 }
 
- bool LocationImportPluginBase::storeLocations(std::vector<Location> &locations, LocationService &locationService) const noexcept
- {
-     bool ok {true};
-
-     for (Location &location : locations) {
-        ok = locationService.store(location);
-        if (!ok) {
-            break;
-        }
-     }
-     return ok;
- }
+bool LocationImportPluginBase::storeLocations(std::vector<Location> &locations, LocationService &locationService) const noexcept
+{
+    // TODO Make the mode a setting
+    const bool ok = locationService.storeAll(locations, LocationService::Mode::Update);
+    if (ok) {
+         emit PersistenceManager::getInstance().locationsImported();
+    }
+    return ok;
+}

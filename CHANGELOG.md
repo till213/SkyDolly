@@ -2,6 +2,10 @@
 
 ## 0.13.0
 
+### New Features
+- New location import plugin
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user points CSV import
+
 ### Bug Fixes
 - The various tabs in the Flight information dialog (Description, Aircraft, Conditions and Flight Plan) are now properly updated when importing a flight or loading a flight from the logbook
 
@@ -15,7 +19,6 @@
 ## 0.12.0
 
 ### New Features
-
 - Location module
   * Capture and teleport to locations in the flight simulator
   * Manually add and edit locations

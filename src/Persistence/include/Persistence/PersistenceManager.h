@@ -89,7 +89,19 @@ public:
     static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
 
 signals:
+
+    /*!
+     * Emitted whenver the connection to the logbook (database) has changed.
+     *
+     * \param connected
+     *        \c true if a successful connection has been made; \c false else (disconnected)
+     */
     void connectionChanged(bool connected);
+
+    /*!
+     * Emitted whenever locations have been imported into the logbook.
+     */
+    void locationsImported();
 
 private:
     const std::unique_ptr<PersistenceManagerPrivate> d;
