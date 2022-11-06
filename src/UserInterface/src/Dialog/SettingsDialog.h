@@ -38,11 +38,11 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 public:
     explicit SettingsDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~SettingsDialog() noexcept;
+    ~SettingsDialog() override;
 
 protected:
-    virtual void showEvent(QShowEvent *event) noexcept override;
-    virtual void hideEvent(QHideEvent *event) noexcept override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(SettingsDialog)

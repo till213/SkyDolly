@@ -39,6 +39,11 @@ struct LocationServicePrivate;
 class PERSISTENCE_API LocationService
 {
 public:
+    enum struct Mode {
+        Ignore,
+        Update,
+        Insert
+    };
     LocationService() noexcept;
     LocationService(const LocationService &rhs) = delete;
     LocationService(LocationService &&rhs);
@@ -47,6 +52,7 @@ public:
     ~LocationService();
 
     bool store(Location &location) noexcept;
+    bool storeAll(std::vector<Location> &locations, Mode mode) noexcept;
     bool update(const Location &location) noexcept;
     bool deleteById(std::int64_t id) noexcept;
     std::vector<Location> getAll(bool *ok = nullptr) const noexcept;

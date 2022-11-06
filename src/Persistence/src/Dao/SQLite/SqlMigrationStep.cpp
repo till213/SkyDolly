@@ -137,7 +137,7 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
         QSqlQuery query;
         ok = query.exec(match.captured(1).trimmed() % ";");
         if (!ok) {
-            errorMessage = query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode();
+            errorMessage = query.lastError().text() + " - error code: " + query.lastError().nativeErrorCode();
             QSqlDatabase::database().rollback();
 #ifdef DEBUG
             qDebug() << "SqlMigrationStep::execute: FAILED:\n" << errorMessage;
@@ -168,7 +168,7 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noe
             ok = QSqlDatabase::database().commit();
         } else {
 #ifdef DEBUG
-            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:\n" << migrQuery.lastError().databaseText() << "- error code:" << migrQuery.lastError().nativeErrorCode();
+            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:\n" << migrQuery.lastError().text() << "- error code:" << migrQuery.lastError().nativeErrorCode();
 #endif
             QSqlDatabase::database().rollback();
         }
@@ -195,7 +195,7 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noe
                 QSqlDatabase::database().commit();
             } else {
 #ifdef DEBUG
-            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:\n" << migrQuery.lastError().databaseText() << "- error code:" << migrQuery.lastError().nativeErrorCode();
+            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:\n" << migrQuery.lastError().text() << "- error code:" << migrQuery.lastError().nativeErrorCode();
 #endif
                 QSqlDatabase::database().rollback();
             }

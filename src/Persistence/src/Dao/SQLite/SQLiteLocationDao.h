@@ -44,6 +44,7 @@ public:
 
     bool add(Location &location) noexcept override;
     bool update(const Location &location) noexcept override;
+    std::vector<Location> getByPosition(double latitude, double longitude, double distance = 0.0, bool *ok = nullptr) const noexcept override;
     bool deleteById(std::int64_t id) noexcept override;
     std::vector<Location> getAll(bool *ok = nullptr) const noexcept override;
     std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) const noexcept override;

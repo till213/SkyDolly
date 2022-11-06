@@ -807,7 +807,7 @@ private:
     const std::unique_ptr<SettingsPrivate> d;
 
     Settings() noexcept;
-    ~Settings() final;
+    ~Settings() override;
 
     void frenchConnection() noexcept;
 
