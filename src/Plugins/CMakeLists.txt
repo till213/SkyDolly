@@ -6,6 +6,6 @@ endif()
 message(STATUS "Output plugin directory=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Module)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Export)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Import)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Flight)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Location)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Connect)

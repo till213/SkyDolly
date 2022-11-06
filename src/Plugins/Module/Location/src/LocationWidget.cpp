@@ -317,6 +317,11 @@ void LocationWidget::frenchConnection() noexcept
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &LocationWidget::updateEditUi);
 
+    // Persistence
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    connect(&persistenceManager, &PersistenceManager::locationsImported,
+            this, &LocationWidget::updateUi);
+
     // Location table
     connect(ui->locationTableWidget, &QTableWidget::cellDoubleClicked,
             this, &LocationWidget::onCellSelected);

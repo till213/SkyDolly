@@ -41,6 +41,7 @@ class QString;
 class SkyConnectIntf;
 class Flight;
 class FlightService;
+class LocationService;
 struct PluginManagerPrivate;
 
 class PLUGINMANAGER_API PluginManager final : public QObject
@@ -61,11 +62,13 @@ public:
      * The plugin UUID and (non-translated) name of the plugin.
      */
     using Handle = std::pair<QUuid, QString>;
-    std::vector<Handle> initialiseExportPlugins() noexcept;
-    std::vector<Handle> initialiseImportPlugins() noexcept;
+    std::vector<Handle> initialiseFlightExportPlugins() noexcept;
+    std::vector<Handle> initialiseFlightImportPlugins() noexcept;
+    std::vector<Handle> initialiseLocationImportPlugins() noexcept;
 
     bool importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept;
     bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;
+    bool importLocation(const QUuid &pluginUuid, LocationService &locationService) const noexcept;
 
 private:
     const std::unique_ptr<PluginManagerPrivate> d;

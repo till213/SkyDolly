@@ -103,7 +103,6 @@ void SortTest::topologicalSort_data()
 
 void SortTest::topologicalSort()
 {
-
     // Setup
     QFETCH(std::vector<ID>, vertices);
     QFETCH(std::vector<PerVertexEdgeList>, edgeLists);

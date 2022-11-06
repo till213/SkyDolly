@@ -44,8 +44,7 @@ struct FlightDescriptionWidgetPrivate
         : flightService(theFlightService)
     {}
 
-    ~FlightDescriptionWidgetPrivate() noexcept
-    {}
+    ~FlightDescriptionWidgetPrivate() = default;
 
     FlightService &flightService;
     Unit unit;

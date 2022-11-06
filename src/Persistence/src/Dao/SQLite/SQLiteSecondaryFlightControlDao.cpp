@@ -91,7 +91,7 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteSecondaryFlightControlDao::add: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteSecondaryFlightControlDao::add: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -140,7 +140,7 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
         }
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLiteSecondaryFlightControlDao::getByAircraftId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteSecondaryFlightControlDao::getByAircraftId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -166,7 +166,7 @@ bool SQLiteSecondaryFlightControlDao::deleteByFlightId(std::int64_t flightId) no
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteSecondaryFlightControlDao::deleteByFlightId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteSecondaryFlightControlDao::deleteByFlightId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -185,7 +185,7 @@ bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteSecondaryFlightControlDao::deleteByAircraftId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteSecondaryFlightControlDao::deleteByAircraftId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return true;

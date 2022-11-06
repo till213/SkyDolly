@@ -89,7 +89,7 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates(bool *ok) const n
         }
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLiteLogbookDao::getFlightDates: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteLogbookDao::getFlightDates: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -193,7 +193,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         }
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLiteLogbookDao::getFlightSummaries: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteLogbookDao::getFlightSummaries: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 

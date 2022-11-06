@@ -95,7 +95,7 @@ bool SQLiteDatabaseDao::optimise() noexcept
         ok = query.exec("update metadata set last_optim_date = datetime('now') where rowid = 1;");
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLiteDatabaseDao::optimise(: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteDatabaseDao::optimise(: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
     return ok;
@@ -109,7 +109,7 @@ bool SQLiteDatabaseDao::backup(const QString &backupPath) noexcept
         ok = query.exec("update metadata set last_backup_date = datetime('now') where rowid = 1;");
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLiteDatabaseDao::backup(: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteDatabaseDao::backup(: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
     return ok;

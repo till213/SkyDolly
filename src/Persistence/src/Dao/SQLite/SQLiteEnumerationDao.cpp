@@ -69,7 +69,7 @@ Enumeration SQLiteEnumerationDao::get(const QString &name, bool *ok) const noexc
         }
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLiteEnumerationDao::getByName: SQL error:" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteEnumerationDao::getByName: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 

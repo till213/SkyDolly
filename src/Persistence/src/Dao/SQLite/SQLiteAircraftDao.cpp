@@ -158,7 +158,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, A
         aircraft.setId(id);
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLiteAircraftDao::add: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAircraftDao::add: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
     if (ok) {
@@ -272,7 +272,7 @@ bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t fli
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteAircraftDao::adjustAircraftSequenceNumbersByIndex: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAircraftDao::adjustAircraftSequenceNumbersByIndex: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -311,7 +311,7 @@ bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) noexcept
         ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
-            qDebug() << "SQLiteAircraftDao::deleteByFlightId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+            qDebug() << "SQLiteAircraftDao::deleteByFlightId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
         }
 #endif
     }
@@ -353,7 +353,7 @@ bool SQLiteAircraftDao::deleteById(std::int64_t id) noexcept
         ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
-            qDebug() << "SQLiteAircraftDao::deleteById: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+            qDebug() << "SQLiteAircraftDao::deleteById: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
         }
 #endif
     }
@@ -412,7 +412,7 @@ std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int
     }
 #ifdef DEBUG
     else {
-        qDebug() << "SQLiteAircraftDao::getAircraftInfosByFlightId: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAircraftDao::getAircraftInfosByFlightId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     if (ok != nullptr) {
@@ -435,7 +435,7 @@ bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffse
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteAircraftDao::updateTimeOffset: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAircraftDao::updateTimeOffset: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -455,7 +455,7 @@ bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNum
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteAircraftDao::updateTailNumber: SQL error" << query.lastError().databaseText() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAircraftDao::updateTailNumber: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
