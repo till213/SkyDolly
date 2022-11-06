@@ -74,7 +74,7 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
 #endif
 }
 
-LogbookBackupDialog::~LogbookBackupDialog() noexcept
+LogbookBackupDialog::~LogbookBackupDialog()
 {
 #ifdef DEBUG
     qDebug() << "LogbookBackupDialog::~LogbookBackupDialog: DELETED";
