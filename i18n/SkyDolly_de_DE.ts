@@ -472,37 +472,85 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="111"/>
+        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="107"/>
         <source>&amp;Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="196"/>
+        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="192"/>
         <source>Add all aircraft to same new flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="197"/>
+        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="193"/>
         <source>When checked then all aircraft are added to the same newly created flight. Otherwise a new flight is created for each imported file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="200"/>
+        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="196"/>
         <source>Add aircraft to current flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="201"/>
+        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="197"/>
         <source>When checked then the imported aircraft is added to the currently loaded flight. Otherwise a new flight is created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="227"/>
+        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="223"/>
         <source>Import Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="229"/>
+        <location filename="../src/PluginManager/src/BasicFlightImportDialog.cpp" line="225"/>
+        <source>Import File</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BasicLocationImportDialog</name>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="14"/>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="22"/>
+        <source>Path:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="41"/>
+        <source>Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="50"/>
+        <source>When checked then all files in the selected directory are imported. Otherwise the selected file is imported (only).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="53"/>
+        <source>Import directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="62"/>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="100"/>
+        <source>&amp;Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="194"/>
+        <source>Import Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="196"/>
         <source>Import File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -823,48 +871,48 @@ MIT License</source>
 <context>
     <name>FlightImportPluginBase</name>
     <message>
-        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="121"/>
-        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="124"/>
+        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="115"/>
+        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="118"/>
         <source>Import error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="121"/>
+        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="115"/>
         <source>The file %1 could not be imported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="125"/>
+        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="119"/>
         <source>The selected aircraft &apos;%1&apos; is not a known aircraft in the logbook. Check for spelling errors or record a flight with this aircraft first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="215"/>
+        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="209"/>
         <source>&amp;Proceed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="216"/>
+        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="210"/>
         <source>&amp;Ignore All Failures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="217"/>
+        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="211"/>
         <source>Import Failure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="218"/>
+        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="212"/>
         <source>The file %1 could not be imported. Do you want to proceed with the remaining files in directory %2?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="219"/>
+        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="213"/>
         <source>Aborting will keep the already successfully imported flights and aircraft.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="289"/>
+        <location filename="../src/PluginManager/src/FlightImportPluginBase.cpp" line="283"/>
         <source>Aircraft imported on %1 from file: %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -873,6 +921,14 @@ MIT License</source>
     <name>FlightPlanWidget</name>
     <message>
         <location filename="../src/UserInterface/src/Widget/FlightPlanWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Form</name>
+    <message>
+        <location filename="../src/PluginManager/src/src/BasicLocationImportDialog.ui" line="16"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1573,6 +1629,44 @@ or choose another reference aircraft (marked in green) in the formation.</source
     </message>
 </context>
 <context>
+    <name>LocationImportPluginBase</name>
+    <message>
+        <location filename="../src/PluginManager/src/LocationImportPluginBase.cpp" line="93"/>
+        <source>Import error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/LocationImportPluginBase.cpp" line="93"/>
+        <source>The file %1 could not be imported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/LocationImportPluginBase.cpp" line="142"/>
+        <source>&amp;Proceed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/LocationImportPluginBase.cpp" line="143"/>
+        <source>&amp;Ignore All Failures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/LocationImportPluginBase.cpp" line="144"/>
+        <source>Import Failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/LocationImportPluginBase.cpp" line="145"/>
+        <source>The file %1 could not be imported. Do you want to proceed with the remaining files in directory %2?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/LocationImportPluginBase.cpp" line="146"/>
+        <source>Aborting will keep the already successfully imported flights and aircraft.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LocationPlugin</name>
     <message>
         <location filename="../src/Plugins/Module/Location/src/LocationPlugin.cpp" line="67"/>
@@ -1681,7 +1775,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
     </message>
     <message>
         <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="216"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="740"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="745"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1776,68 +1870,68 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="435"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="440"/>
         <source>Double-click to teleport to location.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="446"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="451"/>
         <source>Double-click to edit title.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="456"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="461"/>
         <source>Double-click to edit description.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="474"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="486"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="479"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="491"/>
         <source>Double-click to edit category.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="497"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="502"/>
         <source>Double-click to edit identifier.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="509"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="514"/>
         <source>Double-click to edit position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="521"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="526"/>
         <source>Double-click to edit altitude.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="556"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="561"/>
         <source>Click to toggle on ground.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="734"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="739"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="737"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="742"/>
         <source>Delete Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="738"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="743"/>
         <source>The location with ID %1 is about to be deleted. Do you want to delete the location?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="739"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="744"/>
         <source>Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="741"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="746"/>
         <source>&amp;Keep</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2746,7 +2840,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
     <message>
         <location filename="../src/Plugins/Flight/Export/CsvExport/src/CsvExportPlugin.cpp" line="86"/>
         <location filename="../src/Plugins/Flight/Import/CsvImport/src/CsvImportPlugin.cpp" line="74"/>
-        <location filename="../src/Plugins/Location/Import/CsvLocationImport/src/CsvLocationImportPlugin.cpp" line="60"/>
+        <location filename="../src/Plugins/Location/Import/CsvLocationImport/src/CsvLocationImportPlugin.cpp" line="67"/>
         <source>Comma-separated values (*.%1)</source>
         <translation type="unfinished"></translation>
     </message>
