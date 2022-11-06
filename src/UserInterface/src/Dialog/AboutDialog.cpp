@@ -80,7 +80,7 @@ AboutDialog::AboutDialog(QWidget *parent) noexcept :
 #endif
 }
 
-AboutDialog::~AboutDialog() noexcept
+AboutDialog::~AboutDialog()
 {
 #ifdef DEBUG
     qDebug() << "AboutDialog::~AboutDialog: DELETED";

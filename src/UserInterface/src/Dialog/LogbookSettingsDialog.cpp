@@ -80,7 +80,7 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
 #endif
 }
 
-LogbookSettingsDialog::~LogbookSettingsDialog() noexcept
+LogbookSettingsDialog::~LogbookSettingsDialog()
 {
 #ifdef DEBUG
     qDebug() << "LogbookSettingsDialog::~LogbookSettingsDialog: DELETED";
