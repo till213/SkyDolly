@@ -22,3 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef LOCATIONEXPORTINTF_H
+#define LOCATIONEXPORTINTF_H
+
+#include <QtPlugin>
+
+#include "PluginIntf.h"
+
+class LocationService;
+
+class LocationExportIntf : public PluginIntf
+{
+public:
+    virtual bool exportLocation(LocationService &locationService) noexcept = 0;
+};
+
+#define LOCATION_EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationExportInterface/1.0"
+Q_DECLARE_INTERFACE(LocationExportIntf, LOCATION_EXPORT_INTERFACE_IID)
+
+#endif // LOCATIONEXPORTINTF_H
