@@ -34,7 +34,7 @@ class LocationService;
 class LocationExportIntf : public PluginIntf
 {
 public:
-    virtual bool exportLocation(LocationService &locationService) noexcept = 0;
+    virtual bool exportLocation() noexcept = 0;
 };
 
 #define LOCATION_EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationExportInterface/1.0"

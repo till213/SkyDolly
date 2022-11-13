@@ -37,9 +37,9 @@ namespace
     constexpr const char *OpenExportedFilesEnabledKey {"OpenExportedFilesEnabled"};
 
     // Defaults
-    constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
-    constexpr FlightExportPluginBaseSettings::FormationExport DefaultFormationExport = FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile;
-    constexpr bool DefaultOpenExportedFilesEnabled = false;
+    constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod {SampleRate::ResamplingPeriod::OneHz};
+    constexpr FlightExportPluginBaseSettings::FormationExport DefaultFormationExport {FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile};
+    constexpr bool DefaultOpenExportedFilesEnabled {false};
 }
 
 struct FlightExportPluginBaseSettingsPrivate

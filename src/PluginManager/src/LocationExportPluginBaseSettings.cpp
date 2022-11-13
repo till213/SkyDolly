@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Location Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,3 +22,84 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <Kernel/SampleRate.h>
+#include "LocationExportPluginBaseSettings.h"
+
+namespace
+{
+    // Keys
+    constexpr const char *ResamplingPeriodKey {"ResamplingPeriod"};
+    constexpr const char *FormationExportKey {"FormationExport"};
+    constexpr const char *OpenExportedFilesEnabledKey {"OpenExportedFilesEnabled"};
+
+    // Defaults
+    constexpr bool DefaultOpenExportedFilesEnabled {false};
+}
+
+struct LocationExportPluginBaseSettingsPrivate
+{
+    bool openExportedFilesEnabled {::DefaultOpenExportedFilesEnabled};
+};
+
+// PUBLIC
+
+LocationExportPluginBaseSettings::LocationExportPluginBaseSettings() noexcept
+    : d(std::make_unique<LocationExportPluginBaseSettingsPrivate>())
+{}
+
+LocationExportPluginBaseSettings::~LocationExportPluginBaseSettings() = default;
+
+bool LocationExportPluginBaseSettings::isOpenExportedFilesEnabled() const noexcept
+{
+    return d->openExportedFilesEnabled;
+}
+
+void LocationExportPluginBaseSettings::setOpenExportedFilesEnabled(bool enabled) noexcept
+{
+    if (d->openExportedFilesEnabled != enabled) {
+        d->openExportedFilesEnabled = enabled;
+        emit baseSettingsChanged();
+    }
+}
+
+void LocationExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::OpenExportedFilesEnabledKey;
+    keyValue.second = d->openExportedFilesEnabled;
+    keyValues.push_back(keyValue);
+
+    addSettingsExtn(keyValues);
+}
+
+void LocationExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::OpenExportedFilesEnabledKey;
+    keyValue.second = ::DefaultOpenExportedFilesEnabled;
+    keysWithDefaults.push_back(keyValue);
+
+    addKeysWithDefaultsExtn(keysWithDefaults);
+}
+
+void LocationExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
+{
+    d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
+    emit baseSettingsChanged();
+
+    restoreSettingsExtn(valuesByKey);
+}
+
+void LocationExportPluginBaseSettings::restoreDefaults() noexcept
+{
+    d->openExportedFilesEnabled = ::DefaultOpenExportedFilesEnabled;
+    emit baseSettingsChanged();
+
+    restoreDefaultsExtn();
+}

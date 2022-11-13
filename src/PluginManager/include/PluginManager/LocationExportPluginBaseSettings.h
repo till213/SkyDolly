@@ -46,8 +46,8 @@ public:
     LocationExportPluginBaseSettings &operator=(LocationExportPluginBaseSettings &&rhs) = delete;
     ~LocationExportPluginBaseSettings() override;
 
-    bool isExportDirectoryEnabled() const noexcept;
-    void setExportDirectoryEnabled(bool enabled) noexcept;
+    bool isOpenExportedFilesEnabled() const noexcept;
+    void setOpenExportedFilesEnabled(bool enabled) noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;

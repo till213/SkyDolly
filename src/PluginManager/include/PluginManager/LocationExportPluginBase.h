@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Location Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -75,7 +75,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    bool exportLocation(LocationService &locationService) noexcept final;
+    bool exportLocation() noexcept final;
 
 protected:
     // Re-implement
@@ -83,13 +83,14 @@ protected:
     virtual QString getFileSuffix() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-    virtual std::vector<Location> importLocation(QFile &file, bool *ok = nullptr) noexcept = 0;
+
+    virtual bool exportLocation(const Location &location, QIODevice &io) noexcept = 0;
 
 private:
     const std::unique_ptr<LocationExportPluginBasePrivate> d;
 
-    bool importLocations(const QStringList &filePaths, LocationService &locationService) noexcept;
-    bool storeLocations(std::vector<Location> &locations, LocationService &locationService) const noexcept;
+    bool exportLocation(const Location &location, const QString &filePath) noexcept;
+
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
     void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;

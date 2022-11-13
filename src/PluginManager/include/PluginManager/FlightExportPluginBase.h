@@ -44,7 +44,7 @@ struct PositionData;
 class FLight;
 class Aircraft;
 class FlightExportPluginBaseSettings;
-struct ExportPluginBasePrivate;
+struct FlightExportPluginBasePrivate;
 
 class PLUGINMANAGER_API FlightExportPluginBase : public PluginBase, public FlightExportIntf
 {
@@ -98,7 +98,7 @@ protected:
     virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept = 0;
 
 private:
-    const std::unique_ptr<ExportPluginBasePrivate> d;
+    const std::unique_ptr<FlightExportPluginBasePrivate> d;
 
     bool exportFlight(const Flight &flight, const QString &filePath) noexcept;
     // Exports all aircraft into separate files, given the 'baseFilePath'

@@ -38,13 +38,9 @@
 #include <QCheckBox>
 
 #include <Kernel/Settings.h>
-#include <Kernel/SampleRate.h>
 #include <Kernel/Unit.h>
 #include <Kernel/Enum.h>
 #include <Model/Location.h>
-#include <Model/Aircraft.h>
-#include <Model/Position.h>
-#include <Model/SimType.h>
 #include "Export.h"
 #include "LocationExportPluginBaseSettings.h"
 #include "BasicLocationExportDialog.h"
@@ -52,16 +48,14 @@
 
 struct BasicLocationExportDialogPrivate
 {
-    BasicLocationExportDialogPrivate(const Location &theLocation, const QString &theFileSuffix, const QString &theFileFilter, LocationExportPluginBaseSettings &thePluginSettings) noexcept
-        : flight(theLocation),
-          fileSuffix(theFileSuffix),
+    BasicLocationExportDialogPrivate(const QString &theFileSuffix, const QString &theFileFilter, LocationExportPluginBaseSettings &thePluginSettings) noexcept
+        : fileSuffix(theFileSuffix),
           fileFilter(theFileFilter),
           pluginSettings(thePluginSettings),
           exportButton(nullptr),
           optionWidget(nullptr)
     {}
 
-    const Location &flight;
     QString fileSuffix;
     QString fileFilter;
     LocationExportPluginBaseSettings &pluginSettings;
@@ -72,10 +66,10 @@ struct BasicLocationExportDialogPrivate
 
 // PUBLIC
 
-BasicLocationExportDialog::BasicLocationExportDialog(const Location &flight, const QString &fileSuffix, const QString &fileFilter, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
+BasicLocationExportDialog::BasicLocationExportDialog(const QString &fileSuffix, const QString &fileFilter, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicLocationExportDialog>()),
-      d(std::make_unique<BasicLocationExportDialogPrivate>(flight, fileSuffix, fileFilter, pluginSettings))
+      d(std::make_unique<BasicLocationExportDialogPrivate>(fileSuffix, fileFilter, pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -115,20 +109,6 @@ void BasicLocationExportDialog::initUi() noexcept
 void BasicLocationExportDialog::initBasicUi() noexcept
 {
     ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->flight, d->fileSuffix)));
-
-    // Formation export
-    ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::toUnderlyingType(LocationExportPluginBaseSettings::FormationExport::UserAircraftOnly));
-    ui->formationExportComboBox->addItem(tr("All aircraft (single file)"), Enum::toUnderlyingType(LocationExportPluginBaseSettings::FormationExport::AllAircraftOneFile));
-    ui->formationExportComboBox->addItem(tr("All aircraft (separate files)"), Enum::toUnderlyingType(LocationExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles));
-
-    // Resampling
-    ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
-    ui->resamplingComboBox->addItem("1/5 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::AFifthHz));
-    ui->resamplingComboBox->addItem(QString("1 Hz") % " (" % tr("good accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::OneHz));
-    ui->resamplingComboBox->addItem("2 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::TwoHz));
-    ui->resamplingComboBox->addItem("5 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::FiveHz));
-    ui->resamplingComboBox->addItem("10 Hz (larger file size, greater accuracy", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::TenHz));
-    ui->resamplingComboBox->addItem(tr("Original data (no resampling)"), Enum::toUnderlyingType(SampleRate::ResamplingPeriod::Original));
 }
 
 void BasicLocationExportDialog::initOptionUi() noexcept
@@ -172,10 +152,6 @@ void BasicLocationExportDialog::frenchConnection() noexcept
             this, &BasicLocationExportDialog::onFileSelectionButtonClicked);
     connect(ui->filePathLineEdit, &QLineEdit::textChanged,
             this, &BasicLocationExportDialog::onFilePathChanged);
-    connect(ui->formationExportComboBox, &QComboBox::currentIndexChanged,
-            this, &BasicLocationExportDialog::onFormationExportChanged);
-    connect(ui->resamplingComboBox, &QComboBox::currentIndexChanged,
-            this, &BasicLocationExportDialog::onResamplingOptionChanged);
     connect(ui->openExportCheckBox, &QCheckBox::toggled,
             this, &BasicLocationExportDialog::onDoOpenExportedFilesChanged);
     connect(&d->pluginSettings, &LocationExportPluginBaseSettings::baseSettingsChanged,
@@ -183,38 +159,6 @@ void BasicLocationExportDialog::frenchConnection() noexcept
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,
             this, &BasicLocationExportDialog::onRestoreDefaults);
-}
-
-inline bool BasicLocationExportDialog::isExportUserAircraftOnly() const noexcept
-{
-    return d->pluginSettings.getFormationExport() == LocationExportPluginBaseSettings::FormationExport::UserAircraftOnly;
-}
-
-std::int64_t BasicLocationExportDialog::estimateNofSamplePoints() const noexcept
-{
-    std::int64_t nofSamplePoints = 0;
-    const std::int64_t period = ui->resamplingComboBox->currentData().toInt();
-    if (period != 0) {
-        if (isExportUserAircraftOnly()) {
-            std::int64_t duration = d->flight.getUserAircraft().getDurationMSec();
-            nofSamplePoints += static_cast<std::int64_t>(std::round(static_cast<double>(duration) / static_cast<double>(period))) + 1;
-        } else {
-            for (const auto &aircraft : d->flight) {
-                std::int64_t duration = aircraft.getDurationMSec();
-                nofSamplePoints += static_cast<std::int64_t>(std::round(static_cast<double>(duration) / static_cast<double>(period))) + 1;
-            }
-        }
-    } else {
-        // Count the actual position sample points
-        if (isExportUserAircraftOnly()) {
-            nofSamplePoints += d->flight.getUserAircraft().getPosition().count();
-        } else {
-            for (const auto &aircraft : d->flight) {
-                nofSamplePoints += aircraft.getPosition().count();
-            }
-        }
-    }
-    return nofSamplePoints;
 }
 
 // PRIVATE SLOTS
@@ -225,35 +169,6 @@ void BasicLocationExportDialog::updateUi() noexcept
     QFileInfo fileInfo(filePath);
     QFile file(fileInfo.absolutePath());
     d->exportButton->setEnabled(file.exists());
-
-    const SampleRate::ResamplingPeriod resamplingPeriod = d->pluginSettings.getResamplingPeriod();
-    int currentIndex = 0;
-    while (currentIndex < ui->resamplingComboBox->count() &&
-           static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != resamplingPeriod) {
-        ++currentIndex;
-    }
-    ui->resamplingComboBox->setCurrentIndex(currentIndex);
-
-    const LocationExportPluginBaseSettings::FormationExport formationExport = d->pluginSettings.getFormationExport();
-    currentIndex = 0;
-    while (currentIndex < ui->formationExportComboBox->count() &&
-           static_cast<LocationExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->itemData(currentIndex).toInt()) != formationExport) {
-        ++currentIndex;
-    }
-    ui->formationExportComboBox->setCurrentIndex(currentIndex);
-
-    switch (formationExport) {
-    case LocationExportPluginBaseSettings::FormationExport::UserAircraftOnly:
-        ui->formationExportComboBox->setToolTip(tr("Only the currently selected user aircraft is exported."));
-        break;
-    case LocationExportPluginBaseSettings::FormationExport::AllAircraftOneFile:
-        ui->formationExportComboBox->setToolTip(tr("All aircraft are exported, into a single file (if supported by the format; otherwise separate files)."));
-        break;
-    case LocationExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
-        ui->formationExportComboBox->setToolTip(tr("All aircraft are exported, into separate files."));
-        break;
-    }
-
     ui->openExportCheckBox->setChecked(d->pluginSettings.isOpenExportedFilesEnabled());
 
     updateDataGroupBox();
@@ -273,16 +188,6 @@ void BasicLocationExportDialog::onFilePathChanged()
 {
     d->pluginSettings.setFileDialogSelectedFile(false);
     updateUi();
-}
-
-void BasicLocationExportDialog::onFormationExportChanged() noexcept
-{
-    d->pluginSettings.setFormationExport(static_cast<LocationExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->currentData().toInt()));
-}
-
-void BasicLocationExportDialog::onResamplingOptionChanged() noexcept
-{
-    d->pluginSettings.setResamplingPeriod(static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt()));
 }
 
 void BasicLocationExportDialog::onDoOpenExportedFilesChanged(bool enable) noexcept

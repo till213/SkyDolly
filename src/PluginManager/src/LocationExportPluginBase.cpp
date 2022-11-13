@@ -56,50 +56,138 @@ LocationExportPluginBase::LocationExportPluginBase() noexcept
 
 LocationExportPluginBase::~LocationExportPluginBase() = default;
 
-bool LocationExportPluginBase::importLocation(LocationService &locationService) noexcept
+bool LocationExportPluginBase::exportLocation() noexcept
 {
-    bool ok {true};
-    LocationExportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicLocationExportDialog> importDialog = std::make_unique<BasicLocationExportDialog>(getFileFilter(), baseSettings, PluginBase::getParentWidget());
-    // Transfer ownership to importDialog
-    importDialog->setOptionWidget(optionWidget.release());
-    const int choice = importDialog->exec();
+    LocationExportPluginBaseSettings &baseSettings = getPluginSettings();
+    std::unique_ptr<BasicLocationExportDialog> exportDialog = std::make_unique<BasicLocationExportDialog>(getFileSuffix(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
+    // Transfer ownership to exportDialog
+    exportDialog->setOptionWidget(optionWidget.release());
+    bool ok {true};
+    const int choice = exportDialog->exec();
     if (choice == QDialog::Accepted) {
-        QStringList selectedFilePaths;
-        // Remember import (export) path
-        const QString selectedPath = importDialog->getSelectedPath();
-        if (baseSettings.isExportDirectoryEnabled()) {
-            Settings::getInstance().setExportPath(selectedPath);
-            selectedFilePaths = File::getFilePaths(selectedPath, getFileSuffix());
-        } else {
-            const QString directoryPath = QFileInfo(selectedPath).absolutePath();
-            Settings::getInstance().setExportPath(directoryPath);
-            selectedFilePaths.append(selectedPath);
-        }
+        // Remember export path
+        const QString selectedFilePath = exportDialog->getSelectedFilePath();
+        if (!selectedFilePath.isEmpty()) {
+            const QString filePath = File::ensureSuffix(selectedFilePath, getFileSuffix());
+            const QFileInfo fileInfo {filePath};
+            const QString exportDirectoryPath = fileInfo.absolutePath();
+            Settings::getInstance().setExportPath(exportDirectoryPath);
 
-#ifdef DEBUG
-        QElapsedTimer timer;
-        timer.start();
-#endif
-        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-        QGuiApplication::processEvents();
-        ok = importLocations(selectedFilePaths, locationService);
-        QGuiApplication::restoreOverrideCursor();
-#ifdef DEBUG
-        qDebug() << QFileInfo(selectedPath).fileName() << "import" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
-#endif
-        if (!ok && !baseSettings.isExportDirectoryEnabled()) {
-            QMessageBox::warning(PluginBase::getParentWidget(), tr("Export error"), tr("The file %1 could not be imported.").arg(selectedPath));
-        }
+            const LocationExportPluginBaseSettings::FormationExport formationExport = getPluginSettings().getFormationExport();
+            ok = exportLocation(location, filePath);
 
+        }
     }
 
     return ok;
 }
 
-
 // PRIVATE
+
+bool LocationExportPluginBase::exportLocation(const Location &location, const QString &filePath) noexcept
+{
+    d->exportedFilePaths.clear();
+    QFile file(filePath);
+    bool ok {true};
+#ifdef DEBUG
+    QElapsedTimer timer;
+    timer.start();
+#endif
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    QGuiApplication::processEvents();
+    const LocationExportPluginBaseSettings &settings = getPluginSettings();
+    switch (settings.getFormationExport()) {
+    case LocationExportPluginBaseSettings::FormationExport::UserAircraftOnly:
+        ok = file.open(QIODevice::WriteOnly);
+        if (ok) {
+            ok = exportAircraft(location, location.getUserAircraft(), file);
+            d->exportedFilePaths.push_back(filePath);
+        }
+        file.close();
+        break;
+    case LocationExportPluginBaseSettings::FormationExport::AllAircraftOneFile:
+        if (hasMultiAircraftSupport()) {
+            ok = file.open(QIODevice::WriteOnly);
+            if (ok) {
+                ok = exportLocation(location, file);
+                d->exportedFilePaths.push_back(filePath);
+            }
+            file.close();
+        } else {
+            ok = exportAllAircraft(location, filePath);
+        }
+        break;
+    case LocationExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
+        ok = exportAllAircraft(location, filePath);
+        break;
+    }
+    QGuiApplication::restoreOverrideCursor();
+#ifdef DEBUG
+    qDebug() << QFileInfo(filePath).fileName() << "export" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
+#endif
+
+    if (ok) {
+        if (settings.isOpenExportedFilesEnabled()) {
+            for (const QString &exportedFilePath : d->exportedFilePaths) {
+                const QString fileUrl = QString("file:///") + exportedFilePath;
+                QDesktopServices::openUrl(QUrl(fileUrl));
+            }
+        }
+    } else {
+        QMessageBox::warning(PluginBase::getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(QDir::toNativeSeparators(filePath)));
+    }
+
+    return ok;
+}
+
+bool LocationExportPluginBase::exportAllAircraft(const Location &location, const QString &filePath) noexcept
+{
+    bool ok {true};
+    bool replaceAll {false};
+    int i {1};
+    for (const auto &aircraft : location) {
+        // Don't append sequence numbers if location has only one aircraft
+        const QString sequencedFilePath = location.count() > 1 ? File::getSequenceFilePath(filePath, i) : filePath;
+        const QFileInfo fileInfo {sequencedFilePath};
+        if (fileInfo.exists() && !replaceAll) {
+            QGuiApplication::restoreOverrideCursor();
+            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
+            messageBox->setIcon(QMessageBox::Question);
+            QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
+            QPushButton *replaceAllButton = messageBox->addButton(tr("Replace &All"), QMessageBox::YesRole);
+            messageBox->setWindowTitle(tr("Replace"));
+            messageBox->setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
+            messageBox->setInformativeText(tr("The file already exists in \"%1\".  Replacing it will overwrite its contents.").arg(fileInfo.dir().dirName()));
+            messageBox->setStandardButtons(QMessageBox::Cancel);
+            messageBox->setDefaultButton(replaceButton);
+
+            messageBox->exec();
+            const QAbstractButton *clickedButton = messageBox->clickedButton();
+            if (clickedButton == replaceAllButton) {
+                replaceAll = true;
+            } else if (clickedButton != replaceButton) {
+                break;
+            }
+            QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+            QGuiApplication::processEvents();
+        }
+
+        QFile file {sequencedFilePath};
+        ok = file.open(QIODevice::WriteOnly);
+        if (ok) {
+            ok = exportAircraft(location, aircraft, file);
+            d->exportedFilePaths.push_back(sequencedFilePath);
+        }
+        file.close();
+        ++i;
+        if (!ok) {
+            break;
+        }
+    } // All aircraft
+
+    return ok;
+}
 
 void LocationExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
@@ -116,59 +204,3 @@ void LocationExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey
     getPluginSettings().restoreSettings(valuesByKey);
 }
 
-bool LocationExportPluginBase::exportLocation(const QStringList &filePaths, LocationService &locationService) noexcept
-{
-    const LocationExportPluginBaseSettings &pluginSettings = getPluginSettings();
-    const bool importDirectory = pluginSettings.isExportDirectoryEnabled();
-
-    bool ok {true};
-    bool ignoreFailures {false};
-    for (const QString &filePath : filePaths) {
-        d->file.setFileName(filePath);
-        ok = d->file.open(QIODevice::ReadOnly);
-        if (ok) {
-            std::vector<Location> locations = importLocation(d->file, &ok);
-            d->file.close();
-            if (ok) {
-                ok = storeLocations(locations, locationService);
-            }
-        }
-
-        if (!ok && importDirectory && !ignoreFailures) {
-            QGuiApplication::restoreOverrideCursor();
-            QFileInfo fileInfo {filePath};
-            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
-            messageBox->setIcon(QMessageBox::Warning);
-            QPushButton *proceedButton = messageBox->addButton(tr("&Proceed"), QMessageBox::AcceptRole);
-            QPushButton *ignoreAllButton = messageBox->addButton(tr("&Ignore All Failures"), QMessageBox::YesRole);
-            messageBox->setWindowTitle(tr("Export Failure"));
-            messageBox->setText(tr("The file %1 could not be imported. Do you want to proceed with the remaining files in directory %2?").arg(fileInfo.fileName(), fileInfo.dir().dirName()));
-            messageBox->setInformativeText(tr("Aborting will keep the already successfully imported flights and aircraft."));
-            messageBox->setStandardButtons(QMessageBox::Cancel);
-            messageBox->setDefaultButton(proceedButton);
-
-            messageBox->exec();
-            const QAbstractButton *clickedButton = messageBox->clickedButton();
-            if (clickedButton == ignoreAllButton) {
-                ignoreFailures = true;
-            } else if (clickedButton != proceedButton) {
-                break;
-            }
-            QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-            QGuiApplication::processEvents();
-        }
-
-    } // All files
-
-    return ok;
-}
-
-bool LocationExportPluginBase::storeLocations(std::vector<Location> &locations, LocationService &locationService) const noexcept
-{
-    // TODO Make the mode a setting
-    const bool ok = locationService.storeAll(locations, LocationService::Mode::Update);
-    if (ok) {
-         emit PersistenceManager::getInstance().locationsExported();
-    }
-    return ok;
-}

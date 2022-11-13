@@ -46,18 +46,15 @@
 #include "FlightExportPluginBaseSettings.h"
 #include "FlightExportPluginBase.h"
 
-struct ExportPluginBasePrivate
-{
-    ExportPluginBasePrivate()
-    {}
-
+struct FlightExportPluginBasePrivate
+{ 
     std::vector<QString> exportedFilePaths;
 };
 
 // PUBLIC
 
 FlightExportPluginBase::FlightExportPluginBase() noexcept
-    : d(std::make_unique<ExportPluginBasePrivate>())
+    : d(std::make_unique<FlightExportPluginBasePrivate>())
 {}
 
 FlightExportPluginBase::~FlightExportPluginBase() = default;

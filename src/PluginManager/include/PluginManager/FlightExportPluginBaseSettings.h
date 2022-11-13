@@ -80,6 +80,7 @@ public:
      * \return \c true if the user has selected the file path via the file selection dialog;
      *         \c false else
      */
+    // TODO MOVE THOSE METHODS AWAY FROM SETTINGS
     bool isFileDialogSelectedFile() const noexcept;
     void setFileDialogSelectedFile(bool fileDialogSelected) noexcept;
 
