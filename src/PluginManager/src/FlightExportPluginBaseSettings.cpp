@@ -47,14 +47,12 @@ struct FlightExportPluginBaseSettingsPrivate
     FlightExportPluginBaseSettingsPrivate()
         : resamplingPeriod(::DefaultResamplingPeriod),
           formationExport(::DefaultFormationExport),
-          openExportedFilesEnabled(::DefaultOpenExportedFilesEnabled),
-          fileDialogSelectedFile(false)
+          openExportedFilesEnabled(::DefaultOpenExportedFilesEnabled)
     {}
 
     SampleRate::ResamplingPeriod resamplingPeriod;
     FlightExportPluginBaseSettings::FormationExport formationExport;
     bool openExportedFilesEnabled;
-    bool fileDialogSelectedFile;
 };
 
 // PUBLIC
@@ -102,16 +100,6 @@ void FlightExportPluginBaseSettings::setOpenExportedFilesEnabled(bool enabled) n
         d->openExportedFilesEnabled = enabled;
         emit baseSettingsChanged();
     }
-}
-
-bool FlightExportPluginBaseSettings::isFileDialogSelectedFile() const noexcept
-{
-    return d->fileDialogSelectedFile;
-}
-
-void FlightExportPluginBaseSettings::setFileDialogSelectedFile(bool fileDialogSelected) noexcept
-{
-    d->fileDialogSelectedFile = fileDialogSelected;
 }
 
 void FlightExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept

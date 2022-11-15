@@ -33,7 +33,7 @@
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <PluginManager/FlightExportPluginBaseSettings.h>
-#include "CsvExportSettings.h"
+#include "CsvLocationExportSettings.h"
 
 namespace
 {
@@ -41,29 +41,29 @@ namespace
     constexpr const char *FormatKey {"Format"};
 
     // Defaults
-    constexpr CsvExportSettings::Format DefaultFormat {CsvExportSettings::Format::SkyDolly};
+    constexpr CsvLocationExportSettings::Format DefaultFormat {CsvLocationExportSettings::Format::SkyDolly};
 }
 
-struct CsvExportSettingsPrivate
+struct CsvLocationExportSettingsPrivate
 {
-    CsvExportSettings::Format format {::DefaultFormat};
+    CsvLocationExportSettings::Format format {::DefaultFormat};
 };
 
 // PUBLIC
 
-CsvExportSettings::CsvExportSettings() noexcept
-    : FlightExportPluginBaseSettings(),
-      d(std::make_unique<CsvExportSettingsPrivate>())
+CsvLocationExportSettings::CsvLocationExportSettings() noexcept
+    : LocationExportPluginBaseSettings(),
+      d(std::make_unique<CsvLocationExportSettingsPrivate>())
 {}
 
-CsvExportSettings::~CsvExportSettings() = default;
+CsvLocationExportSettings::~CsvLocationExportSettings() = default;
 
-CsvExportSettings::Format CsvExportSettings::getFormat() const noexcept
+CsvLocationExportSettings::Format CsvLocationExportSettings::getFormat() const noexcept
 {
     return d->format;
 }
 
-void CsvExportSettings::setFormat(Format format) noexcept
+void CsvLocationExportSettings::setFormat(Format format) noexcept
 {
     if (d->format != format) {
         d->format = format;
@@ -73,7 +73,7 @@ void CsvExportSettings::setFormat(Format format) noexcept
 
 // PROTECTED
 
-void CsvExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
+void CsvLocationExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
@@ -82,7 +82,7 @@ void CsvExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     keyValues.push_back(keyValue);
 }
 
-void CsvExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void CsvLocationExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     Settings::KeyValue keyValue;
 
@@ -91,7 +91,7 @@ void CsvExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     keysWithDefaults.push_back(keyValue);
 }
 
-void CsvExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
+void CsvLocationExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
     const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
@@ -102,7 +102,7 @@ void CsvExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     }
 }
 
-void CsvExportSettings::restoreDefaultsExtn() noexcept
+void CsvLocationExportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
 

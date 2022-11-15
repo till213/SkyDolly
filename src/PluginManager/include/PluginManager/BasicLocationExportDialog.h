@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -26,14 +26,14 @@
 #define BASICLOCATIONEXPORTDIALOG_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QDialog>
-#include <QString>
 
-class QWidget;
-
+#include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
+class Location;
 class LocationExportPluginBaseSettings;
 struct BasicLocationExportDialogPrivate;
 
@@ -45,17 +45,15 @@ class PLUGINMANAGER_API BasicLocationExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicLocationExportDialog(const QString &fileExtension, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    explicit BasicLocationExportDialog(const QString &fileSuffix, const QString &fileFilter, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     BasicLocationExportDialog(const BasicLocationExportDialog &rhs) = delete;
     BasicLocationExportDialog(BasicLocationExportDialog &&rhs) = delete;
     BasicLocationExportDialog &operator=(const BasicLocationExportDialog &rhs) = delete;
     BasicLocationExportDialog &operator=(BasicLocationExportDialog &&rhs) = delete;
     ~BasicLocationExportDialog() override;
 
-    QString getSelectedPath() const noexcept;
-
-    QString getFileFilter() const noexcept;
-    void setFileFilter(const QString &fileFilter) noexcept;
+    QString getSelectedFilePath() const noexcept;
+    void setSelectedFilePath(const QString &filePath) noexcept;
 
     void setOptionWidget(QWidget *widget) noexcept;
 

@@ -7,7 +7,7 @@
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
- * software and associated documentation files (the "Software"), to deal in the Software
+ * software and associated documentation ios (the "Software"), to deal in the Software
  * without restriction, including without limitation the rights to use, copy, modify, merge,
  * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
  * to whom the Software is furnished to do so, subject to the following conditions:
@@ -22,22 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOCATIONIMPORTINTF_H
-#define LOCATIONIMPORTINTF_H
+#ifndef CSVLOCATIONEXPORTOPTIONWIDGET_H
+#define CSVLOCATIONEXPORTOPTIONWIDGET_H
 
-#include <QtPlugin>
+#include <memory>
 
-#include "PluginIntf.h"
+#include <QWidget>
 
-class LocationService;
+namespace Ui {
+    class CsvLocationExportOptionWidget;
+}
 
-class LocationImportIntf : public PluginIntf
+class CsvLocationExportSettings;
+struct CsvLocationExportOptionWidgetPrivate;
+
+class CsvLocationExportOptionWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    virtual bool importLocation(LocationService &locationService) noexcept = 0;
+    explicit CsvLocationExportOptionWidget(CsvLocationExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    virtual ~CsvLocationExportOptionWidget() noexcept;
+
+private:
+    std::unique_ptr<Ui::CsvLocationExportOptionWidget> ui;
+    const std::unique_ptr<CsvLocationExportOptionWidgetPrivate> d;
+
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+
+private slots:
+    void updateUi() noexcept;
+    void onFormatChanged() noexcept;
 };
 
-#define LOCATION_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationImportInterface/1.0"
-Q_DECLARE_INTERFACE(LocationImportIntf, LOCATION_IMPORT_INTERFACE_IID)
-
-#endif // LOCATIONIMPORTINTF_H
+#endif // CSVLOCATIONEXPORTOPTIONWIDGET_H

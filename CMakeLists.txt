@@ -172,7 +172,10 @@ target_sources(${APP_NAME}
         SECURITY.md
         SHASUM256.md
         THIRD_PARTY.md
+        doc/Design/Architecture.md
+        doc/Design/README.md
         doc/SkyDolly.simvars
+        doc/LICENSE
         res/Info.plist.in
         res/SkyDolly.rc.in
         ${QM_FILES}

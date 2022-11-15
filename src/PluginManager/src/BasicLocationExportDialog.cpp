@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Location Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -38,9 +38,13 @@
 #include <QCheckBox>
 
 #include <Kernel/Settings.h>
+#include <Kernel/SampleRate.h>
 #include <Kernel/Unit.h>
 #include <Kernel/Enum.h>
 #include <Model/Location.h>
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <Model/SimType.h>
 #include "Export.h"
 #include "LocationExportPluginBaseSettings.h"
 #include "BasicLocationExportDialog.h"
@@ -51,16 +55,14 @@ struct BasicLocationExportDialogPrivate
     BasicLocationExportDialogPrivate(const QString &theFileSuffix, const QString &theFileFilter, LocationExportPluginBaseSettings &thePluginSettings) noexcept
         : fileSuffix(theFileSuffix),
           fileFilter(theFileFilter),
-          pluginSettings(thePluginSettings),
-          exportButton(nullptr),
-          optionWidget(nullptr)
+          pluginSettings(thePluginSettings)
     {}
 
     QString fileSuffix;
     QString fileFilter;
     LocationExportPluginBaseSettings &pluginSettings;
-    QPushButton *exportButton;
-    QWidget *optionWidget;
+    QPushButton *exportButton {nullptr};
+    QWidget *optionWidget {nullptr};
     Unit unit;
 };
 
@@ -108,7 +110,7 @@ void BasicLocationExportDialog::initUi() noexcept
 
 void BasicLocationExportDialog::initBasicUi() noexcept
 {
-    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->flight, d->fileSuffix)));
+    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestLocationFilePath(d->fileSuffix)));
 }
 
 void BasicLocationExportDialog::initOptionUi() noexcept
@@ -124,26 +126,6 @@ void BasicLocationExportDialog::initOptionUi() noexcept
     } else {
         ui->optionGroupBox->setHidden(true);
     }
-}
-
-void BasicLocationExportDialog::updateDataGroupBox() noexcept
-{
-    QString infoText;
-    if (isExportUserAircraftOnly()) {
-        infoText = tr("The current user aircraft will be exported.");
-    } else {
-        infoText = tr("%Ln aircraft will be exported.", nullptr, d->flight.count());
-    }
-    SampleRate::ResamplingPeriod resamplingPeriod = static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
-    std::int64_t samplePoints = estimateNofSamplePoints();
-    if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-        infoText.append(" " % tr("The position data will be resampled every %1 milliseconds, resulting in %Ln exported positions.",
-                                 nullptr, samplePoints)
-                                 .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0)));
-    } else {
-        infoText.append(" " % tr("The original recorded data will be exported, resulting in total %Ln exported positions.", nullptr, samplePoints));
-    }
-    ui->infoLabel->setText(infoText);
 }
 
 void BasicLocationExportDialog::frenchConnection() noexcept
@@ -170,8 +152,6 @@ void BasicLocationExportDialog::updateUi() noexcept
     QFile file(fileInfo.absolutePath());
     d->exportButton->setEnabled(file.exists());
     ui->openExportCheckBox->setChecked(d->pluginSettings.isOpenExportedFilesEnabled());
-
-    updateDataGroupBox();
 }
 
 void BasicLocationExportDialog::onFileSelectionButtonClicked() noexcept
@@ -179,14 +159,12 @@ void BasicLocationExportDialog::onFileSelectionButtonClicked() noexcept
     const QString filePath = QFileDialog::getSaveFileName(this, tr("Export File"), ui->filePathLineEdit->text(), d->fileFilter);
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
-        d->pluginSettings.setFileDialogSelectedFile(true);
     }
     updateUi();
 }
 
 void BasicLocationExportDialog::onFilePathChanged()
 {
-    d->pluginSettings.setFileDialogSelectedFile(false);
     updateUi();
 }
 

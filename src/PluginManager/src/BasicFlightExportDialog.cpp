@@ -56,18 +56,17 @@ struct BasicFlightExportDialogPrivate
         : flight(theFlight),
           fileSuffix(theFileSuffix),
           fileFilter(theFileFilter),
-          pluginSettings(thePluginSettings),
-          exportButton(nullptr),
-          optionWidget(nullptr)
+          pluginSettings(thePluginSettings)
     {}
 
     const Flight &flight;
     QString fileSuffix;
     QString fileFilter;
     FlightExportPluginBaseSettings &pluginSettings;
-    QPushButton *exportButton;
-    QWidget *optionWidget;
+    QPushButton *exportButton {nullptr};
+    QWidget *optionWidget {nullptr};
     Unit unit;
+    bool fileDialogSelectedFile {false};
 };
 
 // PUBLIC
@@ -101,6 +100,11 @@ void BasicFlightExportDialog::setOptionWidget(QWidget *widget) noexcept
     initOptionUi();
 }
 
+bool BasicFlightExportDialog::isFileDialogSelectedFile() const noexcept
+{
+    return d->fileDialogSelectedFile;
+}
+
 // PRIVATE
 
 void BasicFlightExportDialog::initUi() noexcept
@@ -114,7 +118,7 @@ void BasicFlightExportDialog::initUi() noexcept
 
 void BasicFlightExportDialog::initBasicUi() noexcept
 {
-    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->flight, d->fileSuffix)));
+    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFlightFilePath(d->flight, d->fileSuffix)));
 
     // Formation export
     ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::toUnderlyingType(FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly));
@@ -264,14 +268,14 @@ void BasicFlightExportDialog::onFileSelectionButtonClicked() noexcept
     const QString filePath = QFileDialog::getSaveFileName(this, tr("Export File"), ui->filePathLineEdit->text(), d->fileFilter);
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
-        d->pluginSettings.setFileDialogSelectedFile(true);
+        d->fileDialogSelectedFile = true;
     }
     updateUi();
 }
 
 void BasicFlightExportDialog::onFilePathChanged()
 {
-    d->pluginSettings.setFileDialogSelectedFile(false);
+   d->fileDialogSelectedFile = false;
     updateUi();
 }
 

@@ -84,12 +84,12 @@ protected:
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
 
-    virtual bool exportLocation(const Location &location, QIODevice &io) noexcept = 0;
+    virtual bool exportLocation(QIODevice &io) noexcept = 0;
 
 private:
     const std::unique_ptr<LocationExportPluginBasePrivate> d;
 
-    bool exportLocation(const Location &location, const QString &filePath) noexcept;
+    bool exportLocation(const QString &filePath) noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;

@@ -78,7 +78,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight) noexcept
             Settings::getInstance().setExportPath(exportDirectoryPath);
 
             const FlightExportPluginBaseSettings::FormationExport formationExport = getPluginSettings().getFormationExport();
-            if (formationExport == FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
+            if (formationExport == FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || exportDialog->isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportFlight(flight, filePath);
             } else {
                 std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());

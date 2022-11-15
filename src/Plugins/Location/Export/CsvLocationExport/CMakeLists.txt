@@ -10,12 +10,10 @@ add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 target_sources(${MODULE_NAME}
     PRIVATE
         src/CsvLocationExportPlugin.h src/CsvLocationExportPlugin.cpp
-#        src/CsvLocationExportSettings.h src/CsvLocationExportSettings.cpp
-#        src/CsvLocationExportOptionWidget.h src/CsvLocationExportOptionWidget.cpp src/CsvLocationExportOptionWidget.ui
-#        src/CsvLocationParserIntf.h
-#        src/LittleNavmapCsvParser.h src/LittleNavmapCsvParser.cpp
+        src/CsvLocationExportSettings.h src/CsvLocationExportSettings.cpp
+        src/CsvLocationExportOptionWidget.h src/CsvLocationExportOptionWidget.cpp src/CsvLocationExportOptionWidget.ui
+        src/CsvLocationWriterIntf.h
         src/CsvLocationExportPlugin.json
-#        doc/Example.csv
 )
 target_link_libraries(${MODULE_NAME}
     PRIVATE

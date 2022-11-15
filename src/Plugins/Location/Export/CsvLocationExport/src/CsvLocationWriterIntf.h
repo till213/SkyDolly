@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,22 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOCATIONIMPORTINTF_H
-#define LOCATIONIMPORTINTF_H
+#ifndef CSVLOCATIONWRITERINTF_H
+#define CSVLOCATIONWRITERINTF_H
 
-#include <QtPlugin>
+#include <QDateTime>
 
-#include "PluginIntf.h"
+class QIODevice;
 
-class LocationService;
+class Flight;
+class Aircraft;
 
-class LocationImportIntf : public PluginIntf
+class CsvLocationWriterIntf
 {
 public:
-    virtual bool importLocation(LocationService &locationService) noexcept = 0;
+    virtual ~CsvLocationWriterIntf() = default;
+
+    virtual bool write(QIODevice &ioDevice) noexcept = 0;
 };
 
-#define LOCATION_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationImportInterface/1.0"
-Q_DECLARE_INTERFACE(LocationImportIntf, LOCATION_IMPORT_INTERFACE_IID)
-
-#endif // LOCATIONIMPORTINTF_H
+#endif // CSVLOCATIONWRITERINTF_H

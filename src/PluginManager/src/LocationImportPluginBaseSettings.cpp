@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,3 +22,81 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+#include <string_view>
+
+#include <Kernel/Settings.h>
+#include "LocationImportPluginBaseSettings.h"
+
+namespace
+{
+    // Keys
+    constexpr const char *ImportDirectoryEnabledKey {"ImportDirectoryEnabled"};
+
+    // Defaults
+constexpr bool DefaultImportDirectoryEnabled {false};
+}
+
+struct LocationImportPluginBaseSettingsPrivate
+{
+    bool importDirectoryEnabled {::DefaultImportDirectoryEnabled};
+};
+
+// PUBLIC
+
+LocationImportPluginBaseSettings::LocationImportPluginBaseSettings() noexcept
+    : d(std::make_unique<LocationImportPluginBaseSettingsPrivate>())
+{}
+
+LocationImportPluginBaseSettings::~LocationImportPluginBaseSettings() = default;
+
+bool LocationImportPluginBaseSettings::isImportDirectoryEnabled() const noexcept
+{
+    return d->importDirectoryEnabled;
+}
+
+void LocationImportPluginBaseSettings::setImportDirectoryEnabled(bool enabled) noexcept
+{
+    if (d->importDirectoryEnabled != enabled) {
+        d->importDirectoryEnabled = enabled;
+        emit baseSettingsChanged();
+    }
+}
+
+void LocationImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::ImportDirectoryEnabledKey;
+    keyValue.second = d->importDirectoryEnabled;
+    keyValues.push_back(keyValue);
+
+    addSettingsExtn(keyValues);
+}
+
+void LocationImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::ImportDirectoryEnabledKey;
+    keyValue.second = ::DefaultImportDirectoryEnabled;
+    keysWithDefaults.push_back(keyValue);
+
+    addKeysWithDefaultsExtn(keysWithDefaults);
+}
+
+void LocationImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
+{
+    d->importDirectoryEnabled = valuesByKey.at(::ImportDirectoryEnabledKey).toBool();
+    emit baseSettingsChanged();
+
+    restoreSettingsExtn(valuesByKey);
+}
+
+void LocationImportPluginBaseSettings::restoreDefaults() noexcept
+{
+    d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
+    emit baseSettingsChanged();
+
+    restoreDefaultsExtn();
+}

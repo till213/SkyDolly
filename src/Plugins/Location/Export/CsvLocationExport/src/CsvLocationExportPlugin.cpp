@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -7,7 +7,7 @@
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
- * software and associated documentation files (the "Software"), to deal in the Software
+ * software and associated documentation ios (the "Software"), to deal in the Software
  * without restriction, including without limitation the rights to use, copy, modify, merge,
  * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
  * to whom the Software is furnished to do so, subject to the following conditions:
@@ -22,9 +22,74 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QWidget>
+#include <QFile>
+// Implements the % operator for string concatenation
+#include <QStringBuilder>
+#include <QString>
+
+#include <Model/Location.h>
+#include <Model/Aircraft.h>
+#include "CsvLocationExportSettings.h"
+#include "CsvLocationExportOptionWidget.h"
+#include "CsvLocationWriterIntf.h"
 #include "CsvLocationExportPlugin.h"
 
-CsvLocationExportPlugin::CsvLocationExportPlugin()
+struct CsvLocationExportPluginPrivate
 {
+public:
+    CsvLocationExportSettings pluginSettings;
 
+    static constexpr const char *FileExtension {"csv"};
+};
+
+// PUBLIC
+
+CsvLocationExportPlugin::CsvLocationExportPlugin() noexcept
+    : d(std::make_unique<CsvLocationExportPluginPrivate>())
+{}
+
+CsvLocationExportPlugin::~CsvLocationExportPlugin() = default;
+
+// PROTECTED
+
+LocationExportPluginBaseSettings &CsvLocationExportPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
+
+QString CsvLocationExportPlugin::getFileSuffix() const noexcept
+{
+    return CsvLocationExportPluginPrivate::FileExtension;
+}
+
+QString CsvLocationExportPlugin::getFileFilter() const noexcept
+{
+    return QObject::tr("Comma-separated values (*.%1)").arg(getFileSuffix());
+}
+
+std::unique_ptr<QWidget> CsvLocationExportPlugin::createOptionWidget() const noexcept
+{
+    return std::make_unique<CsvLocationExportOptionWidget>(d->pluginSettings);
+}
+
+bool CsvLocationExportPlugin::exportLocation(QIODevice &io) noexcept
+{
+    std::unique_ptr<CsvLocationWriterIntf> writer;
+    switch (d->pluginSettings.getFormat()) {
+    case CsvLocationExportSettings::Format::SkyDolly:
+        // TODO IMPLEMENT ME
+        writer = nullptr; // std::make_unique<SkyDollyCsvWriter>(d->pluginSettings);
+        break;
+    case CsvLocationExportSettings::Format::LittleNavmap:
+        writer = nullptr; // std::make_unique<LocationRadar24CsvWriter>(d->pluginSettings);
+        break;
+    }
+
+    bool ok {false};
+    if (writer != nullptr) {
+        ok = writer->write(io);
+    }
+
+    return ok;
 }
