@@ -59,7 +59,7 @@ protected:
     QString getFileSuffix() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    std::vector<Location> importLocation(QFile &file, bool *ok = nullptr) noexcept override;
+    std::vector<Location> importLocations(QFile &file, bool *ok = nullptr) noexcept override;
 
 private:
     const std::unique_ptr<CsvLocationImportPluginPrivate> d;

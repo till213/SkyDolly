@@ -73,7 +73,7 @@ std::unique_ptr<QWidget> CsvLocationExportPlugin::createOptionWidget() const noe
     return std::make_unique<CsvLocationExportOptionWidget>(d->pluginSettings);
 }
 
-bool CsvLocationExportPlugin::exportLocation(QIODevice &io) noexcept
+bool CsvLocationExportPlugin::exportLocations(QIODevice &io) noexcept
 {
     std::unique_ptr<CsvLocationWriterIntf> writer;
     switch (d->pluginSettings.getFormat()) {

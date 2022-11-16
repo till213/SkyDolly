@@ -57,7 +57,7 @@ LocationExportPluginBase::LocationExportPluginBase() noexcept
 
 LocationExportPluginBase::~LocationExportPluginBase() = default;
 
-bool LocationExportPluginBase::exportLocation() noexcept
+bool LocationExportPluginBase::exportLocations() noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     LocationExportPluginBaseSettings &baseSettings = getPluginSettings();
@@ -78,7 +78,7 @@ bool LocationExportPluginBase::exportLocation() noexcept
             QFile file {filePath};
             ok = file.open(QIODevice::WriteOnly);
             if (ok) {
-                ok = exportLocation(file);
+                ok = exportLocations(file);
             }
             file.close();
 
@@ -91,7 +91,7 @@ bool LocationExportPluginBase::exportLocation() noexcept
 
 // PRIVATE
 
-bool LocationExportPluginBase::exportLocation(const QString &filePath) noexcept
+bool LocationExportPluginBase::exportLocations(const QString &filePath) noexcept
 {
     QFile file(filePath);
     bool ok {true};
@@ -104,7 +104,7 @@ bool LocationExportPluginBase::exportLocation(const QString &filePath) noexcept
 
     ok = file.open(QIODevice::WriteOnly);
     if (ok) {
-        ok = exportLocation(file);
+        ok = exportLocations(file);
     }
     file.close();
 

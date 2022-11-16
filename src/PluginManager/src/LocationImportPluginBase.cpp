@@ -56,7 +56,7 @@ LocationImportPluginBase::LocationImportPluginBase() noexcept
 
 LocationImportPluginBase::~LocationImportPluginBase() = default;
 
-bool LocationImportPluginBase::importLocation(LocationService &locationService) noexcept
+bool LocationImportPluginBase::importLocations(LocationService &locationService) noexcept
 {
     bool ok {true};
     LocationImportPluginBaseSettings &baseSettings = getPluginSettings();
@@ -127,7 +127,7 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths, Loc
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
         if (ok) {
-            std::vector<Location> locations = importLocation(d->file, &ok);
+            std::vector<Location> locations = importLocations(d->file, &ok);
             d->file.close();
             if (ok) {
                 ok = storeLocations(locations, locationService);

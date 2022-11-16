@@ -220,6 +220,7 @@ private slots:
     void onFlightImport(QAction *action) noexcept;
     void onFlightExport(QAction *action) noexcept;
     void onLocationImport(QAction *action) noexcept;
+    void onLocationExport(QAction *action) noexcept;
 
     // Settings
     void onReplayLoopChanged() noexcept;

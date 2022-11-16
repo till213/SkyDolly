@@ -75,7 +75,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    bool exportLocation() noexcept final;
+    bool exportLocations() noexcept final;
 
 protected:
     // Re-implement
@@ -84,12 +84,12 @@ protected:
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
 
-    virtual bool exportLocation(QIODevice &io) noexcept = 0;
+    virtual bool exportLocations(QIODevice &io) noexcept = 0;
 
 private:
     const std::unique_ptr<LocationExportPluginBasePrivate> d;
 
-    bool exportLocation(const QString &filePath) noexcept;
+    bool exportLocations(const QString &filePath) noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;

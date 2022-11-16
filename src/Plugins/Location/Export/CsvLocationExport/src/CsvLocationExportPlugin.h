@@ -83,7 +83,7 @@ protected:
     QString getFileSuffix() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool exportLocation(QIODevice &io) noexcept override;
+    bool exportLocations(QIODevice &io) noexcept override;
 
 private:
     const std::unique_ptr<CsvLocationExportPluginPrivate> d;

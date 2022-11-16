@@ -72,7 +72,7 @@ std::unique_ptr<QWidget> CsvLocationImportPlugin::createOptionWidget() const noe
     return std::make_unique<CsvLocationImportOptionWidget>(d->pluginSettings);
 }
 
-std::vector<Location> CsvLocationImportPlugin::importLocation(QFile &file, bool *ok) noexcept
+std::vector<Location> CsvLocationImportPlugin::importLocations(QFile &file, bool *ok) noexcept
 {
     std::vector<Location> locations;
     std::unique_ptr<CsvLocationParserIntf> parser;
