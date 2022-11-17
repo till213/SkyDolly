@@ -57,11 +57,11 @@ LocationExportPluginBase::LocationExportPluginBase() noexcept
 
 LocationExportPluginBase::~LocationExportPluginBase() = default;
 
-bool LocationExportPluginBase::exportLocations() noexcept
+bool LocationExportPluginBase::exportLocations(const std::vector<Location> &locations) noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     LocationExportPluginBaseSettings &baseSettings = getPluginSettings();
-    std::unique_ptr<BasicLocationExportDialog> exportDialog = std::make_unique<BasicLocationExportDialog>(getFileSuffix(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
+    std::unique_ptr<BasicLocationExportDialog> exportDialog = std::make_unique<BasicLocationExportDialog>(getFileExtension(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
     // Transfer ownership to exportDialog
     exportDialog->setOptionWidget(optionWidget.release());
     bool ok {true};
@@ -70,19 +70,11 @@ bool LocationExportPluginBase::exportLocations() noexcept
         // Remember export path
         const QString selectedFilePath = exportDialog->getSelectedFilePath();
         if (!selectedFilePath.isEmpty()) {
-            const QString filePath = File::ensureSuffix(selectedFilePath, getFileSuffix());
+            const QString filePath = File::ensureSuffix(selectedFilePath, getFileExtension());
             const QFileInfo fileInfo {filePath};
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
-
-            QFile file {filePath};
-            ok = file.open(QIODevice::WriteOnly);
-            if (ok) {
-                ok = exportLocations(file);
-            }
-            file.close();
-
-
+            ok = exportLocations(locations, filePath);
         }
     }
 
@@ -91,7 +83,7 @@ bool LocationExportPluginBase::exportLocations() noexcept
 
 // PRIVATE
 
-bool LocationExportPluginBase::exportLocations(const QString &filePath) noexcept
+bool LocationExportPluginBase::exportLocations(const std::vector<Location> &locations, const QString &filePath) noexcept
 {
     QFile file(filePath);
     bool ok {true};
@@ -104,7 +96,7 @@ bool LocationExportPluginBase::exportLocations(const QString &filePath) noexcept
 
     ok = file.open(QIODevice::WriteOnly);
     if (ok) {
-        ok = exportLocations(file);
+        ok = exportLocations(locations, file);
     }
     file.close();
 

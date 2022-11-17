@@ -30,9 +30,6 @@
 #include <QTimeZone>
 #include <QDateTime>
 #include <QXmlStreamReader>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Convert.h>
 #include <Model/Flight.h>
@@ -45,14 +42,12 @@
 struct AbstractKmlParserPrivate
 {
     AbstractKmlParserPrivate() noexcept
-        : flight(nullptr),
-          xml(nullptr)
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
-    Flight *flight;
-    QXmlStreamReader *xml;
+    Flight *flight {nullptr};
+    QXmlStreamReader *xml {nullptr};
     QString documentName;    
     QDateTime firstDateTimeUtc;
 };
@@ -61,18 +56,9 @@ struct AbstractKmlParserPrivate
 
 AbstractKmlParser::AbstractKmlParser() noexcept
     : d(std::make_unique<AbstractKmlParserPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "AbstractKmlParser::AbstractKmlParser: CREATED";
-#endif
-}
+{}
 
-AbstractKmlParser::~AbstractKmlParser() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "AbstractKmlParser::~AbstractKmlParser: DELETED";
-#endif
-}
+AbstractKmlParser::~AbstractKmlParser() noexcept = default;
 
 QString AbstractKmlParser::getDocumentName() const noexcept
 {

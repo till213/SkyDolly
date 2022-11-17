@@ -39,6 +39,7 @@
 
 #include <Model/Flight.h>
 #include <Persistence/Service/FlightService.h>
+#include <Persistence/Service/LocationService.h>
 #include "FlightImportIntf.h"
 #include "FlightExportIntf.h"
 #include "LocationImportIntf.h"
@@ -231,7 +232,10 @@ bool PluginManager::exportLocations(const QUuid &pluginUuid, LocationService &lo
         if (exportPlugin != nullptr) {
             exportPlugin->setParentWidget(d->parentWidget);
             exportPlugin->restoreSettings(pluginUuid);
-            ok = exportPlugin->exportLocations();
+            std::vector<Location> locations = locationService.getAll(&ok);
+            if (ok) {
+                ok = exportPlugin->exportLocations(locations);
+            }
             exportPlugin->storeSettings(pluginUuid);
         } else {
             ok = false;

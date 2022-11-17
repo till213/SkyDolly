@@ -26,9 +26,6 @@
 #include <memory>
 
 #include <QString>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>

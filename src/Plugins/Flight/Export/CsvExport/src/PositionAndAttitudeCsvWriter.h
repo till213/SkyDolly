@@ -25,6 +25,8 @@
 #ifndef POSITIONANDATTITUDECSVWRITER_H
 #define POSITIONANDATTITUDECSVWRITER_H
 
+#include <memory>
+
 class QIODevice;
 
 #include "CsvWriterIntf.h"

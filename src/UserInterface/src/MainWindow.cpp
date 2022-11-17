@@ -448,7 +448,6 @@ void MainWindow::initPlugins() noexcept
     d->hasFlightImportPlugins = flightImportPlugins.size() > 0;
     if (d->hasFlightImportPlugins) {
         ui->flightImportMenu->setEnabled(true);
-
         for (const PluginManager::Handle &handle : flightImportPlugins) {
             QAction *flightImportAction = new QAction(handle.second, ui->flightImportMenu);
             // First: plugin uuid
@@ -465,7 +464,6 @@ void MainWindow::initPlugins() noexcept
     d->hasFlightExportPlugins = flightExportPlugins.size() > 0;
     if (d->hasFlightExportPlugins) {
         ui->flightExportMenu->setEnabled(true);
-
         for (const PluginManager::Handle &handle : flightExportPlugins) {
             QAction *flightExportAction = new QAction(handle.second, ui->flightExportMenu);
             // First: plugin uuid
@@ -482,7 +480,6 @@ void MainWindow::initPlugins() noexcept
     d->hasLocationImportPlugins = locationImportPlugins.size() > 0;
     if (d->hasLocationImportPlugins) {
         ui->locationImportMenu->setEnabled(true);
-
         for (const PluginManager::Handle &handle : locationImportPlugins) {
             QAction *locationImportAction = new QAction(handle.second, ui->locationImportMenu);
             // First: plugin uuid
@@ -499,7 +496,6 @@ void MainWindow::initPlugins() noexcept
     d->hasLocationExportPlugins = locationExportPlugins.size() > 0;
     if (d->hasLocationExportPlugins) {
         ui->locationExportMenu->setEnabled(true);
-
         for (const PluginManager::Handle &handle : locationExportPlugins) {
             QAction *locationExportAction = new QAction(handle.second, ui->locationExportMenu);
             // First: plugin uuid

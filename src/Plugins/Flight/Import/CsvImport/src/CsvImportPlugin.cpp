@@ -46,7 +46,7 @@ struct CsvImportPluginPrivate
     QDateTime firstDateTimeUtc;
     QString flightNumber;
 
-    static inline const QString FileSuffix {QStringLiteral("csv")};
+    static constexpr const char *FileExtension {"csv"};
 };
 
 // PUBLIC
@@ -64,14 +64,14 @@ FlightImportPluginBaseSettings &CsvImportPlugin::getPluginSettings() const noexc
     return d->pluginSettings;
 }
 
-QString CsvImportPlugin::getFileSuffix() const noexcept
+QString CsvImportPlugin::getFileExtension() const noexcept
 {
-    return CsvImportPluginPrivate::FileSuffix;
+    return CsvImportPluginPrivate::FileExtension;
 }
 
 QString CsvImportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("Comma-separated values (*.%1)").arg(getFileSuffix());
+    return QObject::tr("Comma-separated values (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept

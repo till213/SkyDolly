@@ -80,10 +80,10 @@ public:
 
 protected:
     LocationExportPluginBaseSettings &getPluginSettings() const noexcept override;
-    QString getFileSuffix() const noexcept override;
+    QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool exportLocations(QIODevice &io) noexcept override;
+    bool exportLocations(const std::vector<Location> &locations, QIODevice &io) noexcept override;
 
 private:
     const std::unique_ptr<CsvLocationExportPluginPrivate> d;

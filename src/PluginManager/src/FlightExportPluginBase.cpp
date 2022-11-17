@@ -63,7 +63,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight) noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     FlightExportPluginBaseSettings &baseSettings = getPluginSettings();
-    std::unique_ptr<BasicFlightExportDialog> exportDialog = std::make_unique<BasicFlightExportDialog>(flight, getFileSuffix(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
+    std::unique_ptr<BasicFlightExportDialog> exportDialog = std::make_unique<BasicFlightExportDialog>(flight, getFileExtension(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
     // Transfer ownership to exportDialog
     exportDialog->setOptionWidget(optionWidget.release());
     bool ok {true};
@@ -72,7 +72,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight) noexcept
         // Remember export path
         const QString selectedFilePath = exportDialog->getSelectedFilePath();
         if (!selectedFilePath.isEmpty()) {
-            const QString filePath = File::ensureSuffix(selectedFilePath, getFileSuffix());
+            const QString filePath = File::ensureSuffix(selectedFilePath, getFileExtension());
             const QFileInfo fileInfo {filePath};
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);

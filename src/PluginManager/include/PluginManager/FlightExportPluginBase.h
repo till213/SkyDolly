@@ -83,7 +83,7 @@ public:
 protected:
     // Re-implement
     virtual FlightExportPluginBaseSettings &getPluginSettings() const noexcept = 0;
-    virtual QString getFileSuffix() const noexcept = 0;
+    virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
 

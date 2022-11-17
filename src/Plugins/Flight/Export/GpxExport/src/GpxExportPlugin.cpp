@@ -56,17 +56,13 @@
 class GpxExportPluginPrivate
 {
 public:
-    GpxExportPluginPrivate() noexcept
-        : flight(nullptr)
-    {}
-
-    const Flight *flight;
+    const Flight *flight {nullptr};
     GpxExportSettings pluginSettings;
     QDateTime startDateTimeUtc;
     Unit unit;
     Convert convert;
 
-    static inline const QString FileExtension {QStringLiteral("gpx")};
+    static constexpr const char *FileExtension {"gpx"};
 };
 
 // PUBLIC
@@ -93,14 +89,14 @@ FlightExportPluginBaseSettings &GpxExportPlugin::getPluginSettings() const noexc
     return d->pluginSettings;
 }
 
-QString GpxExportPlugin::getFileSuffix() const noexcept
+QString GpxExportPlugin::getFileExtension() const noexcept
 {
     return GpxExportPluginPrivate::FileExtension;
 }
 
 QString GpxExportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("GPS exchange format (*.%1)").arg(getFileSuffix());
+    return QObject::tr("GPS exchange format (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> GpxExportPlugin::createOptionWidget() const noexcept

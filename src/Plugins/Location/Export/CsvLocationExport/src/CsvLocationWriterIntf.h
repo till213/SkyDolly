@@ -25,19 +25,18 @@
 #ifndef CSVLOCATIONWRITERINTF_H
 #define CSVLOCATIONWRITERINTF_H
 
-#include <QDateTime>
+#include <vector>
 
 class QIODevice;
 
-class Flight;
-class Aircraft;
+class Location;
 
 class CsvLocationWriterIntf
 {
 public:
     virtual ~CsvLocationWriterIntf() = default;
 
-    virtual bool write(QIODevice &ioDevice) noexcept = 0;
+    virtual bool write(const std::vector<Location> &locations, QIODevice &ioDevice) noexcept = 0;
 };
 
 #endif // CSVLOCATIONWRITERINTF_H

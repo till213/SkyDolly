@@ -31,9 +31,6 @@
 #include <QChar>
 #include <QString>
 #include <QStringBuilder>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Convert.h>
 #include <Kernel/Unit.h>
@@ -50,15 +47,15 @@
 
 namespace
 {
-    inline const QString TimestampColumn = QStringLiteral("Timestamp");
-    inline const QString UtcColumn = QStringLiteral("UTC");
-    inline const QString Latitude = QStringLiteral("Latitude");
-    inline const QString Longitude = QStringLiteral("Longitude");
-    inline const QString AltitudeColumn = QStringLiteral("Altitude");
-    inline const QString SpeedColumn = QStringLiteral("Speed");
-    inline const QString PitchColumn = QStringLiteral("Pitch");
-    inline const QString BankColumn = QStringLiteral("Bank");
-    inline const QString HeadingColumn = QStringLiteral("Heading");
+    const QString TimestampColumn = QStringLiteral("Timestamp");
+    const QString UtcColumn = QStringLiteral("UTC");
+    const QString Latitude = QStringLiteral("Latitude");
+    const QString Longitude = QStringLiteral("Longitude");
+    const QString AltitudeColumn = QStringLiteral("Altitude");
+    const QString SpeedColumn = QStringLiteral("Speed");
+    const QString PitchColumn = QStringLiteral("Pitch");
+    const QString BankColumn = QStringLiteral("Bank");
+    const QString HeadingColumn = QStringLiteral("Heading");
 }
 
 struct PositionAndAttitudeCsvWriterPrivate
@@ -68,30 +65,18 @@ struct PositionAndAttitudeCsvWriterPrivate
     {}
 
     const CsvExportSettings &pluginSettings;
-
-    static inline const QString FileExtension {QStringLiteral("csv")};
 };
 
 // PUBLIC
 
 PositionAndAttitudeCsvWriter::PositionAndAttitudeCsvWriter(const CsvExportSettings &pluginSettings) noexcept
     : d(std::make_unique<PositionAndAttitudeCsvWriterPrivate>(pluginSettings))
-{
-#ifdef DEBUG
-    qDebug() << "PositionAndAttitudeCsvWriter::PositionAndAttitudeCsvWriter: CREATED";
-#endif
-}
+{}
 
-PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter: DELETED";
-#endif
-}
+PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() noexcept = default;
 
 bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
-    io.setTextModeEnabled(true);
     QString csv = QString(::TimestampColumn % CsvConst::CommaSep %
                           ::UtcColumn % CsvConst::CommaSep %
                           ::Latitude % CsvConst::CommaSep %

@@ -65,18 +65,13 @@ namespace
 
 struct KmlExportPluginPrivate
 {
-    KmlExportPluginPrivate() noexcept
-        : flight(nullptr),
-          styleExport(std::make_unique<KmlStyleExport>(pluginSettings))
-    {}
-
-    const Flight *flight;
-    std::unique_ptr<KmlStyleExport> styleExport;
+    const Flight *flight {nullptr};
     KmlExportSettings pluginSettings;
+    std::unique_ptr<KmlStyleExport> styleExport {std::make_unique<KmlStyleExport>(pluginSettings)};
     Unit unit;
     std::unordered_map<QString, int> aircraftTypeCount;
 
-    static inline const QString FileExtension {QStringLiteral("kml")};
+    static constexpr const char *FileExtension {"kml"};
 };
 
 // PUBLIC
@@ -103,14 +98,14 @@ FlightExportPluginBaseSettings &KmlExportPlugin::getPluginSettings() const noexc
     return d->pluginSettings;
 }
 
-QString KmlExportPlugin::getFileSuffix() const noexcept
+QString KmlExportPlugin::getFileExtension() const noexcept
 {
     return KmlExportPluginPrivate::FileExtension;
 }
 
 QString KmlExportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("Keyhole markup language (*.%1)").arg(getFileSuffix());
+    return QObject::tr("Keyhole markup language (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> KmlExportPlugin::createOptionWidget() const noexcept

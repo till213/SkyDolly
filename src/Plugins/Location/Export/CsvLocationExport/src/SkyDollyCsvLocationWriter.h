@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,33 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTRADAR24CSVWRITER_H
-#define FLIGHTRADAR24CSVWRITER_H
+#ifndef SKYDOLLYCSVLOCATIONWRITER_H
+#define SKYDOLLYCSVLOCATIONWRITER_H
 
 #include <memory>
+#include <vector>
 
 class QIODevice;
 
-#include "CsvWriterIntf.h"
+#include "CsvLocationWriterIntf.h"
 
-class Flight;
-class Aircraft;
-class CsvExportSettings;
-class PositionData;
-struct FlightRadar24CsvWriterPrivate;
+class Location;
+class CsvLocationExportSettings;
+struct SkyDollyCsvLocationWriterPrivate;
 
-class FlightRadar24CsvWriter : public CsvWriterIntf
+class SkyDollyCsvLocationWriter : public CsvLocationWriterIntf
 {
 public:
-    FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept;
-    virtual ~FlightRadar24CsvWriter() noexcept;
+    SkyDollyCsvLocationWriter(const CsvLocationExportSettings &pluginSettings) noexcept;
+    virtual ~SkyDollyCsvLocationWriter() noexcept;
 
-    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
+    virtual bool write(const std::vector<Location> &locations, QIODevice &ioDevice) noexcept override;
 
 private:
-    const std::unique_ptr<FlightRadar24CsvWriterPrivate> d;
-
-    static inline QString formatPosition(const PositionData &positionData) noexcept;
+    const std::unique_ptr<SkyDollyCsvLocationWriterPrivate> d;
 };
 
-#endif // FLIGHTRADAR24CSVWRITER_H
+#endif // SKYDOLLYCSVLOCATIONWRITER_H

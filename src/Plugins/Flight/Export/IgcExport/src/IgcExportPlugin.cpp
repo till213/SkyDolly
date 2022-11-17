@@ -109,11 +109,7 @@ namespace
 
 struct IgcExportPluginPrivate
 {
-    IgcExportPluginPrivate() noexcept
-        : flight(nullptr)
-    {}
-
-    const Flight *flight;
+    const Flight *flight {nullptr};
     IgcExportSettings pluginSettings;
     Unit unit;
 
@@ -127,7 +123,7 @@ struct IgcExportPluginPrivate
     static inline const QByteArray KRecord {"K"};
     static inline const QByteArray GRecord {"G"};
 
-    static inline const QString FileSuffix {QStringLiteral("igc")};
+    static constexpr const char *FileExtension {"igc"};
 };
 
 // PUBLIC
@@ -154,14 +150,14 @@ FlightExportPluginBaseSettings &IgcExportPlugin::getPluginSettings() const noexc
     return d->pluginSettings;
 }
 
-QString IgcExportPlugin::getFileSuffix() const noexcept
+QString IgcExportPlugin::getFileExtension() const noexcept
 {
-    return IgcExportPluginPrivate::FileSuffix;
+    return IgcExportPluginPrivate::FileExtension;
 }
 
 QString IgcExportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("International gliding commission (*.%1)").arg(getFileSuffix());
+    return QObject::tr("International gliding commission (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> IgcExportPlugin::createOptionWidget() const noexcept
