@@ -33,6 +33,8 @@
 #include <Kernel/Enum.h>
 #include <Kernel/Unit.h>
 #include <Model/Location.h>
+#include <Model/Enumeration.h>
+#include <Persistence/Service/EnumerationService.h>
 #include <PluginManager/CsvConst.h>
 #include <PluginManager/Export.h>
 #include "CsvLocationExportSettings.h"
@@ -64,6 +66,7 @@ struct SkyDollyCsvLocationWriterPrivate
     {}
 
     const CsvLocationExportSettings &pluginSettings;
+    EnumerationService enumerationService;
 
     static constexpr const char *FileExtension {"csv"};
 };
@@ -96,16 +99,25 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                           );
 
     bool ok = io.write(csv.toUtf8());
+    Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType);
+    Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
+    Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country);
     if (ok) {
         for (const Location &location : locations) {
 
-            const QString csv = location.title % CsvConst::CommaSep %
-                                location.description % CsvConst::CommaSep %
-                                QString::number(location.typeId) % CsvConst::CommaSep %
-                                QString::number(location.categoryId) % CsvConst::CommaSep %
-                                QString::number(location.countryId) % CsvConst::CommaSep %
+            QString title = location.title;
+            QString description = location.description;
+            QString identifier = location.identifier;
+            const QString locationTypeSymbolicId = locationTypeEnumeration.getItemById(location.typeId).symbolicId;
+            const QString locationCategorySymbolicId = locationCategoryEnumeration.getItemById(location.categoryId).symbolicId;
+            const QString countrySymbolicId = countryEnumeration.getItemById(location.countryId).symbolicId;
+            const QString csv = "\"" % title.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
+                                "\"" % description.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
+                                locationTypeSymbolicId % CsvConst::CommaSep %
+                                locationCategorySymbolicId % CsvConst::CommaSep %
+                                countrySymbolicId % CsvConst::CommaSep %
                                 QString::number(location.attributes) % CsvConst::CommaSep %
-                                location.identifier % CsvConst::CommaSep %
+                                "\"" % identifier.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
                                 QString::number(location.latitude) % CsvConst::CommaSep %
                                 QString::number(location.longitude) % CsvConst::CommaSep %
                                 QString::number(location.altitude) % CsvConst::CommaSep %

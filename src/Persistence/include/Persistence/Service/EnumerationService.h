@@ -51,7 +51,7 @@ public:
      *        the name of the enumeration
      * \param ok
      *        if set, \c true if successful; \c false else (unknown Enumeration name, no database connection)
-     * \return the persisted Enumeration to get, identified by the \c name
+     * \return the persisted Enumeration identified by the \c name
      */
     Enumeration getEnumerationByName(const QString &name, bool *ok = nullptr);
 
