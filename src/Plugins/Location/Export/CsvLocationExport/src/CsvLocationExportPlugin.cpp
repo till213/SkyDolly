@@ -34,6 +34,7 @@
 #include "CsvLocationExportOptionWidget.h"
 #include "CsvLocationWriterIntf.h"
 #include "SkyDollyCsvLocationWriter.h"
+#include "LittleNavmapCsvLocationWriter.h"
 #include "CsvLocationExportPlugin.h"
 
 struct CsvLocationExportPluginPrivate
@@ -77,11 +78,10 @@ bool CsvLocationExportPlugin::exportLocations(const std::vector<Location> &locat
     std::unique_ptr<CsvLocationWriterIntf> writer;
     switch (d->pluginSettings.getFormat()) {
     case CsvLocationExportSettings::Format::SkyDolly:
-        // TODO IMPLEMENT ME
         writer = std::make_unique<SkyDollyCsvLocationWriter>(d->pluginSettings);
         break;
     case CsvLocationExportSettings::Format::LittleNavmap:
-        writer = nullptr; // std::make_unique<LocationRadar24CsvWriter>(d->pluginSettings);
+        writer = std::make_unique<LittleNavmapCsvLocationWriter>(d->pluginSettings);
         break;
     }
 

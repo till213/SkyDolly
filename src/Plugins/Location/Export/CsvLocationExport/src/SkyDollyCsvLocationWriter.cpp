@@ -67,8 +67,6 @@ struct SkyDollyCsvLocationWriterPrivate
 
     const CsvLocationExportSettings &pluginSettings;
     EnumerationService enumerationService;
-
-    static constexpr const char *FileExtension {"csv"};
 };
 
 // PUBLIC
@@ -104,7 +102,6 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
     Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country);
     if (ok) {
         for (const Location &location : locations) {
-
             QString title = location.title;
             QString description = location.description;
             QString identifier = location.identifier;

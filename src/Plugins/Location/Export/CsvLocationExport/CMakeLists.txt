@@ -14,6 +14,7 @@ target_sources(${MODULE_NAME}
         src/CsvLocationExportOptionWidget.h src/CsvLocationExportOptionWidget.cpp src/CsvLocationExportOptionWidget.ui
         src/CsvLocationWriterIntf.h
         src/SkyDollyCsvLocationWriter.h src/SkyDollyCsvLocationWriter.cpp
+        src/LittleNavmapCsvLocationWriter.h src/LittleNavmapCsvLocationWriter.cpp
         src/CsvLocationExportPlugin.json
 )
 target_link_libraries(${MODULE_NAME}
