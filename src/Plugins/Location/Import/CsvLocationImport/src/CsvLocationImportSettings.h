@@ -56,6 +56,12 @@ public:
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;
 
+    int getDefaultAltitude() const noexcept;
+    void setDefaultAltitdue(int altitude) noexcept;
+
+    int getDefaultIndicatedAirspeed() const noexcept;
+    void setDefaultIndicatedAirspeed(int indicatedAirspeed) noexcept;
+
 signals:
     /*!
      * Emitted whenever the extended settings have changed.

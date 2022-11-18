@@ -74,8 +74,8 @@ SkyDollyCsvLocationParser::SkyDollyCsvLocationParser() noexcept
     : d(std::make_unique<SkyDollyCsvLocationParserPrivate>())
 {}
 
-SkyDollyCsvLocationParser::SkyDollyCsvLocationParser(SkyDollyCsvLocationParser &&rhs) = default;
-SkyDollyCsvLocationParser &SkyDollyCsvLocationParser::operator=(SkyDollyCsvLocationParser &&rhs) = default;
+SkyDollyCsvLocationParser::SkyDollyCsvLocationParser(SkyDollyCsvLocationParser &&rhs) noexcept = default;
+SkyDollyCsvLocationParser &SkyDollyCsvLocationParser::operator=(SkyDollyCsvLocationParser &&rhs) noexcept = default;
 SkyDollyCsvLocationParser::~SkyDollyCsvLocationParser() = default;
 
 std::vector<Location> SkyDollyCsvLocationParser::parse(QTextStream &textStream, bool *ok) noexcept

@@ -81,7 +81,7 @@ std::vector<Location> CsvLocationImportPlugin::importLocations(QFile &file, bool
         parser = std::make_unique<SkyDollyCsvLocationParser>();
         break;
     case CsvLocationImportSettings::Format::LittleNavmap:
-        parser = std::make_unique<LittleNavmapCsvParser>();
+        parser = std::make_unique<LittleNavmapCsvParser>(d->pluginSettings);
         break;
     }
     bool success {false};

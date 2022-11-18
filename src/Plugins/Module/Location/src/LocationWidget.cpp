@@ -72,17 +72,6 @@ namespace
     constexpr int InvalidRow {-1};
     constexpr int InvalidColumn {-1};
 
-    constexpr double DefaultAltitude {5000};
-    // Dead Sea Depression - The lowest point on Earth: -413 meters
-    // https://geology.com/below-sea-level/
-    constexpr double MinimumAltitude {-1500};
-    // https://www.reddit.com/r/flightsim/comments/ibstui/turns_out_the_maximum_altitude_in_fs2020_275000/
-    constexpr double MaximumAltitude {275000};
-    constexpr int DefaultIndicatedAirspeed {120};
-    constexpr int MinimumIndicatedAirspeed {0};
-    // NASA X-43 (Mach 9.6)
-    // https://internationalaviationhq.com/2020/06/27/17-fastest-aircraft/
-    constexpr int MaximumIndicatedAirspeed {6350};
     constexpr bool DefaultOnGround {false};
 
     constexpr double DefaultPitch {0.0};
@@ -277,12 +266,14 @@ void LocationWidget::initUi() noexcept
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
 
-    ui->defaultAltitudeSpinBox->setMinimum(::MinimumAltitude);
-    ui->defaultAltitudeSpinBox->setMaximum(::MaximumAltitude);
-    ui->defaultAltitudeSpinBox->setValue(::DefaultAltitude);
-    ui->defaultIndicatedAirspeedSpinBox->setMinimum(::MinimumIndicatedAirspeed);
-    ui->defaultIndicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
-    ui->defaultIndicatedAirspeedSpinBox->setValue(::DefaultIndicatedAirspeed);
+    ui->defaultAltitudeSpinBox->setMinimum(Const::MinimumAltitude);
+    ui->defaultAltitudeSpinBox->setMaximum(Const::MaximumAltitude);
+    ui->defaultAltitudeSpinBox->setValue(Const::DefaultAltitude);
+    ui->defaultAltitudeSpinBox->setSuffix(tr(" feet"));
+    ui->defaultIndicatedAirspeedSpinBox->setMinimum(Const::MinimumIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setValue(Const::DefaultIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setSuffix(tr(" knots"));
     ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);
 
     ui->pitchSpinBox->setMinimum(::MinimumPitch);
@@ -294,8 +285,8 @@ void LocationWidget::initUi() noexcept
     ui->trueHeadingSpinBox->setMinimum(::MinimumHeading);
     ui->trueHeadingSpinBox->setMaximum(::MaximumHeading);
     ui->trueHeadingSpinBox->setSuffix("°");
-    ui->indicatedAirspeedSpinBox->setMinimum(::MinimumIndicatedAirspeed);
-    ui->indicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
+    ui->indicatedAirspeedSpinBox->setMinimum(Const::MinimumIndicatedAirspeed);
+    ui->indicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setSuffix(tr(" knots"));
 
     const int infoGroupBoxHeight = ui->informationGroupBox->minimumHeight();

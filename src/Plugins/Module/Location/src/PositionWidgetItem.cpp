@@ -59,7 +59,7 @@ QVariant PositionWidgetItem::data(int role) const
         return QTableWidgetItem::data(role);
         break;
     }
-    return QVariant();
+    return {};
 }
 
 void PositionWidgetItem::setData(int role, const QVariant &value)

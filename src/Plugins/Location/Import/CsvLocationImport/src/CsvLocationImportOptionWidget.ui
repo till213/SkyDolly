@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>277</width>
-    <height>43</height>
+    <width>387</width>
+    <height>112</height>
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
@@ -27,6 +27,26 @@
       </size>
      </property>
     </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Default altitude:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QSpinBox" name="defaultAltitudeSpinBox"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Default indicated airspeed:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QSpinBox" name="defaultIndicatedAirspeedSpinBox"/>
    </item>
   </layout>
  </widget>

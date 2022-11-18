@@ -25,6 +25,7 @@
 #include <QWidget>
 #include <QComboBox>
 
+#include <Kernel/Const.h>
 #include <Kernel/Enum.h>
 #include "CsvLocationImportOptionWidget.h"
 #include "CsvLocationImportSettings.h"
@@ -60,6 +61,10 @@ void CsvLocationImportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CsvLocationImportOptionWidget::onFormatChanged);
+    connect(ui->defaultAltitudeSpinBox, &QSpinBox::valueChanged,
+            this, &CsvLocationImportOptionWidget::onDefaultAltitudeChanged);
+    connect(ui->defaultIndicatedAirspeedSpinBox, &QSpinBox::valueChanged,
+            this, &CsvLocationImportOptionWidget::onDefaultIndicatedAirspeedChanged);
     connect(&d->settings, &CsvLocationImportSettings::extendedSettingsChanged,
             this, &CsvLocationImportOptionWidget::updateUi);
 }
@@ -68,6 +73,14 @@ void CsvLocationImportOptionWidget::initUi() noexcept
 {
     ui->formatComboBox->addItem("Sky Dolly", Enum::toUnderlyingType(CsvLocationImportSettings::Format::SkyDolly));
     ui->formatComboBox->addItem("Little Navmap", Enum::toUnderlyingType(CsvLocationImportSettings::Format::LittleNavmap));
+
+    ui->defaultAltitudeSpinBox->setMinimum(Const::MinimumAltitude);
+    ui->defaultAltitudeSpinBox->setMaximum(Const::MaximumAltitude);
+    ui->defaultAltitudeSpinBox->setSuffix(tr(" feet"));
+
+    ui->defaultIndicatedAirspeedSpinBox->setMinimum(Const::MinimumIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setSuffix(tr(" knots"));
 }
 
 // PRIVATE SLOTS
@@ -81,10 +94,29 @@ void CsvLocationImportOptionWidget::updateUi() noexcept
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);
+    if (format != CsvLocationImportSettings::Format::SkyDolly) {
+        ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
+        ui->defaultIndicatedAirspeedSpinBox->setValue(d->settings.getDefaultIndicatedAirspeed());
+        ui->defaultAltitudeSpinBox->setEnabled(true);
+        ui->defaultIndicatedAirspeedSpinBox->setEnabled(true);
+    } else {
+        ui->defaultAltitudeSpinBox->setEnabled(false);
+        ui->defaultIndicatedAirspeedSpinBox->setEnabled(false);
+    }
 }
 
 void CsvLocationImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
 {
     const CsvLocationImportSettings::Format format = static_cast<CsvLocationImportSettings::Format>(ui->formatComboBox->currentData().toInt());
     d->settings.setFormat(format);
+}
+
+void CsvLocationImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
+{
+    d->settings.setDefaultAltitdue(value);
+}
+
+void CsvLocationImportOptionWidget::onDefaultIndicatedAirspeedChanged(int value) noexcept
+{
+    d->settings.setDefaultIndicatedAirspeed(value);
 }

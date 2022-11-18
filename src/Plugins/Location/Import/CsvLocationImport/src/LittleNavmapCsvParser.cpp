@@ -26,6 +26,7 @@
 #include <cstdint>
 #include <unordered_map>
 
+#include <QtGlobal>
 #include <QIODevice>
 #include <QTextStream>
 #include <QTextCodec>
@@ -34,6 +35,7 @@
 #include <Model/Location.h>
 #include <Model/Enumeration.h>
 #include <Persistence/Service/EnumerationService.h>
+#include "CsvLocationImportSettings.h"
 #include "LittleNavmapCsvParser.h"
 
 namespace
@@ -53,7 +55,8 @@ namespace
 struct LittleNavmapCsvParserPrivate
 {
 public:
-    LittleNavmapCsvParserPrivate() noexcept
+    LittleNavmapCsvParserPrivate(const CsvLocationImportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {
         initTypeToSymbolicIdMap();
         Enumeration locationType = enumerationService.getEnumerationByName(EnumerationService::LocationType);
@@ -62,6 +65,7 @@ public:
         worldId = country.getItemBySymbolicId(EnumerationService::CountryWorldSymbolicId).id;
     }
 
+    const CsvLocationImportSettings &pluginSettings;
     EnumerationService enumerationService;
     // Key: Litte Navmap userpoint type, value: symbolic category ID
     std::unordered_map<QString, QString> typeToSymbolicId;
@@ -92,12 +96,12 @@ private:
 
 // PUBLIC
 
-LittleNavmapCsvParser::LittleNavmapCsvParser() noexcept
-    : d(std::make_unique<LittleNavmapCsvParserPrivate>())
+LittleNavmapCsvParser::LittleNavmapCsvParser(const CsvLocationImportSettings &pluginSettings) noexcept
+    : d(std::make_unique<LittleNavmapCsvParserPrivate>(pluginSettings))
 {}
 
-LittleNavmapCsvParser::LittleNavmapCsvParser(LittleNavmapCsvParser &&rhs) = default;
-LittleNavmapCsvParser &LittleNavmapCsvParser::operator=(LittleNavmapCsvParser &&rhs) = default;
+LittleNavmapCsvParser::LittleNavmapCsvParser(LittleNavmapCsvParser &&rhs) noexcept = default;
+LittleNavmapCsvParser &LittleNavmapCsvParser::operator=(LittleNavmapCsvParser &&rhs) noexcept = default;
 LittleNavmapCsvParser::~LittleNavmapCsvParser() = default;
 
 std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool *ok) noexcept
@@ -150,13 +154,22 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
         if (!data.isNull()) {
             const double altitude = data.toDouble(&ok);
             if (ok) {
-                location.altitude = altitude;
+                if (!qFuzzyIsNull(altitude)) {
+                    location.altitude = altitude;
+                } else {
+                    // TODO Provide an option to:
+                    // - place aircraft on ground
+                    // - use default altitude
+                    // - import "as is" (0.0 feet)
+                    location.altitude = d->pluginSettings.getDefaultAltitude();
+                }
             }
         } else {
-            // Default altitude
-            // TODO Make this a plugin setting
-            location.altitude = 3000.0;
+            location.altitude = d->pluginSettings.getDefaultAltitude();
         }
+    }
+    if (ok) {
+        location.indicatedAirspeed = d->pluginSettings.getDefaultIndicatedAirspeed();
     }
     if (ok) {
         location.description = row.at(::DescriptionIndex);
