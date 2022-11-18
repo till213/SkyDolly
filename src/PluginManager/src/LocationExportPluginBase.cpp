@@ -74,7 +74,27 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
             const QFileInfo fileInfo {filePath};
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
-            ok = exportLocations(locations, filePath);
+
+            if (exportDialog->isFileDialogSelectedFile() || !fileInfo.exists()) {
+                ok = exportLocations(locations, filePath);
+            } else {
+                std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
+                messageBox->setIcon(QMessageBox::Question);
+                QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
+                messageBox->setWindowTitle(tr("Replace"));
+                messageBox->setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
+                messageBox->setInformativeText(tr("The file already exists in \"%1\".  Replacing it will overwrite its contents.").arg(fileInfo.dir().dirName()));
+                messageBox->setStandardButtons(QMessageBox::Cancel);
+                messageBox->setDefaultButton(replaceButton);
+
+                messageBox->exec();
+                const QAbstractButton *clickedButton = messageBox->clickedButton();
+                if (clickedButton == replaceButton) {
+                    ok = exportLocations(locations, filePath);
+                } else {
+                    ok = true;
+                }
+            }
         }
     }
 

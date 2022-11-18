@@ -52,10 +52,10 @@
 
 struct BasicFlightExportDialogPrivate
 {
-    BasicFlightExportDialogPrivate(const Flight &theFlight, const QString &theFileSuffix, const QString &theFileFilter, FlightExportPluginBaseSettings &thePluginSettings) noexcept
+    BasicFlightExportDialogPrivate(const Flight &theFlight, QString theFileSuffix, QString theFileFilter, FlightExportPluginBaseSettings &thePluginSettings) noexcept
         : flight(theFlight),
-          fileSuffix(theFileSuffix),
-          fileFilter(theFileFilter),
+          fileSuffix(std::move(theFileSuffix)),
+          fileFilter(std::move(theFileFilter)),
           pluginSettings(thePluginSettings)
     {}
 
@@ -275,7 +275,7 @@ void BasicFlightExportDialog::onFileSelectionButtonClicked() noexcept
 
 void BasicFlightExportDialog::onFilePathChanged()
 {
-   d->fileDialogSelectedFile = false;
+    d->fileDialogSelectedFile = false;
     updateUi();
 }
 

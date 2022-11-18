@@ -64,6 +64,7 @@ struct BasicLocationExportDialogPrivate
     QPushButton *exportButton {nullptr};
     QWidget *optionWidget {nullptr};
     Unit unit;
+    bool fileDialogSelectedFile {false};
 };
 
 // PUBLIC
@@ -95,6 +96,11 @@ void BasicLocationExportDialog::setOptionWidget(QWidget *widget) noexcept
 {
     d->optionWidget = widget;
     initOptionUi();
+}
+
+bool BasicLocationExportDialog::isFileDialogSelectedFile() const noexcept
+{
+    return d->fileDialogSelectedFile;
 }
 
 // PRIVATE
@@ -159,12 +165,14 @@ void BasicLocationExportDialog::onFileSelectionButtonClicked() noexcept
     const QString filePath = QFileDialog::getSaveFileName(this, tr("Export File"), ui->filePathLineEdit->text(), d->fileFilter);
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
+        d->fileDialogSelectedFile = true;
     }
     updateUi();
 }
 
 void BasicLocationExportDialog::onFilePathChanged()
 {
+    d->fileDialogSelectedFile = false;
     updateUi();
 }
 
