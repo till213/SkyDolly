@@ -72,8 +72,8 @@ SqlMigration::SqlMigration() noexcept
      Q_INIT_RESOURCE(Migration);
 }
 
-SqlMigration::SqlMigration(SqlMigration &&rhs) = default;
-SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) = default;
+SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;
+SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) noexcept = default;
 SqlMigration::~SqlMigration() = default;
 
 bool SqlMigration::migrate() noexcept
