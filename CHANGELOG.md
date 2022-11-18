@@ -5,6 +5,10 @@
 ### New Features
 - New location import plugin
   * [Little Navmap](https://albar965.github.io/littlenavmap.html) user points CSV import
+  
+### Improvements
+- Additional system locations
+- The system locations migration file, located at *[Sky Dolly installation directory]/Resources/migr/Locations.csv*, is now optional and can be deleted
 
 ### Bug Fixes
 - The various tabs in the Flight information dialog (Description, Aircraft, Conditions and Flight Plan) are now properly updated when importing a flight or loading a flight from the logbook
