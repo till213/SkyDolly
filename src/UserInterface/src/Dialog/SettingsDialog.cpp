@@ -62,7 +62,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
 #endif
 }
 
-SettingsDialog::~SettingsDialog() noexcept
+SettingsDialog::~SettingsDialog()
 {
 #ifdef DEBUG
     qDebug() << "SettingsDialog::~SettingsDialog: DELETED";

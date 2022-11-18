@@ -33,7 +33,7 @@
 
 #include "WidgetLib.h"
 
-class TableDateItemPrivate;
+struct TableDateItemPrivate;
 
 /*!
  * Sortable QTableWidgetItem displaying a QDate.
@@ -44,12 +44,12 @@ class WIDGET_API TableDateItem : public QTableWidgetItem
 {
 public:
     TableDateItem(const QString &dateString, const QDate &date) noexcept;
-    virtual ~TableDateItem() noexcept;
+    ~TableDateItem() noexcept override;
 
-    virtual bool operator<(const QTableWidgetItem &rhs) const noexcept override;
+    bool operator<(const QTableWidgetItem &rhs) const noexcept override;
 
 private:
-    std::unique_ptr<TableDateItemPrivate> d;
+    const std::unique_ptr<TableDateItemPrivate> d;
 };
 
 #endif // TABLEDATEITEM_H

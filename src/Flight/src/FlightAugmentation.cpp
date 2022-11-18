@@ -58,9 +58,8 @@ namespace {
     constexpr double MaxBankAngle = 25;
 }
 
-class FlightAugmentationPrivate
+struct FlightAugmentationPrivate
 {
-public:
     FlightAugmentationPrivate(FlightAugmentation::Procedures theProcedures, FlightAugmentation::Aspects theAspects)
         : procedures(theProcedures),
           aspects(theAspects)
@@ -74,18 +73,11 @@ public:
 
 FlightAugmentation::FlightAugmentation(Procedures procedures, Aspects aspects) noexcept
     : d(std::make_unique<FlightAugmentationPrivate>(procedures, aspects))
-{
-#ifdef DEBUG
-    qDebug("FlightAugmentation::~FlightAugmentation: CREATED");
-#endif
-}
+{}
 
-FlightAugmentation::~FlightAugmentation() noexcept
-{
-#ifdef DEBUG
-    qDebug("FlightAugmentation::~FlightAugmentation: DELETED");
-#endif
-}
+FlightAugmentation::FlightAugmentation(FlightAugmentation &&rhs) = default;
+FlightAugmentation &FlightAugmentation::operator=(FlightAugmentation &&rhs) = default;
+FlightAugmentation::~FlightAugmentation() = default;
 
 void FlightAugmentation::setProcedures(Procedures procedures) noexcept
 {

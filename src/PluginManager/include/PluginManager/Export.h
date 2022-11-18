@@ -26,7 +26,6 @@
 #define EXPORT_H
 
 #include <vector>
-#include <iterator>
 
 #include <QStringView>
 #include <QString>
@@ -54,7 +53,16 @@ public:
      *        the desired file suffix (e.g. \e kml or \e csv)
      * \return the file path having a suggested file name based on the given \c flight
      */
-    static QString suggestFilePath(const Flight &flight, QStringView suffix) noexcept;
+    static QString suggestFlightFilePath(const Flight &flight, QStringView suffix) noexcept;
+
+    /*!
+     * Returns a file path for location export with the suggested file name having the given \c suffix.
+     *
+     * \param suffix
+     *        the desired file suffix (e.g. \e kml or \e csv)
+     * \return the file path having a suggested file name for location export
+     */
+    static QString suggestLocationFilePath(QStringView suffix) noexcept;
 
     /*!
      * Formats the general \c number (e.g. altitude or heading) with the appropriate decimal point precision.
@@ -68,7 +76,7 @@ public:
      */
     static QString formatNumber(double number) noexcept;
 
-    static void resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) noexcept;
+    static std::vector<PositionData> resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 };
 
 #endif // EXPORT_H

@@ -51,9 +51,8 @@
 #include "FlightDialog.h"
 #include "ui_FlightDialog.h"
 
-class FlightDialogPrivate
+struct FlightDialogPrivate
 {
-public:
     FlightDialogPrivate(FlightService &theFlightService) noexcept
         : flightService(theFlightService),
           closeDialogShortcut(nullptr)
@@ -78,7 +77,7 @@ FlightDialog::FlightDialog(FlightService &flightService, QWidget *parent) noexce
 #endif
 }
 
-FlightDialog::~FlightDialog() noexcept
+FlightDialog::~FlightDialog()
 {
 #ifdef DEBUG
     qDebug() << "FlightDialog::~FlightDialog: DELETED";

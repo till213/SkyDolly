@@ -14,9 +14,9 @@ target_compile_definitions(${LIBRARY_NAME}
 target_sources(${LIBRARY_NAME}
     PRIVATE
         include/Persistence/PersistenceLib.h
-        include/Persistence/LogbookManager.h src/LogbookManager.cpp
-        include/Persistence/FlightSelector.h src/FlightSelector.cpp
-        include/Persistence/LocationSelector.h src/LocationSelector.cpp
+        include/Persistence/PersistenceManager.h src/PersistenceManager.cpp
+        include/Persistence/FlightSelector.h
+        include/Persistence/LocationSelector.h
         include/Persistence/Metadata.h
         include/Persistence/PersistedEnumerationItem.h src/PersistedEnumerationItem.cpp
         src/Dao/DatabaseDaoIntf.h

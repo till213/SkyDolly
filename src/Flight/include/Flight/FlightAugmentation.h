@@ -33,7 +33,7 @@
 #include "FlightLib.h"
 
 class Aircraft;
-class FlightAugmentationPrivate;
+struct FlightAugmentationPrivate;
 
 /*!
  * Augments flight data with attitude and velocity, for instance.
@@ -69,7 +69,11 @@ public:
     Q_DECLARE_FLAGS(Aspects, Aspect)
 
     FlightAugmentation(Procedures procedures = Procedure::All, Aspects aspects = Aspect::All) noexcept;
-    ~FlightAugmentation() noexcept;
+    FlightAugmentation(const FlightAugmentation &rhs) = delete;
+    FlightAugmentation(FlightAugmentation &&rhs);
+    FlightAugmentation &operator=(const  FlightAugmentation &rhs) = delete;
+    FlightAugmentation &operator=(FlightAugmentation &&rhs);
+    ~FlightAugmentation();
 
     void setProcedures(Procedures procedures) noexcept;
     Procedures getProcedures() const noexcept;

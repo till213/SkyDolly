@@ -19,9 +19,10 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/Color.h src/Color.cpp
         include/Kernel/Const.h
         include/Kernel/Convert.h src/Convert.cpp
+        include/Kernel/CsvParser.h src/CsvParser.cpp
         include/Kernel/Enum.h
         include/Kernel/File.h src/File.cpp
-        include/Kernel/FlightSimulator.h src/FlightSimulator.cpp
+        include/Kernel/FlightSimulator.h
         include/Kernel/Name.h
         include/Kernel/PositionParser.h src/PositionParser.cpp
         include/Kernel/Replay.h

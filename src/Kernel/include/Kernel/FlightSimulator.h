@@ -33,7 +33,6 @@
 class KERNEL_API FlightSimulator final
 {
 public:
-    FlightSimulator() noexcept;
 
     enum struct Id {
         None,
@@ -49,15 +48,13 @@ public:
     static inline const QString FlightSimulatorNamePrepar3Dv5 {QStringLiteral("Prepar3Dv5")};
 
     static inline Id nameToId(QStringView name) noexcept {
-        Id id;
+        Id id {Id::None};
         if (name == FlightSimulatorNameAll) {
             id = Id::All;
         } else if (name == FlightSimulatorNameMSFS) {
             id = Id::FS2020;
         } else if (name == FlightSimulatorNamePrepar3Dv5) {
             id = Id::Prepar3Dv5;
-        } else {
-            id = Id::None;
         }
         return id;
     }

@@ -27,9 +27,8 @@
 
 #include "ActionCheckBox.h"
 
-class ActionCheckBoxPrivate
+struct ActionCheckBoxPrivate
 {
-public:
     ActionCheckBoxPrivate(bool theWithText)  noexcept
         : action(nullptr),
           withText(theWithText)

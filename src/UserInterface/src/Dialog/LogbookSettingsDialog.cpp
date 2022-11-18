@@ -40,15 +40,14 @@
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Persistence/Service/DatabaseService.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/PersistenceManager.h>
 #include <Persistence/Metadata.h>
 #include <Widget/BackupPeriodComboBox.h>
 #include "LogbookSettingsDialog.h"
 #include "ui_LogbookSettingsDialog.h"
 
-class LogbookSettingsDialogPrivate
+struct LogbookSettingsDialogPrivate
 {
-public:
     LogbookSettingsDialogPrivate() noexcept
         : databaseService(std::make_unique<DatabaseService>())
     {}
@@ -68,9 +67,10 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
     initUi();
     frenchConnection();
 
-    LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metadata;
-    if (logbookManager.getMetadata(metadata)) {
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    bool ok {true};
+    const Metadata metadata = persistenceManager.getMetadata(&ok);
+    if (ok) {
         d->originalBackupPeriodIntlId = metadata.backupPeriodSymId;
     } else {
         d->originalBackupPeriodIntlId = Const::BackupNeverSymId;
@@ -80,7 +80,7 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
 #endif
 }
 
-LogbookSettingsDialog::~LogbookSettingsDialog() noexcept
+LogbookSettingsDialog::~LogbookSettingsDialog()
 {
 #ifdef DEBUG
     qDebug() << "LogbookSettingsDialog::~LogbookSettingsDialog: DELETED";
@@ -124,11 +124,11 @@ void LogbookSettingsDialog::initUi() noexcept
 
 void LogbookSettingsDialog::updateUi() noexcept
 {
-    LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metadata;
-    const bool ok = logbookManager.getMetadata(metadata);
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    bool ok {true};
+    const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
-        const QString logbookPath = logbookManager.getLogbookPath();
+        const QString logbookPath = persistenceManager.getLogbookPath();
         QFileInfo fileInfo = QFileInfo(logbookPath);
 
         const QString logbookDirectoryPath = QDir::toNativeSeparators(fileInfo.absolutePath());
@@ -175,7 +175,7 @@ void LogbookSettingsDialog::frenchConnection() noexcept
 
 void LogbookSettingsDialog::openLogbookDirectory() noexcept
 {
-    const QString logbookPath = LogbookManager::getInstance().getLogbookPath();
+    const QString logbookPath = PersistenceManager::getInstance().getLogbookPath();
     const QFileInfo fileInfo = QFileInfo(logbookPath);
     const QUrl url = QUrl::fromLocalFile(fileInfo.absolutePath());
     QDesktopServices::openUrl(url);

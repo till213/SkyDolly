@@ -25,26 +25,21 @@
 #ifndef FLIGHTSUMMARY_H
 #define FLIGHTSUMMARY_H
 
+#include "Kernel/Const.h"
 #include <cstdint>
 
 #include <QString>
 #include <QDateTime>
 
+#include <Kernel/Const.h>
 #include "ModelLib.h"
 
-struct MODEL_API FlightSummary
+struct MODEL_API FlightSummary final
 {
-    FlightSummary() noexcept;
-    FlightSummary(const FlightSummary &other) = default;
-    FlightSummary(FlightSummary &&other) noexcept;
-    ~FlightSummary() noexcept;
-    FlightSummary &operator=(const FlightSummary &rhs) = default;
-    FlightSummary &operator=(FlightSummary &&rhs) noexcept;
-
-    std::int64_t flightId;
+    std::int64_t flightId {Const::InvalidId};
     QDateTime creationDate;
     QString aircraftType;
-    int aircraftCount;
+    std::size_t aircraftCount {0};
     QDateTime startSimulationLocalTime;
     QDateTime startSimulationZuluTime;
     QDateTime endSimulationLocalTime;

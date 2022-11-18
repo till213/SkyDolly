@@ -22,13 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <iterator>
+#include <vector>
 
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QSqlDriver>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -37,13 +38,18 @@
 #include <LocationSelector.h>
 #include "SQLiteLocationDao.h"
 
+namespace
+{
+    // The initial capacity of the location vector (e.g. SQLite does not support returning
+    // the result count for the given SELECT query)
+    constexpr int DefaultCapacity = 25;
+}
+
 // PUBIC
 
-SQLiteLocationDao::SQLiteLocationDao() noexcept
-{}
-
-SQLiteLocationDao::~SQLiteLocationDao() noexcept
-{}
+SQLiteLocationDao::SQLiteLocationDao(SQLiteLocationDao &&rhs) = default;
+SQLiteLocationDao &SQLiteLocationDao::operator=(SQLiteLocationDao &&rhs) = default;
+SQLiteLocationDao::~SQLiteLocationDao() = default;
 
 bool SQLiteLocationDao::add(Location &location) noexcept
 {
@@ -105,7 +111,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         location.id = query.lastInsertId().toLongLong();
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLiteLocationDao::add: SQL error:" << qPrintable(query.lastError().databaseText()) << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteLocationDao::add: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -154,44 +160,42 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteLocationDao::update: SQL error:" << qPrintable(query.lastError().databaseText()) << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteLocationDao::update: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
 
     return ok;
 }
 
-bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
+std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double longitude, double distance, bool *ok) const noexcept
 {
-    QSqlQuery query;
-    query.prepare(
-        "delete "
-        "from   location "
-        "where  id = :id;"
-    );
-    query.bindValue(":id", QVariant::fromValue(id));
-
-    const bool ok = query.exec();
-#ifdef DEBUG
-    if (!ok) {
-        qDebug() << "SQLiteLocationDao::deleteById: SQL error:" << qPrintable(query.lastError().databaseText())  << "- error code:" << query.lastError().nativeErrorCode();
-    }
-#endif
-    return ok;
-}
-
-bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
-{
+    std::vector<Location> locations;
     QSqlQuery query;
     query.setForwardOnly(true);
+
+    // TODO Implement https://jonisalonen.com/2014/computing-distance-between-coordinates-can-be-simple-and-fast/
+    //      SQlite supports "math functions" from Qt 6.5 onwards:
+    //      - https://bugreports.qt.io/browse/QTBUG-108016
+    //      - https://codereview.qt-project.org/c/qt/qtbase/+/440378
     query.prepare(
         "select * "
         "from   location l "
+        "where  l.latitude = :latitude "
+        "  and  l.longitude = :longitude "
         "order by l.id;"
     );
 
-    const bool ok = query.exec();
-    if (ok) {
+    query.bindValue(":latitude", latitude);
+    query.bindValue(":longitude", longitude);
+
+    const bool success = query.exec();
+    if (success) {
+        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        if (querySizeFeature) {
+            locations.reserve(query.size());
+        } else {
+            locations.reserve(1);
+        }
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
         const int titleIdx = record.indexOf("title");
@@ -210,7 +214,7 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
         const int onGroundIdx = record.indexOf("on_ground");
         const int attributesIdx = record.indexOf("attributes");
 
-        while (ok && query.next()) {
+        while (query.next()) {
             Location location;
             location.id = query.value(idIdx).toLongLong();
             location.title = query.value(titleIdx).toString();
@@ -229,19 +233,115 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
             location.onGround = query.value(onGroundIdx).toBool();
             location.attributes = query.value(attributesIdx).toLongLong();
 
-            backInsertIterator = std::move(location);
+            locations.push_back(std::move(location));
         }
     }
 #ifdef DEBUG
     else {
-        qDebug("SQLiteLocationDao::getAll: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code:" + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteLocationDao::getByPosition: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+    }
+#endif
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return locations;
+}
+
+bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
+{
+    QSqlQuery query;
+    query.prepare(
+        "delete "
+        "from   location "
+        "where  id = :id;"
+    );
+    query.bindValue(":id", QVariant::fromValue(id));
+
+    const bool ok = query.exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug() << "SQLiteLocationDao::deleteById: SQL error:" << query.lastError().text()  << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
 }
 
-/// \todo IMPLEMENT ME
-bool SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
+std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
 {
-    return true;
+    std::vector<Location> locations;
+    QSqlQuery query;
+    query.setForwardOnly(true);
+    query.prepare(
+        "select * "
+        "from   location l "
+        "order by l.id;"
+    );
+
+    const bool success = query.exec();
+    if (success) {
+        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        if (querySizeFeature) {
+            locations.reserve(query.size());
+        } else {
+            locations.reserve(::DefaultCapacity);
+        }
+        QSqlRecord record = query.record();
+        const int idIdx = record.indexOf("id");
+        const int titleIdx = record.indexOf("title");
+        const int descriptionIdx = record.indexOf("description");
+        const int typeIdx = record.indexOf("type_id");
+        const int categoryIdx = record.indexOf("category_id");
+        const int countryIdx = record.indexOf("country_id");
+        const int identifierIdx = record.indexOf("identifier");
+        const int latitudeIdx = record.indexOf("latitude");
+        const int longitudeIdx = record.indexOf("longitude");
+        const int altitudeIdx = record.indexOf("altitude");
+        const int pitchIdx = record.indexOf("pitch");
+        const int bankIdx = record.indexOf("bank");
+        const int trueHeadingIdx = record.indexOf("true_heading");
+        const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
+        const int onGroundIdx = record.indexOf("on_ground");
+        const int attributesIdx = record.indexOf("attributes");
+
+        while (query.next()) {
+            Location location;
+            location.id = query.value(idIdx).toLongLong();
+            location.title = query.value(titleIdx).toString();
+            location.description = query.value(descriptionIdx).toString();
+            location.typeId = query.value(typeIdx).toLongLong();
+            location.categoryId = query.value(categoryIdx).toLongLong();
+            location.countryId = query.value(countryIdx).toLongLong();
+            location.identifier = query.value(identifierIdx).toString();
+            location.latitude = query.value(latitudeIdx).toDouble();
+            location.longitude = query.value(longitudeIdx).toDouble();
+            location.altitude = query.value(altitudeIdx).toDouble();
+            location.pitch = query.value(pitchIdx).toDouble();
+            location.bank = query.value(bankIdx).toDouble();
+            location.trueHeading = query.value(trueHeadingIdx).toDouble();
+            location.indicatedAirspeed = query.value(indicatedAirspeedIdx).toInt();
+            location.onGround = query.value(onGroundIdx).toBool();
+            location.attributes = query.value(attributesIdx).toLongLong();
+
+            locations.push_back(std::move(location));
+        }
+    }
+#ifdef DEBUG
+    else {
+        qDebug() << "SQLiteLocationDao::getAll: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+    }
+#endif
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return locations;
+}
+
+/// \todo IMPLEMENT ME
+std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, bool *ok) const noexcept
+{
+    std::vector<Location> locations;
+    if (ok != nullptr) {
+        *ok = true;
+    }
+    return locations;
 }

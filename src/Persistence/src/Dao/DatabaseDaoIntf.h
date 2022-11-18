@@ -25,14 +25,21 @@
 #ifndef DATABASEDAOINTF_H
 #define DATABASEDAOINTF_H
 
-class QString;
+#include <QString>
+
 class QDateTime;
 
-#include <Metadata.h>
+#include <Kernel/Version.h>
+#include "Metadata.h"
 
 class DatabaseDaoIntf
 {
 public:
+    DatabaseDaoIntf() = default;
+    DatabaseDaoIntf(const DatabaseDaoIntf &rhs) = delete;
+    DatabaseDaoIntf(DatabaseDaoIntf &&rhs) = default;
+    DatabaseDaoIntf &operator=(const DatabaseDaoIntf &rhs) = delete;
+    DatabaseDaoIntf &operator=(DatabaseDaoIntf &&rhs) = default;
     virtual ~DatabaseDaoIntf() = default;
 
     virtual bool connectDb(const QString &logbookPath) noexcept = 0;
@@ -45,9 +52,9 @@ public:
     virtual bool updateNextBackupDate(const QDateTime &date) noexcept = 0;
     virtual bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept = 0;
 
-    virtual bool getMetadata(Metadata &metadata) const noexcept = 0;
-    virtual bool getDatabaseVersion(Version &databaseVersion) const noexcept = 0;
-    virtual bool getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept = 0;
+    virtual Metadata getMetadata(bool *ok = nullptr) const noexcept = 0;
+    virtual Version getDatabaseVersion(bool *ok = nullptr) const noexcept = 0;
+    virtual QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // DATABASEDAOINTF_H

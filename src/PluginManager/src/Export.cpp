@@ -25,6 +25,7 @@
 #include <QString>
 #include <QStringView>
 #include <QRegularExpression>
+#include <QCoreApplication>
 
 #include <Kernel/Enum.h>
 #include <Kernel/Version.h>
@@ -46,7 +47,7 @@ namespace
 
 // PUBLIC
 
-QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexcept
+QString Export::suggestFlightFilePath(const Flight &flight, QStringView suffix) noexcept
 {
     // https://www.codeproject.com/tips/758861/removing-characters-which-are-not-allowed-in-windo
     static const QRegularExpression illegalInFileName = QRegularExpression(R"([\\/:*?""<>|])");
@@ -69,13 +70,22 @@ QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexce
     return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
 }
 
+QString Export::suggestLocationFilePath(QStringView suffix) noexcept
+{
+    QString suggestedFileName {QCoreApplication::translate("Export", "Location")};
+
+    const Settings &settings = Settings::getInstance();
+    return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
+}
+
 QString Export::formatNumber(double number) noexcept
 {
     return QString::number(number, 'f', ::NumberPrecision);
 }
 
-void Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) noexcept
+std::vector<PositionData> Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept
 {
+    std::vector<PositionData> interpolatedPositionData;
     // Position data
     Position &position = aircraft.getPosition();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
@@ -85,12 +95,14 @@ void Export::resamplePositionDataForExport(const Aircraft &aircraft, const Sampl
         while (timestamp <= duration) {
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Export);
             if (!positionData.isNull()) {
-                backInsertIterator = positionData;
+                interpolatedPositionData.push_back(positionData);
             }
             timestamp += deltaTime;
         }
     } else {
         // Original data requested
-        std::copy(position.begin(), position.end(), backInsertIterator);
+        interpolatedPositionData.reserve(position.count());
+        std::copy(position.begin(), position.end(), std::back_inserter(interpolatedPositionData));
     }
+    return interpolatedPositionData;
 }

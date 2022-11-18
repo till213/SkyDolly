@@ -35,6 +35,11 @@ class FlightSummary;
 class FlightDaoIntf
 {
 public:
+    FlightDaoIntf() = default;
+    FlightDaoIntf(const FlightDaoIntf &rhs) = delete;
+    FlightDaoIntf(FlightDaoIntf &&rhs) = default;
+    FlightDaoIntf &operator=(const FlightDaoIntf &rhs) = delete;
+    FlightDaoIntf &operator=(FlightDaoIntf &&rhs) = default;
     virtual ~FlightDaoIntf() = default;
 
     /*!

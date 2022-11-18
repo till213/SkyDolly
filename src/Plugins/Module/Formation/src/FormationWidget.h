@@ -62,7 +62,7 @@ public:
 
 private:
     std::unique_ptr<Ui::FormationWidget> ui;
-    std::unique_ptr<FormationWidgetPrivate> d;
+    const std::unique_ptr<FormationWidgetPrivate> d;
 
     void initUi() noexcept;
     void initTimeOffsetUi() noexcept;

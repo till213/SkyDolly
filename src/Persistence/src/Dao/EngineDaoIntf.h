@@ -26,16 +26,18 @@
 #define ENGINEDAOINTF_H
 
 #include <vector>
-#include <iterator>
 #include <cstdint>
-
-#include <QtGlobal>
 
 struct EngineData;
 
 class EngineDaoIntf
 {
 public:
+    EngineDaoIntf() = default;
+    EngineDaoIntf(const EngineDaoIntf &rhs) = delete;
+    EngineDaoIntf(EngineDaoIntf &&rhs) = default;
+    EngineDaoIntf &operator=(const EngineDaoIntf &rhs) = delete;
+    EngineDaoIntf &operator=(EngineDaoIntf &&rhs) = default;
     virtual ~EngineDaoIntf() = default;
 
     /*!
@@ -48,7 +50,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(std::int64_t aircraftId, const EngineData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<EngineData>> backInsertIterator) const noexcept = 0;
+    virtual std::vector<EngineData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept = 0;
     virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
     virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
 };

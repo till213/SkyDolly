@@ -65,7 +65,7 @@
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/LogbookService.h>
 #include <Persistence/Service/FlightService.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/PersistenceManager.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <Widget/Platform.h>
@@ -119,7 +119,7 @@ struct LogbookWidgetPrivate
     std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>()};
     FlightService &flightService;
 
-    std::int64_t flightInMemoryId {Flight::InvalidId};
+    std::int64_t flightInMemoryId {Const::InvalidId};
     Unit unit;
     FlightSelector flightSelector;
     std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
@@ -146,7 +146,7 @@ LogbookWidget::LogbookWidget(FlightService &flightService, QWidget *parent) noex
     onSelectionChanged();
     frenchConnection();
 #ifdef DEBUG
-    qDebug() << "LogbookWidget::LogbookWidget: CREATED.";
+    qDebug() << "LogbookWidget::LogbookWidget: CREATED";
 #endif
 }
 
@@ -155,7 +155,7 @@ LogbookWidget::~LogbookWidget() noexcept
     const QByteArray logbookState = ui->logTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setLogbookState(logbookState);
 #ifdef DEBUG
-    qDebug() << "LogbookWidget::~LogbookWidget: DELETED.";
+    qDebug() << "LogbookWidget::~LogbookWidget: DELETED";
 #endif
 }
 
@@ -234,7 +234,7 @@ void LogbookWidget::initFilterUi() noexcept
 
 void LogbookWidget::updateFlightTable() noexcept
 {
-    if (LogbookManager::getInstance().isConnected()) {
+    if (PersistenceManager::getInstance().isConnected()) {
 
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         d->flightInMemoryId = flight.getId();
@@ -316,7 +316,7 @@ inline void LogbookWidget::updateFlightSummaryRow(const FlightSummary &summary, 
 
     // Aircraft count
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::DisplayRole, summary.aircraftCount);
+    newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.aircraftCount));
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->logTableWidget->setItem(row, column, newItem.release());
     ++column;
@@ -366,10 +366,9 @@ inline void LogbookWidget::updateFlightSummaryRow(const FlightSummary &summary, 
 
 void LogbookWidget::updateDateSelectorUi() noexcept
 {
-    if (LogbookManager::getInstance().isConnected()) {
+    if (PersistenceManager::getInstance().isConnected()) {
         // Sorted by year, month, day
-        std::forward_list<FlightDate> flightDates;
-        d->logbookService->getFlightDates(std::front_insert_iterator(flightDates));
+        std::forward_list<FlightDate> flightDates = d->logbookService->getFlightDates();
         ui->logTreeWidget->blockSignals(true);
         ui->logTreeWidget->clear();
 
@@ -415,15 +414,15 @@ void LogbookWidget::updateEditUi() noexcept
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool active = skyConnect && skyConnect->get().isActive();
     const std::int64_t selectedFlightId = getSelectedFlightId();
-    ui->loadPushButton->setEnabled(!active && selectedFlightId != Flight::InvalidId);
-    ui->deletePushButton->setEnabled(!active && selectedFlightId != Flight::InvalidId);
+    ui->loadPushButton->setEnabled(!active && selectedFlightId != Const::InvalidId);
+    ui->deletePushButton->setEnabled(!active && selectedFlightId != Const::InvalidId);
 }
 
 void LogbookWidget::frenchConnection() noexcept
 {
     // Logbook
     const Logbook &logbook = Logbook::getInstance();
-    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
+    connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &LogbookWidget::updateUi);
     connect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
             this, &LogbookWidget::updateUi);
@@ -579,7 +578,7 @@ int LogbookWidget::getSelectedRow() const noexcept
 
 std::int64_t LogbookWidget::getSelectedFlightId() const noexcept
 {
-    std::int64_t selectedFlightId {::Flight::InvalidId};
+    std::int64_t selectedFlightId {Const::InvalidId};
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         selectedFlightId = ui->logTableWidget->item(selectedRow, LogbookWidgetPrivate::flightIdColumn)->data(Qt::EditRole).toLongLong();
@@ -647,7 +646,7 @@ void LogbookWidget::loadFlight() noexcept
 {
     if (!SkyConnectManager::getInstance().isInRecordingState()) {
         const std::int64_t selectedFlightId = getSelectedFlightId();
-        if (selectedFlightId != Flight::InvalidId) {
+        if (selectedFlightId != Const::InvalidId) {
             const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
             if (!ok) {
                 QMessageBox::critical(this, tr("Logbook error"), tr("The flight %1 could not be read from the logbook.").arg(selectedFlightId));
@@ -659,7 +658,7 @@ void LogbookWidget::loadFlight() noexcept
 void LogbookWidget::deleteFlight() noexcept
 {
     const std::int64_t selectedFlightId = getSelectedFlightId();
-    if (selectedFlightId != Flight::InvalidId) {
+    if (selectedFlightId != Const::InvalidId) {
 
         Settings &settings = Settings::getInstance();
         bool doDelete {true};

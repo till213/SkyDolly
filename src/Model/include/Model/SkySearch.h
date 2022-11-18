@@ -31,7 +31,6 @@
 #include <cstdint>
 
 #include "TimeVariableData.h"
-#include "PositionData.h"
 
 namespace SkySearch {
 
@@ -81,7 +80,7 @@ namespace SkySearch {
     template <typename T>
     int binaryIntervalSearch(const std::vector<T> &data, std::int64_t timestamp, int lowIndex, int highIndex) noexcept
     {
-        int index;
+        int index {InvalidIndex};
         if (data.size() == 0) {
             index = InvalidIndex;
         } else if (data.at(lowIndex).timestamp > timestamp) {
@@ -93,8 +92,6 @@ namespace SkySearch {
         } else if (data.back().timestamp == timestamp) {
             index = data.size() - 1;
         } else {
-
-            index = InvalidIndex;
             int low = lowIndex;
             int high = highIndex;
             while (low <= high)
@@ -126,7 +123,7 @@ namespace SkySearch {
     template <typename T>
     int linearIntervalSearch(const std::vector<T> &data, std::int64_t timestamp, int startIndex) noexcept
     {
-        int index;
+        int index {startIndex};
         if (data.size() == 0) {
             index = InvalidIndex;
         } else if (data.at(startIndex).timestamp > timestamp) {
@@ -134,7 +131,6 @@ namespace SkySearch {
         } else if (data.back().timestamp < timestamp) {
             index = InvalidIndex;
         } else {
-            index = startIndex;
             int size = data.size();
             // Linear search: increment the current index, until we find a position having a
             // timestamp > the given timestamp
@@ -163,7 +159,7 @@ namespace SkySearch {
     template <typename T>
     int updateStartIndex(const std::vector<T> &data, int startIndex, std::int64_t timestamp) noexcept
     {
-        int index = startIndex;
+        int index {startIndex};
         int size = data.size();
         if (size > 0) {
             if (timestamp < data.back().timestamp) {
@@ -201,8 +197,8 @@ namespace SkySearch {
             } else {
                 // The given timestamp lies "in the past" and could really be anywwhere
                 // -> binary search in the past
-                int low;
-                int high;
+                auto low {0};
+                auto high {data.size() - 1};
                 if (startIndex != InvalidIndex) {
                     if (timestamp < data.at(startIndex).timestamp) {
                         // Search in "the past"
@@ -213,10 +209,6 @@ namespace SkySearch {
                         low = startIndex;
                         high = data.size() - 1;
                     }
-                } else {
-                    // index not yet initialised -> search entire timeline
-                    low = 0;
-                    high = data.size() - 1;
                 }
                 index = binaryIntervalSearch(data, timestamp, low, high);
             }

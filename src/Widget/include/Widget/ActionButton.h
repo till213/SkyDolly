@@ -77,8 +77,7 @@ public:
     void setShowText(bool enable) noexcept;
 
 private:
-    Q_DISABLE_COPY(ActionButton)
-    std::unique_ptr<ActionButtonPrivate> d;
+    const std::unique_ptr<ActionButtonPrivate> d;
 
 private slots:
 

@@ -82,6 +82,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 - https://github.com/Elephant42/FS_Tool - A simple tool that allows to set the aircraft location and simulation rate
 - https://github.com/pyviator/msfs-geoshot - Takes screenshots and automatically "geotags" them
 - https://github.com/ijl20/msfs_logger_replay - IGC logger and replay (for FSX)
+- https://joinfs.net/ - Allows to synchronise multiplayer flights across different flight simulators (MSFS, Prepar3D/FSX, XPlane). Also provides a flight recorder with formation flight recording ("overdub").
 
 ## Other Useful Resources
 

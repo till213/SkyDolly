@@ -25,36 +25,30 @@
 #include <cstddef>
 #include <memory>
 #include <vector>
-#include <iterator>
 
 #include <QObject>
 
 #include "Waypoint.h"
 #include "FlightPlan.h"
 
-class FlightPlanPrivate
+struct FlightPlanPrivate
 {
-public:
-    FlightPlanPrivate() noexcept
-    {}
-
     std::vector<Waypoint> waypoints;
 };
 
 // PUBLIC
 
-FlightPlan::FlightPlan(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<FlightPlanPrivate>())
+FlightPlan::FlightPlan() noexcept
+    : d(std::make_unique<FlightPlanPrivate>())
 {}
 
-FlightPlan::~FlightPlan() noexcept
-{}
+FlightPlan::FlightPlan(FlightPlan &&rhs) = default;
+FlightPlan &FlightPlan::operator=(FlightPlan &&rhs) = default;
+FlightPlan::~FlightPlan() = default;
 
 void FlightPlan::add(const Waypoint &waypoint) noexcept
 {
     d->waypoints.push_back(waypoint);
-    emit waypointAdded(waypoint);
 }
 
 void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
@@ -89,7 +83,6 @@ void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
     }
     if (changed) {
         d->waypoints[index] = currentWaypoint;
-        emit waypointUpdated(index, currentWaypoint);
     }
 }
 
@@ -101,7 +94,6 @@ std::size_t FlightPlan::count() const noexcept
 void FlightPlan::clear() noexcept
 {
     d->waypoints.clear();
-    emit waypointsCleared();
 }
 
 FlightPlan::Iterator FlightPlan::begin() noexcept
@@ -122,11 +114,6 @@ const FlightPlan::Iterator FlightPlan::begin() const noexcept
 const FlightPlan::Iterator FlightPlan::end() const noexcept
 {
     return Iterator(d->waypoints.end());
-}
-
-FlightPlan::BackInsertIterator FlightPlan::backInsertIterator() noexcept
-{
-    return std::back_inserter(d->waypoints);
 }
 
 // OPERATORS

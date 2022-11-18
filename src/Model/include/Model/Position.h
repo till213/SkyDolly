@@ -30,20 +30,12 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API Position : public AbstractComponent<PositionData>
+class MODEL_API Position final : public AbstractComponent<PositionData>
 {
 public:
     explicit Position(const AircraftInfo &aircraftInfo) noexcept;
-    Position(Position &other) = default;
-    Position(Position &&other) = default;
-    ~Position() noexcept override;
-    Position &operator=(const Position &rhs) = default;
-    Position &operator=(Position &&rhs) = default;
 
-    const PositionData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
-
-private:
-    PositionData m_currentPositionData;
+    PositionData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 };
 
 #endif // POSITION_H

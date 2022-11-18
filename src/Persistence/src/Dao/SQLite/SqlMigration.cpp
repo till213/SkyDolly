@@ -30,11 +30,9 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <QTextCodec>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Const.h>
+#include <Model/Enumeration.h>
 #include <Model/Location.h>
 #include <Service/EnumerationService.h>
 #include "SQLiteLocationDao.h"
@@ -43,8 +41,6 @@
 
 namespace
 {
-    constexpr char MigrationDirectory[] = "Resources/migr";
-
     // Also refer to Locations.csv
     constexpr int TitleIndex = 1;
     constexpr int DescriptionIndex = 2;
@@ -62,33 +58,23 @@ namespace
     constexpr int AttributesIndex = 14;
 }
 
-class SqlMigrationPrivate
+struct SqlMigrationPrivate
 {
-public:
-    SqlMigrationPrivate()
-    {}
-
     SQLiteLocationDao locationDao;
     EnumerationService enumerationService;
 };
 
 // PUBLIC
 
-SqlMigration::SqlMigration()
+SqlMigration::SqlMigration() noexcept
     : d(std::make_unique<SqlMigrationPrivate>())
 {
      Q_INIT_RESOURCE(Migration);
-#ifdef DEBUG
-    qDebug() << "SqlMigration::SqlMigration: CREATED";
-#endif
 }
 
-SqlMigration::~SqlMigration()
-{
-#ifdef DEBUG
-    qDebug() << "SqlMigration::~SqlMigration: DELETED";
-#endif
-}
+SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;
+SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) noexcept = default;
+SqlMigration::~SqlMigration() = default;
 
 bool SqlMigration::migrate() noexcept
 {
@@ -139,7 +125,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
                 const QRegularExpressionMatch tagMatch = it.next();
                 QString tag = tagMatch.captured(1);
 #ifdef DEBUG
-                qDebug("SqlMigration::migrate: %s", qPrintable(tag));
+                qDebug() << "SqlMigration::migrate:" << tag;
 #endif
                 SqlMigrationStep step;
                 ok = step.parseTag(tagMatch);
@@ -161,7 +147,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
     // https://regex101.com/
     static const QRegularExpression uuidRegExp {R"(["]?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})["]?)"};
     static const QRegularExpression csvRegExp {
-        R"(["|,]?([^"]+)["]?,)"       // Title
+        R"(^["|,]?([^"]+)["]?,)"      // Title
         R"(["]?([^"]*)["]?,)"         // Description (optional)
         R"(["]?([^"]*)["]?,)"         // Category (symbolic ID) (optional)
         R"(["]?([^"]*)["]?,)"         // Country (symbolic ID) (optional)
@@ -224,22 +210,19 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
     Location location;
     location.title = locationMatch.captured(::TitleIndex);
     location.description = locationMatch.captured(::DescriptionIndex).replace("\\n", "\n");
-    Enumeration locationType(EnumerationService::LocationType);
-    ok = d->enumerationService.getEnumerationByName(locationType);
+    Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
     if (ok) {
-        location.typeId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id;
+        location.typeId = locationTypeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id;
     }
-    Enumeration locationCategory(EnumerationService::LocationCategory);
-    ok = d->enumerationService.getEnumerationByName(locationCategory);
+    Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
     if (ok) {
         const QString categorySymbolicId = locationMatch.captured(::CategoryIndex);
-        location.categoryId = locationCategory.getItemBySymbolicId(categorySymbolicId).id;
+        location.categoryId = locationCategoryEnumeration.getItemBySymbolicId(categorySymbolicId).id;
     }
-    Enumeration country(EnumerationService::Country);
-    ok = d->enumerationService.getEnumerationByName(country);
+    Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
     if (ok) {
         const QString countrySymbolicId = locationMatch.captured(::CountryIndex);
-        location.countryId = country.getItemBySymbolicId(countrySymbolicId).id;
+        location.countryId = countryEnumeration.getItemBySymbolicId(countrySymbolicId).id;
     }
     if (ok) {
         location.identifier = locationMatch.captured(::IdentifierIndex);

@@ -55,7 +55,7 @@ protected slots:
     void onRecordingStopped() noexcept override;
 
 private:
-    std::unique_ptr<FormationPluginPrivate> d;
+    const std::unique_ptr<FormationPluginPrivate> d;
 };
 
 #endif // FORMATIONPLUGIN_H

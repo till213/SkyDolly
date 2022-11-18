@@ -50,7 +50,7 @@ protected slots:
     void onRecordingStopped() noexcept override;
 
 private:
-    std::unique_ptr<LogbookPluginPrivate> d;
+    const std::unique_ptr<LogbookPluginPrivate> d;
 };
 
 #endif // LOGBOOKPLUGIN_H

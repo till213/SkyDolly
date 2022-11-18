@@ -45,9 +45,8 @@
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 
-class AboutDialogPrivate
+struct AboutDialogPrivate
 {
-public:
     AboutDialogPrivate(QWidget &parent) noexcept
     {
         if (parent.devicePixelRatioF() >= 1.5) {
@@ -81,7 +80,7 @@ AboutDialog::AboutDialog(QWidget *parent) noexcept :
 #endif
 }
 
-AboutDialog::~AboutDialog() noexcept
+AboutDialog::~AboutDialog()
 {
 #ifdef DEBUG
     qDebug() << "AboutDialog::~AboutDialog: DELETED";

@@ -35,14 +35,13 @@
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
 #include <Persistence/Service/DatabaseService.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/PersistenceManager.h>
 #include <Persistence/Metadata.h>
 #include "LogbookBackupDialog.h"
 #include "ui_LogbookBackupDialog.h"
 
-class LogbookBackupDialogPrivate
+struct LogbookBackupDialogPrivate
 {
-public:
     LogbookBackupDialogPrivate()
         : databaseService(std::make_unique<DatabaseService>())
     {}
@@ -62,9 +61,10 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
     initUi();
     frenchConnection();
 
-    LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metadata;
-    if (logbookManager.getMetadata(metadata)) {
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    bool ok {true};
+    const Metadata metadata = persistenceManager.getMetadata(&ok);
+    if (ok) {
         d->originalBackupPeriodIntlId = metadata.backupPeriodSymId;
     } else {
         d->originalBackupPeriodIntlId = Const::BackupNeverSymId;
@@ -74,7 +74,7 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
 #endif
 }
 
-LogbookBackupDialog::~LogbookBackupDialog() noexcept
+LogbookBackupDialog::~LogbookBackupDialog()
 {
 #ifdef DEBUG
     qDebug() << "LogbookBackupDialog::~LogbookBackupDialog: DELETED";
@@ -144,12 +144,12 @@ void LogbookBackupDialog::initUi() noexcept
 
 void LogbookBackupDialog::updateUi() noexcept
 {
-    LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metadata;
-    const bool ok = logbookManager.getMetadata(metadata);
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    bool ok {true};
+    const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
         // Backup folder
-        const QString backupDirectoryPath = LogbookManager::createBackupPathIfNotExists(metadata.backupDirectoryPath);
+        const QString backupDirectoryPath = PersistenceManager::createBackupPathIfNotExists(metadata.backupDirectoryPath);
         ui->backupDirectoryLineEdit->setText(QDir::toNativeSeparators(backupDirectoryPath));
 
         // Backup period
@@ -182,7 +182,7 @@ void LogbookBackupDialog::chooseBackupFolder() noexcept
     QString path = ui->backupDirectoryLineEdit->text();
     const QDir dir(path);
     if (!dir.exists()) {
-        path = QFileInfo(LogbookManager::getInstance().getLogbookPath()).absolutePath();
+        path = QFileInfo(PersistenceManager::getInstance().getLogbookPath()).absolutePath();
     }
     const QString backupDirectoryPath = QFileDialog::getExistingDirectory(this, tr("Select Backup Folder"), path);
     if (!backupDirectoryPath.isNull()) {

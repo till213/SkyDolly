@@ -28,6 +28,10 @@
 #include <memory>
 #include <exception>
 
+#ifdef DEBUG
+#include <QDebug>
+#endif
+
 #include <GeographicLib/Geoid.hpp>
 
 #include "KernelLib.h"
@@ -45,7 +49,11 @@ class KERNEL_API Convert final
 public:
 
     Convert() noexcept;
-    ~Convert() noexcept;
+    Convert(const Convert &rhs) = delete;
+    Convert(Convert &&rhs);
+    Convert &operator=(const Convert &rhs) = delete;
+    Convert &operator=(Convert &&rhs);
+    ~Convert();
 
     /*!
      * Converts the \c height height above WGS84 reference ellipsoid to height above the earth
@@ -79,7 +87,7 @@ public:
             catch (const std::exception &ex) {
                 heightAboveGeoid = height;
 #ifdef DEBUG
-                qDebug("Convert::wgs84ToEgmGeoid: caught exception: %s", ex.what());
+                qDebug() << "Convert::wgs84ToEgmGeoid: caught exception: %s", ex.what();
 #endif
             }
         } else {
@@ -120,7 +128,7 @@ public:
             catch (const std::exception &ex) {
                 heightAboveEllipsoid = height;
 #ifdef DEBUG
-                qDebug("Convert::egmToWgs84Ellipsoid: caught exception: %s", ex.what());
+                qDebug() << "Convert::egmToWgs84Ellipsoid: caught exception:" << ex.what();
 #endif
             }
         } else {

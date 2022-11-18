@@ -27,9 +27,8 @@
 
 #include "ActionRadioButton.h"
 
-class ActionRadioButtonPrivate
+struct ActionRadioButtonPrivate
 {
-public:
     ActionRadioButtonPrivate()  noexcept
         : action(nullptr)
     {}
