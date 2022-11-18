@@ -3,7 +3,11 @@
 ## 0.13.0
 
 ### New Features
+- New location export plugin
+  * Sky Dolly CSV export
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user points CSV export
 - New location import plugin
+  * Sky Dolly CSV import
   * [Little Navmap](https://albar965.github.io/littlenavmap.html) user points CSV import
   
 ### Improvements
