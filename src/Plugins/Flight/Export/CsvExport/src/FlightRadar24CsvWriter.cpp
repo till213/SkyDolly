@@ -31,9 +31,6 @@
 #include <QChar>
 #include <QString>
 #include <QStringBuilder>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Unit.h>
@@ -49,13 +46,13 @@
 
 namespace
 {
-    inline const QString TimestampColumn = QStringLiteral("Timestamp");
-    inline const QString UtcColumn = QStringLiteral("UTC");
-    inline const QString CallsignColumn = QStringLiteral("Callsign");
-    inline const QString PositionColumn = QStringLiteral("Position");
-    inline const QString AltitudeColumn = QStringLiteral("Altitude");
-    inline const QString SpeedColumn = QStringLiteral("Speed");
-    inline const QString DirectionColumn = QStringLiteral("Direction");
+    const QString TimestampColumn = QStringLiteral("Timestamp");
+    const QString UtcColumn = QStringLiteral("UTC");
+    const QString CallsignColumn = QStringLiteral("Callsign");
+    const QString PositionColumn = QStringLiteral("Position");
+    const QString AltitudeColumn = QStringLiteral("Altitude");
+    const QString SpeedColumn = QStringLiteral("Speed");
+    const QString DirectionColumn = QStringLiteral("Direction");
 }
 
 struct FlightRadar24CsvWriterPrivate
@@ -65,30 +62,18 @@ struct FlightRadar24CsvWriterPrivate
     {}
 
     const CsvExportSettings &pluginSettings;
-
-    static inline const QString FileExtension {QStringLiteral("csv")};
 };
 
 // PUBLIC
 
 FlightRadar24CsvWriter::FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept
     : d(std::make_unique<FlightRadar24CsvWriterPrivate>(pluginSettings))
-{
-#ifdef DEBUG
-    qDebug() << "FlightRadar24CsvWriter::FlightRadar24CsvWriter: CREATED";
-#endif
-}
+{}
 
-FlightRadar24CsvWriter::~FlightRadar24CsvWriter() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FlightRadar24CsvWriter::~FlightRadar24CsvWriter: DELETED";
-#endif
-}
+FlightRadar24CsvWriter::~FlightRadar24CsvWriter() noexcept = default;
 
 bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
-    io.setTextModeEnabled(true);
     QString csv = QString(::TimestampColumn % CsvConst::CommaSep %
                           ::UtcColumn % CsvConst::CommaSep %
                           ::CallsignColumn % CsvConst::CommaSep %

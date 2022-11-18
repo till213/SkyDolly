@@ -45,7 +45,6 @@ class PLUGINMANAGER_API BasicFlightExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-
     explicit BasicFlightExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     BasicFlightExportDialog(const BasicFlightExportDialog &rhs) = delete;
     BasicFlightExportDialog(BasicFlightExportDialog &&rhs) = delete;
@@ -57,6 +56,19 @@ public:
     void setSelectedFilePath(const QString &filePath) noexcept;
 
     void setOptionWidget(QWidget *widget) noexcept;
+
+    /*!
+     * Returns whether the user has selected the file via the file selection dialog,
+     * which typically already asks the user whether to overwrite existing files.
+     *
+     * Note: the assumption here is that a file selection dialog will check the
+     * existence of a selected file. This is the case on Windows, macOS and Ubuntu
+     * (with MATE).
+     *
+     * \return \c true if the user has selected the file path via the file selection dialog;
+     *         \c false else
+     */
+    bool isFileDialogSelectedFile() const noexcept;
 
 private:
     const std::unique_ptr<Ui::BasicFlightExportDialog> ui;

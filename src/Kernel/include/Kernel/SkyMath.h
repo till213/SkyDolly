@@ -423,7 +423,7 @@ namespace SkyMath
      */
     inline double approximatePitch(double sphericalDistance, double deltaAltitude) noexcept
     {
-        double pitch;
+        double pitch {0.0};
         if (!qFuzzyIsNull(deltaAltitude)) {
             if (sphericalDistance > 0.0) {
                 pitch = std::atan(deltaAltitude / sphericalDistance);
@@ -433,9 +433,6 @@ namespace SkyMath
                 // or in other words: level (0.0 degrees pitch) on the ground
                 pitch = 0.0;
             }
-        } else {
-            // Level flight
-            pitch = 0.0;
         }
         return pitch * 180.0 / M_PI;
     }

@@ -31,6 +31,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QCompleter>
+#include <utility>
 
 #include <Kernel/Settings.h>
 #include <Model/Aircraft.h>
@@ -43,9 +44,9 @@
 
 struct BasicFlightImportDialogPrivate
 {
-    BasicFlightImportDialogPrivate(const Flight &theFlight, const QString &theFileFilter, FlightImportPluginBaseSettings &pluginSettings) noexcept
+    BasicFlightImportDialogPrivate(const Flight &theFlight, QString theFileFilter, FlightImportPluginBaseSettings &pluginSettings) noexcept
         : flight(theFlight),
-          fileFilter(theFileFilter),
+          fileFilter(std::move(theFileFilter)),
           pluginSettings(pluginSettings)
     {}
 
@@ -168,7 +169,7 @@ void BasicFlightImportDialog::updateUi() noexcept
     const QString filePath = ui->pathLineEdit->text();
     QFileInfo fileInfo {filePath};
 
-    bool fileExists;
+    bool fileExists {false};
     if (d->pluginSettings.isImportDirectoryEnabled()) {
         fileExists = fileInfo.isDir() && fileInfo.exists();
     } else {

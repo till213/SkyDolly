@@ -69,20 +69,6 @@ public:
     bool isOpenExportedFilesEnabled() const noexcept;
     void setOpenExportedFilesEnabled(bool enabled) noexcept;
 
-    /*!
-     * Returns whether the user has selected the file via the file selection dialog,
-     * which typically already asks the user whether to overwrite existing files.
-     *
-     * Note: the assumption here is that a file selection dialog will check the
-     * existence of a selected file. This is the case on Windows, macOS and Ubuntu
-     * (with MATE).
-     *
-     * \return \c true if the user has selected the file path via the file selection dialog;
-     *         \c false else
-     */
-    bool isFileDialogSelectedFile() const noexcept;
-    void setFileDialogSelectedFile(bool fileDialogSelected) noexcept;
-
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept;

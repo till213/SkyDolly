@@ -55,15 +55,11 @@
 
 struct JsonExportPluginPrivate
 {
-    JsonExportPluginPrivate() noexcept
-        : flight(nullptr)
-    {}
-
-    const Flight *flight;
+    const Flight *flight {nullptr};
     JsonExportSettings pluginSettings;
     Unit unit;
 
-    static inline const QString FileExtension {QStringLiteral("json")};
+    static constexpr const char *FileExtension {"json"};
 };
 
 // PUBLIC
@@ -90,14 +86,14 @@ FlightExportPluginBaseSettings &JsonExportPlugin::getPluginSettings() const noex
     return d->pluginSettings;
 }
 
-QString JsonExportPlugin::getFileSuffix() const noexcept
+QString JsonExportPlugin::getFileExtension() const noexcept
 {
     return JsonExportPluginPrivate::FileExtension;
 }
 
 QString JsonExportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("JavaScript object notation (*.%1)").arg(getFileSuffix());
+    return QObject::tr("JavaScript object notation (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> JsonExportPlugin::createOptionWidget() const noexcept

@@ -28,9 +28,6 @@
 #include <QString>
 #include <QStringLiteral>
 #include <QXmlStreamReader>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Convert.h>
 #include <Model/Flight.h>
@@ -44,9 +41,6 @@
 
 struct FlightAwareKmlParserPrivate
 {
-    FlightAwareKmlParserPrivate() noexcept
-    {}
-
     QString flightNumber;
 };
 
@@ -55,18 +49,9 @@ struct FlightAwareKmlParserPrivate
 FlightAwareKmlParser::FlightAwareKmlParser() noexcept
     : AbstractKmlTrackParser(),
       d(std::make_unique<FlightAwareKmlParserPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "FlightAwareKmlParser::FlightAwareKmlParser: CREATED";
-#endif
-}
+{}
 
-FlightAwareKmlParser::~FlightAwareKmlParser() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FlightAwareKmlParser::~FlightAwareKmlParser: DELETED";
-#endif
-}
+FlightAwareKmlParser::~FlightAwareKmlParser() noexcept = default;
 
 // FlightAware KML files (are expected to) have 3 Placemarks, with:
 // - <Point> Takeoff airpart

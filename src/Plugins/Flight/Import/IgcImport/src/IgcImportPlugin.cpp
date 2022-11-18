@@ -72,24 +72,18 @@ namespace
 
 struct IgcImportPluginPrivate
 {
-    IgcImportPluginPrivate()
-        : flight(nullptr),
-          throttleResponseCurve(QEasingCurve::OutExpo)
-    {}
-
-    Flight *flight;
-    IgcParser igcParser;
-
     enum struct EngineState {
         Unknown,
         Running,
         Shutdown
     };
 
+    Flight *flight {nullptr};
+    IgcParser igcParser;
     IgcImportSettings pluginSettings;
-    QEasingCurve throttleResponseCurve;
+    QEasingCurve throttleResponseCurve {QEasingCurve::OutExpo};
 
-    static const inline QString FileSuffix {QStringLiteral("igc")};
+    static constexpr const char *FileExtension {"igc"};
 };
 
 // PUBLIC
@@ -116,14 +110,14 @@ FlightImportPluginBaseSettings &IgcImportPlugin::getPluginSettings() const noexc
     return d->pluginSettings;
 }
 
-QString IgcImportPlugin::getFileSuffix() const noexcept
+QString IgcImportPlugin::getFileExtension() const noexcept
 {
-    return IgcImportPluginPrivate::FileSuffix;
+    return IgcImportPluginPrivate::FileExtension;
 }
 
 QString IgcImportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("International gliding commission (*.%1)").arg(getFileSuffix());
+    return QObject::tr("International gliding commission (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept

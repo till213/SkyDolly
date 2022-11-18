@@ -46,18 +46,15 @@
 #include "FlightExportPluginBaseSettings.h"
 #include "FlightExportPluginBase.h"
 
-struct ExportPluginBasePrivate
-{
-    ExportPluginBasePrivate()
-    {}
-
+struct FlightExportPluginBasePrivate
+{ 
     std::vector<QString> exportedFilePaths;
 };
 
 // PUBLIC
 
 FlightExportPluginBase::FlightExportPluginBase() noexcept
-    : d(std::make_unique<ExportPluginBasePrivate>())
+    : d(std::make_unique<FlightExportPluginBasePrivate>())
 {}
 
 FlightExportPluginBase::~FlightExportPluginBase() = default;
@@ -66,7 +63,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight) noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     FlightExportPluginBaseSettings &baseSettings = getPluginSettings();
-    std::unique_ptr<BasicFlightExportDialog> exportDialog = std::make_unique<BasicFlightExportDialog>(flight, getFileSuffix(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
+    std::unique_ptr<BasicFlightExportDialog> exportDialog = std::make_unique<BasicFlightExportDialog>(flight, getFileExtension(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
     // Transfer ownership to exportDialog
     exportDialog->setOptionWidget(optionWidget.release());
     bool ok {true};
@@ -75,13 +72,13 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight) noexcept
         // Remember export path
         const QString selectedFilePath = exportDialog->getSelectedFilePath();
         if (!selectedFilePath.isEmpty()) {
-            const QString filePath = File::ensureSuffix(selectedFilePath, getFileSuffix());
+            const QString filePath = File::ensureSuffix(selectedFilePath, getFileExtension());
             const QFileInfo fileInfo {filePath};
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
 
             const FlightExportPluginBaseSettings::FormationExport formationExport = getPluginSettings().getFormationExport();
-            if (formationExport == FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
+            if (formationExport == FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || exportDialog->isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportFlight(flight, filePath);
             } else {
                 std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());

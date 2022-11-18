@@ -42,7 +42,8 @@ public:
      * CSV format (flavour).
      */
     enum struct Format {
-        LittleNavmap = 0
+        SkyDolly = 0,
+        LittleNavmap = 1
     };
 
     CsvLocationImportSettings() noexcept;

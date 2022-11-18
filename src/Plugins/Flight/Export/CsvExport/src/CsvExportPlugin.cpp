@@ -49,7 +49,7 @@ public:
 
     CsvExportSettings pluginSettings;
 
-    static inline const QString FileExtension {QStringLiteral("csv")};
+    static constexpr const char *FileExtension {"csv"};
 };
 
 // PUBLIC
@@ -76,14 +76,14 @@ FlightExportPluginBaseSettings &CsvExportPlugin::getPluginSettings() const noexc
     return d->pluginSettings;
 }
 
-QString CsvExportPlugin::getFileSuffix() const noexcept
+QString CsvExportPlugin::getFileExtension() const noexcept
 {
     return CsvExportPluginPrivate::FileExtension;
 }
 
 QString CsvExportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("Comma-separated values (*.%1)").arg(getFileSuffix());
+    return QObject::tr("Comma-separated values (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept
@@ -119,6 +119,7 @@ bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
 
     bool ok {false};
     if (writer != nullptr) {
+        io.setTextModeEnabled(true);
         ok = writer->write(flight, aircraft, io);
     }
 

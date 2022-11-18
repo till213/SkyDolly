@@ -26,9 +26,6 @@
 #include <memory>
 
 #include <QString>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -46,9 +43,6 @@ namespace
 
 struct CsvExportSettingsPrivate
 {
-    CsvExportSettingsPrivate()
-    {}
-
     CsvExportSettings::Format format {::DefaultFormat};
 };
 
@@ -57,18 +51,9 @@ struct CsvExportSettingsPrivate
 CsvExportSettings::CsvExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
       d(std::make_unique<CsvExportSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "CsvExportSettings::CsvExportSettings: CREATED";
-#endif
-}
+{}
 
-CsvExportSettings::~CsvExportSettings()
-{
-#ifdef DEBUG
-    qDebug() << "CsvExportSettings::~CsvExportSettings: DELETED";
-#endif
-}
+CsvExportSettings::~CsvExportSettings() = default;
 
 CsvExportSettings::Format CsvExportSettings::getFormat() const noexcept
 {

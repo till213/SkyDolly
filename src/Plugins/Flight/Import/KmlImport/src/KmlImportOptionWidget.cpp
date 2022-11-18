@@ -22,10 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QWidget>
 #include <QComboBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include "KmlImportOptionWidget.h"
@@ -52,17 +50,9 @@ KmlImportOptionWidget::KmlImportOptionWidget(KmlImportSettings &settings, QWidge
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "KmlImportOptionWidget::KmlImportOptionWidget: CREATED";
-#endif
 }
 
-KmlImportOptionWidget::~KmlImportOptionWidget() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "KmlImportOptionWidget::~KmlImportOptionWidget: DELETED";
-#endif
-}
+KmlImportOptionWidget::~KmlImportOptionWidget() noexcept = default;
 
 // PRIVATE
 

@@ -75,15 +75,15 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    bool importLocation(LocationService &locationService) noexcept final;
+    bool importLocations(LocationService &locationService) noexcept final;
 
 protected:
     // Re-implement
     virtual LocationImportPluginBaseSettings &getPluginSettings() const noexcept = 0;
-    virtual QString getFileSuffix() const noexcept = 0;
+    virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-    virtual std::vector<Location> importLocation(QFile &file, bool *ok = nullptr) noexcept = 0;
+    virtual std::vector<Location> importLocations(QFile &file, bool *ok = nullptr) noexcept = 0;
 
 private:
     const std::unique_ptr<LocationImportPluginBasePrivate> d;

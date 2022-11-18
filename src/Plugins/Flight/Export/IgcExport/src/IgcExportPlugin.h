@@ -58,7 +58,7 @@ public:
 
 protected:
     FlightExportPluginBaseSettings &getPluginSettings() const noexcept override;
-    QString getFileSuffix() const noexcept override;
+    QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
     bool hasMultiAircraftSupport() const noexcept override;

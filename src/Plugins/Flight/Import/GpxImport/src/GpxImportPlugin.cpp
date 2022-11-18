@@ -54,16 +54,12 @@
 
 struct GpxImportPluginPrivate
 {
-    GpxImportPluginPrivate()
-        : flight(nullptr)
-    {}
-
-    Flight *flight;
+    Flight *flight {nullptr};
     GpxImportSettings pluginSettings;
     QXmlStreamReader xml;    
     std::unique_ptr<GpxParser> parser;
 
-    static inline const QString FileSuffix {QStringLiteral("gpx")};
+    static constexpr const char *FileExtension {"gpx"};
 };
 
 // PUBLIC
@@ -90,14 +86,14 @@ FlightImportPluginBaseSettings &GpxImportPlugin::getPluginSettings() const noexc
     return d->pluginSettings;
 }
 
-QString GpxImportPlugin::getFileSuffix() const noexcept
+QString GpxImportPlugin::getFileExtension() const noexcept
 {
-    return GpxImportPluginPrivate::FileSuffix;
+    return GpxImportPluginPrivate::FileExtension;
 }
 
 QString GpxImportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("GPX exchange format (*.%1)").arg(getFileSuffix());
+    return QObject::tr("GPX exchange format (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> GpxImportPlugin::createOptionWidget() const noexcept
