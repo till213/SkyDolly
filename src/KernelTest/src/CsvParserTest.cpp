@@ -71,7 +71,7 @@ void CsvParserTest::parseCsv_data() noexcept
     QTest::addColumn<CsvParser::Rows>("expectedRows");
 
     // Single row
-    CsvParser::Columns expectedColumns;
+    CsvParser::Row expectedColumns;
     expectedColumns.push_back("a");
     expectedColumns.push_back("b");
     expectedColumns.push_back("c");
@@ -175,7 +175,7 @@ void CsvParserTest::parseCsv() noexcept
     QCOMPARE(rows.size(), expectedRows.size());
     int row = 0;
     for (const auto &columns : rows) {
-        const CsvParser::Columns expectedColumns = expectedRows.at(row);
+        const CsvParser::Row expectedColumns = expectedRows.at(row);
         QCOMPARE(columns.size(), expectedColumns.size());
         int column = 0;
         for (const auto &value : columns) {

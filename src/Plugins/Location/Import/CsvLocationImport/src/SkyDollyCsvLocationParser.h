@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LITTLENAVMAPCSVPARSER_H
-#define LITTLENAVMAPCSVPARSER_H
+#ifndef SKYDOLLYCSVLOCATIONPARSER_H
+#define SKYDOLLYCSVLOCATIONPARSER_H
 
 #include <memory>
 #include <cstdint>
@@ -35,25 +35,24 @@ class QRegularExpressionMatch;
 #include "CsvLocationParserIntf.h"
 
 class Location;
-struct LittleNavmapCsvParserPrivate;
+struct SkyDollyCsvLocationParserPrivate;
 
-class LittleNavmapCsvParser : public CsvLocationParserIntf
+class SkyDollyCsvLocationParser : public CsvLocationParserIntf
 {
 public:
-    LittleNavmapCsvParser() noexcept;
-    LittleNavmapCsvParser(const LittleNavmapCsvParser &rhs) = delete;
-    LittleNavmapCsvParser(LittleNavmapCsvParser &&rhs);
-    LittleNavmapCsvParser &operator=(const LittleNavmapCsvParser &rhs) = delete;
-    LittleNavmapCsvParser &operator=(LittleNavmapCsvParser &&rhs);
-    ~LittleNavmapCsvParser();
+    SkyDollyCsvLocationParser() noexcept;
+    SkyDollyCsvLocationParser(const SkyDollyCsvLocationParser &rhs) = delete;
+    SkyDollyCsvLocationParser(SkyDollyCsvLocationParser &&rhs);
+    SkyDollyCsvLocationParser &operator=(const SkyDollyCsvLocationParser &rhs) = delete;
+    SkyDollyCsvLocationParser &operator=(SkyDollyCsvLocationParser &&rhs);
+    ~SkyDollyCsvLocationParser();
 
     virtual std::vector<Location> parse(QTextStream &textStream, bool *ok = nullptr) noexcept override;
 
 private:
-    std::unique_ptr<LittleNavmapCsvParserPrivate> d;
+    std::unique_ptr<SkyDollyCsvLocationParserPrivate> d;
 
     Location parseLocation(CsvParser::Row row, bool &ok) const noexcept;
-    inline std::int64_t mapTypeToCategoryId(const QString &type) const noexcept;
 };
 
-#endif // LITTLENAVMAPCSVPARSER_H
+#endif // SKYDOLLYCSVLOCATIONPARSER_H

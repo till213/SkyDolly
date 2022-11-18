@@ -25,6 +25,8 @@
 #ifndef LOCATION_H
 #define LOCATION_H
 
+#include <cstdint>
+
 #include <QString>
 
 #include <Kernel/Const.h>

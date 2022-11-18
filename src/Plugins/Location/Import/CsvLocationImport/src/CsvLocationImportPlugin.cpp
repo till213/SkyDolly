@@ -32,6 +32,7 @@
 #include "CsvLocationImportOptionWidget.h"
 #include "CsvLocationImportSettings.h"
 #include "CsvLocationParserIntf.h"
+#include "SkyDollyCsvLocationParser.h"
 #include "LittleNavmapCsvParser.h"
 #include "CsvLocationImportPlugin.h"
 
@@ -76,6 +77,9 @@ std::vector<Location> CsvLocationImportPlugin::importLocations(QFile &file, bool
     std::vector<Location> locations;
     std::unique_ptr<CsvLocationParserIntf> parser;
     switch (d->pluginSettings.getFormat()) {
+    case CsvLocationImportSettings::Format::SkyDolly:
+        parser = std::make_unique<SkyDollyCsvLocationParser>();
+        break;
     case CsvLocationImportSettings::Format::LittleNavmap:
         parser = std::make_unique<LittleNavmapCsvParser>();
         break;
