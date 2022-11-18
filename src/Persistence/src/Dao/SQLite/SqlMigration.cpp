@@ -32,6 +32,7 @@
 #include <QTextCodec>
 
 #include <Kernel/Const.h>
+#include <Model/Enumeration.h>
 #include <Model/Location.h>
 #include <Service/EnumerationService.h>
 #include "SQLiteLocationDao.h"
@@ -71,8 +72,8 @@ SqlMigration::SqlMigration() noexcept
      Q_INIT_RESOURCE(Migration);
 }
 
-SqlMigration::SqlMigration(SqlMigration &&rhs) = default;
-SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) = default;
+SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;
+SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) noexcept = default;
 SqlMigration::~SqlMigration() = default;
 
 bool SqlMigration::migrate() noexcept
@@ -207,19 +208,19 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
     Location location;
     location.title = locationMatch.captured(::TitleIndex);
     location.description = locationMatch.captured(::DescriptionIndex).replace("\\n", "\n");
-    Enumeration locationType = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
+    Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
     if (ok) {
-        location.typeId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id;
+        location.typeId = locationTypeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id;
     }
-    Enumeration locationCategory = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
+    Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
     if (ok) {
         const QString categorySymbolicId = locationMatch.captured(::CategoryIndex);
-        location.categoryId = locationCategory.getItemBySymbolicId(categorySymbolicId).id;
+        location.categoryId = locationCategoryEnumeration.getItemBySymbolicId(categorySymbolicId).id;
     }
-    Enumeration country = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
+    Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
     if (ok) {
         const QString countrySymbolicId = locationMatch.captured(::CountryIndex);
-        location.countryId = country.getItemBySymbolicId(countrySymbolicId).id;
+        location.countryId = countryEnumeration.getItemBySymbolicId(countrySymbolicId).id;
     }
     if (ok) {
         location.identifier = locationMatch.captured(::IdentifierIndex);

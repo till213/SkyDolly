@@ -38,9 +38,9 @@ class SqlMigration
 public:
     SqlMigration() noexcept;
     SqlMigration(const SqlMigration &rhs) = delete;
-    SqlMigration(SqlMigration &&rhs);
+    SqlMigration(SqlMigration &&rhs) noexcept;
     SqlMigration &operator=(const SqlMigration &rhs) = delete;
-    SqlMigration &operator=(SqlMigration &&rhs);
+    SqlMigration &operator=(SqlMigration &&rhs) noexcept;
     ~SqlMigration();
 
     bool migrate() noexcept;

@@ -57,7 +57,7 @@ public:
     {
         initTypeToSymbolicIdMap();
         Enumeration locationType = enumerationService.getEnumerationByName(EnumerationService::LocationType);
-        locationTypeImportId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id;
+        importTypeId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id;
         Enumeration country = enumerationService.getEnumerationByName(EnumerationService::Country);
         worldId = country.getItemBySymbolicId(EnumerationService::CountryWorldSymbolicId).id;
     }
@@ -65,7 +65,7 @@ public:
     EnumerationService enumerationService;
     // Key: Litte Navmap userpoint type, value: symbolic category ID
     std::unordered_map<QString, QString> typeToSymbolicId;
-    std::int64_t locationTypeImportId;
+    std::int64_t importTypeId;
     std::int64_t worldId;
 
 private:
@@ -108,8 +108,8 @@ std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool
     bool success {true};
     CsvParser::Rows rows = csvParser.parse(textStream, ::LittleNavmapCsvHeader);
     locations.reserve(rows.size());
-    for (const auto &columns : rows) {
-        const Location location = parseLocation(columns, success);
+    for (const auto &row : rows) {
+        const Location location = parseLocation(row, success);
         if (success) {
             locations.push_back(location);
         } else {
@@ -124,35 +124,29 @@ std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool
     return locations;
 }
 
-Location LittleNavmapCsvParser::parseLocation(CsvParser::Columns columns, bool &ok) const noexcept
+Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) const noexcept
 {
     Location location;
 
     ok = true;
-    location.title = columns.at(::TitleIndex);
+    location.title = row.at(::TitleIndex);
     location.countryId = d->worldId;
-    location.typeId = d->locationTypeImportId;
+    location.typeId = d->importTypeId;
+    const QString type = row.at(::TypeIndex);
+    location.categoryId = mapTypeToCategoryId(type);
+    location.identifier = row.at(::IdentIndex);
+    const double latitude = row.at(::LatitudeIndex).toDouble(&ok);
     if (ok) {
-        const QString type = columns.at(::TypeIndex);
-        location.categoryId = mapTypeToCategoryId(type);
+        location.latitude = latitude;
     }
     if (ok) {
-        location.identifier = columns.at(::IdentIndex);
-    }
-    if (ok) {
-        const double latitude = columns.at(::LatitudeIndex).toDouble(&ok);
-        if (ok) {
-            location.latitude = latitude;
-        }
-    }
-    if (ok) {
-        const double longitude = columns.at(::LongitudeIndex).toDouble(&ok);
+        const double longitude = row.at(::LongitudeIndex).toDouble(&ok);
         if (ok) {
             location.longitude = longitude;
         }
     }
     if (ok) {
-        const QVariant data = columns.at(::ElevationIndex);
+        const QVariant data = row.at(::ElevationIndex);
         if (!data.isNull()) {
             const double altitude = data.toDouble(&ok);
             if (ok) {
@@ -165,7 +159,7 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Columns columns, bool &
         }
     }
     if (ok) {
-        location.description = columns.at(::DescriptionIndex);
+        location.description = row.at(::DescriptionIndex);
     }
 
     return location;

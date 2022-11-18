@@ -26,36 +26,21 @@
 
 #include <QString>
 #include <QXmlStreamReader>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include "AbstractKmlTrackParser.h"
 #include "GenericKmlParser.h"
 
 struct GenericKmlParserPrivate
-{
-    GenericKmlParserPrivate() noexcept
-    {}
-};
+{};
 
 // PUBLIC
 
 GenericKmlParser::GenericKmlParser() noexcept
     : AbstractKmlTrackParser(),
       d(std::make_unique<GenericKmlParserPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "GenericKmlParser::GenericKmlParser: CREATED";
-#endif
-}
+{}
 
-GenericKmlParser::~GenericKmlParser() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "GenericKmlParser::~GenericKmlParser: DELETED";
-#endif
-}
+GenericKmlParser::~GenericKmlParser() noexcept = default;
 
 // Generic KML files (are expected to) have at least one "gx:Track"
 void GenericKmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept

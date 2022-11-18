@@ -32,11 +32,9 @@ namespace
 {
     // Keys
     constexpr const char *ImportDirectoryEnabledKey {"ImportDirectoryEnabled"};
-    constexpr const char *AddToFlightEnabledKey {"AddToFlightEnabled"};
 
     // Defaults
-    constexpr bool DefaultImportDirectoryEnabled = false;
-    constexpr bool DefaultAddToFlightEnabled = false;
+constexpr bool DefaultImportDirectoryEnabled {false};
 }
 
 struct LocationImportPluginBaseSettingsPrivate

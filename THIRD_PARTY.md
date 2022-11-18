@@ -1,6 +1,6 @@
 # Third Party Libraries
 
-Sky Dolly uses (or is "inspired by") the following third-party libraries and functionality.
+Sky Dolly uses or is "inspired by" the following third-party libraries and functionality.
 
 ## Qt Framework
 - Author: The Qt Company, various
@@ -32,7 +32,17 @@ Sky Dolly uses (or is "inspired by") the following third-party libraries and fun
 - Source: https://github.com/Turbo87/igc-parser
 - License: MIT License
 
+## CSV Parser
+- Author: Alexander Barthel
+- Source: https://github.com/albar965/atools
+- License: GPL 3
+
 ## icns.cmake
 - Author: Qix
 - Source: https://gist.github.com/Qix-/f4090181e55ea365633da8c3d0ab5249
 - License: CC0
+
+## CheckGit.cmake
+- Author: Jonathan Hamberg
+- Source: https://jonathanhamberg.com/post/cmake-embedding-git-hash/
+- License: MIT License

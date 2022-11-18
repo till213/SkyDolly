@@ -32,13 +32,13 @@
 #include "CsvLocationImportOptionWidget.h"
 #include "CsvLocationImportSettings.h"
 #include "CsvLocationParserIntf.h"
+#include "SkyDollyCsvLocationParser.h"
 #include "LittleNavmapCsvParser.h"
 #include "CsvLocationImportPlugin.h"
 
 struct CsvLocationImportPluginPrivate
 {
     CsvLocationImportSettings pluginSettings;
-
     static constexpr const char *FileSuffix {"csv"};
 };
 
@@ -57,14 +57,14 @@ LocationImportPluginBaseSettings &CsvLocationImportPlugin::getPluginSettings() c
     return d->pluginSettings;
 }
 
-QString CsvLocationImportPlugin::getFileSuffix() const noexcept
+QString CsvLocationImportPlugin::getFileExtension() const noexcept
 {
     return CsvLocationImportPluginPrivate::FileSuffix;
 }
 
 QString CsvLocationImportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("Comma-separated values (*.%1)").arg(getFileSuffix());
+    return QObject::tr("Comma-separated values (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> CsvLocationImportPlugin::createOptionWidget() const noexcept
@@ -72,11 +72,14 @@ std::unique_ptr<QWidget> CsvLocationImportPlugin::createOptionWidget() const noe
     return std::make_unique<CsvLocationImportOptionWidget>(d->pluginSettings);
 }
 
-std::vector<Location> CsvLocationImportPlugin::importLocation(QFile &file, bool *ok) noexcept
+std::vector<Location> CsvLocationImportPlugin::importLocations(QFile &file, bool *ok) noexcept
 {
     std::vector<Location> locations;
     std::unique_ptr<CsvLocationParserIntf> parser;
     switch (d->pluginSettings.getFormat()) {
+    case CsvLocationImportSettings::Format::SkyDolly:
+        parser = std::make_unique<SkyDollyCsvLocationParser>();
+        break;
     case CsvLocationImportSettings::Format::LittleNavmap:
         parser = std::make_unique<LittleNavmapCsvParser>();
         break;

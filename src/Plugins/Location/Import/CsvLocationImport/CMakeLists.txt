@@ -13,6 +13,7 @@ target_sources(${MODULE_NAME}
         src/CsvLocationImportSettings.h src/CsvLocationImportSettings.cpp
         src/CsvLocationImportOptionWidget.h src/CsvLocationImportOptionWidget.cpp src/CsvLocationImportOptionWidget.ui
         src/CsvLocationParserIntf.h
+        src/SkyDollyCsvLocationParser.h src/SkyDollyCsvLocationParser.cpp
         src/LittleNavmapCsvParser.h src/LittleNavmapCsvParser.cpp
         src/CsvLocationImportPlugin.json
         doc/Example.csv

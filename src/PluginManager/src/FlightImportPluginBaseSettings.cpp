@@ -35,19 +35,14 @@ namespace
     constexpr const char *AddToFlightEnabledKey {"AddToFlightEnabled"};
 
     // Defaults
-    constexpr bool DefaultImportDirectoryEnabled = false;
-    constexpr bool DefaultAddToFlightEnabled = false;
+    constexpr bool DefaultImportDirectoryEnabled {false};
+    constexpr bool DefaultAddToFlightEnabled {false};
 }
 
 struct FlightImportPluginBaseSettingsPrivate
 {
-    FlightImportPluginBaseSettingsPrivate()
-        : importDirectoryEnabled(::DefaultImportDirectoryEnabled),
-          addToFlightEnabled(::DefaultAddToFlightEnabled)
-    {}
-
-    bool importDirectoryEnabled;
-    bool addToFlightEnabled;
+    bool importDirectoryEnabled {::DefaultImportDirectoryEnabled};
+    bool addToFlightEnabled {::DefaultAddToFlightEnabled};
 };
 
 // PUBLIC

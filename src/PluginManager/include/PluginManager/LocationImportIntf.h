@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Location Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -34,7 +34,7 @@ class LocationService;
 class LocationImportIntf : public PluginIntf
 {
 public:
-    virtual bool importLocation(LocationService &locationService) noexcept = 0;
+    virtual bool importLocations(LocationService &locationService) noexcept = 0;
 };
 
 #define LOCATION_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationImportInterface/1.0"

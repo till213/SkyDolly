@@ -55,7 +55,7 @@ public:
 
 protected:
     FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;
-    QString getFileSuffix() const noexcept override;
+    QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
     bool importFlight(QFile &file, Flight &flight) noexcept override;

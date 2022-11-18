@@ -32,6 +32,10 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/FlightExportPluginBase.h src/FlightExportPluginBase.cpp
         include/PluginManager/FlightExportPluginBaseSettings.h src/FlightExportPluginBaseSettings.cpp
         include/PluginManager/BasicFlightExportDialog.h src/BasicFlightExportDialog.cpp src/BasicFlightExportDialog.ui
+        include/PluginManager/LocationExportIntf.h
+        include/PluginManager/LocationExportPluginBase.h src/LocationExportPluginBase.cpp
+        include/PluginManager/LocationExportPluginBaseSettings.h src/LocationExportPluginBaseSettings.cpp
+        include/PluginManager/BasicLocationExportDialog.h src/BasicLocationExportDialog.cpp src/BasicLocationExportDialog.ui
         include/PluginManager/LocationImportIntf.h
         include/PluginManager/LocationImportPluginBase.h src/LocationImportPluginBase.cpp
         include/PluginManager/LocationImportPluginBaseSettings.h src/LocationImportPluginBaseSettings.cpp

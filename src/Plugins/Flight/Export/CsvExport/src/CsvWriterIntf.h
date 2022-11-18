@@ -25,8 +25,6 @@
 #ifndef CSVWRITERINTF_H
 #define CSVWRITERINTF_H
 
-#include <QDateTime>
-
 class QIODevice;
 
 class Flight;

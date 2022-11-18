@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Location Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -56,7 +56,7 @@ LocationImportPluginBase::LocationImportPluginBase() noexcept
 
 LocationImportPluginBase::~LocationImportPluginBase() = default;
 
-bool LocationImportPluginBase::importLocation(LocationService &locationService) noexcept
+bool LocationImportPluginBase::importLocations(LocationService &locationService) noexcept
 {
     bool ok {true};
     LocationImportPluginBaseSettings &baseSettings = getPluginSettings();
@@ -71,7 +71,7 @@ bool LocationImportPluginBase::importLocation(LocationService &locationService) 
         const QString selectedPath = importDialog->getSelectedPath();
         if (baseSettings.isImportDirectoryEnabled()) {
             Settings::getInstance().setExportPath(selectedPath);
-            selectedFilePaths = File::getFilePaths(selectedPath, getFileSuffix());
+            selectedFilePaths = File::getFilePaths(selectedPath, getFileExtension());
         } else {
             const QString directoryPath = QFileInfo(selectedPath).absolutePath();
             Settings::getInstance().setExportPath(directoryPath);
@@ -127,7 +127,7 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths, Loc
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
         if (ok) {
-            std::vector<Location> locations = importLocation(d->file, &ok);
+            std::vector<Location> locations = importLocations(d->file, &ok);
             d->file.close();
             if (ok) {
                 ok = storeLocations(locations, locationService);

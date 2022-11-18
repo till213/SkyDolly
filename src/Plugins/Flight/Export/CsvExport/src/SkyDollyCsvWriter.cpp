@@ -28,9 +28,6 @@
 #include <QChar>
 #include <QString>
 #include <QStringBuilder>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/SampleRate.h>
@@ -59,30 +56,18 @@ struct SkyDollyCsvWriterPrivate
     {}
 
     const CsvExportSettings &pluginSettings;
-
-    static inline const QString FileExtension {QStringLiteral("csv")};
 };
 
 // PUBLIC
 
 SkyDollyCsvWriter::SkyDollyCsvWriter(const CsvExportSettings &pluginSettings) noexcept
     : d(std::make_unique<SkyDollyCsvWriterPrivate>(pluginSettings))
-{
-#ifdef DEBUG
-    qDebug() << "SkyDollyCsvWriter::SkyDollyCsvWriter: CREATED";
-#endif
-}
+{}
 
-SkyDollyCsvWriter::~SkyDollyCsvWriter() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "SkyDollyCsvWriter::~SkyDollyCsvWriter: DELETED";
-#endif
-}
+SkyDollyCsvWriter::~SkyDollyCsvWriter() noexcept = default;
 
 bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
-    io.setTextModeEnabled(true);
     QString csv = QString(CsvConst::TypeColumnName) % CsvConst::TabSep %
                           getPositionHeader() % CsvConst::TabSep %
                           getEngineHeader() % CsvConst::TabSep %

@@ -42,7 +42,7 @@ struct CsvParserPrivate
     QChar quoteChar;
     bool trimValue {false};
 
-    CsvParser::Columns columns;
+    CsvParser::Row row;
     QString currentValue;
 
     bool inQuotation {false};
@@ -91,7 +91,7 @@ CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header)
             continue;
         }
 
-        rows.push_back(d->columns);
+        rows.push_back(d->row);
         ++row;
     }
 
@@ -125,7 +125,7 @@ inline void CsvParser::parseLine(const QString &line) noexcept
 
     if (!d->inQuotation) {
         // Finish line
-        d->columns.push_back((d->trimValue && !d->currentValueQuoted) ? d->currentValue.trimmed() : d->currentValue);
+        d->row.push_back((d->trimValue && !d->currentValueQuoted) ? d->currentValue.trimmed() : d->currentValue);
         d->currentValue.clear();
         d->currentValueQuoted = false;
     }
@@ -154,7 +154,7 @@ inline void CsvParser::parseQuote() noexcept
 
 inline void CsvParser::parseSeparator() noexcept
 {
-    d->columns.push_back((d->trimValue && !d->currentValueQuoted) ? d->currentValue.trimmed() : d->currentValue);
+    d->row.push_back((d->trimValue && !d->currentValueQuoted) ? d->currentValue.trimmed() : d->currentValue);
     d->currentValue.clear();
     d->currentValueQuoted = false;
     d->lastChar = d->currentChar;
@@ -162,7 +162,7 @@ inline void CsvParser::parseSeparator() noexcept
 
 inline void CsvParser::reset() noexcept
 {
-    d->columns.clear();
+    d->row.clear();
     d->inQuotation = false;
     d->currentValue.clear();
     d->lastChar = '\0';

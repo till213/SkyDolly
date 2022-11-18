@@ -25,6 +25,7 @@
 #include <QString>
 #include <QStringView>
 #include <QRegularExpression>
+#include <QCoreApplication>
 
 #include <Kernel/Enum.h>
 #include <Kernel/Version.h>
@@ -46,7 +47,7 @@ namespace
 
 // PUBLIC
 
-QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexcept
+QString Export::suggestFlightFilePath(const Flight &flight, QStringView suffix) noexcept
 {
     // https://www.codeproject.com/tips/758861/removing-characters-which-are-not-allowed-in-windo
     static const QRegularExpression illegalInFileName = QRegularExpression(R"([\\/:*?""<>|])");
@@ -66,6 +67,14 @@ QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexce
     }
 
     suggestedFileName = suggestedFileName.replace(illegalInFileName, "_");
+    return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
+}
+
+QString Export::suggestLocationFilePath(QStringView suffix) noexcept
+{
+    QString suggestedFileName {QCoreApplication::translate("Export", "Location")};
+
+    const Settings &settings = Settings::getInstance();
     return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
 }
 

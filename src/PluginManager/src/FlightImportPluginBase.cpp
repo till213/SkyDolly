@@ -92,7 +92,7 @@ bool FlightImportPluginBase::importFlight(FlightService &flightService, Flight &
         const QString selectedPath = importDialog->getSelectedPath();
         if (baseSettings.isImportDirectoryEnabled()) {
             Settings::getInstance().setExportPath(selectedPath);
-            selectedFilePaths = File::getFilePaths(selectedPath, getFileSuffix());
+            selectedFilePaths = File::getFilePaths(selectedPath, getFileExtension());
         } else {
             const QString directoryPath = QFileInfo(selectedPath).absolutePath();
             Settings::getInstance().setExportPath(directoryPath);

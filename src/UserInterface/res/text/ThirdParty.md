@@ -39,6 +39,9 @@ SkyDolly CSVParser inspired by the CSV reader implementation by Alexander Barthe
 GPL-3.0 license \
 Copyright (c) 2022 Alexander Barthel
 
+The atools are part of Little Navmap, a flight planner, navigation tool, moving map and more:
+- https://github.com/albar965/littlenavmap
+
 ## icns.cmake
 - Qix
 - https://gist.github.com/Qix-/f4090181e55ea365633da8c3d0ab5249

@@ -43,8 +43,8 @@ struct CsvParserPrivate;
 class KERNEL_API CsvParser final
 {
 public:
-    using Columns = std::vector<QString>;
-    using Rows = std::vector<Columns>;
+    using Row = std::vector<QString>;
+    using Rows = std::vector<Row>;
 
     explicit CsvParser(QChar separatorChar = ',', QChar escapeChar = '"', bool trimValues = true);
     CsvParser(const CsvParser &rhs) = delete;

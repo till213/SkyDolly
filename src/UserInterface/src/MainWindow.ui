@@ -351,7 +351,7 @@
      <x>0</x>
      <y>0</y>
      <width>821</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -370,7 +370,12 @@
     </widget>
     <widget class="QMenu" name="locationImportMenu">
      <property name="title">
-      <string>Location Import</string>
+      <string>Location I&amp;mport</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="locationExportMenu">
+     <property name="title">
+      <string>Location E&amp;xport</string>
      </property>
     </widget>
     <addaction name="newLogbookAction"/>
@@ -382,6 +387,7 @@
     <addaction name="flightExportMenu"/>
     <addaction name="separator"/>
     <addaction name="locationImportMenu"/>
+    <addaction name="locationExportMenu"/>
     <addaction name="separator"/>
     <addaction name="showSettingsAction"/>
     <addaction name="showLogbookSettingsAction"/>

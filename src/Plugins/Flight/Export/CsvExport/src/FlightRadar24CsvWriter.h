@@ -25,6 +25,8 @@
 #ifndef FLIGHTRADAR24CSVWRITER_H
 #define FLIGHTRADAR24CSVWRITER_H
 
+#include <memory>
+
 class QIODevice;
 
 #include "CsvWriterIntf.h"

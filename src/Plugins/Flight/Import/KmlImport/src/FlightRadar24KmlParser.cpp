@@ -31,9 +31,6 @@
 #include <QDateTime>
 #include <QXmlStreamReader>
 #include <QRegularExpression>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Convert.h>
 #include <Model/Flight.h>
@@ -58,14 +55,12 @@ struct FlightRadar24KmlParserPrivate
     std::vector<TrackItem> trackData;
 
     FlightRadar24KmlParserPrivate() noexcept
-        : flight(nullptr),
-          xml(nullptr)
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
-    Flight *flight;
-    QXmlStreamReader *xml;
+    Flight *flight {nullptr};
+    QXmlStreamReader *xml {nullptr};
     QString documentName;
     QString flightNumber;
     QDateTime firstDateTimeUtc;
@@ -85,18 +80,9 @@ const QRegularExpression FlightRadar24KmlParserPrivate::headingRegExp {FlightRad
 
 FlightRadar24KmlParser::FlightRadar24KmlParser() noexcept
     : d(std::make_unique<FlightRadar24KmlParserPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "FlightRadar24KmlParser::FlightRadar24KmlParser: CREATED";
-#endif
-}
+{}
 
-FlightRadar24KmlParser::~FlightRadar24KmlParser() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FlightRadar24KmlParser::~FlightRadar24KmlParser: DELETED";
-#endif
-}
+FlightRadar24KmlParser::~FlightRadar24KmlParser() noexcept = default;
 
 // FlightRadar24 KML files (are expected to) have one "Route" folder with <Placemarks> containing
 // - <description> - HTML snippet containing speed and heading
