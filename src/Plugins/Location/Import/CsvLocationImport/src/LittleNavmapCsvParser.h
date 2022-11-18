@@ -26,6 +26,7 @@
 #define LITTLENAVMAPCSVPARSER_H
 
 #include <memory>
+#include <cstdint>
 
 class QTextStream;
 class QRegularExpressionMatch;

@@ -27,6 +27,10 @@
 
 #include <memory>
 #include <vector>
+#include <cstdint>
+
+#include <QString>
+#include <QStringView>
 
 class QIODevice;
 
@@ -46,6 +50,8 @@ public:
 
 private:
     const std::unique_ptr<LittleNavmapCsvLocationWriterPrivate> d;
+
+    inline QString mapCategorySymbolicIdToType(const QString &categorySymbolicId) const noexcept;
 };
 
 #endif // LITTLENAVMAPCSVLOCATIONWRITER_H
