@@ -91,7 +91,9 @@ bool SqlMigration::migrate() noexcept
         }
 #endif
         const QString locationsFilePath = migrationDirectory.absolutePath().append("/Resources/migr/Locations.csv");
-        ok = migrateCsv(locationsFilePath);
+        if (QFileInfo::exists(locationsFilePath)) {
+            ok = migrateCsv(locationsFilePath);
+        }
     }
     return ok;
 }
@@ -145,7 +147,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
     // https://regex101.com/
     static const QRegularExpression uuidRegExp {R"(["]?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})["]?)"};
     static const QRegularExpression csvRegExp {
-        R"(^["|,]?([^"]+)["]?,)"      // Title
+        R"(["|,]?([^"]+)["]?,)"       // Title
         R"(["]?([^"]*)["]?,)"         // Description (optional)
         R"(["]?([^"]*)["]?,)"         // Category (symbolic ID) (optional)
         R"(["]?([^"]*)["]?,)"         // Country (symbolic ID) (optional)
