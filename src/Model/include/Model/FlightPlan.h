@@ -46,9 +46,10 @@ public:
     FlightPlan &operator=(FlightPlan &&rhs);
     ~FlightPlan();
 
-    void add(const Waypoint &waypoint) noexcept;
+    void add(Waypoint waypoint) noexcept;
     void update(int index, const Waypoint &waypoint) noexcept;
     std::size_t count() const noexcept;
+    void reserve(std::size_t n);
     void clear() noexcept;
 
     using Iterator = std::vector<Waypoint>::iterator;

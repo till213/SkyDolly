@@ -48,6 +48,7 @@ public:
     explicit AbstractComponent(const AircraftInfo &aircraftInfo) noexcept
         : m_aircraftInfo(aircraftInfo)
     {}
+
     AbstractComponent() noexcept;
     AbstractComponent(const AbstractComponent &rhs) = default;
     AbstractComponent(AbstractComponent &&rhs) = default;
@@ -76,11 +77,11 @@ public:
      *        the data to be upserted
      * \sa upsert
      */
-    void upsertLast(const T &data) noexcept
+    void upsertLast(T data) noexcept
     {
         if (m_data.size() > 0 && m_data.back() == data)  {
             // Same timestamp -> replace
-            m_data.back() = data;
+            m_data.back() = std::move(data);
         } else {
             m_data.push_back(std::move(data));
         }
@@ -97,13 +98,13 @@ public:
      *        the data to be upserted
      * \sa upsertLast
      */
-    void upsert(const T &data) noexcept
+    void upsert(T data) noexcept
     {
         auto result = std::find_if(m_data.begin(), m_data.end(),
                                   [&data] (const TimeVariableData &d) { return d.timestamp == data.timestamp; });
         if (result != m_data.end()) {
             // Same timestamp -> update
-            *result = data;
+            *result = std::move(data);
         } else {
             m_data.push_back(std::move(data));
         }

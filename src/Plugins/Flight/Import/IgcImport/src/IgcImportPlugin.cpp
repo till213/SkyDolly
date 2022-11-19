@@ -90,18 +90,9 @@ struct IgcImportPluginPrivate
 
 IgcImportPlugin::IgcImportPlugin() noexcept
     : d(std::make_unique<IgcImportPluginPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "IgcImportPlugin::IgcImportPlugin: PLUGIN LOADED";
-#endif
-}
+{}
 
-IgcImportPlugin::~IgcImportPlugin() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "IgcImportPlugin::~IgcImportPlugin: PLUGIN UNLOADED";
-#endif
-}
+IgcImportPlugin::~IgcImportPlugin() = default;
 
 // PROTECTED
 
@@ -141,6 +132,7 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
         const double enlThresholdNorm = static_cast<double>(d->pluginSettings.getEnlThresholdPercent()) / 100.0;
 
         Convert convert;
+        position.reserve(d->igcParser.getFixes().size());
         for (const IgcParser::Fix &fix : d->igcParser.getFixes()) {
             // Import either GNSS or pressure altitude
             double heightAboveGeoid {0.0};
@@ -326,7 +318,8 @@ void IgcImportPlugin::updateWaypoints() noexcept
         // depending on how much fun the pilot had in the cockpit ;)
         std::unordered_set<std::int64_t> timestamps;
         const std::vector<IgcParser::TaskItem> tasks = d->igcParser.getTask().tasks;
-        const int nofTasks = tasks.size();
+        const auto nofTasks = tasks.size();
+        flightPlan.reserve(nofTasks);
         for (int i = 0; i < nofTasks; ++i) {
 
             const IgcParser::TaskItem &item = tasks[i];
@@ -335,7 +328,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
             waypoint.longitude = item.longitude;
             waypoint.identifier = item.description;
 
-            std::int64_t uniqueTimestamp;
+            std::int64_t uniqueTimestamp {0};
 
             // The first and last waypoint always contain the start- respectively
             // end date & time.
@@ -351,7 +344,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
             // uniqueness requirement of the persistence layer)
             if (i == 0) {
                 // First waypoint
-                waypoint.altitude = firstPositionData.altitude;
+                waypoint.altitude = static_cast<float>(firstPositionData.altitude);
                 waypoint.localTime = startDateTimeUtc.toLocalTime();
                 waypoint.zuluTime = startDateTimeUtc;
                 uniqueTimestamp = i;
@@ -363,7 +356,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
                 if (SkyMath::isSameWaypoint(SkyMath::Coordinate(item.latitude, item.longitude),
                                             SkyMath::Coordinate(firstItem.latitude, firstItem.longitude),
                                             SameWaypointDistanceThreshold)) {
-                    waypoint.altitude = firstPositionData.altitude;
+                    waypoint.altitude = static_cast<float>(firstPositionData.altitude);
                     waypoint.localTime = startDateTimeUtc.toLocalTime();
                     waypoint.zuluTime = startDateTimeUtc;
                     uniqueTimestamp = i;
@@ -377,7 +370,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
                 if (SkyMath::isSameWaypoint(SkyMath::Coordinate(item.latitude, item.longitude),
                                             SkyMath::Coordinate(lastItem.latitude, lastItem.longitude),
                                             SameWaypointDistanceThreshold)) {
-                    waypoint.altitude = lastPositionData.altitude;
+                    waypoint.altitude = static_cast<float>(lastPositionData.altitude);
                     waypoint.localTime = endDateTimeUtc.toLocalTime();
                     waypoint.zuluTime = endDateTimeUtc;
                     uniqueTimestamp = lastPositionData.timestamp - 1;
@@ -389,7 +382,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
                 }
             } else if (i == nofTasks - 1) {
                 // Last waypoint
-                waypoint.altitude = lastPositionData.altitude;
+                waypoint.altitude = static_cast<float>(lastPositionData.altitude);
                 waypoint.localTime = endDateTimeUtc.toLocalTime();
                 waypoint.zuluTime = endDateTimeUtc;
                 uniqueTimestamp = lastPositionData.timestamp;
@@ -406,7 +399,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
             // flown position
             if (waypoint.timestamp == TimeVariableData::InvalidTime) {
                 const PositionData &closestPositionData = analytics.closestPosition(waypoint.latitude, waypoint.longitude);
-                waypoint.altitude = closestPositionData.altitude;
+                waypoint.altitude = static_cast<float>(closestPositionData.altitude);
                 const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(closestPositionData.timestamp);
                 waypoint.localTime = dateTimeUtc.toLocalTime();
                 waypoint.zuluTime = dateTimeUtc;
