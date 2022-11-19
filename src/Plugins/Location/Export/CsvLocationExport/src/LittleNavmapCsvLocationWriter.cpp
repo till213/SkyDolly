@@ -56,7 +56,7 @@ namespace
     const QString LastEditColumn = QStringLiteral("Last Edit");
     const QString ImportFilenameColumn = QStringLiteral("Import Filename");
 
-    constexpr const char *OtherType = "other";
+    constexpr const char *OtherType = "Other";
 }
 
 struct LittleNavmapCsvLocationWriterPrivate
@@ -75,30 +75,30 @@ struct LittleNavmapCsvLocationWriterPrivate
 private:
     inline void initSymbolicIdToType() {
         symbolicIdToType["00"] = ::OtherType;
-        symbolicIdToType["AP"] = "airprort";
-        symbolicIdToType["AS"] = "airstrip";
-        symbolicIdToType["BR"] = "other";
-        symbolicIdToType["BU"] = "building";
-        symbolicIdToType["CA"] = "landform";
-        symbolicIdToType["CI"] = "settlement";
-        symbolicIdToType["DA"] = "other";
-        symbolicIdToType["DE"] = "landform";
-        symbolicIdToType["GL"] = "mountain";
-        symbolicIdToType["HP"] = "helipad";
-        symbolicIdToType["IS"] = "landform";
-        symbolicIdToType["LA"] = "water";
-        symbolicIdToType["LM"] = "landform";
-        symbolicIdToType["LH"] = "lighthouse";
-        symbolicIdToType["MO"] = "mountain";
-        symbolicIdToType["OT"] = "other";
-        symbolicIdToType["PA"] = "park";
-        symbolicIdToType["PO"] = "poi";
-        symbolicIdToType["SE"] = "water";
-        symbolicIdToType["SP"] = "seaport";
-        symbolicIdToType["TO"] = "settlement";
-        symbolicIdToType["RI"] = "water";
-        symbolicIdToType["VA"] = "";
-        symbolicIdToType["WA"] = "water";
+        symbolicIdToType["AP"] = "Airprort";
+        symbolicIdToType["AS"] = "Airstrip";
+        symbolicIdToType["BR"] = "POI";
+        symbolicIdToType["BU"] = "Building";
+        symbolicIdToType["CA"] = "Landform";
+        symbolicIdToType["CI"] = "Settlement";
+        symbolicIdToType["DA"] = "POI";
+        symbolicIdToType["DE"] = "Landform";
+        symbolicIdToType["GL"] = "Mountain";
+        symbolicIdToType["HP"] = "Helipad";
+        symbolicIdToType["IS"] = "Landform";
+        symbolicIdToType["LA"] = "Water";
+        symbolicIdToType["LM"] = "Landform";
+        symbolicIdToType["LH"] = "Lighthouse";
+        symbolicIdToType["MO"] = "Mountain";
+        symbolicIdToType["OT"] = ::OtherType;
+        symbolicIdToType["PA"] = "Park";
+        symbolicIdToType["PO"] = "POI";
+        symbolicIdToType["SE"] = "Water";
+        symbolicIdToType["SP"] = "Seaport";
+        symbolicIdToType["TO"] = "Settlement";
+        symbolicIdToType["RI"] = "Water";
+        symbolicIdToType["VA"] = "POI";
+        symbolicIdToType["WA"] = "Water";
     }
 };
 

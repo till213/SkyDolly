@@ -54,7 +54,7 @@ QVariant EnumerationWidgetItem::data(int role) const
         return QTableWidgetItem::data(role);
         break;
     }
-    return QVariant();
+    return {};
 }
 
 void EnumerationWidgetItem::setData(int role, const QVariant &value)

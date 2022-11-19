@@ -28,6 +28,7 @@
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
 #include <Persistence/Service/EnumerationService.h>
+#include <Widget/EnumerationComboBox.h>
 #include "CsvLocationImportOptionWidget.h"
 #include "CsvLocationImportSettings.h"
 #include "ui_CsvLocationImportOptionWidget.h"
@@ -62,6 +63,8 @@ void CsvLocationImportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CsvLocationImportOptionWidget::onFormatChanged);
+    connect(ui->defaultCountryComboBox, &EnumerationComboBox::currentIndexChanged,
+            this, &CsvLocationImportOptionWidget::onDefaultCountryChanged);
     connect(ui->defaultAltitudeSpinBox, &QSpinBox::valueChanged,
             this, &CsvLocationImportOptionWidget::onDefaultAltitudeChanged);
     connect(ui->defaultIndicatedAirspeedSpinBox, &QSpinBox::valueChanged,
@@ -91,18 +94,24 @@ void CsvLocationImportOptionWidget::initUi() noexcept
 void CsvLocationImportOptionWidget::updateUi() noexcept
 {
     const CsvLocationImportSettings::Format format = d->settings.getFormat();
-    int currentIndex = 0;
+    int currentIndex {0};
     while (currentIndex < ui->formatComboBox->count() &&
            static_cast<CsvLocationImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != format) {
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);
+
+    ui->defaultCountryComboBox->setCurrentId(d->settings.getDefaultCountryId());
+    ui->formatComboBox->setCurrentIndex(currentIndex);
     if (format != CsvLocationImportSettings::Format::SkyDolly) {
+        ui->defaultCountryComboBox->setCurrentId(d->settings.getDefaultCountryId());
         ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
         ui->defaultIndicatedAirspeedSpinBox->setValue(d->settings.getDefaultIndicatedAirspeed());
+        ui->defaultCountryComboBox->setEnabled(true);
         ui->defaultAltitudeSpinBox->setEnabled(true);
         ui->defaultIndicatedAirspeedSpinBox->setEnabled(true);
     } else {
+        ui->defaultCountryComboBox->setEnabled(false);
         ui->defaultAltitudeSpinBox->setEnabled(false);
         ui->defaultIndicatedAirspeedSpinBox->setEnabled(false);
     }
@@ -114,9 +123,14 @@ void CsvLocationImportOptionWidget::onFormatChanged([[maybe_unused]]int index) n
     d->settings.setFormat(format);
 }
 
+void CsvLocationImportOptionWidget::onDefaultCountryChanged([[maybe_unused]]int index) noexcept
+{
+    d->settings.setDefaultCountryId(ui->defaultCountryComboBox->getCurrentId());
+}
+
 void CsvLocationImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
 {
-    d->settings.setDefaultAltitdue(value);
+    d->settings.setDefaultAltitude(value);
 }
 
 void CsvLocationImportOptionWidget::onDefaultIndicatedAirspeedChanged(int value) noexcept

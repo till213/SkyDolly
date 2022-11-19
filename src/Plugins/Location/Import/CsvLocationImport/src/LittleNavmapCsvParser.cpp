@@ -59,10 +59,8 @@ public:
         : pluginSettings(pluginSettings)
     {
         initTypeToSymbolicIdMap();
-        Enumeration locationType = enumerationService.getEnumerationByName(EnumerationService::LocationType);
-        importTypeId = locationType.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id;
-        Enumeration country = enumerationService.getEnumerationByName(EnumerationService::Country);
-        worldId = country.getItemBySymbolicId(EnumerationService::CountryWorldSymbolicId).id;
+        Enumeration locationTypeEnumeration = enumerationService.getEnumerationByName(EnumerationService::LocationType);
+        importTypeId = locationTypeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id;
     }
 
     const CsvLocationImportSettings &pluginSettings;
@@ -70,11 +68,10 @@ public:
     // Key: Litte Navmap userpoint type, value: symbolic category ID
     std::unordered_map<QString, QString> typeToSymbolicId;
     std::int64_t importTypeId;
-    std::int64_t worldId;
 
 private:
     inline void initTypeToSymbolicIdMap() {
-        typeToSymbolicId["airprort"] = "AP";
+        typeToSymbolicId["airport"] = "AP";
         typeToSymbolicId["airstrip"] = "AS";
         typeToSymbolicId["building"] = "BU";
         typeToSymbolicId["helipad"] = "HP";
@@ -134,7 +131,7 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
 
     ok = true;
     location.title = row.at(::TitleIndex);
-    location.countryId = d->worldId;
+    location.countryId = d->pluginSettings.getDefaultCountryId();
     location.typeId = d->importTypeId;
     const QString type = row.at(::TypeIndex);
     location.categoryId = mapTypeToCategoryId(type);

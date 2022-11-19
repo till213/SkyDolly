@@ -22,16 +22,21 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <cstdint>
+
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
+#include <Model/Enumeration.h>
+#include <Persistence/Service/EnumerationService.h>
 #include "CsvLocationImportSettings.h"
 
 namespace
 {
     // Keys
     constexpr const char *FormatKey {"Format"};
+    constexpr const char *DefaultCountryKey {"DefaultCountry"};
     constexpr const char *DefaultAltitudeKey {"DefaultAltitude"};
     constexpr const char *DefaultIndicatedAirspeedKey {"DefaultIndicatedAirspeed"};
 
@@ -41,7 +46,15 @@ namespace
 
 struct CsvLocationImportSettingsPrivate
 {
+    CsvLocationImportSettingsPrivate()
+    {
+        EnumerationService enumerationService;
+        Enumeration countryEnumeration = enumerationService.getEnumerationByName(EnumerationService::Country);
+        worldCountryId = countryEnumeration.getItemBySymbolicId(EnumerationService::CountryWorldSymbolicId).id;
+    }
     CsvLocationImportSettings::Format format {::DefaultFormat};
+    std::int64_t worldCountryId {Const::InvalidId};
+    std::int64_t defaultCountryId {worldCountryId};
     int defaultAltitude {Const::DefaultAltitude};
     int defaultIndicatedAirspeed {Const::DefaultIndicatedAirspeed};
 };
@@ -67,14 +80,30 @@ void CsvLocationImportSettings::setFormat(Format format) noexcept
     }
 }
 
+std::int64_t CsvLocationImportSettings::getDefaultCountryId() const noexcept
+{
+    return d->defaultCountryId;
+}
+
+void CsvLocationImportSettings::setDefaultCountryId(std::int64_t countryId) noexcept
+{
+    if (d->defaultCountryId != countryId) {
+        d->defaultCountryId = countryId;
+        emit extendedSettingsChanged();
+    }
+}
+
 int CsvLocationImportSettings::getDefaultAltitude() const noexcept
 {
     return d->defaultAltitude;
 }
 
-void CsvLocationImportSettings::setDefaultAltitdue(int altitude) noexcept
+void CsvLocationImportSettings::setDefaultAltitude(int altitude) noexcept
 {
-    d->defaultAltitude = altitude;
+    if (d->defaultAltitude != altitude) {
+        d->defaultAltitude = altitude;
+        emit extendedSettingsChanged();
+    }
 }
 
 int CsvLocationImportSettings::getDefaultIndicatedAirspeed() const noexcept
@@ -84,7 +113,10 @@ int CsvLocationImportSettings::getDefaultIndicatedAirspeed() const noexcept
 
 void CsvLocationImportSettings::setDefaultIndicatedAirspeed(int indicatedAirspeed) noexcept
 {
-    d->defaultIndicatedAirspeed = indicatedAirspeed;
+    if (d->defaultIndicatedAirspeed != indicatedAirspeed) {
+        d->defaultIndicatedAirspeed = indicatedAirspeed;
+        emit extendedSettingsChanged();
+    }
 }
 
 // PROTECTED
@@ -95,6 +127,10 @@ void CsvLocationImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) 
 
     keyValue.first = ::FormatKey;
     keyValue.second = Enum::toUnderlyingType(d->format);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::DefaultCountryKey;
+    keyValue.second = d->defaultCountryId;
     keyValues.push_back(keyValue);
 
     keyValue.first = ::DefaultAltitudeKey;
@@ -114,6 +150,10 @@ void CsvLocationImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
     keyValue.second = Enum::toUnderlyingType(::DefaultFormat);
     keysWithDefaults.push_back(keyValue);
 
+    keyValue.first = ::DefaultCountryKey;
+    keyValue.second = d->worldCountryId;
+    keysWithDefaults.push_back(keyValue);
+
     keyValue.first = ::DefaultAltitudeKey;
     keyValue.second = Const::DefaultAltitude;
     keysWithDefaults.push_back(keyValue);
@@ -131,6 +171,13 @@ void CsvLocationImportSettings::restoreSettingsExtn(const Settings::ValuesByKey 
         d->format = static_cast<CsvLocationImportSettings::Format >(enumeration);
     } else {
         d->format = ::DefaultFormat;
+    }
+
+    const std::int64_t defaultCountryId = valuesByKey.at(::DefaultCountryKey).toLongLong(&ok);
+    if (ok) {
+        d->defaultCountryId = defaultCountryId;
+    } else {
+        d->defaultCountryId = d->worldCountryId;
     }
 
     const int defaultAltitude = valuesByKey.at(::DefaultAltitudeKey).toInt(&ok);
@@ -153,6 +200,7 @@ void CsvLocationImportSettings::restoreSettingsExtn(const Settings::ValuesByKey 
 void CsvLocationImportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
+    d->defaultCountryId = d->worldCountryId;
     d->defaultAltitude = Const::DefaultAltitude;
     d->defaultIndicatedAirspeed = Const::DefaultIndicatedAirspeed;
 
