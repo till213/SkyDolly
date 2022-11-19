@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 #include <vector>
 #include <unordered_map>
 
@@ -33,8 +34,8 @@
 
 struct EnumerationPrivate
 {
-    EnumerationPrivate(const QString &theName) noexcept
-        : name(theName)
+    EnumerationPrivate(QString name = QString()) noexcept
+        : name(std::move(name))
     {}
 
     QString name;
@@ -47,12 +48,14 @@ struct EnumerationPrivate
 
 // PUBLIC
 
-Enumeration::Enumeration() noexcept
-    : d(std::make_unique<EnumerationPrivate>(QString()))
-{}
+Enumeration::Enumeration(QString name) noexcept
+    : Enumeration()
+{
+    d->name = std::move(name);
+}
 
-Enumeration::Enumeration(const QString &name) noexcept
-    : d(std::make_unique<EnumerationPrivate>(name))
+Enumeration::Enumeration() noexcept
+    : d(std::make_unique<EnumerationPrivate>())
 {}
 
 Enumeration::Enumeration(Enumeration &&rhs) = default;
@@ -62,6 +65,11 @@ Enumeration::~Enumeration() = default;
 QString Enumeration::getName() const noexcept
 {
     return d->name;
+}
+
+void Enumeration::setName(QString name) noexcept
+{
+    d->name = std::move(name);
 }
 
 void Enumeration::addItem(Item item) noexcept
@@ -83,7 +91,7 @@ Enumeration::Item Enumeration::getItemBySymbolicId(QString symbolicId) const noe
     if (it != d->itemsBySymbolicId.end()) {
         return d->items[it->second];
     }
-    return Enumeration::Item();
+    return {};
 }
 
 Enumeration::Item Enumeration::getItemById(std::int64_t id) const noexcept
@@ -92,7 +100,7 @@ Enumeration::Item Enumeration::getItemById(std::int64_t id) const noexcept
     if (it != d->itemsById.end()) {
         return d->items[it->second];
     }
-    return Enumeration::Item();
+    return {};
 }
 
 QString Enumeration::getSymbolicIdById(std::int64_t id) const noexcept

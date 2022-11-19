@@ -55,7 +55,7 @@ public:
     };
 
     explicit BackupPeriodComboBox(QWidget *parent = nullptr, Selection selection = Selection::BackupPeriod) noexcept;
-    ~BackupPeriodComboBox() noexcept override;
+    ~BackupPeriodComboBox() override;
 
     Selection getSelection() const noexcept;
     void setSelection(Selection selection) noexcept;

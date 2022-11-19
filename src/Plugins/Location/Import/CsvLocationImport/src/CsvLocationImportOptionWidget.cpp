@@ -27,6 +27,7 @@
 
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
+#include <Persistence/Service/EnumerationService.h>
 #include "CsvLocationImportOptionWidget.h"
 #include "CsvLocationImportSettings.h"
 #include "ui_CsvLocationImportOptionWidget.h"
@@ -73,6 +74,8 @@ void CsvLocationImportOptionWidget::initUi() noexcept
 {
     ui->formatComboBox->addItem("Sky Dolly", Enum::toUnderlyingType(CsvLocationImportSettings::Format::SkyDolly));
     ui->formatComboBox->addItem("Little Navmap", Enum::toUnderlyingType(CsvLocationImportSettings::Format::LittleNavmap));
+
+    ui->defaultCountryComboBox->setEnumerationName(EnumerationService::Country);
 
     ui->defaultAltitudeSpinBox->setMinimum(Const::MinimumAltitude);
     ui->defaultAltitudeSpinBox->setMaximum(Const::MaximumAltitude);

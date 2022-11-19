@@ -45,8 +45,7 @@ ActionCheckBox::ActionCheckBox(bool withText, QWidget *parent) noexcept
       d(std::make_unique<ActionCheckBoxPrivate>(withText))
 {}
 
-ActionCheckBox::~ActionCheckBox() noexcept
-{}
+ActionCheckBox::~ActionCheckBox() = default;
 
 void ActionCheckBox::setAction(const QAction *action) noexcept
 {

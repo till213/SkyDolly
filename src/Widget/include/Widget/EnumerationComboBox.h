@@ -39,7 +39,11 @@ class WIDGET_API EnumerationComboBox : public QComboBox
     Q_OBJECT
 public:
     explicit EnumerationComboBox(QString enumerationName, QWidget *parent = nullptr) noexcept;
-    ~EnumerationComboBox() noexcept override;
+    explicit EnumerationComboBox(QWidget *parent = nullptr) noexcept;
+    ~EnumerationComboBox() override;
+
+    QString getEnumerationName() const;
+    void setEnumerationName(QString name) noexcept;
 
     std::int64_t getCurrentId() const noexcept;
     void setCurrentId(std::int64_t id) noexcept;

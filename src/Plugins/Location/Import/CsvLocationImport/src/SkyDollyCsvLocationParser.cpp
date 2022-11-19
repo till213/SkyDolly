@@ -61,11 +61,11 @@ namespace
 
 struct SkyDollyCsvLocationParserPrivate
 {
-public:
     EnumerationService enumerationService;
     Enumeration typeEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationType)};
     Enumeration categoryEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationCategory)};
     Enumeration countryEnumeration {enumerationService.getEnumerationByName(EnumerationService::Country)};
+    std::int64_t importTypeId {typeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id};
 };
 
 // PUBLIC
@@ -109,8 +109,8 @@ Location SkyDollyCsvLocationParser::parseLocation(CsvParser::Row row, bool &ok) 
     ok = true;
     location.title = row.at(::TitleIndex);
     location.description = row.at(::DescriptionIndex);
-    const QString typeSymbolicId = row.at(::TypeIndex);
-    location.typeId = d->typeEnumeration.getItemBySymbolicId(typeSymbolicId).id;
+    // For now imported Sky Dolly locations always are of type "imported"
+    location.typeId = d->importTypeId;
     ok = location.typeId != Const::InvalidId;
     if (ok) {
         const QString categorySymbolicId = row.at(::CategoryIndex);

@@ -26,6 +26,7 @@
 #define ENUMERATION_H
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include <QString>
@@ -45,7 +46,7 @@ struct EnumerationPrivate;
 class MODEL_API Enumeration final
 {
 public:
-    Enumeration(const QString &name) noexcept;
+    Enumeration(QString name) noexcept;
     Enumeration() noexcept;
     Enumeration(const Enumeration &rhs) = delete;
     Enumeration(Enumeration &&rhs);
@@ -60,13 +61,14 @@ public:
         {}
 
         Item_(std::atomic_int64_t id, QString thesymbolicId, QString theName) noexcept
-            : Data(id), symbolicId(thesymbolicId), name(theName)
+            : Data(id), symbolicId(std::move(thesymbolicId)), name(std::move(theName))
         {}
         QString symbolicId;
         QString name;
     };
 
     QString getName() const noexcept;
+    void setName(QString name) noexcept;
     void addItem(Item item) noexcept;
     const std::vector<Item> &items() const noexcept;
     Item getItemBySymbolicId(QString symbolicId) const noexcept;

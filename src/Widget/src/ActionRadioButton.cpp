@@ -43,8 +43,7 @@ ActionRadioButton::ActionRadioButton(QWidget *parent) noexcept
       d(std::make_unique<ActionRadioButtonPrivate>())
 {}
 
-ActionRadioButton::~ActionRadioButton() noexcept
-{}
+ActionRadioButton::~ActionRadioButton() = default;
 
 void ActionRadioButton::setAction(const QAction *action) noexcept
 {

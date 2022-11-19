@@ -48,8 +48,7 @@ BackupPeriodComboBox::BackupPeriodComboBox(QWidget *parent, Selection selection)
     initUi();
 }
 
-BackupPeriodComboBox::~BackupPeriodComboBox() noexcept
-{}
+BackupPeriodComboBox::~BackupPeriodComboBox() = default;
 
 BackupPeriodComboBox::Selection BackupPeriodComboBox::getSelection() const noexcept
 {

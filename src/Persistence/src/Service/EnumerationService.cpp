@@ -52,12 +52,12 @@ EnumerationService::EnumerationService(EnumerationService &&rhs) = default;
 EnumerationService &EnumerationService::operator=(EnumerationService &&rhs) = default;
 EnumerationService::~EnumerationService() = default;
 
-Enumeration EnumerationService::getEnumerationByName(const QString &name, bool *ok)
+Enumeration EnumerationService::getEnumerationByName(QString name, bool *ok)
 {
     Enumeration enumeration;
     bool success = QSqlDatabase::database().transaction();
     if (success) {
-        enumeration = d->enumerationDao->get(name, &success);
+        enumeration = d->enumerationDao->get(std::move(name), &success);
     }
     QSqlDatabase::database().rollback();
     if (ok != nullptr) {

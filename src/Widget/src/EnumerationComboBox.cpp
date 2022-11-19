@@ -25,9 +25,6 @@
 #include <memory>
 
 #include <QComboBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Model/Enumeration.h>
 #include <Persistence/Service/EnumerationService.h>
@@ -35,7 +32,7 @@
 
 struct EnumerationComboBoxPrivate
 {
-    EnumerationComboBoxPrivate(QString enumerationName)
+    EnumerationComboBoxPrivate(QString enumerationName = QString())
         : enumeration(enumerationName)
     {}
 
@@ -46,20 +43,29 @@ struct EnumerationComboBoxPrivate
 // PUBLIC
 
 EnumerationComboBox::EnumerationComboBox(QString enumerationName, QWidget *parent) noexcept
-    : QComboBox(parent),
-      d(std::make_unique<EnumerationComboBoxPrivate>(enumerationName))
+    : EnumerationComboBox(parent)
+
 {
+    d->enumeration = {enumerationName};
     initUi();
-#ifdef DEBUG
-    qDebug() << "EnumerationComboBox::EnumerationComboBox: CREATED, enumeration name:" << enumerationName;
-#endif
 }
 
-EnumerationComboBox::~ EnumerationComboBox() noexcept
+EnumerationComboBox::EnumerationComboBox(QWidget *parent) noexcept
+    : QComboBox(parent),
+      d(std::make_unique<EnumerationComboBoxPrivate>())
+{}
+
+EnumerationComboBox::~EnumerationComboBox() = default;
+
+QString EnumerationComboBox::getEnumerationName() const
 {
-#ifdef DEBUG
-    qDebug() << "EnumerationComboBox::~EnumerationComboBox: DELETED";
-#endif
+    return d->enumeration.getName();
+}
+
+void EnumerationComboBox::setEnumerationName(QString name) noexcept
+{
+    d->enumeration.setName(std::move(name));
+    initUi();
 }
 
 std::int64_t EnumerationComboBox::getCurrentId() const noexcept

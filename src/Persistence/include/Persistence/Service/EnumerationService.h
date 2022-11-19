@@ -53,11 +53,14 @@ public:
      *        if set, \c true if successful; \c false else (unknown Enumeration name, no database connection)
      * \return the persisted Enumeration identified by the \c name
      */
-    Enumeration getEnumerationByName(const QString &name, bool *ok = nullptr);
+    Enumeration getEnumerationByName(QString name, bool *ok = nullptr);
 
     // Implementation note:
     // Well-known database enumerations: TitleCase name must match with corresponding
     // snake_case name (without the "enum_" prefix) of the corresponding "enumeration table".
+    //
+    // At least with MinGW 8.1 (Windows) using "static constexpr const char *" does not seem
+    // to link "beyond DLL boundaries", so we use QString for now
     static inline const QString BackupPeriod {QStringLiteral("BackupPeriod")};
     static inline const QString LocationType {QStringLiteral("LocationType")};
     static inline const QString LocationCategory {QStringLiteral("LocationCategory")};
@@ -66,15 +69,15 @@ public:
     // Well-known symbolic IDs
 
     // Location type
-    static inline const QString LocationTypeSystemSymbolicId {QStringLiteral("S")};
-    static inline const QString LocationTypeImportSymbolicId {QStringLiteral("I")};
-    static inline const QString LocationTypeUserSymbolicId {QStringLiteral("U")};
+    static constexpr const char *LocationTypeSystemSymbolicId {"S"};
+    static constexpr const char *LocationTypeImportSymbolicId {"I"};
+    static constexpr const char *LocationTypeUserSymbolicId {"U"};
 
     // Location category
-    static inline const QString LocationCategoryNoneSymbolicId {QStringLiteral("00")};
+    static constexpr const char *LocationCategoryNoneSymbolicId {"00"};
 
     // Country
-    static inline const QString CountryWorldSymbolicId {QStringLiteral("00")};
+    static constexpr const char *CountryWorldSymbolicId {"00"};
 
 private:
     std::unique_ptr<EnumerationServicePrivate> d;

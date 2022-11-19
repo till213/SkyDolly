@@ -44,8 +44,7 @@ TableDateItem::TableDateItem(const QString &dateString, const QDate &date) noexc
       d(std::make_unique<TableDateItemPrivate>(date))
 {}
 
-TableDateItem::~TableDateItem() noexcept
-{}
+TableDateItem::~TableDateItem() = default;
 
 bool TableDateItem::operator<(const QTableWidgetItem &rhs) const noexcept
 {
