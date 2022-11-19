@@ -131,10 +131,14 @@ public:
         return m_data.back();
     }
 
-    [[nodiscard]]
     std::size_t count() const noexcept
     {
         return m_data.size();
+    }
+
+    void reserve(typename Data::size_type size)
+    {
+        m_data.reserve(size);
     }
 
     void clear() noexcept
@@ -177,19 +181,16 @@ public:
     virtual T interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
 
 protected:
-    [[nodiscard]]
     inline const Data &getData() const noexcept
     {
         return m_data;
     }
 
-    [[nodiscard]]
     inline const AircraftInfo &getAircraftInfo() const noexcept
     {
         return m_aircraftInfo;
     }
 
-    [[nodiscard]]
     inline std::int64_t getCurrentTimestamp() const noexcept
     {
         return m_currentTimestamp;
@@ -199,7 +200,6 @@ protected:
         m_currentTimestamp = timestamp;
     }
 
-    [[nodiscard]]
     inline int getCurrentIndex() const noexcept
     {
         return m_currentIndex;
@@ -209,7 +209,6 @@ protected:
         m_currentIndex = index;
     }
 
-    [[nodiscard]]
     inline TimeVariableData::Access getCurrentAccess() const noexcept
     {
         return m_currentAccess;
