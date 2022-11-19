@@ -26,21 +26,15 @@
 
 #include <QObject>
 #include <QCoreApplication>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
+#include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/SkyConnectManager.h>
 #include "LocationWidget.h"
 #include "LocationPlugin.h"
 
 struct LocationPluginPrivate
 {
-    LocationPluginPrivate()
-        : locationWidget(std::make_unique<LocationWidget>())
-    {}
-
-    std::unique_ptr<LocationWidget> locationWidget;
+    std::unique_ptr<LocationWidget> locationWidget {std::make_unique<LocationWidget>()};
 };
 
 // PUBLIC
@@ -50,17 +44,9 @@ LocationPlugin::LocationPlugin(QObject *parent) noexcept
       d(std::make_unique<LocationPluginPrivate>())
 {
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "LocationPlugin::LocationPlugin: CREATED";
-#endif
 }
 
-LocationPlugin::~LocationPlugin() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "LocationPlugin::~LocationPlugin: DELETED";
-#endif
-}
+LocationPlugin::~LocationPlugin() = default;
 
 QString LocationPlugin::getModuleName() const noexcept
 {
@@ -98,7 +84,10 @@ void LocationPlugin::captureLocation() noexcept
 void LocationPlugin::teleportTo(const Location &location) noexcept
 {
     const InitialPosition initialPosition = location.toInitialPosition();
-    SkyConnectManager::getInstance().setUserAircraftInitialPosition(initialPosition);
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    skyConnectManager.setUserAircraftInitialPosition(initialPosition);
+    // TODO IMPLEMENT ME
+    skyConnectManager.sendSimulationEvent(SkyConnectIntf::SimulationEvent::EngineStop);
 }
 
 void LocationPlugin::onLocationReceived(Location location) noexcept

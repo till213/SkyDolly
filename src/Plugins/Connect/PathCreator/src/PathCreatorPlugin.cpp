@@ -121,7 +121,12 @@ bool PathCreatorPlugin::onInitialPositionSetup([[maybe_unused]] const InitialPos
     return true;
 }
 
-bool PathCreatorPlugin::onFreezeUserAircraft([[maybe_unused]] bool enable) noexcept
+bool PathCreatorPlugin::onFreezeUserAircraft([[maybe_unused]] bool enable) const noexcept
+{
+    return true;
+}
+
+bool PathCreatorPlugin::onSimulationEvent(SimulationEvent event) const noexcept
 {
     return true;
 }

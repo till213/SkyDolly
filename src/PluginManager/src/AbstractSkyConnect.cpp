@@ -117,9 +117,22 @@ bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &i
     return ok;
 }
 
-bool AbstractSkyConnect::freezeUserAircraft(bool enable) noexcept
+bool AbstractSkyConnect::freezeUserAircraft(bool enable) const noexcept
 {
     return onFreezeUserAircraft(enable);
+}
+
+bool AbstractSkyConnect::sendSimulationEvent(SimulationEvent event) noexcept
+{
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this, event]() -> bool { return onSimulationEvent(event); });
+    }
+    return ok;
 }
 
 SkyConnectIntf::ReplayMode AbstractSkyConnect::getReplayMode() const noexcept

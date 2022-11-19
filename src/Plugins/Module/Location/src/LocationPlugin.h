@@ -43,7 +43,7 @@ class LocationPlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit LocationPlugin(QObject *parent = nullptr) noexcept;
-    ~LocationPlugin() noexcept override;
+    ~LocationPlugin() override;
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;

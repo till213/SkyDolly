@@ -55,7 +55,8 @@ protected:
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
-    bool onFreezeUserAircraft(bool enable) noexcept override;
+    bool onFreezeUserAircraft(bool enable) const noexcept override;
+    bool onSimulationEvent(SimulationEvent event) const noexcept override;
 
     bool onStartRecording() noexcept override;
     void onRecordingPaused(bool paused) noexcept override;
