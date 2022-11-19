@@ -32,6 +32,7 @@
 #include <QIODevice>
 #include <QFileInfo>
 #include <QTextCodec>
+#include <QTextStream>
 
 #include <Kernel/Convert.h>
 #include <Kernel/CsvParser.h>
