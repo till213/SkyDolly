@@ -130,7 +130,7 @@ void CsvLocationImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) 
     keyValues.push_back(keyValue);
 
     keyValue.first = ::DefaultCountryKey;
-    keyValue.second = d->defaultCountryId;
+    keyValue.second = QVariant::fromValue(d->defaultCountryId);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::DefaultAltitudeKey;
@@ -151,7 +151,7 @@ void CsvLocationImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::DefaultCountryKey;
-    keyValue.second = d->worldCountryId;
+    keyValue.second = QVariant::fromValue(d->worldCountryId);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::DefaultAltitudeKey;

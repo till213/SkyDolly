@@ -1786,7 +1786,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
 <context>
     <name>LocationPlugin</name>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationPlugin.cpp" line="67"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationPlugin.cpp" line="53"/>
         <source>Location</source>
         <translation type="unfinished"></translation>
     </message>
