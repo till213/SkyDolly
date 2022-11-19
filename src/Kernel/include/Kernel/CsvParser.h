@@ -53,7 +53,20 @@ public:
     CsvParser &operator=(CsvParser &&rhs);
     ~CsvParser();
 
-    Rows parse(QTextStream &textStream, const QString &header = QString()) noexcept;
+    /*!
+     * Parses the \c textStream as comma-separated values (CSV). The first row is ignored
+     * if it begins with either \c header or \c alternateHeader.
+     *
+     * \param textStream
+     *        the CSV to be parsed
+     * \param header
+     *        the header of the values (case-insensitive)
+     * \param alternateHeader
+     *        the alternate header of the values (case-insensitive); useful if the header
+     *        may contain different escape characters
+     * \return the CSV rows
+     */
+    Rows parse(QTextStream &textStream, const QString &header = QString(), const QString &alternateHeader = QString()) noexcept;
 
 private:
     std::unique_ptr<CsvParserPrivate> d;

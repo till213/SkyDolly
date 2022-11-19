@@ -62,7 +62,7 @@ CsvParser::CsvParser(CsvParser &&rhs) = default;
 CsvParser &CsvParser::operator=(CsvParser &&rhs) = default;
 CsvParser::~CsvParser() = default;
 
-CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header) noexcept
+CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header, const QString &alternateHeader) noexcept
 {
     Rows rows;
 
@@ -71,9 +71,11 @@ CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header)
     {
         const QString line = textStream.readLine();
 
-        if (row == 0 && !header.isNull()) {
+        if (row == 0) {
             // Compare header (case-insensitive)
-            if (line.startsWith(header, Qt::CaseInsensitive)) {
+            if (!header.isNull() && line.startsWith(header, Qt::CaseInsensitive) ||
+                !alternateHeader.isNull() && line.startsWith(alternateHeader, Qt::CaseInsensitive))
+            {
                 ++row;
                 // Skip header
                 continue;
