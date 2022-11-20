@@ -104,6 +104,7 @@ struct LocationWidgetPrivate
     std::unique_ptr<EnumerationService> enumerationService {std::make_unique<EnumerationService>()};
     std::unique_ptr<EnumerationItemDelegate> locationCategoryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
     std::unique_ptr<EnumerationItemDelegate> countryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::Country)};
+    std::int64_t systemLocationTypeId {typeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id};
 
     Unit unit;
     // Columns are only auto-resized the first time the table is loaded
@@ -125,6 +126,7 @@ struct LocationWidgetPrivate
     static inline int indicatedAirspeedColumn {InvalidColumn};
     static inline int onGroundColumn {InvalidColumn};
     static inline int attributesColumn {InvalidColumn};
+    static inline int engineColumn {InvalidColumn};
 
     static inline Enumeration typeEnumeration;
     static inline Enumeration categoryEnumeration;
@@ -159,27 +161,13 @@ LocationWidget::~LocationWidget() noexcept
 void LocationWidget::addUserLocation(double latitude, double longitude)
 {
     Location location;
-    location.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymbolicId).id();
-    location.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymbolicId).id();
-    location.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymbolicId).id();
     location.latitude = latitude;
     location.longitude = longitude;
     location.altitude = ui->defaultAltitudeSpinBox->value();
     location.indicatedAirspeed = ui->defaultIndicatedAirspeedSpinBox->value();
     location.onGround = ui->defaultOnGroundCheckBox->isChecked();
-    location.engineEventId = PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymbolicId).id();
-    if (d->locationService->store(location)) {
-        ui->locationTableWidget->blockSignals(true);
-        ui->locationTableWidget->setSortingEnabled(false);
-        const int row = ui->locationTableWidget->rowCount();
-        ui->locationTableWidget->insertRow(row);
-        updateLocationRow(location, row);
-        ui->locationTableWidget->blockSignals(false);
-        // Automatically select newly inserted item (make sure that signals are emitted
-        // again)
-        ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
-        ui->locationTableWidget->setSortingEnabled(true);
-    }
+    location.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
+    addLocation(location);
 }
 
 void LocationWidget::addLocation(Location newLocation)
@@ -193,6 +181,9 @@ void LocationWidget::addLocation(Location newLocation)
     if (newLocation.countryId == Const::InvalidId) {
         newLocation.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymbolicId).id();
     }
+    if (newLocation.engineEventId == Const::InvalidId) {
+        newLocation.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
+    }
     Location location {newLocation};
     if (d->locationService->store(location)) {
         const int rowCount = ui->locationTableWidget->rowCount();
@@ -200,8 +191,11 @@ void LocationWidget::addLocation(Location newLocation)
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->insertRow(rowCount);
         updateLocationRow(location, rowCount);
-        ui->locationTableWidget->setSortingEnabled(true);
         ui->locationTableWidget->blockSignals(false);
+        // Automatically select newly inserted item (make sure that signals are emitted
+        // again)
+        ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
+        ui->locationTableWidget->setSortingEnabled(true);
     }
 }
 
@@ -224,7 +218,7 @@ void LocationWidget::initUi() noexcept
         tr("ID"), tr("Title"), tr("Description"), tr("Type"), tr("Category"),
         tr("Country"), tr("Identifer"), tr("Position"), tr("Altitude"),
         tr("Pitch"), tr("Bank"), tr("True Heading"), tr("Indicated Airspeed"),
-        tr("On Ground"), tr("Attributes")
+        tr("On Ground"), tr("Attributes"), tr("Engine")
     };
     LocationWidgetPrivate::idColumn = headers.indexOf(tr("ID"));
     LocationWidgetPrivate::titleColumn = headers.indexOf(tr("Title"));
@@ -241,6 +235,7 @@ void LocationWidget::initUi() noexcept
     LocationWidgetPrivate::indicatedAirspeedColumn = headers.indexOf(tr("Indicated Airspeed"));
     LocationWidgetPrivate::onGroundColumn = headers.indexOf(tr("On Ground"));
     LocationWidgetPrivate::attributesColumn = headers.indexOf(tr("Attributes"));
+    LocationWidgetPrivate::engineColumn = headers.indexOf(tr("Engine"));
 
     ui->locationTableWidget->setColumnCount(headers.count());
     ui->locationTableWidget->setHorizontalHeaderLabels(headers);
@@ -258,6 +253,7 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::trueHeadingColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::indicatedAirspeedColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::attributesColumn, true);
+    ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::engineColumn, true);
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::categoryColumn, d->locationCategoryDelegate.get());
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::countryColumn, d->countryDelegate.get());
 
@@ -275,7 +271,8 @@ void LocationWidget::initUi() noexcept
     ui->defaultIndicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
     ui->defaultIndicatedAirspeedSpinBox->setValue(Const::DefaultIndicatedAirspeed);
     ui->defaultIndicatedAirspeedSpinBox->setSuffix(tr(" knots"));
-    ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);
+    ui->defaultEngineEventComboBox->setEnumerationName(EnumerationService::EngineEvent);
+    ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);    
 
     ui->pitchSpinBox->setMinimum(::MinimumPitch);
     ui->pitchSpinBox->setMaximum(::MaximumPitch);
@@ -289,6 +286,7 @@ void LocationWidget::initUi() noexcept
     ui->indicatedAirspeedSpinBox->setMinimum(Const::MinimumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setSuffix(tr(" knots"));
+    ui->engineEventComboBox->setEnumerationName(EnumerationService::EngineEvent);
 
     const int infoGroupBoxHeight = ui->informationGroupBox->minimumHeight();
     ui->splitter->setSizes({height() - infoGroupBoxHeight, infoGroupBoxHeight});
@@ -341,6 +339,8 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::onHeadingChanged);
     connect(ui->indicatedAirspeedSpinBox, &QSpinBox::valueChanged,
             this, &LocationWidget::onIndicatedAirspeedChanged);
+    connect(ui->engineEventComboBox, &EnumerationComboBox::currentIndexChanged,
+            this, &LocationWidget::onEngineEventChanged);
 }
 
 void LocationWidget::updateInfoUi() noexcept
@@ -350,13 +350,14 @@ void LocationWidget::updateInfoUi() noexcept
     ui->bankSpinBox->blockSignals(true);
     ui->trueHeadingSpinBox->blockSignals(true);
     ui->indicatedAirspeedSpinBox->blockSignals(true);
+    ui->engineEventComboBox->blockSignals(true);
 
     const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
     bool readOnly {true};
     if (hasSelection) {
         const int selectedRow = getSelectedRow();
         QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::typeColumn);
-        readOnly = item->data(Qt::EditRole).toLongLong() == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id();
+        readOnly = item->data(Qt::EditRole).toLongLong() == d->systemLocationTypeId;
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::descriptionColumn);
         ui->descriptionPlainTextEdit->setPlainText(item->text());
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::pitchColumn);
@@ -367,12 +368,15 @@ void LocationWidget::updateInfoUi() noexcept
         ui->trueHeadingSpinBox->setValue(item->text().toDouble());
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::indicatedAirspeedColumn);
         ui->indicatedAirspeedSpinBox->setValue(item->text().toInt());
+        item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::engineColumn);
+        ui->engineEventComboBox->setCurrentId(item->text().toLongLong());
     } else {
         ui->descriptionPlainTextEdit->clear();
         ui->pitchSpinBox->setValue(::DefaultPitch);
         ui->bankSpinBox->setValue(::DefaultBank);
         ui->trueHeadingSpinBox->setValue(::DefaultHeading);
         ui->indicatedAirspeedSpinBox->setValue(ui->defaultIndicatedAirspeedSpinBox->value());
+        ui->engineEventComboBox->setCurrentId(ui->defaultEngineEventComboBox->getCurrentId());
     }
 
     ui->descriptionPlainTextEdit->setReadOnly(readOnly);
@@ -386,6 +390,7 @@ void LocationWidget::updateInfoUi() noexcept
     ui->bankSpinBox->blockSignals(false);
     ui->trueHeadingSpinBox->blockSignals(false);
     ui->indicatedAirspeedSpinBox->blockSignals(false);
+    ui->engineEventComboBox->blockSignals(false);
 }
 
 void LocationWidget::updateLocationTable() noexcept
@@ -544,7 +549,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int row)
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
-    // On Ground
+    // On ground
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setCheckState(location.onGround ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     if (isSystemLocation) {
@@ -559,6 +564,12 @@ inline void LocationWidget::updateLocationRow(const Location &location, int row)
     // Attributes
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.attributes));
+    ui->locationTableWidget->setItem(row, column, newItem.release());
+    ++column;
+
+    // Engine event
+    newItem = std::make_unique<QTableWidgetItem>();
+    newItem->setData(Qt::EditRole, QVariant::fromValue(location.engineEventId));
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 }
@@ -619,6 +630,9 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
 
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::attributesColumn);
     location.attributes = item->data(Qt::EditRole).toLongLong();
+
+    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::engineColumn);
+    location.engineEventId = item->data(Qt::EditRole).toLongLong();
 
     return location;
 }
@@ -825,6 +839,21 @@ void LocationWidget::onIndicatedAirspeedChanged(int value) noexcept
         if (d->locationService->update(location)) {
             ui->locationTableWidget->blockSignals(true);
             QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::indicatedAirspeedColumn);
+            item->setData(Qt::EditRole, location.indicatedAirspeed);
+            ui->locationTableWidget->blockSignals(false);
+        }
+    }
+}
+
+void LocationWidget::onEngineEventChanged(int index) noexcept
+{
+    const int selectedRow = getSelectedRow();
+    if (selectedRow != ::InvalidRow) {
+        Location location = getLocationByRow(selectedRow);
+        location.engineEventId = ui->engineEventComboBox->getCurrentId();
+        if (d->locationService->update(location)) {
+            ui->locationTableWidget->blockSignals(true);
+            QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::engineColumn);
             item->setData(Qt::EditRole, location.indicatedAirspeed);
             ui->locationTableWidget->blockSignals(false);
         }

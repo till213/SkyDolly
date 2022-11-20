@@ -34,6 +34,9 @@
 
 struct EnumerationComboBoxPrivate;
 
+/*!
+ * A combo box showing the the persisted enumeration values.
+ */
 class WIDGET_API EnumerationComboBox : public QComboBox
 {
     Q_OBJECT
