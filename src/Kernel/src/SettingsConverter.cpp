@@ -32,7 +32,12 @@ namespace
 {
     void convertToV13(const Version &settingsVersion, QSettings &settings) noexcept
     {
-        // Nothing to convert yet
+        settings.beginGroup("Window");
+        {
+            settings.setValue("LocationTableState", QVariant());
+        }
+        settings.endGroup();
+
     }
 }
 
