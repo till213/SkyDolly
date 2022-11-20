@@ -58,6 +58,7 @@ namespace
     constexpr int IndicatedAirspeedIndex = 12;
     constexpr int OnGroundIndex = 13;
     constexpr int AttributesIndex = 14;
+    constexpr int EngineEvent = 15;
 
     // Depending on the CSV generating application (e.g. Excel or LibreOffice) the column titles may
     // or may not have "quotes"
@@ -160,7 +161,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
             QTextStream textStream(&migrationFile);
             textStream.setCodec(QTextCodec::codecForName("UTF-8"));
             CsvParser csvParser;
-            CsvParser::Rows rows = csvParser.parse(textStream, ::LocationMigrationHeader);
+            CsvParser::Rows rows = csvParser.parse(textStream, ::LocationMigrationHeader, ::AlternateLocationMigrationHeader);
             for (const auto &row : rows) {
                 const QString uuid = row.at(::UuidIndex);
                 SqlMigrationStep step;
@@ -230,6 +231,11 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     }
     if (ok) {
         location.onGround = row.at(::OnGroundIndex).toLower() == "true" ? true : false;
+    }
+    Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent, &ok);
+    if (ok) {
+        const QString engineEventSymbolicId = row.at(::EngineEvent);
+        location.engineEventId = engineEventEnumeration.getItemBySymbolicId(engineEventSymbolicId).id;
     }
     if (ok) {
         ok = d->locationDao.add(location);
