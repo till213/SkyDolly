@@ -66,6 +66,7 @@ public:
     };
 
     enum struct SimulationEvent {
+        None,
         EngineStart,
         EngineStop
     };

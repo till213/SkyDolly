@@ -27,6 +27,8 @@
 #include <QObject>
 #include <QCoreApplication>
 
+#include <Persistence/PersistedEnumerationItem.h>
+#include <Persistence/Service/EnumerationService.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/SkyConnectManager.h>
 #include "LocationWidget.h"
@@ -35,6 +37,8 @@
 struct LocationPluginPrivate
 {
     std::unique_ptr<LocationWidget> locationWidget {std::make_unique<LocationWidget>()};
+    const std::int64_t engineEventStartId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStartSymbolicId).id()};
+    const std::int64_t engineEventStopId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStopSymbolicId).id()};
 };
 
 // PUBLIC
@@ -86,8 +90,17 @@ void LocationPlugin::teleportTo(const Location &location) noexcept
     const InitialPosition initialPosition = location.toInitialPosition();
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.setUserAircraftInitialPosition(initialPosition);
-    // TODO IMPLEMENT ME
-    skyConnectManager.sendSimulationEvent(SkyConnectIntf::SimulationEvent::EngineStop);
+    SkyConnectIntf::SimulationEvent event {SkyConnectIntf::SimulationEvent::None};
+
+    if (location.engineEventId == d->engineEventStartId) {
+        event = SkyConnectIntf::SimulationEvent::EngineStart;
+    } else if (location.engineEventId == d->engineEventStopId) {
+        event = SkyConnectIntf::SimulationEvent::EngineStop;
+    }
+
+    if (event != SkyConnectIntf::SimulationEvent::None) {
+        skyConnectManager.sendSimulationEvent(event);
+    }
 }
 
 void LocationPlugin::onLocationReceived(Location location) noexcept

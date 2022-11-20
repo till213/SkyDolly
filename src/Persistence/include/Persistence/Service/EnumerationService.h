@@ -81,6 +81,8 @@ public:
     static constexpr const char *CountryWorldSymbolicId {"00"};
 
     // Engine event
+    static constexpr const char *EngineEventStartSymbolicId {"START"};
+    static constexpr const char *EngineEventStopSymbolicId {"STOP"};
     static constexpr const char *EngineEventKeepSymbolicId {"KEEP"};
 
 private:
