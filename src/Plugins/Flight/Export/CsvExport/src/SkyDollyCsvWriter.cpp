@@ -304,8 +304,8 @@ inline QString SkyDollyCsvWriter::getPositionData(const PositionData &data) noex
 {
     QString csv;
     if (!data.isNull()) {
-        csv = Unit::formatCoordinate(data.latitude) % CsvConst::TabSep %
-              Unit::formatCoordinate(data.longitude) % CsvConst::TabSep %
+        csv = Export::formatCoordinate(data.latitude) % CsvConst::TabSep %
+              Export::formatCoordinate(data.longitude) % CsvConst::TabSep %
               Export::formatNumber(data.altitude) % CsvConst::TabSep %
               Export::formatNumber(data.indicatedAltitude) % CsvConst::TabSep %
               Export::formatNumber(data.pitch) % CsvConst::TabSep %

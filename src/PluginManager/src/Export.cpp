@@ -39,12 +39,6 @@
 #include <Model/PositionData.h>
 #include "Export.h"
 
-namespace
-{
-    // Precision of general number (altitude, heading, ...)
-    constexpr int NumberPrecision = 2;
-}
-
 // PUBLIC
 
 QString Export::suggestFlightFilePath(const Flight &flight, QStringView suffix) noexcept
@@ -76,11 +70,6 @@ QString Export::suggestLocationFilePath(QStringView suffix) noexcept
 
     const Settings &settings = Settings::getInstance();
     return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
-}
-
-QString Export::formatNumber(double number) noexcept
-{
-    return QString::number(number, 'f', ::NumberPrecision);
 }
 
 std::vector<PositionData> Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept

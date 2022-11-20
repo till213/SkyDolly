@@ -276,9 +276,9 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
                     currentIndex += 1;
                 }
                 const PositionData positionData = interpolatedPositionData[currentIndex];
-                ok = io.write((Unit::formatCoordinate(positionData.longitude) % "," %
-                               Unit::formatCoordinate(positionData.latitude) % "," %
-                               Unit::formatCoordinate(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+                ok = io.write((Export::formatCoordinate(positionData.longitude) % "," %
+                               Export::formatCoordinate(positionData.latitude) % "," %
+                               Export::formatCoordinate(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
                 if (!ok) {
                     break;
                 }
@@ -386,10 +386,10 @@ inline bool KmlExportPlugin::exportPlacemark(QIODevice &io, KmlStyleExport::Icon
 "      <name><![CDATA[" % name % "]]></name>\n"
 "      <description><![CDATA[" % description % "]]></description>\n"
 "      <LookAt>\n"
-"        <longitude>" % Unit::formatCoordinate(longitude) % "</longitude>\n"
-"        <latitude>" % Unit::formatCoordinate(latitude) % "</latitude>\n"
-"        <altitude>" % Unit::formatCoordinate(Convert::feetToMeters(altitudeInFeet)) % "</altitude>\n"
-"        <heading>" % Unit::formatCoordinate(heading) % "</heading>\n"
+"        <longitude>" % Export::formatCoordinate(longitude) % "</longitude>\n"
+"        <latitude>" % Export::formatCoordinate(latitude) % "</latitude>\n"
+"        <altitude>" % Export::formatCoordinate(Convert::feetToMeters(altitudeInFeet)) % "</altitude>\n"
+"        <heading>" % Export::formatCoordinate(heading) % "</heading>\n"
 "        <tilt>" % LookAtTilt % "</tilt>\n"
 "        <range>" % LookAtRange % "</range>\n"
 "        <altitudeMode>absolute</altitudeMode>\n"
@@ -399,7 +399,7 @@ inline bool KmlExportPlugin::exportPlacemark(QIODevice &io, KmlStyleExport::Icon
 "        <extrude>1</extrude>\n"
 "        <altitudeMode>absolute</altitudeMode>\n"
 "        <gx:drawOrder>1</gx:drawOrder>\n"
-"        <coordinates>" % Unit::formatCoordinate(longitude) % "," % Unit::formatCoordinate(latitude) % "," % Unit::formatCoordinate(Convert::feetToMeters(altitudeInFeet)) % "</coordinates>\n"
+"        <coordinates>" % Export::formatCoordinate(longitude) % "," % Export::formatCoordinate(latitude) % "," % Export::formatCoordinate(Convert::feetToMeters(altitudeInFeet)) % "</coordinates>\n"
 "      </Point>\n"
 "    </Placemark>\n";
     return io.write(placemark.toUtf8());

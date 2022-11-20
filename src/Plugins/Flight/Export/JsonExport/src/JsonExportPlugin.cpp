@@ -259,8 +259,8 @@ bool JsonExportPlugin::exportFooter(QIODevice &io) const noexcept
 
 inline bool JsonExportPlugin::exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept
 {
-    const QString trackPoint = "[" % Unit::formatCoordinate(positionData.longitude) % ", " %
-                                     Unit::formatCoordinate(positionData.latitude) % ", " %
+    const QString trackPoint = "[" % Export::formatCoordinate(positionData.longitude) % ", " %
+                                     Export::formatCoordinate(positionData.latitude) % ", " %
                                      Export::formatNumber(Convert::feetToMeters(positionData.altitude)) %
                                "]";
 
@@ -275,8 +275,8 @@ inline bool JsonExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice
 "      \"geometry\": {\n"
 "        \"type\": \"Point\",\n"
 "        \"coordinates\": [" %
-           Unit::formatCoordinate(waypoint.longitude) % ", " %
-           Unit::formatCoordinate(waypoint.latitude) % ", " %
+           Export::formatCoordinate(waypoint.longitude) % ", " %
+           Export::formatCoordinate(waypoint.latitude) % ", " %
            Export::formatNumber(Convert::feetToMeters(waypoint.altitude)) %
            "]\n" %
 "      },\n"

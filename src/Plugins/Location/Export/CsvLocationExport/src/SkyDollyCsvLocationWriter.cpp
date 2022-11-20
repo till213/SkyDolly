@@ -115,8 +115,8 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                                 countrySymbolicId % CsvConst::CommaSep %
                                 QString::number(location.attributes) % CsvConst::CommaSep %
                                 "\"" % identifier.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
-                                Unit::formatCoordinate(location.latitude) % CsvConst::CommaSep %
-                                Unit::formatCoordinate(location.longitude) % CsvConst::CommaSep %
+                                Export::formatCoordinate(location.latitude) % CsvConst::CommaSep %
+                                Export::formatCoordinate(location.longitude) % CsvConst::CommaSep %
                                 Export::formatNumber(location.altitude) % CsvConst::CommaSep %
                                 Export::formatNumber(location.pitch) % CsvConst::CommaSep %
                                 Export::formatNumber(location.bank) % CsvConst::CommaSep %
