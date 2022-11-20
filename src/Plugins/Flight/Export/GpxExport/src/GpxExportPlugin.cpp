@@ -75,7 +75,7 @@ GpxExportPlugin::GpxExportPlugin() noexcept
 #endif
 }
 
-GpxExportPlugin::~GpxExportPlugin() noexcept
+GpxExportPlugin::~GpxExportPlugin()
 {
 #ifdef DEBUG
     qDebug() << "GpxExportPlugin::~GpxExportPlugin: PLUGIN UNLOADED";

@@ -52,7 +52,7 @@ class GpxExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     GpxExportPlugin() noexcept;
-    ~GpxExportPlugin() noexcept override;
+    ~GpxExportPlugin() override;
 
 protected:
     FlightExportPluginBaseSettings &getPluginSettings() const noexcept override;

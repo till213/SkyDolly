@@ -115,12 +115,12 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                                 countrySymbolicId % CsvConst::CommaSep %
                                 QString::number(location.attributes) % CsvConst::CommaSep %
                                 "\"" % identifier.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
-                                QString::number(location.latitude) % CsvConst::CommaSep %
-                                QString::number(location.longitude) % CsvConst::CommaSep %
-                                QString::number(location.altitude) % CsvConst::CommaSep %
-                                QString::number(location.pitch) % CsvConst::CommaSep %
-                                QString::number(location.bank) % CsvConst::CommaSep %
-                                QString::number(location.trueHeading) % CsvConst::CommaSep %
+                                Unit::formatCoordinate(location.latitude) % CsvConst::CommaSep %
+                                Unit::formatCoordinate(location.longitude) % CsvConst::CommaSep %
+                                Export::formatNumber(location.altitude) % CsvConst::CommaSep %
+                                Export::formatNumber(location.pitch) % CsvConst::CommaSep %
+                                Export::formatNumber(location.bank) % CsvConst::CommaSep %
+                                Export::formatNumber(location.trueHeading) % CsvConst::CommaSep %
                                 QString::number(location.indicatedAirspeed) % CsvConst::CommaSep %
                                 (location.onGround ? "true" : "false") % CsvConst::Ln;
             ok = io.write(csv.toUtf8());

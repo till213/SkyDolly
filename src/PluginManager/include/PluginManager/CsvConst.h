@@ -36,10 +36,6 @@ namespace CsvConst {
     /*! Newline character */
     constexpr char Ln = '\n';
 
-    // Format and precision for double
-    constexpr char Format = 'g';
-    constexpr int Precision = 9;
-
     enum struct DataType : char {
         Aircraft = 'a',
         Engine = 'e',

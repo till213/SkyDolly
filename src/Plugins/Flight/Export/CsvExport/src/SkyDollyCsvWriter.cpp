@@ -31,6 +31,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/SampleRate.h>
+#include <Kernel/Unit.h>
 #include <Model/SimVar.h>
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
@@ -46,6 +47,7 @@
 #include <Model/Light.h>
 #include <Model/LightData.h>
 #include <PluginManager/CsvConst.h>
+#include <PluginManager/Export.h>
 #include "CsvExportSettings.h"
 #include "SkyDollyCsvWriter.h"
 
@@ -302,19 +304,19 @@ inline QString SkyDollyCsvWriter::getPositionData(const PositionData &data) noex
 {
     QString csv;
     if (!data.isNull()) {
-        csv = QString::number(data.latitude, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.longitude, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.altitude, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.indicatedAltitude, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.pitch, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.bank, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.trueHeading, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.velocityBodyX, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.velocityBodyY, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.velocityBodyZ, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.rotationVelocityBodyX, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.rotationVelocityBodyY, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
-              QString::number(data.rotationVelocityBodyZ, CsvConst::Format, CsvConst::Precision);
+        csv = Unit::formatCoordinate(data.latitude) % CsvConst::TabSep %
+              Unit::formatCoordinate(data.longitude) % CsvConst::TabSep %
+              Export::formatNumber(data.altitude) % CsvConst::TabSep %
+              Export::formatNumber(data.indicatedAltitude) % CsvConst::TabSep %
+              Export::formatNumber(data.pitch) % CsvConst::TabSep %
+              Export::formatNumber(data.bank) % CsvConst::TabSep %
+              Export::formatNumber(data.trueHeading) % CsvConst::TabSep %
+              Export::formatNumber(data.velocityBodyX) % CsvConst::TabSep %
+              Export::formatNumber(data.velocityBodyY) % CsvConst::TabSep %
+              Export::formatNumber(data.velocityBodyZ) % CsvConst::TabSep %
+              Export::formatNumber(data.rotationVelocityBodyX) % CsvConst::TabSep %
+              Export::formatNumber(data.rotationVelocityBodyY) % CsvConst::TabSep %
+              Export::formatNumber(data.rotationVelocityBodyZ);
     } else {
         const QString EmptyString;
         csv = EmptyString % CsvConst::TabSep %
@@ -444,8 +446,8 @@ inline QString SkyDollyCsvWriter::getPrimaryFlightControlData(const PrimaryFligh
     QString csv;
     if (!data.isNull()) {
         csv = QString::number(data.rudderPosition) % CsvConst::TabSep %
-                QString::number(data.elevatorPosition) % CsvConst::TabSep %
-                QString::number(data.aileronPosition);
+              QString::number(data.elevatorPosition) % CsvConst::TabSep %
+              QString::number(data.aileronPosition);
     } else {
         const QString EmptyString;
         csv = EmptyString % CsvConst::TabSep %
