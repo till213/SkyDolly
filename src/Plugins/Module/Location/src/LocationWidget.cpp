@@ -167,6 +167,7 @@ void LocationWidget::addUserLocation(double latitude, double longitude)
     location.altitude = ui->defaultAltitudeSpinBox->value();
     location.indicatedAirspeed = ui->defaultIndicatedAirspeedSpinBox->value();
     location.onGround = ui->defaultOnGroundCheckBox->isChecked();
+    location.engineEventId = PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymbolicId).id();
     if (d->locationService->store(location)) {
         ui->locationTableWidget->blockSignals(true);
         ui->locationTableWidget->setSortingEnabled(false);

@@ -348,29 +348,29 @@ create index location_idx6 on location(on_ground);
 update metadata
 set app_version = '0.12.0';
 
-@migr(id = "eeed782c-d594-4635-88d7-15b8d4ab7edc", descn = "Create location engine event enumeration table", step_cnt = 2)
-create table enum_location_engine_event(
+@migr(id = "eeed782c-d594-4635-88d7-15b8d4ab7edc", descn = "Create engine event enumeration table", step_cnt = 2)
+create table enum_engine_event(
     id integer primary key,
     sym_id text not null,
     name text,
     desc text
 );
-create unique index enum_location_engine_event_idx1 on enum_location_engine_event(sym_id);
+create unique index enum_engine_event_idx1 on enum_engine_event(sym_id);
 
 @migr(id = "eeed782c-d594-4635-88d7-15b8d4ab7edc", descn = "Insert location engine events", step = 2)
-insert into enum_location_engine_event(sym_id, name, desc)
+insert into enum_engine_event(sym_id, name, desc)
 values
   ('START', 'Start', 'Start the engine'),
   ('STOP', 'Stop', 'Stop the engine'),
   ('KEEP', 'Keep', 'Keep the engine state as-is');
 
 @migr(id = "db2ef8c9-8a62-47b5-96d1-37146404f51e", descn = "Add engine event column", step_cnt = 2)
-alter table location add column engine_event integer references enum_location_engine_event(id);
+alter table location add column engine_event integer references enum_engine_event(id);
 
 @migr(id = "db2ef8c9-8a62-47b5-96d1-37146404f51e", descn = "Migrate engine event column", step = 2)
 update location
 set    engine_event = (select id
-                       from enum_location_engine_event
+                       from enum_engine_event
                        where sym_id = 'KEEP');
 
 @migr(id = "55a04d46-fc38-445a-8967-f84c96aa41bb", descn = "Update application version to 0.13", step = 1)

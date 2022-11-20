@@ -65,6 +65,7 @@ public:
     static inline const QString LocationType {QStringLiteral("LocationType")};
     static inline const QString LocationCategory {QStringLiteral("LocationCategory")};
     static inline const QString Country {QStringLiteral("Country")};
+    static inline const QString EngineEvent {QStringLiteral("EngineEvent")};
 
     // Well-known symbolic IDs
 
@@ -78,6 +79,9 @@ public:
 
     // Country
     static constexpr const char *CountryWorldSymbolicId {"00"};
+
+    // Engine event
+    static constexpr const char *EngineEventKeepSymbolicId {"KEEP"};
 
 private:
     std::unique_ptr<EnumerationServicePrivate> d;
