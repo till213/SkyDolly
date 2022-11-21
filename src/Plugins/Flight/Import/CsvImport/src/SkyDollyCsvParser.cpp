@@ -258,178 +258,98 @@ inline bool SkyDollyCsvParser::importPositionData(const CsvParser::Row &row, boo
 
 inline bool SkyDollyCsvParser::importEngineData(const CsvParser::Row &row, bool firstRow, Engine &engine) noexcept
 {
-//    EngineData data;
-//    int ::Index::Longitude = 0;
-//    std::int64_t timestampDelta = 0;
+    EngineData data;
+    std::int64_t timestampDelta = 0;
     bool ok {true};
-//    for (const QByteArray &header : headers) {
 
-//        if (::Index::Longitude >= row.count()) {
-//            // Less values than headers
-//            ok = false;
-//            break;
-//        }
+    data.throttleLeverPosition1 = row.at(::Index::ThrottleLeverPosition1).toInt(&ok);
+    if (ok) {
+        data.throttleLeverPosition2 = row.at(::Index::ThrottleLeverPosition2).toInt(&ok);
+    }
+    if (ok) {
+        data.throttleLeverPosition3 = row.at(::Index::ThrottleLeverPosition3).toInt(&ok);
+    }
+    if (ok) {
+        data.throttleLeverPosition4 = row.at(::Index::ThrottleLeverPosition4).toInt(&ok);
+    }
+    if (ok) {
+        data.propellerLeverPosition1 = row.at(::Index::PropellerLeverPosition1).toInt(&ok);
+    }
+    if (ok) {
+        data.propellerLeverPosition2 = row.at(::Index::PropellerLeverPosition2).toInt(&ok);
+    }
+    if (ok) {
+        data.propellerLeverPosition3 = row.at(::Index::PropellerLeverPosition3).toInt(&ok);
+    }
+    if (ok) {
+        data.propellerLeverPosition4 = row.at(::Index::PropellerLeverPosition4).toInt(&ok);
+    }
+    if (ok) {
+        data.mixtureLeverPosition1 = row.at(::Index::MixtureLeverPosition1).toInt(&ok);
+    }
+    if (ok) {
+        data.mixtureLeverPosition2 = row.at(::Index::MixtureLeverPosition2).toInt(&ok);
+    }
+    if (ok) {
+        data.mixtureLeverPosition3 = row.at(::Index::MixtureLeverPosition3).toInt(&ok);
+    }
+    if (ok) {
+        data.mixtureLeverPosition4 = row.at(::Index::MixtureLeverPosition4).toInt(&ok);
+    }
+    if (ok) {
+        data.cowlFlapPosition1 = row.at(::Index::RecipEngineCowlFlapPosition1).toInt(&ok);
+    }
+    if (ok) {
+        data.cowlFlapPosition2 = row.at(::Index::RecipEngineCowlFlapPosition2).toInt(&ok);
+    }
+    if (ok) {
+        data.cowlFlapPosition3 = row.at(::Index::RecipEngineCowlFlapPosition3).toInt(&ok);
+    }
+    if (ok) {
+        data.cowlFlapPosition4 = row.at(::Index::RecipEngineCowlFlapPosition4).toInt(&ok);
+    }
+    if (ok) {
+        data.electricalMasterBattery1 = row.at(::Index::ElectricalMasterBattery1).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.electricalMasterBattery2 = row.at(::Index::ElectricalMasterBattery2).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.electricalMasterBattery3 = row.at(::Index::ElectricalMasterBattery3).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.electricalMasterBattery4 = row.at(::Index::ElectricalMasterBattery4).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineStarter1 = row.at(::Index::GeneralEngineStarter1).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineStarter2 = row.at(::Index::GeneralEngineStarter2).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineStarter3 = row.at(::Index::GeneralEngineStarter3).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineStarter4 = row.at(::Index::GeneralEngineStarter4).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineCombustion1 = row.at(::Index::GeneralEngineCombustion1).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineCombustion2 = row.at(::Index::GeneralEngineCombustion2).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineCombustion3 = row.at(::Index::GeneralEngineCombustion3).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineCombustion4 = row.at(::Index::GeneralEngineCombustion4).toInt(&ok) != 0;
+    }
+    // Timestamp
+    ok = importTimestamp(row, firstRow, data.timestamp, timestampDelta);
 
-//        int intValue;
-//        if (header == SimVar::ThrottleLeverPosition1) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.throttleLeverPosition1 = intValue;
-//            }
-//        } else if (header == SimVar::ThrottleLeverPosition2) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.throttleLeverPosition2 = intValue;
-//            }
-//        } else if (header == SimVar::ThrottleLeverPosition3) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.throttleLeverPosition3 = intValue;
-//            }
-//        } else if (header == SimVar::ThrottleLeverPosition4) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.throttleLeverPosition4 = intValue;
-//            }
-//        } else if (header == SimVar::PropellerLeverPosition1) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.propellerLeverPosition1 = intValue;
-//            }
-//        } else if (header == SimVar::PropellerLeverPosition2) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.propellerLeverPosition2 = intValue;
-//            }
-//        } else if (header == SimVar::PropellerLeverPosition3) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.propellerLeverPosition3 = intValue;
-//            }
-//        } else if (header == SimVar::PropellerLeverPosition4) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.propellerLeverPosition4 = intValue;
-//            }
-//        } else if (header == SimVar::MixtureLeverPosition1) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.mixtureLeverPosition1 = intValue;
-//            }
-//        } else if (header == SimVar::MixtureLeverPosition2) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.mixtureLeverPosition2 = intValue;
-//            }
-//        } else if (header == SimVar::MixtureLeverPosition3) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.mixtureLeverPosition3 = intValue;
-//            }
-//        } else if (header == SimVar::MixtureLeverPosition4) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.mixtureLeverPosition4 = intValue;
-//            }
-//        } else if (header == SimVar::RecipEngineCowlFlapPosition1) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.cowlFlapPosition1 = intValue;
-//            }
-//        } else if (header == SimVar::RecipEngineCowlFlapPosition2) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.cowlFlapPosition2 = intValue;
-//            }
-//        } else if (header == SimVar::RecipEngineCowlFlapPosition3) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.cowlFlapPosition3 = intValue;
-//            }
-//        } else if (header == SimVar::RecipEngineCowlFlapPosition4) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.cowlFlapPosition4 = intValue;
-//            }
-//        } else if (header == SimVar::ElectricalMasterBattery1) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.electricalMasterBattery1 = intValue != 0;
-//            }
-//        } else if (header == SimVar::ElectricalMasterBattery2) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.electricalMasterBattery2 = intValue != 0;
-//            }
-//        } else if (header == SimVar::ElectricalMasterBattery3) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.electricalMasterBattery3 = intValue != 0;
-//            }
-//        } else if (header == SimVar::ElectricalMasterBattery4) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.electricalMasterBattery4 = intValue != 0;
-//            }
-//        } else if (header == SimVar::GeneralEngineStarter1) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.generalEngineStarter1 = intValue != 0;
-//            }
-//        } else if (header == SimVar::GeneralEngineStarter2) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.generalEngineStarter2 = intValue != 0;
-//            }
-//        } else if (header == SimVar::GeneralEngineStarter3) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.generalEngineStarter3 = intValue != 0;
-//            }
-//        } else if (header == SimVar::GeneralEngineStarter4) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.generalEngineStarter4 = intValue != 0;
-//            }
-//        } else if (header == SimVar::GeneralEngineCombustion1) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.generalEngineCombustion1 = intValue != 0;
-//            }
-//        } else if (header == SimVar::GeneralEngineCombustion2) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.generalEngineCombustion2 = intValue != 0;
-//            }
-//        } else if (header == SimVar::GeneralEngineCombustion3) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.generalEngineCombustion3 = intValue != 0;
-//            }
-//        } else if (header == SimVar::GeneralEngineCombustion4) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.generalEngineCombustion4 = intValue != 0;
-//            }
-//            // Timestamp
-//        } else if (header == SimVar::Timestamp) {
-//            ok = importTimestamp(values, ::Index::Longitude, firstRow, data.timestamp, timestampDelta);
-//        } else {
-//            ok = true;
-//        }
-
-//        if (ok) {
-//            // Next value
-//            ++::Index::Longitude;
-//        } else {
-//            // Parse error
-//            break;
-//        }
-
-//    }
-//    if (ok) {
-//        engine.upsertLast(std::move(data));
-//    }
+    if (ok) {
+        engine.upsertLast(std::move(data));
+    }
     return ok;
 }
 
