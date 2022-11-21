@@ -32,6 +32,8 @@ class QIODevice;
 class QDateTime;
 class QString;
 
+#include <Kernel/CsvParser.h>
+#include <Model/PositionData.h>
 #include "CsvParserIntf.h"
 
 class Flight;
@@ -48,13 +50,14 @@ public:
     bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
 
 private:
-    static inline bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;
-    static inline bool importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept;
-    static inline bool importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept;
-    static inline bool importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept;
-    static inline bool importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept;
-    static inline bool importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept;
-    static inline bool importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept;
+    inline bool parseRow(const CsvParser::Row &row, Aircraft &aircraft, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept;
+    static inline bool importPositionData(const CsvParser::Row &row, bool firstRow, Aircraft &aircraft) noexcept;
+    static inline bool importEngineData(const CsvParser::Row &row, bool firstRow, Engine &engine) noexcept;
+    static inline bool importPrimaryFlightControlData(const CsvParser::Row &row, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept;
+    static inline bool importSecondaryFlightControlData(const CsvParser::Row &row, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept;
+    static inline bool importAircraftHandleData(const CsvParser::Row &row, bool firstRow, AircraftHandle &aircraftHandle) noexcept;
+    static inline bool importLightData(const CsvParser::Row &row, bool firstRow, Light &light) noexcept;
+    static inline bool importTimestamp(const CsvParser::Row &row, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept;
 };
 
 #endif // SKYDOLLYCSVPARSER_H
