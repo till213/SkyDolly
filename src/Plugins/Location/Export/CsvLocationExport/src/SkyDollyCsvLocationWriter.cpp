@@ -57,6 +57,7 @@ namespace
     const QString TrueHeadingColumn = QStringLiteral("True Heading");
     const QString IndicatedAirspeedColumn = QStringLiteral("Indicated Airspeed");
     const QString OnGroundColumn = QStringLiteral("On Ground");
+    const QString EngineEventColumn = QStringLiteral("Engine Event");
 }
 
 struct SkyDollyCsvLocationWriterPrivate
@@ -93,13 +94,15 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                           ::BankColumn % CsvConst::CommaSep %
                           ::TrueHeadingColumn % CsvConst::CommaSep %
                           ::IndicatedAirspeedColumn % CsvConst::CommaSep %
-                          ::OnGroundColumn % CsvConst::Ln
+                          ::OnGroundColumn % CsvConst::CommaSep %
+                          ::EngineEventColumn % CsvConst::Ln
                           );
 
     bool ok = io.write(csv.toUtf8());
     Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType);
     Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
     Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country);
+    Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent);
     if (ok) {
         for (const Location &location : locations) {
             QString title = location.title;
@@ -108,6 +111,7 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
             const QString locationTypeSymbolicId = locationTypeEnumeration.getItemById(location.typeId).symbolicId;
             const QString locationCategorySymbolicId = locationCategoryEnumeration.getItemById(location.categoryId).symbolicId;
             const QString countrySymbolicId = countryEnumeration.getItemById(location.countryId).symbolicId;
+            const QString engineEventSymbolicId = engineEventEnumeration.getItemById(location.engineEventId).symbolicId;
             const QString csv = "\"" % title.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
                                 "\"" % description.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
                                 locationTypeSymbolicId % CsvConst::CommaSep %
@@ -122,7 +126,8 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                                 Export::formatNumber(location.bank) % CsvConst::CommaSep %
                                 Export::formatNumber(location.trueHeading) % CsvConst::CommaSep %
                                 QString::number(location.indicatedAirspeed) % CsvConst::CommaSep %
-                                (location.onGround ? "true" : "false") % CsvConst::Ln;
+                                (location.onGround ? "true" : "false") % CsvConst::CommaSep %
+                                engineEventSymbolicId % CsvConst::Ln;
             ok = io.write(csv.toUtf8());
 
             if (!ok) {

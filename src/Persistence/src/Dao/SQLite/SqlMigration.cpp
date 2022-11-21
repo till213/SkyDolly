@@ -42,23 +42,26 @@
 
 namespace
 {
-    // Also refer to Locations.csv
-    constexpr int UuidIndex = 0;
-    constexpr int TitleIndex = 1;
-    constexpr int DescriptionIndex = 2;
-    constexpr int CategoryIndex = 3;
-    constexpr int CountryIndex = 4;
-    constexpr int IdentifierIndex = 5;
-    constexpr int LatitudeIndex = 6;
-    constexpr int LongitudeIndex = 7;
-    constexpr int AltitudeIndex = 8;
-    constexpr int PitchIndex = 9;
-    constexpr int BankIndex = 10;
-    constexpr int TrueHeadingIndex = 11;
-    constexpr int IndicatedAirspeedIndex = 12;
-    constexpr int OnGroundIndex = 13;
-    constexpr int AttributesIndex = 14;
-    constexpr int EngineEvent = 15;
+    // Also refer to res/migr/Locations.csv
+    enum Index
+    {
+        Uuid = 0,
+        Title,
+        Description,
+        Category,
+        Country,
+        Identifier,
+        Latitude,
+        Longitude,
+        Altitude,
+        Pitch,
+        Bank,
+        TrueHeading,
+        IndicatedAirspeed,
+        OnGround,
+        Attributes,
+        EngineEvent
+    };
 
     // Depending on the CSV generating application (e.g. Excel or LibreOffice) the column titles may
     // or may not have "quotes"
@@ -163,7 +166,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
             CsvParser csvParser;
             CsvParser::Rows rows = csvParser.parse(textStream, ::LocationMigrationHeader, ::AlternateLocationMigrationHeader);
             for (const auto &row : rows) {
-                const QString uuid = row.at(::UuidIndex);
+                const QString uuid = row.at(::Index::Uuid);
                 SqlMigrationStep step;
                 step.setMigrationId(uuid);
                 step.setStep(1);
@@ -185,8 +188,8 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
 {
     bool ok {true};
     Location location;
-    location.title = row.at(::TitleIndex);
-    QString description = row.at(::DescriptionIndex);
+    location.title = row.at(::Index::Title);
+    QString description = row.at(::Index::Description);
     location.description = description.replace("\\n", "\n");
     Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
     if (ok) {
@@ -194,47 +197,47 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     }
     Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
     if (ok) {
-        const QString categorySymbolicId = row.at(::CategoryIndex);
+        const QString categorySymbolicId = row.at(::Index::Category);
         location.categoryId = locationCategoryEnumeration.getItemBySymbolicId(categorySymbolicId).id;
     }
     Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
     if (ok) {
-        const QString countrySymbolicId = row.at(::CountryIndex);
+        const QString countrySymbolicId = row.at(::Index::Country);
         location.countryId = countryEnumeration.getItemBySymbolicId(countrySymbolicId).id;
     }
     if (ok) {
-        location.identifier = row.at(::IdentifierIndex);
+        location.identifier = row.at(::Index::Identifier);
     }
     if (ok) {
-        location.latitude = row.at(::LatitudeIndex).toDouble(&ok);
+        location.latitude = row.at(::Index::Latitude).toDouble(&ok);
     }
     if (ok) {
-        location.longitude = row.at(::LongitudeIndex).toDouble(&ok);
+        location.longitude = row.at(::Index::Longitude).toDouble(&ok);
     }
     if (ok) {
-        location.altitude = row.at(::AltitudeIndex).toDouble(&ok);
+        location.altitude = row.at(::Index::Altitude).toDouble(&ok);
     }
     if (ok) {
-        location.pitch = row.at(::PitchIndex).toDouble(&ok);
+        location.pitch = row.at(::Index::Pitch).toDouble(&ok);
     }
     if (ok) {
-        location.bank = row.at(::BankIndex).toDouble(&ok);
+        location.bank = row.at(::Index::Bank).toDouble(&ok);
     }
     if (ok) {
-        location.trueHeading = row.at(::TrueHeadingIndex).toDouble(&ok);
+        location.trueHeading = row.at(::Index::TrueHeading).toDouble(&ok);
     }
     if (ok) {
-        location.indicatedAirspeed = row.at(::IndicatedAirspeedIndex).toInt(&ok);
+        location.indicatedAirspeed = row.at(::Index::IndicatedAirspeed).toInt(&ok);
     }
     if (ok) {
-        location.attributes = row.at(::AttributesIndex).toLongLong(&ok);
+        location.attributes = row.at(::Index::Attributes).toLongLong(&ok);
     }
     if (ok) {
-        location.onGround = row.at(::OnGroundIndex).toLower() == "true" ? true : false;
+        location.onGround = row.at(::Index::OnGround).toLower() == "true" ? true : false;
     }
     Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent, &ok);
     if (ok) {
-        const QString engineEventSymbolicId = row.at(::EngineEvent);
+        const QString engineEventSymbolicId = row.at(::Index::EngineEvent);
         location.engineEventId = engineEventEnumeration.getItemBySymbolicId(engineEventSymbolicId).id;
     }
     if (ok) {

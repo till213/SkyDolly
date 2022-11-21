@@ -39,22 +39,25 @@
 
 namespace
 {
-    // Also refer to Locations.csv
-    constexpr int TitleIndex = 0;
-    constexpr int DescriptionIndex = 1;
-    constexpr int TypeIndex = 2;
-    constexpr int CategoryIndex = 3;
-    constexpr int CountryIndex = 4;
-    constexpr int AttributesIndex = 5;
-    constexpr int IdentifierIndex = 6;
-    constexpr int LatitudeIndex = 7;
-    constexpr int LongitudeIndex = 8;
-    constexpr int AltitudeIndex = 9;
-    constexpr int PitchIndex = 10;
-    constexpr int BankIndex = 11;
-    constexpr int TrueHeadingIndex = 12;
-    constexpr int IndicatedAirspeedIndex = 13;
-    constexpr int OnGroundIndex = 14;
+    enum Index
+    {
+        Title = 0,
+        Description,
+        Type,
+        Category,
+        Country,
+        Attributes,
+        Identifier,
+        Latitude,
+        Longitude,
+        Altitude,
+        Pitch,
+        Bank,
+        TrueHeading,
+        IndicatedAirspeed,
+        OnGround,
+        EngineEvent
+    };
 
     constexpr const char *SkyDollyCsvHeader {"Title,Description,Type,Category,Country,Attributes"};
 }
@@ -65,6 +68,7 @@ struct SkyDollyCsvLocationParserPrivate
     Enumeration typeEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationType)};
     Enumeration categoryEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationCategory)};
     Enumeration countryEnumeration {enumerationService.getEnumerationByName(EnumerationService::Country)};
+    Enumeration engineEventEnumeration {enumerationService.getEnumerationByName(EnumerationService::EngineEvent)};
     std::int64_t importTypeId {typeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id};
 };
 
@@ -107,77 +111,82 @@ Location SkyDollyCsvLocationParser::parseLocation(CsvParser::Row row, bool &ok) 
     Location location;
 
     ok = true;
-    location.title = row.at(::TitleIndex);
-    location.description = row.at(::DescriptionIndex);
+    location.title = row.at(::Index::Title);
+    location.description = row.at(::Description);
     // For now imported Sky Dolly locations always are of type "imported"
     location.typeId = d->importTypeId;
     ok = location.typeId != Const::InvalidId;
     if (ok) {
-        const QString categorySymbolicId = row.at(::CategoryIndex);
+        const QString categorySymbolicId = row.at(::Index::Category);
         location.categoryId = d->categoryEnumeration.getItemBySymbolicId(categorySymbolicId).id;
         ok = location.categoryId != Const::InvalidId;
     }
     if (ok) {
-        const QString countrySymbolicId = row.at(::CountryIndex);
+        const QString countrySymbolicId = row.at(::Index::Country);
         location.countryId = d->countryEnumeration.getItemBySymbolicId(countrySymbolicId).id;
         ok = location.countryId != Const::InvalidId;
     }
     if (ok) {
-        const std::int64_t attributes = row.at(::AttributesIndex).toLongLong(&ok);
+        const std::int64_t attributes = row.at(::Index::Attributes).toLongLong(&ok);
         if (ok) {
             location.attributes = attributes;
         }
     }
     if (ok) {
-        location.identifier = row.at(::IdentifierIndex);
+        location.identifier = row.at(::Index::Identifier);
     }
     if (ok) {
-        const double latitude = row.at(::LatitudeIndex).toDouble(&ok);
+        const double latitude = row.at(::Index::Latitude).toDouble(&ok);
         if (ok) {
             location.latitude = latitude;
         }
     }
     if (ok) {
-        const double longitude = row.at(::LongitudeIndex).toDouble(&ok);
+        const double longitude = row.at(::Index::Longitude).toDouble(&ok);
         if (ok) {
             location.longitude = longitude;
         }
     }
     if (ok) {
-        const double altitude = row.at(::AltitudeIndex).toDouble(&ok);
+        const double altitude = row.at(::Index::Altitude).toDouble(&ok);
         if (ok) {
             location.altitude = altitude;
         }
     }
     if (ok) {
-        const double pitch = row.at(::PitchIndex).toDouble(&ok);
+        const double pitch = row.at(::Index::Pitch).toDouble(&ok);
         if (ok) {
             location.pitch = pitch;
         }
     }
     if (ok) {
-        const double bank = row.at(::BankIndex).toDouble(&ok);
+        const double bank = row.at(::Index::Bank).toDouble(&ok);
         if (ok) {
             location.bank = bank;
         }
     }
     if (ok) {
-        const double trueHeading = row.at(::TrueHeadingIndex).toDouble(&ok);
+        const double trueHeading = row.at(::Index::TrueHeading).toDouble(&ok);
         if (ok) {
             location.trueHeading = trueHeading;
         }
     }
     if (ok) {
-        const int indicatedAirspeed = row.at(::IndicatedAirspeedIndex).toInt(&ok);
+        const int indicatedAirspeed = row.at(::Index::IndicatedAirspeed).toInt(&ok);
         if (ok) {
             location.indicatedAirspeed = indicatedAirspeed;
         }
     }
     if (ok) {
-        const QString onGround = row.at(::OnGroundIndex);
+        const QString onGround = row.at(::Index::OnGround);
         if (ok) {
             location.onGround = onGround == "true" ? true : false;
         }
+    }
+    if (ok) {
+        const QString engineEventSymbolicId = row.at(::Index::EngineEvent);
+        location.engineEventId = d->engineEventEnumeration.getItemBySymbolicId(engineEventSymbolicId).id;
+        ok = location.engineEventId != Const::InvalidId;
     }
 
     return location;

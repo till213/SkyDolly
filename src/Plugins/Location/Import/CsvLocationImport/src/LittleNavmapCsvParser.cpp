@@ -34,20 +34,23 @@
 #include <Kernel/CsvParser.h>
 #include <Model/Location.h>
 #include <Model/Enumeration.h>
+#include <Persistence/PersistedEnumerationItem.h>
 #include <Persistence/Service/EnumerationService.h>
 #include "CsvLocationImportSettings.h"
 #include "LittleNavmapCsvParser.h"
 
 namespace
 {
-    // Also refer to Locations.csv
-    constexpr int TypeIndex = 0;
-    constexpr int TitleIndex = 1;
-    constexpr int IdentIndex = 2;
-    constexpr int LatitudeIndex = 3;
-    constexpr int LongitudeIndex = 4;
-    constexpr int ElevationIndex = 5;
-    constexpr int DescriptionIndex = 8;
+    enum Index
+    {
+        Type = 0,
+        Title,
+        Ident,
+        Latitude,
+        Longitude,
+        Elevation,
+        Description
+    };
 
     constexpr const char *LittleNavmapCsvHeader {"type,name,ident,latitude,longitude,elevation"};
 }
@@ -59,15 +62,14 @@ public:
         : pluginSettings(pluginSettings)
     {
         initTypeToSymbolicIdMap();
-        Enumeration locationTypeEnumeration = enumerationService.getEnumerationByName(EnumerationService::LocationType);
-        importTypeId = locationTypeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id;
     }
 
     const CsvLocationImportSettings &pluginSettings;
-    EnumerationService enumerationService;
+    const std::int64_t importTypeId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::LocationTypeImportSymbolicId).id()};
+    const std::int64_t keepEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymbolicId).id()};
+
     // Key: Litte Navmap userpoint type, value: symbolic category ID
     std::unordered_map<QString, QString> typeToSymbolicId;
-    std::int64_t importTypeId;
 
 private:
     inline void initTypeToSymbolicIdMap() {
@@ -130,24 +132,25 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
     Location location;
 
     ok = true;
-    location.title = row.at(::TitleIndex);
+    location.title = row.at(::Index::Title);
     location.countryId = d->pluginSettings.getDefaultCountryId();
     location.typeId = d->importTypeId;
-    const QString type = row.at(::TypeIndex);
+    location.engineEventId = d->keepEngineEventId;
+    const QString type = row.at(::Index::Type);
     location.categoryId = mapTypeToCategoryId(type);
-    location.identifier = row.at(::IdentIndex);
-    const double latitude = row.at(::LatitudeIndex).toDouble(&ok);
+    location.identifier = row.at(::Index::Ident);
+    const double latitude = row.at(::Index::Latitude).toDouble(&ok);
     if (ok) {
         location.latitude = latitude;
     }
     if (ok) {
-        const double longitude = row.at(::LongitudeIndex).toDouble(&ok);
+        const double longitude = row.at(::Index::Longitude).toDouble(&ok);
         if (ok) {
             location.longitude = longitude;
         }
     }
     if (ok) {
-        const QVariant data = row.at(::ElevationIndex);
+        const QVariant data = row.at(::Index::Elevation);
         if (!data.isNull()) {
             const double altitude = data.toDouble(&ok);
             if (ok) {
@@ -169,7 +172,7 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
         location.indicatedAirspeed = d->pluginSettings.getDefaultIndicatedAirspeed();
     }
     if (ok) {
-        location.description = row.at(::DescriptionIndex);
+        location.description = row.at(::Index::Description);
     }
 
     return location;
@@ -177,7 +180,8 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
 
 inline std::int64_t LittleNavmapCsvParser::mapTypeToCategoryId(const QString &type) const noexcept
 {
-    Enumeration locationCategory = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
+    EnumerationService enumerationService;
+    Enumeration locationCategory = enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
     QString categorySymbolicId;
     const auto it = d->typeToSymbolicId.find(type.toLower());
     if (it != d->typeToSymbolicId.end()) {
