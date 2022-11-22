@@ -35,6 +35,7 @@
 #include <QTextStream>
 
 #include <Kernel/Convert.h>
+#include <Kernel/Enum.h>
 #include <Kernel/CsvParser.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -45,12 +46,16 @@
 namespace
 {
     constexpr const char *FlightRadar24CsvHeader {"Timestamp,UTC,Callsign,Position,Altitude,Speed,Direction"};
-    constexpr int UnixTimestampIndex = 0;
-    constexpr int CallsignIndex = 2;
-    constexpr int PositionIndex = 3;
-    constexpr int AltitudeIndex = 4;
-    constexpr int SpeedIndex = 5;
-    constexpr int HeadingIndex = 6;
+
+    enum struct Index
+    {
+        UnixTimestamp = 0,
+        Callsign,
+        Position,
+        Altitude,
+        Speed,
+        Heading
+    };
 }
 
 // PUBLIC
@@ -87,13 +92,13 @@ inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &
 
     ok = true;
     // In seconds after 1970-01-01 UTC
-    const std::int64_t unixTimestamp = row.at(::UnixTimestampIndex).toLongLong(&ok);
+    const std::int64_t unixTimestamp = row.at(Enum::toUnderlyingType(::Index::UnixTimestamp)).toLongLong(&ok);
     if (ok) {
         if (firstDateTimeUtc.isNull()) {
             firstDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
             currentDateTimeUtc = firstDateTimeUtc;
             timestamp = 0;
-            flightNumber = row.at(::CallsignIndex);
+            flightNumber = row.at(Enum::toUnderlyingType(::Index::Callsign));
         } else {
             currentDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
             timestamp = firstDateTimeUtc.msecsTo(currentDateTimeUtc);
@@ -101,7 +106,7 @@ inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &
     }
     if (ok) {
         positionData.timestamp = timestamp;
-        const QString position = row.at(::PositionIndex);
+        const QString position = row.at(Enum::toUnderlyingType(::Index::Position));
         const QStringList coordinates = position.split(',');
         if (coordinates.size() == 2) {
             positionData.latitude = coordinates.first().toDouble(&ok);
@@ -113,14 +118,14 @@ inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &
         }
     }
     if (ok) {
-        positionData.altitude = row.at(::AltitudeIndex).toDouble(&ok);
+        positionData.altitude = row.at(Enum::toUnderlyingType(::Index::Altitude)).toDouble(&ok);
         positionData.indicatedAltitude = positionData.altitude;
     }
     if (ok) {
-        positionData.velocityBodyZ = row.at(::SpeedIndex).toDouble(&ok);
+        positionData.velocityBodyZ = row.at(Enum::toUnderlyingType(::Index::Speed)).toDouble(&ok);
     }
     if (ok) {
-        positionData.trueHeading = row.at(::HeadingIndex).toDouble(&ok);
+        positionData.trueHeading = row.at(Enum::toUnderlyingType(::Index::Heading)).toDouble(&ok);
     }
     return positionData;
 }
