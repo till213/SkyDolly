@@ -108,7 +108,7 @@ bool JsonExportPlugin::hasMultiAircraftSupport() const noexcept
     return true;
 }
 
-bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
+bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
     d->flight = &flight;
     io.setTextModeEnabled(true);
@@ -127,7 +127,7 @@ bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcep
     return ok;
 }
 
-bool JsonExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+bool JsonExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     d->flight = &flight;
     io.setTextModeEnabled(true);

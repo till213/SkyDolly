@@ -27,8 +27,6 @@
 
 namespace CsvConst {
 
-    /*! Separator character for Sky Dolly CSV import & export */
-    constexpr char TabSep = '\t';
     /*! Comma separator character */
     constexpr char CommaSep = ',';
     /*! Double-quote character */

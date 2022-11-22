@@ -119,7 +119,7 @@ bool KmlExportPlugin::hasMultiAircraftSupport() const noexcept
     return true;
 }
 
-bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
+bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
     io.setTextModeEnabled(true);
 
@@ -152,7 +152,7 @@ bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
     return ok;
 }
 
-bool KmlExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+bool KmlExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     io.setTextModeEnabled(true);
 

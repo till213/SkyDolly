@@ -110,7 +110,7 @@ bool GpxExportPlugin::hasMultiAircraftSupport() const noexcept
     return true;
 }
 
-bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
+bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
     d->flight = &flight;
     io.setTextModeEnabled(true);
@@ -130,7 +130,7 @@ bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
     return ok;
 }
 
-bool GpxExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+bool GpxExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     d->flight = &flight;
     io.setTextModeEnabled(true);

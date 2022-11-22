@@ -170,12 +170,12 @@ bool IgcExportPlugin::hasMultiAircraftSupport() const noexcept
     return false;
 }
 
-bool IgcExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) noexcept
+bool IgcExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) const noexcept
 {
     return false;
 }
 
-bool IgcExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+bool IgcExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     d->flight = &flight;
     bool ok = exportARecord(io);

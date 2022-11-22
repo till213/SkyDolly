@@ -51,7 +51,7 @@ public:
     SkyDollyCsvWriter(const CsvExportSettings &pluginSettings) noexcept;
     ~SkyDollyCsvWriter() noexcept override;
 
-    bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
+    bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept override;
 
 private:
     const std::unique_ptr<SkyDollyCsvWriterPrivate> d;

@@ -47,7 +47,7 @@ Position::Position(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
 {}
 
-PositionData Position::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+PositionData Position::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     PositionData positionData;
     const PositionData *p0 {nullptr}, *p1 {nullptr}, *p2 {nullptr}, *p3 {nullptr};

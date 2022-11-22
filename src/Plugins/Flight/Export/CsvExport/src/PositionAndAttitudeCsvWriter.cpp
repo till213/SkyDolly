@@ -75,7 +75,7 @@ PositionAndAttitudeCsvWriter::PositionAndAttitudeCsvWriter(const CsvExportSettin
 
 PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() noexcept = default;
 
-bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     QString csv = QString(::TimestampColumn % CsvConst::CommaSep %
                           ::UtcColumn % CsvConst::CommaSep %
