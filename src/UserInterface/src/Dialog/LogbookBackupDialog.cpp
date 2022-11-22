@@ -28,9 +28,6 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QMessageBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
@@ -42,12 +39,8 @@
 
 struct LogbookBackupDialogPrivate
 {
-    LogbookBackupDialogPrivate()
-        : databaseService(std::make_unique<DatabaseService>())
-    {}
-
-    std::unique_ptr<DatabaseService> databaseService;
-    QString originalBackupPeriodIntlId;
+    std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>()};
+    QString originalBackupPeriodSymId;
 };
 
 // PUBLIC
@@ -65,21 +58,13 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
     bool ok {true};
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
-        d->originalBackupPeriodIntlId = metadata.backupPeriodSymId;
+        d->originalBackupPeriodSymId = metadata.backupPeriodSymId;
     } else {
-        d->originalBackupPeriodIntlId = Const::BackupNeverSymId;
+        d->originalBackupPeriodSymId = Const::BackupNeverSymId;
     }
-#ifdef DEBUG
-    qDebug() << "LogbookBackupDialog::LogbookBackupDialog: CREATED";
-#endif
 }
 
-LogbookBackupDialog::~LogbookBackupDialog()
-{
-#ifdef DEBUG
-    qDebug() << "LogbookBackupDialog::~LogbookBackupDialog: DELETED";
-#endif
-}
+LogbookBackupDialog::~LogbookBackupDialog() = default;
 
 // PUBLIC SLOTS
 
@@ -112,7 +97,7 @@ void LogbookBackupDialog::reject() noexcept
 
    // First update the backup period in case it has been changed...
    const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
-   if (backupPeriodIntlId != d->originalBackupPeriodIntlId) {
+   if (backupPeriodIntlId != d->originalBackupPeriodSymId) {
        // ... as this influences...
        if (backupPeriodIntlId != Const::BackupNowSymId) {
            d->databaseService->setBackupPeriod(backupPeriodIntlId);
