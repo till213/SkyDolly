@@ -37,7 +37,7 @@ class LocationService;
 class LocationExportIntf : public PluginIntf
 {
 public:
-    virtual bool exportLocations(const std::vector<Location> &locations) noexcept = 0;
+    virtual bool exportLocations(const std::vector<Location> &locations) const noexcept = 0;
 };
 
 #define LOCATION_EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationExportInterface/1.0"
