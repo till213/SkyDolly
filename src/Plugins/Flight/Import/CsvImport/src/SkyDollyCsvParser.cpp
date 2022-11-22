@@ -140,69 +140,63 @@ bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[mayb
 
     QFile *file = qobject_cast<QFile *>(&io);
     firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
+    flightNumber = QString();
 
     CsvParser csvParser;
     QTextStream textStream(&io);
     textStream.setCodec(QTextCodec::codecForName("UTF-8"));
     CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
     position.reserve(rows.size());
+    bool firstRow {true};
     bool ok {true};
     for (const auto &row : rows) {
-        ok = parseRow(row, aircraft, firstDateTimeUtc, flightNumber);
-        if (!ok) {
+        if (firstRow) {
+            // The first position timestamp must be 0, so shift all timestamps by
+            // the timestamp delta, derived from the first timestamp
+            // (that is usually 0 already)
+            m_timestampDelta = row.at(::Index::Timestamp).toLongLong(&ok);
+            firstRow = false;
+        }
+        if (ok) {
+            ok = parseRow(row, aircraft);
+        } else {
             break;
         }
     }
     return ok;
 }
 
-inline bool SkyDollyCsvParser::parseRow(const CsvParser::Row &row, Aircraft &aircraft, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
+inline bool SkyDollyCsvParser::parseRow(const CsvParser::Row &row, Aircraft &aircraft) noexcept
 {
-    PositionData positionData;
-
-    bool firstPositionData {true};
-    bool firstEngineData {true};
-    bool firstPrimaryFlightControlData {true};
-    bool firstSecondaryFlightControlData {true};
-    bool firstAircraftHandleData {true};
-    bool firstLightData {true};
-
     CsvConst::DataType dataType = static_cast<CsvConst::DataType>(row.at(::Index::Type).at(0).toLatin1());
 
     bool ok {true};
     switch (dataType) {
     case CsvConst::DataType::Aircraft:
-        ok = importPositionData(row, firstPositionData, aircraft);
-        firstPositionData = false;
+        ok = importPositionData(row, aircraft);
         break;
     case CsvConst::DataType::Engine:
-        ok = importEngineData(row, firstEngineData, aircraft.getEngine());
-        firstEngineData = false;
+        ok = importEngineData(row, aircraft.getEngine());
         break;
     case CsvConst::DataType::PrimaryFlightControl:
-        ok = importPrimaryFlightControlData(row, firstPrimaryFlightControlData, aircraft.getPrimaryFlightControl());
-        firstPrimaryFlightControlData = false;
+        ok = importPrimaryFlightControlData(row, aircraft.getPrimaryFlightControl());
         break;
     case CsvConst::DataType::SecondaryFlightControl:
-        ok = importSecondaryFlightControlData(row, firstSecondaryFlightControlData, aircraft.getSecondaryFlightControl());
-        firstSecondaryFlightControlData = false;
+        ok = importSecondaryFlightControlData(row, aircraft.getSecondaryFlightControl());
         break;
     case CsvConst::DataType::AircraftHandle:
-        ok = importAircraftHandleData(row, firstAircraftHandleData, aircraft.getAircraftHandle());
-        firstAircraftHandleData = false;
+        ok = importAircraftHandleData(row, aircraft.getAircraftHandle());
         break;
     case CsvConst::DataType::Light:
-        ok = importLightData(row, firstLightData, aircraft.getLight());
-        firstLightData = false;
+        ok = importLightData(row, aircraft.getLight());
         break;
     }
-
     return ok;
 }
 
 // PRIVATE
 
-inline bool SkyDollyCsvParser::importPositionData(const CsvParser::Row &row, bool firstRow, Aircraft &aircraft) noexcept
+inline bool SkyDollyCsvParser::importPositionData(const CsvParser::Row &row, Aircraft &aircraft) noexcept
 {
     PositionData data;
     std::int64_t timestampDelta {0};
@@ -248,7 +242,9 @@ inline bool SkyDollyCsvParser::importPositionData(const CsvParser::Row &row, boo
         data.rotationVelocityBodyZ = row.at(::Index::RotationVelocityBodyZ).toDouble(&ok);
     }
     // Timestamp
-    ok = importTimestamp(row, firstRow, data.timestamp, timestampDelta);
+    if (ok) {
+        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+    }
 
     if (ok) {
         aircraft.getPosition().upsertLast(data);
@@ -256,7 +252,7 @@ inline bool SkyDollyCsvParser::importPositionData(const CsvParser::Row &row, boo
     return ok;
 }
 
-inline bool SkyDollyCsvParser::importEngineData(const CsvParser::Row &row, bool firstRow, Engine &engine) noexcept
+inline bool SkyDollyCsvParser::importEngineData(const CsvParser::Row &row, Engine &engine) noexcept
 {
     EngineData data;
     std::int64_t timestampDelta = 0;
@@ -345,271 +341,130 @@ inline bool SkyDollyCsvParser::importEngineData(const CsvParser::Row &row, bool 
         data.generalEngineCombustion4 = row.at(::Index::GeneralEngineCombustion4).toInt(&ok) != 0;
     }
     // Timestamp
-    ok = importTimestamp(row, firstRow, data.timestamp, timestampDelta);
+    if (ok) {
+        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+    }
 
     if (ok) {
-        engine.upsertLast(std::move(data));
+        engine.upsertLast(data);
     }
     return ok;
 }
 
-inline bool SkyDollyCsvParser::importPrimaryFlightControlData(const CsvParser::Row &row, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept
+inline bool SkyDollyCsvParser::importPrimaryFlightControlData(const CsvParser::Row &row, PrimaryFlightControl &primaryFlightControl) noexcept
 {
-//    PrimaryFlightControlData data;
-//    int ::Index::Longitude = 0;
-//    std::int64_t timestampDelta = 0;
+    PrimaryFlightControlData data;
+    std::int64_t timestampDelta = 0;
     bool ok {true};
-//    for (const QByteArray &header : headers) {
 
-//        if (::Index::Longitude >= row.count()) {
-//            // Less values than headers
-//            ok = false;
-//            break;
-//        }
-
-//        int intValue;
-//        if (header == SimVar::RudderPosition) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.rudderPosition = intValue;
-//            }
-//        } else if (header == SimVar::ElevatorPosition) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.elevatorPosition = intValue;
-//            }
-//        } else if (header == SimVar::AileronPosition) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.aileronPosition = intValue;
-//            }
-//            // Timestamp
-//        } else if (header == SimVar::Timestamp) {
-//            ok = importTimestamp(values, ::Index::Longitude, firstRow, data.timestamp, timestampDelta);
-//        } else {
-//            ok = true;
-//        }
-
-//        if (ok) {
-//            // Next value
-//            ++::Index::Longitude;
-//        } else {
-//            // Parse error
-//            break;
-//        }
-
-//    }
-//    if (ok) {
-//        primaryFlightControl.upsertLast(std::move(data));
-//    }
-    return ok;
-}
-
-inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser::Row &row, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept
-{
-//    SecondaryFlightControlData data;
-//    int ::Index::Longitude = 0;
-//    std::int64_t timestampDelta = 0;
-    bool ok {true};
-//    for (const QByteArray &header : headers) {
-
-//        if (::Index::Longitude >= row.count()) {
-//            // Less values than headers
-//            ok = false;
-//            break;
-//        }
-
-//        int intValue;
-//        if (header == SimVar::LeadingEdgeFlapsLeftPercent) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.leadingEdgeFlapsLeftPosition = intValue;
-//            }
-//        } else if (header == SimVar::LeadingEdgeFlapsRightPercent) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.leadingEdgeFlapsRightPosition = intValue;
-//            }
-//        } else if (header == SimVar::TrailingEdgeFlapsLeftPercent) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.trailingEdgeFlapsLeftPosition = intValue;
-//            }
-//        } else if (header == SimVar::TrailingEdgeFlapsRightPercent) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.trailingEdgeFlapsRightPosition = intValue;
-//            }
-//        } else if (header == SimVar::SpoilersHandlePosition) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.spoilersHandlePosition = intValue;
-//            }
-//        } else if (header == SimVar::FlapsHandleIndex) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.flapsHandleIndex = intValue;
-//            }
-//            // Timestamp
-//        } else if (header == SimVar::Timestamp) {
-//            ok = importTimestamp(values, ::Index::Longitude, firstRow, data.timestamp, timestampDelta);
-//        } else {
-//            ok = true;
-//        }
-
-//        if (ok) {
-//            // Next value
-//            ++::Index::Longitude;
-//        } else {
-//            // Parse error
-//            break;
-//        }
-
-//    }
-//    if (ok) {
-//        secondaryFlightControl.upsertLast(std::move(data));
-//    }
-    return ok;
-}
-
-inline bool SkyDollyCsvParser::importAircraftHandleData(const CsvParser::Row &row, bool firstRow, AircraftHandle &aircraftHandle) noexcept
-{
-//    AircraftHandleData data;
-//    int ::Index::Longitude = 0;
-//    std::int64_t timestampDelta = 0;
-    bool ok {true};
-//    for (const QByteArray &header : headers) {
-
-//        if (::Index::Longitude >= row.count()) {
-//            // Less values than headers
-//            ok = false;
-//            break;
-//        }
-
-//        int intValue;
-//        if (header == SimVar::GearHandlePosition) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.gearHandlePosition = intValue == 1 ? true : false;
-//            }
-//        } else if (header == SimVar::BrakeLeftPosition) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.brakeLeftPosition = intValue;
-//            }
-//        } else if (header == SimVar::BrakeRightPosition) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.brakeRightPosition = intValue;
-//            }
-//        } else if (header == SimVar::WaterRudderHandlePosition) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.waterRudderHandlePosition = intValue;
-//            }
-//        } else if (header == SimVar::TailhookPosition) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.tailhookPosition = intValue;
-//            }
-//        } else if (header == SimVar::CanopyOpen) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.canopyOpen = intValue;
-//            }
-//        } else if (header == SimVar::FoldingWingLeftPercent) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.leftWingFolding = intValue;
-//            }
-//        } else if (header == SimVar::FoldingWingRightPercent) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.rightWingFolding = intValue;
-//            }
-//        } else if (header == SimVar::SmokeEnable) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.smokeEnabled = intValue == 1 ? true : false;
-//            }
-//            // Timestamp
-//        } else if (header == SimVar::Timestamp) {
-//            ok = importTimestamp(values, ::Index::Longitude, firstRow, data.timestamp, timestampDelta);
-//        } else {
-//            ok = true;
-//        }
-
-//        if (ok) {
-//            // Next value
-//            ++::Index::Longitude;
-//        } else {
-//            // Parse error
-//            break;
-//        }
-
-//    }
-//    if (ok) {
-//        aircraftHandle.upsertLast(std::move(data));
-//    }
-    return ok;
-}
-
-inline bool SkyDollyCsvParser::importLightData(const CsvParser::Row &row, bool firstRow, Light &light) noexcept
-{
-//    LightData data;
-//    int ::Index::Longitude = 0;
-//    std::int64_t timestampDelta = 0;
-    bool ok {true};
-//    for (const QByteArray &header : headers) {
-
-//        if (::Index::Longitude >= row.count()) {
-//            // Less values than headers
-//            ok = false;
-//            break;
-//        }
-
-//        int intValue;
-//        if (header == SimVar::LightStates) {
-//            intValue = row.at(::Index::Longitude).toInt(&ok);
-//            if (ok) {
-//                data.lightStates = static_cast<SimType::LightStates>(intValue);
-//            }
-//            // Timestamp
-//        } else if (header == SimVar::Timestamp) {
-//            ok = importTimestamp(values, ::Index::Longitude, firstRow, data.timestamp, timestampDelta);
-//        } else {
-//            ok = true;
-//        }
-
-//        if (ok) {
-//            // Next value
-//            ++::Index::Longitude;
-//        } else {
-//            // Parse error
-//            break;
-//        }
-
-//    }
-//    if (ok) {
-//        light.upsertLast(std::move(data));
-//    }
-    return ok;
-}
-
-inline bool SkyDollyCsvParser::importTimestamp(const CsvParser::Row &row, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
-{
-    bool ok {true};
-    timestamp = row.at(::Index::Timestamp).toLongLong(&ok);
+    data.rudderPosition = row.at(::Index::RudderPosition).toInt(&ok);
     if (ok) {
-        if (!firstRow) {
-            timestamp += timestampDelta;
-        } else {
-            // The first timestamp must be 0, so shift all timestamps by
-            // the timestamp delta, derived from the first timestamp
-            // (which is usually 0 already)
-            timestampDelta = -timestamp;
-            timestamp = 0.0;
-        }
+        data.elevatorPosition =  row.at(::Index::ElevatorPosition).toInt(&ok);
+    }
+    if (ok) {
+        data.aileronPosition = row.at(::Index::AileronPosition).toInt(&ok);
+    }
+    // Timestamp
+    if (ok) {
+        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+    }
+
+    if (ok) {
+        primaryFlightControl.upsertLast(data);
+    }
+    return ok;
+}
+
+inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser::Row &row, SecondaryFlightControl &secondaryFlightControl) noexcept
+{
+    SecondaryFlightControlData data;
+    std::int64_t timestampDelta = 0;
+    bool ok {true};
+
+
+    data.leadingEdgeFlapsLeftPosition = row.at(::Index::LeadingEdgeFlapsLeftPercent).toInt(&ok);
+    if (ok) {
+        data.leadingEdgeFlapsRightPosition = row.at(::Index::LeadingEdgeFlapsRightPercent).toInt(&ok);
+    }
+    if (ok) {
+        data.trailingEdgeFlapsLeftPosition = row.at(::Index::TrailingEdgeFlapsLeftPercent).toInt(&ok);
+    }
+    if (ok) {
+        data.trailingEdgeFlapsRightPosition = row.at(::Index::TrailingEdgeFlapsRightPercent).toInt(&ok);
+    }
+    if (ok) {
+        data.spoilersHandlePosition = row.at(::Index::SpoilersHandlePosition).toInt(&ok);
+    }
+    if (ok) {
+        data.flapsHandleIndex = row.at(::Index::FlapsHandleIndex).toInt(&ok);
+    }
+    // Timestamp
+    if (ok) {
+        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+    }
+
+    if (ok) {
+        secondaryFlightControl.upsertLast(data);
+    }
+    return ok;
+}
+
+inline bool SkyDollyCsvParser::importAircraftHandleData(const CsvParser::Row &row, AircraftHandle &aircraftHandle) noexcept
+{
+    AircraftHandleData data;;
+    std::int64_t timestampDelta = 0;
+    bool ok {true};
+
+    data.gearHandlePosition = row.at(::Index::GearHandlePosition).toInt(&ok) == 1 ? true : false;
+    if (ok) {
+        data.brakeLeftPosition = row.at(::Index::BrakeLeftPosition).toInt(&ok);
+    }
+    if (ok) {
+        data.brakeRightPosition = row.at(::Index::BrakeRightPosition).toInt(&ok);
+    }
+    if (ok) {
+        data.waterRudderHandlePosition = row.at(::Index::WaterRudderHandlePosition).toInt(&ok);
+    }
+    if (ok) {
+        data.tailhookPosition = row.at(::Index::TailhookPosition).toInt(&ok);
+    }
+    if (ok) {
+        data.canopyOpen = row.at(::Index::CanopyOpen).toInt(&ok);
+    }
+    if (ok) {
+        data.leftWingFolding = row.at(::Index::FoldingWingLeftPercent).toInt(&ok);
+    }
+    if (ok) {
+        data.rightWingFolding = row.at(::Index::FoldingWingRightPercent).toInt(&ok);
+    }
+    if (ok) {
+        data.smokeEnabled = row.at(::Index::SmokeEnable).toInt(&ok) == 1 ? true : false;
+    }
+    // Timestamp
+    if (ok) {
+        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+    }
+
+    if (ok) {
+        aircraftHandle.upsertLast(data);
+    }
+    return ok;
+}
+
+inline bool SkyDollyCsvParser::importLightData(const CsvParser::Row &row, Light &light) noexcept
+{
+    LightData data;
+    std::int64_t timestampDelta = 0;
+    bool ok {true};
+
+    data.lightStates = static_cast<SimType::LightStates>(row.at(::Index::LightStates).toInt(&ok));
+    // Timestamp
+    if (ok) {
+        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+    }
+
+    if (ok) {
+        light.upsertLast(data);
     }
     return ok;
 }

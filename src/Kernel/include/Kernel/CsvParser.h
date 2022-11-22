@@ -64,7 +64,7 @@ public:
      * \param alternateHeader
      *        the alternate header of the values (case-insensitive); useful if the header
      *        may contain different escape characters
-     * \return the CSV rows
+     * \return the CSV rows, without the header row (if present)
      */
     Rows parse(QTextStream &textStream, const QString &header = QString(), const QString &alternateHeader = QString()) noexcept;
 

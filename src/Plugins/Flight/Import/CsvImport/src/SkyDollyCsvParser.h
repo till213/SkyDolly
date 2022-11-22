@@ -25,6 +25,8 @@
 #ifndef SKYDOLLYCSVPARSER_H
 #define SKYDOLLYCSVPARSER_H
 
+#include <cstdint>
+
 #include <QByteArray>
 #include <QList>
 
@@ -50,14 +52,14 @@ public:
     bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
 
 private:
-    inline bool parseRow(const CsvParser::Row &row, Aircraft &aircraft, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept;
-    static inline bool importPositionData(const CsvParser::Row &row, bool firstRow, Aircraft &aircraft) noexcept;
-    static inline bool importEngineData(const CsvParser::Row &row, bool firstRow, Engine &engine) noexcept;
-    static inline bool importPrimaryFlightControlData(const CsvParser::Row &row, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept;
-    static inline bool importSecondaryFlightControlData(const CsvParser::Row &row, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept;
-    static inline bool importAircraftHandleData(const CsvParser::Row &row, bool firstRow, AircraftHandle &aircraftHandle) noexcept;
-    static inline bool importLightData(const CsvParser::Row &row, bool firstRow, Light &light) noexcept;
-    static inline bool importTimestamp(const CsvParser::Row &row, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept;
+    std::int64_t m_timestampDelta {0};
+    inline bool parseRow(const CsvParser::Row &row, Aircraft &aircraft) noexcept;
+    inline bool importPositionData(const CsvParser::Row &row, Aircraft &aircraft) noexcept;
+    inline bool importEngineData(const CsvParser::Row &row, Engine &engine) noexcept;
+    inline bool importPrimaryFlightControlData(const CsvParser::Row &row, PrimaryFlightControl &primaryFlightControl) noexcept;
+    inline bool importSecondaryFlightControlData(const CsvParser::Row &row, SecondaryFlightControl &secondaryFlightControl) noexcept;
+    inline bool importAircraftHandleData(const CsvParser::Row &row, AircraftHandle &aircraftHandle) noexcept;
+    inline bool importLightData(const CsvParser::Row &row, Light &light) noexcept;
 };
 
 #endif // SKYDOLLYCSVPARSER_H

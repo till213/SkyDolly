@@ -150,7 +150,7 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
             PositionData positionData {fix.latitude, fix.longitude, Convert::metersToFeet(heightAboveGeoid)};
             positionData.timestamp = fix.timestamp;
             positionData.indicatedAltitude = Convert::metersToFeet(fix.pressureAltitude);
-            position.upsertLast(std::move(positionData));
+            position.upsertLast(positionData);
 
             if (d->igcParser.hasEnvironmentalNoiseLevel()) {
                 const double enl = fix.environmentalNoiseLevel;

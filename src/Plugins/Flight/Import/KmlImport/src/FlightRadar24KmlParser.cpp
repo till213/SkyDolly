@@ -116,7 +116,7 @@ void FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &fl
         positionData.velocityBodyZ = trackItem.speed;
         positionData.trueHeading = trackItem.heading;
 
-        position.upsertLast(std::move(positionData));
+        position.upsertLast(positionData);
     }
 }
 

@@ -334,7 +334,7 @@ void PathCreatorPlugin::recordEngineData(std::int64_t timestamp) noexcept
 
     engineData.timestamp = timestamp;
     Aircraft &aircraft = getCurrentFlight().getUserAircraft();
-    aircraft.getEngine().upsertLast(std::move(engineData));
+    aircraft.getEngine().upsertLast(engineData);
 }
 
 void PathCreatorPlugin::recordPrimaryControls(std::int64_t timestamp) noexcept
@@ -346,7 +346,7 @@ void PathCreatorPlugin::recordPrimaryControls(std::int64_t timestamp) noexcept
 
     primaryFlightControlData.timestamp = timestamp;
     Aircraft &aircraft = getCurrentFlight().getUserAircraft();
-    aircraft.getPrimaryFlightControl().upsertLast(std::move(primaryFlightControlData));
+    aircraft.getPrimaryFlightControl().upsertLast(primaryFlightControlData);
 }
 
 void PathCreatorPlugin::recordSecondaryControls(std::int64_t timestamp) noexcept
@@ -361,7 +361,7 @@ void PathCreatorPlugin::recordSecondaryControls(std::int64_t timestamp) noexcept
 
     secondaryFlightControlData.timestamp = timestamp;
     Aircraft &aircraft = getCurrentFlight().getUserAircraft();
-    aircraft.getSecondaryFlightControl().upsertLast(std::move(secondaryFlightControlData));
+    aircraft.getSecondaryFlightControl().upsertLast(secondaryFlightControlData);
 }
 
 void PathCreatorPlugin::recordAircraftHandle(std::int64_t timestamp) noexcept
@@ -379,7 +379,7 @@ void PathCreatorPlugin::recordAircraftHandle(std::int64_t timestamp) noexcept
 
     aircraftHandleData.timestamp = timestamp;
     Aircraft &aircraft = getCurrentFlight().getUserAircraft();
-    aircraft.getAircraftHandle().upsertLast(std::move(aircraftHandleData));
+    aircraft.getAircraftHandle().upsertLast(aircraftHandleData);
 }
 
 void PathCreatorPlugin::recordLights(std::int64_t timestamp) noexcept
@@ -391,7 +391,7 @@ void PathCreatorPlugin::recordLights(std::int64_t timestamp) noexcept
 
     lightData.timestamp = timestamp;
     Aircraft &aircraft = getCurrentFlight().getUserAircraft();
-    aircraft.getLight().upsertLast(std::move(lightData));
+    aircraft.getLight().upsertLast(lightData);
 }
 
 void PathCreatorPlugin::recordWaypoint() noexcept

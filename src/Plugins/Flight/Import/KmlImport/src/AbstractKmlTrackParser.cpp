@@ -143,7 +143,7 @@ void AbstractKmlTrackParser::parseTrack() noexcept
             PositionData positionData {std::get<1>(trackItem), std::get<2>(trackItem), std::get<3>(trackItem)};
             positionData.timestamp = std::get<0>(trackItem);
 
-            position.upsertLast(std::move(positionData));
+            position.upsertLast(positionData);
         }
 
     } else {
