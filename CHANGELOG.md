@@ -5,10 +5,10 @@
 ### New Features
 - New location export plugin
   * Sky Dolly CSV export
-  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user points CSV export
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV export
 - New location import plugin
   * Sky Dolly CSV import
-  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user points CSV import
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV import
   
 ### Improvements
 - Flight CSV export
@@ -25,7 +25,8 @@
 - Thread-safe access to singletons [[Back to Basics: Concurrency - Arthur O'Dwyer - CppCon 2020](https://www.youtube.com/watch?v=F6Ipn7gCOsY)]
 - "Const pimpl" pattern (where applicable) [[CppCon 2016: Herb Sutter “Leak-Freedom in C++... By Default.”](https://www.youtube.com/watch?v=JfmTagWcqoE)]
 - Value-based aircraft list (CPU cache optimisation)
-- Small performance optimisations such as return value optimisation
+- Small performance optimisations such as return value optimisation and memory pre-allocation
+- Replace regular expression etc. based CSV parsers by new CSV parser (very much inspired by Little Navmap CSV parser implementation)
 
 ## 0.12.0
 

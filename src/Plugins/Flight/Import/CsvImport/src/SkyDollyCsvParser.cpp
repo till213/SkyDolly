@@ -32,6 +32,9 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTextCodec>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/CsvParser.h>
 #include <Kernel/Convert.h>
@@ -135,9 +138,6 @@ namespace
 
 bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
 {
-    Aircraft &aircraft = flight.getUserAircraft();
-    Position &position = aircraft.getPosition();
-
     QFile *file = qobject_cast<QFile *>(&io);
     firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
     flightNumber = QString();
@@ -146,7 +146,29 @@ bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[mayb
     QTextStream textStream(&io);
     textStream.setCodec(QTextCodec::codecForName("UTF-8"));
     CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
-    position.reserve(rows.size());
+
+    Aircraft &aircraft = flight.getUserAircraft();
+    // Heuristical memory pre-allocation: we expect that about
+    // - half of the rows are position samples
+    // - 1/4 are engine samples
+    // - etc.
+    aircraft.getPosition().reserve(rows.size() >> 1);
+    aircraft.getEngine().reserve(rows.size() >> 2);
+    aircraft.getPrimaryFlightControl().reserve(rows.size() >> 3);
+    aircraft.getSecondaryFlightControl().reserve(rows.size() >> 4);
+    aircraft.getAircraftHandle().reserve(rows.size() >> 6);
+    aircraft.getLight().reserve(rows.size() >> 6);
+
+#ifdef DEBUG
+    qDebug() << "SkyDollyCsvParser::parse, total CSV rows:" << rows.size() << "\n"
+             << "Position size:" << aircraft.getPosition().capacity() << "\n"
+             << "Engine size:" << aircraft.getEngine().capacity() << "\n"
+             << "Primary flight controls size:" << aircraft.getPrimaryFlightControl().capacity() << "\n"
+             << "Secondary flight controls size:" << aircraft.getSecondaryFlightControl().capacity() << "\n"
+             << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
+             << "Light size:" << aircraft.getLight().capacity() << "\n";
+#endif
+
     bool firstRow {true};
     bool ok {true};
     for (const auto &row : rows) {

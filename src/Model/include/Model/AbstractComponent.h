@@ -142,6 +142,11 @@ public:
         m_data.reserve(size);
     }
 
+    typename Data::size_type capacity() const noexcept
+    {
+        return m_data.capacity();
+    }
+
     void clear() noexcept
     {
         m_data.clear();
