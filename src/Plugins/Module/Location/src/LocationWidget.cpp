@@ -856,7 +856,7 @@ void LocationWidget::onEngineEventChanged(int index) noexcept
         if (d->locationService->update(location)) {
             ui->locationTableWidget->blockSignals(true);
             QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::engineColumn);
-            item->setData(Qt::EditRole, location.engineEventId);
+            item->setData(Qt::EditRole, QVariant::fromValue(location.engineEventId));
             ui->locationTableWidget->blockSignals(false);
         }
     }
