@@ -165,10 +165,8 @@ Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
         "       m.last_backup_date,"
         "       m.next_backup_date,"
         "       m.backup_directory_path,"
-        "       ebp.sym_id "
-        "from metadata m "
-        "join enum_backup_period ebp "
-        "on m.backup_period_id = ebp.id;"
+        "       m.backup_period_id "
+        "from metadata m;"
     );
     if (success && query.next()) {
         QDateTime dateTime = query.value(0).toDateTime();
