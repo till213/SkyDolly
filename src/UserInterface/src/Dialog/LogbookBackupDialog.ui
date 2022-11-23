@@ -81,7 +81,7 @@
   <customwidget>
    <class>EnumerationComboBox</class>
    <extends>QComboBox</extends>
-   <header location="global">widget/EnumerationComboBox.h</header>
+   <header location="global">Widget/EnumerationComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>848</width>
-    <height>370</height>
+    <width>858</width>
+    <height>379</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -216,7 +216,7 @@
   <customwidget>
    <class>EnumerationComboBox</class>
    <extends>QComboBox</extends>
-   <header location="global">widget/EnumerationComboBox.h</header>
+   <header location="global">Widget/EnumerationComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
