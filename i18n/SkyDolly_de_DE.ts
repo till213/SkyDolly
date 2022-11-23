@@ -1783,12 +1783,6 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="274"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="290"/>
-        <source> knots</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="157"/>
         <source>On ground</source>
         <translation type="unfinished"></translation>
@@ -1933,6 +1927,12 @@ or choose another reference aircraft (marked in green) in the formation.</source
     <message>
         <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="270"/>
         <source> feet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="274"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="290"/>
+        <source> knots</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2116,11 +2116,6 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="196"/>
-        <source>Defines the backup period of the logbook. Backups are being made when exiting the application.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="186"/>
         <source>Controls whether a backup should be made prior to migrating a logbook which has been created with an older application version.</source>
         <translation type="unfinished"></translation>
@@ -2128,6 +2123,11 @@ or choose another reference aircraft (marked in green) in the formation.</source
     <message>
         <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="189"/>
         <source>Before migration of an older logbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="196"/>
+        <source>Defines the backup period of the logbook. Backups are being made when exiting the application.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

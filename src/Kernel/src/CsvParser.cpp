@@ -42,17 +42,17 @@ CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header,
 {
     Rows rows;
 
-    int row {0};
+    bool firstLine {true};
     while (!textStream.atEnd())
     {
         const QString line = textStream.readLine();
 
-        if (row == 0) {
+        if (firstLine) {
             // Compare header (case-insensitive)
             if (!header.isNull() && line.startsWith(header, Qt::CaseInsensitive) ||
                 !alternateHeader.isNull() && line.startsWith(alternateHeader, Qt::CaseInsensitive))
             {
-                ++row;
+                firstLine = false;
                 // Skip header
                 continue;
             }
@@ -70,7 +70,6 @@ CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header,
         }
 
         rows.push_back(m_currentRow);
-        ++row;
     }
 
     return rows;
