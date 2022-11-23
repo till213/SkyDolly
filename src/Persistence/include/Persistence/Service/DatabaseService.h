@@ -26,6 +26,7 @@
 #define DATABASESERVICE_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 
@@ -50,7 +51,7 @@ public:
 
     bool backup() noexcept;
 
-    bool setBackupPeriod(const QString &backupPeriodIntlId) noexcept;
+    bool setBackupPeriod(std::int64_t backupPeriodId) noexcept;
     bool setNextBackupDate(const QDateTime &date) noexcept;
     bool updateBackupDate() noexcept;
     bool setBackupDirectoryPath(const QString &backupFolderPath) noexcept;

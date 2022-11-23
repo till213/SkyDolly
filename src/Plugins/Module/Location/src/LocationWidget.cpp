@@ -104,7 +104,8 @@ struct LocationWidgetPrivate
     std::unique_ptr<EnumerationService> enumerationService {std::make_unique<EnumerationService>()};
     std::unique_ptr<EnumerationItemDelegate> locationCategoryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
     std::unique_ptr<EnumerationItemDelegate> countryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::Country)};
-    std::int64_t systemLocationTypeId {typeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id};
+
+    const std::int64_t SystemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
 
     Unit unit;
     // Columns are only auto-resized the first time the table is loaded
@@ -173,13 +174,13 @@ void LocationWidget::addUserLocation(double latitude, double longitude)
 void LocationWidget::addLocation(Location newLocation)
 {
     if (newLocation.typeId == Const::InvalidId) {
-        newLocation.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymbolicId).id();
+        newLocation.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id();
     }
     if (newLocation.categoryId == Const::InvalidId) {
-        newLocation.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymbolicId).id();
+        newLocation.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id();
     }
     if (newLocation.countryId == Const::InvalidId) {
-        newLocation.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymbolicId).id();
+        newLocation.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id();
     }
     if (newLocation.engineEventId == Const::InvalidId) {
         newLocation.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
@@ -272,7 +273,7 @@ void LocationWidget::initUi() noexcept
     ui->defaultIndicatedAirspeedSpinBox->setValue(Const::DefaultIndicatedAirspeed);
     ui->defaultIndicatedAirspeedSpinBox->setSuffix(tr(" knots"));
     ui->defaultEngineEventComboBox->setEnumerationName(EnumerationService::EngineEvent);
-    ui->defaultEngineEventComboBox->setCurrentId(PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymbolicId).id());
+    ui->defaultEngineEventComboBox->setCurrentId(PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id());
     ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);    
 
     ui->pitchSpinBox->setMinimum(::MinimumPitch);
@@ -358,7 +359,7 @@ void LocationWidget::updateInfoUi() noexcept
     if (hasSelection) {
         const int selectedRow = getSelectedRow();
         QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::typeColumn);
-        readOnly = item->data(Qt::EditRole).toLongLong() == d->systemLocationTypeId;
+        readOnly = item->data(Qt::EditRole).toLongLong() == d->SystemLocationTypeId;
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::descriptionColumn);
         ui->descriptionPlainTextEdit->setPlainText(item->text());
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::pitchColumn);
@@ -426,7 +427,7 @@ void LocationWidget::updateLocationTable() noexcept
 
 inline void LocationWidget::updateLocationRow(const Location &location, int row) noexcept
 {
-    const bool isSystemLocation {location.typeId == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id()};
+    const bool isSystemLocation {location.typeId == d->SystemLocationTypeId};
     int column {0};
 
     // ID
@@ -689,7 +690,7 @@ void LocationWidget::updateEditUi() noexcept
     if (hasSelection) {
         const int selectedRow = getSelectedRow();
         Location location =  getLocationByRow(selectedRow);
-        editableRow = location.typeId != PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id();
+        editableRow = location.typeId != PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id();
     }
     ui->deletePushButton->setEnabled(editableRow);
 }

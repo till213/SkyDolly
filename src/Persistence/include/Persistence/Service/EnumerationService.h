@@ -69,21 +69,30 @@ public:
 
     // Well-known symbolic IDs
 
+    // Backup period
+    static constexpr const char *BackupPeriodNeverSymId = "NEVER";
+    static constexpr const char *BackupPeriodNowSymId = "NOW";
+    static constexpr const char *BackupPeriodNextTimeSymId = "NEXT";
+    static constexpr const char *BackupPeriodMonthlySymId = "MONTH";
+    static constexpr const char *BackupPeriodWeeklySymId = "WEEK";
+    static constexpr const char *BackupPeriodDailySymId = "DAY";
+    static constexpr const char *BackupPeriodAlwaysSymId = "ALWAYS";
+
     // Location type
-    static constexpr const char *LocationTypeSystemSymbolicId {"S"};
-    static constexpr const char *LocationTypeImportSymbolicId {"I"};
-    static constexpr const char *LocationTypeUserSymbolicId {"U"};
+    static constexpr const char *LocationTypeSystemSymId {"S"};
+    static constexpr const char *LocationTypeImportSymId {"I"};
+    static constexpr const char *LocationTypeUserSymId {"U"};
 
     // Location category
-    static constexpr const char *LocationCategoryNoneSymbolicId {"00"};
+    static constexpr const char *LocationCategoryNoneSymId {"00"};
 
     // Country
-    static constexpr const char *CountryWorldSymbolicId {"00"};
+    static constexpr const char *CountryWorldSymId {"00"};
 
     // Engine event
-    static constexpr const char *EngineEventStartSymbolicId {"START"};
-    static constexpr const char *EngineEventStopSymbolicId {"STOP"};
-    static constexpr const char *EngineEventKeepSymbolicId {"KEEP"};
+    static constexpr const char *EngineEventStartSymId {"START"};
+    static constexpr const char *EngineEventStopSymId {"STOP"};
+    static constexpr const char *EngineEventKeepSymId {"KEEP"};
 
 private:
     std::unique_ptr<EnumerationServicePrivate> d;

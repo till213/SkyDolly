@@ -315,7 +315,7 @@ values
   ('ZM', 'Zambia'),
   ('ZW', 'Zimbabwe');
 
-@migr(id = "5f105246-8898-41aa-a292-073cce33a341", descn = "Create location table", step_cnt = 1)
+@migr(id = "5f105246-8898-41aa-a292-073cce33a341", descn = "Create location table", step = 1)
 create table location(
     id integer primary key,
     title text,

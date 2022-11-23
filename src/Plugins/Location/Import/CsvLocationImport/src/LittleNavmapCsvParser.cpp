@@ -65,8 +65,8 @@ public:
     }
 
     const CsvLocationImportSettings &pluginSettings;
-    const std::int64_t importTypeId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::LocationTypeImportSymbolicId).id()};
-    const std::int64_t keepEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymbolicId).id()};
+    const std::int64_t ImportTypeId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::LocationTypeImportSymId).id()};
+    const std::int64_t KeepEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
 
     // Key: Litte Navmap userpoint type, value: symbolic category ID
     std::unordered_map<QString, QString> typeToSymbolicId;
@@ -134,8 +134,8 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
     ok = true;
     location.title = row.at(::Index::Title);
     location.countryId = d->pluginSettings.getDefaultCountryId();
-    location.typeId = d->importTypeId;
-    location.engineEventId = d->keepEngineEventId;
+    location.typeId = d->ImportTypeId;
+    location.engineEventId = d->KeepEngineEventId;
     const QString type = row.at(::Index::Type);
     location.categoryId = mapTypeToCategoryId(type);
     location.identifier = row.at(::Index::Ident);
@@ -187,7 +187,7 @@ inline std::int64_t LittleNavmapCsvParser::mapTypeToCategoryId(const QString &ty
     if (it != d->typeToSymbolicId.end()) {
        categorySymbolicId = it->second;
     } else {
-        categorySymbolicId = EnumerationService::LocationCategoryNoneSymbolicId;
+        categorySymbolicId = EnumerationService::LocationCategoryNoneSymId;
     }
     return locationCategory.getItemBySymbolicId(categorySymbolicId).id;
 }

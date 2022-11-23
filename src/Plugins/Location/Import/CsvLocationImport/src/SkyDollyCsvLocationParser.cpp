@@ -69,7 +69,7 @@ struct SkyDollyCsvLocationParserPrivate
     Enumeration categoryEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationCategory)};
     Enumeration countryEnumeration {enumerationService.getEnumerationByName(EnumerationService::Country)};
     Enumeration engineEventEnumeration {enumerationService.getEnumerationByName(EnumerationService::EngineEvent)};
-    std::int64_t importTypeId {typeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeImportSymbolicId).id};
+    std::int64_t importTypeId {typeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeImportSymId).id};
 };
 
 // PUBLIC

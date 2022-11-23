@@ -3,6 +3,9 @@
 
 #include <cstdint>
 
+/*!
+ * Generally useful constants.
+ */
 namespace Const {
 
     /*!
@@ -10,14 +13,10 @@ namespace Const {
      */
     constexpr std::int64_t InvalidId {-1};
 
+    /*!
+     * The logbook file extension.
+     */
     constexpr const char *LogbookExtension {".sdlog"};
-
-    constexpr const char *BackupNeverSymId = "NEVER";
-    constexpr const char *BackupNowSymId = "NOW";
-    constexpr const char *BackupMonthlySymId = "MONTH";
-    constexpr const char *BackupWeeklySymId = "WEEK";
-    constexpr const char *BackupDailySymId = "DAY";
-    constexpr const char *BackupAlwaysSymId = "ALWAYS";
 
     // Altitude [feet] and speed [knots] minima and maxima
 

@@ -193,7 +193,7 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     location.description = description.replace("\\n", "\n");
     Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
     if (ok) {
-        location.typeId = locationTypeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id;
+        location.typeId = locationTypeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymId).id;
     }
     Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
     if (ok) {

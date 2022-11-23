@@ -37,8 +37,8 @@
 struct LocationPluginPrivate
 {
     std::unique_ptr<LocationWidget> locationWidget {std::make_unique<LocationWidget>()};
-    const std::int64_t engineEventStartId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStartSymbolicId).id()};
-    const std::int64_t engineEventStopId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStopSymbolicId).id()};
+    const std::int64_t EngineEventStartId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStartSymId).id()};
+    const std::int64_t EngineEventStopId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStopSymId).id()};
 };
 
 // PUBLIC
@@ -92,9 +92,9 @@ void LocationPlugin::teleportTo(const Location &location) noexcept
     skyConnectManager.setUserAircraftInitialPosition(initialPosition);
     SkyConnectIntf::SimulationEvent event {SkyConnectIntf::SimulationEvent::None};
 
-    if (location.engineEventId == d->engineEventStartId) {
+    if (location.engineEventId == d->EngineEventStartId) {
         event = SkyConnectIntf::SimulationEvent::EngineStart;
-    } else if (location.engineEventId == d->engineEventStopId) {
+    } else if (location.engineEventId == d->EngineEventStopId) {
         event = SkyConnectIntf::SimulationEvent::EngineStop;
     }
 
