@@ -124,7 +124,7 @@ bool SQLiteDatabaseDao::updateBackupPeriod(std::int64_t backupPeriodId) noexcept
         "set    backup_period_id = :backup_period_id;"
     );
 
-    query.bindValue(":backup_period_id", backupPeriodId);
+    query.bindValue(":backup_period_id", QVariant::fromValue(backupPeriodId));
     return query.exec();
 }
 
