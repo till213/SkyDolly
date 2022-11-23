@@ -70,9 +70,9 @@ public:
 
     FlightAugmentation(Procedures procedures = Procedure::All, Aspects aspects = Aspect::All) noexcept;
     FlightAugmentation(const FlightAugmentation &rhs) = delete;
-    FlightAugmentation(FlightAugmentation &&rhs);
+    FlightAugmentation(FlightAugmentation &&rhs) noexcept;
     FlightAugmentation &operator=(const  FlightAugmentation &rhs) = delete;
-    FlightAugmentation &operator=(FlightAugmentation &&rhs);
+    FlightAugmentation &operator=(FlightAugmentation &&rhs) noexcept;
     ~FlightAugmentation();
 
     void setProcedures(Procedures procedures) noexcept;

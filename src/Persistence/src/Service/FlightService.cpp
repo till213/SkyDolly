@@ -53,8 +53,8 @@ FlightService::FlightService() noexcept
     : d(std::make_unique<FlightServicePrivate>())
 {}
 
-FlightService::FlightService(FlightService &&rhs) = default;
-FlightService &FlightService::operator=(FlightService &&rhs) = default;
+FlightService::FlightService(FlightService &&rhs) noexcept = default;
+FlightService &FlightService::operator=(FlightService &&rhs) noexcept = default;
 FlightService::~FlightService() = default;
 
 bool FlightService::store(Flight &flight) noexcept
@@ -85,7 +85,7 @@ bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
     return ok;
 }
 
-bool FlightService::deleteById(std::int64_t id)  noexcept
+bool FlightService::deleteById(std::int64_t id) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {

@@ -39,9 +39,9 @@ class PERSISTENCE_API EnumerationService
 public:
     EnumerationService() noexcept;
     EnumerationService(const EnumerationService &rhs) = delete;
-    EnumerationService(EnumerationService &&rhs);
+    EnumerationService(EnumerationService &&rhs) noexcept;
     EnumerationService &operator=(const EnumerationService &rhs) = delete;
-    EnumerationService &operator=(EnumerationService &&rhs);
+    EnumerationService &operator=(EnumerationService &&rhs) noexcept;
     ~EnumerationService();
 
     /*!
@@ -53,7 +53,7 @@ public:
      *        if set, \c true if successful; \c false else (unknown Enumeration name, no database connection)
      * \return the persisted Enumeration identified by the \c name
      */
-    Enumeration getEnumerationByName(QString name, bool *ok = nullptr);
+    Enumeration getEnumerationByName(const QString &name, bool *ok = nullptr);
 
     // Implementation note:
     // Well-known database enumerations: TitleCase name must match with corresponding

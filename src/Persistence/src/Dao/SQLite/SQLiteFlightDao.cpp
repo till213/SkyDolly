@@ -64,8 +64,8 @@ SQLiteFlightDao::SQLiteFlightDao() noexcept
     : d(std::make_unique<SQLiteFlightDaoPrivate>())
 {}
 
-SQLiteFlightDao::SQLiteFlightDao(SQLiteFlightDao &&rhs) = default;
-SQLiteFlightDao &SQLiteFlightDao::operator=(SQLiteFlightDao &&rhs) = default;
+SQLiteFlightDao::SQLiteFlightDao(SQLiteFlightDao &&rhs) noexcept = default;
+SQLiteFlightDao &SQLiteFlightDao::operator=(SQLiteFlightDao &&rhs) noexcept = default;
 SQLiteFlightDao::~SQLiteFlightDao() = default;
 
 bool SQLiteFlightDao::add(Flight &flight) noexcept

@@ -222,7 +222,7 @@ bool FlightRadar24KmlParser::parseDescription() noexcept
         match = d->headingRegExp.match(description, pos);
         if (match.hasMatch()) {
             trackItem.heading = match.captured(1).toInt();
-            d->trackData.push_back(std::move(trackItem));
+            d->trackData.push_back(trackItem);
             ok = true;
         } else {
             ok = false;

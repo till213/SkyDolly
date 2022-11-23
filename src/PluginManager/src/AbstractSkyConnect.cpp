@@ -691,7 +691,7 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
                                      settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
 }
 
-bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
+bool AbstractSkyConnect::retryWithReconnect(const std::function<bool()> &func)
 {
     int nofAttempts {2};
     bool ok {true};

@@ -42,8 +42,8 @@ FlightPlan::FlightPlan() noexcept
     : d(std::make_unique<FlightPlanPrivate>())
 {}
 
-FlightPlan::FlightPlan(FlightPlan &&rhs) = default;
-FlightPlan &FlightPlan::operator=(FlightPlan &&rhs) = default;
+FlightPlan::FlightPlan(FlightPlan &&rhs) noexcept = default;
+FlightPlan &FlightPlan::operator=(FlightPlan &&rhs) noexcept = default;
 FlightPlan::~FlightPlan() = default;
 
 void FlightPlan::add(Waypoint waypoint) noexcept

@@ -29,7 +29,7 @@
 
 struct ActionButtonPrivate
 {
-    ActionButtonPrivate(ActionButton::Capitalisation theCapitalisation)  noexcept
+    ActionButtonPrivate(ActionButton::Capitalisation theCapitalisation) noexcept
         : capitalisation(theCapitalisation)
     {}
 

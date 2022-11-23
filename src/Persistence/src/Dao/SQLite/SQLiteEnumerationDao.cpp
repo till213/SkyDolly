@@ -38,8 +38,8 @@
 
 // PUBIC
 
-SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) = default;
-SQLiteEnumerationDao &SQLiteEnumerationDao::operator=(SQLiteEnumerationDao &&rhs) = default;
+SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept = default;
+SQLiteEnumerationDao &SQLiteEnumerationDao::operator=(SQLiteEnumerationDao &&rhs) noexcept = default;
 SQLiteEnumerationDao::~SQLiteEnumerationDao() = default;
 
 Enumeration SQLiteEnumerationDao::get(const QString &name, bool *ok) const noexcept

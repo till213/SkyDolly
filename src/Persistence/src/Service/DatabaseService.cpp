@@ -76,8 +76,8 @@ DatabaseService::DatabaseService() noexcept
     : d(std::make_unique<DatabaseServicePrivate>())
 {}
 
-DatabaseService::DatabaseService(DatabaseService &&rhs) = default;
-DatabaseService &DatabaseService::operator=(DatabaseService &&rhs) = default;
+DatabaseService::DatabaseService(DatabaseService &&rhs) noexcept = default;
+DatabaseService &DatabaseService::operator=(DatabaseService &&rhs) noexcept = default;
 DatabaseService::~DatabaseService() = default;
 
 bool DatabaseService::backup() noexcept

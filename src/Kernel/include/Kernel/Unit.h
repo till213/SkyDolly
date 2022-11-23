@@ -69,9 +69,9 @@ public:
 
     Unit();
     Unit(const Unit &rhs) = delete;
-    Unit(Unit &&rhs);
+    Unit(Unit &&rhs) noexcept;
     Unit &operator=(const Unit &rhs) = delete;
-    Unit &operator=(Unit &&rhs);
+    Unit &operator=(Unit &&rhs) noexcept;
     ~Unit();
 
     /*!

@@ -51,9 +51,9 @@ public:
 
     AbstractComponent() noexcept;
     AbstractComponent(const AbstractComponent &rhs) = default;
-    AbstractComponent(AbstractComponent &&rhs) = default;
+    AbstractComponent(AbstractComponent &&rhs) noexcept = default;
     AbstractComponent &operator=(const AbstractComponent &rhs) = default;
-    AbstractComponent &operator=(AbstractComponent &&rhs) = default;
+    AbstractComponent &operator=(AbstractComponent &&rhs) noexcept = default;
     virtual ~AbstractComponent() = default;
 
     void setData(const Data &data) noexcept

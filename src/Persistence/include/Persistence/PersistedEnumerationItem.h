@@ -38,12 +38,12 @@ struct PersistedEnumerationItemPrivate;
 class PERSISTENCE_API PersistedEnumerationItem
 {
 public:
-    PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept;
+    PersistedEnumerationItem(const QString &enumerationName, const QString &symbolicId) noexcept;
     PersistedEnumerationItem() = default;
     PersistedEnumerationItem(const PersistedEnumerationItem &rhs) = delete;
-    PersistedEnumerationItem(PersistedEnumerationItem &&rhs);
+    PersistedEnumerationItem(PersistedEnumerationItem &&rhs) noexcept;
     PersistedEnumerationItem &operator=(const PersistedEnumerationItem &rhs) = delete;
-    PersistedEnumerationItem &operator=(PersistedEnumerationItem &&rhs);
+    PersistedEnumerationItem &operator=(PersistedEnumerationItem &&rhs) noexcept;
     ~PersistedEnumerationItem();
 
     std::int64_t id() const noexcept;

@@ -49,9 +49,9 @@ public:
     Enumeration(QString name) noexcept;
     Enumeration() noexcept;
     Enumeration(const Enumeration &rhs) = delete;
-    Enumeration(Enumeration &&rhs);
+    Enumeration(Enumeration &&rhs) noexcept;
     Enumeration &operator=(const Enumeration &rhs) = delete;
-    Enumeration &operator=(Enumeration &&rhs);
+    Enumeration &operator=(Enumeration &&rhs) noexcept;
     ~Enumeration();
 
     using Item = struct Item_ : public Data
@@ -69,9 +69,9 @@ public:
 
     QString getName() const noexcept;
     void setName(QString name) noexcept;
-    void addItem(Item item) noexcept;
+    void addItem(const Item& item) noexcept;
     const std::vector<Item> &items() const noexcept;
-    Item getItemBySymbolicId(QString symbolicId) const noexcept;
+    Item getItemBySymbolicId(const QString &symbolicId) const noexcept;
     Item getItemById(std::int64_t id) const noexcept;
     QString getSymbolicIdById(std::int64_t id) const noexcept;
 

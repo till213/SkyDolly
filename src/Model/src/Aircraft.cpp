@@ -67,8 +67,8 @@ Aircraft::Aircraft() noexcept
     : d(std::make_unique<AircraftPrivate>())
 {}
 
-Aircraft::Aircraft(Aircraft &&rhs) = default;
-Aircraft &Aircraft::operator=(Aircraft &&rhs) = default;
+Aircraft::Aircraft(Aircraft &&rhs) noexcept = default;
+Aircraft &Aircraft::operator=(Aircraft &&rhs) noexcept = default;
 Aircraft::~Aircraft() = default;
 
 std::int64_t Aircraft::getId() const noexcept

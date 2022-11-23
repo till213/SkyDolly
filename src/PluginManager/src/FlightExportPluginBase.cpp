@@ -222,7 +222,7 @@ void FlightExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &key
     getPluginSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
-void FlightExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void FlightExportPluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }

@@ -222,7 +222,7 @@ QString Settings::getExportPath() const noexcept
     return d->exportPath;
 }
 
-void Settings::setExportPath(QString exportPath)
+void Settings::setExportPath(const QString &exportPath)
 {
     if (d->exportPath != exportPath) {
         d->exportPath = exportPath;

@@ -59,24 +59,24 @@ public:
     void setLineWidth(float lineWidth) noexcept;
 
     QColor getJetStartColor() const noexcept;
-    void setJetStartColor(QColor color) noexcept;
+    void setJetStartColor(const QColor &color) noexcept;
     QColor getJetEndColor() const noexcept;
-    void setJetEndColor(QColor color) noexcept;
+    void setJetEndColor(const QColor &color) noexcept;
 
     QColor getTurbopropStartColor() const noexcept;
-    void setTurbopropStartColor(QColor color) noexcept;
+    void setTurbopropStartColor(const QColor &color) noexcept;
     QColor getTurbopropEndColor() const noexcept;
-    void setTurbopropEndColor(QColor color) noexcept;
+    void setTurbopropEndColor(const QColor &color) noexcept;
 
     QColor getPistonStartColor() const noexcept;
-    void setPistonStartColor(QColor color) noexcept;
+    void setPistonStartColor(const QColor &color) noexcept;
     QColor getPistonEndColor() const noexcept;
-    void setPistonEndColor(QColor color) noexcept;
+    void setPistonEndColor(const QColor &color) noexcept;
 
     QColor getAllStartColor() const noexcept;
-    void setAllStartColor(QColor color) noexcept;
+    void setAllStartColor(const QColor &color) noexcept;
     QColor getAllEndColor() const noexcept;
-    void setAllEndColor(QColor color) noexcept;
+    void setAllEndColor(const QColor &color) noexcept;
 
 signals:
     /*!

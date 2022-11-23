@@ -43,9 +43,9 @@ class SQLiteDatabaseDao : public DatabaseDaoIntf
 public:
     SQLiteDatabaseDao() noexcept;
     SQLiteDatabaseDao(const SQLiteDatabaseDao &rhs) = delete;
-    SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs);
+    SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) noexcept;
     SQLiteDatabaseDao &operator=(const SQLiteDatabaseDao &rhs) = delete;
-    SQLiteDatabaseDao &operator=(SQLiteDatabaseDao &&rhs);
+    SQLiteDatabaseDao &operator=(SQLiteDatabaseDao &&rhs) noexcept;
     ~SQLiteDatabaseDao() override;
 
     bool connectDb(const QString &logbookPath) noexcept override;

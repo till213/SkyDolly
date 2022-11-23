@@ -35,9 +35,9 @@ class SQLiteEnumerationDao : public EnumerationDaoIntf
 public:
     SQLiteEnumerationDao() = default;
     SQLiteEnumerationDao(const SQLiteEnumerationDao &rhs) = delete;
-    SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs);
+    SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept;
     SQLiteEnumerationDao &operator=(const SQLiteEnumerationDao &rhs) = delete;
-    SQLiteEnumerationDao &operator=(SQLiteEnumerationDao &&rhs);
+    SQLiteEnumerationDao &operator=(SQLiteEnumerationDao &&rhs) noexcept;
     ~SQLiteEnumerationDao() override;
 
     Enumeration get(const QString &name, bool *ok = nullptr) const noexcept override;

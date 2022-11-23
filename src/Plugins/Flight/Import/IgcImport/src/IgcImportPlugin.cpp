@@ -352,7 +352,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
                 timestamps.insert(uniqueTimestamp);
             } else if (i == 1 && i != nofTasks - 1) {
                 // Second (but not last) waypoint
-                const IgcParser::TaskItem firstItem = tasks[0];
+                const IgcParser::TaskItem& firstItem = tasks[0];
                 if (SkyMath::isSameWaypoint(SkyMath::Coordinate(item.latitude, item.longitude),
                                             SkyMath::Coordinate(firstItem.latitude, firstItem.longitude),
                                             SameWaypointDistanceThreshold)) {
@@ -366,7 +366,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
 
             } else if (i == nofTasks - 2 && i != 1) {
                 // Second last (but not second) waypoint
-                const IgcParser::TaskItem lastItem = tasks[nofTasks - 1];
+                const IgcParser::TaskItem& lastItem = tasks[nofTasks - 1];
                 if (SkyMath::isSameWaypoint(SkyMath::Coordinate(item.latitude, item.longitude),
                                             SkyMath::Coordinate(lastItem.latitude, lastItem.longitude),
                                             SameWaypointDistanceThreshold)) {

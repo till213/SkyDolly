@@ -50,11 +50,11 @@ namespace
 
 // PUBLIC
 
-SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs) = default;
-SQLiteSecondaryFlightControlDao &SQLiteSecondaryFlightControlDao::operator=(SQLiteSecondaryFlightControlDao &&rhs) = default;
+SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs) noexcept = default;
+SQLiteSecondaryFlightControlDao &SQLiteSecondaryFlightControlDao::operator=(SQLiteSecondaryFlightControlDao &&rhs) noexcept = default;
 SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() = default;
 
-bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
+bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const SecondaryFlightControlData &secondaryFlightControlData) noexcept
 {
     QSqlQuery query;
     query.prepare(

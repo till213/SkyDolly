@@ -39,9 +39,9 @@ class SQLiteLogbookDao : public LogbookDaoIntf
 public:
     SQLiteLogbookDao() = default;
     SQLiteLogbookDao(const SQLiteLogbookDao &rhs) = delete;
-    SQLiteLogbookDao(SQLiteLogbookDao &&rhs);
+    SQLiteLogbookDao(SQLiteLogbookDao &&rhs) noexcept;
     SQLiteLogbookDao &operator=(const SQLiteLogbookDao &rhs) = delete;
-    SQLiteLogbookDao &operator=(SQLiteLogbookDao &&rhs);
+    SQLiteLogbookDao &operator=(SQLiteLogbookDao &&rhs) noexcept;
     ~SQLiteLogbookDao() override;
 
     std::forward_list<FlightDate> getFlightDates(bool *ok = nullptr) const noexcept override;

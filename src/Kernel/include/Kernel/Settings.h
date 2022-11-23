@@ -311,7 +311,7 @@ public:
      *        the path of the last export / import directory
      * \sa exportPathChanged
      */
-    void setExportPath(QString exportPath);
+    void setExportPath(const QString &exportPath);
 
     /*!
      * Returns whether the fast-forward / backward interval is an absolute value (in milliseconds).

@@ -44,9 +44,9 @@ class PERSISTENCE_API DatabaseService
 public:
     DatabaseService() noexcept;
     DatabaseService(const DatabaseService &rhs) = delete;
-    DatabaseService(DatabaseService &&rhs);
+    DatabaseService(DatabaseService &&rhs) noexcept;
     DatabaseService &operator=(const DatabaseService &rhs) = delete;
-    DatabaseService &operator=(DatabaseService &&rhs);
+    DatabaseService &operator=(DatabaseService &&rhs) noexcept;
     ~DatabaseService();
 
     bool backup() noexcept;

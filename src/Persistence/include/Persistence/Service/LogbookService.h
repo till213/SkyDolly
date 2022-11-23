@@ -41,9 +41,9 @@ class PERSISTENCE_API LogbookService
 public:
     LogbookService() noexcept;
     LogbookService(const LogbookService &rhs) = delete;
-    LogbookService(LogbookService &&rhs);
+    LogbookService(LogbookService &&rhs) noexcept;
     LogbookService &operator=(const LogbookService &rhs) = delete;
-    LogbookService &operator=(LogbookService &&rhs);
+    LogbookService &operator=(LogbookService &&rhs) noexcept;
     ~LogbookService();
 
     std::forward_list<FlightDate> getFlightDates() const noexcept;

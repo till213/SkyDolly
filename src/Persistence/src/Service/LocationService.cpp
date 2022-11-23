@@ -52,8 +52,8 @@ LocationService::LocationService() noexcept
     : d(std::make_unique<LocationServicePrivate>())
 {}
 
-LocationService::LocationService(LocationService &&rhs) = default;
-LocationService &LocationService::operator=(LocationService &&rhs) = default;
+LocationService::LocationService(LocationService &&rhs) noexcept = default;
+LocationService &LocationService::operator=(LocationService &&rhs) noexcept = default;
 LocationService::~LocationService() = default;
 
 bool LocationService::store(Location &location) noexcept

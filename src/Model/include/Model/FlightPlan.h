@@ -41,9 +41,9 @@ class MODEL_API FlightPlan final
 public:
     FlightPlan() noexcept;
     FlightPlan(const FlightPlan &rhs) = delete;
-    FlightPlan(FlightPlan &&rhs);
+    FlightPlan(FlightPlan &&rhs) noexcept;
     FlightPlan &operator=(const FlightPlan &rhs) = delete;
-    FlightPlan &operator=(FlightPlan &&rhs);
+    FlightPlan &operator=(FlightPlan &&rhs) noexcept;
     ~FlightPlan();
 
     void add(Waypoint waypoint) noexcept;

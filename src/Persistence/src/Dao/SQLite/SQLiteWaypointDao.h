@@ -38,9 +38,9 @@ class SQLiteWaypointDao : public WaypointDaoIntf
 public:
     SQLiteWaypointDao() = default;
     SQLiteWaypointDao(const SQLiteWaypointDao &rhs) = delete;
-    SQLiteWaypointDao(SQLiteWaypointDao &&rhs);
+    SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept;
     SQLiteWaypointDao &operator=(const SQLiteWaypointDao &rhs) = delete;
-    SQLiteWaypointDao &operator=(SQLiteWaypointDao &&rhs);
+    SQLiteWaypointDao &operator=(SQLiteWaypointDao &&rhs) noexcept;
     ~SQLiteWaypointDao() override;
 
     bool add(std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept override;

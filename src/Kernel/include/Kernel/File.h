@@ -69,7 +69,7 @@ public:
      *        numbers should start with 1 and increase
      * \return the \c filePath with a sequence number
      */
-    static QString getSequenceFilePath(QString filePath, int n) noexcept;
+    static QString getSequenceFilePath(const QString &filePath, int n) noexcept;
 
     static QStringList getFilePaths(const QString &directoryPath, QStringView suffix) noexcept;
 };

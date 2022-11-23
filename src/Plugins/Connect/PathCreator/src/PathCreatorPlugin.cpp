@@ -487,7 +487,7 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
     info.startOnGround = d->randomGenerator->bounded(2) > 0 ? true : false;
     info.initialAirspeed = d->randomGenerator->bounded(600);
 
-    aircraft.setAircraftInfo(std::move(info));
+    aircraft.setAircraftInfo(info);
 }
 
 void PathCreatorPlugin::replay() noexcept

@@ -106,7 +106,7 @@ inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &
     }
     if (ok) {
         positionData.timestamp = timestamp;
-        const QString position = row.at(Enum::toUnderlyingType(::Index::Position));
+        const QString &position = row.at(Enum::toUnderlyingType(::Index::Position));
         const QStringList coordinates = position.split(',');
         if (coordinates.size() == 2) {
             positionData.latitude = coordinates.first().toDouble(&ok);

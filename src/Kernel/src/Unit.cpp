@@ -64,8 +64,8 @@ Unit::Unit()
     : d(std::make_unique<UnitPrivate>())
 {}
 
-Unit::Unit(Unit &&rhs) = default;
-Unit &Unit::operator=(Unit &&rhs) = default;
+Unit::Unit(Unit &&rhs) noexcept = default;
+Unit &Unit::operator=(Unit &&rhs) noexcept = default;
 Unit::~Unit() = default;
 
 QString Unit::formatLatitudeDMS(double latitude) noexcept

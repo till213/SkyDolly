@@ -57,8 +57,8 @@ namespace
 
 // PUBLIC
 
-SQLiteLogbookDao::SQLiteLogbookDao(SQLiteLogbookDao &&rhs) = default;
-SQLiteLogbookDao &SQLiteLogbookDao::operator=(SQLiteLogbookDao &&rhs) = default;
+SQLiteLogbookDao::SQLiteLogbookDao(SQLiteLogbookDao &&rhs) noexcept = default;
+SQLiteLogbookDao &SQLiteLogbookDao::operator=(SQLiteLogbookDao &&rhs) noexcept = default;
 SQLiteLogbookDao::~SQLiteLogbookDao() = default;
 
 std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates(bool *ok) const noexcept

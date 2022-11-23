@@ -38,9 +38,9 @@ class SQLiteHandleDao : public HandleDaoIntf
 public:
     SQLiteHandleDao() = default;
     SQLiteHandleDao(const SQLiteHandleDao &rhs) = delete;
-    SQLiteHandleDao(SQLiteHandleDao &&rhs);
+    SQLiteHandleDao(SQLiteHandleDao &&rhs) noexcept;
     SQLiteHandleDao &operator=(const SQLiteHandleDao &rhs) = delete;
-    SQLiteHandleDao &operator=(SQLiteHandleDao &&rhs);
+    SQLiteHandleDao &operator=(SQLiteHandleDao &&rhs) noexcept;
     ~SQLiteHandleDao() override;
 
     bool add(std::int64_t aircraftId, const AircraftHandleData &data) noexcept override;

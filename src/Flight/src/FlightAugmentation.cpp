@@ -75,8 +75,8 @@ FlightAugmentation::FlightAugmentation(Procedures procedures, Aspects aspects) n
     : d(std::make_unique<FlightAugmentationPrivate>(procedures, aspects))
 {}
 
-FlightAugmentation::FlightAugmentation(FlightAugmentation &&rhs) = default;
-FlightAugmentation &FlightAugmentation::operator=(FlightAugmentation &&rhs) = default;
+FlightAugmentation::FlightAugmentation(FlightAugmentation &&rhs) noexcept = default;
+FlightAugmentation &FlightAugmentation::operator=(FlightAugmentation &&rhs) noexcept = default;
 FlightAugmentation::~FlightAugmentation() = default;
 
 void FlightAugmentation::setProcedures(Procedures procedures) noexcept

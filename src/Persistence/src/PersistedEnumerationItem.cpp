@@ -22,8 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory.h>
+#include <memory>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
 
@@ -35,7 +36,7 @@
 
 struct PersistedEnumerationItemPrivate
 {
-    PersistedEnumerationItemPrivate(QString enumerationName, QString symbolicId)
+    PersistedEnumerationItemPrivate(const QString &enumerationName, const QString &symbolicId)
     {
         bool ok {false};
         enumeration = enumerationService.getEnumerationByName(enumerationName, &ok);
@@ -51,11 +52,11 @@ struct PersistedEnumerationItemPrivate
 
 // PUBLIC
 
-PersistedEnumerationItem::PersistedEnumerationItem(PersistedEnumerationItem &&rhs) = default;
-PersistedEnumerationItem &PersistedEnumerationItem::operator=(PersistedEnumerationItem &&rhs) = default;
+PersistedEnumerationItem::PersistedEnumerationItem(PersistedEnumerationItem &&rhs) noexcept = default;
+PersistedEnumerationItem &PersistedEnumerationItem::operator=(PersistedEnumerationItem &&rhs) noexcept = default;
 PersistedEnumerationItem::~PersistedEnumerationItem() = default;
 
-PersistedEnumerationItem::PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept
+PersistedEnumerationItem::PersistedEnumerationItem(const QString &enumerationName, const QString &symbolicId) noexcept
     : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, symbolicId))
 {}
 

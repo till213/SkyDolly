@@ -47,11 +47,11 @@ namespace
 
 // PUBLIC
 
-SQLiteAircraftTypeDao::SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) = default;
-SQLiteAircraftTypeDao &SQLiteAircraftTypeDao::operator=(SQLiteAircraftTypeDao &&rhs) = default;
+SQLiteAircraftTypeDao::SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) noexcept = default;
+SQLiteAircraftTypeDao &SQLiteAircraftTypeDao::operator=(SQLiteAircraftTypeDao &&rhs) noexcept = default;
 SQLiteAircraftTypeDao::~SQLiteAircraftTypeDao() = default;
 
-bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
+bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) noexcept
 {
     QSqlQuery query;
     query.prepare(

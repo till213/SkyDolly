@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 
 #include <QStyledItemDelegate>
 #include <QModelIndex>
@@ -38,7 +39,7 @@
 struct EnumerationItemDelegatePrivate
 {
     EnumerationItemDelegatePrivate(QString theEnumerationName)
-        : enumerationName(theEnumerationName)
+        : enumerationName(std::move(theEnumerationName))
     {}
 
     QString enumerationName;
@@ -48,7 +49,7 @@ struct EnumerationItemDelegatePrivate
 
 EnumerationItemDelegate::EnumerationItemDelegate(QString enumerationName) noexcept
     : QStyledItemDelegate(),
-      d(std::make_unique<EnumerationItemDelegatePrivate>(enumerationName))
+      d(std::make_unique<EnumerationItemDelegatePrivate>(std::move(enumerationName)))
 {
 #ifdef DEBUG
     qDebug() << "EnumerationItemDelegate::EnumerationItemDelegate: CREATED";
@@ -88,7 +89,6 @@ void EnumerationItemDelegate::setEditorData(QWidget *editor, const QModelIndex &
 
 void EnumerationItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const noexcept
 {
-    const QVariant data = index.data(Qt::EditRole);
     if (index.data().canConvert<std::int64_t>()) {
          EnumerationComboBox *enumerationEditor = qobject_cast<EnumerationComboBox *>(editor);
          model->setData(index, QVariant::fromValue(enumerationEditor->getCurrentId()));

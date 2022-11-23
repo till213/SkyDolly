@@ -106,7 +106,7 @@ private:
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 };
 
 #endif // FLIGHTEXPORTPLUGINBASE_H

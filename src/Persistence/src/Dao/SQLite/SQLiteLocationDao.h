@@ -37,9 +37,9 @@ class SQLiteLocationDao : public LocationDaoIntf
 public:
     SQLiteLocationDao() = default;
     SQLiteLocationDao(const SQLiteLocationDao &rhs) = delete;
-    SQLiteLocationDao(SQLiteLocationDao &&rhs);
+    SQLiteLocationDao(SQLiteLocationDao &&rhs) noexcept;
     SQLiteLocationDao &operator=(const SQLiteLocationDao &rhs) = delete;
-    SQLiteLocationDao &operator=(SQLiteLocationDao &&rhs);
+    SQLiteLocationDao &operator=(SQLiteLocationDao &&rhs) noexcept;
     ~SQLiteLocationDao() override;
 
     bool add(Location &location) noexcept override;

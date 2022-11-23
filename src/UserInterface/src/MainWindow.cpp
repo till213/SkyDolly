@@ -1432,7 +1432,7 @@ void MainWindow::updateMainWindow() noexcept
     }
 }
 
-void MainWindow::onModuleActivated(const QString title, [[maybe_unused]] QUuid uuid) noexcept
+void MainWindow::onModuleActivated(const QString &title, [[maybe_unused]] QUuid uuid) noexcept
 {
     ui->moduleGroupBox->setTitle(title);
     // Disable the minimal UI (if activated)

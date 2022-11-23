@@ -26,6 +26,7 @@
 #define IGCPARSER_H
 
 #include <memory>
+#include <utility>
 #include <vector>
 #include <cstdint>
 
@@ -72,7 +73,7 @@ public:
         Task_(double lat, double lon, QString desc)
             : latitude(lat),
               longitude(lon),
-              description(desc)
+              description(std::move(desc))
         {}
 
         float latitude;

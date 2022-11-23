@@ -197,12 +197,12 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     }
     Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
     if (ok) {
-        const QString categorySymbolicId = row.at(::Index::Category);
+        const QString &categorySymbolicId = row.at(::Index::Category);
         location.categoryId = locationCategoryEnumeration.getItemBySymbolicId(categorySymbolicId).id;
     }
     Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
     if (ok) {
-        const QString countrySymbolicId = row.at(::Index::Country);
+        const QString &countrySymbolicId = row.at(::Index::Country);
         location.countryId = countryEnumeration.getItemBySymbolicId(countrySymbolicId).id;
     }
     if (ok) {
@@ -237,7 +237,7 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     }
     Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent, &ok);
     if (ok) {
-        const QString engineEventSymbolicId = row.at(::Index::EngineEvent);
+        const QString &engineEventSymbolicId = row.at(::Index::EngineEvent);
         location.engineEventId = engineEventEnumeration.getItemBySymbolicId(engineEventSymbolicId).id;
     }
     if (ok) {

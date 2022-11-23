@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <utility>
+
 #include <QString>
 
 #include "AircraftType.h"
@@ -29,7 +31,7 @@
 // PUBLIC
 
 AircraftType::AircraftType(QString type, QString category, int wingSpan, SimType::EngineType engineType, int numberOfEngines) noexcept
-    : type(type), category(category), wingSpan(wingSpan), engineType(engineType), numberOfEngines(numberOfEngines)
+    : type(std::move(type)), category(std::move(category)), wingSpan(wingSpan), engineType(engineType), numberOfEngines(numberOfEngines)
 {};
 
 void AircraftType::clear() noexcept

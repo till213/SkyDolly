@@ -47,9 +47,9 @@ public:
 
     Analytics(const Aircraft &aircraft);
     Analytics(const Analytics &rhs) = delete;
-    Analytics(Analytics &&rhs);
+    Analytics(Analytics &&rhs) noexcept;
     Analytics &operator=(const Analytics &rhs) = delete;
-    Analytics &operator=(Analytics &&rhs);
+    Analytics &operator=(Analytics &&rhs) noexcept;
     ~Analytics();
 
     /*!

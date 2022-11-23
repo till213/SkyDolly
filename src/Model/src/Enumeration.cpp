@@ -58,8 +58,8 @@ Enumeration::Enumeration() noexcept
     : d(std::make_unique<EnumerationPrivate>())
 {}
 
-Enumeration::Enumeration(Enumeration &&rhs) = default;
-Enumeration &Enumeration::operator=(Enumeration &&rhs) = default;
+Enumeration::Enumeration(Enumeration &&rhs) noexcept = default;
+Enumeration &Enumeration::operator=(Enumeration &&rhs) noexcept = default;
 Enumeration::~Enumeration() = default;
 
 QString Enumeration::getName() const noexcept
@@ -72,7 +72,7 @@ void Enumeration::setName(QString name) noexcept
     d->name = std::move(name);
 }
 
-void Enumeration::addItem(Item item) noexcept
+void Enumeration::addItem(const Item& item) noexcept
 {
     d->items.push_back(item);
     const std::size_t index = d->items.size() - 1;
@@ -85,7 +85,7 @@ const std::vector<Enumeration::Item> &Enumeration::items() const noexcept
     return d->items;
 }
 
-Enumeration::Item Enumeration::getItemBySymbolicId(QString symbolicId) const noexcept
+Enumeration::Item Enumeration::getItemBySymbolicId(const QString &symbolicId) const noexcept
 {
     auto it = d->itemsBySymbolicId.find(symbolicId);
     if (it != d->itemsBySymbolicId.end()) {

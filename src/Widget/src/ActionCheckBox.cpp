@@ -29,7 +29,7 @@
 
 struct ActionCheckBoxPrivate
 {
-    ActionCheckBoxPrivate(bool theWithText)  noexcept
+    ActionCheckBoxPrivate(bool theWithText) noexcept
         : action(nullptr),
           withText(theWithText)
     {}

@@ -323,48 +323,41 @@ bool KmlExportPlugin::exportFooter(QIODevice &io) const noexcept
 QString KmlExportPlugin::getFlightDescription() const noexcept
 {
     const FlightCondition &flightCondition = d->flight->getFlightCondition();
-    const QString description =
-            QObject::tr("Description") % ": " % d->flight->getDescription() % "\n" %
-            "\n" %
-            QObject::tr("Creation date") % ": " % d->unit.formatDate(d->flight->getCreationTime()) % "\n" %
-            QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
-            QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
-            QObject::tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
-            QObject::tr("Total air temperature") % ": " % d->unit.formatCelcius(flightCondition.totalAirTemperature) % "\n" %
-            QObject::tr("Precipitation") % ": " % SimType::precipitationStateToString(flightCondition.precipitationState) % "\n" %
-            QObject::tr("Wind direction") % ": " % d->unit.formatDegrees(flightCondition.windDirection) % "\n" %
-            QObject::tr("Wind speed") % ": " % d->unit.formatKnots(flightCondition.windSpeed) % "\n" %
-            QObject::tr("Visibility") % ": " % d->unit.formatVisibility(flightCondition.visibility) % "\n" %
-            QObject::tr("In clouds") % ": " % d->unit.formatBoolean(flightCondition.inClouds) % "\n";
-
-    return description;
+    return QObject::tr("Description") % ": " % d->flight->getDescription() % "\n" %
+           "\n" %
+           QObject::tr("Creation date") % ": " % d->unit.formatDate(d->flight->getCreationTime()) % "\n" %
+           QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
+           QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
+           QObject::tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
+           QObject::tr("Total air temperature") % ": " % d->unit.formatCelcius(flightCondition.totalAirTemperature) % "\n" %
+           QObject::tr("Precipitation") % ": " % SimType::precipitationStateToString(flightCondition.precipitationState) % "\n" %
+           QObject::tr("Wind direction") % ": " % d->unit.formatDegrees(flightCondition.windDirection) % "\n" %
+           QObject::tr("Wind speed") % ": " % d->unit.formatKnots(flightCondition.windSpeed) % "\n" %
+           QObject::tr("Visibility") % ": " % d->unit.formatVisibility(flightCondition.visibility) % "\n" %
+           QObject::tr("In clouds") % ": " % d->unit.formatBoolean(flightCondition.inClouds) % "\n";
 }
 
 QString KmlExportPlugin::getAircraftDescription(const Aircraft &aircraft) const noexcept
 {
     const AircraftInfo &info = aircraft.getAircraftInfo();
     const AircraftType &type = info.aircraftType;
-    const QString description =
-            QObject::tr("Category") % ": " % type.category % "\n" %
-            QObject::tr("Engine type") % ": " % SimType::engineTypeToString(type.engineType) % "\n" %
-            QObject::tr("Number of engines") % ": " % d->unit.formatNumber(type.numberOfEngines, 0) % "\n" %
-            QObject::tr("Wingspan") % ": " % d->unit.formatFeet(type.wingSpan) % "\n"
-            "\n" %
-            QObject::tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
-            QObject::tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %
-            QObject::tr("Airline") % ": " % info.airline % "\n" %
-            QObject::tr("Flight number") % ": " % info.flightNumber % "\n" %
-            QObject::tr("Tail number") % ": " % info.tailNumber % "\n";
-    return description;
+    return QObject::tr("Category") % ": " % type.category % "\n" %
+           QObject::tr("Engine type") % ": " % SimType::engineTypeToString(type.engineType) % "\n" %
+           QObject::tr("Number of engines") % ": " % d->unit.formatNumber(type.numberOfEngines, 0) % "\n" %
+           QObject::tr("Wingspan") % ": " % d->unit.formatFeet(type.wingSpan) % "\n"
+           "\n" %
+           QObject::tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
+           QObject::tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %
+           QObject::tr("Airline") % ": " % info.airline % "\n" %
+           QObject::tr("Flight number") % ": " % info.flightNumber % "\n" %
+           QObject::tr("Tail number") % ": " % info.tailNumber % "\n";
 }
 
 QString KmlExportPlugin::getWaypointDescription(const Waypoint &waypoint) const noexcept
 {
-    const QString description =
-            QObject::tr("Arrival time (local)") % ": " % d->unit.formatTime(waypoint.localTime) % "\n" %
-            QObject::tr("Arrival time (zulu)") % ": " % d->unit.formatTime(waypoint.zuluTime) % "\n" %
-            QObject::tr("Altitude") % ": " % d->unit.formatFeet(waypoint.altitude) % "\n";
-    return description;
+    return QObject::tr("Arrival time (local)") % ": " % d->unit.formatTime(waypoint.localTime) % "\n" %
+           QObject::tr("Arrival time (zulu)") % ": " % d->unit.formatTime(waypoint.zuluTime) % "\n" %
+           QObject::tr("Altitude") % ": " % d->unit.formatFeet(waypoint.altitude) % "\n";
 }
 
 

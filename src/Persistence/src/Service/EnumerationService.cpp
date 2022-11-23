@@ -48,16 +48,16 @@ EnumerationService::EnumerationService() noexcept
     : d(std::make_unique<EnumerationServicePrivate>())
 {}
 
-EnumerationService::EnumerationService(EnumerationService &&rhs) = default;
-EnumerationService &EnumerationService::operator=(EnumerationService &&rhs) = default;
+EnumerationService::EnumerationService(EnumerationService &&rhs) noexcept = default;
+EnumerationService &EnumerationService::operator=(EnumerationService &&rhs) noexcept = default;
 EnumerationService::~EnumerationService() = default;
 
-Enumeration EnumerationService::getEnumerationByName(QString name, bool *ok)
+Enumeration EnumerationService::getEnumerationByName(const QString &name, bool *ok)
 {
     Enumeration enumeration;
     bool success = QSqlDatabase::database().transaction();
     if (success) {
-        enumeration = d->enumerationDao->get(std::move(name), &success);
+        enumeration = d->enumerationDao->get(name, &success);
     }
     QSqlDatabase::database().rollback();
     if (ok != nullptr) {

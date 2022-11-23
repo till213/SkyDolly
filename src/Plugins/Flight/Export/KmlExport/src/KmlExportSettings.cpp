@@ -170,7 +170,7 @@ QColor KmlExportSettings::getJetStartColor() const noexcept
     return d->jetStartColor;
 }
 
-void KmlExportSettings::setJetStartColor(QColor color) noexcept
+void KmlExportSettings::setJetStartColor(const QColor &color) noexcept
 {
     if (d->jetStartColor != color) {
         d->jetStartColor = color;
@@ -183,7 +183,7 @@ QColor KmlExportSettings::getJetEndColor() const noexcept
     return d->jetEndColor;
 }
 
-void KmlExportSettings::setJetEndColor(QColor color) noexcept
+void KmlExportSettings::setJetEndColor(const QColor &color) noexcept
 {
     if (d->jetEndColor != color) {
         d->jetEndColor = color;
@@ -196,7 +196,7 @@ QColor KmlExportSettings::getTurbopropStartColor() const noexcept
     return d->turbopropStartColor;
 }
 
-void KmlExportSettings::setTurbopropStartColor(QColor color) noexcept
+void KmlExportSettings::setTurbopropStartColor(const QColor &color) noexcept
 {
     if (d->turbopropStartColor != color) {
         d->turbopropStartColor = color;
@@ -209,7 +209,7 @@ QColor KmlExportSettings::getTurbopropEndColor() const noexcept
     return d->turbopropEndColor;
 }
 
-void KmlExportSettings::setTurbopropEndColor(QColor color) noexcept
+void KmlExportSettings::setTurbopropEndColor(const QColor &color) noexcept
 {
     if (d->turbopropEndColor != color) {
         d->turbopropEndColor = color;
@@ -222,7 +222,7 @@ QColor KmlExportSettings::getPistonStartColor() const noexcept
     return d->pistonStartColor;
 }
 
-void KmlExportSettings::setPistonStartColor(QColor color) noexcept
+void KmlExportSettings::setPistonStartColor(const QColor &color) noexcept
 {
     if (d->pistonStartColor != color) {
         d->pistonStartColor = color;
@@ -235,7 +235,7 @@ QColor KmlExportSettings::getPistonEndColor() const noexcept
     return d->pistonEndColor;
 }
 
-void KmlExportSettings::setPistonEndColor(QColor color) noexcept
+void KmlExportSettings::setPistonEndColor(const QColor &color) noexcept
 {
     if (d->pistonEndColor != color) {
         d->pistonEndColor = color;
@@ -248,7 +248,7 @@ QColor KmlExportSettings::getAllStartColor() const noexcept
     return d->allStartColor;
 }
 
-void KmlExportSettings::setAllStartColor(QColor color) noexcept
+void KmlExportSettings::setAllStartColor(const QColor &color) noexcept
 {
     if (d->allStartColor != color) {
         d->allStartColor = color;
@@ -261,7 +261,7 @@ QColor KmlExportSettings::getAllEndColor() const noexcept
     return d->allEndColor;
 }
 
-void KmlExportSettings::setAllEndColor(QColor color) noexcept
+void KmlExportSettings::setAllEndColor(const QColor &color) noexcept
 {
     if (d->allEndColor != color) {
         d->allEndColor = color;

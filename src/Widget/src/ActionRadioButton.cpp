@@ -29,7 +29,7 @@
 
 struct ActionRadioButtonPrivate
 {
-    ActionRadioButtonPrivate()  noexcept
+    ActionRadioButtonPrivate() noexcept
         : action(nullptr)
     {}
 

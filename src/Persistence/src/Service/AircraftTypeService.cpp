@@ -51,8 +51,8 @@ AircraftTypeService::AircraftTypeService() noexcept
     : d(std::make_unique<AircraftTypeServicePrivate>())
 {}
 
-AircraftTypeService::AircraftTypeService(AircraftTypeService &&rhs) = default;
-AircraftTypeService &AircraftTypeService::operator=(AircraftTypeService &&rhs) = default;
+AircraftTypeService::AircraftTypeService(AircraftTypeService &&rhs) noexcept = default;
+AircraftTypeService &AircraftTypeService::operator=(AircraftTypeService &&rhs) noexcept = default;
 AircraftTypeService::~AircraftTypeService() = default;
 
 AircraftType AircraftTypeService::getByType(const QString &type, bool *ok) const noexcept

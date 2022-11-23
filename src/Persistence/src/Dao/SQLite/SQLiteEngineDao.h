@@ -38,9 +38,9 @@ class SQLiteEngineDao : public EngineDaoIntf
 public:
     SQLiteEngineDao() = default;
     SQLiteEngineDao(const SQLiteEngineDao &rhs) = delete;
-    SQLiteEngineDao(SQLiteEngineDao &&rhs);
+    SQLiteEngineDao(SQLiteEngineDao &&rhs) noexcept;
     SQLiteEngineDao &operator=(const SQLiteEngineDao &rhs) = delete;
-    SQLiteEngineDao &operator=(SQLiteEngineDao &&rhs);
+    SQLiteEngineDao &operator=(SQLiteEngineDao &&rhs) noexcept;
     ~SQLiteEngineDao() override;
 
     bool add(std::int64_t aircraftId, const EngineData &data) noexcept override;

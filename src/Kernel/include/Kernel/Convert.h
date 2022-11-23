@@ -50,9 +50,9 @@ public:
 
     Convert() noexcept;
     Convert(const Convert &rhs) = delete;
-    Convert(Convert &&rhs);
+    Convert(Convert &&rhs) noexcept;
     Convert &operator=(const Convert &rhs) = delete;
-    Convert &operator=(Convert &&rhs);
+    Convert &operator=(Convert &&rhs) noexcept;
     ~Convert();
 
     /*!

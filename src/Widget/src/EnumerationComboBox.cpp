@@ -25,6 +25,7 @@
 #include <memory>
 
 #include <QComboBox>
+#include <utility>
 
 #include <Model/Enumeration.h>
 #include <Persistence/Service/EnumerationService.h>
@@ -33,7 +34,7 @@
 struct EnumerationComboBoxPrivate
 {
     EnumerationComboBoxPrivate(QString enumerationName = QString())
-        : enumeration(enumerationName)
+        : enumeration(std::move(enumerationName))
     {}
 
     Enumeration enumeration;
@@ -46,7 +47,7 @@ EnumerationComboBox::EnumerationComboBox(QString enumerationName, QWidget *paren
     : EnumerationComboBox(parent)
 
 {
-    d->enumeration = {enumerationName};
+    d->enumeration = {std::move(enumerationName)};
     initUi();
 }
 

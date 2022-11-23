@@ -158,7 +158,7 @@ private:
     bool hasRecordingStarted() const noexcept;
     inline std::int64_t getSkipInterval() const noexcept;
 
-    inline bool retryWithReconnect(std::function<bool()> func);
+    inline bool retryWithReconnect(const std::function<bool()> &func);
 
     bool setupInitialRecordingPosition(InitialPosition initialPosition) noexcept;
     bool setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept;
