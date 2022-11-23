@@ -25,7 +25,6 @@
 #include <cstdint>
 
 #include <QByteArray>
-#include <QList>
 #include <QString>
 #include <QDateTime>
 #include <QIODevice>
@@ -38,6 +37,7 @@
 
 #include <Kernel/CsvParser.h>
 #include <Kernel/Convert.h>
+#include <Kernel/Enum.h>
 #include <Model/SimVar.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -60,7 +60,7 @@ namespace
 {
     constexpr const char *SkyDollyCsvHeader {"Type,Plane Latitude,Plane Longitude,Plane Altitude"};
 
-    enum Index
+    enum struct Index
     {
         Type = 0,
         // Position
@@ -176,7 +176,7 @@ bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[mayb
             // The first position timestamp must be 0, so shift all timestamps by
             // the timestamp delta, derived from the first timestamp
             // (that is usually 0 already)
-            m_timestampDelta = row.at(::Index::Timestamp).toLongLong(&ok);
+            m_timestampDelta = row.at(Enum::toUnderlyingType(::Index::Timestamp)).toLongLong(&ok);
             firstRow = false;
         }
         if (ok) {
@@ -190,7 +190,7 @@ bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[mayb
 
 inline bool SkyDollyCsvParser::parseRow(const CsvParser::Row &row, Aircraft &aircraft) noexcept
 {
-    CsvConst::DataType dataType = static_cast<CsvConst::DataType>(row.at(::Index::Type).at(0).toLatin1());
+    CsvConst::DataType dataType = static_cast<CsvConst::DataType>(row.at(Enum::toUnderlyingType(::Index::Type)).at(0).toLatin1());
 
     bool ok {true};
     switch (dataType) {
@@ -221,51 +221,49 @@ inline bool SkyDollyCsvParser::parseRow(const CsvParser::Row &row, Aircraft &air
 inline bool SkyDollyCsvParser::importPositionData(const CsvParser::Row &row, Aircraft &aircraft) noexcept
 {
     PositionData data;
-    std::int64_t timestampDelta {0};
     bool ok {true};
 
-    // Position
-    data.latitude = row.at(::Index::Latitude).toDouble(&ok);
+    data.latitude = row.at(Enum::toUnderlyingType(::Index::Latitude)).toDouble(&ok);
     if (ok) {
-        data.longitude = row.at(::Index::Longitude).toDouble(&ok);
+        data.longitude = row.at(Enum::toUnderlyingType(::Index::Longitude)).toDouble(&ok);
     }
     if (ok) {
-        data.altitude = row.at(::Index::Altitude).toDouble(&ok);
+        data.altitude = row.at(Enum::toUnderlyingType(::Index::Altitude)).toDouble(&ok);
     }
     if (ok) {
-        data.indicatedAltitude = row.at(::Index::IndicatedAltitude).toDouble(&ok);
+        data.indicatedAltitude = row.at(Enum::toUnderlyingType(::Index::IndicatedAltitude)).toDouble(&ok);
     }
     if (ok) {
-        data.pitch = row.at(::Index::Pitch).toDouble(&ok);
+        data.pitch = row.at(Enum::toUnderlyingType(::Index::Pitch)).toDouble(&ok);
     }
     if (ok) {
-        data.bank = row.at(::Index::Bank).toDouble(&ok);
+        data.bank = row.at(Enum::toUnderlyingType(::Index::Bank)).toDouble(&ok);
     }
     if (ok) {
-        data.trueHeading = row.at(::Index::TrueHeading).toDouble(&ok);
+        data.trueHeading = row.at(Enum::toUnderlyingType(::Index::TrueHeading)).toDouble(&ok);
     }
     // Velocity
     if (ok) {
-        data.velocityBodyX = row.at(::Index::VelocityBodyX).toDouble(&ok);
+        data.velocityBodyX = row.at(Enum::toUnderlyingType(::Index::VelocityBodyX)).toDouble(&ok);
     }
     if (ok) {
-        data.velocityBodyY = row.at(::Index::VelocityBodyY).toDouble(&ok);
+        data.velocityBodyY = row.at(Enum::toUnderlyingType(::Index::VelocityBodyY)).toDouble(&ok);
     }
     if (ok) {
-        data.velocityBodyZ = row.at(::Index::VelocityBodyZ).toDouble(&ok);
+        data.velocityBodyZ = row.at(Enum::toUnderlyingType(::Index::VelocityBodyZ)).toDouble(&ok);
     }
     if (ok) {
-        data.rotationVelocityBodyX = row.at(::Index::RotationVelocityBodyX).toDouble(&ok);
+        data.rotationVelocityBodyX = row.at(Enum::toUnderlyingType(::Index::RotationVelocityBodyX)).toDouble(&ok);
     }
     if (ok) {
-        data.rotationVelocityBodyY= row.at(::Index::RotationVelocityBodyY).toDouble(&ok);
+        data.rotationVelocityBodyY= row.at(Enum::toUnderlyingType(::Index::RotationVelocityBodyY)).toDouble(&ok);
     }
     if (ok) {
-        data.rotationVelocityBodyZ = row.at(::Index::RotationVelocityBodyZ).toDouble(&ok);
+        data.rotationVelocityBodyZ = row.at(Enum::toUnderlyingType(::Index::RotationVelocityBodyZ)).toDouble(&ok);
     }
     // Timestamp
     if (ok) {
-        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+        data.timestamp = row.at(Enum::toUnderlyingType(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
     }
 
     if (ok) {
@@ -277,94 +275,93 @@ inline bool SkyDollyCsvParser::importPositionData(const CsvParser::Row &row, Air
 inline bool SkyDollyCsvParser::importEngineData(const CsvParser::Row &row, Engine &engine) noexcept
 {
     EngineData data;
-    std::int64_t timestampDelta = 0;
     bool ok {true};
 
-    data.throttleLeverPosition1 = row.at(::Index::ThrottleLeverPosition1).toInt(&ok);
+    data.throttleLeverPosition1 = row.at(Enum::toUnderlyingType(::Index::ThrottleLeverPosition1)).toInt(&ok);
     if (ok) {
-        data.throttleLeverPosition2 = row.at(::Index::ThrottleLeverPosition2).toInt(&ok);
+        data.throttleLeverPosition2 = row.at(Enum::toUnderlyingType(::Index::ThrottleLeverPosition2)).toInt(&ok);
     }
     if (ok) {
-        data.throttleLeverPosition3 = row.at(::Index::ThrottleLeverPosition3).toInt(&ok);
+        data.throttleLeverPosition3 = row.at(Enum::toUnderlyingType(::Index::ThrottleLeverPosition3)).toInt(&ok);
     }
     if (ok) {
-        data.throttleLeverPosition4 = row.at(::Index::ThrottleLeverPosition4).toInt(&ok);
+        data.throttleLeverPosition4 = row.at(Enum::toUnderlyingType(::Index::ThrottleLeverPosition4)).toInt(&ok);
     }
     if (ok) {
-        data.propellerLeverPosition1 = row.at(::Index::PropellerLeverPosition1).toInt(&ok);
+        data.propellerLeverPosition1 = row.at(Enum::toUnderlyingType(::Index::PropellerLeverPosition1)).toInt(&ok);
     }
     if (ok) {
-        data.propellerLeverPosition2 = row.at(::Index::PropellerLeverPosition2).toInt(&ok);
+        data.propellerLeverPosition2 = row.at(Enum::toUnderlyingType(::Index::PropellerLeverPosition2)).toInt(&ok);
     }
     if (ok) {
-        data.propellerLeverPosition3 = row.at(::Index::PropellerLeverPosition3).toInt(&ok);
+        data.propellerLeverPosition3 = row.at(Enum::toUnderlyingType(::Index::PropellerLeverPosition3)).toInt(&ok);
     }
     if (ok) {
-        data.propellerLeverPosition4 = row.at(::Index::PropellerLeverPosition4).toInt(&ok);
+        data.propellerLeverPosition4 = row.at(Enum::toUnderlyingType(::Index::PropellerLeverPosition4)).toInt(&ok);
     }
     if (ok) {
-        data.mixtureLeverPosition1 = row.at(::Index::MixtureLeverPosition1).toInt(&ok);
+        data.mixtureLeverPosition1 = row.at(Enum::toUnderlyingType(::Index::MixtureLeverPosition1)).toInt(&ok);
     }
     if (ok) {
-        data.mixtureLeverPosition2 = row.at(::Index::MixtureLeverPosition2).toInt(&ok);
+        data.mixtureLeverPosition2 = row.at(Enum::toUnderlyingType(::Index::MixtureLeverPosition2)).toInt(&ok);
     }
     if (ok) {
-        data.mixtureLeverPosition3 = row.at(::Index::MixtureLeverPosition3).toInt(&ok);
+        data.mixtureLeverPosition3 = row.at(Enum::toUnderlyingType(::Index::MixtureLeverPosition3)).toInt(&ok);
     }
     if (ok) {
-        data.mixtureLeverPosition4 = row.at(::Index::MixtureLeverPosition4).toInt(&ok);
+        data.mixtureLeverPosition4 = row.at(Enum::toUnderlyingType(::Index::MixtureLeverPosition4)).toInt(&ok);
     }
     if (ok) {
-        data.cowlFlapPosition1 = row.at(::Index::RecipEngineCowlFlapPosition1).toInt(&ok);
+        data.cowlFlapPosition1 = row.at(Enum::toUnderlyingType(::Index::RecipEngineCowlFlapPosition1)).toInt(&ok);
     }
     if (ok) {
-        data.cowlFlapPosition2 = row.at(::Index::RecipEngineCowlFlapPosition2).toInt(&ok);
+        data.cowlFlapPosition2 = row.at(Enum::toUnderlyingType(::Index::RecipEngineCowlFlapPosition2)).toInt(&ok);
     }
     if (ok) {
-        data.cowlFlapPosition3 = row.at(::Index::RecipEngineCowlFlapPosition3).toInt(&ok);
+        data.cowlFlapPosition3 = row.at(Enum::toUnderlyingType(::Index::RecipEngineCowlFlapPosition3)).toInt(&ok);
     }
     if (ok) {
-        data.cowlFlapPosition4 = row.at(::Index::RecipEngineCowlFlapPosition4).toInt(&ok);
+        data.cowlFlapPosition4 = row.at(Enum::toUnderlyingType(::Index::RecipEngineCowlFlapPosition4)).toInt(&ok);
     }
     if (ok) {
-        data.electricalMasterBattery1 = row.at(::Index::ElectricalMasterBattery1).toInt(&ok) != 0;
+        data.electricalMasterBattery1 = row.at(Enum::toUnderlyingType(::Index::ElectricalMasterBattery1)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.electricalMasterBattery2 = row.at(::Index::ElectricalMasterBattery2).toInt(&ok) != 0;
+        data.electricalMasterBattery2 = row.at(Enum::toUnderlyingType(::Index::ElectricalMasterBattery2)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.electricalMasterBattery3 = row.at(::Index::ElectricalMasterBattery3).toInt(&ok) != 0;
+        data.electricalMasterBattery3 = row.at(Enum::toUnderlyingType(::Index::ElectricalMasterBattery3)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.electricalMasterBattery4 = row.at(::Index::ElectricalMasterBattery4).toInt(&ok) != 0;
+        data.electricalMasterBattery4 = row.at(Enum::toUnderlyingType(::Index::ElectricalMasterBattery4)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.generalEngineStarter1 = row.at(::Index::GeneralEngineStarter1).toInt(&ok) != 0;
+        data.generalEngineStarter1 = row.at(Enum::toUnderlyingType(::Index::GeneralEngineStarter1)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.generalEngineStarter2 = row.at(::Index::GeneralEngineStarter2).toInt(&ok) != 0;
+        data.generalEngineStarter2 = row.at(Enum::toUnderlyingType(::Index::GeneralEngineStarter2)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.generalEngineStarter3 = row.at(::Index::GeneralEngineStarter3).toInt(&ok) != 0;
+        data.generalEngineStarter3 = row.at(Enum::toUnderlyingType(::Index::GeneralEngineStarter3)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.generalEngineStarter4 = row.at(::Index::GeneralEngineStarter4).toInt(&ok) != 0;
+        data.generalEngineStarter4 = row.at(Enum::toUnderlyingType(::Index::GeneralEngineStarter4)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.generalEngineCombustion1 = row.at(::Index::GeneralEngineCombustion1).toInt(&ok) != 0;
+        data.generalEngineCombustion1 = row.at(Enum::toUnderlyingType(::Index::GeneralEngineCombustion1)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.generalEngineCombustion2 = row.at(::Index::GeneralEngineCombustion2).toInt(&ok) != 0;
+        data.generalEngineCombustion2 = row.at(Enum::toUnderlyingType(::Index::GeneralEngineCombustion2)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.generalEngineCombustion3 = row.at(::Index::GeneralEngineCombustion3).toInt(&ok) != 0;
+        data.generalEngineCombustion3 = row.at(Enum::toUnderlyingType(::Index::GeneralEngineCombustion3)).toInt(&ok) != 0;
     }
     if (ok) {
-        data.generalEngineCombustion4 = row.at(::Index::GeneralEngineCombustion4).toInt(&ok) != 0;
+        data.generalEngineCombustion4 = row.at(Enum::toUnderlyingType(::Index::GeneralEngineCombustion4)).toInt(&ok) != 0;
     }
     // Timestamp
     if (ok) {
-        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+        data.timestamp = row.at(Enum::toUnderlyingType(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
     }
 
     if (ok) {
@@ -376,19 +373,18 @@ inline bool SkyDollyCsvParser::importEngineData(const CsvParser::Row &row, Engin
 inline bool SkyDollyCsvParser::importPrimaryFlightControlData(const CsvParser::Row &row, PrimaryFlightControl &primaryFlightControl) noexcept
 {
     PrimaryFlightControlData data;
-    std::int64_t timestampDelta = 0;
     bool ok {true};
 
-    data.rudderPosition = row.at(::Index::RudderPosition).toInt(&ok);
+    data.rudderPosition = row.at(Enum::toUnderlyingType(::Index::RudderPosition)).toInt(&ok);
     if (ok) {
-        data.elevatorPosition =  row.at(::Index::ElevatorPosition).toInt(&ok);
+        data.elevatorPosition =  row.at(Enum::toUnderlyingType(::Index::ElevatorPosition)).toInt(&ok);
     }
     if (ok) {
-        data.aileronPosition = row.at(::Index::AileronPosition).toInt(&ok);
+        data.aileronPosition = row.at(Enum::toUnderlyingType(::Index::AileronPosition)).toInt(&ok);
     }
     // Timestamp
     if (ok) {
-        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+        data.timestamp = row.at(Enum::toUnderlyingType(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
     }
 
     if (ok) {
@@ -400,29 +396,27 @@ inline bool SkyDollyCsvParser::importPrimaryFlightControlData(const CsvParser::R
 inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser::Row &row, SecondaryFlightControl &secondaryFlightControl) noexcept
 {
     SecondaryFlightControlData data;
-    std::int64_t timestampDelta = 0;
     bool ok {true};
 
-
-    data.leadingEdgeFlapsLeftPosition = row.at(::Index::LeadingEdgeFlapsLeftPercent).toInt(&ok);
+    data.leadingEdgeFlapsLeftPosition = row.at(Enum::toUnderlyingType(::Index::LeadingEdgeFlapsLeftPercent)).toInt(&ok);
     if (ok) {
-        data.leadingEdgeFlapsRightPosition = row.at(::Index::LeadingEdgeFlapsRightPercent).toInt(&ok);
+        data.leadingEdgeFlapsRightPosition = row.at(Enum::toUnderlyingType(::Index::LeadingEdgeFlapsRightPercent)).toInt(&ok);
     }
     if (ok) {
-        data.trailingEdgeFlapsLeftPosition = row.at(::Index::TrailingEdgeFlapsLeftPercent).toInt(&ok);
+        data.trailingEdgeFlapsLeftPosition = row.at(Enum::toUnderlyingType(::Index::TrailingEdgeFlapsLeftPercent)).toInt(&ok);
     }
     if (ok) {
-        data.trailingEdgeFlapsRightPosition = row.at(::Index::TrailingEdgeFlapsRightPercent).toInt(&ok);
+        data.trailingEdgeFlapsRightPosition = row.at(Enum::toUnderlyingType(::Index::TrailingEdgeFlapsRightPercent)).toInt(&ok);
     }
     if (ok) {
-        data.spoilersHandlePosition = row.at(::Index::SpoilersHandlePosition).toInt(&ok);
+        data.spoilersHandlePosition = row.at(Enum::toUnderlyingType(::Index::SpoilersHandlePosition)).toInt(&ok);
     }
     if (ok) {
-        data.flapsHandleIndex = row.at(::Index::FlapsHandleIndex).toInt(&ok);
+        data.flapsHandleIndex = row.at(Enum::toUnderlyingType(::Index::FlapsHandleIndex)).toInt(&ok);
     }
     // Timestamp
     if (ok) {
-        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+        data.timestamp = row.at(Enum::toUnderlyingType(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
     }
 
     if (ok) {
@@ -434,37 +428,36 @@ inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser:
 inline bool SkyDollyCsvParser::importAircraftHandleData(const CsvParser::Row &row, AircraftHandle &aircraftHandle) noexcept
 {
     AircraftHandleData data;;
-    std::int64_t timestampDelta = 0;
     bool ok {true};
 
-    data.gearHandlePosition = row.at(::Index::GearHandlePosition).toInt(&ok) == 1 ? true : false;
+    data.gearHandlePosition = row.at(Enum::toUnderlyingType(::Index::GearHandlePosition)).toInt(&ok) == 1 ? true : false;
     if (ok) {
-        data.brakeLeftPosition = row.at(::Index::BrakeLeftPosition).toInt(&ok);
+        data.brakeLeftPosition = row.at(Enum::toUnderlyingType(::Index::BrakeLeftPosition)).toInt(&ok);
     }
     if (ok) {
-        data.brakeRightPosition = row.at(::Index::BrakeRightPosition).toInt(&ok);
+        data.brakeRightPosition = row.at(Enum::toUnderlyingType(::Index::BrakeRightPosition)).toInt(&ok);
     }
     if (ok) {
-        data.waterRudderHandlePosition = row.at(::Index::WaterRudderHandlePosition).toInt(&ok);
+        data.waterRudderHandlePosition = row.at(Enum::toUnderlyingType(::Index::WaterRudderHandlePosition)).toInt(&ok);
     }
     if (ok) {
-        data.tailhookPosition = row.at(::Index::TailhookPosition).toInt(&ok);
+        data.tailhookPosition = row.at(Enum::toUnderlyingType(::Index::TailhookPosition)).toInt(&ok);
     }
     if (ok) {
-        data.canopyOpen = row.at(::Index::CanopyOpen).toInt(&ok);
+        data.canopyOpen = row.at(Enum::toUnderlyingType(::Index::CanopyOpen)).toInt(&ok);
     }
     if (ok) {
-        data.leftWingFolding = row.at(::Index::FoldingWingLeftPercent).toInt(&ok);
+        data.leftWingFolding = row.at(Enum::toUnderlyingType(::Index::FoldingWingLeftPercent)).toInt(&ok);
     }
     if (ok) {
-        data.rightWingFolding = row.at(::Index::FoldingWingRightPercent).toInt(&ok);
+        data.rightWingFolding = row.at(Enum::toUnderlyingType(::Index::FoldingWingRightPercent)).toInt(&ok);
     }
     if (ok) {
-        data.smokeEnabled = row.at(::Index::SmokeEnable).toInt(&ok) == 1 ? true : false;
+        data.smokeEnabled = row.at(Enum::toUnderlyingType(::Index::SmokeEnable)).toInt(&ok) == 1 ? true : false;
     }
     // Timestamp
     if (ok) {
-        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+        data.timestamp = row.at(Enum::toUnderlyingType(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
     }
 
     if (ok) {
@@ -476,13 +469,12 @@ inline bool SkyDollyCsvParser::importAircraftHandleData(const CsvParser::Row &ro
 inline bool SkyDollyCsvParser::importLightData(const CsvParser::Row &row, Light &light) noexcept
 {
     LightData data;
-    std::int64_t timestampDelta = 0;
     bool ok {true};
 
-    data.lightStates = static_cast<SimType::LightStates>(row.at(::Index::LightStates).toInt(&ok));
+    data.lightStates = static_cast<SimType::LightStates>(row.at(Enum::toUnderlyingType(::Index::LightStates)).toInt(&ok));
     // Timestamp
     if (ok) {
-        data.timestamp = row.at(::Index::Timestamp).toLongLong(&ok) - m_timestampDelta;
+        data.timestamp = row.at(Enum::toUnderlyingType(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
     }
 
     if (ok) {

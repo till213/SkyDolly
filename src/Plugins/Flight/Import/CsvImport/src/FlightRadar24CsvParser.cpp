@@ -25,7 +25,6 @@
 #include <cstdint>
 
 #include <QByteArray>
-#include <QList>
 #include <QString>
 #include <QDateTime>
 #include <QTimeZone>

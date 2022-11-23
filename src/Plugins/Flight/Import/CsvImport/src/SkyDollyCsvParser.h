@@ -28,7 +28,6 @@
 #include <cstdint>
 
 #include <QByteArray>
-#include <QList>
 
 class QIODevice;
 class QDateTime;
