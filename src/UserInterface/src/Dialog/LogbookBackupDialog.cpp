@@ -106,6 +106,7 @@ void LogbookBackupDialog::reject() noexcept
    const std::int64_t backupPeriodId = ui->backupPeriodComboBox->getCurrentId();
    if (backupPeriodId != d->originalBackupPeriodId) {
        // ... as this influences...
+       // TODO FIXME What is the "now" good for?
        if (backupPeriodId != d->BackupPeriodNowId) {
            d->databaseService->setBackupPeriod(backupPeriodId);
            // ... the next backup date
@@ -129,6 +130,7 @@ void LogbookBackupDialog::initUi() noexcept
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     EnumerationComboBox::IgnoredIds ignoredIds;
+    ignoredIds.insert(d->BackupPeriodNowId);
     ignoredIds.insert(d->BackupPeriodNextTimeId);
     ui->backupPeriodComboBox->setIgnoredIds(ignoredIds);
     ui->backupPeriodComboBox->setEnumerationName(EnumerationService::BackupPeriod);
