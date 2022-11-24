@@ -22,9 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <stack>
 #include <vector>
-#include <unordered_map>
 #include <memory>
 #include <utility>
 

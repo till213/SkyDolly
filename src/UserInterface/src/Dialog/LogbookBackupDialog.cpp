@@ -47,6 +47,7 @@ struct LogbookBackupDialogPrivate
 
     const std::int64_t BackupPeriodNeverId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNeverSymId).id()};
     const std::int64_t BackupPeriodNowId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNowSymId).id()};
+    const std::int64_t BackupPeriodNextTimeId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNextTimeSymId).id()};
 };
 
 // PUBLIC
@@ -126,6 +127,10 @@ void LogbookBackupDialog::showEvent(QShowEvent *event) noexcept
 void LogbookBackupDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
+
+    EnumerationComboBox::IgnoredIds ignoredIds;
+    ignoredIds.insert(d->BackupPeriodNextTimeId);
+    ui->backupPeriodComboBox->setIgnoredIds(ignoredIds);
     ui->backupPeriodComboBox->setEnumerationName(EnumerationService::BackupPeriod);
 
     // Transfer ownership to the buttonBox

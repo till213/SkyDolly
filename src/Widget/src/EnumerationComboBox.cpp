@@ -23,9 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 
 #include <QComboBox>
-#include <utility>
 
 #include <Model/Enumeration.h>
 #include <Persistence/Service/EnumerationService.h>
@@ -39,6 +39,7 @@ struct EnumerationComboBoxPrivate
 
     Enumeration enumeration;
     EnumerationService enumerationService;
+    EnumerationComboBox::IgnoredIds ignoredIds;
 };
 
 // PUBLIC
@@ -84,6 +85,16 @@ void EnumerationComboBox::setCurrentId(std::int64_t id) noexcept
     }
 }
 
+EnumerationComboBox::IgnoredIds EnumerationComboBox::getIgnoredIds() const noexcept
+{
+    return d->ignoredIds;
+}
+
+void EnumerationComboBox::setIgnoredIds(IgnoredIds ignoredIds) noexcept
+{
+    d->ignoredIds = ignoredIds;
+}
+
 // PRIVATE
 
 void EnumerationComboBox::initUi() noexcept
@@ -93,7 +104,9 @@ void EnumerationComboBox::initUi() noexcept
     d->enumeration = d->enumerationService.getEnumerationByName(d->enumeration.getName(), &ok);
     if (ok)  {
         for (const auto &item : d->enumeration) {
-            addItem(item.name, QVariant::fromValue(item.id));
+            if (d->ignoredIds.find(item.id) == d->ignoredIds.cend()) {
+                addItem(item.name, QVariant::fromValue(item.id));
+            }
         }
     }
 }

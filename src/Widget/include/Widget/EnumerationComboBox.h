@@ -26,6 +26,7 @@
 #define ENUMERATIONCOMBOBOX_H
 
 #include <memory>
+#include <unordered_set>
 #include <cstdint>
 
 #include <QComboBox>
@@ -41,6 +42,8 @@ class WIDGET_API EnumerationComboBox : public QComboBox
 {
     Q_OBJECT
 public:
+    using IgnoredIds = std::unordered_set<std::int64_t>;
+
     explicit EnumerationComboBox(QString enumerationName, QWidget *parent = nullptr) noexcept;
     explicit EnumerationComboBox(QWidget *parent = nullptr) noexcept;
     ~EnumerationComboBox() override;
@@ -50,6 +53,9 @@ public:
 
     std::int64_t getCurrentId() const noexcept;
     void setCurrentId(std::int64_t id) noexcept;
+
+    IgnoredIds getIgnoredIds() const noexcept;
+    void setIgnoredIds(IgnoredIds ignoredIds) noexcept;
 
 private:
     const std::unique_ptr<EnumerationComboBoxPrivate> d;

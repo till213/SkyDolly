@@ -49,6 +49,7 @@ struct LogbookSettingsDialogPrivate
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>()};
     std::int64_t originalBackupPeriodId;
 
+    const std::int64_t BackupPeriodNowId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNowSymId).id()};
     const std::int64_t BackupPeriodNeverId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNeverSymId).id()};
     const std::int64_t BackupPeriodNextTimeId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNextTimeSymId).id()};
 };
@@ -108,6 +109,9 @@ void LogbookSettingsDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
+    EnumerationComboBox::IgnoredIds ignoredIds;
+    ignoredIds.insert(d->BackupPeriodNowId);
+    ui->backupPeriodComboBox->setIgnoredIds(ignoredIds);
     ui->backupPeriodComboBox->setEnumerationName(EnumerationService::BackupPeriod);
 }
 

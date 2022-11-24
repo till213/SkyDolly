@@ -27,9 +27,6 @@
 
 #include <QStyledItemDelegate>
 #include <QModelIndex>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Widget/EnumerationComboBox.h>
 
@@ -50,18 +47,9 @@ struct EnumerationItemDelegatePrivate
 EnumerationItemDelegate::EnumerationItemDelegate(QString enumerationName) noexcept
     : QStyledItemDelegate(),
       d(std::make_unique<EnumerationItemDelegatePrivate>(std::move(enumerationName)))
-{
-#ifdef DEBUG
-    qDebug() << "EnumerationItemDelegate::EnumerationItemDelegate: CREATED";
-#endif
-}
+{}
 
-EnumerationItemDelegate::~EnumerationItemDelegate() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "EnumerationItemDelegate::~EnumerationItemDelegate: DELETED";
-#endif
-}
+EnumerationItemDelegate::~EnumerationItemDelegate() noexcept = default;
 
 QWidget *EnumerationItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
