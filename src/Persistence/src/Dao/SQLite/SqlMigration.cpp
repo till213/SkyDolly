@@ -193,17 +193,17 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     location.description = description.replace("\\n", "\n");
     Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
     if (ok) {
-        location.typeId = locationTypeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymId).id;
+        location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypeSystemSymId).id;
     }
     Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
     if (ok) {
-        const QString &categorySymbolicId = row.at(::Index::Category);
-        location.categoryId = locationCategoryEnumeration.getItemBySymbolicId(categorySymbolicId).id;
+        const QString &categorySymId = row.at(::Index::Category);
+        location.categoryId = locationCategoryEnumeration.getItemBySymId(categorySymId).id;
     }
     Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
     if (ok) {
-        const QString &countrySymbolicId = row.at(::Index::Country);
-        location.countryId = countryEnumeration.getItemBySymbolicId(countrySymbolicId).id;
+        const QString &countrySymId = row.at(::Index::Country);
+        location.countryId = countryEnumeration.getItemBySymId(countrySymId).id;
     }
     if (ok) {
         location.identifier = row.at(::Index::Identifier);
@@ -237,8 +237,8 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     }
     Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent, &ok);
     if (ok) {
-        const QString &engineEventSymbolicId = row.at(::Index::EngineEvent);
-        location.engineEventId = engineEventEnumeration.getItemBySymbolicId(engineEventSymbolicId).id;
+        const QString &engineEventSymId = row.at(::Index::EngineEvent);
+        location.engineEventId = engineEventEnumeration.getItemBySymId(engineEventSymId).id;
     }
     if (ok) {
         ok = d->locationDao.add(location);

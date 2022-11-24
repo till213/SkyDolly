@@ -50,7 +50,7 @@ struct CsvLocationImportSettingsPrivate
     {
         EnumerationService enumerationService;
         Enumeration countryEnumeration = enumerationService.getEnumerationByName(EnumerationService::Country);
-        worldCountryId = countryEnumeration.getItemBySymbolicId(EnumerationService::CountryWorldSymId).id;
+        worldCountryId = countryEnumeration.getItemBySymId(EnumerationService::CountryWorldSymId).id;
     }
     CsvLocationImportSettings::Format format {::DefaultFormat};
     std::int64_t worldCountryId {Const::InvalidId};

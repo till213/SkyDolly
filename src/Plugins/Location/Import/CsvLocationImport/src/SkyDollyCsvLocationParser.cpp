@@ -69,7 +69,7 @@ struct SkyDollyCsvLocationParserPrivate
     Enumeration categoryEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationCategory)};
     Enumeration countryEnumeration {enumerationService.getEnumerationByName(EnumerationService::Country)};
     Enumeration engineEventEnumeration {enumerationService.getEnumerationByName(EnumerationService::EngineEvent)};
-    std::int64_t importTypeId {typeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeImportSymId).id};
+    std::int64_t importTypeId {typeEnumeration.getItemBySymId(EnumerationService::LocationTypeImportSymId).id};
 };
 
 // PUBLIC
@@ -117,13 +117,13 @@ Location SkyDollyCsvLocationParser::parseLocation(CsvParser::Row row, bool &ok) 
     location.typeId = d->importTypeId;
     ok = location.typeId != Const::InvalidId;
     if (ok) {
-        const QString categorySymbolicId = row.at(::Index::Category);
-        location.categoryId = d->categoryEnumeration.getItemBySymbolicId(categorySymbolicId).id;
+        const QString categorySymId = row.at(::Index::Category);
+        location.categoryId = d->categoryEnumeration.getItemBySymId(categorySymId).id;
         ok = location.categoryId != Const::InvalidId;
     }
     if (ok) {
-        const QString countrySymbolicId = row.at(::Index::Country);
-        location.countryId = d->countryEnumeration.getItemBySymbolicId(countrySymbolicId).id;
+        const QString countrySymId = row.at(::Index::Country);
+        location.countryId = d->countryEnumeration.getItemBySymId(countrySymId).id;
         ok = location.countryId != Const::InvalidId;
     }
     if (ok) {
@@ -184,8 +184,8 @@ Location SkyDollyCsvLocationParser::parseLocation(CsvParser::Row row, bool &ok) 
         }
     }
     if (ok) {
-        const QString engineEventSymbolicId = row.at(::Index::EngineEvent);
-        location.engineEventId = d->engineEventEnumeration.getItemBySymbolicId(engineEventSymbolicId).id;
+        const QString engineEventSymId = row.at(::Index::EngineEvent);
+        location.engineEventId = d->engineEventEnumeration.getItemBySymId(engineEventSymId).id;
         ok = location.engineEventId != Const::InvalidId;
     }
 

@@ -61,7 +61,7 @@ public:
     LittleNavmapCsvParserPrivate(const CsvLocationImportSettings &pluginSettings) noexcept
         : pluginSettings(pluginSettings)
     {
-        initTypeToSymbolicIdMap();
+        initTypeToSymIdMap();
     }
 
     const CsvLocationImportSettings &pluginSettings;
@@ -69,27 +69,27 @@ public:
     const std::int64_t KeepEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
 
     // Key: Litte Navmap userpoint type, value: symbolic category ID
-    std::unordered_map<QString, QString> typeToSymbolicId;
+    std::unordered_map<QString, QString> typeToSymId;
 
 private:
-    inline void initTypeToSymbolicIdMap() {
-        typeToSymbolicId["airport"] = "AP";
-        typeToSymbolicId["airstrip"] = "AS";
-        typeToSymbolicId["building"] = "BU";
-        typeToSymbolicId["helipad"] = "HP";
-        typeToSymbolicId["history"] = "PO";
-        typeToSymbolicId["landform"] = "LM";
-        typeToSymbolicId["lighthouse"] = "LH";
-        typeToSymbolicId["location"] = "PO";
-        typeToSymbolicId["marker"] = "PO";
-        typeToSymbolicId["mountain"] = "MO";
-        typeToSymbolicId["other"] = "OT";
-        typeToSymbolicId["park"] = "PA";
-        typeToSymbolicId["pin"] = "PO";
-        typeToSymbolicId["poi"] = "PO";
-        typeToSymbolicId["seaport"] = "SP";
-        typeToSymbolicId["settlement"] = "CI";
-        typeToSymbolicId["water"] = "LA";
+    inline void initTypeToSymIdMap() {
+        typeToSymId["airport"] = "AP";
+        typeToSymId["airstrip"] = "AS";
+        typeToSymId["building"] = "BU";
+        typeToSymId["helipad"] = "HP";
+        typeToSymId["history"] = "PO";
+        typeToSymId["landform"] = "LM";
+        typeToSymId["lighthouse"] = "LH";
+        typeToSymId["location"] = "PO";
+        typeToSymId["marker"] = "PO";
+        typeToSymId["mountain"] = "MO";
+        typeToSymId["other"] = "OT";
+        typeToSymId["park"] = "PA";
+        typeToSymId["pin"] = "PO";
+        typeToSymId["poi"] = "PO";
+        typeToSymId["seaport"] = "SP";
+        typeToSymId["settlement"] = "CI";
+        typeToSymId["water"] = "LA";
     }
 };
 
@@ -182,12 +182,12 @@ inline std::int64_t LittleNavmapCsvParser::mapTypeToCategoryId(const QString &ty
 {
     EnumerationService enumerationService;
     Enumeration locationCategory = enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
-    QString categorySymbolicId;
-    const auto it = d->typeToSymbolicId.find(type.toLower());
-    if (it != d->typeToSymbolicId.end()) {
-       categorySymbolicId = it->second;
+    QString categorySymId;
+    const auto it = d->typeToSymId.find(type.toLower());
+    if (it != d->typeToSymId.end()) {
+       categorySymId = it->second;
     } else {
-        categorySymbolicId = EnumerationService::LocationCategoryNoneSymId;
+        categorySymId = EnumerationService::LocationCategoryNoneSymId;
     }
-    return locationCategory.getItemBySymbolicId(categorySymbolicId).id;
+    return locationCategory.getItemBySymId(categorySymId).id;
 }

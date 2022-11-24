@@ -36,12 +36,12 @@
 
 struct PersistedEnumerationItemPrivate
 {
-    PersistedEnumerationItemPrivate(const QString &enumerationName, const QString &symbolicId)
+    PersistedEnumerationItemPrivate(const QString &enumerationName, const QString &symId)
     {
         bool ok {false};
         enumeration = enumerationService.getEnumerationByName(enumerationName, &ok);
         if (ok) {
-            id = enumeration.getItemBySymbolicId(symbolicId).id;
+            id = enumeration.getItemBySymId(symId).id;
         }
     }
 
@@ -56,8 +56,8 @@ PersistedEnumerationItem::PersistedEnumerationItem(PersistedEnumerationItem &&rh
 PersistedEnumerationItem &PersistedEnumerationItem::operator=(PersistedEnumerationItem &&rhs) noexcept = default;
 PersistedEnumerationItem::~PersistedEnumerationItem() = default;
 
-PersistedEnumerationItem::PersistedEnumerationItem(const QString &enumerationName, const QString &symbolicId) noexcept
-    : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, symbolicId))
+PersistedEnumerationItem::PersistedEnumerationItem(const QString &enumerationName, const QString &symId) noexcept
+    : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, symId))
 {}
 
 std::int64_t PersistedEnumerationItem::id() const noexcept

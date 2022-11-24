@@ -60,10 +60,10 @@ public:
             : Data()
         {}
 
-        Item_(std::atomic_int64_t id, QString thesymbolicId, QString theName) noexcept
-            : Data(id), symbolicId(std::move(thesymbolicId)), name(std::move(theName))
+        Item_(std::atomic_int64_t id, QString symId, QString name) noexcept
+            : Data(id), symId(std::move(symId)), name(std::move(name))
         {}
-        QString symbolicId;
+        QString symId;
         QString name;
     };
 
@@ -71,9 +71,9 @@ public:
     void setName(QString name) noexcept;
     void addItem(const Item& item) noexcept;
     const std::vector<Item> &items() const noexcept;
-    Item getItemBySymbolicId(const QString &symbolicId) const noexcept;
+    Item getItemBySymId(const QString &symId) const noexcept;
     Item getItemById(std::int64_t id) const noexcept;
-    QString getSymbolicIdById(std::int64_t id) const noexcept;
+    QString getSymIdById(std::int64_t id) const noexcept;
 
     std::size_t count() const noexcept;
 

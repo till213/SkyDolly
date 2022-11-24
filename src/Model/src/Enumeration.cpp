@@ -41,7 +41,7 @@ struct EnumerationPrivate
     QString name;
     std::vector<Enumeration::Item> items;
     // Stores the index into items, indexed by the symbolic ID
-    std::unordered_map<QString, std::size_t> itemsBySymbolicId;
+    std::unordered_map<QString, std::size_t> itemsBySymId;
     // Stores the index into items, indexed by the internal ID
     std::unordered_map<std::int64_t, std::size_t> itemsById;
 };
@@ -76,7 +76,7 @@ void Enumeration::addItem(const Item& item) noexcept
 {
     d->items.push_back(item);
     const std::size_t index = d->items.size() - 1;
-    d->itemsBySymbolicId[item.symbolicId] = index;
+    d->itemsBySymId[item.symId] = index;
     d->itemsById[item.id] = index;
 }
 
@@ -85,10 +85,10 @@ const std::vector<Enumeration::Item> &Enumeration::items() const noexcept
     return d->items;
 }
 
-Enumeration::Item Enumeration::getItemBySymbolicId(const QString &symbolicId) const noexcept
+Enumeration::Item Enumeration::getItemBySymId(const QString &symId) const noexcept
 {
-    auto it = d->itemsBySymbolicId.find(symbolicId);
-    if (it != d->itemsBySymbolicId.end()) {
+    auto it = d->itemsBySymId.find(symId);
+    if (it != d->itemsBySymId.end()) {
         return d->items[it->second];
     }
     return {};
@@ -103,9 +103,9 @@ Enumeration::Item Enumeration::getItemById(std::int64_t id) const noexcept
     return {};
 }
 
-QString Enumeration::getSymbolicIdById(std::int64_t id) const noexcept
+QString Enumeration::getSymIdById(std::int64_t id) const noexcept
 {
-    return getItemById(id).symbolicId;
+    return getItemById(id).symId;
 }
 
 std::size_t Enumeration::count() const noexcept
