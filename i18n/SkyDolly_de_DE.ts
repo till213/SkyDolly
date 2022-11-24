@@ -2025,27 +2025,27 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="96"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="97"/>
         <source>Logbook error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="96"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="97"/>
         <source>The logbook backup could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="132"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="137"/>
         <source>&amp;Backup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="134"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="139"/>
         <source>&amp;Skip This Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="165"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="170"/>
         <source>Select Backup Folder</source>
         <translation type="unfinished"></translation>
     </message>
