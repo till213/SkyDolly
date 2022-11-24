@@ -79,7 +79,7 @@ std::vector<PositionData> Export::resamplePositionDataForExport(const Aircraft &
     Position &position = aircraft.getPosition();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
         const std::int64_t duration = position.getLast().timestamp;
-        const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
+        const std::int64_t deltaTime = Enum::underly(resamplingPeriod);
         std::int64_t timestamp = 0;
         while (timestamp <= duration) {
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Export);

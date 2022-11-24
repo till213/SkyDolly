@@ -77,8 +77,8 @@ void GpxExportOptionWidget::frenchConnection() noexcept
 
 void GpxExportOptionWidget::initUi() noexcept
 {
-    ui->timestampModeComboBox->addItem(tr("Simulation time"), Enum::toUnderlyingType(GpxExportSettings::TimestampMode::Simulation));
-    ui->timestampModeComboBox->addItem(tr("Recording (real world) time"), Enum::toUnderlyingType(GpxExportSettings::TimestampMode::Recording));
+    ui->timestampModeComboBox->addItem(tr("Simulation time"), Enum::underly(GpxExportSettings::TimestampMode::Simulation));
+    ui->timestampModeComboBox->addItem(tr("Recording (real world) time"), Enum::underly(GpxExportSettings::TimestampMode::Recording));
 }
 
 // PRIVATE SLOTS

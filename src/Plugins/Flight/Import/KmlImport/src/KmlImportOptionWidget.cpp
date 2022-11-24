@@ -66,9 +66,9 @@ void KmlImportOptionWidget::frenchConnection() noexcept
 
 void KmlImportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem("FlightAware", Enum::toUnderlyingType(KmlImportSettings::Format::FlightAware));
-    ui->formatComboBox->addItem("FlightRadar24", Enum::toUnderlyingType(KmlImportSettings::Format::FlightRadar24));
-    ui->formatComboBox->addItem(tr("Generic KML with track data"), Enum::toUnderlyingType(KmlImportSettings::Format::Generic));
+    ui->formatComboBox->addItem("FlightAware", Enum::underly(KmlImportSettings::Format::FlightAware));
+    ui->formatComboBox->addItem("FlightRadar24", Enum::underly(KmlImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem(tr("Generic KML with track data"), Enum::underly(KmlImportSettings::Format::Generic));
 }
 
 // PRIVATE SLOTS

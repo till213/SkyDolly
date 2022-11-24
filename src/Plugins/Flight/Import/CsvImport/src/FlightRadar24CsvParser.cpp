@@ -91,13 +91,13 @@ inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &
 
     ok = true;
     // In seconds after 1970-01-01 UTC
-    const std::int64_t unixTimestamp = row.at(Enum::toUnderlyingType(::Index::UnixTimestamp)).toLongLong(&ok);
+    const std::int64_t unixTimestamp = row.at(Enum::underly(::Index::UnixTimestamp)).toLongLong(&ok);
     if (ok) {
         if (firstDateTimeUtc.isNull()) {
             firstDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
             currentDateTimeUtc = firstDateTimeUtc;
             timestamp = 0;
-            flightNumber = row.at(Enum::toUnderlyingType(::Index::Callsign));
+            flightNumber = row.at(Enum::underly(::Index::Callsign));
         } else {
             currentDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
             timestamp = firstDateTimeUtc.msecsTo(currentDateTimeUtc);
@@ -105,7 +105,7 @@ inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &
     }
     if (ok) {
         positionData.timestamp = timestamp;
-        const QString &position = row.at(Enum::toUnderlyingType(::Index::Position));
+        const QString &position = row.at(Enum::underly(::Index::Position));
         const QStringList coordinates = position.split(',');
         if (coordinates.size() == 2) {
             positionData.latitude = coordinates.first().toDouble(&ok);
@@ -117,14 +117,14 @@ inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &
         }
     }
     if (ok) {
-        positionData.altitude = row.at(Enum::toUnderlyingType(::Index::Altitude)).toDouble(&ok);
+        positionData.altitude = row.at(Enum::underly(::Index::Altitude)).toDouble(&ok);
         positionData.indicatedAltitude = positionData.altitude;
     }
     if (ok) {
-        positionData.velocityBodyZ = row.at(Enum::toUnderlyingType(::Index::Speed)).toDouble(&ok);
+        positionData.velocityBodyZ = row.at(Enum::underly(::Index::Speed)).toDouble(&ok);
     }
     if (ok) {
-        positionData.trueHeading = row.at(Enum::toUnderlyingType(::Index::Heading)).toDouble(&ok);
+        positionData.trueHeading = row.at(Enum::underly(::Index::Heading)).toDouble(&ok);
     }
     return positionData;
 }

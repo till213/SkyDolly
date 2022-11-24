@@ -276,7 +276,7 @@ void KmlExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ColorStyleKey;
-    keyValue.second = Enum::toUnderlyingType(d->colorStyle);
+    keyValue.second = Enum::underly(d->colorStyle);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::NofColorsPerRampKey;
@@ -325,7 +325,7 @@ void KmlExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ColorStyleKey;
-    keyValue.second = Enum::toUnderlyingType(::DefaultColorStyle);
+    keyValue.second = Enum::underly(::DefaultColorStyle);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::NofColorsPerRampKey;

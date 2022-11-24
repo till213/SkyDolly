@@ -146,7 +146,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     query.bindValue(":to_date", flightSelector.toDate);
     query.bindValue(":search_keyword", searchKeyword);
     query.bindValue(":aircraft_count", aircraftCount);
-    const QVariant engineTypeVariant = flightSelector.engineType != SimType::EngineType::All ? Enum::toUnderlyingType(flightSelector.engineType) : QVariant();
+    const QVariant engineTypeVariant = flightSelector.engineType != SimType::EngineType::All ? Enum::underly(flightSelector.engineType) : QVariant();
     query.bindValue(":engine_type", engineTypeVariant);
     query.bindValue(":duration", flightSelector.mininumDurationMinutes);
     const bool success = query.exec();

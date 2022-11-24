@@ -156,11 +156,11 @@ void GpxImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     Settings::KeyValue keyValue;
 
     keyValue.first = ::WaypointSelectionKey;
-    keyValue.second = Enum::toUnderlyingType(d->waypointSelection);
+    keyValue.second = Enum::underly(d->waypointSelection);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::PositionSelectionKey;
-    keyValue.second = Enum::toUnderlyingType(d->positionSelection);
+    keyValue.second = Enum::underly(d->positionSelection);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::DefaultAltitudeKey;
@@ -181,11 +181,11 @@ void GpxImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     Settings::KeyValue keyValue;
 
     keyValue.first = ::WaypointSelectionKey;
-    keyValue.second = Enum::toUnderlyingType(::DefaultWaypointSelection);
+    keyValue.second = Enum::underly(::DefaultWaypointSelection);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::PositionSelectionKey;
-    keyValue.second = Enum::toUnderlyingType(::DefaultPositionSelection);
+    keyValue.second = Enum::underly(::DefaultPositionSelection);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::DefaultAltitudeKey;

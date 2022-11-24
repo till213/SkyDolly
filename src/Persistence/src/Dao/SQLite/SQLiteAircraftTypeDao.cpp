@@ -68,7 +68,7 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) noexcept
     query.bindValue(":type", aircraftType.type);
     query.bindValue(":category", aircraftType.category);
     query.bindValue(":wing_span", aircraftType.wingSpan);
-    query.bindValue(":engine_type", Enum::toUnderlyingType(aircraftType.engineType));
+    query.bindValue(":engine_type", Enum::underly(aircraftType.engineType));
     query.bindValue(":nof_engines", aircraftType.numberOfEngines);
 
     const bool ok = query.exec();

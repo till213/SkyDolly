@@ -75,8 +75,8 @@ void CsvLocationImportOptionWidget::frenchConnection() noexcept
 
 void CsvLocationImportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem("Sky Dolly", Enum::toUnderlyingType(CsvLocationImportSettings::Format::SkyDolly));
-    ui->formatComboBox->addItem("Little Navmap", Enum::toUnderlyingType(CsvLocationImportSettings::Format::LittleNavmap));
+    ui->formatComboBox->addItem("Sky Dolly", Enum::underly(CsvLocationImportSettings::Format::SkyDolly));
+    ui->formatComboBox->addItem("Little Navmap", Enum::underly(CsvLocationImportSettings::Format::LittleNavmap));
 
     ui->defaultCountryComboBox->setEnumerationName(EnumerationService::Country);
 

@@ -168,7 +168,7 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
             // The first position timestamp must be 0, so shift all timestamps by
             // the timestamp delta, derived from the first timestamp
             // (that is usually 0 already)
-            d->timestampDelta = row.at(Enum::toUnderlyingType(::Index::Milliseconds)).toLongLong(&ok);
+            d->timestampDelta = row.at(Enum::underly(::Index::Milliseconds)).toLongLong(&ok);
             firstRow = false;
         }
         if (ok) {
@@ -198,44 +198,44 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     // Position
     PositionData positionData;
     bool ok {true};
-    const std::int64_t timestamp = row.at(Enum::toUnderlyingType(::Index::Milliseconds)).toLongLong(&ok) - d->timestampDelta;
+    const std::int64_t timestamp = row.at(Enum::underly(::Index::Milliseconds)).toLongLong(&ok) - d->timestampDelta;
     if (ok) {
         positionData.timestamp = timestamp;
-        positionData.latitude = row.at(Enum::toUnderlyingType(::Index::Latitude)).toDouble(&ok);
+        positionData.latitude = row.at(Enum::underly(::Index::Latitude)).toDouble(&ok);
     }
     if (ok) {
-        positionData.longitude = row.at(Enum::toUnderlyingType(::Index::Longitude)).toDouble(&ok);
+        positionData.longitude = row.at(Enum::underly(::Index::Longitude)).toDouble(&ok);
     }
     if (ok) {
-        positionData.altitude = row.at(Enum::toUnderlyingType(::Index::Altitude)).toDouble(&ok);
+        positionData.altitude = row.at(Enum::underly(::Index::Altitude)).toDouble(&ok);
         positionData.indicatedAltitude = positionData.altitude;
     }
     if (ok) {
-        positionData.pitch = row.at(Enum::toUnderlyingType(::Index::Pitch)).toDouble(&ok);
+        positionData.pitch = row.at(Enum::underly(::Index::Pitch)).toDouble(&ok);
     }
     if (ok) {
-        positionData.bank = row.at(Enum::toUnderlyingType(::Index::Bank)).toDouble(&ok);
+        positionData.bank = row.at(Enum::underly(::Index::Bank)).toDouble(&ok);
     }
     if (ok) {
-        positionData.trueHeading = row.at(Enum::toUnderlyingType(::Index::TrueHeading)).toDouble(&ok);
+        positionData.trueHeading = row.at(Enum::underly(::Index::TrueHeading)).toDouble(&ok);
     }
     if (ok) {
-        positionData.velocityBodyX = row.at(Enum::toUnderlyingType(::Index::VelocityBodyX)).toLongLong(&ok);
+        positionData.velocityBodyX = row.at(Enum::underly(::Index::VelocityBodyX)).toLongLong(&ok);
     }
     if (ok) {
-        positionData.velocityBodyY = row.at(Enum::toUnderlyingType(::Index::VelocityBodyY)).toDouble(&ok);
+        positionData.velocityBodyY = row.at(Enum::underly(::Index::VelocityBodyY)).toDouble(&ok);
     }
     if (ok) {
-        positionData.velocityBodyZ = row.at(Enum::toUnderlyingType(::Index::VelocityBodyZ)).toDouble(&ok);
+        positionData.velocityBodyZ = row.at(Enum::underly(::Index::VelocityBodyZ)).toDouble(&ok);
     }
     if (ok) {
-        positionData.rotationVelocityBodyX = row.at(Enum::toUnderlyingType(::Index::RotationVelocityBodyX)).toDouble(&ok);
+        positionData.rotationVelocityBodyX = row.at(Enum::underly(::Index::RotationVelocityBodyX)).toDouble(&ok);
     }
     if (ok) {
-        positionData.rotationVelocityBodyY = row.at(Enum::toUnderlyingType(::Index::RotationVelocityBodyY)).toDouble(&ok);
+        positionData.rotationVelocityBodyY = row.at(Enum::underly(::Index::RotationVelocityBodyY)).toDouble(&ok);
     }
     if (ok) {
-        positionData.rotationVelocityBodyZ = row.at(Enum::toUnderlyingType(::Index::RotationVelocityBodyZ)).toDouble(&ok);
+        positionData.rotationVelocityBodyZ = row.at(Enum::underly(::Index::RotationVelocityBodyZ)).toDouble(&ok);
     }
 
     if (ok) {
@@ -250,16 +250,16 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double throttleLeverPosition3 {0.0};
     double throttleLeverPosition4 {0.0};
     if (ok) {
-        throttleLeverPosition1 = row.at(Enum::toUnderlyingType(::Index::ThrottleLeverPosition1)).toDouble(&ok);
+        throttleLeverPosition1 = row.at(Enum::underly(::Index::ThrottleLeverPosition1)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition1 = row.at(Enum::toUnderlyingType(::Index::ThrottleLeverPosition2)).toDouble(&ok);
+        throttleLeverPosition1 = row.at(Enum::underly(::Index::ThrottleLeverPosition2)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition1 = row.at(Enum::toUnderlyingType(::Index::ThrottleLeverPosition3)).toDouble(&ok);
+        throttleLeverPosition1 = row.at(Enum::underly(::Index::ThrottleLeverPosition3)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition1 = row.at(Enum::toUnderlyingType(::Index::ThrottleLeverPosition4)).toDouble(&ok);
+        throttleLeverPosition1 = row.at(Enum::underly(::Index::ThrottleLeverPosition4)).toDouble(&ok);
     }
     if (ok) {
         engineData.throttleLeverPosition1 = SkyMath::fromPosition(throttleLeverPosition1);
@@ -279,13 +279,13 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double elevatorPosition {0.0};
     double aileronPosition {0.0};
     if (ok) {
-        rudderPosition = row.at(Enum::toUnderlyingType(::Index::RudderPosition)).toDouble(&ok);
+        rudderPosition = row.at(Enum::underly(::Index::RudderPosition)).toDouble(&ok);
     }
     if (ok) {
-        elevatorPosition = row.at(Enum::toUnderlyingType(::Index::ElevatorPosition)).toDouble(&ok);
+        elevatorPosition = row.at(Enum::underly(::Index::ElevatorPosition)).toDouble(&ok);
     }
     if (ok) {
-        aileronPosition = row.at(Enum::toUnderlyingType(::Index::AileronPosition)).toDouble(&ok);
+        aileronPosition = row.at(Enum::underly(::Index::AileronPosition)).toDouble(&ok);
     }
     if (ok) {
         primaryFlightControlData.rudderPosition = SkyMath::fromPosition(rudderPosition);
@@ -304,22 +304,22 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double trailingEdgeFlapsRightPosition {0.0};
     double spoilerHandlePositionPercent {0.0};
     if (ok) {
-        leadingEdgeFlapsLeftPosition = row.at(Enum::toUnderlyingType(::Index::LeadingEdgeFlapsLeftPercent)).toDouble(&ok);
+        leadingEdgeFlapsLeftPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsLeftPercent)).toDouble(&ok);
     }
     if (ok) {
-        leadingEdgeFlapsRightPosition = row.at(Enum::toUnderlyingType(::Index::LeadingEdgeFlapsRightPercent)).toDouble(&ok);
+        leadingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsRightPercent)).toDouble(&ok);
     }
     if (ok) {
-        trailingEdgeFlapsLeftPosition = row.at(Enum::toUnderlyingType(::Index::TrailingEdgeFlapsLeftPercent)).toDouble(&ok);
+        trailingEdgeFlapsLeftPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsLeftPercent)).toDouble(&ok);
     }
     if (ok) {
-        trailingEdgeFlapsRightPosition = row.at(Enum::toUnderlyingType(::Index::TrailingEdgeFlapsRightPercent)).toDouble(&ok);
+        trailingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsRightPercent)).toDouble(&ok);
     }
     if (ok) {
-        spoilerHandlePositionPercent = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toDouble(&ok);
+        spoilerHandlePositionPercent = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        secondaryFlightControlData.flapsHandleIndex = row.at(Enum::toUnderlyingType(::Index::FlapsHandleIndex)).toInt(&ok);
+        secondaryFlightControlData.flapsHandleIndex = row.at(Enum::underly(::Index::FlapsHandleIndex)).toInt(&ok);
     }
     if (ok) {
         secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(leadingEdgeFlapsLeftPosition);
@@ -338,16 +338,16 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double brakeRightPosition {0.0};
     double waterRudderHandlePosition {0.0};
     if (ok) {
-        brakeLeftPosition = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toDouble(&ok);
+        brakeLeftPosition = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        brakeRightPosition = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toDouble(&ok);
+        brakeRightPosition = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        waterRudderHandlePosition = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toDouble(&ok);
+        waterRudderHandlePosition = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        aircraftHandleData.gearHandlePosition = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        aircraftHandleData.gearHandlePosition = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
         aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(brakeLeftPosition);
@@ -373,31 +373,31 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     bool lightRecognition {false};
     bool lightCabin {false};
     if (ok) {
-        lightTaxi = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightTaxi = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightLanding = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightLanding = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightStrobe = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightStrobe = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightBeacon = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightBeacon = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightNav = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightNav = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightWing = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightWing = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightLogo = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightLogo = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightRecognition = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightRecognition = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightCabin = row.at(Enum::toUnderlyingType(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightCabin = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
         lightData.lightStates.setFlag(SimType::LightState::Taxi, lightTaxi);

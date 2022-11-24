@@ -123,7 +123,7 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
     query.bindValue(":description", flight.getDescription());
     // Sequence number starts at 1
     query.bindValue(":user_aircraft_seq_nr", flight.getUserAircraftIndex() + 1);
-    query.bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType));
+    query.bindValue(":surface_type", Enum::underly(flightCondition.surfaceType));
     query.bindValue(":ground_altitude", flightCondition.groundAltitude);
     query.bindValue(":ambient_temperature", flightCondition.ambientTemperature);
     query.bindValue(":total_air_temperature", flightCondition.totalAirTemperature);
@@ -133,7 +133,7 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
     query.bindValue(":sea_level_pressure", flightCondition.seaLevelPressure);
     query.bindValue(":pitot_icing", flightCondition.pitotIcingPercent);
     query.bindValue(":structural_icing", flightCondition.structuralIcingPercent);
-    query.bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState));
+    query.bindValue(":precipitation_state", Enum::underly(flightCondition.precipitationState));
     query.bindValue(":in_clouds", flightCondition.inClouds);
     // No conversion to UTC
     query.bindValue(":start_local_sim_time", flightCondition.startLocalTime);

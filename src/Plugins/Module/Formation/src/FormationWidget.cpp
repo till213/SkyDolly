@@ -269,9 +269,9 @@ void FormationWidget::initUi() noexcept
     ui->nwPositionRadioButton->setStyleSheet(css);
     ui->nnwPositionRadioButton->setStyleSheet(css);
 
-    ui->replayModeComboBox->insertItem(ReplayModeIndex::Normal, tr("Formation (Normal)"), Enum::toUnderlyingType(SkyConnectIntf::ReplayMode::Normal));
-    ui->replayModeComboBox->insertItem(ReplayModeIndex::UserAircraftManualControl, tr("Take control of recorded user aircraft"), Enum::toUnderlyingType(SkyConnectIntf::ReplayMode::UserAircraftManualControl));
-    ui->replayModeComboBox->insertItem(ReplayModeIndex::FlyWithFormation, tr("Fly with formation"), Enum::toUnderlyingType(SkyConnectIntf::ReplayMode::FlyWithFormation));
+    ui->replayModeComboBox->insertItem(ReplayModeIndex::Normal, tr("Formation (Normal)"), Enum::underly(SkyConnectIntf::ReplayMode::Normal));
+    ui->replayModeComboBox->insertItem(ReplayModeIndex::UserAircraftManualControl, tr("Take control of recorded user aircraft"), Enum::underly(SkyConnectIntf::ReplayMode::UserAircraftManualControl));
+    ui->replayModeComboBox->insertItem(ReplayModeIndex::FlyWithFormation, tr("Fly with formation"), Enum::underly(SkyConnectIntf::ReplayMode::FlyWithFormation));
 
     initTimeOffsetUi();
 

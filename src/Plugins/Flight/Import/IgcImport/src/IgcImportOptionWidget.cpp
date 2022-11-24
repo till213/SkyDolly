@@ -83,8 +83,8 @@ void IgcImportOptionWidget::frenchConnection() noexcept
 
 void IgcImportOptionWidget::initUi() noexcept
 {
-    ui->altitudeComboBox->addItem(tr("GNSS altitude"), Enum::toUnderlyingType(IgcImportSettings::AltitudeMode::Gnss));
-    ui->altitudeComboBox->addItem(tr("Pressure altitude"), Enum::toUnderlyingType(IgcImportSettings::AltitudeMode::Pressure));
+    ui->altitudeComboBox->addItem(tr("GNSS altitude"), Enum::underly(IgcImportSettings::AltitudeMode::Gnss));
+    ui->altitudeComboBox->addItem(tr("Pressure altitude"), Enum::underly(IgcImportSettings::AltitudeMode::Pressure));
 
     // Percent [0, 100]
     ui->enlThresholdSpinBox->setRange(0, 100);

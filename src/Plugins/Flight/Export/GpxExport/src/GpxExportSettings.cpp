@@ -91,7 +91,7 @@ void GpxExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     Settings::KeyValue keyValue;
 
     keyValue.first = ::TimestampModeKey;
-    keyValue.second = Enum::toUnderlyingType(d->timestampMode);
+    keyValue.second = Enum::underly(d->timestampMode);
     keyValues.push_back(keyValue);
 }
 
@@ -100,7 +100,7 @@ void GpxExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     Settings::KeyValue keyValue;
 
     keyValue.first = ::TimestampModeKey;
-    keyValue.second = Enum::toUnderlyingType(::DefaultTimestampMode);
+    keyValue.second = Enum::underly(::DefaultTimestampMode);
     keysWithDefaults.push_back(keyValue);
 }
 
