@@ -162,7 +162,7 @@ bool MSFSSimConnectPlugin::setUserAircraftPosition(const PositionData &positionD
 {
     SimConnectPositionRequest simConnnectPositionRequest;
     simConnnectPositionRequest.fromPositionData(positionData);
-    const HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::PositionRequest),
+    const HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionRequest),
                                                            ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                            sizeof(SimConnectPositionRequest), &simConnnectPositionRequest);
     return result == S_OK;
@@ -179,7 +179,7 @@ bool MSFSSimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRa
 bool MSFSSimConnectPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
 {
     SIMCONNECT_DATA_INITPOSITION initialSimConnectPosition = SimConnectPositionRequest::toInitialPosition(initialPosition);
-    HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::InitialPosition),
+    HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::InitialPosition),
                                                      ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION),
                                                      &initialSimConnectPosition);
     return result == S_OK;
@@ -196,10 +196,10 @@ bool MSFSSimConnectPlugin::onSimulationEvent(SimulationEvent event) const noexce
 
     switch (event) {
     case SimulationEvent::EngineStart:
-        result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::toUnderlyingType(::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         break;
     case SimulationEvent::EngineStop:
-        result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::toUnderlyingType(::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         break;
     }
     return result == S_OK;
@@ -214,12 +214,12 @@ bool MSFSSimConnectPlugin::onStartRecording() noexcept
     d->flightPlan.clear();
 
     // Get aircraft information
-    HRESULT result = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::AircraftInfo), Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformation), ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
+    HRESULT result = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftInfo), Enum::underly(SimConnectType::DataDefinition::FlightInformation), ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
     bool ok = result == S_OK;
 
     // For formation flights (count > 1) send AI aircraft positions every visual frame
     if (ok && getCurrentFlight().count() > 1) {
-        result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::Frame), "Frame");
+        result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(::Event::Frame), "Frame");
         ok = result == S_OK;
     }
     return ok;
@@ -233,7 +233,7 @@ void MSFSSimConnectPlugin::onRecordingPaused([[maybe_unused]] bool paused) noexc
 void MSFSSimConnectPlugin::onStopRecording() noexcept
 {
     // Stop receiving "frame" events
-    ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::Frame));
+    ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(::Event::Frame));
 
     // Stop receiving aircraft position
     updateRequestPeriod(::SIMCONNECT_PERIOD_NEVER);
@@ -290,22 +290,22 @@ bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
     d->engineState = EngineState::Unknown;
 
     // Send aircraft position every visual frame
-    HRESULT result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::Frame), "Frame");
+    HRESULT result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(::Event::Frame), "Frame");
     return result == S_OK;
 }
 
 void MSFSSimConnectPlugin::onReplayPaused(bool paused) noexcept
 {
     if (paused) {
-        ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::Frame));
+        ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(::Event::Frame));
     } else {
-        ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::Frame), "Frame");
+        ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(::Event::Frame), "Frame");
     }
 }
 
 void MSFSSimConnectPlugin::onStopReplay() noexcept
 {
-    ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::Frame));
+    ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(::Event::Frame));
 }
 
 void MSFSSimConnectPlugin::onSeek(std::int64_t currentTimestamp) noexcept
@@ -351,7 +351,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                 if (!positionData.isNull()) {
                     SimConnectPositionRequest simConnnectPositionRequest;
                     simConnnectPositionRequest.fromPositionData(positionData);
-                    const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::PositionRequest),
+                    const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionRequest),
                                                                         objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                                         sizeof(SimConnectPositionRequest), &simConnnectPositionRequest);
                     ok = res == S_OK;
@@ -363,7 +363,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!engineData.isNull()) {
                         SimConnectEngineRequest simConnectEngineRequest;
                         simConnectEngineRequest.fromEngineData(engineData);
-                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::EngineRequest),
+                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineRequest),
                                                                             objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                                             sizeof(SimConnectEngineRequest), &simConnectEngineRequest);
                         ok = res == S_OK;
@@ -379,7 +379,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!primaryFlightControlData.isNull()) {
                         SimConnectPrimaryFlightControl simConnectPrimaryFlightControl;
                         simConnectPrimaryFlightControl.fromPrimaryFlightControlData(primaryFlightControlData);
-                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::PrimaryFlightControl),
+                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControl),
                                                                             objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                                             sizeof(SimConnectPrimaryFlightControl), &simConnectPrimaryFlightControl);
                         ok = res == S_OK;
@@ -392,7 +392,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!secondaryFlightControlData.isNull()) {
                         SimConnectSecondaryFlightControl simConnectSecondaryFlightControl;
                         simConnectSecondaryFlightControl.fromSecondaryFlightControlData(secondaryFlightControlData);
-                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::SecondaryFlightControl),
+                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControl),
                                                                             objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                                             sizeof(SimConnectSecondaryFlightControl), &simConnectSecondaryFlightControl);
                         ok = res == S_OK;
@@ -405,7 +405,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!aircraftHandleData.isNull()) {
                         SimConnectAircraftHandle simConnectAircraftHandle;
                         simConnectAircraftHandle.fromAircraftHandleData(aircraftHandleData);
-                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::Handle),
+                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::Handle),
                                                                             objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                                             sizeof(SimConnectAircraftHandle), &simConnectAircraftHandle);
                         ok = res == S_OK;
@@ -418,7 +418,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!lightData.isNull()) {
                         SimConnectLight simConnectLight;
                         simConnectLight.fromLightData(lightData);
-                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::Light),
+                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::Light),
                                                                             objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                                             sizeof(SimConnectLight), &simConnectLight);
                         ok = res == S_OK;
@@ -453,14 +453,14 @@ inline bool MSFSSimConnectPlugin::updateAndSendEngineEvent(std::int64_t objectId
             d->engineState = EngineState::Started;
         } else if (!engineData.hasEngineStarterEnabled()) {
              // STARTING: Engine started disabled, no combustion -> STOPPED
-            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
             d->engineState = EngineState::Stopped;
         }
         break;
     case EngineState::Started:
         if (!engineData.hasCombustion()) {
             // STARTED: No combustion -> STOPPED
-            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
             d->engineState = EngineState::Stopped;
         }
         break;
@@ -469,17 +469,17 @@ inline bool MSFSSimConnectPlugin::updateAndSendEngineEvent(std::int64_t objectId
         // Note: apparently the engine starter can be disabled (false) and yet with an active combustion (= running engine)
         //       specifically in the case when the aircraft has been "auto-started" (CTRL + E)
         if (engineData.hasEngineStarterEnabled() || engineData.hasCombustion()) {
-            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
             d->engineState = EngineState::Starting;
         }
         break;
     default:
         // Unknown
         if (engineData.hasEngineStarterEnabled() || engineData.hasCombustion()) {
-            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
             d->engineState = engineData.hasCombustion() ? EngineState::Started : EngineState::Starting;
         } else {
-            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
             d->engineState = EngineState::Stopped;
         }
         break;
@@ -536,8 +536,8 @@ void MSFSSimConnectPlugin::onRemoveAllAiObjects() noexcept
 
 bool MSFSSimConnectPlugin::onRequestLocation() noexcept
 {
-    const HRESULT result = ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::Location),
-                                                               Enum::toUnderlyingType(SimConnectType::DataDefinition::Location),
+    const HRESULT result = ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::Location),
+                                                               Enum::underly(SimConnectType::DataDefinition::Location),
                                                                ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, 0);
     return result == S_OK;
 }
@@ -640,31 +640,31 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
     SimConnectSimulationTime::addToDataDefinition(d->simConnectHandle);
     SimConnectLocation::addToDataDefinition(d->simConnectHandle);
 
-    ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::InitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
+    ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::InitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
     // System event subscription
-    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::SimStart), "SimStart");
-    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::Pause), "Pause");
-    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::Crashed), "Crashed");
+    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(::Event::SimStart), "SimStart");
+    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(::Event::Pause), "Pause");
+    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(::Event::Crashed), "Crashed");
 
     // Client events
-    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::FreezeLatituteLongitude), "FREEZE_LATITUDE_LONGITUDE_SET");
-    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::FreezeAltitude), "FREEZE_ALTITUDE_SET");
-    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::FreezeLatituteLongitude), "FREEZE_LATITUDE_LONGITUDE_SET");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::FreezeAltitude), "FREEZE_ALTITUDE_SET");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
 
-    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::EngineAutoStart), "ENGINE_AUTO_START");
-    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(::Event::EngineAutoShutdown), "ENGINE_AUTO_SHUTDOWN");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::EngineAutoStart), "ENGINE_AUTO_START");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::EngineAutoShutdown), "ENGINE_AUTO_SHUTDOWN");
 }
 
 bool MSFSSimConnectPlugin::freezeAircraft(::SIMCONNECT_OBJECT_ID objectId, bool enable) const noexcept
 {
     const DWORD data = enable ? 1 : 0;
-    HRESULT result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(::Event::FreezeLatituteLongitude), data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+    HRESULT result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::FreezeLatituteLongitude), data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
     if (result == S_OK) {
-        result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(::Event::FreezeAltitude), data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::FreezeAltitude), data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
     }
     if (result == S_OK) {
-        result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(::Event::FreezeAttitude), data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::FreezeAttitude), data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
     }
     return result == S_OK;
 }
@@ -716,31 +716,31 @@ void MSFSSimConnectPlugin::updateRecordingFrequency(SampleRate::SampleRate sampl
 void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept
 {
     if (d->currentRequestPeriod != period) {
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::AircraftPosition),
-                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::PositionReply),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftPosition),
+                                            Enum::underly(SimConnectType::DataDefinition::PositionReply),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::Engine),
-                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::EngineReply),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::Engine),
+                                            Enum::underly(SimConnectType::DataDefinition::EngineReply),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::PrimaryFlightControl),
-                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::PrimaryFlightControl),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::PrimaryFlightControl),
+                                            Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControl),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::SecondaryFlightControl),
-                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::SecondaryFlightControl),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::SecondaryFlightControl),
+                                            Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControl),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::AircraftHandle),
-                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::Handle),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftHandle),
+                                            Enum::underly(SimConnectType::DataDefinition::Handle),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::Light),
-                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::Light),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::Light),
+                                            Enum::underly(SimConnectType::DataDefinition::Light),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         // Update the flight plan and simulation time only every second
         ::SIMCONNECT_PERIOD oneSecondPeriod = period != ::SIMCONNECT_PERIOD_NEVER ? ::SIMCONNECT_PERIOD_SECOND : ::SIMCONNECT_PERIOD_NEVER;
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::FlightPlan),
-                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlan),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::FlightPlan),
+                                            Enum::underly(SimConnectType::DataDefinition::FlightPlan),
                                             ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::SimulationTime),
-                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::SimulationTime),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::SimulationTime),
+                                            Enum::underly(SimConnectType::DataDefinition::SimulationTime),
                                             ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         d->currentRequestPeriod = period;
     }
@@ -992,7 +992,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         SIMCONNECT_RECV_ASSIGNED_OBJECT_ID *objectData = (SIMCONNECT_RECV_ASSIGNED_OBJECT_ID*)receivedData;
         std::int64_t simulationObjectId = objectData->dwObjectID;
         if (skyConnect->d->simConnectAi->registerObjectId(objectData->dwRequestID, simulationObjectId)) {
-            ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, simulationObjectId, Enum::toUnderlyingType(SimConnectType::DataRequest::AiReleaseControl));
+            ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, simulationObjectId, Enum::underly(SimConnectType::DataRequest::AiReleaseControl));
             skyConnect->freezeAircraft(objectData->dwObjectID, true);
         } else {
             // No pending request (request has already been removed), so destroy the

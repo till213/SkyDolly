@@ -41,7 +41,7 @@ struct EnumerationPrivate;
  *
  * For C++ enumeration class support also refer to Enum.h
  *
- * \sa Enum#toUnderlyingType
+ * \sa Enum#underly
  */
 class MODEL_API Enumeration final
 {

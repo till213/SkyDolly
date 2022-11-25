@@ -35,7 +35,7 @@
 
 void SimConnectEngineRequest::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    addToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::EngineRequest));
+    addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineRequest));
 }
 
 // PROTECTED
