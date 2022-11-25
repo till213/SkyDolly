@@ -48,8 +48,8 @@ EnumerationService::EnumerationService() noexcept
     : d(std::make_unique<EnumerationServicePrivate>())
 {}
 
-EnumerationService::EnumerationService(EnumerationService &&rhs) = default;
-EnumerationService &EnumerationService::operator=(EnumerationService &&rhs) = default;
+EnumerationService::EnumerationService(EnumerationService &&rhs) noexcept = default;
+EnumerationService &EnumerationService::operator=(EnumerationService &&rhs) noexcept = default;
 EnumerationService::~EnumerationService() = default;
 
 Enumeration EnumerationService::getEnumerationByName(const QString &name, bool *ok)

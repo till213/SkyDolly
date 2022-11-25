@@ -92,7 +92,7 @@ private:
     bool storeLocations(std::vector<Location> &locations, LocationService &locationService) const noexcept;
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 };
 
 #endif // LOCATIONIMPORTPLUGINBASE_H

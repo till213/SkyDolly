@@ -48,15 +48,39 @@ public:
 
     explicit CsvParser(QChar separatorChar = ',', QChar escapeChar = '"', bool trimValues = true);
     CsvParser(const CsvParser &rhs) = delete;
-    CsvParser(CsvParser &&rhs);
+    CsvParser(CsvParser &&rhs) = default;
     CsvParser &operator=(const CsvParser &rhs) = delete;
-    CsvParser &operator=(CsvParser &&rhs);
-    ~CsvParser();
+    CsvParser &operator=(CsvParser &&rhs) = default;
+    ~CsvParser() = default;
 
-    Rows parse(QTextStream &textStream, const QString &header = QString()) noexcept;
+    /*!
+     * Parses the \c textStream as comma-separated values (CSV). The first row is ignored
+     * if it begins with either \c header or \c alternateHeader.
+     *
+     * \param textStream
+     *        the CSV to be parsed
+     * \param header
+     *        the header of the values (case-insensitive)
+     * \param alternateHeader
+     *        the alternate header of the values (case-insensitive); useful if the header
+     *        may contain different escape characters
+     * \return the CSV rows, without the header row (if present)
+     */
+    Rows parse(QTextStream &textStream, const QString &header = QString(), const QString &alternateHeader = QString()) noexcept;
 
 private:
-    std::unique_ptr<CsvParserPrivate> d;
+    QChar m_separatorChar;
+    QChar m_quoteChar;
+    bool m_trimValue {false};
+
+    Row m_currentRow;
+    QString m_currentValue;
+
+    bool m_inQuotation {false};
+    bool m_currentValueQuoted {false};
+
+    QChar m_lastChar {'\0'};
+    QChar m_currentChar {'\0'};
 
     inline void parseLine(const QString &line) noexcept;
     inline void parseQuote() noexcept;

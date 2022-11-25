@@ -42,12 +42,12 @@ class SkyDollyCsvLocationParser : public CsvLocationParserIntf
 public:
     SkyDollyCsvLocationParser() noexcept;
     SkyDollyCsvLocationParser(const SkyDollyCsvLocationParser &rhs) = delete;
-    SkyDollyCsvLocationParser(SkyDollyCsvLocationParser &&rhs);
+    SkyDollyCsvLocationParser(SkyDollyCsvLocationParser &&rhs) noexcept;
     SkyDollyCsvLocationParser &operator=(const SkyDollyCsvLocationParser &rhs) = delete;
-    SkyDollyCsvLocationParser &operator=(SkyDollyCsvLocationParser &&rhs);
-    ~SkyDollyCsvLocationParser();
+    SkyDollyCsvLocationParser &operator=(SkyDollyCsvLocationParser &&rhs) noexcept;
+    ~SkyDollyCsvLocationParser() override;
 
-    virtual std::vector<Location> parse(QTextStream &textStream, bool *ok = nullptr) noexcept override;
+    std::vector<Location> parse(QTextStream &textStream, bool *ok = nullptr) noexcept override;
 
 private:
     std::unique_ptr<SkyDollyCsvLocationParserPrivate> d;

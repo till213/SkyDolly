@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <utility>
+
 #include <QString>
 #include <QStringList>
 #include <QStringBuilder>
@@ -57,8 +59,8 @@ SqlMigrationStep::SqlMigrationStep() noexcept
     : d(std::make_unique<SqlMigrationStepPrivate>())
 {}
 
-SqlMigrationStep::SqlMigrationStep(SqlMigrationStep &&rhs) = default;
-SqlMigrationStep &SqlMigrationStep::operator=(SqlMigrationStep &&rhs) = default;
+SqlMigrationStep::SqlMigrationStep(SqlMigrationStep &&rhs) noexcept = default;
+SqlMigrationStep &SqlMigrationStep::operator=(SqlMigrationStep &&rhs) noexcept = default;
 SqlMigrationStep::~SqlMigrationStep() = default;
 
 bool SqlMigrationStep::isValid() const noexcept
@@ -184,7 +186,7 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noe
             } else {
                 migrQuery.prepare("update migr set success = :success, msg = :msg where id = :id and step = :step;");
             }
-            d->errorMessage = errorMessage;
+            d->errorMessage = std::move(errorMessage);
 
             migrQuery.bindValue(":id", d->migrationId);
             migrQuery.bindValue(":step", d->step);
@@ -215,7 +217,7 @@ const QString &SqlMigrationStep::getMigrationId() const noexcept
 
 void SqlMigrationStep::setMigrationId(QString migrationId) noexcept
 {
-    d->migrationId = migrationId;
+    d->migrationId = std::move(migrationId);
 }
 
 const QString &SqlMigrationStep::getDescription() const noexcept
@@ -225,7 +227,7 @@ const QString &SqlMigrationStep::getDescription() const noexcept
 
 void SqlMigrationStep::setDescription(QString description) noexcept
 {
-    d->description = description;
+    d->description = std::move(description);
 }
 
 int SqlMigrationStep::getStep() const noexcept

@@ -82,5 +82,5 @@ void PluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 void PluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {}
 
-void PluginBase::restoreSettings([[maybe_unused]]Settings::ValuesByKey valuesByKey) noexcept
+void PluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {}

@@ -26,6 +26,7 @@
 #define CSVLOCATIONIMPORTSETTINGS_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 
@@ -55,6 +56,15 @@ public:
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;
+
+    std::int64_t getDefaultCountryId() const noexcept;
+    void setDefaultCountryId(std::int64_t countryId) noexcept;
+
+    int getDefaultAltitude() const noexcept;
+    void setDefaultAltitude(int altitude) noexcept;
+
+    int getDefaultIndicatedAirspeed() const noexcept;
+    void setDefaultIndicatedAirspeed(int indicatedAirspeed) noexcept;
 
 signals:
     /*!

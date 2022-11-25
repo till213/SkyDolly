@@ -42,13 +42,13 @@ FlightPlan::FlightPlan() noexcept
     : d(std::make_unique<FlightPlanPrivate>())
 {}
 
-FlightPlan::FlightPlan(FlightPlan &&rhs) = default;
-FlightPlan &FlightPlan::operator=(FlightPlan &&rhs) = default;
+FlightPlan::FlightPlan(FlightPlan &&rhs) noexcept = default;
+FlightPlan &FlightPlan::operator=(FlightPlan &&rhs) noexcept = default;
 FlightPlan::~FlightPlan() = default;
 
-void FlightPlan::add(const Waypoint &waypoint) noexcept
+void FlightPlan::add(Waypoint waypoint) noexcept
 {
-    d->waypoints.push_back(waypoint);
+    d->waypoints.push_back(std::move(waypoint));
 }
 
 void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
@@ -89,6 +89,11 @@ void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
 std::size_t FlightPlan::count() const noexcept
 {
     return d->waypoints.size();
+}
+
+void FlightPlan::reserve(std::size_t n)
+{
+    d->waypoints.reserve(n);
 }
 
 void FlightPlan::clear() noexcept

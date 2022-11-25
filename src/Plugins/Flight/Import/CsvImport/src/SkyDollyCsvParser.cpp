@@ -25,14 +25,19 @@
 #include <cstdint>
 
 #include <QByteArray>
-#include <QList>
 #include <QString>
 #include <QDateTime>
 #include <QIODevice>
 #include <QFile>
 #include <QFileInfo>
+#include <QTextCodec>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
+#include <Kernel/CsvParser.h>
 #include <Kernel/Convert.h>
+#include <Kernel/Enum.h>
 #include <Model/SimVar.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -51,627 +56,429 @@
 #include <PluginManager/CsvConst.h>
 #include "SkyDollyCsvParser.h"
 
+namespace
+{
+    constexpr const char *SkyDollyCsvHeader {"Type,Plane Latitude,Plane Longitude,Plane Altitude"};
+
+    enum struct Index
+    {
+        Type = 0,
+        // Position
+        Latitude,
+        Longitude,
+        Altitude,
+        IndicatedAltitude,
+        Pitch,
+        Bank,
+        TrueHeading,
+        VelocityBodyX,
+        VelocityBodyY,
+        VelocityBodyZ,
+        RotationVelocityBodyX,
+        RotationVelocityBodyY,
+        RotationVelocityBodyZ,
+        // Engine
+        ThrottleLeverPosition1,
+        ThrottleLeverPosition2,
+        ThrottleLeverPosition3,
+        ThrottleLeverPosition4,
+        PropellerLeverPosition1,
+        PropellerLeverPosition2,
+        PropellerLeverPosition3,
+        PropellerLeverPosition4,
+        MixtureLeverPosition1,
+        MixtureLeverPosition2,
+        MixtureLeverPosition3,
+        MixtureLeverPosition4,
+        RecipEngineCowlFlapPosition1,
+        RecipEngineCowlFlapPosition2,
+        RecipEngineCowlFlapPosition3,
+        RecipEngineCowlFlapPosition4,
+        ElectricalMasterBattery1,
+        ElectricalMasterBattery2,
+        ElectricalMasterBattery3,
+        ElectricalMasterBattery4,
+        GeneralEngineStarter1,
+        GeneralEngineStarter2,
+        GeneralEngineStarter3,
+        GeneralEngineStarter4,
+        GeneralEngineCombustion1,
+        GeneralEngineCombustion2,
+        GeneralEngineCombustion3,
+        GeneralEngineCombustion4,
+        // Primary flight controls
+        RudderPosition,
+        ElevatorPosition,
+        AileronPosition,
+        // Secondary flight controls
+        LeadingEdgeFlapsLeftPercent,
+        LeadingEdgeFlapsRightPercent,
+        TrailingEdgeFlapsLeftPercent,
+        TrailingEdgeFlapsRightPercent,
+        SpoilersHandlePosition,
+        FlapsHandleIndex,
+        // Aircraft handles
+        GearHandlePosition,
+        BrakeLeftPosition,
+        BrakeRightPosition,
+        WaterRudderHandlePosition,
+        TailhookPosition,
+        CanopyOpen,
+        FoldingWingLeftPercent,
+        FoldingWingRightPercent,
+        SmokeEnable,
+        // Light
+        LightStates,
+        // Common
+        Timestamp
+    };
+}
+
 // PUBLIC
 
 bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
 {
-    Aircraft &aircraft = flight.getUserAircraft();
-
     QFile *file = qobject_cast<QFile *>(&io);
     firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
+    flightNumber = QString();
 
-    // Headers
-    QByteArray line = io.readLine();
-    // Trim away line endings (\r\n for instance)
-    QByteArray data = line.trimmed();
+    CsvParser csvParser;
+    QTextStream textStream(&io);
+    textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+    CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
 
-    bool ok = !data.isNull();
-    if (ok) {
-        QList<QByteArray> headers = data.split(CsvConst::TabSep);
-        if (headers.first() == QString(CsvConst::TypeColumnName)) {
-            headers.removeFirst();
+    Aircraft &aircraft = flight.getUserAircraft();
+    // Heuristical memory pre-allocation: we expect that about
+    // - half of the rows are position samples
+    // - 1/4 are engine samples
+    // - etc.
+    aircraft.getPosition().reserve(rows.size() >> 1);
+    aircraft.getEngine().reserve(rows.size() >> 2);
+    aircraft.getPrimaryFlightControl().reserve(rows.size() >> 3);
+    aircraft.getSecondaryFlightControl().reserve(rows.size() >> 4);
+    aircraft.getAircraftHandle().reserve(rows.size() >> 6);
+    aircraft.getLight().reserve(rows.size() >> 6);
 
-            // CSV data
-            data = io.readLine();
-            bool firstPositionData = true;
-            bool firstEngineData = true;
-            bool firstPrimaryFlightControlData = true;
-            bool firstSecondaryFlightControlData = true;
-            bool firstAircraftHandleData = true;
-            bool firstLightData = true;
-            while (!data.isNull()) {
+#ifdef DEBUG
+    qDebug() << "SkyDollyCsvParser::parse, total CSV rows:" << rows.size() << "\n"
+             << "Position size:" << aircraft.getPosition().capacity() << "\n"
+             << "Engine size:" << aircraft.getEngine().capacity() << "\n"
+             << "Primary flight controls size:" << aircraft.getPrimaryFlightControl().capacity() << "\n"
+             << "Secondary flight controls size:" << aircraft.getSecondaryFlightControl().capacity() << "\n"
+             << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
+             << "Light size:" << aircraft.getLight().capacity() << "\n";
+#endif
 
-                PositionData positionData;
-                QList<QByteArray> values = data.split(CsvConst::TabSep);
-
-                // Type
-                ok = values.at(0).size() > 0;
-                if (ok) {
-                    CsvConst::DataType dataType = static_cast<CsvConst::DataType>(values.at(0).at(0));
-                    values.removeFirst();
-                    switch (dataType) {
-                    case CsvConst::DataType::Aircraft:
-                        ok = importPositionData(headers, values, firstPositionData, aircraft);
-                        firstPositionData = false;
-                        break;
-                    case CsvConst::DataType::Engine:
-                        ok = importEngineData(headers, values, firstEngineData, aircraft.getEngine());
-                        firstEngineData = false;
-                        break;
-                    case CsvConst::DataType::PrimaryFlightControl:
-                        ok = importPrimaryFlightControlData(headers, values, firstPrimaryFlightControlData, aircraft.getPrimaryFlightControl());
-                        firstPrimaryFlightControlData = false;
-                        break;
-                    case CsvConst::DataType::SecondaryFlightControl:
-                        ok = importSecondaryFlightControlData(headers, values, firstSecondaryFlightControlData, aircraft.getSecondaryFlightControl());
-                        firstSecondaryFlightControlData = false;
-                        break;
-                    case CsvConst::DataType::AircraftHandle:
-                        ok = importAircraftHandleData(headers, values, firstAircraftHandleData, aircraft.getAircraftHandle());
-                        firstAircraftHandleData = false;
-                        break;
-                    case CsvConst::DataType::Light:
-                        ok = importLightData(headers, values, firstLightData, aircraft.getLight());
-                        firstLightData = false;
-                        break;
-                    }
-                }
-
-                // Read next line
-                if (ok) {
-                    data = io.readLine();
-                } else {
-                    break;
-                }
-            }
-
-        } else {
-            ok = false;
+    bool firstRow {true};
+    bool ok {true};
+    for (const auto &row : rows) {
+        if (firstRow) {
+            // The first position timestamp must be 0, so shift all timestamps by
+            // the timestamp delta, derived from the first timestamp
+            // (that is usually 0 already)
+            m_timestampDelta = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok);
+            firstRow = false;
         }
+        if (ok) {
+            ok = parseRow(row, aircraft);
+        } else {
+            break;
+        }
+    }
+    return ok;
+}
+
+inline bool SkyDollyCsvParser::parseRow(const CsvParser::Row &row, Aircraft &aircraft) noexcept
+{
+    CsvConst::DataType dataType = static_cast<CsvConst::DataType>(row.at(Enum::underly(::Index::Type)).at(0).toLatin1());
+
+    bool ok {true};
+    switch (dataType) {
+    case CsvConst::DataType::Aircraft:
+        ok = importPositionData(row, aircraft);
+        break;
+    case CsvConst::DataType::Engine:
+        ok = importEngineData(row, aircraft.getEngine());
+        break;
+    case CsvConst::DataType::PrimaryFlightControl:
+        ok = importPrimaryFlightControlData(row, aircraft.getPrimaryFlightControl());
+        break;
+    case CsvConst::DataType::SecondaryFlightControl:
+        ok = importSecondaryFlightControlData(row, aircraft.getSecondaryFlightControl());
+        break;
+    case CsvConst::DataType::AircraftHandle:
+        ok = importAircraftHandleData(row, aircraft.getAircraftHandle());
+        break;
+    case CsvConst::DataType::Light:
+        ok = importLightData(row, aircraft.getLight());
+        break;
     }
     return ok;
 }
 
 // PRIVATE
 
-inline bool SkyDollyCsvParser::importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept
+inline bool SkyDollyCsvParser::importPositionData(const CsvParser::Row &row, Aircraft &aircraft) noexcept
 {
     PositionData data;
-    int columnIndex = 0;
-    std::int64_t timestampDelta = 0;
-    bool ok {false};
-    for (const QByteArray &header : headers) {
+    bool ok {true};
 
-        if (columnIndex >= values.count()) {
-            // Less values than headers
-            ok = false;
-            break;
-        }
-
-        // Position
-        double doubleValue;
-        if (header == SimVar::Latitude) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.latitude = doubleValue;
-            }
-        } else if (header == SimVar::Longitude) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.longitude = doubleValue;
-            }
-        } else if (header == SimVar::Altitude) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.altitude = doubleValue;
-            }
-        } else if (header == SimVar::IndicatedAltitude) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.indicatedAltitude = doubleValue;
-            }
-        } else if (header == SimVar::Pitch) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.pitch = doubleValue;
-            }
-        } else if (header == SimVar::Bank) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.bank = doubleValue;
-            }
-        } else if (header == SimVar::TrueHeading) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.trueHeading = doubleValue;
-            }
-            // Velocity
-        } else if (header == SimVar::VelocityBodyX) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.velocityBodyX = doubleValue;
-            }
-        } else if (header == SimVar::VelocityBodyY) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.velocityBodyY = doubleValue;
-            }
-        } else if (header == SimVar::VelocityBodyZ) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.velocityBodyZ = doubleValue;
-            }
-        } else if (header == SimVar::RotationVelocityBodyX) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.rotationVelocityBodyX = doubleValue;
-            }
-        } else if (header == SimVar::RotationVelocityBodyY) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.rotationVelocityBodyY= doubleValue;
-            }
-        } else if (header == SimVar::RotationVelocityBodyZ) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.rotationVelocityBodyZ = doubleValue;
-            }
-            // Timestamp
-        } else if (header == SimVar::Timestamp) {
-            ok = importTimestamp(values, columnIndex, firstRow, data.timestamp, timestampDelta);
-        } else {
-            ok = true;
-        }
-
-        if (ok) {
-            // Next value
-            ++columnIndex;
-        } else {
-            // Parse error
-            break;
-        }
-
+    data.latitude = row.at(Enum::underly(::Index::Latitude)).toDouble(&ok);
+    if (ok) {
+        data.longitude = row.at(Enum::underly(::Index::Longitude)).toDouble(&ok);
     }
+    if (ok) {
+        data.altitude = row.at(Enum::underly(::Index::Altitude)).toDouble(&ok);
+    }
+    if (ok) {
+        data.indicatedAltitude = row.at(Enum::underly(::Index::IndicatedAltitude)).toDouble(&ok);
+    }
+    if (ok) {
+        data.pitch = row.at(Enum::underly(::Index::Pitch)).toDouble(&ok);
+    }
+    if (ok) {
+        data.bank = row.at(Enum::underly(::Index::Bank)).toDouble(&ok);
+    }
+    if (ok) {
+        data.trueHeading = row.at(Enum::underly(::Index::TrueHeading)).toDouble(&ok);
+    }
+    // Velocity
+    if (ok) {
+        data.velocityBodyX = row.at(Enum::underly(::Index::VelocityBodyX)).toDouble(&ok);
+    }
+    if (ok) {
+        data.velocityBodyY = row.at(Enum::underly(::Index::VelocityBodyY)).toDouble(&ok);
+    }
+    if (ok) {
+        data.velocityBodyZ = row.at(Enum::underly(::Index::VelocityBodyZ)).toDouble(&ok);
+    }
+    if (ok) {
+        data.rotationVelocityBodyX = row.at(Enum::underly(::Index::RotationVelocityBodyX)).toDouble(&ok);
+    }
+    if (ok) {
+        data.rotationVelocityBodyY= row.at(Enum::underly(::Index::RotationVelocityBodyY)).toDouble(&ok);
+    }
+    if (ok) {
+        data.rotationVelocityBodyZ = row.at(Enum::underly(::Index::RotationVelocityBodyZ)).toDouble(&ok);
+    }
+    // Timestamp
+    if (ok) {
+        data.timestamp = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
+    }
+
     if (ok) {
         aircraft.getPosition().upsertLast(data);
     }
     return ok;
 }
 
-inline bool SkyDollyCsvParser::importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept
+inline bool SkyDollyCsvParser::importEngineData(const CsvParser::Row &row, Engine &engine) noexcept
 {
     EngineData data;
-    int columnIndex = 0;
-    std::int64_t timestampDelta = 0;
-    bool ok {false};
-    for (const QByteArray &header : headers) {
+    bool ok {true};
 
-        if (columnIndex >= values.count()) {
-            // Less values than headers
-            ok = false;
-            break;
-        }
-
-        int intValue;
-        if (header == SimVar::ThrottleLeverPosition1) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.throttleLeverPosition1 = intValue;
-            }
-        } else if (header == SimVar::ThrottleLeverPosition2) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.throttleLeverPosition2 = intValue;
-            }
-        } else if (header == SimVar::ThrottleLeverPosition3) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.throttleLeverPosition3 = intValue;
-            }
-        } else if (header == SimVar::ThrottleLeverPosition4) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.throttleLeverPosition4 = intValue;
-            }
-        } else if (header == SimVar::PropellerLeverPosition1) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.propellerLeverPosition1 = intValue;
-            }
-        } else if (header == SimVar::PropellerLeverPosition2) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.propellerLeverPosition2 = intValue;
-            }
-        } else if (header == SimVar::PropellerLeverPosition3) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.propellerLeverPosition3 = intValue;
-            }
-        } else if (header == SimVar::PropellerLeverPosition4) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.propellerLeverPosition4 = intValue;
-            }
-        } else if (header == SimVar::MixtureLeverPosition1) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.mixtureLeverPosition1 = intValue;
-            }
-        } else if (header == SimVar::MixtureLeverPosition2) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.mixtureLeverPosition2 = intValue;
-            }
-        } else if (header == SimVar::MixtureLeverPosition3) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.mixtureLeverPosition3 = intValue;
-            }
-        } else if (header == SimVar::MixtureLeverPosition4) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.mixtureLeverPosition4 = intValue;
-            }
-        } else if (header == SimVar::RecipEngineCowlFlapPosition1) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.cowlFlapPosition1 = intValue;
-            }
-        } else if (header == SimVar::RecipEngineCowlFlapPosition2) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.cowlFlapPosition2 = intValue;
-            }
-        } else if (header == SimVar::RecipEngineCowlFlapPosition3) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.cowlFlapPosition3 = intValue;
-            }
-        } else if (header == SimVar::RecipEngineCowlFlapPosition4) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.cowlFlapPosition4 = intValue;
-            }
-        } else if (header == SimVar::ElectricalMasterBattery1) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.electricalMasterBattery1 = intValue != 0;
-            }
-        } else if (header == SimVar::ElectricalMasterBattery2) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.electricalMasterBattery2 = intValue != 0;
-            }
-        } else if (header == SimVar::ElectricalMasterBattery3) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.electricalMasterBattery3 = intValue != 0;
-            }
-        } else if (header == SimVar::ElectricalMasterBattery4) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.electricalMasterBattery4 = intValue != 0;
-            }
-        } else if (header == SimVar::GeneralEngineStarter1) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.generalEngineStarter1 = intValue != 0;
-            }
-        } else if (header == SimVar::GeneralEngineStarter2) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.generalEngineStarter2 = intValue != 0;
-            }
-        } else if (header == SimVar::GeneralEngineStarter3) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.generalEngineStarter3 = intValue != 0;
-            }
-        } else if (header == SimVar::GeneralEngineStarter4) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.generalEngineStarter4 = intValue != 0;
-            }
-        } else if (header == SimVar::GeneralEngineCombustion1) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.generalEngineCombustion1 = intValue != 0;
-            }
-        } else if (header == SimVar::GeneralEngineCombustion2) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.generalEngineCombustion2 = intValue != 0;
-            }
-        } else if (header == SimVar::GeneralEngineCombustion3) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.generalEngineCombustion3 = intValue != 0;
-            }
-        } else if (header == SimVar::GeneralEngineCombustion4) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.generalEngineCombustion4 = intValue != 0;
-            }
-            // Timestamp
-        } else if (header == SimVar::Timestamp) {
-            ok = importTimestamp(values, columnIndex, firstRow, data.timestamp, timestampDelta);
-        } else {
-            ok = true;
-        }
-
-        if (ok) {
-            // Next value
-            ++columnIndex;
-        } else {
-            // Parse error
-            break;
-        }
-
+    data.throttleLeverPosition1 = row.at(Enum::underly(::Index::ThrottleLeverPosition1)).toInt(&ok);
+    if (ok) {
+        data.throttleLeverPosition2 = row.at(Enum::underly(::Index::ThrottleLeverPosition2)).toInt(&ok);
     }
     if (ok) {
-        engine.upsertLast(std::move(data));
+        data.throttleLeverPosition3 = row.at(Enum::underly(::Index::ThrottleLeverPosition3)).toInt(&ok);
+    }
+    if (ok) {
+        data.throttleLeverPosition4 = row.at(Enum::underly(::Index::ThrottleLeverPosition4)).toInt(&ok);
+    }
+    if (ok) {
+        data.propellerLeverPosition1 = row.at(Enum::underly(::Index::PropellerLeverPosition1)).toInt(&ok);
+    }
+    if (ok) {
+        data.propellerLeverPosition2 = row.at(Enum::underly(::Index::PropellerLeverPosition2)).toInt(&ok);
+    }
+    if (ok) {
+        data.propellerLeverPosition3 = row.at(Enum::underly(::Index::PropellerLeverPosition3)).toInt(&ok);
+    }
+    if (ok) {
+        data.propellerLeverPosition4 = row.at(Enum::underly(::Index::PropellerLeverPosition4)).toInt(&ok);
+    }
+    if (ok) {
+        data.mixtureLeverPosition1 = row.at(Enum::underly(::Index::MixtureLeverPosition1)).toInt(&ok);
+    }
+    if (ok) {
+        data.mixtureLeverPosition2 = row.at(Enum::underly(::Index::MixtureLeverPosition2)).toInt(&ok);
+    }
+    if (ok) {
+        data.mixtureLeverPosition3 = row.at(Enum::underly(::Index::MixtureLeverPosition3)).toInt(&ok);
+    }
+    if (ok) {
+        data.mixtureLeverPosition4 = row.at(Enum::underly(::Index::MixtureLeverPosition4)).toInt(&ok);
+    }
+    if (ok) {
+        data.cowlFlapPosition1 = row.at(Enum::underly(::Index::RecipEngineCowlFlapPosition1)).toInt(&ok);
+    }
+    if (ok) {
+        data.cowlFlapPosition2 = row.at(Enum::underly(::Index::RecipEngineCowlFlapPosition2)).toInt(&ok);
+    }
+    if (ok) {
+        data.cowlFlapPosition3 = row.at(Enum::underly(::Index::RecipEngineCowlFlapPosition3)).toInt(&ok);
+    }
+    if (ok) {
+        data.cowlFlapPosition4 = row.at(Enum::underly(::Index::RecipEngineCowlFlapPosition4)).toInt(&ok);
+    }
+    if (ok) {
+        data.electricalMasterBattery1 = row.at(Enum::underly(::Index::ElectricalMasterBattery1)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.electricalMasterBattery2 = row.at(Enum::underly(::Index::ElectricalMasterBattery2)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.electricalMasterBattery3 = row.at(Enum::underly(::Index::ElectricalMasterBattery3)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.electricalMasterBattery4 = row.at(Enum::underly(::Index::ElectricalMasterBattery4)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineStarter1 = row.at(Enum::underly(::Index::GeneralEngineStarter1)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineStarter2 = row.at(Enum::underly(::Index::GeneralEngineStarter2)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineStarter3 = row.at(Enum::underly(::Index::GeneralEngineStarter3)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineStarter4 = row.at(Enum::underly(::Index::GeneralEngineStarter4)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineCombustion1 = row.at(Enum::underly(::Index::GeneralEngineCombustion1)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineCombustion2 = row.at(Enum::underly(::Index::GeneralEngineCombustion2)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineCombustion3 = row.at(Enum::underly(::Index::GeneralEngineCombustion3)).toInt(&ok) != 0;
+    }
+    if (ok) {
+        data.generalEngineCombustion4 = row.at(Enum::underly(::Index::GeneralEngineCombustion4)).toInt(&ok) != 0;
+    }
+    // Timestamp
+    if (ok) {
+        data.timestamp = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
+    }
+
+    if (ok) {
+        engine.upsertLast(data);
     }
     return ok;
 }
 
-inline bool SkyDollyCsvParser::importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept
+inline bool SkyDollyCsvParser::importPrimaryFlightControlData(const CsvParser::Row &row, PrimaryFlightControl &primaryFlightControl) noexcept
 {
     PrimaryFlightControlData data;
-    int columnIndex = 0;
-    std::int64_t timestampDelta = 0;
-    bool ok {false};
-    for (const QByteArray &header : headers) {
+    bool ok {true};
 
-        if (columnIndex >= values.count()) {
-            // Less values than headers
-            ok = false;
-            break;
-        }
-
-        int intValue;
-        if (header == SimVar::RudderPosition) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.rudderPosition = intValue;
-            }
-        } else if (header == SimVar::ElevatorPosition) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.elevatorPosition = intValue;
-            }
-        } else if (header == SimVar::AileronPosition) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.aileronPosition = intValue;
-            }
-            // Timestamp
-        } else if (header == SimVar::Timestamp) {
-            ok = importTimestamp(values, columnIndex, firstRow, data.timestamp, timestampDelta);
-        } else {
-            ok = true;
-        }
-
-        if (ok) {
-            // Next value
-            ++columnIndex;
-        } else {
-            // Parse error
-            break;
-        }
-
+    data.rudderPosition = row.at(Enum::underly(::Index::RudderPosition)).toInt(&ok);
+    if (ok) {
+        data.elevatorPosition =  row.at(Enum::underly(::Index::ElevatorPosition)).toInt(&ok);
     }
     if (ok) {
-        primaryFlightControl.upsertLast(std::move(data));
+        data.aileronPosition = row.at(Enum::underly(::Index::AileronPosition)).toInt(&ok);
+    }
+    // Timestamp
+    if (ok) {
+        data.timestamp = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
+    }
+
+    if (ok) {
+        primaryFlightControl.upsertLast(data);
     }
     return ok;
 }
 
-inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept
+inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser::Row &row, SecondaryFlightControl &secondaryFlightControl) noexcept
 {
     SecondaryFlightControlData data;
-    int columnIndex = 0;
-    std::int64_t timestampDelta = 0;
-    bool ok {false};
-    for (const QByteArray &header : headers) {
+    bool ok {true};
 
-        if (columnIndex >= values.count()) {
-            // Less values than headers
-            ok = false;
-            break;
-        }
-
-        int intValue;
-        if (header == SimVar::LeadingEdgeFlapsLeftPercent) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.leadingEdgeFlapsLeftPosition = intValue;
-            }
-        } else if (header == SimVar::LeadingEdgeFlapsRightPercent) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.leadingEdgeFlapsRightPosition = intValue;
-            }
-        } else if (header == SimVar::TrailingEdgeFlapsLeftPercent) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.trailingEdgeFlapsLeftPosition = intValue;
-            }
-        } else if (header == SimVar::TrailingEdgeFlapsRightPercent) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.trailingEdgeFlapsRightPosition = intValue;
-            }
-        } else if (header == SimVar::SpoilersHandlePosition) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.spoilersHandlePosition = intValue;
-            }
-        } else if (header == SimVar::FlapsHandleIndex) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.flapsHandleIndex = intValue;
-            }
-            // Timestamp
-        } else if (header == SimVar::Timestamp) {
-            ok = importTimestamp(values, columnIndex, firstRow, data.timestamp, timestampDelta);
-        } else {
-            ok = true;
-        }
-
-        if (ok) {
-            // Next value
-            ++columnIndex;
-        } else {
-            // Parse error
-            break;
-        }
-
+    data.leadingEdgeFlapsLeftPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsLeftPercent)).toInt(&ok);
+    if (ok) {
+        data.leadingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsRightPercent)).toInt(&ok);
     }
     if (ok) {
-        secondaryFlightControl.upsertLast(std::move(data));
+        data.trailingEdgeFlapsLeftPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsLeftPercent)).toInt(&ok);
+    }
+    if (ok) {
+        data.trailingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsRightPercent)).toInt(&ok);
+    }
+    if (ok) {
+        data.spoilersHandlePosition = row.at(Enum::underly(::Index::SpoilersHandlePosition)).toInt(&ok);
+    }
+    if (ok) {
+        data.flapsHandleIndex = row.at(Enum::underly(::Index::FlapsHandleIndex)).toInt(&ok);
+    }
+    // Timestamp
+    if (ok) {
+        data.timestamp = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
+    }
+
+    if (ok) {
+        secondaryFlightControl.upsertLast(data);
     }
     return ok;
 }
 
-inline bool SkyDollyCsvParser::importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept
+inline bool SkyDollyCsvParser::importAircraftHandleData(const CsvParser::Row &row, AircraftHandle &aircraftHandle) noexcept
 {
-    AircraftHandleData data;
-    int columnIndex = 0;
-    std::int64_t timestampDelta = 0;
-    bool ok {false};
-    for (const QByteArray &header : headers) {
+    AircraftHandleData data;;
+    bool ok {true};
 
-        if (columnIndex >= values.count()) {
-            // Less values than headers
-            ok = false;
-            break;
-        }
-
-        int intValue;
-        if (header == SimVar::GearHandlePosition) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.gearHandlePosition = intValue == 1 ? true : false;
-            }
-        } else if (header == SimVar::BrakeLeftPosition) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.brakeLeftPosition = intValue;
-            }
-        } else if (header == SimVar::BrakeRightPosition) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.brakeRightPosition = intValue;
-            }
-        } else if (header == SimVar::WaterRudderHandlePosition) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.waterRudderHandlePosition = intValue;
-            }
-        } else if (header == SimVar::TailhookPosition) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.tailhookPosition = intValue;
-            }
-        } else if (header == SimVar::CanopyOpen) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.canopyOpen = intValue;
-            }
-        } else if (header == SimVar::FoldingWingLeftPercent) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.leftWingFolding = intValue;
-            }
-        } else if (header == SimVar::FoldingWingRightPercent) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.rightWingFolding = intValue;
-            }
-        } else if (header == SimVar::SmokeEnable) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.smokeEnabled = intValue == 1 ? true : false;
-            }
-            // Timestamp
-        } else if (header == SimVar::Timestamp) {
-            ok = importTimestamp(values, columnIndex, firstRow, data.timestamp, timestampDelta);
-        } else {
-            ok = true;
-        }
-
-        if (ok) {
-            // Next value
-            ++columnIndex;
-        } else {
-            // Parse error
-            break;
-        }
-
+    data.gearHandlePosition = row.at(Enum::underly(::Index::GearHandlePosition)).toInt(&ok) == 1 ? true : false;
+    if (ok) {
+        data.brakeLeftPosition = row.at(Enum::underly(::Index::BrakeLeftPosition)).toInt(&ok);
     }
     if (ok) {
-        aircraftHandle.upsertLast(std::move(data));
+        data.brakeRightPosition = row.at(Enum::underly(::Index::BrakeRightPosition)).toInt(&ok);
+    }
+    if (ok) {
+        data.waterRudderHandlePosition = row.at(Enum::underly(::Index::WaterRudderHandlePosition)).toInt(&ok);
+    }
+    if (ok) {
+        data.tailhookPosition = row.at(Enum::underly(::Index::TailhookPosition)).toInt(&ok);
+    }
+    if (ok) {
+        data.canopyOpen = row.at(Enum::underly(::Index::CanopyOpen)).toInt(&ok);
+    }
+    if (ok) {
+        data.leftWingFolding = row.at(Enum::underly(::Index::FoldingWingLeftPercent)).toInt(&ok);
+    }
+    if (ok) {
+        data.rightWingFolding = row.at(Enum::underly(::Index::FoldingWingRightPercent)).toInt(&ok);
+    }
+    if (ok) {
+        data.smokeEnabled = row.at(Enum::underly(::Index::SmokeEnable)).toInt(&ok) == 1 ? true : false;
+    }
+    // Timestamp
+    if (ok) {
+        data.timestamp = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
+    }
+
+    if (ok) {
+        aircraftHandle.upsertLast(data);
     }
     return ok;
 }
 
-inline bool SkyDollyCsvParser::importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept
+inline bool SkyDollyCsvParser::importLightData(const CsvParser::Row &row, Light &light) noexcept
 {
     LightData data;
-    int columnIndex = 0;
-    std::int64_t timestampDelta = 0;
-    bool ok {false};
-    for (const QByteArray &header : headers) {
-
-        if (columnIndex >= values.count()) {
-            // Less values than headers
-            ok = false;
-            break;
-        }
-
-        int intValue;
-        if (header == SimVar::LightStates) {
-            intValue = values.at(columnIndex).toInt(&ok);
-            if (ok) {
-                data.lightStates = static_cast<SimType::LightStates>(intValue);
-            }
-            // Timestamp
-        } else if (header == SimVar::Timestamp) {
-            ok = importTimestamp(values, columnIndex, firstRow, data.timestamp, timestampDelta);
-        } else {
-            ok = true;
-        }
-
-        if (ok) {
-            // Next value
-            ++columnIndex;
-        } else {
-            // Parse error
-            break;
-        }
-
-    }
-    if (ok) {
-        light.upsertLast(std::move(data));
-    }
-    return ok;
-}
-
-inline bool SkyDollyCsvParser::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
-{
     bool ok {true};
-    timestamp = values.at(columnIndex).toLongLong(&ok);
+
+    data.lightStates = static_cast<SimType::LightStates>(row.at(Enum::underly(::Index::LightStates)).toInt(&ok));
+    // Timestamp
     if (ok) {
-        if (!firstRow) {
-            timestamp += timestampDelta;
-        } else {
-            // The first timestamp must be 0, so shift all timestamps by
-            // the timestamp delta, derived from the first timestamp
-            // (which is usually 0 already)
-            timestampDelta = -timestamp;
-            timestamp = 0.0;
-        }
+        data.timestamp = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
+    }
+
+    if (ok) {
+        light.upsertLast(data);
     }
     return ok;
 }

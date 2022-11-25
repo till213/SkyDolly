@@ -64,9 +64,9 @@ public:
         {};
 
         Vertex(const Vertex &rhs) = delete;
-        Vertex(Vertex &&rhs) = default;
+        Vertex(Vertex &&rhs) noexcept = default;
         Vertex &operator=(const Vertex &rhs) = delete;
-        Vertex &operator=(Vertex &&rhs) = default;
+        Vertex &operator=(Vertex &&rhs) noexcept = default;
         ~Vertex() = default;
 
         T id;

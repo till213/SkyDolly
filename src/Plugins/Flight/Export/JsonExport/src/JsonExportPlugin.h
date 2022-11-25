@@ -60,8 +60,8 @@ protected:
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
     bool hasMultiAircraftSupport() const noexcept override;
-    bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
-    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
+    bool exportFlight(const Flight &flight, QIODevice &io) const noexcept override;
+    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept override;
 
 private:
     const std::unique_ptr<JsonExportPluginPrivate> d;

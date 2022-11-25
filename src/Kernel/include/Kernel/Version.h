@@ -71,9 +71,9 @@ public:
 
     Version() noexcept;
     Version(const Version &rhs) = delete;
-    Version(Version &&rhs);
+    Version(Version &&rhs) noexcept;
     Version &operator=(const Version &rhs) = delete;
-    Version &operator=(Version &&rhs);
+    Version &operator=(Version &&rhs) noexcept;
     ~Version();
 
     void fromString(QStringView version) noexcept;

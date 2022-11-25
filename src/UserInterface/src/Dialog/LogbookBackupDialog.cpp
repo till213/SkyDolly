@@ -28,26 +28,26 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QMessageBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/PersistenceManager.h>
+#include <Persistence/PersistedEnumerationItem.h>
+#include <Persistence/Service/EnumerationService.h>
 #include <Persistence/Metadata.h>
+#include <Widget/EnumerationComboBox.h>
 #include "LogbookBackupDialog.h"
 #include "ui_LogbookBackupDialog.h"
 
 struct LogbookBackupDialogPrivate
 {
-    LogbookBackupDialogPrivate()
-        : databaseService(std::make_unique<DatabaseService>())
-    {}
+    std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>()};
+    std::int64_t originalBackupPeriodId;
 
-    std::unique_ptr<DatabaseService> databaseService;
-    QString originalBackupPeriodIntlId;
+    const std::int64_t BackupPeriodNeverId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNeverSymId).id()};
+    const std::int64_t BackupPeriodNowId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNowSymId).id()};
+    const std::int64_t BackupPeriodNextTimeId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNextTimeSymId).id()};
 };
 
 // PUBLIC
@@ -65,21 +65,13 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
     bool ok {true};
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
-        d->originalBackupPeriodIntlId = metadata.backupPeriodSymId;
+        d->originalBackupPeriodId = metadata.backupPeriodId;
     } else {
-        d->originalBackupPeriodIntlId = Const::BackupNeverSymId;
+        d->originalBackupPeriodId = d->BackupPeriodNeverId;
     }
-#ifdef DEBUG
-    qDebug() << "LogbookBackupDialog::LogbookBackupDialog: CREATED";
-#endif
 }
 
-LogbookBackupDialog::~LogbookBackupDialog()
-{
-#ifdef DEBUG
-    qDebug() << "LogbookBackupDialog::~LogbookBackupDialog: DELETED";
-#endif
-}
+LogbookBackupDialog::~LogbookBackupDialog() = default;
 
 // PUBLIC SLOTS
 
@@ -91,9 +83,12 @@ void LogbookBackupDialog::accept() noexcept
     bool ok = d->databaseService->setBackupDirectoryPath(ui->backupDirectoryLineEdit->text());
 
     // First update the backup period, as this influences...
-    const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
-    if (ok && backupPeriodIntlId != Const::BackupNowSymId) {
-        ok = d->databaseService->setBackupPeriod(backupPeriodIntlId);
+    const std::int64_t backupPeriodId = ui->backupPeriodComboBox->getCurrentId();
+    if (ok && backupPeriodId != d->BackupPeriodNowId) {
+        ok = d->databaseService->setBackupPeriod(backupPeriodId);
+    } else {
+        // Only do the backup now, but afterwards never
+        d->databaseService->setBackupPeriod(d->BackupPeriodNeverId);
     }
 
     // ... the next backup date which is set upon successful backup
@@ -111,14 +106,17 @@ void LogbookBackupDialog::reject() noexcept
    QDialog::reject();
 
    // First update the backup period in case it has been changed...
-   const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
-   if (backupPeriodIntlId != d->originalBackupPeriodIntlId) {
+   const std::int64_t backupPeriodId = ui->backupPeriodComboBox->getCurrentId();
+   if (backupPeriodId != d->originalBackupPeriodId) {
        // ... as this influences...
-       if (backupPeriodIntlId != Const::BackupNowSymId) {
-           d->databaseService->setBackupPeriod(backupPeriodIntlId);
-           // ... the next backup date
-           d->databaseService->updateBackupDate();
+       if (backupPeriodId != d->BackupPeriodNowId) {
+           d->databaseService->setBackupPeriod(backupPeriodId);
+       } else {
+           // Skip this backup, and also afterwards
+           d->databaseService->setBackupPeriod(d->BackupPeriodNeverId);
        }
+       // ... the next backup date
+       d->databaseService->updateBackupDate();
    }
 }
 
@@ -136,6 +134,12 @@ void LogbookBackupDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
+    EnumerationComboBox::IgnoredIds ignoredIds;
+    ignoredIds.insert(d->BackupPeriodNeverId);
+    ignoredIds.insert(d->BackupPeriodNextTimeId);
+    ui->backupPeriodComboBox->setIgnoredIds(ignoredIds);
+    ui->backupPeriodComboBox->setEnumerationName(EnumerationService::BackupPeriod);
+
     // Transfer ownership to the buttonBox
     QPushButton *backupButton = ui->buttonBox->addButton(tr("&Backup"), QDialogButtonBox::AcceptRole);
     backupButton->setDefault(true);
@@ -151,21 +155,7 @@ void LogbookBackupDialog::updateUi() noexcept
         // Backup folder
         const QString backupDirectoryPath = PersistenceManager::createBackupPathIfNotExists(metadata.backupDirectoryPath);
         ui->backupDirectoryLineEdit->setText(QDir::toNativeSeparators(backupDirectoryPath));
-
-        // Backup period
-        if (metadata.backupPeriodSymId == Const::BackupNeverSymId) {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));
-        } else if (metadata.backupPeriodSymId == Const::BackupMonthlySymId) {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Monthly));
-        } else if (metadata.backupPeriodSymId == Const::BackupWeeklySymId) {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Weekly));
-        } else if (metadata.backupPeriodSymId == Const::BackupDailySymId) {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Daily));
-        } else if (metadata.backupPeriodSymId == Const::BackupAlwaysSymId) {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Always));
-        } else {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));
-        }
+        ui->backupPeriodComboBox->setCurrentId(metadata.backupPeriodId);
     }
 }
 

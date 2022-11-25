@@ -161,7 +161,7 @@ namespace SampleRate
         if (sampleRateValue != AutoValue) {
             return static_cast<int>(1000.0 / sampleRateValue);
         } else {
-            return 1000.0 / DefaultAutoSampleRate;
+            return static_cast<int>(1000.0 / DefaultAutoSampleRate);
         }
     }
 

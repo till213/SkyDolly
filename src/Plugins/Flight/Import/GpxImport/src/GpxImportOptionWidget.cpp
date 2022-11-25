@@ -93,13 +93,13 @@ void GpxImportOptionWidget::frenchConnection() noexcept
 
 void GpxImportOptionWidget::initUi() noexcept
 {
-    ui->waypointSelectionComboBox->addItem(tr("Waypoint (<wpt>)"), Enum::toUnderlyingType(GpxImportSettings::GPXElement::Waypoint));
-    ui->waypointSelectionComboBox->addItem(tr("Route (<rte>)"), Enum::toUnderlyingType(GpxImportSettings::GPXElement::Route));
-    ui->waypointSelectionComboBox->addItem(tr("Track (<trk>)"), Enum::toUnderlyingType(GpxImportSettings::GPXElement::Track));
+    ui->waypointSelectionComboBox->addItem(tr("Waypoint (<wpt>)"), Enum::underly(GpxImportSettings::GPXElement::Waypoint));
+    ui->waypointSelectionComboBox->addItem(tr("Route (<rte>)"), Enum::underly(GpxImportSettings::GPXElement::Route));
+    ui->waypointSelectionComboBox->addItem(tr("Track (<trk>)"), Enum::underly(GpxImportSettings::GPXElement::Track));
 
-    ui->positionSelectionComboBox->addItem(tr("Waypoint (<wpt>)"), Enum::toUnderlyingType(GpxImportSettings::GPXElement::Waypoint));
-    ui->positionSelectionComboBox->addItem(tr("Route (<rte>)"), Enum::toUnderlyingType(GpxImportSettings::GPXElement::Route));
-    ui->positionSelectionComboBox->addItem(tr("Track (<trk>)"), Enum::toUnderlyingType(GpxImportSettings::GPXElement::Track));
+    ui->positionSelectionComboBox->addItem(tr("Waypoint (<wpt>)"), Enum::underly(GpxImportSettings::GPXElement::Waypoint));
+    ui->positionSelectionComboBox->addItem(tr("Route (<rte>)"), Enum::underly(GpxImportSettings::GPXElement::Route));
+    ui->positionSelectionComboBox->addItem(tr("Track (<trk>)"), Enum::underly(GpxImportSettings::GPXElement::Track));
 
     ui->defaultAltitudeSpinBox->setRange(0, ::MaximumAltitude);
     ui->defaultAltitudeSpinBox->setSuffix(tr(" feet"));

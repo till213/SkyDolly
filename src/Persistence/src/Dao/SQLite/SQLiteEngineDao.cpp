@@ -48,11 +48,11 @@ namespace
 
 // PUBLIC
 
-SQLiteEngineDao::SQLiteEngineDao(SQLiteEngineDao &&rhs) = default;
-SQLiteEngineDao &SQLiteEngineDao::operator=(SQLiteEngineDao &&rhs) = default;
+SQLiteEngineDao::SQLiteEngineDao(SQLiteEngineDao &&rhs) noexcept = default;
+SQLiteEngineDao &SQLiteEngineDao::operator=(SQLiteEngineDao &&rhs) noexcept = default;
 SQLiteEngineDao::~SQLiteEngineDao() = default;
 
-bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data)  noexcept
+bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data) noexcept
 {
     QSqlQuery query;
     query.prepare(

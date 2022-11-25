@@ -26,6 +26,7 @@
 #define DATABASESERVICE_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 
@@ -43,14 +44,14 @@ class PERSISTENCE_API DatabaseService
 public:
     DatabaseService() noexcept;
     DatabaseService(const DatabaseService &rhs) = delete;
-    DatabaseService(DatabaseService &&rhs);
+    DatabaseService(DatabaseService &&rhs) noexcept;
     DatabaseService &operator=(const DatabaseService &rhs) = delete;
-    DatabaseService &operator=(DatabaseService &&rhs);
+    DatabaseService &operator=(DatabaseService &&rhs) noexcept;
     ~DatabaseService();
 
     bool backup() noexcept;
 
-    bool setBackupPeriod(const QString &backupPeriodIntlId) noexcept;
+    bool setBackupPeriod(std::int64_t backupPeriodId) noexcept;
     bool setNextBackupDate(const QDateTime &date) noexcept;
     bool updateBackupDate() noexcept;
     bool setBackupDirectoryPath(const QString &backupFolderPath) noexcept;

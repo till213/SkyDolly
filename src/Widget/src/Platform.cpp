@@ -48,7 +48,7 @@ namespace Bright {
 inline bool Platform::isDarkModeEnabled() noexcept
 {
     const QPalette palette = QApplication::palette();
-    const QColor windowColor = palette.color(QPalette::Window);
+    const QColor &windowColor = palette.color(QPalette::Window);
     return windowColor.value() < DarkModeValueThreshold;
 }
 

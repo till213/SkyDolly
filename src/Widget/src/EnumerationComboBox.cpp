@@ -23,11 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 
 #include <QComboBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Model/Enumeration.h>
 #include <Persistence/Service/EnumerationService.h>
@@ -35,31 +33,41 @@
 
 struct EnumerationComboBoxPrivate
 {
-    EnumerationComboBoxPrivate(QString enumerationName)
-        : enumeration(enumerationName)
+    EnumerationComboBoxPrivate(QString enumerationName = QString())
+        : enumeration(std::move(enumerationName))
     {}
 
     Enumeration enumeration;
     EnumerationService enumerationService;
+    EnumerationComboBox::IgnoredIds ignoredIds;
 };
 
 // PUBLIC
 
 EnumerationComboBox::EnumerationComboBox(QString enumerationName, QWidget *parent) noexcept
-    : QComboBox(parent),
-      d(std::make_unique<EnumerationComboBoxPrivate>(enumerationName))
+    : EnumerationComboBox(parent)
+
 {
+    d->enumeration = {std::move(enumerationName)};
     initUi();
-#ifdef DEBUG
-    qDebug() << "EnumerationComboBox::EnumerationComboBox: CREATED, enumeration name:" << enumerationName;
-#endif
 }
 
-EnumerationComboBox::~ EnumerationComboBox() noexcept
+EnumerationComboBox::EnumerationComboBox(QWidget *parent) noexcept
+    : QComboBox(parent),
+      d(std::make_unique<EnumerationComboBoxPrivate>())
+{}
+
+EnumerationComboBox::~EnumerationComboBox() = default;
+
+QString EnumerationComboBox::getEnumerationName() const
 {
-#ifdef DEBUG
-    qDebug() << "EnumerationComboBox::~EnumerationComboBox: DELETED";
-#endif
+    return d->enumeration.getName();
+}
+
+void EnumerationComboBox::setEnumerationName(QString name) noexcept
+{
+    d->enumeration.setName(std::move(name));
+    initUi();
 }
 
 std::int64_t EnumerationComboBox::getCurrentId() const noexcept
@@ -77,6 +85,16 @@ void EnumerationComboBox::setCurrentId(std::int64_t id) noexcept
     }
 }
 
+EnumerationComboBox::IgnoredIds EnumerationComboBox::getIgnoredIds() const noexcept
+{
+    return d->ignoredIds;
+}
+
+void EnumerationComboBox::setIgnoredIds(IgnoredIds ignoredIds) noexcept
+{
+    d->ignoredIds = ignoredIds;
+}
+
 // PRIVATE
 
 void EnumerationComboBox::initUi() noexcept
@@ -86,7 +104,9 @@ void EnumerationComboBox::initUi() noexcept
     d->enumeration = d->enumerationService.getEnumerationByName(d->enumeration.getName(), &ok);
     if (ok)  {
         for (const auto &item : d->enumeration) {
-            addItem(item.name, QVariant::fromValue(item.id));
+            if (d->ignoredIds.find(item.id) == d->ignoredIds.cend()) {
+                addItem(item.name, QVariant::fromValue(item.id));
+            }
         }
     }
 }

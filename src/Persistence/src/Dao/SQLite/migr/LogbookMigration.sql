@@ -35,7 +35,7 @@ values (datetime('now'), 3);
 update metadata
 set app_version = '0.6.0';
 
-@migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create flight table", step_cnt = 1)
+@migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create flight table", step = 1)
 create table flight (
     id integer primary key,
     creation_date datetime default current_timestamp,
@@ -59,7 +59,7 @@ create table flight (
     end_zulu_sim_time datetime
 );
 
-@migr(id = "1fb17949-6c94-4bbf-98a2-ff54fe3a749f", descn = "Create aircraft table", step_cnt = 1)
+@migr(id = "1fb17949-6c94-4bbf-98a2-ff54fe3a749f", descn = "Create aircraft table", step = 1)
 create table aircraft (
     id integer primary key,
     flight_id integer not null,
@@ -81,7 +81,7 @@ create table aircraft (
 );
 create unique index aircraft_idx1 on aircraft (flight_id, seq_nr);
 
-@migr(id = "9b831594-f6c2-489c-906d-2de31bb9788b", descn = "Create position table", step_cnt = 1)
+@migr(id = "9b831594-f6c2-489c-906d-2de31bb9788b", descn = "Create position table", step = 1)
 create table position (
     aircraft_id integer not null,
     timestamp integer not null,
@@ -101,7 +101,7 @@ create table position (
     foreign key(aircraft_id) references aircraft(id)
 );
 
-@migr(id = "0f5e5cc3-8977-4de0-be15-104f3ab045aa", descn = "Create engine table", step_cnt = 1)
+@migr(id = "0f5e5cc3-8977-4de0-be15-104f3ab045aa", descn = "Create engine table", step = 1)
 create table engine (
     aircraft_id integer not null,
     timestamp integer not null,
@@ -133,7 +133,7 @@ create table engine (
     foreign key(aircraft_id) references aircraft(id)
 );
 
-@migr(id = "148779f2-44c5-4d8c-9c0a-06d6d8158655", descn = "Create primary flight controls table", step_cnt = 1)
+@migr(id = "148779f2-44c5-4d8c-9c0a-06d6d8158655", descn = "Create primary flight controls table", step = 1)
 create table primary_flight_control (
     aircraft_id integer not null,
     timestamp integer not null,
@@ -144,7 +144,7 @@ create table primary_flight_control (
     foreign key(aircraft_id) references aircraft(id)
 );
 
-@migr(id = "73f7c48a-53f4-42a7-ab1d-011266c8ead3", descn = "Create secondary flight controls table", step_cnt = 1)
+@migr(id = "73f7c48a-53f4-42a7-ab1d-011266c8ead3", descn = "Create secondary flight controls table", step = 1)
 create table secondary_flight_control (
     aircraft_id integer not null,
     timestamp integer not null,
@@ -158,7 +158,7 @@ create table secondary_flight_control (
     foreign key(aircraft_id) references aircraft(id)
 );
 
-@migr(id = "b9a56065-d6ac-4572-bba0-39f7ba8a3169", descn = "Create handles and levers table", step_cnt = 1)
+@migr(id = "b9a56065-d6ac-4572-bba0-39f7ba8a3169", descn = "Create handles and levers table", step = 1)
 create table handle (
     aircraft_id integer not null,
     timestamp integer not null,
@@ -174,7 +174,7 @@ create table handle (
     foreign key(aircraft_id) references aircraft(id)
 );
 
-@migr(id = "ae5cb680-41fa-40e8-8ea9-0777c3574bd4", descn = "Create lights table", step_cnt = 1)
+@migr(id = "ae5cb680-41fa-40e8-8ea9-0777c3574bd4", descn = "Create lights table", step = 1)
 create table light (
     aircraft_id integer not null,
     timestamp integer not null,
@@ -183,7 +183,7 @@ create table light (
     foreign key(aircraft_id) references aircraft(id)
 );
 
-@migr(id = "fb2a21ad-5b8d-4be0-ae94-33e63be2ef3a", descn = "Create waypoint table", step_cnt = 1)
+@migr(id = "fb2a21ad-5b8d-4be0-ae94-33e63be2ef3a", descn = "Create waypoint table", step = 1)
 create table waypoint (
     aircraft_id integer not null,
     timestamp integer not null,
@@ -262,7 +262,7 @@ set    general_engine_combustion1 = case when throttle_lever_position1 > 0 then 
 create index flight_idx1 on flight (title collate nocase);
 create index waypoint_idx1 on waypoint (ident collate nocase);
 
-@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Create new aircraft_type table", step_cnt = 10)
+@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Create new aircraft_type table", step = 10)
 create table aircraft_type (
     type text primary key,
     category text,
@@ -552,7 +552,7 @@ set smoke_enable = 0;
 update metadata
 set app_version = '0.8.0';
 
-@migr(id = "133820ce-d5e0-4563-8458-aed6604c3f64", descn = "Migrate flaps position from percent to position value", step_cnt = 1)
+@migr(id = "133820ce-d5e0-4563-8458-aed6604c3f64", descn = "Migrate flaps position from percent to position value", step = 1)
 update secondary_flight_control
 set leading_edge_flaps_left_percent = round((leading_edge_flaps_left_percent / 255.0) * 32767.0),
     leading_edge_flaps_right_percent = round((leading_edge_flaps_right_percent / 255.0) * 32767.0),
@@ -604,7 +604,7 @@ create unique index aircraft_idx1 on aircraft (flight_id, seq_nr);
 @migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Create case-insensitive index on type in aircraft table", step = 6)
 create index aircraft_idx2 on aircraft (type collate nocase);
 
-@migr(id = "50d25b69-7410-4777-9b17-1e16c4ea4867", descn = "Rename column flight.creation_date to creation_time", step_cnt = 1)
+@migr(id = "50d25b69-7410-4777-9b17-1e16c4ea4867", descn = "Rename column flight.creation_date to creation_time", step = 1)
 alter table flight rename creation_date to creation_time;
 
 @migr(id = "3813896d-82a4-4ae1-ad10-c349ea0df073", descn = "Add additional aircraft types from sim update 7", step = 1)
@@ -663,19 +663,72 @@ insert into aircraft_type values
 update metadata
 set app_version = '0.11.0';
 
-@migr(id = "00c67a6f-b124-4147-8c97-6f99d814e3cc", descn = "Rename column flight.wind_velocity to wind_speed", step_cnt = 1)
+@migr(id = "00c67a6f-b124-4147-8c97-6f99d814e3cc", descn = "Rename column flight.wind_velocity to wind_speed", step = 1)
 alter table flight rename column wind_velocity to wind_speed;
 
-@migr(id = "07cd96ff-e33f-45ca-a29d-2efdfe519409", descn = "Rename column enum_backup_period.intl_id to sym_id", step_cnt = 1)
+@migr(id = "07cd96ff-e33f-45ca-a29d-2efdfe519409", descn = "Rename column enum_backup_period.intl_id to sym_id", step = 1)
 alter table enum_backup_period rename intl_id to sym_id;
 
-@migr(id = "38c50df7-836c-4b33-b8cc-bbcfbe4aaab4", descn = "Rename column position.heading to true_heading", step_cnt = 1)
+@migr(id = "38c50df7-836c-4b33-b8cc-bbcfbe4aaab4", descn = "Rename column position.heading to true_heading", step = 1)
 alter table position rename heading to true_heading;
 
 @migr(id = "c94c121e-3d93-44e4-a747-6db2b5e3b45b", descn = "Update application version to 0.12", step = 1)
 update metadata
 set app_version = '0.12.0';
 
-@migr(id = "55a04d46-fc38-445a-8967-f84c96aa41bb", descn = "Update application version to 0.13", step = 1)
+@migr(id = "b0b79e7e-9086-42bc-b9ee-45e1e729309a", descn = "Insert next time into backup period", step_cnt = 2)
+insert into enum_backup_period (sym_id, name, desc)
+values
+  ('NEXT', 'Next time, when exiting Sky Dolly', 'The backup is created the next time Sky Dolly is exited.');
+
+@migr(id = "b0b79e7e-9086-42bc-b9ee-45e1e729309a", descn = "Update backup period names", step = 2)
+update enum_backup_period
+set    name = 'Only this time'
+where  sym_id = 'NOW';
+update enum_backup_period
+set    name = 'Once a month, when exiting Sky Dolly'
+where  sym_id = 'MONTH';
+update enum_backup_period
+set    name = 'Once a week, when exiting Sky Dolly'
+where  sym_id = 'WEEK';
+update enum_backup_period
+set    name = 'Daily, when exiting Sky Dolly'
+where  sym_id = 'DAY';
+update enum_backup_period
+set    name = 'Always, when exiting Sky Dolly'
+where  sym_id = 'ALWAYS';
+
+@migr(id = "4f5ec557-36b4-4dce-8578-2cf645c4d2e2", descn = "Renumerate backup periods", step_cnt = 2)
+update enum_backup_period
+set    id = 99
+where  sym_id = 'NEVER';
+update enum_backup_period
+set    id = 6
+where  sym_id = 'ALWAYS';
+update enum_backup_period
+set    id = 5
+where  sym_id = 'DAY';
+update enum_backup_period
+set    id = 4
+where  sym_id = 'WEEK';
+update enum_backup_period
+set    id = 3
+where  sym_id = 'MONTH';
+update enum_backup_period
+set    id = 2
+where  sym_id = 'NEVER';
+
+@migr(id = "0ec16dd8-c7b2-47fc-8d1f-bf80fb8dfb9e", descn = "Update reference to backup period", step = 2)
+update metadata
+set    backup_period_id = case backup_period_id
+                          when 1 then 1
+                          when 2 then 3
+                          when 3 then 4
+                          when 4 then 5
+                          when 5 then 6
+                          when 6 then 2
+                          end;
+
+@migr(id = "0ec16dd8-c7b2-47fc-8d1f-bf80fb8dfb9e", descn = "Update application version to 0.13", step = 1)
 update metadata
 set app_version = '0.13.0';

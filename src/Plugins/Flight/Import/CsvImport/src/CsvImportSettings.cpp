@@ -86,7 +86,7 @@ void CsvImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     Settings::KeyValue keyValue;
 
     keyValue.first = ::FormatKey;
-    keyValue.second = Enum::toUnderlyingType(d->format);
+    keyValue.second = Enum::underly(d->format);
     keyValues.push_back(keyValue);
 }
 
@@ -95,7 +95,7 @@ void CsvImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     Settings::KeyValue keyValue;
 
     keyValue.first = ::FormatKey;
-    keyValue.second = Enum::toUnderlyingType(::DefaultFormat);
+    keyValue.second = Enum::underly(::DefaultFormat);
     keysWithDefaults.push_back(keyValue);
 }
 

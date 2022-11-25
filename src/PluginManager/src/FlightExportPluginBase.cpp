@@ -59,7 +59,7 @@ FlightExportPluginBase::FlightExportPluginBase() noexcept
 
 FlightExportPluginBase::~FlightExportPluginBase() = default;
 
-bool FlightExportPluginBase::exportFlight(const Flight &flight) noexcept
+bool FlightExportPluginBase::exportFlight(const Flight &flight) const noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     FlightExportPluginBaseSettings &baseSettings = getPluginSettings();
@@ -108,7 +108,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight) noexcept
 
 // PRIVATE
 
-bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &filePath) noexcept
+bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &filePath) const noexcept
 {
     d->exportedFilePaths.clear();
     QFile file(filePath);
@@ -164,7 +164,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &f
     return ok;
 }
 
-bool FlightExportPluginBase::exportAllAircraft(const Flight &flight, const QString &filePath) noexcept
+bool FlightExportPluginBase::exportAllAircraft(const Flight &flight, const QString &filePath) const noexcept
 {
     bool ok {true};
     bool replaceAll {false};
@@ -222,7 +222,7 @@ void FlightExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &key
     getPluginSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
-void FlightExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void FlightExportPluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }

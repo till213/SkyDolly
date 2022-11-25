@@ -100,19 +100,19 @@ void KmlExportOptionWidget::frenchConnection() noexcept
 
 void KmlExportOptionWidget::initUi() noexcept
 {
-    ui->colorStyleComboBox->addItem(tr("One color"), Enum::toUnderlyingType(KmlExportSettings::ColorStyle::OneColor));
-    ui->colorStyleComboBox->addItem(tr("One color per engine type"), Enum::toUnderlyingType(KmlExportSettings::ColorStyle::OneColorPerEngineType));
-    ui->colorStyleComboBox->addItem(tr("Color ramp"), Enum::toUnderlyingType(KmlExportSettings::ColorStyle::ColorRamp));
-    ui->colorStyleComboBox->addItem(tr("Color ramp per engine type"), Enum::toUnderlyingType(KmlExportSettings::ColorStyle::ColorRampPerEngineType));
+    ui->colorStyleComboBox->addItem(tr("One color"), Enum::underly(KmlExportSettings::ColorStyle::OneColor));
+    ui->colorStyleComboBox->addItem(tr("One color per engine type"), Enum::underly(KmlExportSettings::ColorStyle::OneColorPerEngineType));
+    ui->colorStyleComboBox->addItem(tr("Color ramp"), Enum::underly(KmlExportSettings::ColorStyle::ColorRamp));
+    ui->colorStyleComboBox->addItem(tr("Color ramp per engine type"), Enum::underly(KmlExportSettings::ColorStyle::ColorRampPerEngineType));
 
-    d->colorButtonGroup->addButton(ui->allStartColorToolButton, Enum::toUnderlyingType(ColorButton::AllStartColor));
-    d->colorButtonGroup->addButton(ui->allEndColorToolButton, Enum::toUnderlyingType(ColorButton::AllEndColor));
-    d->colorButtonGroup->addButton(ui->jetStartColorToolButton, Enum::toUnderlyingType(ColorButton::JetStartColor));
-    d->colorButtonGroup->addButton(ui->jetEndColorToolButton, Enum::toUnderlyingType(ColorButton::JetEndColor));
-    d->colorButtonGroup->addButton(ui->turbopropStartColorToolButton, Enum::toUnderlyingType(ColorButton::TurbopropStartColor));
-    d->colorButtonGroup->addButton(ui->turbopropEndColorToolButton, Enum::toUnderlyingType(ColorButton::TurbopropEndColor));
-    d->colorButtonGroup->addButton(ui->pistonStartColorToolButton, Enum::toUnderlyingType(ColorButton::PistonStartColor));
-    d->colorButtonGroup->addButton(ui->pistonEndColorToolButton, Enum::toUnderlyingType(ColorButton::PistonEndColor));
+    d->colorButtonGroup->addButton(ui->allStartColorToolButton, Enum::underly(ColorButton::AllStartColor));
+    d->colorButtonGroup->addButton(ui->allEndColorToolButton, Enum::underly(ColorButton::AllEndColor));
+    d->colorButtonGroup->addButton(ui->jetStartColorToolButton, Enum::underly(ColorButton::JetStartColor));
+    d->colorButtonGroup->addButton(ui->jetEndColorToolButton, Enum::underly(ColorButton::JetEndColor));
+    d->colorButtonGroup->addButton(ui->turbopropStartColorToolButton, Enum::underly(ColorButton::TurbopropStartColor));
+    d->colorButtonGroup->addButton(ui->turbopropEndColorToolButton, Enum::underly(ColorButton::TurbopropEndColor));
+    d->colorButtonGroup->addButton(ui->pistonStartColorToolButton, Enum::underly(ColorButton::PistonStartColor));
+    d->colorButtonGroup->addButton(ui->pistonEndColorToolButton, Enum::underly(ColorButton::PistonEndColor));
 }
 
 // PRIVATE SLOTS

@@ -43,7 +43,7 @@ public:
     PositionAndAttitudeCsvWriter(const CsvExportSettings &pluginSettings) noexcept;
     ~PositionAndAttitudeCsvWriter() noexcept override;
 
-    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
+    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) const noexcept override;
 
 private:
     const std::unique_ptr<PositionAndAttitudeCsvWriterPrivate> d;

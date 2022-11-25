@@ -179,7 +179,7 @@ void CsvParserTest::parseCsv() noexcept
         QCOMPARE(columns.size(), expectedColumns.size());
         int column = 0;
         for (const auto &value : columns) {
-            const QString expectedValue = expectedColumns.at(column);
+            const QString &expectedValue = expectedColumns.at(column);
             QCOMPARE(value, expectedValue);
             ++column;
         }

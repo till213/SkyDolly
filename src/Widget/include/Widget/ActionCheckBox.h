@@ -50,7 +50,7 @@ class WIDGET_API ActionCheckBox : public QCheckBox
     Q_OBJECT
 public:
     explicit ActionCheckBox(bool withText, QWidget *parent = nullptr) noexcept;
-    ~ActionCheckBox() noexcept override;
+    ~ActionCheckBox() override;
 
     /*!
      * Sets the action to be associated with this radio button. This radio button is

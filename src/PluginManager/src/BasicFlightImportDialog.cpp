@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 
 #include <QDialog>
 #include <QString>
@@ -31,7 +32,6 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QCompleter>
-#include <utility>
 
 #include <Kernel/Settings.h>
 #include <Model/Aircraft.h>

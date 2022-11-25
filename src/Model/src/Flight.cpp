@@ -24,6 +24,7 @@
  */
 #include <algorithm>
 #include <memory>
+#include <utility>
 #include <vector>
 #include <cstdint>
 #include <cinttypes>
@@ -239,7 +240,7 @@ const FlightCondition &Flight::getFlightCondition() const noexcept
 
 void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
 {
-    d->flightCondition = flightCondition;
+    d->flightCondition = std::move(flightCondition);
     emit flightConditionChanged();
 }
 

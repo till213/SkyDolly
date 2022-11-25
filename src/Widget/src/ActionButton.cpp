@@ -29,7 +29,7 @@
 
 struct ActionButtonPrivate
 {
-    ActionButtonPrivate(ActionButton::Capitalisation theCapitalisation)  noexcept
+    ActionButtonPrivate(ActionButton::Capitalisation theCapitalisation) noexcept
         : capitalisation(theCapitalisation)
     {}
 
@@ -47,8 +47,7 @@ ActionButton::ActionButton(QWidget *parent, Capitalisation capitalisation) noexc
     setFocusPolicy(Qt::FocusPolicy::NoFocus);
 }
 
-ActionButton::~ActionButton() noexcept
-{}
+ActionButton::~ActionButton() = default;
 
 void ActionButton::setAction(const QAction *action) noexcept
 {

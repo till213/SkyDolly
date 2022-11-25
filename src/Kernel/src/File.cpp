@@ -43,7 +43,7 @@ QString File::ensureSuffix(QStringView filePath, QStringView suffix) noexcept
     return filePathWithSuffix;
 }
 
-QString File::getSequenceFilePath(QString filePath, int n) noexcept
+QString File::getSequenceFilePath(const QString &filePath, int n) noexcept
 {
     const QFileInfo fileInfo {filePath};
     const QString baseName = fileInfo.baseName();

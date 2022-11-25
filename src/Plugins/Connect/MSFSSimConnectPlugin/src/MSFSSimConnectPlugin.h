@@ -57,7 +57,8 @@ protected:
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
-    bool onFreezeUserAircraft(bool enable) noexcept override;
+    bool onFreezeUserAircraft(bool enable) const noexcept override;
+    bool onSimulationEvent(SimulationEvent event) const noexcept override;
 
     bool onStartRecording() noexcept override;
     void onRecordingPaused(bool paused ) noexcept override;
@@ -92,9 +93,9 @@ private:
     bool reconnectWithSim() noexcept;
     bool close() noexcept;
     void setupRequestData() noexcept;
-    bool setAircraftFrozen(::SIMCONNECT_OBJECT_ID objectId, bool enable) noexcept;
+    bool freezeAircraft(::SIMCONNECT_OBJECT_ID objectId, bool enable) const noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
-    inline bool updateAndSendEngineStartEvent(std::int64_t objectId, const EngineData &engineData, TimeVariableData::Access access) noexcept;
+    inline bool updateAndSendEngineEvent(std::int64_t objectId, const EngineData &engineData, TimeVariableData::Access access) noexcept;
     void replay() noexcept;
     void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;

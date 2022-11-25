@@ -57,8 +57,8 @@ AircraftService::AircraftService() noexcept
     : d(std::make_unique<AircraftServicePrivate>())
 {}
 
-AircraftService::AircraftService(AircraftService &&rhs) = default;
-AircraftService &AircraftService::operator=(AircraftService &&rhs) = default;
+AircraftService::AircraftService(AircraftService &&rhs) noexcept = default;
+AircraftService &AircraftService::operator=(AircraftService &&rhs) noexcept = default;
 AircraftService::~AircraftService() = default;
 
 bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept

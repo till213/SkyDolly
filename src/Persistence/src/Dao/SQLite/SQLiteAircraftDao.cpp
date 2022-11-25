@@ -104,11 +104,11 @@ SQLiteAircraftDao::SQLiteAircraftDao() noexcept
     : d(std::make_unique<SQLiteAircraftDaoPrivate>())
 {}
 
-SQLiteAircraftDao::SQLiteAircraftDao(SQLiteAircraftDao &&rhs) = default;
-SQLiteAircraftDao &SQLiteAircraftDao::operator=(SQLiteAircraftDao &&rhs) = default;
+SQLiteAircraftDao::SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept = default;
+SQLiteAircraftDao &SQLiteAircraftDao::operator=(SQLiteAircraftDao &&rhs) noexcept = default;
 SQLiteAircraftDao::~SQLiteAircraftDao() = default;
 
-bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft)  noexcept
+bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept
 {
     QSqlQuery query;
     query.prepare(

@@ -72,17 +72,6 @@ namespace
     constexpr int InvalidRow {-1};
     constexpr int InvalidColumn {-1};
 
-    constexpr double DefaultAltitude {5000};
-    // Dead Sea Depression - The lowest point on Earth: -413 meters
-    // https://geology.com/below-sea-level/
-    constexpr double MinimumAltitude {-1500};
-    // https://www.reddit.com/r/flightsim/comments/ibstui/turns_out_the_maximum_altitude_in_fs2020_275000/
-    constexpr double MaximumAltitude {275000};
-    constexpr int DefaultIndicatedAirspeed {120};
-    constexpr int MinimumIndicatedAirspeed {0};
-    // NASA X-43 (Mach 9.6)
-    // https://internationalaviationhq.com/2020/06/27/17-fastest-aircraft/
-    constexpr int MaximumIndicatedAirspeed {6350};
     constexpr bool DefaultOnGround {false};
 
     constexpr double DefaultPitch {0.0};
@@ -116,6 +105,8 @@ struct LocationWidgetPrivate
     std::unique_ptr<EnumerationItemDelegate> locationCategoryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
     std::unique_ptr<EnumerationItemDelegate> countryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::Country)};
 
+    const std::int64_t SystemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
+
     Unit unit;
     // Columns are only auto-resized the first time the table is loaded
     // After that manual column resizes are kept
@@ -136,6 +127,7 @@ struct LocationWidgetPrivate
     static inline int indicatedAirspeedColumn {InvalidColumn};
     static inline int onGroundColumn {InvalidColumn};
     static inline int attributesColumn {InvalidColumn};
+    static inline int engineColumn {InvalidColumn};
 
     static inline Enumeration typeEnumeration;
     static inline Enumeration categoryEnumeration;
@@ -170,38 +162,28 @@ LocationWidget::~LocationWidget() noexcept
 void LocationWidget::addUserLocation(double latitude, double longitude)
 {
     Location location;
-    location.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymbolicId).id();
-    location.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymbolicId).id();
-    location.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymbolicId).id();
     location.latitude = latitude;
     location.longitude = longitude;
     location.altitude = ui->defaultAltitudeSpinBox->value();
     location.indicatedAirspeed = ui->defaultIndicatedAirspeedSpinBox->value();
     location.onGround = ui->defaultOnGroundCheckBox->isChecked();
-    if (d->locationService->store(location)) {
-        ui->locationTableWidget->blockSignals(true);
-        ui->locationTableWidget->setSortingEnabled(false);
-        const int row = ui->locationTableWidget->rowCount();
-        ui->locationTableWidget->insertRow(row);
-        updateLocationRow(location, row);
-        ui->locationTableWidget->blockSignals(false);
-        // Automatically select newly inserted item (make sure that signals are emitted
-        // again)
-        ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
-        ui->locationTableWidget->setSortingEnabled(true);
-    }
+    location.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
+    addLocation(location);
 }
 
 void LocationWidget::addLocation(Location newLocation)
 {
     if (newLocation.typeId == Const::InvalidId) {
-        newLocation.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymbolicId).id();
+        newLocation.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id();
     }
     if (newLocation.categoryId == Const::InvalidId) {
-        newLocation.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymbolicId).id();
+        newLocation.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id();
     }
     if (newLocation.countryId == Const::InvalidId) {
-        newLocation.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymbolicId).id();
+        newLocation.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id();
+    }
+    if (newLocation.engineEventId == Const::InvalidId) {
+        newLocation.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
     }
     Location location {newLocation};
     if (d->locationService->store(location)) {
@@ -210,8 +192,11 @@ void LocationWidget::addLocation(Location newLocation)
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->insertRow(rowCount);
         updateLocationRow(location, rowCount);
-        ui->locationTableWidget->setSortingEnabled(true);
         ui->locationTableWidget->blockSignals(false);
+        // Automatically select newly inserted item (make sure that signals are emitted
+        // again)
+        ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
+        ui->locationTableWidget->setSortingEnabled(true);
     }
 }
 
@@ -234,7 +219,7 @@ void LocationWidget::initUi() noexcept
         tr("ID"), tr("Title"), tr("Description"), tr("Type"), tr("Category"),
         tr("Country"), tr("Identifer"), tr("Position"), tr("Altitude"),
         tr("Pitch"), tr("Bank"), tr("True Heading"), tr("Indicated Airspeed"),
-        tr("On Ground"), tr("Attributes")
+        tr("On Ground"), tr("Attributes"), tr("Engine")
     };
     LocationWidgetPrivate::idColumn = headers.indexOf(tr("ID"));
     LocationWidgetPrivate::titleColumn = headers.indexOf(tr("Title"));
@@ -251,6 +236,7 @@ void LocationWidget::initUi() noexcept
     LocationWidgetPrivate::indicatedAirspeedColumn = headers.indexOf(tr("Indicated Airspeed"));
     LocationWidgetPrivate::onGroundColumn = headers.indexOf(tr("On Ground"));
     LocationWidgetPrivate::attributesColumn = headers.indexOf(tr("Attributes"));
+    LocationWidgetPrivate::engineColumn = headers.indexOf(tr("Engine"));
 
     ui->locationTableWidget->setColumnCount(headers.count());
     ui->locationTableWidget->setHorizontalHeaderLabels(headers);
@@ -268,6 +254,7 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::trueHeadingColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::indicatedAirspeedColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::attributesColumn, true);
+    ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::engineColumn, true);
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::categoryColumn, d->locationCategoryDelegate.get());
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::countryColumn, d->countryDelegate.get());
 
@@ -277,13 +264,17 @@ void LocationWidget::initUi() noexcept
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
 
-    ui->defaultAltitudeSpinBox->setMinimum(::MinimumAltitude);
-    ui->defaultAltitudeSpinBox->setMaximum(::MaximumAltitude);
-    ui->defaultAltitudeSpinBox->setValue(::DefaultAltitude);
-    ui->defaultIndicatedAirspeedSpinBox->setMinimum(::MinimumIndicatedAirspeed);
-    ui->defaultIndicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
-    ui->defaultIndicatedAirspeedSpinBox->setValue(::DefaultIndicatedAirspeed);
-    ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);
+    ui->defaultAltitudeSpinBox->setMinimum(Const::MinimumAltitude);
+    ui->defaultAltitudeSpinBox->setMaximum(Const::MaximumAltitude);
+    ui->defaultAltitudeSpinBox->setValue(Const::DefaultAltitude);
+    ui->defaultAltitudeSpinBox->setSuffix(tr(" feet"));
+    ui->defaultIndicatedAirspeedSpinBox->setMinimum(Const::MinimumIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setValue(Const::DefaultIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setSuffix(tr(" knots"));
+    ui->defaultEngineEventComboBox->setEnumerationName(EnumerationService::EngineEvent);
+    ui->defaultEngineEventComboBox->setCurrentId(PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id());
+    ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);    
 
     ui->pitchSpinBox->setMinimum(::MinimumPitch);
     ui->pitchSpinBox->setMaximum(::MaximumPitch);
@@ -294,9 +285,10 @@ void LocationWidget::initUi() noexcept
     ui->trueHeadingSpinBox->setMinimum(::MinimumHeading);
     ui->trueHeadingSpinBox->setMaximum(::MaximumHeading);
     ui->trueHeadingSpinBox->setSuffix("°");
-    ui->indicatedAirspeedSpinBox->setMinimum(::MinimumIndicatedAirspeed);
-    ui->indicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
+    ui->indicatedAirspeedSpinBox->setMinimum(Const::MinimumIndicatedAirspeed);
+    ui->indicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setSuffix(tr(" knots"));
+    ui->engineEventComboBox->setEnumerationName(EnumerationService::EngineEvent);
 
     const int infoGroupBoxHeight = ui->informationGroupBox->minimumHeight();
     ui->splitter->setSizes({height() - infoGroupBoxHeight, infoGroupBoxHeight});
@@ -349,6 +341,8 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::onHeadingChanged);
     connect(ui->indicatedAirspeedSpinBox, &QSpinBox::valueChanged,
             this, &LocationWidget::onIndicatedAirspeedChanged);
+    connect(ui->engineEventComboBox, &EnumerationComboBox::currentIndexChanged,
+            this, &LocationWidget::onEngineEventChanged);
 }
 
 void LocationWidget::updateInfoUi() noexcept
@@ -358,13 +352,14 @@ void LocationWidget::updateInfoUi() noexcept
     ui->bankSpinBox->blockSignals(true);
     ui->trueHeadingSpinBox->blockSignals(true);
     ui->indicatedAirspeedSpinBox->blockSignals(true);
+    ui->engineEventComboBox->blockSignals(true);
 
     const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
     bool readOnly {true};
     if (hasSelection) {
         const int selectedRow = getSelectedRow();
         QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::typeColumn);
-        readOnly = item->data(Qt::EditRole).toLongLong() == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id();
+        readOnly = item->data(Qt::EditRole).toLongLong() == d->SystemLocationTypeId;
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::descriptionColumn);
         ui->descriptionPlainTextEdit->setPlainText(item->text());
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::pitchColumn);
@@ -375,12 +370,15 @@ void LocationWidget::updateInfoUi() noexcept
         ui->trueHeadingSpinBox->setValue(item->text().toDouble());
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::indicatedAirspeedColumn);
         ui->indicatedAirspeedSpinBox->setValue(item->text().toInt());
+        item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::engineColumn);
+        ui->engineEventComboBox->setCurrentId(item->text().toLongLong());
     } else {
         ui->descriptionPlainTextEdit->clear();
         ui->pitchSpinBox->setValue(::DefaultPitch);
         ui->bankSpinBox->setValue(::DefaultBank);
         ui->trueHeadingSpinBox->setValue(::DefaultHeading);
         ui->indicatedAirspeedSpinBox->setValue(ui->defaultIndicatedAirspeedSpinBox->value());
+        ui->engineEventComboBox->setCurrentId(ui->defaultEngineEventComboBox->getCurrentId());
     }
 
     ui->descriptionPlainTextEdit->setReadOnly(readOnly);
@@ -394,6 +392,7 @@ void LocationWidget::updateInfoUi() noexcept
     ui->bankSpinBox->blockSignals(false);
     ui->trueHeadingSpinBox->blockSignals(false);
     ui->indicatedAirspeedSpinBox->blockSignals(false);
+    ui->engineEventComboBox->blockSignals(false);
 }
 
 void LocationWidget::updateLocationTable() noexcept
@@ -428,7 +427,7 @@ void LocationWidget::updateLocationTable() noexcept
 
 inline void LocationWidget::updateLocationRow(const Location &location, int row) noexcept
 {
-    const bool isSystemLocation {location.typeId == PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id()};
+    const bool isSystemLocation {location.typeId == d->SystemLocationTypeId};
     int column {0};
 
     // ID
@@ -552,7 +551,7 @@ inline void LocationWidget::updateLocationRow(const Location &location, int row)
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
-    // On Ground
+    // On ground
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setCheckState(location.onGround ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     if (isSystemLocation) {
@@ -567,6 +566,12 @@ inline void LocationWidget::updateLocationRow(const Location &location, int row)
     // Attributes
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::EditRole, QVariant::fromValue(location.attributes));
+    ui->locationTableWidget->setItem(row, column, newItem.release());
+    ++column;
+
+    // Engine event
+    newItem = std::make_unique<QTableWidgetItem>();
+    newItem->setData(Qt::EditRole, QVariant::fromValue(location.engineEventId));
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 }
@@ -628,6 +633,9 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::attributesColumn);
     location.attributes = item->data(Qt::EditRole).toLongLong();
 
+    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::engineColumn);
+    location.engineEventId = item->data(Qt::EditRole).toLongLong();
+
     return location;
 }
 
@@ -682,7 +690,7 @@ void LocationWidget::updateEditUi() noexcept
     if (hasSelection) {
         const int selectedRow = getSelectedRow();
         Location location =  getLocationByRow(selectedRow);
-        editableRow = location.typeId != PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymbolicId).id();
+        editableRow = location.typeId != PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id();
     }
     ui->deletePushButton->setEnabled(editableRow);
 }
@@ -834,6 +842,21 @@ void LocationWidget::onIndicatedAirspeedChanged(int value) noexcept
             ui->locationTableWidget->blockSignals(true);
             QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::indicatedAirspeedColumn);
             item->setData(Qt::EditRole, location.indicatedAirspeed);
+            ui->locationTableWidget->blockSignals(false);
+        }
+    }
+}
+
+void LocationWidget::onEngineEventChanged(int index) noexcept
+{
+    const int selectedRow = getSelectedRow();
+    if (selectedRow != ::InvalidRow) {
+        Location location = getLocationByRow(selectedRow);
+        location.engineEventId = ui->engineEventComboBox->getCurrentId();
+        if (d->locationService->update(location)) {
+            ui->locationTableWidget->blockSignals(true);
+            QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::engineColumn);
+            item->setData(Qt::EditRole, QVariant::fromValue(location.engineEventId));
             ui->locationTableWidget->blockSignals(false);
         }
     }

@@ -34,7 +34,7 @@ class Flight;
 class FlightExportIntf : public PluginIntf
 {
 public:
-    virtual bool exportFlight(const Flight &flight) noexcept = 0;
+    virtual bool exportFlight(const Flight &flight) const noexcept = 0;
 };
 
 #define FLIGHT_EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightExportInterface/1.0"

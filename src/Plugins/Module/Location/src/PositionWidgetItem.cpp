@@ -51,7 +51,7 @@ QVariant PositionWidgetItem::data(int role) const
         break;
     case Qt::EditRole:
     {
-        const QString editString = m_unit.formatCoordinates(m_latitude, m_longitude);
+        const QString editString = Unit::formatCoordinates(m_latitude, m_longitude);
         return QVariant::fromValue(editString);
         break;
     }
@@ -59,7 +59,7 @@ QVariant PositionWidgetItem::data(int role) const
         return QTableWidgetItem::data(role);
         break;
     }
-    return QVariant();
+    return {};
 }
 
 void PositionWidgetItem::setData(int role, const QVariant &value)

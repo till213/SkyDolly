@@ -48,9 +48,9 @@ public:
 
     Aircraft() noexcept;
     Aircraft(const Aircraft &rhs) = delete;
-    Aircraft(Aircraft &&rhs);
+    Aircraft(Aircraft &&rhs) noexcept;
     Aircraft &operator=(const Aircraft &rhs) = delete;
-    Aircraft &operator=(Aircraft &&rhs);
+    Aircraft &operator=(Aircraft &&rhs) noexcept;
     ~Aircraft();
 
     std::int64_t getId() const noexcept;

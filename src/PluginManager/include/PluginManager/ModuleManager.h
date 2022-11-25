@@ -95,7 +95,7 @@ private:
 
     void initModules() noexcept;
     void frenchConnection() noexcept;
-    void initModule(const QString fileName, std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept;
+    void initModule(const QString &fileName, std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept;
     void initModuleActions(const std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept;
 
 private slots:

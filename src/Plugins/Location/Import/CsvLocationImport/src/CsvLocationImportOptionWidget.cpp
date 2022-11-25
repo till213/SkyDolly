@@ -25,7 +25,10 @@
 #include <QWidget>
 #include <QComboBox>
 
+#include <Kernel/Const.h>
 #include <Kernel/Enum.h>
+#include <Persistence/Service/EnumerationService.h>
+#include <Widget/EnumerationComboBox.h>
 #include "CsvLocationImportOptionWidget.h"
 #include "CsvLocationImportSettings.h"
 #include "ui_CsvLocationImportOptionWidget.h"
@@ -60,14 +63,30 @@ void CsvLocationImportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CsvLocationImportOptionWidget::onFormatChanged);
+    connect(ui->defaultCountryComboBox, &EnumerationComboBox::currentIndexChanged,
+            this, &CsvLocationImportOptionWidget::onDefaultCountryChanged);
+    connect(ui->defaultAltitudeSpinBox, &QSpinBox::valueChanged,
+            this, &CsvLocationImportOptionWidget::onDefaultAltitudeChanged);
+    connect(ui->defaultIndicatedAirspeedSpinBox, &QSpinBox::valueChanged,
+            this, &CsvLocationImportOptionWidget::onDefaultIndicatedAirspeedChanged);
     connect(&d->settings, &CsvLocationImportSettings::extendedSettingsChanged,
             this, &CsvLocationImportOptionWidget::updateUi);
 }
 
 void CsvLocationImportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem("Sky Dolly", Enum::toUnderlyingType(CsvLocationImportSettings::Format::SkyDolly));
-    ui->formatComboBox->addItem("Little Navmap", Enum::toUnderlyingType(CsvLocationImportSettings::Format::LittleNavmap));
+    ui->formatComboBox->addItem("Sky Dolly", Enum::underly(CsvLocationImportSettings::Format::SkyDolly));
+    ui->formatComboBox->addItem("Little Navmap", Enum::underly(CsvLocationImportSettings::Format::LittleNavmap));
+
+    ui->defaultCountryComboBox->setEnumerationName(EnumerationService::Country);
+
+    ui->defaultAltitudeSpinBox->setMinimum(Const::MinimumAltitude);
+    ui->defaultAltitudeSpinBox->setMaximum(Const::MaximumAltitude);
+    ui->defaultAltitudeSpinBox->setSuffix(tr(" feet"));
+
+    ui->defaultIndicatedAirspeedSpinBox->setMinimum(Const::MinimumIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
+    ui->defaultIndicatedAirspeedSpinBox->setSuffix(tr(" knots"));
 }
 
 // PRIVATE SLOTS
@@ -75,16 +94,46 @@ void CsvLocationImportOptionWidget::initUi() noexcept
 void CsvLocationImportOptionWidget::updateUi() noexcept
 {
     const CsvLocationImportSettings::Format format = d->settings.getFormat();
-    int currentIndex = 0;
+    int currentIndex {0};
     while (currentIndex < ui->formatComboBox->count() &&
            static_cast<CsvLocationImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != format) {
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);
+
+    ui->defaultCountryComboBox->setCurrentId(d->settings.getDefaultCountryId());
+    ui->formatComboBox->setCurrentIndex(currentIndex);
+    if (format != CsvLocationImportSettings::Format::SkyDolly) {
+        ui->defaultCountryComboBox->setCurrentId(d->settings.getDefaultCountryId());
+        ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
+        ui->defaultIndicatedAirspeedSpinBox->setValue(d->settings.getDefaultIndicatedAirspeed());
+        ui->defaultCountryComboBox->setEnabled(true);
+        ui->defaultAltitudeSpinBox->setEnabled(true);
+        ui->defaultIndicatedAirspeedSpinBox->setEnabled(true);
+    } else {
+        ui->defaultCountryComboBox->setEnabled(false);
+        ui->defaultAltitudeSpinBox->setEnabled(false);
+        ui->defaultIndicatedAirspeedSpinBox->setEnabled(false);
+    }
 }
 
 void CsvLocationImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
 {
     const CsvLocationImportSettings::Format format = static_cast<CsvLocationImportSettings::Format>(ui->formatComboBox->currentData().toInt());
     d->settings.setFormat(format);
+}
+
+void CsvLocationImportOptionWidget::onDefaultCountryChanged([[maybe_unused]]int index) noexcept
+{
+    d->settings.setDefaultCountryId(ui->defaultCountryComboBox->getCurrentId());
+}
+
+void CsvLocationImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
+{
+    d->settings.setDefaultAltitude(value);
+}
+
+void CsvLocationImportOptionWidget::onDefaultIndicatedAirspeedChanged(int value) noexcept
+{
+    d->settings.setDefaultIndicatedAirspeed(value);
 }

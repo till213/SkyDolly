@@ -23,9 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <QComboBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Version.h>
@@ -53,17 +50,9 @@ CsvImportOptionWidget::CsvImportOptionWidget(CsvImportSettings &settings, QWidge
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "CsvImportOptionWidget::CsvImportOptionWidget: CREATED";
-#endif
 }
 
-CsvImportOptionWidget::~CsvImportOptionWidget() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "CsvImportOptionWidget::~CsvImportOptionWidget: DELETED";
-#endif
-}
+CsvImportOptionWidget::~CsvImportOptionWidget() noexcept = default;
 
 // PRIVATE
 
@@ -77,9 +66,9 @@ void CsvImportOptionWidget::frenchConnection() noexcept
 
 void CsvImportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem(Version::getApplicationName(), Enum::toUnderlyingType(CsvImportSettings::Format::SkyDolly));
-    ui->formatComboBox->addItem("FlightRadar24", Enum::toUnderlyingType(CsvImportSettings::Format::FlightRadar24));
-    ui->formatComboBox->addItem("Flight Recorder", Enum::toUnderlyingType(CsvImportSettings::Format::FlightRecorder));
+    ui->formatComboBox->addItem(Version::getApplicationName(), Enum::underly(CsvImportSettings::Format::SkyDolly));
+    ui->formatComboBox->addItem("FlightRadar24", Enum::underly(CsvImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("Flight Recorder", Enum::underly(CsvImportSettings::Format::FlightRecorder));
 }
 
 // PRIVATE SLOTS

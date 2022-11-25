@@ -57,6 +57,6 @@ Convert::Convert() noexcept
     }
 }
 
-Convert::Convert(Convert &&rhs) = default;
-Convert &Convert::operator=(Convert &&rhs) = default;
+Convert::Convert(Convert &&rhs) noexcept = default;
+Convert &Convert::operator=(Convert &&rhs) noexcept = default;
 Convert::~Convert() = default;

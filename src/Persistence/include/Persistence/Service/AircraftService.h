@@ -41,9 +41,9 @@ class PERSISTENCE_API AircraftService
 public:
     AircraftService() noexcept;
     AircraftService(const AircraftService &rhs) = delete;
-    AircraftService(AircraftService &&rhs);
+    AircraftService(AircraftService &&rhs) noexcept;
     AircraftService &operator=(const AircraftService &rhs) = delete;
-    AircraftService &operator=(AircraftService &&rhs);
+    AircraftService &operator=(AircraftService &&rhs) noexcept;
     ~AircraftService();
 
     bool store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept;

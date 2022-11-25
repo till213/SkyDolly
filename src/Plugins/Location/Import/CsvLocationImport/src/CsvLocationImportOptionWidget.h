@@ -57,6 +57,9 @@ private:
 private slots:
     void updateUi() noexcept;
     void onFormatChanged(int index) noexcept;
+    void onDefaultCountryChanged(int index) noexcept;
+    void onDefaultAltitudeChanged(int value) noexcept;
+    void onDefaultIndicatedAirspeedChanged(int value) noexcept;
 };
 
 #endif // CSVLOCATIONIMPORTOPTIONWIDGET_H

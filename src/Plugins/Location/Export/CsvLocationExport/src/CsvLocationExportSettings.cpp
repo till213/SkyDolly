@@ -78,7 +78,7 @@ void CsvLocationExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) 
     Settings::KeyValue keyValue;
 
     keyValue.first = ::FormatKey;
-    keyValue.second = Enum::toUnderlyingType(d->format);
+    keyValue.second = Enum::underly(d->format);
     keyValues.push_back(keyValue);
 }
 
@@ -87,7 +87,7 @@ void CsvLocationExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
     Settings::KeyValue keyValue;
 
     keyValue.first = ::FormatKey;
-    keyValue.second = Enum::toUnderlyingType(::DefaultFormat);
+    keyValue.second = Enum::underly(::DefaultFormat);
     keysWithDefaults.push_back(keyValue);
 }
 

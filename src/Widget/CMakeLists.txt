@@ -20,7 +20,6 @@ target_sources(${LIBRARY_NAME}
         include/Widget/ActionCheckBox.h src/ActionCheckBox.cpp
         include/Widget/FocusPlainTextEdit.h src/FocusPlainTextEdit.cpp
         include/Widget/AircraftSelectionComboBox.h src/AircraftSelectionComboBox.cpp
-        include/Widget/BackupPeriodComboBox.h src/BackupPeriodComboBox.cpp
         include/Widget/Platform.h src/Platform.cpp
         include/Widget/TableDateItem.h src/TableDateItem.cpp
         include/Widget/TableTimeItem.h src/TableTimeItem.cpp

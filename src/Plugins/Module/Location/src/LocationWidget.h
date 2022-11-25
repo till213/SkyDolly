@@ -97,6 +97,7 @@ private slots:
     void onBankChanged(double value) noexcept;
     void onHeadingChanged(double value) noexcept;
     void onIndicatedAirspeedChanged(int value) noexcept;
+    void onEngineEventChanged(int index) noexcept;
 };
 
 #endif // LOCATIONWIDGET_H

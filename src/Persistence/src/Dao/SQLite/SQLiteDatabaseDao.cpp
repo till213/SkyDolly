@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -41,13 +42,13 @@
 #include "SqlMigration.h"
 #include "SQLiteDatabaseDao.h"
 
-constexpr const char *DbName {"QSQLITE"};
+namespace
+{
+    constexpr const char *DbName {"QSQLITE"};
+}
 
 struct DatabaseDaoPrivate
 {
-    DatabaseDaoPrivate()
-    {}
-
     QSqlDatabase db;
 };
 
@@ -57,8 +58,8 @@ SQLiteDatabaseDao::SQLiteDatabaseDao() noexcept
     : d(std::make_unique<DatabaseDaoPrivate>())
 {}
 
-SQLiteDatabaseDao::SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) = default;
-SQLiteDatabaseDao &SQLiteDatabaseDao::operator=(SQLiteDatabaseDao &&rhs) = default;
+SQLiteDatabaseDao::SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) noexcept = default;
+SQLiteDatabaseDao &SQLiteDatabaseDao::operator=(SQLiteDatabaseDao &&rhs) noexcept = default;
 
 SQLiteDatabaseDao::~SQLiteDatabaseDao()
 {
@@ -67,7 +68,7 @@ SQLiteDatabaseDao::~SQLiteDatabaseDao()
 
 bool SQLiteDatabaseDao::connectDb(const QString &logbookPath) noexcept
 {
-    d->db = QSqlDatabase::addDatabase(DbName);
+    d->db = QSqlDatabase::addDatabase(::DbName);
     d->db.setDatabaseName(logbookPath);
     return d->db.open();
 }
@@ -115,18 +116,15 @@ bool SQLiteDatabaseDao::backup(const QString &backupPath) noexcept
     return ok;
 }
 
-bool SQLiteDatabaseDao::updateBackupPeriod(const QString &backupPeriodIntlId) noexcept
+bool SQLiteDatabaseDao::updateBackupPeriod(std::int64_t backupPeriodId) noexcept
 {
     QSqlQuery query;
     query.prepare(
         "update metadata "
-        "set    backup_period_id = (select ebp.id"
-        "                           from enum_backup_period ebp"
-        "                           where ebp.sym_id = :sym_id"
-        "                          );"
+        "set    backup_period_id = :backup_period_id;"
     );
 
-    query.bindValue(":sym_id", backupPeriodIntlId);
+    query.bindValue(":backup_period_id", QVariant::fromValue(backupPeriodId));
     return query.exec();
 }
 
@@ -167,10 +165,8 @@ Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
         "       m.last_backup_date,"
         "       m.next_backup_date,"
         "       m.backup_directory_path,"
-        "       ebp.sym_id "
-        "from metadata m "
-        "join enum_backup_period ebp "
-        "on m.backup_period_id = ebp.id;"
+        "       m.backup_period_id "
+        "from metadata m;"
     );
     if (success && query.next()) {
         QDateTime dateTime = query.value(0).toDateTime();
@@ -193,7 +189,7 @@ Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
         metadata.nextBackupDate = dateTime.toLocalTime();
 
         metadata.backupDirectoryPath = query.value(5).toString();
-        metadata.backupPeriodSymId = query.value(6).toString();
+        metadata.backupPeriodId = query.value(6).toLongLong();
     }
     if (ok != nullptr) {
         *ok = success;

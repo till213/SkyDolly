@@ -46,9 +46,9 @@ public:
     };
     LocationService() noexcept;
     LocationService(const LocationService &rhs) = delete;
-    LocationService(LocationService &&rhs);
+    LocationService(LocationService &&rhs) noexcept;
     LocationService &operator=(const LocationService &rhs) = delete;
-    LocationService &operator=(LocationService &&rhs);
+    LocationService &operator=(LocationService &&rhs) noexcept;
     ~LocationService();
 
     bool store(Location &location) noexcept;

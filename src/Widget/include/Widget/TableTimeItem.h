@@ -44,7 +44,7 @@ class WIDGET_API TableTimeItem : public QTableWidgetItem
 {
 public:
     TableTimeItem(const QString &timeString, const QTime &time) noexcept;
-    ~TableTimeItem() noexcept override;
+    ~TableTimeItem() override;
 
     bool operator<(const QTableWidgetItem &rhs) const noexcept override;
 

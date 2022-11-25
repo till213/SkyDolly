@@ -30,6 +30,7 @@
 #include <QStringView>
 #include <QString>
 
+#include <Kernel/Unit.h>
 #include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
@@ -43,6 +44,9 @@ struct PositionData;
 class PLUGINMANAGER_API Export
 {
 public:
+
+    /*! Precision of general number (altitude, heading, ...). */
+    static constexpr int NumberPrecision = 2;
 
     /*!
      * Returns a file path based on the title of the \c flight with the suggested file name having the given \c suffix.
@@ -65,6 +69,21 @@ public:
     static QString suggestLocationFilePath(QStringView suffix) noexcept;
 
     /*!
+     * Formats the GNSS \c coordinate (latitude or longitude) with the appropriate decimal point precision.
+     *
+     * \param coordinate
+     *        the coordinate to be formatted
+     * \return the text representation of \c coordinate
+     * \sa formatLatitude
+     * \sa formatLongitude
+     */
+    static inline QString formatCoordinate(double coordinate) noexcept
+    {
+        // Note: coordinates are always formatted with a decimal point
+        return Unit::formatCoordinate(coordinate);
+    }
+
+    /*!
      * Formats the general \c number (e.g. altitude or heading) with the appropriate decimal point precision.
      *
      * Note that in case the \c number should be displayed as text to a user, according to local settings, then
@@ -74,7 +93,10 @@ public:
      *        the number to be formatted as QString
      * \return the text representation of \c number
      */
-    static QString formatNumber(double number) noexcept;
+    static inline QString formatNumber(double number) noexcept
+    {
+        return QString::number(number, 'f', NumberPrecision);
+    }
 
     static std::vector<PositionData> resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 };

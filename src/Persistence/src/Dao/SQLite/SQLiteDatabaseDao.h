@@ -26,6 +26,7 @@
 #define SQLITEDATABASEDAO_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QString>
 
@@ -42,9 +43,9 @@ class SQLiteDatabaseDao : public DatabaseDaoIntf
 public:
     SQLiteDatabaseDao() noexcept;
     SQLiteDatabaseDao(const SQLiteDatabaseDao &rhs) = delete;
-    SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs);
+    SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) noexcept;
     SQLiteDatabaseDao &operator=(const SQLiteDatabaseDao &rhs) = delete;
-    SQLiteDatabaseDao &operator=(SQLiteDatabaseDao &&rhs);
+    SQLiteDatabaseDao &operator=(SQLiteDatabaseDao &&rhs) noexcept;
     ~SQLiteDatabaseDao() override;
 
     bool connectDb(const QString &logbookPath) noexcept override;
@@ -53,7 +54,7 @@ public:
     bool migrate() noexcept override;
     bool optimise() noexcept override;
     bool backup(const QString &backupFilePath) noexcept override;
-    bool updateBackupPeriod(const QString &backupPeriodIntlId) noexcept override;
+    bool updateBackupPeriod(std::int64_t backupPeriodId) noexcept override;
     bool updateNextBackupDate(const QDateTime &date) noexcept override;
     bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept override;
 

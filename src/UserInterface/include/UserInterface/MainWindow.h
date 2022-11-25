@@ -170,7 +170,7 @@ private slots:
     void updateMainWindow() noexcept;
 
     // Modules
-    void onModuleActivated(const QString title, QUuid uuid) noexcept;
+    void onModuleActivated(const QString &title, QUuid uuid) noexcept;
 
     // File menu
     void createNewLogbook() noexcept;

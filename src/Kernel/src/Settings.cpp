@@ -222,7 +222,7 @@ QString Settings::getExportPath() const noexcept
     return d->exportPath;
 }
 
-void Settings::setExportPath(QString exportPath)
+void Settings::setExportPath(const QString &exportPath)
 {
     if (d->exportPath != exportPath) {
         d->exportPath = exportPath;
@@ -643,7 +643,7 @@ void Settings::store() const noexcept
         d->settings.setValue("SeekIntervalSeconds", d->seekIntervalSeconds);
         d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
         d->settings.setValue("ReplayLoop", d->replayLoop);
-        d->settings.setValue("ReplaySpeedUnit", Enum::toUnderlyingType(d->replaySpeedUnit));
+        d->settings.setValue("ReplaySpeedUnit", Enum::underly(d->replaySpeedUnit));
         d->settings.setValue("RepeatFlapsHandleIndex", d->repeatFlapsHandleIndex);
         d->settings.setValue("RepeatCanopyOpen", d->repeatCanopyOpen);
     }
@@ -762,12 +762,12 @@ void Settings::restore() noexcept
             d->seekIntervalPercent = SettingsPrivate::DefaultSeekIntervalPercent;
         }
         d->replayLoop = d->settings.value("ReplayLoop", SettingsPrivate::DefaultReplayLoop).toBool();
-        int replaySpeedUnitValue = d->settings.value("ReplaySpeedUnit", Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit)).toInt(&ok);
+        int replaySpeedUnitValue = d->settings.value("ReplaySpeedUnit", Enum::underly(SettingsPrivate::DefaultReplaySpeedUnit)).toInt(&ok);
         if (ok) {
             d->replaySpeedUnit = static_cast<Replay::SpeedUnit>(replaySpeedUnitValue);
         } else {
 #ifdef DEBUG
-            qWarning() << "The replay speed unit in the settings could not be parsed, so setting value to default value:" << Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit);
+            qWarning() << "The replay speed unit in the settings could not be parsed, so setting value to default value:" << Enum::underly(SettingsPrivate::DefaultReplaySpeedUnit);
 #endif
             d->replaySpeedUnit = SettingsPrivate::DefaultReplaySpeedUnit;
         }

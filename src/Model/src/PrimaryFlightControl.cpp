@@ -39,7 +39,7 @@ PrimaryFlightControl::PrimaryFlightControl(const AircraftInfo &aircraftInfo) noe
     : AbstractComponent(aircraftInfo)
 {}
 
-PrimaryFlightControlData PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+PrimaryFlightControlData PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     PrimaryFlightControlData primaryFlightControlData;
     const PrimaryFlightControlData *p1 {nullptr}, *p2 {nullptr};

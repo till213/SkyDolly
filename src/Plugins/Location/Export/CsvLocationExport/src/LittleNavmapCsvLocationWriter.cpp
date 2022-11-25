@@ -56,7 +56,7 @@ namespace
     const QString LastEditColumn = QStringLiteral("Last Edit");
     const QString ImportFilenameColumn = QStringLiteral("Import Filename");
 
-    constexpr const char *OtherType = "other";
+    constexpr const char *OtherType = "Other";
 }
 
 struct LittleNavmapCsvLocationWriterPrivate
@@ -64,41 +64,41 @@ struct LittleNavmapCsvLocationWriterPrivate
     LittleNavmapCsvLocationWriterPrivate(const CsvLocationExportSettings &thePluginSettings) noexcept
         : pluginSettings(thePluginSettings)
     {
-        initSymbolicIdToType();
+        initSymIdToType();
     }
 
     const CsvLocationExportSettings &pluginSettings;
     EnumerationService enumerationService;
     // Key: symbolic category ID, value: Litte Navmap userpoint type
-    std::unordered_map<QString, QString> symbolicIdToType;
+    std::unordered_map<QString, QString> symIdToType;
 
 private:
-    inline void initSymbolicIdToType() {
-        symbolicIdToType["00"] = ::OtherType;
-        symbolicIdToType["AP"] = "airprort";
-        symbolicIdToType["AS"] = "airstrip";
-        symbolicIdToType["BR"] = "other";
-        symbolicIdToType["BU"] = "building";
-        symbolicIdToType["CA"] = "landform";
-        symbolicIdToType["CI"] = "settlement";
-        symbolicIdToType["DA"] = "other";
-        symbolicIdToType["DE"] = "landform";
-        symbolicIdToType["GL"] = "mountain";
-        symbolicIdToType["HP"] = "helipad";
-        symbolicIdToType["IS"] = "landform";
-        symbolicIdToType["LA"] = "water";
-        symbolicIdToType["LM"] = "landform";
-        symbolicIdToType["LH"] = "lighthouse";
-        symbolicIdToType["MO"] = "mountain";
-        symbolicIdToType["OT"] = "other";
-        symbolicIdToType["PA"] = "park";
-        symbolicIdToType["PO"] = "poi";
-        symbolicIdToType["SE"] = "water";
-        symbolicIdToType["SP"] = "seaport";
-        symbolicIdToType["TO"] = "settlement";
-        symbolicIdToType["RI"] = "water";
-        symbolicIdToType["VA"] = "";
-        symbolicIdToType["WA"] = "water";
+    inline void initSymIdToType() {
+        symIdToType["00"] = ::OtherType;
+        symIdToType["AP"] = "Airprort";
+        symIdToType["AS"] = "Airstrip";
+        symIdToType["BR"] = "POI";
+        symIdToType["BU"] = "Building";
+        symIdToType["CA"] = "Landform";
+        symIdToType["CI"] = "Settlement";
+        symIdToType["DA"] = "POI";
+        symIdToType["DE"] = "Landform";
+        symIdToType["GL"] = "Mountain";
+        symIdToType["HP"] = "Helipad";
+        symIdToType["IS"] = "Landform";
+        symIdToType["LA"] = "Water";
+        symIdToType["LM"] = "Landform";
+        symIdToType["LH"] = "Lighthouse";
+        symIdToType["MO"] = "Mountain";
+        symIdToType["OT"] = ::OtherType;
+        symIdToType["PA"] = "Park";
+        symIdToType["PO"] = "POI";
+        symIdToType["SE"] = "Water";
+        symIdToType["SP"] = "Seaport";
+        symIdToType["TO"] = "Settlement";
+        symIdToType["RI"] = "Water";
+        symIdToType["VA"] = "POI";
+        symIdToType["WA"] = "Water";
     }
 };
 
@@ -135,9 +135,9 @@ bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations
             QString title = location.title;
             QString description = location.description;
             QString identifier = location.identifier;
-            const QString categorySymbolicId = locationCategoryEnumeration.getItemById(location.categoryId).symbolicId;
-            const QString type = mapCategorySymbolicIdToType(categorySymbolicId);
-            const QString countrySymbolicId = countryEnumeration.getItemById(location.countryId).symbolicId;
+            const QString categorySymId = locationCategoryEnumeration.getItemById(location.categoryId).symId;
+            const QString type = mapCategorySymIdToType(categorySymId);
+            const QString countrySymId = countryEnumeration.getItemById(location.countryId).symId;
             const QString csv = type % CsvConst::CommaSep %
                                 "\"" % title.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
                                 "\"" % identifier.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
@@ -147,7 +147,7 @@ bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations
                                 "" % CsvConst::CommaSep %
                                 "" % CsvConst::CommaSep %
                                 "\"" % description.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
-                                countrySymbolicId % CsvConst::CommaSep %
+                                countrySymId % CsvConst::CommaSep %
                                 "" % CsvConst::CommaSep %
                                 "" % CsvConst::CommaSep %
                                 "" % CsvConst::Ln;
@@ -162,12 +162,12 @@ bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations
 
 // PRIVATE
 
-inline QString LittleNavmapCsvLocationWriter::mapCategorySymbolicIdToType(const QString &categorySymbolicId) const noexcept
+inline QString LittleNavmapCsvLocationWriter::mapCategorySymIdToType(const QString &categorySymId) const noexcept
 {
     Enumeration locationCategory = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
     QString type;
-    const auto it = d->symbolicIdToType.find(categorySymbolicId);
-    if (it != d->symbolicIdToType.end()) {
+    const auto it = d->symIdToType.find(categorySymId);
+    if (it != d->symIdToType.end()) {
        type = it->second;
     } else {
         type = ::OtherType;

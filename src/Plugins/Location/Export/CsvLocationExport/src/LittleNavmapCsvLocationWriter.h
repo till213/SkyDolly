@@ -51,7 +51,7 @@ public:
 private:
     const std::unique_ptr<LittleNavmapCsvLocationWriterPrivate> d;
 
-    inline QString mapCategorySymbolicIdToType(const QString &categorySymbolicId) const noexcept;
+    inline QString mapCategorySymIdToType(const QString &categorySymId) const noexcept;
 };
 
 #endif // LITTLENAVMAPCSVLOCATIONWRITER_H

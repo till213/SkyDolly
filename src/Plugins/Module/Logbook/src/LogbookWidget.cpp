@@ -211,24 +211,24 @@ void LogbookWidget::initUi() noexcept
 void LogbookWidget::initFilterUi() noexcept
 {
     // Duration
-    ui->durationComboBox->addItem(tr("All"), Enum::toUnderlyingType(Duration::All));
-    ui->durationComboBox->addItem(tr("2 minutes"), Enum::toUnderlyingType(Duration::TwoMinutes));
-    ui->durationComboBox->addItem(tr("5 minutes"), Enum::toUnderlyingType(Duration::FiveMinutes));
-    ui->durationComboBox->addItem(tr("10 minutes"), Enum::toUnderlyingType(Duration::TenMinutes));
-    ui->durationComboBox->addItem(tr("15 minutes"), Enum::toUnderlyingType(Duration::Fifteen));
-    ui->durationComboBox->addItem(tr("30 minutes"), Enum::toUnderlyingType(Duration::ThirtyMinutes));
-    ui->durationComboBox->addItem(tr("1 hour"), Enum::toUnderlyingType(Duration::OneHour));
-    ui->durationComboBox->addItem(tr("2 hours"), Enum::toUnderlyingType(Duration::TwoHours));
-    ui->durationComboBox->addItem(tr("3 hours"), Enum::toUnderlyingType(Duration::ThreeHours));
-    ui->durationComboBox->addItem(tr("4 hours"), Enum::toUnderlyingType(Duration::FourHours));
+    ui->durationComboBox->addItem(tr("All"), Enum::underly(Duration::All));
+    ui->durationComboBox->addItem(tr("2 minutes"), Enum::underly(Duration::TwoMinutes));
+    ui->durationComboBox->addItem(tr("5 minutes"), Enum::underly(Duration::FiveMinutes));
+    ui->durationComboBox->addItem(tr("10 minutes"), Enum::underly(Duration::TenMinutes));
+    ui->durationComboBox->addItem(tr("15 minutes"), Enum::underly(Duration::Fifteen));
+    ui->durationComboBox->addItem(tr("30 minutes"), Enum::underly(Duration::ThirtyMinutes));
+    ui->durationComboBox->addItem(tr("1 hour"), Enum::underly(Duration::OneHour));
+    ui->durationComboBox->addItem(tr("2 hours"), Enum::underly(Duration::TwoHours));
+    ui->durationComboBox->addItem(tr("3 hours"), Enum::underly(Duration::ThreeHours));
+    ui->durationComboBox->addItem(tr("4 hours"), Enum::underly(Duration::FourHours));
 
     // Engine type
-    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::All), Enum::toUnderlyingType(SimType::EngineType::All));
-    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Jet), Enum::toUnderlyingType(SimType::EngineType::Jet));
-    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Turboprop), Enum::toUnderlyingType(SimType::EngineType::Turboprop));
-    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Piston), Enum::toUnderlyingType(SimType::EngineType::Piston));
-    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::HeloBellTurbine), Enum::toUnderlyingType(SimType::EngineType::HeloBellTurbine));
-    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::None), Enum::toUnderlyingType(SimType::EngineType::None));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::All), Enum::underly(SimType::EngineType::All));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Jet), Enum::underly(SimType::EngineType::Jet));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Turboprop), Enum::underly(SimType::EngineType::Turboprop));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Piston), Enum::underly(SimType::EngineType::Piston));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::HeloBellTurbine), Enum::underly(SimType::EngineType::HeloBellTurbine));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::None), Enum::underly(SimType::EngineType::None));
     ui->engineTypeComboBox->setCurrentText(0);
 }
 

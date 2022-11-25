@@ -120,7 +120,7 @@ void IgcImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     Settings::KeyValue keyValue;
 
     keyValue.first = ::AltitudeKey;
-    keyValue.second = Enum::toUnderlyingType(d->altitudeMode);
+    keyValue.second = Enum::underly(d->altitudeMode);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::EnlThresholdKey;
@@ -137,7 +137,7 @@ void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     Settings::KeyValue keyValue;
 
     keyValue.first = ::AltitudeKey;
-    keyValue.second = Enum::toUnderlyingType(::DefaultAltitudeMode);
+    keyValue.second = Enum::underly(::DefaultAltitudeMode);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::EnlThresholdKey;
