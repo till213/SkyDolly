@@ -683,6 +683,9 @@ values
 
 @migr(id = "b0b79e7e-9086-42bc-b9ee-45e1e729309a", descn = "Update backup period names", step = 2)
 update enum_backup_period
+set    name = 'Only this time'
+where  sym_id = 'NOW';
+update enum_backup_period
 set    name = 'Once a month, when exiting Sky Dolly'
 where  sym_id = 'MONTH';
 update enum_backup_period
@@ -695,6 +698,37 @@ update enum_backup_period
 set    name = 'Always, when exiting Sky Dolly'
 where  sym_id = 'ALWAYS';
 
-@migr(id = "55a04d46-fc38-445a-8967-f84c96aa41bb", descn = "Update application version to 0.13", step = 1)
+@migr(id = "4f5ec557-36b4-4dce-8578-2cf645c4d2e2", descn = "Renumerate backup periods", step_cnt = 2)
+update enum_backup_period
+set    id = 99
+where  sym_id = 'NEVER';
+update enum_backup_period
+set    id = 6
+where  sym_id = 'ALWAYS';
+update enum_backup_period
+set    id = 5
+where  sym_id = 'DAY';
+update enum_backup_period
+set    id = 4
+where  sym_id = 'WEEK';
+update enum_backup_period
+set    id = 3
+where  sym_id = 'MONTH';
+update enum_backup_period
+set    id = 2
+where  sym_id = 'NEVER';
+
+@migr(id = "0ec16dd8-c7b2-47fc-8d1f-bf80fb8dfb9e", descn = "Update reference to backup period", step = 2)
+update metadata
+set    backup_period_id = case backup_period_id
+                          when 1 then 1
+                          when 2 then 3
+                          when 3 then 4
+                          when 4 then 5
+                          when 5 then 6
+                          when 6 then 2
+                          end;
+
+@migr(id = "0ec16dd8-c7b2-47fc-8d1f-bf80fb8dfb9e", descn = "Update application version to 0.13", step = 1)
 update metadata
 set app_version = '0.13.0';

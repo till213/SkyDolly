@@ -86,6 +86,9 @@ void LogbookBackupDialog::accept() noexcept
     const std::int64_t backupPeriodId = ui->backupPeriodComboBox->getCurrentId();
     if (ok && backupPeriodId != d->BackupPeriodNowId) {
         ok = d->databaseService->setBackupPeriod(backupPeriodId);
+    } else {
+        // Only do the backup now, but afterwards never
+        d->databaseService->setBackupPeriod(d->BackupPeriodNeverId);
     }
 
     // ... the next backup date which is set upon successful backup
@@ -106,12 +109,14 @@ void LogbookBackupDialog::reject() noexcept
    const std::int64_t backupPeriodId = ui->backupPeriodComboBox->getCurrentId();
    if (backupPeriodId != d->originalBackupPeriodId) {
        // ... as this influences...
-       // TODO FIXME What is the "now" good for?
        if (backupPeriodId != d->BackupPeriodNowId) {
            d->databaseService->setBackupPeriod(backupPeriodId);
-           // ... the next backup date
-           d->databaseService->updateBackupDate();
+       } else {
+           // Skip this backup, and also afterwards
+           d->databaseService->setBackupPeriod(d->BackupPeriodNeverId);
        }
+       // ... the next backup date
+       d->databaseService->updateBackupDate();
    }
 }
 
@@ -130,7 +135,7 @@ void LogbookBackupDialog::initUi() noexcept
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     EnumerationComboBox::IgnoredIds ignoredIds;
-    ignoredIds.insert(d->BackupPeriodNowId);
+    ignoredIds.insert(d->BackupPeriodNeverId);
     ignoredIds.insert(d->BackupPeriodNextTimeId);
     ui->backupPeriodComboBox->setIgnoredIds(ignoredIds);
     ui->backupPeriodComboBox->setEnumerationName(EnumerationService::BackupPeriod);
