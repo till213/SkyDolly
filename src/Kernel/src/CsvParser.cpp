@@ -30,69 +30,46 @@
 
 #include "CsvParser.h"
 
-struct CsvParserPrivate
-{
-    CsvParserPrivate(QChar separatorChar, QChar escapeChar, bool trimValue)
-        : separatorChar(separatorChar),
-          quoteChar(escapeChar),
-          trimValue(trimValue)
-    {}
-
-    QChar separatorChar;
-    QChar quoteChar;
-    bool trimValue {false};
-
-    CsvParser::Row row;
-    QString currentValue;
-
-    bool inQuotation {false};
-    bool currentValueQuoted {false};
-
-    QChar lastChar {'\0'};
-    QChar currentChar {'\0'};
-};
-
 // PUBLIC
 
 CsvParser::CsvParser(QChar separatorChar, QChar quoteChar, bool trimValue)
-    : d(std::make_unique<CsvParserPrivate>(separatorChar, quoteChar, trimValue))
+    : m_separatorChar(separatorChar),
+      m_quoteChar(quoteChar),
+      m_trimValue(trimValue)
 {}
 
-CsvParser::CsvParser(CsvParser &&rhs) = default;
-CsvParser &CsvParser::operator=(CsvParser &&rhs) = default;
-CsvParser::~CsvParser() = default;
-
-CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header) noexcept
+CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header, const QString &alternateHeader) noexcept
 {
     Rows rows;
 
-    int row {0};
+    bool firstLine {true};
     while (!textStream.atEnd())
     {
         const QString line = textStream.readLine();
 
-        if (row == 0 && !header.isNull()) {
+        if (firstLine) {
             // Compare header (case-insensitive)
-            if (line.startsWith(header, Qt::CaseInsensitive)) {
-                ++row;
+            if (!header.isNull() && line.startsWith(header, Qt::CaseInsensitive) ||
+                !alternateHeader.isNull() && line.startsWith(alternateHeader, Qt::CaseInsensitive))
+            {
+                firstLine = false;
                 // Skip header
                 continue;
             }
         }
 
         // Skip empty lines but add them if within a quoted field
-        if (line.isEmpty() && !d->inQuotation) {
+        if (line.isEmpty() && !m_inQuotation) {
             continue;
         }
 
         parseLine(line);
-        if (d->inQuotation) {
+        if (m_inQuotation) {
             // Still in a quoted line, so continue to read unchanged until a quotation character shows the end of the field
             continue;
         }
 
-        rows.push_back(d->row);
-        ++row;
+        rows.push_back(m_currentRow);
     }
 
     return rows;
@@ -100,72 +77,72 @@ CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header)
 
 inline void CsvParser::parseLine(const QString &line) noexcept
 {
-    if (!d->inQuotation) {
+    if (!m_inQuotation) {
         // Reading a full new line
         reset();
     } else {
         // In a quotation: add a new line
-        d->currentValue += "\n";
+        m_currentValue += "\n";
     }
 
     for (int i = 0; i < line.size(); ++i) {
-        d->currentChar = line.at(i);
+        m_currentChar = line.at(i);
 
-        if (d->currentChar == d->quoteChar) {
+        if (m_currentChar == m_quoteChar) {
             parseQuote();
-        } else if (d->currentChar == d->separatorChar && !d->inQuotation) {
+        } else if (m_currentChar == m_separatorChar && !m_inQuotation) {
             // Separator in unquoted text - start new value
             parseSeparator();
         } else {
             // Regular character
-            d->currentValue.append(d->currentChar);
-            d->lastChar = d->currentChar;
+            m_currentValue.append(m_currentChar);
+            m_lastChar = m_currentChar;
         }
     }
 
-    if (!d->inQuotation) {
+    if (!m_inQuotation) {
         // Finish line
-        d->row.push_back((d->trimValue && !d->currentValueQuoted) ? d->currentValue.trimmed() : d->currentValue);
-        d->currentValue.clear();
-        d->currentValueQuoted = false;
+        m_currentRow.push_back((m_trimValue && !m_currentValueQuoted) ? m_currentValue.trimmed() : m_currentValue);
+        m_currentValue.clear();
+        m_currentValueQuoted = false;
     }
 }
 
 inline void CsvParser::parseQuote() noexcept
 {
     // Remember if this value is quoted to suppress trimming
-    if (!d->currentValueQuoted) {
+    if (!m_currentValueQuoted) {
         // However do trim any characters (expected: whitespace after the previous separator) that we have read so far
-        d->currentValue.clear();
-        d->currentValueQuoted = true;
+        m_currentValue.clear();
+        m_currentValueQuoted = true;
     }
 
-    if (d->inQuotation) {
-        d->inQuotation = false;
+    if (m_inQuotation) {
+        m_inQuotation = false;
     } else {
-        if (d->lastChar == d->quoteChar) {
+        if (m_lastChar == m_quoteChar) {
             // Double quotation character ("escaped") - add single quotation to value and keep quoted state
-            d->currentValue.append(d->currentChar);
+            m_currentValue.append(m_currentChar);
         }
-        d->inQuotation = true;
+        m_inQuotation = true;
     }
-    d->lastChar = d->currentChar;
+    m_lastChar = m_currentChar;
 }
 
 inline void CsvParser::parseSeparator() noexcept
 {
-    d->row.push_back((d->trimValue && !d->currentValueQuoted) ? d->currentValue.trimmed() : d->currentValue);
-    d->currentValue.clear();
-    d->currentValueQuoted = false;
-    d->lastChar = d->currentChar;
+    m_currentRow.push_back((m_trimValue && !m_currentValueQuoted) ? m_currentValue.trimmed() : m_currentValue);
+    m_currentValue.clear();
+    m_currentValueQuoted = false;
+    m_lastChar = m_currentChar;
 }
 
 inline void CsvParser::reset() noexcept
 {
-    d->row.clear();
-    d->inQuotation = false;
-    d->currentValue.clear();
-    d->lastChar = '\0';
-    d->currentChar = '\0';
-    d->currentValueQuoted = false;
+    m_currentRow.clear();
+    m_inQuotation = false;
+    m_currentValue.clear();
+    m_lastChar = '\0';
+    m_currentChar = '\0';
+    m_currentValueQuoted = false;
 }

@@ -39,9 +39,9 @@ class SQLiteAircraftTypeDao : public AircraftTypeDaoIntf
 public:
     SQLiteAircraftTypeDao() = default;
     SQLiteAircraftTypeDao(const SQLiteAircraftTypeDao &rhs) = delete;
-    SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs);
+    SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) noexcept;
     SQLiteAircraftTypeDao &operator=(const SQLiteAircraftTypeDao &rhs) = delete;
-    SQLiteAircraftTypeDao &operator=(SQLiteAircraftTypeDao &&rhs);
+    SQLiteAircraftTypeDao &operator=(SQLiteAircraftTypeDao &&rhs) noexcept;
     ~SQLiteAircraftTypeDao() override;
 
     bool upsert(const AircraftType &aircraftType) noexcept override;

@@ -46,8 +46,7 @@ ActiveButton::ActiveButton(QWidget *parent) noexcept
     setAutoDefault(false);
 }
 
-ActiveButton::~ActiveButton() noexcept
-{}
+ActiveButton::~ActiveButton() = default;
 
 // PROTECTED
 

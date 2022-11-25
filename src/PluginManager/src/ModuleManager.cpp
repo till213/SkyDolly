@@ -241,7 +241,7 @@ void ModuleManager::frenchConnection() noexcept
             this, &ModuleManager::handleModuleSelected);
 }
 
-void ModuleManager::initModule(const QString fileName, std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept
+void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept
 {
     const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
     d->pluginLoader->setFileName(pluginPath);
@@ -290,7 +290,7 @@ void ModuleManager::initModuleActions(const std::unordered_map<QUuid, ModuleInfo
     int count {0};
     for (const auto &sortedModule : sortedModules) {
         const QUuid uuid {sortedModule->id};
-        const ModuleInfo moduleInfo = moduleInfos.at(uuid);
+        const ModuleInfo& moduleInfo = moduleInfos.at(uuid);
         QAction *action = d->moduleActionGroup->addAction(moduleInfo.first);
         if (count < d->actionShortcuts.size()) {
             action->setShortcut(d->actionShortcuts[count]);

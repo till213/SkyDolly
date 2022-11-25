@@ -121,18 +121,18 @@ void BasicFlightExportDialog::initBasicUi() noexcept
     ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFlightFilePath(d->flight, d->fileSuffix)));
 
     // Formation export
-    ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::toUnderlyingType(FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly));
-    ui->formationExportComboBox->addItem(tr("All aircraft (single file)"), Enum::toUnderlyingType(FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile));
-    ui->formationExportComboBox->addItem(tr("All aircraft (separate files)"), Enum::toUnderlyingType(FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles));
+    ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::underly(FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly));
+    ui->formationExportComboBox->addItem(tr("All aircraft (single file)"), Enum::underly(FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile));
+    ui->formationExportComboBox->addItem(tr("All aircraft (separate files)"), Enum::underly(FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles));
 
     // Resampling
-    ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
-    ui->resamplingComboBox->addItem("1/5 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::AFifthHz));
-    ui->resamplingComboBox->addItem(QString("1 Hz") % " (" % tr("good accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::OneHz));
-    ui->resamplingComboBox->addItem("2 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::TwoHz));
-    ui->resamplingComboBox->addItem("5 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::FiveHz));
-    ui->resamplingComboBox->addItem("10 Hz (larger file size, greater accuracy", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::TenHz));
-    ui->resamplingComboBox->addItem(tr("Original data (no resampling)"), Enum::toUnderlyingType(SampleRate::ResamplingPeriod::Original));
+    ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::underly(SampleRate::ResamplingPeriod::ATenthHz));
+    ui->resamplingComboBox->addItem("1/5 Hz", Enum::underly(SampleRate::ResamplingPeriod::AFifthHz));
+    ui->resamplingComboBox->addItem(QString("1 Hz") % " (" % tr("good accuracy") % ")", Enum::underly(SampleRate::ResamplingPeriod::OneHz));
+    ui->resamplingComboBox->addItem("2 Hz", Enum::underly(SampleRate::ResamplingPeriod::TwoHz));
+    ui->resamplingComboBox->addItem("5 Hz", Enum::underly(SampleRate::ResamplingPeriod::FiveHz));
+    ui->resamplingComboBox->addItem("10 Hz (larger file size, greater accuracy", Enum::underly(SampleRate::ResamplingPeriod::TenHz));
+    ui->resamplingComboBox->addItem(tr("Original data (no resampling)"), Enum::underly(SampleRate::ResamplingPeriod::Original));
 }
 
 void BasicFlightExportDialog::initOptionUi() noexcept
@@ -163,7 +163,7 @@ void BasicFlightExportDialog::updateDataGroupBox() noexcept
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
         infoText.append(" " % tr("The position data will be resampled every %1 milliseconds, resulting in %Ln exported positions.",
                                  nullptr, samplePoints)
-                                 .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0)));
+                                 .arg(d->unit.formatNumber(Enum::underly(resamplingPeriod), 0)));
     } else {
         infoText.append(" " % tr("The original recorded data will be exported, resulting in total %Ln exported positions.", nullptr, samplePoints));
     }

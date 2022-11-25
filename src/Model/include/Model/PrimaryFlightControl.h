@@ -35,7 +35,7 @@ class MODEL_API PrimaryFlightControl final : public AbstractComponent<PrimaryFli
 public:
     explicit PrimaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
 
-    PrimaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    PrimaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 };
 
 #endif // PRIMARYFLIGHTCONTROL_H

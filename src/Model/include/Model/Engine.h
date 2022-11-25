@@ -35,7 +35,7 @@ class MODEL_API Engine final : public AbstractComponent<EngineData>
 public:
     explicit Engine(const AircraftInfo &aircraftInfo) noexcept;
 
-    EngineData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    EngineData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 };
 
 #endif // ENGINE_H

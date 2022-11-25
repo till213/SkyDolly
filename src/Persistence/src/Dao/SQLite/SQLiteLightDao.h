@@ -38,9 +38,9 @@ class SQLiteLightDao : public LightDaoIntf
 public:
     SQLiteLightDao() = default;
     SQLiteLightDao(const SQLiteLightDao &rhs) = delete;
-    SQLiteLightDao(SQLiteLightDao &&rhs);
+    SQLiteLightDao(SQLiteLightDao &&rhs) noexcept;
     SQLiteLightDao &operator=(const SQLiteLightDao &rhs) = delete;
-    SQLiteLightDao &operator=(SQLiteLightDao &&rhs);
+    SQLiteLightDao &operator=(SQLiteLightDao &&rhs) noexcept;
     ~SQLiteLightDao() override;
 
     bool add(std::int64_t aircraftId, const LightData &data) noexcept override;

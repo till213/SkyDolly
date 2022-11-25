@@ -50,7 +50,7 @@ class WIDGET_API ActionRadioButton : public QRadioButton
     Q_OBJECT
 public:
     explicit ActionRadioButton(QWidget *parent = nullptr) noexcept;
-    ~ActionRadioButton() noexcept override;
+    ~ActionRadioButton() override;
 
     /*!
      * Sets the action to be associated with this radio button. This radio button is

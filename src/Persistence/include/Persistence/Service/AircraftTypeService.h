@@ -41,9 +41,9 @@ class PERSISTENCE_API AircraftTypeService
 public:
     AircraftTypeService() noexcept;
     AircraftTypeService(const AircraftTypeService &rhs) = delete;
-    AircraftTypeService(AircraftTypeService &&rhs);
+    AircraftTypeService(AircraftTypeService &&rhs) noexcept;
     AircraftTypeService &operator=(const AircraftTypeService &rhs) = delete;
-    AircraftTypeService &operator=(AircraftTypeService &&rhs);
+    AircraftTypeService &operator=(AircraftTypeService &&rhs) noexcept;
     ~AircraftTypeService();
 
     AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept;

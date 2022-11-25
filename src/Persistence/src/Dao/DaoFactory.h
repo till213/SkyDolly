@@ -56,9 +56,9 @@ public:
     DaoFactory(DbType dbType);
     DaoFactory() = default;
     DaoFactory(const DaoFactory &rhs) = delete;
-    DaoFactory(DaoFactory &&rhs);
+    DaoFactory(DaoFactory &&rhs) noexcept;
     DaoFactory &operator=(const DaoFactory &rhs) = delete;
-    DaoFactory &operator=(DaoFactory &&rhs);
+    DaoFactory &operator=(DaoFactory &&rhs) noexcept;
     virtual ~DaoFactory();
 
     std::unique_ptr<DatabaseDaoIntf> createDatabaseDao() noexcept;

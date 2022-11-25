@@ -29,7 +29,7 @@
 
 #include <QString>
 
-class QRegularExpressionMatch;
+#include <Kernel/CsvParser.h>
 
 struct SqlMigrationPrivate;
 
@@ -50,7 +50,7 @@ private:
 
     bool migrateSql(const QString &migrationFilePath) noexcept;
     bool migrateCsv(const QString &migrationFilePath) noexcept;
-    bool migrateLocation(const QRegularExpressionMatch &locationMatch) noexcept;
+    bool migrateLocation(const CsvParser::Row &row) noexcept;
 };
 
 #endif // SQLMIGRATION_H

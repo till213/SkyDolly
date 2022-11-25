@@ -41,9 +41,9 @@ class SqlMigrationStep
 public:
     SqlMigrationStep() noexcept;
     SqlMigrationStep(const SqlMigrationStep &rhs) = delete;
-    SqlMigrationStep(SqlMigrationStep &&rhs);
+    SqlMigrationStep(SqlMigrationStep &&rhs) noexcept;
     SqlMigrationStep &operator=(const SqlMigrationStep &rhs) = delete;
-    SqlMigrationStep &operator=(SqlMigrationStep &&rhs);
+    SqlMigrationStep &operator=(SqlMigrationStep &&rhs) noexcept;
     ~SqlMigrationStep();
 
     bool isValid() const noexcept;

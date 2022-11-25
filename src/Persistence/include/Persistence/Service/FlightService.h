@@ -42,9 +42,9 @@ class PERSISTENCE_API FlightService
 public:
     FlightService() noexcept;
     FlightService(const FlightService &rhs) = delete;
-    FlightService(FlightService &&rhs);
+    FlightService(FlightService &&rhs) noexcept;
     FlightService &operator=(const FlightService &rhs) = delete;
-    FlightService &operator=(FlightService &&rhs);
+    FlightService &operator=(FlightService &&rhs) noexcept;
     ~FlightService();
 
     bool store(Flight &flight) noexcept;

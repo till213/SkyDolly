@@ -42,11 +42,11 @@
 
 // PUBLIC
 
-SQLiteWaypointDao::SQLiteWaypointDao(SQLiteWaypointDao &&rhs) = default;
-SQLiteWaypointDao &SQLiteWaypointDao::operator=(SQLiteWaypointDao &&rhs) = default;
+SQLiteWaypointDao::SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept = default;
+SQLiteWaypointDao &SQLiteWaypointDao::operator=(SQLiteWaypointDao &&rhs) noexcept = default;
 SQLiteWaypointDao::~SQLiteWaypointDao() = default;
 
-bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPlan)  noexcept
+bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept
 {
     QSqlQuery query;
     query.prepare(

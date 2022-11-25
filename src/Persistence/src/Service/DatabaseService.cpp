@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QCoreApplication>
 #include <QString>
@@ -41,8 +42,11 @@
 #include <Kernel/Const.h>
 #include <Model/Logbook.h>
 #include <PersistenceManager.h>
+
 #include "../Dao/DaoFactory.h"
 #include "../Dao/DatabaseDaoIntf.h"
+#include "PersistedEnumerationItem.h"
+#include <Service/EnumerationService.h>
 #include <Service/DatabaseService.h>
 
 namespace
@@ -55,14 +59,15 @@ namespace
 
 struct DatabaseServicePrivate
 {
-public:
-    DatabaseServicePrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          databaseDao(daoFactory->createDatabaseDao())
-    {}
+    std::unique_ptr<DaoFactory> daoFactory {std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)};
+    std::unique_ptr<DatabaseDaoIntf> databaseDao {daoFactory->createDatabaseDao()};
 
-    std::unique_ptr<DaoFactory> daoFactory;
-    std::unique_ptr<DatabaseDaoIntf> databaseDao;
+    const std::int64_t BackupPeriodNeverId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNeverSymId).id()};
+    const std::int64_t BackupPeriodNowId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNowSymId).id()};
+    const std::int64_t BackupPeriodMonthlyId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodMonthlySymId).id()};
+    const std::int64_t BackupPeriodWeeklyId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodWeeklySymId).id()};
+    const std::int64_t BackupPeriodDailyId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodDailySymId).id()};
+    const std::int64_t BackupPeriodAlwaysId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodAlwaysSymId).id()};
 };
 
 // PUBLIC
@@ -71,8 +76,8 @@ DatabaseService::DatabaseService() noexcept
     : d(std::make_unique<DatabaseServicePrivate>())
 {}
 
-DatabaseService::DatabaseService(DatabaseService &&rhs) = default;
-DatabaseService &DatabaseService::operator=(DatabaseService &&rhs) = default;
+DatabaseService::DatabaseService(DatabaseService &&rhs) noexcept = default;
+DatabaseService &DatabaseService::operator=(DatabaseService &&rhs) noexcept = default;
 DatabaseService::~DatabaseService() = default;
 
 bool DatabaseService::backup() noexcept
@@ -105,11 +110,11 @@ bool DatabaseService::backup() noexcept
     return ok;
 }
 
-bool DatabaseService::setBackupPeriod(const QString &backupPeriodIntlId) noexcept
+bool DatabaseService::setBackupPeriod(std::int64_t backupPeriodId) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        ok = d->databaseDao->updateBackupPeriod(backupPeriodIntlId);
+        ok = d->databaseDao->updateBackupPeriod(backupPeriodId);
         if (ok) {
             ok = QSqlDatabase::database().commit();
         } else {
@@ -140,13 +145,13 @@ bool DatabaseService::updateBackupDate() noexcept
     if (ok) {
         const QDateTime today = QDateTime::currentDateTime();
         QDateTime nextBackupDate = metaData.lastBackupDate.isNull() ? today : metaData.lastBackupDate;
-        if (metaData.backupPeriodSymId == Const::BackupNeverSymId) {
+        if (metaData.backupPeriodId == d->BackupPeriodNeverId) {
             nextBackupDate = nextBackupDate.addYears(BackupPeriodYearsNever);
-        } else if (metaData.backupPeriodSymId == Const::BackupMonthlySymId) {
+        } else if (metaData.backupPeriodId == d->BackupPeriodMonthlyId) {
             nextBackupDate = nextBackupDate.addMonths(BackupPeriodOneMonth);
-        } else if (metaData.backupPeriodSymId == Const::BackupWeeklySymId) {
+        } else if (metaData.backupPeriodId == d->BackupPeriodWeeklyId) {
             nextBackupDate = nextBackupDate.addDays(BackupPeriodSevenDays);
-        } else if (metaData.backupPeriodSymId == Const::BackupDailySymId) {
+        } else if (metaData.backupPeriodId == d->BackupPeriodDailyId) {
             nextBackupDate = nextBackupDate.addDays(BackupPeriodOneDay);
         }
         if (nextBackupDate < today) {

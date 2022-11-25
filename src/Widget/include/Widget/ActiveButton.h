@@ -49,7 +49,7 @@ class WIDGET_API ActiveButton : public QPushButton
     Q_OBJECT
 public:
     explicit ActiveButton(QWidget *parent) noexcept;
-    ~ActiveButton() noexcept override;
+    ~ActiveButton() override;
 
 protected:
     void mousePressEvent(QMouseEvent *e) noexcept override;

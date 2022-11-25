@@ -111,7 +111,7 @@ void LocationImportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &k
     getPluginSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
-void LocationImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void LocationImportPluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }

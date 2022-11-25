@@ -52,8 +52,8 @@ LogbookService::LogbookService() noexcept
     : d(std::make_unique<LogbookServicePrivate>())
 {}
 
-LogbookService::LogbookService(LogbookService &&rhs) = default;
-LogbookService &LogbookService::operator=(LogbookService &&rhs) = default;
+LogbookService::LogbookService(LogbookService &&rhs) noexcept = default;
+LogbookService &LogbookService::operator=(LogbookService &&rhs) noexcept = default;
 LogbookService::~LogbookService() = default;
 
 std::forward_list<FlightDate> LogbookService::getFlightDates() const noexcept

@@ -96,13 +96,13 @@ bool CsvExportPlugin::hasMultiAircraftSupport() const noexcept
     return false;
 }
 
-bool CsvExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) noexcept
+bool CsvExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) const  noexcept
 {
     // No multi aircraft support
     return false;
 }
 
-bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const  noexcept
 {
     std::unique_ptr<CsvWriterIntf> writer;
     switch (d->pluginSettings.getFormat()) {

@@ -35,7 +35,7 @@ class MODEL_API Position final : public AbstractComponent<PositionData>
 public:
     explicit Position(const AircraftInfo &aircraftInfo) noexcept;
 
-    PositionData interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    PositionData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 };
 
 #endif // POSITION_H

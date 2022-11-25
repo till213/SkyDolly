@@ -47,8 +47,8 @@ namespace
 
 // PUBIC
 
-SQLiteLocationDao::SQLiteLocationDao(SQLiteLocationDao &&rhs) = default;
-SQLiteLocationDao &SQLiteLocationDao::operator=(SQLiteLocationDao &&rhs) = default;
+SQLiteLocationDao::SQLiteLocationDao(SQLiteLocationDao &&rhs) noexcept = default;
+SQLiteLocationDao &SQLiteLocationDao::operator=(SQLiteLocationDao &&rhs) noexcept = default;
 SQLiteLocationDao::~SQLiteLocationDao() = default;
 
 bool SQLiteLocationDao::add(Location &location) noexcept
@@ -70,7 +70,8 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  true_heading,"
         "  indicated_airspeed,"
         "  on_ground,"
-        "  attributes"
+        "  attributes,"
+        "  engine_event"
         ") values ("
         "  :title,"
         "  :description,"
@@ -86,7 +87,8 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  :true_heading,"
         "  :indicated_airspeed,"
         "  :on_ground,"
-        "  :attributes"
+        "  :attributes,"
+        "  :engine_event"
         ");"
     );
 
@@ -105,6 +107,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
     query.bindValue(":attributes", QVariant::fromValue(location.attributes));
+    query.bindValue(":engine_event", QVariant::fromValue(location.engineEventId));
 
     const bool ok = query.exec();
     if (ok) {
@@ -137,7 +140,8 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
         "       true_heading = :true_heading,"
         "       indicated_airspeed = :indicated_airspeed,"
         "       on_ground = :on_ground,"
-        "       attributes = :attributes "
+        "       attributes = :attributes,"
+        "       engine_event = :engine_event "
         "where id = :id;"
     );
 
@@ -156,6 +160,7 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
     query.bindValue(":attributes", QVariant::fromValue(location.attributes));
+    query.bindValue(":engine_event", QVariant::fromValue(location.engineEventId));
     query.bindValue(":id", QVariant::fromValue(location.id));
     const bool ok = query.exec();
 #ifdef DEBUG
@@ -213,6 +218,7 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
         const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
         const int onGroundIdx = record.indexOf("on_ground");
         const int attributesIdx = record.indexOf("attributes");
+        const int engineEventIdx = record.indexOf("engine_event");
 
         while (query.next()) {
             Location location;
@@ -232,6 +238,7 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
             location.indicatedAirspeed = query.value(indicatedAirspeedIdx).toInt();
             location.onGround = query.value(onGroundIdx).toBool();
             location.attributes = query.value(attributesIdx).toLongLong();
+            location.engineEventId = query.value(engineEventIdx).toLongLong();
 
             locations.push_back(std::move(location));
         }
@@ -302,6 +309,7 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
         const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
         const int onGroundIdx = record.indexOf("on_ground");
         const int attributesIdx = record.indexOf("attributes");
+        const int engineEventIdx = record.indexOf("engine_event");
 
         while (query.next()) {
             Location location;
@@ -321,6 +329,7 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
             location.indicatedAirspeed = query.value(indicatedAirspeedIdx).toInt();
             location.onGround = query.value(onGroundIdx).toBool();
             location.attributes = query.value(attributesIdx).toLongLong();
+            location.engineEventId = query.value(engineEventIdx).toLongLong();
 
             locations.push_back(std::move(location));
         }

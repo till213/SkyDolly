@@ -35,19 +35,20 @@ class QRegularExpressionMatch;
 #include "CsvLocationParserIntf.h"
 
 class Location;
+class CsvLocationImportSettings;
 struct LittleNavmapCsvParserPrivate;
 
 class LittleNavmapCsvParser : public CsvLocationParserIntf
 {
 public:
-    LittleNavmapCsvParser() noexcept;
+    explicit LittleNavmapCsvParser(const CsvLocationImportSettings &pluginSettings) noexcept;
     LittleNavmapCsvParser(const LittleNavmapCsvParser &rhs) = delete;
-    LittleNavmapCsvParser(LittleNavmapCsvParser &&rhs);
+    LittleNavmapCsvParser(LittleNavmapCsvParser &&rhs) noexcept;
     LittleNavmapCsvParser &operator=(const LittleNavmapCsvParser &rhs) = delete;
-    LittleNavmapCsvParser &operator=(LittleNavmapCsvParser &&rhs);
-    ~LittleNavmapCsvParser();
+    LittleNavmapCsvParser &operator=(LittleNavmapCsvParser &&rhs) noexcept;
+    ~LittleNavmapCsvParser() override;
 
-    virtual std::vector<Location> parse(QTextStream &textStream, bool *ok = nullptr) noexcept override;
+    std::vector<Location> parse(QTextStream &textStream, bool *ok = nullptr) noexcept override;
 
 private:
     std::unique_ptr<LittleNavmapCsvParserPrivate> d;

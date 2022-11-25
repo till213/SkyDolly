@@ -64,7 +64,7 @@ Version::Version() noexcept
 {}
 
 Version::Version(int majorNo, int minorNo, int patch) noexcept
-    : d(new VersionPrivate(majorNo, minorNo, patch))
+    : d(std::make_unique<VersionPrivate>(majorNo, minorNo, patch))
 {}
 
 Version::Version(QStringView version) noexcept
@@ -73,8 +73,8 @@ Version::Version(QStringView version) noexcept
     fromString(version);
 }
 
-Version::Version(Version &&rhs) = default;
-Version &Version::operator=(Version &&rhs) = default;
+Version::Version(Version &&rhs) noexcept = default;
+Version &Version::operator=(Version &&rhs) noexcept = default;
 Version::~Version() = default;
 
 void Version::fromString(QStringView version) noexcept

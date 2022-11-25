@@ -3,23 +3,30 @@
 ## 0.13.0
 
 ### New Features
+- New location export plugin
+  * Sky Dolly CSV export
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV export
 - New location import plugin
-  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user points CSV import
+  * Sky Dolly CSV import
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV import
   
 ### Improvements
-- Additional system locations
+- Flight CSV export
+  * The Sky Dolly CSV export now uses comma (,) instead of tab stops as value delimiters
+  * Size of file reduced, rounding numbers to two decimal places (except latitude and longitude values that are rounded to six decimal places)
+- Additional locations
 - The system locations migration file, located at *[Sky Dolly installation directory]/Resources/migr/Locations.csv*, is now optional and can be deleted
 
 ### Bug Fixes
 - The various tabs in the Flight information dialog (Description, Aircraft, Conditions and Flight Plan) are now properly updated when importing a flight or loading a flight from the logbook
 
 ### Under The Hood
-- Return value optimisation
 - Rule of Zero, copy-and-swap [[Back to Basics: RAII and the Rule of Zero - Arthur O'Dwyer - CppCon 2019](https://www.youtube.com/watch?v=7Qgd9B1KuMQ)]
 - Thread-safe access to singletons [[Back to Basics: Concurrency - Arthur O'Dwyer - CppCon 2020](https://www.youtube.com/watch?v=F6Ipn7gCOsY)]
 - "Const pimpl" pattern (where applicable) [[CppCon 2016: Herb Sutter “Leak-Freedom in C++... By Default.”](https://www.youtube.com/watch?v=JfmTagWcqoE)]
 - Value-based aircraft list (CPU cache optimisation)
-- Small performance optimisations (e.g. return value optimisation)
+- Small performance optimisations such as return value optimisation and memory pre-allocation
+- Replace regular expression etc. based CSV parsers by new CSV parser (very much inspired by Little Navmap CSV parser implementation)
 
 ## 0.12.0
 

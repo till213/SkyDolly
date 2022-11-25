@@ -162,6 +162,12 @@ bool SkyConnectManager::freezeUserAircraft(bool enable) noexcept
     return skyConnect ? skyConnect->get().freezeUserAircraft(enable) : false;
 }
 
+bool SkyConnectManager::sendSimulationEvent(SkyConnectIntf::SimulationEvent event) noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().sendSimulationEvent(event) : false;
+}
+
 SkyConnectIntf::ReplayMode SkyConnectManager::getReplayMode() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();

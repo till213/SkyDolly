@@ -48,11 +48,12 @@ public:
     explicit AbstractComponent(const AircraftInfo &aircraftInfo) noexcept
         : m_aircraftInfo(aircraftInfo)
     {}
+
     AbstractComponent() noexcept;
     AbstractComponent(const AbstractComponent &rhs) = default;
-    AbstractComponent(AbstractComponent &&rhs) = default;
+    AbstractComponent(AbstractComponent &&rhs) noexcept = default;
     AbstractComponent &operator=(const AbstractComponent &rhs) = default;
-    AbstractComponent &operator=(AbstractComponent &&rhs) = default;
+    AbstractComponent &operator=(AbstractComponent &&rhs) noexcept = default;
     virtual ~AbstractComponent() = default;
 
     void setData(const Data &data) noexcept
@@ -82,7 +83,7 @@ public:
             // Same timestamp -> replace
             m_data.back() = data;
         } else {
-            m_data.push_back(std::move(data));
+            m_data.push_back(data);
         }
     }
 
@@ -105,7 +106,7 @@ public:
             // Same timestamp -> update
             *result = data;
         } else {
-            m_data.push_back(std::move(data));
+            m_data.push_back(data);
         }
     }
 
@@ -131,10 +132,19 @@ public:
         return m_data.back();
     }
 
-    [[nodiscard]]
     std::size_t count() const noexcept
     {
         return m_data.size();
+    }
+
+    void reserve(typename Data::size_type size)
+    {
+        m_data.reserve(size);
+    }
+
+    typename Data::size_type capacity() const noexcept
+    {
+        return m_data.capacity();
     }
 
     void clear() noexcept
@@ -149,7 +159,17 @@ public:
         return m_data.begin();
     }
 
+    ConstIterator begin() const noexcept
+    {
+        return m_data.begin();
+    }
+
     Iterator end() noexcept
+    {
+        return m_data.end();
+    }
+
+    ConstIterator end() const noexcept
     {
         return m_data.end();
     }
@@ -174,47 +194,42 @@ public:
         return m_data[index];
     }
 
-    virtual T interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
+    virtual T interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept = 0;
 
 protected:
-    [[nodiscard]]
     inline const Data &getData() const noexcept
     {
         return m_data;
     }
 
-    [[nodiscard]]
     inline const AircraftInfo &getAircraftInfo() const noexcept
     {
         return m_aircraftInfo;
     }
 
-    [[nodiscard]]
     inline std::int64_t getCurrentTimestamp() const noexcept
     {
         return m_currentTimestamp;
     }
-    inline void setCurrentTimestamp(std::int64_t timestamp) noexcept
+    inline void setCurrentTimestamp(std::int64_t timestamp) const noexcept
     {
         m_currentTimestamp = timestamp;
     }
 
-    [[nodiscard]]
     inline int getCurrentIndex() const noexcept
     {
         return m_currentIndex;
     }
-    inline void setCurrentIndex(int index) noexcept
+    inline void setCurrentIndex(int index) const noexcept
     {
         m_currentIndex = index;
     }
 
-    [[nodiscard]]
     inline TimeVariableData::Access getCurrentAccess() const noexcept
     {
         return m_currentAccess;
     }
-    inline void setCurrentAccess(TimeVariableData::Access access) noexcept
+    inline void setCurrentAccess(TimeVariableData::Access access) const noexcept
     {
         m_currentAccess = access;
     }
@@ -222,9 +237,9 @@ protected:
 private:
     Data m_data;
     const AircraftInfo &m_aircraftInfo;
-    std::int64_t m_currentTimestamp {TimeVariableData::InvalidTime};
-    int m_currentIndex {SkySearch::InvalidIndex};
-    TimeVariableData::Access m_currentAccess {TimeVariableData::Access::Linear};
+    mutable std::int64_t m_currentTimestamp {TimeVariableData::InvalidTime};
+    mutable int m_currentIndex {SkySearch::InvalidIndex};
+    mutable TimeVariableData::Access m_currentAccess {TimeVariableData::Access::Linear};
 };
 
 #endif // ABSTRACTCOMPONENT_H

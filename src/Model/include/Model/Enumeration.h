@@ -26,6 +26,7 @@
 #define ENUMERATION_H
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include <QString>
@@ -40,17 +41,17 @@ struct EnumerationPrivate;
  *
  * For C++ enumeration class support also refer to Enum.h
  *
- * \sa Enum#toUnderlyingType
+ * \sa Enum#underly
  */
 class MODEL_API Enumeration final
 {
 public:
-    Enumeration(const QString &name) noexcept;
+    Enumeration(QString name) noexcept;
     Enumeration() noexcept;
     Enumeration(const Enumeration &rhs) = delete;
-    Enumeration(Enumeration &&rhs);
+    Enumeration(Enumeration &&rhs) noexcept;
     Enumeration &operator=(const Enumeration &rhs) = delete;
-    Enumeration &operator=(Enumeration &&rhs);
+    Enumeration &operator=(Enumeration &&rhs) noexcept;
     ~Enumeration();
 
     using Item = struct Item_ : public Data
@@ -59,19 +60,20 @@ public:
             : Data()
         {}
 
-        Item_(std::atomic_int64_t id, QString thesymbolicId, QString theName) noexcept
-            : Data(id), symbolicId(thesymbolicId), name(theName)
+        Item_(std::atomic_int64_t id, QString symId, QString name) noexcept
+            : Data(id), symId(std::move(symId)), name(std::move(name))
         {}
-        QString symbolicId;
+        QString symId;
         QString name;
     };
 
     QString getName() const noexcept;
-    void addItem(Item item) noexcept;
+    void setName(QString name) noexcept;
+    void addItem(const Item& item) noexcept;
     const std::vector<Item> &items() const noexcept;
-    Item getItemBySymbolicId(QString symbolicId) const noexcept;
+    Item getItemBySymId(const QString &symId) const noexcept;
     Item getItemById(std::int64_t id) const noexcept;
-    QString getSymbolicIdById(std::int64_t id) const noexcept;
+    QString getSymIdById(std::int64_t id) const noexcept;
 
     std::size_t count() const noexcept;
 

@@ -25,15 +25,17 @@
 #include <cstdint>
 
 #include <QByteArray>
-#include <QList>
 #include <QString>
 #include <QDateTime>
 #include <QTimeZone>
 #include <QIODevice>
 #include <QFileInfo>
-#include <QRegularExpression>
+#include <QTextCodec>
+#include <QTextStream>
 
 #include <Kernel/Convert.h>
+#include <Kernel/Enum.h>
+#include <Kernel/CsvParser.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
@@ -42,14 +44,17 @@
 
 namespace
 {
-    constexpr const char *FlightRadar24CSVPattern {R"(^(\d*),(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z),([\w]*|[\d]*),\"([-]?\d{1,2}.\d+),([-]?\d{1,3}.\d+)\",(\d+),(\d+),(\d+))"};
-    constexpr int UnixTimestampIndex = 1;
-    constexpr int CallsignIndex = 2;
-    constexpr int LatitudeIndex = 3;
-    constexpr int LongitudeIndex = 4;
-    constexpr int AltitudeIndex = 5;
-    constexpr int SpeedIndex = 6;
-    constexpr int HeadingIndex = 7;
+    constexpr const char *FlightRadar24CsvHeader {"Timestamp,UTC,Callsign,Position,Altitude,Speed,Direction"};
+
+    enum struct Index
+    {
+        UnixTimestamp = 0,
+        Callsign,
+        Position,
+        Altitude,
+        Speed,
+        Heading
+    };
 }
 
 // PUBLIC
@@ -57,64 +62,69 @@ namespace
 bool FlightRadar24CsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept
 {
     Aircraft &aircraft = flight.getUserAircraft();
-    static const QRegularExpression regexp(::FlightRadar24CSVPattern);
-
-    // Headers
-    const QByteArray header = io.readLine();
-    bool ok = !header.isNull();
-
+    Position &position = aircraft.getPosition();
     firstDateTimeUtc.setTimeZone(QTimeZone::utc());
+
+    CsvParser csvParser;
+    QTextStream textStream(&io);
+    textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+    CsvParser::Rows rows = csvParser.parse(textStream, ::FlightRadar24CsvHeader);
+    position.reserve(rows.size());
+    bool ok {true};
+    for (const auto &row : rows) {
+        const PositionData positionData = parsePosition(row, firstDateTimeUtc, flightNumber, ok);
+        if (ok) {
+            position.upsertLast(positionData);
+        } else {
+            break;
+        }
+    }
+    return ok;
+}
+
+inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) noexcept
+{
+    PositionData positionData;
+    std::int64_t timestamp {0};
     QDateTime currentDateTimeUtc;
     currentDateTimeUtc.setTimeZone(QTimeZone::utc());
-    std::int64_t timestamp;
 
-    Position &position = aircraft.getPosition();
-
-    // CSV data
-    QByteArray data = io.readLine();
-    while (ok && !data.isNull()) {
-        const QRegularExpressionMatch match = regexp.match(data);
-        if (match.hasMatch()) {
-
-            PositionData positionData;
-
-            // In seconds after 1970-01-01 UTC
-            const std::int64_t unixTimestamp = match.capturedView(::UnixTimestampIndex).toLongLong(&ok);
-            if (ok) {
-                if (firstDateTimeUtc.isNull()) {
-                    firstDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
-                    currentDateTimeUtc = firstDateTimeUtc;
-                    timestamp = 0;
-                    flightNumber = match.captured(::CallsignIndex);
-                } else {
-                    currentDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
-                    timestamp = firstDateTimeUtc.msecsTo(currentDateTimeUtc);
-                }
-            }
-            if (ok) {
-                positionData.timestamp = timestamp;
-                positionData.latitude = match.capturedView(::LatitudeIndex).toDouble(&ok);
-            }
-            if (ok) {
-                positionData.longitude = match.capturedView(::LongitudeIndex).toDouble(&ok);
-            }
-            if (ok) {
-                positionData.altitude = match.capturedView(::AltitudeIndex).toDouble(&ok);
-                positionData.indicatedAltitude = positionData.altitude;
-            }
-            if (ok) {
-                positionData.velocityBodyZ = match.capturedView(::SpeedIndex).toDouble(&ok);
-            }
-            if (ok) {
-                positionData.trueHeading = match.capturedView(::HeadingIndex).toDouble(&ok);
-            }
-            if (ok) {
-                position.upsertLast(positionData);
-            }
-
+    ok = true;
+    // In seconds after 1970-01-01 UTC
+    const std::int64_t unixTimestamp = row.at(Enum::underly(::Index::UnixTimestamp)).toLongLong(&ok);
+    if (ok) {
+        if (firstDateTimeUtc.isNull()) {
+            firstDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
+            currentDateTimeUtc = firstDateTimeUtc;
+            timestamp = 0;
+            flightNumber = row.at(Enum::underly(::Index::Callsign));
+        } else {
+            currentDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
+            timestamp = firstDateTimeUtc.msecsTo(currentDateTimeUtc);
         }
-        data = io.readLine();
     }
-
-    return ok;
+    if (ok) {
+        positionData.timestamp = timestamp;
+        const QString &position = row.at(Enum::underly(::Index::Position));
+        const QStringList coordinates = position.split(',');
+        if (coordinates.size() == 2) {
+            positionData.latitude = coordinates.first().toDouble(&ok);
+            if (ok) {
+                positionData.longitude = coordinates.last().toDouble(&ok);
+            }
+        } else {
+            ok = false;
+        }
+    }
+    if (ok) {
+        positionData.altitude = row.at(Enum::underly(::Index::Altitude)).toDouble(&ok);
+        positionData.indicatedAltitude = positionData.altitude;
+    }
+    if (ok) {
+        positionData.velocityBodyZ = row.at(Enum::underly(::Index::Speed)).toDouble(&ok);
+    }
+    if (ok) {
+        positionData.trueHeading = row.at(Enum::underly(::Index::Heading)).toDouble(&ok);
+    }
+    return positionData;
 }

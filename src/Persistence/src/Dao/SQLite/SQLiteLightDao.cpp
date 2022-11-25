@@ -48,11 +48,11 @@ namespace
 
 // PUBLIC
 
-SQLiteLightDao::SQLiteLightDao(SQLiteLightDao &&rhs) = default;
-SQLiteLightDao &SQLiteLightDao::operator=(SQLiteLightDao &&rhs) = default;
+SQLiteLightDao::SQLiteLightDao(SQLiteLightDao &&rhs) noexcept = default;
+SQLiteLightDao &SQLiteLightDao::operator=(SQLiteLightDao &&rhs) noexcept = default;
 SQLiteLightDao::~SQLiteLightDao() = default;
 
-bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData)  noexcept
+bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData) noexcept
 {
     QSqlQuery query;
     query.prepare(

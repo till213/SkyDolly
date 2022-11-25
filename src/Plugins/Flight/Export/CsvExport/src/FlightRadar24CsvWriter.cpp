@@ -72,7 +72,7 @@ FlightRadar24CsvWriter::FlightRadar24CsvWriter(const CsvExportSettings &pluginSe
 
 FlightRadar24CsvWriter::~FlightRadar24CsvWriter() noexcept = default;
 
-bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     QString csv = QString(::TimestampColumn % CsvConst::CommaSep %
                           ::UtcColumn % CsvConst::CommaSep %
@@ -114,5 +114,5 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
 
 inline QString FlightRadar24CsvWriter::formatPosition(const PositionData &positionData) noexcept
 {
-    return CsvConst::DoubleQuote % Unit::formatCoordinate(positionData.latitude) % "," % Unit::formatCoordinate(positionData.longitude) % CsvConst::DoubleQuote;
+    return CsvConst::DoubleQuote % Export::formatCoordinate(positionData.latitude) % "," % Export::formatCoordinate(positionData.longitude) % CsvConst::DoubleQuote;
 }

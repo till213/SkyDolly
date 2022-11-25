@@ -78,7 +78,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    bool exportFlight(const Flight &flight) noexcept final;
+    bool exportFlight(const Flight &flight) const noexcept final;
 
 protected:
     // Re-implement
@@ -94,19 +94,19 @@ protected:
      * \return \c true if the file format supports multiple aircraft tracks; \c false else
      */
     virtual bool hasMultiAircraftSupport() const noexcept = 0;
-    virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept = 0;
-    virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept = 0;
+    virtual bool exportFlight(const Flight &flight, QIODevice &io) const noexcept = 0;
+    virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept = 0;
 
 private:
     const std::unique_ptr<FlightExportPluginBasePrivate> d;
 
-    bool exportFlight(const Flight &flight, const QString &filePath) noexcept;
+    bool exportFlight(const Flight &flight, const QString &filePath) const noexcept;
     // Exports all aircraft into separate files, given the 'baseFilePath'
-    bool exportAllAircraft(const Flight &flight, const QString &baseFilePath) noexcept;
+    bool exportAllAircraft(const Flight &flight, const QString &baseFilePath) const noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 };
 
 #endif // FLIGHTEXPORTPLUGINBASE_H

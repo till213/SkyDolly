@@ -28,12 +28,12 @@
 #include <memory>
 
 #include <QByteArray>
-#include <QList>
 
 class QIODevice;
 class QDateTime;
 class QString;
 
+#include <Kernel/CsvParser.h>
 #include "CsvParserIntf.h"
 
 class Flight;
@@ -52,11 +52,7 @@ public:
 private:
     std::unique_ptr<FlightRecorderCsvParserPrivate> d;
 
-    bool parseHeader(QIODevice &io) noexcept;
-    bool parseData(QIODevice &io) noexcept;
-    inline bool importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept;
-    template <typename T>
-    inline bool importValue(const QList<QByteArray> &values, const char *name, int &index, T &value) noexcept;
+    bool parseRow(const CsvParser::Row &row) noexcept;
     inline void initEngineDefaultValues(EngineData &engineData) noexcept;
     inline void initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandle) noexcept;
 };

@@ -38,9 +38,9 @@ class SQLiteSecondaryFlightControlDao : public SecondaryFlightControlDaoIntf
 public:
     SQLiteSecondaryFlightControlDao() = default;
     SQLiteSecondaryFlightControlDao(const SQLiteSecondaryFlightControlDao &rhs) = delete;
-    SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs);
+    SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs) noexcept;
     SQLiteSecondaryFlightControlDao &operator=(const SQLiteSecondaryFlightControlDao &rhs) = delete;
-    SQLiteSecondaryFlightControlDao &operator=(SQLiteSecondaryFlightControlDao &&rhs);
+    SQLiteSecondaryFlightControlDao &operator=(SQLiteSecondaryFlightControlDao &&rhs) noexcept;
     ~SQLiteSecondaryFlightControlDao() override;
 
     bool add(std::int64_t aircraftId, const SecondaryFlightControlData &data) noexcept override;

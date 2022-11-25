@@ -39,12 +39,6 @@
 #include <Model/PositionData.h>
 #include "Export.h"
 
-namespace
-{
-    // Precision of general number (altitude, heading, ...)
-    constexpr int NumberPrecision = 2;
-}
-
 // PUBLIC
 
 QString Export::suggestFlightFilePath(const Flight &flight, QStringView suffix) noexcept
@@ -78,11 +72,6 @@ QString Export::suggestLocationFilePath(QStringView suffix) noexcept
     return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
 }
 
-QString Export::formatNumber(double number) noexcept
-{
-    return QString::number(number, 'f', ::NumberPrecision);
-}
-
 std::vector<PositionData> Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept
 {
     std::vector<PositionData> interpolatedPositionData;
@@ -90,7 +79,7 @@ std::vector<PositionData> Export::resamplePositionDataForExport(const Aircraft &
     Position &position = aircraft.getPosition();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
         const std::int64_t duration = position.getLast().timestamp;
-        const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
+        const std::int64_t deltaTime = Enum::underly(resamplingPeriod);
         std::int64_t timestamp = 0;
         while (timestamp <= duration) {
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Export);

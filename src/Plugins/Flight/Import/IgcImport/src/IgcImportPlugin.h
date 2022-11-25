@@ -51,7 +51,7 @@ class IgcImportPlugin : public FlightImportPluginBase
     Q_INTERFACES(FlightImportIntf)
 public:
     IgcImportPlugin() noexcept;
-    ~IgcImportPlugin() noexcept override;
+    ~IgcImportPlugin() override;
 
 protected:
     FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;

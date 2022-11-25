@@ -116,7 +116,7 @@ void FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &fl
         positionData.velocityBodyZ = trackItem.speed;
         positionData.trueHeading = trackItem.heading;
 
-        position.upsertLast(std::move(positionData));
+        position.upsertLast(positionData);
     }
 }
 
@@ -222,7 +222,7 @@ bool FlightRadar24KmlParser::parseDescription() noexcept
         match = d->headingRegExp.match(description, pos);
         if (match.hasMatch()) {
             trackItem.heading = match.captured(1).toInt();
-            d->trackData.push_back(std::move(trackItem));
+            d->trackData.push_back(trackItem);
             ok = true;
         } else {
             ok = false;

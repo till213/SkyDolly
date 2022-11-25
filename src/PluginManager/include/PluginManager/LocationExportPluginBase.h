@@ -75,7 +75,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    bool exportLocations(const std::vector<Location> &locations) noexcept final;
+    bool exportLocations(const std::vector<Location> &locations) const noexcept final;
 
 protected:
     // Re-implement
@@ -84,16 +84,16 @@ protected:
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
 
-    virtual bool exportLocations(const std::vector<Location> &locations, QIODevice &io) noexcept = 0;
+    virtual bool exportLocations(const std::vector<Location> &locations, QIODevice &io) const noexcept = 0;
 
 private:
     const std::unique_ptr<LocationExportPluginBasePrivate> d;
 
-    bool exportLocations(const std::vector<Location> &locations, const QString &filePath) noexcept;
+    bool exportLocations(const std::vector<Location> &locations, const QString &filePath) const noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 };
 
 #endif // LOCATIONEXPORTPLUGINBASE_H

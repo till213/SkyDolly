@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>901</width>
-    <height>307</height>
+    <width>840</width>
+    <height>286</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -109,6 +109,16 @@
             <item row="2" column="1">
              <widget class="QDoubleSpinBox" name="trueHeadingSpinBox"/>
             </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Engine:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="EnumerationComboBox" name="engineEventComboBox"/>
+            </item>
            </layout>
           </item>
          </layout>
@@ -127,13 +137,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QDoubleSpinBox" name="defaultAltitudeSpinBox">
-            <property name="suffix">
-             <string> feet</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
@@ -144,14 +147,31 @@
           <item row="1" column="1">
            <widget class="QSpinBox" name="defaultIndicatedAirspeedSpinBox">
             <property name="suffix">
-             <string> knots</string>
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="defaultOnGroundCheckBox">
+            <property name="text">
+             <string>On ground</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="defaultAltitudeSpinBox">
+            <property name="suffix">
+             <string/>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QCheckBox" name="defaultOnGroundCheckBox">
+           <widget class="EnumerationComboBox" name="defaultEngineEventComboBox"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_8">
             <property name="text">
-             <string>On ground</string>
+             <string>Engine:</string>
             </property>
            </widget>
           </item>
@@ -226,6 +246,11 @@
    <class>FocusPlainTextEdit</class>
    <extends>QPlainTextEdit</extends>
    <header location="global">Widget/FocusPlainTextEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>EnumerationComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">Widget/EnumerationComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -60,7 +60,7 @@ public:
     };
 
     explicit ActionButton(QWidget *parent = nullptr, Capitalisation capitalisation = Capitalisation::Normal) noexcept;
-    ~ActionButton() noexcept override;
+    ~ActionButton() override;
 
     /*!
      * Sets the action to be associated with this button. This button is

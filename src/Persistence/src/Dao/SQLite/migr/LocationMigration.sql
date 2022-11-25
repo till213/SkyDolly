@@ -315,7 +315,7 @@ values
   ('ZM', 'Zambia'),
   ('ZW', 'Zimbabwe');
 
-@migr(id = "5f105246-8898-41aa-a292-073cce33a341", descn = "Create location table", step_cnt = 1)
+@migr(id = "5f105246-8898-41aa-a292-073cce33a341", descn = "Create location table", step = 1)
 create table location(
     id integer primary key,
     title text,
@@ -343,3 +343,49 @@ create index location_idx3 on location(category_id);
 create index location_idx4 on location(country_id);
 create index location_idx5 on location(identifier collate nocase);
 create index location_idx6 on location(on_ground);
+
+@migr(id = "c94c121e-3d93-44e4-a747-6db2b5e3b45b", descn = "Update application version to 0.12", step = 1)
+update metadata
+set app_version = '0.12.0';
+
+@migr(id = "eeed782c-d594-4635-88d7-15b8d4ab7edc", descn = "Create engine event enumeration table", step_cnt = 2)
+create table enum_engine_event(
+    id integer primary key,
+    sym_id text not null,
+    name text,
+    desc text
+);
+create unique index enum_engine_event_idx1 on enum_engine_event(sym_id);
+
+@migr(id = "eeed782c-d594-4635-88d7-15b8d4ab7edc", descn = "Insert location engine events", step = 2)
+insert into enum_engine_event(sym_id, name, desc)
+values
+  ('START', 'Start', 'Start the engine'),
+  ('STOP', 'Stop', 'Stop the engine'),
+  ('KEEP', 'Keep', 'Keep the engine state as-is');
+
+@migr(id = "db2ef8c9-8a62-47b5-96d1-37146404f51e", descn = "Add engine event column", step_cnt = 2)
+alter table location add column engine_event integer references enum_engine_event(id);
+
+@migr(id = "db2ef8c9-8a62-47b5-96d1-37146404f51e", descn = "Migrate engine event column", step = 2)
+update location
+set    engine_event = (select ee.id
+                       from enum_engine_event ee
+                       where ee.sym_id = 'KEEP')
+where  engine_event is null
+  and  on_ground = 0;
+update location
+set    engine_event = (select ee.id
+                       from enum_engine_event ee
+                       where ee.sym_id = 'STOP')
+where  engine_event is null
+  and  on_ground = 1;
+
+@migr(id = "d834e6da-efe9-4137-a1b8-ea85c7bb13cb", descn = "Insert water runway category", step = 1)
+insert into enum_location_category(sym_id, name, desc)
+values
+  ('WR', 'Water runway', 'Water runway');
+
+@migr(id = "55a04d46-fc38-445a-8967-f84c96aa41bb", descn = "Update application version to 0.13", step = 1)
+update metadata
+set app_version = '0.13.0';

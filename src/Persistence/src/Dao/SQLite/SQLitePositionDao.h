@@ -38,9 +38,9 @@ class SQLitePositionDao : public PositionDaoIntf
 public:
     SQLitePositionDao() = default;
     SQLitePositionDao(const SQLitePositionDao &rhs) = delete;
-    SQLitePositionDao(SQLitePositionDao &&rhs);
+    SQLitePositionDao(SQLitePositionDao &&rhs) noexcept;
     SQLitePositionDao &operator=(const SQLitePositionDao &rhs) = delete;
-    SQLitePositionDao &operator=(SQLitePositionDao &&rhs);
+    SQLitePositionDao &operator=(SQLitePositionDao &&rhs) noexcept;
     ~SQLitePositionDao() override;
 
     bool add(std::int64_t aircraftId, const PositionData &data) noexcept override;

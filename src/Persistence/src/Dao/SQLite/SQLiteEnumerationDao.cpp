@@ -38,8 +38,8 @@
 
 // PUBIC
 
-SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) = default;
-SQLiteEnumerationDao &SQLiteEnumerationDao::operator=(SQLiteEnumerationDao &&rhs) = default;
+SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept = default;
+SQLiteEnumerationDao &SQLiteEnumerationDao::operator=(SQLiteEnumerationDao &&rhs) noexcept = default;
 SQLiteEnumerationDao::~SQLiteEnumerationDao() = default;
 
 Enumeration SQLiteEnumerationDao::get(const QString &name, bool *ok) const noexcept
@@ -59,13 +59,13 @@ Enumeration SQLiteEnumerationDao::get(const QString &name, bool *ok) const noexc
     if (success) {
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
-        const int symbolicIdIdx = record.indexOf("sym_id");
+        const int symIdIdx = record.indexOf("sym_id");
         const int nameIdx = record.indexOf("name");
         while (query.next()) {
             const std::int64_t id = query.value(idIdx).toLongLong();
-            const QString symbolicId = query.value(symbolicIdIdx).toString();
+            const QString symId = query.value(symIdIdx).toString();
             const QString itemName = query.value(nameIdx).toString();
-            enumeration.addItem({id, symbolicId, itemName});
+            enumeration.addItem({id, symId, itemName});
         }
 #ifdef DEBUG
     } else {

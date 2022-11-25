@@ -39,7 +39,7 @@ Light::Light(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
 {}
 
-LightData Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+LightData Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     LightData lightData;
     const LightData *p1 {nullptr}, *p2 {nullptr};

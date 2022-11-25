@@ -27,6 +27,8 @@
 
 #include <memory>
 
+#include <QString>
+
 class QIODevice;
 
 #include "CsvWriterIntf.h"
@@ -43,7 +45,7 @@ public:
     FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept;
     virtual ~FlightRadar24CsvWriter() noexcept;
 
-    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
+    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) const noexcept override;
 
 private:
     const std::unique_ptr<FlightRadar24CsvWriterPrivate> d;

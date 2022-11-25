@@ -57,7 +57,7 @@ LocationExportPluginBase::LocationExportPluginBase() noexcept
 
 LocationExportPluginBase::~LocationExportPluginBase() = default;
 
-bool LocationExportPluginBase::exportLocations(const std::vector<Location> &locations) noexcept
+bool LocationExportPluginBase::exportLocations(const std::vector<Location> &locations) const noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     LocationExportPluginBaseSettings &baseSettings = getPluginSettings();
@@ -103,7 +103,7 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
 
 // PRIVATE
 
-bool LocationExportPluginBase::exportLocations(const std::vector<Location> &locations, const QString &filePath) noexcept
+bool LocationExportPluginBase::exportLocations(const std::vector<Location> &locations, const QString &filePath) const noexcept
 {
     QFile file(filePath);
     bool ok {true};
@@ -148,7 +148,7 @@ void LocationExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &k
     getPluginSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
-void LocationExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void LocationExportPluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }

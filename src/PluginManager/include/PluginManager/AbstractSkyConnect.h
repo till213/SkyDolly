@@ -58,7 +58,8 @@ public:
     ~AbstractSkyConnect() override;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
-    bool freezeUserAircraft(bool enable) noexcept override;
+    bool freezeUserAircraft(bool enable) const noexcept override;
+    bool sendSimulationEvent(SimulationEvent event) noexcept override;
 
     ReplayMode getReplayMode() const noexcept override;
     void setReplayMode(ReplayMode replayMode) noexcept override;
@@ -122,7 +123,8 @@ protected:
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
 
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
-    virtual bool onFreezeUserAircraft(bool enable) noexcept = 0;
+    virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
+    virtual bool onSimulationEvent(SimulationEvent event) const noexcept = 0;
 
     virtual bool onStartRecording() noexcept = 0;
     virtual void onRecordingPaused(bool paused) noexcept = 0;
@@ -156,7 +158,7 @@ private:
     bool hasRecordingStarted() const noexcept;
     inline std::int64_t getSkipInterval() const noexcept;
 
-    inline bool retryWithReconnect(std::function<bool()> func);
+    inline bool retryWithReconnect(const std::function<bool()> &func);
 
     bool setupInitialRecordingPosition(InitialPosition initialPosition) noexcept;
     bool setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept;

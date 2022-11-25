@@ -265,7 +265,7 @@ public:
      * \param state
      *        the logbook table state encoded in the QByteAarray
      */
-    void setLogbookState(const QByteArray &layout) noexcept;
+    void setLogbookState(const QByteArray &state) noexcept;
 
     /*!
      * Returns the saved formation aircraft table state.
@@ -280,7 +280,7 @@ public:
      * \param state
      *        the formation aircraft table state encoded in the QByteAarray
      */
-    void setFormationAircraftTableState(const QByteArray &layout) noexcept;
+    void setFormationAircraftTableState(const QByteArray &state) noexcept;
 
     /*!
      * Returns the saved location table state.
@@ -295,7 +295,7 @@ public:
      * \param state
      *        the location table state encoded in the QByteAarray
      */
-    void setLocationTableState(const QByteArray &layout) noexcept;
+    void setLocationTableState(const QByteArray &state) noexcept;
 
     /*!
      * Returns the path of the directory which was last accessed during export or import.
@@ -311,7 +311,7 @@ public:
      *        the path of the last export / import directory
      * \sa exportPathChanged
      */
-    void setExportPath(QString exportPath);
+    void setExportPath(const QString &exportPath);
 
     /*!
      * Returns whether the fast-forward / backward interval is an absolute value (in milliseconds).

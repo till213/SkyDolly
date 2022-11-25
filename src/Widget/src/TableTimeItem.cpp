@@ -44,8 +44,7 @@ TableTimeItem::TableTimeItem(const QString &timeString, const QTime &time) noexc
       d(std::make_unique<TableTimeItemPrivate>(time))
 {}
 
-TableTimeItem::~TableTimeItem() noexcept
-{}
+TableTimeItem::~TableTimeItem() = default;
 
 bool TableTimeItem::operator<(const QTableWidgetItem &rhs) const noexcept
 {

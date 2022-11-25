@@ -107,11 +107,11 @@ void FlightExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues)
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ResamplingPeriodKey;
-    keyValue.second = Enum::toUnderlyingType(d->resamplingPeriod);
+    keyValue.second = Enum::underly(d->resamplingPeriod);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::FormationExportKey;
-    keyValue.second = Enum::toUnderlyingType(d->formationExport);
+    keyValue.second = Enum::underly(d->formationExport);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::OpenExportedFilesEnabledKey;
@@ -126,11 +126,11 @@ void FlightExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ResamplingPeriodKey;
-    keyValue.second = Enum::toUnderlyingType(::DefaultResamplingPeriod);
+    keyValue.second = Enum::underly(::DefaultResamplingPeriod);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::FormationExportKey;
-    keyValue.second = Enum::toUnderlyingType(::DefaultFormationExport);
+    keyValue.second = Enum::underly(::DefaultFormationExport);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::OpenExportedFilesEnabledKey;

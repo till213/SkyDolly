@@ -29,6 +29,8 @@ class QIODevice;
 class QDateTime;
 class QString;
 
+#include <Kernel/CsvParser.h>
+#include <Model/PositionData.h>
 #include "CsvParserIntf.h"
 
 class Flight;
@@ -36,7 +38,9 @@ class Flight;
 class FlightRadar24CsvParser : public CsvParserIntf
 {
 public:
-    virtual bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+private:
+    static inline PositionData parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) noexcept;
 };
 
 #endif // FLIGHTRADAR24CSVPARSER_H

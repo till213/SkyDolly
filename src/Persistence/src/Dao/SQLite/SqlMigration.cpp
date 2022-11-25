@@ -32,6 +32,7 @@
 #include <QTextCodec>
 
 #include <Kernel/Const.h>
+#include <Kernel/CsvParser.h>
 #include <Model/Enumeration.h>
 #include <Model/Location.h>
 #include <Service/EnumerationService.h>
@@ -41,21 +42,31 @@
 
 namespace
 {
-    // Also refer to Locations.csv
-    constexpr int TitleIndex = 1;
-    constexpr int DescriptionIndex = 2;
-    constexpr int CategoryIndex = 3;
-    constexpr int CountryIndex = 4;
-    constexpr int IdentifierIndex = 5;
-    constexpr int LatitudeIndex = 6;
-    constexpr int LongitudeIndex = 7;
-    constexpr int AltitudeIndex = 8;
-    constexpr int PitchIndex = 9;
-    constexpr int BankIndex = 10;
-    constexpr int TrueHeadingIndex = 11;
-    constexpr int IndicatedAirspeedIndex = 12;
-    constexpr int OnGroundIndex = 13;
-    constexpr int AttributesIndex = 14;
+    // Also refer to res/migr/Locations.csv
+    enum Index
+    {
+        Uuid = 0,
+        Title,
+        Description,
+        Category,
+        Country,
+        Identifier,
+        Latitude,
+        Longitude,
+        Altitude,
+        Pitch,
+        Bank,
+        TrueHeading,
+        IndicatedAirspeed,
+        OnGround,
+        Attributes,
+        EngineEvent
+    };
+
+    // Depending on the CSV generating application (e.g. Excel or LibreOffice) the column titles may
+    // or may not have "quotes"
+    constexpr const char *LocationMigrationHeader {R"("MigrationId","Title","Description","Category")"};
+    constexpr const char *AlternateLocationMigrationHeader {R"(MigrationId,Title,Description,Category)"};
 }
 
 struct SqlMigrationPrivate
@@ -143,25 +154,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 }
 
 bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
-{
-    // https://regex101.com/
-    static const QRegularExpression uuidRegExp {R"(["]?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})["]?)"};
-    static const QRegularExpression csvRegExp {
-        R"(["|,]?([^"]+)["]?,)"       // Title
-        R"(["]?([^"]*)["]?,)"         // Description (optional)
-        R"(["]?([^"]*)["]?,)"         // Category (symbolic ID) (optional)
-        R"(["]?([^"]*)["]?,)"         // Country (symbolic ID) (optional)
-        R"(["]?([^"]*)["]?,)"         // Identifier (optional)
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Latitude
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Longitude
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Altitude (optional)
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Pitch (optional)
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // Bank (optional)
-        R"(([+-]?[0-9]*[.]?[0-9]+),)" // True Heading (optional)
-        R"(([+-]?[\d]*),)"            // Indicated airspeed (optional)
-        R"(["]?(false|true)*["]?,)"   // On Ground (optional)
-        R"(([+-]?[\d]*)$)"            // Attributes (optional)
-    };
+{ 
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
     bool ok = query.exec();
     if (ok) {
@@ -170,32 +163,19 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
         if (ok) {
             QTextStream textStream(&migrationFile);
             textStream.setCodec(QTextCodec::codecForName("UTF-8"));
-            QString csv = textStream.readLine();
-            if (csv.startsWith("\"MigrationId\"") || csv.startsWith("MigrationId")) {
-                // Skip column names
-                csv = textStream.readLine();
-            }
-
-            while (!csv.isNull()) {
-                QRegularExpressionMatch match = uuidRegExp.match(csv);
-                const bool hasMatch = match.hasMatch();
-                if (hasMatch) {
-                    const QString uuid = match.captured(1);
-                    SqlMigrationStep step;
-                    step.setMigrationId(uuid);
-                    step.setStep(1);
-                    step.setStepCount(1);
-                    if (!step.checkApplied()) {
-                        const int offset = match.capturedLength();
-                        match = csvRegExp.match(csv, offset);
-                        if (match.hasMatch()) {
-                            ok = migrateLocation(match);
-                            const QString errorMessage = !ok ? QString("The location import %1 failed.").arg(uuid) : QString();
-                            step.registerMigration(ok, errorMessage);
-                        }
-                    }
+            CsvParser csvParser;
+            CsvParser::Rows rows = csvParser.parse(textStream, ::LocationMigrationHeader, ::AlternateLocationMigrationHeader);
+            for (const auto &row : rows) {
+                const QString uuid = row.at(::Index::Uuid);
+                SqlMigrationStep step;
+                step.setMigrationId(uuid);
+                step.setStep(1);
+                step.setStepCount(1);
+                if (!step.checkApplied()) {
+                    ok = migrateLocation(row);
+                    const QString errorMessage = !ok ? QString("The location import %1 failed.").arg(uuid) : QString();
+                    step.registerMigration(ok, errorMessage);
                 }
-                csv = textStream.readLine();
             }
             migrationFile.close();
         }
@@ -204,55 +184,61 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
     return query.exec() && ok;
 }
 
-bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch) noexcept
+bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
 {
     bool ok {true};
     Location location;
-    location.title = locationMatch.captured(::TitleIndex);
-    location.description = locationMatch.captured(::DescriptionIndex).replace("\\n", "\n");
+    location.title = row.at(::Index::Title);
+    QString description = row.at(::Index::Description);
+    location.description = description.replace("\\n", "\n");
     Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
     if (ok) {
-        location.typeId = locationTypeEnumeration.getItemBySymbolicId(EnumerationService::LocationTypeSystemSymbolicId).id;
+        location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypeSystemSymId).id;
     }
     Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
     if (ok) {
-        const QString categorySymbolicId = locationMatch.captured(::CategoryIndex);
-        location.categoryId = locationCategoryEnumeration.getItemBySymbolicId(categorySymbolicId).id;
+        const QString &categorySymId = row.at(::Index::Category);
+        location.categoryId = locationCategoryEnumeration.getItemBySymId(categorySymId).id;
     }
     Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
     if (ok) {
-        const QString countrySymbolicId = locationMatch.captured(::CountryIndex);
-        location.countryId = countryEnumeration.getItemBySymbolicId(countrySymbolicId).id;
+        const QString &countrySymId = row.at(::Index::Country);
+        location.countryId = countryEnumeration.getItemBySymId(countrySymId).id;
     }
     if (ok) {
-        location.identifier = locationMatch.captured(::IdentifierIndex);
+        location.identifier = row.at(::Index::Identifier);
     }
     if (ok) {
-        location.latitude = locationMatch.captured(::LatitudeIndex).toDouble(&ok);
+        location.latitude = row.at(::Index::Latitude).toDouble(&ok);
     }
     if (ok) {
-        location.longitude = locationMatch.captured(::LongitudeIndex).toDouble(&ok);
+        location.longitude = row.at(::Index::Longitude).toDouble(&ok);
     }
     if (ok) {
-        location.altitude = locationMatch.captured(::AltitudeIndex).toDouble(&ok);
+        location.altitude = row.at(::Index::Altitude).toDouble(&ok);
     }
     if (ok) {
-        location.pitch = locationMatch.captured(::PitchIndex).toDouble(&ok);
+        location.pitch = row.at(::Index::Pitch).toDouble(&ok);
     }
     if (ok) {
-        location.bank = locationMatch.captured(::BankIndex).toDouble(&ok);
+        location.bank = row.at(::Index::Bank).toDouble(&ok);
     }
     if (ok) {
-        location.trueHeading = locationMatch.captured(::TrueHeadingIndex).toDouble(&ok);
+        location.trueHeading = row.at(::Index::TrueHeading).toDouble(&ok);
     }
     if (ok) {
-        location.indicatedAirspeed = locationMatch.captured(::IndicatedAirspeedIndex).toInt(&ok);
+        location.indicatedAirspeed = row.at(::Index::IndicatedAirspeed).toInt(&ok);
     }
     if (ok) {
-        location.attributes = locationMatch.captured(::AttributesIndex).toLongLong(&ok);
+        location.attributes = row.at(::Index::Attributes).toLongLong(&ok);
     }
     if (ok) {
-        location.onGround = locationMatch.captured(::OnGroundIndex).toLower() == "true" ? true : false;
+        location.onGround = row.at(::Index::OnGround).toLower() == "true" ? true : false;
+    }
+    Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent, &ok);
+    if (ok) {
+        const QString &engineEventSymId = row.at(::Index::EngineEvent);
+        location.engineEventId = engineEventEnumeration.getItemBySymId(engineEventSymId).id;
     }
     if (ok) {
         ok = d->locationDao.add(location);
