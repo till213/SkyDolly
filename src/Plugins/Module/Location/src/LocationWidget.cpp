@@ -323,6 +323,11 @@ void LocationWidget::initUi() noexcept
     ui->splitter->setStretchFactor(0, 1);
     ui->splitter->setStretchFactor(1, 0);
 
+    ui->searchLineEdit->setPlaceholderText(tr("Title, description"));
+    // Make sure that shortcuts are initially accepted
+    ui->searchLineEdit->clearFocus();
+    ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
+
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
@@ -436,8 +441,8 @@ void LocationWidget::updateLocationTable() noexcept
     if (PersistenceManager::getInstance().isConnected()) {
 
         std::vector<Location> locations = d->locationSelector.hasSelectors() ?
-                    d->locationService->getAll() :
-                    d->locationService->getSelectedLocations(d->locationSelector);
+                    d->locationService->getSelectedLocations(d->locationSelector) :
+                    d->locationService->getAll();
 
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->blockSignals(true);        

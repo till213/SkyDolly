@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <QString>
+#include <QStringBuilder>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -349,14 +350,25 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
 std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, bool *ok) const noexcept
 {
     std::vector<Location> locations;
-    QString queryString =        "select * "
-                                 "from   location l "
-                                 "where 1 = 1 ";
-    queryString.append("order by l.id;");
-
     QSqlQuery query;
+    QString searchKeyword;
     query.setForwardOnly(true);
+    QString queryString = "select * "
+                          "from   location l "
+                          "where 1 = 1 ";
+    if (!selector.searchKeyword.isEmpty()) {
+        queryString.append("  and (   l.title like :search_keyword "
+                           "       or l.description like :search_keyword "
+                           "      ) "
+
+        );
+        const QString LikeOperatorPlaceholder {"%"};
+        // Add like operator placeholders
+        searchKeyword = LikeOperatorPlaceholder  % selector.searchKeyword % LikeOperatorPlaceholder;
+    }
+    queryString.append("order by l.id;");
     query.prepare(queryString);
+    query.bindValue(":search_keyword", searchKeyword);
 
     const bool success = query.exec();
     if (success) {
@@ -416,6 +428,5 @@ std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSele
     if (ok != nullptr) {
         *ok = success;
     }
-    return locations;
     return locations;
 }

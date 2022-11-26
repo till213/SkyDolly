@@ -40,7 +40,7 @@ struct PERSISTENCE_API LocationSelector
 
     inline bool hasSelectors() const noexcept
     {
-        return typeIds.size() > 0 &&
+        return typeIds.size() > 0 ||
                !searchKeyword.isEmpty();
     }
 };
