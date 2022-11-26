@@ -354,7 +354,7 @@ void FormationWidget::frenchConnection() noexcept
 
 void FormationWidget::updateAircraftTable() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
 
     ui->aircraftTableWidget->blockSignals(true);
     ui->aircraftTableWidget->setSortingEnabled(false);
