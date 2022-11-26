@@ -49,7 +49,7 @@ class IgcParser
 {
 public:
     IgcParser() noexcept;
-    ~IgcParser() noexcept;
+    ~IgcParser();
 
     // "H" record
     using Header = struct
@@ -70,7 +70,7 @@ public:
     // "C" record
     using TaskItem = struct Task_
     {
-        Task_(double lat, double lon, QString desc)
+        Task_(float lat, float lon, QString desc)
             : latitude(lat),
               longitude(lon),
               description(std::move(desc))
