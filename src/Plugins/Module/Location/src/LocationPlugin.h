@@ -55,6 +55,7 @@ private:
 
 private slots:
     void captureLocation() noexcept;
+    void updateLocation() noexcept;
     void teleportTo(const Location &location) noexcept;
     void onLocationReceived(Location location) noexcept;
 };

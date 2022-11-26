@@ -9,7 +9,14 @@
       "installRoot": "${projectDir}\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
-      "ctestCommandArgs": ""
+      "ctestCommandArgs": "",
+      "variables": [
+        {
+          "name": "Qt5Test_DIR",
+          "value": "C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5Test",
+          "type": "PATH"
+        }
+      ]
     },
     {
       "name": "x64-Release",
@@ -20,8 +27,7 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": []
+      "inheritEnvironments": [ "msvc_x64_x64" ]
     }
   ]
 }

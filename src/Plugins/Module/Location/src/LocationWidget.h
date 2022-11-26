@@ -53,10 +53,12 @@ public:
 
     void addUserLocation(double latitude, double longitude);
     void addLocation(Location location);
+    void updateLocation(Location location);
 
     void keyPressEvent(QKeyEvent *event) noexcept override;
 
 signals:
+    void doUpdateLocation();
     void doCaptureLocation();
     void teleportTo(Location location);
 
@@ -89,6 +91,7 @@ private slots:
 
     void onAddLocation() noexcept;
     void onCaptureLocation() noexcept;
+    void onUpdateLocation() noexcept;
     void onTeleportToSelectedLocation() noexcept;
     void onDeleteLocation() noexcept;
 
