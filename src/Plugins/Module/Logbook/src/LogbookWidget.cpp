@@ -449,7 +449,7 @@ void LogbookWidget::frenchConnection() noexcept
     connect(ui->searchLineEdit, &QLineEdit::textChanged,
             this, &LogbookWidget::onSearchTextChanged);
     connect(d->searchTimer.get(), &QTimer::timeout,
-            this, &LogbookWidget::searchText);    
+            this, &LogbookWidget::searchText);
 
     // Logbook table
     connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
