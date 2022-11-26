@@ -30,8 +30,8 @@
 #include <QTimeZone>
 #include <QIODevice>
 #include <QFileInfo>
-#include <QTextCodec>
 #include <QTextStream>
+#include <QTextCodec>
 
 #include <Kernel/Convert.h>
 #include <Kernel/Enum.h>

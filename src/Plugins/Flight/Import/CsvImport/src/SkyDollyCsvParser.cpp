@@ -30,6 +30,7 @@
 #include <QIODevice>
 #include <QFile>
 #include <QFileInfo>
+#include <QTextStream>
 #include <QTextCodec>
 #ifdef DEBUG
 #include <QDebug>

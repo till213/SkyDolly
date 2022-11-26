@@ -32,6 +32,7 @@
 #include <QIODevice>
 #include <QFile>
 #include <QFileInfo>
+#include <QTextStream>
 #include <QTextCodec>
 
 #include <Kernel/Convert.h>
