@@ -306,8 +306,8 @@ void IgcImportPlugin::updateWaypoints() noexcept
     if (position.count() > 0) {
         Analytics analytics(aircraft);
         const QDateTime startDateTimeUtc = d->igcParser.getHeader().flightDateTimeUtc;
-        const PositionData firstPositionData = position.getFirst();
-        const PositionData lastPositionData = position.getLast();
+        const PositionData &firstPositionData = position.getFirst();
+        const PositionData &lastPositionData = position.getLast();
         const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
         // Typically the takeoff and landing location are repeated in the IGC task list,
         // e.g. the takeoff airport and the actual takeoff point; those points can be

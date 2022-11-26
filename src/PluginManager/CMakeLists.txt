@@ -15,7 +15,7 @@ target_sources(${LIBRARY_NAME}
     PRIVATE
         include/PluginManager/PluginManagerLib.h
         include/PluginManager/Connect.h
-        include/PluginManager/CsvConst.h
+        include/PluginManager/Csv.h
         include/PluginManager/SkyConnectIntf.h
         include/PluginManager/SettingsIntf.h
         include/PluginManager/PluginIntf.h

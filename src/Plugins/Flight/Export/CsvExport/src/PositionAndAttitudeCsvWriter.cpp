@@ -40,7 +40,7 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
-#include <PluginManager/CsvConst.h>
+#include <PluginManager/Csv.h>
 #include <PluginManager/Export.h>
 #include "CsvExportSettings.h"
 #include "PositionAndAttitudeCsvWriter.h"
@@ -77,15 +77,15 @@ PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() noexcept = default
 
 bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    QString csv = QString(::TimestampColumn % CsvConst::CommaSep %
-                          ::UtcColumn % CsvConst::CommaSep %
-                          ::Latitude % CsvConst::CommaSep %
-                          ::Longitude % CsvConst::CommaSep %
-                          ::AltitudeColumn % CsvConst::CommaSep %
-                          ::SpeedColumn % CsvConst::CommaSep %
-                          ::PitchColumn % CsvConst::CommaSep %
-                          ::BankColumn % CsvConst::CommaSep %
-                          ::HeadingColumn % CsvConst::Ln
+    QString csv = QString(::TimestampColumn % Csv::CommaSep %
+                          ::UtcColumn % Csv::CommaSep %
+                          ::Latitude % Csv::CommaSep %
+                          ::Longitude % Csv::CommaSep %
+                          ::AltitudeColumn % Csv::CommaSep %
+                          ::SpeedColumn % Csv::CommaSep %
+                          ::PitchColumn % Csv::CommaSep %
+                          ::BankColumn % Csv::CommaSep %
+                          ::HeadingColumn % Csv::Ln
                           );
 
     bool ok = io.write(csv.toUtf8());
@@ -95,15 +95,15 @@ bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &a
         for (const PositionData &positionData : interpolatedPositionData) {
             if (!positionData.isNull()) {
                 const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
-                const QString csv = QString::number(positionData.timestamp) % CsvConst::CommaSep %
-                                    dateTimeUtc.toString(Qt::ISODate) % CsvConst::CommaSep %
-                                    Export::formatCoordinate(positionData.latitude) % CsvConst::CommaSep %
-                                    Export::formatCoordinate(positionData.longitude) % CsvConst::CommaSep %
-                                    QString::number(static_cast<int>(std::round(positionData.altitude))) % CsvConst::CommaSep %
-                                    QString::number(static_cast<int>(std::round(positionData.velocityBodyZ))) % CsvConst::CommaSep %
-                                    QString::number(static_cast<int>(std::round(positionData.pitch))) % CsvConst::CommaSep %
-                                    QString::number(static_cast<int>(std::round(positionData.bank))) % CsvConst::CommaSep %
-                                    QString::number(static_cast<int>(std::round(positionData.trueHeading))) % CsvConst::Ln;
+                const QString csv = QString::number(positionData.timestamp) % Csv::CommaSep %
+                                    dateTimeUtc.toString(Qt::ISODate) % Csv::CommaSep %
+                                    Export::formatCoordinate(positionData.latitude) % Csv::CommaSep %
+                                    Export::formatCoordinate(positionData.longitude) % Csv::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.altitude))) % Csv::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.velocityBodyZ))) % Csv::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.pitch))) % Csv::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.bank))) % Csv::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.trueHeading))) % Csv::Ln;
                 ok = io.write(csv.toUtf8());
             }
             if (!ok) {

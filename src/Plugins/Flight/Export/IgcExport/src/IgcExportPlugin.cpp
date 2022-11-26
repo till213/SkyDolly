@@ -249,36 +249,40 @@ inline bool IgcExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
 {
     const FlightPlan &flightPlan = aircraft.getFlightPlan();
     const Position &position = aircraft.getPosition();
-    const int nofTurnPoints = flightPlan.count() - 2;
-    QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(d->flight->getAircraftStartZuluTime(aircraft)) %
-                        ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
-                        // Number of turn points, excluding start and end wapoints
-                        formatNumber(std::min(nofTurnPoints, 0), 2) %
-                        d->flight->getTitle().toLatin1() % ::LineEnd;
-    bool ok = io.write(record);
-    const std::size_t count = flightPlan.count();
-    std::size_t i = 0;
-    while (ok && i < count) {
-        const Waypoint &waypoint = flightPlan[i];
-        if (i == 0) {
-            record = IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
-            record = record % ::TakeoffPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
-            const PositionData &positionData = position.getFirst();
-            record = record % IgcExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
-            record = record % ::StartPoint % ::LineEnd;
-        } else if (i == count - 1) {
-            const PositionData &positionData = position.getLast();
-            record = IgcExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
-            record = record % ::FinishPoint % ::LineEnd;
-            record = record % IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
-            record = record % ::LandingPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
-        } else {
-            record = IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
-            record = record % ::TurnPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
-        }
-        ++i;
+    bool ok {false};
+    if (position.count() > 0) {
+        const int nofTurnPoints = flightPlan.count() - 2;
+        QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(d->flight->getAircraftStartZuluTime(aircraft)) %
+                            ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
+                            // Number of turn points, excluding start and end wapoints
+                            formatNumber(std::min(nofTurnPoints, 0), 2) %
+                            d->flight->getTitle().toLatin1() % ::LineEnd;
         ok = io.write(record);
-    }
+        const std::size_t count = flightPlan.count();
+        std::size_t i = 0;
+        while (ok && i < count) {
+            const Waypoint &waypoint = flightPlan[i];
+            if (i == 0) {
+                const PositionData &positionData = position.getFirst();
+                record = IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
+                record = record % ::TakeoffPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
+                record = record % IgcExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
+                record = record % ::StartPoint % ::LineEnd;
+            } else if (i == count - 1) {
+                const PositionData &positionData = position.getLast();
+                record = IgcExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
+                record = record % ::FinishPoint % ::LineEnd;
+                record = record % IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
+                record = record % ::LandingPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
+            } else {
+                record = IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
+                record = record % ::TurnPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
+            }
+            ++i;
+            ok = io.write(record);
+        }
+    } // Position count
+
     return ok;
 }
 

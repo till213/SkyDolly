@@ -151,14 +151,14 @@ void FlightAwareKmlParser::updateWaypoints() noexcept
         if (waypointCount > 0) {
 
             const Position &position = aircraft.getPosition();
-            const PositionData firstPositionData = position.getFirst();
-            const PositionData lastPositionData = position.getLast();
+            const PositionData &firstPositionData = position.getFirst();
+            const PositionData &lastPositionData = position.getLast();
             const QDateTime startDateTimeUtc = getFirstDateTimeUtc();
             const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
 
             Waypoint &departure = aircraft.getFlightPlan()[0];
             departure.timestamp = firstPositionData.timestamp;
-            departure.altitude = firstPositionData.altitude;
+            departure.altitude = static_cast<float>(firstPositionData.altitude);
             departure.localTime = getFirstDateTimeUtc().toLocalTime();
             departure.zuluTime = getFirstDateTimeUtc();
 
@@ -166,7 +166,7 @@ void FlightAwareKmlParser::updateWaypoints() noexcept
                 const PositionData &lastPositionData = aircraft.getPosition().getLast();
                 Waypoint &arrival = aircraft.getFlightPlan()[1];
                 arrival.timestamp = lastPositionData.timestamp;
-                arrival.altitude = lastPositionData.altitude;
+                arrival.altitude = static_cast<float>(lastPositionData.altitude);
                 arrival.localTime = endDateTimeUtc.toLocalTime();
                 arrival.zuluTime = endDateTimeUtc;
             }

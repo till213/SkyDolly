@@ -256,22 +256,22 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
         flight.updateWaypoint(waypointCount - 1, waypoint);
     } else if (waypointCount == 0 && userAircraft.getPosition().count() > 0) {
         Waypoint departureWaypoint;
-        PositionData position = userAircraft.getPosition().getFirst();
+        const PositionData &firstPosition = userAircraft.getPosition().getFirst();
         departureWaypoint.identifier = Waypoint::CustomDepartureIdentifier;
-        departureWaypoint.latitude = static_cast<float>(position.latitude);
-        departureWaypoint.longitude = static_cast<float>(position.longitude);
-        departureWaypoint.altitude = static_cast<float>(position.altitude);
+        departureWaypoint.latitude = static_cast<float>(firstPosition.latitude);
+        departureWaypoint.longitude = static_cast<float>(firstPosition.longitude);
+        departureWaypoint.altitude = static_cast<float>(firstPosition.altitude);
         departureWaypoint.localTime = flight.getFlightCondition().startLocalTime;
         departureWaypoint.zuluTime = flight.getFlightCondition().startZuluTime;
         departureWaypoint.timestamp = 0;
         flight.addWaypoint(departureWaypoint);
 
         Waypoint arrivalWaypoint;
-        position = userAircraft.getPosition().getLast();
+        const PositionData &lastPosition = userAircraft.getPosition().getLast();
         arrivalWaypoint.identifier = Waypoint::CustomArrivalIdentifier;
-        arrivalWaypoint.latitude = static_cast<float>(position.latitude);
-        arrivalWaypoint.longitude = static_cast<float>(position.longitude);
-        arrivalWaypoint.altitude = static_cast<float>(position.altitude);
+        arrivalWaypoint.latitude = static_cast<float>(lastPosition.latitude);
+        arrivalWaypoint.longitude = static_cast<float>(lastPosition.longitude);
+        arrivalWaypoint.altitude = static_cast<float>(lastPosition.altitude);
         arrivalWaypoint.localTime = d->currentLocalDateTime;
         arrivalWaypoint.zuluTime = d->currentZuluDateTime;
         arrivalWaypoint.timestamp = std::max(getCurrentTimestamp(), departureWaypoint.timestamp + 1);
@@ -811,6 +811,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             const SimConnectAircraftInfo *simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
             AircraftInfo aircraftInfo = simConnectAircraftInfo->toAircraftInfo();
             userAircraft.setAircraftInfo(aircraftInfo);
+            emit flight.aircraftInfoChanged(userAircraft);
             FlightCondition flightCondition = simConnectAircraftInfo->toFlightCondition();
             flight.setFlightCondition(flightCondition);
             break;

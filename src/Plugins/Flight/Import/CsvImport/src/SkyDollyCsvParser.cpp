@@ -30,6 +30,7 @@
 #include <QIODevice>
 #include <QFile>
 #include <QFileInfo>
+#include <QTextStream>
 #include <QTextCodec>
 #ifdef DEBUG
 #include <QDebug>
@@ -53,7 +54,7 @@
 #include <Model/AircraftHandleData.h>
 #include <Model/Light.h>
 #include <Model/LightData.h>
-#include <PluginManager/CsvConst.h>
+#include <PluginManager/Csv.h>
 #include "SkyDollyCsvParser.h"
 
 namespace
@@ -130,7 +131,9 @@ namespace
         // Light
         LightStates,
         // Common
-        Timestamp
+        Timestamp,
+        // Last index
+        Count
     };
 }
 
@@ -146,70 +149,72 @@ bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[mayb
     QTextStream textStream(&io);
     textStream.setCodec(QTextCodec::codecForName("UTF-8"));
     CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
+    bool ok = Csv::validate(rows, Enum::underly(::Index::Count));
+    if (ok) {
+        Aircraft &aircraft = flight.getUserAircraft();
+        // Heuristical memory pre-allocation: we expect that about
+        // - half of the rows are position samples
+        // - 1/4 are engine samples
+        // - etc.
+        aircraft.getPosition().reserve(rows.size() >> 1);
+        aircraft.getEngine().reserve(rows.size() >> 2);
+        aircraft.getPrimaryFlightControl().reserve(rows.size() >> 3);
+        aircraft.getSecondaryFlightControl().reserve(rows.size() >> 4);
+        aircraft.getAircraftHandle().reserve(rows.size() >> 6);
+        aircraft.getLight().reserve(rows.size() >> 6);
 
-    Aircraft &aircraft = flight.getUserAircraft();
-    // Heuristical memory pre-allocation: we expect that about
-    // - half of the rows are position samples
-    // - 1/4 are engine samples
-    // - etc.
-    aircraft.getPosition().reserve(rows.size() >> 1);
-    aircraft.getEngine().reserve(rows.size() >> 2);
-    aircraft.getPrimaryFlightControl().reserve(rows.size() >> 3);
-    aircraft.getSecondaryFlightControl().reserve(rows.size() >> 4);
-    aircraft.getAircraftHandle().reserve(rows.size() >> 6);
-    aircraft.getLight().reserve(rows.size() >> 6);
+    #ifdef DEBUG
+        qDebug() << "SkyDollyCsvParser::parse, total CSV rows:" << rows.size() << "\n"
+                 << "Position size:" << aircraft.getPosition().capacity() << "\n"
+                 << "Engine size:" << aircraft.getEngine().capacity() << "\n"
+                 << "Primary flight controls size:" << aircraft.getPrimaryFlightControl().capacity() << "\n"
+                 << "Secondary flight controls size:" << aircraft.getSecondaryFlightControl().capacity() << "\n"
+                 << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
+                 << "Light size:" << aircraft.getLight().capacity() << "\n";
+    #endif
 
-#ifdef DEBUG
-    qDebug() << "SkyDollyCsvParser::parse, total CSV rows:" << rows.size() << "\n"
-             << "Position size:" << aircraft.getPosition().capacity() << "\n"
-             << "Engine size:" << aircraft.getEngine().capacity() << "\n"
-             << "Primary flight controls size:" << aircraft.getPrimaryFlightControl().capacity() << "\n"
-             << "Secondary flight controls size:" << aircraft.getSecondaryFlightControl().capacity() << "\n"
-             << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
-             << "Light size:" << aircraft.getLight().capacity() << "\n";
-#endif
-
-    bool firstRow {true};
-    bool ok {true};
-    for (const auto &row : rows) {
-        if (firstRow) {
-            // The first position timestamp must be 0, so shift all timestamps by
-            // the timestamp delta, derived from the first timestamp
-            // (that is usually 0 already)
-            m_timestampDelta = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok);
-            firstRow = false;
-        }
-        if (ok) {
-            ok = parseRow(row, aircraft);
-        } else {
-            break;
+        bool firstRow {true};
+        for (const auto &row : rows) {
+            if (firstRow) {
+                // The first position timestamp must be 0, so shift all timestamps by
+                // the timestamp delta, derived from the first timestamp
+                // (that is usually 0 already)
+                m_timestampDelta = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok);
+                firstRow = false;
+            }
+            if (ok) {
+                ok = parseRow(row, aircraft);
+            } else {
+                break;
+            }
         }
     }
+
     return ok;
 }
 
 inline bool SkyDollyCsvParser::parseRow(const CsvParser::Row &row, Aircraft &aircraft) noexcept
 {
-    CsvConst::DataType dataType = static_cast<CsvConst::DataType>(row.at(Enum::underly(::Index::Type)).at(0).toLatin1());
+    Csv::DataType dataType = static_cast<Csv::DataType>(row.at(Enum::underly(::Index::Type)).at(0).toLatin1());
 
     bool ok {true};
     switch (dataType) {
-    case CsvConst::DataType::Aircraft:
+    case Csv::DataType::Aircraft:
         ok = importPositionData(row, aircraft);
         break;
-    case CsvConst::DataType::Engine:
+    case Csv::DataType::Engine:
         ok = importEngineData(row, aircraft.getEngine());
         break;
-    case CsvConst::DataType::PrimaryFlightControl:
+    case Csv::DataType::PrimaryFlightControl:
         ok = importPrimaryFlightControlData(row, aircraft.getPrimaryFlightControl());
         break;
-    case CsvConst::DataType::SecondaryFlightControl:
+    case Csv::DataType::SecondaryFlightControl:
         ok = importSecondaryFlightControlData(row, aircraft.getSecondaryFlightControl());
         break;
-    case CsvConst::DataType::AircraftHandle:
+    case Csv::DataType::AircraftHandle:
         ok = importAircraftHandleData(row, aircraft.getAircraftHandle());
         break;
-    case CsvConst::DataType::Light:
+    case Csv::DataType::Light:
         ok = importLightData(row, aircraft.getLight());
         break;
     }
