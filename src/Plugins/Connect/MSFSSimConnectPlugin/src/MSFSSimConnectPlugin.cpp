@@ -811,6 +811,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             const SimConnectAircraftInfo *simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
             AircraftInfo aircraftInfo = simConnectAircraftInfo->toAircraftInfo();
             userAircraft.setAircraftInfo(aircraftInfo);
+            emit flight.aircraftInfoChanged(userAircraft);
             FlightCondition flightCondition = simConnectAircraftInfo->toFlightCondition();
             flight.setFlightCondition(flightCondition);
             break;

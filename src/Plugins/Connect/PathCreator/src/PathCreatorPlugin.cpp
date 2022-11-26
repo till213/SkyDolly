@@ -436,7 +436,8 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
 
 void PathCreatorPlugin::recordAircraftInfo() noexcept
 {
-    Aircraft &aircraft = getCurrentFlight().getUserAircraft();
+    Flight &flight = getCurrentFlight();
+    Aircraft &aircraft = flight.getUserAircraft();
     AircraftInfo info(aircraft.getId());
 
     switch (d->randomGenerator->bounded(5)) {
@@ -488,6 +489,7 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
     info.initialAirspeed = d->randomGenerator->bounded(600);
 
     aircraft.setAircraftInfo(info);
+    emit flight.aircraftInfoChanged(aircraft);
 }
 
 void PathCreatorPlugin::replay() noexcept
