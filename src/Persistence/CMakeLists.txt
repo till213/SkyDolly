@@ -63,6 +63,7 @@ target_sources(${LIBRARY_NAME}
         res/migr/Locations.csv
         res/migr/Locations.ods
         res/migr/README.md
+        doc/Aircraft.md
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE

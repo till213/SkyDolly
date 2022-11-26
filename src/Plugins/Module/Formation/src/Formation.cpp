@@ -58,9 +58,8 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const Aircraft &userAircraft = flight.getUserAircraft();
     Position &position = userAircraft.getPosition();
-    const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::Seek);
-    if (!positionData.isNull()) {
-
+    if (position.count() > 0) {
+        const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::Seek);
         const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfo();
         const AircraftType &aircraftType = aircraftInfo.aircraftType;
 
@@ -173,7 +172,7 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
         initialPosition.longitude = initial.second;
         initialPosition.altitude = altitude;
 
-    } // positionData is not null
+    } // position count > 0
 
     return initialPosition;
 }

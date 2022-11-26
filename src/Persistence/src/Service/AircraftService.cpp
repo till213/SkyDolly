@@ -128,8 +128,11 @@ bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffse
     if (ok) {
         ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
         if (ok) {
-            aircraft.setTimeOffset(newOffset);
+            aircraft.setTimeOffset(newOffset);            
             ok = QSqlDatabase::database().commit();
+            if (ok) {
+                emit Logbook::getInstance().getCurrentFlight().timeOffsetChanged(aircraft);
+            }
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -143,8 +146,11 @@ bool AircraftService::changeTailNumber(Aircraft &aircraft, const QString &tailNu
     if (ok) {
         ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber);
         if (ok) {
-            aircraft.setTailNumber(tailNumber);
+            aircraft.setTailNumber(tailNumber);            
             ok = QSqlDatabase::database().commit();
+            if (ok) {
+                emit Logbook::getInstance().getCurrentFlight().tailNumberChanged(aircraft);
+            }
         } else {
             QSqlDatabase::database().rollback();
         }

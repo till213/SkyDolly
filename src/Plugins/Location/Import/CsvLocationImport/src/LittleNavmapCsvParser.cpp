@@ -32,16 +32,18 @@
 #include <QTextCodec>
 
 #include <Kernel/CsvParser.h>
+#include <Kernel/Enum.h>
 #include <Model/Location.h>
 #include <Model/Enumeration.h>
 #include <Persistence/PersistedEnumerationItem.h>
 #include <Persistence/Service/EnumerationService.h>
+#include <PluginManager/Csv.h>
 #include "CsvLocationImportSettings.h"
 #include "LittleNavmapCsvParser.h"
 
 namespace
 {
-    enum Index
+    enum struct Index
     {
         Type = 0,
         Title,
@@ -49,7 +51,9 @@ namespace
         Latitude,
         Longitude,
         Elevation,
-        Description
+        Description,
+        // Last index
+        Count
     };
 
     constexpr const char *LittleNavmapCsvHeader {"type,name,ident,latitude,longitude,elevation"};
@@ -108,15 +112,17 @@ std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool
     std::vector<Location> locations;
     CsvParser csvParser;
 
-    bool success {true};
     CsvParser::Rows rows = csvParser.parse(textStream, ::LittleNavmapCsvHeader);
-    locations.reserve(rows.size());
-    for (const auto &row : rows) {
-        const Location location = parseLocation(row, success);
-        if (success) {
-            locations.push_back(location);
-        } else {
-            break;
+    bool success = Csv::validate(rows, Enum::underly(::Index::Count));
+    if (success) {
+        locations.reserve(rows.size());
+        for (const auto &row : rows) {
+            const Location location = parseLocation(row, success);
+            if (success) {
+                locations.push_back(location);
+            } else {
+                break;
+            }
         }
     }
 
@@ -132,25 +138,25 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
     Location location;
 
     ok = true;
-    location.title = row.at(::Index::Title);
+    location.title = row.at(Enum::underly(::Index::Title));
     location.countryId = d->pluginSettings.getDefaultCountryId();
     location.typeId = d->ImportTypeId;
     location.engineEventId = d->KeepEngineEventId;
-    const QString type = row.at(::Index::Type);
+    const QString type = row.at(Enum::underly(::Index::Type));
     location.categoryId = mapTypeToCategoryId(type);
-    location.identifier = row.at(::Index::Ident);
-    const double latitude = row.at(::Index::Latitude).toDouble(&ok);
+    location.identifier = row.at(Enum::underly(::Index::Ident));
+    const double latitude = row.at(Enum::underly(::Index::Latitude)).toDouble(&ok);
     if (ok) {
         location.latitude = latitude;
     }
     if (ok) {
-        const double longitude = row.at(::Index::Longitude).toDouble(&ok);
+        const double longitude = row.at(Enum::underly(::Index::Longitude)).toDouble(&ok);
         if (ok) {
             location.longitude = longitude;
         }
     }
     if (ok) {
-        const QVariant data = row.at(::Index::Elevation);
+        const QVariant data = row.at(Enum::underly(::Index::Elevation));
         if (!data.isNull()) {
             const double altitude = data.toDouble(&ok);
             if (ok) {
@@ -172,7 +178,7 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
         location.indicatedAirspeed = d->pluginSettings.getDefaultIndicatedAirspeed();
     }
     if (ok) {
-        location.description = row.at(::Index::Description);
+        location.description = row.at(Enum::underly(::Index::Description));
     }
 
     return location;
