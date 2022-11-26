@@ -11,3 +11,15 @@ The selectable aircraft are stored in table aircraft_type. Default aircraft, tha
 * Select the aircraft to be added
 * In Sky Dolly, quickly record a flight
 * Repeat
+
+Then
+
+* Open the logbook with DB Browser for SQLite
+* File | Export | Database to SQL file...
+* Only select the aircraft_type table
+  - Keep column names in INSERT INTO: OFF
+  - Multiple rows (VALUES) per INSERT statement: ON
+  - Export everything
+  - Keep old schema
+* Open the exported file (e.g. aircraft_type.sql, with Visual Studio Code) and...
+* ... cop and adapt an existing aircraft type migration in LogbookMigration.sql with the content of aircraft_type.sql
