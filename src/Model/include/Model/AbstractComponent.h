@@ -49,7 +49,7 @@ public:
         : m_aircraftInfo(aircraftInfo)
     {}
 
-    AbstractComponent() noexcept;
+    AbstractComponent() noexcept = default;
     AbstractComponent(const AbstractComponent &rhs) = default;
     AbstractComponent(AbstractComponent &&rhs) noexcept = default;
     AbstractComponent &operator=(const AbstractComponent &rhs) = default;
