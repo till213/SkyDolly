@@ -199,9 +199,15 @@ bool KmlExportPlugin::exportHeader(QIODevice &io) const noexcept
 
 bool KmlExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 {
+    bool ok {true};
     const Aircraft &aircraft = d->flight->getUserAircraft();
-    const PositionData &positionData = aircraft.getPosition().getFirst();
-    return exportPlacemark(io, KmlStyleExport::Icon::Airport, d->flight->getTitle(), getFlightDescription(), positionData);
+    if (aircraft.getPosition().count() > 0) {
+        const PositionData &positionData = aircraft.getPosition().getFirst();
+        ok = exportPlacemark(io, KmlStyleExport::Icon::Airport, d->flight->getTitle(), getFlightDescription(), positionData);
+    } else {
+        ok = false;
+    }
+    return ok;
 }
 
 bool KmlExportPlugin::exportAllAircraft(QIODevice &io) const noexcept

@@ -262,7 +262,7 @@ set    general_engine_combustion1 = case when throttle_lever_position1 > 0 then 
 create index flight_idx1 on flight (title collate nocase);
 create index waypoint_idx1 on waypoint (ident collate nocase);
 
-@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Create new aircraft_type table", step = 10)
+@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Create new aircraft_type table", step_cnt = 10)
 create table aircraft_type (
     type text primary key,
     category text,

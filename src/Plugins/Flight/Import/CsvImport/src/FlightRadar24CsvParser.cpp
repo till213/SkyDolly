@@ -40,6 +40,7 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <PluginManager/Csv.h>
 #include "FlightRadar24CsvParser.h"
 
 namespace
@@ -53,7 +54,9 @@ namespace
         Position,
         Altitude,
         Speed,
-        Heading
+        Heading,
+        // Last index
+        Count
     };
 }
 
@@ -69,14 +72,16 @@ bool FlightRadar24CsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, Q
     QTextStream textStream(&io);
     textStream.setCodec(QTextCodec::codecForName("UTF-8"));
     CsvParser::Rows rows = csvParser.parse(textStream, ::FlightRadar24CsvHeader);
-    position.reserve(rows.size());
-    bool ok {true};
-    for (const auto &row : rows) {
-        const PositionData positionData = parsePosition(row, firstDateTimeUtc, flightNumber, ok);
-        if (ok) {
-            position.upsertLast(positionData);
-        } else {
-            break;
+    bool ok = Csv::validate(rows, Enum::underly(::Index::Count));
+    if (ok) {
+        position.reserve(rows.size());
+        for (const auto &row : rows) {
+            const PositionData positionData = parsePosition(row, firstDateTimeUtc, flightNumber, ok);
+            if (ok) {
+                position.upsertLast(positionData);
+            } else {
+                break;
+            }
         }
     }
     return ok;

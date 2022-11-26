@@ -738,10 +738,10 @@ bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition flyWithForma
     case ReplayMode::Normal:
         if (d->currentTimestamp == 0) {
             const Aircraft &userAircraft = getCurrentFlight().getUserAircraft();
-            const PositionData &positionData = userAircraft.getPosition().getFirst();
             // Make sure recorded position data exists
-            ok = !positionData.isNull();
+            ok = userAircraft.getPosition().count() > 0;
             if (ok) {
+                const PositionData &positionData = userAircraft.getPosition().getFirst();
                 const AircraftInfo aircraftInfo = userAircraft.getAircraftInfo();
                 const InitialPosition initialPosition = InitialPosition(positionData, aircraftInfo);
                 ok = onInitialPositionSetup(initialPosition);

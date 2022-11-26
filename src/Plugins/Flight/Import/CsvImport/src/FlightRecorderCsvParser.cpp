@@ -53,6 +53,7 @@
 #include <Model/AircraftHandleData.h>
 #include <Model/Light.h>
 #include <Model/LightData.h>
+#include <PluginManager/Csv.h>
 #include "FlightRecorderCsvParser.h"
 
 namespace
@@ -105,7 +106,9 @@ namespace
         LightWing,
         LightLogo,
         LightRecognition,
-        LightCabin
+        LightCabin,
+        // Last index
+        Count
     };
 }
 
@@ -140,41 +143,42 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
     QTextStream textStream(&io);
     textStream.setCodec(QTextCodec::codecForName("UTF-8"));
     CsvParser::Rows rows = csvParser.parse(textStream, ::FlightRecorderCsvHeader);
+    bool ok = Csv::validate(rows, Enum::underly(::Index::Count));
+    if (ok) {
+        Aircraft &aircraft = flight.getUserAircraft();
 
-    Aircraft &aircraft = flight.getUserAircraft();
+        aircraft.getPosition().reserve(rows.size());
+        aircraft.getEngine().reserve(rows.size());
+        aircraft.getPrimaryFlightControl().reserve(rows.size());
+        aircraft.getSecondaryFlightControl().reserve(rows.size());
+        aircraft.getAircraftHandle().reserve(rows.size());
+        aircraft.getLight().reserve(rows.size());
 
-    aircraft.getPosition().reserve(rows.size());
-    aircraft.getEngine().reserve(rows.size());
-    aircraft.getPrimaryFlightControl().reserve(rows.size());
-    aircraft.getSecondaryFlightControl().reserve(rows.size());
-    aircraft.getAircraftHandle().reserve(rows.size());
-    aircraft.getLight().reserve(rows.size());
+    #ifdef DEBUG
+        qDebug() << "parse::parse, total CSV rows:" << rows.size() << "\n"
+                 << "Position size:" << aircraft.getPosition().capacity() << "\n"
+                 << "Engine size:" << aircraft.getEngine().capacity() << "\n"
+                 << "Primary flight controls size:" << aircraft.getPrimaryFlightControl().capacity() << "\n"
+                 << "Secondary flight controls size:" << aircraft.getSecondaryFlightControl().capacity() << "\n"
+                 << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
+                 << "Light size:" << aircraft.getLight().capacity() << "\n";
+    #endif
 
-#ifdef DEBUG
-    qDebug() << "parse::parse, total CSV rows:" << rows.size() << "\n"
-             << "Position size:" << aircraft.getPosition().capacity() << "\n"
-             << "Engine size:" << aircraft.getEngine().capacity() << "\n"
-             << "Primary flight controls size:" << aircraft.getPrimaryFlightControl().capacity() << "\n"
-             << "Secondary flight controls size:" << aircraft.getSecondaryFlightControl().capacity() << "\n"
-             << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
-             << "Light size:" << aircraft.getLight().capacity() << "\n";
-#endif
+        bool firstRow {true};
+        for (const auto &row : rows) {
 
-    bool firstRow {true};
-    bool ok {true};
-    for (const auto &row : rows) {
-
-        if (firstRow) {
-            // The first position timestamp must be 0, so shift all timestamps by
-            // the timestamp delta, derived from the first timestamp
-            // (that is usually 0 already)
-            d->timestampDelta = row.at(Enum::underly(::Index::Milliseconds)).toLongLong(&ok);
-            firstRow = false;
-        }
-        if (ok) {
-            ok = parseRow(row);
-        } else {
-            break;
+            if (firstRow) {
+                // The first position timestamp must be 0, so shift all timestamps by
+                // the timestamp delta, derived from the first timestamp
+                // (that is usually 0 already)
+                d->timestampDelta = row.at(Enum::underly(::Index::Milliseconds)).toLongLong(&ok);
+                firstRow = false;
+            }
+            if (ok) {
+                ok = parseRow(row);
+            } else {
+                break;
+            }
         }
     }
 
@@ -220,7 +224,7 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         positionData.trueHeading = row.at(Enum::underly(::Index::TrueHeading)).toDouble(&ok);
     }
     if (ok) {
-        positionData.velocityBodyX = row.at(Enum::underly(::Index::VelocityBodyX)).toLongLong(&ok);
+        positionData.velocityBodyX = row.at(Enum::underly(::Index::VelocityBodyX)).toDouble(&ok);
     }
     if (ok) {
         positionData.velocityBodyY = row.at(Enum::underly(::Index::VelocityBodyY)).toDouble(&ok);
@@ -266,7 +270,7 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         engineData.throttleLeverPosition2 = SkyMath::fromPosition(throttleLeverPosition2);
         engineData.throttleLeverPosition3 = SkyMath::fromPosition(throttleLeverPosition3);
         engineData.throttleLeverPosition4 = SkyMath::fromPosition(throttleLeverPosition4);
-        // Flight recorder does not support all Sky Dolly simulation variables, so we initialise them to "engine on"
+        // Flight Recorder does not support all Sky Dolly simulation variables, so we initialise them to "engine on"
         initEngineDefaultValues(engineData);
         engine.upsertLast(engineData);
     }
@@ -353,7 +357,7 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(brakeLeftPosition);
         aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(brakeRightPosition);
         aircraftHandleData.waterRudderHandlePosition = SkyMath::fromPosition(waterRudderHandlePosition);
-        // Flight recorder does not support all Sky Dolly simulation variables, so we initialise them to
+        // Flight Recorder does not support all Sky Dolly simulation variables, so we initialise them to
         // some reasonable values
         initAircraftHandleDefaultValues(aircraftHandleData);
         aircraftHandle.upsertLast(aircraftHandleData);

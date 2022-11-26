@@ -22,17 +22,19 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVCONST_H
-#define CSVCONST_H
+#ifndef CSV_H
+#define CSV_H
 
-namespace CsvConst {
+#include <Kernel/CsvParser.h>
+
+namespace Csv {
 
     /*! Comma separator character */
-    constexpr char CommaSep = ',';
+    static constexpr char CommaSep = ',';
     /*! Double-quote character */
-    constexpr char DoubleQuote = '\"';
+    static constexpr char DoubleQuote = '\"';
     /*! Newline character */
-    constexpr char Ln = '\n';
+    static constexpr char Ln = '\n';
 
     enum struct DataType : char {
         Aircraft = 'a',
@@ -43,7 +45,21 @@ namespace CsvConst {
         Light = 'l'
     };
 
-    constexpr const char *TypeColumnName {"Type"};
-}
+    static constexpr const char *TypeColumnName {"Type"};
 
-#endif // CSVCONST_H
+    inline bool validate(const CsvParser::Rows &rows, int expectedColumnCount) noexcept
+    {
+        bool ok = rows.size() > 0;
+        if (ok) {
+            for (const CsvParser::Row &row : rows) {
+                ok = row.size() == expectedColumnCount;
+                if (!ok) {
+                    break;
+                }
+            }
+        }
+        return ok;
+    };
+};
+
+#endif // CSV_H

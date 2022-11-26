@@ -35,7 +35,7 @@
 #include <Model/Location.h>
 #include <Model/Enumeration.h>
 #include <Persistence/Service/EnumerationService.h>
-#include <PluginManager/CsvConst.h>
+#include <PluginManager/Csv.h>
 #include <PluginManager/Export.h>
 #include "CsvLocationExportSettings.h"
 #include "LittleNavmapCsvLocationWriter.h"
@@ -112,19 +112,19 @@ LittleNavmapCsvLocationWriter::~LittleNavmapCsvLocationWriter() noexcept = defau
 
 bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations, QIODevice &io) noexcept
 {
-    QString csv = QString(::TypeColumn % CsvConst::CommaSep %
-                          ::NameColumn % CsvConst::CommaSep %
-                          ::IdentColumn % CsvConst::CommaSep %
-                          ::LatitudeColumn % CsvConst::CommaSep %
-                          ::LongitudeColumn % CsvConst::CommaSep %
-                          ::ElevationColumn % CsvConst::CommaSep %
-                          ::MagneticDeclinationColumn % CsvConst::CommaSep %
-                          ::TagsColumn % CsvConst::CommaSep %
-                          ::DescriptionColumn % CsvConst::CommaSep %
-                          ::RegionColumn % CsvConst::CommaSep %
-                          ::VisibleFromColumn % CsvConst::CommaSep %
-                          ::LastEditColumn % CsvConst::CommaSep %
-                          ::ImportFilenameColumn % CsvConst::Ln
+    QString csv = QString(::TypeColumn % Csv::CommaSep %
+                          ::NameColumn % Csv::CommaSep %
+                          ::IdentColumn % Csv::CommaSep %
+                          ::LatitudeColumn % Csv::CommaSep %
+                          ::LongitudeColumn % Csv::CommaSep %
+                          ::ElevationColumn % Csv::CommaSep %
+                          ::MagneticDeclinationColumn % Csv::CommaSep %
+                          ::TagsColumn % Csv::CommaSep %
+                          ::DescriptionColumn % Csv::CommaSep %
+                          ::RegionColumn % Csv::CommaSep %
+                          ::VisibleFromColumn % Csv::CommaSep %
+                          ::LastEditColumn % Csv::CommaSep %
+                          ::ImportFilenameColumn % Csv::Ln
                           );
 
     bool ok = io.write(csv.toUtf8());
@@ -138,19 +138,19 @@ bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations
             const QString categorySymId = locationCategoryEnumeration.getItemById(location.categoryId).symId;
             const QString type = mapCategorySymIdToType(categorySymId);
             const QString countrySymId = countryEnumeration.getItemById(location.countryId).symId;
-            const QString csv = type % CsvConst::CommaSep %
-                                "\"" % title.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
-                                "\"" % identifier.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
-                                QString::number(location.latitude) % CsvConst::CommaSep %
-                                QString::number(location.longitude) % CsvConst::CommaSep %
-                                QString::number(location.altitude) % CsvConst::CommaSep %
-                                "" % CsvConst::CommaSep %
-                                "" % CsvConst::CommaSep %
-                                "\"" % description.replace("\"", "\"\"") % "\"" % CsvConst::CommaSep %
-                                countrySymId % CsvConst::CommaSep %
-                                "" % CsvConst::CommaSep %
-                                "" % CsvConst::CommaSep %
-                                "" % CsvConst::Ln;
+            const QString csv = type % Csv::CommaSep %
+                                "\"" % title.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
+                                "\"" % identifier.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
+                                QString::number(location.latitude) % Csv::CommaSep %
+                                QString::number(location.longitude) % Csv::CommaSep %
+                                QString::number(location.altitude) % Csv::CommaSep %
+                                "" % Csv::CommaSep %
+                                "" % Csv::CommaSep %
+                                "\"" % description.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
+                                countrySymId % Csv::CommaSep %
+                                "" % Csv::CommaSep %
+                                "" % Csv::CommaSep %
+                                "" % Csv::Ln;
             ok = io.write(csv.toUtf8());
             if (!ok) {
                 break;
