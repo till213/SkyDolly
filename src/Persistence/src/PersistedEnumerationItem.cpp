@@ -52,13 +52,14 @@ struct PersistedEnumerationItemPrivate
 
 // PUBLIC
 
+PersistedEnumerationItem::PersistedEnumerationItem(const QString& enumerationName, const QString& symId) noexcept
+    : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, symId))
+{}
+
+PersistedEnumerationItem::PersistedEnumerationItem() = default;
 PersistedEnumerationItem::PersistedEnumerationItem(PersistedEnumerationItem &&rhs) noexcept = default;
 PersistedEnumerationItem &PersistedEnumerationItem::operator=(PersistedEnumerationItem &&rhs) noexcept = default;
 PersistedEnumerationItem::~PersistedEnumerationItem() = default;
-
-PersistedEnumerationItem::PersistedEnumerationItem(const QString &enumerationName, const QString &symId) noexcept
-    : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, symId))
-{}
 
 std::int64_t PersistedEnumerationItem::id() const noexcept
 {

@@ -41,9 +41,6 @@
 #include <QClipboard>
 #include <QRegularExpression>
 #include <QApplication>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <GeographicLib/DMS.hpp>
 
@@ -106,6 +103,10 @@ struct LocationWidgetPrivate
     std::unique_ptr<EnumerationItemDelegate> countryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::Country)};
 
     const std::int64_t SystemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
+    const std::int64_t UserLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
+    const std::int64_t NoneLocationCategory {PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id()};
+    const std::int64_t WorldCountry {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
+    const std::int64_t KeepEngineEvent {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
 
     Unit unit;
     // Columns are only auto-resized the first time the table is loaded
@@ -145,18 +146,12 @@ LocationWidget::LocationWidget(QWidget *parent) noexcept
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "LocationWidget::LocationWidget: CREATED";
-#endif
 }
 
 LocationWidget::~LocationWidget() noexcept
 {
     const QByteArray tableState = ui->locationTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setLocationTableState(tableState);
-#ifdef DEBUG
-    qDebug() << "LocationWidget::~LocationWidget: DELETED";
-#endif
 }
 
 void LocationWidget::addUserLocation(double latitude, double longitude)
@@ -174,13 +169,13 @@ void LocationWidget::addUserLocation(double latitude, double longitude)
 void LocationWidget::addLocation(Location newLocation)
 {
     if (newLocation.typeId == Const::InvalidId) {
-        newLocation.typeId = PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id();
+        newLocation.typeId = d->UserLocationTypeId;
     }
     if (newLocation.categoryId == Const::InvalidId) {
-        newLocation.categoryId = PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id();
+        newLocation.categoryId = d->NoneLocationCategory;
     }
     if (newLocation.countryId == Const::InvalidId) {
-        newLocation.countryId = PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id();
+        newLocation.countryId = d->WorldCountry;
     }
     if (newLocation.engineEventId == Const::InvalidId) {
         newLocation.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
@@ -188,8 +183,8 @@ void LocationWidget::addLocation(Location newLocation)
     Location location {newLocation};
     if (d->locationService->store(location)) {
         const int rowCount = ui->locationTableWidget->rowCount();
-        ui->locationTableWidget->blockSignals(true);
         ui->locationTableWidget->setSortingEnabled(false);
+        ui->locationTableWidget->blockSignals(true);        
         ui->locationTableWidget->insertRow(rowCount);
         updateLocationRow(location, rowCount);
         ui->locationTableWidget->blockSignals(false);
@@ -197,6 +192,31 @@ void LocationWidget::addLocation(Location newLocation)
         // again)
         ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
         ui->locationTableWidget->setSortingEnabled(true);
+    }
+}
+
+void LocationWidget::updateLocation(Location location)
+{
+    const int selectedRow = getSelectedRow();
+    if (selectedRow != ::InvalidRow) {
+        Location selectedLocation = getLocationByRow(selectedRow);
+
+        selectedLocation.latitude = location.latitude;
+        selectedLocation.longitude = location.longitude;
+        selectedLocation.altitude = location.altitude;
+        selectedLocation.pitch = location.pitch;
+        selectedLocation.bank = location.bank;
+        selectedLocation.trueHeading = location.trueHeading;
+        selectedLocation.indicatedAirspeed = location.indicatedAirspeed;
+        selectedLocation.onGround = location.onGround;
+
+        if (d->locationService->update(selectedLocation)) {
+            ui->locationTableWidget->setSortingEnabled(false);
+            ui->locationTableWidget->blockSignals(true);            
+            updateLocationRow(selectedLocation, selectedRow);
+            ui->locationTableWidget->blockSignals(false);
+            ui->locationTableWidget->setSortingEnabled(true);
+        }
     }
 }
 
@@ -273,7 +293,7 @@ void LocationWidget::initUi() noexcept
     ui->defaultIndicatedAirspeedSpinBox->setValue(Const::DefaultIndicatedAirspeed);
     ui->defaultIndicatedAirspeedSpinBox->setSuffix(tr(" knots"));
     ui->defaultEngineEventComboBox->setEnumerationName(EnumerationService::EngineEvent);
-    ui->defaultEngineEventComboBox->setCurrentId(PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id());
+    ui->defaultEngineEventComboBox->setCurrentId(d->KeepEngineEvent);
     ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);    
 
     ui->pitchSpinBox->setMinimum(::MinimumPitch);
@@ -323,6 +343,8 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::onSelectionChanged);
     connect(ui->addPushButton, &QPushButton::clicked,
             this, &LocationWidget::onAddLocation);
+    connect(ui->updatePushButton, &QPushButton::clicked,
+            this, &LocationWidget::onUpdateLocation);
     connect(ui->capturePushButton, &QPushButton::clicked,
             this, &LocationWidget::onCaptureLocation);
     connect(ui->teleportPushButton, &QPushButton::clicked,
@@ -401,8 +423,8 @@ void LocationWidget::updateLocationTable() noexcept
 
         std::vector<Location> locations = d->locationService->getAll();
 
-        ui->locationTableWidget->blockSignals(true);
         ui->locationTableWidget->setSortingEnabled(false);
+        ui->locationTableWidget->blockSignals(true);        
         ui->locationTableWidget->clearContents();
         ui->locationTableWidget->setRowCount(static_cast<int>(locations.size()));
 
@@ -411,13 +433,12 @@ void LocationWidget::updateLocationTable() noexcept
             updateLocationRow(location, row);
             ++row;
         }
-
-        ui->locationTableWidget->setSortingEnabled(true);
         if (!d->columnsAutoResized) {
             ui->locationTableWidget->resizeColumnsToContents();
             d->columnsAutoResized = true;
         }
         ui->locationTableWidget->blockSignals(false);
+        ui->locationTableWidget->setSortingEnabled(true);
 
     } else {
         // Clear existing entries
@@ -690,8 +711,9 @@ void LocationWidget::updateEditUi() noexcept
     if (hasSelection) {
         const int selectedRow = getSelectedRow();
         Location location =  getLocationByRow(selectedRow);
-        editableRow = location.typeId != PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id();
+        editableRow = location.typeId != d->SystemLocationTypeId;
     }
+    ui->updatePushButton->setEnabled(editableRow);
     ui->deletePushButton->setEnabled(editableRow);
 }
 
@@ -725,6 +747,11 @@ void LocationWidget::onAddLocation() noexcept
 void LocationWidget::onCaptureLocation() noexcept
 {
     emit doCaptureLocation();
+}
+
+void LocationWidget::onUpdateLocation() noexcept
+{
+    emit doUpdateLocation();
 }
 
 void LocationWidget::onTeleportToSelectedLocation() noexcept

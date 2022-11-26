@@ -39,7 +39,7 @@ class PERSISTENCE_API PersistedEnumerationItem
 {
 public:
     PersistedEnumerationItem(const QString &enumerationName, const QString &symId) noexcept;
-    PersistedEnumerationItem() = default;
+    PersistedEnumerationItem();
     PersistedEnumerationItem(const PersistedEnumerationItem &rhs) = delete;
     PersistedEnumerationItem(PersistedEnumerationItem &&rhs) noexcept;
     PersistedEnumerationItem &operator=(const PersistedEnumerationItem &rhs) = delete;

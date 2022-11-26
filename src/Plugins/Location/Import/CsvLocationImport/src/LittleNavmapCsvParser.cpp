@@ -65,7 +65,7 @@ public:
     }
 
     const CsvLocationImportSettings &pluginSettings;
-    const std::int64_t ImportTypeId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::LocationTypeImportSymId).id()};
+    const std::int64_t ImportTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
     const std::int64_t KeepEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
 
     // Key: Litte Navmap userpoint type, value: symbolic category ID

@@ -205,6 +205,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="updatePushButton">
+       <property name="toolTip">
+        <string>Update the selected location with the current location from the flight simulator.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Update</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="teleportPushButton">
        <property name="toolTip">
         <string>Teleport the aircraft to the selected location.</string>

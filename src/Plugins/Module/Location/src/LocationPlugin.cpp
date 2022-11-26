@@ -36,9 +36,16 @@
 
 struct LocationPluginPrivate
 {
+    enum struct Mode
+    {
+        Add,
+        Update
+    };
+
     std::unique_ptr<LocationWidget> locationWidget {std::make_unique<LocationWidget>()};
     const std::int64_t EngineEventStartId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStartSymId).id()};
     const std::int64_t EngineEventStopId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStopSymId).id()};
+    Mode mode {Mode::Add};
 };
 
 // PUBLIC
@@ -74,6 +81,8 @@ void LocationPlugin::frenchConnection() noexcept
     // Location widget
     connect(d->locationWidget.get(), &LocationWidget::doCaptureLocation,
             this, &LocationPlugin::captureLocation);
+    connect(d->locationWidget.get(), &LocationWidget::doUpdateLocation,
+            this, &LocationPlugin::updateLocation);
     connect(d->locationWidget.get(), &LocationWidget::teleportTo,
             this, &LocationPlugin::teleportTo);
 }
@@ -82,6 +91,13 @@ void LocationPlugin::frenchConnection() noexcept
 
 void LocationPlugin::captureLocation() noexcept
 {
+    d->mode = LocationPluginPrivate::Mode::Add;
+    SkyConnectManager::getInstance().requestInitialPosition();
+}
+
+void LocationPlugin::updateLocation() noexcept
+{
+    d->mode = LocationPluginPrivate::Mode::Update;
     SkyConnectManager::getInstance().requestInitialPosition();
 }
 
@@ -105,5 +121,13 @@ void LocationPlugin::teleportTo(const Location &location) noexcept
 
 void LocationPlugin::onLocationReceived(Location location) noexcept
 {
-    d->locationWidget->addLocation(std::move(location));
+    switch (d->mode)
+    {
+    case LocationPluginPrivate::Mode::Add:
+        d->locationWidget->addLocation(std::move(location));
+        break;
+    case LocationPluginPrivate::Mode::Update:
+        d->locationWidget->updateLocation(std::move(location));
+        break;
+    }
 }
