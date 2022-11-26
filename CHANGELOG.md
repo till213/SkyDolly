@@ -14,7 +14,9 @@
 - Flight CSV export
   * The Sky Dolly CSV export now uses comma (,) instead of tab stops as value delimiters
   * Size of file reduced, rounding numbers to two decimal places (except latitude and longitude values that are rounded to six decimal places)
-- Additional locations
+- Location module
+  * A new update button which updates the selected location with the current location in the flight simulator (sytem locations cannot be updated)
+  * Additional locations
 - The system locations migration file, located at *[Sky Dolly installation directory]/Resources/migr/Locations.csv*, is now optional and can be deleted
 
 ### Bug Fixes
