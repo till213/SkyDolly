@@ -19,9 +19,10 @@
   * Additional system locations
 - The system locations migration file, located at *[Sky Dolly installation directory]/Resources/migr/Locations.csv*, is now optional and can be deleted
 - A new "Only this time" backup option has been added to the backup dialog: selecting this option will create a backup, but will then set the backup period to "Never" afterwards
-- Added default aircraft types from simulation update 11 ("40th anniversary update")
+- Added default aircraft types from simulation update 11 ("40th anniversary update"), for aircraft selector combobox (flight import)
 - Position data is now interpolated within an "infinite interpolation window"
   * Imported flight plans (e.g. GPX flight plans from Little Navmap) with "sparse waypoints" are now properly replayed
+- Flight Recorder CSV import now also imports "propeller lever position"
 
 ### Bug Fixes
 - The various tabs in the Flight information dialog (Description, Aircraft, Conditions and Flight Plan) are now properly updated when importing a flight or loading a flight from the logbook
