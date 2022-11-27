@@ -61,56 +61,62 @@ namespace
 {
     constexpr const char *FlightRecorderCsvHeader {"Milliseconds,Latitude,Longitude,Altitude"};
 
-    enum struct Index
-    {
-        Milliseconds = 0,
-        // Position
-        Latitude,
-        Longitude,
-        Altitude,
-        Pitch,
-        Bank,
-        TrueHeading,
-        VelocityBodyX,
-        VelocityBodyY,
-        VelocityBodyZ,
-        RotationVelocityBodyX,
-        RotationVelocityBodyY,
-        RotationVelocityBodyZ,
-        // Engine
-        ThrottleLeverPosition1,
-        ThrottleLeverPosition2,
-        ThrottleLeverPosition3,
-        ThrottleLeverPosition4,
-        // Primary flight controls
-        RudderPosition,
-        ElevatorPosition,
-        AileronPosition,
-        // Secondary flight controls
-        LeadingEdgeFlapsLeftPercent,
-        LeadingEdgeFlapsRightPercent,
-        TrailingEdgeFlapsLeftPercent,
-        TrailingEdgeFlapsRightPercent,
-        SpoilerHandlePosition,
-        FlapsHandleIndex,
-        // Aircraft handles
-        BrakeLeftPosition,
-        BrakeRightPosition,
-        WaterRudderHandlePosition,
-        GearHandlePosition,
-        // Light
-        LightTaxi,
-        LightLanding,
-        LightStrobe,
-        LightBeacon,
-        LightNav,
-        LightWing,
-        LightLogo,
-        LightRecognition,
-        LightCabin,
-        // Last index
-        Count
-    };
+    // Column names
+
+    // Position
+    constexpr const char *Milliseconds {"Milliseconds"};
+    constexpr const char *Latitude {"Latitude"};
+    constexpr const char *Longitude {"Longitude"};
+    constexpr const char *Altitude {"Altitude"};
+    constexpr const char *Pitch {"Pitch"};
+    constexpr const char *Bank {"Bank"};
+    constexpr const char *TrueHeading {"TrueHeading"};
+    constexpr const char *VelocityBodyX {"VelocityBodyX"};
+    constexpr const char *VelocityBodyY {"VelocityBodyY"};
+    constexpr const char *VelocityBodyZ {"VelocityBodyZ"};
+    constexpr const char *RotationVelocityBodyX {"RotationVelocityBodyX"};
+    constexpr const char *RotationVelocityBodyY {"RotationVelocityBodyY"};
+    constexpr const char *RotationVelocityBodyZ {"RotationVelocityBodyZ"};
+
+    // Engine
+    constexpr const char *ThrottleLeverPosition1 {"ThrottleLeverPosition1"};
+    constexpr const char *ThrottleLeverPosition2 {"ThrottleLeverPosition2"};
+    constexpr const char *ThrottleLeverPosition3 {"ThrottleLeverPosition3"};
+    constexpr const char *ThrottleLeverPosition4 {"ThrottleLeverPosition4"};
+    constexpr const char *PropellerLeverPosition1 {"PropellerLeverPosition1"};
+    constexpr const char *PropellerLeverPosition2 {"PropellerLeverPosition2"};
+    constexpr const char *PropellerLeverPosition3 {"PropellerLeverPosition3"};
+    constexpr const char *PropellerLeverPosition4 {"PropellerLeverPosition4"};
+
+    // Primary flight controls
+    constexpr const char *RudderPosition {"RudderPosition"};
+    constexpr const char *ElevatorPosition {"ElevatorPosition"};
+    constexpr const char *AileronPosition {"AileronPosition"};
+
+    // Secondary flight controls
+    constexpr const char *LeadingEdgeFlapsLeftPercent {"LeadingEdgeFlapsLeftPercent"};
+    constexpr const char *LeadingEdgeFlapsRightPercent {"LeadingEdgeFlapsRightPercent"};
+    constexpr const char *TrailingEdgeFlapsLeftPercent {"TrailingEdgeFlapsLeftPercent"};
+    constexpr const char *TrailingEdgeFlapsRightPercent {"TrailingEdgeFlapsRightPercent"};
+    constexpr const char *SpoilerHandlePosition {"SpoilerHandlePosition"};
+    constexpr const char *FlapsHandleIndex {"FlapsHandleIndex"};
+
+    // Aircraft handles
+    constexpr const char *BrakeLeftPosition {"BrakeLeftPosition"};
+    constexpr const char *BrakeRightPosition {"BrakeRightPosition"};
+    constexpr const char *WaterRudderHandlePosition {"WaterRudderHandlePosition"};
+    constexpr const char *GearHandlePosition {"GearHandlePosition"};
+
+    // Lights
+    constexpr const char *LightTaxi {"LightTaxi"};
+    constexpr const char *LightLanding {"LightLanding"};
+    constexpr const char *LightStrobe {"LightStrobe"};
+    constexpr const char *LightBeacon {"LightBeacon"};
+    constexpr const char *LightNav {"LightNav"};
+    constexpr const char *LightWing {"LightWing"};
+    constexpr const char *LightLogo {"LightLogo"};
+    constexpr const char *LightRecognition {"LightRecognition"};
+    constexpr const char *LightCabin {"LightCabin"};
 }
 
 struct FlightRecorderCsvParserPrivate
@@ -123,6 +129,55 @@ struct FlightRecorderCsvParserPrivate
     Flight *flight {nullptr};
     QDateTime firstDateTimeUtc;
     std::int64_t timestampDelta {0};
+
+    std::unordered_map<const char *, int> columnIndices {
+        {::Milliseconds, InvalidIdx},
+        {::Latitude, InvalidIdx},
+        {::Longitude, InvalidIdx},
+        {::Altitude, InvalidIdx},
+        {::Pitch, InvalidIdx},
+        {::Bank, InvalidIdx},
+        {::Bank, InvalidIdx},
+        {::TrueHeading, InvalidIdx},
+        {::VelocityBodyX, InvalidIdx},
+        {::VelocityBodyY, InvalidIdx},
+        {::VelocityBodyZ, InvalidIdx},
+        {::RotationVelocityBodyX, InvalidIdx},
+        {::RotationVelocityBodyY, InvalidIdx},
+        {::RotationVelocityBodyZ, InvalidIdx},
+        {::ThrottleLeverPosition1, InvalidIdx},
+        {::ThrottleLeverPosition2, InvalidIdx},
+        {::ThrottleLeverPosition3, InvalidIdx},
+        {::ThrottleLeverPosition4, InvalidIdx},
+        {::PropellerLeverPosition1, InvalidIdx},
+        {::PropellerLeverPosition2, InvalidIdx},
+        {::PropellerLeverPosition3, InvalidIdx},
+        {::PropellerLeverPosition4, InvalidIdx},
+        {::RudderPosition, InvalidIdx},
+        {::ElevatorPosition, InvalidIdx},
+        {::AileronPosition, InvalidIdx},
+        {::LeadingEdgeFlapsLeftPercent, InvalidIdx},
+        {::LeadingEdgeFlapsRightPercent, InvalidIdx},
+        {::TrailingEdgeFlapsLeftPercent, InvalidIdx},
+        {::TrailingEdgeFlapsRightPercent, InvalidIdx},
+        {::SpoilerHandlePosition, InvalidIdx},
+        {::FlapsHandleIndex, InvalidIdx},
+        {::BrakeLeftPosition, InvalidIdx},
+        {::BrakeRightPosition, InvalidIdx},
+        {::WaterRudderHandlePosition, InvalidIdx},
+        {::GearHandlePosition, InvalidIdx},
+        {::LightTaxi, InvalidIdx},
+        {::LightLanding, InvalidIdx},
+        {::LightStrobe, InvalidIdx},
+        {::LightBeacon, InvalidIdx},
+        {::LightNav, InvalidIdx},
+        {::LightWing, InvalidIdx},
+        {::LightLogo, InvalidIdx},
+        {::LightRecognition, InvalidIdx},
+        {::LightCabin, InvalidIdx}
+    };
+
+    static constexpr int InvalidIdx {-1};
 };
 
 // PUBLIC
@@ -144,7 +199,11 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
     QTextStream textStream(&io);
     textStream.setCodec(QTextCodec::codecForName("UTF-8"));
     CsvParser::Rows rows = csvParser.parse(textStream, ::FlightRecorderCsvHeader);
-    bool ok = Csv::validate(rows, Enum::underly(::Index::Count));
+    CsvParser::Headers headers = csvParser.getHeaders();
+    bool ok = initColumnIndices(headers);
+    if (ok) {
+        ok = Csv::validate(rows, headers.size());
+    }
     if (ok) {
         Aircraft &aircraft = flight.getUserAircraft();
 
@@ -155,7 +214,7 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
         aircraft.getAircraftHandle().reserve(rows.size());
         aircraft.getLight().reserve(rows.size());
 
-    #ifdef DEBUG
+#ifdef DEBUG
         qDebug() << "parse::parse, total CSV rows:" << rows.size() << "\n"
                  << "Position size:" << aircraft.getPosition().capacity() << "\n"
                  << "Engine size:" << aircraft.getEngine().capacity() << "\n"
@@ -163,7 +222,7 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
                  << "Secondary flight controls size:" << aircraft.getSecondaryFlightControl().capacity() << "\n"
                  << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
                  << "Light size:" << aircraft.getLight().capacity() << "\n";
-    #endif
+#endif
 
         bool firstRow {true};
         for (const auto &row : rows) {
@@ -172,7 +231,7 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
                 // The first position timestamp must be 0, so shift all timestamps by
                 // the timestamp delta, derived from the first timestamp
                 // (that is usually 0 already)
-                d->timestampDelta = row.at(Enum::underly(::Index::Milliseconds)).toLongLong(&ok);
+                d->timestampDelta = row.at(d->columnIndices.at(::Milliseconds)).toLongLong(&ok);
                 firstRow = false;
             }
             if (ok) {
@@ -190,6 +249,22 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
 
 // PRIVATE
 
+ bool FlightRecorderCsvParser::initColumnIndices(const CsvParser::Headers &headers) noexcept
+ {
+     bool ok {true};
+
+     for (auto &val : d->columnIndices) {
+         auto it = headers.find(val.first);
+         if (it != headers.end()) {
+             val.second = it->second;
+         } else {
+             ok = false;
+         }
+     }
+
+     return ok;
+ }
+
 bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
 {
     Aircraft &aircraft = d->flight->getUserAircraft();
@@ -203,44 +278,44 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     // Position
     PositionData positionData;
     bool ok {true};
-    const std::int64_t timestamp = row.at(Enum::underly(::Index::Milliseconds)).toLongLong(&ok) - d->timestampDelta;
+    const std::int64_t timestamp = row.at(d->columnIndices.at(::Milliseconds)).toLongLong(&ok) - d->timestampDelta;
     if (ok) {
         positionData.timestamp = timestamp;
-        positionData.latitude = row.at(Enum::underly(::Index::Latitude)).toDouble(&ok);
+        positionData.latitude = row.at(d->columnIndices.at(::Latitude)).toDouble(&ok);
     }
     if (ok) {
-        positionData.longitude = row.at(Enum::underly(::Index::Longitude)).toDouble(&ok);
+        positionData.longitude = row.at(d->columnIndices.at(::Longitude)).toDouble(&ok);
     }
     if (ok) {
-        positionData.altitude = row.at(Enum::underly(::Index::Altitude)).toDouble(&ok);
+        positionData.altitude = row.at(d->columnIndices.at(::Altitude)).toDouble(&ok);
         positionData.indicatedAltitude = positionData.altitude;
     }
     if (ok) {
-        positionData.pitch = row.at(Enum::underly(::Index::Pitch)).toDouble(&ok);
+        positionData.pitch = row.at(d->columnIndices.at(::Pitch)).toDouble(&ok);
     }
     if (ok) {
-        positionData.bank = row.at(Enum::underly(::Index::Bank)).toDouble(&ok);
+        positionData.bank = row.at(d->columnIndices.at(::Bank)).toDouble(&ok);
     }
     if (ok) {
-        positionData.trueHeading = row.at(Enum::underly(::Index::TrueHeading)).toDouble(&ok);
+        positionData.trueHeading = row.at(d->columnIndices.at(::TrueHeading)).toDouble(&ok);
     }
     if (ok) {
-        positionData.velocityBodyX = row.at(Enum::underly(::Index::VelocityBodyX)).toDouble(&ok);
+        positionData.velocityBodyX = row.at(d->columnIndices.at(::VelocityBodyX)).toDouble(&ok);
     }
     if (ok) {
-        positionData.velocityBodyY = row.at(Enum::underly(::Index::VelocityBodyY)).toDouble(&ok);
+        positionData.velocityBodyY = row.at(d->columnIndices.at(::VelocityBodyY)).toDouble(&ok);
     }
     if (ok) {
-        positionData.velocityBodyZ = row.at(Enum::underly(::Index::VelocityBodyZ)).toDouble(&ok);
+        positionData.velocityBodyZ = row.at(d->columnIndices.at(::VelocityBodyZ)).toDouble(&ok);
     }
     if (ok) {
-        positionData.rotationVelocityBodyX = row.at(Enum::underly(::Index::RotationVelocityBodyX)).toDouble(&ok);
+        positionData.rotationVelocityBodyX = row.at(d->columnIndices.at(::RotationVelocityBodyX)).toDouble(&ok);
     }
     if (ok) {
-        positionData.rotationVelocityBodyY = row.at(Enum::underly(::Index::RotationVelocityBodyY)).toDouble(&ok);
+        positionData.rotationVelocityBodyY = row.at(d->columnIndices.at(::RotationVelocityBodyY)).toDouble(&ok);
     }
     if (ok) {
-        positionData.rotationVelocityBodyZ = row.at(Enum::underly(::Index::RotationVelocityBodyZ)).toDouble(&ok);
+        positionData.rotationVelocityBodyZ = row.at(d->columnIndices.at(::RotationVelocityBodyZ)).toDouble(&ok);
     }
 
     if (ok) {
@@ -255,22 +330,48 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double throttleLeverPosition3 {0.0};
     double throttleLeverPosition4 {0.0};
     if (ok) {
-        throttleLeverPosition1 = row.at(Enum::underly(::Index::ThrottleLeverPosition1)).toDouble(&ok);
+        throttleLeverPosition1 = row.at(d->columnIndices.at(::ThrottleLeverPosition1)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition1 = row.at(Enum::underly(::Index::ThrottleLeverPosition2)).toDouble(&ok);
+        throttleLeverPosition2 = row.at(d->columnIndices.at(::ThrottleLeverPosition2)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition1 = row.at(Enum::underly(::Index::ThrottleLeverPosition3)).toDouble(&ok);
+        throttleLeverPosition3 = row.at(d->columnIndices.at(::ThrottleLeverPosition3)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition1 = row.at(Enum::underly(::Index::ThrottleLeverPosition4)).toDouble(&ok);
+        throttleLeverPosition4 = row.at(d->columnIndices.at(::ThrottleLeverPosition4)).toDouble(&ok);
     }
     if (ok) {
         engineData.throttleLeverPosition1 = SkyMath::fromPosition(throttleLeverPosition1);
         engineData.throttleLeverPosition2 = SkyMath::fromPosition(throttleLeverPosition2);
         engineData.throttleLeverPosition3 = SkyMath::fromPosition(throttleLeverPosition3);
         engineData.throttleLeverPosition4 = SkyMath::fromPosition(throttleLeverPosition4);
+        // Flight Recorder does not support all Sky Dolly simulation variables, so we initialise them to "engine on"
+        initEngineDefaultValues(engineData);
+        engine.upsertLast(engineData);
+    }
+
+    double propellerLeverPosition1 {0.0};
+    double propellerLeverPosition2 {0.0};
+    double propellerLeverPosition3 {0.0};
+    double propellerLeverPosition4 {0.0};
+    if (ok) {
+        propellerLeverPosition1 = row.at(d->columnIndices.at(::PropellerLeverPosition1)).toDouble(&ok);
+    }
+    if (ok) {
+        propellerLeverPosition2 = row.at(d->columnIndices.at(::PropellerLeverPosition2)).toDouble(&ok);
+    }
+    if (ok) {
+        propellerLeverPosition3 = row.at(d->columnIndices.at(::PropellerLeverPosition3)).toDouble(&ok);
+    }
+    if (ok) {
+        propellerLeverPosition4 = row.at(d->columnIndices.at(::PropellerLeverPosition4)).toDouble(&ok);
+    }
+    if (ok) {
+        engineData.propellerLeverPosition1 = SkyMath::fromPosition(propellerLeverPosition1);
+        engineData.propellerLeverPosition2 = SkyMath::fromPosition(propellerLeverPosition2);
+        engineData.propellerLeverPosition3 = SkyMath::fromPosition(propellerLeverPosition3);
+        engineData.propellerLeverPosition4 = SkyMath::fromPosition(propellerLeverPosition4);
         // Flight Recorder does not support all Sky Dolly simulation variables, so we initialise them to "engine on"
         initEngineDefaultValues(engineData);
         engine.upsertLast(engineData);
@@ -284,13 +385,13 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double elevatorPosition {0.0};
     double aileronPosition {0.0};
     if (ok) {
-        rudderPosition = row.at(Enum::underly(::Index::RudderPosition)).toDouble(&ok);
+        rudderPosition = row.at(d->columnIndices.at(::RudderPosition)).toDouble(&ok);
     }
     if (ok) {
-        elevatorPosition = row.at(Enum::underly(::Index::ElevatorPosition)).toDouble(&ok);
+        elevatorPosition = row.at(d->columnIndices.at(::ElevatorPosition)).toDouble(&ok);
     }
     if (ok) {
-        aileronPosition = row.at(Enum::underly(::Index::AileronPosition)).toDouble(&ok);
+        aileronPosition = row.at(d->columnIndices.at(::AileronPosition)).toDouble(&ok);
     }
     if (ok) {
         primaryFlightControlData.rudderPosition = SkyMath::fromPosition(rudderPosition);
@@ -309,22 +410,22 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double trailingEdgeFlapsRightPosition {0.0};
     double spoilerHandlePositionPercent {0.0};
     if (ok) {
-        leadingEdgeFlapsLeftPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsLeftPercent)).toDouble(&ok);
+        leadingEdgeFlapsLeftPosition = row.at(d->columnIndices.at(::LeadingEdgeFlapsLeftPercent)).toDouble(&ok);
     }
     if (ok) {
-        leadingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsRightPercent)).toDouble(&ok);
+        leadingEdgeFlapsRightPosition = row.at(d->columnIndices.at(::LeadingEdgeFlapsRightPercent)).toDouble(&ok);
     }
     if (ok) {
-        trailingEdgeFlapsLeftPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsLeftPercent)).toDouble(&ok);
+        trailingEdgeFlapsLeftPosition = row.at(d->columnIndices.at(::TrailingEdgeFlapsLeftPercent)).toDouble(&ok);
     }
     if (ok) {
-        trailingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsRightPercent)).toDouble(&ok);
+        trailingEdgeFlapsRightPosition = row.at(d->columnIndices.at(::TrailingEdgeFlapsRightPercent)).toDouble(&ok);
     }
     if (ok) {
-        spoilerHandlePositionPercent = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toDouble(&ok);
+        spoilerHandlePositionPercent = row.at(d->columnIndices.at(::SpoilerHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        secondaryFlightControlData.flapsHandleIndex = row.at(Enum::underly(::Index::FlapsHandleIndex)).toInt(&ok);
+        secondaryFlightControlData.flapsHandleIndex = row.at(d->columnIndices.at(::FlapsHandleIndex)).toInt(&ok);
     }
     if (ok) {
         secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(leadingEdgeFlapsLeftPosition);
@@ -343,20 +444,20 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double brakeRightPosition {0.0};
     double waterRudderHandlePosition {0.0};
     if (ok) {
-        brakeLeftPosition = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toDouble(&ok);
+        brakeLeftPosition = row.at(d->columnIndices.at(::BrakeLeftPosition)).toDouble(&ok);
     }
     if (ok) {
-        brakeRightPosition = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toDouble(&ok);
+        brakeRightPosition = row.at(d->columnIndices.at(::BrakeRightPosition)).toDouble(&ok);
     }
     if (ok) {
-        waterRudderHandlePosition = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toDouble(&ok);
+        waterRudderHandlePosition = row.at(d->columnIndices.at(::WaterRudderHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        aircraftHandleData.gearHandlePosition = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        aircraftHandleData.gearHandlePosition = row.at(d->columnIndices.at(::GearHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
         aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(brakeLeftPosition);
-        aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(brakeRightPosition);
+        aircraftHandleData.brakeRightPosition = SkyMath::fromPosition(brakeRightPosition);
         aircraftHandleData.waterRudderHandlePosition = SkyMath::fromPosition(waterRudderHandlePosition);
         // Flight Recorder does not support all Sky Dolly simulation variables, so we initialise them to
         // some reasonable values
@@ -378,31 +479,31 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     bool lightRecognition {false};
     bool lightCabin {false};
     if (ok) {
-        lightTaxi = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightTaxi = row.at(d->columnIndices.at(::LightTaxi)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightLanding = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightLanding = row.at(d->columnIndices.at(::LightLanding)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightStrobe = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightStrobe = row.at(d->columnIndices.at(::LightStrobe)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightBeacon = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightBeacon = row.at(d->columnIndices.at(::LightBeacon)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightNav = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightNav = row.at(d->columnIndices.at(::LightNav)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightWing = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightWing = row.at(d->columnIndices.at(::LightWing)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightLogo = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightLogo = row.at(d->columnIndices.at(::LightLogo)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightRecognition = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightRecognition = row.at(d->columnIndices.at(::LightRecognition)).toInt(&ok) == 1;
     }
     if (ok) {
-        lightCabin = row.at(Enum::underly(::Index::SpoilerHandlePosition)).toInt(&ok) == 1;
+        lightCabin = row.at(d->columnIndices.at(::LightCabin)).toInt(&ok) == 1;
     }
     if (ok) {
         lightData.lightStates.setFlag(SimType::LightState::Taxi, lightTaxi);
@@ -423,10 +524,6 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
 inline void FlightRecorderCsvParser::initEngineDefaultValues(EngineData &engineData) noexcept
 {
     // Turn "engine on" and "full propeller", no cowl flaps
-    engineData.propellerLeverPosition1 = SkyMath::PositionMax16;
-    engineData.propellerLeverPosition2 = SkyMath::PositionMax16;
-    engineData.propellerLeverPosition3 = SkyMath::PositionMax16;
-    engineData.propellerLeverPosition4 = SkyMath::PositionMax16;
     engineData.mixtureLeverPosition1 = SkyMath::PercentMax8;
     engineData.mixtureLeverPosition2 = SkyMath::PercentMax8;
     engineData.mixtureLeverPosition3 = SkyMath::PercentMax8;
