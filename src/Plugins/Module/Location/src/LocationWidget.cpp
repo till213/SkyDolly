@@ -630,8 +630,10 @@ inline void LocationWidget::updateLocationRow(const Location &location, int row)
 
 void LocationWidget::teleportToLocation(int row) noexcept
 {
-    Location location = getLocationByRow(row);
-    emit teleportTo(location);
+    if (!SkyConnectManager::getInstance().isActive()) {
+        Location location = getLocationByRow(row);
+        emit teleportTo(location);
+    }
 }
 
 Location LocationWidget::getLocationByRow(int row) const noexcept
@@ -734,7 +736,8 @@ void LocationWidget::updateUi() noexcept
 
 void LocationWidget::updateEditUi() noexcept
 {
-    const bool isActive = SkyConnectManager::getInstance().isActive();
+    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const bool isActive = skyConnectManager.isActive();
     const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
 
     ui->teleportPushButton->setEnabled(hasSelection && !isActive);
