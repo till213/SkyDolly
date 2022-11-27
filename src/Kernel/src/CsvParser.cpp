@@ -24,6 +24,7 @@
  */
 
 #include <memory>
+#include <unordered_map>
 
 #include <QTextStream>
 #include <QTextCodec>
@@ -53,7 +54,7 @@ CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header,
                 !alternateHeader.isNull() && line.startsWith(alternateHeader, Qt::CaseInsensitive))
             {
                 firstLine = false;
-                // Skip header
+                parseHeader(line);
                 continue;
             }
         }
@@ -75,6 +76,41 @@ CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header,
     return rows;
 }
 
+const CsvParser::Headers &CsvParser::getHeaders() const noexcept
+{
+    return m_headers;
+}
+
+inline void CsvParser::parseHeader(const QString &line) noexcept
+{
+    m_headers.clear();
+    for (const QChar currentChar : line) {
+        if (currentChar == m_quoteChar) {
+            parseQuote(currentChar);
+        } else if (currentChar == m_separatorChar && !m_inQuotation) {
+            // Separator in unquoted text - start new value
+            parseHeaderSeparator(currentChar);
+        } else {
+            // Regular character
+            m_currentValue.append(currentChar);
+            m_lastChar = currentChar;
+        }
+    }
+
+    // Finish header
+    m_headers.insert({getCurrentValue(), m_headers.size()});
+    m_currentValue.clear();
+    m_currentValueQuoted = false;
+}
+
+inline void CsvParser::parseHeaderSeparator(QChar currentChar) noexcept
+{
+    m_headers.insert({getCurrentValue(), m_headers.size()});
+    m_currentValue.clear();
+    m_currentValueQuoted = false;
+    m_lastChar = currentChar;
+}
+
 inline void CsvParser::parseLine(const QString &line) noexcept
 {
     if (!m_inQuotation) {
@@ -85,30 +121,37 @@ inline void CsvParser::parseLine(const QString &line) noexcept
         m_currentValue += "\n";
     }
 
-    for (int i = 0; i < line.size(); ++i) {
-        m_currentChar = line.at(i);
+    for (const QChar currentChar : line) {
 
-        if (m_currentChar == m_quoteChar) {
-            parseQuote();
-        } else if (m_currentChar == m_separatorChar && !m_inQuotation) {
+        if (currentChar == m_quoteChar) {
+            parseQuote(currentChar);
+        } else if (currentChar == m_separatorChar && !m_inQuotation) {
             // Separator in unquoted text - start new value
-            parseSeparator();
+            parseLineSeparator(currentChar);
         } else {
             // Regular character
-            m_currentValue.append(m_currentChar);
-            m_lastChar = m_currentChar;
+            m_currentValue.append(currentChar);
+            m_lastChar = currentChar;
         }
     }
 
     if (!m_inQuotation) {
         // Finish line
-        m_currentRow.push_back((m_trimValue && !m_currentValueQuoted) ? m_currentValue.trimmed() : m_currentValue);
+        m_currentRow.push_back(getCurrentValue());
         m_currentValue.clear();
         m_currentValueQuoted = false;
     }
 }
 
-inline void CsvParser::parseQuote() noexcept
+inline void CsvParser::parseLineSeparator(QChar currentChar) noexcept
+{
+    m_currentRow.push_back(getCurrentValue());
+    m_currentValue.clear();
+    m_currentValueQuoted = false;
+    m_lastChar = currentChar;
+}
+
+inline void CsvParser::parseQuote(QChar currentChar) noexcept
 {
     // Remember if this value is quoted to suppress trimming
     if (!m_currentValueQuoted) {
@@ -122,19 +165,16 @@ inline void CsvParser::parseQuote() noexcept
     } else {
         if (m_lastChar == m_quoteChar) {
             // Double quotation character ("escaped") - add single quotation to value and keep quoted state
-            m_currentValue.append(m_currentChar);
+            m_currentValue.append(currentChar);
         }
         m_inQuotation = true;
     }
-    m_lastChar = m_currentChar;
+    m_lastChar = currentChar;
 }
 
-inline void CsvParser::parseSeparator() noexcept
+QString CsvParser::getCurrentValue() const noexcept
 {
-    m_currentRow.push_back((m_trimValue && !m_currentValueQuoted) ? m_currentValue.trimmed() : m_currentValue);
-    m_currentValue.clear();
-    m_currentValueQuoted = false;
-    m_lastChar = m_currentChar;
+    return (m_trimValue && !m_currentValueQuoted) ? m_currentValue.trimmed() : m_currentValue;
 }
 
 inline void CsvParser::reset() noexcept
@@ -143,6 +183,5 @@ inline void CsvParser::reset() noexcept
     m_inQuotation = false;
     m_currentValue.clear();
     m_lastChar = '\0';
-    m_currentChar = '\0';
     m_currentValueQuoted = false;
 }

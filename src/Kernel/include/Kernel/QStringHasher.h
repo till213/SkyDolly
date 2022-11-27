@@ -22,31 +22,19 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVPARSERTEST_H
-#define CSVPARSERTEST_H
+#ifndef QSTRINGHASHER_H
+#define QSTRINGHASHER_H
 
-#include <utility>
+#include <cstdlib>
 
-#include <QObject>
+#include <QHash>
+#include <QString>
 
-#include <Kernel/CsvParser.h>
-
-/*!
- * Test cases for the CsvParser.
- */
-class CsvParserTest : public QObject
-{
-    Q_OBJECT
-private:
-    // Generates and returns the header and complete CSV data (inclusive header)
-    static std::pair<QString, QString> createCsv(const CsvParser::Row &header, const CsvParser::Rows &rows, bool quotedValues) noexcept;
-
-private slots:
-    void initTestCase() noexcept;
-    void cleanupTestCase() noexcept;
-
-    void parseCsv_data() noexcept;
-    void parseCsv() noexcept;
+// https://www.kdab.com/qt-datatypes-in-standard-library/
+struct QStringHasher {
+    std::size_t operator()(const QString &value) const noexcept {
+        return qHash(value);
+    }
 };
 
-#endif // CSVPARSERTEST_H
+#endif // QSTRINGHASHER_H
