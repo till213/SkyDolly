@@ -27,12 +27,15 @@
 
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 #include <QString>
 #include <QChar>
+#include <QHash>
 
 class QTextStream;
 
+#include "QStringHasher.h"
 #include "KernelLib.h"
 
 struct CsvParserPrivate;
@@ -45,8 +48,9 @@ class KERNEL_API CsvParser final
 public:
     using Row = std::vector<QString>;
     using Rows = std::vector<Row>;
+    using Headers = std::unordered_map<QString, int>;
 
-    explicit CsvParser(QChar separatorChar = ',', QChar escapeChar = '"', bool trimValues = true);
+    explicit CsvParser(QChar separatorChar = ',', QChar quoteChar = '"', bool trimValues = true);
     CsvParser(const CsvParser &rhs) = delete;
     CsvParser(CsvParser &&rhs) = default;
     CsvParser &operator=(const CsvParser &rhs) = delete;
@@ -68,23 +72,37 @@ public:
      */
     Rows parse(QTextStream &textStream, const QString &header = QString(), const QString &alternateHeader = QString()) noexcept;
 
+    /*!
+     * Returns the headers and their column indices from a previous parsing. Column
+     * index numbering starts at 0.
+     *
+     * Also refer to #parse.
+     *
+     * \return the parsed heades (names) and their column indices, starting at 0; an
+     *         empty collection if no headers were present or no parsing has been done yet
+     */
+    const Headers &getHeaders() const noexcept;
+
 private:
+    Row m_currentRow;
+    Headers m_headers;
+    QString m_currentValue;
     QChar m_separatorChar;
     QChar m_quoteChar;
+    QChar m_lastChar {'\0'};
+
     bool m_trimValue {false};
-
-    Row m_currentRow;
-    QString m_currentValue;
-
     bool m_inQuotation {false};
     bool m_currentValueQuoted {false};
 
-    QChar m_lastChar {'\0'};
-    QChar m_currentChar {'\0'};
+    inline void parseHeader(const QString &line) noexcept;
+    inline void parseHeaderSeparator(QChar currentChar) noexcept;
 
     inline void parseLine(const QString &line) noexcept;
-    inline void parseQuote() noexcept;
-    inline void parseSeparator() noexcept;
+    inline void parseLineSeparator(QChar currentChar) noexcept;
+
+    inline void parseQuote(QChar currentChar) noexcept;
+    inline QString getCurrentValue() const noexcept;
     inline void reset() noexcept;
 };
 

@@ -48,14 +48,14 @@ AircraftSelectionComboBox::AircraftSelectionComboBox(QWidget *parent) noexcept
     : QComboBox(parent),
       d(std::make_unique<AircraftSelectionComboBoxPrivate>())
 {
-    initialise();
+    initUi();
 }
 
 AircraftSelectionComboBox::~AircraftSelectionComboBox() = default;
 
 // PRIVATE
 
-void AircraftSelectionComboBox::initialise() noexcept
+void AircraftSelectionComboBox::initUi() noexcept
 {
     const std::vector<AircraftType> aircraftTypes = d->aircraftTypeService->getAll();
     for (const AircraftType &aircraftType : aircraftTypes) {

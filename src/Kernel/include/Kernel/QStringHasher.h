@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,40 +22,19 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTRECORDERCSVPARSER_H
-#define FLIGHTRECORDERCSVPARSER_H
+#ifndef QSTRINGHASHER_H
+#define QSTRINGHASHER_H
 
-#include <memory>
+#include <cstdlib>
 
-#include <QByteArray>
+#include <QHash>
+#include <QString>
 
-class QIODevice;
-class QDateTime;
-class QString;
-
-#include <Kernel/CsvParser.h>
-#include "CsvParserIntf.h"
-
-class Flight;
-struct EngineData;
-struct AircraftHandleData;
-struct FlightRecorderCsvParserPrivate;
-
-class FlightRecorderCsvParser : public CsvParserIntf
-{
-public:
-    FlightRecorderCsvParser() noexcept;
-    ~FlightRecorderCsvParser() override;
-
-    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
-
-private:
-    std::unique_ptr<FlightRecorderCsvParserPrivate> d;
-
-    bool initColumnIndices(const CsvParser::Headers &headers) noexcept;
-    bool parseRow(const CsvParser::Row &row) noexcept;
-    inline void initEngineDefaultValues(EngineData &engineData) noexcept;
-    inline void initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandle) noexcept;
+// https://www.kdab.com/qt-datatypes-in-standard-library/
+struct QStringHasher {
+    std::size_t operator()(const QString &value) const noexcept {
+        return qHash(value);
+    }
 };
 
-#endif // FLIGHTRECORDERCSVPARSER_H
+#endif // QSTRINGHASHER_H
