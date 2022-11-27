@@ -58,21 +58,11 @@ PositionData Position::interpolate(std::int64_t timestamp, TimeVariableData::Acc
 
         int currentIndex = getCurrentIndex();
         double tn {0.0};
-        switch (access) {
-        case TimeVariableData::Access::Linear:
-            [[fallthrough]];
-        case TimeVariableData::Access::Export:
-            if (SkySearch::getCubicInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::PositionInterpolationWindow, currentIndex, &p0, &p1, &p2, &p3)) {
-                tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
-            }
-            break;
-        case TimeVariableData::Access::Seek:
-            if (SkySearch::getCubicInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::InfinitetInterpolationWindow, currentIndex, &p0, &p1, &p2, &p3)) {
-                tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
-            }
-            break;
+        // Position data is always interpolated within an "infinite" interpolation window, in order to
+        // take imported "sparse flight plans" into account
+        if (SkySearch::getCubicInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::InfinitetInterpolationWindow, currentIndex, &p0, &p1, &p2, &p3)) {
+            tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
         }
-
         if (p1 != nullptr) {
             // Aircraft position & attitude
 
