@@ -26,6 +26,7 @@
 #include <utility>
 
 #include <QComboBox>
+#include <QCompleter>
 
 #include <Model/Enumeration.h>
 #include <Persistence/Service/EnumerationService.h>
@@ -92,7 +93,7 @@ EnumerationComboBox::IgnoredIds EnumerationComboBox::getIgnoredIds() const noexc
 
 void EnumerationComboBox::setIgnoredIds(IgnoredIds ignoredIds) noexcept
 {
-    d->ignoredIds = ignoredIds;
+    d->ignoredIds = std::move(ignoredIds);
 }
 
 // PRIVATE
@@ -109,4 +110,10 @@ void EnumerationComboBox::initUi() noexcept
             }
         }
     }
+
+    setEditable(true);
+    setInsertPolicy(QComboBox::NoInsert);
+    QCompleter *autoCompleter = completer();
+    autoCompleter->setCompletionMode(QCompleter::PopupCompletion);
+    autoCompleter->setFilterMode(Qt::MatchContains);
 }

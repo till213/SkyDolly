@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <utility>
+
 #include <QtTest/QtTest>
 #include <QBuffer>
 #include <QTextStream>
@@ -34,26 +36,36 @@
 
 // PRIVATE
 
-QString CsvParserTest::createCsv(const QString &header, const CsvParser::Rows &rows, bool quotedValues) noexcept
+std::pair<QString, QString> CsvParserTest::createCsv(const CsvParser::Row &headers, const CsvParser::Rows &rows, bool quotedValues) noexcept
 {
-    QString csvData;
-    if (!header.isEmpty()) {
-        csvData = header + '\n';
+    QString header;
+
+    // Header
+    for (int i = 0; i < headers.size(); ++i) {
+        QString value = headers.at(i);
+        value = value.replace("\"", "\"\"");
+        const QString escapedValue = (quotedValues ? "\"" : "") % value % (quotedValues ? "\"" : "");
+        header.append(escapedValue);
+        if (i < headers.size() - 1) {
+            header.append(", ");
+        }
     }
-    for (const auto &columns : rows) {
-        for (int i = 0; i < columns.size(); ++i) {
-            QString value = columns.at(i);
+    // CSV
+    QString csvData;
+    for (const auto &row : rows) {
+        for (int i = 0; i < row.size(); ++i) {
+            QString value = row.at(i);
             value = value.replace("\"", "\"\"");
             const QString escapedValue = (quotedValues ? "\"" : "") % value % (quotedValues ? "\"" : "");
             csvData.append(escapedValue);
-            if (i < columns.size() - 1) {
+            if (i < row.size() - 1) {
                 csvData.append(", ");
             } else {
                 csvData.append("\n");
             }
         }
     }
-    return csvData;
+    return {header, header % '\n' % csvData};
 }
 
 // PRIVATE SLOTS
@@ -66,101 +78,131 @@ void CsvParserTest::cleanupTestCase() noexcept
 
 void CsvParserTest::parseCsv_data() noexcept
 {
-    QTest::addColumn<QString>("csv");
     QTest::addColumn<QString>("header");
+    QTest::addColumn<QString>("csv");
+    QTest::addColumn<CsvParser::Row>("expectedHeaders");
     QTest::addColumn<CsvParser::Rows>("expectedRows");
 
     // Single row
-    CsvParser::Row expectedColumns;
-    expectedColumns.push_back("a");
-    expectedColumns.push_back("b");
-    expectedColumns.push_back("c");
+
+    CsvParser::Row expectedHeader;
+    CsvParser::Row expectedRow;
+
+    expectedRow.push_back("a");
+    expectedRow.push_back("b");
+    expectedRow.push_back("c");
     CsvParser::Rows expectedRows;
-    expectedRows.push_back(expectedColumns);
+    expectedRows.push_back(expectedRow);
 
-    QString header;
-    QString csvData = createCsv(header, expectedRows, false);
-
-    QTest::newRow("Single row") << csvData
-                                << header
+    expectedHeader = {};
+    std::pair<QString, QString> csv = createCsv(expectedHeader, expectedRows, false);
+    QTest::newRow("Single row") << csv.first
+                                << csv.second
+                                << expectedHeader
                                 << expectedRows;
 
     // Two rows
     expectedRows.clear();
-    expectedColumns.clear();
-    expectedColumns.push_back("a");
-    expectedColumns.push_back("b");
-    expectedColumns.push_back("c");
-    expectedRows.push_back(expectedColumns);
-    expectedColumns.clear();
-    expectedColumns.push_back("d");
-    expectedColumns.push_back("e");
-    expectedColumns.push_back("f");
-    expectedRows.push_back(expectedColumns);
+    expectedRow.clear();
+    expectedRow.push_back("a");
+    expectedRow.push_back("b");
+    expectedRow.push_back("c");
+    expectedRows.push_back(expectedRow);
+    expectedRow.clear();
+    expectedRow.push_back("d");
+    expectedRow.push_back("e");
+    expectedRow.push_back("f");
+    expectedRows.push_back(expectedRow);
 
-    header.clear();
-    csvData = createCsv(header, expectedRows, false);
-    QTest::newRow("Two rows") << csvData
-                              << header
+    expectedHeader = {};
+    csv = createCsv(expectedHeader, expectedRows, false);
+    QTest::newRow("Two rows") << csv.first
+                              << csv.second
+                              << expectedHeader
                               << expectedRows;
 
-    // Comma-separated, multiline, quoted
+    // With header, unquoted
     expectedRows.clear();
-    expectedColumns.clear();
-    expectedColumns.push_back("11");
-    expectedColumns.push_back("12");
-    expectedColumns.push_back("13");
-    expectedRows.push_back(expectedColumns);
-    expectedColumns.clear();
-    expectedColumns.push_back("21");
-    expectedColumns.push_back("22");
-    expectedColumns.push_back("23");
-    expectedRows.push_back(expectedColumns);
+    expectedRow.clear();
+    expectedRow.push_back("11");
+    expectedRow.push_back("12");
+    expectedRow.push_back("13");
+    expectedRows.push_back(expectedRow);
+    expectedRow.clear();
+    expectedRow.push_back("21");
+    expectedRow.push_back("22");
+    expectedRow.push_back("23");
+    expectedRows.push_back(expectedRow);
 
-    header = "Header 1, Header 2, Header 3";
-    csvData = createCsv(header, expectedRows, false);
-    QTest::newRow("With header") << csvData
-                                 << header
+    expectedHeader = {"Header 1", "Header 2", "Header 3"};
+    csv = createCsv(expectedHeader, expectedRows, false);
+    QTest::newRow("With header") << csv.first
+                                 << csv.second
+                                 << expectedHeader
                                  << expectedRows;
-    expectedRows.clear();
-    expectedColumns.clear();
-    expectedColumns.push_back(R"(keyword 1, keyword 2, keyword 3)");
-    expectedColumns.push_back(R"("Quoted keyword 4")");
-    expectedRows.push_back(expectedColumns);
-    expectedColumns.clear();
-    expectedColumns.push_back(R"(Multiline
-keyword 5)");
-    expectedColumns.push_back(R"(   Multiline,
-non-trimmed, "quoted" and comma-separated keyword 6    )");
 
-    expectedRows.push_back(expectedColumns);
-    header.clear();
-    csvData = createCsv(header, expectedRows, true);
-    QTest::newRow("Comma-separated, multiline, quoted") << csvData
-                                                        << header
+    // With header, quoted
+    expectedRows.clear();
+    expectedRow.clear();
+    expectedRow.push_back("11");
+    expectedRow.push_back("12");
+    expectedRow.push_back("13");
+    expectedRows.push_back(expectedRow);
+    expectedRow.clear();
+    expectedRow.push_back("21");
+    expectedRow.push_back("22");
+    expectedRow.push_back("23");
+    expectedRows.push_back(expectedRow);
+
+    expectedHeader = {"Header 1", "Header 2", "Header 3"};
+    csv = createCsv(expectedHeader, expectedRows, true);
+    QTest::newRow("With header") << csv.first
+                                 << csv.second
+                                 << expectedHeader
+                                 << expectedRows;
+
+    // Multiline, quoted
+    expectedRows.clear();
+    expectedRow.clear();
+    expectedRow.push_back(R"(keyword 1, keyword 2, keyword 3)");
+    expectedRow.push_back(R"("Quoted keyword 4")");
+    expectedRows.push_back(expectedRow);
+    expectedRow.clear();
+    expectedRow.push_back(R"(Multiline
+keyword 5)");
+    expectedRow.push_back(R"(   Multiline,
+non-trimmed, "quoted" and comma-separated keyword 6    )");
+    expectedRows.push_back(expectedRow);
+
+    expectedHeader = {};
+    csv = createCsv(expectedHeader, expectedRows, true);
+    QTest::newRow("Comma-separated, multiline, quoted") << csv.first
+                                                        << csv.second
+                                                        << expectedHeader
                                                         << expectedRows;
 
     // UTF-8
-    expectedColumns.clear();
-    expectedColumns.push_back("祝你好运");
-    expectedColumns.push_back("飞行");
-    expectedColumns.push_back("到月球");
+    expectedRow.clear();
+    expectedRow.push_back("祝你好运");
+    expectedRow.push_back("飞行");
+    expectedRow.push_back("到月球");
     expectedRows.clear();
-    expectedRows.push_back(expectedColumns);
-    header.clear();
-    csvData = createCsv(header, expectedRows, true);
+    expectedRows.push_back(expectedRow);
 
-    QTest::newRow("UTF-8") << csvData
-                           << header
+    expectedHeader = {};
+    csv = createCsv(expectedHeader, expectedRows, true);
+    QTest::newRow("UTF-8") << csv.first
+                           << csv.second
+                           << expectedHeader
                            << expectedRows;
 }
 
 void CsvParserTest::parseCsv() noexcept
 {
-
     // Setup
-    QFETCH(QString, csv);
     QFETCH(QString, header);
+    QFETCH(QString, csv);    
+    QFETCH(CsvParser::Row, expectedHeaders);
     QFETCH(CsvParser::Rows, expectedRows);
 
     CsvParser csvParser;
@@ -170,20 +212,33 @@ void CsvParserTest::parseCsv() noexcept
 
     // Exercise
     const CsvParser::Rows rows = csvParser.parse(textStream, header);
+    const CsvParser::Headers headers = csvParser.getHeaders();
 
     // Verify
+
+    // Headers
+    QCOMPARE(headers.size(), expectedHeaders.size());
+
+    int columnIndex = 0;
+    for (const QString &expectedHeader : expectedHeaders) {
+        const int index = headers.at(expectedHeader);
+        QCOMPARE(index, columnIndex);
+        ++columnIndex;
+    }
+
+    // CSV
     QCOMPARE(rows.size(), expectedRows.size());
-    int row = 0;
-    for (const auto &columns : rows) {
-        const CsvParser::Row expectedColumns = expectedRows.at(row);
-        QCOMPARE(columns.size(), expectedColumns.size());
-        int column = 0;
-        for (const auto &value : columns) {
-            const QString &expectedValue = expectedColumns.at(column);
+    int rowIndex = 0;
+    for (const auto &row : rows) {
+        const CsvParser::Row &expectedRow = expectedRows.at(rowIndex);
+        QCOMPARE(row.size(), expectedRow.size());
+        int columnIndex = 0;
+        for (const auto &value : row) {
+            const QString &expectedValue = expectedRow.at(columnIndex);
             QCOMPARE(value, expectedValue);
-            ++column;
+            ++columnIndex;
         }
-        ++row;
+        ++rowIndex;
     }
 }
 

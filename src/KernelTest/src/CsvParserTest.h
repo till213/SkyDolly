@@ -25,6 +25,8 @@
 #ifndef CSVPARSERTEST_H
 #define CSVPARSERTEST_H
 
+#include <utility>
+
 #include <QObject>
 
 #include <Kernel/CsvParser.h>
@@ -36,7 +38,8 @@ class CsvParserTest : public QObject
 {
     Q_OBJECT
 private:
-    static QString createCsv(const QString &header, const CsvParser::Rows &rows, bool quotedValues) noexcept;
+    // Generates and returns the header and complete CSV data (inclusive header)
+    static std::pair<QString, QString> createCsv(const CsvParser::Row &header, const CsvParser::Rows &rows, bool quotedValues) noexcept;
 
 private slots:
     void initTestCase() noexcept;
