@@ -66,7 +66,7 @@ QString Export::suggestFlightFilePath(const Flight &flight, QStringView suffix) 
 
 QString Export::suggestLocationFilePath(QStringView suffix) noexcept
 {
-    QString suggestedFileName {QCoreApplication::translate("Export", "Location")};
+    QString suggestedFileName {QCoreApplication::translate("Export", "Locations")};
 
     const Settings &settings = Settings::getInstance();
     return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
