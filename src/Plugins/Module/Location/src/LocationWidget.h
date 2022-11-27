@@ -86,6 +86,8 @@ private slots:
     void updateEditUi() noexcept;
 
     // Search
+    void onCategoryChanged() noexcept;
+    void onCountryChanged() noexcept;
     void onSearchTextChanged() noexcept;
     void searchText() noexcept;
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>957</width>
-    <height>340</height>
+    <width>840</width>
+    <height>318</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,6 +30,34 @@
          <width>80</width>
          <height>0</height>
         </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>Category:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="EnumerationComboBox" name="categoryComboBox">
+       <property name="toolTip">
+        <string>Filter by category. Set to 'No category' to show all categories.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Country:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="EnumerationComboBox" name="countryComboBox">
+       <property name="toolTip">
+        <string>Filter by country. Set to 'World' to show all countries.</string>
        </property>
       </widget>
      </item>

@@ -355,6 +355,12 @@ std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSele
     QString queryString = "select * "
                           "from   location l "
                           "where 1 = 1 ";
+    if (selector.categoryId != Const::InvalidId) {
+        queryString.append("  and l.category_id = :category_id ");
+    }
+    if (selector.countryId != Const::InvalidId) {
+        queryString.append("  and l.country_id = :country_id ");
+    }
     if (!selector.searchKeyword.isEmpty()) {
         queryString.append("  and (   l.title like :search_keyword "
                            "       or l.description like :search_keyword "
@@ -368,6 +374,8 @@ std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSele
     }
     queryString.append("order by l.id;");
     query.prepare(queryString);
+    query.bindValue(":category_id", selector.categoryId);
+    query.bindValue(":country_id", selector.countryId);
     query.bindValue(":search_keyword", searchKeyword);
 
     const bool success = query.exec();

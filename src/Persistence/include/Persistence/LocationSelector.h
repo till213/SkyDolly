@@ -36,11 +36,15 @@
 struct PERSISTENCE_API LocationSelector
 {
     std::unordered_set<std::int64_t> typeIds;
+    std::int64_t categoryId {Const::InvalidId};
+    std::int64_t countryId {Const::InvalidId};
     QString searchKeyword;
 
     inline bool hasSelectors() const noexcept
     {
         return typeIds.size() > 0 ||
+               categoryId != Const::InvalidId ||
+               countryId != Const::InvalidId ||
                !searchKeyword.isEmpty();
     }
 };

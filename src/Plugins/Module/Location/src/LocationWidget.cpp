@@ -243,6 +243,17 @@ void LocationWidget::keyPressEvent(QKeyEvent *event) noexcept
 
 void LocationWidget::initUi() noexcept
 {
+    // Search
+    ui->categoryComboBox->setEnumerationName(EnumerationService::LocationCategory);
+    ui->categoryComboBox->setCurrentId(d->NoneLocationCategory);
+    ui->countryComboBox->setEnumerationName(EnumerationService::Country);
+    ui->countryComboBox->setCurrentId(d->WorldCountry);
+    ui->searchLineEdit->setPlaceholderText(tr("Title, description, identifier"));
+    // Make sure that shortcuts are initially accepted
+    ui->searchLineEdit->clearFocus();
+    ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
+
+    // Table
     const QStringList headers {
         tr("ID"), tr("Title"), tr("Description"), tr("Type"), tr("Category"),
         tr("Country"), tr("Identifer"), tr("Position"), tr("Altitude"),
@@ -323,11 +334,6 @@ void LocationWidget::initUi() noexcept
     ui->splitter->setStretchFactor(0, 1);
     ui->splitter->setStretchFactor(1, 0);
 
-    ui->searchLineEdit->setPlaceholderText(tr("Title, description, identifier"));
-    // Make sure that shortcuts are initially accepted
-    ui->searchLineEdit->clearFocus();
-    ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
-
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
@@ -343,6 +349,10 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::updateEditUi);
 
     // Search
+    connect(ui->categoryComboBox, &EnumerationComboBox::currentIndexChanged,
+            this, &LocationWidget::onCategoryChanged);
+    connect(ui->countryComboBox, &EnumerationComboBox::currentIndexChanged,
+            this, &LocationWidget::onCountryChanged);
     connect(ui->searchLineEdit, &QLineEdit::textChanged,
             this, &LocationWidget::onSearchTextChanged);
     connect(d->searchTimer.get(), &QTimer::timeout,
@@ -736,6 +746,24 @@ void LocationWidget::updateEditUi() noexcept
     }
     ui->updatePushButton->setEnabled(editableRow);
     ui->deletePushButton->setEnabled(editableRow);
+}
+
+void LocationWidget::onCategoryChanged() noexcept
+{
+    d->locationSelector.categoryId = ui->categoryComboBox->getCurrentId();
+    if (d->locationSelector.categoryId == d->NoneLocationCategory) {
+        d->locationSelector.categoryId = Const::InvalidId;
+    }
+    updateLocationTable();
+}
+
+void LocationWidget::onCountryChanged() noexcept
+{
+    d->locationSelector.countryId = ui->countryComboBox->getCurrentId();
+    if (d->locationSelector.countryId == d->WorldCountry) {
+        d->locationSelector.countryId = Const::InvalidId;
+    }
+    updateLocationTable();
 }
 
 void LocationWidget::onSearchTextChanged() noexcept
