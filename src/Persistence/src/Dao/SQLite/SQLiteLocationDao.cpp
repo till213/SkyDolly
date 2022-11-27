@@ -374,8 +374,8 @@ std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSele
     }
     queryString.append("order by l.id;");
     query.prepare(queryString);
-    query.bindValue(":category_id", selector.categoryId);
-    query.bindValue(":country_id", selector.countryId);
+    query.bindValue(":category_id", QVariant::fromValue(selector.categoryId));
+    query.bindValue(":country_id", QVariant::fromValue(selector.countryId));
     query.bindValue(":search_keyword", searchKeyword);
 
     const bool success = query.exec();
