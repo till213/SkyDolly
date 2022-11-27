@@ -85,6 +85,7 @@ Flight::Flight(QObject *parent) noexcept
 {
     // A flight always has at least one (user) aircraft
     addUserAircraft();
+    frenchConnection();
 }
 
 Flight::~Flight() = default;
@@ -345,6 +346,14 @@ const Aircraft &Flight::operator[](std::size_t index) const noexcept
 }
 
 // PRIVATE
+
+ void Flight::frenchConnection()
+ {
+     connect(this, &Flight::timeOffsetChanged,
+             this, &Flight::aircraftInfoChanged);
+     connect(this, &Flight::tailNumberChanged,
+             this, &Flight::aircraftInfoChanged);
+ }
 
 void Flight::reassignUserAircraftIndex(std::int64_t index) noexcept
 {

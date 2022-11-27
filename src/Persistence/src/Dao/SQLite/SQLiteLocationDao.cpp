@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <QString>
+#include <QStringBuilder>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -345,12 +346,95 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
     return locations;
 }
 
-/// \todo IMPLEMENT ME
 std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, bool *ok) const noexcept
 {
     std::vector<Location> locations;
+    QSqlQuery query;
+    QString searchKeyword;
+    query.setForwardOnly(true);
+    QString queryString = "select * "
+                          "from   location l "
+                          "where 1 = 1 ";
+    if (selector.categoryId != Const::InvalidId) {
+        queryString.append("  and l.category_id = :category_id ");
+    }
+    if (selector.countryId != Const::InvalidId) {
+        queryString.append("  and l.country_id = :country_id ");
+    }
+    if (!selector.searchKeyword.isEmpty()) {
+        queryString.append("  and (   l.title like :search_keyword "
+                           "       or l.description like :search_keyword "
+                           "       or l.identifier like :search_keyword "
+                           "      ) "
+
+        );
+        const QString LikeOperatorPlaceholder {"%"};
+        // Add like operator placeholders
+        searchKeyword = LikeOperatorPlaceholder  % selector.searchKeyword % LikeOperatorPlaceholder;
+    }
+    queryString.append("order by l.id;");
+    query.prepare(queryString);
+    query.bindValue(":category_id", selector.categoryId);
+    query.bindValue(":country_id", selector.countryId);
+    query.bindValue(":search_keyword", searchKeyword);
+
+    const bool success = query.exec();
+    if (success) {
+        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        if (querySizeFeature) {
+            locations.reserve(query.size());
+        } else {
+            locations.reserve(::DefaultCapacity);
+        }
+        QSqlRecord record = query.record();
+        const int idIdx = record.indexOf("id");
+        const int titleIdx = record.indexOf("title");
+        const int descriptionIdx = record.indexOf("description");
+        const int typeIdx = record.indexOf("type_id");
+        const int categoryIdx = record.indexOf("category_id");
+        const int countryIdx = record.indexOf("country_id");
+        const int identifierIdx = record.indexOf("identifier");
+        const int latitudeIdx = record.indexOf("latitude");
+        const int longitudeIdx = record.indexOf("longitude");
+        const int altitudeIdx = record.indexOf("altitude");
+        const int pitchIdx = record.indexOf("pitch");
+        const int bankIdx = record.indexOf("bank");
+        const int trueHeadingIdx = record.indexOf("true_heading");
+        const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
+        const int onGroundIdx = record.indexOf("on_ground");
+        const int attributesIdx = record.indexOf("attributes");
+        const int engineEventIdx = record.indexOf("engine_event");
+
+        while (query.next()) {
+            Location location;
+            location.id = query.value(idIdx).toLongLong();
+            location.title = query.value(titleIdx).toString();
+            location.description = query.value(descriptionIdx).toString();
+            location.typeId = query.value(typeIdx).toLongLong();
+            location.categoryId = query.value(categoryIdx).toLongLong();
+            location.countryId = query.value(countryIdx).toLongLong();
+            location.identifier = query.value(identifierIdx).toString();
+            location.latitude = query.value(latitudeIdx).toDouble();
+            location.longitude = query.value(longitudeIdx).toDouble();
+            location.altitude = query.value(altitudeIdx).toDouble();
+            location.pitch = query.value(pitchIdx).toDouble();
+            location.bank = query.value(bankIdx).toDouble();
+            location.trueHeading = query.value(trueHeadingIdx).toDouble();
+            location.indicatedAirspeed = query.value(indicatedAirspeedIdx).toInt();
+            location.onGround = query.value(onGroundIdx).toBool();
+            location.attributes = query.value(attributesIdx).toLongLong();
+            location.engineEventId = query.value(engineEventIdx).toLongLong();
+
+            locations.push_back(std::move(location));
+        }
+    }
+#ifdef DEBUG
+    else {
+        qDebug() << "SQLiteLocationDao::getAll: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+    }
+#endif
     if (ok != nullptr) {
-        *ok = true;
+        *ok = success;
     }
     return locations;
 }

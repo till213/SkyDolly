@@ -37,9 +37,9 @@ struct MODEL_API Waypoint final : public TimeVariableData
     QString identifier;
     QDateTime localTime;
     QDateTime zuluTime;
-    float latitude {0.0};
-    float longitude {0.0};
-    float altitude {0.0};
+    float latitude {0.0f};
+    float longitude {0.0f};
+    float altitude {0.0f};
 
     explicit Waypoint(float latitude = 0.0f, float longitude = 0.0f, float altitude = 0.0f) noexcept;
 

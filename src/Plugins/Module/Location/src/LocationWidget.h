@@ -85,6 +85,12 @@ private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;
 
+    // Search
+    void onCategoryChanged() noexcept;
+    void onCountryChanged() noexcept;
+    void onSearchTextChanged() noexcept;
+    void searchText() noexcept;
+
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;
     void onSelectionChanged() noexcept;
