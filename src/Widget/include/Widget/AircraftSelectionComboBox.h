@@ -45,7 +45,7 @@ public:
 private:
     const std::unique_ptr<AircraftSelectionComboBoxPrivate> d;
 
-    void initialise() noexcept;
+    void initUi() noexcept;
 };
 
 #endif // AIRCRAFTSELECTIONCOMBOBOX_H
