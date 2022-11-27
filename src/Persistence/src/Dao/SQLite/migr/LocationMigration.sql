@@ -386,6 +386,11 @@ insert into enum_location_category(sym_id, name, desc)
 values
   ('WR', 'Water runway', 'Water runway');
 
+@migr(id = "6c11d4ef-f1a6-4ece-bc27-db4f0d8fa7d5", descn = "Correct country name", step = 1)
+update enum_country
+set    name = 'Qatar'
+where  sym_id = 'QA';
+
 @migr(id = "55a04d46-fc38-445a-8967-f84c96aa41bb", descn = "Update application version to 0.13", step = 1)
 update metadata
 set app_version = '0.13.0';
