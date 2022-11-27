@@ -420,11 +420,13 @@ void MainWindow::initUi() noexcept
                                      CakeString + CakeString + CakeString + QString(" HAPPY 40TH ANNIVERSARY, FLIGHT SIMULATOR! ") + CakeString + CakeString + CakeString +
                                      QString("\n\n"
                                              "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                                             "This release v%2 introduces location import and export, making it possible to exchange user points with e.g. Little Navmap. "
+                                             "This release v%2 \"%3\" introduces location import and export, making it possible to exchange user points with e.g. Little Navmap. "
                                              "The Location module now also supports basic filtering and the engine state (start, stop, unchanged) can be controlled upon teleportation.\n\n"
-                                             "While not many new features have been introduced in this release a lot of work has been done \"under the hood\": memory "
+                                             "While not many new features have been introduced a lot of work has been done \"under the hood\": memory "
                                              "optimisations and smaller performance optimisations have been applied, according to various code analysis tools.\n\n"
-                                             "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
+                                             "This dialog will be shown %4 more times.")
+                                     .arg(Version::getApplicationName(), Version::getApplicationVersion())
+                                     .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
                                      QMessageBox::StandardButton::Ok);
             settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
         });
