@@ -352,7 +352,7 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::resetAllTimeOffsets);
 }
 
-void FormationWidget::updateAircraftTable() noexcept
+void FormationWidget::updateTable() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
 
@@ -794,7 +794,7 @@ int FormationWidget::getRowByAircraftIndex(int index) const noexcept
 
 void FormationWidget::updateUi() noexcept
 {
-    updateAircraftTable();
+    updateTable();
     updateRelativePositionUi();
     updateEditUi();    
     updateTimeOffsetUi();

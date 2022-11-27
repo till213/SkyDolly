@@ -68,7 +68,7 @@ private:
     void initTimeOffsetUi() noexcept;
     void frenchConnection() noexcept;
 
-    void updateAircraftTable() noexcept;
+    void updateTable() noexcept;
     void updateAircraftIcons() noexcept;
     void updateRelativePositionUi() noexcept;
     void updateEditUi() noexcept;

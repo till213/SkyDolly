@@ -194,7 +194,7 @@ void LocationWidget::addLocation(Location newLocation)
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->blockSignals(true);        
         ui->locationTableWidget->insertRow(rowCount);
-        updateLocationRow(location, rowCount);
+        initRow(location, rowCount);
         ui->locationTableWidget->blockSignals(false);
         // Automatically select newly inserted item (make sure that signals are emitted
         // again)
@@ -221,7 +221,7 @@ void LocationWidget::updateLocation(Location location)
         if (d->locationService->update(selectedLocation)) {
             ui->locationTableWidget->setSortingEnabled(false);
             ui->locationTableWidget->blockSignals(true);            
-            updateLocationRow(selectedLocation, selectedRow);
+            initRow(selectedLocation, selectedRow);
             ui->locationTableWidget->blockSignals(false);
             ui->locationTableWidget->setSortingEnabled(true);
         }
@@ -448,7 +448,7 @@ void LocationWidget::updateInfoUi() noexcept
     ui->engineEventComboBox->blockSignals(false);
 }
 
-void LocationWidget::updateLocationTable() noexcept
+void LocationWidget::updateTable() noexcept
 {
     if (PersistenceManager::getInstance().isConnected()) {
 
@@ -463,7 +463,7 @@ void LocationWidget::updateLocationTable() noexcept
 
         int row {0};
         for (const Location &location : locations) {
-            updateLocationRow(location, row);
+            initRow(location, row);
             ++row;
         }
         if (!d->columnsAutoResized) {
@@ -479,7 +479,7 @@ void LocationWidget::updateLocationTable() noexcept
     }
 }
 
-inline void LocationWidget::updateLocationRow(const Location &location, int row) noexcept
+inline void LocationWidget::initRow(const Location &location, int row) noexcept
 {
     const bool isSystemLocation {location.typeId == d->SystemLocationTypeId};
     int column {0};
@@ -731,7 +731,7 @@ std::int64_t LocationWidget::getSelectedLocationId() const noexcept
 
 void LocationWidget::updateUi() noexcept
 {
-    updateLocationTable();
+    updateTable();
     updateEditUi();
     updateInfoUi();
 }
@@ -759,7 +759,7 @@ void LocationWidget::onCategoryChanged() noexcept
     if (d->locationSelector.categoryId == d->NoneLocationCategory) {
         d->locationSelector.categoryId = Const::InvalidId;
     }
-    updateLocationTable();
+    updateTable();
 }
 
 void LocationWidget::onCountryChanged() noexcept
@@ -768,7 +768,7 @@ void LocationWidget::onCountryChanged() noexcept
     if (d->locationSelector.countryId == d->WorldCountry) {
         d->locationSelector.countryId = Const::InvalidId;
     }
-    updateLocationTable();
+    updateTable();
 }
 
 void LocationWidget::onSearchTextChanged() noexcept
@@ -779,7 +779,7 @@ void LocationWidget::onSearchTextChanged() noexcept
 void LocationWidget::searchText() noexcept
 {
     d->locationSelector.searchKeyword = ui->searchLineEdit->text();
-    updateLocationTable();
+    updateTable();
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept

@@ -70,8 +70,10 @@ private:
     void frenchConnection() noexcept;
     void updateInfoUi() noexcept;
 
-    void updateLocationTable() noexcept;
-    inline void updateLocationRow(const Location &location, int row) noexcept;
+    void updateTable() noexcept;
+    inline void initRow(const Location &location, int row) noexcept;
+    // TODO IMPLEMENT ME: initRow, addRow, updateRow
+    // void updateRow(const Location &location, int row) noexcept;
 
     void teleportToLocation(int row) noexcept;
     Location getLocationByRow(int row) const noexcept;
