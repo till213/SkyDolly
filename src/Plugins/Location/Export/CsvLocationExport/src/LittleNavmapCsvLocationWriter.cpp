@@ -141,9 +141,9 @@ bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations
             const QString csv = type % Csv::CommaSep %
                                 "\"" % title.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
                                 "\"" % identifier.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
-                                QString::number(location.latitude) % Csv::CommaSep %
-                                QString::number(location.longitude) % Csv::CommaSep %
-                                QString::number(location.altitude) % Csv::CommaSep %
+                                Export::formatCoordinate(location.latitude) % Csv::CommaSep %
+                                Export::formatCoordinate(location.longitude) % Csv::CommaSep %
+                                Export::formatNumber(location.altitude) % Csv::CommaSep %
                                 "" % Csv::CommaSep %
                                 "" % Csv::CommaSep %
                                 "\"" % description.replace("\"", "\"\"") % "\"" % Csv::CommaSep %

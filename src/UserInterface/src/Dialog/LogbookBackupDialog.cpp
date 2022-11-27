@@ -43,7 +43,7 @@
 struct LogbookBackupDialogPrivate
 {
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>()};
-    std::int64_t originalBackupPeriodId;
+    std::int64_t originalBackupPeriodId {Const::InvalidId};
 
     const std::int64_t BackupPeriodNeverId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNeverSymId).id()};
     const std::int64_t BackupPeriodNowId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNowSymId).id()};

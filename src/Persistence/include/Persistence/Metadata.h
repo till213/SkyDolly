@@ -29,6 +29,7 @@
 
 #include <QDateTime>
 
+#include <Kernel/Const.h>
 #include <Kernel/Version.h>
 
 struct Metadata
@@ -39,7 +40,7 @@ struct Metadata
     QDateTime lastBackupDate;
     QDateTime nextBackupDate;
     QString backupDirectoryPath;
-    std::int64_t backupPeriodId;
+    std::int64_t backupPeriodId {Const::InvalidId};
 };
 
 #endif // METADATA_H

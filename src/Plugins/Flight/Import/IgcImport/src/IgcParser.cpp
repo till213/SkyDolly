@@ -182,8 +182,7 @@ IgcParser::IgcParser() noexcept
     : d(std::make_unique<IgcParserPrivate>())
 {}
 
-IgcParser::~IgcParser() noexcept
-{}
+IgcParser::~IgcParser() = default;
 
 bool IgcParser::parse(QFile &file) noexcept
 {

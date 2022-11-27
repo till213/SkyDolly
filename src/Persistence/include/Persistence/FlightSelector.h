@@ -33,7 +33,6 @@
 
 struct PERSISTENCE_API FlightSelector
 {
-public:
     QDate fromDate {MinDate};
     QDate toDate {MaxDate};
     QString searchKeyword;

@@ -52,8 +52,6 @@ namespace SkySearch {
      */
     constexpr std::int64_t DefaultInterpolationWindow = 2000;
 
-    constexpr std::int64_t PositionInterpolationWindow = 1000 * 60 * 30;
-
     /*!
      * An interpolation window that considers all sample points.
      */

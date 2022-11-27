@@ -199,7 +199,6 @@ signals:
 
     void aircraftAdded(const Aircraft &newAircraft);
     void aircraftRemoved(std::int64_t removedAircraftId);
-    void infoChanged(const Aircraft &aircraft);
 
     /*!
      * Emitted whenever a new \c waypoint has been added to the user aircraft.
@@ -245,6 +244,13 @@ signals:
      * \sa timeOffsettChanged
      */
     void aircraftInfoChanged(const Aircraft &aircraft);
+
+    /*!
+     * Emitted whenever the tail number of the \c aircraft has changed.
+     *
+     * \param aircraft
+     *        the aircraft whose tail number has changed
+     */
     void tailNumberChanged(const Aircraft &aircraft);
 
     /*!
@@ -259,6 +265,8 @@ signals:
 
 private:
     std::unique_ptr<FlightPrivate> d;
+
+    void frenchConnection();
 
     /*
      * Re-assigns the user aircraft \c index, but without emitting the \c userAircraftChanged signal.

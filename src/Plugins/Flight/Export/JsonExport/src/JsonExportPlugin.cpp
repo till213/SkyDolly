@@ -220,7 +220,7 @@ bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) c
 "        \"engineType\": \"" % SimType::engineTypeToString(type.engineType) % "\",\n"
 "        \"engineCount\": " % QString::number(type.numberOfEngines) % ",\n"
 "        \"wingspanFeet\": " % QString::number(type.wingSpan) % ",\n"
-"        \"initialAltitudeAboveGroundFeet\": " % QString::number(info.altitudeAboveGround) % ",\n"
+"        \"initialAltitudeAboveGroundFeet\": " % Export::formatNumber(info.altitudeAboveGround) % ",\n"
 "        \"initialAirspeedKnots\": " % QString::number(info.initialAirspeed) % ",\n"
 "        \"airline\": \"" % info.airline % "\",\n"
 "        \"flightNumber\": \"" % info.flightNumber % "\",\n"

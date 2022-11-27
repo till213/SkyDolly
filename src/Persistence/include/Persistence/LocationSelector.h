@@ -25,16 +25,28 @@
 #ifndef LOCATIONSELECTOR_H
 #define LOCATIONSELECTOR_H
 
-#include <QDate>
+#include <unordered_set>
+#include <cstdint>
+
 #include <QString>
 
-#include <Model/SimType.h>
+#include <Kernel/Const.h>
 #include "PersistenceLib.h"
 
-/// \todo IMPLEMENT ME
 struct PERSISTENCE_API LocationSelector
 {
-public:
+    std::unordered_set<std::int64_t> typeIds;
+    std::int64_t categoryId {Const::InvalidId};
+    std::int64_t countryId {Const::InvalidId};
+    QString searchKeyword;
+
+    inline bool hasSelectors() const noexcept
+    {
+        return typeIds.size() > 0 ||
+               categoryId != Const::InvalidId ||
+               countryId != Const::InvalidId ||
+               !searchKeyword.isEmpty();
+    }
 };
 
 #endif // LOCATIONSELECTOR_H

@@ -41,6 +41,7 @@
 #include <QClipboard>
 #include <QRegularExpression>
 #include <QApplication>
+#include <QTimer>
 
 #include <GeographicLib/DMS.hpp>
 
@@ -51,6 +52,7 @@
 #include <Model/Logbook.h>
 #include <Persistence/PersistenceManager.h>
 #include <Persistence/PersistedEnumerationItem.h>
+#include <Persistence/LocationSelector.h>
 #include <Persistence/Service/LocationService.h>
 #include <Persistence/Service/EnumerationService.h>
 #include <Widget/FocusPlainTextEdit.h>
@@ -80,6 +82,8 @@ namespace
     constexpr double DefaultHeading {0.0};
     constexpr double MinimumHeading {0.0};
     constexpr double MaximumHeading {360.0};
+
+    constexpr int SearchTimeoutMSec {200};
 }
 
 struct LocationWidgetPrivate
@@ -95,8 +99,12 @@ struct LocationWidgetPrivate
         if (countryEnumeration.count() == 0) {
             countryEnumeration = enumerationService->getEnumerationByName(EnumerationService::Country);
         }
+        searchTimer->setSingleShot(true);
+        searchTimer->setInterval(::SearchTimeoutMSec);
     }
 
+    LocationSelector locationSelector;
+    std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
     std::unique_ptr<EnumerationService> enumerationService {std::make_unique<EnumerationService>()};
     std::unique_ptr<EnumerationItemDelegate> locationCategoryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
@@ -235,6 +243,17 @@ void LocationWidget::keyPressEvent(QKeyEvent *event) noexcept
 
 void LocationWidget::initUi() noexcept
 {
+    // Search
+    ui->categoryComboBox->setEnumerationName(EnumerationService::LocationCategory);
+    ui->categoryComboBox->setCurrentId(d->NoneLocationCategory);
+    ui->countryComboBox->setEnumerationName(EnumerationService::Country);
+    ui->countryComboBox->setCurrentId(d->WorldCountry);
+    ui->searchLineEdit->setPlaceholderText(tr("Title, description, identifier"));
+    // Make sure that shortcuts are initially accepted
+    ui->searchLineEdit->clearFocus();
+    ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
+
+    // Table
     const QStringList headers {
         tr("ID"), tr("Title"), tr("Description"), tr("Type"), tr("Category"),
         tr("Country"), tr("Identifer"), tr("Position"), tr("Altitude"),
@@ -329,6 +348,16 @@ void LocationWidget::frenchConnection() noexcept
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &LocationWidget::updateEditUi);
 
+    // Search
+    connect(ui->categoryComboBox, &EnumerationComboBox::currentIndexChanged,
+            this, &LocationWidget::onCategoryChanged);
+    connect(ui->countryComboBox, &EnumerationComboBox::currentIndexChanged,
+            this, &LocationWidget::onCountryChanged);
+    connect(ui->searchLineEdit, &QLineEdit::textChanged,
+            this, &LocationWidget::onSearchTextChanged);
+    connect(d->searchTimer.get(), &QTimer::timeout,
+            this, &LocationWidget::searchText);
+
     // Persistence
     PersistenceManager &persistenceManager = PersistenceManager::getInstance();
     connect(&persistenceManager, &PersistenceManager::locationsImported,
@@ -421,7 +450,9 @@ void LocationWidget::updateLocationTable() noexcept
 {
     if (PersistenceManager::getInstance().isConnected()) {
 
-        std::vector<Location> locations = d->locationService->getAll();
+        std::vector<Location> locations = d->locationSelector.hasSelectors() ?
+                    d->locationService->getSelectedLocations(d->locationSelector) :
+                    d->locationService->getAll();
 
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->blockSignals(true);        
@@ -715,6 +746,35 @@ void LocationWidget::updateEditUi() noexcept
     }
     ui->updatePushButton->setEnabled(editableRow);
     ui->deletePushButton->setEnabled(editableRow);
+}
+
+void LocationWidget::onCategoryChanged() noexcept
+{
+    d->locationSelector.categoryId = ui->categoryComboBox->getCurrentId();
+    if (d->locationSelector.categoryId == d->NoneLocationCategory) {
+        d->locationSelector.categoryId = Const::InvalidId;
+    }
+    updateLocationTable();
+}
+
+void LocationWidget::onCountryChanged() noexcept
+{
+    d->locationSelector.countryId = ui->countryComboBox->getCurrentId();
+    if (d->locationSelector.countryId == d->WorldCountry) {
+        d->locationSelector.countryId = Const::InvalidId;
+    }
+    updateLocationTable();
+}
+
+void LocationWidget::onSearchTextChanged() noexcept
+{
+    d->searchTimer->start();
+}
+
+void LocationWidget::searchText() noexcept
+{
+    d->locationSelector.searchKeyword = ui->searchLineEdit->text();
+    updateLocationTable();
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
