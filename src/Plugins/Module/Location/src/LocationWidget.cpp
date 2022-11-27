@@ -245,8 +245,10 @@ void LocationWidget::initUi() noexcept
 {
     // Search
     ui->categoryComboBox->setEnumerationName(EnumerationService::LocationCategory);
+    ui->categoryComboBox->setEditable(true);
     ui->categoryComboBox->setCurrentId(d->NoneLocationCategory);
     ui->countryComboBox->setEnumerationName(EnumerationService::Country);
+    ui->countryComboBox->setEditable(true);
     ui->countryComboBox->setCurrentId(d->WorldCountry);
     ui->searchLineEdit->setPlaceholderText(tr("Title, description, identifier"));
     // Make sure that shortcuts are initially accepted
