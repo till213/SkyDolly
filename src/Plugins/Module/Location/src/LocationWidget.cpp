@@ -323,7 +323,7 @@ void LocationWidget::initUi() noexcept
     ui->splitter->setStretchFactor(0, 1);
     ui->splitter->setStretchFactor(1, 0);
 
-    ui->searchLineEdit->setPlaceholderText(tr("Title, description"));
+    ui->searchLineEdit->setPlaceholderText(tr("Title, description, identifier"));
     // Make sure that shortcuts are initially accepted
     ui->searchLineEdit->clearFocus();
     ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);

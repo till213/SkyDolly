@@ -346,7 +346,6 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
     return locations;
 }
 
-/// \todo IMPLEMENT ME
 std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, bool *ok) const noexcept
 {
     std::vector<Location> locations;
@@ -359,6 +358,7 @@ std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSele
     if (!selector.searchKeyword.isEmpty()) {
         queryString.append("  and (   l.title like :search_keyword "
                            "       or l.description like :search_keyword "
+                           "       or l.identifier like :search_keyword "
                            "      ) "
 
         );
