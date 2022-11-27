@@ -46,12 +46,18 @@ namespace
     enum struct Index
     {
         Type = 0,
-        Title,
+        Name,
         Ident,
         Latitude,
         Longitude,
         Elevation,
+        MagneticDeclination,
+        Tags,
         Description,
+        Region,
+        VisibleFrom,
+        LastEdit,
+        ImportFilename,
         // Last index
         Count
     };
@@ -138,7 +144,7 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
     Location location;
 
     ok = true;
-    location.title = row.at(Enum::underly(::Index::Title));
+    location.title = row.at(Enum::underly(::Index::Name));
     location.countryId = d->pluginSettings.getDefaultCountryId();
     location.typeId = d->ImportTypeId;
     location.engineEventId = d->KeepEngineEventId;
