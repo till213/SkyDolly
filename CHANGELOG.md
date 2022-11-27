@@ -26,6 +26,9 @@
 
 ### Bug Fixes
 - The various tabs in the Flight information dialog (Description, Aircraft, Conditions and Flight Plan) are now properly updated when importing a flight or loading a flight from the logbook
+- Imported "Historical flights" - that is to say, any real-world flight done before August 2020 - are now properly shown in the Logbook
+  * While the date August 18 2020, the birthday of MSFS, was certainly a reasonable choice for recorded flights...
+  * ... the date December 17 1903, the day of the first flight in human history, is certainly a safer bet when it comes to tracked (and imported) flights ;)
 
 ### Under The Hood
 - Rule of Zero, copy-and-swap [[Back to Basics: RAII and the Rule of Zero - Arthur O'Dwyer - CppCon 2019](https://www.youtube.com/watch?v=7Qgd9B1KuMQ)]
