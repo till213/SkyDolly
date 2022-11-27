@@ -22,10 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
@@ -34,7 +30,7 @@
 namespace
 {
     // Keys
-    constexpr char FormatKey[] {"Format"};
+    constexpr const char *FormatKey {"Format"};
 
     // Defaults
     constexpr KmlImportSettings::Format DefaultFormat {KmlImportSettings::Format::FlightAware};
@@ -53,18 +49,9 @@ struct KmlImportSettingsPrivate
 
 KmlImportSettings::KmlImportSettings() noexcept
     : d(std::make_unique<KmlImportSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "KmlImportSettings::KmlImportSettings: CREATED";
-#endif
-}
+{}
 
-KmlImportSettings::~KmlImportSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "KmlImportSettings::~KmlImportSettings: DELETED";
-#endif
-}
+KmlImportSettings::~KmlImportSettings() noexcept = default;
 
 KmlImportSettings::Format KmlImportSettings::getFormat() const noexcept
 {

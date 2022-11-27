@@ -63,7 +63,7 @@ namespace
 {
     constexpr const char *FlightRecorderCsvHeader {"Milliseconds,Latitude,Longitude,Altitude"};
 
-    // Column names
+    // Column names (also add them to FlightRecorderCsvParserPrivate::HeaderNames, for validation)
 
     // Position
     constexpr const char *Milliseconds {"Milliseconds"};

@@ -103,9 +103,9 @@ protected:
 private:
     const std::unique_ptr<FlightImportPluginBasePrivate> d;
 
-    virtual void addSettings(Settings::KeyValues &keyValues) const noexcept final;
-    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;
+    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 
     bool importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept;
     void updateAircraftInfo() noexcept;
