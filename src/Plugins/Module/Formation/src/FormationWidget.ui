@@ -987,7 +987,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>ncrease the time offset by 1 second.</string>
+             <string>Increase the time offset by 1 second.</string>
             </property>
             <property name="text">
              <string/>
