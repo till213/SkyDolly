@@ -71,9 +71,9 @@ private:
     void updateInfoUi() noexcept;
 
     void updateTable() noexcept;
+    inline void createRow(const Location &location) noexcept;
     inline void initRow(const Location &location, int row) noexcept;
-    // TODO IMPLEMENT ME: initRow, addRow, updateRow
-    // void updateRow(const Location &location, int row) noexcept;
+    void updateRow(const Location &location, int row) noexcept;
 
     void teleportToLocation(int row) noexcept;
     Location getLocationByRow(int row) const noexcept;
