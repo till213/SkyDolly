@@ -491,8 +491,6 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
 
     // ID
     std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
-    QVariant locationId = QVariant::fromValue(location.id);
-    newItem->setData(Qt::DisplayRole, locationId);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     newItem->setToolTip(tr("Double-click to teleport to location."));
@@ -501,7 +499,7 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
     ++column;
 
     // Title
-    newItem = std::make_unique<QTableWidgetItem>(location.title);
+    newItem = std::make_unique<QTableWidgetItem>();
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
@@ -512,7 +510,7 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
     ++column;
 
     // Description
-    newItem = std::make_unique<QTableWidgetItem>(location.description);
+    newItem = std::make_unique<QTableWidgetItem>();
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
@@ -523,13 +521,11 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
 
     // Type
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::typeEnumeration);
-    newItem->setData(Qt::EditRole, QVariant::fromValue(location.typeId));
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Category
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::categoryEnumeration);
-    newItem->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
@@ -541,7 +537,6 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
 
     // Country
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::countryEnumeration);
-    newItem->setData(Qt::EditRole, QVariant::fromValue(location.countryId));
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
@@ -552,7 +547,7 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
     ++column;
 
     // Identifier
-    newItem = std::make_unique<QTableWidgetItem>(location.identifier);
+    newItem = std::make_unique<QTableWidgetItem>();
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
@@ -564,7 +559,6 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
 
     // Position
     newItem = std::make_unique<PositionWidgetItem>();
-    newItem->setData(Qt::ItemDataRole::EditRole, Unit::formatCoordinates(location.latitude, location.longitude));
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
@@ -576,7 +570,6 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
 
     // Altitude
     newItem = std::make_unique<UnitWidgetItem>(d->unit, Unit::Name::Feet);
-    newItem->setData(Qt::EditRole, location.altitude);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
@@ -588,31 +581,26 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
 
     // Pitch
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::EditRole, location.pitch);
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Bank
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::EditRole, location.bank);
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Heading
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::EditRole, location.trueHeading);
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Indicated airspeed
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::EditRole, location.indicatedAirspeed);
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // On ground
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setCheckState(location.onGround ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsUserCheckable);
     } else {
@@ -624,15 +612,15 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
 
     // Attributes
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::EditRole, QVariant::fromValue(location.attributes));
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Engine event
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::EditRole, QVariant::fromValue(location.engineEventId));
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
+
+    updateRow(location, row);
 }
 
 inline void LocationWidget::updateRow(const Location &location, int row) noexcept
