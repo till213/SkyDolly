@@ -131,6 +131,7 @@ public:
 
     QString formatDate(const QDate &date) const noexcept;
     QString formatDate(const QDateTime &dateTime) const noexcept;
+    QString formatTime(const QTime &time) const noexcept;
     QString formatTime(const QDateTime &dateTime) const noexcept;
     QString formatDateTime(const QDateTime &dateTime) const noexcept;
     QString formatDuration(const QTime &time) const noexcept;

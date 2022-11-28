@@ -615,7 +615,7 @@ inline void FormationWidget::updateRow(const Aircraft &aircraft, int row, int ai
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
 
     // Sequence number
-    QTableWidgetItem *item = ui->aircraftTableWidget->item(row, d->sequenceNumberColumn);
+    QTableWidgetItem *item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::sequenceNumberColumn);
     // Sequence numbers start at 1
     item->setData(Qt::DisplayRole, aircraftIndex + 1);
     // Icon
@@ -636,36 +636,36 @@ inline void FormationWidget::updateRow(const Aircraft &aircraft, int row, int ai
     }
 
     // Aircraft type
-    item = ui->aircraftTableWidget->item(row, d->aircraftTypeColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::aircraftTypeColumn);
     item->setData(Qt::DisplayRole, aircraftInfo.aircraftType.type);
 
     // Engine type 
-    item = ui->aircraftTableWidget->item(row, d->engineTypeColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::engineTypeColumn);
     item->setData(Qt::DisplayRole, SimType::engineTypeToString(aircraftInfo.aircraftType.engineType));
 
     // Wing span
-    item = ui->aircraftTableWidget->item(row, d->wingSpanColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::wingSpanColumn);
     item->setData(Qt::DisplayRole, d->unit.formatFeet(aircraftInfo.aircraftType.wingSpan));
 
     // Initial airspeed 
-    item = ui->aircraftTableWidget->item(row, d->initialAirspeedColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::initialAirspeedColumn);
     item->setData(Qt::DisplayRole, d->unit.formatKnots(aircraftInfo.initialAirspeed));
 
     // Initial altitude above ground
-    item = ui->aircraftTableWidget->item(row, d->initialAltitudeColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::initialAltitudeColumn);
     item->setData(Qt::DisplayRole, d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
 
     // Duration
-    item = ui->aircraftTableWidget->item(row, d->durationColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::durationColumn);
     item->setData(Qt::DisplayRole, Unit::formatHHMMSS(aircraft.getDurationMSec()));
 
     // Tail number 
-    item = ui->aircraftTableWidget->item(row, d->tailNumberColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::tailNumberColumn);
     item->setData(Qt::DisplayRole, aircraftInfo.tailNumber);
 
     // Time offset
     const double timeOffsetSec = static_cast<double>(aircraftInfo.timeOffset) / 1000.0;    
-    item = ui->aircraftTableWidget->item(row, d->timeOffsetColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::timeOffsetColumn);
     item->setData(Qt::EditRole, timeOffsetSec);
 }
 

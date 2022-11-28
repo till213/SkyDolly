@@ -64,9 +64,12 @@ private:
 
     void initUi() noexcept;
     void initFilterUi() noexcept;
-    void updateFlightTable() noexcept;
-    inline void updateFlightSummaryRow(const FlightSummary &summary, int row) noexcept;
-    void updateDateSelectorUi() noexcept;    
+
+    void updateTable() noexcept;
+    inline void initRow(const FlightSummary &summary, int row) noexcept;
+    inline void updateRow(const FlightSummary &summary, int row) noexcept;
+
+    void updateDateSelectorUi() noexcept;
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
     inline void insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept;
