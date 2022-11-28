@@ -34,11 +34,11 @@
 namespace
 {
     // Keys
-    constexpr char WaypointSelectionKey[] {"WaypointSelection"};
-    constexpr char PositionSelectionKey[] {"PositionSelection"};
-    constexpr char DefaultAltitudeKey[] {"DefaultAltitude"};
-    constexpr char DefaultSpeedKey[] {"DefaultSpeed"};
-    constexpr char ConvertAltitudeKey[] {"ConvertAltitude"};
+    constexpr const char *WaypointSelectionKey {"WaypointSelection"};
+    constexpr const char *PositionSelectionKey {"PositionSelection"};
+    constexpr const char *DefaultAltitudeKey {"DefaultAltitude"};
+    constexpr const char *DefaultSpeedKey {"DefaultSpeed"};
+    constexpr const char *ConvertAltitudeKey {"ConvertAltitude"};
 
     // Defaults
     constexpr GpxImportSettings::GPXElement DefaultWaypointSelection {GpxImportSettings::GPXElement::Route};

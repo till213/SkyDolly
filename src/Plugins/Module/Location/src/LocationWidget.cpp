@@ -692,7 +692,7 @@ inline void LocationWidget::updateRow(const Location &location, int row) noexcep
 
     // Engine event
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::engineColumn);
-    item->setData(Qt::EditRole, location.engineEventId);
+    item->setData(Qt::EditRole, QVariant::fromValue(location.engineEventId));
 }
 
 void LocationWidget::teleportToLocation(int row) noexcept

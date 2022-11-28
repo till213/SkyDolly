@@ -62,46 +62,46 @@
 namespace
 {
     // General
-    constexpr char LineEnd[] {"\r\n"};
-    constexpr char DateFormat[] {"ddMMyy"};
-    constexpr char TimeFormat[] {"hhmmss"};
+    constexpr const char *LineEnd {"\r\n"};
+    constexpr const char *DateFormat {"ddMMyy"};
+    constexpr const char *TimeFormat {"hhmmss"};
 
     // A record
-    constexpr char ManufacturerCode[] {"XXY"};
-    constexpr char SerialId[] {"001"};
+    constexpr const char *ManufacturerCode {"XXY"};
+    constexpr const char *SerialId {"001"};
 
     // H record
-    constexpr char Date[] {"FDTEDATE:"};
-    constexpr char Pilot[] {"FPLTPILOTINCHARGE:"};
-    constexpr char CoPilot[] {"FCM2CREW2:"};
-    constexpr char GliderType[] {"FGTYGLIDERTYPE:"};
-    constexpr char GliderId[] {"FGIDGLIDERID:"};
-    constexpr char GPSDatum[] {"FDTMGPSDATUM:WGS84"};
-    constexpr char FirmwareVersion[] {"FRFWFIRMWAREVERSION:"};
-    constexpr char HardwareVersion[] {"FRHWHARDWAREVERSION:"};
-    constexpr char FlightRecorderType[] {"FFTYFRTYPE:"};
-    constexpr char GpsReceiver[] {"FGPSRECEIVER:"};
-    constexpr char PressureAltitudeSensor[] {"FPRSPRESSALTSENSOR:"};
-    constexpr char Security[] {"FFRSSECURITYOK"};
+    constexpr const char *Date {"FDTEDATE:"};
+    constexpr const char *Pilot {"FPLTPILOTINCHARGE:"};
+    constexpr const char *CoPilot {"FCM2CREW2:"};
+    constexpr const char *GliderType {"FGTYGLIDERTYPE:"};
+    constexpr const char *GliderId {"FGIDGLIDERID:"};
+    constexpr const char *GPSDatum {"FDTMGPSDATUM:WGS84"};
+    constexpr const char *FirmwareVersion {"FRFWFIRMWAREVERSION:"};
+    constexpr const char *HardwareVersion {"FRHWHARDWAREVERSION:"};
+    constexpr const char *FlightRecorderType {"FFTYFRTYPE:"};
+    constexpr const char *GpsReceiver {"FGPSRECEIVER:"};
+    constexpr const char *PressureAltitudeSensor {"FPRSPRESSALTSENSOR:"};
+    constexpr const char *Security {"FFRSSECURITYOK"};
 
     // I record
-    constexpr char EnvironmentalNoiseLevel[] {"ENL"};
+    constexpr const char *EnvironmentalNoiseLevel {"ENL"};
 
     // J record
-    constexpr char TrueHeading[] {"HDT"};
-    constexpr char IndicatedAirspeed[] {"IAS"};
+    constexpr const char *TrueHeading {"HDT"};
+    constexpr const char *IndicatedAirspeed {"IAS"};
 
     // C record
-    constexpr char ObsoleteFlightDate[] {"000000"};
-    constexpr char ObsoleteTaskNumber[] {"000000"};
-    constexpr char TakeoffPoint[] {"TAKEOFF"};
-    constexpr char StartPoint[] {"START"};
-    constexpr char TurnPoint[] {"TURN"};
-    constexpr char FinishPoint[] {"FINISH"};
-    constexpr char LandingPoint[] {"LANDING"};
+    constexpr const char *ObsoleteFlightDate {"000000"};
+    constexpr const char *ObsoleteTaskNumber {"000000"};
+    constexpr const char *TakeoffPoint {"TAKEOFF"};
+    constexpr const char *StartPoint {"START"};
+    constexpr const char *TurnPoint {"TURN"};
+    constexpr const char *FinishPoint {"FINISH"};
+    constexpr const char *LandingPoint {"LANDING"};
 
     // B record
-    constexpr char FixValid[] {"A"};
+    constexpr const char *FixValid {"A"};
 
     // Interval of 20 seconds for K records
     constexpr int KRecordIntervalSec {20};

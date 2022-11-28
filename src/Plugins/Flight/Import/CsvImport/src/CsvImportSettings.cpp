@@ -34,7 +34,7 @@
 namespace
 {
     // Keys
-    constexpr char FormatKey[] {"Format"};
+    constexpr const char *FormatKey {"Format"};
 
     // Defaults
     constexpr CsvImportSettings::Format DefaultFormat {CsvImportSettings::Format::SkyDolly};
