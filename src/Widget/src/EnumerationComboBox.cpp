@@ -45,11 +45,11 @@ struct EnumerationComboBoxPrivate
 
 // PUBLIC
 
-EnumerationComboBox::EnumerationComboBox(QString enumerationName, QWidget *parent) noexcept
+EnumerationComboBox::EnumerationComboBox(QString enumerationName, bool editable, QWidget *parent) noexcept
     : EnumerationComboBox(parent)
-
 {
     d->enumeration = {std::move(enumerationName)};
+    setEditable(editable);
     initUi();
 }
 
@@ -69,6 +69,12 @@ void EnumerationComboBox::setEnumerationName(QString name) noexcept
 {
     d->enumeration.setName(std::move(name));
     initUi();
+}
+
+void EnumerationComboBox::setEditable(bool editable) noexcept
+{
+    QComboBox::setEditable(editable);
+    initAutoCompleter();
 }
 
 std::int64_t EnumerationComboBox::getCurrentId() const noexcept
@@ -110,10 +116,16 @@ void EnumerationComboBox::initUi() noexcept
             }
         }
     }
-
-    setEditable(true);
     setInsertPolicy(QComboBox::NoInsert);
+    initAutoCompleter();
+}
+
+void EnumerationComboBox::initAutoCompleter() noexcept
+{
     QCompleter *autoCompleter = completer();
-    autoCompleter->setCompletionMode(QCompleter::PopupCompletion);
-    autoCompleter->setFilterMode(Qt::MatchContains);
+    if (autoCompleter != nullptr) {
+        // Combo box is editable
+        autoCompleter->setCompletionMode(QCompleter::PopupCompletion);
+        autoCompleter->setFilterMode(Qt::MatchContains);
+    }
 }

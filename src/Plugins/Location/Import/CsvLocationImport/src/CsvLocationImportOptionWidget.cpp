@@ -79,6 +79,7 @@ void CsvLocationImportOptionWidget::initUi() noexcept
     ui->formatComboBox->addItem("Little Navmap", Enum::underly(CsvLocationImportSettings::Format::LittleNavmap));
 
     ui->defaultCountryComboBox->setEnumerationName(EnumerationService::Country);
+    ui->defaultCountryComboBox->setEditable(true);
 
     ui->defaultAltitudeSpinBox->setMinimum(Const::MinimumAltitude);
     ui->defaultAltitudeSpinBox->setMaximum(Const::MaximumAltitude);

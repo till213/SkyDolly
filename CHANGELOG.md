@@ -16,6 +16,7 @@
   * Size of file reduced, rounding numbers to two decimal places (except latitude and longitude values that are rounded to six decimal places)
 - Location module
   * A new update button which updates the selected location with the current location in the flight simulator (sytem locations cannot be updated)
+  * Automatically scrolls to the newly inserted item (with any column sorting enabled)
   * Additional system locations
 - The system locations migration file, located at *[Sky Dolly installation directory]/Resources/migr/Locations.csv*, is now optional and can be deleted
 - A new "Only this time" backup option has been added to the backup dialog: selecting this option will create a backup, but will then set the backup period to "Never" afterwards
@@ -26,6 +27,11 @@
 
 ### Bug Fixes
 - The various tabs in the Flight information dialog (Description, Aircraft, Conditions and Flight Plan) are now properly updated when importing a flight or loading a flight from the logbook
+- Imported "Historical flights" - that is to say, any real-world flight done before August 2020 - are now properly shown in the Logbook
+  * While the date August 18 2020, the birthday of MSFS, was certainly a reasonable choice for recorded flights...
+  * ... the date December 17 1903, the day of the first flight in human history, is certainly a safer bet when it comes to tracked (and imported) flights ;)
+- Correct country name of Qatar
+- Prevent teleportation by double-click on location ID during replay
 
 ### Under The Hood
 - Rule of Zero, copy-and-swap [[Back to Basics: RAII and the Rule of Zero - Arthur O'Dwyer - CppCon 2019](https://www.youtube.com/watch?v=7Qgd9B1KuMQ)]

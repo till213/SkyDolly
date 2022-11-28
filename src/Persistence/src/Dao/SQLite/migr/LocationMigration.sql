@@ -362,7 +362,7 @@ insert into enum_engine_event(sym_id, name, desc)
 values
   ('START', 'Start', 'Start the engine'),
   ('STOP', 'Stop', 'Stop the engine'),
-  ('KEEP', 'Keep', 'Keep the engine state as-is');
+  ('KEEP', 'Unchanged', 'Keep the engine state as is');
 
 @migr(id = "db2ef8c9-8a62-47b5-96d1-37146404f51e", descn = "Add engine event column", step_cnt = 2)
 alter table location add column engine_event integer references enum_engine_event(id);
@@ -385,6 +385,11 @@ where  engine_event is null
 insert into enum_location_category(sym_id, name, desc)
 values
   ('WR', 'Water runway', 'Water runway');
+
+@migr(id = "6c11d4ef-f1a6-4ece-bc27-db4f0d8fa7d5", descn = "Correct country name", step = 1)
+update enum_country
+set    name = 'Qatar'
+where  sym_id = 'QA';
 
 @migr(id = "55a04d46-fc38-445a-8967-f84c96aa41bb", descn = "Update application version to 0.13", step = 1)
 update metadata
