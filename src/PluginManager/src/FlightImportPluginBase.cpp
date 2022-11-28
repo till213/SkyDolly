@@ -148,7 +148,7 @@ void FlightImportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &key
     getPluginSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
-void FlightImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void FlightImportPluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }

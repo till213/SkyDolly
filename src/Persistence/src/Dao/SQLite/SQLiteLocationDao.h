@@ -28,6 +28,8 @@
 #include <cstdint>
 #include <vector>
 
+class QSqlQuery;
+
 #include "../LocationDaoIntf.h"
 
 struct Location;
@@ -48,6 +50,9 @@ public:
     bool deleteById(std::int64_t id) noexcept override;
     std::vector<Location> getAll(bool *ok = nullptr) const noexcept override;
     std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) const noexcept override;
+
+private:
+    inline std::vector<Location> executeGetLocationQuery(QSqlQuery &query, bool *ok = nullptr) const noexcept;
 };
 
 #endif // SQLITELOCATIONDAO_H

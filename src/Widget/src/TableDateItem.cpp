@@ -27,31 +27,28 @@
 #include <Kernel/Unit.h>
 #include "TableDateItem.h"
 
-struct TableDateItemPrivate
-{
-    TableDateItemPrivate(const QDate &theDate) noexcept
-        : date(theDate)
-    {}
-
-    QDate date;
-    Unit unit;
-};
-
 // PUBLIC
 
-TableDateItem::TableDateItem(const QString &dateString, const QDate &date) noexcept
-    : QTableWidgetItem(dateString),
-      d(std::make_unique<TableDateItemPrivate>(date))
-{}
+TableDateItem::TableDateItem(QDate date) noexcept
+    : QTableWidgetItem()
+{
+    setDate(date);
+}
 
-TableDateItem::~TableDateItem() = default;
+QDate TableDateItem::getDate() const noexcept
+{
+    return data(Qt::EditRole).toDate();
+}
+
+void TableDateItem::setDate(QDate date) noexcept
+{
+    setData(Qt::DisplayRole, m_unit.formatDate(date));
+    setData(Qt::EditRole, date);
+}
 
 bool TableDateItem::operator<(const QTableWidgetItem &rhs) const noexcept
 {
-    TableDateItem const *r = dynamic_cast<const TableDateItem *>(&rhs);
-    if (r != nullptr) {
-        return d->date < r->d->date;
-    } else {
-        return false;
-    }
+    const QDate date1 = data(Qt::EditRole).toDate();
+    const QDate date2 = rhs.data(Qt::EditRole).toDate();
+    return date1 < date2;
 }

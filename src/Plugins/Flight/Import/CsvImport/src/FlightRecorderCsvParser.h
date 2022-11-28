@@ -52,7 +52,7 @@ public:
 private:
     std::unique_ptr<FlightRecorderCsvParserPrivate> d;
 
-    bool initColumnIndices(const CsvParser::Headers &headers) noexcept;
+    bool validateHeaders() noexcept;
     bool parseRow(const CsvParser::Row &row) noexcept;
     inline void initEngineDefaultValues(EngineData &engineData) noexcept;
     inline void initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandle) noexcept;

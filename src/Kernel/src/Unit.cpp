@@ -204,10 +204,14 @@ QString Unit::formatDate(const QDateTime &dateTime) const noexcept
     return formatDate(dateTime.date());
 }
 
+QString Unit::formatTime(const QTime &time) const noexcept
+{
+    return d->locale.toString(time, QLocale::ShortFormat);
+}
+
 QString Unit::formatTime(const QDateTime &dateTime) const noexcept
 {
-    QTime time(dateTime.time());
-    return d->locale.toString(time, QLocale::ShortFormat);
+    return formatTime(dateTime.time());
 }
 
 QString Unit::formatDateTime(const QDateTime &dateTime) const noexcept

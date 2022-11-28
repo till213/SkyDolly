@@ -108,12 +108,12 @@ namespace
 
     constexpr int CustomSpeedLineEditMinimumWidth {40};
 
-    constexpr char TimestampFormat[] {"hh:mm:ss"};
+    constexpr const char *TimestampFormat {"hh:mm:ss"};
     constexpr std::int64_t MilliSecondsPerSecond {1000};
     constexpr std::int64_t MilliSecondsPerMinute {60 * MilliSecondsPerSecond};
     constexpr std::int64_t MilliSecondsPerHour {60 * MilliSecondsPerMinute};
 
-    constexpr char ReplaySpeedProperty[] {"ReplaySpeed"};
+    constexpr const char *ReplaySpeedProperty {"ReplaySpeed"};
 
     enum struct ReplaySpeed {
         Slow10,
@@ -414,15 +414,20 @@ void MainWindow::initUi() noexcept
             Settings &settings = Settings::getInstance();
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
+            constexpr uint CakeChar = 0x1f382;
+            const QString CakeString = QString::fromUcs4(&CakeChar, 1);
             QMessageBox::information(this, "Preview",
-                QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                "This release v%2 also implements the modules as plugins, reducing memory (RAM) usage even further.\n\n"
-                "At the same time a new Locations module is introduced, allowing to quickly teleport to the selected location. "
-                "It comes with an initial set of default (system) locations that are neither editable nor deletable.\n\n"
-                "Own user locations can either be captured from an active flight (even during recording), or copy & pasted from the system clipboard (with CTRL + V).\n\n"
-                "Note that the Locations module is work in progress: filtering and additional attributes are yet to be implemented.\n\n"
-                "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
-                QMessageBox::StandardButton::Ok);            
+                                     CakeString + CakeString + CakeString + QString(" HAPPY 40TH ANNIVERSARY, FLIGHT SIMULATOR! ") + CakeString + CakeString + CakeString +
+                                     QString("\n\n"
+                                             "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
+                                             "This release v%2 \"%3\" introduces location import and export, making it possible to exchange user points with e.g. Little Navmap. "
+                                             "The Location module now also supports basic filtering and the engine state (start, stop, unchanged) can be controlled upon teleportation.\n\n"
+                                             "While not many new features have been introduced a lot of work has been done \"under the hood\": memory "
+                                             "and performance optimisations in various areas have been applied.\n\n"
+                                             "This dialog will be shown %4 more times.")
+                                     .arg(Version::getApplicationName(), Version::getApplicationVersion())
+                                     .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
+                                     QMessageBox::StandardButton::Ok);
             settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
         });
     }
@@ -1013,7 +1018,7 @@ void MainWindow::updateMinimalUiEssentialButtonVisibility() noexcept
 void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
 {
     Settings &settings = Settings::getInstance();
-    bool replaySpeedVisible;
+    bool replaySpeedVisible {false};
     if (enterMinimalUi) {
         // When switching to minimal UI mode the default replay speed visibility takes precedence
         replaySpeedVisible = settings.getDefaultMinimalUiReplaySpeedVisibility() && settings.isReplaySpeedVisible();

@@ -352,17 +352,20 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::resetAllTimeOffsets);
 }
 
-void FormationWidget::updateAircraftTable() noexcept
+void FormationWidget::updateTable() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
 
     ui->aircraftTableWidget->blockSignals(true);
     ui->aircraftTableWidget->setSortingEnabled(false);
-    ui->aircraftTableWidget->setRowCount(0);
+    ui->aircraftTableWidget->clearContents();
+    ui->aircraftTableWidget->setRowCount(static_cast<int>(flight.count()));
 
+    int row {0};
     int aircraftIndex {0};
     for (const auto &aircraft : flight) {
-        createRow(aircraft, aircraftIndex);
+        initRow(aircraft, row, aircraftIndex);
+        ++row;
         ++aircraftIndex;
     }
 
@@ -535,64 +538,51 @@ void FormationWidget::updateToolTips() noexcept
     }
 }
 
-void FormationWidget::createRow(const Aircraft &aircraft, int aircraftIndex) noexcept
+inline const QTableWidgetItem *FormationWidget::createRow(const Aircraft &aircraft, int aircraftIndex) noexcept
+{
+    const int row = ui->aircraftTableWidget->rowCount();
+    ui->aircraftTableWidget->insertRow(row);
+    return initRow(aircraft, row, aircraftIndex);
+}
+
+inline const QTableWidgetItem *FormationWidget::initRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept
 {
     const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
     int column {0};
 
-    const int row = ui->aircraftTableWidget->rowCount();
-    ui->aircraftTableWidget->insertRow(row);
-
     // Sequence number
     std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
-    // Sequence numbers start at 1
-    newItem->setData(Qt::DisplayRole, aircraftIndex + 1);
+    const QTableWidgetItem *firstItem = newItem.get();
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     newItem->setToolTip(tr("Double-click to change user aircraft."));
-    // Icon
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const int userAircraftIndex = flight.getUserAircraftIndex();
-    const bool recording = skyConnectManager.isInRecordingState();
-    const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
-    if (aircraftIndex == userAircraftIndex) {
-        if (recording) {
-            newItem->setIcon(FormationWidgetPrivate::recordingAircraftIcon);
-        } else if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
-            newItem->setIcon(FormationWidgetPrivate::referenceAircraftIcon);
-        } else {
-            newItem->setIcon(FormationWidgetPrivate::normalAircraftIcon);
-        }
-    } else {
-        newItem->setIcon(QIcon());
-    }
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Aircraft type
-    newItem = std::make_unique<QTableWidgetItem>(aircraftInfo.aircraftType.type);
+    newItem = std::make_unique<QTableWidgetItem>();
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Engine type
-    newItem = std::make_unique<QTableWidgetItem>(SimType::engineTypeToString(aircraftInfo.aircraftType.engineType));
+    newItem = std::make_unique<QTableWidgetItem>();
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Wing span
-    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatFeet(aircraftInfo.aircraftType.wingSpan));
+    newItem = std::make_unique<QTableWidgetItem>();
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Initial airspeed
-    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatKnots(aircraftInfo.initialAirspeed));
+    newItem = std::make_unique<QTableWidgetItem>();
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Initial altitude above ground
-    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
+    newItem = std::make_unique<QTableWidgetItem>();
     newItem->setToolTip(tr("Altitude above ground."));
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
@@ -600,35 +590,35 @@ void FormationWidget::createRow(const Aircraft &aircraft, int aircraftIndex) noe
 
     // Duration
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setData(Qt::DisplayRole, Unit::formatHHMMSS(aircraft.getDurationMSec()));
     newItem->setToolTip(tr("Recording duration."));
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Tail number
-    newItem = std::make_unique<QTableWidgetItem>(aircraftInfo.tailNumber);
+    newItem = std::make_unique<QTableWidgetItem>();
     newItem->setToolTip(tr("Double-click to edit tail number."));
     newItem->setBackground(Platform::getEditableTableCellBGColor());
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Time offset
-    const double timeOffsetSec = static_cast<double>(aircraftInfo.timeOffset) / 1000.0;
     newItem = std::make_unique<UnitWidgetItem>(d->unit, Unit::Name::Second);
-    newItem->setData(Qt::EditRole, timeOffsetSec);
     newItem->setToolTip(tr("Double-click to edit time offset [seconds]."));
     newItem->setBackground(Platform::getEditableTableCellBGColor());
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
+
+    updateRow(aircraft, row, aircraftIndex);
+
+    return firstItem;
 }
 
-void FormationWidget::updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept
+inline void FormationWidget::updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept
 {
     const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
-    int column {0};
 
     // Sequence number
-    QTableWidgetItem *item = ui->aircraftTableWidget->item(row, d->sequenceNumberColumn);
+    QTableWidgetItem *item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::sequenceNumberColumn);
     // Sequence numbers start at 1
     item->setData(Qt::DisplayRole, aircraftIndex + 1);
     // Icon
@@ -647,46 +637,38 @@ void FormationWidget::updateRow(const Aircraft &aircraft, int row, int aircraftI
     } else {
         item->setIcon(QIcon());
     }
-    ++column;
 
     // Aircraft type
-    item = ui->aircraftTableWidget->item(row, d->aircraftTypeColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::aircraftTypeColumn);
     item->setData(Qt::DisplayRole, aircraftInfo.aircraftType.type);
-    ++column;
 
     // Engine type 
-    item = ui->aircraftTableWidget->item(row, d->engineTypeColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::engineTypeColumn);
     item->setData(Qt::DisplayRole, SimType::engineTypeToString(aircraftInfo.aircraftType.engineType));
-    ++column;
 
     // Wing span
-    item = ui->aircraftTableWidget->item(row, d->wingSpanColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::wingSpanColumn);
     item->setData(Qt::DisplayRole, d->unit.formatFeet(aircraftInfo.aircraftType.wingSpan));
-    ++column;
 
     // Initial airspeed 
-    item = ui->aircraftTableWidget->item(row, d->initialAirspeedColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::initialAirspeedColumn);
     item->setData(Qt::DisplayRole, d->unit.formatKnots(aircraftInfo.initialAirspeed));
-    ++column;
 
     // Initial altitude above ground
-    item = ui->aircraftTableWidget->item(row, d->initialAltitudeColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::initialAltitudeColumn);
     item->setData(Qt::DisplayRole, d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
-    ++column;
 
     // Duration
-    item = ui->aircraftTableWidget->item(row, d->durationColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::durationColumn);
     item->setData(Qt::DisplayRole, Unit::formatHHMMSS(aircraft.getDurationMSec()));
-    ++column;
 
     // Tail number 
-    item = ui->aircraftTableWidget->item(row, d->tailNumberColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::tailNumberColumn);
     item->setData(Qt::DisplayRole, aircraftInfo.tailNumber);
-    ++column;
 
     // Time offset
     const double timeOffsetSec = static_cast<double>(aircraftInfo.timeOffset) / 1000.0;    
-    item = ui->aircraftTableWidget->item(row, d->timeOffsetColumn);
+    item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::timeOffsetColumn);
     item->setData(Qt::EditRole, timeOffsetSec);
 }
 
@@ -794,7 +776,7 @@ int FormationWidget::getRowByAircraftIndex(int index) const noexcept
 
 void FormationWidget::updateUi() noexcept
 {
-    updateAircraftTable();
+    updateTable();
     updateRelativePositionUi();
     updateEditUi();    
     updateTimeOffsetUi();
@@ -816,9 +798,10 @@ void FormationWidget::onAircraftAdded(const Aircraft &aircraft) noexcept
 
     ui->aircraftTableWidget->blockSignals(true);
     ui->aircraftTableWidget->setSortingEnabled(false);
-    createRow(aircraft, aircraftIndex);
+    const QTableWidgetItem *firstItem = createRow(aircraft, aircraftIndex);
     ui->aircraftTableWidget->blockSignals(false);
     ui->aircraftTableWidget->setSortingEnabled(true);
+    ui->aircraftTableWidget->scrollToItem(firstItem);
     updateTimeOffsetUi();
 }
 
