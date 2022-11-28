@@ -33,6 +33,7 @@
 class QShowEvent;
 class QHideEvent;
 class QAction;
+class QTableWidgetItem;
 
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/ModuleIntf.h>
@@ -76,9 +77,9 @@ private:
     void updateReplayUi() noexcept;
     void updateToolTips() noexcept;
 
-    void inline createRow(const Aircraft &aircraft, int aircraftIndex) noexcept;
-    void inline initRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
-    void inline updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
+    inline const QTableWidgetItem *createRow(const Aircraft &aircraft, int aircraftIndex) noexcept;
+    inline const QTableWidgetItem *initRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
+    inline void updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
 
     void updateAndSendUserAircraftPosition() const noexcept;
     void updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept;

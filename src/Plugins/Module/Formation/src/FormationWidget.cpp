@@ -538,14 +538,14 @@ void FormationWidget::updateToolTips() noexcept
     }
 }
 
-inline void FormationWidget::createRow(const Aircraft &aircraft, int aircraftIndex) noexcept
+inline const QTableWidgetItem *FormationWidget::createRow(const Aircraft &aircraft, int aircraftIndex) noexcept
 {
     const int row = ui->aircraftTableWidget->rowCount();
     ui->aircraftTableWidget->insertRow(row);
-    initRow(aircraft, row, aircraftIndex);
+    return initRow(aircraft, row, aircraftIndex);
 }
 
-inline void FormationWidget::initRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept
+inline const QTableWidgetItem *FormationWidget::initRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept
 {
     const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
@@ -553,6 +553,7 @@ inline void FormationWidget::initRow(const Aircraft &aircraft, int row, int airc
 
     // Sequence number
     std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
+    const QTableWidgetItem *firstItem = newItem.get();
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     newItem->setToolTip(tr("Double-click to change user aircraft."));
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
@@ -607,6 +608,8 @@ inline void FormationWidget::initRow(const Aircraft &aircraft, int row, int airc
     ui->aircraftTableWidget->setItem(row, column, newItem.release());
 
     updateRow(aircraft, row, aircraftIndex);
+
+    return firstItem;
 }
 
 inline void FormationWidget::updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept
@@ -795,9 +798,10 @@ void FormationWidget::onAircraftAdded(const Aircraft &aircraft) noexcept
 
     ui->aircraftTableWidget->blockSignals(true);
     ui->aircraftTableWidget->setSortingEnabled(false);
-    createRow(aircraft, aircraftIndex);
+    const QTableWidgetItem *firstItem = createRow(aircraft, aircraftIndex);
     ui->aircraftTableWidget->blockSignals(false);
     ui->aircraftTableWidget->setSortingEnabled(true);
+    ui->aircraftTableWidget->scrollToItem(firstItem);
     updateTimeOffsetUi();
 }
 
