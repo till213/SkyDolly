@@ -631,8 +631,7 @@ inline void LocationWidget::updateRow(const Location &location, int row) noexcep
 {
     // ID
     QTableWidgetItem *item = ui->locationTableWidget->item(row, LocationWidgetPrivate::idColumn);
-    QVariant locationId = QVariant::fromValue(location.id);
-    item->setData(Qt::DisplayRole, locationId);
+    item->setData(Qt::DisplayRole, QVariant::fromValue(location.id));
 
     // Title
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::titleColumn);
@@ -643,16 +642,22 @@ inline void LocationWidget::updateRow(const Location &location, int row) noexcep
     item->setData(Qt::DisplayRole, location.description);
 
     // Type
-    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::typeColumn);
-    item->setData(Qt::EditRole, QVariant::fromValue(location.typeId));
+    EnumerationWidgetItem *enumerationWidgetItem = dynamic_cast<EnumerationWidgetItem *>(ui->locationTableWidget->item(row, LocationWidgetPrivate::typeColumn));
+    if (enumerationWidgetItem != nullptr) {
+        enumerationWidgetItem->setData(Qt::EditRole, QVariant::fromValue(location.typeId));
+    }
 
     // Category
-    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::categoryColumn);
-    item->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
+    enumerationWidgetItem = dynamic_cast<EnumerationWidgetItem *>(ui->locationTableWidget->item(row, LocationWidgetPrivate::categoryColumn));
+    if (enumerationWidgetItem != nullptr) {
+        enumerationWidgetItem->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
+    }
 
     // Country
-    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::countryColumn);
-    item->setData(Qt::EditRole, QVariant::fromValue(location.countryId));
+    enumerationWidgetItem = dynamic_cast<EnumerationWidgetItem *>(ui->locationTableWidget->item(row, LocationWidgetPrivate::countryColumn));
+    if (enumerationWidgetItem != nullptr) {
+        enumerationWidgetItem->setData(Qt::EditRole, QVariant::fromValue(location.countryId));
+    }
 
     // Identifier
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::identifierColumn);

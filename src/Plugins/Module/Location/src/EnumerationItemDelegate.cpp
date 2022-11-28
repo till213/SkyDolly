@@ -56,7 +56,7 @@ QWidget *EnumerationItemDelegate::createEditor(QWidget *parent, const QStyleOpti
     if (index.data().canConvert<QString>()) {
         EnumerationComboBox *enumerationComboBox = new EnumerationComboBox(d->enumerationName, parent);
         connect(enumerationComboBox, &EnumerationComboBox::currentIndexChanged,
-                         this, &EnumerationItemDelegate::commitAndCloseEditor);
+                this, &EnumerationItemDelegate::commitAndCloseEditor);
         return enumerationComboBox;
     } else {
         return QStyledItemDelegate::createEditor(parent, option, index);
