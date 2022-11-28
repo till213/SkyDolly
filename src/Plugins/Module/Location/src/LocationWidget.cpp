@@ -454,8 +454,8 @@ void LocationWidget::updateTable() noexcept
                     d->locationService->getSelectedLocations(d->locationSelector) :
                     d->locationService->getAll();
 
-        ui->locationTableWidget->setSortingEnabled(false);
-        ui->locationTableWidget->blockSignals(true);        
+        ui->locationTableWidget->blockSignals(true);
+        ui->locationTableWidget->setSortingEnabled(false);           
         ui->locationTableWidget->clearContents();
         ui->locationTableWidget->setRowCount(static_cast<int>(locations.size()));
 
@@ -468,8 +468,8 @@ void LocationWidget::updateTable() noexcept
             ui->locationTableWidget->resizeColumnsToContents();
             d->columnsAutoResized = true;
         }
-        ui->locationTableWidget->blockSignals(false);
         ui->locationTableWidget->setSortingEnabled(true);
+        ui->locationTableWidget->blockSignals(false);
 
     } else {
         // Clear existing entries

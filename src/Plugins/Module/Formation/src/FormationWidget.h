@@ -76,8 +76,10 @@ private:
     void updateReplayUi() noexcept;
     void updateToolTips() noexcept;
 
-    void createRow(const Aircraft &aircraft, int aircraftIndex) noexcept;
-    void updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
+    void inline createRow(const Aircraft &aircraft, int aircraftIndex) noexcept;
+    void inline initRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
+    void inline updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
+
     void updateAndSendUserAircraftPosition() const noexcept;
     void updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept;
 
