@@ -2360,11 +2360,6 @@ or choose another reference aircraft (marked in green) in the formation.</source
         </translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.cpp" line="379"/>
-        <source>REC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.cpp" line="305"/>
         <source>Double-click to load flight.</source>
         <translation type="unfinished"></translation>
@@ -2372,6 +2367,16 @@ or choose another reference aircraft (marked in green) in the formation.</source
     <message>
         <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.cpp" line="312"/>
         <source>Double-click to edit title.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.cpp" line="360"/>
+        <source>Simulation duration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.cpp" line="379"/>
+        <source>REC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2383,11 +2388,6 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.cpp" line="403"/>
         <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.cpp" line="412"/>
         <source>Simulation time (%1Z).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.cpp" line="360"/>
-        <source>Simulation duration.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
