@@ -423,7 +423,7 @@ void MainWindow::initUi() noexcept
                                              "This release v%2 \"%3\" introduces location import and export, making it possible to exchange user points with e.g. Little Navmap. "
                                              "The Location module now also supports basic filtering and the engine state (start, stop, unchanged) can be controlled upon teleportation.\n\n"
                                              "While not many new features have been introduced a lot of work has been done \"under the hood\": memory "
-                                             "optimisations and smaller performance optimisations have been applied, according to various code analysis tools.\n\n"
+                                             "and performance optimisations in various areas have been applied.\n\n"
                                              "This dialog will be shown %4 more times.")
                                      .arg(Version::getApplicationName(), Version::getApplicationVersion())
                                      .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
