@@ -38,17 +38,17 @@
 namespace
 {
     // Keys
-    constexpr char ColorStyleKey[] {"ColorStyle"};
-    constexpr char NofColorsPerRampKey[] {"NofColorsPerRamp"};
-    constexpr char LineWidthKey[] {"LineWidth"};
-    constexpr char JetStartColorKey[] {"JetStartColor"};
-    constexpr char JetEndColorKey[] {"JetEndColor"};
-    constexpr char TurbopropStartColorKey[] {"TurbopropStartColor"};
-    constexpr char TurbopropEndColorKey[] {"TurbopropEndColor"};
-    constexpr char PistonStartColorKey[] {"PistonStartColor"};
-    constexpr char PistonEndColorKey[] {"PistonEndColor"};
-    constexpr char AllStartColorKey[] {"AllStartColor"};
-    constexpr char AllEndColorKey[] {"AllEndColor"};
+    constexpr const char *ColorStyleKey {"ColorStyle"};
+    constexpr const char *NofColorsPerRampKey {"NofColorsPerRamp"};
+    constexpr const char *LineWidthKey {"LineWidth"};
+    constexpr const char *JetStartColorKey {"JetStartColor"};
+    constexpr const char *JetEndColorKey {"JetEndColor"};
+    constexpr const char *TurbopropStartColorKey {"TurbopropStartColor"};
+    constexpr const char *TurbopropEndColorKey {"TurbopropEndColor"};
+    constexpr const char *PistonStartColorKey {"PistonStartColor"};
+    constexpr const char *PistonEndColorKey {"PistonEndColor"};
+    constexpr const char *AllStartColorKey {"AllStartColor"};
+    constexpr const char *AllEndColorKey {"AllEndColor"};
 
     // Defaults
     constexpr KmlExportSettings::ColorStyle DefaultColorStyle {KmlExportSettings::ColorStyle::OneColor};

@@ -38,8 +38,8 @@
 namespace
 {
     // Keys
-    constexpr char PilotNameKey[] {"PilotName"};
-    constexpr char CoPilotNameKey[] {"CoPilotName"};
+    constexpr const char *PilotNameKey {"PilotName"};
+    constexpr const char *CoPilotNameKey {"CoPilotName"};
 }
 
 struct IgcExportSettingsPrivate
