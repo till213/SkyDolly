@@ -192,12 +192,13 @@ void LocationWidget::addLocation(Location newLocation)
     if (d->locationService->store(location)) {
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->blockSignals(true);
-        createRow(location);
+        const QTableWidgetItem *firstItem = createRow(location);
         ui->locationTableWidget->blockSignals(false);
         // Automatically select newly inserted item (make sure that signals are emitted
         // again)
         ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
         ui->locationTableWidget->setSortingEnabled(true);
+        ui->locationTableWidget->scrollToItem(firstItem);
     }
 }
 
@@ -477,20 +478,21 @@ void LocationWidget::updateTable() noexcept
     }
 }
 
-inline void LocationWidget::createRow(const Location &location) noexcept
+inline const QTableWidgetItem *LocationWidget::createRow(const Location &location) noexcept
 {
     const int row = ui->locationTableWidget->rowCount();
     ui->locationTableWidget->insertRow(row);
-    initRow(location, row);
+    return initRow(location, row);
 }
 
-inline void LocationWidget::initRow(const Location &location, int row) noexcept
+inline const QTableWidgetItem *LocationWidget::initRow(const Location &location, int row) noexcept
 {
     const bool isSystemLocation {location.typeId == d->SystemLocationTypeId};
     int column {0};
 
     // ID
     std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
+    const QTableWidgetItem *firstItem = newItem.get();
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     newItem->setToolTip(tr("Double-click to teleport to location."));
@@ -621,6 +623,8 @@ inline void LocationWidget::initRow(const Location &location, int row) noexcept
     ++column;
 
     updateRow(location, row);
+
+    return firstItem;
 }
 
 inline void LocationWidget::updateRow(const Location &location, int row) noexcept
@@ -853,7 +857,7 @@ void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexce
     }
 }
 
-void LocationWidget::   onCellChanged(int row, [[maybe_unused]]int column) noexcept
+void LocationWidget::onCellChanged(int row, [[maybe_unused]]int column) noexcept
 {
     Location location = getLocationByRow(row);
     d->locationService->update(location);

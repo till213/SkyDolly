@@ -32,6 +32,7 @@
 #include <QWidget>
 #include <QStringList>
 
+class QTableWidgetItem;
 class QKeyEvent;
 
 #include <PluginManager/ModuleIntf.h>
@@ -71,8 +72,8 @@ private:
     void updateInfoUi() noexcept;
 
     void updateTable() noexcept;
-    inline void createRow(const Location &location) noexcept;
-    inline void initRow(const Location &location, int row) noexcept;
+    inline const QTableWidgetItem *createRow(const Location &location) noexcept;
+    inline const QTableWidgetItem *initRow(const Location &location, int row) noexcept;
     inline void updateRow(const Location &location, int row) noexcept;
 
     void teleportToLocation(int row) noexcept;

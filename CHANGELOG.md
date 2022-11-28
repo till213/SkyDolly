@@ -16,6 +16,7 @@
   * Size of file reduced, rounding numbers to two decimal places (except latitude and longitude values that are rounded to six decimal places)
 - Location module
   * A new update button which updates the selected location with the current location in the flight simulator (sytem locations cannot be updated)
+  * Automatically scrolls to the newly inserted item (with any column sorting enabled)
   * Additional system locations
 - The system locations migration file, located at *[Sky Dolly installation directory]/Resources/migr/Locations.csv*, is now optional and can be deleted
 - A new "Only this time" backup option has been added to the backup dialog: selecting this option will create a backup, but will then set the backup period to "Never" afterwards
