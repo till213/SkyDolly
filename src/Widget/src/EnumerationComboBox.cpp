@@ -45,11 +45,11 @@ struct EnumerationComboBoxPrivate
 
 // PUBLIC
 
-EnumerationComboBox::EnumerationComboBox(QString enumerationName, bool editable, QWidget *parent) noexcept
+EnumerationComboBox::EnumerationComboBox(QString enumerationName, Mode mode, QWidget *parent) noexcept
     : EnumerationComboBox(parent)
 {
     d->enumeration = {std::move(enumerationName)};
-    setEditable(editable);
+    setMode(mode);
     initUi();
 }
 
@@ -71,10 +71,22 @@ void EnumerationComboBox::setEnumerationName(QString name) noexcept
     initUi();
 }
 
-void EnumerationComboBox::setEditable(bool editable) noexcept
+EnumerationComboBox::Mode EnumerationComboBox::getMode() const noexcept
 {
-    QComboBox::setEditable(editable);
-    initAutoCompleter();
+    return isEditable() ? EnumerationComboBox::Mode::Editable : EnumerationComboBox::Mode::NonEditable;
+}
+
+void EnumerationComboBox::setMode(Mode mode) noexcept
+{
+    switch (mode) {
+    case Mode::Editable:
+        QComboBox::setEditable(true);
+        initAutoCompleter();
+        break;
+    case Mode::NonEditable:
+        QComboBox::setEditable(false);
+        break;
+    }
 }
 
 std::int64_t EnumerationComboBox::getCurrentId() const noexcept

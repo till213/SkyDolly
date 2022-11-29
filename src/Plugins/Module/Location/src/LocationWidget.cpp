@@ -543,7 +543,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
-        newItem->setToolTip(tr("Double-click to edit category."));
+        newItem->setToolTip(tr("Double-click to edit country."));
     }
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
