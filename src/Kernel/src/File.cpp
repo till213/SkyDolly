@@ -32,15 +32,15 @@
 
 // PUBLIC
 
-QString File::ensureSuffix(QStringView filePath, QStringView suffix) noexcept
+QString File::ensureExtension(QStringView filePath, QStringView extension) noexcept
 {
-    QString filePathWithSuffix;
-    if (!filePath.endsWith(suffix, Qt::CaseInsensitive)) {
-        filePathWithSuffix = filePath % "." % suffix;
+    QString filePathWithExtension;
+    if (!filePath.endsWith(extension, Qt::CaseInsensitive)) {
+        filePathWithExtension = filePath % "." % extension;
     } else {
-        filePathWithSuffix = filePath.toString();
+        filePathWithExtension = filePath.toString();
     }
-    return filePathWithSuffix;
+    return filePathWithExtension;
 }
 
 QString File::getSequenceFilePath(const QString &filePath, int n) noexcept
