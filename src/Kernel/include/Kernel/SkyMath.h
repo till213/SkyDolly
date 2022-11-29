@@ -368,7 +368,7 @@ namespace SkyMath
         const double distance = geodesicDistance(startPosition, endPosition);
         const double deltaT = static_cast<double>(endTimestamp - startTimestamp) / 1000.0;
 
-        return std::pair(distance, distance / deltaT);
+        return {distance, distance / deltaT};
     }
 
     /*!

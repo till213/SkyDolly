@@ -94,7 +94,7 @@ struct SettingsPrivate
     QString exportPath;
     QString defaultExportPath;
     QString defaultLogbookPath;
-    bool absoluteSeek;
+    bool absoluteSeek {false};
     double seekIntervalSeconds;
     double seekIntervalPercent;
     bool replayLoop;
