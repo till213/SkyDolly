@@ -193,12 +193,7 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
     frenchConnection();
 }
 
-MainWindow::~MainWindow() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "MainWindow::~MainWindow: DELETED";
-#endif
-}
+MainWindow::~MainWindow() = default;
 
 bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 {

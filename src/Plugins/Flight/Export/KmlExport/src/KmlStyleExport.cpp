@@ -54,18 +54,9 @@ namespace
 
 struct KmlStyleExportPrivate
 {
-    KmlStyleExportPrivate(const KmlExportSettings &theExportSettings) noexcept
-        : settings(theExportSettings),
-          jetColorRampIndex(0),
-          turbopropColorRampIndex(0),
-          pistonColorRampIndex(0),
-          allColorRampIndex(0)
-    {
-        jetColorRampIndex = 0;
-        turbopropColorRampIndex = 0;
-        pistonColorRampIndex = 0;
-        allColorRampIndex = 0;
-    }
+    KmlStyleExportPrivate(const KmlExportSettings &exportSettings) noexcept
+        : settings(exportSettings)
+    {}
 
     const KmlExportSettings &settings;
     std::vector<QRgb> jetColorRamp;
@@ -73,10 +64,10 @@ struct KmlStyleExportPrivate
     std::vector<QRgb> pistonColorRamp;
     std::vector<QRgb> allColorRamp;
     // Index into color ramp, modulo its size
-    int jetColorRampIndex;
-    int turbopropColorRampIndex;
-    int pistonColorRampIndex;
-    int allColorRampIndex;
+    int jetColorRampIndex {0};
+    int turbopropColorRampIndex {0};
+    int pistonColorRampIndex {0};
+    int allColorRampIndex {0};
 };
 
 // PUBLIC
@@ -85,8 +76,7 @@ KmlStyleExport::KmlStyleExport(const KmlExportSettings &settings) noexcept
     : d(std::make_unique<KmlStyleExportPrivate>(settings))
 {}
 
-KmlStyleExport::~KmlStyleExport() noexcept
-{}
+KmlStyleExport::~KmlStyleExport() = default;
 
 bool KmlStyleExport::exportStyles(QIODevice &io) noexcept
 {
@@ -107,7 +97,7 @@ bool KmlStyleExport::exportStyles(QIODevice &io) noexcept
 QString KmlStyleExport::getNextEngineTypeStyleMap(SimType::EngineType engineType) noexcept
 {
     QString styleMapId;
-    std::size_t nofColors;
+    std::size_t nofColors {0};
 
     if (d->settings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
         switch (engineType) {

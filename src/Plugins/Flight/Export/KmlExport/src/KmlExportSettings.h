@@ -47,7 +47,7 @@ public:
     };
 
     KmlExportSettings() noexcept;
-    ~KmlExportSettings() noexcept override;
+    ~KmlExportSettings() override;
 
     ColorStyle getColorStyle() const noexcept;
     void setColorStyle(ColorStyle colorStyle) noexcept;

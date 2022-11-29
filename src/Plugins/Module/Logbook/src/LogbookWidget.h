@@ -56,7 +56,7 @@ class LogbookWidget : public QWidget
     Q_OBJECT
 public:
     explicit LogbookWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
-    ~LogbookWidget() noexcept override;
+    ~LogbookWidget() override;
 
 private:
     std::unique_ptr<Ui::LogbookWidget> ui;

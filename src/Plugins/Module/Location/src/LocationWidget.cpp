@@ -156,7 +156,7 @@ LocationWidget::LocationWidget(QWidget *parent) noexcept
     frenchConnection();
 }
 
-LocationWidget::~LocationWidget() noexcept
+LocationWidget::~LocationWidget()
 {
     const QByteArray tableState = ui->locationTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setLocationTableState(tableState);

@@ -45,7 +45,7 @@ public:
     };
 
     KmlStyleExport(const KmlExportSettings &settings) noexcept;
-    ~KmlStyleExport() noexcept;
+    ~KmlStyleExport();
 
     bool exportStyles(QIODevice &io) noexcept;
     QString getNextEngineTypeStyleMap(SimType::EngineType engineType) noexcept;

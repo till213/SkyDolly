@@ -39,7 +39,7 @@ class AbstractKmlTrackParser : public AbstractKmlParser
 {
 public:
     AbstractKmlTrackParser() noexcept;
-    ~AbstractKmlTrackParser() noexcept override;
+    ~AbstractKmlTrackParser() override;
 
     QDateTime getFirstDateTimeUtc() const noexcept override;
 

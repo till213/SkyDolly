@@ -46,7 +46,7 @@ public:
     };
 
     GpxImportSettings() noexcept;
-    ~GpxImportSettings() noexcept override;
+    ~GpxImportSettings() override;
 
     GPXElement getWaypointSelection() const noexcept;
     void setWaypointSelection(GPXElement selection) noexcept;

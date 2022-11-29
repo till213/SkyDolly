@@ -51,11 +51,7 @@
 
 struct KmlImportPluginPrivate
 {
-    KmlImportPluginPrivate()
-        : flight(nullptr)
-    {}
-
-    Flight *flight;
+    Flight *flight {nullptr};
     QXmlStreamReader xml;
     KmlImportSettings pluginSettings;
     QDateTime firstDateTimeUtc;

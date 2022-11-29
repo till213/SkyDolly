@@ -45,7 +45,7 @@ public:
     };
 
     IgcImportSettings() noexcept;
-    ~IgcImportSettings() noexcept override;
+    ~IgcImportSettings() override;
 
     AltitudeMode getAltitudeMode() const noexcept;
     void setAltitudeMode(AltitudeMode altitudeMode) noexcept;

@@ -82,7 +82,7 @@ FlightRadar24KmlParser::FlightRadar24KmlParser() noexcept
     : d(std::make_unique<FlightRadar24KmlParserPrivate>())
 {}
 
-FlightRadar24KmlParser::~FlightRadar24KmlParser() noexcept = default;
+FlightRadar24KmlParser::~FlightRadar24KmlParser() = default;
 
 // FlightRadar24 KML files (are expected to) have one "Route" folder with <Placemarks> containing
 // - <description> - HTML snippet containing speed and heading

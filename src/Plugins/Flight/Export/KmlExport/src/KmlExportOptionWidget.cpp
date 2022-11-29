@@ -27,9 +27,6 @@
 #include <QString>
 #include <QStringBuilder>
 #include <QColorDialog>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include "KmlExportOptionWidget.h"
@@ -74,17 +71,9 @@ KmlExportOptionWidget::KmlExportOptionWidget(KmlExportSettings &settings, QWidge
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "KmlExportOptionWidget::KmlExportOptionWidget: CREATED";
-#endif
 }
 
-KmlExportOptionWidget::~KmlExportOptionWidget() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "KmlExportOptionWidget::~KmlExportOptionWidget: DELETED";
-#endif
-}
+KmlExportOptionWidget::~KmlExportOptionWidget() = default;
 
 // PRIVATE
 

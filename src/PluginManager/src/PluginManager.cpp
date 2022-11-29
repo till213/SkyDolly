@@ -64,7 +64,6 @@ namespace
 struct PluginManagerPrivate
 {
     PluginManagerPrivate() noexcept
-        : parentWidget(nullptr)
     {
         pluginsDirectory = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
@@ -78,7 +77,7 @@ struct PluginManagerPrivate
 
     ~PluginManagerPrivate() = default;
 
-    QWidget *parentWidget;
+    QWidget *parentWidget {nullptr};
     QDir pluginsDirectory;
     // Plugin UUID / plugin path
     QMap<QUuid, QString> flightImportPluginRegistry;

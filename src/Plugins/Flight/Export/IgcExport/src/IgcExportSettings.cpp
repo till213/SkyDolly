@@ -26,9 +26,6 @@
 #include <memory>
 
 #include <QString>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
@@ -61,18 +58,9 @@ struct IgcExportSettingsPrivate
 IgcExportSettings::IgcExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
       d(std::make_unique<IgcExportSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "IgcExportSettings::IgcExportSettings: CREATED";
-#endif
-}
+{}
 
-IgcExportSettings::~IgcExportSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "IgcExportSettings::~IgcExportSettings: DELETED";
-#endif
-}
+IgcExportSettings::~IgcExportSettings() = default;
 
 QString IgcExportSettings::getPilotName() const noexcept
 {

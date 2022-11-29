@@ -41,7 +41,7 @@ class GenericKmlParser : public AbstractKmlTrackParser
 {
 public:
     GenericKmlParser() noexcept;
-    ~GenericKmlParser() noexcept override;
+    ~GenericKmlParser() override;
 
     void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
     QString getFlightNumber() const noexcept override;

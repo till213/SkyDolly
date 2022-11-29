@@ -66,7 +66,7 @@ SkyDollyCsvWriter::SkyDollyCsvWriter(const CsvExportSettings &pluginSettings) no
     : d(std::make_unique<SkyDollyCsvWriterPrivate>(pluginSettings))
 {}
 
-SkyDollyCsvWriter::~SkyDollyCsvWriter() noexcept = default;
+SkyDollyCsvWriter::~SkyDollyCsvWriter() = default;
 
 bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
@@ -533,7 +533,7 @@ inline QString SkyDollyCsvWriter::getAircraftHandleData(const AircraftHandleData
 
 inline QString SkyDollyCsvWriter::getLightHeader() noexcept
 {
-    return QString(SimVar::LightStates);
+    return {SimVar::LightStates};
 }
 
 inline QString SkyDollyCsvWriter::getLightData(const LightData &data) noexcept

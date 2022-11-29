@@ -52,9 +52,9 @@
 
 struct BasicLocationExportDialogPrivate
 {
-    BasicLocationExportDialogPrivate(const QString &theFileSuffix, const QString &theFileFilter, LocationExportPluginBaseSettings &thePluginSettings) noexcept
-        : fileSuffix(theFileSuffix),
-          fileFilter(theFileFilter),
+    BasicLocationExportDialogPrivate(QString theFileSuffix, QString theFileFilter, LocationExportPluginBaseSettings &thePluginSettings) noexcept
+        : fileSuffix(std::move(theFileSuffix)),
+          fileFilter(std::move(theFileFilter)),
           pluginSettings(thePluginSettings)
     {}
 
@@ -69,10 +69,10 @@ struct BasicLocationExportDialogPrivate
 
 // PUBLIC
 
-BasicLocationExportDialog::BasicLocationExportDialog(const QString &fileSuffix, const QString &fileFilter, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
+BasicLocationExportDialog::BasicLocationExportDialog(QString fileSuffix, QString fileFilter, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicLocationExportDialog>()),
-      d(std::make_unique<BasicLocationExportDialogPrivate>(fileSuffix, fileFilter, pluginSettings))
+      d(std::make_unique<BasicLocationExportDialogPrivate>(std::move(fileSuffix), std::move(fileFilter), pluginSettings))
 {
     ui->setupUi(this);
     initUi();

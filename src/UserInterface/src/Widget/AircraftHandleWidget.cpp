@@ -67,8 +67,7 @@ AircraftHandleWidget::AircraftHandleWidget(QWidget *parent) noexcept :
     initUi();
 }
 
-AircraftHandleWidget::~AircraftHandleWidget() noexcept
-{}
+AircraftHandleWidget::~AircraftHandleWidget() = default;
 
 // PRIVATE
 

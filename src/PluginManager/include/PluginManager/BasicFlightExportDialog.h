@@ -80,7 +80,7 @@ private:
     void updateDataGroupBox() noexcept;
     void frenchConnection() noexcept;
     inline bool isExportUserAircraftOnly() const noexcept;
-    std::int64_t estimateNofSamplePoints() const noexcept;
+    std::size_t estimateNofSamplePoints() const noexcept;
 
 private slots:
     void updateUi() noexcept;

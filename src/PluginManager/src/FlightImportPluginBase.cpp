@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <vector>
+#include <cmath>
 
 #include <QWidget>
 #include <QIODevice>
@@ -240,14 +241,14 @@ void FlightImportPluginBase::updateAircraftInfo() noexcept
     const PositionData &lastPositionData = position.getLast();
     const QDateTime startDateTimeUtc = getStartDateTimeUtc();
     const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
-    int positionCount = position.count();
+    std::size_t positionCount = position.count();
     if (positionCount > 0) {
         const PositionData &firstPositionData = position.getFirst();
-        aircraftInfo.initialAirspeed = Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ);
+        aircraftInfo.initialAirspeed = static_cast<int>(std::round(Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ)));
 
         // Add default waypoints (first and last position) in case none are present in the imported data
         FlightPlan &flightPlan = aircraft.getFlightPlan();
-        int waypointCount = flightPlan.count();
+        std::size_t waypointCount = flightPlan.count();
         if (waypointCount == 0) {
             Waypoint departure;
             departure.identifier = Waypoint::CustomDepartureIdentifier;

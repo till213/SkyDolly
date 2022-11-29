@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 
 #include <QDialog>
 #include <QString>
@@ -43,8 +44,8 @@
 
 struct BasicLocationImportDialogPrivate
 {
-    BasicLocationImportDialogPrivate(const QString &theFileFilter, LocationImportPluginBaseSettings &pluginSettings) noexcept
-        : fileFilter(theFileFilter),
+    BasicLocationImportDialogPrivate(QString fileFilter, LocationImportPluginBaseSettings &pluginSettings) noexcept
+        : fileFilter(std::move(fileFilter)),
           pluginSettings(pluginSettings)
     {}
 
@@ -57,10 +58,10 @@ struct BasicLocationImportDialogPrivate
 
 // PUBLIC
 
-BasicLocationImportDialog::BasicLocationImportDialog(const QString &fileSuffix, LocationImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
+BasicLocationImportDialog::BasicLocationImportDialog(QString fileFilter, LocationImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicLocationImportDialog>()),
-      d(std::make_unique<BasicLocationImportDialogPrivate>(fileSuffix, pluginSettings))
+      d(std::make_unique<BasicLocationImportDialogPrivate>(fileFilter, pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -80,9 +81,9 @@ QString BasicLocationImportDialog::getFileFilter() const noexcept
     return d->fileFilter;
 }
 
-void BasicLocationImportDialog::setFileFilter(const QString &fileFilter) noexcept
+void BasicLocationImportDialog::setFileFilter(QString fileFilter) noexcept
 {
-    d->fileFilter = fileFilter;
+    d->fileFilter = std::move(fileFilter);
 }
 
 void BasicLocationImportDialog::setOptionWidget(QWidget *widget) noexcept
@@ -146,7 +147,7 @@ void BasicLocationImportDialog::updateUi() noexcept
     const QString filePath = ui->pathLineEdit->text();
     QFileInfo fileInfo {filePath};
 
-    bool fileExists;
+    bool fileExists {false};
     if (d->pluginSettings.isImportDirectoryEnabled()) {
         fileExists = fileInfo.isDir() && fileInfo.exists();
     } else {

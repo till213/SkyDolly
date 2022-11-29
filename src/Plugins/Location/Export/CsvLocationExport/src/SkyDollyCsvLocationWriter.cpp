@@ -76,7 +76,7 @@ SkyDollyCsvLocationWriter::SkyDollyCsvLocationWriter(const CsvLocationExportSett
     : d(std::make_unique<SkyDollyCsvLocationWriterPrivate>(pluginSettings))
 {}
 
-SkyDollyCsvLocationWriter::~SkyDollyCsvLocationWriter() noexcept = default;
+SkyDollyCsvLocationWriter::~SkyDollyCsvLocationWriter() = default;
 
 bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QIODevice &io) noexcept
 {

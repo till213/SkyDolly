@@ -41,7 +41,7 @@ class TemplatePlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit TemplatePlugin(QObject *parent = nullptr) noexcept;
-    ~TemplatePlugin() noexcept override;
+    ~TemplatePlugin() override;
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;

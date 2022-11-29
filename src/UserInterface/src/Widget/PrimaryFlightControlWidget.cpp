@@ -67,8 +67,7 @@ PrimaryFlightControlWidget::PrimaryFlightControlWidget(QWidget *parent) noexcept
     initUi();
 }
 
-PrimaryFlightControlWidget::~PrimaryFlightControlWidget() noexcept
-{}
+PrimaryFlightControlWidget::~PrimaryFlightControlWidget() = default;
 
 // PROTECED SLOTS
 

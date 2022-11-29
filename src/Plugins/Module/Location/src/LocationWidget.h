@@ -50,7 +50,7 @@ class LocationWidget : public QWidget
     Q_OBJECT
 public:
     explicit LocationWidget(QWidget *parent = nullptr) noexcept;
-    ~LocationWidget() noexcept override;
+    ~LocationWidget() override;
 
     void addUserLocation(double latitude, double longitude);
     void addLocation(Location location);

@@ -127,7 +127,7 @@ public:
 
     QString formatKnots(double speed) const noexcept;
 
-    QString formatMemory(std::int64_t memory) const noexcept;
+    QString formatMemory(std::size_t memory) const noexcept;
 
     QString formatDate(const QDate &date) const noexcept;
     QString formatDate(const QDateTime &dateTime) const noexcept;

@@ -53,7 +53,7 @@ class KmlExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     KmlExportPlugin() noexcept;
-    ~KmlExportPlugin() noexcept override;
+    ~KmlExportPlugin() override;
 
 protected:
     FlightExportPluginBaseSettings &getPluginSettings() const noexcept override;

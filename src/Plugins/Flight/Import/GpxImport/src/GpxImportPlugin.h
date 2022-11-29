@@ -51,7 +51,7 @@ class GpxImportPlugin : public FlightImportPluginBase
     Q_INTERFACES(FlightImportIntf)
 public:
     GpxImportPlugin() noexcept;
-    ~GpxImportPlugin() noexcept override;
+    ~GpxImportPlugin() override;
 
 protected:
     FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;

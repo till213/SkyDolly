@@ -42,15 +42,11 @@
 
 struct SqlMigrationStepPrivate
 {
-    SqlMigrationStepPrivate()
-    {}
-
     QString migrationId;
     QString description;
-    int step {0};
-    int stepCount {0};
-
     QString errorMessage;
+    int step {0};
+    int stepCount {0};    
 };
 
 // PUBLIC

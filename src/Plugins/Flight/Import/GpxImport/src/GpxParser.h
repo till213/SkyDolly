@@ -37,11 +37,11 @@ class Flight;
 class GpxImportSettings;
 struct GpxParserPrivate;
 
-class GpxParser
+class GpxParser final
 {
 public:
     GpxParser(Flight &flight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &pluginSettings) noexcept;
-    ~GpxParser() noexcept;
+    ~GpxParser();
 
     void parse() noexcept;
     QDateTime getFirstDateTimeUtc() const noexcept;

@@ -66,18 +66,9 @@ struct GpxImportPluginPrivate
 
 GpxImportPlugin::GpxImportPlugin() noexcept
     : d(std::make_unique<GpxImportPluginPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "GpxImportPlugin::GpxImportPlugin: PLUGIN LOADED";
-#endif
-}
+{}
 
-GpxImportPlugin::~GpxImportPlugin() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "GpxImportPlugin::~GpxImportPlugin: PLUGIN UNLOADED";
-#endif
-}
+GpxImportPlugin::~GpxImportPlugin() = default;
 
 // PROTECTED
 
@@ -177,9 +168,9 @@ void GpxImportPlugin::updateWaypoints() noexcept
 
         // Assign timestamps according to the closest flown position
         std::unordered_set<std::int64_t> timestamps;
-        std::int64_t uniqueTimestamp;
+        std::int64_t uniqueTimestamp {0};
         FlightPlan &flightPlan = aircraft.getFlightPlan();
-        const int count = flightPlan.count();
+        const std::size_t count = flightPlan.count();
         for (int i = 0; i < count; ++i) {
             Waypoint &waypoint = flightPlan[i];
             if (i == 0) {

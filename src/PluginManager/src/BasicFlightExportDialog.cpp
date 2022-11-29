@@ -159,7 +159,7 @@ void BasicFlightExportDialog::updateDataGroupBox() noexcept
         infoText = tr("%Ln aircraft will be exported.", nullptr, d->flight.count());
     }
     SampleRate::ResamplingPeriod resamplingPeriod = static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
-    std::int64_t samplePoints = estimateNofSamplePoints();
+    std::size_t samplePoints = estimateNofSamplePoints();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
         infoText.append(" " % tr("The position data will be resampled every %1 milliseconds, resulting in %Ln exported positions.",
                                  nullptr, samplePoints)
@@ -194,9 +194,9 @@ inline bool BasicFlightExportDialog::isExportUserAircraftOnly() const noexcept
     return d->pluginSettings.getFormationExport() == FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly;
 }
 
-std::int64_t BasicFlightExportDialog::estimateNofSamplePoints() const noexcept
+std::size_t BasicFlightExportDialog::estimateNofSamplePoints() const noexcept
 {
-    std::int64_t nofSamplePoints = 0;
+    std::size_t nofSamplePoints = 0;
     const std::int64_t period = ui->resamplingComboBox->currentData().toInt();
     if (period != 0) {
         if (isExportUserAircraftOnly()) {

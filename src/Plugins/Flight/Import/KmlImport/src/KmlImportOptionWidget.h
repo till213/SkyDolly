@@ -41,7 +41,7 @@ class KmlImportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit KmlImportOptionWidget(KmlImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    ~KmlImportOptionWidget() noexcept override;
+    ~KmlImportOptionWidget() override;
 
 private:
     std::unique_ptr<Ui::KmlImportOptionWidget> ui;

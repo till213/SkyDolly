@@ -146,7 +146,7 @@ void Flight::setAircraft(std::vector<Aircraft> &&aircraft) noexcept
 
 Aircraft &Flight::addUserAircraft() noexcept
 {
-    d->aircraft.push_back(Aircraft());
+    d->aircraft.emplace_back(Aircraft());
     switchUserAircraftIndex(static_cast<int>(d->aircraft.size()) - 1);
     emit aircraftAdded(d->aircraft.back());
     return d->aircraft.back();

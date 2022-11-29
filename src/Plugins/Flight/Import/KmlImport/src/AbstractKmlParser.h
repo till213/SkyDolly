@@ -39,7 +39,7 @@ class AbstractKmlParser : public KmlParserIntf
 {
 public:
     AbstractKmlParser() noexcept;
-    ~AbstractKmlParser() noexcept override;
+    ~AbstractKmlParser() override;
 
     QString getDocumentName() const noexcept override;
 
