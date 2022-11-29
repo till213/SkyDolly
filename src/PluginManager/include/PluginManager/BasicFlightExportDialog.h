@@ -45,7 +45,7 @@ class PLUGINMANAGER_API BasicFlightExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicFlightExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    explicit BasicFlightExportDialog(const Flight &flight, const QString &fileExtension, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     BasicFlightExportDialog(const BasicFlightExportDialog &rhs) = delete;
     BasicFlightExportDialog(BasicFlightExportDialog &&rhs) = delete;
     BasicFlightExportDialog &operator=(const BasicFlightExportDialog &rhs) = delete;

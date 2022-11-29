@@ -47,9 +47,9 @@ namespace {
     constexpr int Mist = 2000; // In meters
     constexpr int Haze = 5000; // In meters
 
-    constexpr int MillisecondsPerSecond = 1000;
-    constexpr int SecondsPerMinute = 60;
-    constexpr int MinutesPerHour = 60;
+    constexpr std::int64_t MillisecondsPerSecond = 1000;
+    constexpr std::int64_t SecondsPerMinute = 60;
+    constexpr std::int64_t MinutesPerHour = 60;
 }
 
 struct UnitPrivate {

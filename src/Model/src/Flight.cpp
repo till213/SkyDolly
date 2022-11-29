@@ -355,7 +355,7 @@ const Aircraft &Flight::operator[](std::size_t index) const noexcept
              this, &Flight::aircraftInfoChanged);
  }
 
-void Flight::reassignUserAircraftIndex(std::int64_t index) noexcept
+void Flight::reassignUserAircraftIndex(int index) noexcept
 {
     d->userAircraftIndex = index;
 }
