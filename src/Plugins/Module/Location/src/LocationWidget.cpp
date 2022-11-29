@@ -502,7 +502,6 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Title
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
@@ -528,7 +527,6 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Category
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::categoryEnumeration);
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
@@ -539,7 +537,6 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Country
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::countryEnumeration);
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
@@ -550,7 +547,6 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Identifier
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
@@ -561,7 +557,6 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Position
     newItem = std::make_unique<PositionWidgetItem>();
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
