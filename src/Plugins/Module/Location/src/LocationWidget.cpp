@@ -642,22 +642,16 @@ inline void LocationWidget::updateRow(const Location &location, int row) noexcep
     item->setData(Qt::DisplayRole, location.description);
 
     // Type
-    EnumerationWidgetItem *enumerationWidgetItem = dynamic_cast<EnumerationWidgetItem *>(ui->locationTableWidget->item(row, LocationWidgetPrivate::typeColumn));
-    if (enumerationWidgetItem != nullptr) {
-        enumerationWidgetItem->setData(Qt::EditRole, QVariant::fromValue(location.typeId));
-    }
+    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::typeColumn);
+    item->setData(Qt::EditRole, QVariant::fromValue(location.typeId));
 
     // Category
-    enumerationWidgetItem = dynamic_cast<EnumerationWidgetItem *>(ui->locationTableWidget->item(row, LocationWidgetPrivate::categoryColumn));
-    if (enumerationWidgetItem != nullptr) {
-        enumerationWidgetItem->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
-    }
+    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::categoryColumn);
+    item->setData(Qt::EditRole, QVariant::fromValue(location.categoryId));
 
     // Country
-    enumerationWidgetItem = dynamic_cast<EnumerationWidgetItem *>(ui->locationTableWidget->item(row, LocationWidgetPrivate::countryColumn));
-    if (enumerationWidgetItem != nullptr) {
-        enumerationWidgetItem->setData(Qt::EditRole, QVariant::fromValue(location.countryId));
-    }
+    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::countryColumn);
+    item->setData(Qt::EditRole, QVariant::fromValue(location.countryId));
 
     // Identifier
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::identifierColumn);
@@ -1009,7 +1003,7 @@ void LocationWidget::onIndicatedAirspeedChanged(int value) noexcept
     }
 }
 
-void LocationWidget::onEngineEventChanged(int index) noexcept
+void LocationWidget::onEngineEventChanged([[maybe_unused]]int index) noexcept
 {
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
