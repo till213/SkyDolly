@@ -49,7 +49,7 @@ public:
     static constexpr int NumberPrecision = 2;
 
     /*!
-     * Returns a file path based on the title of the \c flight with the suggested file name having the given \c suffix.
+     * Returns a file path based on the title of the \c flight with the suggested file name having the given \c extension.
      *
      * \param flight
      *        the Flight from which the suggested file path is derived
