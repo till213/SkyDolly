@@ -46,20 +46,6 @@ namespace Csv {
     };
 
     static constexpr const char *TypeColumnName {"Type"};
-
-    inline bool validate(const CsvParser::Rows &rows, std::size_t expectedColumnCount) noexcept
-    {
-        bool ok = rows.size() > 0;
-        if (ok) {
-            for (const CsvParser::Row &row : rows) {
-                ok = row.size() == expectedColumnCount;
-                if (!ok) {
-                    break;
-                }
-            }
-        }
-        return ok;
-    };
 };
 
 #endif // CSV_H

@@ -203,7 +203,7 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
     d->headers = csvParser.getHeaders();
     bool ok = validateHeaders();
     if (ok) {
-        ok = Csv::validate(rows, d->headers.size());
+        ok = CsvParser::validate(rows, d->headers.size());
     }
     if (ok) {
         Aircraft &aircraft = flight.getUserAircraft();

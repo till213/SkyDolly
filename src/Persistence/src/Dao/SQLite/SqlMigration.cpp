@@ -32,6 +32,7 @@
 #include <QTextCodec>
 
 #include <Kernel/Const.h>
+#include <Kernel/Enum.h>
 #include <Kernel/CsvParser.h>
 #include <Model/Enumeration.h>
 #include <Model/Location.h>
@@ -50,6 +51,7 @@ namespace
         Description,
         Category,
         Country,
+        Attributes,
         Identifier,
         Latitude,
         Longitude,
@@ -58,9 +60,10 @@ namespace
         Bank,
         TrueHeading,
         IndicatedAirspeed,
-        OnGround,
-        Attributes,
-        EngineEvent
+        OnGround,        
+        EngineEvent,
+        // Last index
+        Count
     };
 
     // Depending on the CSV generating application (e.g. Excel or LibreOffice) the column titles may
@@ -165,18 +168,25 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
             textStream.setCodec(QTextCodec::codecForName("UTF-8"));
             CsvParser csvParser;
             CsvParser::Rows rows = csvParser.parse(textStream, ::LocationMigrationHeader, ::AlternateLocationMigrationHeader);
-            for (const auto &row : rows) {
-                const QString uuid = row.at(::Index::Uuid);
-                SqlMigrationStep step;
-                step.setMigrationId(uuid);
-                step.setStep(1);
-                step.setStepCount(1);
-                if (!step.checkApplied()) {
-                    ok = migrateLocation(row);
-                    const QString errorMessage = !ok ? QString("The location import %1 failed.").arg(uuid) : QString();
-                    step.registerMigration(ok, errorMessage);
+            if (CsvParser::validate(rows, Enum::underly(::Index::Count))) {
+                for (const auto &row : rows) {
+                    const QString uuid = row.at(::Index::Uuid);
+                    SqlMigrationStep step;
+                    step.setMigrationId(uuid);
+                    step.setStep(1);
+                    step.setStepCount(1);
+                    if (!step.checkApplied()) {
+                        ok = migrateLocation(row);
+                        const QString errorMessage = !ok ? QString("The location import %1 failed.").arg(uuid) : QString();
+                        step.registerMigration(ok, errorMessage);
+                    }
                 }
             }
+#ifdef DEBUG
+            else {
+                qDebug() << "SqlMigration::migrateCsv: invalid location CSV file:" << migrationFilePath;
+            }
+#endif
             migrationFile.close();
         }
     }

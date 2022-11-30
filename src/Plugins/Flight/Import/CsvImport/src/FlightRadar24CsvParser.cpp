@@ -72,7 +72,7 @@ bool FlightRadar24CsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, Q
     QTextStream textStream(&io);
     textStream.setCodec(QTextCodec::codecForName("UTF-8"));
     CsvParser::Rows rows = csvParser.parse(textStream, ::FlightRadar24CsvHeader);
-    bool ok = Csv::validate(rows, Enum::underly(::Index::Count));
+    bool ok = CsvParser::validate(rows, Enum::underly(::Index::Count));
     if (ok) {
         position.reserve(rows.size());
         for (const auto &row : rows) {
