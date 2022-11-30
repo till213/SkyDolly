@@ -47,10 +47,13 @@ The atools are part of Little Navmap, a flight planner, navigation tool, moving 
 - https://gist.github.com/Qix-/f4090181e55ea365633da8c3d0ab5249
 - License: CC0
 
-
 ## CheckGit.cmake
 - Jonathan Hamberg
 - https://jonathanhamberg.com/post/cmake-embedding-git-hash/
+
+## Wikipedia
+- Source: https://en.wikipedia.org/
+- License: https://creativecommons.org/licenses/by-sa/3.0/
 
 \
 The MIT License (MIT).\
