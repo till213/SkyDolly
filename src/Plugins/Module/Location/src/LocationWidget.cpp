@@ -223,6 +223,7 @@ void LocationWidget::updateLocation(Location location)
             updateRow(selectedLocation, selectedRow);
             ui->locationTableWidget->blockSignals(false);
             ui->locationTableWidget->setSortingEnabled(true);
+            updateInfoUi();
         }
     }
 }
