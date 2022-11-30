@@ -55,6 +55,9 @@ The atools are part of Little Navmap, a flight planner, navigation tool, moving 
 - Source: https://en.wikipedia.org/
 - License: https://creativecommons.org/licenses/by-sa/3.0/
 
+## Flightspots
+- Source: https://flightspots.co/
+
 \
 The MIT License (MIT).\
 \

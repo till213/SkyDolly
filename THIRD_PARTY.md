@@ -50,3 +50,6 @@ Sky Dolly uses or is "inspired by" the following third-party libraries and funct
 ## Wikipedia
 - Source: https://en.wikipedia.org/
 - License: https://creativecommons.org/licenses/by-sa/3.0/
+
+## Flightspots
+- Source: https://flightspots.co/
