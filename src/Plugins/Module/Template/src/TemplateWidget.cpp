@@ -25,18 +25,11 @@
 
 #include <memory>
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include "TemplateWidget.h"
 #include "ui_TemplateWidget.h"
 
 struct TemplateWidgetPrivate
-{
-    TemplateWidgetPrivate() noexcept
-    {}
-};
+{};
 
 // PUBLIC
 
@@ -49,17 +42,9 @@ TemplateWidget::TemplateWidget(QWidget *parent) noexcept
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "TemplateWidget::TemplateWidget: CREATED";
-#endif
 }
 
-TemplateWidget::~TemplateWidget() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "TemplateWidget::~TemplateWidget: DELETED";
-#endif
-}
+TemplateWidget::~TemplateWidget() = default;
 
 // PRIVATE
 

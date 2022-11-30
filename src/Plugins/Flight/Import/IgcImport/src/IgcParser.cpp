@@ -136,9 +136,6 @@ namespace
 
 struct IgcParserPrivate
 {
-    IgcParserPrivate() noexcept
-    {}
-
     QFile *file {nullptr};
 
     // Fix timestamps
@@ -296,7 +293,7 @@ bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
     bool ok {true};
     QRegularExpressionMatch match = d->hRecordDateRegExp.match(line);
     if (match.hasMatch()) {
-        int year;
+        int year {0};
         const QStringView yearText = match.capturedView(::HRecordYearIndex);
         if (yearText.at(0) == '8' || yearText.at(0) == '9') {
             // The glorious 80ies and 90ies: two-digit year dates were all the rage!
@@ -474,7 +471,7 @@ bool IgcParser::parseFix(const QByteArray &line) noexcept
             const QStringView gnssAltitudeText = match.capturedView(::BRecordGNSSAltitudeIndex);
             const double gnssAltitude = gnssAltitudeText.toDouble();
             // Optional environmental noise level (ENL) addition
-            double enlNorm;
+            double enlNorm {0.0};
             if (d->enlAddition) {
                 const QByteArray enlText = line.mid(d->enlStartOffset, d->enlLength);
                 const double enlValue = enlText.toDouble(&ok);

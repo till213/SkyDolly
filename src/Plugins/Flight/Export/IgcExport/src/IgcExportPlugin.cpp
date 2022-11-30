@@ -130,18 +130,9 @@ struct IgcExportPluginPrivate
 
 IgcExportPlugin::IgcExportPlugin() noexcept
     : d(std::make_unique<IgcExportPluginPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "IgcExportPlugin::IgcExportPlugin: PLUGIN LOADED";
-#endif
-}
+{}
 
-IgcExportPlugin::~IgcExportPlugin() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "IgcExportPlugin::~IgcExportPlugin: PLUGIN UNLOADED";
-#endif
-}
+IgcExportPlugin::~IgcExportPlugin() = default;
 
 // PROTECTED
 
@@ -251,7 +242,7 @@ inline bool IgcExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
     const Position &position = aircraft.getPosition();
     bool ok {false};
     if (position.count() > 0) {
-        const int nofTurnPoints = flightPlan.count() - 2;
+        const int nofTurnPoints = static_cast<int>(flightPlan.count()) - 2;
         QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(d->flight->getAircraftStartZuluTime(aircraft)) %
                             ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
                             // Number of turn points, excluding start and end wapoints
@@ -325,9 +316,9 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
                 const double indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
                 const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
                                            formatTime(currentTime) %
-                                           formatNumber(std::round(positionData.trueHeading), 3) %
+                                           formatNumber(static_cast<int>(std::round(positionData.trueHeading)), 3) %
                                            // IAS: km/h
-                                           formatNumber(std::round(indicatedAirspeed), 3) %
+                                           formatNumber(static_cast<int>(std::round(indicatedAirspeed)), 3) %
                                            ::LineEnd;
                 ok = io.write(kRecord);
                 lastKFixTime = currentTime;
@@ -370,8 +361,8 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatNumber(int value, int 
 
 inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitude) const noexcept
 {
-    double degrees;
-    double minutes;
+    double degrees {0.0};
+    double minutes {0.0};
 
     GeographicLib::DMS::Encode(latitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
@@ -385,8 +376,8 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitu
 
 inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLongitude(double longitude) const noexcept
 {
-    double degrees;
-    double minutes;
+    double degrees {0.0};
+    double minutes{0.0};
 
     GeographicLib::DMS::Encode(longitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
@@ -405,7 +396,7 @@ inline QByteArray IgcExportPlugin::formatPosition(double latitude, double longit
 
 inline int IgcExportPlugin::estimateEnvironmentalNoise(const EngineData &engineData) const noexcept
 {
-    int noise;
+    int noise {0};
     if (engineData.hasCombustion()) {
         noise = static_cast<int>(static_cast<double>(qAbs(engineData.propellerLeverPosition1)) / SkyMath::PositionMax16 * 999.0);
         noise = std::min(noise, 999);

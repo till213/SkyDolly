@@ -40,9 +40,6 @@
 
 struct AircraftInfoWidgetPrivate
 {
-    AircraftInfoWidgetPrivate() noexcept
-    {}
-
     Unit unit;
 };
 
@@ -57,8 +54,7 @@ AircraftInfoWidget::AircraftInfoWidget(QWidget *parent) noexcept :
     initUi();
 }
 
-AircraftInfoWidget::~AircraftInfoWidget() noexcept
-{}
+AircraftInfoWidget::~AircraftInfoWidget() = default;
 
 // PROTECTED
 

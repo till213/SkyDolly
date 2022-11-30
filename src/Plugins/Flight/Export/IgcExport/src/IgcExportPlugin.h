@@ -54,7 +54,7 @@ class IgcExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     IgcExportPlugin() noexcept;
-    ~IgcExportPlugin() noexcept override;
+    ~IgcExportPlugin() override;
 
 protected:
     FlightExportPluginBaseSettings &getPluginSettings() const noexcept override;

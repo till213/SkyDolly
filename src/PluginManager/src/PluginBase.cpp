@@ -30,11 +30,7 @@
 
 struct PluginBasePrivate
 {
-    PluginBasePrivate()
-        : parent(nullptr)
-    {}
-
-    QWidget *parent;
+    QWidget *parent {nullptr};
 };
 
 // PUBLIC

@@ -392,7 +392,7 @@ std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int
         const int initialAirspeedIdx = record.indexOf("initial_airspeed");
         const int airCraftAltitudeAboveGroundIdx = record.indexOf("altitude_above_ground");
         const int startOnGroundIdx = record.indexOf("start_on_ground");
-        while (ok && query.next()) {
+        while (success && query.next()) {
             AircraftInfo info(query.value(idIdx).toLongLong());
             const QString &type = query.value(typeIdx).toString();
             info.timeOffset = query.value(timeOffsetIdx).toLongLong();
@@ -404,7 +404,7 @@ std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int
             info.startOnGround = query.value(startOnGroundIdx).toBool();
 
             AircraftType aircraftType = d->aircraftTypeDao->getByType(type, &success);
-            if (ok) {
+            if (success) {
                 info.aircraftType = std::move(aircraftType);
                 aircraftInfos.push_back(std::move(info));
             };

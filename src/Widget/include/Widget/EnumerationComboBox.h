@@ -44,14 +44,20 @@ class WIDGET_API EnumerationComboBox : public QComboBox
 public:
     using IgnoredIds = std::unordered_set<std::int64_t>;
 
-    explicit EnumerationComboBox(QString enumerationName, bool editable, QWidget *parent = nullptr) noexcept;
+    enum struct Mode {
+        Editable,
+        NonEditable
+    };
+
+    explicit EnumerationComboBox(QString enumerationName, Mode mode, QWidget *parent = nullptr) noexcept;
     explicit EnumerationComboBox(QWidget *parent = nullptr) noexcept;
     ~EnumerationComboBox() override;
 
     QString getEnumerationName() const;
     void setEnumerationName(QString name) noexcept;
 
-    void setEditable(bool editable) noexcept;
+    Mode getMode() const noexcept;
+    void setMode(Mode mode) noexcept;
 
     std::int64_t getCurrentId() const noexcept;
     void setCurrentId(std::int64_t id) noexcept;

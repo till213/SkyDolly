@@ -47,7 +47,7 @@ class PLUGINMANAGER_API BasicFlightImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicFlightImportDialog(const Flight &flight, const QString &fileExtension, FlightImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    explicit BasicFlightImportDialog(const Flight &flight, const QString &fileFilter, FlightImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     BasicFlightImportDialog(const BasicFlightImportDialog &rhs) = delete;
     BasicFlightImportDialog(BasicFlightImportDialog &&rhs) = delete;
     BasicFlightImportDialog &operator=(const BasicFlightImportDialog &rhs) = delete;

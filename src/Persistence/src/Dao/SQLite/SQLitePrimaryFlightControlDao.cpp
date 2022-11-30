@@ -119,9 +119,9 @@ std::vector<PrimaryFlightControlData> SQLitePrimaryFlightControlDao::getByAircra
             PrimaryFlightControlData data;
 
             data.timestamp = query.value(timestampIdx).toLongLong();
-            data.rudderPosition = query.value(rudderPositionIdx).toDouble();
-            data.elevatorPosition = query.value(elevatorPositionIdx).toDouble();
-            data.aileronPosition = query.value(aileronPositionIdx).toDouble();
+            data.rudderPosition = query.value(rudderPositionIdx).toInt();
+            data.elevatorPosition = query.value(elevatorPositionIdx).toInt();
+            data.aileronPosition = query.value(aileronPositionIdx).toInt();
 
             primaryFlightControlData.push_back(std::move(data));
         }

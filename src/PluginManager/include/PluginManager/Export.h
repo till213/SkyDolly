@@ -49,24 +49,24 @@ public:
     static constexpr int NumberPrecision = 2;
 
     /*!
-     * Returns a file path based on the title of the \c flight with the suggested file name having the given \c suffix.
+     * Returns a file path based on the title of the \c flight with the suggested file name having the given \c extension.
      *
      * \param flight
      *        the Flight from which the suggested file path is derived
-     * \param suffix
-     *        the desired file suffix (e.g. \e kml or \e csv)
+     * \param extension
+     *        the desired file extension (e.g. \e kml or \e csv)
      * \return the file path having a suggested file name based on the given \c flight
      */
-    static QString suggestFlightFilePath(const Flight &flight, QStringView suffix) noexcept;
+    static QString suggestFlightFilePath(const Flight &flight, QStringView extension) noexcept;
 
     /*!
-     * Returns a file path for location export with the suggested file name having the given \c suffix.
+     * Returns a file path for location export with the suggested file name having the given \c extension.
      *
-     * \param suffix
-     *        the desired file suffix (e.g. \e kml or \e csv)
+     * \param extension
+     *        the desired file extension (e.g. \e kml or \e csv)
      * \return the file path having a suggested file name for location export
      */
-    static QString suggestLocationFilePath(QStringView suffix) noexcept;
+    static QString suggestLocationFilePath(QStringView extension) noexcept;
 
     /*!
      * Formats the GNSS \c coordinate (latitude or longitude) with the appropriate decimal point precision.

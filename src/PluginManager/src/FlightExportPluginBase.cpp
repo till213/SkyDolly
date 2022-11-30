@@ -72,7 +72,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight) const noexcept
         // Remember export path
         const QString selectedFilePath = exportDialog->getSelectedFilePath();
         if (!selectedFilePath.isEmpty()) {
-            const QString filePath = File::ensureSuffix(selectedFilePath, getFileExtension());
+            const QString filePath = File::ensureExtension(selectedFilePath, getFileExtension());
             const QFileInfo fileInfo {filePath};
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);

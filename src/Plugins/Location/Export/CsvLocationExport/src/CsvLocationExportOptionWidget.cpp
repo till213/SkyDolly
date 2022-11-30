@@ -24,9 +24,6 @@
  */
 #include <QComboBox>
 #include <QString>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include "CsvLocationExportOptionWidget.h"
@@ -35,8 +32,8 @@
 
 struct CsvLocationExportOptionWidgetPrivate
 {
-    CsvLocationExportOptionWidgetPrivate(CsvLocationExportSettings &theSettings) noexcept
-        : settings(theSettings)
+    CsvLocationExportOptionWidgetPrivate(CsvLocationExportSettings &settings) noexcept
+        : settings(settings)
     {}
 
     CsvLocationExportSettings &settings;
@@ -53,17 +50,9 @@ CsvLocationExportOptionWidget::CsvLocationExportOptionWidget(CsvLocationExportSe
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "CsvLocationExportOptionWidget::CsvLocationExportOptionWidget: CREATED";
-#endif
 }
 
-CsvLocationExportOptionWidget::~CsvLocationExportOptionWidget() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "CsvLocationExportOptionWidget::~CsvLocationExportOptionWidget: DELETED";
-#endif
-}
+CsvLocationExportOptionWidget::~CsvLocationExportOptionWidget() = default;
 
 // PRIVATE
 

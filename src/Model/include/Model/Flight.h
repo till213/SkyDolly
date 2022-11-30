@@ -274,7 +274,7 @@ private:
      * is deleted and hence the user aircraft index must be re-assigned, but without actually
      * switching the user aircraft to a previous AI object.
      */
-    void reassignUserAircraftIndex(std::int64_t index) noexcept;
+    void reassignUserAircraftIndex(int index) noexcept;
 };
 
 #endif // FLIGHT_H

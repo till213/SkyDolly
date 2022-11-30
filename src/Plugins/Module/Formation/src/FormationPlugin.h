@@ -41,7 +41,7 @@ class FormationPlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit FormationPlugin(QObject *parent = nullptr) noexcept;
-    ~FormationPlugin() noexcept override;
+    ~FormationPlugin() override;
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;

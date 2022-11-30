@@ -115,14 +115,12 @@ bool Version::isNull() const noexcept
 
 bool Version::operator==(const Version &rhs) const noexcept
 {
-    bool result;
-    result = d->major == rhs.d->major && d->minor == rhs.d->minor && d->patch == rhs.d->patch;
-    return result;
+    return d->major == rhs.d->major && d->minor == rhs.d->minor && d->patch == rhs.d->patch;
 }
 
 bool Version::operator>=(const Version &rhs) const noexcept
 {
-    bool result;
+    bool result {false};
     if (d->major > rhs.d->major) {
         result = true;
     } else if (d->major < rhs.d->major) {

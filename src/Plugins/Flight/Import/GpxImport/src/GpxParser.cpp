@@ -29,6 +29,9 @@
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Convert.h>
 #include <Kernel/SkyMath.h>
@@ -69,18 +72,9 @@ struct GpxParserPrivate
 
 GpxParser::GpxParser(Flight &flight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &thePluginSettings) noexcept
     : d(std::make_unique<GpxParserPrivate>(flight, xmlStreamReader, thePluginSettings))
-{
-#ifdef DEBUG
-    qDebug() << "GpxParser::~GpxParser: CREATED";
-#endif
-}
+{}
 
-GpxParser::~GpxParser() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "GpxParser::~GpxParser: DELETED";
-#endif
-}
+GpxParser::~GpxParser() = default;
 
 void GpxParser::parse() noexcept
 {

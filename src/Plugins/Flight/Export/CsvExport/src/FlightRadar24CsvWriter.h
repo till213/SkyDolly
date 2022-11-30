@@ -43,9 +43,9 @@ class FlightRadar24CsvWriter : public CsvWriterIntf
 {
 public:
     FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept;
-    virtual ~FlightRadar24CsvWriter() noexcept;
+    ~FlightRadar24CsvWriter() override;
 
-    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) const noexcept override;
+    bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) const noexcept override;
 
 private:
     const std::unique_ptr<FlightRadar24CsvWriterPrivate> d;

@@ -29,12 +29,11 @@
 
 struct ActionCheckBoxPrivate
 {
-    ActionCheckBoxPrivate(bool theWithText) noexcept
-        : action(nullptr),
-          withText(theWithText)
+    ActionCheckBoxPrivate(bool withText) noexcept
+        : withText(withText)
     {}
 
-    const QAction *action;
+    const QAction *action {nullptr};
     bool withText;
 };
 

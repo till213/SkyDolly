@@ -30,9 +30,6 @@
 
 struct ActiveButtonPrivate
 {
-    ActiveButtonPrivate()
-    {}
-
     QPixmap normalPixmap;
     QPixmap activePixmap;
 };

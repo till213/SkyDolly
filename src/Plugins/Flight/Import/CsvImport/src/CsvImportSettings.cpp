@@ -22,10 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
@@ -53,18 +49,9 @@ struct CsvImportSettingsPrivate
 
 CsvImportSettings::CsvImportSettings() noexcept
     : d(std::make_unique<CsvImportSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "CsvImportSettings::CsvImportSettings: CREATED";
-#endif
-}
+{}
 
-CsvImportSettings::~CsvImportSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "CsvImportSettings::~CsvImportSettings: DELETED";
-#endif
-}
+CsvImportSettings::~CsvImportSettings() = default;
 
 CsvImportSettings::Format CsvImportSettings::getFormat() const noexcept
 {

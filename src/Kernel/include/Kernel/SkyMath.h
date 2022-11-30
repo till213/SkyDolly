@@ -368,7 +368,7 @@ namespace SkyMath
         const double distance = geodesicDistance(startPosition, endPosition);
         const double deltaT = static_cast<double>(endTimestamp - startTimestamp) / 1000.0;
 
-        return std::pair(distance, distance / deltaT);
+        return {distance, distance / deltaT};
     }
 
     /*!
@@ -505,7 +505,7 @@ namespace SkyMath
     }
 
     /*!
-     * Returns the relative position from the starting \c position at altitude \c altitude,
+     * Returns the relative position from the starting \c position,
      * given the \c bearing and geodesic \c distance.
      *
      * sinphi2    = sinphi1⋅cosδ + cosphi1⋅sinδ⋅costheta
@@ -513,15 +513,13 @@ namespace SkyMath
      *
      * \param position
      *        the Coordinate of the position [degrees]
-     * \param altitude
-     *        the altitude above sea level [meters]
      * \param bearing
      *        the bearing of the destination point [degrees]
      * \param distance
      *        the geodesic distance to the destination point [meters]
      * \return the Coordinate of the relative position [degrees]
      */
-    inline Coordinate relativePosition(Coordinate position, double altitude, double bearing, double distance) noexcept
+    inline Coordinate relativePosition(Coordinate position, double bearing, double distance) noexcept
     {
         Coordinate destination;
         try {

@@ -52,7 +52,7 @@ CsvExportOptionWidget::CsvExportOptionWidget(CsvExportSettings &settings, QWidge
     frenchConnection();
 }
 
-CsvExportOptionWidget::~CsvExportOptionWidget() noexcept = default;
+CsvExportOptionWidget::~CsvExportOptionWidget() = default;
 
 // PRIVATE
 

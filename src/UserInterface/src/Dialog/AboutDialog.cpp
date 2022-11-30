@@ -37,9 +37,6 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QTimer>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Version.h>
 #include "AboutDialog.h"
@@ -75,17 +72,9 @@ AboutDialog::AboutDialog(QWidget *parent) noexcept :
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "AboutDialog::AboutDialog: CREATED";
-#endif
 }
 
-AboutDialog::~AboutDialog()
-{
-#ifdef DEBUG
-    qDebug() << "AboutDialog::~AboutDialog: DELETED";
-#endif
-}
+AboutDialog::~AboutDialog() = default;
 
 // PROTECTED
 

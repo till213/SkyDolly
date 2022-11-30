@@ -42,7 +42,7 @@ class FlightPlanWidget : public QWidget
     Q_OBJECT
 public:
     explicit FlightPlanWidget(QWidget *parent = nullptr) noexcept;
-    ~FlightPlanWidget() noexcept override;
+    ~FlightPlanWidget() override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;

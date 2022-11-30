@@ -67,8 +67,7 @@ SecondaryFlightControlWidget::SecondaryFlightControlWidget(QWidget *parent) noex
     initUi();
 }
 
-SecondaryFlightControlWidget::~SecondaryFlightControlWidget() noexcept
-{}
+SecondaryFlightControlWidget::~SecondaryFlightControlWidget() = default;
 
 // PROTECTED SLOTS
 

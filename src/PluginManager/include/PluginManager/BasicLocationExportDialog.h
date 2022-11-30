@@ -45,7 +45,7 @@ class PLUGINMANAGER_API BasicLocationExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicLocationExportDialog(const QString &fileSuffix, const QString &fileFilter, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    explicit BasicLocationExportDialog(QString fileExtension, QString fileFilter, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     BasicLocationExportDialog(const BasicLocationExportDialog &rhs) = delete;
     BasicLocationExportDialog(BasicLocationExportDialog &&rhs) = delete;
     BasicLocationExportDialog &operator=(const BasicLocationExportDialog &rhs) = delete;

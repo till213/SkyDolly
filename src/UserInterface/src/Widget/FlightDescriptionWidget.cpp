@@ -40,11 +40,9 @@
 
 struct FlightDescriptionWidgetPrivate
 {
-    FlightDescriptionWidgetPrivate(FlightService &theFlightService) noexcept
-        : flightService(theFlightService)
+    FlightDescriptionWidgetPrivate(FlightService &flightService) noexcept
+        : flightService(flightService)
     {}
-
-    ~FlightDescriptionWidgetPrivate() = default;
 
     FlightService &flightService;
     Unit unit;
@@ -62,8 +60,7 @@ FlightDescriptionWidget::FlightDescriptionWidget(FlightService &flightService, Q
     frenchConnection();
 }
 
-FlightDescriptionWidget::~FlightDescriptionWidget()
-{}
+FlightDescriptionWidget::~FlightDescriptionWidget() = default;
 
 // PROTECTED
 

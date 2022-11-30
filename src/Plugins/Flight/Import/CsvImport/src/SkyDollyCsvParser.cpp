@@ -149,7 +149,7 @@ bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[mayb
     QTextStream textStream(&io);
     textStream.setCodec(QTextCodec::codecForName("UTF-8"));
     CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
-    bool ok = Csv::validate(rows, Enum::underly(::Index::Count));
+    bool ok = CsvParser::validate(rows, Enum::underly(::Index::Count));
     if (ok) {
         Aircraft &aircraft = flight.getUserAircraft();
         // Heuristical memory pre-allocation: we expect that about

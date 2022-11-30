@@ -52,7 +52,7 @@ CsvImportOptionWidget::CsvImportOptionWidget(CsvImportSettings &settings, QWidge
     frenchConnection();
 }
 
-CsvImportOptionWidget::~CsvImportOptionWidget() noexcept = default;
+CsvImportOptionWidget::~CsvImportOptionWidget() = default;
 
 // PRIVATE
 

@@ -156,7 +156,7 @@ LocationWidget::LocationWidget(QWidget *parent) noexcept
     frenchConnection();
 }
 
-LocationWidget::~LocationWidget() noexcept
+LocationWidget::~LocationWidget()
 {
     const QByteArray tableState = ui->locationTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setLocationTableState(tableState);
@@ -223,6 +223,7 @@ void LocationWidget::updateLocation(Location location)
             updateRow(selectedLocation, selectedRow);
             ui->locationTableWidget->blockSignals(false);
             ui->locationTableWidget->setSortingEnabled(true);
+            updateInfoUi();
         }
     }
 }
@@ -502,7 +503,6 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Title
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
@@ -528,7 +528,6 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Category
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::categoryEnumeration);
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
@@ -539,18 +538,16 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Country
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::countryEnumeration);
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
-        newItem->setToolTip(tr("Double-click to edit category."));
+        newItem->setToolTip(tr("Double-click to edit country."));
     }
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
     // Identifier
     newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
@@ -561,7 +558,6 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Position
     newItem = std::make_unique<PositionWidgetItem>();
-    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
@@ -631,8 +627,7 @@ inline void LocationWidget::updateRow(const Location &location, int row) noexcep
 {
     // ID
     QTableWidgetItem *item = ui->locationTableWidget->item(row, LocationWidgetPrivate::idColumn);
-    QVariant locationId = QVariant::fromValue(location.id);
-    item->setData(Qt::DisplayRole, locationId);
+    item->setData(Qt::DisplayRole, QVariant::fromValue(location.id));
 
     // Title
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::titleColumn);
@@ -1004,7 +999,7 @@ void LocationWidget::onIndicatedAirspeedChanged(int value) noexcept
     }
 }
 
-void LocationWidget::onEngineEventChanged(int index) noexcept
+void LocationWidget::onEngineEventChanged([[maybe_unused]]int index) noexcept
 {
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {

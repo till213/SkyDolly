@@ -38,19 +38,18 @@ class KERNEL_API File final
 public:
 
     /*!
-     * Ensures that the given \c filePath has the suffix \c suffix, which is case-insensitive.
+     * Ensures that the given \c filePath has the extension \c extension, which is case-insensitive.
      *
      * \param filePath
-     *        the file path to be checked for suffix \c suffix
-     * \param suffix
-     *        the case-insensitive suffix
-     * \return the \c filePath with guaranteed suffix \c suffix
+     *        the file path to be checked for extension \c extension
+     * \param extension
+     *        the case-insensitive file extension
+     * \return the \c filePath with guaranteed extension \c extension
      */
-    static QString ensureSuffix(QStringView filePath, QStringView suffix) noexcept;
+    static QString ensureExtension(QStringView filePath, QStringView extension) noexcept;
 
     /*!
-     * Returns the \c filePath with a sequence number \c n appended to it (before the suffix).
-     * When \c n is equal 1
+     * Returns the \c filePath with a sequence number \c n appended to it (before the extension).
      *
      * Examples:
      *
@@ -63,7 +62,7 @@ public:
      * /some/path/example.csv | n | /some/path/example-n.csv
      *
      * \param filePath
-     *        the file path including file suffix
+     *        the file path including file extension
      * \param n
      *        the sequence number; while also negative values are acceptable meaningful sequence
      *        numbers should start with 1 and increase
@@ -71,7 +70,7 @@ public:
      */
     static QString getSequenceFilePath(const QString &filePath, int n) noexcept;
 
-    static QStringList getFilePaths(const QString &directoryPath, QStringView suffix) noexcept;
+    static QStringList getFilePaths(const QString &directoryPath, QStringView extension) noexcept;
 };
 
 #endif // FILE_H

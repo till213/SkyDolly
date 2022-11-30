@@ -55,7 +55,7 @@ class TemplateWidget : public QWidget
     Q_OBJECT
 public:
     explicit TemplateWidget(QWidget *parent = nullptr) noexcept;
-    ~TemplateWidget() noexcept override;
+    ~TemplateWidget() override;
 
 private:
     std::unique_ptr<Ui::TemplateWidget> ui;

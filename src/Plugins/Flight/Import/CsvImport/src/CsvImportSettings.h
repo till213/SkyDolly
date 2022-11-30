@@ -49,7 +49,7 @@ public:
     };
 
     CsvImportSettings() noexcept;
-    ~CsvImportSettings() noexcept override;
+    ~CsvImportSettings() override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;
