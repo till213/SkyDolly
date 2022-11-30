@@ -73,7 +73,7 @@ PositionAndAttitudeCsvWriter::PositionAndAttitudeCsvWriter(const CsvExportSettin
     : d(std::make_unique<PositionAndAttitudeCsvWriterPrivate>(pluginSettings))
 {}
 
-PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() noexcept = default;
+PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() = default;
 
 bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {

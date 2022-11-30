@@ -41,7 +41,7 @@ class CsvImportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit CsvImportOptionWidget(CsvImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    ~CsvImportOptionWidget() noexcept override;
+    ~CsvImportOptionWidget() override;
 
 private:
     std::unique_ptr<Ui::CsvImportOptionWidget> ui;

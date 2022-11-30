@@ -46,7 +46,7 @@ class EngineWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit EngineWidget(QWidget *parent) noexcept;
-    ~EngineWidget() noexcept override;
+    ~EngineWidget() override;
 
 protected slots:
     void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;

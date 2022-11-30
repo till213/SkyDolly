@@ -41,7 +41,7 @@ class CsvLocationExportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit CsvLocationExportOptionWidget(CsvLocationExportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~CsvLocationExportOptionWidget() noexcept;
+    ~CsvLocationExportOptionWidget() override;
 
 private:
     std::unique_ptr<Ui::CsvLocationExportOptionWidget> ui;

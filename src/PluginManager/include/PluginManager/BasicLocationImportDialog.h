@@ -45,7 +45,7 @@ class PLUGINMANAGER_API BasicLocationImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicLocationImportDialog(const QString &fileExtension, LocationImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    explicit BasicLocationImportDialog(QString fileFilter, LocationImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     BasicLocationImportDialog(const BasicLocationImportDialog &rhs) = delete;
     BasicLocationImportDialog(BasicLocationImportDialog &&rhs) = delete;
     BasicLocationImportDialog &operator=(const BasicLocationImportDialog &rhs) = delete;
@@ -55,7 +55,7 @@ public:
     QString getSelectedPath() const noexcept;
 
     QString getFileFilter() const noexcept;
-    void setFileFilter(const QString &fileFilter) noexcept;
+    void setFileFilter(QString fileFilter) noexcept;
 
     void setOptionWidget(QWidget *widget) noexcept;
 

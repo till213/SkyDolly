@@ -158,18 +158,12 @@ FormationWidget::FormationWidget(FlightService &flightService, AircraftService &
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "FormationWidget::FormationWidget: CREATED";
-#endif
 }
 
-FormationWidget::~FormationWidget() noexcept
+FormationWidget::~FormationWidget()
 {
     const QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setFormationAircraftTableState(tableState);
-#ifdef DEBUG
-    qDebug() << "FormationWidget::~FormationWidget: DELETED";
-#endif
 }
 
 Formation::HorizontalDistance FormationWidget::getHorizontalDistance() const noexcept

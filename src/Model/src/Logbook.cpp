@@ -35,12 +35,6 @@
 
 struct LogbookPrivate
 {
-    LogbookPrivate() noexcept
-    {}
-
-    ~LogbookPrivate() noexcept
-    {}
-
     std::vector<std::unique_ptr<Flight>> flights;
 
     static inline std::once_flag onceFlag;

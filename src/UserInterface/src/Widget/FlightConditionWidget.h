@@ -43,7 +43,7 @@ class FlightConditionWidget : public QWidget
     Q_OBJECT
 public:
     explicit FlightConditionWidget(QWidget *parent = nullptr) noexcept;
-    ~FlightConditionWidget() noexcept override;
+    ~FlightConditionWidget() override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;

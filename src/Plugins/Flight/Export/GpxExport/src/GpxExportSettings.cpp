@@ -26,9 +26,6 @@
 #include <memory>
 
 #include <QString>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -58,18 +55,9 @@ struct GpxExportSettingsPrivate
 GpxExportSettings::GpxExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
       d(std::make_unique<GpxExportSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "GpxExportSettings::GpxExportSettings: CREATED";
-#endif
-}
+{}
 
-GpxExportSettings::~GpxExportSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "GpxExportSettings::~GpxExportSettings: DELETED";
-#endif
-}
+GpxExportSettings::~GpxExportSettings() = default;
 
 GpxExportSettings::TimestampMode GpxExportSettings::getTimestampMode() const noexcept
 {

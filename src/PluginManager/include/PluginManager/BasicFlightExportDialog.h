@@ -45,7 +45,7 @@ class PLUGINMANAGER_API BasicFlightExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicFlightExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    explicit BasicFlightExportDialog(const Flight &flight, const QString &fileExtension, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     BasicFlightExportDialog(const BasicFlightExportDialog &rhs) = delete;
     BasicFlightExportDialog(BasicFlightExportDialog &&rhs) = delete;
     BasicFlightExportDialog &operator=(const BasicFlightExportDialog &rhs) = delete;
@@ -80,7 +80,7 @@ private:
     void updateDataGroupBox() noexcept;
     void frenchConnection() noexcept;
     inline bool isExportUserAircraftOnly() const noexcept;
-    std::int64_t estimateNofSamplePoints() const noexcept;
+    std::size_t estimateNofSamplePoints() const noexcept;
 
 private slots:
     void updateUi() noexcept;

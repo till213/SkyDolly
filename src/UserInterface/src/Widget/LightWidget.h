@@ -48,7 +48,7 @@ class LightWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit LightWidget(QWidget *parent) noexcept;
-    ~LightWidget() noexcept override;
+    ~LightWidget() override;
 
 protected slots:
     void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;

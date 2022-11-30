@@ -60,12 +60,8 @@
 
 struct StatisticsDialogPrivate
 {
-    StatisticsDialogPrivate() noexcept
-        : closeDialogShortcut(nullptr)
-    {}
-
     Unit unit;
-    QShortcut *closeDialogShortcut;
+    QShortcut *closeDialogShortcut {nullptr};
 };
 
 // PUBLIC
@@ -162,23 +158,23 @@ void StatisticsDialog::updateRecordUi(std::int64_t timestamp) noexcept
         ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
     }
 
-    std::int64_t totalCount = 0;
-    std::int64_t totalSize = 0;
+    std::size_t totalCount = 0;
+    std::size_t totalSize = 0;
     for (const auto &aircraft : flight) {
-        const int positionDataCount = aircraft.getPosition().count();
-        const int engineDataCount = aircraft.getEngine().count();
-        const int primaryFlightControlDataCount = aircraft.getPrimaryFlightControl().count();
-        const int secondaryFlightControlDataCount = aircraft.getSecondaryFlightControl().count();
-        const int aircraftHandleDataCount = aircraft.getAircraftHandle().count();
-        const int lightDataCount = aircraft.getLight().count();
+        const std::size_t positionDataCount = aircraft.getPosition().count();
+        const std::size_t engineDataCount = aircraft.getEngine().count();
+        const std::size_t primaryFlightControlDataCount = aircraft.getPrimaryFlightControl().count();
+        const std::size_t secondaryFlightControlDataCount = aircraft.getSecondaryFlightControl().count();
+        const std::size_t aircraftHandleDataCount = aircraft.getAircraftHandle().count();
+        const std::size_t lightDataCount = aircraft.getLight().count();
         totalCount = totalCount + positionDataCount + engineDataCount + primaryFlightControlDataCount + secondaryFlightControlDataCount + aircraftHandleDataCount + lightDataCount;
 
-        const std::int64_t positionDataSize = positionDataCount * sizeof(PositionData);
-        const std::int64_t engineDataSize = engineDataCount * sizeof(EngineData);
-        const std::int64_t primaryFlightControlDataSize = primaryFlightControlDataCount * sizeof(PrimaryFlightControlData);
-        const std::int64_t secondaryFlightControlDataSize = secondaryFlightControlDataCount * sizeof(SecondaryFlightControlData);
-        const std::int64_t aircraftHandleDataSize = aircraftHandleDataCount * sizeof(AircraftHandleData);
-        const std::int64_t lightDataSize = lightDataCount * sizeof(LightData);
+        const std::size_t positionDataSize = positionDataCount * sizeof(PositionData);
+        const std::size_t engineDataSize = engineDataCount * sizeof(EngineData);
+        const std::size_t primaryFlightControlDataSize = primaryFlightControlDataCount * sizeof(PrimaryFlightControlData);
+        const std::size_t secondaryFlightControlDataSize = secondaryFlightControlDataCount * sizeof(SecondaryFlightControlData);
+        const std::size_t aircraftHandleDataSize = aircraftHandleDataCount * sizeof(AircraftHandleData);
+        const std::size_t lightDataSize = lightDataCount * sizeof(LightData);
         totalSize = totalSize + positionDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
     }
 

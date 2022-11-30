@@ -41,7 +41,7 @@ class KmlExportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit KmlExportOptionWidget(KmlExportSettings &settings, QWidget *parent = nullptr) noexcept;
-    ~KmlExportOptionWidget() noexcept override;
+    ~KmlExportOptionWidget() override;
 
 private:
     std::unique_ptr<Ui::KmlExportOptionWidget> ui;

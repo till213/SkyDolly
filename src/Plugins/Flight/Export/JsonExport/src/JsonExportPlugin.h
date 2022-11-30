@@ -52,7 +52,7 @@ class JsonExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     JsonExportPlugin() noexcept;
-    ~JsonExportPlugin() noexcept override;
+    ~JsonExportPlugin() override;
 
 protected:
     FlightExportPluginBaseSettings &getPluginSettings() const noexcept override;

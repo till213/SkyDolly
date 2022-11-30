@@ -25,9 +25,6 @@
 #include <QComboBox>
 #include <QSpinBox>
 #include <QCheckBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Version.h>
@@ -55,17 +52,9 @@ IgcImportOptionWidget::IgcImportOptionWidget(IgcImportSettings &settings, QWidge
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "IgcImportOptionWidget::IgcImportOptionWidget: CREATED";
-#endif
 }
 
-IgcImportOptionWidget::~IgcImportOptionWidget() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "IgcImportOptionWidget::~IgcImportOptionWidget: DELETED";
-#endif
-}
+IgcImportOptionWidget::~IgcImportOptionWidget() = default;
 
 // PRIVATE
 

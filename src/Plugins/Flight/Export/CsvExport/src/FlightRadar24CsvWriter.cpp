@@ -70,7 +70,7 @@ FlightRadar24CsvWriter::FlightRadar24CsvWriter(const CsvExportSettings &pluginSe
     : d(std::make_unique<FlightRadar24CsvWriterPrivate>(pluginSettings))
 {}
 
-FlightRadar24CsvWriter::~FlightRadar24CsvWriter() noexcept = default;
+FlightRadar24CsvWriter::~FlightRadar24CsvWriter() = default;
 
 bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {

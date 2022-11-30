@@ -43,7 +43,7 @@ class WIDGET_API TableDateItem final : public QTableWidgetItem
 {
 public:
     explicit TableDateItem(QDate date = QDate()) noexcept;
-    ~TableDateItem() = default;
+    ~TableDateItem() override = default;
 
     QDate getDate() const noexcept;
     void setDate(QDate date) noexcept;

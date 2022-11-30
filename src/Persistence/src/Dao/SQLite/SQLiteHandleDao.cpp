@@ -118,7 +118,7 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
-    if (ok) {
+    if (success) {
         const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             aircraftHandleData.reserve(query.size());
@@ -139,7 +139,6 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
         while (query.next()) {
 
             AircraftHandleData data;
-
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.brakeLeftPosition = query.value(brakeLeftPositionIdx).toInt();
             data.brakeRightPosition = query.value(brakeRightPositionIdx).toInt();

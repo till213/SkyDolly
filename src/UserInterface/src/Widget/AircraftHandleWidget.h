@@ -48,7 +48,7 @@ class AircraftHandleWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit AircraftHandleWidget(QWidget *parent) noexcept;
-    ~AircraftHandleWidget() noexcept override;
+    ~AircraftHandleWidget() override;
 
 protected slots:
     void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;

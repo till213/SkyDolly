@@ -41,11 +41,7 @@
 #include "ui_FlightPlanWidget.h"
 
 struct FlightPlanWidgetPrivate
-{
-    FlightPlanWidgetPrivate() noexcept
-    {}
-
-};
+{};
 
 // PUBLIC
 
@@ -55,17 +51,9 @@ FlightPlanWidget::FlightPlanWidget(QWidget *parent) noexcept :
     d(std::make_unique<FlightPlanWidgetPrivate>())
 {
     ui->setupUi(this);
-#ifdef DEBUG
-    qDebug() << "FlightPlanWidget::FlightPlanWidget: CREATED";
-#endif
 }
 
-FlightPlanWidget::~FlightPlanWidget() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FlightPlanWidget::~FlightPlanWidget: DELETED";
-#endif
-}
+FlightPlanWidget::~FlightPlanWidget() = default;
 
 // PROTECTED
 
@@ -135,7 +123,7 @@ void FlightPlanWidget::addWaypoint(const Waypoint &waypoint)
 
 void FlightPlanWidget::updateWaypoint(int index, const Waypoint &waypoint)
 {
-    WaypointWidget *waypointWidget = static_cast<WaypointWidget *>(ui->waypointTabWidget->widget(index));
+    WaypointWidget *waypointWidget = dynamic_cast<WaypointWidget *>(ui->waypointTabWidget->widget(index));
     waypointWidget->update(waypoint);
 }
 

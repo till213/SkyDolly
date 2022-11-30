@@ -64,8 +64,7 @@ AircraftWidget::AircraftWidget(QWidget *parent) noexcept :
     initUi();
 }
 
-AircraftWidget::~AircraftWidget() noexcept
-{}
+AircraftWidget::~AircraftWidget() = default;
 
 // PROTECTED SLOTS
 

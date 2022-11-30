@@ -24,10 +24,6 @@
  */
 #include <memory>
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
@@ -54,18 +50,9 @@ struct LogbookPluginPrivate
 LogbookPlugin::LogbookPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
       d(std::make_unique<LogbookPluginPrivate>(getFlightService()))
-{
-#ifdef DEBUG
-    qDebug() << "LogbookPlugin::LogbookPlugin: CREATED";
-#endif
-}
+{}
 
-LogbookPlugin::~LogbookPlugin() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "LogbookPlugin::~LogbookPlugin: DELETED";
-#endif
-}
+LogbookPlugin::~LogbookPlugin() = default;
 
 QString LogbookPlugin::getModuleName() const noexcept
 {

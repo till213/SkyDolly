@@ -49,14 +49,14 @@ TemplatePlugin::TemplatePlugin(QObject *parent) noexcept
       d(std::make_unique<TemplatePluginPrivate>())
 {
 #ifdef DEBUG
-    qDebug() << "TemplatePlugin::TemplatePlugin: CREATED";
+    qDebug() << "TemplatePlugin::TemplatePlugin: LOADED";
 #endif
 }
 
-TemplatePlugin::~TemplatePlugin() noexcept
+TemplatePlugin::~TemplatePlugin()
 {
 #ifdef DEBUG
-    qDebug() << "TemplatePlugin::~TemplatePlugin: DELETED";
+    qDebug() << "TemplatePlugin::~TemplatePlugin: UNLOADED";
 #endif
 }
 

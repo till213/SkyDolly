@@ -49,12 +49,12 @@ EnumerationItemDelegate::EnumerationItemDelegate(QString enumerationName) noexce
       d(std::make_unique<EnumerationItemDelegatePrivate>(std::move(enumerationName)))
 {}
 
-EnumerationItemDelegate::~EnumerationItemDelegate() noexcept = default;
+EnumerationItemDelegate::~EnumerationItemDelegate() = default;
 
 QWidget *EnumerationItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if (index.data().canConvert<QString>()) {
-        EnumerationComboBox *enumerationComboBox = new EnumerationComboBox(d->enumerationName, parent);
+        EnumerationComboBox *enumerationComboBox = new EnumerationComboBox(d->enumerationName, EnumerationComboBox::Mode::Editable, parent);
         connect(enumerationComboBox, &EnumerationComboBox::currentIndexChanged,
                 this, &EnumerationItemDelegate::commitAndCloseEditor);
         return enumerationComboBox;

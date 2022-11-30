@@ -217,7 +217,7 @@ QString SQLiteDatabaseDao::getBackupDirectoryPath(bool *ok) const noexcept
     QString backupDirectoryPath;
     QSqlQuery query;
     const bool success = query.exec("select m.backup_directory_path from metadata m;");
-    if (ok && query.next()) {
+    if (success && query.next()) {
         backupDirectoryPath = query.value(0).toString();
     }
     if (ok != nullptr) {

@@ -39,7 +39,7 @@
 struct CsvLocationImportPluginPrivate
 {
     CsvLocationImportSettings pluginSettings;
-    static constexpr const char *FileSuffix {"csv"};
+    static constexpr const char *FileExtension {"csv"};
 };
 
 // PUBLIC
@@ -59,7 +59,7 @@ LocationImportPluginBaseSettings &CsvLocationImportPlugin::getPluginSettings() c
 
 QString CsvLocationImportPlugin::getFileExtension() const noexcept
 {
-    return CsvLocationImportPluginPrivate::FileSuffix;
+    return CsvLocationImportPluginPrivate::FileExtension;
 }
 
 QString CsvLocationImportPlugin::getFileFilter() const noexcept

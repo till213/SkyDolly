@@ -47,9 +47,9 @@ namespace {
     constexpr int Mist = 2000; // In meters
     constexpr int Haze = 5000; // In meters
 
-    constexpr int MillisecondsPerSecond = 1000;
-    constexpr int SecondsPerMinute = 60;
-    constexpr int MinutesPerHour = 60;
+    constexpr std::int64_t MillisecondsPerSecond = 1000;
+    constexpr std::int64_t SecondsPerMinute = 60;
+    constexpr std::int64_t MinutesPerHour = 60;
 }
 
 struct UnitPrivate {
@@ -177,16 +177,16 @@ QString Unit::formatKnots(double speed) const noexcept
     return d->locale.toString(speed, 'f', Precision) % " knots";
 }
 
-QString Unit::formatMemory(std::int64_t memory) const noexcept
+QString Unit::formatMemory(std::size_t memory) const noexcept
 {
     QString size;
     if (memory < 1024) {
         size = QString("%1 bytes").arg(memory);
-    } else if (memory < 1024 * 1024) {
+    } else if (memory < 1024ull * 1024ull) {
         size = QString("%1 KiB").arg(QString::number(static_cast<double>(memory) / 1024.0, 'f', 1));
-    } else if (memory < 1024 * 1024 * 1024) {
+    } else if (memory < 1024ull * 1024ull * 1024ull) {
         size = QString("%1 MiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0), 'f', 2));
-    } else if (memory < 1024ll * 1024ll * 1024ll * 1024ll) {
+    } else if (memory < 1024ull * 1024ull * 1024ull * 1024ull) {
         size = QString("%1 GiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0), 'f', 2));
     } else {
         size = QString("%1 TiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0 * 1024.0), 'f', 2));

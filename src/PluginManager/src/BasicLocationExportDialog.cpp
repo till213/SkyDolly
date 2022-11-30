@@ -52,13 +52,13 @@
 
 struct BasicLocationExportDialogPrivate
 {
-    BasicLocationExportDialogPrivate(const QString &theFileSuffix, const QString &theFileFilter, LocationExportPluginBaseSettings &thePluginSettings) noexcept
-        : fileSuffix(theFileSuffix),
-          fileFilter(theFileFilter),
+    BasicLocationExportDialogPrivate(QString fileExtension, QString theFileFilter, LocationExportPluginBaseSettings &thePluginSettings) noexcept
+        : fileExtension(std::move(fileExtension)),
+          fileFilter(std::move(theFileFilter)),
           pluginSettings(thePluginSettings)
     {}
 
-    QString fileSuffix;
+    QString fileExtension;
     QString fileFilter;
     LocationExportPluginBaseSettings &pluginSettings;
     QPushButton *exportButton {nullptr};
@@ -69,10 +69,10 @@ struct BasicLocationExportDialogPrivate
 
 // PUBLIC
 
-BasicLocationExportDialog::BasicLocationExportDialog(const QString &fileSuffix, const QString &fileFilter, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
+BasicLocationExportDialog::BasicLocationExportDialog(QString fileExtension, QString fileFilter, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicLocationExportDialog>()),
-      d(std::make_unique<BasicLocationExportDialogPrivate>(fileSuffix, fileFilter, pluginSettings))
+      d(std::make_unique<BasicLocationExportDialogPrivate>(std::move(fileExtension), std::move(fileFilter), pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -116,7 +116,7 @@ void BasicLocationExportDialog::initUi() noexcept
 
 void BasicLocationExportDialog::initBasicUi() noexcept
 {
-    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestLocationFilePath(d->fileSuffix)));
+    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestLocationFilePath(d->fileExtension)));
 }
 
 void BasicLocationExportDialog::initOptionUi() noexcept

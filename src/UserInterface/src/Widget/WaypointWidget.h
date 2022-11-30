@@ -44,10 +44,10 @@ class WaypointWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit WaypointWidget(const Waypoint &data, QWidget *parent = nullptr) noexcept;
-    ~WaypointWidget() noexcept override;
+    explicit WaypointWidget(Waypoint waypoint, QWidget *parent = nullptr) noexcept;
+    ~WaypointWidget() override;
 
-    void update(const Waypoint &waypoint) noexcept;
+    void update(Waypoint waypoint) noexcept;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;

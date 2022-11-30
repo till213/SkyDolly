@@ -30,7 +30,7 @@
 
 namespace
 {
-    void convertToV13(const Version &settingsVersion, QSettings &settings) noexcept
+    void convertToV13([[maybe_unused]] const Version &settingsVersion, QSettings &settings) noexcept
     {
         settings.beginGroup("Window");
         {

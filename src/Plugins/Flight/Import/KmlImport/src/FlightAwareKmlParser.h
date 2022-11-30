@@ -41,7 +41,7 @@ class FlightAwareKmlParser : public AbstractKmlTrackParser
 {
 public:
     FlightAwareKmlParser() noexcept;
-    ~FlightAwareKmlParser() noexcept override;
+    ~FlightAwareKmlParser() override;
 
     void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
     QString getFlightNumber() const noexcept override;

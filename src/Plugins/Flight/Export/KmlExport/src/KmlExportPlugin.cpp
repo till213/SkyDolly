@@ -84,7 +84,7 @@ KmlExportPlugin::KmlExportPlugin() noexcept
 #endif
 }
 
-KmlExportPlugin::~KmlExportPlugin() noexcept
+KmlExportPlugin::~KmlExportPlugin()
 {
 #ifdef DEBUG
     qDebug() << "KmlExportPlugin::~KmlExportPlugin: PLUGIN UNLOADED";
@@ -125,7 +125,7 @@ bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const no
 
     d->flight = &flight;
     d->aircraftTypeCount.clear();
-    const int nofAircraft = d->flight->count();
+    const int nofAircraft = static_cast<int>(d->flight->count());
     // Only create as many colors per ramp as there are aircraft (if there are less aircraft
     // than requested colors per ramp)
     d->pluginSettings.setNofColorsPerRamp(std::min(nofAircraft, d->pluginSettings.getNofColorsPerRamp()));
@@ -257,7 +257,7 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
         ok = io.write(placemarkBegin.toUtf8());
         if (ok) {
 
-            const int interpolatedPositionCount = interpolatedPositionData.size();
+            const std::size_t interpolatedPositionCount = interpolatedPositionData.size();
             int nextLineSegmentIndex = 0;
             int currentIndex = nextLineSegmentIndex;
             while (currentIndex < interpolatedPositionCount - 1) {

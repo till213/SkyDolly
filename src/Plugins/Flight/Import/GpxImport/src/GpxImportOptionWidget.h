@@ -41,7 +41,7 @@ class GpxImportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit GpxImportOptionWidget(GpxImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    ~GpxImportOptionWidget() noexcept override;
+    ~GpxImportOptionWidget() override;
 
 private:
     std::unique_ptr<Ui::GpxImportOptionWidget> ui;

@@ -49,7 +49,7 @@ public:
     };
 
     KmlImportSettings() noexcept;
-    ~KmlImportSettings() noexcept override;
+    ~KmlImportSettings() override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;

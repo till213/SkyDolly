@@ -44,9 +44,6 @@
 struct CsvExportPluginPrivate
 {
 public:
-    CsvExportPluginPrivate() noexcept
-    {}
-
     CsvExportSettings pluginSettings;
 
     static constexpr const char *FileExtension {"csv"};

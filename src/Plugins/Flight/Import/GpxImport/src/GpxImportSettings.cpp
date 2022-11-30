@@ -22,9 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
@@ -71,18 +68,9 @@ struct GpxImportSettingsPrivate
 
 GpxImportSettings::GpxImportSettings() noexcept
     : d(std::make_unique<GpxImportSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "GpxImportSettings::GpxImportSettings: CREATED";
-#endif
-}
+{}
 
-GpxImportSettings::~GpxImportSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "GpxImportSettings::~GpxImportSettings: DELETED";
-#endif
-}
+GpxImportSettings::~GpxImportSettings() = default;
 
 GpxImportSettings::GPXElement GpxImportSettings::getWaypointSelection() const noexcept
 {

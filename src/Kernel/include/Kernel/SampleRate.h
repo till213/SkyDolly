@@ -144,8 +144,6 @@ namespace SampleRate
             return SampleRate::Hz50;
         else if (sampleRate <= 60.0)
             return SampleRate::Hz60;
-        else if (sampleRate <= AutoValue)
-            return SampleRate::Auto;
         else
             return SampleRate::Auto;
     }

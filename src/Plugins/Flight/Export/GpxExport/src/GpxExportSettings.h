@@ -44,7 +44,7 @@ public:
     };
 
     GpxExportSettings() noexcept;
-    ~GpxExportSettings() noexcept override;
+    ~GpxExportSettings() override;
 
     TimestampMode getTimestampMode() const noexcept;
     void setTimestampMode(TimestampMode timestampMode) noexcept;

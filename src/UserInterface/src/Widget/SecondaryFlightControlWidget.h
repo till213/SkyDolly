@@ -48,7 +48,7 @@ class SecondaryFlightControlWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit SecondaryFlightControlWidget(QWidget *parent) noexcept;
-    ~SecondaryFlightControlWidget() noexcept override;
+    ~SecondaryFlightControlWidget() override;
 
 protected slots:
     void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;

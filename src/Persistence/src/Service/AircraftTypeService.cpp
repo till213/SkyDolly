@@ -85,12 +85,10 @@ std::vector<AircraftType> AircraftTypeService::getAll(bool *ok) const noexcept
 
 bool AircraftTypeService::exists(const QString &type) const noexcept
 {
-    bool exists;
+    bool exists {false};
     if (QSqlDatabase::database().transaction()) {
         exists = d->aircraftTypeDao->exists(type);
         QSqlDatabase::database().rollback();
-    } else {
-        exists = false;
     }
     return exists;
 }

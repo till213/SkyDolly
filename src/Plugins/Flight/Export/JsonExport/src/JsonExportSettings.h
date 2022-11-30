@@ -39,7 +39,7 @@ class JsonExportSettings : public FlightExportPluginBaseSettings
     Q_OBJECT
 public:
     JsonExportSettings() noexcept;
-    ~JsonExportSettings() noexcept override;
+    ~JsonExportSettings() override;
 
 signals:
     /*!

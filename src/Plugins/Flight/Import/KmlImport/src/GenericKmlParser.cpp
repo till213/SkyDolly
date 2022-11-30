@@ -40,7 +40,7 @@ GenericKmlParser::GenericKmlParser() noexcept
       d(std::make_unique<GenericKmlParserPrivate>())
 {}
 
-GenericKmlParser::~GenericKmlParser() noexcept = default;
+GenericKmlParser::~GenericKmlParser() = default;
 
 // Generic KML files (are expected to) have at least one "gx:Track"
 void GenericKmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept
@@ -51,5 +51,5 @@ void GenericKmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &flight) 
 
 QString GenericKmlParser::getFlightNumber() const noexcept
 {
-    return QString();
+    return {};
 }

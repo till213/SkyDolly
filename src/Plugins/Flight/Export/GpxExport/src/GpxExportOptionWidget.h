@@ -41,7 +41,7 @@ class GpxExportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit GpxExportOptionWidget(GpxExportSettings &settings, QWidget *parent = nullptr) noexcept;
-    ~GpxExportOptionWidget() noexcept override;
+    ~GpxExportOptionWidget() override;
 
 private:
     std::unique_ptr<Ui::GpxExportOptionWidget> ui;

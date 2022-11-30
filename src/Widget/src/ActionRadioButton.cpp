@@ -29,11 +29,7 @@
 
 struct ActionRadioButtonPrivate
 {
-    ActionRadioButtonPrivate() noexcept
-        : action(nullptr)
-    {}
-
-    const QAction *action;
+    const QAction *action {nullptr};
 };
 
 // PUBLIC

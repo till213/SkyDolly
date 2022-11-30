@@ -52,7 +52,7 @@ KmlImportOptionWidget::KmlImportOptionWidget(KmlImportSettings &settings, QWidge
     frenchConnection();
 }
 
-KmlImportOptionWidget::~KmlImportOptionWidget() noexcept = default;
+KmlImportOptionWidget::~KmlImportOptionWidget() = default;
 
 // PRIVATE
 

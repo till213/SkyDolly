@@ -24,9 +24,6 @@
  */
 #include <QComboBox>
 #include <QSpinBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -37,8 +34,8 @@
 
 namespace
 {
-    constexpr int MaximumAltitude = 99999;
-    constexpr int MaximumSpeed = 999;
+    constexpr int MaximumAltitude {99999};
+    constexpr int MaximumSpeed {999};
 }
 
 struct GpxImportOptionWidgetPrivate
@@ -61,17 +58,9 @@ GpxImportOptionWidget::GpxImportOptionWidget(GpxImportSettings &settings, QWidge
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "GpxImportOptionWidget::GpxImportOptionWidget: CREATED";
-#endif
 }
 
-GpxImportOptionWidget::~GpxImportOptionWidget() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "GpxImportOptionWidget::~GpxImportOptionWidget: DELETED";
-#endif
-}
+GpxImportOptionWidget::~GpxImportOptionWidget() = default;
 
 // PRIVATE
 

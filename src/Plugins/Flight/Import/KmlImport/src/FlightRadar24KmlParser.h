@@ -41,7 +41,7 @@ class FlightRadar24KmlParser : public KmlParserIntf
 {
 public:
     FlightRadar24KmlParser() noexcept;
-    ~FlightRadar24KmlParser() noexcept override;
+    ~FlightRadar24KmlParser() override;
 
     void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
     QString getDocumentName() const noexcept override;

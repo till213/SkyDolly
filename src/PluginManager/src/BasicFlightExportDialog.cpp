@@ -52,15 +52,15 @@
 
 struct BasicFlightExportDialogPrivate
 {
-    BasicFlightExportDialogPrivate(const Flight &theFlight, QString theFileSuffix, QString theFileFilter, FlightExportPluginBaseSettings &thePluginSettings) noexcept
+    BasicFlightExportDialogPrivate(const Flight &theFlight, QString fileExtension, QString fileFilter, FlightExportPluginBaseSettings &thePluginSettings) noexcept
         : flight(theFlight),
-          fileSuffix(std::move(theFileSuffix)),
-          fileFilter(std::move(theFileFilter)),
+          fileExtension(std::move(fileExtension)),
+          fileFilter(std::move(fileFilter)),
           pluginSettings(thePluginSettings)
     {}
 
     const Flight &flight;
-    QString fileSuffix;
+    QString fileExtension;
     QString fileFilter;
     FlightExportPluginBaseSettings &pluginSettings;
     QPushButton *exportButton {nullptr};
@@ -71,10 +71,10 @@ struct BasicFlightExportDialogPrivate
 
 // PUBLIC
 
-BasicFlightExportDialog::BasicFlightExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
+BasicFlightExportDialog::BasicFlightExportDialog(const Flight &flight, const QString &fileExtension, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicFlightExportDialog>()),
-      d(std::make_unique<BasicFlightExportDialogPrivate>(flight, fileSuffix, fileFilter, pluginSettings))
+      d(std::make_unique<BasicFlightExportDialogPrivate>(flight, fileExtension, fileFilter, pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -118,7 +118,7 @@ void BasicFlightExportDialog::initUi() noexcept
 
 void BasicFlightExportDialog::initBasicUi() noexcept
 {
-    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFlightFilePath(d->flight, d->fileSuffix)));
+    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFlightFilePath(d->flight, d->fileExtension)));
 
     // Formation export
     ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::underly(FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly));
@@ -159,7 +159,7 @@ void BasicFlightExportDialog::updateDataGroupBox() noexcept
         infoText = tr("%Ln aircraft will be exported.", nullptr, d->flight.count());
     }
     SampleRate::ResamplingPeriod resamplingPeriod = static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
-    std::int64_t samplePoints = estimateNofSamplePoints();
+    std::size_t samplePoints = estimateNofSamplePoints();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
         infoText.append(" " % tr("The position data will be resampled every %1 milliseconds, resulting in %Ln exported positions.",
                                  nullptr, samplePoints)
@@ -194,9 +194,9 @@ inline bool BasicFlightExportDialog::isExportUserAircraftOnly() const noexcept
     return d->pluginSettings.getFormationExport() == FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly;
 }
 
-std::int64_t BasicFlightExportDialog::estimateNofSamplePoints() const noexcept
+std::size_t BasicFlightExportDialog::estimateNofSamplePoints() const noexcept
 {
-    std::int64_t nofSamplePoints = 0;
+    std::size_t nofSamplePoints = 0;
     const std::int64_t period = ui->resamplingComboBox->currentData().toInt();
     if (period != 0) {
         if (isExportUserAircraftOnly()) {

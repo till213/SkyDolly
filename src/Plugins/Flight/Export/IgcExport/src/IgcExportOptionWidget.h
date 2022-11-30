@@ -41,7 +41,7 @@ class IgcExportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit IgcExportOptionWidget(IgcExportSettings &settings, QWidget *parent = nullptr) noexcept;
-    ~IgcExportOptionWidget() noexcept override;
+    ~IgcExportOptionWidget() override;
 
 private:
     std::unique_ptr<Ui::IgcExportOptionWidget> ui;

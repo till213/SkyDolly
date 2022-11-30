@@ -28,6 +28,9 @@
 #include <QString>
 #include <QStringLiteral>
 #include <QXmlStreamReader>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Convert.h>
 #include <Model/Flight.h>
@@ -51,7 +54,7 @@ FlightAwareKmlParser::FlightAwareKmlParser() noexcept
       d(std::make_unique<FlightAwareKmlParserPrivate>())
 {}
 
-FlightAwareKmlParser::~FlightAwareKmlParser() noexcept = default;
+FlightAwareKmlParser::~FlightAwareKmlParser() = default;
 
 // FlightAware KML files (are expected to) have 3 Placemarks, with:
 // - <Point> Takeoff airpart
@@ -145,9 +148,9 @@ void FlightAwareKmlParser::updateWaypoints() noexcept
 {
     Aircraft &aircraft = getFlight()->getUserAircraft();
 
-    int positionCount = aircraft.getPosition().count();
+    std::size_t positionCount = aircraft.getPosition().count();
     if (positionCount > 0) {
-        int waypointCount = aircraft.getFlightPlan().count();
+        std::size_t waypointCount = aircraft.getFlightPlan().count();
         if (waypointCount > 0) {
 
             const Position &position = aircraft.getPosition();
@@ -177,7 +180,6 @@ void FlightAwareKmlParser::updateWaypoints() noexcept
         for (Waypoint &waypoint : aircraft.getFlightPlan()) {
             waypoint.timestamp = currentWaypointTimestamp;
             ++currentWaypointTimestamp;
-
         }
     }
 }
