@@ -41,8 +41,8 @@
 namespace
 {
     // The initial capacity of the aircraft type vector; happens to be the number of default
-    // aircraft types (as per Sky Dolly v0.12), also refer to LogbookMigration.sql
-    constexpr int DefaultCapacity = 206;
+    // aircraft types (as per Sky Dolly v0.13), also refer to LogbookMigration.sql
+    constexpr int DefaultCapacity = 279;
 }
 
 // PUBLIC
