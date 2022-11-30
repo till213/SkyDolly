@@ -1859,7 +1859,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
     </message>
     <message>
         <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="295"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="910"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="915"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2017,27 +2017,27 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="904"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="909"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="907"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="912"/>
         <source>Delete Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="908"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="913"/>
         <source>The location with ID %1 is about to be deleted. Do you want to delete the location?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="909"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="914"/>
         <source>Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="911"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="916"/>
         <source>&amp;Keep</source>
         <translation type="unfinished"></translation>
     </message>

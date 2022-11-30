@@ -41,7 +41,7 @@ class IgcImportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit IgcImportOptionWidget(IgcImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    ~IgcImportOptionWidget() noexcept override;
+    ~IgcImportOptionWidget() override;
 
 private:
     std::unique_ptr<Ui::IgcImportOptionWidget> ui;

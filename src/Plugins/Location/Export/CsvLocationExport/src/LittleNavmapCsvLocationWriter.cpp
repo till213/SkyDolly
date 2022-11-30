@@ -108,7 +108,7 @@ LittleNavmapCsvLocationWriter::LittleNavmapCsvLocationWriter(const CsvLocationEx
     : d(std::make_unique<LittleNavmapCsvLocationWriterPrivate>(pluginSettings))
 {}
 
-LittleNavmapCsvLocationWriter::~LittleNavmapCsvLocationWriter() noexcept = default;
+LittleNavmapCsvLocationWriter::~LittleNavmapCsvLocationWriter() = default;
 
 bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations, QIODevice &io) noexcept
 {

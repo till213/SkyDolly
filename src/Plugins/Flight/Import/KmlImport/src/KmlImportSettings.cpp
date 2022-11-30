@@ -51,7 +51,7 @@ KmlImportSettings::KmlImportSettings() noexcept
     : d(std::make_unique<KmlImportSettingsPrivate>())
 {}
 
-KmlImportSettings::~KmlImportSettings() noexcept = default;
+KmlImportSettings::~KmlImportSettings() = default;
 
 KmlImportSettings::Format KmlImportSettings::getFormat() const noexcept
 {

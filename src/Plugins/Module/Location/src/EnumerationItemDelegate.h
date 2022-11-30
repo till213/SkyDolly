@@ -38,7 +38,7 @@ class EnumerationItemDelegate : public QStyledItemDelegate
 {
 public:
     EnumerationItemDelegate(QString enumerationName) noexcept;
-    ~EnumerationItemDelegate() noexcept override;
+    ~EnumerationItemDelegate() override;
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void setEditorData(QWidget *editor, const QModelIndex &index) const noexcept override;

@@ -67,8 +67,7 @@ EngineWidget::EngineWidget(QWidget *parent) noexcept :
     initUi();
 }
 
-EngineWidget::~EngineWidget() noexcept
-{}
+EngineWidget::~EngineWidget() = default;
 
 // PROTECTED SLOTS
 

@@ -58,7 +58,7 @@ AbstractKmlParser::AbstractKmlParser() noexcept
     : d(std::make_unique<AbstractKmlParserPrivate>())
 {}
 
-AbstractKmlParser::~AbstractKmlParser() noexcept = default;
+AbstractKmlParser::~AbstractKmlParser() = default;
 
 QString AbstractKmlParser::getDocumentName() const noexcept
 {

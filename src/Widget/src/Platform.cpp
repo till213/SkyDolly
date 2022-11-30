@@ -36,11 +36,11 @@ namespace  {
 }
 
 namespace Dark {
-    constexpr QRgb EditableTableCellBGColor = 0xff3aa8ff;
+constexpr QRgb EditableTableCellBGColor {0xff3aa8ff};
 }
 
 namespace Bright {
-    constexpr QRgb EditableTableCellBGColor = 0xfff6fdff;
+    constexpr QRgb EditableTableCellBGColor {0xfff6fdff};
 }
 
 // PUBLIC
@@ -55,8 +55,8 @@ inline bool Platform::isDarkModeEnabled() noexcept
 QColor Platform::getEditableTableCellBGColor() noexcept
 {
     if (isDarkModeEnabled()) {
-        return QColor(Dark::EditableTableCellBGColor);
+        return {Dark::EditableTableCellBGColor};
     } else {
-        return QColor(Bright::EditableTableCellBGColor);
+        return {Bright::EditableTableCellBGColor};
     }
 }

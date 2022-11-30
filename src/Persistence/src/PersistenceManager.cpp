@@ -57,14 +57,13 @@ struct PersistenceManagerPrivate
 {
     PersistenceManagerPrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          databaseDao(daoFactory->createDatabaseDao()),
-          connected(false)
+          databaseDao(daoFactory->createDatabaseDao())
     {}
 
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<DatabaseDaoIntf> databaseDao;
     QString logbookPath;
-    bool connected;
+    bool connected {false};
 
     static inline std::once_flag onceFlag;
     static inline PersistenceManager *instance;

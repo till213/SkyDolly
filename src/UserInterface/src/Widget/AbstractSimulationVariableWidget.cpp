@@ -38,8 +38,7 @@ AbstractSimulationVariableWidget  ::AbstractSimulationVariableWidget(QWidget *pa
     : QWidget(parent)
 {}
 
-AbstractSimulationVariableWidget::~AbstractSimulationVariableWidget() noexcept
-{}
+AbstractSimulationVariableWidget::~AbstractSimulationVariableWidget() = default;
 
 // PROTECTED
 

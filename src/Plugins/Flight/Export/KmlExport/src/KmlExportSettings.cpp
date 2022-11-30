@@ -26,9 +26,6 @@
 #include <memory>
 
 #include <QColor>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -108,18 +105,9 @@ struct KmlExportSettingsPrivate
 KmlExportSettings::KmlExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
       d(std::make_unique<KmlExportSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "KmlExportSettings::KmlExportSettings: CREATED";
-#endif
-}
+{}
 
-KmlExportSettings::~KmlExportSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "KmlExportSettings::~KmlExportSettings: DELETED";
-#endif
-}
+KmlExportSettings::~KmlExportSettings() = default;
 
 KmlExportSettings::ColorStyle KmlExportSettings::getColorStyle() const noexcept
 {

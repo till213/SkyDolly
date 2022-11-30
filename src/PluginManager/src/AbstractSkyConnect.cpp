@@ -61,16 +61,6 @@ namespace
 struct AbstractSkyConnectPrivate
 {
     AbstractSkyConnectPrivate() noexcept
-        : replayMode(SkyConnectIntf::ReplayMode::Normal),
-          state(Connect::State::Disconnected),
-          currentFlight(Logbook::getInstance().getCurrentFlight()),
-          currentTimestamp(0),
-          lastNotificationTimestamp(0),
-          recordingSampleRate(Settings::getInstance().getRecordingSampleRateValue()),
-          recordingIntervalMSec(SampleRate::toIntervalMSec(recordingSampleRate)),
-          replaySpeedFactor(1.0),
-          elapsedTime(0),
-          lastSamplesPerSecondIndex(0)
     {
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
 #ifdef DEBUG
@@ -78,19 +68,19 @@ struct AbstractSkyConnectPrivate
 #endif
     }
 
-    SkyConnectIntf::ReplayMode replayMode;
-    Connect::State state;
-    Flight &currentFlight;
+    SkyConnectIntf::ReplayMode replayMode {SkyConnectIntf::ReplayMode::Normal};
+    Connect::State state {Connect::State::Disconnected};
+    Flight &currentFlight {Logbook::getInstance().getCurrentFlight()};
     // Triggers the recording of sample data (if not event-based recording)
     QTimer recordingTimer;
-    std::int64_t currentTimestamp;
-    std::int64_t lastNotificationTimestamp;
-    double recordingSampleRate;
-    int recordingIntervalMSec;
+    std::int64_t currentTimestamp {0};
+    std::int64_t lastNotificationTimestamp {0};
+    double recordingSampleRate {Settings::getInstance().getRecordingSampleRateValue()};
+    int recordingIntervalMSec {SampleRate::toIntervalMSec(recordingSampleRate)};
     QElapsedTimer elapsedTimer;
-    double replaySpeedFactor;
-    std::int64_t elapsedTime;
-    mutable int lastSamplesPerSecondIndex;
+    double replaySpeedFactor {1.0};
+    std::int64_t elapsedTime {0};
+    mutable int lastSamplesPerSecondIndex {0};
 };
 
 // PUBLIC

@@ -58,7 +58,7 @@ AbstractKmlTrackParser::AbstractKmlTrackParser() noexcept
       d(std::make_unique<AbstractKmlTrackParserPrivate>())
 {}
 
-AbstractKmlTrackParser::~AbstractKmlTrackParser() noexcept = default;
+AbstractKmlTrackParser::~AbstractKmlTrackParser() = default;
 
 QDateTime AbstractKmlTrackParser::getFirstDateTimeUtc() const noexcept
 {

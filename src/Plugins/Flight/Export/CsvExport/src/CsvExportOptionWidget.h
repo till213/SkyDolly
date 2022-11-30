@@ -41,7 +41,7 @@ class CsvExportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit CsvExportOptionWidget(CsvExportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~CsvExportOptionWidget() noexcept;
+    ~CsvExportOptionWidget() override;
 
 private:
     std::unique_ptr<Ui::CsvExportOptionWidget> ui;

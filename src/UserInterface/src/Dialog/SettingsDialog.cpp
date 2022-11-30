@@ -29,9 +29,6 @@
 #include <QWidget>
 #include <QString>
 #include <QDoubleSpinBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
@@ -43,11 +40,11 @@
 
 namespace
 {
-    constexpr double MinSeekSeconds = 0.001;
-    constexpr double MaxSeekSeconds = 999.0;
+    constexpr double MinSeekSeconds {0.001};
+    constexpr double MaxSeekSeconds {999.0};
 
-    constexpr double MinSeekPercent = 0.001;
-    constexpr double MaxSeekPercent = 100.0;
+    constexpr double MinSeekPercent {0.001};
+    constexpr double MaxSeekPercent {100.0};
 }
 
 SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
@@ -57,17 +54,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
     ui->setupUi(this);
     initUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "SettingsDialog::SettingsDialog: CREATED";
-#endif
 }
 
-SettingsDialog::~SettingsDialog()
-{
-#ifdef DEBUG
-    qDebug() << "SettingsDialog::~SettingsDialog: DELETED";
-#endif
-}
+SettingsDialog::~SettingsDialog() = default;
 
 // PROTECTED
 

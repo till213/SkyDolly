@@ -41,8 +41,8 @@
 namespace
 {
     // The initial capacity of the aircraft type vector; happens to be the number of default
-    // aircraft types (as per Sky Dolly v0.12), also refer to LogbookMigration.sql
-    constexpr int DefaultCapacity = 206;
+    // aircraft types (as per Sky Dolly v0.13), also refer to LogbookMigration.sql
+    constexpr int DefaultCapacity = 279;
 }
 
 // PUBLIC
@@ -154,7 +154,7 @@ std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
         }
 #ifdef DEBUG
     } else {
-            qDebug() << "SQLitePositionDao::getAll: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+            qDebug() << "SQLiteAircraftTypeDao::getAll: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
@@ -166,7 +166,7 @@ std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
 
 bool SQLiteAircraftTypeDao::exists(const QString &type) const noexcept
 {
-    bool exists;
+    bool exists {false};
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -181,12 +181,12 @@ bool SQLiteAircraftTypeDao::exists(const QString &type) const noexcept
     if (ok && query.next()) {
         const int count = query.value(0).toInt();
         exists = count > 0;
-    } else {
-        exists = false;
-#ifdef DEBUG
-        qDebug() << "SQLitePositionDao::exists: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
-#endif
     }
+#ifdef DEBUG
+    else {
+        qDebug() << "SQLiteAircraftTypeDao::exists: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+    }
+#endif
 
     return ok && exists;
 }

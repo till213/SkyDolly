@@ -119,7 +119,7 @@ public:
     inline double egmToWgs84Ellipsoid(double height, double latitude, double longitude) noexcept
     {
         // In meters
-        double heightAboveEllipsoid;
+        double heightAboveEllipsoid {height};
         if (m_egm != nullptr) {
             try {
                 // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
@@ -131,8 +131,6 @@ public:
                 qDebug() << "Convert::egmToWgs84Ellipsoid: caught exception:" << ex.what();
 #endif
             }
-        } else {
-            heightAboveEllipsoid = height;
         }
         return heightAboveEllipsoid;
     }

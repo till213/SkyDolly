@@ -41,7 +41,7 @@
 
 // PUBLIC
 
-QString Export::suggestFlightFilePath(const Flight &flight, QStringView suffix) noexcept
+QString Export::suggestFlightFilePath(const Flight &flight, QStringView extension) noexcept
 {
     // https://www.codeproject.com/tips/758861/removing-characters-which-are-not-allowed-in-windo
     static const QRegularExpression illegalInFileName = QRegularExpression(R"([\\/:*?""<>|])");
@@ -61,15 +61,15 @@ QString Export::suggestFlightFilePath(const Flight &flight, QStringView suffix) 
     }
 
     suggestedFileName = suggestedFileName.replace(illegalInFileName, "_");
-    return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
+    return settings.getExportPath() + "/" + File::ensureExtension(suggestedFileName, extension);
 }
 
-QString Export::suggestLocationFilePath(QStringView suffix) noexcept
+QString Export::suggestLocationFilePath(QStringView extension) noexcept
 {
     QString suggestedFileName {QCoreApplication::translate("Export", "Locations")};
 
     const Settings &settings = Settings::getInstance();
-    return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
+    return settings.getExportPath() + "/" + File::ensureExtension(suggestedFileName, extension);
 }
 
 std::vector<PositionData> Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept

@@ -22,10 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
@@ -61,18 +57,9 @@ struct IgcImportSettingsPrivate
 
 IgcImportSettings::IgcImportSettings() noexcept
     : d(std::make_unique<IgcImportSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "IgcImportSettings::IgcImportSettings: CREATED";
-#endif
-}
+{}
 
-IgcImportSettings::~IgcImportSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "IgcImportSettings::~IgcImportSettings: DELETED";
-#endif
-}
+IgcImportSettings::~IgcImportSettings() = default;
 
 IgcImportSettings::AltitudeMode IgcImportSettings::getAltitudeMode() const noexcept
 {
@@ -159,7 +146,7 @@ void IgcImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
         d->altitudeMode = ::DefaultAltitudeMode;
     }
 
-    const double enlThresholdPercent = valuesByKey.at(::EnlThresholdKey).toDouble(&ok);
+    const int enlThresholdPercent = valuesByKey.at(::EnlThresholdKey).toInt(&ok);
     if (ok) {
         d->enlThresholdPercent = enlThresholdPercent;
     } else {

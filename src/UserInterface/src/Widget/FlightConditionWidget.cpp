@@ -38,9 +38,6 @@
 
 struct FlightConditionWidgetPrivate
 {
-    FlightConditionWidgetPrivate() noexcept
-    {}
-
     Unit unit;
 };
 
@@ -55,8 +52,7 @@ FlightConditionWidget::FlightConditionWidget(QWidget *parent) noexcept :
     initUi();
 }
 
-FlightConditionWidget::~FlightConditionWidget() noexcept
-{}
+FlightConditionWidget::~FlightConditionWidget() = default;
 
 // PROTECTED
 
@@ -127,8 +123,8 @@ void FlightConditionWidget::updateUi() noexcept
     ui->inCloudsCheckBox->setChecked(flightCondition.inClouds);
     ui->visibilityLineEdit->setText(d->unit.formatVisibility(flightCondition.visibility));
     ui->seaLevelPressure->setText(d->unit.formatPressureInHPa(flightCondition.seaLevelPressure));
-    ui->pitotIcingLineEdit->setText(d->unit.formatPercent(SkyMath::toPercent(flightCondition.pitotIcingPercent)));
-    ui->structuralIcingLineEdit->setText(d->unit.formatPercent(SkyMath::toPercent(flightCondition.structuralIcingPercent)));
+    ui->pitotIcingLineEdit->setText(d->unit.formatPercent(flightCondition.pitotIcingPercent));
+    ui->structuralIcingLineEdit->setText(d->unit.formatPercent(flightCondition.structuralIcingPercent));
     ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.startLocalTime));
     ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.endLocalTime));
     // Zulu time

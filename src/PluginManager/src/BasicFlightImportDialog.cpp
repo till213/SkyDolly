@@ -44,9 +44,9 @@
 
 struct BasicFlightImportDialogPrivate
 {
-    BasicFlightImportDialogPrivate(const Flight &theFlight, QString theFileFilter, FlightImportPluginBaseSettings &pluginSettings) noexcept
+    BasicFlightImportDialogPrivate(const Flight &theFlight, QString fileFilter, FlightImportPluginBaseSettings &pluginSettings) noexcept
         : flight(theFlight),
-          fileFilter(std::move(theFileFilter)),
+          fileFilter(std::move(fileFilter)),
           pluginSettings(pluginSettings)
     {}
 
@@ -60,10 +60,10 @@ struct BasicFlightImportDialogPrivate
 
 // PUBLIC
 
-BasicFlightImportDialog::BasicFlightImportDialog(const Flight &flight, const QString &fileSuffix, FlightImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
+BasicFlightImportDialog::BasicFlightImportDialog(const Flight &flight, const QString &fileFilter, FlightImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicFlightImportDialog>()),
-      d(std::make_unique<BasicFlightImportDialogPrivate>(flight, fileSuffix, pluginSettings))
+      d(std::make_unique<BasicFlightImportDialogPrivate>(flight, fileFilter, pluginSettings))
 {
     ui->setupUi(this);    
     initUi();

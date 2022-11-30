@@ -35,9 +35,6 @@
 
 struct AbstractModulePrivate
 {
-    AbstractModulePrivate() noexcept
-    {}
-
     std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
 };
 

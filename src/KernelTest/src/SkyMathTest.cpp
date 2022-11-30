@@ -410,7 +410,6 @@ void SkyMathTest::relativePosition_data()
 {
     QTest::addColumn<double>("latitude");
     QTest::addColumn<double>("longitude");
-    QTest::addColumn<double>("altitude");
     QTest::addColumn<double>("bearing");
     QTest::addColumn<double>("distance");
     QTest::addColumn<double>("expectedLatitude");
@@ -418,11 +417,11 @@ void SkyMathTest::relativePosition_data()
 
     // DMS to degrees: https://boulter.com/gps/
     // https://www.movable-type.co.uk/scripts/latlong.html
-    QTest::newRow("Northern Hemisphere") << 47.0 << 8.0 << 0.0 << 90.0 << 100000.0 << 46.9925 << 9.3147;
-    QTest::newRow("Southern Hemisphere") << -47.0 << -8.0 << 0.0 << -90.0 << 100000.0 << -46.9925 << -9.3147;
-    QTest::newRow("Northpole") << 90.0 << 0.0 << 0.0 << 0.0 << 100000.0 << 89.1047 << 180.0;
-    QTest::newRow("Southpole") << -90.0 << 0.0 << 0.0 << 0.0 << 100000.0 << -89.1047 << 0.0;
-    QTest::newRow("Same point") << -47.0 << -8.0 << 0.0 << -90.0 << 0.0 << -47.0 << -8.0;
+    QTest::newRow("Northern Hemisphere") << 47.0 << 8.0 << 90.0 << 100000.0 << 46.9925 << 9.3147;
+    QTest::newRow("Southern Hemisphere") << -47.0 << -8.0 << -90.0 << 100000.0 << -46.9925 << -9.3147;
+    QTest::newRow("Northpole") << 90.0 << 0.0 << 0.0 <<100000.0 << 89.1047 << 180.0;
+    QTest::newRow("Southpole") << -90.0 << 0.0 << 0.0 << 100000.0 << -89.1047 << 0.0;
+    QTest::newRow("Same point") << -47.0 << -8.0 << -90.0 << 0.0 << -47.0 << -8.0;
 }
 
 void SkyMathTest::relativePosition()
@@ -432,7 +431,6 @@ void SkyMathTest::relativePosition()
     // Setup
     QFETCH(double, latitude);
     QFETCH(double, longitude);
-    QFETCH(double, altitude);
     QFETCH(double, bearing);
     QFETCH(double, distance);
     QFETCH(double, expectedLatitude);
@@ -442,7 +440,7 @@ void SkyMathTest::relativePosition()
     SkyMath::Coordinate expectedDestination(expectedLatitude, expectedLongitude);
 
     // Exercise
-    SkyMath::Coordinate destination = SkyMath::relativePosition(position, altitude, bearing, distance);
+    SkyMath::Coordinate destination = SkyMath::relativePosition(position, bearing, distance);
 
     // Verify
     const double lat = std::round(destination.first * PrecisionFactor) / PrecisionFactor;

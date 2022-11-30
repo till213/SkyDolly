@@ -36,28 +36,16 @@
 #include "JsonExportSettings.h"
 
 struct JsonExportSettingsPrivate
-{
-    JsonExportSettingsPrivate()
-    {}
-};
+{};
 
 // PUBLIC
 
 JsonExportSettings::JsonExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
       d(std::make_unique<JsonExportSettingsPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "JsonExportSettings::JsonExportSettings: CREATED";
-#endif
-}
+{}
 
-JsonExportSettings::~JsonExportSettings() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "JsonExportSettings::~JsonExportSettings: DELETED";
-#endif
-}
+JsonExportSettings::~JsonExportSettings() = default;
 
 // PROTECTED
 

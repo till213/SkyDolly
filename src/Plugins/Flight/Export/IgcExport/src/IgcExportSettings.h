@@ -40,7 +40,7 @@ class IgcExportSettings : public FlightExportPluginBaseSettings
     Q_OBJECT
 public:
     IgcExportSettings() noexcept;
-    ~IgcExportSettings() noexcept override;
+    ~IgcExportSettings() override;
 
     QString getPilotName() const noexcept;
     void setPilotName(const QString &pilotName) noexcept;

@@ -44,7 +44,7 @@ class AircraftInfoWidget : public QWidget
     Q_OBJECT
 public:
     explicit AircraftInfoWidget(QWidget *parent = nullptr) noexcept;
-    virtual ~AircraftInfoWidget() noexcept;
+    ~AircraftInfoWidget() override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;

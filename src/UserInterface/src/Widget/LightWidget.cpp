@@ -64,8 +64,7 @@ LightWidget::LightWidget(QWidget *parent) noexcept :
     initUi();
 }
 
-LightWidget::~LightWidget() noexcept
-{}
+LightWidget::~LightWidget() = default;
 
 // PROTECTED
 

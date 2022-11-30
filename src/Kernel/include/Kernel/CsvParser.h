@@ -83,6 +83,20 @@ public:
      */
     const Headers &getHeaders() const noexcept;
 
+    static inline bool validate(const Rows &rows, std::size_t expectedColumnCount) noexcept
+    {
+        bool ok = rows.size() > 0;
+        if (ok) {
+            for (const Row &row : rows) {
+                ok = row.size() == expectedColumnCount;
+                if (!ok) {
+                    break;
+                }
+            }
+        }
+        return ok;
+    };
+
 private:
     Row m_currentRow;
     Headers m_headers;

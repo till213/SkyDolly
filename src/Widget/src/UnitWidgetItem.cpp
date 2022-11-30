@@ -55,7 +55,7 @@ QVariant UnitWidgetItem::data(int role) const
         return QTableWidgetItem::data(role);
         break;
     }
-    return QVariant();
+    return {};
 }
 
 void UnitWidgetItem::setData(int role, const QVariant &value)

@@ -151,7 +151,7 @@ LogbookWidget::LogbookWidget(FlightService &flightService, QWidget *parent) noex
     frenchConnection();
 }
 
-LogbookWidget::~LogbookWidget() noexcept
+LogbookWidget::~LogbookWidget()
 {
     const QByteArray logbookState = ui->logTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setLogbookState(logbookState);
@@ -396,12 +396,12 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
     // Creation date
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::creationDateColumn);
     item->setToolTip(tr("Recording time: %1.").arg(d->unit.formatTime(summary.creationDate)));
-    static_cast<TableDateItem *>(item)->setDate(summary.creationDate.date());
+    dynamic_cast<TableDateItem *>(item)->setDate(summary.creationDate.date());
 
     // Start time
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::startTimeColumn);
     item->setToolTip(tr("Simulation time (%1Z).").arg(d->unit.formatTime(summary.startSimulationZuluTime)));
-    static_cast<TableTimeItem *>(item)->setTime(summary.startSimulationLocalTime.time());
+    dynamic_cast<TableTimeItem *>(item)->setTime(summary.startSimulationLocalTime.time());
 
     // Start location
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::startLocationColumn);
@@ -410,7 +410,7 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
     // End time
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::endTimeColumn);
     item->setToolTip(tr("Simulation time (%1Z).").arg(d->unit.formatTime(summary.endSimulationZuluTime)));
-    static_cast<TableTimeItem *>(item)->setTime(summary.endSimulationLocalTime.time());
+    dynamic_cast<TableTimeItem *>(item)->setTime(summary.endSimulationLocalTime.time());
 
     // End location
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::endLocationColumn);
@@ -435,12 +435,12 @@ void LogbookWidget::updateDateSelectorUi() noexcept
 
         int totalFlights = 0;
         while (!flightDates.empty()) {
-            std::forward_list<FlightDate>::const_iterator first = flightDates.cbegin();
-            std::forward_list<FlightDate>::const_iterator last = first;
+            auto first = flightDates.cbegin();
+            auto last = first;
 
             // Group by year
-            int currentYear = first->year;
-            int nofFlightsPerYear = 0;
+            int currentYear {first->year};
+            int nofFlightsPerYear {0};
             while (last != flightDates.end() && last->year == currentYear) {
                 nofFlightsPerYear += last->nofFlights;
                 ++last;
@@ -541,8 +541,8 @@ inline void LogbookWidget::insertYear(QTreeWidgetItem *parent, std::forward_list
     QTreeWidgetItem *yearItem = new QTreeWidgetItem(parent, {QString::number(year), QString::number(nofFlightsPerYear)});
     yearItem->setData(::DateColumn, Qt::UserRole, year);
     while (!flightDatesByYear.empty()) {
-        std::forward_list<FlightDate>::const_iterator first = flightDatesByYear.cbegin();
-        std::forward_list<FlightDate>::const_iterator last = first;
+        auto first = flightDatesByYear.cbegin();
+        auto last = first;
 
         // Group by month
         int currentMonth = first->month;

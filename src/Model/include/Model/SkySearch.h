@@ -79,11 +79,7 @@ namespace SkySearch {
     int binaryIntervalSearch(const std::vector<T> &data, std::int64_t timestamp, int lowIndex, int highIndex) noexcept
     {
         int index {InvalidIndex};
-        if (data.size() == 0) {
-            index = InvalidIndex;
-        } else if (data.at(lowIndex).timestamp > timestamp) {
-            index = InvalidIndex;
-        } else if (data.at(highIndex).timestamp < timestamp) {
+        if (data.size() == 0 || data.at(lowIndex).timestamp > timestamp || data.at(highIndex).timestamp < timestamp) {
             index = InvalidIndex;
         } else if (data.at(0).timestamp == timestamp) {
             index = 0;
@@ -122,11 +118,7 @@ namespace SkySearch {
     int linearIntervalSearch(const std::vector<T> &data, std::int64_t timestamp, int startIndex) noexcept
     {
         int index {startIndex};
-        if (data.size() == 0) {
-            index = InvalidIndex;
-        } else if (data.at(startIndex).timestamp > timestamp) {
-            index = InvalidIndex;
-        } else if (data.back().timestamp < timestamp) {
+        if (data.size() == 0 || data.at(startIndex).timestamp > timestamp || data.back().timestamp < timestamp) {
             index = InvalidIndex;
         } else {
             int size = data.size();
@@ -162,11 +154,9 @@ namespace SkySearch {
         if (size > 0) {
             if (timestamp < data.back().timestamp) {
                 if (index != InvalidIndex) {
-                    if (timestamp < data.at(index).timestamp) {
+                    if (timestamp < data.at(index).timestamp || timestamp - BinaryIntervalSearchThreshold > data.at(index).timestamp) {
                         // The timestamp was moved to front ("rewind"), so search the
                         // array until and including the current index
-                        index = BinaryIntervalSearch;
-                    } else if (timestamp - BinaryIntervalSearchThreshold > data.at(index).timestamp) {
                         index = BinaryIntervalSearch;
                     }
                 } else {
@@ -307,7 +297,7 @@ namespace SkySearch {
         return *p1 != nullptr;
     }
 
-    double normaliseTimestamp(const TimeVariableData &p1, const TimeVariableData &p2, quint64 timestamp) noexcept;
+    double normaliseTimestamp(const TimeVariableData &p1, const TimeVariableData &p2, std::int64_t timestamp) noexcept;
 
 } // namespace
 

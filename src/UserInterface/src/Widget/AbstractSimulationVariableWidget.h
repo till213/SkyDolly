@@ -39,7 +39,7 @@ class AbstractSimulationVariableWidget : public QWidget
     Q_OBJECT
 public:
     explicit AbstractSimulationVariableWidget(QWidget *parent) noexcept;
-    virtual ~AbstractSimulationVariableWidget() noexcept;
+    ~AbstractSimulationVariableWidget() override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;

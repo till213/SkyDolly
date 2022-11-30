@@ -22,8 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <cstdio>
+
 #include <windows.h>
-#include <stdio.h>
 #include <tchar.h>
 #include <psapi.h>
 
@@ -46,8 +47,8 @@ static bool isProcessRunning(DWORD pid, QStringView processName)
 
     // Get the process name
     if (processHandle != nullptr) {
-        HMODULE moduleHandle;
-        DWORD actualSize;
+        HMODULE moduleHandle {nullptr};
+        DWORD actualSize {0};
         if (EnumProcessModules(processHandle, &moduleHandle, sizeof(moduleHandle), &actualSize)) {
             GetModuleBaseName(processHandle, moduleHandle, actualProcessName, sizeof(actualProcessName) / sizeof(TCHAR));
         }
@@ -69,7 +70,7 @@ static bool isProcessRunning(DWORD pid, QStringView processName)
 
 bool FlightSimulator::isRunning(Id id) noexcept
 {
-    bool running;
+    bool running {false};
 
     QString processName;
     switch (id) {
@@ -89,37 +90,31 @@ bool FlightSimulator::isRunning(Id id) noexcept
     if (!processName.isEmpty()) {
         // https://docs.microsoft.com/en-us/windows/win32/psapi/enumerating-all-processes
         // Get the list of process identifiers
-        DWORD pidTable[1024], actualSize, nofPIds;
-        unsigned int i;
+        DWORD pidTable[1024], actualSize {0}, nofPIds {0};
         if (EnumProcesses(pidTable, sizeof(pidTable), &actualSize)) {
             // Calculate how many process identifiers were returned
             nofPIds = actualSize / sizeof(DWORD);
 
             // Check if process given by its name is running
             running = false;
-            for (i = 0; i < nofPIds && !running; ++i) {
+            for (unsigned int i = 0; i < nofPIds && !running; ++i) {
                 if( pidTable[i] != 0) {
                     running = isProcessRunning(pidTable[i], processName);
                 }
             }
-        } else {
-            running = false;
         }
-    } else {
-        running = false;
     }
     return running;
 }
 
 bool FlightSimulator::isInstalled(Id id) noexcept
 {
-    bool installed;
     // Search the community folder: if found then we assume that FS2020 is installed, too
     QString appDataPath = QString::fromLocal8Bit(qgetenv("APPDATA"));
 
     // MS Store edition
     QDir communityFolderPath(appDataPath + "/Local/Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe");
-    installed = communityFolderPath.exists();
+    bool installed = communityFolderPath.exists();
 
     if (!installed) {
         // Steam edition

@@ -57,11 +57,7 @@
 
 struct SimulationVariablesDialogPrivate
 {
-    SimulationVariablesDialogPrivate() noexcept
-        : closeDialogShortcut(nullptr)
-    {}
-
-    QShortcut *closeDialogShortcut;
+    QShortcut *closeDialogShortcut {nullptr};
 };
 
 // PUBLIC

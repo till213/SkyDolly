@@ -26,11 +26,11 @@
 #include "TimeVariableData.h"
 #include "SkySearch.h"
 
-double SkySearch::normaliseTimestamp(const TimeVariableData &p1, const TimeVariableData &p2, quint64 timestamp) noexcept
+double SkySearch::normaliseTimestamp(const TimeVariableData &p1, const TimeVariableData &p2, std::int64_t timestamp) noexcept
 {
-    double t1 = timestamp - p1.timestamp;
-    double t2 = p2.timestamp - p1.timestamp;
-    if (t2 != 0.0) {
+    std::int64_t t2 = p2.timestamp - p1.timestamp;
+    if (t2 != 0) {
+        std::int64_t t1 = timestamp - p1.timestamp;
         return static_cast<double>(t1) / static_cast<double>(t2);
     } else {
         // p1 and p2 are the same (last sampled) point
