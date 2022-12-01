@@ -190,8 +190,12 @@ void LocationWidget::addLocation(Location newLocation)
     if (newLocation.engineEventId == Const::InvalidId) {
         newLocation.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
     }
-    Location location {newLocation};
+    Location location {std::move(newLocation)};
     if (d->locationService->store(location)) {
+        if (!d->locationSelector.showUserLocations()) {
+            // Make sure that user locations are visible
+            ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
+        }
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->blockSignals(true);
         const QTableWidgetItem *firstItem = createRow(location);
@@ -200,11 +204,11 @@ void LocationWidget::addLocation(Location newLocation)
         // again)
         ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
         ui->locationTableWidget->setSortingEnabled(true);
-        ui->locationTableWidget->scrollToItem(firstItem);
+        ui->locationTableWidget->scrollToItem(firstItem); 
     }
 }
 
-void LocationWidget::updateLocation(Location location)
+void LocationWidget::updateLocation(const Location &location)
 {
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {

@@ -120,6 +120,16 @@ void LinkedOptionGroup::addOption(const QString &name, const QVariant &optionVal
             this, &LinkedOptionGroup::onButtonToggled);
 }
 
+void LinkedOptionGroup::setOptionEnabled(const QVariant &optionValue, bool enable) noexcept
+{
+    for (QPushButton *button : d->buttons) {
+        if (button->property(::OptionValue) == optionValue) {
+            button->setChecked(enable);
+            break;
+        }
+    }
+}
+
 // PRIVATE
 
 void LinkedOptionGroup::initUi() noexcept

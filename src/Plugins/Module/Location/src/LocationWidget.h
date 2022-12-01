@@ -54,7 +54,7 @@ public:
 
     void addUserLocation(double latitude, double longitude);
     void addLocation(Location location);
-    void updateLocation(Location location);
+    void updateLocation(const Location &location);
 
     void keyPressEvent(QKeyEvent *event) noexcept override;
 

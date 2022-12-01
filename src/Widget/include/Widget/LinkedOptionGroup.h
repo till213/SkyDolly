@@ -44,6 +44,7 @@ public:
     ~LinkedOptionGroup() override;
 
     void addOption(const QString &name, const QVariant &optionValue) noexcept;
+    void setOptionEnabled(const QVariant &optionValue, bool enable) noexcept;
 
 signals:
     void optionToggled(bool enable, const QVariant &optionValue);
