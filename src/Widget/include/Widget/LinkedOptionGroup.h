@@ -36,6 +36,7 @@
 
 struct LinkedOptionGroupPrivate;
 
+/*! \todo This class needs some serious API rework ;) */
 class WIDGET_API LinkedOptionGroup : public QWidget
 {
     Q_OBJECT
