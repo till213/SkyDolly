@@ -43,7 +43,7 @@ public:
     explicit LinkedOptionGroup(QWidget *parent = nullptr) noexcept;
     ~LinkedOptionGroup() override;
 
-    void addOption(const QString &name, const QVariant &optionValue) noexcept;
+    void addOption(const QString &name, const QVariant &optionValue, const QString &toopTip = QString()) noexcept;
     void setOptionEnabled(const QVariant &optionValue, bool enable) noexcept;
 
 signals:

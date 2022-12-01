@@ -51,19 +51,19 @@ R"(QPushButton:checked {
     constexpr const char *singleButtonCss{
 R"(QPushButton{
     border-radius: 6px;
-}"})"};
+})"};
 
     constexpr const char *firstButtonCss{
 R"(QPushButton{
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
-}"})"};
+})"};
 
     constexpr const char *lastButtonCss{
 R"(QPushButton{
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
-}"})"};
+})"};
 
 }
 
@@ -96,11 +96,12 @@ LinkedOptionGroup::LinkedOptionGroup(QWidget *parent) noexcept
 
 LinkedOptionGroup::~LinkedOptionGroup() = default;
 
-void LinkedOptionGroup::addOption(const QString &name, const QVariant &optionValue) noexcept
+void LinkedOptionGroup::addOption(const QString &name, const QVariant &optionValue, const QString &toolTip) noexcept
 {
     QPushButton *button = new QPushButton(name, this);
     button->setCheckable(true);
     button->setProperty(::OptionValue, optionValue);
+    button->setToolTip(toolTip);
     d->buttons.push_back(button);
     std::size_t buttonCount = d->buttons.size();
     if (buttonCount == 1) {

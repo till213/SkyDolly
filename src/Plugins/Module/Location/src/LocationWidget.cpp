@@ -263,9 +263,9 @@ void LocationWidget::initUi() noexcept
     ui->searchLineEdit->setClearButtonEnabled(true);
 
     // Type
-    ui->typeOptionGroup->addOption(tr("System"), QVariant::fromValue(d->SystemLocationTypeId));
-    ui->typeOptionGroup->addOption(tr("User"), QVariant::fromValue(d->UserLocationTypeId));
-    ui->typeOptionGroup->addOption(tr("Import"), QVariant::fromValue(d->ImportLocationTypeId));
+    ui->typeOptionGroup->addOption(tr("System"), QVariant::fromValue(d->SystemLocationTypeId), tr("Show system locations."));
+    ui->typeOptionGroup->addOption(tr("User"), QVariant::fromValue(d->UserLocationTypeId), tr("Show user locations."));
+    ui->typeOptionGroup->addOption(tr("Import"), QVariant::fromValue(d->ImportLocationTypeId), tr("Show imported locations."));
 
     // Table
     const QStringList headers {
