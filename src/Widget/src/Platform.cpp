@@ -37,11 +37,13 @@ namespace  {
 }
 
 namespace Dark {
-constexpr QRgb EditableTableCellBGColor {0xff3aa8ff};
+    constexpr QRgb EditableTableCellBGColor {0xff3aa8ff};
+    constexpr QRgb ButtonBGColor {0xe1e1e1};
 }
 
 namespace Bright {
     constexpr QRgb EditableTableCellBGColor {0xfff6fdff};
+    constexpr QRgb ButtonBGColor {0xe1e1e1};
 }
 
 // PUBLIC
@@ -55,14 +57,15 @@ inline bool Platform::isDarkModeEnabled() noexcept
 
 QColor Platform::getEditableTableCellBGColor() noexcept
 {
-    if (isDarkModeEnabled()) {
-        return {Dark::EditableTableCellBGColor};
-    } else {
-        return {Bright::EditableTableCellBGColor};
-    }
+    return isDarkModeEnabled() ? Dark::EditableTableCellBGColor : Bright::EditableTableCellBGColor;
 }
 
 QColor Platform::getActiveButtonBGColor() noexcept
 {
     return {::ActiveButtonBGColor};
+}
+
+QColor Platform::getButtonBGColor() noexcept
+{
+    return isDarkModeEnabled() ? Dark::ButtonBGColor : Bright::ButtonBGColor;
 }

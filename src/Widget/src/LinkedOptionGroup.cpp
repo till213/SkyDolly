@@ -30,8 +30,6 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <QPalette>
-#include <QGuiApplication>
 
 #include "Platform.h"
 #include "LinkedOptionGroup.h"
@@ -113,8 +111,8 @@ void LinkedOptionGroup::setOptionEnabled(const QVariant &optionValue, bool enabl
 
 void LinkedOptionGroup::initUi() noexcept
 {
-    static QString normalButtonCss {"QPushButton {margin: 0; padding: 4px; border: 0px; background-color: " % QGuiApplication::palette().color(QPalette::Button).name() % ";} "};
-    static QString checkedButtonCss {"QPushButton:checked { background-color: " % Platform::getActiveButtonBGColor().name() % ";}"};
+    static QString normalButtonCss {"QPushButton {margin: 0; padding: 4px; border: 0px; background-color: " % Platform::getButtonBGColor().name() % ";} "};
+    static QString checkedButtonCss {"QPushButton:checked { background-color: " % Platform::getActiveButtonBGColor().name() % "; color: white;}"};
 
     setStyleSheet(normalButtonCss % checkedButtonCss);
 
