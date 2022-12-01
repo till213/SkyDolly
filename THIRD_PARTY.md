@@ -46,3 +46,10 @@ Sky Dolly uses or is "inspired by" the following third-party libraries and funct
 - Author: Jonathan Hamberg
 - Source: https://jonathanhamberg.com/post/cmake-embedding-git-hash/
 - License: MIT License
+
+## Wikipedia
+- Source: https://en.wikipedia.org/
+- License: https://creativecommons.org/licenses/by-sa/3.0/
+
+## Flightspots
+- Source: https://flightspots.co/
