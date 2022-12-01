@@ -34,6 +34,16 @@
       </widget>
      </item>
      <item>
+      <widget class="LinkedButtonGroup" name="linkedButtonGroup" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label_11">
        <property name="text">
         <string>Category:</string>
@@ -310,6 +320,12 @@
    <class>EnumerationComboBox</class>
    <extends>QComboBox</extends>
    <header location="global">Widget/EnumerationComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LinkedButtonGroup</class>
+   <extends>QWidget</extends>
+   <header location="global">Widget/LinkedButtonGroup.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
