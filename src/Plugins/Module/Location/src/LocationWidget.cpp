@@ -259,7 +259,7 @@ void LocationWidget::initUi() noexcept
     ui->searchLineEdit->setClearButtonEnabled(true);
 
     // Type
-    ui->typeOptionGroup->addOption(tr("Sys"), QVariant::fromValue(d->SystemLocationTypeId));
+    ui->typeOptionGroup->addOption(tr("System"), QVariant::fromValue(d->SystemLocationTypeId));
     ui->typeOptionGroup->addOption(tr("User"), QVariant::fromValue(d->UserLocationTypeId));
     ui->typeOptionGroup->addOption(tr("Import"), QVariant::fromValue(d->ImportLocationTypeId));
 
@@ -854,7 +854,13 @@ void LocationWidget::searchText() noexcept
 
 void LocationWidget::onTypeOptionToggled(bool enable, const QVariant &userData) noexcept
 {
-    qDebug("IMPLEMENT ME");
+    std::int64_t typeId = userData.toLongLong();
+    if (enable) {
+        d->locationSelector.typeIds.insert(typeId);
+    } else {
+        d->locationSelector.typeIds.erase(typeId);
+    }
+    updateTable();
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept

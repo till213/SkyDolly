@@ -295,6 +295,18 @@ std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSele
     QString queryString = "select * "
                           "from   location l "
                           "where 1 = 1 ";
+    if (selector.typeIds.size() > 0) {
+        queryString.append("  and l.type_id in (");
+        std::size_t i {0};
+        for (const std::int64_t typeId : selector.typeIds) {
+            queryString.append(QString::number(typeId));
+            if (i < selector.typeIds.size() - 1) {
+                queryString.append(",");
+            }
+            ++i;
+        }
+        queryString.append(")" );
+    }
     if (selector.categoryId != Const::InvalidId) {
         queryString.append("  and l.category_id = :category_id ");
     }

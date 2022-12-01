@@ -43,10 +43,10 @@ public:
     explicit LinkedOptionGroup(QWidget *parent = nullptr) noexcept;
     ~LinkedOptionGroup() override;
 
-    void addOption(const QString &name, const QVariant &userData) noexcept;
+    void addOption(const QString &name, const QVariant &optionValue) noexcept;
 
 signals:
-    void optionToggled(bool enable, const QVariant &userData);
+    void optionToggled(bool enable, const QVariant &optionValue);
 
 private:
     std::unique_ptr<LinkedOptionGroupPrivate> d;
