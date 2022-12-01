@@ -38,7 +38,7 @@ namespace  {
 
 namespace Dark {
     constexpr QRgb EditableTableCellBGColor {0xff3aa8ff};
-    constexpr QRgb ButtonBGColor {0xe1e1e1};
+    constexpr QRgb ButtonBGColor {0x6a6a6a};
 }
 
 namespace Bright {
