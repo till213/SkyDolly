@@ -22,10 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <vector>
+
+#include <QVariant>
+#include <QString>
+#include <QWidget>
 #include <QHBoxLayout>
 #include <QPushButton>
 
-#include "LinkedButtonGroup.h"
+#include "LinkedOptionGroup.h"
+
+namespace
+{
+constexpr const char *UserData {"UserData"};
+}
 
 static QString strip_normal(
 "QPushButton {"
@@ -36,6 +46,10 @@ static QString strip_normal(
 static QString strip_checked(
 "QPushButton:checked {"
 "   background-color: #aaa;"
+"}");
+static QString strip_single(
+"QPushButton{"
+"   border-radius: 6px;"
 "}");
 static QString strip_first(
 "QPushButton{"
@@ -53,9 +67,10 @@ static QString widget_back(
 "   background-color: blue;"
 "}");
 
-struct LinkedButtonGroupPrivate
+struct LinkedOptionGroupPrivate
 {
-
+    QHBoxLayout *layout {nullptr};
+    std::vector<QPushButton *> buttons;
 };
 
 // PUBLIC
@@ -72,26 +87,59 @@ QPushButton *createButton(QString const& name,
     return pb;
 }
 
-LinkedButtonGroup::LinkedButtonGroup(QWidget *parent)
+LinkedOptionGroup::LinkedOptionGroup(QWidget *parent) noexcept
     : QWidget(parent),
-      d(std::make_unique<LinkedButtonGroupPrivate>())
+      d(std::make_unique<LinkedOptionGroupPrivate>())
+{
+    initUi();
+}
+
+LinkedOptionGroup::~LinkedOptionGroup() = default;
+
+void LinkedOptionGroup::addOption(const QString &name, const QVariant &userData) noexcept
+{
+    QPushButton *button = new QPushButton(name, this);
+    button->setCheckable(true);
+    button->setProperty(::UserData, userData);
+    d->buttons.push_back(button);
+    std::size_t buttonCount = d->buttons.size();
+    if (buttonCount == 1) {
+        button->setStyleSheet(strip_single);
+    } else if (buttonCount == 2) {
+        button->setStyleSheet(strip_last);
+        // Also update the first button
+        d->buttons.front()->setStyleSheet(strip_first);
+    } else {
+        button->setStyleSheet(strip_last);
+        // Also update the second to last button
+        d->buttons[buttonCount - 2]->setStyleSheet("");
+    }
+
+    d->layout->addWidget(button);
+    connect(button, &QPushButton::toggled,
+            this, &LinkedOptionGroup::onButtonToggled);
+}
+
+// PRIVATE
+
+void LinkedOptionGroup::initUi() noexcept
 {
     /* style sheet applies to this widget and its children */
     setStyleSheet(widget_back+strip_normal+strip_checked);
 
-    /* First and last widget need special borders */
-    QPushButton *one = createButton("Sys",   true,  strip_first);
-    QPushButton *two = createButton("User",   false);
-    QPushButton *thr = createButton("Impt", false, strip_last);
-
     /* Layout with no spacing */
-    QHBoxLayout *hl = new QHBoxLayout(parent);
-    hl->addWidget(one);
-    hl->addWidget(two);
-    hl->addWidget(thr);
-    hl->setSpacing(0);
+    d->layout = new QHBoxLayout(this);
+    d->layout->setSpacing(0);
 
-    setLayout(hl);
+    setLayout(d->layout);
 }
 
-LinkedButtonGroup::~LinkedButtonGroup() = default;
+// PRIVATE SLOTS
+
+void LinkedOptionGroup::onButtonToggled(bool enable) noexcept
+{
+    QPushButton *button = qobject_cast<QPushButton *>(sender());
+    if (button != nullptr) {
+        emit optionToggled(enable, button->property(::UserData));
+    }
+}

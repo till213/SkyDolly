@@ -93,6 +93,7 @@ private slots:
     void onCountryChanged() noexcept;
     void onSearchTextChanged() noexcept;
     void searchText() noexcept;
+    void onTypeOptionToggled(bool enable, const QVariant &userData) noexcept;
 
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;

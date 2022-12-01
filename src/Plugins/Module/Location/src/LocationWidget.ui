@@ -34,7 +34,7 @@
       </widget>
      </item>
      <item>
-      <widget class="LinkedButtonGroup" name="linkedButtonGroup" native="true">
+      <widget class="LinkedOptionGroup" name="typeOptionGroup" native="true">
        <property name="minimumSize">
         <size>
          <width>32</width>
@@ -322,9 +322,9 @@
    <header location="global">Widget/EnumerationComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>LinkedButtonGroup</class>
+   <class>LinkedOptionGroup</class>
    <extends>QWidget</extends>
-   <header location="global">Widget/LinkedButtonGroup.h</header>
+   <header location="global">Widget/LinkedOptionGroup.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

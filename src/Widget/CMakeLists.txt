@@ -27,7 +27,7 @@ target_sources(${LIBRARY_NAME}
         include/Widget/EnumerationComboBox.h src/EnumerationComboBox.cpp
         include/Widget/EnumerationWidgetItem.h src/EnumerationWidgetItem.cpp
         include/Widget/UnitWidgetItem.h src/UnitWidgetItem.cpp
-        include/Widget/LinkedButtonGroup.h src/LinkedButtonGroup.cpp
+        include/Widget/LinkedOptionGroup.h src/LinkedOptionGroup.cpp
 )
 if(${PLATFORM_IS_WINDOWS})
     target_sources(${LIBRARY_NAME}

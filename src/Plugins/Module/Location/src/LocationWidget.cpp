@@ -58,6 +58,7 @@
 #include <Widget/FocusPlainTextEdit.h>
 #include <Widget/EnumerationWidgetItem.h>
 #include <Widget/UnitWidgetItem.h>
+#include <Widget/LinkedOptionGroup.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/AbstractModule.h>
@@ -112,6 +113,7 @@ struct LocationWidgetPrivate
 
     const std::int64_t SystemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
     const std::int64_t UserLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
+    const std::int64_t ImportLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
     const std::int64_t NoneLocationCategory {PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id()};
     const std::int64_t WorldCountry {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
     const std::int64_t KeepEngineEvent {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
@@ -256,6 +258,11 @@ void LocationWidget::initUi() noexcept
     ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     ui->searchLineEdit->setClearButtonEnabled(true);
 
+    // Type
+    ui->typeOptionGroup->addOption(tr("Sys"), QVariant::fromValue(d->SystemLocationTypeId));
+    ui->typeOptionGroup->addOption(tr("User"), QVariant::fromValue(d->UserLocationTypeId));
+    ui->typeOptionGroup->addOption(tr("Import"), QVariant::fromValue(d->ImportLocationTypeId));
+
     // Table
     const QStringList headers {
         tr("ID"), tr("Title"), tr("Description"), tr("Type"), tr("Category"),
@@ -360,6 +367,8 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::onSearchTextChanged);
     connect(d->searchTimer.get(), &QTimer::timeout,
             this, &LocationWidget::searchText);
+    connect(ui->typeOptionGroup, &LinkedOptionGroup::optionToggled,
+            this, &LocationWidget::onTypeOptionToggled);
 
     // Persistence
     PersistenceManager &persistenceManager = PersistenceManager::getInstance();
@@ -841,6 +850,11 @@ void LocationWidget::searchText() noexcept
 {
     d->locationSelector.searchKeyword = ui->searchLineEdit->text();
     updateTable();
+}
+
+void LocationWidget::onTypeOptionToggled(bool enable, const QVariant &userData) noexcept
+{
+    qDebug("IMPLEMENT ME");
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept

@@ -22,26 +22,39 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LINKEDBUTTONGROUP_H
-#define LINKEDBUTTONGROUP_H
+#ifndef LINKEDOPTIONGROUP_H
+#define LINKEDOPTIONGROUP_H
 
 #include <memory>
 
+#include <QString>
 #include <QWidget>
+#include <QPushButton>
+#include <QVariant>
 
 #include "WidgetLib.h"
 
-struct LinkedButtonGroupPrivate;
+struct LinkedOptionGroupPrivate;
 
-class WIDGET_API LinkedButtonGroup : public QWidget
+class WIDGET_API LinkedOptionGroup : public QWidget
 {
     Q_OBJECT
 public:
-    explicit LinkedButtonGroup(QWidget *parent = nullptr);
-    ~LinkedButtonGroup() override;
+    explicit LinkedOptionGroup(QWidget *parent = nullptr) noexcept;
+    ~LinkedOptionGroup() override;
+
+    void addOption(const QString &name, const QVariant &userData) noexcept;
+
+signals:
+    void optionToggled(bool enable, const QVariant &userData);
 
 private:
-    std::unique_ptr<LinkedButtonGroupPrivate> d;
+    std::unique_ptr<LinkedOptionGroupPrivate> d;
+
+    void initUi() noexcept;
+
+private slots:
+    void onButtonToggled(bool enable) noexcept;
 };
 
-#endif // LINKEDBUTTONGROUP_H
+#endif // LINKEDOPTIONGROUP_H
