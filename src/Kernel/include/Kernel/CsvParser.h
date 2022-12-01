@@ -48,7 +48,7 @@ class KERNEL_API CsvParser final
 public:
     using Row = std::vector<QString>;
     using Rows = std::vector<Row>;
-    using Headers = std::unordered_map<QString, int>;
+    using Headers = std::unordered_map<QString, std::size_t>;
 
     explicit CsvParser(QChar separatorChar = ',', QChar quoteChar = '"', bool trimValues = true);
     CsvParser(const CsvParser &rhs) = delete;

@@ -58,6 +58,7 @@
 #include <Widget/FocusPlainTextEdit.h>
 #include <Widget/EnumerationWidgetItem.h>
 #include <Widget/UnitWidgetItem.h>
+#include <Widget/LinkedOptionGroup.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/AbstractModule.h>
@@ -112,6 +113,7 @@ struct LocationWidgetPrivate
 
     const std::int64_t SystemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
     const std::int64_t UserLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
+    const std::int64_t ImportLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
     const std::int64_t NoneLocationCategory {PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id()};
     const std::int64_t WorldCountry {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
     const std::int64_t KeepEngineEvent {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
@@ -188,8 +190,12 @@ void LocationWidget::addLocation(Location newLocation)
     if (newLocation.engineEventId == Const::InvalidId) {
         newLocation.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
     }
-    Location location {newLocation};
+    Location location {std::move(newLocation)};
     if (d->locationService->store(location)) {
+        if (!d->locationSelector.showUserLocations()) {
+            // Make sure that user locations are visible
+            ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
+        }
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->blockSignals(true);
         const QTableWidgetItem *firstItem = createRow(location);
@@ -198,11 +204,11 @@ void LocationWidget::addLocation(Location newLocation)
         // again)
         ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
         ui->locationTableWidget->setSortingEnabled(true);
-        ui->locationTableWidget->scrollToItem(firstItem);
+        ui->locationTableWidget->scrollToItem(firstItem); 
     }
 }
 
-void LocationWidget::updateLocation(Location location)
+void LocationWidget::updateLocation(const Location &location)
 {
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
@@ -255,6 +261,11 @@ void LocationWidget::initUi() noexcept
     ui->searchLineEdit->clearFocus();
     ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     ui->searchLineEdit->setClearButtonEnabled(true);
+
+    // Type
+    ui->typeOptionGroup->addOption(tr("System"), QVariant::fromValue(d->SystemLocationTypeId), tr("Show system locations."));
+    ui->typeOptionGroup->addOption(tr("User"), QVariant::fromValue(d->UserLocationTypeId), tr("Show user locations."));
+    ui->typeOptionGroup->addOption(tr("Import"), QVariant::fromValue(d->ImportLocationTypeId), tr("Show imported locations."));
 
     // Table
     const QStringList headers {
@@ -360,6 +371,8 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::onSearchTextChanged);
     connect(d->searchTimer.get(), &QTimer::timeout,
             this, &LocationWidget::searchText);
+    connect(ui->typeOptionGroup, &LinkedOptionGroup::optionToggled,
+            this, &LocationWidget::onTypeOptionToggled);
 
     // Persistence
     PersistenceManager &persistenceManager = PersistenceManager::getInstance();
@@ -840,6 +853,17 @@ void LocationWidget::onSearchTextChanged() noexcept
 void LocationWidget::searchText() noexcept
 {
     d->locationSelector.searchKeyword = ui->searchLineEdit->text();
+    updateTable();
+}
+
+void LocationWidget::onTypeOptionToggled(bool enable, const QVariant &userData) noexcept
+{
+    std::int64_t typeId = userData.toLongLong();
+    if (enable) {
+        d->locationSelector.typeIds.insert(typeId);
+    } else {
+        d->locationSelector.typeIds.erase(typeId);
+    }
     updateTable();
 }
 

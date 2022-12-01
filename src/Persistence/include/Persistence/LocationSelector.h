@@ -31,6 +31,8 @@
 #include <QString>
 
 #include <Kernel/Const.h>
+#include "Service/EnumerationService.h"
+#include "PersistedEnumerationItem.h"
 #include "PersistenceLib.h"
 
 struct PERSISTENCE_API LocationSelector
@@ -46,6 +48,12 @@ struct PERSISTENCE_API LocationSelector
                categoryId != Const::InvalidId ||
                countryId != Const::InvalidId ||
                !searchKeyword.isEmpty();
+    }
+
+    inline bool showUserLocations() const noexcept
+    {
+        static const std::int64_t userLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
+        return typeIds.empty() || typeIds.find(userLocationTypeId) != typeIds.end();
     }
 };
 

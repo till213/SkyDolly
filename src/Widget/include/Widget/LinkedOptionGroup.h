@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,22 +22,41 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLATFORM_H
-#define PLATFORM_H
+#ifndef LINKEDOPTIONGROUP_H
+#define LINKEDOPTIONGROUP_H
 
-#include <QColor>
+#include <memory>
+
 #include <QString>
+#include <QWidget>
+#include <QPushButton>
+#include <QVariant>
 
 #include "WidgetLib.h"
 
-class WIDGET_API Platform
+struct LinkedOptionGroupPrivate;
+
+/*! \todo This class needs some serious API rework ;) */
+class WIDGET_API LinkedOptionGroup : public QWidget
 {
+    Q_OBJECT
 public:
-    static bool isDarkModeEnabled() noexcept;
-    static QColor getEditableTableCellBGColor() noexcept;
-    static QColor getButtonBGColor() noexcept;
-    static QColor getActiveButtonBGColor() noexcept;
-    static QString getFlatButtonCss() noexcept;
+    explicit LinkedOptionGroup(QWidget *parent = nullptr) noexcept;
+    ~LinkedOptionGroup() override;
+
+    void addOption(const QString &name, const QVariant &optionValue, const QString &toopTip = QString()) noexcept;
+    void setOptionEnabled(const QVariant &optionValue, bool enable) noexcept;
+
+signals:
+    void optionToggled(bool enable, const QVariant &optionValue);
+
+private:
+    std::unique_ptr<LinkedOptionGroupPrivate> d;
+
+    void initUi() noexcept;
+
+private slots:
+    void onButtonToggled(bool enable) noexcept;
 };
 
-#endif // PLATFORM_H
+#endif // LINKEDOPTIONGROUP_H
