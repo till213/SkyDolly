@@ -35,6 +35,7 @@ class WIDGET_API Platform
 public:
     static bool isDarkModeEnabled() noexcept;
     static QColor getEditableTableCellBGColor() noexcept;
+    static QColor getActiveButtonBGColor() noexcept;
     static QString getFlatButtonCss() noexcept;
 };
 

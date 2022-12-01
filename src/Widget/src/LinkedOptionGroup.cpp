@@ -30,41 +30,15 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QPalette>
+#include <QGuiApplication>
 
+#include "Platform.h"
 #include "LinkedOptionGroup.h"
 
 namespace
 {
     constexpr const char *OptionValue {"OptionValue"};
-
-    constexpr const char *normalButtonCss{
-R"(QPushButton {
-    margin: 0; padding: 4px; border: 0px;
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f6f7fa, stop: 1 #aaabae);
-})"};
-
-    constexpr const char *checkedButtonCss{
-R"(QPushButton:checked {
-   background-color: #aaa;
-})"};
-
-    constexpr const char *singleButtonCss{
-R"(QPushButton{
-    border-radius: 6px;
-})"};
-
-    constexpr const char *firstButtonCss{
-R"(QPushButton{
-    border-top-left-radius: 6px;
-    border-bottom-left-radius: 6px;
-})"};
-
-    constexpr const char *lastButtonCss{
-R"(QPushButton{
-    border-top-right-radius: 6px;
-    border-bottom-right-radius: 6px;
-})"};
-
 }
 
 struct LinkedOptionGroupPrivate
@@ -98,6 +72,10 @@ LinkedOptionGroup::~LinkedOptionGroup() = default;
 
 void LinkedOptionGroup::addOption(const QString &name, const QVariant &optionValue, const QString &toolTip) noexcept
 {
+    static QLatin1String singleButtonCss {"QPushButton {border-radius: 6px;}"};
+    static QLatin1String firstButtonCss {"QPushButton {border-top-left-radius: 6px; border-bottom-left-radius: 6px;}"};
+    static QLatin1String lastButtonCss {"QPushButton {border-top-right-radius: 6px; border-bottom-right-radius: 6px;}"};
+
     QPushButton *button = new QPushButton(name, this);
     button->setCheckable(true);
     button->setProperty(::OptionValue, optionValue);
@@ -105,13 +83,13 @@ void LinkedOptionGroup::addOption(const QString &name, const QVariant &optionVal
     d->buttons.push_back(button);
     std::size_t buttonCount = d->buttons.size();
     if (buttonCount == 1) {
-        button->setStyleSheet(::singleButtonCss);
+        button->setStyleSheet(singleButtonCss);
     } else if (buttonCount == 2) {
-        button->setStyleSheet(::lastButtonCss);
+        button->setStyleSheet(lastButtonCss);
         // Also update the first button
-        d->buttons.front()->setStyleSheet(::firstButtonCss);
+        d->buttons.front()->setStyleSheet(firstButtonCss);
     } else {
-        button->setStyleSheet(::lastButtonCss);
+        button->setStyleSheet(lastButtonCss);
         // Also update the second to last button
         d->buttons[buttonCount - 2]->setStyleSheet({});
     }
@@ -135,7 +113,10 @@ void LinkedOptionGroup::setOptionEnabled(const QVariant &optionValue, bool enabl
 
 void LinkedOptionGroup::initUi() noexcept
 {
-    setStyleSheet(QString(::normalButtonCss) % QString(::checkedButtonCss));
+    static QString normalButtonCss {"QPushButton {margin: 0; padding: 4px; border: 0px; background-color: " % QGuiApplication::palette().color(QPalette::Button).name() % ";} "};
+    static QString checkedButtonCss {"QPushButton:checked { background-color: " % Platform::getActiveButtonBGColor().name() % ";}"};
+
+    setStyleSheet(normalButtonCss % checkedButtonCss);
 
     d->layout = new QHBoxLayout(this);
     d->layout->setSpacing(0);

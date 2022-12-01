@@ -33,6 +33,7 @@
 
 namespace  {
     constexpr int DarkModeValueThreshold {80};
+    constexpr QRgb ActiveButtonBGColor {0x0077e5};
 }
 
 namespace Dark {
@@ -59,4 +60,9 @@ QColor Platform::getEditableTableCellBGColor() noexcept
     } else {
         return {Bright::EditableTableCellBGColor};
     }
+}
+
+QColor Platform::getActiveButtonBGColor() noexcept
+{
+    return {::ActiveButtonBGColor};
 }
