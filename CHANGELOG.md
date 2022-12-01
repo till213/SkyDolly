@@ -33,6 +33,7 @@
   * ... the date December 17 1903, the day of the first flight in human history, is certainly a safer bet when it comes to tracked (and imported) flights ;)
 - Correct country name of Qatar
 - Prevent teleportation by double-click on location ID during replay
+- Fixed the TAB order in the Logbook and Location module
 
 ### Under The Hood
 - Rule of Zero, copy-and-swap [[Back to Basics: RAII and the Rule of Zero - Arthur O'Dwyer - CppCon 2019](https://www.youtube.com/watch?v=7Qgd9B1KuMQ)]

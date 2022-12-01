@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>840</width>
-    <height>318</height>
+    <width>957</width>
+    <height>346</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,6 +28,16 @@
        <property name="minimumSize">
         <size>
          <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="LinkedOptionGroup" name="typeOptionGroup" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
          <height>0</height>
         </size>
        </property>
@@ -311,7 +321,34 @@
    <extends>QComboBox</extends>
    <header location="global">Widget/EnumerationComboBox.h</header>
   </customwidget>
+  <customwidget>
+   <class>LinkedOptionGroup</class>
+   <extends>QWidget</extends>
+   <header location="global">Widget/LinkedOptionGroup.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>searchLineEdit</tabstop>
+  <tabstop>categoryComboBox</tabstop>
+  <tabstop>countryComboBox</tabstop>
+  <tabstop>locationTableWidget</tabstop>
+  <tabstop>descriptionPlainTextEdit</tabstop>
+  <tabstop>pitchSpinBox</tabstop>
+  <tabstop>bankSpinBox</tabstop>
+  <tabstop>trueHeadingSpinBox</tabstop>
+  <tabstop>indicatedAirspeedSpinBox</tabstop>
+  <tabstop>engineEventComboBox</tabstop>
+  <tabstop>defaultAltitudeSpinBox</tabstop>
+  <tabstop>defaultIndicatedAirspeedSpinBox</tabstop>
+  <tabstop>defaultEngineEventComboBox</tabstop>
+  <tabstop>defaultOnGroundCheckBox</tabstop>
+  <tabstop>addPushButton</tabstop>
+  <tabstop>capturePushButton</tabstop>
+  <tabstop>updatePushButton</tabstop>
+  <tabstop>teleportPushButton</tabstop>
+  <tabstop>deletePushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

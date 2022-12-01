@@ -54,7 +54,7 @@ public:
 
     void addUserLocation(double latitude, double longitude);
     void addLocation(Location location);
-    void updateLocation(Location location);
+    void updateLocation(const Location &location);
 
     void keyPressEvent(QKeyEvent *event) noexcept override;
 
@@ -93,6 +93,7 @@ private slots:
     void onCountryChanged() noexcept;
     void onSearchTextChanged() noexcept;
     void searchText() noexcept;
+    void onTypeOptionToggled(bool enable, const QVariant &userData) noexcept;
 
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;
