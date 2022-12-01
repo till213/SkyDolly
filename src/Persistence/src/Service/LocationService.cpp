@@ -33,6 +33,8 @@
 #include "../Dao/LocationDaoIntf.h"
 #include <PersistenceManager.h>
 #include <LocationSelector.h>
+#include <PersistedEnumerationItem.h>
+#include <Service/EnumerationService.h>
 #include <Service/LocationService.h>
 
 struct LocationServicePrivate
@@ -72,6 +74,7 @@ bool LocationService::store(Location &location) noexcept
 
 bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noexcept
 {
+    static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
     bool ok = QSqlDatabase::database().transaction();
     auto it = locations.begin();
     while (it != locations.end() && ok) {
@@ -79,9 +82,12 @@ bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noex
             const std::vector<Location> neighbours = d->locationDao->getByPosition(it->latitude, it->longitude, 0.0, &ok);
             if (neighbours.size() == 0) {
                 ok = d->locationDao->add(*it);
-            } else if (mode == Mode::Update) {
-                it->id = neighbours.cbegin()->id;
-                d->locationDao->update(*it);
+            } else if (mode == Mode::Update) {                
+                // System locations are never updated
+                if (neighbours.cbegin()->typeId != systemLocationTypeId) {
+                    it->id = neighbours.cbegin()->id;
+                    d->locationDao->update(*it);
+                }
             }
         } else {
             // Unconditional insert

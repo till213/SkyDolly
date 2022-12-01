@@ -171,6 +171,7 @@ void LogbookWidget::initUi() noexcept
     // Make sure that shortcuts are initially accepted
     ui->searchLineEdit->clearFocus();
     ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
+    ui->searchLineEdit->setClearButtonEnabled(true);
 
     const QStringList headers {
         tr("Flight"),
