@@ -261,14 +261,11 @@ void LocationWidget::initUi() noexcept
     ui->searchLineEdit->clearFocus();
     ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
     ui->searchLineEdit->setClearButtonEnabled(true);
-<<<<<<< HEAD
 
     // Type
     ui->typeOptionGroup->addOption(tr("System"), QVariant::fromValue(d->SystemLocationTypeId), tr("Show system locations."));
     ui->typeOptionGroup->addOption(tr("User"), QVariant::fromValue(d->UserLocationTypeId), tr("Show user locations."));
     ui->typeOptionGroup->addOption(tr("Import"), QVariant::fromValue(d->ImportLocationTypeId), tr("Show imported locations."));
-=======
->>>>>>> main
 
     // Table
     const QStringList headers {
