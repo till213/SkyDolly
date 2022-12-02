@@ -75,6 +75,7 @@ private:
     inline const QTableWidgetItem *createRow(const Location &location) noexcept;
     inline const QTableWidgetItem *initRow(const Location &location, int row) noexcept;
     inline void updateRow(const Location &location, int row) noexcept;
+    inline void updateLocationCount() const noexcept;
 
     void teleportToLocation(int row) noexcept;
     Location getLocationByRow(int row) const noexcept;

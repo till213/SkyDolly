@@ -69,18 +69,9 @@ public:
 
 GpxExportPlugin::GpxExportPlugin() noexcept
     : d(std::make_unique<GpxExportPluginPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "GpxExportPlugin::GpxExportPlugin: PLUGIN LOADED";
-#endif
-}
+{}
 
-GpxExportPlugin::~GpxExportPlugin()
-{
-#ifdef DEBUG
-    qDebug() << "GpxExportPlugin::~GpxExportPlugin: PLUGIN UNLOADED";
-#endif
-}
+GpxExportPlugin::~GpxExportPlugin() = default;
 
 // PROTECTED
 

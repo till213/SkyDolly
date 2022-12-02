@@ -51,7 +51,7 @@ class KmlImportPlugin : public FlightImportPluginBase
     Q_INTERFACES(FlightImportIntf)
 public:
     KmlImportPlugin() noexcept;
-    ~KmlImportPlugin() noexcept override;
+    ~KmlImportPlugin() override;
 
 protected:
     FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;
