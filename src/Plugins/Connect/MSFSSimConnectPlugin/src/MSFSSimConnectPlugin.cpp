@@ -144,18 +144,12 @@ MSFSSimConnectPlugin::MSFSSimConnectPlugin(QObject *parent) noexcept
       d(std::make_unique<SkyConnectPrivate>())
 {
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "MSFSSimConnectPlugin::MSFSSimConnectPlugin: CREATED";
-#endif
 }
 
 MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
 {
     freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
     close();
-#ifdef DEBUG
-    qDebug() << "MSFSSimConnectPlugin::~MSFSSimConnectPlugin: DELETED";
-#endif
 }
 
 bool MSFSSimConnectPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
@@ -620,6 +614,9 @@ bool MSFSSimConnectPlugin::reconnectWithSim() noexcept
 bool MSFSSimConnectPlugin::close() noexcept
 {
     HRESULT result {S_OK};
+    if (d->simConnectAi != nullptr) {
+        d->simConnectAi = nullptr;
+    }
     if (d->simConnectHandle != nullptr) {
         result = ::SimConnect_Close(d->simConnectHandle);
         d->simConnectHandle = nullptr;
