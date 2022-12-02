@@ -31,6 +31,7 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
+#include <Persistence/Service/LocationService.h>
 #include "PluginManagerLib.h"
 
 struct LocationImportPluginBaseSettingsPrivate;
@@ -48,6 +49,9 @@ public:
 
     bool isImportDirectoryEnabled() const noexcept;
     void setImportDirectoryEnabled(bool enabled) noexcept;
+
+    LocationService::Mode getImportMode() const noexcept;
+    void setImportMode(LocationService::Mode mode) noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
