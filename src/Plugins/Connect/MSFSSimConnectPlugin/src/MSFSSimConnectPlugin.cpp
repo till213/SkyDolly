@@ -770,7 +770,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 
         case ::Event::Pause:
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatchSIMCONNECT_RECV_ID_EVENT: PAUSE event:" << evt->dwData;
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: PAUSE event:" << evt->dwData;
 #endif
             // It seems that the pause event is currently only triggered by selecting "Pause Simulation"
             // in the developer mode (FS 2020), but neither when "active pause" is selected nor when ESC
