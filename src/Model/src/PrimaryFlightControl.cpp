@@ -41,7 +41,6 @@ PrimaryFlightControl::PrimaryFlightControl(const AircraftInfo &aircraftInfo) noe
 
 PrimaryFlightControlData PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    PrimaryFlightControlData primaryFlightControlData;
     const PrimaryFlightControlData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
     const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
@@ -73,17 +72,20 @@ PrimaryFlightControlData PrimaryFlightControl::interpolate(std::int64_t timestam
         }
 
         if (p1 != nullptr) {
-            primaryFlightControlData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
-            primaryFlightControlData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
-            primaryFlightControlData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
-            primaryFlightControlData.timestamp = adjustedTimestamp;
+            m_currentData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
+            m_currentData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
+            m_currentData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
+            m_currentData.timestamp = adjustedTimestamp;
+        } else {
+            // No recorded data, or the timestamp exceeds the timestamp of the last recorded data
+            m_currentData.reset();
         }
 
         setCurrentIndex(currentIndex);
         setCurrentTimestamp(adjustedTimestamp);
         setCurrentAccess(access);
     }
-    return primaryFlightControlData;
+    return m_currentData;
 }
 
 template class AbstractComponent<PrimaryFlightControlData>;

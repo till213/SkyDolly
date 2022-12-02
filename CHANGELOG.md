@@ -34,6 +34,7 @@
 - Correct country name of Qatar
 - Prevent teleportation by double-click on location ID during replay
 - Fixed the TAB order in the Logbook and Location module
+- AI aircraft data structures are now properly removed upon disconnect from MSFS: AI aircraft are hence properly re-created when re-connecting to the newly launched MSFS
 
 ### Under The Hood
 - Rule of Zero, copy-and-swap [[Back to Basics: RAII and the Rule of Zero - Arthur O'Dwyer - CppCon 2019](https://www.youtube.com/watch?v=7Qgd9B1KuMQ)]

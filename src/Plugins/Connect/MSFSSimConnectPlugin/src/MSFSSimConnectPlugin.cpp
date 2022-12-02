@@ -144,18 +144,12 @@ MSFSSimConnectPlugin::MSFSSimConnectPlugin(QObject *parent) noexcept
       d(std::make_unique<SkyConnectPrivate>())
 {
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "MSFSSimConnectPlugin::MSFSSimConnectPlugin: CREATED";
-#endif
 }
 
 MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
 {
     freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
     close();
-#ifdef DEBUG
-    qDebug() << "MSFSSimConnectPlugin::~MSFSSimConnectPlugin: DELETED";
-#endif
 }
 
 bool MSFSSimConnectPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
@@ -200,6 +194,9 @@ bool MSFSSimConnectPlugin::onSimulationEvent(SimulationEvent event) const noexce
         break;
     case SimulationEvent::EngineStop:
         result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        break;
+    case SimulationEvent::None:
+        // Nothing to do
         break;
     }
     return result == S_OK;
@@ -617,6 +614,9 @@ bool MSFSSimConnectPlugin::reconnectWithSim() noexcept
 bool MSFSSimConnectPlugin::close() noexcept
 {
     HRESULT result {S_OK};
+    if (d->simConnectAi != nullptr) {
+        d->simConnectAi = nullptr;
+    }
     if (d->simConnectHandle != nullptr) {
         result = ::SimConnect_Close(d->simConnectHandle);
         d->simConnectHandle = nullptr;
@@ -767,7 +767,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 
         case ::Event::Pause:
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatchSIMCONNECT_RECV_ID_EVENT: PAUSE event:" << evt->dwData;
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: PAUSE event:" << evt->dwData;
 #endif
             // It seems that the pause event is currently only triggered by selecting "Pause Simulation"
             // in the developer mode (FS 2020), but neither when "active pause" is selected nor when ESC
