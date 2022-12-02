@@ -6,7 +6,6 @@
 - Ensure that the proper project version has been set in the main [CMakeLists.txt](CMakeLists.txt)
   * E.g. `VERSION 0.12.0`
 - Ensure that the copyright year in [SkyDolly.rc.in](res/SkyDolly.rc.in) and (Info.plist.in)[res/Info.plist.in] is up to date
-
 - Choose and set a suitable "version codename" in [Version.cpp](src/Kernel/src/Version.cpp)
 - Update the "preview dialog" message in [MainWindow.cpp](src/UserInterface/src/MainWindow.cpp)
 - Adjust the `PreviewInfoDialogBase` in [Settings.cpp](src/Kernel/src/Settings.cpp) in order to show the preview dialog three times
