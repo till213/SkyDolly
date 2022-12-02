@@ -64,7 +64,7 @@
      <item row="0" column="1">
       <widget class="QComboBox" name="importModeComboBox">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Defines how existing positions are modified:&lt;br/&gt;&lt;br/&gt;• Ignore: nothing is changed&lt;br/&gt;• Update: existing positions are modified&lt;br/&gt;• Insert: new positions are added (existing positions are left unmodified)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Defines how existing locations are modified:&lt;br/&gt;&lt;br/&gt;• Ignore: nothing is changed&lt;br/&gt;• Update: existing locations are modified&lt;br/&gt;• Insert: new locations are added (existing locations are left unmodified)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
