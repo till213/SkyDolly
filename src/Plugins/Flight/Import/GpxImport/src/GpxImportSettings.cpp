@@ -194,14 +194,14 @@ void GpxImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     bool ok {true};
     int enumeration = valuesByKey.at(::WaypointSelectionKey).toInt(&ok);
     if (ok) {
-        d->waypointSelection = static_cast<GPXElement >(enumeration);
+        d->waypointSelection = static_cast<GPXElement>(enumeration);
     } else {
         d->waypointSelection = DefaultWaypointSelection;
     }
 
     enumeration = valuesByKey.at(::PositionSelectionKey).toInt(&ok);
     if (ok) {
-        d->positionSelection = static_cast<GPXElement >(enumeration);
+        d->positionSelection = static_cast<GPXElement>(enumeration);
     } else {
         d->positionSelection = DefaultPositionSelection;
     }

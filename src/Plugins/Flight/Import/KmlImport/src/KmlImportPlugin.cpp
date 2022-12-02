@@ -32,9 +32,6 @@
 #include <QDateTime>
 #include <QTimeZone>
 #include <QFlags>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Unit.h>
 #include <Model/Flight.h>
@@ -65,18 +62,9 @@ struct KmlImportPluginPrivate
 
 KmlImportPlugin::KmlImportPlugin() noexcept
     : d(std::make_unique<KmlImportPluginPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "KmlImportPlugin::KmlImportPlugin: PLUGIN LOADED";
-#endif
-}
+{}
 
-KmlImportPlugin::~KmlImportPlugin() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "KmlImportPlugin::~KmlImportPlugin: PLUGIN UNLOADED";
-#endif
-}
+KmlImportPlugin::~KmlImportPlugin() = default;
 
 // PROTECTED
 

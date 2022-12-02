@@ -78,18 +78,9 @@ struct KmlExportPluginPrivate
 
 KmlExportPlugin::KmlExportPlugin() noexcept
     : d(std::make_unique<KmlExportPluginPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "KmlExportPlugin::KmlExportPlugin: PLUGIN LOADED";
-#endif
-}
+{}
 
-KmlExportPlugin::~KmlExportPlugin()
-{
-#ifdef DEBUG
-    qDebug() << "KmlExportPlugin::~KmlExportPlugin: PLUGIN UNLOADED";
-#endif
-}
+KmlExportPlugin::~KmlExportPlugin() = default;
 
 // PROTECTED
 

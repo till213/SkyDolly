@@ -6,64 +6,78 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>561</width>
-    <height>170</height>
+    <width>559</width>
+    <height>206</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Import</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="fileLabel">
-       <property name="text">
-        <string>Path:</string>
+  <layout class="QFormLayout" name="formLayout_2">
+   <item row="0" column="0">
+    <widget class="QLabel" name="fileLabel">
+     <property name="text">
+      <string>Path:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLineEdit" name="pathLineEdit">
+       <property name="minimumSize">
+        <size>
+         <width>400</width>
+         <height>0</height>
+        </size>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLineEdit" name="pathLineEdit">
-         <property name="minimumSize">
-          <size>
-           <width>400</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="fileSelectionPushButton">
-         <property name="text">
-          <string>Browse...</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="importDirectoryCheckBox">
-       <property name="toolTip">
-        <string>When checked then all files in the selected directory are imported. Otherwise the selected file is imported (only).</string>
-       </property>
+     <item>
+      <widget class="QPushButton" name="fileSelectionPushButton">
        <property name="text">
-        <string>Import directory</string>
+        <string>Browse...</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QCheckBox" name="importDirectoryCheckBox">
+     <property name="toolTip">
+      <string>When checked then all files in the selected directory are imported. Otherwise the selected file is imported (only).</string>
+     </property>
+     <property name="text">
+      <string>Import directory</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Existing locations:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="importModeComboBox">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Defines how existing positions are modified:&lt;br/&gt;&lt;br/&gt;• Ignore: nothing is changed&lt;br/&gt;• Update: existing positions are modified&lt;br/&gt;• Insert: new positions are added (existing positions are left unmodified)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0" colspan="2">
     <widget class="QGroupBox" name="optionGroupBox">
      <property name="title">
       <string>Options</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="4" column="0" colspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -76,7 +90,7 @@
      </property>
     </spacer>
    </item>
-   <item>
+   <item row="5" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="defaultButtonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

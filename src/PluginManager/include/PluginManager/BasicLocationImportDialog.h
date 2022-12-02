@@ -73,6 +73,7 @@ private slots:
 
     void onFileSelectionChanged() noexcept;
     void onImportDirectoryChanged(bool enable) noexcept;
+    void onImportModeChanged() noexcept;
     void onRestoreDefaults() noexcept;
 };
 

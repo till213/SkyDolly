@@ -833,9 +833,6 @@ void Settings::restore() noexcept
 Settings::Settings() noexcept
     : d(std::make_unique<SettingsPrivate>())
 {
-#ifdef DEBUG
-    qDebug() << "Settings::Settings: CREATED";
-#endif
     restore();
     frenchConnection();
     updateEgmFilePath();
@@ -843,9 +840,6 @@ Settings::Settings() noexcept
 
 Settings::~Settings()
 {
-#ifdef DEBUG
-    qDebug() << "Settings::~Settings: DELETED";
-#endif
     store();
 }
 
