@@ -38,6 +38,7 @@
 #include <Model/AircraftType.h>
 #include <Model/Location.h>
 #include <Persistence/Service/AircraftTypeService.h>
+#include "Kernel/Enum.h"
 #include "LocationImportPluginBaseSettings.h"
 #include "BasicLocationImportDialog.h"
 #include "ui_BasicLocationImportDialog.h"
@@ -108,6 +109,10 @@ void BasicLocationImportDialog::initBasicUi() noexcept
     Settings &settings = Settings::getInstance();
     ui->pathLineEdit->setText(QDir::toNativeSeparators(settings.getExportPath()));
     ui->importDirectoryCheckBox->setChecked(d->pluginSettings.isImportDirectoryEnabled());
+
+    ui->importModeComboBox->addItem(tr("Ignore"), Enum::underly(LocationService::Mode::Ignore));
+    ui->importModeComboBox->addItem(tr("Update"), Enum::underly(LocationService::Mode::Update));
+    ui->importModeComboBox->addItem(tr("Insert"), Enum::underly(LocationService::Mode::Insert));
 }
 
 void BasicLocationImportDialog::initOptionUi() noexcept
@@ -133,6 +138,8 @@ void BasicLocationImportDialog::frenchConnection() noexcept
             this, &BasicLocationImportDialog::onFileSelectionChanged);
     connect(ui->importDirectoryCheckBox, &QCheckBox::toggled,
             this, &BasicLocationImportDialog::onImportDirectoryChanged);
+    connect(ui->importModeComboBox, &QComboBox::currentIndexChanged,
+            this, &BasicLocationImportDialog::onImportModeChanged);
     connect(&d->pluginSettings, &LocationImportPluginBaseSettings::baseSettingsChanged,
             this, &BasicLocationImportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
@@ -153,6 +160,14 @@ void BasicLocationImportDialog::updateUi() noexcept
     } else {
         fileExists = fileInfo.isFile() && fileInfo.exists();
     }
+
+    const LocationService::Mode importMode = d->pluginSettings.getImportMode();
+    int currentIndex = 0;
+    while (currentIndex < ui->importModeComboBox->count() &&
+           static_cast<LocationService::Mode>(ui->importModeComboBox->itemData(currentIndex).toInt()) != importMode) {
+        ++currentIndex;
+    }
+    ui->importModeComboBox->setCurrentIndex(currentIndex);
 
     const bool enabled = fileExists;
     d->importButton->setEnabled(enabled);
@@ -204,6 +219,12 @@ void BasicLocationImportDialog::onFileSelectionChanged() noexcept
 void BasicLocationImportDialog::onImportDirectoryChanged(bool enable) noexcept
 {
     d->pluginSettings.setImportDirectoryEnabled(enable);
+}
+
+void BasicLocationImportDialog::onImportModeChanged() noexcept
+{
+    const LocationService::Mode mode = static_cast<LocationService::Mode>(ui->importModeComboBox->currentData().toInt());
+    d->pluginSettings.setImportMode(mode);
 }
 
 void BasicLocationImportDialog::onRestoreDefaults() noexcept

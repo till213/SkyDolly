@@ -25,21 +25,26 @@
 #include <memory>
 #include <string_view>
 
+#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
+#include <Persistence/Service/LocationService.h>
 #include "LocationImportPluginBaseSettings.h"
 
 namespace
 {
     // Keys
     constexpr const char *ImportDirectoryEnabledKey {"ImportDirectoryEnabled"};
+    constexpr const char *ImportModeKey {"ImportMode"};
 
     // Defaults
-constexpr bool DefaultImportDirectoryEnabled {false};
+    constexpr bool DefaultImportDirectoryEnabled {false};
+    constexpr LocationService::Mode DefaultImportMode {LocationService::Mode::Ignore};
 }
 
 struct LocationImportPluginBaseSettingsPrivate
 {
     bool importDirectoryEnabled {::DefaultImportDirectoryEnabled};
+    LocationService::Mode importMode;
 };
 
 // PUBLIC
@@ -63,12 +68,29 @@ void LocationImportPluginBaseSettings::setImportDirectoryEnabled(bool enabled) n
     }
 }
 
+LocationService::Mode LocationImportPluginBaseSettings::getImportMode() const noexcept
+{
+    return d->importMode;
+}
+
+void LocationImportPluginBaseSettings::setImportMode(LocationService::Mode mode) noexcept
+{
+    if (d->importMode != mode) {
+        d->importMode = mode;
+        emit baseSettingsChanged();
+    }
+}
+
 void LocationImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ImportDirectoryEnabledKey;
     keyValue.second = d->importDirectoryEnabled;
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::ImportModeKey;
+    keyValue.second = Enum::underly(d->importMode);
     keyValues.push_back(keyValue);
 
     addSettingsExtn(keyValues);
@@ -82,12 +104,24 @@ void LocationImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
     keyValue.second = ::DefaultImportDirectoryEnabled;
     keysWithDefaults.push_back(keyValue);
 
+    keyValue.first = ::ImportModeKey;
+    keyValue.second = Enum::underly(::DefaultImportMode);
+    keysWithDefaults.push_back(keyValue);
+
     addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
 void LocationImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->importDirectoryEnabled = valuesByKey.at(::ImportDirectoryEnabledKey).toBool();
+    bool ok {true};
+    int enumeration = valuesByKey.at(::ImportModeKey).toInt(&ok);
+    if (ok) {
+        d->importMode = static_cast<LocationService::Mode>(enumeration);
+    } else {
+        d->importMode = DefaultImportMode;
+    }
+
     emit baseSettingsChanged();
 
     restoreSettingsExtn(valuesByKey);
@@ -96,6 +130,7 @@ void LocationImportPluginBaseSettings::restoreSettings(const Settings::ValuesByK
 void LocationImportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
+    d->importMode = ::DefaultImportMode;
     emit baseSettingsChanged();
 
     restoreDefaultsExtn();

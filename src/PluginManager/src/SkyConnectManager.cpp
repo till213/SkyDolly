@@ -417,18 +417,9 @@ SkyConnectManager::SkyConnectManager() noexcept
     : d(std::make_unique<skyConnectManagerPrivate>(this))
 {
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "SkyConnectManager::SkyConnectManager: CREATED";
-#endif
 }
 
-SkyConnectManager::~SkyConnectManager()
-{
-#ifdef DEBUG
-    qDebug() << "SkyConnectManager::~SkyConnectManager: DELETED";
-#endif
-}
-
+SkyConnectManager::~SkyConnectManager() = default;
 
 void SkyConnectManager::frenchConnection() noexcept
 {

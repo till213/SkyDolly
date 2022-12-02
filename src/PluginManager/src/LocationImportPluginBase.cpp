@@ -165,8 +165,8 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths, Loc
 
 bool LocationImportPluginBase::storeLocations(std::vector<Location> &locations, LocationService &locationService) const noexcept
 {
-    // TODO Make the mode a setting
-    const bool ok = locationService.storeAll(locations, LocationService::Mode::Update);
+    const LocationService::Mode mode = getPluginSettings().getImportMode();
+    const bool ok = locationService.storeAll(locations, mode);
     if (ok) {
          emit PersistenceManager::getInstance().locationsImported();
     }
