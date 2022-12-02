@@ -32,7 +32,7 @@
 
 ### Package
 - Create a new package folder, e.g. `SkyDolly-v0.12.0`
-- Copy all executables and libraries from the build `bin` folder into the new package folder (e.g. `SkyDolly-v0.12.0`)
+- Copy all executables and libraries from the build `bin` folder into the new package folder (e.g. simply `SkyDolly`)
 - Ensure that the following dependencies are in the package folder:
   * platforms/qwindows.dll
   * sqldrivers/sqlite.dll
@@ -47,6 +47,7 @@
   * SkyMathTest.exe, SkySearchTest.exe, ...
 - Ensure that the resources files are in the package folder:
   * Resources/geoids/egm2008-5.wld, egm2008-5.pgm. egm2008-5.pgm.aux.xml
+  * Resources/migr/Locations.csv
 
 ### Smoke Test
 - Launch SkyDolly.exe
