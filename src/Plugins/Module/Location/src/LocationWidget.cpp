@@ -491,12 +491,14 @@ void LocationWidget::updateTable() noexcept
         // Clear existing entries
         ui->locationTableWidget->setRowCount(0);
     }
+    updateLocationCount();
 }
 
 inline const QTableWidgetItem *LocationWidget::createRow(const Location &location) noexcept
 {
     const int row = ui->locationTableWidget->rowCount();
     ui->locationTableWidget->insertRow(row);
+    updateLocationCount();
     return initRow(location, row);
 }
 
@@ -702,6 +704,12 @@ inline void LocationWidget::updateRow(const Location &location, int row) noexcep
     // Engine event
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::engineColumn);
     item->setData(Qt::EditRole, QVariant::fromValue(location.engineEventId));
+}
+
+inline void LocationWidget::updateLocationCount() const noexcept
+{
+    const int locationCount = ui->locationTableWidget->rowCount();
+    ui->locationCountLabel->setText(tr("%1 locations", "Number of locations selected", locationCount).arg(locationCount));
 }
 
 void LocationWidget::teleportToLocation(int row) noexcept
