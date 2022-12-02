@@ -36,6 +36,8 @@ public:
     explicit Light(const AircraftInfo &aircraftInfo) noexcept;
 
     LightData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
+private:
+    mutable LightData m_currentData;
 };
 
 #endif // LIGHT_H

@@ -38,7 +38,7 @@ public:
     SecondaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 
 private:
-    mutable SecondaryFlightControlData m_previousSecondaryFlightControlData;
+    mutable SecondaryFlightControlData m_currentData;
 };
 
 #endif // SECONDARYFLIGHTCONTROL_H

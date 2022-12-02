@@ -40,7 +40,7 @@ public:
     AircraftHandleData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 
 private:
-    mutable AircraftHandleData m_previousAircraftHandleData;
+    mutable AircraftHandleData m_currentData;
 };
 
 #endif // AIRCRAFTHANDLE_H
