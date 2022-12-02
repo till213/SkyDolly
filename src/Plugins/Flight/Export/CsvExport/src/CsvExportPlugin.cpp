@@ -27,9 +27,6 @@
 // Implements the % operator for string concatenation
 #include <QStringBuilder>
 #include <QString>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -53,18 +50,9 @@ public:
 
 CsvExportPlugin::CsvExportPlugin() noexcept
     : d(std::make_unique<CsvExportPluginPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "CsvExportPlugin::CsvExportPlugin: PLUGIN LOADED";
-#endif
-}
+{}
 
-CsvExportPlugin::~CsvExportPlugin()
-{
-#ifdef DEBUG
-    qDebug() << "CsvExportPlugin::~CsvExportPlugin: PLUGIN UNLOADED";
-#endif
-}
+CsvExportPlugin::~CsvExportPlugin() = default;
 
 // PROTECTED
 

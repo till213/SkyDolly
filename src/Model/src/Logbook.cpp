@@ -27,9 +27,6 @@
 #include <mutex>
 
 #include <QObject>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include "Logbook.h"
 
@@ -71,17 +68,9 @@ Logbook::Logbook() noexcept
     : QObject(),
       d(std::make_unique<LogbookPrivate>())
 {
-#ifdef DEBUG
-    qDebug() << "Logbook::Logbook: CREATED";
-#endif
     // Logbook may support several flights, but for now there will be always
     // exactly one
     d->flights.push_back(std::make_unique<Flight>());
 }
 
-Logbook::~Logbook()
-{
-#ifdef DEBUG
-    qDebug() << "Logbook::~Logbook: DELETED";
-#endif
-}
+Logbook::~Logbook() = default;
