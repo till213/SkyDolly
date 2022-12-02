@@ -66,9 +66,8 @@ namespace
 
 struct ModuleManagerPrivate
 {
-    ModuleManagerPrivate(QLayout &theLayout) noexcept
-        : layout(theLayout),
-          moduleActionGroup(new QActionGroup(&layout))
+    ModuleManagerPrivate(QLayout &layout) noexcept
+        : layout(layout)
     {
         pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
@@ -93,7 +92,7 @@ struct ModuleManagerPrivate
     std::unique_ptr<QPluginLoader> pluginLoader {std::make_unique<QPluginLoader>()};
     QDir pluginsDirectoryPath;
     QLayout &layout;
-    QActionGroup *moduleActionGroup;
+    QActionGroup *moduleActionGroup {new QActionGroup(&layout)};
     ModuleIntf *activeModule {nullptr};
     QUuid activeModuleUuid;
     // Key: uuid - value: plugin path

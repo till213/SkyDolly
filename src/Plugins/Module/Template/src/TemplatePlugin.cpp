@@ -26,9 +26,6 @@
 
 #include <QObject>
 #include <QCoreApplication>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include "TemplateWidget.h"
 #include "TemplatePlugin.h"
@@ -47,18 +44,9 @@ struct TemplatePluginPrivate
 TemplatePlugin::TemplatePlugin(QObject *parent) noexcept
     : AbstractModule(parent),
       d(std::make_unique<TemplatePluginPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "TemplatePlugin::TemplatePlugin: LOADED";
-#endif
-}
+{}
 
-TemplatePlugin::~TemplatePlugin()
-{
-#ifdef DEBUG
-    qDebug() << "TemplatePlugin::~TemplatePlugin: UNLOADED";
-#endif
-}
+TemplatePlugin::~TemplatePlugin() = default;
 
 QString TemplatePlugin::getModuleName() const noexcept
 {

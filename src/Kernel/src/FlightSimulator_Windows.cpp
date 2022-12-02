@@ -40,7 +40,7 @@
 // and compile with -DPSAPI_VERSION=1
 static bool isProcessRunning(DWORD pid, QStringView processName)
 {
-    TCHAR actualProcessName[MAX_PATH] = TEXT("<unknown>");
+    TCHAR actualProcessName[MAX_PATH] {TEXT("<unknown>")};
 
     // Get a handle to the process
     HANDLE processHandle = ::OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
@@ -60,8 +60,10 @@ static bool isProcessRunning(DWORD pid, QStringView processName)
     QString actualName = QString::fromLocal8Bit(actualProcessName);
 #endif
 
-    // Release the handle to the process
-    CloseHandle(processHandle);
+    if (processHandle != nullptr) {
+        // Release the handle to the process
+        CloseHandle(processHandle);
+    }
 
     return actualName == processName;
 }

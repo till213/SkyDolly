@@ -290,18 +290,11 @@ QString PersistenceManager::createBackupPathIfNotExists(const QString &relativeO
 PersistenceManager::PersistenceManager() noexcept
     : QObject(),
       d(std::make_unique<PersistenceManagerPrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "PersistenceManager::PersistenceManager: CREATED";
-#endif
-}
+{}
 
 PersistenceManager::~PersistenceManager()
 {
     disconnectFromLogbook();
-#ifdef DEBUG
-    qDebug() << "PersistenceManager::~PersistenceManager: DELETED";
-#endif
 }
 
 bool PersistenceManager::connectDb(const QString &logbookPath) noexcept
