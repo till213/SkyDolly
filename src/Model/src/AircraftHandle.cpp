@@ -41,7 +41,6 @@ AircraftHandle::AircraftHandle(const AircraftInfo &aircraftInfo) noexcept
 
 AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    AircraftHandleData aircraftHandleData;
     const AircraftHandleData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
     const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
@@ -73,36 +72,31 @@ AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, TimeVaria
         }
 
         if (p1 != nullptr) {
-            aircraftHandleData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
-            aircraftHandleData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
-            aircraftHandleData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
-            aircraftHandleData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
-            aircraftHandleData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
-            aircraftHandleData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);
-            aircraftHandleData.rightWingFolding = SkyMath::interpolateLinear(p1->rightWingFolding, p2->rightWingFolding, tn);
-            aircraftHandleData.gearHandlePosition = p1->gearHandlePosition;
-            aircraftHandleData.smokeEnabled = p1->smokeEnabled;
-            aircraftHandleData.timestamp = adjustedTimestamp;
-
+            m_currentData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
+            m_currentData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
+            m_currentData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
+            m_currentData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
+            m_currentData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
+            m_currentData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);
+            m_currentData.rightWingFolding = SkyMath::interpolateLinear(p1->rightWingFolding, p2->rightWingFolding, tn);
+            m_currentData.gearHandlePosition = p1->gearHandlePosition;
+            m_currentData.smokeEnabled = p1->smokeEnabled;
+            m_currentData.timestamp = adjustedTimestamp;
+        } else {
             // Certain aircraft override the CANOPY OPEN, so values need to be repeatedly set
             if (Settings::getInstance().isRepeatCanopyOpenEnabled()) {
-                // We do that my storing the previous values (when the canopy is "open")...
-                m_previousAircraftHandleData = aircraftHandleData;
+                m_currentData.timestamp = adjustedTimestamp;
             } else {
-                // "Repeat values" setting disabled
-                m_previousAircraftHandleData = AircraftHandleData();
+                // No recorded data (and no repeat), or the timestamp exceeds the timestamp of the last recorded data
+                m_currentData.reset();
             }
-        } else if (!m_previousAircraftHandleData.isNull()) {
-            // ... and send the previous values again
-            aircraftHandleData = m_previousAircraftHandleData;
-            aircraftHandleData.timestamp = adjustedTimestamp;
         }
 
         setCurrentIndex(currentIndex);
         setCurrentTimestamp(adjustedTimestamp);
         setCurrentAccess(access);
     }
-    return aircraftHandleData;
+    return m_currentData;
 }
 
 template class AbstractComponent<AircraftHandleData>;

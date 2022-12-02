@@ -329,7 +329,7 @@ void FormationWidget::frenchConnection() noexcept
     connect(d->positionButtonGroup, &QButtonGroup::idClicked,
             this, &FormationWidget::onRelativePositionChanged);
     connect(ui->replayModeComboBox, &QComboBox::activated,
-            this, &FormationWidget::updateReplayMode);
+            this, &FormationWidget::onReplayModeSelected);
 
     // Time offset
     connect(ui->fastBackwardOffsetPushButton, &QPushButton::clicked,
@@ -926,7 +926,7 @@ void FormationWidget::onRelativeDistanceChanged() noexcept
     onRelativePositionChanged();
 }
 
-void FormationWidget::updateReplayMode(int index) noexcept
+void FormationWidget::onReplayModeSelected(int index) noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     switch(index) {
@@ -940,7 +940,6 @@ void FormationWidget::updateReplayMode(int index) noexcept
         skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::FlyWithFormation);
         break;
     }
-    updateUserAircraftPosition(skyConnectManager.getReplayMode());
     updateUi();
 }
 
