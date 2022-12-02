@@ -36,6 +36,8 @@ public:
     explicit Engine(const AircraftInfo &aircraftInfo) noexcept;
 
     EngineData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
+private:
+    mutable EngineData m_currentData;
 };
 
 #endif // ENGINE_H

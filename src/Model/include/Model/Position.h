@@ -36,6 +36,9 @@ public:
     explicit Position(const AircraftInfo &aircraftInfo) noexcept;
 
     PositionData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
+
+private:
+    mutable PositionData m_currentData;
 };
 
 #endif // POSITION_H
