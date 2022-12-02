@@ -201,6 +201,9 @@ bool MSFSSimConnectPlugin::onSimulationEvent(SimulationEvent event) const noexce
     case SimulationEvent::EngineStop:
         result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         break;
+    case SimulationEvent::None:
+        // Nothing to do
+        break;
     }
     return result == S_OK;
 }

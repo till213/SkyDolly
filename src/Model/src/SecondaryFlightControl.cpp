@@ -41,7 +41,6 @@ SecondaryFlightControl::SecondaryFlightControl(const AircraftInfo &aircraftInfo)
 
 SecondaryFlightControlData SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    SecondaryFlightControlData secondaryFlightControlData;
     const SecondaryFlightControlData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
     const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
@@ -73,35 +72,30 @@ SecondaryFlightControlData SecondaryFlightControl::interpolate(std::int64_t time
         }
 
         if (p1 != nullptr) {
-            secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPosition, p2->leadingEdgeFlapsLeftPosition, tn);
-            secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPosition, p2->leadingEdgeFlapsRightPosition, tn);
-            secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPosition, p2->trailingEdgeFlapsLeftPosition, tn);
-            secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPosition, p2->trailingEdgeFlapsRightPosition, tn);
-            secondaryFlightControlData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
+            m_currentData.leadingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPosition, p2->leadingEdgeFlapsLeftPosition, tn);
+            m_currentData.leadingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPosition, p2->leadingEdgeFlapsRightPosition, tn);
+            m_currentData.trailingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPosition, p2->trailingEdgeFlapsLeftPosition, tn);
+            m_currentData.trailingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPosition, p2->trailingEdgeFlapsRightPosition, tn);
+            m_currentData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
 
             // No interpolation for flaps handle position
-            secondaryFlightControlData.flapsHandleIndex = p1->flapsHandleIndex;
-            // Certain aircraft automatically override the FLAPS HANDLE INDEX, so values need to be repeatedly set
-            if (Settings::getInstance().isRepeatFlapsHandleIndexEnabled()) {
-                // We do that my storing the previous values (when the flaps are set)...
-                m_previousSecondaryFlightControlData = secondaryFlightControlData;
+            m_currentData.flapsHandleIndex = p1->flapsHandleIndex;
+            m_currentData.timestamp = adjustedTimestamp;
+        } else {
+            // Certain aircraft might override the FLAPS HANDLE INDEX, so values need to be repeatedly set
+            if (Settings::getInstance().isRepeatCanopyOpenEnabled()) {
+                m_currentData.timestamp = adjustedTimestamp;
             } else {
-                // "Repeat values" setting disabled
-                m_previousSecondaryFlightControlData = SecondaryFlightControlData();
+                // No recorded data (and no repeat), or the timestamp exceeds the timestamp of the last recorded data
+                m_currentData.reset();
             }
-
-            secondaryFlightControlData.timestamp = adjustedTimestamp;
-        } else if (!m_previousSecondaryFlightControlData.isNull()) {
-            // ... and send the previous values again (for as long as the flaps are extracted)
-            secondaryFlightControlData = m_previousSecondaryFlightControlData;
-            secondaryFlightControlData.timestamp = adjustedTimestamp;
         }
 
         setCurrentIndex(currentIndex);
         setCurrentTimestamp(adjustedTimestamp);
         setCurrentAccess(access);
     }
-    return secondaryFlightControlData;
+    return m_currentData;
 }
 
 template class AbstractComponent<SecondaryFlightControlData>;

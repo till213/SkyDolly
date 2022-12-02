@@ -36,6 +36,9 @@ public:
     explicit PrimaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
 
     PrimaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
+
+private:
+    mutable PrimaryFlightControlData m_currentData;
 };
 
 #endif // PRIMARYFLIGHTCONTROL_H
