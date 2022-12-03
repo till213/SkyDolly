@@ -49,19 +49,11 @@ namespace
 
 struct GpxImportSettingsPrivate
 {
-    GpxImportSettingsPrivate()
-        : waypointSelection(::DefaultWaypointSelection),
-          positionSelection(::DefaultPositionSelection),
-          defaultAltitude(::DefaultAltitude),
-          defaultSpeed(::DefaultSpeed),
-          convertAltitude(::DefaultConvertAltitude)
-    {}
-
-    GpxImportSettings::GPXElement waypointSelection;
-    GpxImportSettings::GPXElement positionSelection;
-    int defaultAltitude;
-    int defaultSpeed;
-    bool convertAltitude;
+    GpxImportSettings::GPXElement waypointSelection {::DefaultWaypointSelection};
+    GpxImportSettings::GPXElement positionSelection {::DefaultPositionSelection};
+    int defaultAltitude {::DefaultAltitude};
+    int defaultSpeed {::DefaultSpeed};
+    bool convertAltitude {::DefaultConvertAltitude};
 };
 
 // PUBLIC

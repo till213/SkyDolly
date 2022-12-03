@@ -30,6 +30,7 @@
 #include <Kernel/Settings.h>
 #include <Model/Enumeration.h>
 #include <Persistence/Service/EnumerationService.h>
+#include <Persistence/PersistedEnumerationItem.h>
 #include "CsvLocationImportSettings.h"
 
 namespace
@@ -46,17 +47,12 @@ namespace
 
 struct CsvLocationImportSettingsPrivate
 {
-    CsvLocationImportSettingsPrivate()
-    {
-        EnumerationService enumerationService;
-        Enumeration countryEnumeration = enumerationService.getEnumerationByName(EnumerationService::Country);
-        worldCountryId = countryEnumeration.getItemBySymId(EnumerationService::CountryWorldSymId).id;
-    }
     CsvLocationImportSettings::Format format {::DefaultFormat};
-    std::int64_t worldCountryId {Const::InvalidId};
-    std::int64_t defaultCountryId {worldCountryId};
+    std::int64_t defaultCountryId {WorldCountryId};
     int defaultAltitude {Const::DefaultAltitude};
     int defaultIndicatedAirspeed {Const::DefaultIndicatedAirspeed};
+
+    static inline std::int64_t WorldCountryId {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
 };
 
 // PUBLIC
@@ -151,7 +147,7 @@ void CsvLocationImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::DefaultCountryKey;
-    keyValue.second = QVariant::fromValue(d->worldCountryId);
+    keyValue.second = QVariant::fromValue(d->WorldCountryId);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::DefaultAltitudeKey;
@@ -177,7 +173,7 @@ void CsvLocationImportSettings::restoreSettingsExtn(const Settings::ValuesByKey 
     if (ok) {
         d->defaultCountryId = defaultCountryId;
     } else {
-        d->defaultCountryId = d->worldCountryId;
+        d->defaultCountryId = d->WorldCountryId;
     }
 
     const int defaultAltitude = valuesByKey.at(::DefaultAltitudeKey).toInt(&ok);
@@ -200,7 +196,7 @@ void CsvLocationImportSettings::restoreSettingsExtn(const Settings::ValuesByKey 
 void CsvLocationImportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
-    d->defaultCountryId = d->worldCountryId;
+    d->defaultCountryId = d->WorldCountryId;
     d->defaultAltitude = Const::DefaultAltitude;
     d->defaultIndicatedAirspeed = Const::DefaultIndicatedAirspeed;
 

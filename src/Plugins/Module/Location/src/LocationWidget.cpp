@@ -114,9 +114,9 @@ struct LocationWidgetPrivate
     const std::int64_t SystemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
     const std::int64_t UserLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
     const std::int64_t ImportLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
-    const std::int64_t NoneLocationCategory {PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id()};
-    const std::int64_t WorldCountry {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
-    const std::int64_t KeepEngineEvent {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
+    const std::int64_t NoneLocationCategoryId {PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id()};
+    const std::int64_t WorldCountryId {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
+    const std::int64_t KeepEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
 
     Unit unit;
     // Columns are only auto-resized the first time the table is loaded
@@ -182,10 +182,10 @@ void LocationWidget::addLocation(Location newLocation)
         newLocation.typeId = d->UserLocationTypeId;
     }
     if (newLocation.categoryId == Const::InvalidId) {
-        newLocation.categoryId = d->NoneLocationCategory;
+        newLocation.categoryId = d->NoneLocationCategoryId;
     }
     if (newLocation.countryId == Const::InvalidId) {
-        newLocation.countryId = d->WorldCountry;
+        newLocation.countryId = d->WorldCountryId;
     }
     if (newLocation.engineEventId == Const::InvalidId) {
         newLocation.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
@@ -252,10 +252,10 @@ void LocationWidget::initUi() noexcept
     // Search
     ui->categoryComboBox->setEnumerationName(EnumerationService::LocationCategory);
     ui->categoryComboBox->setEditable(true);
-    ui->categoryComboBox->setCurrentId(d->NoneLocationCategory);
+    ui->categoryComboBox->setCurrentId(d->NoneLocationCategoryId);
     ui->countryComboBox->setEnumerationName(EnumerationService::Country);
     ui->countryComboBox->setEditable(true);
-    ui->countryComboBox->setCurrentId(d->WorldCountry);
+    ui->countryComboBox->setCurrentId(d->WorldCountryId);
     ui->searchLineEdit->setPlaceholderText(tr("Title, description, identifier"));
     // Make sure that shortcuts are initially accepted
     ui->searchLineEdit->clearFocus();
@@ -326,7 +326,7 @@ void LocationWidget::initUi() noexcept
     ui->defaultIndicatedAirspeedSpinBox->setValue(Const::DefaultIndicatedAirspeed);
     ui->defaultIndicatedAirspeedSpinBox->setSuffix(tr(" knots"));
     ui->defaultEngineEventComboBox->setEnumerationName(EnumerationService::EngineEvent);
-    ui->defaultEngineEventComboBox->setCurrentId(d->KeepEngineEvent);
+    ui->defaultEngineEventComboBox->setCurrentId(d->KeepEngineEventId);
     ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);    
 
     ui->pitchSpinBox->setMinimum(::MinimumPitch);
@@ -838,7 +838,7 @@ void LocationWidget::updateEditUi() noexcept
 void LocationWidget::onCategoryChanged() noexcept
 {
     d->locationSelector.categoryId = ui->categoryComboBox->getCurrentId();
-    if (d->locationSelector.categoryId == d->NoneLocationCategory) {
+    if (d->locationSelector.categoryId == d->NoneLocationCategoryId) {
         d->locationSelector.categoryId = Const::InvalidId;
     }
     updateTable();
@@ -847,7 +847,7 @@ void LocationWidget::onCategoryChanged() noexcept
 void LocationWidget::onCountryChanged() noexcept
 {
     d->locationSelector.countryId = ui->countryComboBox->getCurrentId();
-    if (d->locationSelector.countryId == d->WorldCountry) {
+    if (d->locationSelector.countryId == d->WorldCountryId) {
         d->locationSelector.countryId = Const::InvalidId;
     }
     updateTable();
