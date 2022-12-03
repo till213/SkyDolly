@@ -16,7 +16,7 @@ There are various methods for computing [SHA-2](https://en.wikipedia.org/wiki/SH
 Example:
 
 ```
-PS C:\path\to\download\folder> Get-FileHash .\SkyDolly-v0.10.0.zip
+PS C:\path\to\download\folder> Get-FileHash .\SkyDolly-v0.13.0.zip
 ```
 
 Once the checksum has been calculated compare it with the corresponding checksum published below. If you have the slightest mismatch:
@@ -25,6 +25,12 @@ Once the checksum has been calculated compare it with the corresponding checksum
 - If the mismatch persists: don't use your copy! It is not identical to the one originally released on either [GitHub.com](https://github.com/till213/SkyDolly/releases) or [flightsim.to](https://flightsim.to/file/9067/sky-dolly).
 
 ## Checksums
+
+### v0.13
+
+Algorithm | Hash                                                             | File
+----------|------------------------------------------------------------------|---------------------
+SHA256    | 4C04AA0AD081D38A7C3CC042109D341B76CC92C165FA312CD8BCD832FCCB6BFB | SkyDolly-v0.13.0.zip
 
 ### v0.12
 
