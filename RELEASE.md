@@ -100,7 +100,7 @@ Description template:
 
 ## Climb
 - Fetch the new tag: `git pull`
-- Create a bug fix branch, e.g.: `git branch 0.13.0`
+- Create a bug fix branch, e.g.: `git branch 0.13.0`, `git checkout 0.13.0`
 - Bump the version to e.g. `0.13.1` in the main [CMakeLists.txt](CMakeLists.txt)
 - Commit, e.g. `git commit -m "Bump version to 0.13.1"`
 - Push, e.g. `git push --set-upstream origin 0.13.0`
