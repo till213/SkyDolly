@@ -15,6 +15,7 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 - Adjustable replay speed ("slow motion", "timelapse"), replay loop
 - Position, velocity and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
 - Plugin architecture with various import/export plugins (CSV, GPX, IGC, KML)
+- Location module with over 100 default locations and import/export functionality
 - Database (SQLite) based persistence ("logbook")
 
 Watch the (preview) release trailer on [YouTube](https://www.youtube.com/watch?v=_n4qRtm78_I):
