@@ -4,12 +4,12 @@
 ## Preflight
 ### Version info
 - Ensure that the proper project version has been set in the main [CMakeLists.txt](CMakeLists.txt)
-  * E.g. `VERSION 0.12.0`
+  * E.g. `VERSION 0.13.0`
 - Ensure that the copyright year in [SkyDolly.rc.in](res/SkyDolly.rc.in) and (Info.plist.in)[res/Info.plist.in] is up to date
 - Choose and set a suitable "version codename" in [Version.cpp](src/Kernel/src/Version.cpp)
 - Update the "preview dialog" message in [MainWindow.cpp](src/UserInterface/src/MainWindow.cpp)
 - Adjust the `PreviewInfoDialogBase` in [Settings.cpp](src/Kernel/src/Settings.cpp) in order to show the preview dialog three times
-- Adjust the _Latest (pre-)release: Sky Dolly 0.12.0_ in [README.md](README.md)
+- Adjust the _Latest (pre-)release: Sky Dolly 0.13.0_ in [README.md](README.md)
 - Adjust the supported versions in [SECURITY.md](SECURITY.md)
 
 ### Settings
@@ -31,7 +31,7 @@
 - Repeat on macOS and Linux
 
 ### Package
-- Create a new package folder, e.g. `SkyDolly-v0.12.0`
+- Create a new package folder, e.g. `SkyDolly-v0.13.0`
 - Copy all executables and libraries from the build `bin` folder into the new package folder (e.g. simply `SkyDolly`)
 - Ensure that the following dependencies are in the package folder:
   * platforms/qwindows.dll
@@ -69,35 +69,41 @@
 - Open a Sky Dolly v0.6 logbook (create a copy first)
 
 ## Take-Off
-- ZIP the package folder (e.g. `SkyDolly-v0.12.0.zip`)
+- ZIP the package folder (e.g. `SkyDolly-v0.13.0.zip`)
 
 ### GitHub
 - Create a new release (https://github.com/till213/SkyDolly/releases/new)
-- Choose a tag, e.g. `v0.12.0`
+- Choose a tag, e.g. `v0.13.0`
 - Ensure that _Target_ is set to `main`
-- Choose a title, e.g. `Sky Dolly 0.12.0`
+- Choose a title, e.g. `Sky Dolly 0.13.0`
 - Provide a description (summary of the changelog)
-- Attach the ZIP archive (e.g. `SkyDolly-v0.12.0.zip`)
+- Attach the ZIP archive (e.g. `SkyDolly-v0.13.0.zip`)
 - Check the _This is a pre-release_ option (as appropriate)
 
 Description template:
 
 > This release provides feature X.
-> * A new feature Y
-> * Another feature Z
+
+> New features:
+> - A new feature Y
+> - Another feature Z
+>
+> Improvements:
+> - Improvement 1
+> - Improvement 2
 >
 > Bug fixes:
-> * Bug fix A
-> * Bug fix B
+> - Bug fix A
+> - Bug fix B
 
 - Publish
 
 ## Climb
 - Fetch the new tag: `git pull`
-- Create a bug fix branch, e.g.: `git branch 0.12.0`
+- Create a bug fix branch, e.g.: `git branch 0.13.0`
 - Bump the version to e.g. `0.12.1` in the main [CMakeLists.txt](CMakeLists.txt)
 - Commit, e.g. `git commit -m "Bump version to 0.12.1"`
-- Push, e.g. `git push --set-upstream origin 0.12.0`
+- Push, e.g. `git push --set-upstream origin 0.13.0`
 - Switch back to _main_: `git checkout main`
 - Update the shasum in (SHASUM256.md)[SHASUM256.md]
 
