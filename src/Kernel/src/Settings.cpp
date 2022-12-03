@@ -58,13 +58,6 @@ namespace
 struct SettingsPrivate
 {
     SettingsPrivate() noexcept
-        : version(QCoreApplication::instance()->applicationVersion()),
-          backupBeforeMigration(DefaultBackupBeforeMigration),
-          recordingSampleRateValue(DefaultRecordingSampleRate),
-          windowStayOnTop(DefaultWindowStayOnTop),
-          minimalUi(DefaultMinimalUi),
-          moduleSelectorVisible(DefaultModuleSelectorVisible),
-          replaySpeedVisible(DefaultReplaySpeedVisible)
     {
         QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
         if (standardLocations.count() > 0) {
@@ -79,13 +72,13 @@ struct SettingsPrivate
     Version version;
 
     QString logbookPath;
-    bool backupBeforeMigration;
+    bool backupBeforeMigration {DefaultBackupBeforeMigration};
     QUuid skyConnectPluginUuid;
-    double recordingSampleRateValue;
-    bool windowStayOnTop;
-    bool minimalUi;
-    bool moduleSelectorVisible;
-    bool replaySpeedVisible;
+    double recordingSampleRateValue {DefaultRecordingSampleRate};
+    bool windowStayOnTop {DefaultWindowStayOnTop};
+    bool minimalUi {DefaultMinimalUi};
+    bool moduleSelectorVisible {DefaultModuleSelectorVisible};
+    bool replaySpeedVisible {DefaultReplaySpeedVisible};
     QByteArray windowGeometry;
     QByteArray windowState;
     QByteArray logbookState;
@@ -148,7 +141,7 @@ struct SettingsPrivate
     static constexpr bool DefaultMinimalUiNonEssentialButtonVisible {false};
     static constexpr bool DefaultMinimalUiReplaySpeedVisible {false};
 
-    static inline const QString DefaultImportAircraftType {QLatin1String("")};
+    static inline const QString DefaultImportAircraftType {};
 
     static constexpr int DefaultPreviewInfoDialogCount {3};
     static constexpr int PreviewInfoDialogBase {110};
@@ -700,7 +693,7 @@ void Settings::restore() noexcept
 {
     QString versionString;
     versionString = d->settings.value("Version", getVersion().toString()).toString();
-    Version settingsVersion(versionString);
+    Version settingsVersion {versionString};
     if (settingsVersion < getVersion()) {
 #ifdef DEBUG
         qDebug() << "Settings::restore: app version:" << getVersion().toString() << "settings version:" << settingsVersion.toString() << "converting...";

@@ -37,7 +37,6 @@ namespace
             settings.setValue("LocationTableState", QVariant());
         }
         settings.endGroup();
-
     }
 }
 
