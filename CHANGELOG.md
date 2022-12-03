@@ -44,7 +44,7 @@
 - "Const pimpl" pattern (where applicable) [[CppCon 2016: Herb Sutter “Leak-Freedom in C++... By Default.”](https://www.youtube.com/watch?v=JfmTagWcqoE)]
 - Value-based aircraft list (CPU cache optimisation)
 - Small performance optimisations such as return value optimisation and memory pre-allocation
-- Replace regular expression etc. based CSV parsers by new CSV parser (very much inspired by [[Little Navmap CSV parser implementation](https://github.com/albar965/atools])
+- Replace regular expression etc. based CSV parsers by new CSV parser (very much inspired by [Little Navmap CSV parser implementation](https://github.com/albar965/atools)
 
 ## 0.12.0
 
