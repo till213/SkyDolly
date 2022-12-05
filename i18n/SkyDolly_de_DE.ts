@@ -519,42 +519,67 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="22"/>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="20"/>
         <source>Path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="41"/>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="39"/>
         <source>Browse...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="50"/>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="48"/>
         <source>When checked then all files in the selected directory are imported. Otherwise the selected file is imported (only).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="53"/>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="51"/>
         <source>Import directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="62"/>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="60"/>
+        <source>Existing locations:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="67"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Defines how existing locations are modified:&lt;br/&gt;&lt;br/&gt;• Ignore: nothing is changed&lt;br/&gt;• Update: existing locations are modified&lt;br/&gt;• Insert: new locations are added (existing locations are left unmodified)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.ui" line="76"/>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="101"/>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="102"/>
         <source>&amp;Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="195"/>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="113"/>
+        <source>Ignore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="114"/>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="115"/>
+        <source>Insert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="210"/>
         <source>Import Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="197"/>
+        <location filename="../src/PluginManager/src/BasicLocationImportDialog.cpp" line="212"/>
         <source>Import File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1286,7 +1311,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
     </message>
     <message>
         <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="890"/>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="997"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="996"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1311,27 +1336,27 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="999"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="998"/>
         <source>Reset Time Offsets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="1000"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="999"/>
         <source>Do you want to reset all time offsets to 0?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="1001"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="1000"/>
         <source>The time offsets of all aircraft in this formation will be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="1002"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="1001"/>
         <source>&amp;Reset Time Offsets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="1003"/>
+        <location filename="../src/Plugins/Module/Formation/src/FormationWidget.cpp" line="1002"/>
         <source>Do &amp;Not Change</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1853,13 +1878,13 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="302"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="328"/>
         <source>Delete the selected location.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="305"/>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="930"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.ui" line="331"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="938"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2006,72 +2031,72 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="513"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="515"/>
         <source>Double-click to teleport to location.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="523"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="525"/>
         <source>Double-click to edit title.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="533"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="535"/>
         <source>Double-click to edit description.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="548"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="550"/>
         <source>Double-click to edit category.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="558"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="560"/>
         <source>Double-click to edit country.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="568"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="570"/>
         <source>Double-click to edit identifier.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="578"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="580"/>
         <source>Double-click to edit position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="589"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="591"/>
         <source>Double-click to edit altitude.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="619"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="621"/>
         <source>Click to toggle on ground.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="924"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="932"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="927"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="935"/>
         <source>Delete Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="928"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="936"/>
         <source>The location with ID %1 is about to be deleted. Do you want to delete the location?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="929"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="937"/>
         <source>Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="931"/>
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="939"/>
         <source>&amp;Keep</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2260,7 +2285,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.ui" line="161"/>
+        <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.ui" line="174"/>
         <location filename="../src/Plugins/Module/Logbook/src/LogbookWidget.cpp" line="732"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
@@ -2990,7 +3015,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/Plugins/Flight/Export/CsvExport/src/CsvExportPlugin.cpp" line="83"/>
+        <location filename="../src/Plugins/Flight/Export/CsvExport/src/CsvExportPlugin.cpp" line="71"/>
         <location filename="../src/Plugins/Flight/Import/CsvImport/src/CsvImportPlugin.cpp" line="74"/>
         <location filename="../src/Plugins/Location/Export/CsvLocationExport/src/CsvLocationExportPlugin.cpp" line="68"/>
         <location filename="../src/Plugins/Location/Import/CsvLocationImport/src/CsvLocationImportPlugin.cpp" line="67"/>
@@ -2998,121 +3023,121 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="99"/>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="90"/>
         <source>GPS exchange format (*.%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="250"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="325"/>
+        <source>Creation date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="251"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="326"/>
+        <source>Start (local time)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="252"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="327"/>
+        <source>End (local time)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="253"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="328"/>
+        <source>Ambient temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="254"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="329"/>
+        <source>Total air temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="255"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="330"/>
+        <source>Precipitation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="256"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="331"/>
+        <source>Wind direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="257"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="332"/>
+        <source>Wind speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="258"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="333"/>
+        <source>Visibility</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="259"/>
         <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="334"/>
-        <source>Creation date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="260"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="335"/>
-        <source>Start (local time)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="261"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="336"/>
-        <source>End (local time)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="262"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="337"/>
-        <source>Ambient temperature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="263"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="338"/>
-        <source>Total air temperature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="264"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="339"/>
-        <source>Precipitation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="265"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="340"/>
-        <source>Wind direction</source>
+        <source>In clouds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="266"/>
         <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="341"/>
-        <source>Wind speed</source>
+        <source>Category</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="267"/>
         <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="342"/>
-        <source>Visibility</source>
+        <source>Engine type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="268"/>
         <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="343"/>
-        <source>In clouds</source>
+        <source>Number of engines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="269"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="344"/>
+        <source>Wingspan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="271"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="346"/>
+        <source>Initial altitude above ground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="272"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="347"/>
+        <source>Initial airspeed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="273"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="348"/>
+        <source>Airline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="274"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="349"/>
+        <source>Flight number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="275"/>
         <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="350"/>
-        <source>Category</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="276"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="351"/>
-        <source>Engine type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="277"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="352"/>
-        <source>Number of engines</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="278"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="353"/>
-        <source>Wingspan</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="280"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="355"/>
-        <source>Initial altitude above ground</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="281"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="356"/>
-        <source>Initial airspeed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="282"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="357"/>
-        <source>Airline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="283"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="358"/>
-        <source>Flight number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugins/Flight/Export/GpxExport/src/GpxExportPlugin.cpp" line="284"/>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="359"/>
         <source>Tail number</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3128,28 +3153,28 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="108"/>
-        <location filename="../src/Plugins/Flight/Import/KmlImport/src/KmlImportPlugin.cpp" line="95"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="99"/>
+        <location filename="../src/Plugins/Flight/Import/KmlImport/src/KmlImportPlugin.cpp" line="83"/>
         <source>Keyhole markup language (*.%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="332"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="323"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="364"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="355"/>
         <source>Arrival time (local)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="365"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="356"/>
         <source>Arrival time (zulu)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="366"/>
+        <location filename="../src/Plugins/Flight/Export/KmlExport/src/KmlExportPlugin.cpp" line="357"/>
         <source>Altitude</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3199,7 +3224,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugins/Flight/Import/KmlImport/src/KmlImportPlugin.cpp" line="197"/>
+        <location filename="../src/Plugins/Flight/Import/KmlImport/src/KmlImportPlugin.cpp" line="185"/>
         <source>KML import</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3813,7 +3838,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
 <context>
     <name>TemplatePlugin</name>
     <message>
-        <location filename="../src/Plugins/Module/Template/src/TemplatePlugin.cpp" line="65"/>
+        <location filename="../src/Plugins/Module/Template/src/TemplatePlugin.cpp" line="53"/>
         <source>Template</source>
         <translation type="unfinished"></translation>
     </message>
