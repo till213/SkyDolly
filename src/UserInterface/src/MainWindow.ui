@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>276</height>
+    <width>821</width>
+    <height>293</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -350,7 +350,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>516</width>
+     <width>821</width>
      <height>21</height>
     </rect>
    </property>
@@ -358,14 +358,24 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <widget class="QMenu" name="exportMenu">
+    <widget class="QMenu" name="flightExportMenu">
      <property name="title">
-      <string>Export</string>
+      <string>Flight &amp;Export</string>
      </property>
     </widget>
-    <widget class="QMenu" name="importMenu">
+    <widget class="QMenu" name="flightImportMenu">
      <property name="title">
-      <string>Import</string>
+      <string>Flight &amp;Import</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="locationImportMenu">
+     <property name="title">
+      <string>Location I&amp;mport</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="locationExportMenu">
+     <property name="title">
+      <string>Location E&amp;xport</string>
      </property>
     </widget>
     <addaction name="newLogbookAction"/>
@@ -373,8 +383,11 @@
     <addaction name="separator"/>
     <addaction name="optimiseLogbookAction"/>
     <addaction name="separator"/>
-    <addaction name="importMenu"/>
-    <addaction name="exportMenu"/>
+    <addaction name="flightImportMenu"/>
+    <addaction name="flightExportMenu"/>
+    <addaction name="separator"/>
+    <addaction name="locationImportMenu"/>
+    <addaction name="locationExportMenu"/>
     <addaction name="separator"/>
     <addaction name="showSettingsAction"/>
     <addaction name="showLogbookSettingsAction"/>
@@ -654,7 +667,7 @@
   </action>
   <action name="optimiseLogbookAction">
    <property name="text">
-    <string>Optimise Logbook</string>
+    <string>O&amp;ptimise Logbook</string>
    </property>
    <property name="toolTip">
     <string>Optimise Logbook</string>
@@ -716,6 +729,11 @@
   <action name="customSpeedAction">
    <property name="text">
     <string>Custom</string>
+   </property>
+  </action>
+  <action name="actionsdfsa">
+   <property name="text">
+    <string>sdfsa</string>
    </property>
   </action>
  </widget>

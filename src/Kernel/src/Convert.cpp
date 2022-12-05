@@ -39,7 +39,7 @@
 // PUBLIC
 
 Convert::Convert() noexcept
-{
+{   
     const QFileInfo earthGravityModelFileInfo = Settings::getInstance().getEarthGravityModelFileInfo();
     if (earthGravityModelFileInfo.exists()) {
         try {
@@ -57,5 +57,6 @@ Convert::Convert() noexcept
     }
 }
 
-Convert::~Convert() noexcept
-{}
+Convert::Convert(Convert &&rhs) noexcept = default;
+Convert &Convert::operator=(Convert &&rhs) noexcept = default;
+Convert::~Convert() = default;

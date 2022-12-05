@@ -28,21 +28,16 @@
 #include <cstdint>
 
 #include <QSqlDatabase>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/FlightDaoIntf.h"
-#include "../Dao/AircraftDaoIntf.h"
 #include <Service/FlightService.h>
 
-class FlightServicePrivate
+struct FlightServicePrivate
 {
-public:
     FlightServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           flightDao(daoFactory->createFlightDao())
@@ -56,18 +51,11 @@ public:
 
 FlightService::FlightService() noexcept
     : d(std::make_unique<FlightServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "FlightService::FlightService: CREATED.";
-#endif
-}
+{}
 
-FlightService::~FlightService() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FlightService::~FlightService: DELETED.";
-#endif
-}
+FlightService::FlightService(FlightService &&rhs) noexcept = default;
+FlightService &FlightService::operator=(FlightService &&rhs) noexcept = default;
+FlightService::~FlightService() = default;
 
 bool FlightService::store(Flight &flight) noexcept
 {
@@ -97,7 +85,7 @@ bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
     return ok;
 }
 
-bool FlightService::deleteById(std::int64_t id)  noexcept
+bool FlightService::deleteById(std::int64_t id) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {

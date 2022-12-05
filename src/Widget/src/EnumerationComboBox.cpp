@@ -23,11 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 
 #include <QComboBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
+#include <QCompleter>
 
 #include <Model/Enumeration.h>
 #include <Persistence/Service/EnumerationService.h>
@@ -35,31 +34,59 @@
 
 struct EnumerationComboBoxPrivate
 {
-    EnumerationComboBoxPrivate(QString enumerationName)
-        : enumeration(enumerationName)
+    EnumerationComboBoxPrivate(QString enumerationName = QString())
+        : enumeration(std::move(enumerationName))
     {}
 
     Enumeration enumeration;
     EnumerationService enumerationService;
+    EnumerationComboBox::IgnoredIds ignoredIds;
 };
 
 // PUBLIC
 
-EnumerationComboBox::EnumerationComboBox(QString enumerationName, QWidget *parent) noexcept
-    : QComboBox(parent),
-      d(std::make_unique<EnumerationComboBoxPrivate>(enumerationName))
+EnumerationComboBox::EnumerationComboBox(QString enumerationName, Mode mode, QWidget *parent) noexcept
+    : EnumerationComboBox(parent)
 {
+    d->enumeration = {std::move(enumerationName)};
+    setMode(mode);
     initUi();
-#ifdef DEBUG
-    qDebug() << "EnumerationComboBox::EnumerationComboBox: CREATED, enumeration name:" << enumerationName;
-#endif
 }
 
-EnumerationComboBox::~ EnumerationComboBox() noexcept
+EnumerationComboBox::EnumerationComboBox(QWidget *parent) noexcept
+    : QComboBox(parent),
+      d(std::make_unique<EnumerationComboBoxPrivate>())
+{}
+
+EnumerationComboBox::~EnumerationComboBox() = default;
+
+QString EnumerationComboBox::getEnumerationName() const
 {
-#ifdef DEBUG
-    qDebug() << "EnumerationComboBox::~EnumerationComboBox: DELETED.";
-#endif
+    return d->enumeration.getName();
+}
+
+void EnumerationComboBox::setEnumerationName(QString name) noexcept
+{
+    d->enumeration.setName(std::move(name));
+    initUi();
+}
+
+EnumerationComboBox::Mode EnumerationComboBox::getMode() const noexcept
+{
+    return isEditable() ? EnumerationComboBox::Mode::Editable : EnumerationComboBox::Mode::NonEditable;
+}
+
+void EnumerationComboBox::setMode(Mode mode) noexcept
+{
+    switch (mode) {
+    case Mode::Editable:
+        QComboBox::setEditable(true);
+        initAutoCompleter();
+        break;
+    case Mode::NonEditable:
+        QComboBox::setEditable(false);
+        break;
+    }
 }
 
 std::int64_t EnumerationComboBox::getCurrentId() const noexcept
@@ -77,14 +104,40 @@ void EnumerationComboBox::setCurrentId(std::int64_t id) noexcept
     }
 }
 
+EnumerationComboBox::IgnoredIds EnumerationComboBox::getIgnoredIds() const noexcept
+{
+    return d->ignoredIds;
+}
+
+void EnumerationComboBox::setIgnoredIds(IgnoredIds ignoredIds) noexcept
+{
+    d->ignoredIds = std::move(ignoredIds);
+}
+
 // PRIVATE
 
 void EnumerationComboBox::initUi() noexcept
 {
     setAutoFillBackground(true);
-    if (d->enumerationService.getEnumerationByName(d->enumeration))  {
+    bool ok {true};
+    d->enumeration = d->enumerationService.getEnumerationByName(d->enumeration.getName(), &ok);
+    if (ok)  {
         for (const auto &item : d->enumeration) {
-            addItem(item.name, QVariant::fromValue(item.id));
+            if (d->ignoredIds.find(item.id) == d->ignoredIds.cend()) {
+                addItem(item.name, QVariant::fromValue(item.id));
+            }
         }
+    }
+    setInsertPolicy(QComboBox::NoInsert);
+    initAutoCompleter();
+}
+
+void EnumerationComboBox::initAutoCompleter() noexcept
+{
+    QCompleter *autoCompleter = completer();
+    if (autoCompleter != nullptr) {
+        // Combo box is editable
+        autoCompleter->setCompletionMode(QCompleter::PopupCompletion);
+        autoCompleter->setFilterMode(Qt::MatchContains);
     }
 }

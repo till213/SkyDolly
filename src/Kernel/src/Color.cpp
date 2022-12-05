@@ -31,7 +31,7 @@
 
 // PUBLIC
 
-std::vector<QRgb> Color::createColorRamp(QColor startColor, QColor endColor, int nofTotalColors) noexcept
+std::vector<QRgb> Color::createColorRamp(const QColor &startColor, const QColor &endColor, int nofTotalColors) noexcept
 {
     return createColorRamp(startColor.rgba(), endColor.rgba(), nofTotalColors);
 }

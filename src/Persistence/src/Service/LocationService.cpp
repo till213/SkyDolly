@@ -24,22 +24,21 @@
  */
 #include <memory>
 #include <cstdint>
-#include <iterator>
+#include <vector>
 
 #include <QSqlDatabase>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Model/Location.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/LocationDaoIntf.h"
+#include <PersistenceManager.h>
 #include <LocationSelector.h>
+#include <PersistedEnumerationItem.h>
+#include <Service/EnumerationService.h>
 #include <Service/LocationService.h>
 
-class LocationServicePrivate
+struct LocationServicePrivate
 {
-public:
     LocationServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           locationDao(daoFactory->createLocationDao())
@@ -53,18 +52,11 @@ public:
 
 LocationService::LocationService() noexcept
     : d(std::make_unique<LocationServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "LocationService::LocationService: CREATED.";
-#endif
-}
+{}
 
-LocationService::~LocationService() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "LocationService::~LocationService: DELETED.";
-#endif
-}
+LocationService::LocationService(LocationService &&rhs) noexcept = default;
+LocationService &LocationService::operator=(LocationService &&rhs) noexcept = default;
+LocationService::~LocationService() = default;
 
 bool LocationService::store(Location &location) noexcept
 {
@@ -76,6 +68,37 @@ bool LocationService::store(Location &location) noexcept
         } else {
             QSqlDatabase::database().rollback();
         }
+    }
+    return ok;
+}
+
+bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noexcept
+{
+    static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
+    bool ok = QSqlDatabase::database().transaction();
+    auto it = locations.begin();
+    while (it != locations.end() && ok) {
+        if (mode != Mode::Insert) {
+            const std::vector<Location> neighbours = d->locationDao->getByPosition(it->latitude, it->longitude, 0.0, &ok);
+            if (neighbours.size() == 0) {
+                ok = d->locationDao->add(*it);
+            } else if (mode == Mode::Update) {                
+                // System locations are never updated
+                if (neighbours.cbegin()->typeId != systemLocationTypeId) {
+                    it->id = neighbours.cbegin()->id;
+                    d->locationDao->update(*it);
+                }
+            }
+        } else {
+            // Unconditional insert
+            ok = d->locationDao->add(*it);
+        }
+        ++it;
+    }
+    if (ok) {
+        ok = QSqlDatabase::database().commit();
+    } else {
+        QSqlDatabase::database().rollback();
     }
     return ok;
 }
@@ -108,22 +131,30 @@ bool LocationService::deleteById(std::int64_t id) noexcept
     return ok;
 }
 
-bool LocationService::getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
+std::vector<Location> LocationService::getAll(bool *ok) const noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->locationDao->getAll(backInsertIterator);
+    std::vector<Location> locations;
+    bool success = QSqlDatabase::database().transaction();
+    if (success) {
+        locations = d->locationDao->getAll(&success);
         QSqlDatabase::database().rollback();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return locations;
 }
 
-bool LocationService::getSelectedLocations(const LocationSelector &locationSelector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
+std::vector<Location> LocationService::getSelectedLocations(const LocationSelector &locationSelector, bool *ok) const noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->locationDao->getSelectedLocations(locationSelector, backInsertIterator);
+    std::vector<Location> locations;
+    bool success = QSqlDatabase::database().transaction();
+    if (success) {
+        locations = d->locationDao->getSelectedLocations(locationSelector, &success);
         QSqlDatabase::database().rollback();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return locations;
 }

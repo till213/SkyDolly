@@ -32,6 +32,7 @@
 #include <QWidget>
 #include <QStringList>
 
+class QTableWidgetItem;
 class QKeyEvent;
 
 #include <PluginManager/ModuleIntf.h>
@@ -49,27 +50,32 @@ class LocationWidget : public QWidget
     Q_OBJECT
 public:
     explicit LocationWidget(QWidget *parent = nullptr) noexcept;
-    ~LocationWidget() noexcept override;
+    ~LocationWidget() override;
 
     void addUserLocation(double latitude, double longitude);
     void addLocation(Location location);
+    void updateLocation(const Location &location);
 
     void keyPressEvent(QKeyEvent *event) noexcept override;
 
 signals:
+    void doUpdateLocation();
     void doCaptureLocation();
     void teleportTo(Location location);
 
 private:
     std::unique_ptr<Ui::LocationWidget> ui;
-    std::unique_ptr<LocationWidgetPrivate> d;
+    const std::unique_ptr<LocationWidgetPrivate> d;
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
     void updateInfoUi() noexcept;
 
-    void updateLocationTable() noexcept;
-    inline void updateLocationRow(const Location &location, int row) noexcept;
+    void updateTable() noexcept;
+    inline const QTableWidgetItem *createRow(const Location &location) noexcept;
+    inline const QTableWidgetItem *initRow(const Location &location, int row) noexcept;
+    inline void updateRow(const Location &location, int row) noexcept;
+    inline void updateLocationCount() const noexcept;
 
     void teleportToLocation(int row) noexcept;
     Location getLocationByRow(int row) const noexcept;
@@ -83,12 +89,20 @@ private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;
 
+    // Search
+    void onCategoryChanged() noexcept;
+    void onCountryChanged() noexcept;
+    void onSearchTextChanged() noexcept;
+    void searchText() noexcept;
+    void onTypeOptionToggled(bool enable, const QVariant &userData) noexcept;
+
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;
     void onSelectionChanged() noexcept;
 
     void onAddLocation() noexcept;
     void onCaptureLocation() noexcept;
+    void onUpdateLocation() noexcept;
     void onTeleportToSelectedLocation() noexcept;
     void onDeleteLocation() noexcept;
 
@@ -97,6 +111,7 @@ private slots:
     void onBankChanged(double value) noexcept;
     void onHeadingChanged(double value) noexcept;
     void onIndicatedAirspeedChanged(int value) noexcept;
+    void onEngineEventChanged(int index) noexcept;
 };
 
 #endif // LOCATIONWIDGET_H

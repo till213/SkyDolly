@@ -29,6 +29,7 @@
 #include <QPlainTextEdit>
 #include <QTextCursor>
 
+#include <Kernel/Const.h>
 #include <Kernel/Unit.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
@@ -37,14 +38,10 @@
 #include "FlightDescriptionWidget.h"
 #include "ui_FlightDescriptionWidget.h"
 
-class FlightDescriptionWidgetPrivate
+struct FlightDescriptionWidgetPrivate
 {
-public:
-    FlightDescriptionWidgetPrivate(FlightService &theFlightService) noexcept
-        : flightService(theFlightService)
-    {}
-
-    ~FlightDescriptionWidgetPrivate() noexcept
+    FlightDescriptionWidgetPrivate(FlightService &flightService) noexcept
+        : flightService(flightService)
     {}
 
     FlightService &flightService;
@@ -55,16 +52,15 @@ public:
 
 FlightDescriptionWidget::FlightDescriptionWidget(FlightService &flightService, QWidget *parent) :
     QWidget(parent),
-    d(std::make_unique<FlightDescriptionWidgetPrivate>(flightService)),
-    ui(std::make_unique<Ui::FlightDescriptionWidget>())
+    ui(std::make_unique<Ui::FlightDescriptionWidget>()),
+    d(std::make_unique<FlightDescriptionWidgetPrivate>(flightService))
 {
     ui->setupUi(this);
     initUi();
     frenchConnection();
 }
 
-FlightDescriptionWidget::~FlightDescriptionWidget()
-{}
+FlightDescriptionWidget::~FlightDescriptionWidget() = default;
 
 // PROTECTED
 
@@ -79,6 +75,8 @@ void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
     const Flight &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::flightStored,
             this, &FlightDescriptionWidget::updateUi);
+    connect(&flight, &Flight::flightRestored,
+            this, &FlightDescriptionWidget::updateUi);
 }
 
 void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
@@ -90,6 +88,8 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
                this, &FlightDescriptionWidget::updateUi);
     const Flight &flight = logbook.getCurrentFlight();
     disconnect(&flight, &Flight::flightStored,
+              this, &FlightDescriptionWidget::updateUi);
+    disconnect(&flight, &Flight::flightRestored,
               this, &FlightDescriptionWidget::updateUi);
 }
 
@@ -112,7 +112,7 @@ void FlightDescriptionWidget::updateUi() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
 
-    bool enabled = flight.getId() != Flight::InvalidId;
+    bool enabled = flight.getId() != Const::InvalidId;
     ui->titleLineEdit->blockSignals(true);
     ui->focusPlainTextEdit->blockSignals(true);
     ui->titleLineEdit->setText(flight.getTitle());

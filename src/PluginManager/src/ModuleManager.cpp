@@ -53,22 +53,21 @@
 
 namespace
 {
-    constexpr char ModuleDirectoryName[] = "Module";
+    constexpr const char *ModuleDirectoryName {"Module"};
 #if defined(Q_OS_MAC)
-    constexpr char PluginDirectoryName[] = "PlugIns";
+    constexpr const char *PluginDirectoryName {"PlugIns"};
 #else
-    constexpr char PluginDirectoryName[] = "Plugins";
+    constexpr const char *PluginDirectoryName {"Plugins"};
 #endif
-    constexpr char PluginUuidKey[] = "uuid";
-    constexpr char PluginNameKey[] = "name";
-    constexpr char PluginAfter[] = "after";
+    constexpr const char *PluginUuidKey {"uuid"};
+    constexpr const char *PluginNameKey {"name"};
+    constexpr const char *PluginAfter {"after"};
 }
 
 struct ModuleManagerPrivate
 {
-    ModuleManagerPrivate(QLayout &theLayout) noexcept
-        : layout(theLayout),
-          moduleActionGroup(new QActionGroup(&layout))
+    ModuleManagerPrivate(QLayout &layout) noexcept
+        : layout(layout)
     {
         pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
@@ -93,7 +92,7 @@ struct ModuleManagerPrivate
     std::unique_ptr<QPluginLoader> pluginLoader {std::make_unique<QPluginLoader>()};
     QDir pluginsDirectoryPath;
     QLayout &layout;
-    QActionGroup *moduleActionGroup;
+    QActionGroup *moduleActionGroup {new QActionGroup(&layout)};
     ModuleIntf *activeModule {nullptr};
     QUuid activeModuleUuid;
     // Key: uuid - value: plugin path
@@ -125,17 +124,11 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
         activateModule(d->moduleRegistry.begin()->first);
     }
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "ModuleManager::ModuleManager: CREATED.";
-#endif
 }
 
-ModuleManager::~ModuleManager() noexcept
+ModuleManager::~ModuleManager()
 {
     d->pluginLoader->unload();
-#ifdef DEBUG
-    qDebug() << "ModuleManager::~ModuleManager: DELETED.";
-#endif
 }
 
 const ModuleManager::ActionRegistry &ModuleManager::getActionRegistry() const noexcept
@@ -247,7 +240,7 @@ void ModuleManager::frenchConnection() noexcept
             this, &ModuleManager::handleModuleSelected);
 }
 
-void ModuleManager::initModule(const QString fileName, std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept
+void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept
 {
     const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
     d->pluginLoader->setFileName(pluginPath);
@@ -282,21 +275,21 @@ void ModuleManager::initModule(const QString fileName, std::unordered_map<QUuid,
             } else {
                 afterVertex = it->second;
             }
-            vertex->edges.push_back(afterVertex);
+            vertex->edges.push_back(afterVertex.get());
         }
     }
 }
 
 void ModuleManager::initModuleActions(const std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept
 {
-    std::deque<std::shared_ptr<Vertex>> sortedModules;
+    std::deque<Vertex *> sortedModules;
     // Reverse sorting, because the "after" edge (directed from A to B: A --- after ---> B) really means that
     // "first B, then A" (= reversed topological sorting)
     sortedModules = UuidSort::topologicalSort(graph, UuidSort::Sorting::Reverse);
     int count {0};
     for (const auto &sortedModule : sortedModules) {
         const QUuid uuid {sortedModule->id};
-        const ModuleInfo moduleInfo = moduleInfos.at(uuid);
+        const ModuleInfo& moduleInfo = moduleInfos.at(uuid);
         QAction *action = d->moduleActionGroup->addAction(moduleInfo.first);
         if (count < d->actionShortcuts.size()) {
             action->setShortcut(d->actionShortcuts[count]);

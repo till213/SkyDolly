@@ -32,8 +32,8 @@
 class QShowEvent;
 class QHideEvent;
 
-class Waypoint;
-class WaypointWidgetPrivate;
+struct Waypoint;
+struct WaypointWidgetPrivate;
 
 namespace Ui {
     class WaypointWidget;
@@ -44,19 +44,18 @@ class WaypointWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit WaypointWidget(const Waypoint &data, QWidget *parent = nullptr) noexcept;
-    virtual ~WaypointWidget() noexcept;
+    explicit WaypointWidget(Waypoint waypoint, QWidget *parent = nullptr) noexcept;
+    ~WaypointWidget() override;
 
-    void update(const Waypoint &waypoint) noexcept;
+    void update(Waypoint waypoint) noexcept;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(WaypointWidget)
-    std::unique_ptr<WaypointWidgetPrivate> d;
     std::unique_ptr<Ui::WaypointWidget> ui;
+    const std::unique_ptr<WaypointWidgetPrivate> d;
 
     void initUi() noexcept;
 

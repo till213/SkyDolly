@@ -25,6 +25,8 @@
 #include <memory>
 
 #include <QCoreApplication>
+#include <QString>
+#include <QStringBuilder>
 #include <QWidget>
 #include <QDialog>
 #include <QShortcut>
@@ -53,19 +55,10 @@
 #include "SimulationVariablesDialog.h"
 #include "ui_SimulationVariablesDialog.h"
 
-class SimulationVariablesDialogPrivate
+struct SimulationVariablesDialogPrivate
 {
-public:
-    SimulationVariablesDialogPrivate() noexcept
-        : closeDialogShortcut(nullptr)
-    {}
-
-    QShortcut *closeDialogShortcut;
-
-    static const char WindowTitle[];
+    QShortcut *closeDialogShortcut {nullptr};
 };
-
-const char SimulationVariablesDialogPrivate::WindowTitle[] = QT_TRANSLATE_NOOP("SimulationVariablesDialog", "Simulation Variables");
 
 // PUBLIC
 
@@ -77,17 +70,9 @@ SimulationVariablesDialog::SimulationVariablesDialog(QWidget *parent) noexcept :
     ui->setupUi(this);
     initUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "SimulationVariablesDialog::SimulationVariablesDialog: CREATED";
-#endif
 }
 
-SimulationVariablesDialog::~SimulationVariablesDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "SimulationVariablesDialog::~SimulationVariablesDialog: DELETED";
-#endif
-}
+SimulationVariablesDialog::~SimulationVariablesDialog() = default;
 
 // PROTECTED
 
@@ -119,23 +104,24 @@ void SimulationVariablesDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    AircraftWidget *aircraftWidget = new AircraftWidget(this);
-    ui->simulationVariablesTab->addTab(aircraftWidget, tr("&Aircraft"));
+    std::unique_ptr<AircraftWidget> aircraftWidget = std::make_unique<AircraftWidget>(this);
+    // Transfer ownership to Qt
+    ui->simulationVariablesTab->addTab(aircraftWidget.release(), tr("&Aircraft"));
 
-    EngineWidget *engineWidget = new EngineWidget(this);
-    ui->simulationVariablesTab->addTab(engineWidget, tr("&Engine"));
+    std::unique_ptr<EngineWidget> engineWidget = std::make_unique<EngineWidget>(this);
+    ui->simulationVariablesTab->addTab(engineWidget.release(), tr("&Engine"));
 
-    PrimaryFlightControlWidget *primaryFlightControlWidget = new PrimaryFlightControlWidget(this);
-    ui->simulationVariablesTab->addTab(primaryFlightControlWidget, tr("&Primary Controls"));
+    std::unique_ptr<PrimaryFlightControlWidget> primaryFlightControlWidget = std::make_unique<PrimaryFlightControlWidget>(this);
+    ui->simulationVariablesTab->addTab(primaryFlightControlWidget.release(), tr("&Primary Controls"));
 
-    SecondaryFlightControlWidget *secondaryFlightControlWidget = new SecondaryFlightControlWidget(this);
-    ui->simulationVariablesTab->addTab(secondaryFlightControlWidget, tr("&Secondary Controls"));
+    std::unique_ptr<SecondaryFlightControlWidget> secondaryFlightControlWidget = std::make_unique<SecondaryFlightControlWidget>(this);
+    ui->simulationVariablesTab->addTab(secondaryFlightControlWidget.release(), tr("&Secondary Controls"));
 
-    AircraftHandleWidget *aircraftHandleWidget = new AircraftHandleWidget(this);
-    ui->simulationVariablesTab->addTab(aircraftHandleWidget, tr("&Handles && Brakes"));
+    std::unique_ptr<AircraftHandleWidget> aircraftHandleWidget = std::make_unique<AircraftHandleWidget>(this);
+    ui->simulationVariablesTab->addTab(aircraftHandleWidget.release(), tr("&Handles && Brakes"));
 
-    LightWidget *lightWidget = new LightWidget(this);
-    ui->simulationVariablesTab->addTab(lightWidget, tr("&Lights"));
+    std::unique_ptr<LightWidget> lightWidget = std::make_unique<LightWidget>(this);
+    ui->simulationVariablesTab->addTab(lightWidget.release(), tr("&Lights"));
 
     d->closeDialogShortcut = new QShortcut(QKeySequence(tr("V", "Window|Simulation Variables...")), this);
 }
@@ -155,27 +141,27 @@ void SimulationVariablesDialog::frenchConnection() noexcept
 
 void SimulationVariablesDialog::updateTitle() noexcept
 {
-    QString windowTitle = QCoreApplication::translate("SimulationVariablesDialog", SimulationVariablesDialogPrivate::WindowTitle);
+    QString windowTitle = tr("Simulation Variables");
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Disconnected:
-        windowTitle.append(" - " + tr("DISCONNECTED"));
+        windowTitle.append(" - " % tr("DISCONNECTED"));
         break;
     case Connect::State::Connected:
-        windowTitle.append(" - " + tr("CONNECTED"));
+        windowTitle.append(" - " % tr("CONNECTED"));
         break;
     case Connect::State::Recording:
-        windowTitle.append(" - " + tr("RECORDING"));
+        windowTitle.append(" - " % tr("RECORDING"));
         break;
     case Connect::State::RecordingPaused:
-        windowTitle.append(" - " + tr("RECORDING PAUSED"));
+        windowTitle.append(" - " % tr("RECORDING PAUSED"));
         break;
     case Connect::State::Replay:
-        windowTitle.append(" - " + tr("PLAYBACK"));
+        windowTitle.append(" - " % tr("PLAYBACK"));
         break;
     case Connect::State::ReplayPaused:
-        windowTitle.append(" - " + tr("PLAYPACK PAUSED"));
+        windowTitle.append(" - " % tr("PLAYPACK PAUSED"));
         break;
     }
     setWindowTitle(windowTitle);

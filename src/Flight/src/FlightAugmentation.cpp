@@ -58,9 +58,8 @@ namespace {
     constexpr double MaxBankAngle = 25;
 }
 
-class FlightAugmentationPrivate
+struct FlightAugmentationPrivate
 {
-public:
     FlightAugmentationPrivate(FlightAugmentation::Procedures theProcedures, FlightAugmentation::Aspects theAspects)
         : procedures(theProcedures),
           aspects(theAspects)
@@ -74,18 +73,11 @@ public:
 
 FlightAugmentation::FlightAugmentation(Procedures procedures, Aspects aspects) noexcept
     : d(std::make_unique<FlightAugmentationPrivate>(procedures, aspects))
-{
-#ifdef DEBUG
-    qDebug("FlightAugmentation::~FlightAugmentation: CREATED");
-#endif
-}
+{}
 
-FlightAugmentation::~FlightAugmentation() noexcept
-{
-#ifdef DEBUG
-    qDebug("FlightAugmentation::~FlightAugmentation: DELETED");
-#endif
-}
+FlightAugmentation::FlightAugmentation(FlightAugmentation &&rhs) noexcept = default;
+FlightAugmentation &FlightAugmentation::operator=(FlightAugmentation &&rhs) noexcept = default;
+FlightAugmentation::~FlightAugmentation() = default;
 
 void FlightAugmentation::setProcedures(Procedures procedures) noexcept
 {
@@ -121,7 +113,7 @@ void FlightAugmentation::augmentAircraftData(Aircraft &aircraft) noexcept
 void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
 {
     Position &position = aircraft.getPosition();
-    const int positionCount = position.count();
+    const auto positionCount = position.count();
 
     Analytics analytics(aircraft);
     const auto [firstMovementTimestamp, firstMovementHeading] = analytics.firstMovementHeading();
@@ -438,7 +430,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         EngineData engineData;
 
         // t minus 5 minutes
-        engineData.timestamp = std::max(lastTimestamp - 5 * 60 * 1000, std::int64_t(0));
+        engineData.timestamp = std::max(lastTimestamp - std::int64_t(5 * 60 * 1000), std::int64_t(0));
         engineData.electricalMasterBattery1 = true;
         engineData.electricalMasterBattery2 = true;
         engineData.electricalMasterBattery3 = true;
@@ -463,7 +455,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         engine.upsert(engineData);
 
         // t minus 2 minutes
-        engineData.timestamp = std::max(lastTimestamp - 2 * 60 * 1000, std::int64_t(0));
+        engineData.timestamp = std::max(lastTimestamp - std::int64_t(2 * 60 * 1000), std::int64_t(0));
         engineData.electricalMasterBattery1 = true;
         engineData.electricalMasterBattery2 = true;
         engineData.electricalMasterBattery3 = true;
@@ -521,7 +513,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     SecondaryFlightControlData secondaryFlightControlData;
 
     // t minus 10 minutes
-    secondaryFlightControlData.timestamp = std::max(lastTimestamp - 10 * 60 * 1000, std::int64_t(0));
+    secondaryFlightControlData.timestamp = std::max(lastTimestamp - std::int64_t(10 * 60 * 1000), std::int64_t(0));
     // Flaps 0
     secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.0);
     secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.0);
@@ -533,7 +525,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 8 minutes
-    secondaryFlightControlData.timestamp = std::max(lastTimestamp - 8 * 60 * 1000, std::int64_t(0));
+    secondaryFlightControlData.timestamp = std::max(lastTimestamp - std::int64_t(8 * 60 * 1000), std::int64_t(0));
     // Flaps 1
     secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.666);
     secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.666);
@@ -545,7 +537,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 7 minutes
-    secondaryFlightControlData.timestamp = std::max(lastTimestamp - 7 * 60 * 1000, std::int64_t(0));
+    secondaryFlightControlData.timestamp = std::max(lastTimestamp - std::int64_t(7 * 60 * 1000), std::int64_t(0));
     // Flaps 2
     secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.8157);
     secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.8157);
@@ -557,7 +549,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 5 minutes
-    secondaryFlightControlData.timestamp = std::max(lastTimestamp - 5 * 60 * 1000, std::int64_t(0));
+    secondaryFlightControlData.timestamp = std::max(lastTimestamp - std::int64_t(5 * 60 * 1000), std::int64_t(0));
     // Flaps 3
     secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.8157);
     secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.8157);
@@ -569,7 +561,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 4 minutes
-    secondaryFlightControlData.timestamp = std::max(lastTimestamp - 4 * 60 * 1000, std::int64_t(0));
+    secondaryFlightControlData.timestamp = std::max(lastTimestamp - std::int64_t(4 * 60 * 1000), std::int64_t(0));
     // Flaps 4
     secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(1.0);
     secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(1.0);
@@ -598,7 +590,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     AircraftHandleData handleData;
 
     // t minus 3 minutes
-    handleData.timestamp = std::max(lastTimestamp - 3 * 60 * 1000, std::int64_t(0));
+    handleData.timestamp = std::max(lastTimestamp - std::int64_t(3 * 60 * 1000), std::int64_t(0));
     // Gear down
     handleData.gearHandlePosition = true;
     aircraftHandle.upsert(handleData);
@@ -610,7 +602,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         LightData lightData;
 
         // t minus 8 minutes
-        lightData.timestamp = std::max(lastTimestamp - 8 * 60 * 1000, std::int64_t(0));
+        lightData.timestamp = std::max(lastTimestamp - std::int64_t(8 * 60 * 1000), std::int64_t(0));
         lightData.lightStates = SimType::LightState::Navigation |
                                 SimType::LightState::Beacon |
                                 SimType::LightState::Strobe |
@@ -621,7 +613,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         light.upsert(lightData);
 
         // t minus 6 minutes
-        lightData.timestamp = std::max(lastTimestamp - 6 * 60 * 1000, std::int64_t(0));
+        lightData.timestamp = std::max(lastTimestamp - std::int64_t(6 * 60 * 1000), std::int64_t(0));
         lightData.lightStates = SimType::LightState::Navigation |
                                 SimType::LightState::Beacon |
                                 SimType::LightState::Landing |
@@ -633,7 +625,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         light.upsert(lightData);
 
         // t minus 4 minutes
-        lightData.timestamp = std::max(lastTimestamp - 4 * 60 * 1000, std::int64_t(0));
+        lightData.timestamp = std::max(lastTimestamp - std::int64_t(4 * 60 * 1000), std::int64_t(0));
         lightData.lightStates = SimType::LightState::Navigation |
                                 SimType::LightState::Beacon |
                                 SimType::LightState::Landing |
@@ -649,7 +641,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     // Adjust approach pitch for the last 3 minutes
     // https://forum.aerosoft.com/index.php?/topic/123864-a320-pitch-angle-during-landing/
     if (d->aspects.testFlag(Aspect::Pitch)) {
-        int index = position.count() - 1;
+        auto index = position.count() - 1;
         if (index >= 0) {
             // Last sample: flare with nose up 6 degrees
             PositionData &positionData = position[index];
@@ -658,7 +650,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
             if (index > 0) {
                 // Second to last sample -> adjust pitch to 3 degrees nose up
                 --index;
-                while (index >= 0 && position[index].timestamp >= std::max(lastTimestamp - (3 * 60 * 1000), std::int64_t(0))) {
+                while (index >= 0 && position[index].timestamp >= std::max(lastTimestamp - std::int64_t(3 * 60 * 1000), std::int64_t(0))) {
                     // Nose up 3 degrees
                     position[index].pitch = -3.0;
                     --index;

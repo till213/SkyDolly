@@ -29,14 +29,18 @@
 
 #include <QString>
 
-class QRegularExpressionMatch;
+#include <Kernel/CsvParser.h>
 
-class SqlMigrationPrivate;
+struct SqlMigrationPrivate;
 
 class SqlMigration
 {
 public:
-    SqlMigration();
+    SqlMigration() noexcept;
+    SqlMigration(const SqlMigration &rhs) = delete;
+    SqlMigration(SqlMigration &&rhs) noexcept;
+    SqlMigration &operator=(const SqlMigration &rhs) = delete;
+    SqlMigration &operator=(SqlMigration &&rhs) noexcept;
     ~SqlMigration();
 
     bool migrate() noexcept;
@@ -46,7 +50,7 @@ private:
 
     bool migrateSql(const QString &migrationFilePath) noexcept;
     bool migrateCsv(const QString &migrationFilePath) noexcept;
-    bool migrateLocation(const QRegularExpressionMatch &locationMatch) noexcept;
+    bool migrateLocation(const CsvParser::Row &row) noexcept;
 };
 
 #endif // SQLMIGRATION_H

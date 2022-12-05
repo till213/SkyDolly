@@ -27,23 +27,26 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
-#include <Model/AircraftHandleData.h>
 #include "../HandleDaoIntf.h"
+
+struct AircraftHandleData;
 
 class SQLiteHandleDao : public HandleDaoIntf
 {
 public:
-    SQLiteHandleDao() noexcept;
-    ~SQLiteHandleDao() noexcept override;
+    SQLiteHandleDao() = default;
+    SQLiteHandleDao(const SQLiteHandleDao &rhs) = delete;
+    SQLiteHandleDao(SQLiteHandleDao &&rhs) noexcept;
+    SQLiteHandleDao &operator=(const SQLiteHandleDao &rhs) = delete;
+    SQLiteHandleDao &operator=(SQLiteHandleDao &&rhs) noexcept;
+    ~SQLiteHandleDao() override;
 
     bool add(std::int64_t aircraftId, const AircraftHandleData &data) noexcept override;
-    bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<AircraftHandleData>> backInsertIterator) const noexcept override;
+    std::vector<AircraftHandleData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };
-
 
 #endif // SQLITEHANDLEDAO_H

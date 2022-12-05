@@ -26,21 +26,26 @@
 
 #include <QObject>
 #include <QCoreApplication>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
+#include <Persistence/PersistedEnumerationItem.h>
+#include <Persistence/Service/EnumerationService.h>
+#include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/SkyConnectManager.h>
 #include "LocationWidget.h"
 #include "LocationPlugin.h"
 
 struct LocationPluginPrivate
 {
-    LocationPluginPrivate()
-        : locationWidget(std::make_unique<LocationWidget>())
-    {}
+    enum struct Mode
+    {
+        Add,
+        Update
+    };
 
-    std::unique_ptr<LocationWidget> locationWidget;
+    std::unique_ptr<LocationWidget> locationWidget {std::make_unique<LocationWidget>()};
+    const std::int64_t EngineEventStartId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStartSymId).id()};
+    const std::int64_t EngineEventStopId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStopSymId).id()};
+    Mode mode {Mode::Add};
 };
 
 // PUBLIC
@@ -50,17 +55,9 @@ LocationPlugin::LocationPlugin(QObject *parent) noexcept
       d(std::make_unique<LocationPluginPrivate>())
 {
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "LocationPlugin::LocationPlugin: CREATED.";
-#endif
 }
 
-LocationPlugin::~LocationPlugin() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "LocationPlugin::~LocationPlugin: DELETED.";
-#endif
-}
+LocationPlugin::~LocationPlugin() = default;
 
 QString LocationPlugin::getModuleName() const noexcept
 {
@@ -84,6 +81,8 @@ void LocationPlugin::frenchConnection() noexcept
     // Location widget
     connect(d->locationWidget.get(), &LocationWidget::doCaptureLocation,
             this, &LocationPlugin::captureLocation);
+    connect(d->locationWidget.get(), &LocationWidget::doUpdateLocation,
+            this, &LocationPlugin::updateLocation);
     connect(d->locationWidget.get(), &LocationWidget::teleportTo,
             this, &LocationPlugin::teleportTo);
 }
@@ -92,16 +91,43 @@ void LocationPlugin::frenchConnection() noexcept
 
 void LocationPlugin::captureLocation() noexcept
 {
+    d->mode = LocationPluginPrivate::Mode::Add;
+    SkyConnectManager::getInstance().requestInitialPosition();
+}
+
+void LocationPlugin::updateLocation() noexcept
+{
+    d->mode = LocationPluginPrivate::Mode::Update;
     SkyConnectManager::getInstance().requestInitialPosition();
 }
 
 void LocationPlugin::teleportTo(const Location &location) noexcept
 {
     const InitialPosition initialPosition = location.toInitialPosition();
-    SkyConnectManager::getInstance().setUserAircraftInitialPosition(initialPosition);
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    skyConnectManager.setUserAircraftInitialPosition(initialPosition);
+    SkyConnectIntf::SimulationEvent event {SkyConnectIntf::SimulationEvent::None};
+
+    if (location.engineEventId == d->EngineEventStartId) {
+        event = SkyConnectIntf::SimulationEvent::EngineStart;
+    } else if (location.engineEventId == d->EngineEventStopId) {
+        event = SkyConnectIntf::SimulationEvent::EngineStop;
+    }
+
+    if (event != SkyConnectIntf::SimulationEvent::None) {
+        skyConnectManager.sendSimulationEvent(event);
+    }
 }
 
 void LocationPlugin::onLocationReceived(Location location) noexcept
 {
-    d->locationWidget->addLocation(std::move(location));
+    switch (d->mode)
+    {
+    case LocationPluginPrivate::Mode::Add:
+        d->locationWidget->addLocation(std::move(location));
+        break;
+    case LocationPluginPrivate::Mode::Update:
+        d->locationWidget->updateLocation(std::move(location));
+        break;
+    }
 }

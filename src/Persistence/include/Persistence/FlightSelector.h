@@ -33,18 +33,18 @@
 
 struct PERSISTENCE_API FlightSelector
 {
-public:
-    FlightSelector();
-
-    QDate fromDate;
-    QDate toDate;
+    QDate fromDate {MinDate};
+    QDate toDate {MaxDate};
     QString searchKeyword;
-    bool hasFormation;
-    SimType::EngineType engineType;
-    int mininumDurationMinutes;
+    bool hasFormation {false};
+    SimType::EngineType engineType {SimType::EngineType::All};
+    int mininumDurationMinutes {0};
 
-    // The release date of MSFS ;)
-    static inline const QDate MinDate {2020, 8, 18};
+    // The first flight in human history: Orville piloted the gasoline-powered,
+    // propeller-driven biplane, which stayed aloft for 12 seconds and covered
+    // 120 feet on its inaugural flight.
+    // [https://www.history.com/this-day-in-history/first-airplane-flies]
+    static inline const QDate MinDate {1903, 12, 17};
     static inline const QDate MaxDate {9999, 12, 31};
 };
 

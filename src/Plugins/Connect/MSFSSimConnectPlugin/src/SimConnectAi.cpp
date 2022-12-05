@@ -32,6 +32,7 @@
 #include <windows.h>
 #include <SimConnect.h>
 
+#include <Kernel/Const.h>
 #include <Kernel/Enum.h>
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
@@ -82,13 +83,13 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
 {
     // Check if the newly added aircraft has any recording yet
     // (otherwise it is the new user aircraft being added for a new recording)
-    if (aircraft.getId() != Aircraft::InvalidId) {
+    if (aircraft.getId() != Const::InvalidId) {
         const AircraftInfo aircraftInfo = aircraft.getAircraftInfo();
         Position &position = aircraft.getPosition();
         const PositionData positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
         const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionRequest::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
 
-        const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::toUnderlyingType(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;
+        const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::underly(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;
         HRESULT result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);
         if (result == S_OK) {
             d->requestByAircraftId[aircraft.getId()] = requestId;
@@ -137,7 +138,7 @@ void SimConnectAi::removeAllObjects() noexcept {
 
 void SimConnectAi::removeByObjectId(::SIMCONNECT_OBJECT_ID objectId) noexcept
 {
-    ::SimConnect_AIRemoveObject(d->simConnectHandle, objectId, Enum::toUnderlyingType(SimConnectType::DataRequest::AiRemoveObject));
+    ::SimConnect_AIRemoveObject(d->simConnectHandle, objectId, Enum::underly(SimConnectType::DataRequest::AiRemoveObject));
 }
 
 bool SimConnectAi::registerObjectId(::SIMCONNECT_DATA_REQUEST_ID requestId, ::SIMCONNECT_OBJECT_ID objectId) noexcept

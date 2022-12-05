@@ -24,26 +24,34 @@
  */
 #include <memory>
 #include <vector>
-#include <iterator>
 
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QSqlDriver>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Model/AircraftType.h>
 #include "SQLiteAircraftTypeDao.h"
 
+namespace
+{
+    // The initial capacity of the aircraft type vector; happens to be the number of default
+    // aircraft types (as per Sky Dolly v0.13), also refer to LogbookMigration.sql
+    constexpr int DefaultCapacity = 279;
+}
+
 // PUBLIC
 
-SQLiteAircraftTypeDao::SQLiteAircraftTypeDao() noexcept
-{}
+SQLiteAircraftTypeDao::SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) noexcept = default;
+SQLiteAircraftTypeDao &SQLiteAircraftTypeDao::operator=(SQLiteAircraftTypeDao &&rhs) noexcept = default;
+SQLiteAircraftTypeDao::~SQLiteAircraftTypeDao() = default;
 
-SQLiteAircraftTypeDao::~SQLiteAircraftTypeDao() noexcept
-{}
-
-bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
+bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -60,20 +68,21 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
     query.bindValue(":type", aircraftType.type);
     query.bindValue(":category", aircraftType.category);
     query.bindValue(":wing_span", aircraftType.wingSpan);
-    query.bindValue(":engine_type", Enum::toUnderlyingType(aircraftType.engineType));
+    query.bindValue(":engine_type", Enum::underly(aircraftType.engineType));
     query.bindValue(":nof_engines", aircraftType.numberOfEngines);
 
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteAircraftTypeDao::upsert: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteAircraftTypeDao::upsert: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
 }
 
-bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraftType) const noexcept
+AircraftType SQLiteAircraftTypeDao::getByType(const QString &type, bool *ok) const noexcept
 {
+    AircraftType aircraftType;
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -84,11 +93,11 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
 
     query.bindValue(":type", type);
     aircraftType.type = type;
-    bool ok = query.exec();
-    if (ok) {
+    bool success = query.exec();
+    if (success) {
         const QSqlRecord record = query.record();
-        ok = query.next();
-        if (ok) {
+        success = query.next();
+        if (success) {
             const int categoryIdx = record.indexOf("category");
             const int wingSpanIdx = record.indexOf("wing_span");
             const int engineTypeIdx = record.indexOf("engine_type");
@@ -101,14 +110,18 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
     }
 #ifdef DEBUG
     else {
-        qDebug("SQLiteAircraftTypeDao::getByType: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteAircraftTypeDao::getByType: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return aircraftType;
 }
 
-bool SQLiteAircraftTypeDao::getAll(std::back_insert_iterator<std::vector<AircraftType>> backInsertIterator) const noexcept
+std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
 {
+    std::vector<AircraftType> aircraftTypes;
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -116,9 +129,15 @@ bool SQLiteAircraftTypeDao::getAll(std::back_insert_iterator<std::vector<Aircraf
         "from   aircraft_type at "
         "order by at.type asc;"
     );
+    const bool success = query.exec();
+    if (success) {
+        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        if (querySizeFeature) {
+            aircraftTypes.reserve(query.size());
+        } else {
+            aircraftTypes.reserve(::DefaultCapacity);
+        }
 
-    const bool ok = query.exec();
-    if (ok) {
         QSqlRecord record = query.record();
         const int typeIdx = record.indexOf("type");
         const int categoryIdx = record.indexOf("category");
@@ -126,27 +145,28 @@ bool SQLiteAircraftTypeDao::getAll(std::back_insert_iterator<std::vector<Aircraf
         const int engineTypeIdx = record.indexOf("engine_type");
         const int nofEnginesIdx = record.indexOf("nof_engines");
         while (query.next()) {
-            AircraftType aircraftType;
-            aircraftType.type = query.value(typeIdx).toString();
-            aircraftType.category = query.value(categoryIdx).toString();
-            aircraftType.wingSpan = query.value(wingSpanIdx).toInt();
-            aircraftType.engineType = static_cast<SimType::EngineType>(query.value(engineTypeIdx).toInt());
-            aircraftType.numberOfEngines = query.value(nofEnginesIdx).toInt();
-
-            backInsertIterator = std::move(aircraftType);
+            const QString type = query.value(typeIdx).toString();
+            const QString category = query.value(categoryIdx).toString();
+            const int wingSpan = query.value(wingSpanIdx).toInt();
+            const SimType::EngineType engineType = static_cast<SimType::EngineType>(query.value(engineTypeIdx).toInt());
+            const int numberOfEngines = query.value(nofEnginesIdx).toInt();
+            aircraftTypes.emplace_back(type, category, wingSpan, engineType, numberOfEngines);
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLitePositionDao::getAll: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+            qDebug() << "SQLiteAircraftTypeDao::getAll: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return aircraftTypes;
 }
 
 bool SQLiteAircraftTypeDao::exists(const QString &type) const noexcept
 {
-    bool exists;
+    bool exists {false};
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -161,12 +181,12 @@ bool SQLiteAircraftTypeDao::exists(const QString &type) const noexcept
     if (ok && query.next()) {
         const int count = query.value(0).toInt();
         exists = count > 0;
-    } else {
-        exists = false;
-#ifdef DEBUG
-        qDebug("SQLitePositionDao::exists: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
-#endif
     }
+#ifdef DEBUG
+    else {
+        qDebug() << "SQLiteAircraftTypeDao::exists: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+    }
+#endif
 
     return ok && exists;
 }

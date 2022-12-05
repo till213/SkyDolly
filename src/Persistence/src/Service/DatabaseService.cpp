@@ -23,8 +23,11 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QCoreApplication>
+#include <QString>
+#include <QStringBuilder>
 #include <QWidget>
 #include <QFileInfo>
 #include <QDir>
@@ -38,9 +41,12 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Const.h>
 #include <Model/Logbook.h>
-#include <LogbookManager.h>
+#include <PersistenceManager.h>
+
 #include "../Dao/DaoFactory.h"
 #include "../Dao/DatabaseDaoIntf.h"
+#include "PersistedEnumerationItem.h"
+#include <Service/EnumerationService.h>
 #include <Service/DatabaseService.h>
 
 namespace
@@ -51,51 +57,45 @@ namespace
     constexpr int BackupPeriodOneDay = 1;
 }
 
-class DatabaseServicePrivate
+struct DatabaseServicePrivate
 {
-public:
-    DatabaseServicePrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          databaseDao(daoFactory->createDatabaseDao())
-    {}
+    std::unique_ptr<DaoFactory> daoFactory {std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)};
+    std::unique_ptr<DatabaseDaoIntf> databaseDao {daoFactory->createDatabaseDao()};
 
-    std::unique_ptr<DaoFactory> daoFactory;
-    std::unique_ptr<DatabaseDaoIntf> databaseDao;
+    const std::int64_t BackupPeriodNeverId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNeverSymId).id()};
+    const std::int64_t BackupPeriodNowId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNowSymId).id()};
+    const std::int64_t BackupPeriodMonthlyId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodMonthlySymId).id()};
+    const std::int64_t BackupPeriodWeeklyId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodWeeklySymId).id()};
+    const std::int64_t BackupPeriodDailyId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodDailySymId).id()};
+    const std::int64_t BackupPeriodAlwaysId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodAlwaysSymId).id()};
 };
 
 // PUBLIC
 
 DatabaseService::DatabaseService() noexcept
     : d(std::make_unique<DatabaseServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug("DatabaseService::DatabaseService: CREATED.");
-#endif
-}
+{}
 
-DatabaseService::~DatabaseService() noexcept
-{
-#ifdef DEBUG
-    qDebug("DatabaseService::~DatabaseService: DELETED.");
-#endif
-}
+DatabaseService::DatabaseService(DatabaseService &&rhs) noexcept = default;
+DatabaseService &DatabaseService::operator=(DatabaseService &&rhs) noexcept = default;
+DatabaseService::~DatabaseService() = default;
 
 bool DatabaseService::backup() noexcept
 {
     QString backupDirectoryPath;
 
-    LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metaData;
-    bool ok = logbookManager.getMetadata(metaData);
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    bool ok {true};
+    const Metadata metaData = persistenceManager.getMetadata(&ok);
     if (ok) {
-        backupDirectoryPath = LogbookManager::createBackupPathIfNotExists(metaData.backupDirectoryPath);
+        backupDirectoryPath = PersistenceManager::createBackupPathIfNotExists(metaData.backupDirectoryPath);
     }
     ok = !backupDirectoryPath.isNull();
     if (ok) {
-        const QString backupFileName = logbookManager.getBackupFileName(backupDirectoryPath);
+        const QString backupFileName = persistenceManager.getBackupFileName(backupDirectoryPath);
         if (!backupFileName.isNull()) {
             const QString backupFilePath = backupDirectoryPath + "/" + backupFileName;
-            ok = logbookManager.backup(backupFilePath);
+            ok = persistenceManager.backup(backupFilePath);
             if (ok) {
                 ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
             }
@@ -110,11 +110,11 @@ bool DatabaseService::backup() noexcept
     return ok;
 }
 
-bool DatabaseService::setBackupPeriod(const QString &backupPeriodIntlId) noexcept
+bool DatabaseService::setBackupPeriod(std::int64_t backupPeriodId) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        ok = d->databaseDao->updateBackupPeriod(backupPeriodIntlId);
+        ok = d->databaseDao->updateBackupPeriod(backupPeriodId);
         if (ok) {
             ok = QSqlDatabase::database().commit();
         } else {
@@ -140,18 +140,18 @@ bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
 
 bool DatabaseService::updateBackupDate() noexcept
 {
-    Metadata metaData;
-    bool ok = LogbookManager::getInstance().getMetadata(metaData);
+    bool ok {true};
+    const Metadata metaData = PersistenceManager::getInstance().getMetadata(&ok);
     if (ok) {
         const QDateTime today = QDateTime::currentDateTime();
         QDateTime nextBackupDate = metaData.lastBackupDate.isNull() ? today : metaData.lastBackupDate;
-        if (metaData.backupPeriodSymId == Const::BackupNeverSymId) {
+        if (metaData.backupPeriodId == d->BackupPeriodNeverId) {
             nextBackupDate = nextBackupDate.addYears(BackupPeriodYearsNever);
-        } else if (metaData.backupPeriodSymId == Const::BackupMonthlySymId) {
+        } else if (metaData.backupPeriodId == d->BackupPeriodMonthlyId) {
             nextBackupDate = nextBackupDate.addMonths(BackupPeriodOneMonth);
-        } else if (metaData.backupPeriodSymId == Const::BackupWeeklySymId) {
+        } else if (metaData.backupPeriodId == d->BackupPeriodWeeklyId) {
             nextBackupDate = nextBackupDate.addDays(BackupPeriodSevenDays);
-        } else if (metaData.backupPeriodSymId == Const::BackupDailySymId) {
+        } else if (metaData.backupPeriodId == d->BackupPeriodDailyId) {
             nextBackupDate = nextBackupDate.addDays(BackupPeriodOneDay);
         }
         if (nextBackupDate < today) {
@@ -180,7 +180,7 @@ QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
 {
     Settings &settings = Settings::getInstance();
     QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
-    QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open Logbook"), existingLogbookPath, QString("*") + Const::LogbookExtension);
+    QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open Logbook"), existingLogbookPath, QString("*") % Const::LogbookExtension);
     return logbookPath;
 }
 
@@ -201,7 +201,7 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
         if (!logbookDirectoryPath.isEmpty()) {
             QFileInfo info = QFileInfo(logbookDirectoryPath);
             if (!info.exists()) {
-                newLogbookPath = logbookDirectoryPath + "/" + info.fileName() + Const::LogbookExtension;
+                newLogbookPath = logbookDirectoryPath + "/" % info.fileName() % Const::LogbookExtension;
                 retry = false;
             } else {
                 QMessageBox::information(parent, QCoreApplication::translate("DatabaseService", "Database exists"),

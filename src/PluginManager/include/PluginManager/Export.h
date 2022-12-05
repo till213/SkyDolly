@@ -26,11 +26,11 @@
 #define EXPORT_H
 
 #include <vector>
-#include <iterator>
 
 #include <QStringView>
 #include <QString>
 
+#include <Kernel/Unit.h>
 #include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
@@ -45,16 +45,43 @@ class PLUGINMANAGER_API Export
 {
 public:
 
+    /*! Precision of general number (altitude, heading, ...). */
+    static constexpr int NumberPrecision = 2;
+
     /*!
-     * Returns a file path based on the title of the \c flight with the suggested file name having the given \c suffix.
+     * Returns a file path based on the title of the \c flight with the suggested file name having the given \c extension.
      *
      * \param flight
      *        the Flight from which the suggested file path is derived
-     * \param suffix
-     *        the desired file suffix (e.g. \e kml or \e csv)
+     * \param extension
+     *        the desired file extension (e.g. \e kml or \e csv)
      * \return the file path having a suggested file name based on the given \c flight
      */
-    static QString suggestFilePath(const Flight &flight, QStringView suffix) noexcept;
+    static QString suggestFlightFilePath(const Flight &flight, QStringView extension) noexcept;
+
+    /*!
+     * Returns a file path for location export with the suggested file name having the given \c extension.
+     *
+     * \param extension
+     *        the desired file extension (e.g. \e kml or \e csv)
+     * \return the file path having a suggested file name for location export
+     */
+    static QString suggestLocationFilePath(QStringView extension) noexcept;
+
+    /*!
+     * Formats the GNSS \c coordinate (latitude or longitude) with the appropriate decimal point precision.
+     *
+     * \param coordinate
+     *        the coordinate to be formatted
+     * \return the text representation of \c coordinate
+     * \sa formatLatitude
+     * \sa formatLongitude
+     */
+    static inline QString formatCoordinate(double coordinate) noexcept
+    {
+        // Note: coordinates are always formatted with a decimal point
+        return Unit::formatCoordinate(coordinate);
+    }
 
     /*!
      * Formats the general \c number (e.g. altitude or heading) with the appropriate decimal point precision.
@@ -66,9 +93,12 @@ public:
      *        the number to be formatted as QString
      * \return the text representation of \c number
      */
-    static QString formatNumber(double number) noexcept;
+    static inline QString formatNumber(double number) noexcept
+    {
+        return QString::number(number, 'f', NumberPrecision);
+    }
 
-    static void resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) noexcept;
+    static std::vector<PositionData> resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 };
 
 #endif // EXPORT_H

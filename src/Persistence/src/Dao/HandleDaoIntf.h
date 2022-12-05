@@ -26,7 +26,6 @@
 #define HANDLEDAOINTF_H
 
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
 struct AircraftHandleData;
@@ -34,6 +33,11 @@ struct AircraftHandleData;
 class HandleDaoIntf
 {
 public:
+    HandleDaoIntf() = default;
+    HandleDaoIntf(const HandleDaoIntf &rhs) = delete;
+    HandleDaoIntf(HandleDaoIntf &&rhs) = default;
+    HandleDaoIntf &operator=(const HandleDaoIntf &rhs) = delete;
+    HandleDaoIntf &operator=(HandleDaoIntf &&rhs) = default;
     virtual ~HandleDaoIntf() = default;
 
     /*!
@@ -46,7 +50,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(std::int64_t aircraftId, const AircraftHandleData &data) noexcept = 0;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<AircraftHandleData>> backInsertIterator) const noexcept = 0;
+    virtual std::vector<AircraftHandleData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept = 0;
     virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
     virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
 };

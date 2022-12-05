@@ -34,26 +34,30 @@
 #include "PluginIntf.h"
 #include "PluginManagerLib.h"
 
-class PluginBasePrivate;
+struct PluginBasePrivate;
 
 class PLUGINMANAGER_API PluginBase : public QObject, public PluginIntf
 {
     Q_OBJECT
 public:
     PluginBase();
-    virtual ~PluginBase();
+    PluginBase(const PluginBase &rhs) = delete;
+    PluginBase(PluginBase &&rhs) = delete;
+    PluginBase &operator=(const PluginBase &rhs) = delete;
+    PluginBase &operator=(PluginBase &&rhs) = delete;
+    ~PluginBase() override;
 
-    virtual QWidget *getParentWidget() const noexcept override;
-    virtual void setParentWidget(QWidget *parent) noexcept override;
+    QWidget *getParentWidget() const noexcept override;
+    void setParentWidget(QWidget *parent) noexcept override;
 
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override;
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override;
+    void storeSettings(const QUuid &pluginUuid) const noexcept override;
+    void restoreSettings(const QUuid &pluginUuid) noexcept override;
 
 protected:
     /*!
      * Adds the plugin-specific settings, a key/value pair for each setting, to \c settings.
      *
-     * @param settings
+     * @param keyValues
      *        the plugin-specific key/value pair settings
      */
     virtual void addSettings(Settings::KeyValues &keyValues) const noexcept;
@@ -72,10 +76,10 @@ protected:
      * \param valuesByKey
      *        the plugin-specific settings associated with their key
      */
-    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept;
+    virtual void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept;
 
 private:
-    std::unique_ptr<PluginBasePrivate> d;
+    const std::unique_ptr<PluginBasePrivate> d;
 };
 
 #endif // PLUGINBASE_H

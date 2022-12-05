@@ -25,8 +25,6 @@
 #ifndef AIRCRAFTHANDLE_H
 #define AIRCRAFTHANDLE_H
 
-#include <vector>
-#include <iterator>
 #include <cstdint>
 
 #include "AircraftHandleData.h"
@@ -34,21 +32,15 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API AircraftHandle : public AbstractComponent<AircraftHandleData>
+class MODEL_API AircraftHandle final : public AbstractComponent<AircraftHandleData>
 {
 public:
     explicit AircraftHandle(const AircraftInfo &aircraftInfo) noexcept;
-    AircraftHandle(AircraftHandle &other) = default;
-    AircraftHandle(AircraftHandle &&other) = default;
-    ~AircraftHandle() noexcept override;
-    AircraftHandle &operator=(const AircraftHandle &rhs) = default;
-    AircraftHandle &operator=(AircraftHandle &&rhs) = default;
 
-    const AircraftHandleData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    AircraftHandleData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 
 private:
-    AircraftHandleData m_currentAircraftHandleData;
-    AircraftHandleData m_previousAircraftHandleData;
+    mutable AircraftHandleData m_currentData;
 };
 
 #endif // AIRCRAFTHANDLE_H

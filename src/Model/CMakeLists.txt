@@ -14,28 +14,28 @@ target_compile_definitions(${LIBRARY_NAME}
 target_sources(${LIBRARY_NAME}
     PRIVATE
         include/Model/ModelLib.h
-        include/Model/Data.h src/Data.cpp
+        include/Model/Data.h
         include/Model/Logbook.h src/Logbook.cpp
         include/Model/AbstractComponent.h
         include/Model/Flight.h src/Flight.cpp
-        include/Model/FlightSummary.h src/FlightSummary.cpp
+        include/Model/FlightSummary.h
         include/Model/FlightDate.h src/FlightDate.cpp
         include/Model/FlightCondition.h src/FlightCondition.cpp
         include/Model/Aircraft.h src/Aircraft.cpp
-        include/Model/TimeVariableData.h src/TimeVariableData.cpp
+        include/Model/TimeVariableData.h
         include/Model/Position.h src/Position.cpp
         include/Model/PositionData.h src/PositionData.cpp
         include/Model/InitialPosition.h src/InitialPosition.cpp
         include/Model/Engine.h src/Engine.cpp
         include/Model/EngineData.h src/EngineData.cpp
         include/Model/PrimaryFlightControl.h src/PrimaryFlightControl.cpp
-        include/Model/PrimaryFlightControlData.h src/PrimaryFlightControlData.cpp
+        include/Model/PrimaryFlightControlData.h
         include/Model/SecondaryFlightControl.h src/SecondaryFlightControl.cpp
-        include/Model/SecondaryFlightControlData.h src/SecondaryFlightControlData.cpp
+        include/Model/SecondaryFlightControlData.h
         include/Model/AircraftHandle.h src/AircraftHandle.cpp
-        include/Model/AircraftHandleData.h src/AircraftHandleData.cpp
+        include/Model/AircraftHandleData.h
         include/Model/Light.h src/Light.cpp
-        include/Model/LightData.h src/LightData.cpp
+        include/Model/LightData.h
         include/Model/AircraftType.h src/AircraftType.cpp
         include/Model/AircraftInfo.h src/AircraftInfo.cpp
         include/Model/Waypoint.h src/Waypoint.cpp

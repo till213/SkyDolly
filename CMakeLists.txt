@@ -9,7 +9,7 @@ set(APP_NAME "SkyDolly")
 
 project(
     ${APP_NAME}
-    VERSION 0.13.0
+    VERSION 0.14.0
     DESCRIPTION "Sky Dolly - The Black Sheep for Your Flight Recordings"
     HOMEPAGE_URL "https://github.com/till213/SkyDolly"
     LANGUAGES CXX    
@@ -172,7 +172,10 @@ target_sources(${APP_NAME}
         SECURITY.md
         SHASUM256.md
         THIRD_PARTY.md
+        doc/Design/Architecture.md
+        doc/Design/README.md
         doc/SkyDolly.simvars
+        doc/LICENSE
         res/Info.plist.in
         res/SkyDolly.rc.in
         ${QM_FILES}

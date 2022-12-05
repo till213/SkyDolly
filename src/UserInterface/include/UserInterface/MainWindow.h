@@ -48,14 +48,14 @@ class SettingsDialog;
 class FlightDialog;
 class SimulationVariablesDialog;
 class StatisticsDialog;
-class MainWindowPrivate;
+struct MainWindowPrivate;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
     explicit MainWindow(const QString &filePath = QString(), QWidget *parent = nullptr) noexcept;
-    ~MainWindow() noexcept override;
+    ~MainWindow() override;
 
     bool connectWithLogbook(const QString &filePath) noexcept;
 
@@ -64,9 +64,8 @@ protected:
     void closeEvent(QCloseEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(MainWindow)
     std::unique_ptr<Ui::MainWindow> ui;
-    std::unique_ptr<MainWindowPrivate> d;
+    const std::unique_ptr<MainWindowPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
@@ -171,7 +170,7 @@ private slots:
     void updateMainWindow() noexcept;
 
     // Modules
-    void onModuleActivated(const QString title, QUuid uuid) noexcept;
+    void onModuleActivated(const QString &title, QUuid uuid) noexcept;
 
     // File menu
     void createNewLogbook() noexcept;
@@ -218,8 +217,10 @@ private slots:
     void onLogbookConnectionChanged(bool connected) noexcept;
 
     // Import / export
-    void onImport(QAction *action) noexcept;
-    void onExport(QAction *action) noexcept;
+    void onFlightImport(QAction *action) noexcept;
+    void onFlightExport(QAction *action) noexcept;
+    void onLocationImport(QAction *action) noexcept;
+    void onLocationExport(QAction *action) noexcept;
 
     // Settings
     void onReplayLoopChanged() noexcept;

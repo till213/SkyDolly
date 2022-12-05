@@ -30,20 +30,14 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API Light : public AbstractComponent<LightData>
+class MODEL_API Light final : public AbstractComponent<LightData>
 {
 public:
     explicit Light(const AircraftInfo &aircraftInfo) noexcept;
-    Light(Light &other) = default;
-    Light(Light &&other) = default;
-    ~Light() noexcept override;
-    Light &operator=(const Light &rhs) = default;
-    Light &operator=(Light &&rhs) = default;
 
-    const LightData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
-
+    LightData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 private:
-    LightData m_currentLightData;
+    mutable LightData m_currentData;
 };
 
 #endif // LIGHT_H

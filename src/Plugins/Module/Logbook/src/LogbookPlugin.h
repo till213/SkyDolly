@@ -41,7 +41,7 @@ class LogbookPlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit LogbookPlugin(QObject *parent = nullptr) noexcept;
-    ~LogbookPlugin() noexcept override;
+    ~LogbookPlugin() override;
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
@@ -50,7 +50,7 @@ protected slots:
     void onRecordingStopped() noexcept override;
 
 private:
-    std::unique_ptr<LogbookPluginPrivate> d;
+    const std::unique_ptr<LogbookPluginPrivate> d;
 };
 
 #endif // LOGBOOKPLUGIN_H

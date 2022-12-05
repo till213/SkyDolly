@@ -27,6 +27,7 @@
 #include <QTableWidgetItem>
 #include <QStringBuilder>
 
+#include <Kernel/Const.h>
 #include <Model/Enumeration.h>
 #include "EnumerationWidgetItem.h"
 
@@ -34,6 +35,7 @@
 
 EnumerationWidgetItem::EnumerationWidgetItem(const Enumeration &enumeration)
     : QTableWidgetItem(QTableWidgetItem::UserType),
+      m_id(Const::InvalidId),
       m_enumeration(enumeration)
 {}
 
@@ -52,7 +54,7 @@ QVariant EnumerationWidgetItem::data(int role) const
         return QTableWidgetItem::data(role);
         break;
     }
-    return QVariant();
+    return {};
 }
 
 void EnumerationWidgetItem::setData(int role, const QVariant &value)

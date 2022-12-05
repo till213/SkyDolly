@@ -22,14 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory.h>
+#include <memory>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
+#include <Kernel/Const.h>
 #include <Model/Data.h>
 #include <Model/Enumeration.h>
 #include "Service/EnumerationService.h"
@@ -37,35 +36,30 @@
 
 struct PersistedEnumerationItemPrivate
 {
-    PersistedEnumerationItemPrivate(QString enumerationName, QString symbolicId)
-        : enumeration(enumerationName)
+    PersistedEnumerationItemPrivate(const QString &enumerationName, const QString &symId)
     {
-        if (enumerationService.getEnumerationByName(enumeration)) {
-            id = enumeration.getItemBySymbolicId(symbolicId).id;
+        bool ok {false};
+        enumeration = enumerationService.getEnumerationByName(enumerationName, &ok);
+        if (ok) {
+            id = enumeration.getItemBySymId(symId).id;
         }
     }
 
     Enumeration enumeration;
-    std::int64_t id {Data::InvalidId};
+    std::int64_t id {Const::InvalidId};
     EnumerationService enumerationService;
 };
 
 // PUBLIC
 
-PersistedEnumerationItem::PersistedEnumerationItem(QString enumerationName, QString symbolicId) noexcept
-    : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, symbolicId))
-{
-#ifdef DEBUG
-    qDebug() << "PersistedEnumerationItem::PersistedEnumerationItem: CREATED, name:" << enumerationName << "ID:" << d->id;
-#endif
-}
+PersistedEnumerationItem::PersistedEnumerationItem(const QString& enumerationName, const QString& symId) noexcept
+    : d(std::make_unique<PersistedEnumerationItemPrivate>(enumerationName, symId))
+{}
 
-PersistedEnumerationItem::~PersistedEnumerationItem() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "PersistedEnumerationItem::~PersistedEnumerationItem: DELETED, name:" << d->enumeration.getName() << "ID:" << d->id;
-#endif
-}
+PersistedEnumerationItem::PersistedEnumerationItem() = default;
+PersistedEnumerationItem::PersistedEnumerationItem(PersistedEnumerationItem &&rhs) noexcept = default;
+PersistedEnumerationItem &PersistedEnumerationItem::operator=(PersistedEnumerationItem &&rhs) noexcept = default;
+PersistedEnumerationItem::~PersistedEnumerationItem() = default;
 
 std::int64_t PersistedEnumerationItem::id() const noexcept
 {

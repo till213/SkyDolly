@@ -25,10 +25,6 @@
 #include <algorithm>
 #include <cstdint>
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/SkyMath.h>
 #include "TimeVariableData.h"
 #include "SkySearch.h"
@@ -41,20 +37,9 @@
 
 Light::Light(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
-{
-#ifdef DEBUG
-    qDebug() << "Light::Light: CREATED";
-#endif
-}
+{}
 
-Light::~Light() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "Light::Light: DELETED";
-#endif
-}
-
-const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+LightData Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const LightData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
@@ -84,18 +69,18 @@ const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Ac
 
         if (p1 != nullptr) {
             // No interpolation for light states
-            m_currentLightData.lightStates = p1->lightStates;
-            m_currentLightData.timestamp = adjustedTimestamp;
+            m_currentData.lightStates = p1->lightStates;
+            m_currentData.timestamp = adjustedTimestamp;
         } else {
-            // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            m_currentLightData = LightData::NullData;
+            // No recorded data, or the timestamp exceeds the timestamp of the last recorded data
+            m_currentData.reset();
         }
 
         setCurrentIndex(currentIndex);
         setCurrentTimestamp(adjustedTimestamp);
         setCurrentAccess(access);
     }
-    return m_currentLightData;
+    return m_currentData;
 }
 
 template class AbstractComponent<LightData>;

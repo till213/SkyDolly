@@ -41,7 +41,7 @@ class Enumeration;
 class WIDGET_API EnumerationWidgetItem : public QTableWidgetItem
 {
 public:
-    EnumerationWidgetItem(const Enumeration &enumeration);
+    explicit EnumerationWidgetItem(const Enumeration &enumeration);
 
     QVariant data(int role) const override;
     void setData(int role, const QVariant &value) override;

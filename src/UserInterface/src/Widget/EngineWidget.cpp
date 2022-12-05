@@ -44,9 +44,8 @@
 #include "EngineWidget.h"
 #include "ui_EngineWidget.h"
 
-class EngineWidgetPrivate
+struct EngineWidgetPrivate
 {
-public:
     EngineWidgetPrivate(const QWidget &widget) noexcept
         : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -61,15 +60,14 @@ public:
 
 EngineWidget::EngineWidget(QWidget *parent) noexcept :
     AbstractSimulationVariableWidget(parent),
-    d(std::make_unique<EngineWidgetPrivate>(*this)),
-    ui(std::make_unique<Ui::EngineWidget>())
+    ui(std::make_unique<Ui::EngineWidget>()),
+    d(std::make_unique<EngineWidgetPrivate>(*this))
 {
     ui->setupUi(this);
     initUi();
 }
 
-EngineWidget::~EngineWidget() noexcept
-{}
+EngineWidget::~EngineWidget() = default;
 
 // PROTECTED SLOTS
 
@@ -207,21 +205,21 @@ void EngineWidget::initUi() noexcept
     ui->generalEngineCombustion4CheckBox->setToolTip(SimVar::GeneralEngineCombustion4);
 }
 
-const EngineData &EngineWidget::getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+EngineData EngineWidget::getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
+    EngineData engineData;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getEngine().getLast();
+            engineData = aircraft.getEngine().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getEngine().interpolate(timestamp, access);
+                engineData = aircraft.getEngine().interpolate(timestamp, access);
             } else {
-                return aircraft.getEngine().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                engineData = aircraft.getEngine().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
-    } else {
-        return EngineData::NullData;
     }
+    return engineData;
 }

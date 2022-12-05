@@ -37,7 +37,7 @@ class QHideEvent;
 
 class SkyConnectIntf;
 struct PositionData;
-class AircraftWidgetPrivate;
+struct AircraftWidgetPrivate;
 
 namespace Ui {
     class AircraftWidget;
@@ -48,17 +48,17 @@ class AircraftWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit AircraftWidget(QWidget *parent) noexcept;
-    virtual ~AircraftWidget() noexcept;
+    ~AircraftWidget() override;
 
 protected slots:
-    virtual void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    std::unique_ptr<AircraftWidgetPrivate> d;
     std::unique_ptr<Ui::AircraftWidget> ui;
+    const std::unique_ptr<AircraftWidgetPrivate> d;
 
     void initUi() noexcept;
-    const PositionData &getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    PositionData getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // AIRCRAFTVARIABLESWIDGET_H

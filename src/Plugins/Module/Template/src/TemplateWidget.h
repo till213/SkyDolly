@@ -44,7 +44,7 @@ class DatabaseService;
 class FlightService;
 class FlightDate;
 class FlightSummary;
-class TemplateWidgetPrivate;
+struct TemplateWidgetPrivate;
 
 namespace Ui {
     class TemplateWidget;
@@ -55,12 +55,11 @@ class TemplateWidget : public QWidget
     Q_OBJECT
 public:
     explicit TemplateWidget(QWidget *parent = nullptr) noexcept;
-    ~TemplateWidget() noexcept override;
+    ~TemplateWidget() override;
 
 private:
-    Q_DISABLE_COPY(TemplateWidget)
     std::unique_ptr<Ui::TemplateWidget> ui;
-    std::unique_ptr<TemplateWidgetPrivate> d;
+    const std::unique_ptr<TemplateWidgetPrivate> d;
 
     void initUi() noexcept;
     void frenchConnection() noexcept;

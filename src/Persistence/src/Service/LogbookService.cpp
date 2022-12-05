@@ -27,9 +27,6 @@
 #include <vector>
 
 #include <QSqlDatabase>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
@@ -38,9 +35,8 @@
 #include <FlightSelector.h>
 #include <Service/LogbookService.h>
 
-class LogbookServicePrivate
+struct LogbookServicePrivate
 {
-public:
     LogbookServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           logbookDao(daoFactory->createLogbookDao())
@@ -54,28 +50,20 @@ public:
 
 LogbookService::LogbookService() noexcept
     : d(std::make_unique<LogbookServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug() << "LogbookService::LogbookService: CREATED.";
-#endif
-}
+{}
 
-LogbookService::~LogbookService() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "LogbookService::~LogbookService: DELETED.";
-#endif
-}
+LogbookService::LogbookService(LogbookService &&rhs) noexcept = default;
+LogbookService &LogbookService::operator=(LogbookService &&rhs) noexcept = default;
+LogbookService::~LogbookService() = default;
 
-bool LogbookService::getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept
+std::forward_list<FlightDate> LogbookService::getFlightDates() const noexcept
 {
     std::forward_list<FlightDate> flightDates;
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->logbookDao->getFlightDates(frontInsertIterator);
+    if (QSqlDatabase::database().transaction()) {
+        flightDates = d->logbookDao->getFlightDates();
         QSqlDatabase::database().rollback();
     }
-    return ok;
+    return flightDates;
 }
 
 std::vector<FlightSummary> LogbookService::getFlightSummaries(const FlightSelector &flightSelector) const noexcept

@@ -58,9 +58,8 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const Aircraft &userAircraft = flight.getUserAircraft();
     Position &position = userAircraft.getPosition();
-    const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::Seek);
-    if (!positionData.isNull()) {
-
+    if (position.count() > 0) {
+        const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::Seek);
         const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfo();
         const AircraftType &aircraftType = aircraftInfo.aircraftType;
 
@@ -115,7 +114,7 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
         const double altitude = positionData.altitude + deltaAltitude;
 
         // Degrees
-        double bearing;
+        double bearing {0.0};
         switch (relativePosition) {
         case RelativePosition::North:
             bearing = 0.0;
@@ -167,13 +166,13 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
             break;
         }
         bearing += positionData.trueHeading;
-        SkyMath::Coordinate initial = SkyMath::relativePosition(sourcePosition, SkyMath::feetToMeters(altitude), bearing, SkyMath::feetToMeters(distance));
+        SkyMath::Coordinate initial = SkyMath::relativePosition(sourcePosition, bearing, SkyMath::feetToMeters(distance));
 
         initialPosition.latitude = initial.first;
         initialPosition.longitude = initial.second;
         initialPosition.altitude = altitude;
 
-    } // positionData is not null
+    } // position count > 0
 
     return initialPosition;
 }

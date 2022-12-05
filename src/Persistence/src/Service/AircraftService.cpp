@@ -29,6 +29,7 @@
 
 #include <QSqlDatabase>
 
+#include <Kernel/Const.h>
 #include <Model/Aircraft.h>
 #include <Model/Logbook.h>
 #include "../Dao/FlightDaoIntf.h"
@@ -36,7 +37,7 @@
 #include "../Dao/AircraftDaoIntf.h"
 #include <Service/AircraftService.h>
 
-class AircraftServicePrivate
+struct AircraftServicePrivate
 {
 public:
     AircraftServicePrivate() noexcept
@@ -54,18 +55,11 @@ public:
 
 AircraftService::AircraftService() noexcept
     : d(std::make_unique<AircraftServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug("AircraftService::AircraftService: CREATED.");
-#endif
-}
+{}
 
-AircraftService::~AircraftService() noexcept
-{
-#ifdef DEBUG
-    qDebug("AircraftService::~AircraftService: DELETED.");
-#endif
-}
+AircraftService::AircraftService(AircraftService &&rhs) noexcept = default;
+AircraftService &AircraftService::operator=(AircraftService &&rhs) noexcept = default;
+AircraftService::~AircraftService() = default;
 
 bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept
 {
@@ -93,7 +87,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t aircraftId = flight.deleteAircraftByIndex(index);
     bool ok {true};
-    if (aircraftId != Aircraft::InvalidId) {
+    if (aircraftId != Const::InvalidId) {
         ok = QSqlDatabase::database().transaction();
         if (ok) {
             ok = d->aircraftDao->deleteById(aircraftId);
@@ -102,7 +96,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
             }
             if (ok) {
                 // Sequence numbers start at 1
-                ok = d->aircraftDao->adjustAircraftSequenceNumbersByFlightId(flight.getId(), index + 1);
+                ok = d->aircraftDao->adjustAircraftSequenceNumbersByFlightId(flight.getId(), static_cast<std::int64_t>(index) + 1);
             }
             if (ok) {
                 ok = QSqlDatabase::database().commit();
@@ -114,14 +108,18 @@ bool AircraftService::deleteByIndex(int index) noexcept
     return ok;
 }
 
-bool AircraftService::getAircraftInfos(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
+std::vector<AircraftInfo> AircraftService::getAircraftInfos(std::int64_t flightId, bool *ok) const noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
-    if (ok) {
-        ok = d->aircraftDao->getAircraftInfosByFlightId(flightId, aircraftInfos);
+    std::vector<AircraftInfo> aircraftInfos;
+    bool success = QSqlDatabase::database().transaction();
+    if (success) {
+        aircraftInfos = d->aircraftDao->getAircraftInfosByFlightId(flightId, &success);
         QSqlDatabase::database().rollback();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return aircraftInfos;
 }
 
 bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset) noexcept
@@ -130,8 +128,11 @@ bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffse
     if (ok) {
         ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
         if (ok) {
-            aircraft.setTimeOffset(newOffset);
+            aircraft.setTimeOffset(newOffset);            
             ok = QSqlDatabase::database().commit();
+            if (ok) {
+                emit Logbook::getInstance().getCurrentFlight().timeOffsetChanged(aircraft);
+            }
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -145,8 +146,11 @@ bool AircraftService::changeTailNumber(Aircraft &aircraft, const QString &tailNu
     if (ok) {
         ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber);
         if (ok) {
-            aircraft.setTailNumber(tailNumber);
+            aircraft.setTailNumber(tailNumber);            
             ok = QSqlDatabase::database().commit();
+            if (ok) {
+                emit Logbook::getInstance().getCurrentFlight().tailNumberChanged(aircraft);
+            }
         } else {
             QSqlDatabase::database().rollback();
         }

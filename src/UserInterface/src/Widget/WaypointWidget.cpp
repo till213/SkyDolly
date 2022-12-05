@@ -24,17 +24,20 @@
  */
 #include <memory>
 
+#ifdef DEBUG
+#include <QDebug>
+#endif
+
 #include <Kernel/Unit.h>
 #include <Model/Waypoint.h>
 #include <Model/SimVar.h>
 #include "WaypointWidget.h"
 #include "ui_WaypointWidget.h"
 
-class WaypointWidgetPrivate
+struct WaypointWidgetPrivate
 {
-public:
-    WaypointWidgetPrivate(const Waypoint &theWaypoint) noexcept
-        : waypoint(theWaypoint)
+    WaypointWidgetPrivate(Waypoint waypoint) noexcept
+        : waypoint(std::move(waypoint))
     {}
 
     Waypoint waypoint;
@@ -43,25 +46,20 @@ public:
 
 // PUBLIC
 
-WaypointWidget::WaypointWidget(const Waypoint &waypoint, QWidget *parent) noexcept :
+WaypointWidget::WaypointWidget(Waypoint waypoint, QWidget *parent) noexcept :
     QWidget(parent),
-    d(std::make_unique<WaypointWidgetPrivate>(waypoint)),
+    d(std::make_unique<WaypointWidgetPrivate>(std::move(waypoint))),
     ui(std::make_unique<Ui::WaypointWidget>())
 {
     ui->setupUi(this);
     initUi();
 }
 
-WaypointWidget::~WaypointWidget() noexcept
-{
-#ifdef DEBUG
-    qDebug("WaypointWidget::~WaypointWidget(): DELETED");
-#endif
-}
+WaypointWidget::~WaypointWidget() = default;
 
-void WaypointWidget::update(const Waypoint &waypoint) noexcept
+void WaypointWidget::update(Waypoint waypoint) noexcept
 {
-    d->waypoint = waypoint;
+    d->waypoint = std::move(waypoint);
     updateUi();
 }
 

@@ -42,8 +42,8 @@
 #include "SampleRate.h"
 #include "KernelLib.h"
 
-class SettingsPrivate;
 class Version;
+struct SettingsPrivate;
 
 /*!
  * The application settings. These settings are persisted to user configuration
@@ -53,6 +53,11 @@ class KERNEL_API Settings final : public QObject
 {
     Q_OBJECT
 public:
+
+    Settings(const Settings &rhs) = delete;
+    Settings(Settings &&rhs) = delete;
+    Settings &operator=(const Settings &rhs) = delete;
+    Settings &operator=(Settings &&rhs) = delete;
 
     /*!
      * Returns the singleton Settings instance.
@@ -260,7 +265,7 @@ public:
      * \param state
      *        the logbook table state encoded in the QByteAarray
      */
-    void setLogbookState(const QByteArray &layout) noexcept;
+    void setLogbookState(const QByteArray &state) noexcept;
 
     /*!
      * Returns the saved formation aircraft table state.
@@ -275,7 +280,7 @@ public:
      * \param state
      *        the formation aircraft table state encoded in the QByteAarray
      */
-    void setFormationAircraftTableState(const QByteArray &layout) noexcept;
+    void setFormationAircraftTableState(const QByteArray &state) noexcept;
 
     /*!
      * Returns the saved location table state.
@@ -290,7 +295,7 @@ public:
      * \param state
      *        the location table state encoded in the QByteAarray
      */
-    void setLocationTableState(const QByteArray &layout) noexcept;
+    void setLocationTableState(const QByteArray &state) noexcept;
 
     /*!
      * Returns the path of the directory which was last accessed during export or import.
@@ -306,7 +311,7 @@ public:
      *        the path of the last export / import directory
      * \sa exportPathChanged
      */
-    void setExportPath(QString exportPath);
+    void setExportPath(const QString &exportPath);
 
     /*!
      * Returns whether the fast-forward / backward interval is an absolute value (in milliseconds).
@@ -798,13 +803,11 @@ signals:
      */
     void changed();
 
-protected:
-    ~Settings() noexcept override;
-
 private:
-    std::unique_ptr<SettingsPrivate> d;
+    const std::unique_ptr<SettingsPrivate> d;
 
     Settings() noexcept;
+    ~Settings() override;
 
     void frenchConnection() noexcept;
 

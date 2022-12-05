@@ -41,7 +41,7 @@ class FormationPlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit FormationPlugin(QObject *parent = nullptr) noexcept;
-    ~FormationPlugin() noexcept override;
+    ~FormationPlugin() override;
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
@@ -55,7 +55,7 @@ protected slots:
     void onRecordingStopped() noexcept override;
 
 private:
-    std::unique_ptr<FormationPluginPrivate> d;
+    const std::unique_ptr<FormationPluginPrivate> d;
 };
 
 #endif // FORMATIONPLUGIN_H

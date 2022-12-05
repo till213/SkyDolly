@@ -25,8 +25,11 @@
 #ifndef METADATA_H
 #define METADATA_H
 
+#include <cstdint>
+
 #include <QDateTime>
 
+#include <Kernel/Const.h>
 #include <Kernel/Version.h>
 
 struct Metadata
@@ -37,7 +40,7 @@ struct Metadata
     QDateTime lastBackupDate;
     QDateTime nextBackupDate;
     QString backupDirectoryPath;
-    QString backupPeriodSymId;
+    std::int64_t backupPeriodId {Const::InvalidId};
 };
 
 #endif // METADATA_H

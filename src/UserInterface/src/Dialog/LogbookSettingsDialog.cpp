@@ -31,30 +31,27 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QUrl>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Unit.h>
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Persistence/Service/DatabaseService.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/Service/EnumerationService.h>
+#include <Persistence/PersistedEnumerationItem.h>
+#include <Persistence/PersistenceManager.h>
 #include <Persistence/Metadata.h>
-#include <Widget/BackupPeriodComboBox.h>
 #include "LogbookSettingsDialog.h"
 #include "ui_LogbookSettingsDialog.h"
 
-class LogbookSettingsDialogPrivate
+struct LogbookSettingsDialogPrivate
 {
-public:
-    LogbookSettingsDialogPrivate() noexcept
-        : databaseService(std::make_unique<DatabaseService>())
-    {}
+    std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>()};
+    std::int64_t originalBackupPeriodId {Const::InvalidId};
 
-    std::unique_ptr<DatabaseService> databaseService;
-    QString originalBackupPeriodIntlId;
+    const std::int64_t BackupPeriodNowId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNowSymId).id()};
+    const std::int64_t BackupPeriodNeverId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNeverSymId).id()};
+    const std::int64_t BackupPeriodNextTimeId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNextTimeSymId).id()};
 };
 
 // PUBLIC
@@ -68,34 +65,27 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
     initUi();
     frenchConnection();
 
-    LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metadata;
-    if (logbookManager.getMetadata(metadata)) {
-        d->originalBackupPeriodIntlId = metadata.backupPeriodSymId;
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    bool ok {true};
+    const Metadata metadata = persistenceManager.getMetadata(&ok);
+    if (ok) {
+        d->originalBackupPeriodId = metadata.backupPeriodId;
     } else {
-        d->originalBackupPeriodIntlId = Const::BackupNeverSymId;
+        d->originalBackupPeriodId = d->BackupPeriodNeverId;
     }
-#ifdef DEBUG
-    qDebug() << "LogbookSettingsDialog::LogbookSettingsDialog: CREATED";
-#endif
 }
 
-LogbookSettingsDialog::~LogbookSettingsDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "LogbookSettingsDialog::~LogbookSettingsDialog: DELETED";
-#endif
-}
+LogbookSettingsDialog::~LogbookSettingsDialog() = default;
 
 // PUBLIC SLOTS
 
 void LogbookSettingsDialog::accept() noexcept
 {
     QDialog::accept();
-    const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
-    if (backupPeriodIntlId != d->originalBackupPeriodIntlId) {
-        if (ui->backupPeriodComboBox->currentIndex() != Enum::toUnderlyingType(BackupPeriodComboBox::Index::NextTime)) {
-            d->databaseService->setBackupPeriod(backupPeriodIntlId);
+    const std::int64_t backupPeriodId = ui->backupPeriodComboBox->getCurrentId();
+    if (backupPeriodId != d->originalBackupPeriodId) {
+        if (ui->backupPeriodComboBox->getCurrentId() != d->BackupPeriodNextTimeId) {
+            d->databaseService->setBackupPeriod(backupPeriodId);
             d->databaseService->updateBackupDate();
         } else {
             // Ask next time Sky Dolly is quitting
@@ -119,16 +109,19 @@ void LogbookSettingsDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    ui->backupPeriodComboBox->setSelection(BackupPeriodComboBox::Selection::IncludingNextTime);
+    EnumerationComboBox::IgnoredIds ignoredIds;
+    ignoredIds.insert(d->BackupPeriodNowId);
+    ui->backupPeriodComboBox->setIgnoredIds(ignoredIds);
+    ui->backupPeriodComboBox->setEnumerationName(EnumerationService::BackupPeriod);
 }
 
 void LogbookSettingsDialog::updateUi() noexcept
 {
-    LogbookManager &logbookManager = LogbookManager::getInstance();
-    Metadata metadata;
-    const bool ok = logbookManager.getMetadata(metadata);
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    bool ok {true};
+    const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
-        const QString logbookPath = logbookManager.getLogbookPath();
+        const QString logbookPath = persistenceManager.getLogbookPath();
         QFileInfo fileInfo = QFileInfo(logbookPath);
 
         const QString logbookDirectoryPath = QDir::toNativeSeparators(fileInfo.absolutePath());
@@ -147,20 +140,7 @@ void LogbookSettingsDialog::updateUi() noexcept
 
         const std::int64_t fileSize = fileInfo.size();
         ui->logbookSizeLineEdit->setText(unit.formatMemory(fileSize));
-
-        if (metadata.backupPeriodSymId == Const::BackupNeverSymId) {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));
-        } else if (metadata.backupPeriodSymId == Const::BackupMonthlySymId) {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Monthly));
-        } else if (metadata.backupPeriodSymId == Const::BackupWeeklySymId) {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Weekly));
-        } else if (metadata.backupPeriodSymId == Const::BackupDailySymId) {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Daily));
-        } else if (metadata.backupPeriodSymId == Const::BackupAlwaysSymId) {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Always));
-        } else {
-            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));
-        }
+        ui->backupPeriodComboBox->setCurrentId(metadata.backupPeriodId);
     }
     ui->backupBeforeMigrationCheckBox->setChecked(Settings::getInstance().isBackupBeforeMigrationEnabled());
 }
@@ -175,7 +155,7 @@ void LogbookSettingsDialog::frenchConnection() noexcept
 
 void LogbookSettingsDialog::openLogbookDirectory() noexcept
 {
-    const QString logbookPath = LogbookManager::getInstance().getLogbookPath();
+    const QString logbookPath = PersistenceManager::getInstance().getLogbookPath();
     const QFileInfo fileInfo = QFileInfo(logbookPath);
     const QUrl url = QUrl::fromLocalFile(fileInfo.absolutePath());
     QDesktopServices::openUrl(url);

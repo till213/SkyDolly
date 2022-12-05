@@ -1,9 +1,54 @@
 # Changelog
 
+## 0.13.0
+
+### New Features
+- New location export plugin
+  * Sky Dolly CSV export
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV export
+- New location import plugin
+  * Sky Dolly CSV import
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV import
+  
+### Improvements
+- Flight CSV export
+  * The Sky Dolly CSV export now uses comma (,) instead of tab stops as value delimiters
+  * Size of file reduced, rounding numbers to two decimal places (except latitude and longitude values that are rounded to six decimal places)
+- Location module
+  * A new update button which updates the selected location with the current location in the flight simulator (sytem locations cannot be updated)
+  * Automatically scrolls to the newly inserted item (with any column sorting enabled)
+  * Additional system locations (101 in total)
+  * Locations can now be filtered with keywords, by country and category
+  * The location count is shown
+- The system locations migration file, located at *[Sky Dolly installation directory]/Resources/migr/Locations.csv*, is now optional and can be deleted
+- A new "Only this time" backup option has been added to the backup dialog: selecting this option will create a backup, but will then set the backup period to "Never" afterwards
+- Added default aircraft types from simulation update 11 ("40th anniversary update"), for aircraft selector combobox (flight import)
+- Position data is now interpolated within an "infinite interpolation window"
+  * Imported flight plans (e.g. GPX flight plans from Little Navmap) with "sparse waypoints" are now properly replayed
+- Flight Recorder CSV import now also imports "propeller lever position"
+- The keyword search text line edit widgets now have a "clear text" button
+
+### Bug Fixes
+- The various tabs in the Flight information dialog (Description, Aircraft, Conditions and Flight Plan) are now properly updated when importing a flight or loading a flight from the logbook
+- Imported "Historical flights" - that is to say, any real-world flight done before August 2020 - are now properly shown in the Logbook
+  * While the date August 18 2020, the birthday of MSFS, was certainly a reasonable choice for recorded flights...
+  * ... the date December 17 1903, the day of the first flight in human history, is certainly a safer bet when it comes to tracked (and imported) flights ;)
+- Correct country name of Qatar
+- Prevent teleportation by double-click on location ID during replay
+- Fixed the TAB order in the Logbook and Location module
+- AI aircraft data structures are now properly removed upon disconnect from MSFS: AI aircraft are hence properly re-created when re-connecting to the newly launched MSFS
+
+### Under The Hood
+- Rule of Zero, copy-and-swap [[Back to Basics: RAII and the Rule of Zero - Arthur O'Dwyer - CppCon 2019](https://www.youtube.com/watch?v=7Qgd9B1KuMQ)]
+- Thread-safe access to singletons [[Back to Basics: Concurrency - Arthur O'Dwyer - CppCon 2020](https://www.youtube.com/watch?v=F6Ipn7gCOsY)]
+- "Const pimpl" pattern (where applicable) [[CppCon 2016: Herb Sutter “Leak-Freedom in C++... By Default.”](https://www.youtube.com/watch?v=JfmTagWcqoE)]
+- Value-based aircraft list (CPU cache optimisation)
+- Small performance optimisations such as return value optimisation and memory pre-allocation
+- Replace regular expression etc. based CSV parsers by new CSV parser (very much inspired by [Little Navmap CSV parser implementation](https://github.com/albar965/atools))
+
 ## 0.12.0
 
 ### New Features
-
 - Location module
   * Capture and teleport to locations in the flight simulator
   * Manually add and edit locations

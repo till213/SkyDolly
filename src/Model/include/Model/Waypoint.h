@@ -29,25 +29,19 @@
 #include <QString>
 #include <QDateTime>
 
-#include "SimType.h"
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API Waypoint : public TimeVariableData
+struct MODEL_API Waypoint final : public TimeVariableData
 {
     QString identifier;
-    float latitude;
-    float longitude;
-    float altitude;
     QDateTime localTime;
     QDateTime zuluTime;
+    float latitude {0.0f};
+    float longitude {0.0f};
+    float altitude {0.0f};
 
     explicit Waypoint(float latitude = 0.0f, float longitude = 0.0f, float altitude = 0.0f) noexcept;
-    Waypoint(const Waypoint &other) = default;
-    Waypoint(Waypoint &&other) noexcept;
-    ~Waypoint() override = default;
-    Waypoint &operator=(const Waypoint &rhs) = default;
-    Waypoint &operator=(Waypoint &&rhs) noexcept;
 
     /*!
      * Returns whether this waypoint is valid or not.
@@ -56,11 +50,11 @@ struct MODEL_API Waypoint : public TimeVariableData
      */
     bool isValid() const noexcept;
 
-    // Note: declaring the constants as "inline" (with initialisation in the header)
-    // apparently won't make them accessible from outside this library (DLL)
+    // Note: declaring the constant as "inline" (with initialisation in the header)
+    // apparently won't make the Waypoint accessible from outside this library (DLL)
     static const Waypoint NullWaypoint;
-    static const char CustomDepartureIdentifier[];
-    static const char CustomArrivalIdentifier[];
+    static constexpr const char *CustomDepartureIdentifier {"CUSTD"};
+    static constexpr const char *CustomArrivalIdentifier {"CUSTA"};
 };
 
 #endif // WAYPOINT_H

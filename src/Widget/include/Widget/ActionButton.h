@@ -60,7 +60,7 @@ public:
     };
 
     explicit ActionButton(QWidget *parent = nullptr, Capitalisation capitalisation = Capitalisation::Normal) noexcept;
-    ~ActionButton() noexcept override;
+    ~ActionButton() override;
 
     /*!
      * Sets the action to be associated with this button. This button is
@@ -77,8 +77,7 @@ public:
     void setShowText(bool enable) noexcept;
 
 private:
-    Q_DISABLE_COPY(ActionButton)
-    std::unique_ptr<ActionButtonPrivate> d;
+    const std::unique_ptr<ActionButtonPrivate> d;
 
 private slots:
 

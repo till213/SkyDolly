@@ -56,18 +56,20 @@ class LogbookWidget : public QWidget
     Q_OBJECT
 public:
     explicit LogbookWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
-    ~LogbookWidget() noexcept override;
+    ~LogbookWidget() override;
 
 private:
-    Q_DISABLE_COPY(LogbookWidget)
     std::unique_ptr<Ui::LogbookWidget> ui;
-    std::unique_ptr<LogbookWidgetPrivate> d;
+    const std::unique_ptr<LogbookWidgetPrivate> d;
 
     void initUi() noexcept;
     void initFilterUi() noexcept;
-    void updateFlightTable() noexcept;
-    inline void updateFlightSummaryRow(const FlightSummary &summary, int row) noexcept;
-    void updateDateSelectorUi() noexcept;    
+
+    void updateTable() noexcept;
+    inline void initRow(const FlightSummary &summary, int row) noexcept;
+    inline void updateRow(const FlightSummary &summary, int row) noexcept;
+
+    void updateDateSelectorUi() noexcept;
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
     inline void insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept;

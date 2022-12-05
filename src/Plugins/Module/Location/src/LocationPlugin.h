@@ -43,18 +43,19 @@ class LocationPlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit LocationPlugin(QObject *parent = nullptr) noexcept;
-    ~LocationPlugin() noexcept override;
+    ~LocationPlugin() override;
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
 
 private:
-    std::unique_ptr<LocationPluginPrivate> d;
+    const std::unique_ptr<LocationPluginPrivate> d;
 
     void frenchConnection() noexcept;
 
 private slots:
     void captureLocation() noexcept;
+    void updateLocation() noexcept;
     void teleportTo(const Location &location) noexcept;
     void onLocationReceived(Location location) noexcept;
 };

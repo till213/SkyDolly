@@ -28,12 +28,8 @@
 
 #include "ActiveButton.h"
 
-class ActiveButtonPrivate
+struct ActiveButtonPrivate
 {
-public:
-    ActiveButtonPrivate()
-    {}
-
     QPixmap normalPixmap;
     QPixmap activePixmap;
 };
@@ -47,8 +43,7 @@ ActiveButton::ActiveButton(QWidget *parent) noexcept
     setAutoDefault(false);
 }
 
-ActiveButton::~ActiveButton() noexcept
-{}
+ActiveButton::~ActiveButton() = default;
 
 // PROTECTED
 

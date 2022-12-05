@@ -33,6 +33,7 @@
 
 #include <GeographicLib/Geodesic.hpp>
 
+#include <QtMath>
 #include <QtGlobal>
 #ifdef DEBUG
 #include <QDebug>
@@ -47,8 +48,6 @@
  */
 namespace SkyMath
 {
-    constexpr double PI = 3.141592653589793238463;
-
     // Latitude, longitude [degrees]
     using Coordinate = std::pair<double, double>;
 
@@ -73,11 +72,11 @@ namespace SkyMath
     constexpr double DefaultDistanceThreshold = 50.0;
 
     inline double degreesToRadians(double degree) {
-        return degree * PI / 180.0;
+        return degree * M_PI / 180.0;
     };
 
     inline double radiansToDegrees(double radians) {
-        return radians * 180.0 / PI;
+        return radians * 180.0 / M_PI;
     };
 
     inline double feetToMeters(double feet) {
@@ -369,7 +368,7 @@ namespace SkyMath
         const double distance = geodesicDistance(startPosition, endPosition);
         const double deltaT = static_cast<double>(endTimestamp - startTimestamp) / 1000.0;
 
-        return std::pair(distance, distance / deltaT);
+        return {distance, distance / deltaT};
     }
 
     /*!
@@ -424,7 +423,7 @@ namespace SkyMath
      */
     inline double approximatePitch(double sphericalDistance, double deltaAltitude) noexcept
     {
-        double pitch;
+        double pitch {0.0};
         if (!qFuzzyIsNull(deltaAltitude)) {
             if (sphericalDistance > 0.0) {
                 pitch = std::atan(deltaAltitude / sphericalDistance);
@@ -434,11 +433,8 @@ namespace SkyMath
                 // or in other words: level (0.0 degrees pitch) on the ground
                 pitch = 0.0;
             }
-        } else {
-            // Level flight
-            pitch = 0.0;
         }
-        return pitch * 180.0 / PI;
+        return pitch * 180.0 / M_PI;
     }
 
     /*!
@@ -509,7 +505,7 @@ namespace SkyMath
     }
 
     /*!
-     * Returns the relative position from the starting \c position at altitude \c altitude,
+     * Returns the relative position from the starting \c position,
      * given the \c bearing and geodesic \c distance.
      *
      * sinphi2    = sinphi1⋅cosδ + cosphi1⋅sinδ⋅costheta
@@ -517,15 +513,13 @@ namespace SkyMath
      *
      * \param position
      *        the Coordinate of the position [degrees]
-     * \param altitude
-     *        the altitude above sea level [meters]
      * \param bearing
      *        the bearing of the destination point [degrees]
      * \param distance
      *        the geodesic distance to the destination point [meters]
      * \return the Coordinate of the relative position [degrees]
      */
-    inline Coordinate relativePosition(Coordinate position, double altitude, double bearing, double distance) noexcept
+    inline Coordinate relativePosition(Coordinate position, double bearing, double distance) noexcept
     {
         Coordinate destination;
         try {

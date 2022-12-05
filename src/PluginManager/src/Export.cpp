@@ -25,6 +25,7 @@
 #include <QString>
 #include <QStringView>
 #include <QRegularExpression>
+#include <QCoreApplication>
 
 #include <Kernel/Enum.h>
 #include <Kernel/Version.h>
@@ -38,15 +39,9 @@
 #include <Model/PositionData.h>
 #include "Export.h"
 
-namespace
-{
-    // Precision of general number (altitude, heading, ...)
-    constexpr int NumberPrecision = 2;
-}
-
 // PUBLIC
 
-QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexcept
+QString Export::suggestFlightFilePath(const Flight &flight, QStringView extension) noexcept
 {
     // https://www.codeproject.com/tips/758861/removing-characters-which-are-not-allowed-in-windo
     static const QRegularExpression illegalInFileName = QRegularExpression(R"([\\/:*?""<>|])");
@@ -66,31 +61,37 @@ QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexce
     }
 
     suggestedFileName = suggestedFileName.replace(illegalInFileName, "_");
-    return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
+    return settings.getExportPath() + "/" + File::ensureExtension(suggestedFileName, extension);
 }
 
-QString Export::formatNumber(double number) noexcept
+QString Export::suggestLocationFilePath(QStringView extension) noexcept
 {
-    return QString::number(number, 'f', ::NumberPrecision);
+    QString suggestedFileName {QCoreApplication::translate("Export", "Locations")};
+
+    const Settings &settings = Settings::getInstance();
+    return settings.getExportPath() + "/" + File::ensureExtension(suggestedFileName, extension);
 }
 
-void Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) noexcept
+std::vector<PositionData> Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept
 {
+    std::vector<PositionData> interpolatedPositionData;
     // Position data
     Position &position = aircraft.getPosition();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
         const std::int64_t duration = position.getLast().timestamp;
-        const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
+        const std::int64_t deltaTime = Enum::underly(resamplingPeriod);
         std::int64_t timestamp = 0;
         while (timestamp <= duration) {
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Export);
             if (!positionData.isNull()) {
-                backInsertIterator = positionData;
+                interpolatedPositionData.push_back(positionData);
             }
             timestamp += deltaTime;
         }
     } else {
         // Original data requested
-        std::copy(position.begin(), position.end(), backInsertIterator);
+        interpolatedPositionData.reserve(position.count());
+        std::copy(position.begin(), position.end(), std::back_inserter(interpolatedPositionData));
     }
+    return interpolatedPositionData;
 }

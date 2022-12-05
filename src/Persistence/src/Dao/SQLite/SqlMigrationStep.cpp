@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <utility>
+
 #include <QString>
 #include <QStringList>
 #include <QStringBuilder>
@@ -32,31 +34,30 @@
 #include <QSqlResult>
 #include <QSqlError>
 #include <QDateTime>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include "SqlMigrationStep.h"
 
-class SqlMigrationStepPrivate
+struct SqlMigrationStepPrivate
 {
-public:
-    SqlMigrationStepPrivate()
-    {}
-
     QString migrationId;
     QString description;
-    int step {0};
-    int stepCount {0};
-
     QString errorMessage;
+    int step {0};
+    int stepCount {0};    
 };
 
 // PUBLIC
 
-SqlMigrationStep::SqlMigrationStep()
+SqlMigrationStep::SqlMigrationStep() noexcept
     : d(std::make_unique<SqlMigrationStepPrivate>())
 {}
 
-SqlMigrationStep::~SqlMigrationStep()
-{}
+SqlMigrationStep::SqlMigrationStep(SqlMigrationStep &&rhs) noexcept = default;
+SqlMigrationStep &SqlMigrationStep::operator=(SqlMigrationStep &&rhs) noexcept = default;
+SqlMigrationStep::~SqlMigrationStep() = default;
 
 bool SqlMigrationStep::isValid() const noexcept
 {
@@ -65,7 +66,7 @@ bool SqlMigrationStep::isValid() const noexcept
 
 bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcept
 {
-    bool ok;
+
     const QString tag = tagMatch.captured(1);
 
     // Match the tag's content, e.g. id = 42, descn = "The description", step = 1
@@ -73,7 +74,7 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
     static const QRegularExpression tagRegExp(R"(([\w]+)\s*=\s*["]*([\w\s\-]+)["]*)");
 
     QRegularExpressionMatchIterator it = tagRegExp.globalMatch(tag);
-    ok = true;
+    bool ok {true};
     while (ok && it.hasNext()) {
         QRegularExpressionMatch match = it.next();
 
@@ -129,16 +130,15 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
 
         QRegularExpressionMatch match = it.next();
 #ifdef DEBUG
-        qDebug("SqlMigrationStep::execute: SQL: %s\n", qPrintable(match.captured(1).toUtf8()));
-        qDebug("\n");
+        qDebug() << "SqlMigrationStep::execute: SQL:" << match.captured(1) << "\n\n";
 #endif
         QSqlQuery query;
         ok = query.exec(match.captured(1).trimmed() % ";");
         if (!ok) {
-            errorMessage = query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode();
+            errorMessage = query.lastError().text() + " - error code: " + query.lastError().nativeErrorCode();
             QSqlDatabase::database().rollback();
 #ifdef DEBUG
-            qDebug("SqlMigrationStep::execute: FAILED:\n%s\n", qPrintable(errorMessage));
+            qDebug() << "SqlMigrationStep::execute: FAILED:\n" << errorMessage;
 #endif
         }
     }
@@ -166,7 +166,7 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noe
             ok = QSqlDatabase::database().commit();
         } else {
 #ifdef DEBUG
-            qDebug("SqlMigrationStep::registerMigration: update MIGR table FAILED:\n%s\n", qPrintable(migrQuery.lastError().databaseText() + " - error code: " + migrQuery.lastError().nativeErrorCode()));
+            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:\n" << migrQuery.lastError().text() << "- error code:" << migrQuery.lastError().nativeErrorCode();
 #endif
             QSqlDatabase::database().rollback();
         }
@@ -182,7 +182,7 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noe
             } else {
                 migrQuery.prepare("update migr set success = :success, msg = :msg where id = :id and step = :step;");
             }
-            d->errorMessage = errorMessage;
+            d->errorMessage = std::move(errorMessage);
 
             migrQuery.bindValue(":id", d->migrationId);
             migrQuery.bindValue(":step", d->step);
@@ -193,14 +193,14 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noe
                 QSqlDatabase::database().commit();
             } else {
 #ifdef DEBUG
-            qDebug("SqlMigrationStep::registerMigration: update MIGR table FAILED:\n%s\n", qPrintable(migrQuery.lastError().databaseText() + " - error code: " + migrQuery.lastError().nativeErrorCode()));
+            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:\n" << migrQuery.lastError().text() << "- error code:" << migrQuery.lastError().nativeErrorCode();
 #endif
                 QSqlDatabase::database().rollback();
             }
         }
 #ifdef DEBUG
         else {
-            qDebug("SqlMigrationStep::registerMigration: FAILED to create transaction.");
+            qDebug() << "SqlMigrationStep::registerMigration: FAILED to create transaction.";
         }
 #endif
     }
@@ -213,7 +213,7 @@ const QString &SqlMigrationStep::getMigrationId() const noexcept
 
 void SqlMigrationStep::setMigrationId(QString migrationId) noexcept
 {
-    d->migrationId = migrationId;
+    d->migrationId = std::move(migrationId);
 }
 
 const QString &SqlMigrationStep::getDescription() const noexcept
@@ -223,7 +223,7 @@ const QString &SqlMigrationStep::getDescription() const noexcept
 
 void SqlMigrationStep::setDescription(QString description) noexcept
 {
-    d->description = description;
+    d->description = std::move(description);
 }
 
 int SqlMigrationStep::getStep() const noexcept

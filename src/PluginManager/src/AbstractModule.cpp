@@ -35,9 +35,6 @@
 
 struct AbstractModulePrivate
 {
-    AbstractModulePrivate() noexcept
-    {}
-
     std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
 };
 
@@ -50,8 +47,7 @@ AbstractModule::AbstractModule(QObject *parent) noexcept
     frenchConnection();
 }
 
-AbstractModule::~AbstractModule() noexcept
-{}
+AbstractModule::~AbstractModule() = default;
 
 ModuleIntf::RecordIconId AbstractModule::getRecordIconId() const noexcept
 {

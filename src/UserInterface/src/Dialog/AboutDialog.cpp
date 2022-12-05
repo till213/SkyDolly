@@ -37,17 +37,13 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QTimer>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Version.h>
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 
-class AboutDialogPrivate
+struct AboutDialogPrivate
 {
-public:
     AboutDialogPrivate(QWidget &parent) noexcept
     {
         if (parent.devicePixelRatioF() >= 1.5) {
@@ -76,17 +72,9 @@ AboutDialog::AboutDialog(QWidget *parent) noexcept :
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "AboutDialog::AboutDialog: CREATED";
-#endif
 }
 
-AboutDialog::~AboutDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "AboutDialog::~AboutDialog: DELETED";
-#endif
-}
+AboutDialog::~AboutDialog() = default;
 
 // PROTECTED
 

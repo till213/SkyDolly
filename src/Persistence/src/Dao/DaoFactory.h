@@ -42,7 +42,7 @@ class DatabaseDaoIntf;
 class LocationDaoIntf;
 class EnumerationDaoIntf;
 
-class DaoFactoryPrivate;
+struct DaoFactoryPrivate;
 
 class DaoFactory
 {
@@ -54,7 +54,12 @@ public:
     };
 
     DaoFactory(DbType dbType);
-    ~DaoFactory();
+    DaoFactory() = default;
+    DaoFactory(const DaoFactory &rhs) = delete;
+    DaoFactory(DaoFactory &&rhs) noexcept;
+    DaoFactory &operator=(const DaoFactory &rhs) = delete;
+    DaoFactory &operator=(DaoFactory &&rhs) noexcept;
+    virtual ~DaoFactory();
 
     std::unique_ptr<DatabaseDaoIntf> createDatabaseDao() noexcept;
     std::unique_ptr<LogbookDaoIntf> createLogbookDao() noexcept;

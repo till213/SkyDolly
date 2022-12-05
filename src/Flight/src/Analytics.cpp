@@ -27,6 +27,9 @@
 #include <cstdint>
 
 #include <QtGlobal>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/SkyMath.h>
 #include <Kernel/Convert.h>
@@ -50,9 +53,8 @@ namespace  {
     };
 }
 
-class AnalyticsPrivate
+struct AnalyticsPrivate
 {
-public:
     AnalyticsPrivate(const Aircraft &theAircraft)
         : aircraft(theAircraft)
     {}
@@ -64,20 +66,13 @@ public:
 
 Analytics::Analytics(const Aircraft &aircraft)
     : d(std::make_unique<AnalyticsPrivate>(aircraft))
-{
-#ifdef DEBUG
-    qDebug("Analytics::~Analytics: CREATED");
-#endif
-}
+{}
 
-Analytics::~Analytics()
-{
-#ifdef DEBUG
-    qDebug("Analytics::~Analytics: DELETED");
-#endif
-}
+Analytics::Analytics(Analytics &&rhs) noexcept = default;
+Analytics &Analytics::operator=(Analytics &&rhs) noexcept = default;
+Analytics::~Analytics() = default;
 
-const std::pair<std::int64_t, double> Analytics::firstMovementHeading() const noexcept
+std::pair<std::int64_t, double> Analytics::firstMovementHeading() const noexcept
 {
     std::pair<std::int64_t, double> result;
     Position &position = d->aircraft.getPosition();
@@ -101,23 +96,19 @@ const std::pair<std::int64_t, double> Analytics::firstMovementHeading() const no
     return result;
 }
 
-const PositionData &Analytics::closestPosition(double latitude, double longitude) const noexcept
+PositionData Analytics::closestPosition(double latitude, double longitude) const noexcept
 {
+    PositionData positionData;
     double minimumDistance = std::numeric_limits<double>::max();
-    const PositionData *closestPositionData {nullptr};
 
     Position &position = d->aircraft.getPosition();
     for (const PositionData &pos : position) {
         const double distance = SkyMath::geodesicDistance(SkyMath::Coordinate(latitude, longitude),
                                                           SkyMath::Coordinate(pos.latitude, pos.longitude));
         if (minimumDistance > distance) {
-            closestPositionData = &pos;
+            positionData = pos;
             minimumDistance = distance;
         }
     }
-    if (closestPositionData != nullptr) {
-        return *closestPositionData;
-    } else {
-        return PositionData::NullData;
-    }
+    return positionData;
 }

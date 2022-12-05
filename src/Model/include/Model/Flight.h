@@ -40,14 +40,19 @@ class QString;
 #include "FlightCondition.h"
 #include "ModelLib.h"
 
+struct Waypoint;
 struct FlightPrivate;
 
-class MODEL_API Flight : public QObject
+class MODEL_API Flight final : public QObject
 {
     Q_OBJECT
 public:
     explicit Flight(QObject *parent = nullptr) noexcept;
-    ~Flight() noexcept override;
+    Flight(const Flight &rhs) = delete;
+    Flight(Flight &&rhs) = delete;
+    Flight &operator=(const Flight &rhs) = delete;
+    Flight &operator=(Flight &&rhs) = delete;
+    ~Flight() override;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
@@ -61,7 +66,7 @@ public:
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;
 
-    void setAircraft(std::vector<std::unique_ptr<Aircraft>> aircraft) noexcept;
+    void setAircraft(std::vector<Aircraft> &&aircraft) noexcept;
     Aircraft &addUserAircraft() noexcept;
     Aircraft &getUserAircraft() const noexcept;
 
@@ -116,6 +121,33 @@ public:
     std::int64_t deleteAircraftByIndex(int index) noexcept;
     std::size_t count() const noexcept;
 
+    /*!
+     * Adds the \c waypoint to the flight plan of the user aircraft.
+     *
+     * \param waypoint
+     *        the waypoint to be added to the flight plan of the user aircraft
+     * \sa waypointAdded
+     */
+    void addWaypoint(const Waypoint &waypoint) noexcept;
+
+    /*!
+     * Updates the waypoint at \c index with the given \c waypoint.
+     *
+     * \param index
+     *        the index of the waypoint to be updated
+     * \param waypoint
+     *        the waypoint data to update with
+     * \sa waypointUpdated
+     */
+    void updateWaypoint(int index, const Waypoint &waypoint) noexcept;
+
+    /*!
+     * Clears all waypoints of the flight plan of the user aircraft.
+     *
+     * \sa waypointsCleared
+     */
+    void clearWaypoints() noexcept;
+
     const FlightCondition &getFlightCondition() const noexcept;
     void setFlightCondition(FlightCondition flightCondition) noexcept;
 
@@ -145,7 +177,7 @@ public:
 
     void clear(bool withOneAircraft) noexcept;
 
-    using Iterator = std::vector<std::unique_ptr<Aircraft>>::iterator;
+    using Iterator = std::vector<Aircraft>::iterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
@@ -155,11 +187,6 @@ public:
     Aircraft &operator[](std::size_t index) noexcept;
     const Aircraft &operator[](std::size_t index) const noexcept;
 
-    /*!
-     * The initial ID for every newly created flight. An invalid ID indicates that this
-     * flight has not yet been (successfully) persisted.
-     */
-    static constexpr std::int64_t InvalidId {-1};
     static constexpr int InvalidAircraftIndex {-1};
 
 signals:
@@ -172,6 +199,29 @@ signals:
 
     void aircraftAdded(const Aircraft &newAircraft);
     void aircraftRemoved(std::int64_t removedAircraftId);
+
+    /*!
+     * Emitted whenever a new \c waypoint has been added to the user aircraft.
+     *
+     * \param waypoint
+     *        the newly added waypoint
+     */
+    void waypointAdded(const Waypoint &waypoint);
+
+    /*!
+     * Emitted whenever the \c waypoint of the user aircraft at \c index has been udpated.
+     *
+     * \param index
+     *        the index of the updated waypoint
+     * \param waypoint
+     *        the updated waypoint
+     */
+    void waypointUpdated(int index, const Waypoint &waypoint);
+
+    /*!
+     * Emitted whenever all waypoints of the user aircraft have been cleared.
+     */
+    void waypointsCleared();
 
     /*!
      * Emitted whenever the user aircraft index is changed to \c newUserAircraftIndex. In case a previous user aircraft
@@ -194,6 +244,13 @@ signals:
      * \sa timeOffsettChanged
      */
     void aircraftInfoChanged(const Aircraft &aircraft);
+
+    /*!
+     * Emitted whenever the tail number of the \c aircraft has changed.
+     *
+     * \param aircraft
+     *        the aircraft whose tail number has changed
+     */
     void tailNumberChanged(const Aircraft &aircraft);
 
     /*!
@@ -209,7 +266,7 @@ signals:
 private:
     std::unique_ptr<FlightPrivate> d;
 
-    inline void connectWithAircraftSignals(Aircraft &aircraft);
+    void frenchConnection();
 
     /*
      * Re-assigns the user aircraft \c index, but without emitting the \c userAircraftChanged signal.
@@ -217,7 +274,7 @@ private:
      * is deleted and hence the user aircraft index must be re-assigned, but without actually
      * switching the user aircraft to a previous AI object.
      */
-    void reassignUserAircraftIndex(std::int64_t index) noexcept;
+    void reassignUserAircraftIndex(int index) noexcept;
 };
 
 #endif // FLIGHT_H

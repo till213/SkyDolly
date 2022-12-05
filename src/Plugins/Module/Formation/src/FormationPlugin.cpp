@@ -24,10 +24,6 @@
  */
 #include <memory>
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
@@ -57,17 +53,9 @@ FormationPlugin::FormationPlugin(QObject *parent) noexcept
       d(std::make_unique<FormationPluginPrivate>(getFlightService()))
 {
      Q_INIT_RESOURCE(FormationPlugin);
-#ifdef DEBUG
-    qDebug() << "FormationPlugin::FormationPlugin: CREATED.";
-#endif
 }
 
-FormationPlugin::~FormationPlugin() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FormationPlugin::~FormationPlugin: DELETED.";
-#endif
-}
+FormationPlugin::~FormationPlugin() = default;
 
 QString FormationPlugin::getModuleName() const noexcept
 {
@@ -95,7 +83,7 @@ void FormationPlugin::onStartRecording() noexcept
     // The initial recording position is calculated for timestamp = 0 ("at the beginning")
     const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ?
                 Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, 0) :
-                InitialPosition::NullData;
+                InitialPosition();
     skyConnectManager.startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
 }
 
@@ -109,7 +97,7 @@ void FormationPlugin::onStartReplay() noexcept
     const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
     const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ?
         Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp) :
-        InitialPosition::NullData;
+        InitialPosition();
     skyConnectManager.startReplay(fromStart, initialPosition);
 }
 

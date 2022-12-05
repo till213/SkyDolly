@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <vector>
-#include <iterator>
 
 #include <QWidget>
 #include <QComboBox>
@@ -34,9 +33,8 @@
 #include <Persistence/Service/AircraftTypeService.h>
 #include "AircraftSelectionComboBox.h"
 
-class AircraftSelectionComboBoxPrivate
+struct AircraftSelectionComboBoxPrivate
 {
-public:
     AircraftSelectionComboBoxPrivate() noexcept
         : aircraftTypeService(std::make_unique<AircraftTypeService>())
     {}
@@ -50,24 +48,19 @@ AircraftSelectionComboBox::AircraftSelectionComboBox(QWidget *parent) noexcept
     : QComboBox(parent),
       d(std::make_unique<AircraftSelectionComboBoxPrivate>())
 {
-    initialise();
+    initUi();
 }
 
-AircraftSelectionComboBox::~AircraftSelectionComboBox() noexcept
-{}
+AircraftSelectionComboBox::~AircraftSelectionComboBox() = default;
 
 // PRIVATE
 
-void AircraftSelectionComboBox::initialise() noexcept
+void AircraftSelectionComboBox::initUi() noexcept
 {
-    std::vector<AircraftType> aircraftTypes;
-    const bool ok = d->aircraftTypeService->getAll(std::back_inserter(aircraftTypes));
-    if (ok) {
-        for (AircraftType &aircraftType : aircraftTypes) {
-            this->addItem(aircraftType.type);
-        }
+    const std::vector<AircraftType> aircraftTypes = d->aircraftTypeService->getAll();
+    for (const AircraftType &aircraftType : aircraftTypes) {
+        this->addItem(aircraftType.type);
     }
-
     setEditable(true);
     setInsertPolicy(QComboBox::NoInsert);
     QCompleter *autoCompleter = completer();

@@ -44,43 +44,26 @@ public:
     using Data = typename std::vector<T>;
     using Iterator = typename Data::iterator;
     using ConstIterator = typename Data::const_iterator;
-    using BackInsertIterator = typename std::back_insert_iterator<Data>;
 
     explicit AbstractComponent(const AircraftInfo &aircraftInfo) noexcept
         : m_aircraftInfo(aircraftInfo)
     {}
-    virtual ~AbstractComponent() = default;
-    AbstractComponent(const AbstractComponent &) = default;
-    AbstractComponent(AbstractComponent &&other)
-        : m_data (std::move(other.m_data)),
-          m_aircraftInfo(std::move(other.m_aircraftInfo)),
-          m_currentTimestamp(other.m_currentTimestamp),
-          m_currentIndex(other.m_currentIndex),
-          m_currentAccess(other.m_currentAccess)
-    {}
 
-    AbstractComponent &operator=(const AbstractComponent &rhs)
+    AbstractComponent() noexcept = default;
+    AbstractComponent(const AbstractComponent &rhs) = default;
+    AbstractComponent(AbstractComponent &&rhs) noexcept = default;
+    AbstractComponent &operator=(const AbstractComponent &rhs) = default;
+    AbstractComponent &operator=(AbstractComponent &&rhs) noexcept = default;
+    virtual ~AbstractComponent() = default;
+
+    void setData(const Data &data) noexcept
     {
-        if (this != &rhs) {
-            // Don't copy the reference member
-            m_data = rhs.m_data;
-            m_currentTimestamp = rhs.m_currentTimestamp;
-            m_currentIndex = rhs.m_currentIndex;
-            m_currentAccess = rhs.m_currentAccess;
-        }
-        return *this;
+        m_data = data;
     }
 
-    AbstractComponent &operator=(AbstractComponent &&rhs)
+    void setData(Data &&data) noexcept
     {
-        if (this != &rhs) {
-            // Don't copy the reference member
-            m_data = std::move(rhs.m_data);
-            m_currentTimestamp = rhs.m_currentTimestamp;
-            m_currentIndex = rhs.m_currentIndex;
-            m_currentAccess = rhs.m_currentAccess;
-        }
-        return *this;
+        m_data = std::move(data);
     }
 
     /*!
@@ -94,13 +77,13 @@ public:
      *        the data to be upserted
      * \sa upsert
      */
-    void upsertLast(const T data) noexcept
+    void upsertLast(const T &data) noexcept
     {
         if (m_data.size() > 0 && m_data.back() == data)  {
             // Same timestamp -> replace
-            m_data[m_data.size() - 1] = std::move(data);
+            m_data.back() = data;
         } else {
-            m_data.push_back(std::move(data));
+            m_data.push_back(data);
         }
     }
 
@@ -115,7 +98,7 @@ public:
      *        the data to be upserted
      * \sa upsertLast
      */
-    void upsert(const T data) noexcept
+    void upsert(const T &data) noexcept
     {
         auto result = std::find_if(m_data.begin(), m_data.end(),
                                   [&data] (const TimeVariableData &d) { return d.timestamp == data.timestamp; });
@@ -123,32 +106,45 @@ public:
             // Same timestamp -> update
             *result = data;
         } else {
-            m_data.push_back(std::move(data));
+            m_data.push_back(data);
         }
     }
 
+    /*!
+     * Returns the first data element. The collection must have at least one element,
+     * otherwise the behaviour is undefined.
+     *
+     * \return the first element T of the collection
+     */
     const T &getFirst() const noexcept
     {
-        if (!m_data.empty()) {
-            return m_data.front();
-        } else {
-            return T::NullData;
-        }
+        return m_data.front();
     }
 
+    /*!
+     * Returns the last data element. The collection must have at least one element,
+     * otherwise the behaviour is undefined.
+     *
+     * \return the last element T of the collection
+     */
     const T &getLast() const noexcept
     {
-        if (!m_data.empty()) {
-            return m_data.back();
-        } else {
-            return T::NullData;
-        }
+        return m_data.back();
     }
 
-    [[nodiscard]]
     std::size_t count() const noexcept
     {
         return m_data.size();
+    }
+
+    void reserve(typename Data::size_type size)
+    {
+        m_data.reserve(size);
+    }
+
+    typename Data::size_type capacity() const noexcept
+    {
+        return m_data.capacity();
     }
 
     void clear() noexcept
@@ -163,7 +159,17 @@ public:
         return m_data.begin();
     }
 
+    ConstIterator begin() const noexcept
+    {
+        return m_data.begin();
+    }
+
     Iterator end() noexcept
+    {
+        return m_data.end();
+    }
+
+    ConstIterator end() const noexcept
     {
         return m_data.end();
     }
@@ -178,11 +184,6 @@ public:
         return m_data.cend();
     }
 
-    BackInsertIterator backInsertIterator() noexcept
-    {
-        return std::back_inserter(m_data);
-    }
-
     T &operator[](std::size_t index) noexcept
     {
         return m_data[index];
@@ -193,47 +194,42 @@ public:
         return m_data[index];
     }
 
-    virtual const T &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
+    virtual T interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept = 0;
 
 protected:
-    [[nodiscard]]
     inline const Data &getData() const noexcept
     {
         return m_data;
     }
 
-    [[nodiscard]]
     inline const AircraftInfo &getAircraftInfo() const noexcept
     {
         return m_aircraftInfo;
     }
 
-    [[nodiscard]]
-    inline const std::int64_t getCurrentTimestamp() const noexcept
+    inline std::int64_t getCurrentTimestamp() const noexcept
     {
         return m_currentTimestamp;
     }
-    inline void setCurrentTimestamp(std::int64_t timestamp) noexcept
+    inline void setCurrentTimestamp(std::int64_t timestamp) const noexcept
     {
         m_currentTimestamp = timestamp;
     }
 
-    [[nodiscard]]
-    inline const int getCurrentIndex() const noexcept
+    inline int getCurrentIndex() const noexcept
     {
         return m_currentIndex;
     }
-    inline void setCurrentIndex(int index) noexcept
+    inline void setCurrentIndex(int index) const noexcept
     {
         m_currentIndex = index;
     }
 
-    [[nodiscard]]
-    inline const TimeVariableData::Access getCurrentAccess() const noexcept
+    inline TimeVariableData::Access getCurrentAccess() const noexcept
     {
         return m_currentAccess;
     }
-    inline void setCurrentAccess(TimeVariableData::Access access) noexcept
+    inline void setCurrentAccess(TimeVariableData::Access access) const noexcept
     {
         m_currentAccess = access;
     }
@@ -241,9 +237,9 @@ protected:
 private:
     Data m_data;
     const AircraftInfo &m_aircraftInfo;
-    std::int64_t m_currentTimestamp {TimeVariableData::InvalidTime};
-    int m_currentIndex {SkySearch::InvalidIndex};
-    TimeVariableData::Access m_currentAccess {TimeVariableData::Access::Linear};
+    mutable std::int64_t m_currentTimestamp {TimeVariableData::InvalidTime};
+    mutable int m_currentIndex {SkySearch::InvalidIndex};
+    mutable TimeVariableData::Access m_currentAccess {TimeVariableData::Access::Linear};
 };
 
 #endif // ABSTRACTCOMPONENT_H

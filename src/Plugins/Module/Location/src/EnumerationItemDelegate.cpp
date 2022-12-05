@@ -23,12 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 
 #include <QStyledItemDelegate>
 #include <QModelIndex>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Widget/EnumerationComboBox.h>
 
@@ -38,7 +36,7 @@
 struct EnumerationItemDelegatePrivate
 {
     EnumerationItemDelegatePrivate(QString theEnumerationName)
-        : enumerationName(theEnumerationName)
+        : enumerationName(std::move(theEnumerationName))
     {}
 
     QString enumerationName;
@@ -48,26 +46,17 @@ struct EnumerationItemDelegatePrivate
 
 EnumerationItemDelegate::EnumerationItemDelegate(QString enumerationName) noexcept
     : QStyledItemDelegate(),
-      d(std::make_unique<EnumerationItemDelegatePrivate>(enumerationName))
-{
-#ifdef DEBUG
-    qDebug() << "EnumerationItemDelegate::EnumerationItemDelegate: CREATED.";
-#endif
-}
+      d(std::make_unique<EnumerationItemDelegatePrivate>(std::move(enumerationName)))
+{}
 
-EnumerationItemDelegate::~EnumerationItemDelegate() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "EnumerationItemDelegate::~EnumerationItemDelegate: DELETED.";
-#endif
-}
+EnumerationItemDelegate::~EnumerationItemDelegate() = default;
 
 QWidget *EnumerationItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if (index.data().canConvert<QString>()) {
-        EnumerationComboBox *enumerationComboBox = new EnumerationComboBox(d->enumerationName, parent);
+        EnumerationComboBox *enumerationComboBox = new EnumerationComboBox(d->enumerationName, EnumerationComboBox::Mode::Editable, parent);
         connect(enumerationComboBox, &EnumerationComboBox::currentIndexChanged,
-                         this, &EnumerationItemDelegate::commitAndCloseEditor);
+                this, &EnumerationItemDelegate::commitAndCloseEditor);
         return enumerationComboBox;
     } else {
         return QStyledItemDelegate::createEditor(parent, option, index);
@@ -88,7 +77,6 @@ void EnumerationItemDelegate::setEditorData(QWidget *editor, const QModelIndex &
 
 void EnumerationItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const noexcept
 {
-    const QVariant data = index.data(Qt::EditRole);
     if (index.data().canConvert<std::int64_t>()) {
          EnumerationComboBox *enumerationEditor = qobject_cast<EnumerationComboBox *>(editor);
          model->setData(index, QVariant::fromValue(enumerationEditor->getCurrentId()));

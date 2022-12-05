@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <optional>
+#include <mutex>
 
 #include <QCoreApplication>
 #include <QPluginLoader>
@@ -45,15 +46,15 @@
 
 namespace
 {
-    constexpr char ConnectPluginDirectoryName[] = "Connect";
+    constexpr const char *ConnectPluginDirectoryName {"Connect"};
 #if defined(Q_OS_MAC)
-    constexpr char PluginDirectoryName[] = "PlugIns";
+    constexpr const char *PluginDirectoryName {"PlugIns"};
 #else
-    constexpr char PluginDirectoryName[] = "Plugins";
+    constexpr const char *PluginDirectoryName {"Plugins"};
 #endif
-    constexpr char PluginUuidKey[] = "uuid";
-    constexpr char PluginNameKey[] = "name";
-    constexpr char PluginFlightSimulatorNameKey[] = "flightSimulator";
+    constexpr const char *PluginUuidKey {"uuid"};
+    constexpr const char *PluginNameKey {"name"};
+    constexpr const char *PluginFlightSimulatorNameKey {"flightSimulator"};
 }
 
 struct skyConnectManagerPrivate
@@ -83,18 +84,17 @@ struct skyConnectManagerPrivate
     QPluginLoader *pluginLoader;
     QUuid currentPluginUuid;
 
-    static SkyConnectManager *instance;
+    static inline std::once_flag onceFlag;
+    static inline SkyConnectManager *instance;
 };
-
-SkyConnectManager *skyConnectManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
 SkyConnectManager &SkyConnectManager::getInstance() noexcept
 {
-    if (skyConnectManagerPrivate::instance == nullptr) {
+    std::call_once(skyConnectManagerPrivate::onceFlag, []() {
         skyConnectManagerPrivate::instance = new SkyConnectManager();
-    }
+    });
     return *skyConnectManagerPrivate::instance;
 }
 
@@ -160,6 +160,12 @@ bool SkyConnectManager::freezeUserAircraft(bool enable) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().freezeUserAircraft(enable) : false;
+}
+
+bool SkyConnectManager::sendSimulationEvent(SkyConnectIntf::SimulationEvent event) noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().sendSimulationEvent(event) : false;
 }
 
 SkyConnectIntf::ReplayMode SkyConnectManager::getReplayMode() const noexcept
@@ -405,25 +411,15 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
     return ok;
 }
 
-// PROTECTED
-
-SkyConnectManager::~SkyConnectManager() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "SkyConnectManager::~SkyConnectManager: DELETED";
-#endif
-}
-
 // PRIVATE
 
 SkyConnectManager::SkyConnectManager() noexcept
     : d(std::make_unique<skyConnectManagerPrivate>(this))
 {
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "SkyConnectManager::SkyConnectManager: CREATED";
-#endif
 }
+
+SkyConnectManager::~SkyConnectManager() = default;
 
 void SkyConnectManager::frenchConnection() noexcept
 {

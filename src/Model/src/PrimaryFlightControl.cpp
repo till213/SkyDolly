@@ -25,10 +25,6 @@
 #include <algorithm>
 #include <cstdint>
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
-
 #include <Kernel/SkyMath.h>
 #include "TimeVariableData.h"
 #include "SkySearch.h"
@@ -36,29 +32,14 @@
 #include "PrimaryFlightControlData.h"
 #include "PrimaryFlightControl.h"
 
-namespace
-{
-    constexpr double Tension = 0.0;
-}
 
 // PUBLIC
 
 PrimaryFlightControl::PrimaryFlightControl(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
-{
-#ifdef DEBUG
-    qDebug() << "PrimaryFlightControl::PrimaryFlightControl: CREATED";
-#endif
-}
+{}
 
-PrimaryFlightControl::~PrimaryFlightControl() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "PrimaryFlightControl::PrimaryFlightControl: DELETED";
-#endif
-}
-
-const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
+PrimaryFlightControlData PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const PrimaryFlightControlData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
@@ -91,20 +72,20 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t t
         }
 
         if (p1 != nullptr) {
-            m_currentPrimaryFlightControlData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
-            m_currentPrimaryFlightControlData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
-            m_currentPrimaryFlightControlData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
-            m_currentPrimaryFlightControlData.timestamp = adjustedTimestamp;
+            m_currentData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
+            m_currentData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
+            m_currentData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
+            m_currentData.timestamp = adjustedTimestamp;
         } else {
-            // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            m_currentPrimaryFlightControlData = PrimaryFlightControlData::NullData;
+            // No recorded data, or the timestamp exceeds the timestamp of the last recorded data
+            m_currentData.reset();
         }
 
         setCurrentIndex(currentIndex);
         setCurrentTimestamp(adjustedTimestamp);
         setCurrentAccess(access);
     }
-    return m_currentPrimaryFlightControlData;
+    return m_currentData;
 }
 
 template class AbstractComponent<PrimaryFlightControlData>;

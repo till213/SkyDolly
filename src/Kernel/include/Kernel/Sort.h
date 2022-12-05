@@ -55,19 +55,26 @@ public:
 
     struct Vertex
     {
-        explicit Vertex()
-            : id(T())
-        {};
-
-        explicit Vertex(T theId)
+        explicit Vertex(T theId) noexcept
             : id(theId)
         {};
 
+        Vertex() noexcept
+            : id(T())
+        {};
+
+        Vertex(const Vertex &rhs) = delete;
+        Vertex(Vertex &&rhs) noexcept = default;
+        Vertex &operator=(const Vertex &rhs) = delete;
+        Vertex &operator=(Vertex &&rhs) noexcept = default;
+        ~Vertex() = default;
+
         T id;
+
         /*!
-         * The edges are defined by this and their end vertices given in the \c edges list.
+         * The edges are defined by the non-owning \c edges list.
          */
-        std::vector<std::shared_ptr<Vertex>> edges;
+        std::vector<Vertex *> edges;
         State state {State::NotVisited};
     };
 
@@ -87,16 +94,16 @@ public:
      * \return the nodes sorted in topological order, with the first node at beginning of the deque;
      *         an empty deque if the \c graph is either empty or not a directed acyclic graph (DAG)
      */
-    static std::deque<std::shared_ptr<Vertex>> topologicalSort(Graph &graph, Sorting sorting = Sorting::Normal) noexcept
+    static std::deque<Vertex *> topologicalSort(Graph &graph, Sorting sorting = Sorting::Normal) noexcept
     {
-        std::deque<std::shared_ptr<Vertex>> sorted;
+        std::deque<Vertex *> sorted;
         for (auto &it : graph) {
             it.second->state = State::NotVisited;
         }
         bool ok {true};
         for (auto &it : graph) {
             if (it.second->state != State::Done) {
-                ok = visit(it.second, sorting, sorted);
+                ok = visit(*(it.second), sorting, sorted);
                 if (!ok) {
                     // Not a DAG -> clear sorted vertices
                     sorted.clear();
@@ -113,29 +120,29 @@ private:
     // vertices have completely been recursively visited.
     // Returns true if the visit was successful or false in case a cycle was detected (in which case the 'sorted' result
     // is left as is, without cycle)
-    static bool visit(std::shared_ptr<Vertex> vertex, Sorting sorting, std::deque<std::shared_ptr<Vertex>> &sorted) noexcept
+    static bool visit(Vertex &vertex, Sorting sorting, std::deque<Vertex *> &sorted) noexcept
     {
-        if (vertex->state == State::Done) {
+        if (vertex.state == State::Done) {
             // Already visited
             return true;
-        } else if (vertex->state == State::Visiting) {
+        } else if (vertex.state == State::Visiting) {
             // Not a DAG (cycle detected)
             return false;
         }
 
-        vertex->state = State::Visiting;
+        vertex.state = State::Visiting;
         bool ok {true};
-        for (std::shared_ptr<Vertex> n : vertex->edges) {
-            ok = visit(n, sorting, sorted);
+        for (Vertex *v : vertex.edges) {
+            ok = visit(*v, sorting, sorted);
             if (!ok) {
                 break;
             }
         }
-        vertex->state = State::Done;
+        vertex.state = State::Done;
         if (sorting == Sorting::Normal) {
-            sorted.push_front(vertex);
+            sorted.push_front(&vertex);
         } else {
-            sorted.push_back(vertex);
+            sorted.push_back(&vertex);
         }
         return ok;
     }

@@ -29,9 +29,6 @@
 #include <QWidget>
 #include <QString>
 #include <QDoubleSpinBox>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
@@ -43,11 +40,11 @@
 
 namespace
 {
-    constexpr double MinSeekSeconds = 0.001;
-    constexpr double MaxSeekSeconds = 999.0;
+    constexpr double MinSeekSeconds {0.001};
+    constexpr double MaxSeekSeconds {999.0};
 
-    constexpr double MinSeekPercent = 0.001;
-    constexpr double MaxSeekPercent = 100.0;
+    constexpr double MinSeekPercent {0.001};
+    constexpr double MaxSeekPercent {100.0};
 }
 
 SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
@@ -57,17 +54,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
     ui->setupUi(this);
     initUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "SettingsDialog::SettingsDialog: CREATED";
-#endif
 }
 
-SettingsDialog::~SettingsDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "SettingsDialog::~SettingsDialog: DELETED";
-#endif
-}
+SettingsDialog::~SettingsDialog() = default;
 
 // PROTECTED
 
@@ -100,19 +89,19 @@ void SettingsDialog::initUi() noexcept
     }
 
     // Record
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Auto), tr("Auto"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz1), tr("1 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz2), tr("2 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz5), tr("5 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz10), tr("10 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz15), tr("15 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz20), tr("20 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz24), tr("24 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz25), tr("25 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz30), tr("30 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz45), tr("45 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz50), tr("50 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz60), tr("60 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Auto), tr("Auto"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz1), tr("1 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz2), tr("2 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz5), tr("5 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz10), tr("10 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz15), tr("15 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz20), tr("20 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz24), tr("24 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz25), tr("25 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz30), tr("30 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz45), tr("45 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz50), tr("50 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz60), tr("60 Hz"));
 
     // Replay
     ui->seekInSecondsSpinBox->setMinimum(MinSeekSeconds);
@@ -147,7 +136,7 @@ void SettingsDialog::updateUi() noexcept
     }
 
     // Recording
-    ui->recordFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(settings.getRecordingSampleRate()));
+    ui->recordFrequencyComboBox->setCurrentIndex(Enum::underly(settings.getRecordingSampleRate()));
 
     // Replay
     ui->absoluteSeekEnabledCheckBox->setChecked(settings.isAbsoluteSeekEnabled());

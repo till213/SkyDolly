@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>494</width>
-    <height>136</height>
+    <width>591</width>
+    <height>158</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -156,6 +156,19 @@
           </widget>
          </item>
          <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QPushButton" name="deletePushButton">
            <property name="text">
             <string>&amp;Delete</string>
@@ -170,6 +183,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>searchLineEdit</tabstop>
+  <tabstop>durationComboBox</tabstop>
+  <tabstop>engineTypeComboBox</tabstop>
+  <tabstop>formationCheckBox</tabstop>
+  <tabstop>logTreeWidget</tabstop>
+  <tabstop>logTableWidget</tabstop>
+  <tabstop>loadPushButton</tabstop>
+  <tabstop>deletePushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

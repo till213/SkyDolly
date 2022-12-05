@@ -20,7 +20,6 @@ target_sources(${LIBRARY_NAME}
         include/Widget/ActionCheckBox.h src/ActionCheckBox.cpp
         include/Widget/FocusPlainTextEdit.h src/FocusPlainTextEdit.cpp
         include/Widget/AircraftSelectionComboBox.h src/AircraftSelectionComboBox.cpp
-        include/Widget/BackupPeriodComboBox.h src/BackupPeriodComboBox.cpp
         include/Widget/Platform.h src/Platform.cpp
         include/Widget/TableDateItem.h src/TableDateItem.cpp
         include/Widget/TableTimeItem.h src/TableTimeItem.cpp
@@ -28,6 +27,7 @@ target_sources(${LIBRARY_NAME}
         include/Widget/EnumerationComboBox.h src/EnumerationComboBox.cpp
         include/Widget/EnumerationWidgetItem.h src/EnumerationWidgetItem.cpp
         include/Widget/UnitWidgetItem.h src/UnitWidgetItem.cpp
+        include/Widget/LinkedOptionGroup.h src/LinkedOptionGroup.cpp
 )
 if(${PLATFORM_IS_WINDOWS})
     target_sources(${LIBRARY_NAME}

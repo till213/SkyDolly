@@ -39,7 +39,7 @@ class AbstractSimulationVariableWidget : public QWidget
     Q_OBJECT
 public:
     explicit AbstractSimulationVariableWidget(QWidget *parent) noexcept;
-    virtual ~AbstractSimulationVariableWidget() noexcept;
+    ~AbstractSimulationVariableWidget() override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
@@ -47,9 +47,6 @@ protected:
 
 protected slots:
     virtual void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
-
-private:
-    Q_DISABLE_COPY(AbstractSimulationVariableWidget)
 
 private slots:
     void updateUiWithCurrentTime() noexcept;

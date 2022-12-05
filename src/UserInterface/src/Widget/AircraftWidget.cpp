@@ -41,9 +41,8 @@
 #include "AircraftWidget.h"
 #include "ui_AircraftWidget.h"
 
-class AircraftWidgetPrivate
+struct AircraftWidgetPrivate
 {
-public:
     AircraftWidgetPrivate(const QWidget &widget) noexcept
         : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -58,15 +57,14 @@ public:
 
 AircraftWidget::AircraftWidget(QWidget *parent) noexcept :
     AbstractSimulationVariableWidget(parent),
-    d(std::make_unique<AircraftWidgetPrivate>(*this)),
-    ui(std::make_unique<Ui::AircraftWidget>())
+    ui(std::make_unique<Ui::AircraftWidget>()),
+    d(std::make_unique<AircraftWidgetPrivate>(*this))
 {
     ui->setupUi(this);
     initUi();
 }
 
-AircraftWidget::~AircraftWidget() noexcept
-{}
+AircraftWidget::~AircraftWidget() = default;
 
 // PROTECTED SLOTS
 
@@ -143,8 +141,9 @@ void AircraftWidget::initUi() noexcept
     ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
 }
 
-const PositionData &AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+PositionData AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
+    PositionData positionData;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
@@ -152,12 +151,11 @@ const PositionData &AircraftWidget::getCurrentPositionData(std::int64_t timestam
             return aircraft.getPosition().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getPosition().interpolate(timestamp, access);
+                positionData = aircraft.getPosition().interpolate(timestamp, access);
             } else {
-                return aircraft.getPosition().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                positionData = aircraft.getPosition().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
-    } else {
-        return PositionData::NullData;
     }
+    return positionData;
 }

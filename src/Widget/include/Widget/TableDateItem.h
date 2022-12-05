@@ -31,25 +31,27 @@
 #include <QDate>
 #include <QTableWidgetItem>
 
+#include <Kernel/Unit.h>
 #include "WidgetLib.h"
-
-class TableDateItemPrivate;
 
 /*!
  * Sortable QTableWidgetItem displaying a QDate.
  *
  * https://linux.m2osw.com/sorting-any-numeric-column-qtablewidget
  */
-class WIDGET_API TableDateItem : public QTableWidgetItem
+class WIDGET_API TableDateItem final : public QTableWidgetItem
 {
 public:
-    TableDateItem(const QString &dateString, const QDate &date) noexcept;
-    virtual ~TableDateItem() noexcept;
+    explicit TableDateItem(QDate date = QDate()) noexcept;
+    ~TableDateItem() override = default;
 
-    virtual bool operator<(const QTableWidgetItem &rhs) const noexcept override;
+    QDate getDate() const noexcept;
+    void setDate(QDate date) noexcept;
+
+    bool operator<(const QTableWidgetItem &rhs) const noexcept override;
 
 private:
-    std::unique_ptr<TableDateItemPrivate> d;
+    Unit m_unit;
 };
 
 #endif // TABLEDATEITEM_H

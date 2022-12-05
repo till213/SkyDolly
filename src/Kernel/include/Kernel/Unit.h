@@ -29,19 +29,36 @@
 #include <cstdint>
 
 #include <QtGlobal>
+#include <QString>
+#include <QStringBuilder>
 
-class QString;
 class QDateTime;
 class QDate;
 class QTime;
 
 #include "KernelLib.h"
 
-class UnitPrivate;
+struct UnitPrivate;
 
+/*!
+ * Formats values having either a unit like month, week, seconds or hour or units
+ * having a special format (convention) such as DMS or decimal coordinates.
+ *
+ * The returned QStrings are represented according to the current locale which
+ * determines the thousand delimiter and decimal point vs comma. Those strings
+ * are hence meant to be displayed in the user interface.
+ *
+ * For exporting values use "raw number conversion" functions such as QString::number()
+ * instead.
+ */
 class KERNEL_API Unit final
 {
 public:
+
+    // Precision of exported double GNSS coordinate values
+    // https://rapidlasso.com/2019/05/06/how-many-decimal-digits-for-storing-longitude-latitude/
+    // https://xkcd.com/2170/
+    static constexpr int CoordinatePrecision = 6;
 
     enum struct Name
     {
@@ -51,6 +68,10 @@ public:
     };
 
     Unit();
+    Unit(const Unit &rhs) = delete;
+    Unit(Unit &&rhs) noexcept;
+    Unit &operator=(const Unit &rhs) = delete;
+    Unit &operator=(Unit &&rhs) noexcept;
     ~Unit();
 
     /*!
@@ -61,7 +82,7 @@ public:
      * \return the \c latitude in DMS format
      * \sa formatCoordinate
      */
-    QString formatLatitudeDMS(double latitude) const noexcept;
+    static QString formatLatitudeDMS(double latitude) noexcept;
 
     /*!
      * Formats the \c longitude into degrees, minutes and seconds (DMS).
@@ -71,7 +92,7 @@ public:
      * \return the \c longitude in DMS format
      * \sa formatCoordinate
      */
-    QString formatLongitudeDMS(double longitude) const noexcept;
+    static QString formatLongitudeDMS(double longitude) noexcept;
 
     /*!
      * Formats the \c latitude and \c longitude into degrees, minutes and seconds (DMS).
@@ -83,7 +104,7 @@ public:
      * \return the \c latitude and \c longitude in DMS format
      * \sa formatCoordinates
      */
-    QString formatLatLongPositionDMS(double latitude, double longitude) const noexcept;
+    static QString formatLatLongPositionDMS(double latitude, double longitude) noexcept;
 
     QString formatFeet(double feet) const noexcept;
     QString formatCelcius(double temperature) const noexcept;
@@ -106,10 +127,11 @@ public:
 
     QString formatKnots(double speed) const noexcept;
 
-    QString formatMemory(std::int64_t memory) const noexcept;
+    QString formatMemory(std::size_t memory) const noexcept;
 
     QString formatDate(const QDate &date) const noexcept;
     QString formatDate(const QDateTime &dateTime) const noexcept;
+    QString formatTime(const QTime &time) const noexcept;
     QString formatTime(const QDateTime &dateTime) const noexcept;
     QString formatDateTime(const QDateTime &dateTime) const noexcept;
     QString formatDuration(const QTime &time) const noexcept;
@@ -174,13 +196,19 @@ public:
     /*!
      * Formats the GNSS \c coordinate (latitude or longitude) with the appropriate decimal point precision.
      *
+     * Note: the coordinate is always formatted with a decimal point, in order to fasciliate exchange
+     * with other applications / websites.
+     *
      * \param coordinate
      *        the coordinate to be formatted
-     * \return the text representation of \c coordinate
-     * \sa formatLatitude
-     * \sa formatLongitude
+     * \return the text representation of \c coordinate; always using a decimal point ('.')
+     * \sa formatLatitudeDMS
+     * \sa formatLongitudeDMS
      */
-    static QString formatCoordinate(double coordinate) noexcept;
+    static inline QString formatCoordinate(double coordinate) noexcept
+    {
+        return QString::number(coordinate, 'f', CoordinatePrecision);
+    }
 
     /*!
      * Formats the GNSS \c latitude and \c longitude with the appropriate decimal point precision.
@@ -192,7 +220,10 @@ public:
      * \return the text representation of the coordinate, separated with a comma (,)
      * \sa formatLatLongPositionDMS
      */
-    static QString formatCoordinates(double latitude, double longitude) noexcept;
+    static inline QString formatCoordinates(double latitude, double longitude) noexcept
+    {
+        return formatCoordinate(latitude) % ", " % formatCoordinate(longitude);
+    }
 
 private:
     std::unique_ptr<UnitPrivate> d;

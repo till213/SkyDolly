@@ -27,33 +27,28 @@
 #include <Kernel/Unit.h>
 #include "TableTimeItem.h"
 
-class TableTimeItemPrivate
-{
-public:
-    TableTimeItemPrivate(const QTime &theTime) noexcept
-        : time(theTime)
-    {}
-
-    QTime time;
-    Unit unit;
-};
-
 // PUBLIC
 
-TableTimeItem::TableTimeItem(const QString &timeString, const QTime &time) noexcept
-    : QTableWidgetItem(timeString),
-      d(std::make_unique<TableTimeItemPrivate>(time))
-{}
+TableTimeItem::TableTimeItem(QTime time) noexcept
+    : QTableWidgetItem()
+{
+    setTime(time);
+}
 
-TableTimeItem::~TableTimeItem() noexcept
-{}
+QTime TableTimeItem::getTime() const noexcept
+{
+    return data(Qt::EditRole).toTime();
+}
+
+void TableTimeItem::setTime(QTime time) noexcept
+{
+    setData(Qt::DisplayRole, m_unit.formatTime(time));
+    setData(Qt::EditRole, time);
+}
 
 bool TableTimeItem::operator<(const QTableWidgetItem &rhs) const noexcept
 {
-    TableTimeItem const *r = dynamic_cast<const TableTimeItem *>(&rhs);
-    if (r != nullptr) {
-        return d->time < r->d->time;
-    } else {
-        return false;
-    }
+    const QTime time1 = data(Qt::EditRole).toTime();
+    const QTime time2 = rhs.data(Qt::EditRole).toTime();
+    return time1 < time2;
 }

@@ -28,22 +28,25 @@
 #include <memory>
 #include <forward_list>
 #include <vector>
-#include <iterator>
 
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
 #include "../PersistenceLib.h"
 
 class FlightSelector;
-class LogbookServicePrivate;
+struct LogbookServicePrivate;
 
 class PERSISTENCE_API LogbookService
 {
 public:
     LogbookService() noexcept;
-    ~LogbookService() noexcept;
+    LogbookService(const LogbookService &rhs) = delete;
+    LogbookService(LogbookService &&rhs) noexcept;
+    LogbookService &operator=(const LogbookService &rhs) = delete;
+    LogbookService &operator=(LogbookService &&rhs) noexcept;
+    ~LogbookService();
 
-    bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept;
+    std::forward_list<FlightDate> getFlightDates() const noexcept;
     std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept;
 
 private:

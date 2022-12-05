@@ -27,15 +27,13 @@
 
 #include "ActionCheckBox.h"
 
-class ActionCheckBoxPrivate
+struct ActionCheckBoxPrivate
 {
-public:
-    ActionCheckBoxPrivate(bool theWithText)  noexcept
-        : action(nullptr),
-          withText(theWithText)
+    ActionCheckBoxPrivate(bool withText) noexcept
+        : withText(withText)
     {}
 
-    const QAction *action;
+    const QAction *action {nullptr};
     bool withText;
 };
 
@@ -46,8 +44,7 @@ ActionCheckBox::ActionCheckBox(bool withText, QWidget *parent) noexcept
       d(std::make_unique<ActionCheckBoxPrivate>(withText))
 {}
 
-ActionCheckBox::~ActionCheckBox() noexcept
-{}
+ActionCheckBox::~ActionCheckBox() = default;
 
 void ActionCheckBox::setAction(const QAction *action) noexcept
 {

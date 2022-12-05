@@ -44,9 +44,8 @@
 #include "PrimaryFlightControlWidget.h"
 #include "ui_PrimaryFlightControlWidget.h"
 
-class PrimaryFlightControlWidgetPrivate
+struct PrimaryFlightControlWidgetPrivate
 {
-public:
     PrimaryFlightControlWidgetPrivate(const QWidget &widget) noexcept
         : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -61,15 +60,14 @@ public:
 
 PrimaryFlightControlWidget::PrimaryFlightControlWidget(QWidget *parent) noexcept :
     AbstractSimulationVariableWidget(parent),
-    d(std::make_unique<PrimaryFlightControlWidgetPrivate>(*this)),
-    ui(std::make_unique<Ui::PrimaryFlightControlWidget>())
+    ui(std::make_unique<Ui::PrimaryFlightControlWidget>()),
+    d(std::make_unique<PrimaryFlightControlWidgetPrivate>(*this))
 {
     ui->setupUi(this);
     initUi();
 }
 
-PrimaryFlightControlWidget::~PrimaryFlightControlWidget() noexcept
-{}
+PrimaryFlightControlWidget::~PrimaryFlightControlWidget() = default;
 
 // PROTECED SLOTS
 
@@ -103,22 +101,21 @@ void PrimaryFlightControlWidget::initUi()
     ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
 }
 
-const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+PrimaryFlightControlData PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
+    PrimaryFlightControlData primaryFlightControlData;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
             return aircraft.getPrimaryFlightControl().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getPrimaryFlightControl().interpolate(timestamp, access);
+                primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(timestamp, access);
             } else {
-                return aircraft.getPrimaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
-    } else {
-        return PrimaryFlightControlData::NullData;
     }
+    return primaryFlightControlData;
 }

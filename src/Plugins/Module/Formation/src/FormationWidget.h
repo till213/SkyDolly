@@ -33,6 +33,7 @@
 class QShowEvent;
 class QHideEvent;
 class QAction;
+class QTableWidgetItem;
 
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/ModuleIntf.h>
@@ -54,7 +55,7 @@ class FormationWidget : public QWidget
     Q_OBJECT
 public:
     FormationWidget(FlightService &flightService, AircraftService &aircraftService, QWidget *parent = nullptr) noexcept;
-    ~FormationWidget() noexcept override;
+    ~FormationWidget() override;
 
     Formation::HorizontalDistance getHorizontalDistance() const noexcept;
     Formation::VerticalDistance getVerticalDistance() const noexcept;
@@ -62,13 +63,13 @@ public:
 
 private:
     std::unique_ptr<Ui::FormationWidget> ui;
-    std::unique_ptr<FormationWidgetPrivate> d;
+    const std::unique_ptr<FormationWidgetPrivate> d;
 
     void initUi() noexcept;
     void initTimeOffsetUi() noexcept;
     void frenchConnection() noexcept;
 
-    void updateAircraftTable() noexcept;
+    void updateTable() noexcept;
     void updateAircraftIcons() noexcept;
     void updateRelativePositionUi() noexcept;
     void updateEditUi() noexcept;
@@ -76,8 +77,10 @@ private:
     void updateReplayUi() noexcept;
     void updateToolTips() noexcept;
 
-    void createRow(const Aircraft &aircraft, int aircraftIndex) noexcept;
-    void updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
+    inline const QTableWidgetItem *createRow(const Aircraft &aircraft, int aircraftIndex) noexcept;
+    inline const QTableWidgetItem *initRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
+    inline void updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
+
     void updateAndSendUserAircraftPosition() const noexcept;
     void updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept;
 
@@ -102,7 +105,7 @@ private slots:
 
     void onRelativePositionChanged() noexcept;
     void onRelativeDistanceChanged() noexcept;
-    void updateReplayMode(int index) noexcept;
+    void onReplayModeSelected(int index) noexcept;
     void onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode);
 
     void changeTimeOffset(const std::int64_t timeOffset) noexcept;

@@ -51,16 +51,14 @@
 #include "FlightDialog.h"
 #include "ui_FlightDialog.h"
 
-class FlightDialogPrivate
+struct FlightDialogPrivate
 {
-public:
-    FlightDialogPrivate(FlightService &theFlightService) noexcept
-        : flightService(theFlightService),
-          closeDialogShortcut(nullptr)
+    FlightDialogPrivate(FlightService &flightService) noexcept
+        : flightService(flightService)
     {}
 
     FlightService &flightService;
-    QShortcut *closeDialogShortcut;
+    QShortcut *closeDialogShortcut {nullptr};
 };
 
 // PUBLIC
@@ -73,17 +71,9 @@ FlightDialog::FlightDialog(FlightService &flightService, QWidget *parent) noexce
     ui->setupUi(this);
     initUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "FlightDialog::FlightDialog: CREATED";
-#endif
 }
 
-FlightDialog::~FlightDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FlightDialog::~FlightDialog: DELETED";
-#endif
-}
+FlightDialog::~FlightDialog() = default;
 
 // PROTECTED
 

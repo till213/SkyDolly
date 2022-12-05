@@ -25,17 +25,36 @@
 #ifndef LOCATIONSELECTOR_H
 #define LOCATIONSELECTOR_H
 
-#include <QDate>
+#include <unordered_set>
+#include <cstdint>
+
 #include <QString>
 
-#include <Model/SimType.h>
+#include <Kernel/Const.h>
+#include "Service/EnumerationService.h"
+#include "PersistedEnumerationItem.h"
 #include "PersistenceLib.h"
 
-/// \todo IMPLEMENT ME
 struct PERSISTENCE_API LocationSelector
 {
-public:
-    LocationSelector();
+    std::unordered_set<std::int64_t> typeIds;
+    std::int64_t categoryId {Const::InvalidId};
+    std::int64_t countryId {Const::InvalidId};
+    QString searchKeyword;
+
+    inline bool hasSelectors() const noexcept
+    {
+        return typeIds.size() > 0 ||
+               categoryId != Const::InvalidId ||
+               countryId != Const::InvalidId ||
+               !searchKeyword.isEmpty();
+    }
+
+    inline bool showUserLocations() const noexcept
+    {
+        static const std::int64_t userLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
+        return typeIds.empty() || typeIds.find(userLocationTypeId) != typeIds.end();
+    }
 };
 
 #endif // LOCATIONSELECTOR_H

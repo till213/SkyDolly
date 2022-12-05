@@ -41,13 +41,13 @@ class TemplatePlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit TemplatePlugin(QObject *parent = nullptr) noexcept;
-    ~TemplatePlugin() noexcept override;
+    ~TemplatePlugin() override;
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
 
 private:
-    std::unique_ptr<TemplatePluginPrivate> d;
+    const std::unique_ptr<TemplatePluginPrivate> d;
 };
 
 #endif // LOCATIONPLUGIN_H

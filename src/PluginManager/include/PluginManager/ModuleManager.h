@@ -53,7 +53,11 @@ class PLUGINMANAGER_API ModuleManager : public QObject
     Q_OBJECT
 public:
     explicit ModuleManager(QLayout &layout, QObject *parent = nullptr) noexcept;
-    ~ModuleManager() noexcept override;
+    ModuleManager(const ModuleManager &rhs) = delete;
+    ModuleManager(ModuleManager &&rhs) = delete;
+    ModuleManager &operator=(const ModuleManager &rhs) = delete;
+    ModuleManager &operator=(ModuleManager &&rhs) = delete;
+    ~ModuleManager() override;
 
     using ActionRegistry = tsl::ordered_map<QUuid, QAction *, QUuidHasher>;
     const ActionRegistry &getActionRegistry() const noexcept;
@@ -87,11 +91,11 @@ private:
     // First: module name - second: path
     using ModuleInfo = std::pair<QString, QString>;
 
-    std::unique_ptr<ModuleManagerPrivate> d;
+    const std::unique_ptr<ModuleManagerPrivate> d;
 
     void initModules() noexcept;
     void frenchConnection() noexcept;
-    void initModule(const QString fileName, std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept;
+    void initModule(const QString &fileName, std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept;
     void initModuleActions(const std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept;
 
 private slots:

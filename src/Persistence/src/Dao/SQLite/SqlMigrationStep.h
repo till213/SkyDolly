@@ -34,12 +34,16 @@
 class QRegularExpressionMatch;
 class QStringRef;
 
-class SqlMigrationStepPrivate;
+struct SqlMigrationStepPrivate;
 
 class SqlMigrationStep
 {
 public:
-    SqlMigrationStep();
+    SqlMigrationStep() noexcept;
+    SqlMigrationStep(const SqlMigrationStep &rhs) = delete;
+    SqlMigrationStep(SqlMigrationStep &&rhs) noexcept;
+    SqlMigrationStep &operator=(const SqlMigrationStep &rhs) = delete;
+    SqlMigrationStep &operator=(SqlMigrationStep &&rhs) noexcept;
     ~SqlMigrationStep();
 
     bool isValid() const noexcept;
