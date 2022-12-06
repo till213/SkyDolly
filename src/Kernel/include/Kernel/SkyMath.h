@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -30,10 +30,10 @@
 #include <utility>
 #include <cstdint>
 #include <exception>
-#include <cmath>
 
 #include <GeographicLib/Geodesic.hpp>
 
+#include <QtMath>
 #include <QtGlobal>
 #ifdef DEBUG
 #include <QDebug>
@@ -48,9 +48,8 @@
  */
 namespace SkyMath
 {
-    constexpr double PI = 3.141592653589793238463;
     // Latitude, longitude [degrees]
-    typedef std::pair<double, double> Coordinate;
+    using Coordinate = std::pair<double, double>;
 
     /*! The minimal position value, such that value 0 is exaclty in the middle of the entire range. */
     constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<std::int16_t>::max());
@@ -73,11 +72,11 @@ namespace SkyMath
     constexpr double DefaultDistanceThreshold = 50.0;
 
     inline double degreesToRadians(double degree) {
-        return degree * PI / 180.0;
+        return degree * M_PI / 180.0;
     };
 
     inline double radiansToDegrees(double radians) {
-        return radians * 180.0 / PI;
+        return radians * 180.0 / M_PI;
     };
 
     inline double feetToMeters(double feet) {
@@ -340,7 +339,7 @@ namespace SkyMath
             geodesic.Inverse(startPosition.first, startPosition.second, endPosition.first, endPosition.second, distance);
         } catch (const std::exception &ex) {
 #ifdef DEBUG
-            qDebug() << "SkyMath::sphericalDistance: caught exception: " << ex.what();
+            qDebug() << "SkyMath::sphericalDistance: caught exception:" << ex.what();
 #endif
             distance = std::numeric_limits<double>::max();
         }
@@ -349,7 +348,7 @@ namespace SkyMath
 
     /*!
      * Calculates the geodesic distance between the \c startPoint and the \c endPoint and the
-     * velocity [meters per second] it takes to travel that distance, taking the timestamps \c startTimestamp
+     * speed [meters per second] it takes to travel that distance, taking the timestamps \c startTimestamp
      * and \c endTimestamp into account.
      *
      * \param startPosition
@@ -363,13 +362,13 @@ namespace SkyMath
      * \return the distance (first value) and required speed [m/s] (second value)
      * \sa sphericalDistance
      */
-    inline std::pair<double, double> distanceAndVelocity(Coordinate startPosition, std::int64_t startTimestamp,
-                                                         Coordinate endPosition, std::int64_t endTimestamp) noexcept
+    inline std::pair<double, double> distanceAndSpeed(Coordinate startPosition, std::int64_t startTimestamp,
+                                                      Coordinate endPosition, std::int64_t endTimestamp) noexcept
     {
         const double distance = geodesicDistance(startPosition, endPosition);
-        const double deltaT = (endTimestamp - startTimestamp) / 1000.0;
+        const double deltaT = static_cast<double>(endTimestamp - startTimestamp) / 1000.0;
 
-        return std::pair(distance, distance / deltaT);
+        return {distance, distance / deltaT};
     }
 
     /*!
@@ -391,7 +390,7 @@ namespace SkyMath
             geodesic.Inverse(startPosition.first, startPosition.second, endPosition.first, endPosition.second, azimuth1, azimuth2);
         } catch (const std::exception &ex) {
 #ifdef DEBUG
-            qDebug() << "SkyMath::initialBearing: caught exception: " << ex.what();
+            qDebug() << "SkyMath::initialBearing: caught exception:" << ex.what();
 #endif
             azimuth1 = 0.0;
         }
@@ -424,7 +423,7 @@ namespace SkyMath
      */
     inline double approximatePitch(double sphericalDistance, double deltaAltitude) noexcept
     {
-        double pitch;
+        double pitch {0.0};
         if (!qFuzzyIsNull(deltaAltitude)) {
             if (sphericalDistance > 0.0) {
                 pitch = std::atan(deltaAltitude / sphericalDistance);
@@ -434,11 +433,8 @@ namespace SkyMath
                 // or in other words: level (0.0 degrees pitch) on the ground
                 pitch = 0.0;
             }
-        } else {
-            // Level flight
-            pitch = 0.0;
         }
-        return pitch * 180.0 / PI;
+        return pitch * 180.0 / M_PI;
     }
 
     /*!
@@ -509,7 +505,7 @@ namespace SkyMath
     }
 
     /*!
-     * Returns the relative position from the starting \c position at altitude \c altitude,
+     * Returns the relative position from the starting \c position,
      * given the \c bearing and geodesic \c distance.
      *
      * sinphi2    = sinphi1⋅cosδ + cosphi1⋅sinδ⋅costheta
@@ -517,15 +513,13 @@ namespace SkyMath
      *
      * \param position
      *        the Coordinate of the position [degrees]
-     * \param altitude
-     *        the altitude above sea level [meters]
      * \param bearing
      *        the bearing of the destination point [degrees]
      * \param distance
      *        the geodesic distance to the destination point [meters]
      * \return the Coordinate of the relative position [degrees]
      */
-    inline Coordinate relativePosition(Coordinate position, double altitude, double bearing, double distance) noexcept
+    inline Coordinate relativePosition(Coordinate position, double bearing, double distance) noexcept
     {
         Coordinate destination;
         try {
@@ -533,7 +527,7 @@ namespace SkyMath
             geodesic.Direct(position.first, position.second, bearing, distance, destination.first, destination.second);
         } catch (const std::exception &ex) {
 #ifdef DEBUG
-            qDebug() << "SkyMath::relativePosition: caught exception: " << ex.what();
+            qDebug() << "SkyMath::relativePosition: caught exception:" << ex.what();
 #endif
             destination.first = 0.0;
             destination.second = 0.0;

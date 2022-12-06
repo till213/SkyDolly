@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -40,14 +40,19 @@ class QString;
 #include "FlightCondition.h"
 #include "ModelLib.h"
 
-class FlightPrivate;
+struct Waypoint;
+struct FlightPrivate;
 
-class MODEL_API Flight : public QObject
+class MODEL_API Flight final : public QObject
 {
     Q_OBJECT
 public:
     explicit Flight(QObject *parent = nullptr) noexcept;
-    ~Flight() noexcept override;
+    Flight(const Flight &rhs) = delete;
+    Flight(Flight &&rhs) = delete;
+    Flight &operator=(const Flight &rhs) = delete;
+    Flight &operator=(Flight &&rhs) = delete;
+    ~Flight() override;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
@@ -61,9 +66,22 @@ public:
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;
 
-    void setAircraft(std::vector<std::unique_ptr<Aircraft>> aircraft) noexcept;
+    void setAircraft(std::vector<Aircraft> &&aircraft) noexcept;
     Aircraft &addUserAircraft() noexcept;
     Aircraft &getUserAircraft() const noexcept;
+
+    /*!
+     * Returns the index of the \c aircraft.
+     *
+     * \return the index of the \c aircraft; indexing starts at 0
+     */
+    int getAircraftIndex(const Aircraft &aircraft) const noexcept;
+
+    /*!
+     * Returns the index of the user aircraft.
+     *
+     * \return the index of the user aircraft; indexing starts at 0
+     */
     int getUserAircraftIndex() const noexcept;
 
     /*!
@@ -103,6 +121,33 @@ public:
     std::int64_t deleteAircraftByIndex(int index) noexcept;
     std::size_t count() const noexcept;
 
+    /*!
+     * Adds the \c waypoint to the flight plan of the user aircraft.
+     *
+     * \param waypoint
+     *        the waypoint to be added to the flight plan of the user aircraft
+     * \sa waypointAdded
+     */
+    void addWaypoint(const Waypoint &waypoint) noexcept;
+
+    /*!
+     * Updates the waypoint at \c index with the given \c waypoint.
+     *
+     * \param index
+     *        the index of the waypoint to be updated
+     * \param waypoint
+     *        the waypoint data to update with
+     * \sa waypointUpdated
+     */
+    void updateWaypoint(int index, const Waypoint &waypoint) noexcept;
+
+    /*!
+     * Clears all waypoints of the flight plan of the user aircraft.
+     *
+     * \sa waypointsCleared
+     */
+    void clearWaypoints() noexcept;
+
     const FlightCondition &getFlightCondition() const noexcept;
     void setFlightCondition(FlightCondition flightCondition) noexcept;
 
@@ -132,7 +177,7 @@ public:
 
     void clear(bool withOneAircraft) noexcept;
 
-    typedef std::vector<std::unique_ptr<Aircraft>>::iterator Iterator;
+    using Iterator = std::vector<Aircraft>::iterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
@@ -142,12 +187,7 @@ public:
     Aircraft &operator[](std::size_t index) noexcept;
     const Aircraft &operator[](std::size_t index) const noexcept;
 
-    /*!
-     * The initial ID for every newly created flight. An invalid ID indicates that this
-     * flight has not yet been (successfully) persisted.
-     */
-    static constexpr int InvalidId = -1;
-    static constexpr int InvalidAircraftIndex = -1;
+    static constexpr int InvalidAircraftIndex {-1};
 
 signals:
     void flightStored(std::int64_t id);
@@ -157,8 +197,31 @@ signals:
     void descriptionOrTitleChanged();
     void flightConditionChanged();
 
-    void aircraftAdded(Aircraft &newAircraft);
+    void aircraftAdded(const Aircraft &newAircraft);
     void aircraftRemoved(std::int64_t removedAircraftId);
+
+    /*!
+     * Emitted whenever a new \c waypoint has been added to the user aircraft.
+     *
+     * \param waypoint
+     *        the newly added waypoint
+     */
+    void waypointAdded(const Waypoint &waypoint);
+
+    /*!
+     * Emitted whenever the \c waypoint of the user aircraft at \c index has been udpated.
+     *
+     * \param index
+     *        the index of the updated waypoint
+     * \param waypoint
+     *        the updated waypoint
+     */
+    void waypointUpdated(int index, const Waypoint &waypoint);
+
+    /*!
+     * Emitted whenever all waypoints of the user aircraft have been cleared.
+     */
+    void waypointsCleared();
 
     /*!
      * Emitted whenever the user aircraft index is changed to \c newUserAircraftIndex. In case a previous user aircraft
@@ -171,8 +234,24 @@ signals:
      */
     void userAircraftChanged(int newUserAircraftIndex, int previousUserAircraftIndex);
 
-    void aircraftInfoChanged(Aircraft &aircraft);
-    void tailNumberChanged(Aircraft &aircraft);
+    /*!
+     * Emited whenever any of the aircraft info data has changed, including the tail number and
+     * time offset.
+     *
+     * \param aircraft
+     *        the Aircraft of which the info has changed
+     * \sa tailNumberChanged
+     * \sa timeOffsettChanged
+     */
+    void aircraftInfoChanged(const Aircraft &aircraft);
+
+    /*!
+     * Emitted whenever the tail number of the \c aircraft has changed.
+     *
+     * \param aircraft
+     *        the aircraft whose tail number has changed
+     */
+    void tailNumberChanged(const Aircraft &aircraft);
 
     /*!
      * Emitted whenever the time offset of the \c aircraft has changed.
@@ -180,15 +259,14 @@ signals:
      * \param aircraft
      *        the aircraft whose time offset has changed
      */
-    void timeOffsetChanged(Aircraft &aircraft);
+    void timeOffsetChanged(const Aircraft &aircraft);
 
-    void aircraftStored(Aircraft &aircraft);
+    void aircraftStored(const Aircraft &aircraft);
 
 private:
-    Q_DISABLE_COPY(Flight)
     std::unique_ptr<FlightPrivate> d;
 
-    inline void connectWithAircraftSignals(Aircraft &aircraft);
+    void frenchConnection();
 
     /*
      * Re-assigns the user aircraft \c index, but without emitting the \c userAircraftChanged signal.

@@ -16,20 +16,12 @@
         <file>img/icons/begin-normal@2x.png</file>
         <file>img/icons/end-normal.png</file>
         <file>img/icons/end-normal@2x.png</file>
-        <file>img/icons/record-normal.png</file>
-        <file>img/icons/record-normal@2x.png</file>
-        <file>img/icons/record-normal-on.png</file>
-        <file>img/icons/record-normal-on@2x.png</file>
         <file>img/icons/stop-normal.png</file>
         <file>img/icons/stop-normal@2x.png</file>
         <file>img/icons/checkbox-collapse-normal.png</file>
         <file>img/icons/checkbox-collapse-normal@2x.png</file>
         <file>img/icons/checkbox-expand-normal.png</file>
         <file>img/icons/checkbox-expand-normal@2x.png</file>
-        <file>img/icons/record-add-normal-on.png</file>
-        <file>img/icons/record-add-normal-on@2x.png</file>
-        <file>img/icons/record-add-normal.png</file>
-        <file>img/icons/record-add-normal@2x.png</file>
         <file>img/icons/begin-active.png</file>
         <file>img/icons/begin-active@2x.png</file>
         <file>img/icons/end-active.png</file>
@@ -48,10 +40,6 @@
         <file>img/icons/application-icon@2x.png</file>
         <file>img/icons/play-active.png</file>
         <file>img/icons/play-active@2x.png</file>
-        <file>img/icons/record-active.png</file>
-        <file>img/icons/record-active@2x.png</file>
-        <file>img/icons/record-add-active.png</file>
-        <file>img/icons/record-add-active@2x.png</file>
         <file>text/ThirdParty.md</file>
     </qresource>
 </RCC>

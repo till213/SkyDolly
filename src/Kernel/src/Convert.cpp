@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -39,7 +39,7 @@
 // PUBLIC
 
 Convert::Convert() noexcept
-{
+{   
     const QFileInfo earthGravityModelFileInfo = Settings::getInstance().getEarthGravityModelFileInfo();
     if (earthGravityModelFileInfo.exists()) {
         try {
@@ -49,7 +49,7 @@ Convert::Convert() noexcept
         } catch (const std::exception &ex) {
             m_egm = nullptr;
 #ifdef DEBUG
-            qDebug() << "Convert::Convert: caught exception: " << ex.what();
+            qDebug() << "Convert::Convert: caught exception:" << ex.what();
 #endif
         }
     } else {
@@ -57,5 +57,6 @@ Convert::Convert() noexcept
     }
 }
 
-Convert::~Convert() noexcept
-{}
+Convert::Convert(Convert &&rhs) noexcept = default;
+Convert &Convert::operator=(Convert &&rhs) noexcept = default;
+Convert::~Convert() = default;

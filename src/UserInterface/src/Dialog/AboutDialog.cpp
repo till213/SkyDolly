@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -37,17 +37,13 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QTimer>
-#ifdef DEBUG
-#include <QDebug>
-#endif
 
 #include <Kernel/Version.h>
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 
-class AboutDialogPrivate
+struct AboutDialogPrivate
 {
-public:
     AboutDialogPrivate(QWidget &parent) noexcept
     {
         if (parent.devicePixelRatioF() >= 1.5) {
@@ -76,17 +72,9 @@ AboutDialog::AboutDialog(QWidget *parent) noexcept :
     initUi();
     updateUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "AboutDialog::AboutDialog: CREATED";
-#endif
 }
 
-AboutDialog::~AboutDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "AboutDialog::~AboutDialog: DELETED";
-#endif
-}
+AboutDialog::~AboutDialog() = default;
 
 // PROTECTED
 
@@ -126,11 +114,7 @@ void AboutDialog::initUi() noexcept
     QFile file(":text/ThirdParty.md");
     if (file.open(QFile::ReadOnly)) {
         file.setTextModeEnabled(true);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        ui->creditsTextEdit->setText(file.readAll().replace("\\", ""));
-#else
         ui->creditsTextEdit->setMarkdown(file.readAll());
-#endif
         ui->creditsTextEdit->setTextInteractionFlags(Qt::TextInteractionFlag::LinksAccessibleByMouse);
         file.close();
     }

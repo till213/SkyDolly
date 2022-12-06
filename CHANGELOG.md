@@ -1,8 +1,85 @@
 # Changelog
 
-## 0.12.0
+## 0.13.0
+
+### New Features
+- New location export plugin
+  * Sky Dolly CSV export
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV export
+- New location import plugin
+  * Sky Dolly CSV import
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV import
+  
+### Improvements
+- Flight CSV export
+  * The Sky Dolly CSV export now uses comma (,) instead of tab stops as value delimiters
+  * Size of file reduced, rounding numbers to two decimal places (except latitude and longitude values that are rounded to six decimal places)
+- Location module
+  * A new update button which updates the selected location with the current location in the flight simulator (sytem locations cannot be updated)
+  * Automatically scrolls to the newly inserted item (with any column sorting enabled)
+  * Additional system locations (101 in total)
+  * Locations can now be filtered with keywords, by country and category
+  * The location count is shown
+- The system locations migration file, located at *[Sky Dolly installation directory]/Resources/migr/Locations.csv*, is now optional and can be deleted
+- A new "Only this time" backup option has been added to the backup dialog: selecting this option will create a backup, but will then set the backup period to "Never" afterwards
+- Added default aircraft types from simulation update 11 ("40th anniversary update"), for aircraft selector combobox (flight import)
+- Position data is now interpolated within an "infinite interpolation window"
+  * Imported flight plans (e.g. GPX flight plans from Little Navmap) with "sparse waypoints" are now properly replayed
+- Flight Recorder CSV import now also imports "propeller lever position"
+- The keyword search text line edit widgets now have a "clear text" button
+
+### Bug Fixes
+- The various tabs in the Flight information dialog (Description, Aircraft, Conditions and Flight Plan) are now properly updated when importing a flight or loading a flight from the logbook
+- Imported "Historical flights" - that is to say, any real-world flight done before August 2020 - are now properly shown in the Logbook
+  * While the date August 18 2020, the birthday of MSFS, was certainly a reasonable choice for recorded flights...
+  * ... the date December 17 1903, the day of the first flight in human history, is certainly a safer bet when it comes to tracked (and imported) flights ;)
+- Correct country name of Qatar
+- Prevent teleportation by double-click on location ID during replay
+- Fixed the TAB order in the Logbook and Location module
+- AI aircraft data structures are now properly removed upon disconnect from MSFS: AI aircraft are hence properly re-created when re-connecting to the newly launched MSFS
 
 ### Under The Hood
+- Rule of Zero, copy-and-swap [[Back to Basics: RAII and the Rule of Zero - Arthur O'Dwyer - CppCon 2019](https://www.youtube.com/watch?v=7Qgd9B1KuMQ)]
+- Thread-safe access to singletons [[Back to Basics: Concurrency - Arthur O'Dwyer - CppCon 2020](https://www.youtube.com/watch?v=F6Ipn7gCOsY)]
+- "Const pimpl" pattern (where applicable) [[CppCon 2016: Herb Sutter “Leak-Freedom in C++... By Default.”](https://www.youtube.com/watch?v=JfmTagWcqoE)]
+- Value-based aircraft list (CPU cache optimisation)
+- Small performance optimisations such as return value optimisation and memory pre-allocation
+- Replace regular expression etc. based CSV parsers by new CSV parser (very much inspired by [Little Navmap CSV parser implementation](https://github.com/albar965/atools))
+
+## 0.12.0
+
+### New Features
+- Location module
+  * Capture and teleport to locations in the flight simulator
+  * Manually add and edit locations
+  * Comes with an intial set of "system" locations (currently non-deleteable by design)
+  * Stores also pitch, bank, heading and initial speed
+  * Country list according to [List of Country Codes [Wikipedia]](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes)
+  * Copy coordinates e.g. from Google maps and paste them (CTRL + V) into the Location module
+    - Various supported formats, e.g.
+      * 46.94809 7.44744
+      * 46.94809, 7.44744
+      * 46°56'53.12" N 7°26'50.78" E
+      * 46°56'53.12" N, 7°26'50.78" E
+      * 7°26'50.78" E 46°56'53.12" N
+      * 7°26'50.78" E, 46°56'53.12" N
+      * And other variants of the DMS notation
+
+### Improvements
+- Renamed 'velocity' (= a vector) to 'speed' (= a value) where appropriate
+- When starting a new recording the user aircraft is now updated in the logbook as soon as it becomes available
+- The aircraft table in the Formation module is now updated by row (instead of the entire table) upon time offset changes
+
+### Bug Fixes
+- The window is properly resized when in minimal mode and the default non-essential button visibility is changed in the settings
+- Selection in the Logbook and Formation modules is now properly taking table reordering into account
+- The Formation module is properly updated when a new logbook is opened or created
+- Formation module: manually adjusted table column is kept when recording a new aircraft
+
+### Under The Hood
+- The modules (Logbook, Formation, Location) are now implemented as plugins
+- The modules are [topologically sorted](https://en.wikipedia.org/wiki/Topological_sorting), based on their defined dependencies
+- "Persisted enumerations": dropdown comboboxes are automatically populated based on the persisted enumeration values
 - Sky Dolly now also compiles and links with the Microsoft Visual Studio 2022 C++ compiler (MSVC)
 - The code is now also [analysed](https://github.com/till213/SkyDolly/actions) for programming / security flaws with the [Microsoft C++ Code Analysis Action](https://github.com/marketplace/actions/microsoft-c-code-analysis-action)
 
@@ -152,7 +229,7 @@
     - Routes describe "how to get there"
     - Tracks contain the actually travelled path (typically recorded with a GPS device)
   * The import dialog allows to select which elements to use for flight waypoints and the actual flown path
-  * It also offers a default altitude and velocity, as timestamps and elevation values are optional values in the GPX format
+  * It also offers a default altitude and speed, as timestamps and elevation values are optional values in the GPX format
 - CSV import plugin
   * The following CSV formats are now supported:
     - CSV from [flightradar24.com](https://www.flightradar24.com/)
@@ -226,7 +303,7 @@
 
 ### Bug Fixes
 
-- The initial velocity when recording a new formation aircraft is now properly set (indicated airspeed, as opposed to true airspeed)
+- The initial speed when recording a new formation aircraft is now properly set (indicated airspeed, as opposed to true airspeed)
   * Note that the conversion from true to indicated airspeed is currently done with a _rule of thumb_ only
   * https://www.pilotmall.com/blogs/news/how-to-calculate-true-airspeed-and-what-it-is-guide
   * Depending on the altitude and especially pressure there might still be a substantial difference to the actual indicated airspeed
@@ -241,7 +318,7 @@
 
 - The main window is now made a _parent_ of the KML export dialog, making sure that the export dialog is always centered and on top of the main window
   * Especially when the _Stay on Top_ option is enabled for the main window
-- The initial velocity in _fly with formation_ replay mode is now properly set
+- The initial speed in _fly with formation_ replay mode is now properly set
   * Properly converted from feet/s to knots
   * Properly converted from true to indicated airspeed (the SIMCONNECT_DATA_INITPOSITION structure really seems to expected indicated airspeed)
 

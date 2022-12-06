@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -32,18 +32,9 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API LightData : public TimeVariableData
+struct MODEL_API LightData final : public TimeVariableData
 {
-    SimType::LightStates lightStates;
-
-    explicit LightData(SimType::LightStates lightStates = SimType::LightState::None) noexcept;
-    LightData(const LightData &other) = default;
-    LightData(LightData &&) = default;
-    ~LightData() override = default;
-    LightData &operator=(const LightData &rhs) = default;
-    LightData &operator=(LightData &&rhs) = default;
-
-    static const LightData NullData;
+    SimType::LightStates lightStates {SimType::LightState::None};
 };
 
 #endif // LIGHTDATA_H

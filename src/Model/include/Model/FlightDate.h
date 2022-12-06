@@ -9,15 +9,9 @@
  * Represents a date on which flights have been recorded, including
  * the number of recorded flights on that date.
  */
-struct MODEL_API FlightDate
+struct MODEL_API FlightDate final
 {
-    FlightDate() noexcept = default;
     FlightDate(int year, int month, int dayOfMonth, int nofFlights) noexcept;
-    FlightDate(const FlightDate &other) = default;
-    FlightDate(FlightDate &&other) = default;
-    ~FlightDate() = default;
-    FlightDate &operator=(const FlightDate &rhs) = default;
-    FlightDate &operator=(FlightDate &&rhs) = default;
 
     /*!
      * The year of the flight: [1 - 9999]

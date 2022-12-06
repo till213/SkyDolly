@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -31,6 +31,11 @@ class QUuid;
 class PluginIntf
 {
 public:
+    PluginIntf() = default;
+    PluginIntf(const PluginIntf &rhs) = delete;
+    PluginIntf(PluginIntf &&rhs) = default;
+    PluginIntf &operator=(const PluginIntf &rhs) = delete;
+    PluginIntf &operator=(PluginIntf &&rhs) = default;
     virtual ~PluginIntf() = default;
 
     virtual QWidget *getParentWidget() const noexcept = 0;

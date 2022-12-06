@@ -9,8 +9,8 @@ set(APP_NAME "SkyDolly")
 
 project(
     ${APP_NAME}
-    VERSION 0.12.0
-    DESCRIPTION "Sky Dolly - The Black Sheep for your Flight Recordings"
+    VERSION 0.14.0
+    DESCRIPTION "Sky Dolly - The Black Sheep for Your Flight Recordings"
     HOMEPAGE_URL "https://github.com/till213/SkyDolly"
     LANGUAGES CXX    
 )
@@ -104,19 +104,18 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Flight)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Widget)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/PluginManager)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Module)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${APP_NAME})
     qt_create_translation(QM_FILES
-        ${CMAKE_SOURCE_DIR}/src
+        src
         i18n/${APP_NAME}_de_DE.ts
     )
 else()
     add_executable(${APP_NAME})
     qt5_create_translation(QM_FILES
-        ${CMAKE_SOURCE_DIR}/src
+        src
         i18n/${APP_NAME}_de_DE.ts
     )
 endif()
@@ -130,10 +129,12 @@ set_target_properties(${APP_NAME}
 
 # Resource (data) files
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
+include(src/Persistence/cmake/Locations.cmake)
 if(${PLATFORM_IS_MACOS})
     target_link_libraries(${APP_NAME}
         PRIVATE
             Geoids
+            Locations
     )
     include(CreateAppIconOnMacOS)
     create_app_icon_on_macos(INPUT "res/SkyDolly.png" OUTPUT APP_ICON_PATH)
@@ -171,9 +172,13 @@ target_sources(${APP_NAME}
         SECURITY.md
         SHASUM256.md
         THIRD_PARTY.md
+        doc/Design/Architecture.md
+        doc/Design/README.md
         doc/SkyDolly.simvars
+        doc/LICENSE
         res/Info.plist.in
         res/SkyDolly.rc.in
+        ${QM_FILES}
 )
 
 target_include_directories(${APP_NAME}

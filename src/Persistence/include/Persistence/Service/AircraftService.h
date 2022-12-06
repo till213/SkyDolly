@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -28,22 +28,27 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <cstddef>
 
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
 #include "../PersistenceLib.h"
 
-class AircraftServicePrivate;
+struct AircraftServicePrivate;
 
 class PERSISTENCE_API AircraftService
 {
 public:
     AircraftService() noexcept;
-    ~AircraftService() noexcept;
+    AircraftService(const AircraftService &rhs) = delete;
+    AircraftService(AircraftService &&rhs) noexcept;
+    AircraftService &operator=(const AircraftService &rhs) = delete;
+    AircraftService &operator=(AircraftService &&rhs) noexcept;
+    ~AircraftService();
 
-    bool store(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept;
+    bool store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept;
     bool deleteByIndex(int index) noexcept;
-    bool getAircraftInfos(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept;
+    std::vector<AircraftInfo> getAircraftInfos(std::int64_t flightId, bool *ok = nullptr) const noexcept;
 
     bool changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset) noexcept;
     bool changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept;

@@ -45,7 +45,6 @@ target_include_directories(${LIBRARY_NAME}
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Widgets
-        Sky::Module
     PRIVATE
         Sky::Kernel
         Sky::Model

@@ -40,10 +40,10 @@
 #pragma pack(push, 1)
 struct SimConnectEngineReply : public SimConnectEngineRequest
 {
-    qint32 generalEngineCombustion1;
-    qint32 generalEngineCombustion2;
-    qint32 generalEngineCombustion3;
-    qint32 generalEngineCombustion4;
+    qint32 generalEngineCombustion1 {0};
+    qint32 generalEngineCombustion2 {0};
+    qint32 generalEngineCombustion3 {0};
+    qint32 generalEngineCombustion4 {0};
 
     inline EngineData toEngineData() const noexcept
     {

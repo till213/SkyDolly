@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -51,6 +51,7 @@ void SkySearchTest::initTestCase()
     PositionData data4;
     data4.timestamp = ::t3;
 
+    m_positionData.reserve(4);
     m_positionData.push_back(data1);
     m_positionData.push_back(data2);
     m_positionData.push_back(data3);

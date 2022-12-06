@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -41,9 +41,8 @@
 #include "AircraftWidget.h"
 #include "ui_AircraftWidget.h"
 
-class AircraftWidgetPrivate
+struct AircraftWidgetPrivate
 {
-public:
     AircraftWidgetPrivate(const QWidget &widget) noexcept
         : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -58,15 +57,14 @@ public:
 
 AircraftWidget::AircraftWidget(QWidget *parent) noexcept :
     AbstractSimulationVariableWidget(parent),
-    d(std::make_unique<AircraftWidgetPrivate>(*this)),
-    ui(std::make_unique<Ui::AircraftWidget>())
+    ui(std::make_unique<Ui::AircraftWidget>()),
+    d(std::make_unique<AircraftWidgetPrivate>(*this))
 {
     ui->setupUi(this);
     initUi();
 }
 
-AircraftWidget::~AircraftWidget() noexcept
-{}
+AircraftWidget::~AircraftWidget() = default;
 
 // PROTECTED SLOTS
 
@@ -77,27 +75,27 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
 
     if (!positionData.isNull()) {
         // Position
-        ui->latitudeLineEdit->setText(d->unit.formatLatitude(positionData.latitude));
-        ui->longitudeLineEdit->setText(d->unit.formatLongitude(positionData.longitude));
+        ui->latitudeLineEdit->setText(d->unit.formatLatitudeDMS(positionData.latitude));
+        ui->longitudeLineEdit->setText(d->unit.formatLongitudeDMS(positionData.longitude));
         ui->altitudeLineEdit->setText(d->unit.formatFeet(positionData.altitude));
         ui->indicatedAltitudeLineEdit->setText(d->unit.formatFeet(positionData.indicatedAltitude));
         ui->pitchLineEdit->setText(d->unit.formatDegrees(positionData.pitch));
         ui->bankLineEdit->setText(d->unit.formatDegrees(positionData.bank));
-        ui->headingLineEdit->setText(d->unit.formatDegrees(positionData.heading));
+        ui->headingLineEdit->setText(d->unit.formatDegrees(positionData.trueHeading));
 
         // Velocity
-        double velocityFeetPerSec = positionData.velocityBodyX;
-        double velocityKnots = Convert::feetPerSecondToKnots(velocityFeetPerSec);
-        ui->velocityXLineEdit->setText(d->unit.formatKnots(velocityKnots) % " (" % d->unit.formatVelocityInFeetPerSecond(velocityFeetPerSec) % ")");
-        velocityFeetPerSec = positionData.velocityBodyY;
-        velocityKnots = Convert::feetPerSecondToKnots(velocityFeetPerSec);
-        ui->velocityYLineEdit->setText(d->unit.formatKnots(velocityKnots) % " (" % d->unit.formatVelocityInFeetPerSecond(velocityFeetPerSec) % ")");
-        velocityFeetPerSec = positionData.velocityBodyZ;
-        velocityKnots = Convert::feetPerSecondToKnots(velocityFeetPerSec);
-        ui->velocityZLineEdit->setText(d->unit.formatKnots(velocityKnots) % " (" % d->unit.formatVelocityInFeetPerSecond(velocityFeetPerSec) % ")");
-        ui->rotationVelocityXLineEdit->setText(d->unit.formatVelocityInRadians(positionData.rotationVelocityBodyX));
-        ui->rotationVelocityYLineEdit->setText(d->unit.formatVelocityInRadians(positionData.rotationVelocityBodyY));
-        ui->rotationVelocityZLineEdit->setText(d->unit.formatVelocityInRadians(positionData.rotationVelocityBodyZ));
+        double speedFeetPerSec = positionData.velocityBodyX;
+        double speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
+        ui->velocityXLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
+        speedFeetPerSec = positionData.velocityBodyY;
+        speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
+        ui->velocityYLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
+        speedFeetPerSec = positionData.velocityBodyZ;
+        speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
+        ui->velocityZLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
+        ui->rotationVelocityXLineEdit->setText(d->unit.formatSpeedInRadians(positionData.rotationVelocityBodyX));
+        ui->rotationVelocityYLineEdit->setText(d->unit.formatSpeedInRadians(positionData.rotationVelocityBodyY));
+        ui->rotationVelocityZLineEdit->setText(d->unit.formatSpeedInRadians(positionData.rotationVelocityBodyZ));
 
         colorName = d->ActiveTextColor.name();
     } else {
@@ -132,7 +130,7 @@ void AircraftWidget::initUi() noexcept
     ui->indicatedAltitudeLineEdit->setToolTip(SimVar::IndicatedAltitude);
     ui->pitchLineEdit->setToolTip(SimVar::Pitch);
     ui->bankLineEdit->setToolTip(SimVar::Bank);
-    ui->headingLineEdit->setToolTip(SimVar::Heading);
+    ui->headingLineEdit->setToolTip(SimVar::TrueHeading);
 
     // Velocity
     ui->velocityXLineEdit->setToolTip(SimVar::VelocityBodyX);
@@ -143,8 +141,9 @@ void AircraftWidget::initUi() noexcept
     ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
 }
 
-const PositionData &AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+PositionData AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
+    PositionData positionData;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
@@ -152,12 +151,11 @@ const PositionData &AircraftWidget::getCurrentPositionData(std::int64_t timestam
             return aircraft.getPosition().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getPosition().interpolate(timestamp, access);
+                positionData = aircraft.getPosition().interpolate(timestamp, access);
             } else {
-                return aircraft.getPosition().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                positionData = aircraft.getPosition().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
-    } else {
-        return PositionData::NullData;
     }
+    return positionData;
 }

@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -27,7 +27,6 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 
 class QString;
 
@@ -38,13 +37,17 @@ struct AircraftType;
 class SQLiteAircraftTypeDao : public AircraftTypeDaoIntf
 {
 public:
-    explicit SQLiteAircraftTypeDao() noexcept;
-    virtual ~SQLiteAircraftTypeDao() noexcept;
+    SQLiteAircraftTypeDao() = default;
+    SQLiteAircraftTypeDao(const SQLiteAircraftTypeDao &rhs) = delete;
+    SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) noexcept;
+    SQLiteAircraftTypeDao &operator=(const SQLiteAircraftTypeDao &rhs) = delete;
+    SQLiteAircraftTypeDao &operator=(SQLiteAircraftTypeDao &&rhs) noexcept;
+    ~SQLiteAircraftTypeDao() override;
 
-    virtual bool upsert(const AircraftType &aircraftType) noexcept override;
-    virtual bool getByType(const QString &type, AircraftType &aircraftType) const noexcept override;
-    virtual bool getAll(std::back_insert_iterator<std::vector<AircraftType>> backInsertIterator) const noexcept override;
-    virtual bool exists(const QString &type) const noexcept override;
+    bool upsert(const AircraftType &aircraftType) noexcept override;
+    AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept override;
+    std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept override;
+    bool exists(const QString &type) const noexcept override;
 };
 
 #endif // AIRCRAFTTYPEDAO_H

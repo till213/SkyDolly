@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -40,10 +40,15 @@ class FlightSummary;
 class LogbookDaoIntf
 {
 public:
+    LogbookDaoIntf() = default;
+    LogbookDaoIntf(const LogbookDaoIntf &rhs) = delete;
+    LogbookDaoIntf(LogbookDaoIntf &&rhs) = default;
+    LogbookDaoIntf &operator=(const LogbookDaoIntf &rhs) = delete;
+    LogbookDaoIntf &operator=(LogbookDaoIntf &&rhs) = default;
     virtual ~LogbookDaoIntf() = default;
 
-    virtual std::forward_list<FlightDate> getFlightDates() const noexcept = 0;
-    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept = 0;
+    virtual std::forward_list<FlightDate> getFlightDates(bool *ok = nullptr) const noexcept = 0;
+    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // LOGBOOKDAO_H

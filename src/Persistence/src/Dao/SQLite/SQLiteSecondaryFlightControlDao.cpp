@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
 #include <QString>
@@ -32,60 +31,30 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QSqlDriver>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Model/SecondaryFlightControlData.h>
 #include "SQLiteSecondaryFlightControlDao.h"
 
-class SQLiteSecondaryFlightControlDaoPrivate
+namespace
 {
-public:
-    SQLiteSecondaryFlightControlDaoPrivate() noexcept
-    {}
-
-    std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByFlightIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByIdQuery;
-
-    void initQueries()
-    {
-        if (insertQuery == nullptr) {
-            insertQuery = std::make_unique<QSqlQuery>();
-
-        }
-        if (selectByAircraftIdQuery == nullptr) {
-            selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
-
-        }
-        if (deleteByFlightIdQuery == nullptr) {
-            deleteByFlightIdQuery = std::make_unique<QSqlQuery>();
-
-        }
-        if (deleteByIdQuery == nullptr) {
-            deleteByIdQuery = std::make_unique<QSqlQuery>();
-
-        }
-    }
-
-    void resetQueries() noexcept
-    {
-        insertQuery = nullptr;
-        selectByAircraftIdQuery = nullptr;
-        deleteByFlightIdQuery = nullptr;
-        deleteByIdQuery = nullptr;
-    }
-};
+    // The initial capacity of the secondary flight control vector (e.g. SQLite does not support returning
+    // the result count for the given SELECT query)
+    // Samples at 30 Hz for an assumed flight duration of 2 * 60 seconds = 2 minutes
+    constexpr int DefaultCapacity = 30 * 2 * 60;
+}
 
 // PUBLIC
 
-SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao() noexcept
-{}
+SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs) noexcept = default;
+SQLiteSecondaryFlightControlDao &SQLiteSecondaryFlightControlDao::operator=(SQLiteSecondaryFlightControlDao &&rhs) noexcept = default;
+SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() = default;
 
-SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() noexcept
-{}
-
-bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
+bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const SecondaryFlightControlData &secondaryFlightControlData) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -119,17 +88,18 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
     query.bindValue(":spoilers_handle_position", secondaryFlightControlData.spoilersHandlePosition);
     query.bindValue(":flaps_handle_index", secondaryFlightControlData.flapsHandleIndex);
 
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteSecondaryFlightControlDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteSecondaryFlightControlDao::add: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
 }
 
-bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<SecondaryFlightControlData>> backInsertIterator) const noexcept
+std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
+    std::vector<SecondaryFlightControlData> secondaryFlightControlData;
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -140,8 +110,14 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, s
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = query.exec();
-    if (ok) {
+    const bool success = query.exec();
+    if (success) {
+        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        if (querySizeFeature) {
+            secondaryFlightControlData.reserve(query.size());
+        } else {
+            secondaryFlightControlData.reserve(::DefaultCapacity);
+        }
         QSqlRecord record = query.record();
         const int timestampIdx = record.indexOf("timestamp");
         const int leadingEdgeFlapsLeftPercentIdx = record.indexOf("leading_edge_flaps_left_percent");
@@ -151,9 +127,7 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, s
         const int spoilersHandlePositionIdx = record.indexOf("spoilers_handle_position");
         const int flapsHandleIndexIdx = record.indexOf("flaps_handle_index");
         while (query.next()) {
-
             SecondaryFlightControlData data;
-
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.leadingEdgeFlapsLeftPosition = query.value(leadingEdgeFlapsLeftPercentIdx).toInt();
             data.leadingEdgeFlapsRightPosition = query.value(leadingEdgeFlapsRightPercentIdx).toInt();
@@ -162,15 +136,18 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, s
             data.spoilersHandlePosition = query.value(spoilersHandlePositionIdx).toInt();
             data.flapsHandleIndex = query.value(flapsHandleIndexIdx).toInt();
 
-            backInsertIterator = std::move(data);
+            secondaryFlightControlData.push_back(std::move(data));
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteSecondaryFlightControlDao::getByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteSecondaryFlightControlDao::getByAircraftId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return secondaryFlightControlData;
 }
 
 bool SQLiteSecondaryFlightControlDao::deleteByFlightId(std::int64_t flightId) noexcept
@@ -186,10 +163,10 @@ bool SQLiteSecondaryFlightControlDao::deleteByFlightId(std::int64_t flightId) no
     );
 
     query.bindValue(":flight_id", QVariant::fromValue(flightId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteSecondaryFlightControlDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteSecondaryFlightControlDao::deleteByFlightId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -205,10 +182,10 @@ bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteSecondaryFlightControlDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteSecondaryFlightControlDao::deleteByAircraftId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return true;

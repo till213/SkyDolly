@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -31,25 +31,27 @@
 #include <QTime>
 #include <QTableWidgetItem>
 
+#include <Kernel/Unit.h>
 #include "WidgetLib.h"
-
-class TableTimeItemPrivate;
 
 /*!
  * Sortable QTableWidgetItem displaying time.
  *
  * https://linux.m2osw.com/sorting-any-numeric-column-qtablewidget
  */
-class WIDGET_API TableTimeItem : public QTableWidgetItem
+class WIDGET_API TableTimeItem final : public QTableWidgetItem
 {
 public:
-    TableTimeItem(const QString &timeString, const QTime &time) noexcept;
-    virtual ~TableTimeItem() noexcept;
+    TableTimeItem(QTime time = QTime()) noexcept;
+    ~TableTimeItem() override = default;
 
-    virtual bool operator<(const QTableWidgetItem &rhs) const noexcept override;
+    QTime getTime() const noexcept;
+    void setTime(QTime time) noexcept;
+
+    bool operator<(const QTableWidgetItem &rhs) const noexcept override;
 
 private:
-    std::unique_ptr<TableTimeItemPrivate> d;
+    Unit m_unit;
 };
 
 #endif // TABLETIMEITEM_H

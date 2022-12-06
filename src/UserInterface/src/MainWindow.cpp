@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -37,6 +37,7 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QDir>
+#include <QUuid>
 #include <QString>
 #include <QUuid>
 #include <QTime>
@@ -49,7 +50,6 @@
 #include <QRadioButton>
 #include <QDoubleValidator>
 #include <QIcon>
-#include <QStackedWidget>
 #include <QEvent>
 #include <QResizeEvent>
 #include <QCloseEvent>
@@ -72,8 +72,10 @@
 #include <Model/AircraftInfo.h>
 #include <Model/Logbook.h>
 #include <Persistence/Service/FlightService.h>
+#include <Persistence/Service/LocationService.h>
 #include <Persistence/Service/DatabaseService.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/PersistenceManager.h>
+#include "Persistence/Metadata.h"
 #include <Widget/ActionButton.h>
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
@@ -82,8 +84,8 @@
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/Connect.h>
 #include <PluginManager/PluginManager.h>
-#include <Module/ModuleIntf.h>
-#include <Module/ModuleManager.h>
+#include <PluginManager/ModuleIntf.h>
+#include <PluginManager/ModuleManager.h>
 #include "Dialog/AboutDialog.h"
 #include "Dialog/LogbookSettingsDialog.h"
 #include "Dialog/SettingsDialog.h"
@@ -106,12 +108,12 @@ namespace
 
     constexpr int CustomSpeedLineEditMinimumWidth {40};
 
-    constexpr char TimestampFormat[] {"hh:mm:ss"};
+    constexpr const char *TimestampFormat {"hh:mm:ss"};
     constexpr std::int64_t MilliSecondsPerSecond {1000};
     constexpr std::int64_t MilliSecondsPerMinute {60 * MilliSecondsPerSecond};
     constexpr std::int64_t MilliSecondsPerHour {60 * MilliSecondsPerMinute};
 
-    constexpr char ReplaySpeedProperty[] {"ReplaySpeed"};
+    constexpr const char *ReplaySpeedProperty {"ReplaySpeed"};
 
     enum struct ReplaySpeed {
         Slow10,
@@ -127,60 +129,41 @@ namespace
     };
 }
 
-class MainWindowPrivate
+struct MainWindowPrivate
 {
-public:
-    MainWindowPrivate() noexcept
-        : previousState(Connect::State::Connected),
-          connectedWithLogbook(false),
-          flightDialog(nullptr),
-          simulationVariablesDialog(nullptr),
-          statisticsDialog(nullptr),
-          flightService(std::make_unique<FlightService>()),
-          databaseService(std::make_unique<DatabaseService>()),
-          replaySpeedActionGroup(nullptr),
-          customSpeedRadioButton(nullptr),
-          lastCustomReplaySpeedFactor(1.0),
-          customSpeedLineEdit(nullptr),
-          replaySpeedUnitComboBox(nullptr),
-          customReplaySpeedFactorValidator(nullptr),
-          customReplaySpeedPercentValidator(nullptr),
-          importQActionGroup(nullptr),
-          exportQActionGroup(nullptr),
-          hasImportPlugins(false),
-          hasExportPlugins(false),
-          moduleManager(nullptr)
-    {}
+    Connect::State previousState {Connect::State::Connected};
+    bool connectedWithLogbook {false};
 
-    Connect::State previousState;
-    bool connectedWithLogbook;
-
-    FlightDialog *flightDialog;
-    SimulationVariablesDialog *simulationVariablesDialog;
-    StatisticsDialog *statisticsDialog;    
+    FlightDialog *flightDialog {nullptr};
+    SimulationVariablesDialog *simulationVariablesDialog {nullptr};
+    StatisticsDialog *statisticsDialog {nullptr};
 
     Unit unit;
 
     // Services
-    std::unique_ptr<FlightService> flightService;
-    std::unique_ptr<DatabaseService> databaseService;
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
 
     QSize lastNormalUiSize;
 
     // Replay speed
-    QActionGroup *replaySpeedActionGroup;
-    ActionRadioButton *customSpeedRadioButton;
-    double lastCustomReplaySpeedFactor;
-    QLineEdit *customSpeedLineEdit;
-    QComboBox *replaySpeedUnitComboBox;
-    QDoubleValidator *customReplaySpeedFactorValidator;
-    QDoubleValidator *customReplaySpeedPercentValidator;
+    QActionGroup *replaySpeedActionGroup {nullptr};
+    ActionRadioButton *customSpeedRadioButton {nullptr};
+    double lastCustomReplaySpeedFactor {1.0};
+    QLineEdit *customSpeedLineEdit {nullptr};
+    QComboBox *replaySpeedUnitComboBox {nullptr};
+    QDoubleValidator *customReplaySpeedFactorValidator {nullptr};
+    QDoubleValidator *customReplaySpeedPercentValidator {nullptr};
 
     // Import / export
-    QActionGroup *importQActionGroup;
-    QActionGroup *exportQActionGroup;
-    bool hasImportPlugins;
-    bool hasExportPlugins;
+    QActionGroup *flightImportActionGroup {nullptr};
+    QActionGroup *flightExportActionGroup {nullptr};
+    QActionGroup *locationImportActionGroup {nullptr};
+    QActionGroup *locationExportActionGroup {nullptr};
+    bool hasFlightImportPlugins {false};
+    bool hasFlightExportPlugins {false};
+    bool hasLocationImportPlugins {false};
+    bool hasLocationExportPlugins {false};
 
     std::unique_ptr<ModuleManager> moduleManager;
 };
@@ -210,21 +193,11 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
     frenchConnection();
 }
 
-MainWindow::~MainWindow() noexcept
-{
-    // Make sure that all widgets having a reference to the flight service
-    // are deleted before this MainWindow instance (which owns the flight
-    // service); we make sure by simply deleting their parent moduleStackWidget
-    delete ui->moduleStackWidget;
-
-#ifdef DEBUG
-    qDebug("MainWindow::~MainWindow: DELETED");
-#endif
-}
+MainWindow::~MainWindow() = default;
 
 bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 {
-    bool ok = LogbookManager::getInstance().connectWithLogbook(filePath, this);
+    bool ok = PersistenceManager::getInstance().connectWithLogbook(filePath, this);
     if (!ok) {
         QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
     }
@@ -235,7 +208,7 @@ bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 
 void MainWindow::resizeEvent(QResizeEvent *event) noexcept
 {
-    if (!Settings::getInstance().isMinimalUiEnabled()) {
+    if (!isMinimalUiEnabled()) {
         d->lastNormalUiSize = event->size();
     }
 }
@@ -244,8 +217,9 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
 {
     QMainWindow::closeEvent(event);
 
-    Metadata metaData;
-    if (LogbookManager::getInstance().getMetadata(metaData)) {
+    bool ok {true};
+    const Metadata metaData = PersistenceManager::getInstance().getMetadata(&ok);
+    if (ok) {
         if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
             std::unique_ptr<LogbookBackupDialog> backupDialog = std::make_unique<LogbookBackupDialog>(this);
             backupDialog->exec();
@@ -298,7 +272,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onReplayLoopChanged);
 
     // Logbook connection
-    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
+    connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &MainWindow::onLogbookConnectionChanged);
 
     // Ui elements
@@ -364,10 +338,14 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::quit);
 
     // Menu actions
-    connect(d->importQActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::onImport);
-    connect(d->exportQActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::onExport);
+    connect(d->flightImportActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::onFlightImport);
+    connect(d->flightExportActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::onFlightExport);
+    connect(d->locationImportActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::onLocationImport);
+    connect(d->locationExportActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::onLocationExport);
 
     // View menu
     // Note: we explicitly connect to signal triggered - and not toggled - also in
@@ -414,7 +392,7 @@ void MainWindow::initUi() noexcept
     initControlUi();
     initReplaySpeedUi();
 
-    const bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
+    const bool minimalUi = isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
     updateMinimalUi(minimalUi);
 
@@ -431,16 +409,20 @@ void MainWindow::initUi() noexcept
             Settings &settings = Settings::getInstance();
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
+            constexpr uint CakeChar = 0x1f382;
+            const QString CakeString = QString::fromUcs4(&CakeChar, 1);
             QMessageBox::information(this, "Preview",
-                QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                "This release v%2 focuses on \"quality of life\" issues, including reducing memory (RAM) usage, code refactoring and on improving existing functionality "
-                "such as a truly minimal user interface mode (configurable in the settings).\n\n"
-                "It also provides an improved \"AI object management\" in the formation module, resulting in less aircraft flickering when e.g. changing the user aircraft. "
-                "The formation module now also provides a new \"set relative position\" option which (when unchecked) allows to record the user aircraft starting from its current position.\n\n"
-                "The newly introduced GeographicLib (third-party, open source) provides functionality to properly calculate the altitude differences (\"undulation\") between the WGS84 reference "
-                "ellipsoid and the EGM2008 geoid, specifically in the IGN and GPX import/export plugins.\n\n"
-                "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
-                QMessageBox::StandardButton::Ok);            
+                                     CakeString + CakeString + CakeString + QString(" HAPPY 40TH ANNIVERSARY, FLIGHT SIMULATOR! ") + CakeString + CakeString + CakeString +
+                                     QString("\n\n"
+                                             "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
+                                             "This release v%2 \"%3\" introduces location import and export, making it possible to exchange user points with e.g. Little Navmap. "
+                                             "The Location module now also supports basic filtering and the engine state (start, stop, unchanged) can be controlled upon teleportation.\n\n"
+                                             "While not many new features have been introduced a lot of work has been done \"under the hood\": memory "
+                                             "and performance optimisations in various areas have been applied.\n\n"
+                                             "This dialog will be shown %4 more times.")
+                                     .arg(Version::getApplicationName(), Version::getApplicationVersion())
+                                     .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
+                                     QMessageBox::StandardButton::Ok);
             settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
         });
     }
@@ -448,49 +430,81 @@ void MainWindow::initUi() noexcept
 
 void MainWindow::initPlugins() noexcept
 {
-    std::vector<PluginManager::Handle> importPlugins;
-    std::vector<PluginManager::Handle> exportPlugins;
+    std::vector<PluginManager::Handle> flightImportPlugins;
+    std::vector<PluginManager::Handle> flightExportPlugins;
+    std::vector<PluginManager::Handle> locationImportPlugins;
+    std::vector<PluginManager::Handle> locationExportPlugins;
 
-    d->importQActionGroup = new QActionGroup(this);
-    d->exportQActionGroup = new QActionGroup(this);
+    d->flightImportActionGroup = new QActionGroup(this);
+    d->flightExportActionGroup = new QActionGroup(this);
+    d->locationImportActionGroup = new QActionGroup(this);
+    d->locationExportActionGroup = new QActionGroup(this);
 
     PluginManager &pluginManager = PluginManager::getInstance();
     pluginManager.initialise(this);
 
-    // Import
-    importPlugins = PluginManager::getInstance().initialiseImportPlugins();
-    d->hasImportPlugins = importPlugins.size() > 0;
-    if (d->hasImportPlugins) {
-        ui->importMenu->setEnabled(true);
-
-        for (const PluginManager::Handle &handle : importPlugins) {
-            QAction *importAction = new QAction(handle.second, ui->importMenu);
+    // Flight import
+    flightImportPlugins = pluginManager.initialiseFlightImportPlugins();
+    d->hasFlightImportPlugins = flightImportPlugins.size() > 0;
+    if (d->hasFlightImportPlugins) {
+        ui->flightImportMenu->setEnabled(true);
+        for (const PluginManager::Handle &handle : flightImportPlugins) {
+            QAction *flightImportAction = new QAction(handle.second, ui->flightImportMenu);
             // First: plugin uuid
-            importAction->setData(handle.first);
-            d->importQActionGroup->addAction(importAction);
-            ui->importMenu->addAction(importAction);
+            flightImportAction->setData(handle.first);
+            d->flightImportActionGroup->addAction(flightImportAction);
+            ui->flightImportMenu->addAction(flightImportAction);
         }
-
     } else {
-        ui->importMenu->setEnabled(false);
+        ui->flightImportMenu->setEnabled(false);
     }
 
-    // Export
-    exportPlugins = PluginManager::getInstance().initialiseExportPlugins();
-    d->hasExportPlugins = exportPlugins.size() > 0;
-    if (d->hasExportPlugins) {
-        ui->exportMenu->setEnabled(true);
-
-        for (const PluginManager::Handle &handle : exportPlugins) {
-            QAction *exportAction = new QAction(handle.second, ui->exportMenu);
+    // Flight export
+    flightExportPlugins = pluginManager.initialiseFlightExportPlugins();
+    d->hasFlightExportPlugins = flightExportPlugins.size() > 0;
+    if (d->hasFlightExportPlugins) {
+        ui->flightExportMenu->setEnabled(true);
+        for (const PluginManager::Handle &handle : flightExportPlugins) {
+            QAction *flightExportAction = new QAction(handle.second, ui->flightExportMenu);
             // First: plugin uuid
-            exportAction->setData(handle.first);
-            d->exportQActionGroup->addAction(exportAction);
-            ui->exportMenu->addAction(exportAction);
+            flightExportAction->setData(handle.first);
+            d->flightExportActionGroup->addAction(flightExportAction);
+            ui->flightExportMenu->addAction(flightExportAction);
         }
-
     } else {
-        ui->exportMenu->setEnabled(false);
+        ui->flightExportMenu->setEnabled(false);
+    }
+
+    // Location import
+    locationImportPlugins = pluginManager.initialiseLocationImportPlugins();
+    d->hasLocationImportPlugins = locationImportPlugins.size() > 0;
+    if (d->hasLocationImportPlugins) {
+        ui->locationImportMenu->setEnabled(true);
+        for (const PluginManager::Handle &handle : locationImportPlugins) {
+            QAction *locationImportAction = new QAction(handle.second, ui->locationImportMenu);
+            // First: plugin uuid
+            locationImportAction->setData(handle.first);
+            d->locationImportActionGroup->addAction(locationImportAction);
+            ui->locationImportMenu->addAction(locationImportAction);
+        }
+    } else {
+        ui->locationImportMenu->setEnabled(false);
+    }
+
+    // Location export
+    locationExportPlugins = pluginManager.initialiseLocationExportPlugins();
+    d->hasLocationExportPlugins = locationExportPlugins.size() > 0;
+    if (d->hasLocationExportPlugins) {
+        ui->locationExportMenu->setEnabled(true);
+        for (const PluginManager::Handle &handle : locationExportPlugins) {
+            QAction *locationExportAction = new QAction(handle.second, ui->locationExportMenu);
+            // First: plugin uuid
+            locationExportAction->setData(handle.first);
+            d->locationExportActionGroup->addAction(locationExportAction);
+            ui->locationExportMenu->addAction(locationExportAction);
+        }
+    } else {
+        ui->locationExportMenu->setEnabled(false);
     }
 
     initSkyConnectPlugin();
@@ -499,7 +513,7 @@ void MainWindow::initPlugins() noexcept
 void MainWindow::initModuleSelectorUi() noexcept
 {
     // Modules
-    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
+    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleGroupBox->layout());
     ActionCheckBox *actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
@@ -524,17 +538,28 @@ void MainWindow::initModuleSelectorUi() noexcept
     // ... and to the moduleVisibilityWidget
     ui->moduleVisibilityWidget->setLayout(moduleVisibilityLayout.release());
 
-    const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
-    ui->moduleGroupBox->setTitle(activeModule.getModuleName());
+    const std::optional<std::reference_wrapper<ModuleIntf>> activeModule = d->moduleManager->getActiveModule();
+    if (activeModule) {
+        ui->moduleGroupBox->setTitle(activeModule->get().getModuleName());
+    }
 
-    for (const auto &item : d->moduleManager->getModules()) {
-        QAction &moduleAction = item->getAction();
-        ui->moduleMenu->addAction(&moduleAction);
-        ActionButton *actionButton = new ActionButton(this);
-        actionButton->setAction(&moduleAction);
+    int moduleCount {0};
+    for (const auto &item : d->moduleManager->getActionRegistry()) {
+        if (moduleCount > 0) {
+            QFrame *verticalLine = new QFrame(this);
+            verticalLine->setFrameShape(QFrame::VLine);
+            verticalLine->setFrameShadow(QFrame::Sunken);
+            ui->moduleSelectorLayout->addWidget(verticalLine);
+        }
+
+        QAction *moduleAction = item.second;
+        ui->moduleMenu->addAction(moduleAction);
+        ActionButton *actionButton = new ActionButton(this, ActionButton::Capitalisation::AllCaps);
+        actionButton->setAction(moduleAction);
         actionButton->setFlat(true);
-        actionButton->setText(moduleAction.text().toUpper());
         ui->moduleSelectorLayout->addWidget(actionButton);
+
+        ++moduleCount;
     }
 }
 
@@ -582,17 +607,17 @@ void MainWindow::initReplaySpeedUi() noexcept
         new QAction("75 %", this)
     };
     slowActions.at(0)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
-    slowActions.at(0)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow10));
+    slowActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow10));
     slowActions.at(1)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
-    slowActions.at(1)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow25));
+    slowActions.at(1)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow25));
     slowActions.at(2)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
-    slowActions.at(2)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow50));
+    slowActions.at(2)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow50));
     slowActions.at(3)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
-    slowActions.at(3)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow75));
+    slowActions.at(3)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow75));
 
     ui->normalSpeedAction->setCheckable(true);
     ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
-    ui->normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Normal));
+    ui->normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Normal));
 
     QList<QAction *> fastActions {
         new QAction("2x", this),
@@ -601,17 +626,17 @@ void MainWindow::initReplaySpeedUi() noexcept
         new QAction("16x", this)
     };
     fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_2));
-    fastActions.at(0)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast2x));
+    fastActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast2x));
     fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_3));
-    fastActions.at(1)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast4x));
+    fastActions.at(1)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast4x));
     fastActions.at(2)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_4));
-    fastActions.at(2)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast8x));
+    fastActions.at(2)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast8x));
     fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_5));
-    fastActions.at(3)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast16x));
+    fastActions.at(3)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast16x));
 
     ui->customSpeedAction->setCheckable(true);
     ui->customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_6));
-    ui->customSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Custom));
+    ui->customSpeedAction->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Custom));
 
     // Action group
     d->replaySpeedActionGroup = new QActionGroup(this);
@@ -700,8 +725,8 @@ void MainWindow::initReplaySpeedUi() noexcept
     }
 
     d->replaySpeedUnitComboBox = new QComboBox(this);
-    d->replaySpeedUnitComboBox->addItem(tr("Factor [f]"), Enum::toUnderlyingType(Replay::SpeedUnit::Absolute));
-    d->replaySpeedUnitComboBox->addItem(tr("Percent [%]"), Enum::toUnderlyingType(Replay::SpeedUnit::Percent));
+    d->replaySpeedUnitComboBox->addItem(tr("Factor [f]"), Enum::underly(Replay::SpeedUnit::Absolute));
+    d->replaySpeedUnitComboBox->addItem(tr("Percent [%]"), Enum::underly(Replay::SpeedUnit::Percent));
     switch (Settings::getInstance().getReplaySpeeedUnit()) {
     case Replay::SpeedUnit::Absolute:
         d->replaySpeedUnitComboBox->setCurrentIndex(0);
@@ -847,11 +872,15 @@ void MainWindow::updateMinimalUi(bool enable)
 {
     Settings &settings = Settings::getInstance();
     settings.setMinimalUiEnabled(enable);
-    if (enable) {
+    const bool hasModules = d->moduleManager->getActiveModule().has_value();
+    ui->showMinimalAction->setEnabled(hasModules);
+
+    const bool minimalUi = isMinimalUiEnabled();
+    if (minimalUi) {
         ui->moduleVisibilityWidget->setHidden(true);
         ui->moduleSelectorWidget->setHidden(true);
         ui->showModulesAction->setChecked(false);
-        ui->showModulesAction->setEnabled(false);
+        ui->showModulesAction->setEnabled(false);  
     } else {
         const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
         ui->moduleVisibilityWidget->setVisible(true);
@@ -861,14 +890,22 @@ void MainWindow::updateMinimalUi(bool enable)
     }
     updateMinimalUiButtonTextVisibility();
     updateMinimalUiEssentialButtonVisibility();
-    updateReplaySpeedVisibility(enable);
+    updateReplaySpeedVisibility(minimalUi);
     updatePositionSliderTickInterval();
-
-    ui->moduleGroupBox->setHidden(enable);
+    ui->moduleGroupBox->setHidden(minimalUi);
 
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
     QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
+}
+
+bool MainWindow::isMinimalUiEnabled() const noexcept
+{
+    Settings &settings = Settings::getInstance();
+    const bool minimalUi = settings.isMinimalUiEnabled();
+    const bool hasModules = d->moduleManager->getActiveModule().has_value();
+    // Also enable minimal UI mode if no module plugins are available
+    return minimalUi || !hasModules;
 }
 
 void MainWindow::updateReplaySpeedUi() noexcept
@@ -931,9 +968,8 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
 
 void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
 {
-    Settings &settings = Settings::getInstance();
-    if (settings.isMinimalUiEnabled()) {
-        const bool buttonTextVisible = settings.getDefaultMinimalUiButtonTextVisibility();
+    if (isMinimalUiEnabled()) {
+        const bool buttonTextVisible = Settings::getInstance().getDefaultMinimalUiButtonTextVisibility();
         ui->recordButton->setShowText(buttonTextVisible);
         ui->skipToBeginButton->setShowText(buttonTextVisible);
         ui->backwardButton->setShowText(buttonTextVisible);
@@ -958,9 +994,8 @@ void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
 
 void MainWindow::updateMinimalUiEssentialButtonVisibility() noexcept
 {
-    Settings &settings = Settings::getInstance();
-    if (settings.isMinimalUiEnabled()) {
-        const bool nonEssentialButtonVisible = settings.getDefaultMinimalUiNonEssentialButtonVisibility();
+    if (isMinimalUiEnabled()) {
+        const bool nonEssentialButtonVisible = Settings::getInstance().getDefaultMinimalUiNonEssentialButtonVisibility();
         ui->skipToBeginButton->setVisible(nonEssentialButtonVisible);
         ui->backwardButton->setVisible(nonEssentialButtonVisible);
         ui->skipToEndButton->setVisible(nonEssentialButtonVisible);
@@ -978,7 +1013,7 @@ void MainWindow::updateMinimalUiEssentialButtonVisibility() noexcept
 void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
 {
     Settings &settings = Settings::getInstance();
-    bool replaySpeedVisible;
+    bool replaySpeedVisible {false};
     if (enterMinimalUi) {
         // When switching to minimal UI mode the default replay speed visibility takes precedence
         replaySpeedVisible = settings.getDefaultMinimalUiReplaySpeedVisibility() && settings.isReplaySpeedVisible();
@@ -992,10 +1027,10 @@ void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
 
 void MainWindow::updatePositionSliderTickInterval() noexcept
 {
-    Settings &settings = Settings::getInstance();
     int tickInterval {10};
-    if (settings.isMinimalUiEnabled()) {
+    if (isMinimalUiEnabled()) {
         if (!ui->showReplaySpeedAction->isChecked()) {
+            Settings &settings = Settings::getInstance();
             if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                 if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                     tickInterval = 10;
@@ -1077,7 +1112,8 @@ void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
 
 void MainWindow::updateWindowSize() noexcept
 {
-    if (Settings::getInstance().isMinimalUiEnabled()) {
+    const bool minimalUi = isMinimalUiEnabled();
+    if (minimalUi) {
         setMinimumSize(0, 0);
         // Let the layout manager realise that a widget has been hidden, which is an
         // asynchronous process
@@ -1102,7 +1138,7 @@ void MainWindow::onTimestampChanged(std::int64_t timestamp) noexcept
 void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
 {
     ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(ReplaySpeedProperty).toInt());
-    double replaySpeedFactor;
+    double replaySpeedFactor {1.0};
     switch (replaySpeed) {
     case ReplaySpeed::Slow10:
         replaySpeedFactor = 0.1;
@@ -1276,22 +1312,7 @@ void MainWindow::updateControlUi() noexcept
 
 void MainWindow::updateControlIcons() noexcept
 {
-    QIcon recordIcon;
-    switch (d->moduleManager->getActiveModule().getModuleId()) {
-    case Module::Module::None:
-        [[fallthrough]];
-    case Module::Module::Logbook:
-        recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-        recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-        recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
-        break;
-    case Module::Module::Formation:
-        recordIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-        recordIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-        recordIcon.addFile(":/img/icons/record-add-active.png", QSize(), QIcon::Active);
-        break;
-
-    }
+    const QIcon &recordIcon = d->moduleManager->getRecordIcon();
     ui->recordAction->setIcon(recordIcon);
 }
 
@@ -1299,8 +1320,7 @@ void MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noe
 {
     updateMinimalUiButtonTextVisibility();
     updatePositionSliderTickInterval();
-    Settings &settings = Settings::getInstance();
-    if (!visible && settings.isMinimalUiEnabled()) {
+    if (!visible && isMinimalUiEnabled()) {
         // Shrink to minimal size
         QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
@@ -1310,8 +1330,7 @@ void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible
 {
     updateMinimalUiEssentialButtonVisibility();
     updatePositionSliderTickInterval();
-    Settings &settings = Settings::getInstance();
-    if (visible && settings.isMinimalUiEnabled()) {
+    if (!visible && isMinimalUiEnabled()) {
         // Shrink to minimal size
         QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
@@ -1340,14 +1359,18 @@ void MainWindow::updateFileMenu() noexcept
     if (SkyConnectManager::getInstance().isInRecordingState()) {
         ui->newLogbookAction->setEnabled(false);
         ui->openLogbookAction->setEnabled(false);
-        ui->importMenu->setEnabled(false);
-        ui->exportMenu->setEnabled(false);
+        ui->flightImportMenu->setEnabled(false);
+        ui->flightExportMenu->setEnabled(false);
+        ui->locationImportMenu->setEnabled(false);
+        ui->locationExportMenu->setEnabled(false);
         ui->optimiseLogbookAction->setEnabled(false);
     } else {
         ui->newLogbookAction->setEnabled(true);
         ui->openLogbookAction->setEnabled(true);
-        ui->importMenu->setEnabled(d->hasImportPlugins && d->connectedWithLogbook);
-        ui->exportMenu->setEnabled(d->hasExportPlugins && hasRecording);
+        ui->flightImportMenu->setEnabled(d->hasFlightImportPlugins && d->connectedWithLogbook);
+        ui->flightExportMenu->setEnabled(d->hasFlightExportPlugins && hasRecording);
+        ui->locationImportMenu->setEnabled(d->hasFlightImportPlugins && d->connectedWithLogbook);
+        ui->locationExportMenu->setEnabled(d->hasFlightExportPlugins && d->connectedWithLogbook);
         ui->optimiseLogbookAction->setEnabled(d->connectedWithLogbook);
     }
 }
@@ -1355,8 +1378,8 @@ void MainWindow::updateFileMenu() noexcept
 void MainWindow::updateModuleActions() noexcept
 {
     const bool recording = SkyConnectManager::getInstance().isInRecordingState();
-    for (auto &module : d->moduleManager->getModules()) {
-        module->getAction().setEnabled(!recording);
+    for (auto &item : d->moduleManager->getActionRegistry()) {
+        item.second->setEnabled(!recording);
     }
 }
 
@@ -1409,7 +1432,7 @@ void MainWindow::updateMainWindow() noexcept
     }
 }
 
-void MainWindow::onModuleActivated(const QString title, [[maybe_unused]] Module::Module moduleId) noexcept
+void MainWindow::onModuleActivated(const QString &title, [[maybe_unused]] QUuid uuid) noexcept
 {
     ui->moduleGroupBox->setTitle(title);
     // Disable the minimal UI (if activated)
@@ -1423,7 +1446,7 @@ void MainWindow::createNewLogbook() noexcept
 {
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
-        const bool ok = LogbookManager::getInstance().connectWithLogbook(logbookPath, this);
+        const bool ok = PersistenceManager::getInstance().connectWithLogbook(logbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be created.").arg(QDir::toNativeSeparators(logbookPath)));
         }
@@ -1440,8 +1463,8 @@ void MainWindow::openLogbook() noexcept
 
 void MainWindow::optimiseLogbook() noexcept
 {
-    LogbookManager &logbookManager = LogbookManager::getInstance();
-    QString logbookPath = logbookManager.getLogbookPath();
+    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    QString logbookPath = persistenceManager.getLogbookPath();
     QFileInfo fileInfo = QFileInfo(logbookPath);
 
     std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
@@ -1458,7 +1481,7 @@ void MainWindow::optimiseLogbook() noexcept
     const QAbstractButton *clickedButton = messageBox->clickedButton();
     if (clickedButton == optimiseButton) {
         QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-        const bool ok = LogbookManager::getInstance().optimise();
+        const bool ok = persistenceManager.optimise();
         QGuiApplication::restoreOverrideCursor();
         if (ok) {
             fileInfo.refresh();
@@ -1575,19 +1598,17 @@ void MainWindow::showOnlineManual() const noexcept
 
 void MainWindow::toggleRecord(bool enable) noexcept
 {
-    blockSignals(true);
-    d->moduleManager->getActiveModule().setRecording(enable);
-    blockSignals(false);
+    d->moduleManager->setRecording(enable);
 }
 
 void MainWindow::togglePause(bool enable) noexcept
 {
-    d->moduleManager->getActiveModule().setPaused(enable);
+    d->moduleManager->setPaused(enable);
 }
 
 void MainWindow::togglePlay(bool enable) noexcept
 {
-     d->moduleManager->getActiveModule().setPlaying(enable);
+     d->moduleManager->setPlaying(enable);
 }
 
 void MainWindow::stop() noexcept
@@ -1629,14 +1650,13 @@ void MainWindow::onFlightRestored() noexcept
     updateUi();
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.skipToBegin();
-    ModuleIntf &module = d->moduleManager->getActiveModule();
     if (skyConnectManager.isConnected()) {
         // Make sure we are unpaused...
-        module.setPaused(false);
+        d->moduleManager->setPaused(false);
         // ... play the first frame (which will "move" to the new location)...
-        module.setPlaying(true);
+        d->moduleManager->setPlaying(true);
         // ... and pause again (such that the new scenery can be loaded)
-        module.setPaused(true);
+        d->moduleManager->setPaused(true);
     }
 }
 
@@ -1646,7 +1666,7 @@ void MainWindow::onLogbookConnectionChanged(bool connected) noexcept
     updateUi();
 }
 
-void MainWindow::onImport(QAction *action) noexcept
+void MainWindow::onFlightImport(QAction *action) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const QUuid pluginUuid = action->data().toUuid();
@@ -1655,19 +1675,30 @@ void MainWindow::onImport(QAction *action) noexcept
         updateUi();
         SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
         skyConnectManager.skipToBegin();
-        ModuleIntf &module = d->moduleManager->getActiveModule();
         if (skyConnectManager.isConnected()) {
-            module.setPlaying(true);
-            module.setPaused(true);
+            d->moduleManager->setPlaying(true);
+            d->moduleManager->setPaused(true);
         }
     }
 }
 
-void MainWindow::onExport(QAction *action) noexcept
+void MainWindow::onFlightExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     PluginManager::getInstance().exportFlight(flight, pluginUuid);
+}
+
+void MainWindow::onLocationImport(QAction *action) noexcept
+{
+    const QUuid pluginUuid = action->data().toUuid();
+    PluginManager::getInstance().importLocations(pluginUuid, *d->locationService);
+}
+
+void MainWindow::onLocationExport(QAction *action) noexcept
+{
+    const QUuid pluginUuid = action->data().toUuid();
+    PluginManager::getInstance().exportLocations(pluginUuid, *d->locationService);
 }
 
 void MainWindow::onReplayLoopChanged() noexcept

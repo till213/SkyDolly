@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -33,7 +33,7 @@
 
 #include "KernelLib.h"
 
-class VersionPrivate;
+struct VersionPrivate;
 
 /*!
  * The default constructor creates an instance which represents the current \e application version.
@@ -42,13 +42,9 @@ class VersionPrivate;
  *
  * The version string has the form "[major].[minor].[patch]", for example "1.2.3".
  */
-class KERNEL_API Version
+class KERNEL_API Version final
 {
 public:
-    /*!
-     * Creates this Version with the current values of the application version.
-     */
-    Version() noexcept;
 
     /*!
      * Creates this Version with \p majorNo, \p minorNo and \p patchNo values. This
@@ -72,7 +68,13 @@ public:
      * \sa #operator<()
      */
     Version(QStringView version) noexcept;
-    ~Version() noexcept;
+
+    Version() noexcept;
+    Version(const Version &rhs) = delete;
+    Version(Version &&rhs) noexcept;
+    Version &operator=(const Version &rhs) = delete;
+    Version &operator=(Version &&rhs) noexcept;
+    ~Version();
 
     void fromString(QStringView version) noexcept;
 
@@ -114,14 +116,6 @@ public:
     bool isNull() const noexcept;
 
     /*!
-     * Assignmnent operator.
-     *
-     * \param rhs
-     *        the other Version to assign from
-     */
-    void operator=(const Version &rhs) noexcept;
-
-    /*!
      * Compares this Version against \c rhs for equality.
      *
      * \param rhs
@@ -129,7 +123,7 @@ public:
      * \return \c true if this Version is equal with the \c rhs version;
      *         \c false else
      */
-    bool operator==(const Version &rhs) noexcept;
+    bool operator==(const Version &rhs) const noexcept;
 
     /*!
      * Compares this Version against \c rhs for greater or equal.
@@ -139,7 +133,7 @@ public:
      * \return \c true if this Version is equal or greater than the \c rhs version;
      *         \c false else
      */
-    bool operator>=(const Version &rhs) noexcept;
+    bool operator>=(const Version &rhs) const noexcept;
 
     /*!
      * Compares this Version against \c rhs for smaller.
@@ -149,14 +143,14 @@ public:
      * \return \c true if this Version is smaller than the \c rhs version;
      *         \c false else
      */
-    bool operator<(const Version &rhs) noexcept;
+    bool operator<(const Version &rhs) const noexcept;
 
     /*!
      * A cool code name - every application needs this ;)
      *
      * \return a QString containing a cool code name
      */
-    static const QString getCodeName() noexcept;
+    static QString getCodeName() noexcept;
 
     /*!
      * A "fancy user readable version" which follows the pattern yy.mm.
@@ -165,7 +159,7 @@ public:
      *
      * \return a QString containing the "user readable version"
      */
-    static const QString getUserVersion() noexcept;
+    static QString getUserVersion() noexcept;
 
     /*!
      * The version number which follows the pattern version.minor.patch.
@@ -174,21 +168,21 @@ public:
      *
      * \return a QString containing the application version.
      */
-    static const QString getApplicationVersion() noexcept;
+    static QString getApplicationVersion() noexcept;
 
     /*!
      * Returns the organisation name.
      *
      * \return a QString the name of the organisation
      */
-    static const QString getOrganisationName() noexcept;
+    static QString getOrganisationName() noexcept;
 
     /*!
      * Returns the application name which can be displayed in dialog captions.
      *
      * \return a QString containing the application name
      */
-    static const QString getApplicationName() noexcept;
+    static QString getApplicationName() noexcept;
 
     static QLatin1String getGitHash() noexcept;
 

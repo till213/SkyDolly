@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -30,20 +30,15 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API Position : public AbstractComponent<PositionData>
+class MODEL_API Position final : public AbstractComponent<PositionData>
 {
 public:
     explicit Position(const AircraftInfo &aircraftInfo) noexcept;
-    Position(Position &aircraftHandle) = default;
-    Position(Position &&aircraftHandle) = default;
-    ~Position() noexcept override;
-    Position &operator=(const Position &rhs) = default;
-    Position &operator=(Position &&rhs) = default;
 
-    const PositionData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    PositionData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 
 private:
-    PositionData m_currentPositionData;
+    mutable PositionData m_currentData;
 };
 
 #endif // POSITION_H

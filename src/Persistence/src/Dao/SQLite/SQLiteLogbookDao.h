@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -26,24 +26,26 @@
 #define SQLITELOGBOOKDAO_H
 
 #include <memory>
+#include <forward_list>
 #include <vector>
 
-#include <QtGlobal>
-
+#include <Model/FlightDate.h>
+#include <Model/FlightSummary.h>
 #include <FlightSelector.h>
 #include "../LogbookDaoIntf.h"
-
-class FlightDate;
-class FlightSummary;
 
 class SQLiteLogbookDao : public LogbookDaoIntf
 {
 public:
-    explicit SQLiteLogbookDao() noexcept;
-    virtual ~SQLiteLogbookDao() noexcept;
+    SQLiteLogbookDao() = default;
+    SQLiteLogbookDao(const SQLiteLogbookDao &rhs) = delete;
+    SQLiteLogbookDao(SQLiteLogbookDao &&rhs) noexcept;
+    SQLiteLogbookDao &operator=(const SQLiteLogbookDao &rhs) = delete;
+    SQLiteLogbookDao &operator=(SQLiteLogbookDao &&rhs) noexcept;
+    ~SQLiteLogbookDao() override;
 
-    virtual std::forward_list<FlightDate> getFlightDates() const noexcept override;
-    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept override;
+    std::forward_list<FlightDate> getFlightDates(bool *ok = nullptr) const noexcept override;
+    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept override;
 };
 
 #endif // SQLITELOGBOOKDAO_H

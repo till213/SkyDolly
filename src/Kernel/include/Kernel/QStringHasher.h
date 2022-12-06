@@ -25,9 +25,6 @@
 #ifndef QSTRINGHASHER_H
 #define QSTRINGHASHER_H
 
-#include <QtGlobal>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 #include <cstdlib>
 
 #include <QHash>
@@ -39,6 +36,5 @@ struct QStringHasher {
         return qHash(value);
     }
 };
-#endif
 
-#endif //  QSTRINGHASHER_H
+#endif // QSTRINGHASHER_H

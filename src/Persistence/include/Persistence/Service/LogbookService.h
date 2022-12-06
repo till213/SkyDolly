@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -34,13 +34,17 @@
 #include "../PersistenceLib.h"
 
 class FlightSelector;
-class LogbookServicePrivate;
+struct LogbookServicePrivate;
 
 class PERSISTENCE_API LogbookService
 {
 public:
     LogbookService() noexcept;
-    virtual ~LogbookService() noexcept;
+    LogbookService(const LogbookService &rhs) = delete;
+    LogbookService(LogbookService &&rhs) noexcept;
+    LogbookService &operator=(const LogbookService &rhs) = delete;
+    LogbookService &operator=(LogbookService &&rhs) noexcept;
+    ~LogbookService();
 
     std::forward_list<FlightDate> getFlightDates() const noexcept;
     std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept;

@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -31,7 +31,7 @@
 
 // PUBLIC
 
-std::vector<QRgb> Color::createColorRamp(QColor startColor, QColor endColor, int nofTotalColors) noexcept
+std::vector<QRgb> Color::createColorRamp(const QColor &startColor, const QColor &endColor, int nofTotalColors) noexcept
 {
     return createColorRamp(startColor.rgba(), endColor.rgba(), nofTotalColors);
 }
@@ -59,6 +59,7 @@ std::vector<QRgb> Color::createColorRamp(QRgb startColor, QRgb endColor, int nof
         const double deltaGreen = (endGreen - startGreen) / static_cast<double>(nofIntervals);
         const double deltaBlue = (endBlue - startBlue) / static_cast<double>(nofIntervals);
 
+        colorRamp.reserve(nofTotalColors);
         // First color
         colorRamp.push_back(startColor);
         // Color ramp

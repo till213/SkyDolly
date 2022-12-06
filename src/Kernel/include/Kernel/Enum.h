@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -28,7 +28,7 @@
 #include <type_traits>
 
 /*!
- * Enumeration support functionality.
+ * C++ enumeration support functionality.
  */
 namespace Enum
 {
@@ -36,9 +36,9 @@ namespace Enum
      * Returns the underlying type for the given enumeration \c e.
      */
     template<typename E>
-    constexpr auto toUnderlyingType(E e) noexcept
+    constexpr auto underly(E e) noexcept
     {
-        return static_cast<typename std::underlying_type<E>::type>(e);
+        return static_cast<std::underlying_type_t<E>>(e);
     }
 }
 

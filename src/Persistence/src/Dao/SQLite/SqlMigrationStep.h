@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -29,28 +29,38 @@
 
 #include <QStringList>
 #include <QString>
+#include <QStringView>
 
 class QRegularExpressionMatch;
 class QStringRef;
 
-class SqlMigrationStepPrivate;
+struct SqlMigrationStepPrivate;
 
 class SqlMigrationStep
 {
 public:
-    SqlMigrationStep();
+    SqlMigrationStep() noexcept;
+    SqlMigrationStep(const SqlMigrationStep &rhs) = delete;
+    SqlMigrationStep(SqlMigrationStep &&rhs) noexcept;
+    SqlMigrationStep &operator=(const SqlMigrationStep &rhs) = delete;
+    SqlMigrationStep &operator=(SqlMigrationStep &&rhs) noexcept;
     ~SqlMigrationStep();
 
     bool isValid() const noexcept;
     bool parseTag(const QRegularExpressionMatch &tagMatch) noexcept;
 
     bool checkApplied() noexcept;
-    bool execute(const QString &sql) noexcept;
+    bool execute(QStringView sql) noexcept;
+    void registerMigration(bool success, QString errorMessage = QString()) noexcept;
 
     const QString &getMigrationId() const noexcept;
+    void setMigrationId(QString migrationId) noexcept;
     const QString &getDescription() const noexcept;
+    void setDescription(QString description) noexcept;
     int getStep() const noexcept;
+    void setStep(int step) noexcept;
     int getStepCount() const noexcept;
+    void setStepCount(int count) noexcept;
 
 private:
     std::unique_ptr<SqlMigrationStepPrivate> d;

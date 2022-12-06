@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -31,6 +32,9 @@
 #include <QDateTime>
 #include <QTimeZone>
 #include <QDateTime>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Settings.h>
 #include <Kernel/Version.h>
@@ -38,14 +42,13 @@
 #include "SqlMigration.h"
 #include "SQLiteDatabaseDao.h"
 
-constexpr char DbName[] = "QSQLITE";
-
-class DatabaseDaoPrivate
+namespace
 {
-public:
-    DatabaseDaoPrivate()
-    {}
+    constexpr const char *DbName {"QSQLITE"};
+}
 
+struct DatabaseDaoPrivate
+{
     QSqlDatabase db;
 };
 
@@ -55,14 +58,17 @@ SQLiteDatabaseDao::SQLiteDatabaseDao() noexcept
     : d(std::make_unique<DatabaseDaoPrivate>())
 {}
 
-SQLiteDatabaseDao::~SQLiteDatabaseDao() noexcept
+SQLiteDatabaseDao::SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) noexcept = default;
+SQLiteDatabaseDao &SQLiteDatabaseDao::operator=(SQLiteDatabaseDao &&rhs) noexcept = default;
+
+SQLiteDatabaseDao::~SQLiteDatabaseDao()
 {
     disconnectSQLite();
 }
 
 bool SQLiteDatabaseDao::connectDb(const QString &logbookPath) noexcept
 {
-    d->db = QSqlDatabase::addDatabase(DbName);
+    d->db = QSqlDatabase::addDatabase(::DbName);
     d->db.setDatabaseName(logbookPath);
     return d->db.open();
 }
@@ -90,7 +96,7 @@ bool SQLiteDatabaseDao::optimise() noexcept
         ok = query.exec("update metadata set last_optim_date = datetime('now') where rowid = 1;");
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteDatabaseDao::optimise(: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteDatabaseDao::optimise(: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
     return ok;
@@ -104,26 +110,22 @@ bool SQLiteDatabaseDao::backup(const QString &backupPath) noexcept
         ok = query.exec("update metadata set last_backup_date = datetime('now') where rowid = 1;");
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteDatabaseDao::backup(: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteDatabaseDao::backup(: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
     return ok;
 }
 
-bool SQLiteDatabaseDao::updateBackupPeriod(const QString &backupPeriodIntlId) noexcept
+bool SQLiteDatabaseDao::updateBackupPeriod(std::int64_t backupPeriodId) noexcept
 {
     QSqlQuery query;
     query.prepare(
         "update metadata "
-        "set    backup_period_id = (select ebp.id"
-        "                           from enum_backup_period ebp"
-        "                           where ebp.intl_id = :intl_id"
-        "                          );"
+        "set    backup_period_id = :backup_period_id;"
     );
 
-    query.bindValue(":intl_id", backupPeriodIntlId);
-    bool ok = query.exec();
-    return ok;
+    query.bindValue(":backup_period_id", QVariant::fromValue(backupPeriodId));
+    return query.exec();
 }
 
 bool SQLiteDatabaseDao::updateNextBackupDate(const QDateTime &date) noexcept
@@ -135,8 +137,7 @@ bool SQLiteDatabaseDao::updateNextBackupDate(const QDateTime &date) noexcept
     );
 
     query.bindValue(":next_backup_date", date.toUTC());
-    bool ok = query.exec();
-    return ok;
+    return query.exec();
 }
 
 bool SQLiteDatabaseDao::updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept
@@ -148,28 +149,26 @@ bool SQLiteDatabaseDao::updateBackupDirectoryPath(const QString &backupDirectory
     );
 
     query.bindValue(":backup_directory_path", backupDirectoryPath);
-    bool ok = query.exec();
-    return ok;
+    return query.exec();
 }
 
-bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
+Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
 {
+    Metadata metadata;
     QSqlQuery query;
     query.setForwardOnly(true);
 
-    bool ok = query.exec(
+    const bool success = query.exec(
         "select m.creation_date,"
         "       m.app_version,"
         "       m.last_optim_date,"
         "       m.last_backup_date,"
         "       m.next_backup_date,"
         "       m.backup_directory_path,"
-        "       ebp.intl_id "
-        "from metadata m "
-        "left join enum_backup_period ebp "
-        "on m.backup_period_id = ebp.id;"
+        "       m.backup_period_id "
+        "from metadata m;"
     );
-    if (ok && query.next()) {
+    if (success && query.next()) {
         QDateTime dateTime = query.value(0).toDateTime();
         dateTime.setTimeZone(QTimeZone::utc());
         metadata.creationDate = dateTime.toLocalTime();
@@ -190,30 +189,41 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
         metadata.nextBackupDate = dateTime.toLocalTime();
 
         metadata.backupDirectoryPath = query.value(5).toString();
-        metadata.backupPeriodIntlId = query.value(6).toString();
+        metadata.backupPeriodId = query.value(6).toLongLong();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return metadata;
 };
 
-bool SQLiteDatabaseDao::getDatabaseVersion(Version &databaseVersion) const noexcept
+Version SQLiteDatabaseDao::getDatabaseVersion(bool *ok) const noexcept
 {
+    Version version;
     QSqlQuery query;
-    bool ok = query.exec("select m.app_version from metadata m;");
-    if (ok && query.next()) {
+    const bool success = query.exec("select m.app_version from metadata m;");
+    if (success && query.next()) {
         QString appVersion = query.value(0).toString();
-        databaseVersion.fromString(appVersion);
+        version.fromString(appVersion);
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return version;
 };
 
-bool SQLiteDatabaseDao::getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept
+QString SQLiteDatabaseDao::getBackupDirectoryPath(bool *ok) const noexcept
 {
+    QString backupDirectoryPath;
     QSqlQuery query;
-    bool ok = query.exec("select m.backup_directory_path from metadata m;");
-    if (ok && query.next()) {
+    const bool success = query.exec("select m.backup_directory_path from metadata m;");
+    if (success && query.next()) {
         backupDirectoryPath = query.value(0).toString();
     }
-    return ok;
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return backupDirectoryPath;
 };
 
 // PRIVATE

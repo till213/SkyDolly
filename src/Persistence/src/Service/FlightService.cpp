@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -34,12 +34,10 @@
 #include <Model/Aircraft.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/FlightDaoIntf.h"
-#include "../Dao/AircraftDaoIntf.h"
 #include <Service/FlightService.h>
 
-class FlightServicePrivate
+struct FlightServicePrivate
 {
-public:
     FlightServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           flightDao(daoFactory->createFlightDao())
@@ -53,24 +51,17 @@ public:
 
 FlightService::FlightService() noexcept
     : d(std::make_unique<FlightServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug("FlightService::FlightService: CREATED.");
-#endif
-}
+{}
 
-FlightService::~FlightService() noexcept
-{
-#ifdef DEBUG
-    qDebug("FlightService::~FlightService: DELETED.");
-#endif
-}
+FlightService::FlightService(FlightService &&rhs) noexcept = default;
+FlightService &FlightService::operator=(FlightService &&rhs) noexcept = default;
+FlightService::~FlightService() = default;
 
 bool FlightService::store(Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        ok = d->flightDao->addFlight(flight);
+        ok = d->flightDao->add(flight);
         if (ok) {
             ok = QSqlDatabase::database().commit();
             emit flight.flightStored(flight.getId());
@@ -86,7 +77,7 @@ bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         flight.blockSignals(true);
-        ok = d->flightDao->getFlightById(id, flight);
+        ok = d->flightDao->get(id, flight);
         flight.blockSignals(false);
         emit flight.flightRestored(flight.getId());
     }
@@ -94,7 +85,7 @@ bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
     return ok;
 }
 
-bool FlightService::deleteById(std::int64_t id)  noexcept
+bool FlightService::deleteById(std::int64_t id) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {

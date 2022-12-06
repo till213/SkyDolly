@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LocationWidget</class>
+ <widget class="QWidget" name="LocationWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>957</width>
+    <height>346</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>Search:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="searchLineEdit">
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="LinkedOptionGroup" name="typeOptionGroup" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>Category:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="EnumerationComboBox" name="categoryComboBox">
+       <property name="toolTip">
+        <string>Filter by category. Set to 'No category' to show all categories.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Country:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="EnumerationComboBox" name="countryComboBox">
+       <property name="toolTip">
+        <string>Filter by country. Set to 'World' to show all countries.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="QTableWidget" name="locationTableWidget"/>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QGroupBox" name="informationGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>160</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Details</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <layout class="QFormLayout" name="formLayout_2">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Description:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="FocusPlainTextEdit" name="descriptionPlainTextEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>320</width>
+                <height>80</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="formLayout_3">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Pitch:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Bank:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>True heading:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Indicated airspeed:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QSpinBox" name="indicatedAirspeedSpinBox"/>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="pitchSpinBox"/>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="bankSpinBox"/>
+            </item>
+            <item row="2" column="1">
+             <widget class="QDoubleSpinBox" name="trueHeadingSpinBox"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Engine:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="EnumerationComboBox" name="engineEventComboBox"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Default Values</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Altitude:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Indicated airspeed:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="defaultIndicatedAirspeedSpinBox">
+            <property name="suffix">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="defaultOnGroundCheckBox">
+            <property name="text">
+             <string>On ground</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="defaultAltitudeSpinBox">
+            <property name="suffix">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="EnumerationComboBox" name="defaultEngineEventComboBox"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Engine:</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="addPushButton">
+       <property name="toolTip">
+        <string>Add a new location entry.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="capturePushButton">
+       <property name="toolTip">
+        <string>Capture the current location from the flight simulator.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Capture</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="updatePushButton">
+       <property name="toolTip">
+        <string>Update the selected location with the current location from the flight simulator.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Update</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="teleportPushButton">
+       <property name="toolTip">
+        <string>Teleport the aircraft to the selected location.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Teleport</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="locationCountLabel">
+       <property name="minimumSize">
+        <size>
+         <width>40</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deletePushButton">
+       <property name="toolTip">
+        <string>Delete the selected location.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Delete</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FocusPlainTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">Widget/FocusPlainTextEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>EnumerationComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">Widget/EnumerationComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LinkedOptionGroup</class>
+   <extends>QWidget</extends>
+   <header location="global">Widget/LinkedOptionGroup.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>searchLineEdit</tabstop>
+  <tabstop>categoryComboBox</tabstop>
+  <tabstop>countryComboBox</tabstop>
+  <tabstop>locationTableWidget</tabstop>
+  <tabstop>descriptionPlainTextEdit</tabstop>
+  <tabstop>pitchSpinBox</tabstop>
+  <tabstop>bankSpinBox</tabstop>
+  <tabstop>trueHeadingSpinBox</tabstop>
+  <tabstop>indicatedAirspeedSpinBox</tabstop>
+  <tabstop>engineEventComboBox</tabstop>
+  <tabstop>defaultAltitudeSpinBox</tabstop>
+  <tabstop>defaultIndicatedAirspeedSpinBox</tabstop>
+  <tabstop>defaultEngineEventComboBox</tabstop>
+  <tabstop>defaultOnGroundCheckBox</tabstop>
+  <tabstop>addPushButton</tabstop>
+  <tabstop>capturePushButton</tabstop>
+  <tabstop>updatePushButton</tabstop>
+  <tabstop>teleportPushButton</tabstop>
+  <tabstop>deletePushButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

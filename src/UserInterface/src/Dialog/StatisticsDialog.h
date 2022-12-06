@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -33,7 +33,7 @@
 class QShowEvent;
 class QHideEvent;
 
-class StatisticsDialogPrivate;
+struct StatisticsDialogPrivate;
 
 namespace Ui {
     class StatisticsDialog;
@@ -44,7 +44,7 @@ class StatisticsDialog : public QDialog
     Q_OBJECT
 public:
     explicit StatisticsDialog(QWidget *parent = nullptr) noexcept;
-    ~StatisticsDialog() noexcept override;
+    ~StatisticsDialog() override;
 
 signals:
     void visibilityChanged(bool visible);
@@ -54,9 +54,8 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(StatisticsDialog)
     std::unique_ptr<StatisticsDialogPrivate> d;
-    std::unique_ptr<Ui::StatisticsDialog> ui;
+    const std::unique_ptr<Ui::StatisticsDialog> ui;
 
     void initUi() noexcept;
     void updateUi() noexcept;

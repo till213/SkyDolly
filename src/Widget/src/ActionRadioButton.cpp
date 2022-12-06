@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -27,14 +27,9 @@
 
 #include "ActionRadioButton.h"
 
-class ActionRadioButtonPrivate
+struct ActionRadioButtonPrivate
 {
-public:
-    ActionRadioButtonPrivate()  noexcept
-        : action(nullptr)
-    {}
-
-    const QAction *action;
+    const QAction *action {nullptr};
 };
 
 // PUBLIC
@@ -44,8 +39,7 @@ ActionRadioButton::ActionRadioButton(QWidget *parent) noexcept
       d(std::make_unique<ActionRadioButtonPrivate>())
 {}
 
-ActionRadioButton::~ActionRadioButton() noexcept
-{}
+ActionRadioButton::~ActionRadioButton() = default;
 
 void ActionRadioButton::setAction(const QAction *action) noexcept
 {

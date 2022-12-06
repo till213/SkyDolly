@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,56 +22,72 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <mutex>
+
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
+#include <QStringBuilder>
 #include <QLatin1String>
 #include <QUuid>
 #include <QByteArray>
 #include <QVariant>
 #include <QDir>
 #include <QFileInfo>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include "Enum.h"
 #include "Const.h"
 #include "SampleRate.h"
 #include "Version.h"
+#include "SettingsConverter.h"
 #include "Settings.h"
 
 namespace
 {
-    constexpr bool DefaultBackupBeforeMigration {true};
-
-    constexpr char ResourceDirectoryName[] = "Resources";
+    constexpr const char *ResourceDirectoryName {"Resources"};
     // This happens to be the same directory name as when unzipping the downloaded EGM data
     // from https://geographiclib.sourceforge.io/html/geoid.html#geoidinst
-    constexpr char EgmDirectoryName[] = "geoids";
-    constexpr char DefaultEgmFileName[] = "egm2008-5.pgm";
+    constexpr const char *EgmDirectoryName {"geoids"};
+    constexpr const char *DefaultEgmFileName {"egm2008-5.pgm"};
 }
 
-class SettingsPrivate
+struct SettingsPrivate
 {
-public:
+    SettingsPrivate() noexcept
+    {
+        QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
+        if (standardLocations.count() > 0) {
+            defaultExportPath = standardLocations.first();
+            defaultLogbookPath = standardLocations.first() % "/" % Version::getApplicationName() % "/" % Version::getApplicationName() % Const::LogbookExtension;
+        } else {
+            defaultExportPath = ".";
+        }
+    }
+
     QSettings settings;
     Version version;
 
     QString logbookPath;
-    bool backupBeforeMigration;
+    bool backupBeforeMigration {DefaultBackupBeforeMigration};
     QUuid skyConnectPluginUuid;
-    double recordingSampleRateValue;
-    bool windowStayOnTop;
-    bool minimalUi;
-    bool moduleSelectorVisible;
-    bool replaySpeedVisible;
+    double recordingSampleRateValue {DefaultRecordingSampleRate};
+    bool windowStayOnTop {DefaultWindowStayOnTop};
+    bool minimalUi {DefaultMinimalUi};
+    bool moduleSelectorVisible {DefaultModuleSelectorVisible};
+    bool replaySpeedVisible {DefaultReplaySpeedVisible};
     QByteArray windowGeometry;
     QByteArray windowState;
     QByteArray logbookState;
     QByteArray formationAircraftTableState;
+    QByteArray locationTableState;
     QString exportPath;
     QString defaultExportPath;
     QString defaultLogbookPath;
-    bool absoluteSeek;
+    bool absoluteSeek {false};
     double seekIntervalSeconds;
     double seekIntervalPercent;
     bool replayLoop;
@@ -83,6 +99,7 @@ public:
 
     bool deleteFlightConfirmation;
     bool deleteAircraftConfirmation;
+    bool deleteLocationConfirmation;
     bool resetTimeOffsetConfirmation;
 
     bool defaultMinimalUiButtonTextVisible;
@@ -95,15 +112,17 @@ public:
 
     int previewInfoDialogCount;
 
-    static Settings *instance;
+    static inline std::once_flag onceFlag;
+    static inline Settings *instance {nullptr};
 
     static constexpr QUuid DefaultSkyConnectPluginUuid {};
+    static constexpr bool DefaultBackupBeforeMigration {true};
     static constexpr double DefaultRecordingSampleRate {SampleRate::toValue(SampleRate::SampleRate::Auto)};
     static constexpr bool DefaultWindowStayOnTop {false};
     static constexpr bool DefaultMinimalUi {false};
-    static constexpr bool DefaultModuleSelectorVisible  {true};
-    static constexpr bool DefaultReplaySpeedVisible  {true};
-    static constexpr bool DefaultAbsoluteSeek  {true};
+    static constexpr bool DefaultModuleSelectorVisible {true};
+    static constexpr bool DefaultReplaySpeedVisible {true};
+    static constexpr bool DefaultAbsoluteSeek {true};
     static constexpr double DefaultSeekIntervalSeconds {1.0};
     static constexpr double DefaultSeekIntervalPercent {0.5};
     static constexpr bool DefaultReplayLoop {false};
@@ -111,46 +130,31 @@ public:
     static constexpr double DefaultRepeatFlapsHandleIndex {false};
     // For now the default value is true, as no known aircraft exists where the canopy values would not
     // have to be repeated
-    static constexpr bool DefaultRepeatCanopyOpen  {true};
+    static constexpr bool DefaultRepeatCanopyOpen {true};
     static constexpr bool DefaultRelativePositionPlacement {true};
-    static constexpr bool DefaultDeleteFlightConfirmation  {true};
-    static constexpr bool DefaultDeleteAircraftConfirmation  {true};
-    static constexpr bool DefaultResetTimeOffsetConfirmation  {true};
+    static constexpr bool DefaultDeleteFlightConfirmation {true};
+    static constexpr bool DefaultDeleteAircraftConfirmation {true};
+    static constexpr bool DefaultDeleteLocationConfirmation {true};
+    static constexpr bool DefaultResetTimeOffsetConfirmation {true};
 
     static constexpr bool DefaultMinimalUiButtonTextVisible {false};
     static constexpr bool DefaultMinimalUiNonEssentialButtonVisible {false};
     static constexpr bool DefaultMinimalUiReplaySpeedVisible {false};
 
-    static inline const QString DefaultImportAircraftType {QLatin1String("")};
+    static inline const QString DefaultImportAircraftType {};
 
     static constexpr int DefaultPreviewInfoDialogCount {3};
-    static constexpr int PreviewInfoDialogBase {90};
-
-    SettingsPrivate() noexcept
-        : version(QCoreApplication::instance()->applicationVersion())
-    {
-        QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
-        if (standardLocations.count() > 0) {
-            defaultExportPath = standardLocations.first();
-            defaultLogbookPath = standardLocations.first() + "/" + Version::getApplicationName() + "/" + Version::getApplicationName() + Const::LogbookExtension;
-        } else {
-            defaultExportPath = ".";
-        }
-    }
-
-    ~SettingsPrivate() noexcept
-    {}
+    static constexpr int PreviewInfoDialogBase {120};
 };
 
-Settings *SettingsPrivate::instance = nullptr;
 
 // PUBLIC
 
 Settings &Settings::getInstance() noexcept
 {
-    if (SettingsPrivate::instance == nullptr) {
+    std::call_once(SettingsPrivate::onceFlag, []() {
         SettingsPrivate::instance = new Settings();
-    }
+    });
     return *SettingsPrivate::instance;
 }
 
@@ -160,6 +164,11 @@ void Settings::destroyInstance() noexcept
         delete SettingsPrivate::instance;
         SettingsPrivate::instance = nullptr;
     }
+}
+
+const Version &Settings::getVersion() const noexcept
+{
+    return d->version;
 }
 
 QString Settings::getLogbookPath() const noexcept
@@ -206,7 +215,7 @@ QString Settings::getExportPath() const noexcept
     return d->exportPath;
 }
 
-void Settings::setExportPath(QString exportPath)
+void Settings::setExportPath(const QString &exportPath)
 {
     if (d->exportPath != exportPath) {
         d->exportPath = exportPath;
@@ -325,6 +334,16 @@ void Settings::setFormationAircraftTableState(const QByteArray &state) noexcept
     d->formationAircraftTableState = state;
 }
 
+QByteArray Settings::getLocationTableState() const
+{
+    return d->locationTableState;
+}
+
+void Settings::setLocationTableState(const QByteArray &state) noexcept
+{
+    d->locationTableState = state;
+}
+
 bool Settings::isAbsoluteSeekEnabled() const noexcept
 {
     return d->absoluteSeek;
@@ -438,6 +457,19 @@ void Settings::setDeleteAircraftConfirmationEnabled(bool enable) noexcept
 {
     if (d->deleteAircraftConfirmation != enable) {
         d->deleteAircraftConfirmation = enable;
+        emit changed();
+    }
+}
+
+bool Settings::isDeleteLocationConfirmationEnabled() const noexcept
+{
+    return d->deleteLocationConfirmation;
+}
+
+void Settings::setDeleteLocationConfirmationEnabled(bool enable) noexcept
+{
+    if (d->deleteLocationConfirmation != enable) {
+        d->deleteLocationConfirmation = enable;
         emit changed();
     }
 }
@@ -604,7 +636,7 @@ void Settings::store() const noexcept
         d->settings.setValue("SeekIntervalSeconds", d->seekIntervalSeconds);
         d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
         d->settings.setValue("ReplayLoop", d->replayLoop);
-        d->settings.setValue("ReplaySpeedUnit", Enum::toUnderlyingType(d->replaySpeedUnit));
+        d->settings.setValue("ReplaySpeedUnit", Enum::underly(d->replaySpeedUnit));
         d->settings.setValue("RepeatFlapsHandleIndex", d->repeatFlapsHandleIndex);
         d->settings.setValue("RepeatCanopyOpen", d->repeatCanopyOpen);
     }
@@ -614,6 +646,7 @@ void Settings::store() const noexcept
         // Confirmations
         d->settings.setValue("DeleteFlightConfirmation", d->deleteFlightConfirmation);
         d->settings.setValue("DeleteAircraftConfirmation", d->deleteAircraftConfirmation);
+        d->settings.setValue("DeleteLocationConfirmation", d->deleteLocationConfirmation);
         d->settings.setValue("ResetTimeOffsetConfirmation", d->resetTimeOffsetConfirmation);
 
         // Minimal UI
@@ -636,6 +669,7 @@ void Settings::store() const noexcept
         d->settings.setValue("State", d->windowState);
         d->settings.setValue("LogbookState", d->logbookState);
         d->settings.setValue("FormationAircraftTableState", d->formationAircraftTableState);
+        d->settings.setValue("LocationTableState", d->locationTableState);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");
@@ -657,26 +691,25 @@ void Settings::store() const noexcept
 
 void Settings::restore() noexcept
 {
-    QString version;
-    version = d->settings.value("Version", getVersion().toString()).toString();
-    Version settingsVersion(version);
+    QString versionString;
+    versionString = d->settings.value("Version", getVersion().toString()).toString();
+    Version settingsVersion {versionString};
     if (settingsVersion < getVersion()) {
 #ifdef DEBUG
-        qDebug("Settings::restore: app version: %s, settings version: %s, conversion might be necessary!",
-               qPrintable(getVersion().toString()), qPrintable(settingsVersion.toString()));
-        /*!\todo Settings conversion as necessary */
+        qDebug() << "Settings::restore: app version:" << getVersion().toString() << "settings version:" << settingsVersion.toString() << "converting...";
 #endif
+        SettingsConverter::convertToCurrent(settingsVersion, d->settings);
     }
 
 #ifdef DEBUG
-    qDebug("Settings::restore: RESTORE: app name %s, organisation name: %s", qPrintable(d->settings.applicationName()), qPrintable(d->settings.organizationName()));
+    qDebug() << "Settings::restore: RESTORE: app name:" << d->settings.applicationName() <<  "organisation name:" << d->settings.organizationName();
 #endif
 
-    bool ok;
+    bool ok {true};
     d->settings.beginGroup("Logbook");
     {
         d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
-        d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", ::DefaultBackupBeforeMigration).toBool();
+        d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", SettingsPrivate::DefaultBackupBeforeMigration).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Plugins");
@@ -697,7 +730,9 @@ void Settings::restore() noexcept
     {
         d->recordingSampleRateValue = d->settings.value("RecordingSampleRate", SettingsPrivate::DefaultRecordingSampleRate).toDouble(&ok);
         if (!ok) {
-            qWarning("The recording sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultRecordingSampleRate);
+#ifdef DEBUG
+            qWarning() << "The recording sample rate in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultRecordingSampleRate;
+#endif
             d->recordingSampleRateValue = SettingsPrivate::DefaultRecordingSampleRate;
         }
     }
@@ -707,20 +742,26 @@ void Settings::restore() noexcept
         d->absoluteSeek = d->settings.value("AbsoluteSeek", SettingsPrivate::DefaultAbsoluteSeek).toBool();
         d->seekIntervalSeconds = d->settings.value("SeekIntervalSeconds", SettingsPrivate::DefaultSeekIntervalSeconds).toDouble(&ok);
         if (!ok) {
-            qWarning("The seek interval [seconds] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalSeconds);
+#ifdef DEBUG
+            qWarning() << "The seek interval [seconds] in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultSeekIntervalSeconds;
+#endif
             d->seekIntervalSeconds = SettingsPrivate::DefaultSeekIntervalSeconds;
         }
         d->seekIntervalPercent = d->settings.value("SeekIntervalPercent", SettingsPrivate::DefaultSeekIntervalPercent).toDouble(&ok);
         if (!ok) {
-            qWarning("The seek interval [percent] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalPercent);
+#ifdef DEBUG
+            qWarning() << "The seek interval [percent] in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultSeekIntervalPercent;
+#endif
             d->seekIntervalPercent = SettingsPrivate::DefaultSeekIntervalPercent;
         }
         d->replayLoop = d->settings.value("ReplayLoop", SettingsPrivate::DefaultReplayLoop).toBool();
-        int replaySpeedUnitValue = d->settings.value("ReplaySpeedUnit", Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit)).toInt(&ok);
+        int replaySpeedUnitValue = d->settings.value("ReplaySpeedUnit", Enum::underly(SettingsPrivate::DefaultReplaySpeedUnit)).toInt(&ok);
         if (ok) {
             d->replaySpeedUnit = static_cast<Replay::SpeedUnit>(replaySpeedUnitValue);
         } else {
-            qWarning("The replay speed unit in the settings coul dnot be parsed, so setting value to default value %d", Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit));
+#ifdef DEBUG
+            qWarning() << "The replay speed unit in the settings could not be parsed, so setting value to default value:" << Enum::underly(SettingsPrivate::DefaultReplaySpeedUnit);
+#endif
             d->replaySpeedUnit = SettingsPrivate::DefaultReplaySpeedUnit;
         }
         d->repeatFlapsHandleIndex = d->settings.value("RepeatFlapsHandleIndex", SettingsPrivate::DefaultRepeatFlapsHandleIndex).toBool();
@@ -732,6 +773,7 @@ void Settings::restore() noexcept
         // Confirmations
         d->deleteFlightConfirmation = d->settings.value("DeleteFlightConfirmation", SettingsPrivate::DefaultDeleteFlightConfirmation).toBool();
         d->deleteAircraftConfirmation = d->settings.value("DeleteAircraftConfirmation", SettingsPrivate::DefaultDeleteAircraftConfirmation).toBool();
+        d->deleteLocationConfirmation = d->settings.value("DeleteLocationConfirmation", SettingsPrivate::DefaultDeleteLocationConfirmation).toBool();
         d->resetTimeOffsetConfirmation = d->settings.value("ResetTimeOffsetConfirmation", SettingsPrivate::DefaultResetTimeOffsetConfirmation).toBool();
 
         d->defaultMinimalUiButtonTextVisible = d->settings.value("DefaultMinimalUiButtonTextVisible", SettingsPrivate::DefaultMinimalUiButtonTextVisible).toBool();
@@ -753,6 +795,7 @@ void Settings::restore() noexcept
         d->windowState = d->settings.value("State").toByteArray();
         d->logbookState = d->settings.value("LogbookState").toByteArray();
         d->formationAircraftTableState = d->settings.value("FormationAircraftTableState").toByteArray();
+        d->locationTableState = d->settings.value("LocationTableState").toByteArray();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");
@@ -778,32 +821,19 @@ void Settings::restore() noexcept
     d->settings.endGroup();
 }
 
-// PROTECTED
-
-Settings::~Settings()
-{
-#ifdef DEBUG
-    qDebug("Settings::~Settings: DELETED");
-#endif
-    store();
-}
-
-const Version &Settings::getVersion() const
-{
-    return d->version;
-}
-
 // PRIVATE
 
 Settings::Settings() noexcept
     : d(std::make_unique<SettingsPrivate>())
 {
-#ifdef DEBUG
-    qDebug("Settings::Settings: CREATED");
-#endif
     restore();
     frenchConnection();
     updateEgmFilePath();
+}
+
+Settings::~Settings()
+{
+    store();
 }
 
 void Settings::frenchConnection() noexcept

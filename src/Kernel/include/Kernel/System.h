@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -29,7 +29,7 @@
 
 #include "KernelLib.h"
 
-class KERNEL_API System
+class KERNEL_API System final
 {
 public:
 

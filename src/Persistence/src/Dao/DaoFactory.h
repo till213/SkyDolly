@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -39,8 +39,10 @@ class HandleDaoIntf;
 class LightDaoIntf;
 class WaypointDaoIntf;
 class DatabaseDaoIntf;
+class LocationDaoIntf;
+class EnumerationDaoIntf;
 
-class DaoFactoryPrivate;
+struct DaoFactoryPrivate;
 
 class DaoFactory
 {
@@ -52,7 +54,12 @@ public:
     };
 
     DaoFactory(DbType dbType);
-    ~DaoFactory();
+    DaoFactory() = default;
+    DaoFactory(const DaoFactory &rhs) = delete;
+    DaoFactory(DaoFactory &&rhs) noexcept;
+    DaoFactory &operator=(const DaoFactory &rhs) = delete;
+    DaoFactory &operator=(DaoFactory &&rhs) noexcept;
+    virtual ~DaoFactory();
 
     std::unique_ptr<DatabaseDaoIntf> createDatabaseDao() noexcept;
     std::unique_ptr<LogbookDaoIntf> createLogbookDao() noexcept;
@@ -66,6 +73,8 @@ public:
     std::unique_ptr<HandleDaoIntf> createHandleDao() noexcept;
     std::unique_ptr<LightDaoIntf> createLightDao() noexcept;
     std::unique_ptr<WaypointDaoIntf> createFlightPlanDao() noexcept;
+    std::unique_ptr<LocationDaoIntf> createLocationDao() noexcept;
+    std::unique_ptr<EnumerationDaoIntf> createEnumerationDao() noexcept;
 
 private:
     std::unique_ptr<DaoFactoryPrivate> d;

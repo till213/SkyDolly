@@ -40,15 +40,15 @@
 struct SimConnectAircraftHandle
 {
     // Gear, brakes & handles
-    float brakeLeftPosition;
-    float brakeRightPosition;
-    float waterRudderHandlePosition;
-    float tailhookPosition;
-    float canopyOpen;
-    float foldingWingLeftPercent;
-    float foldingWingRightPercent;
-    qint32 gearHandlePosition;
-    qint32 smokeEnable;
+    float brakeLeftPosition {0.0f};
+    float brakeRightPosition {0.0f};
+    float waterRudderHandlePosition {0.0f};
+    float tailhookPosition {0.0f};
+    float canopyOpen {0.0f};
+    float foldingWingLeftPercent {0.0f};
+    float foldingWingRightPercent {0.0f};
+    qint32 gearHandlePosition {0};
+    qint32 smokeEnable {0};
 
     inline AircraftHandleData toAircraftHandleData() const noexcept
     {

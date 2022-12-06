@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -29,6 +29,7 @@
 #include <cstdint>
 
 #include <QMainWindow>
+#include <QUuid>
 
 class QButtonGroup;
 class QTime;
@@ -36,7 +37,6 @@ class QEvent;
 class QResizeEvent;
 class QCloseEvent;
 
-#include <Module/Module.h>
 #include "UserInterfaceLib.h"
 
 QT_BEGIN_NAMESPACE
@@ -48,14 +48,14 @@ class SettingsDialog;
 class FlightDialog;
 class SimulationVariablesDialog;
 class StatisticsDialog;
-class MainWindowPrivate;
+struct MainWindowPrivate;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
     explicit MainWindow(const QString &filePath = QString(), QWidget *parent = nullptr) noexcept;
-    ~MainWindow() noexcept override;
+    ~MainWindow() override;
 
     bool connectWithLogbook(const QString &filePath) noexcept;
 
@@ -64,9 +64,8 @@ protected:
     void closeEvent(QCloseEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(MainWindow)
     std::unique_ptr<Ui::MainWindow> ui;
-    std::unique_ptr<MainWindowPrivate> d;
+    const std::unique_ptr<MainWindowPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
@@ -105,6 +104,7 @@ private:
     inline bool hasStatisticsDialog() const noexcept;
 
     void updateMinimalUi(bool enable);
+    bool isMinimalUiEnabled() const noexcept;
     void updateReplaySpeedUi() noexcept;
 
     /*
@@ -170,7 +170,7 @@ private slots:
     void updateMainWindow() noexcept;
 
     // Modules
-    void onModuleActivated(const QString title, Module::Module moduleId) noexcept;
+    void onModuleActivated(const QString &title, QUuid uuid) noexcept;
 
     // File menu
     void createNewLogbook() noexcept;
@@ -217,8 +217,10 @@ private slots:
     void onLogbookConnectionChanged(bool connected) noexcept;
 
     // Import / export
-    void onImport(QAction *action) noexcept;
-    void onExport(QAction *action) noexcept;
+    void onFlightImport(QAction *action) noexcept;
+    void onFlightExport(QAction *action) noexcept;
+    void onLocationImport(QAction *action) noexcept;
+    void onLocationExport(QAction *action) noexcept;
 
     // Settings
     void onReplayLoopChanged() noexcept;

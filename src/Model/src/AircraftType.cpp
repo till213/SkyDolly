@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,37 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <utility>
+
 #include <QString>
 
 #include "AircraftType.h"
 
 // PUBLIC
 
-AircraftType::AircraftType() noexcept
-    : wingSpan(0),
-      engineType(SimType::EngineType::Unknown),
-      numberOfEngines(0)
-{}
-
-AircraftType::AircraftType(AircraftType &&other) noexcept
-    : type(std::move(other.type)),
-      category(std::move(other.category)),
-      wingSpan(other.wingSpan),
-      engineType(other.engineType),
-      numberOfEngines(other.numberOfEngines)
-{}
-
-AircraftType &AircraftType::operator=(AircraftType &&rhs) noexcept
-{
-    if (this != &rhs) {
-        type = std::move(rhs.type);
-        category = std::move(rhs.category);
-        wingSpan = rhs.wingSpan;
-        engineType = rhs.engineType;
-        numberOfEngines = rhs.numberOfEngines;
-    }
-    return *this;
-}
+AircraftType::AircraftType(QString type, QString category, int wingSpan, SimType::EngineType engineType, int numberOfEngines) noexcept
+    : type(std::move(type)), category(std::move(category)), wingSpan(wingSpan), engineType(engineType), numberOfEngines(numberOfEngines)
+{};
 
 void AircraftType::clear() noexcept
 {

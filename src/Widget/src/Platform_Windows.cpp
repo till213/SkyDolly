@@ -32,7 +32,7 @@
 #include "QtCore/qstringliteral.h"
 
 namespace  {
-    const QString FlatButtonCss {QStringLiteral("")};
+    constexpr const char *FlatButtonCss {""};
 }
 
 QString Platform::getFlatButtonCss() noexcept

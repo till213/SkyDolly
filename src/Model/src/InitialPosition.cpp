@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -28,22 +28,14 @@
 
 // PUBLIC
 
-InitialPosition::InitialPosition(double latitude, double longitude, double altitude) noexcept
-    : pitch(0.0),
-      bank(0.0),
-      heading(0.0),
-      onGround(false),
-      indicatedAirspeed(InvalidAirspeed)
-{
-    this->latitude = latitude;
-    this->longitude = longitude;
-    this->altitude = altitude;
-}
+InitialPosition::InitialPosition(double theLatitude, double theLongitude, double theAltitude) noexcept
+    : latitude(theLatitude),
+      longitude(theLongitude),
+      altitude(theAltitude)
+{}
 
 InitialPosition::InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept
+    : onGround(aircraftInfo.startOnGround)
 {
     fromPositionData(positionData);
-    onGround = aircraftInfo.startOnGround;
 }
-
-const InitialPosition InitialPosition::NullData = InitialPosition(0.0, 0.0, 0.0);

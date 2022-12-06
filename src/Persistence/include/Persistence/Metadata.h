@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -25,8 +25,11 @@
 #ifndef METADATA_H
 #define METADATA_H
 
+#include <cstdint>
+
 #include <QDateTime>
 
+#include <Kernel/Const.h>
 #include <Kernel/Version.h>
 
 struct Metadata
@@ -37,7 +40,7 @@ struct Metadata
     QDateTime lastBackupDate;
     QDateTime nextBackupDate;
     QString backupDirectoryPath;
-    QString backupPeriodIntlId;
+    std::int64_t backupPeriodId {Const::InvalidId};
 };
 
 #endif // METADATA_H

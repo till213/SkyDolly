@@ -26,21 +26,37 @@ MIT License\
 Copyright (c) 2017 Thibaut Goetghebuer-Planchon
 
 ## IGC Parser
-- Tobias Bieniek
+SkyDolly IGCParser inspired by the IGC parser by Tobias Bieniek.
 - https://github.com/Turbo87/igc-parser
 
 The MIT License (MIT)\
 Copyright (c) 2017 Tobias Bieniek
+
+## CSV Parser
+SkyDolly CSVParser inspired by the CSV reader implementation by Alexander Barthel.
+- https://github.com/albar965/atools
+
+GPL-3.0 license \
+Copyright (c) 2022 Alexander Barthel
+
+The atools are part of Little Navmap, a flight planner, navigation tool, moving map and more:
+- https://github.com/albar965/littlenavmap
 
 ## icns.cmake
 - Qix
 - https://gist.github.com/Qix-/f4090181e55ea365633da8c3d0ab5249
 - License: CC0
 
-
 ## CheckGit.cmake
 - Jonathan Hamberg
 - https://jonathanhamberg.com/post/cmake-embedding-git-hash/
+
+## Wikipedia
+- Source: https://en.wikipedia.org/
+- License: https://creativecommons.org/licenses/by-sa/3.0/
+
+## Flightspots
+- Source: https://flightspots.co/
 
 \
 The MIT License (MIT).\

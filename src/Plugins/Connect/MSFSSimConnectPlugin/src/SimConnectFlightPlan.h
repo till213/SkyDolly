@@ -41,14 +41,14 @@
 #pragma pack(push, 1)
 struct SimConnectFlightPlan
 {
-    char gpsWpNextId[8];
-    char gpsWpPrevId[8];
-    float gpsWpNextLat;
-    float gpsWpNextLon;
-    float gpsWpNextAlt;
-    float gpsWpPrevLat;
-    float gpsWpPrevLon;
-    float gpsWpPrevAlt;
+    char gpsWpNextId[8] {'\0'};
+    char gpsWpPrevId[8] {'\0'};
+    float gpsWpNextLat {0.0f};
+    float gpsWpNextLon {0.0f};
+    float gpsWpNextAlt {0.0f};
+    float gpsWpPrevLat {0.0f};
+    float gpsWpPrevLon {0.0f};
+    float gpsWpPrevAlt {0.0f};
 
     inline Waypoint toNextWaypoint() const noexcept
     {

@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -37,8 +37,8 @@
 class Flight;
 class Aircraft;
 struct PositionData;
-class InitialPosition;
-class PathCreatorPluginPrivate;
+struct InitialPosition;
+struct PathCreatorPluginPrivate;
 
 class PathCreatorPlugin : public AbstractSkyConnect
 {
@@ -47,7 +47,7 @@ class PathCreatorPlugin : public AbstractSkyConnect
     Q_INTERFACES(SkyConnectIntf)
 public:
     PathCreatorPlugin(QObject *parent = nullptr) noexcept;
-    ~PathCreatorPlugin() noexcept override;
+    ~PathCreatorPlugin() override;
 
     bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
 
@@ -55,7 +55,8 @@ protected:
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
-    bool onFreezeUserAircraft(bool enable) noexcept override;
+    bool onFreezeUserAircraft(bool enable) const noexcept override;
+    bool onSimulationEvent(SimulationEvent event) const noexcept override;
 
     bool onStartRecording() noexcept override;
     void onRecordingPaused(bool paused) noexcept override;
@@ -76,11 +77,13 @@ protected:
     void onRemoveAiObject(std::int64_t aircraftId) noexcept override;
     void onRemoveAllAiObjects() noexcept override;
 
+    bool onRequestLocation() noexcept override;
+
 protected slots:
     void recordData() noexcept override;
 
 private:
-    std::unique_ptr<PathCreatorPluginPrivate> d;
+    const std::unique_ptr<PathCreatorPluginPrivate> d;
 
     void frenchConnection() noexcept;
     void recordPositionData(std::int64_t timestamp) noexcept;

@@ -39,7 +39,7 @@
 #pragma pack(push, 1)
 struct SimConnectLight
 {
-    qint32 lightStates;
+    qint32 lightStates {0};
 
     inline LightData toLightData() const noexcept
     {

@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -33,6 +33,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/Const.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
@@ -60,16 +61,6 @@ namespace
 struct AbstractSkyConnectPrivate
 {
     AbstractSkyConnectPrivate() noexcept
-        : replayMode(SkyConnectIntf::ReplayMode::Normal),
-          state(Connect::State::Disconnected),
-          currentFlight(Logbook::getInstance().getCurrentFlight()),
-          currentTimestamp(0),
-          lastNotificationTimestamp(0),
-          recordingSampleRate(Settings::getInstance().getRecordingSampleRateValue()),
-          recordingIntervalMSec(SampleRate::toIntervalMSec(recordingSampleRate)),
-          replaySpeedFactor(1.0),
-          elapsedTime(0),
-          lastSamplesPerSecondIndex(0)
     {
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
 #ifdef DEBUG
@@ -77,19 +68,19 @@ struct AbstractSkyConnectPrivate
 #endif
     }
 
-    SkyConnectIntf::ReplayMode replayMode;
-    Connect::State state;
-    Flight &currentFlight;
+    SkyConnectIntf::ReplayMode replayMode {SkyConnectIntf::ReplayMode::Normal};
+    Connect::State state {Connect::State::Disconnected};
+    Flight &currentFlight {Logbook::getInstance().getCurrentFlight()};
     // Triggers the recording of sample data (if not event-based recording)
     QTimer recordingTimer;
-    std::int64_t currentTimestamp;
-    std::int64_t lastNotificationTimestamp;
-    double recordingSampleRate;
-    int recordingIntervalMSec;
+    std::int64_t currentTimestamp {0};
+    std::int64_t lastNotificationTimestamp {0};
+    double recordingSampleRate {Settings::getInstance().getRecordingSampleRateValue()};
+    int recordingIntervalMSec {SampleRate::toIntervalMSec(recordingSampleRate)};
     QElapsedTimer elapsedTimer;
-    double replaySpeedFactor;
-    std::int64_t elapsedTime;
-    mutable int lastSamplesPerSecondIndex;
+    double replaySpeedFactor {1.0};
+    std::int64_t elapsedTime {0};
+    mutable int lastSamplesPerSecondIndex {0};
 };
 
 // PUBLIC
@@ -101,17 +92,37 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
     frenchConnection();
 }
 
-AbstractSkyConnect::~AbstractSkyConnect() noexcept
-{}
+AbstractSkyConnect::~AbstractSkyConnect() = default;
 
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
-    return onInitialPositionSetup(initialPosition);
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this, initialPosition]() -> bool { return onInitialPositionSetup(initialPosition); });
+    }
+    return ok;
 }
 
-bool AbstractSkyConnect::freezeUserAircraft(bool enable) noexcept
+bool AbstractSkyConnect::freezeUserAircraft(bool enable) const noexcept
 {
     return onFreezeUserAircraft(enable);
+}
+
+bool AbstractSkyConnect::sendSimulationEvent(SimulationEvent event) noexcept
+{
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this, event]() -> bool { return onSimulationEvent(event); });
+    }
+    return ok;
 }
 
 SkyConnectIntf::ReplayMode AbstractSkyConnect::getReplayMode() const noexcept
@@ -185,7 +196,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         }
         ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
-            ok = onStartRecording();
+            ok = retryWithReconnect([this]() -> bool { return onStartRecording(); });
         }
     }
 
@@ -280,11 +291,6 @@ void AbstractSkyConnect::stop() noexcept
     } else {
         stopReplay();
     }
-}
-
-bool AbstractSkyConnect::isActive() const noexcept
-{
-    return d->state != Connect::State::Disconnected && d->state != Connect::State::Connected;
 }
 
 void AbstractSkyConnect::setPaused(bool enabled) noexcept
@@ -430,6 +436,11 @@ bool AbstractSkyConnect::isIdle() const noexcept
     return d->state == Connect::State::Connected || d->state == Connect::State::Disconnected;
 }
 
+bool AbstractSkyConnect::isActive() const noexcept
+{
+    return !isIdle();
+}
+
 std::int64_t AbstractSkyConnect::getCurrentTimestamp() const noexcept
 {
     return d->currentTimestamp;
@@ -482,6 +493,19 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
     return samplesPerSecond;
 }
 
+bool AbstractSkyConnect::requestLocation() noexcept
+{
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this]() -> bool { return onRequestLocation(); });
+    }
+    return ok;
+}
+
 // PUBLIC SLOTS
 
 void AbstractSkyConnect::addAiObject(const Aircraft &aircraft) noexcept
@@ -520,7 +544,7 @@ void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previo
         // by an invalid ID (= it has never been persisted). In such a case it does not
         // have an associated AI object either
         const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
-        if (userAircraft.getId() != Aircraft::InvalidId) {
+        if (userAircraft.getId() != Const::InvalidId) {
             removeAiObject(userAircraft.getId());
         }
         if (previousUserAircraftIndex != Flight::InvalidAircraftIndex) {
@@ -539,7 +563,7 @@ void AbstractSkyConnect::onTimeOffsetChanged() noexcept
     }
 }
 
-void AbstractSkyConnect::onTailNumberChanged(Aircraft &aircraft) noexcept
+void AbstractSkyConnect::onTailNumberChanged(const Aircraft &aircraft) noexcept
 {
     onRemoveAiObject(aircraft.getId());
     onAddAiObject(aircraft);
@@ -600,8 +624,8 @@ void AbstractSkyConnect::createAiObjects() noexcept
         const bool includingUserAircraft = getReplayMode() == ReplayMode::FlyWithFormation;
         const std::int64_t userAircraftId = d->currentFlight.getUserAircraft().getId();
         for (const auto &aircraft : d->currentFlight) {
-            if (aircraft->getId() != userAircraftId || includingUserAircraft) {
-                onAddAiObject(*aircraft);
+            if (aircraft.getId() != userAircraftId || includingUserAircraft) {
+                onAddAiObject(aircraft);
             }
         }
     }
@@ -657,16 +681,16 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
                                      settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
 }
 
-bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
+bool AbstractSkyConnect::retryWithReconnect(const std::function<bool()> &func)
 {
-    int nofAttempts = 2;
-    bool ok = true;
+    int nofAttempts {2};
+    bool ok {true};
     while (nofAttempts > 0) {
         ok = func();
         --nofAttempts;
         if (!ok && nofAttempts > 0) {
 #ifdef DEBUG
-            qDebug("AbstractSkyConnect::retryWithReconnect: previous connection is stale, RETRY with reconnect %d more time(s)...", nofAttempts);
+            qDebug() << "AbstractSkyConnect::retryWithReconnect: previous connection is stale, RETRY with reconnect" << nofAttempts << "more time(s)...";
 #endif
             // Automatically reconnect in case the server crashed
             // previously (without sending a "quit" message)
@@ -680,7 +704,7 @@ bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
     return ok;
 }
 
-bool AbstractSkyConnect::setupInitialRecordingPosition(const InitialPosition &initialPosition) noexcept
+bool AbstractSkyConnect::setupInitialRecordingPosition(InitialPosition initialPosition) noexcept
 {
     bool ok {true};
     if (!initialPosition.isNull()) {
@@ -690,7 +714,7 @@ bool AbstractSkyConnect::setupInitialRecordingPosition(const InitialPosition &in
     return ok;
 }
 
-bool AbstractSkyConnect::setupInitialReplayPosition(const InitialPosition &flyWithFormationPosition) noexcept
+bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept
 {
     bool ok {true};
     switch (d->replayMode) {
@@ -704,10 +728,10 @@ bool AbstractSkyConnect::setupInitialReplayPosition(const InitialPosition &flyWi
     case ReplayMode::Normal:
         if (d->currentTimestamp == 0) {
             const Aircraft &userAircraft = getCurrentFlight().getUserAircraft();
-            const PositionData &positionData = userAircraft.getPosition().getFirst();
             // Make sure recorded position data exists
-            ok = !positionData.isNull();
+            ok = userAircraft.getPosition().count() > 0;
             if (ok) {
+                const PositionData &positionData = userAircraft.getPosition().getFirst();
                 const AircraftInfo aircraftInfo = userAircraft.getAircraftInfo();
                 const InitialPosition initialPosition = InitialPosition(positionData, aircraftInfo);
                 ok = onInitialPositionSetup(initialPosition);

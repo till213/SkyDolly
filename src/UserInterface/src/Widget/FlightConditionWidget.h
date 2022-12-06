@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -32,7 +32,7 @@
 class QShowEvent;
 class QHideEvent;
 
-class FlightConditionWidgetPrivate;
+struct FlightConditionWidgetPrivate;
 
 namespace Ui {
     class FlightConditionWidget;
@@ -43,16 +43,15 @@ class FlightConditionWidget : public QWidget
     Q_OBJECT
 public:
     explicit FlightConditionWidget(QWidget *parent = nullptr) noexcept;
-    virtual ~FlightConditionWidget() noexcept;
+    ~FlightConditionWidget() override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(FlightConditionWidget)
-    std::unique_ptr<FlightConditionWidgetPrivate> d;
     std::unique_ptr<Ui::FlightConditionWidget> ui;
+    const std::unique_ptr<FlightConditionWidgetPrivate> d;
 
     void initUi() noexcept;
 

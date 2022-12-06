@@ -102,12 +102,12 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label_17">
        <property name="text">
-        <string>Wind velocity:</string>
+        <string>Wind speed:</string>
        </property>
       </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QLineEdit" name="windVelocityLineEdit">
+      <widget class="QLineEdit" name="windSpeedLineEdit">
        <property name="minimumSize">
         <size>
          <width>160</width>

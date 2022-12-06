@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -32,7 +32,7 @@
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <Persistence/LogbookManager.h>
+#include <Persistence/PersistenceManager.h>
 #include <PluginManager/PluginManager.h>
 #include <UserInterface/MainWindow.h>
 
@@ -41,7 +41,7 @@ static void destroySingletons() noexcept
     // Destroying the settings singleton also persists the settings
     Settings::destroyInstance();
     Logbook::destroyInstance();
-    LogbookManager::destroyInstance();
+    PersistenceManager::destroyInstance();
     PluginManager::destroyInstance();
     SkyConnectManager::destroyInstance();
 }

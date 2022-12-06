@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -29,12 +29,18 @@
 
 #include <QString>
 
-class SqlMigrationPrivate;
+#include <Kernel/CsvParser.h>
+
+struct SqlMigrationPrivate;
 
 class SqlMigration
 {
 public:
-    SqlMigration();
+    SqlMigration() noexcept;
+    SqlMigration(const SqlMigration &rhs) = delete;
+    SqlMigration(SqlMigration &&rhs) noexcept;
+    SqlMigration &operator=(const SqlMigration &rhs) = delete;
+    SqlMigration &operator=(SqlMigration &&rhs) noexcept;
     ~SqlMigration();
 
     bool migrate() noexcept;
@@ -42,7 +48,9 @@ public:
 private:
     std::unique_ptr<SqlMigrationPrivate> d;
 
-    bool migrate(const QString &migration) noexcept;
+    bool migrateSql(const QString &migrationFilePath) noexcept;
+    bool migrateCsv(const QString &migrationFilePath) noexcept;
+    bool migrateLocation(const CsvParser::Row &row) noexcept;
 };
 
 #endif // SQLMIGRATION_H

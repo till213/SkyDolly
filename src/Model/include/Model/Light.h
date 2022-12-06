@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -30,20 +30,14 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API Light : public AbstractComponent<LightData>
+class MODEL_API Light final : public AbstractComponent<LightData>
 {
 public:
     explicit Light(const AircraftInfo &aircraftInfo) noexcept;
-    Light(Light &aircraftHandle) = default;
-    Light(Light &&aircraftHandle) = default;
-    ~Light() noexcept override;
-    Light &operator=(const Light &rhs) = default;
-    Light &operator=(Light &&rhs) = default;
 
-    const LightData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
-
+    LightData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 private:
-    LightData m_currentLightData;
+    mutable LightData m_currentData;
 };
 
 #endif // LIGHT_H

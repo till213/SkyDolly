@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -33,7 +33,7 @@
 #include "ActiveButton.h"
 #include "WidgetLib.h"
 
-class ActionButtonPrivate;
+struct ActionButtonPrivate;
 
 /*!
  * An extension of an ActiveButton (QPushButton) that supports QAction.
@@ -54,8 +54,13 @@ class WIDGET_API ActionButton : public ActiveButton
 {
     Q_OBJECT
 public:
-    explicit ActionButton(QWidget *parent = nullptr) noexcept;
-    ~ActionButton() noexcept override;
+    enum struct Capitalisation{
+        Normal,
+        AllCaps
+    };
+
+    explicit ActionButton(QWidget *parent = nullptr, Capitalisation capitalisation = Capitalisation::Normal) noexcept;
+    ~ActionButton() override;
 
     /*!
      * Sets the action to be associated with this button. This button is
@@ -72,8 +77,7 @@ public:
     void setShowText(bool enable) noexcept;
 
 private:
-    Q_DISABLE_COPY(ActionButton)
-    std::unique_ptr<ActionButtonPrivate> d;
+    const std::unique_ptr<ActionButtonPrivate> d;
 
 private slots:
 

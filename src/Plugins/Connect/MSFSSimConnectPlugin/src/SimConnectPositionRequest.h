@@ -41,20 +41,20 @@
 struct SimConnectPositionRequest
 {
     // Aircraft position
-    double latitude;
-    double longitude;
-    double altitude;
-    double pitch;
-    double bank;
-    double heading;
+    double latitude {0.0};
+    double longitude {0.0};
+    double altitude {0.0};
+    double pitch {0.0};
+    double bank {0.0};
+    double trueHeading {0.0};
 
     // Velocity
-    double velocityBodyX;
-    double velocityBodyY;
-    double velocityBodyZ;
-    double rotationVelocityBodyX;
-    double rotationVelocityBodyY;
-    double rotationVelocityBodyZ;
+    double velocityBodyX {0.0};
+    double velocityBodyY {0.0};
+    double velocityBodyZ {0.0};
+    double rotationVelocityBodyX {0.0};
+    double rotationVelocityBodyY {0.0};
+    double rotationVelocityBodyZ {0.0};
 
     inline void fromPositionData(const PositionData &positionData) noexcept
     {
@@ -63,7 +63,7 @@ struct SimConnectPositionRequest
         altitude = positionData.altitude;
         pitch = positionData.pitch;
         bank = positionData.bank;
-        heading = positionData.heading;
+        trueHeading = positionData.trueHeading;
 
         velocityBodyX = positionData.velocityBodyX;
         velocityBodyY = positionData.velocityBodyY;
@@ -82,7 +82,7 @@ struct SimConnectPositionRequest
         initialPosition.Altitude = positionData.altitude;
         initialPosition.Pitch = positionData.pitch;
         initialPosition.Bank = positionData.bank;
-        initialPosition.Heading = positionData.heading;
+        initialPosition.Heading = positionData.trueHeading;
         initialPosition.OnGround = onGround ? 1 : 0;
         initialPosition.Airspeed = initialAirspeed;
 
@@ -98,7 +98,7 @@ struct SimConnectPositionRequest
         initialSimConnnectPosition.Altitude = initialPosition.altitude;
         initialSimConnnectPosition.Pitch = initialPosition.pitch;
         initialSimConnnectPosition.Bank = initialPosition.bank;
-        initialSimConnnectPosition.Heading = initialPosition.heading;
+        initialSimConnnectPosition.Heading = initialPosition.trueHeading;
         initialSimConnnectPosition.OnGround = initialPosition.onGround ? 1 : 0;
         initialSimConnnectPosition.Airspeed = initialPosition.indicatedAirspeed;
 

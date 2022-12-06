@@ -33,6 +33,7 @@
 #include <QDate>
 #include <QTime>
 
+#include <Kernel/Const.h>
 #include <Kernel/SkyMath.h>
 #include <Model/SimType.h>
 #include <Model/Aircraft.h>
@@ -49,35 +50,35 @@
 struct SimConnectAircraftInfo
 {
     // Aircraft info
-    char title[256];
-    char atcId[32];
-    char atcAirline[64];
-    char atcFlightNumber[8];
-    char category[256];
+    char title[256] {'\0'};
+    char atcId[32] {'\0'};
+    char atcAirline[64] {'\0'};
+    char atcFlightNumber[8] {'\0'};
+    char category[256] {'\0'};
     // Feet
-    float planeAltAboveGround;
-    qint32 simOnGround;
+    float planeAltAboveGround {0.0f};
+    qint32 simOnGround {0};
     // Knots
-    qint32 airspeedTrue;
+    qint32 airspeedTrue {0};
     // Feet
-    qint32 wingSpan;
-    qint32 engineType;
-    qint32 numberOfEngines;
+    qint32 wingSpan {0};
+    qint32 engineType {0};
+    qint32 numberOfEngines {0};
 
     // Flight conditions
-    qint32 surfaceType;
-    float groundAltitude;
+    qint32 surfaceType {0};
+    float groundAltitude {0.0f};
     // Celcius
-    float ambientTemperature;
-    float totalAirTemperature;
-    float ambientWindVelocity;
-    float ambientWindDirection;
-    float ambientVisibility;
-    float seaLevelPressure;
-    float pitotIcePct;
-    float structuralIcePct;
-    qint32 ambientPrecipState;
-    qint32 ambientInCloud;
+    float ambientTemperature {0.0f};
+    float totalAirTemperature {0.0f};
+    float ambientWindVelocity {0.0f};
+    float ambientWindDirection {0.0f};
+    float ambientVisibility {0.0f};
+    float seaLevelPressure {0.0f};
+    float pitotIcePct {0.0f};
+    float structuralIcePct {0.0f};
+    qint32 ambientPrecipState {0};
+    qint32 ambientInCloud {0};
 
     // Simulation time
     // [seconds]
@@ -122,7 +123,7 @@ struct SimConnectAircraftInfo
 
     inline AircraftInfo toAircraftInfo() const noexcept
     {
-        AircraftInfo aircraftInfo(Aircraft::InvalidId);
+        AircraftInfo aircraftInfo(Const::InvalidId);
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&title[0], sizeof(title), nullptr))) {
@@ -160,7 +161,7 @@ struct SimConnectAircraftInfo
         flightCondition.groundAltitude = groundAltitude;
         flightCondition.ambientTemperature = ambientTemperature;
         flightCondition.totalAirTemperature = totalAirTemperature;
-        flightCondition.windVelocity = ambientWindVelocity;
+        flightCondition.windSpeed = ambientWindVelocity;
         flightCondition.windDirection = ambientWindDirection;
         flightCondition.visibility = ambientVisibility;
         flightCondition.seaLevelPressure = seaLevelPressure;

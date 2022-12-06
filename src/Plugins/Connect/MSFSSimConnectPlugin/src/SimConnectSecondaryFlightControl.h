@@ -39,12 +39,12 @@
 #pragma pack(push, 1)
 struct SimConnectSecondaryFlightControl
 {
-    float leadingEdgeFlapsLeftPercent;
-    float leadingEdgeFlapsRightPercent;
-    float trailingEdgeFlapsLeftPercent;
-    float trailingEdgeFlapsRightPercent;
-    float spoilersHandlePosition;
-    qint32 flapsHandleIndex;
+    float leadingEdgeFlapsLeftPercent {0.0f};
+    float leadingEdgeFlapsRightPercent {0.0f};
+    float trailingEdgeFlapsLeftPercent {0.0f};
+    float trailingEdgeFlapsRightPercent {0.0f};
+    float spoilersHandlePosition{0.0f} ;
+    qint32 flapsHandleIndex {0};
 
     inline SecondaryFlightControlData toSecondaryFlightControlData() const noexcept
     {

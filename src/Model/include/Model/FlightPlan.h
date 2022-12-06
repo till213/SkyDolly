@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -30,46 +30,39 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
-#include <QVector>
-
 #include "Waypoint.h"
 #include "ModelLib.h"
 
-class Waypoint;
-class FlightPlanPrivate;
+struct Waypoint;
+struct FlightPlanPrivate;
 
-class MODEL_API FlightPlan : public QObject
+class MODEL_API FlightPlan final
 {
-    Q_OBJECT
 public:
-    explicit FlightPlan(QObject *parent = nullptr) noexcept;
-    ~FlightPlan() noexcept override;
+    FlightPlan() noexcept;
+    FlightPlan(const FlightPlan &rhs) = delete;
+    FlightPlan(FlightPlan &&rhs) noexcept;
+    FlightPlan &operator=(const FlightPlan &rhs) = delete;
+    FlightPlan &operator=(FlightPlan &&rhs) noexcept;
+    ~FlightPlan();
 
-    void add(const Waypoint &waypoint) noexcept;
+    void add(Waypoint waypoint) noexcept;
     void update(int index, const Waypoint &waypoint) noexcept;
     std::size_t count() const noexcept;
+    void reserve(std::size_t n);
     void clear() noexcept;
 
-    typedef std::vector<Waypoint>::iterator Iterator;
-    typedef std::back_insert_iterator<std::vector<Waypoint>> BackInsertIterator;
+    using Iterator = std::vector<Waypoint>::iterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
-    BackInsertIterator backInsertIterator() noexcept;
 
     Waypoint &operator[](std::size_t index) noexcept;
     const Waypoint &operator[](std::size_t index) const noexcept;
 
-signals:
-    void waypointAdded(const Waypoint &waypoint);
-    void waypointUpdated(int index, const Waypoint &waypoint);
-    void waypointsCleared();
-
 private:
-    Q_DISABLE_COPY(FlightPlan)
     std::unique_ptr<FlightPlanPrivate> d;
 };
 

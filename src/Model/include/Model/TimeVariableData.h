@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -28,12 +28,16 @@
 #include <limits>
 #include <cstdint>
 
-#include "SimType.h"
 #include "ModelLib.h"
 
 struct MODEL_API TimeVariableData
 {
-    static constexpr std::int64_t InvalidTime = std::numeric_limits<std::int64_t>::min();
+    TimeVariableData() = default;
+    TimeVariableData(const TimeVariableData &rhs) = default;
+    TimeVariableData(TimeVariableData &&rhs) = default;
+    TimeVariableData &operator=(const TimeVariableData &rhs) = default;
+    TimeVariableData &operator=(TimeVariableData &&rhs) = default;
+    virtual ~TimeVariableData() = default;
 
     /*!
      * Defines the way (use case) the sampled data is accessed.
@@ -48,32 +52,31 @@ struct MODEL_API TimeVariableData
     };
 
     // In milliseconds since the start of recording
-    std::int64_t timestamp;
+    std::int64_t timestamp {InvalidTime};
 
-    TimeVariableData() noexcept;
-    TimeVariableData(const TimeVariableData &other) = default;
-    TimeVariableData(TimeVariableData &&other) = default;
-    virtual ~TimeVariableData() noexcept;
-    TimeVariableData &operator=(const TimeVariableData &rhs) = default;
-    TimeVariableData &operator=(TimeVariableData &&rhs) = default;
-
+    /*!
+     * Returns whether this data is considered \enull data.
+     *
+     * \return \c true if this data is \enull (invalid) data; \c false else
+     * \sa reset
+     */
     inline bool isNull() const noexcept {
         return (timestamp == InvalidTime);
     }
 
-    inline bool operator==(const TimeVariableData &rhs) noexcept
+    /*!
+     * Resets this data such that it is considered \e null data afterwards.
+     *
+     * \sa isNull
+     */
+    inline void reset() noexcept
     {
-        return timestamp == rhs.timestamp;
+        timestamp = InvalidTime;
     }
 
-    inline bool operator>=(const TimeVariableData &rhs) noexcept
+    friend inline bool operator==(const TimeVariableData &lhs, const TimeVariableData &rhs) noexcept
     {
-        return timestamp >= rhs.timestamp;
-    }
-
-    inline bool operator<(const TimeVariableData &rhs) noexcept
-    {
-        return !(*this >= rhs);
+        return lhs.timestamp == rhs.timestamp;
     }
 
     friend inline bool operator>=(const TimeVariableData &lhs, const TimeVariableData &rhs) noexcept
@@ -85,6 +88,9 @@ struct MODEL_API TimeVariableData
     {
         return !(lhs >= rhs);
     }
+
+    static constexpr std::int64_t InvalidTime = std::numeric_limits<std::int64_t>::min();
+
 };
 
 #endif // TIMEVARIABLEDATA_H

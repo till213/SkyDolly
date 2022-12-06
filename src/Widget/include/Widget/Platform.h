@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -35,6 +35,8 @@ class WIDGET_API Platform
 public:
     static bool isDarkModeEnabled() noexcept;
     static QColor getEditableTableCellBGColor() noexcept;
+    static QColor getButtonBGColor() noexcept;
+    static QColor getActiveButtonBGColor() noexcept;
     static QString getFlatButtonCss() noexcept;
 };
 

@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -36,14 +36,14 @@ namespace Ui {
     class LogbookSettingsDialog;
 }
 
-class LogbookSettingsDialogPrivate;
+struct LogbookSettingsDialogPrivate;
 
 class LogbookSettingsDialog : public QDialog
 {
     Q_OBJECT
 public:
     explicit LogbookSettingsDialog(QWidget *parent = nullptr) noexcept;
-    ~LogbookSettingsDialog() noexcept override;
+    ~LogbookSettingsDialog() override;
 
 public slots:
     void accept() noexcept override;
@@ -52,9 +52,8 @@ protected:
     void showEvent(QShowEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(LogbookSettingsDialog)
     std::unique_ptr<Ui::LogbookSettingsDialog> ui;
-    std::unique_ptr<LogbookSettingsDialogPrivate> d;
+    const std::unique_ptr<LogbookSettingsDialogPrivate> d;
 
     void initUi() noexcept;
     void updateUi() noexcept;

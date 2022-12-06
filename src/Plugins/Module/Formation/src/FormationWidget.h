@@ -1,0 +1,116 @@
+/**
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
+ *
+ * Copyright (c) Oliver Knoll
+ * All rights reserved.
+ *
+ * MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this
+ * software and associated documentation files (the "Software"), to deal in the Software
+ * without restriction, including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+ * to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+ * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+#ifndef FORMATIONWIDGET_H
+#define FORMATIONWIDGET_H
+
+#include <memory>
+#include <cstdint>
+
+#include <QWidget>
+
+class QShowEvent;
+class QHideEvent;
+class QAction;
+class QTableWidgetItem;
+
+#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/ModuleIntf.h>
+#include <PluginManager/AbstractModule.h>
+#include "Formation.h"
+
+class Aircraft;
+struct PositionData;
+class FlightService;
+class AircraftService;
+struct FormationWidgetPrivate;
+
+namespace Ui {
+    class FormationWidget;
+}
+
+class FormationWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    FormationWidget(FlightService &flightService, AircraftService &aircraftService, QWidget *parent = nullptr) noexcept;
+    ~FormationWidget() override;
+
+    Formation::HorizontalDistance getHorizontalDistance() const noexcept;
+    Formation::VerticalDistance getVerticalDistance() const noexcept;
+    Formation::RelativePosition getRelativePosition() const noexcept;
+
+private:
+    std::unique_ptr<Ui::FormationWidget> ui;
+    const std::unique_ptr<FormationWidgetPrivate> d;
+
+    void initUi() noexcept;
+    void initTimeOffsetUi() noexcept;
+    void frenchConnection() noexcept;
+
+    void updateTable() noexcept;
+    void updateAircraftIcons() noexcept;
+    void updateRelativePositionUi() noexcept;
+    void updateEditUi() noexcept;
+    void updateTimeOffsetUi() noexcept;
+    void updateReplayUi() noexcept;
+    void updateToolTips() noexcept;
+
+    inline const QTableWidgetItem *createRow(const Aircraft &aircraft, int aircraftIndex) noexcept;
+    inline const QTableWidgetItem *initRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
+    inline void updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept;
+
+    void updateAndSendUserAircraftPosition() const noexcept;
+    void updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept;
+
+    int getSelectedRow() const noexcept;
+    int getRowBySequenceNumber(int sequenceNumber) const noexcept;
+    int getRowByAircraftIndex(int index) const noexcept;
+
+private slots:
+    void updateUi() noexcept;
+
+    void onUserAircraftChanged() noexcept;
+    void onAircraftAdded(const Aircraft &aircraft) noexcept;
+    void onAircraftInfoChanged(const Aircraft &aircraft) noexcept;
+
+    void onCellSelected(int row, int column) noexcept;
+    void onCellChanged(int row, int column) noexcept;
+    void onSelectionChanged() noexcept;
+
+    void onInitialPositionPlacementChanged(bool enable) noexcept;
+    void updateUserAircraftIndex() noexcept;
+    void deleteAircraft() noexcept;
+
+    void onRelativePositionChanged() noexcept;
+    void onRelativeDistanceChanged() noexcept;
+    void onReplayModeSelected(int index) noexcept;
+    void onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode);
+
+    void changeTimeOffset(const std::int64_t timeOffset) noexcept;
+    void onTimeOffsetValueChanged() noexcept;
+    void resetAllTimeOffsets() noexcept;
+};
+
+#endif // FORMATIONWIDGET_H

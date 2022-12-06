@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -35,9 +35,8 @@
 #include <FlightSelector.h>
 #include <Service/LogbookService.h>
 
-class LogbookServicePrivate
+struct LogbookServicePrivate
 {
-public:
     LogbookServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           logbookDao(daoFactory->createLogbookDao())
@@ -51,18 +50,11 @@ public:
 
 LogbookService::LogbookService() noexcept
     : d(std::make_unique<LogbookServicePrivate>())
-{
-#ifdef DEBUG
-    qDebug("LogbookService::LogbookService: CREATED.");
-#endif
-}
+{}
 
-LogbookService::~LogbookService() noexcept
-{
-#ifdef DEBUG
-    qDebug("LogbookService::~LogbookService: DELETED.");
-#endif
-}
+LogbookService::LogbookService(LogbookService &&rhs) noexcept = default;
+LogbookService &LogbookService::operator=(LogbookService &&rhs) noexcept = default;
+LogbookService::~LogbookService() = default;
 
 std::forward_list<FlightDate> LogbookService::getFlightDates() const noexcept
 {

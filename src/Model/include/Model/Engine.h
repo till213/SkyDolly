@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -30,20 +30,14 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API Engine : public AbstractComponent<EngineData>
+class MODEL_API Engine final : public AbstractComponent<EngineData>
 {
 public:
     explicit Engine(const AircraftInfo &aircraftInfo) noexcept;
-    Engine(Engine &aircraftHandle) = default;
-    Engine(Engine &&aircraftHandle) = default;
-    ~Engine() noexcept override;
-    Engine &operator=(const Engine &rhs) = default;
-    Engine &operator=(Engine &&rhs) = default;
 
-    const EngineData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
-
+    EngineData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 private:
-    EngineData m_currentEngineData;
+    mutable EngineData m_currentData;
 };
 
 #endif // ENGINE_H

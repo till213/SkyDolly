@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>848</width>
-    <height>370</height>
+    <width>858</width>
+    <height>379</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -180,13 +180,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="BackupPeriodComboBox" name="backupPeriodComboBox">
-        <property name="toolTip">
-         <string>Defines the backup period of the logbook. Backups are being made when exiting the application.</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
        <widget class="QCheckBox" name="backupBeforeMigrationCheckBox">
         <property name="toolTip">
@@ -194,6 +187,13 @@
         </property>
         <property name="text">
          <string>Before migration of an older logbook</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="EnumerationComboBox" name="backupPeriodComboBox">
+        <property name="toolTip">
+         <string>Defines the backup period of the logbook. Backups are being made when exiting the application.</string>
         </property>
        </widget>
       </item>
@@ -214,9 +214,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BackupPeriodComboBox</class>
+   <class>EnumerationComboBox</class>
    <extends>QComboBox</extends>
-   <header location="global">Widget/BackupPeriodComboBox.h</header>
+   <header location="global">Widget/EnumerationComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

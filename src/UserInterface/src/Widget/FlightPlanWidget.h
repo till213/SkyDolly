@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -31,7 +31,7 @@
 
 #include <Model/Waypoint.h>
 
-class FlightPlanWidgetPrivate;
+struct FlightPlanWidgetPrivate;
 
 namespace Ui {
     class FlightPlanWidget;
@@ -42,16 +42,15 @@ class FlightPlanWidget : public QWidget
     Q_OBJECT
 public:
     explicit FlightPlanWidget(QWidget *parent = nullptr) noexcept;
-    virtual ~FlightPlanWidget() noexcept;
+    ~FlightPlanWidget() override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
     void hideEvent(QHideEvent *event) noexcept override;
 
-private:
-    Q_DISABLE_COPY(FlightPlanWidget)    
+private: 
     std::unique_ptr<Ui::FlightPlanWidget> ui;
-    std::unique_ptr<FlightPlanWidgetPrivate> d;
+    const std::unique_ptr<FlightPlanWidgetPrivate> d;
 
     void initUi() noexcept;
 

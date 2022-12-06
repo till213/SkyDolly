@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/dao/sqlite/migr">
+        <file>LogbookMigration.sql</file>
+        <file>LocationMigration.sql</file>
+    </qresource>
+</RCC>

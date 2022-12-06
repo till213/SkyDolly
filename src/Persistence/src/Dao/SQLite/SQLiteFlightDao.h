@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -38,15 +38,19 @@ class SQLiteFlightDaoPrivate;
 class SQLiteFlightDao : public FlightDaoIntf
 {
 public:
-    explicit SQLiteFlightDao() noexcept;
-    virtual ~SQLiteFlightDao() noexcept;
+    SQLiteFlightDao() noexcept;
+    SQLiteFlightDao(const SQLiteFlightDao &rhs) = delete;
+    SQLiteFlightDao(SQLiteFlightDao &&rhs) noexcept;
+    SQLiteFlightDao &operator=(const SQLiteFlightDao &rhs) = delete;
+    SQLiteFlightDao &operator=(SQLiteFlightDao &&rhs) noexcept;
+    ~SQLiteFlightDao() override;
 
-    virtual bool addFlight(Flight &flight)  noexcept override;
-    virtual bool getFlightById(std::int64_t id, Flight &flight) const noexcept override;
-    virtual bool deleteById(std::int64_t id) noexcept override;
-    virtual bool updateTitle(std::int64_t id, const QString &title) noexcept override;
-    virtual bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept override;
-    virtual bool updateUserAircraftIndex(std::int64_t id, int index) noexcept override;
+    bool add(Flight &flight) noexcept override;
+    bool get(std::int64_t id, Flight &flight) const noexcept override;
+    bool deleteById(std::int64_t id) noexcept override;
+    bool updateTitle(std::int64_t id, const QString &title) noexcept override;
+    bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept override;
+    bool updateUserAircraftIndex(std::int64_t id, int index) noexcept override;
 
 private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;

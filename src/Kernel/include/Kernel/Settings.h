@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -42,17 +42,22 @@
 #include "SampleRate.h"
 #include "KernelLib.h"
 
-class SettingsPrivate;
 class Version;
+struct SettingsPrivate;
 
 /*!
  * The application settings. These settings are persisted to user configuration
  * files.
  */
-class KERNEL_API Settings : public QObject
+class KERNEL_API Settings final : public QObject
 {
     Q_OBJECT
 public:
+
+    Settings(const Settings &rhs) = delete;
+    Settings(Settings &&rhs) = delete;
+    Settings &operator=(const Settings &rhs) = delete;
+    Settings &operator=(Settings &&rhs) = delete;
 
     /*!
      * Returns the singleton Settings instance.
@@ -67,6 +72,13 @@ public:
      * as well, in configuration files (or the registry).
      */
     static void destroyInstance() noexcept;
+
+    /*!
+     * Returns the version of the application (Sky Dolly) that wrote these settings last.
+     *
+     * \return the version of the application that wrote these settings last
+     */
+    const Version &getVersion() const noexcept;
 
     /*!
      * Returns the logbook path.
@@ -253,7 +265,7 @@ public:
      * \param state
      *        the logbook table state encoded in the QByteAarray
      */
-    void setLogbookState(const QByteArray &layout) noexcept;
+    void setLogbookState(const QByteArray &state) noexcept;
 
     /*!
      * Returns the saved formation aircraft table state.
@@ -268,7 +280,22 @@ public:
      * \param state
      *        the formation aircraft table state encoded in the QByteAarray
      */
-    void setFormationAircraftTableState(const QByteArray &layout) noexcept;
+    void setFormationAircraftTableState(const QByteArray &state) noexcept;
+
+    /*!
+     * Returns the saved location table state.
+     *
+     * \return the location table state; a \e null QByteArray if not saved before
+     */
+    QByteArray getLocationTableState() const;
+
+    /*!
+     * Stores the location table state.
+     *
+     * \param state
+     *        the location table state encoded in the QByteAarray
+     */
+    void setLocationTableState(const QByteArray &state) noexcept;
 
     /*!
      * Returns the path of the directory which was last accessed during export or import.
@@ -284,7 +311,7 @@ public:
      *        the path of the last export / import directory
      * \sa exportPathChanged
      */
-    void setExportPath(QString exportPath);
+    void setExportPath(const QString &exportPath);
 
     /*!
      * Returns whether the fast-forward / backward interval is an absolute value (in milliseconds).
@@ -443,6 +470,23 @@ public:
     void setDeleteAircraftConfirmationEnabled(bool enable) noexcept;
 
     /*!
+     * Returns whether the location deletion confirmation is enabled or not.
+     *
+     * \return \c true if the location deletion confirmation is enabled; \c false else
+     */
+    bool isDeleteLocationConfirmationEnabled() const noexcept;
+
+    /*!
+     * Enables the location deletion confirmation.
+     *
+     * \param enable
+     *        set to \c true to set the location deletion confirmation enabled;
+     *        \c false else
+     * \sa changed
+     */
+    void setDeleteLocationConfirmationEnabled(bool enable) noexcept;
+
+    /*!
      * Returns whether the reset time offset confirmation is enabled or not.
      *
      * \return \c true if the reset time offset confirmation is enabled; \c false else
@@ -592,15 +636,10 @@ public:
     [[deprecated("Do not use once version 1.0 has been reached.")]]
     void setPreviewInfoDialogCount(int count) noexcept;
 
-    typedef std::pair<QString, QVariant> KeyValue;
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#include "QStringHasher.h"
-    typedef std::unordered_map<QString, QVariant, QStringHasher> ValuesByKey;
-#else
-    typedef std::unordered_map<QString, QVariant> ValuesByKey;
-#endif
-    typedef std::vector<KeyValue> KeyValues;
-    typedef std::vector<KeyValue> KeysWithDefaults;
+    using KeyValue = std::pair<QString, QVariant>;
+    using ValuesByKey = std::unordered_map<QString, QVariant>;
+    using KeyValues = std::vector<KeyValue>;
+    using KeysWithDefaults = std::vector<KeyValue>;
 
     void storePluginSettings(QUuid pluginUuid, const KeyValues &keyValues) const noexcept;
     ValuesByKey restorePluginSettings(QUuid pluginUuid, const KeysWithDefaults &keys) noexcept;
@@ -764,15 +803,11 @@ signals:
      */
     void changed();
 
-protected:
-    ~Settings() override;
-    const Version &getVersion() const;
-
 private:
-    Q_DISABLE_COPY(Settings)
-    std::unique_ptr<SettingsPrivate> d;
+    const std::unique_ptr<SettingsPrivate> d;
 
     Settings() noexcept;
+    ~Settings() override;
 
     void frenchConnection() noexcept;
 

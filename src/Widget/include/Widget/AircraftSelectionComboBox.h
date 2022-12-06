@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -33,19 +33,19 @@ class QWidget;
 
 #include "WidgetLib.h"
 
-class AircraftSelectionComboBoxPrivate;
+struct AircraftSelectionComboBoxPrivate;
 
 class WIDGET_API AircraftSelectionComboBox : public QComboBox
 {
     Q_OBJECT
 public:
-    AircraftSelectionComboBox(QWidget *parent = nullptr) noexcept;
-    virtual ~AircraftSelectionComboBox() noexcept;
+    explicit AircraftSelectionComboBox(QWidget *parent = nullptr) noexcept;
+    ~AircraftSelectionComboBox() override;
 
 private:
-    std::unique_ptr<AircraftSelectionComboBoxPrivate> d;
+    const std::unique_ptr<AircraftSelectionComboBoxPrivate> d;
 
-    void initialise() noexcept;
+    void initUi() noexcept;
 };
 
 #endif // AIRCRAFTSELECTIONCOMBOBOX_H

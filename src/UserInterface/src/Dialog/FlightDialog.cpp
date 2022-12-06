@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -51,16 +51,14 @@
 #include "FlightDialog.h"
 #include "ui_FlightDialog.h"
 
-class FlightDialogPrivate
+struct FlightDialogPrivate
 {
-public:
-    FlightDialogPrivate(FlightService &theFlightService) noexcept
-        : flightService(theFlightService),
-          closeDialogShortcut(nullptr)
+    FlightDialogPrivate(FlightService &flightService) noexcept
+        : flightService(flightService)
     {}
 
     FlightService &flightService;
-    QShortcut *closeDialogShortcut;
+    QShortcut *closeDialogShortcut {nullptr};
 };
 
 // PUBLIC
@@ -73,17 +71,9 @@ FlightDialog::FlightDialog(FlightService &flightService, QWidget *parent) noexce
     ui->setupUi(this);
     initUi();
     frenchConnection();
-#ifdef DEBUG
-    qDebug() << "FlightDialog::FlightDialog: CREATED";
-#endif
 }
 
-FlightDialog::~FlightDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "FlightDialog::~FlightDialog: DELETED";
-#endif
-}
+FlightDialog::~FlightDialog() = default;
 
 // PROTECTED
 
@@ -102,6 +92,7 @@ void FlightDialog::hideEvent(QHideEvent *event) noexcept
 
 // PRIVATE
 
+/// \todo DRY: "centrally" define the "F" shortcut (currently also assigned to the corresponding QAction)
 void FlightDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
@@ -120,7 +111,6 @@ void FlightDialog::initUi() noexcept
 
     ui->flightTab->setCurrentIndex(0);
 
-    // @todo DRY: "centrally" define the "F" shortcut (currently also assigned to the corresponding QAction)
     d->closeDialogShortcut = new QShortcut(QKeySequence(tr("F", "Window|Flight...")), this);
 }
 

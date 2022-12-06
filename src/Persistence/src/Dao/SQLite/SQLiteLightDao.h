@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -27,22 +27,26 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
-#include <Model/LightData.h>
 #include "../LightDaoIntf.h"
+
+struct LightData;
 
 class SQLiteLightDao : public LightDaoIntf
 {
 public:
-    explicit SQLiteLightDao() noexcept;
-    virtual ~SQLiteLightDao() noexcept;
+    SQLiteLightDao() = default;
+    SQLiteLightDao(const SQLiteLightDao &rhs) = delete;
+    SQLiteLightDao(SQLiteLightDao &&rhs) noexcept;
+    SQLiteLightDao &operator=(const SQLiteLightDao &rhs) = delete;
+    SQLiteLightDao &operator=(SQLiteLightDao &&rhs) noexcept;
+    ~SQLiteLightDao() override;
 
-    virtual bool add(std::int64_t aircraftId, const LightData &data) noexcept override;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<LightData>> backInsertIterator) const noexcept override;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept override;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+    bool add(std::int64_t aircraftId, const LightData &data) noexcept override;
+    std::vector<LightData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
+    bool deleteByFlightId(std::int64_t flightId) noexcept override;
+    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };
 
 #endif // SQLITELIGHTDAO_H

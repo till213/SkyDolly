@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -30,26 +30,18 @@
 #include <QtGlobal>
 #include <QFlags>
 
-#include "SimType.h"
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API SecondaryFlightControlData : public TimeVariableData
+struct MODEL_API SecondaryFlightControlData final : public TimeVariableData
 {
     // Flaps & speed brakes
-    std::int16_t leadingEdgeFlapsLeftPosition;
-    std::int16_t leadingEdgeFlapsRightPosition;
-    std::int16_t trailingEdgeFlapsLeftPosition;
-    std::int16_t trailingEdgeFlapsRightPosition;
-    std::int16_t spoilersHandlePosition;
-    std::int8_t flapsHandleIndex;
-
-    SecondaryFlightControlData() noexcept;
-    SecondaryFlightControlData(SecondaryFlightControlData &&) = default;
-    SecondaryFlightControlData(const SecondaryFlightControlData &) = default;
-    SecondaryFlightControlData &operator=(const SecondaryFlightControlData &) = default;
-
-    static const SecondaryFlightControlData NullData;
+    std::int16_t leadingEdgeFlapsLeftPosition {0};
+    std::int16_t leadingEdgeFlapsRightPosition {0};
+    std::int16_t trailingEdgeFlapsLeftPosition {0};
+    std::int16_t trailingEdgeFlapsRightPosition {0};
+    std::int16_t spoilersHandlePosition {0};
+    std::int8_t flapsHandleIndex {0};
 };
 
 #endif // SECONDARYFLIGHTCONTROLDATA_H

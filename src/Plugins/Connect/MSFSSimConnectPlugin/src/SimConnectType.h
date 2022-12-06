@@ -24,6 +24,7 @@
  */
 #ifndef SIMCONNECTTYPE_H
 #define SIMCONNECTTYPE_H
+
 #include <windows.h>
 
 #include <SimConnect.h>
@@ -31,23 +32,26 @@
 namespace SimConnectType
 {
     enum struct DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
-        FlightInformationDefinition,
-        FlightPlanDefinition,
-        SimulationTimeDefinition,
-        AircraftPositionReplyDefinition,
-        AircraftPositionRequestDefinition,
-        AircraftEngineReplyDefinition,
-        AircraftEngineRequestDefinition,
-        AircraftPrimaryFlightControlDefinition,
-        AircraftSecondaryFlightControlDefinition,
-        AircraftHandleDefinition,
-        AircraftLightDefinition,
-        AircraftInitialPosition
+        FlightInformation,
+        FlightPlan,
+        SimulationTime,
+        InitialPosition,
+        Location,
+        PositionReply,
+        PositionRequest,
+        EngineReply,
+        EngineRequest,
+        PrimaryFlightControl,
+        SecondaryFlightControl,
+        Handle,
+        Light
     };
 
     enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
         AircraftInfo,
         FlightPlan,
+        InitialPosition,
+        Location,
         SimulationTime,
         AircraftPosition,
         Engine,

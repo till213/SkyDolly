@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
 #include <QString>
@@ -34,6 +33,9 @@
 #include <QSqlRecord>
 #include <QDateTime>
 #include <QTimeZone>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Model/Flight.h>
@@ -62,10 +64,11 @@ SQLiteFlightDao::SQLiteFlightDao() noexcept
     : d(std::make_unique<SQLiteFlightDaoPrivate>())
 {}
 
-SQLiteFlightDao::~SQLiteFlightDao() noexcept
-{}
+SQLiteFlightDao::SQLiteFlightDao(SQLiteFlightDao &&rhs) noexcept = default;
+SQLiteFlightDao &SQLiteFlightDao::operator=(SQLiteFlightDao &&rhs) noexcept = default;
+SQLiteFlightDao::~SQLiteFlightDao() = default;
 
-bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
+bool SQLiteFlightDao::add(Flight &flight) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -78,7 +81,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
         "  ground_altitude,"
         "  ambient_temperature,"
         "  total_air_temperature,"
-        "  wind_velocity,"
+        "  wind_speed,"
         "  wind_direction,"
         "  visibility,"
         "  sea_level_pressure,"
@@ -99,7 +102,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
         " :ground_altitude,"
         " :ambient_temperature,"
         " :total_air_temperature,"
-        " :wind_velocity,"
+        " :wind_speed,"
         " :wind_direction,"
         " :visibility,"
         " :sea_level_pressure,"
@@ -120,17 +123,17 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     query.bindValue(":description", flight.getDescription());
     // Sequence number starts at 1
     query.bindValue(":user_aircraft_seq_nr", flight.getUserAircraftIndex() + 1);
-    query.bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType));
+    query.bindValue(":surface_type", Enum::underly(flightCondition.surfaceType));
     query.bindValue(":ground_altitude", flightCondition.groundAltitude);
     query.bindValue(":ambient_temperature", flightCondition.ambientTemperature);
     query.bindValue(":total_air_temperature", flightCondition.totalAirTemperature);
-    query.bindValue(":wind_velocity", flightCondition.windVelocity);
+    query.bindValue(":wind_speed", flightCondition.windSpeed);
     query.bindValue(":wind_direction", flightCondition.windDirection);
     query.bindValue(":visibility", flightCondition.visibility);
     query.bindValue(":sea_level_pressure", flightCondition.seaLevelPressure);
     query.bindValue(":pitot_icing", flightCondition.pitotIcingPercent);
     query.bindValue(":structural_icing", flightCondition.structuralIcingPercent);
-    query.bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState));
+    query.bindValue(":precipitation_state", Enum::underly(flightCondition.precipitationState));
     query.bindValue(":in_clouds", flightCondition.inClouds);
     // No conversion to UTC
     query.bindValue(":start_local_sim_time", flightCondition.startLocalTime);
@@ -146,14 +149,14 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
         flight.setId(id);
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteFlightDao::addFlight: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteFlightDao::add: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
     if (ok) {
         // Starts at 1
-        int sequenceNumber = 1;
-        for (auto &it : flight) {
-            ok = d->aircraftDao->add(flight.getId(), sequenceNumber, *it.get());
+        std::size_t sequenceNumber = 1;
+        for (auto &aircaft : flight) {
+            ok = d->aircraftDao->add(flight.getId(), sequenceNumber, aircaft);
             if (ok) {
                 ++sequenceNumber;
             } else {
@@ -165,7 +168,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexcept
+bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -188,7 +191,7 @@ bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexc
         const int groundAltitudeIdx = record.indexOf("ground_altitude");
         const int ambientTemperatureIdx = record.indexOf("ambient_temperature");
         const int totalAirTemperatureIdx = record.indexOf("total_air_temperature");
-        const int windVelocityIdx = record.indexOf("wind_velocity");
+        const int windSpeedIdx = record.indexOf("wind_speed");
         const int windDirectionIdx = record.indexOf("wind_direction");
         const int visibilityIdx = record.indexOf("visibility");
         const int seaLevelPressureIdx = record.indexOf("sea_level_pressure");
@@ -214,7 +217,7 @@ bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexc
             flightCondition.groundAltitude = query.value(groundAltitudeIdx).toFloat();
             flightCondition.ambientTemperature = query.value(ambientTemperatureIdx).toFloat();
             flightCondition.totalAirTemperature = query.value(totalAirTemperatureIdx).toFloat();
-            flightCondition.windVelocity = query.value(windVelocityIdx).toFloat();
+            flightCondition.windSpeed = query.value(windSpeedIdx).toFloat();
             flightCondition.windDirection = query.value(windDirectionIdx).toFloat();
             flightCondition.visibility = query.value(visibilityIdx).toFloat();
             flightCondition.seaLevelPressure = query.value(seaLevelPressureIdx).toFloat();
@@ -230,8 +233,7 @@ bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexc
 
             flight.setFlightCondition(flightCondition);
         }
-        std::vector<std::unique_ptr<Aircraft>> aircraft;
-        ok = d->aircraftDao->getByFlightId(id, std::back_inserter(aircraft));
+        std::vector<Aircraft> aircraft = d->aircraftDao->getByFlightId(id, &ok);
         flight.setAircraft(std::move(aircraft));
         if (ok) {
             // Index starts at 0
@@ -240,7 +242,7 @@ bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexc
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteFlightDao::getFlightById: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteFlightDao::get: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
     return ok;
@@ -261,7 +263,7 @@ bool SQLiteFlightDao::deleteById(std::int64_t id) noexcept
         ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
-            qDebug("SQLiteFlightDao::deleteById: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+            qDebug() << "SQLiteFlightDao::deleteById: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
         }
 #endif
     }
@@ -279,10 +281,10 @@ bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) noexcep
 
     query.bindValue(":title", title);
     query.bindValue(":id", QVariant::fromValue(id));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightDao::updateTitleQuery: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteFlightDao::updateTitleQuery: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -304,7 +306,7 @@ bool SQLiteFlightDao::updateTitleAndDescription(std::int64_t id, const QString &
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightDao::updateTitleAndDescription: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteFlightDao::updateTitleAndDescription: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
@@ -322,10 +324,10 @@ bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index) noexce
     // Sequence number starts at 1
     query.bindValue(":user_aircraft_seq_nr", index + 1);
     query.bindValue(":id", QVariant::fromValue(id));
-    bool ok = query.exec();
+    const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightDao::updateUserAircraftIndex: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteFlightDao::updateUserAircraftIndex: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;

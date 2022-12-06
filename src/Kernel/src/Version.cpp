@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -36,22 +36,18 @@
 #include <VersionConfig.h>
 #include "Version.h"
 
-class VersionPrivate
+struct VersionPrivate
 {
-public:
-    VersionPrivate() noexcept
-        : major(VersionConfig::Major), minor(VersionConfig::Minor), patch(VersionConfig::Patch)
+    VersionPrivate(int major = VersionConfig::Major, int minor = VersionConfig::Minor, int patch = VersionConfig::Patch) noexcept
+        : major(major), minor(minor), patch(patch)
     {}
 
-    VersionPrivate(int theMajor, int theMinor, int thePatch) noexcept
-        : major(theMajor), minor(theMinor), patch(thePatch)
-    {}
+    int major {VersionConfig::Major};
+    int minor {VersionConfig::Minor};
+    int patch {VersionConfig::Patch};
 
-    int major;
-    int minor;
-    int patch;
-
-    static inline const QString CodeName {QStringLiteral("Blissful Boeing")};
+    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/adjectives-that-start-with-d.html
+    static inline const QString CodeName {QStringLiteral("Dapper Daher")};
 };
 
 // PUBLIC
@@ -61,7 +57,7 @@ Version::Version() noexcept
 {}
 
 Version::Version(int majorNo, int minorNo, int patch) noexcept
-    : d(new VersionPrivate(majorNo, minorNo, patch))
+    : d(std::make_unique<VersionPrivate>(majorNo, minorNo, patch))
 {}
 
 Version::Version(QStringView version) noexcept
@@ -70,23 +66,20 @@ Version::Version(QStringView version) noexcept
     fromString(version);
 }
 
+Version::Version(Version &&rhs) noexcept = default;
+Version &Version::operator=(Version &&rhs) noexcept = default;
+Version::~Version() = default;
+
 void Version::fromString(QStringView version) noexcept
 {
-    QRegularExpression versionRegExp("^(\\d+)\\.(\\d+)\\.(\\d+)$");
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    QRegularExpressionMatch match = versionRegExp.match(version.toString());
-#else
+    static QRegularExpression versionRegExp(R"(^(\d+)\.(\d+)\.(\d+)$)");
     QRegularExpressionMatch match = versionRegExp.match(version);
-#endif
     if (match.isValid()) {
         d->major = match.captured(1).toInt();
         d->minor = match.captured(2).toInt();
         d->patch = match.captured(3).toInt();
     }
 }
-
-Version::~Version() noexcept
-{}
 
 int Version::getMajor() const noexcept
 {
@@ -113,21 +106,14 @@ bool Version::isNull() const noexcept
     return d->major == 0 && d->minor == 0 && d->patch == 0;
 }
 
-void Version::operator=(const Version &rhs) noexcept
+bool Version::operator==(const Version &rhs) const noexcept
 {
-    d = std::make_unique<VersionPrivate>(rhs.d->major, rhs.d->minor, rhs.d->patch);
+    return d->major == rhs.d->major && d->minor == rhs.d->minor && d->patch == rhs.d->patch;
 }
 
-bool Version::operator==(const Version &rhs) noexcept
+bool Version::operator>=(const Version &rhs) const noexcept
 {
-    bool result;
-    result = d->major == rhs.d->major && d->minor == rhs.d->minor && d->patch == rhs.d->patch;
-    return result;
-}
-
-bool Version::operator>=(const Version &rhs) noexcept
-{
-    bool result;
+    bool result {false};
     if (d->major > rhs.d->major) {
         result = true;
     } else if (d->major < rhs.d->major) {
@@ -148,17 +134,17 @@ bool Version::operator>=(const Version &rhs) noexcept
     return result;
 }
 
-bool Version::operator<(const Version &rhs) noexcept
+bool Version::operator<(const Version &rhs) const noexcept
 {
     return !(*this >= rhs);
 }
 
-const QString Version::getCodeName() noexcept
+QString Version::getCodeName() noexcept
 {
     return VersionPrivate::CodeName;
 }
 
-const QString Version::getUserVersion() noexcept
+QString Version::getUserVersion() noexcept
 {
     QString userVersion;
     const QDate gitDate = getGitDate().date();
@@ -168,18 +154,18 @@ const QString Version::getUserVersion() noexcept
     return userVersion;
 }
 
-const QString Version::getApplicationVersion() noexcept
+QString Version::getApplicationVersion() noexcept
 {
     Version version;
     return version.toString();
 }
 
-const QString Version::getOrganisationName() noexcept
+QString Version::getOrganisationName() noexcept
 {
     return VersionConfig::OrganisationName;
 }
 
-const QString Version::getApplicationName() noexcept
+QString Version::getApplicationName() noexcept
 {
     return VersionConfig::ApplicationName;
 }

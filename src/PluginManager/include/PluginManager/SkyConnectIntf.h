@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -32,6 +32,7 @@
 #include <Kernel/SampleRate.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
+#include <Model/Location.h>
 #include "Connect.h"
 #include "PluginManagerLib.h"
 
@@ -64,11 +65,26 @@ public:
         FlyWithFormation
     };
 
+    enum struct SimulationEvent {
+        None,
+        EngineStart,
+        EngineStop
+    };
+
+    SkyConnectIntf(QObject *parent = nullptr) noexcept
+        : QObject(parent)
+    {}
+
+    SkyConnectIntf(const SkyConnectIntf &rhs) = delete;
+    SkyConnectIntf(SkyConnectIntf &&rhs) = delete;
+    SkyConnectIntf &operator=(const SkyConnectIntf &rhs) = delete;
+    SkyConnectIntf &operator=(SkyConnectIntf &&rhs) = delete;
     ~SkyConnectIntf() override = default;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
-    virtual bool setUserAircraftPosition(const PositionData & positionData) noexcept = 0;
-    virtual bool freezeUserAircraft(bool enable) noexcept = 0;
+    virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
+    virtual bool freezeUserAircraft(bool enable) const noexcept = 0;
+    virtual bool sendSimulationEvent(SimulationEvent event) noexcept = 0;
 
     /*!
      * Returns the replay mode.
@@ -87,7 +103,7 @@ public:
     virtual void setReplayMode(ReplayMode replayMode) noexcept = 0;
 
     /*!
-     * Starts recording the flight. Depending on the \C recordingMode already recorded formation aircraft
+     * Starts recording the flight. Depending on the \c recordingMode already recorded formation aircraft
      * are replayed during recording. If the \c initialPosition is given (\c isNull() returns false) then
      * the user aircraft is placed at the given \c initialPosition before recording. This position is
      * typically calculated to be relative of the previous user aircraft in the formation.
@@ -98,7 +114,7 @@ public:
      *        the optional initial position where the current user aircraft is placed before recording;
      *        set to a \e null position if the user aircraft should keep its current initial position
      */
-    virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition::NullData) noexcept = 0;
+    virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept = 0;
     virtual void stopRecording() noexcept = 0;
 
     /*!
@@ -124,7 +140,7 @@ public:
      */
     virtual bool isInRecordingState() const noexcept = 0;
 
-    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition::NullData) noexcept = 0;
+    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept = 0;
     virtual void stopReplay() noexcept = 0;
 
     /*!
@@ -190,6 +206,15 @@ public:
 
     virtual double calculateRecordedSamplesPerSecond() const noexcept = 0;
 
+    /*!
+     * Requests the current position of the user aircraft whcich is asynchronously
+     * returned as Location.
+     *
+     * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
+     * \sa locationReceived
+     */
+    virtual bool requestLocation() noexcept = 0;
+
 public slots:
     virtual void addAiObject(const Aircraft &aircraft) noexcept = 0;
     virtual void removeAiObjects() noexcept = 0;
@@ -197,13 +222,9 @@ public slots:
     virtual void syncAiObjectsWithFlight() noexcept = 0;
     virtual void updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept = 0;
     virtual void onTimeOffsetChanged() noexcept = 0;
-    virtual void onTailNumberChanged(Aircraft &aircraft) noexcept = 0;
+    virtual void onTailNumberChanged(const Aircraft &aircraft) noexcept = 0;
 
 protected:
-    SkyConnectIntf(QObject *parent = nullptr) noexcept
-        : QObject(parent)
-    {}
-
     /*!
      * Sets the new connection \c state. This method will also emit the
      * signal #recordingStarted and #recordingStopped when the state changes
@@ -236,7 +257,7 @@ signals:
      * \param replayMode
      *        the current replay mode
      */
-    void replayModeChanged(ReplayMode replayMode);
+    void replayModeChanged(SkyConnectIntf::ReplayMode replayMode);
 
     /*!
      * Emitted whenever recording has been started, that is when the
@@ -262,8 +283,13 @@ signals:
      */
     void recordingStopped();
 
-private:
-    Q_DISABLE_COPY(SkyConnectIntf)
+    /*!
+     * Emitted whenever the response to the Location request has been received.
+     *
+     * \param location
+     *        the received Location
+     */
+    void locationReceived(Location location);
 };
 
 #define SKYCONNECT_INTERFACE_IID "com.github.till213.SkyDolly.SkyConnectInterface/1.0"

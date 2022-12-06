@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -28,14 +28,9 @@
 #include <Kernel/Settings.h>
 #include "PluginBase.h"
 
-class PluginBasePrivate
+struct PluginBasePrivate
 {
-public:
-    PluginBasePrivate()
-        : parent(nullptr)
-    {}
-
-    QWidget *parent;
+    QWidget *parent {nullptr};
 };
 
 // PUBLIC
@@ -44,8 +39,7 @@ PluginBase::PluginBase()
     : d(std::make_unique<PluginBasePrivate>())
 {}
 
-PluginBase::~PluginBase()
-{}
+PluginBase::~PluginBase() = default;
 
 QWidget *PluginBase::getParentWidget() const noexcept
 {
@@ -84,5 +78,5 @@ void PluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 void PluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {}
 
-void PluginBase::restoreSettings([[maybe_unused]]Settings::ValuesByKey valuesByKey) noexcept
+void PluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {}

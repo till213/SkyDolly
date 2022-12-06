@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -36,12 +36,8 @@
 #include "FlightConditionWidget.h"
 #include "ui_FlightConditionWidget.h"
 
-class FlightConditionWidgetPrivate
+struct FlightConditionWidgetPrivate
 {
-public:
-    FlightConditionWidgetPrivate() noexcept
-    {}
-
     Unit unit;
 };
 
@@ -49,15 +45,14 @@ public:
 
 FlightConditionWidget::FlightConditionWidget(QWidget *parent) noexcept :
     QWidget(parent),
-    d(std::make_unique<FlightConditionWidgetPrivate>()),
-    ui(std::make_unique<Ui::FlightConditionWidget>())
+    ui(std::make_unique<Ui::FlightConditionWidget>()),
+    d(std::make_unique<FlightConditionWidgetPrivate>())
 {
     ui->setupUi(this);
     initUi();
 }
 
-FlightConditionWidget::~FlightConditionWidget() noexcept
-{}
+FlightConditionWidget::~FlightConditionWidget() = default;
 
 // PROTECTED
 
@@ -69,6 +64,10 @@ void FlightConditionWidget::showEvent(QShowEvent *event) noexcept
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::flightConditionChanged,
             this, &FlightConditionWidget::updateUi);
+    connect(&flight, &Flight::flightStored,
+            this, &FlightConditionWidget::updateUi);
+    connect(&flight, &Flight::flightRestored,
+            this, &FlightConditionWidget::updateUi);
 }
 
 void FlightConditionWidget::hideEvent(QHideEvent *event) noexcept
@@ -76,7 +75,11 @@ void FlightConditionWidget::hideEvent(QHideEvent *event) noexcept
     QWidget::hideEvent(event);
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::flightConditionChanged,
-            this, &FlightConditionWidget::updateUi);
+               this, &FlightConditionWidget::updateUi);
+    disconnect(&flight, &Flight::flightStored,
+               this, &FlightConditionWidget::updateUi);
+    disconnect(&flight, &Flight::flightRestored,
+               this, &FlightConditionWidget::updateUi);
 }
 
 // PRIVATE
@@ -87,7 +90,7 @@ void FlightConditionWidget::initUi() noexcept
     ui->surfaceTypeLineEdit->setToolTip(SimVar::SurfaceType);
     ui->temperatureLineEdit->setToolTip(SimVar::AmbientTemperature);
     ui->totalAirTemperatureLineEdit->setToolTip(SimVar::TotalAirTemperature);
-    ui->windVelocityLineEdit->setToolTip(SimVar::AmbientWindVelocity);
+    ui->windSpeedLineEdit->setToolTip(SimVar::AmbientWindVelocity);
     ui->windDirectionLineEdit->setToolTip(SimVar::AmbientWindDirection);
     ui->precipitationStateLineEdit->setToolTip(SimVar::AmbientPrecipState);
 
@@ -113,15 +116,15 @@ void FlightConditionWidget::updateUi() noexcept
     ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightCondition.surfaceType));
     ui->temperatureLineEdit->setText(d->unit.formatCelcius(flightCondition.ambientTemperature));
     ui->totalAirTemperatureLineEdit->setText(d->unit.formatCelcius(flightCondition.totalAirTemperature));
-    ui->windVelocityLineEdit->setText(d->unit.formatKnots(flightCondition.windVelocity));
+    ui->windSpeedLineEdit->setText(d->unit.formatKnots(flightCondition.windSpeed));
     ui->windDirectionLineEdit->setText(d->unit.formatDegrees(flightCondition.windDirection));
     ui->precipitationStateLineEdit->setText(SimType::precipitationStateToString(flightCondition.precipitationState));
 
     ui->inCloudsCheckBox->setChecked(flightCondition.inClouds);
     ui->visibilityLineEdit->setText(d->unit.formatVisibility(flightCondition.visibility));
     ui->seaLevelPressure->setText(d->unit.formatPressureInHPa(flightCondition.seaLevelPressure));
-    ui->pitotIcingLineEdit->setText(d->unit.formatPercent(SkyMath::toPercent(flightCondition.pitotIcingPercent)));
-    ui->structuralIcingLineEdit->setText(d->unit.formatPercent(SkyMath::toPercent(flightCondition.structuralIcingPercent)));
+    ui->pitotIcingLineEdit->setText(d->unit.formatPercent(flightCondition.pitotIcingPercent));
+    ui->structuralIcingLineEdit->setText(d->unit.formatPercent(flightCondition.structuralIcingPercent));
     ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.startLocalTime));
     ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.endLocalTime));
     // Zulu time

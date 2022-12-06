@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -28,29 +28,32 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
-#include <iterator>
+#include <cstddef>
 
-#include <QtGlobal>
-
-#include <Model/Aircraft.h>
 #include "../AircraftDaoIntf.h"
 
-class SQLiteAircraftDaoPrivate;
+class Aircraft;
+struct AircraftInfo;
+struct SQLiteAircraftDaoPrivate;
 
 class SQLiteAircraftDao : public AircraftDaoIntf
 {
 public:
-    explicit SQLiteAircraftDao() noexcept;
-    virtual ~SQLiteAircraftDao() noexcept;
+    SQLiteAircraftDao() noexcept;
+    SQLiteAircraftDao(const SQLiteAircraftDao &rhs) = delete;
+    SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept;
+    SQLiteAircraftDao &operator=(const SQLiteAircraftDao &rhs) = delete;
+    SQLiteAircraftDao &operator=(SQLiteAircraftDao &&rhs) noexcept;
+    ~SQLiteAircraftDao() override;
 
-    virtual bool add(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept override;
-    virtual bool getByFlightId(std::int64_t flightId, std::back_insert_iterator<std::vector<std::unique_ptr<Aircraft>>> backInsertIterator) const noexcept override;
-    virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, int sequenceNumber) noexcept override;
-    virtual bool deleteAllByFlightId(std::int64_t flightId) noexcept override;
-    virtual bool deleteById(std::int64_t id) noexcept override;
-    virtual bool getAircraftInfosByFlightId(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept override;
-    virtual bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept override;
-    virtual bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept override;
+    bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
+    std::vector<Aircraft> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
+    bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept override;
+    bool deleteAllByFlightId(std::int64_t flightId) noexcept override;
+    bool deleteById(std::int64_t id) noexcept override;
+    std::vector<AircraftInfo> getAircraftInfosByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
+    bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept override;
+    bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept override;
 
 private:
     std::unique_ptr<SQLiteAircraftDaoPrivate> d;

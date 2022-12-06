@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -25,7 +25,6 @@
 #include <memory>
 #include <vector>
 #include <forward_list>
-#include <iterator>
 
 #include <QString>
 #include <QStringBuilder>
@@ -33,8 +32,12 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QSqlDriver>
 #include <QDateTime>
 #include <QTimeZone>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Model/Logbook.h>
@@ -44,15 +47,21 @@
 #include <FlightSelector.h>
 #include "SQLiteLogbookDao.h"
 
+namespace
+{
+    // The initial capacity of the logbook summaries vector (e.g. SQLite does not support returning
+    // the result count for the given SELECT query)
+    // Assume 50 entries per logbook
+    constexpr int DefaultSummaryCapacity = 50;
+}
+
 // PUBLIC
 
-SQLiteLogbookDao::SQLiteLogbookDao() noexcept
-{}
+SQLiteLogbookDao::SQLiteLogbookDao(SQLiteLogbookDao &&rhs) noexcept = default;
+SQLiteLogbookDao &SQLiteLogbookDao::operator=(SQLiteLogbookDao &&rhs) noexcept = default;
+SQLiteLogbookDao::~SQLiteLogbookDao() = default;
 
-SQLiteLogbookDao::~SQLiteLogbookDao() noexcept
-{}
-
-std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
+std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates(bool *ok) const noexcept
 {
     std::forward_list<FlightDate> flightDates;
 
@@ -64,8 +73,8 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
         "group by year, month, day"
     );
 
-    const bool ok = query.exec();
-    if (ok) {
+    const bool success = query.exec();
+    if (success) {
         QSqlRecord record = query.record();
         const int yearIdx = record.indexOf("year");
         const int monthIdx = record.indexOf("month");
@@ -80,20 +89,23 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteLogbookDao::getFlightDates: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteLogbookDao::getFlightDates: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
+    if (ok != nullptr) {
+        *ok = success;
+    }
     return flightDates;
 }
 
-std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSelector &flightSelector) const noexcept
+std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSelector &flightSelector, bool *ok) const noexcept
 {
-    const QString LikeOperatorPlaceholder("%");
-
     std::vector<FlightSummary> summaries;
+
     QString searchKeyword;
     if (!flightSelector.searchKeyword.isEmpty()) {
+        const QString LikeOperatorPlaceholder {"%"};
         // Add like operator placeholders
         searchKeyword = LikeOperatorPlaceholder  % flightSelector.searchKeyword % LikeOperatorPlaceholder;
     }
@@ -134,11 +146,17 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     query.bindValue(":to_date", flightSelector.toDate);
     query.bindValue(":search_keyword", searchKeyword);
     query.bindValue(":aircraft_count", aircraftCount);
-    const QVariant engineTypeVariant = flightSelector.engineType != SimType::EngineType::All ? Enum::toUnderlyingType(flightSelector.engineType) : QVariant();
+    const QVariant engineTypeVariant = flightSelector.engineType != SimType::EngineType::All ? Enum::underly(flightSelector.engineType) : QVariant();
     query.bindValue(":engine_type", engineTypeVariant);
     query.bindValue(":duration", flightSelector.mininumDurationMinutes);
-    const bool ok = query.exec();
-    if (ok) {
+    const bool success = query.exec();
+    if (success) {
+        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        if (querySizeFeature) {
+            summaries.reserve(query.size());
+        } else {
+            summaries.reserve(::DefaultSummaryCapacity);
+        }
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
         const int creationTimeIdx = record.indexOf("creation_time");
@@ -171,13 +189,16 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
             summary.endLocation = query.value(endWaypointIdx).toString();
             summary.title = query.value(titleIdx).toString();
 
-            summaries.push_back(summary);
+            summaries.push_back(std::move(summary));
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteLogbookDao::getFlightSummaries: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug() << "SQLiteLogbookDao::getFlightSummaries: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
+    if (ok != nullptr) {
+        *ok = success;
+    }
     return summaries;
 }

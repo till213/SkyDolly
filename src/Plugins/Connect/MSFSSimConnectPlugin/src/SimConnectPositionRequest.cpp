@@ -35,7 +35,7 @@
 
 void SimConnectPositionRequest::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    addToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionRequestDefinition));
+    addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionRequest));
 }
 
 // PROTECTED
@@ -48,7 +48,7 @@ void SimConnectPositionRequest::addToDataDefinition(HANDLE simConnectHandle, ::S
     ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Altitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Pitch, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Bank, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Heading, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::TrueHeading, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
 
     // Velocity
     ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::VelocityBodyX, "Feet per Second", ::SIMCONNECT_DATATYPE_FLOAT64);

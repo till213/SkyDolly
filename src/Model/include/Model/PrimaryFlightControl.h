@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -30,20 +30,15 @@
 #include "AbstractComponent.h"
 #include "ModelLib.h"
 
-class MODEL_API PrimaryFlightControl : public AbstractComponent<PrimaryFlightControlData>
+class MODEL_API PrimaryFlightControl final : public AbstractComponent<PrimaryFlightControlData>
 {
 public:
     explicit PrimaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
-    PrimaryFlightControl(PrimaryFlightControl &aircraftHandle) = default;
-    PrimaryFlightControl(PrimaryFlightControl &&aircraftHandle) = default;
-    ~PrimaryFlightControl() noexcept override;
-    PrimaryFlightControl &operator=(const PrimaryFlightControl &rhs) = default;
-    PrimaryFlightControl &operator=(PrimaryFlightControl &&rhs) = default;
 
-    const PrimaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    PrimaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 
 private:
-    PrimaryFlightControlData m_currentPrimaryFlightControlData;
+    mutable PrimaryFlightControlData m_currentData;
 };
 
 #endif // PRIMARYFLIGHTCONTROL_H

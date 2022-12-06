@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -38,8 +38,7 @@ AbstractSimulationVariableWidget  ::AbstractSimulationVariableWidget(QWidget *pa
     : QWidget(parent)
 {}
 
-AbstractSimulationVariableWidget::~AbstractSimulationVariableWidget() noexcept
-{}
+AbstractSimulationVariableWidget::~AbstractSimulationVariableWidget() = default;
 
 // PROTECTED
 

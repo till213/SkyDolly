@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -43,28 +43,33 @@ class QUuid;
 #include "SkyConnectIntf.h"
 #include "PluginManagerLib.h"
 
-class skyConnectManagerPrivate;
+struct skyConnectManagerPrivate;
 
-// @todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
-class PLUGINMANAGER_API SkyConnectManager : public QObject
+/// \todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
+class PLUGINMANAGER_API SkyConnectManager final : public QObject
 {
     Q_OBJECT
 public:
+    SkyConnectManager(const SkyConnectManager &rhs) = delete;
+    SkyConnectManager(SkyConnectManager &&rhs) = delete;
+    SkyConnectManager &operator=(const SkyConnectManager &rhs) = delete;
+    SkyConnectManager &operator=(SkyConnectManager &&rhs) = delete;
+
     static SkyConnectManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
     /*!
      * The plugin name and the flight simulator it supports.
      */
-    typedef struct {
+    using SkyConnectPlugin = struct {
         QString name;
         FlightSimulator::Id flightSimulatorId;
-    } SkyConnectPlugin;
+    };
 
     /*!
      * The plugin UUID and the plugin name and capabilities (flight simulator).
      */
-    typedef std::pair<QUuid, SkyConnectPlugin> Handle;
+    using Handle = std::pair<QUuid, SkyConnectPlugin>;
     const std::vector<Handle> &initialisePlugins() noexcept;
     const std::vector<Handle> &availablePlugins() const noexcept;
     bool hasPlugins() const noexcept;
@@ -75,19 +80,30 @@ public:
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
     bool setUserAircraftPosition(const PositionData & positionData) noexcept;
     bool freezeUserAircraft(bool enable) noexcept;
+    bool sendSimulationEvent(SkyConnectIntf::SimulationEvent event) noexcept;
 
     SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
     void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;
 
-    void startRecording(SkyConnectIntf::RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition::NullData) noexcept;
+    void startRecording(SkyConnectIntf::RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept;
     void stopRecording() noexcept;
     bool isRecording() const noexcept;
     bool isInRecordingState() const noexcept;
 
-    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition::NullData) noexcept;
+    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept;
     void stopReplay() noexcept;
     bool isReplaying() const noexcept;
     bool isInReplayState() const noexcept;
+
+    /*!
+     * Returns \c true in case the SkyConnect connection is \eactive, that is either
+     * a replay or recording (including paused states) is taking place.
+     *
+     * \return \c true if the SkyConnect connection is \eactive; \c false else
+     * \sa isInRecordingState
+     * \sa isInReplayState
+     */
+    bool isActive() const noexcept;
 
     void stop() noexcept;
 
@@ -108,6 +124,8 @@ public:
     void setReplaySpeedFactor(double factor) noexcept;
     std::int64_t getCurrentTimestamp() const noexcept;
     bool isAtEnd() const noexcept;
+
+    bool requestInitialPosition() const noexcept;
 
 public slots:
     bool tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept;
@@ -149,14 +167,18 @@ signals:
      */
     void recordingStopped();
 
-protected:
-    ~SkyConnectManager() noexcept override;
+    /*!
+     * Relay of the SkyConnectIntf#locationReceived signal.
+     *
+     * \sa SkyConnectIntf#locationReceived
+     */
+    void locationReceived(Location location);
 
 private:
-    Q_DISABLE_COPY(SkyConnectManager)
-    std::unique_ptr<skyConnectManagerPrivate> d;
+    const std::unique_ptr<skyConnectManagerPrivate> d;
 
     SkyConnectManager() noexcept;
+    ~SkyConnectManager() override;
 
     void frenchConnection() noexcept;
     void initialisePlugins(const QString &pluginDirectoryName) noexcept;

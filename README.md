@@ -1,10 +1,10 @@
 # Sky Dolly
-Sky Dolly - The Black Sheep for your Flight Recordings.
+Sky Dolly - The Black Sheep for Your Flight Recordings.
 
 ## About
 Sky Dolly connects to a running Flight Simulator 2020 instance and records various simulation variables, for replay.
 
-![Sky Dolly v0.10.0](./img/SkyDolly-v0.11.0.png)
+![Sky Dolly v0.11.0](./img/SkyDolly-v0.11.0.png)
 
 The connection is made via SimConnect, a standard API introduced with Flight Simulator X to connect with the flight simulator.
 
@@ -15,6 +15,7 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 - Adjustable replay speed ("slow motion", "timelapse"), replay loop
 - Position, velocity and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
 - Plugin architecture with various import/export plugins (CSV, GPX, IGC, KML)
+- Location module with over 100 default locations and import/export functionality
 - Database (SQLite) based persistence ("logbook")
 
 Watch the (preview) release trailer on [YouTube](https://www.youtube.com/watch?v=_n4qRtm78_I):
@@ -66,7 +67,7 @@ Why don't you try it with one of the guided ["Tell Tours"](https://github.com/ti
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.11.1**
+Latest (pre-)release: **Sky Dolly 0.13.0**
 
 Compute and compare your checksum against the [published SHA-256 checksums](SHASUM256.md), to verify the integrity of your downloaded copy.
 
@@ -83,6 +84,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 - https://github.com/pyviator/msfs-geoshot - Takes screenshots and automatically "geotags" them
 - https://github.com/ijl20/msfs_logger_replay - IGC logger and replay (for FSX)
 - https://github.com/diagonalization-lab/msfs-panel-notepad - Minimal MSFS toolbar / panel example
+- https://joinfs.net/ - Allows to synchronise multiplayer flights across different flight simulators (MSFS, Prepar3D/FSX, XPlane). Also provides a flight recorder with formation flight recording ("overdub").
 
 ## Other Useful Resources
 

@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -35,6 +35,11 @@ class FlightSummary;
 class FlightDaoIntf
 {
 public:
+    FlightDaoIntf() = default;
+    FlightDaoIntf(const FlightDaoIntf &rhs) = delete;
+    FlightDaoIntf(FlightDaoIntf &&rhs) = default;
+    FlightDaoIntf &operator=(const FlightDaoIntf &rhs) = delete;
+    FlightDaoIntf &operator=(FlightDaoIntf &&rhs) = default;
     virtual ~FlightDaoIntf() = default;
 
     /*!
@@ -43,8 +48,8 @@ public:
      *        the Flight to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool addFlight(Flight &flight) noexcept = 0;
-    virtual bool getFlightById(std::int64_t id, Flight &flight) const noexcept = 0;
+    virtual bool add(Flight &flight) noexcept = 0;
+    virtual bool get(std::int64_t id, Flight &flight) const noexcept = 0;
     virtual bool deleteById(std::int64_t id) noexcept = 0;
     virtual bool updateTitle(std::int64_t id, const QString &title) noexcept = 0;
     virtual bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept = 0;

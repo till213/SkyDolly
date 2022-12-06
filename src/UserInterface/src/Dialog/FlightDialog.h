@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -33,7 +33,7 @@ class QShowEvent;
 class QHideEvent;
 
 class FlightService;
-class FlightDialogPrivate;
+struct FlightDialogPrivate;
 
 namespace Ui {
     class FlightDialog;
@@ -44,19 +44,18 @@ class FlightDialog : public QDialog
     Q_OBJECT
 public:
     explicit FlightDialog(FlightService &flightService, QWidget *parent = nullptr) noexcept;
-    virtual ~FlightDialog() noexcept;
+    ~FlightDialog() override;
 
 signals:
     void visibilityChanged(bool visible);
 
 protected:
-    virtual void showEvent(QShowEvent *event) noexcept override;
-    virtual void hideEvent(QHideEvent *event) noexcept override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(FlightDialog)
     std::unique_ptr<FlightDialogPrivate> d;
-    std::unique_ptr<Ui::FlightDialog> ui;
+    const std::unique_ptr<Ui::FlightDialog> ui;
 
     void initUi() noexcept;
     void updateUi() noexcept;

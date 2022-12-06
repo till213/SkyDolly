@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -37,31 +37,23 @@
 
 struct AircraftInfo;
 
-class MODEL_API InitialPosition
+struct MODEL_API InitialPosition final
 {
-public:
-    static constexpr int InvalidAirspeed = std::numeric_limits<int>::min();
-
-    double latitude;
-    double longitude;
-    double altitude;
-    double pitch;
-    double bank;
-    double heading;
-    bool onGround;
+    double latitude {0.0};
+    double longitude {0.0};
+    double altitude {0.0};
+    double pitch {0.0};
+    double bank {0.0};
+    double trueHeading {0.0};
     // Indicated airspeed [knots]
-    int indicatedAirspeed;
+    int indicatedAirspeed {InvalidIndicatedAirspeed};
+    bool onGround {false};
 
     explicit InitialPosition(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
     InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept;
-    InitialPosition(const InitialPosition &other) = default;
-    InitialPosition(InitialPosition &&other) = default;
-    ~InitialPosition() = default;
-    InitialPosition &operator=(const InitialPosition &rhs) = default;
-    InitialPosition &operator=(InitialPosition &&rhs) = default;
 
     inline bool isNull() const noexcept {
-        return (indicatedAirspeed == InvalidAirspeed);
+        return (indicatedAirspeed == InvalidIndicatedAirspeed);
     }
 
     inline void fromPositionData(const PositionData &positionData) {
@@ -70,12 +62,13 @@ public:
         altitude = positionData.altitude;
         pitch = positionData.pitch;
         bank = positionData.bank;
-        heading = positionData.heading;
+        trueHeading = positionData.trueHeading;
         const double trueAirspeed = Convert::feetPerSecondToKnots(positionData.velocityBodyZ);
         indicatedAirspeed = static_cast<int>(std::round(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude)));
+        onGround = false;
     }
 
-    static const InitialPosition NullData;
+    static constexpr int InvalidIndicatedAirspeed = std::numeric_limits<int>::min();
 };
 
 #endif // INITIALPOSITION_H
