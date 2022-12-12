@@ -95,7 +95,10 @@ namespace
         FreezeAttitude,
         EngineAutoStart,
         EngineAutoShutdown,
-        AileronSet
+        // Primary flight controls
+        AileronSet,
+        ElevatorSet,
+        RudderSet
     };
 
     enum struct EngineState: int {
@@ -375,15 +378,10 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                 if (ok) {
                     const PrimaryFlightControlData &primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(currentTimestamp, access);
                     if (!primaryFlightControlData.isNull()) {
-                        // @todo TEST ME
-                        const HRESULT res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(Event::AileronSet), primaryFlightControlData.aileronPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-
-
-//                        SimConnectPrimaryFlightControl simConnectPrimaryFlightControl;
-//                        simConnectPrimaryFlightControl.fromPrimaryFlightControlData(primaryFlightControlData);
-//                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControl),
-//                                                                            objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-//                                                                            sizeof(SimConnectPrimaryFlightControl), &simConnectPrimaryFlightControl);
+                        // Event values have opposite sign than recorded simulation variable values
+                        HRESULT res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::RudderSet), -primaryFlightControlData.rudderPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+                        res |= ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::AileronSet), -primaryFlightControlData.aileronPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+                        res |= ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::ElevatorSet), -primaryFlightControlData.elevatorPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
                         ok = res == S_OK;
                     }
                 }
@@ -659,6 +657,8 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::EngineAutoStart), "ENGINE_AUTO_START");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::EngineAutoShutdown), "ENGINE_AUTO_SHUTDOWN");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::AileronSet), "AILERON_SET");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::ElevatorSet), "ELEVATOR_SET");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::RudderSet), "RUDDER_SET");
 }
 
 bool MSFSSimConnectPlugin::freezeAircraft(::SIMCONNECT_OBJECT_ID objectId, bool enable) const noexcept
