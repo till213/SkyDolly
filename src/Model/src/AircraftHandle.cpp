@@ -39,7 +39,7 @@ AircraftHandle::AircraftHandle(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
 {}
 
-AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const AircraftHandleData &AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const AircraftHandleData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;

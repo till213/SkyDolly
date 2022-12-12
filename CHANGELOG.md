@@ -2,6 +2,12 @@
 
 ## 0.14.0
 
+### Improvements
+- Primary flight controls are now event-based replayed
+
+### Under The Hood
+- Small performance improvements
+
 ## 0.13.0
 
 ### New Features

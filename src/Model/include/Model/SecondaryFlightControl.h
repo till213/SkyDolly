@@ -35,7 +35,7 @@ class MODEL_API SecondaryFlightControl final : public AbstractComponent<Secondar
 public:
     explicit SecondaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
 
-    SecondaryFlightControlData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
+    const SecondaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 
 private:
     mutable SecondaryFlightControlData m_currentData;

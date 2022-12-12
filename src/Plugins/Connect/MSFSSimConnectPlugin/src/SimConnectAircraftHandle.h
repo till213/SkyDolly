@@ -69,13 +69,13 @@ struct SimConnectAircraftHandle
 
     inline void fromAircraftHandleData(const AircraftHandleData &aircraftHandleData) noexcept
     {
-        brakeLeftPosition = SkyMath::toPosition(aircraftHandleData.brakeLeftPosition);
-        brakeRightPosition = SkyMath::toPosition(aircraftHandleData.brakeRightPosition);
-        waterRudderHandlePosition = SkyMath::toPosition(aircraftHandleData.waterRudderHandlePosition);
-        tailhookPosition = SkyMath::toPercent(aircraftHandleData.tailhookPosition);
-        canopyOpen = SkyMath::toPercent(aircraftHandleData.canopyOpen);
-        foldingWingLeftPercent = SkyMath::toPercent(aircraftHandleData.leftWingFolding);
-        foldingWingRightPercent = SkyMath::toPercent(aircraftHandleData.rightWingFolding);
+        brakeLeftPosition = static_cast<float>(SkyMath::toPosition(aircraftHandleData.brakeLeftPosition));
+        brakeRightPosition = static_cast<float>(SkyMath::toPosition(aircraftHandleData.brakeRightPosition));
+        waterRudderHandlePosition = static_cast<float>(SkyMath::toPosition(aircraftHandleData.waterRudderHandlePosition));
+        tailhookPosition = static_cast<float>(SkyMath::toPercent(aircraftHandleData.tailhookPosition));
+        canopyOpen = static_cast<float>(SkyMath::toPercent(aircraftHandleData.canopyOpen));
+        foldingWingLeftPercent = static_cast<float>(SkyMath::toPercent(aircraftHandleData.leftWingFolding));
+        foldingWingRightPercent = static_cast<float>(SkyMath::toPercent(aircraftHandleData.rightWingFolding));
         gearHandlePosition = aircraftHandleData.gearHandlePosition ? 1 : 0;
         smokeEnable = aircraftHandleData.smokeEnabled ? 1 : 0;
     }

@@ -37,7 +37,7 @@ class MODEL_API AircraftHandle final : public AbstractComponent<AircraftHandleDa
 public:
     explicit AircraftHandle(const AircraftInfo &aircraftInfo) noexcept;
 
-    AircraftHandleData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
+    const AircraftHandleData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 
 private:
     mutable AircraftHandleData m_currentData;
