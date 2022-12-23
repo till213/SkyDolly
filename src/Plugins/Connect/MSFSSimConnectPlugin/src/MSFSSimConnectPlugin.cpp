@@ -82,8 +82,8 @@
 
 namespace
 {
-    const char *ConnectionName= "SkyConnect";
-    constexpr DWORD UserAirplaneRadiusMeters = 0;
+    constexpr const char *ConnectionName {"SkyConnect"};
+    constexpr DWORD UserAirplaneRadiusMeters {0};
 
     enum struct Event: ::SIMCONNECT_CLIENT_EVENT_ID {
         SimStart,
@@ -98,7 +98,12 @@ namespace
         // Primary flight controls
         AileronSet,
         ElevatorSet,
-        RudderSet
+        RudderSet,
+        // Secondary flight controls
+        Flaps_1,
+        Flaps_2,
+        Flaps_3,
+        Flaps_4
     };
 
     enum struct EngineState: int {
@@ -112,33 +117,23 @@ namespace
 class SkyConnectPrivate
 {
 public:
-    SkyConnectPrivate() noexcept
-        : storeDataImmediately(true),
-          engineState(EngineState::Unknown),
-          pendingWaypointTime(false),
-          simConnectHandle(nullptr),
-          eventWidget(std::make_unique<EventWidget>()),
-          currentRequestPeriod(::SIMCONNECT_PERIOD_NEVER),
-          simConnectAi(nullptr)
-    {}
-
-    bool storeDataImmediately;
     PositionData currentPositionData;
     EngineData currentEngineData;
-    EngineState engineState;
+    EngineState engineState {EngineState::Unknown};
     PrimaryFlightControlData currentPrimaryFlightControlData;
     SecondaryFlightControlData currentSecondaryFlightControlData;
     AircraftHandleData currentAircraftHandleData;
     LightData currentLightData;
     QDateTime currentLocalDateTime;
     QDateTime currentZuluDateTime;
-    bool pendingWaypointTime;
-    HANDLE simConnectHandle;
-    std::unique_ptr<EventWidget> eventWidget;
-    ::SIMCONNECT_PERIOD currentRequestPeriod;
+    HANDLE simConnectHandle{nullptr};
+    std::unique_ptr<SimConnectAi> simConnectAi {nullptr};
+    std::unique_ptr<EventWidget> eventWidget {std::make_unique<EventWidget>()};
+    ::SIMCONNECT_PERIOD currentRequestPeriod {::SIMCONNECT_PERIOD_NEVER};
     // Insert order is order of flight plan
-    tsl::ordered_map<QString, Waypoint> flightPlan;
-    std::unique_ptr<SimConnectAi> simConnectAi;
+    tsl::ordered_map<QString, Waypoint> flightPlan;    
+    bool pendingWaypointTime {false};
+    bool storeDataImmediately {true};
 };
 
 // PUBLIC
@@ -248,7 +243,7 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
     }
 
     // Update timestamp and simulation time of last waypoint
-    int waypointCount = flightPlan.count();
+    int waypointCount = static_cast<int>(flightPlan.count());
     if (waypointCount > 1) {
         Waypoint waypoint = flightPlan[waypointCount - 1];
         waypoint.localTime = d->currentLocalDateTime;
@@ -392,9 +387,11 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!secondaryFlightControlData.isNull()) {
                         SimConnectSecondaryFlightControl simConnectSecondaryFlightControl;
                         simConnectSecondaryFlightControl.fromSecondaryFlightControlData(secondaryFlightControlData);
-                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControl),
-                                                                            objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                            sizeof(SimConnectSecondaryFlightControl), &simConnectSecondaryFlightControl);
+                        HRESULT res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(::Event::Flaps_3), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+
+//                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControl),
+//                                                                            objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+//                                                                            sizeof(SimConnectSecondaryFlightControl), &simConnectSecondaryFlightControl);
                         ok = res == S_OK;
                     }
                 }
@@ -495,7 +492,7 @@ bool MSFSSimConnectPlugin::isConnectedWithSim() const noexcept
 
 bool MSFSSimConnectPlugin::connectWithSim() noexcept
 {
-    HWND hWnd = reinterpret_cast<HWND>(d->eventWidget->winId());
+    auto hWnd = reinterpret_cast<HWND>(d->eventWidget->winId());
     DWORD userEvent = EventWidget::SimConnnectUserMessage;
     HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, ::SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
     if (result == S_OK) {
@@ -549,32 +546,32 @@ void MSFSSimConnectPlugin::recordData() noexcept
     Aircraft &userAircraft = getCurrentFlight().getUserAircraft();
     bool dataStored = false;
     if (!d->currentPositionData.isNull()) {
-        userAircraft.getPosition().upsertLast(std::move(d->currentPositionData));
+        userAircraft.getPosition().upsertLast(d->currentPositionData);
         // Processed
         dataStored = true;
     }
     if (!d->currentEngineData.isNull()) {
-        userAircraft.getEngine().upsertLast(std::move(d->currentEngineData));
+        userAircraft.getEngine().upsertLast(d->currentEngineData);
         // Processed
         dataStored = true;
     }
     if (!d->currentPrimaryFlightControlData.isNull()) {
-        userAircraft.getPrimaryFlightControl().upsertLast(std::move(d->currentPrimaryFlightControlData));
+        userAircraft.getPrimaryFlightControl().upsertLast(d->currentPrimaryFlightControlData);
         // Processed
         dataStored = true;
     }
     if (!d->currentSecondaryFlightControlData.isNull()) {
-        userAircraft.getSecondaryFlightControl().upsertLast(std::move(d->currentSecondaryFlightControlData));
+        userAircraft.getSecondaryFlightControl().upsertLast(d->currentSecondaryFlightControlData);
         // Processed
         dataStored = true;
     }
     if (!d->currentAircraftHandleData.isNull()) {
-        userAircraft.getAircraftHandle().upsertLast(std::move(d->currentAircraftHandleData));
+        userAircraft.getAircraftHandle().upsertLast(d->currentAircraftHandleData);
         // Processed
         dataStored = true;
     }
     if (!d->currentLightData.isNull()) {
-        userAircraft.getLight().upsertLast(std::move(d->currentLightData));
+        userAircraft.getLight().upsertLast(d->currentLightData);
         // Processed
         dataStored = true;
     }
@@ -656,9 +653,15 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::EngineAutoStart), "ENGINE_AUTO_START");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::EngineAutoShutdown), "ENGINE_AUTO_SHUTDOWN");
+    // Primary flight controls
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::AileronSet), "AILERON_SET");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::ElevatorSet), "ELEVATOR_SET");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::RudderSet), "RUDDER_SET");
+    // Secondary flight controls
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::Flaps_1), "FLAPS_1");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::Flaps_2), "FLAPS_2");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::Flaps_3), "FLAPS_3");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::underly(::Event::Flaps_4), "FLAPS_4");
 }
 
 bool MSFSSimConnectPlugin::freezeAircraft(::SIMCONNECT_OBJECT_ID objectId, bool enable) const noexcept
@@ -753,7 +756,7 @@ void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexc
 
 void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[maybe_unused]] DWORD cbData, void *context) noexcept
 {
-    MSFSSimConnectPlugin *skyConnect = static_cast<MSFSSimConnectPlugin *>(context);
+    auto skyConnect = static_cast<MSFSSimConnectPlugin *>(context);
     Flight &flight = skyConnect->getCurrentFlight();
     Aircraft &userAircraft = flight.getUserAircraft();
     ::SIMCONNECT_RECV_SIMOBJECT_DATA *objectData {nullptr};
@@ -762,7 +765,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
     switch (receivedData->dwID) {
     case ::SIMCONNECT_RECV_ID_EVENT:
     {
-        const ::SIMCONNECT_RECV_EVENT *evt = reinterpret_cast<::SIMCONNECT_RECV_EVENT *>(receivedData);
+        const ::SIMCONNECT_RECV_EVENT *evt = static_cast<::SIMCONNECT_RECV_EVENT *>(receivedData);
         switch (static_cast<::Event>(evt->uEventID)) {
         case ::Event::SimStart:
 #ifdef DEBUG
@@ -809,11 +812,11 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 
     case ::SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE:
     {
-        objectData = reinterpret_cast<::SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(receivedData);
+        objectData = static_cast<::SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(receivedData);
         switch (static_cast<SimConnectType::DataRequest>(objectData->dwRequestID)) {
         case SimConnectType::DataRequest::AircraftInfo:
         {
-            const SimConnectAircraftInfo *simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
+            auto simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
             AircraftInfo aircraftInfo = simConnectAircraftInfo->toAircraftInfo();
             userAircraft.setAircraftInfo(aircraftInfo);
             emit flight.aircraftInfoChanged(userAircraft);
@@ -829,18 +832,18 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 
     case ::SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
     {
-        objectData = reinterpret_cast<::SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
+        objectData = static_cast<::SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
 
         const bool storeDataImmediately = skyConnect->d->storeDataImmediately;
         switch (static_cast<SimConnectType::DataRequest>(objectData->dwRequestID)) {
         case SimConnectType::DataRequest::AircraftPosition:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                const SimConnectPositionReply *simConnectPositionReply = reinterpret_cast<const SimConnectPositionReply *>(&objectData->dwData);
+                auto simConnectPositionReply = reinterpret_cast<const SimConnectPositionReply *>(&objectData->dwData);
                 PositionData positionData = simConnectPositionReply->toPositionData();
                 positionData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getPosition().upsertLast(std::move(positionData));
+                    userAircraft.getPosition().upsertLast(positionData);
                     dataStored = true;
                 } else {
                     skyConnect->d->currentPositionData = std::move(positionData);
@@ -851,11 +854,11 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         case SimConnectType::DataRequest::Engine:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                const SimConnectEngineReply *simConnectEngineReply = reinterpret_cast<const SimConnectEngineReply *>(&objectData->dwData);
+                auto simConnectEngineReply = reinterpret_cast<const SimConnectEngineReply *>(&objectData->dwData);
                 EngineData engineData = simConnectEngineReply->toEngineData();
                 engineData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getEngine().upsertLast(std::move(engineData));
+                    userAircraft.getEngine().upsertLast(engineData);
                     dataStored = true;
                 } else {
                     skyConnect->d->currentEngineData = std::move(engineData);
@@ -866,11 +869,11 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         case SimConnectType::DataRequest::PrimaryFlightControl:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                const SimConnectPrimaryFlightControl *simConnectPrimaryFlightControl = reinterpret_cast<const SimConnectPrimaryFlightControl *>(&objectData->dwData);
+                auto simConnectPrimaryFlightControl = reinterpret_cast<const SimConnectPrimaryFlightControl *>(&objectData->dwData);
                 PrimaryFlightControlData primaryFlightControlData = simConnectPrimaryFlightControl->toPrimaryFlightControlData();
                 primaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getPrimaryFlightControl().upsertLast(std::move(primaryFlightControlData));
+                    userAircraft.getPrimaryFlightControl().upsertLast(primaryFlightControlData);
                     dataStored = true;
                 } else {
                     skyConnect->d->currentPrimaryFlightControlData = std::move(primaryFlightControlData);
@@ -881,11 +884,11 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         case SimConnectType::DataRequest::SecondaryFlightControl:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                const SimConnectSecondaryFlightControl *simConnectSecondaryFlightControl = reinterpret_cast<const SimConnectSecondaryFlightControl *>(&objectData->dwData);
+                auto simConnectSecondaryFlightControl = reinterpret_cast<const SimConnectSecondaryFlightControl *>(&objectData->dwData);
                 SecondaryFlightControlData secondaryFlightControlData = simConnectSecondaryFlightControl->toSecondaryFlightControlData();
                 secondaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getSecondaryFlightControl().upsertLast(std::move(secondaryFlightControlData));
+                    userAircraft.getSecondaryFlightControl().upsertLast(secondaryFlightControlData);
                     dataStored = true;
                 } else {
                     skyConnect->d->currentSecondaryFlightControlData = std::move(secondaryFlightControlData);
@@ -896,11 +899,11 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         case SimConnectType::DataRequest::AircraftHandle:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                const SimConnectAircraftHandle *simConnectAircraftHandle = reinterpret_cast<const SimConnectAircraftHandle *>(&objectData->dwData);
+                auto simConnectAircraftHandle = reinterpret_cast<const SimConnectAircraftHandle *>(&objectData->dwData);
                 AircraftHandleData aircraftHandleData = simConnectAircraftHandle->toAircraftHandleData();
                 aircraftHandleData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getAircraftHandle().upsertLast(std::move(aircraftHandleData));
+                    userAircraft.getAircraftHandle().upsertLast(aircraftHandleData);
                     dataStored = true;
                 } else {
                     skyConnect->d->currentAircraftHandleData = std::move(aircraftHandleData);
@@ -915,7 +918,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
                 LightData lightData = simConnectLight->toLightData();
                 lightData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getLight().upsertLast(std::move(lightData));
+                    userAircraft.getLight().upsertLast(lightData);
                     dataStored = true;
                 } else {
                     skyConnect->d->currentLightData = std::move(lightData);
@@ -926,7 +929,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         case SimConnectType::DataRequest::FlightPlan:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                const SimConnectFlightPlan *simConnectFlightPlan = reinterpret_cast<const SimConnectFlightPlan *>(&objectData->dwData);
+                auto simConnectFlightPlan = reinterpret_cast<const SimConnectFlightPlan *>(&objectData->dwData);
                 Waypoint waypoint = simConnectFlightPlan->toPreviousWaypoint();
                 if (waypoint.isValid()) {
                     if (skyConnect->d->currentLocalDateTime.isValid()) {
@@ -967,7 +970,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::Location:
         {
-            const SimConnectLocation *simConnectLocation = reinterpret_cast<const SimConnectLocation *>(&objectData->dwData);
+            auto simConnectLocation = reinterpret_cast<const SimConnectLocation *>(&objectData->dwData);
             emit skyConnect->locationReceived(simConnectLocation->toLocation());
             break;
 
@@ -995,7 +998,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 
     case ::SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID:
     {
-        SIMCONNECT_RECV_ASSIGNED_OBJECT_ID *objectData = (SIMCONNECT_RECV_ASSIGNED_OBJECT_ID*)receivedData;
+        auto objectData = static_cast<SIMCONNECT_RECV_ASSIGNED_OBJECT_ID *>(receivedData);
         std::int64_t simulationObjectId = objectData->dwObjectID;
         if (skyConnect->d->simConnectAi->registerObjectId(objectData->dwRequestID, simulationObjectId)) {
             ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, simulationObjectId, Enum::underly(SimConnectType::DataRequest::AiReleaseControl));
@@ -1028,7 +1031,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
     case ::SIMCONNECT_RECV_ID_EXCEPTION:
 #ifdef DEBUG
     {
-        SIMCONNECT_RECV_EXCEPTION *exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
+        auto exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
         qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EXCEPTION: A server exception" << exception->dwException
                  << "happened: sender ID:" << exception->dwSendID
                  << "index:" << exception->dwIndex

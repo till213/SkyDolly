@@ -33,11 +33,7 @@
 struct MODEL_API TimeVariableData
 {
     TimeVariableData() = default;
-    TimeVariableData(const TimeVariableData &rhs)
-    {
-        qDebug("TimeVariableData: COPY CTOR: CALLED");
-        *this = rhs;
-    }
+    TimeVariableData(const TimeVariableData &rhs) = default;
     TimeVariableData(TimeVariableData &&rhs) = default;
     TimeVariableData &operator=(const TimeVariableData &rhs) = default;
     TimeVariableData &operator=(TimeVariableData &&rhs) = default;

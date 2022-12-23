@@ -30,32 +30,20 @@
 
 EventWidget::EventWidget(QWidget *parent) noexcept
     : QWidget(parent)
-{
-#ifdef DEBUG
-    qDebug("EventWidget: CREATED");
-#endif
-}
-
-EventWidget::~EventWidget() noexcept
-{
-#ifdef DEBUG
-    qDebug("EventWidget: DELETED");
-#endif
-}
+{}
 
 // PROTECTED
 
 bool EventWidget::nativeEvent([[maybe_unused]] const QByteArray &eventType, void *message, [[maybe_unused]] long *result) noexcept
 {
-    bool handled;
-    const MSG *msg = static_cast<MSG *>(message);
+    bool handled {false};
+    auto msg = static_cast<MSG *>(message);
     switch(msg->message) {
     case SimConnnectUserMessage:
         emit simConnectEvent();
         handled = true;
         break;
     default:
-        handled = false;
         break;
     }
     return handled;

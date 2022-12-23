@@ -27,8 +27,6 @@
 #include <unordered_map>
 #include <algorithm>
 
-#include <QDebug>
-
 #include <windows.h>
 #include <SimConnect.h>
 
@@ -66,25 +64,16 @@ public:
 
 SimConnectAi::SimConnectAi(::HANDLE simConnectHandle)
     : d(std::make_unique<SimConnectAIPrivate>(simConnectHandle))
-{
-#ifdef DEBUG
-    qDebug() << "SimConnectAI::SimConnectAI: CREATED";
-#endif
-}
+{}
 
-SimConnectAi::~SimConnectAi()
-{
-#ifdef DEBUG
-    qDebug() << "SimConnectAI::~SimConnectAI: DELETED";
-#endif
-}
+SimConnectAi::~SimConnectAi() = default;
 
 void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) noexcept
 {
     // Check if the newly added aircraft has any recording yet
     // (otherwise it is the new user aircraft being added for a new recording)
     if (aircraft.getId() != Const::InvalidId) {
-        const AircraftInfo aircraftInfo = aircraft.getAircraftInfo();
+        const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
         Position &position = aircraft.getPosition();
         const PositionData &positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
         const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionRequest::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);

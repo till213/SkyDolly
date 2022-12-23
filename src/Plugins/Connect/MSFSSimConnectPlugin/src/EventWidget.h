@@ -32,7 +32,6 @@ class EventWidget : public QWidget
     Q_OBJECT
 public:
     explicit EventWidget(QWidget *parent = nullptr) noexcept;
-    virtual ~EventWidget() noexcept;
 
     static constexpr int SimConnnectUserMessage = 0x0402;
 
