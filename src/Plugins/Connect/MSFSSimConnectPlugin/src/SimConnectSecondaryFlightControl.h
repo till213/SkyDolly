@@ -25,10 +25,11 @@
 #ifndef SIMCONNECTSECONDARYFLIGHTCONTROL_H
 #define SIMCONNECTSECONDARYFLIGHTCONTROL_H
 
+#include <cstdint>
+
 #include <windows.h>
 
 #include <Kernel/SkyMath.h>
-#include <Model/SimType.h>
 #include <Model/SecondaryFlightControlData.h>
 
 /*!
@@ -44,29 +45,29 @@ struct SimConnectSecondaryFlightControl
     float trailingEdgeFlapsLeftPercent {0.0f};
     float trailingEdgeFlapsRightPercent {0.0f};
     float spoilersHandlePosition{0.0f} ;
-    qint32 flapsHandleIndex {0};
+    std::int32_t flapsHandleIndex {0};
 
     inline SecondaryFlightControlData toSecondaryFlightControlData() const noexcept
     {
         SecondaryFlightControlData secondaryFlightControlData;
 
-        secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(leadingEdgeFlapsLeftPercent);
-        secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(leadingEdgeFlapsRightPercent);
-        secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(trailingEdgeFlapsLeftPercent);
-        secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(trailingEdgeFlapsRightPercent);
+        secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsLeftPercent);
+        secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsRightPercent);
+        secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsLeftPercent);
+        secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsRightPercent);
         secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(spoilersHandlePosition);
-        secondaryFlightControlData.flapsHandleIndex = flapsHandleIndex;
+        secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(flapsHandleIndex);
 
         return secondaryFlightControlData;
     }
 
     inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
     {
-        leadingEdgeFlapsLeftPercent = SkyMath::toPosition(secondaryFlightControlData.leadingEdgeFlapsLeftPosition);
-        leadingEdgeFlapsRightPercent = SkyMath::toPosition(secondaryFlightControlData.leadingEdgeFlapsRightPosition);
-        trailingEdgeFlapsLeftPercent = SkyMath::toPosition(secondaryFlightControlData.trailingEdgeFlapsLeftPosition);
-        trailingEdgeFlapsRightPercent = SkyMath::toPosition(secondaryFlightControlData.trailingEdgeFlapsRightPosition);
-        spoilersHandlePosition = SkyMath::toPercent(secondaryFlightControlData.spoilersHandlePosition);
+        leadingEdgeFlapsLeftPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.leadingEdgeFlapsLeftPosition));
+        leadingEdgeFlapsRightPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.leadingEdgeFlapsRightPosition));
+        trailingEdgeFlapsLeftPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.trailingEdgeFlapsLeftPosition));
+        trailingEdgeFlapsRightPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.trailingEdgeFlapsRightPosition));
+        spoilersHandlePosition = static_cast<float>(SkyMath::toPercent(secondaryFlightControlData.spoilersHandlePosition));
         flapsHandleIndex = secondaryFlightControlData.flapsHandleIndex;
     }
 

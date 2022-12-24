@@ -28,7 +28,6 @@
 #include <windows.h>
 
 #include <Kernel/SkyMath.h>
-#include <Model/SimType.h>
 #include <Model/PrimaryFlightControlData.h>
 
 /*!
@@ -47,18 +46,18 @@ struct SimConnectPrimaryFlightControl
     {
         PrimaryFlightControlData primaryFlightControlData;
 
-        primaryFlightControlData.rudderPosition = SkyMath::fromPosition(rudderPosition);
-        primaryFlightControlData.elevatorPosition = SkyMath::fromPosition(elevatorPosition);
-        primaryFlightControlData.aileronPosition = SkyMath::fromPosition(aileronPosition);
+        primaryFlightControlData.rudderPosition = SkyMath::fromNormalisedPosition(rudderPosition);
+        primaryFlightControlData.elevatorPosition = SkyMath::fromNormalisedPosition(elevatorPosition);
+        primaryFlightControlData.aileronPosition = SkyMath::fromNormalisedPosition(aileronPosition);
 
         return primaryFlightControlData;
     }
 
     inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
     {
-        rudderPosition = static_cast<float>(SkyMath::toPosition(primaryFlightControlData.rudderPosition));
-        elevatorPosition = static_cast<float>(SkyMath::toPosition(primaryFlightControlData.elevatorPosition));
-        aileronPosition = static_cast<float>(SkyMath::toPosition(primaryFlightControlData.aileronPosition));
+        rudderPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.rudderPosition));
+        elevatorPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.elevatorPosition));
+        aileronPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.aileronPosition));
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;

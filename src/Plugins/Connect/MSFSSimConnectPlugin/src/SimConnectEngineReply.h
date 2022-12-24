@@ -25,10 +25,11 @@
 #ifndef SIMCONNECTENGINEREPLY_H
 #define SIMCONNECTENGINEREPLY_H
 
+#include <cstdint>
+
 #include <windows.h>
 
 #include <Kernel/SkyMath.h>
-#include <Model/SimType.h>
 #include <Model/EngineData.h>
 #include "SimConnectEngineRequest.h"
 
@@ -40,10 +41,10 @@
 #pragma pack(push, 1)
 struct SimConnectEngineReply : public SimConnectEngineRequest
 {
-    qint32 generalEngineCombustion1 {0};
-    qint32 generalEngineCombustion2 {0};
-    qint32 generalEngineCombustion3 {0};
-    qint32 generalEngineCombustion4 {0};
+    std::int32_t generalEngineCombustion1 {0};
+    std::int32_t generalEngineCombustion2 {0};
+    std::int32_t generalEngineCombustion3 {0};
+    std::int32_t generalEngineCombustion4 {0};
 
     inline EngineData toEngineData() const noexcept
     {
@@ -51,14 +52,14 @@ struct SimConnectEngineReply : public SimConnectEngineRequest
 
         // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
         //       position (std::int16_t) which supports negative values as well
-        engineData.throttleLeverPosition1 = SkyMath::fromPosition(throttleLeverPosition1);
-        engineData.throttleLeverPosition2 = SkyMath::fromPosition(throttleLeverPosition2);
-        engineData.throttleLeverPosition3 = SkyMath::fromPosition(throttleLeverPosition3);
-        engineData.throttleLeverPosition4 = SkyMath::fromPosition(throttleLeverPosition4);
-        engineData.propellerLeverPosition1 = SkyMath::fromPosition(propellerLeverPosition1);
-        engineData.propellerLeverPosition2 = SkyMath::fromPosition(propellerLeverPosition2);
-        engineData.propellerLeverPosition3 = SkyMath::fromPosition(propellerLeverPosition3);
-        engineData.propellerLeverPosition4 = SkyMath::fromPosition(propellerLeverPosition4);
+        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(throttleLeverPosition1);
+        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(throttleLeverPosition2);
+        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(throttleLeverPosition3);
+        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(throttleLeverPosition4);
+        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(propellerLeverPosition1);
+        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(propellerLeverPosition2);
+        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(propellerLeverPosition3);
+        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(propellerLeverPosition4);
         engineData.mixtureLeverPosition1 = SkyMath::fromPercent(mixtureLeverPosition1);
         engineData.mixtureLeverPosition2 = SkyMath::fromPercent(mixtureLeverPosition2);
         engineData.mixtureLeverPosition3 = SkyMath::fromPercent(mixtureLeverPosition3);

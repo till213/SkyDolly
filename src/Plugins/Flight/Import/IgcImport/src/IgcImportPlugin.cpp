@@ -169,18 +169,18 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
                     engineData.generalEngineCombustion3 = loudNoise;
                     engineData.generalEngineCombustion4 = loudNoise;
 
-                    engineData.throttleLeverPosition1 = SkyMath::fromPosition(position);
-                    engineData.throttleLeverPosition2 = SkyMath::fromPosition(position);
-                    engineData.throttleLeverPosition3 = SkyMath::fromPosition(position);
-                    engineData.throttleLeverPosition4 = SkyMath::fromPosition(position);
-                    engineData.propellerLeverPosition1 = SkyMath::fromPosition(position);
-                    engineData.propellerLeverPosition2 = SkyMath::fromPosition(position);
-                    engineData.propellerLeverPosition3 = SkyMath::fromPosition(position);
-                    engineData.propellerLeverPosition4 = SkyMath::fromPosition(position);
-                    engineData.mixtureLeverPosition1 = SkyMath::fromPosition(1.0);
-                    engineData.mixtureLeverPosition2 = SkyMath::fromPosition(1.0);
-                    engineData.mixtureLeverPosition3 = SkyMath::fromPosition(1.0);
-                    engineData.mixtureLeverPosition4 = SkyMath::fromPosition(1.0);
+                    engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(position);
+                    engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(position);
+                    engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(position);
+                    engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(position);
+                    engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(position);
+                    engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(position);
+                    engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(position);
+                    engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(position);
+                    engineData.mixtureLeverPosition1 = SkyMath::fromNormalisedPosition(1.0);
+                    engineData.mixtureLeverPosition2 = SkyMath::fromNormalisedPosition(1.0);
+                    engineData.mixtureLeverPosition3 = SkyMath::fromNormalisedPosition(1.0);
+                    engineData.mixtureLeverPosition4 = SkyMath::fromNormalisedPosition(1.0);
                     // Elements are inserted chronologically from the start (and no other engine
                     // data exist yet), so we can use upsertLast (instead of the more general upsert)
                     engine.upsertLast(engineData);
@@ -197,14 +197,14 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
                         engineData.generalEngineCombustion2 = false;
                         engineData.generalEngineCombustion3 = false;
                         engineData.generalEngineCombustion4 = false;
-                        engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.0);
-                        engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.0);
-                        engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.0);
-                        engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.0);
-                        engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.0);
-                        engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.0);
-                        engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.0);
-                        engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.0);
+                        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.0);
                         engine.upsertLast(engineData);
                         engineState = IgcImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
@@ -220,14 +220,14 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
                         engineData.generalEngineCombustion2 = true;
                         engineData.generalEngineCombustion3 = true;
                         engineData.generalEngineCombustion4 = true;
-                        engineData.throttleLeverPosition1 = SkyMath::fromPosition(position);
-                        engineData.throttleLeverPosition2 = SkyMath::fromPosition(position);
-                        engineData.throttleLeverPosition3 = SkyMath::fromPosition(position);
-                        engineData.throttleLeverPosition4 = SkyMath::fromPosition(position);
-                        engineData.propellerLeverPosition1 = SkyMath::fromPosition(position);
-                        engineData.propellerLeverPosition2 = SkyMath::fromPosition(position);
-                        engineData.propellerLeverPosition3 = SkyMath::fromPosition(position);
-                        engineData.propellerLeverPosition4 = SkyMath::fromPosition(position);
+                        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(position);
+                        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(position);
+                        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(position);
+                        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(position);
+                        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(position);
+                        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(position);
+                        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(position);
+                        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(position);
                         engine.upsertLast(engineData);
                         engineState = IgcImportPluginPrivate::EngineState::Running;
 #ifdef DEBUG

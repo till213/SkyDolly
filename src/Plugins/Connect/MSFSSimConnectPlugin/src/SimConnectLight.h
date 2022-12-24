@@ -25,6 +25,8 @@
 #ifndef SIMCONNECTLIGHT_H
 #define SIMCONNECTLIGHT_H
 
+#include <cstdint>
+
 #include <windows.h>
 
 #include <Model/SimType.h>
@@ -39,7 +41,7 @@
 #pragma pack(push, 1)
 struct SimConnectLight
 {
-    qint32 lightStates {0};
+    std::int32_t lightStates {0};
 
     inline LightData toLightData() const noexcept
     {

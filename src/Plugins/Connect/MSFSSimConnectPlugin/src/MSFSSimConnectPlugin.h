@@ -24,6 +24,7 @@
  */
 #ifndef FS2020SIMCONNNECTPLUGIN_H
 #define FS2020SIMCONNNECTPLUGIN_H
+
 #include <memory>
 #include <cstdint>
 

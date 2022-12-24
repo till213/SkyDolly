@@ -28,7 +28,6 @@
 #include <windows.h>
 
 #include <Model/Location.h>
-#include <Model/SimType.h>
 #include <Model/LightData.h>
 
 /*!

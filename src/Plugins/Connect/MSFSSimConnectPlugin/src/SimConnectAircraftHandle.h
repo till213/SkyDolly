@@ -25,10 +25,11 @@
 #ifndef SIMCONNECTAIRCRAFTHANDLE_H
 #define SIMCONNECTAIRCRAFTHANDLE_H
 
+#include <cstdint>
+
 #include <windows.h>
 
 #include <Kernel/SkyMath.h>
-#include <Model/SimType.h>
 #include <Model/AircraftHandleData.h>
 
 /*!
@@ -47,16 +48,16 @@ struct SimConnectAircraftHandle
     float canopyOpen {0.0f};
     float foldingWingLeftPercent {0.0f};
     float foldingWingRightPercent {0.0f};
-    qint32 gearHandlePosition {0};
-    qint32 smokeEnable {0};
+    std::int32_t gearHandlePosition {0};
+    std::int32_t smokeEnable {0};
 
     inline AircraftHandleData toAircraftHandleData() const noexcept
     {
         AircraftHandleData aircraftHandleData;
 
-        aircraftHandleData.brakeLeftPosition= SkyMath::fromPosition(brakeLeftPosition);
-        aircraftHandleData.brakeRightPosition = SkyMath::fromPosition(brakeRightPosition);
-        aircraftHandleData.waterRudderHandlePosition = SkyMath::fromPosition(waterRudderHandlePosition);
+        aircraftHandleData.brakeLeftPosition= SkyMath::fromNormalisedPosition(brakeLeftPosition);
+        aircraftHandleData.brakeRightPosition = SkyMath::fromNormalisedPosition(brakeRightPosition);
+        aircraftHandleData.waterRudderHandlePosition = SkyMath::fromNormalisedPosition(waterRudderHandlePosition);
         aircraftHandleData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
         aircraftHandleData.canopyOpen = SkyMath::fromPercent(canopyOpen);
         aircraftHandleData.leftWingFolding = SkyMath::fromPercent(foldingWingLeftPercent);
@@ -69,9 +70,9 @@ struct SimConnectAircraftHandle
 
     inline void fromAircraftHandleData(const AircraftHandleData &aircraftHandleData) noexcept
     {
-        brakeLeftPosition = static_cast<float>(SkyMath::toPosition(aircraftHandleData.brakeLeftPosition));
-        brakeRightPosition = static_cast<float>(SkyMath::toPosition(aircraftHandleData.brakeRightPosition));
-        waterRudderHandlePosition = static_cast<float>(SkyMath::toPosition(aircraftHandleData.waterRudderHandlePosition));
+        brakeLeftPosition = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.brakeLeftPosition));
+        brakeRightPosition = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.brakeRightPosition));
+        waterRudderHandlePosition = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.waterRudderHandlePosition));
         tailhookPosition = static_cast<float>(SkyMath::toPercent(aircraftHandleData.tailhookPosition));
         canopyOpen = static_cast<float>(SkyMath::toPercent(aircraftHandleData.canopyOpen));
         foldingWingLeftPercent = static_cast<float>(SkyMath::toPercent(aircraftHandleData.leftWingFolding));

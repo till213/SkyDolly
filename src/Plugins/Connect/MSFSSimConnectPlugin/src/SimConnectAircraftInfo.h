@@ -25,6 +25,8 @@
 #ifndef SIMCONNECTAIRCRAFTINFO_H
 #define SIMCONNECTAIRCRAFTINFO_H
 
+#include <cstdint>
+
 #include <windows.h>
 #include <strsafe.h>
 
@@ -57,16 +59,16 @@ struct SimConnectAircraftInfo
     char category[256] {'\0'};
     // Feet
     float planeAltAboveGround {0.0f};
-    qint32 simOnGround {0};
+    std::int32_t simOnGround {0};
     // Knots
-    qint32 airspeedTrue {0};
+    std::int32_t airspeedTrue {0};
     // Feet
-    qint32 wingSpan {0};
-    qint32 engineType {0};
-    qint32 numberOfEngines {0};
+    std::int32_t wingSpan {0};
+    std::int32_t engineType {0};
+    std::int32_t numberOfEngines {0};
 
     // Flight conditions
-    qint32 surfaceType {0};
+    std::int32_t surfaceType {0};
     float groundAltitude {0.0f};
     // Celcius
     float ambientTemperature {0.0f};
@@ -77,20 +79,20 @@ struct SimConnectAircraftInfo
     float seaLevelPressure {0.0f};
     float pitotIcePct {0.0f};
     float structuralIcePct {0.0f};
-    qint32 ambientPrecipState {0};
-    qint32 ambientInCloud {0};
+    std::int32_t ambientPrecipState {0};
+    std::int32_t ambientInCloud {0};
 
     // Simulation time
     // [seconds]
-    qint32 localTime;
-    qint32 localYear;
-    qint32 localMonth;
-    qint32 localDay;
+    std::int32_t localTime;
+    std::int32_t localYear;
+    std::int32_t localMonth;
+    std::int32_t localDay;
     // [seconds]
-    qint32 zuluTime;
-    qint32 zuluYear;
-    qint32 zuluMonth;
-    qint32 zuluDay;
+    std::int32_t zuluTime;
+    std::int32_t zuluYear;
+    std::int32_t zuluMonth;
+    std::int32_t zuluDay;
 
     SimConnectAircraftInfo() noexcept
         : planeAltAboveGround(0.0f),
@@ -186,7 +188,7 @@ struct SimConnectAircraftInfo
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 
 private:
-    static inline SimType::SurfaceType toSurfaceType(qint32 surfaceType) noexcept
+    static inline SimType::SurfaceType toSurfaceType(std::int32_t surfaceType) noexcept
     {
         switch (surfaceType) {
         case 0:
@@ -270,7 +272,7 @@ private:
         }
     }
 
-    static inline SimType::EngineType toEngineType(qint32 engineType) noexcept
+    static inline SimType::EngineType toEngineType(std::int32_t engineType) noexcept
     {
         switch (engineType) {
         case 0:
@@ -297,7 +299,7 @@ private:
         }
     }
 
-    static inline SimType::PrecipitationState toPrecipitationState(qint32 precipitationState) noexcept
+    static inline SimType::PrecipitationState toPrecipitationState(std::int32_t precipitationState) noexcept
     {
         switch (precipitationState) {
         case 0:

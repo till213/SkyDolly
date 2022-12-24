@@ -25,11 +25,12 @@
 #ifndef SIMCONNECTENGINEREQUEST_H
 #define SIMCONNECTENGINEREQUEST_H
 
+#include <cstdint>
+
 #include <windows.h>
 #include <SimConnect.h>
 
 #include <Kernel/SkyMath.h>
-#include <Model/SimType.h>
 #include <Model/EngineData.h>
 
 /*!
@@ -56,33 +57,33 @@ struct SimConnectEngineRequest
     float recipEngineCowlFlapPosition2 {0.0f};
     float recipEngineCowlFlapPosition3 {0.0f};
     float recipEngineCowlFlapPosition4 {0.0f};
-    qint32 electricalMasterBattery1 {0};
-    qint32 electricalMasterBattery2 {0};
-    qint32 electricalMasterBattery3 {0};
-    qint32 electricalMasterBattery4 {0};
-    qint32 generalEngineStarter1 {0};
-    qint32 generalEngineStarter2 {0};
-    qint32 generalEngineStarter3 {0};
-    qint32 generalEngineStarter4 {0};
+    std::int32_t electricalMasterBattery1 {0};
+    std::int32_t electricalMasterBattery2 {0};
+    std::int32_t electricalMasterBattery3 {0};
+    std::int32_t electricalMasterBattery4 {0};
+    std::int32_t generalEngineStarter1 {0};
+    std::int32_t generalEngineStarter2 {0};
+    std::int32_t generalEngineStarter3 {0};
+    std::int32_t generalEngineStarter4 {0};
 
     inline void fromEngineData(const EngineData &engineData) noexcept
     {
-        throttleLeverPosition1 = SkyMath::toPosition(engineData.throttleLeverPosition1);
-        throttleLeverPosition2 = SkyMath::toPosition(engineData.throttleLeverPosition2);
-        throttleLeverPosition3 = SkyMath::toPosition(engineData.throttleLeverPosition3);
-        throttleLeverPosition4 = SkyMath::toPosition(engineData.throttleLeverPosition4);
-        propellerLeverPosition1 = SkyMath::toPosition(engineData.propellerLeverPosition1);
-        propellerLeverPosition2 = SkyMath::toPosition(engineData.propellerLeverPosition2);
-        propellerLeverPosition3 = SkyMath::toPosition(engineData.propellerLeverPosition3);
-        propellerLeverPosition4 = SkyMath::toPosition(engineData.propellerLeverPosition4);
-        mixtureLeverPosition1 = SkyMath::toPercent(engineData.mixtureLeverPosition1);
-        mixtureLeverPosition2 = SkyMath::toPercent(engineData.mixtureLeverPosition2);
-        mixtureLeverPosition3 = SkyMath::toPercent(engineData.mixtureLeverPosition3);
-        mixtureLeverPosition4 = SkyMath::toPercent(engineData.mixtureLeverPosition4);
-        recipEngineCowlFlapPosition1 = SkyMath::toPercent(engineData.cowlFlapPosition1);
-        recipEngineCowlFlapPosition2 = SkyMath::toPercent(engineData.cowlFlapPosition2);
-        recipEngineCowlFlapPosition3 = SkyMath::toPercent(engineData.cowlFlapPosition3);
-        recipEngineCowlFlapPosition4 = SkyMath::toPercent(engineData.cowlFlapPosition4);
+        throttleLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition1));
+        throttleLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition2));
+        throttleLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition3));
+        throttleLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition4));
+        propellerLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition1));
+        propellerLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition2));
+        propellerLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition3));
+        propellerLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition4));
+        mixtureLeverPosition1 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition1));
+        mixtureLeverPosition2 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition2));
+        mixtureLeverPosition3 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition3));
+        mixtureLeverPosition4 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition4));
+        recipEngineCowlFlapPosition1 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition1));
+        recipEngineCowlFlapPosition2 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition2));
+        recipEngineCowlFlapPosition3 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition3));
+        recipEngineCowlFlapPosition4 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition4));
         electricalMasterBattery1 = engineData.electricalMasterBattery1 ? 1 : 0;
         electricalMasterBattery2 = engineData.electricalMasterBattery2 ? 1 : 0;
         electricalMasterBattery3 = engineData.electricalMasterBattery3 ? 1 : 0;

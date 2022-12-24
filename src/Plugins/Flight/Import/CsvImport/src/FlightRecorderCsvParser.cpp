@@ -342,10 +342,10 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         throttleLeverPosition4 = row.at(d->headers.at(::ThrottleLeverPosition4)).toDouble(&ok);
     }
     if (ok) {
-        engineData.throttleLeverPosition1 = SkyMath::fromPosition(throttleLeverPosition1);
-        engineData.throttleLeverPosition2 = SkyMath::fromPosition(throttleLeverPosition2);
-        engineData.throttleLeverPosition3 = SkyMath::fromPosition(throttleLeverPosition3);
-        engineData.throttleLeverPosition4 = SkyMath::fromPosition(throttleLeverPosition4);
+        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(throttleLeverPosition1);
+        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(throttleLeverPosition2);
+        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(throttleLeverPosition3);
+        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(throttleLeverPosition4);
         // Flight Recorder does not support all Sky Dolly simulation variables, so we initialise them to "engine on"
         initEngineDefaultValues(engineData);
         engine.upsertLast(engineData);
@@ -368,10 +368,10 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         propellerLeverPosition4 = row.at(d->headers.at(::PropellerLeverPosition4)).toDouble(&ok);
     }
     if (ok) {
-        engineData.propellerLeverPosition1 = SkyMath::fromPosition(propellerLeverPosition1);
-        engineData.propellerLeverPosition2 = SkyMath::fromPosition(propellerLeverPosition2);
-        engineData.propellerLeverPosition3 = SkyMath::fromPosition(propellerLeverPosition3);
-        engineData.propellerLeverPosition4 = SkyMath::fromPosition(propellerLeverPosition4);
+        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(propellerLeverPosition1);
+        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(propellerLeverPosition2);
+        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(propellerLeverPosition3);
+        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(propellerLeverPosition4);
         // Flight Recorder does not support all Sky Dolly simulation variables, so we initialise them to "engine on"
         initEngineDefaultValues(engineData);
         engine.upsertLast(engineData);
@@ -394,9 +394,9 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         aileronPosition = row.at(d->headers.at(::AileronPosition)).toDouble(&ok);
     }
     if (ok) {
-        primaryFlightControlData.rudderPosition = SkyMath::fromPosition(rudderPosition);
-        primaryFlightControlData.elevatorPosition = SkyMath::fromPosition(elevatorPosition);
-        primaryFlightControlData.aileronPosition = SkyMath::fromPosition(aileronPosition);
+        primaryFlightControlData.rudderPosition = SkyMath::fromNormalisedPosition(rudderPosition);
+        primaryFlightControlData.elevatorPosition = SkyMath::fromNormalisedPosition(elevatorPosition);
+        primaryFlightControlData.aileronPosition = SkyMath::fromNormalisedPosition(aileronPosition);
         primaryFlightControl.upsertLast(primaryFlightControlData);
     }
 
@@ -428,10 +428,10 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(row.at(d->headers.at(::FlapsHandleIndex)).toInt(&ok));
     }
     if (ok) {
-        secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(leadingEdgeFlapsLeftPosition);
-        secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(leadingEdgeFlapsRightPosition);
-        secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(trailingEdgeFlapsLeftPosition);
-        secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(trailingEdgeFlapsRightPosition);
+        secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsLeftPosition);
+        secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsRightPosition);
+        secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsLeftPosition);
+        secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsRightPosition);
         secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(spoilerHandlePositionPercent);
         secondaryFlightControl.upsertLast(secondaryFlightControlData);
     }
@@ -456,9 +456,9 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         aircraftHandleData.gearHandlePosition = row.at(d->headers.at(::GearHandlePosition)).toInt(&ok) == 1;
     }
     if (ok) {
-        aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(brakeLeftPosition);
-        aircraftHandleData.brakeRightPosition = SkyMath::fromPosition(brakeRightPosition);
-        aircraftHandleData.waterRudderHandlePosition = SkyMath::fromPosition(waterRudderHandlePosition);
+        aircraftHandleData.brakeLeftPosition = SkyMath::fromNormalisedPosition(brakeLeftPosition);
+        aircraftHandleData.brakeRightPosition = SkyMath::fromNormalisedPosition(brakeRightPosition);
+        aircraftHandleData.waterRudderHandlePosition = SkyMath::fromNormalisedPosition(waterRudderHandlePosition);
         // Flight Recorder does not support all Sky Dolly simulation variables, so we initialise them to
         // some reasonable values
         initAircraftHandleDefaultValues(aircraftHandleData);

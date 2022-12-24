@@ -278,22 +278,22 @@ namespace SkyMath
      * Maps the \c position value to a discrete, signed 16bit value.
      *
      * \param position
-     *        the position value in the range [-1.0, 1.0]
+     *        the normalised position value in the range [-1.0, 1.0]
      * \return the mapped discrete, signed 16bit value [PositionMin16, PositionMax16] (note: symmetric range)
      */
-    inline std::int16_t fromPosition(double position) noexcept
+    inline std::int16_t fromNormalisedPosition(double position) noexcept
     {
         return static_cast<std::int16_t>(std::round(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
     }
 
     /*!
-     * Maps the \c position16 value to a double value.
+     * Maps the \c position16 value to a normalised double value.
      *
      * \param position16
      *        the discrete signed 16bit position value in the range [PositionMin16, PositionMax16] (note: symmetric range)
-     * \return the position mapped onto a double value [-1.0, 1.0]
+     * \return the position mapped onto a normalised double value [-1.0, 1.0]
      */
-    inline double toPosition(std::int16_t position16) noexcept
+    inline double toNormalisedPosition(std::int16_t position16) noexcept
     {
         return 2.0 * (static_cast<double>(position16) - PositionMin16) / PositionRange16 - 1.0;
     }

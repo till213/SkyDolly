@@ -22,54 +22,24 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTTYPE_H
-#define SIMCONNECTTYPE_H
+#ifndef SIMCONNECTVARIABLES_H
+#define SIMCONNECTVARIABLES_H
+
+#include <cstdint>
 
 #include <windows.h>
 
-#include <SimConnect.h>
-
-namespace SimConnectType
+/*!
+ * Flaps simulation variable.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(push, 1)
+struct FlapsHandleIndex
 {
-    enum struct DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
-        FlightInformation,
-        FlightPlan,
-        SimulationTime,
-        InitialPosition,
-        Location,
-        PositionReply,
-        PositionRequest,
-        EngineReply,
-        EngineRequest,
-        PrimaryFlightControl,
-        SecondaryFlightControl,
-        Handle,
-        Light,
-        // Simulation variables
-        FlapsHandleIndex
-    };
+    std::int32_t flapsHandleIndex {0};
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+};
+#pragma pack(pop)
 
-    enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
-        AircraftInfo,
-        FlightPlan,
-        InitialPosition,
-        Location,
-        SimulationTime,
-        AircraftPosition,
-        Engine,
-        PrimaryFlightControl,
-        Flaps,
-        SecondaryFlightControl,
-        AircraftHandle,
-        Light,
-        // Simulation variables
-        FlapsHandleIndex,
-        // AI objects
-        AiRemoveObject,
-        AiReleaseControl,
-        // Must come last
-        AiObjectBase
-    };
-}
-
-#endif // SIMCONNECTTYPE_H
+#endif // SIMCONNECTVARIABLES_H

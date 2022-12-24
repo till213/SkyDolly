@@ -25,6 +25,8 @@
 #ifndef SIMCONNECTSIMULATIONTIME_H
 #define SIMCONNECTSIMULATIONTIME_H
 
+#include <cstdint>
+
 #include <windows.h>
 #include <SimConnect.h>
 
@@ -41,14 +43,14 @@
 #pragma pack(push, 1)
 struct SimConnectSimulationTime
 {
-    qint32 localTime {0};
-    qint32 localYear {0};
-    qint32 localMonth {0};
-    qint32 localDay {0};
-    qint32 zuluTime {0};
-    qint32 zuluYear {0};
-    qint32 zuluMonth {0};
-    qint32 zuluDay {0};
+    std::int32_t localTime {0};
+    std::int32_t localYear {0};
+    std::int32_t localMonth {0};
+    std::int32_t localDay {0};
+    std::int32_t zuluTime {0};
+    std::int32_t zuluYear {0};
+    std::int32_t zuluMonth {0};
+    std::int32_t zuluDay {0};
 
     inline QDateTime toLocalDateTime() const noexcept
     {

@@ -25,8 +25,10 @@ target_sources(${MODULE_NAME}
         src/SimConnectFlightPlan.h src/SimConnectFlightPlan.cpp
         src/SimConnectSimulationTime.h src/SimConnectSimulationTime.cpp
         src/SimConnectLocation.h src/SimConnectLocation.cpp
+        src/SimConnectVariables.h src/SimConnectVariables.cpp
         src/SimConnectAi.h src/SimConnectAi.cpp
         src/EventWidget.h src/EventWidget.cpp
+        src/SimConnectEvent.h
         src/MSFSSimConnectPlugin.json
 )
 target_link_libraries(${MODULE_NAME}

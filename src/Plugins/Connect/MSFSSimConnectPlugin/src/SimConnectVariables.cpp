@@ -22,54 +22,19 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTTYPE_H
-#define SIMCONNECTTYPE_H
-
 #include <windows.h>
 
 #include <SimConnect.h>
 
-namespace SimConnectType
+#include <Kernel/Enum.h>
+#include <Model/SimVar.h>
+#include "SimConnectType.h"
+#include "SimConnectVariables.h"
+
+// PUBLIC
+
+
+void FlapsHandleIndex::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    enum struct DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
-        FlightInformation,
-        FlightPlan,
-        SimulationTime,
-        InitialPosition,
-        Location,
-        PositionReply,
-        PositionRequest,
-        EngineReply,
-        EngineRequest,
-        PrimaryFlightControl,
-        SecondaryFlightControl,
-        Handle,
-        Light,
-        // Simulation variables
-        FlapsHandleIndex
-    };
-
-    enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
-        AircraftInfo,
-        FlightPlan,
-        InitialPosition,
-        Location,
-        SimulationTime,
-        AircraftPosition,
-        Engine,
-        PrimaryFlightControl,
-        Flaps,
-        SecondaryFlightControl,
-        AircraftHandle,
-        Light,
-        // Simulation variables
-        FlapsHandleIndex,
-        // AI objects
-        AiRemoveObject,
-        AiReleaseControl,
-        // Must come last
-        AiObjectBase
-    };
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlapsHandleIndex), SimVar::FlapsHandleIndex, "Number", ::SIMCONNECT_DATATYPE_INT32);
 }
-
-#endif // SIMCONNECTTYPE_H
