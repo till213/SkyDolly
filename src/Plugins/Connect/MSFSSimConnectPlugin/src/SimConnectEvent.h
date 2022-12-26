@@ -64,7 +64,8 @@ public:
         Flaps_3,
         Flaps_4,
         Flaps_Decrease,
-        Flaps_Increase
+        Flaps_Increase,
+        GearSet
     };
 
     SimConnectEvent(::HANDLE simConnectHandle)
@@ -96,6 +97,8 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Flaps_4), "FLAPS_4");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Flaps_Decrease), "FLAPS_DECR");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Flaps_Increase), "FLAPS_INCR");
+        // Handles
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::GearSet), "GEAR_SET");
     }
 
     inline bool setPrimaryFlightControls(const PrimaryFlightControlData &primaryFlightControlData)
@@ -121,35 +124,7 @@ public:
 
         m_requestedFlapsIndex = index;
         if (m_requestedFlapsIndex != m_currentFlapsIndex) {
-            if (m_requestedFlapsIndex <= MaxFlapIndex) {
-                switch (index) {
-                case 1:
-                    event = Event::Flaps_1;
-                    break;
-                case 2:
-                    event = Event::Flaps_2;
-                    break;
-                case 3:
-                    event = Event::Flaps_3;
-                    break;
-                case 4:
-                    // TODO FIXME Somhow "FLAPS_4" results in a "server exception 1 happened: sender ID: 22083 index: 2 data: 24"
-                    event = Event::Flaps_4;
-                    break;
-                default:
-                    break;
-                }
-                res = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(event), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-#ifdef DEBUG
-                qDebug() << "SimConnectEvent::requestFlapsHandleIndex: directly setting flaps handle index to:" << m_requestedFlapsIndex
-                         << "Previous index:" << m_currentFlapsIndex
-                         << "Event ID:" << Enum::underly(event)
-                         << "Success:" << (res == S_OK);
-#endif
-                if (res == S_OK) {
-                    m_currentFlapsIndex = m_requestedFlapsIndex;
-                }
-            } else if (m_currentFlapsIndex != InvalidFlapsIndex) {
+            if (m_currentFlapsIndex != InvalidFlapsIndex) {
                 event = m_requestedFlapsIndex > m_currentFlapsIndex ? Event::Flaps_Increase : Event::Flaps_Decrease;
                 const int steps = std::abs(m_currentFlapsIndex - m_requestedFlapsIndex);
                 for (int step = 0; step < steps; ++step) {
@@ -196,6 +171,13 @@ public:
             ok = requestFlapsHandleIndex(m_requestedFlapsIndex);
         }
         return ok;
+    }
+
+    inline bool setGear(std::int32_t gearHandlePosition)
+    {
+        // Event values have opposite sign than recorded simulation variable values
+        HRESULT res = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::GearSet), gearHandlePosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        return res == S_OK;
     }
 
     inline void reset() {

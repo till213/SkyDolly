@@ -357,7 +357,6 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     const PrimaryFlightControlData &primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(currentTimestamp, access);
                     if (!primaryFlightControlData.isNull()) {
                         if (isUserAircraft) {
-                            // Event values have opposite sign than recorded simulation variable values
                             ok = d->simConnectEvent->setPrimaryFlightControls(primaryFlightControlData);
                         } else {
                             SimConnectPrimaryFlightControl simConnectPrimaryFlightControl;
@@ -397,6 +396,11 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                                                                             objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                                             sizeof(SimConnectAircraftHandle), &simConnectAircraftHandle);
                         ok = res == S_OK;
+                        if (isUserAircraft) {
+                            if (ok) {
+                                ok = d->simConnectEvent->setGear(simConnectAircraftHandle.gearHandlePosition);
+                            }
+                        }
                     }
                 }
 
@@ -753,9 +757,9 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: PAUSE event:" << evt->dwData;
 #endif
             // It seems that the pause event is currently only triggered by selecting "Pause Simulation"
-            // in the developer mode (FS 2020), but neither when "active pause" is selected nor when ESC
+            // in the developer mode (MSFS), but neither when "active pause" is selected nor when ESC
             // (in-game meu") is entered; also, we ignore the first "unpause" event (which is always
-            // sent by FS 2020 after the initial connect), as we explicitly pause the replay after having
+            // sent by MSFS after the initial connect), as we explicitly pause the replay after having
             // loaded a flight: we simply do this by assuming that no "unpause" would normally be sent
             // at the very beginning (timestamp 0) of the replay
             if (evt->dwData > 0 || skyConnect->getCurrentTimestamp() > 0) {
