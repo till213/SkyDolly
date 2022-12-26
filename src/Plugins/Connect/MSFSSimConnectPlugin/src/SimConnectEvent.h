@@ -58,11 +58,6 @@ public:
         ElevatorSet,
         RudderSet,
         // Secondary flight controls
-        Flaps_Up,
-        Flaps_1,
-        Flaps_2,
-        Flaps_3,
-        Flaps_4,
         Flaps_Decrease,
         Flaps_Increase,
         GearSet
@@ -90,11 +85,6 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::ElevatorSet), "ELEVATOR_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::RudderSet), "RUDDER_SET");
         // Secondary flight controls
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Flaps_Up), "FLAPS_UP");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Flaps_1), "FLAPS_1");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Flaps_2), "FLAPS_2");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Flaps_3), "FLAPS_3");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Flaps_4), "FLAPS_4");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Flaps_Decrease), "FLAPS_DECR");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Flaps_Increase), "FLAPS_INCR");
         // Handles
@@ -110,22 +100,13 @@ public:
         return res == S_OK;
     }
 
-    inline bool requestFlapsHandleIndex(std::int32_t index) {
-        // Implementation note:
-        // Trying to send event "FLAPS_4" results in a server exception 1:
-        //   "server exception 1 happened: sender ID: 22083 index: 2 data: 24"
-        // (Exception: "Error") - e.g. both with stock A320neo and Boeing 747
-        //
-        // So for now we limit to "FLAPS_3" and set all other flap handle indices
-        // with incremental "flaps up/down" events
-        static constexpr int MaxFlapIndex {Enum::underly(Event::Flaps_3) - Enum::underly(Event::Flaps_Up)};
-        Event event {Event::Flaps_Up};
+    inline bool requestFlapsHandleIndex(std::int32_t index)
+    {
         HRESULT res {S_OK};
-
         m_requestedFlapsIndex = index;
         if (m_requestedFlapsIndex != m_currentFlapsIndex) {
             if (m_currentFlapsIndex != InvalidFlapsIndex) {
-                event = m_requestedFlapsIndex > m_currentFlapsIndex ? Event::Flaps_Increase : Event::Flaps_Decrease;
+                Event event = m_requestedFlapsIndex > m_currentFlapsIndex ? Event::Flaps_Increase : Event::Flaps_Decrease;
                 const int steps = std::abs(m_currentFlapsIndex - m_requestedFlapsIndex);
                 for (int step = 0; step < steps; ++step) {
                     res |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(event), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
@@ -151,7 +132,6 @@ public:
 #ifdef DEBUG
                 qDebug() << "SimConnectEvent::requestFlapsHandleIndex: requesting current flaps index"
                          << "Current index:" << m_currentFlapsIndex
-                         << "Event ID:" << Enum::underly(event)
                          << "Success:" << (res == S_OK);
 #endif
             }
@@ -159,7 +139,8 @@ public:
         return res == S_OK;
     }
 
-    inline bool setCurrentFlapsHandleIndex(std::int32_t index) {
+    inline bool setCurrentFlapsHandleIndex(std::int32_t index)
+    {
         bool ok {true};
         m_pendingFlapsIndexRequest = false;
 #ifdef DEBUG
