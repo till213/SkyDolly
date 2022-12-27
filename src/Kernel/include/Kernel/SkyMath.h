@@ -33,11 +33,12 @@
 
 #include <GeographicLib/Geodesic.hpp>
 
-#include <QtMath>
 #include <QtGlobal>
 #ifdef DEBUG
 #include <QDebug>
 #endif
+
+#include "Convert.h"
 
 /*!
  * Mathematical functions for interpolation and geodesic math.
@@ -71,22 +72,6 @@ namespace SkyMath
     /*! Default threshold beyond with two coordinates are considered to be different [meters] */
     constexpr double DefaultDistanceThreshold = 50.0;
 
-    inline double degreesToRadians(double degree) {
-        return degree * M_PI / 180.0;
-    };
-
-    inline double radiansToDegrees(double radians) {
-        return radians * 180.0 / M_PI;
-    };
-
-    inline double feetToMeters(double feet) {
-        return feet / 3.2808;
-    };
-
-    inline double metersToFeet(double meters) {
-        return meters * 3.2808;
-    };
-
     /*!
      * Returns the sign of \c val.
      *
@@ -94,7 +79,7 @@ namespace SkyMath
      *         0; +1 else
      */
     template <typename T>
-    int sgn(T val) noexcept
+    int constexpr sgn(T val) noexcept
     {
         return (T(0) < val) - (val < T(0));
     }
@@ -127,7 +112,7 @@ namespace SkyMath
      * the normalised values are then suitable for interpolation.
      */
     template <typename T>
-    T normalise180(T y0, T y1) noexcept
+    T constexpr normalise180(T y0, T y1) noexcept
     {
         T y1n;
         T s0 = sgn(y0);
@@ -168,7 +153,7 @@ namespace SkyMath
      *        negative values create a bias towards the second segment
      */
     template <typename T>
-    T interpolateHermite(
+    constexpr T interpolateHermite(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -193,7 +178,7 @@ namespace SkyMath
     }
 
     template <typename T>
-    T interpolateCatmullRom(
+    constexpr T interpolateCatmullRom(
         T y0, T y1, T y2, T y3,
         T mu) noexcept
     {
@@ -215,7 +200,7 @@ namespace SkyMath
      * \sa #interpolateHermite
      */
     template <typename T>
-    T interpolateHermite180(
+    constexpr T interpolateHermite180(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -245,7 +230,7 @@ namespace SkyMath
      * \sa #interpolateHermite
      */
     template <typename T>
-    T interpolateHermite360(
+    constexpr T interpolateHermite360(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -265,7 +250,7 @@ namespace SkyMath
      *        the interpolation factor in [0.0, 1.0]
      */
     template <typename T, typename U>
-    T interpolateLinear(T p1, T p2, U mu) noexcept
+    constexpr T interpolateLinear(T p1, T p2, U mu) noexcept
     {
         if (std::is_integral<T>::value) {
             return p1 + std::round(mu * (U(p2) - U(p1)));
@@ -281,7 +266,7 @@ namespace SkyMath
      *        the normalised position value in the range [-1.0, 1.0]
      * \return the mapped discrete, signed 16bit value [PositionMin16, PositionMax16] (note: symmetric range)
      */
-    inline std::int16_t fromNormalisedPosition(double position) noexcept
+    inline constexpr std::int16_t fromNormalisedPosition(double position) noexcept
     {
         return static_cast<std::int16_t>(std::round(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
     }
@@ -293,7 +278,7 @@ namespace SkyMath
      *        the discrete signed 16bit position value in the range [PositionMin16, PositionMax16] (note: symmetric range)
      * \return the position mapped onto a normalised double value [-1.0, 1.0]
      */
-    inline double toNormalisedPosition(std::int16_t position16) noexcept
+    inline constexpr double toNormalisedPosition(std::int16_t position16) noexcept
     {
         return 2.0 * (static_cast<double>(position16) - PositionMin16) / PositionRange16 - 1.0;
     }
@@ -305,7 +290,7 @@ namespace SkyMath
      *        the percent value in the range [0.0, 100.0]
      * \return the mapped discrete, unsigned 8bit value [0, PercentMax8]
      */
-    inline std::uint8_t fromPercent(double percent) noexcept
+    inline constexpr std::uint8_t fromPercent(double percent) noexcept
     {
         return static_cast<std::uint8_t>(std::round(percent * PercentRange8 / 100.0));
     }
@@ -317,7 +302,7 @@ namespace SkyMath
      *        the discrete unsigned 8bit percent value in the range [0, PercentMax8]
      * \return the percent mapped onto a double value [0, 100.0]
      */
-    inline double toPercent(std::uint8_t percent8) noexcept
+    inline constexpr double toPercent(std::uint8_t percent8) noexcept
     {
         return static_cast<double>(100.0 * percent8 / PercentRange8);
     }
@@ -421,7 +406,7 @@ namespace SkyMath
      *        positive pitch angle
      * \return the eximated pitch angle [-90, 90] [degrees]
      */
-    inline double approximatePitch(double sphericalDistance, double deltaAltitude) noexcept
+    inline constexpr double approximatePitch(double sphericalDistance, double deltaAltitude) noexcept
     {
         double pitch {0.0};
         if (!qFuzzyIsNull(deltaAltitude)) {
@@ -434,7 +419,7 @@ namespace SkyMath
                 pitch = 0.0;
             }
         }
-        return pitch * 180.0 / M_PI;
+        return Convert::leftAileronDeflection(pitch);
     }
 
     /*!
@@ -458,7 +443,7 @@ namespace SkyMath
      * \sa #interpolateHermite360
      * \sa https://forum.arduino.cc/t/calculating-heading-distance-and-direction/92144/6
      */
-    inline double headingChange(double currentHeading, double targetHeading) noexcept
+    inline constexpr double headingChange(double currentHeading, double targetHeading) noexcept
     {
         // The denormalizedHeading is always larger or equal than the targetHeading
         const double denormalizedHeading = currentHeading >= targetHeading ? currentHeading : currentHeading + 360.0;
@@ -499,9 +484,9 @@ namespace SkyMath
      *         for "right turns"; positive values for "left turns"
      * \sa headingChange
      */
-    inline double bankAngle(double headingChange, double maxBankAngleForHeadingChange, double maxBankAngle) noexcept
+    inline constexpr double bankAngle(double headingChange, double maxBankAngleForHeadingChange, double maxBankAngle) noexcept
     {
-        return std::min((std::abs(headingChange) / maxBankAngleForHeadingChange) * maxBankAngle, maxBankAngle) * SkyMath::sgn(headingChange);
+        return std::min((std::abs(headingChange) / maxBankAngleForHeadingChange) * maxBankAngle, maxBankAngle) * sgn(headingChange);
     }
 
     /*!
