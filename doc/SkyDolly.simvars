@@ -21,8 +21,12 @@ ROTATION ACCELERATION BODY Z,radians per second squared,False,  0
 YOKE X POSITION,position,False,  0.0
 YOKE Y POSITION,position,False,  0.0
 RUDDER POSITION,position,False,  0.0
+RUDDER DEFLECTION,radians,False,  0.0
 ELEVATOR POSITION,position,False,  0.0
+ELEVATOR DEFLECTION,radians,False,  0.0
 AILERON POSITION,position,False,  0.0
+AILERON LEFT DEFLECTION,radians,False,  0.0
+AILERON RIGHT DEFLECTION,radians,False,  0.0
 GENERAL ENG THROTTLE LEVER POSITION:1,position,False,  0.0
 GENERAL ENG THROTTLE LEVER POSITION:2,position,False,  0.0
 GENERAL ENG THROTTLE LEVER POSITION:3,position,False,  0.0

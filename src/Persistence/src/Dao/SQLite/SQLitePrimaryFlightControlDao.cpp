@@ -61,12 +61,20 @@ bool SQLitePrimaryFlightControlDao::add(std::int64_t aircraftId, const PrimaryFl
         "insert into primary_flight_control ("
         "  aircraft_id,"
         "  timestamp,"
+        "  rudder_deflection,"
+        "  elevator_deflection,"
+        "  aileron_left_deflection,"
+        "  aileron_right_deflection,"
         "  rudder_position,"
         "  elevator_position,"
         "  aileron_position"
         ") values ("
         " :aircraft_id,"
         " :timestamp,"
+        " :rudder_deflection,"
+        " :elevator_deflection,"
+        " :aileron_left_deflection,"
+        " :aileron_right_deflection,"
         " :rudder_position,"
         " :elevator_position,"
         " :aileron_position"
@@ -75,6 +83,10 @@ bool SQLitePrimaryFlightControlDao::add(std::int64_t aircraftId, const PrimaryFl
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     query.bindValue(":timestamp", QVariant::fromValue(primaryFlightControlData.timestamp));
+    query.bindValue(":rudder_deflection", primaryFlightControlData.rudderDeflection);
+    query.bindValue(":elevator_deflection", primaryFlightControlData.elevatorDeflection);
+    query.bindValue(":aileron_left_deflection", primaryFlightControlData.leftAileronDeflection);
+    query.bindValue(":aileron_right_deflection", primaryFlightControlData.rightAileronDeflection);
     query.bindValue(":rudder_position", primaryFlightControlData.rudderPosition);
     query.bindValue(":elevator_position", primaryFlightControlData.elevatorPosition);
     query.bindValue(":aileron_position", primaryFlightControlData.aileronPosition);
@@ -111,6 +123,10 @@ std::vector<PrimaryFlightControlData> SQLitePrimaryFlightControlDao::getByAircra
         }
         QSqlRecord record = query.record();
         const int timestampIdx = record.indexOf("timestamp");
+        const int rudderDeflectionIdx = record.indexOf("rudder_deflection");
+        const int elevatorDeflectionIdx = record.indexOf("elevator_deflection");
+        const int aileronLeftDeflectionIdx = record.indexOf("aileron_left_deflection");
+        const int aileronRightDeflectionIdx = record.indexOf("aileron_right_deflection");
         const int rudderPositionIdx = record.indexOf("rudder_position");
         const int elevatorPositionIdx = record.indexOf("elevator_position");
         const int aileronPositionIdx = record.indexOf("aileron_position");
@@ -119,9 +135,13 @@ std::vector<PrimaryFlightControlData> SQLitePrimaryFlightControlDao::getByAircra
             PrimaryFlightControlData data;
 
             data.timestamp = query.value(timestampIdx).toLongLong();
-            data.rudderPosition = query.value(rudderPositionIdx).toInt();
-            data.elevatorPosition = query.value(elevatorPositionIdx).toInt();
-            data.aileronPosition = query.value(aileronPositionIdx).toInt();
+            data.rudderDeflection = query.value(rudderDeflectionIdx).toFloat();
+            data.elevatorDeflection = query.value(elevatorDeflectionIdx).toFloat();
+            data.leftAileronDeflection = query.value(aileronLeftDeflectionIdx).toFloat();
+            data.rightAileronDeflection = query.value(aileronRightDeflectionIdx).toFloat();
+            data.rudderPosition = static_cast<std::int16_t>(query.value(rudderPositionIdx).toInt());
+            data.elevatorPosition = static_cast<std::int16_t>(query.value(elevatorPositionIdx).toInt());
+            data.aileronPosition = static_cast<std::int16_t>(query.value(aileronPositionIdx).toInt());
 
             primaryFlightControlData.push_back(std::move(data));
         }

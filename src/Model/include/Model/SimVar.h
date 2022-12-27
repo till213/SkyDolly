@@ -46,9 +46,13 @@ namespace SimVar
     constexpr const char *RotationVelocityBodyY = "Rotation Velocity Body Y";
     constexpr const char *RotationVelocityBodyZ = "Rotation Velocity Body Z";
 
+    constexpr const char *AileronLeftDeflection = "Aileron Left Deflection";
+    constexpr const char *AileronRightDeflection = "Aileron Right Deflection";
+    constexpr const char *ElevatorDeflection = "Elevator Deflection";
+    constexpr const char *RudderDeflection = "Rudder Deflection";
     constexpr const char *RudderPosition = "Rudder Position";
     constexpr const char *ElevatorPosition = "Elevator Position";
-    constexpr const char *AileronPosition = "Aileron Position";
+    constexpr const char *AileronPosition = "Aileron Position";    
 
     constexpr const char *ThrottleLeverPosition1 = "General Eng Throttle Lever Position:1";
     constexpr const char *ThrottleLeverPosition2 = "General Eng Throttle Lever Position:2";

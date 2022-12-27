@@ -30,6 +30,7 @@
 #include <QColor>
 #include <QPalette>
 
+#include <Kernel/Convert.h>
 #include <Kernel/Unit.h>
 #include <Model/SimVar.h>
 #include <Model/Logbook.h>
@@ -77,6 +78,10 @@ void PrimaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableDa
     QString colorName;
 
     if (!primaryFlightControlData.isNull()) {
+        ui->rudderDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::leftAileronDeflection(primaryFlightControlData.rudderDeflection)));
+        ui->elevatorDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::leftAileronDeflection(primaryFlightControlData.elevatorDeflection)));
+        ui->leftAileronDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::leftAileronDeflection(primaryFlightControlData.leftAileronDeflection)));
+        ui->rightAileronDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::leftAileronDeflection(primaryFlightControlData.rightAileronDeflection)));
         ui->rudderLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.rudderPosition));
         ui->elevatorLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.elevatorPosition));
         ui->aileronLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.aileronPosition));
@@ -87,6 +92,10 @@ void PrimaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableDa
     }
 
     const QString css{QString("color: %1;").arg(colorName)};
+    ui->rudderDeflectionLineEdit->setStyleSheet(css);
+    ui->elevatorDeflectionLineEdit->setStyleSheet(css);
+    ui->leftAileronDeflectionLineEdit->setStyleSheet(css);
+    ui->rightAileronDeflectionLineEdit->setStyleSheet(css);
     ui->rudderLineEdit->setStyleSheet(css);
     ui->elevatorLineEdit->setStyleSheet(css);
     ui->aileronLineEdit->setStyleSheet(css);
@@ -96,6 +105,10 @@ void PrimaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableDa
 
 void PrimaryFlightControlWidget::initUi()
 {
+    ui->rudderDeflectionLineEdit->setToolTip(SimVar::RudderDeflection);
+    ui->elevatorDeflectionLineEdit->setToolTip(SimVar::ElevatorDeflection);
+    ui->leftAileronDeflectionLineEdit->setToolTip(SimVar::AileronLeftDeflection);
+    ui->rightAileronDeflectionLineEdit->setToolTip(SimVar::AileronRightDeflection);
     ui->rudderLineEdit->setToolTip(SimVar::RudderPosition);
     ui->elevatorLineEdit->setToolTip(SimVar::ElevatorPosition);
     ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);

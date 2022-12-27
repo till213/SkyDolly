@@ -817,3 +817,20 @@ insert into aircraft_type values
 @migr(id = "0ec16dd8-c7b2-47fc-8d1f-bf80fb8dfb9e", descn = "Update application version to 0.13", step = 1)
 update metadata
 set app_version = '0.13.0';
+
+@migr(id = "9c9c0be5-4868-4299-9504-8b3a1861094f", descn = "Add primary control animation columns", step_cnt = 2)
+alter table primary_flight_control add column rudder_deflection real;
+alter table primary_flight_control add column elevator_deflection real;
+alter table primary_flight_control add column aileron_left_deflection real;
+alter table primary_flight_control add column aileron_right_deflection real;
+
+@migr(id = "9c9c0be5-4868-4299-9504-8b3a1861094f", descn = "Update control animation columns, based on A320neo maximum deflection angles", step = 2)
+update primary_flight_control
+set    rudder_deflection = (rudder_position / 32767.0) * 0.4363,
+       elevator_deflection = case when elevator_position > 0 then (elevator_position / 32767.0) * 0.2793 else (elevator_position / 32767.0) * 0.2007 end,
+       aileron_left_deflection = (aileron_position / 32767.0) * 0.2967,
+       aileron_right_deflection = (aileron_position / 32767.0) * 0.2967;
+
+@migr(id = "663032d8-c8a4-43ff-b126-0d964d73bf23", descn = "Update application version to 0.14", step = 1)
+update metadata
+set app_version = '0.14.0';

@@ -72,6 +72,10 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t t
         }
 
         if (p1 != nullptr) {
+            m_currentData.leftAileronDeflection = SkyMath::interpolateLinear(p1->leftAileronDeflection, p2->leftAileronDeflection, tn);
+            m_currentData.rightAileronDeflection = SkyMath::interpolateLinear(p1->rightAileronDeflection, p2->rightAileronDeflection, tn);
+            m_currentData.elevatorDeflection = SkyMath::interpolateLinear(p1->elevatorDeflection, p2->elevatorDeflection, tn);
+            m_currentData.rudderDeflection = SkyMath::interpolateLinear(p1->rudderDeflection, p2->rudderDeflection, tn);
             m_currentData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
             m_currentData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
             m_currentData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);

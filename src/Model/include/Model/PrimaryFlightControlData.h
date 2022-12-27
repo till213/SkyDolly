@@ -35,6 +35,11 @@
 
 struct MODEL_API PrimaryFlightControlData final : public TimeVariableData
 {
+    // Radians
+    float rudderDeflection {0.0f};
+    float elevatorDeflection {0.0f};
+    float leftAileronDeflection {0.0f};
+    float rightAileronDeflection {0.0f};
     std::int16_t rudderPosition {0};
     std::int16_t elevatorPosition {0};
     std::int16_t aileronPosition {0};

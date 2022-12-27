@@ -38,14 +38,23 @@
 #pragma pack(push, 1)
 struct SimConnectPrimaryFlightControl
 {
+    // Radians
+    float rudderDeflection {0.0f};
+    float elevatorDeflection {0.0f};
+    float aileronLeftDeflection {0.0f};
+    float aileronRightDeflection {0.0f};
     float rudderPosition {0.0f};
     float elevatorPosition {0.0f};
-    float aileronPosition {0.0f};
+    float aileronPosition {0.0f};    
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {
         PrimaryFlightControlData primaryFlightControlData;
 
+        primaryFlightControlData.rudderDeflection = rudderDeflection;
+        primaryFlightControlData.elevatorDeflection = elevatorDeflection;
+        primaryFlightControlData.leftAileronDeflection = aileronLeftDeflection;
+        primaryFlightControlData.rightAileronDeflection = aileronRightDeflection;
         primaryFlightControlData.rudderPosition = SkyMath::fromNormalisedPosition(rudderPosition);
         primaryFlightControlData.elevatorPosition = SkyMath::fromNormalisedPosition(elevatorPosition);
         primaryFlightControlData.aileronPosition = SkyMath::fromNormalisedPosition(aileronPosition);
@@ -55,6 +64,10 @@ struct SimConnectPrimaryFlightControl
 
     inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
     {
+        rudderDeflection = primaryFlightControlData.rudderDeflection;
+        elevatorDeflection = primaryFlightControlData.elevatorDeflection;
+        aileronLeftDeflection = primaryFlightControlData.leftAileronDeflection;
+        aileronRightDeflection = primaryFlightControlData.rightAileronDeflection;
         rudderPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.rudderPosition));
         elevatorPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.elevatorPosition));
         aileronPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.aileronPosition));
