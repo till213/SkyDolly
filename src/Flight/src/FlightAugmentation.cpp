@@ -269,10 +269,10 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
         engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(1.0);
         engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(1.0);
         engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(1.0);
-        engineData.mixtureLeverPosition1 = SkyMath::fromNormalisedPosition(1.0);
-        engineData.mixtureLeverPosition2 = SkyMath::fromNormalisedPosition(1.0);
-        engineData.mixtureLeverPosition3 = SkyMath::fromNormalisedPosition(1.0);
-        engineData.mixtureLeverPosition4 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(100.0);
         // The start procedure is the first procedure, and elements
         // are inserted chronologically from the start, so we can
         // use upsertLast (instead of the more general upsert)
@@ -299,10 +299,10 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
         engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.80);
         engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.80);
         // Mixture down to 85%
-        engineData.mixtureLeverPosition1 = SkyMath::fromNormalisedPosition(0.85);
-        engineData.mixtureLeverPosition2 = SkyMath::fromNormalisedPosition(0.85);
-        engineData.mixtureLeverPosition3 = SkyMath::fromNormalisedPosition(0.85);
-        engineData.mixtureLeverPosition4 = SkyMath::fromNormalisedPosition(0.85);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(85.0);
         engine.upsertLast(engineData);
 
         // 5 minutes
@@ -324,10 +324,10 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
         engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.80);
         engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.80);
         // Mixture down to 75%
-        engineData.mixtureLeverPosition1 = SkyMath::fromNormalisedPosition(0.75);
-        engineData.mixtureLeverPosition2 = SkyMath::fromNormalisedPosition(0.75);
-        engineData.mixtureLeverPosition3 = SkyMath::fromNormalisedPosition(0.75);
-        engineData.mixtureLeverPosition4 = SkyMath::fromNormalisedPosition(0.75);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(75.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(75.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(75.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(75.0);
         engine.upsertLast(engineData);
 
     }
@@ -448,10 +448,10 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.60);
         engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.60);
         // Mixture up to 85%
-        engineData.mixtureLeverPosition1 = SkyMath::fromNormalisedPosition(0.85);
-        engineData.mixtureLeverPosition2 = SkyMath::fromNormalisedPosition(0.85);
-        engineData.mixtureLeverPosition3 = SkyMath::fromNormalisedPosition(0.85);
-        engineData.mixtureLeverPosition4 = SkyMath::fromNormalisedPosition(0.85);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(85.0);
         engine.upsert(engineData);
 
         // t minus 2 minutes
@@ -474,10 +474,10 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.40);
         engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.40);
         // Mixture up to 100%
-        engineData.mixtureLeverPosition1 = SkyMath::fromNormalisedPosition(1.0);
-        engineData.mixtureLeverPosition2 = SkyMath::fromNormalisedPosition(1.0);
-        engineData.mixtureLeverPosition3 = SkyMath::fromNormalisedPosition(1.0);
-        engineData.mixtureLeverPosition4 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(100.0);
         engine.upsert(engineData);
 
         // At end
@@ -500,10 +500,10 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(0.0);
         engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.0);
         engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.0);
-        engineData.mixtureLeverPosition1 = SkyMath::fromNormalisedPosition(1.0);
-        engineData.mixtureLeverPosition2 = SkyMath::fromNormalisedPosition(1.0);
-        engineData.mixtureLeverPosition3 = SkyMath::fromNormalisedPosition(1.0);
-        engineData.mixtureLeverPosition4 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(100.0);
         engine.upsert(engineData);
     }
 
