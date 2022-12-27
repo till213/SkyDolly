@@ -37,10 +37,10 @@ void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle) noexce
 {
     // Aircraft info
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::Title, nullptr, ::SIMCONNECT_DATATYPE_STRING256);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::ATCId, NULL, SIMCONNECT_DATATYPE_STRING32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::ATCAirline, NULL, SIMCONNECT_DATATYPE_STRING64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::ATCFlightNumber, NULL, SIMCONNECT_DATATYPE_STRING8);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::Category, NULL, SIMCONNECT_DATATYPE_STRING256);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::ATCId, nullptr, SIMCONNECT_DATATYPE_STRING32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::ATCAirline, nullptr, SIMCONNECT_DATATYPE_STRING64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::ATCFlightNumber, nullptr, SIMCONNECT_DATATYPE_STRING8);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::Category, nullptr, SIMCONNECT_DATATYPE_STRING256);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::PlaneAltAboveGround, "Feet", SIMCONNECT_DATATYPE_FLOAT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::SimOnGround, "Bool", ::SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlightInformation), SimVar::AirspeedTrue, "Knots", ::SIMCONNECT_DATATYPE_INT32);
