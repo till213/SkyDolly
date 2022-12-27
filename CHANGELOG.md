@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.13.1
+
+### Bug Fixes
+- The mixture lever position is now properly initialised from "percent" (instead of "position") values:
+  * during "flight augmentation" (importing flights from e.g. flightradar24 or flightaware)
+  * during IGC import
+
 ## 0.13.0
 
 ### New Features

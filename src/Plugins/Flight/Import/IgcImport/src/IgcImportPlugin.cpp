@@ -177,10 +177,11 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
                     engineData.propellerLeverPosition2 = SkyMath::fromPosition(position);
                     engineData.propellerLeverPosition3 = SkyMath::fromPosition(position);
                     engineData.propellerLeverPosition4 = SkyMath::fromPosition(position);
-                    engineData.mixtureLeverPosition1 = SkyMath::fromPosition(1.0);
-                    engineData.mixtureLeverPosition2 = SkyMath::fromPosition(1.0);
-                    engineData.mixtureLeverPosition3 = SkyMath::fromPosition(1.0);
-                    engineData.mixtureLeverPosition4 = SkyMath::fromPosition(1.0);
+                    engineData.mixtureLeverPosition1 = SkyMath::fromPercent(100.0);
+                    engineData.mixtureLeverPosition2 = SkyMath::fromPercent(100.0);
+                    engineData.mixtureLeverPosition3 = SkyMath::fromPercent(100.0);
+                    engineData.mixtureLeverPosition4 = SkyMath::fromPercent(100.0);
+
                     // Elements are inserted chronologically from the start (and no other engine
                     // data exist yet), so we can use upsertLast (instead of the more general upsert)
                     engine.upsertLast(engineData);
