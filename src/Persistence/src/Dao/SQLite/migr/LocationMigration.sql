@@ -394,3 +394,13 @@ where  sym_id = 'QA';
 @migr(id = "55a04d46-fc38-445a-8967-f84c96aa41bb", descn = "Update application version to 0.13", step = 1)
 update metadata
 set app_version = '0.13.0';
+
+@migr(id = "7620ca47-cbd3-4718-9ea9-0d701236aa58", descn = "Add new location categories", step = 1)
+insert into enum_location_category(sym_id, name, desc)
+values
+  ('CR', 'Carrier', 'Carrier'),
+  ('OR', 'Oil Rig', 'Oil rig');
+
+@migr(id = "b7c620c9-5ffe-4fdc-a120-cba323e327d0", descn = "Update application version to 0.14", step = 1)
+update metadata
+set app_version = '0.14.0';

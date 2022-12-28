@@ -90,6 +90,7 @@ private:
         symIdToType["LM"] = "Landform";
         symIdToType["LH"] = "Lighthouse";
         symIdToType["MO"] = "Mountain";
+        symIdToType["OR"] = "Oil Rig";
         symIdToType["OT"] = ::OtherType;
         symIdToType["PA"] = "Park";
         symIdToType["PO"] = "POI";

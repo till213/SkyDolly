@@ -94,6 +94,7 @@ private:
         typeToSymId["marker"] = "PO";
         typeToSymId["mountain"] = "MO";
         typeToSymId["other"] = "OT";
+        typeToSymId["oil rig"] = "OR";
         typeToSymId["park"] = "PA";
         typeToSymId["pin"] = "PO";
         typeToSymId["poi"] = "PO";
