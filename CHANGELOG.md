@@ -3,7 +3,10 @@
 ## 0.14.0
 
 ### Improvements
-- Primary flight controls are now event-based replayed
+- Improved replay of primary flight controls, specifically with 3rd party aircraft
+
+### Bug Fixes
+- Fixed a potential crash ("illegal access to last data element that might not yet have been recorded") that might occur if starting a recording with the Simulation Variables dialog open
 
 ### Under The Hood
 - Small performance improvements

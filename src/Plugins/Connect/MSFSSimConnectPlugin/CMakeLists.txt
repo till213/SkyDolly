@@ -11,26 +11,27 @@ add_definitions(-DNOMINMAX)
 
 target_sources(${MODULE_NAME}
     PRIVATE
-        src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp
+
+        src/SimVar/SimConnectPositionRequest.h src/SimVar/SimConnectPositionRequest.cpp
+        src/SimVar/SimConnectPositionReply.h src/SimVar/SimConnectPositionReply.cpp
+        src/SimVar/SimConnectEngineReply.h src/SimVar/SimConnectEngineReply.cpp
+        src/SimVar/SimConnectEngineRequest.h src/SimVar/SimConnectEngineRequest.cpp
+        src/SimVar/SimConnectPrimaryFlightControlAnimation.h
+        src/SimVar/SimConnectPrimaryFlightControl.h
+        src/SimVar/SimConnectPrimaryFlightControlReply.h
+        src/SimVar/SimConnectSecondaryFlightControl.h src/SimVar/SimConnectSecondaryFlightControl.cpp
+        src/SimVar/SimConnectAircraftHandle.h src/SimVar/SimConnectAircraftHandle.cpp
+        src/SimVar/SimConnectLight.h src/SimVar/SimConnectLight.cpp
+        src/SimVar/SimConnectAircraftInfo.h src/SimVar/SimConnectAircraftInfo.cpp
+        src/SimVar/SimConnectFlightPlan.h src/SimVar/SimConnectFlightPlan.cpp
+        src/SimVar/SimConnectSimulationTime.h src/SimVar/SimConnectSimulationTime.cpp
+        src/SimVar/SimConnectLocation.h src/SimVar/SimConnectLocation.cpp
+        src/SimVar/SimConnectVariables.h src/SimVar/SimConnectVariables.cpp
+        src/Event/EventWidget.h src/Event/EventWidget.cpp
+        src/Event/SimConnectEvent.h
         src/SimConnectType.h
-        src/SimConnectPositionRequest.h src/SimConnectPositionRequest.cpp
-        src/SimConnectPositionReply.h src/SimConnectPositionReply.cpp
-        src/SimConnectEngineReply.h src/SimConnectEngineReply.cpp
-        src/SimConnectEngineRequest.h src/SimConnectEngineRequest.cpp
-        src/SimConnectPrimaryFlightControlAnimation.h
-        src/SimConnectPrimaryFlightControl.h
-        src/SimConnectPrimaryFlightControlReply.h
-        src/SimConnectSecondaryFlightControl.h src/SimConnectSecondaryFlightControl.cpp
-        src/SimConnectAircraftHandle.h src/SimConnectAircraftHandle.cpp
-        src/SimConnectLight.h src/SimConnectLight.cpp
-        src/SimConnectAircraftInfo.h src/SimConnectAircraftInfo.cpp
-        src/SimConnectFlightPlan.h src/SimConnectFlightPlan.cpp
-        src/SimConnectSimulationTime.h src/SimConnectSimulationTime.cpp
-        src/SimConnectLocation.h src/SimConnectLocation.cpp
-        src/SimConnectVariables.h src/SimConnectVariables.cpp
-        src/SimConnectAi.h src/SimConnectAi.cpp
-        src/EventWidget.h src/EventWidget.cpp
-        src/SimConnectEvent.h
+        src/SimConnectAi.h src/SimConnectAi.cpp        
+        src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp
         src/MSFSSimConnectPlugin.json
 )
 target_link_libraries(${MODULE_NAME}
@@ -41,6 +42,10 @@ target_link_libraries(${MODULE_NAME}
         Sky::Kernel
         Sky::Model
         Sky::PluginManager
+)
+target_include_directories(${MODULE_NAME}
+    PRIVATE
+        src
 )
 
 # Copy SimConnect.dll to bin directory
