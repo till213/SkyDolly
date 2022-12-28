@@ -28,8 +28,8 @@
 #include <windows.h>
 
 #include <Kernel/Enum.h>
-#include <Kernel/SkyMath.h>
 #include <Model/PrimaryFlightControlData.h>
+#include "SimConnectType.h"
 #include "SimConnectPrimaryFlightControl.h"
 #include "SimConnectPrimaryFlightControlAnimation.h"
 
@@ -46,8 +46,7 @@ struct SimConnectPrimaryFlightControlReply
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {
-        PrimaryFlightControlData primaryFlightControlData;
-        primaryFlightControlData = primaryFlightControl.toPrimaryFlightControlData();
+        PrimaryFlightControlData primaryFlightControlData = primaryFlightControl.toPrimaryFlightControlData();
         primaryFlightControlAnimation.toPrimaryFlightControlData(primaryFlightControlData);
         return primaryFlightControlData;
     }

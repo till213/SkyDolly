@@ -29,9 +29,11 @@
 
 #include <windows.h>
 
-#include <Kernel/SkyMath.h>
+#include <Kernel/Enum.h>
 #include <Model/EngineData.h>
-#include "SimConnectEngineRequest.h"
+#include "SimConnectType.h"
+#include "SimConnectEngine.h"
+#include "SimConnectEngineAnimation.h"
 
 /*!
  * Simulation variables which represent the engine (reply received from the flight simulator).
@@ -39,8 +41,10 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectEngineReply : public SimConnectEngineRequest
+struct SimConnectEngineReply
 {
+    SimConnectEngine engine;
+    SimConnectEngineAnimation engineAnimation;
     std::int32_t generalEngineCombustion1 {0};
     std::int32_t generalEngineCombustion2 {0};
     std::int32_t generalEngineCombustion3 {0};
@@ -48,34 +52,9 @@ struct SimConnectEngineReply : public SimConnectEngineRequest
 
     inline EngineData toEngineData() const noexcept
     {
-        EngineData engineData;
+        EngineData engineData = engine.toEngineData();
 
-        // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
-        //       position (std::int16_t) which supports negative values as well
-        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(throttleLeverPosition1);
-        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(throttleLeverPosition2);
-        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(throttleLeverPosition3);
-        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(throttleLeverPosition4);
-        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(propellerLeverPosition1);
-        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(propellerLeverPosition2);
-        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(propellerLeverPosition3);
-        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(propellerLeverPosition4);
-        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(mixtureLeverPosition1);
-        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(mixtureLeverPosition2);
-        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(mixtureLeverPosition3);
-        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(mixtureLeverPosition4);
-        engineData.cowlFlapPosition1 = SkyMath::fromPercent(recipEngineCowlFlapPosition1);
-        engineData.cowlFlapPosition2 = SkyMath::fromPercent(recipEngineCowlFlapPosition2);
-        engineData.cowlFlapPosition3 = SkyMath::fromPercent(recipEngineCowlFlapPosition3);
-        engineData.cowlFlapPosition4 = SkyMath::fromPercent(recipEngineCowlFlapPosition4);
-        engineData.electricalMasterBattery1 = (electricalMasterBattery1 != 0);
-        engineData.electricalMasterBattery2 = (electricalMasterBattery2 != 0);
-        engineData.electricalMasterBattery3 = (electricalMasterBattery3 != 0);
-        engineData.electricalMasterBattery4 = (electricalMasterBattery4 != 0);
-        engineData.generalEngineStarter1 = (generalEngineStarter1 != 0);
-        engineData.generalEngineStarter2 = (generalEngineStarter2 != 0);
-        engineData.generalEngineStarter3 = (generalEngineStarter3 != 0);
-        engineData.generalEngineStarter4 = (generalEngineStarter4 != 0);
+        engineAnimation.toEngineData(engineData);
         engineData.generalEngineCombustion1 = (generalEngineCombustion1 != 0);
         engineData.generalEngineCombustion2 = (generalEngineCombustion2 != 0);
         engineData.generalEngineCombustion3 = (generalEngineCombustion3 != 0);
@@ -84,7 +63,16 @@ struct SimConnectEngineReply : public SimConnectEngineRequest
         return engineData;
     }
 
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
+    {
+        SimConnectEngine::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineReply));
+        SimConnectEngineAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineReply));
+
+        ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineReply), SimVar::GeneralEngineCombustion1, "Bool", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineReply), SimVar::GeneralEngineCombustion2, "Bool", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineReply), SimVar::GeneralEngineCombustion3, "Bool", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineReply), SimVar::GeneralEngineCombustion4, "Bool", ::SIMCONNECT_DATATYPE_INT32);
+    }
 };
 #pragma pack(pop)
 

@@ -7,6 +7,7 @@
 
 ### Bug Fixes
 - Fixed a potential crash ("illegal access to last data element that might not yet have been recorded") that might occur if starting a recording with the Simulation Variables dialog open
+- Fixed a rare potential crash when closing the application and either the Flight, Simulation Variables or Statistics dialog are open
 
 ### Under The Hood
 - Small performance improvements

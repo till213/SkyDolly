@@ -64,21 +64,7 @@
 #include <Model/InitialPosition.h>
 #include <PluginManager/Connect.h>
 
-#include "SimVar/SimConnectAircraftInfo.h"
-#include "SimVar/SimConnectPositionReply.h"
-#include "SimVar/SimConnectPositionRequest.h"
-#include "SimVar/SimConnectEngineReply.h"
-#include "SimVar/SimConnectEngineRequest.h"
-#include "SimVar/SimConnectPrimaryFlightControl.h"
-#include "SimVar/SimConnectPrimaryFlightControlAnimation.h"
-#include "SimVar/SimConnectPrimaryFlightControlReply.h"
-#include "SimVar/SimConnectSecondaryFlightControl.h"
-#include "SimVar/SimConnectAircraftHandle.h"
-#include "SimVar/SimConnectLight.h"
-#include "SimVar/SimConnectFlightPlan.h"
-#include "SimVar/SimConnectSimulationTime.h"
-#include "SimVar/SimConnectLocation.h"
-#include "SimVar/SimConnectVariables.h"
+#include "SimVar/SimulationVariables.h"
 #include "Event/SimConnectEvent.h"
 #include "Event/EventWidget.h"
 #include "SimConnectType.h"
@@ -343,11 +329,11 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                 if (ok) {
                     const EngineData &engineData = aircraft.getEngine().interpolate(currentTimestamp, access);
                     if (!engineData.isNull()) {
-                        SimConnectEngineRequest simConnectEngineRequest;
-                        simConnectEngineRequest.fromEngineData(engineData);
-                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineRequest),
+                        SimConnectEngine simConnectEngine;
+                        simConnectEngine.fromEngineData(engineData);
+                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::Engine),
                                                                             objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                            sizeof(SimConnectEngineRequest), &simConnectEngineRequest);
+                                                                            sizeof(SimConnectEngine), &simConnectEngine);
                         ok = res == S_OK;
                         if (ok) {
                             ok = updateAndSendEngineEvent(objectId, engineData, access);
@@ -629,8 +615,9 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
     SimConnectPositionReply::addToDataDefinition(d->simConnectHandle);
     SimConnectPositionRequest::addToDataDefinition(d->simConnectHandle);
-    SimConnectEngineReply::addToDataDefinition(d->simConnectHandle);
-    SimConnectEngineRequest::addToDataDefinition(d->simConnectHandle);
+    SimConnectEngine::addToDataDefinition(d->simConnectHandle);
+    SimConnectEngineAnimation::addToDataDefinition(d->simConnectHandle);
+    SimConnectEngineReply::addToDataDefinition(d->simConnectHandle);    
     SimConnectPrimaryFlightControl::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControlAnimation::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControlReply::addToDataDefinition(d->simConnectHandle);
