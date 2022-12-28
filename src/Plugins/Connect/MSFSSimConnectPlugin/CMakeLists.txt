@@ -14,9 +14,9 @@ target_sources(${MODULE_NAME}
 
         src/SimVar/SimConnectPositionRequest.h src/SimVar/SimConnectPositionRequest.cpp
         src/SimVar/SimConnectPositionReply.h src/SimVar/SimConnectPositionReply.cpp
-        src/SimVar/SimConnectEngine.h
-        src/SimVar/SimConnectEngineAnimation.h
-        src/SimVar/SimConnectEngineReply.h
+        src/SimVar/SimConnectEngineCore.h
+        src/SimVar/SimConnectEngineEvent.h
+        src/SimVar/SimConnectEngineAll.h
         src/SimVar/SimConnectPrimaryFlightControlAnimation.h
         src/SimVar/SimConnectPrimaryFlightControl.h
         src/SimVar/SimConnectPrimaryFlightControlReply.h
@@ -48,6 +48,7 @@ target_link_libraries(${MODULE_NAME}
 target_include_directories(${MODULE_NAME}
     PRIVATE
         src
+        src/SimVar
 )
 
 # Copy SimConnect.dll to bin directory

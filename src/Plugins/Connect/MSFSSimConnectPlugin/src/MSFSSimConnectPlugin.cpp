@@ -75,13 +75,6 @@ namespace
 {
     constexpr const char *ConnectionName {"SkyConnect"};
     constexpr DWORD UserAirplaneRadiusMeters {0};
-
-    enum struct EngineState: int {
-        Unknown,
-        Starting,
-        Started,
-        Stopped
-    };
 }
 
 class SkyConnectPrivate
@@ -89,7 +82,6 @@ class SkyConnectPrivate
 public:
     PositionData currentPositionData;
     EngineData currentEngineData;
-    EngineState engineState {EngineState::Unknown};
     PrimaryFlightControlData currentPrimaryFlightControlData;
     SecondaryFlightControlData currentSecondaryFlightControlData;
     AircraftHandleData currentAircraftHandleData;
@@ -254,7 +246,6 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
 
 bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
 {
-    d->engineState = EngineState::Unknown;
     d->simConnectEvent->reset();
 
     // Send aircraft position every visual frame
@@ -278,7 +269,7 @@ void MSFSSimConnectPlugin::onStopReplay() noexcept
 
 void MSFSSimConnectPlugin::onSeek(std::int64_t currentTimestamp) noexcept
 {
-    d->engineState = EngineState::Unknown;
+    d->simConnectEvent->reset();
 };
 
 void MSFSSimConnectPlugin::onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
@@ -329,14 +320,21 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                 if (ok) {
                     const EngineData &engineData = aircraft.getEngine().interpolate(currentTimestamp, access);
                     if (!engineData.isNull()) {
-                        SimConnectEngine simConnectEngine;
-                        simConnectEngine.fromEngineData(engineData);
-                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::Engine),
-                                                                            objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                            sizeof(SimConnectEngine), &simConnectEngine);
-                        ok = res == S_OK;
-                        if (ok) {
-                            ok = updateAndSendEngineEvent(objectId, engineData, access);
+
+                        SimConnectEngineAll simConnectEngine(engineData);
+                        if (isUserAircraft) {
+                            const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineCore),
+                                                                                objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                                                sizeof(SimConnectEngineCore), &simConnectEngine.core);
+                            ok = res == S_OK;
+                            if (ok) {
+                                ok = d->simConnectEvent->sendEngine(simConnectEngine);
+                            }
+                        } else {
+                            const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineEvent),
+                                                                                objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                                                sizeof(SimConnectEngineEvent), &simConnectEngine.event);
+                            ok = res == S_OK;
                         }
                     }
                 }
@@ -346,7 +344,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     const PrimaryFlightControlData &primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(currentTimestamp, access);
                     if (!primaryFlightControlData.isNull()) {
                         if (isUserAircraft) {
-                            ok = d->simConnectEvent->setPrimaryFlightControls(primaryFlightControlData);
+                            ok = d->simConnectEvent->sendPrimaryFlightControls(primaryFlightControlData);
                         } else {
                             SimConnectPrimaryFlightControlAnimation simConnectPrimaryFlightControlAnimation;
                             simConnectPrimaryFlightControlAnimation.fromPrimaryFlightControlData(primaryFlightControlData);
@@ -365,7 +363,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                         SimConnectSecondaryFlightControl simConnectSecondaryFlightControl;
                         simConnectSecondaryFlightControl.fromSecondaryFlightControlData(secondaryFlightControlData);
                         if (isUserAircraft) {
-                            ok = d->simConnectEvent->requestFlapsHandleIndex(simConnectSecondaryFlightControl.flapsHandleIndex);
+                            ok = d->simConnectEvent->sendFlapsHandleIndex(simConnectSecondaryFlightControl.flapsHandleIndex);
                         } else {
                             const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControl),
                                                                                 objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
@@ -418,55 +416,6 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
         startElapsedTimer();
     }
     return ok;
-}
-
-inline bool MSFSSimConnectPlugin::updateAndSendEngineEvent(std::int64_t objectId, const EngineData &engineData, TimeVariableData::Access access) noexcept
-{
-    HRESULT result {S_OK};
-
-    if (access == TimeVariableData::Access::Seek) {
-        d->engineState = EngineState::Unknown;
-    }
-
-    switch (d->engineState) {
-    case EngineState::Starting:
-        if (engineData.hasCombustion()) {
-            d->engineState = EngineState::Started;
-        } else if (!engineData.hasEngineStarterEnabled()) {
-             // STARTING: Engine started disabled, no combustion -> STOPPED
-            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(SimConnectEvent::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-            d->engineState = EngineState::Stopped;
-        }
-        break;
-    case EngineState::Started:
-        if (!engineData.hasCombustion()) {
-            // STARTED: No combustion -> STOPPED
-            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(SimConnectEvent::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-            d->engineState = EngineState::Stopped;
-        }
-        break;
-    case EngineState::Stopped:
-        // Either general engine starter has been enabled or combustion has started -> engine start
-        // Note: apparently the engine starter can be disabled (false) and yet with an active combustion (= running engine)
-        //       specifically in the case when the aircraft has been "auto-started" (CTRL + E)
-        if (engineData.hasEngineStarterEnabled() || engineData.hasCombustion()) {
-            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(SimConnectEvent::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-            d->engineState = EngineState::Starting;
-        }
-        break;
-    default:
-        // Unknown
-        if (engineData.hasEngineStarterEnabled() || engineData.hasCombustion()) {
-            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(SimConnectEvent::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-            d->engineState = engineData.hasCombustion() ? EngineState::Started : EngineState::Starting;
-        } else {
-            result = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::underly(SimConnectEvent::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-            d->engineState = EngineState::Stopped;
-        }
-        break;
-    }
-
-    return result == S_OK;
 }
 
 bool MSFSSimConnectPlugin::isConnectedWithSim() const noexcept
@@ -615,9 +564,9 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
     SimConnectPositionReply::addToDataDefinition(d->simConnectHandle);
     SimConnectPositionRequest::addToDataDefinition(d->simConnectHandle);
-    SimConnectEngine::addToDataDefinition(d->simConnectHandle);
-    SimConnectEngineAnimation::addToDataDefinition(d->simConnectHandle);
-    SimConnectEngineReply::addToDataDefinition(d->simConnectHandle);    
+    SimConnectEngineCore::addToDataDefinition(d->simConnectHandle);
+    SimConnectEngineEvent::addToDataDefinition(d->simConnectHandle);
+    SimConnectEngineAll::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControl::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControlAnimation::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControlReply::addToDataDefinition(d->simConnectHandle);
@@ -698,8 +647,8 @@ void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexc
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftPositionReply),
                                             Enum::underly(SimConnectType::DataDefinition::PositionReply),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::Engine),
-                                            Enum::underly(SimConnectType::DataDefinition::EngineReply),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::EngineAll),
+                                            Enum::underly(SimConnectType::DataDefinition::EngineAll),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::PrimaryFlightControlReply),
                                             Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlReply),
@@ -822,11 +771,11 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             }
             break;
         }
-        case SimConnectType::DataRequest::Engine:
+        case SimConnectType::DataRequest::EngineAll:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                auto simConnectEngineReply = reinterpret_cast<const SimConnectEngineReply *>(&objectData->dwData);
-                EngineData engineData = simConnectEngineReply->toEngineData();
+                auto simConnectEngineAll = reinterpret_cast<const SimConnectEngineAll *>(&objectData->dwData);
+                EngineData engineData = simConnectEngineAll->toEngineData();
                 engineData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
                     userAircraft.getEngine().upsertLast(engineData);

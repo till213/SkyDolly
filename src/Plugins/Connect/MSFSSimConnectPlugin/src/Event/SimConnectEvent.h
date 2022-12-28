@@ -36,6 +36,7 @@
 
 #include <Kernel/Enum.h>
 #include <Model/PrimaryFlightControlData.h>
+#include "SimConnectEngineAll.h"
 #include "SimConnectType.h"
 
 class SimConnectEvent
@@ -44,15 +45,30 @@ public:
     static constexpr std::int32_t InvalidFlapsIndex {-1};
 
     enum struct Event: ::SIMCONNECT_CLIENT_EVENT_ID {
+        // Simulation
         SimStart,
         Pause,
         Crashed,
         Frame,
+        // Aircraft
         FreezeLatituteLongitude,
         FreezeAltitude,
         FreezeAttitude,
+        // Engine
+        Throttle1Set,
+        Throttle2Set,
+        Throttle3Set,
+        Throttle4Set,
+        AxisPropeller1Set,
+        AxisPropeller2Set,
+        AxisPropeller3Set,
+        AxisPropeller4Set,
+        CowlFlap1Set,
+        CowlFlap2Set,
+        CowlFlap3Set,
+        CowlFlap4Set,
         EngineAutoStart,
-        EngineAutoShutdown,
+        EngineAutoShutdown,        
         // Primary flight controls
         AileronSet,
         ElevatorSet,
@@ -63,9 +79,38 @@ public:
         GearSet
     };
 
+    enum struct EngineState: int {
+        Unknown,
+        Starting,
+        Started,
+        Stopped
+    };
+
     SimConnectEvent(::HANDLE simConnectHandle)
         : m_simConnectHandle(simConnectHandle)
     {}
+
+    /*!
+     * Converts the normalised \c value to an \em event (position) value.
+     *
+     * @param value
+     *        the normalised value to be converted [-1.0, 1.0]
+     * @return the converted \em event (position) value [-16384, 16384]
+     */
+    constexpr std::int16_t positionTo16K(double value) noexcept {
+        return static_cast<std::int16_t>(std::round(value * 16384));
+    }
+
+    /*!
+     * Converts the \c percent to an \em event (position) value.
+     *
+     * @param percent
+     *        the percent value to be converted [0, 100]
+     * @return the converted \em event (position) value [-16384, 16384]
+     */
+    constexpr std::int16_t percentTo16K(double percent) noexcept {
+        return static_cast<std::int16_t>(std::round(percent * 163.84));
+    }
 
     void setupEvents()
     {
@@ -78,6 +123,22 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FreezeLatituteLongitude), "FREEZE_LATITUDE_LONGITUDE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FreezeAltitude), "FREEZE_ALTITUDE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
+        // Engine
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Throttle1Set), "THROTTLE1_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Throttle2Set), "THROTTLE2_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Throttle3Set), "THROTTLE3_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Throttle4Set), "THROTTLE4_SET");
+
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisPropeller1Set), "AXIS_PROPELLER1_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisPropeller2Set), "AXIS_PROPELLER2_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisPropeller3Set), "AXIS_PROPELLER3_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisPropeller4Set), "AXIS_PROPELLER4_SET");
+
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::CowlFlap1Set), "COWLFLAP1_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::CowlFlap2Set), "COWLFLAP2_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::CowlFlap3Set), "COWLFLAP3_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::CowlFlap4Set), "COWLFLAP4_SET");
+
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::EngineAutoStart), "ENGINE_AUTO_START");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::EngineAutoShutdown), "ENGINE_AUTO_SHUTDOWN");
         // Primary flight controls
@@ -91,52 +152,75 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::GearSet), "GEAR_SET");
     }
 
-    inline bool setPrimaryFlightControls(const PrimaryFlightControlData &primaryFlightControlData)
+    inline bool sendEngine(const SimConnectEngineAll &simConnectEngine) noexcept
     {
-        // Event values have opposite sign than recorded simulation variable values
-        HRESULT res = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::RudderSet), -primaryFlightControlData.rudderPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        res |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AileronSet), -primaryFlightControlData.aileronPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        res |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::ElevatorSet), -primaryFlightControlData.elevatorPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        return res == S_OK;
+        bool ok = sendEngineState(simConnectEngine);
+        // TODO IMPLEMENT ME send events
+        const SimConnectEngineEvent &engineEvent = simConnectEngine.event;
+        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::Throttle1Set), positionTo16K(engineEvent.throttleLeverPosition1), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::Throttle2Set), positionTo16K(engineEvent.throttleLeverPosition2), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::Throttle3Set), positionTo16K(engineEvent.throttleLeverPosition3), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::Throttle4Set), positionTo16K(engineEvent.throttleLeverPosition4), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisPropeller1Set), positionTo16K(engineEvent.propellerLeverPosition1), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisPropeller2Set), positionTo16K(engineEvent.propellerLeverPosition2), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisPropeller3Set), positionTo16K(engineEvent.propellerLeverPosition3), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisPropeller4Set), positionTo16K(engineEvent.propellerLeverPosition4), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::CowlFlap1Set), percentTo16K(engineEvent.recipEngineCowlFlapPosition1), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::CowlFlap2Set), percentTo16K(engineEvent.recipEngineCowlFlapPosition2), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::CowlFlap3Set), percentTo16K(engineEvent.recipEngineCowlFlapPosition3), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::CowlFlap4Set), percentTo16K(engineEvent.recipEngineCowlFlapPosition4), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+
+        return ok && result == S_OK;
     }
 
-    inline bool requestFlapsHandleIndex(std::int32_t index)
+    inline bool sendPrimaryFlightControls(const PrimaryFlightControlData &primaryFlightControlData)
     {
-        HRESULT res {S_OK};
+        // Event values have opposite sign than recorded simulation variable values
+        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::RudderSet), -primaryFlightControlData.rudderPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AileronSet), -primaryFlightControlData.aileronPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::ElevatorSet), -primaryFlightControlData.elevatorPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        return result == S_OK;
+    }
+
+    inline bool sendFlapsHandleIndex(std::int32_t index)
+    {
+        HRESULT result {S_OK};
         m_requestedFlapsIndex = index;
         if (m_requestedFlapsIndex != m_currentFlapsIndex) {
             if (m_currentFlapsIndex != InvalidFlapsIndex) {
                 Event event = m_requestedFlapsIndex > m_currentFlapsIndex ? Event::Flaps_Increase : Event::Flaps_Decrease;
                 const int steps = std::abs(m_currentFlapsIndex - m_requestedFlapsIndex);
                 for (int step = 0; step < steps; ++step) {
-                    res |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(event), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+                    result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(event), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
                 }
 #ifdef DEBUG
-                qDebug() << "SimConnectEvent::requestFlapsHandleIndex: incrementally setting flaps handle index to:" << m_requestedFlapsIndex
+                qDebug() << "SimConnectEvent::sendFlapsHandleIndex: incrementally setting flaps handle index to:" << m_requestedFlapsIndex
                          << "Previous index:" << m_currentFlapsIndex
                          << "Steps:" << steps
                          << "Event ID:" << Enum::underly(event)
-                         << "Success:" << (res == S_OK);
+                         << "Success:" << (result == S_OK);
 #endif
-                if (res == S_OK) {
+                if (result == S_OK) {
                     m_currentFlapsIndex = m_requestedFlapsIndex;
                 }
             } else if (!m_pendingFlapsIndexRequest) {
                 // Request current flaps index
-                res = ::SimConnect_RequestDataOnSimObject(m_simConnectHandle, Enum::underly(SimConnectType::DataRequest::FlapsHandleIndex),
+                result = ::SimConnect_RequestDataOnSimObject(m_simConnectHandle, Enum::underly(SimConnectType::DataRequest::FlapsHandleIndex),
                                                           Enum::underly(SimConnectType::DataDefinition::FlapsHandleIndex),
                                                           ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-                if (res == S_OK) {
+                if (result == S_OK) {
                     m_pendingFlapsIndexRequest = true;
                 }
 #ifdef DEBUG
-                qDebug() << "SimConnectEvent::requestFlapsHandleIndex: requesting current flaps index"
+                qDebug() << "SimConnectEvent::sendFlapsHandleIndex: requesting current flaps index"
                          << "Current index:" << m_currentFlapsIndex
-                         << "Success:" << (res == S_OK);
+                         << "Success:" << (result == S_OK);
 #endif
             }
         } // m_requestedFlapsIndex != m_currentFlapsIndex
-        return res == S_OK;
+        return result == S_OK;
     }
 
     inline bool setCurrentFlapsHandleIndex(std::int32_t index)
@@ -149,7 +233,7 @@ public:
 #endif
         m_currentFlapsIndex = index;
         if (m_requestedFlapsIndex != m_currentFlapsIndex) {
-            ok = requestFlapsHandleIndex(m_requestedFlapsIndex);
+            ok = sendFlapsHandleIndex(m_requestedFlapsIndex);
         }
         return ok;
     }
@@ -162,6 +246,7 @@ public:
     }
 
     inline void reset() {
+        m_engineState = EngineState::Unknown;
         m_currentFlapsIndex = InvalidFlapsIndex;
         m_requestedFlapsIndex = InvalidFlapsIndex;
         m_pendingFlapsIndexRequest = false;
@@ -169,9 +254,86 @@ public:
 
 private:
     ::HANDLE m_simConnectHandle;
+    EngineState m_engineState {EngineState::Unknown};
     std::int32_t m_currentFlapsIndex {InvalidFlapsIndex};
     std::int32_t m_requestedFlapsIndex {InvalidFlapsIndex};
     bool m_pendingFlapsIndexRequest {false};
+
+    inline bool sendEngineState(const SimConnectEngineAll &simConnectEngine) noexcept
+    {
+        HRESULT result {S_OK};
+        const SimConnectEngineCore &engineCore = simConnectEngine.core;
+        const SimConnectEngineEvent &engineEvent = simConnectEngine.event;
+        switch (m_engineState) {
+        case EngineState::Starting:
+            if (engineEvent.hasCombustion()) {
+                m_engineState = EngineState::Started;
+            } else if (!engineCore.hasEngineStarterEnabled()) {
+                 // STARTING: Engine started disabled, no combustion -> STOPPED
+                result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+                m_engineState = EngineState::Stopped;
+#ifdef DEBUG
+                qDebug() << "SimConnectEvent::sendEngineState: stopping engines"
+                         << "Current engine state: STOPPED"
+                         << "Previous engine state: STARTING"
+                         << "Success:" << (result == S_OK);
+#endif
+            }
+            break;
+        case EngineState::Started:
+            if (!engineEvent.hasCombustion()) {
+                // STARTED: No combustion -> STOPPED
+                result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+                m_engineState = EngineState::Stopped;
+#ifdef DEBUG
+                qDebug() << "SimConnectEvent::sendEngineState: stopping engines"
+                         << "Current engine state: STOPPED"
+                         << "Previous engine state: STARTED"
+                         << "Success:" << (result == S_OK);
+#endif
+            }
+            break;
+        case EngineState::Stopped:
+            // Either general engine starter has been enabled or combustion has started -> engine start
+            // Note: apparently the engine starter can be disabled (false) and yet with an active combustion (= running engine)
+            //       specifically in the case when the aircraft has been "auto-started" (CTRL + E)
+            if (engineCore.hasEngineStarterEnabled() || engineEvent.hasCombustion()) {
+                result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+                m_engineState = EngineState::Starting;
+#ifdef DEBUG
+                qDebug() << "SimConnectEvent::sendEngineState: starting engines"
+                         << "Current engine state: STARTING"
+                         << "Previous engine state: STOPPED"
+                         << "Success:" << (result == S_OK);
+#endif
+            }
+            break;
+        default:
+            // Unknown
+            if (engineCore.hasEngineStarterEnabled() || engineEvent.hasCombustion()) {
+                result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+                m_engineState = engineEvent.hasCombustion() ? EngineState::Started : EngineState::Starting;
+#ifdef DEBUG
+                qDebug() << "SimConnectEvent::sendEngineState: starting engines"
+                         << "Current engine state:" << (engineEvent.hasCombustion() ? "STARTED" : "STARTING")
+                         << "Previous engine state: UNKNOWN"
+                         << "Success:" << (result == S_OK);
+#endif
+            } else {
+                result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+                m_engineState = EngineState::Stopped;
+#ifdef DEBUG
+                qDebug() << "SimConnectEvent::sendEngineState: stopping engines"
+                         << "Current engine state: STOPPED"
+                         << "Previous engine state: UNKNOWN"
+                         << "Success:" << (result == S_OK);
+#endif
+            }
+            break;
+        }
+
+        return result == S_OK;
+    }
 };
 
 #endif // SIMCONNECTEVENT_H

@@ -96,7 +96,6 @@ private:
     void setupRequestData() noexcept;
     bool freezeAircraft(::SIMCONNECT_OBJECT_ID objectId, bool enable) const noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
-    inline bool updateAndSendEngineEvent(std::int64_t objectId, const EngineData &engineData, TimeVariableData::Access access) noexcept;
     void replay() noexcept;
     void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;

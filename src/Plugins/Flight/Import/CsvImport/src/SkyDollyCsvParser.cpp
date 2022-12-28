@@ -108,6 +108,10 @@ namespace
         GeneralEngineCombustion3,
         GeneralEngineCombustion4,
         // Primary flight controls
+        LeftAileronDeflection,
+        RightAileronDeflection,
+        ElevatorDeflection,
+        RudderDeflection,
         RudderPosition,
         ElevatorPosition,
         AileronPosition,
@@ -141,7 +145,7 @@ namespace
 
 bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
 {
-    QFile *file = qobject_cast<QFile *>(&io);
+    auto *file = qobject_cast<QFile *>(&io);
     firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
     flightNumber = QString();
 
@@ -380,7 +384,19 @@ inline bool SkyDollyCsvParser::importPrimaryFlightControlData(const CsvParser::R
     PrimaryFlightControlData data;
     bool ok {true};
 
-    data.rudderPosition = row.at(Enum::underly(::Index::RudderPosition)).toInt(&ok);
+    data.leftAileronDeflection = row.at(Enum::underly(::Index::LeftAileronDeflection)).toFloat(&ok);
+    if (ok) {
+        data.rightAileronDeflection = row.at(Enum::underly(::Index::RightAileronDeflection)).toFloat(&ok);
+    }
+    if (ok) {
+        data.elevatorDeflection = row.at(Enum::underly(::Index::ElevatorDeflection)).toFloat(&ok);
+    }
+    if (ok) {
+        data.rudderDeflection = row.at(Enum::underly(::Index::RudderDeflection)).toFloat(&ok);
+    }
+    if (ok) {
+        data.rudderPosition = row.at(Enum::underly(::Index::RudderPosition)).toInt(&ok);
+    }
     if (ok) {
         data.elevatorPosition =  row.at(Enum::underly(::Index::ElevatorPosition)).toInt(&ok);
     }
