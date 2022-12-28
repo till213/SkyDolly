@@ -34,17 +34,11 @@
 #include <Kernel/Unit.h>
 #include <Model/SimVar.h>
 #include <Model/Aircraft.h>
-#include <Model/Position.h>
 #include <Model/PositionData.h>
-#include <Model/Engine.h>
 #include <Model/EngineData.h>
-#include <Model/PrimaryFlightControl.h>
 #include <Model/PrimaryFlightControlData.h>
-#include <Model/SecondaryFlightControl.h>
 #include <Model/SecondaryFlightControlData.h>
-#include <Model/AircraftHandle.h>
 #include <Model/AircraftHandleData.h>
-#include <Model/Light.h>
 #include <Model/LightData.h>
 #include <PluginManager/Csv.h>
 #include <PluginManager/Export.h>
@@ -92,188 +86,80 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
         const std::int64_t deltaTime = Enum::underly(resamplingPeriod);
 
         // Position data
-        const Position &position = aircraft.getPosition();
-        QChar dataType = QChar(Enum::underly(Csv::DataType::Aircraft));
-        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            std::int64_t duration = position.getLast().timestamp;
-            std::int64_t timestamp = 0;
-            while (ok && timestamp <= duration) {
-                const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
-                if (!positionData.isNull()) {
-                    ok = writeLine(dataType, positionData, emptyEngineData,
-                                   emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
-                                   emptyAircraftHandleData, emptyLightData,
-                                   positionData.timestamp, io);
-                    if (!ok) {
-                        break;
-                    }
-                }
-                timestamp += deltaTime;
-            }
-        } else {
-            for (const PositionData &positionData : position) {
-                ok = writeLine(dataType, positionData, emptyEngineData,
-                               emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
-                               emptyAircraftHandleData, emptyLightData,
-                               positionData.timestamp, io);
-                if (!ok) {
-                    break;
-                }
+        auto dataType = QChar(Enum::underly(Csv::DataType::Aircraft));
+        const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+        for (const PositionData &positionData : interpolatedPositionData) {
+            ok = writeLine(dataType, positionData, emptyEngineData,
+                           emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                           emptyAircraftHandleData, emptyLightData,
+                           positionData.timestamp, io);
+            if (!ok) {
+                break;
             }
         }
 
         // Engine data
-        Engine &engine = aircraft.getEngine();
         dataType = QChar(Enum::underly(Csv::DataType::Engine));
-        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            std::int64_t duration = engine.getLast().timestamp;
-            std::int64_t timestamp = 0;
-            while (ok && timestamp <= duration) {
-                const EngineData &engineData = engine.interpolate(timestamp, TimeVariableData::Access::Linear);
-                if (!engineData.isNull()) {
-                    ok = writeLine(dataType, emptyPositionData, engineData,
-                                   emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
-                                   emptyAircraftHandleData, emptyLightData,
-                                   engineData.timestamp, io);
-                    if (!ok) {
-                        break;
-                    }
-                }
-                timestamp += deltaTime;
-            }
-        } else {
-            for (const EngineData &engineData : engine) {
-                ok = writeLine(dataType, emptyPositionData, engineData,
-                               emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
-                               emptyAircraftHandleData, emptyLightData,
-                               engineData.timestamp, io);
-                if (!ok) {
-                    break;
-                }
+        const std::vector<EngineData> interpolatedEngineData = Export::resampleEngineDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+        for (const EngineData &engineData : interpolatedEngineData) {
+            ok = writeLine(dataType, emptyPositionData, engineData,
+                           emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                           emptyAircraftHandleData, emptyLightData,
+                           engineData.timestamp, io);
+            if (!ok) {
+                break;
             }
         }
 
         // Primary flight controls
-        PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControl();
         dataType = QChar(Enum::underly(Csv::DataType::PrimaryFlightControl));
-        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            std::int64_t duration = primaryFlightControl.getLast().timestamp;
-            std::int64_t timestamp = 0;
-            while (ok && timestamp <= duration) {
-                const PrimaryFlightControlData &primaryFlightControlData = primaryFlightControl.interpolate(timestamp, TimeVariableData::Access::Linear);
-                if (!primaryFlightControlData.isNull()) {
-                    ok = writeLine(dataType, emptyPositionData, emptyEngineData,
-                                   primaryFlightControlData, emptySecondaryFlightControlData,
-                                   emptyAircraftHandleData, emptyLightData,
-                                   primaryFlightControlData.timestamp, io);
-                    if (!ok) {
-                        break;
-                    }
-                }
-                timestamp += deltaTime;
-            }
-        } else {
-            for (const PrimaryFlightControlData &primaryFlightControlData : primaryFlightControl) {
-                ok = writeLine(dataType, emptyPositionData, emptyEngineData,
-                               primaryFlightControlData, emptySecondaryFlightControlData,
-                               emptyAircraftHandleData, emptyLightData,
-                               primaryFlightControlData.timestamp, io);
-                if (!ok) {
-                    break;
-                }
+        const std::vector<PrimaryFlightControlData> interpolatedPrimaryFlightControlData = Export::resamplePrimaryFlightControlDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+        for (const PrimaryFlightControlData &primaryFlightControlData : interpolatedPrimaryFlightControlData) {
+            ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                           primaryFlightControlData, emptySecondaryFlightControlData,
+                           emptyAircraftHandleData, emptyLightData,
+                           primaryFlightControlData.timestamp, io);
+            if (!ok) {
+                break;
             }
         }
 
-        // Secondary flight controls
-        SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControl();
+        // Primary flight controls
         dataType = QChar(Enum::underly(Csv::DataType::SecondaryFlightControl));
-        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            std::int64_t duration = secondaryFlightControl.getLast().timestamp;
-            std::int64_t timestamp = 0;
-            while (ok && timestamp <= duration) {
-                const SecondaryFlightControlData &secondaryFlightControlData = secondaryFlightControl.interpolate(timestamp, TimeVariableData::Access::Linear);
-                if (!secondaryFlightControlData.isNull()) {
-                    ok = writeLine(dataType, emptyPositionData, emptyEngineData,
-                                   emptyPrimaryFlightControlData, secondaryFlightControlData,
-                                   emptyAircraftHandleData, emptyLightData,
-                                   secondaryFlightControlData.timestamp, io);
-                    if (!ok) {
-                        break;
-                    }
-                }
-                timestamp += deltaTime;
-            }
-        } else {
-            for (const SecondaryFlightControlData &secondaryFlightControlData : secondaryFlightControl) {
-                ok = writeLine(dataType, emptyPositionData, emptyEngineData,
-                               emptyPrimaryFlightControlData, secondaryFlightControlData,
-                               emptyAircraftHandleData, emptyLightData,
-                               secondaryFlightControlData.timestamp, io);
-                if (!ok) {
-                    break;
-                }
+        const std::vector<SecondaryFlightControlData> interpolatedSecondaryFlightControlData = Export::resampleSecondaryFlightControlDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+        for (const SecondaryFlightControlData &secondaryFlightControlData : interpolatedSecondaryFlightControlData) {
+            ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                           emptyPrimaryFlightControlData, secondaryFlightControlData,
+                           emptyAircraftHandleData, emptyLightData,
+                           secondaryFlightControlData.timestamp, io);
+            if (!ok) {
+                break;
             }
         }
 
         // Aircraft handles
-        AircraftHandle &aircraftHandle = aircraft.getAircraftHandle();
         dataType = QChar(Enum::underly(Csv::DataType::AircraftHandle));
-        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            std::int64_t duration = aircraftHandle.getLast().timestamp;
-            std::int64_t timestamp = 0;
-            while (ok && timestamp <= duration) {
-                const AircraftHandleData &aircraftHandleData = aircraftHandle.interpolate(timestamp, TimeVariableData::Access::Linear);
-                if (!aircraftHandleData.isNull()) {
-                    ok = writeLine(dataType, emptyPositionData, emptyEngineData,
-                                   emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
-                                   aircraftHandleData, emptyLightData,
-                                   aircraftHandleData.timestamp, io);
-                    if (!ok) {
-                        break;
-                    }
-                }
-                timestamp += deltaTime;
-            }
-        } else {
-            for (const AircraftHandleData &aircraftHandleData : aircraftHandle) {
-                ok = writeLine(dataType, emptyPositionData, emptyEngineData,
-                               emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
-                               aircraftHandleData, emptyLightData,
-                               aircraftHandleData.timestamp, io);
-                if (!ok) {
-                    break;
-                }
+        const std::vector<AircraftHandleData> interpolatedAircraftHandleData = Export::resampleAircraftHandleDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+        for (const AircraftHandleData &aircraftHandleData : interpolatedAircraftHandleData) {
+            ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                           emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                           aircraftHandleData, emptyLightData,
+                           aircraftHandleData.timestamp, io);
+            if (!ok) {
+                break;
             }
         }
 
         // Lights
-        Light &light = aircraft.getLight();
         dataType = QChar(Enum::underly(Csv::DataType::Light));
-        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            std::int64_t duration = light.getLast().timestamp;
-            std::int64_t timestamp = 0;
-            while (ok && timestamp <= duration) {
-                const LightData &lightData = light.interpolate(timestamp, TimeVariableData::Access::Linear);
-                if (!lightData.isNull()) {
-                    ok = writeLine(dataType, emptyPositionData, emptyEngineData,
-                                   emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
-                                   emptyAircraftHandleData, lightData,
-                                   lightData.timestamp, io);
-                    if (!ok) {
-                        break;
-                    }
-                }
-                timestamp += deltaTime;
-            }
-        } else {
-            for (const LightData &lightData : light) {
-                ok = writeLine(dataType, emptyPositionData, emptyEngineData,
-                               emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
-                               emptyAircraftHandleData, lightData,
-                               lightData.timestamp, io);
-                if (!ok) {
-                    break;
-                }
+        const std::vector<LightData> interpolatedLightData = Export::resampleLightDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+        for (const LightData &lightData : interpolatedLightData) {
+            ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                           emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                           emptyAircraftHandleData, lightData,
+                           lightData.timestamp, io);
+            if (!ok) {
+                break;
             }
         }
     }

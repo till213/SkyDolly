@@ -287,42 +287,39 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
     const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
     for (const PositionData &positionData : interpolatedPositionData) {
-        if (!positionData.isNull()) {
+        // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
+        const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
 
-            // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
-            const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
+        const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
+        const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
+        const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.indicatedAltitude)));
+        const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
+        const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
+        const int noise = estimateEnvironmentalNoise(engineData);
+        const QDateTime currentTime = startTime.addMSecs(positionData.timestamp);
+        const QByteArray bRecord = IgcExportPluginPrivate::BRecord %
+                                   formatTime(currentTime) %
+                                   formatPosition(positionData.latitude, positionData.longitude) %
+                                   ::FixValid %
+                                   // Pressure altitude
+                                   pressureAltitudeByteArray %
+                                   // GNSS altitude
+                                   gnssAltitudeByteArray %
+                                   formatNumber(noise, 3) %
+                                   ::LineEnd;
+        ok = io.write(bRecord);
 
-            const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
-            const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
-            const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.indicatedAltitude)));
-            const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
-            const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
-            const int noise = estimateEnvironmentalNoise(engineData);
-            const QDateTime currentTime = startTime.addMSecs(positionData.timestamp);
-            const QByteArray bRecord = IgcExportPluginPrivate::BRecord %
+        if (ok && (lastKFixTime.isNull() || lastKFixTime.secsTo(currentTime) >= ::KRecordIntervalSec)) {
+            const double trueAirspeed = Convert::feetPerSecondToKilometersPerHour(positionData.velocityBodyZ);
+            const double indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
+            const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
                                        formatTime(currentTime) %
-                                       formatPosition(positionData.latitude, positionData.longitude) %
-                                       ::FixValid %
-                                       // Pressure altitude
-                                       pressureAltitudeByteArray %
-                                       // GNSS altitude
-                                       gnssAltitudeByteArray %
-                                       formatNumber(noise, 3) %
+                                       formatNumber(static_cast<int>(std::round(positionData.trueHeading)), 3) %
+                                       // IAS: km/h
+                                       formatNumber(static_cast<int>(std::round(indicatedAirspeed)), 3) %
                                        ::LineEnd;
-            ok = io.write(bRecord);
-
-            if (ok && (lastKFixTime.isNull() || lastKFixTime.secsTo(currentTime) >= ::KRecordIntervalSec)) {
-                const double trueAirspeed = Convert::feetPerSecondToKilometersPerHour(positionData.velocityBodyZ);
-                const double indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
-                const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
-                                           formatTime(currentTime) %
-                                           formatNumber(static_cast<int>(std::round(positionData.trueHeading)), 3) %
-                                           // IAS: km/h
-                                           formatNumber(static_cast<int>(std::round(indicatedAirspeed)), 3) %
-                                           ::LineEnd;
-                ok = io.write(kRecord);
-                lastKFixTime = currentTime;
-            }
+            ok = io.write(kRecord);
+            lastKFixTime = currentTime;
         }
         if (!ok) {
             break;

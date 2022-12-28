@@ -148,7 +148,9 @@ PositionData AircraftWidget::getCurrentPositionData(std::int64_t timestamp, Time
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getPosition().getLast();
+            if (aircraft.getPosition().count() > 0) {
+                positionData = aircraft.getPosition().getLast();
+            }
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 positionData = aircraft.getPosition().interpolate(timestamp, access);
