@@ -27,6 +27,8 @@
 
 #include <QString>
 
+#include <Model/Enumeration.h>
+
 class Enumeration;
 
 /*!
@@ -55,11 +57,14 @@ public:
      *
      * \param name
      *        the name of the enumeration; in camelCase
+     * \param order
+     *        defines the attribute by which to order the enumarations:
+     *        by ID (default), by symbolic ID or name
      * \param ok
      *        if provided, set to \c true if successful; \c false else (enumeration does not exist; no DB connection)
      * \return the Enumeration as defined on the database
      */
-    virtual Enumeration get(const QString &name, bool *ok = nullptr) const noexcept = 0;
+    virtual Enumeration get(const QString &name, Enumeration::Order order = Enumeration::Order::Id, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // ENUMERATIONDAOINTF_H
