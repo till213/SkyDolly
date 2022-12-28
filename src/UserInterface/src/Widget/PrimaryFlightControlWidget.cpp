@@ -121,8 +121,9 @@ PrimaryFlightControlData PrimaryFlightControlWidget::getCurrentPrimaryFlightCont
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            // TODO FIXME: If recording just started then there is no last element just yet (crash!) Check count first!
-            return aircraft.getPrimaryFlightControl().getLast();
+            if (aircraft.getPrimaryFlightControl().count() > 0) {
+                primaryFlightControlData = aircraft.getPrimaryFlightControl().getLast();
+            }
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(timestamp, access);
