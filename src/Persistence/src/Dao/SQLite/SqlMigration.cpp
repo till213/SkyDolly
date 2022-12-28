@@ -201,16 +201,16 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     location.title = row.at(::Index::Title);
     QString description = row.at(::Index::Description);
     location.description = description.replace("\\n", "\n");
-    Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
+    Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, Enumeration::Order::Id, &ok);
     if (ok) {
         location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypeSystemSymId).id;
     }
-    Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
+    Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, Enumeration::Order::Id, &ok);
     if (ok) {
         const QString &categorySymId = row.at(::Index::Category);
         location.categoryId = locationCategoryEnumeration.getItemBySymId(categorySymId).id;
     }
-    Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
+    Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country, Enumeration::Order::Id, &ok);
     if (ok) {
         const QString &countrySymId = row.at(::Index::Country);
         location.countryId = countryEnumeration.getItemBySymId(countrySymId).id;
@@ -245,7 +245,7 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     if (ok) {
         location.onGround = row.at(::Index::OnGround).toLower() == "true" ? true : false;
     }
-    Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent, &ok);
+    Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent, Enumeration::Order::Id, &ok);
     if (ok) {
         const QString &engineEventSymId = row.at(::Index::EngineEvent);
         location.engineEventId = engineEventEnumeration.getItemBySymId(engineEventSymId).id;

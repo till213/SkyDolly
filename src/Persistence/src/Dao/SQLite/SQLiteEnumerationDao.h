@@ -40,7 +40,7 @@ public:
     SQLiteEnumerationDao &operator=(SQLiteEnumerationDao &&rhs) noexcept;
     ~SQLiteEnumerationDao() override;
 
-    Enumeration get(const QString &name, bool *ok = nullptr) const noexcept override;
+    Enumeration get(const QString &name, Enumeration::Order order, bool *ok = nullptr) const noexcept override;
 };
 
 #endif // SQLITEENUMERATIONDAO_H

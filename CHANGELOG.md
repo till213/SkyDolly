@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.14.0
+
+### Improvements
+- New location categories, including improved CSV import & export with Little Navmap
+  * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
+  
+### Bug Fixes
+- Location CSV export as Little Navmap user points now properly exports "airport" as location type (fixed typo)
+
 ## 0.13.0
 
 ### New Features
