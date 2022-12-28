@@ -398,8 +398,12 @@ set app_version = '0.13.0';
 @migr(id = "7620ca47-cbd3-4718-9ea9-0d701236aa58", descn = "Add new location categories", step = 1)
 insert into enum_location_category(sym_id, name, desc)
 values
+  ('CB', 'Cabin', 'Cabin'),
   ('CR', 'Carrier', 'Carrier'),
-  ('OR', 'Oil Rig', 'Oil rig');
+  ('HI', 'History', 'History'),
+  ('OB', 'Obstacle', 'Obstacle'),
+  ('OP', 'Oil Platform', 'Oil platform'),
+  ('ST', 'Settlement', 'Settlement');
 
 @migr(id = "b7c620c9-5ffe-4fdc-a120-cba323e327d0", descn = "Update application version to 0.14", step = 1)
 update metadata

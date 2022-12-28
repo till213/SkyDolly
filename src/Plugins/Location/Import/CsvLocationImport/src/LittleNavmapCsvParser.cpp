@@ -86,20 +86,22 @@ private:
         typeToSymId["airport"] = "AP";
         typeToSymId["airstrip"] = "AS";
         typeToSymId["building"] = "BU";
+        typeToSymId["cabin"] = "CB";
         typeToSymId["helipad"] = "HP";
-        typeToSymId["history"] = "PO";
+        typeToSymId["history"] = "HI";
         typeToSymId["landform"] = "LM";
         typeToSymId["lighthouse"] = "LH";
         typeToSymId["location"] = "PO";
         typeToSymId["marker"] = "PO";
         typeToSymId["mountain"] = "MO";
+        typeToSymId["obstacle"] = "OB";
         typeToSymId["other"] = "OT";
-        typeToSymId["oil rig"] = "OR";
+        typeToSymId["oil platform"] = "OP";
         typeToSymId["park"] = "PA";
         typeToSymId["pin"] = "PO";
         typeToSymId["poi"] = "PO";
         typeToSymId["seaport"] = "SP";
-        typeToSymId["settlement"] = "CI";
+        typeToSymId["settlement"] = "ST";
         typeToSymId["water"] = "LA";
     }
 };

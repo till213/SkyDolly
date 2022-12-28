@@ -75,26 +75,31 @@ struct LittleNavmapCsvLocationWriterPrivate
 private:
     inline void initSymIdToType() {
         symIdToType["00"] = ::OtherType;
-        symIdToType["AP"] = "Airprort";
+        symIdToType["AP"] = "Airport";
         symIdToType["AS"] = "Airstrip";
         symIdToType["BR"] = "POI";
         symIdToType["BU"] = "Building";
         symIdToType["CA"] = "Landform";
+        symIdToType["CB"] = "Cabin";
         symIdToType["CI"] = "Settlement";
+        symIdToType["CR"] = ::OtherType;
         symIdToType["DA"] = "POI";
         symIdToType["DE"] = "Landform";
         symIdToType["GL"] = "Mountain";
         symIdToType["HP"] = "Helipad";
         symIdToType["IS"] = "Landform";
+        symIdToType["HI"] = "History";
         symIdToType["LA"] = "Water";
         symIdToType["LM"] = "Landform";
         symIdToType["LH"] = "Lighthouse";
         symIdToType["MO"] = "Mountain";
-        symIdToType["OR"] = "Oil Rig";
+        symIdToType["OB"] = "Obstacle";
+        symIdToType["OP"] = "Oil Platform";
         symIdToType["OT"] = ::OtherType;
         symIdToType["PA"] = "Park";
         symIdToType["PO"] = "POI";
         symIdToType["SE"] = "Water";
+        symIdToType["ST"] = "Settlement";
         symIdToType["SP"] = "Seaport";
         symIdToType["TO"] = "Settlement";
         symIdToType["RI"] = "Water";
