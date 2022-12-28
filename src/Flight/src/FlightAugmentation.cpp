@@ -227,15 +227,17 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
 
 void FlightAugmentation::augmentProcedures(Aircraft &aircraft) noexcept
 {
-    augmentStartProcedure(aircraft);
-    augmentLandingProcedure(aircraft);
+    if (aircraft.getPosition().count() > 0) {
+        augmentStartProcedure(aircraft);
+        augmentLandingProcedure(aircraft);
 
-    // In case the flight is very short it is possible that the augmented start- and landing
-    // events overlap and are hence out of order
-    std::sort(aircraft.getEngine().begin(), aircraft.getEngine().end());
-    std::sort(aircraft.getSecondaryFlightControl().begin(), aircraft.getSecondaryFlightControl().end());
-    std::sort(aircraft.getAircraftHandle().begin(), aircraft.getAircraftHandle().end());
-    std::sort(aircraft.getLight().begin(), aircraft.getLight().end());
+        // In case the flight is very short it is possible that the augmented start- and landing
+        // events overlap and are hence out of order
+        std::sort(aircraft.getEngine().begin(), aircraft.getEngine().end());
+        std::sort(aircraft.getSecondaryFlightControl().begin(), aircraft.getSecondaryFlightControl().end());
+        std::sort(aircraft.getAircraftHandle().begin(), aircraft.getAircraftHandle().end());
+        std::sort(aircraft.getLight().begin(), aircraft.getLight().end());
+    }
 }
 
 // PRIVATE

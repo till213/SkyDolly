@@ -394,4 +394,3 @@ inline bool KmlExportPlugin::exportPlacemark(QIODevice &io, KmlStyleExport::Icon
 "    </Placemark>\n";
     return io.write(placemark.toUtf8());
 }
-

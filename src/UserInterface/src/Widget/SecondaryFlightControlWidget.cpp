@@ -118,7 +118,9 @@ SecondaryFlightControlData SecondaryFlightControlWidget::getCurrentSecondaryFlig
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getSecondaryFlightControl().getLast();
+            if (aircraft.getSecondaryFlightControl().count() > 0) {
+                secondaryFlightControlData = aircraft.getSecondaryFlightControl().getLast();
+            }
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 secondaryFlightControlData = aircraft.getSecondaryFlightControl().interpolate(timestamp, access);
