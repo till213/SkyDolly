@@ -17,7 +17,9 @@ target_sources(${MODULE_NAME}
         src/SimConnectPositionReply.h src/SimConnectPositionReply.cpp
         src/SimConnectEngineReply.h src/SimConnectEngineReply.cpp
         src/SimConnectEngineRequest.h src/SimConnectEngineRequest.cpp
-        src/SimConnectPrimaryFlightControl.h src/SimConnectPrimaryFlightControl.cpp
+        src/SimConnectPrimaryFlightControlAnimation.h
+        src/SimConnectPrimaryFlightControl.h
+        src/SimConnectPrimaryFlightControlReply.h
         src/SimConnectSecondaryFlightControl.h src/SimConnectSecondaryFlightControl.cpp
         src/SimConnectAircraftHandle.h src/SimConnectAircraftHandle.cpp
         src/SimConnectLight.h src/SimConnectLight.cpp

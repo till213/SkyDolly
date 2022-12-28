@@ -22,11 +22,10 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPRIMARYFLIGHTCONTROL_H
-#define SIMCONNECTPRIMARYFLIGHTCONTROL_H
+#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLANIMATION_H
+#define SIMCONNECTPRIMARYFLIGHTCONTROLANIMATION_H
 
 #include <windows.h>
-#include <SimConnect.h>
 
 #include <Kernel/Enum.h>
 #include <Kernel/SkyMath.h>
@@ -40,12 +39,13 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPrimaryFlightControl
+struct SimConnectPrimaryFlightControlAnimation
 {
     // Radians
-    float rudderPosition {0.0f};
-    float elevatorPosition {0.0f};
-    float aileronPosition {0.0f};    
+    float rudderDeflection {0.0f};
+    float elevatorDeflection {0.0f};
+    float aileronLeftDeflection {0.0f};
+    float aileronRightDeflection {0.0f};
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {
@@ -56,30 +56,33 @@ struct SimConnectPrimaryFlightControl
 
     inline void toPrimaryFlightControlData(PrimaryFlightControlData &primaryFlightControlData) const noexcept
     {
-        primaryFlightControlData.rudderPosition = SkyMath::fromNormalisedPosition(rudderPosition);
-        primaryFlightControlData.elevatorPosition = SkyMath::fromNormalisedPosition(elevatorPosition);
-        primaryFlightControlData.aileronPosition = SkyMath::fromNormalisedPosition(aileronPosition);
+        primaryFlightControlData.rudderDeflection = rudderDeflection;
+        primaryFlightControlData.elevatorDeflection = elevatorDeflection;
+        primaryFlightControlData.leftAileronDeflection = aileronLeftDeflection;
+        primaryFlightControlData.rightAileronDeflection = aileronRightDeflection;
     }
 
     inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
     {
-        rudderPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.rudderPosition));
-        elevatorPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.elevatorPosition));
-        aileronPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.aileronPosition));
+        rudderDeflection = primaryFlightControlData.rudderDeflection;
+        elevatorDeflection = primaryFlightControlData.elevatorDeflection;
+        aileronLeftDeflection = primaryFlightControlData.leftAileronDeflection;
+        aileronRightDeflection = primaryFlightControlData.rightAileronDeflection;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControl));
+        addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAnimation));
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RudderPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::ElevatorPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::AileronPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RudderDeflection, "Radians", ::SIMCONNECT_DATATYPE_FLOAT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::ElevatorDeflection, "Radians", ::SIMCONNECT_DATATYPE_FLOAT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::AileronLeftDeflection, "Radians", ::SIMCONNECT_DATATYPE_FLOAT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::AileronRightDeflection, "Radians", ::SIMCONNECT_DATATYPE_FLOAT32);
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPRIMARYFLIGHTCONTROL_H
+#endif // SIMCONNECTPRIMARYFLIGHTCONTROLANIMATION_H

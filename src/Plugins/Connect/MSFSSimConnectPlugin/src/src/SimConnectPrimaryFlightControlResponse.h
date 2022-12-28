@@ -22,56 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTTYPE_H
-#define SIMCONNECTTYPE_H
+#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLRESPONSE_H
+#define SIMCONNECTPRIMARYFLIGHTCONTROLRESPONSE_H
 
-#include <windows.h>
-
-#include <SimConnect.h>
-
-namespace SimConnectType
-{
-    enum struct DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
-        FlightInformation,
-        FlightPlan,
-        SimulationTime,
-        InitialPosition,
-        Location,
-        PositionReply,
-        PositionRequest,
-        EngineReply,
-        EngineRequest,
-        PrimaryFlightControl,
-        PrimaryFlightControlAnimation,
-        PrimaryFlightControlReply,
-        SecondaryFlightControl,
-        Handle,
-        Light,
-        // Simulation variables
-        FlapsHandleIndex
-    };
-
-    enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
-        AircraftInfo,
-        FlightPlan,
-        InitialPosition,
-        Location,
-        SimulationTime,
-        AircraftPositionReply,
-        Engine,
-        PrimaryFlightControlReply,
-        Flaps,
-        SecondaryFlightControl,
-        AircraftHandle,
-        Light,
-        // Simulation variables
-        FlapsHandleIndex,
-        // AI objects
-        AiRemoveObject,
-        AiReleaseControl,
-        // Must come last
-        AiObjectBase
-    };
-}
-
-#endif // SIMCONNECTTYPE_H
+#endif // SIMCONNECTPRIMARYFLIGHTCONTROLRESPONSE_H
