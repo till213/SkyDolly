@@ -4,10 +4,13 @@
 
 ### Improvements
 - Improved replay of primary flight controls, specifically with 3rd party aircraft
+- New location categories, including improved CSV import & export with Little Navmap
+  * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
 
 ### Bug Fixes
 - Fixed a potential crash ("illegal access to last data element that might not yet have been recorded") that might occur if starting a recording with the Simulation Variables dialog open
 - Fixed a rare potential crash when closing the application and either the Flight, Simulation Variables or Statistics dialog are open
+- Location CSV export as Little Navmap user points now properly exports "airport" as location type (fixed typo)
 
 ### Under The Hood
 - Small performance improvements

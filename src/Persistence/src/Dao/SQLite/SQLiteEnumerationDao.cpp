@@ -42,17 +42,31 @@ SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept 
 SQLiteEnumerationDao &SQLiteEnumerationDao::operator=(SQLiteEnumerationDao &&rhs) noexcept = default;
 SQLiteEnumerationDao::~SQLiteEnumerationDao() = default;
 
-Enumeration SQLiteEnumerationDao::get(const QString &name, bool *ok) const noexcept
+Enumeration SQLiteEnumerationDao::get(const QString &name, Enumeration::Order order, bool *ok) const noexcept
 {
     Enumeration enumeration {name};
     const QString enumerationTableName = QStringLiteral("enum_") % Name::fromCamelCase(enumeration.getName());
 
     QSqlQuery query;
     query.setForwardOnly(true);
+
+    QString orderColumn;
+    switch (order) {
+    case Enumeration::Order::Id:
+        orderColumn = "id";
+        break;
+    case Enumeration::Order::SymId:
+        orderColumn = "sym_id";
+        break;
+    case Enumeration::Order::Name:
+        orderColumn = "name";
+        break;
+    }
+
     query.prepare(
         "select e.id, e.sym_id, e.name "
         "from   " % enumerationTableName % " e "
-        "order by e.id asc;"
+        "order by e." % orderColumn % " asc;"
     );
 
     const bool success = query.exec();

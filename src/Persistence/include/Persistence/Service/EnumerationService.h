@@ -49,11 +49,14 @@ public:
      *
      * \param name
      *        the name of the enumeration
+     * \param order
+     *        defines the attribute by which to order the enumarations:
+     *        by ID (default), by symbolic ID or name
      * \param ok
      *        if set, \c true if successful; \c false else (unknown Enumeration name, no database connection)
      * \return the persisted Enumeration identified by the \c name
      */
-    Enumeration getEnumerationByName(const QString &name, bool *ok = nullptr);
+    Enumeration getEnumerationByName(const QString &name, Enumeration::Order order = Enumeration::Order::Id, bool *ok = nullptr);
 
     // Implementation note:
     // Well-known database enumerations: TitleCase name must match with corresponding

@@ -120,7 +120,7 @@ void EnumerationComboBox::initUi() noexcept
 {
     setAutoFillBackground(true);
     bool ok {true};
-    d->enumeration = d->enumerationService.getEnumerationByName(d->enumeration.getName(), &ok);
+    d->enumeration = d->enumerationService.getEnumerationByName(d->enumeration.getName(), Enumeration::Order::Name, &ok);
     if (ok)  {
         for (const auto &item : d->enumeration) {
             if (d->ignoredIds.find(item.id) == d->ignoredIds.cend()) {
