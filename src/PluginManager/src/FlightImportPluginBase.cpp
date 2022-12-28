@@ -237,12 +237,12 @@ void FlightImportPluginBase::updateAircraftInfo() noexcept
     AircraftInfo aircraftInfo(aircraft.getId());
     aircraftInfo.aircraftType = d->aircraftType;
 
-    const Position &position = aircraft.getPosition();
-    const PositionData &lastPositionData = position.getLast();
-    const QDateTime startDateTimeUtc = getStartDateTimeUtc();
-    const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
-    std::size_t positionCount = position.count();
-    if (positionCount > 0) {
+    const Position &position = aircraft.getPosition();   
+    if (position.count() > 0) {
+        const PositionData &lastPositionData = position.getLast();
+        const QDateTime startDateTimeUtc = getStartDateTimeUtc();
+        const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
+
         const PositionData &firstPositionData = position.getFirst();
         aircraftInfo.initialAirspeed = static_cast<int>(std::round(Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ)));
 
