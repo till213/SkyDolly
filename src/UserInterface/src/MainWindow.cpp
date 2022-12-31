@@ -193,7 +193,24 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
     frenchConnection();
 }
 
-MainWindow::~MainWindow() = default;
+MainWindow::~MainWindow()
+{
+    // Don't get notified about the dialog destruction in case
+    // the Qt event queue tries to delete this MainWindow first
+    // (which then also implicitly deletes the dialogs due to
+    // them being children of this MainWindow); otherwise we
+    // would try to access the invalid private data 'd' in
+    // the various onXYZDeleted slots
+    if (d->flightDialog != nullptr) {
+        d->flightDialog->disconnect();
+    }
+    if (d->simulationVariablesDialog != nullptr) {
+        d->simulationVariablesDialog->disconnect();
+    }
+    if (d->statisticsDialog != nullptr) {
+        d->statisticsDialog->disconnect();
+    }
+}
 
 bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 {

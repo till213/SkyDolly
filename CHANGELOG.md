@@ -6,6 +6,8 @@
 - The mixture lever position is now properly initialised from "percent" (instead of "position") values:
   * during "flight augmentation" (importing flights from e.g. flightradar24 or flightaware)
   * during IGC import
+- In the Simulation Variables dialog (and elsewhere) ensure that at least one recorded data sample exist before accessing the "last" entry
+- Prevent access to invalidated data upon application termination when either the Flight, Simulation Variables or Statistics dialog was open before quitting the application (rare race condition)
 
 ## 0.13.0
 
