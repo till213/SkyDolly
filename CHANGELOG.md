@@ -8,13 +8,18 @@
   * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
 - When pausing either replay or recording the simulation is now also paused
 
-### Bug Fixes
-- Fixed a potential crash ("illegal access to last data element that might not yet have been recorded") that might occur if starting a recording with the Simulation Variables dialog open
-- Fixed a rare potential crash when closing the application and either the Flight, Simulation Variables or Statistics dialog are open
-- Location CSV export as Little Navmap user points now properly exports "airport" as location type (fixed typo)
-
 ### Under The Hood
 - Small performance improvements
+
+## 0.13.1
+
+### Bug Fixes
+- The mixture lever position is now properly initialised from "percent" (instead of "position") values:
+  * during "flight augmentation" ("flight augmentation" is applied when importing flights from e.g. flightradar24 or flightaware)
+  * during IGC import (when detecting "engine noise" in the IGC data)
+- In the Simulation Variables dialog (and elsewhere) ensure that at least one recorded data sample exist before accessing the "last" entry
+- Prevent access to invalidated data upon application termination when either the Flight, Simulation Variables or Statistics dialog was open before quitting the application (rare race condition)
+- Properly spell "airport" in the location CSV export in Little Navmap format (fix typo)
 
 ## 0.13.0
 
