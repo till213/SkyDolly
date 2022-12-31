@@ -75,7 +75,7 @@ struct LittleNavmapCsvLocationWriterPrivate
 private:
     inline void initSymIdToType() {
         symIdToType["00"] = ::OtherType;
-        symIdToType["AP"] = "Airprort";
+        symIdToType["AP"] = "Airport";
         symIdToType["AS"] = "Airstrip";
         symIdToType["BR"] = "POI";
         symIdToType["BU"] = "Building";

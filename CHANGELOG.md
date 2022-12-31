@@ -4,10 +4,11 @@
 
 ### Bug Fixes
 - The mixture lever position is now properly initialised from "percent" (instead of "position") values:
-  * during "flight augmentation" (importing flights from e.g. flightradar24 or flightaware)
-  * during IGC import
+  * during "flight augmentation" ("flight augmentation" is applied when importing flights from e.g. flightradar24 or flightaware)
+  * during IGC import (when detecting "engine noise" in the IGC data)
 - In the Simulation Variables dialog (and elsewhere) ensure that at least one recorded data sample exist before accessing the "last" entry
 - Prevent access to invalidated data upon application termination when either the Flight, Simulation Variables or Statistics dialog was open before quitting the application (rare race condition)
+- Properly spell "airport" in the location CSV export in Little Navmap format (fix typo)
 
 ## 0.13.0
 
