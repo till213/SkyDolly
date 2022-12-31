@@ -22,47 +22,53 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLREPLY_H
-#define SIMCONNECTPRIMARYFLIGHTCONTROLREPLY_H
-
-#include <windows.h>
+#ifndef SIMCONNECTENGINEAI_H
+#define SIMCONNECTENGINEAI_H
 
 #include <Kernel/Enum.h>
-#include <Model/PrimaryFlightControlData.h>
+#include <Model/EngineData.h>
 #include "SimConnectType.h"
-#include "SimConnectPrimaryFlightControl.h"
-#include "SimConnectPrimaryFlightControlAnimation.h"
+#include "SimConnectEngineCommon.h"
+#include "SimConnectEngineEvent.h"
 
 /*!
- * Simulation variables which represent the primary flight controls: rudder, elevators and ailerons.
+ * Engine simulation variables that are sent to AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPrimaryFlightControlReply
+struct SimConnectEngineAi
 {
-    SimConnectPrimaryFlightControl control;
-    SimConnectPrimaryFlightControlAnimation animation;
+    SimConnectEngineCommon common;
+    SimConnectEngineEvent event;
 
-    inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
+    SimConnectEngineAi(const EngineData &engineData) noexcept
+        : SimConnectEngineAi()
     {
-        PrimaryFlightControlData primaryFlightControlData = control.toPrimaryFlightControlData();
-        animation.toPrimaryFlightControlData(primaryFlightControlData);
-        return primaryFlightControlData;
+        fromEngineData(engineData);
     }
 
-    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+    SimConnectEngineAi() = default;
+
+    inline EngineData toEngineData() const noexcept
     {
-        control.fromPrimaryFlightControlData(primaryFlightControlData);
-        animation.fromPrimaryFlightControlData(primaryFlightControlData);
+        EngineData engineData = common.toEngineData();
+        event.toEngineData(engineData);
+        return engineData;
+    }
+
+    inline void fromEngineData(const EngineData &engineData)
+    {
+        common.fromEngineData(engineData);
+        event.fromEngineData(engineData);
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        SimConnectPrimaryFlightControl::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlReply));
-        SimConnectPrimaryFlightControlAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlReply));
+        SimConnectEngineCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineAi));
+        SimConnectEngineEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineAi));
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPRIMARYFLIGHTCONTROLREPLY_H
+#endif // SIMCONNECTENGINEAI_H

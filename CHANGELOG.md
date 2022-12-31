@@ -6,6 +6,7 @@
 - Improved replay of primary flight controls, specifically with 3rd party aircraft
 - New location categories, including improved CSV import & export with Little Navmap
   * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
+- When pausing either replay or recording the simulation is now also paused
 
 ### Bug Fixes
 - Fixed a potential crash ("illegal access to last data element that might not yet have been recorded") that might occur if starting a recording with the Simulation Variables dialog open

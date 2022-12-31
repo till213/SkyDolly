@@ -79,6 +79,10 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t t
             m_currentData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
             m_currentData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
             m_currentData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
+            m_currentData.yokeXPosition = SkyMath::interpolateLinear(p1->yokeXPosition, p2->yokeXPosition, tn);
+            m_currentData.yokeYPosition = SkyMath::interpolateLinear(p1->yokeYPosition, p2->yokeYPosition, tn);
+            m_currentData.leftWingFlex = SkyMath::interpolateLinear(p1->leftWingFlex, p2->leftWingFlex, tn);
+            m_currentData.rightWingFlex = SkyMath::interpolateLinear(p1->rightWingFlex, p2->rightWingFlex, tn);
             m_currentData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded data

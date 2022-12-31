@@ -14,9 +14,12 @@ target_sources(${MODULE_NAME}
 
         src/SimVar/SimConnectPositionRequest.h src/SimVar/SimConnectPositionRequest.cpp
         src/SimVar/SimConnectPositionReply.h src/SimVar/SimConnectPositionReply.cpp
+        src/SimVar/SimConnectEngineCommon.h
         src/SimVar/SimConnectEngineCore.h
         src/SimVar/SimConnectEngineEvent.h
         src/SimVar/SimConnectEngineAll.h
+        src/SimVar/SimConnectEngineUser.h
+        src/SimVar/SimConnectEngineAi.h
         src/SimVar/SimConnectPrimaryFlightControlAnimation.h
         src/SimVar/SimConnectPrimaryFlightControl.h
         src/SimVar/SimConnectPrimaryFlightControlReply.h
@@ -35,6 +38,7 @@ target_sources(${MODULE_NAME}
         src/SimConnectAi.h src/SimConnectAi.cpp        
         src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp
         src/MSFSSimConnectPlugin.json
+        doc/SimVars.md
 )
 target_link_libraries(${MODULE_NAME}
     PRIVATE

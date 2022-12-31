@@ -67,7 +67,12 @@ struct SimConnectEngineCore
     inline EngineData toEngineData() const noexcept
     {
         EngineData engineData;
+        toEngineData(engineData);
+        return engineData;
+    }
 
+    inline void toEngineData(EngineData &engineData) const noexcept
+    {
         // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
         //       position (std::int16_t) which supports negative values as well
         engineData.mixtureLeverPosition1 = SkyMath::fromPercent(mixtureLeverPosition1);
@@ -82,8 +87,6 @@ struct SimConnectEngineCore
         engineData.generalEngineStarter2 = (generalEngineStarter2 != 0);
         engineData.generalEngineStarter3 = (generalEngineStarter3 != 0);
         engineData.generalEngineStarter4 = (generalEngineStarter4 != 0);
-
-        return engineData;
     }
 
     inline void fromEngineData(const EngineData &engineData) noexcept
@@ -100,11 +103,6 @@ struct SimConnectEngineCore
         generalEngineStarter2 = engineData.generalEngineStarter2 ? 1 : 0;
         generalEngineStarter3 = engineData.generalEngineStarter3 ? 1 : 0;
         generalEngineStarter4 = engineData.generalEngineStarter4 ? 1 : 0;
-    }
-
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
-    {
-        addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineCore));
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

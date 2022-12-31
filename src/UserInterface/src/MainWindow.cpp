@@ -1102,7 +1102,7 @@ void MainWindow::onPositionSliderValueChanged(int value) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const double factor = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
     const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-    const std::int64_t timestamp = static_cast<std::int64_t>(std::round(factor * static_cast<double>(totalDuration)));
+    auto timestamp = static_cast<std::int64_t>(std::round(factor * static_cast<double>(totalDuration)));
 
     // Prevent the timestampTimeEdit field to set the replay position as well
     ui->timestampTimeEdit->blockSignals(true);

@@ -53,11 +53,6 @@ struct SimConnectEngineEvent
     float propellerLeverPosition2 {0.0f};
     float propellerLeverPosition3 {0.0f};
     float propellerLeverPosition4 {0.0f};
-    // Percent
-    float recipEngineCowlFlapPosition1 {0.0f};
-    float recipEngineCowlFlapPosition2 {0.0f};
-    float recipEngineCowlFlapPosition3 {0.0f};
-    float recipEngineCowlFlapPosition4 {0.0f};
     std::int32_t generalEngineCombustion1 {0};
     std::int32_t generalEngineCombustion2 {0};
     std::int32_t generalEngineCombustion3 {0};
@@ -70,7 +65,7 @@ struct SimConnectEngineEvent
     }
     SimConnectEngineEvent() = default;
 
-    inline EngineData toPrimaryFlightControlData() const noexcept
+    inline EngineData toEngineData() const noexcept
     {
         EngineData engineData;
         toEngineData(engineData);
@@ -89,10 +84,6 @@ struct SimConnectEngineEvent
         engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(propellerLeverPosition2);
         engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(propellerLeverPosition3);
         engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(propellerLeverPosition4);
-        engineData.cowlFlapPosition1 = SkyMath::fromPercent(recipEngineCowlFlapPosition1);
-        engineData.cowlFlapPosition2 = SkyMath::fromPercent(recipEngineCowlFlapPosition2);
-        engineData.cowlFlapPosition3 = SkyMath::fromPercent(recipEngineCowlFlapPosition3);
-        engineData.cowlFlapPosition4 = SkyMath::fromPercent(recipEngineCowlFlapPosition4);
         engineData.generalEngineCombustion1 = (generalEngineCombustion1 != 0);
         engineData.generalEngineCombustion2 = (generalEngineCombustion2 != 0);
         engineData.generalEngineCombustion3 = (generalEngineCombustion3 != 0);
@@ -109,19 +100,10 @@ struct SimConnectEngineEvent
         propellerLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition2));
         propellerLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition3));
         propellerLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition4));
-        recipEngineCowlFlapPosition1 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition1));
-        recipEngineCowlFlapPosition2 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition2));
-        recipEngineCowlFlapPosition3 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition3));
-        recipEngineCowlFlapPosition4 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition4));
         generalEngineCombustion1 = engineData.generalEngineCombustion1 ? 1 : 0;
         generalEngineCombustion2 = engineData.generalEngineCombustion2 ? 1 : 0;
         generalEngineCombustion3 = engineData.generalEngineCombustion3 ? 1 : 0;
         generalEngineCombustion4 = engineData.generalEngineCombustion4 ? 1 : 0;
-    }
-
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
-    {
-        addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineEvent));
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
@@ -134,10 +116,6 @@ struct SimConnectEngineEvent
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PropellerLeverPosition2, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PropellerLeverPosition3, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PropellerLeverPosition4, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RecipEngineCowlFlapPosition1, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RecipEngineCowlFlapPosition2, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RecipEngineCowlFlapPosition3, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RecipEngineCowlFlapPosition4, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GeneralEngineCombustion1, "Bool", ::SIMCONNECT_DATATYPE_INT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GeneralEngineCombustion2, "Bool", ::SIMCONNECT_DATATYPE_INT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GeneralEngineCombustion3, "Bool", ::SIMCONNECT_DATATYPE_INT32);

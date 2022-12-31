@@ -25,15 +25,14 @@
 #ifndef SIMCONNECTENGINEALL_H
 #define SIMCONNECTENGINEALL_H
 
-#include <cstdint>
-
-#include <windows.h>
-
 #include <Kernel/Enum.h>
 #include <Model/EngineData.h>
 #include "SimConnectType.h"
+#include "SimConnectEngineCommon.h"
 #include "SimConnectEngineCore.h"
 #include "SimConnectEngineEvent.h"
+#include "SimConnectEngineUser.h"
+#include "SimConnectEngineAi.h"
 
 /*!
  * Simulation variables which represent the engine (reply received from the flight simulator).
@@ -43,6 +42,7 @@
 #pragma pack(push, 1)
 struct SimConnectEngineAll
 {
+    SimConnectEngineCommon common;
     SimConnectEngineCore core;
     SimConnectEngineEvent event;
 
@@ -56,19 +56,38 @@ struct SimConnectEngineAll
 
     inline EngineData toEngineData() const noexcept
     {
-        EngineData engineData = core.toEngineData();
+        EngineData engineData = common.toEngineData();
+        core.toEngineData(engineData);
         event.toEngineData(engineData);
         return engineData;
     }
 
-    inline void fromEngineData(const EngineData &engineData)
+    inline void fromEngineData(const EngineData &engineData) noexcept
     {
+        common.fromEngineData(engineData);
         core.fromEngineData(engineData);
         event.fromEngineData(engineData);
     }
 
+    inline SimConnectEngineUser user() const noexcept
+    {
+        SimConnectEngineUser user;
+        user.common = common;
+        user.core = core;
+        return user;
+    }
+
+    inline SimConnectEngineAi ai() const noexcept
+    {
+        SimConnectEngineAi ai;
+        ai.common = common;
+        ai.event = event;
+        return ai;
+    }
+
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
+        SimConnectEngineCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineAll));
         SimConnectEngineCore::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineAll));
         SimConnectEngineEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineAll));
     }
