@@ -22,23 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPOSITIONREQUEST_H
-#define SIMCONNECTPOSITIONREQUEST_H
+#ifndef SIMCONNECTPOSITIONCOMMON_H
+#define SIMCONNECTPOSITIONCOMMON_H
+
+#include <cstdint>
 
 #include <windows.h>
 #include <SimConnect.h>
 
+#include <Kernel/SkyMath.h>
+#include <Kernel/Enum.h>
+#include <Model/SimVar.h>
 #include <Model/PositionData.h>
 #include <Model/InitialPosition.h>
+#include "SimConnectType.h"
 
 /*!
- * Simulation variables which represent the aircraft's position, attitude and velocities
- * (request sent to the flight simulator).
+ * Common SimConnect position data that is sent both to the user- and AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPositionRequest
+struct SimConnectPositionCommon
 {
     // Aircraft position
     double latitude {0.0};
@@ -72,6 +77,23 @@ struct SimConnectPositionRequest
         velocityBodyZ = positionData.velocityBodyZ;
     }
 
+    inline PositionData toPositionData() const noexcept
+        {
+            PositionData positionData;
+            positionData.latitude = latitude;
+            positionData.longitude = longitude;
+            positionData.altitude = altitude;
+            positionData.pitch = pitch;
+            positionData.bank = bank;
+            positionData.trueHeading = trueHeading;
+
+            positionData.velocityBodyX = velocityBodyX;
+            positionData.velocityBodyY = velocityBodyY;
+            positionData.velocityBodyZ = velocityBodyZ;
+
+            return positionData;
+        }
+
     static inline SIMCONNECT_DATA_INITPOSITION toInitialPosition(const PositionData &positionData, bool onGround, int initialAirspeed)
     {
         SIMCONNECT_DATA_INITPOSITION initialPosition {};
@@ -104,11 +126,22 @@ struct SimConnectPositionRequest
         return initialSimConnnectPosition;
     }
 
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+    static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
+    {
+        // Aircraft position & attitude
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Latitude, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Longitude, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Altitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Pitch, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Bank, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::TrueHeading, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
 
-protected:
-    static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept;
+        // Velocity
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::VelocityBodyX, "Feet per Second", ::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::VelocityBodyY, "Feet per Second",::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::VelocityBodyZ, "Feet per Second",::SIMCONNECT_DATATYPE_FLOAT64);
+    }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPOSITIONREQUEST_H
+#endif // SIMCONNECTPOSITIONCOMMON_H

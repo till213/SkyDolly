@@ -43,10 +43,6 @@ struct MODEL_API PrimaryFlightControlData final : public TimeVariableData
     std::int16_t rudderPosition {0};
     std::int16_t elevatorPosition {0};
     std::int16_t aileronPosition {0};
-    std::int16_t yokeXPosition {0};
-    std::int16_t yokeYPosition {0};
-    std::int8_t leftWingFlex {0};
-    std::int8_t rightWingFlex {0};
 };
 
 #endif // PRIMARYFLIGHTCONTROLDATA_H

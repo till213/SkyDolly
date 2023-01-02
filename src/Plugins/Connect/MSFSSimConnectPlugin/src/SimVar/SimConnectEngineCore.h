@@ -37,7 +37,7 @@
 #include <Model/EngineData.h>
 
 /*!
- * Simulation variables which represent the engine (request sent to the flight simulator).
+ * Engine simulation variables that represent the core.
  *
  * Implementation note: this struct needs to be packed.
  */

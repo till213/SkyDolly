@@ -22,20 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <windows.h>
-
-#include <SimConnect.h>
+#ifndef SIMCONNECTPOSITIONAI_H
+#define SIMCONNECTPOSITIONAI_H
 
 #include <Kernel/Enum.h>
-#include <Model/SimVar.h>
+#include <Model/PositionData.h>
 #include "SimConnectType.h"
-#include "SimConnectPositionReply.h"
+#include "SimConnectPositionCommon.h"
 
-// PUBLIC
-
-void SimConnectPositionReply::addToDataDefinition(HANDLE simConnectHandle) noexcept
+/*!
+ * Position simulation variables that are sent to AI aircraft.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(push, 1)
+struct SimConnectPositionAi
 {
-    SimConnectPositionRequest::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionReply));
+    SimConnectPositionCommon common;
 
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionReply), SimVar::IndicatedAltitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
-}
+    SimConnectPositionAi(const PositionData &positionData) noexcept
+        : SimConnectPositionAi()
+    {
+        fromPositionData(positionData);
+    }
+
+    SimConnectPositionAi() = default;
+
+    inline PositionData toPositionData() const noexcept
+    {
+        PositionData positionData = common.toPositionData();
+        return positionData;
+    }
+
+    inline void fromPositionData(const PositionData &positionData)
+    {
+        common.fromPositionData(positionData);
+    }
+
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
+    {
+        SimConnectPositionCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAi));
+    }
+};
+#pragma pack(pop)
+
+#endif // SIMCONNECTPOSITIONAI_H

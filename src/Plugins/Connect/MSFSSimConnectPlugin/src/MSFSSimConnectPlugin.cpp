@@ -118,11 +118,10 @@ MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
 
 bool MSFSSimConnectPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
 {
-    SimConnectPositionRequest simConnnectPositionRequest;
-    simConnnectPositionRequest.fromPositionData(positionData);
-    const HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionRequest),
+    SimConnectPositionUser simConnnectPositionUser {positionData};
+    const HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionUser),
                                                            ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                           sizeof(SimConnectPositionRequest), &simConnnectPositionRequest);
+                                                           sizeof(simConnnectPositionUser), &simConnnectPositionUser);
     return result == S_OK;
 }
 
@@ -136,7 +135,7 @@ bool MSFSSimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRa
 
 bool MSFSSimConnectPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
 {
-    SIMCONNECT_DATA_INITPOSITION initialSimConnectPosition = SimConnectPositionRequest::toInitialPosition(initialPosition);
+    SIMCONNECT_DATA_INITPOSITION initialSimConnectPosition = SimConnectPositionCommon::toInitialPosition(initialPosition);
     HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::InitialPosition),
                                                      ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION),
                                                      &initialSimConnectPosition);
@@ -315,19 +314,27 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                 ok = true;
                 const PositionData &positionData = aircraft.getPosition().interpolate(currentTimestamp, access);
                 if (!positionData.isNull()) {
-                    SimConnectPositionRequest simConnnectPositionRequest;
-                    simConnnectPositionRequest.fromPositionData(positionData);
-                    const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionRequest),
-                                                                        objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                        sizeof(SimConnectPositionRequest), &simConnnectPositionRequest);
-                    ok = res == S_OK;
+                    SimConnectPositionAll simConnnectPositionAll {positionData};
+                    if (isUserAircraft) {
+                        SimConnectPositionUser positionUser = simConnnectPositionAll.user();
+                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionUser),
+                                                                            objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                                            sizeof(SimConnectPositionUser), &positionUser);
+                        ok = res == S_OK;
+                    } else {
+                        SimConnectPositionAi positionAi = simConnnectPositionAll.ai();
+                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAi),
+                                                                            objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                                            sizeof(SimConnectPositionAi), &positionAi);
+                        ok = res == S_OK;
+                    }
                 }
 
                 // Engine
                 if (ok) {
                     const EngineData &engineData = aircraft.getEngine().interpolate(currentTimestamp, access);
                     if (!engineData.isNull()) {
-                        SimConnectEngineAll simConnectEngine(engineData);
+                        SimConnectEngineAll simConnectEngine {engineData};
                         if (isUserAircraft) {
                             SimConnectEngineUser engineUser = simConnectEngine.user();
                             const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineUser),
@@ -573,8 +580,9 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
 {
     // Request data
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
-    SimConnectPositionReply::addToDataDefinition(d->simConnectHandle);
-    SimConnectPositionRequest::addToDataDefinition(d->simConnectHandle);
+    SimConnectPositionUser::addToDataDefinition(d->simConnectHandle);
+    SimConnectPositionAi::addToDataDefinition(d->simConnectHandle);
+    SimConnectPositionAll::addToDataDefinition(d->simConnectHandle);
     SimConnectEngineUser::addToDataDefinition(d->simConnectHandle);
     SimConnectEngineAi::addToDataDefinition(d->simConnectHandle);
     SimConnectEngineAll::addToDataDefinition(d->simConnectHandle);
@@ -643,7 +651,7 @@ void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexc
 {
     if (d->currentRequestPeriod != period) {
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftPositionReply),
-                                            Enum::underly(SimConnectType::DataDefinition::PositionReply),
+                                            Enum::underly(SimConnectType::DataDefinition::PositionAll),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::EngineAll),
                                             Enum::underly(SimConnectType::DataDefinition::EngineAll),
@@ -757,8 +765,8 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         case SimConnectType::DataRequest::AircraftPositionReply:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                auto simConnectPositionReply = reinterpret_cast<const SimConnectPositionReply *>(&objectData->dwData);
-                PositionData positionData = simConnectPositionReply->toPositionData();
+                auto simConnectPositionAll = reinterpret_cast<const SimConnectPositionAll *>(&objectData->dwData);
+                PositionData positionData = simConnectPositionAll->toPositionData();
                 positionData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
                     userAircraft.getPosition().upsertLast(positionData);

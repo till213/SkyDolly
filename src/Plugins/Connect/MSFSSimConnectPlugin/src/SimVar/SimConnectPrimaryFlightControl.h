@@ -63,10 +63,6 @@ struct SimConnectPrimaryFlightControl
         primaryFlightControlData.rudderPosition = SkyMath::fromNormalisedPosition(rudderPosition);
         primaryFlightControlData.elevatorPosition = SkyMath::fromNormalisedPosition(elevatorPosition);
         primaryFlightControlData.aileronPosition = SkyMath::fromNormalisedPosition(aileronPosition);
-        primaryFlightControlData.yokeXPosition = SkyMath::fromNormalisedPosition(yokeXPosition);
-        primaryFlightControlData.yokeYPosition = SkyMath::fromNormalisedPosition(yokeYPosition);
-        primaryFlightControlData.leftWingFlex = SkyMath::fromPercent(wingFlexPercent1);
-        primaryFlightControlData.rightWingFlex = SkyMath::fromPercent(wingFlexPercent2);
     }
 
     inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
@@ -74,10 +70,6 @@ struct SimConnectPrimaryFlightControl
         rudderPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.rudderPosition));
         elevatorPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.elevatorPosition));
         aileronPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.aileronPosition));
-        yokeXPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.yokeXPosition));
-        yokeYPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.yokeYPosition));
-        wingFlexPercent1 = static_cast<float>(SkyMath::toPercent(primaryFlightControlData.leftWingFlex));
-        wingFlexPercent2 = static_cast<float>(SkyMath::toPercent(primaryFlightControlData.rightWingFlex));
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
@@ -90,10 +82,6 @@ struct SimConnectPrimaryFlightControl
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RudderPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::ElevatorPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::AileronPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, "YOKE X POSITION", "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, "YOKE Y POSITION", "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, "WING FLEX PCT:1", "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, "WING FLEX PCT:2", "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
     }
 };
 #pragma pack(pop)

@@ -22,48 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPOSITIONREPLY_H
-#define SIMCONNECTPOSITIONREPLY_H
+#ifndef SIMCONNECTPOSITIONUSER_H
+#define SIMCONNECTPOSITIONUSER_H
 
-#include <windows.h>
-#include <SimConnect.h>
-
+#include <Kernel/Enum.h>
 #include <Model/PositionData.h>
-#include "SimConnectPositionRequest.h"
+#include "SimConnectType.h"
+#include "SimConnectPositionCommon.h"
 
 /*!
- * Simulation variables which represent the aircraft's position, attitude and velocities
- * (reply received from the flight simulator).
+ * Position simulation variables that are sent to the user aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPositionReply : public SimConnectPositionRequest
+struct SimConnectPositionUser
 {
-    // Extended aircraft position
-    double indicatedAltitude {0.0};
+    SimConnectPositionCommon common;
+
+    SimConnectPositionUser(const PositionData &positionData) noexcept
+        : SimConnectPositionUser()
+    {
+        fromPositionData(positionData);
+    }
+
+    SimConnectPositionUser() = default;
 
     inline PositionData toPositionData() const noexcept
     {
-        PositionData positionData;
-        positionData.latitude = latitude;
-        positionData.longitude = longitude;
-        positionData.altitude = altitude;
-        positionData.indicatedAltitude = indicatedAltitude;
-        positionData.pitch = pitch;
-        positionData.bank = bank;
-        positionData.trueHeading = trueHeading;
-
-        positionData.velocityBodyX = velocityBodyX;
-        positionData.velocityBodyY = velocityBodyY;
-        positionData.velocityBodyZ = velocityBodyZ;
-
+        PositionData positionData = common.toPositionData();
         return positionData;
     }
 
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+    inline void fromPositionData(const PositionData &positionData)
+    {
+        common.fromPositionData(positionData);
+    }
 
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
+    {
+        SimConnectPositionCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionUser));
+    }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPOSITIONREPLY_H
+#endif // SIMCONNECTPOSITIONUSER_H

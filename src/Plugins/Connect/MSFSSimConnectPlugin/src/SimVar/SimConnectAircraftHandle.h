@@ -33,7 +33,7 @@
 #include <Model/AircraftHandleData.h>
 
 /*!
- * Simulation variables which represent aircraft handles and brakes.
+ * Simulation variables that represent aircraft handles and brakes.
  *
  * Implementation note: this struct needs to be packed.
  */

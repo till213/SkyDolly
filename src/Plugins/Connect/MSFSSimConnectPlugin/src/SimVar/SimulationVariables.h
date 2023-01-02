@@ -26,8 +26,8 @@
 #define SIMULATIONVARIABLES_H
 
 #include "SimConnectAircraftInfo.h"
-#include "SimConnectPositionReply.h"
-#include "SimConnectPositionRequest.h"
+#include "SimConnectPositionUser.h"
+#include "SimConnectPositionAll.h"
 #include "SimConnectEngineUser.h"
 #include "SimConnectEngineAi.h"
 #include "SimConnectEngineAll.h"

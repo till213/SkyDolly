@@ -11,9 +11,11 @@ add_definitions(-DNOMINMAX)
 
 target_sources(${MODULE_NAME}
     PRIVATE
-
-        src/SimVar/SimConnectPositionRequest.h src/SimVar/SimConnectPositionRequest.cpp
-        src/SimVar/SimConnectPositionReply.h src/SimVar/SimConnectPositionReply.cpp
+        src/SimVar/SimConnectPositionCommon.h
+        src/SimVar/SimConnectPositionCore.h
+        src/SimVar/SimConnectPositionUser.h
+        src/SimVar/SimConnectPositionAi.h
+        src/SimVar/SimConnectPositionAll.h
         src/SimVar/SimConnectEngineCommon.h
         src/SimVar/SimConnectEngineCore.h
         src/SimVar/SimConnectEngineEvent.h

@@ -236,8 +236,8 @@ public:
             } else if (!m_pendingFlapsIndexRequest) {
                 // Request current flaps index
                 result = ::SimConnect_RequestDataOnSimObject(m_simConnectHandle, Enum::underly(SimConnectType::DataRequest::FlapsHandleIndex),
-                                                          Enum::underly(SimConnectType::DataDefinition::FlapsHandleIndex),
-                                                          ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+                                                             Enum::underly(SimConnectType::DataDefinition::FlapsHandleIndex),
+                                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
                 if (result == S_OK) {
                     m_pendingFlapsIndexRequest = true;
                 }

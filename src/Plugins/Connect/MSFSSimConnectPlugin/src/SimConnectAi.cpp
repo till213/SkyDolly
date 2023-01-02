@@ -38,7 +38,7 @@
 #include <Model/Position.h>
 #include <Model/PositionData.h>
 #include "SimConnectType.h"
-#include "SimVar/SimConnectPositionRequest.h"
+#include "SimVar/SimConnectPositionCommon.h"
 #include "SimConnectAi.h"
 
 using RequestByAircraftId = std::unordered_map<std::int64_t, ::SIMCONNECT_DATA_REQUEST_ID>;
@@ -76,7 +76,7 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
         const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
         Position &position = aircraft.getPosition();
         const PositionData &positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
-        const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionRequest::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
+        const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionCommon::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
 
         const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::underly(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;
         HRESULT result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);

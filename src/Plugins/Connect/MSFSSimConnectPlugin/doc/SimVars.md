@@ -14,7 +14,7 @@ The simulation variables are organised into records, covering the following topi
 Each topic X is furthermore split into sub-records:
 
 - XCommon: common simulation variables that are sent to both user- and AI aircraft
-- XCore: core simulation variables might be sent as simulation variables or events to the user aircraft
+- XCore: core simulation variables might be sent as either simulation variables or events to the user aircraft, or simply recorded "for information purposes" only
 - XEvent: event variables are sent as event to the user aircraft and (possibly) as simulation variables to AI aircraft
 
 ## Request and Response Records
