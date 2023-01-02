@@ -65,6 +65,22 @@ struct SimConnectEngineEvent
     }
     SimConnectEngineEvent() = default;
 
+    inline void fromEngineData(const EngineData &engineData) noexcept
+    {
+        throttleLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition1));
+        throttleLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition2));
+        throttleLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition3));
+        throttleLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition4));
+        propellerLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition1));
+        propellerLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition2));
+        propellerLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition3));
+        propellerLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition4));
+        generalEngineCombustion1 = engineData.generalEngineCombustion1 ? 1 : 0;
+        generalEngineCombustion2 = engineData.generalEngineCombustion2 ? 1 : 0;
+        generalEngineCombustion3 = engineData.generalEngineCombustion3 ? 1 : 0;
+        generalEngineCombustion4 = engineData.generalEngineCombustion4 ? 1 : 0;
+    }
+
     inline EngineData toEngineData() const noexcept
     {
         EngineData engineData;
@@ -88,22 +104,6 @@ struct SimConnectEngineEvent
         engineData.generalEngineCombustion2 = (generalEngineCombustion2 != 0);
         engineData.generalEngineCombustion3 = (generalEngineCombustion3 != 0);
         engineData.generalEngineCombustion4 = (generalEngineCombustion4 != 0);
-    }
-
-    inline void fromEngineData(const EngineData &engineData) noexcept
-    {
-        throttleLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition1));
-        throttleLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition2));
-        throttleLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition3));
-        throttleLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition4));
-        propellerLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition1));
-        propellerLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition2));
-        propellerLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition3));
-        propellerLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition4));
-        generalEngineCombustion1 = engineData.generalEngineCombustion1 ? 1 : 0;
-        generalEngineCombustion2 = engineData.generalEngineCombustion2 ? 1 : 0;
-        generalEngineCombustion3 = engineData.generalEngineCombustion3 ? 1 : 0;
-        generalEngineCombustion4 = engineData.generalEngineCombustion4 ? 1 : 0;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

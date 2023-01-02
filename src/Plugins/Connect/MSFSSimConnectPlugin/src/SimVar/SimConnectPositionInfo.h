@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPOSITIONCORE_H
-#define SIMCONNECTPOSITIONCORE_H
+#ifndef SIMCONNECTPOSITIONINFO_H
+#define SIMCONNECTPOSITIONINFO_H
 
 #include <cstdint>
 
@@ -38,19 +38,21 @@
 #include "SimConnectType.h"
 
 /*!
+ * Position simulation variables that are stored for information purposes only.
+ *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPositionCore
+struct SimConnectPositionInfo
 {
     double indicatedAltitude {0.0};
 
-    SimConnectPositionCore(const PositionData &positionData) noexcept
-        : SimConnectPositionCore()
+    SimConnectPositionInfo(const PositionData &positionData) noexcept
+        : SimConnectPositionInfo()
     {
         fromPositionData(positionData);
     }
-    SimConnectPositionCore() = default;
+    SimConnectPositionInfo() = default;
 
     inline void fromPositionData(const PositionData &positionData) noexcept
     {
@@ -76,4 +78,4 @@ struct SimConnectPositionCore
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPOSITIONCORE_H
+#endif // SIMCONNECTPOSITIONINFO_H

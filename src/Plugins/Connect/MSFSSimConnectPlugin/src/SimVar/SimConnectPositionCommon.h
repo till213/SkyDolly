@@ -78,52 +78,20 @@ struct SimConnectPositionCommon
     }
 
     inline PositionData toPositionData() const noexcept
-        {
-            PositionData positionData;
-            positionData.latitude = latitude;
-            positionData.longitude = longitude;
-            positionData.altitude = altitude;
-            positionData.pitch = pitch;
-            positionData.bank = bank;
-            positionData.trueHeading = trueHeading;
-
-            positionData.velocityBodyX = velocityBodyX;
-            positionData.velocityBodyY = velocityBodyY;
-            positionData.velocityBodyZ = velocityBodyZ;
-
-            return positionData;
-        }
-
-    static inline SIMCONNECT_DATA_INITPOSITION toInitialPosition(const PositionData &positionData, bool onGround, int initialAirspeed)
     {
-        SIMCONNECT_DATA_INITPOSITION initialPosition {};
+        PositionData positionData;
+        positionData.latitude = latitude;
+        positionData.longitude = longitude;
+        positionData.altitude = altitude;
+        positionData.pitch = pitch;
+        positionData.bank = bank;
+        positionData.trueHeading = trueHeading;
 
-        initialPosition.Latitude = positionData.latitude;
-        initialPosition.Longitude = positionData.longitude;
-        initialPosition.Altitude = positionData.altitude;
-        initialPosition.Pitch = positionData.pitch;
-        initialPosition.Bank = positionData.bank;
-        initialPosition.Heading = positionData.trueHeading;
-        initialPosition.OnGround = onGround ? 1 : 0;
-        initialPosition.Airspeed = initialAirspeed;
+        positionData.velocityBodyX = velocityBodyX;
+        positionData.velocityBodyY = velocityBodyY;
+        positionData.velocityBodyZ = velocityBodyZ;
 
-        return initialPosition;
-    }
-
-    static inline SIMCONNECT_DATA_INITPOSITION toInitialPosition(const InitialPosition &initialPosition)
-    {
-        SIMCONNECT_DATA_INITPOSITION initialSimConnnectPosition {};
-
-        initialSimConnnectPosition.Latitude = initialPosition.latitude;
-        initialSimConnnectPosition.Longitude = initialPosition.longitude;
-        initialSimConnnectPosition.Altitude = initialPosition.altitude;
-        initialSimConnnectPosition.Pitch = initialPosition.pitch;
-        initialSimConnnectPosition.Bank = initialPosition.bank;
-        initialSimConnnectPosition.Heading = initialPosition.trueHeading;
-        initialSimConnnectPosition.OnGround = initialPosition.onGround ? 1 : 0;
-        initialSimConnnectPosition.Airspeed = initialPosition.indicatedAirspeed;
-
-        return initialSimConnnectPosition;
+        return positionData;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

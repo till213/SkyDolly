@@ -22,23 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMULATIONVARIABLES_H
-#define SIMULATIONVARIABLES_H
+#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLAI_H
+#define SIMCONNECTPRIMARYFLIGHTCONTROLAI_H
 
-#include "SimConnectAircraftInfo.h"
-#include "SimConnectPositionUser.h"
-#include "SimConnectPositionAll.h"
-#include "SimConnectEngineUser.h"
-#include "SimConnectEngineAi.h"
-#include "SimConnectEngineAll.h"
-#include "SimConnectPrimaryFlightControlAi.h"
-#include "SimConnectPrimaryFlightControlAll.h"
-#include "SimConnectSecondaryFlightControl.h"
-#include "SimConnectAircraftHandle.h"
-#include "SimConnectLight.h"
-#include "SimConnectFlightPlan.h"
-#include "SimConnectSimulationTime.h"
-#include "SimConnectLocation.h"
-#include "SimConnectVariables.h"
-
-#endif // SIMULATIONVARIABLES_H
+#endif // SIMCONNECTPRIMARYFLIGHTCONTROLAI_H

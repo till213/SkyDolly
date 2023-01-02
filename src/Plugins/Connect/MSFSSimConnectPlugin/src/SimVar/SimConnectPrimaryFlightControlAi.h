@@ -22,47 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLREPLY_H
-#define SIMCONNECTPRIMARYFLIGHTCONTROLREPLY_H
-
-#include <windows.h>
+#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLAI_H
+#define SIMCONNECTPRIMARYFLIGHTCONTROLAI_H
 
 #include <Kernel/Enum.h>
 #include <Model/PrimaryFlightControlData.h>
 #include "SimConnectType.h"
-#include "SimConnectPrimaryFlightControl.h"
 #include "SimConnectPrimaryFlightControlAnimation.h"
 
 /*!
- * Simulation variables which represent the primary flight controls: rudder, elevators and ailerons.
+ * Primary flight control simulation variables that are sent to AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPrimaryFlightControlReply
+struct SimConnectPrimaryFlightControlAi
 {
-    SimConnectPrimaryFlightControl control;
     SimConnectPrimaryFlightControlAnimation animation;
+
+    SimConnectPrimaryFlightControlAi(const PrimaryFlightControlData &primaryflightcontrolData) noexcept
+        : SimConnectPrimaryFlightControlAi()
+    {
+        fromPrimaryFlightControlData(primaryflightcontrolData);
+    }
+
+    SimConnectPrimaryFlightControlAi() = default;
+
+    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryflightcontrolData)
+    {
+        animation.fromPrimaryFlightControlData(primaryflightcontrolData);
+    }
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {
-        PrimaryFlightControlData primaryFlightControlData = control.toPrimaryFlightControlData();
-        animation.toPrimaryFlightControlData(primaryFlightControlData);
-        return primaryFlightControlData;
-    }
-
-    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
-    {
-        control.fromPrimaryFlightControlData(primaryFlightControlData);
-        animation.fromPrimaryFlightControlData(primaryFlightControlData);
+        PrimaryFlightControlData primaryflightcontrolData = animation.toPrimaryFlightControlData();
+        return primaryflightcontrolData;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        SimConnectPrimaryFlightControl::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlReply));
-        SimConnectPrimaryFlightControlAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlReply));
+        SimConnectPrimaryFlightControlAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAi));
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPRIMARYFLIGHTCONTROLREPLY_H
+#endif // SIMCONNECTPRIMARYFLIGHTCONTROLAI_H

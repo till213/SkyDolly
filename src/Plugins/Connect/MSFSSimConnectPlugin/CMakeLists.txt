@@ -12,7 +12,7 @@ add_definitions(-DNOMINMAX)
 target_sources(${MODULE_NAME}
     PRIVATE
         src/SimVar/SimConnectPositionCommon.h
-        src/SimVar/SimConnectPositionCore.h
+        src/SimVar/SimConnectPositionInfo.h
         src/SimVar/SimConnectPositionUser.h
         src/SimVar/SimConnectPositionAi.h
         src/SimVar/SimConnectPositionAll.h
@@ -23,8 +23,9 @@ target_sources(${MODULE_NAME}
         src/SimVar/SimConnectEngineUser.h
         src/SimVar/SimConnectEngineAi.h
         src/SimVar/SimConnectPrimaryFlightControlAnimation.h
-        src/SimVar/SimConnectPrimaryFlightControl.h
-        src/SimVar/SimConnectPrimaryFlightControlReply.h
+        src/SimVar/SimConnectPrimaryFlightControlEvent.h
+        src/SimVar/SimConnectPrimaryFlightControlAll.h
+        src/SimVar/SimConnectPrimaryFlightControlAi.h
         src/SimVar/SimConnectSecondaryFlightControl.h src/SimVar/SimConnectSecondaryFlightControl.cpp
         src/SimVar/SimConnectAircraftHandle.h src/SimVar/SimConnectAircraftHandle.cpp
         src/SimVar/SimConnectLight.h src/SimVar/SimConnectLight.cpp

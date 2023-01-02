@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPRIMARYFLIGHTCONTROL_H
-#define SIMCONNECTPRIMARYFLIGHTCONTROL_H
+#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLEVENT_H
+#define SIMCONNECTPRIMARYFLIGHTCONTROLEVENT_H
 
 #include <windows.h>
 #include <SimConnect.h>
@@ -40,16 +40,12 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPrimaryFlightControl
+struct SimConnectPrimaryFlightControlEvent
 {
     // Radians
     float rudderPosition {0.0f};
     float elevatorPosition {0.0f};
     float aileronPosition {0.0f};
-    float yokeXPosition {0.0f};
-    float yokeYPosition {0.0f};
-    float wingFlexPercent1 {0.0f};
-    float wingFlexPercent2 {0.0f};
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {
@@ -72,11 +68,6 @@ struct SimConnectPrimaryFlightControl
         aileronPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.aileronPosition));
     }
 
-    static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
-    {
-        addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControl));
-    }
-
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RudderPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
@@ -86,4 +77,4 @@ struct SimConnectPrimaryFlightControl
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPRIMARYFLIGHTCONTROL_H
+#endif // SIMCONNECTPRIMARYFLIGHTCONTROLEVENT_H

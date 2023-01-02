@@ -48,15 +48,15 @@ struct SimConnectPositionAi
 
     SimConnectPositionAi() = default;
 
+    inline void fromPositionData(const PositionData &positionData)
+    {
+        common.fromPositionData(positionData);
+    }
+
     inline PositionData toPositionData() const noexcept
     {
         PositionData positionData = common.toPositionData();
         return positionData;
-    }
-
-    inline void fromPositionData(const PositionData &positionData)
-    {
-        common.fromPositionData(positionData);
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept

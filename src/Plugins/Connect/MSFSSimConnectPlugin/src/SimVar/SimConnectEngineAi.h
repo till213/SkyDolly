@@ -50,17 +50,17 @@ struct SimConnectEngineAi
 
     SimConnectEngineAi() = default;
 
+    inline void fromEngineData(const EngineData &engineData)
+    {
+        common.fromEngineData(engineData);
+        event.fromEngineData(engineData);
+    }
+
     inline EngineData toEngineData() const noexcept
     {
         EngineData engineData = common.toEngineData();
         event.toEngineData(engineData);
         return engineData;
-    }
-
-    inline void fromEngineData(const EngineData &engineData)
-    {
-        common.fromEngineData(engineData);
-        event.fromEngineData(engineData);
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
