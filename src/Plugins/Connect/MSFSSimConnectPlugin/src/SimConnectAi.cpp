@@ -38,7 +38,7 @@
 #include <Model/Position.h>
 #include <Model/PositionData.h>
 #include "SimConnectType.h"
-#include "SimVar/SimConnectPositionAll.h"
+#include "SimVar/SimulationVariables.h"
 #include "SimConnectAi.h"
 
 using RequestByAircraftId = std::unordered_map<std::int64_t, ::SIMCONNECT_DATA_REQUEST_ID>;

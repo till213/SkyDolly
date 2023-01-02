@@ -44,7 +44,7 @@ struct SimConnectSecondaryFlightControl
     float leadingEdgeFlapsRightPercent {0.0f};
     float trailingEdgeFlapsLeftPercent {0.0f};
     float trailingEdgeFlapsRightPercent {0.0f};
-    float spoilersHandlePosition{0.0f} ;
+    float spoilersHandlePosition {0.0f} ;
     std::int32_t flapsHandleIndex {0};
 
     inline SecondaryFlightControlData toSecondaryFlightControlData() const noexcept

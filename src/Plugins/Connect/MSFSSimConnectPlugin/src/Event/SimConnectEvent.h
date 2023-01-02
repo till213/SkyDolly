@@ -35,9 +35,9 @@
 #endif
 
 #include <Kernel/Enum.h>
-#include "SimConnectPrimaryFlightControlAll.h"
-#include "SimConnectEngineEvent.h"
-#include "SimConnectEngineAll.h"
+#include "PrimaryFlightControl/SimConnectPrimaryFlightControlAll.h"
+#include "Engine/SimConnectEngineEvent.h"
+#include "Engine/SimConnectEngineAll.h"
 #include "SimConnectType.h"
 
 class SimConnectEvent

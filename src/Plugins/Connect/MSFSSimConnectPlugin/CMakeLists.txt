@@ -11,21 +11,21 @@ add_definitions(-DNOMINMAX)
 
 target_sources(${MODULE_NAME}
     PRIVATE
-        src/SimVar/SimConnectPositionCommon.h
-        src/SimVar/SimConnectPositionInfo.h
-        src/SimVar/SimConnectPositionUser.h
-        src/SimVar/SimConnectPositionAi.h
-        src/SimVar/SimConnectPositionAll.h
-        src/SimVar/SimConnectEngineCommon.h
-        src/SimVar/SimConnectEngineCore.h
-        src/SimVar/SimConnectEngineEvent.h
-        src/SimVar/SimConnectEngineAll.h
-        src/SimVar/SimConnectEngineUser.h
-        src/SimVar/SimConnectEngineAi.h
-        src/SimVar/SimConnectPrimaryFlightControlAnimation.h
-        src/SimVar/SimConnectPrimaryFlightControlEvent.h
-        src/SimVar/SimConnectPrimaryFlightControlAll.h
-        src/SimVar/SimConnectPrimaryFlightControlAi.h
+        src/SimVar/Position/SimConnectPositionCommon.h
+        src/SimVar/Position/SimConnectPositionInfo.h
+        src/SimVar/Position/SimConnectPositionUser.h
+        src/SimVar/Position/SimConnectPositionAi.h
+        src/SimVar/Position/SimConnectPositionAll.h
+        src/SimVar/Engine/SimConnectEngineCommon.h
+        src/SimVar/Engine/SimConnectEngineCore.h
+        src/SimVar/Engine/SimConnectEngineEvent.h
+        src/SimVar/Engine/SimConnectEngineAll.h
+        src/SimVar/Engine/SimConnectEngineUser.h
+        src/SimVar/Engine/SimConnectEngineAi.h
+        src/SimVar/PrimaryFlightControl/SimConnectPrimaryFlightControlAnimation.h
+        src/SimVar/PrimaryFlightControl/SimConnectPrimaryFlightControlEvent.h
+        src/SimVar/PrimaryFlightControl/SimConnectPrimaryFlightControlAll.h
+        src/SimVar/PrimaryFlightControl/SimConnectPrimaryFlightControlAi.h
         src/SimVar/SimConnectSecondaryFlightControl.h src/SimVar/SimConnectSecondaryFlightControl.cpp
         src/SimVar/SimConnectAircraftHandle.h src/SimVar/SimConnectAircraftHandle.cpp
         src/SimVar/SimConnectLight.h src/SimVar/SimConnectLight.cpp
