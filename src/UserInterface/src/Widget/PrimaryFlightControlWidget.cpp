@@ -78,10 +78,10 @@ void PrimaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableDa
     QString colorName;
 
     if (!primaryFlightControlData.isNull()) {
-        ui->rudderDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::leftAileronDeflection(primaryFlightControlData.rudderDeflection)));
-        ui->elevatorDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::leftAileronDeflection(primaryFlightControlData.elevatorDeflection)));
-        ui->leftAileronDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::leftAileronDeflection(primaryFlightControlData.leftAileronDeflection)));
-        ui->rightAileronDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::leftAileronDeflection(primaryFlightControlData.rightAileronDeflection)));
+        ui->rudderDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::radiansToDegrees(primaryFlightControlData.rudderDeflection)));
+        ui->elevatorDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::radiansToDegrees(primaryFlightControlData.elevatorDeflection)));
+        ui->leftAileronDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::radiansToDegrees(primaryFlightControlData.leftAileronDeflection)));
+        ui->rightAileronDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::radiansToDegrees(primaryFlightControlData.rightAileronDeflection)));
         ui->rudderLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.rudderPosition));
         ui->elevatorLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.elevatorPosition));
         ui->aileronLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.aileronPosition));

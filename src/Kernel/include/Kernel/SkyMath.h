@@ -419,7 +419,7 @@ namespace SkyMath
                 pitch = 0.0;
             }
         }
-        return Convert::leftAileronDeflection(pitch);
+        return Convert::radiansToDegrees(pitch);
     }
 
     /*!

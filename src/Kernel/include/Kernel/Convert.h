@@ -147,7 +147,7 @@ public:
      *        the radians to convert
      * \return the converted degrees
      */
-    static inline constexpr double leftAileronDeflection(double radians) noexcept {
+    static inline constexpr double radiansToDegrees(double radians) noexcept {
         return radians * 180.0 / M_PI;
     };
 
