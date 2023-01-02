@@ -48,9 +48,6 @@ struct MODEL_API PositionData final : public TimeVariableData
     double velocityBodyX {0.0};
     double velocityBodyY {0.0};
     double velocityBodyZ {0.0};
-    double rotationVelocityBodyX {0.0};
-    double rotationVelocityBodyY {0.0};
-    double rotationVelocityBodyZ {0.0};
 
     explicit PositionData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
 };

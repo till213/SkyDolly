@@ -52,9 +52,11 @@ struct SimConnectPositionRequest
     double velocityBodyX {0.0};
     double velocityBodyY {0.0};
     double velocityBodyZ {0.0};
-    double rotationVelocityBodyX {0.0};
-    double rotationVelocityBodyY {0.0};
-    double rotationVelocityBodyZ {0.0};
+
+    // Implementation note:
+    // If we would store the "rotation velocity body" (which we currently do not anymore) then
+    // then the unit would be (wrongly) "FEET per second" (and not "RADIANS per second):
+    // https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Misc_Variables.htm#ROTATION_VELOCITY_BODY_X
 
     inline void fromPositionData(const PositionData &positionData) noexcept
     {
@@ -68,14 +70,11 @@ struct SimConnectPositionRequest
         velocityBodyX = positionData.velocityBodyX;
         velocityBodyY = positionData.velocityBodyY;
         velocityBodyZ = positionData.velocityBodyZ;
-        rotationVelocityBodyX = positionData.rotationVelocityBodyX;
-        rotationVelocityBodyY = positionData.rotationVelocityBodyY;
-        rotationVelocityBodyZ = positionData.rotationVelocityBodyZ;
     }
 
     static inline SIMCONNECT_DATA_INITPOSITION toInitialPosition(const PositionData &positionData, bool onGround, int initialAirspeed)
     {
-        SIMCONNECT_DATA_INITPOSITION initialPosition;
+        SIMCONNECT_DATA_INITPOSITION initialPosition {};
 
         initialPosition.Latitude = positionData.latitude;
         initialPosition.Longitude = positionData.longitude;
@@ -91,7 +90,7 @@ struct SimConnectPositionRequest
 
     static inline SIMCONNECT_DATA_INITPOSITION toInitialPosition(const InitialPosition &initialPosition)
     {
-        SIMCONNECT_DATA_INITPOSITION initialSimConnnectPosition;
+        SIMCONNECT_DATA_INITPOSITION initialSimConnnectPosition {};
 
         initialSimConnnectPosition.Latitude = initialPosition.latitude;
         initialSimConnnectPosition.Longitude = initialPosition.longitude;

@@ -277,9 +277,6 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     aircraftData.bank = -180.0 + d->randomGenerator->bounded(360.0);
     aircraftData.trueHeading = -180.0 + d->randomGenerator->bounded(360.0);
 
-    aircraftData.rotationVelocityBodyX = d->randomGenerator->bounded(1.0);
-    aircraftData.rotationVelocityBodyY = d->randomGenerator->bounded(1.0);
-    aircraftData.rotationVelocityBodyZ = d->randomGenerator->bounded(1.0);
     aircraftData.velocityBodyX = d->randomGenerator->bounded(1.0);
     aircraftData.velocityBodyY = d->randomGenerator->bounded(1.0);
     aircraftData.velocityBodyZ = d->randomGenerator->bounded(1.0);

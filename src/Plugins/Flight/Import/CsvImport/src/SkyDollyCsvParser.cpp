@@ -261,15 +261,6 @@ inline bool SkyDollyCsvParser::importPositionData(const CsvParser::Row &row, Air
     if (ok) {
         data.velocityBodyZ = row.at(Enum::underly(::Index::VelocityBodyZ)).toDouble(&ok);
     }
-    if (ok) {
-        data.rotationVelocityBodyX = row.at(Enum::underly(::Index::RotationVelocityBodyX)).toDouble(&ok);
-    }
-    if (ok) {
-        data.rotationVelocityBodyY= row.at(Enum::underly(::Index::RotationVelocityBodyY)).toDouble(&ok);
-    }
-    if (ok) {
-        data.rotationVelocityBodyZ = row.at(Enum::underly(::Index::RotationVelocityBodyZ)).toDouble(&ok);
-    }
     // Timestamp
     if (ok) {
         data.timestamp = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;

@@ -110,7 +110,9 @@ MSFSSimConnectPlugin::MSFSSimConnectPlugin(QObject *parent) noexcept
 
 MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
 {
-    d->simConnectEvent->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
+    if (d->simConnectEvent != nullptr) {
+        d->simConnectEvent->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
+    }
     close();
 }
 
@@ -353,23 +355,15 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                             SimConnectPrimaryFlightControl simConnectPrimaryFlightControl;
                             simConnectPrimaryFlightControl.fromPrimaryFlightControlData(primaryFlightControlData);
                             ok = d->simConnectEvent->sendPrimaryFlightControls(simConnectPrimaryFlightControl);
-                            HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControl),
-                                                                          objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                          sizeof(SimConnectPrimaryFlightControl), &simConnectPrimaryFlightControl);
                         }
-//                        else {
-//                            SimConnectPrimaryFlightControlAnimation simConnectPrimaryFlightControlAnimation;
-//                            simConnectPrimaryFlightControlAnimation.fromPrimaryFlightControlData(primaryFlightControlData);
-//                            HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAnimation),
-//                                                                          objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-//                                                                          sizeof(SimConnectPrimaryFlightControlAnimation), &simConnectPrimaryFlightControlAnimation);
-//                            ok = res == S_OK;
-//                        }
-//                        SimConnectPrimaryFlightControlReply simConnectPrimaryFlightControlReply;
-//                        simConnectPrimaryFlightControlReply.fromPrimaryFlightControlData(primaryFlightControlData);
-//                        HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlReply),
-//                                                                      objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-//                                                                      sizeof(SimConnectPrimaryFlightControlReply), &simConnectPrimaryFlightControlReply);
+                        else {
+                            SimConnectPrimaryFlightControlAnimation simConnectPrimaryFlightControlAnimation;
+                            simConnectPrimaryFlightControlAnimation.fromPrimaryFlightControlData(primaryFlightControlData);
+                            HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAnimation),
+                                                                          objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                                          sizeof(SimConnectPrimaryFlightControlAnimation), &simConnectPrimaryFlightControlAnimation);
+                            ok = res == S_OK;
+                        }
                     }
                 }
 

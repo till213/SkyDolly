@@ -11,6 +11,10 @@
 ### Under The Hood
 - Small performance improvements
 
+### Bug Fixes
+- Fix "ailerons reversal" (Asobo A320neo, F/A-18 and other aircraft with "PID controllers")
+  * Actual root cause (in MSFS/SimConnect): "*radians*" per second instead of the expected "*feet* per second" unit for "*rotation* velocity body" (radians per second would actually be the correct physical unit for roation velocity)
+
 ## 0.13.1
 
 ### Bug Fixes

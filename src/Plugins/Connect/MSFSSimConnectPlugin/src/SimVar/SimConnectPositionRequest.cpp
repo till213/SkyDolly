@@ -54,7 +54,4 @@ void SimConnectPositionRequest::addToDataDefinition(HANDLE simConnectHandle, ::S
     ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::VelocityBodyX, "Feet per Second", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::VelocityBodyY, "Feet per Second",::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::VelocityBodyZ, "Feet per Second",::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RotationVelocityBodyX, "Radians per Second", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RotationVelocityBodyY, "Radians per Second", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::RotationVelocityBodyZ, "Radians per Second", ::SIMCONNECT_DATATYPE_FLOAT64);
 }

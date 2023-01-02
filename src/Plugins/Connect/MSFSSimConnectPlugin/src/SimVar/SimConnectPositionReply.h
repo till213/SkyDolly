@@ -57,9 +57,6 @@ struct SimConnectPositionReply : public SimConnectPositionRequest
         positionData.velocityBodyX = velocityBodyX;
         positionData.velocityBodyY = velocityBodyY;
         positionData.velocityBodyZ = velocityBodyZ;
-        positionData.rotationVelocityBodyX = rotationVelocityBodyX;
-        positionData.rotationVelocityBodyY = rotationVelocityBodyY;
-        positionData.rotationVelocityBodyZ = rotationVelocityBodyZ;
 
         return positionData;
     }

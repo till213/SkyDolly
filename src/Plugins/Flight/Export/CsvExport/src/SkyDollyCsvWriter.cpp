@@ -199,16 +199,10 @@ inline QString SkyDollyCsvWriter::getPositionData(const PositionData &data) noex
               Export::formatNumber(data.trueHeading) % Csv::CommaSep %
               Export::formatNumber(data.velocityBodyX) % Csv::CommaSep %
               Export::formatNumber(data.velocityBodyY) % Csv::CommaSep %
-              Export::formatNumber(data.velocityBodyZ) % Csv::CommaSep %
-              Export::formatNumber(data.rotationVelocityBodyX) % Csv::CommaSep %
-              Export::formatNumber(data.rotationVelocityBodyY) % Csv::CommaSep %
-              Export::formatNumber(data.rotationVelocityBodyZ);
+              Export::formatNumber(data.velocityBodyZ) % Csv::CommaSep;
     } else {
         const QString EmptyString;
         csv = EmptyString % Csv::CommaSep %
-              EmptyString % Csv::CommaSep %
-              EmptyString % Csv::CommaSep %
-              EmptyString % Csv::CommaSep %
               EmptyString % Csv::CommaSep %
               EmptyString % Csv::CommaSep %
               EmptyString % Csv::CommaSep %

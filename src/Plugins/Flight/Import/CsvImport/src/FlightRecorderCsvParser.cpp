@@ -308,15 +308,6 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     if (ok) {
         positionData.velocityBodyZ = row.at(d->headers.at(::VelocityBodyZ)).toDouble(&ok);
     }
-    if (ok) {
-        positionData.rotationVelocityBodyX = row.at(d->headers.at(::RotationVelocityBodyX)).toDouble(&ok);
-    }
-    if (ok) {
-        positionData.rotationVelocityBodyY = row.at(d->headers.at(::RotationVelocityBodyY)).toDouble(&ok);
-    }
-    if (ok) {
-        positionData.rotationVelocityBodyZ = row.at(d->headers.at(::RotationVelocityBodyZ)).toDouble(&ok);
-    }
 
     if (ok) {
         position.upsertLast(positionData);
