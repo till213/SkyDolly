@@ -82,13 +82,8 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64
             m_currentData.flapsHandleIndex = p1->flapsHandleIndex;
             m_currentData.timestamp = adjustedTimestamp;
         } else {
-            // Certain aircraft might override the FLAPS HANDLE INDEX, so values need to be repeatedly set
-            if (Settings::getInstance().isRepeatCanopyOpenEnabled()) {
-                m_currentData.timestamp = adjustedTimestamp;
-            } else {
-                // No recorded data (and no repeat), or the timestamp exceeds the timestamp of the last recorded data
-                m_currentData.reset();
-            }
+            // No recorded data (and no repeat), or the timestamp exceeds the timestamp of the last recorded data
+            m_currentData.reset();
         }
 
         setCurrentIndex(currentIndex);

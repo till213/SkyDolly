@@ -7,6 +7,7 @@
 - New location categories, including improved CSV import & export with Little Navmap
   * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
 - When pausing either replay or recording the simulation is now also paused
+- No need to "repeat flaps" in settings anymore (improved replay)
 
 ### Under The Hood
 - Small performance improvements

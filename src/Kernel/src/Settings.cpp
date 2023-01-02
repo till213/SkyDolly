@@ -92,7 +92,6 @@ struct SettingsPrivate
     double seekIntervalPercent;
     bool replayLoop;
     Replay::SpeedUnit replaySpeedUnit;
-    bool repeatFlapsHandleIndex;
     bool repeatCanopyOpen;
 
     bool relativePositionPlacement;
@@ -127,7 +126,6 @@ struct SettingsPrivate
     static constexpr double DefaultSeekIntervalPercent {0.5};
     static constexpr bool DefaultReplayLoop {false};
     static constexpr Replay::SpeedUnit DefaultReplaySpeedUnit {Replay::SpeedUnit::Absolute};
-    static constexpr double DefaultRepeatFlapsHandleIndex {false};
     // For now the default value is true, as no known aircraft exists where the canopy values would not
     // have to be repeated
     static constexpr bool DefaultRepeatCanopyOpen {true};
@@ -409,19 +407,6 @@ void Settings::setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept
     }
 }
 
-bool Settings::isRepeatFlapsHandleIndexEnabled() const noexcept
-{
-    return d->repeatFlapsHandleIndex;
-}
-
-void Settings::setRepeatFlapsHandleIndexEnabled(bool enable) noexcept
-{
-    if (d->repeatFlapsHandleIndex != enable) {
-        d->repeatFlapsHandleIndex = enable;
-        emit repeatFlapsPositionChanged(d->repeatFlapsHandleIndex);
-    }
-}
-
 bool Settings::isRepeatCanopyOpenEnabled() const noexcept
 {
     return d->repeatCanopyOpen;
@@ -637,7 +622,6 @@ void Settings::store() const noexcept
         d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
         d->settings.setValue("ReplayLoop", d->replayLoop);
         d->settings.setValue("ReplaySpeedUnit", Enum::underly(d->replaySpeedUnit));
-        d->settings.setValue("RepeatFlapsHandleIndex", d->repeatFlapsHandleIndex);
         d->settings.setValue("RepeatCanopyOpen", d->repeatCanopyOpen);
     }
     d->settings.endGroup();
@@ -764,7 +748,6 @@ void Settings::restore() noexcept
 #endif
             d->replaySpeedUnit = SettingsPrivate::DefaultReplaySpeedUnit;
         }
-        d->repeatFlapsHandleIndex = d->settings.value("RepeatFlapsHandleIndex", SettingsPrivate::DefaultRepeatFlapsHandleIndex).toBool();
         d->repeatCanopyOpen = d->settings.value("RepeatCanopyOpen", SettingsPrivate::DefaultRepeatCanopyOpen).toBool();
     }
     d->settings.endGroup();
@@ -865,8 +848,6 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::replayLoopChanged,
             this, &Settings::changed);
     connect(this, &Settings::replaySpeedUnitChanged,
-            this, &Settings::changed);
-    connect(this, &Settings::repeatFlapsPositionChanged,
             this, &Settings::changed);
     connect(this, &Settings::repeatCanopyChanged,
             this, &Settings::changed);
