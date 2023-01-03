@@ -36,7 +36,7 @@
 #include <Model/EngineData.h>
 
 /*!
- * Engine simulation variables that represent the core data.
+ * Engine simulation variables that are only sent to the user aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -63,13 +63,6 @@ struct SimConnectEngineCore
     }
     SimConnectEngineCore() = default;
 
-    inline EngineData toEngineData() const noexcept
-    {
-        EngineData engineData;
-        toEngineData(engineData);
-        return engineData;
-    }
-
     inline void fromEngineData(const EngineData &engineData) noexcept
     {
         mixtureLeverPosition1 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition1));
@@ -84,6 +77,13 @@ struct SimConnectEngineCore
         generalEngineStarter2 = engineData.generalEngineStarter2 ? 1 : 0;
         generalEngineStarter3 = engineData.generalEngineStarter3 ? 1 : 0;
         generalEngineStarter4 = engineData.generalEngineStarter4 ? 1 : 0;
+    }
+
+    inline EngineData toEngineData() const noexcept
+    {
+        EngineData engineData;
+        toEngineData(engineData);
+        return engineData;
     }
 
     inline void toEngineData(EngineData &engineData) const noexcept

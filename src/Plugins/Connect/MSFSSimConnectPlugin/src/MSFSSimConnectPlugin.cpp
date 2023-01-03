@@ -392,17 +392,25 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                 if (ok) {
                     const AircraftHandleData &aircraftHandleData = aircraft.getAircraftHandle().interpolate(currentTimestamp, access);
                     if (!aircraftHandleData.isNull()) {
-                        SimConnectAircraftHandle simConnectAircraftHandle;
-                        simConnectAircraftHandle.fromAircraftHandleData(aircraftHandleData);
-                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::Handle),
-                                                                            objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                            sizeof(SimConnectAircraftHandle), &simConnectAircraftHandle);
-                        ok = res == S_OK;
+                        SimConnectAircraftHandleAll simConnectAircraftHandleAll {aircraftHandleData};
                         if (isUserAircraft) {
+                            SimConnectAircraftHandleUser simConnectAircraftHandleUser = simConnectAircraftHandleAll.user();
+                            const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleUser),
+                                                                                objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                                                sizeof(SimConnectAircraftHandleUser), &simConnectAircraftHandleUser);
+                            ok = res == S_OK;
                             if (ok) {
-                                ok = d->simConnectEvent->setGear(simConnectAircraftHandle.gearHandlePosition);
+                                ok = d->simConnectEvent->sendAircraftHandle(simConnectAircraftHandleAll);
                             }
+
+                        } else {
+                            SimConnectAircraftHandleAi simConnectAircraftHandleAi = simConnectAircraftHandleAll.ai();
+                            const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAi),
+                                                                                objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                                                sizeof(SimConnectAircraftHandleAi), &simConnectAircraftHandleAi);
+                            ok = res == S_OK;
                         }
+
                     }
                 }
 
@@ -587,7 +595,9 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
     SimConnectPrimaryFlightControlAll::addToDataDefinition(d->simConnectHandle);
     SimConnectSecondaryFlightControlAi::addToDataDefinition(d->simConnectHandle);
     SimConnectSecondaryFlightControlAll::addToDataDefinition(d->simConnectHandle);
-    SimConnectAircraftHandle::addToDataDefinition(d->simConnectHandle);
+    SimConnectAircraftHandleUser::addToDataDefinition(d->simConnectHandle);
+    SimConnectAircraftHandleAi::addToDataDefinition(d->simConnectHandle);
+    SimConnectAircraftHandleAll::addToDataDefinition(d->simConnectHandle);
     SimConnectLight::addToDataDefinition(d->simConnectHandle);
     SimConnectFlightPlan::addToDataDefinition(d->simConnectHandle);
     SimConnectSimulationTime::addToDataDefinition(d->simConnectHandle);
@@ -659,8 +669,8 @@ void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexc
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::SecondaryFlightControlAll),
                                             Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControlAll),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftHandle),
-                                            Enum::underly(SimConnectType::DataDefinition::Handle),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftHandleAll),
+                                            Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::Light),
                                             Enum::underly(SimConnectType::DataDefinition::Light),
@@ -819,11 +829,11 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             }
             break;
         }
-        case SimConnectType::DataRequest::AircraftHandle:
+        case SimConnectType::DataRequest::AircraftHandleAll:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                auto simConnectAircraftHandle = reinterpret_cast<const SimConnectAircraftHandle *>(&objectData->dwData);
-                AircraftHandleData aircraftHandleData = simConnectAircraftHandle->toAircraftHandleData();
+                auto simConnectAircraftHandleAll = reinterpret_cast<const SimConnectAircraftHandleAll *>(&objectData->dwData);
+                AircraftHandleData aircraftHandleData = simConnectAircraftHandleAll->toAircraftHandleData();
                 aircraftHandleData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
                     userAircraft.getAircraftHandle().upsertLast(aircraftHandleData);

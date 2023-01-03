@@ -22,67 +22,74 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTAIRCRAFTHANDLE_H
-#define SIMCONNECTAIRCRAFTHANDLE_H
+#ifndef SIMCONNECTAIRCRAFTHANDLEEVENT_H
+#define SIMCONNECTAIRCRAFTHANDLEEVENT_H
 
 #include <cstdint>
 
 #include <windows.h>
+#include <SimConnect.h>
 
 #include <Kernel/SkyMath.h>
+#include <Model/SimVar.h>
+#include "SimConnectType.h"
 #include <Model/AircraftHandleData.h>
 
 /*!
- * Simulation variables that represent aircraft handles and brakes.
+ * Aircraft handle simulation variables that are only sent to the user aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectAircraftHandle
+struct SimConnectAircraftHandleEvent
 {
-    // Gear, brakes & handles
-    float brakeLeftPosition {0.0f};
-    float brakeRightPosition {0.0f};
-    float waterRudderHandlePosition {0.0f};
     float tailhookPosition {0.0f};
-    float canopyOpen {0.0f};
     float foldingWingLeftPercent {0.0f};
     float foldingWingRightPercent {0.0f};
     std::int32_t gearHandlePosition {0};
     std::int32_t smokeEnable {0};
 
-    inline AircraftHandleData toAircraftHandleData() const noexcept
+    SimConnectAircraftHandleEvent(const AircraftHandleData &aircraftHandleData) noexcept
+        : SimConnectAircraftHandleEvent()
     {
-        AircraftHandleData aircraftHandleData;
-
-        aircraftHandleData.brakeLeftPosition= SkyMath::fromNormalisedPosition(brakeLeftPosition);
-        aircraftHandleData.brakeRightPosition = SkyMath::fromNormalisedPosition(brakeRightPosition);
-        aircraftHandleData.waterRudderHandlePosition = SkyMath::fromNormalisedPosition(waterRudderHandlePosition);
-        aircraftHandleData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
-        aircraftHandleData.canopyOpen = SkyMath::fromPercent(canopyOpen);
-        aircraftHandleData.leftWingFolding = SkyMath::fromPercent(foldingWingLeftPercent);
-        aircraftHandleData.rightWingFolding = SkyMath::fromPercent(foldingWingRightPercent);
-        aircraftHandleData.gearHandlePosition = gearHandlePosition != 0;
-        aircraftHandleData.smokeEnabled = smokeEnable != 0;
-
-        return aircraftHandleData;
+        fromAircraftHandleData(aircraftHandleData);
     }
+    SimConnectAircraftHandleEvent() = default;
 
     inline void fromAircraftHandleData(const AircraftHandleData &aircraftHandleData) noexcept
     {
-        brakeLeftPosition = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.brakeLeftPosition));
-        brakeRightPosition = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.brakeRightPosition));
-        waterRudderHandlePosition = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.waterRudderHandlePosition));
         tailhookPosition = static_cast<float>(SkyMath::toPercent(aircraftHandleData.tailhookPosition));
-        canopyOpen = static_cast<float>(SkyMath::toPercent(aircraftHandleData.canopyOpen));
         foldingWingLeftPercent = static_cast<float>(SkyMath::toPercent(aircraftHandleData.leftWingFolding));
         foldingWingRightPercent = static_cast<float>(SkyMath::toPercent(aircraftHandleData.rightWingFolding));
         gearHandlePosition = aircraftHandleData.gearHandlePosition ? 1 : 0;
         smokeEnable = aircraftHandleData.smokeEnabled ? 1 : 0;
     }
 
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+    inline AircraftHandleData toAircraftHandleData() const noexcept
+    {
+        AircraftHandleData aircraftHandleData;
+        toAircraftHandleData(aircraftHandleData);
+        return aircraftHandleData;
+    }
+
+    inline void toAircraftHandleData(AircraftHandleData &aircraftHandleData) const noexcept
+    {
+        aircraftHandleData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
+        aircraftHandleData.leftWingFolding = SkyMath::fromPercent(foldingWingLeftPercent);
+        aircraftHandleData.rightWingFolding = SkyMath::fromPercent(foldingWingRightPercent);
+        aircraftHandleData.gearHandlePosition = gearHandlePosition != 0;
+        aircraftHandleData.smokeEnabled = smokeEnable != 0;
+    }
+
+    static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
+    {
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::TailhookPosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::FoldingWingLeftPercent, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::FoldingWingRightPercent, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GearHandlePosition, "Bool", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SmokeEnable, "Bool", ::SIMCONNECT_DATATYPE_INT32);
+    }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTAIRCRAFTHANDLE_H
+#endif // SIMCONNECTAIRCRAFTHANDLEEVENT_H

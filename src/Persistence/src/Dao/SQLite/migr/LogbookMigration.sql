@@ -876,6 +876,23 @@ drop table position;
 @migr(id = "1e013965-e38a-4df1-b70c-f1d3af6d1e5b", descn = "Rename the new position table to original name", step = 4)
 alter table position_new rename to position;
 
+@migr(id = "078f7bb3-6c92-4c86-8396-fa9fd4976067", descn = "Rename column handle.tail_hook_position to tailhook_position", step = 1)
+alter table handle rename column tail_hook_position to tailhook_position;
+
+@migr(id = "7deb21ba-b486-4b1c-8fed-8432adf3a1f2", descn = "Add column tailhook handle position, step_cnt = 2)
+alter table handle add column tailhook_handle_position integer;
+
+@migr(id = "7deb21ba-b486-4b1c-8fed-8432adf3a1f2", descn = "Migrate column tailhook handle position, step = 2)
+update handle
+set    tailhook_handle_position = case when tailhook_position > 128 then 1 else 0 end;
+
+@migr(id = "3740cd86-5c65-4d78-bc5a-2581656799d4", descn = "Add column folding wing handle position, step_cnt = 2)
+alter table handle add column folding_wing_handle_position integer;
+
+@migr(id = "3740cd86-5c65-4d78-bc5a-2581656799d4", descn = "Migrate column folding wing handle position, step = 2)
+update handle
+set    folding_wing_handle_position = case when (left_wing_folding > 128 or right_wing_folding > 128) then 1 else 0 end;
+
 @migr(id = "663032d8-c8a4-43ff-b126-0d964d73bf23", descn = "Update application version to 0.14", step = 1)
 update metadata
 set app_version = '0.14.0';

@@ -47,7 +47,9 @@ namespace SimConnectType
         PrimaryFlightControlAll,
         SecondaryFlightControlAi,
         SecondaryFlightControlAll,
-        Handle,
+        AircraftHandleUser,
+        AircraftHandleAi,
+        AircraftHandleAll,
         Light,
         // Simulation variables
         FlapsHandleIndex
@@ -64,7 +66,7 @@ namespace SimConnectType
         PrimaryFlightControlAll,
         Flaps,
         SecondaryFlightControlAll,
-        AircraftHandle,
+        AircraftHandleAll,
         Light,
         // Simulation variables
         FlapsHandleIndex,

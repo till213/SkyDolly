@@ -80,6 +80,13 @@ struct SimConnectPositionCommon
     inline PositionData toPositionData() const noexcept
     {
         PositionData positionData;
+        toPositionData(positionData);
+        return positionData;
+    }
+
+    inline void toPositionData(PositionData &positionData) const noexcept
+    {
+
         positionData.latitude = latitude;
         positionData.longitude = longitude;
         positionData.altitude = altitude;
@@ -90,8 +97,6 @@ struct SimConnectPositionCommon
         positionData.velocityBodyX = velocityBodyX;
         positionData.velocityBodyY = velocityBodyY;
         positionData.velocityBodyZ = velocityBodyZ;
-
-        return positionData;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

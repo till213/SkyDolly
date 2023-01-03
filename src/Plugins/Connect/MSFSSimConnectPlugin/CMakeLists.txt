@@ -30,7 +30,13 @@ target_sources(${MODULE_NAME}
         src/SimVar/SecondaryFlightControl/SimConnectSecondaryFlightControlEvent.h
         src/SimVar/SecondaryFlightControl/SimConnectSecondaryFlightControlAll.h
         src/SimVar/SecondaryFlightControl/SimConnectSecondaryFlightControlAi.h
-        src/SimVar/SimConnectAircraftHandle.h src/SimVar/SimConnectAircraftHandle.cpp
+        src/SimVar/AircraftHandle/SimConnectAircraftHandleCommon.h
+        src/SimVar/AircraftHandle/SimConnectAircraftHandleCore.h
+        src/SimVar/AircraftHandle/SimConnectAircraftHandleEvent.h
+        src/SimVar/AircraftHandle/SimConnectAircraftHandleInfo.h
+        src/SimVar/AircraftHandle/SimConnectAircraftHandleAll.h
+        src/SimVar/AircraftHandle/SimConnectAircraftHandleUser.h
+        src/SimVar/AircraftHandle/SimConnectAircraftHandleAi.h
         src/SimVar/SimConnectLight.h src/SimVar/SimConnectLight.cpp
         src/SimVar/SimConnectAircraftInfo.h src/SimVar/SimConnectAircraftInfo.cpp
         src/SimVar/SimConnectFlightPlan.h src/SimVar/SimConnectFlightPlan.cpp
