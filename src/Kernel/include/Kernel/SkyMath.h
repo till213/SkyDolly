@@ -79,7 +79,7 @@ namespace SkyMath
      *         0; +1 else
      */
     template <typename T>
-    int constexpr sgn(T val) noexcept
+    inline int constexpr sgn(T val) noexcept
     {
         return (T(0) < val) - (val < T(0));
     }
@@ -112,7 +112,7 @@ namespace SkyMath
      * the normalised values are then suitable for interpolation.
      */
     template <typename T>
-    T constexpr normalise180(T y0, T y1) noexcept
+    inline T constexpr normalise180(T y0, T y1) noexcept
     {
         T y1n;
         T s0 = sgn(y0);
@@ -153,7 +153,7 @@ namespace SkyMath
      *        negative values create a bias towards the second segment
      */
     template <typename T>
-    constexpr T interpolateHermite(
+    inline constexpr T interpolateHermite(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -178,7 +178,7 @@ namespace SkyMath
     }
 
     template <typename T>
-    constexpr T interpolateCatmullRom(
+    inline constexpr T interpolateCatmullRom(
         T y0, T y1, T y2, T y3,
         T mu) noexcept
     {
@@ -200,7 +200,7 @@ namespace SkyMath
      * \sa #interpolateHermite
      */
     template <typename T>
-    constexpr T interpolateHermite180(
+    inline constexpr T interpolateHermite180(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -230,7 +230,7 @@ namespace SkyMath
      * \sa #interpolateHermite
      */
     template <typename T>
-    constexpr T interpolateHermite360(
+    inline constexpr T interpolateHermite360(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -250,7 +250,7 @@ namespace SkyMath
      *        the interpolation factor in [0.0, 1.0]
      */
     template <typename T, typename U>
-    constexpr T interpolateLinear(T p1, T p2, U mu) noexcept
+    inline constexpr T interpolateLinear(T p1, T p2, U mu) noexcept
     {
         if (std::is_integral<T>::value) {
             return p1 + std::round(mu * (U(p2) - U(p1)));

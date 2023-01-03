@@ -28,14 +28,13 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Kernel/Enum.h>
 #include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
 #include <Model/PrimaryFlightControlData.h>
 #include "SimConnectType.h"
 
 /*!
- * Simulation variables which represent the primary flight controls: rudder, elevators and ailerons.
+ * Simulation variables that represent the primary flight controls: rudder, elevators and ailerons.
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -46,6 +45,20 @@ struct SimConnectPrimaryFlightControlEvent
     float rudderPosition {0.0f};
     float elevatorPosition {0.0f};
     float aileronPosition {0.0f};
+
+    SimConnectPrimaryFlightControlEvent(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+        : SimConnectPrimaryFlightControlEvent()
+    {
+        fromPrimaryFlightControlData(primaryFlightControlData);
+    }
+    SimConnectPrimaryFlightControlEvent() = default;
+
+    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+    {
+        rudderPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.rudderPosition));
+        elevatorPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.elevatorPosition));
+        aileronPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.aileronPosition));
+    }
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {
@@ -59,13 +72,6 @@ struct SimConnectPrimaryFlightControlEvent
         primaryFlightControlData.rudderPosition = SkyMath::fromNormalisedPosition(rudderPosition);
         primaryFlightControlData.elevatorPosition = SkyMath::fromNormalisedPosition(elevatorPosition);
         primaryFlightControlData.aileronPosition = SkyMath::fromNormalisedPosition(aileronPosition);
-    }
-
-    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
-    {
-        rudderPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.rudderPosition));
-        elevatorPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.elevatorPosition));
-        aileronPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.aileronPosition));
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

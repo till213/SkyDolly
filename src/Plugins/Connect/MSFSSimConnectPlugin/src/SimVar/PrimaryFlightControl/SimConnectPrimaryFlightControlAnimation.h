@@ -26,15 +26,14 @@
 #define SIMCONNECTPRIMARYFLIGHTCONTROLANIMATION_H
 
 #include <windows.h>
+#include <SimConnect.h>
 
-#include <Kernel/Enum.h>
-#include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
 #include <Model/PrimaryFlightControlData.h>
 #include "SimConnectType.h"
 
 /*!
- * Simulation variables which represent the primary flight controls: rudder, elevators and ailerons.
+ * Simulation variables that represent the primary flight controls: rudder, elevators and ailerons.
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -46,6 +45,21 @@ struct SimConnectPrimaryFlightControlAnimation
     float elevatorDeflection {0.0f};
     float aileronLeftDeflection {0.0f};
     float aileronRightDeflection {0.0f};
+
+    SimConnectPrimaryFlightControlAnimation(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+        : SimConnectPrimaryFlightControlAnimation()
+    {
+        fromPrimaryFlightControlData(primaryFlightControlData);
+    }
+    SimConnectPrimaryFlightControlAnimation() = default;
+
+    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+    {
+        rudderDeflection = primaryFlightControlData.rudderDeflection;
+        elevatorDeflection = primaryFlightControlData.elevatorDeflection;
+        aileronLeftDeflection = primaryFlightControlData.leftAileronDeflection;
+        aileronRightDeflection = primaryFlightControlData.rightAileronDeflection;
+    }
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {
@@ -60,14 +74,6 @@ struct SimConnectPrimaryFlightControlAnimation
         primaryFlightControlData.elevatorDeflection = elevatorDeflection;
         primaryFlightControlData.leftAileronDeflection = aileronLeftDeflection;
         primaryFlightControlData.rightAileronDeflection = aileronRightDeflection;
-    }
-
-    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
-    {
-        rudderDeflection = primaryFlightControlData.rudderDeflection;
-        elevatorDeflection = primaryFlightControlData.elevatorDeflection;
-        aileronLeftDeflection = primaryFlightControlData.leftAileronDeflection;
-        aileronRightDeflection = primaryFlightControlData.rightAileronDeflection;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

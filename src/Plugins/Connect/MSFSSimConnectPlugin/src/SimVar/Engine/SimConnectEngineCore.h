@@ -31,7 +31,6 @@
 #include <SimConnect.h>
 
 #include <Kernel/SkyMath.h>
-#include <Kernel/Enum.h>
 #include <Model/SimVar.h>
 #include "SimConnectType.h"
 #include <Model/EngineData.h>
@@ -71,6 +70,22 @@ struct SimConnectEngineCore
         return engineData;
     }
 
+    inline void fromEngineData(const EngineData &engineData) noexcept
+    {
+        mixtureLeverPosition1 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition1));
+        mixtureLeverPosition2 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition2));
+        mixtureLeverPosition3 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition3));
+        mixtureLeverPosition4 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition4));
+        electricalMasterBattery1 = engineData.electricalMasterBattery1 ? 1 : 0;
+        electricalMasterBattery2 = engineData.electricalMasterBattery2 ? 1 : 0;
+        electricalMasterBattery3 = engineData.electricalMasterBattery3 ? 1 : 0;
+        electricalMasterBattery4 = engineData.electricalMasterBattery4 ? 1 : 0;
+        generalEngineStarter1 = engineData.generalEngineStarter1 ? 1 : 0;
+        generalEngineStarter2 = engineData.generalEngineStarter2 ? 1 : 0;
+        generalEngineStarter3 = engineData.generalEngineStarter3 ? 1 : 0;
+        generalEngineStarter4 = engineData.generalEngineStarter4 ? 1 : 0;
+    }
+
     inline void toEngineData(EngineData &engineData) const noexcept
     {
         // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
@@ -89,20 +104,9 @@ struct SimConnectEngineCore
         engineData.generalEngineStarter4 = (generalEngineStarter4 != 0);
     }
 
-    inline void fromEngineData(const EngineData &engineData) noexcept
+    inline bool hasEngineStarterEnabled() const noexcept
     {
-        mixtureLeverPosition1 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition1));
-        mixtureLeverPosition2 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition2));
-        mixtureLeverPosition3 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition3));
-        mixtureLeverPosition4 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition4));
-        electricalMasterBattery1 = engineData.electricalMasterBattery1 ? 1 : 0;
-        electricalMasterBattery2 = engineData.electricalMasterBattery2 ? 1 : 0;
-        electricalMasterBattery3 = engineData.electricalMasterBattery3 ? 1 : 0;
-        electricalMasterBattery4 = engineData.electricalMasterBattery4 ? 1 : 0;
-        generalEngineStarter1 = engineData.generalEngineStarter1 ? 1 : 0;
-        generalEngineStarter2 = engineData.generalEngineStarter2 ? 1 : 0;
-        generalEngineStarter3 = engineData.generalEngineStarter3 ? 1 : 0;
-        generalEngineStarter4 = engineData.generalEngineStarter4 ? 1 : 0;
+        return (generalEngineStarter1 || generalEngineStarter2 || generalEngineStarter3 || generalEngineStarter4);
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
@@ -119,11 +123,6 @@ struct SimConnectEngineCore
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GeneralEngineStarter2, "Bool", ::SIMCONNECT_DATATYPE_INT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GeneralEngineStarter3, "Bool", ::SIMCONNECT_DATATYPE_INT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GeneralEngineStarter4, "Bool", ::SIMCONNECT_DATATYPE_INT32);
-    }
-
-    inline bool hasEngineStarterEnabled() const noexcept
-    {
-        return (generalEngineStarter1 || generalEngineStarter2 || generalEngineStarter3 || generalEngineStarter4);
     }
 };
 #pragma pack(pop)

@@ -82,7 +82,7 @@ void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariable
         ui->leadingEdgeFlapsRightLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.leadingEdgeFlapsRightPosition));
         ui->trailingEdgeFlapsLeftLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.trailingEdgeFlapsLeftPosition));
         ui->trailingEdgeFlapsRightLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.trailingEdgeFlapsRightPosition));
-        ui->spoilerLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.spoilersHandlePosition));
+        ui->spoilerLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.spoilersHandlePercent));
         ui->flapsPositionLineEdit->setText(QString::number(secondaryFlightControlData.flapsHandleIndex));
 
         colorName = d->ActiveTextColor.name();

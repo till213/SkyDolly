@@ -35,7 +35,7 @@
 
 struct MODEL_API PrimaryFlightControlData final : public TimeVariableData
 {
-    // Radians
+    // Deflection is measured in radians
     float rudderDeflection {0.0f};
     float elevatorDeflection {0.0f};
     float leftAileronDeflection {0.0f};

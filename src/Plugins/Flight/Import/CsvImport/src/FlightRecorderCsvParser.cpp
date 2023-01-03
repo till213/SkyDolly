@@ -423,7 +423,7 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsRightPosition);
         secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsLeftPosition);
         secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsRightPosition);
-        secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(spoilerHandlePositionPercent);
+        secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(spoilerHandlePositionPercent);
         secondaryFlightControl.upsertLast(secondaryFlightControlData);
     }
 

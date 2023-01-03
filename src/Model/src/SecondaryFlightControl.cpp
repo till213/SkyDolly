@@ -76,7 +76,9 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64
             m_currentData.leadingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPosition, p2->leadingEdgeFlapsRightPosition, tn);
             m_currentData.trailingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPosition, p2->trailingEdgeFlapsLeftPosition, tn);
             m_currentData.trailingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPosition, p2->trailingEdgeFlapsRightPosition, tn);
-            m_currentData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
+            m_currentData.spoilersLeftPosition = SkyMath::interpolateLinear(p1->spoilersLeftPosition, p2->spoilersLeftPosition, tn);
+            m_currentData.spoilersRightPosition = SkyMath::interpolateLinear(p1->spoilersRightPosition, p2->spoilersRightPosition, tn);
+            m_currentData.spoilersHandlePercent = SkyMath::interpolateLinear(p1->spoilersHandlePercent, p2->spoilersHandlePercent, tn);
 
             // No interpolation for flaps handle position
             m_currentData.flapsHandleIndex = p1->flapsHandleIndex;

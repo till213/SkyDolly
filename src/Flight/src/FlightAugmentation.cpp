@@ -347,7 +347,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(0.286);
     secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(0.286);
     secondaryFlightControlData.flapsHandleIndex = 1;
-    secondaryFlightControlData.spoilersHandlePosition = 0;
+    secondaryFlightControlData.spoilersHandlePercent = 0;
     secondaryFlightControl.upsertLast(secondaryFlightControlData);
 
     // 30 seconds
@@ -358,7 +358,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(0.0);
     secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(0.0);
     secondaryFlightControlData.flapsHandleIndex = 0;
-    secondaryFlightControlData.spoilersHandlePosition = 0;
+    secondaryFlightControlData.spoilersHandlePercent = 0;
     secondaryFlightControl.upsertLast(secondaryFlightControlData);
 
     // Handles & gear
@@ -523,7 +523,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(0.0);
     secondaryFlightControlData.flapsHandleIndex = 0;
     // Spoilers 40%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(20.0);
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(20.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 8 minutes
@@ -535,7 +535,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(0.286);
     secondaryFlightControlData.flapsHandleIndex = 1;
     // Spoilers 60%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(60.0);
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(60.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 7 minutes
@@ -547,7 +547,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(0.4275);
     secondaryFlightControlData.flapsHandleIndex = 2;
     // Spoilers 60%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(60.0);
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(60.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 5 minutes
@@ -559,7 +559,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(0.5725);
     secondaryFlightControlData.flapsHandleIndex = 3;
     // Spoilers 20%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(20.0);
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(20.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 4 minutes
@@ -571,7 +571,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(1.0);
     secondaryFlightControlData.flapsHandleIndex = 4;
     // Spoilers 0%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(0.0);
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(0.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t
@@ -583,7 +583,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(1.0);
     secondaryFlightControlData.flapsHandleIndex = 4;
     // Spoilers 100%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(100.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // Handles & gear

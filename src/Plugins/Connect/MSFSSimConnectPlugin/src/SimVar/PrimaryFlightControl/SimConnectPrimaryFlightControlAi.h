@@ -59,7 +59,7 @@ struct SimConnectPrimaryFlightControlAi
         return primaryflightcontrolData;
     }
 
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
+    static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
         SimConnectPrimaryFlightControlAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAi));
     }

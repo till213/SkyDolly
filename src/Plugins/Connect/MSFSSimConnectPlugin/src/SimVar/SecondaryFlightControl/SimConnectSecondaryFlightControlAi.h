@@ -22,53 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTENGINEUSER_H
-#define SIMCONNECTENGINEUSER_H
+#ifndef SIMCONNECTSECONDARYFLIGHTCONTROLAI_H
+#define SIMCONNECTSECONDARYFLIGHTCONTROLAI_H
 
 #include <Kernel/Enum.h>
-#include <Model/EngineData.h>
+#include <Model/SecondaryFlightControlData.h>
 #include "SimConnectType.h"
-#include "SimConnectEngineCommon.h"
-#include "SimConnectEngineCore.h"
+#include "SimConnectSecondaryFlightControlAnimation.h"
 
 /*!
- * Engine simulation variables that are sent to the user aircraft.
+ * Secondary flight control simulation variables that are sent to AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectEngineUser
+struct SimConnectSecondaryFlightControlAi
 {
-    SimConnectEngineCommon common;
-    SimConnectEngineCore core;
+    SimConnectSecondaryFlightControlAnimation animation;
 
-    SimConnectEngineUser(const EngineData &engineData) noexcept
-        : SimConnectEngineUser()
+    SimConnectSecondaryFlightControlAi(const SecondaryFlightControlData &secondaryflightcontrolData) noexcept
+        : SimConnectSecondaryFlightControlAi()
     {
-        fromEngineData(engineData);
+        fromSecondaryFlightControlData(secondaryflightcontrolData);
     }
 
-    SimConnectEngineUser() = default;
+    SimConnectSecondaryFlightControlAi() = default;
 
-    inline void fromEngineData(const EngineData &engineData)
+    inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &secondaryflightcontrolData)
     {
-        common.fromEngineData(engineData);
-        core.fromEngineData(engineData);
+        animation.fromSecondaryFlightControlData(secondaryflightcontrolData);
     }
 
-    inline EngineData toEngineData() const noexcept
+    inline SecondaryFlightControlData toSecondaryFlightControlData() const noexcept
     {
-        EngineData engineData = common.toEngineData();
-        core.toEngineData(engineData);
-        return engineData;
+        SecondaryFlightControlData secondaryflightcontrolData = animation.toSecondaryFlightControlData();
+        return secondaryflightcontrolData;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        SimConnectEngineCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineUser));
-        SimConnectEngineCore::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::EngineUser));
+        SimConnectSecondaryFlightControlAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControlAi));
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTENGINEUSER_H
+#endif // SIMCONNECTSECONDARYFLIGHTCONTROLAI_H

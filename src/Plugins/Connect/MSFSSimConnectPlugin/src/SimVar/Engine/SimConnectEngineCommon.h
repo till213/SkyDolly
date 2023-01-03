@@ -29,7 +29,6 @@
 #include <SimConnect.h>
 
 #include <Kernel/SkyMath.h>
-#include <Kernel/Enum.h>
 #include <Model/SimVar.h>
 #include "SimConnectType.h"
 #include <Model/EngineData.h>
@@ -55,6 +54,14 @@ struct SimConnectEngineCommon
     }
     SimConnectEngineCommon() = default;
 
+    inline void fromEngineData(const EngineData &engineData) noexcept
+    {
+        recipEngineCowlFlapPosition1 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition1));
+        recipEngineCowlFlapPosition2 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition2));
+        recipEngineCowlFlapPosition3 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition3));
+        recipEngineCowlFlapPosition4 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition4));
+    }
+
     inline EngineData toEngineData() const noexcept
     {
         EngineData engineData;
@@ -65,14 +72,6 @@ struct SimConnectEngineCommon
         engineData.cowlFlapPosition4 = SkyMath::fromPercent(recipEngineCowlFlapPosition4);
 
         return engineData;
-    }
-
-    inline void fromEngineData(const EngineData &engineData) noexcept
-    {
-        recipEngineCowlFlapPosition1 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition1));
-        recipEngineCowlFlapPosition2 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition2));
-        recipEngineCowlFlapPosition3 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition3));
-        recipEngineCowlFlapPosition4 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition4));
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

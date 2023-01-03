@@ -360,7 +360,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!primaryFlightControlData.isNull()) {
                         SimConnectPrimaryFlightControlAll simConnectPrimaryFlightControlAll {primaryFlightControlData};
                         if (isUserAircraft) {
-                            ok = d->simConnectEvent->sendPrimaryFlightControls(simConnectPrimaryFlightControlAll);
+                            ok = d->simConnectEvent->sendPrimaryFlightControl(simConnectPrimaryFlightControlAll.event);
                         } else {
                             SimConnectPrimaryFlightControlAi simConnectPrimaryFlightControlAi = simConnectPrimaryFlightControlAll.ai();
                             HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAi),
@@ -375,14 +375,14 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                 if (ok) {
                     const SecondaryFlightControlData &secondaryFlightControlData = aircraft.getSecondaryFlightControl().interpolate(currentTimestamp, access);
                     if (!secondaryFlightControlData.isNull()) {
-                        SimConnectSecondaryFlightControl simConnectSecondaryFlightControl;
-                        simConnectSecondaryFlightControl.fromSecondaryFlightControlData(secondaryFlightControlData);
+                        SimConnectSecondaryFlightControlAll simConnectSecondaryFlightControlAll {secondaryFlightControlData};
                         if (isUserAircraft) {
-                            ok = d->simConnectEvent->sendFlapsHandleIndex(simConnectSecondaryFlightControl.flapsHandleIndex);
+                            ok = d->simConnectEvent->sendSecondaryFlightControl(simConnectSecondaryFlightControlAll.event);
                         } else {
-                            const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControl),
+                            SimConnectSecondaryFlightControlAi simConnectSecondaryFlightControlAi = simConnectSecondaryFlightControlAll.ai();
+                            const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControlAi),
                                                                                 objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                                sizeof(SimConnectSecondaryFlightControl), &simConnectSecondaryFlightControl);
+                                                                                sizeof(SimConnectSecondaryFlightControlAi), &simConnectSecondaryFlightControlAi);
                             ok = res == S_OK;
                         }
                     }
@@ -585,7 +585,8 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
     SimConnectEngineAll::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControlAi::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControlAll::addToDataDefinition(d->simConnectHandle);
-    SimConnectSecondaryFlightControl::addToDataDefinition(d->simConnectHandle);
+    SimConnectSecondaryFlightControlAi::addToDataDefinition(d->simConnectHandle);
+    SimConnectSecondaryFlightControlAll::addToDataDefinition(d->simConnectHandle);
     SimConnectAircraftHandle::addToDataDefinition(d->simConnectHandle);
     SimConnectLight::addToDataDefinition(d->simConnectHandle);
     SimConnectFlightPlan::addToDataDefinition(d->simConnectHandle);
@@ -655,8 +656,8 @@ void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexc
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::PrimaryFlightControlAll),
                                             Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAll),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::SecondaryFlightControl),
-                                            Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControl),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::SecondaryFlightControlAll),
+                                            Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControlAll),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftHandle),
                                             Enum::underly(SimConnectType::DataDefinition::Handle),
@@ -791,8 +792,8 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         case SimConnectType::DataRequest::PrimaryFlightControlAll:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                auto simConnectPrimaryFlightControlReply = reinterpret_cast<const SimConnectPrimaryFlightControlAll *>(&objectData->dwData);
-                PrimaryFlightControlData primaryFlightControlData = simConnectPrimaryFlightControlReply->toPrimaryFlightControlData();
+                auto simConnectPrimaryFlightControlAll = reinterpret_cast<const SimConnectPrimaryFlightControlAll *>(&objectData->dwData);
+                PrimaryFlightControlData primaryFlightControlData = simConnectPrimaryFlightControlAll->toPrimaryFlightControlData();
                 primaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
                     userAircraft.getPrimaryFlightControl().upsertLast(primaryFlightControlData);
@@ -803,11 +804,11 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             }
             break;
         }
-        case SimConnectType::DataRequest::SecondaryFlightControl:
+        case SimConnectType::DataRequest::SecondaryFlightControlAll:
         {
             if (skyConnect->getState() == Connect::State::Recording) {
-                auto simConnectSecondaryFlightControl = reinterpret_cast<const SimConnectSecondaryFlightControl *>(&objectData->dwData);
-                SecondaryFlightControlData secondaryFlightControlData = simConnectSecondaryFlightControl->toSecondaryFlightControlData();
+                auto simConnectSecondaryFlightControlAll = reinterpret_cast<const SimConnectSecondaryFlightControlAll *>(&objectData->dwData);
+                SecondaryFlightControlData secondaryFlightControlData = simConnectSecondaryFlightControlAll->toSecondaryFlightControlData();
                 secondaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
                     userAircraft.getSecondaryFlightControl().upsertLast(secondaryFlightControlData);

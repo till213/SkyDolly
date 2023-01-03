@@ -499,8 +499,8 @@ insert into aircraft_type values
  ('Airbus A320neo FlyByWire','Airplane',117,2,2)
  on conflict(type)
  do update
- set category = excluded.category,
-     wing_span = excluded.wing_span,
+ set category    = excluded.category,
+     wing_span   = excluded.wing_span,
      engine_type = excluded.engine_type,
      nof_engines = excluded.nof_engines;
 
@@ -554,9 +554,9 @@ set app_version = '0.8.0';
 
 @migr(id = "133820ce-d5e0-4563-8458-aed6604c3f64", descn = "Migrate flaps position from percent to position value", step = 1)
 update secondary_flight_control
-set leading_edge_flaps_left_percent = round((leading_edge_flaps_left_percent / 255.0) * 32767.0),
-    leading_edge_flaps_right_percent = round((leading_edge_flaps_right_percent / 255.0) * 32767.0),
-    trailing_edge_flaps_left_percent = round((trailing_edge_flaps_left_percent / 255.0) * 32767.0),
+set leading_edge_flaps_left_percent   = round((leading_edge_flaps_left_percent / 255.0) * 32767.0),
+    leading_edge_flaps_right_percent  = round((leading_edge_flaps_right_percent / 255.0) * 32767.0),
+    trailing_edge_flaps_left_percent  = round((trailing_edge_flaps_left_percent / 255.0) * 32767.0),
     trailing_edge_flaps_right_percent = round((trailing_edge_flaps_right_percent / 255.0) * 32767.0);
 
 @migr(id = "6713ed1d-22c3-4b8e-95a4-1bf19cf6dacd", descn = "Add indicated altitude column", step_cnt = 2)
@@ -639,8 +639,8 @@ insert into aircraft_type values
  ('Volocity Microsoft Livery Xbox Aviators Club','Airplane',20,1,1)
  on conflict(type)
  do update
- set category = excluded.category,
-     wing_span = excluded.wing_span,
+ set category    = excluded.category,
+     wing_span   = excluded.wing_span,
      engine_type = excluded.engine_type,
      nof_engines = excluded.nof_engines;
 
@@ -654,8 +654,8 @@ insert into aircraft_type values
  ('Experimental Darkstar Asobo','Airplane',35,2,4)
  on conflict(type)
  do update
- set category = excluded.category,
-     wing_span = excluded.wing_span,
+ set category    = excluded.category,
+     wing_span   = excluded.wing_span,
      engine_type = excluded.engine_type,
      nof_engines = excluded.nof_engines;
 
@@ -818,18 +818,27 @@ insert into aircraft_type values
 update metadata
 set app_version = '0.13.0';
 
-@migr(id = "9c9c0be5-4868-4299-9504-8b3a1861094f", descn = "Add primary control animation columns", step_cnt = 2)
+@migr(id = "9c9c0be5-4868-4299-9504-8b3a1861094f", descn = "Add primary control deflection animation columns", step_cnt = 2)
 alter table primary_flight_control add column rudder_deflection real;
 alter table primary_flight_control add column elevator_deflection real;
 alter table primary_flight_control add column aileron_left_deflection real;
 alter table primary_flight_control add column aileron_right_deflection real;
 
-@migr(id = "9c9c0be5-4868-4299-9504-8b3a1861094f", descn = "Update control animation columns, based on A320neo maximum deflection angles", step = 2)
+@migr(id = "9c9c0be5-4868-4299-9504-8b3a1861094f", descn = "Update primary control animation columns, based on A320neo maximum deflection angles", step = 2)
 update primary_flight_control
-set    rudder_deflection = (rudder_position / 32767.0) * 0.4363,
-       elevator_deflection = case when elevator_position > 0 then (elevator_position / 32767.0) * 0.2793 else (elevator_position / 32767.0) * 0.2007 end,
-       aileron_left_deflection = (aileron_position / 32767.0) * 0.2967,
+set    rudder_deflection        = (rudder_position / 32767.0) * 0.4363,
+       elevator_deflection      = case when elevator_position > 0 then (elevator_position / 32767.0) * 0.2793 else (elevator_position / 32767.0) * 0.2007 end,
+       aileron_left_deflection  = (aileron_position / 32767.0) * 0.2967,
        aileron_right_deflection = (aileron_position / 32767.0) * 0.2967;
+
+@migr(id = "f7ca2bc1-79c7-4055-b5cc-fa868cad410c", descn = "Add spoilers position columns", step_cnt = 2)
+alter table secondary_flight_control add column spoilers_left_position integer;
+alter table secondary_flight_control add column spoilers_right_position integer;
+
+@migr(id = "f7ca2bc1-79c7-4055-b5cc-fa868cad410c", descn = "Update secondary control animation columns", step = 2)
+update secondary_flight_control
+set    spoilers_left_position  = round((spoilers_handle_position / 255.0) * 32767.0),
+       spoilers_right_position = round((spoilers_handle_position / 255.0) * 32767.0);
 
 @migr(id = "663032d8-c8a4-43ff-b126-0d964d73bf23", descn = "Update application version to 0.14", step = 1)
 update metadata

@@ -45,7 +45,8 @@ namespace SimConnectType
         EngineAll,
         PrimaryFlightControlAi,
         PrimaryFlightControlAll,
-        SecondaryFlightControl,
+        SecondaryFlightControlAi,
+        SecondaryFlightControlAll,
         Handle,
         Light,
         // Simulation variables
@@ -62,7 +63,7 @@ namespace SimConnectType
         EngineAll,
         PrimaryFlightControlAll,
         Flaps,
-        SecondaryFlightControl,
+        SecondaryFlightControlAll,
         AircraftHandle,
         Light,
         // Simulation variables

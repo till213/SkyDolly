@@ -421,7 +421,7 @@ inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser:
         data.trailingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsRightPercent)).toInt(&ok);
     }
     if (ok) {
-        data.spoilersHandlePosition = row.at(Enum::underly(::Index::SpoilersHandlePosition)).toInt(&ok);
+        data.spoilersHandlePercent = row.at(Enum::underly(::Index::SpoilersHandlePosition)).toInt(&ok);
     }
     if (ok) {
         data.flapsHandleIndex = row.at(Enum::underly(::Index::FlapsHandleIndex)).toInt(&ok);

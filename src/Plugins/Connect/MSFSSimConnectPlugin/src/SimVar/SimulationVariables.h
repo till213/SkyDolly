@@ -33,7 +33,7 @@
 #include "Engine/SimConnectEngineAll.h"
 #include "PrimaryFlightControl/SimConnectPrimaryFlightControlAi.h"
 #include "PrimaryFlightControl/SimConnectPrimaryFlightControlAll.h"
-#include "SimConnectSecondaryFlightControl.h"
+#include "SecondaryFlightControl/SimConnectSecondaryFlightControlAll.h"
 #include "SimConnectAircraftHandle.h"
 #include "SimConnectLight.h"
 #include "SimConnectFlightPlan.h"

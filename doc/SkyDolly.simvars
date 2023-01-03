@@ -9,17 +9,6 @@ AIRSPEED TRUE,knots,False,  1.6182177066803
 VELOCITY BODY X,feet per second,False,  0
 VELOCITY BODY Y,feet per second,False,  0
 VELOCITY BODY Z,feet per second,False,  0
-ROTATION VELOCITY BODY X,radians per second,False,  0
-ROTATION VELOCITY BODY Y,radians per second,False,  0
-ROTATION VELOCITY BODY Z,radians per second,False,  0
-ACCELERATION BODY X,feet per second squared,False,  0
-ACCELERATION BODY Y,feet per second squared,False,  0
-ACCELERATION BODY Z,feet per second squared,False,  0
-ROTATION ACCELERATION BODY X,radians per second squared,False,  0
-ROTATION ACCELERATION BODY Y,radians per second squared,False,  0
-ROTATION ACCELERATION BODY Z,radians per second squared,False,  0
-YOKE X POSITION,position,False,  0.0
-YOKE Y POSITION,position,False,  0.0
 RUDDER POSITION,position,False,  0.0
 RUDDER DEFLECTION,radians,False,  0.0
 ELEVATOR POSITION,position,False,  0.0
@@ -55,6 +44,8 @@ LEADING EDGE FLAPS LEFT PERCENT:4,percent,False,  0
 LEADING EDGE FLAPS RIGHT PERCENT:4,percent,False,  0
 TRAILING EDGE FLAPS LEFT PERCENT:4,percent,False,  0
 TRAILING EDGE FLAPS RIGHT PERCENT:4,percent,False,  0
+SPOILERS LEFT POSITION,position,False,  0
+SPOILERS RIGHT POSITION,position,False,  0
 SPOILERS HANDLE POSITION,percent,False,  0
 FLAPS HANDLE INDEX,number,False,  0
 GEAR HANDLE POSITION,Boolean,False,  0
