@@ -133,22 +133,14 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.cpp" line="124"/>
+        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.cpp" line="126"/>
         <source>Extended</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.cpp" line="124"/>
+        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.cpp" line="126"/>
         <source>Retracted</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.cpp" line="126"/>
-        <source>Folded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.cpp" line="126"/>
-        <source>Extracted</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
