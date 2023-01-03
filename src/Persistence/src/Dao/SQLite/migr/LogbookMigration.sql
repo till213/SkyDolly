@@ -299,7 +299,7 @@ create table aircraft_new (
     foreign key(type) references aircraft_type(type)
 );
 
-@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Copy the original aircraft data into new aircraft_new table", step = 4)
+@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Copy data into the new aircraft table", step = 4)
 insert into aircraft_new(id, flight_id, seq_nr, type, start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground)
 select a.id, a.flight_id, a.seq_nr, coalesce(a.type, (select at.type from aircraft_type at limit 1)), a.start_date, a.end_date, a.tail_number, a.airline, a.flight_number, a.initial_airspeed, a.altitude_above_ground, a.start_on_ground
 from   aircraft a;
@@ -570,7 +570,7 @@ set    indicated_altitude = altitude;
 update metadata
 set app_version = '0.9.0';
 
-@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Drop columns start_date, end_date", step_cnt = 6)
+@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Drop columns start_date, end_date from aircraft table", step_cnt = 6)
 create table aircraft_new (
     id integer primary key,
     flight_id integer not null,
@@ -587,7 +587,7 @@ create table aircraft_new (
     foreign key(type) references aircraft_type(type)
 );
 
-@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Drop the old aircraft table", step = 2)
+@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Copy data into the new aircraft table", step = 2)
 insert into aircraft_new(id, flight_id, seq_nr, type, time_offset, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground)
 select a.id, a.flight_id, a.seq_nr, a.type, a.time_offset, a.tail_number, a.airline, a.flight_number, a.initial_airspeed, a.altitude_above_ground, a.start_on_ground
 from   aircraft a;
@@ -846,6 +846,35 @@ alter table secondary_flight_control add column right_spoilers_position integer;
 update secondary_flight_control
 set    left_spoilers_position  = round((spoilers_handle_percent / 255.0) * 32767.0),
        right_spoilers_position = round((spoilers_handle_percent / 255.0) * 32767.0);
+
+@migr(id = "1e013965-e38a-4df1-b70c-f1d3af6d1e5b", descn = "Drop rotation velocity columns from position table", step_cnt = 4)
+create table position_new (
+    aircraft_id integer not null,
+    timestamp integer not null,
+    latitude real,
+    longitude real,
+    altitude real,
+    indicated_altitude real,
+    pitch real,
+    bank real,
+    true_heading real,
+    velocity_x real,
+    velocity_y real,
+    velocity_z real,
+    primary key(aircraft_id, timestamp),
+    foreign key(aircraft_id) references aircraft(id)
+);
+
+@migr(id = "1e013965-e38a-4df1-b70c-f1d3af6d1e5b", descn = "Copy data into new position table", step = 2)
+insert into position_new(aircraft_id, timestamp, latitude, longitude, altitude, indicated_altitude, pitch, bank, true_heading, velocity_x, velocity_y, velocity_z)
+select p.aircraft_id, p.timestamp, p.latitude, p.longitude, p.altitude, p.indicated_altitude, p.pitch, p.bank, p.true_heading, p.velocity_x, p.velocity_y, p.velocity_z
+from   position p;
+
+@migr(id = "1e013965-e38a-4df1-b70c-f1d3af6d1e5b", descn = "Drop the old position table", step = 3)
+drop table position;
+
+@migr(id = "1e013965-e38a-4df1-b70c-f1d3af6d1e5b", descn = "Rename the new position table to original name", step = 4)
+alter table position_new rename to position;
 
 @migr(id = "663032d8-c8a4-43ff-b126-0d964d73bf23", descn = "Update application version to 0.14", step = 1)
 update metadata
