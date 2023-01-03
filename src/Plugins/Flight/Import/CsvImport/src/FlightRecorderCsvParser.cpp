@@ -395,22 +395,22 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     SecondaryFlightControlData secondaryFlightControlData;
     secondaryFlightControlData.timestamp = timestamp;
 
-    double leadingEdgeFlapsLeftPosition {0.0};
-    double leadingEdgeFlapsRightPosition {0.0};
-    double trailingEdgeFlapsLeftPosition {0.0};
-    double trailingEdgeFlapsRightPosition {0.0};
+    double leftLeadingEdgeFlapsPosition {0.0};
+    double rightLeadingEdgeFlapsPosition {0.0};
+    double leftTrailingEdgeFlapsPosition {0.0};
+    double rightTrailingEdgeFlapsPosition {0.0};
     double spoilerHandlePositionPercent {0.0};
     if (ok) {
-        leadingEdgeFlapsLeftPosition = row.at(d->headers.at(::LeadingEdgeFlapsLeftPercent)).toDouble(&ok);
+        leftLeadingEdgeFlapsPosition = row.at(d->headers.at(::LeadingEdgeFlapsLeftPercent)).toDouble(&ok);
     }
     if (ok) {
-        leadingEdgeFlapsRightPosition = row.at(d->headers.at(::LeadingEdgeFlapsRightPercent)).toDouble(&ok);
+        rightLeadingEdgeFlapsPosition = row.at(d->headers.at(::LeadingEdgeFlapsRightPercent)).toDouble(&ok);
     }
     if (ok) {
-        trailingEdgeFlapsLeftPosition = row.at(d->headers.at(::TrailingEdgeFlapsLeftPercent)).toDouble(&ok);
+        leftTrailingEdgeFlapsPosition = row.at(d->headers.at(::TrailingEdgeFlapsLeftPercent)).toDouble(&ok);
     }
     if (ok) {
-        trailingEdgeFlapsRightPosition = row.at(d->headers.at(::TrailingEdgeFlapsRightPercent)).toDouble(&ok);
+        rightTrailingEdgeFlapsPosition = row.at(d->headers.at(::TrailingEdgeFlapsRightPercent)).toDouble(&ok);
     }
     if (ok) {
         spoilerHandlePositionPercent = row.at(d->headers.at(::SpoilerHandlePosition)).toDouble(&ok);
@@ -419,10 +419,10 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(row.at(d->headers.at(::FlapsHandleIndex)).toInt(&ok));
     }
     if (ok) {
-        secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsLeftPosition);
-        secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsRightPosition);
-        secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsLeftPosition);
-        secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsRightPosition);
+        secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(leftLeadingEdgeFlapsPosition);
+        secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(rightLeadingEdgeFlapsPosition);
+        secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(leftTrailingEdgeFlapsPosition);
+        secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(rightTrailingEdgeFlapsPosition);
         secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(spoilerHandlePositionPercent);
         secondaryFlightControl.upsertLast(secondaryFlightControlData);
     }

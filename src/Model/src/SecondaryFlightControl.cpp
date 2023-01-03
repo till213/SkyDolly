@@ -72,12 +72,12 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64
         }
 
         if (p1 != nullptr) {
-            m_currentData.leadingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPosition, p2->leadingEdgeFlapsLeftPosition, tn);
-            m_currentData.leadingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPosition, p2->leadingEdgeFlapsRightPosition, tn);
-            m_currentData.trailingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPosition, p2->trailingEdgeFlapsLeftPosition, tn);
-            m_currentData.trailingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPosition, p2->trailingEdgeFlapsRightPosition, tn);
-            m_currentData.spoilersLeftPosition = SkyMath::interpolateLinear(p1->spoilersLeftPosition, p2->spoilersLeftPosition, tn);
-            m_currentData.spoilersRightPosition = SkyMath::interpolateLinear(p1->spoilersRightPosition, p2->spoilersRightPosition, tn);
+            m_currentData.leftLeadingEdgeFlapsPosition = SkyMath::interpolateLinear(p1->leftLeadingEdgeFlapsPosition, p2->leftLeadingEdgeFlapsPosition, tn);
+            m_currentData.rightLeadingEdgeFlapsPosition = SkyMath::interpolateLinear(p1->rightLeadingEdgeFlapsPosition, p2->rightLeadingEdgeFlapsPosition, tn);
+            m_currentData.leftTrailingEdgeFlapsPosition = SkyMath::interpolateLinear(p1->leftTrailingEdgeFlapsPosition, p2->leftTrailingEdgeFlapsPosition, tn);
+            m_currentData.rightTrailingEdgeFlapsPosition = SkyMath::interpolateLinear(p1->rightTrailingEdgeFlapsPosition, p2->rightTrailingEdgeFlapsPosition, tn);
+            m_currentData.leftSpoilersPosition = SkyMath::interpolateLinear(p1->leftSpoilersPosition, p2->leftSpoilersPosition, tn);
+            m_currentData.rightSpoilersPosition = SkyMath::interpolateLinear(p1->rightSpoilersPosition, p2->rightSpoilersPosition, tn);
             m_currentData.spoilersHandlePercent = SkyMath::interpolateLinear(p1->spoilersHandlePercent, p2->spoilersHandlePercent, tn);
 
             // No interpolation for flaps handle position

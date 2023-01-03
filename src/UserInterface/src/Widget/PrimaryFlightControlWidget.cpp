@@ -82,9 +82,9 @@ void PrimaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableDa
         ui->elevatorDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::radiansToDegrees(primaryFlightControlData.elevatorDeflection)));
         ui->leftAileronDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::radiansToDegrees(primaryFlightControlData.leftAileronDeflection)));
         ui->rightAileronDeflectionLineEdit->setText(d->unit.formatDegrees(Convert::radiansToDegrees(primaryFlightControlData.rightAileronDeflection)));
-        ui->rudderLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.rudderPosition));
-        ui->elevatorLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.elevatorPosition));
-        ui->aileronLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.aileronPosition));
+        ui->rudderLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(primaryFlightControlData.rudderPosition));
+        ui->elevatorLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(primaryFlightControlData.elevatorPosition));
+        ui->aileronLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(primaryFlightControlData.aileronPosition));
 
         colorName = d->ActiveTextColor.name();
     } else {

@@ -49,8 +49,8 @@ struct SimConnectSecondaryFlightControlAnimation
     float leadingEdgeFlapsRightPercent {0.0f};
     float trailingEdgeFlapsLeftPercent {0.0f};
     float trailingEdgeFlapsRightPercent {0.0f};
-    float spoilersLeftPosition {0.0};
-    float spoilersRightPosition {0.0};
+    float leftSpoilersPosition {0.0};
+    float rightSpoilersPosition {0.0};
 
     SimConnectSecondaryFlightControlAnimation(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
         : SimConnectSecondaryFlightControlAnimation()
@@ -61,12 +61,12 @@ struct SimConnectSecondaryFlightControlAnimation
 
     inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
     {
-        leadingEdgeFlapsLeftPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.leadingEdgeFlapsLeftPosition));
-        leadingEdgeFlapsRightPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.leadingEdgeFlapsRightPosition));
-        trailingEdgeFlapsLeftPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.trailingEdgeFlapsLeftPosition));
-        trailingEdgeFlapsRightPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.trailingEdgeFlapsRightPosition));
-        spoilersLeftPosition = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.spoilersLeftPosition));
-        spoilersRightPosition = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.spoilersRightPosition));
+        leadingEdgeFlapsLeftPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.leftLeadingEdgeFlapsPosition));
+        leadingEdgeFlapsRightPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.rightLeadingEdgeFlapsPosition));
+        trailingEdgeFlapsLeftPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.leftTrailingEdgeFlapsPosition));
+        trailingEdgeFlapsRightPercent = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.rightTrailingEdgeFlapsPosition));
+        leftSpoilersPosition = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.leftSpoilersPosition));
+        rightSpoilersPosition = static_cast<float>(SkyMath::toNormalisedPosition(secondaryFlightControlData.rightSpoilersPosition));
     }
 
     inline SecondaryFlightControlData toSecondaryFlightControlData() const noexcept
@@ -78,12 +78,12 @@ struct SimConnectSecondaryFlightControlAnimation
 
     inline void toSecondaryFlightControlData(SecondaryFlightControlData &secondaryFlightControlData) const noexcept
     {
-        secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsLeftPercent);
-        secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsRightPercent);
-        secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsLeftPercent);
-        secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsRightPercent);
-        secondaryFlightControlData.spoilersLeftPosition = SkyMath::fromNormalisedPosition(spoilersLeftPosition);
-        secondaryFlightControlData.spoilersRightPosition = SkyMath::fromNormalisedPosition(spoilersRightPosition);
+        secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsLeftPercent);
+        secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(leadingEdgeFlapsRightPercent);
+        secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsLeftPercent);
+        secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(trailingEdgeFlapsRightPercent);
+        secondaryFlightControlData.leftSpoilersPosition = SkyMath::fromNormalisedPosition(leftSpoilersPosition);
+        secondaryFlightControlData.rightSpoilersPosition = SkyMath::fromNormalisedPosition(rightSpoilersPosition);
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

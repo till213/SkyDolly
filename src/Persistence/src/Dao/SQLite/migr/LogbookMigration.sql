@@ -831,14 +831,21 @@ set    rudder_deflection        = (rudder_position / 32767.0) * 0.4363,
        aileron_left_deflection  = (aileron_position / 32767.0) * 0.2967,
        aileron_right_deflection = (aileron_position / 32767.0) * 0.2967;
 
+@migr(id = "026ed87a-7577-4af5-b0c7-862a1ad6d39f", descn = "Rename secondary flight control position and percent columns", step = 1)
+alter table secondary_flight_control rename column leading_edge_flaps_left_percent to left_leading_edge_flaps_position;
+alter table secondary_flight_control rename column leading_edge_flaps_right_percent to right_leading_edge_flaps_position;
+alter table secondary_flight_control rename column trailing_edge_flaps_left_percent to left_trailing_edge_flaps_position;
+alter table secondary_flight_control rename column trailing_edge_flaps_right_percent to right_trailing_edge_flaps_position;
+alter table secondary_flight_control rename column spoilers_handle_position to spoilers_handle_percent;
+
 @migr(id = "f7ca2bc1-79c7-4055-b5cc-fa868cad410c", descn = "Add spoilers position columns", step_cnt = 2)
-alter table secondary_flight_control add column spoilers_left_position integer;
-alter table secondary_flight_control add column spoilers_right_position integer;
+alter table secondary_flight_control add column left_spoilers_position integer;
+alter table secondary_flight_control add column right_spoilers_position integer;
 
 @migr(id = "f7ca2bc1-79c7-4055-b5cc-fa868cad410c", descn = "Update secondary control animation columns", step = 2)
 update secondary_flight_control
-set    spoilers_left_position  = round((spoilers_handle_position / 255.0) * 32767.0),
-       spoilers_right_position = round((spoilers_handle_position / 255.0) * 32767.0);
+set    left_spoilers_position  = round((spoilers_handle_percent / 255.0) * 32767.0),
+       right_spoilers_position = round((spoilers_handle_percent / 255.0) * 32767.0);
 
 @migr(id = "663032d8-c8a4-43ff-b126-0d964d73bf23", descn = "Update application version to 0.14", step = 1)
 update metadata

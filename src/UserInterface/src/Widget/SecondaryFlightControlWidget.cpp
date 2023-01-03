@@ -77,13 +77,16 @@ void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariable
     QString colorName;
 
     if (!secondaryFlightControlData.isNull()) {
-        // Flaps & speed brakes
-        ui->leadingEdgeFlapsLeftLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.leadingEdgeFlapsLeftPosition));
-        ui->leadingEdgeFlapsRightLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.leadingEdgeFlapsRightPosition));
-        ui->trailingEdgeFlapsLeftLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.trailingEdgeFlapsLeftPosition));
-        ui->trailingEdgeFlapsRightLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.trailingEdgeFlapsRightPosition));
-        ui->spoilerLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.spoilersHandlePercent));
-        ui->flapsPositionLineEdit->setText(QString::number(secondaryFlightControlData.flapsHandleIndex));
+        // Flaps & spoilers (speed brakes)
+        ui->flapsHandleIndexLineEdit->setText(QString::number(secondaryFlightControlData.flapsHandleIndex));
+        ui->leftLeadingEdgeFlapsLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.leftLeadingEdgeFlapsPosition));
+        ui->rightLeadingEdgeFlapsLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.rightLeadingEdgeFlapsPosition));
+        ui->leftTrailingEdgeFlapsLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.leftTrailingEdgeFlapsPosition));
+        ui->rightTrailingEdgeFlapsLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.rightTrailingEdgeFlapsPosition));
+
+        ui->spoilersHandlePositionLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.spoilersHandlePercent));
+        ui->leftSpoilersPositionLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.leftSpoilersPosition));
+        ui->rightSpoilersPositionLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.rightSpoilersPosition));
 
         colorName = d->ActiveTextColor.name();
     } else {
@@ -91,24 +94,30 @@ void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariable
     }
 
     const QString css{QString("color: %1;").arg(colorName)};
-    ui->leadingEdgeFlapsLeftLineEdit->setStyleSheet(css);
-    ui->leadingEdgeFlapsRightLineEdit->setStyleSheet(css);
-    ui->trailingEdgeFlapsLeftLineEdit->setStyleSheet(css);
-    ui->trailingEdgeFlapsRightLineEdit->setStyleSheet(css);
-    ui->spoilerLineEdit->setStyleSheet(css);
-    ui->flapsPositionLineEdit->setStyleSheet(css);
+    ui->flapsHandleIndexLineEdit->setStyleSheet(css);
+    ui->leftLeadingEdgeFlapsLineEdit->setStyleSheet(css);
+    ui->rightLeadingEdgeFlapsLineEdit->setStyleSheet(css);
+    ui->leftTrailingEdgeFlapsLineEdit->setStyleSheet(css);
+    ui->rightTrailingEdgeFlapsLineEdit->setStyleSheet(css);
+
+    ui->spoilersHandlePositionLineEdit->setStyleSheet(css);
+    ui->leftSpoilersPositionLineEdit->setStyleSheet(css);
+    ui->rightSpoilersPositionLineEdit->setStyleSheet(css);
 }
 
 // PRIVATE
 
 void SecondaryFlightControlWidget::initUi() noexcept
 {
-    ui->leadingEdgeFlapsLeftLineEdit->setToolTip(SimVar::LeadingEdgeFlapsLeftPercent);
-    ui->leadingEdgeFlapsRightLineEdit->setToolTip(SimVar::LeadingEdgeFlapsRightPercent);
-    ui->trailingEdgeFlapsLeftLineEdit->setToolTip(SimVar::TrailingEdgeFlapsLeftPercent);
-    ui->trailingEdgeFlapsRightLineEdit->setToolTip(SimVar::TrailingEdgeFlapsRightPercent);
-    ui->flapsPositionLineEdit->setToolTip(SimVar::FlapsHandleIndex);
-    ui->spoilerLineEdit->setToolTip(SimVar::SpoilersHandlePosition);
+    ui->flapsHandleIndexLineEdit->setToolTip(SimVar::FlapsHandleIndex);
+    ui->leftLeadingEdgeFlapsLineEdit->setToolTip(SimVar::LeadingEdgeFlapsLeftPercent);
+    ui->rightLeadingEdgeFlapsLineEdit->setToolTip(SimVar::LeadingEdgeFlapsRightPercent);
+    ui->leftTrailingEdgeFlapsLineEdit->setToolTip(SimVar::TrailingEdgeFlapsLeftPercent);
+    ui->rightTrailingEdgeFlapsLineEdit->setToolTip(SimVar::TrailingEdgeFlapsRightPercent);
+
+    ui->spoilersHandlePositionLineEdit->setToolTip(SimVar::SpoilersHandlePosition);
+    ui->leftSpoilersPositionLineEdit->setToolTip(SimVar::SpoilersLeftPosition);
+    ui->rightSpoilersPositionLineEdit->setToolTip(SimVar::SpoilersRightPosition);
 }
 
 SecondaryFlightControlData SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept

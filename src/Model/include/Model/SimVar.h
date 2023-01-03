@@ -83,12 +83,14 @@ namespace SimVar
     constexpr const char *GeneralEngineCombustion3 = "General Eng Combustion:3";
     constexpr const char *GeneralEngineCombustion4 = "General Eng Combustion:4";
 
+    constexpr const char *FlapsHandleIndex = "Flaps Handle Index";
     constexpr const char *LeadingEdgeFlapsLeftPercent = "Leading Edge Flaps Left Percent";
     constexpr const char *LeadingEdgeFlapsRightPercent = "Leading Edge Flaps Right Percent";
     constexpr const char *TrailingEdgeFlapsLeftPercent = "Trailing Edge Flaps Left Percent";
     constexpr const char *TrailingEdgeFlapsRightPercent = "Trailing Edge Flaps Right Percent";
     constexpr const char *SpoilersHandlePosition = "Spoilers Handle Position";
-    constexpr const char *FlapsHandleIndex = "Flaps Handle Index";
+    constexpr const char *SpoilersLeftPosition = "Spoilers Left Position";
+    constexpr const char *SpoilersRightPosition = "Spoilers Right Position";
 
     constexpr const char *BrakeLeftPosition = "Brake Left Position";
     constexpr const char *BrakeRightPosition = "Brake Right Position";

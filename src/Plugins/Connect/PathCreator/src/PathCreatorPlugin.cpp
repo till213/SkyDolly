@@ -338,10 +338,10 @@ void PathCreatorPlugin::recordPrimaryControls(std::int64_t timestamp) noexcept
 void PathCreatorPlugin::recordSecondaryControls(std::int64_t timestamp) noexcept
 {
     SecondaryFlightControlData secondaryFlightControlData;
-    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
-    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
-    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
-    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
     secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(d->randomGenerator->bounded(5));
 

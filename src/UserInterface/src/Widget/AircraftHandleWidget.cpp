@@ -114,9 +114,9 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
 
     if (!aircraftHandleData.isNull()) {
         aircraftHandleData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));
-        ui->brakeLeftLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeLeftPosition));
-        ui->brakeRightLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeRightPosition));
-        ui->waterRudderLineEdit->setText(d->unit.formatPosition(aircraftHandleData.waterRudderHandlePosition));
+        ui->brakeLeftLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(aircraftHandleData.brakeLeftPosition));
+        ui->brakeRightLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(aircraftHandleData.brakeRightPosition));
+        ui->waterRudderLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(aircraftHandleData.waterRudderHandlePosition));
         aircraftHandleData.smokeEnabled ? ui->smokeEnabledLineEdit->setText(tr("On")) : ui->smokeEnabledLineEdit->setText(tr("Off"));
         ui->tailhookLineEdit->setText(d->unit.formatPercent(aircraftHandleData.tailhookPosition));
         ui->canopyOpenLineEdit->setText(d->unit.formatPercent(aircraftHandleData.canopyOpen));

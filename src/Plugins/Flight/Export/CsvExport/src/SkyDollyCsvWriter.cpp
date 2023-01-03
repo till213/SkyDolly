@@ -363,10 +363,10 @@ inline QString SkyDollyCsvWriter::getSecondaryFlightControlData(const SecondaryF
 {
     QString csv;
     if (!data.isNull()) {
-        csv = QString::number(data.leadingEdgeFlapsLeftPosition) % Csv::CommaSep %
-              QString::number(data.leadingEdgeFlapsRightPosition) % Csv::CommaSep %
-              QString::number(data.trailingEdgeFlapsLeftPosition) % Csv::CommaSep %
-              QString::number(data.trailingEdgeFlapsRightPosition) % Csv::CommaSep %
+        csv = QString::number(data.leftLeadingEdgeFlapsPosition) % Csv::CommaSep %
+              QString::number(data.rightLeadingEdgeFlapsPosition) % Csv::CommaSep %
+              QString::number(data.leftTrailingEdgeFlapsPosition) % Csv::CommaSep %
+              QString::number(data.rightTrailingEdgeFlapsPosition) % Csv::CommaSep %
               QString::number(data.spoilersHandlePercent) % Csv::CommaSep %
               QString::number(data.flapsHandleIndex);
     } else {

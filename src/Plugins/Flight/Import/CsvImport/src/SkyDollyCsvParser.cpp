@@ -410,15 +410,15 @@ inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser:
     SecondaryFlightControlData data;
     bool ok {true};
 
-    data.leadingEdgeFlapsLeftPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsLeftPercent)).toInt(&ok);
+    data.leftLeadingEdgeFlapsPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsLeftPercent)).toInt(&ok);
     if (ok) {
-        data.leadingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsRightPercent)).toInt(&ok);
+        data.rightLeadingEdgeFlapsPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsRightPercent)).toInt(&ok);
     }
     if (ok) {
-        data.trailingEdgeFlapsLeftPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsLeftPercent)).toInt(&ok);
+        data.leftTrailingEdgeFlapsPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsLeftPercent)).toInt(&ok);
     }
     if (ok) {
-        data.trailingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsRightPercent)).toInt(&ok);
+        data.rightTrailingEdgeFlapsPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsRightPercent)).toInt(&ok);
     }
     if (ok) {
         data.spoilersHandlePercent = row.at(Enum::underly(::Index::SpoilersHandlePosition)).toInt(&ok);
