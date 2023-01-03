@@ -49,6 +49,7 @@ struct MODEL_API AircraftHandleData final : public TimeVariableData
     bool tailhookHandlePosition {false};
     // True: retracted - false: extended
     bool foldingWingHandlePosition {false};
+    // True: enabled - false: disabled
     bool smokeEnabled {false};
 };
 

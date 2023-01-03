@@ -78,9 +78,10 @@ void AircraftHandleWidget::initUi() noexcept
     ui->brakeRightLineEdit->setToolTip(SimVar::BrakeRightPosition);
     ui->waterRudderLineEdit->setToolTip(SimVar::WaterRudderHandlePosition);
     ui->smokeEnabledLineEdit->setToolTip(SimVar::SmokeEnable);
+    ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
     ui->tailhookHandleLineEdit->setToolTip(SimVar::TailhookHandle);
     ui->tailhookPositionLineEdit->setToolTip(SimVar::TailhookPosition);
-    ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
+    ui->wingFoldingHandleLineEdit->setToolTip(SimVar::FoldingWingHandlePosition);
     ui->leftWingFoldingLineEdit->setToolTip(SimVar::FoldingWingLeftPercent);
     ui->rightWingFoldingLineEdit->setToolTip(SimVar::FoldingWingRightPercent);
 }
@@ -119,9 +120,10 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
         ui->brakeRightLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(aircraftHandleData.brakeRightPosition));
         ui->waterRudderLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(aircraftHandleData.waterRudderHandlePosition));
         aircraftHandleData.smokeEnabled ? ui->smokeEnabledLineEdit->setText(tr("On")) : ui->smokeEnabledLineEdit->setText(tr("Off"));
+        ui->canopyOpenLineEdit->setText(d->unit.formatPercent(aircraftHandleData.canopyOpen));
         aircraftHandleData.tailhookHandlePosition ? ui->tailhookHandleLineEdit->setText(tr("Extended")) : ui->tailhookHandleLineEdit->setText(tr("Retracted"));
         ui->tailhookPositionLineEdit->setText(d->unit.formatPercent(aircraftHandleData.tailhookPosition));
-        ui->canopyOpenLineEdit->setText(d->unit.formatPercent(aircraftHandleData.canopyOpen));
+        aircraftHandleData.foldingWingHandlePosition ? ui->wingFoldingHandleLineEdit->setText(tr("Folded")) : ui->tailhookHandleLineEdit->setText(tr("Extracted"));
         ui->leftWingFoldingLineEdit->setText(d->unit.formatPercent(aircraftHandleData.leftWingFolding));
         ui->rightWingFoldingLineEdit->setText(d->unit.formatPercent(aircraftHandleData.rightWingFolding));
 
@@ -136,9 +138,10 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
     ui->brakeRightLineEdit->setStyleSheet(css);
     ui->waterRudderLineEdit->setStyleSheet(css);
     ui->smokeEnabledLineEdit->setStyleSheet(css);
+    ui->canopyOpenLineEdit->setStyleSheet(css);
     ui->tailhookHandleLineEdit->setStyleSheet(css);
     ui->tailhookPositionLineEdit->setStyleSheet(css);
-    ui->canopyOpenLineEdit->setStyleSheet(css);
+    ui->wingFoldingHandleLineEdit->setStyleSheet(css);
     ui->leftWingFoldingLineEdit->setStyleSheet(css);
     ui->rightWingFoldingLineEdit->setStyleSheet(css);
 }
