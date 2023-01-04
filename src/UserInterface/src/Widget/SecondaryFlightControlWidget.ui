@@ -150,14 +150,14 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_45">
+         <widget class="QLabel" name="label_46">
           <property name="text">
-           <string>Left spoilers position:</string>
+           <string>Spoilers armed:</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="leftSpoilersPositionLineEdit">
+         <widget class="QLineEdit" name="spoilersArmedLineEdit">
           <property name="minimumSize">
            <size>
             <width>160</width>
@@ -170,13 +170,33 @@
          </widget>
         </item>
         <item row="2" column="0">
+         <widget class="QLabel" name="label_45">
+          <property name="text">
+           <string>Left spoilers position:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="leftSpoilersPositionLineEdit">
+          <property name="minimumSize">
+           <size>
+            <width>160</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
          <widget class="QLabel" name="label_44">
           <property name="text">
            <string>Right spoilers position:</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <widget class="QLineEdit" name="rightSpoilersPositionLineEdit">
           <property name="minimumSize">
            <size>

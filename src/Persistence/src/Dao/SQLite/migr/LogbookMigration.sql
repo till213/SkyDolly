@@ -838,7 +838,7 @@ alter table secondary_flight_control rename column trailing_edge_flaps_left_perc
 alter table secondary_flight_control rename column trailing_edge_flaps_right_percent to right_trailing_edge_flaps_position;
 alter table secondary_flight_control rename column spoilers_handle_position to spoilers_handle_percent;
 
-@migr(id = "f7ca2bc1-79c7-4055-b5cc-fa868cad410c", descn = "Add spoilers position columns", step_cnt = 2)
+@migr(id = "f7ca2bc1-79c7-4055-b5cc-fa868cad410c", descn = "Add spoilers position columns to secondary flight control table", step_cnt = 2)
 alter table secondary_flight_control add column left_spoilers_position integer;
 alter table secondary_flight_control add column right_spoilers_position integer;
 
@@ -879,19 +879,26 @@ alter table position_new rename to position;
 @migr(id = "078f7bb3-6c92-4c86-8396-fa9fd4976067", descn = "Rename column handle.tail_hook_position to tailhook_position", step = 1)
 alter table handle rename column tail_hook_position to tailhook_position;
 
-@migr(id = "7deb21ba-b486-4b1c-8fed-8432adf3a1f2", descn = "Add column tailhook handle position, step_cnt = 2)
+@migr(id = "7deb21ba-b486-4b1c-8fed-8432adf3a1f2", descn = "Add column tailhook handle position to handle table, step_cnt = 2)
 alter table handle add column tailhook_handle_position integer;
 
 @migr(id = "7deb21ba-b486-4b1c-8fed-8432adf3a1f2", descn = "Migrate column tailhook handle position, step = 2)
 update handle
 set    tailhook_handle_position = case when tailhook_position > 128 then 1 else 0 end;
 
-@migr(id = "3740cd86-5c65-4d78-bc5a-2581656799d4", descn = "Add column folding wing handle position, step_cnt = 2)
+@migr(id = "3740cd86-5c65-4d78-bc5a-2581656799d4", descn = "Add column folding wing handle position to handle table, step_cnt = 2)
 alter table handle add column folding_wing_handle_position integer;
 
 @migr(id = "3740cd86-5c65-4d78-bc5a-2581656799d4", descn = "Migrate column folding wing handle position, step = 2)
 update handle
 set    folding_wing_handle_position = case when (left_wing_folding > 128 or right_wing_folding > 128) then 1 else 0 end;
+
+@migr(id = "2c0056bb-bd8e-43ab-8450-2efa25f4bf96", descn = "Add column spoilers armed to secondary flight controls table, step_cnt = 2)
+alter table secondary_flight_control add column spoilers_armed integer;
+
+@migr(id = "2c0056bb-bd8e-43ab-8450-2efa25f4bf96", descn = "Migrate column spoilers armed, step = 2)
+update secondary_flight_control
+set    spoilers_armed = 0;
 
 @migr(id = "663032d8-c8a4-43ff-b126-0d964d73bf23", descn = "Update application version to 0.14", step = 1)
 update metadata

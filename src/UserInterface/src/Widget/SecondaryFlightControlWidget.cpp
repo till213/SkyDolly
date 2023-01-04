@@ -85,6 +85,7 @@ void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariable
         ui->rightTrailingEdgeFlapsLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.rightTrailingEdgeFlapsPosition));
 
         ui->spoilersHandlePositionLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.spoilersHandlePercent));
+        secondaryFlightControlData.spoilersArmed ? ui->spoilersArmedLineEdit->setText(tr("Armed")) : ui->spoilersArmedLineEdit->setText(tr("Disarmed"));
         ui->leftSpoilersPositionLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.leftSpoilersPosition));
         ui->rightSpoilersPositionLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.rightSpoilersPosition));
 
@@ -101,6 +102,7 @@ void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariable
     ui->rightTrailingEdgeFlapsLineEdit->setStyleSheet(css);
 
     ui->spoilersHandlePositionLineEdit->setStyleSheet(css);
+    ui->spoilersArmedLineEdit->setStyleSheet(css);
     ui->leftSpoilersPositionLineEdit->setStyleSheet(css);
     ui->rightSpoilersPositionLineEdit->setStyleSheet(css);
 }
@@ -116,6 +118,7 @@ void SecondaryFlightControlWidget::initUi() noexcept
     ui->rightTrailingEdgeFlapsLineEdit->setToolTip(SimVar::TrailingEdgeFlapsRightPercent);
 
     ui->spoilersHandlePositionLineEdit->setToolTip(SimVar::SpoilersHandlePosition);
+    ui->spoilersArmedLineEdit->setToolTip(SimVar::SpoilersArmed);
     ui->leftSpoilersPositionLineEdit->setToolTip(SimVar::SpoilersLeftPosition);
     ui->rightSpoilersPositionLineEdit->setToolTip(SimVar::SpoilersRightPosition);
 }

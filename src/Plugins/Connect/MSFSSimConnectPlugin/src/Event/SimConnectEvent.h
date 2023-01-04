@@ -81,6 +81,7 @@ public:
         // Secondary flight controls
         FlapsDecrease,
         FlapsIncrease,
+        SpoilersSet,
         AxisSpoilerSet,
         SpoilersOff,
         SpoilersOn,
@@ -104,7 +105,7 @@ public:
         : m_simConnectHandle(simConnectHandle)
     {}
 
-    static constexpr std::int16_t Max16KPosition {16384};
+    static constexpr std::int16_t Max16KPosition {16383};
 
     /*!
      * Converts the normalised \c value to an \em event (position) value.
@@ -125,7 +126,7 @@ public:
      * @return the converted \em event (position) value [-16384, 16384]
      */
     constexpr std::int16_t percentTo16K(double percent) noexcept {
-        return static_cast<std::int16_t>(std::round(percent * 163.84));
+        return static_cast<std::int16_t>(std::round(percent * (double)Max16KPosition / 100.0));
     }
 
     void setupEvents()
@@ -150,6 +151,7 @@ public:
         // Secondary flight controls
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FlapsDecrease), "FLAPS_DECR");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FlapsIncrease), "FLAPS_INCR");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SpoilersSet), "SPOILERS_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisSpoilerSet), "AXIS_SPOILER_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SpoilersOff), "SPOILERS_OFF");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SpoilersOn), "SPOILERS_ON");
@@ -209,7 +211,7 @@ public:
     inline bool sendSecondaryFlightControl(const SimConnectSecondaryFlightControlEvent &event)
     {
         bool ok = sendSpoilersArmed(event.spoilersArmed);
-        if (ok) {
+        if (ok && event.spoilersArmed == 0) {
             ok = sendSpoilerPosition(percentTo16K(event.spoilersHandlePosition));
         }
         if (ok) {
@@ -384,11 +386,19 @@ private:
 
     inline bool sendSpoilerPosition(std::int32_t spoilersHandlePosition)
     {
-        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisSpoilerSet), spoilersHandlePosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        // Implementation note:
+        // Apparently not every aircraft reacts to every simulation event, so we combine a mixture of events here:
+        // - Spoilers set: this SHOULD set the spoiler handle exactly to the value that we provide, but some 3rd party aircraft seemingly ignore this event altogether
+        // - Axis spoiler set: while this seems to move the spoiler handle for most aircraft there is some "response curve" ("sensitivity") applied -> not what we generally want
+        // - Spoilers on/off: some aircraft ignore this as well (but we send it anway, who knows what good it does for other aircraft)
+        // - Oh well...
+        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SpoilersSet), spoilersHandlePosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         if (spoilersHandlePosition == 0) {
             result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SpoilersOff), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisSpoilerSet), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         } else if (spoilersHandlePosition == Max16KPosition) {
             result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SpoilersOn), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisSpoilerSet), Max16KPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         }
         return result == S_OK;
     }

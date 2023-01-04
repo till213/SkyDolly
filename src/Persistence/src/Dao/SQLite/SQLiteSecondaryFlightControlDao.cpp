@@ -68,6 +68,7 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
         "  left_spoilers_position,"
         "  right_spoilers_position,"
         "  spoilers_handle_percent,"
+        "  spoilers_armed,"
         "  flaps_handle_index"
         ") values ("
         " :aircraft_id,"
@@ -79,6 +80,7 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
         " :left_spoilers_position,"
         " :right_spoilers_position,"
         " :spoilers_handle_percent,"
+        " :spoilers_armed,"
         " :flaps_handle_index"
         ");"
     );
@@ -92,6 +94,7 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
     query.bindValue(":left_spoilers_position", secondaryFlightControlData.leftSpoilersPosition);
     query.bindValue(":right_spoilers_position", secondaryFlightControlData.rightSpoilersPosition);
     query.bindValue(":spoilers_handle_percent", secondaryFlightControlData.spoilersHandlePercent);
+    query.bindValue(":spoilers_armed", secondaryFlightControlData.spoilersArmed);
     query.bindValue(":flaps_handle_index", secondaryFlightControlData.flapsHandleIndex);
 
     const bool ok = query.exec();
@@ -133,6 +136,7 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
         const int leftSpoilersPositionIdx = record.indexOf("left_spoilers_position");
         const int rightSpoilersPositionIdx = record.indexOf("right_spoilers_position");
         const int spoilersHandlePercentIdx = record.indexOf("spoilers_handle_percent");
+        const int spoilersArmedIdx = record.indexOf("spoilers_armed");
         const int flapsHandleIndexIdx = record.indexOf("flaps_handle_index");
         while (query.next()) {
             SecondaryFlightControlData data;
@@ -144,6 +148,7 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
             data.leftSpoilersPosition = static_cast<std::int16_t>(query.value(leftSpoilersPositionIdx).toInt());
             data.rightSpoilersPosition = static_cast<std::int16_t>(query.value(rightSpoilersPositionIdx).toInt());
             data.spoilersHandlePercent = static_cast<std::uint8_t>(query.value(spoilersHandlePercentIdx).toInt());
+            data.spoilersArmed = query.value(spoilersArmedIdx).toBool();
             data.flapsHandleIndex = static_cast<std::int8_t>(query.value(flapsHandleIndexIdx).toInt());
 
             secondaryFlightControlData.push_back(std::move(data));
