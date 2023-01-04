@@ -248,7 +248,7 @@ public:
                          << "Previous index:" << m_currentFlapsIndex;
 #endif
         m_currentFlapsIndex = index;
-        if (m_requestedFlapsIndex != m_currentFlapsIndex) {
+        if (m_requestedFlapsIndex != InvalidFlapsIndex && m_requestedFlapsIndex != m_currentFlapsIndex) {
             ok = sendFlapsHandleIndex(m_requestedFlapsIndex);
         }
         return ok;
