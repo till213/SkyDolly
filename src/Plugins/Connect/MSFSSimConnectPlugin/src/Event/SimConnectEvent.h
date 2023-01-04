@@ -60,10 +60,10 @@ public:
         FreezeAltitude,
         FreezeAttitude,
         // Engine
-        Throttle1Set,
-        Throttle2Set,
-        Throttle3Set,
-        Throttle4Set,
+        AxisThrottle1Set,
+        AxisThrottle2Set,
+        AxisThrottle3Set,
+        AxisThrottle4Set,
         AxisPropeller1Set,
         AxisPropeller2Set,
         AxisPropeller3Set,
@@ -75,9 +75,9 @@ public:
         EngineAutoStart,
         EngineAutoShutdown,        
         // Primary flight controls
-        AileronSet,
-        ElevatorSet,
-        RudderSet,
+        AxisAileronsSet,
+        AxisElevatorSet,
+        AxisRudderSet,
         // Secondary flight controls
         FlapsDecrease,
         FlapsIncrease,
@@ -135,10 +135,10 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FreezeAltitude), "FREEZE_ALTITUDE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
         // Engine
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Throttle1Set), "THROTTLE1_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Throttle2Set), "THROTTLE2_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Throttle3Set), "THROTTLE3_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::Throttle4Set), "THROTTLE4_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisThrottle1Set), "AXIS_THROTTLE1_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisThrottle2Set), "AXIS_THROTTLE2_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisThrottle3Set), "AXIS_THROTTLE3_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisThrottle4Set), "AXIS_THROTTLE4_SET");
 
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisPropeller1Set), "AXIS_PROPELLER1_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisPropeller2Set), "AXIS_PROPELLER2_SET");
@@ -153,9 +153,9 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::EngineAutoStart), "ENGINE_AUTO_START");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::EngineAutoShutdown), "ENGINE_AUTO_SHUTDOWN");
         // Primary flight controls
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AileronSet), "AILERON_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::ElevatorSet), "ELEVATOR_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::RudderSet), "RUDDER_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisAileronsSet), "AXIS_AILERONS_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisElevatorSet), "AXIS_ELEVATOR_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisRudderSet), "AXIS_RUDDER_SET");
         // Secondary flight controls
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FlapsDecrease), "FLAPS_DECR");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FlapsIncrease), "FLAPS_INCR");
@@ -201,10 +201,10 @@ public:
         bool ok = sendEngineState(engine);
 
         const SimConnectEngineEvent &event = engine.event;
-        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::Throttle1Set), positionTo16K(event.throttleLeverPosition1), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::Throttle2Set), positionTo16K(event.throttleLeverPosition2), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::Throttle3Set), positionTo16K(event.throttleLeverPosition3), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::Throttle4Set), positionTo16K(event.throttleLeverPosition4), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisThrottle1Set), positionTo16K(event.throttleLeverPosition1), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisThrottle2Set), positionTo16K(event.throttleLeverPosition2), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisThrottle3Set), positionTo16K(event.throttleLeverPosition3), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisThrottle4Set), positionTo16K(event.throttleLeverPosition4), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
 
         result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisPropeller1Set), positionTo16K(event.propellerLeverPosition1), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisPropeller2Set), positionTo16K(event.propellerLeverPosition2), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
@@ -217,9 +217,9 @@ public:
     inline bool sendPrimaryFlightControl(const SimConnectPrimaryFlightControlEvent &event)
     {
         // The recorded control surface values have opposite sign than the event values to be sent
-        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::RudderSet), -positionTo16K(event.rudderPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AileronSet), -positionTo16K(event.aileronPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::ElevatorSet), -positionTo16K(event.elevatorPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisRudderSet), -positionTo16K(event.rudderPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisAileronsSet), -positionTo16K(event.aileronPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisElevatorSet), -positionTo16K(event.elevatorPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
 
         return result == S_OK;
     }
