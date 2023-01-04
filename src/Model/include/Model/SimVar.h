@@ -89,6 +89,7 @@ namespace SimVar
     constexpr const char *TrailingEdgeFlapsLeftPercent = "Trailing Edge Flaps Left Percent";
     constexpr const char *TrailingEdgeFlapsRightPercent = "Trailing Edge Flaps Right Percent";
     constexpr const char *SpoilersHandlePosition = "Spoilers Handle Position";
+    constexpr const char *SpoilersArmed = "Spoilers Armed";
     constexpr const char *SpoilersLeftPosition = "Spoilers Left Position";
     constexpr const char *SpoilersRightPosition = "Spoilers Right Position";
 

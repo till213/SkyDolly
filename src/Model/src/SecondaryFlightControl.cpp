@@ -79,9 +79,8 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64
             m_currentData.leftSpoilersPosition = SkyMath::interpolateLinear(p1->leftSpoilersPosition, p2->leftSpoilersPosition, tn);
             m_currentData.rightSpoilersPosition = SkyMath::interpolateLinear(p1->rightSpoilersPosition, p2->rightSpoilersPosition, tn);
             m_currentData.spoilersHandlePercent = SkyMath::interpolateLinear(p1->spoilersHandlePercent, p2->spoilersHandlePercent, tn);
-
-            // No interpolation for flaps handle position
             m_currentData.flapsHandleIndex = p1->flapsHandleIndex;
+            m_currentData.spoilersArmed = p1->spoilersArmed;
             m_currentData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data (and no repeat), or the timestamp exceeds the timestamp of the last recorded data

@@ -81,7 +81,11 @@ public:
         // Secondary flight controls
         FlapsDecrease,
         FlapsIncrease,
-        SpoilersSet,
+        AxisSpoilerSet,
+        SpoilersOff,
+        SpoilersOn,
+        SpoilersArmSet,
+        // Aircraft handles
         GearDown,
         GearUp,
         SetTailHookHandle,
@@ -100,6 +104,8 @@ public:
         : m_simConnectHandle(simConnectHandle)
     {}
 
+    static constexpr std::int16_t Max16KPosition {16384};
+
     /*!
      * Converts the normalised \c value to an \em event (position) value.
      *
@@ -108,7 +114,7 @@ public:
      * @return the converted \em event (position) value [-16384, 16384]
      */
     constexpr std::int16_t positionTo16K(double value) noexcept {
-        return static_cast<std::int16_t>(std::round(value * 16384));
+        return static_cast<std::int16_t>(std::round(value * Max16KPosition));
     }
 
     /*!
@@ -135,21 +141,6 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FreezeAltitude), "FREEZE_ALTITUDE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
         // Engine
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisThrottle1Set), "AXIS_THROTTLE1_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisThrottle2Set), "AXIS_THROTTLE2_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisThrottle3Set), "AXIS_THROTTLE3_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisThrottle4Set), "AXIS_THROTTLE4_SET");
-
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisPropeller1Set), "AXIS_PROPELLER1_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisPropeller2Set), "AXIS_PROPELLER2_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisPropeller3Set), "AXIS_PROPELLER3_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisPropeller4Set), "AXIS_PROPELLER4_SET");
-
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::CowlFlap1Set), "COWLFLAP1_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::CowlFlap2Set), "COWLFLAP2_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::CowlFlap3Set), "COWLFLAP3_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::CowlFlap4Set), "COWLFLAP4_SET");
-
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::EngineAutoStart), "ENGINE_AUTO_START");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::EngineAutoShutdown), "ENGINE_AUTO_SHUTDOWN");
         // Primary flight controls
@@ -159,7 +150,10 @@ public:
         // Secondary flight controls
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FlapsDecrease), "FLAPS_DECR");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FlapsIncrease), "FLAPS_INCR");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SpoilersSet), "SPOILERS_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::AxisSpoilerSet), "AXIS_SPOILER_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SpoilersOff), "SPOILERS_OFF");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SpoilersOn), "SPOILERS_ON");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SpoilersArmSet), "SPOILERS_ARM_SET");
         // Handles
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::GearUp), "GEAR_UP");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::GearDown), "GEAR_DOWN");
@@ -198,20 +192,8 @@ public:
 
     inline bool sendEngine(const SimConnectEngineAll &engine) noexcept
     {
-        bool ok = sendEngineState(engine);
-
-        const SimConnectEngineEvent &event = engine.event;
-        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisThrottle1Set), positionTo16K(event.throttleLeverPosition1), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisThrottle2Set), positionTo16K(event.throttleLeverPosition2), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisThrottle3Set), positionTo16K(event.throttleLeverPosition3), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisThrottle4Set), positionTo16K(event.throttleLeverPosition4), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisPropeller1Set), positionTo16K(event.propellerLeverPosition1), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisPropeller2Set), positionTo16K(event.propellerLeverPosition2), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisPropeller3Set), positionTo16K(event.propellerLeverPosition3), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisPropeller4Set), positionTo16K(event.propellerLeverPosition4), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-
-        return ok && result == S_OK;
+        const bool ok = sendEngineState(engine);
+        return ok;;
     }
 
     inline bool sendPrimaryFlightControl(const SimConnectPrimaryFlightControlEvent &event)
@@ -226,8 +208,10 @@ public:
 
     inline bool sendSecondaryFlightControl(const SimConnectSecondaryFlightControlEvent &event)
     {
-        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SpoilersSet), percentTo16K(event.spoilersHandlePosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        bool ok = setSpoilers(percentTo16K(event.spoilersHandlePosition));
+        bool ok = sendSpoilersArmed(event.spoilersArmed);
+        if (ok) {
+            ok = sendSpoilerPosition(percentTo16K(event.spoilersHandlePosition));
+        }
         if (ok) {
             ok = sendFlapsHandleIndex(event.flapsHandleIndex);
         }
@@ -398,34 +382,45 @@ private:
         return result == S_OK;
     }
 
-    inline bool setSpoilers(std::int32_t spoilersHandlePosition)
+    inline bool sendSpoilerPosition(std::int32_t spoilersHandlePosition)
     {
-        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SpoilersSet), spoilersHandlePosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::AxisSpoilerSet), spoilersHandlePosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        if (spoilersHandlePosition == 0) {
+            result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SpoilersOff), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        } else if (spoilersHandlePosition == Max16KPosition) {
+            result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SpoilersOn), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        }
+        return result == S_OK;
+    }
+
+    inline bool sendSpoilersArmed(std::int32_t armed)
+    {
+        const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SpoilersArmSet), armed, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
     inline bool sendGearHandlePosition(bool gearDown)
     {
-        SIMCONNECT_CLIENT_EVENT_ID eventId = gearDown ?Enum::underly(Event::GearDown) : Enum::underly(Event::GearUp);
+        const SIMCONNECT_CLIENT_EVENT_ID eventId = gearDown ?Enum::underly(Event::GearDown) : Enum::underly(Event::GearUp);
         HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, eventId, 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
     inline bool sendTailhookHandlePosition(std::int32_t enable)
     {
-        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SetTailHookHandle), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SetTailHookHandle), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
     inline bool sendSmokeEnabled(std::int32_t enable)
     {
-        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SmokeSet), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SmokeSet), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
     inline bool sendWingFold(std::int32_t enable)
     {
-        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SetWingFold), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SetWingFold), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 };

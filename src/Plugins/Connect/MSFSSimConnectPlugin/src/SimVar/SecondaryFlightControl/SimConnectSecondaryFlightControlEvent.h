@@ -43,7 +43,8 @@
 #pragma pack(push, 1)
 struct SimConnectSecondaryFlightControlEvent
 {
-    float spoilersHandlePosition {0.0f} ;
+    float spoilersHandlePosition {0.0f};
+    std::int32_t spoilersArmed {0};
     std::int32_t flapsHandleIndex {0};
 
     SimConnectSecondaryFlightControlEvent(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
@@ -56,6 +57,7 @@ struct SimConnectSecondaryFlightControlEvent
     inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
     {
         spoilersHandlePosition = static_cast<float>(SkyMath::toPercent(secondaryFlightControlData.spoilersHandlePercent));
+        spoilersArmed = secondaryFlightControlData.spoilersArmed ? 1 : 0;
         flapsHandleIndex = secondaryFlightControlData.flapsHandleIndex;
     }
 
@@ -69,6 +71,7 @@ struct SimConnectSecondaryFlightControlEvent
     inline void toSecondaryFlightControlData(SecondaryFlightControlData &secondaryFlightControlData) const noexcept
     {
         secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(spoilersHandlePosition);
+        secondaryFlightControlData.spoilersArmed = spoilersArmed != 0;
         secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(flapsHandleIndex);
     }
 
@@ -76,6 +79,7 @@ struct SimConnectSecondaryFlightControlEvent
     {
         // Spoilers, also known as "speed brakes"
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SpoilersHandlePosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SpoilersArmed, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::FlapsHandleIndex, "Number", ::SIMCONNECT_DATATYPE_INT32);
     }
 };

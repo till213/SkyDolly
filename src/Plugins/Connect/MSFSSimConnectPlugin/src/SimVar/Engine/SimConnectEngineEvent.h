@@ -43,15 +43,6 @@
 #pragma pack(push, 1)
 struct SimConnectEngineEvent
 {
-    // Position
-    float throttleLeverPosition1 {0.0f};
-    float throttleLeverPosition2 {0.0f};
-    float throttleLeverPosition3 {0.0f};
-    float throttleLeverPosition4 {0.0f};
-    float propellerLeverPosition1 {0.0f};
-    float propellerLeverPosition2 {0.0f};
-    float propellerLeverPosition3 {0.0f};
-    float propellerLeverPosition4 {0.0f};
     std::int32_t generalEngineCombustion1 {0};
     std::int32_t generalEngineCombustion2 {0};
     std::int32_t generalEngineCombustion3 {0};
@@ -66,14 +57,6 @@ struct SimConnectEngineEvent
 
     inline void fromEngineData(const EngineData &engineData) noexcept
     {
-        throttleLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition1));
-        throttleLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition2));
-        throttleLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition3));
-        throttleLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition4));
-        propellerLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition1));
-        propellerLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition2));
-        propellerLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition3));
-        propellerLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition4));
         generalEngineCombustion1 = engineData.generalEngineCombustion1 ? 1 : 0;
         generalEngineCombustion2 = engineData.generalEngineCombustion2 ? 1 : 0;
         generalEngineCombustion3 = engineData.generalEngineCombustion3 ? 1 : 0;
@@ -89,16 +72,6 @@ struct SimConnectEngineEvent
 
     inline void toEngineData(EngineData &engineData) const noexcept
     {
-        // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
-        //       position (std::int16_t) which supports negative values as well
-        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(throttleLeverPosition1);
-        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(throttleLeverPosition2);
-        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(throttleLeverPosition3);
-        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(throttleLeverPosition4);
-        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(propellerLeverPosition1);
-        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(propellerLeverPosition2);
-        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(propellerLeverPosition3);
-        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(propellerLeverPosition4);
         engineData.generalEngineCombustion1 = (generalEngineCombustion1 != 0);
         engineData.generalEngineCombustion2 = (generalEngineCombustion2 != 0);
         engineData.generalEngineCombustion3 = (generalEngineCombustion3 != 0);
@@ -112,14 +85,6 @@ struct SimConnectEngineEvent
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::ThrottleLeverPosition1, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::ThrottleLeverPosition2, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::ThrottleLeverPosition3, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::ThrottleLeverPosition4, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PropellerLeverPosition1, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PropellerLeverPosition2, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PropellerLeverPosition3, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PropellerLeverPosition4, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GeneralEngineCombustion1, "Bool", ::SIMCONNECT_DATATYPE_INT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GeneralEngineCombustion2, "Bool", ::SIMCONNECT_DATATYPE_INT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GeneralEngineCombustion3, "Bool", ::SIMCONNECT_DATATYPE_INT32);
