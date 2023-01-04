@@ -22,61 +22,58 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPOSITIONINFO_H
-#define SIMCONNECTPOSITIONINFO_H
-
-#include <cstdint>
+#ifndef SIMCONNECTLIGHTEVENTALL_H
+#define SIMCONNECTLIGHTEVENTALL_H
 
 #include <windows.h>
-#include <SimConnect.h>
 
-#include <Kernel/SkyMath.h>
 #include <Kernel/Enum.h>
-#include <Model/SimVar.h>
-#include <Model/PositionData.h>
-#include <Model/InitialPosition.h>
+#include <Model/LightData.h>
 #include "SimConnectType.h"
+#include "SimConnectLightEvent.h"
+#include "SimConnectLightAi.h"
 
 /*!
- * Position simulation variables that are stored for information purposes only.
+ * Simulation variables that represent aircraft lights.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPositionInfo
+struct SimConnectLightAll
 {
-    double indicatedAltitude {0.0};
+    SimConnectLightEvent event;
 
-    SimConnectPositionInfo(const PositionData &positionData) noexcept
-        : SimConnectPositionInfo()
+    SimConnectLightAll(const LightData &lightData) noexcept
+        : SimConnectLightAll()
     {
-        fromPositionData(positionData);
+        fromLightData(lightData);
     }
 
-    SimConnectPositionInfo() = default;
+    SimConnectLightAll() = default;
 
-    inline void fromPositionData(const PositionData &positionData) noexcept
+    inline void fromLightData(const LightData &lightData) noexcept
     {
-        indicatedAltitude = positionData.indicatedAltitude;
+        event.fromLightData(lightData);
     }
 
-    inline PositionData toPositionData() const noexcept
+    inline LightData toLightData() const noexcept
     {
-        PositionData positionData;
-        toPositionData(positionData);
-        return positionData;
+        LightData lightData = event.toLightData();
+        return lightData;
     }
 
-    inline void toPositionData(PositionData &positionData) const noexcept
+    inline SimConnectLightAi ai() const noexcept
     {
-        positionData.indicatedAltitude = indicatedAltitude;
+        SimConnectLightAi ai;
+        ai.event = event;
+        return ai;
     }
 
-    static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
+    static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::IndicatedAltitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
+        SimConnectLightEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LightAll));
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPOSITIONINFO_H
+#endif // SIMCONNECTLIGHTEVENTALL_H

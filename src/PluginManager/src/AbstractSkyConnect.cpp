@@ -310,7 +310,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             // In case the elapsed time has started (is valid)...
             if (d->elapsedTimer.isValid()) {
                 // ... store the elapsed replay time measured with the current time scale...
-                d->elapsedTime = d->elapsedTime + static_cast<std::int64_t>(std::round(static_cast<double>(d->elapsedTimer.elapsed()) * d->replaySpeedFactor));;
+                d->elapsedTime = d->elapsedTime + static_cast<std::int64_t>(std::round(static_cast<double>(d->elapsedTimer.elapsed()) * d->replaySpeedFactor));
                 // ... and stop the elapsed timer
                 d->elapsedTimer.invalidate();
             }

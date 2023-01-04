@@ -49,7 +49,8 @@ namespace SimType {
         Recognition = 0x0040,
         Wing = 0x0080,
         Logo = 0x0100,
-        Cabin = 0x0200
+        Cabin = 0x0200,
+        Unknown = 0xffff
     };
     Q_DECLARE_FLAGS(LightStates, LightState)
 

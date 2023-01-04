@@ -29,17 +29,22 @@
 
 #include <windows.h>
 
-/*!
- * Flaps simulation variable.
- *
- * Implementation note: this struct needs to be packed.
- */
-#pragma pack(push, 1)
-struct FlapsHandleIndex
+namespace SimConnectVariables
 {
-    std::int32_t flapsHandleIndex {0};
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
-};
-#pragma pack(pop)
+
+    /*!
+     * Flaps simulation variable.
+     *
+     * Implementation note: this struct needs to be packed.
+     */
+    #pragma pack(push, 1)
+    struct FlapsHandleIndex
+    {
+        std::int32_t flapsHandleIndex {0};
+        static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+    };
+    #pragma pack(pop)
+
+}
 
 #endif // SIMCONNECTVARIABLES_H

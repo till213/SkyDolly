@@ -439,7 +439,7 @@ inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser:
 
 inline bool SkyDollyCsvParser::importAircraftHandleData(const CsvParser::Row &row, AircraftHandle &aircraftHandle) noexcept
 {
-    AircraftHandleData data;;
+    AircraftHandleData data;
     bool ok {true};
 
     data.gearHandlePosition = row.at(Enum::underly(::Index::GearHandlePosition)).toInt(&ok) == 1 ? true : false;

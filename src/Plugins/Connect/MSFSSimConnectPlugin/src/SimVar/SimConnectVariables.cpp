@@ -34,7 +34,7 @@
 // PUBLIC
 
 
-void FlapsHandleIndex::addToDataDefinition(HANDLE simConnectHandle) noexcept
+void SimConnectVariables::FlapsHandleIndex::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlapsHandleIndex), SimVar::FlapsHandleIndex, "Number", ::SIMCONNECT_DATATYPE_INT32);
 }

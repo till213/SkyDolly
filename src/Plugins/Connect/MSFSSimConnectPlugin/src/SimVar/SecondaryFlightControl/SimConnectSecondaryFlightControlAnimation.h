@@ -36,7 +36,7 @@
 #include "SimConnectType.h"
 
 /*!
- * Simulation variables which represent the secondary flight controls: flaps and spoilers.
+ * Simulation variables that represent the secondary flight controls: flaps and spoilers.
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -57,6 +57,7 @@ struct SimConnectSecondaryFlightControlAnimation
     {
         fromSecondaryFlightControlData(secondaryFlightControlData);
     }
+
     SimConnectSecondaryFlightControlAnimation() = default;
 
     inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &secondaryFlightControlData) noexcept

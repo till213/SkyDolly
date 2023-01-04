@@ -61,6 +61,7 @@ struct SimConnectEngineCore
     {
         fromEngineData(engineData);
     }
+
     SimConnectEngineCore() = default;
 
     inline void fromEngineData(const EngineData &engineData) noexcept

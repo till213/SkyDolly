@@ -30,7 +30,6 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
 #include "SimConnectType.h"
 #include <Model/EngineData.h>
@@ -53,6 +52,7 @@ struct SimConnectEngineEvent
     {
         fromEngineData(engineData);
     }
+
     SimConnectEngineEvent() = default;
 
     inline void fromEngineData(const EngineData &engineData) noexcept
