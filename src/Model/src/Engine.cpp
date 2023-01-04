@@ -38,7 +38,7 @@ Engine::Engine(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
 {}
 
-EngineData Engine::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const EngineData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;

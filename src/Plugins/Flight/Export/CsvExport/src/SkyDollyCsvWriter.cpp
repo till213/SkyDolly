@@ -199,16 +199,10 @@ inline QString SkyDollyCsvWriter::getPositionData(const PositionData &data) noex
               Export::formatNumber(data.trueHeading) % Csv::CommaSep %
               Export::formatNumber(data.velocityBodyX) % Csv::CommaSep %
               Export::formatNumber(data.velocityBodyY) % Csv::CommaSep %
-              Export::formatNumber(data.velocityBodyZ) % Csv::CommaSep %
-              Export::formatNumber(data.rotationVelocityBodyX) % Csv::CommaSep %
-              Export::formatNumber(data.rotationVelocityBodyY) % Csv::CommaSep %
-              Export::formatNumber(data.rotationVelocityBodyZ);
+              Export::formatNumber(data.velocityBodyZ) % Csv::CommaSep;
     } else {
         const QString EmptyString;
         csv = EmptyString % Csv::CommaSep %
-              EmptyString % Csv::CommaSep %
-              EmptyString % Csv::CommaSep %
-              EmptyString % Csv::CommaSep %
               EmptyString % Csv::CommaSep %
               EmptyString % Csv::CommaSep %
               EmptyString % Csv::CommaSep %
@@ -322,7 +316,11 @@ inline QString SkyDollyCsvWriter::getEngineData(const EngineData &data) noexcept
 
 inline QString SkyDollyCsvWriter::getPrimaryFlightControlHeader() noexcept
 {
-    return QString(SimVar::RudderPosition) % Csv::CommaSep %
+    return QString(SimVar::AileronLeftDeflection) % Csv::CommaSep %
+           QString(SimVar::AileronRightDeflection) % Csv::CommaSep %
+           QString(SimVar::ElevatorDeflection) % Csv::CommaSep %
+           QString(SimVar::RudderDeflection) % Csv::CommaSep %
+           QString(SimVar::RudderPosition) % Csv::CommaSep %
            QString(SimVar::ElevatorPosition) % Csv::CommaSep %
            QString(SimVar::AileronPosition);
 }
@@ -331,12 +329,20 @@ inline QString SkyDollyCsvWriter::getPrimaryFlightControlData(const PrimaryFligh
 {
     QString csv;
     if (!data.isNull()) {
-        csv = QString::number(data.rudderPosition) % Csv::CommaSep %
+        csv = QString::number(data.leftAileronDeflection) % Csv::CommaSep %
+              QString::number(data.rightAileronDeflection) % Csv::CommaSep %
+              QString::number(data.elevatorDeflection) % Csv::CommaSep %
+              QString::number(data.rudderDeflection) % Csv::CommaSep %
+              QString::number(data.rudderPosition) % Csv::CommaSep %
               QString::number(data.elevatorPosition) % Csv::CommaSep %
               QString::number(data.aileronPosition);
     } else {
         const QString EmptyString;
         csv = EmptyString % Csv::CommaSep %
+              EmptyString % Csv::CommaSep %
+              EmptyString % Csv::CommaSep %
+              EmptyString % Csv::CommaSep %
+              EmptyString % Csv::CommaSep %
               EmptyString % Csv::CommaSep %
               EmptyString;
     }
@@ -357,11 +363,11 @@ inline QString SkyDollyCsvWriter::getSecondaryFlightControlData(const SecondaryF
 {
     QString csv;
     if (!data.isNull()) {
-        csv = QString::number(data.leadingEdgeFlapsLeftPosition) % Csv::CommaSep %
-              QString::number(data.leadingEdgeFlapsRightPosition) % Csv::CommaSep %
-              QString::number(data.trailingEdgeFlapsLeftPosition) % Csv::CommaSep %
-              QString::number(data.trailingEdgeFlapsRightPosition) % Csv::CommaSep %
-              QString::number(data.spoilersHandlePosition) % Csv::CommaSep %
+        csv = QString::number(data.leftLeadingEdgeFlapsPosition) % Csv::CommaSep %
+              QString::number(data.rightLeadingEdgeFlapsPosition) % Csv::CommaSep %
+              QString::number(data.leftTrailingEdgeFlapsPosition) % Csv::CommaSep %
+              QString::number(data.rightTrailingEdgeFlapsPosition) % Csv::CommaSep %
+              QString::number(data.spoilersHandlePercent) % Csv::CommaSep %
               QString::number(data.flapsHandleIndex);
     } else {
         const QString EmptyString;

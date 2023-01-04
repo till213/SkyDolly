@@ -24,6 +24,7 @@
  */
 #include <cstdint>
 
+#include <Kernel/Convert.h>
 #include <Kernel/SkyMath.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
@@ -166,7 +167,7 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
             break;
         }
         bearing += positionData.trueHeading;
-        SkyMath::Coordinate initial = SkyMath::relativePosition(sourcePosition, bearing, SkyMath::feetToMeters(distance));
+        SkyMath::Coordinate initial = SkyMath::relativePosition(sourcePosition, bearing, Convert::feetToMeters(distance));
 
         initialPosition.latitude = initial.first;
         initialPosition.longitude = initial.second;

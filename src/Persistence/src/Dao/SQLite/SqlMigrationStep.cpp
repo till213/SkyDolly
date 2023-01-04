@@ -130,7 +130,7 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
 
         QRegularExpressionMatch match = it.next();
 #ifdef DEBUG
-        qDebug() << "SqlMigrationStep::execute: SQL:" << match.captured(1) << "\n\n";
+        qDebug() << "SqlMigrationStep::execute: SQL:" << match.captured(1);
 #endif
         QSqlQuery query;
         ok = query.exec(match.captured(1).trimmed() % ";");
@@ -138,7 +138,7 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
             errorMessage = query.lastError().text() + " - error code: " + query.lastError().nativeErrorCode();
             QSqlDatabase::database().rollback();
 #ifdef DEBUG
-            qDebug() << "SqlMigrationStep::execute: FAILED:\n" << errorMessage;
+            qDebug() << "SqlMigrationStep::execute: FAILED:" << errorMessage;
 #endif
         }
     }
@@ -166,7 +166,7 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noe
             ok = QSqlDatabase::database().commit();
         } else {
 #ifdef DEBUG
-            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:\n" << migrQuery.lastError().text() << "- error code:" << migrQuery.lastError().nativeErrorCode();
+            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:" << migrQuery.lastError().text() << "- error code:" << migrQuery.lastError().nativeErrorCode();
 #endif
             QSqlDatabase::database().rollback();
         }
@@ -193,7 +193,7 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noe
                 QSqlDatabase::database().commit();
             } else {
 #ifdef DEBUG
-            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:\n" << migrQuery.lastError().text() << "- error code:" << migrQuery.lastError().nativeErrorCode();
+            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:" << migrQuery.lastError().text() << "- error code:" << migrQuery.lastError().nativeErrorCode();
 #endif
                 QSqlDatabase::database().rollback();
             }

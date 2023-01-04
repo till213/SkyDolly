@@ -93,9 +93,6 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
         speedFeetPerSec = positionData.velocityBodyZ;
         speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
         ui->velocityZLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
-        ui->rotationVelocityXLineEdit->setText(d->unit.formatSpeedInRadians(positionData.rotationVelocityBodyX));
-        ui->rotationVelocityYLineEdit->setText(d->unit.formatSpeedInRadians(positionData.rotationVelocityBodyY));
-        ui->rotationVelocityZLineEdit->setText(d->unit.formatSpeedInRadians(positionData.rotationVelocityBodyZ));
 
         colorName = d->ActiveTextColor.name();
     } else {
@@ -114,9 +111,6 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
     ui->velocityXLineEdit->setStyleSheet(css);
     ui->velocityYLineEdit->setStyleSheet(css);
     ui->velocityZLineEdit->setStyleSheet(css);
-    ui->rotationVelocityXLineEdit->setStyleSheet(css);
-    ui->rotationVelocityYLineEdit->setStyleSheet(css);
-    ui->rotationVelocityZLineEdit->setStyleSheet(css);
 }
 
 // PRIVATE
@@ -136,9 +130,6 @@ void AircraftWidget::initUi() noexcept
     ui->velocityXLineEdit->setToolTip(SimVar::VelocityBodyX);
     ui->velocityYLineEdit->setToolTip(SimVar::VelocityBodyY);
     ui->velocityZLineEdit->setToolTip(SimVar::VelocityBodyZ);
-    ui->rotationVelocityXLineEdit->setToolTip(SimVar::RotationVelocityBodyX);
-    ui->rotationVelocityYLineEdit->setToolTip(SimVar::RotationVelocityBodyY);
-    ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
 }
 
 PositionData AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept

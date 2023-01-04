@@ -3,11 +3,34 @@
 ## 0.14.0
 
 ### Improvements
+- Improved replay specifically with 3rd party aircraft, for:
+  * Primary and secondary flight controls (ailerons, flaps, spoilers, ...)
+  * Engine (thrust lever)
+  * Aircraft handles (gear, wing folding, tailhook, ...)
+- Imroved replay for AI aircraft ("formation flight"):
+  * Animated ailerons, elevator and rudder
+  * Less SimConnect data sent
 - New location categories, including improved CSV import & export with Little Navmap
   * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
-  
+- When pausing either replay or recording the simulation is now also paused
+- No need to "repeat flaps" in settings anymore (improved flight control replay)
+
+### Under The Hood
+- Small performance improvements
+
 ### Bug Fixes
-- Location CSV export as Little Navmap user points now properly exports "airport" as location type (fixed typo)
+- Fix "ailerons reversal" (Asobo A320neo, F/A-18 and other aircraft with "PID controllers")
+  * Actual root cause (in MSFS/SimConnect): "*radians*" per second instead of the expected "*feet* per second" unit for "*rotation* velocity body" (radians per second would actually be the correct physical unit for roation velocity)
+
+## 0.13.1
+
+### Bug Fixes
+- The mixture lever position is now properly initialised from "percent" (instead of "position") values:
+  * during "flight augmentation" ("flight augmentation" is applied when importing flights from e.g. flightradar24 or flightaware)
+  * during IGC import (when detecting "engine noise" in the IGC data)
+- In the Simulation Variables dialog (and elsewhere) ensure that at least one recorded data sample exist before accessing the "last" entry
+- Prevent access to invalidated data upon application termination when either the Flight, Simulation Variables or Statistics dialog was open before quitting the application (rare race condition)
+- Properly spell "airport" in the location CSV export in Little Navmap format (fix typo)
 
 ## 0.13.0
 

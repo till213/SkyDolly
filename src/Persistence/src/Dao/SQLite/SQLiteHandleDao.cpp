@@ -62,11 +62,13 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
         "  brake_left_position,"
         "  brake_right_position,"
         "  water_rudder_handle_position,"
-        "  tail_hook_position,"
+        "  tailhook_position,"
         "  canopy_open,"
         "  left_wing_folding,"
         "  right_wing_folding,"
         "  gear_handle_position,"
+        "  tailhook_handle_position,"
+        "  folding_wing_handle_position,"
         "  smoke_enable"
         ") values ("
         " :aircraft_id,"
@@ -74,11 +76,13 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
         " :brake_left_position,"
         " :brake_right_position,"
         " :water_rudder_handle_position,"
-        " :tail_hook_position,"
+        " :tailhook_position,"
         " :canopy_open,"
         " :left_wing_folding,"
         " :right_wing_folding,"
         " :gear_handle_position,"
+        " :tailhook_handle_position,"
+        " :folding_wing_handle_position,"
         " :smoke_enable"
         ");"
     );
@@ -88,11 +92,13 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
     query.bindValue(":brake_left_position", aircraftHandleData.brakeLeftPosition);
     query.bindValue(":brake_right_position", aircraftHandleData.brakeRightPosition);
     query.bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition);
-    query.bindValue(":tail_hook_position", aircraftHandleData.tailhookPosition);
+    query.bindValue(":tailhook_position", aircraftHandleData.tailhookPosition);
     query.bindValue(":canopy_open", aircraftHandleData.canopyOpen);
     query.bindValue(":left_wing_folding", aircraftHandleData.leftWingFolding);
     query.bindValue(":right_wing_folding", aircraftHandleData.rightWingFolding);
     query.bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0);
+    query.bindValue(":tailhook_handle_position", aircraftHandleData.tailhookHandlePosition ? 1 : 0);
+    query.bindValue(":folding_wing_handle_position", aircraftHandleData.foldingWingHandlePosition ? 1 : 0);
     query.bindValue(":smoke_enable", aircraftHandleData.smokeEnabled ? 1 : 0);
 
     const bool ok = query.exec();
@@ -130,24 +136,28 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
         const int brakeLeftPositionIdx = record.indexOf("brake_left_position");
         const int brakeRightPositionIdx = record.indexOf("brake_right_position");
         const int waterRudderHandlePositionIdx = record.indexOf("water_rudder_handle_position");
-        const int tailHookPositionIdx = record.indexOf("tail_hook_position");
+        const int tailhookPositionIdx = record.indexOf("tailhook_position");
         const int canopyOpenIdx = record.indexOf("canopy_open");
         const int leftWingFoldingIdx = record.indexOf("left_wing_folding");
         const int rightWingFoldingIdx = record.indexOf("right_wing_folding");
         const int gearHandlePositionIdx = record.indexOf("gear_handle_position");
+        const int tailhookHandlePositionIdx = record.indexOf("tailhook_handle_position");
+        const int foldingWingHandlePositionIdx = record.indexOf("folding_wing_handle_position");
         const int smokeEnablePositionIdx = record.indexOf("smoke_enable");
         while (query.next()) {
 
             AircraftHandleData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
-            data.brakeLeftPosition = query.value(brakeLeftPositionIdx).toInt();
-            data.brakeRightPosition = query.value(brakeRightPositionIdx).toInt();
-            data.waterRudderHandlePosition = query.value(waterRudderHandlePositionIdx).toInt();
-            data.tailhookPosition = query.value(tailHookPositionIdx).toInt();
+            data.brakeLeftPosition = static_cast<std::int16_t>(query.value(brakeLeftPositionIdx).toInt());
+            data.brakeRightPosition = static_cast<std::int16_t>(query.value(brakeRightPositionIdx).toInt());
+            data.waterRudderHandlePosition = static_cast<std::int16_t>(query.value(waterRudderHandlePositionIdx).toInt());
+            data.tailhookPosition = query.value(tailhookPositionIdx).toInt();
             data.canopyOpen = query.value(canopyOpenIdx).toInt();
             data.leftWingFolding = query.value(leftWingFoldingIdx).toInt();
             data.rightWingFolding = query.value(rightWingFoldingIdx).toInt();
             data.gearHandlePosition = query.value(gearHandlePositionIdx).toBool();
+            data.tailhookHandlePosition = query.value(tailhookHandlePositionIdx).toBool();
+            data.foldingWingHandlePosition = query.value(foldingWingHandlePositionIdx).toBool();
             data.smokeEnabled = query.value(smokeEnablePositionIdx).toBool();
 
             aircraftHandleData.push_back(std::move(data));

@@ -39,7 +39,7 @@ PrimaryFlightControl::PrimaryFlightControl(const AircraftInfo &aircraftInfo) noe
     : AbstractComponent(aircraftInfo)
 {}
 
-PrimaryFlightControlData PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const PrimaryFlightControlData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
@@ -72,6 +72,10 @@ PrimaryFlightControlData PrimaryFlightControl::interpolate(std::int64_t timestam
         }
 
         if (p1 != nullptr) {
+            m_currentData.leftAileronDeflection = SkyMath::interpolateLinear(p1->leftAileronDeflection, p2->leftAileronDeflection, tn);
+            m_currentData.rightAileronDeflection = SkyMath::interpolateLinear(p1->rightAileronDeflection, p2->rightAileronDeflection, tn);
+            m_currentData.elevatorDeflection = SkyMath::interpolateLinear(p1->elevatorDeflection, p2->elevatorDeflection, tn);
+            m_currentData.rudderDeflection = SkyMath::interpolateLinear(p1->rudderDeflection, p2->rudderDeflection, tn);
             m_currentData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
             m_currentData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
             m_currentData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);

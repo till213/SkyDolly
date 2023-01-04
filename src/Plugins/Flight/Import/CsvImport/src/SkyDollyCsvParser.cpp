@@ -108,6 +108,10 @@ namespace
         GeneralEngineCombustion3,
         GeneralEngineCombustion4,
         // Primary flight controls
+        LeftAileronDeflection,
+        RightAileronDeflection,
+        ElevatorDeflection,
+        RudderDeflection,
         RudderPosition,
         ElevatorPosition,
         AileronPosition,
@@ -141,7 +145,7 @@ namespace
 
 bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
 {
-    QFile *file = qobject_cast<QFile *>(&io);
+    auto *file = qobject_cast<QFile *>(&io);
     firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
     flightNumber = QString();
 
@@ -257,15 +261,6 @@ inline bool SkyDollyCsvParser::importPositionData(const CsvParser::Row &row, Air
     if (ok) {
         data.velocityBodyZ = row.at(Enum::underly(::Index::VelocityBodyZ)).toDouble(&ok);
     }
-    if (ok) {
-        data.rotationVelocityBodyX = row.at(Enum::underly(::Index::RotationVelocityBodyX)).toDouble(&ok);
-    }
-    if (ok) {
-        data.rotationVelocityBodyY= row.at(Enum::underly(::Index::RotationVelocityBodyY)).toDouble(&ok);
-    }
-    if (ok) {
-        data.rotationVelocityBodyZ = row.at(Enum::underly(::Index::RotationVelocityBodyZ)).toDouble(&ok);
-    }
     // Timestamp
     if (ok) {
         data.timestamp = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
@@ -380,7 +375,19 @@ inline bool SkyDollyCsvParser::importPrimaryFlightControlData(const CsvParser::R
     PrimaryFlightControlData data;
     bool ok {true};
 
-    data.rudderPosition = row.at(Enum::underly(::Index::RudderPosition)).toInt(&ok);
+    data.leftAileronDeflection = row.at(Enum::underly(::Index::LeftAileronDeflection)).toFloat(&ok);
+    if (ok) {
+        data.rightAileronDeflection = row.at(Enum::underly(::Index::RightAileronDeflection)).toFloat(&ok);
+    }
+    if (ok) {
+        data.elevatorDeflection = row.at(Enum::underly(::Index::ElevatorDeflection)).toFloat(&ok);
+    }
+    if (ok) {
+        data.rudderDeflection = row.at(Enum::underly(::Index::RudderDeflection)).toFloat(&ok);
+    }
+    if (ok) {
+        data.rudderPosition = row.at(Enum::underly(::Index::RudderPosition)).toInt(&ok);
+    }
     if (ok) {
         data.elevatorPosition =  row.at(Enum::underly(::Index::ElevatorPosition)).toInt(&ok);
     }
@@ -403,18 +410,18 @@ inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser:
     SecondaryFlightControlData data;
     bool ok {true};
 
-    data.leadingEdgeFlapsLeftPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsLeftPercent)).toInt(&ok);
+    data.leftLeadingEdgeFlapsPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsLeftPercent)).toInt(&ok);
     if (ok) {
-        data.leadingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsRightPercent)).toInt(&ok);
+        data.rightLeadingEdgeFlapsPosition = row.at(Enum::underly(::Index::LeadingEdgeFlapsRightPercent)).toInt(&ok);
     }
     if (ok) {
-        data.trailingEdgeFlapsLeftPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsLeftPercent)).toInt(&ok);
+        data.leftTrailingEdgeFlapsPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsLeftPercent)).toInt(&ok);
     }
     if (ok) {
-        data.trailingEdgeFlapsRightPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsRightPercent)).toInt(&ok);
+        data.rightTrailingEdgeFlapsPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsRightPercent)).toInt(&ok);
     }
     if (ok) {
-        data.spoilersHandlePosition = row.at(Enum::underly(::Index::SpoilersHandlePosition)).toInt(&ok);
+        data.spoilersHandlePercent = row.at(Enum::underly(::Index::SpoilersHandlePosition)).toInt(&ok);
     }
     if (ok) {
         data.flapsHandleIndex = row.at(Enum::underly(::Index::FlapsHandleIndex)).toInt(&ok);

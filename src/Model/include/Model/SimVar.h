@@ -46,9 +46,13 @@ namespace SimVar
     constexpr const char *RotationVelocityBodyY = "Rotation Velocity Body Y";
     constexpr const char *RotationVelocityBodyZ = "Rotation Velocity Body Z";
 
+    constexpr const char *AileronLeftDeflection = "Aileron Left Deflection";
+    constexpr const char *AileronRightDeflection = "Aileron Right Deflection";
+    constexpr const char *ElevatorDeflection = "Elevator Deflection";
+    constexpr const char *RudderDeflection = "Rudder Deflection";
     constexpr const char *RudderPosition = "Rudder Position";
     constexpr const char *ElevatorPosition = "Elevator Position";
-    constexpr const char *AileronPosition = "Aileron Position";
+    constexpr const char *AileronPosition = "Aileron Position";    
 
     constexpr const char *ThrottleLeverPosition1 = "General Eng Throttle Lever Position:1";
     constexpr const char *ThrottleLeverPosition2 = "General Eng Throttle Lever Position:2";
@@ -79,20 +83,25 @@ namespace SimVar
     constexpr const char *GeneralEngineCombustion3 = "General Eng Combustion:3";
     constexpr const char *GeneralEngineCombustion4 = "General Eng Combustion:4";
 
+    constexpr const char *FlapsHandleIndex = "Flaps Handle Index";
     constexpr const char *LeadingEdgeFlapsLeftPercent = "Leading Edge Flaps Left Percent";
     constexpr const char *LeadingEdgeFlapsRightPercent = "Leading Edge Flaps Right Percent";
     constexpr const char *TrailingEdgeFlapsLeftPercent = "Trailing Edge Flaps Left Percent";
     constexpr const char *TrailingEdgeFlapsRightPercent = "Trailing Edge Flaps Right Percent";
     constexpr const char *SpoilersHandlePosition = "Spoilers Handle Position";
-    constexpr const char *FlapsHandleIndex = "Flaps Handle Index";
+    constexpr const char *SpoilersArmed = "Spoilers Armed";
+    constexpr const char *SpoilersLeftPosition = "Spoilers Left Position";
+    constexpr const char *SpoilersRightPosition = "Spoilers Right Position";
 
     constexpr const char *BrakeLeftPosition = "Brake Left Position";
     constexpr const char *BrakeRightPosition = "Brake Right Position";
     constexpr const char *WaterRudderHandlePosition = "Water Rudder Handle Position";
+    constexpr const char *TailhookHandle = "Tailhook Handle";
     constexpr const char *TailhookPosition = "Tailhook Position";
     constexpr const char *CanopyOpen = "Canopy Open";
     constexpr const char *GearHandlePosition = "Gear Handle Position";
     constexpr const char *SmokeEnable = "Smoke Enable";
+    constexpr const char *FoldingWingHandlePosition = "Folding Wing Handle Position";
     constexpr const char *FoldingWingLeftPercent = "Folding Wing Left Percent";
     constexpr const char *FoldingWingRightPercent = "Folding Wing Right Percent";
 

@@ -332,7 +332,7 @@ void SkyMathTest::fromPosition()
     QFETCH(std::int16_t, expected);
 
     // Exercise
-    std::int16_t result = SkyMath::fromPosition(p);
+    std::int16_t result = SkyMath::fromNormalisedPosition(p);
 
     // Verify
     QCOMPARE(result, expected);
@@ -355,7 +355,7 @@ void SkyMathTest::toPosition()
     QFETCH(double, expected);
 
     // Exercise
-    double result = SkyMath::toPosition(p16);
+    double result = SkyMath::toNormalisedPosition(p16);
 
     // Verify
     QCOMPARE(result, expected);

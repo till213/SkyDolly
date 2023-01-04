@@ -36,12 +36,15 @@
 struct MODEL_API SecondaryFlightControlData final : public TimeVariableData
 {
     // Flaps & speed brakes
-    std::int16_t leadingEdgeFlapsLeftPosition {0};
-    std::int16_t leadingEdgeFlapsRightPosition {0};
-    std::int16_t trailingEdgeFlapsLeftPosition {0};
-    std::int16_t trailingEdgeFlapsRightPosition {0};
-    std::int16_t spoilersHandlePosition {0};
+    std::int16_t leftLeadingEdgeFlapsPosition {0};
+    std::int16_t rightLeadingEdgeFlapsPosition {0};
+    std::int16_t leftTrailingEdgeFlapsPosition {0};
+    std::int16_t rightTrailingEdgeFlapsPosition {0};
+    std::int16_t leftSpoilersPosition {0};
+    std::int16_t rightSpoilersPosition {0};
+    std::uint8_t spoilersHandlePercent {0};
     std::int8_t flapsHandleIndex {0};
+    bool spoilersArmed {false};
 };
 
 #endif // SECONDARYFLIGHTCONTROLDATA_H

@@ -27,8 +27,6 @@
 #include <unordered_map>
 #include <algorithm>
 
-#include <QDebug>
-
 #include <windows.h>
 #include <SimConnect.h>
 
@@ -40,7 +38,7 @@
 #include <Model/Position.h>
 #include <Model/PositionData.h>
 #include "SimConnectType.h"
-#include "SimConnectPositionRequest.h"
+#include "SimVar/SimulationVariables.h"
 #include "SimConnectAi.h"
 
 using RequestByAircraftId = std::unordered_map<std::int64_t, ::SIMCONNECT_DATA_REQUEST_ID>;
@@ -66,28 +64,19 @@ public:
 
 SimConnectAi::SimConnectAi(::HANDLE simConnectHandle)
     : d(std::make_unique<SimConnectAIPrivate>(simConnectHandle))
-{
-#ifdef DEBUG
-    qDebug() << "SimConnectAI::SimConnectAI: CREATED";
-#endif
-}
+{}
 
-SimConnectAi::~SimConnectAi()
-{
-#ifdef DEBUG
-    qDebug() << "SimConnectAI::~SimConnectAI: DELETED";
-#endif
-}
+SimConnectAi::~SimConnectAi() = default;
 
 void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) noexcept
 {
     // Check if the newly added aircraft has any recording yet
     // (otherwise it is the new user aircraft being added for a new recording)
     if (aircraft.getId() != Const::InvalidId) {
-        const AircraftInfo aircraftInfo = aircraft.getAircraftInfo();
+        const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
         Position &position = aircraft.getPosition();
-        const PositionData positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
-        const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionRequest::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
+        const PositionData &positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
+        const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionAll::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
 
         const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::underly(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;
         HRESULT result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);

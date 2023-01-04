@@ -263,18 +263,18 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
         engineData.generalEngineCombustion2 = true;
         engineData.generalEngineCombustion3 = true;
         engineData.generalEngineCombustion4 = true;
-        engineData.throttleLeverPosition1 = SkyMath::fromPosition(1.0);
-        engineData.throttleLeverPosition2 = SkyMath::fromPosition(1.0);
-        engineData.throttleLeverPosition3 = SkyMath::fromPosition(1.0);
-        engineData.throttleLeverPosition4 = SkyMath::fromPosition(1.0);
-        engineData.propellerLeverPosition1 = SkyMath::fromPosition(1.0);
-        engineData.propellerLeverPosition2 = SkyMath::fromPosition(1.0);
-        engineData.propellerLeverPosition3 = SkyMath::fromPosition(1.0);
-        engineData.propellerLeverPosition4 = SkyMath::fromPosition(1.0);
-        engineData.mixtureLeverPosition1 = SkyMath::fromPosition(1.0);
-        engineData.mixtureLeverPosition2 = SkyMath::fromPosition(1.0);
-        engineData.mixtureLeverPosition3 = SkyMath::fromPosition(1.0);
-        engineData.mixtureLeverPosition4 = SkyMath::fromPosition(1.0);
+        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(1.0);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(100.0);
         // The start procedure is the first procedure, and elements
         // are inserted chronologically from the start, so we can
         // use upsertLast (instead of the more general upsert)
@@ -291,20 +291,20 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
         engineData.generalEngineCombustion3 = true;
         engineData.generalEngineCombustion4 = true;
         // In the (stock) A320neo 86% correspond to "climb" throttle detent
-        engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.86);
+        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(0.86);
         // Reduce propeller power to 80%
-        engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.80);
-        engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.80);
-        engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.80);
-        engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.80);
+        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(0.80);
+        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(0.80);
+        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.80);
+        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.80);
         // Mixture down to 85%
-        engineData.mixtureLeverPosition1 = SkyMath::fromPosition(0.85);
-        engineData.mixtureLeverPosition2 = SkyMath::fromPosition(0.85);
-        engineData.mixtureLeverPosition3 = SkyMath::fromPosition(0.85);
-        engineData.mixtureLeverPosition4 = SkyMath::fromPosition(0.85);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(85.0);
         engine.upsertLast(engineData);
 
         // 5 minutes
@@ -317,19 +317,19 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
         engineData.generalEngineCombustion2 = true;
         engineData.generalEngineCombustion3 = true;
         engineData.generalEngineCombustion4 = true;
-        engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.86);
-        engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.80);
-        engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.80);
-        engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.80);
-        engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.80);
+        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(0.80);
+        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(0.80);
+        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.80);
+        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.80);
         // Mixture down to 75%
-        engineData.mixtureLeverPosition1 = SkyMath::fromPosition(0.75);
-        engineData.mixtureLeverPosition2 = SkyMath::fromPosition(0.75);
-        engineData.mixtureLeverPosition3 = SkyMath::fromPosition(0.75);
-        engineData.mixtureLeverPosition4 = SkyMath::fromPosition(0.75);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(75.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(75.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(75.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(75.0);
         engine.upsertLast(engineData);
 
     }
@@ -342,23 +342,27 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     // 0 seconds
     secondaryFlightControlData.timestamp = 0;
     // Flaps
-    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.666);
-    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.666);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.286);
-    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.286);
     secondaryFlightControlData.flapsHandleIndex = 1;
-    secondaryFlightControlData.spoilersHandlePosition = 0;
+    secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.666);
+    secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.666);
+    secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.286);
+    secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.286);    
+    secondaryFlightControlData.spoilersHandlePercent = 0;
+    secondaryFlightControlData.leftSpoilersPosition = 0;
+    secondaryFlightControlData.rightSpoilersPosition = 0;
     secondaryFlightControl.upsertLast(secondaryFlightControlData);
 
     // 30 seconds
     secondaryFlightControlData.timestamp = std::min(static_cast<std::int64_t>(30 * 1000), lastTimestamp);
     // Retract flaps
-    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.0);
-    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.0);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.0);
-    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.0);
     secondaryFlightControlData.flapsHandleIndex = 0;
-    secondaryFlightControlData.spoilersHandlePosition = 0;
+    secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.0);
+    secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.0);
+    secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.0);
+    secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.0);    
+    secondaryFlightControlData.spoilersHandlePercent = 0;
+    secondaryFlightControlData.leftSpoilersPosition = 0;
+    secondaryFlightControlData.rightSpoilersPosition = 0;
     secondaryFlightControl.upsertLast(secondaryFlightControlData);
 
     // Handles & gear
@@ -441,19 +445,19 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         engineData.generalEngineCombustion2 = true;
         engineData.generalEngineCombustion3 = true;
         engineData.generalEngineCombustion4 = true;
-        engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.86);
-        engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.60);
-        engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.60);
-        engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.60);
-        engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.60);
+        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(0.60);
+        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(0.60);
+        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.60);
+        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.60);
         // Mixture up to 85%
-        engineData.mixtureLeverPosition1 = SkyMath::fromPosition(0.85);
-        engineData.mixtureLeverPosition2 = SkyMath::fromPosition(0.85);
-        engineData.mixtureLeverPosition3 = SkyMath::fromPosition(0.85);
-        engineData.mixtureLeverPosition4 = SkyMath::fromPosition(0.85);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(85.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(85.0);
         engine.upsert(engineData);
 
         // t minus 2 minutes
@@ -466,20 +470,20 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         engineData.generalEngineCombustion2 = true;
         engineData.generalEngineCombustion3 = true;
         engineData.generalEngineCombustion4 = true;
-        engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.86);
-        engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.86);
+        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(0.86);
+        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(0.86);
         // Propeller down to 40%
-        engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.40);
-        engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.40);
-        engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.40);
-        engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.40);
+        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(0.40);
+        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(0.40);
+        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.40);
+        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.40);
         // Mixture up to 100%
-        engineData.mixtureLeverPosition1 = SkyMath::fromPosition(1.0);
-        engineData.mixtureLeverPosition2 = SkyMath::fromPosition(1.0);
-        engineData.mixtureLeverPosition3 = SkyMath::fromPosition(1.0);
-        engineData.mixtureLeverPosition4 = SkyMath::fromPosition(1.0);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(100.0);
         engine.upsert(engineData);
 
         // At end
@@ -493,19 +497,19 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         engineData.generalEngineCombustion3 = true;
         engineData.generalEngineCombustion4 = true;
         // Reverse thrust (-20%)
-        engineData.throttleLeverPosition1 = SkyMath::fromPosition(-0.2);
-        engineData.throttleLeverPosition2 = SkyMath::fromPosition(-0.2);
-        engineData.throttleLeverPosition3 = SkyMath::fromPosition(-0.2);
-        engineData.throttleLeverPosition4 = SkyMath::fromPosition(-0.2);
+        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(-0.2);
+        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(-0.2);
+        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(-0.2);
+        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(-0.2);
         // Propeller down to 0%
-        engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.0);
-        engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.0);
-        engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.0);
-        engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.0);
-        engineData.mixtureLeverPosition1 = SkyMath::fromPosition(1.0);
-        engineData.mixtureLeverPosition2 = SkyMath::fromPosition(1.0);
-        engineData.mixtureLeverPosition3 = SkyMath::fromPosition(1.0);
-        engineData.mixtureLeverPosition4 = SkyMath::fromPosition(1.0);
+        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(0.0);
+        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(0.0);
+        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.0);
+        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.0);
+        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(100.0);
+        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(100.0);
         engine.upsert(engineData);
     }
 
@@ -517,73 +521,79 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     // t minus 10 minutes
     secondaryFlightControlData.timestamp = std::max(lastTimestamp - std::int64_t(10 * 60 * 1000), std::int64_t(0));
     // Flaps 0
-    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.0);
-    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.0);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.0);
-    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.0);
     secondaryFlightControlData.flapsHandleIndex = 0;
-    // Spoilers 40%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(20.0);
+    secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.0);
+    secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.0);
+    secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.0);
+    secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.0);
+
+    // Spoilers 20%
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(20.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 8 minutes
     secondaryFlightControlData.timestamp = std::max(lastTimestamp - std::int64_t(8 * 60 * 1000), std::int64_t(0));
     // Flaps 1
-    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.666);
-    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.666);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.286);
-    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.286);
     secondaryFlightControlData.flapsHandleIndex = 1;
-    // Spoilers 60%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(60.0);
+    secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.666);
+    secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.666);
+    secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.286);
+    secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.286);
+
+    // Spoilers 40%
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(40.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 7 minutes
     secondaryFlightControlData.timestamp = std::max(lastTimestamp - std::int64_t(7 * 60 * 1000), std::int64_t(0));
     // Flaps 2
-    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.8157);
-    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.8157);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.4275);
-    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.4275);
     secondaryFlightControlData.flapsHandleIndex = 2;
+    secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.8157);
+    secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.8157);
+    secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.4275);
+    secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.4275);
+
     // Spoilers 60%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(60.0);
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(60.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 5 minutes
     secondaryFlightControlData.timestamp = std::max(lastTimestamp - std::int64_t(5 * 60 * 1000), std::int64_t(0));
     // Flaps 3
-    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.8157);
-    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.8157);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.5725);
-    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.5725);
     secondaryFlightControlData.flapsHandleIndex = 3;
+    secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.8157);
+    secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.8157);
+    secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.5725);
+    secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(0.5725);
+
     // Spoilers 20%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(20.0);
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(20.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 4 minutes
     secondaryFlightControlData.timestamp = std::max(lastTimestamp - std::int64_t(4 * 60 * 1000), std::int64_t(0));
     // Flaps 4
-    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(1.0);
-    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(1.0);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(1.0);
-    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(1.0);
     secondaryFlightControlData.flapsHandleIndex = 4;
+    secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(1.0);
+    secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(1.0);
+    secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(1.0);
+    secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(1.0);
+
     // Spoilers 0%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(0.0);
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(0.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t
     secondaryFlightControlData.timestamp = lastTimestamp;
     // Flaps 4
-    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(1.0);
-    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(1.0);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(1.0);
-    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(1.0);
     secondaryFlightControlData.flapsHandleIndex = 4;
+    secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(1.0);
+    secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(1.0);
+    secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(1.0);
+    secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(1.0);
+
     // Spoilers 100%
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(100.0);
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // Handles & gear

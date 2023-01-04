@@ -39,7 +39,7 @@ SecondaryFlightControl::SecondaryFlightControl(const AircraftInfo &aircraftInfo)
     : AbstractComponent(aircraftInfo)
 {}
 
-SecondaryFlightControlData SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const SecondaryFlightControlData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
@@ -72,23 +72,19 @@ SecondaryFlightControlData SecondaryFlightControl::interpolate(std::int64_t time
         }
 
         if (p1 != nullptr) {
-            m_currentData.leadingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPosition, p2->leadingEdgeFlapsLeftPosition, tn);
-            m_currentData.leadingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPosition, p2->leadingEdgeFlapsRightPosition, tn);
-            m_currentData.trailingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPosition, p2->trailingEdgeFlapsLeftPosition, tn);
-            m_currentData.trailingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPosition, p2->trailingEdgeFlapsRightPosition, tn);
-            m_currentData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
-
-            // No interpolation for flaps handle position
+            m_currentData.leftLeadingEdgeFlapsPosition = SkyMath::interpolateLinear(p1->leftLeadingEdgeFlapsPosition, p2->leftLeadingEdgeFlapsPosition, tn);
+            m_currentData.rightLeadingEdgeFlapsPosition = SkyMath::interpolateLinear(p1->rightLeadingEdgeFlapsPosition, p2->rightLeadingEdgeFlapsPosition, tn);
+            m_currentData.leftTrailingEdgeFlapsPosition = SkyMath::interpolateLinear(p1->leftTrailingEdgeFlapsPosition, p2->leftTrailingEdgeFlapsPosition, tn);
+            m_currentData.rightTrailingEdgeFlapsPosition = SkyMath::interpolateLinear(p1->rightTrailingEdgeFlapsPosition, p2->rightTrailingEdgeFlapsPosition, tn);
+            m_currentData.leftSpoilersPosition = SkyMath::interpolateLinear(p1->leftSpoilersPosition, p2->leftSpoilersPosition, tn);
+            m_currentData.rightSpoilersPosition = SkyMath::interpolateLinear(p1->rightSpoilersPosition, p2->rightSpoilersPosition, tn);
+            m_currentData.spoilersHandlePercent = SkyMath::interpolateLinear(p1->spoilersHandlePercent, p2->spoilersHandlePercent, tn);
             m_currentData.flapsHandleIndex = p1->flapsHandleIndex;
+            m_currentData.spoilersArmed = p1->spoilersArmed;
             m_currentData.timestamp = adjustedTimestamp;
         } else {
-            // Certain aircraft might override the FLAPS HANDLE INDEX, so values need to be repeatedly set
-            if (Settings::getInstance().isRepeatCanopyOpenEnabled()) {
-                m_currentData.timestamp = adjustedTimestamp;
-            } else {
-                // No recorded data (and no repeat), or the timestamp exceeds the timestamp of the last recorded data
-                m_currentData.reset();
-            }
+            // No recorded data (and no repeat), or the timestamp exceeds the timestamp of the last recorded data
+            m_currentData.reset();
         }
 
         setCurrentIndex(currentIndex);

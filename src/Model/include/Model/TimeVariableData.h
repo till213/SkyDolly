@@ -55,9 +55,9 @@ struct MODEL_API TimeVariableData
     std::int64_t timestamp {InvalidTime};
 
     /*!
-     * Returns whether this data is considered \enull data.
+     * Returns whether this data is considered \e null data.
      *
-     * \return \c true if this data is \enull (invalid) data; \c false else
+     * \return \c true if this data is \e null (invalid) data; \c false else
      * \sa reset
      */
     inline bool isNull() const noexcept {

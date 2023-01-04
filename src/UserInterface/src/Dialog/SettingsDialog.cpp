@@ -110,7 +110,6 @@ void SettingsDialog::initUi() noexcept
     ui->seekInPercentSpinBox->setMinimum(MinSeekPercent);
     ui->seekInPercentSpinBox->setMaximum(MaxSeekPercent);
 
-    ui->repeatFlapsCheckBox->setToolTip(SimVar::FlapsHandleIndex);
     ui->repeatCanopyOpenCheckBox->setToolTip(SimVar::CanopyOpen);
 
     ui->settingsTabWidget->setCurrentIndex(0);
@@ -143,7 +142,6 @@ void SettingsDialog::updateUi() noexcept
     ui->seekInSecondsSpinBox->setValue(settings.getSeekIntervalSeconds());
     ui->seekInPercentSpinBox->setValue(settings.getSeekIntervalPercent());
 
-    ui->repeatFlapsCheckBox->setChecked(settings.isRepeatFlapsHandleIndexEnabled());
     ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
 
     // User interface
@@ -176,7 +174,6 @@ void SettingsDialog::handleAccepted() noexcept
     settings.setSeekIntervalSeconds(ui->seekInSecondsSpinBox->value());
     settings.setSeekIntervalPercent(ui->seekInPercentSpinBox->value());
 
-    settings.setRepeatFlapsHandleIndexEnabled(ui->repeatFlapsCheckBox->isChecked());
     settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());
 
     // User interface

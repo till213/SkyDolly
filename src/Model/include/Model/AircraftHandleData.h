@@ -43,7 +43,13 @@ struct MODEL_API AircraftHandleData final : public TimeVariableData
     std::uint8_t canopyOpen {0};
     std::uint8_t leftWingFolding {0};
     std::uint8_t rightWingFolding {0};
+    // True: up - false: down
     bool gearHandlePosition {false};
+    // True: engaged - false: disengaged
+    bool tailhookHandlePosition {false};
+    // True: retracted - false: extended
+    bool foldingWingHandlePosition {false};
+    // True: enabled - false: disabled
     bool smokeEnabled {false};
 };
 

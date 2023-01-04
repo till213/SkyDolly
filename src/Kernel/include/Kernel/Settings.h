@@ -394,27 +394,6 @@ public:
     void setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept;
 
     /*!
-     * Returns whether the FLAPS HANDLE INDEX simulation variable
-     * is repeatedly sent or not.
-     *
-     * \return \c true if the FLAPS HANDLE INDEX value is repeatedly
-     *         sent when its value is greater zero; \c false if
-     *         the value is only to be sent when changed
-     */
-    bool isRepeatFlapsHandleIndexEnabled() const noexcept;
-
-    /*!
-     * Enables the value repeat for the FLAPS HANDLE INDEX simulation
-     * variable.
-     *
-     * \param enable
-     *        set to \c true in order to enable value repeat;
-     *        \c false else
-     * \sa repeatFlapsPositionChanged
-     */
-    void setRepeatFlapsHandleIndexEnabled(bool enable) noexcept;
-
-    /*!
      * Returns whether the CANOPY OPEN simulation variable
      * is repeatedly sent or not.
      *
@@ -756,13 +735,6 @@ signals:
      * \sa changed
      */
     void replaySpeedUnitChanged(Replay::SpeedUnit replaySpeedUnit);
-
-    /*!
-     * Emitted when the repeat flaps position has changed.
-     *
-     * \sa changed
-     */
-    void repeatFlapsPositionChanged(bool enable);
 
     /*!
      * Emitted when the repeat canopy has changed.

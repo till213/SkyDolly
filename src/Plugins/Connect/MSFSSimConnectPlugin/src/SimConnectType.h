@@ -37,14 +37,22 @@ namespace SimConnectType
         SimulationTime,
         InitialPosition,
         Location,
-        PositionReply,
-        PositionRequest,
-        EngineReply,
-        EngineRequest,
-        PrimaryFlightControl,
-        SecondaryFlightControl,
-        Handle,
-        Light
+        PositionUser,
+        PositionAi,
+        PositionAll,
+        EngineUser,
+        EngineAi,
+        EngineAll,
+        PrimaryFlightControlAi,
+        PrimaryFlightControlAll,
+        SecondaryFlightControlAi,
+        SecondaryFlightControlAll,
+        AircraftHandleUser,
+        AircraftHandleAi,
+        AircraftHandleAll,
+        Light,
+        // Simulation variables
+        FlapsHandleIndex
     };
 
     enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
@@ -53,12 +61,15 @@ namespace SimConnectType
         InitialPosition,
         Location,
         SimulationTime,
-        AircraftPosition,
-        Engine,
-        PrimaryFlightControl,
-        SecondaryFlightControl,
-        AircraftHandle,
+        AircraftPositionAll,
+        EngineAll,
+        PrimaryFlightControlAll,
+        Flaps,
+        SecondaryFlightControlAll,
+        AircraftHandleAll,
         Light,
+        // Simulation variables
+        FlapsHandleIndex,
         // AI objects
         AiRemoveObject,
         AiReleaseControl,

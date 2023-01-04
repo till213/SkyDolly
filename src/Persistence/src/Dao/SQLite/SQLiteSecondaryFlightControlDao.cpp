@@ -61,31 +61,40 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
         "insert into secondary_flight_control ("
         "  aircraft_id,"
         "  timestamp,"
-        "  leading_edge_flaps_left_percent,"
-        "  leading_edge_flaps_right_percent,"
-        "  trailing_edge_flaps_left_percent,"
-        "  trailing_edge_flaps_right_percent,"
-        "  spoilers_handle_position,"
+        "  left_leading_edge_flaps_position,"
+        "  right_leading_edge_flaps_position,"
+        "  left_trailing_edge_flaps_position,"
+        "  right_trailing_edge_flaps_position,"
+        "  left_spoilers_position,"
+        "  right_spoilers_position,"
+        "  spoilers_handle_percent,"
+        "  spoilers_armed,"
         "  flaps_handle_index"
         ") values ("
         " :aircraft_id,"
         " :timestamp,"
-        " :leading_edge_flaps_left_percent,"
-        " :leading_edge_flaps_right_percent,"
-        " :trailing_edge_flaps_left_percent,"
-        " :trailing_edge_flaps_right_percent,"
-        " :spoilers_handle_position,"
+        " :left_leading_edge_flaps_position,"
+        " :right_leading_edge_flaps_position,"
+        " :left_trailing_edge_flaps_position,"
+        " :right_trailing_edge_flaps_position,"
+        " :left_spoilers_position,"
+        " :right_spoilers_position,"
+        " :spoilers_handle_percent,"
+        " :spoilers_armed,"
         " :flaps_handle_index"
         ");"
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     query.bindValue(":timestamp", QVariant::fromValue(secondaryFlightControlData.timestamp));
-    query.bindValue(":leading_edge_flaps_left_percent", secondaryFlightControlData.leadingEdgeFlapsLeftPosition);
-    query.bindValue(":leading_edge_flaps_right_percent", secondaryFlightControlData.leadingEdgeFlapsRightPosition);
-    query.bindValue(":trailing_edge_flaps_left_percent", secondaryFlightControlData.trailingEdgeFlapsLeftPosition);
-    query.bindValue(":trailing_edge_flaps_right_percent", secondaryFlightControlData.trailingEdgeFlapsRightPosition);
-    query.bindValue(":spoilers_handle_position", secondaryFlightControlData.spoilersHandlePosition);
+    query.bindValue(":left_leading_edge_flaps_position", secondaryFlightControlData.leftLeadingEdgeFlapsPosition);
+    query.bindValue(":right_leading_edge_flaps_position", secondaryFlightControlData.rightLeadingEdgeFlapsPosition);
+    query.bindValue(":left_trailing_edge_flaps_position", secondaryFlightControlData.leftTrailingEdgeFlapsPosition);
+    query.bindValue(":right_trailing_edge_flaps_position", secondaryFlightControlData.rightTrailingEdgeFlapsPosition);
+    query.bindValue(":left_spoilers_position", secondaryFlightControlData.leftSpoilersPosition);
+    query.bindValue(":right_spoilers_position", secondaryFlightControlData.rightSpoilersPosition);
+    query.bindValue(":spoilers_handle_percent", secondaryFlightControlData.spoilersHandlePercent);
+    query.bindValue(":spoilers_armed", secondaryFlightControlData.spoilersArmed);
     query.bindValue(":flaps_handle_index", secondaryFlightControlData.flapsHandleIndex);
 
     const bool ok = query.exec();
@@ -120,21 +129,27 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
         }
         QSqlRecord record = query.record();
         const int timestampIdx = record.indexOf("timestamp");
-        const int leadingEdgeFlapsLeftPercentIdx = record.indexOf("leading_edge_flaps_left_percent");
-        const int leadingEdgeFlapsRightPercentIdx = record.indexOf("leading_edge_flaps_right_percent");
-        const int trailingEdgeFlapsLeftPercentIdx = record.indexOf("trailing_edge_flaps_left_percent");
-        const int trailingEdgeFlapsRightPercentIdx = record.indexOf("trailing_edge_flaps_right_percent");
-        const int spoilersHandlePositionIdx = record.indexOf("spoilers_handle_position");
+        const int leftLeadingEdgeFlapsPositionIdx = record.indexOf("left_leading_edge_flaps_position");
+        const int rightLeadingEdgeFlapsPositionIdx = record.indexOf("right_leading_edge_flaps_position");
+        const int leftTrailingEdgeFlapsPositionIdx = record.indexOf("left_trailing_edge_flaps_position");
+        const int rightTrailingEdgeFlapsPositionIdx = record.indexOf("right_trailing_edge_flaps_position");
+        const int leftSpoilersPositionIdx = record.indexOf("left_spoilers_position");
+        const int rightSpoilersPositionIdx = record.indexOf("right_spoilers_position");
+        const int spoilersHandlePercentIdx = record.indexOf("spoilers_handle_percent");
+        const int spoilersArmedIdx = record.indexOf("spoilers_armed");
         const int flapsHandleIndexIdx = record.indexOf("flaps_handle_index");
         while (query.next()) {
             SecondaryFlightControlData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
-            data.leadingEdgeFlapsLeftPosition = query.value(leadingEdgeFlapsLeftPercentIdx).toInt();
-            data.leadingEdgeFlapsRightPosition = query.value(leadingEdgeFlapsRightPercentIdx).toInt();
-            data.trailingEdgeFlapsLeftPosition = query.value(trailingEdgeFlapsLeftPercentIdx).toInt();
-            data.trailingEdgeFlapsRightPosition = query.value(trailingEdgeFlapsRightPercentIdx).toInt();
-            data.spoilersHandlePosition = query.value(spoilersHandlePositionIdx).toInt();
-            data.flapsHandleIndex = query.value(flapsHandleIndexIdx).toInt();
+            data.leftLeadingEdgeFlapsPosition = static_cast<std::int16_t>(query.value(leftLeadingEdgeFlapsPositionIdx).toInt());
+            data.rightLeadingEdgeFlapsPosition = static_cast<std::int16_t>(query.value(rightLeadingEdgeFlapsPositionIdx).toInt());
+            data.leftTrailingEdgeFlapsPosition = static_cast<std::int16_t>(query.value(leftTrailingEdgeFlapsPositionIdx).toInt());
+            data.rightTrailingEdgeFlapsPosition = static_cast<std::int16_t>(query.value(rightTrailingEdgeFlapsPositionIdx).toInt());
+            data.leftSpoilersPosition = static_cast<std::int16_t>(query.value(leftSpoilersPositionIdx).toInt());
+            data.rightSpoilersPosition = static_cast<std::int16_t>(query.value(rightSpoilersPositionIdx).toInt());
+            data.spoilersHandlePercent = static_cast<std::uint8_t>(query.value(spoilersHandlePercentIdx).toInt());
+            data.spoilersArmed = query.value(spoilersArmedIdx).toBool();
+            data.flapsHandleIndex = static_cast<std::int8_t>(query.value(flapsHandleIndexIdx).toInt());
 
             secondaryFlightControlData.push_back(std::move(data));
         }

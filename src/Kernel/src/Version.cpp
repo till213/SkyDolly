@@ -46,8 +46,8 @@ struct VersionPrivate
     int minor {VersionConfig::Minor};
     int patch {VersionConfig::Patch};
 
-    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/adjectives-that-start-with-d.html
-    static inline const QString CodeName {QStringLiteral("Dapper Daher")};
+    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/Adjectives-That-Start-With-E.html
+    static inline const QString CodeName {QStringLiteral("Ethereal Embraer")};
 };
 
 // PUBLIC

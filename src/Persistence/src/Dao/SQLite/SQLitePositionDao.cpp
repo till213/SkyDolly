@@ -70,10 +70,7 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
         "  true_heading,"
         "  velocity_x,"
         "  velocity_y,"
-        "  velocity_z,"
-        "  rotation_velocity_x,"
-        "  rotation_velocity_y,"
-        "  rotation_velocity_z"
+        "  velocity_z"
         ") values ("
         " :aircraft_id,"
         " :timestamp,"
@@ -86,10 +83,7 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
         " :true_heading,"
         " :velocity_x,"
         " :velocity_y,"
-        " :velocity_z,"
-        " :rotation_velocity_x,"
-        " :rotation_velocity_y,"
-        " :rotation_velocity_z"
+        " :velocity_z"
         ");"
     );
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
@@ -104,9 +98,6 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
     query.bindValue(":velocity_x", position.velocityBodyX);
     query.bindValue(":velocity_y", position.velocityBodyY);
     query.bindValue(":velocity_z", position.velocityBodyZ);
-    query.bindValue(":rotation_velocity_x", position.rotationVelocityBodyX);
-    query.bindValue(":rotation_velocity_y", position.rotationVelocityBodyY);
-    query.bindValue(":rotation_velocity_z", position.rotationVelocityBodyZ);    
 
     const bool ok = query.exec();
 
@@ -151,9 +142,6 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
         const int velocitXIdx = record.indexOf("velocity_x");
         const int velocitYIdx = record.indexOf("velocity_y");
         const int velocitZIdx = record.indexOf("velocity_z");
-        const int rotationVelocityXIdx = record.indexOf("rotation_velocity_x");
-        const int rotationVelocityYIdx = record.indexOf("rotation_velocity_y");
-        const int rotationVelocityZIdx = record.indexOf("rotation_velocity_z");
         while (query.next()) {
 
             PositionData data;
@@ -168,9 +156,6 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
             data.velocityBodyX = query.value(velocitXIdx).toDouble();
             data.velocityBodyY = query.value(velocitYIdx).toDouble();
             data.velocityBodyZ = query.value(velocitZIdx).toDouble();
-            data.rotationVelocityBodyX = query.value(rotationVelocityXIdx).toDouble();
-            data.rotationVelocityBodyY = query.value(rotationVelocityYIdx).toDouble();
-            data.rotationVelocityBodyZ = query.value(rotationVelocityZIdx).toDouble();
 
             positionData.push_back(std::move(data));
         }

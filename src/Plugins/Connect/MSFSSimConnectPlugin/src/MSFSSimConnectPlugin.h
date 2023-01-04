@@ -24,6 +24,7 @@
  */
 #ifndef FS2020SIMCONNNECTPLUGIN_H
 #define FS2020SIMCONNNECTPLUGIN_H
+
 #include <memory>
 #include <cstdint>
 
@@ -61,11 +62,11 @@ protected:
     bool onSimulationEvent(SimulationEvent event) const noexcept override;
 
     bool onStartRecording() noexcept override;
-    void onRecordingPaused(bool paused ) noexcept override;
+    void onRecordingPaused(bool enable) noexcept override;
     void onStopRecording() noexcept override;
 
     bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
-    void onReplayPaused(bool paused) noexcept override;
+    void onReplayPaused(bool enable) noexcept override;
     void onStopReplay() noexcept override;
 
     void onSeek(std::int64_t currentTimestamp) noexcept override;
@@ -93,9 +94,7 @@ private:
     bool reconnectWithSim() noexcept;
     bool close() noexcept;
     void setupRequestData() noexcept;
-    bool freezeAircraft(::SIMCONNECT_OBJECT_ID objectId, bool enable) const noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
-    inline bool updateAndSendEngineEvent(std::int64_t objectId, const EngineData &engineData, TimeVariableData::Access access) noexcept;
     void replay() noexcept;
     void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
