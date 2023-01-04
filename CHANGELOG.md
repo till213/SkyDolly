@@ -3,11 +3,17 @@
 ## 0.14.0
 
 ### Improvements
-- Improved replay of primary flight controls, specifically with 3rd party aircraft
+- Improved replay specifically with 3rd party aircraft, for:
+  * Primary and secondary flight controls (ailerons, flaps, spoilers, ...)
+  * Engine (thrust lever)
+  * Aircraft handles (gear, wing folding, tailhook, ...)
+- Imroved replay for AI aircraft ("formation flight"):
+  * Animated ailerons, elevator and rudder
+  * Less SimConnect data sent
 - New location categories, including improved CSV import & export with Little Navmap
   * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
 - When pausing either replay or recording the simulation is now also paused
-- No need to "repeat flaps" in settings anymore (improved replay)
+- No need to "repeat flaps" in settings anymore (improved flight control replay)
 
 ### Under The Hood
 - Small performance improvements

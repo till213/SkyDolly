@@ -82,7 +82,8 @@ public:
         FlapsDecrease,
         FlapsIncrease,
         SpoilersSet,
-        GearSet,
+        GearDown,
+        GearUp,
         SetTailHookHandle,
         SetWingFold,
         SmokeSet
@@ -160,7 +161,8 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::FlapsIncrease), "FLAPS_INCR");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SpoilersSet), "SPOILERS_SET");
         // Handles
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::GearSet), "GEAR_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::GearUp), "GEAR_UP");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::GearDown), "GEAR_DOWN");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SetTailHookHandle), "SET_TAIL_HOOK_HANDLE");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SetWingFold), "SET_WING_FOLD");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SmokeSet), "SMOKE_SET");
@@ -399,13 +401,13 @@ private:
     inline bool setSpoilers(std::int32_t spoilersHandlePosition)
     {
         HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SpoilersSet), spoilersHandlePosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-
         return result == S_OK;
     }
 
-    inline bool sendGearHandlePosition(std::int32_t enable)
+    inline bool sendGearHandlePosition(bool gearDown)
     {
-        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::GearSet), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        SIMCONNECT_CLIENT_EVENT_ID eventId = gearDown ?Enum::underly(Event::GearDown) : Enum::underly(Event::GearUp);
+        HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, eventId, 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
