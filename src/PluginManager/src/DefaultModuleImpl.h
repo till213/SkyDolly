@@ -33,6 +33,7 @@ class QWidget;
 
 class DefaultModuleImpl : public AbstractModule
 {
+	Q_OBJECT
 public:
     QString getModuleName() const noexcept final;
     QWidget *getWidget() const noexcept final;

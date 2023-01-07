@@ -1,14 +1,10 @@
-find_package(Qt5Test REQUIRED)
+find_package(Qt6Test REQUIRED)
 
 ## SkyMath Test ##
 
 set(TEST_NAME "SkyMathTest")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${TEST_NAME})
-else()
-    add_executable(${TEST_NAME})
-endif()
+qt_add_executable(${TEST_NAME})
 
 target_sources(${TEST_NAME}
     PRIVATE
@@ -30,11 +26,7 @@ add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
 set(TEST_NAME "SortTest")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${TEST_NAME})
-else()
-    add_executable(${TEST_NAME})
-endif()
+qt_add_executable(${TEST_NAME})
 
 target_sources(${TEST_NAME}
     PRIVATE

@@ -69,7 +69,7 @@ struct ModuleManagerPrivate
     ModuleManagerPrivate(QLayout &layout) noexcept
         : layout(layout)
     {
-        pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
+        pluginsDirectoryPath.setPath(QDir(QCoreApplication::applicationDirPath()));
 #if defined(Q_OS_MAC)
         if (pluginsDirectoryPath.dirName() == "MacOS") {
             // Navigate up the app bundle structure, into the Contents folder

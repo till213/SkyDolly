@@ -32,7 +32,7 @@
 
 // https://www.kdab.com/qt-datatypes-in-standard-library/
 struct QUuidHasher {
-    std::size_t operator()(const QUuid &value) const noexcept {
+    size_t operator()(const QUuid &value) const noexcept {
         return qHash(value);
     }
 };

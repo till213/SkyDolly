@@ -50,14 +50,13 @@ endif()
 
 # Debug output
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-    add_definitions(-DDEBUG)
+    add_compile_definitions(DEBUG)
 endif()
 # No use of deprecated Qt functionality before Qt 5.15
-add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x051500)
+add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
 
 # Qt
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools Sql REQUIRED)
+find_package(Qt6 COMPONENTS Core Widgets LinguistTools REQUIRED)
 
 # 3rd Party
 # ordered-map (Tessil)
@@ -106,19 +105,11 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Widget)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/PluginManager)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${APP_NAME})
-    qt_create_translation(QM_FILES
-        src
-        i18n/${APP_NAME}_de_DE.ts
-    )
-else()
-    add_executable(${APP_NAME})
-    qt5_create_translation(QM_FILES
-        src
-        i18n/${APP_NAME}_de_DE.ts
-    )
-endif()
+qt_add_executable(${APP_NAME})
+qt_create_translation(QM_FILES
+    src
+    i18n/${APP_NAME}_de_DE.ts
+)
 
 set_target_properties(${APP_NAME}
     PROPERTIES
