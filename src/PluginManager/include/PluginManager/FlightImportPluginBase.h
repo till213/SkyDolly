@@ -32,7 +32,6 @@
 #include <QStringView>
 
 class QFile;
-class QStringList;
 
 #include <Kernel/Settings.h>
 #include <Flight/FlightAugmentation.h>

@@ -35,7 +35,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
-#include <QTextCodec>
+#include <QStringConverter>
 
 #include <Kernel/Convert.h>
 #include <Kernel/CsvParser.h>
@@ -198,7 +198,7 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
 
     CsvParser csvParser;
     QTextStream textStream(&io);
-    textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+    textStream.setEncoding(QStringConverter::Utf8);
     CsvParser::Rows rows = csvParser.parse(textStream, ::FlightRecorderCsvHeader);
     d->headers = csvParser.getHeaders();
     bool ok = validateHeaders();

@@ -69,7 +69,7 @@ struct ModuleManagerPrivate
     ModuleManagerPrivate(QLayout &layout) noexcept
         : layout(layout)
     {
-        pluginsDirectoryPath.setPath(QDir(QCoreApplication::applicationDirPath()));
+        pluginsDirectoryPath.setPath(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
         if (pluginsDirectoryPath.dirName() == "MacOS") {
             // Navigate up the app bundle structure, into the Contents folder
@@ -246,12 +246,12 @@ void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid
     d->pluginLoader->setFileName(pluginPath);
     const QJsonObject metaData = d->pluginLoader->metaData();
     if (!metaData.isEmpty()) {
-        const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
-        const QUuid uuid = pluginMetadata.value(::PluginUuidKey).toString();
-        const QString name = pluginMetadata.value(::PluginNameKey).toString();
+        const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
+        const QUuid uuid {pluginMetadata.value(::PluginUuidKey).toString()};
+        const QString name {pluginMetadata.value(::PluginNameKey).toString()};
         moduleInfos[uuid] = std::make_pair(name, pluginPath);
 
-        const QJsonArray afterArray = pluginMetadata.value(::PluginAfter).toArray();
+        const QJsonArray afterArray {pluginMetadata.value(::PluginAfter).toArray()};
         std::shared_ptr<Vertex> vertex ;
         const auto it = graph.find(uuid);
         // Vertex already in graph?

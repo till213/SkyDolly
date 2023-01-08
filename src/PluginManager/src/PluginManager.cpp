@@ -65,7 +65,7 @@ struct PluginManagerPrivate
 {
     PluginManagerPrivate() noexcept
     {
-        pluginsDirectory.setPath(QDir(QCoreApplication::applicationDirPath()));
+        pluginsDirectory.setPath(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
         if (pluginsDirectory.dirName() == "MacOS") {
             // Navigate up the app bundle structure, into the Contents folder
@@ -266,10 +266,10 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
-                const QUuid uuid = pluginMetadata.value(::PluginUuidKey).toString();
-                const QString pluginName = pluginMetadata.value(::PluginNameKey).toString();
-                const Handle handle = {uuid, pluginName};
+                const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
+                const QUuid uuid {pluginMetadata.value(::PluginUuidKey).toString()};
+                const QString pluginName {pluginMetadata.value(::PluginNameKey).toString()};
+                const Handle handle {uuid, pluginName};
                 pluginHandles.push_back(handle);
                 pluginRegistry.insert(uuid, pluginPath);
             }

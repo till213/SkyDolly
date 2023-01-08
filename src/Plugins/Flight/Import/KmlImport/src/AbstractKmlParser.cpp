@@ -86,7 +86,7 @@ QXmlStreamReader *AbstractKmlParser::getXmlStreamReader() const noexcept
 void AbstractKmlParser::parseKML() noexcept
 {
     while (d->xml->readNextStartElement()) {
-        const QStringRef xmlName = d->xml->name();
+        const QStringView xmlName = d->xml->name();
         if (xmlName == Kml::Document) {
             parseDocument();
         }  else if (xmlName == Kml::Folder) {
@@ -102,7 +102,7 @@ void AbstractKmlParser::parseKML() noexcept
 void AbstractKmlParser::parseDocument() noexcept
 {
     while (d->xml->readNextStartElement()) {
-        const QStringRef xmlName = d->xml->name();
+        const QStringView xmlName = d->xml->name();
 #ifdef DEBUG
         qDebug() << "AbstractKmlParser::parseDocument: XML start element:" << xmlName.toString();
 #endif
@@ -121,7 +121,7 @@ void AbstractKmlParser::parseDocument() noexcept
 void AbstractKmlParser::parseFolder() noexcept
 {
     while (d->xml->readNextStartElement()) {
-        const QStringRef xmlName = d->xml->name();
+        const QStringView xmlName = d->xml->name();
 #ifdef DEBUG
         qDebug() << "AbstractKmlParser::parseFolder: XML start element:" << xmlName.toString();
 #endif
@@ -138,7 +138,7 @@ void AbstractKmlParser::parseFolder() noexcept
 void AbstractKmlParser::parsePlacemark() noexcept
 {
     while (d->xml->readNextStartElement()) {
-        const QStringRef xmlName = d->xml->name();
+        const QStringView xmlName = d->xml->name();
 #ifdef DEBUG
         qDebug() << "AbstractKmlParser::parsePlacemark: XML start element:" << xmlName.toString();
 #endif

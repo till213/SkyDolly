@@ -31,7 +31,7 @@
 #include <QIODevice>
 #include <QFileInfo>
 #include <QTextStream>
-#include <QTextCodec>
+#include <QStringConverter>
 
 #include <Kernel/Convert.h>
 #include <Kernel/Enum.h>
@@ -70,7 +70,7 @@ bool FlightRadar24CsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, Q
 
     CsvParser csvParser;
     QTextStream textStream(&io);
-    textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+    textStream.setEncoding(QStringConverter::Utf8);
     CsvParser::Rows rows = csvParser.parse(textStream, ::FlightRadar24CsvHeader);
     bool ok = CsvParser::validate(rows, Enum::underly(::Index::Count));
     if (ok) {

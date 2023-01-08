@@ -29,7 +29,6 @@
 #include <QtGlobal>
 #include <QIODevice>
 #include <QTextStream>
-#include <QTextCodec>
 
 #include <Kernel/CsvParser.h>
 #include <Kernel/Enum.h>

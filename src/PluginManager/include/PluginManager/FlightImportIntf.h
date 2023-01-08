@@ -35,6 +35,8 @@ class FlightService;
 class FlightImportIntf : public PluginIntf
 {
 public:
+    virtual ~FlightImportIntf() = default;
+
     virtual bool importFlight(FlightService &flightService, Flight &flight) noexcept = 0;
 };
 

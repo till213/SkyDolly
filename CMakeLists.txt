@@ -90,7 +90,10 @@ CheckGitSetup()
 
 # Only enable auto-moccing for our own libraries and executables
 # (not for the third-party libraries above)
-qt_standard_project_setup()
+# qt_standard_project_setup()
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 # Application libraries
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)

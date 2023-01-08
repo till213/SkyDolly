@@ -28,7 +28,7 @@
 #include <QBuffer>
 #include <QTextStream>
 #include <QString>
-#include <QTextCodec>
+#include <QStringConverter>
 #include <QStringBuilder>
 
 #include <Kernel/CsvParser.h>
@@ -208,7 +208,7 @@ void CsvParserTest::parseCsv() noexcept
     CsvParser csvParser;
     QByteArray data = csv.toUtf8();
     QTextStream textStream {data};
-    textStream.setCodec("UTF-8");
+    textStream.setEncoding(QStringConverter::Utf8);
 
     // Exercise
     const CsvParser::Rows rows = csvParser.parse(textStream, header);

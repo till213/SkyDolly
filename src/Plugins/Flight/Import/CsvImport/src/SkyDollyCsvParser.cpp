@@ -31,7 +31,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
-#include <QTextCodec>
+#include <QStringConverter>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -151,7 +151,7 @@ bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[mayb
 
     CsvParser csvParser;
     QTextStream textStream(&io);
-    textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+    textStream.setEncoding(QStringConverter::Utf8);
     CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
     bool ok = CsvParser::validate(rows, Enum::underly(::Index::Count));
     if (ok) {

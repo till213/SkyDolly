@@ -57,32 +57,32 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="34"/>
+        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="57"/>
         <source>Gear:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="54"/>
+        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="77"/>
         <source>Left brake:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="74"/>
+        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="97"/>
         <source>Right brake:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="94"/>
+        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="117"/>
         <source>Water rudder:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="114"/>
+        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="137"/>
         <source>Smoke:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="131"/>
+        <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="34"/>
         <source>Canopy:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -912,22 +912,41 @@ MIT License</source>
     <name>FlightExportPluginBase</name>
     <message>
         <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="86"/>
+        <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="180"/>
         <source>&amp;Replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="87"/>
+        <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="182"/>
         <source>Replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="88"/>
+        <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="183"/>
         <source>A file named &quot;%1&quot; already exists. Do you want to replace it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="89"/>
+        <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="184"/>
         <source>The file already exists in &quot;%1&quot;.  Replacing it will overwrite its contents.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="161"/>
+        <source>Export error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="161"/>
+        <source>An error occured during export into file %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/FlightExportPluginBase.cpp" line="181"/>
+        <source>Replace &amp;All</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1713,6 +1732,16 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <source>The file already exists in &quot;%1&quot;.  Replacing it will overwrite its contents.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../src/PluginManager/src/LocationExportPluginBase.cpp" line="135"/>
+        <source>Export error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PluginManager/src/LocationExportPluginBase.cpp" line="135"/>
+        <source>An error occured during export into file %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LocationImportPluginBase</name>
@@ -2081,6 +2110,15 @@ or choose another reference aircraft (marked in green) in the formation.</source
         <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="621"/>
         <source>Click to toggle on ground.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="712"/>
+        <source>%1 locations</source>
+        <comment>Number of locations selected</comment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../src/Plugins/Module/Location/src/LocationWidget.cpp" line="932"/>
@@ -2511,7 +2549,7 @@ or choose another reference aircraft (marked in green) in the formation.</source
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="120"/>
-        <source>Time</source>
+        <source>Time:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3300,12 +3338,27 @@ or choose another reference aircraft (marked in green) in the formation.</source
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widget/SecondaryFlightControlWidget.ui" line="155"/>
-        <source>Left spoilers position:</source>
+        <source>Spoilers armed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widget/SecondaryFlightControlWidget.ui" line="175"/>
+        <source>Left spoilers position:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widget/SecondaryFlightControlWidget.ui" line="195"/>
         <source>Right spoilers position:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widget/SecondaryFlightControlWidget.cpp" line="88"/>
+        <source>Armed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widget/SecondaryFlightControlWidget.cpp" line="88"/>
+        <source>Disarmed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

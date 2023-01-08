@@ -27,7 +27,7 @@
 #include <QString>
 #include <QStringLiteral>
 #include <QStringBuilder>
-#include <QLatin1Char>
+#include <QChar>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QDateTime>
@@ -150,7 +150,7 @@ QString Version::getUserVersion() noexcept
     const QDate gitDate = getGitDate().date();
     const int year = gitDate.year();
     const int month = gitDate.month();
-    userVersion = QString("%1").arg(year) % "." % QString("%1").arg(month, 2, 10, u'0');
+    userVersion = QString("%1").arg(year) % "." % QString("%1").arg(month, 2, 10, QChar('0'));
     return userVersion;
 }
 
