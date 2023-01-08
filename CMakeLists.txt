@@ -56,7 +56,7 @@ endif()
 add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
 
 # Qt
-find_package(Qt6 COMPONENTS Core Widgets LinguistTools REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Sql LinguistTools)
 
 # 3rd Party
 # ordered-map (Tessil)
@@ -90,9 +90,7 @@ CheckGitSetup()
 
 # Only enable auto-moccing for our own libraries and executables
 # (not for the third-party libraries above)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+qt_standard_project_setup()
 
 # Application libraries
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
@@ -178,7 +176,7 @@ target_include_directories(${APP_NAME}
 )
 target_link_libraries(${APP_NAME}
     PRIVATE
-        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt6::Widgets
         Sky::Kernel
         Sky::Model
         Sky::Persistence

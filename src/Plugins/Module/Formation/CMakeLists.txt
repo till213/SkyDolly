@@ -1,10 +1,6 @@
 set(MODULE_NAME "Formation")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${MODULE_NAME} MODULE)
-else()
-    add_library(${MODULE_NAME} MODULE)
-endif()
+qt_add_library(${MODULE_NAME} MODULE)
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 
 target_sources(${MODULE_NAME}
@@ -17,7 +13,7 @@ target_sources(${MODULE_NAME}
 )
 target_link_libraries(${MODULE_NAME}
     PRIVATE
-        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt6::Widgets
         Sky::Kernel
         Sky::Model
         Sky::Persistence

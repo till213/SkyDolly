@@ -12,7 +12,7 @@ target_sources(${TEST_NAME}
 )
 
 set(KERNELTEST_LIBS
-    Qt${QT_VERSION_MAJOR}::Test
+    Qt6::Test
     Sky::Kernel
 )
 
@@ -34,7 +34,7 @@ target_sources(${TEST_NAME}
 )
 
 set(KERNELTEST_LIBS
-    Qt${QT_VERSION_MAJOR}::Test
+    Qt6::Test
     Sky::Kernel
 )
 
@@ -48,11 +48,7 @@ add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
 set(TEST_NAME "NameTest")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${TEST_NAME})
-else()
-    add_executable(${TEST_NAME})
-endif()
+qt_add_executable(${TEST_NAME})
 
 target_sources(${TEST_NAME}
     PRIVATE
@@ -60,7 +56,7 @@ target_sources(${TEST_NAME}
 )
 
 set(KERNELTEST_LIBS
-    Qt${QT_VERSION_MAJOR}::Test
+    Qt6::Test
     Sky::Kernel
 )
 
@@ -74,11 +70,7 @@ add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
 set(TEST_NAME "PositionParserTest")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${TEST_NAME})
-else()
-    add_executable(${TEST_NAME})
-endif()
+qt_add_executable(${TEST_NAME})
 
 target_sources(${TEST_NAME}
     PRIVATE
@@ -86,7 +78,7 @@ target_sources(${TEST_NAME}
 )
 
 set(KERNELTEST_LIBS
-    Qt${QT_VERSION_MAJOR}::Test
+    Qt6::Test
     Sky::Kernel
 )
 
@@ -100,11 +92,7 @@ add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
 set(TEST_NAME "CsvParserTest")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${TEST_NAME})
-else()
-    add_executable(${TEST_NAME})
-endif()
+qt_add_executable(${TEST_NAME})
 
 target_sources(${TEST_NAME}
     PRIVATE
@@ -112,7 +100,7 @@ target_sources(${TEST_NAME}
 )
 
 set(KERNELTEST_LIBS
-    Qt${QT_VERSION_MAJOR}::Test
+    Qt6::Test
     Sky::Kernel
 )
 

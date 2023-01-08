@@ -1,10 +1,6 @@
 set(LIBRARY_NAME "Persistence")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} SHARED)
-else()
-    add_library(${LIBRARY_NAME} SHARED)
-endif()
+qt_add_library(${LIBRARY_NAME} SHARED)
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_compile_definitions(${LIBRARY_NAME}
@@ -73,8 +69,8 @@ target_include_directories(${LIBRARY_NAME}
 )
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC
-        Qt${QT_VERSION_MAJOR}::Widgets
-        Qt${QT_VERSION_MAJOR}::Sql
+        Qt6::Widgets
+        Qt6::Sql
     PRIVATE
         Sky::Kernel
         Sky::Model
