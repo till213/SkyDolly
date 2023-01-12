@@ -14,9 +14,6 @@ project(
     HOMEPAGE_URL "https://github.com/till213/SkyDolly"
     LANGUAGES CXX    
 )
-# Used to populate the Info.plist.in and SkyDolly.rc.in
-set(PROJECT_APPLICATION_NAME "Sky Dolly")
-set(PROJECT_ORGANISATION_NAME till213)
 
 include(InitSubmodules)
 
@@ -25,7 +22,6 @@ include(CTest)
 
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 set(CMAKE_SHARED_MODULE_PREFIX "")
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -105,18 +101,11 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Flight)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Widget)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/PluginManager)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyDolly)
 
-qt_add_executable(${APP_NAME})
 qt_create_translation(QM_FILES
     src
     i18n/${APP_NAME}_de_DE.ts
-)
-
-set_target_properties(${APP_NAME}
-    PROPERTIES
-        WIN32_EXECUTABLE ON
-        MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/res/Info.plist.in"
 )
 
 # Resource (data) files
@@ -153,9 +142,8 @@ elseif(${PLATFORM_IS_WINDOWS})
     )
 endif()
 
-target_sources(${APP_NAME}
+target_sources(${PROJECT_NAME}
     PRIVATE
-        src/main.cpp
         BUILD.md
         CHANGELOG.md
         CODE_OF_CONDUCT.md
@@ -168,25 +156,8 @@ target_sources(${APP_NAME}
         doc/Design/README.md
         doc/SkyDolly.simvars
         doc/LICENSE
-        res/Info.plist.in
-        res/SkyDolly.rc.in
         ${QM_FILES}
 )
-
-target_include_directories(${APP_NAME}
-    PRIVATE
-        ${CMAKE_BINARY_DIR}/generated
-)
-target_link_libraries(${APP_NAME}
-    PRIVATE
-        Qt6::Widgets
-        Sky::Kernel
-        Sky::Model
-        Sky::Persistence
-        Sky::PluginManager
-        Sky::UserInterface
-)
-
 # Plugins
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugins)
 

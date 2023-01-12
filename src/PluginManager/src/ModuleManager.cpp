@@ -158,7 +158,8 @@ void ModuleManager::activateModule(QUuid uuid) noexcept
         QString modulePath = d->moduleRegistry[uuid];
         d->pluginLoader->setFileName(modulePath);
         const QObject *plugin = d->pluginLoader->instance();
-        d->activeModule = qobject_cast<ModuleIntf *>(plugin);
+        // TODO FIX ME!!!
+        //d->activeModule = qobject_cast<ModuleIntf *>(plugin);
         if (d->activeModule != nullptr) {
             d->activeModuleUuid = uuid;
             d->layout.addWidget(d->activeModule->getWidget());

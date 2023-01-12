@@ -32,7 +32,6 @@
 #include "PluginIntf.h"
 
 class Location;
-class LocationService;
 
 class LocationExportIntf : public PluginIntf
 {
