@@ -9,7 +9,7 @@ set_target_properties(${APP_NAME}
     PROPERTIES
         WIN32_EXECUTABLE ON
         MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/res/Info.plist.in"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/src/SkyDolly/res/Info.plist.in"
 )
 
 target_sources(${APP_NAME}
@@ -32,3 +32,34 @@ target_link_libraries(${APP_NAME}
         Sky::PluginManager
         Sky::UserInterface
 )
+
+if(${PLATFORM_IS_MACOS})
+    target_link_libraries(${APP_NAME}
+        PRIVATE
+            Geoids
+            Locations
+    )
+    include(CreateAppIconOnMacOS)
+    create_app_icon_on_macos(INPUT "res/SkyDolly.png" OUTPUT APP_ICON_PATH)
+    set_source_files_properties(${APP_ICON_PATH}
+        PROPERTIES
+            MACOSX_PACKAGE_LOCATION "Resources"
+    )
+    target_sources(${APP_NAME}
+        PRIVATE
+            ${APP_ICON_PATH}
+    )
+elseif(${PLATFORM_IS_WINDOWS})
+    # KNOWN ISSUE: windres.exe (MinGW on Windows) does not properly handle include paths with spaces
+    #              Also refer e.g. to https://bugreports.qt.io/browse/QTBUG-62918
+    # WORKAROUND: Place the Sky Dolly sources into a path without spaces
+    # Resource file (*.rc)
+    configure_file("${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in"
+                   "${PROJECT_SOURCE_DIR}/res/SkyDolly.rc" @ONLY)
+    add_library(resources OBJECT "${PROJECT_SOURCE_DIR}/res/SkyDolly.rc")
+    target_include_directories(resources PRIVATE "${PROJECT_SOURCE_DIR}/res/")
+    target_sources(${APP_NAME}
+        PRIVATE
+            $<TARGET_OBJECTS:resources>
+    )
+endif()
