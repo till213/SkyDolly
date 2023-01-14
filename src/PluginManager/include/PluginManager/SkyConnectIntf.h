@@ -45,7 +45,6 @@ class PLUGINMANAGER_API SkyConnectIntf : public QObject
 {
     Q_OBJECT
 public:
-
     enum struct RecordingMode {
         /*! A (new) flight with a single aircrat is to be recorded. */
         SingleAircraft,
