@@ -38,7 +38,6 @@ struct LogbookPrivate
     static inline Logbook *instance;
 };
 
-
 // PUBLIC
 
 Logbook &Logbook::getInstance() noexcept
