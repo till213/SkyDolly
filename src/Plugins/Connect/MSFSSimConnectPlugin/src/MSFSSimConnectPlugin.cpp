@@ -144,7 +144,11 @@ bool MSFSSimConnectPlugin::onInitialPositionSetup(const InitialPosition &initial
 
 bool MSFSSimConnectPlugin::onFreezeUserAircraft(bool enable) const noexcept
 {
-    return d->simConnectEvent->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, enable);
+    bool ok {true};
+    if (d->simConnectEvent != nullptr) {
+        ok = d->simConnectEvent->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, enable);
+    }
+    return ok;
 }
 
 bool MSFSSimConnectPlugin::onSimulationEvent(SimulationEvent event) const noexcept
@@ -188,7 +192,9 @@ bool MSFSSimConnectPlugin::onStartRecording() noexcept
 void MSFSSimConnectPlugin::onRecordingPaused(bool enable) noexcept
 {
     updateRecordingFrequency(Settings::getInstance().getRecordingSampleRate());
-    d->simConnectEvent->pauseSimulation(enable);
+    if (d->simConnectEvent != nullptr) {
+        d->simConnectEvent->pauseSimulation(enable);
+    }
 }
 
 void MSFSSimConnectPlugin::onStopRecording() noexcept
@@ -199,7 +205,9 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
     // Stop receiving aircraft position
     updateRequestPeriod(::SIMCONNECT_PERIOD_NEVER);
 
-    d->simConnectEvent->resumePausedSimulation();
+    if (d->simConnectEvent != nullptr) {
+        d->simConnectEvent->resumePausedSimulation();
+    }
 
     // Update flight plan
     Flight &flight = getCurrentFlight();
@@ -250,7 +258,9 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
 
 bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
 {
-    d->simConnectEvent->reset();
+    if (d->simConnectEvent != nullptr) {
+        d->simConnectEvent->reset();
+    }
 
     // Send aircraft position every visual frame
     HRESULT result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
@@ -264,18 +274,24 @@ void MSFSSimConnectPlugin::onReplayPaused(bool enable) noexcept
     } else {
         ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
     }
-    d->simConnectEvent->pauseSimulation(enable);
+    if (d->simConnectEvent != nullptr) {
+        d->simConnectEvent->pauseSimulation(enable);
+    }
 }
 
 void MSFSSimConnectPlugin::onStopReplay() noexcept
 {
     ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
-    d->simConnectEvent->resumePausedSimulation();
+    if (d->simConnectEvent != nullptr) {
+        d->simConnectEvent->resumePausedSimulation();
+    }
 }
 
 void MSFSSimConnectPlugin::onSeek(std::int64_t currentTimestamp) noexcept
 {
-    d->simConnectEvent->reset();
+    if (d->simConnectEvent != nullptr) {
+        d->simConnectEvent->reset();
+    }
 };
 
 void MSFSSimConnectPlugin::onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
@@ -926,7 +942,8 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         {
             if (skyConnect->getState() == Connect::State::Replay || skyConnect->getState() == Connect::State::ReplayPaused) {
                 auto simConnectLightEvent = reinterpret_cast<const SimConnectLightEvent *>(&objectData->dwData);
-                skyConnect->d->simConnectEvent->setCurrentLightEvent(simConnectLightEvent);
+                // TODO IMPLEMENT ME
+                //skyConnect->d->simConnectEvent->setCurrentLightEvent(simConnectLightEvent);
             }
             break;
         }
