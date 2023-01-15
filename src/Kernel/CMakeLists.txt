@@ -9,6 +9,10 @@ target_compile_definitions(${LIBRARY_NAME}
 )
 configure_file(src/VersionConfig.h.in generated/VersionConfig.h @ONLY)
 
+# https://jonathanhamberg.com/post/cmake-embedding-git-hash/
+set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+CheckGitSetup()
+
 target_sources(${LIBRARY_NAME}
     PRIVATE
         include/Kernel/KernelLib.h
@@ -33,6 +37,7 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/Sort.h
         src/SettingsConverter.h src/SettingsConverter.cpp
         src/VersionConfig.h.in
+        src/GitInfo.h src/GitInfo.cpp.in
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE

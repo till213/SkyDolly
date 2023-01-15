@@ -177,6 +177,5 @@ QLatin1String Version::getGitHash() noexcept
 
 QDateTime Version::getGitDate() noexcept
 {
-    QDateTime dateTime = QDateTime::fromString(GitInfo::GitIsoDate, Qt::ISODate);
-    return dateTime;
+    return QDateTime::fromString(GitInfo::GitIsoDate, Qt::ISODate);
 }
