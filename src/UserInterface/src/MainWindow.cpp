@@ -175,8 +175,6 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
       ui(std::make_unique<Ui::MainWindow>()),
       d(std::make_unique<MainWindowPrivate>())
 {
-    Q_INIT_RESOURCE(UserInterface);
-
     ui->setupUi(this);
 
     // Connect with logbook

@@ -118,7 +118,6 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<ModuleManagerPrivate>(layout))
 {
-    Q_INIT_RESOURCE(PluginManager);
     initModules();
     if (d->moduleRegistry.size() > 0) {
         activateModule(d->moduleRegistry.begin()->first);
