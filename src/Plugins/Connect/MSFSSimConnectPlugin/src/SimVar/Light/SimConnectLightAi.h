@@ -31,7 +31,7 @@
 #include "SimConnectLightEvent.h"
 
 /*!
- * Primary flight control simulation variables that are sent to AI aircraft.
+ * Lightl simulation variables that are sent to AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */

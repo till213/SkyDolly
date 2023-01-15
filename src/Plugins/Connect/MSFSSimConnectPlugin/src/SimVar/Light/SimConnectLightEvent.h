@@ -43,7 +43,16 @@
 #pragma pack(push, 1)
 struct SimConnectLightEvent
 {
-    std::int32_t lightStates {0};
+    std::int32_t navigation;
+    std::int32_t beacon;
+    std::int32_t landing;
+    std::int32_t taxi;
+    std::int32_t strobe;
+    std::int32_t panel;
+    std::int32_t recognition;
+    std::int32_t wing;
+    std::int32_t logo;
+    std::int32_t cabin;
 
     SimConnectLightEvent(const LightData &lightData) noexcept
         : SimConnectLightEvent()
@@ -55,13 +64,31 @@ struct SimConnectLightEvent
 
     inline void fromLightData(const LightData &lightData) noexcept
     {
-        lightStates = lightData.lightStates;
+        navigation = lightData.lightStates.testFlag(SimType::LightState::Navigation) ? 1 : 0;
+        beacon = lightData.lightStates.testFlag(SimType::LightState::Beacon) ? 1 : 0;
+        landing = lightData.lightStates.testFlag(SimType::LightState::Landing) ? 1 : 0;
+        taxi = lightData.lightStates.testFlag(SimType::LightState::Taxi) ? 1 : 0;
+        strobe = lightData.lightStates.testFlag(SimType::LightState::Strobe) ? 1 : 0;
+        panel = lightData.lightStates.testFlag(SimType::LightState::Panel) ? 1 : 0;
+        recognition = lightData.lightStates.testFlag(SimType::LightState::Recognition) ? 1 : 0;
+        wing = lightData.lightStates.testFlag(SimType::LightState::Wing) ? 1 : 0;
+        logo = lightData.lightStates.testFlag(SimType::LightState::Logo) ? 1 : 0;
+        cabin = lightData.lightStates.testFlag(SimType::LightState::Cabin) ? 1 : 0;
     }
 
     inline LightData toLightData() const noexcept
     {
         LightData lightData;
-        lightData.lightStates = SimType::LightStates(lightStates);
+        lightData.lightStates.setFlag(SimType::LightState::Navigation, navigation != 0);
+        lightData.lightStates.setFlag(SimType::LightState::Beacon, beacon != 0);
+        lightData.lightStates.setFlag(SimType::LightState::Landing, landing != 0);
+        lightData.lightStates.setFlag(SimType::LightState::Taxi, taxi != 0);
+        lightData.lightStates.setFlag(SimType::LightState::Strobe, strobe != 0);
+        lightData.lightStates.setFlag(SimType::LightState::Panel, panel != 0);
+        lightData.lightStates.setFlag(SimType::LightState::Recognition, recognition != 0);
+        lightData.lightStates.setFlag(SimType::LightState::Wing, wing != 0);
+        lightData.lightStates.setFlag(SimType::LightState::Logo, logo != 0);
+        lightData.lightStates.setFlag(SimType::LightState::Cabin, cabin != 0);
         return lightData;
     }
 
@@ -72,7 +99,16 @@ struct SimConnectLightEvent
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightStates, "Mask", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightNav, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightBeacon, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightLanding, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightTaxi, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightStrobe, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightPanel, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightRecognition, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightWing, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightLogo, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightCabin, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
     }
 
 };

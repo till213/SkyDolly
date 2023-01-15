@@ -44,6 +44,48 @@
 #include "Light/SimConnectLightEvent.h"
 #include "SimConnectType.h"
 
+template <typename T>
+struct SwitchState
+{
+    T current {};
+    T requested {};
+    bool valid {false};
+    bool pending {false};
+
+    SwitchState() {
+        reset();
+    }
+
+    /*!
+     * Returns whether an update needs to be sent, as the \c requested value differs from the \c current
+     * value.
+     *
+     * \return \c true if the \c current value is different from the \c requested value; \c false else
+     */
+    bool needsUpdate() const noexcept {
+        return current != requested;
+    }
+
+    void reset() noexcept {
+        if constexpr(std::is_integral_v<T>) {
+            current = 0;
+            requested = 0;
+        }
+        else if constexpr(std::is_floating_point_v<T>) {
+            current = 0.0;
+            requested = 0.0;
+        } else if constexpr(std::is_same_v<T, bool>) {
+            current = false;
+            requested = false;
+        } else {
+            current = 0;
+            requested = 0;
+        }
+        valid = false;
+        pending = false;
+    }
+};
+
 class SimConnectEvent
 {
 public:
@@ -95,10 +137,9 @@ public:
         SetWingFold,
         SmokeSet,
         // Light
-        BeaconLightsSet,
-        LandingLightsSet,
-        LandingLightsOn,
-        LandingLightsOff
+        ToggleNavLights,
+        ToggleBeaconLights,
+        LandingLightsToggle
     };
 
     enum struct EngineState: int {
@@ -170,10 +211,9 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SetWingFold), "SET_WING_FOLD");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::SmokeSet), "SMOKE_SET");
         // Lights
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::BeaconLightsSet), "BEACON_LIGHTS_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::LandingLightsSet), "LANDING_LIGHTS_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::LandingLightsOn), "LANDING_LIGHTS_ON");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::LandingLightsOff), "LANDING_LIGHTS_OFF");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::ToggleNavLights), "TOGGLE_NAV_LIGHTS");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::ToggleBeaconLights), "TOGGLE_BEACON_LIGHTS");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(Event::LandingLightsToggle), "LANDING_LIGHTS_TOGGLE");
     }
 
     inline void pauseSimulation(bool enable) noexcept
@@ -253,61 +293,9 @@ public:
 
     inline bool sendLight(const SimConnectLightEvent &event)
     {
-        // TODO IMPLEMENT ME!!!
-        HRESULT result {S_OK};
-        auto lightStates = SimType::LightStates(event.lightStates);
-        DWORD enable = lightStates.testFlag(SimType::LightState::Beacon) ? 1 : 0;
-        result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::BeaconLightsSet), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-
-        enable = lightStates.testFlag(SimType::LightState::Landing) ? 1 : 0;
-        result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::LandingLightsSet), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-
-        if (lightStates.testFlag(SimType::LightState::Landing)) {
-            result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::LandingLightsOn), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        } else {
-            result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::LandingLightsOff), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        }
-
-        return result == S_OK;
-    }
-
-    inline bool sendLight2(const SimConnectLightEvent &event)
-    {
-        HRESULT result {S_OK};
-        m_requestedLightEvent = event;
-        if (m_requestedLightEvent != m_currentLightEvent) {
-            if (m_currentLightEvent != InvalidFlapsIndex) {
-                Event event = m_requestedFlapsIndex > m_currentLightStates ? Event::FlapsIncrease : Event::FlapsDecrease;
-                const int steps = std::abs(m_currentLightStates - m_requestedFlapsIndex);
-                for (int step = 0; step < steps; ++step) {
-                    result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(event), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-                }
-#ifdef DEBUG
-                qDebug() << "SimConnectEvent::sendFlapsHandleIndex: incrementally setting flaps handle index to:" << m_requestedFlapsIndex
-                         << "Previous index:" << m_currentLightStates
-                         << "Steps:" << steps
-                         << "Event ID:" << Enum::underly(event)
-                         << "Success:" << (result == S_OK);
-#endif
-                if (result == S_OK) {
-                    //m_currentLightStates = m_requestedFlapsIndex;
-                }
-            } else if (!m_pendingLightStatesRequest) {
-                // Request current flaps index
-                result = ::SimConnect_RequestDataOnSimObject(m_simConnectHandle, Enum::underly(SimConnectType::DataRequest::FlapsHandleIndex),
-                                                             Enum::underly(SimConnectType::DataDefinition::FlapsHandleIndex),
-                                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-                if (result == S_OK) {
-                    m_pendingFlapsIndexRequest = true;
-                }
-#ifdef DEBUG
-                qDebug() << "SimConnectEvent::sendFlapsHandleIndex: requesting current flaps index"
-                         << "Current index:" << m_currentFlapsIndex
-                         << "Success:" << (result == S_OK);
-#endif
-            }
-        } // m_requestedFlapsIndex != m_currentFlapsIndex
-        return result == S_OK;
+        bool ok = sendLandingLight(event.landing);
+        // TODO IMPLEMENT ME
+        return ok;
     }
 
     inline bool setCurrentFlapsHandleIndex(std::int32_t index)
@@ -325,16 +313,17 @@ public:
         return ok;
     }
 
-    inline bool setCurrentLightEvent(SimConnectLightEvent event)
+    inline bool setCurrentLandingLight(std::int32_t enabled)
     {
         bool ok {true};
-        m_pendingFlapsIndexRequest = false;
+        m_landingLightState.pending = false;
 #ifdef DEBUG
-        qDebug() << "SimConnectEvent::setCurrentLightEvent: current light events received";
+        qDebug() << "SimConnectEvent::setCurrentLandingLight: current landing light received:" << enabled
+                 << "Previous state:" << m_landingLightState.current;
 #endif
-        m_currentLightEvent = event;
-        if (m_requestedLightEvent != m_currentLightEvent) {
-            ok = sendLight2(m_requestedLightEvent);
+        m_landingLightState.current = (enabled != 0);
+        if (m_landingLightState.requested != m_landingLightState.current) {
+            ok = sendLandingLight(m_landingLightState.requested);
         }
         return ok;
     }
@@ -353,9 +342,9 @@ private:
     std::int32_t m_requestedFlapsIndex {InvalidFlapsIndex};
     bool m_pendingFlapsIndexRequest {false};
 
-    SimConnectLightEvent m_currentLightEvent;
-    SimConnectLightEvent m_requestedLightEvent;
-    bool m_pendingLightEventRequest {false};
+    SwitchState<bool> m_navigationLightState;
+    SwitchState<bool> m_landingLightState;
+
 
     bool m_paused {false};
 
@@ -521,6 +510,39 @@ private:
     inline bool sendWingFold(std::int32_t enable)
     {
         const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::SetWingFold), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        return result == S_OK;
+    }
+
+    inline bool sendLandingLight(std::int32_t enable)
+    {
+        HRESULT result {S_OK};
+        m_landingLightState.requested = enable;
+        if (m_landingLightState.needsUpdate()) {
+            if (m_landingLightState.valid) {
+                result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(Event::LandingLightsToggle), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+#ifdef DEBUG
+                qDebug() << "SimConnectEvent::sendLandingLight: requested state:" << m_landingLightState.requested
+                         << "Previous state:" << m_landingLightState.current
+                         << "Success:" << (result == S_OK);
+#endif
+                if (result == S_OK) {
+                    m_landingLightState.current = m_landingLightState.requested;
+                }
+            } else if (!m_landingLightState.pending) {
+                // Request current light state
+                result = ::SimConnect_RequestDataOnSimObject(m_simConnectHandle, Enum::underly(SimConnectType::DataRequest::FlapsHandleIndex),
+                                                             Enum::underly(SimConnectType::DataDefinition::FlapsHandleIndex),
+                                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+                if (result == S_OK) {
+                    m_pendingFlapsIndexRequest = true;
+                }
+#ifdef DEBUG
+                qDebug() << "SimConnectEvent::sendFlapsHandleIndex: requesting current flaps index"
+                         << "Current index:" << m_currentFlapsIndex
+                         << "Success:" << (result == S_OK);
+#endif
+            }
+        } // m_requestedFlapsIndex != m_currentFlapsIndex
         return result == S_OK;
     }
 };
