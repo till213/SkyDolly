@@ -55,7 +55,7 @@ function(CheckGitVersion)
 
         # Also get the date of the latest commit hash of the working branch
         execute_process(
-            COMMAND git show --no-patch --no-notes --pretty=%cd --date=iso ${GIT_HASH}
+            COMMAND git show --no-patch --no-notes --pretty=%cd --date=iso-strict ${GIT_HASH}
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
             OUTPUT_VARIABLE GIT_ISO_DATE
             OUTPUT_STRIP_TRAILING_WHITESPACE

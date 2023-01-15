@@ -24,7 +24,6 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/Replay.h
         include/Kernel/SampleRate.h
         include/Kernel/Settings.h src/Settings.cpp
-        src/SettingsConverter.h src/SettingsConverter.cpp
         include/Kernel/SkyMath.h
         include/Kernel/System.h src/System.cpp
         include/Kernel/Unit.h src/Unit.cpp
@@ -32,6 +31,7 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/QUuidHasher.h
         include/Kernel/QStringHasher.h
         include/Kernel/Sort.h
+        src/SettingsConverter.h src/SettingsConverter.cpp
         src/VersionConfig.h.in
 )
 target_include_directories(${LIBRARY_NAME}

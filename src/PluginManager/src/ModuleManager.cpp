@@ -250,7 +250,7 @@ void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid
         const QString name {pluginMetadata.value(::PluginNameKey).toString()};
         moduleInfos[uuid] = std::make_pair(name, pluginPath);
 
-        const QJsonArray afterArray {pluginMetadata.value(::PluginAfter).toArray()};
+        const QJsonArray afterArray = pluginMetadata.value(::PluginAfter).toArray();
         std::shared_ptr<Vertex> vertex ;
         const auto it = graph.find(uuid);
         // Vertex already in graph?
