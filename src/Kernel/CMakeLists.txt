@@ -11,6 +11,7 @@ configure_file(src/VersionConfig.h.in generated/VersionConfig.h @ONLY)
 
 # https://jonathanhamberg.com/post/cmake-embedding-git-hash/
 set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+include(${PROJECT_SOURCE_DIR}/cmake/CheckGit.cmake)
 CheckGitSetup()
 
 target_sources(${LIBRARY_NAME}

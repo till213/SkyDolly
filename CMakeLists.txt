@@ -79,9 +79,6 @@ else()
     message(STATUS "IPO SUPPORT disabled for debug builds")
 endif()
 
-# https://jonathanhamberg.com/post/cmake-embedding-git-hash/
-include(cmake/CheckGit.cmake)
-
 # Only enable auto-moccing for our own libraries and executables
 # (not for the third-party libraries above)
 set(CMAKE_AUTOUIC ON)
