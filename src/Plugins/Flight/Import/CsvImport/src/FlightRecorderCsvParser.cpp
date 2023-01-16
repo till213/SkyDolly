@@ -253,15 +253,12 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
  bool FlightRecorderCsvParser::validateHeaders() noexcept
  {
      bool ok {true};
-
      for (auto val : d->HeaderNames) {
-         auto it = d->headers.find(val);
-         ok = it != d->headers.end();
+         ok = d->headers.contains(val);
          if (!ok) {
              break;
          }
      }
-
      return ok;
  }
 
