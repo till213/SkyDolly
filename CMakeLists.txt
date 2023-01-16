@@ -90,9 +90,7 @@ set(CMAKE_AUTORCC ON)
 
 # Application libraries
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/KernelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Model)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/ModelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Flight)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Widget)
@@ -101,6 +99,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
 # Application
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyDolly)
+
+# Tests
+add_subdirectory(${CMAKE_SOURCE_DIR}/test)
 
 qt_create_translation(QM_FILES
     src
