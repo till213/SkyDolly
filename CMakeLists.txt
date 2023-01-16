@@ -6,6 +6,9 @@ include(CMakePrintHelpers)
 include(CheckIPOSupported)
 
 set(APP_NAME "SkyDolly")
+# Used to populate the Info.plist.in and SkyDolly.rc.in
+set(PROJECT_APPLICATION_NAME "Sky Dolly")
+set(PROJECT_ORGANISATION_NAME till213)
 
 project(
     ${APP_NAME}
