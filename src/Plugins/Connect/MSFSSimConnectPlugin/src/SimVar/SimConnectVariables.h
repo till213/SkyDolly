@@ -28,10 +28,10 @@
 #include <cstdint>
 
 #include <windows.h>
+#include <SimConnect.h>
 
 namespace SimConnectVariables
 {
-
     /*!
      * Flaps simulation variable.
      *
@@ -44,7 +44,6 @@ namespace SimConnectVariables
         static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
     };
     #pragma pack(pop)
-
 }
 
 #endif // SIMCONNECTVARIABLES_H

@@ -942,8 +942,16 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         {
             if (skyConnect->getState() == Connect::State::Replay || skyConnect->getState() == Connect::State::ReplayPaused) {
                 auto simConnectLightEvent = reinterpret_cast<const SimConnectLightEvent *>(&objectData->dwData);
-                // TODO IMPLEMENT ME
-                //skyConnect->d->simConnectEvent->setCurrentLightEvent(simConnectLightEvent);
+                skyConnect->d->simConnectEvent->setCurrentNavigationLight(simConnectLightEvent->navigation);
+                skyConnect->d->simConnectEvent->setCurrentBeaconLight(simConnectLightEvent->beacon);
+                skyConnect->d->simConnectEvent->setCurrentLandingLight(simConnectLightEvent->landing);
+                skyConnect->d->simConnectEvent->setCurrentTaxiLight(simConnectLightEvent->taxi);
+                skyConnect->d->simConnectEvent->setCurrentStrobeLight(simConnectLightEvent->strobe);
+                skyConnect->d->simConnectEvent->setCurrentPanelLight(simConnectLightEvent->panel);
+                skyConnect->d->simConnectEvent->setCurrentRecognitionLight(simConnectLightEvent->recognition);
+                skyConnect->d->simConnectEvent->setCurrentWingLight(simConnectLightEvent->wing);
+                skyConnect->d->simConnectEvent->setCurrentLogoLight(simConnectLightEvent->logo);
+                skyConnect->d->simConnectEvent->setCurrentCabinLight(simConnectLightEvent->cabin);
             }
             break;
         }

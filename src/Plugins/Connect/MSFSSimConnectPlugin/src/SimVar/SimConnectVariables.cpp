@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <windows.h>
-
 #include <SimConnect.h>
 
 #include <Kernel/Enum.h>
@@ -32,7 +31,6 @@
 #include "SimConnectVariables.h"
 
 // PUBLIC
-
 
 void SimConnectVariables::FlapsHandleIndex::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
