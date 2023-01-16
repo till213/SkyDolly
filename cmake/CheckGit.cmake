@@ -8,8 +8,8 @@ if(NOT DEFINED POST_CONFIGURE_DIR)
     set(POST_CONFIGURE_DIR ${CMAKE_BINARY_DIR}/generated)
 endif()
 
-set(PRE_CONFIGURE_FILE ${PRE_CONFIGURE_DIR}/GitInfo.cpp.in)
-set(POST_CONFIGURE_FILE ${POST_CONFIGURE_DIR}/GitInfo.cpp)
+set(PRE_CONFIGURE_FILE "${PRE_CONFIGURE_DIR}/GitInfo.cpp.in")
+set(POST_CONFIGURE_FILE "${POST_CONFIGURE_DIR}/GitInfo.cpp")
 
 function(CheckGitWrite git_hash)
     file(WRITE ${CMAKE_BINARY_DIR}/git-state.txt ${git_hash})

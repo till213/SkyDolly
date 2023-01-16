@@ -25,7 +25,7 @@ include(CTest)
 
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 set(CMAKE_SHARED_MODULE_PREFIX "")
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Platform identifiers
@@ -111,7 +111,8 @@ qt_create_translation(QM_FILES
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
 include(src/Persistence/cmake/Locations.cmake)
 
-target_sources(${PROJECT_NAME}
+add_custom_target("SkyDollyProject")
+target_sources("SkyDollyProject"
     PRIVATE
         BUILD.md
         CHANGELOG.md
@@ -127,6 +128,7 @@ target_sources(${PROJECT_NAME}
         doc/LICENSE
         ${QM_FILES}
 )
+
 # Plugins
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugins)
 
