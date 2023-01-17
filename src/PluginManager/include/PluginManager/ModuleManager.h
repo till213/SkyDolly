@@ -43,6 +43,7 @@ class QLayout;
 
 #include <Kernel/Sort.h>
 #include <Kernel/QUuidHasher.h>
+#include "SkyConnectIntf.h"
 #include "PluginManagerLib.h"
 
 class ModuleIntf;
@@ -79,7 +80,7 @@ public:
 
     void setRecording(bool enable) noexcept;
     void setPlaying(bool enable) noexcept;
-    void setPaused(bool enable) noexcept;
+    void setPauseMode(SkyConnectIntf::PauseMode pauseMode) noexcept;
 
 signals:
     void activated(QString title, QUuid moduleUuid);

@@ -30,6 +30,10 @@
 #include <QtGlobal>
 #include <QRandomGenerator>
 #include <QStringList>
+#ifdef DEBUG
+#include <QDebug>
+#include <Kernel/Enum.h>
+#endif
 
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
@@ -154,13 +158,16 @@ bool PathCreatorPlugin::onStartReplay([[maybe_unused]] std::int64_t currentTimes
     return true;
 }
 
-void PathCreatorPlugin::onReplayPaused(bool paused) noexcept
+void PathCreatorPlugin::onReplayPaused(PauseMode pauseMode) noexcept
 {
-    if (paused) {
+    if (pauseMode != PauseMode::Resume) {
          d->replayTimer.stop();
     } else {
         d->replayTimer.start(ReplayPeriod);
     }
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::onReplayPaused: pauseMode:" << Enum::underly(pauseMode);
+#endif
 }
 
 void PathCreatorPlugin::onStopReplay() noexcept

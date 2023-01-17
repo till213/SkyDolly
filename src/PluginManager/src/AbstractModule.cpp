@@ -66,7 +66,7 @@ void AbstractModule::setRecording(bool enable) noexcept
     case Connect::State::RecordingPaused:
         if (enable) {
             // The record button also unpauses a paused recording
-            setPaused(false);
+            setPauseMode(SkyConnectIntf::PauseMode::Resume);
         }
         break;
     default:
@@ -77,9 +77,9 @@ void AbstractModule::setRecording(bool enable) noexcept
     }
 }
 
-void AbstractModule::setPaused(bool enable) noexcept
+void AbstractModule::setPauseMode(SkyConnectIntf::PauseMode pauseMode) noexcept
 {
-    onPaused(enable);
+    onPauseMode(pauseMode);
 }
 
 void AbstractModule::setPlaying(bool enable) noexcept
@@ -87,7 +87,7 @@ void AbstractModule::setPlaying(bool enable) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isPaused() && enable) {
         // The play button also unpauses a paused replay
-        setPaused(false);
+        setPauseMode(SkyConnectIntf::PauseMode::Resume);
     } else if (enable) {
         onStartReplay();
     } else {
@@ -102,9 +102,9 @@ void AbstractModule::onStartRecording() noexcept
     SkyConnectManager::getInstance().startRecording(SkyConnectIntf::RecordingMode::SingleAircraft);
 }
 
-void AbstractModule::onPaused(bool enable) noexcept
+void AbstractModule::onPauseMode(SkyConnectIntf::PauseMode pauseMode) noexcept
 {
-    SkyConnectManager::getInstance().setPaused(enable);
+    SkyConnectManager::getInstance().setPauseMode(pauseMode);
 }
 
 void AbstractModule::onStartReplay() noexcept

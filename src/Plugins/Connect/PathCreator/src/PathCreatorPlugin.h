@@ -63,7 +63,7 @@ protected:
     void onStopRecording() noexcept override;
 
     bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
-    void onReplayPaused(bool paused) noexcept override;
+    void onReplayPaused(PauseMode pauseMode) noexcept override;
     void onStopReplay() noexcept override;
 
     void onSeek(std::int64_t currentTimestamp) noexcept override;

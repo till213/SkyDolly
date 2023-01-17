@@ -258,14 +258,24 @@ bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
     return result == S_OK;
 }
 
-void MSFSSimConnectPlugin::onReplayPaused(bool enable) noexcept
+void MSFSSimConnectPlugin::onReplayPaused(PauseMode pauseMode) noexcept
 {
-    if (enable) {
+    if (pauseMode != PauseMode::Resume) {
         ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
     } else {
         ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
     }
-    d->eventStateHandler->pauseSimulation(enable);
+    switch (pauseMode) {
+    case PauseMode::Pause:
+        d->eventStateHandler->pauseSimulation(true);
+        break;
+    case PauseMode::PauseDuringSeek:
+        // We do not pause the simulation during seek
+        break;
+    case PauseMode::Resume:
+        d->eventStateHandler->resumePausedSimulation();
+        break;
+    }
 }
 
 void MSFSSimConnectPlugin::onStopReplay() noexcept
@@ -724,7 +734,8 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             // loaded a flight: we simply do this by assuming that no "unpause" would normally be sent
             // at the very beginning (timestamp 0) of the replay
             if (evt->dwData > 0 || skyConnect->getCurrentTimestamp() > 0) {
-                skyConnect->setPaused(evt->dwData == 1);
+                PauseMode pauseMode = evt->dwData == 1 ? SkyConnectIntf::PauseMode::Pause : SkyConnectIntf::PauseMode::Resume;
+                skyConnect->setPauseMode(pauseMode);
             }
             break;
 

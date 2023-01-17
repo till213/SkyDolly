@@ -76,7 +76,7 @@ public:
 
     void stop() noexcept override;
 
-    void setPaused(bool enabled) noexcept override;
+    void setPauseMode(PauseMode pauseMode) noexcept override;
     bool isPaused() const noexcept override;
 
     void skipToBegin() noexcept override;
@@ -131,7 +131,7 @@ protected:
     virtual void onStopRecording() noexcept = 0;
 
     virtual bool onStartReplay(std::int64_t currentTimestamp) noexcept = 0;
-    virtual void onReplayPaused(bool paused) noexcept = 0;
+    virtual void onReplayPaused(PauseMode pauseMode) noexcept = 0;
     virtual void onStopReplay() noexcept = 0;
 
     virtual void onSeek(std::int64_t currentTimestamp) noexcept = 0;

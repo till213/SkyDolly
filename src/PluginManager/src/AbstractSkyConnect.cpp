@@ -293,9 +293,9 @@ void AbstractSkyConnect::stop() noexcept
     }
 }
 
-void AbstractSkyConnect::setPaused(bool enabled) noexcept
+void AbstractSkyConnect::setPauseMode(PauseMode pauseMode) noexcept
 {
-    if (enabled) {
+    if (pauseMode != PauseMode::Resume) {
         switch (d->state) {
         case Connect::State::Recording:
             setState(Connect::State::RecordingPaused);
@@ -315,7 +315,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
                 d->elapsedTimer.invalidate();
             }
             updateUserAircraftFreeze();
-            onReplayPaused(true);
+            onReplayPaused(pauseMode);
             break;
          default:
             // No state change
@@ -338,7 +338,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             setState(Connect::State::Replay);
             startElapsedTimer();
             updateUserAircraftFreeze();
-            onReplayPaused(false);
+            onReplayPaused(pauseMode);
             break;
          default:
             // No state change

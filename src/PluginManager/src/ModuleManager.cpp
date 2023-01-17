@@ -47,6 +47,7 @@
 #include <Kernel/Enum.h>
 #include <Kernel/QUuidHasher.h>
 #include <Kernel/Sort.h>
+#include "SkyConnectIntf.h"
 #include "ModuleIntf.h"
 #include "DefaultModuleImpl.h"
 #include "ModuleManager.h"
@@ -203,12 +204,12 @@ void ModuleManager::setPlaying(bool enable) noexcept
     }
 }
 
-void ModuleManager::setPaused(bool enable) noexcept
+void ModuleManager::setPauseMode(SkyConnectIntf::PauseMode pauseMode) noexcept
 {
     if (d->activeModule != nullptr) {
-        d->activeModule->setPaused(enable);
+        d->activeModule->setPauseMode(pauseMode);
     } else {
-        d->defaultModuleImpl->setPaused(enable);
+        d->defaultModuleImpl->setPauseMode(pauseMode);
     }
 }
 

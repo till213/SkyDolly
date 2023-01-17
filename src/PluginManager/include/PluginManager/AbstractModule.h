@@ -31,6 +31,7 @@
 
 class QWidget;
 
+#include "SkyConnectIntf.h"
 #include "ModuleIntf.h"
 #include "PluginManagerLib.h"
 
@@ -51,12 +52,12 @@ public:
 
     ModuleIntf::RecordIconId getRecordIconId() const noexcept override;
     void setRecording(bool enable) noexcept override;
-    void setPaused(bool enable) noexcept override;
+    void setPauseMode(SkyConnectIntf::PauseMode pauseMode) noexcept override;
     void setPlaying(bool enable) noexcept override;
 
 protected:
     virtual void onStartRecording() noexcept;
-    virtual void onPaused(bool enable) noexcept;
+    virtual void onPauseMode(SkyConnectIntf::PauseMode pauseMode) noexcept;
     virtual void onStartReplay() noexcept;
 
     FlightService &getFlightService() const noexcept;

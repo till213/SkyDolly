@@ -1093,7 +1093,7 @@ void MainWindow::onPositionSliderPressed() noexcept
     d->previousState = skyConnectManager.getState();
     if (d->previousState == Connect::State::Replay) {
         // Pause the replay while sliding the position slider
-        skyConnectManager.setPaused(true);
+        skyConnectManager.setPauseMode(SkyConnectIntf::PauseMode::PauseDuringSeek);
     }
 }
 
@@ -1114,7 +1114,7 @@ void MainWindow::onPositionSliderReleased() noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (d->previousState == Connect::State::Replay) {
-        skyConnectManager.setPaused(false);
+        skyConnectManager.setPauseMode(SkyConnectIntf::PauseMode::Resume);
     }
 }
 
@@ -1620,7 +1620,8 @@ void MainWindow::toggleRecord(bool enable) noexcept
 
 void MainWindow::togglePause(bool enable) noexcept
 {
-    d->moduleManager->setPaused(enable);
+    SkyConnectIntf::PauseMode pauseMode = enable ? SkyConnectIntf::PauseMode::Pause : SkyConnectIntf::PauseMode::Resume;
+    d->moduleManager->setPauseMode(pauseMode);
 }
 
 void MainWindow::togglePlay(bool enable) noexcept
@@ -1669,11 +1670,11 @@ void MainWindow::onFlightRestored() noexcept
     skyConnectManager.skipToBegin();
     if (skyConnectManager.isConnected()) {
         // Make sure we are unpaused...
-        d->moduleManager->setPaused(false);
+        d->moduleManager->setPauseMode(SkyConnectIntf::PauseMode::Resume);
         // ... play the first frame (which will "move" to the new location)...
         d->moduleManager->setPlaying(true);
         // ... and pause again (such that the new scenery can be loaded)
-        d->moduleManager->setPaused(true);
+        d->moduleManager->setPauseMode(SkyConnectIntf::PauseMode::Pause);
     }
 }
 
@@ -1694,7 +1695,7 @@ void MainWindow::onFlightImport(QAction *action) noexcept
         skyConnectManager.skipToBegin();
         if (skyConnectManager.isConnected()) {
             d->moduleManager->setPlaying(true);
-            d->moduleManager->setPaused(true);
+            d->moduleManager->setPauseMode(SkyConnectIntf::PauseMode::Pause);
         }
     }
 }
