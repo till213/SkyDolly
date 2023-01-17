@@ -66,6 +66,8 @@
 
 #include "SimVar/SimulationVariables.h"
 #include "Event/SimConnectEvent.h"
+#include "Event/EventState.h"
+#include "Event/EventStateHandler.h"
 #include "Event/EventWidget.h"
 #include "SimConnectType.h"
 #include "SimConnectAi.h"
@@ -88,8 +90,8 @@ public:
     LightData currentLightData;
     QDateTime currentLocalDateTime;
     QDateTime currentZuluDateTime;
-    HANDLE simConnectHandle{nullptr};
-    std::unique_ptr<SimConnectEvent> simConnectEvent {nullptr};
+    ::HANDLE simConnectHandle {nullptr};
+    std::unique_ptr<EventStateHandler> eventStateHandler {std::make_unique<EventStateHandler>()};
     std::unique_ptr<SimConnectAi> simConnectAi {nullptr};
     std::unique_ptr<EventWidget> eventWidget {std::make_unique<EventWidget>()};
     ::SIMCONNECT_PERIOD currentRequestPeriod {::SIMCONNECT_PERIOD_NEVER};
@@ -110,9 +112,7 @@ MSFSSimConnectPlugin::MSFSSimConnectPlugin(QObject *parent) noexcept
 
 MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
 {
-    if (d->simConnectEvent != nullptr) {
-        d->simConnectEvent->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
-    }
+    d->eventStateHandler->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
     close();
 }
 
@@ -145,9 +145,7 @@ bool MSFSSimConnectPlugin::onInitialPositionSetup(const InitialPosition &initial
 bool MSFSSimConnectPlugin::onFreezeUserAircraft(bool enable) const noexcept
 {
     bool ok {true};
-    if (d->simConnectEvent != nullptr) {
-        ok = d->simConnectEvent->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, enable);
-    }
+    ok = d->eventStateHandler->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, enable);
     return ok;
 }
 
@@ -192,9 +190,7 @@ bool MSFSSimConnectPlugin::onStartRecording() noexcept
 void MSFSSimConnectPlugin::onRecordingPaused(bool enable) noexcept
 {
     updateRecordingFrequency(Settings::getInstance().getRecordingSampleRate());
-    if (d->simConnectEvent != nullptr) {
-        d->simConnectEvent->pauseSimulation(enable);
-    }
+    d->eventStateHandler->pauseSimulation(enable);
 }
 
 void MSFSSimConnectPlugin::onStopRecording() noexcept
@@ -205,9 +201,7 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
     // Stop receiving aircraft position
     updateRequestPeriod(::SIMCONNECT_PERIOD_NEVER);
 
-    if (d->simConnectEvent != nullptr) {
-        d->simConnectEvent->resumePausedSimulation();
-    }
+    d->eventStateHandler->resumePausedSimulation();
 
     // Update flight plan
     Flight &flight = getCurrentFlight();
@@ -258,10 +252,7 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
 
 bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
 {
-    if (d->simConnectEvent != nullptr) {
-        d->simConnectEvent->reset();
-    }
-
+    d->eventStateHandler->reset();
     // Send aircraft position every visual frame
     HRESULT result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
     return result == S_OK;
@@ -274,24 +265,18 @@ void MSFSSimConnectPlugin::onReplayPaused(bool enable) noexcept
     } else {
         ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
     }
-    if (d->simConnectEvent != nullptr) {
-        d->simConnectEvent->pauseSimulation(enable);
-    }
+    d->eventStateHandler->pauseSimulation(enable);
 }
 
 void MSFSSimConnectPlugin::onStopReplay() noexcept
 {
     ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
-    if (d->simConnectEvent != nullptr) {
-        d->simConnectEvent->resumePausedSimulation();
-    }
+    d->eventStateHandler->resumePausedSimulation();
 }
 
 void MSFSSimConnectPlugin::onSeek(std::int64_t currentTimestamp) noexcept
 {
-    if (d->simConnectEvent != nullptr) {
-        d->simConnectEvent->reset();
-    }
+    d->eventStateHandler->reset();
 };
 
 void MSFSSimConnectPlugin::onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
@@ -358,7 +343,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                                                                                 sizeof(SimConnectEngineUser), &engineUser);
                             ok = res == S_OK;
                             if (ok) {
-                                ok = d->simConnectEvent->sendEngine(simConnectEngineAll);
+                                ok = d->eventStateHandler->sendEngine(simConnectEngineAll);
                             }
                         } else {
                             SimConnectEngineAi engineAi {simConnectEngineAll.ai()};
@@ -376,7 +361,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!primaryFlightControlData.isNull()) {
                         SimConnectPrimaryFlightControlAll simConnectPrimaryFlightControlAll {primaryFlightControlData};
                         if (isUserAircraft) {
-                            ok = d->simConnectEvent->sendPrimaryFlightControl(simConnectPrimaryFlightControlAll.event);
+                            ok = d->eventStateHandler->sendPrimaryFlightControl(simConnectPrimaryFlightControlAll.event);
                         } else {
                             SimConnectPrimaryFlightControlAi simConnectPrimaryFlightControlAi {simConnectPrimaryFlightControlAll.ai()};
                             HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAi),
@@ -393,7 +378,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!secondaryFlightControlData.isNull()) {
                         SimConnectSecondaryFlightControlAll simConnectSecondaryFlightControlAll {secondaryFlightControlData};
                         if (isUserAircraft) {
-                            ok = d->simConnectEvent->sendSecondaryFlightControl(simConnectSecondaryFlightControlAll.event);
+                            ok = d->eventStateHandler->sendSecondaryFlightControl(simConnectSecondaryFlightControlAll.event);
                         } else {
                             SimConnectSecondaryFlightControlAi simConnectSecondaryFlightControlAi {simConnectSecondaryFlightControlAll.ai()};
                             const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControlAi),
@@ -416,7 +401,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                                                                                 sizeof(SimConnectAircraftHandleUser), &simConnectAircraftHandleUser);
                             ok = res == S_OK;
                             if (ok) {
-                                ok = d->simConnectEvent->sendAircraftHandle(simConnectAircraftHandleAll);
+                                ok = d->eventStateHandler->sendAircraftHandle(simConnectAircraftHandleAll);
                             }
 
                         } else {
@@ -436,7 +421,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!lightData.isNull()) {
                         SimConnectLightAll simConnectLightAll {lightData};
                         if (isUserAircraft) {
-                            ok = d->simConnectEvent->sendLight(simConnectLightAll.event);
+                            ok = d->eventStateHandler->sendLight(simConnectLightAll.event);
                         } else {
                             SimConnectLightAi simConnectLightAi {simConnectLightAll.ai()};
                             const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LightAi),
@@ -472,7 +457,7 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
     DWORD userEvent = EventWidget::SimConnnectUserMessage;
     HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, ::SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
     if (result == S_OK) {
-        d->simConnectEvent = std::make_unique<SimConnectEvent>(d->simConnectHandle);
+        d->eventStateHandler->setSimConnectHandle(d->simConnectHandle);
         d->simConnectAi = std::make_unique<SimConnectAi>(d->simConnectHandle);
         setupRequestData();
     }
@@ -629,7 +614,7 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
 
     ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::InitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
-    d->simConnectEvent->setupEvents();
+    d->eventStateHandler->setupEvents();
 }
 
 void MSFSSimConnectPlugin::replay() noexcept
@@ -934,7 +919,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         {
             if (skyConnect->getState() == Connect::State::Replay || skyConnect->getState() == Connect::State::ReplayPaused) {
                 auto flapsHandleIndex = reinterpret_cast<const SimConnectVariables::FlapsHandleIndex *>(&objectData->dwData);
-                skyConnect->d->simConnectEvent->setCurrentFlapsHandleIndex(flapsHandleIndex->flapsHandleIndex);
+                skyConnect->d->eventStateHandler->setCurrentFlapsHandleIndex(flapsHandleIndex->flapsHandleIndex);
             }
             break;
         }
@@ -942,16 +927,16 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         {
             if (skyConnect->getState() == Connect::State::Replay || skyConnect->getState() == Connect::State::ReplayPaused) {
                 auto simConnectLightEvent = reinterpret_cast<const SimConnectLightEvent *>(&objectData->dwData);
-                skyConnect->d->simConnectEvent->setCurrentNavigationLight(simConnectLightEvent->navigation);
-                skyConnect->d->simConnectEvent->setCurrentBeaconLight(simConnectLightEvent->beacon);
-                skyConnect->d->simConnectEvent->setCurrentLandingLight(simConnectLightEvent->landing);
-                skyConnect->d->simConnectEvent->setCurrentTaxiLight(simConnectLightEvent->taxi);
-                skyConnect->d->simConnectEvent->setCurrentStrobeLight(simConnectLightEvent->strobe);
-                skyConnect->d->simConnectEvent->setCurrentPanelLight(simConnectLightEvent->panel);
-                skyConnect->d->simConnectEvent->setCurrentRecognitionLight(simConnectLightEvent->recognition);
-                skyConnect->d->simConnectEvent->setCurrentWingLight(simConnectLightEvent->wing);
-                skyConnect->d->simConnectEvent->setCurrentLogoLight(simConnectLightEvent->logo);
-                skyConnect->d->simConnectEvent->setCurrentCabinLight(simConnectLightEvent->cabin);
+                skyConnect->d->eventStateHandler->setCurrentNavigationLight(simConnectLightEvent->navigation);
+                skyConnect->d->eventStateHandler->setCurrentBeaconLight(simConnectLightEvent->beacon);
+                skyConnect->d->eventStateHandler->setCurrentLandingLight(simConnectLightEvent->landing);
+                skyConnect->d->eventStateHandler->setCurrentTaxiLight(simConnectLightEvent->taxi);
+                skyConnect->d->eventStateHandler->setCurrentStrobeLight(simConnectLightEvent->strobe);
+                skyConnect->d->eventStateHandler->setCurrentPanelLight(simConnectLightEvent->panel);
+                skyConnect->d->eventStateHandler->setCurrentRecognitionLight(simConnectLightEvent->recognition);
+                skyConnect->d->eventStateHandler->setCurrentWingLight(simConnectLightEvent->wing);
+                skyConnect->d->eventStateHandler->setCurrentLogoLight(simConnectLightEvent->logo);
+                skyConnect->d->eventStateHandler->setCurrentCabinLight(simConnectLightEvent->cabin);
             }
             break;
         }
@@ -982,7 +967,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         std::int64_t simulationObjectId = objectData->dwObjectID;
         if (skyConnect->d->simConnectAi->registerObjectId(objectData->dwRequestID, simulationObjectId)) {
             ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, simulationObjectId, Enum::underly(SimConnectType::DataRequest::AiReleaseControl));
-            skyConnect->d->simConnectEvent->freezeAircraft(objectData->dwObjectID, true);
+            skyConnect->d->eventStateHandler->freezeAircraft(objectData->dwObjectID, true);
         } else {
             // No pending request (request has already been removed), so destroy the
             // just generated AI object again

@@ -65,6 +65,9 @@ public:
         FlyWithFormation
     };
 
+    /*!
+     * Simulation events that can explicitly be triggered (requested) by the application.
+     */
     enum struct SimulationEvent {
         None,
         EngineStart,
