@@ -213,25 +213,25 @@ public:
     inline bool sendLight(const SimConnectLightEvent &event)
     {
         m_navigationLightSwitch.requested = event.navigation;
-        bool ok = sendLightState(m_navigationLightSwitch);
+        bool ok = toggleLight(m_navigationLightSwitch);
         m_beaconLightSwitch.requested = event.beacon;
-        ok = ok && sendLightState(m_beaconLightSwitch);
+        ok = ok && toggleLight(m_beaconLightSwitch);
         m_landingLightSwitch.requested = event.landing;
-        ok = ok && sendLightState(m_landingLightSwitch);
+        ok = ok && toggleLight(m_landingLightSwitch);
         m_taxiLightSwitch.requested = event.taxi;
-        ok = ok && sendLightState(m_taxiLightSwitch);
+        ok = ok && toggleLight(m_taxiLightSwitch);
         m_strobeLightSwitch.requested = event.taxi;
-        ok = ok && sendLightState(m_strobeLightSwitch);
+        ok = ok && toggleLight(m_strobeLightSwitch);
         m_panelLightSwitch.requested = event.panel;
-        ok = ok && sendLightState(m_panelLightSwitch);
+        ok = ok && toggleLight(m_panelLightSwitch);
         m_recognitionLightSwitch.requested = event.recognition;
-        ok = ok && sendLightState(m_recognitionLightSwitch);
+        ok = ok && toggleLight(m_recognitionLightSwitch);
         m_wingLightSwitch.requested = event.wing;
-        ok = ok && sendLightState(m_wingLightSwitch);
+        ok = ok && toggleLight(m_wingLightSwitch);
         m_logoLightSwitch.requested = event.logo;
-        ok = ok && sendLightState(m_logoLightSwitch);
+        ok = ok && toggleLight(m_logoLightSwitch);
         m_cabinLightSwitch.requested = event.cabin;
-        ok = ok && sendLightState(m_cabinLightSwitch);
+        ok = ok && toggleLight(m_cabinLightSwitch);
 
         return ok;
     }
@@ -258,7 +258,7 @@ public:
 #endif
         m_navigationLightSwitch.current = (enabled != 0);
         m_navigationLightSwitch.valid = true;
-        const bool ok = sendLightState(m_navigationLightSwitch);
+        const bool ok = toggleLight(m_navigationLightSwitch);
         return ok;
     }
 
@@ -271,7 +271,7 @@ public:
 #endif
         m_beaconLightSwitch.current = (enabled != 0);
         m_beaconLightSwitch.valid = true;
-        const bool ok = sendLightState(m_beaconLightSwitch);
+        const bool ok = toggleLight(m_beaconLightSwitch);
         return ok;
     }
 
@@ -284,7 +284,7 @@ public:
 #endif
         m_landingLightSwitch.current = (enabled != 0);
         m_landingLightSwitch.valid = true;
-        const bool ok = sendLightState(m_landingLightSwitch);
+        const bool ok = toggleLight(m_landingLightSwitch);
         return ok;
     }
 
@@ -297,7 +297,7 @@ public:
 #endif
         m_taxiLightSwitch.current = (enabled != 0);
         m_taxiLightSwitch.valid = true;
-        const bool ok = sendLightState(m_taxiLightSwitch);
+        const bool ok = toggleLight(m_taxiLightSwitch);
         return ok;
     }
 
@@ -310,7 +310,7 @@ public:
 #endif
         m_strobeLightSwitch.current = (enabled != 0);
         m_strobeLightSwitch.valid = true;
-        const bool ok = sendLightState(m_strobeLightSwitch);
+        const bool ok = toggleLight(m_strobeLightSwitch);
         return ok;
     }
 
@@ -323,7 +323,7 @@ public:
 #endif
         m_panelLightSwitch.current = (enabled != 0);
         m_panelLightSwitch.valid = true;
-        const bool ok = sendLightState(m_panelLightSwitch);
+        const bool ok = toggleLight(m_panelLightSwitch);
         return ok;
     }
 
@@ -336,7 +336,7 @@ public:
 #endif
         m_recognitionLightSwitch.current = (enabled != 0);
         m_recognitionLightSwitch.valid = true;
-        const bool ok = sendLightState(m_recognitionLightSwitch);
+        const bool ok = toggleLight(m_recognitionLightSwitch);
         return ok;
     }
 
@@ -349,7 +349,7 @@ public:
 #endif
         m_wingLightSwitch.current = (enabled != 0);
         m_wingLightSwitch.valid = true;
-        const bool ok = sendLightState(m_wingLightSwitch);
+        const bool ok = toggleLight(m_wingLightSwitch);
         return ok;
     }
 
@@ -362,7 +362,7 @@ public:
 #endif
         m_logoLightSwitch.current = (enabled != 0);
         m_logoLightSwitch.valid = true;
-        const bool ok = sendLightState(m_logoLightSwitch);
+        const bool ok = toggleLight(m_logoLightSwitch);
         return ok;
     }
 
@@ -375,13 +375,13 @@ public:
 #endif
         m_cabinLightSwitch.current = (enabled != 0);
         m_cabinLightSwitch.valid = true;
-        const bool ok = sendLightState(m_cabinLightSwitch);
+        const bool ok = toggleLight(m_cabinLightSwitch);
         return ok;
     }
 
     inline void reset() {
         // Engine
-        m_engineState = EventState::EngineState::Unknown;
+        m_engineState = EventState::Engine::Unknown;
         // Flaps
         m_flapsIndex.reset();
         // Lights
@@ -399,20 +399,20 @@ public:
 
 private:
     ::HANDLE m_simConnectHandle {nullptr};
-    EventState::EngineState m_engineState {EventState::EngineState::Unknown};
+    EventState::Engine m_engineState {EventState::Engine::Unknown};
 
-    EventState::SwitchState<std::int32_t> m_flapsIndex;
+    EventState::Switch<std::int32_t> m_flapsIndex;
 
-    EventState::ToggleSwitch m_navigationLightSwitch {SimConnectEvent::Event::ToggleNavLights};
-    EventState::ToggleSwitch m_beaconLightSwitch {SimConnectEvent::Event::ToggleBeaconLights};
-    EventState::ToggleSwitch m_landingLightSwitch {SimConnectEvent::Event::LandingLightsToggle};
-    EventState::ToggleSwitch m_taxiLightSwitch {SimConnectEvent::Event::ToggleTaxiLights};
-    EventState::ToggleSwitch m_strobeLightSwitch {SimConnectEvent::Event::StrobesToggle};
-    EventState::ToggleSwitch m_panelLightSwitch {SimConnectEvent::Event::PanelLightsToggle};
-    EventState::ToggleSwitch m_recognitionLightSwitch {SimConnectEvent::Event::ToggleRecognitionLights};
-    EventState::ToggleSwitch m_wingLightSwitch {SimConnectEvent::Event::ToggleWingLights};
-    EventState::ToggleSwitch m_logoLightSwitch {SimConnectEvent::Event::ToggleLogoLights};
-    EventState::ToggleSwitch m_cabinLightSwitch {SimConnectEvent::Event::ToggleCabinLights};
+    EventState::Toggle m_navigationLightSwitch {SimConnectEvent::Event::ToggleNavLights};
+    EventState::Toggle m_beaconLightSwitch {SimConnectEvent::Event::ToggleBeaconLights};
+    EventState::Toggle m_landingLightSwitch {SimConnectEvent::Event::LandingLightsToggle};
+    EventState::Toggle m_taxiLightSwitch {SimConnectEvent::Event::ToggleTaxiLights};
+    EventState::Toggle m_strobeLightSwitch {SimConnectEvent::Event::StrobesToggle};
+    EventState::Toggle m_panelLightSwitch {SimConnectEvent::Event::PanelLightsToggle};
+    EventState::Toggle m_recognitionLightSwitch {SimConnectEvent::Event::ToggleRecognitionLights};
+    EventState::Toggle m_wingLightSwitch {SimConnectEvent::Event::ToggleWingLights};
+    EventState::Toggle m_logoLightSwitch {SimConnectEvent::Event::ToggleLogoLights};
+    EventState::Toggle m_cabinLightSwitch {SimConnectEvent::Event::ToggleCabinLights};
 
     bool m_paused {false};
 
@@ -422,13 +422,13 @@ private:
         const SimConnectEngineCore &engineCore = engine.core;
         const SimConnectEngineEvent &engineEvent = engine.event;
         switch (m_engineState) {
-        case EventState::EngineState::Starting:
+        case EventState::Engine::Starting:
             if (engineEvent.hasCombustion()) {
-                m_engineState = EventState::EngineState::Started;
+                m_engineState = EventState::Engine::Started;
             } else if (!engineCore.hasEngineStarterEnabled()) {
                  // STARTING: Engine started disabled, no combustion -> STOPPED
                 result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-                m_engineState = EventState::EngineState::Stopped;
+                m_engineState = EventState::Engine::Stopped;
 #ifdef DEBUG
                 qDebug() << "EventStateHandler::sendEventState::EngineState: stopping engines"
                          << "Current engine state: STOPPED"
@@ -437,11 +437,11 @@ private:
 #endif
             }
             break;
-        case EventState::EngineState::Started:
+        case EventState::Engine::Started:
             if (!engineEvent.hasCombustion()) {
                 // STARTED: No combustion -> STOPPED
                 result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-                m_engineState = EventState::EngineState::Stopped;
+                m_engineState = EventState::Engine::Stopped;
 #ifdef DEBUG
                 qDebug() << "EventStateHandler::sendEventState::EngineState: stopping engines"
                          << "Current engine state: STOPPED"
@@ -450,13 +450,13 @@ private:
 #endif
             }
             break;
-        case EventState::EngineState::Stopped:
+        case EventState::Engine::Stopped:
             // Either general engine starter has been enabled or combustion has started -> engine start
             // Note: apparently the engine starter can be disabled (false) and yet with an active combustion (= running engine)
             //       specifically in the case when the aircraft has been "auto-started" (CTRL + E)
             if (engineCore.hasEngineStarterEnabled() || engineEvent.hasCombustion()) {
                 result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-                m_engineState = EventState::EngineState::Starting;
+                m_engineState = EventState::Engine::Starting;
 #ifdef DEBUG
                 qDebug() << "EventStateHandler::sendEventState::EngineState: starting engines"
                          << "Current engine state: STARTING"
@@ -469,7 +469,7 @@ private:
             // Unknown
             if (engineCore.hasEngineStarterEnabled() || engineEvent.hasCombustion()) {
                 result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-                m_engineState = engineEvent.hasCombustion() ? EventState::EngineState::Started : EventState::EngineState::Starting;
+                m_engineState = engineEvent.hasCombustion() ? EventState::Engine::Started : EventState::Engine::Starting;
 #ifdef DEBUG
                 qDebug() << "EventStateHandler::sendEventState::EngineState: starting engines"
                          << "Current engine state:" << (engineEvent.hasCombustion() ? "STARTED" : "STARTING")
@@ -478,7 +478,7 @@ private:
 #endif
             } else {
                 result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-                m_engineState = EventState::EngineState::Stopped;
+                m_engineState = EventState::Engine::Stopped;
 #ifdef DEBUG
                 qDebug() << "EventStateHandler::sendEventState::EngineState: stopping engines"
                          << "Current engine state: STOPPED"
@@ -557,7 +557,7 @@ private:
 
     inline bool sendGearHandlePosition(bool gearDown)
     {
-        const SIMCONNECT_CLIENT_EVENT_ID eventId = gearDown ?Enum::underly(SimConnectEvent::Event::GearDown) : Enum::underly(SimConnectEvent::Event::GearUp);
+        const SIMCONNECT_CLIENT_EVENT_ID eventId = gearDown ? Enum::underly(SimConnectEvent::Event::GearDown) : Enum::underly(SimConnectEvent::Event::GearUp);
         HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, eventId, 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
@@ -580,14 +580,14 @@ private:
         return result == S_OK;
     }
 
-    inline bool sendLightState(EventState::ToggleSwitch lightSwitch)
+    inline bool toggleLight(EventState::Toggle lightSwitch)
     {
         HRESULT result {S_OK};
         if (lightSwitch.needsUpdate()) {
             if (lightSwitch.valid) {
                 result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(lightSwitch.toggleEvent), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
 #ifdef DEBUG
-                qDebug() << "EventStateHandler::sendLightState: requested state:" << lightSwitch.requested
+                qDebug() << "EventStateHandler::toggleLight: requested state:" << lightSwitch.requested
                          << "Previous state:" << lightSwitch.current
                          << "Event:" << Enum::underly(lightSwitch.toggleEvent)
                          << "Success:" << (result == S_OK);
@@ -604,7 +604,7 @@ private:
                     lightSwitch.pending = true;
                 }
 #ifdef DEBUG
-                qDebug() << "EventStateHandler::sendLightState: requesting current light state"
+                qDebug() << "EventStateHandler::toggleLight: requesting current light state"
                          << "Current index:" << lightSwitch.current
                          << "Event:" << Enum::underly(lightSwitch.toggleEvent)
                          << "Success:" << (result == S_OK);

@@ -31,7 +31,7 @@
 
 namespace EventState
 {
-    enum struct EngineState: int {
+    enum struct Engine: int {
         Unknown,
         Starting,
         Started,
@@ -39,14 +39,14 @@ namespace EventState
     };
 
     template <typename T>
-    struct SwitchState
+    struct Switch
     {
         T current {};
         T requested {};
         bool valid {false};
         bool pending {false};
 
-        SwitchState() noexcept
+        Switch() noexcept
         {
             reset();
         }
@@ -83,14 +83,14 @@ namespace EventState
         }
     };
 
-    struct ToggleSwitch : public SwitchState<bool>
+    struct Toggle : public Switch<bool>
     {
         SimConnectEvent::Event toggleEvent;
 
-        ToggleSwitch(SimConnectEvent::Event toggleEvent) noexcept
+        Toggle(SimConnectEvent::Event toggleEvent) noexcept
             : toggleEvent(toggleEvent)
         {
-            SwitchState<bool>::reset();
+            Switch<bool>::reset();
         }
     };
 }
