@@ -37,6 +37,11 @@ namespace Const {
     // NASA X-43 (Mach 9.6)
     // https://internationalaviationhq.com/2020/06/27/17-fastest-aircraft/
     constexpr int MaximumIndicatedAirspeed {6350};
+
+    /*!
+     * Maximum rate at which the flight simulator is run.
+     */
+    constexpr int MaximumSimulationRate = 8;
 }
 
 #endif // CONST_H

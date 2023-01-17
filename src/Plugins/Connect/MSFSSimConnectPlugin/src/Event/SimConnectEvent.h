@@ -38,6 +38,7 @@ namespace SimConnectEvent
         Frame,
         // System events (requests)
         PauseSet,
+        SimRateSet,
         // Aircraft
         FreezeLatituteLongitude,
         FreezeAltitude,

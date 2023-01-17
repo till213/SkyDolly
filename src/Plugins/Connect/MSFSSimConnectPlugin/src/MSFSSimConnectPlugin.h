@@ -59,7 +59,7 @@ protected:
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;
-    bool onSimulationEvent(SimulationEvent event) const noexcept override;
+    bool onSimulationEvent(SimulationEvent event, int arg1) const noexcept override;
 
     bool onStartRecording() noexcept override;
     void onRecordingPaused(bool enable) noexcept override;

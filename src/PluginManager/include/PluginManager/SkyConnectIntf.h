@@ -80,7 +80,9 @@ public:
     enum struct SimulationEvent {
         None,
         EngineStart,
-        EngineStop
+        EngineStop,
+        /*! Argument 1: simulation rate */
+        SimulationRate
     };
 
     SkyConnectIntf(QObject *parent = nullptr) noexcept
@@ -96,7 +98,7 @@ public:
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) const noexcept = 0;
-    virtual bool sendSimulationEvent(SimulationEvent event) noexcept = 0;
+    virtual bool sendSimulationEvent(SimulationEvent event, int arg1) noexcept = 0;
 
     /*!
      * Returns the replay mode.

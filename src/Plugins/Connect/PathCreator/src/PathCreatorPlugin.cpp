@@ -119,7 +119,7 @@ bool PathCreatorPlugin::onFreezeUserAircraft([[maybe_unused]] bool enable) const
     return true;
 }
 
-bool PathCreatorPlugin::onSimulationEvent([[maybe_unused]] SimulationEvent event) const noexcept
+bool PathCreatorPlugin::onSimulationEvent([[maybe_unused]] SimulationEvent event, [[maybe_unused]] int arg1) const noexcept
 {
     return true;
 }

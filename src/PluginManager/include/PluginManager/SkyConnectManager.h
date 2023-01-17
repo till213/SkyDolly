@@ -80,7 +80,7 @@ public:
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
     bool setUserAircraftPosition(const PositionData & positionData) noexcept;
     bool freezeUserAircraft(bool enable) noexcept;
-    bool sendSimulationEvent(SkyConnectIntf::SimulationEvent event) noexcept;
+    bool sendSimulationEvent(SkyConnectIntf::SimulationEvent event, int arg1 = 0) noexcept;
 
     SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
     void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;

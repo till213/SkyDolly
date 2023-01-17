@@ -59,7 +59,7 @@ public:
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
     bool freezeUserAircraft(bool enable) const noexcept override;
-    bool sendSimulationEvent(SimulationEvent event) noexcept override;
+    bool sendSimulationEvent(SimulationEvent event, int arg1) noexcept override;
 
     ReplayMode getReplayMode() const noexcept override;
     void setReplayMode(ReplayMode replayMode) noexcept override;
@@ -124,7 +124,7 @@ protected:
 
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
-    virtual bool onSimulationEvent(SimulationEvent event) const noexcept = 0;
+    virtual bool onSimulationEvent(SimulationEvent event, int arg1) const noexcept = 0;
 
     virtual bool onStartRecording() noexcept = 0;
     virtual void onRecordingPaused(bool paused) noexcept = 0;

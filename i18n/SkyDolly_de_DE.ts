@@ -792,61 +792,76 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="65"/>
+        <source>Surface condition:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="88"/>
         <source>Temperature:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="85"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="108"/>
         <source>Total air temperature:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="105"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="128"/>
         <source>Wind speed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="125"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="148"/>
         <source>Wind direction:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="145"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="168"/>
         <source>Precipitation state:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="178"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="327"/>
+        <source>On any runway</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="349"/>
         <source>In clouds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="204"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="371"/>
+        <source>In parking state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="214"/>
         <source>Sea level pressure:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="224"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="234"/>
         <source>Pitot icing:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="244"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="254"/>
         <source>Structural icing:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="264"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="274"/>
         <source>Start simulation time:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="271"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="294"/>
         <source>End simulation time:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="304"/>
+        <location filename="../src/UserInterface/src/Widget/FlightConditionWidget.ui" line="194"/>
         <source>Visibility:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3580,180 +3595,197 @@ or choose another reference aircraft (marked in green) in the formation.</source
 <context>
     <name>SimType</name>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="121"/>
-        <location filename="../src/Model/include/Model/SimType.h" line="206"/>
-        <location filename="../src/Model/include/Model/SimType.h" line="237"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="137"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="222"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="244"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="275"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="127"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="140"/>
         <source>Concrete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="130"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="143"/>
         <source>Grass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="133"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="146"/>
         <source>Water</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="136"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="149"/>
         <source>Bumpy grass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="139"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="152"/>
         <source>Asphalt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="142"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="155"/>
         <source>Short grass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="145"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="158"/>
         <source>Long grass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="148"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="161"/>
         <source>Hard turf</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="151"/>
-        <location filename="../src/Model/include/Model/SimType.h" line="249"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="164"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="234"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="284"/>
         <source>Snow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="154"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="167"/>
         <source>Ice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="157"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="170"/>
         <source>Urban</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="160"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="173"/>
         <source>Forest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="163"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="176"/>
         <source>Dirt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="166"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="179"/>
         <source>Coral</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="169"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="182"/>
         <source>Gravel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="172"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="185"/>
         <source>Oil treated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="175"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="188"/>
         <source>Steel mats</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="178"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="191"/>
         <source>Bituminus</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="181"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="194"/>
         <source>Brick</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="184"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="197"/>
         <source>Macadam</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="187"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="200"/>
         <source>Planks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="190"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="203"/>
         <source>Sand</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="193"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="206"/>
         <source>Shale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="196"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="209"/>
         <source>Tarmac</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="199"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="212"/>
         <source>Wright flyer track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="212"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="225"/>
+        <source>Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Model/include/Model/SimType.h" line="228"/>
+        <source>Wet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Model/include/Model/SimType.h" line="231"/>
+        <source>Icy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Model/include/Model/SimType.h" line="247"/>
         <source>Piston</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="215"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="250"/>
         <source>Jet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="218"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="253"/>
         <source>No engine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="221"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="256"/>
         <source>Helo (Bell) turbine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="224"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="259"/>
         <source>Unsupported</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="227"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="262"/>
         <source>Turboprop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="230"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="265"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="243"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="278"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Model/include/Model/SimType.h" line="246"/>
+        <location filename="../src/Model/include/Model/SimType.h" line="281"/>
         <source>Rain</source>
         <translation type="unfinished"></translation>
     </message>

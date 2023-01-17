@@ -18,6 +18,7 @@
   * Surface condition (normal, wet, icy, snow)  
   * On any runway
   * Airplane in parking state
+- Increasing the replay speed now also increases the simulation rate (up to a maximum rate of 8x)
  
 ### Under The Hood
 - Small performance improvements
