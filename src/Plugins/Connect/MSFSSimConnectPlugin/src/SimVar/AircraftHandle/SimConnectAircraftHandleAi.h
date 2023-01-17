@@ -33,7 +33,7 @@
 #include "SimConnectAircraftHandleAnimation.h"
 
 /*!
- * AircraftHandle simulation variables that are sent to AI aircraft.
+ * Aircraft handle simulation variables that are sent to AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */

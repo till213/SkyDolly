@@ -34,7 +34,7 @@
 #include "SimConnectLightAi.h"
 
 /*!
- * Simulation variables that represent aircraft lights.
+ * All light simulation variables (reply from the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */

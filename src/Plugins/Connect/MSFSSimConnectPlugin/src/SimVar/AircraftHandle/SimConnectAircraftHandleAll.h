@@ -37,7 +37,7 @@
 #include "SimConnectAircraftHandleAi.h"
 
 /*!
- * Simulation variables that represent the engine (reply received from the flight simulator).
+ * All aircraft handle simulation variables (reply from the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */

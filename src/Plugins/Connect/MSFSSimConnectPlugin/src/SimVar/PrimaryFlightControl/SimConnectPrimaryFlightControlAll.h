@@ -35,7 +35,7 @@
 #include "SimConnectPrimaryFlightControlAi.h"
 
 /*!
- * Simulation variables that represent the primary flight controls: rudder, elevators and ailerons.
+ * All primary flight control simulation variables (reply from the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */

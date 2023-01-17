@@ -36,7 +36,7 @@
 #include "SimConnectType.h"
 
 /*!
- * Simulation variables that represent the secondary flight controls: flaps and spoilers.
+ * Secondary flightr control simulation variables that are sent exclusively to AI aircraft for animation.
  *
  * Implementation note: this struct needs to be packed.
  */

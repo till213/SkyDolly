@@ -35,7 +35,7 @@
 #include "SimConnectPositionAi.h"
 
 /*!
- * Simulation variables that represent the position (reply received from the flight simulator).
+ * All aircraft position simulation variables (reply from the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */

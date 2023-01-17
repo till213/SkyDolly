@@ -36,7 +36,7 @@
 #include <Model/AircraftHandleData.h>
 
 /*!
- * Aircraft handle variables that are sent exclusively to AI aircraft for animation.
+ * Aircraft handle simulation variables that are sent exclusively to AI aircraft for animation.
  *
  * Implementation note: this struct needs to be packed.
  */
