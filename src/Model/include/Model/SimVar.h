@@ -128,6 +128,11 @@ namespace SimVar
     constexpr const char *AirspeedTrue = "Airspeed True";
     constexpr const char *AirspeedIndicated = "Airspeed Indicated";
     constexpr const char *SurfaceType = "Surface Type";
+    constexpr const char *OnAnyRunway = "On Any Runway";
+    constexpr const char *PlaneInParkingState = "Plane In Parking State";
+    constexpr const char *SurfaceCondition = "Surface Condition";
+    constexpr const char *SurfaceInfoValid = "Surface Info Valid";
+
     constexpr const char *WingSpan = "Wing Span";
     constexpr const char *NumberOfEngines = "Number Of Engines";
     constexpr const char *EngineType = "Engine Type";

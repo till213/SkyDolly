@@ -412,6 +412,7 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
 
     flightCondition.groundAltitude = static_cast<float>(d->randomGenerator->bounded(4000.0));
     flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->randomGenerator->bounded(26));
+    flightCondition.surfaceCondition = static_cast<SimType::SurfaceCondition>(d->randomGenerator->bounded(5));
     flightCondition.ambientTemperature = static_cast<float>(d->randomGenerator->bounded(80.0f)) - 40.0f;
     flightCondition.totalAirTemperature = static_cast<float>(d->randomGenerator->bounded(80.0f)) - 40.0f;
     flightCondition.windSpeed = static_cast<float>(d->randomGenerator->bounded(30.0));
@@ -422,6 +423,8 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.pitotIcingPercent = d->randomGenerator->bounded(101);
     flightCondition.structuralIcingPercent = d->randomGenerator->bounded(101);
     flightCondition.inClouds = d->randomGenerator->bounded(2) < 1 ? false : true;
+    flightCondition.onAnyRunway = d->randomGenerator->bounded(2) < 1 ? false : true;
+    flightCondition.inParkingState = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.startLocalTime = QDateTime::currentDateTime();
     flightCondition.startZuluTime = QDateTime::currentDateTimeUtc();
 

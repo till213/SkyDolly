@@ -69,6 +69,11 @@ struct SimConnectAircraftInfo
 
     // Flight conditions
     std::int32_t surfaceType {0};
+    std::int32_t onAnyRunway {0};
+    std::int32_t planeInParkingState {0};
+    std::int32_t surfaceCondition {0};
+    std::int32_t surfaceInfoValid {0};
+
     float groundAltitude {0.0f};
     // Celcius
     float ambientTemperature {0.0f};
@@ -84,44 +89,15 @@ struct SimConnectAircraftInfo
 
     // Simulation time
     // [seconds]
-    std::int32_t localTime;
-    std::int32_t localYear;
-    std::int32_t localMonth;
-    std::int32_t localDay;
+    std::int32_t localTime {0};
+    std::int32_t localYear {0};
+    std::int32_t localMonth {0};
+    std::int32_t localDay {0};
     // [seconds]
-    std::int32_t zuluTime;
-    std::int32_t zuluYear;
-    std::int32_t zuluMonth;
-    std::int32_t zuluDay;
-
-    SimConnectAircraftInfo() noexcept
-        : planeAltAboveGround(0.0f),
-          simOnGround(false),
-          airspeedTrue(0),
-          wingSpan(0),
-          engineType(0),
-          numberOfEngines(0),
-          surfaceType(0),
-          groundAltitude(0.0f),
-          ambientTemperature(0.0f),
-          totalAirTemperature(0.0f),
-          ambientWindVelocity(0.0f),
-          ambientWindDirection(0.0f),
-          ambientVisibility(0.0f),
-          seaLevelPressure(0.0f),
-          pitotIcePct(0.0f),
-          structuralIcePct(0.0f),
-          ambientPrecipState(0),
-          ambientInCloud(0),
-          localTime(0),
-          localYear(0),
-          localMonth(0),
-          localDay(0),
-          zuluTime(0),
-          zuluYear(0),
-          zuluMonth(0),
-          zuluDay(0)
-    {}
+    std::int32_t zuluTime {0};
+    std::int32_t zuluYear {0};
+    std::int32_t zuluMonth {0};
+    std::int32_t zuluDay {0};
 
     inline AircraftInfo toAircraftInfo() const noexcept
     {
@@ -160,6 +136,10 @@ struct SimConnectAircraftInfo
         FlightCondition flightCondition;
 
         flightCondition.surfaceType = toSurfaceType(surfaceType);
+        flightCondition.onAnyRunway = (onAnyRunway != 0);
+        flightCondition.inParkingState = (planeInParkingState != 0);
+        flightCondition.surfaceCondition = toSurfaceCondition(surfaceCondition, (surfaceInfoValid != 0));
+
         flightCondition.groundAltitude = groundAltitude;
         flightCondition.ambientTemperature = ambientTemperature;
         flightCondition.totalAirTemperature = totalAirTemperature;
@@ -188,136 +168,170 @@ struct SimConnectAircraftInfo
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 
 private:
-    static inline SimType::SurfaceType toSurfaceType(std::int32_t surfaceType) noexcept
+    static inline SimType::SurfaceType toSurfaceType(std::int32_t type) noexcept
     {
-        switch (surfaceType) {
+        SimType::SurfaceType surfaceType;
+        switch (type) {
         case 0:
-            return SimType::SurfaceType::Concrete;
+            surfaceType = SimType::SurfaceType::Concrete;
             break;
         case 1:
-            return SimType::SurfaceType::Grass;
+            surfaceType = SimType::SurfaceType::Grass;
             break;
         case 2:
-            return SimType::SurfaceType::Water;
+            surfaceType = SimType::SurfaceType::Water;
             break;
         case 3:
-            return SimType::SurfaceType::BumpyGrass;
+            surfaceType = SimType::SurfaceType::BumpyGrass;
             break;
         case 4:
-            return SimType::SurfaceType::Asphalt;
+            surfaceType = SimType::SurfaceType::Asphalt;
             break;
         case 5:
-            return SimType::SurfaceType::ShortGrass;
+            surfaceType = SimType::SurfaceType::ShortGrass;
             break;
         case 6:
-            return SimType::SurfaceType::LongGrass;
+            surfaceType = SimType::SurfaceType::LongGrass;
             break;
         case 7:
-            return SimType::SurfaceType::HardTurf;
+            surfaceType = SimType::SurfaceType::HardTurf;
             break;
         case 8:
-            return SimType::SurfaceType::Snow;
+            surfaceType = SimType::SurfaceType::Snow;
             break;
         case 9:
-            return SimType::SurfaceType::Ice;
+            surfaceType = SimType::SurfaceType::Ice;
             break;
         case 10:
-            return SimType::SurfaceType::Urban;
+            surfaceType = SimType::SurfaceType::Urban;
             break;
         case 11:
-            return SimType::SurfaceType::Forest;
+            surfaceType = SimType::SurfaceType::Forest;
             break;
         case 12:
-            return SimType::SurfaceType::Dirt;
+            surfaceType = SimType::SurfaceType::Dirt;
             break;
         case 13:
-            return SimType::SurfaceType::Coral;
+            surfaceType = SimType::SurfaceType::Coral;
             break;
         case 14:
-            return SimType::SurfaceType::Gravel;
+            surfaceType = SimType::SurfaceType::Gravel;
             break;
         case 15:
-            return SimType::SurfaceType::OilTreated;
+            surfaceType = SimType::SurfaceType::OilTreated;
             break;
         case 16:
-            return SimType::SurfaceType::SteelMats;
+            surfaceType = SimType::SurfaceType::SteelMats;
             break;
         case 17:
-            return SimType::SurfaceType::Bituminus;
+            surfaceType = SimType::SurfaceType::Bituminus;
             break;
         case 18:
-            return SimType::SurfaceType::Brick;
+            surfaceType = SimType::SurfaceType::Brick;
             break;
         case 19:
-            return SimType::SurfaceType::Macadam;
+            surfaceType = SimType::SurfaceType::Macadam;
             break;
         case 20:
-            return SimType::SurfaceType::Planks;
+            surfaceType = SimType::SurfaceType::Planks;
             break;
         case 21:
-            return SimType::SurfaceType::Sand;
+            surfaceType = SimType::SurfaceType::Sand;
             break;
         case 22:
-            return SimType::SurfaceType::Shale;
+            surfaceType = SimType::SurfaceType::Shale;
             break;
         case 23:
-            return SimType::SurfaceType::Tarmac;
+            surfaceType = SimType::SurfaceType::Tarmac;
             break;
         case 24:
-            return SimType::SurfaceType::WrightFlyerTrack;
+            surfaceType = SimType::SurfaceType::WrightFlyerTrack;
             break;
         default:
-            return SimType::SurfaceType::Unknown;
+            surfaceType = SimType::SurfaceType::Unknown;
             break;
         }
+        return surfaceType;
     }
 
-    static inline SimType::EngineType toEngineType(std::int32_t engineType) noexcept
+    static inline SimType::SurfaceCondition toSurfaceCondition(std::int32_t condition, bool valid) noexcept
     {
-        switch (engineType) {
+        SimType::SurfaceCondition surfaceCondition;
+        if (valid) {
+            switch (condition) {
+            case 0:
+                surfaceCondition = SimType::SurfaceCondition::Normal;
+                break;
+            case 1:
+                surfaceCondition = SimType::SurfaceCondition::Wet;
+                break;
+            case 2:
+                surfaceCondition = SimType::SurfaceCondition::Icy;
+                break;
+            case 3:
+                surfaceCondition = SimType::SurfaceCondition::Snow;
+                break;
+            default:
+                surfaceCondition = SimType::SurfaceCondition::Unknown;
+                break;
+            }
+        } else {
+            // Surface condition info invalid
+            surfaceCondition = SimType::SurfaceCondition::Unknown;
+        }
+        return surfaceCondition;
+    }
+
+    static inline SimType::EngineType toEngineType(std::int32_t type) noexcept
+    {
+        SimType::EngineType engineType;
+        switch (type) {
         case 0:
-            return SimType::EngineType::Piston;
+            engineType = SimType::EngineType::Piston;
             break;
         case 1:
-            return SimType::EngineType::Jet;
+            engineType = SimType::EngineType::Jet;
             break;
         case 2:
-            return SimType::EngineType::None;
+            engineType = SimType::EngineType::None;
             break;
         case 3:
-            return SimType::EngineType::HeloBellTurbine;
+            engineType = SimType::EngineType::HeloBellTurbine;
             break;
         case 4:
-            return SimType::EngineType::Unsupported;
+            engineType = SimType::EngineType::Unsupported;
             break;
         case 5:
-            return SimType::EngineType::Turboprop;
+            engineType = SimType::EngineType::Turboprop;
             break;
         default:
-            return SimType::EngineType::Unknown;
+            engineType = SimType::EngineType::Unknown;
             break;
         }
+        return engineType;
     }
 
-    static inline SimType::PrecipitationState toPrecipitationState(std::int32_t precipitationState) noexcept
+    static inline SimType::PrecipitationState toPrecipitationState(std::int32_t state) noexcept
     {
-        switch (precipitationState) {
+        SimType::PrecipitationState precipitationState;
+        switch (state) {
         case 0:
-            return SimType::PrecipitationState::Unknown;
+            precipitationState = SimType::PrecipitationState::Unknown;
             break;
         case 2:
-            return SimType::PrecipitationState::None;
+            precipitationState = SimType::PrecipitationState::None;
             break;
         case 4:
-            return SimType::PrecipitationState::Rain;
+            precipitationState = SimType::PrecipitationState::Rain;
             break;
         case 8:
-            return SimType::PrecipitationState::Snow;
+            precipitationState = SimType::PrecipitationState::Snow;
             break;
         default:
-            return SimType::PrecipitationState::Unknown;
+            precipitationState = SimType::PrecipitationState::Unknown;
             break;
         }
+        return precipitationState;
     }
 };
 #pragma pack(pop)

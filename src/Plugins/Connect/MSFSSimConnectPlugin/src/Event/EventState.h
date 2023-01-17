@@ -83,7 +83,7 @@ namespace EventState
         }
     };
 
-    struct Toggle : public Switch<bool>
+    struct Toggle final : public Switch<bool>
     {
         SimConnectEvent::Event toggleEvent;
 

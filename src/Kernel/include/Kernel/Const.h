@@ -18,6 +18,12 @@ namespace Const {
      */
     constexpr const char *LogbookExtension {".sdlog"};
 
+    /*!
+     * Suffix indicating zulu time including whitespace, ready to be appended to a
+     * formated date/time string.
+     */
+    constexpr const char *ZuluTimeSuffix {" Z"};
+
     // Altitude [feet] and speed [knots] minima and maxima
 
     constexpr int DefaultAltitude {5000};

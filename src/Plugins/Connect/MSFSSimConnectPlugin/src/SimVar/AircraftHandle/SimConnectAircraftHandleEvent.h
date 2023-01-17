@@ -44,7 +44,7 @@
 struct SimConnectAircraftHandleEvent
 {
     float tailhookPosition {0.0f};
-    // TODO Move to HandleAnimation
+    // AI aircraft animation
     float foldingWingLeftPercent {0.0f};
     float foldingWingRightPercent {0.0f};
     std::int32_t gearHandlePosition {0};

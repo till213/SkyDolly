@@ -46,11 +46,9 @@
 #include "SimConnectEvent.h"
 #include "SimConnectType.h"
 
-class EventStateHandler
+class EventStateHandler final
 {
 public:
-
-
     EventStateHandler(::HANDLE simConnectHandle = nullptr) noexcept
         : m_simConnectHandle(simConnectHandle)
     {}

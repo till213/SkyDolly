@@ -35,22 +35,25 @@
 
 struct MODEL_API FlightCondition final
 {
-    float groundAltitude {0.0f};
+    QDateTime startLocalTime;
+    QDateTime startZuluTime;
+    QDateTime endLocalTime;
+    QDateTime endZuluTime;
     SimType::SurfaceType surfaceType {SimType::SurfaceType::Unknown};
+    SimType::SurfaceCondition surfaceCondition {SimType::SurfaceCondition::Unknown};
+    SimType::PrecipitationState precipitationState {SimType::PrecipitationState::None};
+    float groundAltitude {0.0f};
     float ambientTemperature {0.0f};
     float totalAirTemperature {0.0f};
     float windSpeed {0.0f};
-    float windDirection {0.0f};
-    SimType::PrecipitationState precipitationState {SimType::PrecipitationState::None};
+    float windDirection {0.0f};    
     float visibility {0.0f};
     float seaLevelPressure {0.0f};
     std::uint8_t pitotIcingPercent {0};
     std::uint8_t structuralIcingPercent {0};
     bool inClouds {false};
-    QDateTime startLocalTime;
-    QDateTime startZuluTime;
-    QDateTime endLocalTime;
-    QDateTime endZuluTime;
+    bool onAnyRunway {false};
+    bool inParkingState {false};
 
     void clear() noexcept;
 };

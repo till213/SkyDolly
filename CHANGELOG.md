@@ -14,7 +14,11 @@
   * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
 - When pausing either replay or recording the simulation is now also paused
 - No need to "repeat flaps" in settings anymore (improved flight control replay)
-
+- Added new flight information simulation variables:
+  * Surface condition (normal, wet, icy, snow)  
+  * On any runway
+  * Airplane in parking state
+ 
 ### Under The Hood
 - Small performance improvements
 
