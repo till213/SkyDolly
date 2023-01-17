@@ -106,6 +106,16 @@ namespace SimVar
     constexpr const char *FoldingWingRightPercent = "Folding Wing Right Percent";
 
     constexpr const char *LightStates = "Light States";
+    constexpr const char *LightNav = "Light Nav";
+    constexpr const char *LightBeacon = "Light Beacon";
+    constexpr const char *LightLanding = "Light Landing";
+    constexpr const char *LightTaxi = "Light Taxi";
+    constexpr const char *LightStrobe = "Light Strobe";
+    constexpr const char *LightPanel = "Light Panel";
+    constexpr const char *LightRecognition = "Light Recognition";
+    constexpr const char *LightWing = "Light Wing";
+    constexpr const char *LightLogo = "Light Logo";
+    constexpr const char *LightCabin = "Light Cabin";
 
     constexpr const char *Title = "Title";
     constexpr const char *ATCId = "ATC Id";

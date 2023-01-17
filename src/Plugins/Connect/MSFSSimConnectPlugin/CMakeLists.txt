@@ -37,15 +37,19 @@ target_sources(${MODULE_NAME}
         src/SimVar/AircraftHandle/SimConnectAircraftHandleAll.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleUser.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleAi.h
-        src/SimVar/SimConnectLight.h src/SimVar/SimConnectLight.cpp
+        src/SimVar/Light/SimConnectLightEvent.h
+        src/SimVar/Light/SimConnectLightAll.h
+        src/SimVar/Light/SimConnectLightAi.h
         src/SimVar/SimConnectAircraftInfo.h src/SimVar/SimConnectAircraftInfo.cpp
         src/SimVar/SimConnectFlightPlan.h src/SimVar/SimConnectFlightPlan.cpp
         src/SimVar/SimConnectSimulationTime.h src/SimVar/SimConnectSimulationTime.cpp
         src/SimVar/SimConnectLocation.h src/SimVar/SimConnectLocation.cpp
         src/SimVar/SimConnectVariables.h src/SimVar/SimConnectVariables.cpp
         src/SimVar/SimulationVariables.h
-        src/Event/EventWidget.h src/Event/EventWidget.cpp
         src/Event/SimConnectEvent.h
+        src/Event/EventState.h
+        src/Event/EventWidget.h src/Event/EventWidget.cpp
+        src/Event/EventStateHandler.h
         src/SimConnectType.h
         src/SimConnectAi.h src/SimConnectAi.cpp        
         src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp

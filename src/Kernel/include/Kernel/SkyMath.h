@@ -266,7 +266,7 @@ namespace SkyMath
      *        the normalised position value in the range [-1.0, 1.0]
      * \return the mapped discrete, signed 16bit value [PositionMin16, PositionMax16] (note: symmetric range)
      */
-    inline constexpr std::int16_t fromNormalisedPosition(double position) noexcept
+    inline std::int16_t fromNormalisedPosition(double position) noexcept
     {
         return static_cast<std::int16_t>(std::round(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
     }
@@ -290,7 +290,7 @@ namespace SkyMath
      *        the percent value in the range [0.0, 100.0]
      * \return the mapped discrete, unsigned 8bit value [0, PercentMax8]
      */
-    inline constexpr std::uint8_t fromPercent(double percent) noexcept
+    inline std::uint8_t fromPercent(double percent) noexcept
     {
         return static_cast<std::uint8_t>(std::round(percent * PercentRange8 / 100.0));
     }

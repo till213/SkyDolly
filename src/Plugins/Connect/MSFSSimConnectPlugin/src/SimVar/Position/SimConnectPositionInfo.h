@@ -52,6 +52,7 @@ struct SimConnectPositionInfo
     {
         fromPositionData(positionData);
     }
+
     SimConnectPositionInfo() = default;
 
     inline void fromPositionData(const PositionData &positionData) noexcept

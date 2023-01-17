@@ -51,6 +51,7 @@ struct SimConnectPrimaryFlightControlAnimation
     {
         fromPrimaryFlightControlData(primaryFlightControlData);
     }
+
     SimConnectPrimaryFlightControlAnimation() = default;
 
     inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept

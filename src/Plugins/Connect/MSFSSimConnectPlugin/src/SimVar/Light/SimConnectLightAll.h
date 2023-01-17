@@ -22,19 +22,58 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef SIMCONNECTLIGHTEVENTALL_H
+#define SIMCONNECTLIGHTEVENTALL_H
+
 #include <windows.h>
 
-#include <SimConnect.h>
-
 #include <Kernel/Enum.h>
-#include <Model/SimVar.h>
+#include <Model/LightData.h>
 #include "SimConnectType.h"
-#include "SimConnectLight.h"
+#include "SimConnectLightEvent.h"
+#include "SimConnectLightAi.h"
 
-// PUBLIC
-
-void SimConnectLight::addToDataDefinition(HANDLE simConnectHandle) noexcept
+/*!
+ * Simulation variables that represent aircraft lights.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(push, 1)
+struct SimConnectLightAll
 {
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::Light), SimVar::LightStates, "Mask", ::SIMCONNECT_DATATYPE_INT32);
-}
+    SimConnectLightEvent event;
 
+    SimConnectLightAll(const LightData &lightData) noexcept
+        : SimConnectLightAll()
+    {
+        fromLightData(lightData);
+    }
+
+    SimConnectLightAll() = default;
+
+    inline void fromLightData(const LightData &lightData) noexcept
+    {
+        event.fromLightData(lightData);
+    }
+
+    inline LightData toLightData() const noexcept
+    {
+        LightData lightData = event.toLightData();
+        return lightData;
+    }
+
+    inline SimConnectLightAi ai() const noexcept
+    {
+        SimConnectLightAi ai;
+        ai.event = event;
+        return ai;
+    }
+
+    static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
+    {
+        SimConnectLightEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LightAll));
+    }
+};
+#pragma pack(pop)
+
+#endif // SIMCONNECTLIGHTEVENTALL_H
