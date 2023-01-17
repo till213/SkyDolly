@@ -33,7 +33,7 @@
 #include "SimConnectType.h"
 
 /*!
- * Simulation variables that represent the primary flight controls: rudder, elevators and ailerons.
+ * Primary flight control variables that are sent exclusively to AI aircraft for animation.
  *
  * Implementation note: this struct needs to be packed.
  */
