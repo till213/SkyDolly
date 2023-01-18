@@ -66,7 +66,6 @@
 
 #include "SimVar/SimulationVariables.h"
 #include "Event/SimConnectEvent.h"
-#include "Event/EventState.h"
 #include "Event/EventStateHandler.h"
 #include "Event/EventWidget.h"
 #include "SimConnectType.h"
@@ -113,6 +112,7 @@ MSFSSimConnectPlugin::MSFSSimConnectPlugin(QObject *parent) noexcept
 MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
 {
     d->eventStateHandler->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
+    d->eventStateHandler->resumePausedSimulation();
     close();
 }
 
