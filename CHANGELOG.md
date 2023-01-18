@@ -20,7 +20,7 @@
 
 ### Bug Fixes
 - Fix "ailerons reversal" (Asobo A320neo, F/A-18 and other aircraft with "PID controllers")
-  * Actual root cause (in MSFS/SimConnect): "*radians*" per second instead of the expected "*feet* per second" unit for "*rotation* velocity body" (*radians* per second would actually be the correct physical unit for rotation velocity)
+  * Actual root cause (in MSFS/SimConnect): MSFS seems to expect "*feet* per second" instead of "*radians* per second" for "*rotation* velocity body" (*radians* per second would actually be the correct physical unit for rotation velocity)
 
 ## 0.13.1
 
