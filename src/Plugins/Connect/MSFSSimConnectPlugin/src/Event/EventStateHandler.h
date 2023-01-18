@@ -235,7 +235,7 @@ public:
         return ok;
     }
 
-    inline bool setCurrentFlapsHandleIndex(std::int32_t index)
+    inline void setCurrentFlapsHandleIndex(std::int32_t index)
     {
         m_flapsIndex.pending = false;
 #ifdef DEBUG
@@ -244,138 +244,116 @@ public:
 #endif
         m_flapsIndex.current = index;
         m_flapsIndex.valid = true;
-        const bool ok = sendFlapsHandleIndex();
-        return ok;
     }
 
-    inline bool setCurrentNavigationLight(std::int32_t enabled)
+    inline void setCurrentNavigationLight(std::int32_t enabled)
     {
         m_navigationLightSwitch.pending = false;
 #ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentNavigationLight: current navigation light received:" << enabled
+        qDebug() << "EventStateHandler::setCurrentNavigationLight: current navigation light received:" << (enabled != 0)
                  << "Previous state:" << m_navigationLightSwitch.current;
 #endif
         m_navigationLightSwitch.current = (enabled != 0);
         m_navigationLightSwitch.valid = true;
-        const bool ok = toggleLight(m_navigationLightSwitch);
-        return ok;
     }
 
-    inline bool setCurrentBeaconLight(std::int32_t enabled)
+    inline void setCurrentBeaconLight(std::int32_t enabled)
     {
         m_navigationLightSwitch.pending = false;
 #ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentBeaconLight: current beacon light received:" << enabled
+        qDebug() << "EventStateHandler::setCurrentBeaconLight: current beacon light received:" << (enabled != 0)
                  << "Previous state:" << m_navigationLightSwitch.current;
 #endif
         m_beaconLightSwitch.current = (enabled != 0);
         m_beaconLightSwitch.valid = true;
-        const bool ok = toggleLight(m_beaconLightSwitch);
-        return ok;
     }
 
-    inline bool setCurrentLandingLight(std::int32_t enabled)
+    inline void setCurrentLandingLight(std::int32_t enabled)
     {
         m_landingLightSwitch.pending = false;
 #ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentLandingLight: current landing light received:" << enabled
+        qDebug() << "EventStateHandler::setCurrentLandingLight: current landing light received:" << (enabled != 0)
                  << "Previous state:" << m_landingLightSwitch.current;
 #endif
         m_landingLightSwitch.current = (enabled != 0);
         m_landingLightSwitch.valid = true;
-        const bool ok = toggleLight(m_landingLightSwitch);
-        return ok;
     }
 
-    inline bool setCurrentTaxiLight(std::int32_t enabled)
+    inline void setCurrentTaxiLight(std::int32_t enabled)
     {
         m_taxiLightSwitch.pending = false;
 #ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentTaxiLight: current taxi light received:" << enabled
+        qDebug() << "EventStateHandler::setCurrentTaxiLight: current taxi light received:" << (enabled != 0)
                  << "Previous state:" << m_taxiLightSwitch.current;
 #endif
         m_taxiLightSwitch.current = (enabled != 0);
         m_taxiLightSwitch.valid = true;
-        const bool ok = toggleLight(m_taxiLightSwitch);
-        return ok;
     }
 
-    inline bool setCurrentStrobeLight(std::int32_t enabled)
+    inline void setCurrentStrobeLight(std::int32_t enabled)
     {
         m_strobeLightSwitch.pending = false;
 #ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentStrobeLight: current strobe light received:" << enabled
+        qDebug() << "EventStateHandler::setCurrentStrobeLight: current strobe light received:" << (enabled != 0)
                  << "Previous state:" << m_strobeLightSwitch.current;
 #endif
         m_strobeLightSwitch.current = (enabled != 0);
         m_strobeLightSwitch.valid = true;
-        const bool ok = toggleLight(m_strobeLightSwitch);
-        return ok;
     }
 
-    inline bool setCurrentPanelLight(std::int32_t enabled)
+    inline void setCurrentPanelLight(std::int32_t enabled)
     {
         m_panelLightSwitch.pending = false;
 #ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentPanelLight: current panel light received:" << enabled
+        qDebug() << "EventStateHandler::setCurrentPanelLight: current panel light received:" << (enabled != 0)
                  << "Previous state:" << m_panelLightSwitch.current;
 #endif
         m_panelLightSwitch.current = (enabled != 0);
         m_panelLightSwitch.valid = true;
-        const bool ok = toggleLight(m_panelLightSwitch);
-        return ok;
     }
 
-    inline bool setCurrentRecognitionLight(std::int32_t enabled)
+    inline void setCurrentRecognitionLight(std::int32_t enabled)
     {
         m_recognitionLightSwitch.pending = false;
 #ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentRecognitionLight: current recognition light received:" << enabled
+        qDebug() << "EventStateHandler::setCurrentRecognitionLight: current recognition light received:" << (enabled != 0)
                  << "Previous state:" << m_recognitionLightSwitch.current;
 #endif
         m_recognitionLightSwitch.current = (enabled != 0);
         m_recognitionLightSwitch.valid = true;
-        const bool ok = toggleLight(m_recognitionLightSwitch);
-        return ok;
     }
 
-    inline bool setCurrentWingLight(std::int32_t enabled)
+    inline void setCurrentWingLight(std::int32_t enabled)
     {
         m_wingLightSwitch.pending = false;
 #ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentWingLight: current wing light received:" << enabled
+        qDebug() << "EventStateHandler::setCurrentWingLight: current wing light received:" << (enabled != 0)
                  << "Previous state:" << m_wingLightSwitch.current;
 #endif
         m_wingLightSwitch.current = (enabled != 0);
         m_wingLightSwitch.valid = true;
-        const bool ok = toggleLight(m_wingLightSwitch);
-        return ok;
     }
 
-    inline bool setCurrentLogoLight(std::int32_t enabled)
+    inline void setCurrentLogoLight(std::int32_t enabled)
     {
         m_logoLightSwitch.pending = false;
 #ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentLogoLight: current logo light received:" << enabled
+        qDebug() << "EventStateHandler::setCurrentLogoLight: current logo light received:" << (enabled != 0)
                  << "Previous state:" << m_logoLightSwitch.current;
 #endif
         m_logoLightSwitch.current = (enabled != 0);
         m_logoLightSwitch.valid = true;
-        const bool ok = toggleLight(m_logoLightSwitch);
-        return ok;
     }
 
-    inline bool setCurrentCabinLight(std::int32_t enabled)
+    inline void setCurrentCabinLight(std::int32_t enabled)
     {
         m_cabinLightSwitch.pending = false;
 #ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentCabinLight: current cabin light received:" << enabled
+        qDebug() << "EventStateHandler::setCurrentCabinLight: current cabin light received:" << (enabled != 0)
                  << "Previous state:" << m_cabinLightSwitch.current;
 #endif
         m_cabinLightSwitch.current = (enabled != 0);
         m_cabinLightSwitch.valid = true;
-        const bool ok = toggleLight(m_cabinLightSwitch);
-        return ok;
     }
 
     inline void reset() {
@@ -579,11 +557,16 @@ private:
         return result == S_OK;
     }
 
-    inline bool toggleLight(EventState::Toggle lightSwitch)
+    inline bool toggleLight(EventState::Toggle &lightSwitch)
     {
         HRESULT result {S_OK};
         if (lightSwitch.needsUpdate()) {
             if (lightSwitch.valid) {
+                // Implementation note:
+                // - Setting the light (e.g. "NAV_LIGHTS_SET") is immediatelly "overridden" again by the switch logic of certain aircraft (e.g. PMDG 737-800)
+                // - Some light switches are combined, e.g. "Navigation & Logo", so toggling both will "unset" the previous state change again (e.g. Asobo A320neo)
+                // - So while "toggle" seems to work in most cases (except e.g. for "Logo" alone) we always need to query the current state before toggling - each time
+                // - Oh well...
                 result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(lightSwitch.toggleEvent), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
 #ifdef DEBUG
                 qDebug() << "EventStateHandler::toggleLight: requested state:" << lightSwitch.requested
