@@ -30,20 +30,103 @@
 #include <windows.h>
 #include <SimConnect.h>
 
+/*!
+ * Individual simulation variables for updating states, particularly for "toggle events".
+ *
+ * Implementation note: all structs needs to be packed.
+ */
 namespace SimConnectVariables
 {
-    /*!
-     * Flaps simulation variable.
-     *
-     * Implementation note: this struct needs to be packed.
-     */
+    /*! Flaps handle index.*/
     #pragma pack(push, 1)
     struct FlapsHandleIndex
     {
-        std::int32_t flapsHandleIndex {0};
-        static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+        std::int32_t value {0};
     };
     #pragma pack(pop)
+
+    /*!  Navigation light. */
+    #pragma pack(push, 1)
+    struct NavigationLight
+    {
+        std::int32_t value;
+    };
+    #pragma pack(pop)
+
+    /*! Beacon light. */
+    #pragma pack(push, 1)
+    struct BeaconLight
+    {
+        std::int32_t value;
+    };
+    #pragma pack(pop)
+
+    /*! Landing light. */
+    #pragma pack(push, 1)
+    struct LandingLight
+    {
+        std::int32_t value;
+    };
+    #pragma pack(pop)
+
+    /*! Taxi light. */
+    #pragma pack(push, 1)
+    struct TaxiLight
+    {
+        std::int32_t value;
+    };
+    #pragma pack(pop)
+
+    /*! Strobe light. */
+    #pragma pack(push, 1)
+    struct StrobeLight
+    {
+        std::int32_t value;
+    };
+    #pragma pack(pop)
+
+    /*! Panel light.*/
+    #pragma pack(push, 1)
+    struct PanelLight
+    {
+        std::int32_t value;
+    };
+    #pragma pack(pop)
+
+    /*! Recognition light.*/
+    #pragma pack(push, 1)
+    struct RecognitionLight
+    {
+        std::int32_t value;
+    };
+    #pragma pack(pop)
+
+    /*! Wing light. */
+    #pragma pack(push, 1)
+    struct WingLight
+    {
+        std::int32_t value;
+    };
+    #pragma pack(pop)
+
+    /*! Logo light. */
+    #pragma pack(push, 1)
+    struct LogoLight
+    {
+        std::int32_t value;
+
+    };
+    #pragma pack(pop)
+
+    /*! Cabin light. */
+    #pragma pack(push, 1)
+    struct CabinLight
+    {
+        std::int32_t value;
+    };
+    #pragma pack(pop)
+
+    void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 }
 
 #endif // SIMCONNECTVARIABLES_H

@@ -390,14 +390,14 @@ void AbstractSkyConnect::seek(std::int64_t timestamp) noexcept
             d->lastNotificationTimestamp = d->currentTimestamp;
             d->elapsedTime = timestamp;
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
-            bool ok = retryWithReconnect([this, timestamp]() -> bool { return sendAircraftData(timestamp, TimeVariableData::Access::Seek, AircraftSelection::All); });
+            onSeek(d->currentTimestamp);
+            bool ok = retryWithReconnect([this]() -> bool { return sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::All); });
             if (ok) {
                 if (d->elapsedTimer.isValid()) {
                     // Restart the elapsed timer, counting onwards from the newly
                     // set timestamp
                     startElapsedTimer();
-                }
-                onSeek(d->currentTimestamp);
+                }                
             } else {
                 setState(Connect::State::Disconnected);
             }

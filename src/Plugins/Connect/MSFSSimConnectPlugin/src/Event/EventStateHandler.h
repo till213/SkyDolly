@@ -211,26 +211,30 @@ public:
 
     inline bool sendLight(const SimConnectLightEvent &event)
     {
-        m_navigationLightSwitch.requested = event.navigation;
-        bool ok = toggleLight(m_navigationLightSwitch);
-        m_beaconLightSwitch.requested = event.beacon;
-        ok = ok && toggleLight(m_beaconLightSwitch);
-        m_landingLightSwitch.requested = event.landing;
-        ok = ok && toggleLight(m_landingLightSwitch);
-        m_taxiLightSwitch.requested = event.taxi;
-        ok = ok && toggleLight(m_taxiLightSwitch);
-        m_strobeLightSwitch.requested = event.taxi;
-        ok = ok && toggleLight(m_strobeLightSwitch);
-        m_panelLightSwitch.requested = event.panel;
-        ok = ok && toggleLight(m_panelLightSwitch);
-        m_recognitionLightSwitch.requested = event.recognition;
-        ok = ok && toggleLight(m_recognitionLightSwitch);
-        m_wingLightSwitch.requested = event.wing;
-        ok = ok && toggleLight(m_wingLightSwitch);
-        m_logoLightSwitch.requested = event.logo;
-        ok = ok && toggleLight(m_logoLightSwitch);
-        m_cabinLightSwitch.requested = event.cabin;
-        ok = ok && toggleLight(m_cabinLightSwitch);
+        // First set the requested values...
+        m_navigationLightToggle.requested = event.navigation;
+        m_beaconLightToggle.requested = event.beacon;
+        m_landingLightToggle.requested = event.landing;
+        m_taxiLightToggle.requested = event.taxi;
+        m_strobeLightToggle.requested = event.taxi;
+        m_panelLightToggle.requested = event.panel;
+        m_recognitionLightToggle.requested = event.recognition;
+        m_wingLightToggle.requested = event.wing;
+        m_logoLightToggle.requested = event.logo;
+        m_cabinLightToggle.requested = event.cabin;
+
+        // ... then check the remote states (which will trigger
+        // a "set light" if needed)
+        bool ok = testLight(m_navigationLightToggle);
+        ok = ok && testLight(m_beaconLightToggle);
+        ok = ok && testLight(m_landingLightToggle);
+        ok = ok && testLight(m_taxiLightToggle);
+        ok = ok && testLight(m_strobeLightToggle);
+        ok = ok && testLight(m_panelLightToggle);
+        ok = ok && testLight(m_recognitionLightToggle);
+        ok = ok && testLight(m_wingLightToggle);
+        ok = ok && testLight(m_logoLightToggle);
+        ok = ok && testLight(m_cabinLightToggle);
 
         return ok;
     }
@@ -246,114 +250,64 @@ public:
         m_flapsIndex.valid = true;
     }
 
-    inline void setCurrentNavigationLight(std::int32_t enabled)
+    inline bool setNavigationLight(std::int32_t enabled)
     {
-        m_navigationLightSwitch.pending = false;
-#ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentNavigationLight: current navigation light received:" << (enabled != 0)
-                 << "Previous state:" << m_navigationLightSwitch.current;
-#endif
-        m_navigationLightSwitch.current = (enabled != 0);
-        m_navigationLightSwitch.valid = true;
+        const bool remoteState = (enabled != 0);
+        return setLight(remoteState, m_navigationLightToggle);
     }
 
-    inline void setCurrentBeaconLight(std::int32_t enabled)
+    inline bool setBeaconLight(std::int32_t enabled)
     {
-        m_navigationLightSwitch.pending = false;
-#ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentBeaconLight: current beacon light received:" << (enabled != 0)
-                 << "Previous state:" << m_navigationLightSwitch.current;
-#endif
-        m_beaconLightSwitch.current = (enabled != 0);
-        m_beaconLightSwitch.valid = true;
+        const bool remoteState = (enabled != 0);
+        return setLight(remoteState, m_beaconLightToggle);
     }
 
-    inline void setCurrentLandingLight(std::int32_t enabled)
+    inline bool setLandingLight(std::int32_t enabled)
     {
-        m_landingLightSwitch.pending = false;
-#ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentLandingLight: current landing light received:" << (enabled != 0)
-                 << "Previous state:" << m_landingLightSwitch.current;
-#endif
-        m_landingLightSwitch.current = (enabled != 0);
-        m_landingLightSwitch.valid = true;
+        const bool remoteState = (enabled != 0);
+        return setLight(remoteState, m_landingLightToggle);
     }
 
-    inline void setCurrentTaxiLight(std::int32_t enabled)
+    inline bool setTaxiLight(std::int32_t enabled)
     {
-        m_taxiLightSwitch.pending = false;
-#ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentTaxiLight: current taxi light received:" << (enabled != 0)
-                 << "Previous state:" << m_taxiLightSwitch.current;
-#endif
-        m_taxiLightSwitch.current = (enabled != 0);
-        m_taxiLightSwitch.valid = true;
+        const bool remoteState = (enabled != 0);
+        return setLight(remoteState, m_taxiLightToggle);
     }
 
-    inline void setCurrentStrobeLight(std::int32_t enabled)
+    inline bool setStrobeLight(std::int32_t enabled)
     {
-        m_strobeLightSwitch.pending = false;
-#ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentStrobeLight: current strobe light received:" << (enabled != 0)
-                 << "Previous state:" << m_strobeLightSwitch.current;
-#endif
-        m_strobeLightSwitch.current = (enabled != 0);
-        m_strobeLightSwitch.valid = true;
+        const bool remoteState = (enabled != 0);
+        return setLight(remoteState, m_strobeLightToggle);
     }
 
-    inline void setCurrentPanelLight(std::int32_t enabled)
+    inline bool setPanelLight(std::int32_t enabled)
     {
-        m_panelLightSwitch.pending = false;
-#ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentPanelLight: current panel light received:" << (enabled != 0)
-                 << "Previous state:" << m_panelLightSwitch.current;
-#endif
-        m_panelLightSwitch.current = (enabled != 0);
-        m_panelLightSwitch.valid = true;
+        const bool remoteState = (enabled != 0);
+        return setLight(remoteState, m_panelLightToggle);
     }
 
-    inline void setCurrentRecognitionLight(std::int32_t enabled)
+    inline bool setRecognitionLight(std::int32_t enabled)
     {
-        m_recognitionLightSwitch.pending = false;
-#ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentRecognitionLight: current recognition light received:" << (enabled != 0)
-                 << "Previous state:" << m_recognitionLightSwitch.current;
-#endif
-        m_recognitionLightSwitch.current = (enabled != 0);
-        m_recognitionLightSwitch.valid = true;
+        const bool remoteState = (enabled != 0);
+        return setLight(remoteState, m_recognitionLightToggle);
     }
 
-    inline void setCurrentWingLight(std::int32_t enabled)
+    inline bool setWingLight(std::int32_t enabled)
     {
-        m_wingLightSwitch.pending = false;
-#ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentWingLight: current wing light received:" << (enabled != 0)
-                 << "Previous state:" << m_wingLightSwitch.current;
-#endif
-        m_wingLightSwitch.current = (enabled != 0);
-        m_wingLightSwitch.valid = true;
+        const bool remoteState = (enabled != 0);
+        return setLight(remoteState, m_wingLightToggle);
     }
 
-    inline void setCurrentLogoLight(std::int32_t enabled)
+    inline bool setLogoLight(std::int32_t enabled)
     {
-        m_logoLightSwitch.pending = false;
-#ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentLogoLight: current logo light received:" << (enabled != 0)
-                 << "Previous state:" << m_logoLightSwitch.current;
-#endif
-        m_logoLightSwitch.current = (enabled != 0);
-        m_logoLightSwitch.valid = true;
+        const bool remoteState = (enabled != 0);
+        return setLight(remoteState, m_logoLightToggle);
     }
 
-    inline void setCurrentCabinLight(std::int32_t enabled)
+    inline bool setCabinLight(std::int32_t enabled)
     {
-        m_cabinLightSwitch.pending = false;
-#ifdef DEBUG
-        qDebug() << "EventStateHandler::setCurrentCabinLight: current cabin light received:" << (enabled != 0)
-                 << "Previous state:" << m_cabinLightSwitch.current;
-#endif
-        m_cabinLightSwitch.current = (enabled != 0);
-        m_cabinLightSwitch.valid = true;
+        const bool remoteState = (enabled != 0);
+        return setLight(remoteState, m_cabinLightToggle);
     }
 
     inline void reset() {
@@ -362,34 +316,37 @@ public:
         // Flaps
         m_flapsIndex.reset();
         // Lights
-        m_navigationLightSwitch.reset();
-        m_beaconLightSwitch.reset();
-        m_landingLightSwitch.reset();
-        m_taxiLightSwitch.reset();
-        m_strobeLightSwitch.reset();
-        m_panelLightSwitch.reset();
-        m_recognitionLightSwitch.reset();
-        m_wingLightSwitch.reset();
-        m_logoLightSwitch.reset();
-        m_cabinLightSwitch.reset();
+        m_navigationLightToggle.reset();
+        m_beaconLightToggle.reset();
+        m_landingLightToggle.reset();
+        m_taxiLightToggle.reset();
+        m_strobeLightToggle.reset();
+        m_panelLightToggle.reset();
+        m_recognitionLightToggle.reset();
+        m_wingLightToggle.reset();
+        m_logoLightToggle.reset();
+        m_cabinLightToggle.reset();
     }
 
 private:
     ::HANDLE m_simConnectHandle {nullptr};
     EventState::Engine m_engineState {EventState::Engine::Unknown};
 
-    EventState::Switch<std::int32_t> m_flapsIndex;
+    EventState::StatefulSwitch<std::int32_t> m_flapsIndex;
 
-    EventState::Toggle m_navigationLightSwitch {SimConnectEvent::Event::ToggleNavLights};
-    EventState::Toggle m_beaconLightSwitch {SimConnectEvent::Event::ToggleBeaconLights};
-    EventState::Toggle m_landingLightSwitch {SimConnectEvent::Event::LandingLightsToggle};
-    EventState::Toggle m_taxiLightSwitch {SimConnectEvent::Event::ToggleTaxiLights};
-    EventState::Toggle m_strobeLightSwitch {SimConnectEvent::Event::StrobesToggle};
-    EventState::Toggle m_panelLightSwitch {SimConnectEvent::Event::PanelLightsToggle};
-    EventState::Toggle m_recognitionLightSwitch {SimConnectEvent::Event::ToggleRecognitionLights};
-    EventState::Toggle m_wingLightSwitch {SimConnectEvent::Event::ToggleWingLights};
-    EventState::Toggle m_logoLightSwitch {SimConnectEvent::Event::ToggleLogoLights};
-    EventState::Toggle m_cabinLightSwitch {SimConnectEvent::Event::ToggleCabinLights};
+    // Implementation note:
+    // Some lights - notably the Navigation and Logo light in the A320neo - may interact with
+    // each other, so we treat them as stateless ("test and set")
+    EventState::StatelessToggle m_navigationLightToggle {SimConnectEvent::Event::ToggleNavLights, SimConnectType::DataRequest::NavigationLight, SimConnectType::DataDefinition::NavigationLight};
+    EventState::StatelessToggle m_beaconLightToggle {SimConnectEvent::Event::ToggleBeaconLights, SimConnectType::DataRequest::BeaconLight, SimConnectType::DataDefinition::BeaconLight};
+    EventState::StatelessToggle m_landingLightToggle {SimConnectEvent::Event::LandingLightsToggle, SimConnectType::DataRequest::LandingLight, SimConnectType::DataDefinition::LandingLight};
+    EventState::StatelessToggle m_taxiLightToggle {SimConnectEvent::Event::ToggleTaxiLights, SimConnectType::DataRequest::TaxiLight, SimConnectType::DataDefinition::TaxiLight};
+    EventState::StatelessToggle m_strobeLightToggle {SimConnectEvent::Event::StrobesToggle, SimConnectType::DataRequest::StrobeLight, SimConnectType::DataDefinition::StrobeLight};
+    EventState::StatelessToggle m_panelLightToggle {SimConnectEvent::Event::PanelLightsToggle, SimConnectType::DataRequest::PanelLight, SimConnectType::DataDefinition::PanelLight};
+    EventState::StatelessToggle m_recognitionLightToggle {SimConnectEvent::Event::ToggleRecognitionLights, SimConnectType::DataRequest::RecognitionLight, SimConnectType::DataDefinition::RecognitionLight};
+    EventState::StatelessToggle m_wingLightToggle {SimConnectEvent::Event::ToggleWingLights, SimConnectType::DataRequest::WingLight, SimConnectType::DataDefinition::WingLight};
+    EventState::StatelessToggle m_logoLightToggle {SimConnectEvent::Event::ToggleLogoLights, SimConnectType::DataRequest::LogoLight, SimConnectType::DataDefinition::LogoLight};
+    EventState::StatelessToggle m_cabinLightToggle {SimConnectEvent::Event::ToggleCabinLights, SimConnectType::DataRequest::CabinLight, SimConnectType::DataDefinition::CabinLight};
 
     bool m_paused {false};
 
@@ -498,8 +455,9 @@ private:
                     m_flapsIndex.pending = true;
                 }
 #ifdef DEBUG
-                qDebug() << "EventStateHandler::sendFlapsHandleIndex: requesting current flaps index"
+                qDebug() << "EventStateHandler::sendFlapsHandleIndex: querying current flaps index"
                          << "Current index:" << m_flapsIndex.current
+                         << "Requested index:" << m_flapsIndex.requested
                          << "Success:" << (result == S_OK);
 #endif
             }
@@ -557,42 +515,42 @@ private:
         return result == S_OK;
     }
 
-    inline bool toggleLight(EventState::Toggle &lightSwitch)
+    inline bool testLight(EventState::StatelessToggle &lightToggle)
     {
         HRESULT result {S_OK};
-        if (lightSwitch.needsUpdate()) {
-            if (lightSwitch.valid) {
-                // Implementation note:
-                // - Setting the light (e.g. "NAV_LIGHTS_SET") is immediatelly "overridden" again by the switch logic of certain aircraft (e.g. PMDG 737-800)
-                // - Some light switches are combined, e.g. "Navigation & Logo", so toggling both will "unset" the previous state change again (e.g. Asobo A320neo)
-                // - So while "toggle" seems to work in most cases (except e.g. for "Logo" alone) we always need to query the current state before toggling - each time
-                // - Oh well...
-                result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(lightSwitch.toggleEvent), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-#ifdef DEBUG
-                qDebug() << "EventStateHandler::toggleLight: requested state:" << lightSwitch.requested
-                         << "Previous state:" << lightSwitch.current
-                         << "Event:" << Enum::underly(lightSwitch.toggleEvent)
-                         << "Success:" << (result == S_OK);
-#endif
-                if (result == S_OK) {
-                    lightSwitch.current = lightSwitch.requested;
-                }
-            } else if (!lightSwitch.pending) {
-                // Request current light state
-                result = ::SimConnect_RequestDataOnSimObject(m_simConnectHandle, Enum::underly(SimConnectType::DataRequest::LightEvent),
-                                                             Enum::underly(SimConnectType::DataDefinition::LightEvent),
-                                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_DEFAULT);
-                if (result == S_OK) {
-                    lightSwitch.pending = true;
-                }
-#ifdef DEBUG
-                qDebug() << "EventStateHandler::toggleLight: requesting current light state"
-                         << "Current index:" << lightSwitch.current
-                         << "Event:" << Enum::underly(lightSwitch.toggleEvent)
-                         << "Success:" << (result == S_OK);
-#endif
+
+        if (!lightToggle.pending) {
+            // Request current remote light state
+            result = ::SimConnect_RequestDataOnSimObject(m_simConnectHandle, Enum::underly(lightToggle.dataRequest),Enum::underly(lightToggle.dataDefinition),
+                                                         ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_DEFAULT);
+            if (result == S_OK) {
+                lightToggle.pending = true;
             }
-        } // needsUpdate
+        }
+        return result == S_OK;
+    }
+
+    // Updates the remote light state according to 'lightToggle', given the current 'remoteState'
+    // if needed and resets the 'pending' state (false) of the 'lightToggle'
+    inline bool setLight(bool remoteState, EventState::StatelessToggle &lightToggle)
+    {
+        HRESULT result {S_OK};
+
+        // Implementation note:
+        // - Setting the light (e.g. "NAV_LIGHTS_SET") is immediatelly "overridden" again by the switch logic of certain aircraft (e.g. PMDG 737-800)
+        // - Some light switches are combined, e.g. "Navigation & Logo", so toggling both will "unset" the previous state change again (e.g. Asobo A320neo)
+        // - So while "toggle" seems to work in most cases (except e.g. for "Logo" alone) we always need to query the current state before toggling - each time
+        // - Oh well...
+        if (lightToggle.needsUpdate(remoteState)) {
+            result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(lightToggle.toggleEvent), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+#ifdef DEBUG
+            qDebug() << "EventStateHandler::setLight: requested state:" << lightToggle.requested
+                     << "remoteState:" << remoteState
+                     << "event:" << Enum::underly(lightToggle.toggleEvent)
+                     << "success:" << (result == S_OK);
+#endif
+        }
+        lightToggle.pending = false;
         return result == S_OK;
     }
 };

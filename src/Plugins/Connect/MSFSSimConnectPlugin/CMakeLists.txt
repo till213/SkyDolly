@@ -47,11 +47,12 @@ target_sources(${MODULE_NAME}
         src/SimVar/SimConnectLocation.h src/SimVar/SimConnectLocation.cpp
         src/SimVar/SimConnectVariables.h src/SimVar/SimConnectVariables.cpp
         src/SimVar/SimulationVariables.h
+        src/SimVar/SimConnectType.h
         src/Event/SimConnectEvent.h
         src/Event/EventState.h
         src/Event/EventWidget.h src/Event/EventWidget.cpp
         src/Event/EventStateHandler.h
-        src/SimConnectType.h
+
         src/SimConnectAi.h src/SimConnectAi.cpp        
         src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp
         src/MSFSSimConnectPlugin.json

@@ -65,10 +65,10 @@
 #include <PluginManager/Connect.h>
 
 #include "SimVar/SimulationVariables.h"
+#include "SimVar/SimConnectType.h"
 #include "Event/SimConnectEvent.h"
 #include "Event/EventStateHandler.h"
 #include "Event/EventWidget.h"
-#include "SimConnectType.h"
 #include "SimConnectAi.h"
 #include "MSFSSimConnectPlugin.h"
 
@@ -622,8 +622,7 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
     SimConnectSimulationTime::addToDataDefinition(d->simConnectHandle);
     SimConnectLocation::addToDataDefinition(d->simConnectHandle);
     // Simulation variables
-    SimConnectVariables::FlapsHandleIndex::addToDataDefinition(d->simConnectHandle);
-    SimConnectLightEvent::addToDataDefinition(d->simConnectHandle);
+    SimConnectVariables::addToDataDefinition(d->simConnectHandle);
 
     ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::InitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
@@ -933,24 +932,87 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         {
             if (skyConnect->getState() == Connect::State::Replay || skyConnect->getState() == Connect::State::ReplayPaused) {
                 auto flapsHandleIndex = reinterpret_cast<const SimConnectVariables::FlapsHandleIndex *>(&objectData->dwData);
-                skyConnect->d->eventStateHandler->setCurrentFlapsHandleIndex(flapsHandleIndex->flapsHandleIndex);
+                skyConnect->d->eventStateHandler->setCurrentFlapsHandleIndex(flapsHandleIndex->value);
             }
             break;
         }
-        case SimConnectType::DataRequest::LightEvent:
+        case SimConnectType::DataRequest::NavigationLight:
         {
-            if (skyConnect->getState() == Connect::State::Replay || skyConnect->getState() == Connect::State::ReplayPaused) {
-                auto simConnectLightEvent = reinterpret_cast<const SimConnectLightEvent *>(&objectData->dwData);
-                skyConnect->d->eventStateHandler->setCurrentNavigationLight(simConnectLightEvent->navigation);
-                skyConnect->d->eventStateHandler->setCurrentBeaconLight(simConnectLightEvent->beacon);
-                skyConnect->d->eventStateHandler->setCurrentLandingLight(simConnectLightEvent->landing);
-                skyConnect->d->eventStateHandler->setCurrentTaxiLight(simConnectLightEvent->taxi);
-                skyConnect->d->eventStateHandler->setCurrentStrobeLight(simConnectLightEvent->strobe);
-                skyConnect->d->eventStateHandler->setCurrentPanelLight(simConnectLightEvent->panel);
-                skyConnect->d->eventStateHandler->setCurrentRecognitionLight(simConnectLightEvent->recognition);
-                skyConnect->d->eventStateHandler->setCurrentWingLight(simConnectLightEvent->wing);
-                skyConnect->d->eventStateHandler->setCurrentLogoLight(simConnectLightEvent->logo);
-                skyConnect->d->eventStateHandler->setCurrentCabinLight(simConnectLightEvent->cabin);
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+                auto navigationLight = reinterpret_cast<const SimConnectVariables::NavigationLight *>(&objectData->dwData);
+                skyConnect->d->eventStateHandler->setNavigationLight(navigationLight->value);
+            }
+            break;
+        }
+        case SimConnectType::DataRequest::BeaconLight:
+        {
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+                auto beaconLight = reinterpret_cast<const SimConnectVariables::BeaconLight *>(&objectData->dwData);
+                skyConnect->d->eventStateHandler->setBeaconLight(beaconLight->value);
+            }
+            break;
+        }
+        case SimConnectType::DataRequest::LandingLight:
+        {
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+                auto landingLight = reinterpret_cast<const SimConnectVariables::LandingLight *>(&objectData->dwData);
+                skyConnect->d->eventStateHandler->setLandingLight(landingLight->value);
+            }
+            break;
+        }
+        case SimConnectType::DataRequest::TaxiLight:
+        {
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+                auto taxiLight = reinterpret_cast<const SimConnectVariables::TaxiLight *>(&objectData->dwData);
+                skyConnect->d->eventStateHandler->setTaxiLight(taxiLight->value);
+            }
+            break;
+        }
+        case SimConnectType::DataRequest::StrobeLight:
+        {
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+                auto strobeLight = reinterpret_cast<const SimConnectVariables::StrobeLight *>(&objectData->dwData);
+                skyConnect->d->eventStateHandler->setStrobeLight(strobeLight->value);
+            }
+            break;
+        }
+        case SimConnectType::DataRequest::PanelLight:
+        {
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+                auto panelLight = reinterpret_cast<const SimConnectVariables::PanelLight *>(&objectData->dwData);
+                skyConnect->d->eventStateHandler->setPanelLight(panelLight->value);
+            }
+            break;
+        }
+        case SimConnectType::DataRequest::RecognitionLight:
+        {
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+                auto recognitionLight = reinterpret_cast<const SimConnectVariables::RecognitionLight *>(&objectData->dwData);
+                skyConnect->d->eventStateHandler->setRecognitionLight(recognitionLight->value);
+            }
+            break;
+        }
+        case SimConnectType::DataRequest::WingLight:
+        {
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+                auto wingLight = reinterpret_cast<const SimConnectVariables::WingLight *>(&objectData->dwData);
+                skyConnect->d->eventStateHandler->setWingLight(wingLight->value);
+            }
+            break;
+        }
+        case SimConnectType::DataRequest::LogoLight:
+        {
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+                auto logoLight = reinterpret_cast<const SimConnectVariables::LogoLight *>(&objectData->dwData);
+                skyConnect->d->eventStateHandler->setLogoLight(logoLight->value);
+            }
+            break;
+        }
+        case SimConnectType::DataRequest::CabinLight:
+        {
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+                auto cabinLight = reinterpret_cast<const SimConnectVariables::CabinLight *>(&objectData->dwData);
+                skyConnect->d->eventStateHandler->setCabinLight(cabinLight->value);
             }
             break;
         }

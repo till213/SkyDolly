@@ -54,7 +54,16 @@ namespace SimConnectType
         LightAll,
         // Simulation variables
         FlapsHandleIndex,
-        LightEvent
+        NavigationLight,
+        BeaconLight,
+        LandingLight,
+        TaxiLight,
+        StrobeLight,
+        PanelLight,
+        RecognitionLight,
+        WingLight,
+        LogoLight,
+        CabinLight
     };
 
     enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
@@ -66,13 +75,21 @@ namespace SimConnectType
         AircraftPositionAll,
         EngineAll,
         PrimaryFlightControlAll,
-        Flaps,
         SecondaryFlightControlAll,
         AircraftHandleAll,
         LightAll,
         // Simulation variables
         FlapsHandleIndex,
-        LightEvent,
+        NavigationLight,
+        BeaconLight,
+        LandingLight,
+        TaxiLight,
+        StrobeLight,
+        PanelLight,
+        RecognitionLight,
+        WingLight,
+        LogoLight,
+        CabinLight,
         // AI objects
         AiRemoveObject,
         AiReleaseControl,

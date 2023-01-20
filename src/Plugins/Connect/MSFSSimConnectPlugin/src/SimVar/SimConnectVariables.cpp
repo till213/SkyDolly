@@ -32,7 +32,19 @@
 
 // PUBLIC
 
-void SimConnectVariables::FlapsHandleIndex::addToDataDefinition(HANDLE simConnectHandle) noexcept
+void SimConnectVariables::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::FlapsHandleIndex), SimVar::FlapsHandleIndex, "Number", ::SIMCONNECT_DATATYPE_INT32);
+
+    // Lights
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::NavigationLight), SimVar::LightNav, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::BeaconLight), SimVar::LightBeacon, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LandingLight), SimVar::LightLanding, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::TaxiLight), SimVar::LightTaxi, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::StrobeLight), SimVar::LightStrobe, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PanelLight), SimVar::LightPanel, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::RecognitionLight), SimVar::LightRecognition, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::WingLight), SimVar::LightWing, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LogoLight), SimVar::LightLogo, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::CabinLight), SimVar::LightCabin, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
 }

@@ -37,7 +37,7 @@
 #include <Model/AircraftType.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
-#include "SimConnectType.h"
+#include "SimVar/SimConnectType.h"
 #include "SimVar/SimulationVariables.h"
 #include "SimConnectAi.h"
 

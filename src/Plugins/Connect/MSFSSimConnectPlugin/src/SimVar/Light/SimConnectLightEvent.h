@@ -92,11 +92,6 @@ struct SimConnectLightEvent
         return lightData;
     }
 
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
-    {
-        addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LightEvent));
-    }
-
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::LightNav, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
