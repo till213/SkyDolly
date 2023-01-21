@@ -353,14 +353,14 @@ bool AbstractSkyConnect::isPaused() const noexcept {
 
 void AbstractSkyConnect::skipToBegin() noexcept
 {
-    seek(0);
+    seek(0, SeekMode::SingleSeek);
 }
 
 void AbstractSkyConnect::skipBackward() noexcept
 {
     std::int64_t skipMSec = getSkipInterval();
     const std::int64_t newTimeStamp = std::max(d->currentTimestamp - skipMSec, std::int64_t(0));
-    seek(newTimeStamp);
+    seek(newTimeStamp, SeekMode::SingleSeek);
 }
 
 void AbstractSkyConnect::skipForward() noexcept
@@ -368,16 +368,16 @@ void AbstractSkyConnect::skipForward() noexcept
     std::int64_t skipMSec = getSkipInterval();
     const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
     const std::int64_t newTimeStamp = std::min(d->currentTimestamp + skipMSec, totalDuration);
-    seek(newTimeStamp);
+    seek(newTimeStamp, SeekMode::SingleSeek);
 }
 
 void AbstractSkyConnect::skipToEnd() noexcept
 {
     const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
-    seek(totalDuration);
+    seek(totalDuration, SeekMode::SingleSeek);
 }
 
-void AbstractSkyConnect::seek(std::int64_t timestamp) noexcept
+void AbstractSkyConnect::seek(std::int64_t timestamp, SeekMode seekMode) noexcept
 {
     if (!isConnectedWithSim()) {
         if (connectWithSim()) {
@@ -390,7 +390,7 @@ void AbstractSkyConnect::seek(std::int64_t timestamp) noexcept
             d->lastNotificationTimestamp = d->currentTimestamp;
             d->elapsedTime = timestamp;
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
-            onSeek(d->currentTimestamp);
+            onSeek(d->currentTimestamp, seekMode);
             bool ok = retryWithReconnect([this]() -> bool { return sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::All); });
             if (ok) {
                 if (d->elapsedTimer.isValid()) {
@@ -561,7 +561,7 @@ void AbstractSkyConnect::onTimeOffsetChanged() noexcept
 {
     // Only send the updated positions (due to a time offset change) when replay is paused
     if (getState() == Connect::State::ReplayPaused) {
-        seek(getCurrentTimestamp());
+        seek(getCurrentTimestamp(), SeekMode::SingleSeek);
     }
 }
 
@@ -571,7 +571,7 @@ void AbstractSkyConnect::onTailNumberChanged(const Aircraft &aircraft) noexcept
     onAddAiObject(aircraft);
     // Only send the updated positions (due to a time offset change) when replay is paused
     if (getState() == Connect::State::ReplayPaused) {
-        seek(getCurrentTimestamp());
+        seek(getCurrentTimestamp(), SeekMode::SingleSeek);
     }
 }
 

@@ -83,7 +83,7 @@ public:
     void skipBackward() noexcept override;
     void skipForward() noexcept override;
     void skipToEnd() noexcept override;
-    void seek(std::int64_t timestamp) noexcept override;
+    void seek(std::int64_t timestamp, SeekMode seekMode) noexcept override;
     void handleAtEnd() noexcept override;
 
     Connect::State getState() const noexcept override;
@@ -134,7 +134,7 @@ protected:
     virtual void onReplayPaused(bool enable) noexcept = 0;
     virtual void onStopReplay() noexcept = 0;
 
-    virtual void onSeek(std::int64_t currentTimestamp) noexcept = 0;
+    virtual void onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept = 0;
     virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept = 0;
 
     virtual bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept = 0;

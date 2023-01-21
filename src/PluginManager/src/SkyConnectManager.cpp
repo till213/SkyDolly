@@ -298,11 +298,11 @@ void SkyConnectManager::skipToEnd() noexcept
     }
 }
 
-void SkyConnectManager::seek(std::int64_t timestamp) noexcept
+void SkyConnectManager::seek(std::int64_t timestamp, SkyConnectIntf::SeekMode seekMode) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
-        skyConnect->get().seek(timestamp);
+        skyConnect->get().seek(timestamp, seekMode);
     }
 }
 

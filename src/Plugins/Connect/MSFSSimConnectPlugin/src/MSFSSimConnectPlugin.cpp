@@ -290,8 +290,9 @@ void MSFSSimConnectPlugin::onStopReplay() noexcept
     ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
 }
 
-void MSFSSimConnectPlugin::onSeek(std::int64_t currentTimestamp) noexcept
+void MSFSSimConnectPlugin::onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept
 {
+    // TODO ONLY SET FLAPS UPON ON SEEK END
     d->eventStateHandler->reset();
 };
 

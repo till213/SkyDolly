@@ -114,7 +114,7 @@ public:
     void skipBackward() noexcept;
     void skipForward() noexcept;
     void skipToEnd() noexcept;
-    void seek(std::int64_t timestamp) noexcept;
+    void seek(std::int64_t timestamp, SkyConnectIntf::SeekMode seekMode) noexcept;
 
     Connect::State getState() const noexcept;
     virtual bool isConnected() const noexcept;

@@ -175,7 +175,7 @@ void PathCreatorPlugin::onStopReplay() noexcept
     d->replayTimer.stop();
 }
 
-void PathCreatorPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp) noexcept
+void PathCreatorPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp, [[maybe_unused]] SeekMode seekMode) noexcept
 {}
 
 void PathCreatorPlugin::onRecordingSampleRateChanged([[maybe_unused]] SampleRate::SampleRate sampleRate) noexcept

@@ -66,7 +66,7 @@ protected:
     void onReplayPaused(bool enable) noexcept override;
     void onStopReplay() noexcept override;
 
-    void onSeek(std::int64_t currentTimestamp) noexcept override;
+    void onSeek(std::int64_t currentTimestampS, SeekMode seekMode) noexcept override;
     void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;

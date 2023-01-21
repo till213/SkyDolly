@@ -65,6 +65,17 @@ public:
         FlyWithFormation
     };
 
+    enum struct SeekMode {
+        /*! Start of a timeline seek operation */
+        Start,
+        /*! Continuation of a timeline seek operation ("drag timeline") */
+        ContinuousSeek,
+        /*! A single seek operation (to beginning, to end, to selected position) */
+        SingleSeek,
+        /*! End of a timeline seek operation */
+        End
+    };
+
     /*!
      * Simulation events that can explicitly be triggered (requested) by the application.
      */
@@ -196,7 +207,7 @@ public:
     virtual void skipBackward() noexcept = 0;
     virtual void skipForward() noexcept = 0;
     virtual void skipToEnd() noexcept = 0;
-    virtual void seek(std::int64_t timestamp) noexcept = 0;
+    virtual void seek(std::int64_t timestamp, SeekMode seekMode) noexcept = 0;
     virtual void handleAtEnd() noexcept = 0;
 
     virtual Connect::State getState() const noexcept = 0;

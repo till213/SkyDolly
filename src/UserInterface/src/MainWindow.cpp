@@ -1095,6 +1095,7 @@ void MainWindow::onPositionSliderPressed() noexcept
         // Pause the replay while sliding the position slider
         skyConnectManager.setPaused(true);
     }
+    // TODO BEGIN SEEK
 }
 
 void MainWindow::onPositionSliderValueChanged(int value) noexcept
@@ -1106,7 +1107,7 @@ void MainWindow::onPositionSliderValueChanged(int value) noexcept
 
     // Prevent the timestampTimeEdit field to set the replay position as well
     ui->timestampTimeEdit->blockSignals(true);
-    skyConnectManager.seek(timestamp);
+    skyConnectManager.seek(timestamp, SkyConnectIntf::SeekMode::ContinuousSeek);
     ui->timestampTimeEdit->blockSignals(false);
 }
 
@@ -1118,6 +1119,7 @@ void MainWindow::onPositionSliderReleased() noexcept
     } else if (d->previousState == Connect::State::ReplayPaused) {
         skyConnectManager.setPaused(true);
     }
+    // TODO END SEEK
 }
 
 void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
@@ -1125,7 +1127,7 @@ void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isIdle() || skyConnectManager.getState() == Connect::State::ReplayPaused) {
         std::int64_t timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
-        skyConnectManager.seek(timestamp);
+        skyConnectManager.seek(timestamp, SkyConnectIntf::SeekMode::SingleSeek);
     }
 }
 
