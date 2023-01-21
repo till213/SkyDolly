@@ -107,7 +107,7 @@ public:
 
     void stop() noexcept;
 
-    void setPauseMode(SkyConnectIntf::PauseMode pauseMode) noexcept;
+    void setPaused(bool enable) noexcept;
     bool isPaused() const noexcept;
 
     void skipToBegin() noexcept;

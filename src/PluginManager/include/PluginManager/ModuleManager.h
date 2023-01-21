@@ -80,7 +80,7 @@ public:
 
     void setRecording(bool enable) noexcept;
     void setPlaying(bool enable) noexcept;
-    void setPauseMode(SkyConnectIntf::PauseMode pauseMode) noexcept;
+    void setPaused(bool enable) noexcept;
 
 signals:
     void activated(QString title, QUuid moduleUuid);

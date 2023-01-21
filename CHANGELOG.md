@@ -7,12 +7,12 @@
   * Primary and secondary flight controls (ailerons, flaps, spoilers, ...)
   * Engine (thrust lever)
   * Aircraft handles (gear, wing folding, tailhook, ...)
-- Imroved replay for AI aircraft ("formation flight"):
+- Improved replay for AI aircraft ("formation flight"):
   * Animated ailerons, elevator and rudder
   * Less SimConnect data sent
 - New location categories, including improved CSV import & export with Little Navmap
   * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
-- When pausing either replay or recording the simulation is now also paused
+- When pausing recording the simulation is now also paused
 - No need to "repeat flaps" in settings anymore (improved flight control replay)
 - Added new flight information simulation variables:
   * Surface condition (normal, wet, icy, snow)  

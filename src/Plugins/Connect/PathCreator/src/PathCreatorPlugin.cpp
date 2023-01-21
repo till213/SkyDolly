@@ -158,15 +158,15 @@ bool PathCreatorPlugin::onStartReplay([[maybe_unused]] std::int64_t currentTimes
     return true;
 }
 
-void PathCreatorPlugin::onReplayPaused(PauseMode pauseMode) noexcept
+void PathCreatorPlugin::onReplayPaused(bool enable) noexcept
 {
-    if (pauseMode != PauseMode::Resume) {
+    if (enable) {
          d->replayTimer.stop();
     } else {
         d->replayTimer.start(ReplayPeriod);
     }
 #ifdef DEBUG
-    qDebug() << "PathCreatorPlugin::onReplayPaused: pauseMode:" << Enum::underly(pauseMode);
+    qDebug() << "PathCreatorPlugin::onReplayPaused: enable:" << enable;
 #endif
 }
 

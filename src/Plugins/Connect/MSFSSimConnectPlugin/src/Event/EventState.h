@@ -88,7 +88,6 @@ namespace EventState
             else if constexpr(std::is_floating_point_v<T>) {
                 requested = 0.0;
             } else if constexpr(std::is_same_v<T, bool>) {
-
                 requested = false;
             } else {
                 requested = {};

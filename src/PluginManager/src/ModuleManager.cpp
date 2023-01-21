@@ -204,12 +204,12 @@ void ModuleManager::setPlaying(bool enable) noexcept
     }
 }
 
-void ModuleManager::setPauseMode(SkyConnectIntf::PauseMode pauseMode) noexcept
+void ModuleManager::setPaused(bool enable) noexcept
 {
     if (d->activeModule != nullptr) {
-        d->activeModule->setPauseMode(pauseMode);
+        d->activeModule->setPaused(enable);
     } else {
-        d->defaultModuleImpl->setPauseMode(pauseMode);
+        d->defaultModuleImpl->setPaused(enable);
     }
 }
 

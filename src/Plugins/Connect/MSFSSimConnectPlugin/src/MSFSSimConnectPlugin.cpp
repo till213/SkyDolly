@@ -98,6 +98,7 @@ public:
     tsl::ordered_map<QString, Waypoint> flightPlan;    
     bool pendingWaypointTime {false};
     bool storeDataImmediately {true};
+    bool subscribedToSystemEvent {false};
 };
 
 // PUBLIC
@@ -185,6 +186,9 @@ bool MSFSSimConnectPlugin::onStartRecording() noexcept
     // For formation flights (count > 1) send AI aircraft positions every visual frame
     if (ok && getCurrentFlight().count() > 1) {
         result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
+        if (result == S_OK) {
+            d->subscribedToSystemEvent = true;
+        }
         ok = result == S_OK;
     }
     return ok;
@@ -199,7 +203,10 @@ void MSFSSimConnectPlugin::onRecordingPaused(bool enable) noexcept
 void MSFSSimConnectPlugin::onStopRecording() noexcept
 {
     // Stop receiving "frame" events
-    ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
+    if (d->subscribedToSystemEvent) {
+        ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
+        d->subscribedToSystemEvent = false;
+    }
 
     // Stop receiving aircraft position
     updateRequestPeriod(::SIMCONNECT_PERIOD_NEVER);
@@ -255,36 +262,32 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
 
 bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
 {
-    d->eventStateHandler->reset();
     // Send aircraft position every visual frame
     HRESULT result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
+    if (result == S_OK) {
+        d->subscribedToSystemEvent = true;
+    }
     return result == S_OK;
 }
 
-void MSFSSimConnectPlugin::onReplayPaused(PauseMode pauseMode) noexcept
+void MSFSSimConnectPlugin::onReplayPaused(bool enable) noexcept
 {
-    if (pauseMode != PauseMode::Resume) {
-        ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
+    if (enable) {
+        if (d->subscribedToSystemEvent) {
+            ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
+            d->subscribedToSystemEvent = false;
+        }
     } else {
-        ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
-    }
-    switch (pauseMode) {
-    case PauseMode::Pause:
-        d->eventStateHandler->pauseSimulation(true);
-        break;
-    case PauseMode::PauseDuringSeek:
-        // We do not pause the simulation during seek
-        break;
-    case PauseMode::Resume:
-        d->eventStateHandler->resumePausedSimulation();
-        break;
+        HRESULT result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
+        if (result == S_OK) {
+            d->subscribedToSystemEvent = true;
+        }
     }
 }
 
 void MSFSSimConnectPlugin::onStopReplay() noexcept
 {
     ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
-    d->eventStateHandler->resumePausedSimulation();
 }
 
 void MSFSSimConnectPlugin::onSeek(std::int64_t currentTimestamp) noexcept
@@ -729,15 +732,13 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: PAUSE event:" << evt->dwData;
 #endif
-            // It seems that the pause event is currently only triggered by selecting "Pause Simulation"
-            // in the developer mode (MSFS), but neither when "active pause" is selected nor when ESC
-            // (in-game meu") is entered; also, we ignore the first "unpause" event (which is always
+            // We ignore the first "unpause" event (which is always
             // sent by MSFS after the initial connect), as we explicitly pause the replay after having
             // loaded a flight: we simply do this by assuming that no "unpause" would normally be sent
             // at the very beginning (timestamp 0) of the replay
             if (evt->dwData > 0 || skyConnect->getCurrentTimestamp() > 0) {
-                PauseMode pauseMode = evt->dwData == 1 ? SkyConnectIntf::PauseMode::Pause : SkyConnectIntf::PauseMode::Resume;
-                skyConnect->setPauseMode(pauseMode);
+                const bool enable = evt->dwData == 1;
+                skyConnect->setPaused(enable);
             }
             break;
 
@@ -930,7 +931,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::FlapsHandleIndex:
         {
-            if (skyConnect->getState() == Connect::State::Replay || skyConnect->getState() == Connect::State::ReplayPaused) {
+            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
                 auto flapsHandleIndex = reinterpret_cast<const SimConnectVariables::FlapsHandleIndex *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setCurrentFlapsHandleIndex(flapsHandleIndex->value);
             }

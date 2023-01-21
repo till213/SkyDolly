@@ -65,15 +65,6 @@ public:
         FlyWithFormation
     };
 
-    enum struct PauseMode {
-        /*! Pause button clicked. */
-        Pause,
-        /*! Pause replay for seeking the timeline */
-        PauseDuringSeek,
-        /*! Resume playback */
-        Resume
-    };
-
     /*!
      * Simulation events that can explicitly be triggered (requested) by the application.
      */
@@ -198,7 +189,7 @@ public:
      */
     virtual bool isActive() const noexcept = 0;
 
-    virtual void setPauseMode(PauseMode pauseMode) noexcept = 0;
+    virtual void setPaused(bool enable) noexcept = 0;
     virtual bool isPaused() const noexcept = 0;
 
     virtual void skipToBegin() noexcept = 0;

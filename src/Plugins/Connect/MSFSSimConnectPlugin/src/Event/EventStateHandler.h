@@ -241,73 +241,69 @@ public:
 
     inline void setCurrentFlapsHandleIndex(std::int32_t index)
     {
-        m_flapsIndex.pending = false;
-#ifdef DEBUG
-        qDebug() << "SimConnectEvent::Event::setCurrentFlapsHandleIndex: current index received:" << index
-                 << "Previous index:" << m_flapsIndex.current;
-#endif
         m_flapsIndex.current = index;
         m_flapsIndex.valid = true;
+        sendFlapsHandleIndex();
     }
 
     inline bool setNavigationLight(std::int32_t enabled)
     {
         const bool remoteState = (enabled != 0);
-        return setLight(remoteState, m_navigationLightToggle);
+        return sendLight(remoteState, m_navigationLightToggle);
     }
 
     inline bool setBeaconLight(std::int32_t enabled)
     {
         const bool remoteState = (enabled != 0);
-        return setLight(remoteState, m_beaconLightToggle);
+        return sendLight(remoteState, m_beaconLightToggle);
     }
 
     inline bool setLandingLight(std::int32_t enabled)
     {
         const bool remoteState = (enabled != 0);
-        return setLight(remoteState, m_landingLightToggle);
+        return sendLight(remoteState, m_landingLightToggle);
     }
 
     inline bool setTaxiLight(std::int32_t enabled)
     {
         const bool remoteState = (enabled != 0);
-        return setLight(remoteState, m_taxiLightToggle);
+        return sendLight(remoteState, m_taxiLightToggle);
     }
 
     inline bool setStrobeLight(std::int32_t enabled)
     {
         const bool remoteState = (enabled != 0);
-        return setLight(remoteState, m_strobeLightToggle);
+        return sendLight(remoteState, m_strobeLightToggle);
     }
 
     inline bool setPanelLight(std::int32_t enabled)
     {
         const bool remoteState = (enabled != 0);
-        return setLight(remoteState, m_panelLightToggle);
+        return sendLight(remoteState, m_panelLightToggle);
     }
 
     inline bool setRecognitionLight(std::int32_t enabled)
     {
         const bool remoteState = (enabled != 0);
-        return setLight(remoteState, m_recognitionLightToggle);
+        return sendLight(remoteState, m_recognitionLightToggle);
     }
 
     inline bool setWingLight(std::int32_t enabled)
     {
         const bool remoteState = (enabled != 0);
-        return setLight(remoteState, m_wingLightToggle);
+        return sendLight(remoteState, m_wingLightToggle);
     }
 
     inline bool setLogoLight(std::int32_t enabled)
     {
         const bool remoteState = (enabled != 0);
-        return setLight(remoteState, m_logoLightToggle);
+        return sendLight(remoteState, m_logoLightToggle);
     }
 
     inline bool setCabinLight(std::int32_t enabled)
     {
         const bool remoteState = (enabled != 0);
-        return setLight(remoteState, m_cabinLightToggle);
+        return sendLight(remoteState, m_cabinLightToggle);
     }
 
     inline void reset() {
@@ -446,6 +442,7 @@ private:
                 if (result == S_OK) {
                     m_flapsIndex.current = m_flapsIndex.requested;
                 }
+                m_flapsIndex.pending = false;
             } else if (!m_flapsIndex.pending) {
                 // Request current flaps index
                 result = ::SimConnect_RequestDataOnSimObject(m_simConnectHandle, Enum::underly(SimConnectType::DataRequest::FlapsHandleIndex),
@@ -454,14 +451,8 @@ private:
                 if (result == S_OK) {
                     m_flapsIndex.pending = true;
                 }
-#ifdef DEBUG
-                qDebug() << "EventStateHandler::sendFlapsHandleIndex: querying current flaps index"
-                         << "Current index:" << m_flapsIndex.current
-                         << "Requested index:" << m_flapsIndex.requested
-                         << "Success:" << (result == S_OK);
-#endif
             }
-        } // m_requestedFlapsIndex != m_currentFlapsIndex
+        } // needsUpdate
         return result == S_OK;
     }
 
@@ -532,7 +523,7 @@ private:
 
     // Updates the remote light state according to 'lightToggle', given the current 'remoteState'
     // if needed and resets the 'pending' state (false) of the 'lightToggle'
-    inline bool setLight(bool remoteState, EventState::StatelessToggle &lightToggle)
+    inline bool sendLight(bool remoteState, EventState::StatelessToggle &lightToggle)
     {
         HRESULT result {S_OK};
 
