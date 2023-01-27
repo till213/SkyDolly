@@ -28,9 +28,8 @@
 #include <forward_list>
 #include <vector>
 
-#include <QtGlobal>
-
 class QString;
+class QSqlDatabase;
 
 class FlightSelector;
 class Flight;
@@ -47,8 +46,8 @@ public:
     LogbookDaoIntf &operator=(LogbookDaoIntf &&rhs) = default;
     virtual ~LogbookDaoIntf() = default;
 
-    virtual std::forward_list<FlightDate> getFlightDates(bool *ok = nullptr) const noexcept = 0;
-    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept = 0;
+    virtual std::forward_list<FlightDate> getFlightDates(QSqlDatabase &db, bool *ok = nullptr) const noexcept = 0;
+    virtual std::vector<FlightSummary> getFlightSummaries(QSqlDatabase &db, const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // LOGBOOKDAO_H

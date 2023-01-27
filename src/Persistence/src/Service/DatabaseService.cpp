@@ -110,35 +110,35 @@ bool DatabaseService::backup() noexcept
     return ok;
 }
 
-bool DatabaseService::setBackupPeriod(std::int64_t backupPeriodId) noexcept
+bool DatabaseService::setBackupPeriod(std::int64_t backupPeriodId, QSqlDatabase &db) noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
+    bool ok = db.transaction();
     if (ok) {
         ok = d->databaseDao->updateBackupPeriod(backupPeriodId);
         if (ok) {
-            ok = QSqlDatabase::database().commit();
+            ok = db.commit();
         } else {
-            QSqlDatabase::database().rollback();
+            db.rollback();
         }
     }
     return ok;
 }
 
-bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
+bool DatabaseService::setNextBackupDate(const QDateTime &date, QSqlDatabase &db) noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
+    bool ok = db.transaction();
     if (ok) {
         ok = d->databaseDao->updateNextBackupDate(date);
         if (ok) {
-            ok = QSqlDatabase::database().commit();
+            ok = db.commit();
         } else {
-            QSqlDatabase::database().rollback();
+            db.rollback();
         }
     }
     return ok;
 }
 
-bool DatabaseService::updateBackupDate() noexcept
+bool DatabaseService::updateBackupDate(QSqlDatabase &db) noexcept
 {
     bool ok {true};
     const Metadata metaData = PersistenceManager::getInstance().getMetadata(&ok);
@@ -157,20 +157,20 @@ bool DatabaseService::updateBackupDate() noexcept
         if (nextBackupDate < today) {
             nextBackupDate = today;
         }
-        ok = setNextBackupDate(nextBackupDate);
+        ok = setNextBackupDate(nextBackupDate, db);
     }
     return ok;
 }
 
-bool DatabaseService::setBackupDirectoryPath(const QString &backupDirectoryPath) noexcept
+bool DatabaseService::setBackupDirectoryPath(const QString &backupDirectoryPath, QSqlDatabase &db) noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
+    bool ok = db.transaction();
     if (ok) {
         ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
         if (ok) {
-            ok = QSqlDatabase::database().commit();
+            ok = db.commit();
         } else {
-            QSqlDatabase::database().rollback();
+            db.rollback();
         }
     }
     return ok;

@@ -29,6 +29,8 @@
 #include <forward_list>
 #include <cstdint>
 
+class QSqlDatabase;
+
 #include <Model/Flight.h>
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
@@ -47,14 +49,14 @@ public:
     FlightService &operator=(FlightService &&rhs) noexcept;
     ~FlightService();
 
-    bool store(Flight &flight) noexcept;
-    bool restore(std::int64_t id, Flight &flight) noexcept;
-    bool deleteById(std::int64_t id) noexcept;
-    bool updateTitle(Flight &flight, const QString &title) noexcept;
-    bool updateTitle(std::int64_t id, const QString &title) noexcept;
-    bool updateTitleAndDescription(Flight &flight, const QString &title, const QString &description) noexcept;
-    bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept;
-    bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
+    bool store(QSqlDatabase &db, Flight &flight) noexcept;
+    bool restore(QSqlDatabase &db, std::int64_t id, Flight &flight) noexcept;
+    bool deleteById(QSqlDatabase &db, std::int64_t id) noexcept;
+    bool updateTitle(QSqlDatabase &db, Flight &flight, const QString &title) noexcept;
+    bool updateTitle(QSqlDatabase &db, std::int64_t id, const QString &title) noexcept;
+    bool updateTitleAndDescription(QSqlDatabase &db, Flight &flight, const QString &title, const QString &description) noexcept;
+    bool updateTitleAndDescription(QSqlDatabase &db, std::int64_t id, const QString &title, const QString &description) noexcept;
+    bool updateUserAircraftIndex(QSqlDatabase &db, Flight &flight, int index) noexcept;
 
 private:
     std::unique_ptr<FlightServicePrivate> d;

@@ -29,6 +29,7 @@
 #include <cstdint>
 
 class QString;
+class QSqlDatabase;
 
 #include "../FlightDaoIntf.h"
 
@@ -45,12 +46,12 @@ public:
     SQLiteFlightDao &operator=(SQLiteFlightDao &&rhs) noexcept;
     ~SQLiteFlightDao() override;
 
-    bool add(Flight &flight) noexcept override;
-    bool get(std::int64_t id, Flight &flight) const noexcept override;
-    bool deleteById(std::int64_t id) noexcept override;
-    bool updateTitle(std::int64_t id, const QString &title) noexcept override;
-    bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept override;
-    bool updateUserAircraftIndex(std::int64_t id, int index) noexcept override;
+    bool add(QSqlDatabase &db, Flight &flight) noexcept override;
+    bool get(QSqlDatabase &db, std::int64_t id, Flight &flight) const noexcept override;
+    bool deleteById(QSqlDatabase &db, std::int64_t id) noexcept override;
+    bool updateTitle(QSqlDatabase &db, std::int64_t id, const QString &title) noexcept override;
+    bool updateTitleAndDescription(QSqlDatabase &db, std::int64_t id, const QString &title, const QString &description) noexcept override;
+    bool updateUserAircraftIndex(QSqlDatabase &db, std::int64_t id, int index) noexcept override;
 
 private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;

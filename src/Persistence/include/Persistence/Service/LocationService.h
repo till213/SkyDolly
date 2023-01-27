@@ -30,6 +30,8 @@
 #include <cstdint>
 #include <cstddef>
 
+class QSqlDatabase;
+
 #include <Model/Location.h>
 #include "../PersistenceLib.h"
 
@@ -51,12 +53,12 @@ public:
     LocationService &operator=(LocationService &&rhs) noexcept;
     ~LocationService();
 
-    bool store(Location &location) noexcept;
-    bool storeAll(std::vector<Location> &locations, Mode mode) noexcept;
-    bool update(const Location &location) noexcept;
-    bool deleteById(std::int64_t id) noexcept;
-    std::vector<Location> getAll(bool *ok = nullptr) const noexcept;
-    std::vector<Location> getSelectedLocations(const LocationSelector &locationSelector, bool *ok = nullptr) const noexcept;
+    bool store(QSqlDatabase &db, Location &location) noexcept;
+    bool storeAll(QSqlDatabase &db, std::vector<Location> &locations, Mode mode) noexcept;
+    bool update(QSqlDatabase &db, const Location &location) noexcept;
+    bool deleteById(QSqlDatabase &db, std::int64_t id) noexcept;
+    std::vector<Location> getAll(QSqlDatabase &db, bool *ok = nullptr) const noexcept;
+    std::vector<Location> getSelectedLocations(QSqlDatabase &db, const LocationSelector &locationSelector, bool *ok = nullptr) const noexcept;
 
 private:
     std::unique_ptr<LocationServicePrivate> d;

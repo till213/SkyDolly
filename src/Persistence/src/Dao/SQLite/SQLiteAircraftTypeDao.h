@@ -44,10 +44,10 @@ public:
     SQLiteAircraftTypeDao &operator=(SQLiteAircraftTypeDao &&rhs) noexcept;
     ~SQLiteAircraftTypeDao() override;
 
-    bool upsert(const AircraftType &aircraftType) noexcept override;
-    AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept override;
-    std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept override;
-    bool exists(const QString &type) const noexcept override;
+    bool upsert(QSqlDatabase &db, const AircraftType &aircraftType) noexcept override;
+    AircraftType getByType(QSqlDatabase &db, const QString &type, bool *ok = nullptr) const noexcept override;
+    std::vector<AircraftType> getAllQSqlDatabase &db, (bool *ok = nullptr) const noexcept override;
+    bool exists(QSqlDatabase &db, const QString &type) const noexcept override;
 };
 
 #endif // AIRCRAFTTYPEDAO_H

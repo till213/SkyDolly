@@ -30,6 +30,7 @@
 #include <QString>
 
 class QDateTime;
+class QSqlDatabase;
 
 #include <Kernel/Version.h>
 #include "Metadata.h"
@@ -47,16 +48,16 @@ public:
     virtual bool connectDb(const QString &logbookPath) noexcept = 0;
     virtual void disconnectDb() noexcept = 0;
 
-    virtual bool migrate() noexcept = 0;
-    virtual bool optimise() noexcept = 0;
-    virtual bool backup(const QString &backupFilePath) noexcept= 0;
-    virtual bool updateBackupPeriod(std::int64_t backupPeriodId) noexcept = 0;
-    virtual bool updateNextBackupDate(const QDateTime &date) noexcept = 0;
-    virtual bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept = 0;
+    virtual bool migrate(QSqlDatabase &db) noexcept = 0;
+    virtual bool optimise(QSqlDatabase &db) noexcept = 0;
+    virtual bool backup(QSqlDatabase &db, const QString &backupFilePath) noexcept= 0;
+    virtual bool updateBackupPeriod(QSqlDatabase &db, std::int64_t backupPeriodId) noexcept = 0;
+    virtual bool updateNextBackupDate(QSqlDatabase &db, const QDateTime &date) noexcept = 0;
+    virtual bool updateBackupDirectoryPath(QSqlDatabase &db, const QString &backupDirectoryPath) noexcept = 0;
 
-    virtual Metadata getMetadata(bool *ok = nullptr) const noexcept = 0;
-    virtual Version getDatabaseVersion(bool *ok = nullptr) const noexcept = 0;
-    virtual QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept = 0;
+    virtual Metadata getMetadata(QSqlDatabase &db, bool *ok = nullptr) const noexcept = 0;
+    virtual Version getDatabaseVersion(QSqlDatabase &db, bool *ok = nullptr) const noexcept = 0;
+    virtual QString getBackupDirectoryPath(QSqlDatabase &db, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // DATABASEDAOINTF_H

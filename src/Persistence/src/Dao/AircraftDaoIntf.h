@@ -31,6 +31,7 @@
 #include <cstddef>
 
 class QString;
+class QSqlDatabase;
 
 class Aircraft;
 struct AircraftInfo;
@@ -56,14 +57,14 @@ public:
      *        the aircraft to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept = 0;
-    virtual std::vector<Aircraft> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept = 0;
-    virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t id, std::size_t sequenceNumber) noexcept = 0;
-    virtual bool deleteAllByFlightId(std::int64_t flightId) noexcept = 0;
-    virtual bool deleteById(std::int64_t id) noexcept = 0;
-    virtual std::vector<AircraftInfo> getAircraftInfosByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept = 0;
-    virtual bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept = 0;
-    virtual bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept = 0;
+    virtual bool add(QSqlDatabase &db, std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept = 0;
+    virtual std::vector<Aircraft> getByFlightId(QSqlDatabase &db, std::int64_t flightId, bool *ok = nullptr) const noexcept = 0;
+    virtual bool adjustAircraftSequenceNumbersByFlightId(QSqlDatabase &db, std::int64_t id, std::size_t sequenceNumber) noexcept = 0;
+    virtual bool deleteAllByFlightId(QSqlDatabase &db, std::int64_t flightId) noexcept = 0;
+    virtual bool deleteById(QSqlDatabase &db, std::int64_t id) noexcept = 0;
+    virtual std::vector<AircraftInfo> getAircraftInfosByFlightId(QSqlDatabase &db, std::int64_t flightId, bool *ok = nullptr) const noexcept = 0;
+    virtual bool updateTimeOffset(QSqlDatabase &db, std::int64_t id, std::int64_t timeOffset) noexcept = 0;
+    virtual bool updateTailNumber(QSqlDatabase &db, std::int64_t id, const QString &tailNumber) noexcept = 0;
 };
 
 #endif // AIRCRAFTDAOINTF_H

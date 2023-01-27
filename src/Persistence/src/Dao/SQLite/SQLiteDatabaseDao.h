@@ -51,16 +51,16 @@ public:
     bool connectDb(const QString &logbookPath) noexcept override;
     void disconnectDb() noexcept override;
 
-    bool migrate() noexcept override;
-    bool optimise() noexcept override;
-    bool backup(const QString &backupFilePath) noexcept override;
-    bool updateBackupPeriod(std::int64_t backupPeriodId) noexcept override;
-    bool updateNextBackupDate(const QDateTime &date) noexcept override;
-    bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept override;
+    bool migrate(QSqlDatabase &db) noexcept override;
+    bool optimise(QSqlDatabase &db) noexcept override;
+    bool backup(QSqlDatabase &db, const QString &backupFilePath) noexcept override;
+    bool updateBackupPeriod(QSqlDatabase &db, std::int64_t backupPeriodId) noexcept override;
+    bool updateNextBackupDate(QSqlDatabase &db, const QDateTime &date) noexcept override;
+    bool updateBackupDirectoryPath(QSqlDatabase &db, const QString &backupDirectoryPath) noexcept override;
 
-    Metadata getMetadata(bool *ok = nullptr) const noexcept override;
-    Version getDatabaseVersion(bool *ok = nullptr) const noexcept override;
-    QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept override;
+    Metadata getMetadata(QSqlDatabase &db, bool *ok = nullptr) const noexcept override;
+    Version getDatabaseVersion(QSqlDatabase &db, bool *ok = nullptr) const noexcept override;
+    QString getBackupDirectoryPath(QSqlDatabase &db, bool *ok = nullptr) const noexcept override;
 
 private:
     std::unique_ptr<DatabaseDaoPrivate> d;

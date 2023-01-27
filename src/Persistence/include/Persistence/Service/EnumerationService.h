@@ -29,6 +29,8 @@
 
 #include <QString>
 
+class QSqlDatabase;
+
 #include <Model/Enumeration.h>
 #include "../PersistenceLib.h"
 
@@ -56,7 +58,7 @@ public:
      *        if set, \c true if successful; \c false else (unknown Enumeration name, no database connection)
      * \return the persisted Enumeration identified by the \c name
      */
-    Enumeration getEnumerationByName(const QString &name, Enumeration::Order order = Enumeration::Order::Id, bool *ok = nullptr);
+    Enumeration getEnumerationByName(QSqlDatabase &db, const QString &name, Enumeration::Order order = Enumeration::Order::Id, bool *ok = nullptr);
 
     // Implementation note:
     // Well-known database enumerations: TitleCase name must match with corresponding

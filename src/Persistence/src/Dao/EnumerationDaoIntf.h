@@ -27,6 +27,8 @@
 
 #include <QString>
 
+class QSqlDatabase;
+
 #include <Model/Enumeration.h>
 
 class Enumeration;
@@ -64,7 +66,7 @@ public:
      *        if provided, set to \c true if successful; \c false else (enumeration does not exist; no DB connection)
      * \return the Enumeration as defined on the database
      */
-    virtual Enumeration get(const QString &name, Enumeration::Order order = Enumeration::Order::Id, bool *ok = nullptr) const noexcept = 0;
+    virtual Enumeration get(QSqlDatabase &db, const QString &name, Enumeration::Order order = Enumeration::Order::Id, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // ENUMERATIONDAOINTF_H

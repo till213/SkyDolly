@@ -43,10 +43,10 @@ public:
     SQLiteLightDao &operator=(SQLiteLightDao &&rhs) noexcept;
     ~SQLiteLightDao() override;
 
-    bool add(std::int64_t aircraftId, const LightData &data) noexcept override;
-    std::vector<LightData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
-    bool deleteByFlightId(std::int64_t flightId) noexcept override;
-    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+    bool add(QSqlDatabase &db, std::int64_t aircraftId, const LightData &data) noexcept override;
+    std::vector<LightData> getByAircraftId(QSqlDatabase &db, std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
+    bool deleteByFlightId(QSqlDatabase &db, std::int64_t flightId) noexcept override;
+    bool deleteByAircraftId(QSqlDatabase &db, std::int64_t aircraftId) noexcept override;
 };
 
 #endif // SQLITELIGHTDAO_H

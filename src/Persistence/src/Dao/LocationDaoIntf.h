@@ -28,6 +28,8 @@
 #include <vector>
 #include <cstdint>
 
+class QSqlDatabase;
+
 struct LocationSelector;
 struct Location;
 
@@ -41,8 +43,8 @@ public:
     LocationDaoIntf &operator=(LocationDaoIntf &&rhs) = default;
     virtual ~LocationDaoIntf() = default;
 
-    virtual bool add(Location &location) noexcept = 0;
-    virtual bool update(const Location &location) noexcept = 0;
+    virtual bool add(QSqlDatabase &db, Location &location) noexcept = 0;
+    virtual bool update(QSqlDatabase &db, const Location &location) noexcept = 0;
 
     /*!
      * Gets the locations that are approximately within the given \c distance from the position
@@ -58,10 +60,10 @@ public:
      *        \c true if the query was successful; \c false else (an error occurred)
      * \return the locations that are within the given \c distance of the given \c latitude and \c longitude
      */
-    virtual std::vector<Location> getByPosition(double latitude, double longitude, double distance = 0.0, bool *ok = nullptr) const noexcept = 0;
-    virtual bool deleteById(std::int64_t id) noexcept = 0;
-    virtual std::vector<Location> getAll(bool *ok = nullptr) const noexcept = 0;
-    virtual std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) const noexcept = 0;
+    virtual std::vector<Location> getByPosition(QSqlDatabase &db, double latitude, double longitude, double distance = 0.0, bool *ok = nullptr) const noexcept = 0;
+    virtual bool deleteById(QSqlDatabase &db, std::int64_t id) noexcept = 0;
+    virtual std::vector<Location> getAll(QSqlDatabase &db, bool *ok = nullptr) const noexcept = 0;
+    virtual std::vector<Location> getSelectedLocations(QSqlDatabase &db, const LocationSelector &selector, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // LOCATIONDAOINTF_H

@@ -43,10 +43,10 @@ public:
     SQLiteHandleDao &operator=(SQLiteHandleDao &&rhs) noexcept;
     ~SQLiteHandleDao() override;
 
-    bool add(std::int64_t aircraftId, const AircraftHandleData &data) noexcept override;
-    std::vector<AircraftHandleData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
-    bool deleteByFlightId(std::int64_t flightId) noexcept override;
-    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+    bool add(QSqlDatabase &db, std::int64_t aircraftId, const AircraftHandleData &data) noexcept override;
+    std::vector<AircraftHandleData> getByAircraftId(QSqlDatabase &db, std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
+    bool deleteByFlightId(QSqlDatabase &db, std::int64_t flightId) noexcept override;
+    bool deleteByAircraftId(QSqlDatabase &db, std::int64_t aircraftId) noexcept override;
 };
 
 #endif // SQLITEHANDLEDAO_H

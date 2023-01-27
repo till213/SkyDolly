@@ -27,6 +27,7 @@
 #include <cstdint>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -68,7 +69,7 @@ SQLiteFlightDao::SQLiteFlightDao(SQLiteFlightDao &&rhs) noexcept = default;
 SQLiteFlightDao &SQLiteFlightDao::operator=(SQLiteFlightDao &&rhs) noexcept = default;
 SQLiteFlightDao::~SQLiteFlightDao() = default;
 
-bool SQLiteFlightDao::add(Flight &flight) noexcept
+bool SQLiteFlightDao::add(Flight &flight, QSqlDatabase &db) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -156,7 +157,7 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
         // Starts at 1
         std::size_t sequenceNumber = 1;
         for (auto &aircaft : flight) {
-            ok = d->aircraftDao->add(flight.getId(), sequenceNumber, aircaft);
+            ok = d->aircraftDao->add(flight.getId(), sequenceNumber, aircaft, db);
             if (ok) {
                 ++sequenceNumber;
             } else {
@@ -168,7 +169,7 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
+bool SQLiteFlightDao::get(std::int64_t id, QSqlDatabase &db, Flight &flight) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -233,7 +234,7 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
 
             flight.setFlightCondition(flightCondition);
         }
-        std::vector<Aircraft> aircraft = d->aircraftDao->getByFlightId(id, &ok);
+        std::vector<Aircraft> aircraft = d->aircraftDao->getByFlightId(id, db, &ok);
         flight.setAircraft(std::move(aircraft));
         if (ok) {
             // Index starts at 0
@@ -248,7 +249,7 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::deleteById(std::int64_t id) noexcept
+bool SQLiteFlightDao::deleteById(std::int64_t id, QSqlDatabase &db) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -257,7 +258,7 @@ bool SQLiteFlightDao::deleteById(std::int64_t id) noexcept
         "where id = :id;"
     );
 
-    bool ok = d->aircraftDao->deleteAllByFlightId(id);
+    bool ok = d->aircraftDao->deleteAllByFlightId(id, db);
     if (ok) {
         query.bindValue(":id", QVariant::fromValue(id));
         ok = query.exec();
@@ -270,7 +271,7 @@ bool SQLiteFlightDao::deleteById(std::int64_t id) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) noexcept
+bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title, QSqlDatabase &db) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -290,7 +291,7 @@ bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) noexcep
     return ok;
 }
 
-bool SQLiteFlightDao::updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept
+bool SQLiteFlightDao::updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description, QSqlDatabase &db) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -312,7 +313,7 @@ bool SQLiteFlightDao::updateTitleAndDescription(std::int64_t id, const QString &
     return ok;
 }
 
-bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index) noexcept
+bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index, QSqlDatabase &db) noexcept
 {
     QSqlQuery query;
     query.prepare(

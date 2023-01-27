@@ -29,6 +29,7 @@
 #include <vector>
 
 class QString;
+class QSqlDatabase;
 
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
@@ -46,9 +47,9 @@ public:
     AircraftTypeService &operator=(AircraftTypeService &&rhs) noexcept;
     ~AircraftTypeService();
 
-    AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept;
-    std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept;
-    bool exists(const QString &type) const noexcept;
+    AircraftType getByType(QSqlDatabase &db, const QString &type, bool *ok = nullptr) const noexcept;
+    std::vector<AircraftType> getAll(QSqlDatabase &db ,bool *ok = nullptr) const noexcept;
+    bool exists(QSqlDatabase &db, const QString &type) const noexcept;
 
 private:
     std::unique_ptr<AircraftTypeServicePrivate> d;

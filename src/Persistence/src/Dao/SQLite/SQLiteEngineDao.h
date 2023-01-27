@@ -43,10 +43,10 @@ public:
     SQLiteEngineDao &operator=(SQLiteEngineDao &&rhs) noexcept;
     ~SQLiteEngineDao() override;
 
-    bool add(std::int64_t aircraftId, const EngineData &data) noexcept override;
-    std::vector<EngineData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
-    bool deleteByFlightId(std::int64_t flightId) noexcept override;
-    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+    bool add(QSqlDatabase &db, std::int64_t aircraftId, const EngineData &data) noexcept override;
+    std::vector<EngineData> getByAircraftId(QSqlDatabase &db, std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
+    bool deleteByFlightId(QSqlDatabase &db, std::int64_t flightId) noexcept override;
+    bool deleteByAircraftId(QSqlDatabase &db, std::int64_t aircraftId) noexcept override;
 };
 
 #endif // SQLITEENGINEDAO_H

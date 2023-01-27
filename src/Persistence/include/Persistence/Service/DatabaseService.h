@@ -33,6 +33,7 @@
 class QString;
 class QWidget;
 class QDateTime;
+class QSqlDatabase;
 
 #include "../PersistenceLib.h"
 
@@ -51,10 +52,10 @@ public:
 
     bool backup() noexcept;
 
-    bool setBackupPeriod(std::int64_t backupPeriodId) noexcept;
-    bool setNextBackupDate(const QDateTime &date) noexcept;
-    bool updateBackupDate() noexcept;
-    bool setBackupDirectoryPath(const QString &backupFolderPath) noexcept;
+    bool setBackupPeriod(QSqlDatabase &db, std::int64_t backupPeriodId) noexcept;
+    bool setNextBackupDate(QSqlDatabase &db, const QDateTime &date) noexcept;
+    bool updateBackupDate(QSqlDatabase &db) noexcept;
+    bool setBackupDirectoryPath(QSqlDatabase &db, const QString &backupFolderPath) noexcept;
 
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;

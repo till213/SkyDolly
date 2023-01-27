@@ -28,6 +28,7 @@
 #include <cstdint>
 
 class QString;
+class QSqlDatabase;
 
 class Flight;
 class FlightSummary;
@@ -48,12 +49,12 @@ public:
      *        the Flight to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(Flight &flight) noexcept = 0;
-    virtual bool get(std::int64_t id, Flight &flight) const noexcept = 0;
-    virtual bool deleteById(std::int64_t id) noexcept = 0;
-    virtual bool updateTitle(std::int64_t id, const QString &title) noexcept = 0;
-    virtual bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept = 0;
-    virtual bool updateUserAircraftIndex(std::int64_t id, int index) noexcept = 0;
+    virtual bool add(QSqlDatabase &db, Flight &flight) noexcept = 0;
+    virtual bool get(QSqlDatabase &db, std::int64_t id, Flight &flight) const noexcept = 0;
+    virtual bool deleteById(QSqlDatabase &db, std::int64_t id) noexcept = 0;
+    virtual bool updateTitle(QSqlDatabase &db, std::int64_t id, const QString &title) noexcept = 0;
+    virtual bool updateTitleAndDescription(QSqlDatabase &db, std::int64_t id, const QString &title, const QString &description) noexcept = 0;
+    virtual bool updateUserAircraftIndex(QSqlDatabase &db, std::int64_t id, int index) noexcept = 0;
 };
 
 #endif // FLIGHTDAOINTF_H

@@ -29,6 +29,8 @@
 #include <forward_list>
 #include <vector>
 
+class QSqlDatabase;
+
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
 #include "../PersistenceLib.h"
@@ -46,8 +48,8 @@ public:
     LogbookService &operator=(LogbookService &&rhs) noexcept;
     ~LogbookService();
 
-    std::forward_list<FlightDate> getFlightDates() const noexcept;
-    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept;
+    std::forward_list<FlightDate> getFlightDates(QSqlDatabase &db) const noexcept;
+    std::vector<FlightSummary> getFlightSummaries(QSqlDatabase &db, const FlightSelector &flightSelector) const noexcept;
 
 private:
     std::unique_ptr<LogbookServicePrivate> d;

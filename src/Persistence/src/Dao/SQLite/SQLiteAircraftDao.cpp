@@ -27,6 +27,7 @@
 #include <vector>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -108,7 +109,7 @@ SQLiteAircraftDao::SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept = default
 SQLiteAircraftDao &SQLiteAircraftDao::operator=(SQLiteAircraftDao &&rhs) noexcept = default;
 SQLiteAircraftDao::~SQLiteAircraftDao() = default;
 
-bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept
+bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft, QSqlDatabase &db) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -215,11 +216,11 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, A
     return ok;
 }
 
-std::vector<Aircraft> SQLiteAircraftDao::getByFlightId(std::int64_t flightId, bool *ok) const noexcept
+std::vector<Aircraft> SQLiteAircraftDao::getByFlightId(std::int64_t flightId, QSqlDatabase &db, bool *ok) const noexcept
 {
     std::vector<Aircraft> aircraftList;
     bool success {true};
-    std::vector<AircraftInfo> aircraftInfos = getAircraftInfosByFlightId(flightId, &success);
+    std::vector<AircraftInfo> aircraftInfos = getAircraftInfosByFlightId(flightId, db, &success);
     if (success) {
         aircraftList.reserve(aircraftInfos.size());
         for (const AircraftInfo &info: aircraftInfos) {
@@ -257,7 +258,7 @@ std::vector<Aircraft> SQLiteAircraftDao::getByFlightId(std::int64_t flightId, bo
     return aircraftList;
 }
 
-bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept
+bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber, QSqlDatabase &db) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -278,7 +279,7 @@ bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t fli
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) noexcept
+bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId, QSqlDatabase &db) noexcept
 {
     // Delete "bottom-up" in order not to violate foreign key constraints
     bool ok = d->positionDao->deleteByFlightId(flightId);
@@ -319,7 +320,7 @@ bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteById(std::int64_t id) noexcept
+bool SQLiteAircraftDao::deleteById(std::int64_t id, QSqlDatabase &db) noexcept
 {
     // Delete "bottom-up" in order not to violate foreign key constraints
     // Note: aircraft types (table aircraft_type) are not deleted
@@ -361,7 +362,7 @@ bool SQLiteAircraftDao::deleteById(std::int64_t id) noexcept
     return ok;
 }
 
-std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int64_t flightId,  bool *ok) const noexcept
+std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int64_t flightId, QSqlDatabase &db,  bool *ok) const noexcept
 {
     std::vector<AircraftInfo> aircraftInfos;
     QSqlQuery query;
@@ -421,7 +422,7 @@ std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int
     return aircraftInfos;
 }
 
-bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept
+bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffset, QSqlDatabase &db) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -441,7 +442,7 @@ bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffse
     return ok;
 };
 
-bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept
+bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNumber, QSqlDatabase &db) noexcept
 {
     QSqlQuery query;
     query.prepare(

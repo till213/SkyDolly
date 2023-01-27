@@ -52,14 +52,14 @@ EnumerationService::EnumerationService(EnumerationService &&rhs) noexcept = defa
 EnumerationService &EnumerationService::operator=(EnumerationService &&rhs) noexcept = default;
 EnumerationService::~EnumerationService() = default;
 
-Enumeration EnumerationService::getEnumerationByName(const QString &name, Enumeration::Order order, bool *ok)
+Enumeration EnumerationService::getEnumerationByName(const QString &name, QSqlDatabase &db, Enumeration::Order order, bool *ok)
 {
     Enumeration enumeration;
-    bool success = QSqlDatabase::database().transaction();
+    bool success = db.transaction();
     if (success) {
         enumeration = d->enumerationDao->get(name, order, &success);
     }
-    QSqlDatabase::database().rollback();
+    db.rollback();
     if (ok != nullptr) {
         *ok = success;
     }
