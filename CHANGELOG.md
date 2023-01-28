@@ -13,11 +13,11 @@
 - New location categories, including improved CSV import & export with Little Navmap
   * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
 - When pausing recording the simulation is now also paused
-- No need to "repeat flaps" in settings anymore (improved flight control replay)
-- Added new flight information simulation variables:
+- No need to "repeat flaps" in settings anymore (improved secondary flight controls replay)
+- Added new flight information simulation variables (dialog Flight -> Conditions):
   * Surface condition (normal, wet, icy, snow)  
   * On any runway
-  * Airplane in parking state
+  * On parking spot
 - Increasing the replay speed now also increases the simulation rate (up to a maximum rate of 16x)
   * The simulation rate is a power of 2: 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0 - the nearest simulation rate
     is chosen, given the current replay speed

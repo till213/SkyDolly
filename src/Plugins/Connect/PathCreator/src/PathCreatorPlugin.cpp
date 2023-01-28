@@ -431,7 +431,7 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.structuralIcingPercent = d->randomGenerator->bounded(101);
     flightCondition.inClouds = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.onAnyRunway = d->randomGenerator->bounded(2) < 1 ? false : true;
-    flightCondition.inParkingState = d->randomGenerator->bounded(2) < 1 ? false : true;
+    flightCondition.onParkingSpot = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.startLocalTime = QDateTime::currentDateTime();
     flightCondition.startZuluTime = QDateTime::currentDateTimeUtc();
 

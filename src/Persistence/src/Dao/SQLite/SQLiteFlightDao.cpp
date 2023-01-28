@@ -90,7 +90,7 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
         "  structural_icing,"
         "  precipitation_state,"
         "  on_any_runway,"
-        "  in_parking_state,"
+        "  on_parking_spot,"
         "  in_clouds,"
         "  start_local_sim_time,"
         "  start_zulu_sim_time,"
@@ -114,7 +114,7 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
         " :structural_icing,"
         " :precipitation_state,"
         " :on_any_runway,"
-        " :in_parking_state,"
+        " :on_parking_spot,"
         " :in_clouds,"
         " :start_local_sim_time,"
         " :start_zulu_sim_time,"
@@ -142,7 +142,7 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
     query.bindValue(":structural_icing", flightCondition.structuralIcingPercent);
     query.bindValue(":precipitation_state", Enum::underly(flightCondition.precipitationState));
     query.bindValue(":on_any_runway", flightCondition.onAnyRunway);
-    query.bindValue(":in_parking_state", flightCondition.inParkingState);
+    query.bindValue(":on_parking_spot", flightCondition.onParkingSpot);
     query.bindValue(":in_clouds", flightCondition.inClouds);
     // No conversion to UTC
     query.bindValue(":start_local_sim_time", flightCondition.startLocalTime);
@@ -198,7 +198,7 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
         const int descriptionIdx = record.indexOf("description");
         const int surfaceTypeIdx = record.indexOf("surface_type");
         const int onAnyRunwayIdx = record.indexOf("on_any_runway");
-        const int inParkingStateIdx = record.indexOf("in_parking_state");
+        const int onParkingSpotIdx = record.indexOf("on_parking_spot");
         const int surfaceConditionIdx = record.indexOf("surface_condition");
         const int groundAltitudeIdx = record.indexOf("ground_altitude");
         const int ambientTemperatureIdx = record.indexOf("ambient_temperature");
@@ -227,7 +227,7 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
             FlightCondition flightCondition;
             flightCondition.surfaceType = static_cast<SimType::SurfaceType>(query.value(surfaceTypeIdx).toInt());
             flightCondition.onAnyRunway = query.value(onAnyRunwayIdx).toBool();
-            flightCondition.inParkingState = query.value(inParkingStateIdx).toBool();
+            flightCondition.onParkingSpot = query.value(onParkingSpotIdx).toBool();
             flightCondition.surfaceCondition = static_cast<SimType::SurfaceCondition>(query.value(surfaceConditionIdx).toInt());
             flightCondition.groundAltitude = query.value(groundAltitudeIdx).toFloat();
             flightCondition.ambientTemperature = query.value(ambientTemperatureIdx).toFloat();

@@ -53,7 +53,7 @@ struct MODEL_API FlightCondition final
     std::uint8_t structuralIcingPercent {0};
     bool inClouds {false};
     bool onAnyRunway {false};
-    bool inParkingState {false};
+    bool onParkingSpot {false};
 
     void clear() noexcept;
 };

@@ -70,9 +70,8 @@ struct SimConnectAircraftInfo
     // Flight conditions
     std::int32_t surfaceType {0};
     std::int32_t onAnyRunway {0};
-    std::int32_t planeInParkingState {0};
+    std::int32_t atcOnParkingSpot {0};
     std::int32_t surfaceCondition {0};
-    std::int32_t surfaceInfoValid {0};
 
     float groundAltitude {0.0f};
     // Celcius
@@ -137,8 +136,8 @@ struct SimConnectAircraftInfo
 
         flightCondition.surfaceType = toSurfaceType(surfaceType);
         flightCondition.onAnyRunway = (onAnyRunway != 0);
-        flightCondition.inParkingState = (planeInParkingState != 0);
-        flightCondition.surfaceCondition = toSurfaceCondition(surfaceCondition, (surfaceInfoValid != 0));
+        flightCondition.onParkingSpot = (atcOnParkingSpot != 0);
+        flightCondition.surfaceCondition = toSurfaceCondition(surfaceCondition, simOnGround);
 
         flightCondition.groundAltitude = groundAltitude;
         flightCondition.ambientTemperature = ambientTemperature;

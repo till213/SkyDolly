@@ -97,7 +97,7 @@ void FlightConditionWidget::initUi() noexcept
     ui->precipitationStateLineEdit->setToolTip(SimVar::AmbientPrecipState);
 
     ui->onAnyRunwayCheckBox->setToolTip(SimVar::OnAnyRunway);
-    ui->inParkingStateCheckBox->setToolTip(SimVar::PlaneInParkingState);
+    ui->onParkingSpotCheckBox->setToolTip(SimVar::AtcOnParkingSpot);
     ui->inCloudsCheckBox->setToolTip(SimVar::AmbientInCloud);
     ui->visibilityLineEdit->setToolTip(SimVar::AmbientVisibility);
     ui->seaLevelPressure->setToolTip(SimVar::SeaLevelPressure);
@@ -126,7 +126,7 @@ void FlightConditionWidget::updateUi() noexcept
     ui->precipitationStateLineEdit->setText(SimType::precipitationStateToString(flightCondition.precipitationState));
 
     ui->onAnyRunwayCheckBox->setChecked(flightCondition.onAnyRunway);
-    ui->inParkingStateCheckBox->setChecked(flightCondition.inParkingState);
+    ui->onParkingSpotCheckBox->setChecked(flightCondition.onParkingSpot);
     ui->inCloudsCheckBox->setChecked(flightCondition.inClouds);
     ui->visibilityLineEdit->setText(d->unit.formatVisibility(flightCondition.visibility));
     ui->seaLevelPressure->setText(d->unit.formatPressureInHPa(flightCondition.seaLevelPressure));
