@@ -57,7 +57,7 @@ namespace SimType {
     /*!
      * The surface type describes the surface on (over) which the flight has started.
      *
-     * Implemenation note: those values act as actual IDs which get persisted in the database.
+     * Implemenation note: those values act as actual IDs that get persisted in the database.
      */
     enum struct SurfaceType {
         Unknown = 0,
@@ -86,6 +86,19 @@ namespace SimType {
         Shale = 23,
         Tarmac = 24,
         WrightFlyerTrack  = 25
+    };
+
+    /*!
+     * The surface condition describes the condition of the runway on which the flight has (potentially) started.
+     *
+     * Implemenation note: those values act as actual IDs that get persisted in the database.
+     */
+    enum struct SurfaceCondition {
+        Unknown = 0,
+        Normal = 1,
+        Wet = 2,
+        Icy = 3,
+        Snow = 4
     };
 
     /*!
@@ -118,138 +131,160 @@ namespace SimType {
     };
 
     inline QString surfaceTypeToString(SurfaceType surfaceType) noexcept {
-        QString unknown = QCoreApplication::translate("SimType", "Unknown");
+        QString surfaceTypeString;
         switch (surfaceType) {
         case SurfaceType::Unknown:
-            return unknown;
+            surfaceTypeString = QCoreApplication::translate("SimType", "Unknown");
             break;
         case SurfaceType::Concrete:
-            return QCoreApplication::translate("SimType", "Concrete");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Concrete");
             break;
         case SurfaceType::Grass:
-            return QCoreApplication::translate("SimType", "Grass");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Grass");
             break;
         case SurfaceType::Water:
-            return QCoreApplication::translate("SimType", "Water");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Water");
             break;
         case SurfaceType::BumpyGrass:
-            return QCoreApplication::translate("SimType", "Bumpy grass");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Bumpy grass");
             break;
         case SurfaceType::Asphalt:
-            return QCoreApplication::translate("SimType", "Asphalt");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Asphalt");
             break;
         case SurfaceType::ShortGrass:
-            return QCoreApplication::translate("SimType", "Short grass");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Short grass");
             break;
         case SurfaceType::LongGrass:
-            return QCoreApplication::translate("SimType", "Long grass");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Long grass");
             break;
         case SurfaceType::HardTurf:
-            return QCoreApplication::translate("SimType", "Hard turf");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Hard turf");
             break;
         case SurfaceType::Snow:
-            return QCoreApplication::translate("SimType", "Snow");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Snow");
             break;
         case SurfaceType::Ice:
-            return QCoreApplication::translate("SimType", "Ice");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Ice");
             break;
         case SurfaceType::Urban:
-            return QCoreApplication::translate("SimType", "Urban");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Urban");
             break;
         case SurfaceType::Forest:
-            return QCoreApplication::translate("SimType", "Forest");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Forest");
             break;
         case SurfaceType::Dirt:
-            return QCoreApplication::translate("SimType", "Dirt");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Dirt");
             break;
         case SurfaceType::Coral:
-            return QCoreApplication::translate("SimType", "Coral");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Coral");
             break;
         case SurfaceType::Gravel:
-            return QCoreApplication::translate("SimType", "Gravel");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Gravel");
             break;
         case SurfaceType::OilTreated:
-            return QCoreApplication::translate("SimType", "Oil treated");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Oil treated");
             break;
         case SurfaceType::SteelMats:
-            return QCoreApplication::translate("SimType", "Steel mats");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Steel mats");
             break;
         case SurfaceType::Bituminus:
-            return QCoreApplication::translate("SimType", "Bituminus");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Bituminus");
             break;
         case SurfaceType::Brick:
-            return QCoreApplication::translate("SimType", "Brick");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Brick");
             break;
         case SurfaceType::Macadam:
-            return QCoreApplication::translate("SimType", "Macadam");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Macadam");
             break;
         case SurfaceType::Planks:
-            return QCoreApplication::translate("SimType", "Planks");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Planks");
             break;
         case SurfaceType::Sand:
-            return QCoreApplication::translate("SimType", "Sand");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Sand");
             break;
         case SurfaceType::Shale:
-            return QCoreApplication::translate("SimType", "Shale");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Shale");
             break;
         case SurfaceType::Tarmac:
-            return QCoreApplication::translate("SimType", "Tarmac");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Tarmac");
             break;
         case SurfaceType::WrightFlyerTrack:
-            return QCoreApplication::translate("SimType", "Wright flyer track");
+            surfaceTypeString = QCoreApplication::translate("SimType", "Wright flyer track");
             break;
         }
-        return unknown;
+        return surfaceTypeString;
+    }
+
+    inline QString surfaceConditionToString(SurfaceCondition surfaceCondition) noexcept {
+        QString surfaceConditionString;
+        switch (surfaceCondition) {
+        case SurfaceCondition::Unknown:
+            surfaceConditionString = QCoreApplication::translate("SimType", "Unknown");
+            break;
+        case SurfaceCondition::Normal:
+            surfaceConditionString =  QCoreApplication::translate("SimType", "Normal");
+            break;
+        case SurfaceCondition::Wet:
+            surfaceConditionString =  QCoreApplication::translate("SimType", "Wet");
+            break;
+        case SurfaceCondition::Icy:
+            surfaceConditionString =  QCoreApplication::translate("SimType", "Icy");
+            break;
+        case SurfaceCondition::Snow:
+            surfaceConditionString =  QCoreApplication::translate("SimType", "Snow");
+            break;
+        }
+        return surfaceConditionString;
     }
 
     inline QString engineTypeToString(EngineType engineType) noexcept {
-        QString unknown = QCoreApplication::translate("SimType", "Unknown");
+        QString engineTypeString;
         switch (engineType) {
         case EngineType::Unknown:
-            return unknown;
+            engineTypeString = QCoreApplication::translate("SimType", "Unknown");
             break;
         case EngineType::Piston:
-            return QCoreApplication::translate("SimType", "Piston");
+            engineTypeString = QCoreApplication::translate("SimType", "Piston");
             break;
         case EngineType::Jet:
-            return QCoreApplication::translate("SimType", "Jet");
+            engineTypeString = QCoreApplication::translate("SimType", "Jet");
             break;
         case EngineType::None:
-            return QCoreApplication::translate("SimType", "No engine");
+            engineTypeString = QCoreApplication::translate("SimType", "No engine");
             break;
         case EngineType::HeloBellTurbine:
-            return QCoreApplication::translate("SimType", "Helo (Bell) turbine");
+            engineTypeString = QCoreApplication::translate("SimType", "Helo (Bell) turbine");
             break;
         case EngineType::Unsupported:
-            return QCoreApplication::translate("SimType", "Unsupported");
+            engineTypeString = QCoreApplication::translate("SimType", "Unsupported");
             break;
         case EngineType::Turboprop:
-            return QCoreApplication::translate("SimType", "Turboprop");
+            engineTypeString = QCoreApplication::translate("SimType", "Turboprop");
             break;
         case EngineType::All:
-            return QCoreApplication::translate("SimType", "All");
+            engineTypeString = QCoreApplication::translate("SimType", "All");
             break;
         }
-        return unknown;
+        return engineTypeString;
     }
 
     inline QString precipitationStateToString(PrecipitationState precipitationState) noexcept {
-        QString unknown = QCoreApplication::translate("SimType", "Unknown");
+        QString precipitationStateString;
         switch (precipitationState) {
         case PrecipitationState::Unknown:
-            return unknown;
+            precipitationStateString = QCoreApplication::translate("SimType", "Unknown");;
             break;
         case PrecipitationState::None:
-            return QCoreApplication::translate("SimType", "None");
+            precipitationStateString = QCoreApplication::translate("SimType", "None");
             break;
         case PrecipitationState::Rain:
-            return QCoreApplication::translate("SimType", "Rain");
+            precipitationStateString = QCoreApplication::translate("SimType", "Rain");
             break;
         case PrecipitationState::Snow:
-            return QCoreApplication::translate("SimType", "Snow");
+            precipitationStateString = QCoreApplication::translate("SimType", "Snow");
             break;
         }
-        return unknown;
+        return precipitationStateString;
     }
 }
 

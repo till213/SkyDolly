@@ -36,8 +36,8 @@
 #include "SimConnectType.h"
 
 /*!
- * Secondary flight controls simulation variables (spoilers, flaps) that are
- * sent as event to the user aircraft.
+ * Secondary flight control simulation variables that are sent as event to the user aircraft
+ * (and possibly as simulation variables to AI aircraft).
  *
  * Implementation note: this struct needs to be packed.
  */

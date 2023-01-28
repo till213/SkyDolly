@@ -30,6 +30,7 @@ target_sources(${MODULE_NAME}
         src/SimVar/SecondaryFlightControl/SimConnectSecondaryFlightControlEvent.h
         src/SimVar/SecondaryFlightControl/SimConnectSecondaryFlightControlAll.h
         src/SimVar/SecondaryFlightControl/SimConnectSecondaryFlightControlAi.h
+        src/SimVar/AircraftHandle/SimConnectAircraftHandleAnimation.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleCommon.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleCore.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleEvent.h
@@ -46,11 +47,13 @@ target_sources(${MODULE_NAME}
         src/SimVar/SimConnectLocation.h src/SimVar/SimConnectLocation.cpp
         src/SimVar/SimConnectVariables.h src/SimVar/SimConnectVariables.cpp
         src/SimVar/SimulationVariables.h
+        src/SimVar/SimConnectType.h
         src/Event/SimConnectEvent.h
         src/Event/EventState.h
         src/Event/EventWidget.h src/Event/EventWidget.cpp
         src/Event/EventStateHandler.h
-        src/SimConnectType.h
+        src/Event/SimulationRate.h
+
         src/SimConnectAi.h src/SimConnectAi.cpp        
         src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp
         src/MSFSSimConnectPlugin.json

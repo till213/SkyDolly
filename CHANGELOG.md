@@ -7,20 +7,29 @@
   * Primary and secondary flight controls (ailerons, flaps, spoilers, ...)
   * Engine (thrust lever)
   * Aircraft handles (gear, wing folding, tailhook, ...)
-- Imroved replay for AI aircraft ("formation flight"):
+- Improved replay for AI aircraft ("formation flight"):
   * Animated ailerons, elevator and rudder
   * Less SimConnect data sent
-- New location categories, including improved CSV import & export with Little Navmap
-  * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
-- When pausing either replay or recording the simulation is now also paused
-- No need to "repeat flaps" in settings anymore (improved flight control replay)
-
+- New location categories, including improved CSV import & export with Little Navmap v2.8.8
+  * Addon, Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
+- When pausing recording the simulation is now also paused
+- No need to "repeat flaps" in settings anymore (improved secondary flight controls replay)
+- Added new flight information simulation variables (dialog Flight -> Conditions):
+  * Surface condition (normal, wet, icy, snow)  
+  * On any runway
+  * On parking spot
+- Increasing the replay speed now also increases the simulation rate (up to a maximum rate of 16x)
+  * The simulation rate is a power of 2: 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0 - the nearest simulation rate
+    is chosen, given the current replay speed
+  * Note: certain aircraft may reduce or even fix the simulation rate to 1.0 (for instance the Fenix A320)
+ 
 ### Under The Hood
 - Small performance improvements
 
 ### Bug Fixes
 - Fix "ailerons reversal" (Asobo A320neo, F/A-18 and other aircraft with "PID controllers")
   * Actual root cause (in MSFS/SimConnect): MSFS seems to expect "*feet* per second" instead of "*radians* per second" for "*rotation* velocity body" (*radians* per second would actually be the correct physical unit for rotation velocity)
+- Ensure that all "position" and "percent" values as reported by MSFS are clamped to the proper range ([0.0, 1.0] and [0, 100] respectively)
 
 ## 0.13.1
 

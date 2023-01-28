@@ -17,6 +17,7 @@ project(
 # Used to populate the Info.plist.in and SkyDolly.rc.in
 set(PROJECT_APPLICATION_NAME "Sky Dolly")
 set(PROJECT_ORGANISATION_NAME till213)
+enable_testing()
 
 include(InitSubmodules)
 

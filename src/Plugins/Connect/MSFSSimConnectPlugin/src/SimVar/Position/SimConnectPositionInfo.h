@@ -38,7 +38,8 @@
 #include "SimConnectType.h"
 
 /*!
- * Position simulation variables that are stored for information purposes only.
+ * Aircraft position simulation variables that are either stored for information purposes only
+ * or that are sent exclusively to the user aircraft as events.
  *
  * Implementation note: this struct needs to be packed.
  */

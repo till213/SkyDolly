@@ -35,8 +35,8 @@
 #include "SimConnectType.h"
 
 /*!
- * Light simulation variables (taxi, navigation, ...) that are
- * sent as event to the user aircraft.
+ * Light simulation variables that are sent as event to the user aircraft
+ * (and possibly as simulation variables to AI aircraft).
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -90,11 +90,6 @@ struct SimConnectLightEvent
         lightData.lightStates.setFlag(SimType::LightState::Logo, logo != 0);
         lightData.lightStates.setFlag(SimType::LightState::Cabin, cabin != 0);
         return lightData;
-    }
-
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
-    {
-        addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LightEvent));
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

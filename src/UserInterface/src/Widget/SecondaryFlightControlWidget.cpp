@@ -79,15 +79,15 @@ void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariable
     if (!secondaryFlightControlData.isNull()) {
         // Flaps & spoilers (speed brakes)
         ui->flapsHandleIndexLineEdit->setText(QString::number(secondaryFlightControlData.flapsHandleIndex));
-        ui->leftLeadingEdgeFlapsLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.leftLeadingEdgeFlapsPosition));
-        ui->rightLeadingEdgeFlapsLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.rightLeadingEdgeFlapsPosition));
-        ui->leftTrailingEdgeFlapsLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.leftTrailingEdgeFlapsPosition));
-        ui->rightTrailingEdgeFlapsLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.rightTrailingEdgeFlapsPosition));
+        ui->leftLeadingEdgeFlapsLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.leftLeadingEdgeFlapsPosition));
+        ui->rightLeadingEdgeFlapsLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.rightLeadingEdgeFlapsPosition));
+        ui->leftTrailingEdgeFlapsLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.leftTrailingEdgeFlapsPosition));
+        ui->rightTrailingEdgeFlapsLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.rightTrailingEdgeFlapsPosition));
 
         ui->spoilersHandlePositionLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.spoilersHandlePercent));
         secondaryFlightControlData.spoilersArmed ? ui->spoilersArmedLineEdit->setText(tr("Armed")) : ui->spoilersArmedLineEdit->setText(tr("Disarmed"));
-        ui->leftSpoilersPositionLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.leftSpoilersPosition));
-        ui->rightSpoilersPositionLineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(secondaryFlightControlData.rightSpoilersPosition));
+        ui->leftSpoilersPositionLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.leftSpoilersPosition));
+        ui->rightSpoilersPositionLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.rightSpoilersPosition));
 
         colorName = d->ActiveTextColor.name();
     } else {

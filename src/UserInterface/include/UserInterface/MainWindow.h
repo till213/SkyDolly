@@ -43,6 +43,8 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+#include <PluginManager/SkyConnectIntf.h>
+
 class AboutDialog;
 class SettingsDialog;
 class FlightDialog;
@@ -131,6 +133,8 @@ private:
     void updatePositionSliderTickInterval() noexcept;
 
     double getCustomSpeedFactor() const;
+
+    void seek(int value, SkyConnectIntf::SeekMode seekMode) const noexcept;
     
 private slots:
     // Ui elements

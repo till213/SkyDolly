@@ -31,6 +31,7 @@
 
 class QWidget;
 
+#include "SkyConnectIntf.h"
 #include "ModuleIntf.h"
 #include "PluginManagerLib.h"
 
@@ -56,7 +57,7 @@ public:
 
 protected:
     virtual void onStartRecording() noexcept;
-    virtual void onPaused(bool enable) noexcept;
+    virtual void onPause(bool enable) noexcept;
     virtual void onStartReplay() noexcept;
 
     FlightService &getFlightService() const noexcept;

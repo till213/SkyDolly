@@ -83,6 +83,7 @@ public:
 
 private:
     inline void initTypeToSymIdMap() {
+        typeToSymId["addon"] = "AP";
         typeToSymId["airport"] = "AP";
         typeToSymId["airstrip"] = "AS";
         typeToSymId["building"] = "BU";

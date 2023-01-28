@@ -17,7 +17,7 @@ Each topic X is furthermore split into sub-records:
 - XCommon: common simulation variables that are sent to both user- and AI aircraft
 - XCore: core simulation variables might be sent as either simulation variables or events to the user aircraft
 - XEvent: event variables are sent as event to the user aircraft and (possibly) as simulation variables to AI aircraft
-- XInfo: simulation variables that are only stored for information purposes and are neither sent to the user- nor any AI aircraft
+- XInfo: simulation variables that are only stored for information purposes or that are sent exclusively to the user aircraft as events
 
 ## Request and Response Records
 The following "cumulative records" are actually registered with SimConnect as data definitions (also refer to SimConnectType.h):

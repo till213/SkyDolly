@@ -683,7 +683,7 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
             // Also update the manually flown user aircraft position
             const Aircraft &aircraft = flight.getUserAircraft();
             Position &position = aircraft.getPosition();
-            const PositionData &positionData = position.interpolate(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::Seek);
+            const PositionData &positionData = position.interpolate(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::DiscreteSeek);
             skyConnectManager.setUserAircraftPosition(positionData);
         }
         break;
@@ -715,7 +715,7 @@ void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode repl
             Flight &flight = Logbook::getInstance().getCurrentFlight();
             const Aircraft &aircraft = flight.getUserAircraft();
             Position &position = aircraft.getPosition();
-            const PositionData &positionData = position.interpolate(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::Seek);
+            const PositionData &positionData = position.interpolate(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::DiscreteSeek);
             skyConnectManager.setUserAircraftPosition(positionData);
             break;
         }

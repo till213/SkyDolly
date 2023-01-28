@@ -59,7 +59,7 @@ protected:
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;
-    bool onSimulationEvent(SimulationEvent event) const noexcept override;
+    bool onSimulationEvent(SimulationEvent event, float arg1) const noexcept override;
 
     bool onStartRecording() noexcept override;
     void onRecordingPaused(bool enable) noexcept override;
@@ -69,7 +69,7 @@ protected:
     void onReplayPaused(bool enable) noexcept override;
     void onStopReplay() noexcept override;
 
-    void onSeek(std::int64_t currentTimestamp) noexcept override;
+    void onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept override;
     void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
@@ -98,6 +98,7 @@ private:
     void replay() noexcept;
     void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
+    void resetEventStates() noexcept;
 
     static void CALLBACK dispatch(::SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept;
 

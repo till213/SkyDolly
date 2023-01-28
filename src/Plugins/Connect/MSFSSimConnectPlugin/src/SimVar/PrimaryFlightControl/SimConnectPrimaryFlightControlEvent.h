@@ -34,8 +34,8 @@
 #include "SimConnectType.h"
 
 /*!
- * Primary flight controls simulation variables (rudder, elevator, ailerons) that are
- * sent as event to the user aircraft.
+ * Primary flight control simulation variables that are sent as event to the user aircraft
+ * (and possibly as simulation variables to AI aircraft).
  *
  * Implementation note: this struct needs to be packed.
  */
