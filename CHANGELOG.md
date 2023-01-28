@@ -10,8 +10,8 @@
 - Improved replay for AI aircraft ("formation flight"):
   * Animated ailerons, elevator and rudder
   * Less SimConnect data sent
-- New location categories, including improved CSV import & export with Little Navmap
-  * Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
+- New location categories, including improved CSV import & export with Little Navmap v2.8.8
+  * Addon, Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
 - When pausing recording the simulation is now also paused
 - No need to "repeat flaps" in settings anymore (improved secondary flight controls replay)
 - Added new flight information simulation variables (dialog Flight -> Conditions):
