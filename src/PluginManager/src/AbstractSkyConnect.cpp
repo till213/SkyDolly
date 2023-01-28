@@ -112,7 +112,7 @@ bool AbstractSkyConnect::freezeUserAircraft(bool enable) const noexcept
     return onFreezeUserAircraft(enable);
 }
 
-bool AbstractSkyConnect::sendSimulationEvent(SimulationEvent event, int arg1) noexcept
+bool AbstractSkyConnect::sendSimulationEvent(SimulationEvent event, float arg1) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -251,6 +251,9 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
             if (ok) {
                 ok = updateUserAircraftFreeze();
             }
+            if (ok) {
+                sendSimulationEvent(SimulationEvent::SimulationRate, d->replaySpeedFactor);
+            }
             if (!ok) {
                 stopReplay();
             }
@@ -272,6 +275,8 @@ void AbstractSkyConnect::stopReplay() noexcept
     d->elapsedTimer.invalidate();
     onStopReplay();
     updateUserAircraftFreeze();
+    // Reset simulation rate
+    sendSimulationEvent(SimulationEvent::SimulationRate, 1.0f);
 }
 
 bool AbstractSkyConnect::isReplaying() const noexcept
@@ -468,8 +473,9 @@ void AbstractSkyConnect::setReplaySpeedFactor(double factor) noexcept
             startElapsedTimer();
         }
         d->replaySpeedFactor = factor;
-        const int simulationRate = std::min(static_cast<int>(std::round(d->replaySpeedFactor)), Const::MaximumSimulationRate);
-        sendSimulationEvent(SimulationEvent::SimulationRate, simulationRate);
+        if (isInReplayState()) {
+            sendSimulationEvent(SimulationEvent::SimulationRate, d->replaySpeedFactor);
+        }
     }
 }
 

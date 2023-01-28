@@ -18,7 +18,10 @@
   * Surface condition (normal, wet, icy, snow)  
   * On any runway
   * Airplane in parking state
-- Increasing the replay speed now also increases the simulation rate (up to a maximum rate of 8x)
+- Increasing the replay speed now also increases the simulation rate (up to a maximum rate of 16x)
+  * The simulation rate is a power of 2: 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0 - the nearest simulation rate
+    is chosen, given the current replay speed
+  * Note: certain aircraft may reduce or even fix the simulation rate to 1.0 (for instance the Fenix A320)
  
 ### Under The Hood
 - Small performance improvements

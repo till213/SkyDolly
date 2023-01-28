@@ -98,7 +98,7 @@ public:
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) const noexcept = 0;
-    virtual bool sendSimulationEvent(SimulationEvent event, int arg1) noexcept = 0;
+    virtual bool sendSimulationEvent(SimulationEvent event, float arg1) noexcept = 0;
 
     /*!
      * Returns the replay mode.

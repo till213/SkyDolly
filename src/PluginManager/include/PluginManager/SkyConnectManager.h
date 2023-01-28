@@ -80,7 +80,7 @@ public:
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
     bool setUserAircraftPosition(const PositionData & positionData) noexcept;
     bool freezeUserAircraft(bool enable) noexcept;
-    bool sendSimulationEvent(SkyConnectIntf::SimulationEvent event, int arg1 = 0) noexcept;
+    bool sendSimulationEvent(SkyConnectIntf::SimulationEvent event, float arg1 = 0.0f) noexcept;
 
     SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
     void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;
@@ -132,7 +132,6 @@ public slots:
 
 signals:
     void connectionChanged(SkyConnectIntf *skyConnect);
-
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
 
     /*!

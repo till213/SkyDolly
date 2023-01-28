@@ -63,7 +63,8 @@ namespace SimConnectType
         RecognitionLight,
         WingLight,
         LogoLight,
-        CabinLight
+        CabinLight,
+        SimulationRate
     };
 
     enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
@@ -90,6 +91,7 @@ namespace SimConnectType
         WingLight,
         LogoLight,
         CabinLight,
+        SimulationRate,
         // AI objects
         AiRemoveObject,
         AiReleaseControl,

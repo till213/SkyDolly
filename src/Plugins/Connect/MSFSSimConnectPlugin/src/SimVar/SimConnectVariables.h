@@ -126,6 +126,14 @@ namespace SimConnectVariables
     };
     #pragma pack(pop)
 
+    /*! Simulation rate. */
+    #pragma pack(push, 1)
+    struct SimulationRate
+    {
+        float value;
+    };
+    #pragma pack(pop)
+
     void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 }
 

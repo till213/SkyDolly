@@ -47,4 +47,7 @@ void SimConnectVariables::addToDataDefinition(HANDLE simConnectHandle) noexcept
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::WingLight), SimVar::LightWing, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LogoLight), SimVar::LightLogo, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::CabinLight), SimVar::LightCabin, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+
+    // Simulation
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::SimulationRate), SimVar::SimulationRate, "Number", ::SIMCONNECT_DATATYPE_FLOAT32);
 }

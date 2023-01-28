@@ -47,7 +47,8 @@ struct MODEL_API TimeVariableData
      * \li continuous: a continuous seek operation is in progress ("dragging the time position slider");
      *     certain event data is dererred until the end of the seek operation
      */
-    enum struct Access {
+    enum struct Access
+    {
         /*!
          * The sampled data is accessed in a linear way, taking the time offset of the Aircraft into account,
          * typically for replay.
@@ -85,7 +86,8 @@ struct MODEL_API TimeVariableData
      * \return \c true if this data is \e null (invalid) data; \c false else
      * \sa reset
      */
-    inline bool isNull() const noexcept {
+    inline bool isNull() const noexcept
+    {
         return (timestamp == InvalidTime);
     }
 

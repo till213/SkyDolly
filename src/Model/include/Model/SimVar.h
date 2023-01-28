@@ -169,6 +169,7 @@ namespace SimVar
     constexpr const char *ZuluDayOfMonth = "Zulu Day of Month";
 
     constexpr const char *Timestamp = "Timestamp";
+    constexpr const char *SimulationRate = "Simulation Rate";
 }
 
 #endif // SIMVAR_H

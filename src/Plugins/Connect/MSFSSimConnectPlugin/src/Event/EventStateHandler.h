@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <algorithm>
+#include <array>
 
 #include <windows.h>
 #include <SimConnect.h>
@@ -75,7 +76,7 @@ public:
      *        the normalised value to be converted [-1.0, 1.0]
      * @return the converted \em event (position) value [-16384, 16384]
      */
-    constexpr std::int16_t positionTo16K(double value) noexcept
+    static constexpr std::int16_t positionTo16K(double value) noexcept
     {
         return static_cast<std::int16_t>(std::round(std::clamp(value, -1.0, 1.0) * Max16KPosition));
     }
@@ -87,12 +88,12 @@ public:
      *        the percent value to be converted [0, 100]
      * @return the converted \em event (position) value [-16384, 16384]
      */
-    constexpr std::int16_t percentTo16K(double percent) noexcept
+    static constexpr std::int16_t percentTo16K(double percent) noexcept
     {
         return static_cast<std::int16_t>(std::round(percent * (double)Max16KPosition / 100.0));
     }
 
-    void setupEvents()
+    void setupEvents() noexcept
     {
         // System event subscription
         ::SimConnect_SubscribeToSystemEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimStart), "SimStart");
@@ -101,7 +102,8 @@ public:
 
         // Client events
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::PauseSet), "PAUSE_SET");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimRateSet), "SIM_RATE_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimRateIncr), "SIM_RATE_INCR");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimRateDecr), "SIM_RATE_DECR");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::FreezeLatituteLongitude), "FREEZE_LATITUDE_LONGITUDE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::FreezeAltitude), "FREEZE_ALTITUDE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
@@ -176,7 +178,7 @@ public:
         return ok;
     }
 
-    inline bool sendPrimaryFlightControl(const SimConnectPrimaryFlightControlEvent &event)
+    inline bool sendPrimaryFlightControl(const SimConnectPrimaryFlightControlEvent &event) noexcept
     {
         // The recorded control surface values have opposite sign than the event values to be sent
         HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisRudderSet), -positionTo16K(event.rudderPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
@@ -186,7 +188,7 @@ public:
         return result == S_OK;
     }
 
-    inline bool sendSecondaryFlightControl(const SimConnectSecondaryFlightControlEvent &event, TimeVariableData::Access access)
+    inline bool sendSecondaryFlightControl(const SimConnectSecondaryFlightControlEvent &event, TimeVariableData::Access access) noexcept
     {
         bool ok = sendSpoilersArmed(event.spoilersArmed);
         if (ok) {
@@ -200,7 +202,7 @@ public:
         return ok;
     }
 
-    inline bool sendAircraftHandle(const SimConnectAircraftHandleAll &aircraftHandle)
+    inline bool sendAircraftHandle(const SimConnectAircraftHandleAll &aircraftHandle) noexcept
     {
         const SimConnectAircraftHandleEvent &event = aircraftHandle.event;
         bool ok = sendGearHandlePosition(event.gearHandlePosition);
@@ -216,7 +218,7 @@ public:
         return ok;
     }
 
-    inline bool sendLight(const SimConnectLightEvent &event)
+    inline bool sendLight(const SimConnectLightEvent &event) noexcept
     {
         // First set the requested values...
         m_navigationLightToggle.requested = event.navigation;
@@ -246,74 +248,75 @@ public:
         return ok;
     }
 
-    inline void setCurrentFlapsHandleIndex(std::int32_t index)
+    inline void setCurrentFlapsHandleIndex(std::int32_t index) noexcept
     {
         m_flapsIndex.current = index;
         m_flapsIndex.valid = true;
         sendFlapsHandleIndex();
     }
 
-    inline bool setNavigationLight(std::int32_t enabled)
+    inline bool setNavigationLight(std::int32_t enabled) noexcept
     {
         const bool remoteState = (enabled != 0);
         return sendLight(remoteState, m_navigationLightToggle);
     }
 
-    inline bool setBeaconLight(std::int32_t enabled)
+    inline bool setBeaconLight(std::int32_t enabled) noexcept
     {
         const bool remoteState = (enabled != 0);
         return sendLight(remoteState, m_beaconLightToggle);
     }
 
-    inline bool setLandingLight(std::int32_t enabled)
+    inline bool setLandingLight(std::int32_t enabled) noexcept
     {
         const bool remoteState = (enabled != 0);
         return sendLight(remoteState, m_landingLightToggle);
     }
 
-    inline bool setTaxiLight(std::int32_t enabled)
+    inline bool setTaxiLight(std::int32_t enabled) noexcept
     {
         const bool remoteState = (enabled != 0);
         return sendLight(remoteState, m_taxiLightToggle);
     }
 
-    inline bool setStrobeLight(std::int32_t enabled)
+    inline bool setStrobeLight(std::int32_t enabled) noexcept
     {
         const bool remoteState = (enabled != 0);
         return sendLight(remoteState, m_strobeLightToggle);
     }
 
-    inline bool setPanelLight(std::int32_t enabled)
+    inline bool setPanelLight(std::int32_t enabled) noexcept
     {
         const bool remoteState = (enabled != 0);
         return sendLight(remoteState, m_panelLightToggle);
     }
 
-    inline bool setRecognitionLight(std::int32_t enabled)
+    inline bool setRecognitionLight(std::int32_t enabled) noexcept
     {
         const bool remoteState = (enabled != 0);
         return sendLight(remoteState, m_recognitionLightToggle);
     }
 
-    inline bool setWingLight(std::int32_t enabled)
+    inline bool setWingLight(std::int32_t enabled) noexcept
     {
         const bool remoteState = (enabled != 0);
         return sendLight(remoteState, m_wingLightToggle);
     }
 
-    inline bool setLogoLight(std::int32_t enabled)
+    inline bool setLogoLight(std::int32_t enabled) noexcept
     {
         const bool remoteState = (enabled != 0);
         return sendLight(remoteState, m_logoLightToggle);
     }
 
-    inline bool setCabinLight(std::int32_t enabled)
+    inline bool setCabinLight(std::int32_t enabled) noexcept
     {
         const bool remoteState = (enabled != 0);
         return sendLight(remoteState, m_cabinLightToggle);
     }
 
-    inline void reset() {
+    inline void reset() noexcept
+    {
         // Engine
         m_engineState = EventState::Engine::Unknown;
         // Flaps
@@ -429,7 +432,7 @@ private:
         return result == S_OK;
     }
 
-    inline bool sendFlapsHandleIndex()
+    inline bool sendFlapsHandleIndex() noexcept
     {
         HRESULT result {S_OK};
         if (m_flapsIndex.needsUpdate()) {
@@ -463,7 +466,7 @@ private:
         return result == S_OK;
     }
 
-    inline bool sendSpoilerPosition(std::int32_t spoilersHandlePosition, bool armed)
+    inline bool sendSpoilerPosition(std::int32_t spoilersHandlePosition, bool armed) noexcept
     {
         // Implementation note:
         // Apparently not every aircraft reacts to every simulation event, so we combine a mixture of events here:
@@ -482,38 +485,38 @@ private:
         return result == S_OK;
     }
 
-    inline bool sendSpoilersArmed(std::int32_t armed)
+    inline bool sendSpoilersArmed(std::int32_t armed) noexcept
     {
         const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SpoilersArmSet), armed, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
-    inline bool sendGearHandlePosition(bool gearDown)
+    inline bool sendGearHandlePosition(bool gearDown) noexcept
     {
         const SIMCONNECT_CLIENT_EVENT_ID eventId = gearDown ? Enum::underly(SimConnectEvent::Event::GearDown) : Enum::underly(SimConnectEvent::Event::GearUp);
         HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, eventId, 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
-    inline bool sendTailhookHandlePosition(std::int32_t enable)
+    inline bool sendTailhookHandlePosition(std::int32_t enable) noexcept
     {
         const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SetTailHookHandle), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
-    inline bool sendSmokeEnabled(std::int32_t enable)
+    inline bool sendSmokeEnabled(std::int32_t enable) noexcept
     {
         const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SmokeSet), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
-    inline bool sendWingFold(std::int32_t enable)
+    inline bool sendWingFold(std::int32_t enable) noexcept
     {
         const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SetWingFold), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
-    inline bool testLight(EventState::StatelessToggle &lightToggle)
+    inline bool testLight(EventState::StatelessToggle &lightToggle) noexcept
     {
         HRESULT result {S_OK};
 
@@ -530,7 +533,7 @@ private:
 
     // Updates the remote light state according to 'lightToggle', given the current 'remoteState'
     // if needed and resets the 'pending' state (false) of the 'lightToggle'
-    inline bool sendLight(bool remoteState, EventState::StatelessToggle &lightToggle)
+    inline bool sendLight(bool remoteState, EventState::StatelessToggle &lightToggle) noexcept
     {
         HRESULT result {S_OK};
 

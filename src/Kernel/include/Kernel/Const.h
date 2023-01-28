@@ -41,7 +41,7 @@ namespace Const {
     /*!
      * Maximum rate at which the flight simulator is run.
      */
-    constexpr int MaximumSimulationRate = 8;
+    constexpr int MaximumSimulationRate = 16;
 }
 
 #endif // CONST_H
