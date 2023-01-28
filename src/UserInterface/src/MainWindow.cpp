@@ -427,16 +427,15 @@ void MainWindow::initUi() noexcept
             Settings &settings = Settings::getInstance();
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
-            constexpr uint CakeChar = 0x1f382;
-            const QString CakeString = QString::fromUcs4(&CakeChar, 1);
             QMessageBox::information(this, "Preview",
-                                     CakeString + CakeString + CakeString + QString(" HAPPY 40TH ANNIVERSARY, FLIGHT SIMULATOR! ") + CakeString + CakeString + CakeString +
                                      QString("\n\n"
                                              "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                                             "This release v%2 \"%3\" introduces location import and export, making it possible to exchange user points with e.g. Little Navmap. "
-                                             "The Location module now also supports basic filtering and the engine state (start, stop, unchanged) can be controlled upon teleportation.\n\n"
-                                             "While not many new features have been introduced a lot of work has been done \"under the hood\": memory "
-                                             "and performance optimisations in various areas have been applied.\n\n"
+                                             "This release v%2 \"%3\" focuses on improved replay for 3rd-party aircraft, specifically for control surfaces like "
+                                             "flaps, spoilers, elevators and ailerons. The gear should also work better with 3rd-party aircraft.\n\n"
+                                             "Note that not all 3rd-party aircraft react the same - or at all - to the newly implemented features, so certain "
+                                             "aspects may still not work. Some aircraft do not even properly report some simulation variables during recording. "
+                                             "Specifically lights (landing, taxi, navigation, ...) behave quite differently, depending on the aircraft type. "
+                                             "Further improvements may be added to future updates, so please consider this a work-in-progess.\n\n"
                                              "This dialog will be shown %4 more times.")
                                      .arg(Version::getApplicationName(), Version::getApplicationVersion())
                                      .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
