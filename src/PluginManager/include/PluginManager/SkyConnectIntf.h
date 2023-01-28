@@ -66,14 +66,12 @@ public:
     };
 
     enum struct SeekMode {
-        /*! Start of a timeline seek operation */
-        Start,
+
         /*! Continuation of a timeline seek operation ("drag timeline") */
-        ContinuousSeek,
+        Continuous,
         /*! A single seek operation (to beginning, to end, to selected position) */
-        SingleSeek,
-        /*! End of a timeline seek operation */
-        End
+        Discrete
+
     };
 
     /*!

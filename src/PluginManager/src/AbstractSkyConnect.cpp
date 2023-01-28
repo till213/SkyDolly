@@ -156,7 +156,7 @@ void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
             updateUserAircraftFreeze();
             emit replayModeChanged(d->replayMode);
         }
-        sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::All);
+        sendAircraftData(d->currentTimestamp, TimeVariableData::Access::DiscreteSeek, AircraftSelection::All);
     }
 }
 
@@ -353,14 +353,14 @@ bool AbstractSkyConnect::isPaused() const noexcept {
 
 void AbstractSkyConnect::skipToBegin() noexcept
 {
-    seek(0, SeekMode::SingleSeek);
+    seek(0, SeekMode::Discrete);
 }
 
 void AbstractSkyConnect::skipBackward() noexcept
 {
     std::int64_t skipMSec = getSkipInterval();
     const std::int64_t newTimeStamp = std::max(d->currentTimestamp - skipMSec, std::int64_t(0));
-    seek(newTimeStamp, SeekMode::SingleSeek);
+    seek(newTimeStamp, SeekMode::Discrete);
 }
 
 void AbstractSkyConnect::skipForward() noexcept
@@ -368,13 +368,13 @@ void AbstractSkyConnect::skipForward() noexcept
     std::int64_t skipMSec = getSkipInterval();
     const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
     const std::int64_t newTimeStamp = std::min(d->currentTimestamp + skipMSec, totalDuration);
-    seek(newTimeStamp, SeekMode::SingleSeek);
+    seek(newTimeStamp, SeekMode::Discrete);
 }
 
 void AbstractSkyConnect::skipToEnd() noexcept
 {
     const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
-    seek(totalDuration, SeekMode::SingleSeek);
+    seek(totalDuration, SeekMode::Discrete);
 }
 
 void AbstractSkyConnect::seek(std::int64_t timestamp, SeekMode seekMode) noexcept
@@ -389,9 +389,10 @@ void AbstractSkyConnect::seek(std::int64_t timestamp, SeekMode seekMode) noexcep
             d->currentTimestamp = timestamp;
             d->lastNotificationTimestamp = d->currentTimestamp;
             d->elapsedTime = timestamp;
-            emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
+            const TimeVariableData::Access access = seekMode == SeekMode::Continuous ? TimeVariableData::Access::ContinuousSeek : TimeVariableData::Access::DiscreteSeek;
+            emit timestampChanged(d->currentTimestamp, access);
             onSeek(d->currentTimestamp, seekMode);
-            bool ok = retryWithReconnect([this]() -> bool { return sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::All); });
+            bool ok = retryWithReconnect([this, access]() -> bool { return sendAircraftData(d->currentTimestamp, access, AircraftSelection::All); });
             if (ok) {
                 if (d->elapsedTimer.isValid()) {
                     // Restart the elapsed timer, counting onwards from the newly
@@ -553,7 +554,7 @@ void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previo
             const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
             addAiObject(aircraft);
         }
-        sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
+        sendAircraftData(d->currentTimestamp, TimeVariableData::Access::DiscreteSeek, AircraftSelection::UserAircraft);
     }
 }
 
@@ -561,7 +562,7 @@ void AbstractSkyConnect::onTimeOffsetChanged() noexcept
 {
     // Only send the updated positions (due to a time offset change) when replay is paused
     if (getState() == Connect::State::ReplayPaused) {
-        seek(getCurrentTimestamp(), SeekMode::SingleSeek);
+        seek(getCurrentTimestamp(), SeekMode::Discrete);
     }
 }
 
@@ -571,7 +572,7 @@ void AbstractSkyConnect::onTailNumberChanged(const Aircraft &aircraft) noexcept
     onAddAiObject(aircraft);
     // Only send the updated positions (due to a time offset change) when replay is paused
     if (getState() == Connect::State::ReplayPaused) {
-        seek(getCurrentTimestamp(), SeekMode::SingleSeek);
+        seek(getCurrentTimestamp(), SeekMode::Discrete);
     }
 }
 

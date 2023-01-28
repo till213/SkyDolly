@@ -40,16 +40,41 @@ struct MODEL_API TimeVariableData
     virtual ~TimeVariableData() = default;
 
     /*!
-     * Defines the way (use case) the sampled data is accessed.
+     * Defines the way (use case) the sampled data is accessed. A distinction is made for the seek access:
+     *
+     * \li discrete: a single seek operation is made; certain event data (such as flaps handle index) is
+     *     only sent in this case
+     * \li continuous: a continuous seek operation is in progress ("dragging the time position slider");
+     *     certain event data is dererred until the end of the seek operation
      */
     enum struct Access {
-        /*! The sampled data is accessed in a linear way, taking the time-offset of the Aircraft into account, typically for replay. */
+        /*!
+         * The sampled data is accessed in a linear way, taking the time offset of the Aircraft into account,
+         * typically for replay.
+         */
         Linear,
-        /*! The sampled data is accessed in a random fashion, taking the time-offset of the Aircraft into account, typically for seeking in the timeline. */
-        Seek,
-        /*! The sampled data is accessed for export (in a linear way), but always starting from the first sample point (not taking the time-offset of the Aircraft into account). */
+        /*!
+         * The sampled data is accessed in a random fashion, taking the time offset of the Aircraft
+         * into account, typically for a single seek operation ("skip to begin/end, end of a continuous
+         * time position slider drag operation")
+         */
+        DiscreteSeek,
+        /*!
+         * The sampled data is accessed in a random fashion, taking the time offset of the Aircraft
+         * into account, typically for continuous seeking in the timeline ("dragging the time position slider").
+         */
+        ContinuousSeek,
+        /*!
+         * The sampled data is accessed for export (in a linear way), but always starting from the first
+         * sample point (not taking the time offset of the Aircraft into account).
+         */
         Export
     };
+
+    static inline bool isSeek(Access access) noexcept
+    {
+        return access == Access::DiscreteSeek || access == Access::ContinuousSeek;
+    }
 
     // In milliseconds since the start of recording
     std::int64_t timestamp {InvalidTime};

@@ -57,7 +57,9 @@ const AircraftHandleData &AircraftHandle::interpolate(std::int64_t timestamp, Ti
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
-        case TimeVariableData::Access::Seek:
+        case TimeVariableData::Access::DiscreteSeek:
+            [[fallthrough]];
+        case TimeVariableData::Access::ContinuousSeek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
             currentIndex = SkySearch::updateStartIndex(getData(), currentIndex, adjustedTimestamp);

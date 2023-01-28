@@ -36,6 +36,7 @@
 
 #include <Kernel/Enum.h>
 #include <Model/SimType.h>
+#include <Model/TimeVariableData.h>
 #include "Engine/SimConnectEngineEvent.h"
 #include "Engine/SimConnectEngineAll.h"
 #include "PrimaryFlightControl/SimConnectPrimaryFlightControlEvent.h"
@@ -164,9 +165,12 @@ public:
         return result == S_OK;
     }
 
-    inline bool sendEngine(const SimConnectEngineAll &engine) noexcept
+    inline bool sendEngine(const SimConnectEngineAll &engine, TimeVariableData::Access access) noexcept
     {
-        const bool ok = sendEngineState(engine);
+        bool ok {true};
+        if (access != TimeVariableData::Access::ContinuousSeek) {
+            ok = sendEngineState(engine);
+        }
         return ok;
     }
 
@@ -180,13 +184,13 @@ public:
         return result == S_OK;
     }
 
-    inline bool sendSecondaryFlightControl(const SimConnectSecondaryFlightControlEvent &event)
+    inline bool sendSecondaryFlightControl(const SimConnectSecondaryFlightControlEvent &event, TimeVariableData::Access access)
     {
         bool ok = sendSpoilersArmed(event.spoilersArmed);
         if (ok && event.spoilersArmed == 0) {
             ok = sendSpoilerPosition(percentTo16K(event.spoilersHandlePosition));
         }
-        if (ok) {
+        if (ok && access != TimeVariableData::Access::ContinuousSeek) {
             m_flapsIndex.requested = event.flapsHandleIndex;
             ok = sendFlapsHandleIndex();
         }

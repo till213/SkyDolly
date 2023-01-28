@@ -290,9 +290,8 @@ void MSFSSimConnectPlugin::onStopReplay() noexcept
     ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
 }
 
-void MSFSSimConnectPlugin::onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept
+void MSFSSimConnectPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp, [[maybe_unused]] SeekMode seekMode) noexcept
 {
-    // TODO ONLY SET FLAPS UPON ON SEEK END
     d->eventStateHandler->reset();
 };
 
@@ -309,7 +308,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
     // (which is really being controlled by the user as an "additional aircraft", next to the formation)
     const std::int64_t userAircraftId = getReplayMode() != ReplayMode::FlyWithFormation ?  flight.getUserAircraft().getId() : Const::InvalidId;
     bool ok {true};
-    for (auto &aircraft : flight) {
+    for (const auto &aircraft : flight) {
 
         // Replay AI aircraft - if any - during recording (if all aircraft are selected for replay)
         const bool isUserAircraft = aircraft.getId() == userAircraftId;
@@ -360,7 +359,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                                                                                 sizeof(SimConnectEngineUser), &engineUser);
                             ok = res == S_OK;
                             if (ok) {
-                                ok = d->eventStateHandler->sendEngine(simConnectEngineAll);
+                                ok = d->eventStateHandler->sendEngine(simConnectEngineAll, access);
                             }
                         } else {
                             SimConnectEngineAi engineAi {simConnectEngineAll.ai()};
@@ -395,7 +394,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     if (!secondaryFlightControlData.isNull()) {
                         SimConnectSecondaryFlightControlAll simConnectSecondaryFlightControlAll {secondaryFlightControlData};
                         if (isUserAircraft) {
-                            ok = d->eventStateHandler->sendSecondaryFlightControl(simConnectSecondaryFlightControlAll.event);
+                            ok = d->eventStateHandler->sendSecondaryFlightControl(simConnectSecondaryFlightControlAll.event, access);
                         } else {
                             SimConnectSecondaryFlightControlAi simConnectSecondaryFlightControlAi {simConnectSecondaryFlightControlAll.ai()};
                             const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControlAi),
@@ -457,7 +456,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
     // Start the elapsed timer after sending the first sample data, but
     // only when not recording (the first received sample will start the timer then)
-    if (!isElapsedTimerRunning() && access != TimeVariableData::Access::Seek && getState() != Connect::State::Recording) {
+    if (!isElapsedTimerRunning() && !TimeVariableData::isSeek(access) && getState() != Connect::State::Recording) {
         startElapsedTimer();
     }
     return ok;

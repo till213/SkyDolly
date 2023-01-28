@@ -164,6 +164,7 @@ struct MainWindowPrivate
     bool hasFlightExportPlugins {false};
     bool hasLocationImportPlugins {false};
     bool hasLocationExportPlugins {false};
+    bool continuousSeek {false};
 
     std::unique_ptr<ModuleManager> moduleManager;
 };
@@ -1085,20 +1086,7 @@ double MainWindow::getCustomSpeedFactor() const
     return customSpeedFactor;
 }
 
-// PRIVATE SLOTS
-
-void MainWindow::onPositionSliderPressed() noexcept
-{
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    d->previousState = skyConnectManager.getState();
-    if (skyConnectManager.isInReplayState()) {
-        // Pause the replay while sliding the position slider
-        skyConnectManager.setPaused(true);
-    }
-    // TODO BEGIN SEEK
-}
-
-void MainWindow::onPositionSliderValueChanged(int value) noexcept
+void MainWindow::seek(int value, SkyConnectIntf::SeekMode seekMode) const noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const double factor = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
@@ -1107,19 +1095,39 @@ void MainWindow::onPositionSliderValueChanged(int value) noexcept
 
     // Prevent the timestampTimeEdit field to set the replay position as well
     ui->timestampTimeEdit->blockSignals(true);
-    skyConnectManager.seek(timestamp, SkyConnectIntf::SeekMode::ContinuousSeek);
+    skyConnectManager.seek(timestamp, seekMode);
     ui->timestampTimeEdit->blockSignals(false);
+}
+
+// PRIVATE SLOTS
+
+void MainWindow::onPositionSliderPressed() noexcept
+{
+    d->continuousSeek = true;
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    d->previousState = skyConnectManager.getState();
+    if (skyConnectManager.isInReplayState()) {
+        // Pause the replay while sliding the position slider
+        skyConnectManager.setPaused(true);
+    }
+}
+
+void MainWindow::onPositionSliderValueChanged(int value) noexcept
+{
+    const SkyConnectIntf::SeekMode seekMode = d->continuousSeek ? SkyConnectIntf::SeekMode::Continuous : SkyConnectIntf::SeekMode::Discrete;
+    seek(value, seekMode);
 }
 
 void MainWindow::onPositionSliderReleased() noexcept
 {
+    seek(ui->positionSlider->value(), SkyConnectIntf::SeekMode::Discrete);
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (d->previousState == Connect::State::Replay) {
         skyConnectManager.setPaused(false);
     } else if (d->previousState == Connect::State::ReplayPaused) {
         skyConnectManager.setPaused(true);
     }
-    // TODO END SEEK
+    d->continuousSeek = false;
 }
 
 void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
@@ -1127,7 +1135,7 @@ void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isIdle() || skyConnectManager.getState() == Connect::State::ReplayPaused) {
         std::int64_t timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
-        skyConnectManager.seek(timestamp, SkyConnectIntf::SeekMode::SingleSeek);
+        skyConnectManager.seek(timestamp, SkyConnectIntf::SeekMode::Discrete);
     }
 }
 
