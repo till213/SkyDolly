@@ -145,9 +145,7 @@ bool MSFSSimConnectPlugin::onInitialPositionSetup(const InitialPosition &initial
 
 bool MSFSSimConnectPlugin::onFreezeUserAircraft(bool enable) const noexcept
 {
-    bool ok {true};
-    ok = d->eventStateHandler->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, enable);
-    return ok;
+    return d->eventStateHandler->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, enable);
 }
 
 bool MSFSSimConnectPlugin::onSimulationEvent(SimulationEvent event, int arg1) const noexcept

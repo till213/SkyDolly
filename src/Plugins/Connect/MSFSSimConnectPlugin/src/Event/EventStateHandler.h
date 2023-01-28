@@ -26,6 +26,7 @@
 #define EVENTSTATEHANDLER_H
 
 #include <cstdint>
+#include <algorithm>
 
 #include <windows.h>
 #include <SimConnect.h>
@@ -64,7 +65,8 @@ public:
         m_simConnectHandle = simConnectHandle;
     }
 
-    static constexpr std::int16_t Max16KPosition {16383};
+    static constexpr std::int16_t Min16KPosition {-16383};
+    static constexpr std::int16_t Max16KPosition {16384};
 
     /*!
      * Converts the normalised \c value to an \em event (position) value.
@@ -75,7 +77,7 @@ public:
      */
     constexpr std::int16_t positionTo16K(double value) noexcept
     {
-        return static_cast<std::int16_t>(std::round(value * Max16KPosition));
+        return static_cast<std::int16_t>(std::round(std::clamp(value, -1.0, 1.0) * Max16KPosition));
     }
 
     /*!
@@ -187,8 +189,9 @@ public:
     inline bool sendSecondaryFlightControl(const SimConnectSecondaryFlightControlEvent &event, TimeVariableData::Access access)
     {
         bool ok = sendSpoilersArmed(event.spoilersArmed);
-        if (ok && event.spoilersArmed == 0) {
-            ok = sendSpoilerPosition(percentTo16K(event.spoilersHandlePosition));
+        if (ok) {
+            const bool spoilersArmed = event.spoilersArmed != 0;
+            ok = sendSpoilerPosition(percentTo16K(event.spoilersHandlePosition), spoilersArmed);
         }
         if (ok && access != TimeVariableData::Access::ContinuousSeek) {
             m_flapsIndex.requested = event.flapsHandleIndex;
@@ -460,7 +463,7 @@ private:
         return result == S_OK;
     }
 
-    inline bool sendSpoilerPosition(std::int32_t spoilersHandlePosition)
+    inline bool sendSpoilerPosition(std::int32_t spoilersHandlePosition, bool armed)
     {
         // Implementation note:
         // Apparently not every aircraft reacts to every simulation event, so we combine a mixture of events here:
@@ -469,9 +472,9 @@ private:
         // - Spoilers on/off: some aircraft ignore this as well (but we send it anway, who knows what good it does for other aircraft)
         // - Oh well...
         HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SpoilersSet), spoilersHandlePosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        if (spoilersHandlePosition == 0) {
+        if (spoilersHandlePosition == 0 && !armed) {
             result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SpoilersOff), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-            result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisSpoilerSet), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisSpoilerSet), Min16KPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         } else if (spoilersHandlePosition == Max16KPosition) {
             result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SpoilersOn), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
             result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisSpoilerSet), Max16KPosition, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
