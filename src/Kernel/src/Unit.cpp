@@ -162,7 +162,7 @@ QString Unit::formatSpeedInRadians(double speed) const noexcept
     return d->locale.toString(speed, 'f', Precision) % " rad/s";
 }
 
-QString Unit::leftLeadingEdgeFlapsPosition(std::int16_t position) const noexcept
+QString Unit::formatPosition(std::int16_t position) const noexcept
 {
     return d->locale.toString(position / static_cast<double>(std::numeric_limits<std::int16_t>::max()) * 100.0, 'f', Precision) % " %";
 }

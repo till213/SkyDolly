@@ -77,14 +77,14 @@ void EngineWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access acc
     QString colorName;
 
     if (!engineData.isNull()) {
-        ui->throttle1LineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(engineData.throttleLeverPosition1));
-        ui->throttle2LineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(engineData.throttleLeverPosition2));
-        ui->throttle3LineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(engineData.throttleLeverPosition3));
-        ui->throttle4LineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(engineData.throttleLeverPosition4));
-        ui->propeller1LineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(engineData.propellerLeverPosition1));
-        ui->propeller2LineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(engineData.propellerLeverPosition2));
-        ui->propeller3LineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(engineData.propellerLeverPosition3));
-        ui->propeller4LineEdit->setText(d->unit.leftLeadingEdgeFlapsPosition(engineData.propellerLeverPosition4));
+        ui->throttle1LineEdit->setText(d->unit.formatPosition(engineData.throttleLeverPosition1));
+        ui->throttle2LineEdit->setText(d->unit.formatPosition(engineData.throttleLeverPosition2));
+        ui->throttle3LineEdit->setText(d->unit.formatPosition(engineData.throttleLeverPosition3));
+        ui->throttle4LineEdit->setText(d->unit.formatPosition(engineData.throttleLeverPosition4));
+        ui->propeller1LineEdit->setText(d->unit.formatPosition(engineData.propellerLeverPosition1));
+        ui->propeller2LineEdit->setText(d->unit.formatPosition(engineData.propellerLeverPosition2));
+        ui->propeller3LineEdit->setText(d->unit.formatPosition(engineData.propellerLeverPosition3));
+        ui->propeller4LineEdit->setText(d->unit.formatPosition(engineData.propellerLeverPosition4));
         ui->mixture1LineEdit->setText(d->unit.formatPercent(engineData.mixtureLeverPosition1));
         ui->mixture2LineEdit->setText(d->unit.formatPercent(engineData.mixtureLeverPosition2));
         ui->mixture3LineEdit->setText(d->unit.formatPercent(engineData.mixtureLeverPosition3));

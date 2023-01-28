@@ -30,13 +30,13 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
 #include "SimConnectType.h"
 #include <Model/EngineData.h>
 
 /*!
- * Engine simulation variables that are sent as event to the user aircraft.
+ * Engine simulation variables that are sent as event to the user aircraft
+ * (and possibly as simulation variables to AI aircraft)..
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -53,6 +53,7 @@ struct SimConnectEngineEvent
     {
         fromEngineData(engineData);
     }
+
     SimConnectEngineEvent() = default;
 
     inline void fromEngineData(const EngineData &engineData) noexcept

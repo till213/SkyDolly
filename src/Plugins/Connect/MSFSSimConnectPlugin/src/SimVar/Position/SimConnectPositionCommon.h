@@ -38,7 +38,7 @@
 #include "SimConnectType.h"
 
 /*!
- * Common SimConnect position data that is sent both to the user- and AI aircraft.
+ * Common aircraft position simulation variables that are sent both to the user- and AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -62,6 +62,14 @@ struct SimConnectPositionCommon
     // If we would store the "rotation velocity body" (which we currently do not anymore) then
     // then the unit would be (wrongly) "FEET per second" (and not "RADIANS per second):
     // https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Misc_Variables.htm#ROTATION_VELOCITY_BODY_X
+
+    SimConnectPositionCommon(const PositionData &positionData) noexcept
+        : SimConnectPositionCommon()
+    {
+        fromPositionData(positionData);
+    }
+
+    SimConnectPositionCommon() = default;
 
     inline void fromPositionData(const PositionData &positionData) noexcept
     {

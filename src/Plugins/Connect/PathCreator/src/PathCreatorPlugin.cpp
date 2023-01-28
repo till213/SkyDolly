@@ -30,6 +30,10 @@
 #include <QtGlobal>
 #include <QRandomGenerator>
 #include <QStringList>
+#ifdef DEBUG
+#include <QDebug>
+#include <Kernel/Enum.h>
+#endif
 
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
@@ -115,7 +119,7 @@ bool PathCreatorPlugin::onFreezeUserAircraft([[maybe_unused]] bool enable) const
     return true;
 }
 
-bool PathCreatorPlugin::onSimulationEvent([[maybe_unused]] SimulationEvent event) const noexcept
+bool PathCreatorPlugin::onSimulationEvent([[maybe_unused]] SimulationEvent event, [[maybe_unused]] float arg1) const noexcept
 {
     return true;
 }
@@ -154,13 +158,16 @@ bool PathCreatorPlugin::onStartReplay([[maybe_unused]] std::int64_t currentTimes
     return true;
 }
 
-void PathCreatorPlugin::onReplayPaused(bool paused) noexcept
+void PathCreatorPlugin::onReplayPaused(bool enable) noexcept
 {
-    if (paused) {
+    if (enable) {
          d->replayTimer.stop();
     } else {
         d->replayTimer.start(ReplayPeriod);
     }
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::onReplayPaused: enable:" << enable;
+#endif
 }
 
 void PathCreatorPlugin::onStopReplay() noexcept
@@ -168,7 +175,7 @@ void PathCreatorPlugin::onStopReplay() noexcept
     d->replayTimer.stop();
 }
 
-void PathCreatorPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp) noexcept
+void PathCreatorPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp, [[maybe_unused]] SeekMode seekMode) noexcept
 {}
 
 void PathCreatorPlugin::onRecordingSampleRateChanged([[maybe_unused]] SampleRate::SampleRate sampleRate) noexcept
@@ -412,6 +419,7 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
 
     flightCondition.groundAltitude = static_cast<float>(d->randomGenerator->bounded(4000.0));
     flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->randomGenerator->bounded(26));
+    flightCondition.surfaceCondition = static_cast<SimType::SurfaceCondition>(d->randomGenerator->bounded(5));
     flightCondition.ambientTemperature = static_cast<float>(d->randomGenerator->bounded(80.0f)) - 40.0f;
     flightCondition.totalAirTemperature = static_cast<float>(d->randomGenerator->bounded(80.0f)) - 40.0f;
     flightCondition.windSpeed = static_cast<float>(d->randomGenerator->bounded(30.0));
@@ -422,6 +430,8 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.pitotIcingPercent = d->randomGenerator->bounded(101);
     flightCondition.structuralIcingPercent = d->randomGenerator->bounded(101);
     flightCondition.inClouds = d->randomGenerator->bounded(2) < 1 ? false : true;
+    flightCondition.onAnyRunway = d->randomGenerator->bounded(2) < 1 ? false : true;
+    flightCondition.onParkingSpot = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.startLocalTime = QDateTime::currentDateTime();
     flightCondition.startZuluTime = QDateTime::currentDateTimeUtc();
 

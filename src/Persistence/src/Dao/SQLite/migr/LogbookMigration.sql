@@ -900,6 +900,17 @@ alter table secondary_flight_control add column spoilers_armed integer;
 update secondary_flight_control
 set    spoilers_armed = 0;
 
+@migr(id = "6c14e4d6-f9c3-48d8-b72b-c36c0568f290", descn = "Add runway condition columns", step_cnt = 2)
+alter table flight add column on_any_runway integer;
+alter table flight add column on_parking_spot integer;
+alter table flight add column surface_condition integer;
+
+@migr(id = "6c14e4d6-f9c3-48d8-b72b-c36c0568f290", descn = "Migrate runway condition columns, step = 2)
+update flight
+set    on_any_runway = 0,
+       on_parking_spot = 0,
+       surface_condition = 0;
+
 @migr(id = "663032d8-c8a4-43ff-b126-0d964d73bf23", descn = "Update application version to 0.14", step = 1)
 update metadata
 set app_version = '0.14.0';

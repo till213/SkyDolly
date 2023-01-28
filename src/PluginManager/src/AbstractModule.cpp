@@ -79,7 +79,7 @@ void AbstractModule::setRecording(bool enable) noexcept
 
 void AbstractModule::setPaused(bool enable) noexcept
 {
-    onPaused(enable);
+    onPause(enable);
 }
 
 void AbstractModule::setPlaying(bool enable) noexcept
@@ -102,7 +102,7 @@ void AbstractModule::onStartRecording() noexcept
     SkyConnectManager::getInstance().startRecording(SkyConnectIntf::RecordingMode::SingleAircraft);
 }
 
-void AbstractModule::onPaused(bool enable) noexcept
+void AbstractModule::onPause(bool enable) noexcept
 {
     SkyConnectManager::getInstance().setPaused(enable);
 }

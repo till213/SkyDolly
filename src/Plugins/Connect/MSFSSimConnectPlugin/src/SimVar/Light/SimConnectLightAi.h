@@ -22,7 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTAIRCRAFTHANDLEAI_H
-#define SIMCONNECTAIRCRAFTHANDLEAI_H
+#ifndef SIMCONNECTLIGHTEVENTAI_H
+#define SIMCONNECTLIGHTEVENTAI_H
 
-#endif // SIMCONNECTAIRCRAFTHANDLEAI_H
+#include <Kernel/Enum.h>
+#include <Model/LightData.h>
+#include "SimConnectType.h"
+#include "SimConnectLightEvent.h"
+
+/*!
+ * Light simulation variables that are sent to AI aircraft.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(push, 1)
+struct SimConnectLightAi
+{
+    SimConnectLightEvent event;
+
+    SimConnectLightAi(const LightData &lightData) noexcept
+        : SimConnectLightAi()
+    {
+        fromLightData(lightData);
+    }
+
+    SimConnectLightAi() = default;
+
+    inline void fromLightData(const LightData &lightData)
+    {
+        event.fromLightData(lightData);
+    }
+
+    inline LightData toLightData() const noexcept
+    {
+        LightData lightData = event.toLightData();
+        return lightData;
+    }
+
+    static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
+    {
+        SimConnectLightEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LightAi));
+    }
+};
+#pragma pack(pop)
+
+#endif // SIMCONNECTLIGHTEVENTAI_H

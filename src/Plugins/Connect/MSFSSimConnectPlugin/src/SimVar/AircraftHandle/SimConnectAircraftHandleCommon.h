@@ -34,7 +34,7 @@
 #include <Model/AircraftHandleData.h>
 
 /*!
- * Common SimConnect aircrafthandle data that is sent both to the user- and AI aircraft.
+ * Common aircraft handle simulation variables that are sent both to the user- and AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */

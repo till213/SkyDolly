@@ -263,12 +263,12 @@ namespace SkyMath
      * Maps the \c position value to a discrete, signed 16bit value.
      *
      * \param position
-     *        the normalised position value in the range [-1.0, 1.0]
+     *        the normalised position value in the range [-1.0, 1.0]; the range is enforced (clamp)
      * \return the mapped discrete, signed 16bit value [PositionMin16, PositionMax16] (note: symmetric range)
      */
-    inline constexpr std::int16_t fromNormalisedPosition(double position) noexcept
+    inline std::int16_t fromNormalisedPosition(double position) noexcept
     {
-        return static_cast<std::int16_t>(std::round(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
+        return static_cast<std::int16_t>(std::round(PositionMin16 + ((std::clamp(position, 0.0, 1.0) + 1.0) * PositionRange16) / 2.0));
     }
 
     /*!
@@ -287,12 +287,12 @@ namespace SkyMath
      * Maps the \c percent value to a discrete, unsigned 8bit value.
      *
      * \param percent
-     *        the percent value in the range [0.0, 100.0]
+     *        the percent value in the range [0.0, 100.0]; the range is enforced (clamp)
      * \return the mapped discrete, unsigned 8bit value [0, PercentMax8]
      */
-    inline constexpr std::uint8_t fromPercent(double percent) noexcept
+    inline std::uint8_t fromPercent(double percent) noexcept
     {
-        return static_cast<std::uint8_t>(std::round(percent * PercentRange8 / 100.0));
+        return static_cast<std::uint8_t>(std::round(std::clamp(percent, 0.0, 100.0) * PercentRange8 / 100.0));
     }
 
     /*!

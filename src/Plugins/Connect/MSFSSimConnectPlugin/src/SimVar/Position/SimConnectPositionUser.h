@@ -31,7 +31,7 @@
 #include "SimConnectPositionCommon.h"
 
 /*!
- * Position simulation variables that are sent to the user aircraft.
+ * Aircraft position simulation variables that are sent to the user aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */

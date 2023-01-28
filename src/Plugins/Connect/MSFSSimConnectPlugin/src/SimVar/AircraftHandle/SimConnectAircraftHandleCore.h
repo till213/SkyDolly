@@ -34,7 +34,7 @@
 #include <Model/AircraftHandleData.h>
 
 /*!
- * Aircraft handle simulation variables that are only sent to the user aircraft.
+ * Core aircraft handle simulation variables that are only sent to the user aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */

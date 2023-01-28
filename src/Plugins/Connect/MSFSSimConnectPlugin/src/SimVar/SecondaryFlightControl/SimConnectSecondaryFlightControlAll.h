@@ -35,7 +35,7 @@
 #include "SimConnectSecondaryFlightControlAi.h"
 
 /*!
- * Simulation variables which represent the secondary flight controls: rudder, elevators and ailerons.
+ * All secondary flight control simulation variables (reply from the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */

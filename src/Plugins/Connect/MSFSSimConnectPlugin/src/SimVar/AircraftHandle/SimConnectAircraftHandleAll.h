@@ -31,12 +31,13 @@
 #include "SimConnectAircraftHandleCommon.h"
 #include "SimConnectAircraftHandleCore.h"
 #include "SimConnectAircraftHandleEvent.h"
+#include "SimConnectAircraftHandleAnimation.h"
 #include "SimConnectAircraftHandleInfo.h"
 #include "SimConnectAircraftHandleUser.h"
 #include "SimConnectAircraftHandleAi.h"
 
 /*!
- * Simulation variables that represent the engine (reply received from the flight simulator).
+ * All aircraft handle simulation variables (reply from the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -47,6 +48,7 @@ struct SimConnectAircraftHandleAll
     SimConnectAircraftHandleCore core;
     SimConnectAircraftHandleInfo info;
     SimConnectAircraftHandleEvent event;
+    SimConnectAircraftHandleAnimation animation;
 
     SimConnectAircraftHandleAll(const AircraftHandleData &aircraftHandle) noexcept
         : SimConnectAircraftHandleAll()
@@ -62,6 +64,7 @@ struct SimConnectAircraftHandleAll
         core.fromAircraftHandleData(aircraftHandle);
         info.fromAircraftHandleData(aircraftHandle);
         event.fromAircraftHandleData(aircraftHandle);
+        animation.fromAircraftHandleData(aircraftHandle);
     }
 
     inline AircraftHandleData toAircraftHandleData() const noexcept
@@ -70,6 +73,7 @@ struct SimConnectAircraftHandleAll
         core.toAircraftHandleData(aircraftHandle);
         event.toAircraftHandleData(aircraftHandle);
         info.toAircraftHandleData(aircraftHandle);
+        animation.toAircraftHandleData(aircraftHandle);
         return aircraftHandle;
     }
 
@@ -86,6 +90,7 @@ struct SimConnectAircraftHandleAll
         SimConnectAircraftHandleAi ai;
         ai.common = common;
         ai.event = event;
+        ai.animation = animation;
         return ai;
     }
 
@@ -95,6 +100,7 @@ struct SimConnectAircraftHandleAll
         SimConnectAircraftHandleCore::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
         SimConnectAircraftHandleInfo::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
         SimConnectAircraftHandleEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
+        SimConnectAircraftHandleAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
     }
 };
 #pragma pack(pop)
