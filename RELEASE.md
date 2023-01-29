@@ -71,6 +71,9 @@
 ## Take-Off
 - ZIP the package folder (e.g. `SkyDolly-v0.14.0.zip`)
 
+## After Take-Off Check
+- Upload the ZIP archive to [VirusTotal](https://www.virustotal.com/)
+
 ### GitHub
 - Create a new release (https://github.com/till213/SkyDolly/releases/new)
 - Choose a tag, e.g. `v0.14.0`
