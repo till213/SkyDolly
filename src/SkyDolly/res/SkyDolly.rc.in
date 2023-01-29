@@ -25,7 +25,7 @@ BEGIN
             VALUE "InternalName", "@PROJECT_APPLICATION_NAME@"
             VALUE "FileDescription", "@PROJECT_DESCRIPTION@"
             VALUE "CompanyName", "@PROJECT_ORGANISATION_NAME@"
-            VALUE "LegalCopyright", "(c) 2022"
+            VALUE "LegalCopyright", "(c) 2023"
             VALUE "ProductName", "@PROJECT_APPLICATION_NAME@"
         END
     END

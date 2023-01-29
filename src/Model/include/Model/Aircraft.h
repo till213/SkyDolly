@@ -45,7 +45,6 @@ struct AircraftPrivate;
 class MODEL_API Aircraft final
 {
 public:
-
     Aircraft() noexcept;
     Aircraft(const Aircraft &rhs) = delete;
     Aircraft(Aircraft &&rhs) noexcept;

@@ -34,7 +34,8 @@
 #include "SimConnectType.h"
 
 /*!
- * Simulation variables that represent the primary flight controls: rudder, elevators and ailerons.
+ * Primary flight control simulation variables that are sent as event to the user aircraft
+ * (and possibly as simulation variables to AI aircraft).
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -51,6 +52,7 @@ struct SimConnectPrimaryFlightControlEvent
     {
         fromPrimaryFlightControlData(primaryFlightControlData);
     }
+
     SimConnectPrimaryFlightControlEvent() = default;
 
     inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept

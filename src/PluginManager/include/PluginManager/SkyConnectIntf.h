@@ -64,10 +64,24 @@ public:
         FlyWithFormation
     };
 
+    enum struct SeekMode {
+
+        /*! Continuation of a timeline seek operation ("drag timeline") */
+        Continuous,
+        /*! A single seek operation (to beginning, to end, to selected position) */
+        Discrete
+
+    };
+
+    /*!
+     * Simulation events that can explicitly be triggered (requested) by the application.
+     */
     enum struct SimulationEvent {
         None,
         EngineStart,
-        EngineStop
+        EngineStop,
+        /*! Argument 1: simulation rate */
+        SimulationRate
     };
 
     SkyConnectIntf(QObject *parent = nullptr) noexcept
@@ -83,7 +97,7 @@ public:
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) const noexcept = 0;
-    virtual bool sendSimulationEvent(SimulationEvent event) noexcept = 0;
+    virtual bool sendSimulationEvent(SimulationEvent event, float arg1) noexcept = 0;
 
     /*!
      * Returns the replay mode.
@@ -183,14 +197,14 @@ public:
      */
     virtual bool isActive() const noexcept = 0;
 
-    virtual void setPaused(bool enabled) noexcept = 0;
+    virtual void setPaused(bool enable) noexcept = 0;
     virtual bool isPaused() const noexcept = 0;
 
     virtual void skipToBegin() noexcept = 0;
     virtual void skipBackward() noexcept = 0;
     virtual void skipForward() noexcept = 0;
     virtual void skipToEnd() noexcept = 0;
-    virtual void seek(std::int64_t timestamp) noexcept = 0;
+    virtual void seek(std::int64_t timestamp, SeekMode seekMode) noexcept = 0;
     virtual void handleAtEnd() noexcept = 0;
 
     virtual Connect::State getState() const noexcept = 0;

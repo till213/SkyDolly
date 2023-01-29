@@ -75,9 +75,6 @@ namespace
         VelocityBodyX,
         VelocityBodyY,
         VelocityBodyZ,
-        RotationVelocityBodyX,
-        RotationVelocityBodyY,
-        RotationVelocityBodyZ,
         // Engine
         ThrottleLeverPosition1,
         ThrottleLeverPosition2,
@@ -120,17 +117,22 @@ namespace
         LeadingEdgeFlapsRightPercent,
         TrailingEdgeFlapsLeftPercent,
         TrailingEdgeFlapsRightPercent,
-        SpoilersHandlePosition,
         FlapsHandleIndex,
+        LeftSpoilersPosition,
+        RightSpoilersPosition,
+        SpoilersHandlePosition,        
+        SpoilersArmed,
         // Aircraft handles
         GearHandlePosition,
         BrakeLeftPosition,
         BrakeRightPosition,
         WaterRudderHandlePosition,
         TailhookPosition,
-        CanopyOpen,
+        TailhookHandle,
         FoldingWingLeftPercent,
         FoldingWingRightPercent,
+        FoldingWingHandlePosition,
+        CanopyOpen,
         SmokeEnable,
         // Light
         LightStates,
@@ -421,11 +423,21 @@ inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser:
         data.rightTrailingEdgeFlapsPosition = row.at(Enum::underly(::Index::TrailingEdgeFlapsRightPercent)).toInt(&ok);
     }
     if (ok) {
+        data.flapsHandleIndex = row.at(Enum::underly(::Index::FlapsHandleIndex)).toInt(&ok);
+    }
+    if (ok) {
+        data.leftSpoilersPosition = row.at(Enum::underly(::Index::LeftSpoilersPosition)).toInt(&ok);
+    }
+    if (ok) {
+        data.rightSpoilersPosition = row.at(Enum::underly(::Index::RightSpoilersPosition)).toInt(&ok);
+    }
+    if (ok) {
         data.spoilersHandlePercent = row.at(Enum::underly(::Index::SpoilersHandlePosition)).toInt(&ok);
     }
     if (ok) {
-        data.flapsHandleIndex = row.at(Enum::underly(::Index::FlapsHandleIndex)).toInt(&ok);
+        data.spoilersArmed = row.at(Enum::underly(::Index::SpoilersHandlePosition)).toInt(&ok)  != 0;
     }
+
     // Timestamp
     if (ok) {
         data.timestamp = row.at(Enum::underly(::Index::Timestamp)).toLongLong(&ok) - m_timestampDelta;
@@ -439,10 +451,10 @@ inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const CsvParser:
 
 inline bool SkyDollyCsvParser::importAircraftHandleData(const CsvParser::Row &row, AircraftHandle &aircraftHandle) noexcept
 {
-    AircraftHandleData data;;
+    AircraftHandleData data;
     bool ok {true};
 
-    data.gearHandlePosition = row.at(Enum::underly(::Index::GearHandlePosition)).toInt(&ok) == 1 ? true : false;
+    data.gearHandlePosition = row.at(Enum::underly(::Index::GearHandlePosition)).toInt(&ok)  != 0;
     if (ok) {
         data.brakeLeftPosition = row.at(Enum::underly(::Index::BrakeLeftPosition)).toInt(&ok);
     }
@@ -456,7 +468,7 @@ inline bool SkyDollyCsvParser::importAircraftHandleData(const CsvParser::Row &ro
         data.tailhookPosition = row.at(Enum::underly(::Index::TailhookPosition)).toInt(&ok);
     }
     if (ok) {
-        data.canopyOpen = row.at(Enum::underly(::Index::CanopyOpen)).toInt(&ok);
+        data.tailhookHandlePosition = row.at(Enum::underly(::Index::TailhookPosition)).toInt(&ok)  != 0;
     }
     if (ok) {
         data.leftWingFolding = row.at(Enum::underly(::Index::FoldingWingLeftPercent)).toInt(&ok);
@@ -465,7 +477,13 @@ inline bool SkyDollyCsvParser::importAircraftHandleData(const CsvParser::Row &ro
         data.rightWingFolding = row.at(Enum::underly(::Index::FoldingWingRightPercent)).toInt(&ok);
     }
     if (ok) {
-        data.smokeEnabled = row.at(Enum::underly(::Index::SmokeEnable)).toInt(&ok) == 1 ? true : false;
+        data.foldingWingHandlePosition = row.at(Enum::underly(::Index::FoldingWingHandlePosition)).toInt(&ok)  != 0;
+    }
+    if (ok) {
+        data.canopyOpen = row.at(Enum::underly(::Index::CanopyOpen)).toInt(&ok);
+    }
+    if (ok) {
+        data.smokeEnabled = row.at(Enum::underly(::Index::SmokeEnable)).toInt(&ok)  != 0;
     }
     // Timestamp
     if (ok) {

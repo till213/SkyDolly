@@ -34,7 +34,7 @@
 #include <Model/EngineData.h>
 
 /*!
- * Common SimConnect engine data that is sent both to the user- and AI aircraft.
+ * Common engine simulation variables that are sent both to the user- and AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -61,6 +61,7 @@ struct SimConnectEngineCommon
     {
         fromEngineData(engineData);
     }
+
     SimConnectEngineCommon() = default;
 
     inline void fromEngineData(const EngineData &engineData) noexcept

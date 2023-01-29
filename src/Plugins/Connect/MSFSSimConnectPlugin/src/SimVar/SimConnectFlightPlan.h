@@ -33,7 +33,7 @@
 #include <Model/Waypoint.h>
 
 /*!
- * Simulation variables which represent aircraft lights, e.g. navigation light
+ * Simulation variables that represent aircraft lights, e.g. navigation light
  * and taxi light.
  *
  * Implementation note: this struct needs to be packed.

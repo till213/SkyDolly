@@ -162,10 +162,10 @@ bool SkyConnectManager::freezeUserAircraft(bool enable) noexcept
     return skyConnect ? skyConnect->get().freezeUserAircraft(enable) : false;
 }
 
-bool SkyConnectManager::sendSimulationEvent(SkyConnectIntf::SimulationEvent event) noexcept
+bool SkyConnectManager::sendSimulationEvent(SkyConnectIntf::SimulationEvent event, float arg1) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().sendSimulationEvent(event) : false;
+    return skyConnect ? skyConnect->get().sendSimulationEvent(event, arg1) : false;
 }
 
 SkyConnectIntf::ReplayMode SkyConnectManager::getReplayMode() const noexcept
@@ -298,11 +298,11 @@ void SkyConnectManager::skipToEnd() noexcept
     }
 }
 
-void SkyConnectManager::seek(std::int64_t timestamp) noexcept
+void SkyConnectManager::seek(std::int64_t timestamp, SkyConnectIntf::SeekMode seekMode) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
-        skyConnect->get().seek(timestamp);
+        skyConnect->get().seek(timestamp, seekMode);
     }
 }
 

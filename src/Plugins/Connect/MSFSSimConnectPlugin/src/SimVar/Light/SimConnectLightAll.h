@@ -22,41 +22,58 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTLIGHT_H
-#define SIMCONNECTLIGHT_H
-
-#include <cstdint>
+#ifndef SIMCONNECTLIGHTEVENTALL_H
+#define SIMCONNECTLIGHTEVENTALL_H
 
 #include <windows.h>
 
-#include <Model/SimType.h>
+#include <Kernel/Enum.h>
 #include <Model/LightData.h>
+#include "SimConnectType.h"
+#include "SimConnectLightEvent.h"
+#include "SimConnectLightAi.h"
 
 /*!
- * Simulation variables which represent aircraft lights, e.g. navigation light
- * and taxi light.
+ * All light simulation variables (reply from the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectLight
+struct SimConnectLightAll
 {
-    std::int32_t lightStates {0};
+    SimConnectLightEvent event;
 
-    inline LightData toLightData() const noexcept
+    SimConnectLightAll(const LightData &lightData) noexcept
+        : SimConnectLightAll()
     {
-        LightData lightData;
-        lightData.lightStates = SimType::LightStates(lightStates);
-        return lightData;
+        fromLightData(lightData);
     }
+
+    SimConnectLightAll() = default;
 
     inline void fromLightData(const LightData &lightData) noexcept
     {
-        lightStates = lightData.lightStates;
+        event.fromLightData(lightData);
     }
 
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+    inline LightData toLightData() const noexcept
+    {
+        LightData lightData = event.toLightData();
+        return lightData;
+    }
+
+    inline SimConnectLightAi ai() const noexcept
+    {
+        SimConnectLightAi ai;
+        ai.event = event;
+        return ai;
+    }
+
+    static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
+    {
+        SimConnectLightEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LightAll));
+    }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTLIGHT_H
+#endif // SIMCONNECTLIGHTEVENTALL_H

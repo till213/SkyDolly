@@ -26,6 +26,7 @@
 
 #include <QWidget>
 
+#include <Kernel/Const.h>
 #include <Kernel/Unit.h>
 #include <Model/SimVar.h>
 #include <Model/Logbook.h>
@@ -88,12 +89,15 @@ void FlightConditionWidget::initUi() noexcept
 {
     ui->groundAltitudeLineEdit->setToolTip(SimVar::GroundAltitude);
     ui->surfaceTypeLineEdit->setToolTip(SimVar::SurfaceType);
+    ui->surfaceConditionLineEdit->setToolTip(SimVar::SurfaceCondition);
     ui->temperatureLineEdit->setToolTip(SimVar::AmbientTemperature);
     ui->totalAirTemperatureLineEdit->setToolTip(SimVar::TotalAirTemperature);
     ui->windSpeedLineEdit->setToolTip(SimVar::AmbientWindVelocity);
     ui->windDirectionLineEdit->setToolTip(SimVar::AmbientWindDirection);
     ui->precipitationStateLineEdit->setToolTip(SimVar::AmbientPrecipState);
 
+    ui->onAnyRunwayCheckBox->setToolTip(SimVar::OnAnyRunway);
+    ui->onParkingSpotCheckBox->setToolTip(SimVar::AtcOnParkingSpot);
     ui->inCloudsCheckBox->setToolTip(SimVar::AmbientInCloud);
     ui->visibilityLineEdit->setToolTip(SimVar::AmbientVisibility);
     ui->seaLevelPressure->setToolTip(SimVar::SeaLevelPressure);
@@ -114,12 +118,15 @@ void FlightConditionWidget::updateUi() noexcept
 
     ui->groundAltitudeLineEdit->setText(d->unit.formatFeet(flightCondition.groundAltitude));
     ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightCondition.surfaceType));
+    ui->surfaceConditionLineEdit->setText(SimType::surfaceConditionToString(flightCondition.surfaceCondition));
     ui->temperatureLineEdit->setText(d->unit.formatCelcius(flightCondition.ambientTemperature));
     ui->totalAirTemperatureLineEdit->setText(d->unit.formatCelcius(flightCondition.totalAirTemperature));
     ui->windSpeedLineEdit->setText(d->unit.formatKnots(flightCondition.windSpeed));
     ui->windDirectionLineEdit->setText(d->unit.formatDegrees(flightCondition.windDirection));
     ui->precipitationStateLineEdit->setText(SimType::precipitationStateToString(flightCondition.precipitationState));
 
+    ui->onAnyRunwayCheckBox->setChecked(flightCondition.onAnyRunway);
+    ui->onParkingSpotCheckBox->setChecked(flightCondition.onParkingSpot);
     ui->inCloudsCheckBox->setChecked(flightCondition.inClouds);
     ui->visibilityLineEdit->setText(d->unit.formatVisibility(flightCondition.visibility));
     ui->seaLevelPressure->setText(d->unit.formatPressureInHPa(flightCondition.seaLevelPressure));
@@ -128,6 +135,6 @@ void FlightConditionWidget::updateUi() noexcept
     ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.startLocalTime));
     ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.endLocalTime));
     // Zulu time
-    ui->startLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.startZuluTime) + "Z");
-    ui->endLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.endZuluTime) + "Z");
+    ui->startLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.startZuluTime) + Const::ZuluTimeSuffix);
+    ui->endLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.endZuluTime) + Const::ZuluTimeSuffix);
 }

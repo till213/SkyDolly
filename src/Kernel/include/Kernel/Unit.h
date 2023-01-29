@@ -122,7 +122,7 @@ public:
     QString formatSpeedInFeetPerSecond(double speed) const noexcept;
     QString formatSpeedInRadians(double speed) const noexcept;
 
-    QString leftLeadingEdgeFlapsPosition(std::int16_t position) const noexcept;
+    QString formatPosition(std::int16_t position) const noexcept;
     QString formatPercent(std::uint8_t percent) const noexcept;
 
     QString formatKnots(double speed) const noexcept;

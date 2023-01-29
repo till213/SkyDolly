@@ -56,17 +56,17 @@ protected:
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;
-    bool onSimulationEvent(SimulationEvent event) const noexcept override;
+    bool onSimulationEvent(SimulationEvent event, float arg1) const noexcept override;
 
     bool onStartRecording() noexcept override;
     void onRecordingPaused(bool paused) noexcept override;
     void onStopRecording() noexcept override;
 
     bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
-    void onReplayPaused(bool paused) noexcept override;
+    void onReplayPaused(bool enable) noexcept override;
     void onStopReplay() noexcept override;
 
-    void onSeek(std::int64_t currentTimestamp) noexcept override;
+    void onSeek(std::int64_t currentTimestampS, SeekMode seekMode) noexcept override;
     void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;

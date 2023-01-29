@@ -42,9 +42,6 @@ namespace SimVar
     constexpr const char *VelocityBodyX = "Velocity Body X";
     constexpr const char *VelocityBodyY = "Velocity Body Y";
     constexpr const char *VelocityBodyZ = "Velocity Body Z";
-    constexpr const char *RotationVelocityBodyX = "Rotation Velocity Body X";
-    constexpr const char *RotationVelocityBodyY = "Rotation Velocity Body Y";
-    constexpr const char *RotationVelocityBodyZ = "Rotation Velocity Body Z";
 
     constexpr const char *AileronLeftDeflection = "Aileron Left Deflection";
     constexpr const char *AileronRightDeflection = "Aileron Right Deflection";
@@ -106,6 +103,16 @@ namespace SimVar
     constexpr const char *FoldingWingRightPercent = "Folding Wing Right Percent";
 
     constexpr const char *LightStates = "Light States";
+    constexpr const char *LightNav = "Light Nav";
+    constexpr const char *LightBeacon = "Light Beacon";
+    constexpr const char *LightLanding = "Light Landing";
+    constexpr const char *LightTaxi = "Light Taxi";
+    constexpr const char *LightStrobe = "Light Strobe";
+    constexpr const char *LightPanel = "Light Panel";
+    constexpr const char *LightRecognition = "Light Recognition";
+    constexpr const char *LightWing = "Light Wing";
+    constexpr const char *LightLogo = "Light Logo";
+    constexpr const char *LightCabin = "Light Cabin";
 
     constexpr const char *Title = "Title";
     constexpr const char *ATCId = "ATC Id";
@@ -118,6 +125,10 @@ namespace SimVar
     constexpr const char *AirspeedTrue = "Airspeed True";
     constexpr const char *AirspeedIndicated = "Airspeed Indicated";
     constexpr const char *SurfaceType = "Surface Type";
+    constexpr const char *OnAnyRunway = "On Any Runway";
+    constexpr const char *AtcOnParkingSpot = "ATC On Parking Spot";
+    constexpr const char *SurfaceCondition = "Surface Condition";
+
     constexpr const char *WingSpan = "Wing Span";
     constexpr const char *NumberOfEngines = "Number Of Engines";
     constexpr const char *EngineType = "Engine Type";
@@ -154,6 +165,7 @@ namespace SimVar
     constexpr const char *ZuluDayOfMonth = "Zulu Day of Month";
 
     constexpr const char *Timestamp = "Timestamp";
+    constexpr const char *SimulationRate = "Simulation Rate";
 }
 
 #endif // SIMVAR_H

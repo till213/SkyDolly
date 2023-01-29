@@ -30,6 +30,8 @@
 
 class QWidget;
 
+#include "SkyConnectIntf.h"
+
 class ModuleIntf
 {
 public:
