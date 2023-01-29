@@ -30,6 +30,7 @@
 - Fix "ailerons reversal" (Asobo A320neo, F/A-18 and other aircraft with "PID controllers")
   * Actual root cause (in MSFS/SimConnect): MSFS seems to expect "*feet* per second" instead of "*radians* per second" for "*rotation* velocity body" (*radians* per second would actually be the correct physical unit for rotation velocity)
 - Ensure that all "position" and "percent" values as reported by MSFS are clamped to the proper range ([0.0, 1.0] and [0, 100] respectively)
+- Fix a crash in the Formation module that would occur when trying to delete the last aircraft from the aircraft table
 
 ## 0.13.1
 
