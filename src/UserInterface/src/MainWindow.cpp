@@ -431,11 +431,13 @@ void MainWindow::initUi() noexcept
                                      QString("\n\n"
                                              "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
                                              "This release v%2 \"%3\" focuses on improved replay for 3rd-party aircraft, specifically for control surfaces like "
-                                             "flaps, spoilers, elevators and ailerons. The gear should also work better with 3rd-party aircraft.\n\n"
+                                             "flaps, spoilers, elevators and ailerons. The gear should also work better with most 3rd-party aircraft.\n\n"
                                              "Note that not all 3rd-party aircraft react the same - or at all - to the newly implemented features, so certain "
-                                             "aspects may still not work. Some aircraft do not even properly report some simulation variables during recording. "
-                                             "Specifically lights (landing, taxi, navigation, ...) behave quite differently, depending on the aircraft type. "
-                                             "Further improvements may be added to future updates, so please consider this a work-in-progess.\n\n"
+                                             "aspects may still not work. Some aircraft do not even properly report certain simulation variables during recording, "
+                                             "the spoiler handle position being such an example.\n\n"
+                                             "Also lights (landing, taxi, navigation, ...) behave quite differently, depending on the aircraft type and its specific "
+                                             "light switch logic: some light switches have dependencies on each other, "
+                                             "making it almost impossible to toggle them individually.\n\n"
                                              "This dialog will be shown %4 more times.")
                                      .arg(Version::getApplicationName(), Version::getApplicationVersion())
                                      .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
