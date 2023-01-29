@@ -46,7 +46,7 @@ public:
 
     bool upsert(QSqlDatabase &db, const AircraftType &aircraftType) noexcept override;
     AircraftType getByType(QSqlDatabase &db, const QString &type, bool *ok = nullptr) const noexcept override;
-    std::vector<AircraftType> getAllQSqlDatabase &db, (bool *ok = nullptr) const noexcept override;
+    std::vector<AircraftType> getAllQSqlDatabase(QSqlDatabase &db, bool *ok = nullptr) const noexcept override;
     bool exists(QSqlDatabase &db, const QString &type) const noexcept override;
 };
 
