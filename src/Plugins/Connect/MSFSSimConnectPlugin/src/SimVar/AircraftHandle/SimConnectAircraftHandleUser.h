@@ -32,7 +32,7 @@
 #include "SimConnectAircraftHandleCore.h"
 
 /*!
- * AircraftHandle simulation variables that are sent to the user aircraft.
+ * Aircraft handle simulation variables that are sent to the user aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */

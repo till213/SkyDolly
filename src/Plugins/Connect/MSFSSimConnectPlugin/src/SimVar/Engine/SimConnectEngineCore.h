@@ -36,7 +36,7 @@
 #include <Model/EngineData.h>
 
 /*!
- * Engine simulation variables that are only sent to the user aircraft.
+ * Core engine simulation variables that are only sent to the user aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -61,6 +61,7 @@ struct SimConnectEngineCore
     {
         fromEngineData(engineData);
     }
+
     SimConnectEngineCore() = default;
 
     inline void fromEngineData(const EngineData &engineData) noexcept

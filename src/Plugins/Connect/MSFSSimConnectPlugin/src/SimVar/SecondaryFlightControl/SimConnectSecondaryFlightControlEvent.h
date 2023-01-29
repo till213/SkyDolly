@@ -36,7 +36,8 @@
 #include "SimConnectType.h"
 
 /*!
- * Simulation variables that represent the secondary flight controls.
+ * Secondary flight control simulation variables that are sent as event to the user aircraft
+ * (and possibly as simulation variables to AI aircraft).
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -52,6 +53,7 @@ struct SimConnectSecondaryFlightControlEvent
     {
         fromSecondaryFlightControlData(secondaryFlightControlData);
     }
+
     SimConnectSecondaryFlightControlEvent() = default;
 
     inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &secondaryFlightControlData) noexcept

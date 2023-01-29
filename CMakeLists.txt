@@ -12,7 +12,7 @@ set(PROJECT_ORGANISATION_NAME till213)
 
 project(
     ${APP_NAME}
-    VERSION 0.14.0
+    VERSION 0.15.0
     DESCRIPTION "Sky Dolly - The Black Sheep for Your Flight Recordings"
     HOMEPAGE_URL "https://github.com/till213/SkyDolly"
     LANGUAGES CXX    

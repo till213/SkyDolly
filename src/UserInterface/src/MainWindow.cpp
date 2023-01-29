@@ -164,6 +164,7 @@ struct MainWindowPrivate
     bool hasFlightExportPlugins {false};
     bool hasLocationImportPlugins {false};
     bool hasLocationExportPlugins {false};
+    bool continuousSeek {false};
 
     std::unique_ptr<ModuleManager> moduleManager;
 };
@@ -424,16 +425,17 @@ void MainWindow::initUi() noexcept
             Settings &settings = Settings::getInstance();
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
-            constexpr uint CakeChar = 0x1f382;
-            const QString CakeString = QString::fromUcs4(&CakeChar, 1);
             QMessageBox::information(this, "Preview",
-                                     CakeString + CakeString + CakeString + QString(" HAPPY 40TH ANNIVERSARY, FLIGHT SIMULATOR! ") + CakeString + CakeString + CakeString +
                                      QString("\n\n"
                                              "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                                             "This release v%2 \"%3\" introduces location import and export, making it possible to exchange user points with e.g. Little Navmap. "
-                                             "The Location module now also supports basic filtering and the engine state (start, stop, unchanged) can be controlled upon teleportation.\n\n"
-                                             "While not many new features have been introduced a lot of work has been done \"under the hood\": memory "
-                                             "and performance optimisations in various areas have been applied.\n\n"
+                                             "This release v%2 \"%3\" focuses on improved replay for 3rd-party aircraft, specifically for control surfaces like "
+                                             "flaps, spoilers, elevators and ailerons. The gear should also work better with most 3rd-party aircraft.\n\n"
+                                             "Note that not all 3rd-party aircraft react the same - or at all - to the newly implemented features, so certain "
+                                             "aspects may still not work. Some aircraft do not even properly report certain simulation variables during recording, "
+                                             "the spoiler handle position being such an example.\n\n"
+                                             "Also lights (landing, taxi, navigation, ...) behave quite differently, depending on the aircraft type and its specific "
+                                             "light switch logic: some light switches have dependencies on each other, "
+                                             "making it almost impossible to toggle them individually.\n\n"
                                              "This dialog will be shown %4 more times.")
                                      .arg(Version::getApplicationName(), Version::getApplicationVersion())
                                      .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
@@ -1083,19 +1085,7 @@ double MainWindow::getCustomSpeedFactor() const
     return customSpeedFactor;
 }
 
-// PRIVATE SLOTS
-
-void MainWindow::onPositionSliderPressed() noexcept
-{
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    d->previousState = skyConnectManager.getState();
-    if (d->previousState == Connect::State::Replay) {
-        // Pause the replay while sliding the position slider
-        skyConnectManager.setPaused(true);
-    }
-}
-
-void MainWindow::onPositionSliderValueChanged(int value) noexcept
+void MainWindow::seek(int value, SkyConnectIntf::SeekMode seekMode) const noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const double factor = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
@@ -1104,16 +1094,39 @@ void MainWindow::onPositionSliderValueChanged(int value) noexcept
 
     // Prevent the timestampTimeEdit field to set the replay position as well
     ui->timestampTimeEdit->blockSignals(true);
-    skyConnectManager.seek(timestamp);
+    skyConnectManager.seek(timestamp, seekMode);
     ui->timestampTimeEdit->blockSignals(false);
+}
+
+// PRIVATE SLOTS
+
+void MainWindow::onPositionSliderPressed() noexcept
+{
+    d->continuousSeek = true;
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    d->previousState = skyConnectManager.getState();
+    if (skyConnectManager.isInReplayState()) {
+        // Pause the replay while sliding the position slider
+        skyConnectManager.setPaused(true);
+    }
+}
+
+void MainWindow::onPositionSliderValueChanged(int value) noexcept
+{
+    const SkyConnectIntf::SeekMode seekMode = d->continuousSeek ? SkyConnectIntf::SeekMode::Continuous : SkyConnectIntf::SeekMode::Discrete;
+    seek(value, seekMode);
 }
 
 void MainWindow::onPositionSliderReleased() noexcept
 {
+    seek(ui->positionSlider->value(), SkyConnectIntf::SeekMode::Discrete);
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (d->previousState == Connect::State::Replay) {
         skyConnectManager.setPaused(false);
+    } else if (d->previousState == Connect::State::ReplayPaused) {
+        skyConnectManager.setPaused(true);
     }
+    d->continuousSeek = false;
 }
 
 void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
@@ -1121,7 +1134,7 @@ void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isIdle() || skyConnectManager.getState() == Connect::State::ReplayPaused) {
         std::int64_t timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
-        skyConnectManager.seek(timestamp);
+        skyConnectManager.seek(timestamp, SkyConnectIntf::SeekMode::Discrete);
     }
 }
 

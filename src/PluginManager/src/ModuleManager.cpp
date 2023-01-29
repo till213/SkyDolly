@@ -47,6 +47,7 @@
 #include <Kernel/Enum.h>
 #include <Kernel/QUuidHasher.h>
 #include <Kernel/Sort.h>
+#include "SkyConnectIntf.h"
 #include "ModuleIntf.h"
 #include "DefaultModuleImpl.h"
 #include "ModuleManager.h"

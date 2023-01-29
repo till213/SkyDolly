@@ -60,7 +60,7 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
     const Aircraft &userAircraft = flight.getUserAircraft();
     Position &position = userAircraft.getPosition();
     if (position.count() > 0) {
-        const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::Seek);
+        const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
         const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfo();
         const AircraftType &aircraftType = aircraftInfo.aircraftType;
 

@@ -85,7 +85,7 @@ bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, A
 bool AircraftService::deleteByIndex(int index, QSqlDatabase &db) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const std::int64_t aircraftId = flight.deleteAircraftByIndex(index);
+    const std::int64_t aircraftId = flight.removeAircraftByIndex(index);
     bool ok {true};
     if (aircraftId != Const::InvalidId) {
         ok = db.transaction();

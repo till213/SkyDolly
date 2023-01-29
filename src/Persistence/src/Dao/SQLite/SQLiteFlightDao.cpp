@@ -79,6 +79,7 @@ bool SQLiteFlightDao::add(Flight &flight, QSqlDatabase &db) noexcept
         "  description,"
         "  user_aircraft_seq_nr,"
         "  surface_type,"
+        "  surface_condition,"
         "  ground_altitude,"
         "  ambient_temperature,"
         "  total_air_temperature,"
@@ -89,6 +90,8 @@ bool SQLiteFlightDao::add(Flight &flight, QSqlDatabase &db) noexcept
         "  pitot_icing,"
         "  structural_icing,"
         "  precipitation_state,"
+        "  on_any_runway,"
+        "  on_parking_spot,"
         "  in_clouds,"
         "  start_local_sim_time,"
         "  start_zulu_sim_time,"
@@ -100,6 +103,7 @@ bool SQLiteFlightDao::add(Flight &flight, QSqlDatabase &db) noexcept
         " :description,"
         " :user_aircraft_seq_nr,"
         " :surface_type,"
+        " :surface_condition,"
         " :ground_altitude,"
         " :ambient_temperature,"
         " :total_air_temperature,"
@@ -110,6 +114,8 @@ bool SQLiteFlightDao::add(Flight &flight, QSqlDatabase &db) noexcept
         " :pitot_icing,"
         " :structural_icing,"
         " :precipitation_state,"
+        " :on_any_runway,"
+        " :on_parking_spot,"
         " :in_clouds,"
         " :start_local_sim_time,"
         " :start_zulu_sim_time,"
@@ -125,6 +131,7 @@ bool SQLiteFlightDao::add(Flight &flight, QSqlDatabase &db) noexcept
     // Sequence number starts at 1
     query.bindValue(":user_aircraft_seq_nr", flight.getUserAircraftIndex() + 1);
     query.bindValue(":surface_type", Enum::underly(flightCondition.surfaceType));
+    query.bindValue(":surface_condition", Enum::underly(flightCondition.surfaceCondition));
     query.bindValue(":ground_altitude", flightCondition.groundAltitude);
     query.bindValue(":ambient_temperature", flightCondition.ambientTemperature);
     query.bindValue(":total_air_temperature", flightCondition.totalAirTemperature);
@@ -135,6 +142,8 @@ bool SQLiteFlightDao::add(Flight &flight, QSqlDatabase &db) noexcept
     query.bindValue(":pitot_icing", flightCondition.pitotIcingPercent);
     query.bindValue(":structural_icing", flightCondition.structuralIcingPercent);
     query.bindValue(":precipitation_state", Enum::underly(flightCondition.precipitationState));
+    query.bindValue(":on_any_runway", flightCondition.onAnyRunway);
+    query.bindValue(":on_parking_spot", flightCondition.onParkingSpot);
     query.bindValue(":in_clouds", flightCondition.inClouds);
     // No conversion to UTC
     query.bindValue(":start_local_sim_time", flightCondition.startLocalTime);
@@ -189,6 +198,9 @@ bool SQLiteFlightDao::get(std::int64_t id, QSqlDatabase &db, Flight &flight) con
         const int titleIdx = record.indexOf("title");
         const int descriptionIdx = record.indexOf("description");
         const int surfaceTypeIdx = record.indexOf("surface_type");
+        const int onAnyRunwayIdx = record.indexOf("on_any_runway");
+        const int onParkingSpotIdx = record.indexOf("on_parking_spot");
+        const int surfaceConditionIdx = record.indexOf("surface_condition");
         const int groundAltitudeIdx = record.indexOf("ground_altitude");
         const int ambientTemperatureIdx = record.indexOf("ambient_temperature");
         const int totalAirTemperatureIdx = record.indexOf("total_air_temperature");
@@ -215,6 +227,9 @@ bool SQLiteFlightDao::get(std::int64_t id, QSqlDatabase &db, Flight &flight) con
 
             FlightCondition flightCondition;
             flightCondition.surfaceType = static_cast<SimType::SurfaceType>(query.value(surfaceTypeIdx).toInt());
+            flightCondition.onAnyRunway = query.value(onAnyRunwayIdx).toBool();
+            flightCondition.onParkingSpot = query.value(onParkingSpotIdx).toBool();
+            flightCondition.surfaceCondition = static_cast<SimType::SurfaceCondition>(query.value(surfaceConditionIdx).toInt());
             flightCondition.groundAltitude = query.value(groundAltitudeIdx).toFloat();
             flightCondition.ambientTemperature = query.value(ambientTemperatureIdx).toFloat();
             flightCondition.totalAirTemperature = query.value(totalAirTemperatureIdx).toFloat();

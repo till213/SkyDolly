@@ -59,7 +59,7 @@ public:
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
     bool freezeUserAircraft(bool enable) const noexcept override;
-    bool sendSimulationEvent(SimulationEvent event) noexcept override;
+    bool sendSimulationEvent(SimulationEvent event, float arg1) noexcept override;
 
     ReplayMode getReplayMode() const noexcept override;
     void setReplayMode(ReplayMode replayMode) noexcept override;
@@ -76,14 +76,14 @@ public:
 
     void stop() noexcept override;
 
-    void setPaused(bool enabled) noexcept override;
+    void setPaused(bool enable) noexcept override;
     bool isPaused() const noexcept override;
 
     void skipToBegin() noexcept override;
     void skipBackward() noexcept override;
     void skipForward() noexcept override;
     void skipToEnd() noexcept override;
-    void seek(std::int64_t timestamp) noexcept override;
+    void seek(std::int64_t timestamp, SeekMode seekMode) noexcept override;
     void handleAtEnd() noexcept override;
 
     Connect::State getState() const noexcept override;
@@ -124,17 +124,17 @@ protected:
 
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
-    virtual bool onSimulationEvent(SimulationEvent event) const noexcept = 0;
+    virtual bool onSimulationEvent(SimulationEvent event, float arg1) const noexcept = 0;
 
     virtual bool onStartRecording() noexcept = 0;
     virtual void onRecordingPaused(bool paused) noexcept = 0;
     virtual void onStopRecording() noexcept = 0;
 
     virtual bool onStartReplay(std::int64_t currentTimestamp) noexcept = 0;
-    virtual void onReplayPaused(bool paused) noexcept = 0;
+    virtual void onReplayPaused(bool enable) noexcept = 0;
     virtual void onStopReplay() noexcept = 0;
 
-    virtual void onSeek(std::int64_t currentTimestamp) noexcept = 0;
+    virtual void onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept = 0;
     virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept = 0;
 
     virtual bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept = 0;

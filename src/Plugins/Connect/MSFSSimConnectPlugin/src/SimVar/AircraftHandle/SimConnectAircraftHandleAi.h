@@ -30,9 +30,10 @@
 #include "SimConnectType.h"
 #include "SimConnectAircraftHandleCommon.h"
 #include "SimConnectAircraftHandleEvent.h"
+#include "SimConnectAircraftHandleAnimation.h"
 
 /*!
- * AircraftHandle simulation variables that are sent to AI aircraft.
+ * Aircraft handle simulation variables that are sent to AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
@@ -41,6 +42,7 @@ struct SimConnectAircraftHandleAi
 {
     SimConnectAircraftHandleCommon common;
     SimConnectAircraftHandleEvent event;
+    SimConnectAircraftHandleAnimation animation;
 
     SimConnectAircraftHandleAi(const AircraftHandleData &engineData) noexcept
         : SimConnectAircraftHandleAi()
@@ -54,12 +56,14 @@ struct SimConnectAircraftHandleAi
     {
         common.fromAircraftHandleData(engineData);
         event.fromAircraftHandleData(engineData);
+        animation.fromAircraftHandleData(engineData);
     }
 
     inline AircraftHandleData toAircraftHandleData() const noexcept
     {
         AircraftHandleData aircraftHandleData = common.toAircraftHandleData();
         event.toAircraftHandleData(aircraftHandleData);
+        animation.toAircraftHandleData(aircraftHandleData);
         return aircraftHandleData;
     }
 
@@ -67,6 +71,7 @@ struct SimConnectAircraftHandleAi
     {
         SimConnectAircraftHandleCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAi));
         SimConnectAircraftHandleEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAi));
+        SimConnectAircraftHandleAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAi));
     }
 };
 #pragma pack(pop)

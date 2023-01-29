@@ -27,7 +27,7 @@
 
 #include <QWidget>
 
-class EventWidget : public QWidget
+class EventWidget final : public QWidget
 {
     Q_OBJECT
 public:
