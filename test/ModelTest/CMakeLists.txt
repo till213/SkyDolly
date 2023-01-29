@@ -1,10 +1,6 @@
-find_package(Qt5Test REQUIRED)
+find_package(Qt6Test REQUIRED)
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(SkySearchTest)
-else()
-    add_executable(SkySearchTest)
-endif()
+qt_add_executable(SkySearchTest)
 
 target_sources(SkySearchTest
     PRIVATE
@@ -12,7 +8,7 @@ target_sources(SkySearchTest
 )
 
 set(KERNELTEST_LIBS
-    Qt${QT_VERSION_MAJOR}::Test
+    Qt6::Test
     Sky::Kernel
     Sky::Model
 )

@@ -29,7 +29,7 @@
 #include <QSqlQuery>
 #include <QDir>
 #include <QCoreApplication>
-#include <QTextCodec>
+#include <QStringConverter>
 
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
@@ -82,9 +82,7 @@ struct SqlMigrationPrivate
 
 SqlMigration::SqlMigration() noexcept
     : d(std::make_unique<SqlMigrationPrivate>())
-{
-     Q_INIT_RESOURCE(Migration);
-}
+{}
 
 SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;
 SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) noexcept = default;
@@ -126,7 +124,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
         if (ok) {
             QTextStream textStream(&migrationFile);
-            textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+            textStream.setEncoding(QStringConverter::Utf8);
             const QString migration = textStream.readAll();
 
             QStringList sqlStatements = migration.split(migrRegExp);
@@ -165,7 +163,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
         if (ok) {
             QTextStream textStream(&migrationFile);
-            textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+            textStream.setEncoding(QStringConverter::Utf8);
             CsvParser csvParser;
             CsvParser::Rows rows = csvParser.parse(textStream, ::LocationMigrationHeader, ::AlternateLocationMigrationHeader);
             if (CsvParser::validate(rows, Enum::underly(::Index::Count))) {

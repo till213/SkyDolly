@@ -55,7 +55,7 @@ static bool isProcessRunning(DWORD pid, QStringView processName)
     }
 
 #ifdef UNICODE
-    QString actualName = QString::fromUtf16(actualProcessName);
+    QString actualName = QString::fromWCharArray(actualProcessName);
 #else
     QString actualName = QString::fromLocal8Bit(actualProcessName);
 #endif

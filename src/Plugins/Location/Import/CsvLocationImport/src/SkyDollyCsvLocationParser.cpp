@@ -28,7 +28,7 @@
 
 #include <QIODevice>
 #include <QTextStream>
-#include <QTextCodec>
+#include <QStringConverter>
 
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>

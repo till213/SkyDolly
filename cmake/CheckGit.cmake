@@ -1,14 +1,15 @@
 set(CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_DIR})
 if(NOT DEFINED PRE_CONFIGURE_DIR)
-    set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_LIST_DIR})
+    set(PRE_CONFIGURE_DIR ${CURRENT_LIST_DIR})
 endif()
+message(STATUS "GitInfo: PRE_CONFIGURE_DIR: ${PRE_CONFIGURE_DIR}")
 
 if(NOT DEFINED POST_CONFIGURE_DIR)
     set(POST_CONFIGURE_DIR ${CMAKE_BINARY_DIR}/generated)
 endif()
 
-set(PRE_CONFIGURE_FILE ${PRE_CONFIGURE_DIR}/GitInfo.cpp.in)
-set(POST_CONFIGURE_FILE ${POST_CONFIGURE_DIR}/GitInfo.cpp)
+set(PRE_CONFIGURE_FILE "${PRE_CONFIGURE_DIR}/GitInfo.cpp.in")
+set(POST_CONFIGURE_FILE "${POST_CONFIGURE_DIR}/GitInfo.cpp")
 
 function(CheckGitWrite git_hash)
     file(WRITE ${CMAKE_BINARY_DIR}/git-state.txt ${git_hash})
@@ -27,7 +28,7 @@ function(CheckGitVersion)
     # Get the latest abbreviated commit hash of the working branch
     execute_process(
         COMMAND git log -1 --format=%h
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        WORKING_DIRECTORY ${CURRENT_LIST_DIR}
         OUTPUT_VARIABLE GIT_HASH
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
@@ -55,8 +56,8 @@ function(CheckGitVersion)
 
         # Also get the date of the latest commit hash of the working branch
         execute_process(
-            COMMAND git show --no-patch --no-notes --pretty=%cd --date=iso ${GIT_HASH}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+            COMMAND git show --no-patch --no-notes --pretty=%cd --date=iso-strict ${GIT_HASH}
+            WORKING_DIRECTORY ${CURRENT_LIST_DIR}
             OUTPUT_VARIABLE GIT_ISO_DATE
             OUTPUT_STRIP_TRAILING_WHITESPACE
             )

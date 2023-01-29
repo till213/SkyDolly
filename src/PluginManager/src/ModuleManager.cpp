@@ -70,7 +70,7 @@ struct ModuleManagerPrivate
     ModuleManagerPrivate(QLayout &layout) noexcept
         : layout(layout)
     {
-        pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
+        pluginsDirectoryPath.setPath(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
         if (pluginsDirectoryPath.dirName() == "MacOS") {
             // Navigate up the app bundle structure, into the Contents folder
@@ -119,7 +119,6 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<ModuleManagerPrivate>(layout))
 {
-    Q_INIT_RESOURCE(PluginManager);
     initModules();
     if (d->moduleRegistry.size() > 0) {
         activateModule(d->moduleRegistry.begin()->first);
@@ -158,7 +157,7 @@ void ModuleManager::activateModule(QUuid uuid) noexcept
         }
         QString modulePath = d->moduleRegistry[uuid];
         d->pluginLoader->setFileName(modulePath);
-        const QObject *plugin = d->pluginLoader->instance();
+        QObject *plugin = d->pluginLoader->instance();
         d->activeModule = qobject_cast<ModuleIntf *>(plugin);
         if (d->activeModule != nullptr) {
             d->activeModuleUuid = uuid;
@@ -247,9 +246,9 @@ void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid
     d->pluginLoader->setFileName(pluginPath);
     const QJsonObject metaData = d->pluginLoader->metaData();
     if (!metaData.isEmpty()) {
-        const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
-        const QUuid uuid = pluginMetadata.value(::PluginUuidKey).toString();
-        const QString name = pluginMetadata.value(::PluginNameKey).toString();
+        const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
+        const QUuid uuid {pluginMetadata.value(::PluginUuidKey).toString()};
+        const QString name {pluginMetadata.value(::PluginNameKey).toString()};
         moduleInfos[uuid] = std::make_pair(name, pluginPath);
 
         const QJsonArray afterArray = pluginMetadata.value(::PluginAfter).toArray();

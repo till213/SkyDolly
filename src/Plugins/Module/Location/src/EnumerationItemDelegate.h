@@ -36,6 +36,7 @@ struct EnumerationItemDelegatePrivate;
 
 class EnumerationItemDelegate : public QStyledItemDelegate
 {
+	Q_OBJECT
 public:
     EnumerationItemDelegate(QString enumerationName) noexcept;
     ~EnumerationItemDelegate() override;

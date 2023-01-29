@@ -87,7 +87,7 @@ void AbstractKmlTrackParser::parseTrack() noexcept
         bool ok {true};
         int currentTrackDataIndex = 0;
         while (xml->readNextStartElement()) {
-            const QStringRef xmlName = xml->name();
+            const QStringView xmlName = xml->name();
 #ifdef DEBUG
             qDebug() << "AbstractKmlTrackParser::parseTrack: XML start element:" << xmlName.toString();
 #endif

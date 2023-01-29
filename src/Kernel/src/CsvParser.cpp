@@ -27,7 +27,6 @@
 #include <unordered_map>
 
 #include <QTextStream>
-#include <QTextCodec>
 
 #include "CsvParser.h"
 

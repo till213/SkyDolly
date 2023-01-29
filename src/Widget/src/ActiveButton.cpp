@@ -52,7 +52,7 @@ void ActiveButton::mousePressEvent(QMouseEvent *e) noexcept
     QPushButton::mousePressEvent(e);
 
     const QPixmap currentPixmap = icon().pixmap(iconSize(), QIcon::Normal);
-    if (d->normalPixmap.isNull() || d->normalPixmap != currentPixmap) {
+    if (d->normalPixmap.isNull() || d->normalPixmap.cacheKey() != currentPixmap.cacheKey()) {
         // The icon of the QAction has been changed -> update the pixmap cache
         d->normalPixmap = currentPixmap;
         d->activePixmap = icon().pixmap(iconSize(), QIcon::Active);

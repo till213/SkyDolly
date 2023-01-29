@@ -51,9 +51,7 @@ struct FormationPluginPrivate
 FormationPlugin::FormationPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
       d(std::make_unique<FormationPluginPrivate>(getFlightService()))
-{
-     Q_INIT_RESOURCE(FormationPlugin);
-}
+{}
 
 FormationPlugin::~FormationPlugin() = default;
 

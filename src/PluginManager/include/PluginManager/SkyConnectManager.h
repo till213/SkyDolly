@@ -43,7 +43,7 @@ class QUuid;
 #include "SkyConnectIntf.h"
 #include "PluginManagerLib.h"
 
-struct skyConnectManagerPrivate;
+struct SkyConnectManagerPrivate;
 
 /// \todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
 class PLUGINMANAGER_API SkyConnectManager final : public QObject
@@ -174,7 +174,7 @@ signals:
     void locationReceived(Location location);
 
 private:
-    const std::unique_ptr<skyConnectManagerPrivate> d;
+    const std::unique_ptr<SkyConnectManagerPrivate> d;
 
     SkyConnectManager() noexcept;
     ~SkyConnectManager() override;

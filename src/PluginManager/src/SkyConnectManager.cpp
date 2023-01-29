@@ -57,12 +57,12 @@ namespace
     constexpr const char *PluginFlightSimulatorNameKey {"flightSimulator"};
 }
 
-struct skyConnectManagerPrivate
+struct SkyConnectManagerPrivate
 {
-    skyConnectManagerPrivate(QObject *parent) noexcept
+    SkyConnectManagerPrivate(QObject *parent) noexcept
         : pluginLoader(new QPluginLoader(parent))
     {
-        pluginsDirectory = QDir(QCoreApplication::applicationDirPath());
+        pluginsDirectory.setPath(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
         if (pluginsDirectory.dirName() == "MacOS") {
             // Navigate up the app bundle structure, into the Contents folder
@@ -72,7 +72,7 @@ struct skyConnectManagerPrivate
         pluginsDirectory.cd(PluginDirectoryName);
     }
 
-    ~skyConnectManagerPrivate() noexcept
+    ~SkyConnectManagerPrivate() noexcept
     {
         pluginLoader->unload();
     }
@@ -92,17 +92,17 @@ struct skyConnectManagerPrivate
 
 SkyConnectManager &SkyConnectManager::getInstance() noexcept
 {
-    std::call_once(skyConnectManagerPrivate::onceFlag, []() {
-        skyConnectManagerPrivate::instance = new SkyConnectManager();
+    std::call_once(SkyConnectManagerPrivate::onceFlag, []() {
+        SkyConnectManagerPrivate::instance = new SkyConnectManager();
     });
-    return *skyConnectManagerPrivate::instance;
+    return *SkyConnectManagerPrivate::instance;
 }
 
 void SkyConnectManager::destroyInstance() noexcept
 {
-    if (skyConnectManagerPrivate::instance != nullptr) {
-        delete skyConnectManagerPrivate::instance;
-        skyConnectManagerPrivate::instance = nullptr;
+    if (SkyConnectManagerPrivate::instance != nullptr) {
+        delete SkyConnectManagerPrivate::instance;
+        SkyConnectManagerPrivate::instance = nullptr;
     }
 }
 
@@ -414,7 +414,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 // PRIVATE
 
 SkyConnectManager::SkyConnectManager() noexcept
-    : d(std::make_unique<skyConnectManagerPrivate>(this))
+    : d(std::make_unique<SkyConnectManagerPrivate>(this))
 {
     frenchConnection();
 }
@@ -442,13 +442,13 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
-                const QUuid uuid = pluginMetadata.value(PluginUuidKey).toString();
-                const QString pluginName = pluginMetadata.value(PluginNameKey).toString();
-                const QString flightSimulatorName = pluginMetadata.value(PluginFlightSimulatorNameKey).toString();
-                const FlightSimulator::Id flightSimulatorId = FlightSimulator::nameToId(flightSimulatorName);
-                SkyConnectPlugin plugin = {pluginName, flightSimulatorId};
-                const Handle handle = {uuid, plugin};
+                const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
+                const QUuid uuid {pluginMetadata.value(PluginUuidKey).toString()};
+                const QString pluginName {pluginMetadata.value(PluginNameKey).toString()};
+                const QString flightSimulatorName {pluginMetadata.value(PluginFlightSimulatorNameKey).toString()};
+                const FlightSimulator::Id flightSimulatorId {FlightSimulator::nameToId(flightSimulatorName)};
+                SkyConnectPlugin plugin {pluginName, flightSimulatorId};
+                const Handle handle {uuid, plugin};
                 d->pluginHandles.push_back(handle);
                 d->pluginRegistry.insert(uuid, pluginPath);
             }

@@ -1,10 +1,6 @@
 set(LIBRARY_NAME "Kernel")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} SHARED)
-else()
-    add_library(${LIBRARY_NAME} SHARED)
-endif()
+qt_add_library(${LIBRARY_NAME} SHARED)
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_compile_definitions(${LIBRARY_NAME}
@@ -12,6 +8,11 @@ target_compile_definitions(${LIBRARY_NAME}
         KERNEL_EXPORT
 )
 configure_file(src/VersionConfig.h.in generated/VersionConfig.h @ONLY)
+
+# https://jonathanhamberg.com/post/cmake-embedding-git-hash/
+set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+include(${PROJECT_SOURCE_DIR}/cmake/CheckGit.cmake)
+CheckGitSetup()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
@@ -28,7 +29,6 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/Replay.h
         include/Kernel/SampleRate.h
         include/Kernel/Settings.h src/Settings.cpp
-        src/SettingsConverter.h src/SettingsConverter.cpp
         include/Kernel/SkyMath.h
         include/Kernel/System.h src/System.cpp
         include/Kernel/Unit.h src/Unit.cpp
@@ -36,7 +36,9 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/QUuidHasher.h
         include/Kernel/QStringHasher.h
         include/Kernel/Sort.h
+        src/SettingsConverter.h src/SettingsConverter.cpp
         src/VersionConfig.h.in
+        src/GitInfo.h src/GitInfo.cpp.in
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
@@ -48,7 +50,7 @@ target_include_directories(${LIBRARY_NAME}
 )
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC
-        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt6::Widgets
         GeographicLib::GeographicLib
         tsl::ordered_map
     PRIVATE

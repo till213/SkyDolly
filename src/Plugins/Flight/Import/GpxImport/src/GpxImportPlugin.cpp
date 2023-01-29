@@ -185,7 +185,7 @@ void GpxImportPlugin::updateWaypoints() noexcept
                 waypoint.localTime = endDateTimeUtc.toLocalTime();
                 waypoint.zuluTime = endDateTimeUtc;
                 uniqueTimestamp = lastPositionData.timestamp;
-                while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                while (timestamps.contains(uniqueTimestamp)) {
                     ++uniqueTimestamp;
                 }
                 waypoint.timestamp = uniqueTimestamp;
@@ -198,7 +198,7 @@ void GpxImportPlugin::updateWaypoints() noexcept
                     waypoint.localTime = dateTimeUtc.toLocalTime();
                     waypoint.zuluTime = dateTimeUtc;
                     uniqueTimestamp = closestPositionData.timestamp;
-                    while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                    while (timestamps.contains(uniqueTimestamp)) {
                         ++uniqueTimestamp;
                     }
                     waypoint.timestamp = uniqueTimestamp;

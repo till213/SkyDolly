@@ -353,7 +353,7 @@ inline QByteArray IgcExportPlugin::formatDateTime(const QDateTime &dateTime) con
 
 inline QByteArray IgcExportPlugin::IgcExportPlugin::formatNumber(int value, int padding) const noexcept
 {
-    return QStringLiteral("%1").arg(value, padding, 10, QLatin1Char('0')).toLatin1();
+    return QStringLiteral("%1").arg(value, padding, 10, QChar('0')).toLatin1();
 }
 
 inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitude) const noexcept
@@ -364,10 +364,10 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitu
     GeographicLib::DMS::Encode(latitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
     return QString("%1%2%3%4")
-           .arg(static_cast<int>(degrees), 2, 10, QLatin1Char('0'))
-           .arg(static_cast<int>(minutes), 2, 10, QLatin1Char('0'))
-           .arg(decimals, 3, 10, QLatin1Char('0'))
-           .arg(latitude >= 0.0 ? QLatin1Char('N') : QLatin1Char('S'))
+           .arg(static_cast<int>(degrees), 2, 10, QChar('0'))
+           .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
+           .arg(decimals, 3, 10, QChar('0'))
+           .arg(latitude >= 0.0 ? u'N' : u'S')
            .toLatin1();
 }
 
@@ -379,10 +379,10 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLongitude(double longi
     GeographicLib::DMS::Encode(longitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
     return QString("%1%2%3%4")
-           .arg(static_cast<int>(degrees), 3, 10, QLatin1Char('0'))
-           .arg(static_cast<int>(minutes), 2, 10, QLatin1Char('0'))
-           .arg(decimals, 3, 10, QLatin1Char('0'))
-           .arg(longitude >= 0.0 ? QLatin1Char('E') : QLatin1Char('W'))
+           .arg(static_cast<int>(degrees), 3, 10, QChar('0'))
+           .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
+           .arg(decimals, 3, 10, QChar('0'))
+           .arg(longitude >= 0.0 ? u'E' : u'W')
            .toLatin1();
 }
 

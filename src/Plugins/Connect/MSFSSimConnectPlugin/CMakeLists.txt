@@ -1,10 +1,6 @@
 set(MODULE_NAME "MSFSSimConnect")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${MODULE_NAME} MODULE)
-else()
-    add_library(${MODULE_NAME} MODULE)
-endif()
+qt_add_library(${MODULE_NAME} MODULE)
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 # Don't define MIN, MAX macros (in windows.h)
 add_definitions(-DNOMINMAX)
@@ -61,7 +57,7 @@ target_sources(${MODULE_NAME}
 )
 target_link_libraries(${MODULE_NAME}
     PRIVATE
-        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt6::Widgets
         MSFS::SimConnect
         tsl::ordered_map
         Sky::Kernel

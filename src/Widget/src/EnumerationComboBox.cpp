@@ -123,7 +123,7 @@ void EnumerationComboBox::initUi() noexcept
     d->enumeration = d->enumerationService.getEnumerationByName(d->enumeration.getName(), Enumeration::Order::Name, &ok);
     if (ok)  {
         for (const auto &item : d->enumeration) {
-            if (d->ignoredIds.find(item.id) == d->ignoredIds.cend()) {
+            if (!d->ignoredIds.contains(item.id)) {
                 addItem(item.name, QVariant::fromValue(item.id));
             }
         }

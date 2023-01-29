@@ -79,7 +79,7 @@ void FlightAwareKmlParser::parsePlacemark() noexcept
     QXmlStreamReader *xml = getXmlStreamReader();
     QString placemarkName;
     while (xml->readNextStartElement()) {
-        const QStringRef xmlName = xml->name();
+        const QStringView xmlName = xml->name();
 #ifdef DEBUG
         qDebug() << "FlightAwareKmlParser::parsePlacemark: XML start element:" << xmlName.toString();
 #endif
@@ -107,7 +107,7 @@ void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
     QXmlStreamReader *xml = getXmlStreamReader();
     bool ok {true};
     while (xml->readNextStartElement()) {
-        const QStringRef xmlName = xml->name();
+        const QStringView xmlName = xml->name();
 #ifdef DEBUG
         qDebug() << "FlightAwareKmlParser::parseWaypoint: XML start element:" << xmlName.toString();
 #endif

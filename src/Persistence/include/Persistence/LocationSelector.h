@@ -53,7 +53,7 @@ struct PERSISTENCE_API LocationSelector
     inline bool showUserLocations() const noexcept
     {
         static const std::int64_t userLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
-        return typeIds.empty() || typeIds.find(userLocationTypeId) != typeIds.end();
+        return typeIds.empty() || typeIds.contains(userLocationTypeId);
     }
 };
 

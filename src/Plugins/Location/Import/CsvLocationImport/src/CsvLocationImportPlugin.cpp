@@ -26,7 +26,7 @@
 
 #include <QFile>
 #include <QTextStream>
-#include <QTextCodec>
+#include <QStringConverter>
 
 #include <Model/Location.h>
 #include "CsvLocationImportOptionWidget.h"
@@ -87,7 +87,7 @@ std::vector<Location> CsvLocationImportPlugin::importLocations(QFile &file, bool
     bool success {false};
     if (parser != nullptr) {
         QTextStream textStream(&file);
-        textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+        textStream.setEncoding(QStringConverter::Utf8);
         locations = parser->parse(textStream, &success);
     }
     if (ok != nullptr) {

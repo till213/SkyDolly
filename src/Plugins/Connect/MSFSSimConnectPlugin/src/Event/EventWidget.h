@@ -39,7 +39,7 @@ signals:
     void simConnectEvent();
 
 protected:
-    bool nativeEvent(const QByteArray &eventType, void *message, long *result) noexcept override;
+    bool nativeEvent(const QByteArray &eventType, void *message, qintptr *result) noexcept override;
 };
 
 #endif // EVENTWIDGET_H

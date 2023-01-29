@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.15.0
+
+### Improvements
+- Upgrade to Qt 6.4.2
+
 ## 0.14.0
 
 ### Improvements
