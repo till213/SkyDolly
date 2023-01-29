@@ -190,7 +190,7 @@ void Flight::switchUserAircraftIndex(int index) noexcept
     }
 }
 
-std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
+std::int64_t Flight::removeAircraftByIndex(int index) noexcept
 {
     std::int64_t aircraftId {Const::InvalidId};
     // A flight has at least one aircraft
@@ -207,6 +207,16 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
         }
         d->aircraft.erase(d->aircraft.begin() + index);
         emit aircraftRemoved(aircraftId);
+    }
+    return aircraftId;
+}
+
+std::int64_t Flight::removeLastAircraft() noexcept
+{
+    std::int64_t aircraftId {Const::InvalidId};
+    const std::size_t size = d->aircraft.size();
+    if (size > 0) {
+        aircraftId = removeAircraftByIndex(static_cast<int>(d->aircraft.size()) - 1);
     }
     return aircraftId;
 }
