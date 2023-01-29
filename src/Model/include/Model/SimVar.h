@@ -42,9 +42,6 @@ namespace SimVar
     constexpr const char *VelocityBodyX = "Velocity Body X";
     constexpr const char *VelocityBodyY = "Velocity Body Y";
     constexpr const char *VelocityBodyZ = "Velocity Body Z";
-    constexpr const char *RotationVelocityBodyX = "Rotation Velocity Body X";
-    constexpr const char *RotationVelocityBodyY = "Rotation Velocity Body Y";
-    constexpr const char *RotationVelocityBodyZ = "Rotation Velocity Body Z";
 
     constexpr const char *AileronLeftDeflection = "Aileron Left Deflection";
     constexpr const char *AileronRightDeflection = "Aileron Right Deflection";

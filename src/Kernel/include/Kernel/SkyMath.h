@@ -268,7 +268,7 @@ namespace SkyMath
      */
     inline std::int16_t fromNormalisedPosition(double position) noexcept
     {
-        return static_cast<std::int16_t>(std::round(PositionMin16 + ((std::clamp(position, 0.0, 1.0) + 1.0) * PositionRange16) / 2.0));
+        return static_cast<std::int16_t>(std::round(PositionMin16 + ((std::clamp(position, -1.0, 1.0) + 1.0) * PositionRange16) / 2.0));
     }
 
     /*!

@@ -120,11 +120,12 @@ namespace EventState
          * Returns whether an update needs to be sent, as the \c requested value differs from the \c current
          * value.
          *
-         * \return \c true if the \c current value is different from the \c requested value; \c false else
+         * \return \c true if the \c current value is different from the \c requested value, or the \c current
+         *         value is not \c valid; \c false else
          */
         bool needsUpdate() const noexcept
         {
-            return StatelessSwitch<T>::needsUpdate(current);
+            return !valid || StatelessSwitch<T>::needsUpdate(current);
         }
 
         void reset() noexcept

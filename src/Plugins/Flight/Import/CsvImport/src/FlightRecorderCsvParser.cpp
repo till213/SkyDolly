@@ -441,7 +441,7 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
         waterRudderHandlePosition = row.at(d->headers.at(::WaterRudderHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        aircraftHandleData.gearHandlePosition = row.at(d->headers.at(::GearHandlePosition)).toInt(&ok) == 1;
+        aircraftHandleData.gearHandlePosition = row.at(d->headers.at(::GearHandlePosition)).toInt(&ok) != 0;
     }
     if (ok) {
         aircraftHandleData.brakeLeftPosition = SkyMath::fromNormalisedPosition(brakeLeftPosition);
@@ -467,31 +467,31 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     bool lightRecognition {false};
     bool lightCabin {false};
     if (ok) {
-        lightTaxi = row.at(d->headers.at(::LightTaxi)).toInt(&ok) == 1;
+        lightTaxi = row.at(d->headers.at(::LightTaxi)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightLanding = row.at(d->headers.at(::LightLanding)).toInt(&ok) == 1;
+        lightLanding = row.at(d->headers.at(::LightLanding)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightStrobe = row.at(d->headers.at(::LightStrobe)).toInt(&ok) == 1;
+        lightStrobe = row.at(d->headers.at(::LightStrobe)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightBeacon = row.at(d->headers.at(::LightBeacon)).toInt(&ok) == 1;
+        lightBeacon = row.at(d->headers.at(::LightBeacon)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightNav = row.at(d->headers.at(::LightNav)).toInt(&ok) == 1;
+        lightNav = row.at(d->headers.at(::LightNav)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightWing = row.at(d->headers.at(::LightWing)).toInt(&ok) == 1;
+        lightWing = row.at(d->headers.at(::LightWing)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightLogo = row.at(d->headers.at(::LightLogo)).toInt(&ok) == 1;
+        lightLogo = row.at(d->headers.at(::LightLogo)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightRecognition = row.at(d->headers.at(::LightRecognition)).toInt(&ok) == 1;
+        lightRecognition = row.at(d->headers.at(::LightRecognition)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightCabin = row.at(d->headers.at(::LightCabin)).toInt(&ok) == 1;
+        lightCabin = row.at(d->headers.at(::LightCabin)).toInt(&ok) != 0;
     }
     if (ok) {
         lightData.lightStates.setFlag(SimType::LightState::Taxi, lightTaxi);
