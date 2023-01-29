@@ -177,19 +177,19 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
             // The flight has always at least one aircraft, but possibly without recording (when the flight has
             // been cleared / newly created)
             const bool addNewAircraft = addToCurrentFlight && flight.getUserAircraft().hasRecording();
-            Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
+            Aircraft &userAircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
 
             ok = importFlight(d->file, flight);
-            if (ok && aircraft.getPosition().count() > 0) {
+            if (ok && userAircraft.getPosition().count() > 0) {
                 d->flightAugmentation.setProcedures(getProcedures());
                 d->flightAugmentation.setAspects(getAspects());
-                d->flightAugmentation.augmentAircraftData(aircraft);
+                d->flightAugmentation.augmentAircraftData(userAircraft);
                 updateAircraftInfo();
                 const std::size_t nofAircraft = flight.count();
                 if (nofAircraft > 1) {
                     // Sequence starts at 1
                     const std::size_t sequenceNumber = nofAircraft;
-                    ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
+                    ok = d->aircraftService->store(flight.getId(), sequenceNumber, userAircraft);
                 } else {
                     // Also update flight info and condition
                     updateFlightInfo();
@@ -197,6 +197,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                     ok = flightService.store(flight);
                 }
             } else {
+                flight.removeLastAircraft();
                 ok = false;
             }
             d->file.close();

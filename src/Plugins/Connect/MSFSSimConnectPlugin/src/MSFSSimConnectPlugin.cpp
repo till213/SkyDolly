@@ -743,7 +743,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             // loaded a flight: we simply do this by assuming that no "unpause" would normally be sent
             // at the very beginning (timestamp 0) of the replay
             if (evt->dwData > 0 || skyConnect->getCurrentTimestamp() > 0) {
-                const bool enable = evt->dwData == 1;
+                const bool enable = evt->dwData != 0;
                 skyConnect->setPaused(enable);
             }
             break;

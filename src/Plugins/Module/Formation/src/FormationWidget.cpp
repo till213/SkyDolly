@@ -368,6 +368,7 @@ void FormationWidget::updateTable() noexcept
         ui->aircraftTableWidget->resizeColumnsToContents();
         d->columnsAutoResized = true;
     }
+    d->selectedAircraftIndex = Flight::InvalidAircraftIndex;
     ui->aircraftTableWidget->blockSignals(false);
 }
 

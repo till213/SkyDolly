@@ -22,6 +22,7 @@
   * The simulation rate is a power of 2: 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0 - the nearest simulation rate
     is chosen, given the current replay speed
   * Note: certain aircraft may reduce or even fix the simulation rate to 1.0 (for instance the Fenix A320)
+- When the 'Add to flight' option is enabled and import fails then no empty (no recorded data) aircraft is left in the formation
  
 ### Under The Hood
 - Small performance improvements
@@ -30,6 +31,7 @@
 - Fix "ailerons reversal" (Asobo A320neo, F/A-18 and other aircraft with "PID controllers")
   * Actual root cause (in MSFS/SimConnect): MSFS seems to expect "*feet* per second" instead of "*radians* per second" for "*rotation* velocity body" (*radians* per second would actually be the correct physical unit for rotation velocity)
 - Ensure that all "position" and "percent" values as reported by MSFS are clamped to the proper range ([0.0, 1.0] and [0, 100] respectively)
+- Fix a crash in the Formation module that would occur when trying to delete the last aircraft from the aircraft table
 
 ## 0.13.1
 

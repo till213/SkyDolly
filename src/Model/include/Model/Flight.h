@@ -67,6 +67,12 @@ public:
     void setDescription(const QString &description) noexcept;
 
     void setAircraft(std::vector<Aircraft> &&aircraft) noexcept;
+
+    /*!
+     *  Creates and adds a new user Aircraft to this Flight.
+     *
+     *  @return the newly created Aircraft
+     */
     Aircraft &addUserAircraft() noexcept;
     Aircraft &getUserAircraft() const noexcept;
 
@@ -118,7 +124,24 @@ public:
      */
     void switchUserAircraftIndex(int index) noexcept;
 
-    std::int64_t deleteAircraftByIndex(int index) noexcept;
+    /*!
+     * Removes the aircraft identified by its \c index.
+     *
+     * \param index
+     *        the index of the aircraft to be removed
+     * \return the ID of the removed Aircraft
+     * \sa aircraftRemoved
+     */
+    std::int64_t removeAircraftByIndex(int index) noexcept;
+
+    /*!
+     * Removes the last aircraft from this flight.
+     *
+     * \return the ID of the removed Aircraft
+     * \sa count
+     * \sa aircraftRemoved
+     */
+    std::int64_t removeLastAircraft() noexcept;
     std::size_t count() const noexcept;
 
     /*!
