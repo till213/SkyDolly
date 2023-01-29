@@ -6,8 +6,8 @@ Sky Dolly is still in active development. Minor bugs will be typically fixed in 
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.13.x  | :white_check_mark: |
-| < 0.13  | :x:                |
+| 0.14.x  | :white_check_mark: |
+| < 0.14  | :x:                |
 
 ## Reporting a Vulnerability
 
