@@ -22,6 +22,7 @@
   * The simulation rate is a power of 2: 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0 - the nearest simulation rate
     is chosen, given the current replay speed
   * Note: certain aircraft may reduce or even fix the simulation rate to 1.0 (for instance the Fenix A320)
+- When the 'Add to flight' option is enabled and import fails then no empty (no recorded data) aircraft is left in the formation
  
 ### Under The Hood
 - Small performance improvements
