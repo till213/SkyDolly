@@ -2,8 +2,10 @@
 
 ## 0.15.0
 
-### Improvements
-- Upgrade to Qt 6.4.2
+### Under The Hood
+- Upgrade Qt to version 6.4.2 (from version 5.15.2)
+- Upgrade GeographicLib to version 2.1.2 (from version 1.52)
+- Upgrade ordered-map to version 1.1.0 (from version 1.0.0)
 
 ## 0.14.0
 

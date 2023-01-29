@@ -62,9 +62,8 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Sql LinguistTools)
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/ordered-map)
 
 # GeographicLib (https://github.com/geographiclib/geographiclib)
-set(GEOGRAPHICLIB_LIB_TYPE SHARED)
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geographiclib EXCLUDE_FROM_ALL)
-set_target_properties(GeographicLib
+set_target_properties(GeographicLib_SHARED
     PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
