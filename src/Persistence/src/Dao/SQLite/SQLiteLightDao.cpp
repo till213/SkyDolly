@@ -25,8 +25,10 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -46,7 +48,20 @@ namespace
     constexpr int DefaultCapacity = 1;
 }
 
+struct SQLiteLightDaoPrivate
+{
+    SQLiteLightDaoPrivate(const QSqlDatabase &db) noexcept
+        : db(db)
+    {}
+
+    QSqlDatabase db;
+};
+
 // PUBLIC
+
+SQLiteLightDao::SQLiteLightDao(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<SQLiteLightDaoPrivate>(db))
+{}
 
 SQLiteLightDao::SQLiteLightDao(SQLiteLightDao &&rhs) noexcept = default;
 SQLiteLightDao &SQLiteLightDao::operator=(SQLiteLightDao &&rhs) noexcept = default;
@@ -94,7 +109,7 @@ std::vector<LightData> SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const bool querySizeFeature = d->db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             lightData.reserve(query.size());
         } else {

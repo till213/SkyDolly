@@ -27,8 +27,6 @@
 
 #include <cstdint>
 
-class QSqlDatabase;
-
 class FlightPlan;
 class Waypoint;
 
@@ -51,10 +49,10 @@ public:
      *        the FlightPlan data to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(QSqlDatabase &db, std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept = 0;
-    virtual bool getByAircraftId(QSqlDatabase &db, std::int64_t aircraftId, FlightPlan &flightPlan) const noexcept = 0;
-    virtual bool deleteByFlightId(QSqlDatabase &db, std::int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(QSqlDatabase &db, std::int64_t aircraftId) noexcept = 0;
+    virtual bool add(std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept = 0;
+    virtual bool getByAircraftId(std::int64_t aircraftId, FlightPlan &flightPlan) const noexcept = 0;
+    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
+    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
 };
 
 #endif // WAYPOINTDAOINTF_H

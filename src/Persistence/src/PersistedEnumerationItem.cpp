@@ -27,6 +27,7 @@
 #include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 
 #include <Kernel/Const.h>
 #include <Model/Data.h>

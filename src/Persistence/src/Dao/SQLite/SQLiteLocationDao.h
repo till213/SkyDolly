@@ -25,19 +25,22 @@
 #ifndef SQLITELOCATIONDAO_H
 #define SQLITELOCATIONDAO_H
 
+#include <memory>
 #include <cstdint>
 #include <vector>
 
 class QSqlQuery;
+class QSqlDatabase;
 
 #include "../LocationDaoIntf.h"
 
 struct Location;
+struct SQLiteLocationDaoPrivate;
 
 class SQLiteLocationDao : public LocationDaoIntf
 {
 public:
-    SQLiteLocationDao() = default;
+    SQLiteLocationDao(const QSqlDatabase &db) noexcept;
     SQLiteLocationDao(const SQLiteLocationDao &rhs) = delete;
     SQLiteLocationDao(SQLiteLocationDao &&rhs) noexcept;
     SQLiteLocationDao &operator=(const SQLiteLocationDao &rhs) = delete;
@@ -52,6 +55,8 @@ public:
     std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) const noexcept override;
 
 private:
+    std::unique_ptr<SQLiteLocationDaoPrivate> d;
+
     inline std::vector<Location> executeGetLocationQuery(QSqlQuery &query, bool *ok = nullptr) const noexcept;
 };
 

@@ -29,21 +29,21 @@
 #include <cstdint>
 
 #include <QObject>
+#include <QSqlDatabase>
 
 class QString;
 class QWidget;
 class QDateTime;
-class QSqlDatabase;
 
 #include "../PersistenceLib.h"
 
 class Version;
 struct DatabaseServicePrivate;
 
-class PERSISTENCE_API DatabaseService
+class PERSISTENCE_API DatabaseService final
 {
 public:
-    DatabaseService() noexcept;
+    DatabaseService(const QSqlDatabase &db = QSqlDatabase::database()) noexcept;
     DatabaseService(const DatabaseService &rhs) = delete;
     DatabaseService(DatabaseService &&rhs) noexcept;
     DatabaseService &operator=(const DatabaseService &rhs) = delete;
@@ -52,10 +52,10 @@ public:
 
     bool backup() noexcept;
 
-    bool setBackupPeriod(QSqlDatabase &db, std::int64_t backupPeriodId) noexcept;
-    bool setNextBackupDate(QSqlDatabase &db, const QDateTime &date) noexcept;
-    bool updateBackupDate(QSqlDatabase &db) noexcept;
-    bool setBackupDirectoryPath(QSqlDatabase &db, const QString &backupFolderPath) noexcept;
+    bool setBackupPeriod(std::int64_t backupPeriodId) noexcept;
+    bool setNextBackupDate(const QDateTime &date) noexcept;
+    bool updateBackupDate() noexcept;
+    bool setBackupDirectoryPath(const QString &backupFolderPath) noexcept;
 
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;

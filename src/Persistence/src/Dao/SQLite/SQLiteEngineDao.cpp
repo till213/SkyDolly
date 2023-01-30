@@ -25,8 +25,10 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -46,7 +48,20 @@ namespace
     constexpr int DefaultCapacity = 10;
 }
 
+struct SQLiteEngineDaoPrivate
+{
+    SQLiteEngineDaoPrivate(const QSqlDatabase &db) noexcept
+        : db(db)
+    {}
+
+    QSqlDatabase db;
+};
+
 // PUBLIC
+
+SQLiteEngineDao::SQLiteEngineDao(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<SQLiteEngineDaoPrivate>(db))
+{}
 
 SQLiteEngineDao::SQLiteEngineDao(SQLiteEngineDao &&rhs) noexcept = default;
 SQLiteEngineDao &SQLiteEngineDao::operator=(SQLiteEngineDao &&rhs) noexcept = default;
@@ -176,7 +191,7 @@ std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const bool querySizeFeature = d->db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             engineData.reserve(query.size());
         } else {

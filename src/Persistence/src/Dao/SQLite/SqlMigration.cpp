@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+#include <utility>
+
 #include <QFile>
 #include <QTextStream>
 #include <QRegularExpression>
@@ -74,14 +77,21 @@ namespace
 
 struct SqlMigrationPrivate
 {
-    SQLiteLocationDao locationDao;
-    EnumerationService enumerationService;
+    SqlMigrationPrivate(const QSqlDatabase &db) noexcept
+        : db(db),
+          locationDao(std::make_unique<SQLiteLocationDao>(db)),
+          enumerationService(std::make_unique<EnumerationService>(db))
+    {}
+
+    QSqlDatabase db;
+    std::unique_ptr<SQLiteLocationDao> locationDao;
+    std::unique_ptr<EnumerationService> enumerationService;
 };
 
 // PUBLIC
 
-SqlMigration::SqlMigration() noexcept
-    : d(std::make_unique<SqlMigrationPrivate>())
+SqlMigration::SqlMigration(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<SqlMigrationPrivate>(db))
 {}
 
 SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;
@@ -139,7 +149,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 #ifdef DEBUG
                 qDebug() << "SqlMigration::migrate:" << tag;
 #endif
-                SqlMigrationStep step;
+                SqlMigrationStep step {d->db};
                 ok = step.parseTag(tagMatch);
                 if (ok && !step.checkApplied()) {
                     ok = step.execute(sqlStatements.at(i));
@@ -169,7 +179,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
             if (CsvParser::validate(rows, Enum::underly(::Index::Count))) {
                 for (const auto &row : rows) {
                     const QString uuid = row.at(::Index::Uuid);
-                    SqlMigrationStep step;
+                    SqlMigrationStep step {d->db};
                     step.setMigrationId(uuid);
                     step.setStep(1);
                     step.setStepCount(1);
@@ -199,16 +209,16 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     location.title = row.at(::Index::Title);
     QString description = row.at(::Index::Description);
     location.description = description.replace("\\n", "\n");
-    Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, Enumeration::Order::Id, &ok);
+    Enumeration locationTypeEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::LocationType, Enumeration::Order::Id, &ok);
     if (ok) {
         location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypeSystemSymId).id;
     }
-    Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, Enumeration::Order::Id, &ok);
+    Enumeration locationCategoryEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::LocationCategory, Enumeration::Order::Id, &ok);
     if (ok) {
         const QString &categorySymId = row.at(::Index::Category);
         location.categoryId = locationCategoryEnumeration.getItemBySymId(categorySymId).id;
     }
-    Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country, Enumeration::Order::Id, &ok);
+    Enumeration countryEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::Country, Enumeration::Order::Id, &ok);
     if (ok) {
         const QString &countrySymId = row.at(::Index::Country);
         location.countryId = countryEnumeration.getItemBySymId(countrySymId).id;
@@ -243,13 +253,13 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     if (ok) {
         location.onGround = row.at(::Index::OnGround).toLower() == "true" ? true : false;
     }
-    Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent, Enumeration::Order::Id, &ok);
+    Enumeration engineEventEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::EngineEvent, Enumeration::Order::Id, &ok);
     if (ok) {
         const QString &engineEventSymId = row.at(::Index::EngineEvent);
         location.engineEventId = engineEventEnumeration.getItemBySymId(engineEventSymId).id;
     }
     if (ok) {
-        ok = d->locationDao.add(location);
+        ok = d->locationDao->add(location);
     }
 
     return ok;

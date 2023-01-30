@@ -56,8 +56,8 @@ namespace {
 struct PersistenceManagerPrivate
 {
     PersistenceManagerPrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          databaseDao(daoFactory->createDatabaseDao())
+        : daoFactory(std::make_unique<DaoFactory>()),
+          databaseDao(daoFactory->createDatabaseDao(DaoFactory::DbType::SQLite))
     {}
 
     std::unique_ptr<DaoFactory> daoFactory;
@@ -68,7 +68,6 @@ struct PersistenceManagerPrivate
     static inline std::once_flag onceFlag;
     static inline PersistenceManager *instance;
 };
-
 
 // PUBLIC
 
@@ -223,10 +222,10 @@ bool PersistenceManager::backup(const QString &backupLogbookPath) noexcept
 Metadata PersistenceManager::getMetadata(bool *ok) const noexcept
 {
     Metadata metadata;
-    bool success = QSqlDatabase::database().transaction();
+    bool success = d->databaseDao->database().transaction();
     if (success) {
         metadata = d->databaseDao->getMetadata(&success);
-        QSqlDatabase::database().rollback();
+        d->databaseDao->database().rollback();
     }
     if (ok != nullptr) {
         *ok = success;

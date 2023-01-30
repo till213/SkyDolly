@@ -40,12 +40,14 @@
 struct AircraftServicePrivate
 {
 public:
-    AircraftServicePrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          aircraftDao(daoFactory->createAircraftDao()),
-          flightDao(daoFactory->createFlightDao())
+    AircraftServicePrivate(const QSqlDatabase &db) noexcept
+        : db(db),
+          daoFactory(std::make_unique<DaoFactory>()),
+          aircraftDao(daoFactory->createAircraftDao(db)),
+          flightDao(daoFactory->createFlightDao(db))
     {}
 
+    QSqlDatabase db;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
     std::unique_ptr<FlightDaoIntf> flightDao;
@@ -53,68 +55,68 @@ public:
 
 // PUBLIC
 
-AircraftService::AircraftService() noexcept
-    : d(std::make_unique<AircraftServicePrivate>())
+AircraftService::AircraftService(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<AircraftServicePrivate>(db))
 {}
 
 AircraftService::AircraftService(AircraftService &&rhs) noexcept = default;
 AircraftService &AircraftService::operator=(AircraftService &&rhs) noexcept = default;
 AircraftService::~AircraftService() = default;
 
-bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft, QSqlDatabase &db) noexcept
+bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
-        ok = d->aircraftDao->add(flightId, sequenceNumber, aircraft, db);
+        ok = d->aircraftDao->add(flightId, sequenceNumber, aircraft);
         if (ok) {
-            ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex(), db);
+            ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
         }
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
             if (ok) {
                 emit flight.aircraftStored(aircraft);
             }
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
 }
 
-bool AircraftService::deleteByIndex(int index, QSqlDatabase &db) noexcept
+bool AircraftService::deleteByIndex(int index) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t aircraftId = flight.removeAircraftByIndex(index);
     bool ok {true};
     if (aircraftId != Const::InvalidId) {
-        ok = db.transaction();
+        ok = d->db.transaction();
         if (ok) {
-            ok = d->aircraftDao->deleteById(aircraftId, db);
+            ok = d->aircraftDao->deleteById(aircraftId);
             if (ok) {
-                ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex(), db);
+                ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
             }
             if (ok) {
                 // Sequence numbers start at 1
-                ok = d->aircraftDao->adjustAircraftSequenceNumbersByFlightId(flight.getId(), static_cast<std::int64_t>(index) + 1, db);
+                ok = d->aircraftDao->adjustAircraftSequenceNumbersByFlightId(flight.getId(), static_cast<std::int64_t>(index) + 1);
             }
             if (ok) {
-                ok = db.commit();
+                ok = d->db.commit();
             } else {
-                db.rollback();
+                d->db.rollback();
             }
         }
     }
     return ok;
 }
 
-std::vector<AircraftInfo> AircraftService::getAircraftInfos(std::int64_t flightId, QSqlDatabase &db, bool *ok) const noexcept
+std::vector<AircraftInfo> AircraftService::getAircraftInfos(std::int64_t flightId, bool *ok) const noexcept
 {
     std::vector<AircraftInfo> aircraftInfos;
-    bool success = db.transaction();
+    bool success = d->db.transaction();
     if (success) {
-        aircraftInfos = d->aircraftDao->getAircraftInfosByFlightId(flightId, db, &success);
-        db.rollback();
+        aircraftInfos = d->aircraftDao->getAircraftInfosByFlightId(flightId, &success);
+        d->db.rollback();
     }
     if (ok != nullptr) {
         *ok = success;
@@ -122,37 +124,37 @@ std::vector<AircraftInfo> AircraftService::getAircraftInfos(std::int64_t flightI
     return aircraftInfos;
 }
 
-bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset, QSqlDatabase &db) noexcept
+bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
-        ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset, db);
+        ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
         if (ok) {
             aircraft.setTimeOffset(newOffset);            
-            ok = db.commit();
+            ok = d->db.commit();
             if (ok) {
                 emit Logbook::getInstance().getCurrentFlight().timeOffsetChanged(aircraft);
             }
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
 }
 
-bool AircraftService::changeTailNumber(Aircraft &aircraft, const QString &tailNumber, QSqlDatabase &db) noexcept
+bool AircraftService::changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
-        ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber, db);
+        ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber);
         if (ok) {
             aircraft.setTailNumber(tailNumber);            
-            ok = db.commit();
+            ok = d->db.commit();
             if (ok) {
                 emit Logbook::getInstance().getCurrentFlight().tailNumberChanged(aircraft);
             }
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;

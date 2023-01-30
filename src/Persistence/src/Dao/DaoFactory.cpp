@@ -24,6 +24,9 @@
  */
 #include <memory>
 
+#include <QString>
+#include <QSqlDatabase>
+
 #include "SQLite/SQLiteDatabaseDao.h"
 #include "SQLite/SQLiteLogbookDao.h"
 #include "SQLite/SQLiteFlightDao.h"
@@ -52,29 +55,16 @@
 #include "EnumerationDaoIntf.h"
 #include "DaoFactory.h"
 
-struct DaoFactoryPrivate
-{
-    DaoFactoryPrivate(DaoFactory::DbType theDbType)
-        : dbType(theDbType)
-    {}
-
-    DaoFactory::DbType dbType;
-};
-
 // PUBLIC
-
-DaoFactory::DaoFactory(DbType dbType)
-    : d(std::make_unique<DaoFactoryPrivate>(dbType))
-{}
 
 DaoFactory::DaoFactory(DaoFactory &&rhs) noexcept = default;
 DaoFactory &DaoFactory::operator=(DaoFactory &&rhs) noexcept = default;
 DaoFactory::~DaoFactory() = default;
 
-std::unique_ptr<DatabaseDaoIntf> DaoFactory::createDatabaseDao() noexcept
+std::unique_ptr<DatabaseDaoIntf> DaoFactory::createDatabaseDao(DbType dbType) noexcept
 {
     std::unique_ptr<DatabaseDaoIntf> dao {nullptr};
-    switch (d->dbType) {
+    switch (dbType) {
     case DbType::SQLite:
         dao = std::make_unique<SQLiteDatabaseDao>();
         break;
@@ -82,146 +72,120 @@ std::unique_ptr<DatabaseDaoIntf> DaoFactory::createDatabaseDao() noexcept
     return dao;
 }
 
-std::unique_ptr<LogbookDaoIntf> DaoFactory::createLogbookDao() noexcept
+std::unique_ptr<LogbookDaoIntf> DaoFactory::createLogbookDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<SQLiteLogbookDao> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteLogbookDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteLogbookDao>(db);
     }
     return dao;
 }
 
-std::unique_ptr<FlightDaoIntf> DaoFactory::createFlightDao() noexcept
+std::unique_ptr<FlightDaoIntf> DaoFactory::createFlightDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<SQLiteFlightDao> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteFlightDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteFlightDao>(db);
     }
     return dao;
 }
 
-std::unique_ptr<AircraftDaoIntf> DaoFactory::createAircraftDao() noexcept
+std::unique_ptr<AircraftDaoIntf> DaoFactory::createAircraftDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<SQLiteAircraftDao> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteAircraftDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteAircraftDao>(db);
     }
     return dao;
 }
 
-std::unique_ptr<AircraftTypeDaoIntf> DaoFactory::createAircraftTypeDao() noexcept
+std::unique_ptr<AircraftTypeDaoIntf> DaoFactory::createAircraftTypeDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<SQLiteAircraftTypeDao> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteAircraftTypeDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteAircraftTypeDao>(db);
     }
     return dao;
 }
 
-std::unique_ptr<PositionDaoIntf> DaoFactory::createPositionDao() noexcept
+std::unique_ptr<PositionDaoIntf> DaoFactory::createPositionDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<PositionDaoIntf> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLitePositionDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLitePositionDao>(db);
     }
     return dao;
 }
 
-std::unique_ptr<EngineDaoIntf> DaoFactory::createEngineDao() noexcept
+std::unique_ptr<EngineDaoIntf> DaoFactory::createEngineDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<EngineDaoIntf> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteEngineDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteEngineDao>(db);
     }
     return dao;
 }
 
-std::unique_ptr<PrimaryFlightControlDaoIntf> DaoFactory::createPrimaryFlightControlDao() noexcept
+std::unique_ptr<PrimaryFlightControlDaoIntf> DaoFactory::createPrimaryFlightControlDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<PrimaryFlightControlDaoIntf> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLitePrimaryFlightControlDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLitePrimaryFlightControlDao>(db);
     }
     return dao;
 };
 
-std::unique_ptr<SecondaryFlightControlDaoIntf> DaoFactory::createSecondaryFlightControlDao() noexcept
+std::unique_ptr<SecondaryFlightControlDaoIntf> DaoFactory::createSecondaryFlightControlDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<SecondaryFlightControlDaoIntf> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteSecondaryFlightControlDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteSecondaryFlightControlDao>(db);
     }
     return dao;
 }
 
-std::unique_ptr<HandleDaoIntf> DaoFactory::createHandleDao() noexcept
+std::unique_ptr<HandleDaoIntf> DaoFactory::createHandleDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<HandleDaoIntf> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteHandleDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteHandleDao>(db);
     }
     return dao;
 }
 
-std::unique_ptr<LightDaoIntf> DaoFactory::createLightDao() noexcept
+std::unique_ptr<LightDaoIntf> DaoFactory::createLightDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<LightDaoIntf> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteLightDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteLightDao>(db);
     }
     return dao;
 }
 
-std::unique_ptr<WaypointDaoIntf> DaoFactory::createFlightPlanDao() noexcept
+std::unique_ptr<WaypointDaoIntf> DaoFactory::createFlightPlanDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<WaypointDaoIntf> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteWaypointDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteWaypointDao>(db);
     }
     return dao;
 }
 
-std::unique_ptr<LocationDaoIntf> DaoFactory::createLocationDao() noexcept
+std::unique_ptr<LocationDaoIntf> DaoFactory::createLocationDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<LocationDaoIntf> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteLocationDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteLocationDao>(db);
     }
     return dao;
 }
 
 
-std::unique_ptr<EnumerationDaoIntf> DaoFactory::createEnumerationDao() noexcept
+std::unique_ptr<EnumerationDaoIntf> DaoFactory::createEnumerationDao(const QSqlDatabase &db) noexcept
 {
     std::unique_ptr<EnumerationDaoIntf> dao {nullptr};
-    switch (d->dbType) {
-    case DbType::SQLite:
-        dao = std::make_unique<SQLiteEnumerationDao>();
-        break;
+    if (db.driverName() == SQLiteDriver) {
+        dao = std::make_unique<SQLiteEnumerationDao>(db);
     }
     return dao;
 }

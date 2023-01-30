@@ -26,21 +26,27 @@
 #define SQLITEENUMERATIONDAO_H
 
 class QString;
+class QSqlDatabase;
 
 #include <Model/Enumeration.h>
 #include "../EnumerationDaoIntf.h"
 
+struct SQLiteEnumerationDaoPrivate;
+
 class SQLiteEnumerationDao : public EnumerationDaoIntf
 {
 public:
-    SQLiteEnumerationDao() = default;
+    SQLiteEnumerationDao(const QSqlDatabase &db) noexcept;
     SQLiteEnumerationDao(const SQLiteEnumerationDao &rhs) = delete;
     SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept;
     SQLiteEnumerationDao &operator=(const SQLiteEnumerationDao &rhs) = delete;
     SQLiteEnumerationDao &operator=(SQLiteEnumerationDao &&rhs) noexcept;
     ~SQLiteEnumerationDao() override;
 
-    Enumeration get(QSqlDatabase &db, const QString &name, Enumeration::Order order, bool *ok = nullptr) const noexcept override;
+    Enumeration get(const QString &name, Enumeration::Order order, bool *ok = nullptr) const noexcept override;
+
+private:
+    std::unique_ptr<SQLiteEnumerationDaoPrivate> d;
 };
 
 #endif // SQLITEENUMERATIONDAO_H

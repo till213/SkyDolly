@@ -28,8 +28,9 @@
 #include <memory>
 #include <vector>
 
+#include <QSqlDatabase>
+
 class QString;
-class QSqlDatabase;
 
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
@@ -37,19 +38,19 @@ class QSqlDatabase;
 
 struct AircraftTypeServicePrivate;
 
-class PERSISTENCE_API AircraftTypeService
+class PERSISTENCE_API AircraftTypeService final
 {
 public:
-    AircraftTypeService() noexcept;
+    AircraftTypeService(const QSqlDatabase &db = QSqlDatabase::database()) noexcept;
     AircraftTypeService(const AircraftTypeService &rhs) = delete;
     AircraftTypeService(AircraftTypeService &&rhs) noexcept;
     AircraftTypeService &operator=(const AircraftTypeService &rhs) = delete;
     AircraftTypeService &operator=(AircraftTypeService &&rhs) noexcept;
     ~AircraftTypeService();
 
-    AircraftType getByType(QSqlDatabase &db, const QString &type, bool *ok = nullptr) const noexcept;
-    std::vector<AircraftType> getAll(QSqlDatabase &db ,bool *ok = nullptr) const noexcept;
-    bool exists(QSqlDatabase &db, const QString &type) const noexcept;
+    AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept;
+    std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept;
+    bool exists(const QString &type) const noexcept;
 
 private:
     std::unique_ptr<AircraftTypeServicePrivate> d;

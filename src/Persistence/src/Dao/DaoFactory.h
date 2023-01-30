@@ -27,6 +27,10 @@
 
 #include <memory>
 
+#include <QString>
+
+class QSqlDatabase;
+
 class LogbookDaoIntf;
 class FlightDaoIntf;
 class AircraftDaoIntf;
@@ -42,8 +46,6 @@ class DatabaseDaoIntf;
 class LocationDaoIntf;
 class EnumerationDaoIntf;
 
-struct DaoFactoryPrivate;
-
 class DaoFactory
 {
 public:
@@ -53,7 +55,6 @@ public:
         SQLite = 0
     };
 
-    DaoFactory(DbType dbType);
     DaoFactory() = default;
     DaoFactory(const DaoFactory &rhs) = delete;
     DaoFactory(DaoFactory &&rhs) noexcept;
@@ -61,23 +62,23 @@ public:
     DaoFactory &operator=(DaoFactory &&rhs) noexcept;
     virtual ~DaoFactory();
 
-    std::unique_ptr<DatabaseDaoIntf> createDatabaseDao() noexcept;
-    std::unique_ptr<LogbookDaoIntf> createLogbookDao() noexcept;
-    std::unique_ptr<FlightDaoIntf> createFlightDao() noexcept;
-    std::unique_ptr<AircraftDaoIntf> createAircraftDao() noexcept;
-    std::unique_ptr<AircraftTypeDaoIntf> createAircraftTypeDao() noexcept;
-    std::unique_ptr<PositionDaoIntf> createPositionDao() noexcept;
-    std::unique_ptr<EngineDaoIntf> createEngineDao() noexcept;
-    std::unique_ptr<PrimaryFlightControlDaoIntf> createPrimaryFlightControlDao() noexcept;
-    std::unique_ptr<SecondaryFlightControlDaoIntf> createSecondaryFlightControlDao() noexcept;
-    std::unique_ptr<HandleDaoIntf> createHandleDao() noexcept;
-    std::unique_ptr<LightDaoIntf> createLightDao() noexcept;
-    std::unique_ptr<WaypointDaoIntf> createFlightPlanDao() noexcept;
-    std::unique_ptr<LocationDaoIntf> createLocationDao() noexcept;
-    std::unique_ptr<EnumerationDaoIntf> createEnumerationDao() noexcept;
+    std::unique_ptr<DatabaseDaoIntf> createDatabaseDao(DbType dbType) noexcept;
+    std::unique_ptr<LogbookDaoIntf> createLogbookDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<FlightDaoIntf> createFlightDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<AircraftDaoIntf> createAircraftDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<AircraftTypeDaoIntf> createAircraftTypeDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<PositionDaoIntf> createPositionDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<EngineDaoIntf> createEngineDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<PrimaryFlightControlDaoIntf> createPrimaryFlightControlDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<SecondaryFlightControlDaoIntf> createSecondaryFlightControlDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<HandleDaoIntf> createHandleDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<LightDaoIntf> createLightDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<WaypointDaoIntf> createFlightPlanDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<LocationDaoIntf> createLocationDao(const QSqlDatabase &db) noexcept;
+    std::unique_ptr<EnumerationDaoIntf> createEnumerationDao(const QSqlDatabase &db) noexcept;
 
 private:
-    std::unique_ptr<DaoFactoryPrivate> d;
+    static inline const QString SQLiteDriver {QStringLiteral("QSQLITE")};
 };
 
 #endif // DAOFACTORY_H

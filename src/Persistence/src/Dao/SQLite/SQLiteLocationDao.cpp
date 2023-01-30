@@ -22,10 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
 #include <vector>
+#include <utility>
 
 #include <QString>
 #include <QStringBuilder>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -46,7 +49,20 @@ namespace
     constexpr int DefaultCapacity = 25;
 }
 
-// PUBIC
+struct SQLiteLocationDaoPrivate
+{
+    SQLiteLocationDaoPrivate(const QSqlDatabase &db) noexcept
+        : db(db)
+    {}
+
+    QSqlDatabase db;
+};
+
+// PUBLIC
+
+SQLiteLocationDao::SQLiteLocationDao(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<SQLiteLocationDaoPrivate>(db))
+{}
 
 SQLiteLocationDao::SQLiteLocationDao(SQLiteLocationDao &&rhs) noexcept = default;
 SQLiteLocationDao &SQLiteLocationDao::operator=(SQLiteLocationDao &&rhs) noexcept = default;
@@ -196,7 +212,7 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
 
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const bool querySizeFeature = d->db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             locations.reserve(query.size());
         } else {
@@ -340,7 +356,7 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
     std::vector<Location> locations;
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const bool querySizeFeature = d->db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             locations.reserve(query.size());
         } else {

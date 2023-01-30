@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+#include <utility>
+
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
@@ -36,7 +39,20 @@
 #include <Model/Enumeration.h>
 #include "SQLiteEnumerationDao.h"
 
-// PUBIC
+struct SQLiteEnumerationDaoPrivate
+{
+    SQLiteEnumerationDaoPrivate(const QSqlDatabase &db) noexcept
+        : db(db)
+    {}
+
+    QSqlDatabase db;
+};
+
+// PUBLIC
+
+SQLiteEnumerationDao::SQLiteEnumerationDao(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<SQLiteEnumerationDaoPrivate>(db))
+{}
 
 SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept = default;
 SQLiteEnumerationDao &SQLiteEnumerationDao::operator=(SQLiteEnumerationDao &&rhs) noexcept = default;

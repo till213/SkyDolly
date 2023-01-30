@@ -39,19 +39,21 @@
 
 struct LocationServicePrivate
 {
-    LocationServicePrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          locationDao(daoFactory->createLocationDao())
+    LocationServicePrivate(const QSqlDatabase &db) noexcept
+        : db(db),
+          daoFactory(std::make_unique<DaoFactory>()),
+          locationDao(daoFactory->createLocationDao(db))
     {}
 
+    QSqlDatabase db;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<LocationDaoIntf> locationDao;
 };
 
 // PUBLIC
 
-LocationService::LocationService() noexcept
-    : d(std::make_unique<LocationServicePrivate>())
+LocationService::LocationService(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<LocationServicePrivate>(db))
 {}
 
 LocationService::LocationService(LocationService &&rhs) noexcept = default;
@@ -60,13 +62,13 @@ LocationService::~LocationService() = default;
 
 bool LocationService::store(Location &location) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
         ok = d->locationDao->add(location);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
@@ -75,7 +77,7 @@ bool LocationService::store(Location &location) noexcept
 bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noexcept
 {
     static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     auto it = locations.begin();
     while (it != locations.end() && ok) {
         if (mode != Mode::Insert) {
@@ -96,22 +98,22 @@ bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noex
         ++it;
     }
     if (ok) {
-        ok = db.commit();
+        ok = d->db.commit();
     } else {
-        db.rollback();
+        d->db.rollback();
     }
     return ok;
 }
 
 bool LocationService::update(const Location &location) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
         ok = d->locationDao->update(location);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
@@ -119,13 +121,13 @@ bool LocationService::update(const Location &location) noexcept
 
 bool LocationService::deleteById(std::int64_t id) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
         ok = d->locationDao->deleteById(id);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
@@ -134,10 +136,10 @@ bool LocationService::deleteById(std::int64_t id) noexcept
 std::vector<Location> LocationService::getAll(bool *ok) const noexcept
 {
     std::vector<Location> locations;
-    bool success = db.transaction();
+    bool success = d->db.transaction();
     if (success) {
         locations = d->locationDao->getAll(&success);
-        db.rollback();
+        d->db.rollback();
     }
     if (ok != nullptr) {
         *ok = success;
@@ -148,10 +150,10 @@ std::vector<Location> LocationService::getAll(bool *ok) const noexcept
 std::vector<Location> LocationService::getSelectedLocations(const LocationSelector &locationSelector, bool *ok) const noexcept
 {
     std::vector<Location> locations;
-    bool success = db.transaction();
+    bool success = d->db.transaction();
     if (success) {
         locations = d->locationDao->getSelectedLocations(locationSelector, &success);
-        db.rollback();
+        d->db.rollback();
     }
     if (ok != nullptr) {
         *ok = success;

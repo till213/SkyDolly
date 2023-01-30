@@ -33,33 +33,35 @@
 
 struct EnumerationServicePrivate
 {
-    EnumerationServicePrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          enumerationDao(daoFactory->createEnumerationDao())
+    EnumerationServicePrivate(const QSqlDatabase &db) noexcept
+        : db(db),
+          daoFactory(std::make_unique<DaoFactory>()),
+          enumerationDao(daoFactory->createEnumerationDao(db))
     {}
 
+    QSqlDatabase db;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<EnumerationDaoIntf> enumerationDao;
 };
 
 // PUBLIC
 
-EnumerationService::EnumerationService() noexcept
-    : d(std::make_unique<EnumerationServicePrivate>())
+EnumerationService::EnumerationService(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<EnumerationServicePrivate>(db))
 {}
 
 EnumerationService::EnumerationService(EnumerationService &&rhs) noexcept = default;
 EnumerationService &EnumerationService::operator=(EnumerationService &&rhs) noexcept = default;
 EnumerationService::~EnumerationService() = default;
 
-Enumeration EnumerationService::getEnumerationByName(const QString &name, QSqlDatabase &db, Enumeration::Order order, bool *ok)
+Enumeration EnumerationService::getEnumerationByName(const QString &name, Enumeration::Order order, bool *ok)
 {
     Enumeration enumeration;
-    bool success = db.transaction();
+    bool success = d->db.transaction();
     if (success) {
         enumeration = d->enumerationDao->get(name, order, &success);
     }
-    db.rollback();
+    d->db.rollback();
     if (ok != nullptr) {
         *ok = success;
     }

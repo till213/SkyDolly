@@ -41,21 +41,21 @@ struct SQLiteAircraftDaoPrivate;
 class SQLiteAircraftDao : public AircraftDaoIntf
 {
 public:
-    SQLiteAircraftDao() noexcept;
+    SQLiteAircraftDao(const QSqlDatabase &db) noexcept;
     SQLiteAircraftDao(const SQLiteAircraftDao &rhs) = delete;
     SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept;
     SQLiteAircraftDao &operator=(const SQLiteAircraftDao &rhs) = delete;
     SQLiteAircraftDao &operator=(SQLiteAircraftDao &&rhs) noexcept;
     ~SQLiteAircraftDao() override;
 
-    bool add(QSqlDatabase &db, std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
-    std::vector<Aircraft> getByFlightId(QSqlDatabase &db, std::int64_t flightId, bool *ok = nullptr) const noexcept override;
-    bool adjustAircraftSequenceNumbersByFlightId(QSqlDatabase &db, std::int64_t flightId, std::size_t sequenceNumber) noexcept override;
-    bool deleteAllByFlightId(QSqlDatabase &db, std::int64_t flightId) noexcept override;
-    bool deleteById(QSqlDatabase &db, std::int64_t id) noexcept override;
-    std::vector<AircraftInfo> getAircraftInfosByFlightId(QSqlDatabase &db, std::int64_t flightId, bool *ok = nullptr) const noexcept override;
-    bool updateTimeOffset(QSqlDatabase &db, std::int64_t id, std::int64_t timeOffset) noexcept override;
-    bool updateTailNumber(QSqlDatabase &db, std::int64_t id, const QString &tailNumber) noexcept override;
+    bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
+    std::vector<Aircraft> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
+    bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept override;
+    bool deleteAllByFlightId(std::int64_t flightId) noexcept override;
+    bool deleteById(std::int64_t id) noexcept override;
+    std::vector<AircraftInfo> getAircraftInfosByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
+    bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept override;
+    bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept override;
 
 private:
     std::unique_ptr<SQLiteAircraftDaoPrivate> d;

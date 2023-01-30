@@ -33,20 +33,10 @@
 #include <Persistence/Service/AircraftTypeService.h>
 #include "AircraftSelectionComboBox.h"
 
-struct AircraftSelectionComboBoxPrivate
-{
-    AircraftSelectionComboBoxPrivate() noexcept
-        : aircraftTypeService(std::make_unique<AircraftTypeService>())
-    {}
-
-    std::unique_ptr<AircraftTypeService> aircraftTypeService;
-};
-
 // PUBLIC
 
 AircraftSelectionComboBox::AircraftSelectionComboBox(QWidget *parent) noexcept
-    : QComboBox(parent),
-      d(std::make_unique<AircraftSelectionComboBoxPrivate>())
+    : QComboBox(parent)
 {
     initUi();
 }
@@ -57,7 +47,8 @@ AircraftSelectionComboBox::~AircraftSelectionComboBox() = default;
 
 void AircraftSelectionComboBox::initUi() noexcept
 {
-    const std::vector<AircraftType> aircraftTypes = d->aircraftTypeService->getAll();
+    AircraftTypeService aircraftTypeService;
+    const std::vector<AircraftType> aircraftTypes = aircraftTypeService.getAll();
     for (const AircraftType &aircraftType : aircraftTypes) {
         this->addItem(aircraftType.type);
     }

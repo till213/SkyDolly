@@ -29,7 +29,7 @@
 #include <forward_list>
 #include <cstdint>
 
-class QSqlDatabase;
+#include <QSqlDatabase>
 
 #include <Model/Flight.h>
 #include <Model/FlightDate.h>
@@ -39,24 +39,24 @@ class QSqlDatabase;
 class SkyConnectIntf;
 struct FlightServicePrivate;
 
-class PERSISTENCE_API FlightService
+class PERSISTENCE_API FlightService final
 {
 public:
-    FlightService() noexcept;
+    FlightService(const QSqlDatabase &db = QSqlDatabase::database()) noexcept;
     FlightService(const FlightService &rhs) = delete;
     FlightService(FlightService &&rhs) noexcept;
     FlightService &operator=(const FlightService &rhs) = delete;
     FlightService &operator=(FlightService &&rhs) noexcept;
     ~FlightService();
 
-    bool store(QSqlDatabase &db, Flight &flight) noexcept;
-    bool restore(QSqlDatabase &db, std::int64_t id, Flight &flight) noexcept;
-    bool deleteById(QSqlDatabase &db, std::int64_t id) noexcept;
-    bool updateTitle(QSqlDatabase &db, Flight &flight, const QString &title) noexcept;
-    bool updateTitle(QSqlDatabase &db, std::int64_t id, const QString &title) noexcept;
-    bool updateTitleAndDescription(QSqlDatabase &db, Flight &flight, const QString &title, const QString &description) noexcept;
-    bool updateTitleAndDescription(QSqlDatabase &db, std::int64_t id, const QString &title, const QString &description) noexcept;
-    bool updateUserAircraftIndex(QSqlDatabase &db, Flight &flight, int index) noexcept;
+    bool store(Flight &flight) noexcept;
+    bool restore(std::int64_t id, Flight &flight) noexcept;
+    bool deleteById(std::int64_t id) noexcept;
+    bool updateTitle(Flight &flight, const QString &title) noexcept;
+    bool updateTitle(std::int64_t id, const QString &title) noexcept;
+    bool updateTitleAndDescription(Flight &flight, const QString &title, const QString &description) noexcept;
+    bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept;
+    bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
 private:
     std::unique_ptr<FlightServicePrivate> d;

@@ -38,98 +38,100 @@
 
 struct FlightServicePrivate
 {
-    FlightServicePrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          flightDao(daoFactory->createFlightDao())
+    FlightServicePrivate(const QSqlDatabase &db) noexcept
+        : db(db),
+          daoFactory(std::make_unique<DaoFactory>()),
+          flightDao(daoFactory->createFlightDao(db))
     {}
 
+    QSqlDatabase db;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<FlightDaoIntf> flightDao;
 };
 
 // PUBLIC
 
-FlightService::FlightService() noexcept
-    : d(std::make_unique<FlightServicePrivate>())
+FlightService::FlightService(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<FlightServicePrivate>(db))
 {}
 
 FlightService::FlightService(FlightService &&rhs) noexcept = default;
 FlightService &FlightService::operator=(FlightService &&rhs) noexcept = default;
 FlightService::~FlightService() = default;
 
-bool FlightService::store(Flight &flight, QSqlDatabase &db) noexcept
+bool FlightService::store(Flight &flight) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
-        ok = d->flightDao->add(flight, db);
+        ok = d->flightDao->add(flight);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
             emit flight.flightStored(flight.getId());
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
 }
 
-bool FlightService::restore(std::int64_t id, QSqlDatabase &db, Flight &flight) noexcept
+bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
         flight.blockSignals(true);
-        ok = d->flightDao->get(id, db, flight);
+        ok = d->flightDao->get(id, flight);
         flight.blockSignals(false);
         emit flight.flightRestored(flight.getId());
     }
-    db.rollback();
+    d->db.rollback();
     return ok;
 }
 
-bool FlightService::deleteById(std::int64_t id, QSqlDatabase &db) noexcept
+bool FlightService::deleteById(std::int64_t id) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         if (flight.getId() == id) {
             flight.clear(true);
         }
-        ok = d->flightDao->deleteById(id, db);
+        ok = d->flightDao->deleteById(id);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
 }
 
-bool FlightService::updateTitle(Flight &flight, const QString &title, QSqlDatabase &db) noexcept
+bool FlightService::updateTitle(Flight &flight, const QString &title) noexcept
 {
-    const bool ok = updateTitle(flight.getId(), title, db);
+    const bool ok = updateTitle(flight.getId(), title);
     if (ok) {
         flight.setTitle(title);
     }
     return ok;
 }
 
-bool FlightService::updateTitle(std::int64_t id, const QString &title, QSqlDatabase &db) noexcept
+bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
-        ok = d->flightDao->updateTitle(id, title, db);
+        ok = d->flightDao->updateTitle(id, title);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
             emit Logbook::getInstance().flightTitleOrDescriptionChanged(id);
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
 }
 
-bool FlightService::updateTitleAndDescription(Flight &flight, const QString &title, const QString &description, QSqlDatabase &db) noexcept
+bool FlightService::updateTitleAndDescription(Flight &flight, const QString &title, const QString &description) noexcept
 {
-    const bool ok = updateTitleAndDescription(flight.getId(), title, description, db);
+    const bool ok = updateTitleAndDescription(flight.getId(), title, description);
     if (ok) {
         flight.setTitle(title);
         flight.setDescription(description);
@@ -137,31 +139,31 @@ bool FlightService::updateTitleAndDescription(Flight &flight, const QString &tit
     return ok;
 }
 
-bool FlightService::updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description, QSqlDatabase &db) noexcept
+bool FlightService::updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
-        ok = d->flightDao->updateTitleAndDescription(id, title, description, db);
+        ok = d->flightDao->updateTitleAndDescription(id, title, description);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
             emit Logbook::getInstance().flightTitleOrDescriptionChanged(id);
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
 }
 
-bool FlightService::updateUserAircraftIndex(Flight &flight, int index, QSqlDatabase &db) noexcept
+bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
         flight.switchUserAircraftIndex(index);
-        ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index, db);
+        ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;

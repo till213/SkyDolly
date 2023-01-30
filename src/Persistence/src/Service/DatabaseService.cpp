@@ -59,8 +59,13 @@ namespace
 
 struct DatabaseServicePrivate
 {
-    std::unique_ptr<DaoFactory> daoFactory {std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)};
-    std::unique_ptr<DatabaseDaoIntf> databaseDao {daoFactory->createDatabaseDao()};
+    DatabaseServicePrivate(const QSqlDatabase &db) noexcept
+        : db(db)
+    {}
+
+    QSqlDatabase db;
+    std::unique_ptr<DaoFactory> daoFactory {std::make_unique<DaoFactory>()};
+    std::unique_ptr<DatabaseDaoIntf> databaseDao {daoFactory->createDatabaseDao(DaoFactory::DbType::SQLite)};
 
     const std::int64_t BackupPeriodNeverId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNeverSymId).id()};
     const std::int64_t BackupPeriodNowId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNowSymId).id()};
@@ -72,8 +77,8 @@ struct DatabaseServicePrivate
 
 // PUBLIC
 
-DatabaseService::DatabaseService() noexcept
-    : d(std::make_unique<DatabaseServicePrivate>())
+DatabaseService::DatabaseService(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<DatabaseServicePrivate>(db))
 {}
 
 DatabaseService::DatabaseService(DatabaseService &&rhs) noexcept = default;
@@ -110,35 +115,35 @@ bool DatabaseService::backup() noexcept
     return ok;
 }
 
-bool DatabaseService::setBackupPeriod(std::int64_t backupPeriodId, QSqlDatabase &db) noexcept
+bool DatabaseService::setBackupPeriod(std::int64_t backupPeriodId) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
         ok = d->databaseDao->updateBackupPeriod(backupPeriodId);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
 }
 
-bool DatabaseService::setNextBackupDate(const QDateTime &date, QSqlDatabase &db) noexcept
+bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
         ok = d->databaseDao->updateNextBackupDate(date);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;
 }
 
-bool DatabaseService::updateBackupDate(QSqlDatabase &db) noexcept
+bool DatabaseService::updateBackupDate() noexcept
 {
     bool ok {true};
     const Metadata metaData = PersistenceManager::getInstance().getMetadata(&ok);
@@ -157,20 +162,20 @@ bool DatabaseService::updateBackupDate(QSqlDatabase &db) noexcept
         if (nextBackupDate < today) {
             nextBackupDate = today;
         }
-        ok = setNextBackupDate(nextBackupDate, db);
+        ok = setNextBackupDate(nextBackupDate);
     }
     return ok;
 }
 
-bool DatabaseService::setBackupDirectoryPath(const QString &backupDirectoryPath, QSqlDatabase &db) noexcept
+bool DatabaseService::setBackupDirectoryPath(const QString &backupDirectoryPath) noexcept
 {
-    bool ok = db.transaction();
+    bool ok = d->db.transaction();
     if (ok) {
         ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
         if (ok) {
-            ok = db.commit();
+            ok = d->db.commit();
         } else {
-            db.rollback();
+            d->db.rollback();
         }
     }
     return ok;

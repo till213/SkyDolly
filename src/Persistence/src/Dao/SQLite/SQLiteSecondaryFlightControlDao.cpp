@@ -25,8 +25,10 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -48,7 +50,20 @@ namespace
     constexpr int DefaultCapacity = 30 * 2 * 60;
 }
 
+struct SQLiteSecondaryFlightControlDaoPrivate
+{
+    SQLiteSecondaryFlightControlDaoPrivate(const QSqlDatabase &db) noexcept
+        : db(db)
+    {}
+
+    QSqlDatabase db;
+};
+
 // PUBLIC
+
+SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<SQLiteSecondaryFlightControlDaoPrivate>(db))
+{}
 
 SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs) noexcept = default;
 SQLiteSecondaryFlightControlDao &SQLiteSecondaryFlightControlDao::operator=(SQLiteSecondaryFlightControlDao &&rhs) noexcept = default;
@@ -121,7 +136,7 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const bool querySizeFeature = d->db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             secondaryFlightControlData.reserve(query.size());
         } else {

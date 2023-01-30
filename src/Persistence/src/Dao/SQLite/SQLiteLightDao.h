@@ -29,24 +29,30 @@
 #include <vector>
 #include <cstdint>
 
+class QSqlDatabase;
+
 #include "../LightDaoIntf.h"
 
 struct LightData;
+struct SQLiteLightDaoPrivate;
 
 class SQLiteLightDao : public LightDaoIntf
 {
 public:
-    SQLiteLightDao() = default;
+    SQLiteLightDao(const QSqlDatabase &db) noexcept;
     SQLiteLightDao(const SQLiteLightDao &rhs) = delete;
     SQLiteLightDao(SQLiteLightDao &&rhs) noexcept;
     SQLiteLightDao &operator=(const SQLiteLightDao &rhs) = delete;
     SQLiteLightDao &operator=(SQLiteLightDao &&rhs) noexcept;
     ~SQLiteLightDao() override;
 
-    bool add(QSqlDatabase &db, std::int64_t aircraftId, const LightData &data) noexcept override;
-    std::vector<LightData> getByAircraftId(QSqlDatabase &db, std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
-    bool deleteByFlightId(QSqlDatabase &db, std::int64_t flightId) noexcept override;
-    bool deleteByAircraftId(QSqlDatabase &db, std::int64_t aircraftId) noexcept override;
+    bool add(std::int64_t aircraftId, const LightData &data) noexcept override;
+    std::vector<LightData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
+    bool deleteByFlightId(std::int64_t flightId) noexcept override;
+    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+
+private:
+    std::unique_ptr<SQLiteLightDaoPrivate> d;
 };
 
 #endif // SQLITELIGHTDAO_H

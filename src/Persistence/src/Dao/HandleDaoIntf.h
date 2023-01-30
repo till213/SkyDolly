@@ -28,8 +28,6 @@
 #include <vector>
 #include <cstdint>
 
-class QSqlDatabase;
-
 struct AircraftHandleData;
 
 class HandleDaoIntf
@@ -51,10 +49,10 @@ public:
      *        the AircraftHandleData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(QSqlDatabase &db, std::int64_t aircraftId, const AircraftHandleData &data) noexcept = 0;
-    virtual std::vector<AircraftHandleData> getByAircraftId(QSqlDatabase &db, std::int64_t aircraftId, bool *ok = nullptr) const noexcept = 0;
-    virtual bool deleteByFlightId(QSqlDatabase &db, std::int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(QSqlDatabase &db, std::int64_t aircraftId) noexcept = 0;
+    virtual bool add(std::int64_t aircraftId, const AircraftHandleData &data) noexcept = 0;
+    virtual std::vector<AircraftHandleData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept = 0;
+    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
+    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
 };
 
 #endif // HANDLEDAOINTF_H

@@ -25,10 +25,12 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
+#include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QSqlDriver>
@@ -48,7 +50,20 @@ namespace
     constexpr int DefaultCapacity = 30 * 2 * 60;
 }
 
+struct SQLitePositionDaoPrivate
+{
+    SQLitePositionDaoPrivate(const QSqlDatabase &db) noexcept
+        : db(db)
+    {}
+
+    QSqlDatabase db;
+};
+
 // PUBLIC
+
+SQLitePositionDao::SQLitePositionDao(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<SQLitePositionDaoPrivate>(db))
+{}
 
 SQLitePositionDao::SQLitePositionDao(SQLitePositionDao &&rhs) noexcept = default;
 SQLitePositionDao &SQLitePositionDao::operator=(SQLitePositionDao &&rhs) noexcept = default;
@@ -124,7 +139,7 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const bool querySizeFeature = d->db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             positionData.reserve(query.size());
         } else {

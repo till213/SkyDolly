@@ -37,41 +37,43 @@
 
 struct LogbookServicePrivate
 {
-    LogbookServicePrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          logbookDao(daoFactory->createLogbookDao())
+    LogbookServicePrivate(const QSqlDatabase &db) noexcept
+        : db(db),
+          daoFactory(std::make_unique<DaoFactory>()),
+          logbookDao(daoFactory->createLogbookDao(db))
     {}
 
+    QSqlDatabase db;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<LogbookDaoIntf> logbookDao;
 };
 
 // PUBLIC
 
-LogbookService::LogbookService() noexcept
-    : d(std::make_unique<LogbookServicePrivate>())
+LogbookService::LogbookService(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<LogbookServicePrivate>(db))
 {}
 
 LogbookService::LogbookService(LogbookService &&rhs) noexcept = default;
 LogbookService &LogbookService::operator=(LogbookService &&rhs) noexcept = default;
 LogbookService::~LogbookService() = default;
 
-std::forward_list<FlightDate> LogbookService::getFlightDates(QSqlDatabase &db) const noexcept
+std::forward_list<FlightDate> LogbookService::getFlightDates() const noexcept
 {
     std::forward_list<FlightDate> flightDates;
-    if (db.transaction()) {
+    if (d->db.transaction()) {
         flightDates = d->logbookDao->getFlightDates();
-        db.rollback();
+        d->db.rollback();
     }
     return flightDates;
 }
 
-std::vector<FlightSummary> LogbookService::getFlightSummaries(QSqlDatabase &db, const FlightSelector &flightSelector) const noexcept
+std::vector<FlightSummary> LogbookService::getFlightSummaries(const FlightSelector &flightSelector) const noexcept
 {
     std::vector<FlightSummary> descriptions;
-    if (db.transaction()) {
+    if (d->db.transaction()) {
         descriptions = d->logbookDao->getFlightSummaries(flightSelector);
-        db.rollback();
+        d->db.rollback();
     }
     return descriptions;
 }

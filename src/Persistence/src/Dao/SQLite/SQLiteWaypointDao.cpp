@@ -24,8 +24,10 @@
  */
 #include <memory>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -40,7 +42,20 @@
 #include <Model/Waypoint.h>
 #include "SQLiteWaypointDao.h"
 
+struct SQLiteWaypointDaoPrivate
+{
+    SQLiteWaypointDaoPrivate(const QSqlDatabase &db) noexcept
+        : db(db)
+    {}
+
+    QSqlDatabase db;
+};
+
 // PUBLIC
+
+SQLiteWaypointDao::SQLiteWaypointDao(const QSqlDatabase &db) noexcept
+    : d(std::make_unique<SQLiteWaypointDaoPrivate>(db))
+{}
 
 SQLiteWaypointDao::SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept = default;
 SQLiteWaypointDao &SQLiteWaypointDao::operator=(SQLiteWaypointDao &&rhs) noexcept = default;

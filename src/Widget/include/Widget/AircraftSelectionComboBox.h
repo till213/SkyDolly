@@ -33,8 +33,6 @@ class QWidget;
 
 #include "WidgetLib.h"
 
-struct AircraftSelectionComboBoxPrivate;
-
 class WIDGET_API AircraftSelectionComboBox : public QComboBox
 {
     Q_OBJECT
@@ -43,8 +41,6 @@ public:
     ~AircraftSelectionComboBox() override;
 
 private:
-    const std::unique_ptr<AircraftSelectionComboBoxPrivate> d;
-
     void initUi() noexcept;
 };
 

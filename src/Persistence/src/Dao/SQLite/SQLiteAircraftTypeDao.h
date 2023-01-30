@@ -29,25 +29,30 @@
 #include <vector>
 
 class QString;
+class QSqlDatabase;
 
 #include "../AircraftTypeDaoIntf.h"
 
 struct AircraftType;
+struct SQLiteAircraftTypeDaoPrivate;
 
 class SQLiteAircraftTypeDao : public AircraftTypeDaoIntf
 {
 public:
-    SQLiteAircraftTypeDao() = default;
+    SQLiteAircraftTypeDao(const QSqlDatabase &db) noexcept;
     SQLiteAircraftTypeDao(const SQLiteAircraftTypeDao &rhs) = delete;
     SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) noexcept;
     SQLiteAircraftTypeDao &operator=(const SQLiteAircraftTypeDao &rhs) = delete;
     SQLiteAircraftTypeDao &operator=(SQLiteAircraftTypeDao &&rhs) noexcept;
     ~SQLiteAircraftTypeDao() override;
 
-    bool upsert(QSqlDatabase &db, const AircraftType &aircraftType) noexcept override;
-    AircraftType getByType(QSqlDatabase &db, const QString &type, bool *ok = nullptr) const noexcept override;
-    std::vector<AircraftType> getAllQSqlDatabase(QSqlDatabase &db, bool *ok = nullptr) const noexcept override;
-    bool exists(QSqlDatabase &db, const QString &type) const noexcept override;
+    bool upsert(const AircraftType &aircraftType) noexcept override;
+    AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept override;
+    std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept override;
+    bool exists(const QString &type) const noexcept override;
+
+private:
+    std::unique_ptr<SQLiteAircraftTypeDaoPrivate> d;
 };
 
 #endif // AIRCRAFTTYPEDAO_H
