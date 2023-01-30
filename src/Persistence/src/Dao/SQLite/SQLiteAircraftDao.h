@@ -30,7 +30,7 @@
 #include <cstdint>
 #include <cstddef>
 
-class QSqlDatabase;
+#include <QString>
 
 #include "../AircraftDaoIntf.h"
 
@@ -41,7 +41,7 @@ struct SQLiteAircraftDaoPrivate;
 class SQLiteAircraftDao : public AircraftDaoIntf
 {
 public:
-    SQLiteAircraftDao(const QSqlDatabase &db) noexcept;
+    SQLiteAircraftDao(QString connectionNanme) noexcept;
     SQLiteAircraftDao(const SQLiteAircraftDao &rhs) = delete;
     SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept;
     SQLiteAircraftDao &operator=(const SQLiteAircraftDao &rhs) = delete;

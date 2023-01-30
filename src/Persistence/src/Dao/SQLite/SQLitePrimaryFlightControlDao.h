@@ -29,7 +29,7 @@
 #include <vector>
 #include <cstdint>
 
-class QSqlDatabase;
+class QString;
 
 #include "../PrimaryFlightControlDaoIntf.h"
 
@@ -39,7 +39,7 @@ struct SQLitePrimaryFlightControlDaoPrivate;
 class SQLitePrimaryFlightControlDao : public PrimaryFlightControlDaoIntf
 {
 public:
-    SQLitePrimaryFlightControlDao(const QSqlDatabase &db) noexcept;
+    SQLitePrimaryFlightControlDao(QString connectionName) noexcept;
     SQLitePrimaryFlightControlDao(const SQLitePrimaryFlightControlDao &rhs) = delete;
     SQLitePrimaryFlightControlDao(SQLitePrimaryFlightControlDao &&rhs) noexcept;
     SQLitePrimaryFlightControlDao &operator=(const SQLitePrimaryFlightControlDao &rhs) = delete;

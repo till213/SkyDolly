@@ -29,7 +29,7 @@
 #include <vector>
 #include <cstdint>
 
-class QSqlDatabase;
+class QString;
 
 #include "../HandleDaoIntf.h"
 
@@ -39,7 +39,7 @@ struct SQLiteHandleDaoPrivate;
 class SQLiteHandleDao : public HandleDaoIntf
 {
 public:
-    SQLiteHandleDao(const QSqlDatabase &db) noexcept;
+    SQLiteHandleDao(QString connectionName) noexcept;
     SQLiteHandleDao(const SQLiteHandleDao &rhs) = delete;
     SQLiteHandleDao(SQLiteHandleDao &&rhs) noexcept;
     SQLiteHandleDao &operator=(const SQLiteHandleDao &rhs) = delete;

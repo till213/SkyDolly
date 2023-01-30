@@ -77,21 +77,21 @@ namespace
 
 struct SqlMigrationPrivate
 {
-    SqlMigrationPrivate(const QSqlDatabase &db) noexcept
-        : db(db),
-          locationDao(std::make_unique<SQLiteLocationDao>(db)),
-          enumerationService(std::make_unique<EnumerationService>(db))
+    SqlMigrationPrivate(QString connectionName) noexcept
+        : connectionName(connectionName),
+          locationDao(std::make_unique<SQLiteLocationDao>(connectionName)),
+          enumerationService(std::make_unique<EnumerationService>(std::move(connectionName)))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
     std::unique_ptr<SQLiteLocationDao> locationDao;
     std::unique_ptr<EnumerationService> enumerationService;
 };
 
 // PUBLIC
 
-SqlMigration::SqlMigration(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<SqlMigrationPrivate>(db))
+SqlMigration::SqlMigration(QString connectionName) noexcept
+    : d(std::make_unique<SqlMigrationPrivate>(std::move(connectionName)))
 {}
 
 SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;

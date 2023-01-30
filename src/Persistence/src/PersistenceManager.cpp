@@ -219,7 +219,7 @@ bool PersistenceManager::backup(const QString &backupLogbookPath) noexcept
     return d->databaseDao->backup(backupLogbookPath);
 }
 
-Metadata PersistenceManager::getMetadata(bool *ok) const noexcept
+Metadata PersistenceManager::getMetadata(const QString &connectionName, bool *ok) const noexcept
 {
     Metadata metadata;
     bool success = d->databaseDao->database().transaction();

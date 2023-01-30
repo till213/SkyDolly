@@ -28,8 +28,7 @@
 #include <memory>
 #include <vector>
 
-class QString;
-class QSqlDatabase;
+#include <QString>;
 
 #include "../AircraftTypeDaoIntf.h"
 
@@ -39,7 +38,7 @@ struct SQLiteAircraftTypeDaoPrivate;
 class SQLiteAircraftTypeDao : public AircraftTypeDaoIntf
 {
 public:
-    SQLiteAircraftTypeDao(const QSqlDatabase &db) noexcept;
+    SQLiteAircraftTypeDao(QString connectionName) noexcept;
     SQLiteAircraftTypeDao(const SQLiteAircraftTypeDao &rhs) = delete;
     SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) noexcept;
     SQLiteAircraftTypeDao &operator=(const SQLiteAircraftTypeDao &rhs) = delete;

@@ -34,6 +34,7 @@
 
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
+#include "../../src/Dao/DatabaseDaoIntf.h"
 #include "../PersistenceLib.h"
 
 struct AircraftServicePrivate;
@@ -41,7 +42,7 @@ struct AircraftServicePrivate;
 class PERSISTENCE_API AircraftService final
 {
 public:
-    AircraftService(const QSqlDatabase &db = QSqlDatabase::database()) noexcept;
+    AircraftService(QString connectionName = DatabaseDaoIntf::DefaultConnectionName) noexcept;
     AircraftService(const AircraftService &rhs) = delete;
     AircraftService(AircraftService &&rhs) noexcept;
     AircraftService &operator=(const AircraftService &rhs) = delete;

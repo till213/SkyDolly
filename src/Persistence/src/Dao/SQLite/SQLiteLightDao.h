@@ -29,7 +29,7 @@
 #include <vector>
 #include <cstdint>
 
-class QSqlDatabase;
+class QString;
 
 #include "../LightDaoIntf.h"
 
@@ -39,7 +39,7 @@ struct SQLiteLightDaoPrivate;
 class SQLiteLightDao : public LightDaoIntf
 {
 public:
-    SQLiteLightDao(const QSqlDatabase &db) noexcept;
+    SQLiteLightDao(QString connectionName) noexcept;
     SQLiteLightDao(const SQLiteLightDao &rhs) = delete;
     SQLiteLightDao(SQLiteLightDao &&rhs) noexcept;
     SQLiteLightDao &operator=(const SQLiteLightDao &rhs) = delete;

@@ -28,7 +28,6 @@
 #include <memory>
 
 class QString;
-class QSqlDatabase;
 
 #include <Kernel/CsvParser.h>
 
@@ -37,7 +36,7 @@ struct SqlMigrationPrivate;
 class SqlMigration
 {
 public:
-    SqlMigration(const QSqlDatabase &db) noexcept;
+    SqlMigration(QString connectionName) noexcept;
     SqlMigration(const SqlMigration &rhs) = delete;
     SqlMigration(SqlMigration &&rhs) noexcept;
     SqlMigration &operator=(const SqlMigration &rhs) = delete;

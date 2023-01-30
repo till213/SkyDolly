@@ -51,21 +51,21 @@
 class SQLiteFlightDaoPrivate
 {
 public:
-    SQLiteFlightDaoPrivate(const QSqlDatabase &db) noexcept
-        : db(db),
+    SQLiteFlightDaoPrivate(QString connectionName) noexcept
+        : connectionName(connectionName),
           daoFactory(std::make_unique<DaoFactory>()),
-          aircraftDao(daoFactory->createAircraftDao(db))
+          aircraftDao(daoFactory->createAircraftDao(std::move(connectionName)))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
 };
 
 // PUBLIC
 
-SQLiteFlightDao::SQLiteFlightDao(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<SQLiteFlightDaoPrivate>(db))
+SQLiteFlightDao::SQLiteFlightDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteFlightDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteFlightDao::SQLiteFlightDao(SQLiteFlightDao &&rhs) noexcept = default;
@@ -74,7 +74,8 @@ SQLiteFlightDao::~SQLiteFlightDao() = default;
 
 bool SQLiteFlightDao::add(Flight &flight) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into flight ("
         "  creation_time,"
@@ -183,7 +184,8 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
 
 bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -269,7 +271,8 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
 
 bool SQLiteFlightDao::deleteById(std::int64_t id) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from flight "
@@ -291,7 +294,8 @@ bool SQLiteFlightDao::deleteById(std::int64_t id) noexcept
 
 bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "update flight "
         "set    title = :title "
@@ -311,7 +315,8 @@ bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) noexcep
 
 bool SQLiteFlightDao::updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "update flight "
         "set    title = :title,"
@@ -333,7 +338,8 @@ bool SQLiteFlightDao::updateTitleAndDescription(std::int64_t id, const QString &
 
 bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "update flight "
         "set    user_aircraft_seq_nr = :user_aircraft_seq_nr "

@@ -52,17 +52,17 @@ namespace
 
 struct SQLiteSecondaryFlightControlDaoPrivate
 {
-    SQLiteSecondaryFlightControlDaoPrivate(const QSqlDatabase &db) noexcept
-        : db(db)
+    SQLiteSecondaryFlightControlDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
 };
 
 // PUBLIC
 
-SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<SQLiteSecondaryFlightControlDaoPrivate>(db))
+SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteSecondaryFlightControlDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs) noexcept = default;
@@ -71,7 +71,8 @@ SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() = default;
 
 bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const SecondaryFlightControlData &secondaryFlightControlData) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into secondary_flight_control ("
         "  aircraft_id,"
@@ -124,7 +125,8 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
 std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<SecondaryFlightControlData> secondaryFlightControlData;
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -136,7 +138,8 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = d->db.driver()->hasFeature(QSqlDriver::QuerySize);
+        QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             secondaryFlightControlData.reserve(query.size());
         } else {
@@ -182,7 +185,8 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
 
 bool SQLiteSecondaryFlightControlDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   secondary_flight_control "
@@ -204,7 +208,8 @@ bool SQLiteSecondaryFlightControlDao::deleteByFlightId(std::int64_t flightId) no
 
 bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   secondary_flight_control "

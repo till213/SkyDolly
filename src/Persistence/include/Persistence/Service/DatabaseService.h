@@ -35,6 +35,7 @@ class QString;
 class QWidget;
 class QDateTime;
 
+#include "../../src/Dao/DatabaseDaoIntf.h"
 #include "../PersistenceLib.h"
 
 class Version;
@@ -43,7 +44,7 @@ struct DatabaseServicePrivate;
 class PERSISTENCE_API DatabaseService final
 {
 public:
-    DatabaseService(const QSqlDatabase &db = QSqlDatabase::database()) noexcept;
+    DatabaseService(QString connectionName = DatabaseDaoIntf::DefaultConnectionName) noexcept;
     DatabaseService(const DatabaseService &rhs) = delete;
     DatabaseService(DatabaseService &&rhs) noexcept;
     DatabaseService &operator=(const DatabaseService &rhs) = delete;

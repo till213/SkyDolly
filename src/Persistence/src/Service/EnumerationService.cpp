@@ -33,21 +33,21 @@
 
 struct EnumerationServicePrivate
 {
-    EnumerationServicePrivate(const QSqlDatabase &db) noexcept
-        : db(db),
+    EnumerationServicePrivate(QString connectionName) noexcept
+        : connectionName(connectionName),
           daoFactory(std::make_unique<DaoFactory>()),
-          enumerationDao(daoFactory->createEnumerationDao(db))
+          enumerationDao(daoFactory->createEnumerationDao(std::move(connectionName)))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<EnumerationDaoIntf> enumerationDao;
 };
 
 // PUBLIC
 
-EnumerationService::EnumerationService(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<EnumerationServicePrivate>(db))
+EnumerationService::EnumerationService(QString connectionName) noexcept
+    : d(std::make_unique<EnumerationServicePrivate>(std::move(connectionName)))
 {}
 
 EnumerationService::EnumerationService(EnumerationService &&rhs) noexcept = default;
@@ -57,11 +57,12 @@ EnumerationService::~EnumerationService() = default;
 Enumeration EnumerationService::getEnumerationByName(const QString &name, Enumeration::Order order, bool *ok)
 {
     Enumeration enumeration;
-    bool success = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool success = db.transaction();
     if (success) {
         enumeration = d->enumerationDao->get(name, order, &success);
     }
-    d->db.rollback();
+    db.rollback();
     if (ok != nullptr) {
         *ok = success;
     }

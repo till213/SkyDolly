@@ -26,7 +26,6 @@
 #define SQLITEENUMERATIONDAO_H
 
 class QString;
-class QSqlDatabase;
 
 #include <Model/Enumeration.h>
 #include "../EnumerationDaoIntf.h"
@@ -36,7 +35,7 @@ struct SQLiteEnumerationDaoPrivate;
 class SQLiteEnumerationDao : public EnumerationDaoIntf
 {
 public:
-    SQLiteEnumerationDao(const QSqlDatabase &db) noexcept;
+    SQLiteEnumerationDao(QString connectionName) noexcept;
     SQLiteEnumerationDao(const SQLiteEnumerationDao &rhs) = delete;
     SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept;
     SQLiteEnumerationDao &operator=(const SQLiteEnumerationDao &rhs) = delete;

@@ -33,6 +33,7 @@
 
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
+#include "../../src/Dao/DatabaseDaoIntf.h"
 #include "../PersistenceLib.h"
 
 class FlightSelector;
@@ -41,7 +42,7 @@ struct LogbookServicePrivate;
 class PERSISTENCE_API LogbookService final
 {
 public:
-    LogbookService(const QSqlDatabase &db = QSqlDatabase::database()) noexcept;
+    LogbookService(QString connectionName = DatabaseDaoIntf::DefaultConnectionName) noexcept;
     LogbookService(const LogbookService &rhs) = delete;
     LogbookService(LogbookService &&rhs) noexcept;
     LogbookService &operator=(const LogbookService &rhs) = delete;

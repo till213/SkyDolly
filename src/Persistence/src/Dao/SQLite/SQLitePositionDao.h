@@ -29,7 +29,7 @@
 #include <vector>
 #include <cstdint>
 
-class QSqlDatabase;
+class QString;
 
 #include "../PositionDaoIntf.h"
 
@@ -39,7 +39,7 @@ struct SQLitePositionDaoPrivate;
 class SQLitePositionDao : public PositionDaoIntf
 {
 public:
-    SQLitePositionDao(const QSqlDatabase &db) noexcept;
+    SQLitePositionDao(QString connectionName) noexcept;
     SQLitePositionDao(const SQLitePositionDao &rhs) = delete;
     SQLitePositionDao(SQLitePositionDao &&rhs) noexcept;
     SQLitePositionDao &operator=(const SQLitePositionDao &rhs) = delete;

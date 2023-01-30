@@ -43,11 +43,11 @@
 
 struct SqlMigrationStepPrivate
 {
-    SqlMigrationStepPrivate(const QSqlDatabase &db)
-        : db(db)
+    SqlMigrationStepPrivate(QString connectionName)
+        : connectionName(std::move(connectionName))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
     QString migrationId;
     QString description;
     QString errorMessage;
@@ -57,8 +57,8 @@ struct SqlMigrationStepPrivate
 
 // PUBLIC
 
-SqlMigrationStep::SqlMigrationStep(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<SqlMigrationStepPrivate>(db))
+SqlMigrationStep::SqlMigrationStep(QString connectionName) noexcept
+    : d(std::make_unique<SqlMigrationStepPrivate>(std::move(connectionName)))
 {}
 
 SqlMigrationStep::SqlMigrationStep(SqlMigrationStep &&rhs) noexcept = default;
@@ -103,7 +103,8 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
 
 bool SqlMigrationStep::checkApplied() noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare("select m.success, m.step, m.msg from migr m where m.id = :id and m.step = :step;");
     query.bindValue(":id", d->migrationId);
     query.bindValue(":step", d->step);
@@ -129,7 +130,8 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
 
     // Note that DDL statements do not require transactions; but for
     // now we execute all queries within a transaction
-    bool ok = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
 
     QRegularExpressionMatchIterator it = sqlRegExp.globalMatch(sql);
     while (ok && it.hasNext()) {
@@ -138,11 +140,11 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
 #ifdef DEBUG
         qDebug() << "SqlMigrationStep::execute: SQL:" << match.captured(1);
 #endif
-        QSqlQuery query;
+        QSqlQuery query {db};
         ok = query.exec(match.captured(1).trimmed() % ";");
         if (!ok) {
             errorMessage = query.lastError().text() + " - error code: " + query.lastError().nativeErrorCode();
-            d->db.rollback();
+            db.rollback();
 #ifdef DEBUG
             qDebug() << "SqlMigrationStep::execute: FAILED:" << errorMessage;
 #endif
@@ -156,8 +158,9 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
 void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noexcept
 {
     bool ok = success;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     if (ok) {
-        QSqlQuery query;
+        QSqlQuery query {db};
         if (!hasPreviousAttempt()) {
             query.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
         } else {
@@ -169,20 +172,20 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noe
         query.bindValue(":msg", QString());
         ok = query.exec();
         if (ok) {
-            ok = d->db.commit();
+            ok = db.commit();
         } else {
 #ifdef DEBUG
             qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
-            d->db.rollback();
+            db.rollback();
         }
         if (ok) {
             d->errorMessage.clear();
         }
     } else {
-        bool migrQueryOk = d->db.transaction();
+        bool migrQueryOk = db.transaction();
         if (migrQueryOk) {
-            QSqlQuery query;
+            QSqlQuery query {db};
             if (!hasPreviousAttempt()) {
                 query.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
             } else {
@@ -196,12 +199,12 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noe
             query.bindValue(":msg", d->errorMessage);
             migrQueryOk = query.exec();
             if (migrQueryOk) {
-                d->db.commit();
+                db.commit();
             } else {
 #ifdef DEBUG
                 qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
-                d->db.rollback();
+                db.rollback();
             }
         }
 #ifdef DEBUG

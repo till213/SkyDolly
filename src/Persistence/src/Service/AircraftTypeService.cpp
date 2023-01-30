@@ -36,21 +36,21 @@
 
 struct AircraftTypeServicePrivate
 {
-    AircraftTypeServicePrivate(const QSqlDatabase &db) noexcept
-        : db(db),
+    AircraftTypeServicePrivate(QString connectionName) noexcept
+        : connectionName(connectionName),
           daoFactory(std::make_unique<DaoFactory>()),
-          aircraftTypeDao(daoFactory->createAircraftTypeDao(db))
+          aircraftTypeDao(daoFactory->createAircraftTypeDao(std::move(connectionName)))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftTypeDaoIntf> aircraftTypeDao;
 };
 
 // PUBLIC
 
-AircraftTypeService::AircraftTypeService(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<AircraftTypeServicePrivate>(db))
+AircraftTypeService::AircraftTypeService(QString connectionName) noexcept
+    : d(std::make_unique<AircraftTypeServicePrivate>(std::move(connectionName)))
 {}
 
 AircraftTypeService::AircraftTypeService(AircraftTypeService &&rhs) noexcept = default;
@@ -60,10 +60,11 @@ AircraftTypeService::~AircraftTypeService() = default;
 AircraftType AircraftTypeService::getByType(const QString &type, bool *ok) const noexcept
 {
     AircraftType aircraftType;
-    bool success = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool success = db.transaction();
     if (success) {
         aircraftType = d->aircraftTypeDao->getByType(type, &success);
-        d->db.rollback();
+        db.rollback();
     }
     if (ok != nullptr) {
         *ok = success;
@@ -74,10 +75,11 @@ AircraftType AircraftTypeService::getByType(const QString &type, bool *ok) const
 std::vector<AircraftType> AircraftTypeService::getAll(bool *ok) const noexcept
 {
     std::vector<AircraftType> aircraftTypes;
-    bool success = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool success = db.transaction();
     if (success) {
         aircraftTypes = d->aircraftTypeDao->getAll(&success);
-        d->db.rollback();
+        db.rollback();
     }
     if (ok != nullptr) {
         *ok = success;
@@ -88,9 +90,10 @@ std::vector<AircraftType> AircraftTypeService::getAll(bool *ok) const noexcept
 bool AircraftTypeService::exists(const QString &type) const noexcept
 {
     bool exists {false};
-    if (d->db.transaction()) {
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    if (db.transaction()) {
         exists = d->aircraftTypeDao->exists(type);
-        d->db.rollback();
+        db.rollback();
     }
     return exists;
 }

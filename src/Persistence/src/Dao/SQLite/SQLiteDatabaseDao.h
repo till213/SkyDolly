@@ -32,7 +32,6 @@
 #include <QLatin1String>
 #include <QSqlDatabase>
 
-class QSqlDatabase;
 class QDateTime;
 
 #include <Kernel/Version.h>
@@ -51,9 +50,8 @@ public:
     SQLiteDatabaseDao &operator=(SQLiteDatabaseDao &&rhs) noexcept;
     ~SQLiteDatabaseDao() override;
 
-    bool connectDb(const QString &logbookPath, const QString &connectionName = QLatin1String(QSqlDatabase::defaultConnection)) noexcept override;
+    bool connectDb(const QString &logbookPath, QString connectionName = QLatin1String(QSqlDatabase::defaultConnection)) noexcept override;
     void disconnectDb() noexcept override;
-    QSqlDatabase database() noexcept override;
 
     bool migrate() noexcept override;
     bool optimise() noexcept override;

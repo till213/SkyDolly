@@ -28,7 +28,7 @@
 #include <memory>
 #include <cstdint>
 
-class QSqlDatabase;
+class QString;
 
 #include <Model/Waypoint.h>
 #include "../WaypointDaoIntf.h"
@@ -39,7 +39,7 @@ struct SQLiteWaypointDaoPrivate;
 class SQLiteWaypointDao : public WaypointDaoIntf
 {
 public:
-    SQLiteWaypointDao(const QSqlDatabase &db) noexcept;
+    SQLiteWaypointDao(QString connectionName) noexcept;
     SQLiteWaypointDao(const SQLiteWaypointDao &rhs) = delete;
     SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept;
     SQLiteWaypointDao &operator=(const SQLiteWaypointDao &rhs) = delete;

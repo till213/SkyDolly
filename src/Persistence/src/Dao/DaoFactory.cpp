@@ -72,120 +72,133 @@ std::unique_ptr<DatabaseDaoIntf> DaoFactory::createDatabaseDao(DbType dbType) no
     return dao;
 }
 
-std::unique_ptr<LogbookDaoIntf> DaoFactory::createLogbookDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<LogbookDaoIntf> DaoFactory::createLogbookDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<SQLiteLogbookDao> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteLogbookDao>(db);
+        dao = std::make_unique<SQLiteLogbookDao>(connectionName);
     }
     return dao;
 }
 
-std::unique_ptr<FlightDaoIntf> DaoFactory::createFlightDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<FlightDaoIntf> DaoFactory::createFlightDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<SQLiteFlightDao> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteFlightDao>(db);
+        dao = std::make_unique<SQLiteFlightDao>(connectionName);
     }
     return dao;
 }
 
-std::unique_ptr<AircraftDaoIntf> DaoFactory::createAircraftDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<AircraftDaoIntf> DaoFactory::createAircraftDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<SQLiteAircraftDao> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteAircraftDao>(db);
+        dao = std::make_unique<SQLiteAircraftDao>(connectionName);
     }
     return dao;
 }
 
-std::unique_ptr<AircraftTypeDaoIntf> DaoFactory::createAircraftTypeDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<AircraftTypeDaoIntf> DaoFactory::createAircraftTypeDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<SQLiteAircraftTypeDao> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteAircraftTypeDao>(db);
+        dao = std::make_unique<SQLiteAircraftTypeDao>(connectionName);
     }
     return dao;
 }
 
-std::unique_ptr<PositionDaoIntf> DaoFactory::createPositionDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<PositionDaoIntf> DaoFactory::createPositionDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<PositionDaoIntf> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLitePositionDao>(db);
+        dao = std::make_unique<SQLitePositionDao>(connectionName);
     }
     return dao;
 }
 
-std::unique_ptr<EngineDaoIntf> DaoFactory::createEngineDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<EngineDaoIntf> DaoFactory::createEngineDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<EngineDaoIntf> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteEngineDao>(db);
+        dao = std::make_unique<SQLiteEngineDao>(connectionName);
     }
     return dao;
 }
 
-std::unique_ptr<PrimaryFlightControlDaoIntf> DaoFactory::createPrimaryFlightControlDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<PrimaryFlightControlDaoIntf> DaoFactory::createPrimaryFlightControlDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<PrimaryFlightControlDaoIntf> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLitePrimaryFlightControlDao>(db);
+        dao = std::make_unique<SQLitePrimaryFlightControlDao>(connectionName);
     }
     return dao;
 };
 
-std::unique_ptr<SecondaryFlightControlDaoIntf> DaoFactory::createSecondaryFlightControlDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<SecondaryFlightControlDaoIntf> DaoFactory::createSecondaryFlightControlDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<SecondaryFlightControlDaoIntf> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteSecondaryFlightControlDao>(db);
+        dao = std::make_unique<SQLiteSecondaryFlightControlDao>(connectionName);
     }
     return dao;
 }
 
-std::unique_ptr<HandleDaoIntf> DaoFactory::createHandleDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<HandleDaoIntf> DaoFactory::createHandleDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<HandleDaoIntf> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteHandleDao>(db);
+        dao = std::make_unique<SQLiteHandleDao>(connectionName);
     }
     return dao;
 }
 
-std::unique_ptr<LightDaoIntf> DaoFactory::createLightDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<LightDaoIntf> DaoFactory::createLightDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<LightDaoIntf> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteLightDao>(db);
+        dao = std::make_unique<SQLiteLightDao>(connectionName);
     }
     return dao;
 }
 
-std::unique_ptr<WaypointDaoIntf> DaoFactory::createFlightPlanDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<WaypointDaoIntf> DaoFactory::createFlightPlanDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<WaypointDaoIntf> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteWaypointDao>(db);
+        dao = std::make_unique<SQLiteWaypointDao>(connectionName);
     }
     return dao;
 }
 
-std::unique_ptr<LocationDaoIntf> DaoFactory::createLocationDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<LocationDaoIntf> DaoFactory::createLocationDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<LocationDaoIntf> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteLocationDao>(db);
+        dao = std::make_unique<SQLiteLocationDao>(connectionName);
     }
     return dao;
 }
 
 
-std::unique_ptr<EnumerationDaoIntf> DaoFactory::createEnumerationDao(const QSqlDatabase &db) noexcept
+std::unique_ptr<EnumerationDaoIntf> DaoFactory::createEnumerationDao(const QString &connectionName) noexcept
 {
     std::unique_ptr<EnumerationDaoIntf> dao {nullptr};
+    QSqlDatabase db {QSqlDatabase::database(connectionName)};
     if (db.driverName() == SQLiteDriver) {
-        dao = std::make_unique<SQLiteEnumerationDao>(db);
+        dao = std::make_unique<SQLiteEnumerationDao>(connectionName);
     }
     return dao;
 }

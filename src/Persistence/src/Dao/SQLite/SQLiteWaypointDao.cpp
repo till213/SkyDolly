@@ -44,17 +44,17 @@
 
 struct SQLiteWaypointDaoPrivate
 {
-    SQLiteWaypointDaoPrivate(const QSqlDatabase &db) noexcept
-        : db(db)
+    SQLiteWaypointDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
 };
 
 // PUBLIC
 
-SQLiteWaypointDao::SQLiteWaypointDao(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<SQLiteWaypointDaoPrivate>(db))
+SQLiteWaypointDao::SQLiteWaypointDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteWaypointDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteWaypointDao::SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept = default;
@@ -63,7 +63,8 @@ SQLiteWaypointDao::~SQLiteWaypointDao() = default;
 
 bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into waypoint ("
         "  aircraft_id,"
@@ -112,7 +113,8 @@ bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPla
 
 bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &flightPlan) const noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -155,7 +157,8 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
 
 bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   waypoint "
@@ -177,7 +180,8 @@ bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) noexcept
 
 bool SQLiteWaypointDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   waypoint "

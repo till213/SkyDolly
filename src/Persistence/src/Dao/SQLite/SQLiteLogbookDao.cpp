@@ -59,17 +59,17 @@ namespace
 
 struct SQLiteLogbookDaoPrivate
 {
-    SQLiteLogbookDaoPrivate(const QSqlDatabase &db) noexcept
-        : db(db)
+    SQLiteLogbookDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
 };
 
 // PUBLIC
 
-SQLiteLogbookDao::SQLiteLogbookDao(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<SQLiteLogbookDaoPrivate>(db))
+SQLiteLogbookDao::SQLiteLogbookDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteLogbookDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteLogbookDao::SQLiteLogbookDao(SQLiteLogbookDao &&rhs) noexcept = default;
@@ -79,8 +79,8 @@ SQLiteLogbookDao::~SQLiteLogbookDao() = default;
 std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates(bool *ok) const noexcept
 {
     std::forward_list<FlightDate> flightDates;
-
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select strftime('%Y', f.creation_time) as year, strftime('%m', f.creation_time) as month, strftime('%d', f.creation_time) as day, count(f.id) as nof_flights "
@@ -125,7 +125,8 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         searchKeyword = LikeOperatorPlaceholder  % flightSelector.searchKeyword % LikeOperatorPlaceholder;
     }
 
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select f.id, f.creation_time, f.title, a.type,"
@@ -166,7 +167,8 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     query.bindValue(":duration", flightSelector.mininumDurationMinutes);
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = d->db.driver()->hasFeature(QSqlDriver::QuerySize);
+        QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             summaries.reserve(query.size());
         } else {

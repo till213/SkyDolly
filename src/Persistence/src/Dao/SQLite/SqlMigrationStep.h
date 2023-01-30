@@ -33,14 +33,13 @@
 
 class QRegularExpressionMatch;
 class QStringRef;
-class QSqlDatabase;
 
 struct SqlMigrationStepPrivate;
 
 class SqlMigrationStep
 {
 public:
-    SqlMigrationStep(const QSqlDatabase &db) noexcept;
+    SqlMigrationStep(QString connectionName) noexcept;
     SqlMigrationStep(const SqlMigrationStep &rhs) = delete;
     SqlMigrationStep(SqlMigrationStep &&rhs) noexcept;
     SqlMigrationStep &operator=(const SqlMigrationStep &rhs) = delete;

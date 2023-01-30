@@ -39,21 +39,21 @@
 
 struct LocationServicePrivate
 {
-    LocationServicePrivate(const QSqlDatabase &db) noexcept
-        : db(db),
+    LocationServicePrivate(QString connectionName) noexcept
+        : connectionName(connectionName),
           daoFactory(std::make_unique<DaoFactory>()),
-          locationDao(daoFactory->createLocationDao(db))
+          locationDao(daoFactory->createLocationDao(std::move(connectionName)))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<LocationDaoIntf> locationDao;
 };
 
 // PUBLIC
 
-LocationService::LocationService(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<LocationServicePrivate>(db))
+LocationService::LocationService(QString connectionName) noexcept
+    : d(std::make_unique<LocationServicePrivate>(std::move(connectionName)))
 {}
 
 LocationService::LocationService(LocationService &&rhs) noexcept = default;
@@ -62,13 +62,14 @@ LocationService::~LocationService() = default;
 
 bool LocationService::store(Location &location) noexcept
 {
-    bool ok = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
     if (ok) {
         ok = d->locationDao->add(location);
         if (ok) {
-            ok = d->db.commit();
+            ok = db.commit();
         } else {
-            d->db.rollback();
+            db.rollback();
         }
     }
     return ok;
@@ -77,7 +78,8 @@ bool LocationService::store(Location &location) noexcept
 bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noexcept
 {
     static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
-    bool ok = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
     auto it = locations.begin();
     while (it != locations.end() && ok) {
         if (mode != Mode::Insert) {
@@ -98,22 +100,23 @@ bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noex
         ++it;
     }
     if (ok) {
-        ok = d->db.commit();
+        ok = db.commit();
     } else {
-        d->db.rollback();
+        db.rollback();
     }
     return ok;
 }
 
 bool LocationService::update(const Location &location) noexcept
 {
-    bool ok = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
     if (ok) {
         ok = d->locationDao->update(location);
         if (ok) {
-            ok = d->db.commit();
+            ok = db.commit();
         } else {
-            d->db.rollback();
+            db.rollback();
         }
     }
     return ok;
@@ -121,13 +124,14 @@ bool LocationService::update(const Location &location) noexcept
 
 bool LocationService::deleteById(std::int64_t id) noexcept
 {
-    bool ok = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
     if (ok) {
         ok = d->locationDao->deleteById(id);
         if (ok) {
-            ok = d->db.commit();
+            ok = db.commit();
         } else {
-            d->db.rollback();
+            db.rollback();
         }
     }
     return ok;
@@ -135,11 +139,12 @@ bool LocationService::deleteById(std::int64_t id) noexcept
 
 std::vector<Location> LocationService::getAll(bool *ok) const noexcept
 {
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     std::vector<Location> locations;
-    bool success = d->db.transaction();
+    bool success = db.transaction();
     if (success) {
         locations = d->locationDao->getAll(&success);
-        d->db.rollback();
+        db.rollback();
     }
     if (ok != nullptr) {
         *ok = success;
@@ -149,11 +154,12 @@ std::vector<Location> LocationService::getAll(bool *ok) const noexcept
 
 std::vector<Location> LocationService::getSelectedLocations(const LocationSelector &locationSelector, bool *ok) const noexcept
 {
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     std::vector<Location> locations;
-    bool success = d->db.transaction();
+    bool success = db.transaction();
     if (success) {
         locations = d->locationDao->getSelectedLocations(locationSelector, &success);
-        d->db.rollback();
+        db.rollback();
     }
     if (ok != nullptr) {
         *ok = success;

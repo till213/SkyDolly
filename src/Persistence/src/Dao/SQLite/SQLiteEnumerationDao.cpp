@@ -41,17 +41,17 @@
 
 struct SQLiteEnumerationDaoPrivate
 {
-    SQLiteEnumerationDaoPrivate(const QSqlDatabase &db) noexcept
-        : db(db)
+    SQLiteEnumerationDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
 };
 
 // PUBLIC
 
-SQLiteEnumerationDao::SQLiteEnumerationDao(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<SQLiteEnumerationDaoPrivate>(db))
+SQLiteEnumerationDao::SQLiteEnumerationDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteEnumerationDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept = default;
@@ -63,7 +63,8 @@ Enumeration SQLiteEnumerationDao::get(const QString &name, Enumeration::Order or
     Enumeration enumeration {name};
     const QString enumerationTableName = QStringLiteral("enum_") % Name::fromCamelCase(enumeration.getName());
 
-    QSqlQuery query;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
 
     QString orderColumn;

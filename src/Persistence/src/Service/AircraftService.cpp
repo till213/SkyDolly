@@ -40,14 +40,14 @@
 struct AircraftServicePrivate
 {
 public:
-    AircraftServicePrivate(const QSqlDatabase &db) noexcept
-        : db(db),
+    AircraftServicePrivate(QString connectionName) noexcept
+        : connectionName(connectionName),
           daoFactory(std::make_unique<DaoFactory>()),
-          aircraftDao(daoFactory->createAircraftDao(db)),
-          flightDao(daoFactory->createFlightDao(db))
+          aircraftDao(daoFactory->createAircraftDao(connectionName)),
+          flightDao(daoFactory->createFlightDao(std::move(connectionName)))
     {}
 
-    QSqlDatabase db;
+    QString connectionName;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
     std::unique_ptr<FlightDaoIntf> flightDao;
@@ -55,8 +55,8 @@ public:
 
 // PUBLIC
 
-AircraftService::AircraftService(const QSqlDatabase &db) noexcept
-    : d(std::make_unique<AircraftServicePrivate>(db))
+AircraftService::AircraftService(QString connectionName) noexcept
+    : d(std::make_unique<AircraftServicePrivate>(std::move(connectionName)))
 {}
 
 AircraftService::AircraftService(AircraftService &&rhs) noexcept = default;
@@ -65,7 +65,8 @@ AircraftService::~AircraftService() = default;
 
 bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept
 {
-    bool ok = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
     if (ok) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         ok = d->aircraftDao->add(flightId, sequenceNumber, aircraft);
@@ -73,12 +74,12 @@ bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, A
             ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
         }
         if (ok) {
-            ok = d->db.commit();
+            ok = db.commit();
             if (ok) {
                 emit flight.aircraftStored(aircraft);
             }
         } else {
-            d->db.rollback();
+            db.rollback();
         }
     }
     return ok;
@@ -90,7 +91,8 @@ bool AircraftService::deleteByIndex(int index) noexcept
     const std::int64_t aircraftId = flight.removeAircraftByIndex(index);
     bool ok {true};
     if (aircraftId != Const::InvalidId) {
-        ok = d->db.transaction();
+        QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        ok = db.transaction();
         if (ok) {
             ok = d->aircraftDao->deleteById(aircraftId);
             if (ok) {
@@ -101,9 +103,9 @@ bool AircraftService::deleteByIndex(int index) noexcept
                 ok = d->aircraftDao->adjustAircraftSequenceNumbersByFlightId(flight.getId(), static_cast<std::int64_t>(index) + 1);
             }
             if (ok) {
-                ok = d->db.commit();
+                ok = db.commit();
             } else {
-                d->db.rollback();
+                db.rollback();
             }
         }
     }
@@ -113,10 +115,11 @@ bool AircraftService::deleteByIndex(int index) noexcept
 std::vector<AircraftInfo> AircraftService::getAircraftInfos(std::int64_t flightId, bool *ok) const noexcept
 {
     std::vector<AircraftInfo> aircraftInfos;
-    bool success = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool success = db.transaction();
     if (success) {
         aircraftInfos = d->aircraftDao->getAircraftInfosByFlightId(flightId, &success);
-        d->db.rollback();
+        db.rollback();
     }
     if (ok != nullptr) {
         *ok = success;
@@ -126,17 +129,18 @@ std::vector<AircraftInfo> AircraftService::getAircraftInfos(std::int64_t flightI
 
 bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset) noexcept
 {
-    bool ok = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
     if (ok) {
         ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
         if (ok) {
             aircraft.setTimeOffset(newOffset);            
-            ok = d->db.commit();
+            ok = db.commit();
             if (ok) {
                 emit Logbook::getInstance().getCurrentFlight().timeOffsetChanged(aircraft);
             }
         } else {
-            d->db.rollback();
+            db.rollback();
         }
     }
     return ok;
@@ -144,17 +148,18 @@ bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffse
 
 bool AircraftService::changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept
 {
-    bool ok = d->db.transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
     if (ok) {
         ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber);
         if (ok) {
             aircraft.setTailNumber(tailNumber);            
-            ok = d->db.commit();
+            ok = db.commit();
             if (ok) {
                 emit Logbook::getInstance().getCurrentFlight().tailNumberChanged(aircraft);
             }
         } else {
-            d->db.rollback();
+            db.rollback();
         }
     }
     return ok;

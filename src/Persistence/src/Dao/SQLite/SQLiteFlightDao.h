@@ -29,7 +29,6 @@
 #include <cstdint>
 
 class QString;
-class QSqlDatabase;
 
 #include "../FlightDaoIntf.h"
 
@@ -39,7 +38,7 @@ class SQLiteFlightDaoPrivate;
 class SQLiteFlightDao : public FlightDaoIntf
 {
 public:
-    SQLiteFlightDao(const QSqlDatabase &db) noexcept;
+    SQLiteFlightDao(QString connectionName) noexcept;
     SQLiteFlightDao(const SQLiteFlightDao &rhs) = delete;
     SQLiteFlightDao(SQLiteFlightDao &&rhs) noexcept;
     SQLiteFlightDao &operator=(const SQLiteFlightDao &rhs) = delete;

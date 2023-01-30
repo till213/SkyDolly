@@ -28,7 +28,6 @@
 #include <cstdint>
 
 #include <QString>
-#include <QSqlDatabase>
 
 class QDateTime;
 
@@ -45,9 +44,10 @@ public:
     DatabaseDaoIntf &operator=(DatabaseDaoIntf &&rhs) = default;
     virtual ~DatabaseDaoIntf() = default;
 
-    virtual bool connectDb(const QString &logbookPath, const QString &connectionName = QLatin1String(QSqlDatabase::defaultConnection)) noexcept = 0;
+    static inline const QString DefaultConnectionName {QStringLiteral("DefaultConnection")};
+
+    virtual bool connectDb(const QString &logbookPath, QString connectionName = DefaultConnectionName) noexcept = 0;
     virtual void disconnectDb() noexcept = 0;
-    virtual QSqlDatabase database() noexcept = 0;
 
     virtual bool migrate() noexcept = 0;
     virtual bool optimise() noexcept = 0;

@@ -29,7 +29,7 @@
 #include <forward_list>
 #include <vector>
 
-class QSqlDatabase;
+class QString;
 
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
@@ -41,7 +41,7 @@ struct SQLiteLogbookDaoPrivate;
 class SQLiteLogbookDao : public LogbookDaoIntf
 {
 public:
-    SQLiteLogbookDao(const QSqlDatabase &db) noexcept;
+    SQLiteLogbookDao(QString connectionName) noexcept;
     SQLiteLogbookDao(const SQLiteLogbookDao &rhs) = delete;
     SQLiteLogbookDao(SQLiteLogbookDao &&rhs) noexcept;
     SQLiteLogbookDao &operator=(const SQLiteLogbookDao &rhs) = delete;
