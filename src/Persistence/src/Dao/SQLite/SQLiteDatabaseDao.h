@@ -28,9 +28,7 @@
 #include <memory>
 #include <cstdint>
 
-#include <QString>
-#include <QLatin1String>
-
+class QString;
 class QDateTime;
 
 #include <Kernel/Version.h>

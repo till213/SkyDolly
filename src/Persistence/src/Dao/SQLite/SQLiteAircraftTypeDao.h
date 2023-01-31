@@ -28,7 +28,7 @@
 #include <memory>
 #include <vector>
 
-#include <QString>
+class QString;
 
 #include "../AircraftTypeDaoIntf.h"
 

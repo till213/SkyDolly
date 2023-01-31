@@ -30,7 +30,7 @@
 #include <cstdint>
 #include <cstddef>
 
-#include <QString>
+class QString;
 
 #include "../AircraftDaoIntf.h"
 
