@@ -37,9 +37,9 @@
 
 struct LogbookServicePrivate
 {
-    LogbookServicePrivate(QString connectionName) noexcept
+    LogbookServicePrivate(const QString &connectionName) noexcept
         : connectionName(connectionName),
-          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, connectionName)),
           logbookDao(daoFactory->createLogbookDao())
     {}
 
@@ -50,8 +50,8 @@ struct LogbookServicePrivate
 
 // PUBLIC
 
-LogbookService::LogbookService(QString connectionName) noexcept
-    : d(std::make_unique<LogbookServicePrivate>(std::move(connectionName)))
+LogbookService::LogbookService(const QString &connectionName) noexcept
+    : d(std::make_unique<LogbookServicePrivate>(connectionName))
 {}
 
 LogbookService::LogbookService(LogbookService &&rhs) noexcept = default;

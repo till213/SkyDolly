@@ -50,7 +50,7 @@ public:
     SQLiteDatabaseDao &operator=(SQLiteDatabaseDao &&rhs) noexcept;
     ~SQLiteDatabaseDao() override;
 
-    bool connectDb(const QString &logbookPath, QString connectionName = Const::DefaultConnectionName) noexcept override;
+    bool connectDb(const QString &logbookPath, const QString &connectionName = Const::DefaultConnectionName) noexcept override;
     void disconnectDb() noexcept override;
     const QString &connectionName() const noexcept override;
 

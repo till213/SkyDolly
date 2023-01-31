@@ -35,7 +35,7 @@ struct SQLiteEnumerationDaoPrivate;
 class SQLiteEnumerationDao : public EnumerationDaoIntf
 {
 public:
-    SQLiteEnumerationDao(QString connectionName) noexcept;
+    SQLiteEnumerationDao(const QString &connectionName) noexcept;
     SQLiteEnumerationDao(const SQLiteEnumerationDao &rhs) = delete;
     SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept;
     SQLiteEnumerationDao &operator=(const SQLiteEnumerationDao &rhs) = delete;

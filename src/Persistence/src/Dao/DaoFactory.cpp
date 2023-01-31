@@ -54,9 +54,9 @@
 
 struct DaoFactoryPrivate
 {
-    DaoFactoryPrivate(DaoFactory::DbType dbType, QString connectionName)
+    DaoFactoryPrivate(DaoFactory::DbType dbType, const QString &connectionName)
         : dbType(dbType),
-          connectionName(std::move(connectionName))
+          connectionName(connectionName)
     {}
 
     DaoFactory::DbType dbType;
@@ -65,7 +65,7 @@ struct DaoFactoryPrivate
 
 // PUBLIC
 
-DaoFactory::DaoFactory(DbType dbType, QString connectionName)
+DaoFactory::DaoFactory(DbType dbType, const QString &connectionName)
     : d(std::make_unique<DaoFactoryPrivate>(dbType, connectionName))
 {}
 

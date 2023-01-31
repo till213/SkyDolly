@@ -50,8 +50,8 @@ namespace
 
 struct SQLiteLightDaoPrivate
 {
-    SQLiteLightDaoPrivate(QString connectionName) noexcept
-        : connectionName(std::move(connectionName))
+    SQLiteLightDaoPrivate(const QString &connectionName) noexcept
+        : connectionName(connectionName)
     {}
 
     QString connectionName;
@@ -59,8 +59,8 @@ struct SQLiteLightDaoPrivate
 
 // PUBLIC
 
-SQLiteLightDao::SQLiteLightDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLiteLightDaoPrivate>(std::move(connectionName)))
+SQLiteLightDao::SQLiteLightDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLiteLightDaoPrivate>(connectionName))
 {}
 
 SQLiteLightDao::SQLiteLightDao(SQLiteLightDao &&rhs) noexcept = default;

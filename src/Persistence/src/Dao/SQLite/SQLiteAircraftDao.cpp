@@ -69,9 +69,9 @@
 
 struct SQLiteAircraftDaoPrivate
 {
-    SQLiteAircraftDaoPrivate(QString connectionName) noexcept
+    SQLiteAircraftDaoPrivate(const QString &connectionName) noexcept
         : connectionName(connectionName),
-          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, connectionName)),
           aircraftTypeDao(daoFactory->createAircraftTypeDao()),
           positionDao(daoFactory->createPositionDao()),
           engineDao(daoFactory->createEngineDao()),
@@ -104,8 +104,8 @@ namespace
 
 // PUBLIC
 
-SQLiteAircraftDao::SQLiteAircraftDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLiteAircraftDaoPrivate>(std::move(connectionName)))
+SQLiteAircraftDao::SQLiteAircraftDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLiteAircraftDaoPrivate>(connectionName))
 {}
 
 SQLiteAircraftDao::SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept = default;

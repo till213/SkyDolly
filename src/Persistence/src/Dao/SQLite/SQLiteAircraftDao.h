@@ -41,7 +41,7 @@ struct SQLiteAircraftDaoPrivate;
 class SQLiteAircraftDao : public AircraftDaoIntf
 {
 public:
-    SQLiteAircraftDao(QString connectionNanme) noexcept;
+    SQLiteAircraftDao(const QString &connectionNanme) noexcept;
     SQLiteAircraftDao(const SQLiteAircraftDao &rhs) = delete;
     SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept;
     SQLiteAircraftDao &operator=(const SQLiteAircraftDao &rhs) = delete;

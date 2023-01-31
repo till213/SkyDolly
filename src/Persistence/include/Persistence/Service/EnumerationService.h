@@ -39,7 +39,7 @@ struct EnumerationServicePrivate;
 class PERSISTENCE_API EnumerationService final
 {
 public:
-    EnumerationService(QString connectionName = Const::DefaultConnectionName) noexcept;
+    EnumerationService(const QString &connectionName = Const::DefaultConnectionName) noexcept;
     EnumerationService(const EnumerationService &rhs) = delete;
     EnumerationService(EnumerationService &&rhs) noexcept;
     EnumerationService &operator=(const EnumerationService &rhs) = delete;

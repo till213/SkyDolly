@@ -67,9 +67,9 @@ SQLiteDatabaseDao::~SQLiteDatabaseDao()
     disconnectSQLite();
 }
 
-bool SQLiteDatabaseDao::connectDb(const QString &logbookPath, QString connectionName) noexcept
+bool SQLiteDatabaseDao::connectDb(const QString &logbookPath, const QString &connectionName) noexcept
 {
-    d->connectionName = std::move(connectionName);
+    d->connectionName = connectionName;
     QSqlDatabase db = QSqlDatabase::addDatabase(::DriverName, d->connectionName);
     // For the QSQLITE driver, if the database name specified does not exist,
     // then it will create the file for you unless the QSQLITE_OPEN_READONLY

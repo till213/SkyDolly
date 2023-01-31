@@ -41,7 +41,7 @@ struct SQLiteLogbookDaoPrivate;
 class SQLiteLogbookDao : public LogbookDaoIntf
 {
 public:
-    SQLiteLogbookDao(QString connectionName) noexcept;
+    SQLiteLogbookDao(const QString &connectionName) noexcept;
     SQLiteLogbookDao(const SQLiteLogbookDao &rhs) = delete;
     SQLiteLogbookDao(SQLiteLogbookDao &&rhs) noexcept;
     SQLiteLogbookDao &operator=(const SQLiteLogbookDao &rhs) = delete;

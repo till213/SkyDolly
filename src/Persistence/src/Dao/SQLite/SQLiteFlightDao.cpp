@@ -51,9 +51,9 @@
 class SQLiteFlightDaoPrivate
 {
 public:
-    SQLiteFlightDaoPrivate(QString connectionName) noexcept
+    SQLiteFlightDaoPrivate(const QString &connectionName) noexcept
         : connectionName(connectionName),
-          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, connectionName)),
           aircraftDao(daoFactory->createAircraftDao())
     {}
 
@@ -64,8 +64,8 @@ public:
 
 // PUBLIC
 
-SQLiteFlightDao::SQLiteFlightDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLiteFlightDaoPrivate>(std::move(connectionName)))
+SQLiteFlightDao::SQLiteFlightDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLiteFlightDaoPrivate>(connectionName))
 {}
 
 SQLiteFlightDao::SQLiteFlightDao(SQLiteFlightDao &&rhs) noexcept = default;

@@ -39,7 +39,7 @@ struct SQLiteLightDaoPrivate;
 class SQLiteLightDao : public LightDaoIntf
 {
 public:
-    SQLiteLightDao(QString connectionName) noexcept;
+    SQLiteLightDao(const QString &connectionName) noexcept;
     SQLiteLightDao(const SQLiteLightDao &rhs) = delete;
     SQLiteLightDao(SQLiteLightDao &&rhs) noexcept;
     SQLiteLightDao &operator=(const SQLiteLightDao &rhs) = delete;

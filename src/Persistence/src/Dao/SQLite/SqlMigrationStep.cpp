@@ -43,8 +43,8 @@
 
 struct SqlMigrationStepPrivate
 {
-    SqlMigrationStepPrivate(QString connectionName)
-        : connectionName(std::move(connectionName))
+    SqlMigrationStepPrivate(const QString &connectionName)
+        : connectionName(connectionName)
     {}
 
     QString connectionName;
@@ -57,8 +57,8 @@ struct SqlMigrationStepPrivate
 
 // PUBLIC
 
-SqlMigrationStep::SqlMigrationStep(QString connectionName) noexcept
-    : d(std::make_unique<SqlMigrationStepPrivate>(std::move(connectionName)))
+SqlMigrationStep::SqlMigrationStep(const QString &connectionName) noexcept
+    : d(std::make_unique<SqlMigrationStepPrivate>(connectionName))
 {}
 
 SqlMigrationStep::SqlMigrationStep(SqlMigrationStep &&rhs) noexcept = default;

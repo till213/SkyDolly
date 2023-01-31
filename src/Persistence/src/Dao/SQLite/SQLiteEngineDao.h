@@ -39,7 +39,7 @@ struct SQLiteEngineDaoPrivate;
 class SQLiteEngineDao : public EngineDaoIntf
 {
 public:
-    SQLiteEngineDao(QString connectionName) noexcept;
+    SQLiteEngineDao(const QString &connectionName) noexcept;
     SQLiteEngineDao(const SQLiteEngineDao &rhs) = delete;
     SQLiteEngineDao(SQLiteEngineDao &&rhs) noexcept;
     SQLiteEngineDao &operator=(const SQLiteEngineDao &rhs) = delete;
