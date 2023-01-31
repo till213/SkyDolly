@@ -32,6 +32,7 @@
 class QDateTime;
 
 #include <Kernel/Version.h>
+#include <Kernel/Const.h>
 #include "Metadata.h"
 
 class DatabaseDaoIntf
@@ -44,10 +45,9 @@ public:
     DatabaseDaoIntf &operator=(DatabaseDaoIntf &&rhs) = default;
     virtual ~DatabaseDaoIntf() = default;
 
-    static inline const QString DefaultConnectionName {QStringLiteral("DefaultConnection")};
-
-    virtual bool connectDb(const QString &logbookPath, QString connectionName = DefaultConnectionName) noexcept = 0;
+    virtual bool connectDb(const QString &logbookPath, QString connectionName = Const::DefaultConnectionName) noexcept = 0;
     virtual void disconnectDb() noexcept = 0;
+    virtual const QString &connectionName() const noexcept = 0;
 
     virtual bool migrate() noexcept = 0;
     virtual bool optimise() noexcept = 0;

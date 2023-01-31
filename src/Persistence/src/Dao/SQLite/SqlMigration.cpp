@@ -29,6 +29,7 @@
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QDir>
 #include <QCoreApplication>
@@ -127,7 +128,8 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
     // https://regex101.com/
     // @migr(...)
     static const QRegularExpression migrRegExp(R"(@migr\(([\w="\-,.\s]+)\))");
-    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
@@ -149,7 +151,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 #ifdef DEBUG
                 qDebug() << "SqlMigration::migrate:" << tag;
 #endif
-                SqlMigrationStep step {d->db};
+                SqlMigrationStep step {d->connectionName};
                 ok = step.parseTag(tagMatch);
                 if (ok && !step.checkApplied()) {
                     ok = step.execute(sqlStatements.at(i));
@@ -165,8 +167,9 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 }
 
 bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
-{ 
-    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
+{
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
@@ -179,7 +182,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
             if (CsvParser::validate(rows, Enum::underly(::Index::Count))) {
                 for (const auto &row : rows) {
                     const QString uuid = row.at(::Index::Uuid);
-                    SqlMigrationStep step {d->db};
+                    SqlMigrationStep step {d->connectionName};
                     step.setMigrationId(uuid);
                     step.setStep(1);
                     step.setStepCount(1);

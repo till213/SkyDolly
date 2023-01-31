@@ -71,7 +71,7 @@ SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() = default;
 
 bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const SecondaryFlightControlData &secondaryFlightControlData) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "insert into secondary_flight_control ("
@@ -125,7 +125,7 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
 std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<SecondaryFlightControlData> secondaryFlightControlData;
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -138,7 +138,7 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             secondaryFlightControlData.reserve(query.size());
@@ -185,7 +185,7 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
 
 bool SQLiteSecondaryFlightControlDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "
@@ -208,7 +208,7 @@ bool SQLiteSecondaryFlightControlDao::deleteByFlightId(std::int64_t flightId) no
 
 bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "

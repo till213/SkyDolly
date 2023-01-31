@@ -30,8 +30,8 @@
 #include <QString>
 #include <QSqlDatabase>
 
+#include <Kernel/Const.h>
 #include <Model/Enumeration.h>
-#include "../../src/Dao/DatabaseDaoIntf.h"
 #include "../PersistenceLib.h"
 
 struct EnumerationServicePrivate;
@@ -39,7 +39,7 @@ struct EnumerationServicePrivate;
 class PERSISTENCE_API EnumerationService final
 {
 public:
-    EnumerationService(QString connectionName = DatabaseDaoIntf::DefaultConnectionName) noexcept;
+    EnumerationService(QString connectionName = Const::DefaultConnectionName) noexcept;
     EnumerationService(const EnumerationService &rhs) = delete;
     EnumerationService(EnumerationService &&rhs) noexcept;
     EnumerationService &operator=(const EnumerationService &rhs) = delete;

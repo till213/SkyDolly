@@ -103,7 +103,7 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
 
 bool SqlMigrationStep::checkApplied() noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare("select m.success, m.step, m.msg from migr m where m.id = :id and m.step = :step;");
     query.bindValue(":id", d->migrationId);

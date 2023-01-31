@@ -81,7 +81,7 @@ public:
     bool optimise() noexcept;
     bool backup(const QString &backupLogbookPath) noexcept;
 
-    Metadata getMetadata(const QString &connectionName, bool *ok = nullptr) const noexcept;
+    Metadata getMetadata(bool *ok = nullptr) const noexcept;
     Version getDatabaseVersion(bool *ok = nullptr) const noexcept;
     QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept;
 

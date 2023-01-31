@@ -69,7 +69,7 @@ SQLiteEngineDao::~SQLiteEngineDao() = default;
 
 bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "insert into engine ("
@@ -180,7 +180,7 @@ bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data) noexc
 std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<EngineData> engineData;
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -193,7 +193,7 @@ std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             engineData.reserve(query.size());
@@ -280,7 +280,7 @@ std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId
 
 bool SQLiteEngineDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "
@@ -303,7 +303,7 @@ bool SQLiteEngineDao::deleteByFlightId(std::int64_t flightId) noexcept
 
 bool SQLiteEngineDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "

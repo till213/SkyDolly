@@ -31,8 +31,8 @@
 
 #include <QSqlDatabase>
 
+#include <Kernel/Const.h>
 #include <Model/Location.h>
-#include "../../src/Dao/DatabaseDaoIntf.h"
 #include "../PersistenceLib.h"
 
 struct LocationSelector;
@@ -46,7 +46,7 @@ public:
         Update,
         Insert
     };
-    LocationService(QString connectionName = DatabaseDaoIntf::DefaultConnectionName) noexcept;
+    LocationService(QString connectionName = Const::DefaultConnectionName) noexcept;
     LocationService(const LocationService &rhs) = delete;
     LocationService(LocationService &&rhs) noexcept;
     LocationService &operator=(const LocationService &rhs) = delete;

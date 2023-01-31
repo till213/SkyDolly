@@ -19,6 +19,11 @@ namespace Const {
     constexpr const char *LogbookExtension {".sdlog"};
 
     /*!
+     * The default logbook connection name that is used for the application.
+     */
+    constexpr const char *DefaultConnectionName {"Default"};
+
+    /*!
      * Suffix indicating zulu time including whitespace, ready to be appended to a
      * formated date/time string.
      */
@@ -37,11 +42,6 @@ namespace Const {
     // NASA X-43 (Mach 9.6)
     // https://internationalaviationhq.com/2020/06/27/17-fastest-aircraft/
     constexpr int MaximumIndicatedAirspeed {6350};
-
-    /*!
-     * Maximum rate at which the flight simulator is run.
-     */
-    constexpr int MaximumSimulationRate = 16;
 }
 
 #endif // CONST_H

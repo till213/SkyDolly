@@ -63,7 +63,7 @@ Enumeration SQLiteEnumerationDao::get(const QString &name, Enumeration::Order or
     Enumeration enumeration {name};
     const QString enumerationTableName = QStringLiteral("enum_") % Name::fromCamelCase(enumeration.getName());
 
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
 

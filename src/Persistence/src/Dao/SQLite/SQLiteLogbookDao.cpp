@@ -79,7 +79,7 @@ SQLiteLogbookDao::~SQLiteLogbookDao() = default;
 std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates(bool *ok) const noexcept
 {
     std::forward_list<FlightDate> flightDates;
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -125,7 +125,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         searchKeyword = LikeOperatorPlaceholder  % flightSelector.searchKeyword % LikeOperatorPlaceholder;
     }
 
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -167,7 +167,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     query.bindValue(":duration", flightSelector.mininumDurationMinutes);
     const bool success = query.exec();
     if (success) {
-        QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             summaries.reserve(query.size());

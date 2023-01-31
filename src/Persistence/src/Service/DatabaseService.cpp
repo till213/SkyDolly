@@ -60,12 +60,14 @@ namespace
 struct DatabaseServicePrivate
 {
     DatabaseServicePrivate(QString connectionName) noexcept
-        : connectionName(std::move(connectionName))
+        :  connectionName(connectionName),
+           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
+           databaseDao(daoFactory->createDatabaseDao())
     {}
 
     QString connectionName;
-    std::unique_ptr<DaoFactory> daoFactory {std::make_unique<DaoFactory>()};
-    std::unique_ptr<DatabaseDaoIntf> databaseDao {daoFactory->createDatabaseDao(DaoFactory::DbType::SQLite)};
+    std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<DatabaseDaoIntf> databaseDao;
 
     const std::int64_t BackupPeriodNeverId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNeverSymId).id()};
     const std::int64_t BackupPeriodNowId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNowSymId).id()};

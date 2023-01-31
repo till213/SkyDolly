@@ -31,10 +31,10 @@
 
 #include <QSqlDatabase>
 
+#include <Kernel/Const.h>
 #include <Model/Flight.h>
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
-#include "../../src/Dao/DatabaseDaoIntf.h"
 #include "../PersistenceLib.h"
 
 class SkyConnectIntf;
@@ -43,7 +43,7 @@ struct FlightServicePrivate;
 class PERSISTENCE_API FlightService final
 {
 public:
-    FlightService(QString connectionName = DatabaseDaoIntf::DefaultConnectionName) noexcept;
+    FlightService(QString connectionName = Const::DefaultConnectionName) noexcept;
     FlightService(const FlightService &rhs) = delete;
     FlightService(FlightService &&rhs) noexcept;
     FlightService &operator=(const FlightService &rhs) = delete;
