@@ -29,20 +29,22 @@
 #include <cstdint>
 
 #include <QObject>
+#include <QSqlDatabase>
 
 class QString;
 class QWidget;
 class QDateTime;
 
+#include <Kernel/Const.h>
 #include "../PersistenceLib.h"
 
 class Version;
 struct DatabaseServicePrivate;
 
-class PERSISTENCE_API DatabaseService
+class PERSISTENCE_API DatabaseService final
 {
 public:
-    DatabaseService() noexcept;
+    DatabaseService(const QString &connectionName = Const::DefaultConnectionName) noexcept;
     DatabaseService(const DatabaseService &rhs) = delete;
     DatabaseService(DatabaseService &&rhs) noexcept;
     DatabaseService &operator=(const DatabaseService &rhs) = delete;

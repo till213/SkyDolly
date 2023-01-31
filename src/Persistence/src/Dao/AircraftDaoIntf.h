@@ -31,6 +31,7 @@
 #include <cstddef>
 
 class QString;
+class QSqlDatabase;
 
 class Aircraft;
 struct AircraftInfo;

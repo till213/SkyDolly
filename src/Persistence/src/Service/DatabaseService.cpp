@@ -59,8 +59,15 @@ namespace
 
 struct DatabaseServicePrivate
 {
-    std::unique_ptr<DaoFactory> daoFactory {std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)};
-    std::unique_ptr<DatabaseDaoIntf> databaseDao {daoFactory->createDatabaseDao()};
+    DatabaseServicePrivate(const QString &connectionName) noexcept
+        :  connectionName(connectionName),
+           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, connectionName)),
+           databaseDao(daoFactory->createDatabaseDao())
+    {}
+
+    QString connectionName;
+    std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<DatabaseDaoIntf> databaseDao;
 
     const std::int64_t BackupPeriodNeverId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNeverSymId).id()};
     const std::int64_t BackupPeriodNowId {PersistedEnumerationItem(EnumerationService::BackupPeriod, EnumerationService::BackupPeriodNowSymId).id()};
@@ -72,8 +79,8 @@ struct DatabaseServicePrivate
 
 // PUBLIC
 
-DatabaseService::DatabaseService() noexcept
-    : d(std::make_unique<DatabaseServicePrivate>())
+DatabaseService::DatabaseService(const QString &connectionName) noexcept
+    : d(std::make_unique<DatabaseServicePrivate>(connectionName))
 {}
 
 DatabaseService::DatabaseService(DatabaseService &&rhs) noexcept = default;
@@ -112,13 +119,14 @@ bool DatabaseService::backup() noexcept
 
 bool DatabaseService::setBackupPeriod(std::int64_t backupPeriodId) noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
     if (ok) {
         ok = d->databaseDao->updateBackupPeriod(backupPeriodId);
         if (ok) {
-            ok = QSqlDatabase::database().commit();
+            ok = db.commit();
         } else {
-            QSqlDatabase::database().rollback();
+            db.rollback();
         }
     }
     return ok;
@@ -126,13 +134,14 @@ bool DatabaseService::setBackupPeriod(std::int64_t backupPeriodId) noexcept
 
 bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
     if (ok) {
         ok = d->databaseDao->updateNextBackupDate(date);
         if (ok) {
-            ok = QSqlDatabase::database().commit();
+            ok = db.commit();
         } else {
-            QSqlDatabase::database().rollback();
+            db.rollback();
         }
     }
     return ok;
@@ -164,13 +173,14 @@ bool DatabaseService::updateBackupDate() noexcept
 
 bool DatabaseService::setBackupDirectoryPath(const QString &backupDirectoryPath) noexcept
 {
-    bool ok = QSqlDatabase::database().transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
     if (ok) {
         ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
         if (ok) {
-            ok = QSqlDatabase::database().commit();
+            ok = db.commit();
         } else {
-            QSqlDatabase::database().rollback();
+            db.rollback();
         }
     }
     return ok;

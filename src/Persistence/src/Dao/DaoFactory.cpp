@@ -54,17 +54,19 @@
 
 struct DaoFactoryPrivate
 {
-    DaoFactoryPrivate(DaoFactory::DbType theDbType)
-        : dbType(theDbType)
+    DaoFactoryPrivate(DaoFactory::DbType dbType, const QString &connectionName)
+        : dbType(dbType),
+          connectionName(connectionName)
     {}
 
     DaoFactory::DbType dbType;
+    QString connectionName;
 };
 
 // PUBLIC
 
-DaoFactory::DaoFactory(DbType dbType)
-    : d(std::make_unique<DaoFactoryPrivate>(dbType))
+DaoFactory::DaoFactory(DbType dbType, const QString &connectionName)
+    : d(std::make_unique<DaoFactoryPrivate>(dbType, connectionName))
 {}
 
 DaoFactory::DaoFactory(DaoFactory &&rhs) noexcept = default;
@@ -87,7 +89,7 @@ std::unique_ptr<LogbookDaoIntf> DaoFactory::createLogbookDao() noexcept
     std::unique_ptr<SQLiteLogbookDao> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteLogbookDao>();
+        dao = std::make_unique<SQLiteLogbookDao>(d->connectionName);
         break;
     }
     return dao;
@@ -98,7 +100,7 @@ std::unique_ptr<FlightDaoIntf> DaoFactory::createFlightDao() noexcept
     std::unique_ptr<SQLiteFlightDao> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteFlightDao>();
+        dao = std::make_unique<SQLiteFlightDao>(d->connectionName);
         break;
     }
     return dao;
@@ -109,7 +111,7 @@ std::unique_ptr<AircraftDaoIntf> DaoFactory::createAircraftDao() noexcept
     std::unique_ptr<SQLiteAircraftDao> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteAircraftDao>();
+        dao = std::make_unique<SQLiteAircraftDao>(d->connectionName);
         break;
     }
     return dao;
@@ -120,7 +122,7 @@ std::unique_ptr<AircraftTypeDaoIntf> DaoFactory::createAircraftTypeDao() noexcep
     std::unique_ptr<SQLiteAircraftTypeDao> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteAircraftTypeDao>();
+        dao = std::make_unique<SQLiteAircraftTypeDao>(d->connectionName);
         break;
     }
     return dao;
@@ -131,7 +133,7 @@ std::unique_ptr<PositionDaoIntf> DaoFactory::createPositionDao() noexcept
     std::unique_ptr<PositionDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLitePositionDao>();
+        dao = std::make_unique<SQLitePositionDao>(d->connectionName);
         break;
     }
     return dao;
@@ -142,7 +144,7 @@ std::unique_ptr<EngineDaoIntf> DaoFactory::createEngineDao() noexcept
     std::unique_ptr<EngineDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteEngineDao>();
+        dao = std::make_unique<SQLiteEngineDao>(d->connectionName);
         break;
     }
     return dao;
@@ -153,7 +155,7 @@ std::unique_ptr<PrimaryFlightControlDaoIntf> DaoFactory::createPrimaryFlightCont
     std::unique_ptr<PrimaryFlightControlDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLitePrimaryFlightControlDao>();
+        dao = std::make_unique<SQLitePrimaryFlightControlDao>(d->connectionName);
         break;
     }
     return dao;
@@ -164,7 +166,7 @@ std::unique_ptr<SecondaryFlightControlDaoIntf> DaoFactory::createSecondaryFlight
     std::unique_ptr<SecondaryFlightControlDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteSecondaryFlightControlDao>();
+        dao = std::make_unique<SQLiteSecondaryFlightControlDao>(d->connectionName);
         break;
     }
     return dao;
@@ -175,7 +177,7 @@ std::unique_ptr<HandleDaoIntf> DaoFactory::createHandleDao() noexcept
     std::unique_ptr<HandleDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteHandleDao>();
+        dao = std::make_unique<SQLiteHandleDao>(d->connectionName);
         break;
     }
     return dao;
@@ -186,7 +188,7 @@ std::unique_ptr<LightDaoIntf> DaoFactory::createLightDao() noexcept
     std::unique_ptr<LightDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteLightDao>();
+        dao = std::make_unique<SQLiteLightDao>(d->connectionName);
         break;
     }
     return dao;
@@ -197,7 +199,7 @@ std::unique_ptr<WaypointDaoIntf> DaoFactory::createFlightPlanDao() noexcept
     std::unique_ptr<WaypointDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteWaypointDao>();
+        dao = std::make_unique<SQLiteWaypointDao>(d->connectionName);
         break;
     }
     return dao;
@@ -208,7 +210,7 @@ std::unique_ptr<LocationDaoIntf> DaoFactory::createLocationDao() noexcept
     std::unique_ptr<LocationDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteLocationDao>();
+        dao = std::make_unique<SQLiteLocationDao>(d->connectionName);
         break;
     }
     return dao;
@@ -220,7 +222,7 @@ std::unique_ptr<EnumerationDaoIntf> DaoFactory::createEnumerationDao() noexcept
     std::unique_ptr<EnumerationDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteEnumerationDao>();
+        dao = std::make_unique<SQLiteEnumerationDao>(d->connectionName);
         break;
     }
     return dao;

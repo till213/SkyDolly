@@ -25,8 +25,10 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -48,7 +50,20 @@ namespace
     constexpr int DefaultCapacity = 30 * 2 * 60;
 }
 
+struct SQLitePrimaryFlightControlDaoPrivate
+{
+    SQLitePrimaryFlightControlDaoPrivate(const QString &connectionName) noexcept
+        : connectionName(connectionName)
+    {}
+
+    QString connectionName;
+};
+
 // PUBLIC
+
+SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLitePrimaryFlightControlDaoPrivate>(connectionName))
+{}
 
 SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao(SQLitePrimaryFlightControlDao &&rhs) noexcept = default;
 SQLitePrimaryFlightControlDao &SQLitePrimaryFlightControlDao::operator=(SQLitePrimaryFlightControlDao &&rhs) noexcept = default;
@@ -56,7 +71,8 @@ SQLitePrimaryFlightControlDao::~SQLitePrimaryFlightControlDao() = default;
 
 bool SQLitePrimaryFlightControlDao::add(std::int64_t aircraftId, const PrimaryFlightControlData &primaryFlightControlData) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into primary_flight_control ("
         "  aircraft_id,"
@@ -103,7 +119,8 @@ bool SQLitePrimaryFlightControlDao::add(std::int64_t aircraftId, const PrimaryFl
 std::vector<PrimaryFlightControlData> SQLitePrimaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<PrimaryFlightControlData> primaryFlightControlData;
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -115,7 +132,8 @@ std::vector<PrimaryFlightControlData> SQLitePrimaryFlightControlDao::getByAircra
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             primaryFlightControlData.reserve(query.size());
         } else {
@@ -159,7 +177,8 @@ std::vector<PrimaryFlightControlData> SQLitePrimaryFlightControlDao::getByAircra
 
 bool SQLitePrimaryFlightControlDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   primary_flight_control "
@@ -181,7 +200,8 @@ bool SQLitePrimaryFlightControlDao::deleteByFlightId(std::int64_t flightId) noex
 
 bool SQLitePrimaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   primary_flight_control "

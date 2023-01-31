@@ -914,3 +914,7 @@ set    on_any_runway = 0,
 @migr(id = "663032d8-c8a4-43ff-b126-0d964d73bf23", descn = "Update application version to 0.14", step = 1)
 update metadata
 set app_version = '0.14.0';
+
+@migr(id = "fbfeec8f-0e50-4efc-956d-391e40563b28", descn = "Update application version to 0.15", step = 1)
+update metadata
+set app_version = '0.15.0';

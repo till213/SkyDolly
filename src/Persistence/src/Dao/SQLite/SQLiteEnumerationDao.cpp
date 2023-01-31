@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+#include <utility>
+
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
@@ -36,7 +39,20 @@
 #include <Model/Enumeration.h>
 #include "SQLiteEnumerationDao.h"
 
-// PUBIC
+struct SQLiteEnumerationDaoPrivate
+{
+    SQLiteEnumerationDaoPrivate(const QString &connectionName) noexcept
+        : connectionName(connectionName)
+    {}
+
+    QString connectionName;
+};
+
+// PUBLIC
+
+SQLiteEnumerationDao::SQLiteEnumerationDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLiteEnumerationDaoPrivate>(connectionName))
+{}
 
 SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept = default;
 SQLiteEnumerationDao &SQLiteEnumerationDao::operator=(SQLiteEnumerationDao &&rhs) noexcept = default;
@@ -47,7 +63,8 @@ Enumeration SQLiteEnumerationDao::get(const QString &name, Enumeration::Order or
     Enumeration enumeration {name};
     const QString enumerationTableName = QStringLiteral("enum_") % Name::fromCamelCase(enumeration.getName());
 
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
 
     QString orderColumn;

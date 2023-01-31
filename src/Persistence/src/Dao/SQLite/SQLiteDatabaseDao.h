@@ -29,10 +29,12 @@
 #include <cstdint>
 
 #include <QString>
+#include <QLatin1String>
 
 class QDateTime;
 
 #include <Kernel/Version.h>
+#include <Kernel/Const.h>
 #include "../DatabaseDaoIntf.h"
 #include "Metadata.h"
 
@@ -48,8 +50,9 @@ public:
     SQLiteDatabaseDao &operator=(SQLiteDatabaseDao &&rhs) noexcept;
     ~SQLiteDatabaseDao() override;
 
-    bool connectDb(const QString &logbookPath) noexcept override;
+    bool connectDb(const QString &logbookPath, const QString &connectionName = Const::DefaultConnectionName) noexcept override;
     void disconnectDb() noexcept override;
+    const QString &connectionName() const noexcept override;
 
     bool migrate() noexcept override;
     bool optimise() noexcept override;

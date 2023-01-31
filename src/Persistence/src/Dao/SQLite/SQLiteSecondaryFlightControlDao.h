@@ -29,14 +29,17 @@
 #include <vector>
 #include <cstdint>
 
+class QString;
+
 #include "../SecondaryFlightControlDaoIntf.h"
 
 struct SecondaryFlightControlData;
+struct SQLiteSecondaryFlightControlDaoPrivate;
 
 class SQLiteSecondaryFlightControlDao : public SecondaryFlightControlDaoIntf
 {
 public:
-    SQLiteSecondaryFlightControlDao() = default;
+    SQLiteSecondaryFlightControlDao(const QString &connectionName) noexcept;
     SQLiteSecondaryFlightControlDao(const SQLiteSecondaryFlightControlDao &rhs) = delete;
     SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs) noexcept;
     SQLiteSecondaryFlightControlDao &operator=(const SQLiteSecondaryFlightControlDao &rhs) = delete;
@@ -47,6 +50,9 @@ public:
     std::vector<SecondaryFlightControlData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+
+private:
+    std::unique_ptr<SQLiteSecondaryFlightControlDaoPrivate> d;
 };
 
 #endif // SQLITESECONDARYFLIGHTCONTROLDAO_H

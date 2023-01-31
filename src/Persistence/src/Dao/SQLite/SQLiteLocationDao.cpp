@@ -22,10 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
 #include <vector>
+#include <utility>
 
 #include <QString>
 #include <QStringBuilder>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -46,7 +49,20 @@ namespace
     constexpr int DefaultCapacity = 25;
 }
 
-// PUBIC
+struct SQLiteLocationDaoPrivate
+{
+    SQLiteLocationDaoPrivate(const QString &connectionName) noexcept
+        : connectionName(connectionName)
+    {}
+
+    QString connectionName;
+};
+
+// PUBLIC
+
+SQLiteLocationDao::SQLiteLocationDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLiteLocationDaoPrivate>(connectionName))
+{}
 
 SQLiteLocationDao::SQLiteLocationDao(SQLiteLocationDao &&rhs) noexcept = default;
 SQLiteLocationDao &SQLiteLocationDao::operator=(SQLiteLocationDao &&rhs) noexcept = default;
@@ -54,7 +70,8 @@ SQLiteLocationDao::~SQLiteLocationDao() = default;
 
 bool SQLiteLocationDao::add(Location &location) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into location ("
         "  title,"
@@ -124,7 +141,8 @@ bool SQLiteLocationDao::add(Location &location) noexcept
 
 bool SQLiteLocationDao::update(const Location &location) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "update location "
         "set    title = :title,"
@@ -176,7 +194,8 @@ bool SQLiteLocationDao::update(const Location &location) noexcept
 std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double longitude, double distance, bool *ok) const noexcept
 {
     std::vector<Location> locations;
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
 
     // TODO Implement https://jonisalonen.com/2014/computing-distance-between-coordinates-can-be-simple-and-fast/
@@ -196,7 +215,8 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
 
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             locations.reserve(query.size());
         } else {
@@ -257,7 +277,8 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
 
 bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   location "
@@ -276,7 +297,8 @@ bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
 
 std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -289,9 +311,11 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
 
 std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, bool *ok) const noexcept
 {
-    QSqlQuery query;
-    QString searchKeyword;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
+
+    QString searchKeyword;
     QString queryString = "select * "
                           "from   location l "
                           "where 1 = 1 ";
@@ -340,7 +364,8 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
     std::vector<Location> locations;
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             locations.reserve(query.size());
         } else {

@@ -29,6 +29,9 @@
 #include <forward_list>
 #include <vector>
 
+#include <QSqlDatabase>
+
+#include <Kernel/Const.h>
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
 #include "../PersistenceLib.h"
@@ -36,10 +39,10 @@
 class FlightSelector;
 struct LogbookServicePrivate;
 
-class PERSISTENCE_API LogbookService
+class PERSISTENCE_API LogbookService final
 {
 public:
-    LogbookService() noexcept;
+    LogbookService(const QString &connectionName = Const::DefaultConnectionName) noexcept;
     LogbookService(const LogbookService &rhs) = delete;
     LogbookService(LogbookService &&rhs) noexcept;
     LogbookService &operator=(const LogbookService &rhs) = delete;

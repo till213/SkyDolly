@@ -27,6 +27,10 @@
 
 #include <memory>
 
+#include <QString>
+
+#include <Kernel/Const.h>
+
 class LogbookDaoIntf;
 class FlightDaoIntf;
 class AircraftDaoIntf;
@@ -53,8 +57,7 @@ public:
         SQLite = 0
     };
 
-    DaoFactory(DbType dbType);
-    DaoFactory() = default;
+    DaoFactory(DbType dbType, const QString &connectionName = Const::DefaultConnectionName);
     DaoFactory(const DaoFactory &rhs) = delete;
     DaoFactory(DaoFactory &&rhs) noexcept;
     DaoFactory &operator=(const DaoFactory &rhs) = delete;

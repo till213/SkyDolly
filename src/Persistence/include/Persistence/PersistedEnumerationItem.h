@@ -28,7 +28,7 @@
 #include <memory>
 #include <cstdint>
 
-#include <QString>
+class QString;
 
 #include <Model/SimType.h>
 #include "PersistenceLib.h"
@@ -38,6 +38,17 @@ struct PersistedEnumerationItemPrivate;
 class PERSISTENCE_API PersistedEnumerationItem
 {
 public:
+    /*!
+     * Creates this PersistedEnumerationItem, initialising its value with the \c symId
+     * of the persisted enumeration \c enumerationName of the \em application database
+     * (default connection).
+     *
+     * \param enumerationName
+     *        the name of the persisted enumeration
+     * \param symId
+     *        the symbolic id
+     * \sa QSqlDatabase::database
+     */
     PersistedEnumerationItem(const QString &enumerationName, const QString &symId) noexcept;
     PersistedEnumerationItem();
     PersistedEnumerationItem(const PersistedEnumerationItem &rhs) = delete;

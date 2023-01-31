@@ -29,6 +29,7 @@
 #include <vector>
 
 class QString;
+class QSqlDatabase;
 
 struct AircraftType;
 

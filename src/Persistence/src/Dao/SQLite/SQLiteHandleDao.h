@@ -29,14 +29,17 @@
 #include <vector>
 #include <cstdint>
 
+class QString;
+
 #include "../HandleDaoIntf.h"
 
 struct AircraftHandleData;
+struct SQLiteHandleDaoPrivate;
 
 class SQLiteHandleDao : public HandleDaoIntf
 {
 public:
-    SQLiteHandleDao() = default;
+    SQLiteHandleDao(const QString &connectionName) noexcept;
     SQLiteHandleDao(const SQLiteHandleDao &rhs) = delete;
     SQLiteHandleDao(SQLiteHandleDao &&rhs) noexcept;
     SQLiteHandleDao &operator=(const SQLiteHandleDao &rhs) = delete;
@@ -47,6 +50,9 @@ public:
     std::vector<AircraftHandleData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+
+private:
+    std::unique_ptr<SQLiteHandleDaoPrivate> d;
 };
 
 #endif // SQLITEHANDLEDAO_H

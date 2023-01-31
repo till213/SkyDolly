@@ -28,8 +28,6 @@
 #include <forward_list>
 #include <vector>
 
-#include <QtGlobal>
-
 class QString;
 
 class FlightSelector;

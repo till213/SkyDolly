@@ -28,16 +28,17 @@
 #include <memory>
 #include <vector>
 
-class QString;
+#include <QString>
 
 #include "../AircraftTypeDaoIntf.h"
 
 struct AircraftType;
+struct SQLiteAircraftTypeDaoPrivate;
 
 class SQLiteAircraftTypeDao : public AircraftTypeDaoIntf
 {
 public:
-    SQLiteAircraftTypeDao() = default;
+    SQLiteAircraftTypeDao(const QString &connectionName) noexcept;
     SQLiteAircraftTypeDao(const SQLiteAircraftTypeDao &rhs) = delete;
     SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) noexcept;
     SQLiteAircraftTypeDao &operator=(const SQLiteAircraftTypeDao &rhs) = delete;
@@ -48,6 +49,9 @@ public:
     AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept override;
     std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept override;
     bool exists(const QString &type) const noexcept override;
+
+private:
+    std::unique_ptr<SQLiteAircraftTypeDaoPrivate> d;
 };
 
 #endif // AIRCRAFTTYPEDAO_H

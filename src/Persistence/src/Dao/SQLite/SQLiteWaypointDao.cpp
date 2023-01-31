@@ -24,8 +24,10 @@
  */
 #include <memory>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -40,7 +42,20 @@
 #include <Model/Waypoint.h>
 #include "SQLiteWaypointDao.h"
 
+struct SQLiteWaypointDaoPrivate
+{
+    SQLiteWaypointDaoPrivate(const QString &connectionName) noexcept
+        : connectionName(connectionName)
+    {}
+
+    QString connectionName;
+};
+
 // PUBLIC
+
+SQLiteWaypointDao::SQLiteWaypointDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLiteWaypointDaoPrivate>(connectionName))
+{}
 
 SQLiteWaypointDao::SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept = default;
 SQLiteWaypointDao &SQLiteWaypointDao::operator=(SQLiteWaypointDao &&rhs) noexcept = default;
@@ -48,7 +63,8 @@ SQLiteWaypointDao::~SQLiteWaypointDao() = default;
 
 bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into waypoint ("
         "  aircraft_id,"
@@ -97,7 +113,8 @@ bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPla
 
 bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &flightPlan) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -140,7 +157,8 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
 
 bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   waypoint "
@@ -162,7 +180,8 @@ bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) noexcept
 
 bool SQLiteWaypointDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   waypoint "

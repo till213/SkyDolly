@@ -25,10 +25,12 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
+#include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QSqlDriver>
@@ -48,7 +50,20 @@ namespace
     constexpr int DefaultCapacity = 30 * 2 * 60;
 }
 
+struct SQLitePositionDaoPrivate
+{
+    SQLitePositionDaoPrivate(const QString &connectionName) noexcept
+        : connectionName(connectionName)
+    {}
+
+    QString connectionName;
+};
+
 // PUBLIC
+
+SQLitePositionDao::SQLitePositionDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLitePositionDaoPrivate>(connectionName))
+{}
 
 SQLitePositionDao::SQLitePositionDao(SQLitePositionDao &&rhs) noexcept = default;
 SQLitePositionDao &SQLitePositionDao::operator=(SQLitePositionDao &&rhs) noexcept = default;
@@ -56,7 +71,8 @@ SQLitePositionDao::~SQLitePositionDao() = default;
 
 bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &position) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into position ("
         "  aircraft_id,"
@@ -112,7 +128,8 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
 std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<PositionData> positionData;
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -124,7 +141,8 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             positionData.reserve(query.size());
         } else {
@@ -173,7 +191,8 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
 
 bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   position "
@@ -195,7 +214,8 @@ bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) noexcept
 
 bool SQLitePositionDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   position "

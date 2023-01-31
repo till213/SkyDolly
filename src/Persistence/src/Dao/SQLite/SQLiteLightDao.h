@@ -29,14 +29,17 @@
 #include <vector>
 #include <cstdint>
 
+class QString;
+
 #include "../LightDaoIntf.h"
 
 struct LightData;
+struct SQLiteLightDaoPrivate;
 
 class SQLiteLightDao : public LightDaoIntf
 {
 public:
-    SQLiteLightDao() = default;
+    SQLiteLightDao(const QString &connectionName) noexcept;
     SQLiteLightDao(const SQLiteLightDao &rhs) = delete;
     SQLiteLightDao(SQLiteLightDao &&rhs) noexcept;
     SQLiteLightDao &operator=(const SQLiteLightDao &rhs) = delete;
@@ -47,6 +50,9 @@ public:
     std::vector<LightData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+
+private:
+    std::unique_ptr<SQLiteLightDaoPrivate> d;
 };
 
 #endif // SQLITELIGHTDAO_H

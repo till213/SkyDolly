@@ -28,18 +28,21 @@
 #include <memory>
 #include <vector>
 
+#include <QSqlDatabase>
+
 class QString;
 
+#include <Kernel/Const.h>
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
 #include "../PersistenceLib.h"
 
 struct AircraftTypeServicePrivate;
 
-class PERSISTENCE_API AircraftTypeService
+class PERSISTENCE_API AircraftTypeService final
 {
 public:
-    AircraftTypeService() noexcept;
+    AircraftTypeService(const QString &connectionName = Const::DefaultConnectionName) noexcept;
     AircraftTypeService(const AircraftTypeService &rhs) = delete;
     AircraftTypeService(AircraftTypeService &&rhs) noexcept;
     AircraftTypeService &operator=(const AircraftTypeService &rhs) = delete;

@@ -30,6 +30,8 @@
 #include <cstdint>
 #include <cstddef>
 
+#include <QString>
+
 #include "../AircraftDaoIntf.h"
 
 class Aircraft;
@@ -39,7 +41,7 @@ struct SQLiteAircraftDaoPrivate;
 class SQLiteAircraftDao : public AircraftDaoIntf
 {
 public:
-    SQLiteAircraftDao() noexcept;
+    SQLiteAircraftDao(const QString &connectionNanme) noexcept;
     SQLiteAircraftDao(const SQLiteAircraftDao &rhs) = delete;
     SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept;
     SQLiteAircraftDao &operator=(const SQLiteAircraftDao &rhs) = delete;

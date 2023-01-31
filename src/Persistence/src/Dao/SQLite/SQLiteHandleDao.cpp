@@ -25,8 +25,10 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -46,7 +48,20 @@ namespace
     constexpr int DefaultCapacity = 4;
 }
 
+struct SQLiteHandleDaoPrivate
+{
+    SQLiteHandleDaoPrivate(const QString &connectionName) noexcept
+        : connectionName(connectionName)
+    {}
+
+    QString connectionName;
+};
+
 // PUBLIC
+
+SQLiteHandleDao::SQLiteHandleDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLiteHandleDaoPrivate>(connectionName))
+{}
 
 SQLiteHandleDao::SQLiteHandleDao(SQLiteHandleDao &&rhs) noexcept = default;
 SQLiteHandleDao &SQLiteHandleDao::operator=(SQLiteHandleDao &&rhs) noexcept = default;
@@ -54,7 +69,8 @@ SQLiteHandleDao::~SQLiteHandleDao() = default;
 
 bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &aircraftHandleData) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into handle ("
         "  aircraft_id,"
@@ -113,7 +129,8 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
 std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<AircraftHandleData> aircraftHandleData;
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -125,7 +142,8 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             aircraftHandleData.reserve(query.size());
         } else {
@@ -175,7 +193,8 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
 
 bool SQLiteHandleDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   handle "
@@ -197,7 +216,8 @@ bool SQLiteHandleDao::deleteByFlightId(std::int64_t flightId) noexcept
 
 bool SQLiteHandleDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   handle "

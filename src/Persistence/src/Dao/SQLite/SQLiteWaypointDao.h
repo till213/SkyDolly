@@ -28,15 +28,18 @@
 #include <memory>
 #include <cstdint>
 
+class QString;
+
 #include <Model/Waypoint.h>
 #include "../WaypointDaoIntf.h"
 
 class FlightPlan;
+struct SQLiteWaypointDaoPrivate;
 
 class SQLiteWaypointDao : public WaypointDaoIntf
 {
 public:
-    SQLiteWaypointDao() = default;
+    SQLiteWaypointDao(const QString &connectionName) noexcept;
     SQLiteWaypointDao(const SQLiteWaypointDao &rhs) = delete;
     SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept;
     SQLiteWaypointDao &operator=(const SQLiteWaypointDao &rhs) = delete;
@@ -47,6 +50,9 @@ public:
     bool getByAircraftId(std::int64_t aircraftId, FlightPlan &flightPlan) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+
+private:
+    std::unique_ptr<SQLiteWaypointDaoPrivate> d;
 };
 
 #endif // SQLITEWAYPOINTDAO_H

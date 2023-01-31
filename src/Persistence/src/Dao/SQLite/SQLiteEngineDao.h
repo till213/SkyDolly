@@ -29,14 +29,17 @@
 #include <vector>
 #include <cstdint>
 
+class QString;
+
 #include "../EngineDaoIntf.h"
 
 struct EngineData;
+struct SQLiteEngineDaoPrivate;
 
 class SQLiteEngineDao : public EngineDaoIntf
 {
 public:
-    SQLiteEngineDao() = default;
+    SQLiteEngineDao(const QString &connectionName) noexcept;
     SQLiteEngineDao(const SQLiteEngineDao &rhs) = delete;
     SQLiteEngineDao(SQLiteEngineDao &&rhs) noexcept;
     SQLiteEngineDao &operator=(const SQLiteEngineDao &rhs) = delete;
@@ -47,6 +50,9 @@ public:
     std::vector<EngineData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
     bool deleteByFlightId(std::int64_t flightId) noexcept override;
     bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+
+private:
+    std::unique_ptr<SQLiteEngineDaoPrivate> d;
 };
 
 #endif // SQLITEENGINEDAO_H

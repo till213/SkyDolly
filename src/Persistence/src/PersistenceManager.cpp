@@ -69,7 +69,6 @@ struct PersistenceManagerPrivate
     static inline PersistenceManager *instance;
 };
 
-
 // PUBLIC
 
 PersistenceManager &PersistenceManager::getInstance() noexcept
@@ -223,10 +222,11 @@ bool PersistenceManager::backup(const QString &backupLogbookPath) noexcept
 Metadata PersistenceManager::getMetadata(bool *ok) const noexcept
 {
     Metadata metadata;
-    bool success = QSqlDatabase::database().transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->databaseDao->connectionName())};
+    bool success = db.transaction();
     if (success) {
         metadata = d->databaseDao->getMetadata(&success);
-        QSqlDatabase::database().rollback();
+        db.rollback();
     }
     if (ok != nullptr) {
         *ok = success;
@@ -236,12 +236,32 @@ Metadata PersistenceManager::getMetadata(bool *ok) const noexcept
 
 Version PersistenceManager::getDatabaseVersion(bool *ok) const noexcept
 {
-    return d->databaseDao->getDatabaseVersion(ok);
+    Version version;
+    QSqlDatabase db {QSqlDatabase::database(d->databaseDao->connectionName())};
+    bool success = db.transaction();
+    if (success) {
+        version = d->databaseDao->getDatabaseVersion(ok);
+        db.rollback();
+    }
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return version;
 }
 
 QString PersistenceManager::getBackupDirectoryPath(bool *ok) const noexcept
 {
-    return d->databaseDao->getBackupDirectoryPath(ok);
+    QString backupDirectoryPath;
+    QSqlDatabase db {QSqlDatabase::database(d->databaseDao->connectionName())};
+    bool success = db.transaction();
+    if (success) {
+        backupDirectoryPath = d->databaseDao->getBackupDirectoryPath(ok);
+        db.rollback();
+    }
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return backupDirectoryPath;
 }
 
 QString PersistenceManager::getBackupFileName(const QString &backupDirectoryPath) const noexcept
@@ -253,14 +273,14 @@ QString PersistenceManager::getBackupFileName(const QString &backupDirectoryPath
     const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
     QString backupLogbookName = baseBackupLogbookName % Const::LogbookExtension;
     int index = 1;
-    while (backupDir.exists(backupLogbookName) && index <= MaxBackupIndex) {
+    while (backupDir.exists(backupLogbookName) && index <= ::MaxBackupIndex) {
         backupLogbookName = baseBackupLogbookName % QString("-%1").arg(index) % Const::LogbookExtension;
         ++index;
     }
-    if (index <= MaxBackupIndex) {
+    if (index <= ::MaxBackupIndex) {
         return backupLogbookName;
     } else {
-        return QString();
+        return {};
     }
 }
 
@@ -307,7 +327,7 @@ bool PersistenceManager::connectDb(const QString &logbookPath) noexcept
     return ok;
 }
 
-std::pair<bool, Version>  PersistenceManager::checkDatabaseVersion() const noexcept
+std::pair<bool, Version> PersistenceManager::checkDatabaseVersion() const noexcept
 {
     std::pair<bool, Version> result;
     result.second = getDatabaseVersion(&result.first);

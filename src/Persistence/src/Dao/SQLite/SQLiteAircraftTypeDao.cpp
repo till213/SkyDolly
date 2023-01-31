@@ -24,7 +24,9 @@
  */
 #include <memory>
 #include <vector>
+#include <utility>
 
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -45,7 +47,20 @@ namespace
     constexpr int DefaultCapacity = 279;
 }
 
+struct SQLiteAircraftTypeDaoPrivate
+{
+    SQLiteAircraftTypeDaoPrivate(const QString &connectionName) noexcept
+        : connectionName(connectionName)
+    {}
+
+    QString connectionName;
+};
+
 // PUBLIC
+
+SQLiteAircraftTypeDao::SQLiteAircraftTypeDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLiteAircraftTypeDaoPrivate>(connectionName))
+{}
 
 SQLiteAircraftTypeDao::SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) noexcept = default;
 SQLiteAircraftTypeDao &SQLiteAircraftTypeDao::operator=(SQLiteAircraftTypeDao &&rhs) noexcept = default;
@@ -53,7 +68,8 @@ SQLiteAircraftTypeDao::~SQLiteAircraftTypeDao() = default;
 
 bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into aircraft_type (type, category, wing_span, engine_type, nof_engines) "
         "values(:type, :category, :wing_span, :engine_type, :nof_engines) "
@@ -83,7 +99,8 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) noexcept
 AircraftType SQLiteAircraftTypeDao::getByType(const QString &type, bool *ok) const noexcept
 {
     AircraftType aircraftType;
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select at.category, at.wing_span, at.engine_type, at.nof_engines "
@@ -122,7 +139,8 @@ AircraftType SQLiteAircraftTypeDao::getByType(const QString &type, bool *ok) con
 std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
 {
     std::vector<AircraftType> aircraftTypes;
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -131,7 +149,7 @@ std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
     );
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             aircraftTypes.reserve(query.size());
         } else {
@@ -167,7 +185,8 @@ std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
 bool SQLiteAircraftTypeDao::exists(const QString &type) const noexcept
 {
     bool exists {false};
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select count(*) "

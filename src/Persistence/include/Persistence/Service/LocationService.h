@@ -28,15 +28,17 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
-#include <cstddef>
 
+#include <QSqlDatabase>
+
+#include <Kernel/Const.h>
 #include <Model/Location.h>
 #include "../PersistenceLib.h"
 
 struct LocationSelector;
 struct LocationServicePrivate;
 
-class PERSISTENCE_API LocationService
+class PERSISTENCE_API LocationService final
 {
 public:
     enum struct Mode {
@@ -44,7 +46,7 @@ public:
         Update,
         Insert
     };
-    LocationService() noexcept;
+    LocationService(const QString &connectionName = Const::DefaultConnectionName) noexcept;
     LocationService(const LocationService &rhs) = delete;
     LocationService(LocationService &&rhs) noexcept;
     LocationService &operator=(const LocationService &rhs) = delete;

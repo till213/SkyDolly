@@ -29,6 +29,9 @@
 #include <forward_list>
 #include <cstdint>
 
+#include <QSqlDatabase>
+
+#include <Kernel/Const.h>
 #include <Model/Flight.h>
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
@@ -37,10 +40,10 @@
 class SkyConnectIntf;
 struct FlightServicePrivate;
 
-class PERSISTENCE_API FlightService
+class PERSISTENCE_API FlightService final
 {
 public:
-    FlightService() noexcept;
+    FlightService(const QString &connectionName = Const::DefaultConnectionName) noexcept;
     FlightService(const FlightService &rhs) = delete;
     FlightService(FlightService &&rhs) noexcept;
     FlightService &operator=(const FlightService &rhs) = delete;

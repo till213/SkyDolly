@@ -25,11 +25,13 @@
 #include <memory>
 #include <vector>
 #include <forward_list>
+#include <utility>
 
 #include <QString>
 #include <QStringBuilder>
 #include <QSqlQuery>
 #include <QVariant>
+#include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QSqlDriver>
@@ -55,7 +57,20 @@ namespace
     constexpr int DefaultSummaryCapacity = 50;
 }
 
+struct SQLiteLogbookDaoPrivate
+{
+    SQLiteLogbookDaoPrivate(const QString &connectionName) noexcept
+        : connectionName(connectionName)
+    {}
+
+    QString connectionName;
+};
+
 // PUBLIC
+
+SQLiteLogbookDao::SQLiteLogbookDao(const QString &connectionName) noexcept
+    : d(std::make_unique<SQLiteLogbookDaoPrivate>(connectionName))
+{}
 
 SQLiteLogbookDao::SQLiteLogbookDao(SQLiteLogbookDao &&rhs) noexcept = default;
 SQLiteLogbookDao &SQLiteLogbookDao::operator=(SQLiteLogbookDao &&rhs) noexcept = default;
@@ -64,8 +79,8 @@ SQLiteLogbookDao::~SQLiteLogbookDao() = default;
 std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates(bool *ok) const noexcept
 {
     std::forward_list<FlightDate> flightDates;
-
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select strftime('%Y', f.creation_time) as year, strftime('%m', f.creation_time) as month, strftime('%d', f.creation_time) as day, count(f.id) as nof_flights "
@@ -110,7 +125,8 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         searchKeyword = LikeOperatorPlaceholder  % flightSelector.searchKeyword % LikeOperatorPlaceholder;
     }
 
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select f.id, f.creation_time, f.title, a.type,"
@@ -151,7 +167,8 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     query.bindValue(":duration", flightSelector.mininumDurationMinutes);
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             summaries.reserve(query.size());
         } else {

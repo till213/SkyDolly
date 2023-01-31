@@ -30,16 +30,19 @@
 #include <cstdint>
 #include <cstddef>
 
+#include <QSqlDatabase>
+
+#include <Kernel/Const.h>
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
 #include "../PersistenceLib.h"
 
 struct AircraftServicePrivate;
 
-class PERSISTENCE_API AircraftService
+class PERSISTENCE_API AircraftService final
 {
 public:
-    AircraftService() noexcept;
+    AircraftService(const QString &connectionName = Const::DefaultConnectionName) noexcept;
     AircraftService(const AircraftService &rhs) = delete;
     AircraftService(AircraftService &&rhs) noexcept;
     AircraftService &operator=(const AircraftService &rhs) = delete;

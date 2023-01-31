@@ -28,16 +28,18 @@
 #include <memory>
 
 #include <QString>
+#include <QSqlDatabase>
 
+#include <Kernel/Const.h>
 #include <Model/Enumeration.h>
 #include "../PersistenceLib.h"
 
 struct EnumerationServicePrivate;
 
-class PERSISTENCE_API EnumerationService
+class PERSISTENCE_API EnumerationService final
 {
 public:
-    EnumerationService() noexcept;
+    EnumerationService(const QString &connectionName = Const::DefaultConnectionName) noexcept;
     EnumerationService(const EnumerationService &rhs) = delete;
     EnumerationService(EnumerationService &&rhs) noexcept;
     EnumerationService &operator=(const EnumerationService &rhs) = delete;

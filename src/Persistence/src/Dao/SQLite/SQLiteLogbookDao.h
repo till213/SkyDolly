@@ -29,15 +29,19 @@
 #include <forward_list>
 #include <vector>
 
+class QString;
+
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
 #include <FlightSelector.h>
 #include "../LogbookDaoIntf.h"
 
+struct SQLiteLogbookDaoPrivate;
+
 class SQLiteLogbookDao : public LogbookDaoIntf
 {
 public:
-    SQLiteLogbookDao() = default;
+    SQLiteLogbookDao(const QString &connectionName) noexcept;
     SQLiteLogbookDao(const SQLiteLogbookDao &rhs) = delete;
     SQLiteLogbookDao(SQLiteLogbookDao &&rhs) noexcept;
     SQLiteLogbookDao &operator=(const SQLiteLogbookDao &rhs) = delete;
@@ -46,6 +50,9 @@ public:
 
     std::forward_list<FlightDate> getFlightDates(bool *ok = nullptr) const noexcept override;
     std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept override;
+
+private:
+    std::unique_ptr<SQLiteLogbookDaoPrivate> d;
 };
 
 #endif // SQLITELOGBOOKDAO_H
