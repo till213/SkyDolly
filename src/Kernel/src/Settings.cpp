@@ -142,7 +142,7 @@ struct SettingsPrivate
     static inline const QString DefaultImportAircraftType {};
 
     static constexpr int DefaultPreviewInfoDialogCount {3};
-    static constexpr int PreviewInfoDialogBase {120};
+    static constexpr int PreviewInfoDialogBase {130};
 };
 
 
