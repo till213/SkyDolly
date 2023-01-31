@@ -53,14 +53,7 @@ int main(int argc, char *argv[]) noexcept
     QCoreApplication::setApplicationName(Version::getApplicationName());
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 
-    // Programmatically enable dark mode support; will probably become default
-    // behaviour with Qt 6.5, also refer to:
-    // https://bugreports.qt.io/browse/QTBUG-72028
-    qputenv("QT_QPA_PLATFORM", "windows:darkmode=2");
     QApplication application(argc, argv);
-    // Dark mode currently looks best with "Fusion" style ("Vista" style works, too,
-    // but looks a bit "raw" at the moment)
-    application.setStyle(QStyleFactory::create("Fusion"));
 
     // Simplistic command line parsing: first arg is assumed to be a file path
     QStringList args = application.arguments();
