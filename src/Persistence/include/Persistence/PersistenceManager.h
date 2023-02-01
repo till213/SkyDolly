@@ -68,7 +68,6 @@ public:
      * \param logbookPath
      *        the path of the logbook (database) file to connect with
      * \return \c true if the connection succeeded; \c false else
-     * \sa PersistenceManager#setLogbookPath
      * \sa connectionChanged
      */
     bool connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept;
@@ -89,7 +88,6 @@ public:
     static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
 
 signals:
-
     /*!
      * Emitted whenver the connection to the logbook (database) has changed.
      *

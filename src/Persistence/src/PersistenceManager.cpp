@@ -109,11 +109,11 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
                 const auto & [success, databaseVersion] = checkDatabaseVersion();
                 ok = success;
                 if (ok) {
-                    Settings &settings = Settings::getInstance();
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
                     flight.clear(true);
                     // Create a backup before migration of existing logbooks
                     Version appVersion;
+                    Settings &settings = Settings::getInstance();
                     if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < appVersion) {
                         QString backupDirectoryPath = d->databaseDao->getBackupDirectoryPath(&ok);
                         if (ok) {
