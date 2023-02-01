@@ -27,7 +27,6 @@
 
 #include <memory>
 
-#include <QStringList>
 #include <QString>
 #include <QStringView>
 

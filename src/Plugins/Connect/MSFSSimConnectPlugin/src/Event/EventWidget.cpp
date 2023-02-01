@@ -39,7 +39,7 @@ bool EventWidget::nativeEvent([[maybe_unused]] const QByteArray &eventType, void
     bool handled {false};
     auto msg = static_cast<MSG *>(message);
     switch(msg->message) {
-    case SimConnnectUserMessage:
+    case SimConnectUserMessage:
         emit simConnectEvent();
         handled = true;
         break;
