@@ -33,7 +33,7 @@ class EventWidget final : public QWidget
 public:
     explicit EventWidget(QWidget *parent = nullptr) noexcept;
 
-    static constexpr int SimConnnectUserMessage = 0x0402;
+    static constexpr int SimConnectUserMessage = 0x0402;
 
 signals:
     void simConnectEvent();
