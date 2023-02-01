@@ -14,9 +14,14 @@ namespace Const {
     constexpr std::int64_t InvalidId {-1};
 
     /*!
-     * The logbook file extension.
+     * The plain logbook file extension (without leading dot).
      */
-    constexpr const char *LogbookExtension {".sdlog"};
+    constexpr const char *LogbookExtension {"sdlog"};
+
+    /*!
+     * The logbook file extension, with a leading dot.
+     */
+    constexpr const char *DotLogbookExtension {".sdlog"};
 
     /*!
      * The default logbook connection name that is used for the application.
