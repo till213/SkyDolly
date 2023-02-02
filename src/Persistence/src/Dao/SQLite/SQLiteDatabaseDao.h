@@ -41,14 +41,14 @@ struct DatabaseDaoPrivate;
 class SQLiteDatabaseDao : public DatabaseDaoIntf
 {
 public:
-    SQLiteDatabaseDao() noexcept;
+    SQLiteDatabaseDao(const QString &connectionName = Const::DefaultConnectionName) noexcept;
     SQLiteDatabaseDao(const SQLiteDatabaseDao &rhs) = delete;
     SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) noexcept;
     SQLiteDatabaseDao &operator=(const SQLiteDatabaseDao &rhs) = delete;
     SQLiteDatabaseDao &operator=(SQLiteDatabaseDao &&rhs) noexcept;
     ~SQLiteDatabaseDao() override;
 
-    bool connectDb(const QString &logbookPath, const QString &connectionName = Const::DefaultConnectionName) noexcept override;
+    bool connectDb(const QString &logbookPath) noexcept override;
     void disconnectDb() noexcept override;
     const QString &connectionName() const noexcept override;
 
