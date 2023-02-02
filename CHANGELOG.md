@@ -27,6 +27,8 @@ This release focuses on the migration to the Qt 6.4 framework. If you are buildi
 
 ### Bug Fixes
 - "Orphaned create AI object" requests are now properly handled (the just created AI object is destroyed again) when the original request has already been removed in the meantime (e.g. due to a failed aircraft import)
+- When importing a file (e.g. CSV format) without waypoint information the created waypoints have now guaranteed a unique timestamp
+  * Specifically in the case when only one position sample ("parked aircraft") exist
 
 ## 0.14.0
 
