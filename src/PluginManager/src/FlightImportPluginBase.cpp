@@ -188,7 +188,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                 const std::size_t nofAircraft = flight.count();
                 if (nofAircraft > 1) {
                     // Sequence starts at 1
-                    const std::size_t sequenceNumber = nofAircraft;
+                    const std::size_t sequenceNumber {nofAircraft};
                     ok = d->aircraftService->store(flight.getId(), sequenceNumber, userAircraft);
                 } else {
                     // Also update flight info and condition
@@ -197,8 +197,10 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                     ok = flightService.store(flight);
                 }
             } else {
-                flight.removeLastAircraft();
                 ok = false;
+            }
+            if (!ok) {
+                flight.removeLastAircraft();
             }
             d->file.close();
         }

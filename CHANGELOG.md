@@ -25,6 +25,9 @@ This release focuses on the migration to the Qt 6.4 framework. If you are buildi
 - Use the C++20 standard (from C++17)
 - Use named database connections: foundation import/export plugins that use the database (Sky Dolly logbook, *.sdlog) format
 
+### Bug Fixes
+- "Orphaned create AI object" requests are now properly handled (the just created AI object is destroyed again) when the original request has already been removed in the meantime (e.g. due to a failed aircraft import)
+
 ## 0.14.0
 
 This release focuses on improved 3rd-party aircraft support, especially "for the big birds".
