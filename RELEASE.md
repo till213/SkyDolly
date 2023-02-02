@@ -38,10 +38,10 @@
   * platforms/qwindows.dll
   * sqldrivers/sqlite.dll
   * styles/qwindowsvistastyle.dll
-  * libgcc_s_seh-1.dll, libstdc++-5.dll, libwinpthread-1.dll
-  * Qt6Widgets.dll, Qt6Core.dll, Qt6Gui.dll, Qt6Sql.dll
+  * libgcc_s_seh-1.dll, libstdc++-6.dll, libwinpthread-1.dll
+  * Qt6Core.dll, Qt6Gui.dll, Qt6Sql.dll, Qt6Widgets.dll 
   * SimConnect.dll
-  * Geographic.dll
+  * GeographicLib.dll
 - Ensure that the following dependencies are removed from the package folder:
   * Plugins/Connect/PathCreator.dll
   * Plugins/Module/Template.dll
