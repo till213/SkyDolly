@@ -188,7 +188,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                 const std::size_t nofAircraft = flight.count();
                 if (nofAircraft > 1) {
                     // Sequence starts at 1
-                    const std::size_t sequenceNumber = nofAircraft;
+                    const std::size_t sequenceNumber {nofAircraft};
                     ok = d->aircraftService->store(flight.getId(), sequenceNumber, userAircraft);
                 } else {
                     // Also update flight info and condition
@@ -197,8 +197,10 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                     ok = flightService.store(flight);
                 }
             } else {
-                flight.removeLastAircraft();
                 ok = false;
+            }
+            if (!ok) {
+                flight.removeLastAircraft();
             }
             d->file.close();
         }
@@ -268,7 +270,9 @@ void FlightImportPluginBase::updateAircraftInfo() noexcept
             arrival.altitude = static_cast<float>(lastPositionData.altitude);
             arrival.localTime = endDateTimeUtc.toLocalTime();
             arrival.zuluTime = endDateTimeUtc;
-            arrival.timestamp = lastPositionData.timestamp;
+            // Make sure that waypoints have distinct timestamps, especially in the case when
+            // the aircraft has only one sampled position ("remains parked")
+            arrival.timestamp = firstPositionData.timestamp != lastPositionData.timestamp ? lastPositionData.timestamp : lastPositionData.timestamp + 1;
             flightPlan.add(std::move(arrival));
         }
     } else {

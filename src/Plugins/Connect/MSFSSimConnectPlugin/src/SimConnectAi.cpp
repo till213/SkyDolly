@@ -100,7 +100,10 @@ void SimConnectAi::removeByAircraftId(std::int64_t aircraftId) noexcept
     const auto it = d->requestByAircraftId.find(aircraftId);
     if (it != d->requestByAircraftId.end()) {
         const ::SIMCONNECT_DATA_REQUEST_ID requestId = it->second;
+        // Remove the request...
+        d->requestByAircraftId.erase(it);
         const auto it2 = d->simulatedObjectByRequestId.find(requestId);
+        // ... and also the AI aircraft, IFF already generated at this point
         if (it2 != d->simulatedObjectByRequestId.end()) {
             const ::SIMCONNECT_OBJECT_ID objectId = it2->second;
             removeByObjectId(objectId);
@@ -108,7 +111,7 @@ void SimConnectAi::removeByAircraftId(std::int64_t aircraftId) noexcept
         qDebug() << "SimConnectAi::removeByAircraftId: removing simulation object:" << objectId << "for aircraft ID:" << aircraftId;
 #endif
             d->simulatedObjectByRequestId.erase(it2);
-            d->requestByAircraftId.erase(it);
+
         }
     }
 }

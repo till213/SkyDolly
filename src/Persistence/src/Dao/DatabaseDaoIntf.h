@@ -45,7 +45,7 @@ public:
     DatabaseDaoIntf &operator=(DatabaseDaoIntf &&rhs) = default;
     virtual ~DatabaseDaoIntf() = default;
 
-    virtual bool connectDb(const QString &logbookPath, const QString &connectionName = Const::DefaultConnectionName) noexcept = 0;
+    virtual bool connectDb(const QString &logbookPath) noexcept = 0;
     virtual void disconnectDb() noexcept = 0;
     virtual const QString &connectionName() const noexcept = 0;
 
