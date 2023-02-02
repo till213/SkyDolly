@@ -105,11 +105,11 @@ Description template:
 ## Climb
 - Fetch the new tag: `git pull`
 - Create a bug fix branch, e.g.: `git branch 0.15.0`, `git checkout 0.15.0`
-- Bump the version to e.g. `0.14.1` in the main [CMakeLists.txt](CMakeLists.txt)
-- Commit, e.g. `git commit -m "Bump version to 0.14.1"`
+- Bump the version to e.g. `0.15.1` in the main [CMakeLists.txt](CMakeLists.txt)
+- Commit, e.g. `git commit -m "Bump version to 0.15.1"`
 - Push, e.g. `git push --set-upstream origin 0.15.0`
 - Switch back to _main_: `git checkout main`
-- Update the shasum in (SHASUM256.md)[SHASUM256.md]
+- Update the shasum in [SHASUM256.md](SHASUM256.md)
 
 ## Cruise
 
