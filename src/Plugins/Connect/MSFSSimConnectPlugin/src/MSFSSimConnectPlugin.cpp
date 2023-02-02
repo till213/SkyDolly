@@ -289,7 +289,10 @@ void MSFSSimConnectPlugin::onReplayPaused(bool enable) noexcept
 
 void MSFSSimConnectPlugin::onStopReplay() noexcept
 {
-    ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
+    if (d->subscribedToSystemEvent) {
+        ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
+        d->subscribedToSystemEvent = false;
+    }
 }
 
 void MSFSSimConnectPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp, [[maybe_unused]] SeekMode seekMode) noexcept
