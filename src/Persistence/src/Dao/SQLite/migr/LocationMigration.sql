@@ -412,3 +412,7 @@ set app_version = '0.14.0';
 @migr(id = "fbfeec8f-0e50-4efc-956d-391e40563b28", descn = "Update application version to 0.15", step = 1)
 update metadata
 set app_version = '0.15.0';
+
+@migr(id = "48e2f465-6fc7-41e8-b32d-07ad1a8d2f06", descn = "Update application version to 0.16", step = 1)
+update metadata
+set app_version = '0.16.0';
