@@ -5,10 +5,6 @@
 This release focuses on the migration to the Qt 6.4 framework. If you are building Sky Dolly from source then also refer to the updated [BUILD.md](BUILD.md) instructions.
 
 ### Improvements
-- The internal flaps state is now reset whenever replay is resumed
-  * This improves the situation where the flaps handle lever is initially in the wrong position due to multiple consecutive "timeline seek" operations
-  * The flaps handle lever will now go into the correct position during replay (upon the next "flap event")
-  * Note that this is due to the "asynchronous nature" ("real-time update") of the "flaps handle index" simulation variable update that some aircraft have in place (specifically the PMDG 737)
 - The new Qt 6 framework also provides initial support for "dark mode"
   * As this is still considered "work in progress" in Qt 6.4 the "dark mode" is not enabled by default
   * However you can explicitly enable it by providing the following command line arguments:
@@ -17,14 +13,17 @@ This release focuses on the migration to the Qt 6.4 framework. If you are buildi
     - For the "Fusion" style that currently looks better in "dark mode":
       * `SkyDolly.exe --style=fusion -platform windows:darkmode=2`
   * Once the option "darkmode=2" has been set Sky Dolly will then follow the Windows "dark mode" settings
+- The internal event state is now reset whenever replay is resumed
+  * This improves the situation where the flaps handle lever is initially in the wrong position due to multiple consecutive "timeline seek" operations
+  * The flaps handle lever will now go into the correct position during replay, upon the next "flaps event"
+  * Note that this is due to the "asynchronous nature" ("real-time update") of the _flaps handle index_ simulation variable update that some aircraft have in place (specifically the PMDG 737)
 
 ### Under The Hood
 - Upgrade Qt to version 6.4.2 (from version 5.15.2)
-  * If you are compiling Sky Dolly from source code also refer to the updated 
 - Upgrade GeographicLib to version 2.1.2 (from version 1.52)
 - Upgrade ordered-map to version 1.1.0 (from version 1.0.0)
 - Use the C++20 standard (from C++17)
-- Use named database connections: foundation import/export plugins that use the database (Sky Dolly logbook) format
+- Use named database connections: foundation import/export plugins that use the database (Sky Dolly logbook, *.sdlog) format
 
 ## 0.14.0
 
