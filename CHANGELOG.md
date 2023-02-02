@@ -7,12 +7,13 @@ This release focuses on the migration to the Qt 6.4 framework. If you are buildi
 ### Improvements
 - The new Qt 6 framework also provides initial support for "dark mode"
   * As this is still considered "work in progress" in Qt 6.4 the "dark mode" is not enabled by default
-  * However you can explicitly enable it by providing the following command line arguments:
-    - For the default style:
+  * However you can already enable it by providing the following command line arguments:
+    - For the "Windows" style:
       * `SkyDolly.exe -platform windows:darkmode=2`
     - For the "Fusion" style that currently looks better in "dark mode":
-      * `SkyDolly.exe --style=fusion -platform windows:darkmode=2`
+      * `SkyDolly.exe -platform windows:darkmode=2 -style=fusion`
   * Once the option "darkmode=2" has been set Sky Dolly will then follow the Windows "dark mode" settings
+  * Unfortunately the "Windows Vista" style (default style on Windows) won't support "dark mode" (due to underlying Win32 API limitations - also refer to [QTBUG-72028](https://bugreports.qt.io/browse/QTBUG-72028)
 - The internal event state is now reset whenever replay is resumed
   * This improves the situation where the flaps handle lever is initially in the wrong position due to multiple consecutive "timeline seek" operations
   * The flaps handle lever will now go into the correct position during replay, upon the next "flaps event"
