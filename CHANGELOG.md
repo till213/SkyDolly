@@ -2,22 +2,33 @@
 
 ## 0.15.0
 
+This release focuses on the migration to the Qt 6.4 framework. If you are building Sky Dolly from source then also refer to the updated [BUILD.md](BUILD.md) instructions.
+
 ### Improvements
-- The new Qt 6 framework provides initial support for "dark mode"
-  * As this is still considered "in progress" in Qt 6.4 this is not yet enabled by default
-  * However you can enable it by providing the follwing command line arguments:
-    - `SkyDolly.exe --style=fusion -platform windows:darkmode=2` for the "Fusion" style (which currently looks slightly better) or simply
-    - `SkyDolly.exe -platform windows:darkmode=2` to get the default "Windows Vista" style
+- The internal flaps state is now reset whenever replay is resumed
+  * This improves the situation where the flaps handle lever is initially in the wrong position due to multiple consecutive "timeline seek" operations
+  * The flaps handle lever will now go into the correct position during replay (upon the next "flap event")
+  * Note that this is due to the "asynchronous nature" ("real-time update") of the "flaps handle index" simulation variable update that some aircraft have in place (specifically the PMDG 737)
+- The new Qt 6 framework also provides initial support for "dark mode"
+  * As this is still considered "work in progress" in Qt 6.4 the "dark mode" is not enabled by default
+  * However you can explicitly enable it by providing the following command line arguments:
+    - For the default style:
+      * `SkyDolly.exe -platform windows:darkmode=2`
+    - For the "Fusion" style that currently looks better in "dark mode":
+      * `SkyDolly.exe --style=fusion -platform windows:darkmode=2`
+  * Once the option "darkmode=2" has been set Sky Dolly will then follow the Windows "dark mode" settings
 
 ### Under The Hood
 - Upgrade Qt to version 6.4.2 (from version 5.15.2)
-  * If you are compiling Sky Dolly from source code also refer to the updated [BUILD.md](BUILD.md)
+  * If you are compiling Sky Dolly from source code also refer to the updated 
 - Upgrade GeographicLib to version 2.1.2 (from version 1.52)
 - Upgrade ordered-map to version 1.1.0 (from version 1.0.0)
 - Use the C++20 standard (from C++17)
 - Use named database connections: foundation import/export plugins that use the database (Sky Dolly logbook) format
 
 ## 0.14.0
+
+This release focuses on improved 3rd-party aircraft support, especially "for the big birds".
 
 ### Improvements
 - Improved replay specifically with 3rd party aircraft, for:
@@ -61,6 +72,8 @@
 - Properly spell "airport" in the location CSV export in Little Navmap format (fix typo)
 
 ## 0.13.0
+
+This release introduced location import and export.
 
 ### New Features
 - New location export plugin
@@ -108,6 +121,8 @@
 
 ## 0.12.0
 
+This release introduces the "Location" module.
+
 ### New Features
 - Location module
   * Capture and teleport to locations in the flight simulator
@@ -150,6 +165,8 @@
 - Apply relative position when _Set relative position_ is enabled and _Fly with formation_ is selected
 
 ## 0.11.0
+
+This release mostly focuses on "under the hood" improvements, but also improves on existing functionality like the AI aircraft management.
 
 ### Improvements
 
@@ -233,6 +250,8 @@
 
 ## 0.10.0
 
+This release adds two new export plugins (JSON and GPX) and improves various existing import and export plugins.
+
 ### New Features
 
 - JSON export plugin
@@ -276,6 +295,8 @@
 - The IGC export plugin now properly exports _simulation_ timestamps (not local timestamps)
   
 ## 0.9.0
+
+This release introduces various new import and export plugins: IGC, GPX and CSV (flightradar24).
 
 ### New Features
 
@@ -398,6 +419,8 @@
 
 ## 0.8.0
 
+This release introduces a new plugin architecture for import and export plugins.
+
 ### New Features
 
 - Plugin architecture
@@ -482,6 +505,8 @@
 
 ## 0.7.0
 
+This release introduces the Formation module.
+
 ### New Features
 
 - New module: Formation - record an unlimited number of aircraft and replay them altogher, with one single user interface
@@ -541,6 +566,8 @@
 
 ## 0.6.0
 
+This release introdcues the logbook, an SQLite based database.
+
 ### New Features
 
 - Add SQLite database support (_logbook_) for persistence
@@ -586,6 +613,8 @@
 
 ## 0.5.0
 
+This release adds support for more simulation variables and reduces the amount of request data by organising the simulation variables into groups.
+
 ### New Features
 - Simulation variables have been split into distinct requests, saving both on required space and CPU usage
 - The replay speed is now a factor instead of percentage value (1 = normal speed, 2 = double speed etc.)
@@ -616,6 +645,8 @@
 - Properly hide window when stay on top is deselected
 
 ## 0.4.0
+
+This release supports additional simulation variables.
 
 ### New Features
 
@@ -660,6 +691,8 @@
 
 ## 0.3.0
 
+This release introduces the first persistence, a simple CSV format.
+
 ### New Features
 
 - Additional simulation variables: flap positions, water ruder and brakes
@@ -682,6 +715,8 @@
 
 ## 0.2.0
 
+This release extends the basic recording & replay implementation.
+
 ### New Features
 
 - Recording & replay of basic flight controls (rudder, ailerons, flaps, gear, ...)
@@ -696,6 +731,8 @@
 - Properly store the already elapsed time when changing the replay speed, for a smooth continuation of the replay
 
 ## 0.1.0
+
+This release implements basic recording & replay functionality.
 
 ### Features
 

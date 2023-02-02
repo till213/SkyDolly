@@ -267,6 +267,7 @@ bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
     if (result == S_OK) {
         d->subscribedToSystemEvent = true;
     }
+    resetEventStates();
     return result == S_OK;
 }
 
@@ -282,6 +283,7 @@ void MSFSSimConnectPlugin::onReplayPaused(bool enable) noexcept
         if (result == S_OK) {
             d->subscribedToSystemEvent = true;
         }
+        resetEventStates();
     }
 }
 
