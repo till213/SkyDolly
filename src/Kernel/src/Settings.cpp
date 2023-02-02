@@ -761,7 +761,7 @@ void Settings::restore() noexcept
 
         d->defaultMinimalUiButtonTextVisible = d->settings.value("DefaultMinimalUiButtonTextVisible", SettingsPrivate::DefaultMinimalUiButtonTextVisible).toBool();
         d->defaultMinimalUiNonEssentialButtonVisible = d->settings.value("DefaultMinimalUiNonEssentialButtonVisible", SettingsPrivate::DefaultMinimalUiNonEssentialButtonVisible).toBool();
-        d->defaultMinimalUiReplaySpeedVisible = d->settings.value("DefaultMinimalUiNonEssentialButtonVisible", SettingsPrivate::DefaultMinimalUiReplaySpeedVisible).toBool();
+        d->defaultMinimalUiReplaySpeedVisible = d->settings.value("DefaultMinimalUiReplaySpeedVisible", SettingsPrivate::DefaultMinimalUiReplaySpeedVisible).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("View");
