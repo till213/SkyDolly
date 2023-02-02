@@ -46,8 +46,9 @@ struct VersionPrivate
     int minor {VersionConfig::Minor};
     int patch {VersionConfig::Patch};
 
-    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/Adjectives-That-Start-With-E.html
-    static inline const QString CodeName {QStringLiteral("Ethereal Embraer")};
+    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/Adjectives-That-Start-With-F.html
+    // https://en.wikipedia.org/wiki/List_of_aircraft_(F)
+    static inline const QString CodeName {QStringLiteral("Flamboyant Fokker")};
 };
 
 // PUBLIC

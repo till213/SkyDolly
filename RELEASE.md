@@ -4,21 +4,21 @@
 ## Preflight
 ### Version info
 - Ensure that the proper project version has been set in the main [CMakeLists.txt](CMakeLists.txt)
-  * E.g. `VERSION 0.14.0`
-- Ensure that either the [logbook migration](src/Persistence/src/Dao/SQLite/migr/LogbookMigration.sql) and/or the (location migration](src/Persistence/src/Dao/SQLite/migr/LocationMigration.sql) updates the database metadata with the current version
-- Ensure that the copyright year in [SkyDolly.rc.in](src/SkyDolly/res/SkyDolly.rc.in) and (Info.plist.in)[src/SkyDolly/res/Info.plist.in] is up to date
+  * E.g. `VERSION 0.15.0`
+- Ensure that either the [logbook migration](src/Persistence/src/Dao/SQLite/migr/LogbookMigration.sql) and/or the [location migration](src/Persistence/src/Dao/SQLite/migr/LocationMigration.sql) updates the database metadata with the current version
+- Ensure that the copyright year in [SkyDolly.rc.in](src/SkyDolly/res/SkyDolly.rc.in) and [Info.plist.in](src/SkyDolly/res/Info.plist.in) is up to date
 - Choose and set a suitable "version codename" in [Version.cpp](src/Kernel/src/Version.cpp)
 - Update the "preview dialog" message in [MainWindow.cpp](src/UserInterface/src/MainWindow.cpp)
 - Adjust the `PreviewInfoDialogBase` in [Settings.cpp](src/Kernel/src/Settings.cpp) in order to show the preview dialog three times
-- Adjust the _Latest (pre-)release: Sky Dolly 0.14.0_ in [README.md](README.md)
+- Adjust the _Latest (pre-)release: Sky Dolly 0.15.0_ in [README.md](README.md)
 - Adjust the supported versions in [SECURITY.md](SECURITY.md)
 
 ### Settings
-- Ensure that settings are converted to latest version (-> SettingsConverter)
+- Ensure that settings are converted to latest version in [SettingsConverter.cpp](src/Kernel/src/SettingsConverter.cpp)
 
 ### Git
 - Push all changes
-- Merge all feature / bug fix branches into main  (https://github.com/till213/SkyDolly/pulls)
+- Merge all feature / bug fix branches into main (https://github.com/till213/SkyDolly/pulls)
 - Pull all changes
 - Switch to main branch
 - Check integration actions (https://github.com/till213/SkyDolly/actions)
@@ -32,16 +32,16 @@
 - Repeat on macOS and Linux
 
 ### Package
-- Create a new package folder, e.g. `SkyDolly-v0.14.0`
-- Copy all executables and libraries from the build `bin` folder into the new package folder (e.g. simply `SkyDolly`)
+- Create a new package folder, e.g. simply `SkyDolly`
+- Copy all executables and libraries from the build `bin` folder into the new package folder (`SkyDolly`)
 - Ensure that the following dependencies are in the package folder:
   * platforms/qwindows.dll
   * sqldrivers/sqlite.dll
   * styles/qwindowsvistastyle.dll
   * libgcc_s_seh-1.dll, libstdc++-6.dll, libwinpthread-1.dll
-  * Qt5Widgets.dll, Qt5Core.dll, Qt5Gui.dll, Qt5Sql.dll
+  * Qt6Core.dll, Qt6Gui.dll, Qt6Sql.dll, Qt6Widgets.dll 
   * SimConnect.dll
-  * Geographic.dll
+  * GeographicLib.dll
 - Ensure that the following dependencies are removed from the package folder:
   * Plugins/Connect/PathCreator.dll
   * Plugins/Module/Template.dll
@@ -70,18 +70,18 @@
 - Open a Sky Dolly v0.6 logbook (create a copy first)
 
 ## Take-Off
-- ZIP the package folder (e.g. `SkyDolly-v0.14.0.zip`)
+- ZIP the package folder (e.g. `SkyDolly-v0.15.0.zip`)
 
 ## After Take-Off Check
 - Upload the ZIP archive to [VirusTotal](https://www.virustotal.com/)
 
 ### GitHub
 - Create a new release (https://github.com/till213/SkyDolly/releases/new)
-- Choose a tag, e.g. `v0.14.0`
+- Choose a tag, e.g. `v0.15.0`
 - Ensure that _Target_ is set to `main`
-- Choose a title, e.g. `Sky Dolly 0.14.0`
+- Choose a title, e.g. `Sky Dolly 0.15.0`
 - Provide a description (summary of the changelog)
-- Attach the ZIP archive (e.g. `SkyDolly-v0.14.0.zip`)
+- Attach the ZIP archive (e.g. `SkyDolly-v0.15.0.zip`)
 - Check the _This is a pre-release_ option (as appropriate)
 
 Description template:
@@ -104,12 +104,12 @@ Description template:
 
 ## Climb
 - Fetch the new tag: `git pull`
-- Create a bug fix branch, e.g.: `git branch 0.14.0`, `git checkout 0.14.0`
-- Bump the version to e.g. `0.14.1` in the main [CMakeLists.txt](CMakeLists.txt)
-- Commit, e.g. `git commit -m "Bump version to 0.14.1"`
-- Push, e.g. `git push --set-upstream origin 0.14.0`
+- Create a bug fix branch, e.g.: `git branch 0.15.0`, `git checkout 0.15.0`
+- Bump the version to e.g. `0.15.1` in the main [CMakeLists.txt](CMakeLists.txt)
+- Commit, e.g. `git commit -m "Bump version to 0.15.1"`
+- Push, e.g. `git push --set-upstream origin 0.15.0`
 - Switch back to _main_: `git checkout main`
-- Update the shasum in (SHASUM256.md)[SHASUM256.md]
+- Update the shasum in [SHASUM256.md](SHASUM256.md)
 
 ## Cruise
 

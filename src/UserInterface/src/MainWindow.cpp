@@ -428,14 +428,14 @@ void MainWindow::initUi() noexcept
             QMessageBox::information(this, "Preview",
                                      QString("\n\n"
                                              "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                                             "This release v%2 \"%3\" focuses on improved replay for 3rd-party aircraft, specifically for control surfaces like "
-                                             "flaps, spoilers, elevators and ailerons. The gear should also work better with most 3rd-party aircraft.\n\n"
-                                             "Note that not all 3rd-party aircraft react the same - or at all - to the newly implemented features, so certain "
-                                             "aspects may still not work. Some aircraft do not even properly report certain simulation variables during recording, "
-                                             "the spoiler handle position being such an example.\n\n"
-                                             "Also lights (landing, taxi, navigation, ...) behave quite differently, depending on the aircraft type and its specific "
-                                             "light switch logic: some light switches have dependencies on each other, "
-                                             "making it almost impossible to toggle them individually.\n\n"
+                                             "This release v%2 \"%3\" is a no-new-features release: it focuses on upgrading 3rd-party libraries, most "
+                                             "importantly the upgrade to the Qt 6 framework.\n\n"
+                                             "Besides better support for Windows 11 this also introduces initial dark mode support on Windows. Dark mode support "
+                                             "is not enabled by default yet, however you can launch the application with the following command-line options:\n\n"
+                                             "SkyDolly.exe -platform windows:darkmode=2\n\n"
+                                             "Alternatively with the Fusion style that currently looks arguably better in dark mode:\n\n"
+                                             "SkyDolly.exe -platform windows:darkmode=2 -style fusion\n\n"
+                                             "In any case dark mode also needs to be enabled in the Windows user settings.\n\n"
                                              "This dialog will be shown %4 more times.")
                                      .arg(Version::getApplicationName(), Version::getApplicationVersion())
                                      .arg(Version::getCodeName()).arg(currentPreviewInfoCount),

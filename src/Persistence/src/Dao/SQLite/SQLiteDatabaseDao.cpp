@@ -50,13 +50,17 @@ namespace
 
 struct DatabaseDaoPrivate
 {
+    DatabaseDaoPrivate(const QString &connectionName) noexcept
+        : connectionName(connectionName)
+    {}
+
     QString connectionName;
 };
 
 // PUBLIC
 
-SQLiteDatabaseDao::SQLiteDatabaseDao() noexcept
-    : d(std::make_unique<DatabaseDaoPrivate>())
+SQLiteDatabaseDao::SQLiteDatabaseDao(const QString &connectionName) noexcept
+    : d(std::make_unique<DatabaseDaoPrivate>(connectionName))
 {}
 
 SQLiteDatabaseDao::SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) noexcept = default;
@@ -67,9 +71,8 @@ SQLiteDatabaseDao::~SQLiteDatabaseDao()
     disconnectSQLite();
 }
 
-bool SQLiteDatabaseDao::connectDb(const QString &logbookPath, const QString &connectionName) noexcept
+bool SQLiteDatabaseDao::connectDb(const QString &logbookPath) noexcept
 {
-    d->connectionName = connectionName;
     QSqlDatabase db = QSqlDatabase::addDatabase(::DriverName, d->connectionName);
     // For the QSQLITE driver, if the database name specified does not exist,
     // then it will create the file for you unless the QSQLITE_OPEN_READONLY
