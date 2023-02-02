@@ -14,11 +14,11 @@
 - Adjust the supported versions in [SECURITY.md](SECURITY.md)
 
 ### Settings
-- Ensure that settings are converted to latest version (-> SettingsConverter)
+- Ensure that settings are converted to latest version in [SettingsConverter.cpp](src/Kernel/src/SettingsConverter.cpp)
 
 ### Git
 - Push all changes
-- Merge all feature / bug fix branches into main  (https://github.com/till213/SkyDolly/pulls)
+- Merge all feature / bug fix branches into main (https://github.com/till213/SkyDolly/pulls)
 - Pull all changes
 - Switch to main branch
 - Check integration actions (https://github.com/till213/SkyDolly/actions)
