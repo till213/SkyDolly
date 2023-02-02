@@ -428,12 +428,12 @@ void MainWindow::initUi() noexcept
             QMessageBox::information(this, "Preview",
                                      QString("\n\n"
                                              "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                                             "This release v%2 \"%3\" is a now-new-features release. Instead it focuses on upgrading 3rd-party libraries, most "
+                                             "This release v%2 \"%3\" is a no-new-features release: it focuses on upgrading 3rd-party libraries, most "
                                              "importantly the upgrade to the Qt 6 framework.\n\n"
                                              "Besides better support for Windows 11 this also introduces initial dark mode support on Windows. Dark mode support "
-                                             "is not enabled by default yet, however you can launch Sky Dolly with the following command-line options:\n\n"
+                                             "is not enabled by default yet, however you can launch the application with the following command-line options:\n\n"
                                              "SkyDolly.exe -platform windows:darkmode=2\n\n"
-                                             "Alternatively with the Fusion style that currently looks somewhat better in dark mode:\n\n"
+                                             "Alternatively with the Fusion style that currently looks arguably better in dark mode:\n\n"
                                              "SkyDolly.exe -platform windows:darkmode=2 -style fusion\n\n"
                                              "In any case dark mode also needs to be enabled in the Windows user settings.\n\n"
                                              "This dialog will be shown %4 more times.")
