@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.16.0
+
 ## 0.15.0
 
 This release focuses on the migration to the Qt 6.4 framework. If you are building Sky Dolly from source then also refer to the updated [BUILD.md](BUILD.md) instructions.
