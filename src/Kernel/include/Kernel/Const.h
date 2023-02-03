@@ -29,6 +29,11 @@ namespace Const {
     constexpr const char *DefaultConnectionName {"Default"};
 
     /*!
+     * The logbook connection name that is used for export.
+     */
+    constexpr const char *ExportConnectionName {"Export"};
+
+    /*!
      * Suffix indicating zulu time including whitespace, ready to be appended to a
      * formated date/time string.
      */

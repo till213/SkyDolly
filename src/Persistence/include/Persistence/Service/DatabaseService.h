@@ -36,6 +36,8 @@ class QWidget;
 class QDateTime;
 
 #include <Kernel/Const.h>
+#include <Kernel/Version.h>
+#include "../Metadata.h"
 #include "../PersistenceLib.h"
 
 class Version;
@@ -51,15 +53,26 @@ public:
     DatabaseService &operator=(DatabaseService &&rhs) noexcept;
     ~DatabaseService();
 
-    bool backup() noexcept;
+    bool connect(const QString &logbookPath) noexcept;
+    QString getLogbookPath() const noexcept;
+    void disconnect() noexcept;
 
+    bool migrate() noexcept;
+    bool optimise() noexcept;
+    bool backup() noexcept;
     bool setBackupPeriod(std::int64_t backupPeriodId) noexcept;
     bool setNextBackupDate(const QDateTime &date) noexcept;
     bool updateBackupDate() noexcept;
+    QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept;
     bool setBackupDirectoryPath(const QString &backupFolderPath) noexcept;
+
+    Metadata getMetadata(bool *ok = nullptr) const noexcept;
+    Version getDatabaseVersion(bool *ok = nullptr) const noexcept;
 
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;
+    QString getBackupFileName(const QString &backupDirectoryPath) const noexcept;
+    static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
 
 private:
     std::unique_ptr<DatabaseServicePrivate> d;

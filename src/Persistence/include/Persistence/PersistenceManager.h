@@ -74,18 +74,13 @@ public:
 
     void disconnectFromLogbook() noexcept;
     bool isConnected() const noexcept;
-    const QString &getLogbookPath() const noexcept;
+    QString getLogbookPath() const noexcept;
 
-    bool migrate() noexcept;
     bool optimise() noexcept;
-    bool backup(const QString &backupLogbookPath) noexcept;
 
     Metadata getMetadata(bool *ok = nullptr) const noexcept;
     Version getDatabaseVersion(bool *ok = nullptr) const noexcept;
     QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept;
-
-    QString getBackupFileName(const QString &backupDirectoryPath) const noexcept;
-    static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
 
 signals:
     /*!
@@ -107,7 +102,6 @@ private:
     PersistenceManager() noexcept;
     ~PersistenceManager() override;
 
-    bool connectDb(const QString &logbookPath) noexcept;
     std::pair<bool, Version> checkDatabaseVersion() const noexcept;
 };
 

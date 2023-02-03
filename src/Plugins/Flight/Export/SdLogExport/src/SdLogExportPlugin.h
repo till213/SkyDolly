@@ -66,8 +66,8 @@ protected:
 private:
     const std::unique_ptr<SdLogExportPluginPrivate> d;
 
-    bool exportAllAircraft(QIODevice &io) const noexcept;
-    bool exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportAllAircraft() const noexcept;
+    bool exportAircraft(const Aircraft &aircraft) const noexcept;
 };
 
 #endif // SDLOGEXPORTPLUGIN_H

@@ -153,7 +153,7 @@ void LogbookBackupDialog::updateUi() noexcept
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
         // Backup folder
-        const QString backupDirectoryPath = PersistenceManager::createBackupPathIfNotExists(metadata.backupDirectoryPath);
+        const QString backupDirectoryPath = DatabaseService::createBackupPathIfNotExists(metadata.backupDirectoryPath);
         ui->backupDirectoryLineEdit->setText(QDir::toNativeSeparators(backupDirectoryPath));
         ui->backupPeriodComboBox->setCurrentId(metadata.backupPeriodId);
     }

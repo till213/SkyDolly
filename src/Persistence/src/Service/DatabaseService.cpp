@@ -51,6 +51,8 @@
 
 namespace
 {
+    constexpr int MaxBackupIndex = 1024;
+
     constexpr int BackupPeriodYearsNever = 999;
     constexpr int BackupPeriodOneMonth = 1;
     constexpr int BackupPeriodSevenDays = 7;
@@ -66,6 +68,7 @@ struct DatabaseServicePrivate
     {}
 
     QString connectionName;
+    QString logbookPath;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<DatabaseDaoIntf> databaseDao;
 
@@ -85,26 +88,62 @@ DatabaseService::DatabaseService(const QString &connectionName) noexcept
 
 DatabaseService::DatabaseService(DatabaseService &&rhs) noexcept = default;
 DatabaseService &DatabaseService::operator=(DatabaseService &&rhs) noexcept = default;
-DatabaseService::~DatabaseService() = default;
+DatabaseService::~DatabaseService()
+{
+    disconnect();
+}
+
+bool DatabaseService::connect(const QString &logbookPath) noexcept
+{
+    bool ok {true};
+    if (d->logbookPath != logbookPath) {
+        ok = d->databaseDao->connectDb(logbookPath);
+        if (ok) {
+            d->logbookPath = logbookPath;
+        }
+    }
+    return ok;
+}
+
+QString DatabaseService::getLogbookPath() const noexcept
+{
+    return d->logbookPath;
+}
+
+void DatabaseService::disconnect() noexcept
+{
+    d->databaseDao->disconnectDb();
+    d->logbookPath.clear();
+}
+
+bool DatabaseService::migrate() noexcept
+{
+    return d->databaseDao->migrate();
+}
+
+bool DatabaseService::optimise() noexcept
+{
+    return d->databaseDao->optimise();
+}
 
 bool DatabaseService::backup() noexcept
 {
     QString backupDirectoryPath;
 
-    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
     bool ok {true};
-    const Metadata metaData = persistenceManager.getMetadata(&ok);
+    const Metadata metaData = getMetadata(&ok);
     if (ok) {
-        backupDirectoryPath = PersistenceManager::createBackupPathIfNotExists(metaData.backupDirectoryPath);
+        backupDirectoryPath = createBackupPathIfNotExists(metaData.backupDirectoryPath);
     }
     ok = !backupDirectoryPath.isNull();
     if (ok) {
-        const QString backupFileName = persistenceManager.getBackupFileName(backupDirectoryPath);
+        const QString backupFileName = getBackupFileName(backupDirectoryPath);
         if (!backupFileName.isNull()) {
             const QString backupFilePath = backupDirectoryPath + "/" + backupFileName;
-            ok = persistenceManager.backup(backupFilePath);
+            // No transaction must be active during backup
+            ok = d->databaseDao->backup(backupFilePath);
             if (ok) {
-                ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
+                ok = setBackupDirectoryPath(backupDirectoryPath);
             }
         }
     }
@@ -171,6 +210,21 @@ bool DatabaseService::updateBackupDate() noexcept
     return ok;
 }
 
+QString DatabaseService::getBackupDirectoryPath(bool *ok) const noexcept
+{
+    QString backupDirectoryPath;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool success = db.transaction();
+    if (success) {
+        backupDirectoryPath = d->databaseDao->getBackupDirectoryPath(&success);
+        db.rollback();
+    }
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return backupDirectoryPath;
+}
+
 bool DatabaseService::setBackupDirectoryPath(const QString &backupDirectoryPath) noexcept
 {
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -184,6 +238,36 @@ bool DatabaseService::setBackupDirectoryPath(const QString &backupDirectoryPath)
         }
     }
     return ok;
+}
+
+Metadata DatabaseService::getMetadata(bool *ok) const noexcept
+{
+    Metadata metadata;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool success = db.transaction();
+    if (success) {
+        metadata = d->databaseDao->getMetadata(&success);
+        db.rollback();
+    }
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return metadata;
+}
+
+Version DatabaseService::getDatabaseVersion(bool *ok) const noexcept
+{
+    Version version;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool success = db.transaction();
+    if (success) {
+        version = d->databaseDao->getDatabaseVersion(&success);
+        db.rollback();
+    }
+    if (ok != nullptr) {
+        *ok = success;
+    }
+    return version;
 }
 
 QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
@@ -222,4 +306,45 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
         }
     }
     return newLogbookPath;
+}
+
+QString DatabaseService::getBackupFileName(const QString &backupDirectoryPath) const noexcept
+{
+    QDir backupDir(backupDirectoryPath);
+
+    const QFileInfo logbookInfo = QFileInfo(d->logbookPath);
+    const QString baseName = logbookInfo.completeBaseName();
+    const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
+    QString backupLogbookName = baseBackupLogbookName % Const::DotLogbookExtension;
+    int index = 1;
+    while (backupDir.exists(backupLogbookName) && index <= ::MaxBackupIndex) {
+        backupLogbookName = baseBackupLogbookName % QString("-%1").arg(index) % Const::DotLogbookExtension;
+        ++index;
+    }
+    if (index <= ::MaxBackupIndex) {
+        return backupLogbookName;
+    } else {
+        return {};
+    }
+}
+
+QString DatabaseService::createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
+{
+    QString existingBackupPath;
+    if (QDir::isRelativePath(relativeOrAbsoluteBackupDirectoryPath)) {
+        const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+        const QString &logbookDirectoryPath = QFileInfo(persistenceManager.getLogbookPath()).absolutePath();
+        existingBackupPath = logbookDirectoryPath + "/" + QFileInfo(relativeOrAbsoluteBackupDirectoryPath).fileName();
+    } else {
+        existingBackupPath = relativeOrAbsoluteBackupDirectoryPath;
+    }
+
+    QDir backupDir(existingBackupPath);
+    if (!backupDir.exists()) {
+         const bool ok = backupDir.mkpath(existingBackupPath);
+         if (!ok) {
+             existingBackupPath.clear();
+         }
+    }
+    return existingBackupPath;
 }

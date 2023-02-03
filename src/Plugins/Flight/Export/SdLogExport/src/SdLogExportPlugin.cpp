@@ -28,6 +28,7 @@
 #include <cstdint>
 
 #include <QIODevice>
+#include <QFile>
 #include <QStringBuilder>
 #include <QString>
 #include <QDateTime>
@@ -50,6 +51,7 @@
 #include <Model/Position.h>
 #include <Model/PositionData.h>
 #include <Model/SimType.h>
+#include <Persistence/Service/DatabaseService.h>
 #include <PluginManager/Export.h>
 #include "SdLogExportSettings.h"
 #include "SdLogExportPlugin.h"
@@ -57,6 +59,7 @@
 struct SdLogExportPluginPrivate
 {
     const Flight *flight {nullptr};
+    std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ExportConnectionName)};
     SdLogExportSettings pluginSettings;
     Unit unit;
 
@@ -101,10 +104,24 @@ bool SdLogExportPlugin::hasMultiAircraftSupport() const noexcept
 
 bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
+    bool ok {true};
     d->flight = &flight;
     io.setTextModeEnabled(true);
 
-    bool ok = exportAllAircraft(io);
+    QFile *file = qobject_cast<QFile *>(&io);
+    if (file != nullptr) {
+        QFileInfo info {*file};
+        ok = d->databaseService->connect(info.absoluteFilePath());
+        if (ok) {
+            d->databaseService->migrate();
+        }
+        if (ok) {
+            ok = exportAllAircraft();
+        }
+    } else {
+        // We only support file-based SQLite databases
+        ok = false;
+    }
 
     // We are done with the export
     d->flight = nullptr;
@@ -113,10 +130,24 @@ bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const 
 
 bool SdLogExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    bool ok {ok};
+    bool ok {true};
     d->flight = &flight;
 
-    // TODO IMPLEMENT ME
+    QFile *file = qobject_cast<QFile *>(&io);
+    if (file != nullptr) {
+        QFileInfo info {*file};
+        ok = d->databaseService->connect(info.absoluteFilePath());
+        if (ok) {
+            d->databaseService->migrate();
+        }
+        if (ok) {
+            ok = exportAircraft(aircraft);
+        }
+        d->databaseService->disconnect();
+    } else {
+        // We only support file-based SQLite databases
+        ok = false;
+    }
 
     // We are done with the export
     d->flight = nullptr;
@@ -126,12 +157,12 @@ bool SdLogExportPlugin::exportAircraft(const Flight &flight, const Aircraft &air
 // PRIVATE
 
 
-bool SdLogExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
+bool SdLogExportPlugin::exportAllAircraft() const noexcept
 {
     bool ok {true};
     std::size_t i = 0;
     for (const auto &aircraft : *d->flight) {
-        ok = exportAircraft(aircraft, io);
+        ok = exportAircraft(aircraft);
         if (!ok) {
             break;
         }
@@ -139,7 +170,7 @@ bool SdLogExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
     return ok;
 }
 
-bool SdLogExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool SdLogExportPlugin::exportAircraft(const Aircraft &aircraft) const noexcept
 {
     const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};

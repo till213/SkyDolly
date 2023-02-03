@@ -14,5 +14,6 @@ target_link_libraries(${MODULE_NAME}
         Qt6::Widgets
         Sky::Kernel
         Sky::Model
+        Sky::Persistence
         Sky::PluginManager
 )
