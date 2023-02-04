@@ -114,8 +114,10 @@ MSFSSimConnectPlugin::MSFSSimConnectPlugin(QObject *parent) noexcept
 
 MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
 {
-    d->eventStateHandler->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
-    d->eventStateHandler->resumePausedSimulation();
+    if (d->simConnectHandle != nullptr) {
+        d->eventStateHandler->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
+        d->eventStateHandler->resumePausedSimulation();
+    }
     close();
 }
 
