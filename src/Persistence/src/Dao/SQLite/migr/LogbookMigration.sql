@@ -919,6 +919,47 @@ set app_version = '0.14.0';
 update metadata
 set app_version = '0.15.0';
 
+@migr(id = "a77e5e8b-acd5-4141-964b-ba358216b42e", descn = "Add NOT NULL constraints to table flight", step_cnt = 3)
+create table flight_new (
+    id integer primary key,
+    creation_time datetime not null default current_timestamp,
+    user_aircraft_seq_nr integer not null,
+    title text,
+    description text,
+    surface_type integer,
+    surface_condition integer,
+    on_any_runway integer,
+    on_parking_spot integer,
+    ground_altitude real,
+    ambient_temperature real,
+    total_air_temperature real,
+    wind_speed real,
+    wind_direction real,
+    visibility real,
+    sea_level_pressure real,
+    pitot_icing real,
+    structural_icing real,
+    precipitation_state integer,
+    in_clouds integer,
+    start_local_sim_time datetime,
+    start_zulu_sim_time datetime,
+    end_local_sim_time datetime,
+    end_zulu_sim_time datetime
+);
+
+@migr(id = "a77e5e8b-acd5-4141-964b-ba358216b42e", descn = "Copy data from old to new flight table", step = 2)
+insert into flight_new (id, creation_time, user_aircraft_seq_nr, title, description, surface_type, surface_condition, on_any_runway, on_parking_spot, ground_altitude, ambient_temperature,
+                        total_air_temperature, wind_speed, wind_direction, visibility, sea_level_pressure, pitot_icing, structural_icing, precipitation_state, in_clouds,
+                        start_local_sim_time, start_zulu_sim_time, end_local_sim_time, end_zulu_sim_time)
+select id, creation_time, coalesce(user_aircraft_seq_nr, 1), title, description, surface_type, surface_condition, on_any_runway, on_parking_spot, ground_altitude, ambient_temperature,
+       total_air_temperature, wind_speed, wind_direction, visibility, sea_level_pressure, pitot_icing, structural_icing, precipitation_state, in_clouds,
+       start_local_sim_time, start_zulu_sim_time, end_local_sim_time, end_zulu_sim_time
+from flight;
+
+@migr(id = "a77e5e8b-acd5-4141-964b-ba358216b42e", descn = "Rename flight_new to flight", step = 3)
+drop table flight;
+alter table flight_new rename to flight;
+
 @migr(id = "48e2f465-6fc7-41e8-b32d-07ad1a8d2f06", descn = "Update application version to 0.16", step = 1)
 update metadata
 set app_version = '0.16.0';
