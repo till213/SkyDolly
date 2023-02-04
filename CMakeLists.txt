@@ -126,6 +126,7 @@ target_sources("SkyDollyProject"
         doc/Design/README.md
         doc/SkyDolly.simvars
         doc/LICENSE
+        "doc/SQL/Timelapse Camera Pan.sql"
         ${QM_FILES}
 )
 
