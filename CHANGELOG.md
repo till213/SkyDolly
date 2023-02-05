@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.15.1
+
+### Bug Fixes
+- Prevents the creation of a logbook backup each time the application is launched:
+  * Make sure each "bump version" migration step _really_ has a distinct UUID
+  * Don't compare patch version numbers, as the database version does not increment them
+- Fix a crash that may occasionally occur when quitting Sky Dolly, in case when MSFS has been closed before and an "active connection" had been established, e.g. due to a replay or recording
+
 ## 0.15.0
 
 This release focuses on the migration to the Qt 6.4 framework. If you are building Sky Dolly from source then also refer to the updated [BUILD.md](BUILD.md) instructions.
