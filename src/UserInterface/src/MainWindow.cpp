@@ -425,21 +425,25 @@ void MainWindow::initUi() noexcept
             Settings &settings = Settings::getInstance();
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
+            constexpr uint WarningSignChar = 0x26A0;
+            const QString WarningString = QString::fromUcs4(&WarningSignChar, 1);
             QMessageBox::information(this, "Preview",
+                                     WarningString + WarningString + WarningString + QString(" EXCESSIVE LOGBOOK BACKUP GENERATION ") + WarningString + WarningString + WarningString +
                                      QString("\n\n"
-                                             "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                                             "This release v%2 \"%3\" is a no-new-features release: it focuses on upgrading 3rd-party libraries, most "
-                                             "importantly the upgrade to the Qt 6 framework.\n\n"
-                                             "Besides better support for Windows 11 this also introduces initial dark mode support on Windows. Dark mode support "
-                                             "is not enabled by default yet, however you can launch the application with the following command-line options:\n\n"
-                                             "SkyDolly.exe -platform windows:darkmode=2\n\n"
-                                             "Alternatively with the Fusion style that currently looks arguably better in dark mode:\n\n"
-                                             "SkyDolly.exe -platform windows:darkmode=2 -style fusion\n\n"
-                                             "In any case dark mode also needs to be enabled in the Windows user settings.\n\n"
-                                             "This dialog will be shown %4 more times.")
-                                     .arg(Version::getApplicationName(), Version::getApplicationVersion())
-                                     .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
-                                     QMessageBox::StandardButton::Ok);
+                                     "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
+                                     "This patch release v%2 \"%3\" fixes an important issue regarding excessive logbook backup generation. "
+                                     "In order to reclaim storage space:\n\n"
+                                     "· Open the logbook location: File | Logbook Settings... | Show\n"
+                                     "· In the File Explorer, open the Backups folder\n"
+                                     "· Delete any backup logbooks that are not needed\n\n"
+                                     "The backup name contains the backup date which should help to identify the most recent backups. In order to disable backup generation completely:\n\n"
+                                     "· Open the logbook location: File | Logbook Settings...\n"
+                                     "· Set the Backup Period to: Never\n"
+                                     "· Uncheck the \"Before migration of an older logbook\" option\n\n"
+                                     "This dialog will be shown %4 more times.")
+                         .arg(Version::getApplicationName(), Version::getApplicationVersion())
+                         .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
+                         QMessageBox::StandardButton::Ok);
             settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
         });
     }
