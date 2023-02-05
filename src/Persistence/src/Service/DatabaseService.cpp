@@ -68,7 +68,6 @@ struct DatabaseServicePrivate
     {}
 
     QString connectionName;
-    QString logbookPath;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<DatabaseDaoIntf> databaseDao;
 
@@ -95,25 +94,12 @@ DatabaseService::~DatabaseService()
 
 bool DatabaseService::connect(const QString &logbookPath) noexcept
 {
-    bool ok {true};
-    if (d->logbookPath != logbookPath) {
-        ok = d->databaseDao->connectDb(logbookPath);
-        if (ok) {
-            d->logbookPath = logbookPath;
-        }
-    }
-    return ok;
-}
-
-QString DatabaseService::getLogbookPath() const noexcept
-{
-    return d->logbookPath;
+    return d->databaseDao->connectDb(logbookPath);
 }
 
 void DatabaseService::disconnect() noexcept
 {
     d->databaseDao->disconnectDb();
-    d->logbookPath.clear();
 }
 
 bool DatabaseService::migrate() noexcept
@@ -126,18 +112,17 @@ bool DatabaseService::optimise() noexcept
     return d->databaseDao->optimise();
 }
 
-bool DatabaseService::backup() noexcept
+bool DatabaseService::backup(const QString &logbookPath) noexcept
 {
-    QString backupDirectoryPath;
-
     bool ok {true};
     const Metadata metaData = getMetadata(&ok);
+    QString backupDirectoryPath;
     if (ok) {
         backupDirectoryPath = createBackupPathIfNotExists(metaData.backupDirectoryPath);
     }
     ok = !backupDirectoryPath.isNull();
     if (ok) {
-        const QString backupFileName = getBackupFileName(backupDirectoryPath);
+        const QString backupFileName = getBackupFileName(logbookPath, backupDirectoryPath);
         if (!backupFileName.isNull()) {
             const QString backupFilePath = backupDirectoryPath + "/" + backupFileName;
             // No transaction must be active during backup
@@ -308,11 +293,11 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
     return newLogbookPath;
 }
 
-QString DatabaseService::getBackupFileName(const QString &backupDirectoryPath) const noexcept
+QString DatabaseService::getBackupFileName(const QString &logbookPath, const QString &backupDirectoryPath) noexcept
 {
-    QDir backupDir(backupDirectoryPath);
+    QDir backupDir {backupDirectoryPath};
 
-    const QFileInfo logbookInfo = QFileInfo(d->logbookPath);
+    const QFileInfo logbookInfo = QFileInfo(logbookPath);
     const QString baseName = logbookInfo.completeBaseName();
     const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
     QString backupLogbookName = baseBackupLogbookName % Const::DotLogbookExtension;

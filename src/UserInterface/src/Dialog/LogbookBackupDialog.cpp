@@ -93,7 +93,8 @@ void LogbookBackupDialog::accept() noexcept
 
     // ... the next backup date which is set upon successful backup
     if (ok) {
-        ok =d->databaseService->backup();
+        PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+        ok =d->databaseService->backup(persistenceManager.getLogbookPath());
     }
 
     if (!ok) {

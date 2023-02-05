@@ -54,12 +54,12 @@ public:
     ~DatabaseService();
 
     bool connect(const QString &logbookPath) noexcept;
-    QString getLogbookPath() const noexcept;
+//    QString getLogbookPath() const noexcept;
     void disconnect() noexcept;
 
     bool migrate() noexcept;
     bool optimise() noexcept;
-    bool backup() noexcept;
+    bool backup(const QString &logbookPath) noexcept;
     bool setBackupPeriod(std::int64_t backupPeriodId) noexcept;
     bool setNextBackupDate(const QDateTime &date) noexcept;
     bool updateBackupDate() noexcept;
@@ -71,7 +71,7 @@ public:
 
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;
-    QString getBackupFileName(const QString &backupDirectoryPath) const noexcept;
+    static QString getBackupFileName(const QString &logbookPath, const QString &backupDirectoryPath) noexcept;
     static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
 
 private:

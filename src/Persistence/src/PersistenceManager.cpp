@@ -77,9 +77,10 @@ void PersistenceManager::destroyInstance() noexcept
 
 bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
 {
-    QString currentLogbookPath = logbookPath;
     bool ok {true};
-    bool retry = true;
+    Settings &settings = Settings::getInstance();
+    QString currentLogbookPath = logbookPath;
+    bool retry {true};
     while (retry && ok) {
         const QString logbookDirectoryPath = QFileInfo(currentLogbookPath).absolutePath();
         QFileInfo info(logbookDirectoryPath);
@@ -99,7 +100,6 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
                 if (ok) {
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
                     flight.clear(true);
-                    Settings &settings = Settings::getInstance();
                     // Create a backup before migration of existing logbooks
                     Version appVersion;
                     // TODO: Check whether there are any migration steps to be executed at all before
@@ -109,16 +109,13 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
                     // so we set the patch version always to 0
                     Version refVersion {appVersion.getMajor(), appVersion.getMinor(), 0};
                     if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < refVersion) {
-                        ok = d->databaseService->backup();
+                        ok = d->databaseService->backup(currentLogbookPath);
                     }
                     if (ok) {
                         // We still migrate, even if the above version check indicates that the database is up to date
                         // (to make sure that we really do not miss any migration steps, in case the database version
                         // was "forgotten" to be updated during some prior migration)
                         ok = d->databaseService->migrate();
-                    }
-                    if (ok) {
-                        settings.setLogbookPath(currentLogbookPath);
                     }
                     retry = false;
                 } else {
@@ -156,6 +153,8 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
     }
     d->connected = ok;
     if (d->connected) {
+        d->logbookPath = logbookPath;
+        settings.setLogbookPath(logbookPath);
         emit connectionChanged(true);
     } else {
         disconnectFromLogbook();
@@ -179,7 +178,7 @@ bool PersistenceManager::isConnected() const noexcept
 
 QString PersistenceManager::getLogbookPath() const noexcept
 {
-    return d->databaseService->getLogbookPath();
+    return d->logbookPath;
 }
 
 bool PersistenceManager::optimise() noexcept
