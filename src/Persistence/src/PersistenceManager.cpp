@@ -99,10 +99,16 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
                 if (ok) {
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
                     flight.clear(true);
+                    Settings &settings = Settings::getInstance();
                     // Create a backup before migration of existing logbooks
                     Version appVersion;
-                    Settings &settings = Settings::getInstance();
-                    if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < appVersion) {
+                    // TODO: Check whether there are any migration steps to be executed at all before
+                    //       creating a backup, instead of comparing database and application versions
+                    //       (the later requires that the database version is always up to date)
+                    // For the time being we only compare major.minur but not major.minor.patch versions;
+                    // so we set the patch version always to 0
+                    Version refVersion {appVersion.getMajor(), appVersion.getMinor(), 0};
+                    if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < refVersion) {
                         ok = d->databaseService->backup();
                     }
                     if (ok) {
