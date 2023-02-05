@@ -46,6 +46,7 @@ public:
     ~SQLiteFlightDao() override;
 
     bool add(Flight &flight) noexcept override;
+    bool exportFlight(const Flight &flight) noexcept override;
     bool get(std::int64_t id, Flight &flight) const noexcept override;
     bool deleteById(std::int64_t id) noexcept override;
     bool updateTitle(std::int64_t id, const QString &title) noexcept override;

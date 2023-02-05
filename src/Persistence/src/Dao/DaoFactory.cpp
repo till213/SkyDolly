@@ -78,7 +78,7 @@ std::unique_ptr<DatabaseDaoIntf> DaoFactory::createDatabaseDao() noexcept
     std::unique_ptr<DatabaseDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        dao = std::make_unique<SQLiteDatabaseDao>();
+        dao = std::make_unique<SQLiteDatabaseDao>(d->connectionName);
         break;
     }
     return dao;

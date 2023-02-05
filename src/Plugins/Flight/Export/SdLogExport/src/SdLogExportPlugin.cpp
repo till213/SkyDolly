@@ -52,14 +52,17 @@
 #include <Model/PositionData.h>
 #include <Model/SimType.h>
 #include <Persistence/Service/DatabaseService.h>
+#include <Persistence/Service/FlightService.h>
+#include <Persistence/Service/AircraftService.h>
 #include <PluginManager/Export.h>
 #include "SdLogExportSettings.h"
 #include "SdLogExportPlugin.h"
 
 struct SdLogExportPluginPrivate
 {
-    const Flight *flight {nullptr};
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ExportConnectionName)};
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>(Const::ExportConnectionName)};
+    std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>(Const::ExportConnectionName)};
     SdLogExportSettings pluginSettings;
     Unit unit;
 
@@ -105,8 +108,6 @@ bool SdLogExportPlugin::hasMultiAircraftSupport() const noexcept
 bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
     bool ok {true};
-    d->flight = &flight;
-    io.setTextModeEnabled(true);
 
     QFile *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
@@ -116,69 +117,41 @@ bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const 
             d->databaseService->migrate();
         }
         if (ok) {
-            ok = exportAllAircraft();
+            ok = d->flightService->exportFlight(flight);
         }
     } else {
         // We only support file-based SQLite databases
         ok = false;
     }
-
-    // We are done with the export
-    d->flight = nullptr;
     return ok;
 }
 
 bool SdLogExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     bool ok {true};
-    d->flight = &flight;
+    // TODO IMPLEMENT ME
+//    d->flight = &flight;
 
-    QFile *file = qobject_cast<QFile *>(&io);
-    if (file != nullptr) {
-        QFileInfo info {*file};
-        ok = d->databaseService->connect(info.absoluteFilePath());
-        if (ok) {
-            d->databaseService->migrate();
-        }
-        if (ok) {
-            ok = exportAircraft(aircraft);
-        }
-        d->databaseService->disconnect();
-    } else {
-        // We only support file-based SQLite databases
-        ok = false;
-    }
+//    QFile *file = qobject_cast<QFile *>(&io);
+//    if (file != nullptr) {
+//        QFileInfo info {*file};
+//        ok = d->databaseService->connect(info.absoluteFilePath());
+//        if (ok) {
+//            d->databaseService->migrate();
+//        }
+//        if (ok) {
+//            ok = exportAircraft(aircraft);
+//        }
+//        d->databaseService->disconnect();
+//    } else {
+//        // We only support file-based SQLite databases
+//        ok = false;
+//    }
 
-    // We are done with the export
-    d->flight = nullptr;
+//    // We are done with the export
+//    d->flight = nullptr;
     return ok;
 }
 
 // PRIVATE
 
-
-bool SdLogExportPlugin::exportAllAircraft() const noexcept
-{
-    bool ok {true};
-    std::size_t i = 0;
-    for (const auto &aircraft : *d->flight) {
-        ok = exportAircraft(aircraft);
-        if (!ok) {
-            break;
-        }
-    }
-    return ok;
-}
-
-bool SdLogExportPlugin::exportAircraft(const Aircraft &aircraft) const noexcept
-{
-    const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
-    bool ok {true};
-
-    const AircraftInfo &info = aircraft.getAircraftInfo();
-    const AircraftType &type = info.aircraftType;
-
-    // TODO IMPLEMENT ME
-
-    return ok;
-}

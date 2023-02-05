@@ -28,6 +28,7 @@
 #include <cstdint>
 
 #include <QSqlDatabase>
+#include <QSqlError>
 
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
@@ -71,6 +72,29 @@ bool FlightService::store(Flight &flight) noexcept
         } else {
             db.rollback();
         }
+#ifdef DEBUG
+    } else {
+        qDebug() << "FlightService::store: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+#endif
+    }
+    return ok;
+}
+
+bool FlightService::exportFlight(const Flight &flight) noexcept
+{
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
+    if (ok) {
+        ok = d->flightDao->exportFlight(flight);
+        if (ok) {
+            ok = db.commit();
+        } else {
+            db.rollback();
+        }
+#ifdef DEBUG
+    } else {
+        qDebug() << "FlightService::exportFlight: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+#endif
     }
     return ok;
 }
@@ -84,8 +108,12 @@ bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
         ok = d->flightDao->get(id, flight);
         flight.blockSignals(false);
         emit flight.flightRestored(flight.getId());
+        db.rollback();
+#ifdef DEBUG
+    } else {
+        qDebug() << "FlightService::restore: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+#endif
     }
-    db.rollback();
     return ok;
 }
 
@@ -104,6 +132,10 @@ bool FlightService::deleteById(std::int64_t id) noexcept
         } else {
             db.rollback();
         }
+#ifdef DEBUG
+    } else {
+        qDebug() << "FlightService::deleteById: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+#endif
     }
     return ok;
 }
@@ -129,6 +161,10 @@ bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
         } else {
             db.rollback();
         }
+#ifdef DEBUG
+    } else {
+        qDebug() << "FlightService::updateTitle: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+#endif
     }
     return ok;
 }
@@ -155,6 +191,10 @@ bool FlightService::updateTitleAndDescription(std::int64_t id, const QString &ti
         } else {
             db.rollback();
         }
+#ifdef DEBUG
+    } else {
+        qDebug() << "FlightService::updateTitleAndDescription: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+#endif
     }
     return ok;
 }
@@ -171,6 +211,10 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
         } else {
             db.rollback();
         }
+#ifdef DEBUG
+    } else {
+        qDebug() << "FlightService::updateUserAircraftIndex: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+#endif
     }
     return ok;
 }

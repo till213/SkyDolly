@@ -26,6 +26,7 @@
 #define SDLOGEXPORTPLUGIN_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 #include <QtPlugin>
@@ -65,9 +66,6 @@ protected:
 
 private:
     const std::unique_ptr<SdLogExportPluginPrivate> d;
-
-    bool exportAllAircraft() const noexcept;
-    bool exportAircraft(const Aircraft &aircraft) const noexcept;
 };
 
 #endif // SDLOGEXPORTPLUGIN_H

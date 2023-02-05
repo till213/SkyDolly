@@ -51,6 +51,7 @@ public:
     ~FlightService();
 
     bool store(Flight &flight) noexcept;
+    bool exportFlight(const Flight &flight) noexcept;
     bool restore(std::int64_t id, Flight &flight) noexcept;
     bool deleteById(std::int64_t id) noexcept;
     bool updateTitle(Flight &flight, const QString &title) noexcept;

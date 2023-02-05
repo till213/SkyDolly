@@ -159,7 +159,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, A
         ok = query.exec();
     }
     if (ok) {
-        std::int64_t id = query.lastInsertId().toLongLong(&ok);
+        const std::int64_t id = query.lastInsertId().toLongLong(&ok);
         aircraft.setId(id);
 #ifdef DEBUG
     } else {
@@ -216,6 +216,115 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, A
     }
     if (ok) {
         ok = d->waypointDao->add(aircraft.getId(), aircraft.getFlightPlan());
+    }
+    return ok;
+}
+
+bool SQLiteAircraftDao::exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept
+{
+    // TODO REFACTOR ME: reuse implementation from above
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
+    query.prepare(
+        "insert into aircraft ("
+        "  flight_id,"
+        "  seq_nr,"
+        "  type,"
+        "  time_offset,"
+        "  tail_number,"
+        "  airline,"
+        "  flight_number,"
+        "  initial_airspeed,"
+        "  altitude_above_ground,"
+        "  start_on_ground"
+        ") values ("
+        " :flight_id,"
+        " :seq_nr,"
+        " :type,"
+        " :time_offset,"
+        " :tail_number,"
+        " :airline,"
+        " :flight_number,"
+        " :initial_airspeed,"
+        " :altitude_above_ground,"
+        " :start_on_ground"
+        ");");
+
+    const AircraftType &aircraftType = aircraft.getAircraftInfo().aircraftType;
+    bool ok = d->aircraftTypeDao->upsert(aircraftType);
+    if (ok) {
+        const AircraftInfo &info = aircraft.getAircraftInfo();
+        query.bindValue(":flight_id", QVariant::fromValue(flightId));
+        query.bindValue(":seq_nr", QVariant::fromValue(sequenceNumber));
+        query.bindValue(":type", aircraftType.type);
+        query.bindValue(":time_offset", QVariant::fromValue(info.timeOffset));
+        query.bindValue(":tail_number", info.tailNumber);
+        query.bindValue(":airline", info.airline);
+        query.bindValue(":flight_number", info.flightNumber);
+        query.bindValue(":initial_airspeed", info.initialAirspeed);
+        query.bindValue(":altitude_above_ground", info.altitudeAboveGround);
+        query.bindValue(":start_on_ground", info.startOnGround);
+
+        ok = query.exec();
+    }
+    std::int64_t aircraftId {Const::InvalidId};
+    if (ok) {
+        aircraftId = query.lastInsertId().toLongLong(&ok);
+#ifdef DEBUG
+    } else {
+        qDebug() << "SQLiteAircraftDao::export: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+#endif
+    }
+    if (ok) {
+        for (const PositionData &data : aircraft.getPosition()) {
+            ok = d->positionDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const EngineData &data : aircraft.getEngine()) {
+            ok = d->engineDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControl()) {
+            ok = d->primaryFlightControlDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControl()) {
+            ok = d->secondaryFlightControlDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const AircraftHandleData &data : aircraft.getAircraftHandle()) {
+            ok = d->handleDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const LightData &data : aircraft.getLight()) {
+            ok = d->lightDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        ok = d->waypointDao->add(aircraftId, aircraft.getFlightPlan());
     }
     return ok;
 }

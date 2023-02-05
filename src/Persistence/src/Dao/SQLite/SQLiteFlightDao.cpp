@@ -159,7 +159,7 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
     query.bindValue(":end_zulu_sim_time", flightCondition.endZuluTime);
     bool ok = query.exec();
     if (ok) {
-        std::int64_t id = query.lastInsertId().toLongLong(&ok);
+        const std::int64_t id = query.lastInsertId().toLongLong(&ok);
         flight.setId(id);
 #ifdef DEBUG
     } else {
@@ -171,6 +171,118 @@ bool SQLiteFlightDao::add(Flight &flight) noexcept
         std::size_t sequenceNumber = 1;
         for (auto &aircaft : flight) {
             ok = d->aircraftDao->add(flight.getId(), sequenceNumber, aircaft);
+            if (ok) {
+                ++sequenceNumber;
+            } else {
+                break;
+            }
+        }
+
+    }
+    return ok;
+}
+
+bool SQLiteFlightDao::exportFlight(const Flight &flight) noexcept
+{
+    // TODO REFACTOR ME Reuse implementation from above
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
+    query.prepare(
+        "insert into flight ("
+        "  creation_time,"
+        "  user_aircraft_seq_nr,"
+        "  title,"
+        "  description,"
+        "  surface_type,"
+        "  surface_condition,"
+        "  on_any_runway,"
+        "  on_parking_spot,"
+        "  ground_altitude,"
+        "  ambient_temperature,"
+        "  total_air_temperature,"
+        "  wind_speed,"
+        "  wind_direction,"
+        "  visibility,"
+        "  sea_level_pressure,"
+        "  pitot_icing,"
+        "  structural_icing,"
+        "  precipitation_state,"
+        "  in_clouds,"
+        "  start_local_sim_time,"
+        "  start_zulu_sim_time,"
+        "  end_local_sim_time,"
+        "  end_zulu_sim_time"
+        ") values ("
+        " :creation_time,"
+        " :user_aircraft_seq_nr,"
+        " :title,"
+        " :description,"
+        " :surface_type,"
+        " :surface_condition,"
+        " :on_any_runway,"
+        " :on_parking_spot,"
+        " :ground_altitude,"
+        " :ambient_temperature,"
+        " :total_air_temperature,"
+        " :wind_speed,"
+        " :wind_direction,"
+        " :visibility,"
+        " :sea_level_pressure,"
+        " :pitot_icing,"
+        " :structural_icing,"
+        " :precipitation_state,"
+        " :in_clouds,"
+        " :start_local_sim_time,"
+        " :start_zulu_sim_time,"
+        " :end_local_sim_time,"
+        " :end_zulu_sim_time"
+        ");"
+    );
+
+    const FlightCondition &flightCondition = flight.getFlightCondition();
+    query.bindValue(":creation_time", flight.getCreationTime().toUTC());
+    // Sequence number starts at 1
+    query.bindValue(":user_aircraft_seq_nr", flight.getUserAircraftIndex() + 1);
+    query.bindValue(":title", flight.getTitle());
+    query.bindValue(":description", flight.getDescription());
+    query.bindValue(":surface_type", Enum::underly(flightCondition.surfaceType));
+    query.bindValue(":surface_condition", Enum::underly(flightCondition.surfaceCondition));
+    query.bindValue(":on_any_runway", flightCondition.onAnyRunway);
+    query.bindValue(":on_parking_spot", flightCondition.onParkingSpot);
+    query.bindValue(":ground_altitude", flightCondition.groundAltitude);
+    query.bindValue(":ambient_temperature", flightCondition.ambientTemperature);
+    query.bindValue(":total_air_temperature", flightCondition.totalAirTemperature);
+    query.bindValue(":wind_speed", flightCondition.windSpeed);
+    query.bindValue(":wind_direction", flightCondition.windDirection);
+    query.bindValue(":visibility", flightCondition.visibility);
+    query.bindValue(":sea_level_pressure", flightCondition.seaLevelPressure);
+    query.bindValue(":pitot_icing", flightCondition.pitotIcingPercent);
+    query.bindValue(":structural_icing", flightCondition.structuralIcingPercent);
+    query.bindValue(":precipitation_state", Enum::underly(flightCondition.precipitationState));
+    query.bindValue(":in_clouds", flightCondition.inClouds);
+    // No conversion to UTC
+    query.bindValue(":start_local_sim_time", flightCondition.startLocalTime);
+    // Zulu time equals to UTC time
+    query.bindValue(":start_zulu_sim_time", flightCondition.startZuluTime);
+    // No conversion to UTC
+    query.bindValue(":end_local_sim_time", flightCondition.endLocalTime);
+    // Zulu time equals to UTC time
+    query.bindValue(":end_zulu_sim_time", flightCondition.endZuluTime);
+    bool ok = query.exec();
+
+    std::int64_t flightId {Const::InvalidId};
+    if (ok) {
+        flightId = query.lastInsertId().toLongLong(&ok);
+#ifdef DEBUG
+    } else {
+        qDebug() << "SQLiteFlightDao::add: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+#endif
+    }
+    if (ok) {
+        // Starts at 1
+        std::size_t sequenceNumber = 1;
+        for (const auto &aircaft : flight) {
+            ok = d->aircraftDao->exportAircraft(flightId, sequenceNumber, aircaft);
             if (ok) {
                 ++sequenceNumber;
             } else {

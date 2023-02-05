@@ -50,6 +50,7 @@ public:
     ~AircraftService();
 
     bool store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept;
+    bool exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept;
     bool deleteByIndex(int index) noexcept;
     std::vector<AircraftInfo> getAircraftInfos(std::int64_t flightId, bool *ok = nullptr) const noexcept;
 
