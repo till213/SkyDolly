@@ -121,9 +121,15 @@ void BasicFlightExportDialog::initBasicUi() noexcept
     ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFlightFilePath(d->flight, d->fileExtension)));
 
     // Formation export
-    ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::underly(FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly));
-    ui->formationExportComboBox->addItem(tr("All aircraft (single file)"), Enum::underly(FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile));
-    ui->formationExportComboBox->addItem(tr("All aircraft (separate files)"), Enum::underly(FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles));
+    if (d->pluginSettings.isFormationExportSupported(FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly)) {
+        ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::underly(FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly));
+    }
+    if (d->pluginSettings.isFormationExportSupported(FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile)) {
+        ui->formationExportComboBox->addItem(tr("All aircraft (single file)"), Enum::underly(FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile));
+    }
+    if (d->pluginSettings.isFormationExportSupported(FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles)) {
+        ui->formationExportComboBox->addItem(tr("All aircraft (separate files)"), Enum::underly(FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles));
+    }
 
     // Resampling
     ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::underly(SampleRate::ResamplingPeriod::ATenthHz));
@@ -231,8 +237,9 @@ void BasicFlightExportDialog::updateUi() noexcept
     d->exportButton->setEnabled(file.exists());
 
     const SampleRate::ResamplingPeriod resamplingPeriod = d->pluginSettings.getResamplingPeriod();
-    int currentIndex = 0;
-    while (currentIndex < ui->resamplingComboBox->count() &&
+    int currentIndex {0};
+    int indexCount = ui->formationExportComboBox->count();
+    while (currentIndex < indexCount &&
            static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != resamplingPeriod) {
         ++currentIndex;
     }
@@ -240,11 +247,18 @@ void BasicFlightExportDialog::updateUi() noexcept
 
     const FlightExportPluginBaseSettings::FormationExport formationExport = d->pluginSettings.getFormationExport();
     currentIndex = 0;
-    while (currentIndex < ui->formationExportComboBox->count() &&
+    indexCount = ui->formationExportComboBox->count();
+    while (currentIndex < indexCount &&
            static_cast<FlightExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->itemData(currentIndex).toInt()) != formationExport) {
         ++currentIndex;
     }
-    ui->formationExportComboBox->setCurrentIndex(currentIndex);
+    if (currentIndex < indexCount) {
+        ui->formationExportComboBox->setCurrentIndex(currentIndex);
+    } else if (indexCount > 0) {
+        // Default setting not supported -> select the first available option
+        ui->formationExportComboBox->setCurrentIndex(0);
+        onFormationExportChanged();
+    }
 
     switch (formationExport) {
     case FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly:

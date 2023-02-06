@@ -41,6 +41,8 @@ public:
     SdLogExportSettings() noexcept;
     ~SdLogExportSettings() override;
 
+    bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
+
 signals:
     /*!
      * Emitted whenever the extended settings have changed.

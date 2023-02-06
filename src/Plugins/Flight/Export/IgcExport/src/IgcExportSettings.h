@@ -51,6 +51,8 @@ public:
     bool isConvertAltitudeEnabled() const noexcept;
     void setConvertAltitudeEnabled(bool enable) noexcept;
 
+    bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
+
 signals:
     /*!
      * Emitted whenever the extended settings have changed.

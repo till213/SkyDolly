@@ -63,6 +63,7 @@ public:
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 
+    virtual bool isFormationExportSupported(FormationExport formationExport) const noexcept = 0;
     FormationExport getFormationExport() const noexcept;
     void setFormationExport(FormationExport formationExport) noexcept;
 

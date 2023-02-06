@@ -357,7 +357,6 @@ QString KmlExportPlugin::getWaypointDescription(const Waypoint &waypoint) const 
            QObject::tr("Altitude") % ": " % d->unit.formatFeet(waypoint.altitude) % "\n";
 }
 
-
 inline bool KmlExportPlugin::exportPlacemark(QIODevice &io, KmlStyleExport::Icon icon, const QString &name, const QString &description, const PositionData &positionData) const noexcept
 {
     bool ok = !positionData.isNull();

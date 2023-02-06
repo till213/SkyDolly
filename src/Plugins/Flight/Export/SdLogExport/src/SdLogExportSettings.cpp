@@ -47,6 +47,23 @@ SdLogExportSettings::SdLogExportSettings() noexcept
 
 SdLogExportSettings::~SdLogExportSettings() = default;
 
+bool SdLogExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
+{
+    bool supported {false};
+    switch (formationExport) {
+    case FormationExport::AllAircraftOneFile:
+        supported = true;
+        break;
+    case FormationExport::AllAircraftSeparateFiles:
+        supported = false;
+        break;
+    case FormationExport::UserAircraftOnly:
+        supported = false;
+        break;
+    }
+    return supported;
+};
+
 // PROTECTED
 
 void SdLogExportSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept

@@ -68,6 +68,12 @@ void CsvExportSettings::setFormat(Format format) noexcept
     }
 }
 
+bool CsvExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
+{
+    // TODO IMPLEMENT ME
+    return true;
+};
+
 // PROTECTED
 
 void CsvExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept

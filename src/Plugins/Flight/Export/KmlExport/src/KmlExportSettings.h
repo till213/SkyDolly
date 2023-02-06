@@ -78,6 +78,8 @@ public:
     QColor getAllEndColor() const noexcept;
     void setAllEndColor(const QColor &color) noexcept;
 
+    bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
+
 signals:
     /*!
      * Emitted whenever the extended settings have changed.

@@ -110,7 +110,7 @@ bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const 
 {
     bool ok {true};
 
-    QFile *file = qobject_cast<QFile *>(&io);
+    auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
         QFileInfo info {*file};
         ok = d->databaseService->connect(info.absoluteFilePath());
@@ -129,9 +129,7 @@ bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const 
 
 bool SdLogExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    bool ok {true};
+    bool ok {false};
     // Currently not supported
     return ok;
 }
-
-// PRIVATE

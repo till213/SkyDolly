@@ -72,6 +72,12 @@ void GpxExportSettings::setTimestampMode(TimestampMode timestampMode) noexcept
     }
 }
 
+bool GpxExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
+{
+    // TODO IMPLEMENT ME
+    return true;
+};
+
 // PROTECTED
 
 void GpxExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
