@@ -39,7 +39,7 @@ struct SQLitePositionDaoPrivate;
 class SQLitePositionDao : public PositionDaoIntf
 {
 public:
-    SQLitePositionDao(const QString &connectionName) noexcept;
+    SQLitePositionDao(QString connectionName) noexcept;
     SQLitePositionDao(const SQLitePositionDao &rhs) = delete;
     SQLitePositionDao(SQLitePositionDao &&rhs) noexcept;
     SQLitePositionDao &operator=(const SQLitePositionDao &rhs) = delete;

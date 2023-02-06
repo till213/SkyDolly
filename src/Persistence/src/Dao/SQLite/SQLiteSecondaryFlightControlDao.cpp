@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 #include <vector>
 #include <cstdint>
 #include <utility>
@@ -52,8 +53,8 @@ namespace
 
 struct SQLiteSecondaryFlightControlDaoPrivate
 {
-    SQLiteSecondaryFlightControlDaoPrivate(const QString &connectionName) noexcept
-        : connectionName(connectionName)
+    SQLiteSecondaryFlightControlDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
     QString connectionName;
@@ -61,8 +62,8 @@ struct SQLiteSecondaryFlightControlDaoPrivate
 
 // PUBLIC
 
-SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(const QString &connectionName) noexcept
-    : d(std::make_unique<SQLiteSecondaryFlightControlDaoPrivate>(connectionName))
+SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteSecondaryFlightControlDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs) noexcept = default;

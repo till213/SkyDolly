@@ -39,7 +39,7 @@ struct SQLiteSecondaryFlightControlDaoPrivate;
 class SQLiteSecondaryFlightControlDao : public SecondaryFlightControlDaoIntf
 {
 public:
-    SQLiteSecondaryFlightControlDao(const QString &connectionName) noexcept;
+    SQLiteSecondaryFlightControlDao(QString connectionName) noexcept;
     SQLiteSecondaryFlightControlDao(const SQLiteSecondaryFlightControlDao &rhs) = delete;
     SQLiteSecondaryFlightControlDao(SQLiteSecondaryFlightControlDao &&rhs) noexcept;
     SQLiteSecondaryFlightControlDao &operator=(const SQLiteSecondaryFlightControlDao &rhs) = delete;

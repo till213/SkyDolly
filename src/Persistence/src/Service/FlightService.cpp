@@ -39,9 +39,9 @@
 
 struct FlightServicePrivate
 {
-    FlightServicePrivate(const QString &connectionName) noexcept
+    FlightServicePrivate(QString connectionName) noexcept
         : connectionName(connectionName),
-          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, connectionName)),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
           flightDao(daoFactory->createFlightDao())
     {}
 
@@ -52,8 +52,8 @@ struct FlightServicePrivate
 
 // PUBLIC
 
-FlightService::FlightService(const QString &connectionName) noexcept
-    : d(std::make_unique<FlightServicePrivate>(connectionName))
+FlightService::FlightService(QString connectionName) noexcept
+    : d(std::make_unique<FlightServicePrivate>(std::move(connectionName)))
 {}
 
 FlightService::FlightService(FlightService &&rhs) noexcept = default;

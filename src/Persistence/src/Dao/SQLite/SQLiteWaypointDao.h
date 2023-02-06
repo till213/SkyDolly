@@ -39,7 +39,7 @@ struct SQLiteWaypointDaoPrivate;
 class SQLiteWaypointDao : public WaypointDaoIntf
 {
 public:
-    SQLiteWaypointDao(const QString &connectionName) noexcept;
+    SQLiteWaypointDao(QString connectionName) noexcept;
     SQLiteWaypointDao(const SQLiteWaypointDao &rhs) = delete;
     SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept;
     SQLiteWaypointDao &operator=(const SQLiteWaypointDao &rhs) = delete;

@@ -79,10 +79,10 @@ namespace
 
 struct SqlMigrationPrivate
 {
-    SqlMigrationPrivate(const QString &connectionName) noexcept
+    SqlMigrationPrivate(QString connectionName) noexcept
         : connectionName(connectionName),
           locationDao(std::make_unique<SQLiteLocationDao>(connectionName)),
-          enumerationService(std::make_unique<EnumerationService>(connectionName))
+          enumerationService(std::make_unique<EnumerationService>(std::move(connectionName)))
     {}
 
     QString connectionName;
@@ -92,8 +92,8 @@ struct SqlMigrationPrivate
 
 // PUBLIC
 
-SqlMigration::SqlMigration(const QString &connectionName) noexcept
-    : d(std::make_unique<SqlMigrationPrivate>(connectionName))
+SqlMigration::SqlMigration(QString connectionName) noexcept
+    : d(std::make_unique<SqlMigrationPrivate>(std::move(connectionName)))
 {}
 
 SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;

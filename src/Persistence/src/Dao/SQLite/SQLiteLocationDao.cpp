@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 #include <vector>
 #include <utility>
 
@@ -51,8 +52,8 @@ namespace
 
 struct SQLiteLocationDaoPrivate
 {
-    SQLiteLocationDaoPrivate(const QString &connectionName) noexcept
-        : connectionName(connectionName)
+    SQLiteLocationDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
     QString connectionName;
@@ -60,8 +61,8 @@ struct SQLiteLocationDaoPrivate
 
 // PUBLIC
 
-SQLiteLocationDao::SQLiteLocationDao(const QString &connectionName) noexcept
-    : d(std::make_unique<SQLiteLocationDaoPrivate>(connectionName))
+SQLiteLocationDao::SQLiteLocationDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteLocationDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteLocationDao::SQLiteLocationDao(SQLiteLocationDao &&rhs) noexcept = default;

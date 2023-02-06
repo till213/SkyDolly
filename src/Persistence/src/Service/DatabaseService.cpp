@@ -61,9 +61,9 @@ namespace
 
 struct DatabaseServicePrivate
 {
-    DatabaseServicePrivate(const QString &connectionName) noexcept
+    DatabaseServicePrivate(QString connectionName) noexcept
         :  connectionName(connectionName),
-           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, connectionName)),
+           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
            databaseDao(daoFactory->createDatabaseDao())
     {}
 
@@ -81,8 +81,8 @@ struct DatabaseServicePrivate
 
 // PUBLIC
 
-DatabaseService::DatabaseService(const QString &connectionName) noexcept
-    : d(std::make_unique<DatabaseServicePrivate>(connectionName))
+DatabaseService::DatabaseService(QString connectionName) noexcept
+    : d(std::make_unique<DatabaseServicePrivate>(std::move(connectionName)))
 {}
 
 DatabaseService::DatabaseService(DatabaseService &&rhs) noexcept = default;

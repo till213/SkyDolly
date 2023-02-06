@@ -37,7 +37,7 @@ struct SqlMigrationPrivate;
 class SqlMigration
 {
 public:
-    SqlMigration(const QString &connectionName) noexcept;
+    SqlMigration(QString connectionName) noexcept;
     SqlMigration(const SqlMigration &rhs) = delete;
     SqlMigration(SqlMigration &&rhs) noexcept;
     SqlMigration &operator=(const SqlMigration &rhs) = delete;

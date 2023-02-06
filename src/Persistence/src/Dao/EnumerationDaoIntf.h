@@ -47,7 +47,7 @@ public:
     /*!
      * Returns the enumeration given by its \c name. The name is to be given in camelCase,
      * without the "enum_" prefix.
-     * \p
+     *
      * Examples:
      *
      * | "Enumeration Name" | "Table Name"           |

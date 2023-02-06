@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 #include <vector>
 #include <cstdint>
 #include <utility>
@@ -50,8 +51,8 @@ namespace
 
 struct SQLiteLightDaoPrivate
 {
-    SQLiteLightDaoPrivate(const QString &connectionName) noexcept
-        : connectionName(connectionName)
+    SQLiteLightDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
     QString connectionName;
@@ -59,8 +60,8 @@ struct SQLiteLightDaoPrivate
 
 // PUBLIC
 
-SQLiteLightDao::SQLiteLightDao(const QString &connectionName) noexcept
-    : d(std::make_unique<SQLiteLightDaoPrivate>(connectionName))
+SQLiteLightDao::SQLiteLightDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteLightDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteLightDao::SQLiteLightDao(SQLiteLightDao &&rhs) noexcept = default;
@@ -122,7 +123,6 @@ std::vector<LightData> SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, 
         const int timestampIdx = record.indexOf("timestamp");
         const int lightStatesIdx = record.indexOf("light_states");
         while (query.next()) {
-
             LightData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.lightStates = static_cast<SimType::LightStates>(query.value(lightStatesIdx).toInt());

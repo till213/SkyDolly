@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 #include <vector>
 #include <cstdint>
 #include <utility>
@@ -52,8 +53,8 @@ namespace
 
 struct SQLitePositionDaoPrivate
 {
-    SQLitePositionDaoPrivate(const QString &connectionName) noexcept
-        : connectionName(connectionName)
+    SQLitePositionDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
     QString connectionName;
@@ -61,8 +62,8 @@ struct SQLitePositionDaoPrivate
 
 // PUBLIC
 
-SQLitePositionDao::SQLitePositionDao(const QString &connectionName) noexcept
-    : d(std::make_unique<SQLitePositionDaoPrivate>(connectionName))
+SQLitePositionDao::SQLitePositionDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLitePositionDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLitePositionDao::SQLitePositionDao(SQLitePositionDao &&rhs) noexcept = default;
@@ -161,7 +162,6 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
         const int velocitYIdx = record.indexOf("velocity_y");
         const int velocitZIdx = record.indexOf("velocity_z");
         while (query.next()) {
-
             PositionData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.latitude = query.value(latitudeIdx).toDouble();

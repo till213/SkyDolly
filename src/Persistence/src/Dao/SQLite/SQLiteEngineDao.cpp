@@ -50,8 +50,8 @@ namespace
 
 struct SQLiteEngineDaoPrivate
 {
-    SQLiteEngineDaoPrivate(const QString &connectionName) noexcept
-        : connectionName(connectionName)
+    SQLiteEngineDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
     QString connectionName;
@@ -59,8 +59,8 @@ struct SQLiteEngineDaoPrivate
 
 // PUBLIC
 
-SQLiteEngineDao::SQLiteEngineDao(const QString &connectionName) noexcept
-    : d(std::make_unique<SQLiteEngineDaoPrivate>(connectionName))
+SQLiteEngineDao::SQLiteEngineDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteEngineDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteEngineDao::SQLiteEngineDao(SQLiteEngineDao &&rhs) noexcept = default;
@@ -232,18 +232,16 @@ std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId
         const int generalEngineCombustion4Idx = record.indexOf("general_engine_combustion4");
 
         while (query.next()) {
-
             EngineData data;
-
             data.timestamp = query.value(timestampIdx).toLongLong();
-            data.throttleLeverPosition1 = query.value(throttleLeverPosition1Idx).toInt();
-            data.throttleLeverPosition2 = query.value(throttleLeverPosition2Idx).toInt();
-            data.throttleLeverPosition3 = query.value(throttleLeverPosition3Idx).toInt();
-            data.throttleLeverPosition4 = query.value(throttleLeverPosition4Idx).toInt();
-            data.propellerLeverPosition1 = query.value(propellerLeverPosition1Idx).toInt();
-            data.propellerLeverPosition2 = query.value(propellerLeverPosition2Idx).toInt();
-            data.propellerLeverPosition3 = query.value(propellerLeverPosition3Idx).toInt();
-            data.propellerLeverPosition4 = query.value(propellerLeverPosition4Idx).toInt();
+            data.throttleLeverPosition1 = static_cast<std::int16_t>(query.value(throttleLeverPosition1Idx).toInt());
+            data.throttleLeverPosition2 = static_cast<std::int16_t>(query.value(throttleLeverPosition2Idx).toInt());
+            data.throttleLeverPosition3 = static_cast<std::int16_t>(query.value(throttleLeverPosition3Idx).toInt());
+            data.throttleLeverPosition4 = static_cast<std::int16_t>(query.value(throttleLeverPosition4Idx).toInt());
+            data.propellerLeverPosition1 = static_cast<std::int16_t>(query.value(propellerLeverPosition1Idx).toInt());
+            data.propellerLeverPosition2 = static_cast<std::int16_t>(query.value(propellerLeverPosition2Idx).toInt());
+            data.propellerLeverPosition3 = static_cast<std::int16_t>(query.value(propellerLeverPosition3Idx).toInt());
+            data.propellerLeverPosition4 = static_cast<std::int16_t>(query.value(propellerLeverPosition4Idx).toInt());
             data.mixtureLeverPosition1 = query.value(mixtureLeverPosition1Idx).toInt();
             data.mixtureLeverPosition2 = query.value(mixtureLeverPosition2Idx).toInt();
             data.mixtureLeverPosition3 = query.value(mixtureLeverPosition3Idx).toInt();

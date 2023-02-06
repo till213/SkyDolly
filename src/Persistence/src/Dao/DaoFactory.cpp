@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 
 #include "SQLite/SQLiteDatabaseDao.h"
 #include "SQLite/SQLiteLogbookDao.h"
@@ -54,9 +55,9 @@
 
 struct DaoFactoryPrivate
 {
-    DaoFactoryPrivate(DaoFactory::DbType dbType, const QString &connectionName)
+    DaoFactoryPrivate(DaoFactory::DbType dbType, QString connectionName)
         : dbType(dbType),
-          connectionName(connectionName)
+          connectionName(std::move(connectionName))
     {}
 
     DaoFactory::DbType dbType;
@@ -65,8 +66,8 @@ struct DaoFactoryPrivate
 
 // PUBLIC
 
-DaoFactory::DaoFactory(DbType dbType, const QString &connectionName)
-    : d(std::make_unique<DaoFactoryPrivate>(dbType, connectionName))
+DaoFactory::DaoFactory(DbType dbType, QString connectionName)
+    : d(std::make_unique<DaoFactoryPrivate>(dbType, std::move(connectionName)))
 {}
 
 DaoFactory::DaoFactory(DaoFactory &&rhs) noexcept = default;

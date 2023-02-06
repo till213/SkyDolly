@@ -43,7 +43,7 @@ struct FlightServicePrivate;
 class PERSISTENCE_API FlightService final
 {
 public:
-    FlightService(const QString &connectionName = Const::DefaultConnectionName) noexcept;
+    FlightService(QString connectionName = Const::DefaultConnectionName) noexcept;
     FlightService(const FlightService &rhs) = delete;
     FlightService(FlightService &&rhs) noexcept;
     FlightService &operator=(const FlightService &rhs) = delete;

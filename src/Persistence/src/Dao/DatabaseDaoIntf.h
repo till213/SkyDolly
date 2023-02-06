@@ -48,7 +48,6 @@ public:
 
     virtual bool connectDb(const QString &logbookPath) noexcept = 0;
     virtual void disconnectDb() noexcept = 0;
-    virtual const QString &connectionName() const noexcept = 0;
 
     virtual bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept = 0;
     virtual bool optimise() noexcept = 0;

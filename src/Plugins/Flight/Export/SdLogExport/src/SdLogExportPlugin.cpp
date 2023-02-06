@@ -130,29 +130,8 @@ bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const 
 bool SdLogExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     bool ok {true};
-    // TODO IMPLEMENT ME
-//    d->flight = &flight;
-
-//    QFile *file = qobject_cast<QFile *>(&io);
-//    if (file != nullptr) {
-//        QFileInfo info {*file};
-//        ok = d->databaseService->connect(info.absoluteFilePath());
-//        if (ok) {
-//            d->databaseService->migrate();
-//        }
-//        if (ok) {
-//            ok = exportAircraft(aircraft);
-//        }
-//        d->databaseService->disconnect();
-//    } else {
-//        // We only support file-based SQLite databases
-//        ok = false;
-//    }
-
-//    // We are done with the export
-//    d->flight = nullptr;
+    // Currently not supported
     return ok;
 }
 
 // PRIVATE
-
