@@ -2,6 +2,9 @@
 
 ## 0.16.0
 
+### Bug Fixes
+- The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
+
 ## 0.15.1
 
 ### Bug Fixes
