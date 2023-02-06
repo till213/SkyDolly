@@ -54,6 +54,7 @@
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
+#include <Persistence/Migration.h>
 #include <PluginManager/Export.h>
 #include "SdLogExportSettings.h"
 #include "SdLogExportPlugin.h"
@@ -114,7 +115,7 @@ bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const 
         QFileInfo info {*file};
         ok = d->databaseService->connect(info.absoluteFilePath());
         if (ok) {
-            d->databaseService->migrate();
+            d->databaseService->migrate(Migration::Milestone::Schema);
         }
         if (ok) {
             ok = d->flightService->exportFlight(flight);

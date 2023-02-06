@@ -40,6 +40,7 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Version.h>
 #include <Metadata.h>
+#include <Migration.h>
 #include "SqlMigration.h"
 #include "SQLiteDatabaseDao.h"
 
@@ -91,12 +92,12 @@ const QString &SQLiteDatabaseDao::connectionName() const noexcept
     return d->connectionName;
 }
 
-bool SQLiteDatabaseDao::migrate() noexcept
+bool SQLiteDatabaseDao::migrate(Migration::Milestones milestones) noexcept
 {
     bool ok = createMigrationTable();
     if (ok) {
         SqlMigration sqlMigration {d->connectionName};
-        ok = sqlMigration.migrate();
+        ok = sqlMigration.migrate(milestones);
     }
     return ok;
 }

@@ -33,6 +33,7 @@ class QDateTime;
 
 #include <Kernel/Version.h>
 #include <Kernel/Const.h>
+#include <Migration.h>
 #include "../DatabaseDaoIntf.h"
 #include "Metadata.h"
 
@@ -52,7 +53,7 @@ public:
     void disconnectDb() noexcept override;
     const QString &connectionName() const noexcept override;
 
-    bool migrate() noexcept override;
+    bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept override;
     bool optimise() noexcept override;
     bool backup(const QString &backupFilePath) noexcept override;
     bool updateBackupPeriod(std::int64_t backupPeriodId) noexcept override;

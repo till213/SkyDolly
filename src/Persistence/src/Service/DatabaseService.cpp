@@ -42,12 +42,12 @@
 #include <Kernel/Const.h>
 #include <Model/Logbook.h>
 #include <PersistenceManager.h>
-
+#include <Service/EnumerationService.h>
+#include <Service/DatabaseService.h>
+#include <Migration.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/DatabaseDaoIntf.h"
 #include "PersistedEnumerationItem.h"
-#include <Service/EnumerationService.h>
-#include <Service/DatabaseService.h>
 
 namespace
 {
@@ -102,9 +102,9 @@ void DatabaseService::disconnect() noexcept
     d->databaseDao->disconnectDb();
 }
 
-bool DatabaseService::migrate() noexcept
+bool DatabaseService::migrate(Migration::Milestones milestones) noexcept
 {
-    return d->databaseDao->migrate();
+    return d->databaseDao->migrate(milestones);
 }
 
 bool DatabaseService::optimise() noexcept

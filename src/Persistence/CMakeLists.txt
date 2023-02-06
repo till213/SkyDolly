@@ -14,7 +14,8 @@ target_sources(${LIBRARY_NAME}
         include/Persistence/FlightSelector.h
         include/Persistence/LocationSelector.h
         include/Persistence/Metadata.h
-        include/Persistence/PersistedEnumerationItem.h src/PersistedEnumerationItem.cpp
+        include/Persistence/Migration.h
+        include/Persistence/PersistedEnumerationItem.h src/PersistedEnumerationItem.cpp        
         src/Dao/DatabaseDaoIntf.h
         src/Dao/LogbookDaoIntf.h
         src/Dao/FlightDaoIntf.h

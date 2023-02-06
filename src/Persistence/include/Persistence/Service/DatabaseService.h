@@ -37,6 +37,7 @@ class QDateTime;
 
 #include <Kernel/Const.h>
 #include <Kernel/Version.h>
+#include "../Migration.h"
 #include "../Metadata.h"
 #include "../PersistenceLib.h"
 
@@ -54,10 +55,9 @@ public:
     ~DatabaseService();
 
     bool connect(const QString &logbookPath) noexcept;
-//    QString getLogbookPath() const noexcept;
     void disconnect() noexcept;
 
-    bool migrate() noexcept;
+    bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept;
     bool optimise() noexcept;
     bool backup(const QString &logbookPath) noexcept;
     bool setBackupPeriod(std::int64_t backupPeriodId) noexcept;

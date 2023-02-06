@@ -41,6 +41,7 @@
 #include <Model/Enumeration.h>
 #include <Model/Location.h>
 #include <Service/EnumerationService.h>
+#include <Migration.h>
 #include "SQLiteLocationDao.h"
 #include "SqlMigrationStep.h"
 #include "SqlMigration.h"
@@ -99,14 +100,17 @@ SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;
 SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) noexcept = default;
 SqlMigration::~SqlMigration() = default;
 
-bool SqlMigration::migrate() noexcept
+bool SqlMigration::migrate(Migration::Milestones milestones) noexcept
 {
-    bool ok = migrateSql(":/dao/sqlite/migr/LogbookMigration.sql");
-    if (ok) {
-        ok = migrateSql(":/dao/sqlite/migr/LocationMigration.sql");
+    bool ok {true};
+    if (milestones.testFlag(Migration::Milestone::Schema)) {
+        ok = migrateSql(":/dao/sqlite/migr/LogbookMigration.sql");
+        if (ok) {
+            ok = migrateSql(":/dao/sqlite/migr/LocationMigration.sql");
+        }
     }
-    if (ok) {
-        QDir migrationDirectory = QDir(QCoreApplication::applicationDirPath());
+    if (ok && milestones.testFlag(Migration::Milestone::Location)) {
+        QDir migrationDirectory {QDir(QCoreApplication::applicationDirPath())};
 #if defined(Q_OS_MAC)
         if (migrationDirectory.dirName() == "MacOS") {
             // Navigate up the app bundle structure, into the Contents folder

@@ -92,7 +92,7 @@ private:
     void recordSecondaryControls(std::int64_t timestamp) noexcept;
     void recordAircraftHandle(std::int64_t timestamp) noexcept;
     void recordLights(std::int64_t timestamp) noexcept;
-    void recordWaypoint() noexcept;
+    void recordWaypoint(std::int64_t timestamp) noexcept;
     void recordFlightCondition() noexcept;
     void recordAircraftInfo() noexcept;
 

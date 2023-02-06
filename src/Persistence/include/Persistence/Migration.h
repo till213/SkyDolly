@@ -22,36 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLMIGRATION_H
-#define SQLMIGRATION_H
+#ifndef MIGRATION_H
+#define MIGRATION_H
 
-#include <memory>
+#include <cstdint>
 
-class QString;
+#include <QFlags>
 
-#include <Kernel/CsvParser.h>
-#include <Migration.h>
-
-struct SqlMigrationPrivate;
-
-class SqlMigration
+/*!
+ * Database related data structures.
+ */
+namespace Migration
 {
-public:
-    SqlMigration(const QString &connectionName) noexcept;
-    SqlMigration(const SqlMigration &rhs) = delete;
-    SqlMigration(SqlMigration &&rhs) noexcept;
-    SqlMigration &operator=(const SqlMigration &rhs) = delete;
-    SqlMigration &operator=(SqlMigration &&rhs) noexcept;
-    ~SqlMigration();
+    /*!
+     * The migration milestones.
+     */
+    enum struct Milestone: std::uint32_t
+    {
+        /*! Migrate the database schema (tables and data) */
+        Schema = 0x01,
+        /*! Migrate the location data, specifically: Locations.csv  */
+        Location = 0x02,
+        /*! All migration milestones */
+        All = 0xffffffff
+    };
 
-    bool migrate(Migration::Milestones milestones) noexcept;
+    /*!
+     * The migration flags define the migration milestones to be executed
+     * during database migration.
+     *
+     * \sa migrate
+     */
+    Q_DECLARE_FLAGS(Milestones, Milestone)
+}
 
-private:
-    std::unique_ptr<SqlMigrationPrivate> d;
-
-    bool migrateSql(const QString &migrationFilePath) noexcept;
-    bool migrateCsv(const QString &migrationFilePath) noexcept;
-    bool migrateLocation(const CsvParser::Row &row) noexcept;
-};
-
-#endif // SQLMIGRATION_H
+#endif // MIGRATION_H
