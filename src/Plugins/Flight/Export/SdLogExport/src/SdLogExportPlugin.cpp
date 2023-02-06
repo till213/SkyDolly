@@ -101,11 +101,6 @@ std::unique_ptr<QWidget> SdLogExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool SdLogExportPlugin::hasMultiAircraftSupport() const noexcept
-{
-    return true;
-}
-
 bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
     bool ok {true};

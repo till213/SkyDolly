@@ -156,11 +156,6 @@ std::unique_ptr<QWidget> IgcExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<IgcExportOptionWidget>(d->pluginSettings);
 }
 
-bool IgcExportPlugin::hasMultiAircraftSupport() const noexcept
-{
-    return false;
-}
-
 bool IgcExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) const noexcept
 {
     return false;

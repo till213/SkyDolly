@@ -104,12 +104,6 @@ std::unique_ptr<QWidget> KmlExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KmlExportOptionWidget>(d->pluginSettings);
 }
 
-bool KmlExportPlugin::hasMultiAircraftSupport() const noexcept
-{
-    // We can store multiple LineStrings in the KML format
-    return true;
-}
-
 bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
     io.setTextModeEnabled(true);

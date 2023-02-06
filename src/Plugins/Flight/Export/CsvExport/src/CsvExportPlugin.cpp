@@ -76,11 +76,6 @@ std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<CsvExportOptionWidget>(d->pluginSettings);
 }
 
-bool CsvExportPlugin::hasMultiAircraftSupport() const noexcept
-{
-    return false;
-}
-
 bool CsvExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) const  noexcept
 {
     // No multi aircraft support

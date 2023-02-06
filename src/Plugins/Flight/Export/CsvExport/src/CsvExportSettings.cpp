@@ -70,8 +70,19 @@ void CsvExportSettings::setFormat(Format format) noexcept
 
 bool CsvExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
 {
-    // TODO IMPLEMENT ME
-    return true;
+    bool supported {false};
+    switch (formationExport) {
+    case FormationExport::AllAircraftOneFile:
+        supported = false;
+        break;
+    case FormationExport::AllAircraftSeparateFiles:
+        supported = false;
+        break;
+    case FormationExport::UserAircraftOnly:
+        supported = true;
+        break;
+    }
+    return supported;
 };
 
 // PROTECTED

@@ -74,8 +74,19 @@ void GpxExportSettings::setTimestampMode(TimestampMode timestampMode) noexcept
 
 bool GpxExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
 {
-    // TODO IMPLEMENT ME
-    return true;
+    bool supported {false};
+    switch (formationExport) {
+    case FormationExport::AllAircraftOneFile:
+        supported = true;
+        break;
+    case FormationExport::AllAircraftSeparateFiles:
+        supported = true;
+        break;
+    case FormationExport::UserAircraftOnly:
+        supported = true;
+        break;
+    }
+    return supported;
 };
 
 // PROTECTED
