@@ -47,6 +47,11 @@ JsonExportSettings::JsonExportSettings() noexcept
 
 JsonExportSettings::~JsonExportSettings() = default;
 
+bool JsonExportSettings::isResamplingSupported() const noexcept
+{
+    return true;
+}
+
 bool JsonExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
 {
     bool supported {false};

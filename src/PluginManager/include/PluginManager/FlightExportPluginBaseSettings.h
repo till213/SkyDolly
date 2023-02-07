@@ -60,6 +60,7 @@ public:
     FlightExportPluginBaseSettings &operator=(FlightExportPluginBaseSettings &&rhs) = delete;
     ~FlightExportPluginBaseSettings() override;
 
+    virtual bool isResamplingSupported() const noexcept = 0;
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 

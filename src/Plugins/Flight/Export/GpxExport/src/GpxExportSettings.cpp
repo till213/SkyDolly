@@ -72,6 +72,11 @@ void GpxExportSettings::setTimestampMode(TimestampMode timestampMode) noexcept
     }
 }
 
+bool GpxExportSettings::isResamplingSupported() const noexcept
+{
+    return false;
+}
+
 bool GpxExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
 {
     bool supported {false};

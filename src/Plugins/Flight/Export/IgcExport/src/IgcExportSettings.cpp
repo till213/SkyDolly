@@ -88,6 +88,11 @@ void IgcExportSettings::setCoPilotName(const QString &coPilotName) noexcept
     }
 }
 
+bool IgcExportSettings::isResamplingSupported() const noexcept
+{
+    return true;
+}
+
 bool IgcExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
 {
     bool supported {false};

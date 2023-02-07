@@ -47,6 +47,11 @@ SdLogExportSettings::SdLogExportSettings() noexcept
 
 SdLogExportSettings::~SdLogExportSettings() = default;
 
+bool SdLogExportSettings::isResamplingSupported() const noexcept
+{
+    return false;
+}
+
 bool SdLogExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
 {
     bool supported {false};

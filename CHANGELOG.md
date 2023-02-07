@@ -2,6 +2,13 @@
 
 ## 0.16.0
 
+### New Features
+- Sky Dolly logbook (SDLOG) export plugin
+  * The current export always exports the entire flight (including all aircraft) into a single logbook file
+  
+### Improvements
+- All export plugins: only the supported resampling and formation export options (as repported by the given plugin) are now selectable
+
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
 

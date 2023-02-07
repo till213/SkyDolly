@@ -122,7 +122,7 @@ bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const 
     return ok;
 }
 
-bool SdLogExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool SdLogExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, [[maybe_unused]] const Aircraft &aircraft, [[maybe_unused]] QIODevice &io) const noexcept
 {
     bool ok {false};
     // Currently not supported

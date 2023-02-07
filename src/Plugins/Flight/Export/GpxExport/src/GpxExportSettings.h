@@ -49,6 +49,7 @@ public:
     TimestampMode getTimestampMode() const noexcept;
     void setTimestampMode(TimestampMode timestampMode) noexcept;
 
+    bool isResamplingSupported() const noexcept override;
     bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
 
 signals:

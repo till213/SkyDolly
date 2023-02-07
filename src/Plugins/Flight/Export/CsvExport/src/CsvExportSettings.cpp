@@ -68,6 +68,11 @@ void CsvExportSettings::setFormat(Format format) noexcept
     }
 }
 
+bool CsvExportSettings::isResamplingSupported() const noexcept
+{
+    return true;
+}
+
 bool CsvExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
 {
     bool supported {false};

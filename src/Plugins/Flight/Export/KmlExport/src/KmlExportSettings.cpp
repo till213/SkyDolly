@@ -257,6 +257,11 @@ void KmlExportSettings::setAllEndColor(const QColor &color) noexcept
     }
 }
 
+bool KmlExportSettings::isResamplingSupported() const noexcept
+{
+    return true;
+}
+
 bool KmlExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
 {
     bool supported {false};
