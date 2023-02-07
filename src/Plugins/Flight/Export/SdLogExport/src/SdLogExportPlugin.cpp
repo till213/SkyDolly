@@ -33,24 +33,10 @@
 #include <QString>
 #include <QDateTime>
 
-#include <Kernel/Version.h>
-#include <Kernel/Convert.h>
 #include <Kernel/Const.h>
-#include <Kernel/File.h>
-#include <Kernel/Enum.h>
-#include <Kernel/Unit.h>
-#include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
 #include <Model/Flight.h>
-#include <Model/FlightPlan.h>
-#include <Model/Waypoint.h>
-#include <Model/FlightCondition.h>
 #include <Model/Aircraft.h>
-#include <Model/AircraftInfo.h>
-#include <Model/AircraftType.h>
-#include <Model/Position.h>
-#include <Model/PositionData.h>
-#include <Model/SimType.h>
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
@@ -65,7 +51,6 @@ struct SdLogExportPluginPrivate
     std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>(Const::ExportConnectionName)};
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>(Const::ExportConnectionName)};
     SdLogExportSettings pluginSettings;
-    Unit unit;
 
     static constexpr const char *FileExtension {Const::LogbookExtension};
 };
