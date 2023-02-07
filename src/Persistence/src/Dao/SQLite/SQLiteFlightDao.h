@@ -38,7 +38,7 @@ class SQLiteFlightDaoPrivate;
 class SQLiteFlightDao : public FlightDaoIntf
 {
 public:
-    SQLiteFlightDao(const QString &connectionName) noexcept;
+    SQLiteFlightDao(QString connectionName) noexcept;
     SQLiteFlightDao(const SQLiteFlightDao &rhs) = delete;
     SQLiteFlightDao(SQLiteFlightDao &&rhs) noexcept;
     SQLiteFlightDao &operator=(const SQLiteFlightDao &rhs) = delete;
@@ -46,6 +46,7 @@ public:
     ~SQLiteFlightDao() override;
 
     bool add(Flight &flight) noexcept override;
+    bool exportFlight(const Flight &flight) noexcept override;
     bool get(std::int64_t id, Flight &flight) const noexcept override;
     bool deleteById(std::int64_t id) noexcept override;
     bool updateTitle(std::int64_t id, const QString &title) noexcept override;
@@ -54,6 +55,10 @@ public:
 
 private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;
+
+    // Inserts the flight and returns the generated aircraft ID if successful; Const::InvalidId upon failure
+    inline std::int64_t insertFlight(const Flight &flight) noexcept;
+    inline bool insertAircraft(std::int64_t flightId, const Flight &flight) noexcept;
 };
 
 #endif // SQLITEFLIGHTDAO_H

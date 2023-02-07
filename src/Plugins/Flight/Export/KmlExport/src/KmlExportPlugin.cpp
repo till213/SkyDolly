@@ -104,12 +104,6 @@ std::unique_ptr<QWidget> KmlExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KmlExportOptionWidget>(d->pluginSettings);
 }
 
-bool KmlExportPlugin::hasMultiAircraftSupport() const noexcept
-{
-    // We can store multiple LineStrings in the KML format
-    return true;
-}
-
 bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
     io.setTextModeEnabled(true);
@@ -356,7 +350,6 @@ QString KmlExportPlugin::getWaypointDescription(const Waypoint &waypoint) const 
            QObject::tr("Arrival time (zulu)") % ": " % d->unit.formatTime(waypoint.zuluTime) % "\n" %
            QObject::tr("Altitude") % ": " % d->unit.formatFeet(waypoint.altitude) % "\n";
 }
-
 
 inline bool KmlExportPlugin::exportPlacemark(QIODevice &io, KmlStyleExport::Icon icon, const QString &name, const QString &description, const PositionData &positionData) const noexcept
 {

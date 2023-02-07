@@ -58,6 +58,21 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept = 0;
+
+    /*!
+     * Exports the \c aircraft. While a new \c id for the exported Aircraft
+     * is generated the \c id of the given \c aircraft (to be exported) is not updated.
+     *
+     * \param flightId
+     *        the flight the \c aircraft belongs to
+     * \param sequenceNumber
+     *        the sequence number of the aircraft
+     * \param aircraft
+     *        the aircraft to be exported (persisted)
+     * \return \c true on success; \c false else
+     */
+    virtual bool exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept = 0;
+
     virtual std::vector<Aircraft> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept = 0;
     virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t id, std::size_t sequenceNumber) noexcept = 0;
     virtual bool deleteAllByFlightId(std::int64_t flightId) noexcept = 0;

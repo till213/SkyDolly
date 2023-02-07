@@ -409,6 +409,10 @@ values
 update metadata
 set app_version = '0.14.0';
 
-@migr(id = "fbfeec8f-0e50-4efc-956d-391e40563b28", descn = "Update application version to 0.15", step = 1)
+@migr(id = "6a3f5879-8974-4685-9285-ec1f174fdacb", descn = "Update application version to 0.15", step = 1)
 update metadata
 set app_version = '0.15.0';
+
+@migr(id = "24916944-050e-4569-8352-1446fe3137d2", descn = "Update application version to 0.16", step = 1)
+update metadata
+set app_version = '0.16.0';

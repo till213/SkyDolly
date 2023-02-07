@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.16.0
+
+### New Features
+- Sky Dolly logbook (SDLOG) export plugin
+  * The current plugin implementation always exports the entire flight (including all aircraft) into a single logbook file, without resampling
+  
+### Improvements
+- All export plugins: only the supported resampling and formation export options (as repported by the given plugin) are now selectable
+
+### Bug Fixes
+- The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
+
+## 0.15.1
+
+### Bug Fixes
+- Prevents the creation of a logbook backup each time the application is launched:
+  * Make sure each "bump version" migration step _really_ has a distinct UUID
+  * Don't compare patch version numbers, as the database version does not increment them
+- Fix a crash that may occasionally occur when quitting Sky Dolly, in case when MSFS has been closed before and an "active connection" had been established, e.g. due to a replay or recording
+
 ## 0.15.0
 
 This release focuses on the migration to the Qt 6.4 framework. If you are building Sky Dolly from source then also refer to the updated [BUILD.md](BUILD.md) instructions.

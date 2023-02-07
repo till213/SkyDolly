@@ -40,7 +40,7 @@
 struct AircraftServicePrivate
 {
 public:
-    AircraftServicePrivate(const QString &connectionName) noexcept
+    AircraftServicePrivate(QString connectionName) noexcept
         : connectionName(connectionName),
           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, connectionName)),
           aircraftDao(daoFactory->createAircraftDao()),
@@ -55,8 +55,8 @@ public:
 
 // PUBLIC
 
-AircraftService::AircraftService(const QString &connectionName) noexcept
-    : d(std::make_unique<AircraftServicePrivate>(connectionName))
+AircraftService::AircraftService(QString connectionName) noexcept
+    : d(std::make_unique<AircraftServicePrivate>(std::move(connectionName)))
 {}
 
 AircraftService::AircraftService(AircraftService &&rhs) noexcept = default;
@@ -70,6 +70,28 @@ bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, A
     if (ok) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         ok = d->aircraftDao->add(flightId, sequenceNumber, aircraft);
+        if (ok) {
+            ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
+        }
+        if (ok) {
+            ok = db.commit();
+            if (ok) {
+                emit flight.aircraftStored(aircraft);
+            }
+        } else {
+            db.rollback();
+        }
+    }
+    return ok;
+}
+
+bool AircraftService::exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept
+{
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
+    if (ok) {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        ok = d->aircraftDao->exportAircraft(flightId, sequenceNumber, aircraft);
         if (ok) {
             ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
         }

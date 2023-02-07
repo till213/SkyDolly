@@ -53,6 +53,9 @@ public:
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;
 
+    bool isResamplingSupported() const noexcept override;
+    bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
+
 signals:
     /*!
      * Emitted whenever the extended settings have changed.

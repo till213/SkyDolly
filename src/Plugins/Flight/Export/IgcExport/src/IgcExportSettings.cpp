@@ -88,6 +88,28 @@ void IgcExportSettings::setCoPilotName(const QString &coPilotName) noexcept
     }
 }
 
+bool IgcExportSettings::isResamplingSupported() const noexcept
+{
+    return true;
+}
+
+bool IgcExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
+{
+    bool supported {false};
+    switch (formationExport) {
+    case FormationExport::AllAircraftOneFile:
+        supported = false;
+        break;
+    case FormationExport::AllAircraftSeparateFiles:
+        supported = true;
+        break;
+    case FormationExport::UserAircraftOnly:
+        supported = true;
+        break;
+    }
+    return supported;
+};
+
 // PROTECTED
 
 void IgcExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept

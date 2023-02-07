@@ -95,12 +95,6 @@ std::unique_ptr<QWidget> GpxExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<GpxExportOptionWidget>(d->pluginSettings);
 }
 
-bool GpxExportPlugin::hasMultiAircraftSupport() const noexcept
-{
-    // We can store multiple tracks in the GPX format
-    return true;
-}
-
 bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
     d->flight = &flight;

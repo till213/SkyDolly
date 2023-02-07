@@ -44,11 +44,22 @@ public:
 
     /*!
      * Persists the \c flight. The \c id in \c flight is updated.
+     *
      * \param flight
      *        the Flight to be persisted
      * \return \c true on success; \c false else
      */
     virtual bool add(Flight &flight) noexcept = 0;
+
+    /*!
+     * Exports the \c flight. While a new \c id for the exported Flight
+     * is generated the \c id of the given \c flight (to be exported) is not updated.
+     *
+     * \param flight
+     *        the Flight to be exported (persisted)
+     * \return \c true on success; \c false else
+     */
+    virtual bool exportFlight(const Flight &flight) noexcept = 0;
     virtual bool get(std::int64_t id, Flight &flight) const noexcept = 0;
     virtual bool deleteById(std::int64_t id) noexcept = 0;
     virtual bool updateTitle(std::int64_t id, const QString &title) noexcept = 0;

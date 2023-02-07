@@ -41,6 +41,7 @@
 #include <Model/Enumeration.h>
 #include <Model/Location.h>
 #include <Service/EnumerationService.h>
+#include <Migration.h>
 #include "SQLiteLocationDao.h"
 #include "SqlMigrationStep.h"
 #include "SqlMigration.h"
@@ -78,10 +79,10 @@ namespace
 
 struct SqlMigrationPrivate
 {
-    SqlMigrationPrivate(const QString &connectionName) noexcept
+    SqlMigrationPrivate(QString connectionName) noexcept
         : connectionName(connectionName),
           locationDao(std::make_unique<SQLiteLocationDao>(connectionName)),
-          enumerationService(std::make_unique<EnumerationService>(connectionName))
+          enumerationService(std::make_unique<EnumerationService>(std::move(connectionName)))
     {}
 
     QString connectionName;
@@ -91,22 +92,25 @@ struct SqlMigrationPrivate
 
 // PUBLIC
 
-SqlMigration::SqlMigration(const QString &connectionName) noexcept
-    : d(std::make_unique<SqlMigrationPrivate>(connectionName))
+SqlMigration::SqlMigration(QString connectionName) noexcept
+    : d(std::make_unique<SqlMigrationPrivate>(std::move(connectionName)))
 {}
 
 SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;
 SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) noexcept = default;
 SqlMigration::~SqlMigration() = default;
 
-bool SqlMigration::migrate() noexcept
+bool SqlMigration::migrate(Migration::Milestones milestones) noexcept
 {
-    bool ok = migrateSql(":/dao/sqlite/migr/LogbookMigration.sql");
-    if (ok) {
-        ok = migrateSql(":/dao/sqlite/migr/LocationMigration.sql");
+    bool ok {true};
+    if (milestones.testFlag(Migration::Milestone::Schema)) {
+        ok = migrateSql(":/dao/sqlite/migr/LogbookMigration.sql");
+        if (ok) {
+            ok = migrateSql(":/dao/sqlite/migr/LocationMigration.sql");
+        }
     }
-    if (ok) {
-        QDir migrationDirectory = QDir(QCoreApplication::applicationDirPath());
+    if (ok && milestones.testFlag(Migration::Milestone::Location)) {
+        QDir migrationDirectory {QDir(QCoreApplication::applicationDirPath())};
 #if defined(Q_OS_MAC)
         if (migrationDirectory.dirName() == "MacOS") {
             // Navigate up the app bundle structure, into the Contents folder

@@ -33,9 +33,9 @@
 
 struct EnumerationServicePrivate
 {
-    EnumerationServicePrivate(const QString &connectionName) noexcept
+    EnumerationServicePrivate(QString connectionName) noexcept
         : connectionName(connectionName),
-          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, connectionName)),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
           enumerationDao(daoFactory->createEnumerationDao())
     {}
 
@@ -46,8 +46,8 @@ struct EnumerationServicePrivate
 
 // PUBLIC
 
-EnumerationService::EnumerationService(const QString &connectionName) noexcept
-    : d(std::make_unique<EnumerationServicePrivate>(connectionName))
+EnumerationService::EnumerationService(QString connectionName) noexcept
+    : d(std::make_unique<EnumerationServicePrivate>(std::move(connectionName)))
 {}
 
 EnumerationService::EnumerationService(EnumerationService &&rhs) noexcept = default;

@@ -30,20 +30,21 @@
 class QString;
 
 #include <Kernel/CsvParser.h>
+#include <Migration.h>
 
 struct SqlMigrationPrivate;
 
 class SqlMigration
 {
 public:
-    SqlMigration(const QString &connectionName) noexcept;
+    SqlMigration(QString connectionName) noexcept;
     SqlMigration(const SqlMigration &rhs) = delete;
     SqlMigration(SqlMigration &&rhs) noexcept;
     SqlMigration &operator=(const SqlMigration &rhs) = delete;
     SqlMigration &operator=(SqlMigration &&rhs) noexcept;
     ~SqlMigration();
 
-    bool migrate() noexcept;
+    bool migrate(Migration::Milestones milestones) noexcept;
 
 private:
     std::unique_ptr<SqlMigrationPrivate> d;

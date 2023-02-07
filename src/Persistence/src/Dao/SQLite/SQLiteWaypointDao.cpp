@@ -44,8 +44,8 @@
 
 struct SQLiteWaypointDaoPrivate
 {
-    SQLiteWaypointDaoPrivate(const QString &connectionName) noexcept
-        : connectionName(connectionName)
+    SQLiteWaypointDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
     QString connectionName;
@@ -53,8 +53,8 @@ struct SQLiteWaypointDaoPrivate
 
 // PUBLIC
 
-SQLiteWaypointDao::SQLiteWaypointDao(const QString &connectionName) noexcept
-    : d(std::make_unique<SQLiteWaypointDaoPrivate>(connectionName))
+SQLiteWaypointDao::SQLiteWaypointDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteWaypointDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteWaypointDao::SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept = default;
@@ -128,6 +128,7 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
     if (ok) {
         flightPlan.clear();
         QSqlRecord record = query.record();
+        const int timestampIdx = record.indexOf("timestamp");
         const int identifierIdx = record.indexOf("ident");
         const int latitudeIdx = record.indexOf("latitude");
         const int longitudeIdx = record.indexOf("longitude");
@@ -136,6 +137,7 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
         const int zuluSimulationTimeIdx = record.indexOf("zulu_sim_time");
         while (query.next()) {
             Waypoint data;
+            data.timestamp = query.value(timestampIdx).toLongLong();
             data.identifier = query.value(identifierIdx).toString();
             data.latitude = query.value(latitudeIdx).toFloat();
             data.longitude = query.value(longitudeIdx).toFloat();

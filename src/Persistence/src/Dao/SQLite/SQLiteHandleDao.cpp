@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 #include <vector>
 #include <cstdint>
 #include <utility>
@@ -50,8 +51,8 @@ namespace
 
 struct SQLiteHandleDaoPrivate
 {
-    SQLiteHandleDaoPrivate(const QString &connectionName) noexcept
-        : connectionName(connectionName)
+    SQLiteHandleDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
     QString connectionName;
@@ -59,8 +60,8 @@ struct SQLiteHandleDaoPrivate
 
 // PUBLIC
 
-SQLiteHandleDao::SQLiteHandleDao(const QString &connectionName) noexcept
-    : d(std::make_unique<SQLiteHandleDaoPrivate>(connectionName))
+SQLiteHandleDao::SQLiteHandleDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteHandleDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteHandleDao::SQLiteHandleDao(SQLiteHandleDao &&rhs) noexcept = default;
@@ -163,7 +164,6 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
         const int foldingWingHandlePositionIdx = record.indexOf("folding_wing_handle_position");
         const int smokeEnablePositionIdx = record.indexOf("smoke_enable");
         while (query.next()) {
-
             AircraftHandleData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.brakeLeftPosition = static_cast<std::int16_t>(query.value(brakeLeftPositionIdx).toInt());

@@ -93,12 +93,6 @@ std::unique_ptr<QWidget> JsonExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool JsonExportPlugin::hasMultiAircraftSupport() const noexcept
-{
-    // We can store multiple LineStrings in the JSON format
-    return true;
-}
-
 bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
     d->flight = &flight;

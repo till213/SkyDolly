@@ -57,7 +57,7 @@ public:
         SQLite = 0
     };
 
-    DaoFactory(DbType dbType, const QString &connectionName = Const::DefaultConnectionName);
+    DaoFactory(DbType dbType, QString connectionName = Const::DefaultConnectionName);
     DaoFactory(const DaoFactory &rhs) = delete;
     DaoFactory(DaoFactory &&rhs) noexcept;
     DaoFactory &operator=(const DaoFactory &rhs) = delete;

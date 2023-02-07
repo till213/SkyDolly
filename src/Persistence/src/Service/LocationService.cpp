@@ -39,9 +39,9 @@
 
 struct LocationServicePrivate
 {
-    LocationServicePrivate(const QString &connectionName) noexcept
+    LocationServicePrivate(QString connectionName) noexcept
         : connectionName(connectionName),
-          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, connectionName)),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
           locationDao(daoFactory->createLocationDao())
     {}
 
@@ -52,8 +52,8 @@ struct LocationServicePrivate
 
 // PUBLIC
 
-LocationService::LocationService(const QString &connectionName) noexcept
-    : d(std::make_unique<LocationServicePrivate>(connectionName))
+LocationService::LocationService(QString connectionName) noexcept
+    : d(std::make_unique<LocationServicePrivate>(std::move(connectionName)))
 {}
 
 LocationService::LocationService(LocationService &&rhs) noexcept = default;

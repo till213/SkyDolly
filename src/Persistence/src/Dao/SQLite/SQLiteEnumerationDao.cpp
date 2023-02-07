@@ -41,8 +41,8 @@
 
 struct SQLiteEnumerationDaoPrivate
 {
-    SQLiteEnumerationDaoPrivate(const QString &connectionName) noexcept
-        : connectionName(connectionName)
+    SQLiteEnumerationDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
     QString connectionName;
@@ -50,8 +50,8 @@ struct SQLiteEnumerationDaoPrivate
 
 // PUBLIC
 
-SQLiteEnumerationDao::SQLiteEnumerationDao(const QString &connectionName) noexcept
-    : d(std::make_unique<SQLiteEnumerationDaoPrivate>(connectionName))
+SQLiteEnumerationDao::SQLiteEnumerationDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteEnumerationDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept = default;

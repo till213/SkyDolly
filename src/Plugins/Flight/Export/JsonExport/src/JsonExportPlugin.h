@@ -59,7 +59,6 @@ protected:
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool hasMultiAircraftSupport() const noexcept override;
     bool exportFlight(const Flight &flight, QIODevice &io) const noexcept override;
     bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept override;
 

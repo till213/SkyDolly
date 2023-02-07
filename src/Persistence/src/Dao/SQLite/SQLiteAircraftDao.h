@@ -41,7 +41,7 @@ struct SQLiteAircraftDaoPrivate;
 class SQLiteAircraftDao : public AircraftDaoIntf
 {
 public:
-    SQLiteAircraftDao(const QString &connectionNanme) noexcept;
+    SQLiteAircraftDao(QString connectionName) noexcept;
     SQLiteAircraftDao(const SQLiteAircraftDao &rhs) = delete;
     SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept;
     SQLiteAircraftDao &operator=(const SQLiteAircraftDao &rhs) = delete;
@@ -49,6 +49,7 @@ public:
     ~SQLiteAircraftDao() override;
 
     bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
+    bool exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept override;
     std::vector<Aircraft> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
     bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept override;
     bool deleteAllByFlightId(std::int64_t flightId) noexcept override;
@@ -59,6 +60,10 @@ public:
 
 private:
     std::unique_ptr<SQLiteAircraftDaoPrivate> d;
+
+    // Inserts the aircraft and returns the generated aircraft ID if successful; Const::InvalidId upon failure
+    inline std::int64_t insertAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept;
+    inline bool insertAircraftData(std::int64_t aircraftId, const Aircraft &aircraft) noexcept;
 };
 
 #endif // SQLITEAIRCRAFTDAO_H

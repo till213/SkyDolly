@@ -68,6 +68,28 @@ void CsvExportSettings::setFormat(Format format) noexcept
     }
 }
 
+bool CsvExportSettings::isResamplingSupported() const noexcept
+{
+    return true;
+}
+
+bool CsvExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
+{
+    bool supported {false};
+    switch (formationExport) {
+    case FormationExport::AllAircraftOneFile:
+        supported = false;
+        break;
+    case FormationExport::AllAircraftSeparateFiles:
+        supported = false;
+        break;
+    case FormationExport::UserAircraftOnly:
+        supported = true;
+        break;
+    }
+    return supported;
+};
+
 // PROTECTED
 
 void CsvExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept

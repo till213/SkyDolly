@@ -60,9 +60,11 @@ public:
     FlightExportPluginBaseSettings &operator=(FlightExportPluginBaseSettings &&rhs) = delete;
     ~FlightExportPluginBaseSettings() override;
 
+    virtual bool isResamplingSupported() const noexcept = 0;
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 
+    virtual bool isFormationExportSupported(FormationExport formationExport) const noexcept = 0;
     FormationExport getFormationExport() const noexcept;
     void setFormationExport(FormationExport formationExport) noexcept;
 

@@ -36,6 +36,9 @@ class QWidget;
 class QDateTime;
 
 #include <Kernel/Const.h>
+#include <Kernel/Version.h>
+#include "../Migration.h"
+#include "../Metadata.h"
 #include "../PersistenceLib.h"
 
 class Version;
@@ -44,22 +47,32 @@ struct DatabaseServicePrivate;
 class PERSISTENCE_API DatabaseService final
 {
 public:
-    DatabaseService(const QString &connectionName = Const::DefaultConnectionName) noexcept;
+    DatabaseService(QString connectionName = Const::DefaultConnectionName) noexcept;
     DatabaseService(const DatabaseService &rhs) = delete;
     DatabaseService(DatabaseService &&rhs) noexcept;
     DatabaseService &operator=(const DatabaseService &rhs) = delete;
     DatabaseService &operator=(DatabaseService &&rhs) noexcept;
     ~DatabaseService();
 
-    bool backup() noexcept;
+    bool connect(const QString &logbookPath) noexcept;
+    void disconnect() noexcept;
 
+    bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept;
+    bool optimise() noexcept;
+    bool backup(const QString &logbookPath) noexcept;
     bool setBackupPeriod(std::int64_t backupPeriodId) noexcept;
     bool setNextBackupDate(const QDateTime &date) noexcept;
     bool updateBackupDate() noexcept;
+    QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept;
     bool setBackupDirectoryPath(const QString &backupFolderPath) noexcept;
+
+    Metadata getMetadata(bool *ok = nullptr) const noexcept;
+    Version getDatabaseVersion(bool *ok = nullptr) const noexcept;
 
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;
+    static QString getBackupFileName(const QString &logbookPath, const QString &backupDirectoryPath) noexcept;
+    static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
 
 private:
     std::unique_ptr<DatabaseServicePrivate> d;

@@ -72,6 +72,28 @@ void GpxExportSettings::setTimestampMode(TimestampMode timestampMode) noexcept
     }
 }
 
+bool GpxExportSettings::isResamplingSupported() const noexcept
+{
+    return false;
+}
+
+bool GpxExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
+{
+    bool supported {false};
+    switch (formationExport) {
+    case FormationExport::AllAircraftOneFile:
+        supported = true;
+        break;
+    case FormationExport::AllAircraftSeparateFiles:
+        supported = true;
+        break;
+    case FormationExport::UserAircraftOnly:
+        supported = true;
+        break;
+    }
+    return supported;
+};
+
 // PROTECTED
 
 void GpxExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept

@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 #include <vector>
 #include <forward_list>
 #include <utility>
@@ -59,8 +60,8 @@ namespace
 
 struct SQLiteLogbookDaoPrivate
 {
-    SQLiteLogbookDaoPrivate(const QString &connectionName) noexcept
-        : connectionName(connectionName)
+    SQLiteLogbookDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
     QString connectionName;
@@ -68,8 +69,8 @@ struct SQLiteLogbookDaoPrivate
 
 // PUBLIC
 
-SQLiteLogbookDao::SQLiteLogbookDao(const QString &connectionName) noexcept
-    : d(std::make_unique<SQLiteLogbookDaoPrivate>(connectionName))
+SQLiteLogbookDao::SQLiteLogbookDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteLogbookDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteLogbookDao::SQLiteLogbookDao(SQLiteLogbookDao &&rhs) noexcept = default;
@@ -187,7 +188,6 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         const int endWaypointIdx = record.indexOf("end_waypoint");
         const int titleIdx = record.indexOf("title");
         while (query.next()) {
-
             FlightSummary summary;
             summary.flightId = query.value(idIdx).toLongLong();
 

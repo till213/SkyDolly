@@ -68,28 +68,21 @@ public:
      * \param logbookPath
      *        the path of the logbook (database) file to connect with
      * \return \c true if the connection succeeded; \c false else
-     * \sa PersistenceManager#setLogbookPath
      * \sa connectionChanged
      */
     bool connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept;
 
     void disconnectFromLogbook() noexcept;
     bool isConnected() const noexcept;
-    const QString &getLogbookPath() const noexcept;
+    QString getLogbookPath() const noexcept;
 
-    bool migrate() noexcept;
     bool optimise() noexcept;
-    bool backup(const QString &backupLogbookPath) noexcept;
 
     Metadata getMetadata(bool *ok = nullptr) const noexcept;
     Version getDatabaseVersion(bool *ok = nullptr) const noexcept;
     QString getBackupDirectoryPath(bool *ok = nullptr) const noexcept;
 
-    QString getBackupFileName(const QString &backupDirectoryPath) const noexcept;
-    static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
-
 signals:
-
     /*!
      * Emitted whenver the connection to the logbook (database) has changed.
      *
@@ -109,7 +102,6 @@ private:
     PersistenceManager() noexcept;
     ~PersistenceManager() override;
 
-    bool connectDb(const QString &logbookPath) noexcept;
     std::pair<bool, Version> checkDatabaseVersion() const noexcept;
 };
 

@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 #include <vector>
 #include <cstdint>
 #include <utility>
@@ -52,8 +53,8 @@ namespace
 
 struct SQLitePrimaryFlightControlDaoPrivate
 {
-    SQLitePrimaryFlightControlDaoPrivate(const QString &connectionName) noexcept
-        : connectionName(connectionName)
+    SQLitePrimaryFlightControlDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
     {}
 
     QString connectionName;
@@ -61,8 +62,8 @@ struct SQLitePrimaryFlightControlDaoPrivate
 
 // PUBLIC
 
-SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao(const QString &connectionName) noexcept
-    : d(std::make_unique<SQLitePrimaryFlightControlDaoPrivate>(connectionName))
+SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLitePrimaryFlightControlDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao(SQLitePrimaryFlightControlDao &&rhs) noexcept = default;
@@ -149,9 +150,7 @@ std::vector<PrimaryFlightControlData> SQLitePrimaryFlightControlDao::getByAircra
         const int elevatorPositionIdx = record.indexOf("elevator_position");
         const int aileronPositionIdx = record.indexOf("aileron_position");
         while (query.next()) {
-
             PrimaryFlightControlData data;
-
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.rudderDeflection = query.value(rudderDeflectionIdx).toFloat();
             data.elevatorDeflection = query.value(elevatorDeflectionIdx).toFloat();

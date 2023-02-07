@@ -262,7 +262,7 @@ void PathCreatorPlugin::recordData() noexcept
     recordSecondaryControls(timestamp);
     recordAircraftHandle(timestamp);
     recordLights(timestamp);
-    recordWaypoint();
+    recordWaypoint(timestamp);
 }
 
 // PRIVATE
@@ -395,18 +395,18 @@ void PathCreatorPlugin::recordLights(std::int64_t timestamp) noexcept
     aircraft.getLight().upsertLast(lightData);
 }
 
-void PathCreatorPlugin::recordWaypoint() noexcept
+void PathCreatorPlugin::recordWaypoint(std::int64_t timestamp) noexcept
 {
     Waypoint waypoint;
     if (d->randomGenerator->bounded(100.0) < 0.5) {
-        int i = d->randomGenerator->bounded(PathCreatorPluginPrivate::IcaoList.size());
+        auto i = d->randomGenerator->bounded(PathCreatorPluginPrivate::IcaoList.size());
         waypoint.identifier = PathCreatorPluginPrivate::IcaoList.at(i);
         waypoint.latitude = -90.0f + static_cast<float>(d->randomGenerator->bounded(180.0));
         waypoint.longitude = -180.0f + static_cast<float>(d->randomGenerator->bounded(90.0));
         waypoint.altitude = static_cast<float>(d->randomGenerator->bounded(3000.0));
         waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
-        waypoint.timestamp = getCurrentTimestamp();
+        waypoint.timestamp = timestamp;
 
         Flight &flight = getCurrentFlight();
         flight.addWaypoint(waypoint);

@@ -130,16 +130,12 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &f
         file.close();
         break;
     case FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile:
-        if (hasMultiAircraftSupport()) {
-            ok = file.open(QIODevice::WriteOnly);
-            if (ok) {
-                ok = exportFlight(flight, file);
-                d->exportedFilePaths.push_back(filePath);
-            }
-            file.close();
-        } else {
-            ok = exportAllAircraft(flight, filePath);
+        ok = file.open(QIODevice::WriteOnly);
+        if (ok) {
+            ok = exportFlight(flight, file);
+            d->exportedFilePaths.push_back(filePath);
         }
+        file.close();
         break;
     case FlightExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
         ok = exportAllAircraft(flight, filePath);
