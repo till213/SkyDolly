@@ -32,7 +32,7 @@
 #include <QString>
 #include <QWidget>
 
-class QRegularExpression;
+class QIODevice;
 
 #include <Flight/FlightAugmentation.h>
 #include <PluginManager/FlightImportIntf.h>
@@ -58,7 +58,7 @@ protected:
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool importFlight(QFile &file, Flight &flight) noexcept override;
+    bool importFlight(QIODevice &io, Flight &flight) noexcept override;
 
     FlightAugmentation::Procedures getProcedures() const noexcept override;
     FlightAugmentation::Aspects getAspects() const noexcept override;

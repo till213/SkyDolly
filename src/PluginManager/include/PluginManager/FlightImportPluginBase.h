@@ -31,7 +31,7 @@
 #include <QtPlugin>
 #include <QStringView>
 
-class QFile;
+class QIODevice;
 
 #include <Kernel/Settings.h>
 #include <Flight/FlightAugmentation.h>
@@ -89,7 +89,7 @@ protected:
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-    virtual bool importFlight(QFile &file, Flight &flight) noexcept = 0;
+    virtual bool importFlight(QIODevice &io, Flight &flight) noexcept = 0;
 
     virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;
     virtual FlightAugmentation::Aspects getAspects() const noexcept = 0;

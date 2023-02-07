@@ -88,13 +88,13 @@ std::unique_ptr<QWidget> KmlImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KmlImportOptionWidget>(d->pluginSettings);
 }
 
-bool KmlImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
+bool KmlImportPlugin::importFlight(QIODevice &io, Flight &flight) noexcept
 {
     d->flight = &flight;
-    d->xml.setDevice(&file);
+    d->xml.setDevice(&io);
     if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
-        qDebug() << "KmlImportPlugin::readFile: XML start element:" << d->xml.name().toString();
+        qDebug() << "KmlImportPlugin::importFlight: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == QStringLiteral("kml")) {
             parseKML();
@@ -106,7 +106,7 @@ bool KmlImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
     bool ok = !d->xml.hasError();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "KmlImportPlugin::readFile: XML error:" << d->xml.errorString();
+        qDebug() << "KmlImportPlugin::importFlight: XML error:" << d->xml.errorString();
     }
 #endif
     // We are done with the import

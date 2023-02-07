@@ -79,7 +79,7 @@ std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<CsvImportOptionWidget>(d->pluginSettings);
 }
 
-bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
+bool CsvImportPlugin::importFlight(QIODevice &io, Flight &flight) noexcept
 {
     std::unique_ptr<CsvParserIntf> parser;
     switch (d->pluginSettings.getFormat()) {
@@ -95,7 +95,7 @@ bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
     }
     bool ok {false};
     if (parser != nullptr) {
-        ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber, flight);
+        ok = parser->parse(io, d->firstDateTimeUtc, d->flightNumber, flight);
     }
     return ok;
 }

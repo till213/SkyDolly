@@ -35,7 +35,7 @@
 #include <QLatin1String>
 #include <QDate>
 
-class QFile;
+class QIODevice;
 class QByteArray;
 
 struct IgcParserPrivate;
@@ -115,7 +115,7 @@ public:
         double environmentalNoiseLevel;
     };
 
-    bool parse(QFile &file) noexcept;
+    bool parse(QIODevice &io) noexcept;
     const Header &getHeader() const noexcept;
     const Task &getTask() const noexcept;
     const std::vector<Fix> &getFixes() const noexcept;

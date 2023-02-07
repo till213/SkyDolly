@@ -116,10 +116,10 @@ std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<IgcImportOptionWidget>(d->pluginSettings);
 }
 
-bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
+bool IgcImportPlugin::importFlight(QIODevice &io, Flight &flight) noexcept
 {
     d->flight = &flight;
-    bool ok = d->igcParser.parse(file);
+    bool ok = d->igcParser.parse(io);
     if (ok) {
         // Now "upsert" the position data, taking possible duplicate timestamps into account
         const Aircraft &aircraft = flight.getUserAircraft();

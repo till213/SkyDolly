@@ -29,6 +29,11 @@ namespace Const {
     constexpr const char *DefaultConnectionName {"Default"};
 
     /*!
+     * The logbook connection name that is used for import.
+     */
+    constexpr const char *ImportConnectionName {"Import"};
+
+    /*!
      * The logbook connection name that is used for export.
      */
     constexpr const char *ExportConnectionName {"Export"};

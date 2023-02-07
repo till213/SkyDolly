@@ -50,7 +50,9 @@
 
 struct SdlogImportPluginPrivate
 {
-    Flight *flight {nullptr};
+    std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ExportConnectionName)};
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>(Const::ExportConnectionName)};
+    std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>(Const::ExportConnectionName)};
     SdLogImportSettings pluginSettings;
 
     static constexpr const char *FileExtension {Const::LogbookExtension};
@@ -86,10 +88,9 @@ std::unique_ptr<QWidget> SdlogImportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool SdlogImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
+bool SdlogImportPlugin::importFlight(QIODevice &io, Flight &flight) noexcept
 {
     bool ok {true};
-    d->flight = &flight;
 
     return ok;
 }

@@ -92,10 +92,10 @@ std::unique_ptr<QWidget> GpxImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<GpxImportOptionWidget>(d->pluginSettings);
 }
 
-bool GpxImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
+bool GpxImportPlugin::importFlight(QIODevice &io, Flight &flight) noexcept
 {
     d->flight = &flight;
-    d->xml.setDevice(&file);
+    d->xml.setDevice(&io);
     parseGPX();
 
     bool ok = !d->xml.hasError();
