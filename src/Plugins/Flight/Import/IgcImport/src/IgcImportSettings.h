@@ -47,6 +47,8 @@ public:
     IgcImportSettings() noexcept;
     ~IgcImportSettings() override;
 
+    bool hasLogbookSupport() const noexcept override;
+
     AltitudeMode getAltitudeMode() const noexcept;
     void setAltitudeMode(AltitudeMode altitudeMode) noexcept;
 

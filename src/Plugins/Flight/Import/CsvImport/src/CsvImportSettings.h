@@ -51,6 +51,8 @@ public:
     CsvImportSettings() noexcept;
     ~CsvImportSettings() override;
 
+    bool hasLogbookSupport() const noexcept override;
+
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;
 

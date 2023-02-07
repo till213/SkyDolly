@@ -63,6 +63,11 @@ GpxImportSettings::GpxImportSettings() noexcept
 
 GpxImportSettings::~GpxImportSettings() = default;
 
+bool GpxImportSettings::hasLogbookSupport() const noexcept
+{
+    return false;
+}
+
 GpxImportSettings::GPXElement GpxImportSettings::getWaypointSelection() const noexcept
 {
     return d->waypointSelection;

@@ -83,8 +83,8 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
     bool retry {true};
     while (retry && ok) {
         const QString logbookDirectoryPath = QFileInfo(currentLogbookPath).absolutePath();
-        QFileInfo info(logbookDirectoryPath);
-        ok = info.exists();
+        QFileInfo fileinfo(logbookDirectoryPath);
+        ok = fileinfo.exists();
         if (!ok) {
             QDir dir(logbookDirectoryPath);
             ok = dir.mkpath(logbookDirectoryPath);

@@ -26,7 +26,6 @@
 #define FLIGHTSERVICE_H
 
 #include <memory>
-#include <forward_list>
 #include <cstdint>
 
 #include <QSqlDatabase>
@@ -43,7 +42,7 @@ struct FlightServicePrivate;
 class PERSISTENCE_API FlightService final
 {
 public:
-    FlightService(QString connectionName = Const::DefaultConnectionName) noexcept;
+    FlightService(QString connectionName = Const::ApplicationConnectionName) noexcept;
     FlightService(const FlightService &rhs) = delete;
     FlightService(FlightService &&rhs) noexcept;
     FlightService &operator=(const FlightService &rhs) = delete;

@@ -41,6 +41,7 @@
 #include <Kernel/Settings.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
+#include <Persistence/Service/LogbookService.h>
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
@@ -50,9 +51,11 @@
 
 struct SdlogImportPluginPrivate
 {
-    std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ExportConnectionName)};
-    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>(Const::ExportConnectionName)};
-    std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>(Const::ExportConnectionName)};
+    std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>(Const::ImportConnectionName)};
+    std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ImportConnectionName)};
+    std::unique_ptr<FlightService> importFlightService {std::make_unique<FlightService>(Const::ImportConnectionName)};
+    std::unique_ptr<FlightService> applicationFlightService {std::make_unique<FlightService>(Const::ApplicationConnectionName)};
+
     SdLogImportSettings pluginSettings;
 
     static constexpr const char *FileExtension {Const::LogbookExtension};
@@ -91,18 +94,37 @@ std::unique_ptr<QWidget> SdlogImportPlugin::createOptionWidget() const noexcept
 bool SdlogImportPlugin::importFlight(QIODevice &io, Flight &flight) noexcept
 {
     bool ok {true};
-
+    auto *file = qobject_cast<QFile *>(&io);
+    if (file != nullptr) {
+        QFileInfo fileinfo {*file};
+        ok = d->databaseService->connect(fileinfo.absoluteFilePath());
+        if (ok) {
+            // TODO IMPLEMENT ME
+            const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
+            if (ok) {
+                for (const std::int64_t flightId : flightIds) {
+                    ok = d->importFlightService->restore(flightId, flight);
+                    if (ok) {
+                        ok = d->applicationFlightService->store(flight);
+                    }
+                }
+            }
+        }
+    } else {
+        // We only support file-based SQLite databases
+        ok = false;
+    }
     return ok;
 }
 
 FlightAugmentation::Procedures SdlogImportPlugin::getProcedures() const noexcept
 {
-    return FlightAugmentation::Procedure::All;
+    return FlightAugmentation::Procedure::None;
 }
 
 FlightAugmentation::Aspects SdlogImportPlugin::getAspects() const noexcept
 {
-    return FlightAugmentation::Aspect::All;
+    return FlightAugmentation::Aspect::None;
 }
 
 QDateTime SdlogImportPlugin::getStartDateTimeUtc() noexcept

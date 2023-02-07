@@ -53,6 +53,11 @@ CsvImportSettings::CsvImportSettings() noexcept
 
 CsvImportSettings::~CsvImportSettings() = default;
 
+bool CsvImportSettings::hasLogbookSupport() const noexcept
+{
+    return false;
+}
+
 CsvImportSettings::Format CsvImportSettings::getFormat() const noexcept
 {
     return d->format;

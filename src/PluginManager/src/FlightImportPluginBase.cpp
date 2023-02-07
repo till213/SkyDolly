@@ -159,6 +159,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
     const FlightImportPluginBaseSettings &pluginSettings = getPluginSettings();
     const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
     const bool addToCurrentFlight = pluginSettings.isAddToFlightEnabled();
+    std::vector<std::unique_ptr<Flight>> importedFlights;
 
     bool ok {true};
     bool ignoreFailures {false};
@@ -174,34 +175,40 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                 flight.clear(true);
                 isFirstFile = false;
             }
-            // The flight has always at least one aircraft, but possibly without recording (when the flight has
-            // been cleared / newly created)
-            const bool addNewAircraft = addToCurrentFlight && flight.getUserAircraft().hasRecording();
-            Aircraft &userAircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
-
-            ok = importFlight(d->file, flight);
-            if (ok && userAircraft.getPosition().count() > 0) {
-                d->flightAugmentation.setProcedures(getProcedures());
-                d->flightAugmentation.setAspects(getAspects());
-                d->flightAugmentation.augmentAircraftData(userAircraft);
-                updateAircraftInfo();
-                const std::size_t nofAircraft = flight.count();
-                if (nofAircraft > 1) {
-                    // Sequence starts at 1
-                    const std::size_t sequenceNumber {nofAircraft};
-                    ok = d->aircraftService->store(flight.getId(), sequenceNumber, userAircraft);
-                } else {
-                    // Also update flight info and condition
-                    updateFlightInfo();
-                    updateFlightCondition();
-                    ok = flightService.store(flight);
-                }
+            if (pluginSettings.hasLogbookSupport()) {
+                importedFlights = importFlight(d->file, &ok);
             } else {
-                ok = false;
+                // TODO IMPLEMENT ME REFACTOR ME
+                // The flight has always at least one aircraft, but possibly without recording (when the flight has
+                // been cleared / newly created)
+//                const bool addNewAircraft = addToCurrentFlight && flight.getUserAircraft().hasRecording();
+//                Aircraft &userAircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
+
+                importedFlights = importFlight(d->file, &ok);
+                if (ok) {
+                    for (auto &importedFlight : importedFlights) {
+                        for (auto &aircraft : *importedFlight) {
+                            augmentAircraft(aircraft);
+                            const std::size_t nofAircraft = flight.count();
+                            if (nofAircraft > 1) {
+                                // Sequence starts at 1
+                                const std::size_t sequenceNumber {nofAircraft};
+                                ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
+                            } else {
+                                // Also update flight info and condition
+                                updateFlightInfo();
+                                updateFlightCondition();
+                                ok = flightService.store(flight);
+                            }
+                        }
+                    }
+                }
+
+                if (!ok) {
+                    flight.removeLastAircraft();
+                }
             }
-            if (!ok) {
-                flight.removeLastAircraft();
-            }
+
             d->file.close();
         }
 
@@ -310,4 +317,16 @@ void FlightImportPluginBase::updateFlightCondition() noexcept
     updateExtendedFlightCondition(flightCondition);
 
     d->flight->setFlightCondition(flightCondition);
+}
+
+bool FlightImportPluginBase::augmentAircraft(Aircraft &aircraft) noexcept
+{
+    bool ok {false};
+    if (aircraft.getPosition().count() > 0) {
+        d->flightAugmentation.setProcedures(getProcedures());
+        d->flightAugmentation.setAspects(getAspects());
+        d->flightAugmentation.augmentAircraftData(aircraft);
+        updateAircraftInfo();
+    }
+    return ok;
 }

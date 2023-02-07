@@ -42,6 +42,8 @@ public:
     SdLogImportSettings() noexcept;
     ~SdLogImportSettings() override;
 
+    bool hasLogbookSupport() const noexcept override;
+
 signals:
     /*!
      * Emitted whenever the extended settings have changed.

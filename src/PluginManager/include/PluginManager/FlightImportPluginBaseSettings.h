@@ -47,6 +47,18 @@ public:
     FlightImportPluginBaseSettings &operator=(FlightImportPluginBaseSettings &&rhs) = delete;
     ~FlightImportPluginBaseSettings() override;
 
+    /*!
+     * Returns whether the plugin supports the logbook(-like) format, that is:
+     *
+     * \li multiple flights
+     * \li each flight having multiple aircraft
+     * \li flight condition and aircraft info
+     * \li the imported data is directly persisted in the logbook
+     *
+     * \return \c true if the \c plugin supports direct logbook data import; \c false else
+     */
+    virtual bool hasLogbookSupport() const noexcept = 0;
+
     bool isImportDirectoryEnabled() const noexcept;
     void setImportDirectoryEnabled(bool enabled) noexcept;
 

@@ -47,7 +47,7 @@ struct DatabaseServicePrivate;
 class PERSISTENCE_API DatabaseService final
 {
 public:
-    DatabaseService(QString connectionName = Const::DefaultConnectionName) noexcept;
+    DatabaseService(QString connectionName = Const::ApplicationConnectionName) noexcept;
     DatabaseService(const DatabaseService &rhs) = delete;
     DatabaseService(DatabaseService &&rhs) noexcept;
     DatabaseService &operator=(const DatabaseService &rhs) = delete;

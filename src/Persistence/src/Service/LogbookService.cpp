@@ -58,24 +58,35 @@ LogbookService::LogbookService(LogbookService &&rhs) noexcept = default;
 LogbookService &LogbookService::operator=(LogbookService &&rhs) noexcept = default;
 LogbookService::~LogbookService() = default;
 
-std::forward_list<FlightDate> LogbookService::getFlightDates() const noexcept
+std::forward_list<FlightDate> LogbookService::getFlightDates(bool *ok) const noexcept
 {
     std::forward_list<FlightDate> flightDates;
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     if (db.transaction()) {
-        flightDates = d->logbookDao->getFlightDates();
+        flightDates = d->logbookDao->getFlightDates(ok);
         db.rollback();
     }
     return flightDates;
 }
 
-std::vector<FlightSummary> LogbookService::getFlightSummaries(const FlightSelector &flightSelector) const noexcept
+std::vector<FlightSummary> LogbookService::getFlightSummaries(const FlightSelector &flightSelector, bool *ok) const noexcept
 {
     std::vector<FlightSummary> descriptions;
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     if (db.transaction()) {
-        descriptions = d->logbookDao->getFlightSummaries(flightSelector);
+        descriptions = d->logbookDao->getFlightSummaries(flightSelector, ok);
         db.rollback();
     }
     return descriptions;
+}
+
+std::vector<std::int64_t> LogbookService::getFlightIds(const FlightSelector &flightSelector, bool *ok) const noexcept
+{
+    std::vector<std::int64_t> flightIds;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    if (db.transaction()) {
+        flightIds = d->logbookDao->getFlightIds(flightSelector, ok);
+        db.rollback();
+    }
+    return flightIds;
 }

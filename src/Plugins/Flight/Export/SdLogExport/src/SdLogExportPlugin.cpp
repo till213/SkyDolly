@@ -49,7 +49,6 @@ struct SdLogExportPluginPrivate
 {
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ExportConnectionName)};
     std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>(Const::ExportConnectionName)};
-    std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>(Const::ExportConnectionName)};
     SdLogExportSettings pluginSettings;
 
     static constexpr const char *FileExtension {Const::LogbookExtension};
@@ -89,11 +88,10 @@ std::unique_ptr<QWidget> SdLogExportPlugin::createOptionWidget() const noexcept
 bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
 {
     bool ok {true};
-
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
-        QFileInfo info {*file};
-        ok = d->databaseService->connect(info.absoluteFilePath());
+        QFileInfo fileinfo {*file};
+        ok = d->databaseService->connect(fileinfo.absoluteFilePath());
         if (ok) {
             d->databaseService->migrate(Migration::Milestone::Schema);
         }

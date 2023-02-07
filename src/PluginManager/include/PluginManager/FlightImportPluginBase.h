@@ -26,6 +26,7 @@
 #define FLIGHTIMPORTPLUGINBASE_H
 
 #include <memory>
+#include <vector>
 
 #include <QObject>
 #include <QtPlugin>
@@ -89,7 +90,15 @@ protected:
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-    virtual bool importFlight(QIODevice &io, Flight &flight) noexcept = 0;
+
+    /*!
+     * Imports the flight(s) from the given \c io datasource and returns them
+     *
+     * \param io
+     *        the IO device to read from
+     * \return the list of imported flights
+     */
+    virtual std::vector<std::unique_ptr<Flight>> importFlight(QIODevice &io, bool *ok = nullptr) noexcept = 0;
 
     virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;
     virtual FlightAugmentation::Aspects getAspects() const noexcept = 0;
@@ -110,6 +119,7 @@ private:
     void updateAircraftInfo() noexcept;
     void updateFlightInfo() noexcept;
     void updateFlightCondition() noexcept;
+    bool augmentAircraft(Aircraft &aircraft) noexcept;
 };
 
 #endif // FLIGHTIMPORTPLUGINBASE_H

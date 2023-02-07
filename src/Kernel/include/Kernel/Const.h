@@ -24,9 +24,9 @@ namespace Const {
     constexpr const char *DotLogbookExtension {".sdlog"};
 
     /*!
-     * The default logbook connection name that is used for the application.
+     * The logbook connection name that is used for the application.
      */
-    constexpr const char *DefaultConnectionName {"Default"};
+    constexpr const char *ApplicationConnectionName {"SkyDolly"};
 
     /*!
      * The logbook connection name that is used for import.

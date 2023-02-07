@@ -61,6 +61,11 @@ IgcImportSettings::IgcImportSettings() noexcept
 
 IgcImportSettings::~IgcImportSettings() = default;
 
+bool IgcImportSettings::hasLogbookSupport() const noexcept
+{
+    return false;
+}
+
 IgcImportSettings::AltitudeMode IgcImportSettings::getAltitudeMode() const noexcept
 {
     return d->altitudeMode;

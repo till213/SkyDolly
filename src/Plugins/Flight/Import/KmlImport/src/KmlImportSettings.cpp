@@ -53,6 +53,11 @@ KmlImportSettings::KmlImportSettings() noexcept
 
 KmlImportSettings::~KmlImportSettings() = default;
 
+bool KmlImportSettings::hasLogbookSupport() const noexcept
+{
+    return false;
+}
+
 KmlImportSettings::Format KmlImportSettings::getFormat() const noexcept
 {
     return d->format;

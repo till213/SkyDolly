@@ -50,6 +50,7 @@ public:
 
     std::forward_list<FlightDate> getFlightDates(bool *ok = nullptr) const noexcept override;
     std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept override;
+    std::vector<std::int64_t> getFlightIds(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteLogbookDaoPrivate> d;

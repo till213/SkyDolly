@@ -41,6 +41,11 @@ SdLogImportSettings::SdLogImportSettings() noexcept
 
 SdLogImportSettings::~SdLogImportSettings() = default;
 
+bool SdLogImportSettings::hasLogbookSupport() const noexcept
+{
+    return true;
+}
+
 // PROTECTED
 
 void SdLogImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept

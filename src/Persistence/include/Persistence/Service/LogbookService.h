@@ -34,23 +34,24 @@
 #include <Kernel/Const.h>
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
+#include "../FlightSelector.h"
 #include "../PersistenceLib.h"
 
-class FlightSelector;
 struct LogbookServicePrivate;
 
 class PERSISTENCE_API LogbookService final
 {
 public:
-    LogbookService(QString connectionName = Const::DefaultConnectionName) noexcept;
+    LogbookService(QString connectionName = Const::ApplicationConnectionName) noexcept;
     LogbookService(const LogbookService &rhs) = delete;
     LogbookService(LogbookService &&rhs) noexcept;
     LogbookService &operator=(const LogbookService &rhs) = delete;
     LogbookService &operator=(LogbookService &&rhs) noexcept;
     ~LogbookService();
 
-    std::forward_list<FlightDate> getFlightDates() const noexcept;
-    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept;
+    std::forward_list<FlightDate> getFlightDates(bool *ok = nullptr) const noexcept;
+    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept;
+    std::vector<std::int64_t> getFlightIds(const FlightSelector &flightSelector = {}, bool *ok = nullptr) const noexcept;
 
 private:
     std::unique_ptr<LogbookServicePrivate> d;
