@@ -4,7 +4,7 @@
 
 ### New Features
 - Sky Dolly logbook (SDLOG) export plugin
-  * The current export always exports the entire flight (including all aircraft) into a single logbook file
+  * The current plugin implementation always exports the entire flight (including all aircraft) into a single logbook file, without resampling
   
 ### Improvements
 - All export plugins: only the supported resampling and formation export options (as repported by the given plugin) are now selectable
