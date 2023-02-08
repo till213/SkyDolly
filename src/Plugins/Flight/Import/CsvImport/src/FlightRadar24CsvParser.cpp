@@ -62,9 +62,9 @@ namespace
 
 // PUBLIC
 
-bool FlightRadar24CsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept
+bool FlightRadar24CsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, FlightData &flightData) noexcept
 {
-    Aircraft &aircraft = flight.getUserAircraft();
+    Aircraft aircraft;
     Position &position = aircraft.getPosition();
     firstDateTimeUtc.setTimeZone(QTimeZone::utc());
 
@@ -83,6 +83,9 @@ bool FlightRadar24CsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, Q
                 break;
             }
         }
+    }
+    if (ok) {
+        flightData.aircraft.push_back(std::move(aircraft));
     }
     return ok;
 }

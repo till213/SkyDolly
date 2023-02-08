@@ -44,6 +44,7 @@
 #include <Kernel/SkyMath.h>
 #include <Kernel/Convert.h>
 #include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/FlightCondition.h>
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
@@ -159,7 +160,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
     const FlightImportPluginBaseSettings &pluginSettings = getPluginSettings();
     const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
     const bool addToCurrentFlight = pluginSettings.isAddToFlightEnabled();
-    std::vector<std::unique_ptr<Flight>> importedFlights;
+    std::vector<FlightData> importedFlights;
 
     bool ok {true};
     bool ignoreFailures {false};
@@ -175,19 +176,17 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                 flight.clear(true);
                 isFirstFile = false;
             }
-            if (pluginSettings.hasLogbookSupport()) {
-                importedFlights = importFlight(d->file, &ok);
-            } else {
+
+            importedFlights = importFlights(d->file, ok);
+            if (!pluginSettings.hasLogbookSupport()) {
                 // TODO IMPLEMENT ME REFACTOR ME
                 // The flight has always at least one aircraft, but possibly without recording (when the flight has
                 // been cleared / newly created)
 //                const bool addNewAircraft = addToCurrentFlight && flight.getUserAircraft().hasRecording();
 //                Aircraft &userAircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
-
-                importedFlights = importFlight(d->file, &ok);
                 if (ok) {
                     for (auto &importedFlight : importedFlights) {
-                        for (auto &aircraft : *importedFlight) {
+                        for (auto &aircraft : importedFlight) {
                             augmentAircraft(aircraft);
                             const std::size_t nofAircraft = flight.count();
                             if (nofAircraft > 1) {
@@ -203,9 +202,15 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                         }
                     }
                 }
-
                 if (!ok) {
                     flight.removeLastAircraft();
+                }
+            }
+            if (ok) {
+                for (auto &flightData : importedFlights) {
+                    Flight flight {std::move(flightData)};
+                    // TODO Refactor flight sevice: store/restore FlightData (instead of Flight)
+                    ok = flightService.store(flight);
                 }
             }
 

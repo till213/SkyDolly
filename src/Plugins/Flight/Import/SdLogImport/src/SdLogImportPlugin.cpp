@@ -91,30 +91,27 @@ std::unique_ptr<QWidget> SdlogImportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool SdlogImportPlugin::importFlight(QIODevice &io, Flight &flight) noexcept
+std::vector<FlightData> SdlogImportPlugin::importFlights(QIODevice &io, bool &ok) noexcept
 {
-    bool ok {true};
+    std::vector<FlightData> flights;
+    ok = false;
+    // Only file-based SQLite databases supported
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
         QFileInfo fileinfo {*file};
         ok = d->databaseService->connect(fileinfo.absoluteFilePath());
         if (ok) {
-            // TODO IMPLEMENT ME
             const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
             if (ok) {
                 for (const std::int64_t flightId : flightIds) {
+                    Flight flight;
                     ok = d->importFlightService->restore(flightId, flight);
-                    if (ok) {
-                        ok = d->applicationFlightService->store(flight);
-                    }
+                    flights.push_back(std::move(flight.toFlightData()));
                 }
             }
         }
-    } else {
-        // We only support file-based SQLite databases
-        ok = false;
     }
-    return ok;
+    return flights;
 }
 
 FlightAugmentation::Procedures SdlogImportPlugin::getProcedures() const noexcept

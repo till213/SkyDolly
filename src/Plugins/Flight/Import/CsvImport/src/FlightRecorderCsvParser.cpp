@@ -128,7 +128,6 @@ struct FlightRecorderCsvParserPrivate
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
-    Flight *flight {nullptr};
     QDateTime firstDateTimeUtc;
     std::int64_t timestampDelta {0};
     CsvParser::Headers headers;
@@ -189,9 +188,8 @@ FlightRecorderCsvParser::FlightRecorderCsvParser() noexcept
 
 FlightRecorderCsvParser::~FlightRecorderCsvParser() = default;
 
-bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
+bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, FlightData &flightData) noexcept
 {
-    d->flight = &flight;
     QFile *file = qobject_cast<QFile *>(&io);
     firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
     flightNumber = QString();
@@ -206,15 +204,13 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
         ok = CsvParser::validate(rows, d->headers.size());
     }
     if (ok) {
-        Aircraft &aircraft = flight.getUserAircraft();
-
+        Aircraft aircraft;
         aircraft.getPosition().reserve(rows.size());
         aircraft.getEngine().reserve(rows.size());
         aircraft.getPrimaryFlightControl().reserve(rows.size());
         aircraft.getSecondaryFlightControl().reserve(rows.size());
         aircraft.getAircraftHandle().reserve(rows.size());
         aircraft.getLight().reserve(rows.size());
-
 #ifdef DEBUG
         qDebug() << "parse::parse, total CSV rows:" << rows.size() << "\n"
                  << "Position size:" << aircraft.getPosition().capacity() << "\n"
@@ -224,10 +220,10 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
                  << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
                  << "Light size:" << aircraft.getLight().capacity() << "\n";
 #endif
+       flightData.aircraft.push_back(std::move(aircraft));
 
         bool firstRow {true};
         for (const auto &row : rows) {
-
             if (firstRow) {
                 // The first position timestamp must be 0, so shift all timestamps by
                 // the timestamp delta, derived from the first timestamp
@@ -236,15 +232,13 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
                 firstRow = false;
             }
             if (ok) {
-                ok = parseRow(row);
+                ok = parseRow(row, flightData);
             } else {
                 break;
             }
         }
     }
 
-    // We are done with the export
-    d->flight = nullptr;
     return ok;
 }
 
@@ -262,9 +256,9 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
      return ok;
  }
 
-bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
+bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &flightData) noexcept
 {
-    Aircraft &aircraft = d->flight->getUserAircraft();
+    Aircraft &aircraft = flightData.aircraft.back();
     Position &position = aircraft.getPosition();
     Engine &engine = aircraft.getEngine();
     PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControl();

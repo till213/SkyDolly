@@ -26,6 +26,7 @@
 #define KMLIMPORTPLUGIN_H
 
 #include <memory>
+#include <vector>
 
 #include <QObject>
 #include <QDateTime>
@@ -39,6 +40,8 @@ class QIODevice;
 #include <PluginManager/FlightImportPluginBase.h>
 
 class Flight;
+struct FlightData;
+struct FlightData;
 struct AircraftInfo;
 struct FlightCondition;
 class FlightImportPluginBaseSettings;
@@ -58,7 +61,7 @@ protected:
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool importFlight(QIODevice &io, Flight &flight) noexcept override;
+    std::vector<FlightData> importFlights(QIODevice &io, bool &ok) noexcept override;
 
     FlightAugmentation::Procedures getProcedures() const noexcept override;
     FlightAugmentation::Aspects getAspects() const noexcept override;

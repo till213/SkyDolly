@@ -38,6 +38,7 @@ class QString;
 #include "Aircraft.h"
 #include "FlightSummary.h"
 #include "FlightCondition.h"
+#include "FlightData.h"
 #include "ModelLib.h"
 
 struct Waypoint;
@@ -47,12 +48,17 @@ class MODEL_API Flight final : public QObject
 {
     Q_OBJECT
 public:
-    explicit Flight(QObject *parent = nullptr) noexcept;
+    explicit Flight(FlightData flightData, QObject *parent = nullptr) noexcept;
+    explicit Flight(QObject *parent = nullptr) noexcept;    
     Flight(const Flight &rhs) = delete;
     Flight(Flight &&rhs) = delete;
     Flight &operator=(const Flight &rhs) = delete;
     Flight &operator=(Flight &&rhs) = delete;
     ~Flight() override;
+
+    void fromFlightData(FlightData flightData) noexcept;
+    void fromFlightData(FlightData &&flightData) noexcept;
+    FlightData &toFlightData() const noexcept;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
@@ -92,7 +98,7 @@ public:
 
     /*!
      * Sets the user aircraft index to \c index and emits the signal #userAircraftChanged, but the
-     * second signal parameter (\c previousUserAircraftIndex) is set to \c InvalidIndex.
+     * second signal parameter (\c previousUserAircraftIndex) is set to \c Const#InvalidIndex.
      *
      * This implies that while the previous AI object for the new user aircraft (identified by the
      * new \c index) is deleted no new AI object for the previous user aircraft is created. This
@@ -201,16 +207,15 @@ public:
     void clear(bool withOneAircraft) noexcept;
 
     using Iterator = std::vector<Aircraft>::iterator;
-
     Iterator begin() noexcept;
     Iterator end() noexcept;
-    const Iterator begin() const noexcept;
-    const Iterator end() const noexcept;
+
+    using ConstIterator = std::vector<Aircraft>::const_iterator;
+    ConstIterator begin() const noexcept;
+    ConstIterator end() const noexcept;
 
     Aircraft &operator[](std::size_t index) noexcept;
     const Aircraft &operator[](std::size_t index) const noexcept;
-
-    static constexpr int InvalidAircraftIndex {-1};
 
 signals:
     void flightStored(std::int64_t id);
@@ -248,12 +253,12 @@ signals:
 
     /*!
      * Emitted whenever the user aircraft index is changed to \c newUserAircraftIndex. In case a previous user aircraft
-     * existed the \c previousUserAircraftIndex is set accordingly, otherwise it is set to InvalidAircraftIndex.
+     * existed the \c previousUserAircraftIndex is set accordingly, otherwise it is set to Const::InvalidIndex.
      *
      * \param newUserAircraftIndex
      *        the index of the new user aircraft
      * \param previousUserAircraftIndex
-     *        the index of the previous user aircraft; InvalidAircraftIndex if no previous user aircraft was set
+     *        the index of the previous user aircraft; Const::InvalidIndex if no previous user aircraft was set
      */
     void userAircraftChanged(int newUserAircraftIndex, int previousUserAircraftIndex);
 

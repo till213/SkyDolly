@@ -37,7 +37,7 @@ class QString;
 #include <Model/PositionData.h>
 #include "CsvParserIntf.h"
 
-class Flight;
+struct FlightData;
 class Aircraft;
 class Engine;
 class PrimaryFlightControl;
@@ -48,7 +48,7 @@ class Light;
 class SkyDollyCsvParser : public CsvParserIntf
 {
 public:
-    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, FlightData &flightData) noexcept override;
 
 private:
     std::int64_t m_timestampDelta {0};

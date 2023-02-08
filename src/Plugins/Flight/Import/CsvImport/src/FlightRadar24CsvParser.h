@@ -33,12 +33,12 @@ class QString;
 #include <Model/PositionData.h>
 #include "CsvParserIntf.h"
 
-class Flight;
+class FlightData;
 
 class FlightRadar24CsvParser : public CsvParserIntf
 {
 public:
-    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, FlightData &flightData) noexcept override;
 private:
     static inline PositionData parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) noexcept;
 };

@@ -65,7 +65,7 @@ BasicFlightImportDialog::BasicFlightImportDialog(const Flight &flight, const QSt
       ui(std::make_unique<Ui::BasicFlightImportDialog>()),
       d(std::make_unique<BasicFlightImportDialogPrivate>(flight, fileFilter, pluginSettings))
 {
-    ui->setupUi(this);    
+        ui->setupUi(this);
     initUi();
     updateUi();
     frenchConnection();

@@ -42,6 +42,7 @@ class QIODevice;
 
 class FlightService;
 class Flight;
+struct FlightData;
 struct AircraftType;
 struct AircraftInfo;
 struct FlightCondition;
@@ -92,13 +93,15 @@ protected:
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
 
     /*!
-     * Imports the flight(s) from the given \c io datasource and returns them
+     * Imports the flight data from the given \c io datasource and returns the list.
      *
      * \param io
      *        the IO device to read from
-     * \return the list of imported flights
+     * \param ok
+     *        is set to \c true in case of success; \c false else
+     * \return the list of imported flight data
      */
-    virtual std::vector<std::unique_ptr<Flight>> importFlight(QIODevice &io, bool *ok = nullptr) noexcept = 0;
+    virtual std::vector<FlightData> importFlights(QIODevice &io, bool &ok) noexcept = 0;
 
     virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;
     virtual FlightAugmentation::Aspects getAspects() const noexcept = 0;

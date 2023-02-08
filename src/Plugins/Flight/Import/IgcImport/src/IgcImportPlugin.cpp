@@ -78,7 +78,6 @@ struct IgcImportPluginPrivate
         Shutdown
     };
 
-    Flight *flight {nullptr};
     IgcParser igcParser;
     IgcImportSettings pluginSettings;
     QEasingCurve throttleResponseCurve {QEasingCurve::OutExpo};
@@ -116,13 +115,12 @@ std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<IgcImportOptionWidget>(d->pluginSettings);
 }
 
-bool IgcImportPlugin::importFlight(QIODevice &io, Flight &flight) noexcept
+std::vector<FlightData> IgcImportPlugin::importFlights(QIODevice &io, bool &ok) noexcept
 {
-    d->flight = &flight;
-    bool ok = d->igcParser.parse(io);
+    std::vector<FlightData> flights = d->igcParser.parse(io, ok);
     if (ok) {
         // Now "upsert" the position data, taking possible duplicate timestamps into account
-        const Aircraft &aircraft = flight.getUserAircraft();
+        const Aircraft &aircraft = flights.back().aircraft.back();
         Position &position = aircraft.getPosition();
 
         // Engine
@@ -244,9 +242,7 @@ bool IgcImportPlugin::importFlight(QIODevice &io, Flight &flight) noexcept
             updateWaypoints();
         }
     }
-    // We are done with the import
-    d->flight = nullptr;
-    return ok;
+    return flights;
 }
 
 FlightAugmentation::Procedures IgcImportPlugin::getProcedures() const noexcept

@@ -14,6 +14,12 @@ namespace Const {
     constexpr std::int64_t InvalidId {-1};
 
     /*!
+     * An invalid aircraft index indicates that no aircraft has been specified as user aircraft.
+     * The index starts at 0.
+     */
+    constexpr int InvalidIndex {-1};
+
+    /*!
      * The plain logbook file extension (without leading dot).
      */
     constexpr const char *LogbookExtension {"sdlog"};

@@ -22,40 +22,10 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTRECORDERCSVPARSER_H
-#define FLIGHTRECORDERCSVPARSER_H
+#include <vector>
 
-#include <memory>
+#include "FlightData.h"
 
-#include <QByteArray>
+// PUBLIC
 
-class QIODevice;
-class QDateTime;
-class QString;
 
-#include <Kernel/CsvParser.h>
-#include "CsvParserIntf.h"
-
-struct FlightData;
-struct EngineData;
-struct AircraftHandleData;
-struct FlightRecorderCsvParserPrivate;
-
-class FlightRecorderCsvParser : public CsvParserIntf
-{
-public:
-    FlightRecorderCsvParser() noexcept;
-    ~FlightRecorderCsvParser() override;
-
-    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, FlightData &flightData) noexcept override;
-
-private:
-    std::unique_ptr<FlightRecorderCsvParserPrivate> d;
-
-    bool validateHeaders() noexcept;
-    bool parseRow(const CsvParser::Row &row, FlightData &flightData) noexcept;
-    inline void initEngineDefaultValues(EngineData &engineData) noexcept;
-    inline void initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandle) noexcept;
-};
-
-#endif // FLIGHTRECORDERCSVPARSER_H

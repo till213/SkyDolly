@@ -43,12 +43,12 @@
 #include <QDebug>
 #endif
 
-#include <Kernel/Version.h>
 #include <Kernel/Const.h>
 #include <Kernel/Convert.h>
+#include <Kernel/Enum.h>
 #include <Kernel/Unit.h>
 #include <Kernel/SkyMath.h>
-#include <Kernel/Enum.h>
+#include <Kernel/Version.h>
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
@@ -121,7 +121,7 @@ struct FormationWidgetPrivate
     FlightService &flightService;
     AircraftService &aircraftService;
     QButtonGroup *positionButtonGroup;
-    int selectedAircraftIndex {Flight::InvalidAircraftIndex};
+    int selectedAircraftIndex {Const::InvalidIndex};
     Unit unit;
     // Columns are only auto-resized the first time the table is loaded
     // After that manual column resizes are kept
@@ -368,7 +368,7 @@ void FormationWidget::updateTable() noexcept
         ui->aircraftTableWidget->resizeColumnsToContents();
         d->columnsAutoResized = true;
     }
-    d->selectedAircraftIndex = Flight::InvalidAircraftIndex;
+    d->selectedAircraftIndex = Const::InvalidIndex;
     ui->aircraftTableWidget->blockSignals(false);
 }
 
@@ -444,14 +444,14 @@ void FormationWidget::updateEditUi() noexcept
     const bool inRecordingState = SkyConnectManager::getInstance().isInRecordingState();
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
-    ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidAircraftIndex && !inRecordingState && !userAircraftIndex);
+    ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Const::InvalidIndex && !inRecordingState && !userAircraftIndex);
     const bool formation = flight.count() > 1;
-    ui->deletePushButton->setEnabled(formation && !inRecordingState && d->selectedAircraftIndex != Flight::InvalidAircraftIndex);
+    ui->deletePushButton->setEnabled(formation && !inRecordingState && d->selectedAircraftIndex != Const::InvalidIndex);
 }
 
 void FormationWidget::updateTimeOffsetUi() noexcept
 {
-    const bool enabled = d->selectedAircraftIndex != Flight::InvalidAircraftIndex;
+    const bool enabled = d->selectedAircraftIndex != Const::InvalidIndex;
 
     ui->fastBackwardOffsetPushButton->setEnabled(enabled);
     ui->backwardOffsetPushButton->setEnabled(enabled);
@@ -859,7 +859,7 @@ void FormationWidget::onSelectionChanged() noexcept
         // Index starts at 0
         d->selectedAircraftIndex = ui->aircraftTableWidget->model()->data(modelIndex).toInt() - 1;
     } else {
-        d->selectedAircraftIndex = Flight::InvalidAircraftIndex;
+        d->selectedAircraftIndex = Const::InvalidIndex;
     }
     updateEditUi();
     updateTimeOffsetUi();
@@ -883,7 +883,7 @@ void FormationWidget::updateUserAircraftIndex() noexcept
 
 void FormationWidget::deleteAircraft() noexcept
 {
-    if (d->selectedAircraftIndex != ::Flight::InvalidAircraftIndex) {
+    if (d->selectedAircraftIndex != ::Const::InvalidIndex) {
         Settings &settings = Settings::getInstance();
         bool doDelete {true};
         if (settings.isDeleteAircraftConfirmationEnabled()) {
@@ -965,7 +965,7 @@ void FormationWidget::onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode)
 
 void FormationWidget::changeTimeOffset(const std::int64_t timeOffset) noexcept
 {
-    if (d->selectedAircraftIndex != Flight::InvalidAircraftIndex) {
+    if (d->selectedAircraftIndex != Const::InvalidIndex) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
@@ -977,7 +977,7 @@ void FormationWidget::changeTimeOffset(const std::int64_t timeOffset) noexcept
 
 void FormationWidget::onTimeOffsetValueChanged() noexcept
 {
-    if (d->selectedAircraftIndex != Flight::InvalidAircraftIndex) {
+    if (d->selectedAircraftIndex != Const::InvalidIndex) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
