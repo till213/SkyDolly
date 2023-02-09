@@ -22,16 +22,11 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <Kernel/Enum.h>
-#include <Kernel/System.h>
 #include <Kernel/Settings.h>
-#include "Model/Flight.h"
 #include "SdLogImportSettings.h"
 
 struct SdLogImportSettingsPrivate
-{
-    Flight *flight;
-};
+{};
 
 // PUBLIC
 
@@ -48,13 +43,13 @@ bool SdLogImportSettings::hasLogbookSupport() const noexcept
 
 // PROTECTED
 
-void SdLogImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
+void SdLogImportSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
 {}
 
-void SdLogImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void SdLogImportSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {}
 
-void SdLogImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
+void SdLogImportSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {}
 
 void SdLogImportSettings::restoreDefaultsExtn() noexcept

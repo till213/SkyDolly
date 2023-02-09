@@ -61,7 +61,6 @@
 
 struct FlightImportPluginBasePrivate
 {
-    Flight *flight {nullptr};
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
     std::unique_ptr<AircraftTypeService> aircraftTypeService {std::make_unique<AircraftTypeService>()};
     QFile file;
@@ -81,7 +80,6 @@ FlightImportPluginBase::~FlightImportPluginBase() = default;
 bool FlightImportPluginBase::importFlight(FlightService &flightService, Flight &flight) noexcept
 {
     bool ok {false};
-    d->flight = &flight;
     FlightImportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     std::unique_ptr<BasicFlightImportDialog> importDialog = std::make_unique<BasicFlightImportDialog>(flight, getFileFilter(), baseSettings, PluginBase::getParentWidget());
@@ -124,9 +122,6 @@ bool FlightImportPluginBase::importFlight(FlightService &flightService, Flight &
     } else {
         ok = true;
     }
-
-    // We are done with the export
-    d->flight = nullptr;
 
     return ok;
 }
@@ -195,8 +190,8 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                                 ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
                             } else {
                                 // Also update flight info and condition
-                                updateFlightInfo();
-                                updateFlightCondition();
+                                updateFlightInfo(flight);
+                                updateFlightCondition(flight);
                                 ok = flightService.store(flight);
                             }
                         }
@@ -246,9 +241,8 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
     return ok;
 }
 
-void FlightImportPluginBase::updateAircraftInfo() noexcept
+void FlightImportPluginBase::updateAircraftInfo(Aircraft &aircraft) noexcept
 {
-    Aircraft &aircraft = d->flight->getUserAircraft();
     AircraftInfo aircraftInfo(aircraft.getId());
     aircraftInfo.aircraftType = d->aircraftType;
 
@@ -294,21 +288,21 @@ void FlightImportPluginBase::updateAircraftInfo() noexcept
     aircraft.setAircraftInfo(aircraftInfo);
 }
 
-void FlightImportPluginBase::updateFlightInfo() noexcept
+void FlightImportPluginBase::updateFlightInfo(Flight &flight) noexcept
 {
-    d->flight->setTitle(getTitle());
+    flight.setTitle(getTitle());
 
     const QString description = tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), d->file.fileName());
-    d->flight->setDescription(description);
-    d->flight->setCreationTime(QFileInfo(d->file).birthTime());
-    updateExtendedFlightInfo(*d->flight);
+    flight.setDescription(description);
+    flight.setCreationTime(QFileInfo(d->file).birthTime());
+    updateExtendedFlightInfo(flight);
 }
 
-void FlightImportPluginBase::updateFlightCondition() noexcept
+void FlightImportPluginBase::updateFlightCondition(Flight &flight) noexcept
 {
     FlightCondition flightCondition;
 
-    Aircraft &aircraft = d->flight->getUserAircraft();
+    Aircraft &aircraft = flight.getUserAircraft();
 
     const Position &position = aircraft.getPosition();
     const PositionData &lastPositionData = position.getLast();
@@ -321,7 +315,7 @@ void FlightImportPluginBase::updateFlightCondition() noexcept
     flightCondition.endZuluTime = endDateTimeUtc;
     updateExtendedFlightCondition(flightCondition);
 
-    d->flight->setFlightCondition(flightCondition);
+    flight.setFlightCondition(flightCondition);
 }
 
 bool FlightImportPluginBase::augmentAircraft(Aircraft &aircraft) noexcept
@@ -331,7 +325,7 @@ bool FlightImportPluginBase::augmentAircraft(Aircraft &aircraft) noexcept
         d->flightAugmentation.setProcedures(getProcedures());
         d->flightAugmentation.setAspects(getAspects());
         d->flightAugmentation.augmentAircraftData(aircraft);
-        updateAircraftInfo();
+        updateAircraftInfo(aircraft);
     }
     return ok;
 }

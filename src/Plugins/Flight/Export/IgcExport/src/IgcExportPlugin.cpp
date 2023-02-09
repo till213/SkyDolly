@@ -109,7 +109,6 @@ namespace
 
 struct IgcExportPluginPrivate
 {
-    const Flight *flight {nullptr};
     IgcExportSettings pluginSettings;
     Unit unit;
 
@@ -182,8 +181,6 @@ bool IgcExportPlugin::exportAircraft(const FlightData &flightData, const Aircraf
     if (ok) {
         ok = exportGRecord(io);
     }
-    // We are done with the export
-    d->flight = nullptr;
     return ok;
 
 }

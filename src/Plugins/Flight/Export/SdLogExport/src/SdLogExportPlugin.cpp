@@ -90,8 +90,8 @@ bool SdLogExportPlugin::exportFlightData(const FlightData &flightData, QIODevice
     bool ok {true};
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
-        QFileInfo fileinfo {*file};
-        ok = d->databaseService->connect(fileinfo.absoluteFilePath());
+        QFileInfo fileInfo {*file};
+        ok = d->databaseService->connect(fileInfo.absoluteFilePath());
         if (ok) {
             d->databaseService->migrate(Migration::Milestone::Schema);
         }

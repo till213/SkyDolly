@@ -98,15 +98,15 @@ std::vector<FlightData> SdlogImportPlugin::importFlights(QIODevice &io, bool &ok
     // Only file-based SQLite databases supported
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
-        QFileInfo fileinfo {*file};
-        ok = d->databaseService->connect(fileinfo.absoluteFilePath());
+        QFileInfo fileInfo {*file};
+        ok = d->databaseService->connect(fileInfo.absoluteFilePath());
         if (ok) {
             const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
             if (ok) {
                 for (const std::int64_t flightId : flightIds) {
-                    Flight flight;
-                    ok = d->importFlightService->restore(flightId, flight);
-                    flights.push_back(std::move(flight.getFlightData()));
+                    FlightData flightData;
+                    ok = d->importFlightService->importFlightData(flightId, flightData);
+                    flights.push_back(std::move(flightData));
                 }
             }
         }

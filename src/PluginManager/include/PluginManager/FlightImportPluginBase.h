@@ -119,9 +119,9 @@ private:
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 
     bool importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept;
-    void updateAircraftInfo() noexcept;
-    void updateFlightInfo() noexcept;
-    void updateFlightCondition() noexcept;
+    void updateAircraftInfo(Aircraft &aircraft) noexcept;
+    void updateFlightInfo(Flight &flight) noexcept;
+    void updateFlightCondition(Flight &flight) noexcept;
     bool augmentAircraft(Aircraft &aircraft) noexcept;
 };
 
