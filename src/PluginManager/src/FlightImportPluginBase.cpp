@@ -203,14 +203,19 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
                 }
             }
             if (ok) {
+                // Store all imported flight data into the logbook
                 for (auto &flightData : importedFlightData) {
                     ok = d->flightService->storeFlightData(flightData);
                     if (!ok) {
                         break;
                     }
                 }
+                // Notify the application that flight data been stored
+                // and restore the last imported flight
                 if (ok) {
-                    flight.fromFlightData(std::move(importedFlightData.back()));
+                    FlightData &flightData = importedFlightData.back();
+                    emit flight.flightStored(flightData.id);
+                    flight.fromFlightData(std::move(flightData));
                 }
             }
 
