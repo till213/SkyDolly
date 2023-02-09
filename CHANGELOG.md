@@ -8,6 +8,7 @@
   
 ### Improvements
 - All export plugins: only the supported resampling and formation export options (as repported by the given plugin) are now selectable
+- The Simulation Variables dialog now also shows the aircraft position as decimal latitude & longitude values ([#89](https://github.com/till213/SkyDolly/issues/89))
 
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
