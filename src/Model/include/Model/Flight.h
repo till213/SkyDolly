@@ -218,7 +218,20 @@ public:
     const Aircraft &operator[](std::size_t index) const noexcept;
 
 signals:
+    /*!
+     * Emitted whenever the Flight given by its \c id has been stored.
+     *
+     * \param id
+     *        the id of the stored Flight
+     */
     void flightStored(std::int64_t id);
+
+    /*!
+     * Emitted whenever the Flight given by its \c id has been restored.
+     *
+     * \param id
+     *        the id of the restored Flight
+     */
     void flightRestored(std::int64_t id);
 
     void cleared();

@@ -40,20 +40,16 @@
 
 struct FlightDescriptionWidgetPrivate
 {
-    FlightDescriptionWidgetPrivate(FlightService &flightService) noexcept
-        : flightService(flightService)
-    {}
-
-    FlightService &flightService;
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
     Unit unit;
 };
 
 // PUBLIC
 
-FlightDescriptionWidget::FlightDescriptionWidget(FlightService &flightService, QWidget *parent) :
+FlightDescriptionWidget::FlightDescriptionWidget(QWidget *parent) :
     QWidget(parent),
     ui(std::make_unique<Ui::FlightDescriptionWidget>()),
-    d(std::make_unique<FlightDescriptionWidgetPrivate>(flightService))
+    d(std::make_unique<FlightDescriptionWidgetPrivate>())
 {
     ui->setupUi(this);
     initUi();
@@ -129,11 +125,11 @@ void FlightDescriptionWidget::updateUi() noexcept
 void FlightDescriptionWidget::onTitleEdited() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    d->flightService.updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    d->flightService->updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
 }
 
 void FlightDescriptionWidget::onDescriptionEdited() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    d->flightService.updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    d->flightService->updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
 }

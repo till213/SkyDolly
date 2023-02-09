@@ -61,22 +61,30 @@ FlightService::FlightService(FlightService &&rhs) noexcept = default;
 FlightService &FlightService::operator=(FlightService &&rhs) noexcept = default;
 FlightService::~FlightService() = default;
 
-bool FlightService::store(Flight &flight) noexcept
+bool FlightService::storeFlight(Flight &flight) noexcept
+{
+    FlightData &flightData = flight.getFlightData();
+    const bool ok = storeFlightData(flightData);
+    if (ok) {
+        emit flight.flightStored(flightData.id);
+    }
+    return ok;
+}
+
+bool FlightService::storeFlightData(FlightData &flightData) noexcept
 {
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
     if (ok) {
-        FlightData &flightData = flight.getFlightData();
         ok = d->flightDao->add(flightData);
         if (ok) {
             ok = db.commit();
-            emit flight.flightStored(flight.getId());
         } else {
             db.rollback();
         }
 #ifdef DEBUG
     } else {
-        qDebug() << "FlightService::store: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+        qDebug() << "FlightService::storeFlightData: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
 #endif
     }
     return ok;
@@ -101,7 +109,7 @@ bool FlightService::exportFlightData(const FlightData &flightData) noexcept
     return ok;
 }
 
-bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
+bool FlightService::restoreFlight(std::int64_t id, Flight &flight) noexcept
 {
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();

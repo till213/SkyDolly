@@ -707,7 +707,7 @@ void LogbookWidget::loadFlight() noexcept
     if (!SkyConnectManager::getInstance().isInRecordingState()) {
         const std::int64_t selectedFlightId = getSelectedFlightId();
         if (selectedFlightId != Const::InvalidId) {
-            const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
+            const bool ok = d->flightService.restoreFlight(selectedFlightId, Logbook::getInstance().getCurrentFlight());
             if (!ok) {
                 QMessageBox::critical(this, tr("Logbook error"), tr("The flight %1 could not be read from the logbook.").arg(selectedFlightId));
             }

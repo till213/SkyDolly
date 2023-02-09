@@ -78,6 +78,7 @@ struct PluginManagerPrivate
     ~PluginManagerPrivate() = default;
 
     QWidget *parentWidget {nullptr};
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
     QDir pluginsDirectory;
     // Plugin UUID / plugin path
     QMap<QUuid, QString> flightImportPluginRegistry;
@@ -157,7 +158,7 @@ std::vector<PluginManager::Handle> PluginManager::initialiseLocationExportPlugin
     return pluginHandles;
 }
 
-bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept
+bool PluginManager::importFlight(const QUuid &pluginUuid, Flight &flight) const noexcept
 {
     bool ok {false};
     if (d->flightImportPluginRegistry.contains(pluginUuid)) {
@@ -168,7 +169,7 @@ bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightS
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
             importPlugin->restoreSettings(pluginUuid);
-            ok = importPlugin->importFlight(flightService, flight);
+            ok = importPlugin->importFlight(flight);
             importPlugin->storeSettings(pluginUuid);
         }
         loader.unload();
@@ -195,7 +196,7 @@ bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) 
     return ok;
 }
 
-bool PluginManager::importLocations(const QUuid &pluginUuid, LocationService &locationService) const noexcept
+bool PluginManager::importLocations(const QUuid &pluginUuid) const noexcept
 {
     bool ok {false};
     if (d->locationImportPluginRegistry.contains(pluginUuid)) {
@@ -206,7 +207,7 @@ bool PluginManager::importLocations(const QUuid &pluginUuid, LocationService &lo
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
             importPlugin->restoreSettings(pluginUuid);
-            ok = importPlugin->importLocations(locationService);
+            ok = importPlugin->importLocations();
             importPlugin->storeSettings(pluginUuid);
         }
         loader.unload();
@@ -214,7 +215,7 @@ bool PluginManager::importLocations(const QUuid &pluginUuid, LocationService &lo
     return ok;
 }
 
-bool PluginManager::exportLocations(const QUuid &pluginUuid, LocationService &locationService) const noexcept
+bool PluginManager::exportLocations(const QUuid &pluginUuid) const noexcept
 {
     bool ok {false};
     if (d->locationExportPluginRegistry.contains(pluginUuid)) {
@@ -225,7 +226,7 @@ bool PluginManager::exportLocations(const QUuid &pluginUuid, LocationService &lo
         if (exportPlugin != nullptr) {
             exportPlugin->setParentWidget(d->parentWidget);
             exportPlugin->restoreSettings(pluginUuid);
-            std::vector<Location> locations = locationService.getAll(&ok);
+            std::vector<Location> locations = d->locationService->getAll(&ok);
             if (ok) {
                 ok = exportPlugin->exportLocations(locations);
             }

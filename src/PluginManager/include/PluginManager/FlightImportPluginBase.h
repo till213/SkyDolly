@@ -81,7 +81,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    bool importFlight(FlightService &flightService, Flight &flight) noexcept final;
+    bool importFlight(Flight &flight) noexcept final;
 
 protected:
     AircraftType &getSelectedAircraftType() const noexcept;
@@ -118,7 +118,7 @@ private:
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 
-    bool importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept;
+    bool importFlights(const QStringList &filePaths, Flight &flight) noexcept;
     void updateAircraftInfo(Aircraft &aircraft) noexcept;
     void updateFlightInfo(Flight &flight) noexcept;
     void updateFlightCondition(Flight &flight) noexcept;

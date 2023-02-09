@@ -61,6 +61,7 @@
 
 struct FlightImportPluginBasePrivate
 {
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
     std::unique_ptr<AircraftTypeService> aircraftTypeService {std::make_unique<AircraftTypeService>()};
     QFile file;
@@ -77,7 +78,7 @@ FlightImportPluginBase::FlightImportPluginBase() noexcept
 
 FlightImportPluginBase::~FlightImportPluginBase() = default;
 
-bool FlightImportPluginBase::importFlight(FlightService &flightService, Flight &flight) noexcept
+bool FlightImportPluginBase::importFlight(Flight &flight) noexcept
 {
     bool ok {false};
     FlightImportPluginBaseSettings &baseSettings = getPluginSettings();
@@ -106,7 +107,7 @@ bool FlightImportPluginBase::importFlight(FlightService &flightService, Flight &
 #endif
             QGuiApplication::setOverrideCursor(Qt::WaitCursor);
             QGuiApplication::processEvents();
-            ok = importFlights(selectedFilePaths, flightService, flight);
+            ok = importFlights(selectedFilePaths, flight);
             QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
             qDebug() << QFileInfo(selectedPath).fileName() << "import" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
@@ -150,12 +151,12 @@ void FlightImportPluginBase::restoreSettings(const Settings::ValuesByKey &values
     getPluginSettings().restoreSettings(valuesByKey);
 }
 
-bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept
+bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight &flight) noexcept
 {
     const FlightImportPluginBaseSettings &pluginSettings = getPluginSettings();
     const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
     const bool addToCurrentFlight = pluginSettings.isAddToFlightEnabled();
-    std::vector<FlightData> importedFlights;
+
 
     bool ok {true};
     bool ignoreFailures {false};
@@ -172,7 +173,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                 isFirstFile = false;
             }
 
-            importedFlights = importFlights(d->file, ok);
+            std::vector<FlightData> importedFlightData = importFlights(d->file, ok);
             if (!pluginSettings.hasLogbookSupport()) {
                 // TODO IMPLEMENT ME REFACTOR ME
                 // The flight has always at least one aircraft, but possibly without recording (when the flight has
@@ -180,7 +181,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
 //                const bool addNewAircraft = addToCurrentFlight && flight.getUserAircraft().hasRecording();
 //                Aircraft &userAircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
                 if (ok) {
-                    for (auto &importedFlight : importedFlights) {
+                    for (auto &importedFlight : importedFlightData) {
                         for (auto &aircraft : importedFlight) {
                             augmentAircraft(aircraft);
                             const std::size_t nofAircraft = flight.count();
@@ -192,7 +193,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                                 // Also update flight info and condition
                                 updateFlightInfo(flight);
                                 updateFlightCondition(flight);
-                                ok = flightService.store(flight);
+                                ok = d->flightService->storeFlight(flight);
                             }
                         }
                     }
@@ -202,10 +203,10 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, FlightS
                 }
             }
             if (ok) {
-                for (auto &flightData : importedFlights) {
+                for (auto &flightData : importedFlightData) {
                     Flight flight {std::move(flightData)};
                     // TODO Refactor flight sevice: store/restore FlightData (instead of Flight)
-                    ok = flightService.store(flight);
+                    ok = d->flightService->storeFlightData(flightData);
                 }
             }
 

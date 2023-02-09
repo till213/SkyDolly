@@ -31,12 +31,12 @@
 #include <QSqlDatabase>
 
 #include <Kernel/Const.h>
-#include <Model/Flight.h>
-#include <Model/FlightData.h>
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
 #include "../PersistenceLib.h"
 
+class Flight;
+struct FlightData;
 class SkyConnectIntf;
 struct FlightServicePrivate;
 
@@ -50,9 +50,65 @@ public:
     FlightService &operator=(FlightService &&rhs) noexcept;
     ~FlightService();
 
-    bool store(Flight &flight) noexcept;
+    /*!
+     * Stores the FlightData of the given \c flight and emits the Flight#flightStored signal
+     * upon success. The \c id of the Flight is updated accordingly.
+     *
+     * \param flight
+     *        the flight that will be stored; typically the \e current flight of the Logbook
+     * \return \c true upon success; \c false else
+     * \sa storeFlightData
+     * \sa Flight#flightStored
+     */
+    bool storeFlight(Flight &flight) noexcept;
+
+    /*!
+     * Stores the \c flightData, but does not emit any signal. The \c id of the FlightData is
+     * updated accordingly.
+     *
+     * \param flightData
+     *        the flight data that will be stored; typically data that has just been imported
+     *        from some other data source (logbook)
+     * \return \c true upon success; \c false else
+     * \sa storeFlight
+     * \sa exportFlightData
+     */
+    bool storeFlightData(FlightData &flightData) noexcept;
+
+    /*!
+     * Exports the \c flightData, but does not emit any signal. The \c id of the FlightData is
+     * left unchanged (possibly still Const#InvalidId).
+     *
+     * \param flightData
+     *        the flight data that will be exported, typically into another logbook
+     * \return \c true upon success; \c false else
+     * \sa storeFlightData
+     */
     bool exportFlightData(const FlightData &flightData) noexcept;
-    bool restore(std::int64_t id, Flight &flight) noexcept;
+
+    /*!
+     * Restores the Flight identified by \c id into \c flight and emits the Flight#flightRestored
+     * signal upon success.
+     *
+     * \param id
+     *        the id of the Flight to be restored
+     * \param flight
+     *        the Flight that will contain the restored data; typically the \e current
+     *        flight of the Logbook
+     * \return \c true upon success; \c false else
+     * \sa importFlightData
+     * \sa Flight#flightRestored
+     */
+    bool restoreFlight(std::int64_t id, Flight &flight) noexcept;
+
+    /*!
+     * Imports the FlightData identified by \c id into \c flightData, but does not emit any signal.
+     *
+     * \param flightData
+     *        the flight data that will be imported, typically from another logbook
+     * \return \c true upon success; \c false else
+     * \sa restoreFlight
+     */
     bool importFlightData(std::int64_t id, FlightData &flightData) noexcept;
     bool deleteById(std::int64_t id) noexcept;
     bool updateTitle(Flight &flight, const QString &title) noexcept;

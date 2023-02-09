@@ -45,18 +45,20 @@
 
 struct LocationImportPluginBasePrivate
 {
-    QFile file;
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
 };
 
 // PUBLIC
 
 LocationImportPluginBase::LocationImportPluginBase() noexcept
     : d(std::make_unique<LocationImportPluginBasePrivate>())
-{}
+{
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
+}
 
 LocationImportPluginBase::~LocationImportPluginBase() = default;
 
-bool LocationImportPluginBase::importLocations(LocationService &locationService) noexcept
+bool LocationImportPluginBase::importLocations() noexcept
 {
     bool ok {true};
     LocationImportPluginBaseSettings &baseSettings = getPluginSettings();
@@ -84,7 +86,7 @@ bool LocationImportPluginBase::importLocations(LocationService &locationService)
 #endif
         QGuiApplication::setOverrideCursor(Qt::WaitCursor);
         QGuiApplication::processEvents();
-        ok = importLocations(selectedFilePaths, locationService);
+        ok = importLocations(selectedFilePaths);
         QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
         qDebug() << QFileInfo(selectedPath).fileName() << "import" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
@@ -116,7 +118,7 @@ void LocationImportPluginBase::restoreSettings(const Settings::ValuesByKey &valu
     getPluginSettings().restoreSettings(valuesByKey);
 }
 
-bool LocationImportPluginBase::importLocations(const QStringList &filePaths, LocationService &locationService) noexcept
+bool LocationImportPluginBase::importLocations(const QStringList &filePaths) noexcept
 {
     const LocationImportPluginBaseSettings &pluginSettings = getPluginSettings();
     const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
@@ -124,13 +126,13 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths, Loc
     bool ok {true};
     bool ignoreFailures {false};
     for (const QString &filePath : filePaths) {
-        d->file.setFileName(filePath);
-        ok = d->file.open(QIODevice::ReadOnly);
+        QFile file {filePath};
+        ok = file.open(QIODevice::ReadOnly);
         if (ok) {
-            std::vector<Location> locations = importLocations(d->file, &ok);
-            d->file.close();
+            std::vector<Location> locations = importLocations(file, &ok);
+            file.close();
             if (ok) {
-                ok = storeLocations(locations, locationService);
+                ok = storeLocations(locations);
             }
         }
 
@@ -163,10 +165,10 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths, Loc
     return ok;
 }
 
-bool LocationImportPluginBase::storeLocations(std::vector<Location> &locations, LocationService &locationService) const noexcept
+bool LocationImportPluginBase::storeLocations(std::vector<Location> &locations) const noexcept
 {
     const LocationService::Mode mode = getPluginSettings().getImportMode();
-    const bool ok = locationService.storeAll(locations, mode);
+    const bool ok = d->locationService->storeAll(locations, mode);
     if (ok) {
          emit PersistenceManager::getInstance().locationsImported();
     }

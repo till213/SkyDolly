@@ -139,11 +139,6 @@ struct MainWindowPrivate
     StatisticsDialog *statisticsDialog {nullptr};
 
     Unit unit;
-
-    // Services
-    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
-    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
-
     QSize lastNormalUiSize;
 
     // Replay speed
@@ -838,7 +833,7 @@ void MainWindow::initSkyConnectPlugin() noexcept
 FlightDialog &MainWindow::getFlightDialog() noexcept
 {
     if (d->flightDialog == nullptr) {
-        d->flightDialog = new FlightDialog(*d->flightService, this);
+        d->flightDialog = new FlightDialog(this);
         d->flightDialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(d->flightDialog, &FlightDialog::visibilityChanged,
                 this, &MainWindow::updateWindowMenu);
@@ -1702,7 +1697,7 @@ void MainWindow::onFlightImport(QAction *action) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const QUuid pluginUuid = action->data().toUuid();
-    const bool ok = PluginManager::getInstance().importFlight(pluginUuid, *d->flightService, flight);
+    const bool ok = PluginManager::getInstance().importFlight(pluginUuid, flight);
     if (ok) {
         updateUi();
         SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
@@ -1724,13 +1719,13 @@ void MainWindow::onFlightExport(QAction *action) noexcept
 void MainWindow::onLocationImport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
-    PluginManager::getInstance().importLocations(pluginUuid, *d->locationService);
+    PluginManager::getInstance().importLocations(pluginUuid);
 }
 
 void MainWindow::onLocationExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
-    PluginManager::getInstance().exportLocations(pluginUuid, *d->locationService);
+    PluginManager::getInstance().exportLocations(pluginUuid);
 }
 
 void MainWindow::onReplayLoopChanged() noexcept
