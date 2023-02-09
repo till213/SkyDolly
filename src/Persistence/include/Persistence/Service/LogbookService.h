@@ -42,7 +42,7 @@ struct LogbookServicePrivate;
 class PERSISTENCE_API LogbookService final
 {
 public:
-    LogbookService(QString connectionName = Const::ApplicationConnectionName) noexcept;
+    LogbookService(QString connectionName = Const::DefaultConnectionName) noexcept;
     LogbookService(const LogbookService &rhs) = delete;
     LogbookService(LogbookService &&rhs) noexcept;
     LogbookService &operator=(const LogbookService &rhs) = delete;

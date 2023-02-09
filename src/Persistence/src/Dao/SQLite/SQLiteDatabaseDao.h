@@ -33,6 +33,7 @@ class QDateTime;
 
 #include <Kernel/Version.h>
 #include <Kernel/Const.h>
+#include <Connection.h>
 #include <Migration.h>
 #include "../DatabaseDaoIntf.h"
 #include "Metadata.h"
@@ -42,7 +43,9 @@ struct DatabaseDaoPrivate;
 class SQLiteDatabaseDao : public DatabaseDaoIntf
 {
 public:
-    SQLiteDatabaseDao(QString connectionName = Const::ApplicationConnectionName) noexcept;
+
+
+    SQLiteDatabaseDao(QString connectionName = Const::DefaultConnectionName) noexcept;
     SQLiteDatabaseDao(const SQLiteDatabaseDao &rhs) = delete;
     SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) noexcept;
     SQLiteDatabaseDao &operator=(const SQLiteDatabaseDao &rhs) = delete;
@@ -50,7 +53,7 @@ public:
     ~SQLiteDatabaseDao() override;
 
     bool connectDb(const QString &logbookPath) noexcept override;
-    void disconnectDb() noexcept override;
+    void disconnectDb(Connection::Default connection) noexcept override;
 
     bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept override;
     bool optimise() noexcept override;
@@ -66,7 +69,7 @@ public:
 private:
     std::unique_ptr<DatabaseDaoPrivate> d;
 
-    void disconnectSQLite() noexcept;
+    void disconnectSQLite(Connection::Default connection) noexcept;
     bool createMigrationTable() noexcept;
 };
 

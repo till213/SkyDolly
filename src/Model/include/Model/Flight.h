@@ -56,8 +56,14 @@ public:
     Flight &operator=(Flight &&rhs) = delete;
     ~Flight() override;
 
+    /*!
+     * Restores this Flight from the given \c flightData.
+     *
+     * \param flightData
+     *        the FlightData to set
+     * \sa flightRestored
+     */
     void fromFlightData(FlightData flightData) noexcept;
-    void fromFlightData(FlightData &&flightData) noexcept;
     FlightData &getFlightData() const noexcept;
 
     std::int64_t getId() const noexcept;
@@ -234,6 +240,8 @@ signals:
      */
     void flightRestored(std::int64_t id);
 
+    void aircraftStored(const Aircraft &aircraft);
+
     void cleared();
     void descriptionOrTitleChanged();
     void flightConditionChanged();
@@ -301,8 +309,6 @@ signals:
      *        the aircraft whose time offset has changed
      */
     void timeOffsetChanged(const Aircraft &aircraft);
-
-    void aircraftStored(const Aircraft &aircraft);
 
 private:
     std::unique_ptr<FlightPrivate> d;

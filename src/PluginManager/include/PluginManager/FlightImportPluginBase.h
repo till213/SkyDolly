@@ -98,7 +98,8 @@ protected:
      * \param io
      *        the IO device to read from
      * \param ok
-     *        is set to \c true in case of success; \c false else
+     *        is set to \c true in case of success; \c false else (an error occured
+     *        or no data imported)
      * \return the list of imported flight data
      */
     virtual std::vector<FlightData> importFlights(QIODevice &io, bool &ok) noexcept = 0;

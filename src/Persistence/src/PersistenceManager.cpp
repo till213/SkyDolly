@@ -165,7 +165,7 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
 
 void PersistenceManager::disconnectFromLogbook() noexcept
 {
-    d->databaseService->disconnect();
+    d->databaseService->disconnect(Connection::Default::Remove);
     d->logbookPath.clear();
     d->connected = false;
     emit connectionChanged(d->connected);

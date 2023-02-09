@@ -40,6 +40,7 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Version.h>
 #include <Metadata.h>
+#include <Connection.h>
 #include <Migration.h>
 #include "SqlMigration.h"
 #include "SQLiteDatabaseDao.h"
@@ -69,7 +70,7 @@ SQLiteDatabaseDao &SQLiteDatabaseDao::operator=(SQLiteDatabaseDao &&rhs) noexcep
 
 SQLiteDatabaseDao::~SQLiteDatabaseDao()
 {
-    disconnectSQLite();
+    disconnectSQLite(Connection::Default::Keep);
 }
 
 bool SQLiteDatabaseDao::connectDb(const QString &logbookPath) noexcept
@@ -82,9 +83,9 @@ bool SQLiteDatabaseDao::connectDb(const QString &logbookPath) noexcept
     return db.open();
 }
 
-void SQLiteDatabaseDao::disconnectDb() noexcept
+void SQLiteDatabaseDao::disconnectDb(Connection::Default connection) noexcept
 {
-    disconnectSQLite();
+    disconnectSQLite(connection);
 }
 
 bool SQLiteDatabaseDao::migrate(Migration::Milestones milestones) noexcept
@@ -245,7 +246,7 @@ QString SQLiteDatabaseDao::getBackupDirectoryPath(bool *ok) const noexcept
 
 // PRIVATE
 
-void SQLiteDatabaseDao::disconnectSQLite() noexcept
+void SQLiteDatabaseDao::disconnectSQLite(Connection::Default connection) noexcept
 {
     // Make sure the 'db' instance goes out of scope before finally
     // removing the connection:
@@ -255,7 +256,9 @@ void SQLiteDatabaseDao::disconnectSQLite() noexcept
         QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
         db.close();
     }
-    QSqlDatabase::removeDatabase(d->connectionName);
+    if (d->connectionName != Const::DefaultConnectionName || connection == Connection::Default::Remove) {
+        QSqlDatabase::removeDatabase(d->connectionName);
+    }
 }
 
 bool SQLiteDatabaseDao::createMigrationTable() noexcept

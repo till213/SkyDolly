@@ -54,7 +54,7 @@ struct SdlogImportPluginPrivate
     std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>(Const::ImportConnectionName)};
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ImportConnectionName)};
     std::unique_ptr<FlightService> importFlightService {std::make_unique<FlightService>(Const::ImportConnectionName)};
-    std::unique_ptr<FlightService> applicationFlightService {std::make_unique<FlightService>(Const::ApplicationConnectionName)};
+    std::unique_ptr<FlightService> applicationFlightService {std::make_unique<FlightService>(Const::DefaultConnectionName)};
 
     SdLogImportSettings pluginSettings;
 

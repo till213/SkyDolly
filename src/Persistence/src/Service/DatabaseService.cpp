@@ -87,19 +87,16 @@ DatabaseService::DatabaseService(QString connectionName) noexcept
 
 DatabaseService::DatabaseService(DatabaseService &&rhs) noexcept = default;
 DatabaseService &DatabaseService::operator=(DatabaseService &&rhs) noexcept = default;
-DatabaseService::~DatabaseService()
-{
-    disconnect();
-}
+DatabaseService::~DatabaseService() = default;
 
 bool DatabaseService::connect(const QString &logbookPath) noexcept
 {
     return d->databaseDao->connectDb(logbookPath);
 }
 
-void DatabaseService::disconnect() noexcept
+void DatabaseService::disconnect(Connection::Default connection) noexcept
 {
-    d->databaseDao->disconnectDb();
+    d->databaseDao->disconnectDb(connection);
 }
 
 bool DatabaseService::migrate(Migration::Milestones milestones) noexcept

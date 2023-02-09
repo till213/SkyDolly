@@ -32,7 +32,7 @@ namespace Const {
     /*!
      * The logbook connection name that is used for the application.
      */
-    constexpr const char *ApplicationConnectionName {"SkyDolly"};
+    constexpr const char *DefaultConnectionName {"SkyDolly"};
 
     /*!
      * The logbook connection name that is used for import.

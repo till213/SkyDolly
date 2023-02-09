@@ -46,7 +46,7 @@ public:
         Update,
         Insert
     };
-    LocationService(QString connectionName = Const::ApplicationConnectionName) noexcept;
+    LocationService(QString connectionName = Const::DefaultConnectionName) noexcept;
     LocationService(const LocationService &rhs) = delete;
     LocationService(LocationService &&rhs) noexcept;
     LocationService &operator=(const LocationService &rhs) = delete;

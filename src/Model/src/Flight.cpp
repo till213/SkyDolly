@@ -77,11 +77,7 @@ Flight::~Flight() = default;
 void Flight::fromFlightData(FlightData flightData) noexcept
 {
     d->flightData = std::move(flightData);
-}
-
-void Flight::fromFlightData(FlightData &&flightData) noexcept
-{
-    d->flightData = std::move(flightData);
+    emit flightRestored(d->flightData.id);
 }
 
 FlightData &Flight::getFlightData() const noexcept

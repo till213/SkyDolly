@@ -22,38 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MIGRATION_H
-#define MIGRATION_H
-
-#include <cstdint>
-
-#include <QFlags>
+#ifndef CONNECTION_H
+#define CONNECTION_H
 
 /*!
- * Database migration related data structures.
+ * Database connection related data structures.
  */
-namespace Migration
+namespace Connection
 {
     /*!
-     * The migration milestones.
+     * Options to either keep or remove the default database connection.
      */
-    enum struct Milestone: std::uint32_t
+    enum struct Default
     {
-        /*! Migrate the database schema (tables and data) */
-        Schema = 0x01,
-        /*! Migrate the location data, specifically: Locations.csv  */
-        Location = 0x02,
-        /*! All migration milestones */
-        All = 0xffffffff
+        Keep,
+        Remove
     };
-
-    /*!
-     * The migration flags define the migration milestones to be executed
-     * during database migration.
-     *
-     * \sa migrate
-     */
-    Q_DECLARE_FLAGS(Milestones, Milestone)
 }
 
-#endif // MIGRATION_H
+#endif // CONNECTION_H

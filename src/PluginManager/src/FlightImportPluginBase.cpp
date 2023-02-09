@@ -204,9 +204,13 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
             }
             if (ok) {
                 for (auto &flightData : importedFlightData) {
-                    Flight flight {std::move(flightData)};
-                    // TODO Refactor flight sevice: store/restore FlightData (instead of Flight)
                     ok = d->flightService->storeFlightData(flightData);
+                    if (!ok) {
+                        break;
+                    }
+                }
+                if (ok) {
+                    flight.fromFlightData(std::move(importedFlightData.back()));
                 }
             }
 

@@ -37,6 +37,7 @@ class QDateTime;
 
 #include <Kernel/Const.h>
 #include <Kernel/Version.h>
+#include "../Connection.h"
 #include "../Migration.h"
 #include "../Metadata.h"
 #include "../PersistenceLib.h"
@@ -47,7 +48,7 @@ struct DatabaseServicePrivate;
 class PERSISTENCE_API DatabaseService final
 {
 public:
-    DatabaseService(QString connectionName = Const::ApplicationConnectionName) noexcept;
+    DatabaseService(QString connectionName = Const::DefaultConnectionName) noexcept;
     DatabaseService(const DatabaseService &rhs) = delete;
     DatabaseService(DatabaseService &&rhs) noexcept;
     DatabaseService &operator=(const DatabaseService &rhs) = delete;
@@ -55,7 +56,7 @@ public:
     ~DatabaseService();
 
     bool connect(const QString &logbookPath) noexcept;
-    void disconnect() noexcept;
+    void disconnect(Connection::Default connection) noexcept;
 
     bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept;
     bool optimise() noexcept;
