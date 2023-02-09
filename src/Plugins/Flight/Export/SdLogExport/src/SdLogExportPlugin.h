@@ -39,7 +39,6 @@ class QString;
 #include <PluginManager/FlightExportIntf.h>
 #include <PluginManager/FlightExportPluginBase.h>
 
-class Flight;
 class Aircraft;
 struct PositionData;
 struct Waypoint;
@@ -60,8 +59,8 @@ protected:
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool exportFlight(const Flight &flight, QIODevice &io) const noexcept override;
-    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept override;
+    bool exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept override;
+    bool exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept override;
 
 private:
     const std::unique_ptr<SdLogExportPluginPrivate> d;

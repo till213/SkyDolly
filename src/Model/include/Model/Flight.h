@@ -58,7 +58,7 @@ public:
 
     void fromFlightData(FlightData flightData) noexcept;
     void fromFlightData(FlightData &&flightData) noexcept;
-    FlightData &toFlightData() const noexcept;
+    FlightData &getFlightData() const noexcept;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;

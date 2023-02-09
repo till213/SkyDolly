@@ -240,7 +240,7 @@ void BasicFlightExportDialog::updateUi() noexcept
 
     const SampleRate::ResamplingPeriod resamplingPeriod = d->pluginSettings.getResamplingPeriod();
     int currentIndex {0};
-    int indexCount = ui->formationExportComboBox->count();
+    int indexCount = ui->resamplingComboBox->count();
     while (currentIndex < indexCount &&
            static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != resamplingPeriod) {
         ++currentIndex;
@@ -308,6 +308,8 @@ void BasicFlightExportDialog::onFormationExportChanged() noexcept
 
 void BasicFlightExportDialog::onResamplingOptionChanged() noexcept
 {
+    // TODO REMOVE ME
+    qDebug() << "BasicFlightExportDialog::onResamplingOptionChanged:" << ui->resamplingComboBox->currentData().toInt();
     d->pluginSettings.setResamplingPeriod(static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt()));
 }
 

@@ -31,7 +31,7 @@ class QIODevice;
 
 #include "CsvWriterIntf.h"
 
-class Flight;
+struct FlightData;
 class Aircraft;
 class CsvExportSettings;
 class PositionData;
@@ -43,7 +43,7 @@ public:
     PositionAndAttitudeCsvWriter(const CsvExportSettings &pluginSettings) noexcept;
     ~PositionAndAttitudeCsvWriter() override;
 
-    bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) const noexcept override;
+    bool write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &ioDevice) const noexcept override;
 
 private:
     const std::unique_ptr<PositionAndAttitudeCsvWriterPrivate> d;

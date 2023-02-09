@@ -62,7 +62,7 @@ SkyDollyCsvWriter::SkyDollyCsvWriter(const CsvExportSettings &pluginSettings) no
 
 SkyDollyCsvWriter::~SkyDollyCsvWriter() = default;
 
-bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool SkyDollyCsvWriter::write([[maybe_unused]] const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const QString header = QString(Csv::TypeColumnName) % Csv::CommaSep %
                                    getPositionHeader() % Csv::CommaSep %

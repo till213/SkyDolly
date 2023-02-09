@@ -64,6 +64,61 @@ struct MODEL_API FlightData final
         }
     }
 
+    /*!
+     * Returns the total duration of the flight [in milliseconds], that is it returns
+     * the longest replay time of all aircraft, taking their time offsets into account.
+     * Unless \c ofUserAircraft is set to \c true, in which case the replay time of the
+     * \e user aircraft is returned.
+     *
+     * Note that the total duration is cached and not updated during recording. Use
+     * the SkyConnectIntf#getCurrentTimestamp in this case, which - during recording - indicates
+     * the current recorded duration (for the user aircraft).
+     *
+     * \param ofUserAircraft
+     *        set to \c true in case to specifically query the replay duration
+     *        of the user aircraft; \c false in order to query the total duration
+     *        for the flight; default: \c false
+     * \return the total replay duration of the flight, or the replay duration of
+     *         the user aircraft: 0 if no user aircraft exists
+     */
+    inline std::int64_t getTotalDurationMSec(bool ofUserAircraft = false) const noexcept
+    {
+        std::int64_t totalDuractionMSec = 0;
+        if (ofUserAircraft) {
+            totalDuractionMSec = userAircraftIndex != Const::InvalidIndex ? aircraft[userAircraftIndex].getDurationMSec() : 0;
+        } else {
+            for (const auto &aircraft : aircraft) {
+                totalDuractionMSec = std::max(aircraft.getDurationMSec(), totalDuractionMSec);
+            }
+        }
+        return totalDuractionMSec;
+    }
+
+    inline Aircraft &getUserAircraft() noexcept
+    {
+        return aircraft.at(userAircraftIndex);
+    }
+
+    inline const Aircraft &getUserAircraftConst() const noexcept
+    {
+        return aircraft.at(userAircraftIndex);
+    }
+
+    inline QDateTime getAircraftCreationTime(const Aircraft &aircraft) const noexcept
+    {
+        return creationTime.addMSecs(-aircraft.getTimeOffset());
+    }
+
+    inline QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept
+    {
+        return flightCondition.startLocalTime.addMSecs(-aircraft.getTimeOffset());
+    }
+
+    inline QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept
+    {
+        return flightCondition.startZuluTime.addMSecs(-aircraft.getTimeOffset());
+    }
+
     using SizeType = std::vector<Aircraft>::size_type;
     inline SizeType count() const noexcept
     {

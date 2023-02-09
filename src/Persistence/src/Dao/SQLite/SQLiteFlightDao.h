@@ -32,7 +32,7 @@ class QString;
 
 #include "../FlightDaoIntf.h"
 
-class Flight;
+struct FlightData;
 class SQLiteFlightDaoPrivate;
 
 class SQLiteFlightDao : public FlightDaoIntf
@@ -45,9 +45,9 @@ public:
     SQLiteFlightDao &operator=(SQLiteFlightDao &&rhs) noexcept;
     ~SQLiteFlightDao() override;
 
-    bool add(Flight &flight) noexcept override;
-    bool exportFlight(const Flight &flight) noexcept override;
-    bool get(std::int64_t id, Flight &flight) const noexcept override;
+    bool add(FlightData &flight) noexcept override;
+    bool exportFlightData(const FlightData &flightData) noexcept override;
+    bool get(std::int64_t id, FlightData &flightData) const noexcept override;
     bool deleteById(std::int64_t id) noexcept override;
     bool updateTitle(std::int64_t id, const QString &title) noexcept override;
     bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept override;
@@ -57,8 +57,8 @@ private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;
 
     // Inserts the flight and returns the generated aircraft ID if successful; Const::InvalidId upon failure
-    inline std::int64_t insertFlight(const Flight &flight) noexcept;
-    inline bool insertAircraft(std::int64_t flightId, const Flight &flight) noexcept;
+    inline std::int64_t insertFlight(const FlightData &flightData) noexcept;
+    inline bool insertAircraft(std::int64_t flightId, const FlightData &flightData) noexcept;
 };
 
 #endif // SQLITEFLIGHTDAO_H

@@ -34,7 +34,7 @@ class QIODevice;
 
 #include "CsvWriterIntf.h"
 
-class Flight;
+struct FlightData;
 class Aircraft;
 struct PositionData;
 struct EngineData;
@@ -51,7 +51,7 @@ public:
     SkyDollyCsvWriter(const CsvExportSettings &pluginSettings) noexcept;
     ~SkyDollyCsvWriter() override;
 
-    bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept override;
+    bool write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept override;
 
 private:
     const std::unique_ptr<SkyDollyCsvWriterPrivate> d;

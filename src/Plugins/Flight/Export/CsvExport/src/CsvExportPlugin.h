@@ -39,6 +39,7 @@ class QDateTime;
 #include <PluginManager/FlightExportIntf.h>
 #include <PluginManager/FlightExportPluginBase.h>
 
+struct FlightData;
 class Aircraft;
 
 class FlightExportPluginBaseSettings;
@@ -58,8 +59,8 @@ protected:
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool exportFlight(const Flight &flight, QIODevice &io) const noexcept override;
-    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept override;
+    bool exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept override;
+    bool exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept override;
 
 private:
     const std::unique_ptr<CsvExportPluginPrivate> d;

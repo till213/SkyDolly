@@ -35,7 +35,7 @@
 
 #include <Kernel/Const.h>
 #include <Kernel/Settings.h>
-#include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/Aircraft.h>
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/FlightService.h>
@@ -85,7 +85,7 @@ std::unique_ptr<QWidget> SdLogExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
+bool SdLogExportPlugin::exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
     auto *file = qobject_cast<QFile *>(&io);
@@ -96,7 +96,7 @@ bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const 
             d->databaseService->migrate(Migration::Milestone::Schema);
         }
         if (ok) {
-            ok = d->flightService->exportFlight(flight);
+            ok = d->flightService->exportFlightData(flightData);
         }
     } else {
         // We only support file-based SQLite databases
@@ -105,7 +105,7 @@ bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const 
     return ok;
 }
 
-bool SdLogExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, [[maybe_unused]] const Aircraft &aircraft, [[maybe_unused]] QIODevice &io) const noexcept
+bool SdLogExportPlugin::exportAircraft([[maybe_unused]] const FlightData &flightData, [[maybe_unused]] const Aircraft &aircraft, [[maybe_unused]] QIODevice &io) const noexcept
 {
     bool ok {false};
     // Currently not supported

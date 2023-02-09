@@ -38,7 +38,7 @@ class QString;
 #include <PluginManager/FlightExportIntf.h>
 #include <PluginManager/FlightExportPluginBase.h>
 
-class Flight;
+struct FlightData;
 class Aircraft;
 struct PositionData;
 struct Waypoint;
@@ -59,20 +59,20 @@ protected:
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool exportFlight(const Flight &flight, QIODevice &io) const noexcept override;
-    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept override;
+    bool exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept override;
+    bool exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept override;
 
 private:
     const std::unique_ptr<GpxExportPluginPrivate> d;
 
     bool exportHeader(QIODevice &io) const noexcept;
-    bool exportFlightInfo(QIODevice &io) const noexcept;
-    bool exportAllAircraft(QIODevice &io) const noexcept;
-    bool exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
-    bool exportWaypoints(QIODevice &io) const noexcept;
+    bool exportFlightInfo(const FlightData &flightData, QIODevice &io) const noexcept;
+    bool exportAllAircraft(const FlightData &flightData, QIODevice &io) const noexcept;
+    bool exportSingleAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportWaypoints(const FlightData &flightData, QIODevice &io) const noexcept;
     bool exportFooter(QIODevice &io) const noexcept;
 
-    QString getFlightDescription() const noexcept;
+    QString getFlightDescription(const FlightData &flightData) const noexcept;
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
 
     inline bool exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept;

@@ -39,7 +39,7 @@
 #include <Kernel/Unit.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
-#include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/FlightPlan.h>
 #include <Model/Waypoint.h>
 #include <Model/FlightCondition.h>
@@ -55,7 +55,6 @@
 
 struct JsonExportPluginPrivate
 {
-    const Flight *flight {nullptr};
     JsonExportSettings pluginSettings;
     Unit unit;
 
@@ -93,32 +92,28 @@ std::unique_ptr<QWidget> JsonExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
+bool JsonExportPlugin::exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept
 {
-    d->flight = &flight;
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
     if (ok) {
-        ok = exportWaypoints(io);
+        ok = exportWaypoints(flightData, io);
     }
     if (ok) {
-        ok = exportAllAircraft(io);
+        ok = exportAllAircraft(flightData, io);
     }
     if (ok) {
         ok = exportFooter(io);
     }
-    // We are done with the export
-    d->flight = nullptr;
     return ok;
 }
 
-bool JsonExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool JsonExportPlugin::exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    d->flight = &flight;
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
     if (ok) {
-        ok = exportWaypoints(io);
+        ok = exportWaypoints(flightData, io);
     }
     if (ok) {
         ok = exportAircraft(aircraft, io);
@@ -129,8 +124,6 @@ bool JsonExportPlugin::exportAircraft(const Flight &flight, const Aircraft &airc
     if (ok) {
         ok = exportFooter(io);
     }
-    // We are done with the export
-    d->flight = nullptr;
     return ok;
 }
 
@@ -145,14 +138,14 @@ bool JsonExportPlugin::exportHeader(QIODevice &io) const noexcept
     return io.write(header.toUtf8());
 }
 
-bool JsonExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
+bool JsonExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
     std::size_t i = 0;
-    for (const auto &aircraft : *d->flight) {
+    for (const auto &aircraft : flightData) {
         ok = exportAircraft(aircraft, io);
         if (ok) {
-            if (i < d->flight->count() - 1) {
+            if (i < flightData.count() - 1) {
                 ok = io.write(",\n");
             } else {
                 ok = io.write("\n");
@@ -221,10 +214,10 @@ bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) c
     return ok;
 }
 
-bool JsonExportPlugin::exportWaypoints(QIODevice &io) const noexcept
+bool JsonExportPlugin::exportWaypoints(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
-    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlan();
+    const FlightPlan &flightPlan = flightData.getUserAircraftConst().getFlightPlan();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);
         if (!ok) {

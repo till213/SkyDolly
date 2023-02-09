@@ -106,7 +106,7 @@ std::vector<FlightData> SdlogImportPlugin::importFlights(QIODevice &io, bool &ok
                 for (const std::int64_t flightId : flightIds) {
                     Flight flight;
                     ok = d->importFlightService->restore(flightId, flight);
-                    flights.push_back(std::move(flight.toFlightData()));
+                    flights.push_back(std::move(flight.getFlightData()));
                 }
             }
         }

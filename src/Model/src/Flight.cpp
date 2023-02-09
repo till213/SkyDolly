@@ -84,7 +84,7 @@ void Flight::fromFlightData(FlightData &&flightData) noexcept
     d->flightData = std::move(flightData);
 }
 
-FlightData &Flight::toFlightData() const noexcept
+FlightData &Flight::getFlightData() const noexcept
 {
     return d->flightData;
 }
@@ -153,7 +153,7 @@ Aircraft &Flight::addUserAircraft() noexcept
 
 Aircraft &Flight::getUserAircraft() const noexcept
 {
-    return d->flightData.aircraft.at(d->flightData.userAircraftIndex);
+    return d->flightData.getUserAircraft();
 }
 
 int Flight::getAircraftIndex(const Aircraft &aircraft) const noexcept
@@ -283,30 +283,22 @@ FlightSummary Flight::getFlightSummary() const noexcept
 
 std::int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
 {
-    std::int64_t totalDuractionMSec = 0;
-    if (ofUserAircraft) {
-        totalDuractionMSec = getUserAircraft().getDurationMSec();
-    } else {
-        for (const auto &aircraft : d->flightData.aircraft) {
-            totalDuractionMSec = std::max(aircraft.getDurationMSec(), totalDuractionMSec);
-        }
-    }
-    return totalDuractionMSec;
+    return d->flightData.getTotalDurationMSec(ofUserAircraft);
 }
 
 QDateTime Flight::getAircraftCreationTime(const Aircraft &aircraft) const noexcept
 {
-    return d->flightData.creationTime.addMSecs(-aircraft.getTimeOffset());
+    return d->flightData.getAircraftCreationTime(aircraft);
 }
 
 QDateTime Flight::getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept
 {
-    return d->flightData.flightCondition.startLocalTime.addMSecs(-aircraft.getTimeOffset());
+    return d->flightData.getAircraftStartLocalTime(aircraft);
 }
 
 QDateTime Flight::getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept
 {
-    return d->flightData.flightCondition.startZuluTime.addMSecs(-aircraft.getTimeOffset());
+    return d->flightData.getAircraftStartZuluTime(aircraft);
 }
 
 void Flight::clear(bool withOneAircraft) noexcept

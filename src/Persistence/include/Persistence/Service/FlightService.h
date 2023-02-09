@@ -32,6 +32,7 @@
 
 #include <Kernel/Const.h>
 #include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
 #include "../PersistenceLib.h"
@@ -50,8 +51,9 @@ public:
     ~FlightService();
 
     bool store(Flight &flight) noexcept;
-    bool exportFlight(const Flight &flight) noexcept;
+    bool exportFlightData(const FlightData &flightData) noexcept;
     bool restore(std::int64_t id, Flight &flight) noexcept;
+    bool importFlightData(std::int64_t id, FlightData &flightData) noexcept;
     bool deleteById(std::int64_t id) noexcept;
     bool updateTitle(Flight &flight, const QString &title) noexcept;
     bool updateTitle(std::int64_t id, const QString &title) noexcept;
