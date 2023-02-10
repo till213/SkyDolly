@@ -46,7 +46,6 @@ const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Ac
     const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
-
         int currentIndex = getCurrentIndex();
         switch (access) {
         case TimeVariableData::Access::Linear:

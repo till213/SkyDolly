@@ -54,7 +54,6 @@ const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableDa
     const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
-
         int currentIndex = getCurrentIndex();
         double tn {0.0};
         // Position data is always interpolated within an "infinite" interpolation window, in order to
@@ -87,14 +86,14 @@ const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableDa
             m_currentData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);
 
             m_currentData.timestamp = adjustedTimestamp;
+        } else {
+            // No recorded data, or the timestamp exceeds the timestamp of the last recorded data
+            m_currentData.reset();
         }
 
         setCurrentIndex(currentIndex);
         setCurrentTimestamp(adjustedTimestamp);
         setCurrentAccess(access);
-    } else {
-        // No recorded data, or the timestamp exceeds the timestamp of the last recorded data
-        m_currentData.reset();
     }
     return m_currentData;
 }

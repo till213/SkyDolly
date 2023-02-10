@@ -45,7 +45,6 @@ const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::
     const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
-
         int currentIndex = getCurrentIndex();
         double tn {0.0};
         switch (access) {
