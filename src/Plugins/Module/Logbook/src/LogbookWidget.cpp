@@ -105,16 +105,15 @@ namespace
 
 struct LogbookWidgetPrivate
 {
-    LogbookWidgetPrivate(FlightService &theFlightService) noexcept
-        : flightService(theFlightService)
+    LogbookWidgetPrivate() noexcept
     {
         searchTimer->setSingleShot(true);
         searchTimer->setInterval(::SearchTimeoutMSec);
     }
 
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>()};
     std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>()};
-    FlightService &flightService;
 
     std::int64_t flightInMemoryId {Const::InvalidId};
     Unit unit;
@@ -139,10 +138,10 @@ struct LogbookWidgetPrivate
 
 // PUBLIC
 
-LogbookWidget::LogbookWidget(FlightService &flightService, QWidget *parent) noexcept
+LogbookWidget::LogbookWidget(QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::LogbookWidget>()),
-      d(std::make_unique<LogbookWidgetPrivate>(flightService))
+      d(std::make_unique<LogbookWidgetPrivate>())
 {
     ui->setupUi(this);
     initUi();
@@ -707,7 +706,7 @@ void LogbookWidget::loadFlight() noexcept
     if (!SkyConnectManager::getInstance().isInRecordingState()) {
         const std::int64_t selectedFlightId = getSelectedFlightId();
         if (selectedFlightId != Const::InvalidId) {
-            const bool ok = d->flightService.restoreFlight(selectedFlightId, Logbook::getInstance().getCurrentFlight());
+            const bool ok = d->flightService->restoreFlight(selectedFlightId, Logbook::getInstance().getCurrentFlight());
             if (!ok) {
                 QMessageBox::critical(this, tr("Logbook error"), tr("The flight %1 could not be read from the logbook.").arg(selectedFlightId));
             }
@@ -742,7 +741,7 @@ void LogbookWidget::deleteFlight() noexcept
 
         if (doDelete) {
             const int lastSelectedRow = getSelectedRow();
-            d->flightService.deleteById(selectedFlightId);
+            d->flightService->deleteById(selectedFlightId);
             updateUi();
             const int selectedRow = std::min(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
             ui->logTableWidget->selectRow(selectedRow);
@@ -787,9 +786,9 @@ void LogbookWidget::onCellChanged(int row, int column) noexcept
         const std::int64_t selectedFlightId = getSelectedFlightId();
         if (flight.getId() == selectedFlightId) {
             // Also update the current flight, if in memory
-            d->flightService.updateTitle(flight, title);
+            d->flightService->updateTitle(flight, title);
         } else {
-            d->flightService.updateTitle(selectedFlightId, title);
+            d->flightService->updateTitle(selectedFlightId, title);
         }
     }
 }

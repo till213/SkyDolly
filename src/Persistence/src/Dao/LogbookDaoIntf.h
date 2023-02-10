@@ -33,8 +33,8 @@ class QString;
 
 class FlightSelector;
 class Flight;
-class FlightDate;
-class FlightSummary;
+struct FlightDate;
+struct FlightSummary;
 
 class LogbookDaoIntf
 {

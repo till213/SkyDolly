@@ -40,10 +40,8 @@ class QString;
 #include <PluginManager/ModuleIntf.h>
 #include <PluginManager/AbstractModule.h>
 
-class DatabaseService;
-class FlightService;
-class FlightDate;
-class FlightSummary;
+struct FlightDate;
+struct FlightSummary;
 class Aircraft;
 struct LogbookWidgetPrivate;
 
@@ -55,7 +53,7 @@ class LogbookWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit LogbookWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    explicit LogbookWidget(QWidget *parent = nullptr) noexcept;
     ~LogbookWidget() override;
 
 private:

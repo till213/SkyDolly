@@ -93,10 +93,8 @@ namespace
 
 struct FormationWidgetPrivate
 {
-    FormationWidgetPrivate(FlightService &theFlightService, AircraftService &theAircraftService, QWidget &parent) noexcept
-        : flightService(theFlightService),
-          aircraftService(theAircraftService),
-          positionButtonGroup(new QButtonGroup(&parent))
+    FormationWidgetPrivate(QWidget &parent) noexcept
+        : positionButtonGroup(new QButtonGroup(&parent))
     {
         // We always initialise all icons at once, so checking only for
         // normalAircraftIcon is sufficient
@@ -118,8 +116,8 @@ struct FormationWidgetPrivate
         }
     }
 
-    FlightService &flightService;
-    AircraftService &aircraftService;
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
+    std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
     QButtonGroup *positionButtonGroup;
     int selectedAircraftIndex {Const::InvalidIndex};
     Unit unit;
@@ -149,10 +147,10 @@ struct FormationWidgetPrivate
 
 // PUBLIC
 
-FormationWidget::FormationWidget(FlightService &flightService, AircraftService &aircraftService, QWidget *parent) noexcept
+FormationWidget::FormationWidget(QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::FormationWidget>()),
-      d(std::make_unique<FormationWidgetPrivate>(flightService, aircraftService, *this))
+      d(std::make_unique<FormationWidgetPrivate>(*this))
 {
     ui->setupUi(this);
     initUi();
@@ -542,8 +540,6 @@ inline const QTableWidgetItem *FormationWidget::createRow(const Aircraft &aircra
 
 inline const QTableWidgetItem *FormationWidget::initRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept
 {
-    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
     int column {0};
 
     // Sequence number
@@ -838,14 +834,14 @@ void FormationWidget::onCellChanged(int row, int column) noexcept
     if (column == FormationWidgetPrivate::tailNumberColumn) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         const QString tailNumber = item->data(Qt::EditRole).toString();
-        d->aircraftService.changeTailNumber(aircraft, tailNumber);
+        d->aircraftService->changeTailNumber(aircraft, tailNumber);
     } else if (column == FormationWidgetPrivate::timeOffsetColumn) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         bool ok {false};
         const double timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
         if (ok) {
             const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
-            d->aircraftService.changeTimeOffset(aircraft, timeOffset);
+            d->aircraftService->changeTimeOffset(aircraft, timeOffset);
         }
     }
 }
@@ -876,7 +872,7 @@ void FormationWidget::updateUserAircraftIndex() noexcept
     if (!SkyConnectManager::getInstance().isInRecordingState()) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         if (d->selectedAircraftIndex != flight.getUserAircraftIndex()) {
-            d->flightService.updateUserAircraftIndex(flight, d->selectedAircraftIndex);
+            d->flightService->updateUserAircraftIndex(flight, d->selectedAircraftIndex);
         }
     }
 }
@@ -907,7 +903,7 @@ void FormationWidget::deleteAircraft() noexcept
 
         if (doDelete) {
             const int lastSelectedRow = getSelectedRow();
-            d->aircraftService.deleteByIndex(d->selectedAircraftIndex);
+            d->aircraftService->deleteByIndex(d->selectedAircraftIndex);
             const int selectedRow = std::min(lastSelectedRow, ui->aircraftTableWidget->rowCount() - 1);
             ui->aircraftTableWidget->selectRow(selectedRow);
             ui->aircraftTableWidget->setFocus(Qt::NoFocusReason);
@@ -946,7 +942,6 @@ void FormationWidget::onReplayModeSelected(int index) noexcept
 
 void FormationWidget::onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode)
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     switch(replayMode) {
     case SkyConnectIntf::ReplayMode::Normal:
         ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::Normal);
@@ -970,7 +965,7 @@ void FormationWidget::changeTimeOffset(const std::int64_t timeOffset) noexcept
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
         const std::int64_t newTimeOffset = aircraft.getTimeOffset() + timeOffset;
-        d->aircraftService.changeTimeOffset(aircraft, newTimeOffset);
+        d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
         updateToolTips();
     }
 }
@@ -983,7 +978,7 @@ void FormationWidget::onTimeOffsetValueChanged() noexcept
 
         const double timeOffsetSec = ui->timeOffsetSpinBox->value();
         const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
-        d->aircraftService.changeTimeOffset(aircraft, timeOffset);
+        d->aircraftService->changeTimeOffset(aircraft, timeOffset);
         updateToolTips();
     }
 }
@@ -1013,7 +1008,7 @@ void FormationWidget::resetAllTimeOffsets() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         bool ok {true};
         for (auto &aircraft : flight) {
-            ok = d->aircraftService.changeTimeOffset(aircraft, 0);
+            ok = d->aircraftService->changeTimeOffset(aircraft, 0);
             if (!ok) {
                 break;
             }

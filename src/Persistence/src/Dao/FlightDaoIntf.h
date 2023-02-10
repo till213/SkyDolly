@@ -30,7 +30,7 @@
 class QString;
 
 struct FlightData;
-class FlightSummary;
+struct FlightSummary;
 
 class FlightDaoIntf
 {

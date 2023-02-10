@@ -54,7 +54,7 @@ class FormationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    FormationWidget(FlightService &flightService, AircraftService &aircraftService, QWidget *parent = nullptr) noexcept;
+    FormationWidget(QWidget *parent = nullptr) noexcept;
     ~FormationWidget() override;
 
     Formation::HorizontalDistance getHorizontalDistance() const noexcept;
