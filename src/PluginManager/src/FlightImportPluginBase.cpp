@@ -381,6 +381,7 @@ bool FlightImportPluginBase::addToCurrentFlight(const QString filePath, std::vec
                     ok = d->aircraftService->store(currentFlight.getId(), sequenceNumber, aircraft);
                     if (ok) {
                         ++sequenceNumber;
+                        ++d->totalAircraftStored;
                     } else {
                         break;
                     }
@@ -392,6 +393,9 @@ bool FlightImportPluginBase::addToCurrentFlight(const QString filePath, std::vec
         }
         if (newFlight) {
             ok = d->flightService->storeFlight(currentFlight);
+            if (ok) {
+                ++d->totalFlightsStored;
+            }
         }
     }
 
