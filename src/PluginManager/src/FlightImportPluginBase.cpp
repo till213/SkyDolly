@@ -170,23 +170,21 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
         ok = d->file.open(QIODevice::ReadOnly);
         if (ok) {
             importedFlightData = importFlights(d->file, ok);
-            if (pluginSettings.requiresFlightAugmentation()) {
+            if (ok && pluginSettings.requiresFlightAugmentation()) {
                 // TODO IMPLEMENT ME REFACTOR ME
-                if (ok) {
-                    for (auto &importedFlight : importedFlightData) {
-                        for (auto &aircraft : importedFlight) {
-                            augmentAircraft(aircraft);
-                            const std::size_t nofAircraft = currentFlight.count();
-                            if (nofAircraft > 1) {
-                                // Sequence starts at 1
-                                const std::size_t sequenceNumber {nofAircraft};
-                                ok = d->aircraftService->store(currentFlight.getId(), sequenceNumber, aircraft);
-                            } else {
-                                // Also update flight info and condition
-                                updateFlightInfo(currentFlight);
-                                updateFlightCondition(currentFlight);
-                                ok = d->flightService->storeFlight(currentFlight);
-                            }
+                for (auto &importedFlight : importedFlightData) {
+                    for (auto &aircraft : importedFlight) {
+                        augmentAircraft(aircraft);
+                        const std::size_t nofAircraft = currentFlight.count();
+                        if (nofAircraft > 1) {
+                            // Sequence starts at 1
+                            const std::size_t sequenceNumber {nofAircraft};
+                            ok = d->aircraftService->store(currentFlight.getId(), sequenceNumber, aircraft);
+                        } else {
+                            // Also update flight info and condition
+                            updateFlightInfo(currentFlight);
+                            updateFlightCondition(currentFlight);
+                            ok = d->flightService->storeFlight(currentFlight);
                         }
                     }
                 }
@@ -209,7 +207,6 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
                     }
                 }
             }
-
             d->file.close();
         }
 
