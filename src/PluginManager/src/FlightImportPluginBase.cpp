@@ -68,6 +68,8 @@ struct FlightImportPluginBasePrivate
     Unit unit;
     AircraftType aircraftType;
     FlightAugmentation flightAugmentation;
+    std::size_t totalFlightsStored {0};
+    std::size_t totalAircraftStored {0};
 };
 
 // PUBLIC
@@ -151,73 +153,59 @@ void FlightImportPluginBase::restoreSettings(const Settings::ValuesByKey &values
     getPluginSettings().restoreSettings(valuesByKey);
 }
 
-bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight &flight) noexcept
+bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight &currentFlight) noexcept
 {
     const FlightImportPluginBaseSettings &pluginSettings = getPluginSettings();
     const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
-    const bool addToCurrentFlight = pluginSettings.isAddToFlightEnabled();
+    const bool doAddToCurrentFlight = pluginSettings.isAddToFlightEnabled();
 
     bool ok {true};
     bool ignoreFailures {false};
-    bool isFirstFile {true};
+    std::vector<FlightData> importedFlightData;
+
+    d->totalFlightsStored = 0;
+    d->totalAircraftStored = 0;
     for (const QString &filePath : filePaths) {
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
         if (ok) {
-            // Clear the current flight IF
-            // - We don't want to add the imported aircraft to the current flight OR
-            // - We import an entire directory, and this is the first file to be imported
-            if (!addToCurrentFlight || (importDirectory && isFirstFile)) {
-                flight.clear(true);
-                isFirstFile = false;
-            }
-
-            std::vector<FlightData> importedFlightData = importFlights(d->file, ok);
-            if (!pluginSettings.hasLogbookSupport()) {
+            importedFlightData = importFlights(d->file, ok);
+            if (pluginSettings.requiresFlightAugmentation()) {
                 // TODO IMPLEMENT ME REFACTOR ME
-                // The flight has always at least one aircraft, but possibly without recording (when the flight has
-                // been cleared / newly created)
-//                const bool addNewAircraft = addToCurrentFlight && flight.getUserAircraft().hasRecording();
-//                Aircraft &userAircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
                 if (ok) {
                     for (auto &importedFlight : importedFlightData) {
                         for (auto &aircraft : importedFlight) {
                             augmentAircraft(aircraft);
-                            const std::size_t nofAircraft = flight.count();
+                            const std::size_t nofAircraft = currentFlight.count();
                             if (nofAircraft > 1) {
                                 // Sequence starts at 1
                                 const std::size_t sequenceNumber {nofAircraft};
-                                ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
+                                ok = d->aircraftService->store(currentFlight.getId(), sequenceNumber, aircraft);
                             } else {
                                 // Also update flight info and condition
-                                updateFlightInfo(flight);
-                                updateFlightCondition(flight);
-                                ok = d->flightService->storeFlight(flight);
+                                updateFlightInfo(currentFlight);
+                                updateFlightCondition(currentFlight);
+                                ok = d->flightService->storeFlight(currentFlight);
                             }
                         }
                     }
                 }
                 if (!ok) {
-                    flight.removeLastAircraft();
+                    currentFlight.removeLastAircraft();
                 }
             }
             if (ok) {
-                if (addToCurrentFlight) {
-
+                if (doAddToCurrentFlight) {
+                    ok = addToCurrentFlight(filePath, std::move(importedFlightData), currentFlight);
                 } else {
                     // Store all imported flight data into the logbook
                     for (auto &flightData : importedFlightData) {
                         ok = d->flightService->storeFlightData(flightData);
-                        if (!ok) {
+                        if (ok) {
+                            ++d->totalFlightsStored;
+                        } else {
                             break;
                         }
-                    }
-                    // Notify the application that flight data been stored
-                    // and restore the last imported flight
-                    if (ok) {
-                        emit flight.flightStored();
-                        FlightData &flightData = importedFlightData.back();
-                        flight.fromFlightData(std::move(flightData));
                     }
                 }
             }
@@ -250,6 +238,18 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
         }
 
     } // All files
+
+    // Notify the application that at least one flight has
+    // been stored
+    if (d->totalFlightsStored > 0) {
+        emit currentFlight.flightStored();
+    } else if (d->totalAircraftStored > 0) {
+        emit currentFlight.aircraftStored();
+    }
+    if (ok && !doAddToCurrentFlight) {
+        FlightData &flightData = importedFlightData.back();
+        currentFlight.fromFlightData(std::move(flightData));
+    }
 
     return ok;
 }
@@ -340,5 +340,63 @@ bool FlightImportPluginBase::augmentAircraft(Aircraft &aircraft) noexcept
         d->flightAugmentation.augmentAircraftData(aircraft);
         updateAircraftInfo(aircraft);
     }
+    return ok;
+}
+
+bool FlightImportPluginBase::addToCurrentFlight(const QString filePath, std::vector<FlightData> importedFlightData, Flight &currentFlight) noexcept
+{
+    bool ok {true};
+    bool doAdd {true};
+    const bool newFlight = !currentFlight.hasRecording();
+    if (importedFlightData.size() > 1) {
+        QGuiApplication::restoreOverrideCursor();
+        QFileInfo fileInfo {filePath};
+        std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
+        messageBox->setIcon(QMessageBox::Warning);
+        QPushButton *proceedButton = messageBox->addButton(tr("&Add Aircraft From All Flights"), QMessageBox::AcceptRole);
+        QPushButton *skipButton = messageBox->addButton(tr("&Skip Flights"), QMessageBox::NoRole);
+        messageBox->setWindowTitle(tr("Multiple Flights"));
+        messageBox->setText(tr("The file %1 contains more than one flight (number of flights: %2). Do you want to add all aircraft from all flights to the current flight?").arg(fileInfo.fileName(), importedFlightData.size()));
+        messageBox->setInformativeText(tr("The aircraft may have been recorded in completely different locations and/or time of day."));
+        messageBox->setStandardButtons(QMessageBox::Cancel);
+        messageBox->setDefaultButton(proceedButton);
+
+        messageBox->exec();
+        const QAbstractButton *clickedButton = messageBox->clickedButton();
+        if (clickedButton == proceedButton) {
+            doAdd = true;
+        } else if (clickedButton == skipButton) {
+            doAdd = false;
+        } else {
+            doAdd = false;
+        }
+        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+        QGuiApplication::processEvents();
+    }
+
+    if (doAdd) {
+        // Iterate over all imported flights (if multiple)...
+        for (auto &flightData : importedFlightData) {
+            if (!newFlight) {
+                // Sequence number starts at 1
+                std::size_t sequenceNumber = currentFlight.count() + 1;
+                for (auto &aircraft : flightData.aircraft) {
+                    ok = d->aircraftService->store(currentFlight.getId(), sequenceNumber, aircraft);
+                    if (ok) {
+                        ++sequenceNumber;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            if (ok) {
+                currentFlight.addAircraft(std::move(flightData.aircraft));
+            }
+        }
+        if (newFlight) {
+            ok = d->flightService->storeFlight(currentFlight);
+        }
+    }
+
     return ok;
 }

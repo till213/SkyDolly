@@ -119,11 +119,12 @@ private:
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 
-    bool importFlights(const QStringList &filePaths, Flight &flight) noexcept;
+    bool importFlights(const QStringList &filePaths, Flight &currentFlight) noexcept;
     void updateAircraftInfo(Aircraft &aircraft) noexcept;
     void updateFlightInfo(Flight &flight) noexcept;
     void updateFlightCondition(Flight &flight) noexcept;
     bool augmentAircraft(Aircraft &aircraft) noexcept;
+    bool addToCurrentFlight(const QString filePath, std::vector<FlightData> importedFlightData, Flight &currentFlight) noexcept;
 };
 
 #endif // FLIGHTIMPORTPLUGINBASE_H

@@ -42,7 +42,7 @@ public:
     SdLogImportSettings() noexcept;
     ~SdLogImportSettings() override;
 
-    bool hasLogbookSupport() const noexcept override;
+    bool requiresFlightAugmentation() const noexcept override;
 
 signals:
     /*!

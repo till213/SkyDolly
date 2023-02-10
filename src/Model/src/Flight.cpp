@@ -131,9 +131,15 @@ void Flight::setDescription(const QString &description) noexcept
     }
 }
 
-void Flight::setAircraft(std::vector<Aircraft> &&aircraft) noexcept
+void Flight::addAircraft(std::vector<Aircraft> &&aircraft) noexcept
 {
-    d->flightData.aircraft = std::move(aircraft);
+    if (!hasRecording()) {
+        d->flightData.aircraft = std::move(aircraft);
+    } else {
+        d->flightData.aircraft.reserve(d->flightData.aircraft.size() + aircraft.size());
+        auto append = [&](Aircraft &a){ d->flightData.aircraft.push_back(std::move(a)); };
+        std::for_each(aircraft.begin(), aircraft.end(), append);
+    }
     for (auto &aircraft : d->flightData.aircraft) {
         emit aircraftAdded(aircraft);
     }
@@ -308,6 +314,12 @@ void Flight::clear(bool withOneAircraft) noexcept
         emit waypointsCleared();
         emit descriptionOrTitleChanged();
     }
+}
+
+bool Flight::hasRecording() const noexcept
+{
+    auto noRecording = [](const Aircraft &a){ return !a.hasRecording(); };
+    return std::find_if(d->flightData.begin(), d->flightData.end(), noRecording) == d->flightData.end();
 }
 
 Flight::Iterator Flight::begin() noexcept

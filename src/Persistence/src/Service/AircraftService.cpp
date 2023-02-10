@@ -76,7 +76,7 @@ bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, A
         if (ok) {
             ok = db.commit();
             if (ok) {
-                emit flight.aircraftStored(aircraft);
+                emit flight.aircraftStored();
             }
         } else {
             db.rollback();
@@ -98,7 +98,7 @@ bool AircraftService::exportAircraft(std::int64_t flightId, std::size_t sequence
         if (ok) {
             ok = db.commit();
             if (ok) {
-                emit flight.aircraftStored(aircraft);
+                emit flight.aircraftStored();
             }
         } else {
             db.rollback();

@@ -102,6 +102,9 @@ std::vector<FlightData> SdlogImportPlugin::importFlights(QIODevice &io, bool &ok
         ok = d->databaseService->connect(fileInfo.absoluteFilePath());
         if (ok) {
             const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
+            // We expect at least one flight to be imported (note that zero flights in a logbook
+            // is a valid state, so the logbook service would return ok = true)
+            ok = flightIds.size() > 0;
             if (ok) {
                 for (const std::int64_t flightId : flightIds) {
                     FlightData flightData;

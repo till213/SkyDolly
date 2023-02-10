@@ -48,16 +48,14 @@ public:
     ~FlightImportPluginBaseSettings() override;
 
     /*!
-     * Returns whether the plugin supports the logbook(-like) format, that is:
+     * Returns whether the plugin requires flight augmentation, for example:
      *
-     * \li multiple flights
-     * \li each flight having multiple aircraft
-     * \li flight condition and aircraft info
-     * \li the imported data is directly persisted in the logbook
+     * \li Calculating aircraft attitude
+     * \li Adding flight "events" such as "set flaps" or "gear down"
      *
-     * \return \c true if the \c plugin supports direct logbook data import; \c false else
+     * \return \c true if the \c plugin requires flight augmentation; \c false else
      */
-    virtual bool hasLogbookSupport() const noexcept = 0;
+    virtual bool requiresFlightAugmentation() const noexcept = 0;
 
     bool isImportDirectoryEnabled() const noexcept;
     void setImportDirectoryEnabled(bool enabled) noexcept;

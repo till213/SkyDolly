@@ -36,9 +36,9 @@ SdLogImportSettings::SdLogImportSettings() noexcept
 
 SdLogImportSettings::~SdLogImportSettings() = default;
 
-bool SdLogImportSettings::hasLogbookSupport() const noexcept
+bool SdLogImportSettings::requiresFlightAugmentation() const noexcept
 {
-    return true;
+    return false;
 }
 
 // PROTECTED

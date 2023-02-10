@@ -78,7 +78,15 @@ public:
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;
 
-    void setAircraft(std::vector<Aircraft> &&aircraft) noexcept;
+    /*!
+     * Adds all \c aircraft to the existing Aircraft of this Flight.
+     * For each aircraft the signal aircraftAdded is emitted.
+     *
+     * \param aircraft
+     *        the aircraft collection to be added to this Flight
+     * \sa aircraftAdded
+     */
+    void addAircraft(std::vector<Aircraft> &&aircraft) noexcept;
 
     /*!
      *  Creates and adds a new user Aircraft to this Flight.
@@ -147,13 +155,25 @@ public:
     std::int64_t removeAircraftByIndex(int index) noexcept;
 
     /*!
-     * Removes the last aircraft from this flight.
+     * Removes the last (highest sequence number) aircraft from this flight.
      *
      * \return the ID of the removed Aircraft
      * \sa count
      * \sa aircraftRemoved
      */
     std::int64_t removeLastAircraft() noexcept;
+
+    /*!
+     * Returns the aircraft count of this Flight. Note that the count is usually
+     * at least one (except in some intermediate, internal states, e.g. just before
+     * restoring a new Flight from the Logbook), as a Flight always has at least
+     * one \e user aircraft. However that does not mean that any sampled (recorded)
+     * data exists.
+     *
+     * \return the number of Aircraft in this Flight; usually at least one
+     * \sa getUserAircraft
+     * \sa hasRecording
+     */
     std::size_t count() const noexcept;
 
     /*!
@@ -212,6 +232,14 @@ public:
 
     void clear(bool withOneAircraft) noexcept;
 
+    /*!
+     * Returns whether at least one Aircraft with sampled position data exists.
+     *
+     * \return \c true if at least one Aircraft has sampled position data; \c false else
+     * \sa Aircraft#hasRecording
+     */
+    bool hasRecording() const noexcept;
+
     using Iterator = std::vector<Aircraft>::iterator;
     Iterator begin() noexcept;
     Iterator end() noexcept;
@@ -237,14 +265,36 @@ signals:
      */
     void flightRestored(std::int64_t id);
 
-    void aircraftStored(const Aircraft &aircraft);
+    /*!
+     * Emitted whenever one or several Aircraft have been stored to the logbook. Typically
+     * emitted whenever a new formation Aircraft has been stored, or imported and added
+     * to the current Flight.
+     */
+    void aircraftStored();
 
     void cleared();
     void descriptionOrTitleChanged();
     void flightConditionChanged();
 
-    void aircraftAdded(const Aircraft &newAircraft);
-    void aircraftRemoved(std::int64_t removedAircraftId);
+    /*!
+     * Emitted whenever an \c aircraft has been added to this Flight. This is
+     * typically called before creating a new formation flight and allows to
+     * update existing "AI aircraft" models.
+     *
+     * \param aircraft
+     *        the Aircraft that has been added to this Flight
+     */
+    void aircraftAdded(const Aircraft &aircraft);
+
+    /*!
+     * Emitted whenever an \c aircraft has been removed from this Flight. This is
+     * typically called from the formation module and allows to update existing
+     * "AI aircraft" models.
+     *
+     * \param aircraftId
+     *        the id of the removed Aircraft
+     */
+    void aircraftRemoved(std::int64_t aircraftId);
 
     /*!
      * Emitted whenever a new \c waypoint has been added to the user aircraft.
