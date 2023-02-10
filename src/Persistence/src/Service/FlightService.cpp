@@ -66,7 +66,7 @@ bool FlightService::storeFlight(Flight &flight) noexcept
     FlightData &flightData = flight.getFlightData();
     const bool ok = storeFlightData(flightData);
     if (ok) {
-        emit flight.flightStored(flightData.id);
+        emit flight.flightStored();
     }
     return ok;
 }

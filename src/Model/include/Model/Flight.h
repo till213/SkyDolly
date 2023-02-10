@@ -225,15 +225,12 @@ public:
 
 signals:
     /*!
-     * Emitted whenever the Flight given by its \c id has been stored.
-     *
-     * \param id
-     *        the id of the stored Flight
+     * Emitted whenever one or several Flight have been stored to the logbook.
      */
-    void flightStored(std::int64_t id);
+    void flightStored();
 
     /*!
-     * Emitted whenever the Flight given by its \c id has been restored.
+     * Emitted whenever the Flight given by its \c id has been restored from the logbook.
      *
      * \param id
      *        the id of the restored Flight

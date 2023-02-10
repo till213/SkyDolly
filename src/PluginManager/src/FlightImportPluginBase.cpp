@@ -157,7 +157,6 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
     const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
     const bool addToCurrentFlight = pluginSettings.isAddToFlightEnabled();
 
-
     bool ok {true};
     bool ignoreFailures {false};
     bool isFirstFile {true};
@@ -203,19 +202,23 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
                 }
             }
             if (ok) {
-                // Store all imported flight data into the logbook
-                for (auto &flightData : importedFlightData) {
-                    ok = d->flightService->storeFlightData(flightData);
-                    if (!ok) {
-                        break;
+                if (addToCurrentFlight) {
+
+                } else {
+                    // Store all imported flight data into the logbook
+                    for (auto &flightData : importedFlightData) {
+                        ok = d->flightService->storeFlightData(flightData);
+                        if (!ok) {
+                            break;
+                        }
                     }
-                }
-                // Notify the application that flight data been stored
-                // and restore the last imported flight
-                if (ok) {
-                    FlightData &flightData = importedFlightData.back();
-                    emit flight.flightStored(flightData.id);
-                    flight.fromFlightData(std::move(flightData));
+                    // Notify the application that flight data been stored
+                    // and restore the last imported flight
+                    if (ok) {
+                        emit flight.flightStored();
+                        FlightData &flightData = importedFlightData.back();
+                        flight.fromFlightData(std::move(flightData));
+                    }
                 }
             }
 
