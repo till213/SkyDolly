@@ -124,7 +124,11 @@ private:
     void updateFlightInfo(Flight &flight) noexcept;
     void updateFlightCondition(Flight &flight) noexcept;
     bool augmentAircraft(Aircraft &aircraft) noexcept;
-    bool addToCurrentFlight(const QString filePath, std::vector<FlightData> importedFlightData, Flight &currentFlight) noexcept;
+    bool addAndStoreAircraftToCurrentFlight(const QString sourceFilePath, std::vector<FlightData> importedFlightData, Flight &currentFlight,
+                                            std::size_t &totalFlightsStored, std::size_t &totalAircraftStored, bool &continueWithDirectoryImport) noexcept;
+    bool storeFlightData(std::vector<FlightData> &importedFlightData, std::size_t &totalFlightsStored);
+    void confirmImportError(const QString &sourceFilePath, bool &ignoreFailures, bool &continueWithDirectoryImport) noexcept;
+    void confirmMultiFlightImport(const QString &sourceFilePath, std::size_t nofFlights, bool &doAdd, bool &continueWithDirectoryImport);
 };
 
 #endif // FLIGHTIMPORTPLUGINBASE_H

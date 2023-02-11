@@ -137,11 +137,11 @@ void Flight::addAircraft(std::vector<Aircraft> &&aircraft) noexcept
         d->flightData.aircraft = std::move(aircraft);
     } else {
         d->flightData.aircraft.reserve(d->flightData.aircraft.size() + aircraft.size());
-        auto append = [&](Aircraft &a){ d->flightData.aircraft.push_back(std::move(a)); };
+        auto append = [&](Aircraft &a) {
+            d->flightData.aircraft.push_back(std::move(a));
+            emit aircraftAdded(d->flightData.aircraft.back());
+        };
         std::for_each(aircraft.begin(), aircraft.end(), append);
-    }
-    for (auto &aircraft : d->flightData.aircraft) {
-        emit aircraftAdded(aircraft);
     }
 }
 

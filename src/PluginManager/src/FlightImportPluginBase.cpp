@@ -68,8 +68,6 @@ struct FlightImportPluginBasePrivate
     Unit unit;
     AircraftType aircraftType;
     FlightAugmentation flightAugmentation;
-    std::size_t totalFlightsStored {0};
-    std::size_t totalAircraftStored {0};
 };
 
 // PUBLIC
@@ -160,11 +158,12 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
     const bool doAddToCurrentFlight = pluginSettings.isAddToFlightEnabled();
 
     bool ok {true};
-    bool ignoreFailures {false};
+    bool ignoreAllFailures {false};
+    bool continueWithDirectoryImport {true};
     std::vector<FlightData> importedFlightData;
 
-    d->totalFlightsStored = 0;
-    d->totalAircraftStored = 0;
+    std::size_t totalFlightsStored {0};
+    std::size_t totalAircraftStored {0};
     for (const QString &filePath : filePaths) {
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
@@ -194,53 +193,32 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
             }
             if (ok) {
                 if (doAddToCurrentFlight) {
-                    ok = addToCurrentFlight(filePath, std::move(importedFlightData), currentFlight);
+                    ok = addAndStoreAircraftToCurrentFlight(filePath, std::move(importedFlightData), currentFlight,
+                                                            totalFlightsStored, totalAircraftStored, continueWithDirectoryImport);
                 } else {
                     // Store all imported flight data into the logbook
-                    for (auto &flightData : importedFlightData) {
-                        ok = d->flightService->storeFlightData(flightData);
-                        if (ok) {
-                            ++d->totalFlightsStored;
-                        } else {
-                            break;
-                        }
-                    }
+                    ok = storeFlightData(importedFlightData, totalFlightsStored);
                 }
             }
             d->file.close();
         }
 
-        if (!ok && importDirectory && !ignoreFailures) {
-            QGuiApplication::restoreOverrideCursor();
-            QFileInfo fileInfo {filePath};
-            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
-            messageBox->setIcon(QMessageBox::Warning);
-            QPushButton *proceedButton = messageBox->addButton(tr("&Proceed"), QMessageBox::AcceptRole);
-            QPushButton *ignoreAllButton = messageBox->addButton(tr("&Ignore All Failures"), QMessageBox::YesRole);
-            messageBox->setWindowTitle(tr("Import Failure"));
-            messageBox->setText(tr("The file %1 could not be imported. Do you want to proceed with the remaining files in directory %2?").arg(fileInfo.fileName(), fileInfo.dir().dirName()));
-            messageBox->setInformativeText(tr("Aborting will keep the already successfully imported flights and aircraft."));
-            messageBox->setStandardButtons(QMessageBox::Cancel);
-            messageBox->setDefaultButton(proceedButton);
+        if (!ok && importDirectory && !ignoreAllFailures) {
+            confirmImportError(filePath, ignoreAllFailures, continueWithDirectoryImport);
+        }
 
-            messageBox->exec();
-            const QAbstractButton *clickedButton = messageBox->clickedButton();
-            if (clickedButton == ignoreAllButton) {
-                ignoreFailures = true;
-            } else if (clickedButton != proceedButton) {
-                break;
-            }
-            QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-            QGuiApplication::processEvents();
+        if (!continueWithDirectoryImport) {
+            break;
         }
 
     } // All files
 
     // Notify the application that at least one flight has
     // been stored
-    if (d->totalFlightsStored > 0) {
+    if (totalFlightsStored > 0) {
         emit currentFlight.flightStored();
-    } else if (d->totalAircraftStored > 0) {
+    }
+    if (totalAircraftStored > 0) {
         emit currentFlight.aircraftStored();
     }
     if (ok && !doAddToCurrentFlight) {
@@ -340,37 +318,15 @@ bool FlightImportPluginBase::augmentAircraft(Aircraft &aircraft) noexcept
     return ok;
 }
 
-bool FlightImportPluginBase::addToCurrentFlight(const QString filePath, std::vector<FlightData> importedFlightData, Flight &currentFlight) noexcept
+bool FlightImportPluginBase::addAndStoreAircraftToCurrentFlight(const QString sourceFilePath, std::vector<FlightData> importedFlightData, Flight &currentFlight,
+                                                                std::size_t &totalFlightsStored, std::size_t &totalAircraftStored, bool &continueWithDirectoryImport) noexcept
 {
     bool ok {true};
     bool doAdd {true};
     const bool newFlight = !currentFlight.hasRecording();
     if (importedFlightData.size() > 1) {
-        QGuiApplication::restoreOverrideCursor();
-        QFileInfo fileInfo {filePath};
-        std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
-        messageBox->setIcon(QMessageBox::Warning);
-        QPushButton *proceedButton = messageBox->addButton(tr("&Add Aircraft From All Flights"), QMessageBox::AcceptRole);
-        QPushButton *skipButton = messageBox->addButton(tr("&Skip Flights"), QMessageBox::NoRole);
-        messageBox->setWindowTitle(tr("Multiple Flights"));
-        messageBox->setText(tr("The file %1 contains more than one flight (number of flights: %2). Do you want to add all aircraft from all flights to the current flight?").arg(fileInfo.fileName(), importedFlightData.size()));
-        messageBox->setInformativeText(tr("The aircraft may have been recorded in completely different locations and/or time of day."));
-        messageBox->setStandardButtons(QMessageBox::Cancel);
-        messageBox->setDefaultButton(proceedButton);
-
-        messageBox->exec();
-        const QAbstractButton *clickedButton = messageBox->clickedButton();
-        if (clickedButton == proceedButton) {
-            doAdd = true;
-        } else if (clickedButton == skipButton) {
-            doAdd = false;
-        } else {
-            doAdd = false;
-        }
-        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-        QGuiApplication::processEvents();
+        confirmMultiFlightImport(sourceFilePath, importedFlightData.size(), doAdd, continueWithDirectoryImport);
     }
-
     if (doAdd) {
         // Iterate over all imported flights (if multiple)...
         for (auto &flightData : importedFlightData) {
@@ -381,7 +337,7 @@ bool FlightImportPluginBase::addToCurrentFlight(const QString filePath, std::vec
                     ok = d->aircraftService->store(currentFlight.getId(), sequenceNumber, aircraft);
                     if (ok) {
                         ++sequenceNumber;
-                        ++d->totalAircraftStored;
+                        ++totalAircraftStored;
                     } else {
                         break;
                     }
@@ -394,10 +350,86 @@ bool FlightImportPluginBase::addToCurrentFlight(const QString filePath, std::vec
         if (newFlight) {
             ok = d->flightService->storeFlight(currentFlight);
             if (ok) {
-                ++d->totalFlightsStored;
+                ++totalFlightsStored;
             }
         }
     }
 
     return ok;
+}
+
+bool FlightImportPluginBase::storeFlightData(std::vector<FlightData> &importedFlightData, std::size_t &totalFlightsStored)
+{
+    bool ok {false};
+    for (auto &flightData : importedFlightData) {
+        ok = d->flightService->storeFlightData(flightData);
+        if (ok) {
+            ++totalFlightsStored;
+        } else {
+            break;
+        }
+    }
+    return ok;
+}
+
+void FlightImportPluginBase::confirmImportError(const QString &filePath, bool &ignoreAllFailures, bool &continueWithDirectoryImport) noexcept
+{
+    QGuiApplication::restoreOverrideCursor();
+    QFileInfo fileInfo {filePath};
+    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
+    messageBox->setIcon(QMessageBox::Warning);
+    QPushButton *proceedButton = messageBox->addButton(tr("&Proceed"), QMessageBox::AcceptRole);
+    QPushButton *ignoreAllButton = messageBox->addButton(tr("&Ignore All Failures"), QMessageBox::YesRole);
+    messageBox->setWindowTitle(tr("Import Failure"));
+    messageBox->setText(tr("The file %1 could not be imported. Do you want to proceed with the remaining files in directory %2?").arg(fileInfo.fileName(), fileInfo.dir().dirName()));
+    messageBox->setInformativeText(tr("Aborting will keep the already successfully imported flights and aircraft."));
+    messageBox->setStandardButtons(QMessageBox::Cancel);
+    messageBox->setDefaultButton(proceedButton);
+
+    messageBox->exec();
+    const QAbstractButton *clickedButton = messageBox->clickedButton();
+    if (clickedButton == ignoreAllButton) {
+        ignoreAllFailures = true;
+        continueWithDirectoryImport = true;
+    } else if (clickedButton == proceedButton) {
+        ignoreAllFailures = false;
+        continueWithDirectoryImport = true;
+    } else {
+        ignoreAllFailures = false;
+        continueWithDirectoryImport = false;
+    }
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    QGuiApplication::processEvents();
+}
+
+void FlightImportPluginBase::confirmMultiFlightImport(const QString &sourceFilePath, std::size_t nofFlights, bool &doAdd, bool &continueWithDirectoryImport)
+{
+    QGuiApplication::restoreOverrideCursor();
+    QFileInfo fileInfo {sourceFilePath};
+    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
+    messageBox->setIcon(QMessageBox::Warning);
+    QPushButton *proceedButton = messageBox->addButton(tr("&Add Aircraft From All Flights"), QMessageBox::AcceptRole);
+    QPushButton *skipButton = messageBox->addButton(tr("&Skip This File"), QMessageBox::RejectRole);
+    messageBox->setWindowTitle(tr("Multiple Flights"));
+    messageBox->setText(tr("The file %1 contains more than one flight (number of flights: %2). Do you want to add all aircraft from this file to the current flight?")
+                        .arg(fileInfo.fileName())
+                        .arg(nofFlights));
+    messageBox->setInformativeText(tr("The aircraft may have been recorded in completely different locations or at different time of day."));
+    messageBox->setStandardButtons(QMessageBox::Cancel);
+    messageBox->setDefaultButton(proceedButton);
+
+    messageBox->exec();
+    const QAbstractButton *clickedButton = messageBox->clickedButton();
+    if (clickedButton == proceedButton) {
+        continueWithDirectoryImport = true;
+        doAdd = true;
+    } else if (clickedButton == skipButton) {
+        continueWithDirectoryImport = true;
+        doAdd = false;
+    } else {
+        doAdd = false;
+        continueWithDirectoryImport = false;
+    }
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    QGuiApplication::processEvents();
 }
