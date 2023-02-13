@@ -109,12 +109,12 @@ std::vector<FlightData> KmlImportPlugin::importFlights(QIODevice &io, bool &ok) 
     return flights;
 }
 
-FlightAugmentation::Procedures KmlImportPlugin::getProcedures() const noexcept
+FlightAugmentation::Procedures KmlImportPlugin::getAugmentationProcedures() const noexcept
 {
     return FlightAugmentation::Procedure::All;
 }
 
-FlightAugmentation::Aspects KmlImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects KmlImportPlugin::getAugmentationAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
     switch (d->pluginSettings.getFormat()) {

@@ -249,12 +249,12 @@ std::vector<FlightData> IgcImportPlugin::importFlights(QIODevice &io, bool &ok) 
     return flights;
 }
 
-FlightAugmentation::Procedures IgcImportPlugin::getProcedures() const noexcept
+FlightAugmentation::Procedures IgcImportPlugin::getAugmentationProcedures() const noexcept
 {
     return FlightAugmentation::Procedure::All;
 }
 
-FlightAugmentation::Aspects IgcImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects IgcImportPlugin::getAugmentationAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects {FlightAugmentation::Aspect::All};
     // Do not augment the engine data: the engine data is already derived from the

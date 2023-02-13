@@ -104,8 +104,8 @@ protected:
      */
     virtual std::vector<FlightData> importFlights(QIODevice &io, bool &ok) noexcept = 0;
 
-    virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;
-    virtual FlightAugmentation::Aspects getAspects() const noexcept = 0;
+    virtual FlightAugmentation::Procedures getAugmentationProcedures() const noexcept = 0;
+    virtual FlightAugmentation::Aspects getAugmentationAspects() const noexcept = 0;
 
 private:
     const std::unique_ptr<FlightImportPluginBasePrivate> d;

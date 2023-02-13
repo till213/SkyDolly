@@ -175,7 +175,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
             importedFlightData = importFlights(d->file, ok);
             if (ok) {
                 enrichFlightData(importedFlightData);
-                if (getAspects() || getProcedures()) {
+                if (getAugmentationAspects() || getAugmentationProcedures()) {
                     augmentFlights(importedFlightData);
                 }
 
@@ -314,8 +314,8 @@ bool FlightImportPluginBase::augmentFlights(std::vector<FlightData> &flightData)
     for (FlightData &flight : flightData) {
         for (Aircraft &aircraft : flight) {
             if (aircraft.getPosition().count() > 0) {
-                d->flightAugmentation.setProcedures(getProcedures());
-                d->flightAugmentation.setAspects(getAspects());
+                d->flightAugmentation.setProcedures(getAugmentationProcedures());
+                d->flightAugmentation.setAspects(getAugmentationAspects());
                 d->flightAugmentation.augmentAircraftData(aircraft);
             }
         }

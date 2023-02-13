@@ -117,12 +117,12 @@ std::vector<FlightData> SdlogImportPlugin::importFlights(QIODevice &io, bool &ok
     return flights;
 }
 
-FlightAugmentation::Procedures SdlogImportPlugin::getProcedures() const noexcept
+FlightAugmentation::Procedures SdlogImportPlugin::getAugmentationProcedures() const noexcept
 {
     return FlightAugmentation::Procedure::None;
 }
 
-FlightAugmentation::Aspects SdlogImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects SdlogImportPlugin::getAugmentationAspects() const noexcept
 {
     return FlightAugmentation::Aspect::None;
 }

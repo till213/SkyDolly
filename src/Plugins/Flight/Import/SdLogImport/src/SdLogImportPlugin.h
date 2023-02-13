@@ -62,8 +62,8 @@ protected:
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
     std::vector<FlightData> importFlights(QIODevice &io, bool &ok) noexcept override;
 
-    FlightAugmentation::Procedures getProcedures() const noexcept override;
-    FlightAugmentation::Aspects getAspects() const noexcept override;
+    FlightAugmentation::Procedures getAugmentationProcedures() const noexcept override;
+    FlightAugmentation::Aspects getAugmentationAspects() const noexcept override;
 
 private:
     const std::unique_ptr<SdlogImportPluginPrivate> d;

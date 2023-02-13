@@ -5,6 +5,8 @@
 ### New Features
 - Sky Dolly logbook (SDLOG) export plugin
   * The current plugin implementation always exports the entire flight (including all aircraft) into a single logbook file, without resampling
+- Sky Dolly logbook (SDLOG) import plugin
+  * All flights including all aircraft are imported, including flight information (title, comment, creation date) and flight conditions (temperature, wind conditions, runway conditions, ...)
   
 ### Improvements
 - All export plugins: only the supported resampling and formation export options (as repported by the given plugin) are now selectable
@@ -20,6 +22,9 @@
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
 - The first aircraft position data is properly cached (not reset when timestamp is set to 0)
 - Fix the flightradar24 CSV import (wrong data validation)
+
+### Under the Hood
+- Flight import plugin API simplified, by introducing a new FlightData structure that allows to move flight data between Flight objects
 
 ## 0.15.1
 

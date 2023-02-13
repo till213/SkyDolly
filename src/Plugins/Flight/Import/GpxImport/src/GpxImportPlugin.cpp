@@ -105,12 +105,12 @@ std::vector<FlightData> GpxImportPlugin::importFlights(QIODevice &io, bool &ok) 
     return flights;
 }
 
-FlightAugmentation::Procedures GpxImportPlugin::getProcedures() const noexcept
+FlightAugmentation::Procedures GpxImportPlugin::getAugmentationProcedures() const noexcept
 {
     return FlightAugmentation::Procedure::All;
 }
 
-FlightAugmentation::Aspects GpxImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects GpxImportPlugin::getAugmentationAspects() const noexcept
 {
     return FlightAugmentation::Aspect::All;
 }

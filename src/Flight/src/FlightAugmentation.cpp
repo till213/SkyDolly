@@ -84,7 +84,7 @@ void FlightAugmentation::setProcedures(Procedures procedures) noexcept
     d->procedures = procedures;
 }
 
-FlightAugmentation::Procedures FlightAugmentation::getProcedures() const noexcept
+FlightAugmentation::Procedures FlightAugmentation::getAugmentationProcedures() const noexcept
 {
     return d->procedures;
 }

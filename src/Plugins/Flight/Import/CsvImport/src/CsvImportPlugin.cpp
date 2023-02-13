@@ -105,7 +105,7 @@ std::vector<FlightData> CsvImportPlugin::importFlights(QIODevice &io, bool &ok) 
     return flights;
 }
 
-FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
+FlightAugmentation::Procedures CsvImportPlugin::getAugmentationProcedures() const noexcept
 {
     FlightAugmentation::Procedures procedures;
     switch (d->pluginSettings.getFormat()) {
@@ -124,7 +124,7 @@ FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
     return procedures;
 }
 
-FlightAugmentation::Aspects CsvImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects CsvImportPlugin::getAugmentationAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
     switch (d->pluginSettings.getFormat()) {
