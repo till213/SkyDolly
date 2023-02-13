@@ -193,7 +193,7 @@ bool KmlExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice 
     bool ok {true};
     for (const auto &aircraft : flightData) {
         d->aircraftTypeCount[aircraft.getAircraftInfo().aircraftType.type] += 1;
-        ok = exportAircraft(flightData, aircraft, io);
+        ok = exportSingleAircraft(flightData, aircraft, io);
         if (!ok) {
             break;
         }
