@@ -48,7 +48,7 @@ public:
     GpxImportSettings() noexcept;
     ~GpxImportSettings() override;
 
-    bool hasLogbookSupport() const noexcept override;
+    bool requiresAircraftSelection() const noexcept override;
 
     GPXElement getWaypointSelection() const noexcept;
     void setWaypointSelection(GPXElement selection) noexcept;

@@ -39,6 +39,7 @@ class QIODevice;
 #include <PluginManager/FlightImportIntf.h>
 #include <PluginManager/FlightImportPluginBase.h>
 
+class Aircraft;
 class Flight;
 struct FlightData;
 struct FlightData;
@@ -65,17 +66,13 @@ protected:
 
     FlightAugmentation::Procedures getProcedures() const noexcept override;
     FlightAugmentation::Aspects getAspects() const noexcept override;
-    QDateTime getStartDateTimeUtc() noexcept override;
-    QString getTitle() const noexcept override;
-    void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    void updateExtendedFlightInfo(Flight &flight) noexcept override;
-    void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 private:
     const std::unique_ptr<GpxImportPluginPrivate> d;
 
-    void parseGPX() noexcept;
-    void updateWaypoints() noexcept;
+    std::vector<FlightData> parseGPX() noexcept;
+    void updateFlightWaypoints(std::vector<FlightData> &flights) noexcept;
+    void updateAircraftWaypoints(Aircraft &aircraft, QDateTime flightTimeUtc) noexcept;
 };
 
 #endif // GPXIMPORTPLUGIN_H

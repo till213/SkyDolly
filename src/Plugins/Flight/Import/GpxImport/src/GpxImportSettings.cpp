@@ -63,9 +63,9 @@ GpxImportSettings::GpxImportSettings() noexcept
 
 GpxImportSettings::~GpxImportSettings() = default;
 
-bool GpxImportSettings::hasLogbookSupport() const noexcept
+bool GpxImportSettings::requiresAircraftSelection() const noexcept
 {
-    return false;
+    return true;
 }
 
 GpxImportSettings::GPXElement GpxImportSettings::getWaypointSelection() const noexcept

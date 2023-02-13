@@ -25,6 +25,7 @@
 #include <memory>
 #include <cmath>
 
+#include <QObject>
 #include <QString>
 #include <QXmlStreamReader>
 #include <QDateTime>
@@ -51,106 +52,94 @@
  */
 struct GpxParserPrivate
 {
-    GpxParserPrivate(Flight &theFlight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &thePluginSettings) noexcept
-        : flight(theFlight),
-          xml(xmlStreamReader),
-          pluginSettings(thePluginSettings)
-    {
-        firstDateTimeUtc.setTimeZone(QTimeZone::utc());
-    }
+    GpxParserPrivate(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &pluginSettings) noexcept
+        : xml(xmlStreamReader),
+          pluginSettings(pluginSettings)
+    {}
 
-    Flight &flight;
     QXmlStreamReader &xml;
-    const GpxImportSettings &pluginSettings;
     QDateTime firstDateTimeUtc;
-    QString documentName;
-    QString description;
+    const GpxImportSettings &pluginSettings;
     Convert convert;
 };
 
 // PUBLIC
 
-GpxParser::GpxParser(Flight &flight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &thePluginSettings) noexcept
-    : d(std::make_unique<GpxParserPrivate>(flight, xmlStreamReader, thePluginSettings))
+GpxParser::GpxParser(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &thePluginSettings) noexcept
+    : d(std::make_unique<GpxParserPrivate>(xmlStreamReader, thePluginSettings))
 {}
 
 GpxParser::~GpxParser() = default;
 
-void GpxParser::parse() noexcept
+std::vector<FlightData> GpxParser::parse() noexcept
 {
+    std::vector<FlightData> flights;
     if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
         qDebug() << "GpxParser::parse: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::gpx) {
-            parseGPX();
+            flights = parseGPX();
         } else {
             d->xml.raiseError(QStringLiteral("The file is not a GPX file."));
         }
     }
-}
-
-QDateTime GpxParser::getFirstDateTimeUtc() const noexcept
-{
-    return d->firstDateTimeUtc;
-}
-
-QString GpxParser::getDocumentName() const noexcept
-{
-    return d->documentName;
-}
-
-QString GpxParser::getDescription() const noexcept
-{
-    return d->description;
+    return flights;
 }
 
 // PRIVATE
 
-void GpxParser::parseGPX() noexcept
+std::vector<FlightData> GpxParser::parseGPX() noexcept
 {
+    std::vector<FlightData> flights;
+    FlightData flightData;
+    flightData.addUserAircraft();
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
         qDebug() << "GpxParser::parseGPX: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::metadata) {
-            parseMetadata();
+            parseMetadata(flightData);
         } else if (d->xml.name() == Gpx::wpt) {
-            parseWaypoint();
+            parseWaypoint(flightData);
         } else if (d->xml.name() == Gpx::rte) {
-            parseRoute();
+            parseRoute(flightData);
         } else if (d->xml.name() == Gpx::trk) {
-            parseTrack();
+            parseTrack(flightData);
         } else {
             d->xml.skipCurrentElement();
         }
     }
+    flightData.flightCondition.startZuluTime = d->firstDateTimeUtc;
+    flightData.flightCondition.startLocalTime = d->firstDateTimeUtc.toLocalTime();
+    flights.push_back(std::move(flightData));
+    return flights;
 }
 
-void GpxParser::parseMetadata() noexcept
+void GpxParser::parseMetadata(FlightData &flightData) noexcept
 {
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
         qDebug() << "GpxParser::parseMetadata: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::name) {
-            d->documentName = d->xml.readElementText();
+            flightData.title = d->xml.readElementText();
         } else if (d->xml.name() == Gpx::desc) {
-            d->description = d->xml.readElementText();
+            flightData.description = d->xml.readElementText();
         } else {
             d->xml.skipCurrentElement();
         }
     }
 }
 
-void GpxParser::parseWaypoint() noexcept
+void GpxParser::parseWaypoint(FlightData &flightData) noexcept
 {
     bool ok {true};
     double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
-    FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlan();
-    Position &position = d->flight.getUserAircraft().getPosition();
+    Aircraft &aircraft = flightData.getUserAircraft();
+    FlightPlan &flightPlan = aircraft.getFlightPlan();
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Waypoint ||
         d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Waypoint) {
@@ -161,7 +150,7 @@ void GpxParser::parseWaypoint() noexcept
 
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Waypoint) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
-        waypoint.identifier = identifier;
+        waypoint.identifier = !identifier.isEmpty() ? identifier : QObject::tr("Waypoint %1").arg(flightPlan.count() + 1);
         flightPlan.add(waypoint);
     }
     if (ok && d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Waypoint) {
@@ -173,8 +162,8 @@ void GpxParser::parseWaypoint() noexcept
                 d->firstDateTimeUtc = QDateTime::currentDateTimeUtc();
             }
         }
-
         // We ignore waypoint timestamps for positions; always calculated based on default speed and distance
+        Position &position = aircraft.getPosition();
         if (position.count() > 0) {
             const PositionData &previousPositionData = position.getLast();
             const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
@@ -193,7 +182,7 @@ void GpxParser::parseWaypoint() noexcept
     }
 }
 
-void GpxParser::parseRoute() noexcept
+void GpxParser::parseRoute(FlightData &flightData) noexcept
 {    
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
@@ -201,26 +190,26 @@ void GpxParser::parseRoute() noexcept
 #endif
         if (d->xml.name() == Gpx::name) {
             // The route name takes precedence over the name given in the metadata
-            d->documentName = d->xml.readElementText();
+            flightData.title = d->xml.readElementText();
         } else if (d->xml.name() == Gpx::desc) {
             // The route description takes precedence over the description given in the metadata
-            d->description = d->xml.readElementText();
+            flightData.description = d->xml.readElementText();
         } else if (d->xml.name() == Gpx::rtept) {
-            parseRoutePoint();
+            parseRoutePoint(flightData);
         } else {
             d->xml.skipCurrentElement();
         }
     }
 }
 
-void GpxParser::parseRoutePoint() noexcept
+void GpxParser::parseRoutePoint(FlightData &flightData) noexcept
 {
     bool ok {true};
     double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
-    FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlan();
-    Position &position = d->flight.getUserAircraft().getPosition();
+    Aircraft &aircraft = flightData.getUserAircraft();
+    FlightPlan &flightPlan = aircraft.getFlightPlan();
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Route ||
         d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Route) {
@@ -231,7 +220,7 @@ void GpxParser::parseRoutePoint() noexcept
 
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Route) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
-        waypoint.identifier = identifier;
+        waypoint.identifier = !identifier.isEmpty() ? identifier : QObject::tr("Waypoint %1").arg(flightPlan.count() + 1);
         flightPlan.add(waypoint);
     }
     if (ok && d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Route) {
@@ -243,8 +232,8 @@ void GpxParser::parseRoutePoint() noexcept
                 d->firstDateTimeUtc = QDateTime::currentDateTimeUtc();
             }
         }
-
         // We ignore route point timestamps for positions; always calculated based on default speed and distance
+        Position &position = aircraft.getPosition();
         if (position.count() > 0) {
             const PositionData &previousPositionData = position.getLast();
             const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
@@ -263,42 +252,42 @@ void GpxParser::parseRoutePoint() noexcept
     }
 }
 
-void GpxParser::parseTrack() noexcept
+void GpxParser::parseTrack(FlightData &flightData) noexcept
 {
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
         qDebug() << "GpxParser::parseTrack: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::trkseg) {
-            parseTrackSegment();
+            parseTrackSegment(flightData);
         } else {
             d->xml.skipCurrentElement();
         }
     }
 }
 
-void GpxParser::parseTrackSegment() noexcept
+void GpxParser::parseTrackSegment(FlightData &flightData) noexcept
 {
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
         qDebug() << "GpxParser::parseTrackSegment: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == Gpx::trkpt) {
-            parseTrackPoint();
+            parseTrackPoint(flightData);
         } else {
             d->xml.skipCurrentElement();
         }
     }
 }
 
-inline void GpxParser::parseTrackPoint() noexcept
+inline void GpxParser::parseTrackPoint(FlightData &flightData) noexcept
 {
     bool ok {true};
     double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
-    FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlan();
-    Position &position = d->flight.getUserAircraft().getPosition();
+    Aircraft &aircraft = flightData.getUserAircraft();
+    FlightPlan &flightPlan = aircraft.getFlightPlan();
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Track ||
         d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Track) {
@@ -309,7 +298,7 @@ inline void GpxParser::parseTrackPoint() noexcept
 
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Track) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
-        waypoint.identifier = identifier;
+        waypoint.identifier = !identifier.isEmpty() ? identifier : QObject::tr("Waypoint %1").arg(flightPlan.count() + 1);
         flightPlan.add(waypoint);
     }
     if (ok && d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Track) {
@@ -322,6 +311,7 @@ inline void GpxParser::parseTrackPoint() noexcept
             }
         }
 
+        Position &position = aircraft.getPosition();
         if (currentDateTimeUtc.isValid()) {
             positionData.timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
         } else {
@@ -371,6 +361,7 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
         } else if (d->xml.name() == Gpx::name) {
             identifier = d->xml.readElementText();
         } else if (d->xml.name() == Gpx::time) {
+            // Time is optional
             dateTime = QDateTime::fromString(d->xml.readElementText(), Qt::ISODate);
             ok = dateTime.isValid();
             if (!ok) {
