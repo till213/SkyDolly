@@ -36,6 +36,11 @@ SdLogImportSettings::SdLogImportSettings() noexcept
 
 SdLogImportSettings::~SdLogImportSettings() = default;
 
+bool SdLogImportSettings::requiresAircraftSelection() const noexcept
+{
+    return false;
+}
+
 bool SdLogImportSettings::requiresFlightAugmentation() const noexcept
 {
     return false;

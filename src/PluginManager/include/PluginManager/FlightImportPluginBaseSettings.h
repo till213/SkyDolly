@@ -62,6 +62,15 @@ public:
     ~FlightImportPluginBaseSettings() override;
 
     /*!
+     * Returns whether the plugin requires the selection of the aircraft type to be
+     * imported, that is the import format does not specify an aircraft type.
+     *
+     * \return \c true if the \c plugin requires aircraft selection; \c false else
+     *         (the format itself specifies the aircraft type)
+     */
+    virtual bool requiresAircraftSelection() const noexcept = 0;
+
+    /*!
      * Returns whether the plugin requires flight augmentation, for example:
      *
      * \li Calculating aircraft attitude

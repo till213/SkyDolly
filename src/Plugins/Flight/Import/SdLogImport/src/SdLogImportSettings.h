@@ -42,6 +42,7 @@ public:
     SdLogImportSettings() noexcept;
     ~SdLogImportSettings() override;
 
+    bool requiresAircraftSelection() const noexcept override;
     bool requiresFlightAugmentation() const noexcept override;
 
 signals:

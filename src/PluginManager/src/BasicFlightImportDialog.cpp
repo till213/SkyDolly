@@ -127,7 +127,8 @@ void BasicFlightImportDialog::initBasicUi() noexcept
     // Import aircraft mode
     ui->aircraftImportModeComboBox->addItem(tr("Add to current flight"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight));
     ui->aircraftImportModeComboBox->addItem(tr("Add to new flight"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight));
-    ui->aircraftImportModeComboBox->addItem(tr("Create separate flights"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::CreateSeparateFlights));
+
+    ui->aircraftSelectionComboBox->setEnabled(d->pluginSettings.requiresAircraftSelection());
 }
 
 void BasicFlightImportDialog::initOptionUi() noexcept
@@ -170,6 +171,7 @@ void BasicFlightImportDialog::frenchConnection() noexcept
 
 void BasicFlightImportDialog::updateUi() noexcept
 {
+    constexpr int CreateSeparateFlightsIndex = 2;
     const QString filePath = ui->pathLineEdit->text();
     QFileInfo fileInfo {filePath};
 
@@ -185,8 +187,9 @@ void BasicFlightImportDialog::updateUi() noexcept
     const bool enabled = fileExists && aircraftTypeExists;
     d->importButton->setEnabled(enabled);
 
-    if (d->pluginSettings.isImportDirectoryEnabled()) {
-        ui->importDirectoryCheckBox->setChecked(true);
+    const bool importDirectory = d->pluginSettings.isImportDirectoryEnabled();
+    ui->importDirectoryCheckBox->setChecked(importDirectory);
+    if (importDirectory) {
         const QString currentPath = ui->pathLineEdit->text();
         if (!currentPath.isEmpty()) {
             QFileInfo fileInfo {currentPath};
@@ -194,9 +197,13 @@ void BasicFlightImportDialog::updateUi() noexcept
                 ui->pathLineEdit->setText(QDir::toNativeSeparators(fileInfo.absolutePath()));
             }
         }
-    } else {
-        ui->importDirectoryCheckBox->setChecked(false);
+        if (ui->aircraftImportModeComboBox->count() <= CreateSeparateFlightsIndex) {
+            ui->aircraftImportModeComboBox->addItem(tr("Create separate flights"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::CreateSeparateFlights));
+        }
+    } else if (ui->aircraftImportModeComboBox->count() == CreateSeparateFlightsIndex + 1) {
+        ui->aircraftImportModeComboBox->removeItem(ui->aircraftImportModeComboBox->count() - 1);
     }
+
     const FlightImportPluginBaseSettings::AircraftImportMode aircraftImportMode = d->pluginSettings.getAircraftImportMode();
     const int indexCount = ui->aircraftImportModeComboBox->count();
     int currentIndex {0};
@@ -216,7 +223,7 @@ void BasicFlightImportDialog::updateUi() noexcept
         ui->aircraftImportModeComboBox->setToolTip(tr("Add all imported aircraft to newly created flight."));
         break;
     case FlightImportPluginBaseSettings::AircraftImportMode::CreateSeparateFlights:
-        ui->aircraftImportModeComboBox->setToolTip(tr("Create separate flights for each imported flight or aircraft."));
+        ui->aircraftImportModeComboBox->setToolTip(tr("Create separate flights for each imported file."));
         break;
     }
 }
