@@ -51,7 +51,7 @@ public:
         /*! A new flight is generated and all aircraft are added to it. */
         AddToNewFlight = 1,
         /*! For each imported aircraft a new flight is generated. */
-        CreateSeparateFlights  = 2
+        SeparateFlights  = 2
     };
 
     FlightImportPluginBaseSettings() noexcept;

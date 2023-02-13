@@ -128,7 +128,13 @@ void BasicFlightImportDialog::initBasicUi() noexcept
     ui->aircraftImportModeComboBox->addItem(tr("Add to current flight"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight));
     ui->aircraftImportModeComboBox->addItem(tr("Add to new flight"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight));
 
-    ui->aircraftSelectionComboBox->setEnabled(d->pluginSettings.requiresAircraftSelection());
+    if (d->pluginSettings.requiresAircraftSelection()) {
+        ui->aircraftSelectionComboBox->setEnabled(true);
+        ui->aircraftSelectionComboBox->setToolTip(tr("Select the aircraft type for each imported aircraft."));
+    } else {
+        ui->aircraftSelectionComboBox->setEnabled(false);
+        ui->aircraftSelectionComboBox->setToolTip(tr("The aircraft type is defined by the file format (%1).").arg(d->fileFilter));
+    }
 }
 
 void BasicFlightImportDialog::initOptionUi() noexcept
@@ -198,7 +204,7 @@ void BasicFlightImportDialog::updateUi() noexcept
             }
         }
         if (ui->aircraftImportModeComboBox->count() <= CreateSeparateFlightsIndex) {
-            ui->aircraftImportModeComboBox->addItem(tr("Create separate flights"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::CreateSeparateFlights));
+            ui->aircraftImportModeComboBox->addItem(tr("Separate flights"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights));
         }
     } else if (ui->aircraftImportModeComboBox->count() == CreateSeparateFlightsIndex + 1) {
         ui->aircraftImportModeComboBox->removeItem(ui->aircraftImportModeComboBox->count() - 1);
@@ -222,7 +228,7 @@ void BasicFlightImportDialog::updateUi() noexcept
     case FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight:
         ui->aircraftImportModeComboBox->setToolTip(tr("Add all imported aircraft to newly created flight."));
         break;
-    case FlightImportPluginBaseSettings::AircraftImportMode::CreateSeparateFlights:
+    case FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights:
         ui->aircraftImportModeComboBox->setToolTip(tr("Create separate flights for each imported file."));
         break;
     }

@@ -83,7 +83,7 @@ QString SdlogImportPlugin::getFileExtension() const noexcept
 
 QString SdlogImportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("GPX exchange format (*.%1)").arg(getFileExtension());
+    return QObject::tr("Sky Dolly logbook (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> SdlogImportPlugin::createOptionWidget() const noexcept

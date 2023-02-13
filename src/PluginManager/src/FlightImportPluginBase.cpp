@@ -203,7 +203,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
                     ok = addAndStoreAircraftToCurrentFlight(filePath, std::move(importedFlightData), currentFlight,
                                                             totalFlightsStored, totalAircraftStored, continueWithDirectoryImport);
                     break;
-                case FlightImportPluginBaseSettings::AircraftImportMode::CreateSeparateFlights:
+                case FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights:
                     // Store all imported flight data into the logbook
                     ok = storeFlightData(importedFlightData, totalFlightsStored);
                     break;
@@ -229,7 +229,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
         // ... or aircraft have been added to the current flight
         emit currentFlight.aircraftStored();
     }
-    if (ok && aircraftImportMode == FlightImportPluginBaseSettings::AircraftImportMode::CreateSeparateFlights) {
+    if (ok && aircraftImportMode == FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights) {
         // Load the last imported flight into the current flight
         FlightData &flightData = importedFlightData.back();
         currentFlight.fromFlightData(std::move(flightData));
