@@ -6,6 +6,7 @@ include(CMakePrintHelpers)
 include(CheckIPOSupported)
 
 set(APP_NAME "SkyDolly")
+set(APP_PROJECT_NAME "SkyDollyProject")
 # Used to populate the Info.plist.in and SkyDolly.rc.in
 set(PROJECT_APPLICATION_NAME "Sky Dolly")
 set(PROJECT_ORGANISATION_NAME till213)
@@ -102,17 +103,12 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyDolly)
 # Tests
 add_subdirectory(${CMAKE_SOURCE_DIR}/test)
 
-qt_create_translation(QM_FILES
-    src
-    i18n/${APP_NAME}_de_DE.ts
-)
-
 # Resource (data) files
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
 include(src/Persistence/cmake/Locations.cmake)
 
-add_custom_target("SkyDollyProject")
-target_sources("SkyDollyProject"
+add_custom_target(${APP_PROJECT_NAME})
+target_sources(${APP_PROJECT_NAME}
     PRIVATE
         BUILD.md
         CHANGELOG.md
@@ -128,7 +124,6 @@ target_sources("SkyDollyProject"
         doc/LICENSE
         doc/SQL/Timelapse-Camera-Pan.sql
         doc/SQL/Flight-Analysis.sql
-        ${QM_FILES}
 )
 
 # Plugins
