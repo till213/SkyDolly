@@ -38,6 +38,64 @@ namespace
         }
         settings.endGroup();
     }
+
+    void convertToV16([[maybe_unused]] const Version &settingsVersion, QSettings &settings) noexcept
+    {
+        convertToV13(settingsVersion, settings);
+
+        // CSV import
+        settings.beginGroup("Plugins/077448de-4909-4c5e-8957-2347afee6708");
+        {
+            const bool addToFlight = settings.value("AddToAircraft").toBool();
+            if (addToFlight) {
+                // Add to current flight
+                settings.setValue("AircraftImportMode", 0);
+            } else {
+                // Generate separate flights
+                settings.setValue("AircraftImportMode", 2);
+            }
+        }
+        settings.endGroup();
+        // GPX import
+        settings.beginGroup("Plugins/13f44df3-1df6-4458-ad29-71f7b185bf3e");
+        {
+            const bool addToFlight = settings.value("AddToAircraft").toBool();
+            if (addToFlight) {
+                // Add to current flight
+                settings.setValue("AircraftImportMode", 0);
+            } else {
+                // Generate separate flights
+                settings.setValue("AircraftImportMode", 2);
+            }
+        }
+        settings.endGroup();
+        // IGC import
+        settings.beginGroup("Plugins/a1902cf0-82a8-47ed-86ee-5a15152697c7");
+        {
+            const bool addToFlight = settings.value("AddToAircraft").toBool();
+            if (addToFlight) {
+                // Add to current flight
+                settings.setValue("AircraftImportMode", 0);
+            } else {
+                // Generate separate flights
+                settings.setValue("AircraftImportMode", 2);
+            }
+        }
+        settings.endGroup();
+        // KML import
+        settings.beginGroup("Plugins/5a72c866-310d-4d84-8bd6-1baa720bc64e");
+        {
+            const bool addToFlight = settings.value("AddToAircraft").toBool();
+            if (addToFlight) {
+                // Add to current flight
+                settings.setValue("AircraftImportMode", 0);
+            } else {
+                // Generate separate flights
+                settings.setValue("AircraftImportMode", 2);
+            }
+        }
+        settings.endGroup();
+    }
 }
 
 // PUBLIC
@@ -46,6 +104,6 @@ void SettingsConverter::convertToCurrent(const Version &settingsVersion, QSettin
 {
     const Version currentVersion;
     if (settingsVersion < currentVersion) {
-        ::convertToV13(settingsVersion, settings);
+        ::convertToV16(settingsVersion, settings);
     }
 }

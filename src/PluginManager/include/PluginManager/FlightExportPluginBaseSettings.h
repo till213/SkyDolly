@@ -42,15 +42,17 @@ class PLUGINMANAGER_API FlightExportPluginBaseSettings : public QObject
 public:
     /*!
      * Defines how formation flights should be exported.
+     *
+     * These values are peristed in the application settings.
      */
     enum struct FormationExport {
         /*! Only the user aircraft is to be exported */
-        UserAircraftOnly,
+        UserAircraftOnly = 0,
         /*! All aircraft are to be exported, into one file if possible (depending on the actual file format);
             otherwise into separate files */
-        AllAircraftOneFile,
+        AllAircraftOneFile = 1,
         /*! All aircraft are to be exported, into separate files each */
-        AllAircraftSeparateFiles
+        AllAircraftSeparateFiles = 2
     };
 
     FlightExportPluginBaseSettings() noexcept;

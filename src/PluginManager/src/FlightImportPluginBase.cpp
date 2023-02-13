@@ -155,7 +155,11 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
 {
     const FlightImportPluginBaseSettings &pluginSettings = getPluginSettings();
     const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
-    const bool doAddToCurrentFlight = pluginSettings.isAddToFlightEnabled();
+    const FlightImportPluginBaseSettings::AircraftImportMode aircraftImportMode = pluginSettings.getAircraftImportMode();
+
+    if (aircraftImportMode == FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight) {
+        currentFlight.clear(true);
+    }
 
     bool ok {true};
     bool ignoreAllFailures {false};
@@ -192,12 +196,17 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
                 }
             }
             if (ok) {
-                if (doAddToCurrentFlight) {
+                switch (aircraftImportMode) {
+                case FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight:
+                    [[fallthrough]];
+                case FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight:
                     ok = addAndStoreAircraftToCurrentFlight(filePath, std::move(importedFlightData), currentFlight,
                                                             totalFlightsStored, totalAircraftStored, continueWithDirectoryImport);
-                } else {
+                    break;
+                case FlightImportPluginBaseSettings::AircraftImportMode::CreateSeparateFlights:
                     // Store all imported flight data into the logbook
                     ok = storeFlightData(importedFlightData, totalFlightsStored);
+                    break;
                 }
             }
             d->file.close();
@@ -221,7 +230,8 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
     if (totalAircraftStored > 0) {
         emit currentFlight.aircraftStored();
     }
-    if (ok && !doAddToCurrentFlight) {
+    if (ok && aircraftImportMode == FlightImportPluginBaseSettings::AircraftImportMode::CreateSeparateFlights) {
+        // Load the last imported flight into the current flight
         FlightData &flightData = importedFlightData.back();
         currentFlight.fromFlightData(std::move(flightData));
     }
