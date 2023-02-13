@@ -74,7 +74,7 @@ Flight::Flight(QObject *parent) noexcept
 
 Flight::~Flight() = default;
 
-void Flight::fromFlightData(FlightData flightData) noexcept
+void Flight::fromFlightData(FlightData &&flightData) noexcept
 {
     d->flightData = std::move(flightData);
     emit flightRestored(d->flightData.id);

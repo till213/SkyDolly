@@ -283,12 +283,13 @@ void FormationWidget::initTimeOffsetUi() noexcept
 void FormationWidget::frenchConnection() noexcept
 {
     // Logbook
-    const Logbook &logbook = Logbook::getInstance();
     connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &FormationWidget::updateUi);
 
     // Flight
     Flight &flight = Logbook::getInstance().getCurrentFlight();
+    connect(&flight, &Flight::flightRestored,
+            this, &FormationWidget::updateUi);
     connect(&flight, &Flight::userAircraftChanged,
             this, &FormationWidget::onUserAircraftChanged);
     connect(&flight, &Flight::aircraftAdded,

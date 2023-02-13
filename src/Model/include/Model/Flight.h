@@ -63,7 +63,7 @@ public:
      *        the FlightData to set
      * \sa flightRestored
      */
-    void fromFlightData(FlightData flightData) noexcept;
+    void fromFlightData(FlightData &&flightData) noexcept;
     FlightData &getFlightData() const noexcept;
 
     std::int64_t getId() const noexcept;

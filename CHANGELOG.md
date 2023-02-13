@@ -8,6 +8,12 @@
   
 ### Improvements
 - All export plugins: only the supported resampling and formation export options (as repported by the given plugin) are now selectable
+- All import plugins:
+  * The "Add to current flight" checkbox has been replaced by an aircraft import mode combobox:
+    - **Add to current flight**: all imported aircraft are added to the currently loaded flight
+    - **Add to new flight**: all imported aircraft are added to a flight that is newly created
+    - **Separate flights**: a new flight is created for each imported file
+  * The aircraft type selection combobox is now disabled for those formats (such as the new Sky Dolly logbook) that already specify the aircraft type
 - The Simulation Variables dialog now also shows the aircraft position as decimal latitude & longitude values ([#89](https://github.com/till213/SkyDolly/issues/89))
 
 ### Bug Fixes
