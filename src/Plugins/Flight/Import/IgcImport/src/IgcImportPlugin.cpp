@@ -93,29 +93,7 @@ IgcImportPlugin::IgcImportPlugin() noexcept
 
 IgcImportPlugin::~IgcImportPlugin() = default;
 
-// PROTECTED
-
-FlightImportPluginBaseSettings &IgcImportPlugin::getPluginSettings() const noexcept
-{
-    return d->pluginSettings;
-}
-
-QString IgcImportPlugin::getFileExtension() const noexcept
-{
-    return IgcImportPluginPrivate::FileExtension;
-}
-
-QString IgcImportPlugin::getFileFilter() const noexcept
-{
-    return QObject::tr("International gliding commission (*.%1)").arg(getFileExtension());
-}
-
-std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept
-{
-    return std::make_unique<IgcImportOptionWidget>(d->pluginSettings);
-}
-
-std::vector<FlightData> IgcImportPlugin::importFlights(QIODevice &io, bool &ok) noexcept
+std::vector<FlightData> IgcImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
 {
     std::vector<FlightData> flights;
     ok = d->igcParser.parse(io);
@@ -186,7 +164,7 @@ std::vector<FlightData> IgcImportPlugin::importFlights(QIODevice &io, bool &ok) 
                     engine.upsertLast(engineData);
                     engineState = loudNoise ? IgcImportPluginPrivate::EngineState::Running : IgcImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
-                    qDebug() << "IgcImportPlugin::readFile: engine INITIALISED, current ENL:" << enl << " threshold:" << enlThresholdNorm << "engine RUNNING:" << loudNoise;
+                    qDebug() << "IgcImportPlugin::importSelectedFlights: engine INITIALISED, current ENL:" << enl << " threshold:" << enlThresholdNorm << "engine RUNNING:" << loudNoise;
 #endif
                     break;
 
@@ -208,7 +186,7 @@ std::vector<FlightData> IgcImportPlugin::importFlights(QIODevice &io, bool &ok) 
                         engine.upsertLast(engineData);
                         engineState = IgcImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
-                        qDebug() << "IgcImportPlugin::readFile: engine now SHUTDOWN, current ENL:" << enl << " threshold:" << enlThresholdNorm;
+                        qDebug() << "IgcImportPlugin::importSelectedFlights: engine now SHUTDOWN, current ENL:" << enl << " threshold:" << enlThresholdNorm;
 #endif
                     }
                     break;
@@ -231,7 +209,7 @@ std::vector<FlightData> IgcImportPlugin::importFlights(QIODevice &io, bool &ok) 
                         engine.upsertLast(engineData);
                         engineState = IgcImportPluginPrivate::EngineState::Running;
 #ifdef DEBUG
-                        qDebug() << "IgcImportPlugin::readFile: engine now RUNNING, current ENL:" << enl << " threshold:" << enlThresholdNorm;
+                        qDebug() << "IgcImportPlugin::importSelectedFlights: engine now RUNNING, current ENL:" << enl << " threshold:" << enlThresholdNorm;
 #endif
                     }
                     break;
@@ -247,6 +225,28 @@ std::vector<FlightData> IgcImportPlugin::importFlights(QIODevice &io, bool &ok) 
         flights.push_back(std::move(flightData));
     }
     return flights;
+}
+
+// PROTECTED
+
+FlightImportPluginBaseSettings &IgcImportPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
+
+QString IgcImportPlugin::getFileExtension() const noexcept
+{
+    return IgcImportPluginPrivate::FileExtension;
+}
+
+QString IgcImportPlugin::getFileFilter() const noexcept
+{
+    return QObject::tr("International gliding commission (*.%1)").arg(getFileExtension());
+}
+
+std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept
+{
+    return std::make_unique<IgcImportOptionWidget>(d->pluginSettings);
 }
 
 FlightAugmentation::Procedures IgcImportPlugin::getAugmentationProcedures() const noexcept

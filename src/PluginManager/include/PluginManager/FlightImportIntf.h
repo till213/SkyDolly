@@ -25,11 +25,16 @@
 #ifndef FLIGHTIMPORTINTF_H
 #define FLIGHTIMPORTINTF_H
 
+#include <vector>
+
 #include <QtPlugin>
+
+class QIODevice;
 
 #include "PluginIntf.h"
 
 class Flight;
+struct FlightData;
 class FlightService;
 
 class FlightImportIntf : public PluginIntf
@@ -46,6 +51,19 @@ public:
      *         imported)
      */
     virtual bool importFlights(Flight &currentFlight) noexcept = 0;
+
+    /*!
+     * Imports the flight data from the given \c io data source and returns the list
+     * of imported FlightData.
+     *
+     * \param io
+     *        the IO device to read from
+     * \param ok
+     *        is set to \c true in case of success; \c false else (a parse/read error occured
+     *        or otherwise no data imported)
+     * \return the list of imported flight data
+     */
+    virtual std::vector<FlightData> importSelectedFlights(QIODevice &io, bool &ok) noexcept = 0;
 };
 
 #define FLIGHT_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightImportInterface/1.0"

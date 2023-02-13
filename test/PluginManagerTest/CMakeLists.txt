@@ -1,8 +1,8 @@
 find_package(Qt6Test REQUIRED)
 
-## SkySearch Test ##
+## CSV Flight Import Test ##
 
-set(TEST_NAME "SkySearchTest")
+set(TEST_NAME "CsvFlightImportTest")
 
 qt_add_executable(${TEST_NAME})
 
@@ -15,6 +15,7 @@ set(KERNELTEST_LIBS
     Qt6::Test
     Sky::Kernel
     Sky::Model
+    Sky::PluginManager
 )
 
 target_link_libraries(${TEST_NAME}

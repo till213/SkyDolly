@@ -32,6 +32,7 @@
 #include <QObject>
 #include <QMap>
 
+class QIODevice;
 class QUuid;
 class QWidget;
 class QString;
@@ -40,6 +41,7 @@ class QString;
 
 class SkyConnectIntf;
 class Flight;
+struct FlightData;
 struct PluginManagerPrivate;
 
 class PLUGINMANAGER_API PluginManager final : public QObject
@@ -65,7 +67,8 @@ public:
     std::vector<Handle> initialiseLocationImportPlugins() noexcept;
     std::vector<Handle> initialiseLocationExportPlugins() noexcept;
 
-    bool importFlight(const QUuid &pluginUuid, Flight &flight) const noexcept;
+    bool importFlights(const QUuid &pluginUuid, Flight &flight) const noexcept;
+    std::vector<FlightData> importSelectedFlights(const QUuid &pluginUuid, QIODevice &io, bool &ok) const noexcept;
     bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;
     bool importLocations(const QUuid &pluginUuid) const noexcept;
     bool exportLocations(const QUuid &pluginUuid) const noexcept;

@@ -1697,7 +1697,7 @@ void MainWindow::onFlightImport(QAction *action) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const QUuid pluginUuid = action->data().toUuid();
-    const bool ok = PluginManager::getInstance().importFlight(pluginUuid, flight);
+    const bool ok = PluginManager::getInstance().importFlights(pluginUuid, flight);
     if (ok) {
         updateUi();
         SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();

@@ -92,18 +92,6 @@ protected:
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
 
-    /*!
-     * Imports the flight data from the given \c io datasource and returns the list.
-     *
-     * \param io
-     *        the IO device to read from
-     * \param ok
-     *        is set to \c true in case of success; \c false else (a parse/read error occured
-     *        or otherwise no data imported)
-     * \return the list of imported flight data
-     */
-    virtual std::vector<FlightData> importFlights(QIODevice &io, bool &ok) noexcept = 0;
-
     virtual FlightAugmentation::Procedures getAugmentationProcedures() const noexcept = 0;
     virtual FlightAugmentation::Aspects getAugmentationAspects() const noexcept = 0;
 

@@ -100,9 +100,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 # Application
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyDolly)
 
-# Tests
-add_subdirectory(${CMAKE_SOURCE_DIR}/test)
-
 # Resource (data) files
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
 include(src/Persistence/cmake/Locations.cmake)
@@ -131,3 +128,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugins)
 
 # Documentation
 add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
+
+# Tests
+add_subdirectory(${CMAKE_SOURCE_DIR}/test)
