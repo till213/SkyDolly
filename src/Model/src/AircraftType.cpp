@@ -38,3 +38,8 @@ void AircraftType::clear() noexcept
 {
     *this = AircraftType();
 }
+
+bool AircraftType::isNull() const noexcept
+{
+    return type.isNull();
+}

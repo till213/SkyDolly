@@ -122,7 +122,7 @@ FlightService &AbstractModule::getFlightService() const noexcept
 
 void AbstractModule::onRecordingStopped() noexcept
 {
-    d->flightService->store(Logbook::getInstance().getCurrentFlight());
+    d->flightService->storeFlight(Logbook::getInstance().getCurrentFlight());
 }
 
 // PRIVATE

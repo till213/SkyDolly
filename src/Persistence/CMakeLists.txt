@@ -13,6 +13,7 @@ target_sources(${LIBRARY_NAME}
         include/Persistence/PersistenceManager.h src/PersistenceManager.cpp
         include/Persistence/FlightSelector.h
         include/Persistence/LocationSelector.h
+        include/Persistence/Connection.h
         include/Persistence/Metadata.h
         include/Persistence/Migration.h
         include/Persistence/PersistedEnumerationItem.h src/PersistedEnumerationItem.cpp        

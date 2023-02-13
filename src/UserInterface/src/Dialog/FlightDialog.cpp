@@ -53,19 +53,15 @@
 
 struct FlightDialogPrivate
 {
-    FlightDialogPrivate(FlightService &flightService) noexcept
-        : flightService(flightService)
-    {}
-
-    FlightService &flightService;
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
     QShortcut *closeDialogShortcut {nullptr};
 };
 
 // PUBLIC
 
-FlightDialog::FlightDialog(FlightService &flightService, QWidget *parent) noexcept :
+FlightDialog::FlightDialog(QWidget *parent) noexcept :
     QDialog(parent),
-    d(std::make_unique<FlightDialogPrivate>(flightService)),
+    d(std::make_unique<FlightDialogPrivate>()),
     ui(std::make_unique<Ui::FlightDialog>())
 {
     ui->setupUi(this);
@@ -97,7 +93,7 @@ void FlightDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    FlightDescriptionWidget *flightDescriptionWidget = new FlightDescriptionWidget(d->flightService, this);
+    FlightDescriptionWidget *flightDescriptionWidget = new FlightDescriptionWidget(this);
     ui->flightTab->addTab(flightDescriptionWidget, tr("&Description"));
 
     AircraftInfoWidget *aircraftInfoWidget = new AircraftInfoWidget(this);

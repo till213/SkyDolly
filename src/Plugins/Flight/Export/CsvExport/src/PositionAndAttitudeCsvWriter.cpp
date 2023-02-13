@@ -36,7 +36,7 @@
 #include <Kernel/Unit.h>
 #include <Kernel/Enum.h>
 #include <Kernel/SampleRate.h>
-#include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
@@ -75,7 +75,7 @@ PositionAndAttitudeCsvWriter::PositionAndAttitudeCsvWriter(const CsvExportSettin
 
 PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() = default;
 
-bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool PositionAndAttitudeCsvWriter::write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     QString csv = QString(::TimestampColumn % Csv::CommaSep %
                           ::UtcColumn % Csv::CommaSep %
@@ -90,7 +90,7 @@ bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &a
 
     bool ok = io.write(csv.toUtf8());
     if (ok) {
-        const QDateTime startDateTimeUtc = flight.getAircraftStartZuluTime(aircraft);
+        const QDateTime startDateTimeUtc = flightData.getAircraftStartZuluTime(aircraft);
         const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
         for (const PositionData &positionData : interpolatedPositionData) {
             const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);

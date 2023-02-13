@@ -42,8 +42,8 @@ class QString;
 
 class DatabaseService;
 class FlightService;
-class FlightDate;
-class FlightSummary;
+struct FlightDate;
+struct FlightSummary;
 struct TemplateWidgetPrivate;
 
 namespace Ui {

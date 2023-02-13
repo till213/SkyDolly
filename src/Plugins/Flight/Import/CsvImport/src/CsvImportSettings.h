@@ -41,6 +41,8 @@ class CsvImportSettings : public FlightImportPluginBaseSettings
 public:
     /*!
      * CSV format (flavour).
+     *
+     * These values are peristed in the application settings.
      */
     enum struct Format {
         SkyDolly = 0,
@@ -49,7 +51,13 @@ public:
     };
 
     CsvImportSettings() noexcept;
+    CsvImportSettings(const CsvImportSettings &rhs) = delete;
+    CsvImportSettings(CsvImportSettings &&rhs) = delete;
+    CsvImportSettings &operator=(const CsvImportSettings &rhs) = delete;
+    CsvImportSettings &operator=(CsvImportSettings &&rhs) = delete;
     ~CsvImportSettings() override;
+
+    bool requiresAircraftSelection() const noexcept override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;

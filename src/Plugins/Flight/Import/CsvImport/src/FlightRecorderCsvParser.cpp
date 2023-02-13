@@ -59,9 +59,9 @@
 #include <PluginManager/Csv.h>
 #include "FlightRecorderCsvParser.h"
 
-namespace
+namespace Header
 {
-    constexpr const char *FlightRecorderCsvHeader {"Milliseconds,Latitude,Longitude,Altitude"};
+    constexpr const char *FlightRecorderCsv {"Milliseconds,Latitude,Longitude,Altitude"};
 
     // Column names (also add them to FlightRecorderCsvParserPrivate::HeaderNames, for validation)
 
@@ -128,57 +128,55 @@ struct FlightRecorderCsvParserPrivate
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
-    Flight *flight {nullptr};
     QDateTime firstDateTimeUtc;
     std::int64_t timestampDelta {0};
     CsvParser::Headers headers;
 
     static constexpr std::array<const char *, 43> HeaderNames {
-                ::Milliseconds,
-                ::Latitude,
-                ::Longitude,
-                ::Altitude,
-                ::Pitch,
-                ::Bank,
-                ::TrueHeading,
-                ::VelocityBodyX,
-                ::VelocityBodyY,
-                ::VelocityBodyZ,
-                ::RotationVelocityBodyX,
-                ::RotationVelocityBodyY,
-                ::RotationVelocityBodyZ,
-                ::ThrottleLeverPosition1,
-                ::ThrottleLeverPosition2,
-                ::ThrottleLeverPosition3,
-                ::ThrottleLeverPosition4,
-                ::PropellerLeverPosition1,
-                ::PropellerLeverPosition2,
-                ::PropellerLeverPosition3,
-                ::PropellerLeverPosition4,
-                ::RudderPosition,
-                ::ElevatorPosition,
-                ::AileronPosition,
-                ::LeadingEdgeFlapsLeftPercent,
-                ::LeadingEdgeFlapsRightPercent,
-                ::TrailingEdgeFlapsLeftPercent,
-                ::TrailingEdgeFlapsRightPercent,
-                ::SpoilerHandlePosition,
-                ::FlapsHandleIndex,
-                ::BrakeLeftPosition,
-                ::BrakeRightPosition,
-                ::WaterRudderHandlePosition,
-                ::GearHandlePosition,
-                ::LightTaxi,
-                ::LightLanding,
-                ::LightStrobe,
-                ::LightBeacon,
-                ::LightNav,
-                ::LightWing,
-                ::LightLogo,
-                ::LightRecognition,
-                ::LightCabin
+                Header::Milliseconds,
+                Header::Latitude,
+                Header::Longitude,
+                Header::Altitude,
+                Header::Pitch,
+                Header::Bank,
+                Header::TrueHeading,
+                Header::VelocityBodyX,
+                Header::VelocityBodyY,
+                Header::VelocityBodyZ,
+                Header::RotationVelocityBodyX,
+                Header::RotationVelocityBodyY,
+                Header::RotationVelocityBodyZ,
+                Header::ThrottleLeverPosition1,
+                Header::ThrottleLeverPosition2,
+                Header::ThrottleLeverPosition3,
+                Header::ThrottleLeverPosition4,
+                Header::PropellerLeverPosition1,
+                Header::PropellerLeverPosition2,
+                Header::PropellerLeverPosition3,
+                Header::PropellerLeverPosition4,
+                Header::RudderPosition,
+                Header::ElevatorPosition,
+                Header::AileronPosition,
+                Header::LeadingEdgeFlapsLeftPercent,
+                Header::LeadingEdgeFlapsRightPercent,
+                Header::TrailingEdgeFlapsLeftPercent,
+                Header::TrailingEdgeFlapsRightPercent,
+                Header::SpoilerHandlePosition,
+                Header::FlapsHandleIndex,
+                Header::BrakeLeftPosition,
+                Header::BrakeRightPosition,
+                Header::WaterRudderHandlePosition,
+                Header::GearHandlePosition,
+                Header::LightTaxi,
+                Header::LightLanding,
+                Header::LightStrobe,
+                Header::LightBeacon,
+                Header::LightNav,
+                Header::LightWing,
+                Header::LightLogo,
+                Header::LightRecognition,
+                Header::LightCabin
     };
-    static constexpr int InvalidIdx {-1};
 };
 
 // PUBLIC
@@ -189,32 +187,25 @@ FlightRecorderCsvParser::FlightRecorderCsvParser() noexcept
 
 FlightRecorderCsvParser::~FlightRecorderCsvParser() = default;
 
-bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
+bool FlightRecorderCsvParser::parse(QIODevice &io, FlightData &flightData) noexcept
 {
-    d->flight = &flight;
-    QFile *file = qobject_cast<QFile *>(&io);
-    firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
-    flightNumber = QString();
-
     CsvParser csvParser;
     QTextStream textStream(&io);
     textStream.setEncoding(QStringConverter::Utf8);
-    CsvParser::Rows rows = csvParser.parse(textStream, ::FlightRecorderCsvHeader);
+    CsvParser::Rows rows = csvParser.parse(textStream, Header::FlightRecorderCsv);
     d->headers = csvParser.getHeaders();
     bool ok = validateHeaders();
     if (ok) {
         ok = CsvParser::validate(rows, d->headers.size());
     }
     if (ok) {
-        Aircraft &aircraft = flight.getUserAircraft();
-
+        Aircraft aircraft;
         aircraft.getPosition().reserve(rows.size());
         aircraft.getEngine().reserve(rows.size());
         aircraft.getPrimaryFlightControl().reserve(rows.size());
         aircraft.getSecondaryFlightControl().reserve(rows.size());
         aircraft.getAircraftHandle().reserve(rows.size());
         aircraft.getLight().reserve(rows.size());
-
 #ifdef DEBUG
         qDebug() << "parse::parse, total CSV rows:" << rows.size() << "\n"
                  << "Position size:" << aircraft.getPosition().capacity() << "\n"
@@ -224,27 +215,25 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
                  << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
                  << "Light size:" << aircraft.getLight().capacity() << "\n";
 #endif
+       flightData.aircraft.push_back(std::move(aircraft));
 
         bool firstRow {true};
         for (const auto &row : rows) {
-
             if (firstRow) {
                 // The first position timestamp must be 0, so shift all timestamps by
                 // the timestamp delta, derived from the first timestamp
                 // (that is usually 0 already)
-                d->timestampDelta = row.at(d->headers.at(::Milliseconds)).toLongLong(&ok);
+                d->timestampDelta = row.at(d->headers.at(Header::Milliseconds)).toLongLong(&ok);
                 firstRow = false;
             }
             if (ok) {
-                ok = parseRow(row);
+                ok = parseRow(row, flightData);
             } else {
                 break;
             }
         }
     }
 
-    // We are done with the export
-    d->flight = nullptr;
     return ok;
 }
 
@@ -262,9 +251,9 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, 
      return ok;
  }
 
-bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
+bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &flightData) noexcept
 {
-    Aircraft &aircraft = d->flight->getUserAircraft();
+    Aircraft &aircraft = flightData.addUserAircraft();
     Position &position = aircraft.getPosition();
     Engine &engine = aircraft.getEngine();
     PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControl();
@@ -275,35 +264,35 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     // Position
     PositionData positionData;
     bool ok {true};
-    const std::int64_t timestamp = row.at(d->headers.at(::Milliseconds)).toLongLong(&ok) - d->timestampDelta;
+    const std::int64_t timestamp = row.at(d->headers.at(Header::Milliseconds)).toLongLong(&ok) - d->timestampDelta;
     if (ok) {
         positionData.timestamp = timestamp;
-        positionData.latitude = row.at(d->headers.at(::Latitude)).toDouble(&ok);
+        positionData.latitude = row.at(d->headers.at(Header::Latitude)).toDouble(&ok);
     }
     if (ok) {
-        positionData.longitude = row.at(d->headers.at(::Longitude)).toDouble(&ok);
+        positionData.longitude = row.at(d->headers.at(Header::Longitude)).toDouble(&ok);
     }
     if (ok) {
-        positionData.altitude = row.at(d->headers.at(::Altitude)).toDouble(&ok);
+        positionData.altitude = row.at(d->headers.at(Header::Altitude)).toDouble(&ok);
         positionData.indicatedAltitude = positionData.altitude;
     }
     if (ok) {
-        positionData.pitch = row.at(d->headers.at(::Pitch)).toDouble(&ok);
+        positionData.pitch = row.at(d->headers.at(Header::Pitch)).toDouble(&ok);
     }
     if (ok) {
-        positionData.bank = row.at(d->headers.at(::Bank)).toDouble(&ok);
+        positionData.bank = row.at(d->headers.at(Header::Bank)).toDouble(&ok);
     }
     if (ok) {
-        positionData.trueHeading = row.at(d->headers.at(::TrueHeading)).toDouble(&ok);
+        positionData.trueHeading = row.at(d->headers.at(Header::TrueHeading)).toDouble(&ok);
     }
     if (ok) {
-        positionData.velocityBodyX = row.at(d->headers.at(::VelocityBodyX)).toDouble(&ok);
+        positionData.velocityBodyX = row.at(d->headers.at(Header::VelocityBodyX)).toDouble(&ok);
     }
     if (ok) {
-        positionData.velocityBodyY = row.at(d->headers.at(::VelocityBodyY)).toDouble(&ok);
+        positionData.velocityBodyY = row.at(d->headers.at(Header::VelocityBodyY)).toDouble(&ok);
     }
     if (ok) {
-        positionData.velocityBodyZ = row.at(d->headers.at(::VelocityBodyZ)).toDouble(&ok);
+        positionData.velocityBodyZ = row.at(d->headers.at(Header::VelocityBodyZ)).toDouble(&ok);
     }
 
     if (ok) {
@@ -318,16 +307,16 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double throttleLeverPosition3 {0.0};
     double throttleLeverPosition4 {0.0};
     if (ok) {
-        throttleLeverPosition1 = row.at(d->headers.at(::ThrottleLeverPosition1)).toDouble(&ok);
+        throttleLeverPosition1 = row.at(d->headers.at(Header::ThrottleLeverPosition1)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition2 = row.at(d->headers.at(::ThrottleLeverPosition2)).toDouble(&ok);
+        throttleLeverPosition2 = row.at(d->headers.at(Header::ThrottleLeverPosition2)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition3 = row.at(d->headers.at(::ThrottleLeverPosition3)).toDouble(&ok);
+        throttleLeverPosition3 = row.at(d->headers.at(Header::ThrottleLeverPosition3)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition4 = row.at(d->headers.at(::ThrottleLeverPosition4)).toDouble(&ok);
+        throttleLeverPosition4 = row.at(d->headers.at(Header::ThrottleLeverPosition4)).toDouble(&ok);
     }
     if (ok) {
         engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(throttleLeverPosition1);
@@ -344,16 +333,16 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double propellerLeverPosition3 {0.0};
     double propellerLeverPosition4 {0.0};
     if (ok) {
-        propellerLeverPosition1 = row.at(d->headers.at(::PropellerLeverPosition1)).toDouble(&ok);
+        propellerLeverPosition1 = row.at(d->headers.at(Header::PropellerLeverPosition1)).toDouble(&ok);
     }
     if (ok) {
-        propellerLeverPosition2 = row.at(d->headers.at(::PropellerLeverPosition2)).toDouble(&ok);
+        propellerLeverPosition2 = row.at(d->headers.at(Header::PropellerLeverPosition2)).toDouble(&ok);
     }
     if (ok) {
-        propellerLeverPosition3 = row.at(d->headers.at(::PropellerLeverPosition3)).toDouble(&ok);
+        propellerLeverPosition3 = row.at(d->headers.at(Header::PropellerLeverPosition3)).toDouble(&ok);
     }
     if (ok) {
-        propellerLeverPosition4 = row.at(d->headers.at(::PropellerLeverPosition4)).toDouble(&ok);
+        propellerLeverPosition4 = row.at(d->headers.at(Header::PropellerLeverPosition4)).toDouble(&ok);
     }
     if (ok) {
         engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(propellerLeverPosition1);
@@ -373,13 +362,13 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double elevatorPosition {0.0};
     double aileronPosition {0.0};
     if (ok) {
-        rudderPosition = row.at(d->headers.at(::RudderPosition)).toDouble(&ok);
+        rudderPosition = row.at(d->headers.at(Header::RudderPosition)).toDouble(&ok);
     }
     if (ok) {
-        elevatorPosition = row.at(d->headers.at(::ElevatorPosition)).toDouble(&ok);
+        elevatorPosition = row.at(d->headers.at(Header::ElevatorPosition)).toDouble(&ok);
     }
     if (ok) {
-        aileronPosition = row.at(d->headers.at(::AileronPosition)).toDouble(&ok);
+        aileronPosition = row.at(d->headers.at(Header::AileronPosition)).toDouble(&ok);
     }
     if (ok) {
         primaryFlightControlData.rudderPosition = SkyMath::fromNormalisedPosition(rudderPosition);
@@ -398,22 +387,22 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double rightTrailingEdgeFlapsPosition {0.0};
     double spoilerHandlePositionPercent {0.0};
     if (ok) {
-        leftLeadingEdgeFlapsPosition = row.at(d->headers.at(::LeadingEdgeFlapsLeftPercent)).toDouble(&ok);
+        leftLeadingEdgeFlapsPosition = row.at(d->headers.at(Header::LeadingEdgeFlapsLeftPercent)).toDouble(&ok);
     }
     if (ok) {
-        rightLeadingEdgeFlapsPosition = row.at(d->headers.at(::LeadingEdgeFlapsRightPercent)).toDouble(&ok);
+        rightLeadingEdgeFlapsPosition = row.at(d->headers.at(Header::LeadingEdgeFlapsRightPercent)).toDouble(&ok);
     }
     if (ok) {
-        leftTrailingEdgeFlapsPosition = row.at(d->headers.at(::TrailingEdgeFlapsLeftPercent)).toDouble(&ok);
+        leftTrailingEdgeFlapsPosition = row.at(d->headers.at(Header::TrailingEdgeFlapsLeftPercent)).toDouble(&ok);
     }
     if (ok) {
-        rightTrailingEdgeFlapsPosition = row.at(d->headers.at(::TrailingEdgeFlapsRightPercent)).toDouble(&ok);
+        rightTrailingEdgeFlapsPosition = row.at(d->headers.at(Header::TrailingEdgeFlapsRightPercent)).toDouble(&ok);
     }
     if (ok) {
-        spoilerHandlePositionPercent = row.at(d->headers.at(::SpoilerHandlePosition)).toDouble(&ok);
+        spoilerHandlePositionPercent = row.at(d->headers.at(Header::SpoilerHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(row.at(d->headers.at(::FlapsHandleIndex)).toInt(&ok));
+        secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(row.at(d->headers.at(Header::FlapsHandleIndex)).toInt(&ok));
     }
     if (ok) {
         secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(leftLeadingEdgeFlapsPosition);
@@ -432,16 +421,16 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     double brakeRightPosition {0.0};
     double waterRudderHandlePosition {0.0};
     if (ok) {
-        brakeLeftPosition = row.at(d->headers.at(::BrakeLeftPosition)).toDouble(&ok);
+        brakeLeftPosition = row.at(d->headers.at(Header::BrakeLeftPosition)).toDouble(&ok);
     }
     if (ok) {
-        brakeRightPosition = row.at(d->headers.at(::BrakeRightPosition)).toDouble(&ok);
+        brakeRightPosition = row.at(d->headers.at(Header::BrakeRightPosition)).toDouble(&ok);
     }
     if (ok) {
-        waterRudderHandlePosition = row.at(d->headers.at(::WaterRudderHandlePosition)).toDouble(&ok);
+        waterRudderHandlePosition = row.at(d->headers.at(Header::WaterRudderHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        aircraftHandleData.gearHandlePosition = row.at(d->headers.at(::GearHandlePosition)).toInt(&ok) != 0;
+        aircraftHandleData.gearHandlePosition = row.at(d->headers.at(Header::GearHandlePosition)).toInt(&ok) != 0;
     }
     if (ok) {
         aircraftHandleData.brakeLeftPosition = SkyMath::fromNormalisedPosition(brakeLeftPosition);
@@ -467,31 +456,31 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row) noexcept
     bool lightRecognition {false};
     bool lightCabin {false};
     if (ok) {
-        lightTaxi = row.at(d->headers.at(::LightTaxi)).toInt(&ok) != 0;
+        lightTaxi = row.at(d->headers.at(Header::LightTaxi)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightLanding = row.at(d->headers.at(::LightLanding)).toInt(&ok) != 0;
+        lightLanding = row.at(d->headers.at(Header::LightLanding)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightStrobe = row.at(d->headers.at(::LightStrobe)).toInt(&ok) != 0;
+        lightStrobe = row.at(d->headers.at(Header::LightStrobe)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightBeacon = row.at(d->headers.at(::LightBeacon)).toInt(&ok) != 0;
+        lightBeacon = row.at(d->headers.at(Header::LightBeacon)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightNav = row.at(d->headers.at(::LightNav)).toInt(&ok) != 0;
+        lightNav = row.at(d->headers.at(Header::LightNav)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightWing = row.at(d->headers.at(::LightWing)).toInt(&ok) != 0;
+        lightWing = row.at(d->headers.at(Header::LightWing)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightLogo = row.at(d->headers.at(::LightLogo)).toInt(&ok) != 0;
+        lightLogo = row.at(d->headers.at(Header::LightLogo)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightRecognition = row.at(d->headers.at(::LightRecognition)).toInt(&ok) != 0;
+        lightRecognition = row.at(d->headers.at(Header::LightRecognition)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightCabin = row.at(d->headers.at(::LightCabin)).toInt(&ok) != 0;
+        lightCabin = row.at(d->headers.at(Header::LightCabin)).toInt(&ok) != 0;
     }
     if (ok) {
         lightData.lightStates.setFlag(SimType::LightState::Taxi, lightTaxi);

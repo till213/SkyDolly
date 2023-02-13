@@ -72,6 +72,12 @@ public:
      */
     bool connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept;
 
+    /*!
+     * Disconnects with the application logbook and also removes the default database
+     * connection.
+     *
+     * \sa Const#DefaultConnectionName
+     */
     void disconnectFromLogbook() noexcept;
     bool isConnected() const noexcept;
     QString getLogbookPath() const noexcept;

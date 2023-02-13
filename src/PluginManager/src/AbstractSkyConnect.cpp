@@ -38,6 +38,7 @@
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
@@ -556,7 +557,7 @@ void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previo
         if (userAircraft.getId() != Const::InvalidId) {
             removeAiObject(userAircraft.getId());
         }
-        if (previousUserAircraftIndex != Flight::InvalidAircraftIndex) {
+        if (previousUserAircraftIndex != Const::InvalidIndex) {
             const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
             addAiObject(aircraft);
         }

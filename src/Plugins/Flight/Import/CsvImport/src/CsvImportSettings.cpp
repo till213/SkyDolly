@@ -53,6 +53,11 @@ CsvImportSettings::CsvImportSettings() noexcept
 
 CsvImportSettings::~CsvImportSettings() = default;
 
+bool CsvImportSettings::requiresAircraftSelection() const noexcept
+{
+    return true;
+}
+
 CsvImportSettings::Format CsvImportSettings::getFormat() const noexcept
 {
     return d->format;

@@ -26,12 +26,13 @@
 #define FLIGHTIMPORTPLUGINBASE_H
 
 #include <memory>
+#include <vector>
 
 #include <QObject>
 #include <QtPlugin>
 #include <QStringView>
 
-class QFile;
+class QIODevice;
 
 #include <Kernel/Settings.h>
 #include <Flight/FlightAugmentation.h>
@@ -41,6 +42,7 @@ class QFile;
 
 class FlightService;
 class Flight;
+struct FlightData;
 struct AircraftType;
 struct AircraftInfo;
 struct FlightCondition;
@@ -79,7 +81,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    bool importFlight(FlightService &flightService, Flight &flight) noexcept final;
+    bool importFlights(Flight &flight) noexcept final;
 
 protected:
     AircraftType &getSelectedAircraftType() const noexcept;
@@ -89,15 +91,21 @@ protected:
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-    virtual bool importFlight(QFile &file, Flight &flight) noexcept = 0;
+
+    /*!
+     * Imports the flight data from the given \c io datasource and returns the list.
+     *
+     * \param io
+     *        the IO device to read from
+     * \param ok
+     *        is set to \c true in case of success; \c false else (a parse/read error occured
+     *        or otherwise no data imported)
+     * \return the list of imported flight data
+     */
+    virtual std::vector<FlightData> importFlights(QIODevice &io, bool &ok) noexcept = 0;
 
     virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;
     virtual FlightAugmentation::Aspects getAspects() const noexcept = 0;
-    virtual QDateTime getStartDateTimeUtc() noexcept = 0;
-    virtual QString getTitle() const noexcept = 0;
-    virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept = 0;
-    virtual void updateExtendedFlightInfo(Flight &flight) noexcept = 0;
-    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept = 0;
 
 private:
     const std::unique_ptr<FlightImportPluginBasePrivate> d;
@@ -106,10 +114,20 @@ private:
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 
-    bool importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept;
-    void updateAircraftInfo() noexcept;
-    void updateFlightInfo() noexcept;
-    void updateFlightCondition() noexcept;
+    bool importFlights(const QStringList &filePaths, Flight &currentFlight) noexcept;
+    void enrichFlightData(std::vector<FlightData> &flightData) const noexcept;
+    void enrichFlightInfo(FlightData &flightData) const noexcept;
+    void enrichFlightCondition(FlightData &flightData) const noexcept;
+    void enrichAircraftInfo(FlightData &flightData) const noexcept;
+
+    bool augmentFlights(std::vector<FlightData> &flightData) const noexcept;
+
+    bool addAndStoreAircraftToCurrentFlight(const QString sourceFilePath, std::vector<FlightData> importedFlightData, Flight &currentFlight,
+                                            std::size_t &totalFlightsStored, std::size_t &totalAircraftStored, bool &continueWithDirectoryImport) noexcept;
+    bool storeFlightData(std::vector<FlightData> &importedFlightData, std::size_t &totalFlightsStored);
+
+    void confirmImportError(const QString &sourceFilePath, bool &ignoreFailures, bool &continueWithDirectoryImport) noexcept;
+    void confirmMultiFlightImport(const QString &sourceFilePath, std::size_t nofFlights, bool &doAdd, bool &continueWithDirectoryImport);
 };
 
 #endif // FLIGHTIMPORTPLUGINBASE_H

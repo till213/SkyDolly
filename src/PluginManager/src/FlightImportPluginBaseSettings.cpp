@@ -25,6 +25,7 @@
 #include <memory>
 #include <string_view>
 
+#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include "FlightImportPluginBaseSettings.h"
 
@@ -32,17 +33,17 @@ namespace
 {
     // Keys
     constexpr const char *ImportDirectoryEnabledKey {"ImportDirectoryEnabled"};
-    constexpr const char *AddToFlightEnabledKey {"AddToFlightEnabled"};
+    constexpr const char *AircraftImportModeKey {"AircraftImportModeKey"};
 
     // Defaults
-    constexpr bool DefaultImportDirectoryEnabled {false};
-    constexpr bool DefaultAddToFlightEnabled {false};
+    constexpr FlightImportPluginBaseSettings::AircraftImportMode DefaultAircraftImportMode {FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights};
+    constexpr bool DefaultImportDirectoryEnabled {false};    
 }
 
 struct FlightImportPluginBaseSettingsPrivate
 {
+    FlightImportPluginBaseSettings::AircraftImportMode aircraftImportMode {::DefaultAircraftImportMode};
     bool importDirectoryEnabled {::DefaultImportDirectoryEnabled};
-    bool addToFlightEnabled {::DefaultAddToFlightEnabled};
 };
 
 // PUBLIC
@@ -66,15 +67,15 @@ void FlightImportPluginBaseSettings::setImportDirectoryEnabled(bool enabled) noe
     }
 }
 
-bool FlightImportPluginBaseSettings::isAddToFlightEnabled() const noexcept
+FlightImportPluginBaseSettings::AircraftImportMode FlightImportPluginBaseSettings::getAircraftImportMode() const noexcept
 {
-    return d->addToFlightEnabled;
+    return d->aircraftImportMode;
 }
 
-void FlightImportPluginBaseSettings::setAddToFlightEnabled(bool enabled) noexcept
+void FlightImportPluginBaseSettings::setAircraftImportMode(AircraftImportMode mode) noexcept
 {
-    if (d->addToFlightEnabled != enabled) {
-        d->addToFlightEnabled = enabled;
+    if (d->aircraftImportMode != mode) {
+        d->aircraftImportMode = mode;
         emit baseSettingsChanged();
     }
 }
@@ -87,8 +88,8 @@ void FlightImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues)
     keyValue.second = d->importDirectoryEnabled;
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::AddToFlightEnabledKey;
-    keyValue.second = d->addToFlightEnabled;
+    keyValue.first = ::AircraftImportModeKey;
+    keyValue.second = Enum::underly(d->aircraftImportMode);
     keyValues.push_back(keyValue);
 
     addSettingsExtn(keyValues);
@@ -102,8 +103,8 @@ void FlightImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
     keyValue.second = ::DefaultImportDirectoryEnabled;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::AddToFlightEnabledKey;
-    keyValue.second = ::DefaultAddToFlightEnabled;
+    keyValue.first = ::AircraftImportModeKey;
+    keyValue.second = Enum::underly(::DefaultAircraftImportMode);
     keysWithDefaults.push_back(keyValue);
 
     addKeysWithDefaultsExtn(keysWithDefaults);
@@ -111,8 +112,12 @@ void FlightImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
 
 void FlightImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
+    bool ok {true};
     d->importDirectoryEnabled = valuesByKey.at(::ImportDirectoryEnabledKey).toBool();
-    d->addToFlightEnabled = valuesByKey.at(::AddToFlightEnabledKey).toBool();
+    int enumeration = valuesByKey.at(::AircraftImportModeKey).toInt(&ok);
+    if (ok) {
+        d->aircraftImportMode = static_cast<FlightImportPluginBaseSettings::AircraftImportMode >(enumeration);
+    }
     emit baseSettingsChanged();
 
     restoreSettingsExtn(valuesByKey);
@@ -121,7 +126,7 @@ void FlightImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey
 void FlightImportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
-    d->addToFlightEnabled = ::DefaultAddToFlightEnabled;
+    d->aircraftImportMode = ::DefaultAircraftImportMode;
     emit baseSettingsChanged();
 
     restoreDefaultsExtn();

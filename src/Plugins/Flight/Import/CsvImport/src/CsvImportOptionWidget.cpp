@@ -66,7 +66,7 @@ void CsvImportOptionWidget::frenchConnection() noexcept
 
 void CsvImportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem(Version::getApplicationName(), Enum::underly(CsvImportSettings::Format::SkyDolly));
+    ui->formatComboBox->addItem(Version::getApplicationName() + " (OBSOLETE)", Enum::underly(CsvImportSettings::Format::SkyDolly));
     ui->formatComboBox->addItem("FlightRadar24", Enum::underly(CsvImportSettings::Format::FlightRadar24));
     ui->formatComboBox->addItem("Flight Recorder", Enum::underly(CsvImportSettings::Format::FlightRecorder));
 }

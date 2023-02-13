@@ -29,10 +29,12 @@
 #include <QString>
 #include <QStringBuilder>
 #include <QFileDialog>
+#include <QComboBox>
 #include <QWidget>
 #include <QPushButton>
 #include <QCompleter>
 
+#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Model/Aircraft.h>
 #include <Model/AircraftType.h>
@@ -65,7 +67,7 @@ BasicFlightImportDialog::BasicFlightImportDialog(const Flight &flight, const QSt
       ui(std::make_unique<Ui::BasicFlightImportDialog>()),
       d(std::make_unique<BasicFlightImportDialogPrivate>(flight, fileFilter, pluginSettings))
 {
-    ui->setupUi(this);    
+        ui->setupUi(this);
     initUi();
     updateUi();
     frenchConnection();
@@ -122,8 +124,17 @@ void BasicFlightImportDialog::initBasicUi() noexcept
     if (!type.isEmpty()) {
         ui->aircraftSelectionComboBox->setCurrentText(type);
     }
-    ui->importDirectoryCheckBox->setChecked(d->pluginSettings.isImportDirectoryEnabled());
-    ui->addToFlightCheckBox->setChecked(d->pluginSettings.isAddToFlightEnabled());
+    // Import aircraft mode
+    ui->aircraftImportModeComboBox->addItem(tr("Add to current flight"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight));
+    ui->aircraftImportModeComboBox->addItem(tr("Add to new flight"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight));
+
+    if (d->pluginSettings.requiresAircraftSelection()) {
+        ui->aircraftSelectionComboBox->setEnabled(true);
+        ui->aircraftSelectionComboBox->setToolTip(tr("Select the aircraft type for each imported aircraft."));
+    } else {
+        ui->aircraftSelectionComboBox->setEnabled(false);
+        ui->aircraftSelectionComboBox->setToolTip(tr("The aircraft type is defined by the file format (%1).").arg(d->fileFilter));
+    }
 }
 
 void BasicFlightImportDialog::initOptionUi() noexcept
@@ -151,8 +162,8 @@ void BasicFlightImportDialog::frenchConnection() noexcept
             this, &BasicFlightImportDialog::updateUi);
     connect(ui->importDirectoryCheckBox, &QCheckBox::toggled,
             this, &BasicFlightImportDialog::onImportDirectoryChanged);
-    connect(ui->addToFlightCheckBox, &QCheckBox::toggled,
-            this, &BasicFlightImportDialog::onAddToExistingFlightChanged);
+    connect(ui->aircraftImportModeComboBox, &QComboBox::currentIndexChanged,
+            this, &BasicFlightImportDialog::onAircraftImportModeChanged);
     connect(&d->pluginSettings, &FlightImportPluginBaseSettings::baseSettingsChanged,
             this, &BasicFlightImportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
@@ -166,6 +177,7 @@ void BasicFlightImportDialog::frenchConnection() noexcept
 
 void BasicFlightImportDialog::updateUi() noexcept
 {
+    constexpr int CreateSeparateFlightsIndex = 2;
     const QString filePath = ui->pathLineEdit->text();
     QFileInfo fileInfo {filePath};
 
@@ -181,8 +193,9 @@ void BasicFlightImportDialog::updateUi() noexcept
     const bool enabled = fileExists && aircraftTypeExists;
     d->importButton->setEnabled(enabled);
 
-    if (d->pluginSettings.isImportDirectoryEnabled()) {
-        ui->importDirectoryCheckBox->setChecked(true);
+    const bool importDirectory = d->pluginSettings.isImportDirectoryEnabled();
+    ui->importDirectoryCheckBox->setChecked(importDirectory);
+    if (importDirectory) {
         const QString currentPath = ui->pathLineEdit->text();
         if (!currentPath.isEmpty()) {
             QFileInfo fileInfo {currentPath};
@@ -190,14 +203,35 @@ void BasicFlightImportDialog::updateUi() noexcept
                 ui->pathLineEdit->setText(QDir::toNativeSeparators(fileInfo.absolutePath()));
             }
         }
-        ui->addToFlightCheckBox->setText(tr("Add all aircraft to same new flight"));
-        ui->addToFlightCheckBox->setToolTip(tr("When checked then all aircraft are added to the same newly created flight. Otherwise a new flight is created for each imported file."));
-    } else {
-        ui->importDirectoryCheckBox->setChecked(false);
-        ui->addToFlightCheckBox->setText(tr("Add aircraft to current flight"));
-        ui->addToFlightCheckBox->setToolTip(tr("When checked then the imported aircraft is added to the currently loaded flight. Otherwise a new flight is created."));
+        if (ui->aircraftImportModeComboBox->count() <= CreateSeparateFlightsIndex) {
+            ui->aircraftImportModeComboBox->addItem(tr("Separate flights"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights));
+        }
+    } else if (ui->aircraftImportModeComboBox->count() == CreateSeparateFlightsIndex + 1) {
+        ui->aircraftImportModeComboBox->removeItem(ui->aircraftImportModeComboBox->count() - 1);
     }
-    ui->addToFlightCheckBox->setChecked(d->pluginSettings.isAddToFlightEnabled());
+
+    const FlightImportPluginBaseSettings::AircraftImportMode aircraftImportMode = d->pluginSettings.getAircraftImportMode();
+    const int indexCount = ui->aircraftImportModeComboBox->count();
+    int currentIndex {0};
+    while (currentIndex < indexCount &&
+           static_cast<FlightImportPluginBaseSettings::AircraftImportMode>(ui->aircraftImportModeComboBox->itemData(currentIndex).toInt()) != aircraftImportMode) {
+        ++currentIndex;
+    }
+    if (currentIndex < indexCount) {
+        ui->aircraftImportModeComboBox->setCurrentIndex(currentIndex);
+    }
+
+    switch (aircraftImportMode) {
+    case FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight:
+        ui->aircraftImportModeComboBox->setToolTip(tr("Add all imported aircraft to current flight."));
+        break;
+    case FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight:
+        ui->aircraftImportModeComboBox->setToolTip(tr("Add all imported aircraft to newly created flight."));
+        break;
+    case FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights:
+        ui->aircraftImportModeComboBox->setToolTip(tr("Create separate flights for each imported file."));
+        break;
+    }
 }
 
 void BasicFlightImportDialog::onFileSelectionChanged() noexcept
@@ -235,9 +269,9 @@ void BasicFlightImportDialog::onImportDirectoryChanged(bool enable) noexcept
     d->pluginSettings.setImportDirectoryEnabled(enable);
 }
 
-void BasicFlightImportDialog::onAddToExistingFlightChanged(bool enable) noexcept
+void BasicFlightImportDialog::onAircraftImportModeChanged() noexcept
 {
-    d->pluginSettings.setAddToFlightEnabled(enable);
+    d->pluginSettings.setAircraftImportMode(static_cast<FlightImportPluginBaseSettings::AircraftImportMode>(ui->aircraftImportModeComboBox->currentData().toInt()));
 }
 
 void BasicFlightImportDialog::onRestoreDefaults() noexcept

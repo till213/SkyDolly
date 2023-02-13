@@ -40,6 +40,20 @@ class PLUGINMANAGER_API FlightImportPluginBaseSettings : public QObject
 {
     Q_OBJECT
 public:
+    /*!
+     * Defines how aircraft are to be imported.
+     *
+     * These values are peristed in the application settings.
+     */
+    enum struct AircraftImportMode {
+        /*! All aircraft are added to the existing flight (loaded in memory). */
+        AddToCurrentFlight = 0,
+        /*! A new flight is generated and all aircraft are added to it. */
+        AddToNewFlight = 1,
+        /*! For each imported aircraft a new flight is generated. */
+        SeparateFlights  = 2
+    };
+
     FlightImportPluginBaseSettings() noexcept;
     FlightImportPluginBaseSettings(const FlightImportPluginBaseSettings &rhs) = delete;
     FlightImportPluginBaseSettings(FlightImportPluginBaseSettings &&rhs) = delete;
@@ -47,11 +61,20 @@ public:
     FlightImportPluginBaseSettings &operator=(FlightImportPluginBaseSettings &&rhs) = delete;
     ~FlightImportPluginBaseSettings() override;
 
+    /*!
+     * Returns whether the plugin requires the selection of the aircraft type to be
+     * imported, that is the import format does not specify an aircraft type.
+     *
+     * \return \c true if the \c plugin requires aircraft selection; \c false else
+     *         (the format itself specifies the aircraft type)
+     */
+    virtual bool requiresAircraftSelection() const noexcept = 0;
+
     bool isImportDirectoryEnabled() const noexcept;
     void setImportDirectoryEnabled(bool enabled) noexcept;
 
-    bool isAddToFlightEnabled() const noexcept;
-    void setAddToFlightEnabled(bool enabled) noexcept;
+    AircraftImportMode getAircraftImportMode() const noexcept;
+    void setAircraftImportMode(AircraftImportMode mode) noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;

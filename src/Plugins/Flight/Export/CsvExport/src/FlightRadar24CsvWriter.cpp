@@ -72,7 +72,7 @@ FlightRadar24CsvWriter::FlightRadar24CsvWriter(const CsvExportSettings &pluginSe
 
 FlightRadar24CsvWriter::~FlightRadar24CsvWriter() = default;
 
-bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool FlightRadar24CsvWriter::write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     QString csv = QString(::TimestampColumn % Csv::CommaSep %
                           ::UtcColumn % Csv::CommaSep %
@@ -85,7 +85,7 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
 
     bool ok = io.write(csv.toUtf8());
     if (ok) {
-        const QDateTime startDateTimeUtc = flight.getAircraftStartZuluTime(aircraft);
+        const QDateTime startDateTimeUtc = flightData.getAircraftStartZuluTime(aircraft);
         const QString callSign = aircraft.getAircraftInfo().flightNumber;
         const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
         for (const PositionData &positionData : interpolatedPositionData) {

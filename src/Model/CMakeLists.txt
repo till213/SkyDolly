@@ -14,6 +14,7 @@ target_sources(${LIBRARY_NAME}
         include/Model/Logbook.h src/Logbook.cpp
         include/Model/AbstractComponent.h
         include/Model/Flight.h src/Flight.cpp
+        include/Model/FlightData.h src/FlightData.cpp
         include/Model/FlightSummary.h
         include/Model/FlightDate.h src/FlightDate.cpp
         include/Model/FlightCondition.h src/FlightCondition.cpp

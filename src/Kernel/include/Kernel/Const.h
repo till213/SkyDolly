@@ -14,6 +14,12 @@ namespace Const {
     constexpr std::int64_t InvalidId {-1};
 
     /*!
+     * An invalid aircraft index indicates that no aircraft has been specified as user aircraft.
+     * A valid index starts at 0.
+     */
+    constexpr int InvalidIndex {-1};
+
+    /*!
      * The plain logbook file extension (without leading dot).
      */
     constexpr const char *LogbookExtension {"sdlog"};
@@ -24,9 +30,14 @@ namespace Const {
     constexpr const char *DotLogbookExtension {".sdlog"};
 
     /*!
-     * The default logbook connection name that is used for the application.
+     * The logbook connection name that is used for the application.
      */
-    constexpr const char *DefaultConnectionName {"Default"};
+    constexpr const char *DefaultConnectionName {"SkyDolly"};
+
+    /*!
+     * The logbook connection name that is used for import.
+     */
+    constexpr const char *ImportConnectionName {"Import"};
 
     /*!
      * The logbook connection name that is used for export.

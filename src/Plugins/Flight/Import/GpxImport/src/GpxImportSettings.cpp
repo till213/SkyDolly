@@ -22,7 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
@@ -63,6 +62,11 @@ GpxImportSettings::GpxImportSettings() noexcept
 {}
 
 GpxImportSettings::~GpxImportSettings() = default;
+
+bool GpxImportSettings::requiresAircraftSelection() const noexcept
+{
+    return true;
+}
 
 GpxImportSettings::GPXElement GpxImportSettings::getWaypointSelection() const noexcept
 {

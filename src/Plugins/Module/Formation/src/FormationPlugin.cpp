@@ -28,7 +28,6 @@
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
-#include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
@@ -38,19 +37,15 @@
 
 struct FormationPluginPrivate
 {
-    FormationPluginPrivate(FlightService &flightService)
-        : formationWidget(std::make_unique<FormationWidget>(flightService, *aircraftService))
-    {}
-
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
-    std::unique_ptr<FormationWidget> formationWidget;
+    std::unique_ptr<FormationWidget> formationWidget{std::make_unique<FormationWidget>()};
 };
 
 // PUBLIC
 
 FormationPlugin::FormationPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
-      d(std::make_unique<FormationPluginPrivate>(getFlightService()))
+      d(std::make_unique<FormationPluginPrivate>())
 {}
 
 FormationPlugin::~FormationPlugin() = default;

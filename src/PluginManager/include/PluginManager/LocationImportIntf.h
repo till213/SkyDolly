@@ -29,12 +29,10 @@
 
 #include "PluginIntf.h"
 
-class LocationService;
-
 class LocationImportIntf : public PluginIntf
 {
 public:
-    virtual bool importLocations(LocationService &locationService) noexcept = 0;
+    virtual bool importLocations() noexcept = 0;
 };
 
 #define LOCATION_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationImportInterface/1.0"

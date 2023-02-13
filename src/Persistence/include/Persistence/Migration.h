@@ -30,7 +30,7 @@
 #include <QFlags>
 
 /*!
- * Database related data structures.
+ * Database migration related data structures.
  */
 namespace Migration
 {

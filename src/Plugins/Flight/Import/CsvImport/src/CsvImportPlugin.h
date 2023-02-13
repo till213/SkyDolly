@@ -26,19 +26,21 @@
 #define CSVIMPORTPLUGIN_H
 
 #include <memory>
+#include <vector>
 
 #include <QObject>
 #include <QDateTime>
 #include <QString>
 #include <QWidget>
 
-class QFile;
+class QIODevice;
 
 #include <Flight/FlightAugmentation.h>
 #include <PluginManager/FlightImportIntf.h>
 #include <PluginManager/FlightImportPluginBase.h>
 
 class Flight;
+struct FlightData;
 struct AircraftInfo;
 struct FlightCondition;
 class FlightImportPluginBaseSettings;
@@ -62,18 +64,16 @@ protected:
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool importFlight(QFile &file, Flight &flight) noexcept override;
+    std::vector<FlightData> importFlights(QIODevice &io, bool &ok) noexcept override;
 
     FlightAugmentation::Procedures getProcedures() const noexcept override;
     FlightAugmentation::Aspects getAspects() const noexcept override;
-    QDateTime getStartDateTimeUtc() noexcept override;
-    QString getTitle() const noexcept override;
-    void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    void updateExtendedFlightInfo(Flight &flight) noexcept override;
-    void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 private:
     const std::unique_ptr<CsvImportPluginPrivate> d;
+
+    void enrichFlightData(FlightData &flightData) const noexcept;
+    QString generateTitle() const noexcept;
 };
 
 #endif // CSVIMPORTPLUGIN_H

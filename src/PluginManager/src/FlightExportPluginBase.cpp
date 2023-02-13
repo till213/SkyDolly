@@ -124,7 +124,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &f
     case FlightExportPluginBaseSettings::FormationExport::UserAircraftOnly:
         ok = file.open(QIODevice::WriteOnly);
         if (ok) {
-            ok = exportAircraft(flight, flight.getUserAircraft(), file);
+            ok = exportAircraft(flight.getFlightData(), flight.getUserAircraft(), file);
             d->exportedFilePaths.push_back(filePath);
         }
         file.close();
@@ -132,7 +132,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &f
     case FlightExportPluginBaseSettings::FormationExport::AllAircraftOneFile:
         ok = file.open(QIODevice::WriteOnly);
         if (ok) {
-            ok = exportFlight(flight, file);
+            ok = exportFlightData(flight.getFlightData(), file);
             d->exportedFilePaths.push_back(filePath);
         }
         file.close();
@@ -195,7 +195,7 @@ bool FlightExportPluginBase::exportAllAircraft(const Flight &flight, const QStri
         QFile file {sequencedFilePath};
         ok = file.open(QIODevice::WriteOnly);
         if (ok) {
-            ok = exportAircraft(flight, aircraft, file);
+            ok = exportAircraft(flight.getFlightData(), aircraft, file);
             d->exportedFilePaths.push_back(sequencedFilePath);
         }
         file.close();

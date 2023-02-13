@@ -42,15 +42,17 @@ class PLUGINMANAGER_API FlightExportPluginBaseSettings : public QObject
 public:
     /*!
      * Defines how formation flights should be exported.
+     *
+     * These values are peristed in the application settings.
      */
     enum struct FormationExport {
         /*! Only the user aircraft is to be exported */
-        UserAircraftOnly,
+        UserAircraftOnly = 0,
         /*! All aircraft are to be exported, into one file if possible (depending on the actual file format);
             otherwise into separate files */
-        AllAircraftOneFile,
+        AllAircraftOneFile = 1,
         /*! All aircraft are to be exported, into separate files each */
-        AllAircraftSeparateFiles
+        AllAircraftSeparateFiles = 2
     };
 
     FlightExportPluginBaseSettings() noexcept;
@@ -60,10 +62,22 @@ public:
     FlightExportPluginBaseSettings &operator=(FlightExportPluginBaseSettings &&rhs) = delete;
     ~FlightExportPluginBaseSettings() override;
 
+    /*!
+     * Returns whether the plugin supports resampling of the (position) data to be exported
+     *
+     * \return \c true if the \c plugin supports position data resampling: \c false else
+     */
     virtual bool isResamplingSupported() const noexcept = 0;
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 
+    /*!
+     * Returns whether the plugin supports the given \c formationExport option.
+     *
+     * \param formationExport
+     *        the formation export option to test
+     * \return \c true if the \c formationExport option is supported by this plugin; \c false else
+     */
     virtual bool isFormationExportSupported(FormationExport formationExport) const noexcept = 0;
     FormationExport getFormationExport() const noexcept;
     void setFormationExport(FormationExport formationExport) noexcept;

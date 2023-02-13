@@ -53,6 +53,11 @@ KmlImportSettings::KmlImportSettings() noexcept
 
 KmlImportSettings::~KmlImportSettings() = default;
 
+bool KmlImportSettings::requiresAircraftSelection() const noexcept
+{
+    return true;
+}
+
 KmlImportSettings::Format KmlImportSettings::getFormat() const noexcept
 {
     return d->format;

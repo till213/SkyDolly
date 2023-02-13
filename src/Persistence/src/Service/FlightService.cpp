@@ -32,6 +32,7 @@
 
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/Aircraft.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/FlightDaoIntf.h"
@@ -60,32 +61,22 @@ FlightService::FlightService(FlightService &&rhs) noexcept = default;
 FlightService &FlightService::operator=(FlightService &&rhs) noexcept = default;
 FlightService::~FlightService() = default;
 
-bool FlightService::store(Flight &flight) noexcept
+bool FlightService::storeFlight(Flight &flight) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
-    bool ok = db.transaction();
+    FlightData &flightData = flight.getFlightData();
+    const bool ok = storeFlightData(flightData);
     if (ok) {
-        ok = d->flightDao->add(flight);
-        if (ok) {
-            ok = db.commit();
-            emit flight.flightStored(flight.getId());
-        } else {
-            db.rollback();
-        }
-#ifdef DEBUG
-    } else {
-        qDebug() << "FlightService::store: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
-#endif
+        emit flight.flightStored();
     }
     return ok;
 }
 
-bool FlightService::exportFlight(const Flight &flight) noexcept
+bool FlightService::storeFlightData(FlightData &flightData) noexcept
 {
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
     if (ok) {
-        ok = d->flightDao->exportFlight(flight);
+        ok = d->flightDao->add(flightData);
         if (ok) {
             ok = db.commit();
         } else {
@@ -93,25 +84,58 @@ bool FlightService::exportFlight(const Flight &flight) noexcept
         }
 #ifdef DEBUG
     } else {
-        qDebug() << "FlightService::exportFlight: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+        qDebug() << "FlightService::storeFlightData: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
 #endif
     }
     return ok;
 }
 
-bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
+bool FlightService::exportFlightData(const FlightData &flightData) noexcept
 {
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
     if (ok) {
-        flight.blockSignals(true);
-        ok = d->flightDao->get(id, flight);
-        flight.blockSignals(false);
+        ok = d->flightDao->exportFlightData(flightData);
+        if (ok) {
+            ok = db.commit();
+        } else {
+            db.rollback();
+        }
+#ifdef DEBUG
+    } else {
+        qDebug() << "FlightService::exportFlightData: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+#endif
+    }
+    return ok;
+}
+
+bool FlightService::restoreFlight(std::int64_t id, Flight &flight) noexcept
+{
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
+    if (ok) {
+        FlightData &flightData = flight.getFlightData();
+        ok = d->flightDao->get(id, flightData);
         emit flight.flightRestored(flight.getId());
         db.rollback();
 #ifdef DEBUG
     } else {
         qDebug() << "FlightService::restore: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+#endif
+    }
+    return ok;
+}
+
+bool FlightService::importFlightData(std::int64_t id, FlightData &flightData) noexcept
+{
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
+    if (ok) {
+        ok = d->flightDao->get(id, flightData);
+        db.rollback();
+#ifdef DEBUG
+    } else {
+        qDebug() << "FlightService::importFlightData: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
 #endif
     }
     return ok;

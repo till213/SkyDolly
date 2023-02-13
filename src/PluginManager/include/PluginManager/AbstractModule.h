@@ -31,7 +31,6 @@
 
 class QWidget;
 
-#include "SkyConnectIntf.h"
 #include "ModuleIntf.h"
 #include "PluginManagerLib.h"
 

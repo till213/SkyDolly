@@ -40,7 +40,7 @@
 #endif
 
 #include <Kernel/Enum.h>
-#include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/FlightSummary.h>
 #include <Model/FlightCondition.h>
 #include "../../Dao/AircraftDaoIntf.h"
@@ -72,30 +72,28 @@ SQLiteFlightDao::SQLiteFlightDao(SQLiteFlightDao &&rhs) noexcept = default;
 SQLiteFlightDao &SQLiteFlightDao::operator=(SQLiteFlightDao &&rhs) noexcept = default;
 SQLiteFlightDao::~SQLiteFlightDao() = default;
 
-bool SQLiteFlightDao::add(Flight &flight) noexcept
+bool SQLiteFlightDao::add(FlightData &flightData) noexcept
 {
     bool ok {false};
-
-    const std::int64_t flightId = insertFlight(flight);
+    const std::int64_t flightId = insertFlight(flightData);
     if (flightId != Const::InvalidId) {
-        flight.setId(flightId);
-        ok = insertAircraft(flightId, flight);
+        flightData.id = flightId;
+        ok = insertAircraft(flightId, flightData);
     }
     return ok;
 }
 
-bool SQLiteFlightDao::exportFlight(const Flight &flight) noexcept
+bool SQLiteFlightDao::exportFlightData(const FlightData &flightData) noexcept
 {
     bool ok {false};
-
-    const std::int64_t flightId = insertFlight(flight);
+    const std::int64_t flightId = insertFlight(flightData);
     if (flightId != Const::InvalidId) {
-        ok = insertAircraft(flightId, flight);
+        ok = insertAircraft(flightId, flightData);
     }
     return ok;
 }
 
-bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
+bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -109,7 +107,7 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
     query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
     if (ok) {
-        flight.clear(false);
+        flightData.clear(false);
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
         const int creationTimeIdx = record.indexOf("creation_time");
@@ -137,14 +135,14 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
         const int endZuluSimulationTimeIdx = record.indexOf("end_zulu_sim_time");
 
         if (query.next()) {
-            flight.setId(query.value(idIdx).toLongLong());
+            flightData.id = query.value(idIdx).toLongLong();
             QDateTime dateTime = query.value(creationTimeIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
-            flight.setCreationTime(dateTime.toLocalTime());
-            flight.setTitle(query.value(titleIdx).toString());
-            flight.setDescription(query.value(descriptionIdx).toString());
+            flightData.creationTime = dateTime.toLocalTime();
+            flightData.title = query.value(titleIdx).toString();
+            flightData.description = query.value(descriptionIdx).toString();
 
-            FlightCondition flightCondition;
+            FlightCondition &flightCondition = flightData.flightCondition;
             flightCondition.surfaceType = static_cast<SimType::SurfaceType>(query.value(surfaceTypeIdx).toInt());
             flightCondition.surfaceCondition = static_cast<SimType::SurfaceCondition>(query.value(surfaceConditionIdx).toInt());
             flightCondition.onAnyRunway = query.value(onAnyRunwayIdx).toBool();
@@ -165,15 +163,12 @@ bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
             flightCondition.startZuluTime = query.value(startZuluSimulationTimeIdx).toDateTime();
             flightCondition.endLocalTime = query.value(endLocalSimulationTimeIdx).toDateTime();
             flightCondition.endZuluTime = query.value(endZuluSimulationTimeIdx).toDateTime();
-
-            flight.setFlightCondition(flightCondition);
         }
         std::vector<Aircraft> aircraft = d->aircraftDao->getByFlightId(id, &ok);
-        flight.setAircraft(std::move(aircraft));
+        flightData.aircraft = std::move(aircraft);
         if (ok) {
             // Index starts at 0
-            const int userAircraftIndex = query.value(userAircraftSequenceNumberIdx).toInt() - 1;
-            flight.setUserAircraftIndex(userAircraftIndex);
+            flightData.userAircraftIndex = query.value(userAircraftSequenceNumberIdx).toInt() - 1;
         }
 #ifdef DEBUG
     } else {
@@ -272,7 +267,7 @@ bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index) noexce
     return ok;
 }
 
-inline std::int64_t SQLiteFlightDao::insertFlight(const Flight &flight) noexcept
+inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) noexcept
 {
     std::int64_t flightId {Const::InvalidId};
 
@@ -330,12 +325,12 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const Flight &flight) noexcept
         ");"
     );
 
-    const FlightCondition &flightCondition = flight.getFlightCondition();
-    query.bindValue(":creation_time", flight.getCreationTime().toUTC());
+    const FlightCondition &flightCondition = flightData.flightCondition;
+    query.bindValue(":creation_time", flightData.creationTime.toUTC());
     // Sequence number starts at 1
-    query.bindValue(":user_aircraft_seq_nr", flight.getUserAircraftIndex() + 1);
-    query.bindValue(":title", flight.getTitle());
-    query.bindValue(":description", flight.getDescription());
+    query.bindValue(":user_aircraft_seq_nr", flightData.userAircraftIndex + 1);
+    query.bindValue(":title", flightData.title);
+    query.bindValue(":description", flightData.description);
     query.bindValue(":surface_type", Enum::underly(flightCondition.surfaceType));
     query.bindValue(":surface_condition", Enum::underly(flightCondition.surfaceCondition));
     query.bindValue(":on_any_runway", flightCondition.onAnyRunway);
@@ -374,12 +369,12 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const Flight &flight) noexcept
     return flightId;
 }
 
-inline bool SQLiteFlightDao::insertAircraft(std::int64_t flightId, const Flight &flight) noexcept
+inline bool SQLiteFlightDao::insertAircraft(std::int64_t flightId, const FlightData &flightData) noexcept
 {
     bool ok {true};
     // Starts at 1
     std::size_t sequenceNumber = 1;
-    for (const auto &aircaft : flight) {
+    for (const auto &aircaft : flightData) {
         ok = d->aircraftDao->exportAircraft(flightId, sequenceNumber, aircaft);
         if (ok) {
             ++sequenceNumber;

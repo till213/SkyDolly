@@ -48,12 +48,9 @@
 
 struct KmlImportPluginPrivate
 {
-    Flight *flight {nullptr};
     QXmlStreamReader xml;
     KmlImportSettings pluginSettings;
     QDateTime firstDateTimeUtc;
-    QString flightNumber;
-    QString title;
 
     static constexpr const char *FileExtension {"kml"};
 };
@@ -88,30 +85,28 @@ std::unique_ptr<QWidget> KmlImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KmlImportOptionWidget>(d->pluginSettings);
 }
 
-bool KmlImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
+std::vector<FlightData> KmlImportPlugin::importFlights(QIODevice &io, bool &ok) noexcept
 {
-    d->flight = &flight;
-    d->xml.setDevice(&file);
+    std::vector<FlightData> flights;
+    d->xml.setDevice(&io);
     if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
-        qDebug() << "KmlImportPlugin::readFile: XML start element:" << d->xml.name().toString();
+        qDebug() << "KmlImportPlugin::importFlight: XML start element:" << d->xml.name().toString();
 #endif
         if (d->xml.name() == QStringLiteral("kml")) {
-            parseKML();
+            flights = parseKML();
         } else {
             d->xml.raiseError(QStringLiteral("The file is not a KML file."));
         }
     }
 
-    bool ok = !d->xml.hasError();
+    ok = !flights.empty() && !d->xml.hasError();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "KmlImportPlugin::readFile: XML error:" << d->xml.errorString();
+        qDebug() << "KmlImportPlugin::importFlight: XML error:" << d->xml.errorString();
     }
 #endif
-    // We are done with the import
-    d->flight = nullptr;
-    return ok;
+    return flights;
 }
 
 FlightAugmentation::Procedures KmlImportPlugin::getProcedures() const noexcept
@@ -140,31 +135,11 @@ FlightAugmentation::Aspects KmlImportPlugin::getAspects() const noexcept
     return aspects;
 }
 
-QDateTime KmlImportPlugin::getStartDateTimeUtc() noexcept
-{
-    return d->firstDateTimeUtc;
-}
-
-QString KmlImportPlugin::getTitle() const noexcept
-{
-    return d->title;
-}
-
-void KmlImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
-{
-    aircraftInfo.flightNumber = d->flightNumber;
-}
-
-void KmlImportPlugin::updateExtendedFlightInfo([[maybe_unused]] Flight &flight) noexcept
-{}
-
-void KmlImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondition &flightCondition) noexcept
-{}
-
 // PRIVATE
 
-void KmlImportPlugin::parseKML() noexcept
+std::vector<FlightData> KmlImportPlugin::parseKML() noexcept
 {
+    std::vector<FlightData> flights;
     std::unique_ptr<KmlParserIntf> parser;
     switch (d->pluginSettings.getFormat()) {
     case KmlImportSettings::Format::FlightAware:
@@ -178,12 +153,7 @@ void KmlImportPlugin::parseKML() noexcept
         break;
     }
     if (parser != nullptr) {
-        parser->parse(d->xml, *d->flight);
-        d->firstDateTimeUtc = parser->getFirstDateTimeUtc();
-        d->title = parser->getDocumentName();
-        if (d->title.isEmpty()) {
-            d->title = QObject::tr("KML import");
-        }
-        d->flightNumber = parser->getFlightNumber();
+        flights = parser->parse(d->xml);
     }
+    return flights;
 }

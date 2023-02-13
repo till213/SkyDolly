@@ -33,6 +33,7 @@ class QDateTime;
 
 #include <Kernel/Version.h>
 #include <Kernel/Const.h>
+#include <Connection.h>
 #include <Migration.h>
 #include "Metadata.h"
 
@@ -47,7 +48,7 @@ public:
     virtual ~DatabaseDaoIntf() = default;
 
     virtual bool connectDb(const QString &logbookPath) noexcept = 0;
-    virtual void disconnectDb() noexcept = 0;
+    virtual void disconnectDb(Connection::Default connection) noexcept = 0;
 
     virtual bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept = 0;
     virtual bool optimise() noexcept = 0;

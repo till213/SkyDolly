@@ -33,24 +33,10 @@
 #include <QString>
 #include <QDateTime>
 
-#include <Kernel/Version.h>
-#include <Kernel/Convert.h>
 #include <Kernel/Const.h>
-#include <Kernel/File.h>
-#include <Kernel/Enum.h>
-#include <Kernel/Unit.h>
-#include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
-#include <Model/Flight.h>
-#include <Model/FlightPlan.h>
-#include <Model/Waypoint.h>
-#include <Model/FlightCondition.h>
+#include <Model/FlightData.h>
 #include <Model/Aircraft.h>
-#include <Model/AircraftInfo.h>
-#include <Model/AircraftType.h>
-#include <Model/Position.h>
-#include <Model/PositionData.h>
-#include <Model/SimType.h>
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
@@ -63,9 +49,7 @@ struct SdLogExportPluginPrivate
 {
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ExportConnectionName)};
     std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>(Const::ExportConnectionName)};
-    std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>(Const::ExportConnectionName)};
     SdLogExportSettings pluginSettings;
-    Unit unit;
 
     static constexpr const char *FileExtension {Const::LogbookExtension};
 };
@@ -101,19 +85,18 @@ std::unique_ptr<QWidget> SdLogExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
+bool SdLogExportPlugin::exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
-
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
-        QFileInfo info {*file};
-        ok = d->databaseService->connect(info.absoluteFilePath());
+        QFileInfo fileInfo {*file};
+        ok = d->databaseService->connect(fileInfo.absoluteFilePath());
         if (ok) {
             d->databaseService->migrate(Migration::Milestone::Schema);
         }
         if (ok) {
-            ok = d->flightService->exportFlight(flight);
+            ok = d->flightService->exportFlightData(flightData);
         }
     } else {
         // We only support file-based SQLite databases
@@ -122,7 +105,7 @@ bool SdLogExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const 
     return ok;
 }
 
-bool SdLogExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, [[maybe_unused]] const Aircraft &aircraft, [[maybe_unused]] QIODevice &io) const noexcept
+bool SdLogExportPlugin::exportAircraft([[maybe_unused]] const FlightData &flightData, [[maybe_unused]] const Aircraft &aircraft, [[maybe_unused]] QIODevice &io) const noexcept
 {
     bool ok {false};
     // Currently not supported

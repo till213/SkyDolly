@@ -32,7 +32,6 @@
 class QShowEvent;
 class QHideEvent;
 
-class FlightService;
 struct FlightDescriptionWidgetPrivate;
 
 namespace Ui {
@@ -43,7 +42,7 @@ class FlightDescriptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FlightDescriptionWidget(FlightService &flightService, QWidget *parent = nullptr);
+    explicit FlightDescriptionWidget(QWidget *parent = nullptr);
     ~FlightDescriptionWidget() override;
 
 protected:

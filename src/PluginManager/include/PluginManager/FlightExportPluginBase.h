@@ -41,7 +41,8 @@ class QIODevice;
 #include "PluginManagerLib.h"
 
 struct PositionData;
-class FLight;
+class Flight;
+struct FlightData;
 class Aircraft;
 class FlightExportPluginBaseSettings;
 struct FlightExportPluginBasePrivate;
@@ -87,8 +88,8 @@ protected:
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
 
-    virtual bool exportFlight(const Flight &flight, QIODevice &io) const noexcept = 0;
-    virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept = 0;
+    virtual bool exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept = 0;
+    virtual bool exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept = 0;
 
 private:
     const std::unique_ptr<FlightExportPluginBasePrivate> d;

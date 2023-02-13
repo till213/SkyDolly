@@ -61,6 +61,11 @@ IgcImportSettings::IgcImportSettings() noexcept
 
 IgcImportSettings::~IgcImportSettings() = default;
 
+bool IgcImportSettings::requiresAircraftSelection() const noexcept
+{
+    return true;
+}
+
 IgcImportSettings::AltitudeMode IgcImportSettings::getAltitudeMode() const noexcept
 {
     return d->altitudeMode;

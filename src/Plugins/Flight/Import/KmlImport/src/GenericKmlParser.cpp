@@ -27,6 +27,7 @@
 #include <QString>
 #include <QXmlStreamReader>
 
+#include <Model/FlightData.h>
 #include "AbstractKmlTrackParser.h"
 #include "GenericKmlParser.h"
 
@@ -43,13 +44,9 @@ GenericKmlParser::GenericKmlParser() noexcept
 GenericKmlParser::~GenericKmlParser() = default;
 
 // Generic KML files (are expected to) have at least one "gx:Track"
-void GenericKmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept
+std::vector<FlightData> GenericKmlParser::parse(QXmlStreamReader &xmlStreamReader) noexcept
 {
-    initialise(&flight, &xmlStreamReader);
-    parseKML();
-}
-
-QString GenericKmlParser::getFlightNumber() const noexcept
-{
-    return {};
+    std::vector<FlightData> flights;
+    initialise(&xmlStreamReader);
+    return parseKML();
 }

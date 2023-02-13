@@ -53,10 +53,9 @@
 #include "GpxExportSettings.h"
 #include "GpxExportPlugin.h"
 
-class GpxExportPluginPrivate
+struct GpxExportPluginPrivate
 {
 public:
-    const Flight *flight {nullptr};
     GpxExportSettings pluginSettings;
     QDateTime startDateTimeUtc;
     Unit unit;
@@ -95,19 +94,18 @@ std::unique_ptr<QWidget> GpxExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<GpxExportOptionWidget>(d->pluginSettings);
 }
 
-bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
+bool GpxExportPlugin::exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept
 {
-    d->flight = &flight;
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
     if (ok) {
-        ok = exportFlightInfo(io);
+        ok = exportFlightInfo(flightData, io);
     }
     if (ok) {
-        ok = exportWaypoints(io);
+        ok = exportWaypoints(flightData, io);
     }
     if (ok) {
-        ok = exportAllAircraft(io);
+        ok = exportAllAircraft(flightData, io);
     }
     if (ok) {
         ok = exportFooter(io);
@@ -115,19 +113,19 @@ bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const no
     return ok;
 }
 
-bool GpxExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool GpxExportPlugin::exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    d->flight = &flight;
+    updateStartDateTimeUtc(flightData, aircraft);
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
     if (ok) {
-        ok = exportFlightInfo(io);
+        ok = exportFlightInfo(flightData, io);
     }    
     if (ok) {
-        ok = exportWaypoints(io);
+        ok = exportWaypoints(flightData, io);
     }
     if (ok) {
-        ok = exportAircraft(aircraft, io);
+        ok = exportSingleAircraft(aircraft, io);
     }    
     if (ok) {
         ok = exportFooter(io);
@@ -137,6 +135,18 @@ bool GpxExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
 }
 
 // PRIVATE
+
+void GpxExportPlugin::updateStartDateTimeUtc(const FlightData &flightData, const Aircraft &aircraft) const noexcept
+{
+    switch (d->pluginSettings.getTimestampMode()) {
+    case GpxExportSettings::TimestampMode::Simulation:
+        d->startDateTimeUtc = flightData.getAircraftStartZuluTime(aircraft);
+        break;
+    case GpxExportSettings::TimestampMode::Recording:
+        d->startDateTimeUtc = flightData.getAircraftCreationTime(aircraft).toUTC();
+        break;
+    }
+}
 
 bool GpxExportPlugin::exportHeader(QIODevice &io) const noexcept
 {
@@ -149,22 +159,22 @@ bool GpxExportPlugin::exportHeader(QIODevice &io) const noexcept
     return io.write(header.toUtf8());
 }
 
-bool GpxExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
+bool GpxExportPlugin::exportFlightInfo(const FlightData &flightData, QIODevice &io) const noexcept
 {
     const QString header =
 "  <metadata>\n"
-"    <name><![CDATA[" % d->flight->getTitle() % "]]></name>\n"
-"    <desc><![CDATA[" % getFlightDescription() % "]]></desc>\n"
+"    <name><![CDATA[" % flightData.title % "]]></name>\n"
+"    <desc><![CDATA[" % getFlightDescription(flightData) % "]]></desc>\n"
 "  </metadata>\n";
 
     return io.write(header.toUtf8());
 }
 
-bool GpxExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
+bool GpxExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
-    for (const auto &aircraft : *d->flight) {
-        ok = exportAircraft(aircraft, io);
+    for (const auto &aircraft : flightData.aircraft) {
+        ok = exportSingleAircraft(aircraft, io);
         if (!ok) {
             break;
         }
@@ -172,17 +182,8 @@ bool GpxExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
     return ok;
 }
 
-bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool GpxExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    switch (d->pluginSettings.getTimestampMode()) {
-    case GpxExportSettings::TimestampMode::Simulation:
-        d->startDateTimeUtc = d->flight->getAircraftStartZuluTime(aircraft);
-        break;
-    case GpxExportSettings::TimestampMode::Recording:
-        d->startDateTimeUtc = d->flight->getAircraftCreationTime(aircraft).toUTC();
-        break;
-    }
-
     const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
     if (interpolatedPositionData.size() > 0) {
@@ -216,10 +217,10 @@ bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     return ok;
 }
 
-bool GpxExportPlugin::exportWaypoints(QIODevice &io) const noexcept
+bool GpxExportPlugin::exportWaypoints(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
-    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlan();
+    const FlightPlan &flightPlan = flightData.getUserAircraftConst().getFlightPlan();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);
         if (!ok) {
@@ -236,12 +237,12 @@ bool GpxExportPlugin::exportFooter(QIODevice &io) const noexcept
     return io.write(footer.toUtf8());
 }
 
-QString GpxExportPlugin::getFlightDescription() const noexcept
+QString GpxExportPlugin::getFlightDescription(const FlightData &flightData) const noexcept
 {
-    const FlightCondition &flightCondition = d->flight->getFlightCondition();
-    return d->flight->getDescription() % "\n" %
+    const FlightCondition &flightCondition = flightData.flightCondition;
+    return flightData.description % "\n" %
            "\n" %
-           QObject::tr("Creation date") % ": " % d->unit.formatDate(d->flight->getCreationTime()) % "\n" %
+           QObject::tr("Creation date") % ": " % d->unit.formatDate(flightData.creationTime) % "\n" %
            QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
            QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
            QObject::tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %

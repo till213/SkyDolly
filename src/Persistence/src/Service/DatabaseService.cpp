@@ -87,19 +87,16 @@ DatabaseService::DatabaseService(QString connectionName) noexcept
 
 DatabaseService::DatabaseService(DatabaseService &&rhs) noexcept = default;
 DatabaseService &DatabaseService::operator=(DatabaseService &&rhs) noexcept = default;
-DatabaseService::~DatabaseService()
-{
-    disconnect();
-}
+DatabaseService::~DatabaseService() = default;
 
 bool DatabaseService::connect(const QString &logbookPath) noexcept
 {
     return d->databaseDao->connectDb(logbookPath);
 }
 
-void DatabaseService::disconnect() noexcept
+void DatabaseService::disconnect(Connection::Default connection) noexcept
 {
-    d->databaseDao->disconnectDb();
+    d->databaseDao->disconnectDb(connection);
 }
 
 bool DatabaseService::migrate(Migration::Milestones milestones) noexcept
@@ -278,9 +275,9 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
     while (retry) {
         QString logbookDirectoryPath = QFileDialog::getSaveFileName(parent, QCoreApplication::translate("DatabaseService", "New Logbook"), existingLogbookDirectory.absolutePath());
         if (!logbookDirectoryPath.isEmpty()) {
-            QFileInfo info = QFileInfo(logbookDirectoryPath);
-            if (!info.exists()) {
-                newLogbookPath = logbookDirectoryPath + "/" % info.fileName() % Const::DotLogbookExtension;
+            QFileInfo fileInfo = QFileInfo(logbookDirectoryPath);
+            if (!fileInfo.exists()) {
+                newLogbookPath = logbookDirectoryPath + "/" % fileInfo.fileName() % Const::DotLogbookExtension;
                 retry = false;
             } else {
                 QMessageBox::information(parent, QCoreApplication::translate("DatabaseService", "Database exists"),

@@ -35,7 +35,6 @@
 #include "PluginBase.h"
 #include "PluginManagerLib.h"
 
-class LocationService;
 class Location;
 struct AircraftType;
 struct AircraftInfo;
@@ -75,7 +74,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    bool importLocations(LocationService &locationService) noexcept final;
+    bool importLocations() noexcept final;
 
 protected:
     // Re-implement
@@ -88,8 +87,8 @@ protected:
 private:
     const std::unique_ptr<LocationImportPluginBasePrivate> d;
 
-    bool importLocations(const QStringList &filePaths, LocationService &locationService) noexcept;
-    bool storeLocations(std::vector<Location> &locations, LocationService &locationService) const noexcept;
+    bool importLocations(const QStringList &filePaths) noexcept;
+    bool storeLocations(std::vector<Location> &locations) const noexcept;
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;

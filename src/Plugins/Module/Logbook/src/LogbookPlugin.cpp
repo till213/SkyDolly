@@ -37,19 +37,15 @@
 
 struct LogbookPluginPrivate
 {
-    LogbookPluginPrivate(FlightService &flightService)
-        : logbookWidget(std::make_unique<LogbookWidget>(flightService))
-    {}
-
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
-    std::unique_ptr<LogbookWidget> logbookWidget;
+    std::unique_ptr<LogbookWidget> logbookWidget {std::make_unique<LogbookWidget>()};
 };
 
 // PUBLIC
 
 LogbookPlugin::LogbookPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
-      d(std::make_unique<LogbookPluginPrivate>(getFlightService()))
+      d(std::make_unique<LogbookPluginPrivate>())
 {}
 
 LogbookPlugin::~LogbookPlugin() = default;

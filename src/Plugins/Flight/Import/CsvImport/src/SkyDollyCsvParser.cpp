@@ -145,11 +145,12 @@ namespace
 
 // PUBLIC
 
-bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
+bool SkyDollyCsvParser::parse(QIODevice &io, FlightData &flightData) noexcept
 {
     auto *file = qobject_cast<QFile *>(&io);
+    QDateTime firstDateTimeUtc;
     firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
-    flightNumber = QString();
+    QString flightNumber = QString();
 
     CsvParser csvParser;
     QTextStream textStream(&io);
@@ -157,7 +158,7 @@ bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[mayb
     CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
     bool ok = CsvParser::validate(rows, Enum::underly(::Index::Count));
     if (ok) {
-        Aircraft &aircraft = flight.getUserAircraft();
+        Aircraft &aircraft = flightData.addUserAircraft();
         // Heuristical memory pre-allocation: we expect that about
         // - half of the rows are position samples
         // - 1/4 are engine samples
@@ -169,7 +170,7 @@ bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[mayb
         aircraft.getAircraftHandle().reserve(rows.size() >> 6);
         aircraft.getLight().reserve(rows.size() >> 6);
 
-    #ifdef DEBUG
+#ifdef DEBUG
         qDebug() << "SkyDollyCsvParser::parse, total CSV rows:" << rows.size() << "\n"
                  << "Position size:" << aircraft.getPosition().capacity() << "\n"
                  << "Engine size:" << aircraft.getEngine().capacity() << "\n"
@@ -177,7 +178,7 @@ bool SkyDollyCsvParser::parse(QIODevice &io, QDateTime &firstDateTimeUtc, [[mayb
                  << "Secondary flight controls size:" << aircraft.getSecondaryFlightControl().capacity() << "\n"
                  << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
                  << "Light size:" << aircraft.getLight().capacity() << "\n";
-    #endif
+#endif
 
         bool firstRow {true};
         for (const auto &row : rows) {

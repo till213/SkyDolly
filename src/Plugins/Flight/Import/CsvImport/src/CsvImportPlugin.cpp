@@ -30,6 +30,8 @@
 #include <QFlags>
 
 #include <Kernel/Unit.h>
+#include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/AircraftInfo.h>
 #include <Flight/FlightAugmentation.h>
 #include "CsvParserIntf.h"
@@ -43,9 +45,6 @@
 struct CsvImportPluginPrivate
 {
     CsvImportSettings pluginSettings;
-    QDateTime firstDateTimeUtc;
-    QString flightNumber;
-
     static constexpr const char *FileExtension {"csv"};
 };
 
@@ -79,8 +78,10 @@ std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<CsvImportOptionWidget>(d->pluginSettings);
 }
 
-bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
+std::vector<FlightData> CsvImportPlugin::importFlights(QIODevice &io, bool &ok) noexcept
 {
+    std::vector<FlightData> flights;
+    FlightData flightData;
     std::unique_ptr<CsvParserIntf> parser;
     switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
@@ -93,11 +94,15 @@ bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
         parser = std::make_unique<FlightRecorderCsvParser>();
         break;
     }
-    bool ok {false};
+    ok = false;
     if (parser != nullptr) {
-        ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber, flight);
+        ok = parser->parse(io, flightData);
+        if (ok) {
+            enrichFlightData(flightData);
+            flights.push_back(std::move(flightData));
+        }
     }
-    return ok;
+    return flights;
 }
 
 FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
@@ -140,12 +145,15 @@ FlightAugmentation::Aspects CsvImportPlugin::getAspects() const noexcept
     return aspects;
 }
 
-QDateTime CsvImportPlugin::getStartDateTimeUtc() noexcept
+
+// PRIVATE
+
+void CsvImportPlugin::enrichFlightData(FlightData &flightData) const noexcept
 {
-    return d->firstDateTimeUtc;
+    flightData.title = generateTitle();
 }
 
-QString CsvImportPlugin::getTitle() const noexcept
+QString CsvImportPlugin::generateTitle() const noexcept
 {
     QString title;
     switch (d->pluginSettings.getFormat()) {
@@ -162,14 +170,3 @@ QString CsvImportPlugin::getTitle() const noexcept
     }
     return title;
 }
-
-void CsvImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
-{
-    aircraftInfo.flightNumber = d->flightNumber;
-}
-
-void CsvImportPlugin::updateExtendedFlightInfo([[maybe_unused]]Flight &flight) noexcept
-{}
-
-void CsvImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondition &flightCondition) noexcept
-{}

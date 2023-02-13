@@ -54,7 +54,6 @@
 
 struct GpxImportPluginPrivate
 {
-    Flight *flight {nullptr};
     GpxImportSettings pluginSettings;
     QXmlStreamReader xml;    
     std::unique_ptr<GpxParser> parser;
@@ -92,21 +91,18 @@ std::unique_ptr<QWidget> GpxImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<GpxImportOptionWidget>(d->pluginSettings);
 }
 
-bool GpxImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
+std::vector<FlightData> GpxImportPlugin::importFlights(QIODevice &io, bool &ok) noexcept
 {
-    d->flight = &flight;
-    d->xml.setDevice(&file);
-    parseGPX();
+    d->xml.setDevice(&io);
+    std::vector<FlightData> flights = parseGPX();
 
-    bool ok = !d->xml.hasError();
+    ok = !d->xml.hasError();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "GpxImportPlugin::import: XML error" << d->xml.errorString();
+        qDebug() << "GpxImportPlugin::importFlights: XML error" << d->xml.errorString();
     }
 #endif
-    // We are done with the import
-    d->flight = nullptr;
-    return ok;
+    return flights;
 }
 
 FlightAugmentation::Procedures GpxImportPlugin::getProcedures() const noexcept
@@ -119,51 +115,35 @@ FlightAugmentation::Aspects GpxImportPlugin::getAspects() const noexcept
     return FlightAugmentation::Aspect::All;
 }
 
-QDateTime GpxImportPlugin::getStartDateTimeUtc() noexcept
-{
-    return d->parser->getFirstDateTimeUtc();
-}
-
-QString GpxImportPlugin::getTitle() const noexcept
-{
-    QString title = d->parser->getDocumentName();
-    if (title.isEmpty()) {
-        title = QObject::tr("GPX import");
-    }
-    return title;
-}
-
-void GpxImportPlugin::updateExtendedAircraftInfo([[maybe_unused]] AircraftInfo &aircraftInfo) noexcept
-{}
-
-void GpxImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
-{
-    const QString description = flight.getDescription() % "\n\n" % d->parser->getDescription();
-    flight.setDescription(description);
-}
-
-void GpxImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondition &flightCondition) noexcept
-{}
-
 // PRIVATE
 
-void GpxImportPlugin::parseGPX() noexcept
+std::vector<FlightData> GpxImportPlugin::parseGPX() noexcept
 {
-    d->parser = std::make_unique<GpxParser>(*d->flight, d->xml, d->pluginSettings);
-    d->parser->parse();
-    updateWaypoints();
+    std::vector<FlightData> flights;
+    d->parser = std::make_unique<GpxParser>(d->xml, d->pluginSettings);
+    flights = d->parser->parse();
+    updateFlightWaypoints(flights);
+    return flights;
 }
 
-void GpxImportPlugin::updateWaypoints() noexcept
+void GpxImportPlugin::updateFlightWaypoints(std::vector<FlightData> &flights) noexcept
 {
-    const Aircraft &aircraft = d->flight->getUserAircraft();
+    for (FlightData &flightData : flights) {
+        for (Aircraft &aircraft : flightData) {
+            updateAircraftWaypoints(aircraft, flightData.getAircraftStartZuluTime(aircraft));
+        }
+    }
+}
+
+void GpxImportPlugin::updateAircraftWaypoints(Aircraft &aircraft, QDateTime flightTimeUtc) noexcept
+{
     Position &position = aircraft.getPosition();
 
     if (position.count() > 0) {
-        Analytics analytics(aircraft);
+        Analytics analytics {aircraft};
         const PositionData firstPositionData = position.getFirst();
         const PositionData lastPositionData = position.getLast();
-        const QDateTime startDateTimeUtc = d->parser->getFirstDateTimeUtc();
+        const QDateTime startDateTimeUtc = flightTimeUtc;
         const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
 
         // Assign timestamps according to the closest flown position
@@ -171,7 +151,7 @@ void GpxImportPlugin::updateWaypoints() noexcept
         std::int64_t uniqueTimestamp {0};
         FlightPlan &flightPlan = aircraft.getFlightPlan();
         const std::size_t count = flightPlan.count();
-        for (int i = 0; i < count; ++i) {
+        for (std::size_t i = 0; i < count; ++i) {
             Waypoint &waypoint = flightPlan[i];
             if (i == 0) {
                 // First waypoint

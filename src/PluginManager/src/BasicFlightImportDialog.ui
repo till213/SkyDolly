@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>578</width>
-    <height>229</height>
+    <height>242</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,19 +55,36 @@
       </widget>
      </item>
      <item row="2" column="0">
+      <widget class="QLabel" name="aircraftLabel_2">
+       <property name="text">
+        <string>Import:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="aircraftImportModeComboBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
       <widget class="QLabel" name="aircraftLabel">
        <property name="text">
         <string>Aircraft:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="AircraftSelectionComboBox" name="aircraftSelectionComboBox"/>
-     </item>
      <item row="3" column="1">
-      <widget class="QCheckBox" name="addToFlightCheckBox">
-       <property name="text">
-        <string>Add to current flight</string>
+      <widget class="AircraftSelectionComboBox" name="aircraftSelectionComboBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>

@@ -27,13 +27,14 @@
 
 #include <forward_list>
 #include <vector>
+#include <cstdint>
 
 class QString;
 
 class FlightSelector;
 class Flight;
-class FlightDate;
-class FlightSummary;
+struct FlightDate;
+struct FlightSummary;
 
 class LogbookDaoIntf
 {
@@ -47,6 +48,7 @@ public:
 
     virtual std::forward_list<FlightDate> getFlightDates(bool *ok = nullptr) const noexcept = 0;
     virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept = 0;
+    virtual std::vector<std::int64_t> getFlightIds(const FlightSelector &flightSelector, bool *ok = nullptr) const noexcept = 0;
 };
 
 #endif // LOGBOOKDAO_H

@@ -26,6 +26,7 @@
 #define GPXPARSER_H
 
 #include <memory>
+#include <vector>
 
 #include <QDateTime>
 #include <QString>
@@ -33,32 +34,29 @@
 class QXmlStreamReader;
 class QDateTime;
 
-class Flight;
+struct FlightData;
 class GpxImportSettings;
 struct GpxParserPrivate;
 
 class GpxParser final
 {
 public:
-    GpxParser(Flight &flight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &pluginSettings) noexcept;
+    GpxParser(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &pluginSettings) noexcept;
     ~GpxParser();
 
-    void parse() noexcept;
-    QDateTime getFirstDateTimeUtc() const noexcept;
-    QString getDocumentName() const noexcept;
-    QString getDescription() const noexcept;
+    std::vector<FlightData> parse() noexcept;
 
 private:
     const std::unique_ptr<GpxParserPrivate> d;
 
-    void parseGPX() noexcept;
-    void parseMetadata() noexcept;
-    void parseWaypoint() noexcept;
-    void parseRoute() noexcept;
-    void parseRoutePoint() noexcept;
-    void parseTrack() noexcept;
-    void parseTrackSegment() noexcept;
-    inline void parseTrackPoint() noexcept;
+    std::vector<FlightData> parseGPX() noexcept;
+    void parseMetadata(FlightData &flightData) noexcept;
+    void parseWaypoint(FlightData &flightData) noexcept;
+    void parseRoute(FlightData &flightData) noexcept;
+    void parseRoutePoint(FlightData &flightData) noexcept;
+    void parseTrack(FlightData &flightData) noexcept;
+    void parseTrackSegment(FlightData &flightData) noexcept;
+    inline void parseTrackPoint(FlightData &flightData) noexcept;
     inline bool parseWaypointType(double &latitude, double &longitude, double &altitude, QString &identifier, QDateTime &dateTime) noexcept;
 };
 
