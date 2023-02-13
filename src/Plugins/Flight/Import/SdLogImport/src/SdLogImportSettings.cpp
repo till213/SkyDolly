@@ -41,11 +41,6 @@ bool SdLogImportSettings::requiresAircraftSelection() const noexcept
     return false;
 }
 
-bool SdLogImportSettings::requiresFlightAugmentation() const noexcept
-{
-    return false;
-}
-
 // PROTECTED
 
 void SdLogImportSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept

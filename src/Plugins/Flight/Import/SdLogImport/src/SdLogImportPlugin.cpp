@@ -126,27 +126,3 @@ FlightAugmentation::Aspects SdlogImportPlugin::getAspects() const noexcept
 {
     return FlightAugmentation::Aspect::None;
 }
-
-QDateTime SdlogImportPlugin::getStartDateTimeUtc() noexcept
-{
-    // TODO IMPLEMENT ME
-    return {};
-}
-
-QString SdlogImportPlugin::getTitle() const noexcept
-{
-    QString title;
-    // TODO IMPLEMENT ME
-    return title;
-}
-
-void SdlogImportPlugin::updateExtendedAircraftInfo([[maybe_unused]] AircraftInfo &aircraftInfo) noexcept
-{}
-
-void SdlogImportPlugin::updateExtendedFlightInfo([[maybe_unused]] Flight &flight) noexcept
-{}
-
-void SdlogImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondition &flightCondition) noexcept
-{}
-
-// PRIVATE

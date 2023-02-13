@@ -169,7 +169,7 @@ bool PluginManager::importFlight(const QUuid &pluginUuid, Flight &flight) const 
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
             importPlugin->restoreSettings(pluginUuid);
-            ok = importPlugin->importFlight(flight);
+            ok = importPlugin->importFlights(flight);
             importPlugin->storeSettings(pluginUuid);
         }
         loader.unload();

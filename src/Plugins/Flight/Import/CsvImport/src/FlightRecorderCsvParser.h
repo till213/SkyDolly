@@ -47,7 +47,7 @@ public:
     FlightRecorderCsvParser() noexcept;
     ~FlightRecorderCsvParser() override;
 
-    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, FlightData &flightData) noexcept override;
+    bool parse(QIODevice &io, FlightData &flightData) noexcept override;
 
 private:
     std::unique_ptr<FlightRecorderCsvParserPrivate> d;

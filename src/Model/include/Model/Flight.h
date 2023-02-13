@@ -89,9 +89,10 @@ public:
     void addAircraft(std::vector<Aircraft> &&aircraft) noexcept;
 
     /*!
-     *  Creates and adds a new user Aircraft to this Flight.
+     * Creates and adds a new user Aircraft to this Flight.
      *
-     *  @return the newly created Aircraft
+     * \return the newly created Aircraft
+     * \sa aircraftAdded
      */
     Aircraft &addUserAircraft() noexcept;
     Aircraft &getUserAircraft() const noexcept;

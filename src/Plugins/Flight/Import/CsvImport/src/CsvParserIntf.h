@@ -36,7 +36,7 @@ class CsvParserIntf
 public:
     virtual ~CsvParserIntf() = default;
 
-    virtual bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, FlightData &flight) noexcept = 0;
+    virtual bool parse(QIODevice &io, FlightData &flight) noexcept = 0;
 };
 
 #endif // CSVPARSERINTF_H

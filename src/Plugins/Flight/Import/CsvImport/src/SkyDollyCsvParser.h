@@ -45,10 +45,10 @@ class SecondaryFlightControl;
 class AircraftHandle;
 class Light;
 
-class SkyDollyCsvParser : public CsvParserIntf
+class [[deprecated]] SkyDollyCsvParser : public CsvParserIntf
 {
 public:
-    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, FlightData &flightData) noexcept override;
+    bool parse(QIODevice &io, FlightData &flightData) noexcept override;
 
 private:
     std::int64_t m_timestampDelta {0};

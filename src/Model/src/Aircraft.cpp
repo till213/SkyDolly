@@ -117,14 +117,14 @@ FlightPlan &Aircraft::getFlightPlan() const noexcept
     return d->flightPlan;
 }
 
-const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
+AircraftInfo &Aircraft::getAircraftInfo() const noexcept
 {
     return d->aircraftInfo;
 }
 
-void Aircraft::setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept
+void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
 {
-    d->aircraftInfo = aircraftInfo;
+    d->aircraftInfo = std::move(aircraftInfo);
 }
 
 void Aircraft::setTailNumber(const QString &tailNumber) noexcept {

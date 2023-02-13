@@ -15,7 +15,7 @@ namespace Const {
 
     /*!
      * An invalid aircraft index indicates that no aircraft has been specified as user aircraft.
-     * The index starts at 0.
+     * A valid index starts at 0.
      */
     constexpr int InvalidIndex {-1};
 

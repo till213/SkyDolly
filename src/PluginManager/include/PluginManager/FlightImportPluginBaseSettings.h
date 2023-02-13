@@ -70,16 +70,6 @@ public:
      */
     virtual bool requiresAircraftSelection() const noexcept = 0;
 
-    /*!
-     * Returns whether the plugin requires flight augmentation, for example:
-     *
-     * \li Calculating aircraft attitude
-     * \li Adding flight "events" such as "set flaps" or "gear down"
-     *
-     * \return \c true if the \c plugin requires flight augmentation; \c false else
-     */
-    virtual bool requiresFlightAugmentation() const noexcept = 0;
-
     bool isImportDirectoryEnabled() const noexcept;
     void setImportDirectoryEnabled(bool enabled) noexcept;
 

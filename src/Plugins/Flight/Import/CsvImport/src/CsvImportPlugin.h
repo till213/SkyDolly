@@ -68,14 +68,12 @@ protected:
 
     FlightAugmentation::Procedures getProcedures() const noexcept override;
     FlightAugmentation::Aspects getAspects() const noexcept override;
-    QDateTime getStartDateTimeUtc() noexcept override;
-    QString getTitle() const noexcept override;
-    void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    void updateExtendedFlightInfo(Flight &flight) noexcept override;
-    void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 private:
     const std::unique_ptr<CsvImportPluginPrivate> d;
+
+    void enrichFlightData(FlightData &flightData) const noexcept;
+    QString generateTitle() const noexcept;
 };
 
 #endif // CSVIMPORTPLUGIN_H

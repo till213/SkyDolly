@@ -53,9 +53,9 @@ CsvImportSettings::CsvImportSettings() noexcept
 
 CsvImportSettings::~CsvImportSettings() = default;
 
-bool CsvImportSettings::hasLogbookSupport() const noexcept
+bool CsvImportSettings::requiresAircraftSelection() const noexcept
 {
-    return false;
+    return true;
 }
 
 CsvImportSettings::Format CsvImportSettings::getFormat() const noexcept

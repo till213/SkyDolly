@@ -19,6 +19,7 @@
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
 - The first aircraft position data is properly cached (not reset when timestamp is set to 0)
+- Fix the flightradar24 CSV import (wrong data validation)
 
 ## 0.15.1
 

@@ -45,9 +45,6 @@
 struct CsvImportPluginPrivate
 {
     CsvImportSettings pluginSettings;
-    QDateTime firstDateTimeUtc;
-    QString flightNumber;
-
     static constexpr const char *FileExtension {"csv"};
 };
 
@@ -99,8 +96,9 @@ std::vector<FlightData> CsvImportPlugin::importFlights(QIODevice &io, bool &ok) 
     }
     ok = false;
     if (parser != nullptr) {
-        ok = parser->parse(io, d->firstDateTimeUtc, d->flightNumber, flightData);
+        ok = parser->parse(io, flightData);
         if (ok) {
+            enrichFlightData(flightData);
             flights.push_back(std::move(flightData));
         }
     }
@@ -147,12 +145,15 @@ FlightAugmentation::Aspects CsvImportPlugin::getAspects() const noexcept
     return aspects;
 }
 
-QDateTime CsvImportPlugin::getStartDateTimeUtc() noexcept
+
+// PRIVATE
+
+void CsvImportPlugin::enrichFlightData(FlightData &flightData) const noexcept
 {
-    return d->firstDateTimeUtc;
+    flightData.title = generateTitle();
 }
 
-QString CsvImportPlugin::getTitle() const noexcept
+QString CsvImportPlugin::generateTitle() const noexcept
 {
     QString title;
     switch (d->pluginSettings.getFormat()) {
@@ -169,14 +170,3 @@ QString CsvImportPlugin::getTitle() const noexcept
     }
     return title;
 }
-
-void CsvImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
-{
-    aircraftInfo.flightNumber = d->flightNumber;
-}
-
-void CsvImportPlugin::updateExtendedFlightInfo([[maybe_unused]]Flight &flight) noexcept
-{}
-
-void CsvImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondition &flightCondition) noexcept
-{}

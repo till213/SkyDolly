@@ -35,7 +35,17 @@ class FlightService;
 class FlightImportIntf : public PluginIntf
 {
 public:
-    virtual bool importFlight(Flight &flight) noexcept = 0;
+    /*!
+     * Presents the user with a file selection dialog and imports all selected
+     * files, optionally adding the imported aircraft to the \c currentFlight
+     * as well.
+     *
+     * \param currentFlight
+     *        the current flight in memory
+     * \return \c true upon success; \c false else (parsing error, no data
+     *         imported)
+     */
+    virtual bool importFlights(Flight &currentFlight) noexcept = 0;
 };
 
 #define FLIGHT_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightImportInterface/1.0"

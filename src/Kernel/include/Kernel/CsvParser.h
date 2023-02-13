@@ -28,6 +28,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <algorithm>
 
 #include <QString>
 #include <QChar>
@@ -35,7 +36,6 @@
 
 class QTextStream;
 
-#include "QStringHasher.h"
 #include "KernelLib.h"
 
 struct CsvParserPrivate;
@@ -83,18 +83,20 @@ public:
      */
     const Headers &getHeaders() const noexcept;
 
+    /*!
+     * Validates that there exists at least one Row in \c rows and that each Row has
+     * exactly the \c expectedColumnCount.
+     *
+     * \param rows
+     *        the previously parsed CSv rows
+     * \param expectedColumnCount
+     *        the expected column count of each row
+     * \return \c true if each row in Rows has \c expectedColumnCount items; \c false else
+     */
     static inline bool validate(const Rows &rows, std::size_t expectedColumnCount) noexcept
     {
-        bool ok = rows.size() > 0;
-        if (ok) {
-            for (const Row &row : rows) {
-                ok = row.size() == expectedColumnCount;
-                if (!ok) {
-                    break;
-                }
-            }
-        }
-        return ok;
+        auto condition = [expectedColumnCount](const Row &row){return row.size() != expectedColumnCount;};
+        return std::find_if(rows.begin(), rows.end(), condition) == rows.end();
     };
 
 private:

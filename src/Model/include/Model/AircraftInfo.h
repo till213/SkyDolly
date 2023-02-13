@@ -29,6 +29,7 @@
 
 #include <QString>
 
+#include <Kernel/Const.h>
 #include "AircraftType.h"
 #include "ModelLib.h"
 
@@ -48,7 +49,7 @@ struct MODEL_API AircraftInfo final
     // Knots (TAS)
     int initialAirspeed {0};
 
-    AircraftInfo(std::int64_t aircraftId) noexcept;
+    AircraftInfo(std::int64_t aircraftId = Const::InvalidId) noexcept;
     AircraftInfo() noexcept;
     AircraftInfo(const AircraftInfo &rhs) = default;
     AircraftInfo(AircraftInfo &&rhs) = default;

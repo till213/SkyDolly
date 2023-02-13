@@ -63,8 +63,8 @@ public:
     Light &getLight() const noexcept;
 
     FlightPlan &getFlightPlan() const noexcept;
-    const AircraftInfo &getAircraftInfo() const noexcept;
-    void setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept;
+    AircraftInfo &getAircraftInfo() const noexcept;
+    void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
     void setTailNumber(const QString &tailNumber) noexcept;
 
     std::int64_t getTimeOffset() const noexcept;

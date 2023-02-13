@@ -94,6 +94,20 @@ struct MODEL_API FlightData final
         return totalDuractionMSec;
     }
 
+    /*!
+     * Adds a new user Aircraft to this FlightData.
+     *
+     * \return the newly added Aircraft
+     * \sa getUserAircraft
+     */
+    inline Aircraft &addUserAircraft() noexcept
+    {
+        aircraft.emplace_back();
+        // Index starts at 0
+        userAircraftIndex = static_cast<int>(aircraft.size()) - 1;
+        return aircraft.back();
+    }
+
     inline Aircraft &getUserAircraft() noexcept
     {
         return aircraft.at(userAircraftIndex);

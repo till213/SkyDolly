@@ -81,7 +81,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    bool importFlight(Flight &flight) noexcept final;
+    bool importFlights(Flight &flight) noexcept final;
 
 protected:
     AircraftType &getSelectedAircraftType() const noexcept;
@@ -106,11 +106,6 @@ protected:
 
     virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;
     virtual FlightAugmentation::Aspects getAspects() const noexcept = 0;
-    virtual QDateTime getStartDateTimeUtc() noexcept = 0;
-    virtual QString getTitle() const noexcept = 0;
-    virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept = 0;
-    virtual void updateExtendedFlightInfo(Flight &flight) noexcept = 0;
-    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept = 0;
 
 private:
     const std::unique_ptr<FlightImportPluginBasePrivate> d;
@@ -120,13 +115,17 @@ private:
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 
     bool importFlights(const QStringList &filePaths, Flight &currentFlight) noexcept;
-    void updateAircraftInfo(Aircraft &aircraft) noexcept;
-    void updateFlightInfo(Flight &flight) noexcept;
-    void updateFlightCondition(Flight &flight) noexcept;
-    bool augmentAircraft(Aircraft &aircraft) noexcept;
+    void enrichFlightData(std::vector<FlightData> &flightData) const noexcept;
+    void enrichFlightInfo(FlightData &flightData) const noexcept;
+    void enrichFlightCondition(FlightData &flightData) const noexcept;
+    void enrichAircraftInfo(FlightData &flightData) const noexcept;
+
+    bool augmentFlights(std::vector<FlightData> &flightData) const noexcept;
+
     bool addAndStoreAircraftToCurrentFlight(const QString sourceFilePath, std::vector<FlightData> importedFlightData, Flight &currentFlight,
                                             std::size_t &totalFlightsStored, std::size_t &totalAircraftStored, bool &continueWithDirectoryImport) noexcept;
     bool storeFlightData(std::vector<FlightData> &importedFlightData, std::size_t &totalFlightsStored);
+
     void confirmImportError(const QString &sourceFilePath, bool &ignoreFailures, bool &continueWithDirectoryImport) noexcept;
     void confirmMultiFlightImport(const QString &sourceFilePath, std::size_t nofFlights, bool &doAdd, bool &continueWithDirectoryImport);
 };

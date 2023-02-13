@@ -78,7 +78,7 @@ FlightImportPluginBase::FlightImportPluginBase() noexcept
 
 FlightImportPluginBase::~FlightImportPluginBase() = default;
 
-bool FlightImportPluginBase::importFlight(Flight &flight) noexcept
+bool FlightImportPluginBase::importFlights(Flight &flight) noexcept
 {
     bool ok {false};
     FlightImportPluginBaseSettings &baseSettings = getPluginSettings();
@@ -172,34 +172,17 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
         if (ok) {
-            importedFlightData = importFlights(d->file, ok); 
-            if (ok && pluginSettings.requiresFlightAugmentation()) {
-                // TODO IMPLEMENT ME REFACTOR ME
-                for (auto &importedFlight : importedFlightData) {
-                    for (auto &aircraft : importedFlight) {
-                        augmentAircraft(aircraft);
-                        const std::size_t nofAircraft = currentFlight.count();
-                        if (nofAircraft > 1) {
-                            // Sequence starts at 1
-                            const std::size_t sequenceNumber {nofAircraft};
-                            ok = d->aircraftService->store(currentFlight.getId(), sequenceNumber, aircraft);
-                        } else {
-                            // Also update flight info and condition
-                            updateFlightInfo(currentFlight);
-                            updateFlightCondition(currentFlight);
-                            ok = d->flightService->storeFlight(currentFlight);
-                        }
-                    }
-                }
-                if (!ok) {
-                    currentFlight.removeLastAircraft();
-                }
-            }
+            importedFlightData = importFlights(d->file, ok);
             if (ok) {
+                enrichFlightData(importedFlightData);
+                if (getAspects() || getProcedures()) {
+                    augmentFlights(importedFlightData);
+                }
+
                 switch (aircraftImportMode) {
-                case FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight:
-                    [[fallthrough]];
                 case FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight:
+                    [[fallthrough]];
+                case FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight:
                     ok = addAndStoreAircraftToCurrentFlight(filePath, std::move(importedFlightData), currentFlight,
                                                             totalFlightsStored, totalAircraftStored, continueWithDirectoryImport);
                     break;
@@ -238,91 +221,104 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
     return ok;
 }
 
-void FlightImportPluginBase::updateAircraftInfo(Aircraft &aircraft) noexcept
+void FlightImportPluginBase::enrichFlightData(std::vector<FlightData> &flightData) const noexcept
 {
-    AircraftInfo aircraftInfo(aircraft.getId());
-    aircraftInfo.aircraftType = d->aircraftType;
-
-    const Position &position = aircraft.getPosition();   
-    if (position.count() > 0) {
-        const PositionData &lastPositionData = position.getLast();
-        const QDateTime startDateTimeUtc = getStartDateTimeUtc();
-        const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
-
-        const PositionData &firstPositionData = position.getFirst();
-        aircraftInfo.initialAirspeed = static_cast<int>(std::round(Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ)));
-
-        // Add default waypoints (first and last position) in case none are present in the imported data
-        FlightPlan &flightPlan = aircraft.getFlightPlan();
-        std::size_t waypointCount = flightPlan.count();
-        if (waypointCount == 0) {
-            Waypoint departure;
-            departure.identifier = Waypoint::CustomDepartureIdentifier;
-            departure.latitude = static_cast<float>(firstPositionData.latitude);
-            departure.longitude = static_cast<float>(firstPositionData.longitude);
-            departure.altitude = static_cast<float>(firstPositionData.altitude);
-            departure.localTime = startDateTimeUtc.toLocalTime();
-            departure.zuluTime = startDateTimeUtc;
-            departure.timestamp = firstPositionData.timestamp;
-            flightPlan.add(std::move(departure));
-
-            Waypoint arrival;
-            arrival.identifier = Waypoint::CustomArrivalIdentifier;
-            arrival.latitude = static_cast<float>(lastPositionData.latitude);
-            arrival.longitude = static_cast<float>(lastPositionData.longitude);
-            arrival.altitude = static_cast<float>(lastPositionData.altitude);
-            arrival.localTime = endDateTimeUtc.toLocalTime();
-            arrival.zuluTime = endDateTimeUtc;
-            // Make sure that waypoints have distinct timestamps, especially in the case when
-            // the aircraft has only one sampled position ("remains parked")
-            arrival.timestamp = firstPositionData.timestamp != lastPositionData.timestamp ? lastPositionData.timestamp : lastPositionData.timestamp + 1;
-            flightPlan.add(std::move(arrival));
-        }
-    } else {
-        aircraftInfo.initialAirspeed = 0.0;
+    for (FlightData &flight : flightData) {
+        enrichFlightInfo(flight);
+        enrichFlightCondition(flight);
+        enrichAircraftInfo(flight);
     }
-    updateExtendedAircraftInfo(aircraftInfo);
-    aircraft.setAircraftInfo(aircraftInfo);
 }
 
-void FlightImportPluginBase::updateFlightInfo(Flight &flight) noexcept
+void FlightImportPluginBase::enrichFlightInfo(FlightData &flightData) const noexcept
 {
-    flight.setTitle(getTitle());
-
-    const QString description = tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), d->file.fileName());
-    flight.setDescription(description);
-    flight.setCreationTime(QFileInfo(d->file).birthTime());
-    updateExtendedFlightInfo(flight);
+    if (!flightData.creationTime.isValid()) {
+        flightData.creationTime = QFileInfo(d->file).birthTime();
+    }
+    if (flightData.title.isEmpty()) {
+        flightData.title = tr("Imported %1").arg(flightData.aircraft.front().getAircraftInfo().aircraftType.type);
+    }
+    if (flightData.description.isEmpty()) {
+        flightData.description = tr("Flight imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), d->file.fileName());
+    }
 }
 
-void FlightImportPluginBase::updateFlightCondition(Flight &flight) noexcept
+void FlightImportPluginBase::enrichFlightCondition(FlightData &flightData) const noexcept
 {
-    FlightCondition flightCondition;
+    FlightCondition &flightCondition = flightData.flightCondition;
 
-    Aircraft &aircraft = flight.getUserAircraft();
+    if (!(flightCondition.startLocalTime.isValid() && flightCondition.startZuluTime.isValid())) {
+        flightCondition.startZuluTime = QDateTime::currentDateTimeUtc();
+        flightCondition.startLocalTime = flightCondition.startZuluTime.toLocalTime();
+    }
 
-    const Position &position = aircraft.getPosition();
-    const PositionData &lastPositionData = position.getLast();
-    const QDateTime startDateTimeUtc = getStartDateTimeUtc();
-    const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
-
-    flightCondition.startLocalTime = startDateTimeUtc.toLocalTime();
-    flightCondition.startZuluTime = startDateTimeUtc;
-    flightCondition.endLocalTime = endDateTimeUtc.toLocalTime();
-    flightCondition.endZuluTime = endDateTimeUtc;
-    updateExtendedFlightCondition(flightCondition);
-
-    flight.setFlightCondition(flightCondition);
+    if (!(flightCondition.endLocalTime.isValid() && flightCondition.endZuluTime.isValid())) {
+        const Aircraft &aircraft = flightData.getUserAircraft();
+        const Position &position = aircraft.getPosition();
+        const PositionData &lastPositionData = position.getLast();
+        flightCondition.endLocalTime =  flightCondition.startLocalTime.addMSecs(lastPositionData.timestamp);
+        flightCondition.endZuluTime = flightCondition.startZuluTime.addMSecs(lastPositionData.timestamp);
+    }
 }
 
-bool FlightImportPluginBase::augmentAircraft(Aircraft &aircraft) noexcept
+void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const noexcept
+{
+    for (Aircraft &aircraft : flightData) {
+        AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+        if (aircraftInfo.aircraftType.isNull()) {
+            aircraftInfo.aircraftType = d->aircraftType;
+        }
+
+        const Position &position = aircraft.getPosition();
+        if (position.count() > 0) {
+            const PositionData &firstPositionData = position.getFirst();
+            aircraftInfo.initialAirspeed = static_cast<int>(std::round(Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ)));
+
+            // Add default waypoints (first and last position) in case none are present in the imported data
+            FlightPlan &flightPlan = aircraft.getFlightPlan();
+            std::size_t waypointCount = flightPlan.count();
+            if (waypointCount == 0) {
+
+                Waypoint departure;
+                departure.identifier = Waypoint::CustomDepartureIdentifier;
+                departure.latitude = static_cast<float>(firstPositionData.latitude);
+                departure.longitude = static_cast<float>(firstPositionData.longitude);
+                departure.altitude = static_cast<float>(firstPositionData.altitude);
+                departure.localTime = flightData.flightCondition.startLocalTime;
+                departure.zuluTime = flightData.flightCondition.startZuluTime;
+                departure.timestamp = firstPositionData.timestamp;
+                flightPlan.add(std::move(departure));
+
+                const PositionData &lastPositionData = position.getLast();
+                Waypoint arrival;
+                arrival.identifier = Waypoint::CustomArrivalIdentifier;
+                arrival.latitude = static_cast<float>(lastPositionData.latitude);
+                arrival.longitude = static_cast<float>(lastPositionData.longitude);
+                arrival.altitude = static_cast<float>(lastPositionData.altitude);
+                arrival.localTime = flightData.flightCondition.endLocalTime;
+                arrival.zuluTime = flightData.flightCondition.endZuluTime;
+                // Make sure that waypoints have distinct timestamps, especially in the case when
+                // the aircraft has only one sampled position ("remains parked")
+                arrival.timestamp = firstPositionData.timestamp != lastPositionData.timestamp ? lastPositionData.timestamp : lastPositionData.timestamp + 1;
+                flightPlan.add(std::move(arrival));
+            }
+        } else {
+            aircraftInfo.initialAirspeed = 0.0;
+        }
+    }
+}
+
+bool FlightImportPluginBase::augmentFlights(std::vector<FlightData> &flightData) const noexcept
 {
     bool ok {false};
-    if (aircraft.getPosition().count() > 0) {
-        d->flightAugmentation.setProcedures(getProcedures());
-        d->flightAugmentation.setAspects(getAspects());
-        d->flightAugmentation.augmentAircraftData(aircraft);
-        updateAircraftInfo(aircraft);
+    for (FlightData &flight : flightData) {
+        for (Aircraft &aircraft : flight) {
+            if (aircraft.getPosition().count() > 0) {
+                d->flightAugmentation.setProcedures(getProcedures());
+                d->flightAugmentation.setAspects(getAspects());
+                d->flightAugmentation.augmentAircraftData(aircraft);
+            }
+        }
     }
     return ok;
 }
