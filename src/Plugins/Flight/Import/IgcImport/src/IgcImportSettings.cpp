@@ -61,9 +61,9 @@ IgcImportSettings::IgcImportSettings() noexcept
 
 IgcImportSettings::~IgcImportSettings() = default;
 
-bool IgcImportSettings::hasLogbookSupport() const noexcept
+bool IgcImportSettings::requiresAircraftSelection() const noexcept
 {
-    return false;
+    return true;
 }
 
 IgcImportSettings::AltitudeMode IgcImportSettings::getAltitudeMode() const noexcept

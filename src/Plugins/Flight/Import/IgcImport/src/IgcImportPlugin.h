@@ -39,7 +39,6 @@ class QIODevice;
 #include <PluginManager/FlightImportIntf.h>
 #include <PluginManager/FlightImportPluginBase.h>
 
-class Flight;
 struct FlightData;
 struct AircraftInfo;
 struct FlightCondition;
@@ -53,6 +52,9 @@ class IgcImportPlugin : public FlightImportPluginBase
     Q_INTERFACES(FlightImportIntf)
 public:
     IgcImportPlugin() noexcept;
+    IgcImportPlugin(IgcImportPlugin &&rhs) = delete;
+    IgcImportPlugin &operator=(const IgcImportPlugin &rhs) = delete;
+    IgcImportPlugin &operator=(IgcImportPlugin &&rhs) = delete;
     ~IgcImportPlugin() override;
 
 protected:
@@ -64,20 +66,17 @@ protected:
 
     FlightAugmentation::Procedures getProcedures() const noexcept override;
     FlightAugmentation::Aspects getAspects() const noexcept override;
-    QDateTime getStartDateTimeUtc() noexcept override;
-    QString getTitle() const noexcept override;
-    void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    void updateExtendedFlightInfo(Flight &flight) noexcept override;
-    void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 private:
     const std::unique_ptr<IgcImportPluginPrivate> d;
 
-    void updateWaypoints() noexcept;
+    void updateWaypoints(Aircraft &aircraft) noexcept;
 
     // Estimates the propeller (thrust) lever position, based on the
     // environmentalNoiseLevel and the threshold
     inline double noiseToPosition(double environmentalNoiseLevel, double threshold) noexcept;
+
+    void enrichFlightData(FlightData &flightData) const noexcept;
 };
 
 #endif // IGCIMPORTPLUGIN_H

@@ -117,10 +117,12 @@ std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept
 
 std::vector<FlightData> IgcImportPlugin::importFlights(QIODevice &io, bool &ok) noexcept
 {
-    std::vector<FlightData> flights = d->igcParser.parse(io, ok);
+    std::vector<FlightData> flights;
+    ok = d->igcParser.parse(io);
     if (ok) {
+        FlightData flightData;
+        Aircraft &aircraft = flightData.addUserAircraft();
         // Now "upsert" the position data, taking possible duplicate timestamps into account
-        const Aircraft &aircraft = flights.back().aircraft.back();
         Position &position = aircraft.getPosition();
 
         // Engine
@@ -239,8 +241,10 @@ std::vector<FlightData> IgcImportPlugin::importFlights(QIODevice &io, bool &ok) 
 
         std::vector<IgcParser::TaskItem> tasks = d->igcParser.getTask().tasks;
         if (tasks.size() > 0) {
-            updateWaypoints();
+            updateWaypoints(aircraft);
         }
+        enrichFlightData(flightData);
+        flights.push_back(std::move(flightData));
     }
     return flights;
 }
@@ -259,43 +263,10 @@ FlightAugmentation::Aspects IgcImportPlugin::getAspects() const noexcept
     return aspects;
 }
 
-QDateTime IgcImportPlugin::getStartDateTimeUtc() noexcept
-{
-    return d->igcParser.getHeader().flightDateTimeUtc;
-}
-
-QString IgcImportPlugin::getTitle() const noexcept
-{
-    return d->igcParser.getHeader().gliderType;
-}
-
-void IgcImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
-{
-    const IgcParser::Header &header = d->igcParser.getHeader();
-    aircraftInfo.tailNumber = header.gliderId;
-    aircraftInfo.flightNumber = header.flightNumber;
-}
-
-void IgcImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
-{
-    const IgcParser::Header &header = d->igcParser.getHeader();
-    Unit unit;
-    const QString description = flight.getDescription() % "\n\n" %
-                                QObject::tr("Glider type:") % " " % header.gliderType % "\n" %
-                                QObject::tr("Pilot:") % " " % header.pilotName % "\n" %
-                                QObject::tr("Co-Pilot:") % " " % header.coPilotName % "\n" %
-                                QObject::tr("Flight date:") % " " % unit.formatDateTime(header.flightDateTimeUtc);
-    flight.setDescription(description);
-}
-
-void IgcImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondition &flightCondition) noexcept
-{}
-
 // PRIVATE
 
-void IgcImportPlugin::updateWaypoints() noexcept
+void IgcImportPlugin::updateWaypoints(Aircraft &aircraft) noexcept
 {
-    const Aircraft &aircraft = d->flight->getUserAircraft();
     Position &position = aircraft.getPosition();
 
     FlightPlan &flightPlan = aircraft.getFlightPlan();
@@ -314,9 +285,9 @@ void IgcImportPlugin::updateWaypoints() noexcept
         // depending on how much fun the pilot had in the cockpit ;)
         std::unordered_set<std::int64_t> timestamps;
         const std::vector<IgcParser::TaskItem> tasks = d->igcParser.getTask().tasks;
-        const auto nofTasks = tasks.size();
+        const std::size_t nofTasks = tasks.size();
         flightPlan.reserve(nofTasks);
-        for (int i = 0; i < nofTasks; ++i) {
+        for (std::size_t i = 0; i < nofTasks; ++i) {
 
             const IgcParser::TaskItem &item = tasks[i];
             Waypoint waypoint;
@@ -428,4 +399,19 @@ inline double IgcImportPlugin::noiseToPosition(double environmentalNoiseLevel, d
 {
     const double linear = std::max(environmentalNoiseLevel - threhsold, 0.0) / (1.0 - threhsold);
     return d->throttleResponseCurve.valueForProgress(linear);
+}
+
+void IgcImportPlugin::enrichFlightData(FlightData &flightData) const noexcept
+{
+    const IgcParser::Header &header = d->igcParser.getHeader();
+    Unit unit;
+
+    flightData.description = QObject::tr("Glider type:") % " " % header.gliderType % "\n" %
+                             QObject::tr("Pilot:") % " " % header.pilotName % "\n" %
+                             QObject::tr("Co-Pilot:") % " " % header.coPilotName % "\n" %
+                             QObject::tr("Flight date:") % " " % unit.formatDateTime(header.flightDateTimeUtc);
+    AircraftInfo &aircraftInfo = flightData.aircraft.back().getAircraftInfo();
+    aircraftInfo.tailNumber = header.gliderId;
+    aircraftInfo.flightNumber = header.flightNumber;
+
 }

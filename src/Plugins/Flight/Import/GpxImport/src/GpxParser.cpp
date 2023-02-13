@@ -139,7 +139,6 @@ void GpxParser::parseWaypoint(FlightData &flightData) noexcept
     QString identifier;
     QDateTime currentDateTimeUtc;
     Aircraft &aircraft = flightData.getUserAircraft();
-    FlightPlan &flightPlan = aircraft.getFlightPlan();
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Waypoint ||
         d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Waypoint) {
@@ -149,6 +148,7 @@ void GpxParser::parseWaypoint(FlightData &flightData) noexcept
     }
 
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Waypoint) {
+        FlightPlan &flightPlan = aircraft.getFlightPlan();
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = !identifier.isEmpty() ? identifier : QObject::tr("Waypoint %1").arg(flightPlan.count() + 1);
         flightPlan.add(waypoint);
@@ -209,7 +209,6 @@ void GpxParser::parseRoutePoint(FlightData &flightData) noexcept
     QString identifier;
     QDateTime currentDateTimeUtc;
     Aircraft &aircraft = flightData.getUserAircraft();
-    FlightPlan &flightPlan = aircraft.getFlightPlan();
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Route ||
         d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Route) {
@@ -219,6 +218,7 @@ void GpxParser::parseRoutePoint(FlightData &flightData) noexcept
     }
 
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Route) {
+        FlightPlan &flightPlan = aircraft.getFlightPlan();
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = !identifier.isEmpty() ? identifier : QObject::tr("Waypoint %1").arg(flightPlan.count() + 1);
         flightPlan.add(waypoint);
@@ -287,7 +287,7 @@ inline void GpxParser::parseTrackPoint(FlightData &flightData) noexcept
     QString identifier;
     QDateTime currentDateTimeUtc;
     Aircraft &aircraft = flightData.getUserAircraft();
-    FlightPlan &flightPlan = aircraft.getFlightPlan();
+
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Track ||
         d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Track) {
@@ -297,6 +297,7 @@ inline void GpxParser::parseTrackPoint(FlightData &flightData) noexcept
     }
 
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Track) {
+        FlightPlan &flightPlan = aircraft.getFlightPlan();
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = !identifier.isEmpty() ? identifier : QObject::tr("Waypoint %1").arg(flightPlan.count() + 1);
         flightPlan.add(waypoint);

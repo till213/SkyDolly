@@ -224,9 +224,10 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
 void FlightImportPluginBase::enrichFlightData(std::vector<FlightData> &flightData) const noexcept
 {
     for (FlightData &flight : flightData) {
-        enrichFlightInfo(flight);
         enrichFlightCondition(flight);
+        // Aircraft info depends on data from flight condition
         enrichAircraftInfo(flight);
+        enrichFlightInfo(flight);
     }
 }
 
@@ -278,7 +279,6 @@ void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const no
             FlightPlan &flightPlan = aircraft.getFlightPlan();
             std::size_t waypointCount = flightPlan.count();
             if (waypointCount == 0) {
-
                 Waypoint departure;
                 departure.identifier = Waypoint::CustomDepartureIdentifier;
                 departure.latitude = static_cast<float>(firstPositionData.latitude);
