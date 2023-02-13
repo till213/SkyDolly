@@ -53,9 +53,9 @@ KmlImportSettings::KmlImportSettings() noexcept
 
 KmlImportSettings::~KmlImportSettings() = default;
 
-bool KmlImportSettings::hasLogbookSupport() const noexcept
+bool KmlImportSettings::requiresAircraftSelection() const noexcept
 {
-    return false;
+    return true;
 }
 
 KmlImportSettings::Format KmlImportSettings::getFormat() const noexcept

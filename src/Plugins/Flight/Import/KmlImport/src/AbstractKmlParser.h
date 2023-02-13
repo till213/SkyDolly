@@ -26,6 +26,7 @@
 #define ABSTRACTKMLPARSER_H
 
 #include <memory>
+#include <vector>
 
 #include <QString>
 
@@ -33,6 +34,7 @@ class QXmlStreamReader;
 
 #include "KmlParserIntf.h"
 
+struct FlightData;
 struct AbstractKmlParserPrivate;
 
 class AbstractKmlParser : public KmlParserIntf
@@ -41,20 +43,17 @@ public:
     AbstractKmlParser() noexcept;
     ~AbstractKmlParser() override;
 
-    QString getDocumentName() const noexcept override;
-
 protected:
-    void initialise(Flight *flight, QXmlStreamReader *xml) noexcept;
-    Flight *getFlight() const noexcept;
+    void initialise(QXmlStreamReader *xml) noexcept;
     QXmlStreamReader *getXmlStreamReader() const noexcept;
 
-    virtual void parseKML() noexcept;
-    virtual void parseDocument() noexcept;
-    virtual void parseFolder() noexcept;
-    virtual void parsePlacemark() noexcept;
-    virtual void parseDocumentName() noexcept;
+    virtual std::vector<FlightData> parseKML() noexcept;
+    virtual void parseDocument(FlightData &flightData) noexcept;
+    virtual void parseFolder(FlightData &flightData) noexcept;
+    virtual void parsePlacemark(FlightData &flightData) noexcept;
+    virtual void parseDocumentName(FlightData &flightData) noexcept;
 
-    virtual void parseTrack() noexcept = 0;
+    virtual void parseTrack(FlightData &flightData) noexcept = 0;
 
 private:
     const std::unique_ptr<AbstractKmlParserPrivate> d;

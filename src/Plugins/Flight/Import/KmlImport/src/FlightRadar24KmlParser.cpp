@@ -43,6 +43,13 @@
 
 struct FlightRadar24KmlParserPrivate
 {
+    FlightRadar24KmlParserPrivate() noexcept
+    {
+        firstDateTimeUtc.setTimeZone(QTimeZone::utc());
+    }
+
+    QDateTime firstDateTimeUtc;
+
     using TrackItem = struct {
         std::int64_t timestamp;
         double latitude;
@@ -53,17 +60,7 @@ struct FlightRadar24KmlParserPrivate
     };
     // The track data may contain data with identical timestamps
     std::vector<TrackItem> trackData;
-
-    FlightRadar24KmlParserPrivate() noexcept
-    {
-        firstDateTimeUtc.setTimeZone(QTimeZone::utc());
-    }
-
-    Flight *flight {nullptr};
     QXmlStreamReader *xml {nullptr};
-    QString documentName;
-    QString flightNumber;
-    QDateTime firstDateTimeUtc;
 
     static const QRegularExpression speedRegExp;
     static const QRegularExpression headingRegExp;
@@ -88,9 +85,11 @@ FlightRadar24KmlParser::~FlightRadar24KmlParser() = default;
 // - <description> - HTML snippet containing speed and heading
 // - <Timestamp> timestamps
 // - <Point> - the coordinates of the track
-void FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept
+std::vector<FlightData> FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStreamReader) noexcept
 {
-    d->flight = &flight;
+    std::vector<FlightData> flights;
+    FlightData flightData;
+    Aircraft &aircraft = flightData.addUserAircraft();
     d->xml = &xmlStreamReader;
     d->trackData.clear();
 
@@ -99,7 +98,7 @@ void FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &fl
         qDebug() << "FlightRadar24KmlParser::readKML: XML start element:" << d->xml->name().toString();
 #endif
         if (d->xml->name() == Kml::Document) {
-            parseName();
+            parseName(flightData);
             parseDocument();
         } else {
             d->xml->raiseError("The file is not a KML document.");
@@ -109,7 +108,7 @@ void FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &fl
     }
 
     // Now "upsert" the position data, taking duplicate timestamps into account
-    Position &position = d->flight->getUserAircraft().getPosition();
+    Position &position = aircraft.getPosition();
     for (const FlightRadar24KmlParserPrivate::TrackItem &trackItem : d->trackData) {
         PositionData positionData {trackItem.latitude, trackItem.longitude, trackItem.altitude};
         positionData.timestamp = trackItem.timestamp;
@@ -118,33 +117,20 @@ void FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &fl
 
         position.upsertLast(positionData);
     }
-}
-
-QString FlightRadar24KmlParser::getDocumentName() const noexcept
-{
-    return d->documentName;
-}
-
-QString FlightRadar24KmlParser::getFlightNumber() const noexcept
-{
-    return d->flightNumber;
-}
-
-QDateTime FlightRadar24KmlParser::getFirstDateTimeUtc() const noexcept
-{
-    return d->firstDateTimeUtc;
+    flights.push_back(std::move(flightData));
+    return flights;
 }
 
 // PRIVATE
 
-void FlightRadar24KmlParser::parseName() noexcept
+void FlightRadar24KmlParser::parseName(FlightData &flightData) noexcept
 {
     if (d->xml->readNextStartElement()) {
 #ifdef DEBUG
         qDebug() << "FlightAwareKmlParser::readDocument: XML start element:" << d->xml->name().toString();
 #endif
         if (d->xml->name() == Kml::name) {
-            d->documentName = d->xml->readElementText();
+            flightData.title = d->xml->readElementText();
         } else {
             d->xml->raiseError("The KML document does not have a name element.");
         }

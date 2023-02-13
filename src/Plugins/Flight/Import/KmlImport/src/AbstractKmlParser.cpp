@@ -41,15 +41,7 @@
 
 struct AbstractKmlParserPrivate
 {
-    AbstractKmlParserPrivate() noexcept
-    {
-        firstDateTimeUtc.setTimeZone(QTimeZone::utc());
-    }
-
-    Flight *flight {nullptr};
     QXmlStreamReader *xml {nullptr};
-    QString documentName;    
-    QDateTime firstDateTimeUtc;
 };
 
 // PUBLIC
@@ -60,22 +52,11 @@ AbstractKmlParser::AbstractKmlParser() noexcept
 
 AbstractKmlParser::~AbstractKmlParser() = default;
 
-QString AbstractKmlParser::getDocumentName() const noexcept
-{
-    return d->documentName;
-}
-
 // PROTECTED
 
-void AbstractKmlParser::initialise(Flight *flight, QXmlStreamReader *xml) noexcept
+void AbstractKmlParser::initialise(QXmlStreamReader *xml) noexcept
 {
-    d->flight = flight;
     d->xml = xml;
-}
-
-Flight *AbstractKmlParser::getFlight() const noexcept
-{
-    return d->flight;
 }
 
 QXmlStreamReader *AbstractKmlParser::getXmlStreamReader() const noexcept
@@ -83,23 +64,28 @@ QXmlStreamReader *AbstractKmlParser::getXmlStreamReader() const noexcept
     return d->xml;
 }
 
-void AbstractKmlParser::parseKML() noexcept
+std::vector<FlightData> AbstractKmlParser::parseKML() noexcept
 {
+    std::vector<FlightData> flights;
+    FlightData flightData;
+    flightData.addUserAircraft();
     while (d->xml->readNextStartElement()) {
         const QStringView xmlName = d->xml->name();
         if (xmlName == Kml::Document) {
-            parseDocument();
+            parseDocument(flightData);
         }  else if (xmlName == Kml::Folder) {
-            parseFolder();
+            parseFolder(flightData);
         } else if (xmlName == Kml::Placemark) {
-            parsePlacemark();
+            parsePlacemark(flightData);
         } else {
             d->xml->skipCurrentElement();
         }
     }
+    flights.push_back(std::move(flightData));
+    return flights;
 }
 
-void AbstractKmlParser::parseDocument() noexcept
+void AbstractKmlParser::parseDocument(FlightData &flightData) noexcept
 {
     while (d->xml->readNextStartElement()) {
         const QStringView xmlName = d->xml->name();
@@ -107,18 +93,18 @@ void AbstractKmlParser::parseDocument() noexcept
         qDebug() << "AbstractKmlParser::parseDocument: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::name) {
-            parseDocumentName();
+            parseDocumentName(flightData);
         } else if (xmlName == Kml::Placemark) {
-            parsePlacemark();
+            parsePlacemark(flightData);
         } else if (xmlName == Kml::Folder) {
-            parseFolder();
+            parseFolder(flightData);
         } else {
             d->xml->skipCurrentElement();
         }
     }
 }
 
-void AbstractKmlParser::parseFolder() noexcept
+void AbstractKmlParser::parseFolder(FlightData &flightData) noexcept
 {
     while (d->xml->readNextStartElement()) {
         const QStringView xmlName = d->xml->name();
@@ -126,16 +112,16 @@ void AbstractKmlParser::parseFolder() noexcept
         qDebug() << "AbstractKmlParser::parseFolder: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::Placemark) {
-            parsePlacemark();
+            parsePlacemark(flightData);
         } else if (xmlName == Kml::Folder) {
-            parseFolder();
+            parseFolder(flightData);
         } else {
             d->xml->skipCurrentElement();
         }
     }
 }
 
-void AbstractKmlParser::parsePlacemark() noexcept
+void AbstractKmlParser::parsePlacemark(FlightData &flightData) noexcept
 {
     while (d->xml->readNextStartElement()) {
         const QStringView xmlName = d->xml->name();
@@ -143,14 +129,14 @@ void AbstractKmlParser::parsePlacemark() noexcept
         qDebug() << "AbstractKmlParser::parsePlacemark: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::Track) {
-            parseTrack();
+            parseTrack(flightData);
         } else {
             d->xml->skipCurrentElement();
         }
     }
 }
 
-void AbstractKmlParser::parseDocumentName() noexcept
+void AbstractKmlParser::parseDocumentName(FlightData &flightData) noexcept
 {
-    d->documentName = d->xml->readElementText();
+    flightData.title = d->xml->readElementText();
 }

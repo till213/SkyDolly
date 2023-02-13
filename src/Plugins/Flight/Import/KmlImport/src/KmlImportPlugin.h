@@ -39,7 +39,6 @@ class QIODevice;
 #include <PluginManager/FlightImportIntf.h>
 #include <PluginManager/FlightImportPluginBase.h>
 
-class Flight;
 struct FlightData;
 struct FlightData;
 struct AircraftInfo;
@@ -65,16 +64,11 @@ protected:
 
     FlightAugmentation::Procedures getProcedures() const noexcept override;
     FlightAugmentation::Aspects getAspects() const noexcept override;
-    QDateTime getStartDateTimeUtc() noexcept override;
-    QString getTitle() const noexcept override;
-    void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    void updateExtendedFlightInfo(Flight &flight) noexcept override;
-    void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 private:
     const std::unique_ptr<KmlImportPluginPrivate> d;
 
-    void parseKML() noexcept;
+    std::vector<FlightData> parseKML() noexcept;
 };
 
 #endif // KMLIMPORTPLUGIN_H

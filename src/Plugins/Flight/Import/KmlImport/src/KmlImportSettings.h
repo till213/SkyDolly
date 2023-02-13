@@ -51,7 +51,7 @@ public:
     KmlImportSettings() noexcept;
     ~KmlImportSettings() override;
 
-    bool hasLogbookSupport() const noexcept override;
+    bool requiresAircraftSelection() const noexcept override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;

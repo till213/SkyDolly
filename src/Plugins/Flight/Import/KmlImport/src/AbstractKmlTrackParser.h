@@ -33,6 +33,7 @@ class QXmlStreamReader;
 
 #include "AbstractKmlParser.h"
 
+struct FlightData;
 struct AbstractKmlTrackParserPrivate;
 
 class AbstractKmlTrackParser : public AbstractKmlParser
@@ -41,10 +42,9 @@ public:
     AbstractKmlTrackParser() noexcept;
     ~AbstractKmlTrackParser() override;
 
-    QDateTime getFirstDateTimeUtc() const noexcept override;
-
 protected:
-    void parseTrack() noexcept override;
+    void parseTrack(FlightData &flightData) noexcept override;
+    QDateTime getFirstDateTimeUtc() const;
 
 private:
     const std::unique_ptr<AbstractKmlTrackParserPrivate> d;

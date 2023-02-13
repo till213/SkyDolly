@@ -51,6 +51,10 @@ public:
     };
 
     CsvImportSettings() noexcept;
+    CsvImportSettings(const CsvImportSettings &rhs) = delete;
+    CsvImportSettings(CsvImportSettings &&rhs) = delete;
+    CsvImportSettings &operator=(const CsvImportSettings &rhs) = delete;
+    CsvImportSettings &operator=(CsvImportSettings &&rhs) = delete;
     ~CsvImportSettings() override;
 
     bool requiresAircraftSelection() const noexcept override;

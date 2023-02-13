@@ -60,18 +60,12 @@ AbstractKmlTrackParser::AbstractKmlTrackParser() noexcept
 
 AbstractKmlTrackParser::~AbstractKmlTrackParser() = default;
 
-QDateTime AbstractKmlTrackParser::getFirstDateTimeUtc() const noexcept
-{
-    return d->firstDateTimeUtc;
-}
-
 // PROTECTED
 
-void AbstractKmlTrackParser::parseTrack() noexcept
+void AbstractKmlTrackParser::parseTrack(FlightData &flightData) noexcept
 {
-    const Flight *flight = getFlight();
     QXmlStreamReader *xml = getXmlStreamReader();
-    Position &position = flight->getUserAircraft().getPosition();
+    Position &position = flightData.getUserAircraft().getPosition();
     if (position.count() == 0) {
 
         // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
@@ -152,5 +146,9 @@ void AbstractKmlTrackParser::parseTrack() noexcept
         // the KML document)
         xml->skipCurrentElement();
     }
+}
 
+QDateTime AbstractKmlTrackParser::getFirstDateTimeUtc() const
+{
+    return d->firstDateTimeUtc;
 }
