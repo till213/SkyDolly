@@ -116,7 +116,7 @@ bool JsonExportPlugin::exportAircraft(const FlightData &flightData, const Aircra
         ok = exportWaypoints(flightData, io);
     }
     if (ok) {
-        ok = exportAircraft(aircraft, io);
+        ok = exportSingleAircraft(aircraft, io);
         if (ok) {
             ok = io.write("\n");
         }
@@ -143,7 +143,7 @@ bool JsonExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice
     bool ok {true};
     std::size_t i = 0;
     for (const auto &aircraft : flightData) {
-        ok = exportAircraft(aircraft, io);
+        ok = exportSingleAircraft(aircraft, io);
         if (ok) {
             if (i < flightData.count() - 1) {
                 ok = io.write(",\n");
@@ -158,7 +158,7 @@ bool JsonExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice
     return ok;
 }
 
-bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool JsonExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};

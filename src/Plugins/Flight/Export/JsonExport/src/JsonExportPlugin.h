@@ -67,7 +67,7 @@ private:
 
     bool exportHeader(QIODevice &io) const noexcept;
     bool exportAllAircraft(const FlightData &flightData, QIODevice &io) const noexcept;
-    bool exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportSingleAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
     bool exportWaypoints(const FlightData &flightData, QIODevice &io) const noexcept;
     bool exportFooter(QIODevice &io) const noexcept;
 

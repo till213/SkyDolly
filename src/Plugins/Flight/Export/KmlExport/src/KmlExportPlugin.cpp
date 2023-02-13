@@ -133,7 +133,7 @@ bool KmlExportPlugin::exportFlightData(const FlightData &flightData, QIODevice &
     return ok;
 }
 
-bool KmlExportPlugin::exportAircraft([[maybe_unused]] const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool KmlExportPlugin::exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     io.setTextModeEnabled(true);
 
@@ -150,7 +150,8 @@ bool KmlExportPlugin::exportAircraft([[maybe_unused]] const FlightData &flightDa
         ok = exportFlightInfo(flightData, io);
     }
     if (ok) {
-        ok = exportAircraft(flightData, aircraft, io);
+        const bool inFormation = flightData.count() > 1;
+        ok = exportSingleAircraft(aircraft, inFormation, io);
     }
     if (ok) {
         ok = exportWaypoints(flightData.getUserAircraftConst().getFlightPlan(), io);
@@ -193,7 +194,8 @@ bool KmlExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice 
     bool ok {true};
     for (const auto &aircraft : flightData) {
         d->aircraftTypeCount[aircraft.getAircraftInfo().aircraftType.type] += 1;
-        ok = exportSingleAircraft(flightData, aircraft, io);
+        const bool inFormation = flightData.count() > 1;
+        ok = exportSingleAircraft(aircraft, inFormation, io);
         if (!ok) {
             break;
         }
@@ -201,7 +203,7 @@ bool KmlExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice 
     return ok;
 }
 
-bool KmlExportPlugin::exportSingleAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inFormation, QIODevice &io) const noexcept
 {
     const QString lineStringBegin = QString(
 "        <LineString>\n"
@@ -219,8 +221,7 @@ bool KmlExportPlugin::exportSingleAircraft(const FlightData &flightData, const A
     if (interpolatedPositionData.size() > 0) {
 
         const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfo().aircraftType.type];
-        const bool isFormation = flightData.count() > 1;
-        const QString aircratId = isFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
+        const QString aircratId = inFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
 
         const SimType::EngineType engineType = aircraft.getAircraftInfo().aircraftType.engineType;
         QString styleMapId = d->styleExport->getNextEngineTypeStyleMap(engineType);

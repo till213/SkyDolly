@@ -33,6 +33,7 @@
 
 class QIODevice;
 class QString;
+class QDateTime;
 
 #include <Kernel/Settings.h>
 #include <PluginManager/FlightExportIntf.h>
@@ -65,10 +66,12 @@ protected:
 private:
     const std::unique_ptr<GpxExportPluginPrivate> d;
 
+    void updateStartDateTimeUtc(const FlightData &flightData, const Aircraft &aircraft) const noexcept;
+
     bool exportHeader(QIODevice &io) const noexcept;
     bool exportFlightInfo(const FlightData &flightData, QIODevice &io) const noexcept;
     bool exportAllAircraft(const FlightData &flightData, QIODevice &io) const noexcept;
-    bool exportSingleAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportSingleAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
     bool exportWaypoints(const FlightData &flightData, QIODevice &io) const noexcept;
     bool exportFooter(QIODevice &io) const noexcept;
 

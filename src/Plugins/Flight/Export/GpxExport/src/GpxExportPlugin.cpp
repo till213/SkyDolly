@@ -115,6 +115,7 @@ bool GpxExportPlugin::exportFlightData(const FlightData &flightData, QIODevice &
 
 bool GpxExportPlugin::exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
+    updateStartDateTimeUtc(flightData, aircraft);
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
     if (ok) {
@@ -124,7 +125,7 @@ bool GpxExportPlugin::exportAircraft(const FlightData &flightData, const Aircraf
         ok = exportWaypoints(flightData, io);
     }
     if (ok) {
-        ok = exportSingleAircraft(flightData, aircraft, io);
+        ok = exportSingleAircraft(aircraft, io);
     }    
     if (ok) {
         ok = exportFooter(io);
@@ -134,6 +135,18 @@ bool GpxExportPlugin::exportAircraft(const FlightData &flightData, const Aircraf
 }
 
 // PRIVATE
+
+void GpxExportPlugin::updateStartDateTimeUtc(const FlightData &flightData, const Aircraft &aircraft) const noexcept
+{
+    switch (d->pluginSettings.getTimestampMode()) {
+    case GpxExportSettings::TimestampMode::Simulation:
+        d->startDateTimeUtc = flightData.getAircraftStartZuluTime(aircraft);
+        break;
+    case GpxExportSettings::TimestampMode::Recording:
+        d->startDateTimeUtc = flightData.getAircraftCreationTime(aircraft).toUTC();
+        break;
+    }
+}
 
 bool GpxExportPlugin::exportHeader(QIODevice &io) const noexcept
 {
@@ -161,7 +174,7 @@ bool GpxExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice 
 {
     bool ok {true};
     for (const auto &aircraft : flightData.aircraft) {
-        ok = exportSingleAircraft(flightData, aircraft, io);
+        ok = exportSingleAircraft(aircraft, io);
         if (!ok) {
             break;
         }
@@ -169,17 +182,8 @@ bool GpxExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice 
     return ok;
 }
 
-bool GpxExportPlugin::exportSingleAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool GpxExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    switch (d->pluginSettings.getTimestampMode()) {
-    case GpxExportSettings::TimestampMode::Simulation:
-        d->startDateTimeUtc = flightData.getAircraftStartZuluTime(aircraft);
-        break;
-    case GpxExportSettings::TimestampMode::Recording:
-        d->startDateTimeUtc = flightData.getAircraftCreationTime(aircraft).toUTC();
-        break;
-    }
-
     const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
     if (interpolatedPositionData.size() > 0) {
