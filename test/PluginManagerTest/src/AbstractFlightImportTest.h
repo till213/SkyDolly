@@ -46,6 +46,10 @@ protected:
 private slots:
     virtual void initTestCase() noexcept final;
     virtual void cleanupTestCase() noexcept final;
+
+    virtual void initTestCase_data() noexcept = 0;
+    virtual void importSelectedFlights_data() noexcept = 0;
+    void importSelectedFlights() noexcept;
 };
 
 #endif // ABSTRACTFLIGHTIMPORTTEST_H

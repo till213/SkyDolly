@@ -26,15 +26,7 @@
 
 #include <QtTest>
 #include <QUuid>
-#include <QFile>
-#include <QString>
-#include <QVariant>
 
-#include <Kernel/Settings.h>
-#include <Kernel/Version.h>
-#include <Model/FlightData.h>
-#include <Model/Aircraft.h>
-#include <Model/Position.h>
 #include <PluginManager/PluginManager.h>
 #include "CsvFlightRadar24ImportTest.h"
 
@@ -54,6 +46,8 @@ namespace Uuid
 
 void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
 {
+    // SETUP
+
     // Select the "FlightRadar24" format
     m_oldPluginFormat = getPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, 0).toInt();
     setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, ::FlightRadar24Format);
@@ -69,7 +63,13 @@ void CsvFlightRadar24ImportTest::onCleanupTestCase() noexcept
     setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, m_oldPluginFormat);
 }
 
-void CsvFlightRadar24ImportTest::parseFlightRadar24_data() noexcept
+void CsvFlightRadar24ImportTest::initTestCase_data() noexcept
+{
+    QTest::addColumn<QString>("pluginUuid");
+    QTest::newRow("pluginUuid") << QString(Uuid::Csv);
+}
+
+void CsvFlightRadar24ImportTest::importSelectedFlights_data() noexcept
 {
     QTest::addColumn<QString>("filepath");
     QTest::addColumn<bool>("expectedOk");
@@ -84,45 +84,6 @@ void CsvFlightRadar24ImportTest::parseFlightRadar24_data() noexcept
     QTest::newRow("FlightRadar24-invalid-1.csv") << ":/test/csv/FlightRadar24-invalid-1.csv" << false << false << 0 << 0 << 0 << 0;
     QTest::newRow("FlightRadar24-invalid-2.csv") << ":/test/csv/FlightRadar24-invalid-2.csv" << false << false << 0 << 0 << 0 << 0;
     QTest::newRow("FlightRadar24-invalid-3.csv") << ":/test/csv/FlightRadar24-invalid-3.csv" << false << false << 0 << 0 << 0 << 0;
-}
-
-void CsvFlightRadar24ImportTest::parseFlightRadar24() noexcept
-{
-    bool ok {false};
-    // Setup
-    QFETCH(QString, filepath);
-    QFETCH(bool, expectedOk);
-    QFETCH(bool, expectedHasRecording);
-    QFETCH(int, expectedNofFlights);
-    QFETCH(int, expectedUserAircraftIndexOfFirstFlight);
-    QFETCH(int, expectedNofAircraftInFirstFlight);
-    QFETCH(int, expectedNofUserAircraftPositionInFirstFlight);
-
-    // Exercise
-    QFile file {filepath};
-    bool fileOpenOk = file.open(QIODeviceBase::ReadOnly);
-    const std::vector<FlightData> flights = PluginManager::getInstance().importSelectedFlights(QUuid(Uuid::Csv), file, ok);
-    file.close();
-
-    // Verify
-    QVERIFY(fileOpenOk);
-    QVERIFY(ok == expectedOk);
-    for (const FlightData &flightData : flights) {
-        QVERIFY(flightData.hasRecording() == expectedHasRecording);
-    }
-
-    std::size_t nofFlights = flights.size();
-    QCOMPARE_EQ(static_cast<int>(nofFlights), expectedNofFlights);
-    if (nofFlights > 0) {
-        const FlightData &firstFlight = flights.front();
-        QCOMPARE_EQ(static_cast<int>(firstFlight.userAircraftIndex), expectedUserAircraftIndexOfFirstFlight);
-        std::size_t nofAircraft = firstFlight.count();
-        QCOMPARE_EQ(static_cast<int>(nofAircraft), expectedNofAircraftInFirstFlight);
-        if (nofAircraft > 0) {
-            const Aircraft &aircraft = firstFlight.getUserAircraftConst();
-            QCOMPARE_EQ(static_cast<int>(aircraft.getPosition().count()), expectedNofUserAircraftPositionInFirstFlight);
-        }
-    }
 }
 
 QTEST_MAIN(CsvFlightRadar24ImportTest)

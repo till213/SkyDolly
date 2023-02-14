@@ -22,14 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QString>
+#include <vector>
+
+#include <QtTest>
 #include <QUuid>
+#include <QFile>
+#include <QString>
 #include <QVariant>
 #include <QCoreApplication>
 
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
 
+#include <Model/FlightData.h>
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <PluginManager/PluginManager.h>
 #include "AbstractFlightImportTest.h"
 
 // PRIVATE
@@ -73,4 +81,44 @@ void AbstractFlightImportTest::initTestCase() noexcept
 void AbstractFlightImportTest::cleanupTestCase() noexcept
 {
     onCleanupTestCase();
+}
+
+void AbstractFlightImportTest::importSelectedFlights() noexcept
+{
+    bool ok {false};
+    // Setup
+    QFETCH_GLOBAL(QString, pluginUuid);
+    QFETCH(QString, filepath);
+    QFETCH(bool, expectedOk);
+    QFETCH(bool, expectedHasRecording);
+    QFETCH(int, expectedNofFlights);
+    QFETCH(int, expectedUserAircraftIndexOfFirstFlight);
+    QFETCH(int, expectedNofAircraftInFirstFlight);
+    QFETCH(int, expectedNofUserAircraftPositionInFirstFlight);
+
+    // Exercise
+    QFile file {filepath};
+    bool fileOpenOk = file.open(QIODeviceBase::ReadOnly);
+    const std::vector<FlightData> flights = PluginManager::getInstance().importSelectedFlights(QUuid(pluginUuid), file, ok);
+    file.close();
+
+    // Verify
+    QVERIFY(fileOpenOk);
+    QVERIFY(ok == expectedOk);
+    for (const FlightData &flightData : flights) {
+        QVERIFY(flightData.hasRecording() == expectedHasRecording);
+    }
+
+    std::size_t nofFlights = flights.size();
+    QCOMPARE_EQ(static_cast<int>(nofFlights), expectedNofFlights);
+    if (nofFlights > 0) {
+        const FlightData &firstFlight = flights.front();
+        QCOMPARE_EQ(static_cast<int>(firstFlight.userAircraftIndex), expectedUserAircraftIndexOfFirstFlight);
+        std::size_t nofAircraft = firstFlight.count();
+        QCOMPARE_EQ(static_cast<int>(nofAircraft), expectedNofAircraftInFirstFlight);
+        if (nofAircraft > 0) {
+            const Aircraft &aircraft = firstFlight.getUserAircraftConst();
+            QCOMPARE_EQ(static_cast<int>(aircraft.getPosition().count()), expectedNofUserAircraftPositionInFirstFlight);
+        }
+    }
 }

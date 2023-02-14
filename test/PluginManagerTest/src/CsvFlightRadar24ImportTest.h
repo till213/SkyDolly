@@ -40,8 +40,8 @@ protected:
     void onCleanupTestCase() noexcept override;
 
 private slots:
-    void parseFlightRadar24_data() noexcept;
-    void parseFlightRadar24() noexcept;
+    void initTestCase_data() noexcept override;
+    void importSelectedFlights_data() noexcept override;
 
 private:
     int m_oldPluginFormat {0};
