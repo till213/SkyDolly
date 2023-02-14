@@ -1,4 +1,4 @@
-set(MODULE_NAME "KMLExport")
+set(MODULE_NAME "KmlExport")
 
 qt_add_library(${MODULE_NAME} MODULE)
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})

@@ -47,8 +47,31 @@ private slots:
     virtual void initTestCase() noexcept final;
     virtual void cleanupTestCase() noexcept final;
 
+    /*!
+     * Set the following global test data:
+     *
+     * - QUuid: "pluginUuid"
+     */
     virtual void initTestCase_data() noexcept = 0;
+
+    /*!
+     * Set the following test data:
+     *
+     * - QString: "filepath"
+     * - bool: "expectedOk";
+     * - bool: "expectedHasRecording"
+     * - int: "expectedNofFlights"
+     * - int: "expectedUserAircraftIndexOfFirstFlight"
+     * - int: "expectedNofAircraftInFirstFlight"
+     * - int: "expectedNofUserAircraftPositionInFirstFlight"
+     */
     virtual void importSelectedFlights_data() noexcept = 0;
+
+    /*!
+     * Tests the PluginManager#importSelectedFlights method with
+     * the test data defined in initTestCase_data() (-> plugin UUID)
+     * and importSelectedFlights_data().
+     */
     void importSelectedFlights() noexcept;
 };
 

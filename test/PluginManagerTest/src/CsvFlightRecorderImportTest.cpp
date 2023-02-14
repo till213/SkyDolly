@@ -28,12 +28,12 @@
 #include <QUuid>
 
 #include <PluginManager/PluginManager.h>
-#include "CsvFlightRadar24ImportTest.h"
+#include "CsvFlightRecorderImportTest.h"
 
 namespace
 {
     constexpr const char *FormatKey = "Format";
-    constexpr const int FlightRadar24Format = 1;
+    constexpr const int FlightRecorderFormat = 2;
 }
 
 namespace Uuid
@@ -44,13 +44,13 @@ namespace Uuid
 
 // PRIVATE SLOTS
 
-void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
+void CsvFlightRecorderImportTest::onInitTestCase() noexcept
 {
     // SETUP
 
-    // Select the "FlightRadar24" format
+    // Select the "FlightRecorder" format
     m_oldPluginFormat = getPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, 0).toInt();
-    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, ::FlightRadar24Format);
+    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, ::FlightRecorderFormat);
 
     // Initialis flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
@@ -58,18 +58,18 @@ void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
     QVERIFY(flightImportPlugins.size() > 0);
 }
 
-void CsvFlightRadar24ImportTest::onCleanupTestCase() noexcept
+void CsvFlightRecorderImportTest::onCleanupTestCase() noexcept
 {
     setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, m_oldPluginFormat);
 }
 
-void CsvFlightRadar24ImportTest::initTestCase_data() noexcept
+void CsvFlightRecorderImportTest::initTestCase_data() noexcept
 {
     QTest::addColumn<QUuid>("pluginUuid");
     QTest::newRow("pluginUuid") << QUuid(Uuid::Csv);
 }
 
-void CsvFlightRadar24ImportTest::importSelectedFlights_data() noexcept
+void CsvFlightRecorderImportTest::importSelectedFlights_data() noexcept
 {
     QTest::addColumn<QString>("filepath");
     QTest::addColumn<bool>("expectedOk");
@@ -79,11 +79,11 @@ void CsvFlightRadar24ImportTest::importSelectedFlights_data() noexcept
     QTest::addColumn<int>("expectedNofAircraftInFirstFlight");
     QTest::addColumn<int>("expectedNofUserAircraftPositionInFirstFlight");
 
-    QTest::newRow("FlightRadar24-valid-1.csv")   << ":/test/csv/FlightRadar24-valid-1.csv"   << true  << true  << 1 << 0 << 1 << 2;
-    QTest::newRow("Empty.csv")                   << ":/test/csv/Empty.csv"                   << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRadar24-invalid-1.csv") << ":/test/csv/FlightRadar24-invalid-1.csv" << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRadar24-invalid-2.csv") << ":/test/csv/FlightRadar24-invalid-2.csv" << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRadar24-invalid-3.csv") << ":/test/csv/FlightRadar24-invalid-3.csv" << false << false << 0 << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-valid-1.csv")   << ":/test/csv/FlightRecorder-valid-1.csv"   << true  << true  << 1 << 0 << 1 << 2;
+    QTest::newRow("Empty.csv")                    << ":/test/csv/Empty.csv"                    << false << false << 0 << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-invalid-1.csv") << ":/test/csv/FlightRecorder-invalid-1.csv" << false << false << 0 << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-invalid-2.csv") << ":/test/csv/FlightRecorder-invalid-2.csv" << false << false << 0 << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-invalid-3.csv") << ":/test/csv/FlightRecorder-invalid-3.csv" << false << false << 0 << 0 << 0 << 0;
 }
 
-QTEST_MAIN(CsvFlightRadar24ImportTest)
+QTEST_MAIN(CsvFlightRecorderImportTest)

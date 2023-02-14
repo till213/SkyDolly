@@ -87,7 +87,7 @@ void AbstractFlightImportTest::importSelectedFlights() noexcept
 {
     bool ok {false};
     // Setup
-    QFETCH_GLOBAL(QString, pluginUuid);
+    QFETCH_GLOBAL(QUuid, pluginUuid);
     QFETCH(QString, filepath);
     QFETCH(bool, expectedOk);
     QFETCH(bool, expectedHasRecording);
@@ -99,7 +99,7 @@ void AbstractFlightImportTest::importSelectedFlights() noexcept
     // Exercise
     QFile file {filepath};
     bool fileOpenOk = file.open(QIODeviceBase::ReadOnly);
-    const std::vector<FlightData> flights = PluginManager::getInstance().importSelectedFlights(QUuid(pluginUuid), file, ok);
+    const std::vector<FlightData> flights = PluginManager::getInstance().importSelectedFlights(pluginUuid, file, ok);
     file.close();
 
     // Verify

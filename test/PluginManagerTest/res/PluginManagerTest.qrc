@@ -5,5 +5,9 @@
         <file>test/csv/FlightRadar24-valid-1.csv</file>
         <file>test/csv/FlightRadar24-invalid-2.csv</file>
         <file>test/csv/FlightRadar24-invalid-3.csv</file>
+        <file>test/csv/FlightRecorder-invalid-1.csv</file>
+        <file>test/csv/FlightRecorder-invalid-2.csv</file>
+        <file>test/csv/FlightRecorder-invalid-3.csv</file>
+        <file>test/csv/FlightRecorder-valid-1.csv</file>
     </qresource>
 </RCC>

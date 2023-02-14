@@ -59,7 +59,6 @@ CsvImportPlugin::~CsvImportPlugin() = default;
 std::vector<FlightData> CsvImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
 {
     std::vector<FlightData> flights;
-    FlightData flightData;
     std::unique_ptr<CsvParserIntf> parser;
     switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
@@ -74,7 +73,7 @@ std::vector<FlightData> CsvImportPlugin::importSelectedFlights(QIODevice &io, bo
     }
     ok = false;
     if (parser != nullptr) {
-        ok = parser->parse(io, flightData);
+        FlightData flightData = parser->parse(io, ok);
         if (ok) {
             ok = flightData.hasRecording();
         }

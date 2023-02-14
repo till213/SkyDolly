@@ -145,18 +145,18 @@ namespace
 
 // PUBLIC
 
-bool SkyDollyCsvParser::parse(QIODevice &io, FlightData &flightData) noexcept
+FlightData SkyDollyCsvParser::parse(QIODevice &io, bool &ok) noexcept
 {
+    FlightData flightData;
     auto *file = qobject_cast<QFile *>(&io);
     QDateTime firstDateTimeUtc;
     firstDateTimeUtc = (file != nullptr) ? QFileInfo(*file).birthTime().toUTC() : QDateTime::currentDateTimeUtc();
-    QString flightNumber = QString();
 
     CsvParser csvParser;
     QTextStream textStream(&io);
     textStream.setEncoding(QStringConverter::Utf8);
     CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
-    bool ok = CsvParser::validate(rows, Enum::underly(::Index::Count));
+    ok = CsvParser::validate(rows, Enum::underly(::Index::Count));
     if (ok) {
         Aircraft &aircraft = flightData.addUserAircraft();
         // Heuristical memory pre-allocation: we expect that about
@@ -197,7 +197,7 @@ bool SkyDollyCsvParser::parse(QIODevice &io, FlightData &flightData) noexcept
         }
     }
 
-    return ok;
+    return flightData;
 }
 
 inline bool SkyDollyCsvParser::parseRow(const CsvParser::Row &row, Aircraft &aircraft) noexcept

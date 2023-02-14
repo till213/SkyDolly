@@ -1,7 +1,6 @@
 find_package(Qt6Test REQUIRED)
 
 ## SkySearch Test ##
-
 set(TEST_NAME "SkySearchTest")
 
 qt_add_executable(${TEST_NAME})

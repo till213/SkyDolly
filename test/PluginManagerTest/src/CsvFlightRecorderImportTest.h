@@ -22,34 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTRADAR24CSVPARSER_H
-#define FLIGHTRADAR24CSVPARSER_H
+#ifndef CSVFLIGHTRECORDERIMPORTTEST_H
+#define CSVFLIGHTRECORDERIMPORTTEST_H
 
-#include <memory.h>
+#include <QObject>
 
-class QIODevice;
-class QDateTime;
-class QString;
+#include "AbstractFlightImportTest.h"
 
-#include <Kernel/CsvParser.h>
-#include <Model/PositionData.h>
-#include "CsvParserIntf.h"
-
-struct FlightData;
-struct FlightRadar24CsvParserPrivate;
-
-class FlightRadar24CsvParser : public CsvParserIntf
+/*!
+ * Test cases for the CsvParser.
+ */
+class CsvFlightRecorderImportTest : public AbstractFlightImportTest
 {
-public:
-    FlightRadar24CsvParser() noexcept;
-    ~FlightRadar24CsvParser() override;
+    Q_OBJECT
+protected:
+    void onInitTestCase() noexcept override;
+    void onCleanupTestCase() noexcept override;
 
-    FlightData parse(QIODevice &io, bool &ok) noexcept override;
+private slots:
+    void initTestCase_data() noexcept override;
+    void importSelectedFlights_data() noexcept override;
+
 private:
-    std::unique_ptr<FlightRadar24CsvParserPrivate> d;
-
-    bool validateHeaders() noexcept;
-    inline PositionData parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) const noexcept;
+    int m_oldPluginFormat {0};
 };
 
-#endif // FLIGHTRADAR24CSVPARSER_H
+#endif // CSVFLIGHTRECORDERIMPORTTEST_H
