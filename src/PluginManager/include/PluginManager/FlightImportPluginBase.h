@@ -110,12 +110,14 @@ private:
 
     bool augmentFlights(std::vector<FlightData> &flightData) const noexcept;
 
-    bool addAndStoreAircraftToCurrentFlight(const QString sourceFilePath, std::vector<FlightData> importedFlightData, Flight &currentFlight,
+    bool addAndStoreAircraftToCurrentFlight(const QString &sourceFilePath, std::vector<FlightData> importedFlights, Flight &currentFlight,
                                             std::size_t &totalFlightsStored, std::size_t &totalAircraftStored, bool &continueWithDirectoryImport) noexcept;
-    bool storeFlightData(std::vector<FlightData> &importedFlightData, std::size_t &totalFlightsStored);
+    bool storeFlightData(std::vector<FlightData> &importedFlights, std::size_t &totalFlightsStored);
 
     void confirmImportError(const QString &sourceFilePath, bool &ignoreFailures, bool &continueWithDirectoryImport) noexcept;
     void confirmMultiFlightImport(const QString &sourceFilePath, std::size_t nofFlights, bool &doAdd, bool &continueWithDirectoryImport);
+
+    void syncAircraftTimeOffset(const Flight &currentFlight, std::vector<FlightData> &importedFlights) const noexcept;
 };
 
 #endif // FLIGHTIMPORTPLUGINBASE_H

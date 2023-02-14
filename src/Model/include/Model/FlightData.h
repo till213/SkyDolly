@@ -38,16 +38,34 @@
 
 struct MODEL_API FlightData final
 {
+    /*! Defines how the flight creation time is to be reset upon clearing the flight. */
+    enum struct CreationTimeMode
+    {
+        /*! Update the creation time to the current date & time */
+        Update,
+        /*! Reset the creation time to an invalid date & time */
+        Reset
+    };
+
     std::int64_t id {Const::InvalidId};
-    QDateTime creationTime {QDateTime::currentDateTime()};
+    // To be updated to "current time" at the very moment when the first recording starts
+    QDateTime creationTime;
     QString title;
     QString description;
     FlightCondition flightCondition;
     std::vector<Aircraft> aircraft;
     int userAircraftIndex {Const::InvalidIndex};
 
-    inline void clear(bool withOneAircraft) noexcept {
+    inline void clear(bool withOneAircraft, CreationTimeMode creationTimeMode) noexcept {
         id = Const::InvalidId;
+        switch (creationTimeMode) {
+        case CreationTimeMode::Update:
+            creationTime = QDateTime::currentDateTime();
+            break;
+        case CreationTimeMode::Reset:
+            creationTime = QDateTime();
+            break;
+        }
         title.clear();
         description.clear();
         flightCondition.clear();

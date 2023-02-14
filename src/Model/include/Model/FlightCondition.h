@@ -35,6 +35,7 @@
 
 struct MODEL_API FlightCondition final
 {
+    // Simulation times (not real-world times)
     QDateTime startLocalTime;
     QDateTime startZuluTime;
     QDateTime endLocalTime;

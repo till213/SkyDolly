@@ -141,6 +141,11 @@ void Aircraft::setTimeOffset(std::int64_t timeOffset) noexcept {
     invalidateDuration();
 }
 
+void Aircraft::addTimeOffset(std::int64_t deltaOffset) noexcept {
+    d->aircraftInfo.timeOffset += deltaOffset;
+    invalidateDuration();
+}
+
 std::int64_t Aircraft::getDurationMSec() const noexcept
 {
     const std::int64_t timeOffset = d->aircraftInfo.timeOffset;
