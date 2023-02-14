@@ -76,6 +76,9 @@ std::vector<FlightData> CsvImportPlugin::importSelectedFlights(QIODevice &io, bo
     if (parser != nullptr) {
         ok = parser->parse(io, flightData);
         if (ok) {
+            ok = flightData.hasRecording();
+        }
+        if (ok) {
             enrichFlightData(flightData);
             flights.push_back(std::move(flightData));
         }

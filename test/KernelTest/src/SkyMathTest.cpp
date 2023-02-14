@@ -27,7 +27,7 @@
 #include <cstdint>
 #include <cmath>
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 #include <Kernel/SkyMath.h>
 #include "SkyMathTest.h"

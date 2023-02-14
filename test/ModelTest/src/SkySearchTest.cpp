@@ -24,7 +24,7 @@
  */
 #include <cstdint>
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 #include <Model/PositionData.h>
 #include <Model/SkySearch.h>

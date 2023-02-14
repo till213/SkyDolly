@@ -95,8 +95,12 @@ public:
      */
     static inline bool validate(const Rows &rows, std::size_t expectedColumnCount) noexcept
     {
-        auto condition = [expectedColumnCount](const Row &row){return row.size() != expectedColumnCount;};
-        return std::find_if(rows.begin(), rows.end(), condition) == rows.end();
+        bool ok = rows.size() > 0;
+        if (ok) {
+            auto condition = [expectedColumnCount](const Row &row) {return row.size() != expectedColumnCount;};
+            ok = std::find_if(rows.begin(), rows.end(), condition) == rows.end();
+        }
+        return ok;
     };
 
 private:

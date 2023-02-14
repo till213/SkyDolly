@@ -319,8 +319,7 @@ void Flight::clear(bool withOneAircraft) noexcept
 
 bool Flight::hasRecording() const noexcept
 {
-    auto noRecording = [](const Aircraft &a){ return !a.hasRecording(); };
-    return std::find_if(d->flightData.begin(), d->flightData.end(), noRecording) == d->flightData.end();
+    return d->flightData.hasRecording();
 }
 
 Flight::Iterator Flight::begin() noexcept

@@ -91,7 +91,6 @@ struct PluginManagerPrivate
     static inline PluginManager *instance;
 };
 
-
 // PUBLIC
 
 PluginManager &PluginManager::getInstance() noexcept

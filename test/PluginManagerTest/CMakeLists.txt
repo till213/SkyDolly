@@ -5,10 +5,17 @@ find_package(Qt6Test REQUIRED)
 set(TEST_NAME "CsvFlightImportTest")
 
 qt_add_executable(${TEST_NAME})
+if(${PLATFORM_IS_MACOS})
+    set_target_properties(${TEST_NAME}
+        PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/SkyDolly.app/Contents/MacOS
+    )
+endif()
 
 target_sources(${TEST_NAME}
     PRIVATE
         src/${TEST_NAME}.h src/${TEST_NAME}.cpp
+        res/PluginManagerTest.qrc
 )
 
 set(KERNELTEST_LIBS

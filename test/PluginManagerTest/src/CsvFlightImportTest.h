@@ -38,8 +38,8 @@ private slots:
     void initTestCase() noexcept;
     void cleanupTestCase() noexcept;
 
-    void parseCsv_data() noexcept;
-    void parseCsv() noexcept;
+    void parseFlightRadar24_data() noexcept;
+    void parseFlightRadar24() noexcept;
 };
 
 #endif // CSVFLIGHTIMPORTTEST_H

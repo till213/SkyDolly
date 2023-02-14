@@ -54,7 +54,9 @@ public:
 
     /*!
      * Imports the flight data from the given \c io data source and returns the list
-     * of imported FlightData.
+     * of imported FlightData. Note that \c ok is also set to \c false in case
+     * no flight data was imported at all (despite the existing file not having
+     * any syntax errors).
      *
      * \param io
      *        the IO device to read from
