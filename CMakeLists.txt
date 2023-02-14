@@ -52,8 +52,8 @@ endif()
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     add_compile_definitions(DEBUG)
 endif()
-# No use of deprecated Qt functionality before Qt 5.15
-add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
+# No use of deprecated Qt functionality before Qt 6.4
+add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060400)
 
 # Qt
 find_package(Qt6 REQUIRED COMPONENTS Widgets Sql LinguistTools)
