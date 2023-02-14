@@ -57,15 +57,15 @@ public:
     GpxImportPlugin() noexcept;
     ~GpxImportPlugin() override;
 
+    std::vector<FlightData> importSelectedFlights(QIODevice &io, bool &ok) noexcept override;
+
 protected:
     FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    std::vector<FlightData> importFlights(QIODevice &io, bool &ok) noexcept override;
-
-    FlightAugmentation::Procedures getProcedures() const noexcept override;
-    FlightAugmentation::Aspects getAspects() const noexcept override;
+    FlightAugmentation::Procedures getAugmentationProcedures() const noexcept override;
+    FlightAugmentation::Aspects getAugmentationAspects() const noexcept override;
 
 private:
     const std::unique_ptr<GpxImportPluginPrivate> d;

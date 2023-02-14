@@ -1,4 +1,4 @@
-set(MODULE_NAME "IGCImport")
+set(MODULE_NAME "IgcImport")
 
 qt_add_library(${MODULE_NAME} MODULE)
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})

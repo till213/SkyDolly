@@ -44,7 +44,7 @@ public:
     FlightRadar24CsvParser() noexcept;
     ~FlightRadar24CsvParser() override;
 
-    bool parse(QIODevice &io, FlightData &flightData) noexcept override;
+    FlightData parse(QIODevice &io, bool &ok) noexcept override;
 private:
     std::unique_ptr<FlightRadar24CsvParserPrivate> d;
 

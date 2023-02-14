@@ -187,19 +187,20 @@ FlightRecorderCsvParser::FlightRecorderCsvParser() noexcept
 
 FlightRecorderCsvParser::~FlightRecorderCsvParser() = default;
 
-bool FlightRecorderCsvParser::parse(QIODevice &io, FlightData &flightData) noexcept
+FlightData FlightRecorderCsvParser::parse(QIODevice &io, bool &ok) noexcept
 {
+    FlightData flightData;
     CsvParser csvParser;
     QTextStream textStream(&io);
     textStream.setEncoding(QStringConverter::Utf8);
     CsvParser::Rows rows = csvParser.parse(textStream, Header::FlightRecorderCsv);
     d->headers = csvParser.getHeaders();
-    bool ok = validateHeaders();
+    ok = validateHeaders();
     if (ok) {
         ok = CsvParser::validate(rows, d->headers.size());
     }
     if (ok) {
-        Aircraft aircraft;
+        Aircraft &aircraft = flightData.addUserAircraft();
         aircraft.getPosition().reserve(rows.size());
         aircraft.getEngine().reserve(rows.size());
         aircraft.getPrimaryFlightControl().reserve(rows.size());
@@ -215,7 +216,6 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, FlightData &flightData) noexc
                  << "Aircraft handles size:" << aircraft.getAircraftHandle().capacity() << "\n"
                  << "Light size:" << aircraft.getLight().capacity() << "\n";
 #endif
-       flightData.aircraft.push_back(std::move(aircraft));
 
         bool firstRow {true};
         for (const auto &row : rows) {
@@ -234,7 +234,7 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, FlightData &flightData) noexc
         }
     }
 
-    return ok;
+    return flightData;
 }
 
 // PRIVATE
@@ -253,7 +253,7 @@ bool FlightRecorderCsvParser::parse(QIODevice &io, FlightData &flightData) noexc
 
 bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &flightData) noexcept
 {
-    Aircraft &aircraft = flightData.addUserAircraft();
+    const Aircraft &aircraft = flightData.getUserAircraftConst();
     Position &position = aircraft.getPosition();
     Engine &engine = aircraft.getEngine();
     PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControl();

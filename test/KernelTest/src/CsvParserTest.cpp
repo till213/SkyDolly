@@ -24,7 +24,7 @@
  */
 #include <utility>
 
-#include <QtTest/QtTest>
+#include <QtTest>
 #include <QBuffer>
 #include <QTextStream>
 #include <QString>

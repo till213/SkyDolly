@@ -1,4 +1,4 @@
-set(MODULE_NAME "CSVLocationImport")
+set(MODULE_NAME "CsvLocationImport")
 
 qt_add_library(${MODULE_NAME} MODULE)
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})

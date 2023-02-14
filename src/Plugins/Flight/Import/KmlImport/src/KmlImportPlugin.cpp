@@ -63,6 +63,30 @@ KmlImportPlugin::KmlImportPlugin() noexcept
 
 KmlImportPlugin::~KmlImportPlugin() = default;
 
+std::vector<FlightData> KmlImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+{
+    std::vector<FlightData> flights;
+    d->xml.setDevice(&io);
+    if (d->xml.readNextStartElement()) {
+#ifdef DEBUG
+        qDebug() << "KmlImportPlugin::importSelectedFlights: XML start element:" << d->xml.name().toString();
+#endif
+        if (d->xml.name() == QStringLiteral("kml")) {
+            flights = parseKML();
+        } else {
+            d->xml.raiseError(QStringLiteral("The file is not a KML file."));
+        }
+    }
+
+    ok = !flights.empty() && !d->xml.hasError();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug() << "KmlImportPlugin::importSelectedFlights: XML error:" << d->xml.errorString();
+    }
+#endif
+    return flights;
+}
+
 // PROTECTED
 
 FlightImportPluginBaseSettings &KmlImportPlugin::getPluginSettings() const noexcept
@@ -85,36 +109,12 @@ std::unique_ptr<QWidget> KmlImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KmlImportOptionWidget>(d->pluginSettings);
 }
 
-std::vector<FlightData> KmlImportPlugin::importFlights(QIODevice &io, bool &ok) noexcept
-{
-    std::vector<FlightData> flights;
-    d->xml.setDevice(&io);
-    if (d->xml.readNextStartElement()) {
-#ifdef DEBUG
-        qDebug() << "KmlImportPlugin::importFlight: XML start element:" << d->xml.name().toString();
-#endif
-        if (d->xml.name() == QStringLiteral("kml")) {
-            flights = parseKML();
-        } else {
-            d->xml.raiseError(QStringLiteral("The file is not a KML file."));
-        }
-    }
-
-    ok = !flights.empty() && !d->xml.hasError();
-#ifdef DEBUG
-    if (!ok) {
-        qDebug() << "KmlImportPlugin::importFlight: XML error:" << d->xml.errorString();
-    }
-#endif
-    return flights;
-}
-
-FlightAugmentation::Procedures KmlImportPlugin::getProcedures() const noexcept
+FlightAugmentation::Procedures KmlImportPlugin::getAugmentationProcedures() const noexcept
 {
     return FlightAugmentation::Procedure::All;
 }
 
-FlightAugmentation::Aspects KmlImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects KmlImportPlugin::getAugmentationAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
     switch (d->pluginSettings.getFormat()) {

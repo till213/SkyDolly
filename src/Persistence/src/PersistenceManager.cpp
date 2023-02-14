@@ -99,7 +99,7 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
                 ok = success;
                 if (ok) {
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
-                    flight.clear(true);
+                    flight.clear(true, FlightData::CreationTimeMode::Reset);
                     // Create a backup before migration of existing logbooks
                     Version appVersion;
                     // TODO: Check whether there are any migration steps to be executed at all before

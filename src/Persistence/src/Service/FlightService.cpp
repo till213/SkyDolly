@@ -148,7 +148,7 @@ bool FlightService::deleteById(std::int64_t id) noexcept
     if (ok) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         if (flight.getId() == id) {
-            flight.clear(true);
+            flight.clear(true, FlightData::CreationTimeMode::Reset);
         }
         ok = d->flightDao->deleteById(id);
         if (ok) {

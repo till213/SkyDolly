@@ -26,7 +26,7 @@
 #include <memory>
 #include <utility>
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 #include <Kernel/QUuidHasher.h>
 #include <Kernel/Sort.h>

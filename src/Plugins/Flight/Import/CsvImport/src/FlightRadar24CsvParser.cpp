@@ -87,10 +87,10 @@ FlightRadar24CsvParser::FlightRadar24CsvParser() noexcept
 
 FlightRadar24CsvParser::~FlightRadar24CsvParser() = default;
 
-bool FlightRadar24CsvParser::parse(QIODevice &io, FlightData &flightData) noexcept
+FlightData FlightRadar24CsvParser::parse(QIODevice &io, bool &ok) noexcept
 {
-    Aircraft &aircraft = flightData.addUserAircraft();
-    Position &position = aircraft.getPosition();
+    FlightData flightData;
+
     QDateTime firstDateTimeUtc;
     QString flightNumber;
 
@@ -101,11 +101,13 @@ bool FlightRadar24CsvParser::parse(QIODevice &io, FlightData &flightData) noexce
     textStream.setEncoding(QStringConverter::Utf8);
     CsvParser::Rows rows = csvParser.parse(textStream, Header::FlightRadar24Csv);
     d->headers = csvParser.getHeaders();
-    bool ok = validateHeaders();
+    ok = validateHeaders();
     if (ok) {
         ok = CsvParser::validate(rows, d->headers.size());
     }
     if (ok) {
+        Aircraft &aircraft = flightData.addUserAircraft();
+        Position &position = aircraft.getPosition();
         position.reserve(rows.size());
         for (const auto &row : rows) {
             const PositionData positionData = parsePosition(row, firstDateTimeUtc, flightNumber, ok);
@@ -115,14 +117,14 @@ bool FlightRadar24CsvParser::parse(QIODevice &io, FlightData &flightData) noexce
                 break;
             }
         }
+        if (ok) {
+            FlightCondition &flightCondition = flightData.flightCondition;
+            flightCondition.startZuluTime = firstDateTimeUtc;
+            flightCondition.startLocalTime = firstDateTimeUtc.toLocalTime();
+            aircraft.getAircraftInfo().flightNumber = flightNumber;
+        }
     }
-    if (ok) {
-        FlightCondition &flightCondition = flightData.flightCondition;
-        flightCondition.startZuluTime = firstDateTimeUtc;
-        flightCondition.startLocalTime = firstDateTimeUtc.toLocalTime();
-        aircraft.getAircraftInfo().flightNumber = flightNumber;
-    }
-    return ok;
+    return flightData;
 }
 
 // PRIVATE

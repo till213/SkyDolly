@@ -107,7 +107,7 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
     query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
     if (ok) {
-        flightData.clear(false);
+        flightData.clear(false, FlightData::CreationTimeMode::Reset);
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
         const int creationTimeIdx = record.indexOf("creation_time");

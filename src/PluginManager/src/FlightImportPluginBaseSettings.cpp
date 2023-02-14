@@ -36,7 +36,7 @@ namespace
     constexpr const char *AircraftImportModeKey {"AircraftImportModeKey"};
 
     // Defaults
-    constexpr FlightImportPluginBaseSettings::AircraftImportMode DefaultAircraftImportMode {FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights};
+    constexpr FlightImportPluginBaseSettings::AircraftImportMode DefaultAircraftImportMode {FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight};
     constexpr bool DefaultImportDirectoryEnabled {false};    
 }
 

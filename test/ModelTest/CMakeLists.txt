@@ -1,10 +1,13 @@
 find_package(Qt6Test REQUIRED)
 
-qt_add_executable(SkySearchTest)
+## SkySearch Test ##
+set(TEST_NAME "SkySearchTest")
 
-target_sources(SkySearchTest
+qt_add_executable(${TEST_NAME})
+
+target_sources(${TEST_NAME}
     PRIVATE
-        src/SkySearchTest.h src/SkySearchTest.cpp
+        src/${TEST_NAME}.h src/${TEST_NAME}.cpp
 )
 
 set(KERNELTEST_LIBS
@@ -13,8 +16,8 @@ set(KERNELTEST_LIBS
     Sky::Model
 )
 
-target_link_libraries(SkySearchTest
+target_link_libraries(${TEST_NAME}
     PRIVATE
         ${KERNELTEST_LIBS}
 )
-add_test(NAME SkySearchTest COMMAND SkySearchTest)
+add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})

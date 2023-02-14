@@ -1,4 +1,4 @@
-set(MODULE_NAME "GPXExport")
+set(MODULE_NAME "GpxExport")
 
 qt_add_library(${MODULE_NAME} MODULE)
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})

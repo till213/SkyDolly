@@ -158,13 +158,13 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
     const FlightImportPluginBaseSettings::AircraftImportMode aircraftImportMode = pluginSettings.getAircraftImportMode();
 
     if (aircraftImportMode == FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight) {
-        currentFlight.clear(true);
+        currentFlight.clear(true, FlightData::CreationTimeMode::Reset);
     }
 
     bool ok {true};
     bool ignoreAllFailures {false};
     bool continueWithDirectoryImport {true};
-    std::vector<FlightData> importedFlightData;
+    std::vector<FlightData> importedFlights;
 
     std::size_t totalFlightsStored {0};
     std::size_t totalAircraftStored {0};
@@ -172,23 +172,24 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
         if (ok) {
-            importedFlightData = importFlights(d->file, ok);
+            importedFlights = importSelectedFlights(d->file, ok);
             if (ok) {
-                enrichFlightData(importedFlightData);
-                if (getAspects() || getProcedures()) {
-                    augmentFlights(importedFlightData);
+                enrichFlightData(importedFlights);
+                if (getAugmentationAspects() || getAugmentationProcedures()) {
+                    augmentFlights(importedFlights);
                 }
 
                 switch (aircraftImportMode) {
                 case FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight:
                     [[fallthrough]];
                 case FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight:
-                    ok = addAndStoreAircraftToCurrentFlight(filePath, std::move(importedFlightData), currentFlight,
+                    syncAircraftTimeOffset(currentFlight, importedFlights);
+                    ok = addAndStoreAircraftToCurrentFlight(filePath, std::move(importedFlights), currentFlight,
                                                             totalFlightsStored, totalAircraftStored, continueWithDirectoryImport);
                     break;
                 case FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights:
                     // Store all imported flight data into the logbook
-                    ok = storeFlightData(importedFlightData, totalFlightsStored);
+                    ok = storeFlightData(importedFlights, totalFlightsStored);
                     break;
                 }
             }
@@ -214,7 +215,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
     }
     if (ok && aircraftImportMode == FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights) {
         // Load the last imported flight into the current flight
-        FlightData &flightData = importedFlightData.back();
+        FlightData &flightData = importedFlights.back();
         currentFlight.fromFlightData(std::move(flightData));
     }
 
@@ -314,8 +315,8 @@ bool FlightImportPluginBase::augmentFlights(std::vector<FlightData> &flightData)
     for (FlightData &flight : flightData) {
         for (Aircraft &aircraft : flight) {
             if (aircraft.getPosition().count() > 0) {
-                d->flightAugmentation.setProcedures(getProcedures());
-                d->flightAugmentation.setAspects(getAspects());
+                d->flightAugmentation.setProcedures(getAugmentationProcedures());
+                d->flightAugmentation.setAspects(getAugmentationAspects());
                 d->flightAugmentation.augmentAircraftData(aircraft);
             }
         }
@@ -323,18 +324,18 @@ bool FlightImportPluginBase::augmentFlights(std::vector<FlightData> &flightData)
     return ok;
 }
 
-bool FlightImportPluginBase::addAndStoreAircraftToCurrentFlight(const QString sourceFilePath, std::vector<FlightData> importedFlightData, Flight &currentFlight,
+bool FlightImportPluginBase::addAndStoreAircraftToCurrentFlight(const QString &sourceFilePath, std::vector<FlightData> importedFlights, Flight &currentFlight,
                                                                 std::size_t &totalFlightsStored, std::size_t &totalAircraftStored, bool &continueWithDirectoryImport) noexcept
 {
     bool ok {true};
     bool newFlight = !currentFlight.hasRecording();
     bool doAdd {true};
-    if (importedFlightData.size() > 1) {
-        confirmMultiFlightImport(sourceFilePath, importedFlightData.size(), doAdd, continueWithDirectoryImport);
+    if (importedFlights.size() > 1) {
+        confirmMultiFlightImport(sourceFilePath, importedFlights.size(), doAdd, continueWithDirectoryImport);
     }
     if (doAdd) {
         // Iterate over all imported flights (if multiple)...
-        for (auto &flightData : importedFlightData) {
+        for (auto &flightData : importedFlights) {
             if (newFlight) {
                 // Create a new flight first, based on the first imported flight data
                 currentFlight.fromFlightData(std::move(flightData));
@@ -364,10 +365,10 @@ bool FlightImportPluginBase::addAndStoreAircraftToCurrentFlight(const QString so
     return ok;
 }
 
-bool FlightImportPluginBase::storeFlightData(std::vector<FlightData> &importedFlightData, std::size_t &totalFlightsStored)
+bool FlightImportPluginBase::storeFlightData(std::vector<FlightData> &importedFlights, std::size_t &totalFlightsStored)
 {
     bool ok {false};
-    for (auto &flightData : importedFlightData) {
+    for (FlightData &flightData : importedFlights) {
         ok = d->flightService->storeFlightData(flightData);
         if (ok) {
             ++totalFlightsStored;
@@ -438,4 +439,30 @@ void FlightImportPluginBase::confirmMultiFlightImport(const QString &sourceFileP
     }
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     QGuiApplication::processEvents();
+}
+
+void FlightImportPluginBase::syncAircraftTimeOffset(const Flight &currentFlight, std::vector<FlightData> &importedFlights) const noexcept
+{
+    const QDateTime& currentCreationTime = currentFlight.getCreationTime();
+    if (currentCreationTime.isValid()) {
+        for (FlightData &flightData : importedFlights) {
+            const QDateTime &creationTime = flightData.creationTime;
+            if (creationTime.isValid()) {
+                // The same time offset is applied to all aircraft in the flight, depending on the
+                // time different between the currentFlight and the newly imported FlightData, as follows:
+                //
+                // - The time difference from the imported creation time to the creation time of the current flight is calculated
+                // - That difference is NEGATIVE if the imported creation time is AFTER the current creation time (imported date "in the future") and...
+                // - ... POSITIVE if the imported creation time is BEFORE the current creation time (imported date "in the past")
+                //
+                // So:
+                // - If the imported creation time is "in the future", we want to apply a NEGATIVE time offset to the imported aircraft ("move it into the past"), and...
+                // - ... if the imported creation time "is in the past" then we want to apply a POSITIVE time offset to the imported aircraft ("move it into the future")
+                std::int64_t deltaOffset = creationTime.secsTo(currentCreationTime) * 1000;
+                for (Aircraft &aircraft : flightData) {
+                    aircraft.addTimeOffset(deltaOffset);
+                }
+            }
+        }
+    }
 }

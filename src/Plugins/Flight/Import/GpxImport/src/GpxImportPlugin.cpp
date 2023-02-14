@@ -69,6 +69,20 @@ GpxImportPlugin::GpxImportPlugin() noexcept
 
 GpxImportPlugin::~GpxImportPlugin() = default;
 
+std::vector<FlightData> GpxImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+{
+    d->xml.setDevice(&io);
+    std::vector<FlightData> flights = parseGPX();
+
+    ok = !d->xml.hasError();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug() << "GpxImportPlugin::importSelectedFlights: XML error" << d->xml.errorString();
+    }
+#endif
+    return flights;
+}
+
 // PROTECTED
 
 FlightImportPluginBaseSettings &GpxImportPlugin::getPluginSettings() const noexcept
@@ -91,26 +105,12 @@ std::unique_ptr<QWidget> GpxImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<GpxImportOptionWidget>(d->pluginSettings);
 }
 
-std::vector<FlightData> GpxImportPlugin::importFlights(QIODevice &io, bool &ok) noexcept
-{
-    d->xml.setDevice(&io);
-    std::vector<FlightData> flights = parseGPX();
-
-    ok = !d->xml.hasError();
-#ifdef DEBUG
-    if (!ok) {
-        qDebug() << "GpxImportPlugin::importFlights: XML error" << d->xml.errorString();
-    }
-#endif
-    return flights;
-}
-
-FlightAugmentation::Procedures GpxImportPlugin::getProcedures() const noexcept
+FlightAugmentation::Procedures GpxImportPlugin::getAugmentationProcedures() const noexcept
 {
     return FlightAugmentation::Procedure::All;
 }
 
-FlightAugmentation::Aspects GpxImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects GpxImportPlugin::getAugmentationAspects() const noexcept
 {
     return FlightAugmentation::Aspect::All;
 }

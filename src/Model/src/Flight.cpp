@@ -48,7 +48,7 @@ struct FlightPrivate
 {
     FlightPrivate() noexcept
     {
-        flightData.clear(true);
+        flightData.clear(true, FlightData::CreationTimeMode::Reset);
     }
 
     FlightData flightData;
@@ -98,11 +98,6 @@ std::int64_t Flight::getId() const noexcept
 const QDateTime &Flight::getCreationTime() const noexcept
 {
     return d->flightData.creationTime;
-}
-
-void Flight::setCreationTime(const QDateTime &creationTime) noexcept
-{
-    d->flightData.creationTime = creationTime;
 }
 
 const QString &Flight::getTitle() const noexcept
@@ -304,10 +299,9 @@ QDateTime Flight::getAircraftStartZuluTime(const Aircraft &aircraft) const noexc
     return d->flightData.getAircraftStartZuluTime(aircraft);
 }
 
-void Flight::clear(bool withOneAircraft) noexcept
+void Flight::clear(bool withOneAircraft, FlightData::CreationTimeMode creationTimeMode) noexcept
 {
-    d->flightData.creationTime = QDateTime::currentDateTime();
-    d->flightData.clear(withOneAircraft);
+    d->flightData.clear(withOneAircraft, creationTimeMode);
     if (withOneAircraft) {
         // Only emit the signals if the flight has at least one aircraft
         // (but e.g. not shortly before loading a new flight from the logbook)
@@ -319,8 +313,7 @@ void Flight::clear(bool withOneAircraft) noexcept
 
 bool Flight::hasRecording() const noexcept
 {
-    auto noRecording = [](const Aircraft &a){ return !a.hasRecording(); };
-    return std::find_if(d->flightData.begin(), d->flightData.end(), noRecording) == d->flightData.end();
+    return d->flightData.hasRecording();
 }
 
 Flight::Iterator Flight::begin() noexcept

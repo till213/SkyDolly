@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <mutex>
+#include <vector>
 
 #include <QCoreApplication>
 #include <QPluginLoader>
@@ -89,7 +90,6 @@ struct PluginManagerPrivate
     static inline std::once_flag onceFlag;
     static inline PluginManager *instance;
 };
-
 
 // PUBLIC
 
@@ -158,7 +158,7 @@ std::vector<PluginManager::Handle> PluginManager::initialiseLocationExportPlugin
     return pluginHandles;
 }
 
-bool PluginManager::importFlight(const QUuid &pluginUuid, Flight &flight) const noexcept
+bool PluginManager::importFlights(const QUuid &pluginUuid, Flight &flight) const noexcept
 {
     bool ok {false};
     if (d->flightImportPluginRegistry.contains(pluginUuid)) {
@@ -175,6 +175,25 @@ bool PluginManager::importFlight(const QUuid &pluginUuid, Flight &flight) const 
         loader.unload();
     }
     return ok;
+}
+
+std::vector<FlightData> PluginManager::importSelectedFlights(const QUuid &pluginUuid, QIODevice &io, bool &ok) const noexcept
+{
+    std::vector<FlightData> flights;
+    if (d->flightImportPluginRegistry.contains(pluginUuid)) {
+        const QString pluginPath {d->flightImportPluginRegistry.value(pluginUuid)};
+        QPluginLoader loader {pluginPath};
+        QObject *plugin = loader.instance();
+        auto *importPlugin = qobject_cast<FlightImportIntf *>(plugin);
+        if (importPlugin != nullptr) {
+            importPlugin->setParentWidget(d->parentWidget);
+            importPlugin->restoreSettings(pluginUuid);
+            flights = importPlugin->importSelectedFlights(io, ok);
+            importPlugin->storeSettings(pluginUuid);
+        }
+        loader.unload();
+    }
+    return flights;
 }
 
 bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept

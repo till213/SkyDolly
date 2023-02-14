@@ -48,7 +48,7 @@ class Light;
 class [[deprecated]] SkyDollyCsvParser : public CsvParserIntf
 {
 public:
-    bool parse(QIODevice &io, FlightData &flightData) noexcept override;
+    FlightData parse(QIODevice &io, bool &ok) noexcept override;
 
 private:
     std::int64_t m_timestampDelta {0};

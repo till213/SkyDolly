@@ -172,7 +172,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         switch (recordingMode) {
         case RecordingMode::SingleAircraft:
             // Start a new flight
-            d->currentFlight.clear(true);
+            d->currentFlight.clear(true, FlightData::CreationTimeMode::Update);
             // Set the recording state only *after* the flight has been cleared
             setState(Connect::State::Recording);
             break;

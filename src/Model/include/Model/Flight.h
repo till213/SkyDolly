@@ -48,6 +48,8 @@ class MODEL_API Flight final : public QObject
 {
     Q_OBJECT
 public:
+
+
     explicit Flight(FlightData flightData, QObject *parent = nullptr) noexcept;
     explicit Flight(QObject *parent = nullptr) noexcept;    
     Flight(const Flight &rhs) = delete;
@@ -69,8 +71,14 @@ public:
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
 
+    /*!
+     * In order to reset the creation time clear this Flight.
+     *
+     * \return the creation date & time when the first aircraft was recorded; an invalid
+     *         QDateTime when no recording has been done yet
+     * \sa clear
+     */
     const QDateTime &getCreationTime() const noexcept;
-    void setCreationTime(const QDateTime &creationTime) noexcept;
 
     const QString &getTitle() const noexcept;
     void setTitle(const QString &title) noexcept;
@@ -231,7 +239,7 @@ public:
     QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept;
     QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept;
 
-    void clear(bool withOneAircraft) noexcept;
+    void clear(bool withOneAircraft, FlightData::CreationTimeMode creationTimeMode) noexcept;
 
     /*!
      * Returns whether at least one Aircraft with sampled position data exists.

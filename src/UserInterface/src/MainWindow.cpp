@@ -420,7 +420,7 @@ void MainWindow::initUi() noexcept
             Settings &settings = Settings::getInstance();
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
-            constexpr uint WarningSignChar = 0x26A0;
+            constexpr char32_t WarningSignChar = 0x26A0;
             const QString WarningString = QString::fromUcs4(&WarningSignChar, 1);
             QMessageBox::information(this, "Preview",
                                      WarningString + WarningString + WarningString + QString(" EXCESSIVE LOGBOOK BACKUP GENERATION ") + WarningString + WarningString + WarningString +
@@ -622,17 +622,17 @@ void MainWindow::initReplaySpeedUi() noexcept
         new QAction("50 %", this),
         new QAction("75 %", this)
     };
-    slowActions.at(0)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
+    slowActions.at(0)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
     slowActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow10));
-    slowActions.at(1)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
+    slowActions.at(1)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_2));
     slowActions.at(1)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow25));
-    slowActions.at(2)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
+    slowActions.at(2)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_3));
     slowActions.at(2)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow50));
-    slowActions.at(3)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
+    slowActions.at(3)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_4));
     slowActions.at(3)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow75));
 
     ui->normalSpeedAction->setCheckable(true);
-    ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
+    ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_1));
     ui->normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Normal));
 
     QList<QAction *> fastActions {
@@ -641,17 +641,17 @@ void MainWindow::initReplaySpeedUi() noexcept
         new QAction("8x", this),
         new QAction("16x", this)
     };
-    fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_2));
+    fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_2));
     fastActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast2x));
-    fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_3));
+    fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_3));
     fastActions.at(1)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast4x));
-    fastActions.at(2)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_4));
+    fastActions.at(2)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_4));
     fastActions.at(2)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast8x));
-    fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_5));
+    fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_5));
     fastActions.at(3)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast16x));
 
     ui->customSpeedAction->setCheckable(true);
-    ui->customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_6));
+    ui->customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_6));
     ui->customSpeedAction->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Custom));
 
     // Action group
@@ -1697,7 +1697,7 @@ void MainWindow::onFlightImport(QAction *action) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const QUuid pluginUuid = action->data().toUuid();
-    const bool ok = PluginManager::getInstance().importFlight(pluginUuid, flight);
+    const bool ok = PluginManager::getInstance().importFlights(pluginUuid, flight);
     if (ok) {
         updateUi();
         SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();

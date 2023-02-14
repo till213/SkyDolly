@@ -56,6 +56,35 @@ CsvImportPlugin::CsvImportPlugin() noexcept
 
 CsvImportPlugin::~CsvImportPlugin() = default;
 
+std::vector<FlightData> CsvImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+{
+    std::vector<FlightData> flights;
+    std::unique_ptr<CsvParserIntf> parser;
+    switch (d->pluginSettings.getFormat()) {
+    case CsvImportSettings::Format::SkyDolly:
+        parser = std::make_unique<SkyDollyCsvParser>();
+        break;
+    case CsvImportSettings::Format::FlightRadar24:
+        parser = std::make_unique<FlightRadar24CsvParser>();
+        break;
+    case CsvImportSettings::Format::FlightRecorder:
+        parser = std::make_unique<FlightRecorderCsvParser>();
+        break;
+    }
+    ok = false;
+    if (parser != nullptr) {
+        FlightData flightData = parser->parse(io, ok);
+        if (ok) {
+            ok = flightData.hasRecording();
+        }
+        if (ok) {
+            enrichFlightData(flightData);
+            flights.push_back(std::move(flightData));
+        }
+    }
+    return flights;
+}
+
 // PROTECTED
 
 FlightImportPluginBaseSettings &CsvImportPlugin::getPluginSettings() const noexcept
@@ -78,34 +107,7 @@ std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<CsvImportOptionWidget>(d->pluginSettings);
 }
 
-std::vector<FlightData> CsvImportPlugin::importFlights(QIODevice &io, bool &ok) noexcept
-{
-    std::vector<FlightData> flights;
-    FlightData flightData;
-    std::unique_ptr<CsvParserIntf> parser;
-    switch (d->pluginSettings.getFormat()) {
-    case CsvImportSettings::Format::SkyDolly:
-        parser = std::make_unique<SkyDollyCsvParser>();
-        break;
-    case CsvImportSettings::Format::FlightRadar24:
-        parser = std::make_unique<FlightRadar24CsvParser>();
-        break;
-    case CsvImportSettings::Format::FlightRecorder:
-        parser = std::make_unique<FlightRecorderCsvParser>();
-        break;
-    }
-    ok = false;
-    if (parser != nullptr) {
-        ok = parser->parse(io, flightData);
-        if (ok) {
-            enrichFlightData(flightData);
-            flights.push_back(std::move(flightData));
-        }
-    }
-    return flights;
-}
-
-FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
+FlightAugmentation::Procedures CsvImportPlugin::getAugmentationProcedures() const noexcept
 {
     FlightAugmentation::Procedures procedures;
     switch (d->pluginSettings.getFormat()) {
@@ -124,7 +126,7 @@ FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
     return procedures;
 }
 
-FlightAugmentation::Aspects CsvImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects CsvImportPlugin::getAugmentationAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
     switch (d->pluginSettings.getFormat()) {
