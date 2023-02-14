@@ -28,7 +28,7 @@
 #include <QUuid>
 #include <QFile>
 #include <QString>
-#include <QCoreApplication>
+#include <QVariant>
 
 #include <Kernel/Settings.h>
 #include <Kernel/Version.h>
@@ -36,11 +36,12 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <PluginManager/PluginManager.h>
-#include "CsvFlightImportTest.h"
+#include "CsvFlightRadar24ImportTest.h"
 
 namespace
 {
     constexpr const char *FormatKey = "Format";
+    constexpr const int FlightRadar24Format = 1;
 }
 
 namespace Uuid
@@ -51,28 +52,24 @@ namespace Uuid
 
 // PRIVATE SLOTS
 
-void CsvFlightImportTest::initTestCase() noexcept
+void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
 {
-    QCoreApplication::setOrganizationName(Version::getOrganisationName());
-    QCoreApplication::setApplicationName(Version::getApplicationName());
+    // Select the "FlightRadar24" format
+    m_oldPluginFormat = getPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, 0).toInt();
+    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, ::FlightRadar24Format);
 
-    m_oldPluginFormat = getPluginFormat();
-    setPluginFormat(1);
-
+    // Initialis flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
-
-    // Flight import
     const std::vector<PluginManager::Handle> flightImportPlugins = pluginManager.initialiseFlightImportPlugins();
-
     QVERIFY(flightImportPlugins.size() > 0);
 }
 
-void CsvFlightImportTest::cleanupTestCase() noexcept
+void CsvFlightRadar24ImportTest::onCleanupTestCase() noexcept
 {
-    setPluginFormat(m_oldPluginFormat);
+    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, m_oldPluginFormat);
 }
 
-void CsvFlightImportTest::parseFlightRadar24_data() noexcept
+void CsvFlightRadar24ImportTest::parseFlightRadar24_data() noexcept
 {
     QTest::addColumn<QString>("filepath");
     QTest::addColumn<bool>("expectedOk");
@@ -89,7 +86,7 @@ void CsvFlightImportTest::parseFlightRadar24_data() noexcept
     QTest::newRow("FlightRadar24-invalid-3.csv") << ":/test/csv/FlightRadar24-invalid-3.csv" << false << false << 0 << 0 << 0 << 0;
 }
 
-void CsvFlightImportTest::parseFlightRadar24() noexcept
+void CsvFlightRadar24ImportTest::parseFlightRadar24() noexcept
 {
     bool ok {false};
     // Setup
@@ -128,34 +125,4 @@ void CsvFlightImportTest::parseFlightRadar24() noexcept
     }
 }
 
-// PRIVATE
-
-int CsvFlightImportTest::getPluginFormat() noexcept
-{
-    int format;
-    Settings &settings = Settings::getInstance();
-
-    Settings::KeysWithDefaults keysWithDefaults;
-    Settings::KeyValue keyValue;
-    Settings::ValuesByKey valuesByKey;
-
-    keyValue.first = ::FormatKey;
-    keyValue.second = 0;
-    keysWithDefaults.push_back(keyValue);
-    valuesByKey = settings.restorePluginSettings(QUuid(Uuid::Csv), keysWithDefaults);
-    return valuesByKey[::FormatKey].toInt();
-}
-
-void CsvFlightImportTest::setPluginFormat(int format) noexcept
-{
-    Settings &settings = Settings::getInstance();
-    Settings::KeyValues keyValues;
-    Settings::KeyValue keyValue;
-
-    keyValue.first = ::FormatKey;
-    keyValue.second = format;
-    keyValues.push_back(keyValue);
-    settings.storePluginSettings(QUuid(Uuid::Csv), keyValues);
-}
-
-QTEST_MAIN(CsvFlightImportTest)
+QTEST_MAIN(CsvFlightRadar24ImportTest)

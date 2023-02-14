@@ -58,8 +58,10 @@ public:
      * no flight data was imported at all (despite the existing file not having
      * any syntax errors).
      *
+     * The datasource \c io must have been properly opened for reading already.
+     *
      * \param io
-     *        the IO device to read from
+     *        the IO device to read from; already opened for reading
      * \param ok
      *        is set to \c true in case of success; \c false else (a parse/read error occured
      *        or otherwise no data imported)

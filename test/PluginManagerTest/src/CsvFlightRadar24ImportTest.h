@@ -22,30 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVFLIGHTIMPORTTEST_H
-#define CSVFLIGHTIMPORTTEST_H
+#ifndef CSVFLIGHTRADAR24IMPORTTEST_H
+#define CSVFLIGHTRADAR24IMPORTTEST_H
 
 #include <QObject>
+
+#include "AbstractFlightImportTest.h"
 
 /*!
  * Test cases for the CsvParser.
  */
-class CsvFlightImportTest : public QObject
+class CsvFlightRadar24ImportTest : public AbstractFlightImportTest
 {
     Q_OBJECT
+protected:
+    void onInitTestCase() noexcept override;
+    void onCleanupTestCase() noexcept override;
 
 private slots:
-    void initTestCase() noexcept;
-    void cleanupTestCase() noexcept;
-
     void parseFlightRadar24_data() noexcept;
     void parseFlightRadar24() noexcept;
 
 private:
     int m_oldPluginFormat {0};
-
-    static int getPluginFormat() noexcept;
-    static void setPluginFormat(int format) noexcept;
 };
 
-#endif // CSVFLIGHTIMPORTTEST_H
+#endif // CSVFLIGHTRADAR24IMPORTTEST_H

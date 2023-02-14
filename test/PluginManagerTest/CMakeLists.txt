@@ -2,7 +2,7 @@ find_package(Qt6Test REQUIRED)
 
 ## CSV Flight Import Test ##
 
-set(TEST_NAME "CsvFlightImportTest")
+set(TEST_NAME "CsvFlightRadar24ImportTest")
 
 qt_add_executable(${TEST_NAME})
 if(${PLATFORM_IS_MACOS})
@@ -14,6 +14,7 @@ endif()
 
 target_sources(${TEST_NAME}
     PRIVATE
+        src/AbstractFlightImportTest.h src/AbstractFlightImportTest.cpp
         src/${TEST_NAME}.h src/${TEST_NAME}.cpp
         res/PluginManagerTest.qrc
 )
