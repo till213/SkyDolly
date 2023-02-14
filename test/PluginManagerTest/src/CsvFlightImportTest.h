@@ -40,6 +40,12 @@ private slots:
 
     void parseFlightRadar24_data() noexcept;
     void parseFlightRadar24() noexcept;
+
+private:
+    int m_oldPluginFormat {0};
+
+    static int getPluginFormat() noexcept;
+    static void setPluginFormat(int format) noexcept;
 };
 
 #endif // CSVFLIGHTIMPORTTEST_H

@@ -47,7 +47,7 @@ static void destroySingletons() noexcept
     SkyConnectManager::destroyInstance();
 }
 
-int main(int argc, char *argv[]) noexcept
+int main(int argc, char **argv) noexcept
 {
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
