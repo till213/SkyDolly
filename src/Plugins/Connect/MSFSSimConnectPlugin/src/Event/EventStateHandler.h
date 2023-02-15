@@ -76,7 +76,7 @@ public:
      *        the normalised value to be converted [-1.0, 1.0]
      * @return the converted \em event (position) value [-16384, 16384]
      */
-    static constexpr std::int16_t positionTo16K(double value) noexcept
+    static std::int16_t positionTo16K(double value) noexcept
     {
         return static_cast<std::int16_t>(std::round(std::clamp(value, -1.0, 1.0) * Max16KPosition));
     }
@@ -88,7 +88,7 @@ public:
      *        the percent value to be converted [0, 100]
      * @return the converted \em event (position) value [-16384, 16384]
      */
-    static constexpr std::int16_t percentTo16K(double percent) noexcept
+    static std::int16_t percentTo16K(double percent) noexcept
     {
         return static_cast<std::int16_t>(std::round(percent * (double)Max16KPosition / 100.0));
     }
