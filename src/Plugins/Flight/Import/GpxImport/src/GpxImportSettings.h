@@ -39,6 +39,11 @@ class GpxImportSettings : public FlightImportPluginBaseSettings
 {
     Q_OBJECT
 public:
+    /*!
+     * The GPX elements that define waypoints and position samples.
+     *
+     * These values are peristed in the application settings.
+     */
     enum struct GPXElement {
         Waypoint = 0,
         Route = 1,
@@ -46,6 +51,10 @@ public:
     };
 
     GpxImportSettings() noexcept;
+    GpxImportSettings(const GpxImportSettings &rhs) = delete;
+    GpxImportSettings(GpxImportSettings &&rhs) = delete;
+    GpxImportSettings &operator=(const GpxImportSettings &rhs) = delete;
+    GpxImportSettings &operator=(GpxImportSettings &&rhs) = delete;
     ~GpxImportSettings() override;
 
     bool requiresAircraftSelection() const noexcept override;

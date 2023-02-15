@@ -54,6 +54,26 @@ class KERNEL_API Settings final : public QObject
     Q_OBJECT
 public:
 
+    /*!
+     * Defines how the aircraft time offset is to be synchronised.
+     *
+     * These values are peristed in the application settings.
+     */
+    enum struct TimeOffsetSync {
+        /*! No synchronisation to be done. */
+        None = 0,
+        /*! Both date and time of the flight creation time are taken into account */
+        DateAndTime = 1,
+        /*!
+         * Only the time is taken into account. For example a flight that was recorded
+         * a day before, on the 2023-02-14 10:45:00Z is only considered to be 15 minutes
+         * behind of a flight recorded on the 2023-02-15 11:00:00Z (and not a day plus
+         * 15 minutes). This is useful when importing e.g. real-world flights that
+         * happened on different days, but should still be synchronised "on the same day".
+         */
+        TimeOnly = 2
+    };
+
     Settings(const Settings &rhs) = delete;
     Settings(Settings &&rhs) = delete;
     Settings &operator=(const Settings &rhs) = delete;

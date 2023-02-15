@@ -48,6 +48,10 @@ class AircraftWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit AircraftWidget(QWidget *parent) noexcept;
+    AircraftWidget(const AircraftWidget &rhs) = delete;
+    AircraftWidget(AircraftWidget &&rhs) = delete;
+    AircraftWidget &operator=(const AircraftWidget &rhs) = delete;
+    AircraftWidget &operator=(AircraftWidget &&rhs) = delete;
     ~AircraftWidget() override;
 
 protected slots:

@@ -40,6 +40,10 @@ class AbstractKmlTrackParser : public AbstractKmlParser
 {
 public:
     AbstractKmlTrackParser() noexcept;
+    AbstractKmlTrackParser(const AbstractKmlTrackParser &rhs) = delete;
+    AbstractKmlTrackParser(AbstractKmlTrackParser &&rhs) = delete;
+    AbstractKmlTrackParser &operator=(const AbstractKmlTrackParser &rhs) = delete;
+    AbstractKmlTrackParser &operator=(AbstractKmlTrackParser &&rhs) = delete;
     ~AbstractKmlTrackParser() override;
 
 protected:

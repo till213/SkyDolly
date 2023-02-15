@@ -247,6 +247,16 @@ public:
      */
     bool hasRecording() const noexcept;
 
+    /*!
+     * Synchronises the time offsets of each aircraft in the \c flightsToBeSynchronised according
+     * to the creation time of this \e current Flight and the creation time of each \c flightsToBeSynchronised.
+     *
+     * \param flightsToBeSynchronised
+     *        the flights to be synchronised, according to their creation time
+     * \sa getCreationTime
+     */
+    void syncAircraftTimeOffset(std::vector<FlightData> &flightsToBeSynchronised) const noexcept;
+
     using Iterator = std::vector<Aircraft>::iterator;
     Iterator begin() noexcept;
     Iterator end() noexcept;

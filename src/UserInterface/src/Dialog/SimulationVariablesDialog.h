@@ -43,6 +43,10 @@ class SimulationVariablesDialog : public QDialog
     Q_OBJECT
 public:
     explicit SimulationVariablesDialog(QWidget *parent = nullptr) noexcept;
+    SimulationVariablesDialog(const SimulationVariablesDialog &rhs) = delete;
+    SimulationVariablesDialog(SimulationVariablesDialog &&rhs) = delete;
+    SimulationVariablesDialog &operator=(const SimulationVariablesDialog &rhs) = delete;
+    SimulationVariablesDialog &operator=(SimulationVariablesDialog &&rhs) = delete;
     ~SimulationVariablesDialog() override;
 
 signals:

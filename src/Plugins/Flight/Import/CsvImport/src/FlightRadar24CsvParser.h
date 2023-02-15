@@ -42,6 +42,10 @@ class FlightRadar24CsvParser : public CsvParserIntf
 {
 public:
     FlightRadar24CsvParser() noexcept;
+    FlightRadar24CsvParser(const FlightRadar24CsvParser &rhs) = delete;
+    FlightRadar24CsvParser(FlightRadar24CsvParser &&rhs) = delete;
+    FlightRadar24CsvParser &operator=(const FlightRadar24CsvParser &rhs) = delete;
+    FlightRadar24CsvParser &operator=(FlightRadar24CsvParser &&rhs) = delete;
     ~FlightRadar24CsvParser() override;
 
     FlightData parse(QIODevice &io, bool &ok) noexcept override;

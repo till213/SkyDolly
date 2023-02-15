@@ -41,6 +41,8 @@ class KmlImportSettings : public FlightImportPluginBaseSettings
 public:
     /*!
      * KML format (flavour).
+     *
+     * These values are peristed in the application settings.
      */
     enum struct Format {
         FlightAware = 0,
@@ -49,6 +51,10 @@ public:
     };
 
     KmlImportSettings() noexcept;
+    KmlImportSettings(const KmlImportSettings &rhs) = delete;
+    KmlImportSettings(KmlImportSettings &&rhs) = delete;
+    KmlImportSettings &operator=(const KmlImportSettings &rhs) = delete;
+    KmlImportSettings &operator=(KmlImportSettings &&rhs) = delete;
     ~KmlImportSettings() override;
 
     bool requiresAircraftSelection() const noexcept override;

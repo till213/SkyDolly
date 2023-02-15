@@ -41,6 +41,10 @@ class IgcExportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit IgcExportOptionWidget(IgcExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    IgcExportOptionWidget(const IgcExportOptionWidget &rhs) = delete;
+    IgcExportOptionWidget(IgcExportOptionWidget &&rhs) = delete;
+    IgcExportOptionWidget &operator=(const IgcExportOptionWidget &rhs) = delete;
+    IgcExportOptionWidget &operator=(IgcExportOptionWidget &&rhs) = delete;
     ~IgcExportOptionWidget() override;
 
 private:

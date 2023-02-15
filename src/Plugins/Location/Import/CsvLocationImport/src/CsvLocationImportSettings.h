@@ -41,6 +41,8 @@ class CsvLocationImportSettings : public LocationImportPluginBaseSettings
 public:
     /*!
      * CSV format (flavour).
+     *
+     * These values are peristed in the application settings.
      */
     enum struct Format {
         SkyDolly = 0,

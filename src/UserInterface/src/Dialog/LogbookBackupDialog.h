@@ -43,6 +43,10 @@ class LogbookBackupDialog : public QDialog
     Q_OBJECT
 public:
     explicit LogbookBackupDialog(QWidget *parent = nullptr) noexcept;
+    LogbookBackupDialog(const LogbookBackupDialog &rhs) = delete;
+    LogbookBackupDialog(LogbookBackupDialog &&rhs) = delete;
+    LogbookBackupDialog &operator=(const LogbookBackupDialog &rhs) = delete;
+    LogbookBackupDialog &operator=(LogbookBackupDialog &&rhs) = delete;
     ~LogbookBackupDialog() override;
 
 public slots:

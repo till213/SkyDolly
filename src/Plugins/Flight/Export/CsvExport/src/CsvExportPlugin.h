@@ -52,6 +52,10 @@ class CsvExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     CsvExportPlugin() noexcept;
+    CsvExportPlugin(const CsvExportPlugin &rhs) = delete;
+    CsvExportPlugin(CsvExportPlugin &&rhs) = delete;
+    CsvExportPlugin &operator=(const CsvExportPlugin &rhs) = delete;
+    CsvExportPlugin &operator=(CsvExportPlugin &&rhs) = delete;
     ~CsvExportPlugin() override;
 
 protected:

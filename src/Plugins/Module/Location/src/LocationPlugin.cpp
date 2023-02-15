@@ -127,7 +127,7 @@ void LocationPlugin::onLocationReceived(Location location) noexcept
         d->locationWidget->addLocation(std::move(location));
         break;
     case LocationPluginPrivate::Mode::Update:
-        d->locationWidget->updateLocation(std::move(location));
+        d->locationWidget->updateLocation(location);
         break;
     }
 }

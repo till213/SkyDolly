@@ -44,6 +44,10 @@ class LittleNavmapCsvLocationWriter : public CsvLocationWriterIntf
 {
 public:
     LittleNavmapCsvLocationWriter(const CsvLocationExportSettings &pluginSettings) noexcept;
+    LittleNavmapCsvLocationWriter(const LittleNavmapCsvLocationWriter &rhs) = delete;
+    LittleNavmapCsvLocationWriter(LittleNavmapCsvLocationWriter &&rhs) = delete;
+    LittleNavmapCsvLocationWriter &operator=(const LittleNavmapCsvLocationWriter &rhs) = delete;
+    LittleNavmapCsvLocationWriter &operator=(LittleNavmapCsvLocationWriter &&rhs) = delete;
     ~LittleNavmapCsvLocationWriter() override;
 
     bool write(const std::vector<Location> &locations, QIODevice &ioDevice) noexcept override;

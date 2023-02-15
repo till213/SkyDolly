@@ -39,12 +39,21 @@ class IgcImportSettings : public FlightImportPluginBaseSettings
 {
     Q_OBJECT
 public:
+    /*!
+     * The way altitude data is to be imported.
+     *
+     * These values are peristed in the application settings.
+     */
     enum struct AltitudeMode {
         Gnss = 0,
         Pressure = 1
     };
 
     IgcImportSettings() noexcept;
+    IgcImportSettings(const IgcImportSettings &rhs) = delete;
+    IgcImportSettings(IgcImportSettings &&rhs) = delete;
+    IgcImportSettings &operator=(const IgcImportSettings &rhs) = delete;
+    IgcImportSettings &operator=(IgcImportSettings &&rhs) = delete;
     ~IgcImportSettings() override;
 
     bool requiresAircraftSelection() const noexcept override;

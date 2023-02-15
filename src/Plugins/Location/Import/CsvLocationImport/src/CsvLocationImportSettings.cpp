@@ -52,7 +52,7 @@ struct CsvLocationImportSettingsPrivate
     int defaultAltitude {Const::DefaultAltitude};
     int defaultIndicatedAirspeed {Const::DefaultIndicatedAirspeed};
 
-    static inline std::int64_t WorldCountryId {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
+    static inline const std::int64_t WorldCountryId {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
 };
 
 // PUBLIC

@@ -41,6 +41,10 @@ class FlightAwareKmlParser : public AbstractKmlTrackParser
 {
 public:
     FlightAwareKmlParser() noexcept;
+    FlightAwareKmlParser(const FlightAwareKmlParser &rhs) = delete;
+    FlightAwareKmlParser(FlightAwareKmlParser &&rhs) = delete;
+    FlightAwareKmlParser &operator=(const FlightAwareKmlParser &rhs) = delete;
+    FlightAwareKmlParser &operator=(FlightAwareKmlParser &&rhs) = delete;
     ~FlightAwareKmlParser() override;
 
     std::vector<FlightData> parse(QXmlStreamReader &xmlStreamReader) noexcept override;

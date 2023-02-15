@@ -43,6 +43,10 @@ class FlightRadar24CsvWriter : public CsvWriterIntf
 {
 public:
     FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept;
+    FlightRadar24CsvWriter(const FlightRadar24CsvWriter &rhs) = delete;
+    FlightRadar24CsvWriter(FlightRadar24CsvWriter &&rhs) = delete;
+    FlightRadar24CsvWriter &operator=(const FlightRadar24CsvWriter &rhs) = delete;
+    FlightRadar24CsvWriter &operator=(FlightRadar24CsvWriter &&rhs) = delete;
     ~FlightRadar24CsvWriter() override;
 
     bool write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &ioDevice) const noexcept override;

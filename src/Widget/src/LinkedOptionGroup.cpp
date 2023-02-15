@@ -51,7 +51,7 @@ QPushButton *createButton(QString const& name,
                           bool checked,
                           QString const& sheet = QString())
 {
-    QPushButton *pb = new QPushButton(name);
+    auto pb = new QPushButton(name);
     pb->setCheckable(true);
     pb->setChecked(checked);
     if (!sheet.isEmpty())
@@ -74,7 +74,7 @@ void LinkedOptionGroup::addOption(const QString &name, const QVariant &optionVal
     static QLatin1String firstButtonCss {"QPushButton {border-top-left-radius: 6px; border-bottom-left-radius: 6px;}"};
     static QLatin1String lastButtonCss {"QPushButton {border-top-right-radius: 6px; border-bottom-right-radius: 6px;}"};
 
-    QPushButton *button = new QPushButton(name, this);
+    auto button = new QPushButton(name, this);
     button->setCheckable(true);
     button->setProperty(::OptionValue, optionValue);
     button->setToolTip(toolTip);
@@ -126,7 +126,7 @@ void LinkedOptionGroup::initUi() noexcept
 
 void LinkedOptionGroup::onButtonToggled(bool enable) noexcept
 {
-    QPushButton *button = qobject_cast<QPushButton *>(sender());
+    auto button = qobject_cast<QPushButton *>(sender());
     if (button != nullptr) {
         emit optionToggled(enable, button->property(::OptionValue));
     }

@@ -50,6 +50,10 @@ class MSFSSimConnectPlugin : public AbstractSkyConnect
     Q_INTERFACES(SkyConnectIntf)
 public:
     MSFSSimConnectPlugin(QObject *parent = nullptr) noexcept;
+    MSFSSimConnectPlugin(const MSFSSimConnectPlugin &rhs) = delete;
+    MSFSSimConnectPlugin(MSFSSimConnectPlugin &&rhs) = delete;
+    MSFSSimConnectPlugin &operator=(const MSFSSimConnectPlugin &rhs) = delete;
+    MSFSSimConnectPlugin &operator=(MSFSSimConnectPlugin &&rhs) = delete;
     ~MSFSSimConnectPlugin() noexcept override;
 
     bool setUserAircraftPosition(const PositionData &positionData) noexcept override;

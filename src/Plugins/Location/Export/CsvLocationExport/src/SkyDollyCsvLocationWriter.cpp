@@ -42,22 +42,22 @@
 
 namespace
 {
-    const QString TitleColumn = QStringLiteral("Title");
-    const QString DescriptionColumn = QStringLiteral("Description");
-    const QString TypeColumn = QStringLiteral("Type");
-    const QString CategoryColumn = QStringLiteral("Category");
-    const QString CountryColumn = QStringLiteral("Country");
-    const QString AttributesColumn = QStringLiteral("Attributes");
-    const QString IdentifierColumn = QStringLiteral("Identifier");
-    const QString LatitudeColumn = QStringLiteral("Latitude");
-    const QString LongitudeColumn = QStringLiteral("Longitude");
-    const QString AltitudeColumn = QStringLiteral("Altitude");
-    const QString PitchColumn = QStringLiteral("Pitch");
-    const QString BankColumn = QStringLiteral("Bank");
-    const QString TrueHeadingColumn = QStringLiteral("True Heading");
-    const QString IndicatedAirspeedColumn = QStringLiteral("Indicated Airspeed");
-    const QString OnGroundColumn = QStringLiteral("On Ground");
-    const QString EngineEventColumn = QStringLiteral("Engine Event");
+    constexpr const char *TitleColumn {"Title"};
+    constexpr const char *DescriptionColumn {"Description"};
+    constexpr const char *TypeColumn {"Type"};
+    constexpr const char *CategoryColumn {"Category"};
+    constexpr const char *CountryColumn {"Country"};
+    constexpr const char *AttributesColumn {"Attributes"};
+    constexpr const char *IdentifierColumn {"Identifier"};
+    constexpr const char *LatitudeColumn {"Latitude"};
+    constexpr const char *LongitudeColumn {"Longitude"};
+    constexpr const char *AltitudeColumn {"Altitude"};
+    constexpr const char *PitchColumn {"Pitch"};
+    constexpr const char *BankColumn {"Bank"};
+    constexpr const char *TrueHeadingColumn {"True Heading"};
+    constexpr const char *IndicatedAirspeedColumn {"Indicated Airspeed"};
+    constexpr const char *OnGroundColumn {"On Ground"};
+    constexpr const char *EngineEventColumn {"Engine Event"};
 }
 
 struct SkyDollyCsvLocationWriterPrivate
@@ -80,7 +80,7 @@ SkyDollyCsvLocationWriter::~SkyDollyCsvLocationWriter() = default;
 
 bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QIODevice &io) noexcept
 {
-    QString csv = QString(::TitleColumn % Csv::CommaSep %
+    QString csv = QString(::TitleColumn) % Csv::CommaSep %
                           ::DescriptionColumn % Csv::CommaSep %
                           ::TypeColumn % Csv::CommaSep %
                           ::CategoryColumn % Csv::CommaSep %
@@ -95,8 +95,7 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                           ::TrueHeadingColumn % Csv::CommaSep %
                           ::IndicatedAirspeedColumn % Csv::CommaSep %
                           ::OnGroundColumn % Csv::CommaSep %
-                          ::EngineEventColumn % Csv::Ln
-                          );
+                          ::EngineEventColumn % Csv::Ln;
 
     bool ok = io.write(csv.toUtf8());
     Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType);
@@ -112,7 +111,7 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
             const QString locationCategorySymId = locationCategoryEnumeration.getItemById(location.categoryId).symId;
             const QString countrySymId = countryEnumeration.getItemById(location.countryId).symId;
             const QString engineEventSymId = engineEventEnumeration.getItemById(location.engineEventId).symId;
-            const QString csv = "\"" % title.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
+            const QString csv = QString("\"") % title.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
                                 "\"" % description.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
                                 locationTypeSymId % Csv::CommaSep %
                                 locationCategorySymId % Csv::CommaSep %

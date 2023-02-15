@@ -55,6 +55,10 @@ class GpxImportPlugin : public FlightImportPluginBase
     Q_INTERFACES(FlightImportIntf)
 public:
     GpxImportPlugin() noexcept;
+    GpxImportPlugin(const GpxImportPlugin &rhs) = delete;
+    GpxImportPlugin(GpxImportPlugin &&rhs) = delete;
+    GpxImportPlugin &operator=(const GpxImportPlugin &rhs) = delete;
+    GpxImportPlugin &operator=(GpxImportPlugin &&rhs) = delete;
     ~GpxImportPlugin() override;
 
     std::vector<FlightData> importSelectedFlights(QIODevice &io, bool &ok) noexcept override;
@@ -72,7 +76,7 @@ private:
 
     std::vector<FlightData> parseGPX() noexcept;
     void updateFlightWaypoints(std::vector<FlightData> &flights) noexcept;
-    void updateAircraftWaypoints(Aircraft &aircraft, QDateTime flightTimeUtc) noexcept;
+    void updateAircraftWaypoints(Aircraft &aircraft, const QDateTime &flightTimeUtc) noexcept;
 };
 
 #endif // GPXIMPORTPLUGIN_H

@@ -117,7 +117,7 @@ private:
     void confirmImportError(const QString &sourceFilePath, bool &ignoreFailures, bool &continueWithDirectoryImport) noexcept;
     void confirmMultiFlightImport(const QString &sourceFilePath, std::size_t nofFlights, bool &doAdd, bool &continueWithDirectoryImport);
 
-    void syncAircraftTimeOffset(const Flight &currentFlight, std::vector<FlightData> &importedFlights) const noexcept;
+    static void syncAircraftTimeOffset(const Flight &currentFlight, std::vector<FlightData> &importedFlights) noexcept;
 };
 
 #endif // FLIGHTIMPORTPLUGINBASE_H

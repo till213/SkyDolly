@@ -39,6 +39,10 @@ class EnumerationItemDelegate : public QStyledItemDelegate
 	Q_OBJECT
 public:
     EnumerationItemDelegate(QString enumerationName) noexcept;
+    EnumerationItemDelegate(const EnumerationItemDelegate &rhs) = delete;
+    EnumerationItemDelegate(EnumerationItemDelegate &&rhs) = delete;
+    EnumerationItemDelegate &operator=(const EnumerationItemDelegate &rhs) = delete;
+    EnumerationItemDelegate &operator=(EnumerationItemDelegate &&rhs) = delete;
     ~EnumerationItemDelegate() override;
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;

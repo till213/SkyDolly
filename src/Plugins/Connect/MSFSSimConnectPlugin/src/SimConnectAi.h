@@ -39,6 +39,10 @@ class SimConnectAi
 {
 public:
     SimConnectAi(::HANDLE simConnectHandle);
+    SimConnectAi(const SimConnectAi &rhs) = delete;
+    SimConnectAi(SimConnectAi &&rhs) = delete;
+    SimConnectAi &operator=(const SimConnectAi &rhs) = delete;
+    SimConnectAi &operator=(SimConnectAi &&rhs) = delete;
     ~SimConnectAi();
 
     void addObject(const Aircraft &aircraft, std::int64_t timestamp) noexcept;

@@ -41,6 +41,10 @@ class KmlImportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit KmlImportOptionWidget(KmlImportSettings &settings, QWidget *parent = nullptr) noexcept;
+    KmlImportOptionWidget(const KmlImportOptionWidget &rhs) = delete;
+    KmlImportOptionWidget(KmlImportOptionWidget &&rhs) = delete;
+    KmlImportOptionWidget &operator=(const KmlImportOptionWidget &rhs) = delete;
+    KmlImportOptionWidget &operator=(KmlImportOptionWidget &&rhs) = delete;
     ~KmlImportOptionWidget() override;
 
 private:

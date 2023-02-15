@@ -45,6 +45,10 @@ class FlightRecorderCsvParser : public CsvParserIntf
 {
 public:
     FlightRecorderCsvParser() noexcept;
+    FlightRecorderCsvParser(const FlightRecorderCsvParser &rhs) = delete;
+    FlightRecorderCsvParser(FlightRecorderCsvParser &&rhs) = delete;
+    FlightRecorderCsvParser &operator=(const FlightRecorderCsvParser &rhs) = delete;
+    FlightRecorderCsvParser &operator=(FlightRecorderCsvParser &&rhs) = delete;
     ~FlightRecorderCsvParser() override;
 
     FlightData parse(QIODevice &io, bool &ok) noexcept override;

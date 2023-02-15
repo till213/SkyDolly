@@ -44,7 +44,7 @@ namespace
 struct LocationImportPluginBaseSettingsPrivate
 {
     bool importDirectoryEnabled {::DefaultImportDirectoryEnabled};
-    LocationService::Mode importMode;
+    LocationService::Mode importMode {::DefaultImportMode};
 };
 
 // PUBLIC

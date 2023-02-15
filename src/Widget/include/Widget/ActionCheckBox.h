@@ -50,6 +50,10 @@ class WIDGET_API ActionCheckBox : public QCheckBox
     Q_OBJECT
 public:
     explicit ActionCheckBox(bool withText, QWidget *parent = nullptr) noexcept;
+    ActionCheckBox(const ActionCheckBox &rhs) = delete;
+    ActionCheckBox(ActionCheckBox &&rhs) = delete;
+    ActionCheckBox &operator=(const ActionCheckBox &rhs) = delete;
+    ActionCheckBox &operator=(ActionCheckBox &&rhs) = delete;
     ~ActionCheckBox() override;
 
     /*!

@@ -40,6 +40,8 @@ class CsvLocationExportSettings : public LocationExportPluginBaseSettings
 public:
     /*!
      * CSV format (flavour).
+     *
+     * These values are peristed in the application settings.
      */
     enum struct Format {
         SkyDolly = 0,
@@ -47,6 +49,10 @@ public:
     };
 
     CsvLocationExportSettings() noexcept;
+    CsvLocationExportSettings(const CsvLocationExportSettings &rhs) = delete;
+    CsvLocationExportSettings(CsvLocationExportSettings &&rhs) = delete;
+    CsvLocationExportSettings &operator=(const CsvLocationExportSettings &rhs) = delete;
+    CsvLocationExportSettings &operator=(CsvLocationExportSettings &&rhs) = delete;
     ~CsvLocationExportSettings() override;
 
     Format getFormat() const noexcept;

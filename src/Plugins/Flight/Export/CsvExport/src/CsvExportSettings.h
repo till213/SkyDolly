@@ -40,6 +40,8 @@ class CsvExportSettings : public FlightExportPluginBaseSettings
 public:
     /*!
      * CSV format (flavour).
+     *
+     * These values are peristed in the application settings.
      */
     enum struct Format {
         SkyDolly = 0,
@@ -48,6 +50,10 @@ public:
     };
 
     CsvExportSettings() noexcept;
+    CsvExportSettings(const CsvExportSettings &rhs) = delete;
+    CsvExportSettings(CsvExportSettings &&rhs) = delete;
+    CsvExportSettings &operator=(const CsvExportSettings &rhs) = delete;
+    CsvExportSettings &operator=(CsvExportSettings &&rhs) = delete;
     ~CsvExportSettings() override;
 
     Format getFormat() const noexcept;

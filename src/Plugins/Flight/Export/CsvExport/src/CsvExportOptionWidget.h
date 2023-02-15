@@ -41,6 +41,10 @@ class CsvExportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit CsvExportOptionWidget(CsvExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    CsvExportOptionWidget(const CsvExportOptionWidget &rhs) = delete;
+    CsvExportOptionWidget(CsvExportOptionWidget &&rhs) = delete;
+    CsvExportOptionWidget &operator=(const CsvExportOptionWidget &rhs) = delete;
+    CsvExportOptionWidget &operator=(CsvExportOptionWidget &&rhs) = delete;
     ~CsvExportOptionWidget() override;
 
 private:

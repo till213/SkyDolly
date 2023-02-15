@@ -41,6 +41,10 @@ class IgcImportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit IgcImportOptionWidget(IgcImportSettings &settings, QWidget *parent = nullptr) noexcept;
+    IgcImportOptionWidget(const IgcImportOptionWidget &rhs) = delete;
+    IgcImportOptionWidget(IgcImportOptionWidget &&rhs) = delete;
+    IgcImportOptionWidget &operator=(const IgcImportOptionWidget &rhs) = delete;
+    IgcImportOptionWidget &operator=(IgcImportOptionWidget &&rhs) = delete;
     ~IgcImportOptionWidget() override;
 
 private:

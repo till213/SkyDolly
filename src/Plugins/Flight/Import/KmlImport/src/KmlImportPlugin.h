@@ -53,6 +53,10 @@ class KmlImportPlugin : public FlightImportPluginBase
     Q_INTERFACES(FlightImportIntf)
 public:
     KmlImportPlugin() noexcept;
+    KmlImportPlugin(const KmlImportPlugin &rhs) = delete;
+    KmlImportPlugin(KmlImportPlugin &&rhs) = delete;
+    KmlImportPlugin &operator=(const KmlImportPlugin &rhs) = delete;
+    KmlImportPlugin &operator=(KmlImportPlugin &&rhs) = delete;
     ~KmlImportPlugin() override;
 
     std::vector<FlightData> importSelectedFlights(QIODevice &io, bool &ok) noexcept override;

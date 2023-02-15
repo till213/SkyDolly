@@ -49,6 +49,10 @@ class IgcParser
 {
 public:
     IgcParser() noexcept;
+    IgcParser(const IgcParser &rhs) = delete;
+    IgcParser(IgcParser &&rhs) = delete;
+    IgcParser &operator=(const IgcParser &rhs) = delete;
+    IgcParser &operator=(IgcParser &&rhs) = delete;
     ~IgcParser();
 
     // "H" record

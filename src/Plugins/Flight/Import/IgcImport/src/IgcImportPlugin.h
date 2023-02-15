@@ -52,6 +52,7 @@ class IgcImportPlugin : public FlightImportPluginBase
     Q_INTERFACES(FlightImportIntf)
 public:
     IgcImportPlugin() noexcept;
+    IgcImportPlugin(const IgcImportPlugin &rhs) = delete;
     IgcImportPlugin(IgcImportPlugin &&rhs) = delete;
     IgcImportPlugin &operator=(const IgcImportPlugin &rhs) = delete;
     IgcImportPlugin &operator=(IgcImportPlugin &&rhs) = delete;

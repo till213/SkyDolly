@@ -93,16 +93,16 @@ void FlightDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    FlightDescriptionWidget *flightDescriptionWidget = new FlightDescriptionWidget(this);
+    auto flightDescriptionWidget = new FlightDescriptionWidget(this);
     ui->flightTab->addTab(flightDescriptionWidget, tr("&Description"));
 
-    AircraftInfoWidget *aircraftInfoWidget = new AircraftInfoWidget(this);
+    auto aircraftInfoWidget = new AircraftInfoWidget(this);
     ui->flightTab->addTab(aircraftInfoWidget, tr("&Aircraft"));
 
-    FlightConditionWidget *flightConditionsWidget = new FlightConditionWidget(this);
+    auto flightConditionsWidget = new FlightConditionWidget(this);
     ui->flightTab->addTab(flightConditionsWidget, tr("&Conditions"));
 
-    FlightPlanWidget *flightPlanWidget = new FlightPlanWidget(this);
+    auto flightPlanWidget = new FlightPlanWidget(this);
     ui->flightTab->addTab(flightPlanWidget, tr("&Flight Plan"));
 
     ui->flightTab->setCurrentIndex(0);

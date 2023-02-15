@@ -55,6 +55,10 @@ class FormationWidget : public QWidget
     Q_OBJECT
 public:
     FormationWidget(QWidget *parent = nullptr) noexcept;
+    FormationWidget(const FormationWidget &rhs) = delete;
+    FormationWidget(FormationWidget &&rhs) = delete;
+    FormationWidget &operator=(const FormationWidget &rhs) = delete;
+    FormationWidget &operator=(FormationWidget &&rhs) = delete;
     ~FormationWidget() override;
 
     Formation::HorizontalDistance getHorizontalDistance() const noexcept;

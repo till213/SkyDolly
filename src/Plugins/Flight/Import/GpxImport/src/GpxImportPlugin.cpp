@@ -135,7 +135,7 @@ void GpxImportPlugin::updateFlightWaypoints(std::vector<FlightData> &flights) no
     }
 }
 
-void GpxImportPlugin::updateAircraftWaypoints(Aircraft &aircraft, QDateTime flightTimeUtc) noexcept
+void GpxImportPlugin::updateAircraftWaypoints(Aircraft &aircraft, const QDateTime &flightTimeUtc) noexcept
 {
     Position &position = aircraft.getPosition();
 
@@ -143,8 +143,7 @@ void GpxImportPlugin::updateAircraftWaypoints(Aircraft &aircraft, QDateTime flig
         Analytics analytics {aircraft};
         const PositionData firstPositionData = position.getFirst();
         const PositionData lastPositionData = position.getLast();
-        const QDateTime startDateTimeUtc = flightTimeUtc;
-        const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
+        const QDateTime endDateTimeUtc = flightTimeUtc.addMSecs(lastPositionData.timestamp);
 
         // Assign timestamps according to the closest flown position
         std::unordered_set<std::int64_t> timestamps;
@@ -155,8 +154,8 @@ void GpxImportPlugin::updateAircraftWaypoints(Aircraft &aircraft, QDateTime flig
             Waypoint &waypoint = flightPlan[i];
             if (i == 0) {
                 // First waypoint
-                waypoint.localTime = startDateTimeUtc.toLocalTime();
-                waypoint.zuluTime = startDateTimeUtc;
+                waypoint.localTime = flightTimeUtc.toLocalTime();
+                waypoint.zuluTime = flightTimeUtc;
                 uniqueTimestamp = firstPositionData.timestamp;
                 waypoint.timestamp = uniqueTimestamp;
                 timestamps.insert(uniqueTimestamp);
@@ -174,7 +173,7 @@ void GpxImportPlugin::updateAircraftWaypoints(Aircraft &aircraft, QDateTime flig
                 // In between waypoints
                 if (waypoint.timestamp == TimeVariableData::InvalidTime) {
                     const PositionData &closestPositionData = analytics.closestPosition(waypoint.latitude, waypoint.longitude);
-                    const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(closestPositionData.timestamp);
+                    const QDateTime dateTimeUtc = flightTimeUtc.addMSecs(closestPositionData.timestamp);
                     waypoint.localTime = dateTimeUtc.toLocalTime();
                     waypoint.zuluTime = dateTimeUtc;
                     uniqueTimestamp = closestPositionData.timestamp;

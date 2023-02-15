@@ -52,6 +52,10 @@ class SdLogExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     SdLogExportPlugin() noexcept;
+    SdLogExportPlugin(const SdLogExportPlugin &rhs) = delete;
+    SdLogExportPlugin(SdLogExportPlugin &&rhs) = delete;
+    SdLogExportPlugin &operator=(const SdLogExportPlugin &rhs) = delete;
+    SdLogExportPlugin &operator=(SdLogExportPlugin &&rhs) = delete;
     ~SdLogExportPlugin() override;
 
 protected:

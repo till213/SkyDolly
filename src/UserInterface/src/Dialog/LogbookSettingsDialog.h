@@ -43,6 +43,10 @@ class LogbookSettingsDialog : public QDialog
     Q_OBJECT
 public:
     explicit LogbookSettingsDialog(QWidget *parent = nullptr) noexcept;
+    LogbookSettingsDialog(const LogbookSettingsDialog &rhs) = delete;
+    LogbookSettingsDialog(LogbookSettingsDialog &&rhs) = delete;
+    LogbookSettingsDialog &operator=(const LogbookSettingsDialog &rhs) = delete;
+    LogbookSettingsDialog &operator=(LogbookSettingsDialog &&rhs) = delete;
     ~LogbookSettingsDialog() override;
 
 public slots:

@@ -54,6 +54,10 @@ class IgcExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     IgcExportPlugin() noexcept;
+    IgcExportPlugin(const IgcExportPlugin &rhs) = delete;
+    IgcExportPlugin(IgcExportPlugin &&rhs) = delete;
+    IgcExportPlugin &operator=(const IgcExportPlugin &rhs) = delete;
+    IgcExportPlugin &operator=(IgcExportPlugin &&rhs) = delete;
     ~IgcExportPlugin() override;
 
 protected:

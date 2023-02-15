@@ -39,6 +39,10 @@ class JsonExportSettings : public FlightExportPluginBaseSettings
     Q_OBJECT
 public:
     JsonExportSettings() noexcept;
+    JsonExportSettings(const JsonExportSettings &rhs) = delete;
+    JsonExportSettings(JsonExportSettings &&rhs) = delete;
+    JsonExportSettings &operator=(const JsonExportSettings &rhs) = delete;
+    JsonExportSettings &operator=(JsonExportSettings &&rhs) = delete;
     ~JsonExportSettings() override;
 
     bool isResamplingSupported() const noexcept override;

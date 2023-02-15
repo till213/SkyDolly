@@ -42,19 +42,19 @@
 
 namespace
 {
-    const QString TypeColumn = QStringLiteral("Type");
-    const QString NameColumn = QStringLiteral("Name");
-    const QString IdentColumn = QStringLiteral("Ident");
-    const QString LatitudeColumn = QStringLiteral("Latitude");
-    const QString LongitudeColumn = QStringLiteral("Longitude");
-    const QString ElevationColumn = QStringLiteral("Elevation");
-    const QString MagneticDeclinationColumn = QStringLiteral("Magnetic Declination");
-    const QString TagsColumn = QStringLiteral("Tags");
-    const QString DescriptionColumn = QStringLiteral("Description");
-    const QString RegionColumn = QStringLiteral("Region");
-    const QString VisibleFromColumn = QStringLiteral("Visible From");
-    const QString LastEditColumn = QStringLiteral("Last Edit");
-    const QString ImportFilenameColumn = QStringLiteral("Import Filename");
+    constexpr const char *TypeColumn {"Type"};
+    constexpr const char *NameColumn {"Name"};
+    constexpr const char *IdentColumn {"Ident"};
+    constexpr const char *LatitudeColumn {"Latitude"};
+    constexpr const char *LongitudeColumn {"Longitude"};
+    constexpr const char *ElevationColumn {"Elevation"};
+    constexpr const char *MagneticDeclinationColumn {"Magnetic Declination"};
+    constexpr const char *TagsColumn {"Tags"};
+    constexpr const char *DescriptionColumn {"Description"};
+    constexpr const char *RegionColumn {"Region"};
+    constexpr const char *VisibleFromColumn {"Visible From"};
+    constexpr const char *LastEditColumn {"Last Edit"};
+    constexpr const char *ImportFilenameColumn {"Import Filename"};
 
     constexpr const char *OtherType = "Other";
 }
@@ -118,7 +118,7 @@ LittleNavmapCsvLocationWriter::~LittleNavmapCsvLocationWriter() = default;
 
 bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations, QIODevice &io) noexcept
 {
-    QString csv = QString(::TypeColumn % Csv::CommaSep %
+    QString csv = QString(::TypeColumn) % Csv::CommaSep %
                           ::NameColumn % Csv::CommaSep %
                           ::IdentColumn % Csv::CommaSep %
                           ::LatitudeColumn % Csv::CommaSep %
@@ -130,8 +130,7 @@ bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations
                           ::RegionColumn % Csv::CommaSep %
                           ::VisibleFromColumn % Csv::CommaSep %
                           ::LastEditColumn % Csv::CommaSep %
-                          ::ImportFilenameColumn % Csv::Ln
-                          );
+                          ::ImportFilenameColumn % Csv::Ln;
 
     bool ok = io.write(csv.toUtf8());
     Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);

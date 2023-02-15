@@ -54,6 +54,10 @@ class KmlExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     KmlExportPlugin() noexcept;
+    KmlExportPlugin(const KmlExportPlugin &rhs) = delete;
+    KmlExportPlugin(KmlExportPlugin &&rhs) = delete;
+    KmlExportPlugin &operator=(const KmlExportPlugin &rhs) = delete;
+    KmlExportPlugin &operator=(KmlExportPlugin &&rhs) = delete;
     ~KmlExportPlugin() override;
 
 protected:
