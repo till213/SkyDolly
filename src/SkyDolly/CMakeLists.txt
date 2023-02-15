@@ -5,10 +5,11 @@ set_target_properties(${APP_NAME}
         MACOSX_BUNDLE ON
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/res/Info.plist.in"
 )
-qt_add_translations(${APP_NAME}
-    TS_FILES
-        i18n/${APP_NAME}_de_DE.ts
-)
+# TODO Translations (i18n)
+#qt_add_translations(${APP_NAME}
+#    TS_FILES
+#        i18n/${APP_NAME}_de_DE.ts
+#)
 target_sources(${APP_NAME}
     PRIVATE
         src/main.cpp
