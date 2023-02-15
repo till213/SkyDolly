@@ -36,6 +36,8 @@
 #endif
 
 #include <Kernel/Const.h>
+#include <Kernel/Settings.h>
+#include <Kernel/SkyMath.h>
 #include "FlightCondition.h"
 #include "Aircraft.h"
 #include "FlightPlan.h"
@@ -316,23 +318,13 @@ bool Flight::hasRecording() const noexcept
     return d->flightData.hasRecording();
 }
 
-void Flight::syncAircraftTimeOffset(std::vector<FlightData> &flightsToBeSynchronised) const noexcept
+void Flight::syncAircraftTimeOffset(Settings::TimeOffsetSync timeOffsetSync, std::vector<FlightData> &flightsToBeSynchronised) const noexcept
 {
     if (d->flightData.creationTime.isValid()) {
         for (FlightData &flightData : flightsToBeSynchronised) {
             const QDateTime &creationTime = flightData.creationTime;
             if (creationTime.isValid()) {
-                // The same time offset is applied to all aircraft in the flight, depending on the
-                // time different between the currentFlight and the newly imported FlightData, as follows:
-                //
-                // - The time difference from the imported creation time to the creation time of the current flight is calculated
-                // - That difference is NEGATIVE if the imported creation time is AFTER the current creation time (imported date "in the future") and...
-                // - ... POSITIVE if the imported creation time is BEFORE the current creation time (imported date "in the past")
-                //
-                // So:
-                // - If the imported creation time is "in the future", we want to apply a NEGATIVE time offset to the imported aircraft ("move it into the past"), and...
-                // - ... if the imported creation time "is in the past" then we want to apply a POSITIVE time offset to the imported aircraft ("move it into the future")
-                std::int64_t deltaOffset = creationTime.secsTo(d->flightData.creationTime) * 1000;
+                std::int64_t deltaOffset = SkyMath::calculateTimeOffset(timeOffsetSync, creationTime, d->flightData.creationTime);
                 for (Aircraft &aircraft : flightData) {
                     aircraft.addTimeOffset(deltaOffset);
                 }

@@ -34,10 +34,12 @@
 #include <GeographicLib/Geodesic.hpp>
 
 #include <QtGlobal>
+#include <QDateTime>
 #ifdef DEBUG
 #include <QDebug>
 #endif
 
+#include "Settings.h"
 #include "Convert.h"
 
 /*!
@@ -524,6 +526,38 @@ namespace SkyMath
     {
         const double distance = geodesicDistance(wp1, wp2);
         return distance < threshold;
+    }
+
+    /*!
+     * Calculates the time difference (in milliseconds) between the given
+     * \c fromDateTime to \c toDateTime (being possibly in different
+     * time zones).
+     *
+     * - The time difference from the imported creation time to the creation time of the current flight is calculated
+     * - That difference is NEGATIVE if the imported creation time is AFTER the current creation time (imported date "in the future") and...
+     * - ... POSITIVE if the imported creation time is BEFORE the current creation time (imported date "in the past")
+     *
+     * So:
+     * - If the imported creation time is "in the future", we want to apply a NEGATIVE time offset to the imported aircraft ("move it into the past"), and...
+     *  - ... if the imported creation time "is in the past" then we want to apply a POSITIVE time offset to the imported aircraft ("move it into the future")
+     */
+    std::int64_t calculateTimeOffset(Settings::TimeOffsetSync timeOffsetSync, const QDateTime &fromDateTime, const QDateTime &toDateTime) noexcept
+    {
+        QDateTime toDateTimeUtc = toDateTime.toUTC();
+        QDateTime fromDateTimeUtc;;
+        switch (timeOffsetSync) {
+        case Settings::TimeOffsetSync::DateAndTime:
+            fromDateTimeUtc = fromDateTimeUtc.toUTC();
+            break;
+        case Settings::TimeOffsetSync::TimeOnly:
+            // Same date
+            fromDateTimeUtc.setDate(toDateTimeUtc.date());
+            break;
+        case Settings::TimeOffsetSync::None:
+            fromDateTimeUtc = toDateTimeUtc;
+            break;
+        }
+        return fromDateTimeUtc.secsTo(toDateTimeUtc) * 1000;
     }
 
 } // namespace
