@@ -48,8 +48,6 @@ class MODEL_API Flight final : public QObject
 {
     Q_OBJECT
 public:
-
-
     explicit Flight(FlightData flightData, QObject *parent = nullptr) noexcept;
     explicit Flight(QObject *parent = nullptr) noexcept;    
     Flight(const Flight &rhs) = delete;

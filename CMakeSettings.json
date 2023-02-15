@@ -12,8 +12,23 @@
       "ctestCommandArgs": "",
       "variables": [
         {
-          "name": "Qt5Test_DIR",
-          "value": "C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5Test",
+          "name": "Qt6CoreTools_DIR",
+          "value": "C:/Qt/6.4.2/msvc2019_64/lib/cmake/Qt6CoreTools",
+          "type": "PATH"
+        },
+        {
+          "name": "Qt6_DIR",
+          "value": "C:/Qt/6.4.2/msvc2019_64/lib/cmake/Qt6",
+          "type": "PATH"
+        },
+        {
+          "name": "Qt6GuiTools_DIR",
+          "value": "C:/Qt/6.4.2/msvc2019_64/lib/cmake/Qt6GuiTools",
+          "type": "PATH"
+        },
+        {
+          "name": "Qt6Test_DIR",
+          "value": "C:/Qt/6.4.2/msvc2019_64/lib/cmake/Qt6Test",
           "type": "PATH"
         }
       ]

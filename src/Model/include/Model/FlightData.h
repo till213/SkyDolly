@@ -56,6 +56,13 @@ struct MODEL_API FlightData final
     std::vector<Aircraft> aircraft;
     int userAircraftIndex {Const::InvalidIndex};
 
+    FlightData() = default;
+    FlightData(const FlightData& rhs) = delete;
+    FlightData(FlightData&& rhs) = default;
+    FlightData& operator=(const FlightData& rhs) = delete;
+    FlightData& operator=(FlightData&& rhs) = default;
+    ~FlightData() = default;
+
     inline void clear(bool withOneAircraft, CreationTimeMode creationTimeMode) noexcept {
         id = Const::InvalidId;
         switch (creationTimeMode) {
@@ -177,12 +184,12 @@ struct MODEL_API FlightData final
     using ConstIterator = std::vector<Aircraft>::const_iterator;
     ConstIterator begin() const noexcept
     {
-        return aircraft.begin();
+        return aircraft.cbegin();
     }
 
     ConstIterator end() const noexcept
     {
-        return aircraft.end();
+        return aircraft.cend();
     }
 
     // OPERATORS
