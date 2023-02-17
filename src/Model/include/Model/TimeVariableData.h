@@ -42,10 +42,10 @@ struct MODEL_API TimeVariableData
     /*!
      * Defines the way (use case) the sampled data is accessed. A distinction is made for the seek access:
      *
-     * \li discrete: a single seek operation is made; certain event data (such as flaps handle index) is
-     *     only sent in this case
-     * \li continuous: a continuous seek operation is in progress ("dragging the time position slider");
-     *     certain event data is dererred until the end of the seek operation
+     * - discrete: a single seek operation is made; certain event data (such as flaps handle index) is
+     *   only sent in this case
+     * - continuous: a continuous seek operation is in progress ("dragging the time position slider");
+     *   certain event data is dererred until the end of the seek operation
      */
     enum struct Access
     {

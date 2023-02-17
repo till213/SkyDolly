@@ -35,11 +35,11 @@
 
 #include <QtGlobal>
 #include <QDateTime>
+#include <QTimeZone>
 #ifdef DEBUG
 #include <QDebug>
 #endif
 
-#include "Settings.h"
 #include "Convert.h"
 
 /*!
@@ -553,13 +553,18 @@ namespace SkyMath
      * \c fromDateTime to \c toDateTime (being possibly in different
      * time zones).
      *
-     * - The time difference from the imported creation time to the creation time of the current flight is calculated
-     * - That difference is NEGATIVE if the imported creation time is AFTER the current creation time (imported date "in the future") and...
-     * - ... POSITIVE if the imported creation time is BEFORE the current creation time (imported date "in the past")
+     * - The time difference from the imported creation time to the creation
+     *   time of the current flight is calculated
+     * - That difference is NEGATIVE if the imported creation time is AFTER
+     *   the current creation time (imported date "in the future") and...
+     * - ... POSITIVE if the imported creation time is BEFORE the current
+     *   creation time (imported date "in the past")
      *
      * So:
-     * - If the imported creation time is "in the future", we want to apply a NEGATIVE time offset to the imported aircraft ("move it into the past"), and...
-     *  - ... if the imported creation time "is in the past" then we want to apply a POSITIVE time offset to the imported aircraft ("move it into the future")
+     * - If the imported creation time is "in the future", we want to apply a
+     *   NEGATIVE time offset to the imported aircraft ("move it into the past"), and...
+     * - ... if the imported creation time "is in the past" then we want to apply
+     *   a POSITIVE time offset to the imported aircraft ("move it into the future")
      */
     inline std::int64_t calculateTimeOffset(TimeOffsetSync timeOffsetSync, const QDateTime &fromDateTime, const QDateTime &toDateTime) noexcept
     {
@@ -567,11 +572,13 @@ namespace SkyMath
         QDateTime fromDateTimeUtc;;
         switch (timeOffsetSync) {
         case TimeOffsetSync::DateAndTime:
-            fromDateTimeUtc = fromDateTimeUtc.toUTC();
+            fromDateTimeUtc = fromDateTime.toUTC();
             break;
         case TimeOffsetSync::TimeOnly:
             // Same date
             fromDateTimeUtc.setDate(toDateTimeUtc.date());
+            fromDateTimeUtc.setTime(fromDateTime.toUTC().time());
+            fromDateTimeUtc.setTimeZone(QTimeZone::utc());
             break;
         case TimeOffsetSync::None:
             fromDateTimeUtc = toDateTimeUtc;
