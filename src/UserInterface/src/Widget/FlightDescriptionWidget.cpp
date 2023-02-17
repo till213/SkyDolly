@@ -120,6 +120,7 @@ void FlightDescriptionWidget::updateUi() noexcept
     ui->focusPlainTextEdit->blockSignals(false);
 
     ui->recordingTimeLineEdit->setText(d->unit.formatDateTime(flight.getCreationTime()));
+    ui->recordingTimeLineEdit->setToolTip(flight.getCreationTime().toUTC().toString(Qt::ISODate));
 }
 
 void FlightDescriptionWidget::onTitleEdited() noexcept

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>578</width>
-    <height>242</height>
+    <width>629</width>
+    <height>241</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -72,13 +72,30 @@
       </widget>
      </item>
      <item row="3" column="0">
+      <widget class="QLabel" name="aircraftLabel_3">
+       <property name="text">
+        <string>Time synchronisation:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QComboBox" name="timeOffsetSyncComboBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
       <widget class="QLabel" name="aircraftLabel">
        <property name="text">
         <string>Aircraft:</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <widget class="AircraftSelectionComboBox" name="aircraftSelectionComboBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">

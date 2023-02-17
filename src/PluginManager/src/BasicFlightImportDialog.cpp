@@ -124,9 +124,15 @@ void BasicFlightImportDialog::initBasicUi() noexcept
     if (!type.isEmpty()) {
         ui->aircraftSelectionComboBox->setCurrentText(type);
     }
+
     // Import aircraft mode
     ui->aircraftImportModeComboBox->addItem(tr("Add to current flight"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight));
     ui->aircraftImportModeComboBox->addItem(tr("Add to new flight"), Enum::underly(FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight));
+
+    // Time offset synchronisation
+    ui->timeOffsetSyncComboBox->addItem(tr("None"), Enum::underly(SkyMath::TimeOffsetSync::None));
+    ui->timeOffsetSyncComboBox->addItem(tr("Time only"), Enum::underly(SkyMath::TimeOffsetSync::TimeOnly));
+    ui->timeOffsetSyncComboBox->addItem(tr("Date and time"), Enum::underly(SkyMath::TimeOffsetSync::DateAndTime));
 
     if (d->pluginSettings.requiresAircraftSelection()) {
         ui->aircraftSelectionComboBox->setEnabled(true);
@@ -164,6 +170,8 @@ void BasicFlightImportDialog::frenchConnection() noexcept
             this, &BasicFlightImportDialog::onImportDirectoryChanged);
     connect(ui->aircraftImportModeComboBox, &QComboBox::currentIndexChanged,
             this, &BasicFlightImportDialog::onAircraftImportModeChanged);
+    connect(ui->timeOffsetSyncComboBox, &QComboBox::currentIndexChanged,
+            this, &BasicFlightImportDialog::onTimeOffsetSyncChanged);
     connect(&d->pluginSettings, &FlightImportPluginBaseSettings::baseSettingsChanged,
             this, &BasicFlightImportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
@@ -211,7 +219,7 @@ void BasicFlightImportDialog::updateUi() noexcept
     }
 
     const FlightImportPluginBaseSettings::AircraftImportMode aircraftImportMode = d->pluginSettings.getAircraftImportMode();
-    const int indexCount = ui->aircraftImportModeComboBox->count();
+    int indexCount = ui->aircraftImportModeComboBox->count();
     int currentIndex {0};
     while (currentIndex < indexCount &&
            static_cast<FlightImportPluginBaseSettings::AircraftImportMode>(ui->aircraftImportModeComboBox->itemData(currentIndex).toInt()) != aircraftImportMode) {
@@ -230,6 +238,29 @@ void BasicFlightImportDialog::updateUi() noexcept
         break;
     case FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights:
         ui->aircraftImportModeComboBox->setToolTip(tr("Create separate flights for each imported file."));
+        break;
+    }
+
+    const SkyMath::TimeOffsetSync timeOffsetSync = d->pluginSettings.getTimeOffsetSync();
+    indexCount = ui->timeOffsetSyncComboBox->count();
+    currentIndex = 0;
+    while (currentIndex < indexCount &&
+           static_cast<SkyMath::TimeOffsetSync>(ui->timeOffsetSyncComboBox->itemData(currentIndex).toInt()) != timeOffsetSync) {
+        ++currentIndex;
+    }
+    if (currentIndex < indexCount) {
+        ui->timeOffsetSyncComboBox->setCurrentIndex(currentIndex);
+    }
+
+    switch (timeOffsetSync) {
+    case SkyMath::TimeOffsetSync::None:
+        ui->timeOffsetSyncComboBox->setToolTip(tr("No time offset is applied to any timestamps."));
+        break;
+    case SkyMath::TimeOffsetSync::DateAndTime:
+        ui->timeOffsetSyncComboBox->setToolTip(tr("Timestamps of newly imported aircraft are being offset based on the difference between the current and the newly imported flight, taking both recording date and time into account."));
+        break;
+    case SkyMath::TimeOffsetSync::TimeOnly:
+        ui->timeOffsetSyncComboBox->setToolTip(tr("Timestamps of newly imported aircraft are being offset based on the difference between the current and the newly imported flight, taking only the recording time into account (ignoring the recording date)."));
         break;
     }
 }
@@ -272,6 +303,11 @@ void BasicFlightImportDialog::onImportDirectoryChanged(bool enable) noexcept
 void BasicFlightImportDialog::onAircraftImportModeChanged() noexcept
 {
     d->pluginSettings.setAircraftImportMode(static_cast<FlightImportPluginBaseSettings::AircraftImportMode>(ui->aircraftImportModeComboBox->currentData().toInt()));
+}
+
+void BasicFlightImportDialog::onTimeOffsetSyncChanged() noexcept
+{
+    d->pluginSettings.setTimeOffsetSync(static_cast<SkyMath::TimeOffsetSync>(ui->timeOffsetSyncComboBox->currentData().toInt()));
 }
 
 void BasicFlightImportDialog::onRestoreDefaults() noexcept

@@ -31,6 +31,7 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
+#include <Kernel/SkyMath.h>
 #include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
@@ -75,6 +76,9 @@ public:
 
     AircraftImportMode getAircraftImportMode() const noexcept;
     void setAircraftImportMode(AircraftImportMode mode) noexcept;
+
+    SkyMath::TimeOffsetSync getTimeOffsetSync() const noexcept;
+    void setTimeOffsetSync(SkyMath::TimeOffsetSync timeOffsetSync) noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
