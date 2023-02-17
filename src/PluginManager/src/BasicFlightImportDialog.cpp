@@ -198,7 +198,7 @@ void BasicFlightImportDialog::updateUi() noexcept
 
     const QString type = ui->aircraftSelectionComboBox->currentText();
     const bool aircraftTypeExists = !type.isEmpty() && d->aircraftTypeService->exists(type);
-    const bool enabled = fileExists && aircraftTypeExists;
+    bool enabled = fileExists && aircraftTypeExists;
     d->importButton->setEnabled(enabled);
 
     const bool importDirectory = d->pluginSettings.isImportDirectoryEnabled();
@@ -241,7 +241,13 @@ void BasicFlightImportDialog::updateUi() noexcept
         break;
     }
 
+    enabled =                    aircraftImportMode == FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight ||
+              importDirectory && aircraftImportMode != FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights;
+    if (!enabled) {
+        d->pluginSettings.setTimeOffsetSync(SkyMath::TimeOffsetSync::None);
+    }
     const SkyMath::TimeOffsetSync timeOffsetSync = d->pluginSettings.getTimeOffsetSync();
+    ui->timeOffsetSyncComboBox->setEnabled(enabled);
     indexCount = ui->timeOffsetSyncComboBox->count();
     currentIndex = 0;
     while (currentIndex < indexCount &&
