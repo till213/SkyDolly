@@ -75,6 +75,26 @@ namespace SkyMath
     constexpr double DefaultDistanceThreshold = 50.0;
 
     /*!
+     * Defines how the aircraft time offset is to be synchronised.
+     *
+     * These values are peristed in the application settings.
+     */
+    enum struct TimeOffsetSync {
+        /*! No synchronisation to be done. */
+        None = 0,
+        /*! Both date and time of the flight creation time are taken into account */
+        DateAndTime = 1,
+        /*!
+         * Only the time is taken into account. For example a flight that was recorded
+         * a day before, on the 2023-02-14 10:45:00Z is only considered to be 15 minutes
+         * behind of a flight recorded on the 2023-02-15 11:00:00Z (and not a day plus
+         * 15 minutes). This is useful when importing e.g. real-world flights that
+         * happened on different days, but should still be synchronised "on the same day".
+         */
+        TimeOnly = 2
+    };
+
+    /*!
      * Returns the sign of \c val.
      *
      * \return -1 if \c val is a negative value; 0 for \c val
@@ -541,19 +561,19 @@ namespace SkyMath
      * - If the imported creation time is "in the future", we want to apply a NEGATIVE time offset to the imported aircraft ("move it into the past"), and...
      *  - ... if the imported creation time "is in the past" then we want to apply a POSITIVE time offset to the imported aircraft ("move it into the future")
      */
-    std::int64_t calculateTimeOffset(Settings::TimeOffsetSync timeOffsetSync, const QDateTime &fromDateTime, const QDateTime &toDateTime) noexcept
+    inline std::int64_t calculateTimeOffset(TimeOffsetSync timeOffsetSync, const QDateTime &fromDateTime, const QDateTime &toDateTime) noexcept
     {
         QDateTime toDateTimeUtc = toDateTime.toUTC();
         QDateTime fromDateTimeUtc;;
         switch (timeOffsetSync) {
-        case Settings::TimeOffsetSync::DateAndTime:
+        case TimeOffsetSync::DateAndTime:
             fromDateTimeUtc = fromDateTimeUtc.toUTC();
             break;
-        case Settings::TimeOffsetSync::TimeOnly:
+        case TimeOffsetSync::TimeOnly:
             // Same date
             fromDateTimeUtc.setDate(toDateTimeUtc.date());
             break;
-        case Settings::TimeOffsetSync::None:
+        case TimeOffsetSync::None:
             fromDateTimeUtc = toDateTimeUtc;
             break;
         }

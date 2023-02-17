@@ -184,7 +184,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
                     [[fallthrough]];
                 case FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight:
                     // TODO make time offset a plugin setting
-                    currentFlight.syncAircraftTimeOffset(Settings::TimeOffsetSync::TimeAndDate, importedFlights);
+                    currentFlight.syncAircraftTimeOffset(SkyMath::TimeOffsetSync::DateAndTime, importedFlights);
                     ok = addAndStoreAircraftToCurrentFlight(filePath, std::move(importedFlights), currentFlight,
                                                             totalFlightsStored, totalAircraftStored, continueWithDirectoryImport);
                     break;

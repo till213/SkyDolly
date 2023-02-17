@@ -35,7 +35,7 @@
 class QDateTime;
 class QString;
 
-#include <Kernel/Settings.h>
+#include <Kernel/SkyMath.h>
 #include "Aircraft.h"
 #include "FlightSummary.h"
 #include "FlightCondition.h"
@@ -258,7 +258,7 @@ public:
      *        the flights to be synchronised, according to their creation time
      * \sa getCreationTime
      */
-    void syncAircraftTimeOffset(Settings::TimeOffsetSync timeOffsetSync, std::vector<FlightData> &flightsToBeSynchronised) const noexcept;
+    void syncAircraftTimeOffset(SkyMath::TimeOffsetSync timeOffsetSync, std::vector<FlightData> &flightsToBeSynchronised) const noexcept;
 
     using Iterator = std::vector<Aircraft>::iterator;
     Iterator begin() noexcept;

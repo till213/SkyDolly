@@ -318,7 +318,7 @@ bool Flight::hasRecording() const noexcept
     return d->flightData.hasRecording();
 }
 
-void Flight::syncAircraftTimeOffset(Settings::TimeOffsetSync timeOffsetSync, std::vector<FlightData> &flightsToBeSynchronised) const noexcept
+void Flight::syncAircraftTimeOffset(SkyMath::TimeOffsetSync timeOffsetSync, std::vector<FlightData> &flightsToBeSynchronised) const noexcept
 {
     if (d->flightData.creationTime.isValid()) {
         for (FlightData &flightData : flightsToBeSynchronised) {
