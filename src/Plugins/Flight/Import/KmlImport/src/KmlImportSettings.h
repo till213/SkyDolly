@@ -51,13 +51,14 @@ public:
     };
 
     KmlImportSettings() noexcept;
-    KmlImportSettings(const KmlImportSettings &rhs) = delete;
+    KmlImportSettings(KmlImportSettings &rhs) = delete;
     KmlImportSettings(KmlImportSettings &&rhs) = delete;
     KmlImportSettings &operator=(const KmlImportSettings &rhs) = delete;
     KmlImportSettings &operator=(KmlImportSettings &&rhs) = delete;
     ~KmlImportSettings() override;
 
-    bool requiresAircraftSelection() const noexcept override;
+    bool isAircraftSelectionRequired() const noexcept override;
+    bool isTimeOffsetSyncSupported() const noexcept override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;

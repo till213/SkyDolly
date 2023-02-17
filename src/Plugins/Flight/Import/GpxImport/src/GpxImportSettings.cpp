@@ -63,7 +63,12 @@ GpxImportSettings::GpxImportSettings() noexcept
 
 GpxImportSettings::~GpxImportSettings() = default;
 
-bool GpxImportSettings::requiresAircraftSelection() const noexcept
+bool GpxImportSettings::isAircraftSelectionRequired() const noexcept
+{
+    return true;
+}
+
+bool GpxImportSettings::isTimeOffsetSyncSupported() const noexcept
 {
     return true;
 }

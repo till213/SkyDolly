@@ -36,9 +36,14 @@ SdLogImportSettings::SdLogImportSettings() noexcept
 
 SdLogImportSettings::~SdLogImportSettings() = default;
 
-bool SdLogImportSettings::requiresAircraftSelection() const noexcept
+bool SdLogImportSettings::isAircraftSelectionRequired() const noexcept
 {
     return false;
+}
+
+bool SdLogImportSettings::isTimeOffsetSyncSupported() const noexcept
+{
+    return true;
 }
 
 // PROTECTED

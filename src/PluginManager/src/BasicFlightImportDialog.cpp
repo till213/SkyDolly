@@ -134,7 +134,7 @@ void BasicFlightImportDialog::initBasicUi() noexcept
     ui->timeOffsetSyncComboBox->addItem(tr("Time only"), Enum::underly(SkyMath::TimeOffsetSync::TimeOnly));
     ui->timeOffsetSyncComboBox->addItem(tr("Date and time"), Enum::underly(SkyMath::TimeOffsetSync::DateAndTime));
 
-    if (d->pluginSettings.requiresAircraftSelection()) {
+    if (d->pluginSettings.isAircraftSelectionRequired()) {
         ui->aircraftSelectionComboBox->setEnabled(true);
         ui->aircraftSelectionComboBox->setToolTip(tr("Select the aircraft type for each imported aircraft."));
     } else {
@@ -241,6 +241,7 @@ void BasicFlightImportDialog::updateUi() noexcept
         break;
     }
 
+    const bool timeOffsetSyncSupported =
     enabled =                    aircraftImportMode == FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight ||
               importDirectory && aircraftImportMode != FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights;
     if (!enabled) {

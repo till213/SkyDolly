@@ -52,7 +52,7 @@ public:
 private:
     void parsePlacemark(FlightData &flightData) noexcept override;
     void parseWaypoint(FlightData &flightData, QString name) noexcept;
-    void updateFlightWaypoints(std::vector<FlightData> &flights) noexcept;
+    void enrichFlightData(std::vector<FlightData> &flights) noexcept;
     void updateAircraftWaypoints(Aircraft &aircraft) noexcept;
 };
 

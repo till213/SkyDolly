@@ -71,7 +71,7 @@ protected:
 private:
     const std::unique_ptr<IgcImportPluginPrivate> d;
 
-    void updateWaypoints(Aircraft &aircraft) noexcept;
+    void updateWaypoints(Aircraft &aircraft) const noexcept;
 
     // Estimates the propeller (thrust) lever position, based on the
     // environmentalNoiseLevel and the threshold

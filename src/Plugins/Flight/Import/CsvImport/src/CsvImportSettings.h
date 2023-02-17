@@ -57,7 +57,8 @@ public:
     CsvImportSettings &operator=(CsvImportSettings &&rhs) = delete;
     ~CsvImportSettings() override;
 
-    bool requiresAircraftSelection() const noexcept override;
+    bool isAircraftSelectionRequired() const noexcept override;
+    bool isTimeOffsetSyncSupported() const noexcept override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;

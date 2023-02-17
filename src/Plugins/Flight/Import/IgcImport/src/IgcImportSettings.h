@@ -56,7 +56,8 @@ public:
     IgcImportSettings &operator=(IgcImportSettings &&rhs) = delete;
     ~IgcImportSettings() override;
 
-    bool requiresAircraftSelection() const noexcept override;
+    bool isAircraftSelectionRequired() const noexcept override;
+    bool isTimeOffsetSyncSupported() const noexcept override;
 
     AltitudeMode getAltitudeMode() const noexcept;
     void setAltitudeMode(AltitudeMode altitudeMode) noexcept;

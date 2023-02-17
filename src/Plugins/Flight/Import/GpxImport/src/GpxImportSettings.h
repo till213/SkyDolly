@@ -57,7 +57,8 @@ public:
     GpxImportSettings &operator=(GpxImportSettings &&rhs) = delete;
     ~GpxImportSettings() override;
 
-    bool requiresAircraftSelection() const noexcept override;
+    bool isAircraftSelectionRequired() const noexcept override;
+    bool isTimeOffsetSyncSupported() const noexcept override;
 
     GPXElement getWaypointSelection() const noexcept;
     void setWaypointSelection(GPXElement selection) noexcept;

@@ -107,6 +107,7 @@ std::vector<FlightData> FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStrea
         d->xml->raiseError("Error reading the XML data.");
     }
 
+    flightData.creationTime = d->firstDateTimeUtc;
     // Now "upsert" the position data, taking duplicate timestamps into account
     Position &position = aircraft.getPosition();
     for (const FlightRadar24KmlParserPrivate::TrackItem &trackItem : d->trackData) {
@@ -114,7 +115,6 @@ std::vector<FlightData> FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStrea
         positionData.timestamp = trackItem.timestamp;
         positionData.velocityBodyZ = trackItem.speed;
         positionData.trueHeading = trackItem.heading;
-
         position.upsertLast(positionData);
     }
     flights.push_back(std::move(flightData));

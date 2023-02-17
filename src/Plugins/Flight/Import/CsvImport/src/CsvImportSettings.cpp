@@ -53,9 +53,27 @@ CsvImportSettings::CsvImportSettings() noexcept
 
 CsvImportSettings::~CsvImportSettings() = default;
 
-bool CsvImportSettings::requiresAircraftSelection() const noexcept
+bool CsvImportSettings::isAircraftSelectionRequired() const noexcept
 {
     return true;
+}
+
+bool CsvImportSettings::isTimeOffsetSyncSupported() const noexcept
+{
+    bool supported {false};
+    switch (d->format) {
+    case CsvImportSettings::Format::FlightRadar24:
+        supported = true;
+        break;
+    case CsvImportSettings::Format::FlightRecorder:
+        supported = false;
+        break;
+    case CsvImportSettings::Format::SkyDolly:
+        supported = false;
+        break;
+    }
+
+    return supported;
 }
 
 CsvImportSettings::Format CsvImportSettings::getFormat() const noexcept

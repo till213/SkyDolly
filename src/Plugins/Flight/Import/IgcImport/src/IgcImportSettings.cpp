@@ -61,7 +61,12 @@ IgcImportSettings::IgcImportSettings() noexcept
 
 IgcImportSettings::~IgcImportSettings() = default;
 
-bool IgcImportSettings::requiresAircraftSelection() const noexcept
+bool IgcImportSettings::isAircraftSelectionRequired() const noexcept
+{
+    return true;
+}
+
+bool IgcImportSettings::isTimeOffsetSyncSupported() const noexcept
 {
     return true;
 }

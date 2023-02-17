@@ -53,7 +53,12 @@ KmlImportSettings::KmlImportSettings() noexcept
 
 KmlImportSettings::~KmlImportSettings() = default;
 
-bool KmlImportSettings::requiresAircraftSelection() const noexcept
+bool KmlImportSettings::isAircraftSelectionRequired() const noexcept
+{
+    return true;
+}
+
+bool KmlImportSettings::isTimeOffsetSyncSupported() const noexcept
 {
     return true;
 }

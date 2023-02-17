@@ -42,11 +42,12 @@ public:
     SdLogImportSettings() noexcept;
     SdLogImportSettings(const SdLogImportSettings &rhs) = delete;
     SdLogImportSettings(SdLogImportSettings &&rhs) = delete;
-    SdLogImportSettings &operator=(const SdLogImportSettings &rhs) = delete;
+    SdLogImportSettings(const SdLogImportSettings &&rhs) = delete;
     SdLogImportSettings &operator=(SdLogImportSettings &&rhs) = delete;
     ~SdLogImportSettings() override;
 
-    bool requiresAircraftSelection() const noexcept override;
+    bool isAircraftSelectionRequired() const noexcept override;
+    bool isTimeOffsetSyncSupported() const noexcept override;
 
 signals:
     /*!
