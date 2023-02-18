@@ -27,6 +27,7 @@
 #include <QtTest>
 #include <QUuid>
 
+#include <Kernel//Const.h>
 #include <PluginManager/PluginManager.h>
 #include "CsvFlightRecorderImportTest.h"
 
@@ -36,12 +37,6 @@ namespace
     constexpr const int FlightRecorderFormat = 2;
 }
 
-namespace Uuid
-{
-    // CsvImportPlugin.json
-    constexpr const char *Csv = "077448de-4909-4c5e-8957-2347afee6708";
-}
-
 // PRIVATE SLOTS
 
 void CsvFlightRecorderImportTest::onInitTestCase() noexcept
@@ -49,8 +44,9 @@ void CsvFlightRecorderImportTest::onInitTestCase() noexcept
     // SETUP
 
     // Select the "FlightRecorder" format
-    m_oldPluginFormat = getPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, 0).toInt();
-    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, ::FlightRecorderFormat);
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+    m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();
+    setPluginSetting(pluginUuid, ::FormatKey, ::FlightRecorderFormat);
 
     // Initialis flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
@@ -60,13 +56,15 @@ void CsvFlightRecorderImportTest::onInitTestCase() noexcept
 
 void CsvFlightRecorderImportTest::onCleanupTestCase() noexcept
 {
-    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, m_oldPluginFormat);
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+    setPluginSetting(pluginUuid, ::FormatKey, m_oldPluginFormat);
 }
 
 void CsvFlightRecorderImportTest::initTestCase_data() noexcept
 {
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
     QTest::addColumn<QUuid>("pluginUuid");
-    QTest::newRow("pluginUuid") << QUuid(Uuid::Csv);
+    QTest::newRow("pluginUuid") << pluginUuid;
 }
 
 void CsvFlightRecorderImportTest::importSelectedFlights_data() noexcept

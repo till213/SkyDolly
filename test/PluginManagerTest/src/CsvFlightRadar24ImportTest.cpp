@@ -27,6 +27,7 @@
 #include <QtTest>
 #include <QUuid>
 
+#include <Kernel/Const.h>
 #include <PluginManager/PluginManager.h>
 #include "CsvFlightRadar24ImportTest.h"
 
@@ -36,12 +37,6 @@ namespace
     constexpr const int FlightRadar24Format = 1;
 }
 
-namespace Uuid
-{
-    // CsvImportPlugin.json
-    constexpr const char *Csv = "077448de-4909-4c5e-8957-2347afee6708";
-}
-
 // PRIVATE SLOTS
 
 void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
@@ -49,8 +44,9 @@ void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
     // SETUP
 
     // Select the "FlightRadar24" format
-    m_oldPluginFormat = getPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, 0).toInt();
-    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, ::FlightRadar24Format);
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+    m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();
+    setPluginSetting(pluginUuid, ::FormatKey, ::FlightRadar24Format);
 
     // Initialis flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
@@ -60,13 +56,16 @@ void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
 
 void CsvFlightRadar24ImportTest::onCleanupTestCase() noexcept
 {
-    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, m_oldPluginFormat);
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+    setPluginSetting(pluginUuid, ::FormatKey, m_oldPluginFormat);
 }
 
 void CsvFlightRadar24ImportTest::initTestCase_data() noexcept
 {
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+
     QTest::addColumn<QUuid>("pluginUuid");
-    QTest::newRow("pluginUuid") << QUuid(Uuid::Csv);
+    QTest::newRow("pluginUuid") << pluginUuid;
 }
 
 void CsvFlightRadar24ImportTest::importSelectedFlights_data() noexcept
