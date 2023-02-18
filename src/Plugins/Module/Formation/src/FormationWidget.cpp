@@ -298,6 +298,8 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateUi);
     connect(&flight, &Flight::aircraftInfoChanged,
             this, &FormationWidget::onAircraftInfoChanged);
+    connect(&flight, &Flight::cleared,
+            this, &FormationWidget::updateUi);
 
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
