@@ -63,6 +63,9 @@ private slots:
 
     void bankAngle_data();
     void bankAngle();
+
+    void calculateTimeOffset_data();
+    void calculateTimeOffset();
 };
 
 #endif // SKYMATHTEST_H

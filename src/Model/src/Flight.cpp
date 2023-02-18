@@ -36,6 +36,8 @@
 #endif
 
 #include <Kernel/Const.h>
+#include <Kernel/Settings.h>
+#include <Kernel/SkyMath.h>
 #include "FlightCondition.h"
 #include "Aircraft.h"
 #include "FlightPlan.h"
@@ -314,6 +316,21 @@ void Flight::clear(bool withOneAircraft, FlightData::CreationTimeMode creationTi
 bool Flight::hasRecording() const noexcept
 {
     return d->flightData.hasRecording();
+}
+
+void Flight::syncAircraftTimeOffset(SkyMath::TimeOffsetSync timeOffsetSync, std::vector<FlightData> &flightsToBeSynchronised) const noexcept
+{
+    if (d->flightData.creationTime.isValid()) {
+        for (FlightData &flightData : flightsToBeSynchronised) {
+            const QDateTime &creationTime = flightData.creationTime;
+            if (creationTime.isValid()) {
+                std::int64_t deltaOffset = SkyMath::calculateTimeOffset(timeOffsetSync, creationTime, d->flightData.creationTime);
+                for (Aircraft &aircraft : flightData) {
+                    aircraft.addTimeOffset(deltaOffset);
+                }
+            }
+        }
+    }
 }
 
 Flight::Iterator Flight::begin() noexcept

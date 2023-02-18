@@ -245,7 +245,7 @@ void LogbookWidget::initFilterUi() noexcept
     ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Piston), Enum::underly(SimType::EngineType::Piston));
     ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::HeloBellTurbine), Enum::underly(SimType::EngineType::HeloBellTurbine));
     ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::None), Enum::underly(SimType::EngineType::None));
-    ui->engineTypeComboBox->setCurrentText(0);
+    ui->engineTypeComboBox->setCurrentText(QString());
 }
 
 void LogbookWidget::updateTable() noexcept
@@ -431,7 +431,7 @@ void LogbookWidget::updateDateSelectorUi() noexcept
         ui->logTreeWidget->blockSignals(true);
         ui->logTreeWidget->clear();
 
-        QTreeWidgetItem *logbookItem = new QTreeWidgetItem(ui->logTreeWidget, QStringList(tr("Logbook")));
+        auto logbookItem = new QTreeWidgetItem(ui->logTreeWidget, QStringList(tr("Logbook")));
 
         int totalFlights = 0;
         while (!flightDates.empty()) {
@@ -538,7 +538,7 @@ void LogbookWidget::frenchConnection() noexcept
 inline void LogbookWidget::insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept
 {
     const int year = flightDatesByYear.cbegin()->year;
-    QTreeWidgetItem *yearItem = new QTreeWidgetItem(parent, {QString::number(year), QString::number(nofFlightsPerYear)});
+    auto yearItem = new QTreeWidgetItem(parent, {QString::number(year), QString::number(nofFlightsPerYear)});
     yearItem->setData(::DateColumn, Qt::UserRole, year);
     while (!flightDatesByYear.empty()) {
         auto first = flightDatesByYear.cbegin();
@@ -567,7 +567,7 @@ inline void LogbookWidget::insertYear(QTreeWidgetItem *parent, std::forward_list
 inline void LogbookWidget::insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth, int nofFlightsPerMonth) noexcept
 {
     const int month = flightDatesByMonth.cbegin()->month;
-    QTreeWidgetItem *monthItem = new QTreeWidgetItem(parent, {d->unit.formatMonth(month), QString::number(nofFlightsPerMonth)});
+    auto monthItem = new QTreeWidgetItem(parent, {d->unit.formatMonth(month), QString::number(nofFlightsPerMonth)});
     monthItem->setData(DateColumn, Qt::UserRole, month);
     // The days are already unique
     insertDay(monthItem, flightDatesByMonth);
@@ -583,7 +583,7 @@ inline void LogbookWidget::insertDay(QTreeWidgetItem *parent, std::forward_list<
     for (auto &it: flightDatesByDayOfMonth) {
         const int dayOfMonth = it.dayOfMonth;
         const int nofFlights = it.nofFlights;
-        QTreeWidgetItem *dayItem = new QTreeWidgetItem(parent, {QString::number(dayOfMonth), QString::number(nofFlights)});
+        auto dayItem = new QTreeWidgetItem(parent, {QString::number(dayOfMonth), QString::number(nofFlights)});
         dayItem->setData(DateColumn, Qt::UserRole, dayOfMonth);
     }
 }
@@ -723,7 +723,7 @@ void LogbookWidget::deleteFlight() noexcept
         bool doDelete {true};
         if (settings.isDeleteFlightConfirmationEnabled()) {
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
-            QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
+            auto dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
             messageBox->setWindowTitle(tr("Delete Flight"));
             messageBox->setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(selectedFlightId));

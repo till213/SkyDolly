@@ -42,6 +42,10 @@ class FlightRadar24KmlParser : public KmlParserIntf
 {
 public:
     FlightRadar24KmlParser() noexcept;
+    FlightRadar24KmlParser(const FlightRadar24KmlParser &rhs) = delete;
+    FlightRadar24KmlParser(FlightRadar24KmlParser &&rhs) = delete;
+    FlightRadar24KmlParser &operator=(const FlightRadar24KmlParser &rhs) = delete;
+    FlightRadar24KmlParser &operator=(FlightRadar24KmlParser &&rhs) = delete;
     ~FlightRadar24KmlParser() override;
 
     std::vector<FlightData> parse(QXmlStreamReader &xmlStreamReader) noexcept override;

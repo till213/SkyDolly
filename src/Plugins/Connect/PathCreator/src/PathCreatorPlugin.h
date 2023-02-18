@@ -47,6 +47,10 @@ class PathCreatorPlugin : public AbstractSkyConnect
     Q_INTERFACES(SkyConnectIntf)
 public:
     PathCreatorPlugin(QObject *parent = nullptr) noexcept;
+    PathCreatorPlugin(const PathCreatorPlugin &rhs) = delete;
+    PathCreatorPlugin(PathCreatorPlugin &&rhs) = delete;
+    PathCreatorPlugin &operator=(const PathCreatorPlugin &rhs) = delete;
+    PathCreatorPlugin &operator=(PathCreatorPlugin &&rhs) = delete;
     ~PathCreatorPlugin() override;
 
     bool setUserAircraftPosition(const PositionData &positionData) noexcept override;

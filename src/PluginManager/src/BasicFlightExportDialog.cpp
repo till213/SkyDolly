@@ -190,7 +190,7 @@ void BasicFlightExportDialog::frenchConnection() noexcept
             this, &BasicFlightExportDialog::onResamplingOptionChanged);
     connect(ui->openExportCheckBox, &QCheckBox::toggled,
             this, &BasicFlightExportDialog::onDoOpenExportedFilesChanged);
-    connect(&d->pluginSettings, &FlightExportPluginBaseSettings::baseSettingsChanged,
+    connect(&d->pluginSettings, &FlightExportPluginBaseSettings::changed,
             this, &BasicFlightExportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,

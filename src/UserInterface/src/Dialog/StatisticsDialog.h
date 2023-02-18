@@ -44,6 +44,10 @@ class StatisticsDialog : public QDialog
     Q_OBJECT
 public:
     explicit StatisticsDialog(QWidget *parent = nullptr) noexcept;
+    StatisticsDialog(const StatisticsDialog &rhs) = delete;
+    StatisticsDialog(StatisticsDialog &&rhs) = delete;
+    StatisticsDialog &operator=(const StatisticsDialog &rhs) = delete;
+    StatisticsDialog &operator=(StatisticsDialog &&rhs) = delete;
     ~StatisticsDialog() override;
 
 signals:

@@ -43,6 +43,10 @@ class FlightDialog : public QDialog
     Q_OBJECT
 public:
     explicit FlightDialog(QWidget *parent = nullptr) noexcept;
+    FlightDialog(const FlightDialog &rhs) = delete;
+    FlightDialog(FlightDialog &&rhs) = delete;
+    FlightDialog &operator=(const FlightDialog &rhs) = delete;
+    FlightDialog &operator=(FlightDialog &&rhs) = delete;
     ~FlightDialog() override;
 
 signals:

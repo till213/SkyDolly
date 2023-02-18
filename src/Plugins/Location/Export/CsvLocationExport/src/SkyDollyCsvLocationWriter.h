@@ -40,6 +40,10 @@ class SkyDollyCsvLocationWriter : public CsvLocationWriterIntf
 {
 public:
     SkyDollyCsvLocationWriter(const CsvLocationExportSettings &pluginSettings) noexcept;
+    SkyDollyCsvLocationWriter(const SkyDollyCsvLocationWriter &rhs) = delete;
+    SkyDollyCsvLocationWriter(SkyDollyCsvLocationWriter &&rhs) = delete;
+    SkyDollyCsvLocationWriter &operator=(const SkyDollyCsvLocationWriter &rhs) = delete;
+    SkyDollyCsvLocationWriter &operator=(SkyDollyCsvLocationWriter &&rhs) = delete;
     ~SkyDollyCsvLocationWriter() override;
 
     bool write(const std::vector<Location> &locations, QIODevice &ioDevice) noexcept override;

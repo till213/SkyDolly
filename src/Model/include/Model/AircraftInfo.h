@@ -50,7 +50,6 @@ struct MODEL_API AircraftInfo final
     int initialAirspeed {0};
 
     AircraftInfo(std::int64_t aircraftId = Const::InvalidId) noexcept;
-    AircraftInfo() noexcept;
     AircraftInfo(const AircraftInfo &rhs) = default;
     AircraftInfo(AircraftInfo &&rhs) = default;
     AircraftInfo &operator=(const AircraftInfo &rhs) = default;

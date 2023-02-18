@@ -77,6 +77,7 @@ private slots:
     void onFileSelectionChanged() noexcept;
     void onImportDirectoryChanged(bool enable) noexcept;
     void onAircraftImportModeChanged() noexcept;
+    void onTimeOffsetSyncChanged() noexcept;
     void onRestoreDefaults() noexcept;
     void onAccepted() noexcept;    
 };

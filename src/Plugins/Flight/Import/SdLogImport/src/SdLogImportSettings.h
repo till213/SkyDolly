@@ -40,15 +40,14 @@ class SdLogImportSettings : public FlightImportPluginBaseSettings
     Q_OBJECT
 public:
     SdLogImportSettings() noexcept;
+    SdLogImportSettings(const SdLogImportSettings &rhs) = delete;
+    SdLogImportSettings(SdLogImportSettings &&rhs) = delete;
+    SdLogImportSettings(const SdLogImportSettings &&rhs) = delete;
+    SdLogImportSettings &operator=(SdLogImportSettings &&rhs) = delete;
     ~SdLogImportSettings() override;
 
-    bool requiresAircraftSelection() const noexcept override;
-
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
+    bool isAircraftSelectionRequired() const noexcept override;
+    bool isTimeOffsetSyncSupported() const noexcept override;
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

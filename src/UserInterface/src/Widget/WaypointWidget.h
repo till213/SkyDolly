@@ -45,6 +45,10 @@ class WaypointWidget : public QWidget
 
 public:
     explicit WaypointWidget(Waypoint waypoint, QWidget *parent = nullptr) noexcept;
+    WaypointWidget(const WaypointWidget &rhs) = delete;
+    WaypointWidget(WaypointWidget &&rhs) = delete;
+    WaypointWidget &operator=(const WaypointWidget &rhs) = delete;
+    WaypointWidget &operator=(WaypointWidget &&rhs) = delete;
     ~WaypointWidget() override;
 
     void update(Waypoint waypoint) noexcept;

@@ -42,6 +42,10 @@ class GenericKmlParser : public AbstractKmlTrackParser
 {
 public:
     GenericKmlParser() noexcept;
+    GenericKmlParser(const GenericKmlParser &rhs) = delete;
+    GenericKmlParser(GenericKmlParser &&rhs) = delete;
+    GenericKmlParser &operator=(const GenericKmlParser &rhs) = delete;
+    GenericKmlParser &operator=(GenericKmlParser &&rhs) = delete;
     ~GenericKmlParser() override;
 
     std::vector<FlightData> parse(QXmlStreamReader &xmlStreamReader) noexcept override;

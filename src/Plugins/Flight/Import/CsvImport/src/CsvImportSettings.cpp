@@ -53,9 +53,27 @@ CsvImportSettings::CsvImportSettings() noexcept
 
 CsvImportSettings::~CsvImportSettings() = default;
 
-bool CsvImportSettings::requiresAircraftSelection() const noexcept
+bool CsvImportSettings::isAircraftSelectionRequired() const noexcept
 {
     return true;
+}
+
+bool CsvImportSettings::isTimeOffsetSyncSupported() const noexcept
+{
+    bool supported {false};
+    switch (d->format) {
+    case CsvImportSettings::Format::FlightRadar24:
+        supported = true;
+        break;
+    case CsvImportSettings::Format::FlightRecorder:
+        supported = false;
+        break;
+    case CsvImportSettings::Format::SkyDolly:
+        supported = false;
+        break;
+    }
+
+    return supported;
 }
 
 CsvImportSettings::Format CsvImportSettings::getFormat() const noexcept
@@ -67,7 +85,7 @@ void CsvImportSettings::setFormat(Format format) noexcept
 {
     if (d->format != format) {
         d->format = format;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -100,13 +118,9 @@ void CsvImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->format = ::DefaultFormat;
     }
-
-    emit extendedSettingsChanged();
 }
 
 void CsvImportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
-
-    emit extendedSettingsChanged();
 }

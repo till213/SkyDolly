@@ -53,6 +53,10 @@ class GpxExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     GpxExportPlugin() noexcept;
+    GpxExportPlugin(const GpxExportPlugin &rhs) = delete;
+    GpxExportPlugin(GpxExportPlugin &&rhs) = delete;
+    GpxExportPlugin &operator=(const GpxExportPlugin &rhs) = delete;
+    GpxExportPlugin &operator=(GpxExportPlugin &&rhs) = delete;
     ~GpxExportPlugin() override;
 
 protected:

@@ -64,7 +64,7 @@ void CsvExportSettings::setFormat(Format format) noexcept
 {
     if (d->format != format) {
         d->format = format;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -124,6 +124,4 @@ void CsvExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
 void CsvExportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
-
-    emit extendedSettingsChanged();
 }

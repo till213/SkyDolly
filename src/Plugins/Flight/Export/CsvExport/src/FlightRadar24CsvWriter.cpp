@@ -46,13 +46,13 @@
 
 namespace
 {
-    const QString TimestampColumn = QStringLiteral("Timestamp");
-    const QString UtcColumn = QStringLiteral("UTC");
-    const QString CallsignColumn = QStringLiteral("Callsign");
-    const QString PositionColumn = QStringLiteral("Position");
-    const QString AltitudeColumn = QStringLiteral("Altitude");
-    const QString SpeedColumn = QStringLiteral("Speed");
-    const QString DirectionColumn = QStringLiteral("Direction");
+    constexpr const char *TimestampColumn {"Timestamp"};
+    constexpr const char *UtcColumn {"UTC"};
+    constexpr const char *CallsignColumn {"Callsign"};
+    constexpr const char *PositionColumn {"Position"};
+    constexpr const char *AltitudeColumn {"Altitude"};
+    constexpr const char *SpeedColumn {"Speed"};
+    constexpr const char *DirectionColumn {"Direction"};
 }
 
 struct FlightRadar24CsvWriterPrivate
@@ -74,14 +74,13 @@ FlightRadar24CsvWriter::~FlightRadar24CsvWriter() = default;
 
 bool FlightRadar24CsvWriter::write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    QString csv = QString(::TimestampColumn % Csv::CommaSep %
+    QString csv = QString(::TimestampColumn) % Csv::CommaSep %
                           ::UtcColumn % Csv::CommaSep %
                           ::CallsignColumn % Csv::CommaSep %
                           ::PositionColumn % Csv::CommaSep %
                           ::AltitudeColumn % Csv::CommaSep %
                           ::SpeedColumn % Csv::CommaSep %
-                          ::DirectionColumn % Csv::Ln
-                          );
+                          ::DirectionColumn % Csv::Ln;
 
     bool ok = io.write(csv.toUtf8());
     if (ok) {

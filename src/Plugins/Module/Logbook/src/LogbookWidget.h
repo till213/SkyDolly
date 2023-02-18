@@ -54,6 +54,10 @@ class LogbookWidget : public QWidget
     Q_OBJECT
 public:
     explicit LogbookWidget(QWidget *parent = nullptr) noexcept;
+    LogbookWidget(const LogbookWidget &rhs) = delete;
+    LogbookWidget(LogbookWidget &&rhs) = delete;
+    LogbookWidget &operator=(const LogbookWidget &rhs) = delete;
+    LogbookWidget &operator=(LogbookWidget &&rhs) = delete;
     ~LogbookWidget() override;
 
 private:

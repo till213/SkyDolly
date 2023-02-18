@@ -35,6 +35,7 @@
 class QDateTime;
 class QString;
 
+#include <Kernel/SkyMath.h>
 #include "Aircraft.h"
 #include "FlightSummary.h"
 #include "FlightCondition.h"
@@ -48,8 +49,6 @@ class MODEL_API Flight final : public QObject
 {
     Q_OBJECT
 public:
-
-
     explicit Flight(FlightData flightData, QObject *parent = nullptr) noexcept;
     explicit Flight(QObject *parent = nullptr) noexcept;    
     Flight(const Flight &rhs) = delete;
@@ -248,6 +247,18 @@ public:
      * \sa Aircraft#hasRecording
      */
     bool hasRecording() const noexcept;
+
+    /*!
+     * Synchronises the time offsets of each aircraft in the \c flightsToBeSynchronised according
+     * to the creation time of this \e current Flight and the creation time of each \c flightsToBeSynchronised.
+     *
+     * \param timeOffsetSync
+     *        defines how to synchronise the time offsets
+     * \param flightsToBeSynchronised
+     *        the flights to be synchronised, according to their creation time
+     * \sa getCreationTime
+     */
+    void syncAircraftTimeOffset(SkyMath::TimeOffsetSync timeOffsetSync, std::vector<FlightData> &flightsToBeSynchronised) const noexcept;
 
     using Iterator = std::vector<Aircraft>::iterator;
     Iterator begin() noexcept;

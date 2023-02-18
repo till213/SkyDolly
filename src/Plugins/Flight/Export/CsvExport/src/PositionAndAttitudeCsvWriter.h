@@ -41,6 +41,10 @@ class PositionAndAttitudeCsvWriter : public CsvWriterIntf
 {
 public:
     PositionAndAttitudeCsvWriter(const CsvExportSettings &pluginSettings) noexcept;
+    PositionAndAttitudeCsvWriter(const PositionAndAttitudeCsvWriter &rhs) = delete;
+    PositionAndAttitudeCsvWriter(PositionAndAttitudeCsvWriter &&rhs) = delete;
+    PositionAndAttitudeCsvWriter &operator=(const PositionAndAttitudeCsvWriter &rhs) = delete;
+    PositionAndAttitudeCsvWriter &operator=(PositionAndAttitudeCsvWriter &&rhs) = delete;
     ~PositionAndAttitudeCsvWriter() override;
 
     bool write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &ioDevice) const noexcept override;

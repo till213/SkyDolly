@@ -50,6 +50,10 @@ class LocationWidget : public QWidget
     Q_OBJECT
 public:
     explicit LocationWidget(QWidget *parent = nullptr) noexcept;
+    LocationWidget(const LocationWidget &rhs) = delete;
+    LocationWidget(LocationWidget &&rhs) = delete;
+    LocationWidget &operator=(const LocationWidget &rhs) = delete;
+    LocationWidget &operator=(LocationWidget &&rhs) = delete;
     ~LocationWidget() override;
 
     void addUserLocation(double latitude, double longitude);

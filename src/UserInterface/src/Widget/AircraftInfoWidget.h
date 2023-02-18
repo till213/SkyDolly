@@ -44,6 +44,10 @@ class AircraftInfoWidget : public QWidget
     Q_OBJECT
 public:
     explicit AircraftInfoWidget(QWidget *parent = nullptr) noexcept;
+    AircraftInfoWidget(const AircraftInfoWidget &rhs) = delete;
+    AircraftInfoWidget(AircraftInfoWidget &&rhs) = delete;
+    AircraftInfoWidget &operator=(const AircraftInfoWidget &rhs) = delete;
+    AircraftInfoWidget &operator=(AircraftInfoWidget &&rhs) = delete;
     ~AircraftInfoWidget() override;
 
 protected:

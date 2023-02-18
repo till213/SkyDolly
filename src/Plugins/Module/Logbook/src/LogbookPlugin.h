@@ -41,6 +41,10 @@ class LogbookPlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit LogbookPlugin(QObject *parent = nullptr) noexcept;
+    LogbookPlugin(const LogbookPlugin &rhs) = delete;
+    LogbookPlugin(LogbookPlugin &&rhs) = delete;
+    LogbookPlugin &operator=(const LogbookPlugin &rhs) = delete;
+    LogbookPlugin &operator=(LogbookPlugin &&rhs) = delete;
     ~LogbookPlugin() override;
 
     QString getModuleName() const noexcept override;

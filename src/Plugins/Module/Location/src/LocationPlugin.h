@@ -43,6 +43,10 @@ class LocationPlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit LocationPlugin(QObject *parent = nullptr) noexcept;
+    LocationPlugin(const LocationPlugin &rhs) = delete;
+    LocationPlugin(LocationPlugin &&rhs) = delete;
+    LocationPlugin &operator=(const LocationPlugin &rhs) = delete;
+    LocationPlugin &operator=(LocationPlugin &&rhs) = delete;
     ~LocationPlugin() override;
 
     QString getModuleName() const noexcept override;

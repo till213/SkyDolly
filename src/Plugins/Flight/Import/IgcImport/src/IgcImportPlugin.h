@@ -52,6 +52,7 @@ class IgcImportPlugin : public FlightImportPluginBase
     Q_INTERFACES(FlightImportIntf)
 public:
     IgcImportPlugin() noexcept;
+    IgcImportPlugin(const IgcImportPlugin &rhs) = delete;
     IgcImportPlugin(IgcImportPlugin &&rhs) = delete;
     IgcImportPlugin &operator=(const IgcImportPlugin &rhs) = delete;
     IgcImportPlugin &operator=(IgcImportPlugin &&rhs) = delete;
@@ -70,7 +71,7 @@ protected:
 private:
     const std::unique_ptr<IgcImportPluginPrivate> d;
 
-    void updateWaypoints(Aircraft &aircraft) noexcept;
+    void updateWaypoints(Aircraft &aircraft) const noexcept;
 
     // Estimates the propeller (thrust) lever position, based on the
     // environmentalNoiseLevel and the threshold

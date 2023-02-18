@@ -60,7 +60,7 @@ void GpxExportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->timestampModeComboBox, &QComboBox::currentIndexChanged,
             this, &GpxExportOptionWidget::onTimestampModeChanged);
-    connect(&d->settings, &GpxExportSettings::extendedSettingsChanged,
+    connect(&d->settings, &GpxExportSettings::changed,
             this, &GpxExportOptionWidget::updateUi);
 }
 

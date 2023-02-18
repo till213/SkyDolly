@@ -47,15 +47,15 @@
 
 namespace
 {
-    const QString TimestampColumn = QStringLiteral("Timestamp");
-    const QString UtcColumn = QStringLiteral("UTC");
-    const QString Latitude = QStringLiteral("Latitude");
-    const QString Longitude = QStringLiteral("Longitude");
-    const QString AltitudeColumn = QStringLiteral("Altitude");
-    const QString SpeedColumn = QStringLiteral("Speed");
-    const QString PitchColumn = QStringLiteral("Pitch");
-    const QString BankColumn = QStringLiteral("Bank");
-    const QString HeadingColumn = QStringLiteral("Heading");
+    constexpr const char *TimestampColumn {"Timestamp"};
+    constexpr const char *UtcColumn {"UTC"};
+    constexpr const char *Latitude {"Latitude"};
+    constexpr const char *Longitude {"Longitude"};
+    constexpr const char *AltitudeColumn {"Altitude"};
+    constexpr const char *SpeedColumn {"Speed"};
+    constexpr const char *PitchColumn {"Pitch"};
+    constexpr const char *BankColumn {"Bank"};
+    constexpr const char *HeadingColumn {"Heading"};
 }
 
 struct PositionAndAttitudeCsvWriterPrivate
@@ -77,7 +77,7 @@ PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() = default;
 
 bool PositionAndAttitudeCsvWriter::write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    QString csv = QString(::TimestampColumn % Csv::CommaSep %
+    QString csv = QString(::TimestampColumn) % Csv::CommaSep %
                           ::UtcColumn % Csv::CommaSep %
                           ::Latitude % Csv::CommaSep %
                           ::Longitude % Csv::CommaSep %
@@ -85,8 +85,7 @@ bool PositionAndAttitudeCsvWriter::write(const FlightData &flightData, const Air
                           ::SpeedColumn % Csv::CommaSep %
                           ::PitchColumn % Csv::CommaSep %
                           ::BankColumn % Csv::CommaSep %
-                          ::HeadingColumn % Csv::Ln
-                          );
+                          ::HeadingColumn % Csv::Ln;
 
     bool ok = io.write(csv.toUtf8());
     if (ok) {

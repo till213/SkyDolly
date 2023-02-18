@@ -51,6 +51,10 @@ public:
 
     explicit EnumerationComboBox(QString enumerationName, Mode mode, QWidget *parent = nullptr) noexcept;
     explicit EnumerationComboBox(QWidget *parent = nullptr) noexcept;
+    EnumerationComboBox(const EnumerationComboBox &rhs) = delete;
+    EnumerationComboBox(EnumerationComboBox &&rhs) = delete;
+    EnumerationComboBox &operator=(const EnumerationComboBox &rhs) = delete;
+    EnumerationComboBox &operator=(EnumerationComboBox &&rhs) = delete;
     ~EnumerationComboBox() override;
 
     QString getEnumerationName() const;

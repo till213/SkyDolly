@@ -79,7 +79,7 @@ KmlExportOptionWidget::~KmlExportOptionWidget() = default;
 
 void KmlExportOptionWidget::frenchConnection() noexcept
 {
-    connect(&d->settings, &KmlExportSettings::extendedSettingsChanged,
+    connect(&d->settings, &KmlExportSettings::changed,
             this, &KmlExportOptionWidget::updateUi);
     connect(d->colorButtonGroup.get(), &QButtonGroup::idClicked,
             this, &KmlExportOptionWidget::selectColor);

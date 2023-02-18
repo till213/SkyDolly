@@ -52,6 +52,10 @@ class JsonExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     JsonExportPlugin() noexcept;
+    JsonExportPlugin(const JsonExportPlugin &rhs) = delete;
+    JsonExportPlugin(JsonExportPlugin &&rhs) = delete;
+    JsonExportPlugin &operator=(const JsonExportPlugin &rhs) = delete;
+    JsonExportPlugin &operator=(JsonExportPlugin &&rhs) = delete;
     ~JsonExportPlugin() override;
 
 protected:

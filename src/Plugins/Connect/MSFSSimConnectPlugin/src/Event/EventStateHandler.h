@@ -70,25 +70,25 @@ public:
     static constexpr std::int16_t Max16KPosition {16384};
 
     /*!
-     * Converts the normalised \c value to an \em event (position) value.
+     * Converts the normalised \c value to an \e event (position) value.
      *
      * @param value
      *        the normalised value to be converted [-1.0, 1.0]
-     * @return the converted \em event (position) value [-16384, 16384]
+     * @return the converted \e event (position) value [-16384, 16384]
      */
-    static constexpr std::int16_t positionTo16K(double value) noexcept
+    static std::int16_t positionTo16K(double value) noexcept
     {
         return static_cast<std::int16_t>(std::round(std::clamp(value, -1.0, 1.0) * Max16KPosition));
     }
 
     /*!
-     * Converts the \c percent to an \em event (position) value.
+     * Converts the \c percent to an \e event (position) value.
      *
      * @param percent
      *        the percent value to be converted [0, 100]
-     * @return the converted \em event (position) value [-16384, 16384]
+     * @return the converted \e event (position) value [-16384, 16384]
      */
-    static constexpr std::int16_t percentTo16K(double percent) noexcept
+    static std::int16_t percentTo16K(double percent) noexcept
     {
         return static_cast<std::int16_t>(std::round(percent * (double)Max16KPosition / 100.0));
     }

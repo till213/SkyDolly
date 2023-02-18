@@ -42,6 +42,10 @@ class GpxParser final
 {
 public:
     GpxParser(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &pluginSettings) noexcept;
+    GpxParser(const GpxParser &rhs) = delete;
+    GpxParser(GpxParser &&rhs) = delete;
+    GpxParser &operator=(const GpxParser &rhs) = delete;
+    GpxParser &operator=(GpxParser &&rhs) = delete;
     ~GpxParser();
 
     std::vector<FlightData> parse() noexcept;

@@ -41,6 +41,10 @@ class AbstractKmlParser : public KmlParserIntf
 {
 public:
     AbstractKmlParser() noexcept;
+    AbstractKmlParser(const AbstractKmlParser &rhs) = delete;
+    AbstractKmlParser(AbstractKmlParser &&rhs) = delete;
+    AbstractKmlParser &operator=(const AbstractKmlParser &rhs) = delete;
+    AbstractKmlParser &operator=(AbstractKmlParser &&rhs) = delete;
     ~AbstractKmlParser() override;
 
 protected:

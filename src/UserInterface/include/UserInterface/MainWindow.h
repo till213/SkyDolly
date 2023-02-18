@@ -57,6 +57,10 @@ class USERINTERFACE_API MainWindow : public QMainWindow
     Q_OBJECT
 public:
     explicit MainWindow(const QString &filePath = QString(), QWidget *parent = nullptr) noexcept;
+    MainWindow(const MainWindow &rhs) = delete;
+    MainWindow(MainWindow &&rhs) = delete;
+    MainWindow &operator=(const MainWindow &rhs) = delete;
+    MainWindow &operator=(MainWindow &&rhs) = delete;
     ~MainWindow() override;
 
     bool connectWithLogbook(const QString &filePath) noexcept;

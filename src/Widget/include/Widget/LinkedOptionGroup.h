@@ -42,6 +42,10 @@ class WIDGET_API LinkedOptionGroup : public QWidget
     Q_OBJECT
 public:
     explicit LinkedOptionGroup(QWidget *parent = nullptr) noexcept;
+    LinkedOptionGroup(const LinkedOptionGroup &rhs) = delete;
+    LinkedOptionGroup(LinkedOptionGroup &&rhs) = delete;
+    LinkedOptionGroup &operator=(const LinkedOptionGroup &rhs) = delete;
+    LinkedOptionGroup &operator=(LinkedOptionGroup &&rhs) = delete;
     ~LinkedOptionGroup() override;
 
     void addOption(const QString &name, const QVariant &optionValue, const QString &toopTip = QString()) noexcept;

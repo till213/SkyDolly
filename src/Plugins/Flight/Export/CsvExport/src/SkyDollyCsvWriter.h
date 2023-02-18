@@ -49,6 +49,10 @@ class SkyDollyCsvWriter : public CsvWriterIntf
 {
 public:
     SkyDollyCsvWriter(const CsvExportSettings &pluginSettings) noexcept;
+    SkyDollyCsvWriter(const SkyDollyCsvWriter &rhs) = delete;
+    SkyDollyCsvWriter(SkyDollyCsvWriter &&rhs) = delete;
+    SkyDollyCsvWriter &operator=(const SkyDollyCsvWriter &rhs) = delete;
+    SkyDollyCsvWriter &operator=(SkyDollyCsvWriter &&rhs) = delete;
     ~SkyDollyCsvWriter() override;
 
     bool write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept override;

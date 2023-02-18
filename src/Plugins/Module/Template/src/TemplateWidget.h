@@ -55,6 +55,10 @@ class TemplateWidget : public QWidget
     Q_OBJECT
 public:
     explicit TemplateWidget(QWidget *parent = nullptr) noexcept;
+    TemplateWidget(const TemplateWidget &rhs) = delete;
+    TemplateWidget(TemplateWidget &&rhs) = delete;
+    TemplateWidget &operator=(const TemplateWidget &rhs) = delete;
+    TemplateWidget &operator=(TemplateWidget &&rhs) = delete;
     ~TemplateWidget() override;
 
 private:

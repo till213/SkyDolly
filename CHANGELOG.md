@@ -9,14 +9,21 @@
   * All flights including all aircraft are imported, including flight information (title, comment, creation date) and flight conditions (temperature, wind conditions, runway conditions, ...)
   
 ### Improvements
-- All export plugins: only the supported resampling and formation export options (as repported by the given plugin) are now selectable
+- All export plugins: only the effectively *supported* resampling and formation export options (as repported by the given plugin) are now selectable
 - All import plugins:
   * The "Add to current flight" checkbox has been replaced by an aircraft import mode combobox:
     - **Add to current flight**: all imported aircraft are added to the currently loaded flight
     - **Add to new flight**: all imported aircraft are added to a flight that is newly created
     - **Separate flights**: a new flight is created for each imported file
   * The aircraft type selection combobox is now disabled for those formats (such as the new Sky Dolly logbook) that already specify the aircraft type
-- The Simulation Variables dialog now also shows the aircraft position as decimal latitude & longitude values ([#89](https://github.com/till213/SkyDolly/issues/89))
+  * Depending on whether the given plugin also reports the flight recording time the timestamp offset of newly imported aircraft can now be automatically adjusted:
+    - **None**: no timestamp offset is being applied
+    - **Date and time**: the timestamp offset is calculated based on the recording date and time difference between the *current* and each newly imported flight
+    - **Time only**: the timestamp offset is calculated based on the recording time difference between the *current* and each newly imported flight, but ignoring the recording date. This can be useful when importing historic real-world flights from different dates in the past into the same "formation flight", but with the goal to replay them "on the same day" (as defined by the first imported flight)
+- The Simulation Variables dialog (key **V**)now also shows the aircraft position as decimal latitude & longitude values ([#89](https://github.com/till213/SkyDolly/issues/89))
+- The flight recording time in the Flight dialog (key **F**) is now empty for new flights (without any recording)
+  * As before it is updated when the *first* aircraft is being recorded
+  * The recording time text field tooltip now also shows the recording date and time converted to UTC ("zulu time"), including seconds
 
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook

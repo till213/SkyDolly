@@ -38,12 +38,23 @@ class GpxExportSettings : public FlightExportPluginBaseSettings
 {
     Q_OBJECT
 public:
+    /*!
+     * Defines how to calculate the exported timestamps.
+     *
+     * These values are peristed in the application settings.
+     */
     enum struct TimestampMode {
+        /*! Timestamps are calculated based on the simulation timestamps. */
         Simulation,
+        /*! Timestamps are calculated based on the real-world recording time. */
         Recording
     };
 
     GpxExportSettings() noexcept;
+    GpxExportSettings(const GpxExportSettings &rhs) = delete;
+    GpxExportSettings(GpxExportSettings &&rhs) = delete;
+    GpxExportSettings &operator=(const GpxExportSettings &rhs) = delete;
+    GpxExportSettings &operator=(GpxExportSettings &&rhs) = delete;
     ~GpxExportSettings() override;
 
     TimestampMode getTimestampMode() const noexcept;
@@ -51,12 +62,6 @@ public:
 
     bool isResamplingSupported() const noexcept override;
     bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
-
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

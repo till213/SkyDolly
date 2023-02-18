@@ -31,6 +31,7 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
+#include <Kernel/SkyMath.h>
 #include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
@@ -63,18 +64,37 @@ public:
 
     /*!
      * Returns whether the plugin requires the selection of the aircraft type to be
-     * imported, that is the import format does not specify an aircraft type.
+     * imported, that is the import format itself does not specify an aircraft type.
      *
      * \return \c true if the \c plugin requires aircraft selection; \c false else
      *         (the format itself specifies the aircraft type)
      */
-    virtual bool requiresAircraftSelection() const noexcept = 0;
+    virtual bool isAircraftSelectionRequired() const noexcept = 0;
+
+    /*!
+     * Returns whether the plugin supports automated time offset synchronisation,
+     * that is whether the reported flight creation time is reliably reported, based
+     * on whether the format has real-world absolute timestamps (typically in UTC) or not.
+     *
+     * Note that the time offset synchronisation (creation time) support may
+     * depend on the actual "flavour" of the given format, for example:
+     *
+     * - FlightRadar24 CSV: \e does support time offset synchronisation (has UTC timestamps)
+     * - FlightRecorder CSV: does \e not support time offset synchronisation (only relative timestamps)
+     *
+     * \return \c true if the \c plugin supports timestamp offset synchronisation;
+     *         \c false else (the format itself does not have real-world timestamps)
+     */
+    virtual bool isTimeOffsetSyncSupported() const noexcept = 0;
 
     bool isImportDirectoryEnabled() const noexcept;
     void setImportDirectoryEnabled(bool enabled) noexcept;
 
     AircraftImportMode getAircraftImportMode() const noexcept;
     void setAircraftImportMode(AircraftImportMode mode) noexcept;
+
+    SkyMath::TimeOffsetSync getTimeOffsetSync() const noexcept;
+    void setTimeOffsetSync(SkyMath::TimeOffsetSync timeOffsetSync) noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
@@ -83,9 +103,9 @@ public:
 
 signals:
     /*!
-     * Emitted whenever the base settings have changed.
+     * Emitted whenever the plugin settings (base settings or extended settings) have changed.
      */
-    void baseSettingsChanged();
+    void changed();
 
 protected:
     virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept = 0;

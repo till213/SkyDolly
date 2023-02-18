@@ -183,7 +183,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
                 case FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight:
                     [[fallthrough]];
                 case FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight:
-                    syncAircraftTimeOffset(currentFlight, importedFlights);
+                    currentFlight.syncAircraftTimeOffset(pluginSettings.getTimeOffsetSync(), importedFlights);
                     ok = addAndStoreAircraftToCurrentFlight(filePath, std::move(importedFlights), currentFlight,
                                                             totalFlightsStored, totalAircraftStored, continueWithDirectoryImport);
                     break;
@@ -439,30 +439,4 @@ void FlightImportPluginBase::confirmMultiFlightImport(const QString &sourceFileP
     }
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     QGuiApplication::processEvents();
-}
-
-void FlightImportPluginBase::syncAircraftTimeOffset(const Flight &currentFlight, std::vector<FlightData> &importedFlights) const noexcept
-{
-    const QDateTime& currentCreationTime = currentFlight.getCreationTime();
-    if (currentCreationTime.isValid()) {
-        for (FlightData &flightData : importedFlights) {
-            const QDateTime &creationTime = flightData.creationTime;
-            if (creationTime.isValid()) {
-                // The same time offset is applied to all aircraft in the flight, depending on the
-                // time different between the currentFlight and the newly imported FlightData, as follows:
-                //
-                // - The time difference from the imported creation time to the creation time of the current flight is calculated
-                // - That difference is NEGATIVE if the imported creation time is AFTER the current creation time (imported date "in the future") and...
-                // - ... POSITIVE if the imported creation time is BEFORE the current creation time (imported date "in the past")
-                //
-                // So:
-                // - If the imported creation time is "in the future", we want to apply a NEGATIVE time offset to the imported aircraft ("move it into the past"), and...
-                // - ... if the imported creation time "is in the past" then we want to apply a POSITIVE time offset to the imported aircraft ("move it into the future")
-                std::int64_t deltaOffset = creationTime.secsTo(currentCreationTime) * 1000;
-                for (Aircraft &aircraft : flightData) {
-                    aircraft.addTimeOffset(deltaOffset);
-                }
-            }
-        }
-    }
 }

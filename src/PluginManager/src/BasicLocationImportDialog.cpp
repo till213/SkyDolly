@@ -62,7 +62,7 @@ struct BasicLocationImportDialogPrivate
 BasicLocationImportDialog::BasicLocationImportDialog(QString fileFilter, LocationImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicLocationImportDialog>()),
-      d(std::make_unique<BasicLocationImportDialogPrivate>(fileFilter, pluginSettings))
+      d(std::make_unique<BasicLocationImportDialogPrivate>(std::move(fileFilter), pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -140,7 +140,7 @@ void BasicLocationImportDialog::frenchConnection() noexcept
             this, &BasicLocationImportDialog::onImportDirectoryChanged);
     connect(ui->importModeComboBox, &QComboBox::currentIndexChanged,
             this, &BasicLocationImportDialog::onImportModeChanged);
-    connect(&d->pluginSettings, &LocationImportPluginBaseSettings::baseSettingsChanged,
+    connect(&d->pluginSettings, &LocationImportPluginBaseSettings::changed,
             this, &BasicLocationImportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,

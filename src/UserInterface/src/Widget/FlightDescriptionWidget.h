@@ -43,6 +43,10 @@ class FlightDescriptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit FlightDescriptionWidget(QWidget *parent = nullptr);
+    FlightDescriptionWidget(const FlightDescriptionWidget &rhs) = delete;
+    FlightDescriptionWidget(FlightDescriptionWidget &&rhs) = delete;
+    FlightDescriptionWidget &operator=(const FlightDescriptionWidget &rhs) = delete;
+    FlightDescriptionWidget &operator=(FlightDescriptionWidget &&rhs) = delete;
     ~FlightDescriptionWidget() override;
 
 protected:

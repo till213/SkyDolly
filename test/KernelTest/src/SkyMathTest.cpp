@@ -28,6 +28,7 @@
 #include <cmath>
 
 #include <QtTest>
+#include <QDateTime>
 
 #include <Kernel/SkyMath.h>
 #include "SkyMathTest.h"
@@ -598,6 +599,161 @@ void SkyMathTest::bankAngle()
 
     // Verify
     QCOMPARE(bankAngle, expectedBankAngle);
+}
+
+void SkyMathTest::calculateTimeOffset_data()
+{
+    QTest::addColumn<SkyMath::TimeOffsetSync>("timeOffsetSync");
+    QTest::addColumn<QDateTime>("fromDateTime");
+    QTest::addColumn<QDateTime>("toDateTime");
+    QTest::addColumn<std::int64_t>("expectedTimeOffset");
+
+    // Same day, same timezone @TimeOnly
+
+    QDateTime fromDateTime = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    QDateTime toDateTime   = QDateTime::fromString("2022-02-17T09:30:05+01:00", Qt::ISODate);
+    std::int64_t expectedTimeOffset = 5000;
+    QTest::newRow("Same day, same timezone, from < to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    expectedTimeOffset = 0;
+    QTest::newRow("Same day, same timezone, from = to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-17T09:30:05+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    expectedTimeOffset = -5000;
+    QTest::newRow("Same day, same timezone, from > to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    // Different timezone, crossing the date line (Wake Island (UTC+12), Midway (UTC-11)
+    fromDateTime = QDateTime::fromString("2022-02-17T20:45:00+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:05-11:00", Qt::ISODate);
+    expectedTimeOffset = 5000;
+    QTest::newRow("Same day, same timezone, from < to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-17T20:45:00+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:00-11:00", Qt::ISODate);
+    expectedTimeOffset = 0;
+    QTest::newRow("Same day, same timezone, from = to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-17T20:45:05+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:00-11:00", Qt::ISODate);
+    expectedTimeOffset = -5000;
+    QTest::newRow("Same day, same timezone, from > to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    // Same day, same timezone @DateAndTime
+
+    fromDateTime = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:05+01:00", Qt::ISODate);
+    expectedTimeOffset = 5000;
+    QTest::newRow("Same day, same timezone, from < to @DateAndTime)") << SkyMath::TimeOffsetSync::DateAndTime << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    expectedTimeOffset = 0;
+    QTest::newRow("Same day, same timezone, from = to @DateAndTime)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-17T09:30:05+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    expectedTimeOffset = -5000;
+    QTest::newRow("Same day, same timezone, from > to @DateAndTime)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    // Different timezone, crossing the date line (Wake Island (UTC+12), Midway (UTC-11)
+    fromDateTime = QDateTime::fromString("2022-02-17T20:45:00+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:05-11:00", Qt::ISODate);
+    expectedTimeOffset = 5000;
+    QTest::newRow("Same day, same timezone, from < to @DateAndTime)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-17T20:45:00+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:00-11:00", Qt::ISODate);
+    expectedTimeOffset = 0;
+    QTest::newRow("Same day, same timezone, from = to @DateAndTime)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-17T20:45:05+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:00-11:00", Qt::ISODate);
+    expectedTimeOffset = -5000;
+    QTest::newRow("Same day, same timezone, from > to @DateAndTime)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    // Different day, same timezone @TimeOnly
+
+    fromDateTime = QDateTime::fromString("2022-02-16T09:30:00+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:05+01:00", Qt::ISODate);
+    expectedTimeOffset = 5000;
+    QTest::newRow("Different day, same timezone, from < to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-16T09:30:00+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    expectedTimeOffset = 0;
+    QTest::newRow("Different day, same timezone, from = to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-16T09:30:05+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    expectedTimeOffset = -5000;
+    QTest::newRow("Different day, same timezone, from > to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    // Different timezone, crossing the date line (Wake Island (UTC+12), Midway (UTC-11)
+    fromDateTime = QDateTime::fromString("2022-02-16T20:45:00+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:05-11:00", Qt::ISODate);
+    expectedTimeOffset = 5000;
+    QTest::newRow("Different day, same timezone, from < to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-16T20:45:00+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:00-11:00", Qt::ISODate);
+    expectedTimeOffset = 0;
+    QTest::newRow("Different day, same timezone, from = to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-16T20:45:05+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:00-11:00", Qt::ISODate);
+    expectedTimeOffset = -5000;
+    QTest::newRow("Different day, same timezone, from > to @TimeOnly)") << SkyMath::TimeOffsetSync::TimeOnly << fromDateTime << toDateTime << expectedTimeOffset;
+
+    // Different day, same timezone @DateAndTime
+
+    fromDateTime = QDateTime::fromString("2022-02-16T09:30:00+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:05+01:00", Qt::ISODate);
+    expectedTimeOffset = 5000 + (24 * 60 * 60 * 1000);
+    QTest::newRow("Different day, same timezone, from < to @DateAndTime)") << SkyMath::TimeOffsetSync::DateAndTime << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-16T09:30:00+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    expectedTimeOffset = 24 * 60 * 60 * 1000;
+    QTest::newRow("Different day, same timezone, from = to @DateAndTime)") << SkyMath::TimeOffsetSync::DateAndTime << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-18T09:30:05+01:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-17T09:30:00+01:00", Qt::ISODate);
+    expectedTimeOffset = -5000 - (24 * 60 * 60 * 1000);
+    QTest::newRow("Different day, same timezone, from > to @DateAndTime)") << SkyMath::TimeOffsetSync::DateAndTime << fromDateTime << toDateTime << expectedTimeOffset;
+
+    // Different timezone, crossing the date line (Wake Island (UTC+12), Midway (UTC-11)
+    fromDateTime = QDateTime::fromString("2022-02-16T20:45:00+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:05-11:00", Qt::ISODate);
+    expectedTimeOffset = 5000 + (24 * 60 * 60 * 1000);
+    QTest::newRow("Different day, same timezone, from < to @DateAndTime)") << SkyMath::TimeOffsetSync::DateAndTime << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-16T20:45:00+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:00-11:00", Qt::ISODate);
+    expectedTimeOffset = 24 * 60 * 60 * 1000;
+    QTest::newRow("Different day, same timezone, from = to @DateAndTime)") << SkyMath::TimeOffsetSync::DateAndTime << fromDateTime << toDateTime << expectedTimeOffset;
+
+    fromDateTime = QDateTime::fromString("2022-02-18T20:45:05+12:00", Qt::ISODate);
+    toDateTime   = QDateTime::fromString("2022-02-16T21:45:00-11:00", Qt::ISODate);
+    expectedTimeOffset = -5000 - (24 * 60 * 60 * 1000);
+    QTest::newRow("Different day, same timezone, from > to @DateAndTime)") << SkyMath::TimeOffsetSync::DateAndTime << fromDateTime << toDateTime << expectedTimeOffset;
+}
+
+void SkyMathTest::calculateTimeOffset()
+{
+    // Setup
+    QFETCH(SkyMath::TimeOffsetSync, timeOffsetSync);
+    QFETCH(QDateTime, fromDateTime);
+    QFETCH(QDateTime, toDateTime);
+    QFETCH(std::int64_t, expectedTimeOffset);
+
+    // Exercise
+    const std::int64_t timeOffset = SkyMath::calculateTimeOffset(timeOffsetSync, fromDateTime, toDateTime);
+
+    // Verify
+    QCOMPARE(timeOffset, expectedTimeOffset);
 }
 
 QTEST_MAIN(SkyMathTest)

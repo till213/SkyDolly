@@ -53,6 +53,10 @@ class SdlogImportPlugin : public FlightImportPluginBase
     Q_INTERFACES(FlightImportIntf)
 public:
     SdlogImportPlugin() noexcept;
+    SdlogImportPlugin(const SdlogImportPlugin &rhs) = delete;
+    SdlogImportPlugin(SdlogImportPlugin &&rhs) = delete;
+    SdlogImportPlugin &operator=(const SdlogImportPlugin &rhs) = delete;
+    SdlogImportPlugin &operator=(SdlogImportPlugin &&rhs) = delete;
     ~SdlogImportPlugin() override;
 
     std::vector<FlightData> importSelectedFlights(QIODevice &io, bool &ok) noexcept override;

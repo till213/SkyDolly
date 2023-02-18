@@ -39,16 +39,14 @@ class SdLogExportSettings : public FlightExportPluginBaseSettings
     Q_OBJECT
 public:
     SdLogExportSettings() noexcept;
+    SdLogExportSettings(const SdLogExportSettings &rhs) = delete;
+    SdLogExportSettings(SdLogExportSettings &&rhs) = delete;
+    SdLogExportSettings &operator=(const SdLogExportSettings &rhs) = delete;
+    SdLogExportSettings &operator=(SdLogExportSettings &&rhs) = delete;
     ~SdLogExportSettings() override;
 
     bool isResamplingSupported() const noexcept override;
     bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
-
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

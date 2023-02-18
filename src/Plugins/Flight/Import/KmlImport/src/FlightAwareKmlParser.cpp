@@ -59,7 +59,7 @@ std::vector<FlightData> FlightAwareKmlParser::parse(QXmlStreamReader &xmlStreamR
 {
     initialise(&xmlStreamReader);
     std::vector<FlightData> flights = parseKML();
-    updateFlightWaypoints(flights);
+    enrichFlightData(flights);
     return flights;
 }
 
@@ -135,9 +135,10 @@ void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrN
     }
 }
 
-void FlightAwareKmlParser::updateFlightWaypoints(std::vector<FlightData> &flights) noexcept
+void FlightAwareKmlParser::enrichFlightData(std::vector<FlightData> &flights) noexcept
 {
     for (FlightData &flightData : flights) {
+        flightData.creationTime = getFirstDateTimeUtc();
         for (Aircraft &aircraft : flightData) {
             updateAircraftWaypoints(aircraft);
         }

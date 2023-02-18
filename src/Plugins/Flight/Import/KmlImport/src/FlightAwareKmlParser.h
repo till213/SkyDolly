@@ -41,6 +41,10 @@ class FlightAwareKmlParser : public AbstractKmlTrackParser
 {
 public:
     FlightAwareKmlParser() noexcept;
+    FlightAwareKmlParser(const FlightAwareKmlParser &rhs) = delete;
+    FlightAwareKmlParser(FlightAwareKmlParser &&rhs) = delete;
+    FlightAwareKmlParser &operator=(const FlightAwareKmlParser &rhs) = delete;
+    FlightAwareKmlParser &operator=(FlightAwareKmlParser &&rhs) = delete;
     ~FlightAwareKmlParser() override;
 
     std::vector<FlightData> parse(QXmlStreamReader &xmlStreamReader) noexcept override;
@@ -48,7 +52,7 @@ public:
 private:
     void parsePlacemark(FlightData &flightData) noexcept override;
     void parseWaypoint(FlightData &flightData, QString name) noexcept;
-    void updateFlightWaypoints(std::vector<FlightData> &flights) noexcept;
+    void enrichFlightData(std::vector<FlightData> &flights) noexcept;
     void updateAircraftWaypoints(Aircraft &aircraft) noexcept;
 };
 

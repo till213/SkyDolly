@@ -53,7 +53,12 @@ KmlImportSettings::KmlImportSettings() noexcept
 
 KmlImportSettings::~KmlImportSettings() = default;
 
-bool KmlImportSettings::requiresAircraftSelection() const noexcept
+bool KmlImportSettings::isAircraftSelectionRequired() const noexcept
+{
+    return true;
+}
+
+bool KmlImportSettings::isTimeOffsetSyncSupported() const noexcept
 {
     return true;
 }
@@ -67,7 +72,7 @@ void KmlImportSettings::setFormat(Format format) noexcept
 {
     if (d->format != format) {
         d->format = format;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -100,13 +105,9 @@ void KmlImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->format = ::DefaultFormat;
     }
-
-    emit extendedSettingsChanged();
 }
 
 void KmlImportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
-
-    emit extendedSettingsChanged();
 }

@@ -100,7 +100,7 @@ namespace EventState
      * The stateful switch stores the last requested value - the state. It is expected that the state
      * of the switch and the corresponding simulation variable state in the flight simulator are
      * always kept in sync, hence the state is only ever queried and updated when \c valid is
-     * \c false (typically when resetting the state after a timeline \em seek operation).
+     * \c false (typically when resetting the state after a timeline \e seek operation).
      */
     template <typename T>
     struct StatefulSwitch : public StatelessSwitch<T>

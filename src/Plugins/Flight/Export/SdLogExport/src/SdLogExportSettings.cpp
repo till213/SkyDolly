@@ -78,11 +78,7 @@ void SdLogExportSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::Key
 {}
 
 void SdLogExportSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    emit extendedSettingsChanged();
-}
+{}
 
 void SdLogExportSettings::restoreDefaultsExtn() noexcept
-{
-    emit extendedSettingsChanged();
-}
+{}

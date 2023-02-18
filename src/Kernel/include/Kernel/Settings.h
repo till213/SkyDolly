@@ -53,7 +53,6 @@ class KERNEL_API Settings final : public QObject
 {
     Q_OBJECT
 public:
-
     Settings(const Settings &rhs) = delete;
     Settings(Settings &&rhs) = delete;
     Settings &operator=(const Settings &rhs) = delete;

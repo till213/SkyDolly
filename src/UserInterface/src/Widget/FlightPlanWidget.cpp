@@ -116,21 +116,21 @@ void FlightPlanWidget::updateUi() noexcept
 
 void FlightPlanWidget::addWaypoint(const Waypoint &waypoint)
 {
-    WaypointWidget *waypointWidget = new WaypointWidget(waypoint, ui->waypointTabWidget);
+    auto waypointWidget = new WaypointWidget(waypoint, ui->waypointTabWidget);
     ui->waypointTabWidget->addTab(waypointWidget, waypoint.identifier);
     ui->waypointTabWidget->setCurrentWidget(waypointWidget);
 }
 
 void FlightPlanWidget::updateWaypoint(int index, const Waypoint &waypoint)
 {
-    WaypointWidget *waypointWidget = dynamic_cast<WaypointWidget *>(ui->waypointTabWidget->widget(index));
+    auto waypointWidget = dynamic_cast<WaypointWidget *>(ui->waypointTabWidget->widget(index));
     waypointWidget->update(waypoint);
 }
 
 void FlightPlanWidget::clear()
 {
     while (ui->waypointTabWidget->count() > 0) {
-        QWidget *tabWidget = ui->waypointTabWidget->currentWidget();
+        auto tabWidget = ui->waypointTabWidget->currentWidget();
         delete tabWidget;
     }
 }

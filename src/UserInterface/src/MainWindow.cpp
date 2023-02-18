@@ -465,7 +465,7 @@ void MainWindow::initPlugins() noexcept
     if (d->hasFlightImportPlugins) {
         ui->flightImportMenu->setEnabled(true);
         for (const PluginManager::Handle &handle : flightImportPlugins) {
-            QAction *flightImportAction = new QAction(handle.second, ui->flightImportMenu);
+            auto flightImportAction = new QAction(handle.second, ui->flightImportMenu);
             // First: plugin uuid
             flightImportAction->setData(handle.first);
             d->flightImportActionGroup->addAction(flightImportAction);
@@ -481,7 +481,7 @@ void MainWindow::initPlugins() noexcept
     if (d->hasFlightExportPlugins) {
         ui->flightExportMenu->setEnabled(true);
         for (const PluginManager::Handle &handle : flightExportPlugins) {
-            QAction *flightExportAction = new QAction(handle.second, ui->flightExportMenu);
+            auto flightExportAction = new QAction(handle.second, ui->flightExportMenu);
             // First: plugin uuid
             flightExportAction->setData(handle.first);
             d->flightExportActionGroup->addAction(flightExportAction);
@@ -497,7 +497,7 @@ void MainWindow::initPlugins() noexcept
     if (d->hasLocationImportPlugins) {
         ui->locationImportMenu->setEnabled(true);
         for (const PluginManager::Handle &handle : locationImportPlugins) {
-            QAction *locationImportAction = new QAction(handle.second, ui->locationImportMenu);
+            auto locationImportAction = new QAction(handle.second, ui->locationImportMenu);
             // First: plugin uuid
             locationImportAction->setData(handle.first);
             d->locationImportActionGroup->addAction(locationImportAction);
@@ -513,7 +513,7 @@ void MainWindow::initPlugins() noexcept
     if (d->hasLocationExportPlugins) {
         ui->locationExportMenu->setEnabled(true);
         for (const PluginManager::Handle &handle : locationExportPlugins) {
-            QAction *locationExportAction = new QAction(handle.second, ui->locationExportMenu);
+            auto locationExportAction = new QAction(handle.second, ui->locationExportMenu);
             // First: plugin uuid
             locationExportAction->setData(handle.first);
             d->locationExportActionGroup->addAction(locationExportAction);
@@ -530,7 +530,7 @@ void MainWindow::initModuleSelectorUi() noexcept
 {
     // Modules
     d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleGroupBox->layout());
-    ActionCheckBox *actionCheckBox = new ActionCheckBox(false, this);
+    auto actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
     const QString css = QStringLiteral(
@@ -570,7 +570,7 @@ void MainWindow::initModuleSelectorUi() noexcept
 
         QAction *moduleAction = item.second;
         ui->moduleMenu->addAction(moduleAction);
-        ActionButton *actionButton = new ActionButton(this, ActionButton::Capitalisation::AllCaps);
+        auto actionButton = new ActionButton(this, ActionButton::Capitalisation::AllCaps);
         actionButton->setAction(moduleAction);
         actionButton->setFlat(true);
         ui->moduleSelectorLayout->addWidget(actionButton);
@@ -674,39 +674,39 @@ void MainWindow::initReplaySpeedUi() noexcept
     QLayout *replaySpeedLayout = ui->replaySpeedGroupBox->layout();
 
     // Action radio buttons
-    ActionRadioButton *slow10RadioButton = new ActionRadioButton(this);
+    auto slow10RadioButton = new ActionRadioButton(this);
     slow10RadioButton->setAction(slowActions.at(0));
     replaySpeedLayout->addWidget(slow10RadioButton);
 
-    ActionRadioButton *slow25RadioButton = new ActionRadioButton(this);
+    auto slow25RadioButton = new ActionRadioButton(this);
     slow25RadioButton->setAction(slowActions.at(1));
     replaySpeedLayout->addWidget(slow25RadioButton);
 
-    ActionRadioButton *slow50RadioButton = new ActionRadioButton(this);
+    auto slow50RadioButton = new ActionRadioButton(this);
     slow50RadioButton->setAction(slowActions.at(2));
     replaySpeedLayout->addWidget(slow50RadioButton);
 
-    ActionRadioButton *slow75RadioButton = new ActionRadioButton(this);
+    auto slow75RadioButton = new ActionRadioButton(this);
     slow75RadioButton->setAction(slowActions.at(3));
     replaySpeedLayout->addWidget(slow75RadioButton);
 
-    ActionRadioButton *normalSpeedRadioButton = new ActionRadioButton(this);
+    auto normalSpeedRadioButton = new ActionRadioButton(this);
     normalSpeedRadioButton->setAction(ui->normalSpeedAction);
     replaySpeedLayout->addWidget(normalSpeedRadioButton);
 
-    ActionRadioButton *fast2xRadioButton = new ActionRadioButton(this);
+    auto fast2xRadioButton = new ActionRadioButton(this);
     fast2xRadioButton->setAction(fastActions.at(0));
     replaySpeedLayout->addWidget(fast2xRadioButton);
 
-    ActionRadioButton *fast4xRadioButton = new ActionRadioButton(this);
+    auto fast4xRadioButton = new ActionRadioButton(this);
     fast4xRadioButton->setAction(fastActions.at(1));
     replaySpeedLayout->addWidget(fast4xRadioButton);
 
-    ActionRadioButton *fast8xRadioButton = new ActionRadioButton(this);
+    auto fast8xRadioButton = new ActionRadioButton(this);
     fast8xRadioButton->setAction(fastActions.at(2));
     replaySpeedLayout->addWidget(fast8xRadioButton);
 
-    ActionRadioButton *fast16xRadioButton = new ActionRadioButton(this);
+    auto fast16xRadioButton = new ActionRadioButton(this);
     fast16xRadioButton->setAction(fastActions.at(3));
     replaySpeedLayout->addWidget(fast16xRadioButton);
 

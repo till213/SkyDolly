@@ -169,7 +169,7 @@ struct SimConnectAircraftInfo
 private:
     static inline SimType::SurfaceType toSurfaceType(std::int32_t type) noexcept
     {
-        SimType::SurfaceType surfaceType;
+        SimType::SurfaceType surfaceType {SimType::SurfaceType::Unknown};
         switch (type) {
         case 0:
             surfaceType = SimType::SurfaceType::Concrete;
@@ -255,7 +255,7 @@ private:
 
     static inline SimType::SurfaceCondition toSurfaceCondition(std::int32_t condition, bool valid) noexcept
     {
-        SimType::SurfaceCondition surfaceCondition;
+        SimType::SurfaceCondition surfaceCondition {SimType::SurfaceCondition::Unknown};
         if (valid) {
             switch (condition) {
             case 0:
@@ -283,7 +283,7 @@ private:
 
     static inline SimType::EngineType toEngineType(std::int32_t type) noexcept
     {
-        SimType::EngineType engineType;
+        SimType::EngineType engineType {SimType::EngineType::None};
         switch (type) {
         case 0:
             engineType = SimType::EngineType::Piston;
@@ -312,7 +312,7 @@ private:
 
     static inline SimType::PrecipitationState toPrecipitationState(std::int32_t state) noexcept
     {
-        SimType::PrecipitationState precipitationState;
+        SimType::PrecipitationState precipitationState {SimType::PrecipitationState::None};
         switch (state) {
         case 0:
             precipitationState = SimType::PrecipitationState::Unknown;

@@ -217,10 +217,6 @@ std::vector<FlightData> IgcImportPlugin::importSelectedFlights(QIODevice &io, bo
             }
         }
 
-        std::vector<IgcParser::TaskItem> tasks = d->igcParser.getTask().tasks;
-        if (tasks.size() > 0) {
-            updateWaypoints(aircraft);
-        }
         enrichFlightData(flightData);
         flights.push_back(std::move(flightData));
     }
@@ -265,7 +261,7 @@ FlightAugmentation::Aspects IgcImportPlugin::getAugmentationAspects() const noex
 
 // PRIVATE
 
-void IgcImportPlugin::updateWaypoints(Aircraft &aircraft) noexcept
+void IgcImportPlugin::updateWaypoints(Aircraft &aircraft) const noexcept
 {
     Position &position = aircraft.getPosition();
 
@@ -406,6 +402,7 @@ void IgcImportPlugin::enrichFlightData(FlightData &flightData) const noexcept
     const IgcParser::Header &header = d->igcParser.getHeader();
     Unit unit;
 
+    flightData.creationTime = header.flightDateTimeUtc;
     flightData.description = QObject::tr("Glider type:") % " " % header.gliderType % "\n" %
                              QObject::tr("Pilot:") % " " % header.pilotName % "\n" %
                              QObject::tr("Co-Pilot:") % " " % header.coPilotName % "\n" %
@@ -414,4 +411,8 @@ void IgcImportPlugin::enrichFlightData(FlightData &flightData) const noexcept
     aircraftInfo.tailNumber = header.gliderId;
     aircraftInfo.flightNumber = header.flightNumber;
 
+    std::vector<IgcParser::TaskItem> tasks = d->igcParser.getTask().tasks;
+    if (tasks.size() > 0) {
+        updateWaypoints(flightData.getUserAircraft());
+    }
 }

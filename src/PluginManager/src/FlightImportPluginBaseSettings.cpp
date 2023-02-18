@@ -34,15 +34,18 @@ namespace
     // Keys
     constexpr const char *ImportDirectoryEnabledKey {"ImportDirectoryEnabled"};
     constexpr const char *AircraftImportModeKey {"AircraftImportModeKey"};
+    constexpr const char *TimeOffsetSyncKey {"TimeOffsetSyncKey"};
 
     // Defaults
     constexpr FlightImportPluginBaseSettings::AircraftImportMode DefaultAircraftImportMode {FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight};
+    constexpr SkyMath::TimeOffsetSync DefaultTimeOffsetSync {SkyMath::TimeOffsetSync::None};
     constexpr bool DefaultImportDirectoryEnabled {false};    
 }
 
 struct FlightImportPluginBaseSettingsPrivate
 {
     FlightImportPluginBaseSettings::AircraftImportMode aircraftImportMode {::DefaultAircraftImportMode};
+    SkyMath::TimeOffsetSync timeOffsetSync {::DefaultTimeOffsetSync};
     bool importDirectoryEnabled {::DefaultImportDirectoryEnabled};
 };
 
@@ -63,7 +66,7 @@ void FlightImportPluginBaseSettings::setImportDirectoryEnabled(bool enabled) noe
 {
     if (d->importDirectoryEnabled != enabled) {
         d->importDirectoryEnabled = enabled;
-        emit baseSettingsChanged();
+        emit changed();
     }
 }
 
@@ -76,7 +79,20 @@ void FlightImportPluginBaseSettings::setAircraftImportMode(AircraftImportMode mo
 {
     if (d->aircraftImportMode != mode) {
         d->aircraftImportMode = mode;
-        emit baseSettingsChanged();
+        emit changed();
+    }
+}
+
+SkyMath::TimeOffsetSync FlightImportPluginBaseSettings::getTimeOffsetSync() const noexcept
+{
+    return d->timeOffsetSync;
+}
+
+void FlightImportPluginBaseSettings::setTimeOffsetSync(SkyMath::TimeOffsetSync sync) noexcept
+{
+    if (d->timeOffsetSync != sync) {
+        d->timeOffsetSync = sync;
+        emit changed();
     }
 }
 
@@ -90,6 +106,10 @@ void FlightImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues)
 
     keyValue.first = ::AircraftImportModeKey;
     keyValue.second = Enum::underly(d->aircraftImportMode);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::TimeOffsetSyncKey;
+    keyValue.second = Enum::underly(d->timeOffsetSync);
     keyValues.push_back(keyValue);
 
     addSettingsExtn(keyValues);
@@ -107,6 +127,10 @@ void FlightImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
     keyValue.second = Enum::underly(::DefaultAircraftImportMode);
     keysWithDefaults.push_back(keyValue);
 
+    keyValue.first = ::TimeOffsetSyncKey;
+    keyValue.second = Enum::underly(::DefaultTimeOffsetSync);
+    keysWithDefaults.push_back(keyValue);
+
     addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
@@ -116,18 +140,23 @@ void FlightImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey
     d->importDirectoryEnabled = valuesByKey.at(::ImportDirectoryEnabledKey).toBool();
     int enumeration = valuesByKey.at(::AircraftImportModeKey).toInt(&ok);
     if (ok) {
-        d->aircraftImportMode = static_cast<FlightImportPluginBaseSettings::AircraftImportMode >(enumeration);
+        d->aircraftImportMode = static_cast<FlightImportPluginBaseSettings::AircraftImportMode>(enumeration);
     }
-    emit baseSettingsChanged();
-
+    enumeration = valuesByKey.at(::TimeOffsetSyncKey).toInt(&ok);
+    if (ok) {
+        d->timeOffsetSync = static_cast<SkyMath::TimeOffsetSync>(enumeration);
+    }
     restoreSettingsExtn(valuesByKey);
+
+    emit changed();
 }
 
 void FlightImportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
     d->aircraftImportMode = ::DefaultAircraftImportMode;
-    emit baseSettingsChanged();
-
+    d->timeOffsetSync = ::DefaultTimeOffsetSync;
     restoreDefaultsExtn();
+
+    emit changed();
 }

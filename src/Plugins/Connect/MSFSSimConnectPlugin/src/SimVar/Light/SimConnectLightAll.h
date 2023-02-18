@@ -64,7 +64,7 @@ struct SimConnectLightAll
 
     inline SimConnectLightAi ai() const noexcept
     {
-        SimConnectLightAi ai;
+        SimConnectLightAi ai {};
         ai.event = event;
         return ai;
     }

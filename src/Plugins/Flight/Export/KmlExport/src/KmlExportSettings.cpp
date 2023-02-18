@@ -123,7 +123,7 @@ void KmlExportSettings::setColorStyle(ColorStyle colorStyle) noexcept
         } else {
             d->nofColorsPerRamp = 1;
         }
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -136,7 +136,7 @@ void KmlExportSettings::setNofColorsPerRamp(int nofColors) noexcept
 {
     if (d->nofColorsPerRamp != nofColors) {
         d->nofColorsPerRamp = nofColors;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -149,7 +149,7 @@ void KmlExportSettings::setLineWidth(float lineWidth) noexcept
 {
     if (d->lineWidth != lineWidth) {
         d->lineWidth = lineWidth;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -162,7 +162,7 @@ void KmlExportSettings::setJetStartColor(const QColor &color) noexcept
 {
     if (d->jetStartColor != color) {
         d->jetStartColor = color;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -175,7 +175,7 @@ void KmlExportSettings::setJetEndColor(const QColor &color) noexcept
 {
     if (d->jetEndColor != color) {
         d->jetEndColor = color;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -188,7 +188,7 @@ void KmlExportSettings::setTurbopropStartColor(const QColor &color) noexcept
 {
     if (d->turbopropStartColor != color) {
         d->turbopropStartColor = color;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -201,7 +201,7 @@ void KmlExportSettings::setTurbopropEndColor(const QColor &color) noexcept
 {
     if (d->turbopropEndColor != color) {
         d->turbopropEndColor = color;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -214,7 +214,7 @@ void KmlExportSettings::setPistonStartColor(const QColor &color) noexcept
 {
     if (d->pistonStartColor != color) {
         d->pistonStartColor = color;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -227,7 +227,7 @@ void KmlExportSettings::setPistonEndColor(const QColor &color) noexcept
 {
     if (d->pistonEndColor != color) {
         d->pistonEndColor = color;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -240,7 +240,7 @@ void KmlExportSettings::setAllStartColor(const QColor &color) noexcept
 {
     if (d->allStartColor != color) {
         d->allStartColor = color;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -253,7 +253,7 @@ void KmlExportSettings::setAllEndColor(const QColor &color) noexcept
 {
     if (d->allEndColor != color) {
         d->allEndColor = color;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -407,8 +407,6 @@ void KmlExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     d->pistonEndColor = valuesByKey.at(::PistonEndColorKey).value<QColor>();
     d->allStartColor = valuesByKey.at(::AllStartColorKey).value<QColor>();
     d->allEndColor = valuesByKey.at(::AllEndColorKey).value<QColor>();
-
-    emit extendedSettingsChanged();
 }
 
 void KmlExportSettings::restoreDefaultsExtn() noexcept
@@ -424,6 +422,4 @@ void KmlExportSettings::restoreDefaultsExtn() noexcept
     d->pistonEndColor = ::DefaultPistonEndRgba;
     d->allStartColor = ::DefaultAllStartRgba;
     d->allEndColor = ::DefaultAllEndRgba;
-
-    emit extendedSettingsChanged();
 }

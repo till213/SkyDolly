@@ -66,7 +66,7 @@ void IgcImportOptionWidget::frenchConnection() noexcept
             this, &IgcImportOptionWidget::onEnlThresholdChanged);
     connect(ui->convertAltitudeCheckBox, &QCheckBox::clicked,
             this, &IgcImportOptionWidget::onConvertAltitudeChanged);
-    connect(&d->settings, &IgcImportSettings::extendedSettingsChanged,
+    connect(&d->settings, &IgcImportSettings::changed,
             this, &IgcImportOptionWidget::updateUi);
 }
 

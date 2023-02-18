@@ -43,6 +43,10 @@ class WIDGET_API TableTimeItem final : public QTableWidgetItem
 {
 public:
     TableTimeItem(QTime time = QTime()) noexcept;
+    TableTimeItem(const TableTimeItem &rhs) = delete;
+    TableTimeItem(TableTimeItem &&rhs) = delete;
+    TableTimeItem &operator=(const TableTimeItem &rhs) = delete;
+    TableTimeItem &operator=(TableTimeItem &&rhs) = delete;
     ~TableTimeItem() override = default;
 
     QTime getTime() const noexcept;

@@ -50,6 +50,10 @@ class WIDGET_API ActionRadioButton : public QRadioButton
     Q_OBJECT
 public:
     explicit ActionRadioButton(QWidget *parent = nullptr) noexcept;
+    ActionRadioButton(const ActionRadioButton &rhs) = delete;
+    ActionRadioButton(ActionRadioButton &&rhs) = delete;
+    ActionRadioButton &operator=(const ActionRadioButton &rhs) = delete;
+    ActionRadioButton &operator=(ActionRadioButton &&rhs) = delete;
     ~ActionRadioButton() override;
 
     /*!

@@ -69,7 +69,7 @@ void CsvLocationImportOptionWidget::frenchConnection() noexcept
             this, &CsvLocationImportOptionWidget::onDefaultAltitudeChanged);
     connect(ui->defaultIndicatedAirspeedSpinBox, &QSpinBox::valueChanged,
             this, &CsvLocationImportOptionWidget::onDefaultIndicatedAirspeedChanged);
-    connect(&d->settings, &CsvLocationImportSettings::extendedSettingsChanged,
+    connect(&d->settings, &CsvLocationImportSettings::changed,
             this, &CsvLocationImportOptionWidget::updateUi);
 }
 

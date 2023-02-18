@@ -57,16 +57,11 @@ public:
     CsvImportSettings &operator=(CsvImportSettings &&rhs) = delete;
     ~CsvImportSettings() override;
 
-    bool requiresAircraftSelection() const noexcept override;
+    bool isAircraftSelectionRequired() const noexcept override;
+    bool isTimeOffsetSyncSupported() const noexcept override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;
-
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
