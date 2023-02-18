@@ -72,7 +72,7 @@ void CsvLocationImportSettings::setFormat(Format format) noexcept
 {
     if (d->format != format) {
         d->format = format;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -85,7 +85,7 @@ void CsvLocationImportSettings::setDefaultCountryId(std::int64_t countryId) noex
 {
     if (d->defaultCountryId != countryId) {
         d->defaultCountryId = countryId;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -98,7 +98,7 @@ void CsvLocationImportSettings::setDefaultAltitude(int altitude) noexcept
 {
     if (d->defaultAltitude != altitude) {
         d->defaultAltitude = altitude;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -111,7 +111,7 @@ void CsvLocationImportSettings::setDefaultIndicatedAirspeed(int indicatedAirspee
 {
     if (d->defaultIndicatedAirspeed != indicatedAirspeed) {
         d->defaultIndicatedAirspeed = indicatedAirspeed;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -189,8 +189,6 @@ void CsvLocationImportSettings::restoreSettingsExtn(const Settings::ValuesByKey 
     } else {
         d->defaultIndicatedAirspeed = Const::DefaultIndicatedAirspeed;
     }
-
-    emit extendedSettingsChanged();
 }
 
 void CsvLocationImportSettings::restoreDefaultsExtn() noexcept
@@ -199,6 +197,4 @@ void CsvLocationImportSettings::restoreDefaultsExtn() noexcept
     d->defaultCountryId = d->WorldCountryId;
     d->defaultAltitude = Const::DefaultAltitude;
     d->defaultIndicatedAirspeed = Const::DefaultIndicatedAirspeed;
-
-    emit extendedSettingsChanged();
 }

@@ -76,7 +76,7 @@ void GpxImportOptionWidget::frenchConnection() noexcept
             this, &GpxImportOptionWidget::onDefaultSpeedChanged);
     connect(ui->convertAltitudeCheckBox, &QCheckBox::stateChanged,
             this, &GpxImportOptionWidget::onConvertAltitudeChanged);
-    connect(&d->settings, &GpxImportSettings::extendedSettingsChanged,
+    connect(&d->settings, &GpxImportSettings::changed,
             this, &GpxImportOptionWidget::updateUi);
 }
 

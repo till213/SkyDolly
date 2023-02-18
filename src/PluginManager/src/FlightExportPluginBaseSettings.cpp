@@ -72,7 +72,7 @@ void FlightExportPluginBaseSettings::setResamplingPeriod(SampleRate::ResamplingP
 {
     if (d->resamplingPeriod != resamplingPeriod) {
         d->resamplingPeriod = resamplingPeriod;
-        emit baseSettingsChanged();
+        emit changed();
     }
 }
 
@@ -85,7 +85,7 @@ void FlightExportPluginBaseSettings::setFormationExport(FormationExport formatio
 {
     if (d->formationExport != formationExport) {
         d->formationExport = formationExport;
-        emit baseSettingsChanged();
+        emit changed();
     }
 }
 
@@ -98,7 +98,7 @@ void FlightExportPluginBaseSettings::setOpenExportedFilesEnabled(bool enabled) n
 {
     if (d->openExportedFilesEnabled != enabled) {
         d->openExportedFilesEnabled = enabled;
-        emit baseSettingsChanged();
+        emit changed();
     }
 }
 
@@ -156,9 +156,9 @@ void FlightExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey
         d->formationExport = ::DefaultFormationExport;
     }
     d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
-    emit baseSettingsChanged();
-
     restoreSettingsExtn(valuesByKey);
+
+    emit changed();
 }
 
 void FlightExportPluginBaseSettings::restoreDefaults() noexcept
@@ -166,7 +166,7 @@ void FlightExportPluginBaseSettings::restoreDefaults() noexcept
     d->resamplingPeriod = ::DefaultResamplingPeriod;
     d->formationExport = ::DefaultFormationExport;
     d->openExportedFilesEnabled = ::DefaultOpenExportedFilesEnabled;
-    emit baseSettingsChanged();
-
     restoreDefaultsExtn();
+
+    emit changed();
 }

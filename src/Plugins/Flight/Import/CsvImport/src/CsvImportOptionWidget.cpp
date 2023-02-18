@@ -60,7 +60,7 @@ void CsvImportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CsvImportOptionWidget::onFormatChanged);
-    connect(&d->settings, &CsvImportSettings::extendedSettingsChanged,
+    connect(&d->settings, &CsvImportSettings::changed,
             this, &CsvImportOptionWidget::updateUi);
 }
 

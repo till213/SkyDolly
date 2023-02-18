@@ -66,7 +66,7 @@ void FlightImportPluginBaseSettings::setImportDirectoryEnabled(bool enabled) noe
 {
     if (d->importDirectoryEnabled != enabled) {
         d->importDirectoryEnabled = enabled;
-        emit baseSettingsChanged();
+        emit changed();
     }
 }
 
@@ -79,7 +79,7 @@ void FlightImportPluginBaseSettings::setAircraftImportMode(AircraftImportMode mo
 {
     if (d->aircraftImportMode != mode) {
         d->aircraftImportMode = mode;
-        emit baseSettingsChanged();
+        emit changed();
     }
 }
 
@@ -92,7 +92,7 @@ void FlightImportPluginBaseSettings::setTimeOffsetSync(SkyMath::TimeOffsetSync s
 {
     if (d->timeOffsetSync != sync) {
         d->timeOffsetSync = sync;
-        emit baseSettingsChanged();
+        emit changed();
     }
 }
 
@@ -146,9 +146,9 @@ void FlightImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey
     if (ok) {
         d->timeOffsetSync = static_cast<SkyMath::TimeOffsetSync>(enumeration);
     }
-    emit baseSettingsChanged();
-
     restoreSettingsExtn(valuesByKey);
+
+    emit changed();
 }
 
 void FlightImportPluginBaseSettings::restoreDefaults() noexcept
@@ -156,7 +156,7 @@ void FlightImportPluginBaseSettings::restoreDefaults() noexcept
     d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
     d->aircraftImportMode = ::DefaultAircraftImportMode;
     d->timeOffsetSync = ::DefaultTimeOffsetSync;
-    emit baseSettingsChanged();
-
     restoreDefaultsExtn();
+
+    emit changed();
 }

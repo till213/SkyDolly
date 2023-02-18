@@ -60,7 +60,7 @@ void CsvLocationExportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CsvLocationExportOptionWidget::onFormatChanged);
-    connect(&d->settings, &CsvLocationExportSettings::extendedSettingsChanged,
+    connect(&d->settings, &CsvLocationExportSettings::changed,
             this, &CsvLocationExportOptionWidget::updateUi);
 }
 

@@ -90,12 +90,6 @@ public:
     bool isResamplingSupported() const noexcept override;
     bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
 
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
-
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;

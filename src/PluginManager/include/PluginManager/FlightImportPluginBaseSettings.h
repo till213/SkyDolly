@@ -103,9 +103,9 @@ public:
 
 signals:
     /*!
-     * Emitted whenever the base settings have changed.
+     * Emitted whenever the plugin settings (base settings or extended settings) have changed.
      */
-    void baseSettingsChanged();
+    void changed();
 
 protected:
     virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept = 0;

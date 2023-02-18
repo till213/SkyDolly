@@ -64,7 +64,7 @@ void LocationImportPluginBaseSettings::setImportDirectoryEnabled(bool enabled) n
 {
     if (d->importDirectoryEnabled != enabled) {
         d->importDirectoryEnabled = enabled;
-        emit baseSettingsChanged();
+        emit changed();
     }
 }
 
@@ -77,7 +77,7 @@ void LocationImportPluginBaseSettings::setImportMode(LocationService::Mode mode)
 {
     if (d->importMode != mode) {
         d->importMode = mode;
-        emit baseSettingsChanged();
+        emit changed();
     }
 }
 
@@ -121,17 +121,16 @@ void LocationImportPluginBaseSettings::restoreSettings(const Settings::ValuesByK
     } else {
         d->importMode = DefaultImportMode;
     }
-
-    emit baseSettingsChanged();
-
     restoreSettingsExtn(valuesByKey);
+
+    emit changed();
 }
 
 void LocationImportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
     d->importMode = ::DefaultImportMode;
-    emit baseSettingsChanged();
-
     restoreDefaultsExtn();
+
+    emit changed();
 }

@@ -71,7 +71,7 @@ void IgcExportSettings::setPilotName(const QString &pilotName) noexcept
 {
     if (d->pilotName != pilotName) {
         d->pilotName = pilotName;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -84,7 +84,7 @@ void IgcExportSettings::setCoPilotName(const QString &coPilotName) noexcept
 {
     if (d->coPilotName != coPilotName) {
         d->coPilotName = coPilotName;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -142,14 +142,10 @@ void IgcExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
 {
     d->pilotName = valuesByKey.at(::PilotNameKey).value<QString>();
     d->coPilotName = valuesByKey.at(::CoPilotNameKey).value<QString>();
-
-    emit extendedSettingsChanged();
 }
 
 void IgcExportSettings::restoreDefaultsExtn() noexcept
 {
     d->pilotName = IgcExportSettingsPrivate::DefaultPilotName;
     d->coPilotName = IgcExportSettingsPrivate::DefaultCoPilotName;
-
-    emit extendedSettingsChanged();
 }

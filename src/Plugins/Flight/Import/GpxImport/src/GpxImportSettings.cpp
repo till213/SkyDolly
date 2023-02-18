@@ -82,7 +82,7 @@ void GpxImportSettings::setWaypointSelection(GPXElement selection) noexcept
 {
     if (d->waypointSelection != selection) {
         d->waypointSelection = selection;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -95,7 +95,7 @@ void GpxImportSettings::setPositionSelection(GPXElement selection) noexcept
 {
     if (d->positionSelection != selection) {
         d->positionSelection = selection;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -108,7 +108,7 @@ void GpxImportSettings::setDefaultAltitude(int altitude) noexcept
 {
     if (d->defaultAltitude != altitude) {
         d->defaultAltitude = altitude;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -121,7 +121,7 @@ void GpxImportSettings::setDefaultSpeed(int speed) noexcept
 {
     if (d->defaultSpeed != speed) {
         d->defaultSpeed = speed;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -134,7 +134,7 @@ void GpxImportSettings::setConvertAltitudeEnabled(bool enable) noexcept
 {
     if (d->convertAltitude != enable) {
         d->convertAltitude = enable;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -222,8 +222,6 @@ void GpxImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     }
 
     d->convertAltitude = valuesByKey.at(::ConvertAltitudeKey).toBool();
-
-    emit extendedSettingsChanged();
 }
 
 void GpxImportSettings::restoreDefaultsExtn() noexcept
@@ -233,6 +231,4 @@ void GpxImportSettings::restoreDefaultsExtn() noexcept
     d->defaultAltitude = ::DefaultAltitude;
     d->defaultSpeed = ::DefaultSpeed;
     d->convertAltitude = ::DefaultConvertAltitude;
-
-    emit extendedSettingsChanged();
 }

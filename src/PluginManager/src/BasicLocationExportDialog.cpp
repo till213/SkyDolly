@@ -142,7 +142,7 @@ void BasicLocationExportDialog::frenchConnection() noexcept
             this, &BasicLocationExportDialog::onFilePathChanged);
     connect(ui->openExportCheckBox, &QCheckBox::toggled,
             this, &BasicLocationExportDialog::onDoOpenExportedFilesChanged);
-    connect(&d->pluginSettings, &LocationExportPluginBaseSettings::baseSettingsChanged,
+    connect(&d->pluginSettings, &LocationExportPluginBaseSettings::changed,
             this, &BasicLocationExportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,

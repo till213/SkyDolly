@@ -72,7 +72,7 @@ void KmlImportSettings::setFormat(Format format) noexcept
 {
     if (d->format != format) {
         d->format = format;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -105,13 +105,9 @@ void KmlImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->format = ::DefaultFormat;
     }
-
-    emit extendedSettingsChanged();
 }
 
 void KmlImportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
-
-    emit extendedSettingsChanged();
 }

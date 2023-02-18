@@ -62,7 +62,7 @@ void LocationExportPluginBaseSettings::setOpenExportedFilesEnabled(bool enabled)
 {
     if (d->openExportedFilesEnabled != enabled) {
         d->openExportedFilesEnabled = enabled;
-        emit baseSettingsChanged();
+        emit changed();
     }
 }
 
@@ -91,15 +91,15 @@ void LocationExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 void LocationExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
-    emit baseSettingsChanged();
-
     restoreSettingsExtn(valuesByKey);
+
+    emit changed();
 }
 
 void LocationExportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->openExportedFilesEnabled = ::DefaultOpenExportedFilesEnabled;
-    emit baseSettingsChanged();
-
     restoreDefaultsExtn();
+
+    emit changed();
 }

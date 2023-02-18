@@ -78,11 +78,7 @@ void JsonExportSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::Keys
 {}
 
 void JsonExportSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    emit extendedSettingsChanged();
-}
+{}
 
 void JsonExportSettings::restoreDefaultsExtn() noexcept
-{
-    emit extendedSettingsChanged();
-}
+{}

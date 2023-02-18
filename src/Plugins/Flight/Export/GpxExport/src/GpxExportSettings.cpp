@@ -68,7 +68,7 @@ void GpxExportSettings::setTimestampMode(TimestampMode timestampMode) noexcept
 {
     if (d->timestampMode != timestampMode) {
         d->timestampMode = timestampMode;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -123,13 +123,9 @@ void GpxExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->timestampMode = ::DefaultTimestampMode;
     }
-
-    emit extendedSettingsChanged();
 }
 
 void GpxExportSettings::restoreDefaultsExtn() noexcept
 {
     d->timestampMode = ::DefaultTimestampMode;
-
-    emit extendedSettingsChanged();
 }

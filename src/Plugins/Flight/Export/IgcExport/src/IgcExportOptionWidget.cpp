@@ -57,7 +57,7 @@ IgcExportOptionWidget::~IgcExportOptionWidget() = default;
 
 void IgcExportOptionWidget::frenchConnection() noexcept
 {
-    connect(&d->settings, &IgcExportSettings::extendedSettingsChanged,
+    connect(&d->settings, &IgcExportSettings::changed,
             this, &IgcExportOptionWidget::updateUi);
     connect(ui->pilotNameLineEdit, &QLineEdit::textChanged,
             this, &IgcExportOptionWidget::onPilotNameChanged);

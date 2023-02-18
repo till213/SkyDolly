@@ -172,7 +172,7 @@ void BasicFlightImportDialog::frenchConnection() noexcept
             this, &BasicFlightImportDialog::onAircraftImportModeChanged);
     connect(ui->timeOffsetSyncComboBox, &QComboBox::currentIndexChanged,
             this, &BasicFlightImportDialog::onTimeOffsetSyncChanged);
-    connect(&d->pluginSettings, &FlightImportPluginBaseSettings::baseSettingsChanged,
+    connect(&d->pluginSettings, &FlightImportPluginBaseSettings::changed,
             this, &BasicFlightImportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,
@@ -241,9 +241,11 @@ void BasicFlightImportDialog::updateUi() noexcept
         break;
     }
 
-    const bool timeOffsetSyncSupported =
-    enabled =                    aircraftImportMode == FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight ||
-              importDirectory && aircraftImportMode != FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights;
+    const bool timeOffsetSyncSupported = d->pluginSettings.isTimeOffsetSyncSupported();
+    enabled = timeOffsetSyncSupported &&
+              (aircraftImportMode == FlightImportPluginBaseSettings::AircraftImportMode::AddToCurrentFlight ||
+               importDirectory && aircraftImportMode != FlightImportPluginBaseSettings::AircraftImportMode::SeparateFlights
+              );
     if (!enabled) {
         d->pluginSettings.setTimeOffsetSync(SkyMath::TimeOffsetSync::None);
     }
@@ -259,16 +261,20 @@ void BasicFlightImportDialog::updateUi() noexcept
         ui->timeOffsetSyncComboBox->setCurrentIndex(currentIndex);
     }
 
-    switch (timeOffsetSync) {
-    case SkyMath::TimeOffsetSync::None:
-        ui->timeOffsetSyncComboBox->setToolTip(tr("No time offset is applied to any timestamps."));
-        break;
-    case SkyMath::TimeOffsetSync::DateAndTime:
-        ui->timeOffsetSyncComboBox->setToolTip(tr("Timestamps of newly imported aircraft are being offset based on the difference between the current and the newly imported flight, taking both recording date and time into account."));
-        break;
-    case SkyMath::TimeOffsetSync::TimeOnly:
-        ui->timeOffsetSyncComboBox->setToolTip(tr("Timestamps of newly imported aircraft are being offset based on the difference between the current and the newly imported flight, taking only the recording time into account (ignoring the recording date)."));
-        break;
+    if (timeOffsetSyncSupported) {
+        switch (timeOffsetSync) {
+        case SkyMath::TimeOffsetSync::None:
+            ui->timeOffsetSyncComboBox->setToolTip(tr("No time offset is applied to any timestamps."));
+            break;
+        case SkyMath::TimeOffsetSync::DateAndTime:
+            ui->timeOffsetSyncComboBox->setToolTip(tr("Timestamps of imported aircraft are being offset based on the difference between the current and the imported flight, taking both recording date and time into account."));
+            break;
+        case SkyMath::TimeOffsetSync::TimeOnly:
+            ui->timeOffsetSyncComboBox->setToolTip(tr("Timestamps of imported aircraft are being offset based on the difference between the current and the imported flight, taking only the recording time into account (ignoring the recording date)."));
+            break;
+        }
+    } else {
+        ui->timeOffsetSyncComboBox->setToolTip(tr("The format does not contain any real-world recording timestamps."));
     }
 }
 
