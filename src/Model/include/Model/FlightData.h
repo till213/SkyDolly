@@ -125,9 +125,9 @@ struct MODEL_API FlightData final
      * \return the newly added Aircraft
      * \sa getUserAircraft
      */
-    inline Aircraft &addUserAircraft() noexcept
+    inline Aircraft &addUserAircraft(std::int64_t aircraftId = Const::InvalidId) noexcept
     {
-        aircraft.emplace_back();
+        aircraft.emplace_back(aircraftId);
         // Index starts at 0
         userAircraftIndex = static_cast<int>(aircraft.size()) - 1;
         return aircraft.back();

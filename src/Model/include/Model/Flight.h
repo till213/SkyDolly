@@ -110,7 +110,7 @@ public:
      * \return the newly created Aircraft
      * \sa aircraftAdded
      */
-    Aircraft &addUserAircraft() noexcept;
+    Aircraft &addUserAircraft(std::int64_t aircraftId) noexcept;
     Aircraft &getUserAircraft() const noexcept;
 
     /*!

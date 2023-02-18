@@ -70,7 +70,7 @@ Flight::Flight(QObject *parent) noexcept
       d(std::make_unique<FlightPrivate>())
 {
     // A flight always has at least one (user) aircraft
-    addUserAircraft();
+    addUserAircraft(Const::InvalidId);
     frenchConnection();
 }
 
@@ -147,10 +147,10 @@ void Flight::addAircraft(std::vector<Aircraft> &&aircraft) noexcept
     }
 }
 
-Aircraft &Flight::addUserAircraft() noexcept
+Aircraft &Flight::addUserAircraft(std::int64_t aircraftId) noexcept
 {
     const int previousUserAircraftIndex = d->flightData.userAircraftIndex;
-    Aircraft &aircraft = d->flightData.addUserAircraft();
+    Aircraft &aircraft = d->flightData.addUserAircraft(aircraftId);
     // First emit the aircraft added signal and...
     emit aircraftAdded(d->flightData.aircraft.back());
     // ... then the user aircraft changed signal
