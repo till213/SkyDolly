@@ -33,8 +33,8 @@ namespace
 {
     // Keys
     constexpr const char *ImportDirectoryEnabledKey {"ImportDirectoryEnabled"};
-    constexpr const char *AircraftImportModeKey {"AircraftImportModeKey"};
-    constexpr const char *TimeOffsetSyncKey {"TimeOffsetSyncKey"};
+    constexpr const char *AircraftImportModeKey {"AircraftImportMode"};
+    constexpr const char *TimeOffsetSyncKey {"TimeOffsetSync"};
 
     // Defaults
     constexpr FlightImportPluginBaseSettings::AircraftImportMode DefaultAircraftImportMode {FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight};

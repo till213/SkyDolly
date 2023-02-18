@@ -34,6 +34,7 @@
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Persistence/Service/FlightService.h>
+#include <PluginManager/SkyConnectManager.h>
 #include <Widget/FocusPlainTextEdit.h>
 #include "FlightDescriptionWidget.h"
 #include "ui_FlightDescriptionWidget.h"
@@ -65,10 +66,20 @@ void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
     QWidget::showEvent(event);
     updateUi();
 
-    const Logbook &logbook = Logbook::getInstance();
-    connect(&logbook.getCurrentFlight(), &Flight::descriptionOrTitleChanged,
+    // Connection
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &FlightDescriptionWidget::updateUi);
+
+    // Flight
+    const Logbook &logbook = Logbook::getInstance();
     const Flight &flight = logbook.getCurrentFlight();
+    connect(&flight, &Flight::cleared,
+            this, &FlightDescriptionWidget::updateUi);
+    connect(&flight, &Flight::titleChanged,
+            this, &FlightDescriptionWidget::updateUi);
+    connect(&flight, &Flight::descriptionChanged,
+            this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::flightStored,
             this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::flightRestored,
@@ -79,14 +90,24 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
 
-    const Logbook &logbook = Logbook::getInstance();
-    disconnect(&logbook.getCurrentFlight(), &Flight::descriptionOrTitleChanged,
+    // Connection
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
                this, &FlightDescriptionWidget::updateUi);
+
+    // Flight
+    const Logbook &logbook = Logbook::getInstance();
     const Flight &flight = logbook.getCurrentFlight();
+    disconnect(&flight, &Flight::cleared,
+               this, &FlightDescriptionWidget::updateUi);
+    disconnect(&flight, &Flight::titleChanged,
+               this, &FlightDescriptionWidget::updateUi);
+    disconnect(&flight, &Flight::descriptionChanged,
+               this, &FlightDescriptionWidget::updateUi);
     disconnect(&flight, &Flight::flightStored,
-              this, &FlightDescriptionWidget::updateUi);
+               this, &FlightDescriptionWidget::updateUi);
     disconnect(&flight, &Flight::flightRestored,
-              this, &FlightDescriptionWidget::updateUi);
+               this, &FlightDescriptionWidget::updateUi);
 }
 
 // PRIVATE
@@ -126,11 +147,11 @@ void FlightDescriptionWidget::updateUi() noexcept
 void FlightDescriptionWidget::onTitleEdited() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    d->flightService->updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    d->flightService->updateTitle(flight, ui->titleLineEdit->text());
 }
 
 void FlightDescriptionWidget::onDescriptionEdited() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    d->flightService->updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    d->flightService->updateDescription(flight, ui->focusPlainTextEdit->toPlainText());
 }

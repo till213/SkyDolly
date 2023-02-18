@@ -24,8 +24,10 @@
  */
 #include <QSettings>
 #include <QByteArray>
+#include <QUuid>
 
-#include <Version.h>
+#include "Version.h"
+#include "Const.h"
 #include "SettingsConverter.h"
 
 namespace
@@ -43,13 +45,16 @@ namespace
     {
         static constexpr const char *AddToFlightEnabledKey = "AddToFlightEnabled";
         static constexpr const char *ImportDirectoryKey = "ImportDirectoryEnabled";
+        bool addToFlight {false};
+        bool importDirectory {false};
+
         convertToV13(settingsVersion, settings);
 
         // CSV import
-        settings.beginGroup("Plugins/077448de-4909-4c5e-8957-2347afee6708");
+        settings.beginGroup(QString("Plugins/") + QUuid(Const::CsvImportPluginUuid).toByteArray());
         {
-            const bool addToFlight = settings.value(AddToFlightEnabledKey).toBool();
-            const bool importDirectory = settings.value(ImportDirectoryKey).toBool();
+            addToFlight = settings.value(AddToFlightEnabledKey).toBool();
+            importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
                 // Add to current flight
                 settings.setValue("AircraftImportMode", 0);
@@ -60,10 +65,10 @@ namespace
         }
         settings.endGroup();
         // GPX import
-        settings.beginGroup("Plugins/13f44df3-1df6-4458-ad29-71f7b185bf3e");
+        settings.beginGroup(QString("Plugins/") + QUuid(Const::GpxImportPluginUuid).toByteArray());
         {
-            const bool addToFlight = settings.value(AddToFlightEnabledKey).toBool();
-            const bool importDirectory = settings.value(ImportDirectoryKey).toBool();
+            addToFlight = settings.value(AddToFlightEnabledKey).toBool();
+            importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
                 // Add to current flight
                 settings.setValue("AircraftImportMode", 0);
@@ -74,10 +79,10 @@ namespace
         }
         settings.endGroup();
         // IGC import
-        settings.beginGroup("Plugins/a1902cf0-82a8-47ed-86ee-5a15152697c7");
+        settings.beginGroup(QString("Plugins/") + QUuid(Const::IgcImportPluginUuid).toByteArray());
         {
-            const bool addToFlight = settings.value(AddToFlightEnabledKey).toBool();
-            const bool importDirectory = settings.value(ImportDirectoryKey).toBool();
+            addToFlight = settings.value(AddToFlightEnabledKey).toBool();
+            importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
                 // Add to current flight
                 settings.setValue("AircraftImportMode", 0);
@@ -88,10 +93,10 @@ namespace
         }
         settings.endGroup();
         // KML import
-        settings.beginGroup("Plugins/5a72c866-310d-4d84-8bd6-1baa720bc64e");
+        settings.beginGroup(QString("Plugins/") + QUuid(Const::KmlImportPluginUuid).toByteArray());
         {
-            const bool addToFlight = settings.value(AddToFlightEnabledKey).toBool();
-            const bool importDirectory = settings.value(ImportDirectoryKey).toBool();
+            addToFlight = settings.value(AddToFlightEnabledKey).toBool();
+            importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
                 // Add to current flight
                 settings.setValue("AircraftImportMode", 0);

@@ -7,6 +7,8 @@
   * The current plugin implementation always exports the entire flight (including all aircraft) into a single logbook file, without resampling
 - Sky Dolly logbook (SDLOG) import plugin
   * All flights including all aircraft are imported, including flight information (title, comment, creation date) and flight conditions (temperature, wind conditions, runway conditions, ...)
+
+**Note:** the new Sky Dolly logbook import & export plugins render the existing Sky Dolly CSV import & export obsolete: the Sky Dolly CSV import & export will be removed in an upcoming release. However other CSV import & export formats such as the [flightradar24.com](https://www.flightradar24.com/), FlightRecorder and *position and attitude* formats will remain.
   
 ### Improvements
 - All export plugins: only the effectively *supported* resampling and formation export options (as repported by the given plugin) are now selectable
@@ -24,11 +26,12 @@
 - The flight recording time in the Flight dialog (key **F**) is now empty for new flights (without any recording)
   * As before it is updated when the *first* aircraft is being recorded
   * The recording time text field tooltip now also shows the recording date and time converted to UTC ("zulu time"), including seconds
+- The flight title and description are now also editable during recording. Because why not :)
 
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
 - The first aircraft position data is properly cached (not reset when timestamp is set to 0)
-- Fix the flightradar24 CSV import (wrong data validation)
+- Fix the [flightradar24.com](https://www.flightradar24.com/) CSV import (wrong data validation)
 
 ### Under the Hood
 - Flight import plugin API simplified, by introducing a new FlightData structure that allows to move flight data between Flight objects
@@ -112,7 +115,7 @@ This release focuses on improved 3rd-party aircraft support, especially "for the
 
 ### Bug Fixes
 - The mixture lever position is now properly initialised from "percent" (instead of "position") values:
-  * during "flight augmentation" ("flight augmentation" is applied when importing flights from e.g. flightradar24 or flightaware)
+  * during "flight augmentation" ("flight augmentation" is applied when importing flights from e.g. [flightradar24.com](https://www.flightradar24.com/) or [flightaware.com](https://flightaware.com))
   * during IGC import (when detecting "engine noise" in the IGC data)
 - In the Simulation Variables dialog (and elsewhere) ensure that at least one recorded data sample exist before accessing the "last" entry
 - Prevent access to invalidated data upon application termination when either the Flight, Simulation Variables or Statistics dialog was open before quitting the application (rare race condition)

@@ -113,8 +113,8 @@ public:
     bool deleteById(std::int64_t id) noexcept;
     bool updateTitle(Flight &flight, const QString &title) noexcept;
     bool updateTitle(std::int64_t id, const QString &title) noexcept;
-    bool updateTitleAndDescription(Flight &flight, const QString &title, const QString &description) noexcept;
-    bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept;
+    bool updateDescription(Flight &flight, const QString &description) noexcept;
+    bool updateDescription(std::int64_t id, const QString &description) noexcept;
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
 private:

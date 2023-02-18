@@ -90,7 +90,6 @@ FlightRadar24CsvParser::~FlightRadar24CsvParser() = default;
 FlightData FlightRadar24CsvParser::parse(QIODevice &io, bool &ok) noexcept
 {
     FlightData flightData;
-
     QDateTime firstDateTimeUtc;
     QString flightNumber;
 
@@ -118,6 +117,7 @@ FlightData FlightRadar24CsvParser::parse(QIODevice &io, bool &ok) noexcept
             }
         }
         if (ok) {
+            flightData.creationTime = firstDateTimeUtc;
             FlightCondition &flightCondition = flightData.flightCondition;
             flightCondition.startZuluTime = firstDateTimeUtc;
             flightCondition.startLocalTime = firstDateTimeUtc.toLocalTime();

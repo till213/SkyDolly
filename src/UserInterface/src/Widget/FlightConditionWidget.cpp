@@ -62,6 +62,7 @@ void FlightConditionWidget::showEvent(QShowEvent *event) noexcept
     QWidget::showEvent(event);
     updateUi();
 
+    // Flight
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::flightConditionChanged,
             this, &FlightConditionWidget::updateUi);
@@ -74,6 +75,8 @@ void FlightConditionWidget::showEvent(QShowEvent *event) noexcept
 void FlightConditionWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
+
+    // Flight
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::flightConditionChanged,
                this, &FlightConditionWidget::updateUi);

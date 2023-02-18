@@ -686,7 +686,7 @@ void Settings::restore() noexcept
     }
 
 #ifdef DEBUG
-    qDebug() << "Settings::restore: RESTORE: app name:" << d->settings.applicationName() <<  "organisation name:" << d->settings.organizationName();
+    qDebug() << "Settings::restore: app name:" << d->settings.applicationName() <<  "organisation name:" << d->settings.organizationName();
 #endif
 
     bool ok {true};

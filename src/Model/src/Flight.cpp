@@ -70,7 +70,7 @@ Flight::Flight(QObject *parent) noexcept
       d(std::make_unique<FlightPrivate>())
 {
     // A flight always has at least one (user) aircraft
-    addUserAircraft();
+    addUserAircraft(Const::InvalidId);
     frenchConnection();
 }
 
@@ -97,6 +97,11 @@ std::int64_t Flight::getId() const noexcept
     return d->flightData.id;
 }
 
+bool Flight::hasValidId() const noexcept
+{
+    return isValidId(d->flightData.id);
+}
+
 const QDateTime &Flight::getCreationTime() const noexcept
 {
     return d->flightData.creationTime;
@@ -107,11 +112,11 @@ const QString &Flight::getTitle() const noexcept
     return d->flightData.title;
 }
 
-void Flight::setTitle(const QString &title) noexcept
+void Flight::setTitle(QString title) noexcept
 {
     if (d->flightData.title != title) {
-        d->flightData.title = title;
-        emit descriptionOrTitleChanged();
+        d->flightData.title = std::move(title);
+        emit titleChanged(d->flightData.id, d->flightData.title);
     }
 }
 
@@ -120,11 +125,11 @@ const QString &Flight::getDescription() const noexcept
     return d->flightData.description;
 }
 
-void Flight::setDescription(const QString &description) noexcept
+void Flight::setDescription(QString description) noexcept
 {
     if (d->flightData.description != description) {
-        d->flightData.description = description;
-        emit descriptionOrTitleChanged();
+        d->flightData.description = std::move(description);
+        emit descriptionChanged(d->flightData.id, d->flightData.description);
     }
 }
 
@@ -142,12 +147,14 @@ void Flight::addAircraft(std::vector<Aircraft> &&aircraft) noexcept
     }
 }
 
-Aircraft &Flight::addUserAircraft() noexcept
+Aircraft &Flight::addUserAircraft(std::int64_t aircraftId) noexcept
 {
     const int previousUserAircraftIndex = d->flightData.userAircraftIndex;
-    Aircraft &aircraft = d->flightData.addUserAircraft();
-    emit userAircraftChanged(d->flightData.userAircraftIndex, previousUserAircraftIndex);
+    Aircraft &aircraft = d->flightData.addUserAircraft(aircraftId);
+    // First emit the aircraft added signal and...
     emit aircraftAdded(d->flightData.aircraft.back());
+    // ... then the user aircraft changed signal
+    emit userAircraftChanged(d->flightData.userAircraftIndex, previousUserAircraftIndex);
     return aircraft;
 }
 
@@ -309,7 +316,6 @@ void Flight::clear(bool withOneAircraft, FlightData::CreationTimeMode creationTi
         // (but e.g. not shortly before loading a new flight from the logbook)
         emit cleared();
         emit waypointsCleared();
-        emit descriptionOrTitleChanged();
     }
 }
 
@@ -331,6 +337,11 @@ void Flight::syncAircraftTimeOffset(SkyMath::TimeOffsetSync timeOffsetSync, std:
             }
         }
     }
+}
+
+bool Flight::isValidId(std::int64_t id) noexcept
+{
+    return id != Const::InvalidId && id != Const::RecordingId;
 }
 
 Flight::Iterator Flight::begin() noexcept

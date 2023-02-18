@@ -26,7 +26,9 @@
 
 #include <QtTest>
 #include <QUuid>
+#include <QDateTime>
 
+#include <Kernel//Const.h>
 #include <PluginManager/PluginManager.h>
 #include "CsvFlightRecorderImportTest.h"
 
@@ -36,12 +38,6 @@ namespace
     constexpr const int FlightRecorderFormat = 2;
 }
 
-namespace Uuid
-{
-    // CsvImportPlugin.json
-    constexpr const char *Csv = "077448de-4909-4c5e-8957-2347afee6708";
-}
-
 // PRIVATE SLOTS
 
 void CsvFlightRecorderImportTest::onInitTestCase() noexcept
@@ -49,8 +45,9 @@ void CsvFlightRecorderImportTest::onInitTestCase() noexcept
     // SETUP
 
     // Select the "FlightRecorder" format
-    m_oldPluginFormat = getPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, 0).toInt();
-    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, ::FlightRecorderFormat);
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+    m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();
+    setPluginSetting(pluginUuid, ::FormatKey, ::FlightRecorderFormat);
 
     // Initialis flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
@@ -60,13 +57,15 @@ void CsvFlightRecorderImportTest::onInitTestCase() noexcept
 
 void CsvFlightRecorderImportTest::onCleanupTestCase() noexcept
 {
-    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, m_oldPluginFormat);
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+    setPluginSetting(pluginUuid, ::FormatKey, m_oldPluginFormat);
 }
 
 void CsvFlightRecorderImportTest::initTestCase_data() noexcept
 {
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
     QTest::addColumn<QUuid>("pluginUuid");
-    QTest::newRow("pluginUuid") << QUuid(Uuid::Csv);
+    QTest::newRow("pluginUuid") << pluginUuid;
 }
 
 void CsvFlightRecorderImportTest::importSelectedFlights_data() noexcept
@@ -75,15 +74,16 @@ void CsvFlightRecorderImportTest::importSelectedFlights_data() noexcept
     QTest::addColumn<bool>("expectedOk");
     QTest::addColumn<bool>("expectedHasRecording");
     QTest::addColumn<int>("expectedNofFlights");
+    QTest::addColumn<QDateTime>("expectedCreationTimeOfFirstFlight");
     QTest::addColumn<int>("expectedUserAircraftIndexOfFirstFlight");
     QTest::addColumn<int>("expectedNofAircraftInFirstFlight");
     QTest::addColumn<int>("expectedNofUserAircraftPositionInFirstFlight");
 
-    QTest::newRow("FlightRecorder-valid-1.csv")   << ":/test/csv/FlightRecorder-valid-1.csv"   << true  << true  << 1 << 0 << 1 << 2;
-    QTest::newRow("Empty.csv")                    << ":/test/csv/Empty.csv"                    << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRecorder-invalid-1.csv") << ":/test/csv/FlightRecorder-invalid-1.csv" << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRecorder-invalid-2.csv") << ":/test/csv/FlightRecorder-invalid-2.csv" << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRecorder-invalid-3.csv") << ":/test/csv/FlightRecorder-invalid-3.csv" << false << false << 0 << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-valid-1.csv")   << ":/test/csv/FlightRecorder-valid-1.csv"   << true  << true  << 1 << QDateTime() << 0 << 1 << 2;
+    QTest::newRow("Empty.csv")                    << ":/test/csv/Empty.csv"                    << false << false << 0 << QDateTime() << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-invalid-1.csv") << ":/test/csv/FlightRecorder-invalid-1.csv" << false << false << 0 << QDateTime() << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-invalid-2.csv") << ":/test/csv/FlightRecorder-invalid-2.csv" << false << false << 0 << QDateTime() << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-invalid-3.csv") << ":/test/csv/FlightRecorder-invalid-3.csv" << false << false << 0 << QDateTime() << 0 << 0 << 0;
 }
 
 QTEST_MAIN(CsvFlightRecorderImportTest)

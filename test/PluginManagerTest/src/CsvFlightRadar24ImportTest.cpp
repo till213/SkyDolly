@@ -26,7 +26,9 @@
 
 #include <QtTest>
 #include <QUuid>
+#include <QDateTime>
 
+#include <Kernel/Const.h>
 #include <PluginManager/PluginManager.h>
 #include "CsvFlightRadar24ImportTest.h"
 
@@ -36,12 +38,6 @@ namespace
     constexpr const int FlightRadar24Format = 1;
 }
 
-namespace Uuid
-{
-    // CsvImportPlugin.json
-    constexpr const char *Csv = "077448de-4909-4c5e-8957-2347afee6708";
-}
-
 // PRIVATE SLOTS
 
 void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
@@ -49,8 +45,9 @@ void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
     // SETUP
 
     // Select the "FlightRadar24" format
-    m_oldPluginFormat = getPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, 0).toInt();
-    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, ::FlightRadar24Format);
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+    m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();
+    setPluginSetting(pluginUuid, ::FormatKey, ::FlightRadar24Format);
 
     // Initialis flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
@@ -60,13 +57,16 @@ void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
 
 void CsvFlightRadar24ImportTest::onCleanupTestCase() noexcept
 {
-    setPluginSetting(QUuid(::Uuid::Csv), ::FormatKey, m_oldPluginFormat);
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+    setPluginSetting(pluginUuid, ::FormatKey, m_oldPluginFormat);
 }
 
 void CsvFlightRadar24ImportTest::initTestCase_data() noexcept
 {
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+
     QTest::addColumn<QUuid>("pluginUuid");
-    QTest::newRow("pluginUuid") << QUuid(Uuid::Csv);
+    QTest::newRow("pluginUuid") << pluginUuid;
 }
 
 void CsvFlightRadar24ImportTest::importSelectedFlights_data() noexcept
@@ -75,15 +75,18 @@ void CsvFlightRadar24ImportTest::importSelectedFlights_data() noexcept
     QTest::addColumn<bool>("expectedOk");
     QTest::addColumn<bool>("expectedHasRecording");
     QTest::addColumn<int>("expectedNofFlights");
+    QTest::addColumn<QDateTime>("expectedCreationTimeOfFirstFlight");
     QTest::addColumn<int>("expectedUserAircraftIndexOfFirstFlight");
     QTest::addColumn<int>("expectedNofAircraftInFirstFlight");
     QTest::addColumn<int>("expectedNofUserAircraftPositionInFirstFlight");
 
-    QTest::newRow("FlightRadar24-valid-1.csv")   << ":/test/csv/FlightRadar24-valid-1.csv"   << true  << true  << 1 << 0 << 1 << 2;
-    QTest::newRow("Empty.csv")                   << ":/test/csv/Empty.csv"                   << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRadar24-invalid-1.csv") << ":/test/csv/FlightRadar24-invalid-1.csv" << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRadar24-invalid-2.csv") << ":/test/csv/FlightRadar24-invalid-2.csv" << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRadar24-invalid-3.csv") << ":/test/csv/FlightRadar24-invalid-3.csv" << false << false << 0 << 0 << 0 << 0;
+    const QDateTime validDateTime {QDateTime::fromString("2021-10-29T04:26:16Z", Qt::ISODate)};
+    const QDateTime invalidDateTime;
+    QTest::newRow("FlightRadar24-valid-1.csv")   << ":/test/csv/FlightRadar24-valid-1.csv"   << true  << true  << 1 << validDateTime << 0 << 1 << 2;
+    QTest::newRow("Empty.csv")                   << ":/test/csv/Empty.csv"                   << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("FlightRadar24-invalid-1.csv") << ":/test/csv/FlightRadar24-invalid-1.csv" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("FlightRadar24-invalid-2.csv") << ":/test/csv/FlightRadar24-invalid-2.csv" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("FlightRadar24-invalid-3.csv") << ":/test/csv/FlightRadar24-invalid-3.csv" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
 }
 
 QTEST_MAIN(CsvFlightRadar24ImportTest)

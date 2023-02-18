@@ -30,11 +30,13 @@
 #include <cstdint>
 
 #include <QWidget>
+#include <QStringView>
 
 class QShowEvent;
 class QHideEvent;
 class QAction;
 class QTreeWidgetItem;
+class QTableWidgetItem;
 class QString;
 
 #include <PluginManager/ModuleIntf.h>
@@ -81,12 +83,14 @@ private:
 
     int getSelectedRow() const noexcept;
     std::int64_t getSelectedFlightId() const noexcept;
+    inline bool isMatch(QTableWidgetItem *flightIdItem, std::int64_t flightId) const noexcept;
 
 private slots:
     void onRecordingStarted() noexcept;
     void updateUi() noexcept;
     void updateAircraftIcons() noexcept;
-    void onAircraftInfoChanged(const Aircraft &aircraft);
+    void onFlightTitleChanged(std::int64_t flightId, const QString &title) noexcept;
+    void onAircraftInfoChanged(const Aircraft &aircraft) noexcept;
 
     void loadFlight() noexcept;
     void deleteFlight() noexcept;

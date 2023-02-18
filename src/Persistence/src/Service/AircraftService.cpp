@@ -151,18 +151,26 @@ std::vector<AircraftInfo> AircraftService::getAircraftInfos(std::int64_t flightI
 
 bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
-    bool ok = db.transaction();
-    if (ok) {
-        ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
-        if (ok) {
-            aircraft.setTimeOffset(newOffset);            
-            ok = db.commit();
+    bool ok {false};
+    const std::int64_t aircraftId = aircraft.getId();
+    if (aircraftId != Const::InvalidId) {
+        if (aircraftId != Const::RecordingId) {
+            QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+            ok = db.transaction();
             if (ok) {
-                emit Logbook::getInstance().getCurrentFlight().timeOffsetChanged(aircraft);
+                ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
+                if (ok) {
+                    ok = db.commit();
+                } else {
+                    db.rollback();
+                }
             }
         } else {
-            db.rollback();
+            ok = true;
+        }
+        if (ok) {
+            aircraft.setTimeOffset(newOffset);
+            emit Logbook::getInstance().getCurrentFlight().timeOffsetChanged(aircraft);
         }
     }
     return ok;
@@ -170,18 +178,26 @@ bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffse
 
 bool AircraftService::changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
-    bool ok = db.transaction();
-    if (ok) {
-        ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber);
-        if (ok) {
-            aircraft.setTailNumber(tailNumber);            
-            ok = db.commit();
+    bool ok {false};
+    const std::int64_t aircraftId = aircraft.getId();
+    if (aircraftId != Const::InvalidId) {
+        if (aircraftId != Const::RecordingId) {
+            QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+            ok = db.transaction();
             if (ok) {
-                emit Logbook::getInstance().getCurrentFlight().tailNumberChanged(aircraft);
+                ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber);
+                if (ok) {
+                    ok = db.commit();
+                } else {
+                    db.rollback();
+                }
             }
         } else {
-            db.rollback();
+            ok = true;
+        }
+        if (ok) {
+            aircraft.setTailNumber(tailNumber);
+            emit Logbook::getInstance().getCurrentFlight().tailNumberChanged(aircraft);
         }
     }
     return ok;

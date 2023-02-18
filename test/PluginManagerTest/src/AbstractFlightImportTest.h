@@ -61,6 +61,7 @@ private slots:
      * - bool: "expectedOk";
      * - bool: "expectedHasRecording"
      * - int: "expectedNofFlights"
+     * - QDateTime: "expectedCreationTimeOfFirstFlight"
      * - int: "expectedUserAircraftIndexOfFirstFlight"
      * - int: "expectedNofAircraftInFirstFlight"
      * - int: "expectedNofUserAircraftPositionInFirstFlight"

@@ -98,9 +98,6 @@ namespace
         ThreeHours = 180,
         FourHours = 240
     };
-
-    constexpr int RecordingInProgressId {std::numeric_limits<int>::max()};
-    constexpr bool RecordingInProgress {true};
 }
 
 struct LogbookWidgetPrivate
@@ -259,7 +256,6 @@ void LogbookWidget::updateTable() noexcept
         const bool recording = SkyConnectManager::getInstance().isInRecordingState();
         if (recording) {
             FlightSummary summary = flight.getFlightSummary();
-            summary.flightId = ::RecordingInProgressId;
             summaries.push_back(std::move(summary));
         }
 
@@ -372,18 +368,18 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
     QVariant flightId = QVariant::fromValue(summary.flightId);
     if (summary.flightId == d->flightInMemoryId) {
         item->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
-    } else if (summary.flightId == ::RecordingInProgressId) {
+    } else if (summary.flightId == Const::RecordingId) {
         item->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
         // Note: alphabetical characters (a-zA-Z) will be > numerical characters (0-9),
         //       so the flight being recorded will be properly sorted in the table
         flightId = QVariant::fromValue(tr("REC"));
-        item->setData(Qt::UserRole, ::RecordingInProgress);
+        item->setData(Qt::UserRole, Const::RecordingId);
     }
     item->setData(Qt::DisplayRole, flightId);
 
     // Title
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::titleColumn);
-    item->setData(Qt::DisplayRole, summary.title);
+    item->setData(Qt::EditRole, summary.title);
 
     // User aircraft
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::userAircraftColumn);
@@ -483,8 +479,6 @@ void LogbookWidget::frenchConnection() noexcept
     const Logbook &logbook = Logbook::getInstance();
     connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &LogbookWidget::updateUi);
-    connect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
-            this, &LogbookWidget::updateUi);
 
     // Flight
     const Flight &flight = logbook.getCurrentFlight();
@@ -496,6 +490,8 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::updateUi);
     connect(&flight, &Flight::aircraftInfoChanged,
             this, &LogbookWidget::onAircraftInfoChanged);
+    connect(&flight, &Flight::titleChanged,
+            this, &LogbookWidget::onFlightTitleChanged);
 
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
@@ -640,9 +636,20 @@ std::int64_t LogbookWidget::getSelectedFlightId() const noexcept
     std::int64_t selectedFlightId {Const::InvalidId};
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
-        selectedFlightId = ui->logTableWidget->item(selectedRow, LogbookWidgetPrivate::flightIdColumn)->data(Qt::EditRole).toLongLong();
+        bool ok {false};
+        selectedFlightId = ui->logTableWidget->item(selectedRow, LogbookWidgetPrivate::flightIdColumn)->data(Qt::DisplayRole).toLongLong(&ok);
+        if (!ok) {
+            // Flight is being recorded (no valid ID yet)
+            selectedFlightId = Const::RecordingId;
+        }
     }
     return selectedFlightId;
+}
+
+inline bool LogbookWidget::isMatch(QTableWidgetItem *flightIdItem, std::int64_t flightId) const noexcept
+{
+    return flightId != Const::RecordingId && flightIdItem->data(Qt::DisplayRole).toLongLong() == flightId ||
+           flightIdItem->data(Qt::UserRole).toLongLong() == flightId;
 }
 
 // PRIVATE SLOTS
@@ -652,7 +659,6 @@ void LogbookWidget::onRecordingStarted() noexcept
     if (SkyConnectManager::getInstance().isInRecordingState()) {
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         FlightSummary summary = flight.getFlightSummary();
-        summary.flightId = ::RecordingInProgressId;
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
         const int row = ui->logTableWidget->rowCount();
@@ -679,7 +685,7 @@ void LogbookWidget::updateAircraftIcons() noexcept
         QTableWidgetItem *item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightIdColumn);
         if (item->data(Qt::DisplayRole).toLongLong() == flightInMemoryId) {
             item->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
-        } else if (item->data(Qt::UserRole).toBool() == ::RecordingInProgress) {
+        } else if (item->data(Qt::UserRole).toLongLong() == Const::RecordingId) {
             item->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
         } else {
             item->setIcon(QIcon());
@@ -687,18 +693,29 @@ void LogbookWidget::updateAircraftIcons() noexcept
     }
 }
 
-void LogbookWidget::onAircraftInfoChanged(const Aircraft &aircraft)
+void LogbookWidget::onFlightTitleChanged(std::int64_t flightId, const QString &title) noexcept
 {
-    ui->logTableWidget->setSortingEnabled(false);
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
-        QTableWidgetItem *item = ui->logTableWidget->item(row, d->userAircraftColumn);
-        if (item->data(Qt::DisplayRole).toString().isEmpty()) {
-            item = ui->logTableWidget->item(row, d->userAircraftColumn);
-            item->setData(Qt::DisplayRole, aircraft.getAircraftInfo().aircraftType.type);
+        QTableWidgetItem *flightIdItem = ui->logTableWidget->item(row, d->flightIdColumn);
+        if (isMatch(flightIdItem, flightId)) {
+            QTableWidgetItem *titleItem = ui->logTableWidget->item(row, d->titleColumn);
+            titleItem->setData(Qt::EditRole, title);
             break;
         }
     }
-     ui->logTableWidget->setSortingEnabled(true);
+}
+
+void LogbookWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
+{
+    const std::int64_t flightId = Logbook::getInstance().getCurrentFlight().getId();
+    for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
+        QTableWidgetItem *flightIdItem = ui->logTableWidget->item(row, d->flightIdColumn);
+        if (isMatch(flightIdItem, flightId)) {
+            QTableWidgetItem *userAircraftItem = ui->logTableWidget->item(row, d->userAircraftColumn);
+            userAircraftItem->setData(Qt::DisplayRole, aircraft.getAircraftInfo().aircraftType.type);
+            break;
+        }
+    }
 }
 
 void LogbookWidget::loadFlight() noexcept

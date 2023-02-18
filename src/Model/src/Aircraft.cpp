@@ -48,6 +48,10 @@
 struct AircraftPrivate
 {
 public:
+    AircraftPrivate(std::int64_t id)
+        : id(id)
+    {}
+
     std::int64_t id {Const::InvalidId};
     AircraftInfo aircraftInfo {id};
     Position position{aircraftInfo};
@@ -63,8 +67,8 @@ public:
 
 // PUBLIC
 
-Aircraft::Aircraft() noexcept
-    : d(std::make_unique<AircraftPrivate>())
+Aircraft::Aircraft(std::int64_t id) noexcept
+    : d(std::make_unique<AircraftPrivate>(id))
 {}
 
 Aircraft::Aircraft(Aircraft &&rhs) noexcept = default;
