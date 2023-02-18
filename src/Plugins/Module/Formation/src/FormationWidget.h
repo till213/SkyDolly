@@ -92,6 +92,8 @@ private:
     int getRowBySequenceNumber(int sequenceNumber) const noexcept;
     int getRowByAircraftIndex(int index) const noexcept;
 
+    void updateAircraftCount() const noexcept;
+    
 private slots:
     void updateUi() noexcept;
 

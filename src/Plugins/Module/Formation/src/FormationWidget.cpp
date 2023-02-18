@@ -370,8 +370,7 @@ void FormationWidget::updateTable() noexcept
     d->selectedAircraftIndex = Const::InvalidIndex;
     ui->aircraftTableWidget->blockSignals(false);
 
-    const int aircraftCount = ui->aircraftTableWidget->rowCount();
-    ui->aircraftCountLabel->setText(tr("%1 aircraft", "Number of aircraft in the formation flight", aircraftCount).arg(aircraftCount));
+    updateAircraftCount();
 }
 
 void FormationWidget::updateAircraftIcons() noexcept
@@ -767,6 +766,12 @@ int FormationWidget::getRowByAircraftIndex(int index) const noexcept
     return getRowBySequenceNumber(index + 1);
 }
 
+void FormationWidget::updateAircraftCount() const noexcept
+{
+    const int aircraftCount = ui->aircraftTableWidget->rowCount();
+    ui->aircraftCountLabel->setText(tr("%1 aircraft", "Number of aircraft in the formation flight", aircraftCount).arg(aircraftCount));
+}
+
 // PRIVATE SLOTS
 
 void FormationWidget::updateUi() noexcept
@@ -798,6 +803,7 @@ void FormationWidget::onAircraftAdded(const Aircraft &aircraft) noexcept
     ui->aircraftTableWidget->setSortingEnabled(true);
     ui->aircraftTableWidget->scrollToItem(firstItem);
     updateTimeOffsetUi();
+    updateAircraftCount();
 }
 
 void FormationWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
