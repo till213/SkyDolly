@@ -26,6 +26,7 @@
 
 #include <QtTest>
 #include <QUuid>
+#include <QDateTime>
 #include <QFile>
 #include <QString>
 #include <QVariant>
@@ -92,6 +93,7 @@ void AbstractFlightImportTest::importSelectedFlights() noexcept
     QFETCH(bool, expectedOk);
     QFETCH(bool, expectedHasRecording);
     QFETCH(int, expectedNofFlights);
+    QFETCH(QDateTime, expectedCreationTimeOfFirstFlight);
     QFETCH(int, expectedUserAircraftIndexOfFirstFlight);
     QFETCH(int, expectedNofAircraftInFirstFlight);
     QFETCH(int, expectedNofUserAircraftPositionInFirstFlight);
@@ -114,6 +116,7 @@ void AbstractFlightImportTest::importSelectedFlights() noexcept
     if (nofFlights > 0) {
         const FlightData &firstFlight = flights.front();
         QCOMPARE_EQ(static_cast<int>(firstFlight.userAircraftIndex), expectedUserAircraftIndexOfFirstFlight);
+        QCOMPARE_EQ(firstFlight.creationTime, expectedCreationTimeOfFirstFlight);
         std::size_t nofAircraft = firstFlight.count();
         QCOMPARE_EQ(static_cast<int>(nofAircraft), expectedNofAircraftInFirstFlight);
         if (nofAircraft > 0) {

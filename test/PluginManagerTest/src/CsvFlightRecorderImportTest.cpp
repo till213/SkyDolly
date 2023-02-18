@@ -26,6 +26,7 @@
 
 #include <QtTest>
 #include <QUuid>
+#include <QDateTime>
 
 #include <Kernel//Const.h>
 #include <PluginManager/PluginManager.h>
@@ -73,15 +74,16 @@ void CsvFlightRecorderImportTest::importSelectedFlights_data() noexcept
     QTest::addColumn<bool>("expectedOk");
     QTest::addColumn<bool>("expectedHasRecording");
     QTest::addColumn<int>("expectedNofFlights");
+    QTest::addColumn<QDateTime>("expectedCreationTimeOfFirstFlight");
     QTest::addColumn<int>("expectedUserAircraftIndexOfFirstFlight");
     QTest::addColumn<int>("expectedNofAircraftInFirstFlight");
     QTest::addColumn<int>("expectedNofUserAircraftPositionInFirstFlight");
 
-    QTest::newRow("FlightRecorder-valid-1.csv")   << ":/test/csv/FlightRecorder-valid-1.csv"   << true  << true  << 1 << 0 << 1 << 2;
-    QTest::newRow("Empty.csv")                    << ":/test/csv/Empty.csv"                    << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRecorder-invalid-1.csv") << ":/test/csv/FlightRecorder-invalid-1.csv" << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRecorder-invalid-2.csv") << ":/test/csv/FlightRecorder-invalid-2.csv" << false << false << 0 << 0 << 0 << 0;
-    QTest::newRow("FlightRecorder-invalid-3.csv") << ":/test/csv/FlightRecorder-invalid-3.csv" << false << false << 0 << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-valid-1.csv")   << ":/test/csv/FlightRecorder-valid-1.csv"   << true  << true  << 1 << QDateTime() << 0 << 1 << 2;
+    QTest::newRow("Empty.csv")                    << ":/test/csv/Empty.csv"                    << false << false << 0 << QDateTime() << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-invalid-1.csv") << ":/test/csv/FlightRecorder-invalid-1.csv" << false << false << 0 << QDateTime() << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-invalid-2.csv") << ":/test/csv/FlightRecorder-invalid-2.csv" << false << false << 0 << QDateTime() << 0 << 0 << 0;
+    QTest::newRow("FlightRecorder-invalid-3.csv") << ":/test/csv/FlightRecorder-invalid-3.csv" << false << false << 0 << QDateTime() << 0 << 0 << 0;
 }
 
 QTEST_MAIN(CsvFlightRecorderImportTest)
