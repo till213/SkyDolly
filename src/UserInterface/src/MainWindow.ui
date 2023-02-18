@@ -435,6 +435,8 @@
     <addaction name="customSpeedAction"/>
     <addaction name="separator"/>
     <addaction name="loopReplayAction"/>
+    <addaction name="separator"/>
+    <addaction name="clearFlightAction"/>
    </widget>
    <widget class="QMenu" name="moduleMenu">
     <property name="title">
@@ -734,6 +736,11 @@
   <action name="actionsdfsa">
    <property name="text">
     <string>sdfsa</string>
+   </property>
+  </action>
+  <action name="clearFlightAction">
+   <property name="text">
+    <string>&amp;Clear</string>
    </property>
   </action>
  </widget>

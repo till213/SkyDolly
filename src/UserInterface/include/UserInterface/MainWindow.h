@@ -213,12 +213,13 @@ private slots:
     void togglePlay(bool checked) noexcept;
     void stop() noexcept;
 
-    // Transport
+    // Transport / flight
     void skipToBegin() noexcept;
     void skipBackward() noexcept;
     void skipForward() noexcept;
     void skipToEnd() noexcept;
     void toggleLoopReplay(bool checked) noexcept;
+    void clearFlight() noexcept;
 
     // Service
     void onFlightRestored() noexcept;

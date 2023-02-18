@@ -62,10 +62,10 @@ private:
     const std::unique_ptr<Ui::StatisticsDialog> ui;
 
     void initUi() noexcept;
-    void updateUi() noexcept;
     void frenchConnection() noexcept;
 
 private slots:
+    void updateUi() noexcept;
     void updateRecordingSampleRate() noexcept;
     void updateRecordUi(std::int64_t timestamp) noexcept;
 };

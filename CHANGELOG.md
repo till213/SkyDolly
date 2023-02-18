@@ -27,6 +27,7 @@
   * As before it is updated when the *first* aircraft is being recorded
   * The recording time text field tooltip now also shows the recording date and time converted to UTC ("zulu time"), including seconds
 - The flight title and description are now also editable during recording. Because why not :)
+- It is now possible to clear a flight via the menu Replay | Clear. Clearing a flight will simply unload it from memory, that is any persisted data in the logbook won't be modified.
 
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook

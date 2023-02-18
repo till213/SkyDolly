@@ -329,6 +329,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipToEnd);
     connect(ui->loopReplayAction, &QAction::triggered,
             this, &MainWindow::toggleLoopReplay);
+    connect(ui->clearFlightAction, &QAction::triggered,
+            this, &MainWindow::clearFlight);
 
     // Modules
     connect(d->moduleManager.get(), &ModuleManager::activated,
@@ -1253,6 +1255,7 @@ void MainWindow::updateUi() noexcept
     updateModuleActions();
     updateWindowMenu();
     updateMainWindow();
+    onRecordingDurationChanged();
 }
 
 void MainWindow::updateControlUi() noexcept
@@ -1276,6 +1279,7 @@ void MainWindow::updateControlUi() noexcept
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(hasRecording && hasSkyConnectPlugins);
         ui->playAction->setChecked(false);
+        ui->clearFlightAction->setEnabled(hasRecording);
         // Transport
         ui->skipToBeginAction->setEnabled(hasRecording && hasSkyConnectPlugins);
         ui->backwardAction->setEnabled(hasRecording && hasSkyConnectPlugins);
@@ -1294,6 +1298,7 @@ void MainWindow::updateControlUi() noexcept
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(false);
         ui->playAction->setChecked(false);
+        ui->clearFlightAction->setEnabled(false);
         // Transport
         ui->skipToBeginAction->setEnabled(false);
         ui->backwardAction->setEnabled(false);
@@ -1318,6 +1323,8 @@ void MainWindow::updateControlUi() noexcept
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(true);
         ui->playAction->setChecked(true);
+        // Clearing a playing flight will stop it first
+        ui->clearFlightAction->setEnabled(true);
         // Transport
         ui->skipToBeginAction->setEnabled(true);
         ui->backwardAction->setEnabled(true);
@@ -1670,6 +1677,12 @@ void MainWindow::skipToEnd() noexcept
 void MainWindow::toggleLoopReplay(bool checked) noexcept
 {
     Settings::getInstance().setLoopReplayEnabled(checked);
+}
+
+void MainWindow::clearFlight() noexcept
+{
+    stop();
+    Logbook::getInstance().getCurrentFlight().clear(true, FlightData::CreationTimeMode::Reset);
 }
 
 // Service
