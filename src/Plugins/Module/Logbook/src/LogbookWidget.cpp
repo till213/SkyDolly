@@ -383,7 +383,7 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
 
     // Title
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::titleColumn);
-    item->setData(Qt::DisplayRole, summary.title);
+    item->setData(Qt::EditRole, summary.title);
 
     // User aircraft
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::userAircraftColumn);
@@ -483,8 +483,6 @@ void LogbookWidget::frenchConnection() noexcept
     const Logbook &logbook = Logbook::getInstance();
     connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &LogbookWidget::updateUi);
-    connect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
-            this, &LogbookWidget::updateUi);
 
     // Flight
     const Flight &flight = logbook.getCurrentFlight();
@@ -496,6 +494,8 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::updateUi);
     connect(&flight, &Flight::aircraftInfoChanged,
             this, &LogbookWidget::onAircraftInfoChanged);
+    connect(&flight, &Flight::titleChanged,
+            this, &LogbookWidget::onFlightTitleChanged);
 
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
@@ -640,7 +640,12 @@ std::int64_t LogbookWidget::getSelectedFlightId() const noexcept
     std::int64_t selectedFlightId {Const::InvalidId};
     const int selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
-        selectedFlightId = ui->logTableWidget->item(selectedRow, LogbookWidgetPrivate::flightIdColumn)->data(Qt::EditRole).toLongLong();
+        bool ok {false};
+        selectedFlightId = ui->logTableWidget->item(selectedRow, LogbookWidgetPrivate::flightIdColumn)->data(Qt::DisplayRole).toLongLong(&ok);
+        if (!ok) {
+            // Flight is being recorded (no valid ID yet)
+            selectedFlightId = ::RecordingInProgressId;
+        }
     }
     return selectedFlightId;
 }
@@ -687,18 +692,29 @@ void LogbookWidget::updateAircraftIcons() noexcept
     }
 }
 
-void LogbookWidget::onAircraftInfoChanged(const Aircraft &aircraft)
+void LogbookWidget::onFlightTitleChanged(std::int64_t flightId, const QString &title) noexcept
+{
+    for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
+        QTableWidgetItem *flightIdItem = ui->logTableWidget->item(row, d->flightIdColumn);
+        if (flightIdItem->data(Qt::DisplayRole).toLongLong() == flightId) {
+            QTableWidgetItem *titleItem = ui->logTableWidget->item(row, d->titleColumn);
+            titleItem->setData(Qt::EditRole, title);
+            break;
+        }
+    }
+}
+
+void LogbookWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
 {
     ui->logTableWidget->setSortingEnabled(false);
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, d->userAircraftColumn);
         if (item->data(Qt::DisplayRole).toString().isEmpty()) {
-            item = ui->logTableWidget->item(row, d->userAircraftColumn);
             item->setData(Qt::DisplayRole, aircraft.getAircraftInfo().aircraftType.type);
             break;
         }
     }
-     ui->logTableWidget->setSortingEnabled(true);
+    ui->logTableWidget->setSortingEnabled(true);
 }
 
 void LogbookWidget::loadFlight() noexcept
@@ -784,11 +800,15 @@ void LogbookWidget::onCellChanged(int row, int column) noexcept
 
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         const std::int64_t selectedFlightId = getSelectedFlightId();
-        if (flight.getId() == selectedFlightId) {
-            // Also update the current flight, if in memory
-            d->flightService->updateTitle(flight, title);
+        if (selectedFlightId != ::RecordingInProgressId) {
+            if (flight.getId() == selectedFlightId) {
+                // Also update the current flight, if in memory
+                d->flightService->updateTitle(flight, title);
+            } else {
+                d->flightService->updateTitle(selectedFlightId, title);
+            }
         } else {
-            d->flightService->updateTitle(selectedFlightId, title);
+            flight.setTitle(title);
         }
     }
 }

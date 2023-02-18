@@ -107,11 +107,11 @@ const QString &Flight::getTitle() const noexcept
     return d->flightData.title;
 }
 
-void Flight::setTitle(const QString &title) noexcept
+void Flight::setTitle(QString title) noexcept
 {
     if (d->flightData.title != title) {
-        d->flightData.title = title;
-        emit descriptionOrTitleChanged();
+        d->flightData.title = std::move(title);
+        emit titleChanged(d->flightData.id, d->flightData.title);
     }
 }
 
@@ -120,11 +120,11 @@ const QString &Flight::getDescription() const noexcept
     return d->flightData.description;
 }
 
-void Flight::setDescription(const QString &description) noexcept
+void Flight::setDescription(QString description) noexcept
 {
     if (d->flightData.description != description) {
-        d->flightData.description = description;
-        emit descriptionOrTitleChanged();
+        d->flightData.description = std::move(description);
+        emit descriptionChanged(d->flightData.id, d->flightData.description);
     }
 }
 
@@ -311,7 +311,6 @@ void Flight::clear(bool withOneAircraft, FlightData::CreationTimeMode creationTi
         // (but e.g. not shortly before loading a new flight from the logbook)
         emit cleared();
         emit waypointsCleared();
-        emit descriptionOrTitleChanged();
     }
 }
 

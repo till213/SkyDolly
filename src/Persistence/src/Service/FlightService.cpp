@@ -181,7 +181,7 @@ bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
         ok = d->flightDao->updateTitle(id, title);
         if (ok) {
             ok = db.commit();
-            emit Logbook::getInstance().flightTitleOrDescriptionChanged(id);
+            emit Logbook::getInstance().getCurrentFlight().titleChanged(id, title);
         } else {
             db.rollback();
         }
@@ -193,31 +193,30 @@ bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
     return ok;
 }
 
-bool FlightService::updateTitleAndDescription(Flight &flight, const QString &title, const QString &description) noexcept
+bool FlightService::updateDescription(Flight &flight, const QString &description) noexcept
 {
-    const bool ok = updateTitleAndDescription(flight.getId(), title, description);
+    const bool ok = updateDescription(flight.getId(), description);
     if (ok) {
-        flight.setTitle(title);
         flight.setDescription(description);
     }
     return ok;
 }
 
-bool FlightService::updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept
+bool FlightService::updateDescription(std::int64_t id, const QString &description) noexcept
 {
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
     if (ok) {
-        ok = d->flightDao->updateTitleAndDescription(id, title, description);
+        ok = d->flightDao->updateDescription(id, description);
         if (ok) {
             ok = db.commit();
-            emit Logbook::getInstance().flightTitleOrDescriptionChanged(id);
+            emit Logbook::getInstance().getCurrentFlight().descriptionChanged(id, description);
         } else {
             db.rollback();
         }
 #ifdef DEBUG
     } else {
-        qDebug() << "FlightService::updateTitleAndDescription: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+        qDebug() << "FlightService::updateDescription: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
 #endif
     }
     return ok;

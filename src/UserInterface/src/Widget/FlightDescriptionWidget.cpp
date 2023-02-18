@@ -66,9 +66,11 @@ void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
     updateUi();
 
     const Logbook &logbook = Logbook::getInstance();
-    connect(&logbook.getCurrentFlight(), &Flight::descriptionOrTitleChanged,
-            this, &FlightDescriptionWidget::updateUi);
     const Flight &flight = logbook.getCurrentFlight();
+    connect(&flight, &Flight::titleChanged,
+            this, &FlightDescriptionWidget::updateUi);
+    connect(&flight, &Flight::descriptionChanged,
+            this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::flightStored,
             this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::flightRestored,
@@ -80,9 +82,11 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
     QWidget::hideEvent(event);
 
     const Logbook &logbook = Logbook::getInstance();
-    disconnect(&logbook.getCurrentFlight(), &Flight::descriptionOrTitleChanged,
-               this, &FlightDescriptionWidget::updateUi);
     const Flight &flight = logbook.getCurrentFlight();
+    disconnect(&flight, &Flight::titleChanged,
+            this, &FlightDescriptionWidget::updateUi);
+    disconnect(&flight, &Flight::descriptionChanged,
+            this, &FlightDescriptionWidget::updateUi);
     disconnect(&flight, &Flight::flightStored,
               this, &FlightDescriptionWidget::updateUi);
     disconnect(&flight, &Flight::flightRestored,
@@ -126,11 +130,19 @@ void FlightDescriptionWidget::updateUi() noexcept
 void FlightDescriptionWidget::onTitleEdited() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    d->flightService->updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    if (flight.getId() != Const::InvalidId) {
+        d->flightService->updateTitle(flight, ui->titleLineEdit->text());
+    } else {
+        flight.setTitle(ui->titleLineEdit->text());
+    }
 }
 
 void FlightDescriptionWidget::onDescriptionEdited() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    d->flightService->updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    if (flight.getId() != Const::InvalidId) {
+        d->flightService->updateDescription(flight, ui->focusPlainTextEdit->toPlainText());
+    } else {
+        flight.setDescription(ui->focusPlainTextEdit->toPlainText());
+    }
 }

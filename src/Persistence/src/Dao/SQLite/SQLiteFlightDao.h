@@ -50,7 +50,7 @@ public:
     bool get(std::int64_t id, FlightData &flightData) const noexcept override;
     bool deleteById(std::int64_t id) noexcept override;
     bool updateTitle(std::int64_t id, const QString &title) noexcept override;
-    bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept override;
+    bool updateDescription(std::int64_t id, const QString &description) noexcept override;
     bool updateUserAircraftIndex(std::int64_t id, int index) noexcept override;
 
 private:

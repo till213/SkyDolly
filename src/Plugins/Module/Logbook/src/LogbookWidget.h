@@ -30,6 +30,7 @@
 #include <cstdint>
 
 #include <QWidget>
+#include <QStringView>
 
 class QShowEvent;
 class QHideEvent;
@@ -86,7 +87,8 @@ private slots:
     void onRecordingStarted() noexcept;
     void updateUi() noexcept;
     void updateAircraftIcons() noexcept;
-    void onAircraftInfoChanged(const Aircraft &aircraft);
+    void onFlightTitleChanged(std::int64_t flightId, const QString &title) noexcept;
+    void onAircraftInfoChanged(const Aircraft &aircraft) noexcept;
 
     void loadFlight() noexcept;
     void deleteFlight() noexcept;

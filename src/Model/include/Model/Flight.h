@@ -80,10 +80,10 @@ public:
     const QDateTime &getCreationTime() const noexcept;
 
     const QString &getTitle() const noexcept;
-    void setTitle(const QString &title) noexcept;
+    void setTitle(QString title) noexcept;
 
     const QString &getDescription() const noexcept;
-    void setDescription(const QString &description) noexcept;
+    void setDescription(QString description) noexcept;
 
     /*!
      * Adds all \c aircraft to the existing Aircraft of this Flight.
@@ -293,7 +293,8 @@ signals:
     void aircraftStored();
 
     void cleared();
-    void descriptionOrTitleChanged();
+    void titleChanged(std::int64_t flightId, const QString &title);
+    void descriptionChanged(std::int64_t flightId, const QString &description);
     void flightConditionChanged();
 
     /*!

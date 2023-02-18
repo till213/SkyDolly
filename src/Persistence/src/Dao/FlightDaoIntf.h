@@ -63,7 +63,7 @@ public:
     virtual bool get(std::int64_t id, FlightData &flightData) const noexcept = 0;
     virtual bool deleteById(std::int64_t id) noexcept = 0;
     virtual bool updateTitle(std::int64_t id, const QString &title) noexcept = 0;
-    virtual bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept = 0;
+    virtual bool updateDescription(std::int64_t id, const QString &description) noexcept = 0;
     virtual bool updateUserAircraftIndex(std::int64_t id, int index) noexcept = 0;
 };
 

@@ -222,24 +222,22 @@ bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) noexcep
     return ok;
 }
 
-bool SQLiteFlightDao::updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept
+bool SQLiteFlightDao::updateDescription(std::int64_t id, const QString &description) noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "update flight "
-        "set    title = :title,"
-        "       description = :description "
+        "set    description = :description "
         "where id = :id;"
     );
 
-    query.bindValue(":title", title);
     query.bindValue(":description", description);
     query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLiteFlightDao::updateTitleAndDescription: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteFlightDao::updateDescription: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
