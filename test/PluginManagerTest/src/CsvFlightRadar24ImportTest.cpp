@@ -42,8 +42,6 @@ namespace
 
 void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
 {
-    // SETUP
-
     // Select the "FlightRadar24" format
     QUuid pluginUuid {Const::CsvImportPluginUuid};
     m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();

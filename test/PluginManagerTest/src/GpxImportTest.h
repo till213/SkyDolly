@@ -22,17 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVFLIGHTRECORDERIMPORTTEST_H
-#define CSVFLIGHTRECORDERIMPORTTEST_H
+#ifndef GPXIMPORTTEST_H
+#define GPXIMPORTTEST_H
 
 #include <QObject>
 
 #include "AbstractFlightImportTest.h"
 
 /*!
- * Test cases for the Flight Recorder CSV parser.
+ * Test cases for the GPX import plugin.
  */
-class CsvFlightRecorderImportTest : public AbstractFlightImportTest
+class GpxImportTest : public AbstractFlightImportTest
 {
     Q_OBJECT
 protected:
@@ -44,7 +44,8 @@ private slots:
     void importSelectedFlights_data() noexcept override;
 
 private:
-    int m_oldPluginFormat {0};
+    int m_oldWaypointSelection {0};
+    int m_oldPositionSelection {0};
 };
 
-#endif // CSVFLIGHTRECORDERIMPORTTEST_H
+#endif // GPXIMPORTTEST_H

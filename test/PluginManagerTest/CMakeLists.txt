@@ -55,3 +55,27 @@ target_link_libraries(${TEST_NAME}
         ${KERNELTEST_LIBS}
 )
 add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+
+## GPX Import Test ##
+set(TEST_NAME "GpxImportTest")
+
+qt_add_executable(${TEST_NAME})
+target_sources(${TEST_NAME}
+    PRIVATE
+        src/AbstractFlightImportTest.h src/AbstractFlightImportTest.cpp
+        src/${TEST_NAME}.h src/${TEST_NAME}.cpp
+        res/PluginManagerTest.qrc
+)
+
+set(KERNELTEST_LIBS
+    Qt6::Test
+    Sky::Kernel
+    Sky::Model
+    Sky::PluginManager
+)
+
+target_link_libraries(${TEST_NAME}
+    PRIVATE
+        ${KERNELTEST_LIBS}
+)
+add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})

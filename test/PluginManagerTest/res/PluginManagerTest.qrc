@@ -9,5 +9,10 @@
         <file>test/csv/FlightRecorder-invalid-2.csv</file>
         <file>test/csv/FlightRecorder-invalid-3.csv</file>
         <file>test/csv/FlightRecorder-valid-1.csv</file>
+        <file>test/gpx/Empty.gpx</file>
+        <file>test/gpx/Invalid-1.gpx</file>
+        <file>test/gpx/Invalid-2.gpx</file>
+        <file>test/gpx/Invalid-3.gpx</file>
+        <file>test/gpx/Valid-1.gpx</file>
     </qresource>
 </RCC>
