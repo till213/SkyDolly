@@ -173,6 +173,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         case RecordingMode::SingleAircraft:
             // Start a new flight
             d->currentFlight.clear(true, FlightData::CreationTimeMode::Update);
+            d->currentFlight.setId(Const::RecordingId);
             // Set the recording state only *after* the flight has been cleared
             setState(Connect::State::Recording);
             break;
@@ -184,6 +185,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
             if (d->currentFlight.getUserAircraft().hasRecording()) {
                 // If yes, add a new aircraft to the current flight (formation)
                 d->currentFlight.addUserAircraft();
+                d->currentFlight.getUserAircraft().setId(Const::RecordingId);
             }
             break;
         }

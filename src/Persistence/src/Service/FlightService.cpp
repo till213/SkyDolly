@@ -166,58 +166,80 @@ bool FlightService::deleteById(std::int64_t id) noexcept
 
 bool FlightService::updateTitle(Flight &flight, const QString &title) noexcept
 {
-    const bool ok = updateTitle(flight.getId(), title);
-    if (ok) {
-        flight.setTitle(title);
+    bool ok {false};
+    const std::int64_t flightId = flight.getId();
+    if (flightId != Const::InvalidId) {
+        if (flightId != Const::RecordingId) {
+            ok = updateTitle(flightId, title);
+        } else {
+            ok = true;
+        }
+        if (ok) {
+            flight.setTitle(title);
+        }
     }
     return ok;
 }
 
 bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
-    bool ok = db.transaction();
-    if (ok) {
-        ok = d->flightDao->updateTitle(id, title);
+    bool ok {false};
+    if (Flight::isValidId(id)) {
+        QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        ok = db.transaction();
         if (ok) {
-            ok = db.commit();
-            emit Logbook::getInstance().getCurrentFlight().titleChanged(id, title);
-        } else {
-            db.rollback();
-        }
+            ok = d->flightDao->updateTitle(id, title);
+            if (ok) {
+                ok = db.commit();
+                emit Logbook::getInstance().getCurrentFlight().titleChanged(id, title);
+            } else {
+                db.rollback();
+            }
 #ifdef DEBUG
-    } else {
-        qDebug() << "FlightService::updateTitle: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+        } else {
+            qDebug() << "FlightService::updateTitle: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
 #endif
+        }
     }
     return ok;
 }
 
 bool FlightService::updateDescription(Flight &flight, const QString &description) noexcept
 {
-    const bool ok = updateDescription(flight.getId(), description);
-    if (ok) {
-        flight.setDescription(description);
+    bool ok {false};
+    const std::int64_t flightId = flight.getId();
+    if (flightId != Const::InvalidId) {
+        if (flightId != Const::RecordingId) {
+            ok = updateDescription(flight.getId(), description);
+        } else {
+            ok = true;
+        }
+        if (ok) {
+            flight.setDescription(description);
+        }
     }
     return ok;
 }
 
 bool FlightService::updateDescription(std::int64_t id, const QString &description) noexcept
 {
-    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
-    bool ok = db.transaction();
-    if (ok) {
-        ok = d->flightDao->updateDescription(id, description);
+    bool ok {false};
+    if (Flight::isValidId(id)) {
+        QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        ok = db.transaction();
         if (ok) {
-            ok = db.commit();
-            emit Logbook::getInstance().getCurrentFlight().descriptionChanged(id, description);
-        } else {
-            db.rollback();
-        }
+            ok = d->flightDao->updateDescription(id, description);
+            if (ok) {
+                ok = db.commit();
+                emit Logbook::getInstance().getCurrentFlight().descriptionChanged(id, description);
+            } else {
+                db.rollback();
+            }
 #ifdef DEBUG
-    } else {
-        qDebug() << "FlightService::updateDescription: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+        } else {
+            qDebug() << "FlightService::updateDescription: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
 #endif
+        }
     }
     return ok;
 }

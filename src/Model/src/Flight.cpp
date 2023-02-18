@@ -97,6 +97,11 @@ std::int64_t Flight::getId() const noexcept
     return d->flightData.id;
 }
 
+bool Flight::hasValidId() const noexcept
+{
+    return isValidId(d->flightData.id);
+}
+
 const QDateTime &Flight::getCreationTime() const noexcept
 {
     return d->flightData.creationTime;
@@ -332,6 +337,11 @@ void Flight::syncAircraftTimeOffset(SkyMath::TimeOffsetSync timeOffsetSync, std:
             }
         }
     }
+}
+
+bool Flight::isValidId(std::int64_t id) noexcept
+{
+    return id != Const::InvalidId && id != Const::RecordingId;
 }
 
 Flight::Iterator Flight::begin() noexcept

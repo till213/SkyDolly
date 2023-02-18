@@ -26,6 +26,7 @@
 - The flight recording time in the Flight dialog (key **F**) is now empty for new flights (without any recording)
   * As before it is updated when the *first* aircraft is being recorded
   * The recording time text field tooltip now also shows the recording date and time converted to UTC ("zulu time"), including seconds
+- The flight title and description are now also editable during recording. Because why not :)
 
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook

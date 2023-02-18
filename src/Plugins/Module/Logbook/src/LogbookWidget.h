@@ -36,6 +36,7 @@ class QShowEvent;
 class QHideEvent;
 class QAction;
 class QTreeWidgetItem;
+class QTableWidgetItem;
 class QString;
 
 #include <PluginManager/ModuleIntf.h>
@@ -82,6 +83,7 @@ private:
 
     int getSelectedRow() const noexcept;
     std::int64_t getSelectedFlightId() const noexcept;
+    inline bool isMatch(QTableWidgetItem *flightIdItem, std::int64_t flightId) const noexcept;
 
 private slots:
     void onRecordingStarted() noexcept;

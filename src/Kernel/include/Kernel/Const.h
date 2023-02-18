@@ -9,9 +9,16 @@
 namespace Const {
 
     /*!
-     * An invalid ID indicates that the object has not yet been (successfully) persisted.
+     * An \e invalid ID indicates that the object has been newly created and
+     * not yet been (successfully) persisted.
      */
     constexpr std::int64_t InvalidId {-1};
+
+    /*!
+     * A \e recording ID indicates that the object is being recorded, but
+     * has not yet been persisted.
+     */
+    constexpr std::int64_t RecordingId {-2};
 
     /*!
      * An invalid aircraft index indicates that no aircraft has been specified as user aircraft.

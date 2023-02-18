@@ -67,8 +67,17 @@ public:
     void fromFlightData(FlightData &&flightData) noexcept;
     FlightData &getFlightData() const noexcept;
 
+    /*!
+     * \sa Const#InvalidId
+     * \sa Const#RecordingId
+     */
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
+
+    /*!
+     * \sa isValidId
+     */
+    bool hasValidId() const noexcept;
 
     /*!
      * In order to reset the creation time clear this Flight.
@@ -260,6 +269,16 @@ public:
      */
     void syncAircraftTimeOffset(SkyMath::TimeOffsetSync timeOffsetSync, std::vector<FlightData> &flightsToBeSynchronised) const noexcept;
 
+    /*!
+     * Returns whether the given \c id is a valid id, that is whether the flight
+     * has been successfully persisted or not.
+     *
+     * \param id
+     *        the id to be validated
+     * \return \c true if the \c id is valid; \c false else (Const#InvalidId, Const#RecordingId)
+     */
+    static bool isValidId(std::int64_t id) noexcept;
+
     using Iterator = std::vector<Aircraft>::iterator;
     Iterator begin() noexcept;
     Iterator end() noexcept;
@@ -352,7 +371,7 @@ signals:
     void userAircraftChanged(int newUserAircraftIndex, int previousUserAircraftIndex);
 
     /*!
-     * Emited whenever any of the aircraft info data has changed, including the tail number and
+     * Emited whenever any of the aircraft info data of the \e current Flight has changed, including the tail number and
      * time offset.
      *
      * \param aircraft
@@ -363,7 +382,7 @@ signals:
     void aircraftInfoChanged(const Aircraft &aircraft);
 
     /*!
-     * Emitted whenever the tail number of the \c aircraft has changed.
+     * Emitted whenever the tail number of the \c aircraft of the \e current Flight has changed has changed.
      *
      * \param aircraft
      *        the aircraft whose tail number has changed
@@ -371,7 +390,7 @@ signals:
     void tailNumberChanged(const Aircraft &aircraft);
 
     /*!
-     * Emitted whenever the time offset of the \c aircraft has changed.
+     * Emitted whenever the time offset of the \c aircraft of the \e current Flight has changed has changed.
      *
      * \param aircraft
      *        the aircraft whose time offset has changed

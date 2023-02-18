@@ -99,7 +99,7 @@ public:
      * Returns \c true in case the SkyConnect connection is \eactive, that is either
      * a replay or recording (including paused states) is taking place.
      *
-     * \return \c true if the SkyConnect connection is \eactive; \c false else
+     * \return \c true if the SkyConnect connection is \e active; \c false else
      * \sa isInRecordingState
      * \sa isInReplayState
      */
