@@ -266,6 +266,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
             this, &MainWindow::onRecordingDurationChanged);
+    connect(&flight, &Flight::aircraftStored,
+            this, &MainWindow::onRecordingDurationChanged);
     connect(&flight, &Flight::aircraftRemoved,
             this, &MainWindow::onRecordingDurationChanged);
     connect(&flight, &Flight::cleared,
