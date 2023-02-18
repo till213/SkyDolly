@@ -57,8 +57,9 @@ private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;
 
     // Inserts the flight and returns the generated aircraft ID if successful; Const::InvalidId upon failure
-    inline std::int64_t insertFlight(const FlightData &flightData) noexcept;
-    inline bool insertAircraft(std::int64_t flightId, const FlightData &flightData) noexcept;
+    inline std::int64_t insertFlight(const FlightData &flightData) const noexcept;
+    inline bool addAircraft(std::int64_t flightId, FlightData &flightData) const noexcept;
+    inline bool exportAircraft(std::int64_t flightId, const FlightData &flightData) const noexcept;
 };
 
 #endif // SQLITEFLIGHTDAO_H

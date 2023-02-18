@@ -78,7 +78,7 @@ bool SQLiteFlightDao::add(FlightData &flightData) noexcept
     const std::int64_t flightId = insertFlight(flightData);
     if (flightId != Const::InvalidId) {
         flightData.id = flightId;
-        ok = insertAircraft(flightId, flightData);
+        ok = addAircraft(flightId, flightData);
     }
     return ok;
 }
@@ -88,7 +88,7 @@ bool SQLiteFlightDao::exportFlightData(const FlightData &flightData) noexcept
     bool ok {false};
     const std::int64_t flightId = insertFlight(flightData);
     if (flightId != Const::InvalidId) {
-        ok = insertAircraft(flightId, flightData);
+        ok = exportAircraft(flightId, flightData);
     }
     return ok;
 }
@@ -267,7 +267,7 @@ bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index) noexce
     return ok;
 }
 
-inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) noexcept
+inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) const noexcept
 {
     std::int64_t flightId {Const::InvalidId};
 
@@ -369,11 +369,27 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
     return flightId;
 }
 
-inline bool SQLiteFlightDao::insertAircraft(std::int64_t flightId, const FlightData &flightData) noexcept
+inline bool SQLiteFlightDao::addAircraft(std::int64_t flightId, FlightData &flightData) const noexcept
 {
     bool ok {true};
     // Starts at 1
-    std::size_t sequenceNumber = 1;
+    std::size_t sequenceNumber {1};
+    for (auto &aircaft : flightData) {
+        ok = d->aircraftDao->add(flightId, sequenceNumber, aircaft);
+        if (ok) {
+            ++sequenceNumber;
+        } else {
+            break;
+        }
+    }
+    return ok;
+}
+
+inline bool SQLiteFlightDao::exportAircraft(std::int64_t flightId, const FlightData &flightData) const noexcept
+{
+    bool ok {true};
+    // Starts at 1
+    std::size_t sequenceNumber {1};
     for (const auto &aircaft : flightData) {
         ok = d->aircraftDao->exportAircraft(flightId, sequenceNumber, aircaft);
         if (ok) {

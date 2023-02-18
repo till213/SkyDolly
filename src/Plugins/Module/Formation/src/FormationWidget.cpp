@@ -369,6 +369,9 @@ void FormationWidget::updateTable() noexcept
     }
     d->selectedAircraftIndex = Const::InvalidIndex;
     ui->aircraftTableWidget->blockSignals(false);
+
+    const int aircraftCount = ui->aircraftTableWidget->rowCount();
+    ui->aircraftCountLabel->setText(tr("%1 aircraft", "Number of aircraft in the formation flight", aircraftCount).arg(aircraftCount));
 }
 
 void FormationWidget::updateAircraftIcons() noexcept

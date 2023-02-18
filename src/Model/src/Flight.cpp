@@ -146,8 +146,10 @@ Aircraft &Flight::addUserAircraft() noexcept
 {
     const int previousUserAircraftIndex = d->flightData.userAircraftIndex;
     Aircraft &aircraft = d->flightData.addUserAircraft();
-    emit userAircraftChanged(d->flightData.userAircraftIndex, previousUserAircraftIndex);
+    // First emit the aircraft added signal and...
     emit aircraftAdded(d->flightData.aircraft.back());
+    // ... then the user aircraft changed signal
+    emit userAircraftChanged(d->flightData.userAircraftIndex, previousUserAircraftIndex);
     return aircraft;
 }
 
