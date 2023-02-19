@@ -378,8 +378,14 @@
       <string>Location E&amp;xport</string>
      </property>
     </widget>
+    <widget class="QMenu" name="recentFilesMenu">
+     <property name="title">
+      <string>&amp;Recent Logbooks</string>
+     </property>
+    </widget>
     <addaction name="newLogbookAction"/>
     <addaction name="openLogbookAction"/>
+    <addaction name="recentFilesMenu"/>
     <addaction name="separator"/>
     <addaction name="optimiseLogbookAction"/>
     <addaction name="separator"/>
@@ -741,6 +747,11 @@
   <action name="clearFlightAction">
    <property name="text">
     <string>&amp;Clear</string>
+   </property>
+  </action>
+  <action name="actionEmpty">
+   <property name="text">
+    <string>Empty</string>
    </property>
   </action>
  </widget>

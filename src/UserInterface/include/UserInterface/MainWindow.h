@@ -50,6 +50,7 @@ class SettingsDialog;
 class FlightDialog;
 class SimulationVariablesDialog;
 class StatisticsDialog;
+class SecurityToken;
 struct MainWindowPrivate;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
@@ -183,6 +184,8 @@ private slots:
     // File menu
     void createNewLogbook() noexcept;
     void openLogbook() noexcept;
+    void onRecentFileSelected(const QString &filePath, SecurityToken *securityToken) noexcept;
+    void updateRecentFileMenu() noexcept;
     void optimiseLogbook() noexcept;
     void showSettings() noexcept;
     void showLogbookSettings() noexcept;

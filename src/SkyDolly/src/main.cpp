@@ -31,6 +31,7 @@
 
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
+#include <Kernel/RecentFile.h>
 #include <Model/Logbook.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <Persistence/PersistenceManager.h>
@@ -45,6 +46,7 @@ static void destroySingletons() noexcept
     PersistenceManager::destroyInstance();
     PluginManager::destroyInstance();
     SkyConnectManager::destroyInstance();
+    RecentFile::destroyInstance();
 }
 
 int main(int argc, char **argv) noexcept

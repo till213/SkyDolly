@@ -67,6 +67,8 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Enum.h>
 #include <Kernel/SampleRate.h>
+#include <Kernel/SecurityToken.h>
+#include <Kernel/RecentFile.h>
 #include <Model/Aircraft.h>
 #include <Model/PositionData.h>
 #include <Model/AircraftInfo.h>
@@ -80,6 +82,7 @@
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
 #include <Widget/Platform.h>
+#include <Widget/RecentFileMenu.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/Connect.h>
@@ -93,7 +96,6 @@
 #include "Dialog/SimulationVariablesDialog.h"
 #include "Dialog/StatisticsDialog.h"
 #include "Dialog/LogbookBackupDialog.h"
-
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -134,6 +136,7 @@ struct MainWindowPrivate
     Connect::State previousState {Connect::State::Connected};
     bool connectedWithLogbook {false};
 
+    RecentFileMenu *recentFileMenu {nullptr};
     FlightDialog *flightDialog {nullptr};
     SimulationVariablesDialog *simulationVariablesDialog {nullptr};
     StatisticsDialog *statisticsDialog {nullptr};
@@ -352,6 +355,12 @@ void MainWindow::frenchConnection() noexcept
     connect(ui->quitAction, &QAction::triggered,
             this, &MainWindow::quit);
 
+    // Recent files
+    connect(&RecentFile::getInstance(), &RecentFile::recentFileSelected,
+            this, &MainWindow::onRecentFileSelected);
+    connect(d->recentFileMenu, &RecentFileMenu::actionGroupChanged,
+            this, &MainWindow::updateRecentFileMenu);
+
     // Menu actions
     connect(d->flightImportActionGroup, &QActionGroup::triggered,
             this, &MainWindow::onFlightImport);
@@ -398,6 +407,10 @@ void MainWindow::initUi() noexcept
 {
     Settings &settings = Settings::getInstance();
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
+
+    // File menu
+    d->recentFileMenu = new RecentFileMenu(this);
+    updateRecentFileMenu();
 
     // Window menu
     ui->stayOnTopAction->setChecked(settings.isWindowStaysOnTopEnabled());
@@ -1483,7 +1496,9 @@ void MainWindow::createNewLogbook() noexcept
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
         const bool ok = PersistenceManager::getInstance().connectWithLogbook(logbookPath, this);
-        if (!ok) {
+        if (ok) {
+            RecentFile::getInstance().addRecentFile(logbookPath);
+        } else {
             QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be created.").arg(QDir::toNativeSeparators(logbookPath)));
         }
     }
@@ -1493,7 +1508,26 @@ void MainWindow::openLogbook() noexcept
 {
     QString filePath = DatabaseService::getExistingLogbookPath(this);
     if (!filePath.isEmpty()) {
-        connectWithLogbook(filePath);
+        if (connectWithLogbook(filePath)) {
+             RecentFile::getInstance().addRecentFile(filePath);
+        }
+    }
+}
+
+void MainWindow::onRecentFileSelected(const QString &filePath, SecurityToken *securityToken) noexcept
+{
+    const bool ok = connectWithLogbook(filePath);
+    if (!ok) {
+        RecentFile::getInstance().removeRecentFile(filePath);
+        QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
+    }
+}
+
+void MainWindow::updateRecentFileMenu() noexcept
+{
+    ui->recentFilesMenu->clear();
+    for (QAction *recentFileAction : d->recentFileMenu->getRecentFileActionGroup().actions()) {
+        ui->recentFilesMenu->addAction(recentFileAction);
     }
 }
 

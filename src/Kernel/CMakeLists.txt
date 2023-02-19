@@ -26,8 +26,10 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/FlightSimulator.h
         include/Kernel/Name.h
         include/Kernel/PositionParser.h src/PositionParser.cpp
+        include/Kernel/RecentFile.h src/RecentFile.cpp
         include/Kernel/Replay.h
         include/Kernel/SampleRate.h
+        include/Kernel/SecurityToken.h
         include/Kernel/Settings.h src/Settings.cpp
         include/Kernel/SkyMath.h
         include/Kernel/System.h src/System.cpp
@@ -57,6 +59,7 @@ target_link_libraries(${LIBRARY_NAME}
         GitInfo
 )
 
+# Platform-specific implemenations
 if(${PLATFORM_IS_WINDOWS})
     find_library (PSAPI psapi)
     target_link_libraries(${LIBRARY_NAME}
@@ -71,16 +74,19 @@ if(${PLATFORM_IS_WINDOWS})
     target_sources(${LIBRARY_NAME}
         PRIVATE
             src/FlightSimulator_Windows.cpp
+            src/SecurityToken_Default.cpp
     )
 elseif(${PLATFORM_IS_MACOS})
     target_sources(${LIBRARY_NAME}
         PRIVATE
             src/FlightSimulator_macOS.cpp
+            src/SecurityToken_macOS.mm
     )
 elseif(${PLATFORM_IS_LINUX})
     target_sources(${LIBRARY_NAME}
         PRIVATE
             src/FlightSimulator_Linux.cpp
+            src/SecurityToken_Default.cpp
     )
 endif()
 
