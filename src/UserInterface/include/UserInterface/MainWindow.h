@@ -36,6 +36,8 @@ class QTime;
 class QEvent;
 class QResizeEvent;
 class QCloseEvent;
+class QDragEnterEvent;
+class QDropEvent;
 
 #include "UserInterfaceLib.h"
 
@@ -69,6 +71,9 @@ public:
 protected:
     void resizeEvent(QResizeEvent *event) noexcept override;
     void closeEvent(QCloseEvent *event) noexcept override;
+
+    void dragEnterEvent(QDragEnterEvent *event) noexcept override;
+    void dropEvent(QDropEvent *event) noexcept override;
 
 private:
     std::unique_ptr<Ui::MainWindow> ui;

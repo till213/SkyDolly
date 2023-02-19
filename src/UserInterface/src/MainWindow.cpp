@@ -30,6 +30,7 @@
 
 #include <QApplication>
 #include <QByteArray>
+#include <QList>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QCursor>
@@ -39,6 +40,7 @@
 #include <QDir>
 #include <QUuid>
 #include <QString>
+#include <QStringBuilder>
 #include <QUuid>
 #include <QTime>
 #include <QTimeEdit>
@@ -57,8 +59,10 @@
 #include <QActionGroup>
 #include <QSpacerItem>
 #include <QTimer>
-#include <QStringBuilder>
 #include <QDesktopServices>
+#include <QMimeData>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 #include <Kernel/Unit.h>
 #include <Kernel/Const.h>
@@ -211,11 +215,13 @@ MainWindow::~MainWindow()
 
 bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 {
-    bool ok = PersistenceManager::getInstance().connectWithLogbook(filePath, this);
-    if (!ok) {
+    d->connectedWithLogbook = PersistenceManager::getInstance().connectWithLogbook(filePath, this);
+    if (d->connectedWithLogbook) {
+        RecentFile::getInstance().addRecentFile(filePath);
+    } else {
         QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
     }
-    return ok;
+    return d->connectedWithLogbook;
 }
 
 // PROTECTED
@@ -243,6 +249,38 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
     Settings &settings = Settings::getInstance();
     settings.setWindowGeometry(saveGeometry());
     settings.setWindowState(saveState());
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) noexcept
+{
+    const QMimeData *mimeData = event->mimeData();
+    if (mimeData->hasUrls()) {
+        const QList<QUrl> urlList = mimeData->urls();
+        // Accept the proposed drop action if at least one
+        // URL looks to be a Sky Dolly logbook (*.sdlog)
+        for (const QUrl &url : urlList) {
+            if (url.isLocalFile() && url.fileName().endsWith(Const::LogbookExtension)) {
+                event->acceptProposedAction();
+                break;
+            }
+        }
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event) noexcept
+{
+    QString filePath;
+    const QMimeData *mimeData = event->mimeData();
+    const QList<QUrl> urlList = mimeData->urls();
+    for (const QUrl &url : urlList) {
+        if (url.isLocalFile() && url.fileName().endsWith(Const::LogbookExtension)) {
+            filePath = url.toLocalFile();
+            break;
+        }
+    }
+    if (!filePath.isEmpty()) {
+        connectWithLogbook(filePath);
+    }
 }
 
 // PRIVATE
@@ -430,6 +468,9 @@ void MainWindow::initUi() noexcept
         restoreGeometry(windowGeometry);
         restoreState(windowState);
     }
+
+    // Drag and drop support
+    setAcceptDrops(true);
 
     const int previewInfoCount = settings.getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
@@ -1395,7 +1436,7 @@ void MainWindow::updateReplayDuration() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
-    const QTime time = QTime::fromMSecsSinceStartOfDay(totalDuration);
+    const QTime time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(totalDuration));
     ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);
@@ -1479,6 +1520,11 @@ void MainWindow::updateMainWindow() noexcept
     } else {
         ui->showModulesAction->setToolTip(tr("Show modules."));
     }
+    if (d->connectedWithLogbook && !settings.isMinimalUiEnabled()) {
+        setWindowTitle(Version::getApplicationName() % " - " % QFileInfo(settings.getLogbookPath()).fileName());
+    } else {
+        setWindowTitle(Version::getApplicationName());
+    }
 }
 
 void MainWindow::onModuleActivated(const QString &title, [[maybe_unused]] QUuid uuid) noexcept
@@ -1508,18 +1554,24 @@ void MainWindow::openLogbook() noexcept
 {
     QString filePath = DatabaseService::getExistingLogbookPath(this);
     if (!filePath.isEmpty()) {
-        if (connectWithLogbook(filePath)) {
-             RecentFile::getInstance().addRecentFile(filePath);
-        }
+        connectWithLogbook(filePath);
     }
 }
 
 void MainWindow::onRecentFileSelected(const QString &filePath, SecurityToken *securityToken) noexcept
 {
-    const bool ok = connectWithLogbook(filePath);
+    // Connecting with a non-existing SQLite database will actually succeed when calling
+    // connectWithLogbook() (the non-existing database file is created first), so we
+    // explicitly check the existence of the file
+    QFileInfo fileInfo {filePath};
+    bool ok = fileInfo.exists();
+    if (ok) {
+        ok = connectWithLogbook(filePath);
+    } else {
+        QMessageBox::critical(this, tr("Logbook not found"), tr("The logbook %1 does not exist.").arg(QDir::toNativeSeparators(filePath)));
+    }
     if (!ok) {
         RecentFile::getInstance().removeRecentFile(filePath);
-        QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
     }
 }
 
