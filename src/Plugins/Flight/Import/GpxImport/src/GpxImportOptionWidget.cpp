@@ -40,8 +40,8 @@ namespace
 
 struct GpxImportOptionWidgetPrivate
 {
-    GpxImportOptionWidgetPrivate(GpxImportSettings &theImportSettings) noexcept
-        : settings(theImportSettings)
+    GpxImportOptionWidgetPrivate(GpxImportSettings &settings) noexcept
+        : settings(settings)
     {}
 
      GpxImportSettings &settings;

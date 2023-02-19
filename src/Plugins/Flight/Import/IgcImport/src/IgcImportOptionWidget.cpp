@@ -34,8 +34,8 @@
 
 struct IgcImportOptionWidgetPrivate
 {
-    IgcImportOptionWidgetPrivate(IgcImportSettings &theImportSettings) noexcept
-        : settings(theImportSettings)
+    IgcImportOptionWidgetPrivate(IgcImportSettings &settings) noexcept
+        : settings(settings)
     {}
 
      IgcImportSettings &settings;

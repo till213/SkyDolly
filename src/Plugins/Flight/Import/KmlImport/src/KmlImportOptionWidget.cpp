@@ -32,8 +32,8 @@
 
 struct KmlImportOptionWidgetPrivate
 {
-    KmlImportOptionWidgetPrivate(KmlImportSettings &theImportSettings) noexcept
-        : settings(theImportSettings)
+    KmlImportOptionWidgetPrivate(KmlImportSettings &settings) noexcept
+        : settings(settings)
     {}
 
     KmlImportSettings &settings;

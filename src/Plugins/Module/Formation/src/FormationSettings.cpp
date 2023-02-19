@@ -25,12 +25,27 @@
 
 #include <memory>
 
+#include <QByteArray>
+
 #include <Kernel/Settings.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 #include "FormationSettings.h"
 
+namespace
+{
+    // Keys
+    constexpr const char *RelativePositionPlacementKey {"RelativePositionPlacement"};
+    constexpr const char *FormationAircraftTableStateKey {"FormationAircraftTableState"};
+
+    // Defaults
+    constexpr bool DefaultRelativePositionPlacement {true};
+}
+
 struct FormationSettingsPrivate
-{};
+{
+    QByteArray formationAircraftTableState;
+    bool relativePositionPlacement {::DefaultRelativePositionPlacement};
+};
 
 // PUBLIC
 
@@ -41,16 +56,61 @@ FormationSettings::FormationSettings() noexcept
 
 FormationSettings::~FormationSettings() = default;
 
+bool FormationSettings::isRelativePositionPlacementEnabled() const noexcept
+{
+    return d->relativePositionPlacement;
+}
+
+void FormationSettings::setRelativePositionPlacementEnabled(bool enable) noexcept
+{
+    d->relativePositionPlacement = enable;
+}
+
+QByteArray FormationSettings::getFormationAircraftTableState() const
+{
+    return d->formationAircraftTableState;
+}
+
+void FormationSettings::setFormationAircraftTableState(const QByteArray &state) noexcept
+{
+    d->formationAircraftTableState = state;
+}
+
 // PROTECTED
 
 void FormationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
-{}
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::RelativePositionPlacementKey;
+    keyValue.second = d->relativePositionPlacement;
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::FormationAircraftTableStateKey;
+    keyValue.second = d->formationAircraftTableState;
+    keyValues.push_back(keyValue);
+}
 
 void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{}
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::RelativePositionPlacementKey;
+    keyValue.second = ::DefaultRelativePositionPlacement;
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::FormationAircraftTableStateKey;
+    keyValue.second = QByteArray();
+    keysWithDefaults.push_back(keyValue);
+}
 
 void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
-{}
+{
+    d->relativePositionPlacement = valuesByKey.at(::RelativePositionPlacementKey).toBool();
+    d->formationAircraftTableState = valuesByKey.at(::FormationAircraftTableStateKey).toByteArray();
+}
 
 void FormationSettings::restoreDefaultsExtn() noexcept
-{}
+{
+    d->relativePositionPlacement = ::DefaultRelativePositionPlacement;
+}

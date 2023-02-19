@@ -28,6 +28,7 @@
 #include <memory>
 
 #include <QObject>
+#include <QByteArray>
 
 #include <Kernel/Settings.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
@@ -44,6 +45,43 @@ public:
     FormationSettings &operator=(const FormationSettings &rhs) = delete;
     FormationSettings &operator=(FormationSettings &&rhs) = delete;
     ~FormationSettings() override;
+
+    /*!
+     * Returns whether the the new user aircraft should be placed at the calculated position
+     * relative to the current reference aircraft (user aircraft) in the formation, e.g.
+     * when starting recording, changing the reference (user) aircraft in the formation or
+     * changing the bearing or distance.
+     *
+     * \return \c true if the aircraft should be placed at its calculated position;
+     *         \c false if the aircraft should remain at its current position
+     */
+    bool isRelativePositionPlacementEnabled() const noexcept;
+
+    /*!
+     * Sets whether the the aircraft should be placed at the calculated relative position
+     * relative to the current reference aircraft (user aircraft) in the formation.
+     *
+     * \param enable
+     *        \c true if the aircraft should be placed at its calculated relative position;
+     *        \c false if the aircraft should remain at its current position
+     * \sa relativePositionPlacementChanged
+     */
+    void setRelativePositionPlacementEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns the saved formation aircraft table state.
+     *
+     * \return the formation aircraft table state; a \e null QByteArray if not saved before
+     */
+    QByteArray getFormationAircraftTableState() const;
+
+    /*!
+     * Stores the formation aircraft table state.
+     *
+     * \param state
+     *        the formation aircraft table state encoded in the QByteAarray
+     */
+    void setFormationAircraftTableState(const QByteArray &state) noexcept;
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

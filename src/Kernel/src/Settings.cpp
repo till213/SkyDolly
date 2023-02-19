@@ -82,7 +82,6 @@ struct SettingsPrivate
     QByteArray windowGeometry;
     QByteArray windowState;
     QByteArray logbookState;
-    QByteArray formationAircraftTableState;
     QByteArray locationTableState;
     QString exportPath;
     QString defaultExportPath;
@@ -93,8 +92,6 @@ struct SettingsPrivate
     bool replayLoop;
     Replay::SpeedUnit replaySpeedUnit;
     bool repeatCanopyOpen;
-
-    bool relativePositionPlacement;
 
     bool deleteFlightConfirmation;
     bool deleteAircraftConfirmation;
@@ -129,7 +126,6 @@ struct SettingsPrivate
     // For now the default value is true, as no known aircraft exists where the canopy values would not
     // have to be repeated
     static constexpr bool DefaultRepeatCanopyOpen {true};
-    static constexpr bool DefaultRelativePositionPlacement {true};
     static constexpr bool DefaultDeleteFlightConfirmation {true};
     static constexpr bool DefaultDeleteAircraftConfirmation {true};
     static constexpr bool DefaultDeleteLocationConfirmation {true};
@@ -320,16 +316,6 @@ QByteArray Settings::getLogbookState() const
 void Settings::setLogbookState(const QByteArray &state) noexcept
 {
     d->logbookState = state;
-}
-
-QByteArray Settings::getFormationAircraftTableState() const
-{
-    return d->formationAircraftTableState;
-}
-
-void Settings::setFormationAircraftTableState(const QByteArray &state) noexcept
-{
-    d->formationAircraftTableState = state;
 }
 
 QByteArray Settings::getLocationTableState() const
@@ -524,19 +510,6 @@ void Settings::setImportAircraftType(const QString &type) noexcept
     }
 }
 
-bool Settings::isRelativePositionPlacementEnabled() const noexcept
-{
-    return d->relativePositionPlacement;
-}
-
-void Settings::setRelativePositionPlacementEnabled(bool enable) noexcept
-{
-    if (d->relativePositionPlacement != enable) {
-        d->relativePositionPlacement = enable;
-        emit relativePositionPlacementChanged(enable);
-    }
-}
-
 QFileInfo Settings::getEarthGravityModelFileInfo() const noexcept
 {
     return d->earthGravityModelFileInfo;
@@ -585,6 +558,31 @@ Settings::ValuesByKey Settings::restorePluginSettings(QUuid pluginUuid, const Ke
     return values;
 }
 
+void Settings::storeModuleSettings(QUuid moduleUuid, const KeyValues &keyValues) const noexcept
+{
+    d->settings.beginGroup("Plugins/Modules/" + moduleUuid.toByteArray());
+    {
+        for (const auto &keyValue : keyValues) {
+            d->settings.setValue(keyValue.first, keyValue.second);
+        }
+    }
+    d->settings.endGroup();
+}
+
+Settings::ValuesByKey Settings::restoreModuleSettings(QUuid moduleUuid, const KeysWithDefaults &keys) noexcept
+{
+    ValuesByKey values;
+    d->settings.beginGroup("Plugins/Modules/" + moduleUuid.toByteArray());
+    {
+        for (const auto &key : keys) {
+            values[key.first] = d->settings.value(key.first, key.second);
+        }
+    }
+    d->settings.endGroup();
+
+    return values;
+}
+
 // PUBLIC SLOTS
 
 void Settings::store() const noexcept
@@ -599,15 +597,6 @@ void Settings::store() const noexcept
     d->settings.beginGroup("Plugins");
     {
         d->settings.setValue("SkyConnectPluginUuid", d->skyConnectPluginUuid);
-        d->settings.beginGroup("Modules");
-        {
-            d->settings.beginGroup("Formation");
-            {
-                d->settings.setValue("RelativePositionPlacement", d->relativePositionPlacement);
-            }
-            d->settings.endGroup();
-        }
-        d->settings.endGroup();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -652,7 +641,6 @@ void Settings::store() const noexcept
         d->settings.setValue("Geometry", d->windowGeometry);
         d->settings.setValue("State", d->windowState);
         d->settings.setValue("LogbookState", d->logbookState);
-        d->settings.setValue("FormationAircraftTableState", d->formationAircraftTableState);
         d->settings.setValue("LocationTableState", d->locationTableState);
     }
     d->settings.endGroup();
@@ -699,15 +687,6 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Plugins");
     {
         d->skyConnectPluginUuid = d->settings.value("SkyConnectPluginUuid", d->DefaultSkyConnectPluginUuid).toUuid();
-        d->settings.beginGroup("Modules");
-        {
-            d->settings.beginGroup("Formation");
-            {
-                d->relativePositionPlacement = d->settings.value("RelativePositionPlacement", d->DefaultRelativePositionPlacement).toBool();
-            }
-            d->settings.endGroup();
-        }
-        d->settings.endGroup();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -777,7 +756,6 @@ void Settings::restore() noexcept
         d->windowGeometry = d->settings.value("Geometry").toByteArray();
         d->windowState = d->settings.value("State").toByteArray();
         d->logbookState = d->settings.value("LogbookState").toByteArray();
-        d->formationAircraftTableState = d->settings.value("FormationAircraftTableState").toByteArray();
         d->locationTableState = d->settings.value("LocationTableState").toByteArray();
     }
     d->settings.endGroup();

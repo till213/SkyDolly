@@ -102,7 +102,7 @@ void AbstractModule::storeSettings(const QUuid &pluginUuid) const noexcept
     Settings::KeyValues settings;
     addSettings(settings);
     if (settings.size() > 0) {
-        Settings::getInstance().storePluginSettings(pluginUuid, settings);
+        Settings::getInstance().storeModuleSettings(pluginUuid, settings);
     }
 }
 
@@ -111,7 +111,7 @@ void AbstractModule::restoreSettings(const QUuid &pluginUuid) noexcept
     Settings::KeysWithDefaults keysWithDefaults;
     addKeysWithDefaults(keysWithDefaults);
     if (keysWithDefaults.size() > 0) {
-        Settings::ValuesByKey values = Settings::getInstance().restorePluginSettings(pluginUuid, keysWithDefaults);
+        Settings::ValuesByKey values = Settings::getInstance().restoreModuleSettings(pluginUuid, keysWithDefaults);
         restoreSettings(values);
     }
 }

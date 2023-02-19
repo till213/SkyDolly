@@ -267,21 +267,6 @@ public:
     void setLogbookState(const QByteArray &state) noexcept;
 
     /*!
-     * Returns the saved formation aircraft table state.
-     *
-     * \return the formation aircraft table state; a \e null QByteArray if not saved before
-     */
-    QByteArray getFormationAircraftTableState() const;
-
-    /*!
-     * Stores the formation aircraft table state.
-     *
-     * \param state
-     *        the formation aircraft table state encoded in the QByteAarray
-     */
-    void setFormationAircraftTableState(const QByteArray &state) noexcept;
-
-    /*!
      * Returns the saved location table state.
      *
      * \return the location table state; a \e null QByteArray if not saved before
@@ -556,30 +541,6 @@ public:
     void setImportAircraftType(const QString &type) noexcept;
 
     /*!
-     * Returns whether the the new user aircraft should be placed at the calculated position
-     * relative to the current reference aircraft (user aircraft) in the formation, e.g.
-     * when starting recording, changing the reference (user) aircraft in the formation or
-     * changing the bearing or distance.
-     *
-     * \return \c true if the aircraft should be placed at its calculated position;
-     *         \c false if the aircraft should remain at its current position
-     */
-    bool isRelativePositionPlacementEnabled() const noexcept;
-
-    /*!
-     * Sets whether the the aircraft should be placed at the calculated relative position
-     * relative to the current reference aircraft (user aircraft) in the formation, e.g.
-     * when starting recording, changing the reference (user) aircraft in the formation or
-     * changing the bearing or distance.
-     *
-     * \param enable
-     *        \c true if the aircraft should be placed at its calculated relative position;
-     *        \c false if the aircraft should remain at its current position
-     * \sa relativePositionPlacementChanged
-     */
-    void setRelativePositionPlacementEnabled(bool enable) noexcept;
-
-    /*!
      * Returns the file info of the best available earth gravity model (EGM) data file.
      *
      * \return the file info of the earth gravity model data file; check for its existence
@@ -621,6 +582,9 @@ public:
 
     void storePluginSettings(QUuid pluginUuid, const KeyValues &keyValues) const noexcept;
     ValuesByKey restorePluginSettings(QUuid pluginUuid, const KeysWithDefaults &keys) noexcept;
+
+    void storeModuleSettings(QUuid moduleUuid, const KeyValues &keyValues) const noexcept;
+    ValuesByKey restoreModuleSettings(QUuid moduleUuid, const KeysWithDefaults &keys) noexcept;
 
 public slots:
     /*!
@@ -763,11 +727,6 @@ signals:
      * \sa changed
      */
     void defaultMinimalUiReplaySpeedVisibilityChanged(bool hidden);
-
-    /*!
-     * Emitted when the relative position placement option has changed.
-     */
-    void relativePositionPlacementChanged(bool enable);
 
     /*!
      * Emitted when any setting has changed.

@@ -38,6 +38,7 @@ class QTableWidgetItem;
 #include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleIntf.h>
 #include <PluginManager/Module/AbstractModule.h>
+#include "FormationSettings.h"
 #include "Formation.h"
 
 class Aircraft;
@@ -54,7 +55,7 @@ class FormationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    FormationWidget(QWidget *parent = nullptr) noexcept;
+    FormationWidget(FormationSettings &settings, QWidget *parent = nullptr) noexcept;
     FormationWidget(const FormationWidget &rhs) = delete;
     FormationWidget(FormationWidget &&rhs) = delete;
     FormationWidget &operator=(const FormationWidget &rhs) = delete;
@@ -117,6 +118,8 @@ private slots:
     void changeTimeOffset(const std::int64_t timeOffset) noexcept;
     void onTimeOffsetValueChanged() noexcept;
     void resetAllTimeOffsets() noexcept;
+
+    void onModuleSettingsChanged() noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

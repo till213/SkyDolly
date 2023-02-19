@@ -35,8 +35,8 @@
 
 struct CsvLocationImportOptionWidgetPrivate
 {
-    CsvLocationImportOptionWidgetPrivate(CsvLocationImportSettings &theImportSettings) noexcept
-        : settings(theImportSettings)
+    CsvLocationImportOptionWidgetPrivate(CsvLocationImportSettings &settings) noexcept
+        : settings(settings)
     {}
 
      CsvLocationImportSettings &settings;
