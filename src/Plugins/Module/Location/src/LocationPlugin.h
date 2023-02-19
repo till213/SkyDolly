@@ -31,7 +31,7 @@
 class QWidget;
 
 #include <Model/Location.h>
-#include "PluginManager/AbstractModule.h"
+#include <PluginManager/Module/AbstractModule.h>
 
 struct InitialPosition;
 class ModuleBaseSettings;

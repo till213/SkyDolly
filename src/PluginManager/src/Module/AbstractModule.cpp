@@ -33,7 +33,7 @@
 #include "SkyConnectIntf.h"
 #include <Persistence/Service/FlightService.h>
 #include <Module/ModuleBaseSettings.h>
-#include "AbstractModule.h"
+#include <Module/AbstractModule.h>
 
 struct AbstractModulePrivate
 {

@@ -61,7 +61,7 @@
 #include <Widget/LinkedOptionGroup.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/AbstractModule.h>
+#include <PluginManager/Module/AbstractModule.h>
 #include "LocationWidget.h"
 #include "EnumerationItemDelegate.h"
 #include "PositionWidgetItem.h"

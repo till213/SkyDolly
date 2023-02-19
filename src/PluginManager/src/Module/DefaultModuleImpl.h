@@ -22,47 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef DEFAULTMODULEIMPL_H
+#define DEFAULTMODULEIMPL_H
+
 #include <memory.h>
 
 #include <QString>
 
-#include <SkyConnectManager.h>
-#include "Module/DefaultModuleSettings.h"
-#include "DefaultModuleImpl.h"
+class QWidget;
 
-struct DefaultModuleImplPrivate
+#include <Module/AbstractModule.h>
+
+struct DefaultModuleImplPrivate;
+
+class DefaultModuleImpl : public AbstractModule
 {
-    DefaultModuleSettings pluginSettings;
+	Q_OBJECT
+public:
+    DefaultModuleImpl() noexcept;
+    DefaultModuleImpl(const DefaultModuleImpl &rhs) = delete;
+    DefaultModuleImpl(DefaultModuleImpl &&rhs) = delete;
+    DefaultModuleImpl &operator=(const DefaultModuleImpl &rhs) = delete;
+    DefaultModuleImpl &operator=(DefaultModuleImpl &&rhs) = delete;
+    ~DefaultModuleImpl() override;
+
+    QString getModuleName() const noexcept final;
+    QWidget *getWidget() const noexcept final;
+    RecordIconId getRecordIconId() const noexcept final;
+
+protected:
+    const std::unique_ptr<DefaultModuleImplPrivate> d;
+
+    ModuleBaseSettings &getPluginSettings() const noexcept override;
 };
 
-// PUBLIC
-
-// PUBLIC
-
-DefaultModuleImpl::DefaultModuleImpl() noexcept
-    : d(std::make_unique<DefaultModuleImplPrivate>())
-{}
-
-DefaultModuleImpl::~DefaultModuleImpl() = default;
-
-QString DefaultModuleImpl::getModuleName() const noexcept
-{
-    return "";
-}
-
-QWidget *DefaultModuleImpl::getWidget() const noexcept
-{
-    return nullptr;
-}
-
-ModuleIntf::RecordIconId DefaultModuleImpl::getRecordIconId() const noexcept
-{
-    return ModuleIntf::RecordIconId::Normal;
-}
-
-// PROTECTED
-
-ModuleBaseSettings &DefaultModuleImpl::getPluginSettings() const noexcept
-{
-    return d->pluginSettings;
-}
+#endif // DEFAULTMODULEIMPL_H

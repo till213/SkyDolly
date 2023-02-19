@@ -36,8 +36,8 @@ class QAction;
 class QTableWidgetItem;
 
 #include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/ModuleIntf.h>
-#include <PluginManager/AbstractModule.h>
+#include <PluginManager/Module/ModuleIntf.h>
+#include <PluginManager/Module/AbstractModule.h>
 #include "Formation.h"
 
 class Aircraft;

@@ -35,10 +35,8 @@
 class QTableWidgetItem;
 class QKeyEvent;
 
-#include <PluginManager/ModuleIntf.h>
-#include <PluginManager/AbstractModule.h>
-
 #include <Model/Location.h>
+
 struct LocationWidgetPrivate;
 
 namespace Ui {

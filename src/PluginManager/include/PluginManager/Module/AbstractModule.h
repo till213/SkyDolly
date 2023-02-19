@@ -33,8 +33,8 @@ class QWidget;
 class QUuid;
 
 #include <Kernel/Settings.h>
+#include "../PluginManagerLib.h"
 #include "ModuleIntf.h"
-#include "PluginManagerLib.h"
 
 class ModuleBaseSettings;
 class FlightService;

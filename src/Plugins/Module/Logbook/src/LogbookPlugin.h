@@ -30,7 +30,7 @@
 
 class QWidget;
 
-#include "PluginManager/AbstractModule.h"
+#include <PluginManager/Module/AbstractModule.h>
 
 class ModuleBaseSettings;
 struct LogbookPluginPrivate;

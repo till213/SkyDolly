@@ -43,8 +43,7 @@ class QLayout;
 
 #include <Kernel/Sort.h>
 #include <Kernel/QUuidHasher.h>
-#include "SkyConnectIntf.h"
-#include "PluginManagerLib.h"
+#include "../PluginManagerLib.h"
 
 class ModuleIntf;
 struct ModuleManagerPrivate;

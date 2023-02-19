@@ -13,7 +13,6 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/Connect.h
         include/PluginManager/Csv.h
         include/PluginManager/SkyConnectIntf.h
-        include/PluginManager/SettingsIntf.h
         include/PluginManager/PluginIntf.h
         include/PluginManager/FlightExportIntf.h
         include/PluginManager/FlightImportIntf.h
@@ -36,10 +35,11 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/LocationImportPluginBase.h src/LocationImportPluginBase.cpp
         include/PluginManager/LocationImportPluginBaseSettings.h src/LocationImportPluginBaseSettings.cpp
         include/PluginManager/BasicLocationImportDialog.h src/BasicLocationImportDialog.cpp src/BasicLocationImportDialog.ui
-        include/PluginManager/ModuleIntf.h
-        include/PluginManager/AbstractModule.h src/AbstractModule.cpp
-        include/PluginManager/ModuleManager.h src/ModuleManager.cpp
-        src/DefaultModuleImpl.h src/DefaultModuleImpl.cpp
+        # Modules
+        include/PluginManager/Module/ModuleIntf.h
+        include/PluginManager/Module/AbstractModule.h src/Module/AbstractModule.cpp
+        include/PluginManager/Module/ModuleManager.h src/Module/ModuleManager.cpp
+        src/Module/DefaultModuleImpl.h src/Module/DefaultModuleImpl.cpp
         src/Module/DefaultModuleSettings.h src/Module/DefaultModuleSettings.cpp
         include/PluginManager/Module/ModuleBaseSettings.h src/Module/ModuleBaseSettings.cpp
         res/PluginManager.qrc

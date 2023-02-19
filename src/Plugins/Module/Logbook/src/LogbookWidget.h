@@ -39,8 +39,8 @@ class QTreeWidgetItem;
 class QTableWidgetItem;
 class QString;
 
-#include <PluginManager/ModuleIntf.h>
-#include <PluginManager/AbstractModule.h>
+#include <PluginManager/Module/ModuleIntf.h>
+#include <PluginManager/Module/AbstractModule.h>
 
 struct FlightDate;
 struct FlightSummary;
