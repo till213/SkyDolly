@@ -28,7 +28,6 @@
 
 #import <QByteArray>
 #import <QString>
-#import <QtMac>
 
 #import "SecurityToken.h"
 
@@ -197,4 +196,3 @@ SecurityToken::~SecurityToken()
     stopAccess(d->securityTokenData);
     delete d;
 }
-
