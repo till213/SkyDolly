@@ -46,8 +46,8 @@
 #include <Model/Position.h>
 #include <Model/SimType.h>
 #include "Export.h"
-#include "LocationExportPluginBaseSettings.h"
-#include "BasicLocationExportDialog.h"
+#include <Location/LocationExportPluginBaseSettings.h>
+#include <Location/BasicLocationExportDialog.h>
 #include "ui_BasicLocationExportDialog.h"
 
 struct BasicLocationExportDialogPrivate

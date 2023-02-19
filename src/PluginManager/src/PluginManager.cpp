@@ -43,8 +43,8 @@
 #include <Persistence/Service/LocationService.h>
 #include <Flight/FlightImportIntf.h>
 #include <Flight/FlightExportIntf.h>
-#include "LocationImportIntf.h"
-#include "LocationExportIntf.h"
+#include <Location/LocationImportIntf.h>
+#include <Location/LocationExportIntf.h>
 #include "PluginManager.h"
 
 namespace

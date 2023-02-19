@@ -28,7 +28,7 @@
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Persistence/Service/LocationService.h>
-#include "LocationImportPluginBaseSettings.h"
+#include <Location/LocationImportPluginBaseSettings.h>
 
 namespace
 {

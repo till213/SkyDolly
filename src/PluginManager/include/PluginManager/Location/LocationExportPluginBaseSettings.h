@@ -31,7 +31,7 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
-#include "PluginManagerLib.h"
+#include "../PluginManagerLib.h"
 
 struct LocationExportPluginBaseSettingsPrivate;
 

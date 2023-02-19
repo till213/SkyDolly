@@ -32,7 +32,7 @@
 
 class QWidget;
 
-#include "PluginManagerLib.h"
+#include "../PluginManagerLib.h"
 
 class LocationImportPluginBaseSettings;
 struct BasicLocationImportDialogPrivate;

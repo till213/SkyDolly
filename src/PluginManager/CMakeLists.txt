@@ -14,7 +14,6 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/Csv.h
         include/PluginManager/SkyConnectIntf.h
         include/PluginManager/PluginIntf.h
-
         include/PluginManager/SkyConnectManager.h src/SkyConnectManager.cpp
         include/PluginManager/AbstractSkyConnect.h src/AbstractSkyConnect.cpp
         include/PluginManager/PluginManager.h src/PluginManager.cpp
@@ -30,14 +29,14 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/Flight/FlightExportPluginBaseSettings.h src/Flight/FlightExportPluginBaseSettings.cpp
         include/PluginManager/Flight/BasicFlightExportDialog.h src/Flight/BasicFlightExportDialog.cpp src/Flight/BasicFlightExportDialog.ui
         # Location import & export plugins
-        include/PluginManager/LocationExportIntf.h
-        include/PluginManager/LocationExportPluginBase.h src/LocationExportPluginBase.cpp
-        include/PluginManager/LocationExportPluginBaseSettings.h src/LocationExportPluginBaseSettings.cpp
-        include/PluginManager/BasicLocationExportDialog.h src/BasicLocationExportDialog.cpp src/BasicLocationExportDialog.ui
-        include/PluginManager/LocationImportIntf.h
-        include/PluginManager/LocationImportPluginBase.h src/LocationImportPluginBase.cpp
-        include/PluginManager/LocationImportPluginBaseSettings.h src/LocationImportPluginBaseSettings.cpp
-        include/PluginManager/BasicLocationImportDialog.h src/BasicLocationImportDialog.cpp src/BasicLocationImportDialog.ui
+        include/PluginManager/Location/LocationExportIntf.h
+        include/PluginManager/Location/LocationExportPluginBase.h src/Location/LocationExportPluginBase.cpp
+        include/PluginManager/Location/LocationExportPluginBaseSettings.h src/Location/LocationExportPluginBaseSettings.cpp
+        include/PluginManager/Location/BasicLocationExportDialog.h src/Location/BasicLocationExportDialog.cpp src/Location/BasicLocationExportDialog.ui
+        include/PluginManager/Location/LocationImportIntf.h
+        include/PluginManager/Location/LocationImportPluginBase.h src/Location/LocationImportPluginBase.cpp
+        include/PluginManager/Location/LocationImportPluginBaseSettings.h src/Location/LocationImportPluginBaseSettings.cpp
+        include/PluginManager/Location/BasicLocationImportDialog.h src/Location/BasicLocationImportDialog.cpp src/Location/BasicLocationImportDialog.ui
         # Modules
         include/PluginManager/ModuleManager.h src/ModuleManager.cpp
         include/PluginManager/Module/ModuleIntf.h

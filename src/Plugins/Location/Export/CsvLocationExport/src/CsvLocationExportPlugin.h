@@ -58,8 +58,8 @@
 class QFile;
 class QWidget;
 
-#include <PluginManager/LocationExportIntf.h>
-#include <PluginManager/LocationExportPluginBase.h>
+#include <PluginManager/Location/LocationExportIntf.h>
+#include <PluginManager/Location/LocationExportPluginBase.h>
 
 class Location;
 class LocationExportPluginBaseSettings;

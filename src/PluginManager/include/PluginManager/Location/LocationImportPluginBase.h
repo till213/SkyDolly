@@ -32,8 +32,8 @@
 #include <QtPlugin>
 
 #include "LocationImportIntf.h"
-#include "PluginBase.h"
-#include "PluginManagerLib.h"
+#include "../PluginBase.h"
+#include "../PluginManagerLib.h"
 
 class Location;
 struct AircraftType;

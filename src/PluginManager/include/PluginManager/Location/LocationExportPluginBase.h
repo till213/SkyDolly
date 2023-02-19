@@ -32,8 +32,8 @@
 #include <QtPlugin>
 
 #include "LocationExportIntf.h"
-#include "PluginBase.h"
-#include "PluginManagerLib.h"
+#include "../PluginBase.h"
+#include "../PluginManagerLib.h"
 
 class LocationService;
 class Location;

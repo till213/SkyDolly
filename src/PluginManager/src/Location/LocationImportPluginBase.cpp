@@ -39,9 +39,9 @@
 #include <Kernel/File.h>
 #include <Persistence/Service/LocationService.h>
 #include <Persistence/PersistenceManager.h>
-#include "BasicLocationImportDialog.h"
-#include "LocationImportPluginBaseSettings.h"
-#include "LocationImportPluginBase.h"
+#include <Location/BasicLocationImportDialog.h>
+#include <Location/LocationImportPluginBaseSettings.h>
+#include <Location/LocationImportPluginBase.h>
 
 struct LocationImportPluginBasePrivate
 {

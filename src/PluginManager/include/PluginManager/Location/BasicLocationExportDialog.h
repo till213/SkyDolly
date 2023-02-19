@@ -31,7 +31,7 @@
 #include <QDialog>
 
 #include <Kernel/SampleRate.h>
-#include "PluginManagerLib.h"
+#include "../PluginManagerLib.h"
 
 class Location;
 class LocationExportPluginBaseSettings;

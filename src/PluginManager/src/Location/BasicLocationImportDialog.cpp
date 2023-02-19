@@ -39,8 +39,8 @@
 #include <Model/Location.h>
 #include <Persistence/Service/AircraftTypeService.h>
 #include "Kernel/Enum.h"
-#include "LocationImportPluginBaseSettings.h"
-#include "BasicLocationImportDialog.h"
+#include <Location/LocationImportPluginBaseSettings.h>
+#include <Location/BasicLocationImportDialog.h>
 #include "ui_BasicLocationImportDialog.h"
 
 struct BasicLocationImportDialogPrivate

@@ -30,7 +30,7 @@
 #include <QObject>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/LocationExportPluginBaseSettings.h>
+#include <PluginManager/Location/LocationExportPluginBaseSettings.h>
 
 struct CsvLocationExportSettingsPrivate;
 

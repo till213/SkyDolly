@@ -32,7 +32,7 @@
 
 #include <Kernel/Settings.h>
 #include <Persistence/Service/LocationService.h>
-#include "PluginManagerLib.h"
+#include "../PluginManagerLib.h"
 
 struct LocationImportPluginBaseSettingsPrivate;
 

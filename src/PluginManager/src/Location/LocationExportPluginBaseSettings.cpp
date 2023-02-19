@@ -27,7 +27,7 @@
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SampleRate.h>
-#include "LocationExportPluginBaseSettings.h"
+#include <Location/LocationExportPluginBaseSettings.h>
 
 namespace
 {

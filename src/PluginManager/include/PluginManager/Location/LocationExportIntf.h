@@ -29,7 +29,7 @@
 
 #include <QtPlugin>
 
-#include "PluginIntf.h"
+#include "../PluginIntf.h"
 
 class Location;
 

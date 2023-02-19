@@ -40,9 +40,9 @@
 #include <Kernel/File.h>
 #include <Persistence/Service/LocationService.h>
 #include <Persistence/PersistenceManager.h>
-#include "BasicLocationExportDialog.h"
-#include "LocationExportPluginBaseSettings.h"
-#include "LocationExportPluginBase.h"
+#include <Location/BasicLocationExportDialog.h>
+#include <Location/LocationExportPluginBaseSettings.h>
+#include <Location/LocationExportPluginBase.h>
 
 struct LocationExportPluginBasePrivate
 {
