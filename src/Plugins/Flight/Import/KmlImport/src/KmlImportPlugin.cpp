@@ -34,7 +34,7 @@
 #include <QFlags>
 
 #include <Kernel/Unit.h>
-#include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/Aircraft.h>
 #include <Model/FlightCondition.h>
 #include <Flight/FlightAugmentation.h>
@@ -78,12 +78,14 @@ std::vector<FlightData> KmlImportPlugin::importSelectedFlights(QIODevice &io, bo
         }
     }
 
-    ok = !flights.empty() && !d->xml.hasError();
-#ifdef DEBUG
+    ok = FlightData::hasAllRecording(flights) && !d->xml.hasError();
     if (!ok) {
+        flights.clear();
+#ifdef DEBUG
         qDebug() << "KmlImportPlugin::importSelectedFlights: XML error:" << d->xml.errorString();
-    }
 #endif
+    }
+
     return flights;
 }
 

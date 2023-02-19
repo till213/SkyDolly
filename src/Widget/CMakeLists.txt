@@ -24,6 +24,7 @@ target_sources(${LIBRARY_NAME}
         include/Widget/EnumerationWidgetItem.h src/EnumerationWidgetItem.cpp
         include/Widget/UnitWidgetItem.h src/UnitWidgetItem.cpp
         include/Widget/LinkedOptionGroup.h src/LinkedOptionGroup.cpp
+        include/Widget/RecentFileMenu.h src/RecentFileMenu.cpp
 )
 if(${PLATFORM_IS_WINDOWS})
     target_sources(${LIBRARY_NAME}

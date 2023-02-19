@@ -158,10 +158,16 @@ struct MODEL_API FlightData final
         return flightCondition.startZuluTime.addMSecs(-aircraft.getTimeOffset());
     }
 
-    bool hasRecording() const noexcept
+    inline bool hasRecording() const noexcept
     {
         auto noRecording = [](const Aircraft &a){ return !a.hasRecording(); };
         return std::find_if(begin(), end(), noRecording) == end();
+    }
+
+    static bool hasAllRecording(const std::vector<FlightData> &flights) noexcept
+    {
+        auto noRecording = [](const FlightData &f){ return !f.hasRecording(); };
+        return std::find_if(flights.begin(), flights.end(), noRecording) == flights.end();
     }
 
     using SizeType = std::vector<Aircraft>::size_type;

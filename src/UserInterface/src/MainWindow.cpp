@@ -30,6 +30,7 @@
 
 #include <QApplication>
 #include <QByteArray>
+#include <QList>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QCursor>
@@ -39,6 +40,7 @@
 #include <QDir>
 #include <QUuid>
 #include <QString>
+#include <QStringBuilder>
 #include <QUuid>
 #include <QTime>
 #include <QTimeEdit>
@@ -57,8 +59,10 @@
 #include <QActionGroup>
 #include <QSpacerItem>
 #include <QTimer>
-#include <QStringBuilder>
 #include <QDesktopServices>
+#include <QMimeData>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 #include <Kernel/Unit.h>
 #include <Kernel/Const.h>
@@ -67,6 +71,8 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Enum.h>
 #include <Kernel/SampleRate.h>
+#include <Kernel/SecurityToken.h>
+#include <Kernel/RecentFile.h>
 #include <Model/Aircraft.h>
 #include <Model/PositionData.h>
 #include <Model/AircraftInfo.h>
@@ -80,6 +86,7 @@
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
 #include <Widget/Platform.h>
+#include <Widget/RecentFileMenu.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/Connect.h>
@@ -93,7 +100,6 @@
 #include "Dialog/SimulationVariablesDialog.h"
 #include "Dialog/StatisticsDialog.h"
 #include "Dialog/LogbookBackupDialog.h"
-
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -134,6 +140,7 @@ struct MainWindowPrivate
     Connect::State previousState {Connect::State::Connected};
     bool connectedWithLogbook {false};
 
+    RecentFileMenu *recentFileMenu {nullptr};
     FlightDialog *flightDialog {nullptr};
     SimulationVariablesDialog *simulationVariablesDialog {nullptr};
     StatisticsDialog *statisticsDialog {nullptr};
@@ -208,11 +215,13 @@ MainWindow::~MainWindow()
 
 bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 {
-    bool ok = PersistenceManager::getInstance().connectWithLogbook(filePath, this);
-    if (!ok) {
+    d->connectedWithLogbook = PersistenceManager::getInstance().connectWithLogbook(filePath, this);
+    if (d->connectedWithLogbook) {
+        RecentFile::getInstance().addRecentFile(filePath);
+    } else {
         QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
     }
-    return ok;
+    return d->connectedWithLogbook;
 }
 
 // PROTECTED
@@ -240,6 +249,38 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
     Settings &settings = Settings::getInstance();
     settings.setWindowGeometry(saveGeometry());
     settings.setWindowState(saveState());
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) noexcept
+{
+    const QMimeData *mimeData = event->mimeData();
+    if (mimeData->hasUrls()) {
+        const QList<QUrl> urlList = mimeData->urls();
+        // Accept the proposed drop action if at least one
+        // URL looks to be a Sky Dolly logbook (*.sdlog)
+        for (const QUrl &url : urlList) {
+            if (url.isLocalFile() && url.fileName().endsWith(Const::LogbookExtension)) {
+                event->acceptProposedAction();
+                break;
+            }
+        }
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event) noexcept
+{
+    QString filePath;
+    const QMimeData *mimeData = event->mimeData();
+    const QList<QUrl> urlList = mimeData->urls();
+    for (const QUrl &url : urlList) {
+        if (url.isLocalFile() && url.fileName().endsWith(Const::LogbookExtension)) {
+            filePath = url.toLocalFile();
+            break;
+        }
+    }
+    if (!filePath.isEmpty()) {
+        connectWithLogbook(filePath);
+    }
 }
 
 // PRIVATE
@@ -329,6 +370,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipToEnd);
     connect(ui->loopReplayAction, &QAction::triggered,
             this, &MainWindow::toggleLoopReplay);
+    connect(ui->clearFlightAction, &QAction::triggered,
+            this, &MainWindow::clearFlight);
 
     // Modules
     connect(d->moduleManager.get(), &ModuleManager::activated,
@@ -349,6 +392,12 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::showLogbookSettings);
     connect(ui->quitAction, &QAction::triggered,
             this, &MainWindow::quit);
+
+    // Recent files
+    connect(&RecentFile::getInstance(), &RecentFile::recentFileSelected,
+            this, &MainWindow::onRecentFileSelected);
+    connect(d->recentFileMenu, &RecentFileMenu::actionGroupChanged,
+            this, &MainWindow::updateRecentFileMenu);
 
     // Menu actions
     connect(d->flightImportActionGroup, &QActionGroup::triggered,
@@ -397,6 +446,10 @@ void MainWindow::initUi() noexcept
     Settings &settings = Settings::getInstance();
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
 
+    // File menu
+    d->recentFileMenu = new RecentFileMenu(this);
+    updateRecentFileMenu();
+
     // Window menu
     ui->stayOnTopAction->setChecked(settings.isWindowStaysOnTopEnabled());
 
@@ -415,6 +468,9 @@ void MainWindow::initUi() noexcept
         restoreGeometry(windowGeometry);
         restoreState(windowState);
     }
+
+    // Drag and drop support
+    setAcceptDrops(true);
 
     const int previewInfoCount = settings.getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
@@ -1253,6 +1309,7 @@ void MainWindow::updateUi() noexcept
     updateModuleActions();
     updateWindowMenu();
     updateMainWindow();
+    onRecordingDurationChanged();
 }
 
 void MainWindow::updateControlUi() noexcept
@@ -1276,6 +1333,7 @@ void MainWindow::updateControlUi() noexcept
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(hasRecording && hasSkyConnectPlugins);
         ui->playAction->setChecked(false);
+        ui->clearFlightAction->setEnabled(hasRecording);
         // Transport
         ui->skipToBeginAction->setEnabled(hasRecording && hasSkyConnectPlugins);
         ui->backwardAction->setEnabled(hasRecording && hasSkyConnectPlugins);
@@ -1294,6 +1352,7 @@ void MainWindow::updateControlUi() noexcept
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(false);
         ui->playAction->setChecked(false);
+        ui->clearFlightAction->setEnabled(false);
         // Transport
         ui->skipToBeginAction->setEnabled(false);
         ui->backwardAction->setEnabled(false);
@@ -1318,6 +1377,8 @@ void MainWindow::updateControlUi() noexcept
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(true);
         ui->playAction->setChecked(true);
+        // Clearing a playing flight will stop it first
+        ui->clearFlightAction->setEnabled(true);
         // Transport
         ui->skipToBeginAction->setEnabled(true);
         ui->backwardAction->setEnabled(true);
@@ -1375,7 +1436,7 @@ void MainWindow::updateReplayDuration() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
-    const QTime time = QTime::fromMSecsSinceStartOfDay(totalDuration);
+    const QTime time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(totalDuration));
     ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);
@@ -1459,6 +1520,11 @@ void MainWindow::updateMainWindow() noexcept
     } else {
         ui->showModulesAction->setToolTip(tr("Show modules."));
     }
+    if (d->connectedWithLogbook && !settings.isMinimalUiEnabled()) {
+        setWindowTitle(Version::getApplicationName() % " - " % QFileInfo(settings.getLogbookPath()).fileName());
+    } else {
+        setWindowTitle(Version::getApplicationName());
+    }
 }
 
 void MainWindow::onModuleActivated(const QString &title, [[maybe_unused]] QUuid uuid) noexcept
@@ -1476,7 +1542,9 @@ void MainWindow::createNewLogbook() noexcept
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
         const bool ok = PersistenceManager::getInstance().connectWithLogbook(logbookPath, this);
-        if (!ok) {
+        if (ok) {
+            RecentFile::getInstance().addRecentFile(logbookPath);
+        } else {
             QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be created.").arg(QDir::toNativeSeparators(logbookPath)));
         }
     }
@@ -1487,6 +1555,31 @@ void MainWindow::openLogbook() noexcept
     QString filePath = DatabaseService::getExistingLogbookPath(this);
     if (!filePath.isEmpty()) {
         connectWithLogbook(filePath);
+    }
+}
+
+void MainWindow::onRecentFileSelected(const QString &filePath, SecurityToken *securityToken) noexcept
+{
+    // Connecting with a non-existing SQLite database will actually succeed when calling
+    // connectWithLogbook() (the non-existing database file is created first), so we
+    // explicitly check the existence of the file
+    QFileInfo fileInfo {filePath};
+    bool ok = fileInfo.exists();
+    if (ok) {
+        ok = connectWithLogbook(filePath);
+    } else {
+        QMessageBox::critical(this, tr("Logbook not found"), tr("The logbook %1 does not exist.").arg(QDir::toNativeSeparators(filePath)));
+    }
+    if (!ok) {
+        RecentFile::getInstance().removeRecentFile(filePath);
+    }
+}
+
+void MainWindow::updateRecentFileMenu() noexcept
+{
+    ui->recentFilesMenu->clear();
+    for (QAction *recentFileAction : d->recentFileMenu->getRecentFileActionGroup().actions()) {
+        ui->recentFilesMenu->addAction(recentFileAction);
     }
 }
 
@@ -1670,6 +1763,12 @@ void MainWindow::skipToEnd() noexcept
 void MainWindow::toggleLoopReplay(bool checked) noexcept
 {
     Settings::getInstance().setLoopReplayEnabled(checked);
+}
+
+void MainWindow::clearFlight() noexcept
+{
+    stop();
+    Logbook::getInstance().getCurrentFlight().clear(true, FlightData::CreationTimeMode::Reset);
 }
 
 // Service

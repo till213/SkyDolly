@@ -22,52 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef STATISTICSDIALOG_H
-#define STATISTICSDIALOG_H
+#ifndef GPXIMPORTTEST_H
+#define GPXIMPORTTEST_H
 
-#include <memory>
-#include <cstdint>
+#include <QObject>
 
-#include <QDialog>
+#include "AbstractFlightImportTest.h"
 
-class QShowEvent;
-class QHideEvent;
-
-struct StatisticsDialogPrivate;
-
-namespace Ui {
-    class StatisticsDialog;
-}
-
-class StatisticsDialog : public QDialog
+/*!
+ * Test cases for the GPX import plugin.
+ */
+class GpxImportTest : public AbstractFlightImportTest
 {
     Q_OBJECT
-public:
-    explicit StatisticsDialog(QWidget *parent = nullptr) noexcept;
-    StatisticsDialog(const StatisticsDialog &rhs) = delete;
-    StatisticsDialog(StatisticsDialog &&rhs) = delete;
-    StatisticsDialog &operator=(const StatisticsDialog &rhs) = delete;
-    StatisticsDialog &operator=(StatisticsDialog &&rhs) = delete;
-    ~StatisticsDialog() override;
-
-signals:
-    void visibilityChanged(bool visible);
-
 protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
-
-private:
-    std::unique_ptr<StatisticsDialogPrivate> d;
-    const std::unique_ptr<Ui::StatisticsDialog> ui;
-
-    void initUi() noexcept;
-    void frenchConnection() noexcept;
+    void onInitTestCase() noexcept override;
+    void onCleanupTestCase() noexcept override;
 
 private slots:
-    void updateUi() noexcept;
-    void updateRecordingSampleRate() noexcept;
-    void updateRecordUi(std::int64_t timestamp) noexcept;
+    void initTestCase_data() noexcept override;
+    void importSelectedFlights_data() noexcept override;
+
+private:
+    int m_oldWaypointSelection {0};
+    int m_oldPositionSelection {0};
 };
 
-#endif // STATISTICSDIALOG_H
+#endif // GPXIMPORTTEST_H

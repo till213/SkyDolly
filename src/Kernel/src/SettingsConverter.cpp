@@ -48,7 +48,9 @@ namespace
         bool addToFlight {false};
         bool importDirectory {false};
 
-        convertToV13(settingsVersion, settings);
+        if (settingsVersion < Version(QString("0.13.0"))) {
+            convertToV13(settingsVersion, settings);
+        }
 
         // CSV import
         settings.beginGroup(QString("Plugins/") + QUuid(Const::CsvImportPluginUuid).toByteArray());
@@ -62,6 +64,8 @@ namespace
                 // Add to separate flights / new flight
                 settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
             }
+            // Remove obsolete setting
+            settings.remove(AddToFlightEnabledKey);
         }
         settings.endGroup();
         // GPX import
@@ -70,12 +74,11 @@ namespace
             addToFlight = settings.value(AddToFlightEnabledKey).toBool();
             importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
-                // Add to current flight
                 settings.setValue("AircraftImportMode", 0);
             } else {
-                // Add to separate flights / new flight
                 settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
             }
+            settings.remove(AddToFlightEnabledKey);
         }
         settings.endGroup();
         // IGC import
@@ -84,12 +87,11 @@ namespace
             addToFlight = settings.value(AddToFlightEnabledKey).toBool();
             importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
-                // Add to current flight
                 settings.setValue("AircraftImportMode", 0);
             } else {
-                // Add to separate flights / new flight
                 settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
             }
+            settings.remove(AddToFlightEnabledKey);
         }
         settings.endGroup();
         // KML import
@@ -98,12 +100,11 @@ namespace
             addToFlight = settings.value(AddToFlightEnabledKey).toBool();
             importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
-                // Add to current flight
                 settings.setValue("AircraftImportMode", 0);
             } else {
-                // Add to separate flights / new flight
                 settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
             }
+            settings.remove(AddToFlightEnabledKey);
         }
         settings.endGroup();
     }

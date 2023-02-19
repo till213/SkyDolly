@@ -72,6 +72,8 @@ void AircraftInfoWidget::showEvent(QShowEvent *event) noexcept
             this, &AircraftInfoWidget::updateUi);
     connect(&flight, &Flight::flightRestored,
             this, &AircraftInfoWidget::updateUi);
+    connect(&flight, &Flight::cleared,
+            this, &AircraftInfoWidget::updateUi);
 }
 
 void AircraftInfoWidget::hideEvent(QHideEvent *event) noexcept
@@ -85,6 +87,8 @@ void AircraftInfoWidget::hideEvent(QHideEvent *event) noexcept
     disconnect(&flight, &Flight::flightStored,
                this, &AircraftInfoWidget::updateUi);
     disconnect(&flight, &Flight::flightRestored,
+               this, &AircraftInfoWidget::updateUi);
+    disconnect(&flight, &Flight::cleared,
                this, &AircraftInfoWidget::updateUi);
 }
 

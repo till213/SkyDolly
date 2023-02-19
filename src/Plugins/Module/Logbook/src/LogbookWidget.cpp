@@ -492,6 +492,8 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::onAircraftInfoChanged);
     connect(&flight, &Flight::titleChanged,
             this, &LogbookWidget::onFlightTitleChanged);
+    connect(&flight, &Flight::cleared,
+            this, &LogbookWidget::updateAircraftIcons);
 
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();

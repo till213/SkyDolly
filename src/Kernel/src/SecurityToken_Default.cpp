@@ -22,52 +22,68 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef STATISTICSDIALOG_H
-#define STATISTICSDIALOG_H
+#include "SecurityToken.h"
 
-#include <memory>
-#include <cstdint>
-
-#include <QDialog>
-
-class QShowEvent;
-class QHideEvent;
-
-struct StatisticsDialogPrivate;
-
-namespace Ui {
-    class StatisticsDialog;
-}
-
-class StatisticsDialog : public QDialog
+class SecurityTokenPrivate
 {
-    Q_OBJECT
 public:
-    explicit StatisticsDialog(QWidget *parent = nullptr) noexcept;
-    StatisticsDialog(const StatisticsDialog &rhs) = delete;
-    StatisticsDialog(StatisticsDialog &&rhs) = delete;
-    StatisticsDialog &operator=(const StatisticsDialog &rhs) = delete;
-    StatisticsDialog &operator=(StatisticsDialog &&rhs) = delete;
-    ~StatisticsDialog() override;
+    SecurityTokenPrivate()
+        : refCount(1)
+    {}
 
-signals:
-    void visibilityChanged(bool visible);
-
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
-
-private:
-    std::unique_ptr<StatisticsDialogPrivate> d;
-    const std::unique_ptr<Ui::StatisticsDialog> ui;
-
-    void initUi() noexcept;
-    void frenchConnection() noexcept;
-
-private slots:
-    void updateUi() noexcept;
-    void updateRecordingSampleRate() noexcept;
-    void updateRecordUi(std::int64_t timestamp) noexcept;
+    int refCount;
 };
 
-#endif // STATISTICSDIALOG_H
+// public
+
+void SecurityToken::retain()
+{
+    ++d->refCount;
+}
+
+void SecurityToken::release()
+{
+    --d->refCount;
+    if (d->refCount == 0) {
+        delete this;
+    }
+}
+
+bool SecurityToken::isValid() const
+{
+    return true;
+}
+
+SecurityToken *SecurityToken::create(const QByteArray &securityTokenData)
+{
+    SecurityToken *result = new SecurityToken(securityTokenData);
+    return result;
+}
+
+QByteArray SecurityToken::createSecurityTokenData(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    QByteArray result;
+    return result;
+}
+
+#ifdef DEBUG
+void SecurityToken::debugTokenToFilePath(const QByteArray &securityTokenData)
+{
+    Q_UNUSED(securityTokenData)
+}
+#endif
+
+// protected
+
+SecurityToken::SecurityToken(const QByteArray &securityTokenData)
+{
+    Q_UNUSED(securityTokenData)
+
+    d = new SecurityTokenPrivate();
+}
+
+SecurityToken::~SecurityToken()
+{
+    delete d;
+}

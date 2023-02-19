@@ -30,7 +30,7 @@
 #include "AbstractFlightImportTest.h"
 
 /*!
- * Test cases for the CsvParser.
+ * Test cases for the flightradar24 CSV parser.
  */
 class CsvFlightRadar24ImportTest : public AbstractFlightImportTest
 {

@@ -30,22 +30,29 @@
 
 #include <Kernel//Const.h>
 #include <PluginManager/PluginManager.h>
-#include "CsvFlightRecorderImportTest.h"
+#include "GpxImportTest.h"
 
 namespace
 {
-    constexpr const char *FormatKey = "Format";
-    constexpr const int FlightRecorderFormat = 2;
+    constexpr const char *WaypointSelectionKey {"WaypointSelection"};
+    constexpr const char *PositionSelectionKey {"PositionSelection"};
+
+    constexpr const int WaypointSelection = 0;
+    constexpr const int RouteSelection = 1;
+    constexpr const int TrackSelection = 2;
 }
 
 // PRIVATE SLOTS
 
-void CsvFlightRecorderImportTest::onInitTestCase() noexcept
+void GpxImportTest::onInitTestCase() noexcept
 {
     // Select the "FlightRecorder" format
-    QUuid pluginUuid {Const::CsvImportPluginUuid};
-    m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();
-    setPluginSetting(pluginUuid, ::FormatKey, ::FlightRecorderFormat);
+    QUuid pluginUuid {Const::GpxImportPluginUuid};
+    m_oldWaypointSelection = getPluginSetting(pluginUuid, ::WaypointSelectionKey, 0).toInt();
+    setPluginSetting(pluginUuid, ::WaypointSelectionKey, ::WaypointSelection);
+    m_oldPositionSelection = getPluginSetting(pluginUuid, ::PositionSelectionKey, 0).toInt();
+    setPluginSetting(pluginUuid, ::PositionSelectionKey, ::TrackSelection);
+
 
     // Initialis flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
@@ -53,20 +60,21 @@ void CsvFlightRecorderImportTest::onInitTestCase() noexcept
     QVERIFY(flightImportPlugins.size() > 0);
 }
 
-void CsvFlightRecorderImportTest::onCleanupTestCase() noexcept
+void GpxImportTest::onCleanupTestCase() noexcept
 {
-    QUuid pluginUuid {Const::CsvImportPluginUuid};
-    setPluginSetting(pluginUuid, ::FormatKey, m_oldPluginFormat);
+    QUuid pluginUuid {Const::GpxImportPluginUuid};
+    setPluginSetting(pluginUuid, ::WaypointSelectionKey, m_oldWaypointSelection);
+    setPluginSetting(pluginUuid, ::PositionSelectionKey, m_oldPositionSelection);
 }
 
-void CsvFlightRecorderImportTest::initTestCase_data() noexcept
+void GpxImportTest::initTestCase_data() noexcept
 {
-    QUuid pluginUuid {Const::CsvImportPluginUuid};
+    QUuid pluginUuid {Const::GpxImportPluginUuid};
     QTest::addColumn<QUuid>("pluginUuid");
     QTest::newRow("pluginUuid") << pluginUuid;
 }
 
-void CsvFlightRecorderImportTest::importSelectedFlights_data() noexcept
+void GpxImportTest::importSelectedFlights_data() noexcept
 {
     QTest::addColumn<QString>("filepath");
     QTest::addColumn<bool>("expectedOk");
@@ -77,12 +85,13 @@ void CsvFlightRecorderImportTest::importSelectedFlights_data() noexcept
     QTest::addColumn<int>("expectedNofAircraftInFirstFlight");
     QTest::addColumn<int>("expectedNofUserAircraftPositionInFirstFlight");
 
+    const QDateTime validDateTime {QDateTime::fromString("2023-02-18T16:10:06Z", Qt::ISODate)};
     const QDateTime invalidDateTime;
-    QTest::newRow("FlightRecorder-valid-1.csv")   << ":/test/csv/FlightRecorder-valid-1.csv"   << true  << true  << 1 << invalidDateTime << 0 << 1 << 2;
-    QTest::newRow("Empty.csv")                    << ":/test/csv/Empty.csv"                    << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("FlightRecorder-invalid-1.csv") << ":/test/csv/FlightRecorder-invalid-1.csv" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("FlightRecorder-invalid-2.csv") << ":/test/csv/FlightRecorder-invalid-2.csv" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("FlightRecorder-invalid-3.csv") << ":/test/csv/FlightRecorder-invalid-3.csv" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("Valid-1.gpx")   << ":/test/gpx/Valid-1.gpx"   << true  << true  << 1 << validDateTime   << 0 << 1 << 3;
+    QTest::newRow("Empty.gpx")     << ":/test/gpx/Empty.gpx"     << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("Invalid-1.gpx") << ":/test/gpx/Invalid-1.gpx" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("Invalid-2.gpx") << ":/test/gpx/Invalid-2.gpx" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("Invalid-3.gpx") << ":/test/gpx/Invalid-3.gpx" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
 }
 
-QTEST_MAIN(CsvFlightRecorderImportTest)
+QTEST_MAIN(GpxImportTest)

@@ -36,6 +36,8 @@ class QTime;
 class QEvent;
 class QResizeEvent;
 class QCloseEvent;
+class QDragEnterEvent;
+class QDropEvent;
 
 #include "UserInterfaceLib.h"
 
@@ -50,6 +52,7 @@ class SettingsDialog;
 class FlightDialog;
 class SimulationVariablesDialog;
 class StatisticsDialog;
+class SecurityToken;
 struct MainWindowPrivate;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
@@ -68,6 +71,9 @@ public:
 protected:
     void resizeEvent(QResizeEvent *event) noexcept override;
     void closeEvent(QCloseEvent *event) noexcept override;
+
+    void dragEnterEvent(QDragEnterEvent *event) noexcept override;
+    void dropEvent(QDropEvent *event) noexcept override;
 
 private:
     std::unique_ptr<Ui::MainWindow> ui;
@@ -183,6 +189,8 @@ private slots:
     // File menu
     void createNewLogbook() noexcept;
     void openLogbook() noexcept;
+    void onRecentFileSelected(const QString &filePath, SecurityToken *securityToken) noexcept;
+    void updateRecentFileMenu() noexcept;
     void optimiseLogbook() noexcept;
     void showSettings() noexcept;
     void showLogbookSettings() noexcept;
@@ -213,12 +221,13 @@ private slots:
     void togglePlay(bool checked) noexcept;
     void stop() noexcept;
 
-    // Transport
+    // Transport / flight
     void skipToBegin() noexcept;
     void skipBackward() noexcept;
     void skipForward() noexcept;
     void skipToEnd() noexcept;
     void toggleLoopReplay(bool checked) noexcept;
+    void clearFlight() noexcept;
 
     // Service
     void onFlightRestored() noexcept;

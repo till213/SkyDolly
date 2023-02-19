@@ -85,11 +85,17 @@ void StatisticsDialog::showEvent(QShowEvent *event) noexcept
     QDialog::showEvent(event);
     updateUi();
 
+    // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &StatisticsDialog::updateRecordUi);
     connect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
             this, &StatisticsDialog::updateRecordingSampleRate);
+
+    // Flight
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    connect(&flight, &Flight::cleared,
+            this, &StatisticsDialog::updateUi);
 
     emit visibilityChanged(true);
 }
@@ -97,11 +103,18 @@ void StatisticsDialog::showEvent(QShowEvent *event) noexcept
 void StatisticsDialog::hideEvent(QHideEvent *event) noexcept
 {
     QDialog::hideEvent(event);
+
+    // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::timestampChanged,
                this, &StatisticsDialog::updateRecordUi);
     disconnect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
                this, &StatisticsDialog::updateRecordingSampleRate);
+
+    // Flight
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    disconnect(&flight, &Flight::cleared,
+               this, &StatisticsDialog::updateUi);
 
     emit visibilityChanged(false);
 }
@@ -116,12 +129,6 @@ void StatisticsDialog::initUi() noexcept
     d->closeDialogShortcut = new QShortcut(QKeySequence(tr("S", "Window|Statistics...")), this);
 }
 
-void StatisticsDialog::updateUi() noexcept
-{
-    updateRecordingSampleRate();
-    updateRecordUi(SkyConnectManager::getInstance().getCurrentTimestamp());
-}
-
 void StatisticsDialog::frenchConnection() noexcept
 {
     connect(d->closeDialogShortcut, &QShortcut::activated,
@@ -129,6 +136,12 @@ void StatisticsDialog::frenchConnection() noexcept
 }
 
 // PRIVATE SLOTS
+
+void StatisticsDialog::updateUi() noexcept
+{
+    updateRecordingSampleRate();
+    updateRecordUi(SkyConnectManager::getInstance().getCurrentTimestamp());
+}
 
 void StatisticsDialog::updateRecordingSampleRate() noexcept
 {

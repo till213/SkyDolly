@@ -22,52 +22,51 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef STATISTICSDIALOG_H
-#define STATISTICSDIALOG_H
+#ifndef RECENTFILEMENU_H
+#define RECENTFILEMENU_H
 
-#include <memory>
-#include <cstdint>
+#include <QObject>
+#include <QActionGroup>
 
-#include <QDialog>
+#include "WidgetLib.h"
 
-class QShowEvent;
-class QHideEvent;
+struct RecentFileMenuPrivate;
 
-struct StatisticsDialogPrivate;
-
-namespace Ui {
-    class StatisticsDialog;
-}
-
-class StatisticsDialog : public QDialog
+/*!
+ * \brief Provides QAction menu entries for a recent files menu.
+ *
+ * The QActions are updated by connecting to the corresponding changes
+ * in the RecentFile instance.
+ */
+class WIDGET_API RecentFileMenu : public QObject
 {
     Q_OBJECT
 public:
-    explicit StatisticsDialog(QWidget *parent = nullptr) noexcept;
-    StatisticsDialog(const StatisticsDialog &rhs) = delete;
-    StatisticsDialog(StatisticsDialog &&rhs) = delete;
-    StatisticsDialog &operator=(const StatisticsDialog &rhs) = delete;
-    StatisticsDialog &operator=(StatisticsDialog &&rhs) = delete;
-    ~StatisticsDialog() override;
+    explicit RecentFileMenu(QObject *parent = 0);
+    virtual ~RecentFileMenu();
+
+    QActionGroup &getRecentFileActionGroup() const;
 
 signals:
-    void visibilityChanged(bool visible);
-
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
+    /*!
+     * Emitted whenever the QActionGroup has changed, that is when QAction items
+     * have been added or removed.
+     */
+    void actionGroupChanged();
 
 private:
-    std::unique_ptr<StatisticsDialogPrivate> d;
-    const std::unique_ptr<Ui::StatisticsDialog> ui;
+    Q_DISABLE_COPY(RecentFileMenu)
 
-    void initUi() noexcept;
-    void frenchConnection() noexcept;
+    RecentFileMenuPrivate *d;
+
+    void initialise();
+    void frenchConnections();
 
 private slots:
-    void updateUi() noexcept;
-    void updateRecordingSampleRate() noexcept;
-    void updateRecordUi(std::int64_t timestamp) noexcept;
+    void updateRecentFileActions();
+    void updateNofRecentFileActions(int maxRecentFiles);
+    void handleRecentFileAction();
+    void clearRecentFileMenu();
 };
 
-#endif // STATISTICSDIALOG_H
+#endif // RECENTFILEMENU_H
