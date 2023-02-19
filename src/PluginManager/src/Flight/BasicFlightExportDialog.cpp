@@ -45,9 +45,9 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/SimType.h>
+#include <Flight/FlightExportPluginBaseSettings.h>
+#include <Flight/BasicFlightExportDialog.h>
 #include "Export.h"
-#include "FlightExportPluginBaseSettings.h"
-#include "BasicFlightExportDialog.h"
 #include "ui_BasicFlightExportDialog.h"
 
 struct BasicFlightExportDialogPrivate

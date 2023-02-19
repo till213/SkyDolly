@@ -32,7 +32,7 @@
 
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
-#include "PluginManagerLib.h"
+#include "../PluginManagerLib.h"
 
 struct FlightImportPluginBaseSettingsPrivate;
 

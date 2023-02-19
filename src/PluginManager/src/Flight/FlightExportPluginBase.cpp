@@ -42,9 +42,9 @@
 #include <Kernel/File.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
-#include "BasicFlightExportDialog.h"
-#include "FlightExportPluginBaseSettings.h"
-#include "FlightExportPluginBase.h"
+#include <Flight/BasicFlightExportDialog.h>
+#include <Flight/FlightExportPluginBaseSettings.h>
+#include <Flight/FlightExportPluginBase.h>
 
 struct FlightExportPluginBasePrivate
 { 

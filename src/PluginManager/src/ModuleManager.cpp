@@ -48,8 +48,8 @@
 #include <Kernel/QUuidHasher.h>
 #include <Kernel/Sort.h>
 #include <Module/ModuleIntf.h>
-#include <Module/ModuleManager.h>
-#include "DefaultModuleImpl.h"
+#include <ModuleManager.h>
+#include "Module/DefaultModuleImpl.h"
 
 namespace
 {

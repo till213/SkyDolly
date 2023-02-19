@@ -35,8 +35,8 @@ class QIODevice;
 class QString;
 
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportIntf.h>
-#include <PluginManager/FlightExportPluginBase.h>
+#include <PluginManager/Flight/FlightExportIntf.h>
+#include <PluginManager/Flight/FlightExportPluginBase.h>
 
 struct FlightData;
 class Aircraft;

@@ -37,8 +37,8 @@ class QIODevice;
 #include <Flight/FlightAugmentation.h>
 #include <Kernel/Settings.h>
 #include "FlightExportIntf.h"
-#include "PluginBase.h"
-#include "PluginManagerLib.h"
+#include "../PluginBase.h"
+#include "../PluginManagerLib.h"
 
 struct PositionData;
 class Flight;

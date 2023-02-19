@@ -33,7 +33,7 @@
 class QWidget;
 
 #include <Model/AircraftType.h>
-#include "PluginManagerLib.h"
+#include "../PluginManagerLib.h"
 
 class Flight;
 class FlightImportPluginBaseSettings;

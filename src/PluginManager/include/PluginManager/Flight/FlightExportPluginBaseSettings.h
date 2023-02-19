@@ -32,7 +32,7 @@
 
 #include <Kernel/Settings.h>
 #include <Kernel/SampleRate.h>
-#include "PluginManagerLib.h"
+#include "../PluginManagerLib.h"
 
 struct FlightExportPluginBaseSettingsPrivate;
 

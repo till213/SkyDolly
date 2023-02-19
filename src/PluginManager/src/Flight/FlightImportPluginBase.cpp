@@ -55,9 +55,9 @@
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
 #include <Persistence/Service/AircraftTypeService.h>
-#include "BasicFlightImportDialog.h"
-#include "FlightImportPluginBaseSettings.h"
-#include "FlightImportPluginBase.h"
+#include <Flight/BasicFlightImportDialog.h>
+#include <Flight/FlightImportPluginBaseSettings.h>
+#include <Flight/FlightImportPluginBase.h>
 
 struct FlightImportPluginBasePrivate
 {

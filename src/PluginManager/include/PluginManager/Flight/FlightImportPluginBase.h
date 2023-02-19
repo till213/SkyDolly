@@ -37,8 +37,8 @@ class QIODevice;
 #include <Kernel/Settings.h>
 #include <Flight/FlightAugmentation.h>
 #include "FlightImportIntf.h"
-#include "PluginBase.h"
-#include "PluginManagerLib.h"
+#include "../PluginBase.h"
+#include "../PluginManagerLib.h"
 
 class FlightService;
 class Flight;

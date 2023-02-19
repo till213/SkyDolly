@@ -40,8 +40,8 @@
 #include <Model/AircraftType.h>
 #include <Model/Flight.h>
 #include <Persistence/Service/AircraftTypeService.h>
-#include "FlightImportPluginBaseSettings.h"
-#include "BasicFlightImportDialog.h"
+#include <Flight/FlightImportPluginBaseSettings.h>
+#include <Flight/BasicFlightImportDialog.h>
 #include "ui_BasicFlightImportDialog.h"
 
 struct BasicFlightImportDialogPrivate

@@ -31,7 +31,7 @@
 
 class QIODevice;
 
-#include "PluginIntf.h"
+#include "../PluginIntf.h"
 
 class Flight;
 struct FlightData;

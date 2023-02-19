@@ -27,7 +27,7 @@
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SampleRate.h>
-#include "FlightExportPluginBaseSettings.h"
+#include <Flight/FlightExportPluginBaseSettings.h>
 
 namespace
 {

@@ -92,7 +92,7 @@
 #include <PluginManager/Connect.h>
 #include <PluginManager/PluginManager.h>
 #include <PluginManager/Module/ModuleIntf.h>
-#include <PluginManager/Module/ModuleManager.h>
+#include <PluginManager/ModuleManager.h>
 #include "Dialog/AboutDialog.h"
 #include "Dialog/LogbookSettingsDialog.h"
 #include "Dialog/SettingsDialog.h"

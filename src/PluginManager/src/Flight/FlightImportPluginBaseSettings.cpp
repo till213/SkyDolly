@@ -27,7 +27,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include "FlightImportPluginBaseSettings.h"
+#include <Flight/FlightImportPluginBaseSettings.h>
 
 namespace
 {

@@ -29,7 +29,7 @@
 
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 #include "IgcExportSettings.h"
 
 namespace
