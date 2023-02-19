@@ -60,7 +60,7 @@
 #include <Widget/UnitWidgetItem.h>
 #include <Widget/LinkedOptionGroup.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/AbstractModule.h>
 #include "LocationWidget.h"
 #include "EnumerationItemDelegate.h"

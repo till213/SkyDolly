@@ -31,8 +31,8 @@
 #include <QObject>
 
 #include <Model/TimeVariableData.h>
-#include <PluginManager/AbstractSkyConnect.h>
-#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect/AbstractSkyConnect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 
 class Flight;
 class Aircraft;

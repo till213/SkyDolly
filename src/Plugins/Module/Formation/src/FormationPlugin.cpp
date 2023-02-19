@@ -30,7 +30,7 @@
 #include <Model/Aircraft.h>
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 #include "Formation.h"
 #include "FormationWidget.h"

@@ -35,7 +35,7 @@ class QHideEvent;
 class QAction;
 class QTableWidgetItem;
 
-#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleIntf.h>
 #include <PluginManager/Module/AbstractModule.h>
 #include "Formation.h"

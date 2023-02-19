@@ -29,11 +29,11 @@
 
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
-#include "SkyConnectManager.h"
-#include "SkyConnectIntf.h"
 #include <Persistence/Service/FlightService.h>
 #include <Module/ModuleBaseSettings.h>
 #include <Module/AbstractModule.h>
+#include <Connect/SkyConnectIntf.h>
+#include <SkyConnectManager.h>
 
 struct AbstractModulePrivate
 {

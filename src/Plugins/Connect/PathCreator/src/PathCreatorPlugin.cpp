@@ -60,7 +60,7 @@
 #include <Model/Waypoint.h>
 #include <Model/FlightCondition.h>
 #include <Model/SimType.h>
-#include <PluginManager/AbstractSkyConnect.h>
+#include <PluginManager/Connect/AbstractSkyConnect.h>
 #include "PathCreatorPlugin.h"
 
 namespace {

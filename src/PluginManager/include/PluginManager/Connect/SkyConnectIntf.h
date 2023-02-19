@@ -34,7 +34,7 @@
 #include <Model/InitialPosition.h>
 #include <Model/Location.h>
 #include "Connect.h"
-#include "PluginManagerLib.h"
+#include "../PluginManagerLib.h"
 
 class Flight;
 class Aircraft;

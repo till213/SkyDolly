@@ -29,7 +29,7 @@
 
 #include <Persistence/PersistedEnumerationItem.h>
 #include <Persistence/Service/EnumerationService.h>
-#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 #include "LocationWidget.h"

@@ -29,8 +29,8 @@
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include "AbstractSimulationVariableWidget.h"
 
 

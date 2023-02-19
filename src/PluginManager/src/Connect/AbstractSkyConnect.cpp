@@ -43,9 +43,9 @@
 #include <Model/Position.h>
 #include <Model/PositionData.h>
 #include <Model/InitialPosition.h>
-#include "Connect.h"
-#include "SkyConnectIntf.h"
-#include "AbstractSkyConnect.h"
+#include <Connect/Connect.h>
+#include <Connect/SkyConnectIntf.h>
+#include <Connect/AbstractSkyConnect.h>
 
 namespace
 {
