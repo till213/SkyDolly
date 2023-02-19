@@ -32,6 +32,7 @@ class QWidget;
 
 #include "PluginManager/AbstractModule.h"
 
+class ModuleBaseSettings;
 struct FormationPluginPrivate;
 
 class FormationPlugin : public AbstractModule
@@ -54,6 +55,7 @@ public:
 protected:
     void onStartRecording() noexcept override;
     void onStartReplay() noexcept override;
+    ModuleBaseSettings &getPluginSettings() const noexcept override;
 
 protected slots:
     void onRecordingStopped() noexcept override;

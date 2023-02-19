@@ -22,47 +22,35 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory.h>
 
-#include <QString>
+#include <memory>
 
-#include <SkyConnectManager.h>
-#include "Module/DefaultModuleSettings.h"
-#include "DefaultModuleImpl.h"
+#include <Kernel/Settings.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
+#include "TemplateSettings.h"
 
-struct DefaultModuleImplPrivate
-{
-    DefaultModuleSettings pluginSettings;
-};
+struct TemplateSettingsPrivate
+{};
 
 // PUBLIC
 
-// PUBLIC
-
-DefaultModuleImpl::DefaultModuleImpl() noexcept
-    : d(std::make_unique<DefaultModuleImplPrivate>())
+TemplateSettings::TemplateSettings() noexcept
+    : ModuleBaseSettings(),
+      d(std::make_unique<TemplateSettingsPrivate>())
 {}
 
-DefaultModuleImpl::~DefaultModuleImpl() = default;
-
-QString DefaultModuleImpl::getModuleName() const noexcept
-{
-    return "";
-}
-
-QWidget *DefaultModuleImpl::getWidget() const noexcept
-{
-    return nullptr;
-}
-
-ModuleIntf::RecordIconId DefaultModuleImpl::getRecordIconId() const noexcept
-{
-    return ModuleIntf::RecordIconId::Normal;
-}
+TemplateSettings::~TemplateSettings() = default;
 
 // PROTECTED
 
-ModuleBaseSettings &DefaultModuleImpl::getPluginSettings() const noexcept
-{
-    return d->pluginSettings;
-}
+void TemplateSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
+{}
+
+void TemplateSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{}
+
+void TemplateSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
+{}
+
+void TemplateSettings::restoreDefaultsExtn() noexcept
+{}

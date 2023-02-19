@@ -22,47 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory.h>
+#ifndef MODULEBASESETTINGS_H
+#define MODULEBASESETTINGS_H
 
+#include <memory>
+
+#include <QObject>
 #include <QString>
 
-#include <SkyConnectManager.h>
-#include "Module/DefaultModuleSettings.h"
-#include "DefaultModuleImpl.h"
+#include <Kernel/Settings.h>
+#include "../PluginManagerLib.h"
 
-struct DefaultModuleImplPrivate
+class PLUGINMANAGER_API ModuleBaseSettings : public QObject
 {
-    DefaultModuleSettings pluginSettings;
+    Q_OBJECT
+public:
+    void addSettings(Settings::KeyValues &keyValues) const noexcept;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept;
+    void restoreDefaults() noexcept;
+
+signals:
+    /*!
+     * Emitted whenever the plugin settings (base settings or extended settings) have changed.
+     */
+    void changed();
+
+protected:
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept = 0;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept = 0;
+    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept = 0;
+    virtual void restoreDefaultsExtn() noexcept = 0;
 };
 
-// PUBLIC
-
-// PUBLIC
-
-DefaultModuleImpl::DefaultModuleImpl() noexcept
-    : d(std::make_unique<DefaultModuleImplPrivate>())
-{}
-
-DefaultModuleImpl::~DefaultModuleImpl() = default;
-
-QString DefaultModuleImpl::getModuleName() const noexcept
-{
-    return "";
-}
-
-QWidget *DefaultModuleImpl::getWidget() const noexcept
-{
-    return nullptr;
-}
-
-ModuleIntf::RecordIconId DefaultModuleImpl::getRecordIconId() const noexcept
-{
-    return ModuleIntf::RecordIconId::Normal;
-}
-
-// PROTECTED
-
-ModuleBaseSettings &DefaultModuleImpl::getPluginSettings() const noexcept
-{
-    return d->pluginSettings;
-}
+#endif // MODULEBASESETTINGS_H

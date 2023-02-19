@@ -22,47 +22,35 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory.h>
 
-#include <QString>
+#include <memory>
 
-#include <SkyConnectManager.h>
-#include "Module/DefaultModuleSettings.h"
-#include "DefaultModuleImpl.h"
+#include <Kernel/Settings.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
+#include "LogbookSettings.h"
 
-struct DefaultModuleImplPrivate
-{
-    DefaultModuleSettings pluginSettings;
-};
+struct LogbookSettingsPrivate
+{};
 
 // PUBLIC
 
-// PUBLIC
-
-DefaultModuleImpl::DefaultModuleImpl() noexcept
-    : d(std::make_unique<DefaultModuleImplPrivate>())
+LogbookSettings::LogbookSettings() noexcept
+    : ModuleBaseSettings(),
+      d(std::make_unique<LogbookSettingsPrivate>())
 {}
 
-DefaultModuleImpl::~DefaultModuleImpl() = default;
-
-QString DefaultModuleImpl::getModuleName() const noexcept
-{
-    return "";
-}
-
-QWidget *DefaultModuleImpl::getWidget() const noexcept
-{
-    return nullptr;
-}
-
-ModuleIntf::RecordIconId DefaultModuleImpl::getRecordIconId() const noexcept
-{
-    return ModuleIntf::RecordIconId::Normal;
-}
+LogbookSettings::~LogbookSettings() = default;
 
 // PROTECTED
 
-ModuleBaseSettings &DefaultModuleImpl::getPluginSettings() const noexcept
-{
-    return d->pluginSettings;
-}
+void LogbookSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
+{}
+
+void LogbookSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{}
+
+void LogbookSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
+{}
+
+void LogbookSettings::restoreDefaultsExtn() noexcept
+{}

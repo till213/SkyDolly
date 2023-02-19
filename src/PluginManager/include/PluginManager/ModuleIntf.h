@@ -29,8 +29,7 @@
 #include <QString>
 
 class QWidget;
-
-#include "SkyConnectIntf.h"
+class QUuid;
 
 class ModuleIntf
 {
@@ -55,6 +54,9 @@ public:
     virtual void setRecording(bool enable) noexcept = 0;
     virtual void setPaused(bool enable) noexcept = 0;
     virtual void setPlaying(bool enable) noexcept = 0;
+
+    virtual void storeSettings(const QUuid &pluginUuid) const noexcept = 0;
+    virtual void restoreSettings(const QUuid &pluginUuid) noexcept = 0;
 
 protected:
     virtual void onRecordingStopped() noexcept = 0;

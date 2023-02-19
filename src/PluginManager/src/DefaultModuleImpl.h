@@ -25,19 +25,35 @@
 #ifndef DEFAULTMODULEIMPL_H
 #define DEFAULTMODULEIMPL_H
 
+#include <memory.h>
+
 #include <QString>
 
 class QWidget;
 
 #include "AbstractModule.h"
 
+struct DefaultModuleImplPrivate;
+
 class DefaultModuleImpl : public AbstractModule
 {
 	Q_OBJECT
 public:
+    DefaultModuleImpl() noexcept;
+    DefaultModuleImpl(const DefaultModuleImpl &rhs) = delete;
+    DefaultModuleImpl(DefaultModuleImpl &&rhs) = delete;
+    DefaultModuleImpl &operator=(const DefaultModuleImpl &rhs) = delete;
+    DefaultModuleImpl &operator=(DefaultModuleImpl &&rhs) = delete;
+    ~DefaultModuleImpl() override;
+
     QString getModuleName() const noexcept final;
     QWidget *getWidget() const noexcept final;
     RecordIconId getRecordIconId() const noexcept final;
+
+protected:
+    const std::unique_ptr<DefaultModuleImplPrivate> d;
+
+    ModuleBaseSettings &getPluginSettings() const noexcept override;
 };
 
 #endif // DEFAULTMODULEIMPL_H

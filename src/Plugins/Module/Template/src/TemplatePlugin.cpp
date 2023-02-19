@@ -27,7 +27,9 @@
 #include <QObject>
 #include <QCoreApplication>
 
+#include <PluginManager/Module/ModuleBaseSettings.h>
 #include "TemplateWidget.h"
+#include "TemplateSettings.h"
 #include "TemplatePlugin.h"
 
 struct TemplatePluginPrivate
@@ -37,6 +39,7 @@ struct TemplatePluginPrivate
     {}
 
     std::unique_ptr<TemplateWidget> locationWidget;
+    TemplateSettings moduleSettings;
 };
 
 // PUBLIC
@@ -56,4 +59,11 @@ QString TemplatePlugin::getModuleName() const noexcept
 QWidget *TemplatePlugin::getWidget() const noexcept
 {
     return d->locationWidget.get();
+}
+
+// PROTECTED
+
+ModuleBaseSettings &TemplatePlugin::getPluginSettings() const noexcept
+{
+    return d->moduleSettings;
 }

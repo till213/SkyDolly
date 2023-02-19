@@ -22,47 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory.h>
+#ifndef LOGBOOKSETTINGS_H
+#define LOGBOOKSETTINGS_H
 
-#include <QString>
+#include <memory>
 
-#include <SkyConnectManager.h>
-#include "Module/DefaultModuleSettings.h"
-#include "DefaultModuleImpl.h"
+#include <QObject>
 
-struct DefaultModuleImplPrivate
+#include <Kernel/Settings.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
+
+struct LogbookSettingsPrivate;
+
+class LogbookSettings : public ModuleBaseSettings
 {
-    DefaultModuleSettings pluginSettings;
+    Q_OBJECT
+public:
+    LogbookSettings() noexcept;
+    LogbookSettings(const LogbookSettings &rhs) = delete;
+    LogbookSettings(LogbookSettings &&rhs) = delete;
+    LogbookSettings &operator=(const LogbookSettings &rhs) = delete;
+    LogbookSettings &operator=(LogbookSettings &&rhs) = delete;
+    ~LogbookSettings() override;
+
+protected:
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
+
+private:
+    const std::unique_ptr<LogbookSettingsPrivate> d;
 };
 
-// PUBLIC
-
-// PUBLIC
-
-DefaultModuleImpl::DefaultModuleImpl() noexcept
-    : d(std::make_unique<DefaultModuleImplPrivate>())
-{}
-
-DefaultModuleImpl::~DefaultModuleImpl() = default;
-
-QString DefaultModuleImpl::getModuleName() const noexcept
-{
-    return "";
-}
-
-QWidget *DefaultModuleImpl::getWidget() const noexcept
-{
-    return nullptr;
-}
-
-ModuleIntf::RecordIconId DefaultModuleImpl::getRecordIconId() const noexcept
-{
-    return ModuleIntf::RecordIconId::Normal;
-}
-
-// PROTECTED
-
-ModuleBaseSettings &DefaultModuleImpl::getPluginSettings() const noexcept
-{
-    return d->pluginSettings;
-}
+#endif // LOGBOOKSETTINGS_H

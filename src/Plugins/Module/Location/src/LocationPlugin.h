@@ -34,6 +34,7 @@ class QWidget;
 #include "PluginManager/AbstractModule.h"
 
 struct InitialPosition;
+class ModuleBaseSettings;
 struct LocationPluginPrivate;
 
 class LocationPlugin : public AbstractModule
@@ -51,6 +52,9 @@ public:
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
+
+protected:
+    ModuleBaseSettings &getPluginSettings() const noexcept override;
 
 private:
     const std::unique_ptr<LocationPluginPrivate> d;

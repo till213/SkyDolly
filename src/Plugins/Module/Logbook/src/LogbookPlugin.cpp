@@ -32,11 +32,14 @@
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
 #include "LogbookWidget.h"
+#include "LogbookSettings.h"
 #include "LogbookPlugin.h"
 
 struct LogbookPluginPrivate
 {
+    LogbookSettings moduleSettings;
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
     std::unique_ptr<LogbookWidget> logbookWidget {std::make_unique<LogbookWidget>()};
 };
@@ -46,7 +49,9 @@ struct LogbookPluginPrivate
 LogbookPlugin::LogbookPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
       d(std::make_unique<LogbookPluginPrivate>())
-{}
+{
+    LogbookSettings moduleSettings;
+}
 
 LogbookPlugin::~LogbookPlugin() = default;
 
@@ -58,6 +63,13 @@ QString LogbookPlugin::getModuleName() const noexcept
 QWidget *LogbookPlugin::getWidget() const noexcept
 {
     return d->logbookWidget.get();
+}
+
+// PROTECTED
+
+ModuleBaseSettings &LogbookPlugin::getPluginSettings() const noexcept
+{
+    return d->moduleSettings;
 }
 
 // PROTECTED SLOTS

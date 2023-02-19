@@ -31,12 +31,15 @@
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
 #include "Formation.h"
 #include "FormationWidget.h"
+#include "FormationSettings.h"
 #include "FormationPlugin.h"
 
 struct FormationPluginPrivate
 {
+    FormationSettings moduleSettings;
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
     std::unique_ptr<FormationWidget> formationWidget{std::make_unique<FormationWidget>()};
 };
@@ -92,6 +95,11 @@ void FormationPlugin::onStartReplay() noexcept
         Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp) :
         InitialPosition();
     skyConnectManager.startReplay(fromStart, initialPosition);
+}
+
+ModuleBaseSettings &FormationPlugin::getPluginSettings() const noexcept
+{
+    return d->moduleSettings;
 }
 
 // PROTECTED SLOTS

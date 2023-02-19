@@ -30,10 +30,13 @@
 #include <QObject>
 
 class QWidget;
+class QUuid;
 
+#include <Kernel/Settings.h>
 #include "ModuleIntf.h"
 #include "PluginManagerLib.h"
 
+class ModuleBaseSettings;
 class FlightService;
 struct AbstractModulePrivate;
 
@@ -54,6 +57,9 @@ public:
     void setPaused(bool enable) noexcept override;
     void setPlaying(bool enable) noexcept override;
 
+    void storeSettings(const QUuid &pluginUuid) const noexcept override;
+    void restoreSettings(const QUuid &pluginUuid) noexcept override;
+
 protected:
     virtual void onStartRecording() noexcept;
     virtual void onPause(bool enable) noexcept;
@@ -61,8 +67,34 @@ protected:
 
     FlightService &getFlightService() const noexcept;
 
+    virtual ModuleBaseSettings &getPluginSettings() const noexcept = 0;
+
 protected slots:
     void onRecordingStopped() noexcept override;
+
+    /*!
+     * Adds the plugin-specific settings, a key/value pair for each setting, to \c settings.
+     *
+     * @param keyValues
+     *        the plugin-specific key/value pair settings
+     */
+    virtual void addSettings(Settings::KeyValues &keyValues) const noexcept;
+
+    /*!
+     * Adds the plugin-specific setting keys with corresponding default values to \c keysWithDefaults.
+     *
+     * @param keysWithDefaults
+     *        the plugin-specific keys, with corresponding default values
+     */
+    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept;
+
+    /*!
+     * Sets the plugin-specific settings.
+     *
+     * \param valuesByKey
+     *        the plugin-specific settings associated with their key
+     */
+    virtual void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept;
 
 private:
     const std::unique_ptr<AbstractModulePrivate> d;

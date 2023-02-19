@@ -31,7 +31,9 @@
 #include <Persistence/Service/EnumerationService.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
 #include "LocationWidget.h"
+#include "LocationSettings.h"
 #include "LocationPlugin.h"
 
 struct LocationPluginPrivate
@@ -42,6 +44,7 @@ struct LocationPluginPrivate
         Update
     };
 
+    LocationSettings moduleSettings;
     std::unique_ptr<LocationWidget> locationWidget {std::make_unique<LocationWidget>()};
     const std::int64_t EngineEventStartId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStartSymId).id()};
     const std::int64_t EngineEventStopId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStopSymId).id()};
@@ -67,6 +70,13 @@ QString LocationPlugin::getModuleName() const noexcept
 QWidget *LocationPlugin::getWidget() const noexcept
 {
     return d->locationWidget.get();
+}
+
+// PROTECTED
+
+ModuleBaseSettings &LocationPlugin::getPluginSettings() const noexcept
+{
+    return d->moduleSettings;
 }
 
 // PRIVATE

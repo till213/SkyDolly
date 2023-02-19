@@ -32,7 +32,6 @@
 
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
-#include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
 struct FlightImportPluginBaseSettingsPrivate;

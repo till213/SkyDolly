@@ -32,6 +32,7 @@ class QWidget;
 
 #include "PluginManager/AbstractModule.h"
 
+class ModuleBaseSettings;
 struct LogbookPluginPrivate;
 
 class LogbookPlugin : public AbstractModule
@@ -49,6 +50,9 @@ public:
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
+
+protected:
+    ModuleBaseSettings &getPluginSettings() const noexcept override;
 
 protected slots:
     void onRecordingStopped() noexcept override;

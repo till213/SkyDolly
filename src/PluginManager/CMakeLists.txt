@@ -40,6 +40,8 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/AbstractModule.h src/AbstractModule.cpp
         include/PluginManager/ModuleManager.h src/ModuleManager.cpp
         src/DefaultModuleImpl.h src/DefaultModuleImpl.cpp
+        src/Module/DefaultModuleSettings.h src/Module/DefaultModuleSettings.cpp
+        include/PluginManager/Module/ModuleBaseSettings.h src/Module/ModuleBaseSettings.cpp
         res/PluginManager.qrc
 )
 target_include_directories(${LIBRARY_NAME}

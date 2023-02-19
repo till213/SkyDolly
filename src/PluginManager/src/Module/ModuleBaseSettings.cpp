@@ -22,47 +22,34 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory.h>
+#include <memory>
 
-#include <QString>
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <Kernel/SampleRate.h>
+#include <Module/ModuleBaseSettings.h>
 
-#include <SkyConnectManager.h>
-#include "Module/DefaultModuleSettings.h"
-#include "DefaultModuleImpl.h"
-
-struct DefaultModuleImplPrivate
-{
-    DefaultModuleSettings pluginSettings;
-};
 
 // PUBLIC
 
-// PUBLIC
-
-DefaultModuleImpl::DefaultModuleImpl() noexcept
-    : d(std::make_unique<DefaultModuleImplPrivate>())
-{}
-
-DefaultModuleImpl::~DefaultModuleImpl() = default;
-
-QString DefaultModuleImpl::getModuleName() const noexcept
+void ModuleBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
-    return "";
+    addSettingsExtn(keyValues);
 }
 
-QWidget *DefaultModuleImpl::getWidget() const noexcept
+void ModuleBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    return nullptr;
+    addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
-ModuleIntf::RecordIconId DefaultModuleImpl::getRecordIconId() const noexcept
+void ModuleBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    return ModuleIntf::RecordIconId::Normal;
+    restoreSettingsExtn(valuesByKey);
+    emit changed();
 }
 
-// PROTECTED
-
-ModuleBaseSettings &DefaultModuleImpl::getPluginSettings() const noexcept
+void ModuleBaseSettings::restoreDefaults() noexcept
 {
-    return d->pluginSettings;
+    restoreDefaultsExtn();
+    emit changed();
 }

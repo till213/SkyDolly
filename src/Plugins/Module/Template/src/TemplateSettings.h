@@ -22,47 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory.h>
+#ifndef TEMPLATESETTINGS_H
+#define TEMPLATESETTINGS_H
 
-#include <QString>
+#include <memory>
 
-#include <SkyConnectManager.h>
-#include "Module/DefaultModuleSettings.h"
-#include "DefaultModuleImpl.h"
+#include <QObject>
 
-struct DefaultModuleImplPrivate
+#include <Kernel/Settings.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
+
+struct TemplateSettingsPrivate;
+
+class TemplateSettings : public ModuleBaseSettings
 {
-    DefaultModuleSettings pluginSettings;
+    Q_OBJECT
+public:
+    TemplateSettings() noexcept;
+    TemplateSettings(const TemplateSettings &rhs) = delete;
+    TemplateSettings(TemplateSettings &&rhs) = delete;
+    TemplateSettings &operator=(const TemplateSettings &rhs) = delete;
+    TemplateSettings &operator=(TemplateSettings &&rhs) = delete;
+    ~TemplateSettings() override;
+
+protected:
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
+
+private:
+    const std::unique_ptr<TemplateSettingsPrivate> d;
 };
 
-// PUBLIC
-
-// PUBLIC
-
-DefaultModuleImpl::DefaultModuleImpl() noexcept
-    : d(std::make_unique<DefaultModuleImplPrivate>())
-{}
-
-DefaultModuleImpl::~DefaultModuleImpl() = default;
-
-QString DefaultModuleImpl::getModuleName() const noexcept
-{
-    return "";
-}
-
-QWidget *DefaultModuleImpl::getWidget() const noexcept
-{
-    return nullptr;
-}
-
-ModuleIntf::RecordIconId DefaultModuleImpl::getRecordIconId() const noexcept
-{
-    return ModuleIntf::RecordIconId::Normal;
-}
-
-// PROTECTED
-
-ModuleBaseSettings &DefaultModuleImpl::getPluginSettings() const noexcept
-{
-    return d->pluginSettings;
-}
+#endif // TEMPLATESETTINGS_H

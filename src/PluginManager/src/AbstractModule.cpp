@@ -27,10 +27,12 @@
 #include <QWidget>
 #include <QAction>
 
+#include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include "SkyConnectManager.h"
 #include "SkyConnectIntf.h"
 #include <Persistence/Service/FlightService.h>
+#include <Module/ModuleBaseSettings.h>
 #include "AbstractModule.h"
 
 struct AbstractModulePrivate
@@ -95,6 +97,25 @@ void AbstractModule::setPlaying(bool enable) noexcept
     }
 }
 
+void AbstractModule::storeSettings(const QUuid &pluginUuid) const noexcept
+{
+    Settings::KeyValues settings;
+    addSettings(settings);
+    if (settings.size() > 0) {
+        Settings::getInstance().storePluginSettings(pluginUuid, settings);
+    }
+}
+
+void AbstractModule::restoreSettings(const QUuid &pluginUuid) noexcept
+{
+    Settings::KeysWithDefaults keysWithDefaults;
+    addKeysWithDefaults(keysWithDefaults);
+    if (keysWithDefaults.size() > 0) {
+        Settings::ValuesByKey values = Settings::getInstance().restorePluginSettings(pluginUuid, keysWithDefaults);
+        restoreSettings(values);
+    }
+}
+
 // PROTECTED
 
 void AbstractModule::onStartRecording() noexcept
@@ -113,16 +134,26 @@ void AbstractModule::onStartReplay() noexcept
     skyConnectManager.startReplay(skyConnectManager.isAtEnd());
 }
 
-FlightService &AbstractModule::getFlightService() const noexcept
-{
-    return *d->flightService;
-}
-
 // PROTECTED SLOTS
 
 void AbstractModule::onRecordingStopped() noexcept
 {
     d->flightService->storeFlight(Logbook::getInstance().getCurrentFlight());
+}
+
+void AbstractModule::addSettings(Settings::KeyValues &keyValues) const noexcept
+{
+    getPluginSettings().addSettings(keyValues);
+}
+
+void AbstractModule::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
+}
+
+void AbstractModule::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
+{
+    getPluginSettings().restoreSettings(valuesByKey);
 }
 
 // PRIVATE
