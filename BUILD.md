@@ -58,6 +58,7 @@ Option                  | Default | Description
 SKY_GIT_INIT_SUBMODULES | ON      | Initialises the git submodules
 SKY_FETCH_EGM           | OFF     | Downloads the earth gravity model EGM2008 geoid file with a 5 minute resolution (size around 18 MiB, decompressed). The EGM file will then be placed into the `Resources` folder (in the `bin` output folder) at compile time
 SKY_DOXY_DOC            | OFF     | Generates the API documentation with Doxygen (Doxygen is required for the documenation generation)
+SKY_TESTS               | OFF     | Builds the Sky Dolly unit tests
 
 Note that the EGM2008 geoid file (which contains the [geoid](https://en.wikipedia.org/wiki/Geoid) undulation values across the globe) is optional: Sky Dolly will use it when available (some import/export plugins apply the undulation values).
 

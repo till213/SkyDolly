@@ -34,8 +34,8 @@
 class QFile;
 class QWidget;
 
-#include <PluginManager/LocationImportIntf.h>
-#include <PluginManager/LocationImportPluginBase.h>
+#include <PluginManager/Location/LocationImportIntf.h>
+#include <PluginManager/Location/LocationImportPluginBase.h>
 
 class Location;
 class LocationImportPluginBaseSettings;

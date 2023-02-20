@@ -40,8 +40,8 @@
 #include <Model/PrimaryFlightControlData.h>
 #include <Model/TimeVariableData.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include "PrimaryFlightControlWidget.h"
 #include "ui_PrimaryFlightControlWidget.h"
 

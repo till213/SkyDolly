@@ -32,19 +32,19 @@
 
 struct KmlImportOptionWidgetPrivate
 {
-    KmlImportOptionWidgetPrivate(KmlImportSettings &theImportSettings) noexcept
-        : settings(theImportSettings)
+    KmlImportOptionWidgetPrivate(KmlImportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {}
 
-    KmlImportSettings &settings;
+    KmlImportSettings &pluginSettings;
 };
 
 // PUBLIC
 
-KmlImportOptionWidget::KmlImportOptionWidget(KmlImportSettings &settings, QWidget *parent) noexcept
+KmlImportOptionWidget::KmlImportOptionWidget(KmlImportSettings &pluginSettings, QWidget *parent) noexcept
    : QWidget(parent),
      ui(std::make_unique<Ui::KmlImportOptionWidget>()),
-      d(std::make_unique<KmlImportOptionWidgetPrivate>(settings))
+      d(std::make_unique<KmlImportOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -60,7 +60,7 @@ void KmlImportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &KmlImportOptionWidget::onFormatChanged);
-    connect(&d->settings, &KmlImportSettings::changed,
+    connect(&d->pluginSettings, &KmlImportSettings::changed,
             this, &KmlImportOptionWidget::updateUi);
 }
 
@@ -75,7 +75,7 @@ void KmlImportOptionWidget::initUi() noexcept
 
 void KmlImportOptionWidget::updateUi() noexcept
 {
-    const KmlImportSettings::Format format = d->settings.getFormat();
+    const KmlImportSettings::Format format = d->pluginSettings.getFormat();
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
            static_cast<KmlImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != format) {
@@ -87,5 +87,5 @@ void KmlImportOptionWidget::updateUi() noexcept
 void KmlImportOptionWidget::onFormatChanged() noexcept
 {
     const KmlImportSettings::Format format = static_cast<KmlImportSettings::Format>(ui->formatComboBox->currentData().toInt());
-    d->settings.setFormat(format);
+    d->pluginSettings.setFormat(format);
 }

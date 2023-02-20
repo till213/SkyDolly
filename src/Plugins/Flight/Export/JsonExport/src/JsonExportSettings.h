@@ -30,7 +30,7 @@
 #include <QObject>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 
 struct JsonExportSettingsPrivate;
 

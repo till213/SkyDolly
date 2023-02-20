@@ -36,8 +36,8 @@
 #include <Model/Position.h>
 #include <Model/PositionData.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include "AircraftWidget.h"
 #include "ui_AircraftWidget.h"
 

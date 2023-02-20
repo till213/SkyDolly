@@ -39,12 +39,13 @@ class QTreeWidgetItem;
 class QTableWidgetItem;
 class QString;
 
-#include <PluginManager/ModuleIntf.h>
-#include <PluginManager/AbstractModule.h>
+#include <PluginManager/Module/ModuleIntf.h>
+#include <PluginManager/Module/AbstractModule.h>
 
 struct FlightDate;
 struct FlightSummary;
 class Aircraft;
+class LogbookSettings;
 struct LogbookWidgetPrivate;
 
 namespace Ui {
@@ -55,7 +56,7 @@ class LogbookWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit LogbookWidget(QWidget *parent = nullptr) noexcept;
+    explicit LogbookWidget(LogbookSettings &moduleSettings, QWidget *parent = nullptr) noexcept;
     LogbookWidget(const LogbookWidget &rhs) = delete;
     LogbookWidget(LogbookWidget &&rhs) = delete;
     LogbookWidget &operator=(const LogbookWidget &rhs) = delete;
@@ -109,6 +110,10 @@ private slots:
     void filterByFormationFlights(bool checked) noexcept;
     void filterByEngineType(int index) noexcept;
     void filterByDuration(int index) noexcept;
+
+    // Settings
+    void onTableLayoutChanged() noexcept;
+    void onModuleSettingsChanged() noexcept;
 };
 
 #endif // LOGBOOKWIDGET_H

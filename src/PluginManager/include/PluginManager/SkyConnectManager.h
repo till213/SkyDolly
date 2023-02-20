@@ -39,8 +39,8 @@ class QUuid;
 #include <Kernel/FlightSimulator.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
-#include "Connect.h"
-#include "SkyConnectIntf.h"
+#include "Connect/Connect.h"
+#include "Connect/SkyConnectIntf.h"
 #include "PluginManagerLib.h"
 
 struct SkyConnectManagerPrivate;

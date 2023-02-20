@@ -27,88 +27,8 @@
 #include <QUuid>
 
 #include "Version.h"
-#include "Const.h"
+#include "SettingsConverterV0dot16.h"
 #include "SettingsConverter.h"
-
-namespace
-{
-    void convertToV13([[maybe_unused]] const Version &settingsVersion, QSettings &settings) noexcept
-    {
-        settings.beginGroup("Window");
-        {
-            settings.setValue("LocationTableState", QVariant());
-        }
-        settings.endGroup();
-    }
-
-    void convertToV16([[maybe_unused]] const Version &settingsVersion, QSettings &settings) noexcept
-    {
-        static constexpr const char *AddToFlightEnabledKey = "AddToFlightEnabled";
-        static constexpr const char *ImportDirectoryKey = "ImportDirectoryEnabled";
-        bool addToFlight {false};
-        bool importDirectory {false};
-
-        if (settingsVersion < Version(QString("0.13.0"))) {
-            convertToV13(settingsVersion, settings);
-        }
-
-        // CSV import
-        settings.beginGroup(QString("Plugins/") + QUuid(Const::CsvImportPluginUuid).toByteArray());
-        {
-            addToFlight = settings.value(AddToFlightEnabledKey).toBool();
-            importDirectory = settings.value(ImportDirectoryKey).toBool();
-            if (addToFlight) {
-                // Add to current flight
-                settings.setValue("AircraftImportMode", 0);
-            } else {
-                // Add to separate flights / new flight
-                settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
-            }
-            // Remove obsolete setting
-            settings.remove(AddToFlightEnabledKey);
-        }
-        settings.endGroup();
-        // GPX import
-        settings.beginGroup(QString("Plugins/") + QUuid(Const::GpxImportPluginUuid).toByteArray());
-        {
-            addToFlight = settings.value(AddToFlightEnabledKey).toBool();
-            importDirectory = settings.value(ImportDirectoryKey).toBool();
-            if (addToFlight) {
-                settings.setValue("AircraftImportMode", 0);
-            } else {
-                settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
-            }
-            settings.remove(AddToFlightEnabledKey);
-        }
-        settings.endGroup();
-        // IGC import
-        settings.beginGroup(QString("Plugins/") + QUuid(Const::IgcImportPluginUuid).toByteArray());
-        {
-            addToFlight = settings.value(AddToFlightEnabledKey).toBool();
-            importDirectory = settings.value(ImportDirectoryKey).toBool();
-            if (addToFlight) {
-                settings.setValue("AircraftImportMode", 0);
-            } else {
-                settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
-            }
-            settings.remove(AddToFlightEnabledKey);
-        }
-        settings.endGroup();
-        // KML import
-        settings.beginGroup(QString("Plugins/") + QUuid(Const::KmlImportPluginUuid).toByteArray());
-        {
-            addToFlight = settings.value(AddToFlightEnabledKey).toBool();
-            importDirectory = settings.value(ImportDirectoryKey).toBool();
-            if (addToFlight) {
-                settings.setValue("AircraftImportMode", 0);
-            } else {
-                settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
-            }
-            settings.remove(AddToFlightEnabledKey);
-        }
-        settings.endGroup();
-    }
-}
 
 // PUBLIC
 
@@ -116,6 +36,6 @@ void SettingsConverter::convertToCurrent(const Version &settingsVersion, QSettin
 {
     const Version currentVersion;
     if (settingsVersion < currentVersion) {
-        ::convertToV16(settingsVersion, settings);
+        SettingsConverterV0dot16::convert(settingsVersion, settings);
     }
 }

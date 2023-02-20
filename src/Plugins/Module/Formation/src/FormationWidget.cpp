@@ -31,6 +31,7 @@
 #include <QDoubleValidator>
 #include <QWidget>
 #include <QTableWidget>
+#include <QHeaderView>
 #include <QIcon>
 #include <QLabel>
 #include <QButtonGroup>
@@ -60,11 +61,12 @@
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include <Widget/Platform.h>
 #include <Widget/UnitWidgetItem.h>
 #include "Formation.h"
+#include "FormationSettings.h"
 #include "FormationWidget.h"
 #include "ui_FormationWidget.h"
 
@@ -93,8 +95,9 @@ namespace
 
 struct FormationWidgetPrivate
 {
-    FormationWidgetPrivate(QWidget &parent) noexcept
-        : positionButtonGroup(new QButtonGroup(&parent))
+    FormationWidgetPrivate(FormationSettings &moduleSettings, QWidget &parent) noexcept
+        : moduleSettings(moduleSettings),
+          positionButtonGroup(new QButtonGroup(&parent))
     {
         // We always initialise all icons at once, so checking only for
         // normalAircraftIcon is sufficient
@@ -116,6 +119,7 @@ struct FormationWidgetPrivate
         }
     }
 
+    FormationSettings &moduleSettings;
     std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
     QButtonGroup *positionButtonGroup;
@@ -147,10 +151,10 @@ struct FormationWidgetPrivate
 
 // PUBLIC
 
-FormationWidget::FormationWidget(QWidget *parent) noexcept
+FormationWidget::FormationWidget(FormationSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::FormationWidget>()),
-      d(std::make_unique<FormationWidgetPrivate>(*this))
+      d(std::make_unique<FormationWidgetPrivate>(settings, *this))
 {
     ui->setupUi(this);
     initUi();
@@ -161,7 +165,7 @@ FormationWidget::FormationWidget(QWidget *parent) noexcept
 FormationWidget::~FormationWidget()
 {
     const QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
-    Settings::getInstance().setFormationAircraftTableState(tableState);
+    d->moduleSettings.setFormationAircraftTableState(tableState);
 }
 
 Formation::HorizontalDistance FormationWidget::getHorizontalDistance() const noexcept
@@ -190,17 +194,17 @@ void FormationWidget::initUi() noexcept
         tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude"),
         tr("Duration"), tr("Tail Number"), tr("Time Offset")
     };
-    FormationWidgetPrivate::sequenceNumberColumn = headers.indexOf(tr("Sequence"));
-    FormationWidgetPrivate::aircraftTypeColumn = headers.indexOf(tr("Aircraft"));
-    FormationWidgetPrivate::engineTypeColumn = headers.indexOf(tr("Engine Type"));
-    FormationWidgetPrivate::wingSpanColumn = headers.indexOf(tr("Wing Span"));
-    FormationWidgetPrivate::initialAirspeedColumn = headers.indexOf(tr("Initial Airspeed"));
-    FormationWidgetPrivate::initialAltitudeColumn = headers.indexOf(tr("Initial Altitude"));
-    FormationWidgetPrivate::durationColumn = headers.indexOf(tr("Duration"));
-    FormationWidgetPrivate::tailNumberColumn = headers.indexOf(tr("Tail Number"));
-    FormationWidgetPrivate::timeOffsetColumn = headers.indexOf(tr("Time Offset"));
+    FormationWidgetPrivate::sequenceNumberColumn = static_cast<int>(headers.indexOf(tr("Sequence")));
+    FormationWidgetPrivate::aircraftTypeColumn = static_cast<int>(headers.indexOf(tr("Aircraft")));
+    FormationWidgetPrivate::engineTypeColumn = static_cast<int>(headers.indexOf(tr("Engine Type")));
+    FormationWidgetPrivate::wingSpanColumn = static_cast<int>(headers.indexOf(tr("Wing Span")));
+    FormationWidgetPrivate::initialAirspeedColumn = static_cast<int>(headers.indexOf(tr("Initial Airspeed")));
+    FormationWidgetPrivate::initialAltitudeColumn = static_cast<int>(headers.indexOf(tr("Initial Altitude")));
+    FormationWidgetPrivate::durationColumn = static_cast<int>(headers.indexOf(tr("Duration")));
+    FormationWidgetPrivate::tailNumberColumn = static_cast<int>(headers.indexOf(tr("Tail Number")));
+    FormationWidgetPrivate::timeOffsetColumn = static_cast<int>(headers.indexOf(tr("Time Offset")));
 
-    ui->aircraftTableWidget->setColumnCount(headers.count());
+    ui->aircraftTableWidget->setColumnCount(static_cast<int>(headers.count()));
     ui->aircraftTableWidget->setHorizontalHeaderLabels(headers);
     ui->aircraftTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->aircraftTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -211,14 +215,14 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->aircraftTableWidget->setAlternatingRowColors(true);
 
-    QByteArray tableState = Settings::getInstance().getFormationAircraftTableState();
+    QByteArray tableState = d->moduleSettings.getFormationAircraftTableState();
     ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
 
     // Default position is south-east
     ui->sePositionRadioButton->setChecked(true);
     ui->horizontalDistanceSlider->setValue(Formation::HorizontalDistance::Nearby);
     ui->verticalDistanceSlider->setValue(Formation::VerticalDistance::Level);
-    ui->relativePositionCheckBox->setChecked(Settings::getInstance().isRelativePositionPlacementEnabled());
+    ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
 
     d->positionButtonGroup->addButton(ui->nPositionRadioButton, Formation::RelativePosition::North);
     d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Formation::RelativePosition::NorthNorthEast);
@@ -345,6 +349,14 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::onTimeOffsetValueChanged);
     connect(ui->resetAllTimeOffsetPushButton, &QPushButton::clicked,
             this, &FormationWidget::resetAllTimeOffsets);
+
+    // Module settings
+    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
+            this, &FormationWidget::onTableLayoutChanged);
+    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
+            this, &FormationWidget::onTableLayoutChanged);
+    connect(&d->moduleSettings, &ModuleBaseSettings::changed,
+            this, &FormationWidget::onModuleSettingsChanged);
 }
 
 void FormationWidget::updateTable() noexcept
@@ -691,7 +703,7 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
         break;
     }
     case SkyConnectIntf::ReplayMode::FlyWithFormation:
-        if (!skyConnectManager.isInRecordingState() && Settings::getInstance().isRelativePositionPlacementEnabled()) {
+        if (!skyConnectManager.isInRecordingState() && d->moduleSettings.isRelativePositionPlacementEnabled()) {
             const Formation::HorizontalDistance horizontalDistance {getHorizontalDistance()};
             const Formation::VerticalDistance verticalDistance {getVerticalDistance()};
             const Formation::RelativePosition relativePosition {getRelativePosition()};
@@ -708,7 +720,7 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
 void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    if (Settings::getInstance().isRelativePositionPlacementEnabled()) {
+    if (d->moduleSettings.isRelativePositionPlacementEnabled()) {
         switch(replayMode) {
         case SkyConnectIntf::ReplayMode::Normal:
             break;
@@ -876,7 +888,7 @@ void FormationWidget::onSelectionChanged() noexcept
 
 void FormationWidget::onInitialPositionPlacementChanged(bool enable) noexcept
 {
-    Settings::getInstance().setRelativePositionPlacementEnabled(enable);
+    d->moduleSettings.setRelativePositionPlacementEnabled(enable);
 }
 
 void FormationWidget::updateUserAircraftIndex() noexcept
@@ -1026,4 +1038,16 @@ void FormationWidget::resetAllTimeOffsets() noexcept
             }
         }
     }
+}
+
+void FormationWidget::onTableLayoutChanged() noexcept
+{
+    QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
+    d->moduleSettings.setFormationAircraftTableState(std::move(tableState));
+}
+
+void FormationWidget::onModuleSettingsChanged() noexcept
+{
+    ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
+    ui->aircraftTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getFormationAircraftTableState());
 }

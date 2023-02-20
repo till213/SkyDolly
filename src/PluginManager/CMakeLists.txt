@@ -10,36 +10,41 @@ target_compile_definitions(${LIBRARY_NAME}
 target_sources(${LIBRARY_NAME}
     PRIVATE
         include/PluginManager/PluginManagerLib.h
-        include/PluginManager/Connect.h
         include/PluginManager/Csv.h
-        include/PluginManager/SkyConnectIntf.h
-        include/PluginManager/SettingsIntf.h
         include/PluginManager/PluginIntf.h
-        include/PluginManager/FlightExportIntf.h
-        include/PluginManager/FlightImportIntf.h
         include/PluginManager/SkyConnectManager.h src/SkyConnectManager.cpp
-        include/PluginManager/AbstractSkyConnect.h src/AbstractSkyConnect.cpp
         include/PluginManager/PluginManager.h src/PluginManager.cpp
         include/PluginManager/Export.h src/Export.cpp
         include/PluginManager/PluginBase.h src/PluginBase.cpp
-        include/PluginManager/FlightImportPluginBase.h src/FlightImportPluginBase.cpp
-        include/PluginManager/FlightImportPluginBaseSettings.h src/FlightImportPluginBaseSettings.cpp
-        include/PluginManager/BasicFlightImportDialog.h src/BasicFlightImportDialog.cpp src/BasicFlightImportDialog.ui
-        include/PluginManager/FlightExportPluginBase.h src/FlightExportPluginBase.cpp
-        include/PluginManager/FlightExportPluginBaseSettings.h src/FlightExportPluginBaseSettings.cpp
-        include/PluginManager/BasicFlightExportDialog.h src/BasicFlightExportDialog.cpp src/BasicFlightExportDialog.ui
-        include/PluginManager/LocationExportIntf.h
-        include/PluginManager/LocationExportPluginBase.h src/LocationExportPluginBase.cpp
-        include/PluginManager/LocationExportPluginBaseSettings.h src/LocationExportPluginBaseSettings.cpp
-        include/PluginManager/BasicLocationExportDialog.h src/BasicLocationExportDialog.cpp src/BasicLocationExportDialog.ui
-        include/PluginManager/LocationImportIntf.h
-        include/PluginManager/LocationImportPluginBase.h src/LocationImportPluginBase.cpp
-        include/PluginManager/LocationImportPluginBaseSettings.h src/LocationImportPluginBaseSettings.cpp
-        include/PluginManager/BasicLocationImportDialog.h src/BasicLocationImportDialog.cpp src/BasicLocationImportDialog.ui
-        include/PluginManager/ModuleIntf.h
-        include/PluginManager/AbstractModule.h src/AbstractModule.cpp
+        # SkyConnect pugins
+        include/PluginManager/Connect/Connect.h
+        include/PluginManager/Connect/SkyConnectIntf.h
+        include/PluginManager/Connect/AbstractSkyConnect.h src/Connect/AbstractSkyConnect.cpp
+        # Flight import & export plugins
+        include/PluginManager/Flight/FlightExportIntf.h
+        include/PluginManager/Flight/FlightImportIntf.h
+        include/PluginManager/Flight/FlightImportPluginBase.h src/Flight/FlightImportPluginBase.cpp
+        include/PluginManager/Flight/FlightImportPluginBaseSettings.h src/Flight/FlightImportPluginBaseSettings.cpp
+        include/PluginManager/Flight/BasicFlightImportDialog.h src/Flight/BasicFlightImportDialog.cpp src/Flight/BasicFlightImportDialog.ui
+        include/PluginManager/Flight/FlightExportPluginBase.h src/Flight/FlightExportPluginBase.cpp
+        include/PluginManager/Flight/FlightExportPluginBaseSettings.h src/Flight/FlightExportPluginBaseSettings.cpp
+        include/PluginManager/Flight/BasicFlightExportDialog.h src/Flight/BasicFlightExportDialog.cpp src/Flight/BasicFlightExportDialog.ui
+        # Location import & export plugins
+        include/PluginManager/Location/LocationExportIntf.h
+        include/PluginManager/Location/LocationExportPluginBase.h src/Location/LocationExportPluginBase.cpp
+        include/PluginManager/Location/LocationExportPluginBaseSettings.h src/Location/LocationExportPluginBaseSettings.cpp
+        include/PluginManager/Location/BasicLocationExportDialog.h src/Location/BasicLocationExportDialog.cpp src/Location/BasicLocationExportDialog.ui
+        include/PluginManager/Location/LocationImportIntf.h
+        include/PluginManager/Location/LocationImportPluginBase.h src/Location/LocationImportPluginBase.cpp
+        include/PluginManager/Location/LocationImportPluginBaseSettings.h src/Location/LocationImportPluginBaseSettings.cpp
+        include/PluginManager/Location/BasicLocationImportDialog.h src/Location/BasicLocationImportDialog.cpp src/Location/BasicLocationImportDialog.ui
+        # Modules
         include/PluginManager/ModuleManager.h src/ModuleManager.cpp
-        src/DefaultModuleImpl.h src/DefaultModuleImpl.cpp
+        include/PluginManager/Module/ModuleIntf.h
+        include/PluginManager/Module/AbstractModule.h src/Module/AbstractModule.cpp        
+        src/Module/DefaultModuleImpl.h src/Module/DefaultModuleImpl.cpp
+        src/Module/DefaultModuleSettings.h src/Module/DefaultModuleSettings.cpp
+        include/PluginManager/Module/ModuleBaseSettings.h src/Module/ModuleBaseSettings.cpp
         res/PluginManager.qrc
 )
 target_include_directories(${LIBRARY_NAME}

@@ -60,11 +60,12 @@
 #include <Widget/UnitWidgetItem.h>
 #include <Widget/LinkedOptionGroup.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/AbstractModule.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Module/AbstractModule.h>
 #include "LocationWidget.h"
 #include "EnumerationItemDelegate.h"
 #include "PositionWidgetItem.h"
+#include "LocationSettings.h"
 #include "ui_LocationWidget.h"
 
 namespace
@@ -89,7 +90,8 @@ namespace
 
 struct LocationWidgetPrivate
 {
-    LocationWidgetPrivate() noexcept
+    LocationWidgetPrivate(LocationSettings &moduleSettings) noexcept
+        : moduleSettings(moduleSettings)
     {
         if (typeEnumeration.count() == 0) {
             typeEnumeration = enumerationService->getEnumerationByName(EnumerationService::LocationType);
@@ -104,6 +106,7 @@ struct LocationWidgetPrivate
         searchTimer->setInterval(::SearchTimeoutMSec);
     }
 
+    LocationSettings &moduleSettings;
     LocationSelector locationSelector;
     std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
@@ -147,10 +150,10 @@ struct LocationWidgetPrivate
 
 // PUBLIC
 
-LocationWidget::LocationWidget(QWidget *parent) noexcept
+LocationWidget::LocationWidget(LocationSettings &moduleSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::LocationWidget>()),
-      d(std::make_unique<LocationWidgetPrivate>())
+      d(std::make_unique<LocationWidgetPrivate>(moduleSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -158,11 +161,7 @@ LocationWidget::LocationWidget(QWidget *parent) noexcept
     frenchConnection();
 }
 
-LocationWidget::~LocationWidget()
-{
-    const QByteArray tableState = ui->locationTableWidget->horizontalHeader()->saveState();
-    Settings::getInstance().setLocationTableState(tableState);
-}
+LocationWidget::~LocationWidget() = default;
 
 void LocationWidget::addUserLocation(double latitude, double longitude)
 {
@@ -311,9 +310,6 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::categoryColumn, d->locationCategoryDelegate.get());
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::countryColumn, d->countryDelegate.get());
 
-    QByteArray tableState = Settings::getInstance().getLocationTableState();
-    ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
-
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
 
@@ -410,6 +406,14 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::onIndicatedAirspeedChanged);
     connect(ui->engineEventComboBox, &EnumerationComboBox::currentIndexChanged,
             this, &LocationWidget::onEngineEventChanged);
+
+    // Module settings
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
+            this, &LocationWidget::onTableLayoutChanged);
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
+            this, &LocationWidget::onTableLayoutChanged);
+    connect(&d->moduleSettings, &ModuleBaseSettings::changed,
+            this, &LocationWidget::onModuleSettingsChanged);
 }
 
 void LocationWidget::updateInfoUi() noexcept
@@ -1045,4 +1049,15 @@ void LocationWidget::onEngineEventChanged([[maybe_unused]]int index) noexcept
             ui->locationTableWidget->blockSignals(false);
         }
     }
+}
+
+void LocationWidget::onTableLayoutChanged() noexcept
+{
+    QByteArray tableState = ui->locationTableWidget->horizontalHeader()->saveState();
+    d->moduleSettings.setLocationTableState(std::move(tableState));
+}
+
+void LocationWidget::onModuleSettingsChanged() noexcept
+{
+    ui->locationTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLocationTableState());
 }

@@ -32,19 +32,19 @@
 
 struct GpxExportOptionWidgetPrivate
 {
-    GpxExportOptionWidgetPrivate(GpxExportSettings &theSettings) noexcept
-        : settings(theSettings)
+    GpxExportOptionWidgetPrivate(GpxExportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {}
 
-    GpxExportSettings &settings;
+    GpxExportSettings &pluginSettings;
 };
 
 // PUBLIC
 
-GpxExportOptionWidget::GpxExportOptionWidget(GpxExportSettings &settings, QWidget *parent) noexcept
+GpxExportOptionWidget::GpxExportOptionWidget(GpxExportSettings &pluginSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::GpxExportOptionWidget>()),
-      d(std::make_unique<GpxExportOptionWidgetPrivate>(settings))
+      d(std::make_unique<GpxExportOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -60,7 +60,7 @@ void GpxExportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->timestampModeComboBox, &QComboBox::currentIndexChanged,
             this, &GpxExportOptionWidget::onTimestampModeChanged);
-    connect(&d->settings, &GpxExportSettings::changed,
+    connect(&d->pluginSettings, &GpxExportSettings::changed,
             this, &GpxExportOptionWidget::updateUi);
 }
 
@@ -74,7 +74,7 @@ void GpxExportOptionWidget::initUi() noexcept
 
 void GpxExportOptionWidget::updateUi() noexcept
 {
-    const GpxExportSettings::TimestampMode timestampMode = d->settings.getTimestampMode();
+    const GpxExportSettings::TimestampMode timestampMode = d->pluginSettings.getTimestampMode();
     int currentIndex = 0;
     while (currentIndex < ui->timestampModeComboBox->count() &&
            static_cast<GpxExportSettings::TimestampMode>(ui->timestampModeComboBox->itemData(currentIndex).toInt()) != timestampMode) {
@@ -95,5 +95,5 @@ void GpxExportOptionWidget::updateUi() noexcept
 void GpxExportOptionWidget::onTimestampModeChanged() noexcept
 {
     const GpxExportSettings::TimestampMode timestampMode = static_cast<GpxExportSettings::TimestampMode>(ui->timestampModeComboBox->currentData().toInt());
-    d->settings.setTimestampMode(timestampMode);
+    d->pluginSettings.setTimestampMode(timestampMode);
 }

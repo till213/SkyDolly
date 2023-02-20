@@ -51,21 +51,21 @@ namespace
 
 struct KmlExportOptionWidgetPrivate
 {
-    KmlExportOptionWidgetPrivate(KmlExportSettings &theSettings) noexcept
+    KmlExportOptionWidgetPrivate(KmlExportSettings &pluginSettings) noexcept
         : colorButtonGroup(std::make_unique<QButtonGroup>()),
-          settings(theSettings)
+          pluginSettings(pluginSettings)
     {}
 
     std::unique_ptr<QButtonGroup> colorButtonGroup;
-    KmlExportSettings &settings;
+    KmlExportSettings &pluginSettings;
 };
 
 // PUBLIC
 
-KmlExportOptionWidget::KmlExportOptionWidget(KmlExportSettings &settings, QWidget *parent) noexcept
+KmlExportOptionWidget::KmlExportOptionWidget(KmlExportSettings &pluginSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::KmlExportOptionWidget>()),
-      d(std::make_unique<KmlExportOptionWidgetPrivate>(settings))
+      d(std::make_unique<KmlExportOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -79,7 +79,7 @@ KmlExportOptionWidget::~KmlExportOptionWidget() = default;
 
 void KmlExportOptionWidget::frenchConnection() noexcept
 {
-    connect(&d->settings, &KmlExportSettings::changed,
+    connect(&d->pluginSettings, &KmlExportSettings::changed,
             this, &KmlExportOptionWidget::updateUi);
     connect(d->colorButtonGroup.get(), &QButtonGroup::idClicked,
             this, &KmlExportOptionWidget::selectColor);
@@ -110,12 +110,12 @@ void KmlExportOptionWidget::updateUi() noexcept
 {
     int currentIndex = 0;
     while (currentIndex < ui->colorStyleComboBox->count() &&
-           static_cast<KmlExportSettings::ColorStyle>(ui->colorStyleComboBox->itemData(currentIndex).toInt()) != d->settings.getColorStyle()) {
+           static_cast<KmlExportSettings::ColorStyle>(ui->colorStyleComboBox->itemData(currentIndex).toInt()) != d->pluginSettings.getColorStyle()) {
         ++currentIndex;
     }
     ui->colorStyleComboBox->setCurrentIndex(currentIndex);
 
-    switch (d->settings.getColorStyle()) {
+    switch (d->pluginSettings.getColorStyle()) {
     case KmlExportSettings::ColorStyle::OneColor:
         ui->allStartColorToolButton->setEnabled(true);
         ui->allEndColorToolButton->setEnabled(false);
@@ -160,52 +160,52 @@ void KmlExportOptionWidget::updateUi() noexcept
 
     QString css;
     if (ui->allStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->settings.getAllStartColor().name() % ";";
+        css = "background-color: " % d->pluginSettings.getAllStartColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->allStartColorToolButton->setStyleSheet(css);
     if (ui->allEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->settings.getAllEndColor().name() % ";";
+        css = "background-color: " % d->pluginSettings.getAllEndColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->allEndColorToolButton->setStyleSheet(css);
 
     if (ui->jetStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->settings.getJetStartColor().name() % ";";
+        css = "background-color: " % d->pluginSettings.getJetStartColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->jetStartColorToolButton->setStyleSheet(css);
     if (ui->jetEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->settings.getJetEndColor().name() % ";";
+        css = "background-color: " % d->pluginSettings.getJetEndColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->jetEndColorToolButton->setStyleSheet(css);
 
     if (ui->turbopropStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->settings.getTurbopropStartColor().name() % ";";
+        css = "background-color: " % d->pluginSettings.getTurbopropStartColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->turbopropStartColorToolButton->setStyleSheet(css);
     if (ui->turbopropEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->settings.getTurbopropEndColor().name() % ";";
+        css = "background-color: " % d->pluginSettings.getTurbopropEndColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->turbopropEndColorToolButton->setStyleSheet(css);
 
     if (ui->pistonStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->settings.getPistonStartColor().name() % ";";
+        css = "background-color: " % d->pluginSettings.getPistonStartColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->pistonStartColorToolButton->setStyleSheet(css);
     if (ui->pistonEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->settings.getPistonEndColor().name() % ";";
+        css = "background-color: " % d->pluginSettings.getPistonEndColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
@@ -217,28 +217,28 @@ void KmlExportOptionWidget::selectColor(int id) noexcept
     QColor initialColor;
     switch (static_cast<ColorButton>(id)) {
     case ColorButton::JetStartColor:
-        initialColor = d->settings.getJetStartColor();
+        initialColor = d->pluginSettings.getJetStartColor();
         break;
     case ColorButton::JetEndColor:
-        initialColor = d->settings.getJetEndColor();
+        initialColor = d->pluginSettings.getJetEndColor();
         break;
     case ColorButton::TurbopropStartColor:
-        initialColor = d->settings.getTurbopropStartColor();
+        initialColor = d->pluginSettings.getTurbopropStartColor();
         break;
     case ColorButton::TurbopropEndColor:
-        initialColor = d->settings.getTurbopropEndColor();
+        initialColor = d->pluginSettings.getTurbopropEndColor();
         break;
     case ColorButton::PistonStartColor:
-        initialColor = d->settings.getPistonStartColor();
+        initialColor = d->pluginSettings.getPistonStartColor();
         break;
     case ColorButton::PistonEndColor:
-        initialColor = d->settings.getPistonEndColor();
+        initialColor = d->pluginSettings.getPistonEndColor();
         break;
     case ColorButton::AllStartColor:
-        initialColor = d->settings.getAllStartColor();
+        initialColor = d->pluginSettings.getAllStartColor();
         break;
     case ColorButton::AllEndColor:
-        initialColor = d->settings.getAllEndColor();
+        initialColor = d->pluginSettings.getAllEndColor();
         break;
     }
 
@@ -246,32 +246,32 @@ void KmlExportOptionWidget::selectColor(int id) noexcept
     if (color.isValid()) {
         switch (static_cast<ColorButton>(id)) {
         case ColorButton::JetStartColor:
-            d->settings.setJetStartColor(color);
-            d->settings.setJetEndColor(color.darker());
+            d->pluginSettings.setJetStartColor(color);
+            d->pluginSettings.setJetEndColor(color.darker());
             break;
         case ColorButton::JetEndColor:
-            d->settings.setJetEndColor(color);
+            d->pluginSettings.setJetEndColor(color);
             break;
         case ColorButton::TurbopropStartColor:
-            d->settings.setTurbopropStartColor(color);
-            d->settings.setTurbopropEndColor(color.darker());
+            d->pluginSettings.setTurbopropStartColor(color);
+            d->pluginSettings.setTurbopropEndColor(color.darker());
             break;
         case ColorButton::TurbopropEndColor:
-            d->settings.setTurbopropEndColor(color);
+            d->pluginSettings.setTurbopropEndColor(color);
             break;
         case ColorButton::PistonStartColor:
-            d->settings.setPistonStartColor(color);
-            d->settings.setPistonEndColor(color.darker());
+            d->pluginSettings.setPistonStartColor(color);
+            d->pluginSettings.setPistonEndColor(color.darker());
             break;
         case ColorButton::PistonEndColor:
-            d->settings.setPistonEndColor(color);
+            d->pluginSettings.setPistonEndColor(color);
             break;
         case ColorButton::AllStartColor:
-            d->settings.setAllStartColor(color);
-            d->settings.setAllEndColor(color.darker());
+            d->pluginSettings.setAllStartColor(color);
+            d->pluginSettings.setAllEndColor(color.darker());
             break;
         case ColorButton::AllEndColor:
-            d->settings.setAllEndColor(color);
+            d->pluginSettings.setAllEndColor(color);
             break;
         }
     }
@@ -280,5 +280,5 @@ void KmlExportOptionWidget::selectColor(int id) noexcept
 void KmlExportOptionWidget::onColorStyleChanged() noexcept
 {
     const KmlExportSettings::ColorStyle colorStyle = static_cast<KmlExportSettings::ColorStyle>(ui->colorStyleComboBox->currentData().toInt());
-    d->settings.setColorStyle(colorStyle);
+    d->pluginSettings.setColorStyle(colorStyle);
 }

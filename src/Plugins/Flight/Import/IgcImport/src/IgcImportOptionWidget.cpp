@@ -34,19 +34,19 @@
 
 struct IgcImportOptionWidgetPrivate
 {
-    IgcImportOptionWidgetPrivate(IgcImportSettings &theImportSettings) noexcept
-        : settings(theImportSettings)
+    IgcImportOptionWidgetPrivate(IgcImportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {}
 
-     IgcImportSettings &settings;
+     IgcImportSettings &pluginSettings;
 };
 
 // PUBLIC
 
-IgcImportOptionWidget::IgcImportOptionWidget(IgcImportSettings &settings, QWidget *parent) noexcept
+IgcImportOptionWidget::IgcImportOptionWidget(IgcImportSettings &pluginSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::IgcImportOptionWidget>()),
-      d(std::make_unique<IgcImportOptionWidgetPrivate>(settings))
+      d(std::make_unique<IgcImportOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -66,7 +66,7 @@ void IgcImportOptionWidget::frenchConnection() noexcept
             this, &IgcImportOptionWidget::onEnlThresholdChanged);
     connect(ui->convertAltitudeCheckBox, &QCheckBox::clicked,
             this, &IgcImportOptionWidget::onConvertAltitudeChanged);
-    connect(&d->settings, &IgcImportSettings::changed,
+    connect(&d->pluginSettings, &IgcImportSettings::changed,
             this, &IgcImportOptionWidget::updateUi);
 }
 
@@ -85,19 +85,19 @@ void IgcImportOptionWidget::initUi() noexcept
 
 void IgcImportOptionWidget::updateUi() noexcept
 {
-    const IgcImportSettings::AltitudeMode altitudeMode = d->settings.getAltitudeMode();
+    const IgcImportSettings::AltitudeMode altitudeMode = d->pluginSettings.getAltitudeMode();
     int currentIndex = 0;
     while (currentIndex < ui->altitudeComboBox->count() &&
            static_cast<IgcImportSettings::AltitudeMode>(ui->altitudeComboBox->itemData(currentIndex).toInt()) != altitudeMode) {
         ++currentIndex;
     }
     ui->altitudeComboBox->setCurrentIndex(currentIndex);
-    ui->enlThresholdSpinBox->setValue(d->settings.getEnlThresholdPercent());
+    ui->enlThresholdSpinBox->setValue(d->pluginSettings.getEnlThresholdPercent());
     switch (altitudeMode) {
     case IgcImportSettings::AltitudeMode::Gnss:
         if (Settings::getInstance().hasEarthGravityModel()) {
             ui->convertAltitudeCheckBox->setEnabled(true);
-            ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
+            ui->convertAltitudeCheckBox->setChecked(d->pluginSettings.isConvertAltitudeEnabled());
             ui->convertAltitudeCheckBox->setToolTip(tr("Converts imported height above WGS84 ellipsoid to height above the EGM2008 geoid."));
         } else {
             ui->convertAltitudeCheckBox->setEnabled(false);
@@ -115,15 +115,15 @@ void IgcImportOptionWidget::updateUi() noexcept
 void IgcImportOptionWidget::onAltitudeChanged() noexcept
 {
     const IgcImportSettings::AltitudeMode altitudeMode = static_cast<IgcImportSettings::AltitudeMode>(ui->altitudeComboBox->currentData().toInt());
-    d->settings.setAltitudeMode(altitudeMode);
+    d->pluginSettings.setAltitudeMode(altitudeMode);
 }
 
 void IgcImportOptionWidget::onEnlThresholdChanged(int value) noexcept
 {
-    d->settings.setEnlThresholdPercent(value);
+    d->pluginSettings.setEnlThresholdPercent(value);
 }
 
 void IgcImportOptionWidget::onConvertAltitudeChanged(bool enabled) noexcept
 {
-    d->settings.setConvertAltitudeEnabled(enabled);
+    d->pluginSettings.setConvertAltitudeEnabled(enabled);
 }

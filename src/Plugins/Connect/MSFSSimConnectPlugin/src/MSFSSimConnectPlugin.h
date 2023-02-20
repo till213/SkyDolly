@@ -36,7 +36,7 @@
 #include <Kernel/SampleRate.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
-#include <PluginManager/AbstractSkyConnect.h>
+#include <PluginManager/Connect/AbstractSkyConnect.h>
 
 struct PositionData;
 struct EngineData;

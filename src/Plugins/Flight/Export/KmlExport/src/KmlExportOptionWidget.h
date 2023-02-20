@@ -40,7 +40,7 @@ class KmlExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit KmlExportOptionWidget(KmlExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    explicit KmlExportOptionWidget(KmlExportSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     KmlExportOptionWidget(const KmlExportOptionWidget &rhs) = delete;
     KmlExportOptionWidget(KmlExportOptionWidget &&rhs) = delete;
     KmlExportOptionWidget &operator=(const KmlExportOptionWidget &rhs) = delete;

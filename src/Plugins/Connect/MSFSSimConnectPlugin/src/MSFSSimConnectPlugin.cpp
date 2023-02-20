@@ -62,7 +62,7 @@
 #include <Model/FlightPlan.h>
 #include <Model/Waypoint.h>
 #include <Model/InitialPosition.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/Connect.h>
 
 #include "SimVar/SimulationVariables.h"
 #include "SimVar/SimConnectType.h"

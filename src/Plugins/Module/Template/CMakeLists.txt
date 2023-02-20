@@ -6,6 +6,7 @@ add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 target_sources(${MODULE_NAME}
     PRIVATE
         src/TemplatePlugin.h src/TemplatePlugin.cpp
+        src/TemplateSettings.h src/TemplateSettings.cpp
         src/TemplateWidget.h src/TemplateWidget.cpp src/TemplateWidget.ui
         src/TemplatePlugin.json
 )

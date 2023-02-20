@@ -31,7 +31,7 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightImportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightImportPluginBaseSettings.h>
 
 struct CsvImportSettingsPrivate;
 

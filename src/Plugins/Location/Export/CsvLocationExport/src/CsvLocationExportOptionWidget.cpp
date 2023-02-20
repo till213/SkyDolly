@@ -32,19 +32,19 @@
 
 struct CsvLocationExportOptionWidgetPrivate
 {
-    CsvLocationExportOptionWidgetPrivate(CsvLocationExportSettings &settings) noexcept
-        : settings(settings)
+    CsvLocationExportOptionWidgetPrivate(CsvLocationExportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {}
 
-    CsvLocationExportSettings &settings;
+    CsvLocationExportSettings &pluginSettings;
 };
 
 // PUBLIC
 
-CsvLocationExportOptionWidget::CsvLocationExportOptionWidget(CsvLocationExportSettings &settings, QWidget *parent) noexcept
+CsvLocationExportOptionWidget::CsvLocationExportOptionWidget(CsvLocationExportSettings &pluginSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::CsvLocationExportOptionWidget>()),
-      d(std::make_unique<CsvLocationExportOptionWidgetPrivate>(settings))
+      d(std::make_unique<CsvLocationExportOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -60,7 +60,7 @@ void CsvLocationExportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CsvLocationExportOptionWidget::onFormatChanged);
-    connect(&d->settings, &CsvLocationExportSettings::changed,
+    connect(&d->pluginSettings, &CsvLocationExportSettings::changed,
             this, &CsvLocationExportOptionWidget::updateUi);
 }
 
@@ -74,7 +74,7 @@ void CsvLocationExportOptionWidget::initUi() noexcept
 
 void CsvLocationExportOptionWidget::updateUi() noexcept
 {
-    const CsvLocationExportSettings::Format format = d->settings.getFormat();
+    const CsvLocationExportSettings::Format format = d->pluginSettings.getFormat();
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
            static_cast<CsvLocationExportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != format) {
@@ -86,5 +86,5 @@ void CsvLocationExportOptionWidget::updateUi() noexcept
 void CsvLocationExportOptionWidget::onFormatChanged() noexcept
 {
     const CsvLocationExportSettings::Format format = static_cast<CsvLocationExportSettings::Format>(ui->formatComboBox->currentData().toInt());
-    d->settings.setFormat(format);
+    d->pluginSettings.setFormat(format);
 }

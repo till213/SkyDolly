@@ -40,7 +40,7 @@ class CsvLocationExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit CsvLocationExportOptionWidget(CsvLocationExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    explicit CsvLocationExportOptionWidget(CsvLocationExportSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     CsvLocationExportOptionWidget(const CsvLocationExportOptionWidget &rhs) = delete;
     CsvLocationExportOptionWidget(CsvLocationExportOptionWidget &&rhs) = delete;
     CsvLocationExportOptionWidget &operator=(const CsvLocationExportOptionWidget &rhs) = delete;

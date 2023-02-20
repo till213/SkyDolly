@@ -7,6 +7,7 @@ target_sources(${MODULE_NAME}
     PRIVATE
         src/Formation.h src/Formation.cpp
         src/FormationPlugin.h src/FormationPlugin.cpp
+        src/FormationSettings.h src/FormationSettings.cpp
         src/FormationWidget.h src/FormationWidget.cpp src/FormationWidget.ui
         src/FormationPlugin.json
         res/FormationPlugin.qrc

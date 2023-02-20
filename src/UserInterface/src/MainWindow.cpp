@@ -88,10 +88,10 @@
 #include <Widget/Platform.h>
 #include <Widget/RecentFileMenu.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include <PluginManager/PluginManager.h>
-#include <PluginManager/ModuleIntf.h>
+#include <PluginManager/Module/ModuleIntf.h>
 #include <PluginManager/ModuleManager.h>
 #include "Dialog/AboutDialog.h"
 #include "Dialog/LogbookSettingsDialog.h"

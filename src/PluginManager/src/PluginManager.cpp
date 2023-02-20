@@ -41,10 +41,10 @@
 #include <Model/Flight.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/LocationService.h>
-#include "FlightImportIntf.h"
-#include "FlightExportIntf.h"
-#include "LocationImportIntf.h"
-#include "LocationExportIntf.h"
+#include <Flight/FlightImportIntf.h>
+#include <Flight/FlightExportIntf.h>
+#include <Location/LocationImportIntf.h>
+#include <Location/LocationExportIntf.h>
 #include "PluginManager.h"
 
 namespace

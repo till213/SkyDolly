@@ -35,15 +35,17 @@ class QHideEvent;
 class QAction;
 class QTableWidgetItem;
 
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/ModuleIntf.h>
-#include <PluginManager/AbstractModule.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Module/ModuleIntf.h>
+#include <PluginManager/Module/AbstractModule.h>
+#include "FormationSettings.h"
 #include "Formation.h"
 
 class Aircraft;
 struct PositionData;
 class FlightService;
 class AircraftService;
+class FormationSettings;
 struct FormationWidgetPrivate;
 
 namespace Ui {
@@ -54,7 +56,7 @@ class FormationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    FormationWidget(QWidget *parent = nullptr) noexcept;
+    FormationWidget(FormationSettings &moduleSettings, QWidget *parent = nullptr) noexcept;
     FormationWidget(const FormationWidget &rhs) = delete;
     FormationWidget(FormationWidget &&rhs) = delete;
     FormationWidget &operator=(const FormationWidget &rhs) = delete;
@@ -117,6 +119,10 @@ private slots:
     void changeTimeOffset(const std::int64_t timeOffset) noexcept;
     void onTimeOffsetValueChanged() noexcept;
     void resetAllTimeOffsets() noexcept;
+
+    // Settings
+    void onTableLayoutChanged() noexcept;
+    void onModuleSettingsChanged() noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

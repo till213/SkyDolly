@@ -24,21 +24,23 @@
  */
 #include <memory>
 
-#include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
 #include "Formation.h"
 #include "FormationWidget.h"
+#include "FormationSettings.h"
 #include "FormationPlugin.h"
 
 struct FormationPluginPrivate
 {
+    FormationSettings moduleSettings;
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
-    std::unique_ptr<FormationWidget> formationWidget{std::make_unique<FormationWidget>()};
+    std::unique_ptr<FormationWidget> formationWidget{std::make_unique<FormationWidget>(moduleSettings)};
 };
 
 // PUBLIC
@@ -74,7 +76,7 @@ void FormationPlugin::onStartRecording() noexcept
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
     const Formation::RelativePosition relativePosition {d->formationWidget->getRelativePosition()};
     // The initial recording position is calculated for timestamp = 0 ("at the beginning")
-    const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ?
+    const InitialPosition initialPosition = d->moduleSettings.isRelativePositionPlacementEnabled() ?
                 Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, 0) :
                 InitialPosition();
     skyConnectManager.startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
@@ -88,10 +90,15 @@ void FormationPlugin::onStartReplay() noexcept
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
     const Formation::RelativePosition relativePosition {d->formationWidget->getRelativePosition()};
     const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
-    const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ?
+    const InitialPosition initialPosition = d->moduleSettings.isRelativePositionPlacementEnabled() ?
         Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp) :
         InitialPosition();
     skyConnectManager.startReplay(fromStart, initialPosition);
+}
+
+ModuleBaseSettings &FormationPlugin::getModuleSettings() const noexcept
+{
+    return d->moduleSettings;
 }
 
 // PROTECTED SLOTS

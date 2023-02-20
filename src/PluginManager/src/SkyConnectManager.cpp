@@ -41,8 +41,8 @@
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
-#include "SkyConnectIntf.h"
-#include "SkyConnectManager.h"
+#include <Connect/SkyConnectIntf.h>
+#include <SkyConnectManager.h>
 
 namespace
 {

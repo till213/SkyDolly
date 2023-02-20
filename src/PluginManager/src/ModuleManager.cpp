@@ -47,10 +47,9 @@
 #include <Kernel/Enum.h>
 #include <Kernel/QUuidHasher.h>
 #include <Kernel/Sort.h>
-#include "SkyConnectIntf.h"
-#include "ModuleIntf.h"
-#include "DefaultModuleImpl.h"
-#include "ModuleManager.h"
+#include <Module/ModuleIntf.h>
+#include <ModuleManager.h>
+#include "Module/DefaultModuleImpl.h"
 
 namespace
 {
@@ -128,7 +127,11 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
 
 ModuleManager::~ModuleManager()
 {
-    d->pluginLoader->unload();
+    if (d->pluginLoader->isLoaded()) {
+        // Store current module settings
+        d->activeModule->storeSettings(d->activeModuleUuid);
+        d->pluginLoader->unload();
+    }
 }
 
 const ModuleManager::ActionRegistry &ModuleManager::getActionRegistry() const noexcept
@@ -151,6 +154,7 @@ void ModuleManager::activateModule(QUuid uuid) noexcept
     if (d->activeModuleUuid != uuid) {
         if (d->pluginLoader->isLoaded()) {
             // Unload the previous module
+            d->activeModule->storeSettings(d->activeModuleUuid);
             d->pluginLoader->unload();
             d->activeModule = nullptr;
             d->activeModuleUuid = QUuid();
@@ -160,6 +164,7 @@ void ModuleManager::activateModule(QUuid uuid) noexcept
         QObject *plugin = d->pluginLoader->instance();
         d->activeModule = qobject_cast<ModuleIntf *>(plugin);
         if (d->activeModule != nullptr) {
+            d->activeModule->restoreSettings(uuid);
             d->activeModuleUuid = uuid;
             d->layout.addWidget(d->activeModule->getWidget());
             d->actionRegistry[uuid]->setChecked(true);

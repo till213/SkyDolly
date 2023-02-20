@@ -30,8 +30,9 @@
 
 class QWidget;
 
-#include "PluginManager/AbstractModule.h"
+#include <PluginManager/Module/AbstractModule.h>
 
+class ModuleBaseSettings;
 struct TemplatePluginPrivate;
 
 class TemplatePlugin : public AbstractModule
@@ -49,6 +50,9 @@ public:
 
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
+
+protected:
+    ModuleBaseSettings &getModuleSettings() const noexcept override;
 
 private:
     const std::unique_ptr<TemplatePluginPrivate> d;

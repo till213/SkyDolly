@@ -6,6 +6,7 @@ add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 target_sources(${MODULE_NAME}
     PRIVATE
         src/LocationPlugin.h src/LocationPlugin.cpp
+        src/LocationSettings.h src/LocationSettings.cpp
         src/LocationWidget.h src/LocationWidget.cpp src/LocationWidget.ui
         src/PositionWidgetItem.h src/PositionWidgetItem.cpp
         src/EnumerationItemDelegate.h src/EnumerationItemDelegate.cpp

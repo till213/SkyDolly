@@ -53,8 +53,8 @@
 #include <Model/Light.h>
 #include <Model/LightData.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include "StatisticsDialog.h"
 #include "ui_StatisticsDialog.h"
 
