@@ -31,6 +31,7 @@
 #include <QDoubleValidator>
 #include <QWidget>
 #include <QTableWidget>
+#include <QHeaderView>
 #include <QIcon>
 #include <QLabel>
 #include <QButtonGroup>
@@ -164,7 +165,7 @@ FormationWidget::FormationWidget(FormationSettings &settings, QWidget *parent) n
 FormationWidget::~FormationWidget()
 {
     const QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
-    d->moduleSettings.setFormationAircraftTableState(tableState);  
+    d->moduleSettings.setFormationAircraftTableState(tableState);
 }
 
 Formation::HorizontalDistance FormationWidget::getHorizontalDistance() const noexcept
@@ -349,6 +350,11 @@ void FormationWidget::frenchConnection() noexcept
     connect(ui->resetAllTimeOffsetPushButton, &QPushButton::clicked,
             this, &FormationWidget::resetAllTimeOffsets);
 
+    // Module settings
+    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
+            this, &FormationWidget::onTableLayoutChanged);
+    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
+            this, &FormationWidget::onTableLayoutChanged);
     connect(&d->moduleSettings, &ModuleBaseSettings::changed,
             this, &FormationWidget::onModuleSettingsChanged);
 }
@@ -1032,6 +1038,12 @@ void FormationWidget::resetAllTimeOffsets() noexcept
             }
         }
     }
+}
+
+void FormationWidget::onTableLayoutChanged() noexcept
+{
+    QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
+    d->moduleSettings.setFormationAircraftTableState(std::move(tableState));
 }
 
 void FormationWidget::onModuleSettingsChanged() noexcept

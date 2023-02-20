@@ -119,6 +119,7 @@ private slots:
     void onTimeOffsetValueChanged() noexcept;
     void resetAllTimeOffsets() noexcept;
 
+    void onTableLayoutChanged() noexcept;
     void onModuleSettingsChanged() noexcept;
 };
 

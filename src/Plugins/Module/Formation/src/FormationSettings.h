@@ -81,7 +81,7 @@ public:
      * \param state
      *        the formation aircraft table state encoded in the QByteAarray
      */
-    void setFormationAircraftTableState(const QByteArray &state) noexcept;
+    void setFormationAircraftTableState(QByteArray state) noexcept;
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
