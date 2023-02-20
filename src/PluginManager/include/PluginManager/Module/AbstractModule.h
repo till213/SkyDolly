@@ -67,7 +67,7 @@ protected:
 
     FlightService &getFlightService() const noexcept;
 
-    virtual ModuleBaseSettings &getPluginSettings() const noexcept = 0;
+    virtual ModuleBaseSettings &getModuleSettings() const noexcept = 0;
 
 protected slots:
     void onRecordingStopped() noexcept override;

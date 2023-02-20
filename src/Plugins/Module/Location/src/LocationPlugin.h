@@ -54,7 +54,7 @@ public:
     QWidget *getWidget() const noexcept override;
 
 protected:
-    ModuleBaseSettings &getPluginSettings() const noexcept override;
+    ModuleBaseSettings &getModuleSettings() const noexcept override;
 
 private:
     const std::unique_ptr<LocationPluginPrivate> d;

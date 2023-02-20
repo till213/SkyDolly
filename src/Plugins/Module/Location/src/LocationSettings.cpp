@@ -22,15 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
 #include <memory>
+#include <utility>
 
 #include <Kernel/Settings.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 #include "LocationSettings.h"
 
+namespace
+{
+    // Keys
+    constexpr const char *locationTableStateKey {"LocationTableState"};
+}
+
 struct LocationSettingsPrivate
-{};
+{
+    QByteArray locationTableState;
+};
 
 // PUBLIC
 
@@ -41,16 +49,42 @@ LocationSettings::LocationSettings() noexcept
 
 LocationSettings::~LocationSettings() = default;
 
+QByteArray LocationSettings::getLocationTableState() const
+{
+    return d->locationTableState;
+}
+
+void LocationSettings::setLocationTableState(QByteArray state) noexcept
+{
+    d->locationTableState = std::move(state);
+}
+
 // PROTECTED
 
 void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
-{}
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::locationTableStateKey;
+    keyValue.second = d->locationTableState;
+    keyValues.push_back(keyValue);
+}
 
 void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{}
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::locationTableStateKey;
+    keyValue.second = QByteArray();
+    keysWithDefaults.push_back(keyValue);
+}
 
 void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
-{}
+{
+    d->locationTableState = valuesByKey.at(::locationTableStateKey).toByteArray();
+}
 
 void LocationSettings::restoreDefaultsExtn() noexcept
-{}
+{
+    d->locationTableState = {};
+}

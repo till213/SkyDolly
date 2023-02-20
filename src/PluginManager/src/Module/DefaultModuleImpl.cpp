@@ -62,7 +62,7 @@ ModuleIntf::RecordIconId DefaultModuleImpl::getRecordIconId() const noexcept
 
 // PROTECTED
 
-ModuleBaseSettings &DefaultModuleImpl::getPluginSettings() const noexcept
+ModuleBaseSettings &DefaultModuleImpl::getModuleSettings() const noexcept
 {
     return d->pluginSettings;
 }

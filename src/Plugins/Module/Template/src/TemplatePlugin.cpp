@@ -63,7 +63,7 @@ QWidget *TemplatePlugin::getWidget() const noexcept
 
 // PROTECTED
 
-ModuleBaseSettings &TemplatePlugin::getPluginSettings() const noexcept
+ModuleBaseSettings &TemplatePlugin::getModuleSettings() const noexcept
 {
     return d->moduleSettings;
 }

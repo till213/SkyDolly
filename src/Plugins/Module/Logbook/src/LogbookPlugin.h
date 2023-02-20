@@ -52,7 +52,7 @@ public:
     QWidget *getWidget() const noexcept override;
 
 protected:
-    ModuleBaseSettings &getPluginSettings() const noexcept override;
+    ModuleBaseSettings &getModuleSettings() const noexcept override;
 
 protected slots:
     void onRecordingStopped() noexcept override;

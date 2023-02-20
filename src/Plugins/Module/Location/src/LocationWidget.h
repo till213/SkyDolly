@@ -37,6 +37,7 @@ class QKeyEvent;
 
 #include <Model/Location.h>
 
+class LocationSettings;
 struct LocationWidgetPrivate;
 
 namespace Ui {
@@ -47,7 +48,7 @@ class LocationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit LocationWidget(QWidget *parent = nullptr) noexcept;
+    explicit LocationWidget(LocationSettings &moduleSettings, QWidget *parent = nullptr) noexcept;
     LocationWidget(const LocationWidget &rhs) = delete;
     LocationWidget(LocationWidget &&rhs) = delete;
     LocationWidget &operator=(const LocationWidget &rhs) = delete;
@@ -114,6 +115,10 @@ private slots:
     void onHeadingChanged(double value) noexcept;
     void onIndicatedAirspeedChanged(int value) noexcept;
     void onEngineEventChanged(int index) noexcept;
+
+    // Settings
+    void onTableLayoutChanged() noexcept;
+    void onModuleSettingsChanged() noexcept;
 };
 
 #endif // LOCATIONWIDGET_H

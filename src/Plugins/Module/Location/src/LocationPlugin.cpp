@@ -45,7 +45,7 @@ struct LocationPluginPrivate
     };
 
     LocationSettings moduleSettings;
-    std::unique_ptr<LocationWidget> locationWidget {std::make_unique<LocationWidget>()};
+    std::unique_ptr<LocationWidget> locationWidget {std::make_unique<LocationWidget>(moduleSettings)};
     const std::int64_t EngineEventStartId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStartSymId).id()};
     const std::int64_t EngineEventStopId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStopSymId).id()};
     Mode mode {Mode::Add};
@@ -74,7 +74,7 @@ QWidget *LocationPlugin::getWidget() const noexcept
 
 // PROTECTED
 
-ModuleBaseSettings &LocationPlugin::getPluginSettings() const noexcept
+ModuleBaseSettings &LocationPlugin::getModuleSettings() const noexcept
 {
     return d->moduleSettings;
 }

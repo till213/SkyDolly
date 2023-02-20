@@ -81,31 +81,30 @@ struct SettingsPrivate
     bool replaySpeedVisible {DefaultReplaySpeedVisible};
     QByteArray windowGeometry;
     QByteArray windowState;
-    QByteArray locationTableState;
     QString exportPath;
     QString defaultExportPath;
     QString defaultLogbookPath;
     bool absoluteSeek {false};
-    double seekIntervalSeconds;
-    double seekIntervalPercent;
-    bool replayLoop;
-    Replay::SpeedUnit replaySpeedUnit;
-    bool repeatCanopyOpen;
+    double seekIntervalSeconds {DefaultSeekIntervalSeconds};
+    double seekIntervalPercent {DefaultSeekIntervalPercent};
+    bool replayLoop {DefaultReplayLoop};
+    Replay::SpeedUnit replaySpeedUnit {DefaultReplaySpeedUnit};
+    bool repeatCanopyOpen {DefaultRepeatCanopyOpen};
 
-    bool deleteFlightConfirmation;
-    bool deleteAircraftConfirmation;
-    bool deleteLocationConfirmation;
-    bool resetTimeOffsetConfirmation;
+    bool deleteFlightConfirmation {DefaultDeleteFlightConfirmation};
+    bool deleteAircraftConfirmation {DefaultDeleteAircraftConfirmation};
+    bool deleteLocationConfirmation {DefaultDeleteLocationConfirmation};
+    bool resetTimeOffsetConfirmation {DefaultResetTimeOffsetConfirmation};
 
-    bool defaultMinimalUiButtonTextVisible;
-    bool defaultMinimalUiNonEssentialButtonVisible;
-    bool defaultMinimalUiReplaySpeedVisible;
+    bool defaultMinimalUiButtonTextVisible {DefaultMinimalUiButtonTextVisible};
+    bool defaultMinimalUiNonEssentialButtonVisible {DefaultMinimalUiNonEssentialButtonVisible};
+    bool defaultMinimalUiReplaySpeedVisible {DefaultMinimalUiReplaySpeedVisible};
 
     QString importAircraftType;
 
     QFileInfo earthGravityModelFileInfo;
 
-    int previewInfoDialogCount;
+    int previewInfoDialogCount {DefaultPreviewInfoDialogCount};
 
     static inline std::once_flag onceFlag;
     static inline Settings *instance {nullptr};
@@ -305,16 +304,6 @@ QByteArray Settings::getWindowState() const noexcept
 void Settings::setWindowState(const QByteArray &state) noexcept
 {
     d->windowState = state;
-}
-
-QByteArray Settings::getLocationTableState() const
-{
-    return d->locationTableState;
-}
-
-void Settings::setLocationTableState(const QByteArray &state) noexcept
-{
-    d->locationTableState = state;
 }
 
 bool Settings::isAbsoluteSeekEnabled() const noexcept

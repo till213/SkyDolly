@@ -22,7 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
 #include <memory>
 #include <utility>
 
@@ -86,4 +85,6 @@ void LogbookSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Value
 }
 
 void LogbookSettings::restoreDefaultsExtn() noexcept
-{}
+{
+    d->logbookTableState = {};
+}

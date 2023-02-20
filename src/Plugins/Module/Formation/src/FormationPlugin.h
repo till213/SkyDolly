@@ -55,7 +55,7 @@ public:
 protected:
     void onStartRecording() noexcept override;
     void onStartReplay() noexcept override;
-    ModuleBaseSettings &getPluginSettings() const noexcept override;
+    ModuleBaseSettings &getModuleSettings() const noexcept override;
 
 protected slots:
     void onRecordingStopped() noexcept override;

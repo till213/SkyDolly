@@ -252,21 +252,6 @@ public:
     void setWindowState(const QByteArray &state) noexcept;
 
     /*!
-     * Returns the saved location table state.
-     *
-     * \return the location table state; a \e null QByteArray if not saved before
-     */
-    QByteArray getLocationTableState() const;
-
-    /*!
-     * Stores the location table state.
-     *
-     * \param state
-     *        the location table state encoded in the QByteAarray
-     */
-    void setLocationTableState(const QByteArray &state) noexcept;
-
-    /*!
      * Returns the path of the directory which was last accessed during export or import.
      *
      * \return the path of the last export / import directory

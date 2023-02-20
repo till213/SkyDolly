@@ -876,7 +876,7 @@ void LogbookWidget::filterByDuration([[maybe_unused]] int index) noexcept
 
 void LogbookWidget::onTableLayoutChanged() noexcept
 {
-    const QByteArray tableState = ui->logTableWidget->horizontalHeader()->saveState();
+    QByteArray tableState = ui->logTableWidget->horizontalHeader()->saveState();
     d->moduleSettings.setLogbookTableState(std::move(tableState));
 }
 

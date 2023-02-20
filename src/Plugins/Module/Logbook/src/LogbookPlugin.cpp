@@ -67,7 +67,7 @@ QWidget *LogbookPlugin::getWidget() const noexcept
 
 // PROTECTED
 
-ModuleBaseSettings &LogbookPlugin::getPluginSettings() const noexcept
+ModuleBaseSettings &LogbookPlugin::getModuleSettings() const noexcept
 {
     return d->moduleSettings;
 }

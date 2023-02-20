@@ -53,7 +53,7 @@ public:
 protected:
     const std::unique_ptr<DefaultModuleImplPrivate> d;
 
-    ModuleBaseSettings &getPluginSettings() const noexcept override;
+    ModuleBaseSettings &getModuleSettings() const noexcept override;
 };
 
 #endif // DEFAULTMODULEIMPL_H

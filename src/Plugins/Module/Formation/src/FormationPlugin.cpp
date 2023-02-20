@@ -96,7 +96,7 @@ void FormationPlugin::onStartReplay() noexcept
     skyConnectManager.startReplay(fromStart, initialPosition);
 }
 
-ModuleBaseSettings &FormationPlugin::getPluginSettings() const noexcept
+ModuleBaseSettings &FormationPlugin::getModuleSettings() const noexcept
 {
     return d->moduleSettings;
 }

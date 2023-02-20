@@ -143,17 +143,17 @@ void AbstractModule::onRecordingStopped() noexcept
 
 void AbstractModule::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
-    getPluginSettings().addSettings(keyValues);
+    getModuleSettings().addSettings(keyValues);
 }
 
 void AbstractModule::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
+    getModuleSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
 void AbstractModule::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    getPluginSettings().restoreSettings(valuesByKey);
+    getModuleSettings().restoreSettings(valuesByKey);
 }
 
 // PRIVATE
