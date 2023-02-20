@@ -38,6 +38,8 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/QUuidHasher.h
         include/Kernel/QStringHasher.h
         include/Kernel/Sort.h
+        src/SettingsConverterV0dot13.h
+        src/SettingsConverterV0dot16.h
         src/SettingsConverter.h src/SettingsConverter.cpp
         src/VersionConfig.h.in
         src/GitInfo.h src/GitInfo.cpp.in

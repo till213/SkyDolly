@@ -22,20 +22,24 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef SETTINGSCONVERTERV0DOT13_H
+#define SETTINGSCONVERTERV0DOT13_H
+
 #include <QSettings>
-#include <QByteArray>
-#include <QUuid>
 
-#include "Version.h"
-#include "SettingsConverterV0dot16.h"
-#include "SettingsConverter.h"
+#include <Version.h>
 
-// PUBLIC
-
-void SettingsConverter::convertToCurrent(const Version &settingsVersion, QSettings &settings) noexcept
+class SettingsConverterV0dot13
 {
-    const Version currentVersion;
-    if (settingsVersion < currentVersion) {
-        SettingsConverterV0dot16::convert(settingsVersion, settings);
+public:
+    static inline void convert([[maybe_unused]] const Version &settingsVersion, QSettings &settings) noexcept
+    {
+        settings.beginGroup("Window");
+        {
+            settings.setValue("LocationTableState", QVariant());
+        }
+        settings.endGroup();
     }
-}
+};
+
+#endif // SETTINGSCONVERTERV0DOT13_H
