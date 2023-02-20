@@ -32,7 +32,7 @@
 
 namespace
 {
-    void convertToV13([[maybe_unused]] const Version &settingsVersion, QSettings &settings) noexcept
+    void convertToV0dot13([[maybe_unused]] const Version &settingsVersion, QSettings &settings) noexcept
     {
         settings.beginGroup("Window");
         {
@@ -41,16 +41,13 @@ namespace
         settings.endGroup();
     }
 
-    void convertToV16([[maybe_unused]] const Version &settingsVersion, QSettings &settings) noexcept
+    void convertPluginsV0dot16(QSettings &settings) noexcept
     {
         static constexpr const char *AddToFlightEnabledKey = "AddToFlightEnabled";
         static constexpr const char *ImportDirectoryKey = "ImportDirectoryEnabled";
+        static constexpr const char *AircraftImportModeKey = "AircraftImportMode";
         bool addToFlight {false};
         bool importDirectory {false};
-
-        if (settingsVersion < Version(QString("0.13.0"))) {
-            convertToV13(settingsVersion, settings);
-        }
 
         // CSV import
         settings.beginGroup(QString("Plugins/") + QUuid(Const::CsvImportPluginUuid).toByteArray());
@@ -59,54 +56,114 @@ namespace
             importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
                 // Add to current flight
-                settings.setValue("AircraftImportMode", 0);
+                settings.setValue(AircraftImportModeKey, 0);
             } else {
                 // Add to separate flights / new flight
-                settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
+                settings.setValue(AircraftImportModeKey, importDirectory ? 2 : 1);
             }
             // Remove obsolete setting
             settings.remove(AddToFlightEnabledKey);
         }
         settings.endGroup();
+
         // GPX import
         settings.beginGroup(QString("Plugins/") + QUuid(Const::GpxImportPluginUuid).toByteArray());
         {
             addToFlight = settings.value(AddToFlightEnabledKey).toBool();
             importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
-                settings.setValue("AircraftImportMode", 0);
+                settings.setValue(AircraftImportModeKey, 0);
             } else {
-                settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
+                settings.setValue(AircraftImportModeKey, importDirectory ? 2 : 1);
             }
             settings.remove(AddToFlightEnabledKey);
         }
         settings.endGroup();
+
         // IGC import
         settings.beginGroup(QString("Plugins/") + QUuid(Const::IgcImportPluginUuid).toByteArray());
         {
             addToFlight = settings.value(AddToFlightEnabledKey).toBool();
             importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
-                settings.setValue("AircraftImportMode", 0);
+                settings.setValue(AircraftImportModeKey, 0);
             } else {
-                settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
+                settings.setValue(AircraftImportModeKey, importDirectory ? 2 : 1);
             }
             settings.remove(AddToFlightEnabledKey);
         }
         settings.endGroup();
+
         // KML import
         settings.beginGroup(QString("Plugins/") + QUuid(Const::KmlImportPluginUuid).toByteArray());
         {
             addToFlight = settings.value(AddToFlightEnabledKey).toBool();
             importDirectory = settings.value(ImportDirectoryKey).toBool();
             if (addToFlight) {
-                settings.setValue("AircraftImportMode", 0);
+                settings.setValue(AircraftImportModeKey, 0);
             } else {
-                settings.setValue("AircraftImportMode", importDirectory ? 2 : 1);
+                settings.setValue(AircraftImportModeKey, importDirectory ? 2 : 1);
             }
             settings.remove(AddToFlightEnabledKey);
         }
         settings.endGroup();
+    }
+
+    void convertModulesV0dot16(QSettings &settings) noexcept
+    {
+        QByteArray logbookTableState;
+        QByteArray formationAircraftTableState;
+        QByteArray locationTableState;
+        bool relativePositionPlacement {false};
+
+        settings.beginGroup("Window");
+        {
+            logbookTableState = settings.value("LogbookState").toByteArray();
+            formationAircraftTableState = settings.value("FormationAircraftTableState").toByteArray();
+            locationTableState = settings.value("LocationTableState").toByteArray();
+            settings.remove("LogbookState");
+            settings.remove("FormationAircraftTableState");
+            settings.remove("LocationTableState");
+        }
+        settings.endGroup();
+
+        settings.beginGroup("Plugins/Modules/Formation");
+        {
+            relativePositionPlacement = settings.value("RelativePositionPlacement").toBool();
+            settings.remove("RelativePositionPlacement");
+        }
+        settings.endGroup();
+
+        // Logbook
+        settings.beginGroup(QString("Plugins/Modules/") + QUuid(Const::LogbookModuleUuid).toByteArray());
+        {
+            settings.setValue("LogbookTableState", logbookTableState);
+        }
+        settings.endGroup();
+
+        // Formation
+        settings.beginGroup(QString("Plugins/Modules/") + QUuid(Const::FormationModuleUuid).toByteArray());
+        {
+            settings.setValue("RelativePositionPlacement", relativePositionPlacement);
+            settings.setValue("FormationAircraftTableState", formationAircraftTableState);
+        }
+        settings.endGroup();
+
+        // Location
+        settings.beginGroup(QString("Plugins/Modules/") + QUuid(Const::LocationModuleUuid).toByteArray());
+        {
+            settings.setValue("LocationTableState", locationTableState);
+        }
+        settings.endGroup();
+    }
+
+    void convertToV0dot16(const Version &settingsVersion, QSettings &settings) noexcept
+    {
+        if (settingsVersion < Version(QString("0.13.0"))) {
+            convertToV0dot13(settingsVersion, settings);
+        }
+        convertPluginsV0dot16(settings);
+        convertModulesV0dot16(settings);
     }
 }
 
@@ -116,6 +173,6 @@ void SettingsConverter::convertToCurrent(const Version &settingsVersion, QSettin
 {
     const Version currentVersion;
     if (settingsVersion < currentVersion) {
-        ::convertToV16(settingsVersion, settings);
+        ::convertToV0dot16(settingsVersion, settings);
     }
 }
