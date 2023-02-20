@@ -11,7 +11,7 @@
 **Note:** the new Sky Dolly logbook import & export plugins render the existing Sky Dolly CSV import & export obsolete: the Sky Dolly CSV import & export will be removed in an upcoming release. However other CSV import & export formats such as the [flightradar24.com](https://www.flightradar24.com/), FlightRecorder and *position and attitude* formats will remain.
   
 ### Improvements
-- All export plugins: only the effectively *supported* resampling and formation export options (as repported by the given plugin) are now selectable
+- All export plugins: now only the effectively *supported* resampling and formation export options (as reported by the given plugin) are selectable
 - All import plugins:
   * The "Add to current flight" checkbox has been replaced by an aircraft import mode combobox:
     - **Add to current flight**: all imported aircraft are added to the currently loaded flight
@@ -35,7 +35,7 @@
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
 - The first aircraft position data is properly cached (not reset when timestamp is set to 0)
-- Fix the [flightradar24.com](https://www.flightradar24.com/) CSV import (wrong data validation)
+- Fix the [flightradar24.com](https://www.flightradar24.com/) CSV import (wrong CSV data validation)
 
 ### Under the Hood
 - Flight import plugin API simplified, by introducing a new FlightData structure that allows to move flight data between Flight objects
