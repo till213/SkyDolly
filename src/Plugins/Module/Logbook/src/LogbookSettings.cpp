@@ -24,13 +24,22 @@
  */
 
 #include <memory>
+#include <utility>
 
 #include <Kernel/Settings.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 #include "LogbookSettings.h"
 
+namespace
+{
+    // Keys
+    constexpr const char *logbookTableStateKey {"LogbookTableState"};
+}
+
 struct LogbookSettingsPrivate
-{};
+{
+    QByteArray logbookTableState;
+};
 
 // PUBLIC
 
@@ -41,16 +50,40 @@ LogbookSettings::LogbookSettings() noexcept
 
 LogbookSettings::~LogbookSettings() = default;
 
+QByteArray LogbookSettings::getLogbookTableState() const
+{
+    return d->logbookTableState;
+}
+
+void LogbookSettings::setLogbookTableState(QByteArray state) noexcept
+{
+    d->logbookTableState = std::move(state);
+}
+
 // PROTECTED
 
 void LogbookSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
-{}
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::logbookTableStateKey;
+    keyValue.second = d->logbookTableState;
+    keyValues.push_back(keyValue);
+}
 
 void LogbookSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{}
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::logbookTableStateKey;
+    keyValue.second = QByteArray();
+    keysWithDefaults.push_back(keyValue);
+}
 
 void LogbookSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
-{}
+{
+    d->logbookTableState = valuesByKey.at(::logbookTableStateKey).toByteArray();
+}
 
 void LogbookSettings::restoreDefaultsExtn() noexcept
 {}

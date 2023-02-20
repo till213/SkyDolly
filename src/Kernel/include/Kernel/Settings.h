@@ -252,21 +252,6 @@ public:
     void setWindowState(const QByteArray &state) noexcept;
 
     /*!
-     * Returns the saved logbook table state.
-     *
-     * \return the logbook table state; a \e null QByteArray if not saved before
-     */
-    QByteArray getLogbookState() const;
-
-    /*!
-     * Stores the logbook table state.
-     *
-     * \param state
-     *        the logbook table state encoded in the QByteAarray
-     */
-    void setLogbookState(const QByteArray &state) noexcept;
-
-    /*!
      * Returns the saved location table state.
      *
      * \return the location table state; a \e null QByteArray if not saved before

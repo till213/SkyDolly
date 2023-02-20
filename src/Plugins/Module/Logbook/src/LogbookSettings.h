@@ -45,6 +45,21 @@ public:
     LogbookSettings &operator=(LogbookSettings &&rhs) = delete;
     ~LogbookSettings() override;
 
+    /*!
+     * Returns the saved logbook table state.
+     *
+     * \return the logbook table state; a \e null QByteArray if not saved before
+     */
+    QByteArray getLogbookTableState() const;
+
+    /*!
+     * Stores the logbook table state.
+     *
+     * \param state
+     *        the logbook table state encoded in the QByteAarray
+     */
+    void setLogbookTableState(QByteArray state) noexcept;
+
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;

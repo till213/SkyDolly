@@ -68,6 +68,7 @@
 #include <Widget/Platform.h>
 #include <Widget/TableDateItem.h>
 #include <Widget/TableTimeItem.h>
+#include "LogbookSettings.h"
 #include "LogbookWidget.h"
 #include "ui_LogbookWidget.h"
 
@@ -102,12 +103,14 @@ namespace
 
 struct LogbookWidgetPrivate
 {
-    LogbookWidgetPrivate() noexcept
+    LogbookWidgetPrivate(LogbookSettings &moduleSettings) noexcept
+        : moduleSettings(moduleSettings)
     {
         searchTimer->setSingleShot(true);
         searchTimer->setInterval(::SearchTimeoutMSec);
     }
 
+    LogbookSettings &moduleSettings;
     std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>()};
     std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>()};
@@ -135,10 +138,10 @@ struct LogbookWidgetPrivate
 
 // PUBLIC
 
-LogbookWidget::LogbookWidget(QWidget *parent) noexcept
+LogbookWidget::LogbookWidget(LogbookSettings &moduleSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::LogbookWidget>()),
-      d(std::make_unique<LogbookWidgetPrivate>())
+      d(std::make_unique<LogbookWidgetPrivate>(moduleSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -147,11 +150,7 @@ LogbookWidget::LogbookWidget(QWidget *parent) noexcept
     frenchConnection();
 }
 
-LogbookWidget::~LogbookWidget()
-{
-    const QByteArray logbookState = ui->logTableWidget->horizontalHeader()->saveState();
-    Settings::getInstance().setLogbookState(logbookState);
-}
+LogbookWidget::~LogbookWidget() = default;
 
 // PRIVATE
 
@@ -202,9 +201,6 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->sortByColumn(LogbookWidgetPrivate::flightIdColumn, Qt::SortOrder::DescendingOrder);
     ui->logTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->logTableWidget->setAlternatingRowColors(true);
-
-    QByteArray logbookState = Settings::getInstance().getLogbookState();
-    ui->logTableWidget->horizontalHeader()->restoreState(logbookState);
 
     QHeaderView *header = ui->logTreeWidget->header();
     header->setSectionResizeMode(QHeaderView::Fixed);
@@ -531,6 +527,14 @@ void LogbookWidget::frenchConnection() noexcept
     // Date selection
     connect(ui->logTreeWidget, &QTreeWidget::itemClicked,
             this, &LogbookWidget::onDateItemClicked);
+
+    // Module settings
+    connect(ui->logTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
+            this, &LogbookWidget::onTableLayoutChanged);
+    connect(ui->logTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
+            this, &LogbookWidget::onTableLayoutChanged);
+    connect(&d->moduleSettings, &ModuleBaseSettings::changed,
+            this, &LogbookWidget::onModuleSettingsChanged);
 }
 
 inline void LogbookWidget::insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept
@@ -868,4 +872,15 @@ void LogbookWidget::filterByDuration([[maybe_unused]] int index) noexcept
 
     d->flightSelector.mininumDurationMinutes = minimumDurationMinutes;
     updateTable();
+}
+
+void LogbookWidget::onTableLayoutChanged() noexcept
+{
+    const QByteArray tableState = ui->logTableWidget->horizontalHeader()->saveState();
+    d->moduleSettings.setLogbookTableState(std::move(tableState));
+}
+
+void LogbookWidget::onModuleSettingsChanged() noexcept
+{
+    ui->logTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLogbookTableState());
 }

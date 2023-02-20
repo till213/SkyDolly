@@ -41,7 +41,7 @@ struct LogbookPluginPrivate
 {
     LogbookSettings moduleSettings;
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
-    std::unique_ptr<LogbookWidget> logbookWidget {std::make_unique<LogbookWidget>()};
+    std::unique_ptr<LogbookWidget> logbookWidget {std::make_unique<LogbookWidget>(moduleSettings)};
 };
 
 // PUBLIC

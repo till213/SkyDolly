@@ -45,6 +45,7 @@ class Aircraft;
 struct PositionData;
 class FlightService;
 class AircraftService;
+class FormationSettings;
 struct FormationWidgetPrivate;
 
 namespace Ui {
@@ -55,7 +56,7 @@ class FormationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    FormationWidget(FormationSettings &settings, QWidget *parent = nullptr) noexcept;
+    FormationWidget(FormationSettings &moduleSettings, QWidget *parent = nullptr) noexcept;
     FormationWidget(const FormationWidget &rhs) = delete;
     FormationWidget(FormationWidget &&rhs) = delete;
     FormationWidget &operator=(const FormationWidget &rhs) = delete;
@@ -119,6 +120,7 @@ private slots:
     void onTimeOffsetValueChanged() noexcept;
     void resetAllTimeOffsets() noexcept;
 
+    // Settings
     void onTableLayoutChanged() noexcept;
     void onModuleSettingsChanged() noexcept;
 };
