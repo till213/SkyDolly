@@ -127,7 +127,13 @@ target_sources(${APP_PROJECT_NAME}
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugins)
 
 # Documentation
-add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
+option(SKY_DOXY_DOC "Build Doxygen documentation" OFF)
+if(SKY_DOXY_DOC)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
+endif()
 
 # Tests
-add_subdirectory(${CMAKE_SOURCE_DIR}/test)
+option(SKY_TESTS "Build Sky Dolly unit tests" OFF)
+if(SKY_TESTS)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/test)
+endif()
