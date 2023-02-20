@@ -54,11 +54,11 @@ namespace
 
 struct KmlStyleExportPrivate
 {
-    KmlStyleExportPrivate(const KmlExportSettings &exportSettings) noexcept
-        : settings(exportSettings)
+    KmlStyleExportPrivate(const KmlExportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {}
 
-    const KmlExportSettings &settings;
+    const KmlExportSettings &pluginSettings;
     std::vector<QRgb> jetColorRamp;
     std::vector<QRgb> turbopropColorRamp;
     std::vector<QRgb> pistonColorRamp;
@@ -72,8 +72,8 @@ struct KmlStyleExportPrivate
 
 // PUBLIC
 
-KmlStyleExport::KmlStyleExport(const KmlExportSettings &settings) noexcept
-    : d(std::make_unique<KmlStyleExportPrivate>(settings))
+KmlStyleExport::KmlStyleExport(const KmlExportSettings &pluginSettings) noexcept
+    : d(std::make_unique<KmlStyleExportPrivate>(pluginSettings))
 {}
 
 KmlStyleExport::~KmlStyleExport() = default;
@@ -99,7 +99,7 @@ QString KmlStyleExport::getNextEngineTypeStyleMap(SimType::EngineType engineType
     QString styleMapId;
     std::size_t nofColors {0};
 
-    if (d->settings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
+    if (d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
         switch (engineType) {
         case SimType::EngineType::Jet:
             nofColors = d->jetColorRamp.size();
@@ -168,25 +168,25 @@ QString KmlStyleExport::getStyleUrl(Icon icon) noexcept
 
 inline void KmlStyleExport::initialiseColorRamps() noexcept
 {
-    const bool doColorRamp = d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRamp || d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType;
-    if (d->settings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
+    const bool doColorRamp = d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRamp || d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType;
+    if (d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
         d->jetColorRamp = Color::createColorRamp(
-                    d->settings.getJetStartColor(),
-                    doColorRamp ? d->settings.getJetEndColor() : d->settings.getJetStartColor(),
-                    d->settings.getNofColorsPerRamp());
+                    d->pluginSettings.getJetStartColor(),
+                    doColorRamp ? d->pluginSettings.getJetEndColor() : d->pluginSettings.getJetStartColor(),
+                    d->pluginSettings.getNofColorsPerRamp());
         d->turbopropColorRamp = Color::createColorRamp(
-                    d->settings.getTurbopropStartColor(),
-                    doColorRamp ? d->settings.getTurbopropEndColor(): d->settings.getTurbopropStartColor(),
-                    d->settings.getNofColorsPerRamp());
+                    d->pluginSettings.getTurbopropStartColor(),
+                    doColorRamp ? d->pluginSettings.getTurbopropEndColor(): d->pluginSettings.getTurbopropStartColor(),
+                    d->pluginSettings.getNofColorsPerRamp());
         d->pistonColorRamp = Color::createColorRamp(
-                    d->settings.getPistonStartColor(),
-                    doColorRamp ? d->settings.getPistonEndColor() : d->settings.getPistonStartColor(),
-                    d->settings.getNofColorsPerRamp());
+                    d->pluginSettings.getPistonStartColor(),
+                    doColorRamp ? d->pluginSettings.getPistonEndColor() : d->pluginSettings.getPistonStartColor(),
+                    d->pluginSettings.getNofColorsPerRamp());
     }
     d->allColorRamp = Color::createColorRamp(
-                d->settings.getAllStartColor(),
-                doColorRamp ? d->settings.getAllEndColor() : d->settings.getAllStartColor(),
-                d->settings.getNofColorsPerRamp());
+                d->pluginSettings.getAllStartColor(),
+                doColorRamp ? d->pluginSettings.getAllEndColor() : d->pluginSettings.getAllStartColor(),
+                d->pluginSettings.getNofColorsPerRamp());
 }
 
 bool KmlStyleExport::exportHighlightLineStyle(QIODevice &io) const noexcept
@@ -197,7 +197,7 @@ bool KmlStyleExport::exportHighlightLineStyle(QIODevice &io) const noexcept
 "    <Style id=\"s_flight_h\">\n"
 "      <LineStyle>\n"
 "        <color>" % QString::number(lineHighlightKml, 16) % "</color>\n"
-"        <width>" % QString::number(d->settings.getLineWidth()) % "</width>\n"
+"        <width>" % QString::number(d->pluginSettings.getLineWidth()) % "</width>\n"
 "      </LineStyle>\n"
 "      <PolyStyle>\n"
 "        <color>" % QString::number(polygonHighlightKml, 16) % "</color>\n"
@@ -210,9 +210,9 @@ bool KmlStyleExport::exportHighlightLineStyle(QIODevice &io) const noexcept
 
 bool KmlStyleExport::exportNormalLineStyles(QIODevice &io) const noexcept
 {
-    const float lineWidth = d->settings.getLineWidth();
+    const float lineWidth = d->pluginSettings.getLineWidth();
     bool ok {true};
-    if (d->settings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
+    if (d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
         // Per engine type (one color or ramp)
         ok = exportNormalLineStylesPerEngineType(SimType::EngineType::Jet, d->jetColorRamp, lineWidth, io);
         if (ok) {
@@ -233,7 +233,7 @@ bool KmlStyleExport::exportLineStyleMaps(QIODevice &io) const noexcept
     bool ok {true};
 
     // Jet style map
-    if (d->settings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->settings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
+    if (d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
         // Per engine type (one color or ramp)
         for (std::size_t index = 0; ok && index < d->jetColorRamp.size(); ++index) {
             const QString styleMap =

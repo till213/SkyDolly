@@ -40,19 +40,19 @@ namespace
 
 struct GpxImportOptionWidgetPrivate
 {
-    GpxImportOptionWidgetPrivate(GpxImportSettings &settings) noexcept
-        : settings(settings)
+    GpxImportOptionWidgetPrivate(GpxImportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {}
 
-     GpxImportSettings &settings;
+     GpxImportSettings &pluginSettings;
 };
 
 // PUBLIC
 
-GpxImportOptionWidget::GpxImportOptionWidget(GpxImportSettings &settings, QWidget *parent) noexcept
+GpxImportOptionWidget::GpxImportOptionWidget(GpxImportSettings &pluginSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::GpxImportOptionWidget>()),
-      d(std::make_unique<GpxImportOptionWidgetPrivate>(settings))
+      d(std::make_unique<GpxImportOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -76,7 +76,7 @@ void GpxImportOptionWidget::frenchConnection() noexcept
             this, &GpxImportOptionWidget::onDefaultSpeedChanged);
     connect(ui->convertAltitudeCheckBox, &QCheckBox::stateChanged,
             this, &GpxImportOptionWidget::onConvertAltitudeChanged);
-    connect(&d->settings, &GpxImportSettings::changed,
+    connect(&d->pluginSettings, &GpxImportSettings::changed,
             this, &GpxImportOptionWidget::updateUi);
 }
 
@@ -104,7 +104,7 @@ void GpxImportOptionWidget::initUi() noexcept
 
 void GpxImportOptionWidget::updateUi() noexcept
 {
-    const GpxImportSettings::GPXElement waypointSelection = d->settings.getWaypointSelection();
+    const GpxImportSettings::GPXElement waypointSelection = d->pluginSettings.getWaypointSelection();
     int currentIndex = 0;
     while (currentIndex < ui->waypointSelectionComboBox->count() &&
            static_cast<GpxImportSettings::GPXElement>(ui->waypointSelectionComboBox->itemData(currentIndex).toInt()) != waypointSelection) {
@@ -112,7 +112,7 @@ void GpxImportOptionWidget::updateUi() noexcept
     }
     ui->waypointSelectionComboBox->setCurrentIndex(currentIndex);
 
-    const GpxImportSettings::GPXElement positionSelection = d->settings.getPositionSelection();
+    const GpxImportSettings::GPXElement positionSelection = d->pluginSettings.getPositionSelection();
     currentIndex = 0;
     while (currentIndex < ui->positionSelectionComboBox->count() &&
            static_cast<GpxImportSettings::GPXElement>(ui->positionSelectionComboBox->itemData(currentIndex).toInt()) != positionSelection) {
@@ -120,12 +120,12 @@ void GpxImportOptionWidget::updateUi() noexcept
     }
     ui->positionSelectionComboBox->setCurrentIndex(currentIndex);
 
-    ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
-    ui->defaultSpeedSpinBox->setValue(d->settings.getDefaultSpeed());
+    ui->defaultAltitudeSpinBox->setValue(d->pluginSettings.getDefaultAltitude());
+    ui->defaultSpeedSpinBox->setValue(d->pluginSettings.getDefaultSpeed());
 
     if (Settings::getInstance().hasEarthGravityModel()) {
         ui->convertAltitudeCheckBox->setEnabled(true);
-        ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
+        ui->convertAltitudeCheckBox->setChecked(d->pluginSettings.isConvertAltitudeEnabled());
         ui->convertAltitudeCheckBox->setToolTip(tr("Converts imported height above WGS84 ellipsoid to height above the EGM2008 geoid."));
     } else {
         ui->convertAltitudeCheckBox->setEnabled(false);
@@ -137,26 +137,26 @@ void GpxImportOptionWidget::updateUi() noexcept
 void GpxImportOptionWidget::onWaypointSelelectionChanged() noexcept
 {
     const GpxImportSettings::GPXElement waypointSelection = static_cast<GpxImportSettings::GPXElement>(ui->waypointSelectionComboBox->currentData().toInt());
-    d->settings.setWaypointSelection(waypointSelection);
+    d->pluginSettings.setWaypointSelection(waypointSelection);
 }
 
 void GpxImportOptionWidget::onPositionSelelectionChanged() noexcept
 {
     const GpxImportSettings::GPXElement positionSelection = static_cast<GpxImportSettings::GPXElement>(ui->positionSelectionComboBox->currentData().toInt());
-    d->settings.setPositionSelection(positionSelection);
+    d->pluginSettings.setPositionSelection(positionSelection);
 }
 
 void GpxImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
 {
-    d->settings.setDefaultAltitude(value);
+    d->pluginSettings.setDefaultAltitude(value);
 }
 
 void GpxImportOptionWidget::onDefaultSpeedChanged(int value) noexcept
 {
-    d->settings.setDefaultSpeed(value);
+    d->pluginSettings.setDefaultSpeed(value);
 }
 
 void GpxImportOptionWidget::onConvertAltitudeChanged(int state) noexcept
 {
-    d->settings.setConvertAltitudeEnabled(state == Qt::Checked);
+    d->pluginSettings.setConvertAltitudeEnabled(state == Qt::Checked);
 }

@@ -35,19 +35,19 @@
 
 struct CsvLocationImportOptionWidgetPrivate
 {
-    CsvLocationImportOptionWidgetPrivate(CsvLocationImportSettings &settings) noexcept
-        : settings(settings)
+    CsvLocationImportOptionWidgetPrivate(CsvLocationImportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {}
 
-     CsvLocationImportSettings &settings;
+     CsvLocationImportSettings &pluginSettings;
 };
 
 // PUBLIC
 
-CsvLocationImportOptionWidget::CsvLocationImportOptionWidget(CsvLocationImportSettings &settings, QWidget *parent) noexcept
+CsvLocationImportOptionWidget::CsvLocationImportOptionWidget(CsvLocationImportSettings &pluginSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::CsvLocationImportOptionWidget>()),
-      d(std::make_unique<CsvLocationImportOptionWidgetPrivate>(settings))
+      d(std::make_unique<CsvLocationImportOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -69,7 +69,7 @@ void CsvLocationImportOptionWidget::frenchConnection() noexcept
             this, &CsvLocationImportOptionWidget::onDefaultAltitudeChanged);
     connect(ui->defaultIndicatedAirspeedSpinBox, &QSpinBox::valueChanged,
             this, &CsvLocationImportOptionWidget::onDefaultIndicatedAirspeedChanged);
-    connect(&d->settings, &CsvLocationImportSettings::changed,
+    connect(&d->pluginSettings, &CsvLocationImportSettings::changed,
             this, &CsvLocationImportOptionWidget::updateUi);
 }
 
@@ -94,7 +94,7 @@ void CsvLocationImportOptionWidget::initUi() noexcept
 
 void CsvLocationImportOptionWidget::updateUi() noexcept
 {
-    const CsvLocationImportSettings::Format format = d->settings.getFormat();
+    const CsvLocationImportSettings::Format format = d->pluginSettings.getFormat();
     int currentIndex {0};
     while (currentIndex < ui->formatComboBox->count() &&
            static_cast<CsvLocationImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != format) {
@@ -102,11 +102,11 @@ void CsvLocationImportOptionWidget::updateUi() noexcept
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);
 
-    ui->defaultCountryComboBox->setCurrentId(d->settings.getDefaultCountryId());
+    ui->defaultCountryComboBox->setCurrentId(d->pluginSettings.getDefaultCountryId());
     ui->formatComboBox->setCurrentIndex(currentIndex);
-    ui->defaultCountryComboBox->setCurrentId(d->settings.getDefaultCountryId());
-    ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
-    ui->defaultIndicatedAirspeedSpinBox->setValue(d->settings.getDefaultIndicatedAirspeed());
+    ui->defaultCountryComboBox->setCurrentId(d->pluginSettings.getDefaultCountryId());
+    ui->defaultAltitudeSpinBox->setValue(d->pluginSettings.getDefaultAltitude());
+    ui->defaultIndicatedAirspeedSpinBox->setValue(d->pluginSettings.getDefaultIndicatedAirspeed());
     const bool enableDefaults = format != CsvLocationImportSettings::Format::SkyDolly;
     ui->defaultCountryComboBox->setEnabled(enableDefaults);
     ui->defaultAltitudeSpinBox->setEnabled(enableDefaults);
@@ -116,20 +116,20 @@ void CsvLocationImportOptionWidget::updateUi() noexcept
 void CsvLocationImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
 {
     const CsvLocationImportSettings::Format format = static_cast<CsvLocationImportSettings::Format>(ui->formatComboBox->currentData().toInt());
-    d->settings.setFormat(format);
+    d->pluginSettings.setFormat(format);
 }
 
 void CsvLocationImportOptionWidget::onDefaultCountryChanged([[maybe_unused]]int index) noexcept
 {
-    d->settings.setDefaultCountryId(ui->defaultCountryComboBox->getCurrentId());
+    d->pluginSettings.setDefaultCountryId(ui->defaultCountryComboBox->getCurrentId());
 }
 
 void CsvLocationImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
 {
-    d->settings.setDefaultAltitude(value);
+    d->pluginSettings.setDefaultAltitude(value);
 }
 
 void CsvLocationImportOptionWidget::onDefaultIndicatedAirspeedChanged(int value) noexcept
 {
-    d->settings.setDefaultIndicatedAirspeed(value);
+    d->pluginSettings.setDefaultIndicatedAirspeed(value);
 }

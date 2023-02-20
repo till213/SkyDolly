@@ -40,7 +40,7 @@ class GpxImportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit GpxImportOptionWidget(GpxImportSettings &settings, QWidget *parent = nullptr) noexcept;
+    explicit GpxImportOptionWidget(GpxImportSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     GpxImportOptionWidget(const GpxImportOptionWidget &rhs) = delete;
     GpxImportOptionWidget(GpxImportOptionWidget &&rhs) = delete;
     GpxImportOptionWidget &operator=(const GpxImportOptionWidget &rhs) = delete;

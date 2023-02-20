@@ -40,7 +40,7 @@ class GpxExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit GpxExportOptionWidget(GpxExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    explicit GpxExportOptionWidget(GpxExportSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     GpxExportOptionWidget(const GpxExportOptionWidget &rhs) = delete;
     GpxExportOptionWidget(GpxExportOptionWidget &&rhs) = delete;
     GpxExportOptionWidget &operator=(const GpxExportOptionWidget &rhs) = delete;

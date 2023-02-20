@@ -31,19 +31,19 @@
 
 struct IgcExportOptionWidgetPrivate
 {
-    IgcExportOptionWidgetPrivate(IgcExportSettings &theSettings) noexcept
-        : settings(theSettings)
+    IgcExportOptionWidgetPrivate(IgcExportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {}
 
-    IgcExportSettings &settings;
+    IgcExportSettings &pluginSettings;
 };
 
 // PUBLIC
 
-IgcExportOptionWidget::IgcExportOptionWidget(IgcExportSettings &settings, QWidget *parent) noexcept
+IgcExportOptionWidget::IgcExportOptionWidget(IgcExportSettings &pluginSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::IgcExportOptionWidget>()),
-      d(std::make_unique<IgcExportOptionWidgetPrivate>(settings))
+      d(std::make_unique<IgcExportOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -57,7 +57,7 @@ IgcExportOptionWidget::~IgcExportOptionWidget() = default;
 
 void IgcExportOptionWidget::frenchConnection() noexcept
 {
-    connect(&d->settings, &IgcExportSettings::changed,
+    connect(&d->pluginSettings, &IgcExportSettings::changed,
             this, &IgcExportOptionWidget::updateUi);
     connect(ui->pilotNameLineEdit, &QLineEdit::textChanged,
             this, &IgcExportOptionWidget::onPilotNameChanged);
@@ -72,16 +72,16 @@ void IgcExportOptionWidget::initUi() noexcept
 
 void IgcExportOptionWidget::updateUi() noexcept
 {
-    ui->pilotNameLineEdit->setText(d->settings.getPilotName());
-    ui->coPilotNameLineEdit->setText(d->settings.getCoPilotName());
+    ui->pilotNameLineEdit->setText(d->pluginSettings.getPilotName());
+    ui->coPilotNameLineEdit->setText(d->pluginSettings.getCoPilotName());
 }
 
 void IgcExportOptionWidget::onPilotNameChanged(const QString &name) noexcept
 {
-    d->settings.setPilotName(name);
+    d->pluginSettings.setPilotName(name);
 }
 
 void IgcExportOptionWidget::onCoPilotNameChanged(const QString &name) noexcept
 {
-    d->settings.setCoPilotName(name);
+    d->pluginSettings.setCoPilotName(name);
 }
