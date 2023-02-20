@@ -40,6 +40,7 @@
 - Fix the [flightradar24.com](https://www.flightradar24.com/) CSV import (wrong CSV data validation)
 - Fix interpolation of first sample point in case the timestamp of the first sample point is > 0 which may happen if e.g. position data
   arrives a few milliseconds after the first engine data sample arrives (the first arriving sampled data starts the timer)
+- Fix internal SimConnect exceptions due to duplicate "frame" systemt event subscriptions
 
 ### Under the Hood
 - Flight import plugin API simplified, by introducing a new FlightData structure that allows to move flight data between Flight objects
