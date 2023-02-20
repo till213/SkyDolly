@@ -117,12 +117,14 @@ void BasicFlightImportDialog::initBasicUi() noexcept
     Settings &settings = Settings::getInstance();
     ui->pathLineEdit->setText(QDir::toNativeSeparators(settings.getExportPath()));
 
-    QString type = d->flight.getUserAircraft().getAircraftInfo().aircraftType.type;
-    if (type.isEmpty()) {
-        type = settings.getImportAircraftType();
-    }
-    if (!type.isEmpty()) {
-        ui->aircraftSelectionComboBox->setCurrentText(type);
+    if (d->pluginSettings.isAircraftSelectionRequired()) {
+        QString type = d->flight.getUserAircraft().getAircraftInfo().aircraftType.type;
+        if (type.isEmpty()) {
+            type = settings.getImportAircraftType();
+        }
+        if (!type.isEmpty()) {
+            ui->aircraftSelectionComboBox->setCurrentText(type);
+        }
     }
 
     // Import aircraft mode
@@ -197,8 +199,8 @@ void BasicFlightImportDialog::updateUi() noexcept
     }
 
     const QString type = ui->aircraftSelectionComboBox->currentText();
-    const bool aircraftTypeExists = !type.isEmpty() && d->aircraftTypeService->exists(type);
-    bool enabled = fileExists && aircraftTypeExists;
+    const bool aircraftTypeSelected = !d->pluginSettings.isAircraftSelectionRequired() || !type.isEmpty() && d->aircraftTypeService->exists(type);
+    bool enabled = fileExists && (aircraftTypeSelected);
     d->importButton->setEnabled(enabled);
 
     const bool importDirectory = d->pluginSettings.isImportDirectoryEnabled();
