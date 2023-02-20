@@ -39,6 +39,8 @@
 
 ### Under the Hood
 - Flight import plugin API simplified, by introducing a new FlightData structure that allows to move flight data between Flight objects
+- Modules now have module-specifc settings (like import & export plugins)
+- Basic unit tests for selected import plugins
 
 ## 0.15.1
 
