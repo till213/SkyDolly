@@ -47,8 +47,8 @@ struct VersionPrivate
     int patch {VersionConfig::Patch};
 
     // https://grammar.yourdictionary.com/parts-of-speech/adjectives/Adjectives-That-Start-With-F.html
-    // https://en.wikipedia.org/wiki/List_of_aircraft_(F)
-    static inline const QString CodeName {QStringLiteral("Flamboyant Fokker")};
+    // https://en.wikipedia.org/wiki/List_of_aircraft_(G)
+    static inline const QString CodeName {QStringLiteral("Gregarious Gee Bee")};
 };
 
 // PUBLIC

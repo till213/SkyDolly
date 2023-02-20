@@ -2,6 +2,8 @@
 
 ## 0.16.0
 
+**"Gregarious Gee Bee"** introduces new Sky Dolly logbook export & import plugins, incuding time synchronisation for formation flights.
+
 ### New Features
 - Sky Dolly logbook (SDLOG) export plugin
   * The current plugin implementation always exports the entire flight (including all aircraft) into a single logbook file, without resampling
@@ -52,7 +54,7 @@
 
 ## 0.15.0
 
-This release focuses on the migration to the Qt 6.4 framework. If you are building Sky Dolly from source then also refer to the updated [BUILD.md](BUILD.md) instructions.
+**"Flamboyant Fokker"** focuses on the migration to the Qt 6.4 framework. If you are building Sky Dolly from source then also refer to the updated [BUILD.md](BUILD.md) instructions.
 
 ### Improvements
 - The new Qt 6 framework also provides initial support for "dark mode"
@@ -84,7 +86,7 @@ This release focuses on the migration to the Qt 6.4 framework. If you are buildi
 
 ## 0.14.0
 
-This release focuses on improved 3rd-party aircraft support, especially "for the big birds".
+**"Ethereal Embraer"** focuses on improved 3rd-party aircraft support, especially "for the big birds".
 
 ### Improvements
 - Improved replay specifically with 3rd party aircraft, for:
@@ -129,7 +131,7 @@ This release focuses on improved 3rd-party aircraft support, especially "for the
 
 ## 0.13.0
 
-This release introduced location import and export.
+**"Dapper Daher"** introduced location import and export.
 
 ### New Features
 - New location export plugin
@@ -177,7 +179,7 @@ This release introduced location import and export.
 
 ## 0.12.0
 
-This release introduces the "Location" module.
+**"Celestial Cessna"** introduces the "Location" module.
 
 ### New Features
 - Location module
@@ -306,7 +308,7 @@ This release mostly focuses on "under the hood" improvements, but also improves 
 
 ## 0.10.0
 
-This release adds two new export plugins (JSON and GPX) and improves various existing import and export plugins.
+**"Beasty Boeing"** adds two new export plugins (JSON and GPX) and improves various existing import and export plugins.
 
 ### New Features
 
@@ -352,7 +354,7 @@ This release adds two new export plugins (JSON and GPX) and improves various exi
   
 ## 0.9.0
 
-This release introduces various new import and export plugins: IGC, GPX and CSV (flightradar24).
+**"Anarchic Airbus"** introduces various new import and export plugins: IGC, GPX and CSV (flightradar24).
 
 ### New Features
 
