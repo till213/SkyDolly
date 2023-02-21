@@ -613,7 +613,7 @@ void MainWindow::initModuleSelectorUi() noexcept
     int moduleCount {0};
     for (const auto &item : d->moduleManager->getActionRegistry()) {
         if (moduleCount > 0) {
-            QFrame *verticalLine = new QFrame(this);
+            auto *verticalLine = new QFrame(this);
             verticalLine->setFrameShape(QFrame::VLine);
             verticalLine->setFrameShadow(QFrame::Sunken);
             ui->moduleSelectorLayout->addWidget(verticalLine);

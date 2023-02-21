@@ -69,7 +69,7 @@ void RecentFileMenu::initialise()
     updateNofRecentFileActions(maxRecentFiles);
     updateRecentFileActions();
 
-    QAction *separator = new QAction(d->recentFileActionGroup);
+    auto *separator = new QAction(d->recentFileActionGroup);
     separator->setSeparator(true);
     d->clearRecentFileAction = new QAction(tr("Clear &Menu"), d->recentFileActionGroup);
 }

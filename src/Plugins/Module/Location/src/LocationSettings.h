@@ -49,6 +49,12 @@ public:
     LocationSelector::TypeSelection getTypeSelection() const noexcept;
     void setTypeSelection(LocationSelector::TypeSelection typeSelection) noexcept;
 
+    std::int64_t getCategoryId() const noexcept;
+    void setCategoryId(std::int64_t id) noexcept;
+
+    std::int64_t getCountryId() const noexcept;
+    void setCountryId(std::int64_t id) noexcept;
+
     /*!
      * Returns the saved location table state.
      *

@@ -845,6 +845,7 @@ void LocationWidget::onCategoryChanged() noexcept
     if (d->locationSelector.categoryId == d->NoneLocationCategoryId) {
         d->locationSelector.categoryId = Const::InvalidId;
     }
+    d->moduleSettings.setCategoryId(d->locationSelector.categoryId);
     updateTable();
 }
 
@@ -854,6 +855,7 @@ void LocationWidget::onCountryChanged() noexcept
     if (d->locationSelector.countryId == d->WorldCountryId) {
         d->locationSelector.countryId = Const::InvalidId;
     }
+    d->moduleSettings.setCountryId(d->locationSelector.countryId);
     updateTable();
 }
 
@@ -876,8 +878,8 @@ void LocationWidget::onTypeOptionToggled(const QVariant &optionValue, bool enabl
     } else {
         d->locationSelector.typeSelection.erase(typeId);
     }
-    updateTable();
     d->moduleSettings.setTypeSelection(d->locationSelector.typeSelection);
+    updateTable();    
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
@@ -934,7 +936,7 @@ void LocationWidget::onDeleteLocation() noexcept
         bool doDelete {true};
         if (settings.isDeleteLocationConfirmationEnabled()) {
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
-            QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
+            auto *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
             // Sequence numbers start at 1
             messageBox->setWindowTitle(tr("Delete Aircraft"));
@@ -1067,6 +1069,15 @@ void LocationWidget::onModuleSettingsChanged() noexcept
         ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(type), true);
     }
     ui->typeOptionGroup->blockSignals(false);
-    updateTable();
+
+    ui->categoryComboBox->blockSignals(true);
+    ui->categoryComboBox->setCurrentId(d->moduleSettings.getCategoryId());
+    ui->categoryComboBox->blockSignals(false);
+
+    ui->countryComboBox->blockSignals(true);
+    ui->countryComboBox->setCurrentId(d->moduleSettings.getCountryId());
+    ui->countryComboBox->blockSignals(false);
+
     ui->locationTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLocationTableState());
+    updateTable();
 }
