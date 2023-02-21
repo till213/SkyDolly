@@ -63,7 +63,10 @@ bool FormationSettings::isRelativePositionPlacementEnabled() const noexcept
 
 void FormationSettings::setRelativePositionPlacementEnabled(bool enable) noexcept
 {
-    d->relativePositionPlacement = enable;
+    if (d->relativePositionPlacement != enable) {
+        d->relativePositionPlacement = enable;
+        emit changed();
+    }
 }
 
 QByteArray FormationSettings::getFormationAircraftTableState() const
@@ -73,7 +76,10 @@ QByteArray FormationSettings::getFormationAircraftTableState() const
 
 void FormationSettings::setFormationAircraftTableState(QByteArray state) noexcept
 {
-    d->formationAircraftTableState = std::move(state);
+    if (d->formationAircraftTableState != state) {
+        d->formationAircraftTableState = std::move(state);
+        emit changed();
+    }
 }
 
 // PROTECTED

@@ -846,7 +846,6 @@ void LocationWidget::onCategoryChanged() noexcept
         d->locationSelector.categoryId = Const::InvalidId;
     }
     d->moduleSettings.setCategoryId(d->locationSelector.categoryId);
-    updateTable();
 }
 
 void LocationWidget::onCountryChanged() noexcept
@@ -856,7 +855,6 @@ void LocationWidget::onCountryChanged() noexcept
         d->locationSelector.countryId = Const::InvalidId;
     }
     d->moduleSettings.setCountryId(d->locationSelector.countryId);
-    updateTable();
 }
 
 void LocationWidget::onSearchTextChanged() noexcept
@@ -879,7 +877,6 @@ void LocationWidget::onTypeOptionToggled(const QVariant &optionValue, bool enabl
         d->locationSelector.typeSelection.erase(typeId);
     }
     d->moduleSettings.setTypeSelection(d->locationSelector.typeSelection);
-    updateTable();    
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept

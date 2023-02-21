@@ -74,7 +74,10 @@ LocationSelector::TypeSelection LocationSettings::getTypeSelection() const noexc
 
 void LocationSettings::setTypeSelection(LocationSelector::TypeSelection typeSelection) noexcept
 {
-    d->typeSelection = std::move(typeSelection);
+    if (d->typeSelection != typeSelection) {
+        d->typeSelection = std::move(typeSelection);
+        emit changed();
+    }
 }
 
 std::int64_t LocationSettings::getCategoryId() const noexcept
@@ -82,9 +85,12 @@ std::int64_t LocationSettings::getCategoryId() const noexcept
     return d->categoryId;
 }
 
-void LocationSettings::setCategoryId(std::int64_t categoryIdd) noexcept
+void LocationSettings::setCategoryId(std::int64_t categoryId) noexcept
 {
-    d->categoryId = categoryIdd;
+    if (d->categoryId != categoryId) {
+        d->categoryId = categoryId;
+        emit changed();
+    }
 }
 
 std::int64_t LocationSettings::getCountryId() const noexcept
@@ -94,7 +100,10 @@ std::int64_t LocationSettings::getCountryId() const noexcept
 
 void LocationSettings::setCountryId(std::int64_t countryId) noexcept
 {
-    d->countryId = countryId;
+    if (d->countryId != countryId) {
+        d->countryId = countryId;
+        emit changed();
+    }
 }
 
 QByteArray LocationSettings::getLocationTableState() const
@@ -104,7 +113,10 @@ QByteArray LocationSettings::getLocationTableState() const
 
 void LocationSettings::setLocationTableState(QByteArray state) noexcept
 {
-    d->locationTableState = std::move(state);
+    if (d->locationTableState != state) {
+        d->locationTableState = std::move(state);
+        emit changed();
+    }
 }
 
 // PROTECTED
