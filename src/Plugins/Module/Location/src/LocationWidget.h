@@ -98,6 +98,7 @@ private slots:
     void onSearchTextChanged() noexcept;
     void searchText() noexcept;
     void onTypeOptionToggled(const QVariant &optionValue, bool enable) noexcept;
+    void resetSearchFilter() noexcept;
 
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;

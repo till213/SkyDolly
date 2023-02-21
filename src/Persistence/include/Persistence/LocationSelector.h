@@ -56,6 +56,14 @@ struct PERSISTENCE_API LocationSelector
         static const std::int64_t userLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
         return typeSelection.empty() || typeSelection.contains(userLocationTypeId);
     }
+
+    inline void clear() noexcept
+    {
+        typeSelection.clear();
+        categoryId = Const::InvalidId;
+        countryId = Const::InvalidId;
+        searchKeyword.clear();
+    }
 };
 
 #endif // LOCATIONSELECTOR_H

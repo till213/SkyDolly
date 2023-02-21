@@ -368,6 +368,8 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::searchText);
     connect(ui->typeOptionGroup, &LinkedOptionGroup::optionToggled,
             this, &LocationWidget::onTypeOptionToggled);
+    connect(ui->resetFilterPushButton, &QPushButton::clicked,
+            this, &LocationWidget::resetSearchFilter);
 
     // Persistence
     PersistenceManager &persistenceManager = PersistenceManager::getInstance();
@@ -878,6 +880,11 @@ void LocationWidget::onTypeOptionToggled(const QVariant &optionValue, bool enabl
     d->moduleSettings.setTypeSelection(typeSelection);
 }
 
+void LocationWidget::resetSearchFilter() noexcept
+{
+    d->moduleSettings.restoreDefaults();
+}
+
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
 {
     QTableWidgetItem *item = ui->locationTableWidget->item(row, column);
@@ -1070,7 +1077,7 @@ void LocationWidget::onModuleSettingsChanged() noexcept
     if (categoryId == Const::InvalidId) {
         categoryId = d->NoneLocationCategoryId;
     }
-    ui->categoryComboBox->setCurrentId(d->moduleSettings.getCategoryId());
+    ui->categoryComboBox->setCurrentId(categoryId);
     ui->categoryComboBox->blockSignals(false);
 
     ui->countryComboBox->blockSignals(true);
@@ -1080,6 +1087,10 @@ void LocationWidget::onModuleSettingsChanged() noexcept
     }
     ui->countryComboBox->setCurrentId(countryId);
     ui->countryComboBox->blockSignals(false);
+
+    ui->searchLineEdit->blockSignals(true);
+    ui->searchLineEdit->setText(d->moduleSettings.getSearchText());
+    ui->searchLineEdit->blockSignals(false);
 
     ui->locationTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLocationTableState());
     updateTable();

@@ -62,6 +62,8 @@ public:
     bool hasSelectors() const noexcept;
     const LocationSelector &getLocationSelector() const noexcept;
 
+    void clearLocationSelector() noexcept;
+
     /*!
      * Returns the saved location table state.
      *

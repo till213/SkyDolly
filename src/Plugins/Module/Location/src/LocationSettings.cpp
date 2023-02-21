@@ -48,6 +48,7 @@ namespace
 
 struct LocationSettingsPrivate
 {
+    // Note: search keywords are deliberately not persisted in the settings
     LocationSelector locationSelector;
     QByteArray locationTableState;
 };
@@ -126,6 +127,12 @@ bool LocationSettings::hasSelectors() const noexcept
 const LocationSelector &LocationSettings::getLocationSelector() const noexcept
 {
     return d->locationSelector;
+}
+
+void LocationSettings::clearLocationSelector() noexcept
+{
+    d->locationSelector.clear();
+    emit changed();
 }
 
 QByteArray LocationSettings::getLocationTableState() const
@@ -210,8 +217,6 @@ void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Valu
 
 void LocationSettings::restoreDefaultsExtn() noexcept
 {
-    d->locationSelector.typeSelection.clear();
-    d->locationSelector.categoryId = Const::InvalidId;
-    d->locationSelector.countryId = Const::InvalidId;
+    d->locationSelector.clear();
     d->locationTableState = {};
 }

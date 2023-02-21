@@ -71,6 +71,16 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="resetFilterPushButton">
+       <property name="toolTip">
+        <string>Reset the search filter criteria.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Reset</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
