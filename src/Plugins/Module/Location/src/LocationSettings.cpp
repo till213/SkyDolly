@@ -43,13 +43,27 @@ namespace
     constexpr const char *LocationTypeSelectionKey {"LocationTypeSelection"};
     constexpr const char *LocationCategorySelectionKey {"LocationCategorySelection"};
     constexpr const char *CountrySelectionKey {"CountrySelection"};
+
+constexpr const char *AltitudeKey {"CountrySelection"};
+constexpr const char *CountrySelectionKey {"CountrySelection"};
+constexpr const char *CountrySelectionKey {"CountrySelection"};
+
     constexpr const char *LocationTableStateKey {"LocationTableState"};
+
+    // Defaults
+    constexpr double DefaultAltitude {5.0};
+    constexpr int DefaultIndicatedAirspeed {120};
+    constexpr bool DefaultOnGround {false};
 }
 
 struct LocationSettingsPrivate
 {
     // Note: search keywords are deliberately not persisted in the settings
     LocationSelector locationSelector;
+    double altitude {::DefaultAltitude};
+    int indicatedAirspeed {::DefaultIndicatedairspeed};
+    bool onGround {::DefaultOnGround};
+
     QByteArray locationTableState;
 };
 
@@ -133,6 +147,45 @@ void LocationSettings::clearLocationSelector() noexcept
 {
     d->locationSelector.clear();
     emit changed();
+}
+
+double LocationSettings::getAltitude() const noexcept
+{
+    return d->altitude;
+}
+
+void LocationSettings::setAltitdue(double altitude) noexcept
+{
+    if (d->altitude != altitude) {
+        d->altitude = altitude;
+        emit changed();
+    }
+}
+
+int LocationSettings::getIndicatedAirspeed() const noexcept
+{
+    return d->indicatedAirspeed;
+}
+
+void LocationSettings::setIndicatedAirspeed(int airspeed)
+{
+    if (d->indicatedAirspeed != airspeed) {
+        d->indicatedAirspeed = airspeed;
+        emit changed();
+    }
+}
+
+bool LocationSettings::isOnGround() const noexcept
+{
+    return d->onGround;
+}
+
+void LocationSettings::setOnGround(bool enable) noexcept
+{
+    if (d->onGround != enable) {
+        d->onGround = enable;
+        emit changed();
+    }
 }
 
 QByteArray LocationSettings::getLocationTableState() const

@@ -62,6 +62,15 @@ public:
     bool hasSelectors() const noexcept;
     const LocationSelector &getLocationSelector() const noexcept;
 
+    double getAltitude() const noexcept;
+    void setAltitdue(double altitude) noexcept;
+
+    int getIndicatedAirspeed() const noexcept;
+    void setIndicatedAirspeed(int airspeed);
+
+    bool isOnGround() const noexcept;
+    void setOnGround(bool enable) noexcept;
+
     void clearLocationSelector() noexcept;
 
     /*!
