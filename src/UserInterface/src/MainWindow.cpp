@@ -478,21 +478,14 @@ void MainWindow::initUi() noexcept
             Settings &settings = Settings::getInstance();
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
-            constexpr char32_t WarningSignChar = 0x26A0;
-            const QString WarningString = QString::fromUcs4(&WarningSignChar, 1);
             QMessageBox::information(this, "Preview",
-                                     WarningString + WarningString + WarningString + QString(" EXCESSIVE LOGBOOK BACKUP GENERATION ") + WarningString + WarningString + WarningString +
-                                     QString("\n\n"
-                                     "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                                     "This patch release v%2 \"%3\" fixes an important issue regarding excessive logbook backup generation. "
-                                     "In order to reclaim storage space:\n\n"
-                                     "· Open the logbook location: File | Logbook Settings... | Show\n"
-                                     "· In the File Explorer, open the Backups folder\n"
-                                     "· Delete any backup logbooks that are not needed\n\n"
-                                     "The backup name contains the backup date which should help to identify the most recent backups. In order to disable backup generation completely:\n\n"
-                                     "· Open the logbook location: File | Logbook Settings...\n"
-                                     "· Set the Backup Period to: Never\n"
-                                     "· Uncheck the \"Before migration of an older logbook\" option\n\n"
+                                     QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
+                                     "This patch release v%2 \"%3\" introduces new Sky Dolly logbook import and export plugins. "
+                                     "Note that they will completely replace the Sky Dolly CSV import and export format which has now been declared obsolete "
+                                     "and will be removed in the next release.\n\n"
+                                     "Note that the other CSV formats (flightradar24.com for instance) will not go away and remain fully supported.\n\n"
+                                     "All import plugins that support real-world timestamps (such as the newly introduced Sky Dolly logbook import) "
+                                     "now also support automated time offset synchronisation, when importing aircraft into a formation flight.\n\n"
                                      "This dialog will be shown %4 more times.")
                          .arg(Version::getApplicationName(), Version::getApplicationVersion())
                          .arg(Version::getCodeName()).arg(currentPreviewInfoCount),

@@ -66,7 +66,7 @@ struct FlightImportPluginBasePrivate
     std::unique_ptr<AircraftTypeService> aircraftTypeService {std::make_unique<AircraftTypeService>()};
     QFile file;
     Unit unit;
-    AircraftType aircraftType;
+    AircraftType selectedAircraftType;
     FlightAugmentation flightAugmentation;
 };
 
@@ -99,7 +99,12 @@ bool FlightImportPluginBase::importFlights(Flight &flight) noexcept
             Settings::getInstance().setExportPath(directoryPath);
             selectedFilePaths.append(selectedPath);
         }
-        d->aircraftType = importDialog->getSelectedAircraftType(&ok);
+        if (baseSettings.isAircraftSelectionRequired()) {
+            d->selectedAircraftType = importDialog->getSelectedAircraftType(&ok);
+        } else {
+            d->selectedAircraftType = AircraftType();
+            ok = true;
+        }
         if (ok) {
 #ifdef DEBUG
             QElapsedTimer timer;
@@ -118,7 +123,7 @@ bool FlightImportPluginBase::importFlights(Flight &flight) noexcept
         } else {
             QMessageBox::warning(PluginBase::getParentWidget(), tr("Import error"),
                                  tr("The selected aircraft '%1' is not a known aircraft in the logbook. "
-                                    "Check for spelling errors or record a flight with this aircraft first.").arg(d->aircraftType.type));
+                                    "Check for spelling errors or record a flight with this aircraft first.").arg(d->selectedAircraftType.type));
         }
     } else {
         ok = true;
@@ -131,7 +136,7 @@ bool FlightImportPluginBase::importFlights(Flight &flight) noexcept
 
 AircraftType &FlightImportPluginBase::getSelectedAircraftType() const noexcept
 {
-    return d->aircraftType;
+    return d->selectedAircraftType;
 }
 
 // PRIVATE
@@ -268,7 +273,7 @@ void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const no
     for (Aircraft &aircraft : flightData) {
         AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
         if (aircraftInfo.aircraftType.isNull()) {
-            aircraftInfo.aircraftType = d->aircraftType;
+            aircraftInfo.aircraftType = d->selectedAircraftType;
         }
 
         const Position &position = aircraft.getPosition();

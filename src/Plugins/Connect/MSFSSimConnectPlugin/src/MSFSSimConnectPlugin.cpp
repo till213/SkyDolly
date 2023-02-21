@@ -100,7 +100,7 @@ public:
     tsl::ordered_map<QString, Waypoint> flightPlan;    
     bool pendingWaypointTime {false};
     bool storeDataImmediately {true};
-    bool subscribedToSystemEvent {false};
+    bool subscribedToFrameEvent {false};
 };
 
 // PUBLIC
@@ -186,10 +186,10 @@ bool MSFSSimConnectPlugin::onStartRecording() noexcept
     bool ok = result == S_OK;
 
     // For formation flights (count > 1) send AI aircraft positions every visual frame
-    if (ok && getCurrentFlight().count() > 1) {
+    if (ok && getCurrentFlight().count() > 1 && !d->subscribedToFrameEvent) {
         result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
         if (result == S_OK) {
-            d->subscribedToSystemEvent = true;
+            d->subscribedToFrameEvent = true;
         }
         ok = result == S_OK;
     }
@@ -205,9 +205,9 @@ void MSFSSimConnectPlugin::onRecordingPaused(bool enable) noexcept
 void MSFSSimConnectPlugin::onStopRecording() noexcept
 {
     // Stop receiving "frame" events
-    if (d->subscribedToSystemEvent) {
+    if (d->subscribedToFrameEvent) {
         ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
-        d->subscribedToSystemEvent = false;
+        d->subscribedToFrameEvent = false;
     }
 
     // Stop receiving aircraft position
@@ -264,10 +264,13 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
 
 bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
 {
+    HRESULT result {S_OK};
     // Send aircraft position every visual frame
-    HRESULT result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
-    if (result == S_OK) {
-        d->subscribedToSystemEvent = true;
+    if (!d->subscribedToFrameEvent) {
+        result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
+        if (result == S_OK) {
+            d->subscribedToFrameEvent = true;
+        }
     }
     resetEventStates();
     return result == S_OK;
@@ -276,14 +279,16 @@ bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
 void MSFSSimConnectPlugin::onReplayPaused(bool enable) noexcept
 {
     if (enable) {
-        if (d->subscribedToSystemEvent) {
+        if (d->subscribedToFrameEvent) {
             ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
-            d->subscribedToSystemEvent = false;
+            d->subscribedToFrameEvent = false;
         }
     } else {
-        HRESULT result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
-        if (result == S_OK) {
-            d->subscribedToSystemEvent = true;
+        if (!d->subscribedToFrameEvent) {
+            HRESULT result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
+            if (result == S_OK) {
+                d->subscribedToFrameEvent = true;
+            }
         }
         resetEventStates();
     }
@@ -291,9 +296,9 @@ void MSFSSimConnectPlugin::onReplayPaused(bool enable) noexcept
 
 void MSFSSimConnectPlugin::onStopReplay() noexcept
 {
-    if (d->subscribedToSystemEvent) {
+    if (d->subscribedToFrameEvent) {
         ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
-        d->subscribedToSystemEvent = false;
+        d->subscribedToFrameEvent = false;
     }
 }
 

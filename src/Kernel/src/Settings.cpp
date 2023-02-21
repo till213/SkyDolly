@@ -139,7 +139,6 @@ struct SettingsPrivate
     static constexpr int PreviewInfoDialogBase {150};
 };
 
-
 // PUBLIC
 
 Settings &Settings::getInstance() noexcept

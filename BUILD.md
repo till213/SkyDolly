@@ -22,6 +22,7 @@ Install cmake and the Qt 6 default package which should also install the basic Q
 
 - `sudo apt-get install cmake`
 - `sudo apt-get install qt6-default`
+- `sudo apt-get install qt6-tools-dev`
 
 Optionally also install QtCreator:
 

@@ -26,9 +26,11 @@
 ## Taxiing
 ### Build
 - Select "Release"
+- Ensure that the CMake option `SKY_TESTS` is enabled
 - Ensure that the CMake option `SKY_FETCH_EGM` is enabled
 - Run CMake
 - Build
+- Run all tests
 - Repeat on macOS and Linux
 
 ### Package
@@ -51,7 +53,7 @@
   * Resources/migr/Locations.csv
 
 ### Smoke Test
-- Launch SkyDolly.exe
+- Launch `SkyDolly.exe`
 - Ensure that the Help / About... information is as expected
 - Compare the version git hash code with the one of the current `main` branch (`git rev-parse --short HEAD`)
 - Ensure that the connect and import/export plugins are present

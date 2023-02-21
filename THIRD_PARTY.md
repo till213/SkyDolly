@@ -52,4 +52,4 @@ Sky Dolly uses or is "inspired by" the following third-party libraries and funct
 - License: https://creativecommons.org/licenses/by-sa/3.0/
 
 ## Flightspots
-- Source: https://flightspots.co/
+- Source: https://flightspots.co/ (original URL - out of service since December 2022)

@@ -136,7 +136,11 @@ private:
         settings.beginGroup("Plugins/Modules/Formation");
         {
             relativePositionPlacement = settings.value("RelativePositionPlacement").toBool();
-            settings.remove("RelativePositionPlacement");
+        }
+        settings.endGroup();
+        settings.beginGroup("Plugins/Modules");
+        {
+            settings.remove("Formation");
         }
         settings.endGroup();
 
