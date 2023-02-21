@@ -38,8 +38,8 @@
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
 - The first aircraft position data is properly cached (not reset when timestamp is set to 0)
 - Fix the [flightradar24.com](https://www.flightradar24.com/) CSV import (wrong CSV data validation)
-- Fix interpolation of first sample point in case the timestamp of the first sample point is > 0 which may happen if e.g. position data
-  arrives a few milliseconds after the first engine data sample arrives (the first arriving sampled data starts the timer)
+- Fix interpolation of first sample point in case the timestamp of the first sample point is > 0 
+  * which may occasionally happen if position data arrives a few milliseconds ("one frame") after e.g. the first engine data sample arrives (the arrival of the first sample data starts the timer)
 - Fix internal SimConnect exceptions due to duplicate "frame" systemt event subscriptions
 
 ### Under the Hood
