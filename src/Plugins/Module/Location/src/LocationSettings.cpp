@@ -48,14 +48,8 @@ namespace
 
 struct LocationSettingsPrivate
 {
-    LocationSelector::TypeSelection typeSelection;
-    std::int64_t categoryId {Const::InvalidId};
-    std::int64_t countryId {Const::InvalidId};
+    LocationSelector locationSelector;
     QByteArray locationTableState;
-
-    // Defaults
-    const std::int64_t DefaultLocationCategoryId {PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id()};
-    const std::int64_t DefaultCountryId {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
 };
 
 // PUBLIC
@@ -69,41 +63,69 @@ LocationSettings::~LocationSettings() = default;
 
 LocationSelector::TypeSelection LocationSettings::getTypeSelection() const noexcept
 {
-    return d->typeSelection;
+    return d->locationSelector.typeSelection;
 }
 
 void LocationSettings::setTypeSelection(LocationSelector::TypeSelection typeSelection) noexcept
 {
-    if (d->typeSelection != typeSelection) {
-        d->typeSelection = std::move(typeSelection);
+    if (d->locationSelector.typeSelection != typeSelection) {
+        d->locationSelector.typeSelection = std::move(typeSelection);
         emit changed();
     }
 }
 
 std::int64_t LocationSettings::getCategoryId() const noexcept
 {
-    return d->categoryId;
+    return d->locationSelector.categoryId;
 }
 
 void LocationSettings::setCategoryId(std::int64_t categoryId) noexcept
 {
-    if (d->categoryId != categoryId) {
-        d->categoryId = categoryId;
+    if (d->locationSelector.categoryId != categoryId) {
+        d->locationSelector.categoryId = categoryId;
         emit changed();
     }
 }
 
 std::int64_t LocationSettings::getCountryId() const noexcept
 {
-    return d->countryId;
+    return d->locationSelector.countryId;
 }
 
 void LocationSettings::setCountryId(std::int64_t countryId) noexcept
 {
-    if (d->countryId != countryId) {
-        d->countryId = countryId;
+    if (d->locationSelector.countryId != countryId) {
+        d->locationSelector.countryId = countryId;
         emit changed();
     }
+}
+
+const QString &LocationSettings::getSearchText() const noexcept
+{
+    return d->locationSelector.searchKeyword;
+}
+
+void LocationSettings::setSearchText(QString searchText) noexcept
+{
+    if (d->locationSelector.searchKeyword != searchText) {
+        d->locationSelector.searchKeyword = searchText;
+        emit changed();
+    }
+}
+
+bool LocationSettings::showUserLocations() const noexcept
+{
+    return d->locationSelector.showUserLocations();
+}
+
+bool LocationSettings::hasSelectors() const noexcept
+{
+    return d->locationSelector.hasSelectors();
+}
+
+const LocationSelector &LocationSettings::getLocationSelector() const noexcept
+{
+    return d->locationSelector;
 }
 
 QByteArray LocationSettings::getLocationTableState() const
@@ -127,18 +149,18 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
 
     keyValue.first = ::LocationTypeSelectionKey;
     QList<QVariant> typeList;
-    for (const auto it : d->typeSelection) {
+    for (const auto it : d->locationSelector.typeSelection) {
         typeList.append(it);
     }
     keyValue.second = QVariant::fromValue(typeList);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::LocationCategorySelectionKey;
-    keyValue.second = d->categoryId;
+    keyValue.second = d->locationSelector.categoryId;
     keyValues.push_back(keyValue);
 
     keyValue.first = ::CountrySelectionKey;
-    keyValue.second = d->countryId;
+    keyValue.second = d->locationSelector.countryId;
     keyValues.push_back(keyValue);
 
     keyValue.first = ::LocationTableStateKey;
@@ -155,11 +177,11 @@ void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWi
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::LocationCategorySelectionKey;
-    keyValue.second = d->DefaultLocationCategoryId;
+    keyValue.second = Const::InvalidId;
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::CountrySelectionKey;
-    keyValue.second = d->DefaultCountryId;
+    keyValue.second = Const::InvalidId;
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::LocationTableStateKey;
@@ -169,27 +191,27 @@ void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWi
 
 void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->typeSelection.clear();
+    d->locationSelector.typeSelection.clear();
     QList<QVariant> typeList = valuesByKey.at(::LocationTypeSelectionKey).toList();
     for (const QVariant &v : typeList) {
-        d->typeSelection.insert(v.toLongLong());
+        d->locationSelector.typeSelection.insert(v.toLongLong());
     }
     bool ok {false};
-    d->categoryId = valuesByKey.at(::LocationCategorySelectionKey).toLongLong(&ok);
+    d->locationSelector.categoryId = valuesByKey.at(::LocationCategorySelectionKey).toLongLong(&ok);
     if (!ok) {
-        d->categoryId = d->DefaultLocationCategoryId;
+        d->locationSelector.categoryId = Const::InvalidId;
     }
-    d->countryId = valuesByKey.at(::CountrySelectionKey).toLongLong(&ok);
+    d->locationSelector.countryId = valuesByKey.at(::CountrySelectionKey).toLongLong(&ok);
     if (!ok) {
-        d->countryId = d->DefaultCountryId;
+        d->locationSelector.countryId = Const::InvalidId;
     }
     d->locationTableState = valuesByKey.at(::LocationTableStateKey).toByteArray();
 }
 
 void LocationSettings::restoreDefaultsExtn() noexcept
 {
-    d->typeSelection.clear();
-    d->categoryId = d->DefaultLocationCategoryId;
-    d->countryId = d->DefaultCountryId;
+    d->locationSelector.typeSelection.clear();
+    d->locationSelector.categoryId = Const::InvalidId;
+    d->locationSelector.countryId = Const::InvalidId;
     d->locationTableState = {};
 }

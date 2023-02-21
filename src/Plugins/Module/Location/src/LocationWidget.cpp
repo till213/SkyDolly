@@ -107,7 +107,6 @@ struct LocationWidgetPrivate
     }
 
     LocationSettings &moduleSettings;
-    LocationSelector locationSelector;
     std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
     std::unique_ptr<EnumerationService> enumerationService {std::make_unique<EnumerationService>()};
@@ -177,21 +176,21 @@ void LocationWidget::addUserLocation(double latitude, double longitude)
 
 void LocationWidget::addLocation(Location newLocation)
 {
-    if (newLocation.typeId == Const::InvalidId) {
-        newLocation.typeId = d->UserLocationTypeId;
-    }
-    if (newLocation.categoryId == Const::InvalidId) {
-        newLocation.categoryId = d->NoneLocationCategoryId;
-    }
-    if (newLocation.countryId == Const::InvalidId) {
-        newLocation.countryId = d->WorldCountryId;
-    }
-    if (newLocation.engineEventId == Const::InvalidId) {
-        newLocation.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
-    }
     Location location {std::move(newLocation)};
+    if (location.typeId == Const::InvalidId) {
+        location.typeId = d->UserLocationTypeId;
+    }
+    if (location.categoryId == Const::InvalidId) {
+        location.categoryId = d->NoneLocationCategoryId;
+    }
+    if (location.countryId == Const::InvalidId) {
+        location.countryId = d->WorldCountryId;
+    }
+    if (location.engineEventId == Const::InvalidId) {
+        location.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
+    }    
     if (d->locationService->store(location)) {
-        if (!d->locationSelector.showUserLocations()) {
+        if (!d->moduleSettings.showUserLocations()) {
             // Make sure that user locations are visible
             ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
         }
@@ -470,8 +469,8 @@ void LocationWidget::updateTable() noexcept
 {
     if (PersistenceManager::getInstance().isConnected()) {
 
-        std::vector<Location> locations = d->locationSelector.hasSelectors() ?
-                    d->locationService->getSelectedLocations(d->locationSelector) :
+        std::vector<Location> locations = d->moduleSettings.hasSelectors() ?
+                    d->locationService->getSelectedLocations(d->moduleSettings.getLocationSelector()) :
                     d->locationService->getAll();
 
         ui->locationTableWidget->blockSignals(true);
@@ -841,20 +840,20 @@ void LocationWidget::updateEditUi() noexcept
 
 void LocationWidget::onCategoryChanged() noexcept
 {
-    d->locationSelector.categoryId = ui->categoryComboBox->getCurrentId();
-    if (d->locationSelector.categoryId == d->NoneLocationCategoryId) {
-        d->locationSelector.categoryId = Const::InvalidId;
+    std:int64_t categoryId = ui->categoryComboBox->getCurrentId();
+    if (categoryId == d->NoneLocationCategoryId) {
+        categoryId = Const::InvalidId;
     }
-    d->moduleSettings.setCategoryId(d->locationSelector.categoryId);
+    d->moduleSettings.setCategoryId(categoryId);
 }
 
 void LocationWidget::onCountryChanged() noexcept
 {
-    d->locationSelector.countryId = ui->countryComboBox->getCurrentId();
-    if (d->locationSelector.countryId == d->WorldCountryId) {
-        d->locationSelector.countryId = Const::InvalidId;
+    std::int64_t countryId = ui->countryComboBox->getCurrentId();
+    if (countryId == d->WorldCountryId) {
+        countryId = Const::InvalidId;
     }
-    d->moduleSettings.setCountryId(d->locationSelector.countryId);
+    d->moduleSettings.setCountryId(countryId);
 }
 
 void LocationWidget::onSearchTextChanged() noexcept
@@ -864,19 +863,19 @@ void LocationWidget::onSearchTextChanged() noexcept
 
 void LocationWidget::searchText() noexcept
 {
-    d->locationSelector.searchKeyword = ui->searchLineEdit->text();
-    updateTable();
+    d->moduleSettings.setSearchText(ui->searchLineEdit->text());
 }
 
 void LocationWidget::onTypeOptionToggled(const QVariant &optionValue, bool enable) noexcept
 {
+    LocationSelector::TypeSelection typeSelection = d->moduleSettings.getTypeSelection();
     std::int64_t typeId = optionValue.toLongLong();
     if (enable) {
-        d->locationSelector.typeSelection.insert(typeId);
+        typeSelection.insert(typeId);
     } else {
-        d->locationSelector.typeSelection.erase(typeId);
+        typeSelection.erase(typeId);
     }
-    d->moduleSettings.setTypeSelection(d->locationSelector.typeSelection);
+    d->moduleSettings.setTypeSelection(typeSelection);
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
@@ -1059,20 +1058,27 @@ void LocationWidget::onTableLayoutChanged() noexcept
 
 void LocationWidget::onModuleSettingsChanged() noexcept
 {
-    d->locationSelector.typeSelection = d->moduleSettings.getTypeSelection();
     ui->typeOptionGroup->blockSignals(true);
     ui->typeOptionGroup->clearOptions();
-    for (const auto type : d->locationSelector.typeSelection) {
+    for (const auto type : d->moduleSettings.getTypeSelection()) {
         ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(type), true);
     }
     ui->typeOptionGroup->blockSignals(false);
 
     ui->categoryComboBox->blockSignals(true);
+    std::int64_t categoryId = d->moduleSettings.getCategoryId();
+    if (categoryId == Const::InvalidId) {
+        categoryId = d->NoneLocationCategoryId;
+    }
     ui->categoryComboBox->setCurrentId(d->moduleSettings.getCategoryId());
     ui->categoryComboBox->blockSignals(false);
 
     ui->countryComboBox->blockSignals(true);
-    ui->countryComboBox->setCurrentId(d->moduleSettings.getCountryId());
+    std::int64_t countryId = d->moduleSettings.getCountryId();
+    if (countryId == Const::InvalidId) {
+        countryId = d->WorldCountryId;
+    }
+    ui->countryComboBox->setCurrentId(countryId);
     ui->countryComboBox->blockSignals(false);
 
     ui->locationTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLocationTableState());

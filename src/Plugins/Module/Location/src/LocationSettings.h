@@ -55,6 +55,13 @@ public:
     std::int64_t getCountryId() const noexcept;
     void setCountryId(std::int64_t id) noexcept;
 
+    const QString &getSearchText() const noexcept;
+    void setSearchText(QString searchtext) noexcept;
+
+    bool showUserLocations() const noexcept;
+    bool hasSelectors() const noexcept;
+    const LocationSelector &getLocationSelector() const noexcept;
+
     /*!
      * Returns the saved location table state.
      *
