@@ -70,9 +70,9 @@ LinkedOptionGroup::~LinkedOptionGroup() = default;
 
 void LinkedOptionGroup::addOption(const QString &name, const QVariant &optionValue, const QString &toolTip) noexcept
 {
-    static QLatin1String singleButtonCss {"QPushButton {border-radius: 6px;}"};
-    static QLatin1String firstButtonCss {"QPushButton {border-top-left-radius: 6px; border-bottom-left-radius: 6px;}"};
-    static QLatin1String lastButtonCss {"QPushButton {border-top-right-radius: 6px; border-bottom-right-radius: 6px;}"};
+    static const QLatin1String SingleButtonCss {"QPushButton {border-radius: 6px;}"};
+    static const QLatin1String FirstButtonCss {"QPushButton {border-top-left-radius: 6px; border-bottom-left-radius: 6px;}"};
+    static const QLatin1String LastButtonCss {"QPushButton {border-top-right-radius: 6px; border-bottom-right-radius: 6px;}"};
 
     auto button = new QPushButton(name, this);
     button->setCheckable(true);
@@ -81,13 +81,13 @@ void LinkedOptionGroup::addOption(const QString &name, const QVariant &optionVal
     d->buttons.push_back(button);
     std::size_t buttonCount = d->buttons.size();
     if (buttonCount == 1) {
-        button->setStyleSheet(singleButtonCss);
+        button->setStyleSheet(SingleButtonCss);
     } else if (buttonCount == 2) {
-        button->setStyleSheet(lastButtonCss);
+        button->setStyleSheet(LastButtonCss);
         // Also update the first button
-        d->buttons.front()->setStyleSheet(firstButtonCss);
+        d->buttons.front()->setStyleSheet(FirstButtonCss);
     } else {
-        button->setStyleSheet(lastButtonCss);
+        button->setStyleSheet(LastButtonCss);
         // Also update the second to last button
         d->buttons[buttonCount - 2]->setStyleSheet({});
     }
@@ -95,6 +95,13 @@ void LinkedOptionGroup::addOption(const QString &name, const QVariant &optionVal
     d->layout->addWidget(button);
     connect(button, &QPushButton::toggled,
             this, &LinkedOptionGroup::onButtonToggled);
+}
+
+void LinkedOptionGroup::clearOptions() noexcept
+{
+    for (auto button : d->buttons) {
+        button->setChecked(false);
+    }
 }
 
 void LinkedOptionGroup::setOptionEnabled(const QVariant &optionValue, bool enable) noexcept
@@ -111,10 +118,10 @@ void LinkedOptionGroup::setOptionEnabled(const QVariant &optionValue, bool enabl
 
 void LinkedOptionGroup::initUi() noexcept
 {
-    static QString normalButtonCss {"QPushButton {margin: 0; padding: 4px; border: 0px; background-color: " % Platform::getButtonBGColor().name() % ";} "};
-    static QString checkedButtonCss {"QPushButton:checked { background-color: " % Platform::getActiveButtonBGColor().name() % "; color: white;}"};
+    static const QString NormalButtonCss {"QPushButton {margin: 0; padding: 4px; border: 0px; background-color: " % Platform::getButtonBGColor().name() % ";} "};
+    static const QString CheckedButtonCss {"QPushButton:checked { background-color: " % Platform::getActiveButtonBGColor().name() % "; color: white;}"};
 
-    setStyleSheet(normalButtonCss % checkedButtonCss);
+    setStyleSheet(NormalButtonCss % CheckedButtonCss);
 
     d->layout = new QHBoxLayout(this);
     d->layout->setSpacing(0);
@@ -128,6 +135,6 @@ void LinkedOptionGroup::onButtonToggled(bool enable) noexcept
 {
     auto button = qobject_cast<QPushButton *>(sender());
     if (button != nullptr) {
-        emit optionToggled(enable, button->property(::OptionValue));
+        emit optionToggled(button->property(::OptionValue), enable);
     }
 }

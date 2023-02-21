@@ -49,10 +49,27 @@ public:
     ~LinkedOptionGroup() override;
 
     void addOption(const QString &name, const QVariant &optionValue, const QString &toopTip = QString()) noexcept;
+
+    /*!
+     * Sets all options to \c false.
+     *
+     * \sa optionToggled
+     */
+    void clearOptions() noexcept;
+
+    /*!
+     * Sets the option identified by \c optionValue to \c enable.
+     *
+     * \param optionValue
+     *        the option value to enable or disable
+     * \param enable
+     *        set to \c true in order to enable the \c optionValue; \c false else
+     * \sa optionToggled
+     */
     void setOptionEnabled(const QVariant &optionValue, bool enable) noexcept;
 
 signals:
-    void optionToggled(bool enable, const QVariant &optionValue);
+    void optionToggled(const QVariant &optionValue, bool enable);
 
 private:
     std::unique_ptr<LinkedOptionGroupPrivate> d;

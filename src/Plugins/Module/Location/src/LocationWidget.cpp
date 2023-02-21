@@ -868,15 +868,16 @@ void LocationWidget::searchText() noexcept
     updateTable();
 }
 
-void LocationWidget::onTypeOptionToggled(bool enable, const QVariant &userData) noexcept
+void LocationWidget::onTypeOptionToggled(const QVariant &optionValue, bool enable) noexcept
 {
-    std::int64_t typeId = userData.toLongLong();
+    std::int64_t typeId = optionValue.toLongLong();
     if (enable) {
-        d->locationSelector.typeIds.insert(typeId);
+        d->locationSelector.typeSelection.insert(typeId);
     } else {
-        d->locationSelector.typeIds.erase(typeId);
+        d->locationSelector.typeSelection.erase(typeId);
     }
     updateTable();
+    d->moduleSettings.setTypeSelection(d->locationSelector.typeSelection);
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
@@ -1059,5 +1060,13 @@ void LocationWidget::onTableLayoutChanged() noexcept
 
 void LocationWidget::onModuleSettingsChanged() noexcept
 {
+    d->locationSelector.typeSelection = d->moduleSettings.getTypeSelection();
+    ui->typeOptionGroup->blockSignals(true);
+    ui->typeOptionGroup->clearOptions();
+    for (const auto type : d->locationSelector.typeSelection) {
+        ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(type), true);
+    }
+    ui->typeOptionGroup->blockSignals(false);
+    updateTable();
     ui->locationTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLocationTableState());
 }

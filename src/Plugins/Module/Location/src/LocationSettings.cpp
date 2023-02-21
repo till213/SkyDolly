@@ -23,20 +23,27 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <unordered_set>
 #include <utility>
 
+#include <QList>
+#include <QVariant>
+
 #include <Kernel/Settings.h>
+#include <Persistence/LocationSelector.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 #include "LocationSettings.h"
 
 namespace
 {
     // Keys
-    constexpr const char *locationTableStateKey {"LocationTableState"};
+    constexpr const char *LocationTypeSelectionKey {"LocationTypeSelection"};
+    constexpr const char *LocationTableStateKey {"LocationTableState"};
 }
 
 struct LocationSettingsPrivate
 {
+    LocationSelector::TypeSelection typeSelection;
     QByteArray locationTableState;
 };
 
@@ -48,6 +55,16 @@ LocationSettings::LocationSettings() noexcept
 {}
 
 LocationSettings::~LocationSettings() = default;
+
+LocationSelector::TypeSelection LocationSettings::getTypeSelection() const noexcept
+{
+    return d->typeSelection;
+}
+
+void LocationSettings::setTypeSelection(LocationSelector::TypeSelection typeSelection) noexcept
+{
+    d->typeSelection = std::move(typeSelection);
+}
 
 QByteArray LocationSettings::getLocationTableState() const
 {
@@ -65,7 +82,15 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::locationTableStateKey;
+    keyValue.first = ::LocationTypeSelectionKey;
+    QList<QVariant> typeList;
+    for (const auto it : d->typeSelection) {
+        typeList.append(it);
+    }
+    keyValue.second = QVariant::fromValue(typeList);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::LocationTableStateKey;
     keyValue.second = d->locationTableState;
     keyValues.push_back(keyValue);
 }
@@ -74,17 +99,27 @@ void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWi
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::locationTableStateKey;
+    keyValue.first = ::LocationTypeSelectionKey;
+    keyValue.second = QVariant::fromValue(QList<QVariant>());
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::LocationTableStateKey;
     keyValue.second = QByteArray();
     keysWithDefaults.push_back(keyValue);
 }
 
 void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->locationTableState = valuesByKey.at(::locationTableStateKey).toByteArray();
+    d->typeSelection.clear();
+    QList<QVariant> typeList = valuesByKey.at(::LocationTypeSelectionKey).toList();
+    for (const QVariant &v : typeList) {
+        d->typeSelection.insert(v.toLongLong());
+    }
+    d->locationTableState = valuesByKey.at(::LocationTableStateKey).toByteArray();
 }
 
 void LocationSettings::restoreDefaultsExtn() noexcept
 {
+    d->typeSelection.clear();
     d->locationTableState = {};
 }

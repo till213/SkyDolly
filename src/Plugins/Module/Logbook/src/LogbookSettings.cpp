@@ -32,7 +32,7 @@
 namespace
 {
     // Keys
-    constexpr const char *logbookTableStateKey {"LogbookTableState"};
+    constexpr const char *LogbookTableStateKey {"LogbookTableState"};
 }
 
 struct LogbookSettingsPrivate
@@ -65,7 +65,7 @@ void LogbookSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyV
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::logbookTableStateKey;
+    keyValue.first = ::LogbookTableStateKey;
     keyValue.second = d->logbookTableState;
     keyValues.push_back(keyValue);
 }
@@ -74,14 +74,14 @@ void LogbookSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWit
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::logbookTableStateKey;
+    keyValue.first = ::LogbookTableStateKey;
     keyValue.second = QByteArray();
     keysWithDefaults.push_back(keyValue);
 }
 
 void LogbookSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->logbookTableState = valuesByKey.at(::logbookTableStateKey).toByteArray();
+    d->logbookTableState = valuesByKey.at(::LogbookTableStateKey).toByteArray();
 }
 
 void LogbookSettings::restoreDefaultsExtn() noexcept

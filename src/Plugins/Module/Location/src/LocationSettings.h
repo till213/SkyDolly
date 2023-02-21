@@ -30,6 +30,7 @@
 #include <QObject>
 
 #include <Kernel/Settings.h>
+#include <Persistence/LocationSelector.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 
 struct LocationSettingsPrivate;
@@ -44,6 +45,9 @@ public:
     LocationSettings &operator=(const LocationSettings &rhs) = delete;
     LocationSettings &operator=(LocationSettings &&rhs) = delete;
     ~LocationSettings() override;
+
+    LocationSelector::TypeSelection getTypeSelection() const noexcept;
+    void setTypeSelection(LocationSelector::TypeSelection typeSelection) noexcept;
 
     /*!
      * Returns the saved location table state.
