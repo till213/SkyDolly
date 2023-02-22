@@ -55,8 +55,8 @@ namespace
     constexpr std::int64_t DefaultCategoryId {Const::InvalidId};
     constexpr std::int64_t DefaultCountryId {Const::InvalidId};
 
-    constexpr int DefaultAltitude {5000};
-    constexpr int DefaultIndicatedAirspeed {120};
+    constexpr int DefaultAltitude {Const::DefaultAltitude};
+    constexpr int DefaultIndicatedAirspeed {Const::DefaultIndicatedAirspeed};
     constexpr bool DefaultOnGround {false};
 }
 
@@ -221,6 +221,18 @@ void LocationSettings::setLocationTableState(QByteArray state) noexcept
     }
 }
 
+void LocationSettings::resetFilter() noexcept
+{
+    restoreFilter();
+    emit changed();
+}
+
+void LocationSettings::resetDefaultValues() noexcept
+{
+    restoreDefaultValues();
+    emit changed();
+}
+
 // PROTECTED
 
 void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
@@ -346,10 +358,22 @@ void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Valu
 
 void LocationSettings::restoreDefaultsExtn() noexcept
 {
+    restoreFilter();
+    resetDefaultValues();
+    d->locationTableState = {};
+}
+
+// PRIVATE
+
+void LocationSettings::restoreFilter() noexcept
+{
     d->locationSelector.clear();
+}
+
+void LocationSettings::restoreDefaultValues() noexcept
+{
     d->altitude = ::DefaultAltitude;
     d->indicatedAirspeed = ::DefaultIndicatedAirspeed;
     d->engineEventId = d->DefaultEngineEventId;
     d->onGround = ::DefaultOnGround;
-    d->locationTableState = {};
 }

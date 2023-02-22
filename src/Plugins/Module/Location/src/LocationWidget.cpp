@@ -363,7 +363,9 @@ void LocationWidget::frenchConnection() noexcept
     connect(ui->typeOptionGroup, &LinkedOptionGroup::optionToggled,
             this, &LocationWidget::onTypeOptionToggled);
     connect(ui->resetFilterPushButton, &QPushButton::clicked,
-            this, &LocationWidget::resetSearchFilter);
+            this, &LocationWidget::resetFilters);
+    connect(ui->resetDefaultsPushButton, &QPushButton::clicked,
+            this, &LocationWidget::resetDefaultValues);
 
     // Persistence
     PersistenceManager &persistenceManager = PersistenceManager::getInstance();
@@ -888,9 +890,14 @@ void LocationWidget::onTypeOptionToggled(const QVariant &optionValue, bool enabl
     d->moduleSettings.setTypeSelection(typeSelection);
 }
 
-void LocationWidget::resetSearchFilter() noexcept
+void LocationWidget::resetFilters() noexcept
 {
-    d->moduleSettings.restoreDefaults();
+    d->moduleSettings.resetFilter();
+}
+
+void LocationWidget::resetDefaultValues() noexcept
+{
+    d->moduleSettings.resetDefaultValues();
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept

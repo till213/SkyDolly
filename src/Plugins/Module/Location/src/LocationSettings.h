@@ -91,6 +91,9 @@ public:
      */
     void setLocationTableState(QByteArray state) noexcept;
 
+    void resetFilter() noexcept;
+    void resetDefaultValues() noexcept;
+
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
@@ -99,6 +102,9 @@ protected:
 
 private:
     const std::unique_ptr<LocationSettingsPrivate> d;
+
+    void restoreFilter() noexcept;
+    void restoreDefaultValues() noexcept;
 };
 
 #endif // LOCATIONSETTINGS_H
