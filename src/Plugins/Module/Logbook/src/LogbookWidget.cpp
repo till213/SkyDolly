@@ -29,6 +29,7 @@
 #include <iterator>
 #include <cstdint>
 #include <limits>
+#include <utility>
 
 #include <QByteArray>
 #include <QVariant>
@@ -117,7 +118,6 @@ struct LogbookWidgetPrivate
 
     std::int64_t flightInMemoryId {Const::InvalidId};
     Unit unit;
-    FlightSelector flightSelector;
     std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
     // Columns are only auto-resized the first time the table is loaded
     // After that manual column resizes are kept
@@ -247,7 +247,7 @@ void LogbookWidget::updateTable() noexcept
 
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         d->flightInMemoryId = flight.getId();
-        std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->flightSelector);
+        std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->moduleSettings.getFlightSelector());
 
         const bool recording = SkyConnectManager::getInstance().isInRecordingState();
         if (recording) {
@@ -602,26 +602,32 @@ inline void LogbookWidget::updateSelectionDateRange(QTreeWidgetItem *item) const
                 const int year = parent1->data(::DateColumn, Qt::UserRole).toInt();
                 const int month = parent->data(::DateColumn, Qt::UserRole).toInt();
                 const int day = item->data(::DateColumn, Qt::UserRole).toInt();
-                d->flightSelector.fromDate.setDate(year, month, day);
-                d->flightSelector.toDate = d->flightSelector.fromDate.addDays(1);
+                QDate fromDate {year, month, day};
+                QDate toDate {fromDate.addDays(1)};
+                d->moduleSettings.setFromDate(std::move(fromDate));
+                d->moduleSettings.setToDate(std::move(toDate));
             } else {
                 // Item: month selected
                 const int year = parent->data(::DateColumn, Qt::UserRole).toInt();
                 const int month = item->data(::DateColumn, Qt::UserRole).toInt();
-                d->flightSelector.fromDate.setDate(year, month, 1);
-                const int daysInMonth = d->flightSelector.fromDate.daysInMonth();
-                d->flightSelector.toDate.setDate(year, month, daysInMonth);
+                QDate fromDate {year, month, 1};
+                const int daysInMonth = fromDate.daysInMonth();
+                d->moduleSettings.setFromDate(std::move(fromDate));
+                QDate toDate {year, month, daysInMonth};
+                d->moduleSettings.setToDate(std::move(toDate));
             }
         } else {
             // Item: year selected
             const int year = item->data(::DateColumn, Qt::UserRole).toInt();
-            d->flightSelector.fromDate.setDate(year, 1, 1);
-            d->flightSelector.toDate.setDate(year, 12, 31);
+            QDate fromDate {year, 1, 1};
+            d->moduleSettings.setFromDate(std::move(fromDate));
+            QDate toDate {year, 12, 31};
+            d->moduleSettings.setToDate(std::move(toDate));
         }
     } else {
         // Item: Logbook selected (show all entries)
-        d->flightSelector.fromDate = FlightSelector::MinDate;
-        d->flightSelector.toDate = FlightSelector::MaxDate;
+        d->moduleSettings.setFromDate(FlightSelector::MinDate);
+        d->moduleSettings.setToDate(FlightSelector::MaxDate);
     }
 }
 
@@ -780,7 +786,7 @@ void LogbookWidget::onSearchTextChanged() noexcept
 
 void LogbookWidget::searchText() noexcept
 {
-    d->flightSelector.searchKeyword = ui->searchLineEdit->text();
+    d->moduleSettings.setSearchKeyword(ui->searchLineEdit->text());
     updateTable();
 }
 
@@ -824,13 +830,13 @@ void LogbookWidget::onDateItemClicked(QTreeWidgetItem *item) noexcept
 
 void LogbookWidget::filterByFormationFlights(bool checked) noexcept
 {
-    d->flightSelector.hasFormation = checked;
+    d->moduleSettings.setFormation(checked);
     updateTable();
 }
 
 void LogbookWidget::filterByEngineType([[maybe_unused]] int index) noexcept
 {
-    d->flightSelector.engineType = static_cast<SimType::EngineType>(ui->engineTypeComboBox->currentData().toInt());
+    d->moduleSettings.setEngineType(static_cast<SimType::EngineType>(ui->engineTypeComboBox->currentData().toInt()));
     updateTable();
 }
 
@@ -870,7 +876,7 @@ void LogbookWidget::filterByDuration([[maybe_unused]] int index) noexcept
         break;
     }
 
-    d->flightSelector.mininumDurationMinutes = minimumDurationMinutes;
+    d->moduleSettings.setMinimumDurationMinutes(minimumDurationMinutes);
     updateTable();
 }
 

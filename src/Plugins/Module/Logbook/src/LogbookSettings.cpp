@@ -25,7 +25,12 @@
 #include <memory>
 #include <utility>
 
+#include <QString>
+#include <QDate>
+
 #include <Kernel/Settings.h>
+#include <Model/SimType.h>
+#include <Persistence/FlightSelector.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 #include "LogbookSettings.h"
 
@@ -37,6 +42,9 @@ namespace
 
 struct LogbookSettingsPrivate
 {
+    // Note: search keywords are deliberately not persisted in the settings
+    FlightSelector flightSelector;
+
     QByteArray logbookTableState;
 };
 
@@ -48,6 +56,89 @@ LogbookSettings::LogbookSettings() noexcept
 {}
 
 LogbookSettings::~LogbookSettings() = default;
+
+QDate LogbookSettings::getFromDate() const noexcept
+{
+    return d->flightSelector.fromDate;
+}
+
+void LogbookSettings::setFromDate(QDate from) noexcept
+{
+    if (d->flightSelector.fromDate != from) {
+        d->flightSelector.fromDate = std::move(from);
+        emit changed();
+    }
+}
+
+QDate LogbookSettings::getToDate() const noexcept
+{
+    return d->flightSelector.toDate;
+}
+
+void LogbookSettings::setToDate(QDate to) noexcept
+{
+    if (d->flightSelector.toDate != to) {
+        d->flightSelector.toDate = std::move(to);
+        emit changed();
+    }
+}
+
+const QString &LogbookSettings::getSearchKeyword() const noexcept
+{
+    return d->flightSelector.searchKeyword;
+}
+
+void LogbookSettings::setSearchKeyword(QString keyword) noexcept
+{
+    if (d->flightSelector.searchKeyword != keyword) {
+        d->flightSelector.searchKeyword = std::move(keyword);
+        emit changed();
+    }
+}
+
+bool LogbookSettings::hasFormation() const noexcept
+{
+    return d->flightSelector.hasFormation;
+}
+
+void LogbookSettings::setFormation(bool enable) noexcept
+{
+    if (d->flightSelector.hasFormation != enable) {
+        d->flightSelector.hasFormation = enable;
+        emit changed();
+    }
+}
+
+SimType::EngineType LogbookSettings::getEngineType() const noexcept
+{
+    return d->flightSelector.engineType;
+}
+
+void LogbookSettings::setEngineType(SimType::EngineType engineType) noexcept
+{
+    if (d->flightSelector.engineType != engineType) {
+        d->flightSelector.engineType = engineType;
+        emit changed();
+    }
+}
+
+int LogbookSettings::getMinimumDurationMinutes() const noexcept
+{
+    return d->flightSelector.mininumDurationMinutes;
+}
+
+void LogbookSettings::setMinimumDurationMinutes(int minutes) noexcept
+{
+    if (d->flightSelector.mininumDurationMinutes != minutes) {
+        d->flightSelector.mininumDurationMinutes = minutes;
+        emit changed();
+    }
+}
+
+const FlightSelector &LogbookSettings::getFlightSelector() const noexcept
+{
+    return d->flightSelector;
+}
 
 QByteArray LogbookSettings::getLogbookTableState() const
 {
