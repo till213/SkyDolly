@@ -117,6 +117,12 @@ private slots:
     void onIndicatedAirspeedChanged(int value) noexcept;
     void onEngineEventChanged(int index) noexcept;
 
+    // Default values
+    void onDefaultAltitudeChanged(int value) noexcept;
+    void onDefaultIndicatedAirspeedChanged(int value) noexcept;
+    void onDefaultEngineEventChanged() noexcept;
+    void onDefaultOnGroundChanged(bool enable) noexcept;
+
     // Settings
     void onTableLayoutChanged() noexcept;
     void onModuleSettingsChanged() noexcept;

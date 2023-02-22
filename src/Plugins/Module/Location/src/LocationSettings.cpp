@@ -44,14 +44,18 @@ namespace
     constexpr const char *LocationCategorySelectionKey {"LocationCategorySelection"};
     constexpr const char *CountrySelectionKey {"CountrySelection"};
 
-constexpr const char *AltitudeKey {"CountrySelection"};
-constexpr const char *CountrySelectionKey {"CountrySelection"};
-constexpr const char *CountrySelectionKey {"CountrySelection"};
+    constexpr const char *DefaultAltitudeKey {"DefaultAltitude"};
+    constexpr const char *DefaultIndicatedAirspeedKey {"DefaultIndicatedAirspeed"};
+    constexpr const char *DefaultEngineEventKey {"DefaultEngineEvent"};
+    constexpr const char *DefaultOnGroundKey {"DefaultOnGround"};
 
     constexpr const char *LocationTableStateKey {"LocationTableState"};
 
     // Defaults
-    constexpr double DefaultAltitude {5.0};
+    constexpr std::int64_t DefaultCategoryId {Const::InvalidId};
+    constexpr std::int64_t DefaultCountryId {Const::InvalidId};
+
+    constexpr int DefaultAltitude {5000};
     constexpr int DefaultIndicatedAirspeed {120};
     constexpr bool DefaultOnGround {false};
 }
@@ -60,11 +64,14 @@ struct LocationSettingsPrivate
 {
     // Note: search keywords are deliberately not persisted in the settings
     LocationSelector locationSelector;
-    double altitude {::DefaultAltitude};
-    int indicatedAirspeed {::DefaultIndicatedairspeed};
+    int altitude {::DefaultAltitude};
+    int indicatedAirspeed {::DefaultIndicatedAirspeed};
     bool onGround {::DefaultOnGround};
+    std::int64_t engineEventId {Const::InvalidId};
 
     QByteArray locationTableState;
+
+    const std::int64_t DefaultEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
 };
 
 // PUBLIC
@@ -115,15 +122,15 @@ void LocationSettings::setCountryId(std::int64_t countryId) noexcept
     }
 }
 
-const QString &LocationSettings::getSearchText() const noexcept
+const QString &LocationSettings::getSearchKeyword() const noexcept
 {
     return d->locationSelector.searchKeyword;
 }
 
-void LocationSettings::setSearchText(QString searchText) noexcept
+void LocationSettings::setSearchKeyword(QString keyword) noexcept
 {
-    if (d->locationSelector.searchKeyword != searchText) {
-        d->locationSelector.searchKeyword = searchText;
+    if (d->locationSelector.searchKeyword != keyword) {
+        d->locationSelector.searchKeyword = std::move(keyword);
         emit changed();
     }
 }
@@ -149,12 +156,12 @@ void LocationSettings::clearLocationSelector() noexcept
     emit changed();
 }
 
-double LocationSettings::getAltitude() const noexcept
+int LocationSettings::getDefaultAltitude() const noexcept
 {
     return d->altitude;
 }
 
-void LocationSettings::setAltitdue(double altitude) noexcept
+void LocationSettings::setDefaultAltitude(int altitude) noexcept
 {
     if (d->altitude != altitude) {
         d->altitude = altitude;
@@ -162,12 +169,12 @@ void LocationSettings::setAltitdue(double altitude) noexcept
     }
 }
 
-int LocationSettings::getIndicatedAirspeed() const noexcept
+int LocationSettings::getDefaultIndicatedAirspeed() const noexcept
 {
     return d->indicatedAirspeed;
 }
 
-void LocationSettings::setIndicatedAirspeed(int airspeed)
+void LocationSettings::setDefaultIndicatedAirspeed(int airspeed)
 {
     if (d->indicatedAirspeed != airspeed) {
         d->indicatedAirspeed = airspeed;
@@ -175,15 +182,28 @@ void LocationSettings::setIndicatedAirspeed(int airspeed)
     }
 }
 
-bool LocationSettings::isOnGround() const noexcept
+bool LocationSettings::isDefaultOnGround() const noexcept
 {
     return d->onGround;
 }
 
-void LocationSettings::setOnGround(bool enable) noexcept
+void LocationSettings::setDefaultOnGround(bool enable) noexcept
 {
     if (d->onGround != enable) {
         d->onGround = enable;
+        emit changed();
+    }
+}
+
+const std::int64_t LocationSettings::getDefaultEngineEventId() const noexcept
+{
+    return d->engineEventId;
+}
+
+void LocationSettings::setDefaultEngineEventId(std::int64_t eventId) noexcept
+{
+    if (d->engineEventId != eventId) {
+        d->engineEventId = eventId;
         emit changed();
     }
 }
@@ -207,6 +227,7 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
 {
     Settings::KeyValue keyValue;
 
+    // Filters
     keyValue.first = ::LocationTypeSelectionKey;
     QList<QVariant> typeList;
     for (const auto it : d->locationSelector.typeSelection) {
@@ -223,6 +244,24 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
     keyValue.second = d->locationSelector.countryId;
     keyValues.push_back(keyValue);
 
+    // Default values
+    keyValue.first = ::DefaultAltitudeKey;
+    keyValue.second = d->altitude;
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::DefaultIndicatedAirspeedKey;
+    keyValue.second = d->indicatedAirspeed;
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::DefaultEngineEventKey;
+    keyValue.second = d->engineEventId;
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::DefaultOnGroundKey;
+    keyValue.second = d->onGround;
+    keyValues.push_back(keyValue);
+
+    // Table state
     keyValue.first = ::LocationTableStateKey;
     keyValue.second = d->locationTableState;
     keyValues.push_back(keyValue);
@@ -232,18 +271,37 @@ void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWi
 {
     Settings::KeyValue keyValue;
 
+    // Filters
     keyValue.first = ::LocationTypeSelectionKey;
     keyValue.second = QVariant::fromValue(QList<QVariant>());
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::LocationCategorySelectionKey;
-    keyValue.second = Const::InvalidId;
+    keyValue.second = ::DefaultCategoryId;
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::CountrySelectionKey;
-    keyValue.second = Const::InvalidId;
+    keyValue.second = ::DefaultCountryId;
     keysWithDefaults.push_back(keyValue);
 
+    // Default values
+    keyValue.first = ::DefaultAltitudeKey;
+    keyValue.second = ::DefaultAltitude;
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::DefaultIndicatedAirspeedKey;
+    keyValue.second = ::DefaultIndicatedAirspeed;
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::DefaultEngineEventKey;
+    keyValue.second = d->DefaultEngineEventId;
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::DefaultOnGroundKey;
+    keyValue.second = ::DefaultOnGround;
+    keysWithDefaults.push_back(keyValue);
+
+    // Table state
     keyValue.first = ::LocationTableStateKey;
     keyValue.second = QByteArray();
     keysWithDefaults.push_back(keyValue);
@@ -251,6 +309,7 @@ void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWi
 
 void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
+    // Filters
     d->locationSelector.typeSelection.clear();
     QList<QVariant> typeList = valuesByKey.at(::LocationTypeSelectionKey).toList();
     for (const QVariant &v : typeList) {
@@ -259,17 +318,38 @@ void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Valu
     bool ok {false};
     d->locationSelector.categoryId = valuesByKey.at(::LocationCategorySelectionKey).toLongLong(&ok);
     if (!ok) {
-        d->locationSelector.categoryId = Const::InvalidId;
+        d->locationSelector.categoryId = ::DefaultCategoryId;
     }
     d->locationSelector.countryId = valuesByKey.at(::CountrySelectionKey).toLongLong(&ok);
     if (!ok) {
-        d->locationSelector.countryId = Const::InvalidId;
+        d->locationSelector.countryId = ::DefaultCountryId;
     }
+
+    // Default values
+    d->altitude = valuesByKey.at(::DefaultAltitudeKey).toInt(&ok);
+    if (!ok) {
+        d->altitude = ::DefaultAltitude;
+    }
+    d->indicatedAirspeed = valuesByKey.at(::DefaultIndicatedAirspeedKey).toInt(&ok);
+    if (!ok) {
+        d->indicatedAirspeed = ::DefaultIndicatedAirspeed;
+    }
+    d->engineEventId = valuesByKey.at(::DefaultEngineEventKey).toLongLong(&ok);
+    if (!ok) {
+        d->engineEventId = d->DefaultEngineEventId;
+    }
+    d->onGround = valuesByKey.at(::DefaultOnGroundKey).toBool();
+
+    // Table state
     d->locationTableState = valuesByKey.at(::LocationTableStateKey).toByteArray();
 }
 
 void LocationSettings::restoreDefaultsExtn() noexcept
 {
     d->locationSelector.clear();
+    d->altitude = ::DefaultAltitude;
+    d->indicatedAirspeed = ::DefaultIndicatedAirspeed;
+    d->engineEventId = d->DefaultEngineEventId;
+    d->onGround = ::DefaultOnGround;
     d->locationTableState = {};
 }

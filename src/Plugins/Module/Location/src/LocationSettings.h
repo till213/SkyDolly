@@ -55,21 +55,24 @@ public:
     std::int64_t getCountryId() const noexcept;
     void setCountryId(std::int64_t id) noexcept;
 
-    const QString &getSearchText() const noexcept;
-    void setSearchText(QString searchtext) noexcept;
+    const QString &getSearchKeyword() const noexcept;
+    void setSearchKeyword(QString keyword) noexcept;
 
     bool showUserLocations() const noexcept;
     bool hasSelectors() const noexcept;
     const LocationSelector &getLocationSelector() const noexcept;
 
-    double getAltitude() const noexcept;
-    void setAltitdue(double altitude) noexcept;
+    int getDefaultAltitude() const noexcept;
+    void setDefaultAltitude(int altitude) noexcept;
 
-    int getIndicatedAirspeed() const noexcept;
-    void setIndicatedAirspeed(int airspeed);
+    int getDefaultIndicatedAirspeed() const noexcept;
+    void setDefaultIndicatedAirspeed(int airspeed);
 
-    bool isOnGround() const noexcept;
-    void setOnGround(bool enable) noexcept;
+    bool isDefaultOnGround() const noexcept;
+    void setDefaultOnGround(bool enable) noexcept;
+
+    const std::int64_t getDefaultEngineEventId() const noexcept;
+    void setDefaultEngineEventId(std::int64_t eventId) noexcept;
 
     void clearLocationSelector() noexcept;
 
