@@ -481,9 +481,9 @@ void MainWindow::initUi() noexcept
             QMessageBox::information(this, "Preview",
                                      QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
                                      "This patch release v%2 \"%3\" introduces new Sky Dolly logbook import and export plugins. "
-                                     "Note that they will completely replace the Sky Dolly CSV import and export format which has now been declared obsolete "
+                                     "The new plugins will completely replace the Sky Dolly CSV import and export format which has now been declared obsolete "
                                      "and will be removed in the next release.\n\n"
-                                     "Note that the other CSV formats (flightradar24.com for instance) will not go away and remain fully supported.\n\n"
+                                     "Note that the other CSV formats (flightradar24.com for instance) will not go away and remain fully supported, both import and export.\n\n"
                                      "All import plugins that support real-world timestamps (such as the newly introduced Sky Dolly logbook import) "
                                      "now also support automated time offset synchronisation, when importing aircraft into a formation flight.\n\n"
                                      "This dialog will be shown %4 more times.")

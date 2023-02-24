@@ -243,17 +243,17 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
     keyValue.first = ::LocationTypeSelectionKey;
     QList<QVariant> typeList;
     for (const auto it : d->locationSelector.typeSelection) {
-        typeList.append(it);
+        typeList.append(QVariant::fromValue(it));
     }
     keyValue.second = QVariant::fromValue(typeList);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::LocationCategorySelectionKey;
-    keyValue.second = d->locationSelector.categoryId;
+    keyValue.second = QVariant::fromValue(d->locationSelector.categoryId);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::CountrySelectionKey;
-    keyValue.second = d->locationSelector.countryId;
+    keyValue.second = QVariant::fromValue(d->locationSelector.countryId);
     keyValues.push_back(keyValue);
 
     // Default values
@@ -266,7 +266,7 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
     keyValues.push_back(keyValue);
 
     keyValue.first = ::DefaultEngineEventKey;
-    keyValue.second = d->engineEventId;
+    keyValue.second = QVariant::fromValue(d->engineEventId);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::DefaultOnGroundKey;
@@ -289,11 +289,11 @@ void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWi
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::LocationCategorySelectionKey;
-    keyValue.second = ::DefaultCategoryId;
+    keyValue.second = QVariant::fromValue(::DefaultCategoryId);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::CountrySelectionKey;
-    keyValue.second = ::DefaultCountryId;
+    keyValue.second = QVariant::fromValue(::DefaultCountryId);
     keysWithDefaults.push_back(keyValue);
 
     // Default values
@@ -306,7 +306,7 @@ void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWi
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::DefaultEngineEventKey;
-    keyValue.second = d->DefaultEngineEventId;
+    keyValue.second = QVariant::fromValue(d->DefaultEngineEventId);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::DefaultOnGroundKey;
