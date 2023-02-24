@@ -161,6 +161,12 @@ void LogbookSettings::setLogbookTableState(QByteArray state) noexcept
     d->logbookTableState = std::move(state);
 }
 
+void LogbookSettings::resetFilter() noexcept
+{
+    restoreFilter();
+    emit changed();
+}
+
 // PROTECTED
 
 void LogbookSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
@@ -207,7 +213,7 @@ void LogbookSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWit
 
 void LogbookSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok;
+    bool ok {false};
     d->flightSelector.hasFormation = valuesByKey.at(::HasFormationKey).toBool();
     d->flightSelector.engineType = static_cast<SimType::EngineType>(valuesByKey.at(::EngineTypeKey).toInt(&ok));
     if (!ok) {
@@ -223,8 +229,15 @@ void LogbookSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Value
 
 void LogbookSettings::restoreDefaultsExtn() noexcept
 {
+    restoreFilter();
+    d->logbookTableState = {};
+}
+
+// PRIVATE
+
+void LogbookSettings::restoreFilter() noexcept
+{
     d->flightSelector.hasFormation = ::DefaultHasFormation;
     d->flightSelector.engineType = ::DefaultEngineType;
     d->flightSelector.mininumDurationMinutes = ::DefaultMinimumDurationMinutes;
-    d->logbookTableState = {};
 }

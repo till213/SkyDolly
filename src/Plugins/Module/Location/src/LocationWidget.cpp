@@ -363,7 +363,7 @@ void LocationWidget::frenchConnection() noexcept
     connect(ui->typeOptionGroup, &LinkedOptionGroup::optionToggled,
             this, &LocationWidget::onTypeOptionToggled);
     connect(ui->resetFilterPushButton, &QPushButton::clicked,
-            this, &LocationWidget::resetFilters);
+            this, &LocationWidget::resetFilter);
     connect(ui->resetDefaultsPushButton, &QPushButton::clicked,
             this, &LocationWidget::resetDefaultValues);
 
@@ -890,7 +890,7 @@ void LocationWidget::onTypeOptionToggled(const QVariant &optionValue, bool enabl
     d->moduleSettings.setTypeSelection(typeSelection);
 }
 
-void LocationWidget::resetFilters() noexcept
+void LocationWidget::resetFilter() noexcept
 {
     d->moduleSettings.resetFilter();
 }

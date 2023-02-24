@@ -522,6 +522,8 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::filterByEngineType);
     connect(ui->durationComboBox, &QComboBox::activated,
             this, &LogbookWidget::filterByDuration);
+    connect(ui->resetFilterPushButton, &QPushButton::clicked,
+            this, &LogbookWidget::resetFilter);
 
     // Date selection
     connect(ui->logTreeWidget, &QTreeWidget::itemClicked,
@@ -876,6 +878,11 @@ void LogbookWidget::filterByDuration([[maybe_unused]] int index) noexcept
         break;
     }
     d->moduleSettings.setMinimumDurationMinutes(minimumDurationMinutes);
+}
+
+void LogbookWidget::resetFilter() noexcept
+{
+    d->moduleSettings.resetFilter();
 }
 
 void LogbookWidget::onTableLayoutChanged() noexcept

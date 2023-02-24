@@ -83,6 +83,13 @@ public:
      */
     void setLogbookTableState(QByteArray state) noexcept;
 
+    /*!
+     * Resets the flight selector.
+     *
+     * \sa changed
+     */
+    void resetFilter() noexcept;
+
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
@@ -91,6 +98,8 @@ protected:
 
 private:
     const std::unique_ptr<LogbookSettingsPrivate> d;
+
+    void restoreFilter() noexcept;
 };
 
 #endif // LOGBOOKSETTINGS_H

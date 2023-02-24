@@ -83,6 +83,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="resetFilterPushButton">
+       <property name="text">
+        <string>&amp;Reset</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="1" column="0">
@@ -188,6 +195,7 @@
   <tabstop>durationComboBox</tabstop>
   <tabstop>engineTypeComboBox</tabstop>
   <tabstop>formationCheckBox</tabstop>
+  <tabstop>resetFilterPushButton</tabstop>
   <tabstop>logTreeWidget</tabstop>
   <tabstop>logTableWidget</tabstop>
   <tabstop>loadPushButton</tabstop>

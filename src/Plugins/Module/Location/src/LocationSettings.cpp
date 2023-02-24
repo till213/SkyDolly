@@ -150,12 +150,6 @@ const LocationSelector &LocationSettings::getLocationSelector() const noexcept
     return d->locationSelector;
 }
 
-void LocationSettings::clearLocationSelector() noexcept
-{
-    d->locationSelector.clear();
-    emit changed();
-}
-
 int LocationSettings::getDefaultAltitude() const noexcept
 {
     return d->altitude;

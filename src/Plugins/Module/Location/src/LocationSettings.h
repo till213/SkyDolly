@@ -74,8 +74,6 @@ public:
     const std::int64_t getDefaultEngineEventId() const noexcept;
     void setDefaultEngineEventId(std::int64_t eventId) noexcept;
 
-    void clearLocationSelector() noexcept;
-
     /*!
      * Returns the saved location table state.
      *
