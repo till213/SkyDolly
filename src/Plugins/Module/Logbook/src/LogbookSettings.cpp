@@ -28,6 +28,7 @@
 #include <QString>
 #include <QDate>
 
+#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Model/SimType.h>
 #include <Persistence/FlightSelector.h>
@@ -37,12 +38,22 @@
 namespace
 {
     // Keys
+    constexpr const char *HasFormationKey {"HasFormation"};
+    constexpr const char *EngineTypeKey {"EngineTypeKey"};
+    constexpr const char *MinimumDurationMinutesKey {"MinimumDurationMinutes"};
+
     constexpr const char *LogbookTableStateKey {"LogbookTableState"};
+
+    // Defaults
+    constexpr bool DefaultHasFormation {false};
+    constexpr SimType::EngineType DefaultEngineType {SimType::EngineType::All};
+    constexpr std::int64_t DefaultMinimumDurationMinutes {0};
+
 }
 
 struct LogbookSettingsPrivate
 {
-    // Note: search keywords are deliberately not persisted in the settings
+    // Note: search keywords and from/to dates are deliberately not persisted in the settings
     FlightSelector flightSelector;
 
     QByteArray logbookTableState;
@@ -156,6 +167,18 @@ void LogbookSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyV
 {
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::HasFormationKey;
+    keyValue.second = d->flightSelector.hasFormation;
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::EngineTypeKey;
+    keyValue.second = Enum::underly(d->flightSelector.engineType);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::MinimumDurationMinutesKey;
+    keyValue.second = d->flightSelector.mininumDurationMinutes;
+    keyValues.push_back(keyValue);
+
     keyValue.first = ::LogbookTableStateKey;
     keyValue.second = d->logbookTableState;
     keyValues.push_back(keyValue);
@@ -165,6 +188,18 @@ void LogbookSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWit
 {
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::HasFormationKey;
+    keyValue.second = DefaultHasFormation;
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::EngineTypeKey;
+    keyValue.second = Enum::underly(DefaultEngineType);
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::MinimumDurationMinutesKey;
+    keyValue.second = DefaultMinimumDurationMinutes;
+    keysWithDefaults.push_back(keyValue);
+
     keyValue.first = ::LogbookTableStateKey;
     keyValue.second = QByteArray();
     keysWithDefaults.push_back(keyValue);
@@ -172,10 +207,24 @@ void LogbookSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWit
 
 void LogbookSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
+    bool ok;
+    d->flightSelector.hasFormation = valuesByKey.at(::HasFormationKey).toBool();
+    d->flightSelector.engineType = static_cast<SimType::EngineType>(valuesByKey.at(::EngineTypeKey).toInt(&ok));
+    if (!ok) {
+        d->flightSelector.engineType = ::DefaultEngineType;
+    }
+    d->flightSelector.mininumDurationMinutes = valuesByKey.at(::MinimumDurationMinutesKey).toInt(&ok);
+    if (!ok) {
+        d->flightSelector.mininumDurationMinutes = ::DefaultMinimumDurationMinutes;
+    }
+
     d->logbookTableState = valuesByKey.at(::LogbookTableStateKey).toByteArray();
 }
 
 void LogbookSettings::restoreDefaultsExtn() noexcept
 {
+    d->flightSelector.hasFormation = ::DefaultHasFormation;
+    d->flightSelector.engineType = ::DefaultEngineType;
+    d->flightSelector.mininumDurationMinutes = ::DefaultMinimumDurationMinutes;
     d->logbookTableState = {};
 }

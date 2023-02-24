@@ -33,7 +33,8 @@
 - A new recent logbooks menu allows to quickly re-open logbooks that have been opened in the past
 - Drag and drop support: you can drag a Sky Dolly logbook from the Windows File Explorer onto the Sky Dolly application in order to quickly open that logbook
 - The current logbook file name is now shown in the application window title
-- The Formation module filter and default values are now stored in module settings
+- The filter values in the Logbook module are now persisted in the application settings
+- The filter and default values in the Formation module are now persisted in the application settings
 
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook

@@ -43,7 +43,7 @@ struct IgcParserPrivate;
 /*!
  * Parses flight recorder files in the IGC (International Gliding Association) format.
  *
- * Implemenation note: only fields relevant for Sky Dolly are stored in the result structure.
+ * Implementation note: only fields relevant for Sky Dolly are stored in the result structure.
  */
 class IgcParser
 {
