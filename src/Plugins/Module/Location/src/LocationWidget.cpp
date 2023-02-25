@@ -189,9 +189,8 @@ void LocationWidget::addLocation(Location newLocation)
     }    
     if (d->locationService->store(location)) {
         // Make sure that user locations are visible
-        if (!d->moduleSettings.showUserLocations()) {            
-            ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
-        }        
+        resetFilter();
+        ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
 
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->blockSignals(true);

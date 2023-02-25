@@ -36,6 +36,7 @@
 - The current logbook file name is now shown in the application window title
 - The filter values in the Logbook module are now persisted in the application settings
 - The filter and default values in the Formation module are now persisted in the application settings
+- The filter values in the Location module are now automatically reset when a user location is being added, in order to make the newly added location visible
 - Added four new New Zealand locations
 
 ### Bug Fixes
