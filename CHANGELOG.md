@@ -36,6 +36,7 @@
 - The current logbook file name is now shown in the application window title
 - The filter values in the Logbook module are now persisted in the application settings
 - The filter and default values in the Formation module are now persisted in the application settings
+- Added four new New Zealand locations
 
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
