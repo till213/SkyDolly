@@ -41,7 +41,6 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Const.h>
 #include <Model/Logbook.h>
-#include <PersistenceManager.h>
 #include <Service/EnumerationService.h>
 #include <Service/DatabaseService.h>
 #include <Migration.h>
@@ -215,7 +214,7 @@ bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
 bool DatabaseService::updateBackupDate() noexcept
 {
     bool ok {true};
-    const Metadata metaData = PersistenceManager::getInstance().getMetadata(&ok);
+    const Metadata metaData = getMetadata(&ok);
     if (ok) {
         const QDateTime today = QDateTime::currentDateTime();
         QDateTime nextBackupDate = metaData.lastBackupDate.isNull() ? today : metaData.lastBackupDate;
