@@ -24,7 +24,8 @@
     - **None**: no timestamp offset is being applied
     - **Date and time**: the timestamp offset is calculated based on the recording date and time difference between the *current* and each newly imported flight
     - **Time only**: the timestamp offset is calculated based on the recording time difference between the *current* and each newly imported flight, but ignoring the recording date. This can be useful when importing historic real-world flights from different dates in the past into the same "formation flight", but with the goal to replay them "on the same day" (as defined by the first imported flight)
-- The Simulation Variables dialog (key **V**)now also shows the aircraft position as decimal latitude & longitude values ([#89](https://github.com/till213/SkyDolly/issues/89))
+  * Old plugin settings are migrated to the new import mode settings
+- The Simulation Variables dialog (key **V**) now also shows the aircraft position as decimal latitude & longitude values ([#89](https://github.com/till213/SkyDolly/issues/89))
 - The flight recording time in the Flight dialog (key **F**) is now empty for new flights (without any recording)
   * As before it is updated when the *first* aircraft is being recorded
   * The recording time text field tooltip now also shows the recording date and time converted to UTC ("zulu time"), including seconds
@@ -35,6 +36,8 @@
 - The current logbook file name is now shown in the application window title
 - The filter values in the Logbook module are now persisted in the application settings
 - The filter and default values in the Formation module are now persisted in the application settings
+- The filter values in the Location module are now automatically reset when a user location is being added, in order to make the newly added location visible
+- Added five new New Zealand locations
 
 ### Bug Fixes
 - The timestamp for waypoints is now properly restored when reading waypoint data from the logbook

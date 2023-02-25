@@ -195,7 +195,7 @@ void LogbookSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWit
     Settings::KeyValue keyValue;
 
     keyValue.first = ::HasFormationKey;
-    keyValue.second = DefaultHasFormation;
+    keyValue.second = ::DefaultHasFormation;
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::EngineTypeKey;
@@ -203,7 +203,7 @@ void LogbookSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWit
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::MinimumDurationMinutesKey;
-    keyValue.second = DefaultMinimumDurationMinutes;
+    keyValue.second = QVariant::fromValue(::DefaultMinimumDurationMinutes);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::LogbookTableStateKey;

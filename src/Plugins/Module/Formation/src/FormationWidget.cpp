@@ -75,7 +75,6 @@ namespace
     constexpr int MinimumTableWidth {120};
     constexpr int InvalidRow {-1};
     constexpr int InvalidColumn {-1};
-    constexpr int InvalidSequence {-1};
 
     enum ReplayModeIndex {
         Normal,

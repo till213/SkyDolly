@@ -188,10 +188,10 @@ void LocationWidget::addLocation(Location newLocation)
         location.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
     }    
     if (d->locationService->store(location)) {
-        if (!d->moduleSettings.showUserLocations()) {
-            // Make sure that user locations are visible
-            ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
-        }
+        // Make sure that user locations are visible
+        resetFilter();
+        ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
+
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->blockSignals(true);
         const QTableWidgetItem *firstItem = createRow(location);
@@ -419,6 +419,8 @@ void LocationWidget::frenchConnection() noexcept
     connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
             this, &LocationWidget::onTableLayoutChanged);
     connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
+            this, &LocationWidget::onTableLayoutChanged);
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
             this, &LocationWidget::onTableLayoutChanged);
     connect(&d->moduleSettings, &ModuleBaseSettings::changed,
             this, &LocationWidget::onModuleSettingsChanged);

@@ -534,6 +534,8 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::onTableLayoutChanged);
     connect(ui->logTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
             this, &LogbookWidget::onTableLayoutChanged);
+    connect(ui->logTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
+            this, &LogbookWidget::onTableLayoutChanged);
     connect(&d->moduleSettings, &ModuleBaseSettings::changed,
             this, &LogbookWidget::onModuleSettingsChanged);
 }

@@ -53,14 +53,16 @@ EnumerationItemDelegate::~EnumerationItemDelegate() = default;
 
 QWidget *EnumerationItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    QWidget *editor;
     if (index.data().canConvert<QString>()) {
         auto *enumerationComboBox = new EnumerationComboBox(d->enumerationName, EnumerationComboBox::Mode::Editable, parent);
         connect(enumerationComboBox, &EnumerationComboBox::currentIndexChanged,
                 this, &EnumerationItemDelegate::commitAndCloseEditor);
-        return enumerationComboBox;
+        editor = enumerationComboBox;
     } else {
-        return QStyledItemDelegate::createEditor(parent, option, index);
+        editor = QStyledItemDelegate::createEditor(parent, option, index);
     }
+    return editor;
 }
 
 void EnumerationItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const noexcept
@@ -69,7 +71,9 @@ void EnumerationItemDelegate::setEditorData(QWidget *editor, const QModelIndex &
     if (data.canConvert<std::int64_t>()) {
          auto id = qvariant_cast<std::int64_t>(data);
          auto *enumerationEditor = qobject_cast<EnumerationComboBox *>(editor);
+         enumerationEditor->blockSignals(true);
          enumerationEditor->setCurrentId(id);
+         enumerationEditor->blockSignals(false);
      } else {
          QStyledItemDelegate::setEditorData(editor, index);
      }
@@ -93,4 +97,3 @@ void EnumerationItemDelegate::commitAndCloseEditor() noexcept
     emit commitData(editor);
     emit closeEditor(editor);
 }
-
