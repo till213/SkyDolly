@@ -26,6 +26,12 @@ Once the checksum has been calculated compare it with the corresponding checksum
 
 ## Checksums
 
+### v0.16
+
+Algorithm | Hash                                                             | File
+----------|------------------------------------------------------------------|---------------------
+SHA256    | 96369A973073BA235194597612A123C972FA2DD39C475E5E444A226CECD39EE5 | SkyDolly-v0.16.0.zip
+
 ### v0.15
 
 Algorithm | Hash                                                             | File
