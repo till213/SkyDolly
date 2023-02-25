@@ -135,7 +135,7 @@ void Flight::setDescription(QString description) noexcept
 
 void Flight::addAircraft(std::vector<Aircraft> &&aircraft) noexcept
 {
-    if (!hasRecording()) {
+    if (!getUserAircraft().hasRecording()) {
         d->flightData.aircraft = std::move(aircraft);
     } else {
         d->flightData.aircraft.reserve(d->flightData.aircraft.size() + aircraft.size());
