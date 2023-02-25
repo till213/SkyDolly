@@ -210,6 +210,11 @@ Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
     if (ok != nullptr) {
         *ok = success;
     }
+#ifdef DEBUG
+    if (!success) {
+        qDebug() << "SQLiteDatabaseDao::getMetadata: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+    }
+#endif
     return metadata;
 };
 

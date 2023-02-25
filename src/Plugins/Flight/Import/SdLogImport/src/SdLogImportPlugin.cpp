@@ -77,7 +77,7 @@ std::vector<FlightData> SdlogImportPlugin::importSelectedFlights(QIODevice &io, 
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
         QFileInfo fileInfo {*file};
-        ok = d->databaseService->connect(fileInfo.absoluteFilePath());
+        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath());
         if (ok) {
             const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
             // We expect at least one flight to be imported (note that zero flights in a logbook

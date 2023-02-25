@@ -107,8 +107,6 @@ private:
 
     PersistenceManager() noexcept;
     ~PersistenceManager() override;
-
-    std::pair<bool, Version> checkDatabaseVersion() const noexcept;
 };
 
 #endif // PERSISTENCEMANAGER_H
