@@ -69,7 +69,8 @@
 - Export as CSV
 - Import same file as CSV
 - Enable / disable minimal UI (key **M**)
-- Open a Sky Dolly v0.6 logbook (create a copy first)
+- _Open_ a Sky Dolly v0.6 logbook (create a copy first)
+- _Import_ a Sky Dolly v0.6 logbook (create a copy first)
 
 ## Take-Off
 - ZIP the package folder (e.g. `SkyDolly-v0.16.0.zip`)
