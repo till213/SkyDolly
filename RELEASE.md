@@ -69,7 +69,7 @@
 - Export as CSV
 - Import same file as CSV
 - Enable / disable minimal UI (key **M**)
-- _Open: a Sky Dolly v0.6 logbook (create a copy first)
+- _Open_: a Sky Dolly v0.6 logbook (create a copy first)
 - _Import_ a Sky Dolly v0.6 logbook (create a copy first)
 
 ## Take-Off
