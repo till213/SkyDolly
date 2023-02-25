@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
-    <height>158</height>
+    <width>662</width>
+    <height>163</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,8 +85,19 @@
      </item>
      <item>
       <widget class="QPushButton" name="resetFilterPushButton">
+       <property name="toolTip">
+        <string>Reset the filter criteria.</string>
+       </property>
        <property name="text">
-        <string>&amp;Reset</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/img/icons/close-normal.png</normalon>
+        </iconset>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
