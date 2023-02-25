@@ -94,7 +94,7 @@ void LogbookBackupDialog::accept() noexcept
     // ... the next backup date which is set upon successful backup
     if (ok) {
         PersistenceManager &persistenceManager = PersistenceManager::getInstance();
-        ok =d->databaseService->backup(persistenceManager.getLogbookPath());
+        ok =d->databaseService->backup(persistenceManager.getLogbookPath(), DatabaseService::BackupMode::Normal);
     }
 
     if (!ok) {
@@ -154,7 +154,7 @@ void LogbookBackupDialog::updateUi() noexcept
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
         // Backup folder
-        const QString backupDirectoryPath = DatabaseService::createBackupPathIfNotExists(metadata.backupDirectoryPath);
+        const QString backupDirectoryPath = DatabaseService::createBackupPathIfNotExists(persistenceManager.getLogbookPath(), metadata.backupDirectoryPath);
         ui->backupDirectoryLineEdit->setText(QDir::toNativeSeparators(backupDirectoryPath));
         ui->backupPeriodComboBox->setCurrentId(metadata.backupPeriodId);
     }

@@ -95,7 +95,7 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
             }
             ok = d->databaseService->connect(currentLogbookPath);
             if (ok) {
-                const auto & [success, databaseVersion] = checkDatabaseVersion();
+                const auto & [success, databaseVersion] = d->databaseService->checkDatabaseVersion();
                 ok = success;
                 if (ok) {
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -109,7 +109,7 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
                     // so we set the patch version always to 0
                     Version refVersion {appVersion.getMajor(), appVersion.getMinor(), 0};
                     if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < refVersion) {
-                        ok = d->databaseService->backup(currentLogbookPath);
+                        ok = d->databaseService->backup(currentLogbookPath, DatabaseService::BackupMode::Migration);
                     }
                     if (ok) {
                         // We still migrate, even if the above version check indicates that the database is up to date
@@ -211,19 +211,4 @@ PersistenceManager::PersistenceManager() noexcept
 PersistenceManager::~PersistenceManager()
 {
     disconnectFromLogbook();
-}
-
-std::pair<bool, Version> PersistenceManager::checkDatabaseVersion() const noexcept
-{
-    std::pair<bool, Version> result;
-    result.second = getDatabaseVersion(&result.first);
-    if (result.first) {
-        Version currentAppVersion;
-        result.first = currentAppVersion >= result.second;
-    } else {
-        // New database - no metadata exists yet
-        result.first = true;
-        result.second = Version(0, 0, 0);
-    }
-    return result;
 }

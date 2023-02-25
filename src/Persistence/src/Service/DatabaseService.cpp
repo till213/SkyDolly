@@ -41,7 +41,6 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Const.h>
 #include <Model/Logbook.h>
-#include <PersistenceManager.h>
 #include <Service/EnumerationService.h>
 #include <Service/DatabaseService.h>
 #include <Migration.h>
@@ -94,9 +93,54 @@ bool DatabaseService::connect(const QString &logbookPath) noexcept
     return d->databaseDao->connectDb(logbookPath);
 }
 
+bool DatabaseService::connectAndMigrate(const QString &logbookPath) noexcept
+{
+    Settings &settings = Settings::getInstance();
+    bool ok = connect(logbookPath);
+    if (ok) {
+        const auto & [success, databaseVersion] = checkDatabaseVersion();
+        ok = success;
+        if (ok) {
+            // Create a backup before migration of existing logbooks
+            Version appVersion;
+            // TODO: Check whether there are any migration steps to be executed at all before
+            //       creating a backup, instead of comparing database and application versions
+            //       (the later requires that the database version is always up to date)
+            // For the time being we only compare major.minur but not major.minor.patch versions;
+            // so we set the patch version always to 0
+            Version refVersion {appVersion.getMajor(), appVersion.getMinor(), 0};
+            if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < refVersion) {
+                ok = backup(logbookPath, DatabaseService::BackupMode::Migration);
+            }
+            if (ok) {
+                // We still migrate, even if the above version check indicates that the database is up to date
+                // (to make sure that we really do not miss any migration steps, in case the database version
+                // was "forgotten" to be updated during some prior migration)
+                ok = migrate();
+            }
+        }
+    }
+    return ok;
+}
+
 void DatabaseService::disconnect(Connection::Default connection) noexcept
 {
     d->databaseDao->disconnectDb(connection);
+}
+
+std::pair<bool, Version> DatabaseService::checkDatabaseVersion() const noexcept
+{
+    std::pair<bool, Version> result;
+    result.second = getDatabaseVersion(&result.first);
+    if (result.first) {
+        Version currentAppVersion;
+        result.first = currentAppVersion >= result.second;
+    } else {
+        // New database - no metadata exists yet
+        result.first = true;
+        result.second = Version(0, 0, 0);
+    }
+    return result;
 }
 
 bool DatabaseService::migrate(Migration::Milestones milestones) noexcept
@@ -109,13 +153,12 @@ bool DatabaseService::optimise() noexcept
     return d->databaseDao->optimise();
 }
 
-bool DatabaseService::backup(const QString &logbookPath) noexcept
+bool DatabaseService::backup(const QString &logbookPath, BackupMode backupMode) noexcept
 {
     bool ok {true};
-    const Metadata metaData = getMetadata(&ok);
-    QString backupDirectoryPath;
+    QString backupDirectoryPath = getBackupDirectoryPath(&ok);
     if (ok) {
-        backupDirectoryPath = createBackupPathIfNotExists(metaData.backupDirectoryPath);
+        backupDirectoryPath = createBackupPathIfNotExists(logbookPath, backupDirectoryPath);
     }
     ok = !backupDirectoryPath.isNull();
     if (ok) {
@@ -130,8 +173,8 @@ bool DatabaseService::backup(const QString &logbookPath) noexcept
         }
     }
 
-    // Update the next backup date
-    if (ok) {
+    // Update the next backup date when not doing a migration
+    if (ok && backupMode == BackupMode::Normal) {
         ok = updateBackupDate();
     }
 
@@ -171,7 +214,7 @@ bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
 bool DatabaseService::updateBackupDate() noexcept
 {
     bool ok {true};
-    const Metadata metaData = PersistenceManager::getInstance().getMetadata(&ok);
+    const Metadata metaData = getMetadata(&ok);
     if (ok) {
         const QDateTime today = QDateTime::currentDateTime();
         QDateTime nextBackupDate = metaData.lastBackupDate.isNull() ? today : metaData.lastBackupDate;
@@ -201,9 +244,14 @@ QString DatabaseService::getBackupDirectoryPath(bool *ok) const noexcept
         backupDirectoryPath = d->databaseDao->getBackupDirectoryPath(&success);
         db.rollback();
     }
+    if (success && backupDirectoryPath.isNull()) {
+        // Default backup location, relative to logbook path
+        // (in earlier logbooks the backup path was initially empty in the metadata)
+        backupDirectoryPath = "./Backups";
+    }
     if (ok != nullptr) {
         *ok = success;
-    }
+    }    
     return backupDirectoryPath;
 }
 
@@ -310,12 +358,11 @@ QString DatabaseService::getBackupFileName(const QString &logbookPath, const QSt
     }
 }
 
-QString DatabaseService::createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
+QString DatabaseService::createBackupPathIfNotExists(const QString &logbookPath, const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
 {
     QString existingBackupPath;
     if (QDir::isRelativePath(relativeOrAbsoluteBackupDirectoryPath)) {
-        const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
-        const QString &logbookDirectoryPath = QFileInfo(persistenceManager.getLogbookPath()).absolutePath();
+        const QString &logbookDirectoryPath = QFileInfo(logbookPath).absolutePath();
         existingBackupPath = logbookDirectoryPath + "/" + QFileInfo(relativeOrAbsoluteBackupDirectoryPath).fileName();
     } else {
         existingBackupPath = relativeOrAbsoluteBackupDirectoryPath;

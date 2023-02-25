@@ -342,29 +342,38 @@ bool FlightImportPluginBase::addAndStoreAircraftToCurrentFlight(const QString &s
         // Iterate over all imported flights (if multiple)...
         for (auto &flightData : importedFlights) {
             if (newFlight) {
-                // Create a new flight first, based on the first imported flight data
-                currentFlight.fromFlightData(std::move(flightData));
-                ok = d->flightService->storeFlight(currentFlight);
-                if (ok) {
-                    ++totalFlightsStored;
-                    newFlight = false;
+                // Ensure that all aircraft in the flight to be imported indeed have sampled positions
+                if (flightData.hasRecording()) {
+                    // Create a new flight first, based on the first imported flight data
+                    currentFlight.fromFlightData(std::move(flightData));
+                    ok = d->flightService->storeFlight(currentFlight);
+                    if (ok) {
+                        ++totalFlightsStored;
+                        newFlight = false;
+                    }
                 }
             } else {
                 // Keep on adding the imported aircraft to current flight (sequence number starts at 1)
                 std::size_t sequenceNumber = currentFlight.count() + 1;
                 for (auto &aircraft : flightData.aircraft) {
-                    ok = d->aircraftService->store(currentFlight.getId(), sequenceNumber, aircraft);
-                    if (ok) {
-                        ++sequenceNumber;
-                        ++totalAircraftStored;
-                    } else {
-                        break;
+                    // Ensure that the current aircraft to be imported indeed has sampled positions
+                    if (aircraft.hasRecording()) {
+                        ok = d->aircraftService->store(currentFlight.getId(), sequenceNumber, aircraft);
+                        if (ok) {
+                            ++sequenceNumber;
+                            ++totalAircraftStored;
+                        } else {
+                            break;
+                        }
                     }
                 }
                 if (ok) {
                     currentFlight.addAircraft(std::move(flightData.aircraft));
                 }
-            }            
+            }
+            if (!ok) {
+                break;
+            }
         } // flight data
     }
     return ok;

@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <cstdint>
+#include <utility>
 
 #include <QObject>
 #include <QSqlDatabase>
@@ -48,6 +49,11 @@ struct DatabaseServicePrivate;
 class PERSISTENCE_API DatabaseService final
 {
 public:
+    enum struct BackupMode
+    {
+        Migration,
+        Normal
+    };
     DatabaseService(QString connectionName = Const::DefaultConnectionName) noexcept;
     DatabaseService(const DatabaseService &rhs) = delete;
     DatabaseService(DatabaseService &&rhs) noexcept;
@@ -56,11 +62,14 @@ public:
     ~DatabaseService();
 
     bool connect(const QString &logbookPath) noexcept;
+    bool connectAndMigrate(const QString &logbookPath) noexcept;
     void disconnect(Connection::Default connection) noexcept;
+
+    std::pair<bool, Version> checkDatabaseVersion() const noexcept;
 
     bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept;
     bool optimise() noexcept;
-    bool backup(const QString &logbookPath) noexcept;
+    bool backup(const QString &logbookPath, BackupMode backupMode) noexcept;
     bool setBackupPeriod(std::int64_t backupPeriodId) noexcept;
     bool setNextBackupDate(const QDateTime &date) noexcept;
     bool updateBackupDate() noexcept;
@@ -73,7 +82,7 @@ public:
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;
     static QString getBackupFileName(const QString &logbookPath, const QString &backupDirectoryPath) noexcept;
-    static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
+    static QString createBackupPathIfNotExists(const QString &logbookPath, const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
 
 private:
     std::unique_ptr<DatabaseServicePrivate> d;
