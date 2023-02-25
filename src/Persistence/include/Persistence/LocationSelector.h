@@ -37,14 +37,15 @@
 
 struct PERSISTENCE_API LocationSelector
 {
-    std::unordered_set<std::int64_t> typeIds;
+    using TypeSelection = std::unordered_set<std::int64_t>;
+    TypeSelection typeSelection;
     std::int64_t categoryId {Const::InvalidId};
     std::int64_t countryId {Const::InvalidId};
     QString searchKeyword;
 
     inline bool hasSelectors() const noexcept
     {
-        return typeIds.size() > 0 ||
+        return typeSelection.size() > 0 ||
                categoryId != Const::InvalidId ||
                countryId != Const::InvalidId ||
                !searchKeyword.isEmpty();
@@ -53,7 +54,15 @@ struct PERSISTENCE_API LocationSelector
     inline bool showUserLocations() const noexcept
     {
         static const std::int64_t userLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
-        return typeIds.empty() || typeIds.contains(userLocationTypeId);
+        return typeSelection.empty() || typeSelection.contains(userLocationTypeId);
+    }
+
+    inline void clear() noexcept
+    {
+        typeSelection.clear();
+        categoryId = Const::InvalidId;
+        countryId = Const::InvalidId;
+        searchKeyword.clear();
     }
 };
 

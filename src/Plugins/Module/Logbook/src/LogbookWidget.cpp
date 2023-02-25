@@ -29,6 +29,7 @@
 #include <iterator>
 #include <cstdint>
 #include <limits>
+#include <utility>
 
 #include <QByteArray>
 #include <QVariant>
@@ -85,8 +86,6 @@ namespace
     constexpr int NofFlightsColumn {1};
     constexpr int NofFlightsColumnWidth {40};
 
-    constexpr int SearchTimeoutMSec {200};
-
     enum struct Duration {
         All = 0,
         TwoMinutes = 2,
@@ -99,6 +98,8 @@ namespace
         ThreeHours = 180,
         FourHours = 240
     };
+
+    constexpr int SearchTimeoutMSec {200};
 }
 
 struct LogbookWidgetPrivate
@@ -117,7 +118,6 @@ struct LogbookWidgetPrivate
 
     std::int64_t flightInMemoryId {Const::InvalidId};
     Unit unit;
-    FlightSelector flightSelector;
     std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
     // Columns are only auto-resized the first time the table is loaded
     // After that manual column resizes are kept
@@ -238,7 +238,6 @@ void LogbookWidget::initFilterUi() noexcept
     ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Piston), Enum::underly(SimType::EngineType::Piston));
     ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::HeloBellTurbine), Enum::underly(SimType::EngineType::HeloBellTurbine));
     ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::None), Enum::underly(SimType::EngineType::None));
-    ui->engineTypeComboBox->setCurrentText(QString());
 }
 
 void LogbookWidget::updateTable() noexcept
@@ -247,7 +246,7 @@ void LogbookWidget::updateTable() noexcept
 
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         d->flightInMemoryId = flight.getId();
-        std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->flightSelector);
+        std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->moduleSettings.getFlightSelector());
 
         const bool recording = SkyConnectManager::getInstance().isInRecordingState();
         if (recording) {
@@ -523,6 +522,8 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::filterByEngineType);
     connect(ui->durationComboBox, &QComboBox::activated,
             this, &LogbookWidget::filterByDuration);
+    connect(ui->resetFilterPushButton, &QPushButton::clicked,
+            this, &LogbookWidget::resetFilter);
 
     // Date selection
     connect(ui->logTreeWidget, &QTreeWidget::itemClicked,
@@ -592,6 +593,7 @@ inline void LogbookWidget::insertDay(QTreeWidgetItem *parent, std::forward_list<
 
 inline void LogbookWidget::updateSelectionDateRange(QTreeWidgetItem *item) const noexcept
 {
+    d->moduleSettings.blockSignals(true);
     const QTreeWidgetItem *parent = item->parent();
     if (parent != nullptr) {
         const QTreeWidgetItem *parent1 = parent->parent();
@@ -602,27 +604,35 @@ inline void LogbookWidget::updateSelectionDateRange(QTreeWidgetItem *item) const
                 const int year = parent1->data(::DateColumn, Qt::UserRole).toInt();
                 const int month = parent->data(::DateColumn, Qt::UserRole).toInt();
                 const int day = item->data(::DateColumn, Qt::UserRole).toInt();
-                d->flightSelector.fromDate.setDate(year, month, day);
-                d->flightSelector.toDate = d->flightSelector.fromDate.addDays(1);
+                QDate fromDate {year, month, day};
+                QDate toDate {fromDate.addDays(1)};
+                d->moduleSettings.setFromDate(std::move(fromDate));
+                d->moduleSettings.setToDate(std::move(toDate));
             } else {
                 // Item: month selected
                 const int year = parent->data(::DateColumn, Qt::UserRole).toInt();
                 const int month = item->data(::DateColumn, Qt::UserRole).toInt();
-                d->flightSelector.fromDate.setDate(year, month, 1);
-                const int daysInMonth = d->flightSelector.fromDate.daysInMonth();
-                d->flightSelector.toDate.setDate(year, month, daysInMonth);
+                QDate fromDate {year, month, 1};
+                const int daysInMonth = fromDate.daysInMonth();
+                d->moduleSettings.setFromDate(std::move(fromDate));
+                QDate toDate {year, month, daysInMonth};
+                d->moduleSettings.setToDate(std::move(toDate));
             }
         } else {
             // Item: year selected
             const int year = item->data(::DateColumn, Qt::UserRole).toInt();
-            d->flightSelector.fromDate.setDate(year, 1, 1);
-            d->flightSelector.toDate.setDate(year, 12, 31);
+            QDate fromDate {year, 1, 1};
+            d->moduleSettings.setFromDate(std::move(fromDate));
+            QDate toDate {year, 12, 31};
+            d->moduleSettings.setToDate(std::move(toDate));
         }
     } else {
         // Item: Logbook selected (show all entries)
-        d->flightSelector.fromDate = FlightSelector::MinDate;
-        d->flightSelector.toDate = FlightSelector::MaxDate;
+        d->moduleSettings.setFromDate(FlightSelector::MinDate);
+        d->moduleSettings.setToDate(FlightSelector::MaxDate);
     }
+    d->moduleSettings.blockSignals(false);
+    emit d->moduleSettings.changed();
 }
 
 int LogbookWidget::getSelectedRow() const noexcept
@@ -780,7 +790,7 @@ void LogbookWidget::onSearchTextChanged() noexcept
 
 void LogbookWidget::searchText() noexcept
 {
-    d->flightSelector.searchKeyword = ui->searchLineEdit->text();
+    d->moduleSettings.setSearchKeyword(ui->searchLineEdit->text());
     updateTable();
 }
 
@@ -819,25 +829,23 @@ void LogbookWidget::onCellChanged(int row, int column) noexcept
 void LogbookWidget::onDateItemClicked(QTreeWidgetItem *item) noexcept
 {
     updateSelectionDateRange(item);
-    updateTable();
 }
 
 void LogbookWidget::filterByFormationFlights(bool checked) noexcept
 {
-    d->flightSelector.hasFormation = checked;
-    updateTable();
+    d->moduleSettings.setFormation(checked);
 }
 
 void LogbookWidget::filterByEngineType([[maybe_unused]] int index) noexcept
 {
-    d->flightSelector.engineType = static_cast<SimType::EngineType>(ui->engineTypeComboBox->currentData().toInt());
-    updateTable();
+    d->moduleSettings.setEngineType(static_cast<SimType::EngineType>(ui->engineTypeComboBox->currentData().toInt()));
 }
 
 void LogbookWidget::filterByDuration([[maybe_unused]] int index) noexcept
 {
     int minimumDurationMinutes {0};
-    switch (static_cast<Duration>(ui->durationComboBox->currentData().toUInt())) {
+    Duration duration = static_cast<Duration>(ui->durationComboBox->currentData().toInt());
+    switch (duration) {
     case Duration::All:
         minimumDurationMinutes = 0;
         break;
@@ -869,9 +877,12 @@ void LogbookWidget::filterByDuration([[maybe_unused]] int index) noexcept
         minimumDurationMinutes = 240;
         break;
     }
+    d->moduleSettings.setMinimumDurationMinutes(minimumDurationMinutes);
+}
 
-    d->flightSelector.mininumDurationMinutes = minimumDurationMinutes;
-    updateTable();
+void LogbookWidget::resetFilter() noexcept
+{
+    d->moduleSettings.resetFilter();
 }
 
 void LogbookWidget::onTableLayoutChanged() noexcept
@@ -882,5 +893,55 @@ void LogbookWidget::onTableLayoutChanged() noexcept
 
 void LogbookWidget::onModuleSettingsChanged() noexcept
 {
+    ui->searchLineEdit->blockSignals(true);
+    ui->searchLineEdit->setText(d->moduleSettings.getSearchKeyword());
+    ui->searchLineEdit->blockSignals(false);
+
+    ui->formationCheckBox->blockSignals(true);
+    ui->formationCheckBox->setChecked(d->moduleSettings.hasFormation());
+    ui->formationCheckBox->blockSignals(false);
+
+    Duration duration {Duration::All};
+    const int minimumDurationMinutes = d->moduleSettings.getMinimumDurationMinutes();
+    if (minimumDurationMinutes < 2) {
+        duration = Duration::All;
+    } else if (minimumDurationMinutes < 5) {
+        duration = Duration::TwoMinutes;
+    } else if (minimumDurationMinutes < 10) {
+        duration = Duration::FiveMinutes;
+    } else if (minimumDurationMinutes < 15) {
+        duration = Duration::TenMinutes;
+    } else if (minimumDurationMinutes < 30) {
+        duration = Duration::Fifteen;
+    } else if (minimumDurationMinutes < 60) {
+        duration = Duration::ThirtyMinutes;
+    } else if (minimumDurationMinutes < 120) {
+        duration = Duration::OneHour;
+    } else if (minimumDurationMinutes < 180) {
+        duration = Duration::TwoHours;
+    } else if (minimumDurationMinutes < 240) {
+        duration = Duration::ThreeHours;
+    } else {
+        duration = Duration::FourHours;
+    }
+    ui->durationComboBox->blockSignals(true);
+    for (int index = 0; index < ui->durationComboBox->count(); ++index) {
+        if (static_cast<Duration>(ui->durationComboBox->itemData(index).toInt()) == duration) {
+            ui->durationComboBox->setCurrentIndex(index);
+            break;
+        }
+    }
+    ui->durationComboBox->blockSignals(false);
+
+    ui->engineTypeComboBox->blockSignals(true);
+    for (int index = 0; index < ui->engineTypeComboBox->count(); ++index) {
+        if (static_cast<SimType::EngineType>(ui->engineTypeComboBox->itemData(index).toInt()) == d->moduleSettings.getEngineType()) {
+            ui->engineTypeComboBox->setCurrentIndex(index);
+            break;
+        }
+    }
+    ui->engineTypeComboBox->blockSignals(false);
+
     ui->logTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLogbookTableState());
+    updateTable();
 }

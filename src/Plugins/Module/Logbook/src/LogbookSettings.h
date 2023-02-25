@@ -28,8 +28,11 @@
 #include <memory>
 
 #include <QObject>
+#include <QDate>
 
 #include <Kernel/Settings.h>
+#include <Model/SimType.h>
+#include <Persistence/FlightSelector.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 
 struct LogbookSettingsPrivate;
@@ -44,6 +47,26 @@ public:
     LogbookSettings &operator=(const LogbookSettings &rhs) = delete;
     LogbookSettings &operator=(LogbookSettings &&rhs) = delete;
     ~LogbookSettings() override;
+
+    QDate getFromDate() const noexcept;
+    void setFromDate(QDate from) noexcept;
+
+    QDate getToDate() const noexcept;
+    void setToDate(QDate to) noexcept;
+
+    const QString &getSearchKeyword() const noexcept;
+    void setSearchKeyword(QString keyword) noexcept;
+
+    bool hasFormation() const noexcept;
+    void setFormation(bool enable) noexcept;
+
+    SimType::EngineType getEngineType() const noexcept;
+    void setEngineType(SimType::EngineType engineType) noexcept;
+
+    int getMinimumDurationMinutes() const noexcept;
+    void setMinimumDurationMinutes(int minutes) noexcept;
+
+    const FlightSelector &getFlightSelector() const noexcept;
 
     /*!
      * Returns the saved logbook table state.
@@ -60,6 +83,13 @@ public:
      */
     void setLogbookTableState(QByteArray state) noexcept;
 
+    /*!
+     * Resets the flight selector.
+     *
+     * \sa changed
+     */
+    void resetFilter() noexcept;
+
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
@@ -68,6 +98,8 @@ protected:
 
 private:
     const std::unique_ptr<LogbookSettingsPrivate> d;
+
+    void restoreFilter() noexcept;
 };
 
 #endif // LOGBOOKSETTINGS_H

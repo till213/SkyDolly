@@ -110,6 +110,7 @@ private slots:
     void filterByFormationFlights(bool checked) noexcept;
     void filterByEngineType(int index) noexcept;
     void filterByDuration(int index) noexcept;
+    void resetFilter() noexcept;
 
     // Settings
     void onTableLayoutChanged() noexcept;

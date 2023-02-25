@@ -30,6 +30,7 @@
 #include <QObject>
 
 #include <Kernel/Settings.h>
+#include <Persistence/LocationSelector.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 
 struct LocationSettingsPrivate;
@@ -44,6 +45,34 @@ public:
     LocationSettings &operator=(const LocationSettings &rhs) = delete;
     LocationSettings &operator=(LocationSettings &&rhs) = delete;
     ~LocationSettings() override;
+
+    LocationSelector::TypeSelection getTypeSelection() const noexcept;
+    void setTypeSelection(LocationSelector::TypeSelection typeSelection) noexcept;
+
+    std::int64_t getCategoryId() const noexcept;
+    void setCategoryId(std::int64_t id) noexcept;
+
+    std::int64_t getCountryId() const noexcept;
+    void setCountryId(std::int64_t id) noexcept;
+
+    const QString &getSearchKeyword() const noexcept;
+    void setSearchKeyword(QString keyword) noexcept;
+
+    bool showUserLocations() const noexcept;
+    bool hasSelectors() const noexcept;
+    const LocationSelector &getLocationSelector() const noexcept;
+
+    int getDefaultAltitude() const noexcept;
+    void setDefaultAltitude(int altitude) noexcept;
+
+    int getDefaultIndicatedAirspeed() const noexcept;
+    void setDefaultIndicatedAirspeed(int airspeed);
+
+    bool isDefaultOnGround() const noexcept;
+    void setDefaultOnGround(bool enable) noexcept;
+
+    const std::int64_t getDefaultEngineEventId() const noexcept;
+    void setDefaultEngineEventId(std::int64_t eventId) noexcept;
 
     /*!
      * Returns the saved location table state.
@@ -60,6 +89,9 @@ public:
      */
     void setLocationTableState(QByteArray state) noexcept;
 
+    void resetFilter() noexcept;
+    void resetDefaultValues() noexcept;
+
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
@@ -68,6 +100,9 @@ protected:
 
 private:
     const std::unique_ptr<LocationSettingsPrivate> d;
+
+    void restoreFilter() noexcept;
+    void restoreDefaultValues() noexcept;
 };
 
 #endif // LOCATIONSETTINGS_H

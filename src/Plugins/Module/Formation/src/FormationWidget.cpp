@@ -908,7 +908,7 @@ void FormationWidget::deleteAircraft() noexcept
         bool doDelete {true};
         if (settings.isDeleteAircraftConfirmationEnabled()) {
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
-            QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
+            auto *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
             // Sequence numbers start at 1
             messageBox->setWindowTitle(tr("Delete Aircraft"));
@@ -1013,7 +1013,7 @@ void FormationWidget::resetAllTimeOffsets() noexcept
     bool doReset {true};
     if (settings.isResetTimeOffsetConfirmationEnabled()) {
         std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
-        QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
+        auto *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
         messageBox->setWindowTitle(tr("Reset Time Offsets"));
         messageBox->setText(tr("Do you want to reset all time offsets to 0?"));

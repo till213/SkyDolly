@@ -61,7 +61,7 @@ target_link_libraries(${LIBRARY_NAME}
         GitInfo
 )
 
-# Platform-specific implemenations
+# Platform-specific implementations
 if(${PLATFORM_IS_WINDOWS})
     find_library (PSAPI psapi)
     target_link_libraries(${LIBRARY_NAME}

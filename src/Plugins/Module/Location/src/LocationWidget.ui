@@ -71,6 +71,16 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="resetFilterPushButton">
+       <property name="toolTip">
+        <string>Reset the filter criteria.</string>
+       </property>
+       <property name="text">
+        <string>Reset &amp;Filter</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -234,6 +244,13 @@
             </property>
            </widget>
           </item>
+          <item row="4" column="1">
+           <widget class="QPushButton" name="resetDefaultsPushButton">
+            <property name="text">
+             <string>Reset &amp;Defaults</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -358,6 +375,7 @@
   <tabstop>searchLineEdit</tabstop>
   <tabstop>categoryComboBox</tabstop>
   <tabstop>countryComboBox</tabstop>
+  <tabstop>resetFilterPushButton</tabstop>
   <tabstop>locationTableWidget</tabstop>
   <tabstop>descriptionPlainTextEdit</tabstop>
   <tabstop>pitchSpinBox</tabstop>
@@ -369,6 +387,7 @@
   <tabstop>defaultIndicatedAirspeedSpinBox</tabstop>
   <tabstop>defaultEngineEventComboBox</tabstop>
   <tabstop>defaultOnGroundCheckBox</tabstop>
+  <tabstop>resetDefaultsPushButton</tabstop>
   <tabstop>addPushButton</tabstop>
   <tabstop>capturePushButton</tabstop>
   <tabstop>updatePushButton</tabstop>

@@ -97,7 +97,9 @@ private slots:
     void onCountryChanged() noexcept;
     void onSearchTextChanged() noexcept;
     void searchText() noexcept;
-    void onTypeOptionToggled(bool enable, const QVariant &userData) noexcept;
+    void onTypeOptionToggled(const QVariant &optionValue, bool enable) noexcept;
+    void resetFilter() noexcept;
+    void resetDefaultValues() noexcept;
 
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;
@@ -115,6 +117,12 @@ private slots:
     void onHeadingChanged(double value) noexcept;
     void onIndicatedAirspeedChanged(int value) noexcept;
     void onEngineEventChanged(int index) noexcept;
+
+    // Default values
+    void onDefaultAltitudeChanged(int value) noexcept;
+    void onDefaultIndicatedAirspeedChanged(int value) noexcept;
+    void onDefaultEngineEventChanged() noexcept;
+    void onDefaultOnGroundChanged(bool enable) noexcept;
 
     // Settings
     void onTableLayoutChanged() noexcept;
