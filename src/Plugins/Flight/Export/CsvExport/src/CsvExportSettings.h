@@ -45,7 +45,7 @@ public:
      */
     enum struct Format {
         // Removed: SkyDolly = 0,
-        FlightRadar24 = 1,
+        Flightradar24 = 1,
         PositionAndAttitude = 2
     };
 

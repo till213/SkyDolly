@@ -35,7 +35,6 @@
 #include <Model/AircraftInfo.h>
 #include <Flight/FlightAugmentation.h>
 #include "CsvParserIntf.h"
-#include "SkyDollyCsvParser.h"
 #include "FlightRadar24CsvParser.h"
 #include "FlightRecorderCsvParser.h"
 #include "CsvImportSettings.h"
@@ -61,10 +60,7 @@ std::vector<FlightData> CsvImportPlugin::importSelectedFlights(QIODevice &io, bo
     std::vector<FlightData> flights;
     std::unique_ptr<CsvParserIntf> parser;
     switch (d->pluginSettings.getFormat()) {
-    case CsvImportSettings::Format::SkyDolly:
-        parser = std::make_unique<SkyDollyCsvParser>();
-        break;
-    case CsvImportSettings::Format::FlightRadar24:
+    case CsvImportSettings::Format::Flightradar24:
         parser = std::make_unique<FlightRadar24CsvParser>();
         break;
     case CsvImportSettings::Format::FlightRecorder:
@@ -111,10 +107,7 @@ FlightAugmentation::Procedures CsvImportPlugin::getAugmentationProcedures() cons
 {
     FlightAugmentation::Procedures procedures;
     switch (d->pluginSettings.getFormat()) {
-    case CsvImportSettings::Format::SkyDolly:
-        procedures = FlightAugmentation::Procedure::None;
-        break;
-    case CsvImportSettings::Format::FlightRadar24:
+    case CsvImportSettings::Format::Flightradar24:
         // Do not augment heading and velocity
         procedures = FlightAugmentation::Procedure::All;
         break;
@@ -130,10 +123,7 @@ FlightAugmentation::Aspects CsvImportPlugin::getAugmentationAspects() const noex
 {
     FlightAugmentation::Aspects aspects;
     switch (d->pluginSettings.getFormat()) {
-    case CsvImportSettings::Format::SkyDolly:
-        aspects = FlightAugmentation::Aspect::None;
-        break;
-    case CsvImportSettings::Format::FlightRadar24:
+    case CsvImportSettings::Format::Flightradar24:
         // Do not augment heading and velocity
         aspects = FlightAugmentation::Aspect::All;
         aspects.setFlag(FlightAugmentation::Aspect::Heading, false);
@@ -159,10 +149,7 @@ QString CsvImportPlugin::generateTitle() const noexcept
 {
     QString title;
     switch (d->pluginSettings.getFormat()) {
-    case CsvImportSettings::Format::SkyDolly:
-        title = QObject::tr("Sky Dolly CSV import");
-        break;
-    case CsvImportSettings::Format::FlightRadar24:
+    case CsvImportSettings::Format::Flightradar24:
         // Do not augment heading and velocity
         title = QObject::tr("Flightradar24 CSV import");
         break;

@@ -66,7 +66,7 @@ void CsvExportOptionWidget::frenchConnection() noexcept
 
 void CsvExportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem("FlightRadar24", Enum::underly(CsvExportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("Flightradar24", Enum::underly(CsvExportSettings::Format::Flightradar24));
     ui->formatComboBox->addItem("Position and attitude", Enum::underly(CsvExportSettings::Format::PositionAndAttitude));
 }
 

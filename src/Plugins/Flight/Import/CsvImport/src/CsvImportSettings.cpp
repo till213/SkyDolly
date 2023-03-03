@@ -33,7 +33,7 @@ namespace
     constexpr const char *FormatKey {"Format"};
 
     // Defaults
-    constexpr CsvImportSettings::Format DefaultFormat {CsvImportSettings::Format::SkyDolly};
+    constexpr CsvImportSettings::Format DefaultFormat {CsvImportSettings::Format::Flightradar24};
 }
 
 struct CsvImportSettingsPrivate
@@ -62,13 +62,10 @@ bool CsvImportSettings::isTimeOffsetSyncSupported() const noexcept
 {
     bool supported {false};
     switch (d->format) {
-    case CsvImportSettings::Format::FlightRadar24:
+    case CsvImportSettings::Format::Flightradar24:
         supported = true;
         break;
     case CsvImportSettings::Format::FlightRecorder:
-        supported = false;
-        break;
-    case CsvImportSettings::Format::SkyDolly:
         supported = false;
         break;
     }
