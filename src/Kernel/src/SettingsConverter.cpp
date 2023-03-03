@@ -27,7 +27,7 @@
 #include <QUuid>
 
 #include "Version.h"
-#include "SettingsConverterV0dot16.h"
+#include "SettingsConverterV0dot17.h"
 #include "SettingsConverter.h"
 
 // PUBLIC
@@ -36,6 +36,6 @@ void SettingsConverter::convertToCurrent(const Version &settingsVersion, QSettin
 {
     const Version currentVersion;
     if (settingsVersion < currentVersion) {
-        SettingsConverterV0dot16::convert(settingsVersion, settings);
+        SettingsConverterV0dot17::convert(settingsVersion, settings);
     }
 }

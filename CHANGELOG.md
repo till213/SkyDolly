@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.17.0
+
+### Other
+- Remove import & export CSV Sky Dolly format
+
 ## 0.16.0
 
 **"Gregarious Gee Bee"** introduces new Sky Dolly logbook export & import plugins, incuding time synchronisation for formation flights.

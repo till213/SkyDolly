@@ -79,6 +79,8 @@ namespace Const {
     constexpr const char *KmlImportPluginUuid {"5a72c866-310d-4d84-8bd6-1baa720bc64e"};
     constexpr const char *SdLogImportPluginUuid {"a0b3c866-3000-4026-aeb5-f53ae5451609"};
 
+    constexpr const char *CsvExportPluginUuid {"e718d4d2-da18-422b-921d-625315b75ca8"};
+
     // Known module UUIDs
 
     constexpr const char *LogbookModuleUuid {"441c2289-1aab-4724-9651-c74d4961270f"};
