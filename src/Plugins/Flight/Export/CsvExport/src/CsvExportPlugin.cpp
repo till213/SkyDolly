@@ -34,7 +34,6 @@
 #include "CsvExportSettings.h"
 #include "CsvExportOptionWidget.h"
 #include "CsvWriterIntf.h"
-#include "SkyDollyCsvWriter.h"
 #include "FlightRadar24CsvWriter.h"
 #include "PositionAndAttitudeCsvWriter.h"
 #include "CsvExportPlugin.h"
@@ -87,9 +86,6 @@ bool CsvExportPlugin::exportAircraft(const FlightData &flightData, const Aircraf
 {
     std::unique_ptr<CsvWriterIntf> writer;
     switch (d->pluginSettings.getFormat()) {
-    case CsvExportSettings::Format::SkyDolly:
-        writer = std::make_unique<SkyDollyCsvWriter>(d->pluginSettings);
-        break;
     case CsvExportSettings::Format::FlightRadar24:
         writer = std::make_unique<FlightRadar24CsvWriter>(d->pluginSettings);
         break;

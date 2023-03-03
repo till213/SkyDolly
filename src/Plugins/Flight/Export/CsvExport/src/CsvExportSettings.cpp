@@ -38,7 +38,7 @@ namespace
     constexpr const char *FormatKey {"Format"};
 
     // Defaults
-    constexpr CsvExportSettings::Format DefaultFormat {CsvExportSettings::Format::SkyDolly};
+    constexpr CsvExportSettings::Format DefaultFormat {CsvExportSettings::Format::PositionAndAttitude};
 }
 
 struct CsvExportSettingsPrivate
