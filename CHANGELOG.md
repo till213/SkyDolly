@@ -4,6 +4,8 @@
 
 ### Other
 - Remove import & export CSV Sky Dolly format
+  * The default import CSV format is now: *Flightradar24*
+  * The default export CSV format is now: *Position and attitude*
 
 ## 0.16.0
 

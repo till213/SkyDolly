@@ -52,6 +52,23 @@ private:
         static constexpr const char *FormatKey = "Format";
         int format {0};
 
+        // CSV import
+        settings.beginGroup(QString("Plugins/") + QUuid(Const::CsvImportPluginUuid).toByteArray());
+        {
+            bool ok {true};
+            format = settings.value(FormatKey).toInt(&ok);
+            if (ok) {
+                if (format == 0) {
+                    // Switch "Sky Dolly" to "Flightradar24" CSV format
+                    settings.setValue(FormatKey, 1);
+                }
+            } else {
+                // Switch "Sky Dolly" to "Flightradar24 CSV format
+                settings.setValue(FormatKey, 1);
+            }
+        }
+        settings.endGroup();
+
         // CSV export
         settings.beginGroup(QString("Plugins/") + QUuid(Const::CsvExportPluginUuid).toByteArray());
         {
