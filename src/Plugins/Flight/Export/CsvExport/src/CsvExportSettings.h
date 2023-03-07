@@ -44,8 +44,8 @@ public:
      * These values are peristed in the application settings.
      */
     enum struct Format {
-        SkyDolly = 0,
-        FlightRadar24 = 1,
+        // Removed: SkyDolly = 0,
+        Flightradar24 = 1,
         PositionAndAttitude = 2
     };
 

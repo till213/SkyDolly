@@ -9,7 +9,6 @@ target_sources(${MODULE_NAME}
         src/CsvImportSettings.h src/CsvImportSettings.cpp
         src/CsvImportOptionWidget.h src/CsvImportOptionWidget.cpp src/CsvImportOptionWidget.ui
         src/CsvParserIntf.h
-        src/SkyDollyCsvParser.h src/SkyDollyCsvParser.cpp
         src/FlightRadar24CsvParser.h src/FlightRadar24CsvParser.cpp
         src/FlightRecorderCsvParser.h src/FlightRecorderCsvParser.cpp
         src/CsvImportPlugin.json

@@ -9,7 +9,6 @@ target_sources(${MODULE_NAME}
         src/CsvExportSettings.h src/CsvExportSettings.cpp
         src/CsvExportOptionWidget.h src/CsvExportOptionWidget.cpp src/CsvExportOptionWidget.ui
         src/CsvWriterIntf.h
-        src/SkyDollyCsvWriter.h src/SkyDollyCsvWriter.cpp
         src/FlightRadar24CsvWriter.h src/FlightRadar24CsvWriter.cpp
         src/PositionAndAttitudeCsvWriter.h src/PositionAndAttitudeCsvWriter.cpp
         src/CsvExportPlugin.json

@@ -25,6 +25,7 @@
 #ifndef SETTINGSCONVERTERV0DOT16_H
 #define SETTINGSCONVERTERV0DOT16_H
 
+#include <QString>
 #include <QSettings>
 #include <QByteArray>
 #include <QUuid>

@@ -963,3 +963,7 @@ alter table flight_new rename to flight;
 @migr(id = "48e2f465-6fc7-41e8-b32d-07ad1a8d2f06", descn = "Update application version to 0.16", step = 1)
 update metadata
 set app_version = '0.16.0';
+
+@migr(id = "c1c4df3f-a5c7-4fdb-90ad-44010744cc7c", descn = "Update application version to 0.17", step = 1)
+update metadata
+set app_version = '0.17.0';

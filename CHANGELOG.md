@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.17.0
+
+### Other
+- Remove import & export CSV Sky Dolly format
+  * The default import CSV format is now: *Flightradar24*
+  * The default export CSV format is now: *Position and attitude*
+
 ## 0.16.0
 
 **"Gregarious Gee Bee"** introduces new Sky Dolly logbook export & import plugins, incuding time synchronisation for formation flights.

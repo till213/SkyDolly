@@ -73,11 +73,15 @@ namespace Const {
 
     // Known plugin UUIDs
 
+    // Import
     constexpr const char *CsvImportPluginUuid {"077448de-4909-4c5e-8957-2347afee6708"};
     constexpr const char *GpxImportPluginUuid {"13f44df3-1df6-4458-ad29-71f7b185bf3e"};
     constexpr const char *IgcImportPluginUuid {"a1902cf0-82a8-47ed-86ee-5a15152697c7"};
     constexpr const char *KmlImportPluginUuid {"5a72c866-310d-4d84-8bd6-1baa720bc64e"};
     constexpr const char *SdLogImportPluginUuid {"a0b3c866-3000-4026-aeb5-f53ae5451609"};
+
+    // Export
+    constexpr const char *CsvExportPluginUuid {"e718d4d2-da18-422b-921d-625315b75ca8"};
 
     // Known module UUIDs
 
