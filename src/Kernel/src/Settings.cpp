@@ -62,7 +62,7 @@ struct SettingsPrivate
         QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
         if (standardLocations.count() > 0) {
             defaultExportPath = standardLocations.first();
-            const QString defaultLogbookName {Version::getApplicationName() % "-" % QObject::tr("Logbook")};
+            const QString defaultLogbookName {Version::getApplicationName() % " " % QObject::tr("Logbook")};
             defaultLogbookPath = standardLocations.first() % "/" % defaultLogbookName % "/" % defaultLogbookName % Const::DotLogbookExtension;
         } else {
             defaultExportPath = ".";

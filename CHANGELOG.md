@@ -2,6 +2,9 @@
 
 ## 0.17.0
 
+### Improvements
+- The default logbook name is now *Sky Dolly Logbook*
+
 ### Other
 - Remove import & export CSV Sky Dolly format
   * The default import CSV format is now: *Flightradar24*
