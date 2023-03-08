@@ -2,6 +2,11 @@
 
 ## 0.17.0
 
+### Improvements
+- The default logbook name is now *Sky Dolly Logbook*
+  * In order to help to avoid confusion between the Sky Dolly application and logbook directory
+  * Existing logbooks remain at their current location
+
 ### Other
 - Remove import & export CSV Sky Dolly format
   * The default import CSV format is now: *Flightradar24*
