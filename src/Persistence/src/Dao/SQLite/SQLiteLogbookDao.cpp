@@ -147,6 +147,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         "where f.creation_time between :from_date and :to_date "
         "  and (  f.title like coalesce(:search_keyword, f.title) "
         "       or a.type like coalesce(:search_keyword, a.type) "
+        "       or a.flight_number like coalesce(:search_keyword, a.flight_number) "
         "       or start_waypoint like coalesce(:search_keyword, start_waypoint) "
         "       or end_waypoint like coalesce(:search_keyword, end_waypoint) "
         "      ) "

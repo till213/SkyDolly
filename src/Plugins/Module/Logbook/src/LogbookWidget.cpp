@@ -163,7 +163,7 @@ void LogbookWidget::initUi() noexcept
     // Flight log table
     ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    ui->searchLineEdit->setPlaceholderText(tr("User aircraft, title, departure, arrival"));
+    ui->searchLineEdit->setPlaceholderText(tr("User aircraft, title, flight number, departure, arrival"));
     // Make sure that shortcuts are initially accepted
     ui->searchLineEdit->clearFocus();
     ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
