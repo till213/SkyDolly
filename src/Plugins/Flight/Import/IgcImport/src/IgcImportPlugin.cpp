@@ -407,9 +407,9 @@ void IgcImportPlugin::enrichFlightData(FlightData &flightData) const noexcept
                              QObject::tr("Pilot:") % " " % header.pilotName % "\n" %
                              QObject::tr("Co-Pilot:") % " " % header.coPilotName % "\n" %
                              QObject::tr("Flight date:") % " " % unit.formatDateTime(header.flightDateTimeUtc);
+    flightData.flightNumber = header.flightNumber;
     AircraftInfo &aircraftInfo = flightData.aircraft.back().getAircraftInfo();
     aircraftInfo.tailNumber = header.gliderId;
-    aircraftInfo.flightNumber = header.flightNumber;
 
     std::vector<IgcParser::TaskItem> tasks = d->igcParser.getTask().tasks;
     if (tasks.size() > 0) {

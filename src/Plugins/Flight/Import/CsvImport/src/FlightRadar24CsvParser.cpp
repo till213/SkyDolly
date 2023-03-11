@@ -118,10 +118,10 @@ FlightData FlightRadar24CsvParser::parse(QIODevice &io, bool &ok) noexcept
         }
         if (ok) {
             flightData.creationTime = firstDateTimeUtc;
+            flightData.flightNumber = flightNumber;
             FlightCondition &flightCondition = flightData.flightCondition;
             flightCondition.startZuluTime = firstDateTimeUtc;
             flightCondition.startLocalTime = firstDateTimeUtc.toLocalTime();
-            aircraft.getAircraftInfo().flightNumber = flightNumber;
         }
     }
     return flightData;

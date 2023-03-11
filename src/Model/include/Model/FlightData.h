@@ -52,6 +52,7 @@ struct MODEL_API FlightData final
     QDateTime creationTime;
     QString title;
     QString description;
+    QString flightNumber;
     FlightCondition flightCondition;
     std::vector<Aircraft> aircraft;
     int userAircraftIndex {Const::InvalidIndex};

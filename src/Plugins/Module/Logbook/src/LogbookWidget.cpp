@@ -495,6 +495,8 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::updateAircraftIcons);
     connect(&flight, &Flight::aircraftStored,
             this, &LogbookWidget::updateUi);
+    connect(&flight, &Flight::flightNumberChanged,
+            this, &LogbookWidget::onFlightNumberChanged);
     connect(&flight, &Flight::aircraftInfoChanged,
             this, &LogbookWidget::onAircraftInfoChanged);
     connect(&flight, &Flight::titleChanged,
@@ -735,6 +737,18 @@ void LogbookWidget::onFlightTitleChanged(std::int64_t flightId, const QString &t
     }
 }
 
+void LogbookWidget::onFlightNumberChanged(std::int64_t flightId, const QString &flightNumber) noexcept
+{
+    for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
+        QTableWidgetItem *flightIdItem = ui->logTableWidget->item(row, d->flightIdColumn);
+        if (isMatch(flightIdItem, flightId)) {
+            QTableWidgetItem *flightNumberItem = ui->logTableWidget->item(row, d->flightNumberColumn);
+            flightNumberItem->setData(Qt::DisplayRole, flightNumber);
+            break;
+        }
+    }
+}
+
 void LogbookWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
 {
     const std::int64_t flightId = Logbook::getInstance().getCurrentFlight().getId();
@@ -744,8 +758,6 @@ void LogbookWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
             const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
             QTableWidgetItem *userAircraftItem = ui->logTableWidget->item(row, d->userAircraftColumn);
             userAircraftItem->setData(Qt::DisplayRole, aircraftInfo.aircraftType.type);
-            QTableWidgetItem *flightNumberItem = ui->logTableWidget->item(row, d->flightNumberColumn);
-            flightNumberItem->setData(Qt::DisplayRole, aircraftInfo.flightNumber);
             break;
         }
     }

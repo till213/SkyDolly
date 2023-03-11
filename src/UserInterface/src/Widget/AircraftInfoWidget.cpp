@@ -125,7 +125,7 @@ void AircraftInfoWidget::updateUi() noexcept
     ui->nameLineEdit->setText(aircraftInfo.aircraftType.type);
     ui->tailNumberLineEdit->setText(aircraftInfo.tailNumber);
     ui->airlineLineEdit->setText(aircraftInfo.airline);
-    ui->flightLineEdit->setText(aircraftInfo.flightNumber);
+    ui->flightLineEdit->setText(flight.getFlightNumber());
     ui->categoryLineEdit->setText(aircraftInfo.aircraftType.category);
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 

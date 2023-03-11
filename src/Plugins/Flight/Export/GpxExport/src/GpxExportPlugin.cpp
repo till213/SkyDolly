@@ -243,6 +243,7 @@ QString GpxExportPlugin::getFlightDescription(const FlightData &flightData) cons
     return flightData.description % "\n" %
            "\n" %
            QObject::tr("Creation date") % ": " % d->unit.formatDate(flightData.creationTime) % "\n" %
+           QObject::tr("Flight number") % ": " % flightData.flightNumber % "\n" %
            QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
            QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
            QObject::tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
@@ -266,7 +267,6 @@ QString GpxExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
            QObject::tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
            QObject::tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %
            QObject::tr("Airline") % ": " % info.airline % "\n" %
-           QObject::tr("Flight number") % ": " % info.flightNumber % "\n" %
            QObject::tr("Tail number") % ": " % info.tailNumber % "\n";
 }
 

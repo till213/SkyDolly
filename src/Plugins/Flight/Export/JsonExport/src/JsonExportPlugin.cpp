@@ -116,7 +116,7 @@ bool JsonExportPlugin::exportAircraft(const FlightData &flightData, const Aircra
         ok = exportWaypoints(flightData, io);
     }
     if (ok) {
-        ok = exportSingleAircraft(aircraft, io);
+        ok = exportSingleAircraft(flightData, aircraft, io);
         if (ok) {
             ok = io.write("\n");
         }
@@ -143,7 +143,7 @@ bool JsonExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice
     bool ok {true};
     std::size_t i = 0;
     for (const auto &aircraft : flightData) {
-        ok = exportSingleAircraft(aircraft, io);
+        ok = exportSingleAircraft(flightData, aircraft, io);
         if (ok) {
             if (i < flightData.count() - 1) {
                 ok = io.write(",\n");
@@ -158,7 +158,7 @@ bool JsonExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice
     return ok;
 }
 
-bool JsonExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool JsonExportPlugin::exportSingleAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
@@ -201,7 +201,7 @@ bool JsonExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice 
 "        \"initialAltitudeAboveGroundFeet\": " % Export::formatNumber(info.altitudeAboveGround) % ",\n"
 "        \"initialAirspeedKnots\": " % QString::number(info.initialAirspeed) % ",\n"
 "        \"airline\": \"" % info.airline % "\",\n"
-"        \"flightNumber\": \"" % info.flightNumber % "\",\n"
+"        \"flightNumber\": \"" % flightData.flightNumber % "\",\n"
 "        \"tailNumber\": \"" % info.tailNumber % "\",\n"
 "        \"stroke\": \"#ff0000\",\n"
 "        \"stroke-width\": \"4\"\n"

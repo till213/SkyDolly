@@ -130,7 +130,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
-        "select f.id, f.creation_time, f.title, a.type, a.flight_number,"
+        "select f.id, f.creation_time, f.title, f.flight_number, a.type,"
         "       (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
         "       f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
         "       f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
@@ -145,9 +145,9 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         "left join (select ident, aircraft_id from waypoint wo2 where wo2.timestamp = (select max(wi2.timestamp) from waypoint wi2 where wi2.aircraft_id = wo2.aircraft_id)) fp2 "
         "on fp2.aircraft_id = a.id "
         "where f.creation_time between :from_date and :to_date "
-        "  and (  f.title like coalesce(:search_keyword, f.title) "
+        "  and (   f.title like coalesce(:search_keyword, f.title) "
+        "       or f.flight_number like coalesce(:search_keyword, f.flight_number) "
         "       or a.type like coalesce(:search_keyword, a.type) "
-        "       or a.flight_number like coalesce(:search_keyword, a.flight_number) "
         "       or start_waypoint like coalesce(:search_keyword, start_waypoint) "
         "       or end_waypoint like coalesce(:search_keyword, end_waypoint) "
         "      ) "

@@ -114,6 +114,7 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
         const int userAircraftSequenceNumberIdx = record.indexOf("user_aircraft_seq_nr");
         const int titleIdx = record.indexOf("title");
         const int descriptionIdx = record.indexOf("description");
+        const int flightNumberIdx = record.indexOf("flight_number");
         const int surfaceTypeIdx = record.indexOf("surface_type");
         const int surfaceConditionIdx = record.indexOf("surface_condition");
         const int onAnyRunwayIdx = record.indexOf("on_any_runway");
@@ -141,6 +142,7 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
             flightData.creationTime = dateTime.toLocalTime();
             flightData.title = query.value(titleIdx).toString();
             flightData.description = query.value(descriptionIdx).toString();
+            flightData.flightNumber = query.value(flightNumberIdx).toString();
 
             FlightCondition &flightCondition = flightData.flightCondition;
             flightCondition.surfaceType = static_cast<SimType::SurfaceType>(query.value(surfaceTypeIdx).toInt());
@@ -277,6 +279,7 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
         "  user_aircraft_seq_nr,"
         "  title,"
         "  description,"
+        "  flight_number,"
         "  surface_type,"
         "  surface_condition,"
         "  on_any_runway,"
@@ -301,6 +304,7 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
         " :user_aircraft_seq_nr,"
         " :title,"
         " :description,"
+        " :flight_number,"
         " :surface_type,"
         " :surface_condition,"
         " :on_any_runway,"
@@ -329,6 +333,7 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
     query.bindValue(":user_aircraft_seq_nr", flightData.userAircraftIndex + 1);
     query.bindValue(":title", flightData.title);
     query.bindValue(":description", flightData.description);
+    query.bindValue(":flight_number", flightData.flightNumber);
     query.bindValue(":surface_type", Enum::underly(flightCondition.surfaceType));
     query.bindValue(":surface_condition", Enum::underly(flightCondition.surfaceCondition));
     query.bindValue(":on_any_runway", flightCondition.onAnyRunway);

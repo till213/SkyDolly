@@ -126,6 +126,7 @@ bool PathCreatorPlugin::onSimulationEvent([[maybe_unused]] SimulationEvent event
 
 bool PathCreatorPlugin::onStartRecording() noexcept
 {
+    recordFlightInfo();
     recordFlightCondition();
     recordAircraftInfo();
     return true;
@@ -413,6 +414,11 @@ void PathCreatorPlugin::recordWaypoint(std::int64_t timestamp) noexcept
     }
 }
 
+void PathCreatorPlugin::recordFlightInfo() noexcept
+{
+    getCurrentFlight().setFlightNumber(QString::number(d->randomGenerator->bounded(100)));
+}
+
 void PathCreatorPlugin::recordFlightCondition() noexcept
 {
     FlightCondition flightCondition;
@@ -487,7 +493,6 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
     info.aircraftType.numberOfEngines = d->randomGenerator->bounded(5);
     info.tailNumber = QString::number(d->randomGenerator->bounded(1000));
     info.airline = QString::number(d->randomGenerator->bounded(1000));
-    info.flightNumber = QString::number(d->randomGenerator->bounded(100));
     info.altitudeAboveGround = static_cast<float>(d->randomGenerator->bounded(40000.0));
     info.startOnGround = d->randomGenerator->bounded(2) > 0 ? true : false;
     info.initialAirspeed = d->randomGenerator->bounded(600);

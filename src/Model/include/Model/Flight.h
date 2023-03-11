@@ -94,6 +94,9 @@ public:
     const QString &getDescription() const noexcept;
     void setDescription(QString description) noexcept;
 
+    const QString &getFlightNumber() const noexcept;
+    void setFlightNumber(QString flightNumber) noexcept;
+
     /*!
      * Adds all \c aircraft to the existing Aircraft of this Flight.
      * For each aircraft the signal aircraftAdded is emitted.
@@ -314,6 +317,7 @@ signals:
     void cleared();
     void titleChanged(std::int64_t flightId, const QString &title);
     void descriptionChanged(std::int64_t flightId, const QString &description);
+    void flightNumberChanged(std::int64_t flightId, const QString &flightNumber);
     void flightConditionChanged();
 
     /*!
