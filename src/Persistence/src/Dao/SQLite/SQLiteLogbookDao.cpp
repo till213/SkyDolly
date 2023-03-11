@@ -130,7 +130,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
-        "select f.id, f.creation_time, f.title, a.type,"
+        "select f.id, f.creation_time, f.title, a.type, a.flight_number,"
         "       (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
         "       f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
         "       f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
@@ -178,6 +178,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         const int idIdx = record.indexOf("id");
         const int creationTimeIdx = record.indexOf("creation_time");
         const int typeIdx = record.indexOf("type");
+        const int flightNumberIdx = record.indexOf("flight_number");
         const int aircraftCountIdx = record.indexOf("aircraft_count");
         const int startLocalSimulationTimeIdx = record.indexOf("start_local_sim_time");
         const int startZuluSimulationTimeIdx = record.indexOf("start_zulu_sim_time");
@@ -194,6 +195,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
             dateTime.setTimeZone(QTimeZone::utc());
             summary.creationDate = dateTime.toLocalTime();
             summary.aircraftType = query.value(typeIdx).toString();
+            summary.flightNumber = query.value(flightNumberIdx).toString();
             summary.aircraftCount = query.value(aircraftCountIdx).toInt();
             // Persisted times is are already local respectively zulu simulation times
             summary.startSimulationLocalTime = query.value(startLocalSimulationTimeIdx).toDateTime();
