@@ -237,9 +237,9 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
         if (ok) {
 
             const std::size_t interpolatedPositionCount = interpolatedPositionData.size();
-            std::size_t nextLineSegmentIndex {0};
-            std::size_t currentIndex = nextLineSegmentIndex;
-            while (currentIndex < interpolatedPositionCount - 1) {
+            std::size_t currentIndex {0};
+            std::size_t nextLineSegmentIndex {currentIndex};
+            while (currentIndex < interpolatedPositionCount) {
                 if (currentIndex == nextLineSegmentIndex) {
                     // End the previous line segment (if any)
                     if (currentIndex > 0) {
@@ -257,13 +257,12 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
                     // last point of the previous line segment is repeated,
                     // in order to connect the segments
                     nextLineSegmentIndex += ::MaxLineSegments;
-                } else {
-                    currentIndex += 1;
                 }
                 const PositionData positionData = interpolatedPositionData[currentIndex];
                 ok = io.write((Export::formatCoordinate(positionData.longitude) % "," %
                                Export::formatCoordinate(positionData.latitude) % "," %
                                Export::formatCoordinate(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+                ++currentIndex;
                 if (!ok) {
                     break;
                 }

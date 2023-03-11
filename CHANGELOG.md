@@ -8,11 +8,15 @@
   * Existing logbooks remain at their current location
 - The flight number is now also shown in the Logbook table
   * Flights can be also filtered with the flight number
+  * The flight number is now stored per flight (not per aircraft anymore)
 
 ### Other
 - Remove import & export CSV Sky Dolly format
   * The default import CSV format is now: *Flightradar24*
   * The default export CSV format is now: *Position and attitude*
+  
+### Bug Fixes
+- KML export: the _first_ position point is now properly exported as well
 
 ## 0.16.0
 
