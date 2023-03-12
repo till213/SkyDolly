@@ -237,9 +237,9 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
         if (ok) {
 
             const std::size_t interpolatedPositionCount = interpolatedPositionData.size();
-            std::size_t nextLineSegmentIndex {0};
-            std::size_t currentIndex = nextLineSegmentIndex;
-            while (currentIndex < interpolatedPositionCount - 1) {
+            std::size_t currentIndex {0};
+            std::size_t nextLineSegmentIndex {currentIndex};
+            while (currentIndex < interpolatedPositionCount) {
                 if (currentIndex == nextLineSegmentIndex) {
                     // End the previous line segment (if any)
                     if (currentIndex > 0) {
@@ -257,13 +257,12 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
                     // last point of the previous line segment is repeated,
                     // in order to connect the segments
                     nextLineSegmentIndex += ::MaxLineSegments;
-                } else {
-                    currentIndex += 1;
                 }
                 const PositionData positionData = interpolatedPositionData[currentIndex];
                 ok = io.write((Export::formatCoordinate(positionData.longitude) % "," %
                                Export::formatCoordinate(positionData.latitude) % "," %
                                Export::formatCoordinate(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+                ++currentIndex;
                 if (!ok) {
                     break;
                 }
@@ -309,6 +308,7 @@ QString KmlExportPlugin::getFlightDescription(const FlightData &flightData) cons
     return QObject::tr("Description") % ": " % flightData.description % "\n" %
            "\n" %
            QObject::tr("Creation date") % ": " % d->unit.formatDate(flightData.creationTime) % "\n" %
+           QObject::tr("Flight number") % ": " % flightData.flightNumber % "\n" %
            QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
            QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
            QObject::tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
@@ -332,7 +332,6 @@ QString KmlExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
            QObject::tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
            QObject::tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %
            QObject::tr("Airline") % ": " % info.airline % "\n" %
-           QObject::tr("Flight number") % ": " % info.flightNumber % "\n" %
            QObject::tr("Tail number") % ": " % info.tailNumber % "\n";
 }
 

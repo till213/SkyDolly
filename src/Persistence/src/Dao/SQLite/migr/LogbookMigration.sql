@@ -964,6 +964,24 @@ alter table flight_new rename to flight;
 update metadata
 set app_version = '0.16.0';
 
+@migr(id = "e84ba603-2628-4317-a05f-257cd1686c8a", descn = "Add flight number column to flight table", step_cnt = 3)
+alter table flight add column flight_number integer;
+
+@migr(id = "e84ba603-2628-4317-a05f-257cd1686c8a", descn = "Migrate flight number from aircraft into flight table", step = 2)
+update flight
+set    flight_number = (select a.flight_number
+                        from   aircraft a
+                        where  a.flight_id = flight.id
+                          and  a.seq_nr = 1
+                       )
+where flight.id in (select a.flight_id
+                    from   aircraft a
+                    where  a.flight_id = flight.id
+                   );
+
+@migr(id = "e84ba603-2628-4317-a05f-257cd1686c8a", descn = "Drop column flight_number from aircraft table", step = 3)
+alter table aircraft drop column flight_number;
+
 @migr(id = "c1c4df3f-a5c7-4fdb-90ad-44010744cc7c", descn = "Update application version to 0.17", step = 1)
 update metadata
 set app_version = '0.17.0';

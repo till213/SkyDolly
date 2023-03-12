@@ -116,9 +116,6 @@ struct SimConnectAircraftInfo
         if (SUCCEEDED(StringCbLengthA(&atcAirline[0], sizeof(atcAirline), nullptr))) {
             aircraftInfo.airline = QString(atcAirline);
         }
-        if (SUCCEEDED(StringCbLengthA(&atcFlightNumber[0], sizeof(atcFlightNumber), nullptr))) {
-            aircraftInfo.flightNumber = QString(atcFlightNumber);
-        }
         if (SUCCEEDED(StringCbLengthA(&category[0], sizeof(category), nullptr))) {
             aircraftInfo.aircraftType.category = QString(category);
         }

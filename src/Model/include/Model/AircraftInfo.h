@@ -40,8 +40,7 @@ struct MODEL_API AircraftInfo final
     // Milliseconds
     std::int64_t timeOffset {0};
     QString tailNumber;
-    QString airline;
-    QString flightNumber;    
+    QString airline;   
 
     // Feet
     float altitudeAboveGround {0.0f};
@@ -65,7 +64,6 @@ inline bool operator==(const AircraftInfo &lhs, const AircraftInfo &rhs) {
            lhs.timeOffset == rhs.timeOffset &&
            lhs.tailNumber == rhs.tailNumber &&
            lhs.airline == rhs.airline &&
-           lhs.flightNumber == rhs.flightNumber &&
            lhs.altitudeAboveGround == rhs.altitudeAboveGround &&
            lhs.startOnGround == rhs.startOnGround &&
            lhs.initialAirspeed == rhs.initialAirspeed;

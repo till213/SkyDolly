@@ -133,6 +133,19 @@ void Flight::setDescription(QString description) noexcept
     }
 }
 
+const QString &Flight::getFlightNumber() const noexcept
+{
+    return d->flightData.flightNumber;
+}
+
+void Flight::setFlightNumber(QString flightNumber) noexcept
+{
+    if (d->flightData.flightNumber != flightNumber) {
+        d->flightData.flightNumber = std::move(flightNumber);
+        emit flightNumberChanged(d->flightData.id, d->flightData.flightNumber);
+    }
+}
+
 void Flight::addAircraft(std::vector<Aircraft> &&aircraft) noexcept
 {
     if (!getUserAircraft().hasRecording()) {

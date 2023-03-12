@@ -320,7 +320,6 @@ std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int
             info.timeOffset = query.value(timeOffsetIdx).toLongLong();
             info.tailNumber = query.value(tailNumberIdx).toString();
             info.airline = query.value(airlineIdx).toString();
-            info.flightNumber = query.value(flightNumberIdx).toString();
             info.initialAirspeed = query.value(initialAirspeedIdx).toInt();
             info.altitudeAboveGround = query.value(airCraftAltitudeAboveGroundIdx).toFloat();
             info.startOnGround = query.value(startOnGroundIdx).toBool();
@@ -400,7 +399,6 @@ inline std::int64_t SQLiteAircraftDao::insertAircraft(std::int64_t flightId, std
         "  time_offset,"
         "  tail_number,"
         "  airline,"
-        "  flight_number,"
         "  initial_airspeed,"
         "  altitude_above_ground,"
         "  start_on_ground"
@@ -411,7 +409,6 @@ inline std::int64_t SQLiteAircraftDao::insertAircraft(std::int64_t flightId, std
         " :time_offset,"
         " :tail_number,"
         " :airline,"
-        " :flight_number,"
         " :initial_airspeed,"
         " :altitude_above_ground,"
         " :start_on_ground"
@@ -427,7 +424,6 @@ inline std::int64_t SQLiteAircraftDao::insertAircraft(std::int64_t flightId, std
         query.bindValue(":time_offset", QVariant::fromValue(info.timeOffset));
         query.bindValue(":tail_number", info.tailNumber);
         query.bindValue(":airline", info.airline);
-        query.bindValue(":flight_number", info.flightNumber);
         query.bindValue(":initial_airspeed", info.initialAirspeed);
         query.bindValue(":altitude_above_ground", info.altitudeAboveGround);
         query.bindValue(":start_on_ground", info.startOnGround);

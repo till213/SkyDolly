@@ -91,6 +91,7 @@ private slots:
     void updateUi() noexcept;
     void updateAircraftIcons() noexcept;
     void onFlightTitleChanged(std::int64_t flightId, const QString &title) noexcept;
+    void onFlightNumberChanged(std::int64_t flightId, const QString &flightNumber) noexcept;
     void onAircraftInfoChanged(const Aircraft &aircraft) noexcept;
 
     void loadFlight() noexcept;

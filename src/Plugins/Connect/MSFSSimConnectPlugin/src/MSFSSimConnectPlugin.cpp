@@ -792,6 +792,9 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             AircraftInfo aircraftInfo = simConnectAircraftInfo->toAircraftInfo();
             userAircraft.setAircraftInfo(aircraftInfo);
             emit flight.aircraftInfoChanged(userAircraft);
+            if (SUCCEEDED(StringCbLengthA(&(simConnectAircraftInfo->atcFlightNumber[0]), sizeof(simConnectAircraftInfo->atcFlightNumber), nullptr))) {
+                flight.setFlightNumber((simConnectAircraftInfo->atcFlightNumber));
+            }
             FlightCondition flightCondition = simConnectAircraftInfo->toFlightCondition();
             flight.setFlightCondition(flightCondition);
             break;

@@ -127,6 +127,7 @@ struct LogbookWidgetPrivate
     static inline int flightIdColumn {::InvalidColumn};
     static inline int titleColumn {::InvalidColumn};
     static inline int userAircraftColumn {::InvalidColumn};
+    static inline int flightNumberColumn {::InvalidColumn};
     static inline int aircraftCountColumn {::InvalidColumn};
     static inline int creationDateColumn {::InvalidColumn};
     static inline int startTimeColumn {::InvalidColumn};
@@ -162,7 +163,7 @@ void LogbookWidget::initUi() noexcept
     // Flight log table
     ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    ui->searchLineEdit->setPlaceholderText(tr("User aircraft, title, departure, arrival"));
+    ui->searchLineEdit->setPlaceholderText(tr("User aircraft, title, flight number, departure, arrival"));
     // Make sure that shortcuts are initially accepted
     ui->searchLineEdit->clearFocus();
     ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
@@ -172,6 +173,7 @@ void LogbookWidget::initUi() noexcept
         tr("Flight"),
         tr("Title"),
         tr("User Aircraft"),
+        tr("Flight Number"),
         tr("Number of Aircraft"),
         tr("Date"),
         tr("Departure Time"),
@@ -183,6 +185,7 @@ void LogbookWidget::initUi() noexcept
     LogbookWidgetPrivate::flightIdColumn = headers.indexOf(tr("Flight"));
     LogbookWidgetPrivate::titleColumn = headers.indexOf(tr("Title"));
     LogbookWidgetPrivate::userAircraftColumn = headers.indexOf(tr("User Aircraft"));
+    LogbookWidgetPrivate::flightNumberColumn = headers.indexOf(tr("Flight Number"));
     LogbookWidgetPrivate::aircraftCountColumn = headers.indexOf(tr("Number of Aircraft"));
     LogbookWidgetPrivate::creationDateColumn = headers.indexOf(tr("Date"));
     LogbookWidgetPrivate::startTimeColumn = headers.indexOf(tr("Departure Time"));
@@ -310,6 +313,11 @@ inline void LogbookWidget::initRow(const FlightSummary &summary, int row) noexce
     ui->logTableWidget->setItem(row, column, newItem.release());
     ++column;
 
+    // Flight number
+    newItem = std::make_unique<QTableWidgetItem>();
+    ui->logTableWidget->setItem(row, column, newItem.release());
+    ++column;
+
     // Aircraft count
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -379,6 +387,10 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
     // User aircraft
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::userAircraftColumn);
     item->setData(Qt::DisplayRole, summary.aircraftType);
+
+    // Flight number
+    item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightNumberColumn);
+    item->setData(Qt::DisplayRole, summary.flightNumber);
 
     // Aircraft count
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::aircraftCountColumn);
@@ -483,6 +495,8 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::updateAircraftIcons);
     connect(&flight, &Flight::aircraftStored,
             this, &LogbookWidget::updateUi);
+    connect(&flight, &Flight::flightNumberChanged,
+            this, &LogbookWidget::onFlightNumberChanged);
     connect(&flight, &Flight::aircraftInfoChanged,
             this, &LogbookWidget::onAircraftInfoChanged);
     connect(&flight, &Flight::titleChanged,
@@ -723,14 +737,27 @@ void LogbookWidget::onFlightTitleChanged(std::int64_t flightId, const QString &t
     }
 }
 
+void LogbookWidget::onFlightNumberChanged(std::int64_t flightId, const QString &flightNumber) noexcept
+{
+    for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
+        QTableWidgetItem *flightIdItem = ui->logTableWidget->item(row, d->flightIdColumn);
+        if (isMatch(flightIdItem, flightId)) {
+            QTableWidgetItem *flightNumberItem = ui->logTableWidget->item(row, d->flightNumberColumn);
+            flightNumberItem->setData(Qt::DisplayRole, flightNumber);
+            break;
+        }
+    }
+}
+
 void LogbookWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
 {
     const std::int64_t flightId = Logbook::getInstance().getCurrentFlight().getId();
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
         QTableWidgetItem *flightIdItem = ui->logTableWidget->item(row, d->flightIdColumn);
         if (isMatch(flightIdItem, flightId)) {
+            const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
             QTableWidgetItem *userAircraftItem = ui->logTableWidget->item(row, d->userAircraftColumn);
-            userAircraftItem->setData(Qt::DisplayRole, aircraft.getAircraftInfo().aircraftType.type);
+            userAircraftItem->setData(Qt::DisplayRole, aircraftInfo.aircraftType.type);
             break;
         }
     }

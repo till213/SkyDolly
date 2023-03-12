@@ -84,7 +84,7 @@ void FlightAwareKmlParser::parsePlacemark(FlightData &flightData) noexcept
             parseWaypoint(flightData, placemarkName);
         } else if (xmlName == Kml::Track) {
             // The track contains the flight number
-            flightData.getUserAircraft().getAircraftInfo().flightNumber = placemarkName;
+            flightData.flightNumber = placemarkName;
             parseTrack(flightData);
         } else {
             xml->skipCurrentElement();
