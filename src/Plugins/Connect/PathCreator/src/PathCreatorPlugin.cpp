@@ -124,10 +124,16 @@ bool PathCreatorPlugin::onSimulationEvent([[maybe_unused]] SimulationEvent event
     return true;
 }
 
-bool PathCreatorPlugin::onStartRecording() noexcept
+bool PathCreatorPlugin::onStartFlightRecording() noexcept
 {
     recordFlightInfo();
     recordFlightCondition();
+    onStartAircraftRecording();
+    return true;
+}
+
+bool PathCreatorPlugin::onStartAircraftRecording() noexcept
+{
     recordAircraftInfo();
     return true;
 }

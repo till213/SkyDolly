@@ -17,6 +17,7 @@
   
 ### Bug Fixes
 - KML export: the _first_ position point is now properly exported as well
+- Flight condition is not overwritten anymore when recording additional formation aircraft
 
 ## 0.16.0
 
