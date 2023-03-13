@@ -43,12 +43,12 @@ public:
         if (settingsVersion < Version(QString("0.13.0"))) {
             SettingsConverterV0dot13::convert(settingsVersion, settings);
         }
-        convertPluginsV0dot16(settings);
-        convertModulesV0dot16(settings);
+        convertPlugins(settings);
+        convertModules(settings);
     }
 
 private:
-    static inline void convertPluginsV0dot16(QSettings &settings) noexcept
+    static inline void convertPlugins(QSettings &settings) noexcept
     {
         static constexpr const char *AddToFlightEnabledKey = "AddToFlightEnabled";
         static constexpr const char *ImportDirectoryKey = "ImportDirectoryEnabled";
@@ -116,7 +116,7 @@ private:
         settings.endGroup();
     }
 
-    static inline void convertModulesV0dot16(QSettings &settings) noexcept
+    static inline void convertModules(QSettings &settings) noexcept
     {
         QByteArray logbookTableState;
         QByteArray formationAircraftTableState;

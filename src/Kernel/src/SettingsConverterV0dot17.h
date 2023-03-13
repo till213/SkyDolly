@@ -43,11 +43,12 @@ public:
         if (settingsVersion < Version(QString("0.16.0"))) {
             SettingsConverterV0dot16::convert(settingsVersion, settings);
         }
-        convertPluginsV0dot17(settings);
+        convertPlugins(settings);
+        convertLogbookTableLayout(settings);
     }
 
 private:
-    static inline void convertPluginsV0dot17(QSettings &settings) noexcept
+    static inline void convertPlugins(QSettings &settings) noexcept
     {
         static constexpr const char *FormatKey = "Format";
         int format {0};
@@ -83,6 +84,15 @@ private:
                 // Switch "Sky Dolly" to "Position and attitude" CSV format
                 settings.setValue(FormatKey, 2);
             }
+        }
+        settings.endGroup();
+    }
+
+    static inline void convertLogbookTableLayout(QSettings &settings)
+    {
+        settings.beginGroup(QString("Plugins/Modules/") + QUuid(Const::LogbookModuleUuid).toByteArray());
+        {
+            settings.setValue("LogbookTableState", QVariant());
         }
         settings.endGroup();
     }
