@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.16.1
+
+### Bug Fixes
+- Properly store the newly selected logbook file path in the application settings in case an attempt is made to open a logbook that has been written by a newer Sky Dolly version and the user chooses an alternate logbook
+  * Regression introduced with v0.16.0
+
 ## 0.16.0
 
 **"Gregarious Gee Bee"** introduces new Sky Dolly logbook export & import plugins, incuding time synchronisation for formation flights.
