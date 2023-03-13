@@ -173,7 +173,7 @@ bool MSFSSimConnectPlugin::onSimulationEvent(SimulationEvent event, float arg1) 
     return result == S_OK;
 }
 
-bool MSFSSimConnectPlugin::onStartRecording() noexcept
+bool MSFSSimConnectPlugin::onStartFlightRecording() noexcept
 {
     resetCurrentSampleData();
     updateRecordingFrequency(Settings::getInstance().getRecordingSampleRate());
@@ -181,6 +181,17 @@ bool MSFSSimConnectPlugin::onStartRecording() noexcept
     // Initialise flight plan
     d->flightPlan.clear();
 
+    // Get aircraft information
+    HRESULT result = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftInfo), Enum::underly(SimConnectType::DataDefinition::FlightInformation), ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
+    return result == S_OK;
+}
+
+bool MSFSSimConnectPlugin::onStartAircraftRecording() noexcept
+{
+    resetCurrentSampleData();
+    updateRecordingFrequency(Settings::getInstance().getRecordingSampleRate());
+
+    // TODO Only request aircraft information (separate request / response data)
     // Get aircraft information
     HRESULT result = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftInfo), Enum::underly(SimConnectType::DataDefinition::FlightInformation), ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
     bool ok = result == S_OK;
