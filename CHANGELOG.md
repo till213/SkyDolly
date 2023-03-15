@@ -37,7 +37,7 @@
 **"Gregarious Gee Bee"** introduces new Sky Dolly logbook export & import plugins, incuding time synchronisation for formation flights.
 
 ### New Features
-- Sky Dolly logbook (SDLOG) export plugin [[Issue #7]5(https://github.com/till213/SkyDolly/issues/75)]
+- Sky Dolly logbook (SDLOG) export plugin [[Issue #75](https://github.com/till213/SkyDolly/issues/75)]
   * The current plugin implementation always exports the entire flight (including all aircraft) into a single logbook file, without resampling
 - Sky Dolly logbook (SDLOG) import plugin
   * All flights including all aircraft are imported, including flight information (title, comment, creation date) and flight conditions (temperature, wind conditions, runway conditions, ...)
