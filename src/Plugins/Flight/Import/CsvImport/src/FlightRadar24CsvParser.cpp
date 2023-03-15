@@ -68,14 +68,14 @@ struct FlightRadar24CsvParserPrivate
     CsvParser::Headers headers;
 
     static constexpr std::array<const char *, 8> HeaderNames {
-                Header::Timestamp,
-                Header::Utc,
-                Header::Callsign,
-                Header::Altitude,
-                Header::Position,
-                Header::Altitude,
-                Header::Speed,
-                Header::Direction
+        Header::Timestamp,
+        Header::Utc,
+        Header::Callsign,
+        Header::Altitude,
+        Header::Position,
+        Header::Altitude,
+        Header::Speed,
+        Header::Direction
     };
 };
 
@@ -129,7 +129,7 @@ FlightData FlightRadar24CsvParser::parse(QIODevice &io, bool &ok) noexcept
 
 // PRIVATE
 
-bool FlightRadar24CsvParser::validateHeaders() noexcept
+bool FlightRadar24CsvParser::validateHeaders() const noexcept
 {
     bool ok {true};
     for (auto val : d->HeaderNames) {

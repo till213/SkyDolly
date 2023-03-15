@@ -18,6 +18,13 @@
 ### Bug Fixes
 - KML export: the _first_ position point is now properly exported as well
 
+## 0.16.2
+
+### Bug Fixes
+- Fix the Little Navmap userpoint (location) import
+  * Relax CSV validation (import CSV without header)
+  * Properly check for empty (value: "") elevation values
+
 ## 0.16.1
 
 ### Bug Fixes
