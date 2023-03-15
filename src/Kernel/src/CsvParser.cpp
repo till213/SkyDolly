@@ -41,7 +41,6 @@ CsvParser::CsvParser(QChar separatorChar, QChar quoteChar, bool trimValue)
 CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header, const QString &alternateHeader) noexcept
 {
     Rows rows;
-
     bool firstLine {true};
     while (!textStream.atEnd())
     {
@@ -51,11 +50,13 @@ CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header,
             // Compare header (case-insensitive)
             if (!header.isNull() && line.startsWith(header, Qt::CaseInsensitive) ||
                 !alternateHeader.isNull() && line.startsWith(alternateHeader, Qt::CaseInsensitive))
-            {
-                firstLine = false;
+            {  
                 parseHeader(line);
                 continue;
+            } else if (!header.isNull()) {
+                parseHeader(header);
             }
+            firstLine = false;
         }
 
         // Skip empty lines but add them if within a quoted field

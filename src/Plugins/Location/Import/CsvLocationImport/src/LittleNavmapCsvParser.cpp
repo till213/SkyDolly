@@ -40,28 +40,20 @@
 #include "CsvLocationImportSettings.h"
 #include "LittleNavmapCsvParser.h"
 
-namespace
+namespace Header
 {
-    enum struct Index
-    {
-        Type = 0,
-        Name,
-        Ident,
-        Latitude,
-        Longitude,
-        Elevation,
-        MagneticDeclination,
-        Tags,
-        Description,
-        Region,
-        VisibleFrom,
-        LastEdit,
-        ImportFilename,
-        // Last index
-        Count
-    };
+    constexpr const char *LittleNavmap {"Type,Name,Ident,Latitude,Longitude,Elevation,Magnetic Declination,Tags,Description,Region,Visible From,Last Edit,Import Filename"};
 
-    constexpr const char *LittleNavmapCsvHeader {"type,name,ident,latitude,longitude,elevation"};
+    // Column names (also add them to LittleNavmapCsvParserPrivate::HeaderNames, for validation)
+    constexpr const char *Type {"Type"};
+    constexpr const char *Name {"Name"};
+    constexpr const char *Ident {"Ident"};
+    constexpr const char *Latitude {"Latitude"};
+    constexpr const char *Longitude {"Longitude"};
+    constexpr const char *Elevation {"Elevation"};
+    constexpr const char *MagneticDeclination {"Magnetic Declination"};
+    constexpr const char *Tags {"Tags"};
+    constexpr const char *Description {"Description"};
 }
 
 struct LittleNavmapCsvParserPrivate
@@ -79,6 +71,19 @@ public:
 
     // Key: Litte Navmap userpoint type, value: symbolic category ID
     std::unordered_map<QString, QString> typeToSymId;
+    CsvParser::Headers headers;
+
+    static constexpr std::array<const char *, 9> HeaderNames {
+        Header::Type,
+        Header::Name,
+        Header::Ident,
+        Header::Latitude,
+        Header::Longitude,
+        Header::Elevation,
+        Header::MagneticDeclination,
+        Header::Tags,
+        Header::Description
+    };
 
 private:
     inline void initTypeToSymIdMap() {
@@ -121,8 +126,12 @@ std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool
     std::vector<Location> locations;
     CsvParser csvParser;
 
-    CsvParser::Rows rows = csvParser.parse(textStream, ::LittleNavmapCsvHeader);
-    bool success = CsvParser::validate(rows, Enum::underly(::Index::Count));
+    CsvParser::Rows rows = csvParser.parse(textStream, Header::LittleNavmap);
+    d->headers = csvParser.getHeaders();
+    bool success = validateHeaders();
+    if (success) {
+        success = CsvParser::validate(rows, d->headers.size());
+    }
     if (success) {
         locations.reserve(rows.size());
         for (const auto &row : rows) {
@@ -142,31 +151,45 @@ std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool
     return locations;
 }
 
+// PRIVATE
+
+bool LittleNavmapCsvParser::validateHeaders() const noexcept
+{
+    bool ok {true};
+    for (auto val : d->HeaderNames) {
+        ok = d->headers.contains(val);
+        if (!ok) {
+            break;
+        }
+    }
+    return ok;
+}
+
 Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) const noexcept
 {
     Location location;
 
     ok = true;
-    location.title = row.at(Enum::underly(::Index::Name));
+    location.title = row.at(d->headers.at(Header::Name));
     location.countryId = d->pluginSettings.getDefaultCountryId();
     location.typeId = d->ImportTypeId;
     location.engineEventId = d->KeepEngineEventId;
-    const QString type = row.at(Enum::underly(::Index::Type));
+    const QString type = row.at(d->headers.at(Header::Type));
     location.categoryId = mapTypeToCategoryId(type);
-    location.identifier = row.at(Enum::underly(::Index::Ident));
-    const double latitude = row.at(Enum::underly(::Index::Latitude)).toDouble(&ok);
+    location.identifier = row.at(d->headers.at(Header::Ident));
+    const double latitude = row.at(d->headers.at(Header::Latitude)).toDouble(&ok);
     if (ok) {
         location.latitude = latitude;
     }
     if (ok) {
-        const double longitude = row.at(Enum::underly(::Index::Longitude)).toDouble(&ok);
+        const double longitude = row.at(d->headers.at(Header::Longitude)).toDouble(&ok);
         if (ok) {
             location.longitude = longitude;
         }
     }
     if (ok) {
-        const QVariant data = row.at(Enum::underly(::Index::Elevation));
-        if (!data.isNull()) {
+        const QVariant data = row.at(d->headers.at(Header::Elevation));
+        if (!data.isNull() && !data.toString().isEmpty()) {
             const double altitude = data.toDouble(&ok);
             if (ok) {
                 if (!qFuzzyIsNull(altitude)) {
@@ -187,7 +210,7 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
         location.indicatedAirspeed = d->pluginSettings.getDefaultIndicatedAirspeed();
     }
     if (ok) {
-        location.description = row.at(Enum::underly(::Index::Description));
+        location.description = row.at(d->headers.at(Header::Description));
     }
 
     return location;

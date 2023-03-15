@@ -12,7 +12,8 @@ target_sources(${MODULE_NAME}
         src/SkyDollyCsvLocationParser.h src/SkyDollyCsvLocationParser.cpp
         src/LittleNavmapCsvParser.h src/LittleNavmapCsvParser.cpp
         src/CsvLocationImportPlugin.json
-        doc/Example.csv
+        doc/LNM-Example.csv
+        doc/LNM-Example-No-Header.csv
 )
 target_link_libraries(${MODULE_NAME}
     PRIVATE

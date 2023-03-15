@@ -85,19 +85,19 @@ public:
 
     /*!
      * Validates that there exists at least one Row in \c rows and that each Row has
-     * exactly the \c expectedColumnCount.
+     * at least the \c expectedColumnCount.
      *
      * \param rows
-     *        the previously parsed CSv rows
+     *        the previously parsed CSV rows
      * \param expectedColumnCount
-     *        the expected column count of each row
+     *        the expected minimal column count of each row
      * \return \c true if each row in Rows has \c expectedColumnCount items; \c false else
      */
-    static inline bool validate(const Rows &rows, std::size_t expectedColumnCount) noexcept
+    static inline bool validate(const Rows &rows, std::size_t expectedMinimumColumnCount) noexcept
     {
         bool ok = rows.size() > 0;
         if (ok) {
-            auto condition = [expectedColumnCount](const Row &row) {return row.size() != expectedColumnCount;};
+            auto condition = [expectedMinimumColumnCount](const Row &row) {return row.size() < expectedMinimumColumnCount;};
             ok = std::find_if(rows.begin(), rows.end(), condition) == rows.end();
         }
         return ok;

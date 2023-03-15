@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.16.2
+
+### Bug Fixes
+- Fix the Little Navmap userpoint (location) import
+  * Relax CSV validation (import CSV without header)
+  * Properly check for empty (value: "") elevation values
+
 ## 0.16.1
 
 ### Bug Fixes

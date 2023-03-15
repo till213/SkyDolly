@@ -53,6 +53,7 @@ public:
 private:
     std::unique_ptr<LittleNavmapCsvParserPrivate> d;
 
+    bool validateHeaders() const noexcept;
     Location parseLocation(CsvParser::Row row, bool &ok) const noexcept;
     inline std::int64_t mapTypeToCategoryId(const QString &type) const noexcept;
 };
