@@ -37,7 +37,7 @@
 **"Gregarious Gee Bee"** introduces new Sky Dolly logbook export & import plugins, incuding time synchronisation for formation flights.
 
 ### New Features
-- Sky Dolly logbook (SDLOG) export plugin
+- Sky Dolly logbook (SDLOG) export plugin [[Issue #7]5(https://github.com/till213/SkyDolly/issues/75)]
   * The current plugin implementation always exports the entire flight (including all aircraft) into a single logbook file, without resampling
 - Sky Dolly logbook (SDLOG) import plugin
   * All flights including all aircraft are imported, including flight information (title, comment, creation date) and flight conditions (temperature, wind conditions, runway conditions, ...)
@@ -57,7 +57,7 @@
     - **Date and time**: the timestamp offset is calculated based on the recording date and time difference between the *current* and each newly imported flight
     - **Time only**: the timestamp offset is calculated based on the recording time difference between the *current* and each newly imported flight, but ignoring the recording date. This can be useful when importing historic real-world flights from different dates in the past into the same "formation flight", but with the goal to replay them "on the same day" (as defined by the first imported flight)
   * Old plugin settings are migrated to the new import mode settings
-- The Simulation Variables dialog (key **V**) now also shows the aircraft position as decimal latitude & longitude values ([#89](https://github.com/till213/SkyDolly/issues/89))
+- The Simulation Variables dialog (key **V**) now also shows the aircraft position as decimal latitude & longitude values [[Issue #89](https://github.com/till213/SkyDolly/issues/89)]
 - The flight recording time in the Flight dialog (key **F**) is now empty for new flights (without any recording)
   * As before it is updated when the *first* aircraft is being recorded
   * The recording time text field tooltip now also shows the recording date and time converted to UTC ("zulu time"), including seconds
@@ -129,7 +129,7 @@
 **"Ethereal Embraer"** focuses on improved 3rd-party aircraft support, especially "for the big birds".
 
 ### Improvements
-- Improved replay specifically with 3rd party aircraft, for:
+- Improved replay specifically with 3rd party aircraft [[Issue #73](https://github.com/till213/SkyDolly/issues/73)], for:
   * Primary and secondary flight controls (ailerons, flaps, spoilers, ...)
   * Engine (thrust lever)
   * Aircraft handles (gear, wing folding, tailhook, ...)
@@ -398,11 +398,11 @@ This release mostly focuses on "under the hood" improvements, but also improves 
 
 ### New Features
 
-- IGC export plugin
+- IGC export plugin [[Issue #15](https://github.com/till213/SkyDolly/issues/15)]
   * Export flight path (position and GNSS altitude)
   * Export waypoints as flight tasks ("C records")
   * Export pilot names
-- GPX import plugin
+- GPX import plugin [[Issue #16](https://github.com/till213/SkyDolly/issues/16)]
   * The GPX format contains three elements: waypoints, routes and tracks
     - Waypoints are typically "places to visit" along the way
     - Routes describe "how to get there"
