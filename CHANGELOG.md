@@ -176,10 +176,10 @@
 ### New Features
 - New location export plugin
   * Sky Dolly CSV export
-  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV export
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) userpoint CSV export
 - New location import plugin
   * Sky Dolly CSV import
-  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV import
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) userpoint CSV import
   
 ### Improvements
 - Flight CSV export
@@ -220,7 +220,7 @@
 ## 0.12.0
 
 **"Celestial Cessna"** introduces the "Location" module.
-
+And 
 ### New Features
 - Location module
   * Capture and teleport to locations in the flight simulator
