@@ -112,7 +112,8 @@ private slots:
     void deleteAircraft() noexcept;
 
     void onRelativePositionChanged() noexcept;
-    void onRelativeDistanceChanged() noexcept;
+    void onHorizontalDistanceChanged() noexcept;
+    void onVerticalDistanceChanged() noexcept;
     void onReplayModeSelected(int index) noexcept;
     void onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode);
 

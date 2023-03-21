@@ -327,9 +327,9 @@ void FormationWidget::frenchConnection() noexcept
 
     // Relative position, replay mode
     connect(ui->horizontalDistanceSlider, &QSlider::valueChanged,
-            this, &FormationWidget::onRelativeDistanceChanged);
+            this, &FormationWidget::onHorizontalDistanceChanged);
     connect(ui->verticalDistanceSlider, &QSlider::valueChanged,
-            this, &FormationWidget::onRelativeDistanceChanged);
+            this, &FormationWidget::onVerticalDistanceChanged);
     connect(d->positionButtonGroup, &QButtonGroup::idClicked,
             this, &FormationWidget::onRelativePositionChanged);
     connect(ui->replayModeComboBox, &QComboBox::activated,
@@ -940,8 +940,16 @@ void FormationWidget::onRelativePositionChanged() noexcept
     updateAndSendUserAircraftPosition();
 }
 
-void FormationWidget::onRelativeDistanceChanged() noexcept
+void FormationWidget::onHorizontalDistanceChanged() noexcept
 {
+    d->moduleSettings.setHorizontalDistance(static_cast<Formation::HorizontalDistance>(ui->horizontalDistanceSlider->value()));
+    updateRelativePositionUi();
+    onRelativePositionChanged();
+}
+
+void FormationWidget::onVerticalDistanceChanged() noexcept
+{
+    d->moduleSettings.setVerticalDistance(static_cast<Formation::VerticalDistance>(ui->verticalDistanceSlider->value()));
     updateRelativePositionUi();
     onRelativePositionChanged();
 }
@@ -1047,6 +1055,8 @@ void FormationWidget::onTableLayoutChanged() noexcept
 
 void FormationWidget::onModuleSettingsChanged() noexcept
 {
+    ui->horizontalDistanceSlider->setValue(d->moduleSettings.getHorizontalDistance());
+    ui->verticalDistanceSlider->setValue(d->moduleSettings.getVerticalDistance());
     ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
     ui->aircraftTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getFormationAircraftTableState());
 }

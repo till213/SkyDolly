@@ -82,7 +82,7 @@ void FormationSettings::setBearing(int bearing) noexcept
 
 Formation::HorizontalDistance FormationSettings::getHorizontalDistance() const noexcept
 {
-    return d->horizontalDistance;;
+    return d->horizontalDistance;
 }
 
 void FormationSettings::setHorizontalDistance(Formation::HorizontalDistance horizontalDistance) noexcept
