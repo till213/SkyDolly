@@ -47,6 +47,9 @@ public:
     FormationSettings &operator=(FormationSettings &&rhs) = delete;
     ~FormationSettings() override;
 
+    int getBearing() const noexcept;
+    void setBearing(int bearing) noexcept;
+
     Formation::HorizontalDistance getHorizontalDistance() const noexcept;
     void setHorizontalDistance(Formation::HorizontalDistance horizontalDistance) noexcept;
 

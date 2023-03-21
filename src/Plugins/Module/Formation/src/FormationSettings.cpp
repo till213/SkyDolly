@@ -37,11 +37,13 @@ namespace
 {
     // Keys
     constexpr const char *RelativePositionPlacementKey {"RelativePositionPlacement"};
+    constexpr const char *BearingKey {"Bearing"};
     constexpr const char *HorizontalDistanceKey {"HorizontalDistance"};
     constexpr const char *VerticalDistanceKey {"VerticalDistance"};
     constexpr const char *FormationAircraftTableStateKey {"FormationAircraftTableState"};
 
     // Defaults
+    constexpr int DefaultBearing {135};
     constexpr Formation::HorizontalDistance DefaultHorizontalDistance {Formation::HorizontalDistance::Nearby};
     constexpr Formation::VerticalDistance DefaultVerticalDistance {Formation::VerticalDistance::Level};
     constexpr bool DefaultRelativePositionPlacement {true};
@@ -50,8 +52,9 @@ namespace
 struct FormationSettingsPrivate
 {
     QByteArray formationAircraftTableState;
-    Formation::HorizontalDistance horizontalDistance;
-    Formation::VerticalDistance verticalDistance;
+    int bearing {::DefaultBearing};
+    Formation::HorizontalDistance horizontalDistance {::DefaultHorizontalDistance};
+    Formation::VerticalDistance verticalDistance {::DefaultVerticalDistance};
     bool relativePositionPlacement {::DefaultRelativePositionPlacement};
 };
 
@@ -63,6 +66,19 @@ FormationSettings::FormationSettings() noexcept
 {}
 
 FormationSettings::~FormationSettings() = default;
+
+int FormationSettings::getBearing() const noexcept
+{
+    return d->bearing;
+}
+
+void FormationSettings::setBearing(int bearing) noexcept
+{
+    if (d->bearing != bearing) {
+        d->bearing = bearing;
+        emit changed();
+    }
+}
 
 Formation::HorizontalDistance FormationSettings::getHorizontalDistance() const noexcept
 {
@@ -122,6 +138,10 @@ void FormationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &ke
 {
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::BearingKey;
+    keyValue.second = d->bearing;
+    keyValues.push_back(keyValue);
+
     keyValue.first = ::HorizontalDistanceKey;
     keyValue.second = Enum::underly(d->horizontalDistance);
     keyValues.push_back(keyValue);
@@ -143,6 +163,10 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 {
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::BearingKey;
+    keyValue.second = ::DefaultBearing;
+    keysWithDefaults.push_back(keyValue);
+
     keyValue.first = ::HorizontalDistanceKey;
     keyValue.second = Enum::underly(::DefaultHorizontalDistance);
     keysWithDefaults.push_back(keyValue);
@@ -163,11 +187,15 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {false};
-    d->horizontalDistance = static_cast<SimType::EngineType>(valuesByKey.at(::HorizontalDistanceKey).toInt(&ok));
+    d->bearing = valuesByKey.at(::BearingKey).toInt(&ok);
+    if (!ok) {
+        d->bearing = ::DefaultBearing;
+    }
+    d->horizontalDistance = static_cast<Formation::HorizontalDistance>(valuesByKey.at(::HorizontalDistanceKey).toInt(&ok));
     if (!ok) {
         d->horizontalDistance = ::DefaultHorizontalDistance;
     }
-    d->verticalDistance = static_cast<SimType::EngineType>(valuesByKey.at(::VerticalDistanceKey).toInt(&ok));
+    d->verticalDistance = static_cast<Formation::VerticalDistance>(valuesByKey.at(::VerticalDistanceKey).toInt(&ok));
     if (!ok) {
         d->verticalDistance = ::DefaultVerticalDistance;
     }
@@ -178,6 +206,7 @@ void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Val
 
 void FormationSettings::restoreDefaultsExtn() noexcept
 {
+    d->bearing = ::DefaultBearing;
     d->horizontalDistance = ::DefaultHorizontalDistance;
     d->verticalDistance = ::DefaultVerticalDistance;
     d->relativePositionPlacement = ::DefaultRelativePositionPlacement;
