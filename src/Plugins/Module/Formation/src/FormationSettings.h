@@ -32,6 +32,7 @@
 
 #include <Kernel/Settings.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
+#include "Formation.h"
 
 struct FormationSettingsPrivate;
 
@@ -45,6 +46,12 @@ public:
     FormationSettings &operator=(const FormationSettings &rhs) = delete;
     FormationSettings &operator=(FormationSettings &&rhs) = delete;
     ~FormationSettings() override;
+
+    Formation::HorizontalDistance getHorizontalDistance() const noexcept;
+    void setHorizontalDistance(Formation::HorizontalDistance horizontalDistance) noexcept;
+
+    Formation::VerticalDistance getVerticalDistance() const noexcept;
+    void setVerticalDistance(Formation::VerticalDistance verticalDistance) noexcept;
 
     /*!
      * Returns whether the the new user aircraft should be placed at the calculated position

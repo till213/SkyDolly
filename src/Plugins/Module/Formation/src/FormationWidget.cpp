@@ -219,8 +219,8 @@ void FormationWidget::initUi() noexcept
 
     // Default position is south-east
     ui->sePositionRadioButton->setChecked(true);
-    ui->horizontalDistanceSlider->setValue(Formation::HorizontalDistance::Nearby);
-    ui->verticalDistanceSlider->setValue(Formation::VerticalDistance::Level);
+    ui->horizontalDistanceSlider->setValue(d->moduleSettings.getHorizontalDistance());
+    ui->verticalDistanceSlider->setValue(d->moduleSettings.getVerticalDistance());
     ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
 
     d->positionButtonGroup->addButton(ui->nPositionRadioButton, Formation::RelativePosition::North);

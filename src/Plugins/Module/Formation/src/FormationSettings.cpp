@@ -27,23 +27,31 @@
 
 #include <QByteArray>
 
+#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
+#include "Formation.h"
 #include "FormationSettings.h"
 
 namespace
 {
     // Keys
     constexpr const char *RelativePositionPlacementKey {"RelativePositionPlacement"};
+    constexpr const char *HorizontalDistanceKey {"HorizontalDistance"};
+    constexpr const char *VerticalDistanceKey {"VerticalDistance"};
     constexpr const char *FormationAircraftTableStateKey {"FormationAircraftTableState"};
 
     // Defaults
+    constexpr Formation::HorizontalDistance DefaultHorizontalDistance {Formation::HorizontalDistance::Nearby};
+    constexpr Formation::VerticalDistance DefaultVerticalDistance {Formation::VerticalDistance::Level};
     constexpr bool DefaultRelativePositionPlacement {true};
 }
 
 struct FormationSettingsPrivate
 {
     QByteArray formationAircraftTableState;
+    Formation::HorizontalDistance horizontalDistance;
+    Formation::VerticalDistance verticalDistance;
     bool relativePositionPlacement {::DefaultRelativePositionPlacement};
 };
 
@@ -55,6 +63,32 @@ FormationSettings::FormationSettings() noexcept
 {}
 
 FormationSettings::~FormationSettings() = default;
+
+Formation::HorizontalDistance FormationSettings::getHorizontalDistance() const noexcept
+{
+    return d->horizontalDistance;;
+}
+
+void FormationSettings::setHorizontalDistance(Formation::HorizontalDistance horizontalDistance) noexcept
+{
+    if (d->horizontalDistance != horizontalDistance) {
+        d->horizontalDistance = horizontalDistance;
+        emit changed();
+    }
+}
+
+Formation::VerticalDistance FormationSettings::getVerticalDistance() const noexcept
+{
+    return d->verticalDistance;
+}
+
+void FormationSettings::setVerticalDistance(Formation::VerticalDistance verticalDistance) noexcept
+{
+    if (d->verticalDistance != verticalDistance) {
+        d->verticalDistance = verticalDistance;
+        emit changed();
+    }
+}
 
 bool FormationSettings::isRelativePositionPlacementEnabled() const noexcept
 {
@@ -88,6 +122,14 @@ void FormationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &ke
 {
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::HorizontalDistanceKey;
+    keyValue.second = Enum::underly(d->horizontalDistance);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::VerticalDistanceKey;
+    keyValue.second = Enum::underly(d->verticalDistance);
+    keyValues.push_back(keyValue);
+
     keyValue.first = ::RelativePositionPlacementKey;
     keyValue.second = d->relativePositionPlacement;
     keyValues.push_back(keyValue);
@@ -101,6 +143,14 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 {
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::HorizontalDistanceKey;
+    keyValue.second = Enum::underly(::DefaultHorizontalDistance);
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::VerticalDistanceKey;
+    keyValue.second = Enum::underly(::DefaultVerticalDistance);
+    keysWithDefaults.push_back(keyValue);
+
     keyValue.first = ::RelativePositionPlacementKey;
     keyValue.second = ::DefaultRelativePositionPlacement;
     keysWithDefaults.push_back(keyValue);
@@ -112,12 +162,24 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 
 void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
+    bool ok {false};
+    d->horizontalDistance = static_cast<SimType::EngineType>(valuesByKey.at(::HorizontalDistanceKey).toInt(&ok));
+    if (!ok) {
+        d->horizontalDistance = ::DefaultHorizontalDistance;
+    }
+    d->verticalDistance = static_cast<SimType::EngineType>(valuesByKey.at(::VerticalDistanceKey).toInt(&ok));
+    if (!ok) {
+        d->verticalDistance = ::DefaultVerticalDistance;
+    }
+
     d->relativePositionPlacement = valuesByKey.at(::RelativePositionPlacementKey).toBool();
     d->formationAircraftTableState = valuesByKey.at(::FormationAircraftTableStateKey).toByteArray();
 }
 
 void FormationSettings::restoreDefaultsExtn() noexcept
 {
+    d->horizontalDistance = ::DefaultHorizontalDistance;
+    d->verticalDistance = ::DefaultVerticalDistance;
     d->relativePositionPlacement = ::DefaultRelativePositionPlacement;
     d->formationAircraftTableState = {};
 }
