@@ -29,6 +29,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 #include "Formation.h"
 #include "FormationSettings.h"
@@ -41,12 +42,14 @@ namespace
     constexpr const char *HorizontalDistanceKey {"HorizontalDistance"};
     constexpr const char *VerticalDistanceKey {"VerticalDistance"};
     constexpr const char *FormationAircraftTableStateKey {"FormationAircraftTableState"};
+    constexpr const char *ReplayModeKey {"ReplayMode"};
 
     // Defaults
     constexpr int DefaultBearing {135};
     constexpr Formation::HorizontalDistance DefaultHorizontalDistance {Formation::HorizontalDistance::Nearby};
     constexpr Formation::VerticalDistance DefaultVerticalDistance {Formation::VerticalDistance::Level};
     constexpr bool DefaultRelativePositionPlacement {true};
+    constexpr SkyConnectIntf::ReplayMode DefaultReplayMode {SkyConnectIntf::ReplayMode::Normal};
 }
 
 struct FormationSettingsPrivate
@@ -56,6 +59,7 @@ struct FormationSettingsPrivate
     Formation::HorizontalDistance horizontalDistance {::DefaultHorizontalDistance};
     Formation::VerticalDistance verticalDistance {::DefaultVerticalDistance};
     bool relativePositionPlacement {::DefaultRelativePositionPlacement};
+    SkyConnectIntf::ReplayMode replayMode;
 };
 
 // PUBLIC
@@ -119,6 +123,19 @@ void FormationSettings::setRelativePositionPlacementEnabled(bool enable) noexcep
     }
 }
 
+SkyConnectIntf::ReplayMode FormationSettings::getReplayMode() const noexcept
+{
+    return d->replayMode;
+}
+
+void FormationSettings::setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept
+{
+    if (d->replayMode != replayMode) {
+        d->replayMode = replayMode;
+        emit changed();
+    }
+}
+
 QByteArray FormationSettings::getFormationAircraftTableState() const
 {
     return d->formationAircraftTableState;
@@ -154,6 +171,10 @@ void FormationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &ke
     keyValue.second = d->relativePositionPlacement;
     keyValues.push_back(keyValue);
 
+    keyValue.first = ::ReplayModeKey;
+    keyValue.second = Enum::underly(d->replayMode);
+    keyValues.push_back(keyValue);
+
     keyValue.first = ::FormationAircraftTableStateKey;
     keyValue.second = d->formationAircraftTableState;
     keyValues.push_back(keyValue);
@@ -179,6 +200,10 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
     keyValue.second = ::DefaultRelativePositionPlacement;
     keysWithDefaults.push_back(keyValue);
 
+    keyValue.first = ::ReplayModeKey;
+    keyValue.second = Enum::underly(::DefaultReplayMode);
+    keysWithDefaults.push_back(keyValue);
+
     keyValue.first = ::FormationAircraftTableStateKey;
     keyValue.second = QByteArray();
     keysWithDefaults.push_back(keyValue);
@@ -199,8 +224,11 @@ void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Val
     if (!ok) {
         d->verticalDistance = ::DefaultVerticalDistance;
     }
-
-    d->relativePositionPlacement = valuesByKey.at(::RelativePositionPlacementKey).toBool();
+    d->relativePositionPlacement = valuesByKey.at(::ReplayModeKey).toInt();
+    d->replayMode = static_cast<SkyConnectIntf::ReplayMode>(valuesByKey.at(::ReplayModeKey).toInt(&ok));
+    if (!ok) {
+        d->replayMode = ::DefaultReplayMode;
+    }
     d->formationAircraftTableState = valuesByKey.at(::FormationAircraftTableStateKey).toByteArray();
 }
 
@@ -210,5 +238,6 @@ void FormationSettings::restoreDefaultsExtn() noexcept
     d->horizontalDistance = ::DefaultHorizontalDistance;
     d->verticalDistance = ::DefaultVerticalDistance;
     d->relativePositionPlacement = ::DefaultRelativePositionPlacement;
+    d->replayMode = ::DefaultReplayMode;
     d->formationAircraftTableState = {};
 }

@@ -31,6 +31,7 @@
 #include <QByteArray>
 
 #include <Kernel/Settings.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
 #include "Formation.h"
 
@@ -77,6 +78,9 @@ public:
      * \sa relativePositionPlacementChanged
      */
     void setRelativePositionPlacementEnabled(bool enable) noexcept;
+
+    SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
+    void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;
 
     /*!
      * Returns the saved formation aircraft table state.

@@ -483,8 +483,12 @@ void FormationWidget::updateTimeOffsetUi() noexcept
 void FormationWidget::updateReplayUi() noexcept
 {
     SkyConnectManager &skyConnectManager {SkyConnectManager::getInstance()};
+    updateReplayModeUi(skyConnectManager.getReplayMode());
+    ui->replayModeComboBox->setEnabled(!skyConnectManager.isInRecordingState());
+}
 
-    const SkyConnectIntf::ReplayMode replayMode {skyConnectManager.getReplayMode()};
+void FormationWidget::updateReplayModeUi(SkyConnectIntf::ReplayMode replayMode) noexcept
+{
     ui->replayModeComboBox->blockSignals(true);
     for (int index = 0; index < ui->replayModeComboBox->count(); ++index) {
         if (static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->itemData(index).toInt()) == replayMode) {
@@ -493,8 +497,6 @@ void FormationWidget::updateReplayUi() noexcept
         }
     }
     ui->replayModeComboBox->blockSignals(false);
-
-    ui->replayModeComboBox->setEnabled(!skyConnectManager.isInRecordingState());
 }
 
 void FormationWidget::updateToolTips() noexcept
@@ -951,23 +953,15 @@ void FormationWidget::onVerticalDistanceChanged() noexcept
 void FormationWidget::onReplayModeSelected() noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    switch (static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->currentData().toInt())) {
-    case SkyConnectIntf::ReplayMode::Normal:
-        skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::Normal);
-        break;
-    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
-        skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::UserAircraftManualControl);
-        break;
-    case SkyConnectIntf::ReplayMode::FlyWithFormation:
-        skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::FlyWithFormation);
-        break;
-    }
+    SkyConnectIntf::ReplayMode replayMode {static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->currentData().toInt())};
+    skyConnectManager.setReplayMode(replayMode);
+    d->moduleSettings.setReplayMode(replayMode);
     updateUi();
 }
 
 void FormationWidget::onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode)
 {
-    updateReplayUi();
+    updateReplayModeUi(replayMode);
     updateUserAircraftPosition(replayMode);
 }
 
@@ -1041,4 +1035,5 @@ void FormationWidget::onModuleSettingsChanged() noexcept
     ui->verticalDistanceSlider->setValue(d->moduleSettings.getVerticalDistance());
     ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
     ui->aircraftTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getFormationAircraftTableState());
+    updateReplayModeUi(d->moduleSettings.getReplayMode());
 }

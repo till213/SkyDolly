@@ -81,6 +81,7 @@ private:
     void updateEditUi() noexcept;
     void updateTimeOffsetUi() noexcept;
     void updateReplayUi() noexcept;
+    void updateReplayModeUi(SkyConnectIntf::ReplayMode replayMode) noexcept;
     void updateToolTips() noexcept;
 
     inline const QTableWidgetItem *createRow(const Aircraft &aircraft, int aircraftIndex) noexcept;
