@@ -76,12 +76,6 @@ namespace
     constexpr int InvalidRow {-1};
     constexpr int InvalidColumn {-1};
 
-    enum ReplayModeIndex {
-        Normal,
-        UserAircraftManualControl,
-        FlyWithFormation
-    };
-
     // Milliseconds
     constexpr std::int64_t SmallTimeOffset = 100;
     constexpr std::int64_t LargeTimeOffset = 1000;
@@ -264,9 +258,9 @@ void FormationWidget::initUi() noexcept
     ui->nwPositionRadioButton->setStyleSheet(css);
     ui->nnwPositionRadioButton->setStyleSheet(css);
 
-    ui->replayModeComboBox->insertItem(ReplayModeIndex::Normal, tr("Formation (Normal)"), Enum::underly(SkyConnectIntf::ReplayMode::Normal));
-    ui->replayModeComboBox->insertItem(ReplayModeIndex::UserAircraftManualControl, tr("Take control of recorded user aircraft"), Enum::underly(SkyConnectIntf::ReplayMode::UserAircraftManualControl));
-    ui->replayModeComboBox->insertItem(ReplayModeIndex::FlyWithFormation, tr("Fly with formation"), Enum::underly(SkyConnectIntf::ReplayMode::FlyWithFormation));
+    ui->replayModeComboBox->addItem(tr("Formation (Normal)"), Enum::underly(SkyConnectIntf::ReplayMode::Normal));
+    ui->replayModeComboBox->addItem(tr("Take control of recorded user aircraft"), Enum::underly(SkyConnectIntf::ReplayMode::UserAircraftManualControl));
+    ui->replayModeComboBox->addItem(tr("Fly with formation"), Enum::underly(SkyConnectIntf::ReplayMode::FlyWithFormation));
 
     initTimeOffsetUi();
 
@@ -488,18 +482,18 @@ void FormationWidget::updateTimeOffsetUi() noexcept
 
 void FormationWidget::updateReplayUi() noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    switch (SkyConnectManager::getInstance().getReplayMode()) {
-    case SkyConnectIntf::ReplayMode::Normal:
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::Normal);
-        break;
-    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::UserAircraftManualControl);
-        break;
-    case SkyConnectIntf::ReplayMode::FlyWithFormation:
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::FlyWithFormation);
-        break;
+    SkyConnectManager &skyConnectManager {SkyConnectManager::getInstance()};
+
+    const SkyConnectIntf::ReplayMode replayMode {skyConnectManager.getReplayMode()};
+    ui->replayModeComboBox->blockSignals(true);
+    for (int index = 0; index < ui->replayModeComboBox->count(); ++index) {
+        if (static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->itemData(index).toInt()) == replayMode) {
+            ui->replayModeComboBox->setCurrentIndex(index);
+            break;
+        }
     }
+    ui->replayModeComboBox->blockSignals(false);
+
     ui->replayModeComboBox->setEnabled(!skyConnectManager.isInRecordingState());
 }
 
@@ -531,15 +525,15 @@ void FormationWidget::updateToolTips() noexcept
     }
 
     // Replay mode
-    switch (ui->replayModeComboBox->currentIndex()) {
-    case ReplayModeIndex::Normal:
+    switch (static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->currentData().toInt())) {
+    case SkyConnectIntf::ReplayMode::Normal:
         ui->replayModeComboBox->setToolTip(tr("%1 controls all recorded aircraft.").arg(Version::getApplicationName()));
         break;
-    case ReplayModeIndex::UserAircraftManualControl:
+    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
         ui->replayModeComboBox->setToolTip(tr("Take control of the recorded user aircraft of the formation.\n"
                                               "The user aircraft (marked in blue) can be changed during replay."));
         break;
-    case ReplayModeIndex::FlyWithFormation:
+    case SkyConnectIntf::ReplayMode::FlyWithFormation:
         ui->replayModeComboBox->setToolTip(tr("Fly with the currently loaded aircraft along with the entire formation.\n"
                                               "Reposition your user aircraft at any time, by either changing its relative position\n"
                                               "or choose another reference aircraft (marked in green) in the formation."));
@@ -954,17 +948,17 @@ void FormationWidget::onVerticalDistanceChanged() noexcept
     onRelativePositionChanged();
 }
 
-void FormationWidget::onReplayModeSelected(int index) noexcept
+void FormationWidget::onReplayModeSelected() noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    switch(index) {
-    case ReplayModeIndex::Normal:
+    switch (static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->currentData().toInt())) {
+    case SkyConnectIntf::ReplayMode::Normal:
         skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::Normal);
         break;
-    case ReplayModeIndex::UserAircraftManualControl:
+    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
         skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::UserAircraftManualControl);
         break;
-    case ReplayModeIndex::FlyWithFormation:
+    case SkyConnectIntf::ReplayMode::FlyWithFormation:
         skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::FlyWithFormation);
         break;
     }
@@ -973,19 +967,7 @@ void FormationWidget::onReplayModeSelected(int index) noexcept
 
 void FormationWidget::onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode)
 {
-    switch(replayMode) {
-    case SkyConnectIntf::ReplayMode::Normal:
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::Normal);
-        break;
-    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
-    {
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::UserAircraftManualControl);
-        break;
-    }
-    case SkyConnectIntf::ReplayMode::FlyWithFormation:
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::FlyWithFormation);
-        break;
-    }
+    updateReplayUi();
     updateUserAircraftPosition(replayMode);
 }
 

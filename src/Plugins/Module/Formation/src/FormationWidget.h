@@ -114,7 +114,7 @@ private slots:
     void onRelativePositionChanged() noexcept;
     void onHorizontalDistanceChanged() noexcept;
     void onVerticalDistanceChanged() noexcept;
-    void onReplayModeSelected(int index) noexcept;
+    void onReplayModeSelected() noexcept;
     void onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode);
 
     void changeTimeOffset(const std::int64_t timeOffset) noexcept;
