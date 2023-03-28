@@ -224,7 +224,7 @@ void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Val
     if (!ok) {
         d->verticalDistance = ::DefaultVerticalDistance;
     }
-    d->relativePositionPlacement = valuesByKey.at(::ReplayModeKey).toInt();
+    d->relativePositionPlacement = valuesByKey.at(::RelativePositionPlacementKey).toBool();
     d->replayMode = static_cast<SkyConnectIntf::ReplayMode>(valuesByKey.at(::ReplayModeKey).toInt(&ok));
     if (!ok) {
         d->replayMode = ::DefaultReplayMode;

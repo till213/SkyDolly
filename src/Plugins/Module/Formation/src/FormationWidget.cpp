@@ -316,8 +316,6 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateUserAircraftIndex);
     connect(ui->deletePushButton, &QPushButton::clicked,
             this, &FormationWidget::deleteAircraft);
-    connect(ui->relativePositionCheckBox, &QCheckBox::stateChanged,
-            this, &FormationWidget::onInitialPositionPlacementChanged);
 
     // Relative position, replay mode
     connect(ui->horizontalDistanceSlider, &QSlider::valueChanged,
@@ -326,6 +324,8 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::onVerticalDistanceChanged);
     connect(d->positionButtonGroup, &QButtonGroup::idClicked,
             this, &FormationWidget::onRelativePositionChanged);
+    connect(ui->relativePositionCheckBox, &QCheckBox::stateChanged,
+            this, &FormationWidget::onInitialPositionPlacementChanged);
     connect(ui->replayModeComboBox, &QComboBox::activated,
             this, &FormationWidget::onReplayModeSelected);
 
