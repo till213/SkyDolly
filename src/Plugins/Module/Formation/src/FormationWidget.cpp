@@ -158,7 +158,9 @@ FormationWidget::FormationWidget(FormationSettings &settings, QWidget *parent) n
 FormationWidget::~FormationWidget()
 {
     const QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
+    d->moduleSettings.blockSignals(true);
     d->moduleSettings.setFormationAircraftTableState(tableState);
+    d->moduleSettings.blockSignals(false);
 }
 
 Formation::HorizontalDistance FormationWidget::getHorizontalDistance() const noexcept
