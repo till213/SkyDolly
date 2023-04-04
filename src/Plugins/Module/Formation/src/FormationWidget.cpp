@@ -213,12 +213,6 @@ void FormationWidget::initUi() noexcept
     QByteArray tableState = d->moduleSettings.getFormationAircraftTableState();
     ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
 
-    // Default position is south-east
-    ui->sePositionRadioButton->setChecked(true);
-    ui->horizontalDistanceSlider->setValue(d->moduleSettings.getHorizontalDistance());
-    ui->verticalDistanceSlider->setValue(d->moduleSettings.getVerticalDistance());
-    ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
-
     d->positionButtonGroup->addButton(ui->nPositionRadioButton, Formation::RelativePosition::North);
     d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Formation::RelativePosition::NorthNorthEast);
     d->positionButtonGroup->addButton(ui->nePositionRadioButton, Formation::RelativePosition::NorthEast);
@@ -264,16 +258,16 @@ void FormationWidget::initUi() noexcept
     ui->replayModeComboBox->addItem(tr("Take control of recorded user aircraft"), Enum::underly(SkyConnectIntf::ReplayMode::UserAircraftManualControl));
     ui->replayModeComboBox->addItem(tr("Fly with formation"), Enum::underly(SkyConnectIntf::ReplayMode::FlyWithFormation));
 
-    initTimeOffsetUi();
-
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
 
-    ui->timeOffsetGroupBox->setStyleSheet(Platform::getFlatButtonCss());
+    initTimeOffsetUi(); 
 }
 
 void FormationWidget::initTimeOffsetUi() noexcept
 {
+    ui->timeOffsetGroupBox->setStyleSheet(Platform::getFlatButtonCss());
+
     // Validation
     ui->timeOffsetSpinBox->setRange(::TimeOffsetMinSec, ::TimeOffsetMaxSec);
     ui->timeOffsetSpinBox->setSuffix(tr(" s"));
@@ -783,6 +777,12 @@ void FormationWidget::updateAircraftCount() const noexcept
     ui->aircraftCountLabel->setText(tr("%1 aircraft", "Number of aircraft in the formation flight", aircraftCount).arg(aircraftCount));
 }
 
+void FormationWidget::updateRelativePosition()
+{
+    updateToolTips();
+    updateAndSendUserAircraftPosition();
+}
+
 // PRIVATE SLOTS
 
 void FormationWidget::updateUi() noexcept
@@ -934,15 +934,18 @@ void FormationWidget::deleteAircraft() noexcept
 
 void FormationWidget::onRelativePositionChanged() noexcept
 {
-    updateToolTips();
-    updateAndSendUserAircraftPosition();
+    QAbstractButton *button = d->positionButtonGroup->checkedButton();
+    FormationSettings::Bearing bearing = bearingFromButton(button);
+    d->moduleSettings.setBearing(bearing);
+
+    updateRelativePosition();
 }
 
 void FormationWidget::onHorizontalDistanceChanged() noexcept
 {
     d->moduleSettings.setHorizontalDistance(static_cast<Formation::HorizontalDistance>(ui->horizontalDistanceSlider->value()));
     updateRelativePositionUi();
-    onRelativePositionChanged();
+    updateRelativePosition();
 }
 
 void FormationWidget::onVerticalDistanceChanged() noexcept
@@ -1033,9 +1036,107 @@ void FormationWidget::onTableLayoutChanged() noexcept
 
 void FormationWidget::onModuleSettingsChanged() noexcept
 {
+    QRadioButton &button = getPositionButtonFromSettings();
+    button.setChecked(true);
     ui->horizontalDistanceSlider->setValue(d->moduleSettings.getHorizontalDistance());
     ui->verticalDistanceSlider->setValue(d->moduleSettings.getVerticalDistance());
     ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
     ui->aircraftTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getFormationAircraftTableState());
     updateReplayModeUi(d->moduleSettings.getReplayMode());
+}
+
+QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
+{
+    QRadioButton *button;
+    switch (d->moduleSettings.getBearing()) {
+    case FormationSettings::Bearing::N:
+        button = ui->nPositionRadioButton;
+        break;
+    case FormationSettings::Bearing::NNE:
+        button = ui->nnePositionRadioButton;
+        break;
+    case FormationSettings::Bearing::NE:
+        button = ui->nePositionRadioButton;
+        break;
+    case FormationSettings::Bearing::ENE:
+        button = ui->enePositionRadioButton;
+        break;
+    case FormationSettings::Bearing::E:
+        button = ui->ePositionRadioButton;
+        break;
+    case FormationSettings::Bearing::ESE:
+        button = ui->esePositionRadioButton;
+        break;
+    case FormationSettings::Bearing::SE:
+        button = ui->sePositionRadioButton;
+        break;
+    case FormationSettings::Bearing::SSE:
+        button = ui->ssePositionRadioButton;
+        break;
+    case FormationSettings::Bearing::S:
+        button = ui->sPositionRadioButton;
+        break;
+    case FormationSettings::Bearing::SSW:
+        button = ui->sswPositionRadioButton;
+        break;
+    case FormationSettings::Bearing::SW:
+        button = ui->swPositionRadioButton;
+        break;
+    case FormationSettings::Bearing::WSW:
+        button = ui->wswPositionRadioButton;
+        break;
+    case FormationSettings::Bearing::W:
+        button = ui->wPositionRadioButton;
+        break;
+    case FormationSettings::Bearing::WNW:
+        button = ui->wnwPositionRadioButton;
+        break;
+    case FormationSettings::Bearing::NW:
+        button = ui->nwPositionRadioButton;
+        break;
+    case FormationSettings::Bearing::NNW:
+        button = ui->nnwPositionRadioButton;
+        break;
+    }
+    return *button;
+}
+
+FormationSettings::Bearing FormationWidget::bearingFromButton(QAbstractButton *button)
+{
+    FormationSettings::Bearing bearing;
+    if (button == ui->nPositionRadioButton) {
+        bearing = FormationSettings::Bearing::N;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::NNE;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::NE;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::ENE;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::E;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::ESE;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::SE;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::SSE;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::S;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::SSW;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::SW;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::WSW;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::W;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::WNW;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = FormationSettings::Bearing::NW;
+    } else {
+        bearing = FormationSettings::Bearing::NNW;
+    }
+
+    return bearing;
 }

@@ -34,6 +34,8 @@ class QShowEvent;
 class QHideEvent;
 class QAction;
 class QTableWidgetItem;
+class QRadioButton;
+class QAbstractButton;
 
 #include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleIntf.h>
@@ -96,6 +98,7 @@ private:
     int getRowByAircraftIndex(int index) const noexcept;
 
     void updateAircraftCount() const noexcept;
+    void updateRelativePosition();
     
 private slots:
     void updateUi() noexcept;
@@ -125,6 +128,8 @@ private slots:
     // Settings
     void onTableLayoutChanged() noexcept;
     void onModuleSettingsChanged() noexcept;
+    QRadioButton &getPositionButtonFromSettings() const noexcept;
+    FormationSettings::Bearing bearingFromButton(QAbstractButton *button);
 };
 
 #endif // FORMATIONWIDGET_H
