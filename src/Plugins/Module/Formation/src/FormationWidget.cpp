@@ -173,9 +173,9 @@ Formation::VerticalDistance FormationWidget::getVerticalDistance() const noexcep
     return static_cast<Formation::VerticalDistance>(ui->verticalDistanceSlider->value());
 }
 
-Formation::RelativePosition FormationWidget::getRelativePosition() const noexcept
+Formation::Bearing FormationWidget::getRelativePosition() const noexcept
 {
-    return static_cast<Formation::RelativePosition>(d->positionButtonGroup->checkedId());
+    return static_cast<Formation::Bearing>(d->positionButtonGroup->checkedId());
 }
 
 // PRIVATE
@@ -213,22 +213,22 @@ void FormationWidget::initUi() noexcept
     QByteArray tableState = d->moduleSettings.getFormationAircraftTableState();
     ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
 
-    d->positionButtonGroup->addButton(ui->nPositionRadioButton, Formation::RelativePosition::North);
-    d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Formation::RelativePosition::NorthNorthEast);
-    d->positionButtonGroup->addButton(ui->nePositionRadioButton, Formation::RelativePosition::NorthEast);
-    d->positionButtonGroup->addButton(ui->enePositionRadioButton, Formation::RelativePosition::EastNorthEast);
-    d->positionButtonGroup->addButton(ui->ePositionRadioButton, Formation::RelativePosition::East);
-    d->positionButtonGroup->addButton(ui->esePositionRadioButton, Formation::RelativePosition::EastSouthEast);
-    d->positionButtonGroup->addButton(ui->sePositionRadioButton, Formation::RelativePosition::SouthEast);
-    d->positionButtonGroup->addButton(ui->ssePositionRadioButton, Formation::RelativePosition::SouthSouthEast);
-    d->positionButtonGroup->addButton(ui->sPositionRadioButton, Formation::RelativePosition::South);
-    d->positionButtonGroup->addButton(ui->sswPositionRadioButton, Formation::RelativePosition::SouthSouthWest);
-    d->positionButtonGroup->addButton(ui->swPositionRadioButton, Formation::RelativePosition::SouthWest);
-    d->positionButtonGroup->addButton(ui->wswPositionRadioButton, Formation::RelativePosition::WestSouthWest);
-    d->positionButtonGroup->addButton(ui->wPositionRadioButton, Formation::RelativePosition::West);
-    d->positionButtonGroup->addButton(ui->wnwPositionRadioButton, Formation::RelativePosition::WestNorthWest);
-    d->positionButtonGroup->addButton(ui->nwPositionRadioButton, Formation::RelativePosition::NorthWest);
-    d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, Formation::RelativePosition::NorthNorthWest);
+    d->positionButtonGroup->addButton(ui->nPositionRadioButton, Formation::Bearing::North);
+    d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Formation::Bearing::NorthNorthEast);
+    d->positionButtonGroup->addButton(ui->nePositionRadioButton, Formation::Bearing::NorthEast);
+    d->positionButtonGroup->addButton(ui->enePositionRadioButton, Formation::Bearing::EastNorthEast);
+    d->positionButtonGroup->addButton(ui->ePositionRadioButton, Formation::Bearing::East);
+    d->positionButtonGroup->addButton(ui->esePositionRadioButton, Formation::Bearing::EastSouthEast);
+    d->positionButtonGroup->addButton(ui->sePositionRadioButton, Formation::Bearing::SouthEast);
+    d->positionButtonGroup->addButton(ui->ssePositionRadioButton, Formation::Bearing::SouthSouthEast);
+    d->positionButtonGroup->addButton(ui->sPositionRadioButton, Formation::Bearing::South);
+    d->positionButtonGroup->addButton(ui->sswPositionRadioButton, Formation::Bearing::SouthSouthWest);
+    d->positionButtonGroup->addButton(ui->swPositionRadioButton, Formation::Bearing::SouthWest);
+    d->positionButtonGroup->addButton(ui->wswPositionRadioButton, Formation::Bearing::WestSouthWest);
+    d->positionButtonGroup->addButton(ui->wPositionRadioButton, Formation::Bearing::West);
+    d->positionButtonGroup->addButton(ui->wnwPositionRadioButton, Formation::Bearing::WestNorthWest);
+    d->positionButtonGroup->addButton(ui->nwPositionRadioButton, Formation::Bearing::NorthWest);
+    d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, Formation::Bearing::NorthNorthWest);
 
     const QString css = QStringLiteral(
 "QRadioButton::indicator:unchecked {"
@@ -697,7 +697,7 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
         if (!skyConnectManager.isInRecordingState() && d->moduleSettings.isRelativePositionPlacementEnabled()) {
             const Formation::HorizontalDistance horizontalDistance {getHorizontalDistance()};
             const Formation::VerticalDistance verticalDistance {getVerticalDistance()};
-            const Formation::RelativePosition relativePosition {getRelativePosition()};
+            const Formation::Bearing relativePosition {getRelativePosition()};
             const PositionData positionData = Formation::calculateRelativePositionToUserAircraft(horizontalDistance,
                                                                                                  verticalDistance,
                                                                                                  relativePosition,
@@ -727,7 +727,7 @@ void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode repl
         case SkyConnectIntf::ReplayMode::FlyWithFormation:
             const Formation::HorizontalDistance horizontalDistance {getHorizontalDistance()};
             const Formation::VerticalDistance verticalDistance {getVerticalDistance()};
-            const Formation::RelativePosition relativePosition {getRelativePosition()};
+            const Formation::Bearing relativePosition {getRelativePosition()};
             const PositionData positionData = Formation::calculateRelativePositionToUserAircraft(horizontalDistance,
                                                                                                  verticalDistance,
                                                                                                  relativePosition,
@@ -934,7 +934,7 @@ void FormationWidget::deleteAircraft() noexcept
 
 void FormationWidget::onRelativePositionChanged() noexcept
 {
-    FormationSettings::Bearing bearing = bearingFromPositionGroup();
+    Formation::Bearing bearing = bearingFromPositionGroup();
     d->moduleSettings.setBearing(bearing);
     updateRelativePosition();
 }
@@ -1046,96 +1046,96 @@ void FormationWidget::onModuleSettingsChanged() noexcept
 QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
 {
     QRadioButton *button {nullptr};
-    const FormationSettings::Bearing bearing = d->moduleSettings.getBearing();
+    const Formation::Bearing bearing = d->moduleSettings.getBearing();
     switch (bearing) {
-    case FormationSettings::Bearing::N:
+    case Formation::Bearing::North:
         button = ui->nPositionRadioButton;
         break;
-    case FormationSettings::Bearing::NNE:
+    case Formation::Bearing::NorthNorthEast:
         button = ui->nnePositionRadioButton;
         break;
-    case FormationSettings::Bearing::NE:
+    case Formation::Bearing::NorthEast:
         button = ui->nePositionRadioButton;
         break;
-    case FormationSettings::Bearing::ENE:
+    case Formation::Bearing::EastNorthEast:
         button = ui->enePositionRadioButton;
         break;
-    case FormationSettings::Bearing::E:
+    case Formation::Bearing::East:
         button = ui->ePositionRadioButton;
         break;
-    case FormationSettings::Bearing::ESE:
+    case Formation::Bearing::EastSouthEast:
         button = ui->esePositionRadioButton;
         break;
-    case FormationSettings::Bearing::SE:
+    case Formation::Bearing::SouthEast:
         button = ui->sePositionRadioButton;
         break;
-    case FormationSettings::Bearing::SSE:
+    case Formation::Bearing::SouthSouthEast:
         button = ui->ssePositionRadioButton;
         break;
-    case FormationSettings::Bearing::S:
+    case Formation::Bearing::South:
         button = ui->sPositionRadioButton;
         break;
-    case FormationSettings::Bearing::SSW:
+    case Formation::Bearing::SouthSouthWest:
         button = ui->sswPositionRadioButton;
         break;
-    case FormationSettings::Bearing::SW:
+    case Formation::Bearing::SouthWest:
         button = ui->swPositionRadioButton;
         break;
-    case FormationSettings::Bearing::WSW:
+    case Formation::Bearing::WestSouthWest:
         button = ui->wswPositionRadioButton;
         break;
-    case FormationSettings::Bearing::W:
+    case Formation::Bearing::West:
         button = ui->wPositionRadioButton;
         break;
-    case FormationSettings::Bearing::WNW:
+    case Formation::Bearing::WestNorthWest:
         button = ui->wnwPositionRadioButton;
         break;
-    case FormationSettings::Bearing::NW:
+    case Formation::Bearing::NorthWest:
         button = ui->nwPositionRadioButton;
         break;
-    case FormationSettings::Bearing::NNW:
+    case Formation::Bearing::NorthNorthWest:
         button = ui->nnwPositionRadioButton;
         break;
     }
     return *button;
 }
 
-FormationSettings::Bearing FormationWidget::bearingFromPositionGroup() const noexcept
+Formation::Bearing FormationWidget::bearingFromPositionGroup() const noexcept
 {
     QAbstractButton *button = d->positionButtonGroup->checkedButton();
-    FormationSettings::Bearing bearing;
+    Formation::Bearing bearing;
     if (button == ui->nPositionRadioButton) {
-        bearing = FormationSettings::Bearing::N;
+        bearing = Formation::Bearing::North;
     } else if (button == ui->nnePositionRadioButton) {
-        bearing = FormationSettings::Bearing::NNE;
+        bearing = Formation::Bearing::NorthNorthEast;
     } else if (button == ui->nePositionRadioButton) {
-        bearing = FormationSettings::Bearing::NE;
+        bearing = Formation::Bearing::NorthEast;
     } else if (button == ui->enePositionRadioButton) {
-        bearing = FormationSettings::Bearing::ENE;
+        bearing = Formation::Bearing::EastNorthEast;
     } else if (button == ui->ePositionRadioButton) {
-        bearing = FormationSettings::Bearing::E;
+        bearing = Formation::Bearing::East;
     } else if (button == ui->esePositionRadioButton) {
-        bearing = FormationSettings::Bearing::ESE;
+        bearing = Formation::Bearing::EastSouthEast;
     } else if (button == ui->sePositionRadioButton) {
-        bearing = FormationSettings::Bearing::SE;
+        bearing = Formation::Bearing::SouthEast;
     } else if (button == ui->ssePositionRadioButton) {
-        bearing = FormationSettings::Bearing::SSE;
+        bearing = Formation::Bearing::SouthSouthEast;
     } else if (button == ui->sPositionRadioButton) {
-        bearing = FormationSettings::Bearing::S;
+        bearing = Formation::Bearing::South;
     } else if (button == ui->sswPositionRadioButton) {
-        bearing = FormationSettings::Bearing::SSW;
+        bearing = Formation::Bearing::SouthSouthWest;
     } else if (button == ui->swPositionRadioButton) {
-        bearing = FormationSettings::Bearing::SW;
+        bearing = Formation::Bearing::SouthWest;
     } else if (button == ui->wswPositionRadioButton) {
-        bearing = FormationSettings::Bearing::WSW;
+        bearing = Formation::Bearing::WestSouthWest;
     } else if (button == ui->wPositionRadioButton) {
-        bearing = FormationSettings::Bearing::W;
+        bearing = Formation::Bearing::West;
     } else if (button == ui->wnwPositionRadioButton) {
-        bearing = FormationSettings::Bearing::WNW;
+        bearing = Formation::Bearing::WestNorthWest;
     } else if (button == ui->nwPositionRadioButton) {
-        bearing = FormationSettings::Bearing::NW;
+        bearing = Formation::Bearing::NorthWest;
     } else {
-        bearing = FormationSettings::Bearing::NNW;
+        bearing = Formation::Bearing::NorthNorthWest;
     }
 
     return bearing;

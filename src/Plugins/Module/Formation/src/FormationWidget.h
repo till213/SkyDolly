@@ -67,7 +67,7 @@ public:
 
     Formation::HorizontalDistance getHorizontalDistance() const noexcept;
     Formation::VerticalDistance getVerticalDistance() const noexcept;
-    Formation::RelativePosition getRelativePosition() const noexcept;
+    Formation::Bearing getRelativePosition() const noexcept;
 
 private:
     std::unique_ptr<Ui::FormationWidget> ui;
@@ -129,7 +129,7 @@ private slots:
     void onTableLayoutChanged() noexcept;
     void onModuleSettingsChanged() noexcept;
     QRadioButton &getPositionButtonFromSettings() const noexcept;
-    FormationSettings::Bearing bearingFromPositionGroup() const noexcept;
+    Formation::Bearing bearingFromPositionGroup() const noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

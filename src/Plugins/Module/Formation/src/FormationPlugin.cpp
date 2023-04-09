@@ -74,7 +74,7 @@ void FormationPlugin::onStartRecording() noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const Formation::HorizontalDistance horizontalDistance {d->formationWidget->getHorizontalDistance()};
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
-    const Formation::RelativePosition relativePosition {d->formationWidget->getRelativePosition()};
+    const Formation::Bearing relativePosition {d->formationWidget->getRelativePosition()};
     // The initial recording position is calculated for timestamp = 0 ("at the beginning")
     const InitialPosition initialPosition = d->moduleSettings.isRelativePositionPlacementEnabled() ?
                 Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, 0) :
@@ -88,7 +88,7 @@ void FormationPlugin::onStartReplay() noexcept
     const bool fromStart = skyConnectManager.isAtEnd();
     const Formation::HorizontalDistance horizontalDistance {d->formationWidget->getHorizontalDistance()};
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
-    const Formation::RelativePosition relativePosition {d->formationWidget->getRelativePosition()};
+    const Formation::Bearing relativePosition {d->formationWidget->getRelativePosition()};
     const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
     const InitialPosition initialPosition = d->moduleSettings.isRelativePositionPlacementEnabled() ?
         Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp) :

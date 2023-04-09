@@ -41,29 +41,6 @@ class FormationSettings : public ModuleBaseSettings
 {
     Q_OBJECT
 public:
-    /*!
-     * The relative bearing of the formation aircraft initial position.
-     *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
-     */
-    enum struct Bearing {
-        N = 0,
-        NNE = 1,
-        NE = 2,
-        ENE = 3,
-        E = 4,
-        ESE = 5,
-        SE = 6,
-        SSE = 7,
-        S = 8,
-        SSW = 9,
-        SW = 10,
-        WSW = 11,
-        W = 12,
-        WNW = 13,
-        NW = 14,
-        NNW = 15
-    };
     FormationSettings() noexcept;
     FormationSettings(const FormationSettings &rhs) = delete;
     FormationSettings(FormationSettings &&rhs) = delete;
@@ -71,8 +48,8 @@ public:
     FormationSettings &operator=(FormationSettings &&rhs) = delete;
     ~FormationSettings() override;
 
-    Bearing getBearing() const noexcept;
-    void setBearing(Bearing bearing) noexcept;
+    Formation::Bearing getBearing() const noexcept;
+    void setBearing(Formation::Bearing bearing) noexcept;
 
     Formation::HorizontalDistance getHorizontalDistance() const noexcept;
     void setHorizontalDistance(Formation::HorizontalDistance horizontalDistance) noexcept;

@@ -45,7 +45,7 @@ namespace
     constexpr const char *ReplayModeKey {"ReplayMode"};
 
     // Defaults
-    constexpr FormationSettings::Bearing DefaultBearing {FormationSettings::Bearing::SW};
+    constexpr Formation::Bearing DefaultBearing {Formation::Bearing::SouthWest};
     constexpr Formation::HorizontalDistance DefaultHorizontalDistance {Formation::HorizontalDistance::Nearby};
     constexpr Formation::VerticalDistance DefaultVerticalDistance {Formation::VerticalDistance::Level};
     constexpr bool DefaultRelativePositionPlacement {true};
@@ -55,7 +55,7 @@ namespace
 struct FormationSettingsPrivate
 {
     QByteArray formationAircraftTableState;
-    FormationSettings::Bearing bearing {::DefaultBearing};
+    Formation::Bearing bearing {::DefaultBearing};
     Formation::HorizontalDistance horizontalDistance {::DefaultHorizontalDistance};
     Formation::VerticalDistance verticalDistance {::DefaultVerticalDistance};
     bool relativePositionPlacement {::DefaultRelativePositionPlacement};
@@ -71,12 +71,12 @@ FormationSettings::FormationSettings() noexcept
 
 FormationSettings::~FormationSettings() = default;
 
-FormationSettings::Bearing FormationSettings::getBearing() const noexcept
+Formation::Bearing FormationSettings::getBearing() const noexcept
 {
     return d->bearing;
 }
 
-void FormationSettings::setBearing(Bearing bearing) noexcept
+void FormationSettings::setBearing(Formation::Bearing bearing) noexcept
 {
     if (d->bearing != bearing) {
         d->bearing = bearing;
@@ -212,7 +212,7 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {false};
-    d->bearing = static_cast<Bearing>(valuesByKey.at(::BearingKey).toInt(&ok));
+    d->bearing = static_cast<Formation::Bearing>(valuesByKey.at(::BearingKey).toInt(&ok));
     if (!ok) {
         d->bearing = ::DefaultBearing;
     }
