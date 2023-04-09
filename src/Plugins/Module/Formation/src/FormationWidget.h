@@ -129,7 +129,7 @@ private slots:
     void onTableLayoutChanged() noexcept;
     void onModuleSettingsChanged() noexcept;
     QRadioButton &getPositionButtonFromSettings() const noexcept;
-    FormationSettings::Bearing bearingFromButton(QAbstractButton *button);
+    FormationSettings::Bearing bearingFromPositionGroup() const noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

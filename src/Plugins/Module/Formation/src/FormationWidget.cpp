@@ -934,10 +934,8 @@ void FormationWidget::deleteAircraft() noexcept
 
 void FormationWidget::onRelativePositionChanged() noexcept
 {
-    QAbstractButton *button = d->positionButtonGroup->checkedButton();
-    FormationSettings::Bearing bearing = bearingFromButton(button);
+    FormationSettings::Bearing bearing = bearingFromPositionGroup();
     d->moduleSettings.setBearing(bearing);
-
     updateRelativePosition();
 }
 
@@ -1047,8 +1045,9 @@ void FormationWidget::onModuleSettingsChanged() noexcept
 
 QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
 {
-    QRadioButton *button;
-    switch (d->moduleSettings.getBearing()) {
+    QRadioButton *button {nullptr};
+    const FormationSettings::Bearing bearing = d->moduleSettings.getBearing();
+    switch (bearing) {
     case FormationSettings::Bearing::N:
         button = ui->nPositionRadioButton;
         break;
@@ -1101,38 +1100,39 @@ QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
     return *button;
 }
 
-FormationSettings::Bearing FormationWidget::bearingFromButton(QAbstractButton *button)
+FormationSettings::Bearing FormationWidget::bearingFromPositionGroup() const noexcept
 {
+    QAbstractButton *button = d->positionButtonGroup->checkedButton();
     FormationSettings::Bearing bearing;
     if (button == ui->nPositionRadioButton) {
         bearing = FormationSettings::Bearing::N;
     } else if (button == ui->nnePositionRadioButton) {
         bearing = FormationSettings::Bearing::NNE;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->nePositionRadioButton) {
         bearing = FormationSettings::Bearing::NE;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->enePositionRadioButton) {
         bearing = FormationSettings::Bearing::ENE;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->ePositionRadioButton) {
         bearing = FormationSettings::Bearing::E;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->esePositionRadioButton) {
         bearing = FormationSettings::Bearing::ESE;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->sePositionRadioButton) {
         bearing = FormationSettings::Bearing::SE;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->ssePositionRadioButton) {
         bearing = FormationSettings::Bearing::SSE;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->sPositionRadioButton) {
         bearing = FormationSettings::Bearing::S;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->sswPositionRadioButton) {
         bearing = FormationSettings::Bearing::SSW;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->swPositionRadioButton) {
         bearing = FormationSettings::Bearing::SW;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->wswPositionRadioButton) {
         bearing = FormationSettings::Bearing::WSW;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->wPositionRadioButton) {
         bearing = FormationSettings::Bearing::W;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->wnwPositionRadioButton) {
         bearing = FormationSettings::Bearing::WNW;
-    } else if (button == ui->nnePositionRadioButton) {
+    } else if (button == ui->nwPositionRadioButton) {
         bearing = FormationSettings::Bearing::NW;
     } else {
         bearing = FormationSettings::Bearing::NNW;
