@@ -45,7 +45,7 @@ namespace
     constexpr const char *ReplayModeKey {"ReplayMode"};
 
     // Defaults
-    constexpr Formation::Bearing DefaultBearing {Formation::Bearing::SouthWest};
+    constexpr Formation::Bearing DefaultBearing {Formation::Bearing::SouthEast};
     constexpr Formation::HorizontalDistance DefaultHorizontalDistance {Formation::HorizontalDistance::Nearby};
     constexpr Formation::VerticalDistance DefaultVerticalDistance {Formation::VerticalDistance::Level};
     constexpr bool DefaultRelativePositionPlacement {true};

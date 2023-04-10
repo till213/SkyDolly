@@ -130,6 +130,7 @@ private slots:
     void onModuleSettingsChanged() noexcept;
     QRadioButton &getPositionButtonFromSettings() const noexcept;
     Formation::Bearing bearingFromPositionGroup() const noexcept;
+    void restoreDefaultSettings() noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

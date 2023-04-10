@@ -324,6 +324,8 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::onInitialPositionPlacementChanged);
     connect(ui->replayModeComboBox, &QComboBox::activated,
             this, &FormationWidget::onReplayModeSelected);
+    connect(ui->restoreDefaultsPushButton, &QPushButton::clicked,
+            this, &FormationWidget::restoreDefaultSettings);
 
     // Time offset
     connect(ui->fastBackwardOffsetPushButton, &QPushButton::clicked,
@@ -1139,4 +1141,8 @@ Formation::Bearing FormationWidget::bearingFromPositionGroup() const noexcept
     }
 
     return bearing;
+}
+
+void FormationWidget::restoreDefaultSettings() noexcept {
+    d->moduleSettings.restoreDefaults();
 }
