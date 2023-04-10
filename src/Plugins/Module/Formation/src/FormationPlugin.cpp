@@ -24,6 +24,10 @@
  */
 #include <memory>
 
+#include <QObject>
+#include <QUuid>
+
+#include <Kernel/Const.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -48,9 +52,20 @@ struct FormationPluginPrivate
 FormationPlugin::FormationPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
       d(std::make_unique<FormationPluginPrivate>())
-{}
+{
+    restoreSettings(QUuid(Const::FormationModuleUuid));
+}
 
-FormationPlugin::~FormationPlugin() = default;
+FormationPlugin::~FormationPlugin()
+{
+    storeSettings(QUuid(Const::FormationModuleUuid));
+};
+
+QUuid FormationPlugin::getUuid() const noexcept
+{
+    static QUuid uuid {Const::FormationModuleUuid};
+    return uuid;
+}
 
 QString FormationPlugin::getModuleName() const noexcept
 {

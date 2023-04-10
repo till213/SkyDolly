@@ -48,6 +48,7 @@ public:
     TemplatePlugin &operator=(TemplatePlugin &&rhs) = delete;
     ~TemplatePlugin() override;
 
+    QUuid getUuid() const noexcept override;
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
 

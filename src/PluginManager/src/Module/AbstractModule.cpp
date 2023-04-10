@@ -26,6 +26,7 @@
 
 #include <QWidget>
 #include <QAction>
+#include <QUuid>
 
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>

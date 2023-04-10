@@ -94,7 +94,6 @@ struct ModuleManagerPrivate
     QLayout &layout;
     QActionGroup *moduleActionGroup {new QActionGroup(&layout)};
     ModuleIntf *activeModule {nullptr};
-    QUuid activeModuleUuid;
     // Key: uuid - value: plugin path
     tsl::ordered_map<QUuid, QString, QUuidHasher> moduleRegistry;
     ModuleManager::ActionRegistry actionRegistry;
@@ -128,8 +127,6 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
 ModuleManager::~ModuleManager()
 {
     if (d->pluginLoader->isLoaded()) {
-        // Store current module settings
-        d->activeModule->storeSettings(d->activeModuleUuid);
         d->pluginLoader->unload();
     }
 }
@@ -150,22 +147,18 @@ std::optional<std::reference_wrapper<ModuleIntf>> ModuleManager::getActiveModule
 }
 
 void ModuleManager::activateModule(QUuid uuid) noexcept
-{   
-    if (d->activeModuleUuid != uuid) {
+{
+    if (d->activeModule == nullptr || d->activeModule->getUuid() != uuid) {
         if (d->pluginLoader->isLoaded()) {
             // Unload the previous module
-            d->activeModule->storeSettings(d->activeModuleUuid);
             d->pluginLoader->unload();
             d->activeModule = nullptr;
-            d->activeModuleUuid = QUuid();
         }
         QString modulePath = d->moduleRegistry[uuid];
         d->pluginLoader->setFileName(modulePath);
         QObject *plugin = d->pluginLoader->instance();
         d->activeModule = qobject_cast<ModuleIntf *>(plugin);
         if (d->activeModule != nullptr) {
-            d->activeModule->restoreSettings(uuid);
-            d->activeModuleUuid = uuid;
             d->layout.addWidget(d->activeModule->getWidget());
             d->actionRegistry[uuid]->setChecked(true);
             emit activated(d->activeModule->getModuleName(), uuid);
