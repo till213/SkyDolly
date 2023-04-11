@@ -86,6 +86,7 @@ private:
     void initViewUi() noexcept;
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;
+    void createTrayIcon() noexcept;
     void initSkyConnectPlugin() noexcept;
 
     /*

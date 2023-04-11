@@ -38,7 +38,6 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QDir>
-#include <QUuid>
 #include <QString>
 #include <QStringBuilder>
 #include <QUuid>
@@ -49,6 +48,8 @@
 #include <QLineEdit>
 #include <QButtonGroup>
 #include <QPushButton>
+#include <QMenu>
+#include <QSystemTrayIcon>
 #include <QRadioButton>
 #include <QDoubleValidator>
 #include <QIcon>
@@ -144,6 +145,9 @@ struct MainWindowPrivate
     FlightDialog *flightDialog {nullptr};
     SimulationVariablesDialog *simulationVariablesDialog {nullptr};
     StatisticsDialog *statisticsDialog {nullptr};
+
+    QMenu *trayIconMenu {nullptr};
+    QSystemTrayIcon *trayIcon {nullptr};
 
     Unit unit;
     QSize lastNormalUiSize;
@@ -457,6 +461,7 @@ void MainWindow::initUi() noexcept
     initViewUi();
     initControlUi();
     initReplaySpeedUi();
+    createTrayIcon();
 
     const bool minimalUi = isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
@@ -804,6 +809,21 @@ void MainWindow::initReplaySpeedUi() noexcept
     }
 
     replaySpeedLayout->addWidget(d->replaySpeedUnitComboBox);
+}
+
+void MainWindow::createTrayIcon() noexcept
+{
+    d->trayIconMenu = new QMenu(this);
+    d->trayIconMenu->addAction(ui->recordAction);
+    d->trayIconMenu->addAction(ui->playAction);
+    d->trayIconMenu->addAction(ui->stopAction);
+    d->trayIconMenu->addSeparator();
+    d->trayIconMenu->addAction(ui->quitAction);
+
+    d->trayIcon = new QSystemTrayIcon(this);
+    d->trayIcon->setContextMenu(d->trayIconMenu);
+
+    d->trayIcon->setIcon(QIcon(":/img/icons/application-icon.png"));
 }
 
 void MainWindow::initSkyConnectPlugin() noexcept
@@ -1518,6 +1538,8 @@ void MainWindow::updateMainWindow() noexcept
     } else {
         setWindowTitle(Version::getApplicationName());
     }
+
+    d->trayIcon->show();
 }
 
 void MainWindow::onModuleActivated(const QString &title, [[maybe_unused]] QUuid uuid) noexcept
