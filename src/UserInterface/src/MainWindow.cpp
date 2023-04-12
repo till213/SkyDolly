@@ -297,8 +297,10 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onTimestampChanged);
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &MainWindow::updateUi);
+    connect(&skyConnectManager, &SkyConnectManager::recordingStarted,
+            this, &MainWindow::onRecordingStarted);
     connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-            this, &MainWindow::onRecordingDurationChanged);
+            this, &MainWindow::onRecordingStopped);
 
     // Replay speed
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
@@ -1437,6 +1439,19 @@ void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible
         // Shrink to minimal size
         QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
+}
+
+void MainWindow::onRecordingStarted() noexcept
+{
+    d->trayIcon->showMessage(Version::getApplicationName(), tr("Recording started."),
+                             QSystemTrayIcon::Information, 3000);
+}
+
+void MainWindow::onRecordingStopped() noexcept
+{
+    d->trayIcon->showMessage(Version::getApplicationName(), tr("Recording stopped."),
+                             QSystemTrayIcon::Information, 3000);
+    onRecordingDurationChanged();
 }
 
 void MainWindow::onRecordingDurationChanged() noexcept

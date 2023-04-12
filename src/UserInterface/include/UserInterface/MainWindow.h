@@ -166,6 +166,9 @@ private slots:
     void onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept;
     void onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept;
 
+    void onRecordingStarted() noexcept;
+    void onRecordingStopped() noexcept;
+
     /*
      * Updates the replay duration (maximum time) and then position slider position.
      */
