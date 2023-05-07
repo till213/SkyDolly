@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16...3.23)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 include(CMakePrintHelpers)
 include(CheckIPOSupported)
@@ -60,10 +60,10 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Sql LinguistTools)
 
 # 3rd Party
 # ordered-map (Tessil)
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/ordered-map)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdParty/ordered-map)
 
 # GeographicLib (https://github.com/geographiclib/geographiclib)
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geographiclib EXCLUDE_FROM_ALL)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdParty/geographiclib EXCLUDE_FROM_ALL)
 set_target_properties(GeographicLib_SHARED
     PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
@@ -89,19 +89,19 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 # Application libraries
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Model)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Flight)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Widget)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/PluginManager)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Kernel)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Model)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Persistence)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Flight)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Widget)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/PluginManager)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/UserInterface)
 
 # Application
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyDolly)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/SkyDolly)
 
 # Resource (data) files
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdParty/geoids)
 include(src/Persistence/cmake/Locations.cmake)
 
 add_custom_target(${APP_PROJECT_NAME})
