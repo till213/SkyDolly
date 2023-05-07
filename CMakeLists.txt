@@ -16,7 +16,7 @@ project(
     VERSION 0.17.0
     DESCRIPTION "Sky Dolly - The Black Sheep for Your Flight Recordings"
     HOMEPAGE_URL "https://github.com/till213/SkyDolly"
-    LANGUAGES CXX    
+    LANGUAGES CXX
 )
 
 include(InitSubmodules)
@@ -124,16 +124,16 @@ target_sources(${APP_PROJECT_NAME}
 )
 
 # Plugins
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugins)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Plugins)
 
 # Documentation
 option(SKY_DOXY_DOC "Build Doxygen documentation" OFF)
 if(SKY_DOXY_DOC)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/doc)
 endif()
 
 # Tests
 option(SKY_TESTS "Build Sky Dolly unit tests" OFF)
 if(SKY_TESTS)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/test)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/test)
 endif()
