@@ -44,7 +44,7 @@ struct FormationPluginPrivate
 {
     FormationSettings moduleSettings;
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
-    std::unique_ptr<FormationWidget> formationWidget{std::make_unique<FormationWidget>(moduleSettings)};
+    std::unique_ptr<FormationWidget> formationWidget {std::make_unique<FormationWidget>(moduleSettings)};
 };
 
 // PUBLIC
