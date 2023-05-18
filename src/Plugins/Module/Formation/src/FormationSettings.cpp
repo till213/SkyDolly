@@ -143,10 +143,7 @@ QByteArray FormationSettings::getFormationAircraftTableState() const
 
 void FormationSettings::setFormationAircraftTableState(QByteArray state) noexcept
 {
-    if (d->formationAircraftTableState != state) {
-        d->formationAircraftTableState = std::move(state);
-        emit changed();
-    }
+    d->formationAircraftTableState = std::move(state);
 }
 
 // PROTECTED

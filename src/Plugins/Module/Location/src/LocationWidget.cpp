@@ -154,7 +154,10 @@ LocationWidget::LocationWidget(LocationSettings &moduleSettings, QWidget *parent
 {
     ui->setupUi(this);
     initUi();
-    updateUi();
+    // The location table is updated once the plugin settings are restored (initiated
+    // by LocationPlugin)
+    updateEditUi();
+    updateInfoUi();
     frenchConnection();
 }
 
@@ -1148,6 +1151,9 @@ void LocationWidget::onModuleSettingsChanged() noexcept
     ui->defaultOnGroundCheckBox->blockSignals(false);
 
     // Table state
+    ui->locationTableWidget->horizontalHeader()->blockSignals(true);
     ui->locationTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLocationTableState());
+    ui->locationTableWidget->horizontalHeader()->blockSignals(false);
+
     updateTable();
 }

@@ -158,9 +158,6 @@ FormationWidget::FormationWidget(FormationSettings &settings, QWidget *parent) n
 FormationWidget::~FormationWidget()
 {
     const QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
-    d->moduleSettings.blockSignals(true);
-    d->moduleSettings.setFormationAircraftTableState(tableState);
-    d->moduleSettings.blockSignals(false);
 }
 
 Formation::HorizontalDistance FormationWidget::getHorizontalDistance() const noexcept
@@ -443,6 +440,8 @@ void FormationWidget::updateRelativePositionUi() noexcept
         ui->verticalDistanceTextLabel->setText(tr("Above"));
         break;
     }
+
+    updateToolTips();
 }
 
 void FormationWidget::updateEditUi() noexcept
@@ -781,7 +780,6 @@ void FormationWidget::updateAircraftCount() const noexcept
 
 void FormationWidget::updateRelativePosition()
 {
-    updateToolTips();
     updateAndSendUserAircraftPosition();
 }
 
@@ -938,6 +936,7 @@ void FormationWidget::onRelativePositionChanged() noexcept
 {
     Formation::Bearing bearing = bearingFromPositionGroup();
     d->moduleSettings.setBearing(bearing);
+    updateRelativePositionUi();
     updateRelativePosition();
 }
 
@@ -1037,11 +1036,26 @@ void FormationWidget::onTableLayoutChanged() noexcept
 void FormationWidget::onModuleSettingsChanged() noexcept
 {
     QRadioButton &button = getPositionButtonFromSettings();
+    button.blockSignals(true);
     button.setChecked(true);
+    button.blockSignals(false);
+
+    ui->horizontalDistanceSlider->blockSignals(true);
     ui->horizontalDistanceSlider->setValue(d->moduleSettings.getHorizontalDistance());
+    ui->horizontalDistanceSlider->blockSignals(false);
+
+    ui->verticalDistanceSlider->blockSignals(true);
     ui->verticalDistanceSlider->setValue(d->moduleSettings.getVerticalDistance());
+    ui->verticalDistanceSlider->blockSignals(false);
+
+    ui->relativePositionCheckBox->blockSignals(true);
     ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
+    ui->relativePositionCheckBox->blockSignals(false);
+
+    ui->aircraftTableWidget->horizontalHeader()->blockSignals(true);
     ui->aircraftTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getFormationAircraftTableState());
+    ui->aircraftTableWidget->horizontalHeader()->blockSignals(false);
+
     updateReplayModeUi(d->moduleSettings.getReplayMode());
 }
 
