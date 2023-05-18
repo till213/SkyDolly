@@ -78,6 +78,7 @@ private:
     void frenchConnection() noexcept;
 
     void updateTable() noexcept;
+    void updateInteractiveUi() noexcept;
     void updateAircraftIcons() noexcept;
     void updateRelativePositionUi() noexcept;
     void updateEditUi() noexcept;

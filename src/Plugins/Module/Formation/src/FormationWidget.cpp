@@ -118,9 +118,6 @@ struct FormationWidgetPrivate
     QButtonGroup *positionButtonGroup;
     int selectedAircraftIndex {Const::InvalidIndex};
     Unit unit;
-    // Columns are only auto-resized the first time the table is loaded
-    // After that manual column resizes are kept
-    bool columnsAutoResized {false};
 
     static inline int sequenceNumberColumn {::InvalidColumn};
     static inline int aircraftTypeColumn {::InvalidColumn};
@@ -151,7 +148,9 @@ FormationWidget::FormationWidget(FormationSettings &settings, QWidget *parent) n
 {
     ui->setupUi(this);
     initUi();
-    updateUi();
+    // The aircraft table is updated once the plugin settings are restored (initiated
+    // by FormationPlugin)
+    updateInteractiveUi();
     frenchConnection();
 }
 
@@ -206,9 +205,6 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->sortByColumn(FormationWidgetPrivate::sequenceNumberColumn, Qt::SortOrder::AscendingOrder);
     ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->aircraftTableWidget->setAlternatingRowColors(true);
-
-    QByteArray tableState = d->moduleSettings.getFormationAircraftTableState();
-    ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
 
     d->positionButtonGroup->addButton(ui->nPositionRadioButton, Formation::Bearing::North);
     d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Formation::Bearing::NorthNorthEast);
@@ -365,14 +361,28 @@ void FormationWidget::updateTable() noexcept
     }
 
     ui->aircraftTableWidget->setSortingEnabled(true);
-    if (!d->columnsAutoResized) {
+
+    QByteArray tableState = d->moduleSettings.getFormationAircraftTableState();
+    if (!tableState.isEmpty()) {
+        ui->aircraftTableWidget->horizontalHeader()->blockSignals(true);
+        ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
+        ui->aircraftTableWidget->horizontalHeader()->blockSignals(false);
+    } else {
         ui->aircraftTableWidget->resizeColumnsToContents();
-        d->columnsAutoResized = true;
     }
     d->selectedAircraftIndex = Const::InvalidIndex;
     ui->aircraftTableWidget->blockSignals(false);
 
     updateAircraftCount();
+}
+
+void FormationWidget::updateInteractiveUi() noexcept
+{
+    updateRelativePositionUi();
+    updateEditUi();
+    updateTimeOffsetUi();
+    updateReplayUi();
+    updateToolTips();
 }
 
 void FormationWidget::updateAircraftIcons() noexcept
@@ -788,11 +798,7 @@ void FormationWidget::updateRelativePosition()
 void FormationWidget::updateUi() noexcept
 {
     updateTable();
-    updateRelativePositionUi();
-    updateEditUi();    
-    updateTimeOffsetUi();
-    updateReplayUi();
-    updateToolTips();
+    updateInteractiveUi();
 }
 
 void FormationWidget::onUserAircraftChanged() noexcept
@@ -1052,10 +1058,7 @@ void FormationWidget::onModuleSettingsChanged() noexcept
     ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
     ui->relativePositionCheckBox->blockSignals(false);
 
-    ui->aircraftTableWidget->horizontalHeader()->blockSignals(true);
-    ui->aircraftTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getFormationAircraftTableState());
-    ui->aircraftTableWidget->horizontalHeader()->blockSignals(false);
-
+    updateTable();
     updateReplayModeUi(d->moduleSettings.getReplayMode());
 }
 

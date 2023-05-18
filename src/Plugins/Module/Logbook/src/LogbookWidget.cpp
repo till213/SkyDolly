@@ -119,9 +119,6 @@ struct LogbookWidgetPrivate
     std::int64_t flightInMemoryId {Const::InvalidId};
     Unit unit;
     std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
-    // Columns are only auto-resized the first time the table is loaded
-    // After that manual column resizes are kept
-    bool columnsAutoResized {false};
 
     // Flight table columns
     static inline int flightIdColumn {::InvalidColumn};
@@ -270,12 +267,17 @@ void LogbookWidget::updateTable() noexcept
         }
 
         ui->logTableWidget->setSortingEnabled(true);
-        if (!d->columnsAutoResized) {
+
+        QByteArray tableState = d->moduleSettings.getLogbookTableState();
+        if (!tableState.isEmpty()) {
+            ui->logTableWidget->horizontalHeader()->blockSignals(true);
+            ui->logTableWidget->horizontalHeader()->restoreState(tableState);
+            ui->logTableWidget->horizontalHeader()->blockSignals(false);
+        } else {
             ui->logTableWidget->resizeColumnsToContents();
             // Reserve some space for the aircraft icon
             const int idColumnWidth = static_cast<int>(std::round(1.25 * ui->logTableWidget->columnWidth(LogbookWidgetPrivate::flightIdColumn)));
             ui->logTableWidget->setColumnWidth(LogbookWidgetPrivate::flightIdColumn, idColumnWidth);
-            d->columnsAutoResized = true;
         }
         ui->logTableWidget->blockSignals(false);
 
@@ -971,10 +973,6 @@ void LogbookWidget::onModuleSettingsChanged() noexcept
         }
     }
     ui->engineTypeComboBox->blockSignals(false);
-
-    ui->logTableWidget->horizontalHeader()->blockSignals(true);
-    ui->logTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLogbookTableState());
-    ui->logTableWidget->horizontalHeader()->blockSignals(false);
 
     updateTable();
 }
