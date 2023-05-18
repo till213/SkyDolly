@@ -44,7 +44,7 @@ else()
 endif()
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_LIST_DIR}/include
     PRIVATE
         include/Widget
 )

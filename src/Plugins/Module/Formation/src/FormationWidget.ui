@@ -6,21 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>755</width>
-    <height>469</height>
+    <width>926</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_12">
      <item>
       <widget class="QTableWidget" name="aircraftTableWidget"/>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMinimumSize</enum>
+       </property>
        <item>
         <widget class="QGroupBox" name="relativePositionGroupBox">
          <property name="sizePolicy">
@@ -49,7 +52,7 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_9">
              <property name="sizeConstraint">
-              <enum>QLayout::SetFixedSize</enum>
+              <enum>QLayout::SetMinimumSize</enum>
              </property>
              <item>
               <spacer name="horizontalSpacer_5">
@@ -273,45 +276,6 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
-                <spacer name="horizontalSpacer_15">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>1</width>
-                   <height>1</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="1" column="2">
-                <spacer name="horizontalSpacer_16">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>1</width>
-                   <height>1</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="1" column="3">
-                <spacer name="horizontalSpacer_17">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>1</width>
-                   <height>1</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
                <item row="1" column="4">
                 <widget class="QRadioButton" name="enePositionRadioButton">
                  <property name="sizePolicy">
@@ -350,19 +314,6 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="1">
-                <spacer name="horizontalSpacer_18">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>1</width>
-                   <height>1</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
                <item row="2" column="2">
                 <widget class="QLabel" name="referenceAircraftLabel">
                  <property name="sizePolicy">
@@ -387,19 +338,6 @@
                   <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
-               </item>
-               <item row="2" column="3">
-                <spacer name="horizontalSpacer_19">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>1</width>
-                   <height>1</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
                <item row="2" column="4">
                 <widget class="QRadioButton" name="ePositionRadioButton">
@@ -438,45 +376,6 @@
                   <string/>
                  </property>
                 </widget>
-               </item>
-               <item row="3" column="1">
-                <spacer name="horizontalSpacer_20">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>1</width>
-                   <height>1</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="3" column="2">
-                <spacer name="horizontalSpacer_21">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>1</width>
-                   <height>1</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="3" column="3">
-                <spacer name="horizontalSpacer_22">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>1</width>
-                   <height>1</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
                <item row="3" column="4">
                 <widget class="QRadioButton" name="esePositionRadioButton">
@@ -685,6 +584,41 @@
               </layout>
              </item>
              <item>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <widget class="QPushButton" name="restoreDefaultsPushButton">
+                 <property name="toolTip">
+                  <string>Restore default values.</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normalon>:/img/icons/close-normal.png</normalon>
+                  </iconset>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
               <spacer name="horizontalSpacer_6">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -833,8 +767,8 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>1</width>
-           <height>1</height>
+           <width>13</width>
+           <height>13</height>
           </size>
          </property>
         </spacer>

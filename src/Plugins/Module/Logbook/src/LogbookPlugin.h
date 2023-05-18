@@ -48,6 +48,7 @@ public:
     LogbookPlugin &operator=(LogbookPlugin &&rhs) = delete;
     ~LogbookPlugin() override;
 
+    QUuid getUuid() const noexcept override;
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
 

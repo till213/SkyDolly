@@ -76,12 +76,6 @@ namespace
     constexpr int InvalidRow {-1};
     constexpr int InvalidColumn {-1};
 
-    enum ReplayModeIndex {
-        Normal,
-        UserAircraftManualControl,
-        FlyWithFormation
-    };
-
     // Milliseconds
     constexpr std::int64_t SmallTimeOffset = 100;
     constexpr std::int64_t LargeTimeOffset = 1000;
@@ -124,9 +118,6 @@ struct FormationWidgetPrivate
     QButtonGroup *positionButtonGroup;
     int selectedAircraftIndex {Const::InvalidIndex};
     Unit unit;
-    // Columns are only auto-resized the first time the table is loaded
-    // After that manual column resizes are kept
-    bool columnsAutoResized {false};
 
     static inline int sequenceNumberColumn {::InvalidColumn};
     static inline int aircraftTypeColumn {::InvalidColumn};
@@ -157,14 +148,15 @@ FormationWidget::FormationWidget(FormationSettings &settings, QWidget *parent) n
 {
     ui->setupUi(this);
     initUi();
-    updateUi();
+    // The aircraft table is updated once the plugin settings are restored (initiated
+    // by FormationPlugin)
+    updateInteractiveUi();
     frenchConnection();
 }
 
 FormationWidget::~FormationWidget()
 {
     const QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
-    d->moduleSettings.setFormationAircraftTableState(tableState);
 }
 
 Formation::HorizontalDistance FormationWidget::getHorizontalDistance() const noexcept
@@ -177,9 +169,9 @@ Formation::VerticalDistance FormationWidget::getVerticalDistance() const noexcep
     return static_cast<Formation::VerticalDistance>(ui->verticalDistanceSlider->value());
 }
 
-Formation::RelativePosition FormationWidget::getRelativePosition() const noexcept
+Formation::Bearing FormationWidget::getRelativePosition() const noexcept
 {
-    return static_cast<Formation::RelativePosition>(d->positionButtonGroup->checkedId());
+    return static_cast<Formation::Bearing>(d->positionButtonGroup->checkedId());
 }
 
 // PRIVATE
@@ -214,31 +206,22 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->aircraftTableWidget->setAlternatingRowColors(true);
 
-    QByteArray tableState = d->moduleSettings.getFormationAircraftTableState();
-    ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
-
-    // Default position is south-east
-    ui->sePositionRadioButton->setChecked(true);
-    ui->horizontalDistanceSlider->setValue(Formation::HorizontalDistance::Nearby);
-    ui->verticalDistanceSlider->setValue(Formation::VerticalDistance::Level);
-    ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
-
-    d->positionButtonGroup->addButton(ui->nPositionRadioButton, Formation::RelativePosition::North);
-    d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Formation::RelativePosition::NorthNorthEast);
-    d->positionButtonGroup->addButton(ui->nePositionRadioButton, Formation::RelativePosition::NorthEast);
-    d->positionButtonGroup->addButton(ui->enePositionRadioButton, Formation::RelativePosition::EastNorthEast);
-    d->positionButtonGroup->addButton(ui->ePositionRadioButton, Formation::RelativePosition::East);
-    d->positionButtonGroup->addButton(ui->esePositionRadioButton, Formation::RelativePosition::EastSouthEast);
-    d->positionButtonGroup->addButton(ui->sePositionRadioButton, Formation::RelativePosition::SouthEast);
-    d->positionButtonGroup->addButton(ui->ssePositionRadioButton, Formation::RelativePosition::SouthSouthEast);
-    d->positionButtonGroup->addButton(ui->sPositionRadioButton, Formation::RelativePosition::South);
-    d->positionButtonGroup->addButton(ui->sswPositionRadioButton, Formation::RelativePosition::SouthSouthWest);
-    d->positionButtonGroup->addButton(ui->swPositionRadioButton, Formation::RelativePosition::SouthWest);
-    d->positionButtonGroup->addButton(ui->wswPositionRadioButton, Formation::RelativePosition::WestSouthWest);
-    d->positionButtonGroup->addButton(ui->wPositionRadioButton, Formation::RelativePosition::West);
-    d->positionButtonGroup->addButton(ui->wnwPositionRadioButton, Formation::RelativePosition::WestNorthWest);
-    d->positionButtonGroup->addButton(ui->nwPositionRadioButton, Formation::RelativePosition::NorthWest);
-    d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, Formation::RelativePosition::NorthNorthWest);
+    d->positionButtonGroup->addButton(ui->nPositionRadioButton, Formation::Bearing::North);
+    d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Formation::Bearing::NorthNorthEast);
+    d->positionButtonGroup->addButton(ui->nePositionRadioButton, Formation::Bearing::NorthEast);
+    d->positionButtonGroup->addButton(ui->enePositionRadioButton, Formation::Bearing::EastNorthEast);
+    d->positionButtonGroup->addButton(ui->ePositionRadioButton, Formation::Bearing::East);
+    d->positionButtonGroup->addButton(ui->esePositionRadioButton, Formation::Bearing::EastSouthEast);
+    d->positionButtonGroup->addButton(ui->sePositionRadioButton, Formation::Bearing::SouthEast);
+    d->positionButtonGroup->addButton(ui->ssePositionRadioButton, Formation::Bearing::SouthSouthEast);
+    d->positionButtonGroup->addButton(ui->sPositionRadioButton, Formation::Bearing::South);
+    d->positionButtonGroup->addButton(ui->sswPositionRadioButton, Formation::Bearing::SouthSouthWest);
+    d->positionButtonGroup->addButton(ui->swPositionRadioButton, Formation::Bearing::SouthWest);
+    d->positionButtonGroup->addButton(ui->wswPositionRadioButton, Formation::Bearing::WestSouthWest);
+    d->positionButtonGroup->addButton(ui->wPositionRadioButton, Formation::Bearing::West);
+    d->positionButtonGroup->addButton(ui->wnwPositionRadioButton, Formation::Bearing::WestNorthWest);
+    d->positionButtonGroup->addButton(ui->nwPositionRadioButton, Formation::Bearing::NorthWest);
+    d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, Formation::Bearing::NorthNorthWest);
 
     const QString css = QStringLiteral(
 "QRadioButton::indicator:unchecked {"
@@ -264,20 +247,20 @@ void FormationWidget::initUi() noexcept
     ui->nwPositionRadioButton->setStyleSheet(css);
     ui->nnwPositionRadioButton->setStyleSheet(css);
 
-    ui->replayModeComboBox->insertItem(ReplayModeIndex::Normal, tr("Formation (Normal)"), Enum::underly(SkyConnectIntf::ReplayMode::Normal));
-    ui->replayModeComboBox->insertItem(ReplayModeIndex::UserAircraftManualControl, tr("Take control of recorded user aircraft"), Enum::underly(SkyConnectIntf::ReplayMode::UserAircraftManualControl));
-    ui->replayModeComboBox->insertItem(ReplayModeIndex::FlyWithFormation, tr("Fly with formation"), Enum::underly(SkyConnectIntf::ReplayMode::FlyWithFormation));
-
-    initTimeOffsetUi();
+    ui->replayModeComboBox->addItem(tr("Formation (Normal)"), Enum::underly(SkyConnectIntf::ReplayMode::Normal));
+    ui->replayModeComboBox->addItem(tr("Take control of recorded user aircraft"), Enum::underly(SkyConnectIntf::ReplayMode::UserAircraftManualControl));
+    ui->replayModeComboBox->addItem(tr("Fly with formation"), Enum::underly(SkyConnectIntf::ReplayMode::FlyWithFormation));
 
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
 
-    ui->timeOffsetGroupBox->setStyleSheet(Platform::getFlatButtonCss());
+    initTimeOffsetUi(); 
 }
 
 void FormationWidget::initTimeOffsetUi() noexcept
 {
+    ui->timeOffsetGroupBox->setStyleSheet(Platform::getFlatButtonCss());
+
     // Validation
     ui->timeOffsetSpinBox->setRange(::TimeOffsetMinSec, ::TimeOffsetMaxSec);
     ui->timeOffsetSpinBox->setSuffix(tr(" s"));
@@ -322,18 +305,20 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateUserAircraftIndex);
     connect(ui->deletePushButton, &QPushButton::clicked,
             this, &FormationWidget::deleteAircraft);
-    connect(ui->relativePositionCheckBox, &QCheckBox::stateChanged,
-            this, &FormationWidget::onInitialPositionPlacementChanged);
 
     // Relative position, replay mode
     connect(ui->horizontalDistanceSlider, &QSlider::valueChanged,
-            this, &FormationWidget::onRelativeDistanceChanged);
+            this, &FormationWidget::onHorizontalDistanceChanged);
     connect(ui->verticalDistanceSlider, &QSlider::valueChanged,
-            this, &FormationWidget::onRelativeDistanceChanged);
+            this, &FormationWidget::onVerticalDistanceChanged);
     connect(d->positionButtonGroup, &QButtonGroup::idClicked,
             this, &FormationWidget::onRelativePositionChanged);
+    connect(ui->relativePositionCheckBox, &QCheckBox::stateChanged,
+            this, &FormationWidget::onInitialPositionPlacementChanged);
     connect(ui->replayModeComboBox, &QComboBox::activated,
             this, &FormationWidget::onReplayModeSelected);
+    connect(ui->restoreDefaultsPushButton, &QPushButton::clicked,
+            this, &FormationWidget::restoreDefaultSettings);
 
     // Time offset
     connect(ui->fastBackwardOffsetPushButton, &QPushButton::clicked,
@@ -376,14 +361,28 @@ void FormationWidget::updateTable() noexcept
     }
 
     ui->aircraftTableWidget->setSortingEnabled(true);
-    if (!d->columnsAutoResized) {
+
+    QByteArray tableState = d->moduleSettings.getFormationAircraftTableState();
+    if (!tableState.isEmpty()) {
+        ui->aircraftTableWidget->horizontalHeader()->blockSignals(true);
+        ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
+        ui->aircraftTableWidget->horizontalHeader()->blockSignals(false);
+    } else {
         ui->aircraftTableWidget->resizeColumnsToContents();
-        d->columnsAutoResized = true;
     }
     d->selectedAircraftIndex = Const::InvalidIndex;
     ui->aircraftTableWidget->blockSignals(false);
 
     updateAircraftCount();
+}
+
+void FormationWidget::updateInteractiveUi() noexcept
+{
+    updateRelativePositionUi();
+    updateEditUi();
+    updateTimeOffsetUi();
+    updateReplayUi();
+    updateToolTips();
 }
 
 void FormationWidget::updateAircraftIcons() noexcept
@@ -451,6 +450,8 @@ void FormationWidget::updateRelativePositionUi() noexcept
         ui->verticalDistanceTextLabel->setText(tr("Above"));
         break;
     }
+
+    updateToolTips();
 }
 
 void FormationWidget::updateEditUi() noexcept
@@ -488,19 +489,21 @@ void FormationWidget::updateTimeOffsetUi() noexcept
 
 void FormationWidget::updateReplayUi() noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    switch (SkyConnectManager::getInstance().getReplayMode()) {
-    case SkyConnectIntf::ReplayMode::Normal:
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::Normal);
-        break;
-    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::UserAircraftManualControl);
-        break;
-    case SkyConnectIntf::ReplayMode::FlyWithFormation:
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::FlyWithFormation);
-        break;
-    }
+    SkyConnectManager &skyConnectManager {SkyConnectManager::getInstance()};
+    updateReplayModeUi(skyConnectManager.getReplayMode());
     ui->replayModeComboBox->setEnabled(!skyConnectManager.isInRecordingState());
+}
+
+void FormationWidget::updateReplayModeUi(SkyConnectIntf::ReplayMode replayMode) noexcept
+{
+    ui->replayModeComboBox->blockSignals(true);
+    for (int index = 0; index < ui->replayModeComboBox->count(); ++index) {
+        if (static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->itemData(index).toInt()) == replayMode) {
+            ui->replayModeComboBox->setCurrentIndex(index);
+            break;
+        }
+    }
+    ui->replayModeComboBox->blockSignals(false);
 }
 
 void FormationWidget::updateToolTips() noexcept
@@ -531,15 +534,15 @@ void FormationWidget::updateToolTips() noexcept
     }
 
     // Replay mode
-    switch (ui->replayModeComboBox->currentIndex()) {
-    case ReplayModeIndex::Normal:
+    switch (static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->currentData().toInt())) {
+    case SkyConnectIntf::ReplayMode::Normal:
         ui->replayModeComboBox->setToolTip(tr("%1 controls all recorded aircraft.").arg(Version::getApplicationName()));
         break;
-    case ReplayModeIndex::UserAircraftManualControl:
+    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
         ui->replayModeComboBox->setToolTip(tr("Take control of the recorded user aircraft of the formation.\n"
                                               "The user aircraft (marked in blue) can be changed during replay."));
         break;
-    case ReplayModeIndex::FlyWithFormation:
+    case SkyConnectIntf::ReplayMode::FlyWithFormation:
         ui->replayModeComboBox->setToolTip(tr("Fly with the currently loaded aircraft along with the entire formation.\n"
                                               "Reposition your user aircraft at any time, by either changing its relative position\n"
                                               "or choose another reference aircraft (marked in green) in the formation."));
@@ -705,7 +708,7 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
         if (!skyConnectManager.isInRecordingState() && d->moduleSettings.isRelativePositionPlacementEnabled()) {
             const Formation::HorizontalDistance horizontalDistance {getHorizontalDistance()};
             const Formation::VerticalDistance verticalDistance {getVerticalDistance()};
-            const Formation::RelativePosition relativePosition {getRelativePosition()};
+            const Formation::Bearing relativePosition {getRelativePosition()};
             const PositionData positionData = Formation::calculateRelativePositionToUserAircraft(horizontalDistance,
                                                                                                  verticalDistance,
                                                                                                  relativePosition,
@@ -735,7 +738,7 @@ void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode repl
         case SkyConnectIntf::ReplayMode::FlyWithFormation:
             const Formation::HorizontalDistance horizontalDistance {getHorizontalDistance()};
             const Formation::VerticalDistance verticalDistance {getVerticalDistance()};
-            const Formation::RelativePosition relativePosition {getRelativePosition()};
+            const Formation::Bearing relativePosition {getRelativePosition()};
             const PositionData positionData = Formation::calculateRelativePositionToUserAircraft(horizontalDistance,
                                                                                                  verticalDistance,
                                                                                                  relativePosition,
@@ -785,16 +788,17 @@ void FormationWidget::updateAircraftCount() const noexcept
     ui->aircraftCountLabel->setText(tr("%1 aircraft", "Number of aircraft in the formation flight", aircraftCount).arg(aircraftCount));
 }
 
+void FormationWidget::updateRelativePosition()
+{
+    updateAndSendUserAircraftPosition();
+}
+
 // PRIVATE SLOTS
 
 void FormationWidget::updateUi() noexcept
 {
     updateTable();
-    updateRelativePositionUi();
-    updateEditUi();    
-    updateTimeOffsetUi();
-    updateReplayUi();
-    updateToolTips();
+    updateInteractiveUi();
 }
 
 void FormationWidget::onUserAircraftChanged() noexcept
@@ -936,48 +940,38 @@ void FormationWidget::deleteAircraft() noexcept
 
 void FormationWidget::onRelativePositionChanged() noexcept
 {
-    updateToolTips();
-    updateAndSendUserAircraftPosition();
+    Formation::Bearing bearing = bearingFromPositionGroup();
+    d->moduleSettings.setBearing(bearing);
+    updateRelativePositionUi();
+    updateRelativePosition();
 }
 
-void FormationWidget::onRelativeDistanceChanged() noexcept
+void FormationWidget::onHorizontalDistanceChanged() noexcept
 {
+    d->moduleSettings.setHorizontalDistance(static_cast<Formation::HorizontalDistance>(ui->horizontalDistanceSlider->value()));
+    updateRelativePositionUi();
+    updateRelativePosition();
+}
+
+void FormationWidget::onVerticalDistanceChanged() noexcept
+{
+    d->moduleSettings.setVerticalDistance(static_cast<Formation::VerticalDistance>(ui->verticalDistanceSlider->value()));
     updateRelativePositionUi();
     onRelativePositionChanged();
 }
 
-void FormationWidget::onReplayModeSelected(int index) noexcept
+void FormationWidget::onReplayModeSelected() noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    switch(index) {
-    case ReplayModeIndex::Normal:
-        skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::Normal);
-        break;
-    case ReplayModeIndex::UserAircraftManualControl:
-        skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::UserAircraftManualControl);
-        break;
-    case ReplayModeIndex::FlyWithFormation:
-        skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::FlyWithFormation);
-        break;
-    }
+    SkyConnectIntf::ReplayMode replayMode {static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->currentData().toInt())};
+    skyConnectManager.setReplayMode(replayMode);
+    d->moduleSettings.setReplayMode(replayMode);
     updateUi();
 }
 
 void FormationWidget::onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode)
 {
-    switch(replayMode) {
-    case SkyConnectIntf::ReplayMode::Normal:
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::Normal);
-        break;
-    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
-    {
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::UserAircraftManualControl);
-        break;
-    }
-    case SkyConnectIntf::ReplayMode::FlyWithFormation:
-        ui->replayModeComboBox->setCurrentIndex(ReplayModeIndex::FlyWithFormation);
-        break;
-    }
+    updateReplayModeUi(replayMode);
     updateUserAircraftPosition(replayMode);
 }
 
@@ -1047,6 +1041,125 @@ void FormationWidget::onTableLayoutChanged() noexcept
 
 void FormationWidget::onModuleSettingsChanged() noexcept
 {
+    QRadioButton &button = getPositionButtonFromSettings();
+    button.blockSignals(true);
+    button.setChecked(true);
+    button.blockSignals(false);
+
+    ui->horizontalDistanceSlider->blockSignals(true);
+    ui->horizontalDistanceSlider->setValue(d->moduleSettings.getHorizontalDistance());
+    ui->horizontalDistanceSlider->blockSignals(false);
+
+    ui->verticalDistanceSlider->blockSignals(true);
+    ui->verticalDistanceSlider->setValue(d->moduleSettings.getVerticalDistance());
+    ui->verticalDistanceSlider->blockSignals(false);
+
+    ui->relativePositionCheckBox->blockSignals(true);
     ui->relativePositionCheckBox->setChecked(d->moduleSettings.isRelativePositionPlacementEnabled());
-    ui->aircraftTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getFormationAircraftTableState());
+    ui->relativePositionCheckBox->blockSignals(false);
+
+    updateTable();
+    updateReplayModeUi(d->moduleSettings.getReplayMode());
+}
+
+QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
+{
+    QRadioButton *button {nullptr};
+    const Formation::Bearing bearing = d->moduleSettings.getBearing();
+    switch (bearing) {
+    case Formation::Bearing::North:
+        button = ui->nPositionRadioButton;
+        break;
+    case Formation::Bearing::NorthNorthEast:
+        button = ui->nnePositionRadioButton;
+        break;
+    case Formation::Bearing::NorthEast:
+        button = ui->nePositionRadioButton;
+        break;
+    case Formation::Bearing::EastNorthEast:
+        button = ui->enePositionRadioButton;
+        break;
+    case Formation::Bearing::East:
+        button = ui->ePositionRadioButton;
+        break;
+    case Formation::Bearing::EastSouthEast:
+        button = ui->esePositionRadioButton;
+        break;
+    case Formation::Bearing::SouthEast:
+        button = ui->sePositionRadioButton;
+        break;
+    case Formation::Bearing::SouthSouthEast:
+        button = ui->ssePositionRadioButton;
+        break;
+    case Formation::Bearing::South:
+        button = ui->sPositionRadioButton;
+        break;
+    case Formation::Bearing::SouthSouthWest:
+        button = ui->sswPositionRadioButton;
+        break;
+    case Formation::Bearing::SouthWest:
+        button = ui->swPositionRadioButton;
+        break;
+    case Formation::Bearing::WestSouthWest:
+        button = ui->wswPositionRadioButton;
+        break;
+    case Formation::Bearing::West:
+        button = ui->wPositionRadioButton;
+        break;
+    case Formation::Bearing::WestNorthWest:
+        button = ui->wnwPositionRadioButton;
+        break;
+    case Formation::Bearing::NorthWest:
+        button = ui->nwPositionRadioButton;
+        break;
+    case Formation::Bearing::NorthNorthWest:
+        button = ui->nnwPositionRadioButton;
+        break;
+    }
+    return *button;
+}
+
+Formation::Bearing FormationWidget::bearingFromPositionGroup() const noexcept
+{
+    QAbstractButton *button = d->positionButtonGroup->checkedButton();
+    Formation::Bearing bearing;
+    if (button == ui->nPositionRadioButton) {
+        bearing = Formation::Bearing::North;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = Formation::Bearing::NorthNorthEast;
+    } else if (button == ui->nePositionRadioButton) {
+        bearing = Formation::Bearing::NorthEast;
+    } else if (button == ui->enePositionRadioButton) {
+        bearing = Formation::Bearing::EastNorthEast;
+    } else if (button == ui->ePositionRadioButton) {
+        bearing = Formation::Bearing::East;
+    } else if (button == ui->esePositionRadioButton) {
+        bearing = Formation::Bearing::EastSouthEast;
+    } else if (button == ui->sePositionRadioButton) {
+        bearing = Formation::Bearing::SouthEast;
+    } else if (button == ui->ssePositionRadioButton) {
+        bearing = Formation::Bearing::SouthSouthEast;
+    } else if (button == ui->sPositionRadioButton) {
+        bearing = Formation::Bearing::South;
+    } else if (button == ui->sswPositionRadioButton) {
+        bearing = Formation::Bearing::SouthSouthWest;
+    } else if (button == ui->swPositionRadioButton) {
+        bearing = Formation::Bearing::SouthWest;
+    } else if (button == ui->wswPositionRadioButton) {
+        bearing = Formation::Bearing::WestSouthWest;
+    } else if (button == ui->wPositionRadioButton) {
+        bearing = Formation::Bearing::West;
+    } else if (button == ui->wnwPositionRadioButton) {
+        bearing = Formation::Bearing::WestNorthWest;
+    } else if (button == ui->nwPositionRadioButton) {
+        bearing = Formation::Bearing::NorthWest;
+    } else {
+        bearing = Formation::Bearing::NorthNorthWest;
+    }
+
+    return bearing;
+}
+
+void FormationWidget::restoreDefaultSettings() noexcept {
+    d->moduleSettings.restoreDefaults();
 }

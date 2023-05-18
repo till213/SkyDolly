@@ -7,8 +7,10 @@
   * In order to help to avoid confusion between the Sky Dolly application and logbook directory
   * Existing logbooks remain at their current location
 - The flight number is now also shown in the Logbook table [[Issue #103](https://github.com/till213/SkyDolly/issues/103)]
-  * Flights can be also filtered with the flight number
+  * Flights can also be filtered with the flight number
   * The flight number is now stored per flight (not per aircraft anymore)
+- The Formation module settings (relative position, replay mode) are now persisted
+- Improved module settings performance: the logbook and location tables are now updated exactly once (and not twice) upon module initialisation
 
 ### Other
 - Remove import & export CSV Sky Dolly format

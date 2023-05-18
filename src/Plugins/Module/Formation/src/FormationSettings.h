@@ -31,7 +31,9 @@
 #include <QByteArray>
 
 #include <Kernel/Settings.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
+#include "Formation.h"
 
 struct FormationSettingsPrivate;
 
@@ -45,6 +47,15 @@ public:
     FormationSettings &operator=(const FormationSettings &rhs) = delete;
     FormationSettings &operator=(FormationSettings &&rhs) = delete;
     ~FormationSettings() override;
+
+    Formation::Bearing getBearing() const noexcept;
+    void setBearing(Formation::Bearing bearing) noexcept;
+
+    Formation::HorizontalDistance getHorizontalDistance() const noexcept;
+    void setHorizontalDistance(Formation::HorizontalDistance horizontalDistance) noexcept;
+
+    Formation::VerticalDistance getVerticalDistance() const noexcept;
+    void setVerticalDistance(Formation::VerticalDistance verticalDistance) noexcept;
 
     /*!
      * Returns whether the the new user aircraft should be placed at the calculated position
@@ -67,6 +78,9 @@ public:
      * \sa relativePositionPlacementChanged
      */
     void setRelativePositionPlacementEnabled(bool enable) noexcept;
+
+    SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
+    void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;
 
     /*!
      * Returns the saved formation aircraft table state.

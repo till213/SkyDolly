@@ -47,6 +47,7 @@ public:
     ModuleIntf &operator=(ModuleIntf &&rhs) = default;
     virtual ~ModuleIntf() = default;
 
+    virtual QUuid getUuid() const noexcept = 0;
     virtual QString getModuleName() const noexcept = 0;
     virtual QWidget *getWidget() const noexcept = 0;
     virtual RecordIconId getRecordIconId() const noexcept = 0;
@@ -54,9 +55,6 @@ public:
     virtual void setRecording(bool enable) noexcept = 0;
     virtual void setPaused(bool enable) noexcept = 0;
     virtual void setPlaying(bool enable) noexcept = 0;
-
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept = 0;
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept = 0;
 
 protected:
     virtual void onRecordingStopped() noexcept = 0;

@@ -55,13 +55,18 @@ public:
         AddToFormation
     };
 
+    /*!
+     * Defines of which aircraft to take control of during formation replay.
+     *
+     * Implementation note: those values act as actual IDs that get persisted in the database.
+     */
     enum struct ReplayMode {
         /*! All aircraft are controlled by Sky Dolly. */
-        Normal,
+        Normal = 0,
         /*! User takes control of recorded user aircraft. */
-        UserAircraftManualControl,
+        UserAircraftManualControl = 1,
         /*! User flies along with all recorded aircraft. */
-        FlyWithFormation
+        FlyWithFormation = 2
     };
 
     enum struct SeekMode {

@@ -27,24 +27,39 @@
 
 #include <QByteArray>
 
+#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
+#include "Formation.h"
 #include "FormationSettings.h"
 
 namespace
 {
     // Keys
     constexpr const char *RelativePositionPlacementKey {"RelativePositionPlacement"};
+    constexpr const char *BearingKey {"Bearing"};
+    constexpr const char *HorizontalDistanceKey {"HorizontalDistance"};
+    constexpr const char *VerticalDistanceKey {"VerticalDistance"};
     constexpr const char *FormationAircraftTableStateKey {"FormationAircraftTableState"};
+    constexpr const char *ReplayModeKey {"ReplayMode"};
 
     // Defaults
+    constexpr Formation::Bearing DefaultBearing {Formation::Bearing::SouthEast};
+    constexpr Formation::HorizontalDistance DefaultHorizontalDistance {Formation::HorizontalDistance::Nearby};
+    constexpr Formation::VerticalDistance DefaultVerticalDistance {Formation::VerticalDistance::Level};
     constexpr bool DefaultRelativePositionPlacement {true};
+    constexpr SkyConnectIntf::ReplayMode DefaultReplayMode {SkyConnectIntf::ReplayMode::Normal};
 }
 
 struct FormationSettingsPrivate
 {
     QByteArray formationAircraftTableState;
+    Formation::Bearing bearing {::DefaultBearing};
+    Formation::HorizontalDistance horizontalDistance {::DefaultHorizontalDistance};
+    Formation::VerticalDistance verticalDistance {::DefaultVerticalDistance};
     bool relativePositionPlacement {::DefaultRelativePositionPlacement};
+    SkyConnectIntf::ReplayMode replayMode;
 };
 
 // PUBLIC
@@ -55,6 +70,45 @@ FormationSettings::FormationSettings() noexcept
 {}
 
 FormationSettings::~FormationSettings() = default;
+
+Formation::Bearing FormationSettings::getBearing() const noexcept
+{
+    return d->bearing;
+}
+
+void FormationSettings::setBearing(Formation::Bearing bearing) noexcept
+{
+    if (d->bearing != bearing) {
+        d->bearing = bearing;
+        emit changed();
+    }
+}
+
+Formation::HorizontalDistance FormationSettings::getHorizontalDistance() const noexcept
+{
+    return d->horizontalDistance;
+}
+
+void FormationSettings::setHorizontalDistance(Formation::HorizontalDistance horizontalDistance) noexcept
+{
+    if (d->horizontalDistance != horizontalDistance) {
+        d->horizontalDistance = horizontalDistance;
+        emit changed();
+    }
+}
+
+Formation::VerticalDistance FormationSettings::getVerticalDistance() const noexcept
+{
+    return d->verticalDistance;
+}
+
+void FormationSettings::setVerticalDistance(Formation::VerticalDistance verticalDistance) noexcept
+{
+    if (d->verticalDistance != verticalDistance) {
+        d->verticalDistance = verticalDistance;
+        emit changed();
+    }
+}
 
 bool FormationSettings::isRelativePositionPlacementEnabled() const noexcept
 {
@@ -69,6 +123,19 @@ void FormationSettings::setRelativePositionPlacementEnabled(bool enable) noexcep
     }
 }
 
+SkyConnectIntf::ReplayMode FormationSettings::getReplayMode() const noexcept
+{
+    return d->replayMode;
+}
+
+void FormationSettings::setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept
+{
+    if (d->replayMode != replayMode) {
+        d->replayMode = replayMode;
+        emit changed();
+    }
+}
+
 QByteArray FormationSettings::getFormationAircraftTableState() const
 {
     return d->formationAircraftTableState;
@@ -76,10 +143,7 @@ QByteArray FormationSettings::getFormationAircraftTableState() const
 
 void FormationSettings::setFormationAircraftTableState(QByteArray state) noexcept
 {
-    if (d->formationAircraftTableState != state) {
-        d->formationAircraftTableState = std::move(state);
-        emit changed();
-    }
+    d->formationAircraftTableState = std::move(state);
 }
 
 // PROTECTED
@@ -88,8 +152,24 @@ void FormationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &ke
 {
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::BearingKey;
+    keyValue.second = Enum::underly(d->bearing);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::HorizontalDistanceKey;
+    keyValue.second = Enum::underly(d->horizontalDistance);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::VerticalDistanceKey;
+    keyValue.second = Enum::underly(d->verticalDistance);
+    keyValues.push_back(keyValue);
+
     keyValue.first = ::RelativePositionPlacementKey;
     keyValue.second = d->relativePositionPlacement;
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::ReplayModeKey;
+    keyValue.second = Enum::underly(d->replayMode);
     keyValues.push_back(keyValue);
 
     keyValue.first = ::FormationAircraftTableStateKey;
@@ -101,8 +181,24 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 {
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::BearingKey;
+    keyValue.second = Enum::underly(::DefaultBearing);
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::HorizontalDistanceKey;
+    keyValue.second = Enum::underly(::DefaultHorizontalDistance);
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::VerticalDistanceKey;
+    keyValue.second = Enum::underly(::DefaultVerticalDistance);
+    keysWithDefaults.push_back(keyValue);
+
     keyValue.first = ::RelativePositionPlacementKey;
     keyValue.second = ::DefaultRelativePositionPlacement;
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::ReplayModeKey;
+    keyValue.second = Enum::underly(::DefaultReplayMode);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::FormationAircraftTableStateKey;
@@ -112,12 +208,33 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 
 void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
+    bool ok {false};
+    d->bearing = static_cast<Formation::Bearing>(valuesByKey.at(::BearingKey).toInt(&ok));
+    if (!ok) {
+        d->bearing = ::DefaultBearing;
+    }
+    d->horizontalDistance = static_cast<Formation::HorizontalDistance>(valuesByKey.at(::HorizontalDistanceKey).toInt(&ok));
+    if (!ok) {
+        d->horizontalDistance = ::DefaultHorizontalDistance;
+    }
+    d->verticalDistance = static_cast<Formation::VerticalDistance>(valuesByKey.at(::VerticalDistanceKey).toInt(&ok));
+    if (!ok) {
+        d->verticalDistance = ::DefaultVerticalDistance;
+    }
     d->relativePositionPlacement = valuesByKey.at(::RelativePositionPlacementKey).toBool();
+    d->replayMode = static_cast<SkyConnectIntf::ReplayMode>(valuesByKey.at(::ReplayModeKey).toInt(&ok));
+    if (!ok) {
+        d->replayMode = ::DefaultReplayMode;
+    }
     d->formationAircraftTableState = valuesByKey.at(::FormationAircraftTableStateKey).toByteArray();
 }
 
 void FormationSettings::restoreDefaultsExtn() noexcept
 {
+    d->bearing = ::DefaultBearing;
+    d->horizontalDistance = ::DefaultHorizontalDistance;
+    d->verticalDistance = ::DefaultVerticalDistance;
     d->relativePositionPlacement = ::DefaultRelativePositionPlacement;
+    d->replayMode = ::DefaultReplayMode;
     d->formationAircraftTableState = {};
 }

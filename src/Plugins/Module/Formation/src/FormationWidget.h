@@ -34,6 +34,8 @@ class QShowEvent;
 class QHideEvent;
 class QAction;
 class QTableWidgetItem;
+class QRadioButton;
+class QAbstractButton;
 
 #include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleIntf.h>
@@ -65,7 +67,7 @@ public:
 
     Formation::HorizontalDistance getHorizontalDistance() const noexcept;
     Formation::VerticalDistance getVerticalDistance() const noexcept;
-    Formation::RelativePosition getRelativePosition() const noexcept;
+    Formation::Bearing getRelativePosition() const noexcept;
 
 private:
     std::unique_ptr<Ui::FormationWidget> ui;
@@ -76,11 +78,13 @@ private:
     void frenchConnection() noexcept;
 
     void updateTable() noexcept;
+    void updateInteractiveUi() noexcept;
     void updateAircraftIcons() noexcept;
     void updateRelativePositionUi() noexcept;
     void updateEditUi() noexcept;
     void updateTimeOffsetUi() noexcept;
     void updateReplayUi() noexcept;
+    void updateReplayModeUi(SkyConnectIntf::ReplayMode replayMode) noexcept;
     void updateToolTips() noexcept;
 
     inline const QTableWidgetItem *createRow(const Aircraft &aircraft, int aircraftIndex) noexcept;
@@ -95,6 +99,7 @@ private:
     int getRowByAircraftIndex(int index) const noexcept;
 
     void updateAircraftCount() const noexcept;
+    void updateRelativePosition();
     
 private slots:
     void updateUi() noexcept;
@@ -112,8 +117,9 @@ private slots:
     void deleteAircraft() noexcept;
 
     void onRelativePositionChanged() noexcept;
-    void onRelativeDistanceChanged() noexcept;
-    void onReplayModeSelected(int index) noexcept;
+    void onHorizontalDistanceChanged() noexcept;
+    void onVerticalDistanceChanged() noexcept;
+    void onReplayModeSelected() noexcept;
     void onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode);
 
     void changeTimeOffset(const std::int64_t timeOffset) noexcept;
@@ -123,6 +129,9 @@ private slots:
     // Settings
     void onTableLayoutChanged() noexcept;
     void onModuleSettingsChanged() noexcept;
+    QRadioButton &getPositionButtonFromSettings() const noexcept;
+    Formation::Bearing bearingFromPositionGroup() const noexcept;
+    void restoreDefaultSettings() noexcept;
 };
 
 #endif // FORMATIONWIDGET_H
