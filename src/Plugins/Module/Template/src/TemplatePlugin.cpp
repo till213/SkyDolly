@@ -32,6 +32,10 @@
 #include "TemplateSettings.h"
 #include "TemplatePlugin.h"
 
+namespace {
+    constexpr const char *TemplateModuleUuid {"2c77a56a-2c20-49f7-83ea-55da2dfd22f0"};
+}
+
 struct TemplatePluginPrivate
 {
     TemplatePluginPrivate()
@@ -47,9 +51,20 @@ struct TemplatePluginPrivate
 TemplatePlugin::TemplatePlugin(QObject *parent) noexcept
     : AbstractModule(parent),
       d(std::make_unique<TemplatePluginPrivate>())
-{}
+{
+    restoreSettings(QUuid(::TemplateModuleUuid));
+}
 
-TemplatePlugin::~TemplatePlugin() = default;
+TemplatePlugin::~TemplatePlugin()
+{
+    storeSettings(QUuid(::TemplateModuleUuid));
+};
+
+QUuid TemplatePlugin::getUuid() const noexcept
+{
+    static const QUuid uuid {::TemplateModuleUuid};
+    return uuid;
+}
 
 QString TemplatePlugin::getModuleName() const noexcept
 {

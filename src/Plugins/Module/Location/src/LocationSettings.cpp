@@ -209,10 +209,7 @@ QByteArray LocationSettings::getLocationTableState() const
 
 void LocationSettings::setLocationTableState(QByteArray state) noexcept
 {
-    if (d->locationTableState != state) {
-        d->locationTableState = std::move(state);
-        emit changed();
-    }
+    d->locationTableState = std::move(state);
 }
 
 void LocationSettings::resetFilter() noexcept

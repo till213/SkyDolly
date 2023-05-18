@@ -10,7 +10,7 @@ target_compile_definitions(${LIBRARY_NAME}
 configure_file(src/VersionConfig.h.in generated/VersionConfig.h @ONLY)
 
 # https://jonathanhamberg.com/post/cmake-embedding-git-hash/
-set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
 include(${PROJECT_SOURCE_DIR}/cmake/CheckGit.cmake)
 CheckGitSetup()
 
@@ -47,7 +47,7 @@ target_sources(${LIBRARY_NAME}
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_LIST_DIR}/include
     PRIVATE
         include/Kernel
         # For generated files: VersionConfig.h, GitInfo.h

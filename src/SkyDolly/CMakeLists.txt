@@ -3,7 +3,7 @@ set_target_properties(${APP_NAME}
     PROPERTIES
         WIN32_EXECUTABLE ON
         MACOSX_BUNDLE ON
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/res/Info.plist.in"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_LIST_DIR}/res/Info.plist.in"
 )
 # TODO Translations (i18n)
 #qt_add_translations(${APP_NAME}
@@ -53,10 +53,10 @@ elseif(${PLATFORM_IS_WINDOWS})
     #              Also refer e.g. to https://bugreports.qt.io/browse/QTBUG-62918
     # WORKAROUND: Place the Sky Dolly sources into a path without spaces
     # Resource file (*.rc)
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/res/SkyDolly.rc.in"
-                   "${CMAKE_CURRENT_SOURCE_DIR}/res/SkyDolly.rc" @ONLY)
-    add_library(resources OBJECT "${CMAKE_CURRENT_SOURCE_DIR}/res/SkyDolly.rc")
-    target_include_directories(resources PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/res/")
+    configure_file("${CMAKE_CURRENT_LIST_DIR}/res/SkyDolly.rc.in"
+                   "${CMAKE_CURRENT_LIST_DIR}/res/SkyDolly.rc" @ONLY)
+    add_library(resources OBJECT "${CMAKE_CURRENT_LIST_DIR}/res/SkyDolly.rc")
+    target_include_directories(resources PRIVATE "${CMAKE_CURRENT_LIST_DIR}/res/")
     target_sources(${APP_NAME}
         PRIVATE
             $<TARGET_OBJECTS:resources>

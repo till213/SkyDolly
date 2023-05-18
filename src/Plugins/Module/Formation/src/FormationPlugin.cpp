@@ -24,6 +24,10 @@
  */
 #include <memory>
 
+#include <QObject>
+#include <QUuid>
+
+#include <Kernel/Const.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -40,7 +44,7 @@ struct FormationPluginPrivate
 {
     FormationSettings moduleSettings;
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
-    std::unique_ptr<FormationWidget> formationWidget{std::make_unique<FormationWidget>(moduleSettings)};
+    std::unique_ptr<FormationWidget> formationWidget {std::make_unique<FormationWidget>(moduleSettings)};
 };
 
 // PUBLIC
@@ -48,9 +52,20 @@ struct FormationPluginPrivate
 FormationPlugin::FormationPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
       d(std::make_unique<FormationPluginPrivate>())
-{}
+{
+    restoreSettings(QUuid(Const::FormationModuleUuid));
+}
 
-FormationPlugin::~FormationPlugin() = default;
+FormationPlugin::~FormationPlugin()
+{
+    storeSettings(QUuid(Const::FormationModuleUuid));
+};
+
+QUuid FormationPlugin::getUuid() const noexcept
+{
+    static QUuid uuid {Const::FormationModuleUuid};
+    return uuid;
+}
 
 QString FormationPlugin::getModuleName() const noexcept
 {
@@ -74,7 +89,7 @@ void FormationPlugin::onStartRecording() noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const Formation::HorizontalDistance horizontalDistance {d->formationWidget->getHorizontalDistance()};
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
-    const Formation::RelativePosition relativePosition {d->formationWidget->getRelativePosition()};
+    const Formation::Bearing relativePosition {d->formationWidget->getRelativePosition()};
     // The initial recording position is calculated for timestamp = 0 ("at the beginning")
     const InitialPosition initialPosition = d->moduleSettings.isRelativePositionPlacementEnabled() ?
                 Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, 0) :
@@ -88,7 +103,7 @@ void FormationPlugin::onStartReplay() noexcept
     const bool fromStart = skyConnectManager.isAtEnd();
     const Formation::HorizontalDistance horizontalDistance {d->formationWidget->getHorizontalDistance()};
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
-    const Formation::RelativePosition relativePosition {d->formationWidget->getRelativePosition()};
+    const Formation::Bearing relativePosition {d->formationWidget->getRelativePosition()};
     const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
     const InitialPosition initialPosition = d->moduleSettings.isRelativePositionPlacementEnabled() ?
         Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp) :

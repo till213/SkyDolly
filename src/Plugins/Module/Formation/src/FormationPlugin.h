@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QUuid>
 
 class QWidget;
 
@@ -48,6 +49,7 @@ public:
     FormationPlugin &operator=(FormationPlugin &&rhs) = delete;
     ~FormationPlugin() override;
 
+    QUuid getUuid() const noexcept override;
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
     RecordIconId getRecordIconId() const noexcept override;

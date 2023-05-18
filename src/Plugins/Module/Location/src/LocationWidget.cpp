@@ -119,9 +119,6 @@ struct LocationWidgetPrivate
     const std::int64_t WorldCountryId {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
 
     Unit unit;
-    // Columns are only auto-resized the first time the table is loaded
-    // After that manual column resizes are kept
-    bool columnsAutoResized {false};
 
     static inline int idColumn {InvalidColumn};
     static inline int titleColumn {InvalidColumn};
@@ -154,7 +151,10 @@ LocationWidget::LocationWidget(LocationSettings &moduleSettings, QWidget *parent
 {
     ui->setupUi(this);
     initUi();
-    updateUi();
+    // The location table is updated once the plugin settings are restored (initiated
+    // by LocationPlugin)
+    updateEditUi();
+    updateInfoUi();
     frenchConnection();
 }
 
@@ -486,7 +486,7 @@ void LocationWidget::updateTable() noexcept
 
         ui->locationTableWidget->blockSignals(true);
         // Prevent table state changes notify the module settings
-        ui->locationTableWidget->horizontalHeader()->blockSignals(true);
+
         ui->locationTableWidget->setSortingEnabled(false);           
         ui->locationTableWidget->clearContents();
         ui->locationTableWidget->setRowCount(static_cast<int>(locations.size()));
@@ -496,12 +496,16 @@ void LocationWidget::updateTable() noexcept
             initRow(location, row);
             ++row;
         }
-        if (!d->columnsAutoResized) {
+
+        QByteArray tableState = d->moduleSettings.getLocationTableState();
+        if (!tableState.isEmpty()) {
+            ui->locationTableWidget->horizontalHeader()->blockSignals(true);
+            ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
+            ui->locationTableWidget->horizontalHeader()->blockSignals(false);
+        } else {
             ui->locationTableWidget->resizeColumnsToContents();
-            d->columnsAutoResized = true;
         }
-        ui->locationTableWidget->setSortingEnabled(true);
-        ui->locationTableWidget->horizontalHeader()->blockSignals(false);
+        ui->locationTableWidget->setSortingEnabled(true);        
         ui->locationTableWidget->blockSignals(false);
 
     } else {
@@ -1147,7 +1151,5 @@ void LocationWidget::onModuleSettingsChanged() noexcept
     ui->defaultOnGroundCheckBox->setChecked(d->moduleSettings.isDefaultOnGround());
     ui->defaultOnGroundCheckBox->blockSignals(false);
 
-    // Table state
-    ui->locationTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLocationTableState());
     updateTable();
 }

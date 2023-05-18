@@ -50,10 +50,19 @@ LogbookPlugin::LogbookPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
       d(std::make_unique<LogbookPluginPrivate>())
 {
-    LogbookSettings moduleSettings;
+    restoreSettings(QUuid(Const::LogbookModuleUuid));
 }
 
-LogbookPlugin::~LogbookPlugin() = default;
+LogbookPlugin::~LogbookPlugin()
+{
+    storeSettings(QUuid(Const::LogbookModuleUuid));
+};
+
+QUuid LogbookPlugin::getUuid() const noexcept
+{
+    static const QUuid uuid {Const::LogbookModuleUuid};
+    return uuid;
+}
 
 QString LogbookPlugin::getModuleName() const noexcept
 {

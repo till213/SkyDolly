@@ -119,9 +119,6 @@ struct LogbookWidgetPrivate
     std::int64_t flightInMemoryId {Const::InvalidId};
     Unit unit;
     std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
-    // Columns are only auto-resized the first time the table is loaded
-    // After that manual column resizes are kept
-    bool columnsAutoResized {false};
 
     // Flight table columns
     static inline int flightIdColumn {::InvalidColumn};
@@ -146,8 +143,9 @@ LogbookWidget::LogbookWidget(LogbookSettings &moduleSettings, QWidget *parent) n
 {
     ui->setupUi(this);
     initUi();
-    updateUi();
-    onSelectionChanged();
+    // The logbook table is updated once the plugin settings are restored (initiated
+    // by LogbookPlugin)
+    updateDateSelectorUi();
     frenchConnection();
 }
 
@@ -269,12 +267,17 @@ void LogbookWidget::updateTable() noexcept
         }
 
         ui->logTableWidget->setSortingEnabled(true);
-        if (!d->columnsAutoResized) {
+
+        QByteArray tableState = d->moduleSettings.getLogbookTableState();
+        if (!tableState.isEmpty()) {
+            ui->logTableWidget->horizontalHeader()->blockSignals(true);
+            ui->logTableWidget->horizontalHeader()->restoreState(tableState);
+            ui->logTableWidget->horizontalHeader()->blockSignals(false);
+        } else {
             ui->logTableWidget->resizeColumnsToContents();
             // Reserve some space for the aircraft icon
             const int idColumnWidth = static_cast<int>(std::round(1.25 * ui->logTableWidget->columnWidth(LogbookWidgetPrivate::flightIdColumn)));
             ui->logTableWidget->setColumnWidth(LogbookWidgetPrivate::flightIdColumn, idColumnWidth);
-            d->columnsAutoResized = true;
         }
         ui->logTableWidget->blockSignals(false);
 
@@ -622,25 +625,25 @@ inline void LogbookWidget::updateSelectionDateRange(QTreeWidgetItem *item) const
                 const int day = item->data(::DateColumn, Qt::UserRole).toInt();
                 QDate fromDate {year, month, day};
                 QDate toDate {fromDate.addDays(1)};
-                d->moduleSettings.setFromDate(std::move(fromDate));
-                d->moduleSettings.setToDate(std::move(toDate));
+                d->moduleSettings.setFromDate(fromDate);
+                d->moduleSettings.setToDate(toDate);
             } else {
                 // Item: month selected
                 const int year = parent->data(::DateColumn, Qt::UserRole).toInt();
                 const int month = item->data(::DateColumn, Qt::UserRole).toInt();
                 QDate fromDate {year, month, 1};
                 const int daysInMonth = fromDate.daysInMonth();
-                d->moduleSettings.setFromDate(std::move(fromDate));
+                d->moduleSettings.setFromDate(fromDate);
                 QDate toDate {year, month, daysInMonth};
-                d->moduleSettings.setToDate(std::move(toDate));
+                d->moduleSettings.setToDate(toDate);
             }
         } else {
             // Item: year selected
             const int year = item->data(::DateColumn, Qt::UserRole).toInt();
             QDate fromDate {year, 1, 1};
-            d->moduleSettings.setFromDate(std::move(fromDate));
+            d->moduleSettings.setFromDate(fromDate);
             QDate toDate {year, 12, 31};
-            d->moduleSettings.setToDate(std::move(toDate));
+            d->moduleSettings.setToDate(toDate);
         }
     } else {
         // Item: Logbook selected (show all entries)
@@ -971,6 +974,5 @@ void LogbookWidget::onModuleSettingsChanged() noexcept
     }
     ui->engineTypeComboBox->blockSignals(false);
 
-    ui->logTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLogbookTableState());
     updateTable();
 }

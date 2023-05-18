@@ -33,7 +33,7 @@
 
 #include "Formation.h"
 
-InitialPosition Formation::calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, RelativePosition relativePosition, std::int64_t timestamp) noexcept
+InitialPosition Formation::calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing relativePosition, std::int64_t timestamp) noexcept
 {
     InitialPosition initialPosition;
 
@@ -52,7 +52,7 @@ InitialPosition Formation::calculateInitialRelativePositionToUserAircraft(Horizo
     return initialPosition;
 }
 
-PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, RelativePosition relativePosition, std::int64_t timestamp) noexcept
+PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing relativePosition, std::int64_t timestamp) noexcept
 {
     PositionData initialPosition;
 
@@ -117,52 +117,52 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
         // Degrees
         double bearing {0.0};
         switch (relativePosition) {
-        case RelativePosition::North:
+        case Bearing::North:
             bearing = 0.0;
             break;
-        case RelativePosition::NorthNorthEast:
+        case Bearing::NorthNorthEast:
             bearing = 22.5;
             break;
-        case RelativePosition::NorthEast:
+        case Bearing::NorthEast:
             bearing = 45.0;
             break;
-        case RelativePosition::EastNorthEast:
+        case Bearing::EastNorthEast:
             bearing = 67.5;
             break;
-        case RelativePosition::East:
+        case Bearing::East:
             bearing = 90.0;
             break;
-        case RelativePosition::EastSouthEast:
+        case Bearing::EastSouthEast:
             bearing = 112.5;
             break;
-        case RelativePosition::SouthEast:
+        case Bearing::SouthEast:
             bearing = 135.0;
             break;
-        case RelativePosition::SouthSouthEast:
+        case Bearing::SouthSouthEast:
             bearing = 157.5;
             break;
-        case RelativePosition::South:
+        case Bearing::South:
             bearing = 180.0;
             break;
-        case RelativePosition::SouthSouthWest:
+        case Bearing::SouthSouthWest:
             bearing = 202.5;
             break;
-        case RelativePosition::SouthWest:
+        case Bearing::SouthWest:
             bearing = 225.0;
             break;
-        case RelativePosition::WestSouthWest:
+        case Bearing::WestSouthWest:
             bearing = 247.5;
             break;
-        case RelativePosition::West:
+        case Bearing::West:
             bearing = 270.0;
             break;
-        case RelativePosition::WestNorthWest:
+        case Bearing::WestNorthWest:
             bearing = 292.5;
             break;
-        case RelativePosition::NorthWest:
+        case Bearing::NorthWest:
             bearing = 315.0;
             break;
-        case RelativePosition::NorthNorthWest:
+        case Bearing::NorthNorthWest:
             bearing = 337.5;
             break;
         }

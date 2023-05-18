@@ -49,6 +49,8 @@ struct LocationPluginPrivate
     const std::int64_t EngineEventStartId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStartSymId).id()};
     const std::int64_t EngineEventStopId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStopSymId).id()};
     Mode mode {Mode::Add};
+
+
 };
 
 // PUBLIC
@@ -58,9 +60,19 @@ LocationPlugin::LocationPlugin(QObject *parent) noexcept
       d(std::make_unique<LocationPluginPrivate>())
 {
     frenchConnection();
+    restoreSettings(QUuid(Const::LocationModuleUuid));
 }
 
-LocationPlugin::~LocationPlugin() = default;
+LocationPlugin::~LocationPlugin()
+{
+    storeSettings(QUuid(Const::LocationModuleUuid));
+};
+
+QUuid LocationPlugin::getUuid() const noexcept
+{
+    static const QUuid uuid {Const::LocationModuleUuid};
+    return uuid;
+}
 
 QString LocationPlugin::getModuleName() const noexcept
 {
