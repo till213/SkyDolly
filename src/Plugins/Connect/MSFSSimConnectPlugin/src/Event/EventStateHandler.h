@@ -39,6 +39,7 @@
 #include <Kernel/Enum.h>
 #include <Model/SimType.h>
 #include <Model/TimeVariableData.h>
+#include <PluginManager/Connect/ClientEventShortcuts.h>
 #include "Engine/SimConnectEngineEvent.h"
 #include "Engine/SimConnectEngineAll.h"
 #include "PrimaryFlightControl/SimConnectPrimaryFlightControlEvent.h"
@@ -141,29 +142,6 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ToggleWingLights), "TOGGLE_WING_LIGHTS");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ToggleLogoLights), "TOGGLE_LOGO_LIGHTS");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ToggleCabinLights), "TOGGLE_CABIN_LIGHTS");
-    }
-
-    void setupInputEvents() noexcept
-    {
-        enum INPUT_ID {
-            INPUT_1
-        };
-
-        enum GROUP_ID {
-            GROUP_1
-        };
-
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::EVENT_1), "Custom.Event1");
-
-        ::SimConnect_AddClientEventToNotificationGroup(m_simConnectHandle, GROUP_1, Enum::underly(SimConnectEvent::Event::EVENT_1));
-
-        ::SimConnect_SetNotificationGroupPriority(m_simConnectHandle, GROUP_1, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
-
-        // Note that this does not override "." for brakes - both with be transmitted
-
-        ::SimConnect_MapInputEventToClientEvent(m_simConnectHandle, INPUT_1, "z", Enum::underly(SimConnectEvent::Event::EVENT_1));
-
-        ::SimConnect_SetInputGroupState(m_simConnectHandle, INPUT_1, SIMCONNECT_STATE_ON);
     }
 
     inline void pauseSimulation(bool enable) noexcept

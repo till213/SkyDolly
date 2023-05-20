@@ -34,6 +34,7 @@
 #include <Model/InitialPosition.h>
 #include <Model/Location.h>
 #include "Connect.h"
+#include "ClientEventShortcuts.h"
 #include "../PluginManagerLib.h"
 
 class Flight;
@@ -108,6 +109,8 @@ public:
     SkyConnectIntf &operator=(const SkyConnectIntf &rhs) = delete;
     SkyConnectIntf &operator=(SkyConnectIntf &&rhs) = delete;
     ~SkyConnectIntf() override = default;
+
+    virtual bool setupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept = 0;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;

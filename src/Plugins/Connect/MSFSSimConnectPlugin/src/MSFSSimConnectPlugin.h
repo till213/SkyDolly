@@ -36,6 +36,7 @@
 #include <Kernel/SampleRate.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
+#include <PluginManager/Connect/ClientEventShortcuts.h>
 #include <PluginManager/Connect/AbstractSkyConnect.h>
 
 struct PositionData;
@@ -60,6 +61,8 @@ public:
 
 protected:
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
+
+    bool onSetupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;

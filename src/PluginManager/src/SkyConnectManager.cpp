@@ -144,27 +144,36 @@ std::optional<QString> SkyConnectManager::getCurrentSkyConnectPluginName() const
     return {};
 }
 
+void SkyConnectManager::tryConnectAndSetup(ClientEventShortcuts shortcuts) noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    if (skyConnect) {
+        // TODO IMPLEMENT ME!!! Retry in case of failure
+        const bool ok = skyConnect->get().setupClientEventShortcuts(shortcuts);
+    }
+}
+
 bool SkyConnectManager::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().setUserAircraftInitialPosition(initialPosition) : false;
 }
 
 bool SkyConnectManager::setUserAircraftPosition(const PositionData & positionData) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().setUserAircraftPosition(positionData) : false;
 }
 
 bool SkyConnectManager::freezeUserAircraft(bool enable) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().freezeUserAircraft(enable) : false;
 }
 
 bool SkyConnectManager::sendSimulationEvent(SkyConnectIntf::SimulationEvent event, float arg1) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().sendSimulationEvent(event, arg1) : false;
 }
 
@@ -176,7 +185,7 @@ SkyConnectIntf::ReplayMode SkyConnectManager::getReplayMode() const noexcept
 
 void SkyConnectManager::setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().setReplayMode(replayMode);
     }
@@ -184,7 +193,7 @@ void SkyConnectManager::setReplayMode(SkyConnectIntf::ReplayMode replayMode) noe
 
 void SkyConnectManager::startRecording(SkyConnectIntf::RecordingMode recordingMode, const InitialPosition &initialPosition) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().startRecording(recordingMode, initialPosition);
     }
@@ -192,7 +201,7 @@ void SkyConnectManager::startRecording(SkyConnectIntf::RecordingMode recordingMo
 
 void SkyConnectManager::stopRecording() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().stopRecording();
     }
@@ -212,7 +221,7 @@ bool SkyConnectManager::isInRecordingState() const noexcept
 
 void SkyConnectManager::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().startReplay(fromStart, flyWithFormationPosition);
     }
@@ -220,7 +229,7 @@ void SkyConnectManager::startReplay(bool fromStart, const InitialPosition &flyWi
 
 void SkyConnectManager::stopReplay() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().stopReplay();
     }
@@ -228,25 +237,25 @@ void SkyConnectManager::stopReplay() noexcept
 
 bool SkyConnectManager::isReplaying() const noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().isReplaying() : false;
 }
 
 bool SkyConnectManager::isInReplayState() const noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().isInReplayState() : false;
 }
 
 bool SkyConnectManager::isActive() const noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().isInRecordingState() || skyConnect->get().isInReplayState(): false;
 }
 
 void SkyConnectManager::stop() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().stop();
     }
@@ -254,7 +263,7 @@ void SkyConnectManager::stop() noexcept
 
 void SkyConnectManager::setPaused(SkyConnectIntf::Initiator initiator, bool enable) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().setPaused(initiator, enable);
     }
@@ -262,13 +271,13 @@ void SkyConnectManager::setPaused(SkyConnectIntf::Initiator initiator, bool enab
 
 bool SkyConnectManager::isPaused() const noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().isPaused() : false;
 }
 
 void SkyConnectManager::skipToBegin() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipToBegin();
     }
@@ -276,7 +285,7 @@ void SkyConnectManager::skipToBegin() noexcept
 
 void SkyConnectManager::skipBackward() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipBackward();
     }
@@ -284,7 +293,7 @@ void SkyConnectManager::skipBackward() noexcept
 
 void SkyConnectManager::skipForward() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipForward();
     }
@@ -292,7 +301,7 @@ void SkyConnectManager::skipForward() noexcept
 
 void SkyConnectManager::skipToEnd() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipToEnd();
     }
@@ -300,7 +309,7 @@ void SkyConnectManager::skipToEnd() noexcept
 
 void SkyConnectManager::seek(std::int64_t timestamp, SkyConnectIntf::SeekMode seekMode) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().seek(timestamp, seekMode);
     }
@@ -308,19 +317,19 @@ void SkyConnectManager::seek(std::int64_t timestamp, SkyConnectIntf::SeekMode se
 
 Connect::State SkyConnectManager::getState() const noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
 }
 
 bool SkyConnectManager::isConnected() const noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().isConnected() : false;
 }
 
 bool SkyConnectManager::isIdle() const noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().isIdle() : true;
 }
 

@@ -80,6 +80,7 @@ private:
     const std::unique_ptr<MainWindowPrivate> d;
 
     void frenchConnection() noexcept;
+    void tryConnectAndSetup() const noexcept;
     void initUi() noexcept;
     void initPlugins() noexcept;
     void initModuleSelectorUi() noexcept;

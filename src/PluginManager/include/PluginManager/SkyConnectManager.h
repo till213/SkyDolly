@@ -77,6 +77,16 @@ public:
     std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
     std::optional<QString> getCurrentSkyConnectPluginName() const noexcept;
 
+    /*!
+     * Tries to connect with the flight simulator and to setup the \p shortcuts. If the connection
+     * fails the SkyConnectManager will periodically retry to connect.
+     *
+     * This method can be repeatedly called, in order to change the \p shortcuts.
+     * \param shortcuts
+     *        the shortcuts to be setup within the flight simulator, in order to control Sky Dolly
+     */
+    void tryConnectAndSetup(ClientEventShortcuts shortcuts) noexcept;
+
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
     bool setUserAircraftPosition(const PositionData & positionData) noexcept;
     bool freezeUserAircraft(bool enable) noexcept;

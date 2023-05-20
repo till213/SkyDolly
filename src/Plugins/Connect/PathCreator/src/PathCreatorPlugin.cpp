@@ -60,6 +60,7 @@
 #include <Model/Waypoint.h>
 #include <Model/FlightCondition.h>
 #include <Model/SimType.h>
+#include <PluginManager/Connect/ClientEventShortcuts.h>
 #include <PluginManager/Connect/AbstractSkyConnect.h>
 #include "PathCreatorPlugin.h"
 
@@ -106,6 +107,12 @@ bool PathCreatorPlugin::setUserAircraftPosition([[maybe_unused]] const PositionD
 
 bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::SampleRate sampleRate) const noexcept
 {
+    return true;
+}
+
+bool PathCreatorPlugin::onSetupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept
+{
+    // TODO IMPLEMENT ME
     return true;
 }
 

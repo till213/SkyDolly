@@ -63,11 +63,13 @@
 #include <Model/Waypoint.h>
 #include <Model/InitialPosition.h>
 #include <PluginManager/Connect/Connect.h>
+#include <PluginManager/Connect/ClientEventShortcuts.h>
 
 #include "SimVar/SimulationVariables.h"
 #include "SimVar/SimConnectType.h"
 #include "Event/SimConnectEvent.h"
 #include "Event/EventStateHandler.h"
+#include "Event/InputEvent.h"
 #include "Event/SimulationRate.h"
 #include "Event/EventWidget.h"
 #include "SimConnectAi.h"
@@ -136,6 +138,15 @@ bool MSFSSimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRa
 {
     // "Auto" and 1 Hz sample rates are processed event-based
     return sampleRate != SampleRate::SampleRate::Auto && sampleRate != SampleRate::SampleRate::Hz1;
+}
+
+bool MSFSSimConnectPlugin::onSetupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept
+{
+    bool ok {false};
+    if (d->simConnectHandle != nullptr) {
+        ok = InputEvent::setup(d->simConnectHandle, shortcuts);
+    }
+    return ok;
 }
 
 bool MSFSSimConnectPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
@@ -679,7 +690,6 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
 
     d->eventStateHandler->setupSystemEvents();
     d->eventStateHandler->setupClientEvents();
-    d->eventStateHandler->setupInputEvents();
 }
 
 void MSFSSimConnectPlugin::replay() noexcept
@@ -814,21 +824,21 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             }
             break;
 
-        case SimConnectEvent::Event::EVENT_1:
+        case SimConnectEvent::Event::CustomRecording:
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: EVENT_1 event";
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomRecording event";
 #endif
             break;
 
-        case SimConnectEvent::Event::EVENT_2:
+        case SimConnectEvent::Event::CustomReplay:
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: EVENT_2 event";
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomReplay event";
 #endif
             break;
 
-        case SimConnectEvent::Event::EVENT_3:
+        case SimConnectEvent::Event::CustomPause:
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: EVENT_3 event";
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomPause event";
 #endif
             break;
 

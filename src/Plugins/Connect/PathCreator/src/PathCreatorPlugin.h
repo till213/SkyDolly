@@ -31,6 +31,7 @@
 #include <QObject>
 
 #include <Model/TimeVariableData.h>
+#include <PluginManager/Connect/ClientEventShortcuts.h>
 #include <PluginManager/Connect/AbstractSkyConnect.h>
 #include <PluginManager/Connect/SkyConnectIntf.h>
 
@@ -52,11 +53,14 @@ public:
     PathCreatorPlugin &operator=(const PathCreatorPlugin &rhs) = delete;
     PathCreatorPlugin &operator=(PathCreatorPlugin &&rhs) = delete;
     ~PathCreatorPlugin() override;
+    
 
     bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
 
 protected:
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
+
+    bool onSetupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;

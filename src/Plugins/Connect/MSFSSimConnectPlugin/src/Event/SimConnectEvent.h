@@ -88,10 +88,14 @@ namespace SimConnectEvent
         ToggleWingLights,
         ToggleLogoLights,
         ToggleCabinLights,
-        // Client events
-        EVENT_1,
-        EVENT_2,
-        EVENT_3
+        // Custom input events
+        CustomRecording,
+        CustomReplay,
+        CustomPause,
+        CustomStop,
+        CustomForward,
+        CustomBackward,
+        CustomRewind
     };
 }
 

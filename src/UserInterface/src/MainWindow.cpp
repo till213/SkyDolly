@@ -90,6 +90,7 @@
 #include <Widget/RecentFileMenu.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/ClientEventShortcuts.h>.h>
 #include <PluginManager/Connect/Connect.h>
 #include <PluginManager/PluginManager.h>
 #include <PluginManager/Module/ModuleIntf.h>
@@ -196,6 +197,7 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
     initUi();
     updateUi();
     frenchConnection();
+    tryConnectAndSetup();
 }
 
 MainWindow::~MainWindow()
@@ -445,6 +447,21 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::showAboutDialog);
     connect(ui->onlineManualAction, &QAction::triggered,
             this, &MainWindow::showOnlineManual);
+}
+
+void MainWindow::tryConnectAndSetup() const noexcept
+{
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+
+    // TODO IMPLEMENT ME
+    if (skyConnectManager.hasPlugins()) {
+        ClientEventShortcuts shortcuts;
+        // TODO Take them from settings
+        shortcuts.record = QKeySequence("CTRL+R");
+        shortcuts.replay = QKeySequence("CTRL+ALT+R");
+        shortcuts.pause = QKeySequence("CTRL+P");
+        skyConnectManager.tryConnectAndSetup(shortcuts);
+    }
 }
 
 void MainWindow::initUi() noexcept

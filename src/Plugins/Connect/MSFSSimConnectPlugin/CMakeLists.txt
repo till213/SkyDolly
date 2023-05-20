@@ -49,6 +49,7 @@ target_sources(${MODULE_NAME}
         src/Event/EventState.h
         src/Event/EventWidget.h src/Event/EventWidget.cpp
         src/Event/EventStateHandler.h
+        src/Event/InputEvent.h
         src/Event/SimulationRate.h
         src/SimConnectAi.h src/SimConnectAi.cpp        
         src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp

@@ -95,6 +95,19 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 
 AbstractSkyConnect::~AbstractSkyConnect() = default;
 
+bool AbstractSkyConnect::setupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept
+{
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this, shortcuts]() -> bool { return onSetupClientEventShortcuts(shortcuts); });
+    }
+    return ok;
+}
+
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {

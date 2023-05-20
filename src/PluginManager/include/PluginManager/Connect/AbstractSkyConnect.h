@@ -57,6 +57,8 @@ public:
     AbstractSkyConnect &operator=(AbstractSkyConnect &&rhs) = delete;
     ~AbstractSkyConnect() override;
 
+    bool setupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept override;
+
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
     bool freezeUserAircraft(bool enable) const noexcept override;
     bool sendSimulationEvent(SimulationEvent event, float arg1) noexcept override;
@@ -122,6 +124,7 @@ protected:
 
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
 
+    virtual bool onSetupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept = 0;
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
     virtual bool onSimulationEvent(SimulationEvent event, float arg1) const noexcept = 0;
