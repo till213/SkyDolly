@@ -112,6 +112,12 @@ void SettingsDialog::initUi() noexcept
 
     ui->repeatCanopyOpenCheckBox->setToolTip(SimVar::CanopyOpen);
 
+    // FLight simulator
+    ui->recordSequenceEdit->setMaximumSequenceLength(1);
+    ui->replaySequenceEdit->setMaximumSequenceLength(1);
+    ui->pauseSequenceEdit->setMaximumSequenceLength(1);
+    ui->stopSequenceEdit->setMaximumSequenceLength(1);
+
     ui->settingsTabWidget->setCurrentIndex(0);
 }
 
