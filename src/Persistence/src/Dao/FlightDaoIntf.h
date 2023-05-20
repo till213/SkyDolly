@@ -49,7 +49,7 @@ public:
      *        the FlightData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(FlightData &flightData) noexcept = 0;
+    virtual bool add(FlightData &flightData) const noexcept = 0;
 
     /*!
      * Exports the \c flight. While a new \c id for the exported Flight
@@ -59,12 +59,13 @@ public:
      *        the FlightData to be exported (persisted)
      * \return \c true on success; \c false else
      */
-    virtual bool exportFlightData(const FlightData &flightData) noexcept = 0;
+    virtual bool exportFlightData(const FlightData &flightData) const noexcept = 0;
     virtual bool get(std::int64_t id, FlightData &flightData) const noexcept = 0;
-    virtual bool deleteById(std::int64_t id) noexcept = 0;
-    virtual bool updateTitle(std::int64_t id, const QString &title) noexcept = 0;
-    virtual bool updateDescription(std::int64_t id, const QString &description) noexcept = 0;
-    virtual bool updateUserAircraftIndex(std::int64_t id, int index) noexcept = 0;
+    virtual bool deleteById(std::int64_t id) const noexcept = 0;
+    virtual bool updateTitle(std::int64_t id, const QString &title) const noexcept = 0;
+    virtual bool updateFlightNumber(std::int64_t id, const QString &flightNumber) const noexcept = 0;
+    virtual bool updateDescription(std::int64_t id, const QString &description) const noexcept = 0;
+    virtual bool updateUserAircraftIndex(std::int64_t id, int index) const noexcept = 0;
 };
 
 #endif // FLIGHTDAOINTF_H

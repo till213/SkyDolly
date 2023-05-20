@@ -68,7 +68,7 @@ SQLiteLightDao::SQLiteLightDao(SQLiteLightDao &&rhs) noexcept = default;
 SQLiteLightDao &SQLiteLightDao::operator=(SQLiteLightDao &&rhs) noexcept = default;
 SQLiteLightDao::~SQLiteLightDao() = default;
 
-bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData) noexcept
+bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -141,7 +141,7 @@ std::vector<LightData> SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, 
     return lightData;
 }
 
-bool SQLiteLightDao::deleteByFlightId(std::int64_t flightId) noexcept
+bool SQLiteLightDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -163,7 +163,7 @@ bool SQLiteLightDao::deleteByFlightId(std::int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLiteLightDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
+bool SQLiteLightDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};

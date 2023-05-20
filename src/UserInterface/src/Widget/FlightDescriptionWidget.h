@@ -62,8 +62,9 @@ private:
 
 private slots:
     void updateUi() noexcept;
-    void onTitleEdited() noexcept;
-    void onDescriptionEdited() noexcept;
+    void onTitleEdited() const noexcept;
+    void onFlightNumberEdited() const noexcept;
+    void onDescriptionEdited() const noexcept;
 };
 
 #endif // FLIGHTDESCRIPTIONWIDGET_H

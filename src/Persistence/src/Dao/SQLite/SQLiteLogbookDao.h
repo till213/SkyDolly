@@ -38,7 +38,7 @@ class QString;
 
 struct SQLiteLogbookDaoPrivate;
 
-class SQLiteLogbookDao : public LogbookDaoIntf
+class SQLiteLogbookDao final : public LogbookDaoIntf
 {
 public:
     SQLiteLogbookDao(QString connectionName) noexcept;

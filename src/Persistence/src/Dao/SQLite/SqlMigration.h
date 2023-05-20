@@ -34,7 +34,7 @@ class QString;
 
 struct SqlMigrationPrivate;
 
-class SqlMigration
+class SqlMigration final
 {
 public:
     SqlMigration(QString connectionName) noexcept;
@@ -44,14 +44,14 @@ public:
     SqlMigration &operator=(SqlMigration &&rhs) noexcept;
     ~SqlMigration();
 
-    bool migrate(Migration::Milestones milestones) noexcept;
+    bool migrate(Migration::Milestones milestones) const noexcept;
 
 private:
     std::unique_ptr<SqlMigrationPrivate> d;
 
-    bool migrateSql(const QString &migrationFilePath) noexcept;
-    bool migrateCsv(const QString &migrationFilePath) noexcept;
-    bool migrateLocation(const CsvParser::Row &row) noexcept;
+    bool migrateSql(const QString &migrationFilePath) const noexcept;
+    bool migrateCsv(const QString &migrationFilePath) const noexcept;
+    bool migrateLocation(const CsvParser::Row &row) const noexcept;
 };
 
 #endif // SQLMIGRATION_H

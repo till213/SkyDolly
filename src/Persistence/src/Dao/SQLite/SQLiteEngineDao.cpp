@@ -67,7 +67,7 @@ SQLiteEngineDao::SQLiteEngineDao(SQLiteEngineDao &&rhs) noexcept = default;
 SQLiteEngineDao &SQLiteEngineDao::operator=(SQLiteEngineDao &&rhs) noexcept = default;
 SQLiteEngineDao::~SQLiteEngineDao() = default;
 
-bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data) noexcept
+bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -276,7 +276,7 @@ std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId
     return engineData;
 }
 
-bool SQLiteEngineDao::deleteByFlightId(std::int64_t flightId) noexcept
+bool SQLiteEngineDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -299,7 +299,7 @@ bool SQLiteEngineDao::deleteByFlightId(std::int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLiteEngineDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
+bool SQLiteEngineDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};

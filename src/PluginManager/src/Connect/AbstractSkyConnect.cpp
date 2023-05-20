@@ -202,7 +202,14 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         }
         ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
-            ok = retryWithReconnect([this]() -> bool { return onStartRecording(); });
+            switch (recordingMode) {
+            case RecordingMode::SingleAircraft:
+                ok = retryWithReconnect([this]() -> bool { return onStartFlightRecording(); });
+                break;
+            case RecordingMode::AddToFormation:
+                ok = retryWithReconnect([this]() -> bool { return onStartAircraftRecording(); });
+                break;
+            }
         }
     }
 

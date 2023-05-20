@@ -100,7 +100,7 @@ SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;
 SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) noexcept = default;
 SqlMigration::~SqlMigration() = default;
 
-bool SqlMigration::migrate(Migration::Milestones milestones) noexcept
+bool SqlMigration::migrate(Migration::Milestones milestones) const noexcept
 {
     bool ok {true};
     if (milestones.testFlag(Migration::Milestone::Schema)) {
@@ -127,7 +127,7 @@ bool SqlMigration::migrate(Migration::Milestones milestones) noexcept
 
 // PRIVATE
 
-bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
+bool SqlMigration::migrateSql(const QString &migrationFilePath) const noexcept
 {
     // https://regex101.com/
     // @migr(...)
@@ -170,7 +170,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
     return query.exec() && ok;
 }
 
-bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
+bool SqlMigration::migrateCsv(const QString &migrationFilePath) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
@@ -209,7 +209,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
     return query.exec() && ok;
 }
 
-bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
+bool SqlMigration::migrateLocation(const CsvParser::Row &row) const noexcept
 {
     bool ok {true};
     Location location;

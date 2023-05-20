@@ -70,7 +70,7 @@ bool SqlMigrationStep::isValid() const noexcept
     return !d->migrationId.isNull();
 }
 
-bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcept
+bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) const noexcept
 {
 
     const QString tag = tagMatch.captured(1);
@@ -101,7 +101,7 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
     return ok;
 }
 
-bool SqlMigrationStep::checkApplied() noexcept
+bool SqlMigrationStep::checkApplied() const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -122,7 +122,7 @@ bool SqlMigrationStep::checkApplied() noexcept
     return applied;
 }
 
-bool SqlMigrationStep::execute(QStringView sql) noexcept
+bool SqlMigrationStep::execute(QStringView sql) const noexcept
 {
     QString errorMessage;
     // Match SQL statements terminated with a semicolon
@@ -155,7 +155,7 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
     return ok;
 }
 
-void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noexcept
+void SqlMigrationStep::registerMigration(bool success, QString errorMessage) const noexcept
 {
     bool ok = success;
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};

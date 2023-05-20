@@ -35,7 +35,7 @@ class QString;
 struct AircraftType;
 struct SQLiteAircraftTypeDaoPrivate;
 
-class SQLiteAircraftTypeDao : public AircraftTypeDaoIntf
+class SQLiteAircraftTypeDao final: public AircraftTypeDaoIntf
 {
 public:
     SQLiteAircraftTypeDao(QString connectionName) noexcept;
@@ -45,7 +45,7 @@ public:
     SQLiteAircraftTypeDao &operator=(SQLiteAircraftTypeDao &&rhs) noexcept;
     ~SQLiteAircraftTypeDao() override;
 
-    bool upsert(const AircraftType &aircraftType) noexcept override;
+    bool upsert(const AircraftType &aircraftType) const noexcept override;
     AircraftType getByType(const QString &type, bool *ok = nullptr) const noexcept override;
     std::vector<AircraftType> getAll(bool *ok = nullptr) const noexcept override;
     bool exists(const QString &type) const noexcept override;

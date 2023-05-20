@@ -126,7 +126,7 @@ bool FlightService::restoreFlight(std::int64_t id, Flight &flight) noexcept
     return ok;
 }
 
-bool FlightService::importFlightData(std::int64_t id, FlightData &flightData) noexcept
+bool FlightService::importFlightData(std::int64_t id, FlightData &flightData) const noexcept
 {
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
@@ -141,7 +141,7 @@ bool FlightService::importFlightData(std::int64_t id, FlightData &flightData) no
     return ok;
 }
 
-bool FlightService::deleteById(std::int64_t id) noexcept
+bool FlightService::deleteById(std::int64_t id) const noexcept
 {
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
@@ -164,7 +164,7 @@ bool FlightService::deleteById(std::int64_t id) noexcept
     return ok;
 }
 
-bool FlightService::updateTitle(Flight &flight, const QString &title) noexcept
+bool FlightService::updateTitle(Flight &flight, const QString &title) const noexcept
 {
     bool ok {false};
     const std::int64_t flightId = flight.getId();
@@ -181,7 +181,24 @@ bool FlightService::updateTitle(Flight &flight, const QString &title) noexcept
     return ok;
 }
 
-bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
+bool FlightService::updateFlightNumber(Flight &flight, const QString &flightNumber) const noexcept
+{
+    bool ok {false};
+    const std::int64_t flightId = flight.getId();
+    if (flightId != Const::InvalidId) {
+        if (flightId != Const::RecordingId) {
+            ok = updateFlightNumber(flightId, flightNumber);
+        } else {
+            ok = true;
+        }
+        if (ok) {
+            flight.setFlightNumber(flightNumber);
+        }
+    }
+    return ok;
+}
+
+bool FlightService::updateTitle(std::int64_t id, const QString &title) const noexcept
 {
     bool ok {false};
     if (Flight::isValidId(id)) {
@@ -204,7 +221,30 @@ bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
     return ok;
 }
 
-bool FlightService::updateDescription(Flight &flight, const QString &description) noexcept
+bool FlightService::updateFlightNumber(std::int64_t id, const QString &flightNumber) const noexcept
+{
+    bool ok {false};
+    if (Flight::isValidId(id)) {
+        QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        ok = db.transaction();
+        if (ok) {
+            ok = d->flightDao->updateFlightNumber(id, flightNumber);
+            if (ok) {
+                ok = db.commit();
+                emit Logbook::getInstance().getCurrentFlight().flightNumberChanged(id, flightNumber);
+            } else {
+                db.rollback();
+            }
+#ifdef DEBUG
+        } else {
+            qDebug() << "FlightService::updateFlightNumber: SQL error:" << db.lastError().text() << "- error code:" << db.lastError().nativeErrorCode();
+#endif
+        }
+    }
+    return ok;
+}
+
+bool FlightService::updateDescription(Flight &flight, const QString &description) const noexcept
 {
     bool ok {false};
     const std::int64_t flightId = flight.getId();
@@ -221,7 +261,7 @@ bool FlightService::updateDescription(Flight &flight, const QString &description
     return ok;
 }
 
-bool FlightService::updateDescription(std::int64_t id, const QString &description) noexcept
+bool FlightService::updateDescription(std::int64_t id, const QString &description) const noexcept
 {
     bool ok {false};
     if (Flight::isValidId(id)) {
@@ -244,7 +284,7 @@ bool FlightService::updateDescription(std::int64_t id, const QString &descriptio
     return ok;
 }
 
-bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
+bool FlightService::updateUserAircraftIndex(Flight &flight, int index) const noexcept
 {
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();

@@ -99,7 +99,6 @@ void AircraftInfoWidget::initUi() noexcept
     ui->nameLineEdit->setToolTip(SimVar::Title);
     ui->tailNumberLineEdit->setToolTip(SimVar::ATCFlightNumber);
     ui->airlineLineEdit->setToolTip(SimVar::ATCAirline);
-    ui->flightLineEdit->setToolTip(SimVar::ATCId);
 
     ui->categoryLineEdit->setToolTip(SimVar::Category);
     ui->startOnGroundCheckBox->setToolTip(SimVar::SimOnGround);
@@ -125,7 +124,6 @@ void AircraftInfoWidget::updateUi() noexcept
     ui->nameLineEdit->setText(aircraftInfo.aircraftType.type);
     ui->tailNumberLineEdit->setText(aircraftInfo.tailNumber);
     ui->airlineLineEdit->setText(aircraftInfo.airline);
-    ui->flightLineEdit->setText(flight.getFlightNumber());
     ui->categoryLineEdit->setText(aircraftInfo.aircraftType.category);
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 
