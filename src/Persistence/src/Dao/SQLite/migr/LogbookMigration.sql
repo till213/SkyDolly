@@ -965,7 +965,7 @@ update metadata
 set app_version = '0.16.0';
 
 @migr(id = "e84ba603-2628-4317-a05f-257cd1686c8a", descn = "Add flight number column to flight table", step_cnt = 3)
-alter table flight add column flight_number integer;
+alter table flight add column flight_number text;
 
 @migr(id = "e84ba603-2628-4317-a05f-257cd1686c8a", descn = "Migrate flight number from aircraft into flight table", step = 2)
 update flight
