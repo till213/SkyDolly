@@ -67,7 +67,7 @@ SQLiteAircraftTypeDao::SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) noexce
 SQLiteAircraftTypeDao &SQLiteAircraftTypeDao::operator=(SQLiteAircraftTypeDao &&rhs) noexcept = default;
 SQLiteAircraftTypeDao::~SQLiteAircraftTypeDao() = default;
 
-bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) noexcept
+bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};

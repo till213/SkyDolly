@@ -25,6 +25,7 @@
 #ifndef SIMULATIONVARIABLES_H
 #define SIMULATIONVARIABLES_H
 
+#include "SimConnectFlightInfo.h"
 #include "SimConnectAircraftInfo.h"
 #include "Position/SimConnectPositionUser.h"
 #include "Position/SimConnectPositionAll.h"

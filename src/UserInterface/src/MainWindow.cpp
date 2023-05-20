@@ -1179,7 +1179,7 @@ void MainWindow::onPositionSliderPressed() noexcept
     d->previousState = skyConnectManager.getState();
     if (skyConnectManager.isInReplayState()) {
         // Pause the replay while sliding the position slider
-        skyConnectManager.setPaused(true);
+        d->moduleManager->setPaused(true);
     }
 }
 
@@ -1192,11 +1192,10 @@ void MainWindow::onPositionSliderValueChanged(int value) noexcept
 void MainWindow::onPositionSliderReleased() noexcept
 {
     seek(ui->positionSlider->value(), SkyConnectIntf::SeekMode::Discrete);
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (d->previousState == Connect::State::Replay) {
-        skyConnectManager.setPaused(false);
+        d->moduleManager->setPaused(false);
     } else if (d->previousState == Connect::State::ReplayPaused) {
-        skyConnectManager.setPaused(true);
+        d->moduleManager->setPaused(true);
     }
     d->continuousSeek = false;
 }

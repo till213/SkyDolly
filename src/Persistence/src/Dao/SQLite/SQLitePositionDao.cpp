@@ -70,7 +70,7 @@ SQLitePositionDao::SQLitePositionDao(SQLitePositionDao &&rhs) noexcept = default
 SQLitePositionDao &SQLitePositionDao::operator=(SQLitePositionDao &&rhs) noexcept = default;
 SQLitePositionDao::~SQLitePositionDao() = default;
 
-bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &position) noexcept
+bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &position) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -189,7 +189,7 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
     return positionData;
 }
 
-bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) noexcept
+bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -212,7 +212,7 @@ bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLitePositionDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
+bool SQLitePositionDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};

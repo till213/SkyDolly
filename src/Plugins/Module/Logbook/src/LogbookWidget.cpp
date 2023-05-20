@@ -119,15 +119,12 @@ struct LogbookWidgetPrivate
     std::int64_t flightInMemoryId {Const::InvalidId};
     Unit unit;
     std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
-    // Columns are only auto-resized the first time the table is loaded
-    // After that manual column resizes are kept
-    bool columnsAutoResized {false};
 
     // Flight table columns
     static inline int flightIdColumn {::InvalidColumn};
     static inline int titleColumn {::InvalidColumn};
-    static inline int userAircraftColumn {::InvalidColumn};
     static inline int flightNumberColumn {::InvalidColumn};
+    static inline int userAircraftColumn {::InvalidColumn};    
     static inline int aircraftCountColumn {::InvalidColumn};
     static inline int creationDateColumn {::InvalidColumn};
     static inline int startTimeColumn {::InvalidColumn};
@@ -146,8 +143,9 @@ LogbookWidget::LogbookWidget(LogbookSettings &moduleSettings, QWidget *parent) n
 {
     ui->setupUi(this);
     initUi();
-    updateUi();
-    onSelectionChanged();
+    // The logbook table is updated once the plugin settings are restored (initiated
+    // by LogbookPlugin)
+    updateDateSelectorUi();
     frenchConnection();
 }
 
@@ -172,8 +170,8 @@ void LogbookWidget::initUi() noexcept
     const QStringList headers {
         tr("Flight"),
         tr("Title"),
-        tr("User Aircraft"),
         tr("Flight Number"),
+        tr("User Aircraft"),        
         tr("Number of Aircraft"),
         tr("Date"),
         tr("Departure Time"),
@@ -184,8 +182,8 @@ void LogbookWidget::initUi() noexcept
     };
     LogbookWidgetPrivate::flightIdColumn = headers.indexOf(tr("Flight"));
     LogbookWidgetPrivate::titleColumn = headers.indexOf(tr("Title"));
-    LogbookWidgetPrivate::userAircraftColumn = headers.indexOf(tr("User Aircraft"));
     LogbookWidgetPrivate::flightNumberColumn = headers.indexOf(tr("Flight Number"));
+    LogbookWidgetPrivate::userAircraftColumn = headers.indexOf(tr("User Aircraft"));    
     LogbookWidgetPrivate::aircraftCountColumn = headers.indexOf(tr("Number of Aircraft"));
     LogbookWidgetPrivate::creationDateColumn = headers.indexOf(tr("Date"));
     LogbookWidgetPrivate::startTimeColumn = headers.indexOf(tr("Departure Time"));
@@ -269,12 +267,17 @@ void LogbookWidget::updateTable() noexcept
         }
 
         ui->logTableWidget->setSortingEnabled(true);
-        if (!d->columnsAutoResized) {
+
+        QByteArray tableState = d->moduleSettings.getLogbookTableState();
+        if (!tableState.isEmpty()) {
+            ui->logTableWidget->horizontalHeader()->blockSignals(true);
+            ui->logTableWidget->horizontalHeader()->restoreState(tableState);
+            ui->logTableWidget->horizontalHeader()->blockSignals(false);
+        } else {
             ui->logTableWidget->resizeColumnsToContents();
             // Reserve some space for the aircraft icon
             const int idColumnWidth = static_cast<int>(std::round(1.25 * ui->logTableWidget->columnWidth(LogbookWidgetPrivate::flightIdColumn)));
             ui->logTableWidget->setColumnWidth(LogbookWidgetPrivate::flightIdColumn, idColumnWidth);
-            d->columnsAutoResized = true;
         }
         ui->logTableWidget->blockSignals(false);
 
@@ -308,15 +311,17 @@ inline void LogbookWidget::initRow(const FlightSummary &summary, int row) noexce
     ui->logTableWidget->setItem(row, column, newItem.release());
     ++column;
 
-    // Aircraft type
+    // Flight number
     newItem = std::make_unique<QTableWidgetItem>();
+    newItem->setToolTip(tr("Double-click to edit flight number."));
+    newItem->setBackground(Platform::getEditableTableCellBGColor());
     ui->logTableWidget->setItem(row, column, newItem.release());
     ++column;
 
-    // Flight number
+    // Aircraft type
     newItem = std::make_unique<QTableWidgetItem>();
     ui->logTableWidget->setItem(row, column, newItem.release());
-    ++column;
+    ++column;    
 
     // Aircraft count
     newItem = std::make_unique<QTableWidgetItem>();
@@ -388,13 +393,13 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::userAircraftColumn);
     item->setData(Qt::DisplayRole, summary.aircraftType);
 
-    // Flight number
-    item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightNumberColumn);
-    item->setData(Qt::DisplayRole, summary.flightNumber);
-
     // Aircraft count
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::aircraftCountColumn);
     item->setData(Qt::DisplayRole, QVariant::fromValue(summary.aircraftCount));
+
+    // Flight number
+    item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightNumberColumn);
+    item->setData(Qt::DisplayRole, summary.flightNumber);
 
     // Creation date
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::creationDateColumn);
@@ -622,25 +627,25 @@ inline void LogbookWidget::updateSelectionDateRange(QTreeWidgetItem *item) const
                 const int day = item->data(::DateColumn, Qt::UserRole).toInt();
                 QDate fromDate {year, month, day};
                 QDate toDate {fromDate.addDays(1)};
-                d->moduleSettings.setFromDate(std::move(fromDate));
-                d->moduleSettings.setToDate(std::move(toDate));
+                d->moduleSettings.setFromDate(fromDate);
+                d->moduleSettings.setToDate(toDate);
             } else {
                 // Item: month selected
                 const int year = parent->data(::DateColumn, Qt::UserRole).toInt();
                 const int month = item->data(::DateColumn, Qt::UserRole).toInt();
                 QDate fromDate {year, month, 1};
                 const int daysInMonth = fromDate.daysInMonth();
-                d->moduleSettings.setFromDate(std::move(fromDate));
+                d->moduleSettings.setFromDate(fromDate);
                 QDate toDate {year, month, daysInMonth};
-                d->moduleSettings.setToDate(std::move(toDate));
+                d->moduleSettings.setToDate(toDate);
             }
         } else {
             // Item: year selected
             const int year = item->data(::DateColumn, Qt::UserRole).toInt();
             QDate fromDate {year, 1, 1};
-            d->moduleSettings.setFromDate(std::move(fromDate));
+            d->moduleSettings.setFromDate(fromDate);
             QDate toDate {year, 12, 31};
-            d->moduleSettings.setToDate(std::move(toDate));
+            d->moduleSettings.setToDate(toDate);
         }
     } else {
         // Item: Logbook selected (show all entries)
@@ -833,6 +838,9 @@ void LogbookWidget::onCellSelected(int row, int column) noexcept
     if (column == d->titleColumn) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, column);
         ui->logTableWidget->editItem(item);
+    } else if (column == d->flightNumberColumn) {
+        QTableWidgetItem *item = ui->logTableWidget->item(row, column);
+        ui->logTableWidget->editItem(item);
     } else {
         loadFlight();
     }
@@ -840,17 +848,24 @@ void LogbookWidget::onCellSelected(int row, int column) noexcept
 
 void LogbookWidget::onCellChanged(int row, int column) noexcept
 {
-    if (column == d->titleColumn) {
-        QTableWidgetItem *item = ui->logTableWidget->item(row, column);
-        const QString title = item->data(Qt::EditRole).toString();
+    QTableWidgetItem *item = ui->logTableWidget->item(row, column);
+    const QString value = item->data(Qt::EditRole).toString();
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const std::int64_t selectedFlightId = getSelectedFlightId();
 
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
-        const std::int64_t selectedFlightId = getSelectedFlightId();
+    if (column == d->titleColumn) {
         if (flight.getId() == selectedFlightId) {
-            // Also update the current flight, if in memory
-            d->flightService->updateTitle(flight, title);
+            // Update the current flight, if in memory
+            d->flightService->updateTitle(flight, value);
         } else {
-            d->flightService->updateTitle(selectedFlightId, title);
+            d->flightService->updateTitle(selectedFlightId, value);
+        }
+    } else if (column == d->flightNumberColumn) {
+        if (flight.getId() == selectedFlightId) {
+            // Update the current flight, if in memory
+            d->flightService->updateFlightNumber(flight, value);
+        } else {
+            d->flightService->updateFlightNumber(selectedFlightId, value);
         }
     }
 }
@@ -971,6 +986,5 @@ void LogbookWidget::onModuleSettingsChanged() noexcept
     }
     ui->engineTypeComboBox->blockSignals(false);
 
-    ui->logTableWidget->horizontalHeader()->restoreState(d->moduleSettings.getLogbookTableState());
     updateTable();
 }

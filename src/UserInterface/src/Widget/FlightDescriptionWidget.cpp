@@ -33,6 +33,7 @@
 #include <Kernel/Unit.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
+#include <Model/SimVar.h>
 #include <Persistence/Service/FlightService.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <Widget/FocusPlainTextEdit.h>
@@ -78,6 +79,8 @@ void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
             this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::titleChanged,
             this, &FlightDescriptionWidget::updateUi);
+    connect(&flight, &Flight::flightNumberChanged,
+            this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::descriptionChanged,
             this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::flightStored,
@@ -113,12 +116,16 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
 // PRIVATE
 
 void FlightDescriptionWidget::initUi() noexcept
-{}
+{
+    ui->flightNumberLineEdit->setToolTip(SimVar::ATCId);
+}
 
 void FlightDescriptionWidget::frenchConnection() noexcept
 {
     connect(ui->titleLineEdit, &QLineEdit::editingFinished,
             this, &FlightDescriptionWidget::onTitleEdited);
+    connect(ui->flightNumberLineEdit, &QLineEdit::editingFinished,
+            this, &FlightDescriptionWidget::onFlightNumberEdited);
     connect(ui->focusPlainTextEdit, &FocusPlainTextEdit::focusLost,
             this, &FlightDescriptionWidget::onDescriptionEdited);
 }
@@ -131,26 +138,40 @@ void FlightDescriptionWidget::updateUi() noexcept
 
     bool enabled = flight.getId() != Const::InvalidId;
     ui->titleLineEdit->blockSignals(true);
+    ui->flightNumberLineEdit->blockSignals(true);
     ui->focusPlainTextEdit->blockSignals(true);
+
     ui->titleLineEdit->setText(flight.getTitle());
     ui->titleLineEdit->setEnabled(enabled);
+
+    ui->flightNumberLineEdit->setText(flight.getFlightNumber());
+    ui->flightNumberLineEdit->setEnabled(enabled);
+
     ui->focusPlainTextEdit->setPlainText(flight.getDescription());
     ui->focusPlainTextEdit->moveCursor(QTextCursor::MoveOperation::End);
     ui->focusPlainTextEdit->setEnabled(enabled);
+
     ui->titleLineEdit->blockSignals(false);
+    ui->flightNumberLineEdit->blockSignals(false);
     ui->focusPlainTextEdit->blockSignals(false);
 
     ui->recordingTimeLineEdit->setText(d->unit.formatDateTime(flight.getCreationTime()));
     ui->recordingTimeLineEdit->setToolTip(flight.getCreationTime().toUTC().toString(Qt::ISODate));
 }
 
-void FlightDescriptionWidget::onTitleEdited() noexcept
+void FlightDescriptionWidget::onTitleEdited() const noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     d->flightService->updateTitle(flight, ui->titleLineEdit->text());
 }
 
-void FlightDescriptionWidget::onDescriptionEdited() noexcept
+void FlightDescriptionWidget::onFlightNumberEdited() const noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    d->flightService->updateFlightNumber(flight, ui->flightNumberLineEdit->text());
+}
+
+void FlightDescriptionWidget::onDescriptionEdited() const noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     d->flightService->updateDescription(flight, ui->focusPlainTextEdit->toPlainText());

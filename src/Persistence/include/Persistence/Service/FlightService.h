@@ -109,13 +109,15 @@ public:
      * \return \c true upon success; \c false else
      * \sa restoreFlight
      */
-    bool importFlightData(std::int64_t id, FlightData &flightData) noexcept;
-    bool deleteById(std::int64_t id) noexcept;
-    bool updateTitle(Flight &flight, const QString &title) noexcept;
-    bool updateTitle(std::int64_t id, const QString &title) noexcept;
-    bool updateDescription(Flight &flight, const QString &description) noexcept;
-    bool updateDescription(std::int64_t id, const QString &description) noexcept;
-    bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
+    bool importFlightData(std::int64_t id, FlightData &flightData) const noexcept;
+    bool deleteById(std::int64_t id) const noexcept;
+    bool updateTitle(Flight &flight, const QString &title) const noexcept;
+    bool updateTitle(std::int64_t id, const QString &title) const noexcept;
+    bool updateFlightNumber(Flight &flight, const QString &flightNumber) const noexcept;
+    bool updateFlightNumber(std::int64_t id, const QString &flightNumber) const noexcept;
+    bool updateDescription(Flight &flight, const QString &description) const noexcept;
+    bool updateDescription(std::int64_t id, const QString &description) const noexcept;
+    bool updateUserAircraftIndex(Flight &flight, int index) const noexcept;
 
 private:
     std::unique_ptr<FlightServicePrivate> d;

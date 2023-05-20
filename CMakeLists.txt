@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16...3.23)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 include(CMakePrintHelpers)
 include(CheckIPOSupported)
@@ -16,7 +16,7 @@ project(
     VERSION 0.17.0
     DESCRIPTION "Sky Dolly - The Black Sheep for Your Flight Recordings"
     HOMEPAGE_URL "https://github.com/till213/SkyDolly"
-    LANGUAGES CXX    
+    LANGUAGES CXX
 )
 
 include(InitSubmodules)
@@ -60,10 +60,10 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Sql LinguistTools)
 
 # 3rd Party
 # ordered-map (Tessil)
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/ordered-map)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdParty/ordered-map)
 
 # GeographicLib (https://github.com/geographiclib/geographiclib)
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geographiclib EXCLUDE_FROM_ALL)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdParty/geographiclib EXCLUDE_FROM_ALL)
 set_target_properties(GeographicLib_SHARED
     PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
@@ -89,19 +89,19 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 # Application libraries
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Model)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Flight)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Widget)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/PluginManager)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Kernel)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Model)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Persistence)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Flight)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Widget)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/PluginManager)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/UserInterface)
 
 # Application
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyDolly)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/SkyDolly)
 
 # Resource (data) files
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdParty/geoids)
 include(src/Persistence/cmake/Locations.cmake)
 
 add_custom_target(${APP_PROJECT_NAME})
@@ -124,16 +124,16 @@ target_sources(${APP_PROJECT_NAME}
 )
 
 # Plugins
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugins)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Plugins)
 
 # Documentation
 option(SKY_DOXY_DOC "Build Doxygen documentation" OFF)
 if(SKY_DOXY_DOC)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/doc)
 endif()
 
 # Tests
 option(SKY_TESTS "Build Sky Dolly unit tests" OFF)
 if(SKY_TESTS)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/test)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/test)
 endif()

@@ -36,7 +36,7 @@ class QString;
 class FlightPlan;
 struct SQLiteWaypointDaoPrivate;
 
-class SQLiteWaypointDao : public WaypointDaoIntf
+class SQLiteWaypointDao final : public WaypointDaoIntf
 {
 public:
     SQLiteWaypointDao(QString connectionName) noexcept;
@@ -46,10 +46,10 @@ public:
     SQLiteWaypointDao &operator=(SQLiteWaypointDao &&rhs) noexcept;
     ~SQLiteWaypointDao() override;
 
-    bool add(std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept override;
+    bool add(std::int64_t aircraftId, const FlightPlan &flightPlan) const noexcept override;
     bool getByAircraftId(std::int64_t aircraftId, FlightPlan &flightPlan) const noexcept override;
-    bool deleteByFlightId(std::int64_t flightId) noexcept override;
-    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+    bool deleteByFlightId(std::int64_t flightId) const noexcept override;
+    bool deleteByAircraftId(std::int64_t aircraftId) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteWaypointDaoPrivate> d;

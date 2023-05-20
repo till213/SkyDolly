@@ -124,15 +124,21 @@ bool PathCreatorPlugin::onSimulationEvent([[maybe_unused]] SimulationEvent event
     return true;
 }
 
-bool PathCreatorPlugin::onStartRecording() noexcept
+bool PathCreatorPlugin::onStartFlightRecording() noexcept
 {
     recordFlightInfo();
     recordFlightCondition();
+    onStartAircraftRecording();
+    return true;
+}
+
+bool PathCreatorPlugin::onStartAircraftRecording() noexcept
+{
     recordAircraftInfo();
     return true;
 }
 
-void PathCreatorPlugin::onRecordingPaused([[maybe_unused]] bool paused) noexcept
+void PathCreatorPlugin::onRecordingPaused([[maybe_unused]] Initiator initiator, [[maybe_unused]] bool paused) noexcept
 {}
 
 void PathCreatorPlugin::onStopRecording() noexcept
@@ -159,7 +165,7 @@ bool PathCreatorPlugin::onStartReplay([[maybe_unused]] std::int64_t currentTimes
     return true;
 }
 
-void PathCreatorPlugin::onReplayPaused(bool enable) noexcept
+void PathCreatorPlugin::onReplayPaused([[maybe_unused]] Initiator initiator, bool enable) noexcept
 {
     if (enable) {
          d->replayTimer.stop();

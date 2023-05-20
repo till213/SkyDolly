@@ -42,13 +42,12 @@ namespace
     constexpr const char *EngineTypeKey {"EngineTypeKey"};
     constexpr const char *MinimumDurationMinutesKey {"MinimumDurationMinutes"};
 
-    constexpr const char *LogbookTableStateKey {"LogbookTableState"};
+constexpr const char *LogbookTableStateKey {"LogbookTableState"};
 
     // Defaults
     constexpr bool DefaultHasFormation {false};
     constexpr SimType::EngineType DefaultEngineType {SimType::EngineType::All};
     constexpr std::int64_t DefaultMinimumDurationMinutes {0};
-
 }
 
 struct LogbookSettingsPrivate

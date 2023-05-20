@@ -35,7 +35,7 @@ class QString;
 struct FlightData;
 class SQLiteFlightDaoPrivate;
 
-class SQLiteFlightDao : public FlightDaoIntf
+class SQLiteFlightDao final : public FlightDaoIntf
 {
 public:
     SQLiteFlightDao(QString connectionName) noexcept;
@@ -45,13 +45,14 @@ public:
     SQLiteFlightDao &operator=(SQLiteFlightDao &&rhs) noexcept;
     ~SQLiteFlightDao() override;
 
-    bool add(FlightData &flight) noexcept override;
-    bool exportFlightData(const FlightData &flightData) noexcept override;
+    bool add(FlightData &flight) const noexcept override;
+    bool exportFlightData(const FlightData &flightData) const noexcept override;
     bool get(std::int64_t id, FlightData &flightData) const noexcept override;
-    bool deleteById(std::int64_t id) noexcept override;
-    bool updateTitle(std::int64_t id, const QString &title) noexcept override;
-    bool updateDescription(std::int64_t id, const QString &description) noexcept override;
-    bool updateUserAircraftIndex(std::int64_t id, int index) noexcept override;
+    bool deleteById(std::int64_t id) const noexcept override;
+    bool updateTitle(std::int64_t id, const QString &title) const noexcept override;
+    bool updateFlightNumber(std::int64_t id, const QString &flightNumber) const noexcept override;
+    bool updateDescription(std::int64_t id, const QString &description) const noexcept override;
+    bool updateUserAircraftIndex(std::int64_t id, int index) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;

@@ -76,7 +76,7 @@ public:
 
     void stop() noexcept override;
 
-    void setPaused(bool enable) noexcept override;
+    void setPaused(Initiator initiator, bool enable) noexcept override;
     bool isPaused() const noexcept override;
 
     void skipToBegin() noexcept override;
@@ -126,12 +126,25 @@ protected:
     virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
     virtual bool onSimulationEvent(SimulationEvent event, float arg1) const noexcept = 0;
 
-    virtual bool onStartRecording() noexcept = 0;
-    virtual void onRecordingPaused(bool paused) noexcept = 0;
+    /*!
+     * Called when recording a Flight has started.
+     *
+     * \return \c true on success; \c false on error (SimConnect connection error)
+     */
+    virtual bool onStartFlightRecording() noexcept = 0;
+
+    /*!
+     * Called when recording an Aircraft has started, excluding Flight data.
+     * This method is called when recording a formation aircraft.
+     *
+     * \return \c true on success; \c false on error (SimConnect connection error)
+     */
+    virtual bool onStartAircraftRecording() noexcept = 0;
+    virtual void onRecordingPaused(Initiator initiator, bool paused) noexcept = 0;
     virtual void onStopRecording() noexcept = 0;
 
     virtual bool onStartReplay(std::int64_t currentTimestamp) noexcept = 0;
-    virtual void onReplayPaused(bool enable) noexcept = 0;
+    virtual void onReplayPaused(Initiator initiator, bool enable) noexcept = 0;
     virtual void onStopReplay() noexcept = 0;
 
     virtual void onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept = 0;

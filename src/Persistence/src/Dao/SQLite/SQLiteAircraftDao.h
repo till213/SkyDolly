@@ -38,7 +38,7 @@ class Aircraft;
 struct AircraftInfo;
 struct SQLiteAircraftDaoPrivate;
 
-class SQLiteAircraftDao : public AircraftDaoIntf
+class SQLiteAircraftDao final : public AircraftDaoIntf
 {
 public:
     SQLiteAircraftDao(QString connectionName) noexcept;
@@ -48,22 +48,22 @@ public:
     SQLiteAircraftDao &operator=(SQLiteAircraftDao &&rhs) noexcept;
     ~SQLiteAircraftDao() override;
 
-    bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
-    bool exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept override;
+    bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) const noexcept override;
+    bool exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) const noexcept override;
     std::vector<Aircraft> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
-    bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept override;
-    bool deleteAllByFlightId(std::int64_t flightId) noexcept override;
-    bool deleteById(std::int64_t id) noexcept override;
+    bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) const noexcept override;
+    bool deleteAllByFlightId(std::int64_t flightId) const noexcept override;
+    bool deleteById(std::int64_t id) const noexcept override;
     std::vector<AircraftInfo> getAircraftInfosByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept override;
-    bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept override;
-    bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept override;
+    bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) const noexcept override;
+    bool updateTailNumber(std::int64_t id, const QString &tailNumber) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteAircraftDaoPrivate> d;
 
     // Inserts the aircraft and returns the generated aircraft ID if successful; Const::InvalidId upon failure
-    inline std::int64_t insertAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept;
-    inline bool insertAircraftData(std::int64_t aircraftId, const Aircraft &aircraft) noexcept;
+    inline std::int64_t insertAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) const noexcept;
+    inline bool insertAircraftData(std::int64_t aircraftId, const Aircraft &aircraft) const noexcept;
 };
 
 #endif // SQLITEAIRCRAFTDAO_H

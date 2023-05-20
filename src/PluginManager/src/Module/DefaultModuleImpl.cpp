@@ -25,6 +25,7 @@
 #include <memory.h>
 
 #include <QString>
+#include <QUuid>
 
 #include <SkyConnectManager.h>
 #include "DefaultModuleSettings.h"
@@ -37,13 +38,16 @@ struct DefaultModuleImplPrivate
 
 // PUBLIC
 
-// PUBLIC
-
 DefaultModuleImpl::DefaultModuleImpl() noexcept
     : d(std::make_unique<DefaultModuleImplPrivate>())
 {}
 
 DefaultModuleImpl::~DefaultModuleImpl() = default;
+
+QUuid DefaultModuleImpl::getUuid() const noexcept
+{
+    return QUuid();
+}
 
 QString DefaultModuleImpl::getModuleName() const noexcept
 {

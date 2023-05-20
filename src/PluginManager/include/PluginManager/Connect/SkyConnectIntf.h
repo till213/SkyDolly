@@ -55,13 +55,18 @@ public:
         AddToFormation
     };
 
+    /*!
+     * Defines of which aircraft to take control of during formation replay.
+     *
+     * Implementation note: those values act as actual IDs that get persisted in the database.
+     */
     enum struct ReplayMode {
         /*! All aircraft are controlled by Sky Dolly. */
-        Normal,
+        Normal = 0,
         /*! User takes control of recorded user aircraft. */
-        UserAircraftManualControl,
+        UserAircraftManualControl = 1,
         /*! User flies along with all recorded aircraft. */
-        FlyWithFormation
+        FlyWithFormation = 2
     };
 
     enum struct SeekMode {
@@ -82,6 +87,16 @@ public:
         EngineStop,
         /*! Argument 1: simulation rate */
         SimulationRate
+    };
+
+    /*!
+     * Indicates who initiated an event such as a pause event.
+     */
+    enum struct Initiator {
+        /*! The application initiated the event */
+        App,
+        /*! The flight simulator initiated the event */
+        FlightSimulator
     };
 
     SkyConnectIntf(QObject *parent = nullptr) noexcept
@@ -197,7 +212,7 @@ public:
      */
     virtual bool isActive() const noexcept = 0;
 
-    virtual void setPaused(bool enable) noexcept = 0;
+    virtual void setPaused(Initiator initiator, bool enable) noexcept = 0;
     virtual bool isPaused() const noexcept = 0;
 
     virtual void skipToBegin() noexcept = 0;

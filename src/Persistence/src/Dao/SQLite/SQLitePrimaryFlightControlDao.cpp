@@ -70,7 +70,7 @@ SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao(SQLitePrimaryFlight
 SQLitePrimaryFlightControlDao &SQLitePrimaryFlightControlDao::operator=(SQLitePrimaryFlightControlDao &&rhs) noexcept = default;
 SQLitePrimaryFlightControlDao::~SQLitePrimaryFlightControlDao() = default;
 
-bool SQLitePrimaryFlightControlDao::add(std::int64_t aircraftId, const PrimaryFlightControlData &primaryFlightControlData) noexcept
+bool SQLitePrimaryFlightControlDao::add(std::int64_t aircraftId, const PrimaryFlightControlData &primaryFlightControlData) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -174,7 +174,7 @@ std::vector<PrimaryFlightControlData> SQLitePrimaryFlightControlDao::getByAircra
     return primaryFlightControlData;
 }
 
-bool SQLitePrimaryFlightControlDao::deleteByFlightId(std::int64_t flightId) noexcept
+bool SQLitePrimaryFlightControlDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -197,7 +197,7 @@ bool SQLitePrimaryFlightControlDao::deleteByFlightId(std::int64_t flightId) noex
     return ok;
 }
 
-bool SQLitePrimaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
+bool SQLitePrimaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};

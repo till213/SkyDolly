@@ -28,6 +28,7 @@
 #include <memory.h>
 
 #include <QString>
+#include <QUuid>
 
 class QWidget;
 
@@ -46,6 +47,7 @@ public:
     DefaultModuleImpl &operator=(DefaultModuleImpl &&rhs) = delete;
     ~DefaultModuleImpl() override;
 
+    QUuid getUuid() const noexcept override;
     QString getModuleName() const noexcept final;
     QWidget *getWidget() const noexcept final;
     RecordIconId getRecordIconId() const noexcept final;

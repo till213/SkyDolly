@@ -57,9 +57,6 @@ public:
     void setPaused(bool enable) noexcept override;
     void setPlaying(bool enable) noexcept override;
 
-    void storeSettings(const QUuid &pluginUuid) const noexcept override;
-    void restoreSettings(const QUuid &pluginUuid) noexcept override;
-
 protected:
     virtual void onStartRecording() noexcept;
     virtual void onPause(bool enable) noexcept;
@@ -67,6 +64,8 @@ protected:
 
     FlightService &getFlightService() const noexcept;
 
+    void storeSettings(const QUuid &pluginUuid) const noexcept;
+    void restoreSettings(const QUuid &pluginUuid) noexcept;
     virtual ModuleBaseSettings &getModuleSettings() const noexcept = 0;
 
 protected slots:
