@@ -67,11 +67,11 @@ protected:
 
     bool onStartFlightRecording() noexcept override;
     bool onStartAircraftRecording() noexcept override;
-    void onRecordingPaused(bool enable) noexcept override;
+    void onRecordingPaused(Initiator initiator, bool enable) noexcept override;
     void onStopRecording() noexcept override;
 
     bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
-    void onReplayPaused(bool enable) noexcept override;
+    void onReplayPaused(Initiator initiator, bool enable) noexcept override;
     void onStopReplay() noexcept override;
 
     void onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept override;

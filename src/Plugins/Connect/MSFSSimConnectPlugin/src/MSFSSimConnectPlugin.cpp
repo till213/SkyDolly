@@ -225,10 +225,16 @@ bool MSFSSimConnectPlugin::onStartAircraftRecording() noexcept
     return ok;
 }
 
-void MSFSSimConnectPlugin::onRecordingPaused(bool enable) noexcept
+void MSFSSimConnectPlugin::onRecordingPaused(Initiator initiator, bool enable) noexcept
 {
     updateRecordingFrequency(Settings::getInstance().getRecordingSampleRate());
-    d->eventStateHandler->pauseSimulation(enable);
+    switch (initiator) {
+    case Initiator::App:
+        d->eventStateHandler->pauseSimulation(enable);
+        break;
+    case Initiator::FlightSimulator:
+        break;
+    }
 }
 
 void MSFSSimConnectPlugin::onStopRecording() noexcept
@@ -305,7 +311,7 @@ bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
     return result == S_OK;
 }
 
-void MSFSSimConnectPlugin::onReplayPaused(bool enable) noexcept
+void MSFSSimConnectPlugin::onReplayPaused([[maybe_unused]] Initiator initiator, bool enable) noexcept
 {
     if (enable) {
         if (d->subscribedToFrameEvent) {
@@ -786,7 +792,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             // at the very beginning (timestamp 0) of the replay
             if (evt->dwData > 0 || skyConnect->getCurrentTimestamp() > 0) {
                 const bool enable = evt->dwData != 0;
-                skyConnect->setPaused(enable);
+                skyConnect->setPaused(Initiator::FlightSimulator, enable);
             }
             break;
 

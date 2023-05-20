@@ -252,11 +252,11 @@ void SkyConnectManager::stop() noexcept
     }
 }
 
-void SkyConnectManager::setPaused(bool enable) noexcept
+void SkyConnectManager::setPaused(SkyConnectIntf::Initiator initiator, bool enable) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
-        skyConnect->get().setPaused(enable);
+        skyConnect->get().setPaused(initiator, enable);
     }
 }
 

@@ -89,6 +89,16 @@ public:
         SimulationRate
     };
 
+    /*!
+     * Indicates who initiated an event such as a pause event.
+     */
+    enum struct Initiator {
+        /*! The application initiated the event */
+        App,
+        /*! The flight simulator initiated the event */
+        FlightSimulator
+    };
+
     SkyConnectIntf(QObject *parent = nullptr) noexcept
         : QObject(parent)
     {}
@@ -202,7 +212,7 @@ public:
      */
     virtual bool isActive() const noexcept = 0;
 
-    virtual void setPaused(bool enable) noexcept = 0;
+    virtual void setPaused(Initiator initiator, bool enable) noexcept = 0;
     virtual bool isPaused() const noexcept = 0;
 
     virtual void skipToBegin() noexcept = 0;
