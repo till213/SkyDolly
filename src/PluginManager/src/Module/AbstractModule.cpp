@@ -126,7 +126,7 @@ void AbstractModule::onStartRecording() noexcept
 
 void AbstractModule::onPause(bool enable) noexcept
 {
-    SkyConnectManager::getInstance().setPaused(enable);
+    SkyConnectManager::getInstance().setPaused(SkyConnectIntf::Initiator::App, enable);
 }
 
 void AbstractModule::onStartReplay() noexcept

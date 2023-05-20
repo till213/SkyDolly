@@ -22,6 +22,7 @@
 ### Bug Fixes
 - KML export: the _first_ position point is now properly exported as well
 - Flight condition is not overwritten anymore when recording additional formation aircraft
+- Toggling the "active pause" in MSFS while recording now properly resumes/pauses recording and the flight [[Issue #106](https://github.com/till213/SkyDolly/issues/106)]
 
 ## 0.16.2
 
