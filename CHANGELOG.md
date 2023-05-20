@@ -24,6 +24,9 @@
 - Flight condition is not overwritten anymore when recording additional formation aircraft
 - Toggling the "active pause" in MSFS while recording now properly resumes/pauses recording and the flight [[Issue #106](https://github.com/till213/SkyDolly/issues/106)]
 
+### Under the Hood
+- Upgrade GeographicLib to version 2.2 (from version 2.1.2)
+
 ## 0.16.2
 
 ### Bug Fixes
