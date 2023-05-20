@@ -50,12 +50,12 @@ public:
     virtual bool connectDb(const QString &logbookPath) noexcept = 0;
     virtual void disconnectDb(Connection::Default connection) noexcept = 0;
 
-    virtual bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept = 0;
-    virtual bool optimise() noexcept = 0;
-    virtual bool backup(const QString &backupFilePath) noexcept= 0;
-    virtual bool updateBackupPeriod(std::int64_t backupPeriodId) noexcept = 0;
-    virtual bool updateNextBackupDate(const QDateTime &date) noexcept = 0;
-    virtual bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept = 0;
+    virtual bool migrate(Migration::Milestones milestones = Migration::Milestone::All) const noexcept = 0;
+    virtual bool optimise() const noexcept = 0;
+    virtual bool backup(const QString &backupFilePath) const noexcept= 0;
+    virtual bool updateBackupPeriod(std::int64_t backupPeriodId) const noexcept = 0;
+    virtual bool updateNextBackupDate(const QDateTime &date) const noexcept = 0;
+    virtual bool updateBackupDirectoryPath(const QString &backupDirectoryPath) const noexcept = 0;
 
     virtual Metadata getMetadata(bool *ok = nullptr) const noexcept = 0;
     virtual Version getDatabaseVersion(bool *ok = nullptr) const noexcept = 0;

@@ -36,7 +36,7 @@ class QString;
 struct AircraftHandleData;
 struct SQLiteHandleDaoPrivate;
 
-class SQLiteHandleDao : public HandleDaoIntf
+class SQLiteHandleDao final : public HandleDaoIntf
 {
 public:
     SQLiteHandleDao(QString connectionName) noexcept;
@@ -46,10 +46,10 @@ public:
     SQLiteHandleDao &operator=(SQLiteHandleDao &&rhs) noexcept;
     ~SQLiteHandleDao() override;
 
-    bool add(std::int64_t aircraftId, const AircraftHandleData &data) noexcept override;
+    bool add(std::int64_t aircraftId, const AircraftHandleData &data) const noexcept override;
     std::vector<AircraftHandleData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
-    bool deleteByFlightId(std::int64_t flightId) noexcept override;
-    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+    bool deleteByFlightId(std::int64_t flightId) const noexcept override;
+    bool deleteByAircraftId(std::int64_t aircraftId) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteHandleDaoPrivate> d;

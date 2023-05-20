@@ -41,8 +41,8 @@ public:
     LocationDaoIntf &operator=(LocationDaoIntf &&rhs) = default;
     virtual ~LocationDaoIntf() = default;
 
-    virtual bool add(Location &location) noexcept = 0;
-    virtual bool update(const Location &location) noexcept = 0;
+    virtual bool add(Location &location) const noexcept = 0;
+    virtual bool update(const Location &location) const noexcept = 0;
 
     /*!
      * Gets the locations that are approximately within the given \c distance from the position
@@ -59,7 +59,7 @@ public:
      * \return the locations that are within the given \c distance of the given \c latitude and \c longitude
      */
     virtual std::vector<Location> getByPosition(double latitude, double longitude, double distance = 0.0, bool *ok = nullptr) const noexcept = 0;
-    virtual bool deleteById(std::int64_t id) noexcept = 0;
+    virtual bool deleteById(std::int64_t id) const noexcept = 0;
     virtual std::vector<Location> getAll(bool *ok = nullptr) const noexcept = 0;
     virtual std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) const noexcept = 0;
 };

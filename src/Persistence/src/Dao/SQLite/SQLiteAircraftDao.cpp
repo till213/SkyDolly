@@ -112,7 +112,7 @@ SQLiteAircraftDao::SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept = default
 SQLiteAircraftDao &SQLiteAircraftDao::operator=(SQLiteAircraftDao &&rhs) noexcept = default;
 SQLiteAircraftDao::~SQLiteAircraftDao() = default;
 
-bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept
+bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) const noexcept
 {
     bool ok {false};
     const std::int64_t aircraftId = insertAircraft(flightId, sequenceNumber, aircraft);
@@ -123,7 +123,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, A
     return ok;
 }
 
-bool SQLiteAircraftDao::exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept
+bool SQLiteAircraftDao::exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) const noexcept
 {
     bool ok {false};
     const std::int64_t aircraftId = insertAircraft(flightId, sequenceNumber, aircraft);
@@ -175,7 +175,7 @@ std::vector<Aircraft> SQLiteAircraftDao::getByFlightId(std::int64_t flightId, bo
     return aircraftList;
 }
 
-bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept
+bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -197,7 +197,7 @@ bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t fli
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) noexcept
+bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) const noexcept
 {
     // Delete "bottom-up" in order not to violate foreign key constraints
     bool ok = d->positionDao->deleteByFlightId(flightId);
@@ -239,7 +239,7 @@ bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteById(std::int64_t id) noexcept
+bool SQLiteAircraftDao::deleteById(std::int64_t id) const noexcept
 {
     // Delete "bottom-up" in order not to violate foreign key constraints
     // Note: aircraft types (table aircraft_type) are not deleted
@@ -342,7 +342,7 @@ std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int
     return aircraftInfos;
 }
 
-bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept
+bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffset) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -363,7 +363,7 @@ bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffse
     return ok;
 };
 
-bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept
+bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNumber) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -386,7 +386,7 @@ bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNum
 
 // PRIVATE
 
-inline std::int64_t SQLiteAircraftDao::insertAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept
+inline std::int64_t SQLiteAircraftDao::insertAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) const noexcept
 {
     std::int64_t aircraftId {Const::InvalidId};
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -444,7 +444,7 @@ inline std::int64_t SQLiteAircraftDao::insertAircraft(std::int64_t flightId, std
     return aircraftId;
 }
 
-inline bool SQLiteAircraftDao::insertAircraftData(std::int64_t aircraftId, const Aircraft &aircraft) noexcept
+inline bool SQLiteAircraftDao::insertAircraftData(std::int64_t aircraftId, const Aircraft &aircraft) const noexcept
 {
     bool ok {true};
     for (const PositionData &data : aircraft.getPosition()) {

@@ -57,7 +57,7 @@ public:
      *        the aircraft to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept = 0;
+    virtual bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) const noexcept = 0;
 
     /*!
      * Exports the \c aircraft. While a new \c id for the exported Aircraft
@@ -71,15 +71,15 @@ public:
      *        the aircraft to be exported (persisted)
      * \return \c true on success; \c false else
      */
-    virtual bool exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept = 0;
+    virtual bool exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) const noexcept = 0;
 
     virtual std::vector<Aircraft> getByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept = 0;
-    virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t id, std::size_t sequenceNumber) noexcept = 0;
-    virtual bool deleteAllByFlightId(std::int64_t flightId) noexcept = 0;
-    virtual bool deleteById(std::int64_t id) noexcept = 0;
+    virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t id, std::size_t sequenceNumber) const noexcept = 0;
+    virtual bool deleteAllByFlightId(std::int64_t flightId) const noexcept = 0;
+    virtual bool deleteById(std::int64_t id) const noexcept = 0;
     virtual std::vector<AircraftInfo> getAircraftInfosByFlightId(std::int64_t flightId, bool *ok = nullptr) const noexcept = 0;
-    virtual bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept = 0;
-    virtual bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept = 0;
+    virtual bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) const noexcept = 0;
+    virtual bool updateTailNumber(std::int64_t id, const QString &tailNumber) const noexcept = 0;
 };
 
 #endif // AIRCRAFTDAOINTF_H

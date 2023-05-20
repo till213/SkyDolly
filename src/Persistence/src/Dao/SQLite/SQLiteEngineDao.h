@@ -36,7 +36,7 @@ class QString;
 struct EngineData;
 struct SQLiteEngineDaoPrivate;
 
-class SQLiteEngineDao : public EngineDaoIntf
+class SQLiteEngineDao final : public EngineDaoIntf
 {
 public:
     SQLiteEngineDao(QString connectionName) noexcept;
@@ -46,10 +46,10 @@ public:
     SQLiteEngineDao &operator=(SQLiteEngineDao &&rhs) noexcept;
     ~SQLiteEngineDao() override;
 
-    bool add(std::int64_t aircraftId, const EngineData &data) noexcept override;
+    bool add(std::int64_t aircraftId, const EngineData &data) const noexcept override;
     std::vector<EngineData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
-    bool deleteByFlightId(std::int64_t flightId) noexcept override;
-    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+    bool deleteByFlightId(std::int64_t flightId) const noexcept override;
+    bool deleteByAircraftId(std::int64_t aircraftId) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteEngineDaoPrivate> d;

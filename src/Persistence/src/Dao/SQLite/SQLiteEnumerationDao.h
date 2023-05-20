@@ -32,7 +32,7 @@ class QString;
 
 struct SQLiteEnumerationDaoPrivate;
 
-class SQLiteEnumerationDao : public EnumerationDaoIntf
+class SQLiteEnumerationDao final : public EnumerationDaoIntf
 {
 public:
     SQLiteEnumerationDao(QString connectionName) noexcept;

@@ -69,7 +69,7 @@ SQLiteLocationDao::SQLiteLocationDao(SQLiteLocationDao &&rhs) noexcept = default
 SQLiteLocationDao &SQLiteLocationDao::operator=(SQLiteLocationDao &&rhs) noexcept = default;
 SQLiteLocationDao::~SQLiteLocationDao() = default;
 
-bool SQLiteLocationDao::add(Location &location) noexcept
+bool SQLiteLocationDao::add(Location &location) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -140,7 +140,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     return ok;
 }
 
-bool SQLiteLocationDao::update(const Location &location) noexcept
+bool SQLiteLocationDao::update(const Location &location) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
@@ -276,7 +276,7 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
     return locations;
 }
 
-bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
+bool SQLiteLocationDao::deleteById(std::int64_t id) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};

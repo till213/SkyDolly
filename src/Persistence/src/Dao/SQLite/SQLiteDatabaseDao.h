@@ -40,7 +40,7 @@ class QDateTime;
 
 struct DatabaseDaoPrivate;
 
-class SQLiteDatabaseDao : public DatabaseDaoIntf
+class SQLiteDatabaseDao final : public DatabaseDaoIntf
 {
 public:
 
@@ -55,12 +55,12 @@ public:
     bool connectDb(const QString &logbookPath) noexcept override;
     void disconnectDb(Connection::Default connection) noexcept override;
 
-    bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept override;
-    bool optimise() noexcept override;
-    bool backup(const QString &backupFilePath) noexcept override;
-    bool updateBackupPeriod(std::int64_t backupPeriodId) noexcept override;
-    bool updateNextBackupDate(const QDateTime &date) noexcept override;
-    bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept override;
+    bool migrate(Migration::Milestones milestones = Migration::Milestone::All) const noexcept override;
+    bool optimise() const noexcept override;
+    bool backup(const QString &backupFilePath) const noexcept override;
+    bool updateBackupPeriod(std::int64_t backupPeriodId) const noexcept override;
+    bool updateNextBackupDate(const QDateTime &date) const noexcept override;
+    bool updateBackupDirectoryPath(const QString &backupDirectoryPath) const noexcept override;
 
     Metadata getMetadata(bool *ok = nullptr) const noexcept override;
     Version getDatabaseVersion(bool *ok = nullptr) const noexcept override;
@@ -69,8 +69,8 @@ public:
 private:
     std::unique_ptr<DatabaseDaoPrivate> d;
 
-    void disconnectSQLite(Connection::Default connection) noexcept;
-    bool createMigrationTable() noexcept;
+    void disconnectSQLite(Connection::Default connection) const noexcept;
+    bool createMigrationTable() const noexcept;
 };
 
 #endif // SQLITEDATABASEDAO_H

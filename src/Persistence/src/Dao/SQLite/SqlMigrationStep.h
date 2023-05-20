@@ -35,7 +35,7 @@ class QStringRef;
 
 struct SqlMigrationStepPrivate;
 
-class SqlMigrationStep
+class SqlMigrationStep final
 {
 public:
     SqlMigrationStep(QString connectionName) noexcept;
@@ -46,11 +46,11 @@ public:
     ~SqlMigrationStep();
 
     bool isValid() const noexcept;
-    bool parseTag(const QRegularExpressionMatch &tagMatch) noexcept;
+    bool parseTag(const QRegularExpressionMatch &tagMatch) const noexcept;
 
-    bool checkApplied() noexcept;
-    bool execute(QStringView sql) noexcept;
-    void registerMigration(bool success, QString errorMessage = QString()) noexcept;
+    bool checkApplied() const noexcept;
+    bool execute(QStringView sql) const noexcept;
+    void registerMigration(bool success, QString errorMessage = QString()) const noexcept;
 
     const QString &getMigrationId() const noexcept;
     void setMigrationId(QString migrationId) noexcept;
