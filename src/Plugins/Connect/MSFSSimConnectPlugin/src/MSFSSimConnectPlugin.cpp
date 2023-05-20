@@ -677,7 +677,9 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
 
     ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::InitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
-    d->eventStateHandler->setupEvents();
+    d->eventStateHandler->setupSystemEvents();
+    d->eventStateHandler->setupClientEvents();
+    d->eventStateHandler->setupInputEvents();
 }
 
 void MSFSSimConnectPlugin::replay() noexcept
@@ -810,6 +812,24 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             default:
                 break;
             }
+            break;
+
+        case SimConnectEvent::Event::EVENT_1:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: EVENT_1 event";
+#endif
+            break;
+
+        case SimConnectEvent::Event::EVENT_2:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: EVENT_2 event";
+#endif
+            break;
+
+        case SimConnectEvent::Event::EVENT_3:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: EVENT_3 event";
+#endif
             break;
 
         default:

@@ -87,7 +87,11 @@ namespace SimConnectEvent
         ToggleRecognitionLights,
         ToggleWingLights,
         ToggleLogoLights,
-        ToggleCabinLights
+        ToggleCabinLights,
+        // Client events
+        EVENT_1,
+        EVENT_2,
+        EVENT_3
     };
 }
 

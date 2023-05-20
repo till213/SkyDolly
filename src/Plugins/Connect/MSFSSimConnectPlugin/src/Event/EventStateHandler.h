@@ -93,14 +93,16 @@ public:
         return static_cast<std::int16_t>(std::round(percent * (double)Max16KPosition / 100.0));
     }
 
-    void setupEvents() noexcept
+    void setupSystemEvents() noexcept
     {
         // System event subscription
         ::SimConnect_SubscribeToSystemEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimStart), "SimStart");
         ::SimConnect_SubscribeToSystemEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::Pause), "Pause");
         ::SimConnect_SubscribeToSystemEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::Crashed), "Crashed");
+    }
 
-        // Client events
+    void setupClientEvents() noexcept
+    {
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::PauseSet), "PAUSE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimRateIncr), "SIM_RATE_INCR");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimRateDecr), "SIM_RATE_DECR");
@@ -139,6 +141,29 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ToggleWingLights), "TOGGLE_WING_LIGHTS");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ToggleLogoLights), "TOGGLE_LOGO_LIGHTS");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ToggleCabinLights), "TOGGLE_CABIN_LIGHTS");
+    }
+
+    void setupInputEvents() noexcept
+    {
+        enum INPUT_ID {
+            INPUT_1
+        };
+
+        enum GROUP_ID {
+            GROUP_1
+        };
+
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::EVENT_1), "Custom.Event1");
+
+        ::SimConnect_AddClientEventToNotificationGroup(m_simConnectHandle, GROUP_1, Enum::underly(SimConnectEvent::Event::EVENT_1));
+
+        ::SimConnect_SetNotificationGroupPriority(m_simConnectHandle, GROUP_1, SIMCONNECT_GROUP_PRIORITY_HIGHEST);
+
+        // Note that this does not override "." for brakes - both with be transmitted
+
+        ::SimConnect_MapInputEventToClientEvent(m_simConnectHandle, INPUT_1, "z", Enum::underly(SimConnectEvent::Event::EVENT_1));
+
+        ::SimConnect_SetInputGroupState(m_simConnectHandle, INPUT_1, SIMCONNECT_STATE_ON);
     }
 
     inline void pauseSimulation(bool enable) noexcept
