@@ -9,6 +9,7 @@
 - The flight number is now also shown in the Logbook table [[Issue #103](https://github.com/till213/SkyDolly/issues/103)]
   * Flights can also be filtered with the flight number
   * The flight number is now stored per flight (not per aircraft anymore)
+  * The flight number can now be edited (both in the Flight dialog and logbook table)
 - The Formation module settings (relative position, replay mode) are now persisted
 - Improved module settings performance: the logbook and location tables are now updated exactly once (and not twice) upon module initialisation
 
