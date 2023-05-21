@@ -73,11 +73,17 @@ public:
         result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomForward));
         result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomForward));
 
-        // Rewind
-        shortcut = toMSFSShortcut(shortcuts.rewind);
-        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomRewind), "Custom.Rewind");
-        result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomRewind));
-        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomRewind));
+        // Begin
+        shortcut = toMSFSShortcut(shortcuts.begin);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomBegin), "Custom.Begin");
+        result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomBegin));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomBegin));
+
+        // End
+        shortcut = toMSFSShortcut(shortcuts.end);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomEnd), "Custom.End");
+        result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomEnd));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomEnd));
 
         result |= ::SimConnect_SetNotificationGroupPriority(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), SIMCONNECT_GROUP_PRIORITY_HIGHEST);
         result |= ::SimConnect_SetInputGroupState(simConnectHandle, Enum::underly(Input::SkyDollyControl), SIMCONNECT_STATE_ON);

@@ -146,7 +146,8 @@ struct SettingsPrivate
     static inline const QKeySequence DefaultStopShortcut {"Ctrl+S"};
     static inline const QKeySequence DefaultBackwardShortcut {"Ctrl+B"};
     static inline const QKeySequence DefaultForwardShortcut {"Ctrl+F"};
-    static inline const QKeySequence DefaultRewindShortcut {"Ctrl+T"};
+    static inline const QKeySequence DefaultBeginShortcut {"Ctrl+T"};
+    static inline const QKeySequence DefaultEndShortcut {"Ctrl+Shift+T"};
     static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {
         DefaultRecordShortcut,
         DefaultReplayShortcut,
@@ -154,7 +155,8 @@ struct SettingsPrivate
         DefaultStopShortcut,
         DefaultBackwardShortcut,
         DefaultForwardShortcut,
-        DefaultRewindShortcut
+        DefaultBeginShortcut,
+        DefaultEndShortcut
     };
 };
 
@@ -614,7 +616,8 @@ void Settings::store() const noexcept
             d->settings.setValue("Stop", d->flightSimulatorShortcuts.stop);
             d->settings.setValue("Backward", d->flightSimulatorShortcuts.backward);
             d->settings.setValue("Forward", d->flightSimulatorShortcuts.forward);
-            d->settings.setValue("Rewind", d->flightSimulatorShortcuts.rewind);
+            d->settings.setValue("Begin", d->flightSimulatorShortcuts.begin);
+            d->settings.setValue("End", d->flightSimulatorShortcuts.end);
         }
         d->settings.endGroup();
     }
@@ -713,7 +716,8 @@ void Settings::restore() noexcept
             d->flightSimulatorShortcuts.stop = d->settings.value("Stop", d->DefaultStopShortcut).toString();
             d->flightSimulatorShortcuts.backward = d->settings.value("Backward", d->DefaultBackwardShortcut).toString();
             d->flightSimulatorShortcuts.forward = d->settings.value("Forward", d->DefaultForwardShortcut).toString();
-            d->flightSimulatorShortcuts.rewind = d->settings.value("Rewind", d->DefaultRewindShortcut).toString();
+            d->flightSimulatorShortcuts.begin = d->settings.value("Begin", d->DefaultBeginShortcut).toString();
+            d->flightSimulatorShortcuts.end = d->settings.value("End", d->DefaultEndShortcut).toString();
         }
         d->settings.endGroup();
     }

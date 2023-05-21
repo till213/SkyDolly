@@ -865,12 +865,19 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 #endif
             emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Forward);
             break;
-
-        case SimConnectEvent::Event::CustomRewind:
+            
+        case SimConnectEvent::Event::CustomBegin:
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomRewind event";
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomBegin event";
 #endif
-            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Rewind);
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Begin);
+            break;
+
+        case SimConnectEvent::Event::CustomEnd:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomEnd event";
+#endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::End);
             break;
 
         default:
