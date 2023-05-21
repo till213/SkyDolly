@@ -529,9 +529,3 @@ void PathCreatorPlugin::replay() noexcept
         handleAtEnd();
     }
 }
-
-void PathCreatorPlugin::onRecordingActivated() const noexcept
-{
-    // TODO IMPLEMENT ME Emit signal
-    qDebug() << "PathCreatorPlugin: recording shortcut activated";
-}

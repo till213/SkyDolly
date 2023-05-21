@@ -29,21 +29,57 @@
 #include <SimConnect.h>
 
 #include <Kernel/Enum.h>
-#include <PluginManager/Connect/ClientEventShortcuts.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include "SimConnectEvent.h"
 
 class InputEvent
 {
 public:
-    static bool setup(HANDLE simConnectHandle, const ClientEventShortcuts &shortcuts) noexcept
+    static bool setup(HANDLE simConnectHandle, const FlightSimulatorShortcuts &shortcuts) noexcept
     {
         // Recording
         QByteArray shortcut = toMSFSShortcut(shortcuts.record);
         HRESULT result = ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomRecording), "Custom.Recording");
         result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomRecording));
-        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDolly), Enum::underly(SimConnectEvent::Event::CustomRecording));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomRecording));
 
-        result |= ::SimConnect_SetNotificationGroupPriority(simConnectHandle, Enum::underly(NotificationGroup::SkyDolly), SIMCONNECT_GROUP_PRIORITY_HIGHEST);
+        // Replay
+        shortcut = toMSFSShortcut(shortcuts.replay);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomReplay), "Custom.Replay");
+        result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomReplay));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomReplay));
+
+        // Pause
+        shortcut = toMSFSShortcut(shortcuts.pause);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomPause), "Custom.Pause");
+        result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomPause));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomPause));
+
+        // Stop
+        shortcut = toMSFSShortcut(shortcuts.stop);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomStop), "Custom.Stop");
+        result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomStop));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomStop));
+
+        // Backward
+        shortcut = toMSFSShortcut(shortcuts.backward);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomBackward), "Custom.Backward");
+        result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomBackward));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomBackward));
+
+        // Forward
+        shortcut = toMSFSShortcut(shortcuts.forward);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomForward), "Custom.Forward");
+        result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomForward));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomForward));
+
+        // Rewind
+        shortcut = toMSFSShortcut(shortcuts.rewind);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomRewind), "Custom.Rewind");
+        result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomRewind));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), Enum::underly(SimConnectEvent::Event::CustomRewind));
+
+        result |= ::SimConnect_SetNotificationGroupPriority(simConnectHandle, Enum::underly(NotificationGroup::SkyDollyShortcuts), SIMCONNECT_GROUP_PRIORITY_HIGHEST);
         result |= ::SimConnect_SetInputGroupState(simConnectHandle, Enum::underly(Input::SkyDollyControl), SIMCONNECT_STATE_ON);
 
         return result == S_OK;
@@ -55,7 +91,7 @@ private:
     };
 
     enum struct NotificationGroup: ::SIMCONNECT_NOTIFICATION_GROUP_ID {
-        SkyDolly,
+        SkyDollyShortcuts,
     };
 
     static QByteArray toMSFSShortcut(const QKeySequence &sequence) noexcept {

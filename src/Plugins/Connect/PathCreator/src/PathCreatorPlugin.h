@@ -108,7 +108,6 @@ private:
 
 private slots:
     void replay() noexcept;
-    void onRecordingActivated() const noexcept;
 };
 
 #endif // PATHCREATORPLUGIN_H

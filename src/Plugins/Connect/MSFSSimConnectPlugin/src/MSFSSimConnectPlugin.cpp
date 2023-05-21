@@ -26,7 +26,7 @@
 #include <memory>
 #include <unordered_map>
 #include <cstdint>
-
+    
 #include <windows.h>
 #include <SimConnect.h>
 
@@ -41,6 +41,7 @@
 #include <tsl/ordered_map.h>
 
 #include <Kernel/Const.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -63,7 +64,6 @@
 #include <Model/Waypoint.h>
 #include <Model/InitialPosition.h>
 #include <PluginManager/Connect/Connect.h>
-#include <PluginManager/Connect/ClientEventShortcuts.h>
 
 #include "SimVar/SimulationVariables.h"
 #include "SimVar/SimConnectType.h"
@@ -140,7 +140,7 @@ bool MSFSSimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRa
     return sampleRate != SampleRate::SampleRate::Auto && sampleRate != SampleRate::SampleRate::Hz1;
 }
 
-bool MSFSSimConnectPlugin::onSetupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept
+bool MSFSSimConnectPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
 {
     bool ok {false};
     if (d->simConnectHandle != nullptr) {
@@ -839,6 +839,30 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         case SimConnectEvent::Event::CustomPause:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomPause event";
+#endif
+            break;
+
+        case SimConnectEvent::Event::CustomStop:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomStop event";
+#endif
+            break;
+
+        case SimConnectEvent::Event::CustomBackward:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomBackward event";
+#endif
+            break;
+
+        case SimConnectEvent::Event::CustomForward:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomForward event";
+#endif
+            break;
+
+        case SimConnectEvent::Event::CustomRewind:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomRewind event";
 #endif
             break;
 

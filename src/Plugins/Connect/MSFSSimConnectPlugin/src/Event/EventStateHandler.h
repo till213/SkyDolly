@@ -39,7 +39,6 @@
 #include <Kernel/Enum.h>
 #include <Model/SimType.h>
 #include <Model/TimeVariableData.h>
-#include <PluginManager/Connect/ClientEventShortcuts.h>
 #include "Engine/SimConnectEngineEvent.h"
 #include "Engine/SimConnectEngineAll.h"
 #include "PrimaryFlightControl/SimConnectPrimaryFlightControlEvent.h"
