@@ -125,7 +125,7 @@ protected:
 
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
     
-    virtual bool onSetupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept = 0;
+    virtual bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept = 0;
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
     virtual bool onSimulationEvent(SimulationEvent event, float arg1) const noexcept = 0;

@@ -28,7 +28,6 @@
 
 #include <QTimer>
 #include <QtGlobal>
-#include <QShortcut>
 #include <QRandomGenerator>
 #include <QStringList>
 #ifdef DEBUG
@@ -82,7 +81,6 @@ struct PathCreatorPluginPrivate
 
     QTimer replayTimer;
     QRandomGenerator *randomGenerator;
-    std::unique_ptr<QShortcut> recordShortCut;
 
     static const QStringList IcaoList;
 };
@@ -112,12 +110,17 @@ bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::Sampl
     return true;
 }
 
-bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept
+bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
 {
-    // TODO IMPLEMENT ME
-    d->recordShortCut = std::make_unique<QShortcut>(shortcuts.record, this);
-    connect(d->recordShortCut.get(), &QShortcut::activated,
-            this, &PathCreatorPlugin::onRecordingActivated);
+#ifdef DEBUG
+    qDebug() << "Recording shortcut:" << shortcuts.record.toString();
+    qDebug() << "Replay shortcut:" << shortcuts.replay.toString();
+    qDebug() << "Pause shortcut:" << shortcuts.pause.toString();
+    qDebug() << "Stop shortcut:" << shortcuts.stop.toString();
+    qDebug() << "Backward shortcut:" << shortcuts.backward.toString();
+    qDebug() << "Forward shortcut:" << shortcuts.forward.toString();
+    qDebug() << "Rewind shortcut:" << shortcuts.rewind.toString();
+#endif
     return true;
 }
 
