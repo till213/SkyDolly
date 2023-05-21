@@ -38,7 +38,7 @@
 #include <QFileInfo>
 #include <QByteArray>
 
-#include "ClientEventShortcuts.h"
+#include "FlightSimulatorShortcuts.h"
 #include "Replay.h"
 #include "SampleRate.h"
 #include "KernelLib.h"
@@ -512,20 +512,20 @@ public:
     void setImportAircraftType(const QString &type) noexcept;
 
     /*!
-     * Returns the aircraft type (name) for import.
+     * Returns the flight simulator shortcuts that can be triggered in the connected flight simulator.
      *
-     * \return the aircraft type which was last selected for import
+     * \return the flight simulator shortcuts
      */
-    ClientEventShortcuts getClientEventShortcuts() const noexcept;
+    FlightSimulatorShortcuts getFlightSimulatorShortcuts() const noexcept;
 
     /*!
-     * Sets the client event shortcuts that can be triggered in the flight simulator.
+     * Sets the flight simulator shortcuts that can be triggered in the connected flight simulator.
      *
      * \param shortcuts
      *        the client event shortcuts
-     * \sa clientEventShortcutsChanged
+     * \sa flightSimulatorShortcutsChanged
      */
-    void setClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept;
+    void setFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept;
 
     /*!
      * Returns the file info of the best available earth gravity model (EGM) data file.
@@ -716,11 +716,11 @@ signals:
     void defaultMinimalUiReplaySpeedVisibilityChanged(bool hidden);
 
     /*!
-     * Emitted when the client event shortcuts have changed.
+     * Emitted when the flight simulator shortcuts have changed.
      *
      * \sa changed
      */
-    void clientEventShortcutsChanged(const ClientEventShortcuts &shortcuts);
+    void flightSimulatorShortcutsChanged(const FlightSimulatorShortcuts &shortcuts);
 
     /*!
      * Emitted when any setting has changed.

@@ -95,7 +95,7 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 
 AbstractSkyConnect::~AbstractSkyConnect() = default;
 
-bool AbstractSkyConnect::setupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept
+bool AbstractSkyConnect::setupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -103,7 +103,7 @@ bool AbstractSkyConnect::setupClientEventShortcuts(ClientEventShortcuts shortcut
 
     bool ok = isConnectedWithSim();
     if (ok) {
-        ok = retryWithReconnect([this, shortcuts]() -> bool { return onSetupClientEventShortcuts(shortcuts); });
+        ok = retryWithReconnect([this, shortcuts]() -> bool { return onSetupFlightSimulatorShortcuts(shortcuts); });
     }
     return ok;
 }

@@ -36,7 +36,7 @@
 #include <Kernel/Enum.h>
 #endif
 
-#include <Kernel/ClientEventShortcuts.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include <Model/TimeVariableData.h>
@@ -112,8 +112,9 @@ bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::Sampl
     return true;
 }
 
-bool PathCreatorPlugin::onSetupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept
+bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept
 {
+    // TODO IMPLEMENT ME
     d->recordShortCut = std::make_unique<QShortcut>(shortcuts.record, this);
     connect(d->recordShortCut.get(), &QShortcut::activated,
             this, &PathCreatorPlugin::onRecordingActivated);

@@ -103,7 +103,7 @@ struct SettingsPrivate
 
     QString importAircraftType;
     QFileInfo earthGravityModelFileInfo;
-    ClientEventShortcuts clientEventShortcuts {DefaultClientEventShortcuts};
+    FlightSimulatorShortcuts flightSimulatorShortcuts {DefaultFlightSimulatorShortcuts};
 
     int previewInfoDialogCount {DefaultPreviewInfoDialogCount};
 
@@ -147,7 +147,7 @@ struct SettingsPrivate
     static inline const QKeySequence DefaultBackwardShortcut {"Ctrl+B"};
     static inline const QKeySequence DefaultForwardShortcut {"Ctrl+F"};
     static inline const QKeySequence DefaultRewindShortcut {"Ctrl+T"};
-    static inline const ClientEventShortcuts DefaultClientEventShortcuts {
+    static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {
         DefaultRecordShortcut,
         DefaultReplayShortcut,
         DefaultPauseShortcut,
@@ -506,16 +506,16 @@ void Settings::setImportAircraftType(const QString &type) noexcept
     }
 }
 
-ClientEventShortcuts Settings::getClientEventShortcuts() const noexcept
+FlightSimulatorShortcuts Settings::getFlightSimulatorShortcuts() const noexcept
 {
-    return d->clientEventShortcuts;
+    return d->flightSimulatorShortcuts;
 }
 
-void Settings::setClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept
+void Settings::setFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept
 {
-    if (d->clientEventShortcuts != shortcuts) {
-        d->clientEventShortcuts = std::move(shortcuts);
-        emit clientEventShortcutsChanged(d->clientEventShortcuts);
+    if (d->flightSimulatorShortcuts != shortcuts) {
+        d->flightSimulatorShortcuts = std::move(shortcuts);
+        emit flightSimulatorShortcutsChanged(d->flightSimulatorShortcuts);
     }
 }
 
@@ -606,15 +606,15 @@ void Settings::store() const noexcept
     d->settings.beginGroup("Plugins");
     {
         d->settings.setValue("SkyConnectPluginUuid", d->skyConnectPluginUuid);
-        d->settings.beginGroup("ClientEventShortcuts");
+        d->settings.beginGroup("FlightSimulatorShortcuts");
         {
-            d->settings.setValue("Record", d->clientEventShortcuts.record);
-            d->settings.setValue("Replay", d->clientEventShortcuts.replay);
-            d->settings.setValue("Pause", d->clientEventShortcuts.pause);
-            d->settings.setValue("Stop", d->clientEventShortcuts.stop);
-            d->settings.setValue("Backward", d->clientEventShortcuts.backward);
-            d->settings.setValue("Forward", d->clientEventShortcuts.forward);
-            d->settings.setValue("Rewind", d->clientEventShortcuts.rewind);
+            d->settings.setValue("Record", d->flightSimulatorShortcuts.record);
+            d->settings.setValue("Replay", d->flightSimulatorShortcuts.replay);
+            d->settings.setValue("Pause", d->flightSimulatorShortcuts.pause);
+            d->settings.setValue("Stop", d->flightSimulatorShortcuts.stop);
+            d->settings.setValue("Backward", d->flightSimulatorShortcuts.backward);
+            d->settings.setValue("Forward", d->flightSimulatorShortcuts.forward);
+            d->settings.setValue("Rewind", d->flightSimulatorShortcuts.rewind);
         }
         d->settings.endGroup();
     }
@@ -705,15 +705,15 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Plugins");
     {
         d->skyConnectPluginUuid = d->settings.value("SkyConnectPluginUuid", d->DefaultSkyConnectPluginUuid).toUuid();
-        d->settings.beginGroup("ClientEventShortcuts");
+        d->settings.beginGroup("FlightSimulatorShortcuts");
         {
-            d->clientEventShortcuts.record = d->settings.value("Record", d->DefaultRecordShortcut).toString();
-            d->clientEventShortcuts.replay = d->settings.value("Replay", d->DefaultReplayShortcut).toString();
-            d->clientEventShortcuts.pause = d->settings.value("Pause", d->DefaultPauseShortcut).toString();
-            d->clientEventShortcuts.stop = d->settings.value("Stop", d->DefaultStopShortcut).toString();
-            d->clientEventShortcuts.backward = d->settings.value("Backward", d->DefaultBackwardShortcut).toString();
-            d->clientEventShortcuts.forward = d->settings.value("Forward", d->DefaultForwardShortcut).toString();
-            d->clientEventShortcuts.rewind = d->settings.value("Rewind", d->DefaultRewindShortcut).toString();
+            d->flightSimulatorShortcuts.record = d->settings.value("Record", d->DefaultRecordShortcut).toString();
+            d->flightSimulatorShortcuts.replay = d->settings.value("Replay", d->DefaultReplayShortcut).toString();
+            d->flightSimulatorShortcuts.pause = d->settings.value("Pause", d->DefaultPauseShortcut).toString();
+            d->flightSimulatorShortcuts.stop = d->settings.value("Stop", d->DefaultStopShortcut).toString();
+            d->flightSimulatorShortcuts.backward = d->settings.value("Backward", d->DefaultBackwardShortcut).toString();
+            d->flightSimulatorShortcuts.forward = d->settings.value("Forward", d->DefaultForwardShortcut).toString();
+            d->flightSimulatorShortcuts.rewind = d->settings.value("Rewind", d->DefaultRewindShortcut).toString();
         }
         d->settings.endGroup();
     }
@@ -862,7 +862,7 @@ void Settings::frenchConnection() noexcept
             this, &Settings::changed);
     connect(this, &Settings::defaultMinimalUiReplaySpeedVisibilityChanged,
             this, &Settings::changed);
-    connect(this, &Settings::clientEventShortcutsChanged,
+    connect(this, &Settings::flightSimulatorShortcutsChanged,
             this, &Settings::changed);
 }
 

@@ -22,14 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CLIENTEVENTSHORTCUTS_H
-#define CLIENTEVENTSHORTCUTS_H
+#ifndef FLIGHTSIMULATORHORTCUTS_H
+#define FLIGHTSIMULATORHORTCUTS_H
 
 #include <QKeySequence>
 
 #include "KernelLib.h"
 
-struct KERNEL_API ClientEventShortcuts
+/*!
+ * Defines keyboard shortcuts for the connected flight simulator.
+ */
+struct KERNEL_API FlightSimulatorShortcuts
 {
 public:
     QKeySequence record;
@@ -40,7 +43,12 @@ public:
     QKeySequence forward;
     QKeySequence rewind;
 
-    bool hasShortCut() const noexcept {
+    /*!
+     * Returns whether any of the flight simulator keyboard shortcuts is defined.
+     *
+     * \return \c true if any keyboard shortcut is define; \c false else
+     */
+    bool hasAny() const noexcept {
         return !record.isEmpty() ||
                !replay.isEmpty() ||
                !pause.isEmpty() ||
@@ -49,10 +57,9 @@ public:
                !forward.isEmpty() ||
                !rewind.isEmpty();
     }
-
 };
 
-inline bool operator==(const ClientEventShortcuts &lhs, const ClientEventShortcuts &rhs) noexcept
+inline bool operator==(const FlightSimulatorShortcuts &lhs, const FlightSimulatorShortcuts &rhs) noexcept
 {
     return lhs.record == rhs.record &&
            lhs.replay == rhs.replay &&
@@ -63,9 +70,9 @@ inline bool operator==(const ClientEventShortcuts &lhs, const ClientEventShortcu
            lhs.rewind == rhs.rewind;
 }
 
-inline bool operator!=(const ClientEventShortcuts &lhs, const ClientEventShortcuts &rhs) noexcept
+inline bool operator!=(const FlightSimulatorShortcuts &lhs, const FlightSimulatorShortcuts &rhs) noexcept
 {
     return !(lhs == rhs);
 }
 
-#endif // CLIENTEVENTSHORTCUTS_H
+#endif // FLIGHTSIMULATORHORTCUTS_H

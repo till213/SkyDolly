@@ -147,7 +147,7 @@ void SettingsDialog::updateUi() noexcept
     if (pluginName) {
         ui->connectionComboBox->setCurrentText(pluginName.value());
     }
-    const ClientEventShortcuts &shortcuts = settings.getClientEventShortcuts();
+    const FlightSimulatorShortcuts &shortcuts = settings.getFlightSimulatorShortcuts();
     ui->recordSequenceEdit->setKeySequence(shortcuts.record);
     ui->replaySequenceEdit->setKeySequence(shortcuts.replay);
     ui->pauseSequenceEdit->setKeySequence(shortcuts.pause);
@@ -184,12 +184,12 @@ void SettingsDialog::handleAccepted() noexcept
     const QUuid uuid = ui->connectionComboBox->currentData().toUuid();
     settings.setSkyConnectPluginUuid(uuid);
 
-    ClientEventShortcuts shortcuts;
+    FlightSimulatorShortcuts shortcuts;
     shortcuts.record = ui->recordSequenceEdit->keySequence();
     shortcuts.replay = ui->replaySequenceEdit->keySequence();
     shortcuts.pause = ui->pauseSequenceEdit->keySequence();
     shortcuts.stop = ui->stopSequenceEdit->keySequence();
-    settings.setClientEventShortcuts(shortcuts);
+    settings.setFlightSimulatorShortcuts(shortcuts);
 
     // User interface
     settings.setDeleteFlightConfirmationEnabled(ui->confirmDeleteFlightCheckBox->isChecked());

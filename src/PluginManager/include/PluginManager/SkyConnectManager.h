@@ -85,7 +85,7 @@ public:
      * \param shortcuts
      *        the shortcuts to be setup within the flight simulator, in order to control Sky Dolly
      */
-    void tryConnectAndSetup(ClientEventShortcuts shortcuts) noexcept;
+    void tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
     bool setUserAircraftPosition(const PositionData & positionData) noexcept;

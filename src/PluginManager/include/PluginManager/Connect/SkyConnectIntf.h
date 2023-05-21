@@ -30,7 +30,7 @@
 #include <QtPlugin>
 
 #include <Kernel/SampleRate.h>
-#include <Kernel/ClientEventShortcuts.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
 #include <Model/Location.h>
@@ -109,8 +109,8 @@ public:
     SkyConnectIntf &operator=(const SkyConnectIntf &rhs) = delete;
     SkyConnectIntf &operator=(SkyConnectIntf &&rhs) = delete;
     ~SkyConnectIntf() override = default;
-
-    virtual bool setupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept = 0;
+    
+    virtual bool setupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept = 0;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;

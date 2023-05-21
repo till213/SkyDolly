@@ -67,7 +67,7 @@
 
 #include <Kernel/Unit.h>
 #include <Kernel/Const.h>
-#include <Kernel/ClientEventShortcuts.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/Replay.h>
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
@@ -455,12 +455,10 @@ void MainWindow::tryConnectAndSetup() const noexcept
 
     // TODO IMPLEMENT ME
     if (skyConnectManager.hasPlugins()) {
-        ClientEventShortcuts shortcuts;
-        // TODO Take them from settings
-        shortcuts.record = QKeySequence("CTRL+R");
-        shortcuts.replay = QKeySequence("CTRL+ALT+R");
-        shortcuts.pause = QKeySequence("CTRL+P");
-        skyConnectManager.tryConnectAndSetup(shortcuts);
+        FlightSimulatorShortcuts shortcuts {Settings::getInstance().getFlightSimulatorShortcuts()};
+        if (shortcuts.hasAny()) {
+            skyConnectManager.tryConnectAndSetup(shortcuts);
+        }
     }
 }
 

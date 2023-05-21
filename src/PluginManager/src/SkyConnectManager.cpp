@@ -144,12 +144,12 @@ std::optional<QString> SkyConnectManager::getCurrentSkyConnectPluginName() const
     return {};
 }
 
-void SkyConnectManager::tryConnectAndSetup(ClientEventShortcuts shortcuts) noexcept
+void SkyConnectManager::tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         // TODO IMPLEMENT ME!!! Retry in case of failure
-        const bool ok = skyConnect->get().setupClientEventShortcuts(shortcuts);
+        const bool ok = skyConnect->get().setupFlightSimulatorShortcuts(shortcuts);
     }
 }
 
