@@ -30,8 +30,8 @@
 
 #include <QObject>
 
+#include <Kernel/ClientEventShortcuts.h>
 #include <Model/TimeVariableData.h>
-#include <PluginManager/Connect/ClientEventShortcuts.h>
 #include <PluginManager/Connect/AbstractSkyConnect.h>
 #include <PluginManager/Connect/SkyConnectIntf.h>
 
@@ -108,6 +108,7 @@ private:
 
 private slots:
     void replay() noexcept;
+    void onRecordingActivated() const noexcept;
 };
 
 #endif // PATHCREATORPLUGIN_H

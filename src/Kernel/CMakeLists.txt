@@ -17,6 +17,7 @@ CheckGitSetup()
 target_sources(${LIBRARY_NAME}
     PRIVATE
         include/Kernel/KernelLib.h
+        include/Kernel/ClientEventShortcuts.h
         include/Kernel/Color.h src/Color.cpp
         include/Kernel/Const.h
         include/Kernel/Convert.h src/Convert.cpp

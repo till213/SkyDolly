@@ -67,6 +67,7 @@
 
 #include <Kernel/Unit.h>
 #include <Kernel/Const.h>
+#include <Kernel/ClientEventShortcuts.h>
 #include <Kernel/Replay.h>
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
@@ -90,7 +91,6 @@
 #include <Widget/RecentFileMenu.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/Connect/SkyConnectIntf.h>
-#include <PluginManager/Connect/ClientEventShortcuts.h>.h>
 #include <PluginManager/Connect/Connect.h>
 #include <PluginManager/PluginManager.h>
 #include <PluginManager/Module/ModuleIntf.h>

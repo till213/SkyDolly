@@ -27,9 +27,9 @@
 
 #include <QKeySequence>
 
-#include "../PluginManagerLib.h"
+#include "KernelLib.h"
 
-struct PLUGINMANAGER_API ClientEventShortcuts
+struct KERNEL_API ClientEventShortcuts
 {
 public:
     QKeySequence record;
@@ -39,6 +39,33 @@ public:
     QKeySequence backward;
     QKeySequence forward;
     QKeySequence rewind;
+
+    bool hasShortCut() const noexcept {
+        return !record.isEmpty() ||
+               !replay.isEmpty() ||
+               !pause.isEmpty() ||
+               !stop.isEmpty() ||
+               !backward.isEmpty() ||
+               !forward.isEmpty() ||
+               !rewind.isEmpty();
+    }
+
 };
+
+inline bool operator==(const ClientEventShortcuts &lhs, const ClientEventShortcuts &rhs) noexcept
+{
+    return lhs.record == rhs.record &&
+           lhs.replay == rhs.replay &&
+           lhs.pause == rhs.pause &&
+           lhs.stop == rhs.stop &&
+           lhs.backward == rhs.backward &&
+           lhs.forward == rhs.forward &&
+           lhs.rewind == rhs.rewind;
+}
+
+inline bool operator!=(const ClientEventShortcuts &lhs, const ClientEventShortcuts &rhs) noexcept
+{
+    return !(lhs == rhs);
+}
 
 #endif // CLIENTEVENTSHORTCUTS_H

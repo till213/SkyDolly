@@ -81,14 +81,16 @@ void SettingsDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    // SkyConnect plugin (flight simulator)
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
-    for (auto &plugin : plugins) {
-        ui->connectionComboBox->addItem(plugin.second.name, plugin.first);
-    }
+    // Replay
+    ui->seekInSecondsSpinBox->setMinimum(MinSeekSeconds);
+    ui->seekInSecondsSpinBox->setMaximum(MaxSeekSeconds);
 
-    // Record
+    ui->seekInPercentSpinBox->setMinimum(MinSeekPercent);
+    ui->seekInPercentSpinBox->setMaximum(MaxSeekPercent);
+
+    ui->repeatCanopyOpenCheckBox->setToolTip(SimVar::CanopyOpen);
+
+    // Recording
     ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Auto), tr("Auto"));
     ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz1), tr("1 Hz"));
     ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz2), tr("2 Hz"));
@@ -103,16 +105,13 @@ void SettingsDialog::initUi() noexcept
     ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz50), tr("50 Hz"));
     ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz60), tr("60 Hz"));
 
-    // Replay
-    ui->seekInSecondsSpinBox->setMinimum(MinSeekSeconds);
-    ui->seekInSecondsSpinBox->setMaximum(MaxSeekSeconds);
+    // Flight simulator
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
+    for (auto &plugin : plugins) {
+        ui->connectionComboBox->addItem(plugin.second.name, plugin.first);
+    }
 
-    ui->seekInPercentSpinBox->setMinimum(MinSeekPercent);
-    ui->seekInPercentSpinBox->setMaximum(MaxSeekPercent);
-
-    ui->repeatCanopyOpenCheckBox->setToolTip(SimVar::CanopyOpen);
-
-    // FLight simulator
     ui->recordSequenceEdit->setMaximumSequenceLength(1);
     ui->replaySequenceEdit->setMaximumSequenceLength(1);
     ui->pauseSequenceEdit->setMaximumSequenceLength(1);
@@ -133,22 +132,26 @@ void SettingsDialog::updateUi() noexcept
 {
     Settings &settings = Settings::getInstance();
 
-    // SkyConnect plugin
+    // Replay
+    ui->absoluteSeekEnabledCheckBox->setChecked(settings.isAbsoluteSeekEnabled());
+    ui->seekInSecondsSpinBox->setValue(settings.getSeekIntervalSeconds());
+    ui->seekInPercentSpinBox->setValue(settings.getSeekIntervalPercent());
+    ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
+
+    // Recording
+    ui->recordFrequencyComboBox->setCurrentIndex(Enum::underly(settings.getRecordingSampleRate()));
+
+    // Flight simulator
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     std::optional<QString> pluginName = skyConnectManager.getCurrentSkyConnectPluginName();
     if (pluginName) {
         ui->connectionComboBox->setCurrentText(pluginName.value());
     }
-
-    // Recording
-    ui->recordFrequencyComboBox->setCurrentIndex(Enum::underly(settings.getRecordingSampleRate()));
-
-    // Replay
-    ui->absoluteSeekEnabledCheckBox->setChecked(settings.isAbsoluteSeekEnabled());
-    ui->seekInSecondsSpinBox->setValue(settings.getSeekIntervalSeconds());
-    ui->seekInPercentSpinBox->setValue(settings.getSeekIntervalPercent());
-
-    ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
+    const ClientEventShortcuts &shortcuts = settings.getClientEventShortcuts();
+    ui->recordSequenceEdit->setKeySequence(shortcuts.record);
+    ui->replaySequenceEdit->setKeySequence(shortcuts.replay);
+    ui->pauseSequenceEdit->setKeySequence(shortcuts.pause);
+    ui->stopSequenceEdit->setKeySequence(shortcuts.stop);
 
     // User interface
     ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
@@ -168,19 +171,25 @@ void SettingsDialog::handleAccepted() noexcept
 {
     Settings &settings = Settings::getInstance();
 
-    // Flight simulator
-    const QUuid uuid = ui->connectionComboBox->currentData().toUuid();
-    settings.setSkyConnectPluginUuid(uuid);
-
-    // Recording
-    settings.setRecordingSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
-
     // Replay
     settings.setAbsoluteSeekEnabled(ui->absoluteSeekEnabledCheckBox->isChecked());
     settings.setSeekIntervalSeconds(ui->seekInSecondsSpinBox->value());
     settings.setSeekIntervalPercent(ui->seekInPercentSpinBox->value());
-
     settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());
+
+    // Recording
+    settings.setRecordingSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
+
+    // Flight simulator
+    const QUuid uuid = ui->connectionComboBox->currentData().toUuid();
+    settings.setSkyConnectPluginUuid(uuid);
+
+    ClientEventShortcuts shortcuts;
+    shortcuts.record = ui->recordSequenceEdit->keySequence();
+    shortcuts.replay = ui->replaySequenceEdit->keySequence();
+    shortcuts.pause = ui->pauseSequenceEdit->keySequence();
+    shortcuts.stop = ui->stopSequenceEdit->keySequence();
+    settings.setClientEventShortcuts(shortcuts);
 
     // User interface
     settings.setDeleteFlightConfirmationEnabled(ui->confirmDeleteFlightCheckBox->isChecked());

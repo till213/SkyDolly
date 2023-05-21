@@ -102,8 +102,8 @@ struct SettingsPrivate
     bool defaultMinimalUiReplaySpeedVisible {DefaultMinimalUiReplaySpeedVisible};
 
     QString importAircraftType;
-
     QFileInfo earthGravityModelFileInfo;
+    ClientEventShortcuts clientEventShortcuts {DefaultClientEventShortcuts};
 
     int previewInfoDialogCount {DefaultPreviewInfoDialogCount};
 
@@ -138,6 +138,24 @@ struct SettingsPrivate
 
     static constexpr int DefaultPreviewInfoDialogCount {3};
     static constexpr int PreviewInfoDialogBase {150};
+
+            // TODO Select proper defaults (non-assigned by default in MSFS)
+    static inline const QKeySequence DefaultRecordShortcut {"Ctrl+R"};
+    static inline const QKeySequence DefaultReplayShortcut {"Ctrl+E"};
+    static inline const QKeySequence DefaultPauseShortcut {"Ctrl+P"};
+    static inline const QKeySequence DefaultStopShortcut {"Ctrl+S"};
+    static inline const QKeySequence DefaultBackwardShortcut {"Ctrl+B"};
+    static inline const QKeySequence DefaultForwardShortcut {"Ctrl+F"};
+    static inline const QKeySequence DefaultRewindShortcut {"Ctrl+T"};
+    static inline const ClientEventShortcuts DefaultClientEventShortcuts {
+        DefaultRecordShortcut,
+        DefaultReplayShortcut,
+        DefaultPauseShortcut,
+        DefaultStopShortcut,
+        DefaultBackwardShortcut,
+        DefaultForwardShortcut,
+        DefaultRewindShortcut
+    };
 };
 
 // PUBLIC
@@ -488,6 +506,19 @@ void Settings::setImportAircraftType(const QString &type) noexcept
     }
 }
 
+ClientEventShortcuts Settings::getClientEventShortcuts() const noexcept
+{
+    return d->clientEventShortcuts;
+}
+
+void Settings::setClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept
+{
+    if (d->clientEventShortcuts != shortcuts) {
+        d->clientEventShortcuts = std::move(shortcuts);
+        emit clientEventShortcutsChanged(d->clientEventShortcuts);
+    }
+}
+
 QFileInfo Settings::getEarthGravityModelFileInfo() const noexcept
 {
     return d->earthGravityModelFileInfo;
@@ -575,11 +606,22 @@ void Settings::store() const noexcept
     d->settings.beginGroup("Plugins");
     {
         d->settings.setValue("SkyConnectPluginUuid", d->skyConnectPluginUuid);
+        d->settings.beginGroup("ClientEventShortcuts");
+        {
+            d->settings.setValue("Record", d->clientEventShortcuts.record);
+            d->settings.setValue("Replay", d->clientEventShortcuts.replay);
+            d->settings.setValue("Pause", d->clientEventShortcuts.pause);
+            d->settings.setValue("Stop", d->clientEventShortcuts.stop);
+            d->settings.setValue("Backward", d->clientEventShortcuts.backward);
+            d->settings.setValue("Forward", d->clientEventShortcuts.forward);
+            d->settings.setValue("Rewind", d->clientEventShortcuts.rewind);
+        }
+        d->settings.endGroup();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
     {
-        d->settings.setValue("RecordingSampleRate", d->recordingSampleRateValue);
+        d->settings.setValue("RecordingSampleRate", d->recordingSampleRateValue);        
     }
     d->settings.endGroup();
     d->settings.beginGroup("Replay");
@@ -663,6 +705,17 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Plugins");
     {
         d->skyConnectPluginUuid = d->settings.value("SkyConnectPluginUuid", d->DefaultSkyConnectPluginUuid).toUuid();
+        d->settings.beginGroup("ClientEventShortcuts");
+        {
+            d->clientEventShortcuts.record = d->settings.value("Record", d->DefaultRecordShortcut).toString();
+            d->clientEventShortcuts.replay = d->settings.value("Replay", d->DefaultReplayShortcut).toString();
+            d->clientEventShortcuts.pause = d->settings.value("Pause", d->DefaultPauseShortcut).toString();
+            d->clientEventShortcuts.stop = d->settings.value("Stop", d->DefaultStopShortcut).toString();
+            d->clientEventShortcuts.backward = d->settings.value("Backward", d->DefaultBackwardShortcut).toString();
+            d->clientEventShortcuts.forward = d->settings.value("Forward", d->DefaultForwardShortcut).toString();
+            d->clientEventShortcuts.rewind = d->settings.value("Rewind", d->DefaultRewindShortcut).toString();
+        }
+        d->settings.endGroup();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -808,6 +861,8 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::defaultMinimalUiNonEssentialButtonVisibilityChanged,
             this, &Settings::changed);
     connect(this, &Settings::defaultMinimalUiReplaySpeedVisibilityChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::clientEventShortcutsChanged,
             this, &Settings::changed);
 }
 

@@ -28,6 +28,7 @@
 
 #include <QTimer>
 #include <QtGlobal>
+#include <QShortcut>
 #include <QRandomGenerator>
 #include <QStringList>
 #ifdef DEBUG
@@ -35,6 +36,7 @@
 #include <Kernel/Enum.h>
 #endif
 
+#include <Kernel/ClientEventShortcuts.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include <Model/TimeVariableData.h>
@@ -60,7 +62,6 @@
 #include <Model/Waypoint.h>
 #include <Model/FlightCondition.h>
 #include <Model/SimType.h>
-#include <PluginManager/Connect/ClientEventShortcuts.h>
 #include <PluginManager/Connect/AbstractSkyConnect.h>
 #include "PathCreatorPlugin.h"
 
@@ -81,6 +82,7 @@ struct PathCreatorPluginPrivate
 
     QTimer replayTimer;
     QRandomGenerator *randomGenerator;
+    std::unique_ptr<QShortcut> recordShortCut;
 
     static const QStringList IcaoList;
 };
@@ -112,7 +114,9 @@ bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::Sampl
 
 bool PathCreatorPlugin::onSetupClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept
 {
-    // TODO IMPLEMENT ME
+    d->recordShortCut = std::make_unique<QShortcut>(shortcuts.record, this);
+    connect(d->recordShortCut.get(), &QShortcut::activated,
+            this, &PathCreatorPlugin::onRecordingActivated);
     return true;
 }
 
@@ -520,4 +524,10 @@ void PathCreatorPlugin::replay() noexcept
     if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
         handleAtEnd();
     }
+}
+
+void PathCreatorPlugin::onRecordingActivated() const noexcept
+{
+    // TODO IMPLEMENT ME Emit signal
+    qDebug() << "PathCreatorPlugin: recording shortcut activated";
 }

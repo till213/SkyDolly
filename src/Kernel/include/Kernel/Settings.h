@@ -38,6 +38,7 @@
 #include <QFileInfo>
 #include <QByteArray>
 
+#include "ClientEventShortcuts.h"
 #include "Replay.h"
 #include "SampleRate.h"
 #include "KernelLib.h"
@@ -502,13 +503,29 @@ public:
     QString getImportAircraftType() const noexcept;
 
     /*!
-     * Sets the aircraft type (name) for import
+     * Sets the aircraft type (name) for import.
      *
      * \param type
      *        the (last) selected aircraft type
      * \sa changed
      */
     void setImportAircraftType(const QString &type) noexcept;
+
+    /*!
+     * Returns the aircraft type (name) for import.
+     *
+     * \return the aircraft type which was last selected for import
+     */
+    ClientEventShortcuts getClientEventShortcuts() const noexcept;
+
+    /*!
+     * Sets the client event shortcuts that can be triggered in the flight simulator.
+     *
+     * \param shortcuts
+     *        the client event shortcuts
+     * \sa clientEventShortcutsChanged
+     */
+    void setClientEventShortcuts(ClientEventShortcuts shortcuts) noexcept;
 
     /*!
      * Returns the file info of the best available earth gravity model (EGM) data file.
@@ -697,6 +714,13 @@ signals:
      * \sa changed
      */
     void defaultMinimalUiReplaySpeedVisibilityChanged(bool hidden);
+
+    /*!
+     * Emitted when the client event shortcuts have changed.
+     *
+     * \sa changed
+     */
+    void clientEventShortcutsChanged(const ClientEventShortcuts &shortcuts);
 
     /*!
      * Emitted when any setting has changed.

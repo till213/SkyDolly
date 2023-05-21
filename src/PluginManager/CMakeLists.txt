@@ -19,7 +19,6 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/PluginBase.h src/PluginBase.cpp
         # SkyConnect pugins
         include/PluginManager/Connect/Connect.h
-        include/PluginManager/Connect/ClientEventShortcuts.h
         include/PluginManager/Connect/SkyConnectIntf.h
         include/PluginManager/Connect/AbstractSkyConnect.h src/Connect/AbstractSkyConnect.cpp
         # Flight import & export plugins
