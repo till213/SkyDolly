@@ -303,6 +303,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onRecordingStarted);
     connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
             this, &MainWindow::onRecordingStopped);
+    connect(&skyConnectManager, &SkyConnectManager::shortCutActivated,
+            this, &MainWindow::onShortcutActivated);
 
     // Replay speed
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
@@ -1466,6 +1468,13 @@ void MainWindow::onRecordingStopped() noexcept
     d->trayIcon->showMessage(Version::getApplicationName(), tr("Recording stopped."),
                              QSystemTrayIcon::Information, 3000);
     onRecordingDurationChanged();
+}
+
+void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept
+{
+#ifdef DEBUG
+    qDebug() << "Main window: flight simulator shortcut activated" << Enum::underly(action);
+#endif
 }
 
 void MainWindow::onRecordingDurationChanged() noexcept

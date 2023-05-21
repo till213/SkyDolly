@@ -255,20 +255,6 @@ public slots:
     virtual void onTimeOffsetChanged() noexcept = 0;
     virtual void onTailNumberChanged(const Aircraft &aircraft) noexcept = 0;
 
-protected:
-    /*!
-     * Sets the new connection \c state. This method will also emit the
-     * signal #recordingStarted and #recordingStopped when the state changes
-     * to/from \e Recording.
-     *
-     * \param state
-     *        the new state to be set
-     * \sa stateChanged
-     * \sa recordingStarted
-     * \sa recordingStopped
-     */
-    virtual void setState(Connect::State state) noexcept = 0;
-
 signals:
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
 
@@ -321,6 +307,28 @@ signals:
      *        the received Location
      */
     void locationReceived(Location location);
+
+    /*!
+     * Emitted whenever a keyboard shortcut was triggered for the given \p action.
+     *
+     * \param action
+     *        the action that was triggered in the flight simulator
+     */
+    void shortCutActivated(FlightSimulatorShortcuts::Action action);
+
+protected:
+    /*!
+     * Sets the new connection \c state. This method will also emit the
+     * signal #recordingStarted and #recordingStopped when the state changes
+     * to/from \e Recording.
+     *
+     * \param state
+     *        the new state to be set
+     * \sa stateChanged
+     * \sa recordingStarted
+     * \sa recordingStopped
+     */
+    virtual void setState(Connect::State state) noexcept = 0;
 };
 
 #define SKYCONNECT_INTERFACE_IID "com.github.till213.SkyDolly.SkyConnectInterface/1.0"

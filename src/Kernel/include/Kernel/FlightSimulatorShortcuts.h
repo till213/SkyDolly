@@ -35,6 +35,20 @@
 struct KERNEL_API FlightSimulatorShortcuts
 {
 public:
+
+    /*!
+     * The actions that correspond to the keyboard shortcuts.
+     */
+    enum struct Action {
+        Record,
+        Replay,
+        Pause,
+        Stop,
+        Backward,
+        Forward,
+        Rewind
+    };
+
     QKeySequence record;
     QKeySequence replay;
     QKeySequence pause;

@@ -828,42 +828,49 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomRecording event";
 #endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Record);
             break;
 
         case SimConnectEvent::Event::CustomReplay:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomReplay event";
 #endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Replay);
             break;
 
         case SimConnectEvent::Event::CustomPause:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomPause event";
 #endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Pause);
             break;
 
         case SimConnectEvent::Event::CustomStop:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomStop event";
 #endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Stop);
             break;
 
         case SimConnectEvent::Event::CustomBackward:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomBackward event";
 #endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Backward);
             break;
 
         case SimConnectEvent::Event::CustomForward:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomForward event";
 #endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Forward);
             break;
 
         case SimConnectEvent::Event::CustomRewind:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomRewind event";
 #endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Rewind);
             break;
 
         default:

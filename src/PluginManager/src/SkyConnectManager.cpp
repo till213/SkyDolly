@@ -391,6 +391,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     this, &SkyConnectManager::recordingStopped);
             connect(skyPlugin, &SkyConnectIntf::locationReceived,
                     this, &SkyConnectManager::locationReceived);
+            connect(skyPlugin, &SkyConnectIntf::shortCutActivated,
+                    this, &SkyConnectManager::shortCutActivated);
 
             // Flight
             const Logbook &logbook = Logbook::getInstance();

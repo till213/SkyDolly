@@ -151,8 +151,8 @@ public:
     /*!
      * Formats the \c second, with local thousands separator and unit.
      *
-     * \param second
-     *        the second to format
+     * \param seconds
+     *        the seconds to format
      * \return the formatted seconds
      */
     QString formatSeconds(double seconds) const noexcept;

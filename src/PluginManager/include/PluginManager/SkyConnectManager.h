@@ -183,6 +183,13 @@ signals:
      */
     void locationReceived(Location location);
 
+    /*!
+     * Relay of the SkyConnectIntf#shortCutActivated signal.
+     *
+     * \sa SkyConnectIntf#shortCutActivated
+     */
+    void shortCutActivated(FlightSimulatorShortcuts::Action action);
+
 private:
     const std::unique_ptr<SkyConnectManagerPrivate> d;
 

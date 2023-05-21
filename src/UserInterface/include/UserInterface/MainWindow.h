@@ -169,6 +169,7 @@ private slots:
 
     void onRecordingStarted() noexcept;
     void onRecordingStopped() noexcept;
+    void onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept;
 
     /*
      * Updates the replay duration (maximum time) and then position slider position.
