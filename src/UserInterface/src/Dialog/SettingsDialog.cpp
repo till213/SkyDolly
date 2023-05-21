@@ -118,7 +118,8 @@ void SettingsDialog::initUi() noexcept
     ui->stopSequenceEdit->setMaximumSequenceLength(1);
     ui->backwardSequenceEdit->setMaximumSequenceLength(1);
     ui->forwardSequenceEdit->setMaximumSequenceLength(1);
-    ui->rewindSequenceEdit->setMaximumSequenceLength(1);
+    ui->beginSequenceEdit->setMaximumSequenceLength(1);
+    ui->endSequenceEdit->setMaximumSequenceLength(1);
 
     ui->settingsTabWidget->setCurrentIndex(0);
 }
@@ -157,7 +158,8 @@ void SettingsDialog::updateUi() noexcept
     ui->stopSequenceEdit->setKeySequence(shortcuts.stop);
     ui->backwardSequenceEdit->setKeySequence(shortcuts.backward);
     ui->forwardSequenceEdit->setKeySequence(shortcuts.forward);
-    ui->rewindSequenceEdit->setKeySequence(shortcuts.rewind);
+    ui->beginSequenceEdit->setKeySequence(shortcuts.begin);
+    ui->endSequenceEdit->setKeySequence(shortcuts.end);
 
     // User interface
     ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
@@ -197,7 +199,8 @@ void SettingsDialog::handleAccepted() noexcept
     shortcuts.stop = ui->stopSequenceEdit->keySequence();
     shortcuts.backward = ui->backwardSequenceEdit->keySequence();
     shortcuts.forward = ui->forwardSequenceEdit->keySequence();
-    shortcuts.rewind = ui->rewindSequenceEdit->keySequence();
+    shortcuts.begin = ui->beginSequenceEdit->keySequence();
+    shortcuts.end = ui->endSequenceEdit->keySequence();
     settings.setFlightSimulatorShortcuts(shortcuts);
 
     // User interface

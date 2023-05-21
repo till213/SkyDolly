@@ -46,7 +46,8 @@ public:
         Stop,
         Backward,
         Forward,
-        Rewind
+        Begin,
+        End
     };
 
     QKeySequence record;
@@ -55,7 +56,8 @@ public:
     QKeySequence stop;
     QKeySequence backward;
     QKeySequence forward;
-    QKeySequence rewind;
+    QKeySequence begin;
+    QKeySequence end;
 
     /*!
      * Returns whether any of the flight simulator keyboard shortcuts is defined.
@@ -69,7 +71,8 @@ public:
                !stop.isEmpty() ||
                !backward.isEmpty() ||
                !forward.isEmpty() ||
-               !rewind.isEmpty();
+               !begin.isEmpty() ||
+               !end.isEmpty();
     }
 };
 
@@ -81,7 +84,8 @@ inline bool operator==(const FlightSimulatorShortcuts &lhs, const FlightSimulato
            lhs.stop == rhs.stop &&
            lhs.backward == rhs.backward &&
            lhs.forward == rhs.forward &&
-           lhs.rewind == rhs.rewind;
+           lhs.begin == rhs.begin &&
+           lhs.end == rhs.end;
 }
 
 inline bool operator!=(const FlightSimulatorShortcuts &lhs, const FlightSimulatorShortcuts &rhs) noexcept

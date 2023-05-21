@@ -119,7 +119,8 @@ bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorSho
     qDebug() << "Stop shortcut:" << shortcuts.stop.toString();
     qDebug() << "Backward shortcut:" << shortcuts.backward.toString();
     qDebug() << "Forward shortcut:" << shortcuts.forward.toString();
-    qDebug() << "Rewind shortcut:" << shortcuts.rewind.toString();
+    qDebug() << "Begin shortcut:" << shortcuts.begin.toString();
+    qDebug() << "End shortcut:" << shortcuts.end.toString();
 #endif
     return true;
 }

@@ -1508,9 +1508,14 @@ void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) no
             ui->forwardAction->trigger();
         }
         break;
-    case FlightSimulatorShortcuts::Action::Rewind:
+    case FlightSimulatorShortcuts::Action::Begin:
         if (ui->skipToBeginAction->isEnabled()) {
             ui->skipToBeginAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::End:
+        if (ui->skipToEndAction->isEnabled()) {
+            ui->skipToEndAction->trigger();
         }
         break;
     }
