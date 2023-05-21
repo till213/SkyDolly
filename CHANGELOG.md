@@ -2,6 +2,15 @@
 
 ## 0.17.0
 
+### New Features
+- Keyboard shortcuts can be defined and triggered within the flight simulator, in order to:
+  * Toggle recording / replay
+  * Pause / Stop
+  * Skip forward/backward
+  * Skip to begin
+  * The shortcuts can be defined in the Sky Dolly application settings
+- Desktop notifications indicate whether recording has started, paused/resumed and stopped
+
 ### Improvements
 - The default logbook name is now *Sky Dolly Logbook*
   * In order to help to avoid confusion between the Sky Dolly application and logbook directory
