@@ -6,7 +6,7 @@ set_target_properties(${APP_NAME}
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_LIST_DIR}/res/Info.plist.in"
 )
 # TODO Translations (i18n)
-#qt_add_translations(${APP_NAME}
+# qt_add_translations(${APP_NAME}
 #    TS_FILES
 #        i18n/${APP_NAME}_de_DE.ts
 #)
