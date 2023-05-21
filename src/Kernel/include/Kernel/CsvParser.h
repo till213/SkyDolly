@@ -89,8 +89,8 @@ public:
      *
      * \param rows
      *        the previously parsed CSV rows
-     * \param expectedColumnCount
-     *        the expected minimal column count of each row
+     * \param expectedMinimumColumnCount
+     *        the expected minimum column count of each row
      * \return \c true if each row in Rows has \c expectedColumnCount items; \c false else
      */
     static inline bool validate(const Rows &rows, std::size_t expectedMinimumColumnCount) noexcept

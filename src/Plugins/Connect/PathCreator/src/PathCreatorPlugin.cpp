@@ -35,6 +35,7 @@
 #include <Kernel/Enum.h>
 #endif
 
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include <Model/TimeVariableData.h>
@@ -106,6 +107,20 @@ bool PathCreatorPlugin::setUserAircraftPosition([[maybe_unused]] const PositionD
 
 bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::SampleRate sampleRate) const noexcept
 {
+    return true;
+}
+
+bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
+{
+#ifdef DEBUG
+    qDebug() << "Recording shortcut:" << shortcuts.record.toString();
+    qDebug() << "Replay shortcut:" << shortcuts.replay.toString();
+    qDebug() << "Pause shortcut:" << shortcuts.pause.toString();
+    qDebug() << "Stop shortcut:" << shortcuts.stop.toString();
+    qDebug() << "Backward shortcut:" << shortcuts.backward.toString();
+    qDebug() << "Forward shortcut:" << shortcuts.forward.toString();
+    qDebug() << "Rewind shortcut:" << shortcuts.rewind.toString();
+#endif
     return true;
 }
 

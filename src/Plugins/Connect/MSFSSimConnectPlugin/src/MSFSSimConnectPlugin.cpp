@@ -26,7 +26,7 @@
 #include <memory>
 #include <unordered_map>
 #include <cstdint>
-
+    
 #include <windows.h>
 #include <SimConnect.h>
 
@@ -41,6 +41,7 @@
 #include <tsl/ordered_map.h>
 
 #include <Kernel/Const.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -68,6 +69,7 @@
 #include "SimVar/SimConnectType.h"
 #include "Event/SimConnectEvent.h"
 #include "Event/EventStateHandler.h"
+#include "Event/InputEvent.h"
 #include "Event/SimulationRate.h"
 #include "Event/EventWidget.h"
 #include "SimConnectAi.h"
@@ -136,6 +138,15 @@ bool MSFSSimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRa
 {
     // "Auto" and 1 Hz sample rates are processed event-based
     return sampleRate != SampleRate::SampleRate::Auto && sampleRate != SampleRate::SampleRate::Hz1;
+}
+
+bool MSFSSimConnectPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
+{
+    bool ok {false};
+    if (d->simConnectHandle != nullptr) {
+        ok = InputEvent::setup(d->simConnectHandle, shortcuts);
+    }
+    return ok;
 }
 
 bool MSFSSimConnectPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
@@ -677,7 +688,8 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
 
     ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::InitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
-    d->eventStateHandler->setupEvents();
+    d->eventStateHandler->setupSystemEvents();
+    d->eventStateHandler->setupClientEvents();
 }
 
 void MSFSSimConnectPlugin::replay() noexcept
@@ -810,6 +822,55 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             default:
                 break;
             }
+            break;
+
+        case SimConnectEvent::Event::CustomRecording:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomRecording event";
+#endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Record);
+            break;
+
+        case SimConnectEvent::Event::CustomReplay:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomReplay event";
+#endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Replay);
+            break;
+
+        case SimConnectEvent::Event::CustomPause:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomPause event";
+#endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Pause);
+            break;
+
+        case SimConnectEvent::Event::CustomStop:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomStop event";
+#endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Stop);
+            break;
+
+        case SimConnectEvent::Event::CustomBackward:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomBackward event";
+#endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Backward);
+            break;
+
+        case SimConnectEvent::Event::CustomForward:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomForward event";
+#endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Forward);
+            break;
+
+        case SimConnectEvent::Event::CustomRewind:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomRewind event";
+#endif
+            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Rewind);
             break;
 
         default:

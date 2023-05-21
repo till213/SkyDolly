@@ -30,6 +30,7 @@
 #include <QtPlugin>
 
 #include <Kernel/SampleRate.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
 #include <Model/Location.h>
@@ -108,6 +109,8 @@ public:
     SkyConnectIntf &operator=(const SkyConnectIntf &rhs) = delete;
     SkyConnectIntf &operator=(SkyConnectIntf &&rhs) = delete;
     ~SkyConnectIntf() override = default;
+    
+    virtual bool setupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept = 0;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
@@ -212,8 +215,33 @@ public:
      */
     virtual bool isActive() const noexcept = 0;
 
+    /*!
+     * Pauses the current activity - either recording or replay.
+     *
+     * \param initiator
+     *        the Initiator of the action (the flight simulator or the application)
+     * \param enable
+     *        set to \c true to pause the current activity; \c false to resume
+     *        the paused activity
+     */
     virtual void setPaused(Initiator initiator, bool enable) noexcept = 0;
+
+    /*!
+     * Returns whether either recording or replay has been paused.
+     *
+     * \return \c true if recording or replay has been paused; \c false else
+     * \sa Connect::State::RecordingPaused
+     * \sa Connect::State::ReplayPaused
+     */
     virtual bool isPaused() const noexcept = 0;
+
+    /*!
+     * Returns whether recording has been paused.
+     *
+     * \return \c true if recording has been paused; \c false else
+     * \sa Connect::State::RecordingPaused
+     */
+    virtual bool isRecordingPaused() const noexcept = 0;
 
     virtual void skipToBegin() noexcept = 0;
     virtual void skipBackward() noexcept = 0;
@@ -251,20 +279,6 @@ public slots:
     virtual void updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept = 0;
     virtual void onTimeOffsetChanged() noexcept = 0;
     virtual void onTailNumberChanged(const Aircraft &aircraft) noexcept = 0;
-
-protected:
-    /*!
-     * Sets the new connection \c state. This method will also emit the
-     * signal #recordingStarted and #recordingStopped when the state changes
-     * to/from \e Recording.
-     *
-     * \param state
-     *        the new state to be set
-     * \sa stateChanged
-     * \sa recordingStarted
-     * \sa recordingStopped
-     */
-    virtual void setState(Connect::State state) noexcept = 0;
 
 signals:
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
@@ -318,6 +332,28 @@ signals:
      *        the received Location
      */
     void locationReceived(Location location);
+
+    /*!
+     * Emitted whenever a keyboard shortcut was triggered for the given \p action.
+     *
+     * \param action
+     *        the action that was triggered in the flight simulator
+     */
+    void shortCutActivated(FlightSimulatorShortcuts::Action action);
+
+protected:
+    /*!
+     * Sets the new connection \c state. This method will also emit the
+     * signal #recordingStarted and #recordingStopped when the state changes
+     * to/from \e Recording.
+     *
+     * \param state
+     *        the new state to be set
+     * \sa stateChanged
+     * \sa recordingStarted
+     * \sa recordingStopped
+     */
+    virtual void setState(Connect::State state) noexcept = 0;
 };
 
 #define SKYCONNECT_INTERFACE_IID "com.github.till213.SkyDolly.SkyConnectInterface/1.0"

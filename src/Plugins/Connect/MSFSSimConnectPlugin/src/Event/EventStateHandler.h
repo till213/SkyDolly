@@ -93,14 +93,16 @@ public:
         return static_cast<std::int16_t>(std::round(percent * (double)Max16KPosition / 100.0));
     }
 
-    void setupEvents() noexcept
+    void setupSystemEvents() noexcept
     {
         // System event subscription
         ::SimConnect_SubscribeToSystemEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimStart), "SimStart");
         ::SimConnect_SubscribeToSystemEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::Pause), "Pause");
         ::SimConnect_SubscribeToSystemEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::Crashed), "Crashed");
+    }
 
-        // Client events
+    void setupClientEvents() noexcept
+    {
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::PauseSet), "PAUSE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimRateIncr), "SIM_RATE_INCR");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimRateDecr), "SIM_RATE_DECR");

@@ -95,6 +95,19 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 
 AbstractSkyConnect::~AbstractSkyConnect() = default;
 
+bool AbstractSkyConnect::setupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept
+{
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this, shortcuts]() -> bool { return onSetupFlightSimulatorShortcuts(shortcuts); });
+    }
+    return ok;
+}
+
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
@@ -367,6 +380,10 @@ void AbstractSkyConnect::setPaused(Initiator initiator, bool enable) noexcept
 
 bool AbstractSkyConnect::isPaused() const noexcept {
     return d->state == Connect::State::RecordingPaused || d->state == Connect::State::ReplayPaused;
+}
+
+bool AbstractSkyConnect::isRecordingPaused() const noexcept {
+    return d->state == Connect::State::RecordingPaused;
 }
 
 void AbstractSkyConnect::skipToBegin() noexcept

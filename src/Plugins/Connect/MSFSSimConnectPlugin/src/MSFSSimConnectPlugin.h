@@ -33,6 +33,7 @@
 
 #include <QObject>
 
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/SampleRate.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
@@ -60,6 +61,8 @@ public:
 
 protected:
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
+
+    bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;

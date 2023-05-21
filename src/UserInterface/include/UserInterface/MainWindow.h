@@ -80,12 +80,14 @@ private:
     const std::unique_ptr<MainWindowPrivate> d;
 
     void frenchConnection() noexcept;
+    void tryConnectAndSetup() const noexcept;
     void initUi() noexcept;
     void initPlugins() noexcept;
     void initModuleSelectorUi() noexcept;
     void initViewUi() noexcept;
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;
+    void createTrayIcon() noexcept;
     void initSkyConnectPlugin() noexcept;
 
     /*
@@ -164,6 +166,9 @@ private slots:
     void updateControlIcons() noexcept;
     void onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept;
     void onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept;
+
+    void onRecordingStopped() noexcept;
+    void onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept;
 
     /*
      * Updates the replay duration (maximum time) and then position slider position.

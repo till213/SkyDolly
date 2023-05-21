@@ -38,7 +38,6 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QDir>
-#include <QUuid>
 #include <QString>
 #include <QStringBuilder>
 #include <QUuid>
@@ -49,6 +48,8 @@
 #include <QLineEdit>
 #include <QButtonGroup>
 #include <QPushButton>
+#include <QMenu>
+#include <QSystemTrayIcon>
 #include <QRadioButton>
 #include <QDoubleValidator>
 #include <QIcon>
@@ -66,6 +67,7 @@
 
 #include <Kernel/Unit.h>
 #include <Kernel/Const.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/Replay.h>
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
@@ -145,6 +147,9 @@ struct MainWindowPrivate
     SimulationVariablesDialog *simulationVariablesDialog {nullptr};
     StatisticsDialog *statisticsDialog {nullptr};
 
+    QMenu *trayIconMenu {nullptr};
+    QSystemTrayIcon *trayIcon {nullptr};
+
     Unit unit;
     QSize lastNormalUiSize;
 
@@ -192,6 +197,7 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
     initUi();
     updateUi();
     frenchConnection();
+    tryConnectAndSetup();
 }
 
 MainWindow::~MainWindow()
@@ -294,7 +300,9 @@ void MainWindow::frenchConnection() noexcept
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &MainWindow::updateUi);
     connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-            this, &MainWindow::onRecordingDurationChanged);
+            this, &MainWindow::onRecordingStopped);
+    connect(&skyConnectManager, &SkyConnectManager::shortCutActivated,
+            this, &MainWindow::onShortcutActivated);
 
     // Replay speed
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
@@ -441,6 +449,19 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::showOnlineManual);
 }
 
+void MainWindow::tryConnectAndSetup() const noexcept
+{
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+
+    // TODO IMPLEMENT ME
+    if (skyConnectManager.hasPlugins()) {
+        FlightSimulatorShortcuts shortcuts {Settings::getInstance().getFlightSimulatorShortcuts()};
+        if (shortcuts.hasAny()) {
+            skyConnectManager.tryConnectAndSetup(shortcuts);
+        }
+    }
+}
+
 void MainWindow::initUi() noexcept
 {
     Settings &settings = Settings::getInstance();
@@ -457,6 +478,7 @@ void MainWindow::initUi() noexcept
     initViewUi();
     initControlUi();
     initReplaySpeedUi();
+    createTrayIcon();
 
     const bool minimalUi = isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
@@ -804,6 +826,21 @@ void MainWindow::initReplaySpeedUi() noexcept
     }
 
     replaySpeedLayout->addWidget(d->replaySpeedUnitComboBox);
+}
+
+void MainWindow::createTrayIcon() noexcept
+{
+    d->trayIconMenu = new QMenu(this);
+    d->trayIconMenu->addAction(ui->recordAction);
+    d->trayIconMenu->addAction(ui->playAction);
+    d->trayIconMenu->addAction(ui->stopAction);
+    d->trayIconMenu->addSeparator();
+    d->trayIconMenu->addAction(ui->quitAction);
+
+    d->trayIcon = new QSystemTrayIcon(this);
+    d->trayIcon->setContextMenu(d->trayIconMenu);
+
+    d->trayIcon->setIcon(QIcon(":/img/icons/application-icon.png"));
 }
 
 void MainWindow::initSkyConnectPlugin() noexcept
@@ -1418,6 +1455,76 @@ void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible
     }
 }
 
+void MainWindow::onRecordingStopped() noexcept
+{
+    onRecordingDurationChanged();
+}
+
+void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept
+{
+    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    QString pushNotification;
+    switch (action) {
+    case FlightSimulatorShortcuts::Action::Record:
+        if (ui->recordAction->isEnabled()) {
+            if (skyConnectManager.isInRecordingState()) {
+                pushNotification = tr("Recording stopped.");
+            } else {
+                pushNotification = tr("Recording started.");
+            }
+            ui->recordAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Replay:
+        if (ui->playAction->isEnabled()) {
+            ui->playAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Pause:
+        if (ui->pauseAction->isEnabled()) {
+            if (skyConnectManager.isRecordingPaused()) {
+                pushNotification = tr("Recording resumed.");
+            } else if (skyConnectManager.isRecording()) {
+                pushNotification = tr("Recording paused.");
+            }
+            ui->pauseAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Stop:
+        if (ui->stopAction->isEnabled()) {
+            if (skyConnectManager.isInRecordingState()) {
+                pushNotification = tr("Recording stopped.");
+            }
+            ui->stopAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Backward:
+        if (ui->backwardAction->isEnabled()) {
+            ui->backwardAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Forward:
+        if (ui->forwardAction->isEnabled()) {
+            ui->forwardAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Rewind:
+        if (ui->skipToBeginAction->isEnabled()) {
+            ui->skipToBeginAction->trigger();
+        }
+        break;
+    }
+
+    if (!pushNotification.isEmpty()) {
+        d->trayIcon->showMessage(Version::getApplicationName(), pushNotification,
+                                 QSystemTrayIcon::Information, 3000);
+    }
+
+#ifdef DEBUG
+    qDebug() << "Main window: flight simulator shortcut activated" << Enum::underly(action);
+#endif
+}
+
 void MainWindow::onRecordingDurationChanged() noexcept
 {
     updateReplayDuration();
@@ -1517,6 +1624,8 @@ void MainWindow::updateMainWindow() noexcept
     } else {
         setWindowTitle(Version::getApplicationName());
     }
+
+    d->trayIcon->show();
 }
 
 void MainWindow::onModuleActivated(const QString &title, [[maybe_unused]] QUuid uuid) noexcept

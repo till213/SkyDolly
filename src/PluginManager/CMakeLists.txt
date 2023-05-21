@@ -10,6 +10,7 @@ target_compile_definitions(${LIBRARY_NAME}
 target_sources(${LIBRARY_NAME}
     PRIVATE
         include/PluginManager/PluginManagerLib.h
+
         include/PluginManager/Csv.h
         include/PluginManager/PluginIntf.h
         include/PluginManager/SkyConnectManager.h src/SkyConnectManager.cpp

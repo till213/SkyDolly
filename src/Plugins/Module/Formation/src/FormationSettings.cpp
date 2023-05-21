@@ -59,7 +59,7 @@ struct FormationSettingsPrivate
     Formation::HorizontalDistance horizontalDistance {::DefaultHorizontalDistance};
     Formation::VerticalDistance verticalDistance {::DefaultVerticalDistance};
     bool relativePositionPlacement {::DefaultRelativePositionPlacement};
-    SkyConnectIntf::ReplayMode replayMode;
+    SkyConnectIntf::ReplayMode replayMode {::DefaultReplayMode};
 };
 
 // PUBLIC
