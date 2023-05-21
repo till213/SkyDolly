@@ -81,6 +81,7 @@ public:
 
     void setPaused(Initiator initiator, bool enable) noexcept override;
     bool isPaused() const noexcept override;
+    bool isRecordingPaused() const noexcept override;
 
     void skipToBegin() noexcept override;
     void skipBackward() noexcept override;

@@ -119,6 +119,7 @@ public:
 
     void setPaused(SkyConnectIntf::Initiator initiator, bool enable) noexcept;
     bool isPaused() const noexcept;
+    bool isRecordingPaused() const noexcept;
 
     void skipToBegin() noexcept;
     void skipBackward() noexcept;

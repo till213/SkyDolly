@@ -275,6 +275,12 @@ bool SkyConnectManager::isPaused() const noexcept
     return skyConnect ? skyConnect->get().isPaused() : false;
 }
 
+bool SkyConnectManager::isRecordingPaused() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().isRecordingPaused() : false;
+}
+
 void SkyConnectManager::skipToBegin() noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();

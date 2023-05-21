@@ -215,8 +215,33 @@ public:
      */
     virtual bool isActive() const noexcept = 0;
 
+    /*!
+     * Pauses the current activity - either recording or replay.
+     *
+     * \param initiator
+     *        the Initiator of the action (the flight simulator or the application)
+     * \param enable
+     *        set to \c true to pause the current activity; \c false to resume
+     *        the paused activity
+     */
     virtual void setPaused(Initiator initiator, bool enable) noexcept = 0;
+
+    /*!
+     * Returns whether either recording or replay has been paused.
+     *
+     * \return \c true if recording or replay has been paused; \c false else
+     * \sa Connect::State::RecordingPaused
+     * \sa Connect::State::ReplayPaused
+     */
     virtual bool isPaused() const noexcept = 0;
+
+    /*!
+     * Returns whether recording has been paused.
+     *
+     * \return \c true if recording has been paused; \c false else
+     * \sa Connect::State::RecordingPaused
+     */
+    virtual bool isRecordingPaused() const noexcept = 0;
 
     virtual void skipToBegin() noexcept = 0;
     virtual void skipBackward() noexcept = 0;

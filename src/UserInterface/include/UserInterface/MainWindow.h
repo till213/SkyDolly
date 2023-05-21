@@ -167,7 +167,6 @@ private slots:
     void onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept;
     void onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept;
 
-    void onRecordingStarted() noexcept;
     void onRecordingStopped() noexcept;
     void onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept;
 

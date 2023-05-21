@@ -382,6 +382,10 @@ bool AbstractSkyConnect::isPaused() const noexcept {
     return d->state == Connect::State::RecordingPaused || d->state == Connect::State::ReplayPaused;
 }
 
+bool AbstractSkyConnect::isRecordingPaused() const noexcept {
+    return d->state == Connect::State::RecordingPaused;
+}
+
 void AbstractSkyConnect::skipToBegin() noexcept
 {
     seek(0, SeekMode::Discrete);

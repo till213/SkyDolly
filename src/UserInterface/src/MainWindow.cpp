@@ -299,8 +299,6 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onTimestampChanged);
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &MainWindow::updateUi);
-    connect(&skyConnectManager, &SkyConnectManager::recordingStarted,
-            this, &MainWindow::onRecordingStarted);
     connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
             this, &MainWindow::onRecordingStopped);
     connect(&skyConnectManager, &SkyConnectManager::shortCutActivated,
@@ -1457,21 +1455,71 @@ void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible
     }
 }
 
-void MainWindow::onRecordingStarted() noexcept
-{
-    d->trayIcon->showMessage(Version::getApplicationName(), tr("Recording started."),
-                             QSystemTrayIcon::Information, 3000);
-}
-
 void MainWindow::onRecordingStopped() noexcept
 {
-    d->trayIcon->showMessage(Version::getApplicationName(), tr("Recording stopped."),
-                             QSystemTrayIcon::Information, 3000);
     onRecordingDurationChanged();
 }
 
 void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept
 {
+    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    QString pushNotification;
+    switch (action) {
+    case FlightSimulatorShortcuts::Action::Record:
+        if (ui->recordAction->isEnabled()) {
+            if (skyConnectManager.isInRecordingState()) {
+                pushNotification = tr("Recording stopped.");
+            } else {
+                pushNotification = tr("Recording started.");
+            }
+            ui->recordAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Replay:
+        if (ui->playAction->isEnabled()) {
+            ui->playAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Pause:
+        if (ui->pauseAction->isEnabled()) {
+            if (skyConnectManager.isRecordingPaused()) {
+                pushNotification = tr("Recording resumed.");
+            } else if (skyConnectManager.isRecording()) {
+                pushNotification = tr("Recording paused.");
+            }
+            ui->pauseAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Stop:
+        if (ui->stopAction->isEnabled()) {
+            if (skyConnectManager.isInRecordingState()) {
+                pushNotification = tr("Recording stopped.");
+            }
+            ui->stopAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Backward:
+        if (ui->backwardAction->isEnabled()) {
+            ui->backwardAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Forward:
+        if (ui->forwardAction->isEnabled()) {
+            ui->forwardAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Rewind:
+        if (ui->skipToBeginAction->isEnabled()) {
+            ui->skipToBeginAction->trigger();
+        }
+        break;
+    }
+
+    if (!pushNotification.isEmpty()) {
+        d->trayIcon->showMessage(Version::getApplicationName(), pushNotification,
+                                 QSystemTrayIcon::Information, 3000);
+    }
+
 #ifdef DEBUG
     qDebug() << "Main window: flight simulator shortcut activated" << Enum::underly(action);
 #endif
