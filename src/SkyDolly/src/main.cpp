@@ -28,6 +28,7 @@
 #include <QApplication>
 #include <QStringList>
 #include <QStyleFactory>
+#include <QMessageBox>
 
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
@@ -61,16 +62,28 @@ int main(int argc, char **argv) noexcept
     QStringList args = application.arguments();
     QString filePath;
     if (args.count() > 1) {
-       filePath = args.at(1);
+        filePath = args.at(1);
     }
+
     int res {0};
-    // Main window scope
-    {
-        std::unique_ptr<MainWindow> mainWindow = std::make_unique<MainWindow>(filePath);
-        mainWindow->show();
-        res = application.exec();
+    try {
+        // Main window scope
+        {
+            std::unique_ptr<MainWindow> mainWindow = std::make_unique<MainWindow>(filePath);
+            mainWindow->show();
+            res = application.exec();
+        }
+        // Destroy singletons after main window has been deleted
+        destroySingletons();
+    } catch (std::exception &ex) {
+        auto title = QT_TRANSLATE_NOOP("Main", "Exception");
+        auto message = QT_TRANSLATE_NOOP("Main", QString("An exception occurred: %1").arg(ex.what()));
+        if (qApp != nullptr) {
+            QMessageBox::critical(nullptr, qApp->translate("Main", title), qApp->translate("Main", message.toLatin1()));
+        } else {
+            QMessageBox::critical(nullptr, title, message);
+        }
+        res = -1;
     }
-    // Destroy singletons after main window has been deleted
-    destroySingletons();
     return res;
 }
