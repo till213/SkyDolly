@@ -23,11 +23,16 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <filesystem>
+#include <exception>
+#include <cstdlib>
 
 #include <QCoreApplication>
 #include <QApplication>
 #include <QStringList>
+#include <QString>
 #include <QStyleFactory>
+#include <QStringBuilder>
 #include <QMessageBox>
 
 #include <Kernel/Version.h>
@@ -50,8 +55,56 @@ static void destroySingletons() noexcept
     RecentFile::destroyInstance();
 }
 
+static QString errorCodeToString(const std::error_code &code)
+{
+    return QString("Error code: %1\nMessage: %2\nCategory: %3")
+                   .arg(code.value()).arg(code.message().c_str(), code.category().name());
+}
+
+static QString exceptionToString(const std::exception *ex)
+{
+    QString message;
+    auto fsex = dynamic_cast<const std::filesystem::filesystem_error *>(ex);
+    if (fsex != nullptr) {
+        message = QString("A filesystem error occurred:\n\n%1\npath 1: %2\npath 2: %3")
+                      .arg(fsex->what(), fsex->path1().c_str(), fsex->path2().c_str());
+        if (fsex->code()) {
+            message = message % '\n' % errorCodeToString(fsex->code());
+        }
+        return message;
+    }
+
+    message = QString("An exception occurred:\n\n%1").arg(ex->what());
+    return message;
+}
+
+static void HandleException(const std::exception *ex)
+{
+    const QString message = exceptionToString(ex);
+    qCritical() << message;
+    QMessageBox::critical(nullptr, "Error", message);
+}
+
+static void handleTerminate()
+{
+    std::exception_ptr ex = std::current_exception();
+    try
+    {
+        std::rethrow_exception(ex);
+    } catch (std::exception &ex) {
+        HandleException(&ex);
+    } catch(...) {
+        QMessageBox::critical(nullptr, "Error", "An unknown (non-standard) exception occurred.");
+    }
+
+    std::abort();
+}
+
 int main(int argc, char **argv) noexcept
 {
+    std::set_terminate(handleTerminate);
+
+    static const int ErrorCode = -1;
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
@@ -75,15 +128,16 @@ int main(int argc, char **argv) noexcept
         }
         // Destroy singletons after main window has been deleted
         destroySingletons();
+    } catch (const std::filesystem::filesystem_error &ex) {
+        HandleException(&ex);
+        res = ErrorCode;
     } catch (std::exception &ex) {
-        auto title = QT_TRANSLATE_NOOP("Main", "Exception");
-        auto message = QT_TRANSLATE_NOOP("Main", QString("An exception occurred: %1").arg(ex.what()));
-        if (qApp != nullptr) {
-            QMessageBox::critical(nullptr, qApp->translate("Main", title), qApp->translate("Main", message.toLatin1()));
-        } else {
-            QMessageBox::critical(nullptr, title, message);
-        }
-        res = -1;
+        HandleException(&ex);
+        res = ErrorCode;
+    } catch (...) {
+        QMessageBox::critical(nullptr, "Error", "An unknown (non-standard) exception occurred.");
+        res = ErrorCode;
     }
+
     return res;
 }
