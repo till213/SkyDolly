@@ -30,6 +30,8 @@
 #include <QStringBuilder>
 #include <QMessageBox>
 
+#include <cpptrace/cpptrace.hpp>
+
 #include "ExceptionHandler.h"
 
 // PUBLIC
@@ -37,6 +39,8 @@
 void ExceptionHandler::handle(const QString &message, const std::exception &ex) noexcept
 {
     try {
+        //cpptrace::print_trace();
+        //auto trace = cpptrace::generate_trace();
         const QString exceptionMessage = exceptionToString(ex);
         qCritical() << "Exception message:" << exceptionMessage;
         const QString dialogMessage = message % "\n\n" % exceptionMessage;

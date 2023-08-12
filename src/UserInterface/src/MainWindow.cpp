@@ -178,6 +178,9 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
       ui(std::make_unique<Ui::MainWindow>()),
       d(std::make_unique<MainWindowPrivate>())
 {
+    // TODO REMOVE ME
+    throw std::runtime_error("My exception");
+
     ui->setupUi(this);
 
     // Connect with logbook

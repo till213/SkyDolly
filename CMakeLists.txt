@@ -70,6 +70,14 @@ set_target_properties(GeographicLib_SHARED
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
+include(FetchContent)
+FetchContent_Declare(
+  cpptrace
+  GIT_REPOSITORY https://github.com/jeremy-rifkin/cpptrace.git
+  GIT_TAG        4b11b87e4d905d003d0325a53994441cc767017a
+)
+FetchContent_MakeAvailable(cpptrace)
+
 # Enabled link time optimisation (LTO) for release build, if available
 if(NOT ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
     check_ipo_supported(RESULT ipo_support OUTPUT output LANGUAGES CXX)
