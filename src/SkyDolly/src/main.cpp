@@ -23,9 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <filesystem>
-#include <exception>
-#include <cstdlib>
 
 #include <QCoreApplication>
 #include <QApplication>
@@ -43,6 +40,7 @@
 #include <Persistence/PersistenceManager.h>
 #include <PluginManager/PluginManager.h>
 #include <UserInterface/MainWindow.h>
+#include "ExceptionHandler.h"
 
 static void destroySingletons() noexcept
 {
@@ -55,54 +53,9 @@ static void destroySingletons() noexcept
     RecentFile::destroyInstance();
 }
 
-static QString errorCodeToString(const std::error_code &code)
-{
-    return QString("Error code: %1\nMessage: %2\nCategory: %3")
-                   .arg(code.value()).arg(code.message().c_str(), code.category().name());
-}
-
-static QString exceptionToString(const std::exception *ex)
-{
-    QString message;
-    auto fsex = dynamic_cast<const std::filesystem::filesystem_error *>(ex);
-    if (fsex != nullptr) {
-        message = QString("A filesystem error occurred:\n\n%1\npath 1: %2\npath 2: %3")
-                      .arg(fsex->what(), fsex->path1().c_str(), fsex->path2().c_str());
-        if (fsex->code()) {
-            message = message % '\n' % errorCodeToString(fsex->code());
-        }
-        return message;
-    }
-
-    message = QString("An exception occurred:\n\n%1").arg(ex->what());
-    return message;
-}
-
-static void HandleException(const std::exception *ex)
-{
-    const QString message = exceptionToString(ex);
-    qCritical() << message;
-    QMessageBox::critical(nullptr, "Error", message);
-}
-
-static void handleTerminate()
-{
-    std::exception_ptr ex = std::current_exception();
-    try
-    {
-        std::rethrow_exception(ex);
-    } catch (std::exception &ex) {
-        HandleException(&ex);
-    } catch(...) {
-        QMessageBox::critical(nullptr, "Error", "An unknown (non-standard) exception occurred.");
-    }
-
-    std::abort();
-}
-
 int main(int argc, char **argv) noexcept
 {
-    std::set_terminate(handleTerminate);
+    std::set_terminate(ExceptionHandler::handleTerminate);
 
     static const int ErrorCode = -1;
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
@@ -128,11 +81,9 @@ int main(int argc, char **argv) noexcept
         }
         // Destroy singletons after main window has been deleted
         destroySingletons();
-    } catch (const std::filesystem::filesystem_error &ex) {
-        HandleException(&ex);
-        res = ErrorCode;
     } catch (std::exception &ex) {
-        HandleException(&ex);
+        QString message = QStringLiteral("The application quit due to an unexpected exception.");
+        ExceptionHandler::handle(message, ex);
         res = ErrorCode;
     } catch (...) {
         QMessageBox::critical(nullptr, "Error", "An unknown (non-standard) exception occurred.");

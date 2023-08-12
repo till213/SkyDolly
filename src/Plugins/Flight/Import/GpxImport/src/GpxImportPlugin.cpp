@@ -29,7 +29,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QXmlStreamReader>
 #include <QDateTime>
