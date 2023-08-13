@@ -31,7 +31,6 @@ target_link_libraries(${APP_NAME}
         Sky::Persistence
         Sky::PluginManager
         Sky::UserInterface
-        cpptrace
 )
 
 if(${PLATFORM_IS_MACOS})

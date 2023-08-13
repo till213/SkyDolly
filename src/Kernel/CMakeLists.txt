@@ -38,6 +38,7 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/QUuidHasher.h
         include/Kernel/QStringHasher.h
         include/Kernel/Sort.h
+        include/Kernel/StackTrace.h
         src/SettingsConverterV0dot13.h
         src/SettingsConverterV0dot16.h
         src/SettingsConverter.h src/SettingsConverter.cpp
@@ -59,6 +60,7 @@ target_link_libraries(${LIBRARY_NAME}
         tsl::ordered_map
     PRIVATE
         GitInfo
+        cpptrace
 )
 
 # Platform-specific implementations
@@ -77,18 +79,21 @@ if(${PLATFORM_IS_WINDOWS})
         PRIVATE
             src/FlightSimulator_Windows.cpp
             src/SecurityToken_Default.cpp
+            src/StackTrace_Cpptrace.cpp
     )
 elseif(${PLATFORM_IS_MACOS})
     target_sources(${LIBRARY_NAME}
         PRIVATE
             src/FlightSimulator_macOS.cpp
             src/SecurityToken_macOS.mm
+            src/StackTrace_macOS.cpp
     )
 elseif(${PLATFORM_IS_LINUX})
     target_sources(${LIBRARY_NAME}
         PRIVATE
             src/FlightSimulator_Linux.cpp
             src/SecurityToken_Default.cpp
+            src/StackTrace_Cpptrace.cpp
     )
 endif()
 

@@ -26,12 +26,12 @@
 #include <filesystem>
 #include <system_error>
 
+#include <QtGlobal>
 #include <QString>
 #include <QStringBuilder>
 #include <QMessageBox>
 
-#include <cpptrace/cpptrace.hpp>
-
+#include <Kernel/StackTrace.h>
 #include "ExceptionHandler.h"
 
 // PUBLIC
@@ -39,8 +39,6 @@
 void ExceptionHandler::handle(const QString &message, const std::exception &ex) noexcept
 {
     try {
-        //cpptrace::print_trace();
-        //auto trace = cpptrace::generate_trace();
         const QString exceptionMessage = exceptionToString(ex);
         qCritical() << "Exception message:" << exceptionMessage;
         const QString dialogMessage = message % "\n\n" % exceptionMessage;
@@ -57,6 +55,7 @@ void ExceptionHandler::handleTerminate() noexcept
     // Really make sure that we are not getting into an "endless termination loop"
     std::set_terminate(nullptr);
 
+    const QString stackTrace = StackTrace::generate();
     try {
         QString message = QStringLiteral("The application quit unexpectedly. "
                                          "This is due to a programming error - Sky Dolly deeply apologises.\n\n"
