@@ -82,8 +82,7 @@ int main(int argc, char **argv) noexcept
         // Destroy singletons after main window has been deleted
         destroySingletons();
     } catch (std::exception &ex) {
-        QString message = QStringLiteral("The application quit due to an unexpected exception.");
-        ExceptionHandler::handle(message, ex);
+        ExceptionHandler::handle("Exception", QString(), ex);
         res = ErrorCode;
     } catch (...) {
         QMessageBox::critical(nullptr, "Error", "An unknown (non-standard) exception occurred.");

@@ -37,14 +37,12 @@
 
 // PUBLIC
 
-void ExceptionHandler::handle(const QString &message, const std::exception &ex) noexcept
+void ExceptionHandler::handle(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept
 {
     try {
         const QString exceptionMessage = exceptionToString(ex);
         qCritical() << "Exception message:" << exceptionMessage;
-        const QString dialogMessage = message % "\n\n" % exceptionMessage;
-        //QMessageBox::critical(nullptr, "Error", dialogMessage);
-        TerminationDialog("An exception occurred", dialogMessage, QString()).exec();
+        TerminationDialog("An exception occurred", exceptionMessage, stackTrace).exec();
     } catch (std::exception &ex) {
         qFatal() << "Could not handle the original exception. Another standard exception occurred:" << ex.what();
     } catch (...) {
@@ -67,7 +65,7 @@ void ExceptionHandler::handleTerminate() noexcept
         try {
             std::rethrow_exception(ex);
         } catch (std::exception &ex) {
-            handle(message, ex);
+            handle("Abnormal Termination", stackTrace, ex);
         } catch(...) {
             QMessageBox::critical(nullptr, "Error", message % "An unknown (non-standard) exception occurred.");
         }

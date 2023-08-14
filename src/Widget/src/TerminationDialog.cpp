@@ -34,7 +34,7 @@
 
 TerminationDialog::TerminationDialog(
     const QString &title,
-    const QString &description,
+    const QString &exeption,
     const QString &stackTrace,
     QWidget *parent
  ) : QDialog(parent),
@@ -42,9 +42,8 @@ TerminationDialog::TerminationDialog(
 {
     ui->setupUi(this);
     this->setWindowTitle(title);
-    ui->exceptionLabel->setTextFormat(Qt::RichText);
-    ui->exceptionLabel->setText(description);
-    ui->stackTracePlainTextEdit->appendPlainText(stackTrace);
+    ui->exceptionTextEdit->appendPlainText(exeption);
+    ui->stackTraceTextEdit->appendPlainText(stackTrace);
 }
 
 TerminationDialog::~TerminationDialog()

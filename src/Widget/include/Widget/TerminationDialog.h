@@ -37,7 +37,7 @@ class TerminationDialog : public QDialog
 {
     Q_OBJECT
 public:
-    TerminationDialog(const QString &title, const QString &description, const QString &stackTrace, QWidget *parent = nullptr);
+    TerminationDialog(const QString &title, const QString &exeption, const QString &stackTrace, QWidget *parent = nullptr);
     virtual ~TerminationDialog();
 
 private:

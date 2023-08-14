@@ -33,7 +33,7 @@
 class ExceptionHandler
 {
 public:
-    static void handle(const QString &message, const std::exception &ex) noexcept;
+    static void handle(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept;
     static void handleTerminate() noexcept;
 private:
     static QString errorCodeToString(const std::error_code &code);
