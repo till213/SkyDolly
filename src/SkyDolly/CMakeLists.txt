@@ -30,6 +30,7 @@ target_link_libraries(${APP_NAME}
         Sky::Model
         Sky::Persistence
         Sky::PluginManager
+        Sky::Widget
         Sky::UserInterface
 )
 

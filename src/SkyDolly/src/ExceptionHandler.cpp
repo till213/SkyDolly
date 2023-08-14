@@ -32,6 +32,7 @@
 #include <QMessageBox>
 
 #include <Kernel/StackTrace.h>
+#include <Widget/TerminationDialog.h>
 #include "ExceptionHandler.h"
 
 // PUBLIC
@@ -42,7 +43,8 @@ void ExceptionHandler::handle(const QString &message, const std::exception &ex) 
         const QString exceptionMessage = exceptionToString(ex);
         qCritical() << "Exception message:" << exceptionMessage;
         const QString dialogMessage = message % "\n\n" % exceptionMessage;
-        QMessageBox::critical(nullptr, "Error", dialogMessage);
+        //QMessageBox::critical(nullptr, "Error", dialogMessage);
+        TerminationDialog("An exception occurred", dialogMessage, QString()).exec();
     } catch (std::exception &ex) {
         qFatal() << "Could not handle the original exception. Another standard exception occurred:" << ex.what();
     } catch (...) {
@@ -59,7 +61,7 @@ void ExceptionHandler::handleTerminate() noexcept
     try {
         QString message = QStringLiteral("The application quit unexpectedly. "
                                          "This is due to a programming error - Sky Dolly deeply apologises.\n\n"
-                                         "You can help fixing this bug by creating an issue at https://github.com/till213/SkyDolly/issues."
+                                         "You can help fixing this bug by creating an issue at <a href=\"https://github.com/till213/SkyDolly/issues\">github.com</a>."
                                          "Please provide a screenshot of this dialog.");
         std::exception_ptr ex = std::current_exception();
         try {
