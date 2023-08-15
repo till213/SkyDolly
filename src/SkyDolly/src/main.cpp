@@ -33,6 +33,7 @@
 #include <QMessageBox>
 
 #include <Kernel/Version.h>
+#include <Kernel/StackTrace.h>
 #include <Kernel/Settings.h>
 #include <Kernel/RecentFile.h>
 #include <Model/Logbook.h>
@@ -82,7 +83,8 @@ int main(int argc, char **argv) noexcept
         // Destroy singletons after main window has been deleted
         destroySingletons();
     } catch (std::exception &ex) {
-        ExceptionHandler::handle("Exception", QString(), ex);
+        const QString stackTrace = StackTrace::generate();
+        ExceptionHandler::handle("Exception", stackTrace, ex);
         res = ErrorCode;
     } catch (...) {
         QMessageBox::critical(nullptr, "Error", "An unknown (non-standard) exception occurred.");

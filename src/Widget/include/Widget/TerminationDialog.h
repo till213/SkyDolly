@@ -37,12 +37,21 @@ class TerminationDialog : public QDialog
 {
     Q_OBJECT
 public:
-    TerminationDialog(const QString &title, const QString &exeption, const QString &stackTrace, QWidget *parent = nullptr);
+    TerminationDialog(const QString title, const QString exeption, const QString stackTrace, QWidget *parent = nullptr);
     virtual ~TerminationDialog();
 
 private:
     Ui::TerminationDialog *ui;
-    void updateUi();
+    QString m_title;
+    QString m_exception;
+    QString m_stackTrace;
+
+    void initUi() noexcept;
+    void frenchConnection() noexcept;
+
+private slots:
+    void createReport() noexcept;
+    void openIssue() noexcept;
 };
 
 #endif // TERMINATIONDIALOG_H

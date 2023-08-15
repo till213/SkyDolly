@@ -77,6 +77,7 @@ FetchContent_Declare(
   GIT_TAG        4b11b87e4d905d003d0325a53994441cc767017a
 )
 FetchContent_MakeAvailable(cpptrace)
+add_library(cpptrace::cpptrace ALIAS cpptrace)
 
 # Enabled link time optimisation (LTO) for release build, if available
 if(NOT ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))

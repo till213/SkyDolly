@@ -60,7 +60,7 @@ target_link_libraries(${LIBRARY_NAME}
         tsl::ordered_map
     PRIVATE
         GitInfo
-        cpptrace
+        cpptrace::cpptrace
 )
 
 # Platform-specific implementations

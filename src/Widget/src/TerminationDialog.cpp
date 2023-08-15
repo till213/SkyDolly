@@ -22,28 +22,40 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <utility>
+
+#include <QUrl>
 #include <QWidget>
 #include <QString>
 #include <QLabel>
-#include <QTextEdit>
+#include <QPushButton>
+#include <QPlainTextEdit>
+#include <QDesktopServices>
 
 #include "TerminationDialog.h"
 #include "ui_TerminationDialog.h"
 
+namespace
+{
+    constexpr const char *OpenIssueUrl {"https://www.github.com/till213/SkyDolly/issues"};
+}
+
 // PUBLIC
 
 TerminationDialog::TerminationDialog(
-    const QString &title,
-    const QString &exeption,
-    const QString &stackTrace,
+    const QString title,
+    const QString exception,
+    const QString stackTrace,
     QWidget *parent
  ) : QDialog(parent),
-    ui(new Ui::TerminationDialog)
+    ui(new Ui::TerminationDialog),
+    m_title(std::move(title)),
+    m_exception(std::move(exception)),
+    m_stackTrace(std::move(stackTrace))
 {
     ui->setupUi(this);
-    this->setWindowTitle(title);
-    ui->exceptionTextEdit->appendPlainText(exeption);
-    ui->stackTraceTextEdit->appendPlainText(stackTrace);
+    initUi();
+    frenchConnection();
 }
 
 TerminationDialog::~TerminationDialog()
@@ -51,4 +63,33 @@ TerminationDialog::~TerminationDialog()
     delete ui;
 }
 
+// PRIVATE
 
+void TerminationDialog::initUi() noexcept
+{
+    this->setWindowTitle(m_title);
+    ui->exceptionTextEdit->appendPlainText(m_exception);
+    ui->stackTraceTextEdit->appendPlainText(m_stackTrace);
+}
+
+void TerminationDialog::frenchConnection() noexcept
+{
+    connect(ui->createReportButton, &QPushButton::clicked,
+            this, &TerminationDialog::createReport);
+    connect(ui->openIssueButton, &QPushButton::clicked,
+            this, &TerminationDialog::openIssue);
+    connect(ui->closeButton, &QPushButton::clicked,
+            this, &TerminationDialog::close);
+}
+
+// PRIVATE SLOTS
+
+void TerminationDialog::createReport() noexcept
+{
+
+}
+
+void TerminationDialog::openIssue() noexcept
+{
+    QDesktopServices::openUrl(QUrl(::OpenIssueUrl));
+}
