@@ -31,6 +31,9 @@
 #include <QPushButton>
 #include <QPlainTextEdit>
 #include <QDesktopServices>
+#include <QLabel>
+#include <QStyle>
+#include <QFontDatabase>
 
 #include "TerminationDialog.h"
 #include "ui_TerminationDialog.h"
@@ -70,6 +73,10 @@ void TerminationDialog::initUi() noexcept
     this->setWindowTitle(m_title);
     ui->exceptionTextEdit->appendPlainText(m_exception);
     ui->stackTraceTextEdit->appendPlainText(m_stackTrace);
+
+    ui->iconLabel->setPixmap(this->style()->standardPixmap(QStyle::SP_MessageBoxCritical));
+    const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    ui->stackTraceTextEdit->setFont(fixedFont);
 }
 
 void TerminationDialog::frenchConnection() noexcept

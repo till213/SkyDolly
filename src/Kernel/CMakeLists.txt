@@ -86,7 +86,9 @@ elseif(${PLATFORM_IS_MACOS})
         PRIVATE
             src/FlightSimulator_macOS.cpp
             src/SecurityToken_macOS.mm
-            src/StackTrace_macOS.cpp
+            # TODO Switch back to _macOS.cpp (cpptrace causes segmenation fault when run outside IDE)
+#            src/StackTrace_macOS.cpp
+            src/StackTrace_Cpptrace.cpp
     )
 elseif(${PLATFORM_IS_LINUX})
     target_sources(${LIBRARY_NAME}
