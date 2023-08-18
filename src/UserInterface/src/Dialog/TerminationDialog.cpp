@@ -28,6 +28,7 @@
 #include <QWidget>
 #include <QString>
 #include <QTextStream>
+#include <QStringBuilder>
 #include <QIODeviceBase>
 #include <QLabel>
 #include <QPushButton>
@@ -37,13 +38,19 @@
 #include <QStyle>
 #include <QFontDatabase>
 #include <QClipboard>
+#include <QTimer>
+#include <QSysInfo>
 
+#include <Kernel/Version.h>
+#include <Kernel/Settings.h>
 #include "Dialog/TerminationDialog.h"
 #include "ui_TerminationDialog.h"
 
 namespace
 {
-    constexpr const char *OpenIssueUrl {"https://www.github.com/till213/SkyDolly/issues"};
+    constexpr int InfoTimerInterval {5000};
+    constexpr const char *CreateIssueUrl {"https://www.github.com/till213/SkyDolly/issues/new"};
+    constexpr const char *CreateIssueTemplateUrl {"https://github.com/till213/SkyDolly/issues/new?template=bug_report.md&title=Unexpected%20Termination"};
 }
 
 // PUBLIC
@@ -80,14 +87,22 @@ void TerminationDialog::initUi() noexcept
     ui->iconLabel->setPixmap(this->style()->standardPixmap(QStyle::SP_MessageBoxCritical));
     const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     ui->stackTraceTextEdit->setFont(fixedFont);
+    QString explanation {
+"<html><head/><body>"
+"<p>" % tr("The application quit unexpectedly: this is due to a programming error. Sky Dolly deeply apologises.") % "</p>"
+"<p>" % tr("You can help fixing this bug by creating a new issue at") % " " % "<a href=\"" % ::CreateIssueTemplateUrl % "\">"
+"<span style=\"text-decoration: underline; color:#007af4;\">" % ::CreateIssueUrl % "</span></a> " %
+tr("(free github.com account required).") % "</p></body></html>"
+    };
+    ui->explanationLabel->setText(explanation);
 }
 
 void TerminationDialog::frenchConnection() noexcept
 {
-    connect(ui->createReportButton, &QPushButton::clicked,
+    connect(ui->copyReportButton, &QPushButton::clicked,
             this, &TerminationDialog::copyReportToClipboard);
-    connect(ui->openIssueButton, &QPushButton::clicked,
-            this, &TerminationDialog::openIssue);
+    connect(ui->createIssueButton, &QPushButton::clicked,
+            this, &TerminationDialog::createIssue);
     connect(ui->closeButton, &QPushButton::clicked,
             this, &TerminationDialog::close);
 }
@@ -97,15 +112,27 @@ QString TerminationDialog::createReport() const noexcept
     QString report;
     QTextStream out(&report, QIODeviceBase::WriteOnly);
 
-    out << ui->exceptionTextEdit->toPlainText() << Qt::endl << Qt::endl
-        << ui->stackTraceTextEdit->toPlainText();
+    Settings &settings = Settings::getInstance();
+    out << this->windowTitle() << Qt::endl << Qt::endl
+        << "Exception:" << Qt::endl << Qt::endl
+        << ui->exceptionTextEdit->toPlainText() << Qt::endl << Qt::endl
+        << ui->stackTraceTextEdit->toPlainText() << Qt::endl << Qt::endl
+        << "Application:" << Qt::endl
+        << "Sky Dolly version: " << Version::getApplicationVersion() << Qt::endl
+        << "Logboog path: " << settings.getLogbookPath() << Qt::endl << Qt::endl
+        << "System info: " << Qt::endl
+        << "Kernel version: " << QSysInfo::kernelVersion() << Qt::endl
+        << "Kernel type: " << QSysInfo::kernelType() << Qt::endl
+        << "Product name:  " << QSysInfo::prettyProductName() << Qt::endl
+        << "Product type:  " << QSysInfo::productType() << Qt::endl
+        << "Product version:  " << QSysInfo::productVersion() << Qt::endl;
 
     return report;
 }
 
 // PRIVATE SLOTS
 
-void TerminationDialog::copyReportToClipboard() const noexcept
+void TerminationDialog::copyReportToClipboard()  noexcept
 {
     QString report = createReport();
     QClipboard* clipboard = QApplication::clipboard();
@@ -113,15 +140,11 @@ void TerminationDialog::copyReportToClipboard() const noexcept
     if (clipboard->supportsSelection()) {
         clipboard->setText(report, QClipboard::Selection);
     }
-    //ui->createReportButton->setText(tr("Copied to Clipboard"));
+    ui->infoLabel->setText(tr("Report copied to clipboard. You may now paste it in your browser into the created issue."));
 }
 
-void TerminationDialog::openIssue() const noexcept
+void TerminationDialog::createIssue() const noexcept
 {
-    QDesktopServices::openUrl(QUrl(::OpenIssueUrl));
-}
-
-void TerminationDialog::restoreReportButtonText() const noexcept
-{
-    ui->createReportButton->setText(tr("Create Report"));
+    QDesktopServices::openUrl(QUrl(::CreateIssueUrl));
+    ui->infoLabel->setText(tr("You may now create a report by clicking on the Copy Report to Clipboard button."));
 }

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>566</width>
-    <height>416</height>
+    <height>516</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,8 +37,14 @@
      </item>
      <item>
       <widget class="QLabel" name="explanationLabel">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>80</height>
+        </size>
+       </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The application quit unexpectedly: this is due to a programming error. Sky Dolly deeply apologises.&lt;/p&gt;&lt;p&gt;You can help fixing this bug by creating a new issue at &lt;a href=&quot;https://github.com/till213/SkyDolly/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;github.com&lt;/span&gt;&lt;/a&gt; (free account required). Please provide the below exception description and stack trace, by clicking on the Create Report button and pasting the generated clipboard content into the description of the newly created issue.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::RichText</enum>
@@ -104,6 +110,22 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="infoLabel">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>You may create a new issue by clicking the Create Issue button below.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -119,9 +141,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="createReportButton">
+      <widget class="QPushButton" name="createIssueButton">
        <property name="text">
-        <string>&amp;Create Report</string>
+        <string>Create &amp;Issue</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>
@@ -129,9 +151,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="openIssueButton">
+      <widget class="QPushButton" name="copyReportButton">
        <property name="text">
-        <string>&amp;Open Issue</string>
+        <string>Copy &amp;Report to Clipboad</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>

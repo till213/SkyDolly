@@ -26,6 +26,7 @@
 #define TERMINATIONDIALOG_H
 
 #include <QDialog>
+#include <QTimer>
 
 class QString;
 
@@ -53,9 +54,8 @@ private:
     QString createReport() const noexcept;
 
 private slots:
-    void copyReportToClipboard() const noexcept;
-    void openIssue() const noexcept;
-    void restoreReportButtonText() const noexcept;
+    void copyReportToClipboard() noexcept;
+    void createIssue() const noexcept;
 };
 
 #endif // TERMINATIONDIALOG_H
