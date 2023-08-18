@@ -27,6 +27,7 @@
 #include <QDebug>
 #include <QString>
 #include <QTextStream>
+#include <QIODeviceBase>
 
 #include <cpptrace/cpptrace.hpp>
 

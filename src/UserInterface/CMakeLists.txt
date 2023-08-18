@@ -12,6 +12,7 @@ target_sources(${LIBRARY_NAME}
         res/UserInterface.qrc
         include/UserInterface/UserInterfaceLib.h
         include/UserInterface/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
+        include/UserInterface/Dialog/TerminationDialog.h src/Dialog/TerminationDialog.cpp src/Dialog/TerminationDialog.ui
         src/Dialog/AboutDialog.h src/Dialog/AboutDialog.cpp src/Dialog/AboutDialog.ui
         src/Dialog/LogbookSettingsDialog.h src/Dialog/LogbookSettingsDialog.cpp src/Dialog/LogbookSettingsDialog.ui
         src/Dialog/SimulationVariablesDialog.h src/Dialog/SimulationVariablesDialog.cpp src/Dialog/SimulationVariablesDialog.ui

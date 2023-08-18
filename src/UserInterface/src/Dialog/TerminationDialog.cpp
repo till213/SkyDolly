@@ -27,6 +27,8 @@
 #include <QUrl>
 #include <QWidget>
 #include <QString>
+#include <QTextStream>
+#include <QIODeviceBase>
 #include <QLabel>
 #include <QPushButton>
 #include <QPlainTextEdit>
@@ -34,8 +36,9 @@
 #include <QLabel>
 #include <QStyle>
 #include <QFontDatabase>
+#include <QClipboard>
 
-#include "TerminationDialog.h"
+#include "Dialog/TerminationDialog.h"
 #include "ui_TerminationDialog.h"
 
 namespace
@@ -82,21 +85,43 @@ void TerminationDialog::initUi() noexcept
 void TerminationDialog::frenchConnection() noexcept
 {
     connect(ui->createReportButton, &QPushButton::clicked,
-            this, &TerminationDialog::createReport);
+            this, &TerminationDialog::copyReportToClipboard);
     connect(ui->openIssueButton, &QPushButton::clicked,
             this, &TerminationDialog::openIssue);
     connect(ui->closeButton, &QPushButton::clicked,
             this, &TerminationDialog::close);
 }
 
-// PRIVATE SLOTS
-
-void TerminationDialog::createReport() noexcept
+QString TerminationDialog::createReport() const noexcept
 {
+    QString report;
+    QTextStream out(&report, QIODeviceBase::WriteOnly);
 
+    out << ui->exceptionTextEdit->toPlainText() << Qt::endl << Qt::endl
+        << ui->stackTraceTextEdit->toPlainText();
+
+    return report;
 }
 
-void TerminationDialog::openIssue() noexcept
+// PRIVATE SLOTS
+
+void TerminationDialog::copyReportToClipboard() const noexcept
+{
+    QString report = createReport();
+    QClipboard* clipboard = QApplication::clipboard();
+    clipboard->setText(report, QClipboard::Clipboard);
+    if (clipboard->supportsSelection()) {
+        clipboard->setText(report, QClipboard::Selection);
+    }
+    //ui->createReportButton->setText(tr("Copied to Clipboard"));
+}
+
+void TerminationDialog::openIssue() const noexcept
 {
     QDesktopServices::openUrl(QUrl(::OpenIssueUrl));
+}
+
+void TerminationDialog::restoreReportButtonText() const noexcept
+{
+    ui->createReportButton->setText(tr("Create Report"));
 }

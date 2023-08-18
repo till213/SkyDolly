@@ -32,7 +32,7 @@
 #include <QMessageBox>
 
 #include <Kernel/StackTrace.h>
-#include <Widget/TerminationDialog.h>
+#include <UserInterface/Dialog/TerminationDialog.h>
 #include "ExceptionHandler.h"
 
 // PUBLIC

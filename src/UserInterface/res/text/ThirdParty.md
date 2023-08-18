@@ -25,6 +25,13 @@ Copyright (c) 2008-2022, Charles Karney
 MIT License\
 Copyright (c) 2017 Thibaut Goetghebuer-Planchon
 
+## Cpptrace
+- Jeremy Rifkin et al.
+- https://github.com/jeremy-rifkin/cpptrace
+
+The MIT License (MIT)\
+Copyright (c) 2023 Jeremy Rifkin
+
 ## IGC Parser
 SkyDolly IGCParser inspired by the IGC parser by Tobias Bieniek.
 - https://github.com/Turbo87/igc-parser

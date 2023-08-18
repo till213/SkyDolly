@@ -33,7 +33,9 @@ namespace Ui {
 class TerminationDialog;
 }
 
-class TerminationDialog : public QDialog
+#include "../UserInterfaceLib.h"
+
+class USERINTERFACE_API TerminationDialog : public QDialog
 {
     Q_OBJECT
 public:
@@ -48,10 +50,12 @@ private:
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
+    QString createReport() const noexcept;
 
 private slots:
-    void createReport() noexcept;
-    void openIssue() noexcept;
+    void copyReportToClipboard() const noexcept;
+    void openIssue() const noexcept;
+    void restoreReportButtonText() const noexcept;
 };
 
 #endif // TERMINATIONDIALOG_H
