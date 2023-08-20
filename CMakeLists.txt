@@ -70,13 +70,8 @@ set_target_properties(GeographicLib_SHARED
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
-include(FetchContent)
-FetchContent_Declare(
-  cpptrace
-  GIT_REPOSITORY https://github.com/jeremy-rifkin/cpptrace.git
-  GIT_TAG        4b11b87e4d905d003d0325a53994441cc767017a
-)
-FetchContent_MakeAvailable(cpptrace)
+# Cpptrace
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/cpptrace)
 add_library(cpptrace::cpptrace ALIAS cpptrace)
 
 # Enabled link time optimisation (LTO) for release build, if available
