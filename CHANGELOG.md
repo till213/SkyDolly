@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.16.3
+
+### Improvements
+- Add an exception handler dialog that provides information about abnormal program termination, including
+  * Information about the exception
+  * Stack trace (using the external Cpptrace library)
+  * Application- and basic system information
+
 ## 0.16.2
 
 ### Bug Fixes

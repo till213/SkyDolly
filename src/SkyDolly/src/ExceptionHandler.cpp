@@ -43,11 +43,25 @@ void ExceptionHandler::handle(const QString &title, const QString &stackTrace, c
         const QString exceptionMessage = exceptionToString(ex);
         handle(title, stackTrace, exceptionMessage);
     } catch (std::exception &ex) {
-        qFatal() << "Could not handle the original exception. Another std::exception occurred:" << ex.what();
+        // TODO IMPLEMENT ME Replace qDebug with qFatal (available as stream API from Qt 6.5 onwards)
+        qDebug() << "Could not handle the original exception. Another std::exception occurred:" << ex.what();
     } catch (...) {
-        qFatal() << "Could not handle the original exception. Another unknown exception occurred.";
+        qDebug() << "Could not handle the original exception. Another unknown exception occurred.";
     }
 }
+
+void ExceptionHandler::handle(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept
+{
+    try {
+        qCritical() << "Exception message:" << exceptionMessage;
+        TerminationDialog(title, exceptionMessage, stackTrace).exec();
+    } catch (std::exception &ex) {
+        qDebug() << "Could not handle the original exception. Another standard exception occurred:" << ex.what();
+    } catch (...) {
+        qDebug() << "Could not handle the original exception. Another unknown exception occurred.";
+    }
+}
+
 
 void ExceptionHandler::handleTerminate() noexcept
 {
@@ -65,9 +79,9 @@ void ExceptionHandler::handleTerminate() noexcept
             handle("Abnormal Termination", stackTrace, "Non std::exception");
         }
     } catch (std::exception &ex) {
-        qFatal() << "Could not handle the errorneous program termination. Another standard exception occurred:" << ex.what();
+        qDebug() << "Could not handle the errorneous program termination. Another standard exception occurred:" << ex.what();
     } catch (...) {
-        qFatal() << "Could not handle the errorneous program termination. Another unknown (non-standard) exception occurred.";
+        qDebug() << "Could not handle the errorneous program termination. Another unknown (non-standard) exception occurred.";
     }
 
     std::abort();
@@ -118,16 +132,4 @@ QString ExceptionHandler::exceptionToString(const std::exception &ex)
     // Basic exception message
     message = QString("A std::exception occurred:\n%1").arg(ex.what());
     return message;
-}
-
-void ExceptionHandler::handle(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept
-{
-    try {
-        qCritical() << "Exception message:" << exceptionMessage;
-        TerminationDialog(title, exceptionMessage, stackTrace).exec();
-    } catch (std::exception &ex) {
-        qFatal() << "Could not handle the original exception. Another standard exception occurred:" << ex.what();
-    } catch (...) {
-        qFatal() << "Could not handle the original exception. Another unknown exception occurred.";
-    }
 }

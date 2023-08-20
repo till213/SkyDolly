@@ -54,7 +54,7 @@ namespace
 {
     constexpr int InfoTimerInterval {5000};
     constexpr const char *CreateIssueUrl {"https://www.github.com/till213/SkyDolly/issues/new"};
-    constexpr const char *CreateIssueTemplateUrl {"https://github.com/till213/SkyDolly/issues/new?template=bug_report.md&title=Unexpected%20Termination"};
+    constexpr const char *CreateIssueTemplateUrl {"https://github.com/till213/SkyDolly/issues/new?template=bug_report.md&title=Abnormal%20Termination"};
 }
 
 // PUBLIC
@@ -176,6 +176,6 @@ void TerminationDialog::copyReportToClipboard()  noexcept
 
 void TerminationDialog::createIssue() const noexcept
 {
-    QDesktopServices::openUrl(QUrl(::CreateIssueUrl));
-    ui->infoLabel->setText(tr("You may now paste the report in clipboard into the issue, plus provide any other information that you may have."));
+    QDesktopServices::openUrl(QUrl(::CreateIssueTemplateUrl));
+    ui->infoLabel->setText(tr("You may now paste the report from the clipboard into the issue. Please provide any other information that you may have."));
 }

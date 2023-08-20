@@ -87,7 +87,8 @@ int main(int argc, char **argv) noexcept
         ExceptionHandler::handle("Exception", stackTrace, ex);
         res = ErrorCode;
     } catch (...) {
-        QMessageBox::critical(nullptr, "Error", "An unknown (non-standard) exception occurred.");
+        const QString stackTrace = StackTrace::generate();
+        ExceptionHandler::handle("Exception", stackTrace, "Non std::exception");
         res = ErrorCode;
     }
 
