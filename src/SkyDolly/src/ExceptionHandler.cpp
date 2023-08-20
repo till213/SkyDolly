@@ -41,10 +41,9 @@ void ExceptionHandler::handle(const QString &title, const QString &stackTrace, c
 {
     try {
         const QString exceptionMessage = exceptionToString(ex);
-        qCritical() << "Exception message:" << exceptionMessage;
-        TerminationDialog(title, exceptionMessage, stackTrace).exec();
+        handle(title, stackTrace, exceptionMessage);
     } catch (std::exception &ex) {
-        qFatal() << "Could not handle the original exception. Another standard exception occurred:" << ex.what();
+        qFatal() << "Could not handle the original exception. Another std::exception occurred:" << ex.what();
     } catch (...) {
         qFatal() << "Could not handle the original exception. Another unknown exception occurred.";
     }
@@ -63,11 +62,7 @@ void ExceptionHandler::handleTerminate() noexcept
         } catch (std::exception &ex) {
             handle("Abnormal Termination", stackTrace, ex);
         } catch(...) {
-            QString message = QStringLiteral("The application quit unexpectedly. "
-                                             "This is due to a programming error - Sky Dolly deeply apologises.\n\n"
-                                             "You can help fixing this bug by creating an issue at <a href=\"https://github.com/till213/SkyDolly/issues\">github.com</a>."
-                                             "Please provide a screenshot of this dialog.");
-            QMessageBox::critical(nullptr, "Error", message % "An unknown (non-standard) exception occurred.");
+            handle("Abnormal Termination", stackTrace, "Non std::exception");
         }
     } catch (std::exception &ex) {
         qFatal() << "Could not handle the errorneous program termination. Another standard exception occurred:" << ex.what();
@@ -101,7 +96,7 @@ QString ExceptionHandler::exceptionToString(const std::exception &ex)
     // File system
     auto fsex = dynamic_cast<const std::filesystem::filesystem_error *>(&ex);
     if (fsex != nullptr) {
-        message = QString("A filesystem error occurred:\n%1\npath 1: %2\npath 2: %3")
+        message = QString("A std::filesystem::filesystem_error:\n%1\npath 1: %2\npath 2: %3")
             .arg(fsex->what(), fsex->path1().c_str(), fsex->path2().c_str());
         if (fsex->code()) {
             message = message % '\n' % errorCodeToString(fsex->code());
@@ -112,7 +107,7 @@ QString ExceptionHandler::exceptionToString(const std::exception &ex)
     // I/O
     auto iosex = dynamic_cast<const std::ios_base::failure *>(&ex);
     if (iosex != nullptr) {
-        message = QString("An input/output error occurred: %1")
+        message = QString("A std::ios_base::failure occurred: %1")
             .arg(iosex->what());
         if (iosex->code()) {
             message = message % '\n' % errorCodeToString(iosex->code());
@@ -123,4 +118,16 @@ QString ExceptionHandler::exceptionToString(const std::exception &ex)
     // Basic exception message
     message = QString("A std::exception occurred:\n%1").arg(ex.what());
     return message;
+}
+
+void ExceptionHandler::handle(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept
+{
+    try {
+        qCritical() << "Exception message:" << exceptionMessage;
+        TerminationDialog(title, exceptionMessage, stackTrace).exec();
+    } catch (std::exception &ex) {
+        qFatal() << "Could not handle the original exception. Another standard exception occurred:" << ex.what();
+    } catch (...) {
+        qFatal() << "Could not handle the original exception. Another unknown exception occurred.";
+    }
 }

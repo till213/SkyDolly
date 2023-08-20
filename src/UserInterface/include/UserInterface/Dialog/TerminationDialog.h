@@ -29,6 +29,7 @@
 #include <QTimer>
 
 class QString;
+class QTextStream;
 
 namespace Ui {
 class TerminationDialog;
@@ -52,6 +53,7 @@ private:
     void initUi() noexcept;
     void frenchConnection() noexcept;
     QString createReport() const noexcept;
+    void enumeratePluginContent(const QString &pluginDirectoryPath, QTextStream &out) const;
 
 private slots:
     void copyReportToClipboard() noexcept;

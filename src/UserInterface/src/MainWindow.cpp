@@ -179,7 +179,8 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
       d(std::make_unique<MainWindowPrivate>())
 {
     // TODO REMOVE ME
-    throw std::runtime_error("My exception");
+    // throw std::runtime_error("My exception");
+    throw "My custom exception";
 
     ui->setupUi(this);
 

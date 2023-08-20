@@ -38,6 +38,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/File.h>
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
@@ -47,11 +48,6 @@
 namespace
 {
     constexpr const char *ConnectPluginDirectoryName {"Connect"};
-#if defined(Q_OS_MAC)
-    constexpr const char *PluginDirectoryName {"PlugIns"};
-#else
-    constexpr const char *PluginDirectoryName {"Plugins"};
-#endif
     constexpr const char *PluginUuidKey {"uuid"};
     constexpr const char *PluginNameKey {"name"};
     constexpr const char *PluginFlightSimulatorNameKey {"flightSimulator"};
@@ -62,14 +58,7 @@ struct SkyConnectManagerPrivate
     SkyConnectManagerPrivate(QObject *parent) noexcept
         : pluginLoader(new QPluginLoader(parent))
     {
-        pluginsDirectory.setPath(QCoreApplication::applicationDirPath());
-#if defined(Q_OS_MAC)
-        if (pluginsDirectory.dirName() == "MacOS") {
-            // Navigate up the app bundle structure, into the Contents folder
-            pluginsDirectory.cdUp();
-        }
-#endif
-        pluginsDirectory.cd(PluginDirectoryName);
+        pluginsDirectory.cd(File::getPluginDirectoryPath());
     }
 
     ~SkyConnectManagerPrivate() noexcept

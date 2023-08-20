@@ -25,6 +25,7 @@
 #include <utility>
 
 #include <QUrl>
+#include <QDirIterator>
 #include <QWidget>
 #include <QString>
 #include <QTextStream>
@@ -40,7 +41,10 @@
 #include <QClipboard>
 #include <QTimer>
 #include <QSysInfo>
+#include <QCoreApplication>
+#include <QFileInfo>
 
+#include <Kernel/File.h>
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
 #include "Dialog/TerminationDialog.h"
@@ -111,23 +115,50 @@ QString TerminationDialog::createReport() const noexcept
 {
     QString report;
     QTextStream out(&report, QIODeviceBase::WriteOnly);
+    const QString pluginDirectoryPath = File::getPluginDirectoryPath() ;
 
     Settings &settings = Settings::getInstance();
-    out << this->windowTitle() << Qt::endl << Qt::endl
+    out << "Issue: " << this->windowTitle() << Qt::endl << Qt::endl
         << "Exception:" << Qt::endl << Qt::endl
         << ui->exceptionTextEdit->toPlainText() << Qt::endl << Qt::endl
-        << ui->stackTraceTextEdit->toPlainText() << Qt::endl << Qt::endl
+        << ui->stackTraceTextEdit->toPlainText() << Qt::endl
+
         << "Application:" << Qt::endl
+        << "Executable path: " << QCoreApplication::applicationFilePath() << Qt::endl
         << "Sky Dolly version: " << Version::getApplicationVersion() << Qt::endl
-        << "Logboog path: " << settings.getLogbookPath() << Qt::endl << Qt::endl
+        << "Sky Dolly build: " << Version::getGitHash() << Qt::endl
+        << "Logboog path: " << settings.getLogbookPath() << Qt::endl
+        << "Plugin directory path: " << pluginDirectoryPath << Qt::endl;
+    enumeratePluginContent(pluginDirectoryPath, out);
+
+    out << Qt::endl
         << "System info: " << Qt::endl
         << "Kernel version: " << QSysInfo::kernelVersion() << Qt::endl
         << "Kernel type: " << QSysInfo::kernelType() << Qt::endl
-        << "Product name:  " << QSysInfo::prettyProductName() << Qt::endl
-        << "Product type:  " << QSysInfo::productType() << Qt::endl
-        << "Product version:  " << QSysInfo::productVersion() << Qt::endl;
+        << "Product name: " << QSysInfo::prettyProductName() << Qt::endl
+        << "Product type: " << QSysInfo::productType() << Qt::endl
+        << "Product version: " << QSysInfo::productVersion() << Qt::endl;
 
     return report;
+}
+
+void TerminationDialog::enumeratePluginContent(const QString &pluginDirectoryPath, QTextStream &out) const
+{
+    constexpr const char *currentDir = ".";
+    constexpr const char *parentDir = "..";
+
+    QDirIterator it {pluginDirectoryPath, QDirIterator::Subdirectories};
+    while (it.hasNext()) {
+        const QFileInfo info {it.nextFileInfo()};
+        if (info.isFile()) {
+            out << "\t" << info.fileName() << Qt::endl;
+        } else if (info.isDir()) {
+            const QString dirName = info.fileName();
+            if (dirName != QString(currentDir) && dirName != QString(parentDir)) {
+                out << "Plugin directory: " << info.fileName() << Qt::endl;
+            }
+        }
+    }
 }
 
 // PRIVATE SLOTS
@@ -140,11 +171,11 @@ void TerminationDialog::copyReportToClipboard()  noexcept
     if (clipboard->supportsSelection()) {
         clipboard->setText(report, QClipboard::Selection);
     }
-    ui->infoLabel->setText(tr("Report copied to clipboard. You may now paste it in your browser into the created issue."));
+    ui->infoLabel->setText(tr("The report has been created and copied to clipboard. Next please create a new issue by clicking on the Create Issue button."));
 }
 
 void TerminationDialog::createIssue() const noexcept
 {
     QDesktopServices::openUrl(QUrl(::CreateIssueUrl));
-    ui->infoLabel->setText(tr("You may now create a report by clicking on the Copy Report to Clipboard button."));
+    ui->infoLabel->setText(tr("You may now paste the report in clipboard into the issue, plus provide any other information that you may have."));
 }

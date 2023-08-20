@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>566</width>
-    <height>516</height>
+    <height>476</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -118,7 +118,7 @@
       </size>
      </property>
      <property name="text">
-      <string>You may create a new issue by clicking the Create Issue button below.</string>
+      <string>You may create a report and copy it to the system clipboard. Then paste it into the newly created issue by clicking the below buttons.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -141,9 +141,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="createIssueButton">
+      <widget class="QPushButton" name="copyReportButton">
        <property name="text">
-        <string>Create &amp;Issue</string>
+        <string>Copy &amp;Report to Clipboad</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>
@@ -151,9 +151,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="copyReportButton">
+      <widget class="QPushButton" name="createIssueButton">
        <property name="text">
-        <string>Copy &amp;Report to Clipboad</string>
+        <string>Create &amp;Issue</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>

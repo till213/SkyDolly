@@ -45,6 +45,7 @@
 #include <tsl/ordered_map.h>
 
 #include <Kernel/Enum.h>
+#include <Kernel/File.h>
 #include <Kernel/QUuidHasher.h>
 #include <Kernel/Sort.h>
 #include <Module/ModuleIntf.h>
@@ -54,11 +55,6 @@
 namespace
 {
     constexpr const char *ModuleDirectoryName {"Module"};
-#if defined(Q_OS_MAC)
-    constexpr const char *PluginDirectoryName {"PlugIns"};
-#else
-    constexpr const char *PluginDirectoryName {"Plugins"};
-#endif
     constexpr const char *PluginUuidKey {"uuid"};
     constexpr const char *PluginNameKey {"name"};
     constexpr const char *PluginAfter {"after"};
@@ -69,14 +65,7 @@ struct ModuleManagerPrivate
     ModuleManagerPrivate(QLayout &layout) noexcept
         : layout(layout)
     {
-        pluginsDirectoryPath.setPath(QCoreApplication::applicationDirPath());
-#if defined(Q_OS_MAC)
-        if (pluginsDirectoryPath.dirName() == "MacOS") {
-            // Navigate up the app bundle structure, into the Contents folder
-            pluginsDirectoryPath.cdUp();
-        }
-#endif
-        pluginsDirectoryPath.cd(PluginDirectoryName);
+        pluginsDirectoryPath.cd(File::getPluginDirectoryPath());
         if (recordIcon.isNull()) {
             recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
             recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);

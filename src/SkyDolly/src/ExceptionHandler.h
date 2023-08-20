@@ -38,6 +38,7 @@ public:
 private:
     static QString errorCodeToString(const std::error_code &code);
     static QString exceptionToString(const std::exception &ex);
+    static void handle(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept;
 };
 
 #endif // EXCEPTIONHANDLER_H
