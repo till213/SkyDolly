@@ -25,6 +25,7 @@
 #include <exception>
 #include <filesystem>
 #include <system_error>
+#include <csignal>
 
 #include <QtGlobal>
 #include <QString>
@@ -34,6 +35,11 @@
 #include <Kernel/StackTrace.h>
 #include <UserInterface/Dialog/TerminationDialog.h>
 #include "ExceptionHandler.h"
+
+namespace
+{
+    volatile std::sig_atomic_t signalStatus {0};
+}
 
 // PUBLIC
 
@@ -62,7 +68,6 @@ void ExceptionHandler::handle(const QString &title, const QString &stackTrace, c
     }
 }
 
-
 void ExceptionHandler::handleTerminate() noexcept
 {
     // Really make sure that we are not getting into an "endless termination loop"
@@ -90,6 +95,16 @@ void ExceptionHandler::handleTerminate() noexcept
     }
 
     std::abort();
+}
+
+void ExceptionHandler::signalHandler(int signal) noexcept
+{
+    ::signalStatus = signal;
+}
+
+int ExceptionHandler::getSignal() noexcept
+{
+    return ::signalStatus;
 }
 
 // PRIVATE
