@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <exception>
+#include <csignal>
 
 #include <QCoreApplication>
 #include <QApplication>
@@ -57,6 +59,7 @@ int main(int argc, char **argv) noexcept
 {
     qDebug() << StackTrace::generate();
     std::set_terminate(ExceptionHandler::handleTerminate);
+    std::signal(SIGSEGV, ExceptionHandler::signalHandler);
 
     static const int ErrorCode = -1;
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
@@ -79,6 +82,9 @@ int main(int argc, char **argv) noexcept
             std::unique_ptr<MainWindow> mainWindow = std::make_unique<MainWindow>(filePath);
             mainWindow->show();
             res = application.exec();
+        }
+        if (ExceptionHandler::getSignal() == SIGSEGV) {
+            QMessageBox::critical(nullptr, "Segmentation fault", "A segmentation fault occurred during applicaiton execution.");
         }
         // Destroy singletons after main window has been deleted
         destroySingletons();

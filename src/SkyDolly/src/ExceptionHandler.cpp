@@ -25,6 +25,7 @@
 #include <exception>
 #include <filesystem>
 #include <system_error>
+#include <csignal>
 
 #include <QtGlobal>
 #include <QString>
@@ -34,6 +35,11 @@
 #include <Kernel/StackTrace.h>
 #include <UserInterface/Dialog/TerminationDialog.h>
 #include "ExceptionHandler.h"
+
+namespace
+{
+    volatile std::sig_atomic_t signalStatus {0};
+}
 
 // PUBLIC
 
@@ -67,8 +73,12 @@ void ExceptionHandler::handleTerminate() noexcept
     // Really make sure that we are not getting into an "endless termination loop"
     std::set_terminate(nullptr);
 
-    //const QString stackTrace = StackTrace::generate();
-    const QString stackTrace;
+    // TODO Re-evaluate me: currently trying to generate a stack trace with cpptrace fails
+    //      when run outside of a debugger and when in a std::terminate handler
+    //      https://github.com/jeremy-rifkin/cpptrace/issues/27
+
+    // const QString stackTrace = StackTrace::generate();
+    QString stackTrace {"Stack trace not available in termination handler"};
     try {
         std::exception_ptr ex = std::current_exception();
         try {
@@ -85,6 +95,16 @@ void ExceptionHandler::handleTerminate() noexcept
     }
 
     std::abort();
+}
+
+void ExceptionHandler::signalHandler(int signal) noexcept
+{
+    ::signalStatus = signal;
+}
+
+int ExceptionHandler::getSignal() noexcept
+{
+    return ::signalStatus;
 }
 
 // PRIVATE
