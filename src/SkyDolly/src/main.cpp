@@ -32,6 +32,7 @@
 #include <QString>
 #include <QStyleFactory>
 #include <QStringBuilder>
+#include <QMessageBox>
 
 #include <Kernel/Version.h>
 #include <Kernel/StackTrace.h>
