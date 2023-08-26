@@ -42,7 +42,7 @@ void ExceptionHandler::handle(const QString &title, const QString &stackTrace, c
     try {
         const QString exceptionMessage = exceptionToString(ex);
         handle(title, stackTrace, exceptionMessage);
-    } catch (std::exception &ex) {
+    } catch (const std::exception &ex) {
         // TODO IMPLEMENT ME Replace qDebug with qFatal (available as stream API from Qt 6.5 onwards)
         qDebug() << "Could not handle the original exception. Another std::exception occurred:" << ex.what();
     } catch (...) {
@@ -55,30 +55,30 @@ void ExceptionHandler::handle(const QString &title, const QString &stackTrace, c
     try {
         qCritical() << "Exception message:" << exceptionMessage;
         TerminationDialog(title, exceptionMessage, stackTrace).exec();
-    } catch (std::exception &ex) {
+    } catch (const std::exception &ex) {
         qDebug() << "Could not handle the original exception. Another standard exception occurred:" << ex.what();
     } catch (...) {
         qDebug() << "Could not handle the original exception. Another unknown exception occurred.";
     }
 }
 
-
 void ExceptionHandler::handleTerminate() noexcept
 {
     // Really make sure that we are not getting into an "endless termination loop"
     std::set_terminate(nullptr);
 
-    const QString stackTrace = StackTrace::generate();
+    //const QString stackTrace = StackTrace::generate();
+    const QString stackTrace;
     try {
         std::exception_ptr ex = std::current_exception();
         try {
             std::rethrow_exception(ex);
-        } catch (std::exception &ex) {
+        } catch (const std::exception &ex) {
             handle("Abnormal Termination", stackTrace, ex);
         } catch(...) {
             handle("Abnormal Termination", stackTrace, "Non std::exception");
         }
-    } catch (std::exception &ex) {
+    } catch (const std::exception &ex) {
         qDebug() << "Could not handle the errorneous program termination. Another standard exception occurred:" << ex.what();
     } catch (...) {
         qDebug() << "Could not handle the errorneous program termination. Another unknown (non-standard) exception occurred.";

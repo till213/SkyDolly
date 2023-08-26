@@ -30,7 +30,6 @@
 #include <QString>
 #include <QStyleFactory>
 #include <QStringBuilder>
-#include <QMessageBox>
 
 #include <Kernel/Version.h>
 #include <Kernel/StackTrace.h>
@@ -56,6 +55,7 @@ static void destroySingletons() noexcept
 
 int main(int argc, char **argv) noexcept
 {
+    qDebug() << StackTrace::generate();
     std::set_terminate(ExceptionHandler::handleTerminate);
 
     static const int ErrorCode = -1;
@@ -82,12 +82,14 @@ int main(int argc, char **argv) noexcept
         }
         // Destroy singletons after main window has been deleted
         destroySingletons();
-    } catch (std::exception &ex) {
-        const QString stackTrace = StackTrace::generate();
+    } catch (const std::exception &ex) {
+        //const QString stackTrace = StackTrace::generate();
+        const QString stackTrace;
         ExceptionHandler::handle("Exception", stackTrace, ex);
         res = ErrorCode;
     } catch (...) {
-        const QString stackTrace = StackTrace::generate();
+        //const QString stackTrace = StackTrace::generate();
+        const QString stackTrace;
         ExceptionHandler::handle("Exception", stackTrace, "Non std::exception");
         res = ErrorCode;
     }
