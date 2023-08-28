@@ -22,42 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef TERMINATIONDIALOG_H
-#define TERMINATIONDIALOG_H
+#include <memory>
+#include <csignal>
 
-#include <QDialog>
-#include <QTimer>
+#include "UnixSignalHandler.h"
+#include "SignalHandler.h"
 
-class QString;
-class QTextStream;
-
-namespace Ui {
-class TerminationDialog;
-}
-
-#include "../UserInterfaceLib.h"
-
-class USERINTERFACE_API TerminationDialog : public QDialog
+struct SignalHandlerPrivate
 {
-    Q_OBJECT
-public:
-    TerminationDialog(const QString title, const QString reason, const QString stackTrace, QWidget *parent = nullptr);
-    virtual ~TerminationDialog();
-
-private:
-    Ui::TerminationDialog *ui;
-    QString m_title;
-    QString m_reason;
-    QString m_stackTrace;
-
-    void initUi() noexcept;
-    void frenchConnection() noexcept;
-    QString createReport() const noexcept;
-    void enumeratePluginContent(const QString &pluginDirectoryPath, QTextStream &out) const;
-
-private slots:
-    void copyReportToClipboard() noexcept;
-    void createIssue() const noexcept;
+    UnixSignalHandler handler;
 };
 
-#endif // TERMINATIONDIALOG_H
+// PUBLIC
+
+SignalHandler::SignalHandler()
+    : d(std::make_unique<SignalHandlerPrivate>())
+{}
+
+SignalHandler::~SignalHandler() = default;
+
+void SignalHandler::registerSignals() noexcept
+{
+    d->handler.registerSignals();
+}
+

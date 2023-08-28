@@ -5,8 +5,9 @@
 ### Improvements
 - Add an exception handler dialog that provides information about abnormal program termination, including
   * Information about the exception
-  * Stack trace (using the external Cpptrace library)
+  * Stack trace (using the external Cpptrace library v0.1.1)
   * Application- and basic system information
+  * Unix signal handling (macOS, Linux only)
 
 ## 0.16.2
 

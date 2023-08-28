@@ -22,42 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef TERMINATIONDIALOG_H
-#define TERMINATIONDIALOG_H
+#ifndef SIGNALHANDLER_H
+#define SIGNALHANDLER_H
 
-#include <QDialog>
-#include <QTimer>
+#include <memory>
 
-class QString;
-class QTextStream;
+struct SignalHandlerPrivate;
 
-namespace Ui {
-class TerminationDialog;
-}
-
-#include "../UserInterfaceLib.h"
-
-class USERINTERFACE_API TerminationDialog : public QDialog
+class SignalHandler
 {
-    Q_OBJECT
 public:
-    TerminationDialog(const QString title, const QString reason, const QString stackTrace, QWidget *parent = nullptr);
-    virtual ~TerminationDialog();
+    SignalHandler();
+    ~SignalHandler();
+
+    void registerSignals() noexcept;
 
 private:
-    Ui::TerminationDialog *ui;
-    QString m_title;
-    QString m_reason;
-    QString m_stackTrace;
-
-    void initUi() noexcept;
-    void frenchConnection() noexcept;
-    QString createReport() const noexcept;
-    void enumeratePluginContent(const QString &pluginDirectoryPath, QTextStream &out) const;
-
-private slots:
-    void copyReportToClipboard() noexcept;
-    void createIssue() const noexcept;
+    std::unique_ptr<SignalHandlerPrivate> d;
 };
 
-#endif // TERMINATIONDIALOG_H
+#endif // SIGNALHANDLER_H

@@ -44,6 +44,8 @@
 #include <PluginManager/PluginManager.h>
 #include <UserInterface/MainWindow.h>
 #include "ExceptionHandler.h"
+#include "SignalHandler.h"
+#include "ErrorCodes.h"
 
 static void destroySingletons() noexcept
 {
@@ -58,16 +60,15 @@ static void destroySingletons() noexcept
 
 int main(int argc, char **argv) noexcept
 {
-    qDebug() << StackTrace::generate();
     std::set_terminate(ExceptionHandler::handleTerminate);
-    std::signal(SIGSEGV, ExceptionHandler::signalHandler);
 
-    static const int ErrorCode = -1;
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 
     QApplication application(argc, argv);
+    SignalHandler signalHandler;
+    signalHandler.registerSignals();
 
     // Simplistic command line parsing: first arg is assumed to be a file path
     QStringList args = application.arguments();
@@ -76,7 +77,7 @@ int main(int argc, char **argv) noexcept
         filePath = args.at(1);
     }
 
-    int res {0};
+    int res {ErrorCodes::Ok};
     try {
         // Main window scope
         {
@@ -84,21 +85,16 @@ int main(int argc, char **argv) noexcept
             mainWindow->show();
             res = application.exec();
         }
-        if (ExceptionHandler::getSignal() == SIGSEGV) {
-            QMessageBox::critical(nullptr, "Segmentation fault", "A segmentation fault occurred during applicaiton execution.");
-        }
         // Destroy singletons after main window has been deleted
         destroySingletons();
     } catch (const std::exception &ex) {
-        //const QString stackTrace = StackTrace::generate();
-        const QString stackTrace;
-        ExceptionHandler::handle("Exception", stackTrace, ex);
-        res = ErrorCode;
+        const QString stackTrace = StackTrace::generate();
+        ExceptionHandler::handleError("Exception", stackTrace, ex);
+        res = ErrorCodes::StandardException;
     } catch (...) {
-        //const QString stackTrace = StackTrace::generate();
-        const QString stackTrace;
-        ExceptionHandler::handle("Exception", stackTrace, "Non std::exception");
-        res = ErrorCode;
+        const QString stackTrace = StackTrace::generate();
+        ExceptionHandler::handleError("Exception", stackTrace, "Non std::exception");
+        res = ErrorCodes::UnknownException;
     }
 
     return res;

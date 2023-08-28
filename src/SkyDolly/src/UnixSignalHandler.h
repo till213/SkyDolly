@@ -22,42 +22,36 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef TERMINATIONDIALOG_H
-#define TERMINATIONDIALOG_H
+#ifndef UNIXSIGNALHANDLER_H
+#define UNIXSIGNALHANDLER_H
 
-#include <QDialog>
-#include <QTimer>
+#include <memory>
 
-class QString;
-class QTextStream;
+#include <QObject>
+#include <QObject>
+#include <QString>
 
-namespace Ui {
-class TerminationDialog;
-}
+class QSocketNotifier;
 
-#include "../UserInterfaceLib.h"
-
-class USERINTERFACE_API TerminationDialog : public QDialog
+class UnixSignalHandler : public QObject
 {
     Q_OBJECT
 public:
-    TerminationDialog(const QString title, const QString reason, const QString stackTrace, QWidget *parent = nullptr);
-    virtual ~TerminationDialog();
+    UnixSignalHandler(QObject *parent = nullptr);
+    virtual ~UnixSignalHandler();
+
+    void registerSignals() noexcept;
 
 private:
-    Ui::TerminationDialog *ui;
-    QString m_title;
-    QString m_reason;
-    QString m_stackTrace;
+    static int m_signalSocketPair[2];    
+    std::unique_ptr<QSocketNotifier> m_signalNotifier;
 
-    void initUi() noexcept;
     void frenchConnection() noexcept;
-    QString createReport() const noexcept;
-    void enumeratePluginContent(const QString &pluginDirectoryPath, QTextStream &out) const;
+    static QString signalToString(int signal);
+    static void handle(int signal);
 
 private slots:
-    void copyReportToClipboard() noexcept;
-    void createIssue() const noexcept;
+    void process();
 };
 
-#endif // TERMINATIONDIALOG_H
+#endif // UNIXSIGNALHANDLER_H
