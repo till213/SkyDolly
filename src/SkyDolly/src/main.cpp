@@ -43,7 +43,7 @@
 #include <Persistence/PersistenceManager.h>
 #include <PluginManager/PluginManager.h>
 #include <UserInterface/MainWindow.h>
-#include "ExceptionHandler.h"
+#include "TerminationHandler.h"
 
 static void destroySingletons() noexcept
 {
@@ -58,11 +58,9 @@ static void destroySingletons() noexcept
 
 int main(int argc, char **argv) noexcept
 {
-    qDebug() << StackTrace::generate();
-    std::set_terminate(ExceptionHandler::handleTerminate);
-    std::signal(SIGSEGV, ExceptionHandler::signalHandler);
+    std::set_terminate(TerminationHandler::handleTerminate);
+    std::signal(SIGSEGV, TerminationHandler::handleSignal);
 
-    static const int ErrorCode = -1;
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
@@ -84,21 +82,16 @@ int main(int argc, char **argv) noexcept
             mainWindow->show();
             res = application.exec();
         }
-        if (ExceptionHandler::getSignal() == SIGSEGV) {
-            QMessageBox::critical(nullptr, "Segmentation fault", "A segmentation fault occurred during applicaiton execution.");
-        }
         // Destroy singletons after main window has been deleted
         destroySingletons();
     } catch (const std::exception &ex) {
-        //const QString stackTrace = StackTrace::generate();
-        const QString stackTrace;
-        ExceptionHandler::handle("Exception", stackTrace, ex);
-        res = ErrorCode;
+        const QString stackTrace = StackTrace::generate();
+        TerminationHandler::handleException("Exception", stackTrace, ex);
+        res = TerminationHandler::ErrorCode;
     } catch (...) {
-        //const QString stackTrace = StackTrace::generate();
-        const QString stackTrace;
-        ExceptionHandler::handle("Exception", stackTrace, "Non std::exception");
-        res = ErrorCode;
+        const QString stackTrace = StackTrace::generate();
+        TerminationHandler::handleException("Exception", stackTrace, "Non std::exception");
+        res = TerminationHandler::ErrorCode;
     }
 
     return res;

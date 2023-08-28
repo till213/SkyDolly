@@ -22,25 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef EXCEPTIONHANDLER_H
-#define EXCEPTIONHANDLER_H
+#ifndef TERMINATIONHANDLER_H
+#define TERMINATIONHANDLER_H
 
 #include <exception>
 #include <system_error>
 
 #include <QString>
 
-class ExceptionHandler
+/**
+ * The termination handler handles unexpected application terminations, due to
+ * - Uncaught exceptions
+ * - Unexpected exceptions (thrown from "noexcept" methods)
+ * - Fatal signals such as "segmentation faults"
+ */
+class TerminationHandler
 {
 public:
-    static void handle(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept;
-    static void handle(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept;
+    static constexpr int ErrorCode {-1};
+    static void handleException(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept;
+    static void handleException(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept;
     static void handleTerminate() noexcept;
-    static void signalHandler(int signal) noexcept;
-    static int getSignal() noexcept;
+    static void handleSignal(int signal) noexcept;
 private:
     static QString errorCodeToString(const std::error_code &code);
     static QString exceptionToString(const std::exception &ex);
 };
 
-#endif // EXCEPTIONHANDLER_H
+#endif // TERMINATIONHANDLER_H

@@ -88,7 +88,7 @@ QString StackTrace::generate() noexcept
     try {
         auto trace = cpptrace::generate_trace();
         stackTrace = ::formatTrace(trace);
-    } catch (std::exception &ex) {
+    } catch (const std::exception &ex) {
         qCritical() << "An exception occurred while trying to generate stack trace:" << ex.what();
     } catch (...) {
         qCritical() << "Unknown exception occurred while trying to generate stack trace.";

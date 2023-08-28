@@ -13,7 +13,7 @@ set_target_properties(${APP_NAME}
 target_sources(${APP_NAME}
     PRIVATE
         src/main.cpp
-        src/ExceptionHandler.h src/ExceptionHandler.cpp
+        src/TerminationHandler.h src/TerminationHandler.cpp
         res/Info.plist.in
         res/SkyDolly.rc.in
         ${QM_FILES}
