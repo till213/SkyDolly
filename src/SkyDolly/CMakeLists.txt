@@ -33,13 +33,6 @@ target_link_libraries(${APP_NAME}
         Sky::Widget
         Sky::UserInterface
 )
-check_cxx_compiler_flag("-gdwarf-4" HAS_DWARF4)
-if(HAS_DWARF4)
-  target_compile_options(${APP_NAME} PRIVATE "$<$<CONFIG:Debug>:-gdwarf-4>")
-endif()
-if(CPPTRACE_BUILD_TEST_RDYNAMIC)
-  set_property(TARGET ${APP_NAME} PROPERTY ENABLE_EXPORTS ON)
-endif()
 
 if(${PLATFORM_IS_MACOS})
     target_link_libraries(${APP_NAME}
