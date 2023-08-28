@@ -73,12 +73,7 @@ void ExceptionHandler::handleTerminate() noexcept
     // Really make sure that we are not getting into an "endless termination loop"
     std::set_terminate(nullptr);
 
-    // TODO Re-evaluate me: currently trying to generate a stack trace with cpptrace fails
-    //      when run outside of a debugger and when in a std::terminate handler
-    //      https://github.com/jeremy-rifkin/cpptrace/issues/27
-
-    // const QString stackTrace = StackTrace::generate();
-    QString stackTrace {"Stack trace not available in termination handler"};
+    const QString stackTrace = StackTrace::generate();
     try {
         std::exception_ptr ex = std::current_exception();
         try {
@@ -94,7 +89,7 @@ void ExceptionHandler::handleTerminate() noexcept
         qDebug() << "Could not handle the errorneous program termination. Another unknown (non-standard) exception occurred.";
     }
 
-    std::abort();
+    std::exit(-1);
 }
 
 void ExceptionHandler::signalHandler(int signal) noexcept
