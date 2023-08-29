@@ -62,11 +62,11 @@
    <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
-      <string>Exception</string>
+      <string>Reason</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QPlainTextEdit" name="exceptionTextEdit">
+       <widget class="QPlainTextEdit" name="reasonTextEdit">
         <property name="minimumSize">
          <size>
           <width>0</width>

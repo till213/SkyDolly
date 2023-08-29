@@ -61,13 +61,13 @@ namespace
 
 TerminationDialog::TerminationDialog(
     const QString title,
-    const QString exception,
+    const QString reason,
     const QString stackTrace,
     QWidget *parent
  ) : QDialog(parent),
     ui(new Ui::TerminationDialog),
     m_title(std::move(title)),
-    m_exception(std::move(exception)),
+    m_reason(std::move(reason)),
     m_stackTrace(std::move(stackTrace))
 {
     ui->setupUi(this);
@@ -85,7 +85,7 @@ TerminationDialog::~TerminationDialog()
 void TerminationDialog::initUi() noexcept
 {
     this->setWindowTitle(m_title);
-    ui->exceptionTextEdit->appendPlainText(m_exception);
+    ui->reasonTextEdit->appendPlainText(m_reason);
     ui->stackTraceTextEdit->appendPlainText(m_stackTrace);
 
     ui->iconLabel->setPixmap(this->style()->standardPixmap(QStyle::SP_MessageBoxCritical));
@@ -94,7 +94,7 @@ void TerminationDialog::initUi() noexcept
     QString explanation {
 "<html><head/><body>"
 "<p>" % tr("The application quit unexpectedly: this is due to a programming error. Sky Dolly deeply apologises.") % "</p>"
-"<p>" % tr("You can help fixing this bug by creating a new issue at") % " " % "<a href=\"" % ::CreateIssueTemplateUrl % "\">"
+"<p>" % tr("You can help to fix this bug by creating a new issue at") % " " % "<a href=\"" % ::CreateIssueTemplateUrl % "\">"
 "<span style=\"text-decoration: underline; color:#007af4;\">" % ::CreateIssueUrl % "</span></a> " %
 tr("(free github.com account required).") % "</p></body></html>"
     };
@@ -119,8 +119,8 @@ QString TerminationDialog::createReport() const noexcept
 
     Settings &settings = Settings::getInstance();
     out << "Issue: " << this->windowTitle() << Qt::endl << Qt::endl
-        << "Exception:" << Qt::endl << Qt::endl
-        << ui->exceptionTextEdit->toPlainText() << Qt::endl << Qt::endl
+        << "Reason:" << Qt::endl << Qt::endl
+        << ui->reasonTextEdit->toPlainText() << Qt::endl << Qt::endl
         << ui->stackTraceTextEdit->toPlainText() << Qt::endl
 
         << "Application:" << Qt::endl

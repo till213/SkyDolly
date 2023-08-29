@@ -40,12 +40,13 @@ class TerminationHandler
 {
 public:
     static constexpr int ErrorCode {-1};
-    static void handleException(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept;
-    static void handleException(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept;
+    static void handleError(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept;
+    static void handleError(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept;
     static void handleTerminate() noexcept;
     static void handleSignal(int signal) noexcept;
 private:
     static QString errorCodeToString(const std::error_code &code);
+    static QString signalToString(int signal);
     static QString exceptionToString(const std::exception &ex);
 };
 

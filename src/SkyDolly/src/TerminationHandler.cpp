@@ -36,30 +36,36 @@
 #include <UserInterface/Dialog/TerminationDialog.h>
 #include "TerminationHandler.h"
 
+namespace
+{
+    // Send signal to process:
+    // - Linux: kill -s SIGSEGV [pid]
+    volatile std::sig_atomic_t receivedSignal {0};
+}
+
 // PUBLIC
 
-void TerminationHandler::handleException(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept
+void TerminationHandler::handleError(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept
 {
     try {
         const QString exceptionMessage = exceptionToString(ex);
-        handleException(title, stackTrace, exceptionMessage);
+        handleError(title, stackTrace, exceptionMessage);
     } catch (const std::exception &ex) {
-        // TODO IMPLEMENT ME Replace qDebug with qFatal (available as stream API from Qt 6.5 onwards)
-        qDebug() << "Could not handle the original exception. Another std::exception occurred:" << ex.what();
+        qCritical() << "Could not handle the original exception. Another std::exception occurred:" << ex.what();
     } catch (...) {
-        qDebug() << "Could not handle the original exception. Another unknown exception occurred.";
+        qCritical() << "Could not handle the original exception. Another unknown exception occurred.";
     }
 }
 
-void TerminationHandler::handleException(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept
+void TerminationHandler::handleError(const QString &title, const QString &stackTrace, const QString &reason) noexcept
 {
     try {
-        qCritical() << "Exception message:" << exceptionMessage;
-        TerminationDialog(title, exceptionMessage, stackTrace).exec();
+        qCritical() << "Exception message:" << reason;
+        TerminationDialog(title, reason, stackTrace).exec();
     } catch (const std::exception &ex) {
-        qDebug() << "Could not handle the original exception. Another standard exception occurred:" << ex.what();
+        qCritical() << "Could not handle the original exception. Another standard exception occurred:" << ex.what();
     } catch (...) {
-        qDebug() << "Could not handle the original exception. Another unknown exception occurred.";
+        qCritical() << "Could not handle the original exception. Another unknown exception occurred.";
     }
 }
 
@@ -67,21 +73,29 @@ void TerminationHandler::handleTerminate() noexcept
 {
     // Really make sure that we are not getting into an "endless termination loop"
     std::set_terminate(nullptr);
-
-    const QString stackTrace = StackTrace::generate();
     try {
-        std::exception_ptr ex = std::current_exception();
-        try {
-            std::rethrow_exception(ex);
-        } catch (const std::exception &ex) {
-            handleException("Abnormal Termination", stackTrace, ex);
-        } catch(...) {
-            handleException("Abnormal Termination", stackTrace, "Non std::exception");
+        const QString stackTrace = StackTrace::generate();
+        if (::receivedSignal != 0) {
+            const QString message = signalToString(::receivedSignal);
+            handleError("Signal Received", stackTrace, message);
+        } else {
+            std::exception_ptr ex = std::current_exception();
+            if (ex != nullptr) {
+                try {
+                    std::rethrow_exception(ex);
+                } catch (const std::exception &ex) {
+                    handleError("Exception", stackTrace, ex);
+                } catch(...) {
+                    handleError("Exception", stackTrace, "Non std::exception");
+                }
+            } else {
+                handleError("Unknown Error", stackTrace, "An unknown error occurred");
+            }
         }
     } catch (const std::exception &ex) {
-        qDebug() << "Could not handle the errorneous program termination. Another standard exception occurred:" << ex.what();
+        qCritical() << "Could not handle the errorneous program termination. Another standard exception occurred:" << ex.what();
     } catch (...) {
-        qDebug() << "Could not handle the errorneous program termination. Another unknown (non-standard) exception occurred.";
+        qCritical() << "Could not handle the errorneous program termination. Another unknown (non-standard) exception occurred.";
     }
 
     std::exit(ErrorCode);
@@ -89,14 +103,14 @@ void TerminationHandler::handleTerminate() noexcept
 
 void TerminationHandler::handleSignal(int signal) noexcept
 {
+    ::receivedSignal = signal;
+    qCritical() << "Signal received:" << signal;
     // A signal handler may only invoke a *very* limited set of std functions
     // (-> "the behavior is undefined if any signal handler performs any of the following: [...]")
     //   https://en.cppreference.com/w/cpp/utility/program/signal
     // However since we already received a "fatal signal" (e.g. segmentation fault)
     // we risk it for the biscuit and try to gather as much as possible information
-    const QString stackTrace = StackTrace::generate();
-    handleException("Signal Received", stackTrace, "");
-    std::exit(ErrorCode);
+    std::terminate();
 }
 
 // PRIVATE
@@ -105,6 +119,22 @@ inline QString TerminationHandler::errorCodeToString(const std::error_code &code
 {
     return QString("Error code: %1\nMessage: %2\nCategory: %3")
         .arg(code.value()).arg(code.message().c_str(), code.category().name());
+}
+
+QString TerminationHandler::signalToString(int signal)
+{
+    QString message;
+
+    switch (signal) {
+    case SIGSEGV:
+        message = "A segmentation fault occurred (signal SIGSEGV)";
+        break;
+    default:
+        message = "An unhandled signal terminated the application, signal: " % QString::number(signal);
+        break;
+    }
+
+    return message;
 }
 
 QString TerminationHandler::exceptionToString(const std::exception &ex)

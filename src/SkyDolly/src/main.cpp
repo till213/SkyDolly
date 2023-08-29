@@ -86,11 +86,11 @@ int main(int argc, char **argv) noexcept
         destroySingletons();
     } catch (const std::exception &ex) {
         const QString stackTrace = StackTrace::generate();
-        TerminationHandler::handleException("Exception", stackTrace, ex);
+        TerminationHandler::handleError("Exception", stackTrace, ex);
         res = TerminationHandler::ErrorCode;
     } catch (...) {
         const QString stackTrace = StackTrace::generate();
-        TerminationHandler::handleException("Exception", stackTrace, "Non std::exception");
+        TerminationHandler::handleError("Exception", stackTrace, "Non std::exception");
         res = TerminationHandler::ErrorCode;
     }
 

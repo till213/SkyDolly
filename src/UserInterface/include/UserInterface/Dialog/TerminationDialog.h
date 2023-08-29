@@ -41,13 +41,13 @@ class USERINTERFACE_API TerminationDialog : public QDialog
 {
     Q_OBJECT
 public:
-    TerminationDialog(const QString title, const QString exeption, const QString stackTrace, QWidget *parent = nullptr);
+    TerminationDialog(const QString title, const QString reason, const QString stackTrace, QWidget *parent = nullptr);
     virtual ~TerminationDialog();
 
 private:
     Ui::TerminationDialog *ui;
     QString m_title;
-    QString m_exception;
+    QString m_reason;
     QString m_stackTrace;
 
     void initUi() noexcept;
