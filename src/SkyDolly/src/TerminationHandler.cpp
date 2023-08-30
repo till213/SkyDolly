@@ -40,6 +40,7 @@ namespace
 {
     // Send signal to process:
     // - Linux: kill -s SIGSEGV [pid]
+    //          killall -<signal> <process_name>
     volatile std::sig_atomic_t receivedSignal {0};
 }
 
@@ -126,8 +127,32 @@ QString TerminationHandler::signalToString(int signal)
     QString message;
 
     switch (signal) {
+    case SIGHUP:
+        message = "The application received a hangup signal (signal SIGHUP)";
+        break;
+    case SIGINT:
+        message = "The application received an interrupt (signal SIGINT)";
+        break;
+    case SIGQUIT:
+        message = "The application received a quit request (signal SIGQUIT)";
+        break;
+    case SIGILL:
+        message = "An attempt to execute an illegal instruction was made (signal SIGILL)";
+        break;
+    case SIGABRT:
+        message = "An abnormal termination occurred (signal SIGABRT)";
+        break;
+    case SIGFPE:
+        message = "A floating-point exception occurred (signal SIGFPE)";
+        break;
     case SIGSEGV:
         message = "A segmentation fault occurred (signal SIGSEGV)";
+        break;
+    case SIGPIPE:
+        message = "An attempt to write to a pipe with no readers was made (signal SIGPIPE)";
+        break;
+    case SIGTERM:
+        message = "A termination request was made (signal SIGTERM)";
         break;
     default:
         message = "An unhandled signal terminated the application, signal: " % QString::number(signal);
