@@ -67,17 +67,17 @@ int main(int argc, char **argv) noexcept
     //       - Unix signals are not sent on Windows anyway: we should use SetConsoleCtrlHandler and friends
     // Fatal signals (if not caught)
     // https://stackoverflow.com/questions/13219071/which-fatal-signals-should-a-user-level-program-catch
-    std::signal(SIGHUP, TerminationHandler::handleSignal);
+    //std::signal(SIGHUP, TerminationHandler::handleSignal);
     std::signal(SIGINT, TerminationHandler::handleSignal);
-    std::signal(SIGQUIT, TerminationHandler::handleSignal);
+    //std::signal(SIGQUIT, TerminationHandler::handleSignal);
     std::signal(SIGILL, TerminationHandler::handleSignal);
     std::signal(SIGABRT, TerminationHandler::handleSignal);
     std::signal(SIGFPE, TerminationHandler::handleSignal);
     std::signal(SIGSEGV, TerminationHandler::handleSignal);
-    std::signal(SIGPIPE, TerminationHandler::handleSignal);
+    //std::signal(SIGPIPE, TerminationHandler::handleSignal);
     std::signal(SIGTERM, TerminationHandler::handleSignal);
-    std::signal(SIGUSR1, TerminationHandler::handleSignal);
-    std::signal(SIGUSR2, TerminationHandler::handleSignal);
+    //std::signal(SIGUSR1, TerminationHandler::handleSignal);
+    //std::signal(SIGUSR2, TerminationHandler::handleSignal);
 
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());

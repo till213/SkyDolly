@@ -85,9 +85,9 @@ void TerminationHandler::handleTerminate() noexcept
                 try {
                     std::rethrow_exception(ex);
                 } catch (const std::exception &ex) {
-                    handleError("Exception", stackTrace, ex);
+                    handleError("Terminate", stackTrace, ex);
                 } catch(...) {
-                    handleError("Exception", stackTrace, "Non std::exception");
+                    handleError("Terminate", stackTrace, "Non std::exception");
                 }
             } else {
                 handleError("Unknown Error", stackTrace, "An unknown error occurred");
@@ -127,15 +127,15 @@ QString TerminationHandler::signalToString(int signal)
     QString message;
 
     switch (signal) {
-    case SIGHUP:
-        message = "The application received a hangup signal (signal SIGHUP)";
-        break;
+//    case SIGHUP:
+//        message = "The application received a hangup signal (signal SIGHUP)";
+//        break;
     case SIGINT:
         message = "The application received an interrupt (signal SIGINT)";
         break;
-    case SIGQUIT:
-        message = "The application received a quit request (signal SIGQUIT)";
-        break;
+//    case SIGQUIT:
+//        message = "The application received a quit request (signal SIGQUIT)";
+//        break;
     case SIGILL:
         message = "An attempt to execute an illegal instruction was made (signal SIGILL)";
         break;
@@ -148,9 +148,9 @@ QString TerminationHandler::signalToString(int signal)
     case SIGSEGV:
         message = "A segmentation fault occurred (signal SIGSEGV)";
         break;
-    case SIGPIPE:
-        message = "An attempt to write to a pipe with no readers was made (signal SIGPIPE)";
-        break;
+//    case SIGPIPE:
+//        message = "An attempt to write to a pipe with no readers was made (signal SIGPIPE)";
+//        break;
     case SIGTERM:
         message = "A termination request was made (signal SIGTERM)";
         break;

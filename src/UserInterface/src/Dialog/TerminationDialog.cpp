@@ -125,7 +125,7 @@ QString TerminationDialog::createReport() const noexcept
 
         << "Application:" << Qt::endl
         << "Executable path: " << QCoreApplication::applicationFilePath() << Qt::endl
-        << "Sky Dolly version: " << Version::getApplicationVersion() << Qt::endl
+        << "Sky Dolly version: " << Version::getApplicationVersion() << " \"" << Version::getCodeName() << "\"" << Qt::endl
         << "Sky Dolly build: " << Version::getGitHash() << Qt::endl
         << "Logboog path: " << settings.getLogbookPath() << Qt::endl
         << "Plugin directory path: " << pluginDirectoryPath << Qt::endl;
