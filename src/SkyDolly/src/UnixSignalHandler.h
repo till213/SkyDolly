@@ -22,32 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef TERMINATIONHANDLER_H
-#define TERMINATIONHANDLER_H
+#ifndef UNIXSIGNALHANDLER_H
+#define UNIXSIGNALHANDLER_H
 
-#include <exception>
-#include <system_error>
-
+#include <QObject>
+#include <QObject>
 #include <QString>
 
-/**
- * The termination handler handles unexpected application terminations, due to
- * - Uncaught exceptions
- * - Unexpected exceptions (thrown from "noexcept" methods)
- * - Fatal signals such as "segmentation faults"
- */
-class TerminationHandler
+class UnixSignalHandler : public QObject
 {
+    Q_OBJECT
 public:
-    static constexpr int ErrorCode {-1};
-    static void handleError(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept;
-    static void handleError(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept;
-    static void handleTerminate() noexcept;
-    static void handleSignal(int signal) noexcept;
+    UnixSignalHandler();
+    virtual ~UnixSignalHandler() = default;
+
+    void registerSignals() noexcept;
+
 private:
-    static QString errorCodeToString(const std::error_code &code);
+    void frenchConnection() noexcept;
     static QString signalToString(int signal);
-    static QString exceptionToString(const std::exception &ex);
+    static void handle(int signal) noexcept;
+
+private slots:
+    static void process(int signal);
 };
 
-#endif // TERMINATIONHANDLER_H
+#endif // UNIXSIGNALHANDLER_H

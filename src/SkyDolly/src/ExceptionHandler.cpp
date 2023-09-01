@@ -34,19 +34,12 @@
 
 #include <Kernel/StackTrace.h>
 #include <UserInterface/Dialog/TerminationDialog.h>
-#include "TerminationHandler.h"
-
-namespace
-{
-    // Send signal to process:
-    // - Linux: kill -s SIGSEGV [pid]
-    //          killall -<signal> <process_name>
-    volatile std::sig_atomic_t receivedSignal {0};
-}
+#include "ErrorCodes.h"
+#include "ExceptionHandler.h"
 
 // PUBLIC
 
-void TerminationHandler::handleError(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept
+void ExceptionHandler::handleError(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept
 {
     try {
         const QString exceptionMessage = exceptionToString(ex);
@@ -58,7 +51,7 @@ void TerminationHandler::handleError(const QString &title, const QString &stackT
     }
 }
 
-void TerminationHandler::handleError(const QString &title, const QString &stackTrace, const QString &reason) noexcept
+void ExceptionHandler::handleError(const QString &title, const QString &stackTrace, const QString &reason) noexcept
 {
     try {
         qCritical() << "Exception message:" << reason;
@@ -70,99 +63,48 @@ void TerminationHandler::handleError(const QString &title, const QString &stackT
     }
 }
 
-void TerminationHandler::handleTerminate() noexcept
+void ExceptionHandler::handleTerminate() noexcept
 {
+    int errorCode {ErrorCodes::Ok};
     // Really make sure that we are not getting into an "endless termination loop"
     std::set_terminate(nullptr);
     try {
         const QString stackTrace = StackTrace::generate();
-        if (::receivedSignal != 0) {
-            const QString message = signalToString(::receivedSignal);
-            handleError("Signal Received", stackTrace, message);
-        } else {
-            std::exception_ptr ex = std::current_exception();
-            if (ex != nullptr) {
-                try {
-                    std::rethrow_exception(ex);
-                } catch (const std::exception &ex) {
-                    handleError("Terminate", stackTrace, ex);
-                } catch(...) {
-                    handleError("Terminate", stackTrace, "Non std::exception");
-                }
-            } else {
-                handleError("Unknown Error", stackTrace, "An unknown error occurred");
+        std::exception_ptr ex = std::current_exception();
+        if (ex != nullptr) {
+            try {
+                std::rethrow_exception(ex);
+            } catch (const std::exception &ex) {
+                errorCode = ErrorCodes::StandardException;
+                handleError("Terminate", stackTrace, ex);
+            } catch(...) {
+                errorCode = ErrorCodes::UnknownException;
+                handleError("Terminate", stackTrace, "Non std::exception");
             }
+        } else {
+            handleError("Unknown Error", stackTrace, "An unknown error occurred");
+            errorCode = ErrorCodes::UnknownError;
         }
     } catch (const std::exception &ex) {
+        errorCode = ErrorCodes::StandardException;
         qCritical() << "Could not handle the errorneous program termination. Another standard exception occurred:" << ex.what();
     } catch (...) {
+        errorCode = ErrorCodes::UnknownException;
         qCritical() << "Could not handle the errorneous program termination. Another unknown (non-standard) exception occurred.";
     }
 
-    std::exit(ErrorCode);
-}
-
-void TerminationHandler::handleSignal(int signal) noexcept
-{
-    ::receivedSignal = signal;
-    qCritical() << "Signal received:" << signal;
-    // A signal handler may only invoke a *very* limited set of std functions
-    // (-> "the behavior is undefined if any signal handler performs any of the following: [...]")
-    //   https://en.cppreference.com/w/cpp/utility/program/signal
-    // However since we already received a "fatal signal" (e.g. segmentation fault)
-    // we risk it for the biscuit and try to gather as much as possible information
-    std::terminate();
+    std::exit(errorCode);
 }
 
 // PRIVATE
 
-inline QString TerminationHandler::errorCodeToString(const std::error_code &code)
+inline QString ExceptionHandler::errorCodeToString(const std::error_code &code)
 {
     return QString("Error code: %1\nMessage: %2\nCategory: %3")
         .arg(code.value()).arg(code.message().c_str(), code.category().name());
 }
 
-QString TerminationHandler::signalToString(int signal)
-{
-    QString message;
-
-    switch (signal) {
-//    case SIGHUP:
-//        message = "The application received a hangup signal (signal SIGHUP)";
-//        break;
-    case SIGINT:
-        message = "The application received an interrupt (signal SIGINT)";
-        break;
-//    case SIGQUIT:
-//        message = "The application received a quit request (signal SIGQUIT)";
-//        break;
-    case SIGILL:
-        message = "An attempt to execute an illegal instruction was made (signal SIGILL)";
-        break;
-    case SIGABRT:
-        message = "An abnormal termination occurred (signal SIGABRT)";
-        break;
-    case SIGFPE:
-        message = "A floating-point exception occurred (signal SIGFPE)";
-        break;
-    case SIGSEGV:
-        message = "A segmentation fault occurred (signal SIGSEGV)";
-        break;
-//    case SIGPIPE:
-//        message = "An attempt to write to a pipe with no readers was made (signal SIGPIPE)";
-//        break;
-    case SIGTERM:
-        message = "A termination request was made (signal SIGTERM)";
-        break;
-    default:
-        message = "An unhandled signal terminated the application, signal: " % QString::number(signal);
-        break;
-    }
-
-    return message;
-}
-
-QString TerminationHandler::exceptionToString(const std::exception &ex)
+QString ExceptionHandler::exceptionToString(const std::exception &ex)
 {
     QString message;
 

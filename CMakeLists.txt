@@ -71,9 +71,11 @@ set_target_properties(GeographicLib_SHARED
 )
 
 # Cpptrace
+if(${PLATFORM_IS_WINDOWS})
 set(CPPTRACE_UNWIND_WITH_UNWIND ON)
 set(CPPTRACE_GET_SYMBOLS_WITH_LIBBACKTRACE ON)
 set(CPPTRACE_GET_SYMBOLS_WITH_ADDR2LINE OFF)
+endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/cpptrace)
 add_library(cpptrace::cpptrace ALIAS cpptrace)
 
