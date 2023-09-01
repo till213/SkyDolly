@@ -41,13 +41,13 @@ public:
     void registerSignals() noexcept;
 
 private:
-    static int signalFd[2];
-
-    QSocketNotifier *signalNotifier;
+    static int m_signalSocketPair[2];
+    
+    QSocketNotifier *m_signalNotifier;
 
     void frenchConnection() noexcept;
     static QString signalToString(int signal);
-    static void handle(int signal) noexcept;
+    static void handle(int signal);
 
 private slots:
     void process();

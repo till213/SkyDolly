@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <csignal>
+#include <vector>
+#include <unistd.h>
 
 #include <sys/socket.h>
 
@@ -50,23 +52,36 @@ namespace
 UnixSignalHandler::UnixSignalHandler(QObject *parent)
     : QObject(parent)
 {
-    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, signalFd))
-    {
-        qFatal("Couldn't create HUP socketpair");
+    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, m_signalSocketPair)) {
+        qFatal("Couldn't create socketpair");
     }
 
-    signalNotifier = new QSocketNotifier(signalFd[1], QSocketNotifier::Read, this);
-    connect(signalNotifier, SIGNAL(activated(QSocketDescriptor)), this, SLOT(process()));
-
+    m_signalNotifier = new QSocketNotifier(m_signalSocketPair[1], QSocketNotifier::Read, this);
     frenchConnection();
 }
 
 UnixSignalHandler::~UnixSignalHandler() = default;
 
-int UnixSignalHandler::signalFd[2];
+int UnixSignalHandler::m_signalSocketPair[2];
 
 void UnixSignalHandler::registerSignals() noexcept
 {
+   // const std::vector unixSignals {SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV};
+    const std::vector unixSignals {SIGINT};
+    struct sigaction action;
+
+    ::memset(&action, '\0', sizeof(action));
+    action.sa_handler = UnixSignalHandler::handle;
+    sigemptyset(&action.sa_mask);
+    action.sa_flags = 0;
+    action.sa_flags |= SA_RESTART;
+
+    for (int signal : unixSignals) {
+        if (::sigaction(signal, &action, nullptr) != 0) {
+            break;;
+        }
+    }
+
     // TODO: This is not an optimal solution:
     //       - std::signal does not block signals while executing the handler
     //       - We should map signals onto Qt signals, via a (Unix) socket pair
@@ -74,24 +89,25 @@ void UnixSignalHandler::registerSignals() noexcept
     //       - Unix signals are not sent on Windows anyway: we should use SetConsoleCtrlHandler and friends
     // Fatal signals (if not caught)
     // https://stackoverflow.com/questions/13219071/which-fatal-signals-should-a-user-level-program-catch
-    std::signal(SIGHUP, UnixSignalHandler::handle);
-    std::signal(SIGINT, UnixSignalHandler::handle);
-    std::signal(SIGQUIT, UnixSignalHandler::handle);
-    std::signal(SIGILL, UnixSignalHandler::handle);
-    std::signal(SIGABRT, UnixSignalHandler::handle);
-    std::signal(SIGFPE, UnixSignalHandler::handle);
-    std::signal(SIGSEGV, UnixSignalHandler::handle);
-    std::signal(SIGPIPE, UnixSignalHandler::handle);
-    std::signal(SIGTERM, UnixSignalHandler::handle);
-    std::signal(SIGUSR1, UnixSignalHandler::handle);
-    std::signal(SIGUSR2, UnixSignalHandler::handle);
+//    std::signal(SIGHUP, UnixSignalHandler::handle);
+//    std::signal(SIGINT, UnixSignalHandler::handle);
+//    std::signal(SIGQUIT, UnixSignalHandler::handle);
+//    std::signal(SIGILL, UnixSignalHandler::handle);
+//    std::signal(SIGABRT, UnixSignalHandler::handle);
+//    std::signal(SIGFPE, UnixSignalHandler::handle);
+//    std::signal(SIGSEGV, UnixSignalHandler::handle);
+//    std::signal(SIGPIPE, UnixSignalHandler::handle);
+//    std::signal(SIGTERM, UnixSignalHandler::handle);
+//    std::signal(SIGUSR1, UnixSignalHandler::handle);
+//    std::signal(SIGUSR2, UnixSignalHandler::handle);
 }
 
 // PRIVATE
 
 void UnixSignalHandler::frenchConnection() noexcept
 {
-
+    connect(m_signalNotifier, &QSocketNotifier::activated,
+            this, &UnixSignalHandler::process);
 }
 
 QString UnixSignalHandler::signalToString(int signal)
@@ -134,12 +150,11 @@ QString UnixSignalHandler::signalToString(int signal)
     return message;
 }
 
-void UnixSignalHandler::handle(int signal) noexcept
+void UnixSignalHandler::handle(int signal)
 {
     ::receivedSignal = signal;
     qCritical() << "Signal received:" << signal;
-
-
+    ::write(m_signalSocketPair[0], &signal, sizeof(int));
 }
 
 // PRIVATE SLOTS
@@ -147,6 +162,7 @@ void UnixSignalHandler::handle(int signal) noexcept
 void UnixSignalHandler::process()
 {
     int signal {0};
+    ::read(m_signalSocketPair[1], &signal, sizeof(int));
 
     const QString stackTrace = StackTrace::generate();
     const QString reason = signalToString(signal);
