@@ -66,8 +66,8 @@ int UnixSignalHandler::m_signalSocketPair[2];
 
 void UnixSignalHandler::registerSignals() noexcept
 {
-   // const std::vector unixSignals {SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV};
-    const std::vector unixSignals {SIGINT};
+    const std::vector unixSignals {SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV};
+    //const std::vector unixSignals {SIGINT};
     struct sigaction action;
 
     ::memset(&action, '\0', sizeof(action));
@@ -153,8 +153,7 @@ QString UnixSignalHandler::signalToString(int signal)
 void UnixSignalHandler::handle(int signal)
 {
     ::receivedSignal = signal;
-    qCritical() << "Signal received:" << signal;
-    ::write(m_signalSocketPair[0], &signal, sizeof(int));
+    :write(m_signalSocketPair[0], &signal, sizeof(int));
 }
 
 // PRIVATE SLOTS
