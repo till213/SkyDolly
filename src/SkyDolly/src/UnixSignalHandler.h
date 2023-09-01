@@ -29,22 +29,28 @@
 #include <QObject>
 #include <QString>
 
+class QSocketNotifier;
+
 class UnixSignalHandler : public QObject
 {
     Q_OBJECT
 public:
-    UnixSignalHandler();
-    virtual ~UnixSignalHandler() = default;
+    UnixSignalHandler(QObject *parent = nullptr);
+    virtual ~UnixSignalHandler();
 
     void registerSignals() noexcept;
 
 private:
+    static int signalFd[2];
+
+    QSocketNotifier *signalNotifier;
+
     void frenchConnection() noexcept;
     static QString signalToString(int signal);
     static void handle(int signal) noexcept;
 
 private slots:
-    static void process(int signal);
+    void process();
 };
 
 #endif // UNIXSIGNALHANDLER_H

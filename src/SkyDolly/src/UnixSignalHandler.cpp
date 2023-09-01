@@ -24,9 +24,12 @@
  */
 #include <csignal>
 
+#include <sys/socket.h>
+
 #include <QObject>
 #include <QString>
 #include <QStringBuilder>
+#include <QSocketNotifier>
 #include <QDebug>
 
 #include <Kernel/StackTrace.h>
@@ -44,10 +47,23 @@ namespace
 
 // PUBLIC
 
-UnixSignalHandler::UnixSignalHandler()
+UnixSignalHandler::UnixSignalHandler(QObject *parent)
+    : QObject(parent)
 {
+    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, signalFd))
+    {
+        qFatal("Couldn't create HUP socketpair");
+    }
+
+    signalNotifier = new QSocketNotifier(signalFd[1], QSocketNotifier::Read, this);
+    connect(signalNotifier, SIGNAL(activated(QSocketDescriptor)), this, SLOT(process()));
+
     frenchConnection();
 }
+
+UnixSignalHandler::~UnixSignalHandler() = default;
+
+int UnixSignalHandler::signalFd[2];
 
 void UnixSignalHandler::registerSignals() noexcept
 {
@@ -123,15 +139,15 @@ void UnixSignalHandler::handle(int signal) noexcept
     ::receivedSignal = signal;
     qCritical() << "Signal received:" << signal;
 
-    // TODO IMPLEMENT ME
-    // Emit signal and invoke connected slot "process"
-    process(signal);
+
 }
 
 // PRIVATE SLOTS
 
-void UnixSignalHandler::process(int signal)
+void UnixSignalHandler::process()
 {
+    int signal {0};
+
     const QString stackTrace = StackTrace::generate();
     const QString reason = signalToString(signal);
     try {
