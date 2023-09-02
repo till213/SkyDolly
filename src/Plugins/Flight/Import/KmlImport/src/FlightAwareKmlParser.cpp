@@ -119,7 +119,7 @@ void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrN
                 if (!ok) {
                     xml->raiseError("Invalid altitude number.");
                 }
-                waypoint.identifier = std::move(icaoOrName);
+                waypoint.identifier = icaoOrName;
                 // The actual timestamps of the waypoints are later updated
                 // in updateWaypoints with the actual timestamp, once the entire
                 // gx:Track data has been parsed
