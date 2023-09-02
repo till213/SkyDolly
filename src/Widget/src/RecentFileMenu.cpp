@@ -89,14 +89,11 @@ void RecentFileMenu::frenchConnections()
 
 void RecentFileMenu::updateRecentFileActions()
 {
-    int n;
-    int nofRecentFiles;
-    int maxRecentFiles;
     RecentFile &recentFile = RecentFile::getInstance();
     const QStringList &recentFiles = recentFile.getRecentFiles();
     const QList<QAction *> recentFileActions = d->recentFileActionGroup->actions();
 
-    nofRecentFiles = recentFiles.count();
+    const int nofRecentFiles = recentFiles.count();
     for (int i = 0; i < nofRecentFiles; ++i) {
         const QFileInfo fileInfo(recentFiles[i]);
         const QString text = fileInfo.fileName();
@@ -107,7 +104,7 @@ void RecentFileMenu::updateRecentFileActions()
     }
 
     // Set all not yet used actions to invisible
-    maxRecentFiles = recentFile.getMaxRecentFiles();
+    const int maxRecentFiles = recentFile.getMaxRecentFiles();
     for (int i = nofRecentFiles; i < maxRecentFiles; ++i) {
         recentFileActions[i]->setVisible(false);
     }
