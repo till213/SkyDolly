@@ -38,6 +38,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/File.h>
 #include <Model/Flight.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/LocationService.h>
@@ -53,11 +54,6 @@ namespace
     constexpr const char *LocationDirectoryName {"Location"};
     constexpr const char *ExportDirectoryName {"Export"};
     constexpr const char *ImportDirectoryName {"Import"};
-#if defined(Q_OS_MAC)
-    constexpr const char *PluginDirectoryName {"PlugIns"};
-#else
-    constexpr const char *PluginDirectoryName {"Plugins"};
-#endif
     constexpr const char *PluginUuidKey {"uuid"};
     constexpr const char *PluginNameKey {"name"};
 }
@@ -66,14 +62,7 @@ struct PluginManagerPrivate
 {
     PluginManagerPrivate() noexcept
     {
-        pluginsDirectory.setPath(QCoreApplication::applicationDirPath());
-#if defined(Q_OS_MAC)
-        if (pluginsDirectory.dirName() == "MacOS") {
-            // Navigate up the app bundle structure, into the Contents folder
-            pluginsDirectory.cdUp();
-        }
-#endif
-        pluginsDirectory.cd(PluginDirectoryName);
+        pluginsDirectory.cd(File::getPluginDirectoryPath());
     }
 
     ~PluginManagerPrivate() = default;

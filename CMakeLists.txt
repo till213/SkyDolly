@@ -42,6 +42,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 if(${PLATFORM_IS_MACOS})
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_NAME}.app/Contents/Frameworks)
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.github/till213/skydolly")
 else()
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 endif()
@@ -68,6 +69,14 @@ set_target_properties(GeographicLib_SHARED
     PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
+
+# Cpptrace
+if(${PLATFORM_IS_WINDOWS})
+set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use the Unwind backend for stack unwinding [Windows]")
+set(CPPTRACE_GET_SYMBOLS_WITH_DBGHELP ON CACHE BOOL "Use DbgHelp for getting the symbols [Windows]")
+endif()
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/cpptrace)
+add_library(cpptrace::cpptrace ALIAS cpptrace)
 
 # Enabled link time optimisation (LTO) for release build, if available
 if(NOT ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))

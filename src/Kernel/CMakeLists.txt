@@ -39,6 +39,7 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/QUuidHasher.h
         include/Kernel/QStringHasher.h
         include/Kernel/Sort.h
+        include/Kernel/StackTrace.h src/StackTrace.cpp
         src/SettingsConverterV0dot13.h
         src/SettingsConverterV0dot16.h
         src/SettingsConverterV0dot17.h
@@ -61,6 +62,7 @@ target_link_libraries(${LIBRARY_NAME}
         tsl::ordered_map
     PRIVATE
         GitInfo
+        cpptrace::cpptrace
 )
 
 # Platform-specific implementations

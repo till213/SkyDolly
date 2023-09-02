@@ -23,13 +23,19 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <exception>
+#include <csignal>
 
 #include <QCoreApplication>
 #include <QApplication>
 #include <QStringList>
+#include <QString>
 #include <QStyleFactory>
+#include <QStringBuilder>
+#include <QMessageBox>
 
 #include <Kernel/Version.h>
+#include <Kernel/StackTrace.h>
 #include <Kernel/Settings.h>
 #include <Kernel/RecentFile.h>
 #include <Model/Logbook.h>
@@ -37,6 +43,9 @@
 #include <Persistence/PersistenceManager.h>
 #include <PluginManager/PluginManager.h>
 #include <UserInterface/MainWindow.h>
+#include "ExceptionHandler.h"
+#include "SignalHandler.h"
+#include "ErrorCodes.h"
 
 static void destroySingletons() noexcept
 {
@@ -51,26 +60,42 @@ static void destroySingletons() noexcept
 
 int main(int argc, char **argv) noexcept
 {
+    std::set_terminate(ExceptionHandler::handleTerminate);
+
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 
     QApplication application(argc, argv);
+    SignalHandler signalHandler;
+    signalHandler.registerSignals();
 
     // Simplistic command line parsing: first arg is assumed to be a file path
     QStringList args = application.arguments();
     QString filePath;
     if (args.count() > 1) {
-       filePath = args.at(1);
+        filePath = args.at(1);
     }
-    int res {0};
-    // Main window scope
-    {
-        std::unique_ptr<MainWindow> mainWindow = std::make_unique<MainWindow>(filePath);
-        mainWindow->show();
-        res = application.exec();
+
+    int res {ErrorCodes::Ok};
+    try {
+        // Main window scope
+        {
+            std::unique_ptr<MainWindow> mainWindow = std::make_unique<MainWindow>(filePath);
+            mainWindow->show();
+            res = application.exec();
+        }
+        // Destroy singletons after main window has been deleted
+        destroySingletons();
+    } catch (const std::exception &ex) {
+        const QString stackTrace = StackTrace::generate();
+        ExceptionHandler::handleError("Exception", stackTrace, ex);
+        res = ErrorCodes::StandardException;
+    } catch (...) {
+        const QString stackTrace = StackTrace::generate();
+        ExceptionHandler::handleError("Exception", stackTrace, "Non std::exception");
+        res = ErrorCodes::UnknownException;
     }
-    // Destroy singletons after main window has been deleted
-    destroySingletons();
+
     return res;
 }

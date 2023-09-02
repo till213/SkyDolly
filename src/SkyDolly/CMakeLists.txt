@@ -13,6 +13,9 @@ set_target_properties(${APP_NAME}
 target_sources(${APP_NAME}
     PRIVATE
         src/main.cpp
+        src/ExceptionHandler.h src/ExceptionHandler.cpp
+        src/SignalHandler.h
+        src/ErrorCodes.h
         res/Info.plist.in
         res/SkyDolly.rc.in
         ${QM_FILES}
@@ -29,6 +32,7 @@ target_link_libraries(${APP_NAME}
         Sky::Model
         Sky::Persistence
         Sky::PluginManager
+        Sky::Widget
         Sky::UserInterface
 )
 
@@ -46,6 +50,8 @@ if(${PLATFORM_IS_MACOS})
     )
     target_sources(${APP_NAME}
         PRIVATE
+            src/SignalHandler_Unix.cpp
+            src/UnixSignalHandler.h src/UnixSignalHandler.cpp
             ${APP_ICON_PATH}
     )
 elseif(${PLATFORM_IS_WINDOWS})
@@ -59,6 +65,13 @@ elseif(${PLATFORM_IS_WINDOWS})
     target_include_directories(resources PRIVATE "${CMAKE_CURRENT_LIST_DIR}/res/")
     target_sources(${APP_NAME}
         PRIVATE
+            src/SignalHandler_Windows.cpp
             $<TARGET_OBJECTS:resources>
+    )
+else()
+    target_sources(${APP_NAME}
+        PRIVATE
+            src/SignalHandler_Unix.cpp
+            src/UnixSignalHandler.h src/UnixSignalHandler.cpp
     )
 endif()

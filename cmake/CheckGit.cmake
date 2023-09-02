@@ -83,7 +83,7 @@ function(CheckGitSetup)
     add_library(GitInfo STATIC)
     target_sources(GitInfo
         PRIVATE
-            ${CMAKE_BINARY_DIR}/generated/GitInfo.cpp
+            ${POST_CONFIGURE_FILE}
     )
     target_include_directories(GitInfo PUBLIC ${CMAKE_BINARY_DIR}/generated)
     add_dependencies(GitInfo AlwaysCheckGit)
