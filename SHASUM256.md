@@ -31,95 +31,95 @@ Once the checksum has been calculated compare it with the corresponding checksum
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
 SHA256    | acf5d3b6cbe89568f472cbac0a5bfd56768f94fd069a9f7221a2c3b1727d99d3 | SkyDolly-v0.16.3.zip
-SHA256    | 34B29C7246D18F828286DF471446493E66C9BF9F5E300BC068C7571F3328050F | SkyDolly-v0.16.2.zip
-SHA256    | 15BB59F017401F2AEB5C2B52E6310DF37E7CAF1EE0C7563D8E379C86DA379586 | SkyDolly-v0.16.1.zip
-SHA256    | 96369A973073BA235194597612A123C972FA2DD39C475E5E444A226CECD39EE5 | SkyDolly-v0.16.0.zip
+SHA256    | 34b29c7246d18f828286df471446493e66c9bf9f5e300bc068c7571f3328050f | SkyDolly-v0.16.2.zip
+SHA256    | 15bb59f017401f2aeb5c2b52e6310df37e7caf1ee0c7563d8e379c86da379586 | SkyDolly-v0.16.1.zip
+SHA256    | 96369a973073ba235194597612a123c972fa2dd39c475e5e444a226cecd39ee5 | SkyDolly-v0.16.0.zip
 
 ### v0.15
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | 3D29F3E93828991E3642BC23DB489F0C5C1E0CEF4D74417916FA3563B31739CB | SkyDolly-v0.15.1.zip
-SHA256    | 3653FCE830E57487E38DCC7886A97463BCA4407CD30D38AA27401AED01F1F4A0 | SkyDolly-v0.15.0.zip
+SHA256    | 3d29f3e93828991e3642bc23db489f0c5c1e0cef4d74417916fa3563b31739cb | SkyDolly-v0.15.1.zip
+SHA256    | 3653fce830e57487e38dcc7886a97463bca4407cd30d38aa27401aed01f1f4a0 | SkyDolly-v0.15.0.zip
 
 ### v0.14
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | B2095961D77AAA9AE284199DD138A6AF8FD60A3580A422A25D3F5A43BAD76BD9 | SkyDolly-v0.14.0.zip
+SHA256    | b2095961d77aaa9ae284199dd138a6af8fd60a3580a422a25d3f5a43bad76bd9 | SkyDolly-v0.14.0.zip
 
 ### v0.13
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | 4C04AA0AD081D38A7C3CC042109D341B76CC92C165FA312CD8BCD832FCCB6BFB | SkyDolly-v0.13.1.zip
-SHA256    | AA990D71B16C06CCE7A79C0310BF497B5CD3339C919BF6EB70AD2873665442BD | SkyDolly-v0.13.0.zip
+SHA256    | 4c04aa0ad081d38a7c3cc042109d341b76cc92c165fa312cd8bcd832fccb6bfb | SkyDolly-v0.13.1.zip
+SHA256    | aa990d71b16c06cce7a79c0310bf497b5cd3339c919bf6eb70ad2873665442bd | SkyDolly-v0.13.0.zip
 
 ### v0.12
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | 9BF59EBCD021BB16130F1CAABD90C78EE5F854F49F20B57BCBE4917440AC19AA | SkyDolly-v0.12.0.zip
+SHA256    | 9bf59ebcd021bb16130f1caabd90c78ee5f854f49f20b57bcbe4917440ac19aa | SkyDolly-v0.12.0.zip
 
 ### v0.11
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | 73463CB7D78C01F7BDE7AB99113E6693841482741AD96A51C19A846308A79758 | SkyDolly-v0.11.1.zip
-SHA256    | 083F5EB20C33FD80DC30BD3678D191A38D81B72908DC1921813E1D1C3C06FD7C | SkyDolly-v0.11.0.zip
+SHA256    | 73463cb7d78c01f7bde7ab99113e6693841482741ad96a51c19a846308a79758 | SkyDolly-v0.11.1.zip
+SHA256    | 083f5eb20c33fd80dc30bd3678d191a38d81b72908dc1921813e1d1c3c06fd7c | SkyDolly-v0.11.0.zip
 
 ### v0.10
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | 90D92D24BD44DD23CBC7E0D3CFE5962C7E5182FE970F619F89E6AD3B396C92CA | SkyDolly-v0.10.0.zip
+SHA256    | 90d92d24bd44dd23cbc7e0d3cfe5962c7e5182fe970f619f89e6ad3b396c92ca | SkyDolly-v0.10.0.zip
 
 ### v0.9
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | 7483CF42C012CF59D703D648CB59EE1060C916177CDB4D3816A58D98A1E702D5 | SkyDolly-v0.9.0.zip
+SHA256    | 7483cf42c012cf59d703d648cb59ee1060c916177cdb4d3816a58d98a1e702d5 | SkyDolly-v0.9.0.zip
 
 ### v0.8
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | 6B30F4FB53F57338CD85D6717FEDBC7280194D610FAE58ED011B2573D99027CB | SkyDolly-v0.8.6.zip
-SHA256    | 942338E85710D5012D8A2680C5D624C4FDD49FF5974AABC6F5C77CE7C9666A73 | SkyDolly-v0.8.5a.zip
-SHA256    | E1F214E83FD0198CAB662D283B3E7D2E2D71BB97B42195DF96785F90D8DE98C3 | SkyDolly-v0.8.4.zip
-SHA256    | A36FD4702D7DEB02549A826299E6E18F2CCF75618B170FDFC6BE3EAC0C9B7BE1 | SkyDolly-v0.8.3.zip
-SHA256    | 37541E550B939C7746913FEE991EA1CF05F526CE3EA269F10841B100779535DB | SkyDolly-v0.8.2.zip
-SHA256    | 958E3F6A447ADD5383FB6A6830A126C6504E27C987A40A1C6C73236B8E045899 | SkyDolly-v0.8.1.zip
-SHA256    | 199CD3B28BB31F04B1A4F12543516366FE49D10842E49AC6285CC967DF3441A6 | SkyDolly-v0.8.0.zip
+SHA256    | 6b30f4fb53f57338cd85d6717fedbc7280194d610fae58ed011b2573d99027cb | SkyDolly-v0.8.6.zip
+SHA256    | 942338e85710d5012d8a2680c5d624c4fdd49ff5974aabc6f5c77ce7c9666a73 | SkyDolly-v0.8.5a.zip
+SHA256    | e1f214e83fd0198cab662d283b3e7d2e2d71bb97b42195df96785f90d8de98c3 | SkyDolly-v0.8.4.zip
+SHA256    | a36fd4702d7deb02549a826299e6e18f2ccf75618b170fdfc6be3eac0c9b7be1 | SkyDolly-v0.8.3.zip
+SHA256    | 37541e550b939c7746913fee991ea1cf05f526ce3ea269f10841b100779535db | SkyDolly-v0.8.2.zip
+SHA256    | 958e3f6a447add5383fb6a6830a126c6504e27c987a40a1c6c73236b8e045899 | SkyDolly-v0.8.1.zip
+SHA256    | 199cd3b28bb31f04b1a4f12543516366fe49d10842e49ac6285cc967df3441a6 | SkyDolly-v0.8.0.zip
 
 ### v0.7
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | 22523889D1A0C01A3C8AF0155C7174CD8C7B4FA8712DBF82C2CC49006DFE457D | SkyDolly-v0.7.1.zip
-SHA256    | 9C90E8D1885F08118254E4BD06355C06B0E980069573D5147A23E5F7CDEC1A82 | SkyDolly-v0.7.0.zip
+SHA256    | 22523889d1a0c01a3c8af0155c7174cd8c7b4fa8712dbf82c2cc49006dfe457d | SkyDolly-v0.7.1.zip
+SHA256    | 9c90e8d1885f08118254e4bd06355c06b0e980069573d5147a23e5f7cdec1a82 | SkyDolly-v0.7.0.zip
 
 ### v0.6
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | 97AE2737620EFE9F941559B9EEBF2D1B2C3B4206DD1165ABF532F9796273A773 | SkyDolly-v0.6.3.zip
-SHA256    | 2D36FBD01761E686067204892B54346CBF0870F3105CB7481E69E713CD3215E0 | SkyDolly-v0.6.2.zip
-SHA256    | BCEBB7E8E6D645D64C59AC49B6D1D2A321107754FFE912BDF95E1949BAF6E326 | SkyDolly-v0.6.1.zip
-SHA256    | 68B3FC72E081C4B52FF89D4AD9ABB005EFB313DE14A864E07493779953343FD8 | SkyDolly-v0.6.0.zip
+SHA256    | 97ae2737620efe9f941559b9eebf2d1b2c3b4206dd1165abf532f9796273a773 | SkyDolly-v0.6.3.zip
+SHA256    | 2d36fbd01761e686067204892b54346cbf0870f3105cb7481e69e713cd3215e0 | SkyDolly-v0.6.2.zip
+SHA256    | bcebb7e8e6d645d64c59ac49b6d1d2a321107754ffe912bdf95e1949baf6e326 | SkyDolly-v0.6.1.zip
+SHA256    | 68b3fc72e081c4b52ff89d4ad9abb005efb313de14a864e07493779953343fd8 | SkyDolly-v0.6.0.zip
 
 ### Older Releases
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
-SHA256    | CC61F9B8CF748E5A07188527579417F7FC9E949CB6B3D839F759D550FF871647 | SkyDolly-v0.5.2.zip
-SHA256    | 3E5843394732050E9E85A4AF6AB4DB67FC715758B7CCA377A33093539552671F | SkyDolly-v0.5.1.zip
-SHA256    | C773E56489D598F1CA70EA7EBB002CCF8F34A6B55BB1E6C4A23C132E4E19814E | SkyDolly-v0.5.0.zip
-SHA256    | 91CF4C974549DED0433200A295823715DA673C902FFCF6FDC38C9A8191F9E616 | SkyDolly-v0.4.2.zip
-SHA256    | 6ABCE8AB962FDCBF4DD30246D52B39D96B3C4986BD19BD8312606567BB592941 | SkyDolly-v0.4.1.zip
-SHA256    | 198DC1D9D92AA1E00D1F59A0F207090358D6574D408124CFF16C6AA0A0D706FB | SkyDolly-v0.4.0.zip
-SHA256    | B716E1AACAA2B873ABE3F3D3FE022B8CE3ABF49A2E855BEF0EFE8FCA75B19EF4 | SkyDolly-v0.3.1.zip
-SHA256    | AD4E794BF68541A968A8F4AAF63054EADC7FDAB321C85A6081C8E6D539C5D323 | SkyDolly-v0.3.0.zip
-SHA256    | 93C9E2705E2220A7E2EDA2429281B77795C4E2E7E0ABD2CE5D9E2EFF84467AD3 | SkyDolly-v0.2.1.zip
-SHA256    | 6F1F28DF105664A55692CD9E3D864A486CF4BBAD4333F9A583D2A24682D486D8 | SkyDolly-v0.2.0.zip
-SHA256    | ED9DA8FFAC77B1CE21B93E1CA3ACE0F1EAA2CCD2D3F5CBB2359FB2AD072547E6 | SkyDolly-v0.1.0.zip
+SHA256    | cc61f9b8cf748e5a07188527579417f7fc9e949cb6b3d839f759d550ff871647 | SkyDolly-v0.5.2.zip
+SHA256    | 3e5843394732050e9e85a4af6ab4db67fc715758b7cca377a33093539552671f | SkyDolly-v0.5.1.zip
+SHA256    | c773e56489d598f1ca70ea7ebb002ccf8f34a6b55bb1e6c4a23c132e4e19814e | SkyDolly-v0.5.0.zip
+SHA256    | 91cf4c974549ded0433200a295823715da673c902ffcf6fdc38c9a8191f9e616 | SkyDolly-v0.4.2.zip
+SHA256    | 6abce8ab962fdcbf4dd30246d52b39d96b3c4986bd19bd8312606567bb592941 | SkyDolly-v0.4.1.zip
+SHA256    | 198dc1d9d92aa1e00d1f59a0f207090358d6574d408124cff16c6aa0a0d706fb | SkyDolly-v0.4.0.zip
+SHA256    | b716e1aacaa2b873abe3f3d3fe022b8ce3abf49a2e855bef0efe8fca75b19ef4 | SkyDolly-v0.3.1.zip
+SHA256    | ad4e794bf68541a968a8f4aaf63054eadc7fdab321c85a6081c8e6d539c5d323 | SkyDolly-v0.3.0.zip
+SHA256    | 93c9e2705e2220a7e2eda2429281b77795c4e2e7e0abd2ce5d9e2eff84467ad3 | SkyDolly-v0.2.1.zip
+SHA256    | 6f1f28df105664a55692cd9e3d864a486cf4bbad4333f9a583d2a24682d486d8 | SkyDolly-v0.2.0.zip
+SHA256    | ed9da8ffac77b1ce21b93e1ca3ace0f1eaa2ccd2d3f5cbb2359fb2ad072547e6 | SkyDolly-v0.1.0.zip
