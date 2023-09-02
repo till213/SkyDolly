@@ -71,9 +71,10 @@ set_target_properties(GeographicLib_SHARED
 )
 
 # Cpptrace
-if(${PLATFORM_IS_WINDOWS})
-set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use the Unwind backend for stack unwinding [Windows]")
-set(CPPTRACE_GET_SYMBOLS_WITH_DBGHELP ON CACHE BOOL "Use DbgHelp for getting the symbols [Windows]")
+if(${PLATFORM_IS_WINDOWS} AND MINGW)
+    # While MinGW provides an addr2line executable we do not want to ship / use it
+    set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use the Unwind backend for stack unwinding [Windows]")
+    set(CPPTRACE_GET_SYMBOLS_WITH_DBGHELP ON CACHE BOOL "Use DbgHelp for getting the symbols [Windows]")
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/cpptrace)
 add_library(cpptrace::cpptrace ALIAS cpptrace)
