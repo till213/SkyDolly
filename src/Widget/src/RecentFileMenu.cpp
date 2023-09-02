@@ -38,7 +38,7 @@ struct RecentFileMenuPrivate
     {}
 
     QActionGroup *recentFileActionGroup;
-    QAction *clearRecentFileAction;
+    QAction *clearRecentFileAction {nullptr};
 };
 
 // PUBLIC
