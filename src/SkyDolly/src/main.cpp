@@ -61,14 +61,16 @@ static void destroySingletons() noexcept
 int main(int argc, char **argv) noexcept
 {
     std::set_terminate(ExceptionHandler::handleTerminate);
-    SignalHandler signalHandler;
-    signalHandler.registerSignals();
 
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 
     QApplication application(argc, argv);
+    // Signals must be registered after the QApplication instantiation, due
+    // to the QSocketNotifier
+    SignalHandler signalHandler;
+    signalHandler.registerSignals();
 
     // Simplistic command line parsing: first arg is assumed to be a file path
     QStringList args = application.arguments();

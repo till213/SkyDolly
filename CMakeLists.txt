@@ -72,9 +72,8 @@ set_target_properties(GeographicLib_SHARED
 
 # Cpptrace
 if(${PLATFORM_IS_WINDOWS})
-set(CPPTRACE_UNWIND_WITH_UNWIND ON)
-set(CPPTRACE_GET_SYMBOLS_WITH_LIBBACKTRACE ON)
-set(CPPTRACE_GET_SYMBOLS_WITH_ADDR2LINE OFF)
+set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use the Unwind backend for stack unwinding [Windows]")
+set(CPPTRACE_GET_SYMBOLS_WITH_DBGHELP ON CACHE BOOL "Use DbgHelp for getting the symbols [Windows]")
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/cpptrace)
 add_library(cpptrace::cpptrace ALIAS cpptrace)

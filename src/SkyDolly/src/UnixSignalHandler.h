@@ -25,6 +25,8 @@
 #ifndef UNIXSIGNALHANDLER_H
 #define UNIXSIGNALHANDLER_H
 
+#include <memory>
+
 #include <QObject>
 #include <QObject>
 #include <QString>
@@ -41,9 +43,8 @@ public:
     void registerSignals() noexcept;
 
 private:
-    static int m_signalSocketPair[2];
-    
-    QSocketNotifier *m_signalNotifier;
+    static int m_signalSocketPair[2];    
+    std::unique_ptr<QSocketNotifier> m_signalNotifier;
 
     void frenchConnection() noexcept;
     static QString signalToString(int signal);

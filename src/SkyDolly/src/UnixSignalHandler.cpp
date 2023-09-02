@@ -22,42 +22,36 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <csignal>
+#include <memory>
 #include <vector>
-#include <unistd.h>
+#include <csignal>
 
+#include <unistd.h>
 #include <sys/socket.h>
 
 #include <QObject>
 #include <QString>
 #include <QStringBuilder>
 #include <QSocketNotifier>
-#include <QDebug>
+#include <QtGlobal>
 
 #include <Kernel/StackTrace.h>
 #include <UserInterface/Dialog/TerminationDialog.h>
 #include "ErrorCodes.h"
 #include "UnixSignalHandler.h"
 
-namespace
-{
-    // Send signal to process:
-    // - Linux: kill -s <signal> <pid>
-    //          killall -<signal> <process_name>
-    volatile std::sig_atomic_t receivedSignal {0};
-}
-
 // PUBLIC
 
 UnixSignalHandler::UnixSignalHandler(QObject *parent)
     : QObject(parent)
 {
-    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, m_signalSocketPair)) {
-        qFatal("Couldn't create socketpair");
+    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, m_signalSocketPair) == 0) {
+        m_signalNotifier = std::make_unique<QSocketNotifier>(m_signalSocketPair[1], QSocketNotifier::Read);
+        frenchConnection();
+    } else {
+        m_signalNotifier = nullptr;
+        qCritical() << "UnixSignalHandler: could not create socketpair";
     }
-
-    m_signalNotifier = new QSocketNotifier(m_signalSocketPair[1], QSocketNotifier::Read, this);
-    frenchConnection();
 }
 
 UnixSignalHandler::~UnixSignalHandler() = default;
@@ -66,11 +60,14 @@ int UnixSignalHandler::m_signalSocketPair[2];
 
 void UnixSignalHandler::registerSignals() noexcept
 {
-   // const std::vector unixSignals {SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV};
-    const std::vector unixSignals {SIGINT};
+    // Send signal to process:
+    // - Linux: kill -s <signal> <pid>
+    //          killall -<signal> <process_name>
+    // Fatal signals (if not caught)
+    // https://stackoverflow.com/questions/13219071/which-fatal-signals-should-a-user-level-program-catch
+    const std::vector unixSignals {SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV, SIGPIPE, SIGTERM, SIGUSR1, SIGUSR2};
     struct sigaction action;
 
-    ::memset(&action, '\0', sizeof(action));
     action.sa_handler = UnixSignalHandler::handle;
     sigemptyset(&action.sa_mask);
     action.sa_flags = 0;
@@ -81,32 +78,13 @@ void UnixSignalHandler::registerSignals() noexcept
             break;;
         }
     }
-
-    // TODO: This is not an optimal solution:
-    //       - std::signal does not block signals while executing the handler
-    //       - We should map signals onto Qt signals, via a (Unix) socket pair
-    //         (https://doc.qt.io/qt-6/unix-signals.html)
-    //       - Unix signals are not sent on Windows anyway: we should use SetConsoleCtrlHandler and friends
-    // Fatal signals (if not caught)
-    // https://stackoverflow.com/questions/13219071/which-fatal-signals-should-a-user-level-program-catch
-//    std::signal(SIGHUP, UnixSignalHandler::handle);
-//    std::signal(SIGINT, UnixSignalHandler::handle);
-//    std::signal(SIGQUIT, UnixSignalHandler::handle);
-//    std::signal(SIGILL, UnixSignalHandler::handle);
-//    std::signal(SIGABRT, UnixSignalHandler::handle);
-//    std::signal(SIGFPE, UnixSignalHandler::handle);
-//    std::signal(SIGSEGV, UnixSignalHandler::handle);
-//    std::signal(SIGPIPE, UnixSignalHandler::handle);
-//    std::signal(SIGTERM, UnixSignalHandler::handle);
-//    std::signal(SIGUSR1, UnixSignalHandler::handle);
-//    std::signal(SIGUSR2, UnixSignalHandler::handle);
 }
 
 // PRIVATE
 
 void UnixSignalHandler::frenchConnection() noexcept
 {
-    connect(m_signalNotifier, &QSocketNotifier::activated,
+    connect(m_signalNotifier.get(), &QSocketNotifier::activated,
             this, &UnixSignalHandler::process);
 }
 
@@ -142,6 +120,12 @@ QString UnixSignalHandler::signalToString(int signal)
     case SIGTERM:
         message = "A termination request was made (signal SIGTERM)";
         break;
+    case SIGUSR1:
+        message = "A user signal 1 was received (signal SIGUSR1)";
+        break;
+    case SIGUSR2:
+        message = "A user signal 2 was received (signal SIGUSR2)";
+        break;
     default:
         message = "An unhandled signal terminated the application, signal: " % QString::number(signal);
         break;
@@ -152,8 +136,7 @@ QString UnixSignalHandler::signalToString(int signal)
 
 void UnixSignalHandler::handle(int signal)
 {
-    ::receivedSignal = signal;
-    qCritical() << "Signal received:" << signal;
+    // Write is either reentrant or not interruptible by signals and is async-signal safe
     ::write(m_signalSocketPair[0], &signal, sizeof(int));
 }
 
@@ -170,9 +153,9 @@ void UnixSignalHandler::process()
         qCritical() << "Received signal:" << signal;
         TerminationDialog(tr("Signal Received"), reason, stackTrace).exec();
     } catch (const std::exception &ex) {
-        qCritical() << "Could not handle the original exception. Another standard exception occurred:" << ex.what();
+        qCritical() << "Could not handle the signal" << signal << ": A standard exception occurred:" << ex.what();
     } catch (...) {
-        qCritical() << "Could not handle the original exception. Another unknown exception occurred.";
+        qCritical() << "Could not handle the signal" << signal << ": Am unknown exception occurred.";
     }
     exit(ErrorCodes::Signal);
 }
