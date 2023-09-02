@@ -136,10 +136,10 @@ void CsvParserTest::parseCsv_data() noexcept
 
     expectedHeader = {"Header 1", "Header 2", "Header 3"};
     csv = createCsv(expectedHeader, expectedRows, false);
-    QTest::newRow("With header") << csv.first
-                                 << csv.second
-                                 << expectedHeader
-                                 << expectedRows;
+    QTest::newRow("With header #1") << csv.first
+                                    << csv.second
+                                    << expectedHeader
+                                    << expectedRows;
 
     // With header, quoted
     expectedRows.clear();
@@ -156,10 +156,10 @@ void CsvParserTest::parseCsv_data() noexcept
 
     expectedHeader = {"Header 1", "Header 2", "Header 3"};
     csv = createCsv(expectedHeader, expectedRows, true);
-    QTest::newRow("With header") << csv.first
-                                 << csv.second
-                                 << expectedHeader
-                                 << expectedRows;
+    QTest::newRow("With header #2") << csv.first
+                                    << csv.second
+                                    << expectedHeader
+                                    << expectedRows;
 
     // Multiline, quoted
     expectedRows.clear();
