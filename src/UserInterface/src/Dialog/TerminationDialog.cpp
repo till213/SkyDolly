@@ -58,9 +58,9 @@ namespace
 // PUBLIC
 
 TerminationDialog::TerminationDialog(
-    const QString title,
-    const QString reason,
-    const QString stackTrace,
+    QString title,
+    QString reason,
+    QString stackTrace,
     QWidget *parent
  ) : QDialog(parent),
     ui(new Ui::TerminationDialog),
