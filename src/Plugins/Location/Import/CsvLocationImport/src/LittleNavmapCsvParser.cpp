@@ -156,7 +156,7 @@ std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool
 bool LittleNavmapCsvParser::validateHeaders() const noexcept
 {
     bool ok {true};
-    for (auto val : d->HeaderNames) {
+    for (const auto val : d->HeaderNames) {
         ok = d->headers.contains(val);
         if (!ok) {
             break;

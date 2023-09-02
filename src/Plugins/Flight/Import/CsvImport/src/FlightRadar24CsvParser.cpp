@@ -132,7 +132,7 @@ FlightData FlightRadar24CsvParser::parse(QIODevice &io, bool &ok) noexcept
 bool FlightRadar24CsvParser::validateHeaders() const noexcept
 {
     bool ok {true};
-    for (auto val : d->HeaderNames) {
+    for (const auto val : d->HeaderNames) {
         ok = d->headers.contains(val);
         if (!ok) {
             break;

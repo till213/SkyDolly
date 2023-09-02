@@ -242,7 +242,7 @@ FlightData FlightRecorderCsvParser::parse(QIODevice &io, bool &ok) noexcept
  bool FlightRecorderCsvParser::validateHeaders() noexcept
  {
      bool ok {true};
-     for (auto val : d->HeaderNames) {
+     for (const auto val : d->HeaderNames) {
          ok = d->headers.contains(val);
          if (!ok) {
              break;
