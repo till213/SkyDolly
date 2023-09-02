@@ -31,7 +31,7 @@ class QString;
 class QActionGroup;
 
 class SecurityToken;
-class RecentFilePrivate;
+struct RecentFilePrivate;
 
 #include "KernelLib.h"
 

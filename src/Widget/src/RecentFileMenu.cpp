@@ -65,7 +65,7 @@ QActionGroup &RecentFileMenu::getRecentFileActionGroup() const
 
 void RecentFileMenu::initialise()
 {
-    int maxRecentFiles = RecentFile::getInstance().getMaxRecentFiles();
+    const int maxRecentFiles = RecentFile::getInstance().getMaxRecentFiles();
     updateNofRecentFileActions(maxRecentFiles);
     updateRecentFileActions();
 

@@ -26,31 +26,25 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QList>
+#include <QSettings>
 
 #include "SecurityToken.h"
-#include "Settings.h"
 #include "RecentFile.h"
 
 namespace
 {
-    const int InvalidIndex = -1;
+    constexpr int InvalidIndex {-1};
 }
 
-class RecentFilePrivate {
+struct RecentFilePrivate {
 public:
     static const int DefaultMaxRecentFiles;
     static const int MaxRecentFiles;
 
-    RecentFilePrivate()
-    {}
-
-    ~RecentFilePrivate()
-    {}
-
     QSettings settings;
     QStringList recentFiles;             // the items in recentFiles must always be in sync
     QList<QByteArray> securityTokenData; // with the items in securityTokenData
-    int maxRecentFiles;
+    int maxRecentFiles {0};
 
     static RecentFile *instance;
 };
