@@ -95,7 +95,7 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 
 AbstractSkyConnect::~AbstractSkyConnect() = default;
 
-bool AbstractSkyConnect::setupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept
+bool AbstractSkyConnect::setupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -703,8 +703,11 @@ void AbstractSkyConnect::frenchConnection() noexcept
 {
     connect(&(d->recordingTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::recordData);
-    connect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
+    Settings &settings = Settings::getInstance();
+    connect(&settings, &Settings::recordingSampleRateChanged,
             this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
+    connect(&settings, &Settings::flightSimulatorShortcutsChanged,
+            this, &AbstractSkyConnect::handleFlightSimulatorShortCutsChanged);
 }
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
@@ -815,4 +818,9 @@ void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate
         }
         onRecordingSampleRateChanged(sampleRate);
     }
+}
+
+void AbstractSkyConnect::handleFlightSimulatorShortCutsChanged(const FlightSimulatorShortcuts &shortcuts) noexcept
+{
+    setupFlightSimulatorShortcuts(shortcuts);
 }

@@ -133,7 +133,7 @@ std::optional<QString> SkyConnectManager::getCurrentSkyConnectPluginName() const
     return {};
 }
 
-void SkyConnectManager::tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept
+void SkyConnectManager::tryConnectAndSetup(const FlightSimulatorShortcuts &shortcuts) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
