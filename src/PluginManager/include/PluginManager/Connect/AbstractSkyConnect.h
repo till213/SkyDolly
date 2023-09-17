@@ -39,6 +39,7 @@
 
 class Flight;
 class Aircraft;
+struct FlightSimulatorShortcuts;
 struct AbstractSkyConnectPrivate;
 
 class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf
@@ -58,7 +59,7 @@ public:
     AbstractSkyConnect &operator=(AbstractSkyConnect &&rhs) = delete;
     ~AbstractSkyConnect() override;
     
-    bool setupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept override;
+    bool setupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept override;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
     bool freezeUserAircraft(bool enable) const noexcept override;
@@ -184,6 +185,7 @@ private:
 
 private slots:
     void handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
+    void handleFlightSimulatorShortCutsChanged(const FlightSimulatorShortcuts &shortcuts) noexcept;
 };
 
 #endif // ABSTRACTSKYCONNECTIMPL_H

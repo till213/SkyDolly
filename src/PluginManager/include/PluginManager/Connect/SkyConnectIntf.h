@@ -110,7 +110,7 @@ public:
     SkyConnectIntf &operator=(SkyConnectIntf &&rhs) = delete;
     ~SkyConnectIntf() override = default;
     
-    virtual bool setupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept = 0;
+    virtual bool setupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept = 0;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
