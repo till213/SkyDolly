@@ -57,6 +57,9 @@ namespace
 
     // The interval [milliseconds] in which timestampChanged signals are emitted
     constexpr std::int64_t NotificationInterval = 1000 / NotificationFrequency;
+
+    // Period to wait after each failed connection attempt
+    constexpr int RetryConnectPeriodMs = 5000;
 }
 
 struct AbstractSkyConnectPrivate
@@ -64,16 +67,19 @@ struct AbstractSkyConnectPrivate
     AbstractSkyConnectPrivate() noexcept
     {
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
+        reconnectTimer.setSingleShot(true);
 #ifdef DEBUG
         qDebug() << "AbstractSkyConnectPrivate: AbstractSkyConnectPrivate: elapsed timer clock type:" << elapsedTimer.clockType();
 #endif
     }
 
     SkyConnectIntf::ReplayMode replayMode {SkyConnectIntf::ReplayMode::Normal};
+    FlightSimulatorShortcuts shortcuts;
     Connect::State state {Connect::State::Disconnected};
     Flight &currentFlight {Logbook::getInstance().getCurrentFlight()};
     // Triggers the recording of sample data (if not event-based recording)
     QTimer recordingTimer;
+    QTimer reconnectTimer;
     std::int64_t currentTimestamp {0};
     std::int64_t lastNotificationTimestamp {0};
     double recordingSampleRate {Settings::getInstance().getRecordingSampleRateValue()};
@@ -95,17 +101,10 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 
 AbstractSkyConnect::~AbstractSkyConnect() = default;
 
-bool AbstractSkyConnect::setupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
+void AbstractSkyConnect::tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept
 {
-    if (!isConnectedWithSim()) {
-        connectWithSim();
-    }
-
-    bool ok = isConnectedWithSim();
-    if (ok) {
-        ok = retryWithReconnect([this, shortcuts]() -> bool { return onSetupFlightSimulatorShortcuts(shortcuts); });
-    }
-    return ok;
+    d->shortcuts = std::move(shortcuts);
+    retryConnectAndSetup();
 }
 
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
@@ -703,6 +702,8 @@ void AbstractSkyConnect::frenchConnection() noexcept
 {
     connect(&(d->recordingTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::recordData);
+    connect(&(d->reconnectTimer), &QTimer::timeout,
+            this, &AbstractSkyConnect::retryConnectAndSetup);
     Settings &settings = Settings::getInstance();
     connect(&settings, &Settings::recordingSampleRateChanged,
             this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
@@ -822,5 +823,25 @@ void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate
 
 void AbstractSkyConnect::handleFlightSimulatorShortCutsChanged(const FlightSimulatorShortcuts &shortcuts) noexcept
 {
-    setupFlightSimulatorShortcuts(shortcuts);
+    d->shortcuts = shortcuts;
+    retryConnectAndSetup();
+}
+
+void AbstractSkyConnect::retryConnectAndSetup() noexcept
+{
+    d->reconnectTimer.stop();
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this]() -> bool { return onSetupFlightSimulatorShortcuts(d->shortcuts); });
+    }
+
+    if (!ok) {
+        // Try later
+        // TODO Use progressive fallback times -> Fibonacci numbers, because why not
+        d->reconnectTimer.start(::RetryConnectPeriodMs);
+    }
 }

@@ -59,7 +59,7 @@ public:
     AbstractSkyConnect &operator=(AbstractSkyConnect &&rhs) = delete;
     ~AbstractSkyConnect() override;
     
-    bool setupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept override;
+    void tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept override;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
     bool freezeUserAircraft(bool enable) const noexcept override;
@@ -186,6 +186,7 @@ private:
 private slots:
     void handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
     void handleFlightSimulatorShortCutsChanged(const FlightSimulatorShortcuts &shortcuts) noexcept;
+    void retryConnectAndSetup() noexcept;
 };
 
 #endif // ABSTRACTSKYCONNECTIMPL_H
