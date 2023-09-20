@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <cmath>
+#include <array>
 
 #include <QTimer>
 #include <QElapsedTimer>
@@ -33,6 +34,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/SkyMath.h>
 #include <Kernel/Const.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
@@ -58,8 +60,10 @@ namespace
     // The interval [milliseconds] in which timestampChanged signals are emitted
     constexpr std::int64_t NotificationInterval = 1000 / NotificationFrequency;
 
-    // Period to wait after each failed connection attempt
-    constexpr int RetryConnectPeriodMs = 5000;
+    // Periods to wait after each failed connection attempt - in fact, the first
+    // NofRetryConnectPeriods Fibonacci numbers (starting with 0), corresponding
+    // to about 90 seconds longest period (89, to be specific)
+    constexpr int NofRetryConnectPeriods = 12;
 }
 
 struct AbstractSkyConnectPrivate
@@ -68,6 +72,7 @@ struct AbstractSkyConnectPrivate
     {
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
         reconnectTimer.setSingleShot(true);
+        retryConnectPeriods = SkyMath::calculateFibonacci<::NofRetryConnectPeriods>(::NofRetryConnectPeriods);
 #ifdef DEBUG
         qDebug() << "AbstractSkyConnectPrivate: AbstractSkyConnectPrivate: elapsed timer clock type:" << elapsedTimer.clockType();
 #endif
@@ -80,6 +85,8 @@ struct AbstractSkyConnectPrivate
     // Triggers the recording of sample data (if not event-based recording)
     QTimer recordingTimer;
     QTimer reconnectTimer;
+    std::size_t reconnectAttempt {0};
+    std::array<int, ::NofRetryConnectPeriods> retryConnectPeriods;
     std::int64_t currentTimestamp {0};
     std::int64_t lastNotificationTimestamp {0};
     double recordingSampleRate {Settings::getInstance().getRecordingSampleRateValue()};
@@ -104,6 +111,7 @@ AbstractSkyConnect::~AbstractSkyConnect() = default;
 void AbstractSkyConnect::tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept
 {
     d->shortcuts = std::move(shortcuts);
+    d->reconnectAttempt = 0;
     retryConnectAndSetup();
 }
 
@@ -824,6 +832,7 @@ void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate
 void AbstractSkyConnect::handleFlightSimulatorShortCutsChanged(const FlightSimulatorShortcuts &shortcuts) noexcept
 {
     d->shortcuts = shortcuts;
+    d->reconnectAttempt = 0;
     retryConnectAndSetup();
 }
 
@@ -840,8 +849,14 @@ void AbstractSkyConnect::retryConnectAndSetup() noexcept
     }
 
     if (!ok) {
-        // Try later
-        // TODO Use progressive fallback times -> Fibonacci numbers, because why not
-        d->reconnectTimer.start(::RetryConnectPeriodMs);
+        // Try later, with progressively increasing retry periods
+        const auto attempt = std::min(d->retryConnectPeriods.size(), d->reconnectAttempt);
+        const auto period = d->retryConnectPeriods[attempt];
+#ifdef DEBUG
+        qDebug() << "AbstractSkyConnectPrivate: retryConnectAndSetup: attempt:" << (d->reconnectAttempt + 1)
+                 << "failed, trying again in" << period << "seconds";
+#endif
+        d->reconnectAttempt++;
+        d->reconnectTimer.start(period * 1000);
     }
 }
