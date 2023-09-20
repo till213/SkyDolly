@@ -137,8 +137,7 @@ void SkyConnectManager::tryConnectAndSetup(const FlightSimulatorShortcuts &short
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
-        // TODO IMPLEMENT ME!!! Retry in case of failure
-        const bool ok = skyConnect->get().setupFlightSimulatorShortcuts(shortcuts);
+        skyConnect->get().tryConnectAndSetup(shortcuts);
     }
 }
 
