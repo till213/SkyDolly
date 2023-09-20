@@ -26,6 +26,7 @@
 #include <utility>
 #include <cstdint>
 #include <cmath>
+#include <array>
 
 #include <QtTest>
 #include <QDateTime>
@@ -745,6 +746,45 @@ void SkyMathTest::calculateTimeOffset()
 
     // Verify
     QCOMPARE(timeOffset, expectedTimeOffset);
+}
+
+void SkyMathTest::calculateFibonacci()
+{
+    // Exercise
+    const auto fibonaccis1 = SkyMath::calculateFibonacci<1>(1);
+
+    // Verify
+    QCOMPARE(fibonaccis1.back(), 0);
+
+    // Exercise
+    const auto fibonaccis2 = SkyMath::calculateFibonacci<2>(2);
+
+    // Verify
+    QCOMPARE(fibonaccis2.back(), 1);
+
+    // Exercise
+    const auto fibonaccis3 = SkyMath::calculateFibonacci<3>(3);
+
+    // Verify
+    QCOMPARE(fibonaccis3.back(), 1);
+
+    // Exercise
+    const auto fibonaccis4 = SkyMath::calculateFibonacci<4>(4);
+
+    // Verify
+    QCOMPARE(fibonaccis4.back(), 2);
+
+    // Exercise
+    const auto fibonaccis5 = SkyMath::calculateFibonacci<5>(5);
+
+    // Verify
+    QCOMPARE(fibonaccis5.back(), 3);
+
+    // Exercise
+    const auto fibonaccis12 = SkyMath::calculateFibonacci<12>(12);
+
+    // Verify
+    QCOMPARE(fibonaccis12.back(), 89);
 }
 
 QTEST_MAIN(SkyMathTest)

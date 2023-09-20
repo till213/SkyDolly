@@ -30,6 +30,7 @@
 #include <utility>
 #include <cstdint>
 #include <exception>
+#include <cassert>
 
 #include <GeographicLib/Geodesic.hpp>
 
@@ -585,6 +586,38 @@ namespace SkyMath
             break;
         }
         return fromDateTimeUtc.secsTo(toDateTimeUtc) * 1000;
+    }
+
+    /*!
+     * Calculates the first \c n-th Fibonacci numbers, starting with 0 for \c n = 1.
+     *
+     * Note that the value of \c c must be equal to the value of \c N.
+     *
+     * \param n
+     *        the number of Fibonacci numbers to calculate: n must be >= 1
+     * \return an array with the first n Fibonacci numbers, starting with 0
+     */
+    template <std::size_t N>
+    consteval std::array<int, N> calculateFibonacci(int n) noexcept
+    {
+        std::array<int, N> fibonaccis {};
+        assert(fibonaccis.size() >= n);
+        assert(n > 0);
+
+        // Base cases
+        fibonaccis[0] = 0;
+
+        if (n > 1) {
+            fibonaccis[1] = 1;
+        }
+
+        // Calculate the remaining Fibonacci numbers
+        for (int i = 2; i < n; ++i)
+        {
+            fibonaccis[i] = fibonaccis[i - 1] + fibonaccis[i - 2];
+        }
+
+        return fibonaccis;
     }
 
 } // namespace
