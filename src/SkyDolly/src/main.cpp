@@ -67,6 +67,9 @@ int main(int argc, char **argv) noexcept
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 
     QApplication application(argc, argv);
+
+    // Signals must be registered after the QApplication instantiation, due
+    // to the QSocketNotifier
     SignalHandler signalHandler;
     signalHandler.registerSignals();
 

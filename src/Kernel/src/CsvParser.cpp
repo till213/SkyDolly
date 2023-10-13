@@ -47,16 +47,18 @@ CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header,
         const QString line = textStream.readLine();
 
         if (firstLine) {
+            firstLine = false;
             // Compare header (case-insensitive)
             if (!header.isNull() && line.startsWith(header, Qt::CaseInsensitive) ||
                 !alternateHeader.isNull() && line.startsWith(alternateHeader, Qt::CaseInsensitive))
-            {  
+            {
+                // First line is a header line
                 parseHeader(line);
                 continue;
             } else if (!header.isNull()) {
+                // First line contains (presumably) values, so parse the expected (default) header
                 parseHeader(header);
             }
-            firstLine = false;
         }
 
         // Skip empty lines but add them if within a quoted field

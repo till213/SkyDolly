@@ -5,8 +5,13 @@
 ### Improvements
 - Add an exception handler dialog that provides information about abnormal program termination, including
   * Information about the exception
-  * Stack trace (using the external Cpptrace library)
+  * Stack trace (using the external Cpptrace library v0.1.1)
   * Application- and basic system information
+  * Unix signal handling (macOS, Linux only)
+  
+### Bug Fixes
+- Fix CSV import for various CSV formats, e.g. Flight Recorder and Sky Dolly: proper CSV header validation
+  * Note: the Sky Dolly CSV format is obsolete and will be removed in the upcoming v0.17 release
 
 ## 0.16.2
 

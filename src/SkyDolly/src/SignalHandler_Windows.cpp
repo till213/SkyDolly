@@ -26,6 +26,9 @@
 
 #include "SignalHandler.h"
 
+struct SignalHandlerPrivate
+{};
+
 // PUBLIC
 
 SignalHandler::SignalHandler() = default;
@@ -33,5 +36,5 @@ SignalHandler::~SignalHandler() = default;
 
 void SignalHandler::registerSignals() noexcept
 {
-    // TODO IMPLEMENT ME
+    // No POSIX signals or similar on Windows
 }

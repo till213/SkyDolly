@@ -25,12 +25,10 @@
 #include <exception>
 #include <filesystem>
 #include <system_error>
-#include <csignal>
 
 #include <QtGlobal>
 #include <QString>
 #include <QStringBuilder>
-#include <QMessageBox>
 
 #include <Kernel/StackTrace.h>
 #include <UserInterface/Dialog/TerminationDialog.h>

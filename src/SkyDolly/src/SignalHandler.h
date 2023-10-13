@@ -36,6 +36,7 @@ public:
     ~SignalHandler();
 
     void registerSignals() noexcept;
+
 private:
     std::unique_ptr<SignalHandlerPrivate> d;
 };

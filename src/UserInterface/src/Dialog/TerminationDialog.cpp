@@ -39,7 +39,6 @@
 #include <QStyle>
 #include <QFontDatabase>
 #include <QClipboard>
-#include <QTimer>
 #include <QSysInfo>
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -52,7 +51,6 @@
 
 namespace
 {
-    constexpr int InfoTimerInterval {5000};
     constexpr const char *CreateIssueUrl {"https://www.github.com/till213/SkyDolly/issues/new"};
     constexpr const char *CreateIssueTemplateUrl {"https://github.com/till213/SkyDolly/issues/new?template=bug_report.md&title=Abnormal%20Termination"};
 }
