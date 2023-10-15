@@ -76,11 +76,15 @@ elseif(${PLATFORM_IS_WINDOWS})
     add_dependencies(resources
         manifest
     )
+    if(MSVC)
+        # We are embedding our own manifest via the resource (*.rc) file, so prevent MSVC linker
+        # from generating and embedding a default (duplicate) manifest
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
+    endif()
     target_include_directories(resources PRIVATE "${CMAKE_CURRENT_LIST_DIR}/res/")
     target_sources(${APP_NAME}
         PRIVATE
             src/SignalHandler_Windows.cpp
-            $<TARGET_OBJECTS:manifest>
             $<TARGET_OBJECTS:resources>
     )
 else()
