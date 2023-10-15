@@ -56,7 +56,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 endif()
 # No use of deprecated Qt functionality before Qt 6.5
 add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060500)
-
+ 
 # Qt
 find_package(Qt6 REQUIRED COMPONENTS Widgets Sql LinguistTools)
 
@@ -74,8 +74,15 @@ set_target_properties(GeographicLib_SHARED
 # Cpptrace
 if(${PLATFORM_IS_WINDOWS} AND MINGW)
     # While MinGW provides an addr2line executable we do not want to ship / use it
-    set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use the Unwind backend for stack unwinding [Windows]")
-    set(CPPTRACE_GET_SYMBOLS_WITH_DBGHELP ON CACHE BOOL "Use DbgHelp for getting the symbols [Windows]")
+    set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use the Unwind backend for stack unwinding [Windows, MinGW]")
+    set(CPPTRACE_GET_SYMBOLS_WITH_DBGHELP ON CACHE BOOL "Use DbgHelp for getting the symbols [Windows, MinGW]")
+    message("CPPTRACE: Set Windows specific MINGW settings")
+elseif(${PLATFORM_IS_WINDOWS} AND MSVC)
+    set(CPPTRACE_UNWIND_WITH_WINAPI ON CACHE BOOL "Use the WinAPI backend for stack unwinding [Windows, MSVC]")
+    set(CPPTRACE_GET_SYMBOLS_WITH_DBGHELP ON CACHE BOOL "Use DbgHelp for getting the symbols [Windows, MSVC]")
+    message("CPPTRACE: Set Windows specific MSVC settings")
+else()
+    message("CPPTRACE: Let cpptrace automatically set configuration")
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/cpptrace)
 add_library(cpptrace::cpptrace ALIAS cpptrace)
