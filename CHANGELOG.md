@@ -35,6 +35,7 @@
 
 ### Under the Hood
 - Upgrade GeographicLib to version 2.2 (from version 2.1.2)
+- Upgrade cpptrace to version 0.2.1 (from 0.1.1)
 
 ## 0.16.3
 
