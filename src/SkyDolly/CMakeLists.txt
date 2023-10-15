@@ -1,4 +1,5 @@
 qt_add_executable(${APP_NAME})
+
 set_target_properties(${APP_NAME}
     PROPERTIES
         WIN32_EXECUTABLE ON
@@ -18,6 +19,7 @@ target_sources(${APP_NAME}
         src/ErrorCodes.h
         res/Info.plist.in
         res/SkyDolly.rc.in
+        res/SkyDolly.exe.manifest.in
         ${QM_FILES}
 )
 
@@ -59,13 +61,26 @@ elseif(${PLATFORM_IS_WINDOWS})
     #              Also refer e.g. to https://bugreports.qt.io/browse/QTBUG-62918
     # WORKAROUND: Place the Sky Dolly sources into a path without spaces
     # Resource file (*.rc)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/res/SkyDolly.exe.manifest.in"
+                   "${CMAKE_CURRENT_SOURCE_DIR}/res/SkyDolly.exe.manifest" @ONLY)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/res/SkyDolly.rc.in"
                    "${CMAKE_CURRENT_SOURCE_DIR}/res/SkyDolly.rc" @ONLY)
-    add_library(resources OBJECT "${CMAKE_CURRENT_SOURCE_DIR}/res/SkyDolly.rc")
+    add_library(manifest
+        OBJECT
+            "${CMAKE_CURRENT_SOURCE_DIR}/res/SkyDolly.exe.manifest"
+    )
+    add_library(resources
+        OBJECT
+            "${CMAKE_CURRENT_SOURCE_DIR}/res/SkyDolly.rc"
+    )
+    add_dependencies(resources
+        manifest
+    )
     target_include_directories(resources PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/res/")
     target_sources(${APP_NAME}
         PRIVATE
             src/SignalHandler_Windows.cpp
+            $<TARGET_OBJECTS:manifest>
             $<TARGET_OBJECTS:resources>
     )
 else()

@@ -60,4 +60,4 @@ build
 
 # Generated files
 src/SkyDolly/res/SkyDolly.rc
-
+src/SkyDolly/res/SkyDolly.exe.manifest
