@@ -88,7 +88,7 @@ public:
             catch (const std::exception &ex) {
                 heightAboveGeoid = height;
 #ifdef DEBUG
-                qDebug() << "Convert::wgs84ToEgmGeoid: caught exception: %s", ex.what();
+                qDebug() << "Convert::wgs84ToEgmGeoid: caught exception:" << ex.what();
 #endif
             }
         } else {
