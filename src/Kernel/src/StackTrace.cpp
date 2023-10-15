@@ -38,16 +38,17 @@ namespace {
         return value < 10 ? 1 : 1 + n_digits(value / 10);
     }
 
-    QString formatTrace(const std::vector<cpptrace::stacktrace_frame> &trace) noexcept
+    QString formatTrace(const cpptrace::stacktrace &trace) noexcept
     {
         QString stackTrace;
         QTextStream out(&stackTrace, QIODeviceBase::WriteOnly);
 
         std::size_t counter = 0;
         if (!trace.empty()) {
+            const auto frames = trace.frames;
             out << "Stack trace (most recent call first):" << Qt::endl;
-            const auto frame_number_width = n_digits(static_cast<int>(trace.size()) - 1);
-            for(const auto &frame : trace) {
+            const auto frame_number_width = n_digits(static_cast<int>(frames.size()) - 1);
+            for(const auto &frame : frames) {
                 out << '#'
                     << qSetFieldWidth(static_cast<int>(frame_number_width))
                     << Qt::left
@@ -68,10 +69,9 @@ namespace {
                     << QString::fromStdString(frame.filename)
                     << ":"
                     << frame.line
-                    << (frame.col > 0 ? ":" + QString::number(frame.col) : "")
+                    << (frame.column > 0 ? ":" + QString::number(frame.column) : "")
                     << Qt::endl;
             }
-
         } else {
             out << "No stack trace available." << Qt::endl;
         }
@@ -84,9 +84,9 @@ namespace {
 QString StackTrace::generate() noexcept
 {
     QString stackTrace;
-    cpptrace::print_trace();
     try {
-        auto trace = cpptrace::generate_trace();
+        const auto trace = cpptrace::generate_trace();
+        trace.print();
         stackTrace = ::formatTrace(trace);
     } catch (const std::exception &ex) {
         qCritical() << "An exception occurred while trying to generate stack trace:" << ex.what();
