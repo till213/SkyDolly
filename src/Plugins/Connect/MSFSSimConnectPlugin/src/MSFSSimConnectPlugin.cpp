@@ -199,10 +199,10 @@ bool MSFSSimConnectPlugin::onStartFlightRecording() noexcept
     d->flightPlan.clear();
 
     // Get flight information
-    HRESULT result = result && ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle,
-                                                                       Enum::underly(SimConnectType::DataRequest::AircraftInfo),
-                                                                       Enum::underly(SimConnectType::DataDefinition::AircraftInfo),
-                                                                       ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
+    HRESULT result = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle,
+                                                             Enum::underly(SimConnectType::DataRequest::AircraftInfo),
+                                                             Enum::underly(SimConnectType::DataDefinition::AircraftInfo),
+                                                             ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
     // Get aircraft information
     if (result == S_OK) {
         result = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle,
