@@ -10,6 +10,7 @@ set(APP_PROJECT_NAME "SkyDollyProject")
 # Used to populate the Info.plist.in and SkyDolly.rc.in
 set(PROJECT_APPLICATION_NAME "Sky Dolly")
 set(PROJECT_ORGANISATION_NAME till213)
+set(PROJECT_BUNDLE_IDENTIFIER net.${PROJECT_ORGANISATION_NAME}.${APP_NAME})
 
 project(
     ${APP_NAME}
