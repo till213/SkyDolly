@@ -118,7 +118,7 @@ void AbstractSkyConnect::tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) 
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
-        connectWithSim();
+        retryConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -136,7 +136,7 @@ bool AbstractSkyConnect::freezeUserAircraft(bool enable) const noexcept
 bool AbstractSkyConnect::sendSimulationEvent(SimulationEvent event, float arg1) noexcept
 {
     if (!isConnectedWithSim()) {
-        connectWithSim();
+        retryConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -184,7 +184,7 @@ void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
 void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
-        connectWithSim();
+        retryConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -267,7 +267,7 @@ bool AbstractSkyConnect::isInRecordingState() const noexcept
 void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
 {
     if (!isConnectedWithSim()) {
-        connectWithSim();
+        retryConnectAndSetup();
     }
     if (isConnectedWithSim()) {
         setState(Connect::State::Replay);
@@ -422,9 +422,7 @@ void AbstractSkyConnect::skipToEnd() noexcept
 void AbstractSkyConnect::seek(std::int64_t timestamp, SeekMode seekMode) noexcept
 {
     if (!isConnectedWithSim()) {
-        if (connectWithSim()) {
-            setState(Connect::State::Connected);
-        }
+        retryConnectAndSetup();
     }
     if (isConnectedWithSim()) {
         if (d->state != Connect::State::Recording) {
@@ -542,7 +540,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 bool AbstractSkyConnect::requestLocation() noexcept
 {
     if (!isConnectedWithSim()) {
-        connectWithSim();
+        retryConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -846,10 +844,14 @@ void AbstractSkyConnect::retryConnectAndSetup() noexcept
     bool ok = isConnectedWithSim();
     if (ok) {
         ok = retryWithReconnect([this]() -> bool { return onSetupFlightSimulatorShortcuts(d->shortcuts); });
+        if (ok) {
+            setState(Connect::State::Connected);
+        }
     }
 
     if (!ok) {
         // Try later, with progressively increasing retry periods
+        setState(Connect::State::Disconnected);
         const auto attempt = std::min(d->retryConnectPeriods.size(), d->reconnectAttempt);
         const auto period = d->retryConnectPeriods[attempt];
 #ifdef DEBUG
