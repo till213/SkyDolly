@@ -1,0 +1,55 @@
+name: Unit tests
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - src/**
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - src/**
+  schedule:
+    - cron: '35 22 * * 5'
+
+env:
+  # Path to the CMake build directory.
+  build: '${{ github.workspace }}/build'
+  config: 'Debug'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    name: Unit Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.6.*'
+          setup-python: 'false'
+
+      - name: Configure CMake
+        run: cmake -B ${{ env.build }} -DSKY_TESTS:BOOLEAN=ON
+
+      # Build is not required unless generated source files are used
+      - name: Build CMake
+        run: cmake --build ${{ env.build }} --verbose
+
+      - name: Run Unit Tests
+        run: cmake --build build --target test
+
+      - name: Publish Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Test Results
+          path: ${{ env.build }}/Testing/Temporary/LastTest.log

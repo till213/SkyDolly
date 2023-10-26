@@ -48,7 +48,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.5.*'
+        version: '6.6.*'
         setup-python: 'false'
 
     # Initializes the CodeQL tools for scanning.
