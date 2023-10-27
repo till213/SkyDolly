@@ -42,7 +42,7 @@ jobs:
           sudo apt-get install libxcb-icccm4 libxcb-xkb1 libxcb-icccm4 libxcb-image0 libxcb-render-util0 libxcb-randr0 libxcb-keysyms1 libxcb-xinerama0 libxcb-xinput-dev
 
       - name: Configure CMake
-        run: cmake --build ${{ env.build }} -DSKY_TESTS:BOOLEAN=ON
+        run: cmake --build ${{ env.build }} -DSKY_TESTS=ON
 
       - name: Build CMake
         run: cmake --build ${{ env.build }} --verbose
