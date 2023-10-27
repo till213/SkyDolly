@@ -13,7 +13,7 @@ on:
 env:
   # Path to the CMake build directory.
   build: '${{ github.workspace }}/build'
-  config: 'Debug'
+  config: 'Release'
 
 permissions:
   contents: read
@@ -44,18 +44,14 @@ jobs:
       - name: Create Build Directory
         shell: pwsh
         run: |
-          mkdir build
-          cd build
+          mkdir ${{ env.build }}
 
       - name: Build
         shell: pwsh
         run: |
-          cd build
-          cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -SKY_TESTS=ON ../
+          cd ${{ env.build }}
+          cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${{ env.config }} -SKY_TESTS=ON ../ --verbose
           cmake --build .
-
-      - name: Build CMake
-        run: cmake --build ${{ env.build }} --verbose
 
       - name: Test
         id: runtests
