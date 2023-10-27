@@ -67,7 +67,7 @@ jobs:
 
       - name: Publish Test Report
         if: ${{ always() && steps.runtests.outcome == 'failure'}}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
             name: TestReport
             path: |
