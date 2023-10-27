@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - src/**
+      - **
   pull_request:
     branches: [ "main" ]
     paths:
@@ -38,6 +38,11 @@ jobs:
           version: '6.6.*'
           setup-python: 'false'
 
+      - name: Install Linux Dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install libxcb-icccm4 libxcb-xkb1 libxcb-icccm4 libxcb-image0 libxcb-render-util0 libxcb-randr0 libxcb-keysyms1 libxcb-xinerama0 libxcb-xinput-dev
+
       - name: Configure CMake
         run: cmake --build ${{ env.build }} -DSKY_TESTS:BOOLEAN=ON
 
@@ -45,10 +50,28 @@ jobs:
         run: cmake --build ${{ env.build }} --verbose
 
       - name: Run Unit Tests
-        run: cmake --build ${{ env.build }} --target test
+        run: cmake --build ${{ env.build }}/test --target test
 
-      - name: Publish Test Results
+      - name: Test
+        id: runtests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          working-directory: ${{ env.build }}/test
+          run: cmake --build . --target test
+
+      - name: Prepare Test Report
+        if: ${{ always() && steps.runtests.outcome == 'failure'}}
+        uses: ./ci/processtestresults
+        with:
+            qt-tests: build/TestResults
+            junit-output: build/TestResults/junitresult.xml
+            html-output: build/TestResults/testsreport.html
+
+      - name: Publish Test Report
+        if: ${{ always() && steps.runtests.outcome == 'failure'}}
         uses: actions/upload-artifact@v2
         with:
-          name: Test Results
-          path: ${{ env.build }}/Testing/Temporary/LastTest.log
+            name: TestReport
+            path: |
+              build/TestResults/*.xml
+              build/TestResults/testsreport.html
