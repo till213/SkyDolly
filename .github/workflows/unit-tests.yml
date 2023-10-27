@@ -41,16 +41,21 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install libxcb-icccm4 libxcb-xkb1 libxcb-icccm4 libxcb-image0 libxcb-render-util0 libxcb-randr0 libxcb-keysyms1 libxcb-xinerama0 libxcb-xinput-dev
 
-      - name: Configure CMake
+      - name: Create Build Directory
+        shell: pwsh
         run: |
-          cmake -DSKY_TESTS:BOOLEAN=ON .
-          cmake --build ${{ env.build }}
+          mkdir build
+          cd build
+
+      - name: Build
+        shell: pwsh
+        run: |
+          cd build
+          cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -SKY_TESTS=ON ../
+          cmake --build .
 
       - name: Build CMake
         run: cmake --build ${{ env.build }} --verbose
-
-      - name: Run Unit Tests
-        run: cmake --build ${{ env.build }}/test --target test
 
       - name: Test
         id: runtests
