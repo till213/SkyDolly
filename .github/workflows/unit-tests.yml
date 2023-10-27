@@ -50,8 +50,8 @@ jobs:
         shell: pwsh
         run: |
           cd ${{ env.build }}
-          cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${{ env.config }} -SKY_TESTS=ON ../ --verbose
-          cmake --build .
+          cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${{ env.config }} -SKY_TESTS=ON ../
+          cmake --build . --verbose
 
       - name: Test
         id: runtests
