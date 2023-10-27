@@ -22,9 +22,6 @@ project(
 
 include(InitSubmodules)
 
-# Enables testing: 'ctest' needs to be run in the "build" directory
-include(CTest)
-
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 set(CMAKE_SHARED_MODULE_PREFIX "")
 set(CMAKE_CXX_STANDARD 20)
@@ -54,15 +51,15 @@ endif()
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     add_compile_definitions(DEBUG)
 endif()
-# No use of deprecated Qt functionality before Qt 6.5
-add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060500)
+# No use of deprecated Qt functionality before Qt 6.6
+add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060600)
  
 # Qt
 find_package(Qt6 REQUIRED COMPONENTS Widgets Sql LinguistTools)
 
 # 3rd Party
 # ordered-map (Tessil)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdParty/ordered-map)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdParty/ordered-map EXCLUDE_FROM_ALL)
 
 # GeographicLib (https://github.com/geographiclib/geographiclib)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/3rdParty/geographiclib EXCLUDE_FROM_ALL)
@@ -84,7 +81,7 @@ elseif(${PLATFORM_IS_WINDOWS} AND MSVC)
 else()
     message("CPPTRACE: Let cpptrace automatically set configuration")
 endif()
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/cpptrace)
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/cpptrace EXCLUDE_FROM_ALL)
 add_library(cpptrace::cpptrace ALIAS cpptrace)
 
 # Enabled link time optimisation (LTO) for release build, if available
@@ -105,6 +102,9 @@ endif()
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+
+# Enables testing: 'ctest' needs to be run in the "build" directory
+include(CTest)
 
 # Application libraries
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Kernel)
