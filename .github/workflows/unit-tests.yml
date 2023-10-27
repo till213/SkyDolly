@@ -55,7 +55,7 @@ jobs:
 
       - name: Test
         id: runtests
-        uses: GabrielBB/xvfb-action@v1
+        uses: coactions/setup-xvfb@v1
         with:
           working-directory: ${{ env.build }}/test
           run: cmake --build . --target test
