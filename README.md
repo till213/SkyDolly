@@ -3,6 +3,8 @@
 ![C++20](https://img.shields.io/badge/C%2B%2B-20-%2300599C?logo=cplusplus)
 ![Supported Compilers](https://img.shields.io/badge/%E2%9A%99%EF%B8%8F%20Compilers-GCC%2C%20clang%2C%20MSVC-informational)
 
+![Unit Tests](https://github.com/github/till213/SkyDolly/actions/workflows/unit-tests.yml/badge.svg)
+
 # Sky Dolly
 Sky Dolly - The Black Sheep for Your Flight Recordings.
 
