@@ -5,10 +5,12 @@ on:
     branches: [ "main" ]
     paths:
       - src/**
+      - test/**
   pull_request:
     branches: [ "main" ]
     paths:
       - src/**
+      - test/**
   schedule:
     - cron: '35 22 * * 5'
 
