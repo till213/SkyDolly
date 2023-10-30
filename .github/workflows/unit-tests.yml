@@ -55,10 +55,9 @@ jobs:
 
       - name: Test
         id: runtests
-        uses: coactions/setup-xvfb@v1
-        with:
-          working-directory: ${{ env.build }}/test
-          run: cmake --build . --target test
+        run: |
+          cd ${{ env.build }}/test
+          xvfb-run ctest . -C ${{ env.config }} 
 
       - name: Prepare Test Report
         if: ${{ always() && steps.runtests.outcome == 'failure'}}
