@@ -62,14 +62,6 @@ jobs:
           --verbose \
           --output-junit unit-tests.xml
 
-      - name: Prepare Test Report
-        if: ${{ always() && steps.runtests.outcome == 'failure'}}
-        uses: ./ci/processtestresults
-        with:
-            qt-tests: ${{ env.build }}/test/TestResults
-            junit-output: ${{ env.build }}/test/unit-tests.xml
-            html-output: ${{ env.build }}/test/testsreport.html
-
       - name: Publish Test Report
         if: ${{ always() && steps.runtests.outcome == 'failure'}}
         uses: actions/upload-artifact@v3
