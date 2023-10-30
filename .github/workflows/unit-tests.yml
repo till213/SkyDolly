@@ -36,6 +36,11 @@ jobs:
           version: '6.6.*'
           setup-python: 'false'
 
+      - name: Install Linux Dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install libxcb-cursor0
+  
       - name: Build
         shell: pwsh
         run: |
