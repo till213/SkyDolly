@@ -13,9 +13,10 @@ on:
     branches: [ "main" ]
     paths:
       - src/**
-      - 3rdParty/**
   pull_request:
     branches: [ "main" ]
+    paths:
+      - src/**
   schedule:
     - cron: '35 22 * * 5'
 
