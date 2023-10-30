@@ -67,5 +67,4 @@ jobs:
         with:
             name: TestReport
             path: |
-              build/TestResults/*.xml
-              build/TestResults/testsreport.html
+              ${{ env.build }}/test/unit-tests.xml
