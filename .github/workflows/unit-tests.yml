@@ -36,36 +36,30 @@ jobs:
           version: '6.6.*'
           setup-python: 'false'
 
-      - name: Install Linux Dependencies
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install libxcb-icccm4 libxcb-xkb1 libxcb-icccm4 libxcb-image0 libxcb-render-util0 libxcb-randr0 libxcb-keysyms1 libxcb-xinerama0 libxcb-xinput-dev
-
-      - name: Create Build Directory
-        shell: pwsh
-        run: |
-          mkdir ${{ env.build }}
-
       - name: Build
         shell: pwsh
         run: |
+          mkdir ${{ env.build }}
           cd ${{ env.build }}
-          cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${{ env.config }} -SKY_TESTS=ON ../
+          cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${{ env.config }} -DSKY_TESTS=ON ../
           cmake --build . --verbose
 
       - name: Test
         id: runtests
         run: |
           cd ${{ env.build }}/test
-          xvfb-run ctest . -C ${{ env.config }} 
+          xvfb-run ctest . -C ${{ env.config }} \
+          --output-on-failure \
+          --verbose \
+          --output-junit unit-tests.xml
 
       - name: Prepare Test Report
         if: ${{ always() && steps.runtests.outcome == 'failure'}}
         uses: ./ci/processtestresults
         with:
-            qt-tests: build/TestResults
-            junit-output: build/TestResults/junitresult.xml
-            html-output: build/TestResults/testsreport.html
+            qt-tests: ${{ env.build }}/test/TestResults
+            junit-output: ${{ env.build }}/test/unit-tests.xml
+            html-output: ${{ env.build }}/test/testsreport.html
 
       - name: Publish Test Report
         if: ${{ always() && steps.runtests.outcome == 'failure'}}
