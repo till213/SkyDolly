@@ -66,12 +66,6 @@ private slots:
 
     void calculateTimeOffset_data();
     void calculateTimeOffset();
-
-    /*!
-     * \brief Deliberate test failure.
-     * \todo REMOVE ME!!!
-     */
-    void deliberateFailure();
 };
 
 #endif // SKYMATHTEST_H
