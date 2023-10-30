@@ -747,4 +747,9 @@ void SkyMathTest::calculateTimeOffset()
     QCOMPARE(timeOffset, expectedTimeOffset);
 }
 
+void SkyMathTest::deliberateFailure()
+{
+    QCOMPARE(42, 1001);
+}
+
 QTEST_MAIN(SkyMathTest)
