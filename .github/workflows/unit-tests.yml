@@ -1,4 +1,4 @@
-name: Unit tests
+name: Unit Tests
 
 on:
   push:
@@ -25,8 +25,8 @@ permissions:
 jobs:
   test:
     permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      checks: write
+      pull-requests: write
     name: Unit Test
     runs-on: ubuntu-latest
 
@@ -62,10 +62,17 @@ jobs:
           --verbose \
           --output-junit unit-tests.xml
 
-      - name: Publish Test Report
+      - name: Upload Test Report
         if: ${{ always() && steps.runtests.outcome == 'failure'}}
         uses: actions/upload-artifact@v3
         with:
             name: TestReport
             path: |
               ${{ env.build }}/test/unit-tests.xml
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+           ${{ env.build }}/test/unit-tests.xml
