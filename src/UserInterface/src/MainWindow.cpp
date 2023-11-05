@@ -503,8 +503,7 @@ void MainWindow::initUi() noexcept
             QMessageBox::information(this, "Preview",
                                      QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
                                      "This patch release v%2 \"%3\" introduces customisable shortcuts for MSFS itself. "
-                                     "Dark mode is now also supported. "
-                                     "and will be removed in the next release.\n\n"
+                                     "Dark mode is now also supported.\n\n"
                                      "Note that the other CSV formats (flightradar24.com for instance) will not go away and remain fully supported, both import and export.\n\n"
                                      "All import plugins that support real-world timestamps such as the newly introduced Sky Dolly logbook import "
                                      "now also support automated time offset synchronisation when importing aircraft into a formation flight.\n\n"
