@@ -25,24 +25,24 @@
 #ifndef SIMULATIONVARIABLES_H
 #define SIMULATIONVARIABLES_H
 
-#include "SimConnectFlightInfo.h"
-#include "SimConnectAircraftInfo.h"
-#include "Position/SimConnectPositionUser.h"
-#include "Position/SimConnectPositionAll.h"
-#include "Engine/SimConnectEngineUser.h"
-#include "Engine/SimConnectEngineAi.h"
-#include "Engine/SimConnectEngineAll.h"
-#include "PrimaryFlightControl/SimConnectPrimaryFlightControlAi.h"
-#include "PrimaryFlightControl/SimConnectPrimaryFlightControlAll.h"
-#include "SecondaryFlightControl/SimConnectSecondaryFlightControlAll.h"
-#include "AircraftHandle/SimConnectAircraftHandleAll.h"
-#include "AircraftHandle/SimConnectAircraftHandleUser.h"
-#include "AircraftHandle/SimConnectAircraftHandleAi.h"
-#include "Light/SimConnectLightAll.h"
-#include "Light/SimConnectLightAi.h"
-#include "SimConnectFlightPlan.h"
-#include "SimConnectSimulationTime.h"
-#include "SimConnectLocation.h"
-#include "SimConnectVariables.h"
+#include "SimConnectFlightInfo.h" // IWYU pragma: export
+#include "SimConnectAircraftInfo.h" // IWYU pragma: export
+#include "Position/SimConnectPositionUser.h" // IWYU pragma: export
+#include "Position/SimConnectPositionAll.h" // IWYU pragma: export
+#include "Engine/SimConnectEngineUser.h" // IWYU pragma: export
+#include "Engine/SimConnectEngineAi.h" // IWYU pragma: export
+#include "Engine/SimConnectEngineAll.h" // IWYU pragma: export
+#include "PrimaryFlightControl/SimConnectPrimaryFlightControlAi.h" // IWYU pragma: export
+#include "PrimaryFlightControl/SimConnectPrimaryFlightControlAll.h" // IWYU pragma: export
+#include "SecondaryFlightControl/SimConnectSecondaryFlightControlAll.h" // IWYU pragma: export
+#include "AircraftHandle/SimConnectAircraftHandleAll.h" // IWYU pragma: export
+#include "AircraftHandle/SimConnectAircraftHandleUser.h" // IWYU pragma: export
+#include "AircraftHandle/SimConnectAircraftHandleAi.h" // IWYU pragma: export
+#include "Light/SimConnectLightAll.h" // IWYU pragma: export
+#include "Light/SimConnectLightAi.h" // IWYU pragma: export
+#include "SimConnectFlightPlan.h" // IWYU pragma: export
+#include "SimConnectSimulationTime.h" // IWYU pragma: export
+#include "SimConnectLocation.h" // IWYU pragma: export
+#include "SimConnectVariables.h" // IWYU pragma: export
 
 #endif // SIMULATIONVARIABLES_H
