@@ -27,7 +27,6 @@
 
 #include <cstdint>
 #include <algorithm>
-#include <array>
 
 #include <windows.h>
 #include <SimConnect.h>

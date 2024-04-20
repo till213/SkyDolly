@@ -26,11 +26,13 @@
 #define SIMCONNECTFLIGHTPLAN_H
 
 #include <windows.h>
-#include <strsafe.h>
 
 #include <SimConnect.h>
 
 #include <Model/Waypoint.h>
+
+// Include this last, as other Qt related headers will generate errors (unless STRSAFE_NO_DEPRECATE is defined)
+#include <strsafe.h>
 
 /*!
  * Simulation variables that represent aircraft lights, e.g. navigation light

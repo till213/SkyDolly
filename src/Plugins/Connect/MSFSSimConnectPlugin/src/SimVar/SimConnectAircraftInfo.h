@@ -28,7 +28,6 @@
 #include <cstdint>
 
 #include <windows.h>
-#include <strsafe.h>
 
 #include <Kernel/Const.h>
 #include <Model/SimType.h>
@@ -36,6 +35,9 @@
 #include <Model/AircraftInfo.h>
 #include <Model/AircraftType.h>
 #include <Model/FlightCondition.h>
+
+// Include this last, as other Qt related headers will generate errors (unless STRSAFE_NO_DEPRECATE is defined)
+#include <strsafe.h>
 
 /*!
  * Information simulation variables about the aircraft and environment at start.
