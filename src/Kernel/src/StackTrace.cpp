@@ -59,7 +59,7 @@ namespace {
                     << "0x"
                     << qSetFieldWidth(2 * sizeof(uintptr_t))
                     << qSetPadChar('0')
-                    << frame.address
+                    << frame.object_address
                     << qSetFieldWidth(0)
                     << Qt::dec
                     << qSetPadChar(' ')
@@ -68,8 +68,9 @@ namespace {
                     << " at "
                     << QString::fromStdString(frame.filename)
                     << ":"
-                    << frame.line
-                    << (frame.column > 0 ? ":" + QString::number(frame.column) : "")
+                    << QString::number(frame.line.value_or(0))
+                    << ":"
+                    << QString::number(frame.column.value_or(0))
                     << Qt::endl;
             }
         } else {
@@ -95,6 +96,3 @@ QString StackTrace::generate() noexcept
     }
     return stackTrace;
 }
-
-// PRIVATE
-

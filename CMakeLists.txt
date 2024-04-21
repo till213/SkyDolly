@@ -82,7 +82,6 @@ else()
     message("CPPTRACE: Let cpptrace automatically set configuration")
 endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/cpptrace EXCLUDE_FROM_ALL)
-add_library(cpptrace::cpptrace ALIAS cpptrace)
 
 # Enabled link time optimisation (LTO) for release build, if available
 if(NOT ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
