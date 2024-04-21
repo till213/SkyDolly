@@ -852,7 +852,7 @@ void AbstractSkyConnect::retryConnectAndSetup() noexcept
     if (!ok) {
         // Try later, with progressively increasing retry periods
         setState(Connect::State::Disconnected);
-        const auto attempt = std::min(d->retryConnectPeriods.size(), d->reconnectAttempt);
+        const auto attempt = std::min(d->retryConnectPeriods.size() - 1, d->reconnectAttempt);
         const auto period = d->retryConnectPeriods[attempt];
 #ifdef DEBUG
         qDebug() << "AbstractSkyConnectPrivate: retryConnectAndSetup: attempt:" << (d->reconnectAttempt + 1)
