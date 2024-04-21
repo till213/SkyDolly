@@ -151,6 +151,31 @@ void SettingsDialog::updateUi() noexcept
     if (pluginName) {
         ui->connectionComboBox->setCurrentText(pluginName.value());
     }
+
+    switch (skyConnectManager.getState()) {
+    case Connect::State::Disconnected:
+        ui->connectionStatusLabel->setText(tr("Disconnected"));
+        break;
+    case Connect::State::Connected:
+        ui->connectionStatusLabel->setText(tr("Connected"));
+        break;
+    case Connect::State::Recording:
+        ui->connectionStatusLabel->setText(tr("Recording"));
+        break;
+    case Connect::State::RecordingPaused:
+        ui->connectionStatusLabel->setText(tr("Recording paused"));
+        break;
+    case Connect::State::Replay:
+        ui->connectionStatusLabel->setText(tr("Replaying"));
+        break;
+    case Connect::State::ReplayPaused:
+        ui->connectionStatusLabel->setText(tr("Replay paused"));
+        break;
+    default:
+        ui->connectionStatusLabel->setText(tr("Disconnected"));
+        break;
+    }
+
     const FlightSimulatorShortcuts &shortcuts = settings.getFlightSimulatorShortcuts();
     ui->recordSequenceEdit->setKeySequence(shortcuts.record);
     ui->replaySequenceEdit->setKeySequence(shortcuts.replay);

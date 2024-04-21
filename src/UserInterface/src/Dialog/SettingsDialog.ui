@@ -196,8 +196,8 @@
       <attribute name="title">
        <string>Flight Simulator</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item>
+      <layout class="QFormLayout" name="formLayout_9">
+       <item row="0" column="0">
         <layout class="QFormLayout" name="formLayout_7">
          <item row="0" column="0">
           <widget class="QLabel" name="label_6">
@@ -210,7 +210,7 @@
           <widget class="QComboBox" name="connectionComboBox">
            <property name="minimumSize">
             <size>
-             <width>100</width>
+             <width>200</width>
              <height>0</height>
             </size>
            </property>
@@ -219,9 +219,23 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>Status: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="connectionStatusLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
-       <item>
+       <item row="1" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBox_4">
          <property name="title">
           <string>Shortcuts</string>
@@ -361,15 +375,15 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="2" column="1">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>381</width>
+           <height>66</height>
           </size>
          </property>
         </spacer>
