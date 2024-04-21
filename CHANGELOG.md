@@ -32,6 +32,7 @@
 - KML export: the _first_ position point is now properly exported as well
 - Flight condition is not overwritten anymore when recording additional formation aircraft
 - Toggling the "active pause" in MSFS while recording now properly resumes/pauses recording and the flight itself [[Issue #106](https://github.com/till213/SkyDolly/issues/106)]
+- Prevent a crash that would occur when a flight is loaded and the replay mode in the Formation module is changed to "Fly with formation", but no connection with MSFS exists yet
 
 ### Under the Hood
 - Upgrade GeographicLib to version 2.2 (from version 2.1.2)
