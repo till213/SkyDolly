@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <cmath>
+#include <array>
 
 #include <QTimer>
 #include <QElapsedTimer>
@@ -33,6 +34,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/SkyMath.h>
 #include <Kernel/Const.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
@@ -57,6 +59,11 @@ namespace
 
     // The interval [milliseconds] in which timestampChanged signals are emitted
     constexpr std::int64_t NotificationInterval = 1000 / NotificationFrequency;
+
+    // Periods to wait after each failed connection attempt - in fact, the first
+    // NofRetryConnectPeriods Fibonacci numbers (starting with 0), corresponding
+    // to about 90 seconds longest period (89, to be specific)
+    constexpr int NofRetryConnectPeriods = 12;
 }
 
 struct AbstractSkyConnectPrivate
@@ -64,16 +71,22 @@ struct AbstractSkyConnectPrivate
     AbstractSkyConnectPrivate() noexcept
     {
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
+        reconnectTimer.setSingleShot(true);
+        retryConnectPeriods = SkyMath::calculateFibonacci<::NofRetryConnectPeriods>(::NofRetryConnectPeriods);
 #ifdef DEBUG
         qDebug() << "AbstractSkyConnectPrivate: AbstractSkyConnectPrivate: elapsed timer clock type:" << elapsedTimer.clockType();
 #endif
     }
 
     SkyConnectIntf::ReplayMode replayMode {SkyConnectIntf::ReplayMode::Normal};
+    FlightSimulatorShortcuts shortcuts;
     Connect::State state {Connect::State::Disconnected};
     Flight &currentFlight {Logbook::getInstance().getCurrentFlight()};
     // Triggers the recording of sample data (if not event-based recording)
     QTimer recordingTimer;
+    QTimer reconnectTimer;
+    std::size_t reconnectAttempt {0};
+    std::array<int, ::NofRetryConnectPeriods> retryConnectPeriods;
     std::int64_t currentTimestamp {0};
     std::int64_t lastNotificationTimestamp {0};
     double recordingSampleRate {Settings::getInstance().getRecordingSampleRateValue()};
@@ -95,23 +108,23 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 
 AbstractSkyConnect::~AbstractSkyConnect() = default;
 
-bool AbstractSkyConnect::setupFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept
+void AbstractSkyConnect::tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept
 {
-    if (!isConnectedWithSim()) {
-        connectWithSim();
-    }
+    d->shortcuts = std::move(shortcuts);
+    tryFirstConnectAndSetup();
+}
 
-    bool ok = isConnectedWithSim();
-    if (ok) {
-        ok = retryWithReconnect([this, shortcuts]() -> bool { return onSetupFlightSimulatorShortcuts(shortcuts); });
-    }
-    return ok;
+void AbstractSkyConnect::disconnect() noexcept
+{
+    onDisconnectFromSim();
+    setState(Connect::State::Disconnected);
+    tryFirstConnectAndSetup();
 }
 
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
-        connectWithSim();
+        tryFirstConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -129,7 +142,7 @@ bool AbstractSkyConnect::freezeUserAircraft(bool enable) const noexcept
 bool AbstractSkyConnect::sendSimulationEvent(SimulationEvent event, float arg1) noexcept
 {
     if (!isConnectedWithSim()) {
-        connectWithSim();
+        tryFirstConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -177,7 +190,7 @@ void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
 void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
-        connectWithSim();
+        tryFirstConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -239,10 +252,11 @@ void AbstractSkyConnect::stopRecording() noexcept
     d->recordingTimer.stop();
     // Only go into "recording stopped" state once the aircraft duration has been invalidated, in
     // order to properly update the total flight duration
-    setState(Connect::State::Connected);
+    Connect::State state = isConnected() ? Connect::State::Connected : Connect::State::Disconnected;
+    setState(state);
 
     // Create a new AI object for the newly recorded aircraft in case "fly with formation" is enabled
-    if (d->replayMode == ReplayMode::FlyWithFormation) {
+    if (state == Connect::State::Connected && d->replayMode == ReplayMode::FlyWithFormation) {
         onAddAiObject(d->currentFlight.getUserAircraft());
     }
 }
@@ -260,7 +274,7 @@ bool AbstractSkyConnect::isInRecordingState() const noexcept
 void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
 {
     if (!isConnectedWithSim()) {
-        connectWithSim();
+        tryFirstConnectAndSetup();
     }
     if (isConnectedWithSim()) {
         setState(Connect::State::Replay);
@@ -415,9 +429,7 @@ void AbstractSkyConnect::skipToEnd() noexcept
 void AbstractSkyConnect::seek(std::int64_t timestamp, SeekMode seekMode) noexcept
 {
     if (!isConnectedWithSim()) {
-        if (connectWithSim()) {
-            setState(Connect::State::Connected);
-        }
+        tryFirstConnectAndSetup();
     }
     if (isConnectedWithSim()) {
         if (d->state != Connect::State::Recording) {
@@ -535,7 +547,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 bool AbstractSkyConnect::requestLocation() noexcept
 {
     if (!isConnectedWithSim()) {
-        connectWithSim();
+        tryFirstConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -703,8 +715,13 @@ void AbstractSkyConnect::frenchConnection() noexcept
 {
     connect(&(d->recordingTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::recordData);
-    connect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
+    connect(&(d->reconnectTimer), &QTimer::timeout,
+            this, &AbstractSkyConnect::retryConnectAndSetup);
+    Settings &settings = Settings::getInstance();
+    connect(&settings, &Settings::recordingSampleRateChanged,
             this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
+    connect(&settings, &Settings::flightSimulatorShortcutsChanged,
+            this, &AbstractSkyConnect::handleFlightSimulatorShortCutsChanged);
 }
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
@@ -718,6 +735,12 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
     return static_cast<std::int64_t>(std::round(settings.isAbsoluteSeekEnabled() ?
                                      settings.getSeekIntervalSeconds() * 1000.0 :
                                      settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
+}
+
+void AbstractSkyConnect::tryFirstConnectAndSetup() noexcept
+{
+    d->reconnectAttempt = 0;
+    retryConnectAndSetup();
 }
 
 bool AbstractSkyConnect::retryWithReconnect(const std::function<bool()> &func)
@@ -814,5 +837,41 @@ void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate
             d->recordingTimer.stop();
         }
         onRecordingSampleRateChanged(sampleRate);
+    }
+}
+
+void AbstractSkyConnect::handleFlightSimulatorShortCutsChanged(const FlightSimulatorShortcuts &shortcuts) noexcept
+{
+    d->shortcuts = shortcuts;
+    d->reconnectAttempt = 0;
+    retryConnectAndSetup();
+}
+
+void AbstractSkyConnect::retryConnectAndSetup() noexcept
+{
+    d->reconnectTimer.stop();
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this]() -> bool { return onSetupFlightSimulatorShortcuts(d->shortcuts); });
+        if (ok) {
+            setState(Connect::State::Connected);
+        }
+    }
+
+    if (!ok) {
+        // Try later, with progressively increasing retry periods
+        setState(Connect::State::Disconnected);
+        const auto attempt = std::min(d->retryConnectPeriods.size() - 1, d->reconnectAttempt);
+        const auto period = d->retryConnectPeriods[attempt];
+#ifdef DEBUG
+        qDebug() << "AbstractSkyConnectPrivate: retryConnectAndSetup: attempt:" << (d->reconnectAttempt + 1)
+                 << "failed, trying again in" << period << "seconds";
+#endif
+        d->reconnectAttempt++;
+        d->reconnectTimer.start(period * 1000);
     }
 }

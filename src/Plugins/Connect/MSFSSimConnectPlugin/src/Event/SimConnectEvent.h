@@ -95,7 +95,8 @@ namespace SimConnectEvent
         CustomStop,
         CustomForward,
         CustomBackward,
-        CustomRewind
+        CustomBegin,
+        CustomEnd
     };
 }
 

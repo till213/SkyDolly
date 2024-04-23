@@ -21,6 +21,7 @@
   * The flight number can now be edited (both in the Flight dialog and logbook table)
 - The Formation module settings (relative position, replay mode) are now persisted
 - Improved module settings performance: the logbook and location tables are now updated exactly once (and not twice) upon module initialisation
+- A flight recording in progress is now automatically stopped and the flight stored to the logbook in case the flight simulator is terminated (e.g. also due to a crash)
 
 ### Other
 - Remove import & export CSV Sky Dolly format

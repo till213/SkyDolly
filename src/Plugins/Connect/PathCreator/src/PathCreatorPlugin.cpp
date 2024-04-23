@@ -119,7 +119,8 @@ bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorSho
     qDebug() << "Stop shortcut:" << shortcuts.stop.toString();
     qDebug() << "Backward shortcut:" << shortcuts.backward.toString();
     qDebug() << "Forward shortcut:" << shortcuts.forward.toString();
-    qDebug() << "Rewind shortcut:" << shortcuts.rewind.toString();
+    qDebug() << "Begin shortcut:" << shortcuts.begin.toString();
+    qDebug() << "End shortcut:" << shortcuts.end.toString();
 #endif
     return true;
 }
@@ -226,7 +227,17 @@ bool PathCreatorPlugin::isConnectedWithSim() const noexcept
 
 bool PathCreatorPlugin::connectWithSim() noexcept
 {
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::connectWithSim: CALLED";
+#endif
     return true;
+}
+
+void PathCreatorPlugin::onDisconnectFromSim() noexcept
+{
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::onDisconnectFromSim: CALLED";
+#endif
 }
 
 void PathCreatorPlugin::onAddAiObject([[maybe_unused]] const Aircraft &aircraft) noexcept

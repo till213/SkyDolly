@@ -43,6 +43,7 @@ class QUuid;
 #include "Connect/SkyConnectIntf.h"
 #include "PluginManagerLib.h"
 
+struct FlightSimulatorShortcuts;
 struct SkyConnectManagerPrivate;
 
 /// \todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
@@ -85,7 +86,7 @@ public:
      * \param shortcuts
      *        the shortcuts to be setup within the flight simulator, in order to control Sky Dolly
      */
-    void tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept;
+    void tryConnectAndSetup(const FlightSimulatorShortcuts &shortcuts) noexcept;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
     bool setUserAircraftPosition(const PositionData & positionData) noexcept;
@@ -199,6 +200,9 @@ private:
 
     void frenchConnection() noexcept;
     void initialisePlugins(const QString &pluginDirectoryName) noexcept;
+
+private slots:
+    void onFlightSimulatorShortcutsChanged(const FlightSimulatorShortcuts &shortcuts);
 };
 
 #endif // SKYCONNECTMANAGER_H

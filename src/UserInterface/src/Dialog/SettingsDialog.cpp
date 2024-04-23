@@ -118,7 +118,8 @@ void SettingsDialog::initUi() noexcept
     ui->stopSequenceEdit->setMaximumSequenceLength(1);
     ui->backwardSequenceEdit->setMaximumSequenceLength(1);
     ui->forwardSequenceEdit->setMaximumSequenceLength(1);
-    ui->rewindSequenceEdit->setMaximumSequenceLength(1);
+    ui->beginSequenceEdit->setMaximumSequenceLength(1);
+    ui->endSequenceEdit->setMaximumSequenceLength(1);
 
     ui->settingsTabWidget->setCurrentIndex(0);
 }
@@ -150,6 +151,31 @@ void SettingsDialog::updateUi() noexcept
     if (pluginName) {
         ui->connectionComboBox->setCurrentText(pluginName.value());
     }
+
+    switch (skyConnectManager.getState()) {
+    case Connect::State::Disconnected:
+        ui->connectionStatusLabel->setText(tr("Disconnected"));
+        break;
+    case Connect::State::Connected:
+        ui->connectionStatusLabel->setText(tr("Connected"));
+        break;
+    case Connect::State::Recording:
+        ui->connectionStatusLabel->setText(tr("Recording"));
+        break;
+    case Connect::State::RecordingPaused:
+        ui->connectionStatusLabel->setText(tr("Recording paused"));
+        break;
+    case Connect::State::Replay:
+        ui->connectionStatusLabel->setText(tr("Replaying"));
+        break;
+    case Connect::State::ReplayPaused:
+        ui->connectionStatusLabel->setText(tr("Replay paused"));
+        break;
+    default:
+        ui->connectionStatusLabel->setText(tr("Disconnected"));
+        break;
+    }
+
     const FlightSimulatorShortcuts &shortcuts = settings.getFlightSimulatorShortcuts();
     ui->recordSequenceEdit->setKeySequence(shortcuts.record);
     ui->replaySequenceEdit->setKeySequence(shortcuts.replay);
@@ -157,7 +183,8 @@ void SettingsDialog::updateUi() noexcept
     ui->stopSequenceEdit->setKeySequence(shortcuts.stop);
     ui->backwardSequenceEdit->setKeySequence(shortcuts.backward);
     ui->forwardSequenceEdit->setKeySequence(shortcuts.forward);
-    ui->rewindSequenceEdit->setKeySequence(shortcuts.rewind);
+    ui->beginSequenceEdit->setKeySequence(shortcuts.begin);
+    ui->endSequenceEdit->setKeySequence(shortcuts.end);
 
     // User interface
     ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
@@ -197,7 +224,8 @@ void SettingsDialog::handleAccepted() noexcept
     shortcuts.stop = ui->stopSequenceEdit->keySequence();
     shortcuts.backward = ui->backwardSequenceEdit->keySequence();
     shortcuts.forward = ui->forwardSequenceEdit->keySequence();
-    shortcuts.rewind = ui->rewindSequenceEdit->keySequence();
+    shortcuts.begin = ui->beginSequenceEdit->keySequence();
+    shortcuts.end = ui->endSequenceEdit->keySequence();
     settings.setFlightSimulatorShortcuts(shortcuts);
 
     // User interface

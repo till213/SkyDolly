@@ -133,12 +133,11 @@ std::optional<QString> SkyConnectManager::getCurrentSkyConnectPluginName() const
     return {};
 }
 
-void SkyConnectManager::tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept
+void SkyConnectManager::tryConnectAndSetup(const FlightSimulatorShortcuts &shortcuts) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
-        // TODO IMPLEMENT ME!!! Retry in case of failure
-        const bool ok = skyConnect->get().setupFlightSimulatorShortcuts(shortcuts);
+        skyConnect->get().tryConnectAndSetup(shortcuts);
     }
 }
 
@@ -432,7 +431,9 @@ void SkyConnectManager::frenchConnection() noexcept
     // Settings
     Settings &settings = Settings::getInstance();
     connect(&settings, &Settings::skyConnectPluginUuidChanged,
-            this, &SkyConnectManager::tryAndSetCurrentSkyConnect);  
+            this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
+    connect(&settings, &Settings::flightSimulatorShortcutsChanged,
+            this, &SkyConnectManager::onFlightSimulatorShortcutsChanged);
 }
 
 void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) noexcept
@@ -461,4 +462,11 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
         }
         d->pluginsDirectory.cdUp();
     }
+}
+
+// PRIVATE SLOTS
+
+void SkyConnectManager::onFlightSimulatorShortcutsChanged(const FlightSimulatorShortcuts &shortcuts)
+{
+    tryConnectAndSetup(shortcuts);
 }
