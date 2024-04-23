@@ -124,7 +124,7 @@ void AbstractSkyConnect::disconnect() noexcept
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
-        retryConnectAndSetup();
+        tryFirstConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -142,7 +142,7 @@ bool AbstractSkyConnect::freezeUserAircraft(bool enable) const noexcept
 bool AbstractSkyConnect::sendSimulationEvent(SimulationEvent event, float arg1) noexcept
 {
     if (!isConnectedWithSim()) {
-        retryConnectAndSetup();
+        tryFirstConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -190,7 +190,7 @@ void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
 void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
-        retryConnectAndSetup();
+        tryFirstConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
@@ -252,10 +252,11 @@ void AbstractSkyConnect::stopRecording() noexcept
     d->recordingTimer.stop();
     // Only go into "recording stopped" state once the aircraft duration has been invalidated, in
     // order to properly update the total flight duration
-    setState(Connect::State::Connected);
+    Connect::State state = isConnected() ? Connect::State::Connected : Connect::State::Disconnected;
+    setState(state);
 
     // Create a new AI object for the newly recorded aircraft in case "fly with formation" is enabled
-    if (d->replayMode == ReplayMode::FlyWithFormation) {
+    if (state == Connect::State::Connected && d->replayMode == ReplayMode::FlyWithFormation) {
         onAddAiObject(d->currentFlight.getUserAircraft());
     }
 }
@@ -273,7 +274,7 @@ bool AbstractSkyConnect::isInRecordingState() const noexcept
 void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
 {
     if (!isConnectedWithSim()) {
-        retryConnectAndSetup();
+        tryFirstConnectAndSetup();
     }
     if (isConnectedWithSim()) {
         setState(Connect::State::Replay);
@@ -428,7 +429,7 @@ void AbstractSkyConnect::skipToEnd() noexcept
 void AbstractSkyConnect::seek(std::int64_t timestamp, SeekMode seekMode) noexcept
 {
     if (!isConnectedWithSim()) {
-        retryConnectAndSetup();
+        tryFirstConnectAndSetup();
     }
     if (isConnectedWithSim()) {
         if (d->state != Connect::State::Recording) {
@@ -546,7 +547,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 bool AbstractSkyConnect::requestLocation() noexcept
 {
     if (!isConnectedWithSim()) {
-        retryConnectAndSetup();
+        tryFirstConnectAndSetup();
     }
 
     bool ok = isConnectedWithSim();
