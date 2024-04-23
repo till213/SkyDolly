@@ -227,7 +227,17 @@ bool PathCreatorPlugin::isConnectedWithSim() const noexcept
 
 bool PathCreatorPlugin::connectWithSim() noexcept
 {
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::connectWithSim: CALLED";
+#endif
     return true;
+}
+
+void PathCreatorPlugin::onDisconnectFromSim() noexcept
+{
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::onDisconnectFromSim: CALLED";
+#endif
 }
 
 void PathCreatorPlugin::onAddAiObject([[maybe_unused]] const Aircraft &aircraft) noexcept

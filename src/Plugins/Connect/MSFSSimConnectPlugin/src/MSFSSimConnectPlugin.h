@@ -83,6 +83,7 @@ protected:
     bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
     bool isConnectedWithSim() const noexcept override;
     bool connectWithSim() noexcept override;
+    void onDisconnectFromSim() noexcept override;
 
     void onAddAiObject(const Aircraft &aircraft) noexcept override;
     void onRemoveAiObject(std::int64_t aircraftId) noexcept override;
@@ -100,7 +101,7 @@ private:
 
     void resetCurrentSampleData() noexcept;
     bool reconnectWithSim() noexcept;
-    bool close() noexcept;
+    bool closeConnection() noexcept;
     void setupRequestData() noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
     void replay() noexcept;

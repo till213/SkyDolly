@@ -120,7 +120,7 @@ MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
         d->eventStateHandler->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
         d->eventStateHandler->resumePausedSimulation();
     }
-    close();
+    closeConnection();
 }
 
 bool MSFSSimConnectPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
@@ -545,6 +545,11 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
     return ok;
 }
 
+void MSFSSimConnectPlugin::onDisconnectFromSim() noexcept
+{
+    closeConnection();
+}
+
 void MSFSSimConnectPlugin::onAddAiObject(const Aircraft &aircraft) noexcept
 {
     // Check if initialised (only when connected with MSFS)
@@ -641,13 +646,13 @@ void MSFSSimConnectPlugin::resetCurrentSampleData() noexcept
 bool MSFSSimConnectPlugin::reconnectWithSim() noexcept
 {
     bool ok {false};
-    if (close()) {
+    if (closeConnection()) {
         ok = connectWithSim();
     }
     return ok;
 }
 
-bool MSFSSimConnectPlugin::close() noexcept
+bool MSFSSimConnectPlugin::closeConnection() noexcept
 {
     HRESULT result {S_OK};
     if (d->simConnectAi != nullptr) {
@@ -1200,7 +1205,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 #ifdef DEBUG
         qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_QUIT";
 #endif
-        skyConnect->close();
+        skyConnect->disconnect();
         break;
 
     case ::SIMCONNECT_RECV_ID_OPEN:

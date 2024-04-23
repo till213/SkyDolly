@@ -110,7 +110,31 @@ public:
     SkyConnectIntf &operator=(SkyConnectIntf &&rhs) = delete;
     ~SkyConnectIntf() override = default;
     
+    /*!
+     * Try to connect with the flight simulator. If the connection has been
+     * successfully established then also setup the given \p shortcuts in
+     * the flight simulator.
+     *
+     * Otherwise a timer is started that tries to reconnnect in various
+     * intervals with increasing length. Already running reconnect timers
+     * are restarted, resetting the reconnect interval as well.
+     *
+     * \param shortcuts
+     *        the keyboard shortcuts to setup within the flight simulator
+     * \sa stateChanged
+     */
     virtual void tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept = 0;
+
+    /*!
+     * Disconnects from the flight simulator. Also call this method when the disconnect
+     * is initiated by the flight simulator itself.
+     *
+     * Any running reconnect timer is restarted.
+     *
+     * \sa tryConnectAndSetup
+     * \sa stateChanged
+     */
+    virtual void disconnect() noexcept = 0;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;

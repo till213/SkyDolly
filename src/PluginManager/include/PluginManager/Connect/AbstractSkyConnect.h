@@ -46,7 +46,6 @@ class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf
 {
     Q_OBJECT
 public:
-
     enum struct AircraftSelection {
         All,
         UserAircraft
@@ -60,6 +59,7 @@ public:
     ~AbstractSkyConnect() override;
     
     void tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept override;
+    void disconnect() noexcept override;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
     bool freezeUserAircraft(bool enable) const noexcept override;
@@ -159,6 +159,7 @@ protected:
     virtual bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept = 0;
     virtual bool isConnectedWithSim() const noexcept = 0;
     virtual bool connectWithSim() noexcept = 0;
+    virtual void onDisconnectFromSim() noexcept = 0;
 
     virtual void onAddAiObject(const Aircraft &aircraft) noexcept = 0;
     virtual void onRemoveAiObject(std::int64_t aircraftId) noexcept = 0;
@@ -177,6 +178,8 @@ private:
     bool hasRecordingStarted() const noexcept;
     inline std::int64_t getSkipInterval() const noexcept;
 
+    // Resets the reconnection count and starts the reconnection attempts with 'retryConnectAndSetup'
+    void tryFirstConnectAndSetup() noexcept;
     inline bool retryWithReconnect(const std::function<bool()> &func);
 
     bool setupInitialRecordingPosition(InitialPosition initialPosition) noexcept;

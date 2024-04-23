@@ -81,6 +81,7 @@ protected:
     bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
     bool isConnectedWithSim() const noexcept override;
     bool connectWithSim() noexcept override;
+    void onDisconnectFromSim() noexcept override;
 
     void onAddAiObject(const Aircraft &aircraft) noexcept override;
     void onRemoveAiObject(std::int64_t aircraftId) noexcept override;

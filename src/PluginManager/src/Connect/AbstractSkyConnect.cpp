@@ -111,8 +111,14 @@ AbstractSkyConnect::~AbstractSkyConnect() = default;
 void AbstractSkyConnect::tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept
 {
     d->shortcuts = std::move(shortcuts);
-    d->reconnectAttempt = 0;
-    retryConnectAndSetup();
+    tryFirstConnectAndSetup();
+}
+
+void AbstractSkyConnect::disconnect() noexcept
+{
+    onDisconnectFromSim();
+    setState(Connect::State::Disconnected);
+    tryFirstConnectAndSetup();
 }
 
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
@@ -728,6 +734,12 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
     return static_cast<std::int64_t>(std::round(settings.isAbsoluteSeekEnabled() ?
                                      settings.getSeekIntervalSeconds() * 1000.0 :
                                      settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
+}
+
+void AbstractSkyConnect::tryFirstConnectAndSetup() noexcept
+{
+    d->reconnectAttempt = 0;
+    retryConnectAndSetup();
 }
 
 bool AbstractSkyConnect::retryWithReconnect(const std::function<bool()> &func)
