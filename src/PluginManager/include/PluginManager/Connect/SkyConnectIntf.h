@@ -136,6 +136,15 @@ public:
      */
     virtual void disconnect() noexcept = 0;
 
+    /*!
+     * Returns the timer's remaining value in milliseconds left until the timeout.
+     *
+     * \return the remaining time until the next reconnect attempt is being made [seconds];
+     *         if the timer is inactive, the returned value will be -1;
+     *         if the timer is overdue, the returned value will be 0.
+     */
+    virtual int getRemainingReconnectTime() const noexcept = 0;
+
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) const noexcept = 0;

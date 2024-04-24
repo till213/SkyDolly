@@ -33,6 +33,8 @@ namespace Ui {
     class SettingsDialog;
 }
 
+struct SettingsDialogPrivate;
+
 class SettingsDialog : public QDialog
 {
     Q_OBJECT
@@ -50,12 +52,14 @@ protected:
 
 private:
     std::unique_ptr<Ui::SettingsDialog> ui;
+    const std::unique_ptr<SettingsDialogPrivate> d;
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
 
 private slots:
     void updateUi() noexcept;
+    void updateConnectionStatus() noexcept;
     void handleAccepted() noexcept;
 };
 

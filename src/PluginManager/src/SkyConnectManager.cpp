@@ -141,6 +141,16 @@ void SkyConnectManager::tryConnectAndSetup(const FlightSimulatorShortcuts &short
     }
 }
 
+int SkyConnectManager::getRemainingReconnectTime() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    if (skyConnect) {
+        return skyConnect->get().getRemainingReconnectTime();
+    } else {
+        return -1;
+    }
+}
+
 bool SkyConnectManager::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
