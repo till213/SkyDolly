@@ -61,6 +61,7 @@ private slots:
     void updateUi() noexcept;
     void updateConnectionStatus() noexcept;
     void handleAccepted() noexcept;
+    void handleTabChanged(int index) noexcept;
 };
 
 #endif // SETTINGSDIALOG_H

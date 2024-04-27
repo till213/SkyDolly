@@ -24,12 +24,16 @@
  */
 #include <memory>
 #include <optional>
+#include <cmath>
 
 #include <QDialog>
 #include <QWidget>
 #include <QString>
 #include <QDoubleSpinBox>
 #include <QTimer>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
@@ -48,6 +52,9 @@ namespace
     constexpr double MaxSeekPercent {100.0};
 
     constexpr int UpdateIntervalMSec = 1000;
+
+    constexpr int ReplayTab = 0;
+    constexpr int FlightSimulatorTab = 2;
 }
 
 struct SettingsDialogPrivate
@@ -81,7 +88,6 @@ void SettingsDialog::showEvent(QShowEvent *event) noexcept
     updateUi();
     connect(&Settings::getInstance(), &Settings::changed,
             this, &SettingsDialog::updateUi);
-    d->updateTimer.start(::UpdateIntervalMSec);
 }
 
 void SettingsDialog::hideEvent(QHideEvent *event) noexcept
@@ -89,7 +95,6 @@ void SettingsDialog::hideEvent(QHideEvent *event) noexcept
     QDialog::hideEvent(event);
     disconnect(&Settings::getInstance(), &Settings::changed,
                this, &SettingsDialog::updateUi);
-    d->updateTimer.stop();
 }
 
 // PRIVATE
@@ -138,15 +143,16 @@ void SettingsDialog::initUi() noexcept
     ui->beginSequenceEdit->setMaximumSequenceLength(1);
     ui->endSequenceEdit->setMaximumSequenceLength(1);
 
-    ui->settingsTabWidget->setCurrentIndex(0);
+    ui->settingsTabWidget->setCurrentIndex(::ReplayTab);
+    handleTabChanged(ui->settingsTabWidget->currentIndex());
 }
 
 void SettingsDialog::frenchConnection() noexcept
 {
     connect(this, &SettingsDialog::accepted,
             this, &SettingsDialog::handleAccepted);
-    connect(&d->updateTimer, &QTimer::timeout,
-            this, &SettingsDialog::updateConnectionStatus);
+    connect(ui->settingsTabWidget, &QTabWidget::currentChanged,
+            this, &SettingsDialog::handleTabChanged);
 }
 
 // PRIVATE SLOTS
@@ -205,7 +211,7 @@ void SettingsDialog::updateConnectionStatus() noexcept
     case Connect::State::Disconnected:
         ui->connectionStatusLabel->setText(tr("Disconnected"));
         time = skyConnectManager.getRemainingReconnectTime() / 1000.0;
-        ui->connectionStatusLabel->setToolTip(tr("Next reconnect attempt in %1 seconds").arg(time));
+        ui->connectionStatusLabel->setToolTip(tr("Next reconnect attempt in %1 seconds").arg(std::round(time)));
         break;
     case Connect::State::Connected:
         ui->connectionStatusLabel->setText(tr("Connected"));
@@ -266,4 +272,27 @@ void SettingsDialog::handleAccepted() noexcept
     settings.setDefaultMinimalUiButtonTextVisibility(!ui->hideButtonTextCheckBox->isChecked());
     settings.setDefaultMinimalUiNonEssentialButtonVisibility(!ui->hideNonEssentialButtonsCheckBox->isChecked());
     settings.setDefaultMinimalUiReplaySpeedVisibility(!ui->hideReplaySpeedCheckBox->isChecked());
+}
+
+void SettingsDialog::handleTabChanged(int index) noexcept
+{
+    switch (index)
+    {
+    case ::FlightSimulatorTab:
+        connect(&d->updateTimer, &QTimer::timeout,
+                this, &SettingsDialog::updateConnectionStatus);
+        d->updateTimer.start(::UpdateIntervalMSec);
+#ifdef DEBUG
+        qDebug() << "SettingsDialog::handleTabChanged: index:" << index << "started update timer";
+#endif
+        break;
+    default:
+        d->updateTimer.stop();
+        disconnect(&d->updateTimer, &QTimer::timeout,
+                   this, &SettingsDialog::updateConnectionStatus);
+#ifdef DEBUG
+        qDebug() << "SettingsDialog::handleTabChanged: index:" << index << "stopped update timer";
+#endif
+        break;
+    }
 }
