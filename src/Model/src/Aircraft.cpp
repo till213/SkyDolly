@@ -47,7 +47,6 @@
 
 struct AircraftPrivate
 {
-public:
     AircraftPrivate(std::int64_t id)
         : id(id)
     {}

@@ -35,7 +35,6 @@
 struct KERNEL_API FlightSimulatorShortcuts
 {
 public:
-
     /*!
      * The actions that correspond to the keyboard shortcuts.
      */

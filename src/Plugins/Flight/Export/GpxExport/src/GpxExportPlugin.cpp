@@ -55,7 +55,6 @@
 
 struct GpxExportPluginPrivate
 {
-public:
     GpxExportSettings pluginSettings;
     QDateTime startDateTimeUtc;
     Unit unit;

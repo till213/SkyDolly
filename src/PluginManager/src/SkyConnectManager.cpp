@@ -442,8 +442,6 @@ void SkyConnectManager::frenchConnection() noexcept
     Settings &settings = Settings::getInstance();
     connect(&settings, &Settings::skyConnectPluginUuidChanged,
             this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
-    connect(&settings, &Settings::flightSimulatorShortcutsChanged,
-            this, &SkyConnectManager::onFlightSimulatorShortcutsChanged);
 }
 
 void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) noexcept
@@ -472,11 +470,4 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
         }
         d->pluginsDirectory.cdUp();
     }
-}
-
-// PRIVATE SLOTS
-
-void SkyConnectManager::onFlightSimulatorShortcutsChanged(const FlightSimulatorShortcuts &shortcuts)
-{
-    tryConnectAndSetup(shortcuts);
 }

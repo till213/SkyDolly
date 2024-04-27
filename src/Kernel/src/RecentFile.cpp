@@ -37,7 +37,6 @@ namespace
 }
 
 struct RecentFilePrivate {
-public:
     static const int DefaultMaxRecentFiles;
     static const int MaxRecentFiles;
 
