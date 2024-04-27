@@ -148,7 +148,7 @@ bool DatabaseService::migrate(Migration::Milestones milestones) noexcept
     return d->databaseDao->migrate(milestones);
 }
 
-bool DatabaseService::optimise() noexcept
+bool DatabaseService::optimise() const noexcept
 {
     return d->databaseDao->optimise();
 }
@@ -323,7 +323,7 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
     while (retry) {
         QString logbookDirectoryPath = QFileDialog::getSaveFileName(parent, QCoreApplication::translate("DatabaseService", "New Logbook"), existingLogbookDirectory.absolutePath());
         if (!logbookDirectoryPath.isEmpty()) {
-            QFileInfo fileInfo = QFileInfo(logbookDirectoryPath);
+            const QFileInfo fileInfo = QFileInfo(logbookDirectoryPath);
             if (!fileInfo.exists()) {
                 newLogbookPath = logbookDirectoryPath + "/" % fileInfo.fileName() % Const::DotLogbookExtension;
                 retry = false;

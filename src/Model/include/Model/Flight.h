@@ -27,7 +27,6 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
 #include <QObject>
@@ -296,8 +295,23 @@ public:
 signals:
     /*!
      * Emitted whenever one or several Flight have been stored to the logbook.
+     *
+     * \param success
+     *        indicates whether persisting the flight was successful (\c true)
+     *        or not (\c false)
      */
-    void flightStored();
+    void flightStored(bool success);
+
+    /*!
+     * Emitted whenever one or several Aircraft have been stored to the logbook. Typically
+     * emitted whenever a new formation Aircraft has been stored, or imported and added
+     * to the current Flight.
+     *
+     * \param success
+     *        indicates whether persisting the flight was successful (\c true)
+     *        or not (\c false)
+     */
+    void aircraftStored(bool success);
 
     /*!
      * Emitted whenever the Flight given by its \c id has been restored from the logbook.
@@ -305,14 +319,7 @@ signals:
      * \param id
      *        the id of the restored Flight
      */
-    void flightRestored(std::int64_t id);
-
-    /*!
-     * Emitted whenever one or several Aircraft have been stored to the logbook. Typically
-     * emitted whenever a new formation Aircraft has been stored, or imported and added
-     * to the current Flight.
-     */
-    void aircraftStored();
+    void flightRestored(std::int64_t id);    
 
     void cleared();
     void titleChanged(std::int64_t flightId, const QString &title);

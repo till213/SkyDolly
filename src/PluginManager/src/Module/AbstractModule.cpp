@@ -22,15 +22,16 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <cassert>
-
 #include <QWidget>
 #include <QAction>
 #include <QUuid>
+#include <QDir>
+#include <QMessageBox>
 
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <Persistence/Service/FlightService.h>
+#include <Persistence/PersistenceManager.h>
 #include <Module/ModuleBaseSettings.h>
 #include <Module/AbstractModule.h>
 #include <Connect/SkyConnectIntf.h>
@@ -139,7 +140,12 @@ void AbstractModule::onStartReplay() noexcept
 
 void AbstractModule::onRecordingStopped() noexcept
 {
-    d->flightService->storeFlight(Logbook::getInstance().getCurrentFlight());
+    const bool ok = d->flightService->storeFlight(Logbook::getInstance().getCurrentFlight());
+    if (!ok) {
+        const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+        const QString logbookPath = QDir::toNativeSeparators(persistenceManager.getLogbookPath());
+        QMessageBox::critical(getWidget(), tr("Flight error"), tr("The flight could not be stored into the logbook %1.").arg(logbookPath));
+    }
 }
 
 void AbstractModule::addSettings(Settings::KeyValues &keyValues) const noexcept

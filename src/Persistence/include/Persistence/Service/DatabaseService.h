@@ -68,7 +68,7 @@ public:
     std::pair<bool, Version> checkDatabaseVersion() const noexcept;
 
     bool migrate(Migration::Milestones milestones = Migration::Milestone::All) noexcept;
-    bool optimise() noexcept;
+    bool optimise() const noexcept;
     bool backup(const QString &logbookPath, BackupMode backupMode) noexcept;
     bool setBackupPeriod(std::int64_t backupPeriodId) noexcept;
     bool setNextBackupDate(const QDateTime &date) noexcept;

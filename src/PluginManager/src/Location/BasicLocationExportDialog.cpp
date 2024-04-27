@@ -154,8 +154,8 @@ void BasicLocationExportDialog::frenchConnection() noexcept
 void BasicLocationExportDialog::updateUi() noexcept
 {
     const QString filePath = ui->filePathLineEdit->text();
-    QFileInfo fileInfo(filePath);
-    QFile file(fileInfo.absolutePath());
+    const QFileInfo fileInfo(filePath);
+    const QFile file(fileInfo.absolutePath());
     d->exportButton->setEnabled(file.exists());
     ui->openExportCheckBox->setChecked(d->pluginSettings.isOpenExportedFilesEnabled());
 }

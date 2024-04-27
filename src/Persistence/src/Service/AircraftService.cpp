@@ -74,13 +74,11 @@ bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, A
             ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
         }
         if (ok) {
-            ok = db.commit();
-            if (ok) {
-                emit flight.aircraftStored();
-            }
+            ok = db.commit();            
         } else {
             db.rollback();
         }
+        emit flight.aircraftStored(ok);
     }
     return ok;
 }
@@ -97,12 +95,10 @@ bool AircraftService::exportAircraft(std::int64_t flightId, std::size_t sequence
         }
         if (ok) {
             ok = db.commit();
-            if (ok) {
-                emit flight.aircraftStored();
-            }
         } else {
             db.rollback();
         }
+        emit flight.aircraftStored(ok);
     }
     return ok;
 }

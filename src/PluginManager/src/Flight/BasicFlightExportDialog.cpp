@@ -234,8 +234,8 @@ std::size_t BasicFlightExportDialog::estimateNofSamplePoints() const noexcept
 void BasicFlightExportDialog::updateUi() noexcept
 {
     const QString filePath = ui->filePathLineEdit->text();
-    QFileInfo fileInfo(filePath);
-    QFile file(fileInfo.absolutePath());
+    const QFileInfo fileInfo(filePath);
+    const QFile file(fileInfo.absolutePath());
     d->exportButton->setEnabled(file.exists());
 
     const SampleRate::ResamplingPeriod resamplingPeriod = d->pluginSettings.getResamplingPeriod();

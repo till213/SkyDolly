@@ -189,7 +189,7 @@ void BasicFlightImportDialog::updateUi() noexcept
 {
     constexpr int CreateSeparateFlightsIndex = 2;
     const QString filePath = ui->pathLineEdit->text();
-    QFileInfo fileInfo {filePath};
+    const QFileInfo fileInfo {filePath};
 
     bool fileExists {false};
     if (d->pluginSettings.isImportDirectoryEnabled()) {
@@ -208,7 +208,7 @@ void BasicFlightImportDialog::updateUi() noexcept
     if (importDirectory) {
         const QString currentPath = ui->pathLineEdit->text();
         if (!currentPath.isEmpty()) {
-            QFileInfo fileInfo {currentPath};
+            const QFileInfo fileInfo {currentPath};
             if (fileInfo.isFile()) {
                 ui->pathLineEdit->setText(QDir::toNativeSeparators(fileInfo.absolutePath()));
             }
@@ -288,7 +288,7 @@ void BasicFlightImportDialog::onFileSelectionChanged() noexcept
     if (currentFilePath.isEmpty()) {
         exportPath = Settings::getInstance().getExportPath();
     } else {
-        QFileInfo fileInfo {currentFilePath};
+        const QFileInfo fileInfo {currentFilePath};
         if (fileInfo.isDir()) {
             exportPath = fileInfo.absoluteFilePath();
         } else {
