@@ -1668,7 +1668,7 @@ void MainWindow::onRecentFileSelected(const QString &filePath, SecurityToken *se
     // Connecting with a non-existing SQLite database will actually succeed when calling
     // connectWithLogbook() (the non-existing database file is created first), so we
     // explicitly check the existence of the file
-    QFileInfo fileInfo {filePath};
+    const QFileInfo fileInfo {filePath};
     bool ok = fileInfo.exists();
     if (ok) {
         ok = connectWithLogbook(filePath);
@@ -1690,8 +1690,8 @@ void MainWindow::updateRecentFileMenu() noexcept
 
 void MainWindow::optimiseLogbook() noexcept
 {
-    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
-    QString logbookPath = persistenceManager.getLogbookPath();
+    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const QString logbookPath = persistenceManager.getLogbookPath();
     QFileInfo fileInfo = QFileInfo(logbookPath);
 
     std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);

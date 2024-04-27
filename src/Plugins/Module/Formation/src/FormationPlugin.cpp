@@ -26,12 +26,16 @@
 
 #include <QObject>
 #include <QUuid>
+#include <QMessageBox>
+#include <QFileInfo>
+#include <QDir>
 
 #include <Kernel/Const.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
 #include <Persistence/Service/AircraftService.h>
+#include <Persistence/PersistenceManager.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
@@ -124,7 +128,13 @@ void FormationPlugin::onRecordingStopped() noexcept
     const std::size_t sequenceNumber = flight.count();
     if (sequenceNumber > 1) {
         // Sequence starts at 1
-        d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
+        const bool ok = d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
+        if (!ok) {
+            flight.removeLastAircraft();
+            const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+            const QString logbookPath = QDir::toNativeSeparators(persistenceManager.getLogbookPath());
+            QMessageBox::critical(getWidget(), tr("Aircraft error"), tr("The aircraft could not be stored into the logbook %1.").arg(logbookPath));
+        }
     } else {
         AbstractModule::onRecordingStopped();
     }

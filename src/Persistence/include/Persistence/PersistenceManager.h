@@ -82,7 +82,7 @@ public:
     bool isConnected() const noexcept;
     QString getLogbookPath() const noexcept;
 
-    bool optimise() noexcept;
+    bool optimise() const noexcept;
 
     Metadata getMetadata(bool *ok = nullptr) const noexcept;
     Version getDatabaseVersion(bool *ok = nullptr) const noexcept;

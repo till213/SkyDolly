@@ -61,7 +61,7 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
     initUi();
     frenchConnection();
 
-    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
     bool ok {true};
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
@@ -93,7 +93,7 @@ void LogbookBackupDialog::accept() noexcept
 
     // ... the next backup date which is set upon successful backup
     if (ok) {
-        PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+        const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
         ok =d->databaseService->backup(persistenceManager.getLogbookPath(), DatabaseService::BackupMode::Normal);
     }
 
@@ -149,7 +149,7 @@ void LogbookBackupDialog::initUi() noexcept
 
 void LogbookBackupDialog::updateUi() noexcept
 {
-    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
     bool ok {true};
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {

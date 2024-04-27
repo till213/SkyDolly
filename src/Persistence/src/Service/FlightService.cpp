@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <utility>
-#include <forward_list>
 #include <cstdint>
 
 #include <QSqlDatabase>
@@ -65,9 +64,7 @@ bool FlightService::storeFlight(Flight &flight) noexcept
 {
     FlightData &flightData = flight.getFlightData();
     const bool ok = storeFlightData(flightData);
-    if (ok) {
-        emit flight.flightStored();
-    }
+    emit flight.flightStored(ok);
     return ok;
 }
 

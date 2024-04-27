@@ -83,7 +83,7 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
     bool retry {true};
     while (retry && ok) {
         const QString logbookDirectoryPath = QFileInfo(selectedLogbookPath).absolutePath();
-        QFileInfo fileInfo(logbookDirectoryPath);
+        const QFileInfo fileInfo(logbookDirectoryPath);
         ok = fileInfo.exists();
         if (!ok) {
             QDir dir(logbookDirectoryPath);
@@ -181,7 +181,7 @@ QString PersistenceManager::getLogbookPath() const noexcept
     return d->logbookPath;
 }
 
-bool PersistenceManager::optimise() noexcept
+bool PersistenceManager::optimise() const noexcept
 {
     return d->databaseService->optimise();
 }

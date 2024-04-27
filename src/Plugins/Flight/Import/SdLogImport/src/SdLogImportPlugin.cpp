@@ -76,7 +76,7 @@ std::vector<FlightData> SdlogImportPlugin::importSelectedFlights(QIODevice &io, 
     // Only file-based SQLite databases supported
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
-        QFileInfo fileInfo {*file};
+        const QFileInfo fileInfo {*file};
         ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath());
         if (ok) {
             const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);

@@ -368,7 +368,7 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::resetDefaultValues);
 
     // Persistence
-    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
     connect(&persistenceManager, &PersistenceManager::locationsImported,
             this, &LocationWidget::updateUi);
 
