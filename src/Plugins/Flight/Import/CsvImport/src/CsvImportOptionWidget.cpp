@@ -32,19 +32,19 @@
 
 struct CsvImportOptionWidgetPrivate
 {
-    CsvImportOptionWidgetPrivate(CsvImportSettings &theImportSettings) noexcept
-        : settings(theImportSettings)
+    CsvImportOptionWidgetPrivate(CsvImportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {}
 
-     CsvImportSettings &settings;
+     CsvImportSettings &pluginSettings;
 };
 
 // PUBLIC
 
-CsvImportOptionWidget::CsvImportOptionWidget(CsvImportSettings &settings, QWidget *parent) noexcept
+CsvImportOptionWidget::CsvImportOptionWidget(CsvImportSettings &pluginSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::CsvImportOptionWidget>()),
-      d(std::make_unique<CsvImportOptionWidgetPrivate>(settings))
+      d(std::make_unique<CsvImportOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -60,14 +60,13 @@ void CsvImportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CsvImportOptionWidget::onFormatChanged);
-    connect(&d->settings, &CsvImportSettings::extendedSettingsChanged,
+    connect(&d->pluginSettings, &CsvImportSettings::changed,
             this, &CsvImportOptionWidget::updateUi);
 }
 
 void CsvImportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem(Version::getApplicationName(), Enum::underly(CsvImportSettings::Format::SkyDolly));
-    ui->formatComboBox->addItem("FlightRadar24", Enum::underly(CsvImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("Flightradar24", Enum::underly(CsvImportSettings::Format::Flightradar24));
     ui->formatComboBox->addItem("Flight Recorder", Enum::underly(CsvImportSettings::Format::FlightRecorder));
 }
 
@@ -75,7 +74,7 @@ void CsvImportOptionWidget::initUi() noexcept
 
 void CsvImportOptionWidget::updateUi() noexcept
 {
-    const CsvImportSettings::Format format = d->settings.getFormat();
+    const CsvImportSettings::Format format = d->pluginSettings.getFormat();
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
            static_cast<CsvImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != format) {
@@ -87,5 +86,5 @@ void CsvImportOptionWidget::updateUi() noexcept
 void CsvImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
 {
     const CsvImportSettings::Format format = static_cast<CsvImportSettings::Format>(ui->formatComboBox->currentData().toInt());
-    d->settings.setFormat(format);
+    d->pluginSettings.setFormat(format);
 }

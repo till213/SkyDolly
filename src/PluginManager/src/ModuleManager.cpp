@@ -45,20 +45,16 @@
 #include <tsl/ordered_map.h>
 
 #include <Kernel/Enum.h>
+#include <Kernel/File.h>
 #include <Kernel/QUuidHasher.h>
 #include <Kernel/Sort.h>
-#include "ModuleIntf.h"
-#include "DefaultModuleImpl.h"
-#include "ModuleManager.h"
+#include <Module/ModuleIntf.h>
+#include <ModuleManager.h>
+#include "Module/DefaultModuleImpl.h"
 
 namespace
 {
     constexpr const char *ModuleDirectoryName {"Module"};
-#if defined(Q_OS_MAC)
-    constexpr const char *PluginDirectoryName {"PlugIns"};
-#else
-    constexpr const char *PluginDirectoryName {"Plugins"};
-#endif
     constexpr const char *PluginUuidKey {"uuid"};
     constexpr const char *PluginNameKey {"name"};
     constexpr const char *PluginAfter {"after"};
@@ -69,14 +65,7 @@ struct ModuleManagerPrivate
     ModuleManagerPrivate(QLayout &layout) noexcept
         : layout(layout)
     {
-        pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
-#if defined(Q_OS_MAC)
-        if (pluginsDirectoryPath.dirName() == "MacOS") {
-            // Navigate up the app bundle structure, into the Contents folder
-            pluginsDirectoryPath.cdUp();
-        }
-#endif
-        pluginsDirectoryPath.cd(PluginDirectoryName);
+        pluginsDirectoryPath.cd(File::getPluginDirectoryPath());
         if (recordIcon.isNull()) {
             recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
             recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
@@ -94,7 +83,6 @@ struct ModuleManagerPrivate
     QLayout &layout;
     QActionGroup *moduleActionGroup {new QActionGroup(&layout)};
     ModuleIntf *activeModule {nullptr};
-    QUuid activeModuleUuid;
     // Key: uuid - value: plugin path
     tsl::ordered_map<QUuid, QString, QUuidHasher> moduleRegistry;
     ModuleManager::ActionRegistry actionRegistry;
@@ -118,7 +106,6 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<ModuleManagerPrivate>(layout))
 {
-    Q_INIT_RESOURCE(PluginManager);
     initModules();
     if (d->moduleRegistry.size() > 0) {
         activateModule(d->moduleRegistry.begin()->first);
@@ -128,7 +115,9 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
 
 ModuleManager::~ModuleManager()
 {
-    d->pluginLoader->unload();
+    if (d->pluginLoader->isLoaded()) {
+        d->pluginLoader->unload();
+    }
 }
 
 const ModuleManager::ActionRegistry &ModuleManager::getActionRegistry() const noexcept
@@ -147,20 +136,18 @@ std::optional<std::reference_wrapper<ModuleIntf>> ModuleManager::getActiveModule
 }
 
 void ModuleManager::activateModule(QUuid uuid) noexcept
-{   
-    if (d->activeModuleUuid != uuid) {
+{
+    if (d->activeModule == nullptr || d->activeModule->getUuid() != uuid) {
         if (d->pluginLoader->isLoaded()) {
             // Unload the previous module
             d->pluginLoader->unload();
             d->activeModule = nullptr;
-            d->activeModuleUuid = QUuid();
         }
         QString modulePath = d->moduleRegistry[uuid];
         d->pluginLoader->setFileName(modulePath);
-        const QObject *plugin = d->pluginLoader->instance();
+        QObject *plugin = d->pluginLoader->instance();
         d->activeModule = qobject_cast<ModuleIntf *>(plugin);
         if (d->activeModule != nullptr) {
-            d->activeModuleUuid = uuid;
             d->layout.addWidget(d->activeModule->getWidget());
             d->actionRegistry[uuid]->setChecked(true);
             emit activated(d->activeModule->getModuleName(), uuid);
@@ -246,9 +233,9 @@ void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid
     d->pluginLoader->setFileName(pluginPath);
     const QJsonObject metaData = d->pluginLoader->metaData();
     if (!metaData.isEmpty()) {
-        const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
-        const QUuid uuid = pluginMetadata.value(::PluginUuidKey).toString();
-        const QString name = pluginMetadata.value(::PluginNameKey).toString();
+        const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
+        const QUuid uuid {pluginMetadata.value(::PluginUuidKey).toString()};
+        const QString name {pluginMetadata.value(::PluginNameKey).toString()};
         moduleInfos[uuid] = std::make_pair(name, pluginPath);
 
         const QJsonArray afterArray = pluginMetadata.value(::PluginAfter).toArray();

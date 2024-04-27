@@ -47,14 +47,13 @@ Position::Position(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
 {}
 
-PositionData Position::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const PositionData *p0 {nullptr}, *p1 {nullptr}, *p2 {nullptr}, *p3 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
     const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
-
         int currentIndex = getCurrentIndex();
         double tn {0.0};
         // Position data is always interpolated within an "infinite" interpolation window, in order to
@@ -85,18 +84,16 @@ PositionData Position::interpolate(std::int64_t timestamp, TimeVariableData::Acc
             m_currentData.velocityBodyX = SkyMath::interpolateLinear(p1->velocityBodyX, p2->velocityBodyX, tn);
             m_currentData.velocityBodyY = SkyMath::interpolateLinear(p1->velocityBodyY, p2->velocityBodyY, tn);
             m_currentData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);
-            m_currentData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
-            m_currentData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
-            m_currentData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
+
             m_currentData.timestamp = adjustedTimestamp;
+        } else {
+            // No recorded data, or the timestamp exceeds the timestamp of the last recorded data
+            m_currentData.reset();
         }
 
         setCurrentIndex(currentIndex);
         setCurrentTimestamp(adjustedTimestamp);
         setCurrentAccess(access);
-    } else {
-        // No recorded data, or the timestamp exceeds the timestamp of the last recorded data
-        m_currentData.reset();
     }
     return m_currentData;
 }

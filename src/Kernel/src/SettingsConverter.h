@@ -25,9 +25,9 @@
 #ifndef SETTINGSCONVERTER_H
 #define SETTINGSCONVERTER_H
 
-#include <QSettings>
+class QSettings;
 
-#include <Version.h>
+class Version;
 
 namespace SettingsConverter
 {

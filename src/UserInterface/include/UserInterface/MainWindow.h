@@ -36,6 +36,8 @@ class QTime;
 class QEvent;
 class QResizeEvent;
 class QCloseEvent;
+class QDragEnterEvent;
+class QDropEvent;
 
 #include "UserInterfaceLib.h"
 
@@ -43,11 +45,14 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+#include <PluginManager/Connect/SkyConnectIntf.h>
+
 class AboutDialog;
 class SettingsDialog;
 class FlightDialog;
 class SimulationVariablesDialog;
 class StatisticsDialog;
+class SecurityToken;
 struct MainWindowPrivate;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
@@ -55,6 +60,10 @@ class USERINTERFACE_API MainWindow : public QMainWindow
     Q_OBJECT
 public:
     explicit MainWindow(const QString &filePath = QString(), QWidget *parent = nullptr) noexcept;
+    MainWindow(const MainWindow &rhs) = delete;
+    MainWindow(MainWindow &&rhs) = delete;
+    MainWindow &operator=(const MainWindow &rhs) = delete;
+    MainWindow &operator=(MainWindow &&rhs) = delete;
     ~MainWindow() override;
 
     bool connectWithLogbook(const QString &filePath) noexcept;
@@ -63,17 +72,22 @@ protected:
     void resizeEvent(QResizeEvent *event) noexcept override;
     void closeEvent(QCloseEvent *event) noexcept override;
 
+    void dragEnterEvent(QDragEnterEvent *event) noexcept override;
+    void dropEvent(QDropEvent *event) noexcept override;
+
 private:
     std::unique_ptr<Ui::MainWindow> ui;
     const std::unique_ptr<MainWindowPrivate> d;
 
     void frenchConnection() noexcept;
+    void tryConnectAndSetup() const noexcept;
     void initUi() noexcept;
     void initPlugins() noexcept;
     void initModuleSelectorUi() noexcept;
     void initViewUi() noexcept;
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;
+    void createTrayIcon() noexcept;
     void initSkyConnectPlugin() noexcept;
 
     /*
@@ -131,6 +145,8 @@ private:
     void updatePositionSliderTickInterval() noexcept;
 
     double getCustomSpeedFactor() const;
+
+    void seek(int value, SkyConnectIntf::SeekMode seekMode) const noexcept;
     
 private slots:
     // Ui elements
@@ -150,6 +166,9 @@ private slots:
     void updateControlIcons() noexcept;
     void onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept;
     void onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept;
+
+    void onRecordingStopped() noexcept;
+    void onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept;
 
     /*
      * Updates the replay duration (maximum time) and then position slider position.
@@ -175,6 +194,8 @@ private slots:
     // File menu
     void createNewLogbook() noexcept;
     void openLogbook() noexcept;
+    void onRecentFileSelected(const QString &filePath, SecurityToken *securityToken) noexcept;
+    void updateRecentFileMenu() noexcept;
     void optimiseLogbook() noexcept;
     void showSettings() noexcept;
     void showLogbookSettings() noexcept;
@@ -205,12 +226,13 @@ private slots:
     void togglePlay(bool checked) noexcept;
     void stop() noexcept;
 
-    // Transport
+    // Transport / flight
     void skipToBegin() noexcept;
     void skipBackward() noexcept;
     void skipForward() noexcept;
     void skipToEnd() noexcept;
     void toggleLoopReplay(bool checked) noexcept;
+    void clearFlight() noexcept;
 
     // Service
     void onFlightRestored() noexcept;

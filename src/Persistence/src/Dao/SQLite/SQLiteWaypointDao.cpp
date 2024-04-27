@@ -24,8 +24,10 @@
  */
 #include <memory>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -40,15 +42,29 @@
 #include <Model/Waypoint.h>
 #include "SQLiteWaypointDao.h"
 
+struct SQLiteWaypointDaoPrivate
+{
+    SQLiteWaypointDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
+    {}
+
+    QString connectionName;
+};
+
 // PUBLIC
+
+SQLiteWaypointDao::SQLiteWaypointDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteWaypointDaoPrivate>(std::move(connectionName)))
+{}
 
 SQLiteWaypointDao::SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept = default;
 SQLiteWaypointDao &SQLiteWaypointDao::operator=(SQLiteWaypointDao &&rhs) noexcept = default;
 SQLiteWaypointDao::~SQLiteWaypointDao() = default;
 
-bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept
+bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPlan) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into waypoint ("
         "  aircraft_id,"
@@ -97,7 +113,8 @@ bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPla
 
 bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &flightPlan) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -111,6 +128,7 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
     if (ok) {
         flightPlan.clear();
         QSqlRecord record = query.record();
+        const int timestampIdx = record.indexOf("timestamp");
         const int identifierIdx = record.indexOf("ident");
         const int latitudeIdx = record.indexOf("latitude");
         const int longitudeIdx = record.indexOf("longitude");
@@ -119,6 +137,7 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
         const int zuluSimulationTimeIdx = record.indexOf("zulu_sim_time");
         while (query.next()) {
             Waypoint data;
+            data.timestamp = query.value(timestampIdx).toLongLong();
             data.identifier = query.value(identifierIdx).toString();
             data.latitude = query.value(latitudeIdx).toFloat();
             data.longitude = query.value(longitudeIdx).toFloat();
@@ -138,9 +157,10 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
     return ok;
 }
 
-bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) noexcept
+bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   waypoint "
@@ -160,9 +180,10 @@ bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLiteWaypointDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
+bool SQLiteWaypointDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   waypoint "

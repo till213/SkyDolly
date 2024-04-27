@@ -32,6 +32,11 @@
 
 namespace Formation
 {
+    /*!
+     * The initial horizontal distance of the formation aircraft, relative to the current user aircraft.
+     *
+     * Implementation note: those values act as actual IDs that get persisted in the database.
+     */
     enum HorizontalDistance {
         VeryClose = 0,
         Close,
@@ -40,35 +45,45 @@ namespace Formation
         VeryFar
     };
 
+    /*!
+     * The initial vertical distance of the formation aircraft, relative to the current user aircraft.
+     *
+     * Implementation note: those values act as actual IDs that get persisted in the database.
+     */
     enum VerticalDistance {
         Below = 0,
-        JustBelow,
-        Level,
-        JustAbove,
-        Above
+        JustBelow = 1,
+        Level = 2,
+        JustAbove = 3,
+        Above = 4
     };
 
-    enum RelativePosition {
+    /*!
+     * The initial bearing of the formation aircraft, relative to the user aircraft.
+     *
+     * Implementation note: those values act as actual IDs that get persisted in the database.
+     */
+    enum Bearing {
         North = 0,
-        NorthNorthEast,
-        NorthEast,
-        EastNorthEast,
-        East,
-        EastSouthEast,
-        SouthEast,
-        SouthSouthEast,
-        South,
-        SouthSouthWest,
-        SouthWest,
-        WestSouthWest,
-        West,
-        WestNorthWest,
-        NorthWest,
-        NorthNorthWest
+        NorthNorthEast = 1,
+        NorthEast = 2,
+        EastNorthEast = 3,
+        East = 4,
+        EastSouthEast = 5,
+        SouthEast = 6,
+        SouthSouthEast = 7,
+        South = 8,
+        SouthSouthWest = 9,
+        SouthWest = 10,
+        WestSouthWest = 11,
+        West = 12,
+        WestNorthWest = 13,
+        NorthWest = 14,
+        NorthNorthWest = 15
     };
 
-    InitialPosition calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, RelativePosition relativePosition, std::int64_t timestamp) noexcept;
-    PositionData calculateRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, RelativePosition relativePosition, std::int64_t timestamp) noexcept;
+    InitialPosition calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing relativePosition, std::int64_t timestamp) noexcept;
+    PositionData calculateRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing relativePosition, std::int64_t timestamp) noexcept;
 };
 
 #endif // FORMATION_H

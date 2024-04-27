@@ -35,9 +35,9 @@ class QMouseEvent;
 
 class WIDGET_API HyperlinkTextEdit : public QTextEdit
 {
+	Q_OBJECT
 public:
     explicit HyperlinkTextEdit(QWidget *parent = nullptr);
-    ~HyperlinkTextEdit() override = default;
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) noexcept override;

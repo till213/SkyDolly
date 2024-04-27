@@ -37,8 +37,8 @@
 #include <Model/LightData.h>
 #include <Model/TimeVariableData.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include "LightWidget.h"
 #include "ui_LightWidget.h"
 
@@ -114,7 +114,9 @@ LightData LightWidget::getCurrentLightData(std::int64_t timestamp, TimeVariableD
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getLight().getLast();
+            if (aircraft.getLight().count() > 0) {
+                lightData = aircraft.getLight().getLast();
+            }
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 lightData = aircraft.getLight().interpolate(timestamp, access);

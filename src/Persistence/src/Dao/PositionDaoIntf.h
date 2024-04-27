@@ -49,10 +49,10 @@ public:
      *        the PositionData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(std::int64_t aircraftId, const PositionData &data) noexcept = 0;
+    virtual bool add(std::int64_t aircraftId, const PositionData &data) const noexcept = 0;
     virtual std::vector<PositionData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept = 0;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
+    virtual bool deleteByFlightId(std::int64_t flightId) const noexcept = 0;
+    virtual bool deleteByAircraftId(std::int64_t aircraftId) const noexcept = 0;
 };
 
 #endif // POSITIONDAOINTF_H

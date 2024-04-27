@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Sky Dolly Integration Test" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <link href="https://github.com/till213/SkyDolly">
+      <text>Integration test file for Sky Dolly</text>
+    </link>
+  </metadata>
+
+  <trkseg>
+    <trkpt lon="8.5438107" lat="47.3702498">
+      <ele>405.00</ele>
+      <time>2023-02-18T16:10:06Z</time>
+    </trkpt>
+    <trkpt lon="7.4442382" lat="46.9466461">
+      <ele>538.00</ele>
+      <time>2023-02-18T18:16:12Z</time>
+    </trkpt>
+    <trkpt lon="7.6584504" lat="45.9765757">
+      <ele>4478.00</ele>
+      <time>2023-02-18T23:15:45Z</time>
+    </trkpt>
+  </trkseg>
+</gpx>

@@ -28,7 +28,9 @@
 #include <memory>
 
 #include <QObject>
-#include <QUuid>
+
+class QWidget;
+class QUuid;
 
 #include <Kernel/Settings.h>
 #include "PluginIntf.h"

@@ -44,7 +44,11 @@ public:
         Flag
     };
 
-    KmlStyleExport(const KmlExportSettings &settings) noexcept;
+    KmlStyleExport(const KmlExportSettings &pluginSettings) noexcept;
+    KmlStyleExport(const KmlStyleExport &rhs) = delete;
+    KmlStyleExport(KmlStyleExport &&rhs) = delete;
+    KmlStyleExport &operator=(const KmlStyleExport &rhs) = delete;
+    KmlStyleExport &operator=(KmlStyleExport &&rhs) = delete;
     ~KmlStyleExport();
 
     bool exportStyles(QIODevice &io) noexcept;

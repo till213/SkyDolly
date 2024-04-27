@@ -1,10 +1,6 @@
 set(LIBRARY_NAME "Model")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} SHARED)
-else()
-    add_library(${LIBRARY_NAME} SHARED)
-endif()
+qt_add_library(${LIBRARY_NAME} SHARED)
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_compile_definitions(${LIBRARY_NAME}
@@ -18,6 +14,7 @@ target_sources(${LIBRARY_NAME}
         include/Model/Logbook.h src/Logbook.cpp
         include/Model/AbstractComponent.h
         include/Model/Flight.h src/Flight.cpp
+        include/Model/FlightData.h 
         include/Model/FlightSummary.h
         include/Model/FlightDate.h src/FlightDate.cpp
         include/Model/FlightCondition.h src/FlightCondition.cpp
@@ -48,14 +45,14 @@ target_sources(${LIBRARY_NAME}
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_LIST_DIR}/include
     PRIVATE
         include/Model
 )
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC
-        Qt${QT_VERSION_MAJOR}::Core
-        Qt${QT_VERSION_MAJOR}::Sql
+        Qt6::Core
+        Qt6::Sql
     PRIVATE
         Sky::Kernel
 )

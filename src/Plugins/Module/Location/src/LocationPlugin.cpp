@@ -29,9 +29,11 @@
 
 #include <Persistence/PersistedEnumerationItem.h>
 #include <Persistence/Service/EnumerationService.h>
-#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
 #include "LocationWidget.h"
+#include "LocationSettings.h"
 #include "LocationPlugin.h"
 
 struct LocationPluginPrivate
@@ -42,10 +44,13 @@ struct LocationPluginPrivate
         Update
     };
 
-    std::unique_ptr<LocationWidget> locationWidget {std::make_unique<LocationWidget>()};
+    LocationSettings moduleSettings;
+    std::unique_ptr<LocationWidget> locationWidget {std::make_unique<LocationWidget>(moduleSettings)};
     const std::int64_t EngineEventStartId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStartSymId).id()};
     const std::int64_t EngineEventStopId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStopSymId).id()};
     Mode mode {Mode::Add};
+
+
 };
 
 // PUBLIC
@@ -55,9 +60,19 @@ LocationPlugin::LocationPlugin(QObject *parent) noexcept
       d(std::make_unique<LocationPluginPrivate>())
 {
     frenchConnection();
+    restoreSettings(QUuid(Const::LocationModuleUuid));
 }
 
-LocationPlugin::~LocationPlugin() = default;
+LocationPlugin::~LocationPlugin()
+{
+    storeSettings(QUuid(Const::LocationModuleUuid));
+};
+
+QUuid LocationPlugin::getUuid() const noexcept
+{
+    static const QUuid uuid {Const::LocationModuleUuid};
+    return uuid;
+}
 
 QString LocationPlugin::getModuleName() const noexcept
 {
@@ -67,6 +82,13 @@ QString LocationPlugin::getModuleName() const noexcept
 QWidget *LocationPlugin::getWidget() const noexcept
 {
     return d->locationWidget.get();
+}
+
+// PROTECTED
+
+ModuleBaseSettings &LocationPlugin::getModuleSettings() const noexcept
+{
+    return d->moduleSettings;
 }
 
 // PRIVATE
@@ -127,7 +149,7 @@ void LocationPlugin::onLocationReceived(Location location) noexcept
         d->locationWidget->addLocation(std::move(location));
         break;
     case LocationPluginPrivate::Mode::Update:
-        d->locationWidget->updateLocation(std::move(location));
+        d->locationWidget->updateLocation(location);
         break;
     }
 }

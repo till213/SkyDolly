@@ -36,7 +36,7 @@ public:
     /*!
      * Returns the name of the currently logged in user.
      *
-     * Implementation note: the current implemenation is extremely simplistic
+     * Implementation note: the current implementation is extremely simplistic
      * and relies on environment variables USERNAME or USER.
      *
      * \return the name of the logged in user; may be an empty string

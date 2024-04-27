@@ -37,13 +37,13 @@ class QAction;
 class QTreeWidgetItem;
 class QString;
 
-#include <PluginManager/ModuleIntf.h>
-#include <PluginManager/AbstractModule.h>
+#include <PluginManager/Module/ModuleIntf.h>
+#include <PluginManager/Module/AbstractModule.h>
 
 class DatabaseService;
 class FlightService;
-class FlightDate;
-class FlightSummary;
+struct FlightDate;
+struct FlightSummary;
 struct TemplateWidgetPrivate;
 
 namespace Ui {
@@ -55,6 +55,10 @@ class TemplateWidget : public QWidget
     Q_OBJECT
 public:
     explicit TemplateWidget(QWidget *parent = nullptr) noexcept;
+    TemplateWidget(const TemplateWidget &rhs) = delete;
+    TemplateWidget(TemplateWidget &&rhs) = delete;
+    TemplateWidget &operator=(const TemplateWidget &rhs) = delete;
+    TemplateWidget &operator=(TemplateWidget &&rhs) = delete;
     ~TemplateWidget() override;
 
 private:

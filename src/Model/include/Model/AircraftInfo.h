@@ -29,6 +29,7 @@
 
 #include <QString>
 
+#include <Kernel/Const.h>
 #include "AircraftType.h"
 #include "ModelLib.h"
 
@@ -39,8 +40,7 @@ struct MODEL_API AircraftInfo final
     // Milliseconds
     std::int64_t timeOffset {0};
     QString tailNumber;
-    QString airline;
-    QString flightNumber;    
+    QString airline;   
 
     // Feet
     float altitudeAboveGround {0.0f};
@@ -48,8 +48,7 @@ struct MODEL_API AircraftInfo final
     // Knots (TAS)
     int initialAirspeed {0};
 
-    AircraftInfo(std::int64_t aircraftId) noexcept;
-    AircraftInfo() noexcept;
+    AircraftInfo(std::int64_t aircraftId = Const::InvalidId) noexcept;
     AircraftInfo(const AircraftInfo &rhs) = default;
     AircraftInfo(AircraftInfo &&rhs) = default;
     AircraftInfo &operator=(const AircraftInfo &rhs) = default;
@@ -65,7 +64,6 @@ inline bool operator==(const AircraftInfo &lhs, const AircraftInfo &rhs) {
            lhs.timeOffset == rhs.timeOffset &&
            lhs.tailNumber == rhs.tailNumber &&
            lhs.airline == rhs.airline &&
-           lhs.flightNumber == rhs.flightNumber &&
            lhs.altitudeAboveGround == rhs.altitudeAboveGround &&
            lhs.startOnGround == rhs.startOnGround &&
            lhs.initialAirspeed == rhs.initialAirspeed;

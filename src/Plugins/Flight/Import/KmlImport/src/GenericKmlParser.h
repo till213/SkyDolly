@@ -26,6 +26,7 @@
 #define GENERICKMLPARSER_H
 
 #include <memory>
+#include <vector>
 
 #include <QDateTime>
 #include <QString>
@@ -41,10 +42,13 @@ class GenericKmlParser : public AbstractKmlTrackParser
 {
 public:
     GenericKmlParser() noexcept;
+    GenericKmlParser(const GenericKmlParser &rhs) = delete;
+    GenericKmlParser(GenericKmlParser &&rhs) = delete;
+    GenericKmlParser &operator=(const GenericKmlParser &rhs) = delete;
+    GenericKmlParser &operator=(GenericKmlParser &&rhs) = delete;
     ~GenericKmlParser() override;
 
-    void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
-    QString getFlightNumber() const noexcept override;
+    std::vector<FlightData> parse(QXmlStreamReader &xmlStreamReader) noexcept override;
 
 private:
     const std::unique_ptr<GenericKmlParserPrivate> d;

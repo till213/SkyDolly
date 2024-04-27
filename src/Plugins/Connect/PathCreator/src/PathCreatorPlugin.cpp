@@ -30,7 +30,12 @@
 #include <QtGlobal>
 #include <QRandomGenerator>
 #include <QStringList>
+#ifdef DEBUG
+#include <QDebug>
+#include <Kernel/Enum.h>
+#endif
 
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include <Model/TimeVariableData.h>
@@ -56,7 +61,7 @@
 #include <Model/Waypoint.h>
 #include <Model/FlightCondition.h>
 #include <Model/SimType.h>
-#include <PluginManager/AbstractSkyConnect.h>
+#include <PluginManager/Connect/AbstractSkyConnect.h>
 #include "PathCreatorPlugin.h"
 
 namespace {
@@ -105,6 +110,21 @@ bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::Sampl
     return true;
 }
 
+bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
+{
+#ifdef DEBUG
+    qDebug() << "Recording shortcut:" << shortcuts.record.toString();
+    qDebug() << "Replay shortcut:" << shortcuts.replay.toString();
+    qDebug() << "Pause shortcut:" << shortcuts.pause.toString();
+    qDebug() << "Stop shortcut:" << shortcuts.stop.toString();
+    qDebug() << "Backward shortcut:" << shortcuts.backward.toString();
+    qDebug() << "Forward shortcut:" << shortcuts.forward.toString();
+    qDebug() << "Begin shortcut:" << shortcuts.begin.toString();
+    qDebug() << "End shortcut:" << shortcuts.end.toString();
+#endif
+    return true;
+}
+
 bool PathCreatorPlugin::onInitialPositionSetup([[maybe_unused]] const InitialPosition &initialPosition) noexcept
 {
     return true;
@@ -115,19 +135,26 @@ bool PathCreatorPlugin::onFreezeUserAircraft([[maybe_unused]] bool enable) const
     return true;
 }
 
-bool PathCreatorPlugin::onSimulationEvent([[maybe_unused]] SimulationEvent event) const noexcept
+bool PathCreatorPlugin::onSimulationEvent([[maybe_unused]] SimulationEvent event, [[maybe_unused]] float arg1) const noexcept
 {
     return true;
 }
 
-bool PathCreatorPlugin::onStartRecording() noexcept
+bool PathCreatorPlugin::onStartFlightRecording() noexcept
 {
+    recordFlightInfo();
     recordFlightCondition();
+    onStartAircraftRecording();
+    return true;
+}
+
+bool PathCreatorPlugin::onStartAircraftRecording() noexcept
+{
     recordAircraftInfo();
     return true;
 }
 
-void PathCreatorPlugin::onRecordingPaused([[maybe_unused]] bool paused) noexcept
+void PathCreatorPlugin::onRecordingPaused([[maybe_unused]] Initiator initiator, [[maybe_unused]] bool paused) noexcept
 {}
 
 void PathCreatorPlugin::onStopRecording() noexcept
@@ -154,13 +181,16 @@ bool PathCreatorPlugin::onStartReplay([[maybe_unused]] std::int64_t currentTimes
     return true;
 }
 
-void PathCreatorPlugin::onReplayPaused(bool paused) noexcept
+void PathCreatorPlugin::onReplayPaused([[maybe_unused]] Initiator initiator, bool enable) noexcept
 {
-    if (paused) {
+    if (enable) {
          d->replayTimer.stop();
     } else {
         d->replayTimer.start(ReplayPeriod);
     }
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::onReplayPaused: enable:" << enable;
+#endif
 }
 
 void PathCreatorPlugin::onStopReplay() noexcept
@@ -168,7 +198,7 @@ void PathCreatorPlugin::onStopReplay() noexcept
     d->replayTimer.stop();
 }
 
-void PathCreatorPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp) noexcept
+void PathCreatorPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp, [[maybe_unused]] SeekMode seekMode) noexcept
 {}
 
 void PathCreatorPlugin::onRecordingSampleRateChanged([[maybe_unused]] SampleRate::SampleRate sampleRate) noexcept
@@ -197,7 +227,17 @@ bool PathCreatorPlugin::isConnectedWithSim() const noexcept
 
 bool PathCreatorPlugin::connectWithSim() noexcept
 {
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::connectWithSim: CALLED";
+#endif
     return true;
+}
+
+void PathCreatorPlugin::onDisconnectFromSim() noexcept
+{
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::onDisconnectFromSim: CALLED";
+#endif
 }
 
 void PathCreatorPlugin::onAddAiObject([[maybe_unused]] const Aircraft &aircraft) noexcept
@@ -255,7 +295,7 @@ void PathCreatorPlugin::recordData() noexcept
     recordSecondaryControls(timestamp);
     recordAircraftHandle(timestamp);
     recordLights(timestamp);
-    recordWaypoint();
+    recordWaypoint(timestamp);
 }
 
 // PRIVATE
@@ -277,9 +317,6 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     aircraftData.bank = -180.0 + d->randomGenerator->bounded(360.0);
     aircraftData.trueHeading = -180.0 + d->randomGenerator->bounded(360.0);
 
-    aircraftData.rotationVelocityBodyX = d->randomGenerator->bounded(1.0);
-    aircraftData.rotationVelocityBodyY = d->randomGenerator->bounded(1.0);
-    aircraftData.rotationVelocityBodyZ = d->randomGenerator->bounded(1.0);
     aircraftData.velocityBodyX = d->randomGenerator->bounded(1.0);
     aircraftData.velocityBodyY = d->randomGenerator->bounded(1.0);
     aircraftData.velocityBodyZ = d->randomGenerator->bounded(1.0);
@@ -292,14 +329,14 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
 void PathCreatorPlugin::recordEngineData(std::int64_t timestamp) noexcept
 {
     EngineData engineData;
-    engineData.throttleLeverPosition1 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
-    engineData.throttleLeverPosition2 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
-    engineData.throttleLeverPosition3 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
-    engineData.throttleLeverPosition4 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
-    engineData.propellerLeverPosition1 = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
-    engineData.propellerLeverPosition2 = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
-    engineData.propellerLeverPosition3 = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
-    engineData.propellerLeverPosition4 = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
     engineData.mixtureLeverPosition1 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     engineData.mixtureLeverPosition2 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     engineData.mixtureLeverPosition3 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
@@ -329,9 +366,13 @@ void PathCreatorPlugin::recordEngineData(std::int64_t timestamp) noexcept
 void PathCreatorPlugin::recordPrimaryControls(std::int64_t timestamp) noexcept
 {
     PrimaryFlightControlData primaryFlightControlData;
-    primaryFlightControlData.rudderPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
-    primaryFlightControlData.elevatorPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
-    primaryFlightControlData.aileronPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    primaryFlightControlData.rudderDeflection = Convert::degreesToRadians(-45.0 + d->randomGenerator->bounded(90.0));
+    primaryFlightControlData.elevatorDeflection = Convert::degreesToRadians(-45.0 + d->randomGenerator->bounded(90.0));
+    primaryFlightControlData.leftAileronDeflection = Convert::degreesToRadians(-45.0 + d->randomGenerator->bounded(90.0));
+    primaryFlightControlData.rightAileronDeflection = Convert::degreesToRadians(-45.0 + d->randomGenerator->bounded(90.0));
+    primaryFlightControlData.rudderPosition = SkyMath::fromNormalisedPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    primaryFlightControlData.elevatorPosition = SkyMath::fromNormalisedPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    primaryFlightControlData.aileronPosition = SkyMath::fromNormalisedPosition(-1.0 + d->randomGenerator->bounded(2.0));
 
     primaryFlightControlData.timestamp = timestamp;
     Aircraft &aircraft = getCurrentFlight().getUserAircraft();
@@ -341,11 +382,13 @@ void PathCreatorPlugin::recordPrimaryControls(std::int64_t timestamp) noexcept
 void PathCreatorPlugin::recordSecondaryControls(std::int64_t timestamp) noexcept
 {
     SecondaryFlightControlData secondaryFlightControlData;
-    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
-    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
-    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
-    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
-    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.rightLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.leftTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.rightTrailingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.leftSpoilersPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.rightSpoilersPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(d->randomGenerator->bounded(5));
 
     secondaryFlightControlData.timestamp = timestamp;
@@ -356,14 +399,16 @@ void PathCreatorPlugin::recordSecondaryControls(std::int64_t timestamp) noexcept
 void PathCreatorPlugin::recordAircraftHandle(std::int64_t timestamp) noexcept
 {
     AircraftHandleData aircraftHandleData;
-    aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
-    aircraftHandleData.brakeRightPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
-    aircraftHandleData.waterRudderHandlePosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    aircraftHandleData.brakeLeftPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    aircraftHandleData.brakeRightPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    aircraftHandleData.waterRudderHandlePosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
     aircraftHandleData.tailhookPosition = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     aircraftHandleData.canopyOpen = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     aircraftHandleData.leftWingFolding = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     aircraftHandleData.rightWingFolding = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     aircraftHandleData.gearHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
+    aircraftHandleData.tailhookHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
+    aircraftHandleData.foldingWingHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
     aircraftHandleData.smokeEnabled = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     aircraftHandleData.timestamp = timestamp;
@@ -383,22 +428,27 @@ void PathCreatorPlugin::recordLights(std::int64_t timestamp) noexcept
     aircraft.getLight().upsertLast(lightData);
 }
 
-void PathCreatorPlugin::recordWaypoint() noexcept
+void PathCreatorPlugin::recordWaypoint(std::int64_t timestamp) noexcept
 {
     Waypoint waypoint;
     if (d->randomGenerator->bounded(100.0) < 0.5) {
-        int i = d->randomGenerator->bounded(PathCreatorPluginPrivate::IcaoList.size());
+        auto i = d->randomGenerator->bounded(PathCreatorPluginPrivate::IcaoList.size());
         waypoint.identifier = PathCreatorPluginPrivate::IcaoList.at(i);
         waypoint.latitude = -90.0f + static_cast<float>(d->randomGenerator->bounded(180.0));
         waypoint.longitude = -180.0f + static_cast<float>(d->randomGenerator->bounded(90.0));
         waypoint.altitude = static_cast<float>(d->randomGenerator->bounded(3000.0));
         waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
-        waypoint.timestamp = getCurrentTimestamp();
+        waypoint.timestamp = timestamp;
 
         Flight &flight = getCurrentFlight();
         flight.addWaypoint(waypoint);
     }
+}
+
+void PathCreatorPlugin::recordFlightInfo() noexcept
+{
+    getCurrentFlight().setFlightNumber(QString::number(d->randomGenerator->bounded(100)));
 }
 
 void PathCreatorPlugin::recordFlightCondition() noexcept
@@ -407,6 +457,7 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
 
     flightCondition.groundAltitude = static_cast<float>(d->randomGenerator->bounded(4000.0));
     flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->randomGenerator->bounded(26));
+    flightCondition.surfaceCondition = static_cast<SimType::SurfaceCondition>(d->randomGenerator->bounded(5));
     flightCondition.ambientTemperature = static_cast<float>(d->randomGenerator->bounded(80.0f)) - 40.0f;
     flightCondition.totalAirTemperature = static_cast<float>(d->randomGenerator->bounded(80.0f)) - 40.0f;
     flightCondition.windSpeed = static_cast<float>(d->randomGenerator->bounded(30.0));
@@ -417,6 +468,8 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.pitotIcingPercent = d->randomGenerator->bounded(101);
     flightCondition.structuralIcingPercent = d->randomGenerator->bounded(101);
     flightCondition.inClouds = d->randomGenerator->bounded(2) < 1 ? false : true;
+    flightCondition.onAnyRunway = d->randomGenerator->bounded(2) < 1 ? false : true;
+    flightCondition.onParkingSpot = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.startLocalTime = QDateTime::currentDateTime();
     flightCondition.startZuluTime = QDateTime::currentDateTimeUtc();
 
@@ -472,7 +525,6 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
     info.aircraftType.numberOfEngines = d->randomGenerator->bounded(5);
     info.tailNumber = QString::number(d->randomGenerator->bounded(1000));
     info.airline = QString::number(d->randomGenerator->bounded(1000));
-    info.flightNumber = QString::number(d->randomGenerator->bounded(100));
     info.altitudeAboveGround = static_cast<float>(d->randomGenerator->bounded(40000.0));
     info.startOnGround = d->randomGenerator->bounded(2) > 0 ? true : false;
     info.initialAirspeed = d->randomGenerator->bounded(600);

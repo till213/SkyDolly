@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -28,6 +28,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <algorithm>
 
 #include <QString>
 #include <QChar>
@@ -35,7 +36,6 @@
 
 class QTextStream;
 
-#include "QStringHasher.h"
 #include "KernelLib.h"
 
 struct CsvParserPrivate;
@@ -83,16 +83,22 @@ public:
      */
     const Headers &getHeaders() const noexcept;
 
-    static inline bool validate(const Rows &rows, std::size_t expectedColumnCount) noexcept
+    /*!
+     * Validates that there exists at least one Row in \c rows and that each Row has
+     * at least the \c expectedColumnCount.
+     *
+     * \param rows
+     *        the previously parsed CSV rows
+     * \param expectedMinimumColumnCount
+     *        the expected minimum column count of each row
+     * \return \c true if each row in Rows has \c expectedColumnCount items; \c false else
+     */
+    static inline bool validate(const Rows &rows, std::size_t expectedMinimumColumnCount) noexcept
     {
         bool ok = rows.size() > 0;
         if (ok) {
-            for (const Row &row : rows) {
-                ok = row.size() == expectedColumnCount;
-                if (!ok) {
-                    break;
-                }
-            }
+            auto condition = [expectedMinimumColumnCount](const Row &row) {return row.size() < expectedMinimumColumnCount;};
+            ok = std::find_if(rows.begin(), rows.end(), condition) == rows.end();
         }
         return ok;
     };

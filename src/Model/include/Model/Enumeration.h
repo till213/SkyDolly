@@ -54,6 +54,12 @@ public:
     Enumeration &operator=(Enumeration &&rhs) noexcept;
     ~Enumeration();
 
+    enum struct Order {
+        Id,
+        SymId,
+        Name
+    };
+
     using Item = struct Item_ : public Data
     {
         Item_() noexcept

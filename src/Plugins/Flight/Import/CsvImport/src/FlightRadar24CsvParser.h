@@ -25,6 +25,8 @@
 #ifndef FLIGHTRADAR24CSVPARSER_H
 #define FLIGHTRADAR24CSVPARSER_H
 
+#include <memory.h>
+
 class QIODevice;
 class QDateTime;
 class QString;
@@ -33,14 +35,25 @@ class QString;
 #include <Model/PositionData.h>
 #include "CsvParserIntf.h"
 
-class Flight;
+struct FlightData;
+struct FlightRadar24CsvParserPrivate;
 
 class FlightRadar24CsvParser : public CsvParserIntf
 {
 public:
-    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+    FlightRadar24CsvParser() noexcept;
+    FlightRadar24CsvParser(const FlightRadar24CsvParser &rhs) = delete;
+    FlightRadar24CsvParser(FlightRadar24CsvParser &&rhs) = delete;
+    FlightRadar24CsvParser &operator=(const FlightRadar24CsvParser &rhs) = delete;
+    FlightRadar24CsvParser &operator=(FlightRadar24CsvParser &&rhs) = delete;
+    ~FlightRadar24CsvParser() override;
+
+    FlightData parse(QIODevice &io, bool &ok) noexcept override;
 private:
-    static inline PositionData parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) noexcept;
+    std::unique_ptr<FlightRadar24CsvParserPrivate> d;
+
+    bool validateHeaders() const noexcept;
+    inline PositionData parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) const noexcept;
 };
 
 #endif // FLIGHTRADAR24CSVPARSER_H

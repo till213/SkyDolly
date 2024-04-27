@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
 #include <utility>
 
 #include <QString>
@@ -42,6 +43,11 @@
 
 struct SqlMigrationStepPrivate
 {
+    SqlMigrationStepPrivate(QString connectionName)
+        : connectionName(std::move(connectionName))
+    {}
+
+    QString connectionName;
     QString migrationId;
     QString description;
     QString errorMessage;
@@ -51,8 +57,8 @@ struct SqlMigrationStepPrivate
 
 // PUBLIC
 
-SqlMigrationStep::SqlMigrationStep() noexcept
-    : d(std::make_unique<SqlMigrationStepPrivate>())
+SqlMigrationStep::SqlMigrationStep(QString connectionName) noexcept
+    : d(std::make_unique<SqlMigrationStepPrivate>(std::move(connectionName)))
 {}
 
 SqlMigrationStep::SqlMigrationStep(SqlMigrationStep &&rhs) noexcept = default;
@@ -64,7 +70,7 @@ bool SqlMigrationStep::isValid() const noexcept
     return !d->migrationId.isNull();
 }
 
-bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcept
+bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) const noexcept
 {
 
     const QString tag = tagMatch.captured(1);
@@ -95,18 +101,19 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
     return ok;
 }
 
-bool SqlMigrationStep::checkApplied() noexcept
+bool SqlMigrationStep::checkApplied() const noexcept
 {
-    QSqlQuery checkAppliedQuery;
-    checkAppliedQuery.prepare("select m.success, m.step, m.msg from migr m where m.id = :id and m.step = :step;");
-    checkAppliedQuery.bindValue(":id", d->migrationId);
-    checkAppliedQuery.bindValue(":step", d->step);
-    checkAppliedQuery.exec();
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
+    query.prepare("select m.success, m.step, m.msg from migr m where m.id = :id and m.step = :step;");
+    query.bindValue(":id", d->migrationId);
+    query.bindValue(":step", d->step);
+    query.exec();
 
     bool applied {false};
-    if (checkAppliedQuery.next()) {
-        applied = checkAppliedQuery.value(0).toInt() > 0;
-        d->errorMessage = checkAppliedQuery.value(1).toString();
+    if (query.next()) {
+        applied = query.value(0).toInt() > 0;
+        d->errorMessage = query.value(1).toString();
         if (!applied && d->errorMessage.isNull()) {
             // Make sure an error message exists
             d->errorMessage = QString("Migration %s failed.").arg(d->migrationId);
@@ -115,7 +122,7 @@ bool SqlMigrationStep::checkApplied() noexcept
     return applied;
 }
 
-bool SqlMigrationStep::execute(QStringView sql) noexcept
+bool SqlMigrationStep::execute(QStringView sql) const noexcept
 {
     QString errorMessage;
     // Match SQL statements terminated with a semicolon
@@ -123,22 +130,23 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
 
     // Note that DDL statements do not require transactions; but for
     // now we execute all queries within a transaction
-    bool ok = QSqlDatabase::database().transaction();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
 
     QRegularExpressionMatchIterator it = sqlRegExp.globalMatch(sql);
     while (ok && it.hasNext()) {
 
         QRegularExpressionMatch match = it.next();
 #ifdef DEBUG
-        qDebug() << "SqlMigrationStep::execute: SQL:" << match.captured(1) << "\n\n";
+        qDebug() << "SqlMigrationStep::execute: SQL:" << match.captured(1);
 #endif
-        QSqlQuery query;
+        QSqlQuery query {db};
         ok = query.exec(match.captured(1).trimmed() % ";");
         if (!ok) {
             errorMessage = query.lastError().text() + " - error code: " + query.lastError().nativeErrorCode();
-            QSqlDatabase::database().rollback();
+            db.rollback();
 #ifdef DEBUG
-            qDebug() << "SqlMigrationStep::execute: FAILED:\n" << errorMessage;
+            qDebug() << "SqlMigrationStep::execute: FAILED:" << errorMessage;
 #endif
         }
     }
@@ -147,55 +155,56 @@ bool SqlMigrationStep::execute(QStringView sql) noexcept
     return ok;
 }
 
-void SqlMigrationStep::registerMigration(bool success, QString errorMessage) noexcept
+void SqlMigrationStep::registerMigration(bool success, QString errorMessage) const noexcept
 {
     bool ok = success;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     if (ok) {
-        QSqlQuery migrQuery;
+        QSqlQuery query {db};
         if (!hasPreviousAttempt()) {
-            migrQuery.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
+            query.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
         } else {
-            migrQuery.prepare("update migr set success = :success, msg = :msg where id = :id and step = :step;");
+            query.prepare("update migr set success = :success, msg = :msg where id = :id and step = :step;");
         }
-        migrQuery.bindValue(":id", d->migrationId);
-        migrQuery.bindValue(":step", d->step);
-        migrQuery.bindValue(":success", 1);
-        migrQuery.bindValue(":msg", QString());
-        ok = migrQuery.exec();
+        query.bindValue(":id", d->migrationId);
+        query.bindValue(":step", d->step);
+        query.bindValue(":success", 1);
+        query.bindValue(":msg", QString());
+        ok = query.exec();
         if (ok) {
-            ok = QSqlDatabase::database().commit();
+            ok = db.commit();
         } else {
 #ifdef DEBUG
-            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:\n" << migrQuery.lastError().text() << "- error code:" << migrQuery.lastError().nativeErrorCode();
+            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
-            QSqlDatabase::database().rollback();
+            db.rollback();
         }
         if (ok) {
             d->errorMessage.clear();
         }
     } else {
-        bool migrQueryOk = QSqlDatabase::database().transaction();
+        bool migrQueryOk = db.transaction();
         if (migrQueryOk) {
-            QSqlQuery migrQuery;
+            QSqlQuery query {db};
             if (!hasPreviousAttempt()) {
-                migrQuery.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
+                query.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
             } else {
-                migrQuery.prepare("update migr set success = :success, msg = :msg where id = :id and step = :step;");
+                query.prepare("update migr set success = :success, msg = :msg where id = :id and step = :step;");
             }
             d->errorMessage = std::move(errorMessage);
 
-            migrQuery.bindValue(":id", d->migrationId);
-            migrQuery.bindValue(":step", d->step);
-            migrQuery.bindValue(":success", 0);
-            migrQuery.bindValue(":msg", d->errorMessage);
-            migrQueryOk = migrQuery.exec();
+            query.bindValue(":id", d->migrationId);
+            query.bindValue(":step", d->step);
+            query.bindValue(":success", 0);
+            query.bindValue(":msg", d->errorMessage);
+            migrQueryOk = query.exec();
             if (migrQueryOk) {
-                QSqlDatabase::database().commit();
+                db.commit();
             } else {
 #ifdef DEBUG
-            qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:\n" << migrQuery.lastError().text() << "- error code:" << migrQuery.lastError().nativeErrorCode();
+                qDebug() << "SqlMigrationStep::registerMigration: update MIGR table FAILED:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
-                QSqlDatabase::database().rollback();
+                db.rollback();
             }
         }
 #ifdef DEBUG

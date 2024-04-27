@@ -25,8 +25,10 @@
 #include <memory>
 #include <cstdint>
 #include <vector>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -67,8 +69,9 @@
 
 struct SQLiteAircraftDaoPrivate
 {
-    SQLiteAircraftDaoPrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+    SQLiteAircraftDaoPrivate(QString connectionName) noexcept
+        : connectionName(connectionName),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
           aircraftTypeDao(daoFactory->createAircraftTypeDao()),
           positionDao(daoFactory->createPositionDao()),
           engineDao(daoFactory->createEngineDao()),
@@ -79,6 +82,7 @@ struct SQLiteAircraftDaoPrivate
           waypointDao(daoFactory->createFlightPlanDao())
     {}
 
+    QString connectionName;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftTypeDaoIntf> aircraftTypeDao;
     std::unique_ptr<PositionDaoIntf> positionDao;
@@ -94,123 +98,37 @@ namespace
 {
     // The initial capacity of the position vector (e.g. SQLite does not support returning
     // the result count for the given SELECT query)
-    // Most flighs have only one aircraft
+    // Most flights have only one aircraft
     constexpr int DefaultCapacity = 1;
 }
 
 // PUBLIC
 
-SQLiteAircraftDao::SQLiteAircraftDao() noexcept
-    : d(std::make_unique<SQLiteAircraftDaoPrivate>())
+SQLiteAircraftDao::SQLiteAircraftDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteAircraftDaoPrivate>(std::move(connectionName)))
 {}
 
 SQLiteAircraftDao::SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept = default;
 SQLiteAircraftDao &SQLiteAircraftDao::operator=(SQLiteAircraftDao &&rhs) noexcept = default;
 SQLiteAircraftDao::~SQLiteAircraftDao() = default;
 
-bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept
+bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) const noexcept
 {
-    QSqlQuery query;
-    query.prepare(
-        "insert into aircraft ("
-        "  flight_id,"
-        "  seq_nr,"
-        "  type,"
-        "  time_offset,"
-        "  tail_number,"
-        "  airline,"
-        "  flight_number,"
-        "  initial_airspeed,"
-        "  altitude_above_ground,"
-        "  start_on_ground"
-        ") values ("
-        " :flight_id,"
-        " :seq_nr,"
-        " :type,"
-        " :time_offset,"
-        " :tail_number,"
-        " :airline,"
-        " :flight_number,"
-        " :initial_airspeed,"
-        " :altitude_above_ground,"
-        " :start_on_ground"
-        ");");
+    bool ok {false};
+    const std::int64_t aircraftId = insertAircraft(flightId, sequenceNumber, aircraft);
+    if (aircraftId != Const::InvalidId) {
+        aircraft.setId(aircraftId);
+        ok = insertAircraftData(aircraftId, aircraft);
+    }
+    return ok;
+}
 
-    const AircraftType &aircraftType = aircraft.getAircraftInfo().aircraftType;
-    bool ok = d->aircraftTypeDao->upsert(aircraftType);
-    if (ok) {
-        const AircraftInfo &info = aircraft.getAircraftInfo();
-        query.bindValue(":flight_id", QVariant::fromValue(flightId));
-        query.bindValue(":seq_nr", QVariant::fromValue(sequenceNumber));
-        query.bindValue(":type", aircraftType.type);
-        query.bindValue(":time_offset", QVariant::fromValue(info.timeOffset));
-        query.bindValue(":tail_number", info.tailNumber);
-        query.bindValue(":airline", info.airline);
-        query.bindValue(":flight_number", info.flightNumber);
-        query.bindValue(":initial_airspeed", info.initialAirspeed);
-        query.bindValue(":altitude_above_ground", info.altitudeAboveGround);
-        query.bindValue(":start_on_ground", info.startOnGround);
-
-        ok = query.exec();
-    }
-    if (ok) {
-        std::int64_t id = query.lastInsertId().toLongLong(&ok);
-        aircraft.setId(id);
-#ifdef DEBUG
-    } else {
-        qDebug() << "SQLiteAircraftDao::add: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
-#endif
-    }
-    if (ok) {
-        for (const PositionData &data : aircraft.getPosition()) {
-            ok = d->positionDao->add(aircraft.getId(), data);
-            if (!ok) {
-                break;
-            }
-        }
-    }
-    if (ok) {
-        for (const EngineData &data : aircraft.getEngine()) {
-            ok = d->engineDao->add(aircraft.getId(), data);
-            if (!ok) {
-                break;
-            }
-        }
-    }
-    if (ok) {
-        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControl()) {
-            ok = d->primaryFlightControlDao->add(aircraft.getId(), data);
-            if (!ok) {
-                break;
-            }
-        }
-    }
-    if (ok) {
-        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControl()) {
-            ok = d->secondaryFlightControlDao->add(aircraft.getId(), data);
-            if (!ok) {
-                break;
-            }
-        }
-    }
-    if (ok) {
-        for (const AircraftHandleData &data : aircraft.getAircraftHandle()) {
-            ok = d->handleDao->add(aircraft.getId(), data);
-            if (!ok) {
-                break;
-            }
-        }
-    }
-    if (ok) {
-        for (const LightData &data : aircraft.getLight()) {
-            ok = d->lightDao->add(aircraft.getId(), data);
-            if (!ok) {
-                break;
-            }
-        }
-    }
-    if (ok) {
-        ok = d->waypointDao->add(aircraft.getId(), aircraft.getFlightPlan());
+bool SQLiteAircraftDao::exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) const noexcept
+{
+    bool ok {false};
+    const std::int64_t aircraftId = insertAircraft(flightId, sequenceNumber, aircraft);
+    if (aircraftId != Const::InvalidId) {
+        ok = insertAircraftData(aircraftId, aircraft);
     }
     return ok;
 }
@@ -257,9 +175,10 @@ std::vector<Aircraft> SQLiteAircraftDao::getByFlightId(std::int64_t flightId, bo
     return aircraftList;
 }
 
-bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept
+bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "update aircraft "
         "set    seq_nr = seq_nr - 1 "
@@ -278,7 +197,7 @@ bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t fli
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) noexcept
+bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) const noexcept
 {
     // Delete "bottom-up" in order not to violate foreign key constraints
     bool ok = d->positionDao->deleteByFlightId(flightId);
@@ -301,7 +220,8 @@ bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) noexcept
         ok = d->waypointDao->deleteByFlightId(flightId);
     }
     if (ok) {
-        QSqlQuery query;
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        QSqlQuery query {db};
         query.prepare(
             "delete "
             "from   aircraft "
@@ -319,7 +239,7 @@ bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteById(std::int64_t id) noexcept
+bool SQLiteAircraftDao::deleteById(std::int64_t id) const noexcept
 {
     // Delete "bottom-up" in order not to violate foreign key constraints
     // Note: aircraft types (table aircraft_type) are not deleted
@@ -343,7 +263,8 @@ bool SQLiteAircraftDao::deleteById(std::int64_t id) noexcept
         ok = d->waypointDao->deleteByAircraftId(id);
     }
     if (ok) {
-        QSqlQuery query;
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        QSqlQuery query {db};
         query.prepare(
             "delete "
             "from   aircraft "
@@ -364,7 +285,8 @@ bool SQLiteAircraftDao::deleteById(std::int64_t id) noexcept
 std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int64_t flightId,  bool *ok) const noexcept
 {
     std::vector<AircraftInfo> aircraftInfos;
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -376,7 +298,7 @@ std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int
     query.bindValue(":flight_id", QVariant::fromValue(flightId));
     bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             aircraftInfos.reserve(query.size());
         } else {
@@ -398,7 +320,6 @@ std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int
             info.timeOffset = query.value(timeOffsetIdx).toLongLong();
             info.tailNumber = query.value(tailNumberIdx).toString();
             info.airline = query.value(airlineIdx).toString();
-            info.flightNumber = query.value(flightNumberIdx).toString();
             info.initialAirspeed = query.value(initialAirspeedIdx).toInt();
             info.altitudeAboveGround = query.value(airCraftAltitudeAboveGroundIdx).toFloat();
             info.startOnGround = query.value(startOnGroundIdx).toBool();
@@ -421,9 +342,10 @@ std::vector<AircraftInfo> SQLiteAircraftDao::getAircraftInfosByFlightId(std::int
     return aircraftInfos;
 }
 
-bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept
+bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffset) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "update aircraft "
         "set    time_offset = :time_offset "
@@ -441,9 +363,10 @@ bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffse
     return ok;
 };
 
-bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept
+bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNumber) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "update aircraft "
         "set    tail_number = :tail_number "
@@ -460,3 +383,118 @@ bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNum
 #endif
     return ok;
 };
+
+// PRIVATE
+
+inline std::int64_t SQLiteAircraftDao::insertAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) const noexcept
+{
+    std::int64_t aircraftId {Const::InvalidId};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
+    query.prepare(
+        "insert into aircraft ("
+        "  flight_id,"
+        "  seq_nr,"
+        "  type,"
+        "  time_offset,"
+        "  tail_number,"
+        "  airline,"
+        "  initial_airspeed,"
+        "  altitude_above_ground,"
+        "  start_on_ground"
+        ") values ("
+        " :flight_id,"
+        " :seq_nr,"
+        " :type,"
+        " :time_offset,"
+        " :tail_number,"
+        " :airline,"
+        " :initial_airspeed,"
+        " :altitude_above_ground,"
+        " :start_on_ground"
+        ");");
+
+    const AircraftType &aircraftType = aircraft.getAircraftInfo().aircraftType;
+    bool ok = d->aircraftTypeDao->upsert(aircraftType);
+    if (ok) {
+        const AircraftInfo &info = aircraft.getAircraftInfo();
+        query.bindValue(":flight_id", QVariant::fromValue(flightId));
+        query.bindValue(":seq_nr", QVariant::fromValue(sequenceNumber));
+        query.bindValue(":type", aircraftType.type);
+        query.bindValue(":time_offset", QVariant::fromValue(info.timeOffset));
+        query.bindValue(":tail_number", info.tailNumber);
+        query.bindValue(":airline", info.airline);
+        query.bindValue(":initial_airspeed", info.initialAirspeed);
+        query.bindValue(":altitude_above_ground", info.altitudeAboveGround);
+        query.bindValue(":start_on_ground", info.startOnGround);
+
+        ok = query.exec();
+    }
+    if (ok) {
+        aircraftId = query.lastInsertId().toLongLong(&ok);
+#ifdef DEBUG
+    } else {
+        qDebug() << "SQLiteAircraftDao::insertAircraft: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode() << "- flight ID" << flightId << "- sequence number" << sequenceNumber;
+#endif
+    }
+
+    if (!ok) {
+        aircraftId = Const::InvalidId;
+    }
+    return aircraftId;
+}
+
+inline bool SQLiteAircraftDao::insertAircraftData(std::int64_t aircraftId, const Aircraft &aircraft) const noexcept
+{
+    bool ok {true};
+    for (const PositionData &data : aircraft.getPosition()) {
+        ok = d->positionDao->add(aircraftId, data);
+        if (!ok) {
+            break;
+        }
+    }
+    if (ok) {
+        for (const EngineData &data : aircraft.getEngine()) {
+            ok = d->engineDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControl()) {
+            ok = d->primaryFlightControlDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControl()) {
+            ok = d->secondaryFlightControlDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const AircraftHandleData &data : aircraft.getAircraftHandle()) {
+            ok = d->handleDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const LightData &data : aircraft.getLight()) {
+            ok = d->lightDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        ok = d->waypointDao->add(aircraftId, aircraft.getFlightPlan());
+    }
+    return ok;
+}

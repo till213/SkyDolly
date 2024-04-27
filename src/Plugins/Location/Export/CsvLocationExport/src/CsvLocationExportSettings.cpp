@@ -32,7 +32,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 #include "CsvLocationExportSettings.h"
 
 namespace
@@ -67,7 +67,7 @@ void CsvLocationExportSettings::setFormat(Format format) noexcept
 {
     if (d->format != format) {
         d->format = format;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -105,6 +105,4 @@ void CsvLocationExportSettings::restoreSettingsExtn(const Settings::ValuesByKey 
 void CsvLocationExportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
-
-    emit extendedSettingsChanged();
 }

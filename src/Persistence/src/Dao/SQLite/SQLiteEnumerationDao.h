@@ -30,17 +30,22 @@ class QString;
 #include <Model/Enumeration.h>
 #include "../EnumerationDaoIntf.h"
 
-class SQLiteEnumerationDao : public EnumerationDaoIntf
+struct SQLiteEnumerationDaoPrivate;
+
+class SQLiteEnumerationDao final : public EnumerationDaoIntf
 {
 public:
-    SQLiteEnumerationDao() = default;
+    SQLiteEnumerationDao(QString connectionName) noexcept;
     SQLiteEnumerationDao(const SQLiteEnumerationDao &rhs) = delete;
     SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept;
     SQLiteEnumerationDao &operator=(const SQLiteEnumerationDao &rhs) = delete;
     SQLiteEnumerationDao &operator=(SQLiteEnumerationDao &&rhs) noexcept;
     ~SQLiteEnumerationDao() override;
 
-    Enumeration get(const QString &name, bool *ok = nullptr) const noexcept override;
+    Enumeration get(const QString &name, Enumeration::Order order, bool *ok = nullptr) const noexcept override;
+
+private:
+    std::unique_ptr<SQLiteEnumerationDaoPrivate> d;
 };
 
 #endif // SQLITEENUMERATIONDAO_H

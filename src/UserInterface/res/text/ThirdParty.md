@@ -25,6 +25,13 @@ Copyright (c) 2008-2022, Charles Karney
 MIT License\
 Copyright (c) 2017 Thibaut Goetghebuer-Planchon
 
+## Cpptrace
+- Jeremy Rifkin et al.
+- https://github.com/jeremy-rifkin/cpptrace
+
+The MIT License (MIT)\
+Copyright (c) 2023 Jeremy Rifkin
+
 ## IGC Parser
 SkyDolly IGCParser inspired by the IGC parser by Tobias Bieniek.
 - https://github.com/Turbo87/igc-parser
@@ -56,7 +63,7 @@ The atools are part of Little Navmap, a flight planner, navigation tool, moving 
 - License: https://creativecommons.org/licenses/by-sa/3.0/
 
 ## Flightspots
-- Source: https://flightspots.co/
+- Source: https://flightspots.co/ (original URL - out of service since December 2022)
 
 \
 The MIT License (MIT).\

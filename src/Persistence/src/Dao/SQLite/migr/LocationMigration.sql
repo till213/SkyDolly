@@ -394,3 +394,29 @@ where  sym_id = 'QA';
 @migr(id = "55a04d46-fc38-445a-8967-f84c96aa41bb", descn = "Update application version to 0.13", step = 1)
 update metadata
 set app_version = '0.13.0';
+
+@migr(id = "7620ca47-cbd3-4718-9ea9-0d701236aa58", descn = "Add new location categories", step = 1)
+insert into enum_location_category(sym_id, name, desc)
+values
+  ('CB', 'Cabin', 'Cabin'),
+  ('CR', 'Carrier', 'Carrier'),
+  ('HI', 'History', 'History'),
+  ('OB', 'Obstacle', 'Obstacle'),
+  ('OP', 'Oil Platform', 'Oil platform'),
+  ('ST', 'Settlement', 'Settlement');
+
+@migr(id = "b7c620c9-5ffe-4fdc-a120-cba323e327d0", descn = "Update application version to 0.14", step = 1)
+update metadata
+set app_version = '0.14.0';
+
+@migr(id = "6a3f5879-8974-4685-9285-ec1f174fdacb", descn = "Update application version to 0.15", step = 1)
+update metadata
+set app_version = '0.15.0';
+
+@migr(id = "24916944-050e-4569-8352-1446fe3137d2", descn = "Update application version to 0.16", step = 1)
+update metadata
+set app_version = '0.16.0';
+
+@migr(id = "54eddc7a-1a89-40ae-af73-0c6ae74e6a2d", descn = "Update application version to 0.17", step = 1)
+update metadata
+set app_version = '0.17.0';

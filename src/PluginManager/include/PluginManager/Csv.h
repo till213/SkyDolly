@@ -36,6 +36,7 @@ namespace Csv {
     /*! Newline character */
     static constexpr char Ln = '\n';
 
+    /*! The data type of each Sky Dolly CSV row */
     enum struct DataType : char {
         Aircraft = 'a',
         Engine = 'e',
@@ -45,6 +46,7 @@ namespace Csv {
         Light = 'l'
     };
 
+    /*! The name of the column defining the DataType */
     static constexpr const char *TypeColumnName {"Type"};
 };
 

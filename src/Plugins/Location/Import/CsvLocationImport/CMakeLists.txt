@@ -1,10 +1,6 @@
-set(MODULE_NAME "CSVLocationImport")
+set(MODULE_NAME "CsvLocationImport")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${MODULE_NAME} MODULE)
-else()
-    add_library(${MODULE_NAME} MODULE)
-endif()
+qt_add_library(${MODULE_NAME} MODULE)
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 
 target_sources(${MODULE_NAME}
@@ -16,11 +12,12 @@ target_sources(${MODULE_NAME}
         src/SkyDollyCsvLocationParser.h src/SkyDollyCsvLocationParser.cpp
         src/LittleNavmapCsvParser.h src/LittleNavmapCsvParser.cpp
         src/CsvLocationImportPlugin.json
-        doc/Example.csv
+        doc/LNM-Example.csv
+        doc/LNM-Example-No-Header.csv
 )
 target_link_libraries(${MODULE_NAME}
     PRIVATE
-        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt6::Widgets
         Sky::Kernel
         Sky::Model
         Sky::Persistence

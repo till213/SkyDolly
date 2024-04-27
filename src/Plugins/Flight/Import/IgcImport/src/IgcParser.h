@@ -35,7 +35,7 @@
 #include <QLatin1String>
 #include <QDate>
 
-class QFile;
+class QIODevice;
 class QByteArray;
 
 struct IgcParserPrivate;
@@ -43,12 +43,16 @@ struct IgcParserPrivate;
 /*!
  * Parses flight recorder files in the IGC (International Gliding Association) format.
  *
- * Implemenation note: only fields relevant for Sky Dolly are stored in the result structure.
+ * Implementation note: only fields relevant for Sky Dolly are stored in the result structure.
  */
 class IgcParser
 {
 public:
     IgcParser() noexcept;
+    IgcParser(const IgcParser &rhs) = delete;
+    IgcParser(IgcParser &&rhs) = delete;
+    IgcParser &operator=(const IgcParser &rhs) = delete;
+    IgcParser &operator=(IgcParser &&rhs) = delete;
     ~IgcParser();
 
     // "H" record
@@ -115,7 +119,7 @@ public:
         double environmentalNoiseLevel;
     };
 
-    bool parse(QFile &file) noexcept;
+    bool parse(QIODevice &io) noexcept;
     const Header &getHeader() const noexcept;
     const Task &getTask() const noexcept;
     const std::vector<Fix> &getFixes() const noexcept;

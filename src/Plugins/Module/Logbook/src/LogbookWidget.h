@@ -30,21 +30,22 @@
 #include <cstdint>
 
 #include <QWidget>
+#include <QStringView>
 
 class QShowEvent;
 class QHideEvent;
 class QAction;
 class QTreeWidgetItem;
+class QTableWidgetItem;
 class QString;
 
-#include <PluginManager/ModuleIntf.h>
-#include <PluginManager/AbstractModule.h>
+#include <PluginManager/Module/ModuleIntf.h>
+#include <PluginManager/Module/AbstractModule.h>
 
-class DatabaseService;
-class FlightService;
-class FlightDate;
-class FlightSummary;
+struct FlightDate;
+struct FlightSummary;
 class Aircraft;
+class LogbookSettings;
 struct LogbookWidgetPrivate;
 
 namespace Ui {
@@ -55,7 +56,11 @@ class LogbookWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit LogbookWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    explicit LogbookWidget(LogbookSettings &moduleSettings, QWidget *parent = nullptr) noexcept;
+    LogbookWidget(const LogbookWidget &rhs) = delete;
+    LogbookWidget(LogbookWidget &&rhs) = delete;
+    LogbookWidget &operator=(const LogbookWidget &rhs) = delete;
+    LogbookWidget &operator=(LogbookWidget &&rhs) = delete;
     ~LogbookWidget() override;
 
 private:
@@ -79,12 +84,15 @@ private:
 
     int getSelectedRow() const noexcept;
     std::int64_t getSelectedFlightId() const noexcept;
+    inline bool isMatch(QTableWidgetItem *flightIdItem, std::int64_t flightId) const noexcept;
 
 private slots:
     void onRecordingStarted() noexcept;
     void updateUi() noexcept;
     void updateAircraftIcons() noexcept;
-    void onAircraftInfoChanged(const Aircraft &aircraft);
+    void onFlightTitleChanged(std::int64_t flightId, const QString &title) noexcept;
+    void onFlightNumberChanged(std::int64_t flightId, const QString &flightNumber) noexcept;
+    void onAircraftInfoChanged(const Aircraft &aircraft) noexcept;
 
     void loadFlight() noexcept;
     void deleteFlight() noexcept;
@@ -103,6 +111,11 @@ private slots:
     void filterByFormationFlights(bool checked) noexcept;
     void filterByEngineType(int index) noexcept;
     void filterByDuration(int index) noexcept;
+    void resetFilter() noexcept;
+
+    // Settings
+    void onTableLayoutChanged() noexcept;
+    void onModuleSettingsChanged() noexcept;
 };
 
 #endif // LOGBOOKWIDGET_H

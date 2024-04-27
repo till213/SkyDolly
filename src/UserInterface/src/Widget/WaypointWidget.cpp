@@ -28,6 +28,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/Const.h>
 #include <Kernel/Unit.h>
 #include <Model/Waypoint.h>
 #include <Model/SimVar.h>
@@ -93,5 +94,5 @@ void WaypointWidget::updateUi() noexcept
     ui->longitudeLineEdit->setText(d->unit.formatLongitudeDMS(d->waypoint.longitude));
     ui->altitudeLineEdit->setText(d->unit.formatFeet(d->waypoint.altitude));
     ui->localSimulationTimeLineEdit->setText(d->unit.formatDateTime(d->waypoint.localTime));
-    ui->localSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(d->waypoint.zuluTime) + "Z");
+    ui->localSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(d->waypoint.zuluTime) + Const::ZuluTimeSuffix);
 }

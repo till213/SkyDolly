@@ -25,22 +25,18 @@
 #ifndef KMLPARSERINTF_H
 #define KMLPARSERINTF_H
 
-#include <QDateTime>
+#include <vector>
 
-class QString;
 class QXmlStreamReader;
 
-class Flight;
+struct FlightData;
 
 class KmlParserIntf
 {
 public:
     virtual ~KmlParserIntf() = default;
 
-    virtual void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept = 0;
-    virtual QString getDocumentName() const noexcept = 0;
-    virtual QString getFlightNumber() const noexcept = 0;
-    virtual QDateTime getFirstDateTimeUtc() const noexcept = 0;
+    virtual std::vector<FlightData> parse(QXmlStreamReader &xmlStreamReader) noexcept = 0;
 };
 
 #endif // KMLPARSERINTF_H

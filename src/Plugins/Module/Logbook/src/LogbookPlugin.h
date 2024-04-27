@@ -30,8 +30,9 @@
 
 class QWidget;
 
-#include "PluginManager/AbstractModule.h"
+#include <PluginManager/Module/AbstractModule.h>
 
+class ModuleBaseSettings;
 struct LogbookPluginPrivate;
 
 class LogbookPlugin : public AbstractModule
@@ -41,10 +42,18 @@ class LogbookPlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit LogbookPlugin(QObject *parent = nullptr) noexcept;
+    LogbookPlugin(const LogbookPlugin &rhs) = delete;
+    LogbookPlugin(LogbookPlugin &&rhs) = delete;
+    LogbookPlugin &operator=(const LogbookPlugin &rhs) = delete;
+    LogbookPlugin &operator=(LogbookPlugin &&rhs) = delete;
     ~LogbookPlugin() override;
 
+    QUuid getUuid() const noexcept override;
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
+
+protected:
+    ModuleBaseSettings &getModuleSettings() const noexcept override;
 
 protected slots:
     void onRecordingStopped() noexcept override;

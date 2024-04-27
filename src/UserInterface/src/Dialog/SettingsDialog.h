@@ -38,6 +38,10 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 public:
     explicit SettingsDialog(QWidget *parent = nullptr) noexcept;
+    SettingsDialog(const SettingsDialog &rhs) = delete;
+    SettingsDialog(SettingsDialog &&rhs) = delete;
+    SettingsDialog &operator=(const SettingsDialog &rhs) = delete;
+    SettingsDialog &operator=(SettingsDialog &&rhs) = delete;
     ~SettingsDialog() override;
 
 protected:
@@ -45,7 +49,6 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(SettingsDialog)
     std::unique_ptr<Ui::SettingsDialog> ui;
 
     void initUi() noexcept;

@@ -1,10 +1,6 @@
 set(LIBRARY_NAME "Widget")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} SHARED)
-else()
-    add_library(${LIBRARY_NAME} SHARED)
-endif()
+qt_add_library(${LIBRARY_NAME} SHARED)
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_compile_definitions(${LIBRARY_NAME}
@@ -28,6 +24,7 @@ target_sources(${LIBRARY_NAME}
         include/Widget/EnumerationWidgetItem.h src/EnumerationWidgetItem.cpp
         include/Widget/UnitWidgetItem.h src/UnitWidgetItem.cpp
         include/Widget/LinkedOptionGroup.h src/LinkedOptionGroup.cpp
+        include/Widget/RecentFileMenu.h src/RecentFileMenu.cpp
 )
 if(${PLATFORM_IS_WINDOWS})
     target_sources(${LIBRARY_NAME}
@@ -47,13 +44,13 @@ else()
 endif()
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_LIST_DIR}/include
     PRIVATE
         include/Widget
 )
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC
-        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt6::Widgets
     PRIVATE
         Sky::Kernel
         Sky::Model

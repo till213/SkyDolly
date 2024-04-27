@@ -32,28 +32,35 @@ class QString;
 
 #include "../FlightDaoIntf.h"
 
-class Flight;
+struct FlightData;
 class SQLiteFlightDaoPrivate;
 
-class SQLiteFlightDao : public FlightDaoIntf
+class SQLiteFlightDao final : public FlightDaoIntf
 {
 public:
-    SQLiteFlightDao() noexcept;
+    SQLiteFlightDao(QString connectionName) noexcept;
     SQLiteFlightDao(const SQLiteFlightDao &rhs) = delete;
     SQLiteFlightDao(SQLiteFlightDao &&rhs) noexcept;
     SQLiteFlightDao &operator=(const SQLiteFlightDao &rhs) = delete;
     SQLiteFlightDao &operator=(SQLiteFlightDao &&rhs) noexcept;
     ~SQLiteFlightDao() override;
 
-    bool add(Flight &flight) noexcept override;
-    bool get(std::int64_t id, Flight &flight) const noexcept override;
-    bool deleteById(std::int64_t id) noexcept override;
-    bool updateTitle(std::int64_t id, const QString &title) noexcept override;
-    bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept override;
-    bool updateUserAircraftIndex(std::int64_t id, int index) noexcept override;
+    bool add(FlightData &flight) const noexcept override;
+    bool exportFlightData(const FlightData &flightData) const noexcept override;
+    bool get(std::int64_t id, FlightData &flightData) const noexcept override;
+    bool deleteById(std::int64_t id) const noexcept override;
+    bool updateTitle(std::int64_t id, const QString &title) const noexcept override;
+    bool updateFlightNumber(std::int64_t id, const QString &flightNumber) const noexcept override;
+    bool updateDescription(std::int64_t id, const QString &description) const noexcept override;
+    bool updateUserAircraftIndex(std::int64_t id, int index) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;
+
+    // Inserts the flight and returns the generated aircraft ID if successful; Const::InvalidId upon failure
+    inline std::int64_t insertFlight(const FlightData &flightData) const noexcept;
+    inline bool addAircraft(std::int64_t flightId, FlightData &flightData) const noexcept;
+    inline bool exportAircraft(std::int64_t flightId, const FlightData &flightData) const noexcept;
 };
 
 #endif // SQLITEFLIGHTDAO_H

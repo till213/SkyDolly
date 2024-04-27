@@ -39,8 +39,8 @@
 #include <Model/EngineData.h>
 #include <Model/TimeVariableData.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include "EngineWidget.h"
 #include "ui_EngineWidget.h"
 
@@ -212,7 +212,9 @@ EngineData EngineWidget::getCurrentEngineData(std::int64_t timestamp, TimeVariab
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            engineData = aircraft.getEngine().getLast();
+            if (aircraft.getEngine().count() > 0) {
+                engineData = aircraft.getEngine().getLast();
+            }
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 engineData = aircraft.getEngine().interpolate(timestamp, access);

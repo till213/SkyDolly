@@ -30,7 +30,7 @@
 #include <QObject>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 
 struct JsonExportSettingsPrivate;
 
@@ -39,13 +39,14 @@ class JsonExportSettings : public FlightExportPluginBaseSettings
     Q_OBJECT
 public:
     JsonExportSettings() noexcept;
+    JsonExportSettings(const JsonExportSettings &rhs) = delete;
+    JsonExportSettings(JsonExportSettings &&rhs) = delete;
+    JsonExportSettings &operator=(const JsonExportSettings &rhs) = delete;
+    JsonExportSettings &operator=(JsonExportSettings &&rhs) = delete;
     ~JsonExportSettings() override;
 
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
+    bool isResamplingSupported() const noexcept override;
+    bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

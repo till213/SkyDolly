@@ -48,6 +48,10 @@
 struct AircraftPrivate
 {
 public:
+    AircraftPrivate(std::int64_t id)
+        : id(id)
+    {}
+
     std::int64_t id {Const::InvalidId};
     AircraftInfo aircraftInfo {id};
     Position position{aircraftInfo};
@@ -63,8 +67,8 @@ public:
 
 // PUBLIC
 
-Aircraft::Aircraft() noexcept
-    : d(std::make_unique<AircraftPrivate>())
+Aircraft::Aircraft(std::int64_t id) noexcept
+    : d(std::make_unique<AircraftPrivate>(id))
 {}
 
 Aircraft::Aircraft(Aircraft &&rhs) noexcept = default;
@@ -117,14 +121,14 @@ FlightPlan &Aircraft::getFlightPlan() const noexcept
     return d->flightPlan;
 }
 
-const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
+AircraftInfo &Aircraft::getAircraftInfo() const noexcept
 {
     return d->aircraftInfo;
 }
 
-void Aircraft::setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept
+void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
 {
-    d->aircraftInfo = aircraftInfo;
+    d->aircraftInfo = std::move(aircraftInfo);
 }
 
 void Aircraft::setTailNumber(const QString &tailNumber) noexcept {
@@ -138,6 +142,11 @@ std::int64_t Aircraft::getTimeOffset() const noexcept
 
 void Aircraft::setTimeOffset(std::int64_t timeOffset) noexcept {
     d->aircraftInfo.timeOffset = timeOffset;
+    invalidateDuration();
+}
+
+void Aircraft::addTimeOffset(std::int64_t deltaOffset) noexcept {
+    d->aircraftInfo.timeOffset += deltaOffset;
     invalidateDuration();
 }
 

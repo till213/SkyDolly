@@ -30,6 +30,7 @@
 
 #include <QApplication>
 #include <QByteArray>
+#include <QList>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QCursor>
@@ -37,8 +38,8 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QDir>
-#include <QUuid>
 #include <QString>
+#include <QStringBuilder>
 #include <QUuid>
 #include <QTime>
 #include <QTimeEdit>
@@ -47,6 +48,8 @@
 #include <QLineEdit>
 #include <QButtonGroup>
 #include <QPushButton>
+#include <QMenu>
+#include <QSystemTrayIcon>
 #include <QRadioButton>
 #include <QDoubleValidator>
 #include <QIcon>
@@ -57,16 +60,21 @@
 #include <QActionGroup>
 #include <QSpacerItem>
 #include <QTimer>
-#include <QStringBuilder>
 #include <QDesktopServices>
+#include <QMimeData>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 #include <Kernel/Unit.h>
 #include <Kernel/Const.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/Replay.h>
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
 #include <Kernel/Enum.h>
 #include <Kernel/SampleRate.h>
+#include <Kernel/SecurityToken.h>
+#include <Kernel/RecentFile.h>
 #include <Model/Aircraft.h>
 #include <Model/PositionData.h>
 #include <Model/AircraftInfo.h>
@@ -80,11 +88,12 @@
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
 #include <Widget/Platform.h>
+#include <Widget/RecentFileMenu.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include <PluginManager/PluginManager.h>
-#include <PluginManager/ModuleIntf.h>
+#include <PluginManager/Module/ModuleIntf.h>
 #include <PluginManager/ModuleManager.h>
 #include "Dialog/AboutDialog.h"
 #include "Dialog/LogbookSettingsDialog.h"
@@ -93,7 +102,6 @@
 #include "Dialog/SimulationVariablesDialog.h"
 #include "Dialog/StatisticsDialog.h"
 #include "Dialog/LogbookBackupDialog.h"
-
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -134,16 +142,15 @@ struct MainWindowPrivate
     Connect::State previousState {Connect::State::Connected};
     bool connectedWithLogbook {false};
 
+    RecentFileMenu *recentFileMenu {nullptr};
     FlightDialog *flightDialog {nullptr};
     SimulationVariablesDialog *simulationVariablesDialog {nullptr};
     StatisticsDialog *statisticsDialog {nullptr};
 
+    QMenu *trayIconMenu {nullptr};
+    QSystemTrayIcon *trayIcon {nullptr};
+
     Unit unit;
-
-    // Services
-    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
-    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
-
     QSize lastNormalUiSize;
 
     // Replay speed
@@ -164,6 +171,7 @@ struct MainWindowPrivate
     bool hasFlightExportPlugins {false};
     bool hasLocationImportPlugins {false};
     bool hasLocationExportPlugins {false};
+    bool continuousSeek {false};
 
     std::unique_ptr<ModuleManager> moduleManager;
 };
@@ -175,8 +183,6 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
       ui(std::make_unique<Ui::MainWindow>()),
       d(std::make_unique<MainWindowPrivate>())
 {
-    Q_INIT_RESOURCE(UserInterface);
-
     ui->setupUi(this);
 
     // Connect with logbook
@@ -191,17 +197,37 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
     initUi();
     updateUi();
     frenchConnection();
+    tryConnectAndSetup();
 }
 
-MainWindow::~MainWindow() = default;
+MainWindow::~MainWindow()
+{
+    // Don't get notified about the dialog destruction in case
+    // the Qt event queue tries to delete this MainWindow first
+    // (which then also implicitly deletes the dialogs due to
+    // them being children of this MainWindow); otherwise we
+    // would try to access the invalid private data 'd' in
+    // the various onXYZDeleted slots
+    if (d->flightDialog != nullptr) {
+        d->flightDialog->disconnect();
+    }
+    if (d->simulationVariablesDialog != nullptr) {
+        d->simulationVariablesDialog->disconnect();
+    }
+    if (d->statisticsDialog != nullptr) {
+        d->statisticsDialog->disconnect();
+    }
+}
 
 bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 {
-    bool ok = PersistenceManager::getInstance().connectWithLogbook(filePath, this);
-    if (!ok) {
+    d->connectedWithLogbook = PersistenceManager::getInstance().connectWithLogbook(filePath, this);
+    if (d->connectedWithLogbook) {
+        RecentFile::getInstance().addRecentFile(filePath);
+    } else {
         QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
     }
-    return ok;
+    return d->connectedWithLogbook;
 }
 
 // PROTECTED
@@ -231,6 +257,38 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
     settings.setWindowState(saveState());
 }
 
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) noexcept
+{
+    const QMimeData *mimeData = event->mimeData();
+    if (mimeData->hasUrls()) {
+        const QList<QUrl> urlList = mimeData->urls();
+        // Accept the proposed drop action if at least one
+        // URL looks to be a Sky Dolly logbook (*.sdlog)
+        for (const QUrl &url : urlList) {
+            if (url.isLocalFile() && url.fileName().endsWith(Const::LogbookExtension)) {
+                event->acceptProposedAction();
+                break;
+            }
+        }
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event) noexcept
+{
+    QString filePath;
+    const QMimeData *mimeData = event->mimeData();
+    const QList<QUrl> urlList = mimeData->urls();
+    for (const QUrl &url : urlList) {
+        if (url.isLocalFile() && url.fileName().endsWith(Const::LogbookExtension)) {
+            filePath = url.toLocalFile();
+            break;
+        }
+    }
+    if (!filePath.isEmpty()) {
+        connectWithLogbook(filePath);
+    }
+}
+
 // PRIVATE
 
 void MainWindow::frenchConnection() noexcept
@@ -242,7 +300,9 @@ void MainWindow::frenchConnection() noexcept
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &MainWindow::updateUi);
     connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-            this, &MainWindow::onRecordingDurationChanged);
+            this, &MainWindow::onRecordingStopped);
+    connect(&skyConnectManager, &SkyConnectManager::shortCutActivated,
+            this, &MainWindow::onShortcutActivated);
 
     // Replay speed
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
@@ -254,6 +314,8 @@ void MainWindow::frenchConnection() noexcept
     connect(&flight, &Flight::flightRestored,
             this, &MainWindow::onFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
+            this, &MainWindow::onRecordingDurationChanged);
+    connect(&flight, &Flight::aircraftStored,
             this, &MainWindow::onRecordingDurationChanged);
     connect(&flight, &Flight::aircraftRemoved,
             this, &MainWindow::onRecordingDurationChanged);
@@ -316,6 +378,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipToEnd);
     connect(ui->loopReplayAction, &QAction::triggered,
             this, &MainWindow::toggleLoopReplay);
+    connect(ui->clearFlightAction, &QAction::triggered,
+            this, &MainWindow::clearFlight);
 
     // Modules
     connect(d->moduleManager.get(), &ModuleManager::activated,
@@ -336,6 +400,12 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::showLogbookSettings);
     connect(ui->quitAction, &QAction::triggered,
             this, &MainWindow::quit);
+
+    // Recent files
+    connect(&RecentFile::getInstance(), &RecentFile::recentFileSelected,
+            this, &MainWindow::onRecentFileSelected);
+    connect(d->recentFileMenu, &RecentFileMenu::actionGroupChanged,
+            this, &MainWindow::updateRecentFileMenu);
 
     // Menu actions
     connect(d->flightImportActionGroup, &QActionGroup::triggered,
@@ -379,10 +449,27 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::showOnlineManual);
 }
 
+void MainWindow::tryConnectAndSetup() const noexcept
+{
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+
+    // TODO IMPLEMENT ME
+    if (skyConnectManager.hasPlugins()) {
+        FlightSimulatorShortcuts shortcuts {Settings::getInstance().getFlightSimulatorShortcuts()};
+        if (shortcuts.hasAny()) {
+            skyConnectManager.tryConnectAndSetup(shortcuts);
+        }
+    }
+}
+
 void MainWindow::initUi() noexcept
 {
     Settings &settings = Settings::getInstance();
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
+
+    // File menu
+    d->recentFileMenu = new RecentFileMenu(this);
+    updateRecentFileMenu();
 
     // Window menu
     ui->stayOnTopAction->setChecked(settings.isWindowStaysOnTopEnabled());
@@ -391,6 +478,7 @@ void MainWindow::initUi() noexcept
     initViewUi();
     initControlUi();
     initReplaySpeedUi();
+    createTrayIcon();
 
     const bool minimalUi = isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
@@ -403,26 +491,26 @@ void MainWindow::initUi() noexcept
         restoreState(windowState);
     }
 
+    // Drag and drop support
+    setAcceptDrops(true);
+
     const int previewInfoCount = settings.getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
         QTimer::singleShot(0, this, [this]() {
             Settings &settings = Settings::getInstance();
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
-            constexpr uint CakeChar = 0x1f382;
-            const QString CakeString = QString::fromUcs4(&CakeChar, 1);
             QMessageBox::information(this, "Preview",
-                                     CakeString + CakeString + CakeString + QString(" HAPPY 40TH ANNIVERSARY, FLIGHT SIMULATOR! ") + CakeString + CakeString + CakeString +
-                                     QString("\n\n"
-                                             "%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                                             "This release v%2 \"%3\" introduces location import and export, making it possible to exchange user points with e.g. Little Navmap. "
-                                             "The Location module now also supports basic filtering and the engine state (start, stop, unchanged) can be controlled upon teleportation.\n\n"
-                                             "While not many new features have been introduced a lot of work has been done \"under the hood\": memory "
-                                             "and performance optimisations in various areas have been applied.\n\n"
-                                             "This dialog will be shown %4 more times.")
-                                     .arg(Version::getApplicationName(), Version::getApplicationVersion())
-                                     .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
-                                     QMessageBox::StandardButton::Ok);
+                                     QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
+                                     "This patch release v%2 \"%3\" introduces customisable shortcuts for MSFS itself. "
+                                     "Dark mode is now also supported.\n\n"
+                                     "Note that the other CSV formats (flightradar24.com for instance) will not go away and remain fully supported, both import and export.\n\n"
+                                     "All import plugins that support real-world timestamps such as the newly introduced Sky Dolly logbook import "
+                                     "now also support automated time offset synchronisation when importing aircraft into a formation flight.\n\n"
+                                     "This dialog will be shown %4 more times.")
+                         .arg(Version::getApplicationName(), Version::getApplicationVersion())
+                         .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
+                         QMessageBox::StandardButton::Ok);
             settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
         });
     }
@@ -449,7 +537,7 @@ void MainWindow::initPlugins() noexcept
     if (d->hasFlightImportPlugins) {
         ui->flightImportMenu->setEnabled(true);
         for (const PluginManager::Handle &handle : flightImportPlugins) {
-            QAction *flightImportAction = new QAction(handle.second, ui->flightImportMenu);
+            auto flightImportAction = new QAction(handle.second, ui->flightImportMenu);
             // First: plugin uuid
             flightImportAction->setData(handle.first);
             d->flightImportActionGroup->addAction(flightImportAction);
@@ -465,7 +553,7 @@ void MainWindow::initPlugins() noexcept
     if (d->hasFlightExportPlugins) {
         ui->flightExportMenu->setEnabled(true);
         for (const PluginManager::Handle &handle : flightExportPlugins) {
-            QAction *flightExportAction = new QAction(handle.second, ui->flightExportMenu);
+            auto flightExportAction = new QAction(handle.second, ui->flightExportMenu);
             // First: plugin uuid
             flightExportAction->setData(handle.first);
             d->flightExportActionGroup->addAction(flightExportAction);
@@ -481,7 +569,7 @@ void MainWindow::initPlugins() noexcept
     if (d->hasLocationImportPlugins) {
         ui->locationImportMenu->setEnabled(true);
         for (const PluginManager::Handle &handle : locationImportPlugins) {
-            QAction *locationImportAction = new QAction(handle.second, ui->locationImportMenu);
+            auto locationImportAction = new QAction(handle.second, ui->locationImportMenu);
             // First: plugin uuid
             locationImportAction->setData(handle.first);
             d->locationImportActionGroup->addAction(locationImportAction);
@@ -497,7 +585,7 @@ void MainWindow::initPlugins() noexcept
     if (d->hasLocationExportPlugins) {
         ui->locationExportMenu->setEnabled(true);
         for (const PluginManager::Handle &handle : locationExportPlugins) {
-            QAction *locationExportAction = new QAction(handle.second, ui->locationExportMenu);
+            auto locationExportAction = new QAction(handle.second, ui->locationExportMenu);
             // First: plugin uuid
             locationExportAction->setData(handle.first);
             d->locationExportActionGroup->addAction(locationExportAction);
@@ -514,7 +602,7 @@ void MainWindow::initModuleSelectorUi() noexcept
 {
     // Modules
     d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleGroupBox->layout());
-    ActionCheckBox *actionCheckBox = new ActionCheckBox(false, this);
+    auto actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
     const QString css = QStringLiteral(
@@ -546,7 +634,7 @@ void MainWindow::initModuleSelectorUi() noexcept
     int moduleCount {0};
     for (const auto &item : d->moduleManager->getActionRegistry()) {
         if (moduleCount > 0) {
-            QFrame *verticalLine = new QFrame(this);
+            auto *verticalLine = new QFrame(this);
             verticalLine->setFrameShape(QFrame::VLine);
             verticalLine->setFrameShadow(QFrame::Sunken);
             ui->moduleSelectorLayout->addWidget(verticalLine);
@@ -554,7 +642,7 @@ void MainWindow::initModuleSelectorUi() noexcept
 
         QAction *moduleAction = item.second;
         ui->moduleMenu->addAction(moduleAction);
-        ActionButton *actionButton = new ActionButton(this, ActionButton::Capitalisation::AllCaps);
+        auto actionButton = new ActionButton(this, ActionButton::Capitalisation::AllCaps);
         actionButton->setAction(moduleAction);
         actionButton->setFlat(true);
         ui->moduleSelectorLayout->addWidget(actionButton);
@@ -606,17 +694,17 @@ void MainWindow::initReplaySpeedUi() noexcept
         new QAction("50 %", this),
         new QAction("75 %", this)
     };
-    slowActions.at(0)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
+    slowActions.at(0)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
     slowActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow10));
-    slowActions.at(1)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
+    slowActions.at(1)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_2));
     slowActions.at(1)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow25));
-    slowActions.at(2)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
+    slowActions.at(2)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_3));
     slowActions.at(2)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow50));
-    slowActions.at(3)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
+    slowActions.at(3)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_4));
     slowActions.at(3)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow75));
 
     ui->normalSpeedAction->setCheckable(true);
-    ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
+    ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_1));
     ui->normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Normal));
 
     QList<QAction *> fastActions {
@@ -625,17 +713,17 @@ void MainWindow::initReplaySpeedUi() noexcept
         new QAction("8x", this),
         new QAction("16x", this)
     };
-    fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_2));
+    fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_2));
     fastActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast2x));
-    fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_3));
+    fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_3));
     fastActions.at(1)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast4x));
-    fastActions.at(2)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_4));
+    fastActions.at(2)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_4));
     fastActions.at(2)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast8x));
-    fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_5));
+    fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_5));
     fastActions.at(3)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast16x));
 
     ui->customSpeedAction->setCheckable(true);
-    ui->customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_6));
+    ui->customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_6));
     ui->customSpeedAction->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Custom));
 
     // Action group
@@ -658,39 +746,39 @@ void MainWindow::initReplaySpeedUi() noexcept
     QLayout *replaySpeedLayout = ui->replaySpeedGroupBox->layout();
 
     // Action radio buttons
-    ActionRadioButton *slow10RadioButton = new ActionRadioButton(this);
+    auto slow10RadioButton = new ActionRadioButton(this);
     slow10RadioButton->setAction(slowActions.at(0));
     replaySpeedLayout->addWidget(slow10RadioButton);
 
-    ActionRadioButton *slow25RadioButton = new ActionRadioButton(this);
+    auto slow25RadioButton = new ActionRadioButton(this);
     slow25RadioButton->setAction(slowActions.at(1));
     replaySpeedLayout->addWidget(slow25RadioButton);
 
-    ActionRadioButton *slow50RadioButton = new ActionRadioButton(this);
+    auto slow50RadioButton = new ActionRadioButton(this);
     slow50RadioButton->setAction(slowActions.at(2));
     replaySpeedLayout->addWidget(slow50RadioButton);
 
-    ActionRadioButton *slow75RadioButton = new ActionRadioButton(this);
+    auto slow75RadioButton = new ActionRadioButton(this);
     slow75RadioButton->setAction(slowActions.at(3));
     replaySpeedLayout->addWidget(slow75RadioButton);
 
-    ActionRadioButton *normalSpeedRadioButton = new ActionRadioButton(this);
+    auto normalSpeedRadioButton = new ActionRadioButton(this);
     normalSpeedRadioButton->setAction(ui->normalSpeedAction);
     replaySpeedLayout->addWidget(normalSpeedRadioButton);
 
-    ActionRadioButton *fast2xRadioButton = new ActionRadioButton(this);
+    auto fast2xRadioButton = new ActionRadioButton(this);
     fast2xRadioButton->setAction(fastActions.at(0));
     replaySpeedLayout->addWidget(fast2xRadioButton);
 
-    ActionRadioButton *fast4xRadioButton = new ActionRadioButton(this);
+    auto fast4xRadioButton = new ActionRadioButton(this);
     fast4xRadioButton->setAction(fastActions.at(1));
     replaySpeedLayout->addWidget(fast4xRadioButton);
 
-    ActionRadioButton *fast8xRadioButton = new ActionRadioButton(this);
+    auto fast8xRadioButton = new ActionRadioButton(this);
     fast8xRadioButton->setAction(fastActions.at(2));
     replaySpeedLayout->addWidget(fast8xRadioButton);
 
-    ActionRadioButton *fast16xRadioButton = new ActionRadioButton(this);
+    auto fast16xRadioButton = new ActionRadioButton(this);
     fast16xRadioButton->setAction(fastActions.at(3));
     replaySpeedLayout->addWidget(fast16xRadioButton);
 
@@ -737,6 +825,21 @@ void MainWindow::initReplaySpeedUi() noexcept
     }
 
     replaySpeedLayout->addWidget(d->replaySpeedUnitComboBox);
+}
+
+void MainWindow::createTrayIcon() noexcept
+{
+    d->trayIconMenu = new QMenu(this);
+    d->trayIconMenu->addAction(ui->recordAction);
+    d->trayIconMenu->addAction(ui->playAction);
+    d->trayIconMenu->addAction(ui->stopAction);
+    d->trayIconMenu->addSeparator();
+    d->trayIconMenu->addAction(ui->quitAction);
+
+    d->trayIcon = new QSystemTrayIcon(this);
+    d->trayIcon->setContextMenu(d->trayIconMenu);
+
+    d->trayIcon->setIcon(QIcon(":/img/icons/application-icon.png"));
 }
 
 void MainWindow::initSkyConnectPlugin() noexcept
@@ -817,7 +920,7 @@ void MainWindow::initSkyConnectPlugin() noexcept
 FlightDialog &MainWindow::getFlightDialog() noexcept
 {
     if (d->flightDialog == nullptr) {
-        d->flightDialog = new FlightDialog(*d->flightService, this);
+        d->flightDialog = new FlightDialog(this);
         d->flightDialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(d->flightDialog, &FlightDialog::visibilityChanged,
                 this, &MainWindow::updateWindowMenu);
@@ -1068,37 +1171,47 @@ double MainWindow::getCustomSpeedFactor() const
     return customSpeedFactor;
 }
 
+void MainWindow::seek(int value, SkyConnectIntf::SeekMode seekMode) const noexcept
+{
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const double factor = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
+    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+    auto timestamp = static_cast<std::int64_t>(std::round(factor * static_cast<double>(totalDuration)));
+
+    // Prevent the timestampTimeEdit field to set the replay position as well
+    ui->timestampTimeEdit->blockSignals(true);
+    skyConnectManager.seek(timestamp, seekMode);
+    ui->timestampTimeEdit->blockSignals(false);
+}
+
 // PRIVATE SLOTS
 
 void MainWindow::onPositionSliderPressed() noexcept
 {
+    d->continuousSeek = true;
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     d->previousState = skyConnectManager.getState();
-    if (d->previousState == Connect::State::Replay) {
+    if (skyConnectManager.isInReplayState()) {
         // Pause the replay while sliding the position slider
-        skyConnectManager.setPaused(true);
+        d->moduleManager->setPaused(true);
     }
 }
 
 void MainWindow::onPositionSliderValueChanged(int value) noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    const double factor = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
-    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-    const std::int64_t timestamp = static_cast<std::int64_t>(std::round(factor * static_cast<double>(totalDuration)));
-
-    // Prevent the timestampTimeEdit field to set the replay position as well
-    ui->timestampTimeEdit->blockSignals(true);
-    skyConnectManager.seek(timestamp);
-    ui->timestampTimeEdit->blockSignals(false);
+    const SkyConnectIntf::SeekMode seekMode = d->continuousSeek ? SkyConnectIntf::SeekMode::Continuous : SkyConnectIntf::SeekMode::Discrete;
+    seek(value, seekMode);
 }
 
 void MainWindow::onPositionSliderReleased() noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    seek(ui->positionSlider->value(), SkyConnectIntf::SeekMode::Discrete);
     if (d->previousState == Connect::State::Replay) {
-        skyConnectManager.setPaused(false);
+        d->moduleManager->setPaused(false);
+    } else if (d->previousState == Connect::State::ReplayPaused) {
+        d->moduleManager->setPaused(true);
     }
+    d->continuousSeek = false;
 }
 
 void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
@@ -1106,7 +1219,7 @@ void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isIdle() || skyConnectManager.getState() == Connect::State::ReplayPaused) {
         std::int64_t timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
-        skyConnectManager.seek(timestamp);
+        skyConnectManager.seek(timestamp, SkyConnectIntf::SeekMode::Discrete);
     }
 }
 
@@ -1224,6 +1337,7 @@ void MainWindow::updateUi() noexcept
     updateModuleActions();
     updateWindowMenu();
     updateMainWindow();
+    onRecordingDurationChanged();
 }
 
 void MainWindow::updateControlUi() noexcept
@@ -1247,6 +1361,7 @@ void MainWindow::updateControlUi() noexcept
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(hasRecording && hasSkyConnectPlugins);
         ui->playAction->setChecked(false);
+        ui->clearFlightAction->setEnabled(hasRecording);
         // Transport
         ui->skipToBeginAction->setEnabled(hasRecording && hasSkyConnectPlugins);
         ui->backwardAction->setEnabled(hasRecording && hasSkyConnectPlugins);
@@ -1265,6 +1380,7 @@ void MainWindow::updateControlUi() noexcept
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(false);
         ui->playAction->setChecked(false);
+        ui->clearFlightAction->setEnabled(false);
         // Transport
         ui->skipToBeginAction->setEnabled(false);
         ui->backwardAction->setEnabled(false);
@@ -1289,6 +1405,8 @@ void MainWindow::updateControlUi() noexcept
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(true);
         ui->playAction->setChecked(true);
+        // Clearing a playing flight will stop it first
+        ui->clearFlightAction->setEnabled(true);
         // Transport
         ui->skipToBeginAction->setEnabled(true);
         ui->backwardAction->setEnabled(true);
@@ -1336,6 +1454,81 @@ void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible
     }
 }
 
+void MainWindow::onRecordingStopped() noexcept
+{
+    onRecordingDurationChanged();
+}
+
+void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept
+{
+    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    QString pushNotification;
+    switch (action) {
+    case FlightSimulatorShortcuts::Action::Record:
+        if (ui->recordAction->isEnabled()) {
+            if (skyConnectManager.isInRecordingState()) {
+                pushNotification = tr("Recording stopped.");
+            } else {
+                pushNotification = tr("Recording started.");
+            }
+            ui->recordAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Replay:
+        if (ui->playAction->isEnabled()) {
+            ui->playAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Pause:
+        if (ui->pauseAction->isEnabled()) {
+            if (skyConnectManager.isRecordingPaused()) {
+                pushNotification = tr("Recording resumed.");
+            } else if (skyConnectManager.isRecording()) {
+                pushNotification = tr("Recording paused.");
+            }
+            ui->pauseAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Stop:
+        if (ui->stopAction->isEnabled()) {
+            if (skyConnectManager.isInRecordingState()) {
+                pushNotification = tr("Recording stopped.");
+            }
+            ui->stopAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Backward:
+        if (ui->backwardAction->isEnabled()) {
+            ui->backwardAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Forward:
+        if (ui->forwardAction->isEnabled()) {
+            ui->forwardAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::Begin:
+        if (ui->skipToBeginAction->isEnabled()) {
+            ui->skipToBeginAction->trigger();
+        }
+        break;
+    case FlightSimulatorShortcuts::Action::End:
+        if (ui->skipToEndAction->isEnabled()) {
+            ui->skipToEndAction->trigger();
+        }
+        break;
+    }
+
+    if (!pushNotification.isEmpty()) {
+        d->trayIcon->showMessage(Version::getApplicationName(), pushNotification,
+                                 QSystemTrayIcon::Information, 3000);
+    }
+
+#ifdef DEBUG
+    qDebug() << "Main window: flight simulator shortcut activated" << Enum::underly(action);
+#endif
+}
+
 void MainWindow::onRecordingDurationChanged() noexcept
 {
     updateReplayDuration();
@@ -1346,7 +1539,7 @@ void MainWindow::updateReplayDuration() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
-    const QTime time = QTime::fromMSecsSinceStartOfDay(totalDuration);
+    const QTime time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(totalDuration));
     ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);
@@ -1430,6 +1623,13 @@ void MainWindow::updateMainWindow() noexcept
     } else {
         ui->showModulesAction->setToolTip(tr("Show modules."));
     }
+    if (d->connectedWithLogbook && !settings.isMinimalUiEnabled()) {
+        setWindowTitle(Version::getApplicationName() % " - " % QFileInfo(settings.getLogbookPath()).fileName());
+    } else {
+        setWindowTitle(Version::getApplicationName());
+    }
+
+    d->trayIcon->show();
 }
 
 void MainWindow::onModuleActivated(const QString &title, [[maybe_unused]] QUuid uuid) noexcept
@@ -1447,7 +1647,9 @@ void MainWindow::createNewLogbook() noexcept
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
         const bool ok = PersistenceManager::getInstance().connectWithLogbook(logbookPath, this);
-        if (!ok) {
+        if (ok) {
+            RecentFile::getInstance().addRecentFile(logbookPath);
+        } else {
             QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be created.").arg(QDir::toNativeSeparators(logbookPath)));
         }
     }
@@ -1461,10 +1663,35 @@ void MainWindow::openLogbook() noexcept
     }
 }
 
+void MainWindow::onRecentFileSelected(const QString &filePath, SecurityToken *securityToken) noexcept
+{
+    // Connecting with a non-existing SQLite database will actually succeed when calling
+    // connectWithLogbook() (the non-existing database file is created first), so we
+    // explicitly check the existence of the file
+    const QFileInfo fileInfo {filePath};
+    bool ok = fileInfo.exists();
+    if (ok) {
+        ok = connectWithLogbook(filePath);
+    } else {
+        QMessageBox::critical(this, tr("Logbook not found"), tr("The logbook %1 does not exist.").arg(QDir::toNativeSeparators(filePath)));
+    }
+    if (!ok) {
+        RecentFile::getInstance().removeRecentFile(filePath);
+    }
+}
+
+void MainWindow::updateRecentFileMenu() noexcept
+{
+    ui->recentFilesMenu->clear();
+    for (QAction *recentFileAction : d->recentFileMenu->getRecentFileActionGroup().actions()) {
+        ui->recentFilesMenu->addAction(recentFileAction);
+    }
+}
+
 void MainWindow::optimiseLogbook() noexcept
 {
-    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
-    QString logbookPath = persistenceManager.getLogbookPath();
+    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const QString logbookPath = persistenceManager.getLogbookPath();
     QFileInfo fileInfo = QFileInfo(logbookPath);
 
     std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
@@ -1643,6 +1870,12 @@ void MainWindow::toggleLoopReplay(bool checked) noexcept
     Settings::getInstance().setLoopReplayEnabled(checked);
 }
 
+void MainWindow::clearFlight() noexcept
+{
+    stop();
+    Logbook::getInstance().getCurrentFlight().clear(true, FlightData::CreationTimeMode::Reset);
+}
+
 // Service
 
 void MainWindow::onFlightRestored() noexcept
@@ -1670,7 +1903,7 @@ void MainWindow::onFlightImport(QAction *action) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const QUuid pluginUuid = action->data().toUuid();
-    const bool ok = PluginManager::getInstance().importFlight(pluginUuid, *d->flightService, flight);
+    const bool ok = PluginManager::getInstance().importFlights(pluginUuid, flight);
     if (ok) {
         updateUi();
         SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
@@ -1692,13 +1925,13 @@ void MainWindow::onFlightExport(QAction *action) noexcept
 void MainWindow::onLocationImport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
-    PluginManager::getInstance().importLocations(pluginUuid, *d->locationService);
+    PluginManager::getInstance().importLocations(pluginUuid);
 }
 
 void MainWindow::onLocationExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
-    PluginManager::getInstance().exportLocations(pluginUuid, *d->locationService);
+    PluginManager::getInstance().exportLocations(pluginUuid);
 }
 
 void MainWindow::onReplayLoopChanged() noexcept

@@ -22,14 +22,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+#include <utility>
+
 #include <QFile>
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QDir>
 #include <QCoreApplication>
-#include <QTextCodec>
+#include <QStringConverter>
 
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
@@ -37,6 +41,7 @@
 #include <Model/Enumeration.h>
 #include <Model/Location.h>
 #include <Service/EnumerationService.h>
+#include <Migration.h>
 #include "SQLiteLocationDao.h"
 #include "SqlMigrationStep.h"
 #include "SqlMigration.h"
@@ -74,30 +79,38 @@ namespace
 
 struct SqlMigrationPrivate
 {
-    SQLiteLocationDao locationDao;
-    EnumerationService enumerationService;
+    SqlMigrationPrivate(QString connectionName) noexcept
+        : connectionName(connectionName),
+          locationDao(std::make_unique<SQLiteLocationDao>(connectionName)),
+          enumerationService(std::make_unique<EnumerationService>(std::move(connectionName)))
+    {}
+
+    QString connectionName;
+    std::unique_ptr<SQLiteLocationDao> locationDao;
+    std::unique_ptr<EnumerationService> enumerationService;
 };
 
 // PUBLIC
 
-SqlMigration::SqlMigration() noexcept
-    : d(std::make_unique<SqlMigrationPrivate>())
-{
-     Q_INIT_RESOURCE(Migration);
-}
+SqlMigration::SqlMigration(QString connectionName) noexcept
+    : d(std::make_unique<SqlMigrationPrivate>(std::move(connectionName)))
+{}
 
 SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;
 SqlMigration &SqlMigration::operator=(SqlMigration &&rhs) noexcept = default;
 SqlMigration::~SqlMigration() = default;
 
-bool SqlMigration::migrate() noexcept
+bool SqlMigration::migrate(Migration::Milestones milestones) const noexcept
 {
-    bool ok = migrateSql(":/dao/sqlite/migr/LogbookMigration.sql");
-    if (ok) {
-        ok = migrateSql(":/dao/sqlite/migr/LocationMigration.sql");
+    bool ok {true};
+    if (milestones.testFlag(Migration::Milestone::Schema)) {
+        ok = migrateSql(":/dao/sqlite/migr/LogbookMigration.sql");
+        if (ok) {
+            ok = migrateSql(":/dao/sqlite/migr/LocationMigration.sql");
+        }
     }
-    if (ok) {
-        QDir migrationDirectory = QDir(QCoreApplication::applicationDirPath());
+    if (ok && milestones.testFlag(Migration::Milestone::Location)) {
+        QDir migrationDirectory {QDir(QCoreApplication::applicationDirPath())};
 #if defined(Q_OS_MAC)
         if (migrationDirectory.dirName() == "MacOS") {
             // Navigate up the app bundle structure, into the Contents folder
@@ -114,19 +127,20 @@ bool SqlMigration::migrate() noexcept
 
 // PRIVATE
 
-bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
+bool SqlMigration::migrateSql(const QString &migrationFilePath) const noexcept
 {
     // https://regex101.com/
     // @migr(...)
     static const QRegularExpression migrRegExp(R"(@migr\(([\w="\-,.\s]+)\))");
-    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
         if (ok) {
             QTextStream textStream(&migrationFile);
-            textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+            textStream.setEncoding(QStringConverter::Utf8);
             const QString migration = textStream.readAll();
 
             QStringList sqlStatements = migration.split(migrRegExp);
@@ -141,7 +155,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 #ifdef DEBUG
                 qDebug() << "SqlMigration::migrate:" << tag;
 #endif
-                SqlMigrationStep step;
+                SqlMigrationStep step {d->connectionName};
                 ok = step.parseTag(tagMatch);
                 if (ok && !step.checkApplied()) {
                     ok = step.execute(sqlStatements.at(i));
@@ -156,22 +170,23 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
     return query.exec() && ok;
 }
 
-bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
-{ 
-    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
+bool SqlMigration::migrateCsv(const QString &migrationFilePath) const noexcept
+{
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
         if (ok) {
             QTextStream textStream(&migrationFile);
-            textStream.setCodec(QTextCodec::codecForName("UTF-8"));
+            textStream.setEncoding(QStringConverter::Utf8);
             CsvParser csvParser;
             CsvParser::Rows rows = csvParser.parse(textStream, ::LocationMigrationHeader, ::AlternateLocationMigrationHeader);
             if (CsvParser::validate(rows, Enum::underly(::Index::Count))) {
                 for (const auto &row : rows) {
                     const QString uuid = row.at(::Index::Uuid);
-                    SqlMigrationStep step;
+                    SqlMigrationStep step {d->connectionName};
                     step.setMigrationId(uuid);
                     step.setStep(1);
                     step.setStepCount(1);
@@ -194,23 +209,23 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
     return query.exec() && ok;
 }
 
-bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
+bool SqlMigration::migrateLocation(const CsvParser::Row &row) const noexcept
 {
     bool ok {true};
     Location location;
     location.title = row.at(::Index::Title);
     QString description = row.at(::Index::Description);
     location.description = description.replace("\\n", "\n");
-    Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType, &ok);
+    Enumeration locationTypeEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::LocationType, Enumeration::Order::Id, &ok);
     if (ok) {
         location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypeSystemSymId).id;
     }
-    Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory, &ok);
+    Enumeration locationCategoryEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::LocationCategory, Enumeration::Order::Id, &ok);
     if (ok) {
         const QString &categorySymId = row.at(::Index::Category);
         location.categoryId = locationCategoryEnumeration.getItemBySymId(categorySymId).id;
     }
-    Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country, &ok);
+    Enumeration countryEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::Country, Enumeration::Order::Id, &ok);
     if (ok) {
         const QString &countrySymId = row.at(::Index::Country);
         location.countryId = countryEnumeration.getItemBySymId(countrySymId).id;
@@ -245,13 +260,13 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) noexcept
     if (ok) {
         location.onGround = row.at(::Index::OnGround).toLower() == "true" ? true : false;
     }
-    Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent, &ok);
+    Enumeration engineEventEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::EngineEvent, Enumeration::Order::Id, &ok);
     if (ok) {
         const QString &engineEventSymId = row.at(::Index::EngineEvent);
         location.engineEventId = engineEventEnumeration.getItemBySymId(engineEventSymId).id;
     }
     if (ok) {
-        ok = d->locationDao.add(location);
+        ok = d->locationDao->add(location);
     }
 
     return ok;

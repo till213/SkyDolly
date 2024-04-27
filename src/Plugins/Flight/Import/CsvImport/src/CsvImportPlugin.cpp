@@ -30,10 +30,11 @@
 #include <QFlags>
 
 #include <Kernel/Unit.h>
+#include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/AircraftInfo.h>
 #include <Flight/FlightAugmentation.h>
 #include "CsvParserIntf.h"
-#include "SkyDollyCsvParser.h"
 #include "FlightRadar24CsvParser.h"
 #include "FlightRecorderCsvParser.h"
 #include "CsvImportSettings.h"
@@ -43,9 +44,6 @@
 struct CsvImportPluginPrivate
 {
     CsvImportSettings pluginSettings;
-    QDateTime firstDateTimeUtc;
-    QString flightNumber;
-
     static constexpr const char *FileExtension {"csv"};
 };
 
@@ -56,6 +54,32 @@ CsvImportPlugin::CsvImportPlugin() noexcept
 {}
 
 CsvImportPlugin::~CsvImportPlugin() = default;
+
+std::vector<FlightData> CsvImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+{
+    std::vector<FlightData> flights;
+    std::unique_ptr<CsvParserIntf> parser;
+    switch (d->pluginSettings.getFormat()) {
+    case CsvImportSettings::Format::Flightradar24:
+        parser = std::make_unique<FlightRadar24CsvParser>();
+        break;
+    case CsvImportSettings::Format::FlightRecorder:
+        parser = std::make_unique<FlightRecorderCsvParser>();
+        break;
+    }
+    ok = false;
+    if (parser != nullptr) {
+        FlightData flightData = parser->parse(io, ok);
+        if (ok) {
+            ok = flightData.hasRecording();
+        }
+        if (ok) {
+            enrichFlightData(flightData);
+            flights.push_back(std::move(flightData));
+        }
+    }
+    return flights;
+}
 
 // PROTECTED
 
@@ -79,35 +103,11 @@ std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<CsvImportOptionWidget>(d->pluginSettings);
 }
 
-bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
-{
-    std::unique_ptr<CsvParserIntf> parser;
-    switch (d->pluginSettings.getFormat()) {
-    case CsvImportSettings::Format::SkyDolly:
-        parser = std::make_unique<SkyDollyCsvParser>();
-        break;
-    case CsvImportSettings::Format::FlightRadar24:
-        parser = std::make_unique<FlightRadar24CsvParser>();
-        break;
-    case CsvImportSettings::Format::FlightRecorder:
-        parser = std::make_unique<FlightRecorderCsvParser>();
-        break;
-    }
-    bool ok {false};
-    if (parser != nullptr) {
-        ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber, flight);
-    }
-    return ok;
-}
-
-FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
+FlightAugmentation::Procedures CsvImportPlugin::getAugmentationProcedures() const noexcept
 {
     FlightAugmentation::Procedures procedures;
     switch (d->pluginSettings.getFormat()) {
-    case CsvImportSettings::Format::SkyDolly:
-        procedures = FlightAugmentation::Procedure::None;
-        break;
-    case CsvImportSettings::Format::FlightRadar24:
+    case CsvImportSettings::Format::Flightradar24:
         // Do not augment heading and velocity
         procedures = FlightAugmentation::Procedure::All;
         break;
@@ -119,14 +119,11 @@ FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
     return procedures;
 }
 
-FlightAugmentation::Aspects CsvImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects CsvImportPlugin::getAugmentationAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
     switch (d->pluginSettings.getFormat()) {
-    case CsvImportSettings::Format::SkyDolly:
-        aspects = FlightAugmentation::Aspect::None;
-        break;
-    case CsvImportSettings::Format::FlightRadar24:
+    case CsvImportSettings::Format::Flightradar24:
         // Do not augment heading and velocity
         aspects = FlightAugmentation::Aspect::All;
         aspects.setFlag(FlightAugmentation::Aspect::Heading, false);
@@ -140,19 +137,19 @@ FlightAugmentation::Aspects CsvImportPlugin::getAspects() const noexcept
     return aspects;
 }
 
-QDateTime CsvImportPlugin::getStartDateTimeUtc() noexcept
+
+// PRIVATE
+
+void CsvImportPlugin::enrichFlightData(FlightData &flightData) const noexcept
 {
-    return d->firstDateTimeUtc;
+    flightData.title = generateTitle();
 }
 
-QString CsvImportPlugin::getTitle() const noexcept
+QString CsvImportPlugin::generateTitle() const noexcept
 {
     QString title;
     switch (d->pluginSettings.getFormat()) {
-    case CsvImportSettings::Format::SkyDolly:
-        title = QObject::tr("Sky Dolly CSV import");
-        break;
-    case CsvImportSettings::Format::FlightRadar24:
+    case CsvImportSettings::Format::Flightradar24:
         // Do not augment heading and velocity
         title = QObject::tr("Flightradar24 CSV import");
         break;
@@ -162,14 +159,3 @@ QString CsvImportPlugin::getTitle() const noexcept
     }
     return title;
 }
-
-void CsvImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
-{
-    aircraftInfo.flightNumber = d->flightNumber;
-}
-
-void CsvImportPlugin::updateExtendedFlightInfo([[maybe_unused]]Flight &flight) noexcept
-{}
-
-void CsvImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondition &flightCondition) noexcept
-{}

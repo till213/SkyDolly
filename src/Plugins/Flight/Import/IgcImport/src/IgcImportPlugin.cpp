@@ -78,7 +78,6 @@ struct IgcImportPluginPrivate
         Shutdown
     };
 
-    Flight *flight {nullptr};
     IgcParser igcParser;
     IgcImportSettings pluginSettings;
     QEasingCurve throttleResponseCurve {QEasingCurve::OutExpo};
@@ -94,35 +93,14 @@ IgcImportPlugin::IgcImportPlugin() noexcept
 
 IgcImportPlugin::~IgcImportPlugin() = default;
 
-// PROTECTED
-
-FlightImportPluginBaseSettings &IgcImportPlugin::getPluginSettings() const noexcept
+std::vector<FlightData> IgcImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
 {
-    return d->pluginSettings;
-}
-
-QString IgcImportPlugin::getFileExtension() const noexcept
-{
-    return IgcImportPluginPrivate::FileExtension;
-}
-
-QString IgcImportPlugin::getFileFilter() const noexcept
-{
-    return QObject::tr("International gliding commission (*.%1)").arg(getFileExtension());
-}
-
-std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept
-{
-    return std::make_unique<IgcImportOptionWidget>(d->pluginSettings);
-}
-
-bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
-{
-    d->flight = &flight;
-    bool ok = d->igcParser.parse(file);
+    std::vector<FlightData> flights;
+    ok = d->igcParser.parse(io);
     if (ok) {
+        FlightData flightData;
+        Aircraft &aircraft = flightData.addUserAircraft();
         // Now "upsert" the position data, taking possible duplicate timestamps into account
-        const Aircraft &aircraft = flight.getUserAircraft();
         Position &position = aircraft.getPosition();
 
         // Engine
@@ -169,24 +147,24 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
                     engineData.generalEngineCombustion3 = loudNoise;
                     engineData.generalEngineCombustion4 = loudNoise;
 
-                    engineData.throttleLeverPosition1 = SkyMath::fromPosition(position);
-                    engineData.throttleLeverPosition2 = SkyMath::fromPosition(position);
-                    engineData.throttleLeverPosition3 = SkyMath::fromPosition(position);
-                    engineData.throttleLeverPosition4 = SkyMath::fromPosition(position);
-                    engineData.propellerLeverPosition1 = SkyMath::fromPosition(position);
-                    engineData.propellerLeverPosition2 = SkyMath::fromPosition(position);
-                    engineData.propellerLeverPosition3 = SkyMath::fromPosition(position);
-                    engineData.propellerLeverPosition4 = SkyMath::fromPosition(position);
-                    engineData.mixtureLeverPosition1 = SkyMath::fromPosition(1.0);
-                    engineData.mixtureLeverPosition2 = SkyMath::fromPosition(1.0);
-                    engineData.mixtureLeverPosition3 = SkyMath::fromPosition(1.0);
-                    engineData.mixtureLeverPosition4 = SkyMath::fromPosition(1.0);
+                    engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(position);
+                    engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(position);
+                    engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(position);
+                    engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(position);
+                    engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(position);
+                    engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(position);
+                    engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(position);
+                    engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(position);
+                    engineData.mixtureLeverPosition1 = SkyMath::fromPercent(100.0);
+                    engineData.mixtureLeverPosition2 = SkyMath::fromPercent(100.0);
+                    engineData.mixtureLeverPosition3 = SkyMath::fromPercent(100.0);
+                    engineData.mixtureLeverPosition4 = SkyMath::fromPercent(100.0);
                     // Elements are inserted chronologically from the start (and no other engine
                     // data exist yet), so we can use upsertLast (instead of the more general upsert)
                     engine.upsertLast(engineData);
                     engineState = loudNoise ? IgcImportPluginPrivate::EngineState::Running : IgcImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
-                    qDebug() << "IgcImportPlugin::readFile: engine INITIALISED, current ENL:" << enl << " threshold:" << enlThresholdNorm << "engine RUNNING:" << loudNoise;
+                    qDebug() << "IgcImportPlugin::importSelectedFlights: engine INITIALISED, current ENL:" << enl << " threshold:" << enlThresholdNorm << "engine RUNNING:" << loudNoise;
 #endif
                     break;
 
@@ -197,18 +175,18 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
                         engineData.generalEngineCombustion2 = false;
                         engineData.generalEngineCombustion3 = false;
                         engineData.generalEngineCombustion4 = false;
-                        engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.0);
-                        engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.0);
-                        engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.0);
-                        engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.0);
-                        engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.0);
-                        engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.0);
-                        engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.0);
-                        engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.0);
+                        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(0.0);
+                        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(0.0);
                         engine.upsertLast(engineData);
                         engineState = IgcImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
-                        qDebug() << "IgcImportPlugin::readFile: engine now SHUTDOWN, current ENL:" << enl << " threshold:" << enlThresholdNorm;
+                        qDebug() << "IgcImportPlugin::importSelectedFlights: engine now SHUTDOWN, current ENL:" << enl << " threshold:" << enlThresholdNorm;
 #endif
                     }
                     break;
@@ -220,18 +198,18 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
                         engineData.generalEngineCombustion2 = true;
                         engineData.generalEngineCombustion3 = true;
                         engineData.generalEngineCombustion4 = true;
-                        engineData.throttleLeverPosition1 = SkyMath::fromPosition(position);
-                        engineData.throttleLeverPosition2 = SkyMath::fromPosition(position);
-                        engineData.throttleLeverPosition3 = SkyMath::fromPosition(position);
-                        engineData.throttleLeverPosition4 = SkyMath::fromPosition(position);
-                        engineData.propellerLeverPosition1 = SkyMath::fromPosition(position);
-                        engineData.propellerLeverPosition2 = SkyMath::fromPosition(position);
-                        engineData.propellerLeverPosition3 = SkyMath::fromPosition(position);
-                        engineData.propellerLeverPosition4 = SkyMath::fromPosition(position);
+                        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(position);
+                        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(position);
+                        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(position);
+                        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(position);
+                        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(position);
+                        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(position);
+                        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(position);
+                        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(position);
                         engine.upsertLast(engineData);
                         engineState = IgcImportPluginPrivate::EngineState::Running;
 #ifdef DEBUG
-                        qDebug() << "IgcImportPlugin::readFile: engine now RUNNING, current ENL:" << enl << " threshold:" << enlThresholdNorm;
+                        qDebug() << "IgcImportPlugin::importSelectedFlights: engine now RUNNING, current ENL:" << enl << " threshold:" << enlThresholdNorm;
 #endif
                     }
                     break;
@@ -239,22 +217,40 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
             }
         }
 
-        std::vector<IgcParser::TaskItem> tasks = d->igcParser.getTask().tasks;
-        if (tasks.size() > 0) {
-            updateWaypoints();
-        }
+        enrichFlightData(flightData);
+        flights.push_back(std::move(flightData));
     }
-    // We are done with the import
-    d->flight = nullptr;
-    return ok;
+    return flights;
 }
 
-FlightAugmentation::Procedures IgcImportPlugin::getProcedures() const noexcept
+// PROTECTED
+
+FlightImportPluginBaseSettings &IgcImportPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
+
+QString IgcImportPlugin::getFileExtension() const noexcept
+{
+    return IgcImportPluginPrivate::FileExtension;
+}
+
+QString IgcImportPlugin::getFileFilter() const noexcept
+{
+    return QObject::tr("International gliding commission (*.%1)").arg(getFileExtension());
+}
+
+std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept
+{
+    return std::make_unique<IgcImportOptionWidget>(d->pluginSettings);
+}
+
+FlightAugmentation::Procedures IgcImportPlugin::getAugmentationProcedures() const noexcept
 {
     return FlightAugmentation::Procedure::All;
 }
 
-FlightAugmentation::Aspects IgcImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects IgcImportPlugin::getAugmentationAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects {FlightAugmentation::Aspect::All};
     // Do not augment the engine data: the engine data is already derived from the
@@ -263,43 +259,10 @@ FlightAugmentation::Aspects IgcImportPlugin::getAspects() const noexcept
     return aspects;
 }
 
-QDateTime IgcImportPlugin::getStartDateTimeUtc() noexcept
-{
-    return d->igcParser.getHeader().flightDateTimeUtc;
-}
-
-QString IgcImportPlugin::getTitle() const noexcept
-{
-    return d->igcParser.getHeader().gliderType;
-}
-
-void IgcImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
-{
-    const IgcParser::Header &header = d->igcParser.getHeader();
-    aircraftInfo.tailNumber = header.gliderId;
-    aircraftInfo.flightNumber = header.flightNumber;
-}
-
-void IgcImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
-{
-    const IgcParser::Header &header = d->igcParser.getHeader();
-    Unit unit;
-    const QString description = flight.getDescription() % "\n\n" %
-                                QObject::tr("Glider type:") % " " % header.gliderType % "\n" %
-                                QObject::tr("Pilot:") % " " % header.pilotName % "\n" %
-                                QObject::tr("Co-Pilot:") % " " % header.coPilotName % "\n" %
-                                QObject::tr("Flight date:") % " " % unit.formatDateTime(header.flightDateTimeUtc);
-    flight.setDescription(description);
-}
-
-void IgcImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondition &flightCondition) noexcept
-{}
-
 // PRIVATE
 
-void IgcImportPlugin::updateWaypoints() noexcept
+void IgcImportPlugin::updateWaypoints(Aircraft &aircraft) const noexcept
 {
-    const Aircraft &aircraft = d->flight->getUserAircraft();
     Position &position = aircraft.getPosition();
 
     FlightPlan &flightPlan = aircraft.getFlightPlan();
@@ -318,9 +281,9 @@ void IgcImportPlugin::updateWaypoints() noexcept
         // depending on how much fun the pilot had in the cockpit ;)
         std::unordered_set<std::int64_t> timestamps;
         const std::vector<IgcParser::TaskItem> tasks = d->igcParser.getTask().tasks;
-        const auto nofTasks = tasks.size();
+        const std::size_t nofTasks = tasks.size();
         flightPlan.reserve(nofTasks);
-        for (int i = 0; i < nofTasks; ++i) {
+        for (std::size_t i = 0; i < nofTasks; ++i) {
 
             const IgcParser::TaskItem &item = tasks[i];
             Waypoint waypoint;
@@ -374,7 +337,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
                     waypoint.localTime = endDateTimeUtc.toLocalTime();
                     waypoint.zuluTime = endDateTimeUtc;
                     uniqueTimestamp = lastPositionData.timestamp - 1;
-                    while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                    while (timestamps.contains(uniqueTimestamp)) {
                         ++uniqueTimestamp;
                     }
                     waypoint.timestamp = uniqueTimestamp;
@@ -386,7 +349,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
                 waypoint.localTime = endDateTimeUtc.toLocalTime();
                 waypoint.zuluTime = endDateTimeUtc;
                 uniqueTimestamp = lastPositionData.timestamp;
-                while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                while (timestamps.contains(uniqueTimestamp)) {
                     ++uniqueTimestamp;
                 }
                 waypoint.timestamp = uniqueTimestamp;
@@ -404,7 +367,7 @@ void IgcImportPlugin::updateWaypoints() noexcept
                 waypoint.localTime = dateTimeUtc.toLocalTime();
                 waypoint.zuluTime = dateTimeUtc;
                 uniqueTimestamp = closestPositionData.timestamp;
-                while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                while (timestamps.contains(uniqueTimestamp)) {
                     ++uniqueTimestamp;
                 }
                 waypoint.timestamp = uniqueTimestamp;
@@ -432,4 +395,24 @@ inline double IgcImportPlugin::noiseToPosition(double environmentalNoiseLevel, d
 {
     const double linear = std::max(environmentalNoiseLevel - threhsold, 0.0) / (1.0 - threhsold);
     return d->throttleResponseCurve.valueForProgress(linear);
+}
+
+void IgcImportPlugin::enrichFlightData(FlightData &flightData) const noexcept
+{
+    const IgcParser::Header &header = d->igcParser.getHeader();
+    Unit unit;
+
+    flightData.creationTime = header.flightDateTimeUtc;
+    flightData.description = QObject::tr("Glider type:") % " " % header.gliderType % "\n" %
+                             QObject::tr("Pilot:") % " " % header.pilotName % "\n" %
+                             QObject::tr("Co-Pilot:") % " " % header.coPilotName % "\n" %
+                             QObject::tr("Flight date:") % " " % unit.formatDateTime(header.flightDateTimeUtc);
+    flightData.flightNumber = header.flightNumber;
+    AircraftInfo &aircraftInfo = flightData.aircraft.back().getAircraftInfo();
+    aircraftInfo.tailNumber = header.gliderId;
+
+    std::vector<IgcParser::TaskItem> tasks = d->igcParser.getTask().tasks;
+    if (tasks.size() > 0) {
+        updateWaypoints(flightData.getUserAircraft());
+    }
 }

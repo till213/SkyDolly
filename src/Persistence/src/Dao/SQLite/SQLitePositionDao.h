@@ -29,24 +29,30 @@
 #include <vector>
 #include <cstdint>
 
+class QString;
+
 #include "../PositionDaoIntf.h"
 
 struct PositionData;
+struct SQLitePositionDaoPrivate;
 
-class SQLitePositionDao : public PositionDaoIntf
+class SQLitePositionDao final : public PositionDaoIntf
 {
 public:
-    SQLitePositionDao() = default;
+    SQLitePositionDao(QString connectionName) noexcept;
     SQLitePositionDao(const SQLitePositionDao &rhs) = delete;
     SQLitePositionDao(SQLitePositionDao &&rhs) noexcept;
     SQLitePositionDao &operator=(const SQLitePositionDao &rhs) = delete;
     SQLitePositionDao &operator=(SQLitePositionDao &&rhs) noexcept;
     ~SQLitePositionDao() override;
 
-    bool add(std::int64_t aircraftId, const PositionData &data) noexcept override;
+    bool add(std::int64_t aircraftId, const PositionData &data) const noexcept override;
     std::vector<PositionData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
-    bool deleteByFlightId(std::int64_t flightId) noexcept override;
-    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+    bool deleteByFlightId(std::int64_t flightId) const noexcept override;
+    bool deleteByAircraftId(std::int64_t aircraftId) const noexcept override;
+
+private:
+    std::unique_ptr<SQLitePositionDaoPrivate> d;
 };
 
 #endif // SQLITEPOSITIONDAO_H

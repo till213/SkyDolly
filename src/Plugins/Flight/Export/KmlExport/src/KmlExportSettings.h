@@ -31,7 +31,7 @@
 #include <QColor>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 
 struct KmlExportSettingsPrivate;
 
@@ -39,14 +39,23 @@ class KmlExportSettings : public FlightExportPluginBaseSettings
 {
     Q_OBJECT
 public:
+    /*!
+     * The colour styles of the lines.
+     *
+     * These values are peristed in the application settings.
+     */
     enum struct ColorStyle {
-        OneColor,
-        OneColorPerEngineType,
-        ColorRamp,
-        ColorRampPerEngineType
+        OneColor = 0,
+        OneColorPerEngineType = 1,
+        ColorRamp = 2,
+        ColorRampPerEngineType = 3
     };
 
     KmlExportSettings() noexcept;
+    KmlExportSettings(const KmlExportSettings &rhs) = delete;
+    KmlExportSettings(KmlExportSettings &&rhs) = delete;
+    KmlExportSettings &operator=(const KmlExportSettings &rhs) = delete;
+    KmlExportSettings &operator=(KmlExportSettings &&rhs) = delete;
     ~KmlExportSettings() override;
 
     ColorStyle getColorStyle() const noexcept;
@@ -78,11 +87,8 @@ public:
     QColor getAllEndColor() const noexcept;
     void setAllEndColor(const QColor &color) noexcept;
 
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
+    bool isResamplingSupported() const noexcept override;
+    bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

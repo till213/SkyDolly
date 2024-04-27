@@ -1,10 +1,6 @@
 set(LIBRARY_NAME "UserInterface")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} SHARED)
-else()
-    add_library(${LIBRARY_NAME} SHARED)
-endif()
+qt_add_library(${LIBRARY_NAME} SHARED)
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_compile_definitions(${LIBRARY_NAME}
@@ -16,6 +12,7 @@ target_sources(${LIBRARY_NAME}
         res/UserInterface.qrc
         include/UserInterface/UserInterfaceLib.h
         include/UserInterface/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
+        include/UserInterface/Dialog/TerminationDialog.h src/Dialog/TerminationDialog.cpp src/Dialog/TerminationDialog.ui
         src/Dialog/AboutDialog.h src/Dialog/AboutDialog.cpp src/Dialog/AboutDialog.ui
         src/Dialog/LogbookSettingsDialog.h src/Dialog/LogbookSettingsDialog.cpp src/Dialog/LogbookSettingsDialog.ui
         src/Dialog/SimulationVariablesDialog.h src/Dialog/SimulationVariablesDialog.cpp src/Dialog/SimulationVariablesDialog.ui
@@ -38,13 +35,13 @@ target_sources(${LIBRARY_NAME}
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_LIST_DIR}/include
     PRIVATE
         include/UserInterface
 )
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC
-        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt6::Widgets
     PRIVATE
         Sky::Kernel
         Sky::Model

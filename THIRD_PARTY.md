@@ -27,6 +27,11 @@ Sky Dolly uses or is "inspired by" the following third-party libraries and funct
 - Source: https://github.com/Tessil/ordered-map
 - License: MIT License
 
+## Cpptrace
+- Author: Jeremy Rifkin et al.
+- Source: https://github.com/jeremy-rifkin/cpptrace
+- License: MIT License
+
 ## IGC Parser
 - Author: Tobias Bieniek
 - Source: https://github.com/Turbo87/igc-parser
@@ -52,4 +57,4 @@ Sky Dolly uses or is "inspired by" the following third-party libraries and funct
 - License: https://creativecommons.org/licenses/by-sa/3.0/
 
 ## Flightspots
-- Source: https://flightspots.co/
+- Source: https://flightspots.co/ (original URL - out of service since December 2022)

@@ -25,33 +25,38 @@
 #ifndef SQLITELOCATIONDAO_H
 #define SQLITELOCATIONDAO_H
 
+#include <memory>
 #include <cstdint>
 #include <vector>
 
+class QString;
 class QSqlQuery;
 
 #include "../LocationDaoIntf.h"
 
 struct Location;
+struct SQLiteLocationDaoPrivate;
 
-class SQLiteLocationDao : public LocationDaoIntf
+class SQLiteLocationDao final : public LocationDaoIntf
 {
 public:
-    SQLiteLocationDao() = default;
+    SQLiteLocationDao(QString connectionName) noexcept;
     SQLiteLocationDao(const SQLiteLocationDao &rhs) = delete;
     SQLiteLocationDao(SQLiteLocationDao &&rhs) noexcept;
     SQLiteLocationDao &operator=(const SQLiteLocationDao &rhs) = delete;
     SQLiteLocationDao &operator=(SQLiteLocationDao &&rhs) noexcept;
     ~SQLiteLocationDao() override;
 
-    bool add(Location &location) noexcept override;
-    bool update(const Location &location) noexcept override;
+    bool add(Location &location) const noexcept override;
+    bool update(const Location &location) const noexcept override;
     std::vector<Location> getByPosition(double latitude, double longitude, double distance = 0.0, bool *ok = nullptr) const noexcept override;
-    bool deleteById(std::int64_t id) noexcept override;
+    bool deleteById(std::int64_t id) const noexcept override;
     std::vector<Location> getAll(bool *ok = nullptr) const noexcept override;
     std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) const noexcept override;
 
 private:
+    std::unique_ptr<SQLiteLocationDaoPrivate> d;
+
     inline std::vector<Location> executeGetLocationQuery(QSqlQuery &query, bool *ok = nullptr) const noexcept;
 };
 

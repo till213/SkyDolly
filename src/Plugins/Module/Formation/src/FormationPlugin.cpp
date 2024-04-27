@@ -24,38 +24,52 @@
  */
 #include <memory>
 
-#include <Kernel/Settings.h>
+#include <QObject>
+#include <QUuid>
+#include <QMessageBox>
+#include <QFileInfo>
+#include <QDir>
+
+#include <Kernel/Const.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
-#include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
+#include <Persistence/PersistenceManager.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
 #include "Formation.h"
 #include "FormationWidget.h"
+#include "FormationSettings.h"
 #include "FormationPlugin.h"
 
 struct FormationPluginPrivate
 {
-    FormationPluginPrivate(FlightService &flightService)
-        : formationWidget(std::make_unique<FormationWidget>(flightService, *aircraftService))
-    {}
-
+    FormationSettings moduleSettings;
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
-    std::unique_ptr<FormationWidget> formationWidget;
+    std::unique_ptr<FormationWidget> formationWidget {std::make_unique<FormationWidget>(moduleSettings)};
 };
 
 // PUBLIC
 
 FormationPlugin::FormationPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
-      d(std::make_unique<FormationPluginPrivate>(getFlightService()))
+      d(std::make_unique<FormationPluginPrivate>())
 {
-     Q_INIT_RESOURCE(FormationPlugin);
+    restoreSettings(QUuid(Const::FormationModuleUuid));
 }
 
-FormationPlugin::~FormationPlugin() = default;
+FormationPlugin::~FormationPlugin()
+{
+    storeSettings(QUuid(Const::FormationModuleUuid));
+};
+
+QUuid FormationPlugin::getUuid() const noexcept
+{
+    static QUuid uuid {Const::FormationModuleUuid};
+    return uuid;
+}
 
 QString FormationPlugin::getModuleName() const noexcept
 {
@@ -79,9 +93,9 @@ void FormationPlugin::onStartRecording() noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const Formation::HorizontalDistance horizontalDistance {d->formationWidget->getHorizontalDistance()};
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
-    const Formation::RelativePosition relativePosition {d->formationWidget->getRelativePosition()};
+    const Formation::Bearing relativePosition {d->formationWidget->getRelativePosition()};
     // The initial recording position is calculated for timestamp = 0 ("at the beginning")
-    const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ?
+    const InitialPosition initialPosition = d->moduleSettings.isRelativePositionPlacementEnabled() ?
                 Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, 0) :
                 InitialPosition();
     skyConnectManager.startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
@@ -93,12 +107,17 @@ void FormationPlugin::onStartReplay() noexcept
     const bool fromStart = skyConnectManager.isAtEnd();
     const Formation::HorizontalDistance horizontalDistance {d->formationWidget->getHorizontalDistance()};
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
-    const Formation::RelativePosition relativePosition {d->formationWidget->getRelativePosition()};
+    const Formation::Bearing relativePosition {d->formationWidget->getRelativePosition()};
     const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
-    const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ?
+    const InitialPosition initialPosition = d->moduleSettings.isRelativePositionPlacementEnabled() ?
         Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp) :
         InitialPosition();
     skyConnectManager.startReplay(fromStart, initialPosition);
+}
+
+ModuleBaseSettings &FormationPlugin::getModuleSettings() const noexcept
+{
+    return d->moduleSettings;
 }
 
 // PROTECTED SLOTS
@@ -109,7 +128,13 @@ void FormationPlugin::onRecordingStopped() noexcept
     const std::size_t sequenceNumber = flight.count();
     if (sequenceNumber > 1) {
         // Sequence starts at 1
-        d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
+        const bool ok = d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
+        if (!ok) {
+            flight.removeLastAircraft();
+            const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+            const QString logbookPath = QDir::toNativeSeparators(persistenceManager.getLogbookPath());
+            QMessageBox::critical(getWidget(), tr("Aircraft error"), tr("The aircraft could not be stored into the logbook %1.").arg(logbookPath));
+        }
     } else {
         AbstractModule::onRecordingStopped();
     }

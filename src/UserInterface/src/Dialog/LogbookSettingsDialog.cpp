@@ -65,7 +65,7 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
     initUi();
     frenchConnection();
 
-    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
     bool ok {true};
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
@@ -117,12 +117,12 @@ void LogbookSettingsDialog::initUi() noexcept
 
 void LogbookSettingsDialog::updateUi() noexcept
 {
-    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
     bool ok {true};
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
         const QString logbookPath = persistenceManager.getLogbookPath();
-        QFileInfo fileInfo = QFileInfo(logbookPath);
+        const QFileInfo fileInfo = QFileInfo(logbookPath);
 
         const QString logbookDirectoryPath = QDir::toNativeSeparators(fileInfo.absolutePath());
         ui->directoryPathLineEdit->setText(logbookDirectoryPath);

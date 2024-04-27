@@ -25,8 +25,10 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -46,15 +48,29 @@ namespace
     constexpr int DefaultCapacity = 10;
 }
 
+struct SQLiteEngineDaoPrivate
+{
+    SQLiteEngineDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
+    {}
+
+    QString connectionName;
+};
+
 // PUBLIC
+
+SQLiteEngineDao::SQLiteEngineDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteEngineDaoPrivate>(std::move(connectionName)))
+{}
 
 SQLiteEngineDao::SQLiteEngineDao(SQLiteEngineDao &&rhs) noexcept = default;
 SQLiteEngineDao &SQLiteEngineDao::operator=(SQLiteEngineDao &&rhs) noexcept = default;
 SQLiteEngineDao::~SQLiteEngineDao() = default;
 
-bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data) noexcept
+bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into engine ("
         "  aircraft_id,"
@@ -164,7 +180,8 @@ bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data) noexc
 std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<EngineData> engineData;
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -176,7 +193,8 @@ std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             engineData.reserve(query.size());
         } else {
@@ -214,18 +232,16 @@ std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId
         const int generalEngineCombustion4Idx = record.indexOf("general_engine_combustion4");
 
         while (query.next()) {
-
             EngineData data;
-
             data.timestamp = query.value(timestampIdx).toLongLong();
-            data.throttleLeverPosition1 = query.value(throttleLeverPosition1Idx).toInt();
-            data.throttleLeverPosition2 = query.value(throttleLeverPosition2Idx).toInt();
-            data.throttleLeverPosition3 = query.value(throttleLeverPosition3Idx).toInt();
-            data.throttleLeverPosition4 = query.value(throttleLeverPosition4Idx).toInt();
-            data.propellerLeverPosition1 = query.value(propellerLeverPosition1Idx).toInt();
-            data.propellerLeverPosition2 = query.value(propellerLeverPosition2Idx).toInt();
-            data.propellerLeverPosition3 = query.value(propellerLeverPosition3Idx).toInt();
-            data.propellerLeverPosition4 = query.value(propellerLeverPosition4Idx).toInt();
+            data.throttleLeverPosition1 = static_cast<std::int16_t>(query.value(throttleLeverPosition1Idx).toInt());
+            data.throttleLeverPosition2 = static_cast<std::int16_t>(query.value(throttleLeverPosition2Idx).toInt());
+            data.throttleLeverPosition3 = static_cast<std::int16_t>(query.value(throttleLeverPosition3Idx).toInt());
+            data.throttleLeverPosition4 = static_cast<std::int16_t>(query.value(throttleLeverPosition4Idx).toInt());
+            data.propellerLeverPosition1 = static_cast<std::int16_t>(query.value(propellerLeverPosition1Idx).toInt());
+            data.propellerLeverPosition2 = static_cast<std::int16_t>(query.value(propellerLeverPosition2Idx).toInt());
+            data.propellerLeverPosition3 = static_cast<std::int16_t>(query.value(propellerLeverPosition3Idx).toInt());
+            data.propellerLeverPosition4 = static_cast<std::int16_t>(query.value(propellerLeverPosition4Idx).toInt());
             data.mixtureLeverPosition1 = query.value(mixtureLeverPosition1Idx).toInt();
             data.mixtureLeverPosition2 = query.value(mixtureLeverPosition2Idx).toInt();
             data.mixtureLeverPosition3 = query.value(mixtureLeverPosition3Idx).toInt();
@@ -260,9 +276,10 @@ std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId
     return engineData;
 }
 
-bool SQLiteEngineDao::deleteByFlightId(std::int64_t flightId) noexcept
+bool SQLiteEngineDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   engine "
@@ -282,9 +299,10 @@ bool SQLiteEngineDao::deleteByFlightId(std::int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLiteEngineDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
+bool SQLiteEngineDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   engine "

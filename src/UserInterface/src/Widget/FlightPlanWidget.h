@@ -42,6 +42,10 @@ class FlightPlanWidget : public QWidget
     Q_OBJECT
 public:
     explicit FlightPlanWidget(QWidget *parent = nullptr) noexcept;
+    FlightPlanWidget(const FlightPlanWidget &rhs) = delete;
+    FlightPlanWidget(FlightPlanWidget &&rhs) = delete;
+    FlightPlanWidget &operator=(const FlightPlanWidget &rhs) = delete;
+    FlightPlanWidget &operator=(FlightPlanWidget &&rhs) = delete;
     ~FlightPlanWidget() override;
 
 protected:

@@ -33,6 +33,7 @@
 #include <QTextEdit>
 #include <QDoubleSpinBox>
 #include <QSpinBox>
+#include <QCheckBox>
 #include <QHBoxLayout>
 #include <QItemSelectionModel>
 #include <QMessageBox>
@@ -60,19 +61,18 @@
 #include <Widget/UnitWidgetItem.h>
 #include <Widget/LinkedOptionGroup.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/AbstractModule.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Module/AbstractModule.h>
 #include "LocationWidget.h"
 #include "EnumerationItemDelegate.h"
 #include "PositionWidgetItem.h"
+#include "LocationSettings.h"
 #include "ui_LocationWidget.h"
 
 namespace
 {
     constexpr int InvalidRow {-1};
     constexpr int InvalidColumn {-1};
-
-    constexpr bool DefaultOnGround {false};
 
     constexpr double DefaultPitch {0.0};
     constexpr double MinimumPitch {-90.0};
@@ -89,7 +89,8 @@ namespace
 
 struct LocationWidgetPrivate
 {
-    LocationWidgetPrivate() noexcept
+    LocationWidgetPrivate(LocationSettings &moduleSettings) noexcept
+        : moduleSettings(moduleSettings)
     {
         if (typeEnumeration.count() == 0) {
             typeEnumeration = enumerationService->getEnumerationByName(EnumerationService::LocationType);
@@ -104,7 +105,7 @@ struct LocationWidgetPrivate
         searchTimer->setInterval(::SearchTimeoutMSec);
     }
 
-    LocationSelector locationSelector;
+    LocationSettings &moduleSettings;
     std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
     std::unique_ptr<EnumerationService> enumerationService {std::make_unique<EnumerationService>()};
@@ -116,12 +117,8 @@ struct LocationWidgetPrivate
     const std::int64_t ImportLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
     const std::int64_t NoneLocationCategoryId {PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id()};
     const std::int64_t WorldCountryId {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
-    const std::int64_t KeepEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
 
     Unit unit;
-    // Columns are only auto-resized the first time the table is loaded
-    // After that manual column resizes are kept
-    bool columnsAutoResized {false};
 
     static inline int idColumn {InvalidColumn};
     static inline int titleColumn {InvalidColumn};
@@ -147,22 +144,21 @@ struct LocationWidgetPrivate
 
 // PUBLIC
 
-LocationWidget::LocationWidget(QWidget *parent) noexcept
+LocationWidget::LocationWidget(LocationSettings &moduleSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::LocationWidget>()),
-      d(std::make_unique<LocationWidgetPrivate>())
+      d(std::make_unique<LocationWidgetPrivate>(moduleSettings))
 {
     ui->setupUi(this);
     initUi();
-    updateUi();
+    // The location table is updated once the plugin settings are restored (initiated
+    // by LocationPlugin)
+    updateEditUi();
+    updateInfoUi();
     frenchConnection();
 }
 
-LocationWidget::~LocationWidget()
-{
-    const QByteArray tableState = ui->locationTableWidget->horizontalHeader()->saveState();
-    Settings::getInstance().setLocationTableState(tableState);
-}
+LocationWidget::~LocationWidget() = default;
 
 void LocationWidget::addUserLocation(double latitude, double longitude)
 {
@@ -178,24 +174,24 @@ void LocationWidget::addUserLocation(double latitude, double longitude)
 
 void LocationWidget::addLocation(Location newLocation)
 {
-    if (newLocation.typeId == Const::InvalidId) {
-        newLocation.typeId = d->UserLocationTypeId;
-    }
-    if (newLocation.categoryId == Const::InvalidId) {
-        newLocation.categoryId = d->NoneLocationCategoryId;
-    }
-    if (newLocation.countryId == Const::InvalidId) {
-        newLocation.countryId = d->WorldCountryId;
-    }
-    if (newLocation.engineEventId == Const::InvalidId) {
-        newLocation.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
-    }
     Location location {std::move(newLocation)};
+    if (location.typeId == Const::InvalidId) {
+        location.typeId = d->UserLocationTypeId;
+    }
+    if (location.categoryId == Const::InvalidId) {
+        location.categoryId = d->NoneLocationCategoryId;
+    }
+    if (location.countryId == Const::InvalidId) {
+        location.countryId = d->WorldCountryId;
+    }
+    if (location.engineEventId == Const::InvalidId) {
+        location.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
+    }    
     if (d->locationService->store(location)) {
-        if (!d->locationSelector.showUserLocations()) {
-            // Make sure that user locations are visible
-            ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
-        }
+        // Make sure that user locations are visible
+        resetFilter();
+        ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
+
         ui->locationTableWidget->setSortingEnabled(false);
         ui->locationTableWidget->blockSignals(true);
         const QTableWidgetItem *firstItem = createRow(location);
@@ -311,23 +307,16 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::categoryColumn, d->locationCategoryDelegate.get());
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::countryColumn, d->countryDelegate.get());
 
-    QByteArray tableState = Settings::getInstance().getLocationTableState();
-    ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
-
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
 
     ui->defaultAltitudeSpinBox->setMinimum(Const::MinimumAltitude);
-    ui->defaultAltitudeSpinBox->setMaximum(Const::MaximumAltitude);
-    ui->defaultAltitudeSpinBox->setValue(Const::DefaultAltitude);
+    ui->defaultAltitudeSpinBox->setMaximum(Const::MaximumAltitude);;
     ui->defaultAltitudeSpinBox->setSuffix(tr(" feet"));
     ui->defaultIndicatedAirspeedSpinBox->setMinimum(Const::MinimumIndicatedAirspeed);
     ui->defaultIndicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
-    ui->defaultIndicatedAirspeedSpinBox->setValue(Const::DefaultIndicatedAirspeed);
     ui->defaultIndicatedAirspeedSpinBox->setSuffix(tr(" knots"));
     ui->defaultEngineEventComboBox->setEnumerationName(EnumerationService::EngineEvent);
-    ui->defaultEngineEventComboBox->setCurrentId(d->KeepEngineEventId);
-    ui->defaultOnGroundCheckBox->setChecked(::DefaultOnGround);    
 
     ui->pitchSpinBox->setMinimum(::MinimumPitch);
     ui->pitchSpinBox->setMaximum(::MaximumPitch);
@@ -373,9 +362,13 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::searchText);
     connect(ui->typeOptionGroup, &LinkedOptionGroup::optionToggled,
             this, &LocationWidget::onTypeOptionToggled);
+    connect(ui->resetFilterPushButton, &QPushButton::clicked,
+            this, &LocationWidget::resetFilter);
+    connect(ui->resetDefaultsPushButton, &QPushButton::clicked,
+            this, &LocationWidget::resetDefaultValues);
 
     // Persistence
-    PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
     connect(&persistenceManager, &PersistenceManager::locationsImported,
             this, &LocationWidget::updateUi);
 
@@ -410,6 +403,27 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::onIndicatedAirspeedChanged);
     connect(ui->engineEventComboBox, &EnumerationComboBox::currentIndexChanged,
             this, &LocationWidget::onEngineEventChanged);
+
+    // Default values group
+    connect(ui->defaultAltitudeSpinBox, &QSpinBox::valueChanged,
+            this, &LocationWidget::onDefaultAltitudeChanged);
+    connect(ui->defaultIndicatedAirspeedSpinBox, &QSpinBox::valueChanged,
+            this, &LocationWidget::onDefaultIndicatedAirspeedChanged);
+    connect(ui->defaultEngineEventComboBox, &EnumerationComboBox::currentIndexChanged,
+            this, &LocationWidget::onDefaultEngineEventChanged);
+    connect(ui->defaultOnGroundCheckBox, &QCheckBox::toggled,
+            this, &LocationWidget::onDefaultOnGroundChanged);
+
+
+    // Module settings
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
+            this, &LocationWidget::onTableLayoutChanged);
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
+            this, &LocationWidget::onTableLayoutChanged);
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
+            this, &LocationWidget::onTableLayoutChanged);
+    connect(&d->moduleSettings, &ModuleBaseSettings::changed,
+            this, &LocationWidget::onModuleSettingsChanged);
 }
 
 void LocationWidget::updateInfoUi() noexcept
@@ -466,11 +480,13 @@ void LocationWidget::updateTable() noexcept
 {
     if (PersistenceManager::getInstance().isConnected()) {
 
-        std::vector<Location> locations = d->locationSelector.hasSelectors() ?
-                    d->locationService->getSelectedLocations(d->locationSelector) :
+        std::vector<Location> locations = d->moduleSettings.hasSelectors() ?
+                    d->locationService->getSelectedLocations(d->moduleSettings.getLocationSelector()) :
                     d->locationService->getAll();
 
         ui->locationTableWidget->blockSignals(true);
+        // Prevent table state changes notify the module settings
+
         ui->locationTableWidget->setSortingEnabled(false);           
         ui->locationTableWidget->clearContents();
         ui->locationTableWidget->setRowCount(static_cast<int>(locations.size()));
@@ -480,11 +496,16 @@ void LocationWidget::updateTable() noexcept
             initRow(location, row);
             ++row;
         }
-        if (!d->columnsAutoResized) {
+
+        QByteArray tableState = d->moduleSettings.getLocationTableState();
+        if (!tableState.isEmpty()) {
+            ui->locationTableWidget->horizontalHeader()->blockSignals(true);
+            ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
+            ui->locationTableWidget->horizontalHeader()->blockSignals(false);
+        } else {
             ui->locationTableWidget->resizeColumnsToContents();
-            d->columnsAutoResized = true;
         }
-        ui->locationTableWidget->setSortingEnabled(true);
+        ui->locationTableWidget->setSortingEnabled(true);        
         ui->locationTableWidget->blockSignals(false);
 
     } else {
@@ -837,20 +858,20 @@ void LocationWidget::updateEditUi() noexcept
 
 void LocationWidget::onCategoryChanged() noexcept
 {
-    d->locationSelector.categoryId = ui->categoryComboBox->getCurrentId();
-    if (d->locationSelector.categoryId == d->NoneLocationCategoryId) {
-        d->locationSelector.categoryId = Const::InvalidId;
+    std:int64_t categoryId = ui->categoryComboBox->getCurrentId();
+    if (categoryId == d->NoneLocationCategoryId) {
+        categoryId = Const::InvalidId;
     }
-    updateTable();
+    d->moduleSettings.setCategoryId(categoryId);
 }
 
 void LocationWidget::onCountryChanged() noexcept
 {
-    d->locationSelector.countryId = ui->countryComboBox->getCurrentId();
-    if (d->locationSelector.countryId == d->WorldCountryId) {
-        d->locationSelector.countryId = Const::InvalidId;
+    std::int64_t countryId = ui->countryComboBox->getCurrentId();
+    if (countryId == d->WorldCountryId) {
+        countryId = Const::InvalidId;
     }
-    updateTable();
+    d->moduleSettings.setCountryId(countryId);
 }
 
 void LocationWidget::onSearchTextChanged() noexcept
@@ -860,19 +881,29 @@ void LocationWidget::onSearchTextChanged() noexcept
 
 void LocationWidget::searchText() noexcept
 {
-    d->locationSelector.searchKeyword = ui->searchLineEdit->text();
-    updateTable();
+    d->moduleSettings.setSearchKeyword(ui->searchLineEdit->text());
 }
 
-void LocationWidget::onTypeOptionToggled(bool enable, const QVariant &userData) noexcept
+void LocationWidget::onTypeOptionToggled(const QVariant &optionValue, bool enable) noexcept
 {
-    std::int64_t typeId = userData.toLongLong();
+    LocationSelector::TypeSelection typeSelection = d->moduleSettings.getTypeSelection();
+    std::int64_t typeId = optionValue.toLongLong();
     if (enable) {
-        d->locationSelector.typeIds.insert(typeId);
+        typeSelection.insert(typeId);
     } else {
-        d->locationSelector.typeIds.erase(typeId);
+        typeSelection.erase(typeId);
     }
-    updateTable();
+    d->moduleSettings.setTypeSelection(typeSelection);
+}
+
+void LocationWidget::resetFilter() noexcept
+{
+    d->moduleSettings.resetFilter();
+}
+
+void LocationWidget::resetDefaultValues() noexcept
+{
+    d->moduleSettings.resetDefaultValues();
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
@@ -929,7 +960,7 @@ void LocationWidget::onDeleteLocation() noexcept
         bool doDelete {true};
         if (settings.isDeleteLocationConfirmationEnabled()) {
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
-            QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
+            auto *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
             // Sequence numbers start at 1
             messageBox->setWindowTitle(tr("Delete Aircraft"));
@@ -1045,4 +1076,80 @@ void LocationWidget::onEngineEventChanged([[maybe_unused]]int index) noexcept
             ui->locationTableWidget->blockSignals(false);
         }
     }
+}
+
+void LocationWidget::onDefaultAltitudeChanged(int value) noexcept
+{
+    d->moduleSettings.setDefaultAltitude(value);
+}
+
+void LocationWidget::onDefaultIndicatedAirspeedChanged(int value) noexcept
+{
+    d->moduleSettings.setDefaultIndicatedAirspeed(value);
+}
+
+void LocationWidget::onDefaultEngineEventChanged() noexcept
+{
+    d->moduleSettings.setDefaultEngineEventId(ui->defaultEngineEventComboBox->getCurrentId());
+}
+
+void LocationWidget::onDefaultOnGroundChanged(bool enable) noexcept
+{
+    d->moduleSettings.setDefaultOnGround(enable);
+}
+
+void LocationWidget::onTableLayoutChanged() noexcept
+{
+    QByteArray tableState = ui->locationTableWidget->horizontalHeader()->saveState();
+    d->moduleSettings.setLocationTableState(std::move(tableState));
+}
+
+void LocationWidget::onModuleSettingsChanged() noexcept
+{
+    // Filters
+    ui->typeOptionGroup->blockSignals(true);
+    ui->typeOptionGroup->clearOptions();
+    for (const auto type : d->moduleSettings.getTypeSelection()) {
+        ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(type), true);
+    }
+    ui->typeOptionGroup->blockSignals(false);
+
+    ui->categoryComboBox->blockSignals(true);
+    std::int64_t categoryId = d->moduleSettings.getCategoryId();
+    if (categoryId == Const::InvalidId) {
+        categoryId = d->NoneLocationCategoryId;
+    }
+    ui->categoryComboBox->setCurrentId(categoryId);
+    ui->categoryComboBox->blockSignals(false);
+
+    ui->countryComboBox->blockSignals(true);
+    std::int64_t countryId = d->moduleSettings.getCountryId();
+    if (countryId == Const::InvalidId) {
+        countryId = d->WorldCountryId;
+    }
+    ui->countryComboBox->setCurrentId(countryId);
+    ui->countryComboBox->blockSignals(false);
+
+    ui->searchLineEdit->blockSignals(true);
+    ui->searchLineEdit->setText(d->moduleSettings.getSearchKeyword());
+    ui->searchLineEdit->blockSignals(false);
+
+    // Default values
+    ui->defaultAltitudeSpinBox->blockSignals(true);
+    ui->defaultAltitudeSpinBox->setValue(d->moduleSettings.getDefaultAltitude());
+    ui->defaultAltitudeSpinBox->blockSignals(false);
+
+    ui->defaultIndicatedAirspeedSpinBox->blockSignals(true);
+    ui->defaultIndicatedAirspeedSpinBox->setValue(d->moduleSettings.getDefaultIndicatedAirspeed());
+    ui->defaultIndicatedAirspeedSpinBox->blockSignals(false);
+
+    ui->defaultEngineEventComboBox->blockSignals(true);
+    ui->defaultEngineEventComboBox->setCurrentId(d->moduleSettings.getDefaultEngineEventId());
+    ui->defaultEngineEventComboBox->blockSignals(false);
+
+    ui->defaultOnGroundCheckBox->blockSignals(true);
+    ui->defaultOnGroundCheckBox->setChecked(d->moduleSettings.isDefaultOnGround());
+    ui->defaultOnGroundCheckBox->blockSignals(false);
+
+    updateTable();
 }

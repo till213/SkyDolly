@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -27,7 +27,6 @@
 #include <unordered_map>
 
 #include <QTextStream>
-#include <QTextCodec>
 
 #include "CsvParser.h"
 
@@ -42,20 +41,23 @@ CsvParser::CsvParser(QChar separatorChar, QChar quoteChar, bool trimValue)
 CsvParser::Rows CsvParser::parse(QTextStream &textStream, const QString &header, const QString &alternateHeader) noexcept
 {
     Rows rows;
-
     bool firstLine {true};
     while (!textStream.atEnd())
     {
         const QString line = textStream.readLine();
 
         if (firstLine) {
+            firstLine = false;
             // Compare header (case-insensitive)
             if (!header.isNull() && line.startsWith(header, Qt::CaseInsensitive) ||
                 !alternateHeader.isNull() && line.startsWith(alternateHeader, Qt::CaseInsensitive))
             {
-                firstLine = false;
+                // First line is a header line
                 parseHeader(line);
                 continue;
+            } else if (!header.isNull()) {
+                // First line contains (presumably) values, so parse the expected (default) header
+                parseHeader(header);
             }
         }
 

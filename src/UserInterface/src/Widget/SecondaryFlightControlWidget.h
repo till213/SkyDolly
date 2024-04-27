@@ -48,6 +48,10 @@ class SecondaryFlightControlWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit SecondaryFlightControlWidget(QWidget *parent) noexcept;
+    SecondaryFlightControlWidget(const SecondaryFlightControlWidget &rhs) = delete;
+    SecondaryFlightControlWidget(SecondaryFlightControlWidget &&rhs) = delete;
+    SecondaryFlightControlWidget &operator=(const SecondaryFlightControlWidget &rhs) = delete;
+    SecondaryFlightControlWidget &operator=(SecondaryFlightControlWidget &&rhs) = delete;
     ~SecondaryFlightControlWidget() override;
 
 protected slots:

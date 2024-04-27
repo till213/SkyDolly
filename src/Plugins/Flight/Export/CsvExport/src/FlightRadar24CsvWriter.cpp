@@ -46,13 +46,13 @@
 
 namespace
 {
-    const QString TimestampColumn = QStringLiteral("Timestamp");
-    const QString UtcColumn = QStringLiteral("UTC");
-    const QString CallsignColumn = QStringLiteral("Callsign");
-    const QString PositionColumn = QStringLiteral("Position");
-    const QString AltitudeColumn = QStringLiteral("Altitude");
-    const QString SpeedColumn = QStringLiteral("Speed");
-    const QString DirectionColumn = QStringLiteral("Direction");
+    constexpr const char *TimestampColumn {"Timestamp"};
+    constexpr const char *UtcColumn {"UTC"};
+    constexpr const char *CallsignColumn {"Callsign"};
+    constexpr const char *PositionColumn {"Position"};
+    constexpr const char *AltitudeColumn {"Altitude"};
+    constexpr const char *SpeedColumn {"Speed"};
+    constexpr const char *DirectionColumn {"Direction"};
 }
 
 struct FlightRadar24CsvWriterPrivate
@@ -72,35 +72,32 @@ FlightRadar24CsvWriter::FlightRadar24CsvWriter(const CsvExportSettings &pluginSe
 
 FlightRadar24CsvWriter::~FlightRadar24CsvWriter() = default;
 
-bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool FlightRadar24CsvWriter::write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    QString csv = QString(::TimestampColumn % Csv::CommaSep %
+    QString csv = QString(::TimestampColumn) % Csv::CommaSep %
                           ::UtcColumn % Csv::CommaSep %
                           ::CallsignColumn % Csv::CommaSep %
                           ::PositionColumn % Csv::CommaSep %
                           ::AltitudeColumn % Csv::CommaSep %
                           ::SpeedColumn % Csv::CommaSep %
-                          ::DirectionColumn % Csv::Ln
-                          );
+                          ::DirectionColumn % Csv::Ln;
 
     bool ok = io.write(csv.toUtf8());
     if (ok) {
-        const QDateTime startDateTimeUtc = flight.getAircraftStartZuluTime(aircraft);
-        const QString callSign = aircraft.getAircraftInfo().flightNumber;
+        const QDateTime startDateTimeUtc = flightData.getAircraftStartZuluTime(aircraft);
+        const QString callSign = flightData.flightNumber;
         const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
         for (const PositionData &positionData : interpolatedPositionData) {
-            if (!positionData.isNull()) {
-                const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
-                const std::int64_t secsSinceEpoch = dateTimeUtc.toSecsSinceEpoch();
-                const QString csv = QString::number(secsSinceEpoch) % Csv::CommaSep %
-                                    dateTimeUtc.toString(Qt::ISODate) % Csv::CommaSep %
-                                    callSign % Csv::CommaSep %
-                                    formatPosition(positionData) % Csv::CommaSep %
-                                    QString::number(static_cast<int>(std::round(positionData.altitude))) % Csv::CommaSep %
-                                    QString::number(static_cast<int>(std::round(positionData.velocityBodyZ))) % Csv::CommaSep %
-                                    QString::number(static_cast<int>(std::round(positionData.trueHeading))) % Csv::Ln;
-                ok = io.write(csv.toUtf8());
-            }
+            const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
+            const std::int64_t secsSinceEpoch = dateTimeUtc.toSecsSinceEpoch();
+            const QString csv = QString::number(secsSinceEpoch) % Csv::CommaSep %
+                                dateTimeUtc.toString(Qt::ISODate) % Csv::CommaSep %
+                                callSign % Csv::CommaSep %
+                                formatPosition(positionData) % Csv::CommaSep %
+                                QString::number(static_cast<int>(std::round(positionData.altitude))) % Csv::CommaSep %
+                                QString::number(static_cast<int>(std::round(positionData.velocityBodyZ))) % Csv::CommaSep %
+                                QString::number(static_cast<int>(std::round(positionData.trueHeading))) % Csv::Ln;
+            ok = io.write(csv.toUtf8());
             if (!ok) {
                 break;
             }

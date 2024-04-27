@@ -35,10 +35,9 @@
 class QTableWidgetItem;
 class QKeyEvent;
 
-#include <PluginManager/ModuleIntf.h>
-#include <PluginManager/AbstractModule.h>
-
 #include <Model/Location.h>
+
+class LocationSettings;
 struct LocationWidgetPrivate;
 
 namespace Ui {
@@ -49,7 +48,11 @@ class LocationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit LocationWidget(QWidget *parent = nullptr) noexcept;
+    explicit LocationWidget(LocationSettings &moduleSettings, QWidget *parent = nullptr) noexcept;
+    LocationWidget(const LocationWidget &rhs) = delete;
+    LocationWidget(LocationWidget &&rhs) = delete;
+    LocationWidget &operator=(const LocationWidget &rhs) = delete;
+    LocationWidget &operator=(LocationWidget &&rhs) = delete;
     ~LocationWidget() override;
 
     void addUserLocation(double latitude, double longitude);
@@ -94,7 +97,9 @@ private slots:
     void onCountryChanged() noexcept;
     void onSearchTextChanged() noexcept;
     void searchText() noexcept;
-    void onTypeOptionToggled(bool enable, const QVariant &userData) noexcept;
+    void onTypeOptionToggled(const QVariant &optionValue, bool enable) noexcept;
+    void resetFilter() noexcept;
+    void resetDefaultValues() noexcept;
 
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;
@@ -112,6 +117,16 @@ private slots:
     void onHeadingChanged(double value) noexcept;
     void onIndicatedAirspeedChanged(int value) noexcept;
     void onEngineEventChanged(int index) noexcept;
+
+    // Default values
+    void onDefaultAltitudeChanged(int value) noexcept;
+    void onDefaultIndicatedAirspeedChanged(int value) noexcept;
+    void onDefaultEngineEventChanged() noexcept;
+    void onDefaultOnGroundChanged(bool enable) noexcept;
+
+    // Settings
+    void onTableLayoutChanged() noexcept;
+    void onModuleSettingsChanged() noexcept;
 };
 
 #endif // LOCATIONWIDGET_H

@@ -72,6 +72,8 @@ void AircraftInfoWidget::showEvent(QShowEvent *event) noexcept
             this, &AircraftInfoWidget::updateUi);
     connect(&flight, &Flight::flightRestored,
             this, &AircraftInfoWidget::updateUi);
+    connect(&flight, &Flight::cleared,
+            this, &AircraftInfoWidget::updateUi);
 }
 
 void AircraftInfoWidget::hideEvent(QHideEvent *event) noexcept
@@ -86,6 +88,8 @@ void AircraftInfoWidget::hideEvent(QHideEvent *event) noexcept
                this, &AircraftInfoWidget::updateUi);
     disconnect(&flight, &Flight::flightRestored,
                this, &AircraftInfoWidget::updateUi);
+    disconnect(&flight, &Flight::cleared,
+               this, &AircraftInfoWidget::updateUi);
 }
 
 // PRIVATE
@@ -95,7 +99,6 @@ void AircraftInfoWidget::initUi() noexcept
     ui->nameLineEdit->setToolTip(SimVar::Title);
     ui->tailNumberLineEdit->setToolTip(SimVar::ATCFlightNumber);
     ui->airlineLineEdit->setToolTip(SimVar::ATCAirline);
-    ui->flightLineEdit->setToolTip(SimVar::ATCId);
 
     ui->categoryLineEdit->setToolTip(SimVar::Category);
     ui->startOnGroundCheckBox->setToolTip(SimVar::SimOnGround);
@@ -121,7 +124,6 @@ void AircraftInfoWidget::updateUi() noexcept
     ui->nameLineEdit->setText(aircraftInfo.aircraftType.type);
     ui->tailNumberLineEdit->setText(aircraftInfo.tailNumber);
     ui->airlineLineEdit->setText(aircraftInfo.airline);
-    ui->flightLineEdit->setText(aircraftInfo.flightNumber);
     ui->categoryLineEdit->setText(aircraftInfo.aircraftType.category);
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 

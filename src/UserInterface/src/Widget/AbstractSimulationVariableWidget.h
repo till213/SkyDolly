@@ -39,6 +39,10 @@ class AbstractSimulationVariableWidget : public QWidget
     Q_OBJECT
 public:
     explicit AbstractSimulationVariableWidget(QWidget *parent) noexcept;
+    AbstractSimulationVariableWidget(const AbstractSimulationVariableWidget &rhs) = delete;
+    AbstractSimulationVariableWidget(AbstractSimulationVariableWidget &&rhs) = delete;
+    AbstractSimulationVariableWidget &operator=(const AbstractSimulationVariableWidget &rhs) = delete;
+    AbstractSimulationVariableWidget &operator=(AbstractSimulationVariableWidget &&rhs) = delete;
     ~AbstractSimulationVariableWidget() override;
 
 protected:

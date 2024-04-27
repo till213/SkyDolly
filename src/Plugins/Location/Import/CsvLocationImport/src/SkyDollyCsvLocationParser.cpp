@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -28,7 +28,7 @@
 
 #include <QIODevice>
 #include <QTextStream>
-#include <QTextCodec>
+#include <QStringConverter>
 
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>

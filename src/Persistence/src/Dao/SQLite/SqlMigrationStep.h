@@ -27,7 +27,6 @@
 
 #include <memory>
 
-#include <QStringList>
 #include <QString>
 #include <QStringView>
 
@@ -36,10 +35,10 @@ class QStringRef;
 
 struct SqlMigrationStepPrivate;
 
-class SqlMigrationStep
+class SqlMigrationStep final
 {
 public:
-    SqlMigrationStep() noexcept;
+    SqlMigrationStep(QString connectionName) noexcept;
     SqlMigrationStep(const SqlMigrationStep &rhs) = delete;
     SqlMigrationStep(SqlMigrationStep &&rhs) noexcept;
     SqlMigrationStep &operator=(const SqlMigrationStep &rhs) = delete;
@@ -47,11 +46,11 @@ public:
     ~SqlMigrationStep();
 
     bool isValid() const noexcept;
-    bool parseTag(const QRegularExpressionMatch &tagMatch) noexcept;
+    bool parseTag(const QRegularExpressionMatch &tagMatch) const noexcept;
 
-    bool checkApplied() noexcept;
-    bool execute(QStringView sql) noexcept;
-    void registerMigration(bool success, QString errorMessage = QString()) noexcept;
+    bool checkApplied() const noexcept;
+    bool execute(QStringView sql) const noexcept;
+    void registerMigration(bool success, QString errorMessage = QString()) const noexcept;
 
     const QString &getMigrationId() const noexcept;
     void setMigrationId(QString migrationId) noexcept;

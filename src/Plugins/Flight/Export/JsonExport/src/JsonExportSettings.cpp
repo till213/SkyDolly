@@ -32,7 +32,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 #include "JsonExportSettings.h"
 
 struct JsonExportSettingsPrivate
@@ -47,6 +47,28 @@ JsonExportSettings::JsonExportSettings() noexcept
 
 JsonExportSettings::~JsonExportSettings() = default;
 
+bool JsonExportSettings::isResamplingSupported() const noexcept
+{
+    return true;
+}
+
+bool JsonExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
+{
+    bool supported {false};
+    switch (formationExport) {
+    case FormationExport::AllAircraftOneFile:
+        supported = true;
+        break;
+    case FormationExport::AllAircraftSeparateFiles:
+        supported = true;
+        break;
+    case FormationExport::UserAircraftOnly:
+        supported = true;
+        break;
+    }
+    return supported;
+};
+
 // PROTECTED
 
 void JsonExportSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
@@ -56,11 +78,7 @@ void JsonExportSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::Keys
 {}
 
 void JsonExportSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    emit extendedSettingsChanged();
-}
+{}
 
 void JsonExportSettings::restoreDefaultsExtn() noexcept
-{
-    emit extendedSettingsChanged();
-}
+{}

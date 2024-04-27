@@ -49,6 +49,10 @@ class WIDGET_API ActiveButton : public QPushButton
     Q_OBJECT
 public:
     explicit ActiveButton(QWidget *parent) noexcept;
+    ActiveButton(const ActiveButton &rhs) = delete;
+    ActiveButton(ActiveButton &&rhs) = delete;
+    ActiveButton &operator=(const ActiveButton &rhs) = delete;
+    ActiveButton &operator=(ActiveButton &&rhs) = delete;
     ~ActiveButton() override;
 
 protected:

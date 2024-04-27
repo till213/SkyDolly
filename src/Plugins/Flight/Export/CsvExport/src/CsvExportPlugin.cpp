@@ -29,11 +29,11 @@
 #include <QString>
 
 #include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/Aircraft.h>
 #include "CsvExportSettings.h"
 #include "CsvExportOptionWidget.h"
 #include "CsvWriterIntf.h"
-#include "SkyDollyCsvWriter.h"
 #include "FlightRadar24CsvWriter.h"
 #include "PositionAndAttitudeCsvWriter.h"
 #include "CsvExportPlugin.h"
@@ -76,25 +76,17 @@ std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<CsvExportOptionWidget>(d->pluginSettings);
 }
 
-bool CsvExportPlugin::hasMultiAircraftSupport() const noexcept
-{
-    return false;
-}
-
-bool CsvExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) const  noexcept
+bool CsvExportPlugin::exportFlightData([[maybe_unused]] const FlightData &flightData, [[maybe_unused]] QIODevice &io) const  noexcept
 {
     // No multi aircraft support
     return false;
 }
 
-bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const  noexcept
+bool CsvExportPlugin::exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const  noexcept
 {
     std::unique_ptr<CsvWriterIntf> writer;
     switch (d->pluginSettings.getFormat()) {
-    case CsvExportSettings::Format::SkyDolly:
-        writer = std::make_unique<SkyDollyCsvWriter>(d->pluginSettings);
-        break;
-    case CsvExportSettings::Format::FlightRadar24:
+    case CsvExportSettings::Format::Flightradar24:
         writer = std::make_unique<FlightRadar24CsvWriter>(d->pluginSettings);
         break;
     case CsvExportSettings::Format::PositionAndAttitude:
@@ -105,7 +97,7 @@ bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
     bool ok {false};
     if (writer != nullptr) {
         io.setTextModeEnabled(true);
-        ok = writer->write(flight, aircraft, io);
+        ok = writer->write(flightData, aircraft, io);
     }
 
     return ok;

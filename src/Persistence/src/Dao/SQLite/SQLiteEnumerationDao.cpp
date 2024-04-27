@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+#include <utility>
+
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
@@ -36,23 +39,51 @@
 #include <Model/Enumeration.h>
 #include "SQLiteEnumerationDao.h"
 
-// PUBIC
+struct SQLiteEnumerationDaoPrivate
+{
+    SQLiteEnumerationDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
+    {}
+
+    QString connectionName;
+};
+
+// PUBLIC
+
+SQLiteEnumerationDao::SQLiteEnumerationDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteEnumerationDaoPrivate>(std::move(connectionName)))
+{}
 
 SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept = default;
 SQLiteEnumerationDao &SQLiteEnumerationDao::operator=(SQLiteEnumerationDao &&rhs) noexcept = default;
 SQLiteEnumerationDao::~SQLiteEnumerationDao() = default;
 
-Enumeration SQLiteEnumerationDao::get(const QString &name, bool *ok) const noexcept
+Enumeration SQLiteEnumerationDao::get(const QString &name, Enumeration::Order order, bool *ok) const noexcept
 {
     Enumeration enumeration {name};
     const QString enumerationTableName = QStringLiteral("enum_") % Name::fromCamelCase(enumeration.getName());
 
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
+
+    QString orderColumn;
+    switch (order) {
+    case Enumeration::Order::Id:
+        orderColumn = "id";
+        break;
+    case Enumeration::Order::SymId:
+        orderColumn = "sym_id";
+        break;
+    case Enumeration::Order::Name:
+        orderColumn = "name";
+        break;
+    }
+
     query.prepare(
         "select e.id, e.sym_id, e.name "
         "from   " % enumerationTableName % " e "
-        "order by e.id asc;"
+        "order by e." % orderColumn % " asc;"
     );
 
     const bool success = query.exec();

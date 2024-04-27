@@ -44,8 +44,8 @@
 #include <Model/PrimaryFlightControl.h>
 #include <Model/AircraftInfo.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include "../Widget/AircraftWidget.h"
 #include "../Widget/EngineWidget.h"
 #include "../Widget/PrimaryFlightControlWidget.h"

@@ -55,7 +55,7 @@ void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
 {
     Waypoint currentWaypoint = d->waypoints.at(index);
     bool changed = false;
-    if (index >= 0 && index < d->waypoints.size()) {
+    if (index >= 0 && index < static_cast<int>(d->waypoints.size())) {
         if (currentWaypoint.timestamp != waypoint.timestamp) {
             currentWaypoint.timestamp = waypoint.timestamp;
             changed = true;

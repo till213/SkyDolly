@@ -39,8 +39,8 @@
 #include <Model/AircraftHandleData.h>
 #include <Model/TimeVariableData.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/Connect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Connect/Connect.h>
 #include "AircraftHandleWidget.h"
 #include "ui_AircraftHandleWidget.h"
 
@@ -78,8 +78,10 @@ void AircraftHandleWidget::initUi() noexcept
     ui->brakeRightLineEdit->setToolTip(SimVar::BrakeRightPosition);
     ui->waterRudderLineEdit->setToolTip(SimVar::WaterRudderHandlePosition);
     ui->smokeEnabledLineEdit->setToolTip(SimVar::SmokeEnable);
-    ui->tailhookLineEdit->setToolTip(SimVar::TailhookPosition);
     ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
+    ui->tailhookHandleLineEdit->setToolTip(SimVar::TailhookHandle);
+    ui->tailhookPositionLineEdit->setToolTip(SimVar::TailhookPosition);
+    ui->wingFoldingHandleLineEdit->setToolTip(SimVar::FoldingWingHandlePosition);
     ui->leftWingFoldingLineEdit->setToolTip(SimVar::FoldingWingLeftPercent);
     ui->rightWingFoldingLineEdit->setToolTip(SimVar::FoldingWingRightPercent);
 }
@@ -91,7 +93,9 @@ AircraftHandleData AircraftHandleWidget::getCurrentAircraftHandleData(std::int64
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getAircraftHandle().getLast();
+            if (aircraft.getAircraftHandle().count() > 0) {
+                aircraftHandleData = aircraft.getAircraftHandle().getLast();
+            }
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 aircraftHandleData = aircraft.getAircraftHandle().interpolate(timestamp, access);
@@ -116,8 +120,10 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
         ui->brakeRightLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeRightPosition));
         ui->waterRudderLineEdit->setText(d->unit.formatPosition(aircraftHandleData.waterRudderHandlePosition));
         aircraftHandleData.smokeEnabled ? ui->smokeEnabledLineEdit->setText(tr("On")) : ui->smokeEnabledLineEdit->setText(tr("Off"));
-        ui->tailhookLineEdit->setText(d->unit.formatPercent(aircraftHandleData.tailhookPosition));
         ui->canopyOpenLineEdit->setText(d->unit.formatPercent(aircraftHandleData.canopyOpen));
+        aircraftHandleData.tailhookHandlePosition ? ui->tailhookHandleLineEdit->setText(tr("Extended")) : ui->tailhookHandleLineEdit->setText(tr("Retracted"));
+        ui->tailhookPositionLineEdit->setText(d->unit.formatPercent(aircraftHandleData.tailhookPosition));
+        aircraftHandleData.foldingWingHandlePosition ? ui->wingFoldingHandleLineEdit->setText(tr("Retracted")) : ui->wingFoldingHandleLineEdit->setText(tr("Extended"));
         ui->leftWingFoldingLineEdit->setText(d->unit.formatPercent(aircraftHandleData.leftWingFolding));
         ui->rightWingFoldingLineEdit->setText(d->unit.formatPercent(aircraftHandleData.rightWingFolding));
 
@@ -132,8 +138,10 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
     ui->brakeRightLineEdit->setStyleSheet(css);
     ui->waterRudderLineEdit->setStyleSheet(css);
     ui->smokeEnabledLineEdit->setStyleSheet(css);
-    ui->tailhookLineEdit->setStyleSheet(css);
     ui->canopyOpenLineEdit->setStyleSheet(css);
+    ui->tailhookHandleLineEdit->setStyleSheet(css);
+    ui->tailhookPositionLineEdit->setStyleSheet(css);
+    ui->wingFoldingHandleLineEdit->setStyleSheet(css);
     ui->leftWingFoldingLineEdit->setStyleSheet(css);
     ui->rightWingFoldingLineEdit->setStyleSheet(css);
 }

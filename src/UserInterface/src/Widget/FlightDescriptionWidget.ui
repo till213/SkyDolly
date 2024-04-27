@@ -7,26 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>428</width>
-    <height>148</height>
+    <height>178</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="titleLineEdit">
-     <property name="minimumSize">
-      <size>
-       <width>320</width>
-       <height>0</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="FocusPlainTextEdit" name="focusPlainTextEdit"/>
-   </item>
+  <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
@@ -37,7 +24,40 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="titleLineEdit">
+     <property name="minimumSize">
+      <size>
+       <width>320</width>
+       <height>0</height>
+      </size>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Flight number:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="flightNumberLineEdit">
+     <property name="minimumSize">
+      <size>
+       <width>320</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Description:</string>
@@ -48,16 +68,19 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="recordingTimeLineEdit">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
+    <widget class="FocusPlainTextEdit" name="focusPlainTextEdit"/>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Recording time:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="recordingTimeLineEdit">
+     <property name="readOnly">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

@@ -37,10 +37,10 @@ class QString;
 class QDateTime;
 
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportIntf.h>
-#include <PluginManager/FlightExportPluginBase.h>
+#include <PluginManager/Flight/FlightExportIntf.h>
+#include <PluginManager/Flight/FlightExportPluginBase.h>
 
-class Flight;
+struct FlightData;
 class Aircraft;
 struct EngineData;
 struct Waypoint;
@@ -54,6 +54,10 @@ class IgcExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     IgcExportPlugin() noexcept;
+    IgcExportPlugin(const IgcExportPlugin &rhs) = delete;
+    IgcExportPlugin(IgcExportPlugin &&rhs) = delete;
+    IgcExportPlugin &operator=(const IgcExportPlugin &rhs) = delete;
+    IgcExportPlugin &operator=(IgcExportPlugin &&rhs) = delete;
     ~IgcExportPlugin() override;
 
 protected:
@@ -61,20 +65,19 @@ protected:
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool hasMultiAircraftSupport() const noexcept override;
-    bool exportFlight(const Flight &flight, QIODevice &io) const noexcept override;
-    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept override;
+    bool exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept override;
+    bool exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept override;
 
 private:
     const std::unique_ptr<IgcExportPluginPrivate> d;
 
     inline bool exportARecord(QIODevice &io) const noexcept;
-    inline bool exportHRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    inline bool exportHRecord(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept;
     inline bool exportIRecord(QIODevice &io) const noexcept;
     inline bool exportJRecord(QIODevice &io) const noexcept;
-    inline bool exportCRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    inline bool exportCRecord(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept;
     // Exports B and - less frequently, in intervals of n seconds - also K records
-    inline bool exportFixes(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    inline bool exportFixes(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept;
     inline bool exportGRecord(QIODevice &io) const noexcept;
 
     inline QByteArray formatDate(const QDateTime &date) const noexcept;

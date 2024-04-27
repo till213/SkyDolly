@@ -33,7 +33,8 @@
 #endif
 
 #include <Kernel/Convert.h>
-#include <Model/Flight.h>
+#include <Model/FlightData.h>
+#include <Model/Aircraft.h>
 #include <Model/FlightPlan.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
@@ -42,16 +43,10 @@
 #include "AbstractKmlTrackParser.h"
 #include "FlightAwareKmlParser.h"
 
-struct FlightAwareKmlParserPrivate
-{
-    QString flightNumber;
-};
-
 // PUBLIC
 
 FlightAwareKmlParser::FlightAwareKmlParser() noexcept
-    : AbstractKmlTrackParser(),
-      d(std::make_unique<FlightAwareKmlParserPrivate>())
+    : AbstractKmlTrackParser()
 {}
 
 FlightAwareKmlParser::~FlightAwareKmlParser() = default;
@@ -60,26 +55,22 @@ FlightAwareKmlParser::~FlightAwareKmlParser() = default;
 // - <Point> Takeoff airpart
 // - <Point> Destination airport
 // - <gx:Track> timestamps (<when>) and positions (<gx:coord>)
-void FlightAwareKmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept
+std::vector<FlightData> FlightAwareKmlParser::parse(QXmlStreamReader &xmlStreamReader) noexcept
 {
-    initialise(&flight, &xmlStreamReader);
-    parseKML();
-    updateWaypoints();
-}
-
-QString FlightAwareKmlParser::getFlightNumber() const noexcept
-{
-    return d->flightNumber;
+    initialise(&xmlStreamReader);
+    std::vector<FlightData> flights = parseKML();
+    enrichFlightData(flights);
+    return flights;
 }
 
 // PRIVATE
 
-void FlightAwareKmlParser::parsePlacemark() noexcept
+void FlightAwareKmlParser::parsePlacemark(FlightData &flightData) noexcept
 {
     QXmlStreamReader *xml = getXmlStreamReader();
     QString placemarkName;
     while (xml->readNextStartElement()) {
-        const QStringRef xmlName = xml->name();
+        const QStringView xmlName = xml->name();
 #ifdef DEBUG
         qDebug() << "FlightAwareKmlParser::parsePlacemark: XML start element:" << xmlName.toString();
 #endif
@@ -90,24 +81,24 @@ void FlightAwareKmlParser::parsePlacemark() noexcept
                 placemarkName = placemarkName.left(4);
             }
         } else if (xmlName == Kml::Point) {
-            parseWaypoint(placemarkName);
+            parseWaypoint(flightData, placemarkName);
         } else if (xmlName == Kml::Track) {
             // The track contains the flight number
-            d->flightNumber = placemarkName;
-            parseTrack();
+            flightData.flightNumber = placemarkName;
+            parseTrack(flightData);
         } else {
             xml->skipCurrentElement();
         }
     }
 }
 
-void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
+void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrName) noexcept
 {
-    Flight *flight = getFlight();
+    Aircraft &aircraft = flightData.getUserAircraft();
     QXmlStreamReader *xml = getXmlStreamReader();
     bool ok {true};
     while (xml->readNextStartElement()) {
-        const QStringRef xmlName = xml->name();
+        const QStringView xmlName = xml->name();
 #ifdef DEBUG
         qDebug() << "FlightAwareKmlParser::parseWaypoint: XML start element:" << xmlName.toString();
 #endif
@@ -134,7 +125,7 @@ void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
                 // gx:Track data has been parsed
                 waypoint.timestamp = TimeVariableData::InvalidTime;
 
-                flight->getUserAircraft().getFlightPlan().add(std::move(waypoint));
+                aircraft.getFlightPlan().add(std::move(waypoint));
             } else {
                 xml->raiseError("Invalid GPS coordinate.");
             }
@@ -144,10 +135,18 @@ void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
     }
 }
 
-void FlightAwareKmlParser::updateWaypoints() noexcept
+void FlightAwareKmlParser::enrichFlightData(std::vector<FlightData> &flights) noexcept
 {
-    Aircraft &aircraft = getFlight()->getUserAircraft();
+    for (FlightData &flightData : flights) {
+        flightData.creationTime = getFirstDateTimeUtc();
+        for (Aircraft &aircraft : flightData) {
+            updateAircraftWaypoints(aircraft);
+        }
+    }
+}
 
+void FlightAwareKmlParser::updateAircraftWaypoints(Aircraft &aircraft) noexcept
+{
     std::size_t positionCount = aircraft.getPosition().count();
     if (positionCount > 0) {
         std::size_t waypointCount = aircraft.getFlightPlan().count();

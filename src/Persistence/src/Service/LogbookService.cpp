@@ -37,41 +37,56 @@
 
 struct LogbookServicePrivate
 {
-    LogbookServicePrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+    LogbookServicePrivate(QString connectionName) noexcept
+        : connectionName(connectionName),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
           logbookDao(daoFactory->createLogbookDao())
     {}
 
+    QString connectionName;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<LogbookDaoIntf> logbookDao;
 };
 
 // PUBLIC
 
-LogbookService::LogbookService() noexcept
-    : d(std::make_unique<LogbookServicePrivate>())
+LogbookService::LogbookService(QString connectionName) noexcept
+    : d(std::make_unique<LogbookServicePrivate>(std::move(connectionName)))
 {}
 
 LogbookService::LogbookService(LogbookService &&rhs) noexcept = default;
 LogbookService &LogbookService::operator=(LogbookService &&rhs) noexcept = default;
 LogbookService::~LogbookService() = default;
 
-std::forward_list<FlightDate> LogbookService::getFlightDates() const noexcept
+std::forward_list<FlightDate> LogbookService::getFlightDates(bool *ok) const noexcept
 {
     std::forward_list<FlightDate> flightDates;
-    if (QSqlDatabase::database().transaction()) {
-        flightDates = d->logbookDao->getFlightDates();
-        QSqlDatabase::database().rollback();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    if (db.transaction()) {
+        flightDates = d->logbookDao->getFlightDates(ok);
+        db.rollback();
     }
     return flightDates;
 }
 
-std::vector<FlightSummary> LogbookService::getFlightSummaries(const FlightSelector &flightSelector) const noexcept
+std::vector<FlightSummary> LogbookService::getFlightSummaries(const FlightSelector &flightSelector, bool *ok) const noexcept
 {
     std::vector<FlightSummary> descriptions;
-    if (QSqlDatabase::database().transaction()) {
-        descriptions = d->logbookDao->getFlightSummaries(flightSelector);
-        QSqlDatabase::database().rollback();
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    if (db.transaction()) {
+        descriptions = d->logbookDao->getFlightSummaries(flightSelector, ok);
+        db.rollback();
     }
     return descriptions;
+}
+
+std::vector<std::int64_t> LogbookService::getFlightIds(const FlightSelector &flightSelector, bool *ok) const noexcept
+{
+    std::vector<std::int64_t> flightIds;
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    if (db.transaction()) {
+        flightIds = d->logbookDao->getFlightIds(flightSelector, ok);
+        db.rollback();
+    }
+    return flightIds;
 }

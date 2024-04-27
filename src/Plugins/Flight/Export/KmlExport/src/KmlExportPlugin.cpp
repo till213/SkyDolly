@@ -65,7 +65,6 @@ namespace
 
 struct KmlExportPluginPrivate
 {
-    const Flight *flight {nullptr};
     KmlExportSettings pluginSettings;
     std::unique_ptr<KmlStyleExport> styleExport {std::make_unique<KmlStyleExport>(pluginSettings)};
     Unit unit;
@@ -104,109 +103,99 @@ std::unique_ptr<QWidget> KmlExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KmlExportOptionWidget>(d->pluginSettings);
 }
 
-bool KmlExportPlugin::hasMultiAircraftSupport() const noexcept
-{
-    // We can store multiple LineStrings in the KML format
-    return true;
-}
-
-bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) const noexcept
+bool KmlExportPlugin::exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept
 {
     io.setTextModeEnabled(true);
 
-    d->flight = &flight;
     d->aircraftTypeCount.clear();
-    const int nofAircraft = static_cast<int>(d->flight->count());
+    const int nofAircraft = static_cast<int>(flightData.count());
     // Only create as many colors per ramp as there are aircraft (if there are less aircraft
     // than requested colors per ramp)
     d->pluginSettings.setNofColorsPerRamp(std::min(nofAircraft, d->pluginSettings.getNofColorsPerRamp()));
 
-    bool ok = exportHeader(io);
+    bool ok = exportHeader(flightData.title, io);
     if (ok) {
         ok = d->styleExport->exportStyles(io);
     }
     if (ok) {
-        ok = exportFlightInfo(io);
+        ok = exportFlightInfo(flightData, io);
     }
     if (ok) {
-        ok = exportAllAircraft(io);
+        ok = exportAllAircraft(flightData, io);
     }
     if (ok) {
-        ok = exportWaypoints(io);
+        ok = exportWaypoints(flightData.getUserAircraftConst().getFlightPlan(), io);
     }
     if (ok) {
         ok = exportFooter(io);
     }
-    // We are done with the export
-    d->flight = nullptr;
 
     return ok;
 }
 
-bool KmlExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
+bool KmlExportPlugin::exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     io.setTextModeEnabled(true);
 
-    d->flight = &flight;
     d->aircraftTypeCount.clear();
     // Only create as many colors per ramp as there are aircraft (if there are less aircraft
     // than requested colors per ramp)
     d->pluginSettings.setNofColorsPerRamp(1);
 
-    bool ok = exportHeader(io);
+    bool ok = exportHeader(flightData.title, io);
     if (ok) {
         ok = d->styleExport->exportStyles(io);
     }
     if (ok) {
-        ok = exportFlightInfo(io);
+        ok = exportFlightInfo(flightData, io);
     }
     if (ok) {
-        ok = exportAircraft(aircraft, io);
+        const bool inFormation = flightData.count() > 1;
+        ok = exportSingleAircraft(aircraft, inFormation, io);
     }
     if (ok) {
-        ok = exportWaypoints(io);
+        ok = exportWaypoints(flightData.getUserAircraftConst().getFlightPlan(), io);
     }
     if (ok) {
         ok = exportFooter(io);
     }
-    // We are done with the export
-    d->flight = nullptr;
 
     return ok;
 }
 
 // PRIVATE
 
-bool KmlExportPlugin::exportHeader(QIODevice &io) const noexcept
+bool KmlExportPlugin::exportHeader(const QString &title, QIODevice &io) const noexcept
 {
     const QString header =
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n"
 "  <Document>\n"
-"    <name><![CDATA[" % d->flight->getTitle() % "]]></name>\n";
+"    <name><![CDATA[" % title % "]]></name>\n";
 
     return io.write(header.toUtf8());
 }
 
-bool KmlExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
+bool KmlExportPlugin::exportFlightInfo(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
-    const Aircraft &aircraft = d->flight->getUserAircraft();
+    const Aircraft &aircraft = flightData.getUserAircraftConst();
     if (aircraft.getPosition().count() > 0) {
         const PositionData &positionData = aircraft.getPosition().getFirst();
-        ok = exportPlacemark(io, KmlStyleExport::Icon::Airport, d->flight->getTitle(), getFlightDescription(), positionData);
+        ok = exportPlacemark(io, KmlStyleExport::Icon::Airport, flightData.title, getFlightDescription(flightData), positionData);
     } else {
         ok = false;
     }
     return ok;
 }
 
-bool KmlExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
+bool KmlExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
-    for (const auto &aircraft : *d->flight) {
+    for (const auto &aircraft : flightData) {
         d->aircraftTypeCount[aircraft.getAircraftInfo().aircraftType.type] += 1;
-        ok = exportAircraft(aircraft, io);
+        const bool inFormation = flightData.count() > 1;
+        ok = exportSingleAircraft(aircraft, inFormation, io);
         if (!ok) {
             break;
         }
@@ -214,7 +203,7 @@ bool KmlExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
     return ok;
 }
 
-bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inFormation, QIODevice &io) const noexcept
 {
     const QString lineStringBegin = QString(
 "        <LineString>\n"
@@ -232,8 +221,7 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     if (interpolatedPositionData.size() > 0) {
 
         const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfo().aircraftType.type];
-        const bool isFormation = d->flight->count() > 1;
-        const QString aircratId = isFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
+        const QString aircratId = inFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
 
         const SimType::EngineType engineType = aircraft.getAircraftInfo().aircraftType.engineType;
         QString styleMapId = d->styleExport->getNextEngineTypeStyleMap(engineType);
@@ -249,9 +237,9 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
         if (ok) {
 
             const std::size_t interpolatedPositionCount = interpolatedPositionData.size();
-            int nextLineSegmentIndex = 0;
-            int currentIndex = nextLineSegmentIndex;
-            while (currentIndex < interpolatedPositionCount - 1) {
+            std::size_t currentIndex {0};
+            std::size_t nextLineSegmentIndex {currentIndex};
+            while (currentIndex < interpolatedPositionCount) {
                 if (currentIndex == nextLineSegmentIndex) {
                     // End the previous line segment (if any)
                     if (currentIndex > 0) {
@@ -269,13 +257,12 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
                     // last point of the previous line segment is repeated,
                     // in order to connect the segments
                     nextLineSegmentIndex += ::MaxLineSegments;
-                } else {
-                    currentIndex += 1;
                 }
                 const PositionData positionData = interpolatedPositionData[currentIndex];
                 ok = io.write((Export::formatCoordinate(positionData.longitude) % "," %
                                Export::formatCoordinate(positionData.latitude) % "," %
                                Export::formatCoordinate(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+                ++currentIndex;
                 if (!ok) {
                     break;
                 }
@@ -297,11 +284,9 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     return ok;
 }
 
-bool KmlExportPlugin::exportWaypoints(QIODevice &io) const noexcept
+bool KmlExportPlugin::exportWaypoints(const FlightPlan &flightPlan, QIODevice &io) const noexcept
 {
     bool ok {true};
-
-    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlan();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportPlacemark(io, KmlStyleExport::Icon::Flag, waypoint.identifier, getWaypointDescription(waypoint),
                              waypoint.longitude, waypoint.latitude, waypoint.altitude, HeadingNorth);
@@ -317,12 +302,13 @@ bool KmlExportPlugin::exportFooter(QIODevice &io) const noexcept
     return io.write(footer.toUtf8());
 }
 
-QString KmlExportPlugin::getFlightDescription() const noexcept
+QString KmlExportPlugin::getFlightDescription(const FlightData &flightData) const noexcept
 {
-    const FlightCondition &flightCondition = d->flight->getFlightCondition();
-    return QObject::tr("Description") % ": " % d->flight->getDescription() % "\n" %
+    const FlightCondition &flightCondition = flightData.flightCondition;
+    return QObject::tr("Description") % ": " % flightData.description % "\n" %
            "\n" %
-           QObject::tr("Creation date") % ": " % d->unit.formatDate(d->flight->getCreationTime()) % "\n" %
+           QObject::tr("Creation date") % ": " % d->unit.formatDate(flightData.creationTime) % "\n" %
+           QObject::tr("Flight number") % ": " % flightData.flightNumber % "\n" %
            QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
            QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
            QObject::tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
@@ -346,7 +332,6 @@ QString KmlExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
            QObject::tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
            QObject::tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %
            QObject::tr("Airline") % ": " % info.airline % "\n" %
-           QObject::tr("Flight number") % ": " % info.flightNumber % "\n" %
            QObject::tr("Tail number") % ": " % info.tailNumber % "\n";
 }
 
@@ -356,7 +341,6 @@ QString KmlExportPlugin::getWaypointDescription(const Waypoint &waypoint) const 
            QObject::tr("Arrival time (zulu)") % ": " % d->unit.formatTime(waypoint.zuluTime) % "\n" %
            QObject::tr("Altitude") % ": " % d->unit.formatFeet(waypoint.altitude) % "\n";
 }
-
 
 inline bool KmlExportPlugin::exportPlacemark(QIODevice &io, KmlStyleExport::Icon icon, const QString &name, const QString &description, const PositionData &positionData) const noexcept
 {
@@ -394,4 +378,3 @@ inline bool KmlExportPlugin::exportPlacemark(QIODevice &io, KmlStyleExport::Icon
 "    </Placemark>\n";
     return io.write(placemark.toUtf8());
 }
-

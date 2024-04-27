@@ -37,6 +37,11 @@
 class Flight;
 class Aircraft;
 struct PositionData;
+struct EngineData;
+struct PrimaryFlightControlData;
+struct SecondaryFlightControlData;
+struct AircraftHandleData;
+struct LightData;
 
 /*!
  * Common export functionality.
@@ -99,6 +104,12 @@ public:
     }
 
     static std::vector<PositionData> resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
+    static std::vector<EngineData> resampleEngineDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
+    static std::vector<PrimaryFlightControlData> resamplePrimaryFlightControlDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
+    static std::vector<SecondaryFlightControlData> resampleSecondaryFlightControlDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
+    static std::vector<AircraftHandleData> resampleAircraftHandleDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
+    static std::vector<LightData> resampleLightDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
+
 };
 
 #endif // EXPORT_H

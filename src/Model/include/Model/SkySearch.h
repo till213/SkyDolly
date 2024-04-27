@@ -246,9 +246,17 @@ namespace SkySearch {
             }
 
         } else {
-            // We are past the last sample point
-            if (data.size() > 0 && timestamp - data.back().timestamp <= interpolationWindow) {
-                *p0 = *p1 = *p2 = *p3 = &data.back();
+            // We are outside the sampled data time interval: either before the first (even with timestamp = 0;
+            // sampled data does not necessarily start with timestamp = 0) or after the last sample point
+            if (data.size() > 0) {
+                if (timestamp < data.front().timestamp) {
+                    // We always start with the first sample point (regardless of the interpolation window)
+                    *p0 = *p1 = *p2 = *p3 = &data.front();
+                } else if (timestamp <= data.back().timestamp + interpolationWindow) {
+                    *p0 = *p1 = *p2 = *p3 = &data.back();
+                } else {
+                    *p0 = *p1 = *p2 = *p3 = nullptr;
+                }
             } else {
                 *p0 = *p1 = *p2 = *p3 = nullptr;
             }

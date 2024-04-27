@@ -76,7 +76,7 @@ public:
     ~FlightAugmentation();
 
     void setProcedures(Procedures procedures) noexcept;
-    Procedures getProcedures() const noexcept;
+    Procedures getAugmentationProcedures() const noexcept;
     void setAspects(Aspects aspects) noexcept;
     Aspects getAspects() const noexcept;
 

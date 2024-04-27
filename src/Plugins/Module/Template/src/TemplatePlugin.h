@@ -30,8 +30,9 @@
 
 class QWidget;
 
-#include "PluginManager/AbstractModule.h"
+#include <PluginManager/Module/AbstractModule.h>
 
+class ModuleBaseSettings;
 struct TemplatePluginPrivate;
 
 class TemplatePlugin : public AbstractModule
@@ -41,10 +42,18 @@ class TemplatePlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit TemplatePlugin(QObject *parent = nullptr) noexcept;
+    TemplatePlugin(const TemplatePlugin &rhs) = delete;
+    TemplatePlugin(TemplatePlugin &&rhs) = delete;
+    TemplatePlugin &operator=(const TemplatePlugin &rhs) = delete;
+    TemplatePlugin &operator=(TemplatePlugin &&rhs) = delete;
     ~TemplatePlugin() override;
 
+    QUuid getUuid() const noexcept override;
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
+
+protected:
+    ModuleBaseSettings &getModuleSettings() const noexcept override;
 
 private:
     const std::unique_ptr<TemplatePluginPrivate> d;

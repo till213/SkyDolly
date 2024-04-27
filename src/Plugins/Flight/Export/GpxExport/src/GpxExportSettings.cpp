@@ -29,7 +29,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 #include "GpxExportSettings.h"
 
 namespace
@@ -68,9 +68,31 @@ void GpxExportSettings::setTimestampMode(TimestampMode timestampMode) noexcept
 {
     if (d->timestampMode != timestampMode) {
         d->timestampMode = timestampMode;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
+
+bool GpxExportSettings::isResamplingSupported() const noexcept
+{
+    return true;
+}
+
+bool GpxExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
+{
+    bool supported {false};
+    switch (formationExport) {
+    case FormationExport::AllAircraftOneFile:
+        supported = true;
+        break;
+    case FormationExport::AllAircraftSeparateFiles:
+        supported = true;
+        break;
+    case FormationExport::UserAircraftOnly:
+        supported = true;
+        break;
+    }
+    return supported;
+};
 
 // PROTECTED
 
@@ -101,13 +123,9 @@ void GpxExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->timestampMode = ::DefaultTimestampMode;
     }
-
-    emit extendedSettingsChanged();
 }
 
 void GpxExportSettings::restoreDefaultsExtn() noexcept
 {
     d->timestampMode = ::DefaultTimestampMode;
-
-    emit extendedSettingsChanged();
 }

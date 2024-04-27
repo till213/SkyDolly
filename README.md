@@ -1,3 +1,10 @@
+[![Pre-Release](https://img.shields.io/github/v/tag/till213/skydolly?include_prereleases&label=Pre-Release)](https://github.com/till213/skydolly/releases)
+![License: MIT](https://img.shields.io/badge/%E2%9A%96%EF%B8%8F%20License-MIT-brightgreen)
+![C++20](https://img.shields.io/badge/C%2B%2B-20-%2300599C?logo=cplusplus)
+![Supported Compilers](https://img.shields.io/badge/%E2%9A%99%EF%B8%8F%20Compilers-GCC%2C%20clang%2C%20MSVC-informational)
+
+![Unit Tests](https://github.com/till213/SkyDolly/actions/workflows/unit-tests.yml/badge.svg?event=push)
+
 # Sky Dolly
 Sky Dolly - The Black Sheep for Your Flight Recordings.
 
@@ -67,7 +74,7 @@ Why don't you try it with one of the guided ["Tell Tours"](https://github.com/ti
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.13.0**
+Latest (pre-)release: **Sky Dolly 0.16.3**
 
 Compute and compare your checksum against the [published SHA-256 checksums](SHASUM256.md), to verify the integrity of your downloaded copy.
 
@@ -85,6 +92,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 - https://github.com/ijl20/msfs_logger_replay - IGC logger and replay (for FSX)
 - https://github.com/diagonalization-lab/msfs-panel-notepad - Minimal MSFS toolbar / panel example
 - https://joinfs.net/ - Allows to synchronise multiplayer flights across different flight simulators (MSFS, Prepar3D/FSX, XPlane). Also provides a flight recorder with formation flight recording ("overdub").
+- https://github.com/paulalexandrow/a32nx-webremote - WebRemote for FlyByWire's A32NX: control cockpit functionality of the FBW A320, using FSUIPC7
 
 ## Other Useful Resources
 

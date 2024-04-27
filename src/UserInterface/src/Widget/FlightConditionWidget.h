@@ -43,6 +43,10 @@ class FlightConditionWidget : public QWidget
     Q_OBJECT
 public:
     explicit FlightConditionWidget(QWidget *parent = nullptr) noexcept;
+    FlightConditionWidget(const FlightConditionWidget &rhs) = delete;
+    FlightConditionWidget(FlightConditionWidget &&rhs) = delete;
+    FlightConditionWidget &operator=(const FlightConditionWidget &rhs) = delete;
+    FlightConditionWidget &operator=(FlightConditionWidget &&rhs) = delete;
     ~FlightConditionWidget() override;
 
 protected:

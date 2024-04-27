@@ -38,6 +38,7 @@
 #include <QFileInfo>
 #include <QByteArray>
 
+#include "FlightSimulatorShortcuts.h"
 #include "Replay.h"
 #include "SampleRate.h"
 #include "KernelLib.h"
@@ -53,7 +54,6 @@ class KERNEL_API Settings final : public QObject
 {
     Q_OBJECT
 public:
-
     Settings(const Settings &rhs) = delete;
     Settings(Settings &&rhs) = delete;
     Settings &operator=(const Settings &rhs) = delete;
@@ -253,51 +253,6 @@ public:
     void setWindowState(const QByteArray &state) noexcept;
 
     /*!
-     * Returns the saved logbook table state.
-     *
-     * \return the logbook table state; a \e null QByteArray if not saved before
-     */
-    QByteArray getLogbookState() const;
-
-    /*!
-     * Stores the logbook table state.
-     *
-     * \param state
-     *        the logbook table state encoded in the QByteAarray
-     */
-    void setLogbookState(const QByteArray &state) noexcept;
-
-    /*!
-     * Returns the saved formation aircraft table state.
-     *
-     * \return the formation aircraft table state; a \e null QByteArray if not saved before
-     */
-    QByteArray getFormationAircraftTableState() const;
-
-    /*!
-     * Stores the formation aircraft table state.
-     *
-     * \param state
-     *        the formation aircraft table state encoded in the QByteAarray
-     */
-    void setFormationAircraftTableState(const QByteArray &state) noexcept;
-
-    /*!
-     * Returns the saved location table state.
-     *
-     * \return the location table state; a \e null QByteArray if not saved before
-     */
-    QByteArray getLocationTableState() const;
-
-    /*!
-     * Stores the location table state.
-     *
-     * \param state
-     *        the location table state encoded in the QByteAarray
-     */
-    void setLocationTableState(const QByteArray &state) noexcept;
-
-    /*!
      * Returns the path of the directory which was last accessed during export or import.
      *
      * \return the path of the last export / import directory
@@ -392,27 +347,6 @@ public:
      *        the replay speed unit
      */
     void setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept;
-
-    /*!
-     * Returns whether the FLAPS HANDLE INDEX simulation variable
-     * is repeatedly sent or not.
-     *
-     * \return \c true if the FLAPS HANDLE INDEX value is repeatedly
-     *         sent when its value is greater zero; \c false if
-     *         the value is only to be sent when changed
-     */
-    bool isRepeatFlapsHandleIndexEnabled() const noexcept;
-
-    /*!
-     * Enables the value repeat for the FLAPS HANDLE INDEX simulation
-     * variable.
-     *
-     * \param enable
-     *        set to \c true in order to enable value repeat;
-     *        \c false else
-     * \sa repeatFlapsPositionChanged
-     */
-    void setRepeatFlapsHandleIndexEnabled(bool enable) noexcept;
 
     /*!
      * Returns whether the CANOPY OPEN simulation variable
@@ -569,7 +503,7 @@ public:
     QString getImportAircraftType() const noexcept;
 
     /*!
-     * Sets the aircraft type (name) for import
+     * Sets the aircraft type (name) for import.
      *
      * \param type
      *        the (last) selected aircraft type
@@ -578,28 +512,20 @@ public:
     void setImportAircraftType(const QString &type) noexcept;
 
     /*!
-     * Returns whether the the new user aircraft should be placed at the calculated position
-     * relative to the current reference aircraft (user aircraft) in the formation, e.g.
-     * when starting recording, changing the reference (user) aircraft in the formation or
-     * changing the bearing or distance.
+     * Returns the flight simulator shortcuts that can be triggered in the connected flight simulator.
      *
-     * \return \c true if the aircraft should be placed at its calculated position;
-     *         \c false if the aircraft should remain at its current position
+     * \return the flight simulator shortcuts
      */
-    bool isRelativePositionPlacementEnabled() const noexcept;
+    FlightSimulatorShortcuts getFlightSimulatorShortcuts() const noexcept;
 
     /*!
-     * Sets whether the the aircraft should be placed at the calculated relative position
-     * relative to the current reference aircraft (user aircraft) in the formation, e.g.
-     * when starting recording, changing the reference (user) aircraft in the formation or
-     * changing the bearing or distance.
+     * Sets the flight simulator shortcuts that can be triggered in the connected flight simulator.
      *
-     * \param enable
-     *        \c true if the aircraft should be placed at its calculated relative position;
-     *        \c false if the aircraft should remain at its current position
-     * \sa relativePositionPlacementChanged
+     * \param shortcuts
+     *        the client event shortcuts
+     * \sa flightSimulatorShortcutsChanged
      */
-    void setRelativePositionPlacementEnabled(bool enable) noexcept;
+    void setFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept;
 
     /*!
      * Returns the file info of the best available earth gravity model (EGM) data file.
@@ -643,6 +569,9 @@ public:
 
     void storePluginSettings(QUuid pluginUuid, const KeyValues &keyValues) const noexcept;
     ValuesByKey restorePluginSettings(QUuid pluginUuid, const KeysWithDefaults &keys) noexcept;
+
+    void storeModuleSettings(QUuid moduleUuid, const KeyValues &keyValues) const noexcept;
+    ValuesByKey restoreModuleSettings(QUuid moduleUuid, const KeysWithDefaults &keys) noexcept;
 
 public slots:
     /*!
@@ -758,13 +687,6 @@ signals:
     void replaySpeedUnitChanged(Replay::SpeedUnit replaySpeedUnit);
 
     /*!
-     * Emitted when the repeat flaps position has changed.
-     *
-     * \sa changed
-     */
-    void repeatFlapsPositionChanged(bool enable);
-
-    /*!
      * Emitted when the repeat canopy has changed.
      *
      * \sa changed
@@ -794,9 +716,11 @@ signals:
     void defaultMinimalUiReplaySpeedVisibilityChanged(bool hidden);
 
     /*!
-     * Emitted when the relative position placement option has changed.
+     * Emitted when the flight simulator shortcuts have changed.
+     *
+     * \sa changed
      */
-    void relativePositionPlacementChanged(bool enable);
+    void flightSimulatorShortcutsChanged(const FlightSimulatorShortcuts &shortcuts);
 
     /*!
      * Emitted when any setting has changed.

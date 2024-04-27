@@ -39,11 +39,12 @@ class QUuid;
 #include <Kernel/FlightSimulator.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
-#include "Connect.h"
-#include "SkyConnectIntf.h"
+#include "Connect/Connect.h"
+#include "Connect/SkyConnectIntf.h"
 #include "PluginManagerLib.h"
 
-struct skyConnectManagerPrivate;
+struct FlightSimulatorShortcuts;
+struct SkyConnectManagerPrivate;
 
 /// \todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
 class PLUGINMANAGER_API SkyConnectManager final : public QObject
@@ -77,10 +78,20 @@ public:
     std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
     std::optional<QString> getCurrentSkyConnectPluginName() const noexcept;
 
+    /*!
+     * Tries to connect with the flight simulator and to setup the \p shortcuts. If the connection
+     * fails the SkyConnectManager will periodically retry to connect.
+     *
+     * This method can be repeatedly called, in order to change the \p shortcuts.
+     * \param shortcuts
+     *        the shortcuts to be setup within the flight simulator, in order to control Sky Dolly
+     */
+    void tryConnectAndSetup(const FlightSimulatorShortcuts &shortcuts) noexcept;
+
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
     bool setUserAircraftPosition(const PositionData & positionData) noexcept;
     bool freezeUserAircraft(bool enable) noexcept;
-    bool sendSimulationEvent(SkyConnectIntf::SimulationEvent event) noexcept;
+    bool sendSimulationEvent(SkyConnectIntf::SimulationEvent event, float arg1 = 0.0f) noexcept;
 
     SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
     void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;
@@ -99,7 +110,7 @@ public:
      * Returns \c true in case the SkyConnect connection is \eactive, that is either
      * a replay or recording (including paused states) is taking place.
      *
-     * \return \c true if the SkyConnect connection is \eactive; \c false else
+     * \return \c true if the SkyConnect connection is \e active; \c false else
      * \sa isInRecordingState
      * \sa isInReplayState
      */
@@ -107,14 +118,15 @@ public:
 
     void stop() noexcept;
 
-    void setPaused(bool enabled) noexcept;
+    void setPaused(SkyConnectIntf::Initiator initiator, bool enable) noexcept;
     bool isPaused() const noexcept;
+    bool isRecordingPaused() const noexcept;
 
     void skipToBegin() noexcept;
     void skipBackward() noexcept;
     void skipForward() noexcept;
     void skipToEnd() noexcept;
-    void seek(std::int64_t timestamp) noexcept;
+    void seek(std::int64_t timestamp, SkyConnectIntf::SeekMode seekMode) noexcept;
 
     Connect::State getState() const noexcept;
     virtual bool isConnected() const noexcept;
@@ -132,7 +144,6 @@ public slots:
 
 signals:
     void connectionChanged(SkyConnectIntf *skyConnect);
-
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
 
     /*!
@@ -174,14 +185,24 @@ signals:
      */
     void locationReceived(Location location);
 
+    /*!
+     * Relay of the SkyConnectIntf#shortCutActivated signal.
+     *
+     * \sa SkyConnectIntf#shortCutActivated
+     */
+    void shortCutActivated(FlightSimulatorShortcuts::Action action);
+
 private:
-    const std::unique_ptr<skyConnectManagerPrivate> d;
+    const std::unique_ptr<SkyConnectManagerPrivate> d;
 
     SkyConnectManager() noexcept;
     ~SkyConnectManager() override;
 
     void frenchConnection() noexcept;
     void initialisePlugins(const QString &pluginDirectoryName) noexcept;
+
+private slots:
+    void onFlightSimulatorShortcutsChanged(const FlightSimulatorShortcuts &shortcuts);
 };
 
 #endif // SKYCONNECTMANAGER_H

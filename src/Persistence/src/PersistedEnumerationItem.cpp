@@ -27,6 +27,7 @@
 #include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 
 #include <Kernel/Const.h>
 #include <Model/Data.h>
@@ -39,7 +40,7 @@ struct PersistedEnumerationItemPrivate
     PersistedEnumerationItemPrivate(const QString &enumerationName, const QString &symId)
     {
         bool ok {false};
-        enumeration = enumerationService.getEnumerationByName(enumerationName, &ok);
+        enumeration = enumerationService.getEnumerationByName(enumerationName, Enumeration::Order::Id, &ok);
         if (ok) {
             id = enumeration.getItemBySymId(symId).id;
         }

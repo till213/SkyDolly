@@ -32,19 +32,19 @@
 
 struct CsvExportOptionWidgetPrivate
 {
-    CsvExportOptionWidgetPrivate(CsvExportSettings &theSettings) noexcept
-        : settings(theSettings)
+    CsvExportOptionWidgetPrivate(CsvExportSettings &pluginSettings) noexcept
+        : pluginSettings(pluginSettings)
     {}
 
-    CsvExportSettings &settings;
+    CsvExportSettings &pluginSettings;
 };
 
 // PUBLIC
 
-CsvExportOptionWidget::CsvExportOptionWidget(CsvExportSettings &settings, QWidget *parent) noexcept
+CsvExportOptionWidget::CsvExportOptionWidget(CsvExportSettings &pluginSettings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::CsvExportOptionWidget>()),
-      d(std::make_unique<CsvExportOptionWidgetPrivate>(settings))
+      d(std::make_unique<CsvExportOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -60,14 +60,13 @@ void CsvExportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CsvExportOptionWidget::onFormatChanged);
-    connect(&d->settings, &CsvExportSettings::extendedSettingsChanged,
+    connect(&d->pluginSettings, &CsvExportSettings::changed,
             this, &CsvExportOptionWidget::updateUi);
 }
 
 void CsvExportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem("Sky Dolly", Enum::underly(CsvExportSettings::Format::SkyDolly));
-    ui->formatComboBox->addItem("FlightRadar24", Enum::underly(CsvExportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("Flightradar24", Enum::underly(CsvExportSettings::Format::Flightradar24));
     ui->formatComboBox->addItem("Position and attitude", Enum::underly(CsvExportSettings::Format::PositionAndAttitude));
 }
 
@@ -75,7 +74,7 @@ void CsvExportOptionWidget::initUi() noexcept
 
 void CsvExportOptionWidget::updateUi() noexcept
 {
-    const CsvExportSettings::Format format = d->settings.getFormat();
+    const CsvExportSettings::Format format = d->pluginSettings.getFormat();
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
            static_cast<CsvExportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != format) {
@@ -87,5 +86,5 @@ void CsvExportOptionWidget::updateUi() noexcept
 void CsvExportOptionWidget::onFormatChanged() noexcept
 {
     const CsvExportSettings::Format format = static_cast<CsvExportSettings::Format>(ui->formatComboBox->currentData().toInt());
-    d->settings.setFormat(format);
+    d->pluginSettings.setFormat(format);
 }

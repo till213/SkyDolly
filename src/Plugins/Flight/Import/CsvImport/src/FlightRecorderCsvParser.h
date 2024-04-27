@@ -36,7 +36,7 @@ class QString;
 #include <Kernel/CsvParser.h>
 #include "CsvParserIntf.h"
 
-class Flight;
+struct FlightData;
 struct EngineData;
 struct AircraftHandleData;
 struct FlightRecorderCsvParserPrivate;
@@ -45,15 +45,19 @@ class FlightRecorderCsvParser : public CsvParserIntf
 {
 public:
     FlightRecorderCsvParser() noexcept;
+    FlightRecorderCsvParser(const FlightRecorderCsvParser &rhs) = delete;
+    FlightRecorderCsvParser(FlightRecorderCsvParser &&rhs) = delete;
+    FlightRecorderCsvParser &operator=(const FlightRecorderCsvParser &rhs) = delete;
+    FlightRecorderCsvParser &operator=(FlightRecorderCsvParser &&rhs) = delete;
     ~FlightRecorderCsvParser() override;
 
-    bool parse(QIODevice &io, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
+    FlightData parse(QIODevice &io, bool &ok) noexcept override;
 
 private:
     std::unique_ptr<FlightRecorderCsvParserPrivate> d;
 
     bool validateHeaders() noexcept;
-    bool parseRow(const CsvParser::Row &row) noexcept;
+    bool parseRow(const CsvParser::Row &row, FlightData &flightData) noexcept;
     inline void initEngineDefaultValues(EngineData &engineData) noexcept;
     inline void initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandle) noexcept;
 };

@@ -48,6 +48,10 @@ class PrimaryFlightControlWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit PrimaryFlightControlWidget(QWidget *parent) noexcept;
+    PrimaryFlightControlWidget(const PrimaryFlightControlWidget &rhs) = delete;
+    PrimaryFlightControlWidget(PrimaryFlightControlWidget &&rhs) = delete;
+    PrimaryFlightControlWidget &operator=(const PrimaryFlightControlWidget &rhs) = delete;
+    PrimaryFlightControlWidget &operator=(PrimaryFlightControlWidget &&rhs) = delete;
     ~PrimaryFlightControlWidget() override;
 
 protected slots:

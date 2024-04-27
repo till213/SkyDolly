@@ -62,6 +62,7 @@ struct MODEL_API AircraftType final
     ~AircraftType() = default;
 
     void clear() noexcept;
+    bool isNull() const noexcept;
 };
 
 inline bool operator==(const AircraftType &lhs, const AircraftType &rhs) {

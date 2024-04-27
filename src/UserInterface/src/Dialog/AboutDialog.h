@@ -42,6 +42,10 @@ class AboutDialog : public QDialog
     Q_OBJECT
 public:
     explicit AboutDialog(QWidget *parent = nullptr) noexcept;
+    AboutDialog(const AboutDialog &rhs) = delete;
+    AboutDialog(AboutDialog &&rhs) = delete;
+    AboutDialog &operator=(const AboutDialog &rhs) = delete;
+    AboutDialog &operator=(AboutDialog &&rhs) = delete;
     ~AboutDialog() override;
 
 protected:

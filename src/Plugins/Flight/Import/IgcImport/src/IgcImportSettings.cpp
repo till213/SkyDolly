@@ -61,6 +61,16 @@ IgcImportSettings::IgcImportSettings() noexcept
 
 IgcImportSettings::~IgcImportSettings() = default;
 
+bool IgcImportSettings::isAircraftSelectionRequired() const noexcept
+{
+    return true;
+}
+
+bool IgcImportSettings::isTimeOffsetSyncSupported() const noexcept
+{
+    return true;
+}
+
 IgcImportSettings::AltitudeMode IgcImportSettings::getAltitudeMode() const noexcept
 {
     return d->altitudeMode;
@@ -70,7 +80,7 @@ void IgcImportSettings::setAltitudeMode(AltitudeMode altitudeMode) noexcept
 {
     if (d->altitudeMode != altitudeMode) {
         d->altitudeMode = altitudeMode;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -83,7 +93,7 @@ void IgcImportSettings::setEnlThresholdPercent(int enlThresholdPercent) noexcept
 {
     if (d->enlThresholdPercent != enlThresholdPercent) {
         d->enlThresholdPercent = enlThresholdPercent;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -96,7 +106,7 @@ void IgcImportSettings::setConvertAltitudeEnabled(bool enable) noexcept
 {
     if (d->convertAltitude != enable) {
         d->convertAltitude = enable;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -154,8 +164,6 @@ void IgcImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     }
 
     d->convertAltitude = valuesByKey.at(::ConvertAltitudeKey).toBool();
-
-    emit extendedSettingsChanged();
 }
 
 void IgcImportSettings::restoreDefaultsExtn() noexcept
@@ -163,6 +171,4 @@ void IgcImportSettings::restoreDefaultsExtn() noexcept
     d->altitudeMode = ::DefaultAltitudeMode;
     d->enlThresholdPercent = ::DefaultEnlThresholdPercent;
     d->convertAltitude = ::DefaultConvertAltitude;
-
-    emit extendedSettingsChanged();
 }

@@ -23,10 +23,13 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 #include <QString>
+#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -46,15 +49,29 @@ namespace
     constexpr int DefaultCapacity = 1;
 }
 
+struct SQLiteLightDaoPrivate
+{
+    SQLiteLightDaoPrivate(QString connectionName) noexcept
+        : connectionName(std::move(connectionName))
+    {}
+
+    QString connectionName;
+};
+
 // PUBLIC
+
+SQLiteLightDao::SQLiteLightDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteLightDaoPrivate>(std::move(connectionName)))
+{}
 
 SQLiteLightDao::SQLiteLightDao(SQLiteLightDao &&rhs) noexcept = default;
 SQLiteLightDao &SQLiteLightDao::operator=(SQLiteLightDao &&rhs) noexcept = default;
 SQLiteLightDao::~SQLiteLightDao() = default;
 
-bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData) noexcept
+bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "insert into light ("
         "  aircraft_id,"
@@ -82,7 +99,8 @@ bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData) no
 std::vector<LightData> SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<LightData> lightData;
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
@@ -94,7 +112,8 @@ std::vector<LightData> SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const bool querySizeFeature = QSqlDatabase::database().driver()->hasFeature(QSqlDriver::QuerySize);
+        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             lightData.reserve(query.size());
         } else {
@@ -104,7 +123,6 @@ std::vector<LightData> SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, 
         const int timestampIdx = record.indexOf("timestamp");
         const int lightStatesIdx = record.indexOf("light_states");
         while (query.next()) {
-
             LightData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.lightStates = static_cast<SimType::LightStates>(query.value(lightStatesIdx).toInt());
@@ -123,9 +141,10 @@ std::vector<LightData> SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, 
     return lightData;
 }
 
-bool SQLiteLightDao::deleteByFlightId(std::int64_t flightId) noexcept
+bool SQLiteLightDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   light "
@@ -144,9 +163,10 @@ bool SQLiteLightDao::deleteByFlightId(std::int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLiteLightDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
+bool SQLiteLightDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
-    QSqlQuery query;
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
     query.prepare(
         "delete "
         "from   light "

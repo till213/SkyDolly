@@ -24,21 +24,11 @@
  */
 #include <QSettings>
 #include <QByteArray>
+#include <QUuid>
 
-#include <Version.h>
+#include "Version.h"
+#include "SettingsConverterV0dot17.h"
 #include "SettingsConverter.h"
-
-namespace
-{
-    void convertToV13([[maybe_unused]] const Version &settingsVersion, QSettings &settings) noexcept
-    {
-        settings.beginGroup("Window");
-        {
-            settings.setValue("LocationTableState", QVariant());
-        }
-        settings.endGroup();
-    }
-}
 
 // PUBLIC
 
@@ -46,6 +36,6 @@ void SettingsConverter::convertToCurrent(const Version &settingsVersion, QSettin
 {
     const Version currentVersion;
     if (settingsVersion < currentVersion) {
-        ::convertToV13(settingsVersion, settings);
+        SettingsConverterV0dot17::convert(settingsVersion, settings);
     }
 }

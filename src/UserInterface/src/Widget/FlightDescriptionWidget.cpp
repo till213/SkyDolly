@@ -33,27 +33,25 @@
 #include <Kernel/Unit.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
+#include <Model/SimVar.h>
 #include <Persistence/Service/FlightService.h>
+#include <PluginManager/SkyConnectManager.h>
 #include <Widget/FocusPlainTextEdit.h>
 #include "FlightDescriptionWidget.h"
 #include "ui_FlightDescriptionWidget.h"
 
 struct FlightDescriptionWidgetPrivate
 {
-    FlightDescriptionWidgetPrivate(FlightService &flightService) noexcept
-        : flightService(flightService)
-    {}
-
-    FlightService &flightService;
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
     Unit unit;
 };
 
 // PUBLIC
 
-FlightDescriptionWidget::FlightDescriptionWidget(FlightService &flightService, QWidget *parent) :
+FlightDescriptionWidget::FlightDescriptionWidget(QWidget *parent) :
     QWidget(parent),
     ui(std::make_unique<Ui::FlightDescriptionWidget>()),
-    d(std::make_unique<FlightDescriptionWidgetPrivate>(flightService))
+    d(std::make_unique<FlightDescriptionWidgetPrivate>())
 {
     ui->setupUi(this);
     initUi();
@@ -69,10 +67,22 @@ void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
     QWidget::showEvent(event);
     updateUi();
 
-    const Logbook &logbook = Logbook::getInstance();
-    connect(&logbook.getCurrentFlight(), &Flight::descriptionOrTitleChanged,
+    // Connection
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &FlightDescriptionWidget::updateUi);
+
+    // Flight
+    const Logbook &logbook = Logbook::getInstance();
     const Flight &flight = logbook.getCurrentFlight();
+    connect(&flight, &Flight::cleared,
+            this, &FlightDescriptionWidget::updateUi);
+    connect(&flight, &Flight::titleChanged,
+            this, &FlightDescriptionWidget::updateUi);
+    connect(&flight, &Flight::flightNumberChanged,
+            this, &FlightDescriptionWidget::updateUi);
+    connect(&flight, &Flight::descriptionChanged,
+            this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::flightStored,
             this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::flightRestored,
@@ -83,25 +93,39 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
 
-    const Logbook &logbook = Logbook::getInstance();
-    disconnect(&logbook.getCurrentFlight(), &Flight::descriptionOrTitleChanged,
+    // Connection
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
                this, &FlightDescriptionWidget::updateUi);
+
+    // Flight
+    const Logbook &logbook = Logbook::getInstance();
     const Flight &flight = logbook.getCurrentFlight();
+    disconnect(&flight, &Flight::cleared,
+               this, &FlightDescriptionWidget::updateUi);
+    disconnect(&flight, &Flight::titleChanged,
+               this, &FlightDescriptionWidget::updateUi);
+    disconnect(&flight, &Flight::descriptionChanged,
+               this, &FlightDescriptionWidget::updateUi);
     disconnect(&flight, &Flight::flightStored,
-              this, &FlightDescriptionWidget::updateUi);
+               this, &FlightDescriptionWidget::updateUi);
     disconnect(&flight, &Flight::flightRestored,
-              this, &FlightDescriptionWidget::updateUi);
+               this, &FlightDescriptionWidget::updateUi);
 }
 
 // PRIVATE
 
 void FlightDescriptionWidget::initUi() noexcept
-{}
+{
+    ui->flightNumberLineEdit->setToolTip(SimVar::ATCId);
+}
 
 void FlightDescriptionWidget::frenchConnection() noexcept
 {
     connect(ui->titleLineEdit, &QLineEdit::editingFinished,
             this, &FlightDescriptionWidget::onTitleEdited);
+    connect(ui->flightNumberLineEdit, &QLineEdit::editingFinished,
+            this, &FlightDescriptionWidget::onFlightNumberEdited);
     connect(ui->focusPlainTextEdit, &FocusPlainTextEdit::focusLost,
             this, &FlightDescriptionWidget::onDescriptionEdited);
 }
@@ -114,26 +138,41 @@ void FlightDescriptionWidget::updateUi() noexcept
 
     bool enabled = flight.getId() != Const::InvalidId;
     ui->titleLineEdit->blockSignals(true);
+    ui->flightNumberLineEdit->blockSignals(true);
     ui->focusPlainTextEdit->blockSignals(true);
+
     ui->titleLineEdit->setText(flight.getTitle());
     ui->titleLineEdit->setEnabled(enabled);
+
+    ui->flightNumberLineEdit->setText(flight.getFlightNumber());
+    ui->flightNumberLineEdit->setEnabled(enabled);
+
     ui->focusPlainTextEdit->setPlainText(flight.getDescription());
     ui->focusPlainTextEdit->moveCursor(QTextCursor::MoveOperation::End);
     ui->focusPlainTextEdit->setEnabled(enabled);
+
     ui->titleLineEdit->blockSignals(false);
+    ui->flightNumberLineEdit->blockSignals(false);
     ui->focusPlainTextEdit->blockSignals(false);
 
     ui->recordingTimeLineEdit->setText(d->unit.formatDateTime(flight.getCreationTime()));
+    ui->recordingTimeLineEdit->setToolTip(flight.getCreationTime().toUTC().toString(Qt::ISODate));
 }
 
-void FlightDescriptionWidget::onTitleEdited() noexcept
+void FlightDescriptionWidget::onTitleEdited() const noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    d->flightService.updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    d->flightService->updateTitle(flight, ui->titleLineEdit->text());
 }
 
-void FlightDescriptionWidget::onDescriptionEdited() noexcept
+void FlightDescriptionWidget::onFlightNumberEdited() const noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    d->flightService.updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    d->flightService->updateFlightNumber(flight, ui->flightNumberLineEdit->text());
+}
+
+void FlightDescriptionWidget::onDescriptionEdited() const noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    d->flightService->updateDescription(flight, ui->focusPlainTextEdit->toPlainText());
 }

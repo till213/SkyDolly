@@ -1,16 +1,16 @@
 # Build Instructions
-Sky Dolly is developed against Qt 5.15, which is now the minimum required Qt version (comes with Ubuntu 22.04).
+Sky Dolly is developed against Qt 6.4, which is now the minimum required Qt version.
 
 ## Windows
 - Install the Microsoft Flight Simulator SDK
   * the SDK download is available with activated developer mode in MSFS
   * default installation location: c:\MSFS SDK\
   * The build system evaluates the environment variable `MSFS_SDK` in order to detect the SDK installation path
-- Install Qt 5.15 for Windows, including Qt Creator
+- Install Qt 6.4 for Windows, including Qt Creator
   * [https://www.qt.io/download](https://www.qt.io/download)
 
 ## macOS
-- Install Qt 5.15 for macOS, including Qt Creator
+- Install Qt 6.4 for macOS, including Qt Creator
   * [https://www.qt.io/download](https://www.qt.io/download)
 
 ## Linux
@@ -18,10 +18,13 @@ Sky Dolly is developed against Qt 5.15, which is now the minimum required Qt ver
 - Install the Qt development tools
 
 ### Ubuntu 22.04
-Install cmake and the Qt 5 default package which should also install the basic Qt development tools and headers:
+Install cmake and the Qt 6 default package which should also install the basic Qt development tools and headers:
 
 - `sudo apt-get install cmake`
-- `sudo apt-get install qt5-default`
+- `sudo apt-get install qt6-default`
+- `sudo apt-get install qt6-tools-dev`
+- `sudo apt-get install qt6-l10n-tools`
+- `sudo apt-get install qt6-tools-dev-tools`
 
 Optionally also install QtCreator:
 
@@ -58,6 +61,7 @@ Option                  | Default | Description
 SKY_GIT_INIT_SUBMODULES | ON      | Initialises the git submodules
 SKY_FETCH_EGM           | OFF     | Downloads the earth gravity model EGM2008 geoid file with a 5 minute resolution (size around 18 MiB, decompressed). The EGM file will then be placed into the `Resources` folder (in the `bin` output folder) at compile time
 SKY_DOXY_DOC            | OFF     | Generates the API documentation with Doxygen (Doxygen is required for the documenation generation)
+SKY_TESTS               | OFF     | Builds the Sky Dolly unit tests
 
 Note that the EGM2008 geoid file (which contains the [geoid](https://en.wikipedia.org/wiki/Geoid) undulation values across the globe) is optional: Sky Dolly will use it when available (some import/export plugins apply the undulation values).
 
@@ -99,4 +103,4 @@ When compiling on Windows with MinGW the invoked tool `windres.exe` (which compi
 
 Also refer e.g. to https://bugreports.qt.io/browse/QTBUG-62918
 
-The workaround for the time being is to place the Sky Dolly sources into a path without spaces. This issue may be mitigated by a future update to Qt 6.x which presumably will also ship with a more recent MinGW toolkit.
+The workaround for the time being is to place the Sky Dolly sources into a path without spaces. This issue still seems to be present with the MinGW 11 (coming with Qt 6.x) provided windres.exe.

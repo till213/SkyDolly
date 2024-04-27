@@ -43,6 +43,10 @@ class WIDGET_API TableDateItem final : public QTableWidgetItem
 {
 public:
     explicit TableDateItem(QDate date = QDate()) noexcept;
+    TableDateItem(const TableDateItem &rhs) = delete;
+    TableDateItem(TableDateItem &&rhs) = delete;
+    TableDateItem &operator=(const TableDateItem &rhs) = delete;
+    TableDateItem &operator=(TableDateItem &&rhs) = delete;
     ~TableDateItem() override = default;
 
     QDate getDate() const noexcept;

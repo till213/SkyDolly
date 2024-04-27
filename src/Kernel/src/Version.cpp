@@ -27,7 +27,7 @@
 #include <QString>
 #include <QStringLiteral>
 #include <QStringBuilder>
-#include <QLatin1Char>
+#include <QChar>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QDateTime>
@@ -46,8 +46,9 @@ struct VersionPrivate
     int minor {VersionConfig::Minor};
     int patch {VersionConfig::Patch};
 
-    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/adjectives-that-start-with-d.html
-    static inline const QString CodeName {QStringLiteral("Dapper Daher")};
+    // https://grammar.yourdictionary.com/parts-of-speech/adjectives/Adjectives-That-Start-With-F.html
+    // https://en.wikipedia.org/wiki/List_of_aircraft_(G)
+    static inline const QString CodeName {QStringLiteral("Gregarious Gee Bee")};
 };
 
 // PUBLIC
@@ -150,7 +151,7 @@ QString Version::getUserVersion() noexcept
     const QDate gitDate = getGitDate().date();
     const int year = gitDate.year();
     const int month = gitDate.month();
-    userVersion = QString("%1").arg(year) % "." % QString("%1").arg(month, 2, 10, QLatin1Char('0'));
+    userVersion = QString("%1").arg(year) % "." % QString("%1").arg(month, 2, 10, QChar('0'));
     return userVersion;
 }
 

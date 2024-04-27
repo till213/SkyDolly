@@ -14,7 +14,7 @@ function(create_icon_from_png)
         message(FATAL_ERROR "Could not find 'sips' - only call this function on macOS.")
     endif()
 
-    get_filename_component(ARG_INPUT_ABS "${ARG_INPUT}" ABSOLUTE BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+    get_filename_component(ARG_INPUT_ABS "${ARG_INPUT}" ABSOLUTE BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
     get_filename_component(ARG_INPUT_ABS_BIN "${ARG_INPUT}" ABSOLUTE BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
     get_filename_component(ARG_INPUT_FN "${ARG_INPUT_ABS_BIN}" NAME_WE)
     get_filename_component(ARG_INPUT_DIR "${ARG_INPUT_ABS_BIN}" DIRECTORY)
@@ -77,14 +77,14 @@ function(create_app_icon_on_macos)
     endif()
 
     if(NOT IS_ABSOLUTE "${ARG_INPUT}")
-        get_filename_component(ARG_INPUT "${ARG_INPUT}" ABSOLUTE BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+        get_filename_component(ARG_INPUT "${ARG_INPUT}" ABSOLUTE BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
     endif()
 
     if(NOT EXISTS "${ARG_INPUT}")
         message(FATAL_ERROR "INPUT does not exist: ${ARG_INPUT}")
     endif()
 
-    file(RELATIVE_PATH ARG_INPUT "${CMAKE_CURRENT_SOURCE_DIR}" "${ARG_INPUT}")
+    file(RELATIVE_PATH ARG_INPUT "${CMAKE_CURRENT_LIST_DIR}" "${ARG_INPUT}")
 
     get_filename_component(ARG_INPUT_EXT "${ARG_INPUT}" EXT)
     if("${ARG_INPUT_EXT}" STREQUAL ".png")

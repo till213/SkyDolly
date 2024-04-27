@@ -32,7 +32,6 @@
 class QShowEvent;
 class QHideEvent;
 
-class FlightService;
 struct FlightDialogPrivate;
 
 namespace Ui {
@@ -43,7 +42,11 @@ class FlightDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit FlightDialog(FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    explicit FlightDialog(QWidget *parent = nullptr) noexcept;
+    FlightDialog(const FlightDialog &rhs) = delete;
+    FlightDialog(FlightDialog &&rhs) = delete;
+    FlightDialog &operator=(const FlightDialog &rhs) = delete;
+    FlightDialog &operator=(FlightDialog &&rhs) = delete;
     ~FlightDialog() override;
 
 signals:

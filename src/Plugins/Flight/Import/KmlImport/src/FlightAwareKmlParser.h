@@ -34,24 +34,26 @@ class QXmlStreamReader;
 
 #include "AbstractKmlTrackParser.h"
 
-class Flight;
-struct FlightAwareKmlParserPrivate;
+struct FlightData;
+class Aircraft;
 
 class FlightAwareKmlParser : public AbstractKmlTrackParser
 {
 public:
     FlightAwareKmlParser() noexcept;
+    FlightAwareKmlParser(const FlightAwareKmlParser &rhs) = delete;
+    FlightAwareKmlParser(FlightAwareKmlParser &&rhs) = delete;
+    FlightAwareKmlParser &operator=(const FlightAwareKmlParser &rhs) = delete;
+    FlightAwareKmlParser &operator=(FlightAwareKmlParser &&rhs) = delete;
     ~FlightAwareKmlParser() override;
 
-    void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
-    QString getFlightNumber() const noexcept override;
+    std::vector<FlightData> parse(QXmlStreamReader &xmlStreamReader) noexcept override;
 
 private:
-    const std::unique_ptr<FlightAwareKmlParserPrivate> d;
-
-    void parsePlacemark() noexcept override;
-    void parseWaypoint(const QString &name) noexcept;
-    void updateWaypoints() noexcept;
+    void parsePlacemark(FlightData &flightData) noexcept override;
+    void parseWaypoint(FlightData &flightData, QString name) noexcept;
+    void enrichFlightData(std::vector<FlightData> &flights) noexcept;
+    void updateAircraftWaypoints(Aircraft &aircraft) noexcept;
 };
 
 #endif // FLIGHTAWAREKMLPARSER_H

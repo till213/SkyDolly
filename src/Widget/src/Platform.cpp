@@ -31,17 +31,16 @@
 #include "Platform.h"
 #include "QtCore/qstringliteral.h"
 
-namespace  {
-    constexpr int DarkModeValueThreshold {80};
+namespace CommonTheme {
     constexpr QRgb ActiveButtonBGColor {0x0077e5};
 }
 
-namespace Dark {
+namespace DarkTheme {
     constexpr QRgb EditableTableCellBGColor {0xff3aa8ff};
     constexpr QRgb ButtonBGColor {0x6a6a6a};
 }
 
-namespace Bright {
+namespace BrightTheme {
     constexpr QRgb EditableTableCellBGColor {0xfff6fdff};
     constexpr QRgb ButtonBGColor {0xe1e1e1};
 }
@@ -52,20 +51,21 @@ inline bool Platform::isDarkModeEnabled() noexcept
 {
     const QPalette palette = QApplication::palette();
     const QColor &windowColor = palette.color(QPalette::Window);
-    return windowColor.value() < DarkModeValueThreshold;
+    const QColor &textColor = palette.color(QPalette::Text);
+    return windowColor.value() < textColor.value();
 }
 
 QColor Platform::getEditableTableCellBGColor() noexcept
 {
-    return isDarkModeEnabled() ? Dark::EditableTableCellBGColor : Bright::EditableTableCellBGColor;
+    return isDarkModeEnabled() ? DarkTheme::EditableTableCellBGColor : BrightTheme::EditableTableCellBGColor;
 }
 
 QColor Platform::getActiveButtonBGColor() noexcept
 {
-    return {::ActiveButtonBGColor};
+    return {CommonTheme::ActiveButtonBGColor};
 }
 
 QColor Platform::getButtonBGColor() noexcept
 {
-    return isDarkModeEnabled() ? Dark::ButtonBGColor : Bright::ButtonBGColor;
+    return isDarkModeEnabled() ? DarkTheme::ButtonBGColor : BrightTheme::ButtonBGColor;
 }

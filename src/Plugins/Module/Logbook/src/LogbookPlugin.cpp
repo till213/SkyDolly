@@ -31,28 +31,38 @@
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
+#include <PluginManager/Module/ModuleBaseSettings.h>
 #include "LogbookWidget.h"
+#include "LogbookSettings.h"
 #include "LogbookPlugin.h"
 
 struct LogbookPluginPrivate
 {
-    LogbookPluginPrivate(FlightService &flightService)
-        : logbookWidget(std::make_unique<LogbookWidget>(flightService))
-    {}
-
+    LogbookSettings moduleSettings;
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
-    std::unique_ptr<LogbookWidget> logbookWidget;
+    std::unique_ptr<LogbookWidget> logbookWidget {std::make_unique<LogbookWidget>(moduleSettings)};
 };
 
 // PUBLIC
 
 LogbookPlugin::LogbookPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
-      d(std::make_unique<LogbookPluginPrivate>(getFlightService()))
-{}
+      d(std::make_unique<LogbookPluginPrivate>())
+{
+    restoreSettings(QUuid(Const::LogbookModuleUuid));
+}
 
-LogbookPlugin::~LogbookPlugin() = default;
+LogbookPlugin::~LogbookPlugin()
+{
+    storeSettings(QUuid(Const::LogbookModuleUuid));
+};
+
+QUuid LogbookPlugin::getUuid() const noexcept
+{
+    static const QUuid uuid {Const::LogbookModuleUuid};
+    return uuid;
+}
 
 QString LogbookPlugin::getModuleName() const noexcept
 {
@@ -62,6 +72,13 @@ QString LogbookPlugin::getModuleName() const noexcept
 QWidget *LogbookPlugin::getWidget() const noexcept
 {
     return d->logbookWidget.get();
+}
+
+// PROTECTED
+
+ModuleBaseSettings &LogbookPlugin::getModuleSettings() const noexcept
+{
+    return d->moduleSettings;
 }
 
 // PROTECTED SLOTS

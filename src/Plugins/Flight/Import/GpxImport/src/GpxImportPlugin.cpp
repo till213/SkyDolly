@@ -29,7 +29,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QXmlStreamReader>
 #include <QDateTime>
@@ -54,7 +53,6 @@
 
 struct GpxImportPluginPrivate
 {
-    Flight *flight {nullptr};
     GpxImportSettings pluginSettings;
     QXmlStreamReader xml;    
     std::unique_ptr<GpxParser> parser;
@@ -69,6 +67,21 @@ GpxImportPlugin::GpxImportPlugin() noexcept
 {}
 
 GpxImportPlugin::~GpxImportPlugin() = default;
+
+std::vector<FlightData> GpxImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+{
+    d->xml.setDevice(&io);
+    std::vector<FlightData> flights = parseGPX();
+
+    ok = FlightData::hasAllRecording(flights) && !d->xml.hasError();
+    if (!ok) {
+        flights.clear();
+#ifdef DEBUG
+        qDebug() << "GpxImportPlugin::importSelectedFlights: XML error" << d->xml.errorString();
+#endif
+    }
+    return flights;
+}
 
 // PROTECTED
 
@@ -92,91 +105,57 @@ std::unique_ptr<QWidget> GpxImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<GpxImportOptionWidget>(d->pluginSettings);
 }
 
-bool GpxImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
-{
-    d->flight = &flight;
-    d->xml.setDevice(&file);
-    parseGPX();
-
-    bool ok = !d->xml.hasError();
-#ifdef DEBUG
-    if (!ok) {
-        qDebug() << "GpxImportPlugin::import: XML error" << d->xml.errorString();
-    }
-#endif
-    // We are done with the import
-    d->flight = nullptr;
-    return ok;
-}
-
-FlightAugmentation::Procedures GpxImportPlugin::getProcedures() const noexcept
+FlightAugmentation::Procedures GpxImportPlugin::getAugmentationProcedures() const noexcept
 {
     return FlightAugmentation::Procedure::All;
 }
 
-FlightAugmentation::Aspects GpxImportPlugin::getAspects() const noexcept
+FlightAugmentation::Aspects GpxImportPlugin::getAugmentationAspects() const noexcept
 {
     return FlightAugmentation::Aspect::All;
 }
 
-QDateTime GpxImportPlugin::getStartDateTimeUtc() noexcept
-{
-    return d->parser->getFirstDateTimeUtc();
-}
-
-QString GpxImportPlugin::getTitle() const noexcept
-{
-    QString title = d->parser->getDocumentName();
-    if (title.isEmpty()) {
-        title = QObject::tr("GPX import");
-    }
-    return title;
-}
-
-void GpxImportPlugin::updateExtendedAircraftInfo([[maybe_unused]] AircraftInfo &aircraftInfo) noexcept
-{}
-
-void GpxImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
-{
-    const QString description = flight.getDescription() % "\n\n" % d->parser->getDescription();
-    flight.setDescription(description);
-}
-
-void GpxImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondition &flightCondition) noexcept
-{}
-
 // PRIVATE
 
-void GpxImportPlugin::parseGPX() noexcept
+std::vector<FlightData> GpxImportPlugin::parseGPX() noexcept
 {
-    d->parser = std::make_unique<GpxParser>(*d->flight, d->xml, d->pluginSettings);
-    d->parser->parse();
-    updateWaypoints();
+    std::vector<FlightData> flights;
+    d->parser = std::make_unique<GpxParser>(d->xml, d->pluginSettings);
+    flights = d->parser->parse();
+    updateFlightWaypoints(flights);
+    return flights;
 }
 
-void GpxImportPlugin::updateWaypoints() noexcept
+void GpxImportPlugin::updateFlightWaypoints(std::vector<FlightData> &flights) noexcept
 {
-    const Aircraft &aircraft = d->flight->getUserAircraft();
+    for (FlightData &flightData : flights) {
+        for (Aircraft &aircraft : flightData) {
+            updateAircraftWaypoints(aircraft, flightData.getAircraftStartZuluTime(aircraft));
+        }
+    }
+}
+
+void GpxImportPlugin::updateAircraftWaypoints(Aircraft &aircraft, const QDateTime &flightTimeUtc) noexcept
+{
     Position &position = aircraft.getPosition();
 
     if (position.count() > 0) {
-        Analytics analytics(aircraft);
+        Analytics analytics {aircraft};
         const PositionData firstPositionData = position.getFirst();
         const PositionData lastPositionData = position.getLast();
-        const QDateTime startDateTimeUtc = d->parser->getFirstDateTimeUtc();
-        const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
+        const QDateTime endDateTimeUtc = flightTimeUtc.addMSecs(lastPositionData.timestamp);
 
         // Assign timestamps according to the closest flown position
         std::unordered_set<std::int64_t> timestamps;
         std::int64_t uniqueTimestamp {0};
         FlightPlan &flightPlan = aircraft.getFlightPlan();
         const std::size_t count = flightPlan.count();
-        for (int i = 0; i < count; ++i) {
+        for (std::size_t i = 0; i < count; ++i) {
             Waypoint &waypoint = flightPlan[i];
             if (i == 0) {
                 // First waypoint
-                waypoint.localTime = startDateTimeUtc.toLocalTime();
-                waypoint.zuluTime = startDateTimeUtc;
+                waypoint.localTime = flightTimeUtc.toLocalTime();
+                waypoint.zuluTime = flightTimeUtc;
                 uniqueTimestamp = firstPositionData.timestamp;
                 waypoint.timestamp = uniqueTimestamp;
                 timestamps.insert(uniqueTimestamp);
@@ -185,7 +164,7 @@ void GpxImportPlugin::updateWaypoints() noexcept
                 waypoint.localTime = endDateTimeUtc.toLocalTime();
                 waypoint.zuluTime = endDateTimeUtc;
                 uniqueTimestamp = lastPositionData.timestamp;
-                while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                while (timestamps.contains(uniqueTimestamp)) {
                     ++uniqueTimestamp;
                 }
                 waypoint.timestamp = uniqueTimestamp;
@@ -194,11 +173,11 @@ void GpxImportPlugin::updateWaypoints() noexcept
                 // In between waypoints
                 if (waypoint.timestamp == TimeVariableData::InvalidTime) {
                     const PositionData &closestPositionData = analytics.closestPosition(waypoint.latitude, waypoint.longitude);
-                    const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(closestPositionData.timestamp);
+                    const QDateTime dateTimeUtc = flightTimeUtc.addMSecs(closestPositionData.timestamp);
                     waypoint.localTime = dateTimeUtc.toLocalTime();
                     waypoint.zuluTime = dateTimeUtc;
                     uniqueTimestamp = closestPositionData.timestamp;
-                    while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                    while (timestamps.contains(uniqueTimestamp)) {
                         ++uniqueTimestamp;
                     }
                     waypoint.timestamp = uniqueTimestamp;

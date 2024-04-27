@@ -62,7 +62,8 @@ struct SettingsPrivate
         QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
         if (standardLocations.count() > 0) {
             defaultExportPath = standardLocations.first();
-            defaultLogbookPath = standardLocations.first() % "/" % Version::getApplicationName() % "/" % Version::getApplicationName() % Const::LogbookExtension;
+            const QString defaultLogbookName {Version::getApplicationName() % " " % QObject::tr("Logbook")};
+            defaultLogbookPath = standardLocations.first() % "/" % defaultLogbookName % "/" % defaultLogbookName % Const::DotLogbookExtension;
         } else {
             defaultExportPath = ".";
         }
@@ -81,36 +82,30 @@ struct SettingsPrivate
     bool replaySpeedVisible {DefaultReplaySpeedVisible};
     QByteArray windowGeometry;
     QByteArray windowState;
-    QByteArray logbookState;
-    QByteArray formationAircraftTableState;
-    QByteArray locationTableState;
     QString exportPath;
     QString defaultExportPath;
     QString defaultLogbookPath;
     bool absoluteSeek {false};
-    double seekIntervalSeconds;
-    double seekIntervalPercent;
-    bool replayLoop;
-    Replay::SpeedUnit replaySpeedUnit;
-    bool repeatFlapsHandleIndex;
-    bool repeatCanopyOpen;
+    double seekIntervalSeconds {DefaultSeekIntervalSeconds};
+    double seekIntervalPercent {DefaultSeekIntervalPercent};
+    bool replayLoop {DefaultReplayLoop};
+    Replay::SpeedUnit replaySpeedUnit {DefaultReplaySpeedUnit};
+    bool repeatCanopyOpen {DefaultRepeatCanopyOpen};
 
-    bool relativePositionPlacement;
+    bool deleteFlightConfirmation {DefaultDeleteFlightConfirmation};
+    bool deleteAircraftConfirmation {DefaultDeleteAircraftConfirmation};
+    bool deleteLocationConfirmation {DefaultDeleteLocationConfirmation};
+    bool resetTimeOffsetConfirmation {DefaultResetTimeOffsetConfirmation};
 
-    bool deleteFlightConfirmation;
-    bool deleteAircraftConfirmation;
-    bool deleteLocationConfirmation;
-    bool resetTimeOffsetConfirmation;
-
-    bool defaultMinimalUiButtonTextVisible;
-    bool defaultMinimalUiNonEssentialButtonVisible;
-    bool defaultMinimalUiReplaySpeedVisible;
+    bool defaultMinimalUiButtonTextVisible {DefaultMinimalUiButtonTextVisible};
+    bool defaultMinimalUiNonEssentialButtonVisible {DefaultMinimalUiNonEssentialButtonVisible};
+    bool defaultMinimalUiReplaySpeedVisible {DefaultMinimalUiReplaySpeedVisible};
 
     QString importAircraftType;
-
     QFileInfo earthGravityModelFileInfo;
+    FlightSimulatorShortcuts flightSimulatorShortcuts {DefaultFlightSimulatorShortcuts};
 
-    int previewInfoDialogCount;
+    int previewInfoDialogCount {DefaultPreviewInfoDialogCount};
 
     static inline std::once_flag onceFlag;
     static inline Settings *instance {nullptr};
@@ -127,11 +122,9 @@ struct SettingsPrivate
     static constexpr double DefaultSeekIntervalPercent {0.5};
     static constexpr bool DefaultReplayLoop {false};
     static constexpr Replay::SpeedUnit DefaultReplaySpeedUnit {Replay::SpeedUnit::Absolute};
-    static constexpr double DefaultRepeatFlapsHandleIndex {false};
     // For now the default value is true, as no known aircraft exists where the canopy values would not
     // have to be repeated
     static constexpr bool DefaultRepeatCanopyOpen {true};
-    static constexpr bool DefaultRelativePositionPlacement {true};
     static constexpr bool DefaultDeleteFlightConfirmation {true};
     static constexpr bool DefaultDeleteAircraftConfirmation {true};
     static constexpr bool DefaultDeleteLocationConfirmation {true};
@@ -144,9 +137,28 @@ struct SettingsPrivate
     static inline const QString DefaultImportAircraftType {};
 
     static constexpr int DefaultPreviewInfoDialogCount {3};
-    static constexpr int PreviewInfoDialogBase {120};
-};
+    static constexpr int PreviewInfoDialogBase {150};
 
+            // TODO Select proper defaults (non-assigned by default in MSFS)
+    static inline const QKeySequence DefaultRecordShortcut {"Ctrl+R"};
+    static inline const QKeySequence DefaultReplayShortcut {"Ctrl+E"};
+    static inline const QKeySequence DefaultPauseShortcut {"Ctrl+P"};
+    static inline const QKeySequence DefaultStopShortcut {"Ctrl+S"};
+    static inline const QKeySequence DefaultBackwardShortcut {"Ctrl+B"};
+    static inline const QKeySequence DefaultForwardShortcut {"Ctrl+F"};
+    static inline const QKeySequence DefaultBeginShortcut {"Ctrl+T"};
+    static inline const QKeySequence DefaultEndShortcut {"Ctrl+Shift+T"};
+    static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {
+        DefaultRecordShortcut,
+        DefaultReplayShortcut,
+        DefaultPauseShortcut,
+        DefaultStopShortcut,
+        DefaultBackwardShortcut,
+        DefaultForwardShortcut,
+        DefaultBeginShortcut,
+        DefaultEndShortcut
+    };
+};
 
 // PUBLIC
 
@@ -314,36 +326,6 @@ void Settings::setWindowState(const QByteArray &state) noexcept
     d->windowState = state;
 }
 
-QByteArray Settings::getLogbookState() const
-{
-    return d->logbookState;
-}
-
-void Settings::setLogbookState(const QByteArray &state) noexcept
-{
-    d->logbookState = state;
-}
-
-QByteArray Settings::getFormationAircraftTableState() const
-{
-    return d->formationAircraftTableState;
-}
-
-void Settings::setFormationAircraftTableState(const QByteArray &state) noexcept
-{
-    d->formationAircraftTableState = state;
-}
-
-QByteArray Settings::getLocationTableState() const
-{
-    return d->locationTableState;
-}
-
-void Settings::setLocationTableState(const QByteArray &state) noexcept
-{
-    d->locationTableState = state;
-}
-
 bool Settings::isAbsoluteSeekEnabled() const noexcept
 {
     return d->absoluteSeek;
@@ -406,19 +388,6 @@ void Settings::setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept
     if (d->replaySpeedUnit != replaySpeedUnit) {
         d->replaySpeedUnit = replaySpeedUnit;
         emit replaySpeedUnitChanged(d->replaySpeedUnit);
-    }
-}
-
-bool Settings::isRepeatFlapsHandleIndexEnabled() const noexcept
-{
-    return d->repeatFlapsHandleIndex;
-}
-
-void Settings::setRepeatFlapsHandleIndexEnabled(bool enable) noexcept
-{
-    if (d->repeatFlapsHandleIndex != enable) {
-        d->repeatFlapsHandleIndex = enable;
-        emit repeatFlapsPositionChanged(d->repeatFlapsHandleIndex);
     }
 }
 
@@ -539,16 +508,16 @@ void Settings::setImportAircraftType(const QString &type) noexcept
     }
 }
 
-bool Settings::isRelativePositionPlacementEnabled() const noexcept
+FlightSimulatorShortcuts Settings::getFlightSimulatorShortcuts() const noexcept
 {
-    return d->relativePositionPlacement;
+    return d->flightSimulatorShortcuts;
 }
 
-void Settings::setRelativePositionPlacementEnabled(bool enable) noexcept
+void Settings::setFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept
 {
-    if (d->relativePositionPlacement != enable) {
-        d->relativePositionPlacement = enable;
-        emit relativePositionPlacementChanged(enable);
+    if (d->flightSimulatorShortcuts != shortcuts) {
+        d->flightSimulatorShortcuts = std::move(shortcuts);
+        emit flightSimulatorShortcutsChanged(d->flightSimulatorShortcuts);
     }
 }
 
@@ -600,6 +569,31 @@ Settings::ValuesByKey Settings::restorePluginSettings(QUuid pluginUuid, const Ke
     return values;
 }
 
+void Settings::storeModuleSettings(QUuid moduleUuid, const KeyValues &keyValues) const noexcept
+{
+    d->settings.beginGroup("Plugins/Modules/" + moduleUuid.toByteArray());
+    {
+        for (const auto &keyValue : keyValues) {
+            d->settings.setValue(keyValue.first, keyValue.second);
+        }
+    }
+    d->settings.endGroup();
+}
+
+Settings::ValuesByKey Settings::restoreModuleSettings(QUuid moduleUuid, const KeysWithDefaults &keys) noexcept
+{
+    ValuesByKey values;
+    d->settings.beginGroup("Plugins/Modules/" + moduleUuid.toByteArray());
+    {
+        for (const auto &key : keys) {
+            values[key.first] = d->settings.value(key.first, key.second);
+        }
+    }
+    d->settings.endGroup();
+
+    return values;
+}
+
 // PUBLIC SLOTS
 
 void Settings::store() const noexcept
@@ -614,20 +608,23 @@ void Settings::store() const noexcept
     d->settings.beginGroup("Plugins");
     {
         d->settings.setValue("SkyConnectPluginUuid", d->skyConnectPluginUuid);
-        d->settings.beginGroup("Modules");
+        d->settings.beginGroup("FlightSimulatorShortcuts");
         {
-            d->settings.beginGroup("Formation");
-            {
-                d->settings.setValue("RelativePositionPlacement", d->relativePositionPlacement);
-            }
-            d->settings.endGroup();
+            d->settings.setValue("Record", d->flightSimulatorShortcuts.record);
+            d->settings.setValue("Replay", d->flightSimulatorShortcuts.replay);
+            d->settings.setValue("Pause", d->flightSimulatorShortcuts.pause);
+            d->settings.setValue("Stop", d->flightSimulatorShortcuts.stop);
+            d->settings.setValue("Backward", d->flightSimulatorShortcuts.backward);
+            d->settings.setValue("Forward", d->flightSimulatorShortcuts.forward);
+            d->settings.setValue("Begin", d->flightSimulatorShortcuts.begin);
+            d->settings.setValue("End", d->flightSimulatorShortcuts.end);
         }
         d->settings.endGroup();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
     {
-        d->settings.setValue("RecordingSampleRate", d->recordingSampleRateValue);
+        d->settings.setValue("RecordingSampleRate", d->recordingSampleRateValue);        
     }
     d->settings.endGroup();
     d->settings.beginGroup("Replay");
@@ -637,7 +634,6 @@ void Settings::store() const noexcept
         d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
         d->settings.setValue("ReplayLoop", d->replayLoop);
         d->settings.setValue("ReplaySpeedUnit", Enum::underly(d->replaySpeedUnit));
-        d->settings.setValue("RepeatFlapsHandleIndex", d->repeatFlapsHandleIndex);
         d->settings.setValue("RepeatCanopyOpen", d->repeatCanopyOpen);
     }
     d->settings.endGroup();
@@ -667,9 +663,6 @@ void Settings::store() const noexcept
         d->settings.setValue("MinimalUi", d->minimalUi);
         d->settings.setValue("Geometry", d->windowGeometry);
         d->settings.setValue("State", d->windowState);
-        d->settings.setValue("LogbookState", d->logbookState);
-        d->settings.setValue("FormationAircraftTableState", d->formationAircraftTableState);
-        d->settings.setValue("LocationTableState", d->locationTableState);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");
@@ -702,7 +695,7 @@ void Settings::restore() noexcept
     }
 
 #ifdef DEBUG
-    qDebug() << "Settings::restore: RESTORE: app name:" << d->settings.applicationName() <<  "organisation name:" << d->settings.organizationName();
+    qDebug() << "Settings::restore: app name:" << d->settings.applicationName() <<  "organisation name:" << d->settings.organizationName();
 #endif
 
     bool ok {true};
@@ -715,13 +708,16 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Plugins");
     {
         d->skyConnectPluginUuid = d->settings.value("SkyConnectPluginUuid", d->DefaultSkyConnectPluginUuid).toUuid();
-        d->settings.beginGroup("Modules");
+        d->settings.beginGroup("FlightSimulatorShortcuts");
         {
-            d->settings.beginGroup("Formation");
-            {
-                d->relativePositionPlacement = d->settings.value("RelativePositionPlacement", d->DefaultRelativePositionPlacement).toBool();
-            }
-            d->settings.endGroup();
+            d->flightSimulatorShortcuts.record = d->settings.value("Record", d->DefaultRecordShortcut).toString();
+            d->flightSimulatorShortcuts.replay = d->settings.value("Replay", d->DefaultReplayShortcut).toString();
+            d->flightSimulatorShortcuts.pause = d->settings.value("Pause", d->DefaultPauseShortcut).toString();
+            d->flightSimulatorShortcuts.stop = d->settings.value("Stop", d->DefaultStopShortcut).toString();
+            d->flightSimulatorShortcuts.backward = d->settings.value("Backward", d->DefaultBackwardShortcut).toString();
+            d->flightSimulatorShortcuts.forward = d->settings.value("Forward", d->DefaultForwardShortcut).toString();
+            d->flightSimulatorShortcuts.begin = d->settings.value("Begin", d->DefaultBeginShortcut).toString();
+            d->flightSimulatorShortcuts.end = d->settings.value("End", d->DefaultEndShortcut).toString();
         }
         d->settings.endGroup();
     }
@@ -764,7 +760,6 @@ void Settings::restore() noexcept
 #endif
             d->replaySpeedUnit = SettingsPrivate::DefaultReplaySpeedUnit;
         }
-        d->repeatFlapsHandleIndex = d->settings.value("RepeatFlapsHandleIndex", SettingsPrivate::DefaultRepeatFlapsHandleIndex).toBool();
         d->repeatCanopyOpen = d->settings.value("RepeatCanopyOpen", SettingsPrivate::DefaultRepeatCanopyOpen).toBool();
     }
     d->settings.endGroup();
@@ -778,7 +773,7 @@ void Settings::restore() noexcept
 
         d->defaultMinimalUiButtonTextVisible = d->settings.value("DefaultMinimalUiButtonTextVisible", SettingsPrivate::DefaultMinimalUiButtonTextVisible).toBool();
         d->defaultMinimalUiNonEssentialButtonVisible = d->settings.value("DefaultMinimalUiNonEssentialButtonVisible", SettingsPrivate::DefaultMinimalUiNonEssentialButtonVisible).toBool();
-        d->defaultMinimalUiReplaySpeedVisible = d->settings.value("DefaultMinimalUiNonEssentialButtonVisible", SettingsPrivate::DefaultMinimalUiReplaySpeedVisible).toBool();
+        d->defaultMinimalUiReplaySpeedVisible = d->settings.value("DefaultMinimalUiReplaySpeedVisible", SettingsPrivate::DefaultMinimalUiReplaySpeedVisible).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("View");
@@ -793,9 +788,6 @@ void Settings::restore() noexcept
         d->minimalUi = d->settings.value("MinimalUi", SettingsPrivate::DefaultMinimalUi).toBool();
         d->windowGeometry = d->settings.value("Geometry").toByteArray();
         d->windowState = d->settings.value("State").toByteArray();
-        d->logbookState = d->settings.value("LogbookState").toByteArray();
-        d->formationAircraftTableState = d->settings.value("FormationAircraftTableState").toByteArray();
-        d->locationTableState = d->settings.value("LocationTableState").toByteArray();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");
@@ -866,8 +858,6 @@ void Settings::frenchConnection() noexcept
             this, &Settings::changed);
     connect(this, &Settings::replaySpeedUnitChanged,
             this, &Settings::changed);
-    connect(this, &Settings::repeatFlapsPositionChanged,
-            this, &Settings::changed);
     connect(this, &Settings::repeatCanopyChanged,
             this, &Settings::changed);
     connect(this, &Settings::defaultMinimalUiButtonTextVisibilityChanged,
@@ -875,6 +865,8 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::defaultMinimalUiNonEssentialButtonVisibilityChanged,
             this, &Settings::changed);
     connect(this, &Settings::defaultMinimalUiReplaySpeedVisibilityChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::flightSimulatorShortcutsChanged,
             this, &Settings::changed);
 }
 

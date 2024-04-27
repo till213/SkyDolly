@@ -46,6 +46,10 @@ class EngineWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit EngineWidget(QWidget *parent) noexcept;
+    EngineWidget(const EngineWidget &rhs) = delete;
+    EngineWidget(EngineWidget &&rhs) = delete;
+    EngineWidget &operator=(const EngineWidget &rhs) = delete;
+    EngineWidget &operator=(EngineWidget &&rhs) = delete;
     ~EngineWidget() override;
 
 protected slots:

@@ -30,7 +30,7 @@
 #include <QObject>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 
 struct CsvExportSettingsPrivate;
 
@@ -40,24 +40,27 @@ class CsvExportSettings : public FlightExportPluginBaseSettings
 public:
     /*!
      * CSV format (flavour).
+     *
+     * These values are peristed in the application settings.
      */
     enum struct Format {
-        SkyDolly = 0,
-        FlightRadar24 = 1,
+        // Removed: SkyDolly = 0,
+        Flightradar24 = 1,
         PositionAndAttitude = 2
     };
 
     CsvExportSettings() noexcept;
+    CsvExportSettings(const CsvExportSettings &rhs) = delete;
+    CsvExportSettings(CsvExportSettings &&rhs) = delete;
+    CsvExportSettings &operator=(const CsvExportSettings &rhs) = delete;
+    CsvExportSettings &operator=(CsvExportSettings &&rhs) = delete;
     ~CsvExportSettings() override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;
 
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
+    bool isResamplingSupported() const noexcept override;
+    bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

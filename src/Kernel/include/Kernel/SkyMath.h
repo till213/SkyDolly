@@ -30,14 +30,18 @@
 #include <utility>
 #include <cstdint>
 #include <exception>
+#include <cassert>
 
 #include <GeographicLib/Geodesic.hpp>
 
-#include <QtMath>
 #include <QtGlobal>
+#include <QDateTime>
+#include <QTimeZone>
 #ifdef DEBUG
 #include <QDebug>
 #endif
+
+#include "Convert.h"
 
 /*!
  * Mathematical functions for interpolation and geodesic math.
@@ -71,20 +75,24 @@ namespace SkyMath
     /*! Default threshold beyond with two coordinates are considered to be different [meters] */
     constexpr double DefaultDistanceThreshold = 50.0;
 
-    inline double degreesToRadians(double degree) {
-        return degree * M_PI / 180.0;
-    };
-
-    inline double radiansToDegrees(double radians) {
-        return radians * 180.0 / M_PI;
-    };
-
-    inline double feetToMeters(double feet) {
-        return feet / 3.2808;
-    };
-
-    inline double metersToFeet(double meters) {
-        return meters * 3.2808;
+    /*!
+     * Defines how the aircraft time offset is to be synchronised.
+     *
+     * These values are peristed in the application settings.
+     */
+    enum struct TimeOffsetSync {
+        /*! No synchronisation to be done. */
+        None = 0,
+        /*! Both date and time of the flight creation time are taken into account */
+        DateAndTime = 1,
+        /*!
+         * Only the time is taken into account. For example a flight that was recorded
+         * a day before, on the 2023-02-14 10:45:00Z is only considered to be 15 minutes
+         * behind of a flight recorded on the 2023-02-15 11:00:00Z (and not a day plus
+         * 15 minutes). This is useful when importing e.g. real-world flights that
+         * happened on different days, but should still be synchronised "on the same day".
+         */
+        TimeOnly = 2
     };
 
     /*!
@@ -94,7 +102,7 @@ namespace SkyMath
      *         0; +1 else
      */
     template <typename T>
-    int sgn(T val) noexcept
+    inline int constexpr sgn(T val) noexcept
     {
         return (T(0) < val) - (val < T(0));
     }
@@ -127,7 +135,7 @@ namespace SkyMath
      * the normalised values are then suitable for interpolation.
      */
     template <typename T>
-    T normalise180(T y0, T y1) noexcept
+    inline T constexpr normalise180(T y0, T y1) noexcept
     {
         T y1n;
         T s0 = sgn(y0);
@@ -168,7 +176,7 @@ namespace SkyMath
      *        negative values create a bias towards the second segment
      */
     template <typename T>
-    T interpolateHermite(
+    inline constexpr T interpolateHermite(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -193,7 +201,7 @@ namespace SkyMath
     }
 
     template <typename T>
-    T interpolateCatmullRom(
+    inline constexpr T interpolateCatmullRom(
         T y0, T y1, T y2, T y3,
         T mu) noexcept
     {
@@ -215,7 +223,7 @@ namespace SkyMath
      * \sa #interpolateHermite
      */
     template <typename T>
-    T interpolateHermite180(
+    inline constexpr T interpolateHermite180(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -245,7 +253,7 @@ namespace SkyMath
      * \sa #interpolateHermite
      */
     template <typename T>
-    T interpolateHermite360(
+    inline constexpr T interpolateHermite360(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -265,7 +273,7 @@ namespace SkyMath
      *        the interpolation factor in [0.0, 1.0]
      */
     template <typename T, typename U>
-    T interpolateLinear(T p1, T p2, U mu) noexcept
+    inline constexpr T interpolateLinear(T p1, T p2, U mu) noexcept
     {
         if (std::is_integral<T>::value) {
             return p1 + std::round(mu * (U(p2) - U(p1)));
@@ -278,22 +286,22 @@ namespace SkyMath
      * Maps the \c position value to a discrete, signed 16bit value.
      *
      * \param position
-     *        the position value in the range [-1.0, 1.0]
+     *        the normalised position value in the range [-1.0, 1.0]; the range is enforced (clamp)
      * \return the mapped discrete, signed 16bit value [PositionMin16, PositionMax16] (note: symmetric range)
      */
-    inline std::int16_t fromPosition(double position) noexcept
+    inline std::int16_t fromNormalisedPosition(double position) noexcept
     {
-        return static_cast<std::int16_t>(std::round(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
+        return static_cast<std::int16_t>(std::round(PositionMin16 + ((std::clamp(position, -1.0, 1.0) + 1.0) * PositionRange16) / 2.0));
     }
 
     /*!
-     * Maps the \c position16 value to a double value.
+     * Maps the \c position16 value to a normalised double value.
      *
      * \param position16
      *        the discrete signed 16bit position value in the range [PositionMin16, PositionMax16] (note: symmetric range)
-     * \return the position mapped onto a double value [-1.0, 1.0]
+     * \return the position mapped onto a normalised double value [-1.0, 1.0]
      */
-    inline double toPosition(std::int16_t position16) noexcept
+    inline constexpr double toNormalisedPosition(std::int16_t position16) noexcept
     {
         return 2.0 * (static_cast<double>(position16) - PositionMin16) / PositionRange16 - 1.0;
     }
@@ -302,12 +310,12 @@ namespace SkyMath
      * Maps the \c percent value to a discrete, unsigned 8bit value.
      *
      * \param percent
-     *        the percent value in the range [0.0, 100.0]
+     *        the percent value in the range [0.0, 100.0]; the range is enforced (clamp)
      * \return the mapped discrete, unsigned 8bit value [0, PercentMax8]
      */
     inline std::uint8_t fromPercent(double percent) noexcept
     {
-        return static_cast<std::uint8_t>(std::round(percent * PercentRange8 / 100.0));
+        return static_cast<std::uint8_t>(std::round(std::clamp(percent, 0.0, 100.0) * PercentRange8 / 100.0));
     }
 
     /*!
@@ -317,7 +325,7 @@ namespace SkyMath
      *        the discrete unsigned 8bit percent value in the range [0, PercentMax8]
      * \return the percent mapped onto a double value [0, 100.0]
      */
-    inline double toPercent(std::uint8_t percent8) noexcept
+    inline constexpr double toPercent(std::uint8_t percent8) noexcept
     {
         return static_cast<double>(100.0 * percent8 / PercentRange8);
     }
@@ -421,7 +429,7 @@ namespace SkyMath
      *        positive pitch angle
      * \return the eximated pitch angle [-90, 90] [degrees]
      */
-    inline double approximatePitch(double sphericalDistance, double deltaAltitude) noexcept
+    inline constexpr double approximatePitch(double sphericalDistance, double deltaAltitude) noexcept
     {
         double pitch {0.0};
         if (!qFuzzyIsNull(deltaAltitude)) {
@@ -434,7 +442,7 @@ namespace SkyMath
                 pitch = 0.0;
             }
         }
-        return pitch * 180.0 / M_PI;
+        return Convert::radiansToDegrees(pitch);
     }
 
     /*!
@@ -458,7 +466,7 @@ namespace SkyMath
      * \sa #interpolateHermite360
      * \sa https://forum.arduino.cc/t/calculating-heading-distance-and-direction/92144/6
      */
-    inline double headingChange(double currentHeading, double targetHeading) noexcept
+    inline constexpr double headingChange(double currentHeading, double targetHeading) noexcept
     {
         // The denormalizedHeading is always larger or equal than the targetHeading
         const double denormalizedHeading = currentHeading >= targetHeading ? currentHeading : currentHeading + 360.0;
@@ -499,9 +507,9 @@ namespace SkyMath
      *         for "right turns"; positive values for "left turns"
      * \sa headingChange
      */
-    inline double bankAngle(double headingChange, double maxBankAngleForHeadingChange, double maxBankAngle) noexcept
+    inline constexpr double bankAngle(double headingChange, double maxBankAngleForHeadingChange, double maxBankAngle) noexcept
     {
-        return std::min((std::abs(headingChange) / maxBankAngleForHeadingChange) * maxBankAngle, maxBankAngle) * SkyMath::sgn(headingChange);
+        return std::min((std::abs(headingChange) / maxBankAngleForHeadingChange) * maxBankAngle, maxBankAngle) * sgn(headingChange);
     }
 
     /*!
@@ -539,6 +547,77 @@ namespace SkyMath
     {
         const double distance = geodesicDistance(wp1, wp2);
         return distance < threshold;
+    }
+
+    /*!
+     * Calculates the time difference (in milliseconds) between the given
+     * \c fromDateTime to \c toDateTime (being possibly in different
+     * time zones).
+     *
+     * - The time difference from the imported creation time to the creation
+     *   time of the current flight is calculated
+     * - That difference is NEGATIVE if the imported creation time is AFTER
+     *   the current creation time (imported date "in the future") and...
+     * - ... POSITIVE if the imported creation time is BEFORE the current
+     *   creation time (imported date "in the past")
+     *
+     * So:
+     * - If the imported creation time is "in the future", we want to apply a
+     *   NEGATIVE time offset to the imported aircraft ("move it into the past"), and...
+     * - ... if the imported creation time "is in the past" then we want to apply
+     *   a POSITIVE time offset to the imported aircraft ("move it into the future")
+     */
+    inline std::int64_t calculateTimeOffset(TimeOffsetSync timeOffsetSync, const QDateTime &fromDateTime, const QDateTime &toDateTime) noexcept
+    {
+        QDateTime toDateTimeUtc = toDateTime.toUTC();
+        QDateTime fromDateTimeUtc;;
+        switch (timeOffsetSync) {
+        case TimeOffsetSync::DateAndTime:
+            fromDateTimeUtc = fromDateTime.toUTC();
+            break;
+        case TimeOffsetSync::TimeOnly:
+            // Same date
+            fromDateTimeUtc.setDate(toDateTimeUtc.date());
+            fromDateTimeUtc.setTime(fromDateTime.toUTC().time());
+            fromDateTimeUtc.setTimeZone(QTimeZone::utc());
+            break;
+        case TimeOffsetSync::None:
+            fromDateTimeUtc = toDateTimeUtc;
+            break;
+        }
+        return fromDateTimeUtc.secsTo(toDateTimeUtc) * 1000;
+    }
+
+    /*!
+     * Calculates the first \c n-th Fibonacci numbers, starting with 0 for \c n = 1.
+     *
+     * Note that the value of \c c must be equal to the value of \c N.
+     *
+     * \param n
+     *        the number of Fibonacci numbers to calculate: n must be >= 1
+     * \return an array with the first n Fibonacci numbers, starting with 0
+     */
+    template <std::size_t N>
+    consteval std::array<int, N> calculateFibonacci(int n) noexcept
+    {
+        std::array<int, N> fibonaccis {};
+        assert(fibonaccis.size() >= n);
+        assert(n > 0);
+
+        // Base cases
+        fibonaccis[0] = 0;
+
+        if (n > 1) {
+            fibonaccis[1] = 1;
+        }
+
+        // Calculate the remaining Fibonacci numbers
+        for (int i = 2; i < n; ++i)
+        {
+            fibonaccis[i] = fibonaccis[i - 1] + fibonaccis[i - 2];
+        }
+
+        return fibonaccis;
     }
 
 } // namespace

@@ -31,7 +31,7 @@
 #include <QObject>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/LocationImportPluginBaseSettings.h>
+#include <PluginManager/Location/LocationImportPluginBaseSettings.h>
 
 struct CsvLocationImportSettingsPrivate;
 
@@ -41,6 +41,8 @@ class CsvLocationImportSettings : public LocationImportPluginBaseSettings
 public:
     /*!
      * CSV format (flavour).
+     *
+     * These values are peristed in the application settings.
      */
     enum struct Format {
         SkyDolly = 0,
@@ -65,12 +67,6 @@ public:
 
     int getDefaultIndicatedAirspeed() const noexcept;
     void setDefaultIndicatedAirspeed(int indicatedAirspeed) noexcept;
-
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

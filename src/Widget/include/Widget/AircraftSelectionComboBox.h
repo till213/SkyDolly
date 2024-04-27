@@ -33,18 +33,18 @@ class QWidget;
 
 #include "WidgetLib.h"
 
-struct AircraftSelectionComboBoxPrivate;
-
 class WIDGET_API AircraftSelectionComboBox : public QComboBox
 {
     Q_OBJECT
 public:
     explicit AircraftSelectionComboBox(QWidget *parent = nullptr) noexcept;
+    AircraftSelectionComboBox(const AircraftSelectionComboBox &rhs) = delete;
+    AircraftSelectionComboBox(AircraftSelectionComboBox &&rhs) = delete;
+    AircraftSelectionComboBox &operator=(const AircraftSelectionComboBox &rhs) = delete;
+    AircraftSelectionComboBox &operator=(AircraftSelectionComboBox &&rhs) = delete;
     ~AircraftSelectionComboBox() override;
 
 private:
-    const std::unique_ptr<AircraftSelectionComboBoxPrivate> d;
-
     void initUi() noexcept;
 };
 

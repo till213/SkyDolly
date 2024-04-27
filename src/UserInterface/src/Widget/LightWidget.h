@@ -48,6 +48,10 @@ class LightWidget : public AbstractSimulationVariableWidget
     Q_OBJECT
 public:
     explicit LightWidget(QWidget *parent) noexcept;
+    LightWidget(const LightWidget &rhs) = delete;
+    LightWidget(LightWidget &&rhs) = delete;
+    LightWidget &operator=(const LightWidget &rhs) = delete;
+    LightWidget &operator=(LightWidget &&rhs) = delete;
     ~LightWidget() override;
 
 protected slots:

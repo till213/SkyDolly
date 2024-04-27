@@ -31,7 +31,7 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 
 struct IgcExportSettingsPrivate;
 
@@ -40,6 +40,10 @@ class IgcExportSettings : public FlightExportPluginBaseSettings
     Q_OBJECT
 public:
     IgcExportSettings() noexcept;
+    IgcExportSettings(const IgcExportSettings &rhs) = delete;
+    IgcExportSettings(IgcExportSettings &&rhs) = delete;
+    IgcExportSettings &operator=(const IgcExportSettings &rhs) = delete;
+    IgcExportSettings &operator=(IgcExportSettings &&rhs) = delete;
     ~IgcExportSettings() override;
 
     QString getPilotName() const noexcept;
@@ -51,11 +55,8 @@ public:
     bool isConvertAltitudeEnabled() const noexcept;
     void setConvertAltitudeEnabled(bool enable) noexcept;
 
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
+    bool isResamplingSupported() const noexcept override;
+    bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

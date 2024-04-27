@@ -29,7 +29,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 #include "CsvExportSettings.h"
 
 namespace
@@ -38,7 +38,7 @@ namespace
     constexpr const char *FormatKey {"Format"};
 
     // Defaults
-    constexpr CsvExportSettings::Format DefaultFormat {CsvExportSettings::Format::SkyDolly};
+    constexpr CsvExportSettings::Format DefaultFormat {CsvExportSettings::Format::PositionAndAttitude};
 }
 
 struct CsvExportSettingsPrivate
@@ -64,9 +64,31 @@ void CsvExportSettings::setFormat(Format format) noexcept
 {
     if (d->format != format) {
         d->format = format;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
+
+bool CsvExportSettings::isResamplingSupported() const noexcept
+{
+    return true;
+}
+
+bool CsvExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
+{
+    bool supported {false};
+    switch (formationExport) {
+    case FormationExport::AllAircraftOneFile:
+        supported = false;
+        break;
+    case FormationExport::AllAircraftSeparateFiles:
+        supported = false;
+        break;
+    case FormationExport::UserAircraftOnly:
+        supported = true;
+        break;
+    }
+    return supported;
+};
 
 // PROTECTED
 
@@ -102,6 +124,4 @@ void CsvExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
 void CsvExportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
-
-    emit extendedSettingsChanged();
 }

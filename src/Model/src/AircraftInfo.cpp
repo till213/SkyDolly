@@ -31,8 +31,8 @@
 
 // PUBLIC
 
-AircraftInfo::AircraftInfo(std::int64_t theAircraftId) noexcept
-    : aircraftId(theAircraftId)
+AircraftInfo::AircraftInfo(std::int64_t aircraftId) noexcept
+    : aircraftId(aircraftId)
 {}
 
 void AircraftInfo::clear() noexcept

@@ -26,7 +26,7 @@
 #define REPLAY_H
 
 /*!
- * Replay related constants.
+ * Replay related data structures.
  */
 namespace Replay
 {

@@ -299,7 +299,7 @@ create table aircraft_new (
     foreign key(type) references aircraft_type(type)
 );
 
-@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Copy the original aircraft data into new aircraft_new table", step = 4)
+@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Copy data into the new aircraft table", step = 4)
 insert into aircraft_new(id, flight_id, seq_nr, type, start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground)
 select a.id, a.flight_id, a.seq_nr, coalesce(a.type, (select at.type from aircraft_type at limit 1)), a.start_date, a.end_date, a.tail_number, a.airline, a.flight_number, a.initial_airspeed, a.altitude_above_ground, a.start_on_ground
 from   aircraft a;
@@ -499,8 +499,8 @@ insert into aircraft_type values
  ('Airbus A320neo FlyByWire','Airplane',117,2,2)
  on conflict(type)
  do update
- set category = excluded.category,
-     wing_span = excluded.wing_span,
+ set category    = excluded.category,
+     wing_span   = excluded.wing_span,
      engine_type = excluded.engine_type,
      nof_engines = excluded.nof_engines;
 
@@ -554,9 +554,9 @@ set app_version = '0.8.0';
 
 @migr(id = "133820ce-d5e0-4563-8458-aed6604c3f64", descn = "Migrate flaps position from percent to position value", step = 1)
 update secondary_flight_control
-set leading_edge_flaps_left_percent = round((leading_edge_flaps_left_percent / 255.0) * 32767.0),
-    leading_edge_flaps_right_percent = round((leading_edge_flaps_right_percent / 255.0) * 32767.0),
-    trailing_edge_flaps_left_percent = round((trailing_edge_flaps_left_percent / 255.0) * 32767.0),
+set leading_edge_flaps_left_percent   = round((leading_edge_flaps_left_percent / 255.0) * 32767.0),
+    leading_edge_flaps_right_percent  = round((leading_edge_flaps_right_percent / 255.0) * 32767.0),
+    trailing_edge_flaps_left_percent  = round((trailing_edge_flaps_left_percent / 255.0) * 32767.0),
     trailing_edge_flaps_right_percent = round((trailing_edge_flaps_right_percent / 255.0) * 32767.0);
 
 @migr(id = "6713ed1d-22c3-4b8e-95a4-1bf19cf6dacd", descn = "Add indicated altitude column", step_cnt = 2)
@@ -570,7 +570,7 @@ set    indicated_altitude = altitude;
 update metadata
 set app_version = '0.9.0';
 
-@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Drop columns start_date, end_date", step_cnt = 6)
+@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Drop columns start_date, end_date from aircraft table", step_cnt = 6)
 create table aircraft_new (
     id integer primary key,
     flight_id integer not null,
@@ -587,7 +587,7 @@ create table aircraft_new (
     foreign key(type) references aircraft_type(type)
 );
 
-@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Drop the old aircraft table", step = 2)
+@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Copy data into the new aircraft table", step = 2)
 insert into aircraft_new(id, flight_id, seq_nr, type, time_offset, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground)
 select a.id, a.flight_id, a.seq_nr, a.type, a.time_offset, a.tail_number, a.airline, a.flight_number, a.initial_airspeed, a.altitude_above_ground, a.start_on_ground
 from   aircraft a;
@@ -639,8 +639,8 @@ insert into aircraft_type values
  ('Volocity Microsoft Livery Xbox Aviators Club','Airplane',20,1,1)
  on conflict(type)
  do update
- set category = excluded.category,
-     wing_span = excluded.wing_span,
+ set category    = excluded.category,
+     wing_span   = excluded.wing_span,
      engine_type = excluded.engine_type,
      nof_engines = excluded.nof_engines;
 
@@ -654,8 +654,8 @@ insert into aircraft_type values
  ('Experimental Darkstar Asobo','Airplane',35,2,4)
  on conflict(type)
  do update
- set category = excluded.category,
-     wing_span = excluded.wing_span,
+ set category    = excluded.category,
+     wing_span   = excluded.wing_span,
      engine_type = excluded.engine_type,
      nof_engines = excluded.nof_engines;
 
@@ -817,3 +817,171 @@ insert into aircraft_type values
 @migr(id = "0ec16dd8-c7b2-47fc-8d1f-bf80fb8dfb9e", descn = "Update application version to 0.13", step = 1)
 update metadata
 set app_version = '0.13.0';
+
+@migr(id = "9c9c0be5-4868-4299-9504-8b3a1861094f", descn = "Add primary control deflection animation columns", step_cnt = 2)
+alter table primary_flight_control add column rudder_deflection real;
+alter table primary_flight_control add column elevator_deflection real;
+alter table primary_flight_control add column aileron_left_deflection real;
+alter table primary_flight_control add column aileron_right_deflection real;
+
+@migr(id = "9c9c0be5-4868-4299-9504-8b3a1861094f", descn = "Update primary control animation columns, based on A320neo maximum deflection angles", step = 2)
+update primary_flight_control
+set    rudder_deflection        = (rudder_position / 32767.0) * 0.4363,
+       elevator_deflection      = case when elevator_position > 0 then (elevator_position / 32767.0) * 0.2793 else (elevator_position / 32767.0) * 0.2007 end,
+       aileron_left_deflection  = (aileron_position / 32767.0) * 0.2967,
+       aileron_right_deflection = (aileron_position / 32767.0) * 0.2967;
+
+@migr(id = "026ed87a-7577-4af5-b0c7-862a1ad6d39f", descn = "Rename secondary flight control position and percent columns", step = 1)
+alter table secondary_flight_control rename column leading_edge_flaps_left_percent to left_leading_edge_flaps_position;
+alter table secondary_flight_control rename column leading_edge_flaps_right_percent to right_leading_edge_flaps_position;
+alter table secondary_flight_control rename column trailing_edge_flaps_left_percent to left_trailing_edge_flaps_position;
+alter table secondary_flight_control rename column trailing_edge_flaps_right_percent to right_trailing_edge_flaps_position;
+alter table secondary_flight_control rename column spoilers_handle_position to spoilers_handle_percent;
+
+@migr(id = "f7ca2bc1-79c7-4055-b5cc-fa868cad410c", descn = "Add spoilers position columns to secondary flight control table", step_cnt = 2)
+alter table secondary_flight_control add column left_spoilers_position integer;
+alter table secondary_flight_control add column right_spoilers_position integer;
+
+@migr(id = "f7ca2bc1-79c7-4055-b5cc-fa868cad410c", descn = "Update secondary control animation columns", step = 2)
+update secondary_flight_control
+set    left_spoilers_position  = round((spoilers_handle_percent / 255.0) * 32767.0),
+       right_spoilers_position = round((spoilers_handle_percent / 255.0) * 32767.0);
+
+@migr(id = "1e013965-e38a-4df1-b70c-f1d3af6d1e5b", descn = "Drop rotation velocity columns from position table", step_cnt = 4)
+create table position_new (
+    aircraft_id integer not null,
+    timestamp integer not null,
+    latitude real,
+    longitude real,
+    altitude real,
+    indicated_altitude real,
+    pitch real,
+    bank real,
+    true_heading real,
+    velocity_x real,
+    velocity_y real,
+    velocity_z real,
+    primary key(aircraft_id, timestamp),
+    foreign key(aircraft_id) references aircraft(id)
+);
+
+@migr(id = "1e013965-e38a-4df1-b70c-f1d3af6d1e5b", descn = "Copy data into new position table", step = 2)
+insert into position_new(aircraft_id, timestamp, latitude, longitude, altitude, indicated_altitude, pitch, bank, true_heading, velocity_x, velocity_y, velocity_z)
+select p.aircraft_id, p.timestamp, p.latitude, p.longitude, p.altitude, p.indicated_altitude, p.pitch, p.bank, p.true_heading, p.velocity_x, p.velocity_y, p.velocity_z
+from   position p;
+
+@migr(id = "1e013965-e38a-4df1-b70c-f1d3af6d1e5b", descn = "Drop the old position table", step = 3)
+drop table position;
+
+@migr(id = "1e013965-e38a-4df1-b70c-f1d3af6d1e5b", descn = "Rename the new position table to original name", step = 4)
+alter table position_new rename to position;
+
+@migr(id = "078f7bb3-6c92-4c86-8396-fa9fd4976067", descn = "Rename column handle.tail_hook_position to tailhook_position", step = 1)
+alter table handle rename column tail_hook_position to tailhook_position;
+
+@migr(id = "7deb21ba-b486-4b1c-8fed-8432adf3a1f2", descn = "Add column tailhook handle position to handle table, step_cnt = 2)
+alter table handle add column tailhook_handle_position integer;
+
+@migr(id = "7deb21ba-b486-4b1c-8fed-8432adf3a1f2", descn = "Migrate column tailhook handle position, step = 2)
+update handle
+set    tailhook_handle_position = case when tailhook_position > 128 then 1 else 0 end;
+
+@migr(id = "3740cd86-5c65-4d78-bc5a-2581656799d4", descn = "Add column folding wing handle position to handle table, step_cnt = 2)
+alter table handle add column folding_wing_handle_position integer;
+
+@migr(id = "3740cd86-5c65-4d78-bc5a-2581656799d4", descn = "Migrate column folding wing handle position, step = 2)
+update handle
+set    folding_wing_handle_position = case when (left_wing_folding > 128 or right_wing_folding > 128) then 1 else 0 end;
+
+@migr(id = "2c0056bb-bd8e-43ab-8450-2efa25f4bf96", descn = "Add column spoilers armed to secondary flight controls table, step_cnt = 2)
+alter table secondary_flight_control add column spoilers_armed integer;
+
+@migr(id = "2c0056bb-bd8e-43ab-8450-2efa25f4bf96", descn = "Migrate column spoilers armed, step = 2)
+update secondary_flight_control
+set    spoilers_armed = 0;
+
+@migr(id = "6c14e4d6-f9c3-48d8-b72b-c36c0568f290", descn = "Add runway condition columns", step_cnt = 2)
+alter table flight add column on_any_runway integer;
+alter table flight add column on_parking_spot integer;
+alter table flight add column surface_condition integer;
+
+@migr(id = "6c14e4d6-f9c3-48d8-b72b-c36c0568f290", descn = "Migrate runway condition columns, step = 2)
+update flight
+set    on_any_runway = 0,
+       on_parking_spot = 0,
+       surface_condition = 0;
+
+@migr(id = "663032d8-c8a4-43ff-b126-0d964d73bf23", descn = "Update application version to 0.14", step = 1)
+update metadata
+set app_version = '0.14.0';
+
+@migr(id = "fbfeec8f-0e50-4efc-956d-391e40563b28", descn = "Update application version to 0.15", step = 1)
+update metadata
+set app_version = '0.15.0';
+
+@migr(id = "a77e5e8b-acd5-4141-964b-ba358216b42e", descn = "Add NOT NULL constraints to table flight", step_cnt = 3)
+create table flight_new (
+    id integer primary key,
+    creation_time datetime not null default current_timestamp,
+    user_aircraft_seq_nr integer not null,
+    title text,
+    description text,
+    surface_type integer,
+    surface_condition integer,
+    on_any_runway integer,
+    on_parking_spot integer,
+    ground_altitude real,
+    ambient_temperature real,
+    total_air_temperature real,
+    wind_speed real,
+    wind_direction real,
+    visibility real,
+    sea_level_pressure real,
+    pitot_icing real,
+    structural_icing real,
+    precipitation_state integer,
+    in_clouds integer,
+    start_local_sim_time datetime,
+    start_zulu_sim_time datetime,
+    end_local_sim_time datetime,
+    end_zulu_sim_time datetime
+);
+
+@migr(id = "a77e5e8b-acd5-4141-964b-ba358216b42e", descn = "Copy data from old to new flight table", step = 2)
+insert into flight_new (id, creation_time, user_aircraft_seq_nr, title, description, surface_type, surface_condition, on_any_runway, on_parking_spot, ground_altitude, ambient_temperature,
+                        total_air_temperature, wind_speed, wind_direction, visibility, sea_level_pressure, pitot_icing, structural_icing, precipitation_state, in_clouds,
+                        start_local_sim_time, start_zulu_sim_time, end_local_sim_time, end_zulu_sim_time)
+select id, creation_time, coalesce(user_aircraft_seq_nr, 1), title, description, surface_type, surface_condition, on_any_runway, on_parking_spot, ground_altitude, ambient_temperature,
+       total_air_temperature, wind_speed, wind_direction, visibility, sea_level_pressure, pitot_icing, structural_icing, precipitation_state, in_clouds,
+       start_local_sim_time, start_zulu_sim_time, end_local_sim_time, end_zulu_sim_time
+from flight;
+
+@migr(id = "a77e5e8b-acd5-4141-964b-ba358216b42e", descn = "Rename flight_new to flight", step = 3)
+drop table flight;
+alter table flight_new rename to flight;
+
+@migr(id = "48e2f465-6fc7-41e8-b32d-07ad1a8d2f06", descn = "Update application version to 0.16", step = 1)
+update metadata
+set app_version = '0.16.0';
+
+@migr(id = "e84ba603-2628-4317-a05f-257cd1686c8a", descn = "Add flight number column to flight table", step_cnt = 3)
+alter table flight add column flight_number text;
+
+@migr(id = "e84ba603-2628-4317-a05f-257cd1686c8a", descn = "Migrate flight number from aircraft into flight table", step = 2)
+update flight
+set    flight_number = (select a.flight_number
+                        from   aircraft a
+                        where  a.flight_id = flight.id
+                          and  a.seq_nr = 1
+                       )
+where flight.id in (select a.flight_id
+                    from   aircraft a
+                    where  a.flight_id = flight.id
+                   );
+
+@migr(id = "e84ba603-2628-4317-a05f-257cd1686c8a", descn = "Drop column flight_number from aircraft table", step = 3)
+alter table aircraft drop column flight_number;
+
+@migr(id = "c1c4df3f-a5c7-4fdb-90ad-44010744cc7c", descn = "Update application version to 0.17", step = 1)
+update metadata
+set app_version = '0.17.0';

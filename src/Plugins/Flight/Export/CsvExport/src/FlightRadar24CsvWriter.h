@@ -33,7 +33,7 @@ class QIODevice;
 
 #include "CsvWriterIntf.h"
 
-class Flight;
+struct FlightData;
 class Aircraft;
 class CsvExportSettings;
 class PositionData;
@@ -43,9 +43,13 @@ class FlightRadar24CsvWriter : public CsvWriterIntf
 {
 public:
     FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept;
+    FlightRadar24CsvWriter(const FlightRadar24CsvWriter &rhs) = delete;
+    FlightRadar24CsvWriter(FlightRadar24CsvWriter &&rhs) = delete;
+    FlightRadar24CsvWriter &operator=(const FlightRadar24CsvWriter &rhs) = delete;
+    FlightRadar24CsvWriter &operator=(FlightRadar24CsvWriter &&rhs) = delete;
     ~FlightRadar24CsvWriter() override;
 
-    bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) const noexcept override;
+    bool write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &ioDevice) const noexcept override;
 
 private:
     const std::unique_ptr<FlightRadar24CsvWriterPrivate> d;

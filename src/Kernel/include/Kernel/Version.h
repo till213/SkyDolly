@@ -69,6 +69,11 @@ public:
      */
     Version(QStringView version) noexcept;
 
+    /*!
+     * Creates this Version with the current application version number.
+     *
+     * \sa VersionConfig
+     */
     Version() noexcept;
     Version(const Version &rhs) = delete;
     Version(Version &&rhs) noexcept;

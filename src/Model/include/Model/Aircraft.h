@@ -45,8 +45,7 @@ struct AircraftPrivate;
 class MODEL_API Aircraft final
 {
 public:
-
-    Aircraft() noexcept;
+    Aircraft(std::int64_t id = Const::InvalidId) noexcept;
     Aircraft(const Aircraft &rhs) = delete;
     Aircraft(Aircraft &&rhs) noexcept;
     Aircraft &operator=(const Aircraft &rhs) = delete;
@@ -64,12 +63,13 @@ public:
     Light &getLight() const noexcept;
 
     FlightPlan &getFlightPlan() const noexcept;
-    const AircraftInfo &getAircraftInfo() const noexcept;
-    void setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept;
+    AircraftInfo &getAircraftInfo() const noexcept;
+    void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
     void setTailNumber(const QString &tailNumber) noexcept;
 
     std::int64_t getTimeOffset() const noexcept;
     void setTimeOffset(std::int64_t timeOffset) noexcept;
+    void addTimeOffset(std::int64_t deltaOffset) noexcept;
 
     /*!
      * Returns the duration of this Aircraft's flight.

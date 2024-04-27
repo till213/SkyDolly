@@ -29,8 +29,8 @@
 
 class QString;
 
-class Flight;
-class FlightSummary;
+struct FlightData;
+struct FlightSummary;
 
 class FlightDaoIntf
 {
@@ -44,16 +44,28 @@ public:
 
     /*!
      * Persists the \c flight. The \c id in \c flight is updated.
-     * \param flight
-     *        the Flight to be persisted
+     *
+     * \param flightData
+     *        the FlightData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(Flight &flight) noexcept = 0;
-    virtual bool get(std::int64_t id, Flight &flight) const noexcept = 0;
-    virtual bool deleteById(std::int64_t id) noexcept = 0;
-    virtual bool updateTitle(std::int64_t id, const QString &title) noexcept = 0;
-    virtual bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept = 0;
-    virtual bool updateUserAircraftIndex(std::int64_t id, int index) noexcept = 0;
+    virtual bool add(FlightData &flightData) const noexcept = 0;
+
+    /*!
+     * Exports the \c flight. While a new \c id for the exported Flight
+     * is generated the \c id of the given \c flight (to be exported) is not updated.
+     *
+     * \param flightData
+     *        the FlightData to be exported (persisted)
+     * \return \c true on success; \c false else
+     */
+    virtual bool exportFlightData(const FlightData &flightData) const noexcept = 0;
+    virtual bool get(std::int64_t id, FlightData &flightData) const noexcept = 0;
+    virtual bool deleteById(std::int64_t id) const noexcept = 0;
+    virtual bool updateTitle(std::int64_t id, const QString &title) const noexcept = 0;
+    virtual bool updateFlightNumber(std::int64_t id, const QString &flightNumber) const noexcept = 0;
+    virtual bool updateDescription(std::int64_t id, const QString &description) const noexcept = 0;
+    virtual bool updateUserAircraftIndex(std::int64_t id, int index) const noexcept = 0;
 };
 
 #endif // FLIGHTDAOINTF_H

@@ -1,0 +1,78 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - src/**
+      - test/**
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - src/**
+      - test/**
+  schedule:
+    - cron: '35 22 * * 5'
+
+env:
+  # Path to the CMake build directory.
+  build: '${{ github.workspace }}/build'
+  config: 'Release'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    permissions:
+      checks: write
+      pull-requests: write
+    name: Unit Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.6.*'
+          setup-python: 'false'
+
+      - name: Install Linux Dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install libxcb-cursor0
+  
+      - name: Build
+        shell: pwsh
+        run: |
+          mkdir ${{ env.build }}
+          cd ${{ env.build }}
+          cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=${{ env.config }} -DSKY_TESTS=ON ../
+          cmake --build . --verbose
+
+      - name: Test
+        id: runtests
+        run: |
+          cd ${{ env.build }}/test
+          xvfb-run ctest . -C ${{ env.config }} \
+          --output-on-failure \
+          --verbose \
+          --output-junit unit-tests.xml
+
+      - name: Upload Test Report
+        if: ${{ always() && steps.runtests.outcome == 'failure'}}
+        uses: actions/upload-artifact@v4
+        with:
+            name: TestReport
+            path: |
+              ${{ env.build }}/test/unit-tests.xml
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+           ${{ env.build }}/test/unit-tests.xml

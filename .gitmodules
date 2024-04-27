@@ -4,3 +4,6 @@
 [submodule "3rdParty/geographiclib"]
 	path = 3rdParty/geographiclib
 	url = https://github.com/geographiclib/geographiclib.git
+[submodule "3rdParty/cpptrace"]
+	path = 3rdParty/cpptrace
+	url = https://github.com/jeremy-rifkin/cpptrace

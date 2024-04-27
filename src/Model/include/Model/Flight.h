@@ -27,7 +27,6 @@
 
 #include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 
 #include <QObject>
@@ -35,9 +34,11 @@
 class QDateTime;
 class QString;
 
+#include <Kernel/SkyMath.h>
 #include "Aircraft.h"
 #include "FlightSummary.h"
 #include "FlightCondition.h"
+#include "FlightData.h"
 #include "ModelLib.h"
 
 struct Waypoint;
@@ -47,27 +48,71 @@ class MODEL_API Flight final : public QObject
 {
     Q_OBJECT
 public:
-    explicit Flight(QObject *parent = nullptr) noexcept;
+    explicit Flight(FlightData flightData, QObject *parent = nullptr) noexcept;
+    explicit Flight(QObject *parent = nullptr) noexcept;    
     Flight(const Flight &rhs) = delete;
     Flight(Flight &&rhs) = delete;
     Flight &operator=(const Flight &rhs) = delete;
     Flight &operator=(Flight &&rhs) = delete;
     ~Flight() override;
 
+    /*!
+     * Restores this Flight from the given \c flightData.
+     *
+     * \param flightData
+     *        the FlightData to set
+     * \sa flightRestored
+     */
+    void fromFlightData(FlightData &&flightData) noexcept;
+    FlightData &getFlightData() const noexcept;
+
+    /*!
+     * \sa Const#InvalidId
+     * \sa Const#RecordingId
+     */
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
 
+    /*!
+     * \sa isValidId
+     */
+    bool hasValidId() const noexcept;
+
+    /*!
+     * In order to reset the creation time clear this Flight.
+     *
+     * \return the creation date & time when the first aircraft was recorded; an invalid
+     *         QDateTime when no recording has been done yet
+     * \sa clear
+     */
     const QDateTime &getCreationTime() const noexcept;
-    void setCreationTime(const QDateTime &creationTime) noexcept;
 
     const QString &getTitle() const noexcept;
-    void setTitle(const QString &title) noexcept;
+    void setTitle(QString title) noexcept;
 
     const QString &getDescription() const noexcept;
-    void setDescription(const QString &description) noexcept;
+    void setDescription(QString description) noexcept;
 
-    void setAircraft(std::vector<Aircraft> &&aircraft) noexcept;
-    Aircraft &addUserAircraft() noexcept;
+    const QString &getFlightNumber() const noexcept;
+    void setFlightNumber(QString flightNumber) noexcept;
+
+    /*!
+     * Adds all \c aircraft to the existing Aircraft of this Flight.
+     * For each aircraft the signal aircraftAdded is emitted.
+     *
+     * \param aircraft
+     *        the aircraft collection to be added to this Flight
+     * \sa aircraftAdded
+     */
+    void addAircraft(std::vector<Aircraft> &&aircraft) noexcept;
+
+    /*!
+     * Creates and adds a new user Aircraft to this Flight.
+     *
+     * \return the newly created Aircraft
+     * \sa aircraftAdded
+     */
+    Aircraft &addUserAircraft(std::int64_t aircraftId) noexcept;
     Aircraft &getUserAircraft() const noexcept;
 
     /*!
@@ -86,7 +131,7 @@ public:
 
     /*!
      * Sets the user aircraft index to \c index and emits the signal #userAircraftChanged, but the
-     * second signal parameter (\c previousUserAircraftIndex) is set to \c InvalidIndex.
+     * second signal parameter (\c previousUserAircraftIndex) is set to \c Const#InvalidIndex.
      *
      * This implies that while the previous AI object for the new user aircraft (identified by the
      * new \c index) is deleted no new AI object for the previous user aircraft is created. This
@@ -118,7 +163,36 @@ public:
      */
     void switchUserAircraftIndex(int index) noexcept;
 
-    std::int64_t deleteAircraftByIndex(int index) noexcept;
+    /*!
+     * Removes the aircraft identified by its \c index.
+     *
+     * \param index
+     *        the index of the aircraft to be removed
+     * \return the ID of the removed Aircraft
+     * \sa aircraftRemoved
+     */
+    std::int64_t removeAircraftByIndex(int index) noexcept;
+
+    /*!
+     * Removes the last (highest sequence number) aircraft from this flight.
+     *
+     * \return the ID of the removed Aircraft
+     * \sa count
+     * \sa aircraftRemoved
+     */
+    std::int64_t removeLastAircraft() noexcept;
+
+    /*!
+     * Returns the aircraft count of this Flight. Note that the count is usually
+     * at least one (except in some intermediate, internal states, e.g. just before
+     * restoring a new Flight from the Logbook), as a Flight always has at least
+     * one \e user aircraft. However that does not mean that any sampled (recorded)
+     * data exists.
+     *
+     * \return the number of Aircraft in this Flight; usually at least one
+     * \sa getUserAircraft
+     * \sa hasRecording
+     */
     std::size_t count() const noexcept;
 
     /*!
@@ -175,30 +249,103 @@ public:
     QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept;
     QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept;
 
-    void clear(bool withOneAircraft) noexcept;
+    void clear(bool withOneAircraft, FlightData::CreationTimeMode creationTimeMode) noexcept;
+
+    /*!
+     * Returns whether at least one Aircraft with sampled position data exists.
+     *
+     * \return \c true if at least one Aircraft has sampled position data; \c false else
+     * \sa Aircraft#hasRecording
+     */
+    bool hasRecording() const noexcept;
+
+    /*!
+     * Synchronises the time offsets of each aircraft in the \c flightsToBeSynchronised according
+     * to the creation time of this \e current Flight and the creation time of each \c flightsToBeSynchronised.
+     *
+     * \param timeOffsetSync
+     *        defines how to synchronise the time offsets
+     * \param flightsToBeSynchronised
+     *        the flights to be synchronised, according to their creation time
+     * \sa getCreationTime
+     */
+    void syncAircraftTimeOffset(SkyMath::TimeOffsetSync timeOffsetSync, std::vector<FlightData> &flightsToBeSynchronised) const noexcept;
+
+    /*!
+     * Returns whether the given \c id is a valid id, that is whether the flight
+     * has been successfully persisted or not.
+     *
+     * \param id
+     *        the id to be validated
+     * \return \c true if the \c id is valid; \c false else (Const#InvalidId, Const#RecordingId)
+     */
+    static bool isValidId(std::int64_t id) noexcept;
 
     using Iterator = std::vector<Aircraft>::iterator;
-
     Iterator begin() noexcept;
     Iterator end() noexcept;
-    const Iterator begin() const noexcept;
-    const Iterator end() const noexcept;
+
+    using ConstIterator = std::vector<Aircraft>::const_iterator;
+    ConstIterator begin() const noexcept;
+    ConstIterator end() const noexcept;
 
     Aircraft &operator[](std::size_t index) noexcept;
     const Aircraft &operator[](std::size_t index) const noexcept;
 
-    static constexpr int InvalidAircraftIndex {-1};
-
 signals:
-    void flightStored(std::int64_t id);
-    void flightRestored(std::int64_t id);
+    /*!
+     * Emitted whenever one or several Flight have been stored to the logbook.
+     *
+     * \param success
+     *        indicates whether persisting the flight was successful (\c true)
+     *        or not (\c false)
+     */
+    void flightStored(bool success);
+
+    /*!
+     * Emitted whenever one or several Aircraft have been stored to the logbook. Typically
+     * emitted whenever a new formation Aircraft has been stored, or imported and added
+     * to the current Flight.
+     *
+     * \param success
+     *        indicates whether persisting the flight was successful (\c true)
+     *        or not (\c false)
+     */
+    void aircraftStored(bool success);
+
+    /*!
+     * Emitted whenever the Flight given by its \c id has been restored from the logbook.
+     *
+     * \param id
+     *        the id of the restored Flight
+     */
+    void flightRestored(std::int64_t id);    
 
     void cleared();
-    void descriptionOrTitleChanged();
+    void titleChanged(std::int64_t flightId, const QString &title);
+    void descriptionChanged(std::int64_t flightId, const QString &description);
+    void flightNumberChanged(std::int64_t flightId, const QString &flightNumber);
     void flightConditionChanged();
 
-    void aircraftAdded(const Aircraft &newAircraft);
-    void aircraftRemoved(std::int64_t removedAircraftId);
+    /*!
+     * Emitted whenever an \c aircraft has been added to this Flight. This is
+     * typically called before creating a new formation flight and allows to
+     * update existing "AI aircraft" models.
+     *
+     * \param aircraft
+     *        the Aircraft that has been added to this Flight
+     */
+    void aircraftAdded(const Aircraft &aircraft);
+
+    /*!
+     * Emitted whenever an \c aircraft has been removed from this Flight. This is
+     * typically called from the formation module and allows to update existing
+     * "AI aircraft" models.
+     *
+     * \param aircraftId
+     *        the id of the removed Aircraft
+     */
+    void aircraftRemoved(std::int64_t aircraftId);
 
     /*!
      * Emitted whenever a new \c waypoint has been added to the user aircraft.
@@ -225,17 +372,17 @@ signals:
 
     /*!
      * Emitted whenever the user aircraft index is changed to \c newUserAircraftIndex. In case a previous user aircraft
-     * existed the \c previousUserAircraftIndex is set accordingly, otherwise it is set to InvalidAircraftIndex.
+     * existed the \c previousUserAircraftIndex is set accordingly, otherwise it is set to Const::InvalidIndex.
      *
      * \param newUserAircraftIndex
      *        the index of the new user aircraft
      * \param previousUserAircraftIndex
-     *        the index of the previous user aircraft; InvalidAircraftIndex if no previous user aircraft was set
+     *        the index of the previous user aircraft; Const::InvalidIndex if no previous user aircraft was set
      */
     void userAircraftChanged(int newUserAircraftIndex, int previousUserAircraftIndex);
 
     /*!
-     * Emited whenever any of the aircraft info data has changed, including the tail number and
+     * Emited whenever any of the aircraft info data of the \e current Flight has changed, including the tail number and
      * time offset.
      *
      * \param aircraft
@@ -246,7 +393,7 @@ signals:
     void aircraftInfoChanged(const Aircraft &aircraft);
 
     /*!
-     * Emitted whenever the tail number of the \c aircraft has changed.
+     * Emitted whenever the tail number of the \c aircraft of the \e current Flight has changed has changed.
      *
      * \param aircraft
      *        the aircraft whose tail number has changed
@@ -254,14 +401,12 @@ signals:
     void tailNumberChanged(const Aircraft &aircraft);
 
     /*!
-     * Emitted whenever the time offset of the \c aircraft has changed.
+     * Emitted whenever the time offset of the \c aircraft of the \e current Flight has changed has changed.
      *
      * \param aircraft
      *        the aircraft whose time offset has changed
      */
     void timeOffsetChanged(const Aircraft &aircraft);
-
-    void aircraftStored(const Aircraft &aircraft);
 
 private:
     std::unique_ptr<FlightPrivate> d;

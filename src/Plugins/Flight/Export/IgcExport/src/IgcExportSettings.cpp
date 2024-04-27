@@ -29,7 +29,7 @@
 
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightExportPluginBaseSettings.h>
 #include "IgcExportSettings.h"
 
 namespace
@@ -71,7 +71,7 @@ void IgcExportSettings::setPilotName(const QString &pilotName) noexcept
 {
     if (d->pilotName != pilotName) {
         d->pilotName = pilotName;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -84,9 +84,31 @@ void IgcExportSettings::setCoPilotName(const QString &coPilotName) noexcept
 {
     if (d->coPilotName != coPilotName) {
         d->coPilotName = coPilotName;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
+
+bool IgcExportSettings::isResamplingSupported() const noexcept
+{
+    return true;
+}
+
+bool IgcExportSettings::isFormationExportSupported(FormationExport formationExport) const noexcept
+{
+    bool supported {false};
+    switch (formationExport) {
+    case FormationExport::AllAircraftOneFile:
+        supported = false;
+        break;
+    case FormationExport::AllAircraftSeparateFiles:
+        supported = true;
+        break;
+    case FormationExport::UserAircraftOnly:
+        supported = true;
+        break;
+    }
+    return supported;
+};
 
 // PROTECTED
 
@@ -120,14 +142,10 @@ void IgcExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
 {
     d->pilotName = valuesByKey.at(::PilotNameKey).value<QString>();
     d->coPilotName = valuesByKey.at(::CoPilotNameKey).value<QString>();
-
-    emit extendedSettingsChanged();
 }
 
 void IgcExportSettings::restoreDefaultsExtn() noexcept
 {
     d->pilotName = IgcExportSettingsPrivate::DefaultPilotName;
     d->coPilotName = IgcExportSettingsPrivate::DefaultCoPilotName;
-
-    emit extendedSettingsChanged();
 }

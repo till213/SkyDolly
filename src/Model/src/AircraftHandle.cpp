@@ -39,7 +39,7 @@ AircraftHandle::AircraftHandle(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
 {}
 
-AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const AircraftHandleData &AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const AircraftHandleData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
@@ -57,7 +57,9 @@ AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, TimeVaria
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
-        case TimeVariableData::Access::Seek:
+        case TimeVariableData::Access::DiscreteSeek:
+            [[fallthrough]];
+        case TimeVariableData::Access::ContinuousSeek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
             currentIndex = SkySearch::updateStartIndex(getData(), currentIndex, adjustedTimestamp);
@@ -80,6 +82,8 @@ AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, TimeVaria
             m_currentData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);
             m_currentData.rightWingFolding = SkyMath::interpolateLinear(p1->rightWingFolding, p2->rightWingFolding, tn);
             m_currentData.gearHandlePosition = p1->gearHandlePosition;
+            m_currentData.tailhookHandlePosition = p1->tailhookHandlePosition;
+            m_currentData.foldingWingHandlePosition = p1->foldingWingHandlePosition;
             m_currentData.smokeEnabled = p1->smokeEnabled;
             m_currentData.timestamp = adjustedTimestamp;
         } else {

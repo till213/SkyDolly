@@ -39,14 +39,13 @@ Light::Light(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
 {}
 
-LightData Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const LightData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
     const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
-
         int currentIndex = getCurrentIndex();
         switch (access) {
         case TimeVariableData::Access::Linear:
@@ -54,7 +53,9 @@ LightData Light::interpolate(std::int64_t timestamp, TimeVariableData::Access ac
         case TimeVariableData::Access::Export:
             SkySearch::getLinearInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::DefaultInterpolationWindow, currentIndex, &p1, &p2);
             break;
-        case TimeVariableData::Access::Seek:
+        case TimeVariableData::Access::DiscreteSeek:
+            [[fallthrough]];
+        case TimeVariableData::Access::ContinuousSeek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
             currentIndex = SkySearch::updateStartIndex(getData(), currentIndex, adjustedTimestamp);

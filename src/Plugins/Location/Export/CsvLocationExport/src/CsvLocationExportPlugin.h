@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -58,8 +58,8 @@
 class QFile;
 class QWidget;
 
-#include <PluginManager/LocationExportIntf.h>
-#include <PluginManager/LocationExportPluginBase.h>
+#include <PluginManager/Location/LocationExportIntf.h>
+#include <PluginManager/Location/LocationExportPluginBase.h>
 
 class Location;
 class LocationExportPluginBaseSettings;

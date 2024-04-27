@@ -31,7 +31,7 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightImportPluginBaseSettings.h>
+#include <PluginManager/Flight/FlightImportPluginBaseSettings.h>
 
 struct CsvImportSettingsPrivate;
 
@@ -41,24 +41,27 @@ class CsvImportSettings : public FlightImportPluginBaseSettings
 public:
     /*!
      * CSV format (flavour).
+     *
+     * These values are peristed in the application settings.
      */
     enum struct Format {
-        SkyDolly = 0,
-        FlightRadar24 = 1,
+        // Removed: SkyDolly = 0,
+        Flightradar24 = 1,
         FlightRecorder = 2
     };
 
     CsvImportSettings() noexcept;
+    CsvImportSettings(const CsvImportSettings &rhs) = delete;
+    CsvImportSettings(CsvImportSettings &&rhs) = delete;
+    CsvImportSettings &operator=(const CsvImportSettings &rhs) = delete;
+    CsvImportSettings &operator=(CsvImportSettings &&rhs) = delete;
     ~CsvImportSettings() override;
+
+    bool isAircraftSelectionRequired() const noexcept override;
+    bool isTimeOffsetSyncSupported() const noexcept override;
 
     Format getFormat() const noexcept;
     void setFormat(Format format) noexcept;
-
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

@@ -33,7 +33,7 @@ namespace
     constexpr const char *FormatKey {"Format"};
 
     // Defaults
-    constexpr CsvImportSettings::Format DefaultFormat {CsvImportSettings::Format::SkyDolly};
+    constexpr CsvImportSettings::Format DefaultFormat {CsvImportSettings::Format::Flightradar24};
 }
 
 struct CsvImportSettingsPrivate
@@ -53,6 +53,26 @@ CsvImportSettings::CsvImportSettings() noexcept
 
 CsvImportSettings::~CsvImportSettings() = default;
 
+bool CsvImportSettings::isAircraftSelectionRequired() const noexcept
+{
+    return true;
+}
+
+bool CsvImportSettings::isTimeOffsetSyncSupported() const noexcept
+{
+    bool supported {false};
+    switch (d->format) {
+    case CsvImportSettings::Format::Flightradar24:
+        supported = true;
+        break;
+    case CsvImportSettings::Format::FlightRecorder:
+        supported = false;
+        break;
+    }
+
+    return supported;
+}
+
 CsvImportSettings::Format CsvImportSettings::getFormat() const noexcept
 {
     return d->format;
@@ -62,7 +82,7 @@ void CsvImportSettings::setFormat(Format format) noexcept
 {
     if (d->format != format) {
         d->format = format;
-        emit extendedSettingsChanged();
+        emit changed();
     }
 }
 
@@ -95,13 +115,9 @@ void CsvImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->format = ::DefaultFormat;
     }
-
-    emit extendedSettingsChanged();
 }
 
 void CsvImportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
-
-    emit extendedSettingsChanged();
 }

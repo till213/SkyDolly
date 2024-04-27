@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -32,7 +32,7 @@
 
 // https://www.kdab.com/qt-datatypes-in-standard-library/
 struct QStringHasher {
-    std::size_t operator()(const QString &value) const noexcept {
+    size_t operator()(const QString &value) const noexcept {
         return qHash(value);
     }
 };

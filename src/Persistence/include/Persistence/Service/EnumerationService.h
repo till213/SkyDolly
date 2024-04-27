@@ -28,16 +28,18 @@
 #include <memory>
 
 #include <QString>
+#include <QSqlDatabase>
 
+#include <Kernel/Const.h>
 #include <Model/Enumeration.h>
 #include "../PersistenceLib.h"
 
 struct EnumerationServicePrivate;
 
-class PERSISTENCE_API EnumerationService
+class PERSISTENCE_API EnumerationService final
 {
 public:
-    EnumerationService() noexcept;
+    EnumerationService(QString connectionName = Const::DefaultConnectionName) noexcept;
     EnumerationService(const EnumerationService &rhs) = delete;
     EnumerationService(EnumerationService &&rhs) noexcept;
     EnumerationService &operator=(const EnumerationService &rhs) = delete;
@@ -49,11 +51,14 @@ public:
      *
      * \param name
      *        the name of the enumeration
+     * \param order
+     *        defines the attribute by which to order the enumarations:
+     *        by ID (default), by symbolic ID or name
      * \param ok
      *        if set, \c true if successful; \c false else (unknown Enumeration name, no database connection)
      * \return the persisted Enumeration identified by the \c name
      */
-    Enumeration getEnumerationByName(const QString &name, bool *ok = nullptr);
+    Enumeration getEnumerationByName(const QString &name, Enumeration::Order order = Enumeration::Order::Id, bool *ok = nullptr);
 
     // Implementation note:
     // Well-known database enumerations: TitleCase name must match with corresponding

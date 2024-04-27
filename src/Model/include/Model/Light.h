@@ -35,7 +35,7 @@ class MODEL_API Light final : public AbstractComponent<LightData>
 public:
     explicit Light(const AircraftInfo &aircraftInfo) noexcept;
 
-    LightData interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
+    const LightData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
 private:
     mutable LightData m_currentData;
 };

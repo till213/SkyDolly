@@ -60,6 +60,10 @@ public:
     };
 
     explicit ActionButton(QWidget *parent = nullptr, Capitalisation capitalisation = Capitalisation::Normal) noexcept;
+    ActionButton(const ActionButton &rhs) = delete;
+    ActionButton(ActionButton &&rhs) = delete;
+    ActionButton &operator=(const ActionButton &rhs) = delete;
+    ActionButton &operator=(ActionButton &&rhs) = delete;
     ~ActionButton() override;
 
     /*!

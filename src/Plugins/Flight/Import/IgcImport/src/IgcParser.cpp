@@ -136,7 +136,7 @@ namespace
 
 struct IgcParserPrivate
 {
-    QFile *file {nullptr};
+    QIODevice *io {nullptr};
 
     // Fix timestamps
     QTime previousTime;
@@ -181,11 +181,11 @@ IgcParser::IgcParser() noexcept
 
 IgcParser::~IgcParser() = default;
 
-bool IgcParser::parse(QFile &file) noexcept
+bool IgcParser::parse(QIODevice &io) noexcept
 {
     init();
 
-    d->file = &file;
+    d->io = &io;
     // Manufacturer / identifier
     bool ok = readManufacturer();
     if (ok) {
@@ -234,14 +234,14 @@ void IgcParser::init() noexcept
 
 bool IgcParser::readManufacturer() noexcept
 {
-    const QByteArray line = d->file->readLine();
+    const QByteArray line = d->io->readLine();
     return !line.isEmpty() && line.at(0) == ARecord;
 }
 
 bool IgcParser::readRecords() noexcept
 {
     bool ok {true};
-    QByteArray line = d->file->readLine();
+    QByteArray line = d->io->readLine();
     while (ok && !line.isEmpty()) {
         switch (line.at(0)) {
         case HRecord:
@@ -264,7 +264,7 @@ bool IgcParser::readRecords() noexcept
             // Ignore other record types
             break;
         }
-        line = d->file->readLine();
+        line = d->io->readLine();
     }
     return ok;
 }

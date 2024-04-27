@@ -27,11 +27,13 @@
 
 #include <QObject>
 #include <QString>
+#include <QUuid>
 
 class QWidget;
 
-#include "PluginManager/AbstractModule.h"
+#include <PluginManager/Module/AbstractModule.h>
 
+class ModuleBaseSettings;
 struct FormationPluginPrivate;
 
 class FormationPlugin : public AbstractModule
@@ -41,8 +43,13 @@ class FormationPlugin : public AbstractModule
     Q_INTERFACES(ModuleIntf)
 public:
     explicit FormationPlugin(QObject *parent = nullptr) noexcept;
+    FormationPlugin(const FormationPlugin &rhs) = delete;
+    FormationPlugin(FormationPlugin &&rhs) = delete;
+    FormationPlugin &operator=(const FormationPlugin &rhs) = delete;
+    FormationPlugin &operator=(FormationPlugin &&rhs) = delete;
     ~FormationPlugin() override;
 
+    QUuid getUuid() const noexcept override;
     QString getModuleName() const noexcept override;
     QWidget *getWidget() const noexcept override;
     RecordIconId getRecordIconId() const noexcept override;
@@ -50,6 +57,7 @@ public:
 protected:
     void onStartRecording() noexcept override;
     void onStartReplay() noexcept override;
+    ModuleBaseSettings &getModuleSettings() const noexcept override;
 
 protected slots:
     void onRecordingStopped() noexcept override;

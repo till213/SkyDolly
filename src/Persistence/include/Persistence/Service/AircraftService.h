@@ -30,16 +30,19 @@
 #include <cstdint>
 #include <cstddef>
 
+#include <QSqlDatabase>
+
+#include <Kernel/Const.h>
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
 #include "../PersistenceLib.h"
 
 struct AircraftServicePrivate;
 
-class PERSISTENCE_API AircraftService
+class PERSISTENCE_API AircraftService final
 {
 public:
-    AircraftService() noexcept;
+    AircraftService(QString connectionName = Const::DefaultConnectionName) noexcept;
     AircraftService(const AircraftService &rhs) = delete;
     AircraftService(AircraftService &&rhs) noexcept;
     AircraftService &operator=(const AircraftService &rhs) = delete;
@@ -47,6 +50,7 @@ public:
     ~AircraftService();
 
     bool store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept;
+    bool exportAircraft(std::int64_t flightId, std::size_t sequenceNumber, const Aircraft &aircraft) noexcept;
     bool deleteByIndex(int index) noexcept;
     std::vector<AircraftInfo> getAircraftInfos(std::int64_t flightId, bool *ok = nullptr) const noexcept;
 

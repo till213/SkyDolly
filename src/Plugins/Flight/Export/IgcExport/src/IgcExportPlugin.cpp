@@ -45,7 +45,7 @@
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
-#include <Model/Flight.h>
+#include <Model/FlightData.h>
 #include <Model/FlightCondition.h>
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
@@ -109,7 +109,6 @@ namespace
 
 struct IgcExportPluginPrivate
 {
-    const Flight *flight {nullptr};
     IgcExportSettings pluginSettings;
     Unit unit;
 
@@ -156,22 +155,16 @@ std::unique_ptr<QWidget> IgcExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<IgcExportOptionWidget>(d->pluginSettings);
 }
 
-bool IgcExportPlugin::hasMultiAircraftSupport() const noexcept
+bool IgcExportPlugin::exportFlightData([[maybe_unused]] const FlightData &flightData, [[maybe_unused]] QIODevice &io) const noexcept
 {
     return false;
 }
 
-bool IgcExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) const noexcept
+bool IgcExportPlugin::exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    return false;
-}
-
-bool IgcExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept
-{
-    d->flight = &flight;
     bool ok = exportARecord(io);
     if (ok) {
-        ok = exportHRecord(aircraft, io);
+        ok = exportHRecord(flightData, aircraft, io);
     }
     if (ok) {
         ok = exportIRecord(io);
@@ -180,16 +173,14 @@ bool IgcExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
         ok = exportJRecord(io);
     }
     if (ok) {
-        ok = exportCRecord(aircraft, io);
+        ok = exportCRecord(flightData, aircraft, io);
     }
     if (ok) {
-        ok = exportFixes(aircraft, io);
+        ok = exportFixes(flightData, aircraft, io);
     }
     if (ok) {
         ok = exportGRecord(io);
     }
-    // We are done with the export
-    d->flight = nullptr;
     return ok;
 
 }
@@ -202,10 +193,10 @@ inline bool IgcExportPlugin::exportARecord(QIODevice &io) const noexcept
     return io.write(record);
 }
 
-inline bool IgcExportPlugin::exportHRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
+inline bool IgcExportPlugin::exportHRecord(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const QByteArray record =
-        IgcExportPluginPrivate::HRecord % ::Date % formatDate(d->flight->getFlightCondition().startZuluTime) % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::Date % formatDate(flightData.flightCondition.startZuluTime) % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::Pilot % d->pluginSettings.getPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::CoPilot % d->pluginSettings.getCoPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfo().aircraftType.type.toLatin1() % ::LineEnd %
@@ -236,18 +227,18 @@ inline bool IgcExportPlugin::exportJRecord(QIODevice &io) const noexcept
     return io.write(record);
 }
 
-inline bool IgcExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
+inline bool IgcExportPlugin::exportCRecord(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const FlightPlan &flightPlan = aircraft.getFlightPlan();
     const Position &position = aircraft.getPosition();
     bool ok {false};
     if (position.count() > 0) {
         const int nofTurnPoints = static_cast<int>(flightPlan.count()) - 2;
-        QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(d->flight->getAircraftStartZuluTime(aircraft)) %
+        QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(flightData.getAircraftStartZuluTime(aircraft)) %
                             ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
                             // Number of turn points, excluding start and end wapoints
                             formatNumber(std::min(nofTurnPoints, 0), 2) %
-                            d->flight->getTitle().toLatin1() % ::LineEnd;
+                            flightData.title.toLatin1() % ::LineEnd;
         ok = io.write(record);
         const std::size_t count = flightPlan.count();
         std::size_t i = 0;
@@ -277,9 +268,9 @@ inline bool IgcExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
     return ok;
 }
 
-inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io) const noexcept
+inline bool IgcExportPlugin::exportFixes(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    QDateTime startTime = d->flight->getAircraftStartZuluTime(aircraft);
+    QDateTime startTime = flightData.getAircraftStartZuluTime(aircraft);
     QDateTime lastKFixTime;
 
     Convert convert;
@@ -287,42 +278,39 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
     const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
     for (const PositionData &positionData : interpolatedPositionData) {
-        if (!positionData.isNull()) {
+        // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
+        const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
 
-            // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
-            const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
+        const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
+        const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
+        const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.indicatedAltitude)));
+        const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
+        const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
+        const int noise = estimateEnvironmentalNoise(engineData);
+        const QDateTime currentTime = startTime.addMSecs(positionData.timestamp);
+        const QByteArray bRecord = IgcExportPluginPrivate::BRecord %
+                                   formatTime(currentTime) %
+                                   formatPosition(positionData.latitude, positionData.longitude) %
+                                   ::FixValid %
+                                   // Pressure altitude
+                                   pressureAltitudeByteArray %
+                                   // GNSS altitude
+                                   gnssAltitudeByteArray %
+                                   formatNumber(noise, 3) %
+                                   ::LineEnd;
+        ok = io.write(bRecord);
 
-            const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
-            const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
-            const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.indicatedAltitude)));
-            const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
-            const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
-            const int noise = estimateEnvironmentalNoise(engineData);
-            const QDateTime currentTime = startTime.addMSecs(positionData.timestamp);
-            const QByteArray bRecord = IgcExportPluginPrivate::BRecord %
+        if (ok && (lastKFixTime.isNull() || lastKFixTime.secsTo(currentTime) >= ::KRecordIntervalSec)) {
+            const double trueAirspeed = Convert::feetPerSecondToKilometersPerHour(positionData.velocityBodyZ);
+            const double indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
+            const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
                                        formatTime(currentTime) %
-                                       formatPosition(positionData.latitude, positionData.longitude) %
-                                       ::FixValid %
-                                       // Pressure altitude
-                                       pressureAltitudeByteArray %
-                                       // GNSS altitude
-                                       gnssAltitudeByteArray %
-                                       formatNumber(noise, 3) %
+                                       formatNumber(static_cast<int>(std::round(positionData.trueHeading)), 3) %
+                                       // IAS: km/h
+                                       formatNumber(static_cast<int>(std::round(indicatedAirspeed)), 3) %
                                        ::LineEnd;
-            ok = io.write(bRecord);
-
-            if (ok && (lastKFixTime.isNull() || lastKFixTime.secsTo(currentTime) >= ::KRecordIntervalSec)) {
-                const double trueAirspeed = Convert::feetPerSecondToKilometersPerHour(positionData.velocityBodyZ);
-                const double indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
-                const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
-                                           formatTime(currentTime) %
-                                           formatNumber(static_cast<int>(std::round(positionData.trueHeading)), 3) %
-                                           // IAS: km/h
-                                           formatNumber(static_cast<int>(std::round(indicatedAirspeed)), 3) %
-                                           ::LineEnd;
-                ok = io.write(kRecord);
-                lastKFixTime = currentTime;
-            }
+            ok = io.write(kRecord);
+            lastKFixTime = currentTime;
         }
         if (!ok) {
             break;
@@ -356,7 +344,7 @@ inline QByteArray IgcExportPlugin::formatDateTime(const QDateTime &dateTime) con
 
 inline QByteArray IgcExportPlugin::IgcExportPlugin::formatNumber(int value, int padding) const noexcept
 {
-    return QStringLiteral("%1").arg(value, padding, 10, QLatin1Char('0')).toLatin1();
+    return QStringLiteral("%1").arg(value, padding, 10, QChar('0')).toLatin1();
 }
 
 inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitude) const noexcept
@@ -367,10 +355,10 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitu
     GeographicLib::DMS::Encode(latitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
     return QString("%1%2%3%4")
-           .arg(static_cast<int>(degrees), 2, 10, QLatin1Char('0'))
-           .arg(static_cast<int>(minutes), 2, 10, QLatin1Char('0'))
-           .arg(decimals, 3, 10, QLatin1Char('0'))
-           .arg(latitude >= 0.0 ? QLatin1Char('N') : QLatin1Char('S'))
+           .arg(static_cast<int>(degrees), 2, 10, QChar('0'))
+           .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
+           .arg(decimals, 3, 10, QChar('0'))
+           .arg(latitude >= 0.0 ? u'N' : u'S')
            .toLatin1();
 }
 
@@ -382,10 +370,10 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLongitude(double longi
     GeographicLib::DMS::Encode(longitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
     return QString("%1%2%3%4")
-           .arg(static_cast<int>(degrees), 3, 10, QLatin1Char('0'))
-           .arg(static_cast<int>(minutes), 2, 10, QLatin1Char('0'))
-           .arg(decimals, 3, 10, QLatin1Char('0'))
-           .arg(longitude >= 0.0 ? QLatin1Char('E') : QLatin1Char('W'))
+           .arg(static_cast<int>(degrees), 3, 10, QChar('0'))
+           .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
+           .arg(decimals, 3, 10, QChar('0'))
+           .arg(longitude >= 0.0 ? u'E' : u'W')
            .toLatin1();
 }
 

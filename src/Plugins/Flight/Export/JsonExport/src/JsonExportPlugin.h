@@ -35,10 +35,10 @@ class QIODevice;
 class QString;
 
 #include <Kernel/Settings.h>
-#include <PluginManager/FlightExportIntf.h>
-#include <PluginManager/FlightExportPluginBase.h>
+#include <PluginManager/Flight/FlightExportIntf.h>
+#include <PluginManager/Flight/FlightExportPluginBase.h>
 
-class Flight;
+struct FlightData;
 class Aircraft;
 struct PositionData;
 struct Waypoint;
@@ -52,6 +52,10 @@ class JsonExportPlugin : public FlightExportPluginBase
     Q_INTERFACES(FlightExportIntf)
 public:
     JsonExportPlugin() noexcept;
+    JsonExportPlugin(const JsonExportPlugin &rhs) = delete;
+    JsonExportPlugin(JsonExportPlugin &&rhs) = delete;
+    JsonExportPlugin &operator=(const JsonExportPlugin &rhs) = delete;
+    JsonExportPlugin &operator=(JsonExportPlugin &&rhs) = delete;
     ~JsonExportPlugin() override;
 
 protected:
@@ -59,17 +63,16 @@ protected:
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    bool hasMultiAircraftSupport() const noexcept override;
-    bool exportFlight(const Flight &flight, QIODevice &io) const noexcept override;
-    bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) const noexcept override;
+    bool exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept override;
+    bool exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept override;
 
 private:
     const std::unique_ptr<JsonExportPluginPrivate> d;
 
     bool exportHeader(QIODevice &io) const noexcept;
-    bool exportAllAircraft(QIODevice &io) const noexcept;
-    bool exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
-    bool exportWaypoints(QIODevice &io) const noexcept;
+    bool exportAllAircraft(const FlightData &flightData, QIODevice &io) const noexcept;
+    bool exportSingleAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportWaypoints(const FlightData &flightData, QIODevice &io) const noexcept;
     bool exportFooter(QIODevice &io) const noexcept;
 
     inline bool exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept;

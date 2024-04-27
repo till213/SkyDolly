@@ -30,9 +30,10 @@
 
 #include <QObject>
 
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/TimeVariableData.h>
-#include <PluginManager/AbstractSkyConnect.h>
-#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect/AbstractSkyConnect.h>
+#include <PluginManager/Connect/SkyConnectIntf.h>
 
 class Flight;
 class Aircraft;
@@ -47,31 +48,40 @@ class PathCreatorPlugin : public AbstractSkyConnect
     Q_INTERFACES(SkyConnectIntf)
 public:
     PathCreatorPlugin(QObject *parent = nullptr) noexcept;
+    PathCreatorPlugin(const PathCreatorPlugin &rhs) = delete;
+    PathCreatorPlugin(PathCreatorPlugin &&rhs) = delete;
+    PathCreatorPlugin &operator=(const PathCreatorPlugin &rhs) = delete;
+    PathCreatorPlugin &operator=(PathCreatorPlugin &&rhs) = delete;
     ~PathCreatorPlugin() override;
+    
 
     bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
 
 protected:
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
+    
+    bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;
-    bool onSimulationEvent(SimulationEvent event) const noexcept override;
+    bool onSimulationEvent(SimulationEvent event, float arg1) const noexcept override;
 
-    bool onStartRecording() noexcept override;
-    void onRecordingPaused(bool paused) noexcept override;
+    bool onStartFlightRecording() noexcept override;
+    bool onStartAircraftRecording() noexcept override;
+    void onRecordingPaused(Initiator initiator, bool paused) noexcept override;
     void onStopRecording() noexcept override;
 
     bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
-    void onReplayPaused(bool paused) noexcept override;
+    void onReplayPaused(Initiator initiator, bool enable) noexcept override;
     void onStopReplay() noexcept override;
 
-    void onSeek(std::int64_t currentTimestamp) noexcept override;
+    void onSeek(std::int64_t currentTimestampS, SeekMode seekMode) noexcept override;
     void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
     bool isConnectedWithSim() const noexcept override;
     bool connectWithSim() noexcept override;
+    void onDisconnectFromSim() noexcept override;
 
     void onAddAiObject(const Aircraft &aircraft) noexcept override;
     void onRemoveAiObject(std::int64_t aircraftId) noexcept override;
@@ -92,7 +102,8 @@ private:
     void recordSecondaryControls(std::int64_t timestamp) noexcept;
     void recordAircraftHandle(std::int64_t timestamp) noexcept;
     void recordLights(std::int64_t timestamp) noexcept;
-    void recordWaypoint() noexcept;
+    void recordWaypoint(std::int64_t timestamp) noexcept;
+    void recordFlightInfo() noexcept;
     void recordFlightCondition() noexcept;
     void recordAircraftInfo() noexcept;
 

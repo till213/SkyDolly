@@ -41,7 +41,7 @@ public:
         Prepar3Dv5
     };
 
-    // Implemenation note: we need to use QStringLiteral here for static inline const QStrings
+    // Implementation note: we need to use QStringLiteral here for static inline const QStrings
     // https://forum.qt.io/topic/102312/very-strange-heap-corruption-exit-code-1073740940-0xc0000374-with-static-inline-const-qstring-release-only
     static inline const QString FlightSimulatorNameAll {QStringLiteral("All")};
     static inline const QString FlightSimulatorNameMSFS {QStringLiteral("MSFS")};

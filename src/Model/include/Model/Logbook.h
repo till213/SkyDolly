@@ -28,6 +28,7 @@
 #include <memory>
 
 #include <QObject>
+#include <QStringView>
 
 #include "Flight.h"
 #include "ModelLib.h"
@@ -46,9 +47,6 @@ public:
     static Logbook &getInstance() noexcept;
     static void destroyInstance() noexcept;
     Flight &getCurrentFlight() const noexcept;
-
-signals:
-    void flightTitleOrDescriptionChanged(std::int64_t id);
 
 private:
     const std::unique_ptr<LogbookPrivate> d;

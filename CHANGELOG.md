@@ -1,14 +1,220 @@
 # Changelog
 
+## 0.17.0
+
+### New Features
+- Keyboard shortcuts can be defined and triggered within the flight simulator, in order to:
+  * Toggle recording / replay
+  * Pause / Stop
+  * Skip forward/backward
+  * Skip to begin
+  * The shortcuts can be defined in the Sky Dolly application settings
+- Desktop notifications indicate whether recording has started, paused/resumed and stopped
+
+### Improvements
+- The default logbook name is now *Sky Dolly Logbook*
+  * In order to help to avoid confusion between the Sky Dolly application and logbook directory
+  * Existing logbooks remain at their current location
+- The flight number is now also shown in the Logbook table [[Issue #103](https://github.com/till213/SkyDolly/issues/103)]
+  * Flights can also be filtered with the flight number
+  * The flight number is now stored per flight (not per aircraft anymore)
+  * The flight number can now be edited (both in the Flight dialog and logbook table)
+- The Formation module settings (relative position, replay mode) are now persisted
+- Improved module settings performance: the logbook and location tables are now updated exactly once (and not twice) upon module initialisation
+- A flight recording in progress is now automatically stopped and the flight stored to the logbook in case the flight simulator is terminated (e.g. also due to a crash)
+
+### Other
+- Remove import & export CSV Sky Dolly format
+  * The default import CSV format is now: *Flightradar24*
+  * The default export CSV format is now: *Position and attitude*
+  * Use the Sky Dolly logbook import & export instead
+  
+### Bug Fixes
+- KML export: the _first_ position point is now properly exported as well
+- Flight condition is not overwritten anymore when recording additional formation aircraft
+- Toggling the "active pause" in MSFS while recording now properly resumes/pauses recording and the flight itself [[Issue #106](https://github.com/till213/SkyDolly/issues/106)]
+- Prevent a crash that would occur when a flight is loaded and the replay mode in the Formation module is changed to "Fly with formation", but no connection with MSFS exists yet
+- Remove last recorded flight or aircraft in case persistence fails (improved error handling)
+- In the Formation module the reference aircraft icon is properly initialised
+
+### Under the Hood
+- Upgrade GeographicLib to version 2.2 (from version 2.1.2)
+- Upgrade cpptrace to version 0.5.2 (from 0.1.1)
+
+## 0.16.3
+
+### Improvements
+- Add an exception handler dialog that provides information about abnormal program termination, including
+  * Information about the exception
+  * Stack trace (using the external Cpptrace library v0.1.1)
+  * Application- and basic system information
+  * Unix signal handling (macOS, Linux only)
+  
+### Bug Fixes
+- Fix CSV import for various CSV formats, e.g. Flight Recorder and Sky Dolly: proper CSV header validation
+  * Note: the Sky Dolly CSV format is obsolete and will be removed in the upcoming v0.17 release
+
+## 0.16.2
+
+### Bug Fixes
+- Fix the Little Navmap userpoint (location) import
+  * Relax CSV validation (import CSV without header)
+  * Properly check for empty (value: "") elevation values
+
+## 0.16.1
+
+### Bug Fixes
+- Properly store the newly selected logbook file path in the application settings in case an attempt is made to open a logbook that has been written by a newer Sky Dolly version and the user chooses an alternate logbook
+  * Regression introduced with v0.16.0
+
+## 0.16.0
+
+**"Gregarious Gee Bee"** introduces new Sky Dolly logbook export & import plugins, incuding time synchronisation for formation flights.
+
+### New Features
+- Sky Dolly logbook (SDLOG) export plugin [[Issue #75](https://github.com/till213/SkyDolly/issues/75)]
+  * The current plugin implementation always exports the entire flight (including all aircraft) into a single logbook file, without resampling
+- Sky Dolly logbook (SDLOG) import plugin
+  * All flights including all aircraft are imported, including flight information (title, comment, creation date) and flight conditions (temperature, wind conditions, runway conditions, ...)
+
+**Note:** the new Sky Dolly logbook import & export plugins render the existing Sky Dolly CSV import & export obsolete: the Sky Dolly CSV import & export will be removed in an upcoming release. However other CSV import & export formats such as the [flightradar24.com](https://www.flightradar24.com/), FlightRecorder and *position and attitude* formats will remain.
+  
+### Improvements
+- All export plugins: now only the effectively *supported* resampling and formation export options (as reported by the given plugin) are selectable
+- All import plugins:
+  * The "Add to current flight" checkbox has been replaced by an aircraft import mode combobox:
+    - **Add to current flight**: all imported aircraft are added to the currently loaded flight
+    - **Add to new flight**: all imported aircraft are added to a flight that is newly created
+    - **Separate flights**: a new flight is created for each imported file
+  * The aircraft type selection combobox is now disabled for those formats (such as the new Sky Dolly logbook) that already specify the aircraft type
+  * Depending on whether the given plugin also reports the flight recording time the timestamp offset of newly imported aircraft can now be automatically adjusted:
+    - **None**: no timestamp offset is being applied
+    - **Date and time**: the timestamp offset is calculated based on the recording date and time difference between the *current* and each newly imported flight
+    - **Time only**: the timestamp offset is calculated based on the recording time difference between the *current* and each newly imported flight, but ignoring the recording date. This can be useful when importing historic real-world flights from different dates in the past into the same "formation flight", but with the goal to replay them "on the same day" (as defined by the first imported flight)
+  * Old plugin settings are migrated to the new import mode settings
+- The Simulation Variables dialog (key **V**) now also shows the aircraft position as decimal latitude & longitude values [[Issue #89](https://github.com/till213/SkyDolly/issues/89)]
+- The flight recording time in the Flight dialog (key **F**) is now empty for new flights (without any recording)
+  * As before it is updated when the *first* aircraft is being recorded
+  * The recording time text field tooltip now also shows the recording date and time converted to UTC ("zulu time"), including seconds
+- The flight title and description are now also editable during recording. Because why not :)
+- It is now possible to clear a flight via the menu Replay | Clear. Clearing a flight will simply unload it from memory, that is any persisted data in the logbook won't be modified
+- A new recent logbooks menu allows to quickly re-open logbooks that have been opened in the past
+- Drag and drop support: you can drag a Sky Dolly logbook from the Windows File Explorer onto the Sky Dolly application in order to quickly open that logbook
+- The current logbook file name is now shown in the application window title
+- The filter values in the Logbook module are now persisted in the application settings
+- The filter and default values in the Formation module are now persisted in the application settings
+- The filter values in the Location module are now automatically reset when a user location is being added, in order to make the newly added location visible
+- Added five new New Zealand locations
+
+### Bug Fixes
+- The timestamp for waypoints is now properly restored when reading waypoint data from the logbook
+- The first aircraft position data is properly cached (not reset when timestamp is set to 0)
+- Fix the [flightradar24.com](https://www.flightradar24.com/) CSV import (wrong CSV data validation)
+- Fix interpolation of first sample point in case the timestamp of the first sample point is > 0 
+  * which may occasionally happen if position data arrives a few milliseconds ("one frame") after e.g. the first engine data sample arrives (the arrival of the first sample data starts the timer)
+- Fix internal SimConnect exceptions due to duplicate "frame" systemt event subscriptions
+
+### Under the Hood
+- Flight import plugin API simplified, by introducing a new FlightData structure that allows to move flight data between Flight objects
+- Modules now have module-specifc settings (like import & export plugins)
+- Basic unit tests for selected import plugins
+
+## 0.15.1
+
+### Bug Fixes
+- Prevents the creation of a logbook backup each time the application is launched:
+  * Make sure each "bump version" migration step _really_ has a distinct UUID
+  * Don't compare patch version numbers, as the database version does not increment them
+- Fix a crash that may occasionally occur when quitting Sky Dolly, in case when MSFS has been closed before and an "active connection" had been established, e.g. due to a replay or recording
+
+## 0.15.0
+
+**"Flamboyant Fokker"** focuses on the migration to the Qt 6.4 framework. If you are building Sky Dolly from source then also refer to the updated [BUILD.md](BUILD.md) instructions.
+
+### Improvements
+- The new Qt 6 framework also provides initial support for "dark mode"
+  * As this is still considered "work in progress" in Qt 6.4 the "dark mode" is not enabled by default
+  * However you can already enable it by providing the following command line arguments:
+    - For the "Windows" style:
+      * `SkyDolly.exe -platform windows:darkmode=2`
+    - For the "Fusion" style that currently looks better in "dark mode":
+      * `SkyDolly.exe -platform windows:darkmode=2 -style=fusion`
+  * Once the option "darkmode=2" has been set Sky Dolly will then follow the Windows "dark mode" settings
+  * Unfortunately the "Windows Vista" style (default style on Windows) won't support "dark mode" (due to underlying Win32 API limitations - also refer to [QTBUG-72028](https://bugreports.qt.io/browse/QTBUG-72028)
+- The internal event state is now reset whenever replay is resumed
+  * This improves the situation where the flaps handle lever is initially in the wrong position due to multiple consecutive "timeline seek" operations
+  * The flaps handle lever will now go into the correct position during replay, upon the next "flaps event"
+  * Note that this is due to the "asynchronous nature" ("real-time update") of the _flaps handle index_ simulation variable update that some aircraft have in place (specifically the PMDG 737)
+
+### Under The Hood
+- Upgrade Qt to version 6.4.2 (from version 5.15.2)
+- Upgrade GeographicLib to version 2.1.2 (from version 1.52)
+- Upgrade ordered-map to version 1.1.0 (from version 1.0.0)
+- Use the C++20 standard (from C++17)
+- Use named database connections: foundation import/export plugins that use the database (Sky Dolly logbook, *.sdlog) format
+
+### Bug Fixes
+- "Orphaned create AI object" requests are now properly handled (the just created AI object is destroyed again) when the original request has already been removed in the meantime (e.g. due to a failed aircraft import)
+- When importing a file (e.g. CSV format) without waypoint information the created waypoints have now guaranteed a unique timestamp
+  * Specifically in the case when only one position sample ("parked aircraft") exist
+- Properly restore the default "show replay speed" option (applied when entering minimal UI mode) from the application settings
+
+## 0.14.0
+
+**"Ethereal Embraer"** focuses on improved 3rd-party aircraft support, especially "for the big birds".
+
+### Improvements
+- Improved replay specifically with 3rd party aircraft [[Issue #73](https://github.com/till213/SkyDolly/issues/73)], for:
+  * Primary and secondary flight controls (ailerons, flaps, spoilers, ...)
+  * Engine (thrust lever)
+  * Aircraft handles (gear, wing folding, tailhook, ...)
+- Improved replay for AI aircraft ("formation flight"):
+  * Animated ailerons, elevator and rudder
+  * Less SimConnect data sent
+- New location categories, including improved CSV import & export with Little Navmap v2.8.8
+  * Addon, Cabin, Carrier, History, Obstacle, Oil Platform, Settlement
+- When pausing recording the simulation is now also paused
+- No need to "repeat flaps" in settings anymore (improved secondary flight controls replay)
+- Added new flight information simulation variables (dialog Flight -> Conditions):
+  * Surface condition (normal, wet, icy, snow)  
+  * On any runway
+  * On parking spot
+- Increasing the replay speed now also increases the simulation rate (up to a maximum rate of 16x)
+  * The simulation rate is a power of 2: 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0 - the nearest simulation rate
+    is chosen, given the current replay speed
+  * Note: certain aircraft may reduce or even fix the simulation rate to 1.0 (for instance the Fenix A320)
+- When the 'Add to flight' option is enabled and import fails then no empty (no recorded data) aircraft is left in the formation
+ 
+### Under The Hood
+- Small performance improvements
+
+### Bug Fixes
+- Fix "ailerons reversal" (Asobo A320neo, F/A-18 and other aircraft with "PID controllers")
+  * Actual root cause (in MSFS/SimConnect): MSFS seems to expect "*feet* per second" instead of "*radians* per second" for "*rotation* velocity body" (*radians* per second would actually be the correct physical unit for rotation velocity)
+- Ensure that all "position" and "percent" values as reported by MSFS are clamped to the proper range ([-1.0, 1.0] and [0, 100] respectively)
+- Fix a crash in the Formation module that would occur when trying to delete the last aircraft from the aircraft table
+
+## 0.13.1
+
+### Bug Fixes
+- The mixture lever position is now properly initialised from "percent" (instead of "position") values:
+  * during "flight augmentation" ("flight augmentation" is applied when importing flights from e.g. [flightradar24.com](https://www.flightradar24.com/) or [flightaware.com](https://flightaware.com))
+  * during IGC import (when detecting "engine noise" in the IGC data)
+- In the Simulation Variables dialog (and elsewhere) ensure that at least one recorded data sample exist before accessing the "last" entry
+- Prevent access to invalidated data upon application termination when either the Flight, Simulation Variables or Statistics dialog was open before quitting the application (rare race condition)
+- Properly spell "airport" in the location CSV export in Little Navmap format (fix typo)
+
 ## 0.13.0
+
+**"Dapper Daher"** introduced location import and export.
 
 ### New Features
 - New location export plugin
   * Sky Dolly CSV export
-  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV export
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) userpoint CSV export
 - New location import plugin
   * Sky Dolly CSV import
-  * [Little Navmap](https://albar965.github.io/littlenavmap.html) user point CSV import
+  * [Little Navmap](https://albar965.github.io/littlenavmap.html) userpoint CSV import
   
 ### Improvements
 - Flight CSV export
@@ -48,6 +254,8 @@
 
 ## 0.12.0
 
+**"Celestial Cessna"** introduces the "Location" module.
+And 
 ### New Features
 - Location module
   * Capture and teleport to locations in the flight simulator
@@ -90,6 +298,8 @@
 - Apply relative position when _Set relative position_ is enabled and _Fly with formation_ is selected
 
 ## 0.11.0
+
+This release mostly focuses on "under the hood" improvements, but also improves on existing functionality like the AI aircraft management.
 
 ### Improvements
 
@@ -173,6 +383,8 @@
 
 ## 0.10.0
 
+**"Beasty Boeing"** adds two new export plugins (JSON and GPX) and improves various existing import and export plugins.
+
 ### New Features
 
 - JSON export plugin
@@ -217,13 +429,15 @@
   
 ## 0.9.0
 
+**"Anarchic Airbus"** introduces various new import and export plugins: IGC, GPX and CSV (flightradar24).
+
 ### New Features
 
-- IGC export plugin
+- IGC export plugin [[Issue #15](https://github.com/till213/SkyDolly/issues/15)]
   * Export flight path (position and GNSS altitude)
   * Export waypoints as flight tasks ("C records")
   * Export pilot names
-- GPX import plugin
+- GPX import plugin [[Issue #16](https://github.com/till213/SkyDolly/issues/16)]
   * The GPX format contains three elements: waypoints, routes and tracks
     - Waypoints are typically "places to visit" along the way
     - Routes describe "how to get there"
@@ -338,6 +552,8 @@
 
 ## 0.8.0
 
+This release introduces a new plugin architecture for import and export plugins.
+
 ### New Features
 
 - Plugin architecture
@@ -422,6 +638,8 @@
 
 ## 0.7.0
 
+This release introduces the Formation module.
+
 ### New Features
 
 - New module: Formation - record an unlimited number of aircraft and replay them altogher, with one single user interface
@@ -481,6 +699,8 @@
 
 ## 0.6.0
 
+This release introdcues the logbook, an SQLite based database.
+
 ### New Features
 
 - Add SQLite database support (_logbook_) for persistence
@@ -526,6 +746,8 @@
 
 ## 0.5.0
 
+This release adds support for more simulation variables and reduces the amount of request data by organising the simulation variables into groups.
+
 ### New Features
 - Simulation variables have been split into distinct requests, saving both on required space and CPU usage
 - The replay speed is now a factor instead of percentage value (1 = normal speed, 2 = double speed etc.)
@@ -556,6 +778,8 @@
 - Properly hide window when stay on top is deselected
 
 ## 0.4.0
+
+This release supports additional simulation variables.
 
 ### New Features
 
@@ -600,6 +824,8 @@
 
 ## 0.3.0
 
+This release introduces the first persistence, a simple CSV format.
+
 ### New Features
 
 - Additional simulation variables: flap positions, water ruder and brakes
@@ -622,6 +848,8 @@
 
 ## 0.2.0
 
+This release extends the basic recording & replay implementation.
+
 ### New Features
 
 - Recording & replay of basic flight controls (rudder, ailerons, flaps, gear, ...)
@@ -636,6 +864,8 @@
 - Properly store the already elapsed time when changing the replay speed, for a smooth continuation of the replay
 
 ## 0.1.0
+
+This release implements basic recording & replay functionality.
 
 ### Features
 

@@ -22,13 +22,24 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QCoreApplication>
 #include <QString>
 #include <QStringView>
+#include <QStringBuilder>
 #include <QStringBuilder>
 #include <QFileInfo>
 #include <QDir>
 
 #include "File.h"
+
+namespace
+{
+#if defined(Q_OS_MAC)
+    constexpr const char *PluginDirectoryName {"PlugIns"};
+#else
+    constexpr const char *PluginDirectoryName {"Plugins"};
+#endif
+}
 
 // PUBLIC
 
@@ -65,4 +76,19 @@ QString File::getSequenceFilePath(const QString &filePath, int n) noexcept
      }
 
      return filePaths;
+ }
+
+ QString File::getPluginDirectoryPath() noexcept
+ {
+     QDir pluginsDirectory;
+
+     pluginsDirectory.setPath(QCoreApplication::applicationDirPath());
+#if defined(Q_OS_MAC)
+     if (pluginsDirectory.dirName() == "MacOS") {
+         // Navigate up the app bundle structure, into the Contents folder
+         pluginsDirectory.cdUp();
+     }
+#endif
+     pluginsDirectory.cd(::PluginDirectoryName);
+     return pluginsDirectory.absolutePath();
  }

@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <mutex>
+#include <vector>
 
 #include <QCoreApplication>
 #include <QPluginLoader>
@@ -37,13 +38,14 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/File.h>
 #include <Model/Flight.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/LocationService.h>
-#include "FlightImportIntf.h"
-#include "FlightExportIntf.h"
-#include "LocationImportIntf.h"
-#include "LocationExportIntf.h"
+#include <Flight/FlightImportIntf.h>
+#include <Flight/FlightExportIntf.h>
+#include <Location/LocationImportIntf.h>
+#include <Location/LocationExportIntf.h>
 #include "PluginManager.h"
 
 namespace
@@ -52,11 +54,6 @@ namespace
     constexpr const char *LocationDirectoryName {"Location"};
     constexpr const char *ExportDirectoryName {"Export"};
     constexpr const char *ImportDirectoryName {"Import"};
-#if defined(Q_OS_MAC)
-    constexpr const char *PluginDirectoryName {"PlugIns"};
-#else
-    constexpr const char *PluginDirectoryName {"Plugins"};
-#endif
     constexpr const char *PluginUuidKey {"uuid"};
     constexpr const char *PluginNameKey {"name"};
 }
@@ -65,19 +62,13 @@ struct PluginManagerPrivate
 {
     PluginManagerPrivate() noexcept
     {
-        pluginsDirectory = QDir(QCoreApplication::applicationDirPath());
-#if defined(Q_OS_MAC)
-        if (pluginsDirectory.dirName() == "MacOS") {
-            // Navigate up the app bundle structure, into the Contents folder
-            pluginsDirectory.cdUp();
-        }
-#endif
-        pluginsDirectory.cd(PluginDirectoryName);
+        pluginsDirectory.cd(File::getPluginDirectoryPath());
     }
 
     ~PluginManagerPrivate() = default;
 
     QWidget *parentWidget {nullptr};
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
     QDir pluginsDirectory;
     // Plugin UUID / plugin path
     QMap<QUuid, QString> flightImportPluginRegistry;
@@ -88,7 +79,6 @@ struct PluginManagerPrivate
     static inline std::once_flag onceFlag;
     static inline PluginManager *instance;
 };
-
 
 // PUBLIC
 
@@ -157,70 +147,83 @@ std::vector<PluginManager::Handle> PluginManager::initialiseLocationExportPlugin
     return pluginHandles;
 }
 
-bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept
+bool PluginManager::importFlights(const QUuid &pluginUuid, Flight &flight) const noexcept
 {
     bool ok {false};
     if (d->flightImportPluginRegistry.contains(pluginUuid)) {
-        const QString pluginPath = d->flightImportPluginRegistry.value(pluginUuid);
-        QPluginLoader loader(pluginPath);
-        const QObject *plugin = loader.instance();
-        FlightImportIntf *importPlugin = qobject_cast<FlightImportIntf *>(plugin);
+        const QString pluginPath {d->flightImportPluginRegistry.value(pluginUuid)};
+        QPluginLoader loader {pluginPath};
+        QObject *plugin = loader.instance();
+        auto *importPlugin = qobject_cast<FlightImportIntf *>(plugin);
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
             importPlugin->restoreSettings(pluginUuid);
-            ok = importPlugin->importFlight(flightService, flight);
+            ok = importPlugin->importFlights(flight);
             importPlugin->storeSettings(pluginUuid);
-        } else {
-            ok = false;
         }
         loader.unload();
     }
     return ok;
+}
+
+std::vector<FlightData> PluginManager::importSelectedFlights(const QUuid &pluginUuid, QIODevice &io, bool &ok) const noexcept
+{
+    std::vector<FlightData> flights;
+    if (d->flightImportPluginRegistry.contains(pluginUuid)) {
+        const QString pluginPath {d->flightImportPluginRegistry.value(pluginUuid)};
+        QPluginLoader loader {pluginPath};
+        QObject *plugin = loader.instance();
+        auto *importPlugin = qobject_cast<FlightImportIntf *>(plugin);
+        if (importPlugin != nullptr) {
+            importPlugin->setParentWidget(d->parentWidget);
+            importPlugin->restoreSettings(pluginUuid);
+            flights = importPlugin->importSelectedFlights(io, ok);
+            importPlugin->storeSettings(pluginUuid);
+        }
+        loader.unload();
+    }
+    return flights;
 }
 
 bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept
 {
     bool ok {false};
     if (d->flightExportPluginRegistry.contains(pluginUuid)) {
-        const QString pluginPath = d->flightExportPluginRegistry.value(pluginUuid);
-        QPluginLoader loader(pluginPath);
+        const QString pluginPath {d->flightExportPluginRegistry.value(pluginUuid)};
+        QPluginLoader loader {pluginPath};
         QObject *plugin = loader.instance();
-        FlightExportIntf *exportPlugin = qobject_cast<FlightExportIntf *>(plugin);
+        auto *exportPlugin = qobject_cast<FlightExportIntf *>(plugin);
         if (exportPlugin != nullptr) {
             exportPlugin->setParentWidget(d->parentWidget);
             exportPlugin->restoreSettings(pluginUuid);
             ok = exportPlugin->exportFlight(flight);
             exportPlugin->storeSettings(pluginUuid);
-        } else {
-            ok = false;
         }
         loader.unload();
     }
     return ok;
 }
 
-bool PluginManager::importLocations(const QUuid &pluginUuid, LocationService &locationService) const noexcept
+bool PluginManager::importLocations(const QUuid &pluginUuid) const noexcept
 {
     bool ok {false};
     if (d->locationImportPluginRegistry.contains(pluginUuid)) {
-        const QString pluginPath = d->locationImportPluginRegistry.value(pluginUuid);
-        QPluginLoader loader(pluginPath);
-        const QObject *plugin = loader.instance();
-        LocationImportIntf *importPlugin = qobject_cast<LocationImportIntf *>(plugin);
+        const QString pluginPath {d->locationImportPluginRegistry.value(pluginUuid)};
+        QPluginLoader loader {pluginPath};
+        QObject *plugin = loader.instance();
+        auto *importPlugin = qobject_cast<LocationImportIntf *>(plugin);
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
             importPlugin->restoreSettings(pluginUuid);
-            ok = importPlugin->importLocations(locationService);
+            ok = importPlugin->importLocations();
             importPlugin->storeSettings(pluginUuid);
-        } else {
-            ok = false;
         }
         loader.unload();
     }
     return ok;
 }
 
-bool PluginManager::exportLocations(const QUuid &pluginUuid, LocationService &locationService) const noexcept
+bool PluginManager::exportLocations(const QUuid &pluginUuid) const noexcept
 {
     bool ok {false};
     if (d->locationExportPluginRegistry.contains(pluginUuid)) {
@@ -231,13 +234,11 @@ bool PluginManager::exportLocations(const QUuid &pluginUuid, LocationService &lo
         if (exportPlugin != nullptr) {
             exportPlugin->setParentWidget(d->parentWidget);
             exportPlugin->restoreSettings(pluginUuid);
-            std::vector<Location> locations = locationService.getAll(&ok);
+            std::vector<Location> locations = d->locationService->getAll(&ok);
             if (ok) {
                 ok = exportPlugin->exportLocations(locations);
             }
             exportPlugin->storeSettings(pluginUuid);
-        } else {
-            ok = false;
         }
         loader.unload();
     }
@@ -266,10 +267,10 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
-                const QUuid uuid = pluginMetadata.value(::PluginUuidKey).toString();
-                const QString pluginName = pluginMetadata.value(::PluginNameKey).toString();
-                const Handle handle = {uuid, pluginName};
+                const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
+                const QUuid uuid {pluginMetadata.value(::PluginUuidKey).toString()};
+                const QString pluginName {pluginMetadata.value(::PluginNameKey).toString()};
+                const Handle handle {uuid, pluginName};
                 pluginHandles.push_back(handle);
                 pluginRegistry.insert(uuid, pluginPath);
             }
