@@ -1,6 +1,7 @@
 set(MODULE_NAME "MSFSSimConnect")
 
-qt_add_library(${MODULE_NAME} MODULE)
+qt_add_library(${MODULE_NAME} MODULE
+    src/Event/InputEvent.cpp)
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 # Don't define MIN, MAX macros (in windows.h)
 add_definitions(-DNOMINMAX)
@@ -49,7 +50,7 @@ target_sources(${MODULE_NAME}
         src/Event/EventState.h
         src/Event/EventWidget.h src/Event/EventWidget.cpp
         src/Event/EventStateHandler.h
-        src/Event/InputEvent.h
+        src/Event/InputEvent.h src/Event/InputEvent.cpp
         src/Event/SimulationRate.h
         src/SimConnectAi.h src/SimConnectAi.cpp        
         src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp

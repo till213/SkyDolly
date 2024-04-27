@@ -81,9 +81,8 @@ namespace
     constexpr DWORD UserAirplaneRadiusMeters {0};
 }
 
-class SkyConnectPrivate
+struct SkyConnectPrivate
 {
-public:
     PositionData currentPositionData;
     EngineData currentEngineData;
     PrimaryFlightControlData currentPrimaryFlightControlData;
@@ -97,6 +96,7 @@ public:
     std::unique_ptr<SimulationRate> simulationRate {std::make_unique<SimulationRate>()};
     std::unique_ptr<SimConnectAi> simConnectAi {nullptr};
     std::unique_ptr<EventWidget> eventWidget {std::make_unique<EventWidget>()};
+    std::unique_ptr<InputEvent> inputEvent {std::make_unique<InputEvent>()};
     ::SIMCONNECT_PERIOD currentRequestPeriod {::SIMCONNECT_PERIOD_NEVER};
     // Insert order is order of flight plan
     tsl::ordered_map<QString, Waypoint> flightPlan;    
@@ -144,7 +144,7 @@ bool MSFSSimConnectPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulator
 {
     bool ok {false};
     if (d->simConnectHandle != nullptr) {
-        ok = InputEvent::setup(d->simConnectHandle, shortcuts);
+        ok = d->inputEvent->setup(d->simConnectHandle, shortcuts);
     }
     return ok;
 }

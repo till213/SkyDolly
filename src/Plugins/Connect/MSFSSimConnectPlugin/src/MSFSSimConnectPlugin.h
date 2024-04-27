@@ -42,7 +42,7 @@
 struct PositionData;
 struct EngineData;
 class Aircraft;
-class SkyConnectPrivate;
+struct SkyConnectPrivate;
 
 class MSFSSimConnectPlugin : public AbstractSkyConnect
 {
