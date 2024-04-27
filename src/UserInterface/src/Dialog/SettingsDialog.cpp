@@ -214,7 +214,9 @@ void SettingsDialog::updateConnectionStatus() noexcept
     case Connect::State::Disconnected:
         ui->connectionStatusLabel->setText(tr("Disconnected"));
         time = skyConnectManager.getRemainingReconnectTime() / 1000.0;
-        ui->connectionStatusLabel->setToolTip(tr("Next reconnect attempt in %1 seconds").arg(std::round(time)));
+        if (time != -1) {
+            ui->connectionStatusLabel->setToolTip(tr("Next reconnect attempt in %1 seconds").arg(std::round(time)));
+        }
         break;
     case Connect::State::Connected:
         ui->connectionStatusLabel->setText(tr("Connected"));

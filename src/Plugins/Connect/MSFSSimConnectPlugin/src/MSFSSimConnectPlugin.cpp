@@ -120,7 +120,7 @@ MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
         d->eventStateHandler->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
         d->eventStateHandler->resumePausedSimulation();
     }
-    closeConnection();
+    onDisconnectFromSim();
 }
 
 bool MSFSSimConnectPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept

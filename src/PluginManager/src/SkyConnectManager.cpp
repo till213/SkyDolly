@@ -40,6 +40,7 @@
 
 #include <Kernel/File.h>
 #include <Kernel/Settings.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Connect/SkyConnectIntf.h>
@@ -416,6 +417,11 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
             connect(&flight, &Flight::tailNumberChanged,
                     skyPlugin, &SkyConnectIntf::onTailNumberChanged);
             d->currentPluginUuid = uuid;
+
+            FlightSimulatorShortcuts shortcuts {Settings::getInstance().getFlightSimulatorShortcuts()};
+            if (shortcuts.hasAny()) {
+                tryConnectAndSetup(shortcuts);
+            }
             ok = true;
         } else {
             // Not a valid SkyConnect plugin

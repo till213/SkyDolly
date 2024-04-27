@@ -81,6 +81,7 @@ struct PathCreatorPluginPrivate
 
     QTimer replayTimer;
     QRandomGenerator *randomGenerator;
+    bool connected {false};
 
     static const QStringList IcaoList;
 };
@@ -96,7 +97,10 @@ PathCreatorPlugin::PathCreatorPlugin(QObject *parent) noexcept
     frenchConnection();
 }
 
-PathCreatorPlugin::~PathCreatorPlugin() = default;
+PathCreatorPlugin::~PathCreatorPlugin()
+{
+    onDisconnectFromSim();
+}
 
 bool PathCreatorPlugin::setUserAircraftPosition([[maybe_unused]] const PositionData &positionData) noexcept
 {
@@ -222,7 +226,7 @@ bool PathCreatorPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVari
 
 bool PathCreatorPlugin::isConnectedWithSim() const noexcept
 {
-    return true;
+    return d->connected;
 }
 
 bool PathCreatorPlugin::connectWithSim() noexcept
@@ -230,7 +234,8 @@ bool PathCreatorPlugin::connectWithSim() noexcept
 #ifdef DEBUG
     qDebug() << "PathCreatorPlugin::connectWithSim: CALLED";
 #endif
-    return true;
+    d->connected = true;
+    return d->connected;
 }
 
 void PathCreatorPlugin::onDisconnectFromSim() noexcept
@@ -238,6 +243,7 @@ void PathCreatorPlugin::onDisconnectFromSim() noexcept
 #ifdef DEBUG
     qDebug() << "PathCreatorPlugin::onDisconnectFromSim: CALLED";
 #endif
+    d->connected = false;
 }
 
 void PathCreatorPlugin::onAddAiObject([[maybe_unused]] const Aircraft &aircraft) noexcept
