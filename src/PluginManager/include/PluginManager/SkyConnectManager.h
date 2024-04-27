@@ -202,9 +202,6 @@ private:
 
     void frenchConnection() noexcept;
     void initialisePlugins(const QString &pluginDirectoryName) noexcept;
-
-private slots:
-    void onFlightSimulatorShortcutsChanged(const FlightSimulatorShortcuts &shortcuts);
 };
 
 #endif // SKYCONNECTMANAGER_H
