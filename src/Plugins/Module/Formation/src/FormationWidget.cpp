@@ -254,7 +254,7 @@ void FormationWidget::initUi() noexcept
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
 
-    initTimeOffsetUi(); 
+    initTimeOffsetUi();
 }
 
 void FormationWidget::initTimeOffsetUi() noexcept
@@ -385,17 +385,12 @@ void FormationWidget::updateInteractiveUi() noexcept
     updateTimeOffsetUi();
     updateReplayUi();
     updateToolTips();
+    updateReferenceAircraftIcon();
 }
 
 void FormationWidget::updateAircraftIcons() noexcept
 {
-    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
-    if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
-        ui->referenceAircraftLabel->setPixmap(d->referenceAircraftPixmap);
-    } else {
-        ui->referenceAircraftLabel->setPixmap(d->userAircraftPixmap);
-    }
+    updateReferenceAircraftIcon();
 
     ui->aircraftTableWidget->blockSignals(true);
 
@@ -413,6 +408,17 @@ void FormationWidget::updateAircraftIcons() noexcept
     }
 
     ui->aircraftTableWidget->blockSignals(false);
+}
+
+void FormationWidget::updateReferenceAircraftIcon() noexcept
+{
+    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
+    if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
+        ui->referenceAircraftLabel->setPixmap(d->referenceAircraftPixmap);
+    } else {
+        ui->referenceAircraftLabel->setPixmap(d->userAircraftPixmap);
+    }
 }
 
 void FormationWidget::updateRelativePositionUi() noexcept

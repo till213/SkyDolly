@@ -80,6 +80,7 @@ private:
     void updateTable() noexcept;
     void updateInteractiveUi() noexcept;
     void updateAircraftIcons() noexcept;
+    void updateReferenceAircraftIcon() noexcept;
     void updateRelativePositionUi() noexcept;
     void updateEditUi() noexcept;
     void updateTimeOffsetUi() noexcept;
