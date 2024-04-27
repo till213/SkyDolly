@@ -48,9 +48,8 @@
 #include "SQLiteFlightDao.h"
 #include "SQLiteFlightDao.h"
 
-class SQLiteFlightDaoPrivate
+struct SQLiteFlightDaoPrivate
 {
-public:
     SQLiteFlightDaoPrivate(QString connectionName) noexcept
         : connectionName(connectionName),
           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),

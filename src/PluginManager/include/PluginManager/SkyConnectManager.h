@@ -88,6 +88,8 @@ public:
      */
     void tryConnectAndSetup(const FlightSimulatorShortcuts &shortcuts) noexcept;
 
+    int getRemainingReconnectTime() const noexcept;
+
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
     bool setUserAircraftPosition(const PositionData & positionData) noexcept;
     bool freezeUserAircraft(bool enable) noexcept;
@@ -200,9 +202,6 @@ private:
 
     void frenchConnection() noexcept;
     void initialisePlugins(const QString &pluginDirectoryName) noexcept;
-
-private slots:
-    void onFlightSimulatorShortcutsChanged(const FlightSimulatorShortcuts &shortcuts);
 };
 
 #endif // SKYCONNECTMANAGER_H

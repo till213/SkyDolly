@@ -58,7 +58,6 @@ namespace Header
 
 struct LittleNavmapCsvParserPrivate
 {
-public:
     LittleNavmapCsvParserPrivate(const CsvLocationImportSettings &pluginSettings) noexcept
         : pluginSettings(pluginSettings)
     {

@@ -44,7 +44,6 @@ struct AnalyticsPrivate;
 class FLIGHT_API Analytics
 {
 public:
-
     Analytics(const Aircraft &aircraft);
     Analytics(const Analytics &rhs) = delete;
     Analytics(Analytics &&rhs) noexcept;

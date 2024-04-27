@@ -45,9 +45,8 @@ using RequestByAircraftId = std::unordered_map<std::int64_t, ::SIMCONNECT_DATA_R
 using RequestByAircraftValueType = RequestByAircraftId::value_type;
 using SimulatedObjectByRequestId = std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, std::int64_t>;
 
-class SimConnectAIPrivate
+struct SimConnectAIPrivate
 {
-public:
     SimConnectAIPrivate(::HANDLE handle) noexcept
         : simConnectHandle(handle)
     {}

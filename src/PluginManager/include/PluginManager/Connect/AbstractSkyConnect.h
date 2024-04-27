@@ -60,6 +60,7 @@ public:
     
     void tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept override;
     void disconnect() noexcept override;
+    int getRemainingReconnectTime() const noexcept override;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
     bool freezeUserAircraft(bool enable) const noexcept override;

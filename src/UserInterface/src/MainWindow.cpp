@@ -197,7 +197,6 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
     initUi();
     updateUi();
     frenchConnection();
-    tryConnectAndSetup();
 }
 
 MainWindow::~MainWindow()
@@ -447,19 +446,6 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::showAboutDialog);
     connect(ui->onlineManualAction, &QAction::triggered,
             this, &MainWindow::showOnlineManual);
-}
-
-void MainWindow::tryConnectAndSetup() const noexcept
-{
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-
-    // TODO IMPLEMENT ME
-    if (skyConnectManager.hasPlugins()) {
-        FlightSimulatorShortcuts shortcuts {Settings::getInstance().getFlightSimulatorShortcuts()};
-        if (shortcuts.hasAny()) {
-            skyConnectManager.tryConnectAndSetup(shortcuts);
-        }
-    }
 }
 
 void MainWindow::initUi() noexcept

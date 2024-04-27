@@ -121,6 +121,11 @@ void AbstractSkyConnect::disconnect() noexcept
     tryFirstConnectAndSetup();
 }
 
+int AbstractSkyConnect::getRemainingReconnectTime() const noexcept
+{
+    return d->reconnectTimer.remainingTime();
+}
+
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {

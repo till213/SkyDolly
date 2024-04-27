@@ -33,7 +33,6 @@
 class KERNEL_API FlightSimulator final
 {
 public:
-
     enum struct Id {
         None,
         All,

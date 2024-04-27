@@ -40,6 +40,7 @@
 
 #include <Kernel/File.h>
 #include <Kernel/Settings.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Connect/SkyConnectIntf.h>
@@ -138,6 +139,16 @@ void SkyConnectManager::tryConnectAndSetup(const FlightSimulatorShortcuts &short
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().tryConnectAndSetup(shortcuts);
+    }
+}
+
+int SkyConnectManager::getRemainingReconnectTime() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    if (skyConnect) {
+        return skyConnect->get().getRemainingReconnectTime();
+    } else {
+        return -1;
     }
 }
 
@@ -406,6 +417,11 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
             connect(&flight, &Flight::tailNumberChanged,
                     skyPlugin, &SkyConnectIntf::onTailNumberChanged);
             d->currentPluginUuid = uuid;
+
+            FlightSimulatorShortcuts shortcuts {Settings::getInstance().getFlightSimulatorShortcuts()};
+            if (shortcuts.hasAny()) {
+                tryConnectAndSetup(shortcuts);
+            }
             ok = true;
         } else {
             // Not a valid SkyConnect plugin
@@ -432,8 +448,6 @@ void SkyConnectManager::frenchConnection() noexcept
     Settings &settings = Settings::getInstance();
     connect(&settings, &Settings::skyConnectPluginUuidChanged,
             this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
-    connect(&settings, &Settings::flightSimulatorShortcutsChanged,
-            this, &SkyConnectManager::onFlightSimulatorShortcutsChanged);
 }
 
 void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) noexcept
@@ -462,11 +476,4 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
         }
         d->pluginsDirectory.cdUp();
     }
-}
-
-// PRIVATE SLOTS
-
-void SkyConnectManager::onFlightSimulatorShortcutsChanged(const FlightSimulatorShortcuts &shortcuts)
-{
-    tryConnectAndSetup(shortcuts);
 }

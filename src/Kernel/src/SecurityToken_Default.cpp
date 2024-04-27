@@ -24,9 +24,8 @@
  */
 #include "SecurityToken.h"
 
-class SecurityTokenPrivate
+struct SecurityTokenPrivate
 {
-public:
     SecurityTokenPrivate()
         : refCount(1)
     {}

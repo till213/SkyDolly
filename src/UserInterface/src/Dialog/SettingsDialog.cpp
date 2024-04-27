@@ -24,11 +24,16 @@
  */
 #include <memory>
 #include <optional>
+#include <cmath>
 
 #include <QDialog>
 #include <QWidget>
 #include <QString>
 #include <QDoubleSpinBox>
+#include <QTimer>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
@@ -45,11 +50,28 @@ namespace
 
     constexpr double MinSeekPercent {0.001};
     constexpr double MaxSeekPercent {100.0};
+
+    constexpr int UpdateIntervalMSec = 1000;
+
+    constexpr int ReplayTab = 0;
+    constexpr int FlightSimulatorTab = 2;
 }
+
+struct SettingsDialogPrivate
+{
+    SettingsDialogPrivate()
+    {
+        updateTimer.setTimerType(Qt::TimerType::PreciseTimer);
+    }
+    QTimer updateTimer;
+};
+
+// PUBLIC
 
 SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
     QDialog(parent),
-    ui(std::make_unique<Ui::SettingsDialog>())
+    ui(std::make_unique<Ui::SettingsDialog>()),
+    d(std::make_unique<SettingsDialogPrivate>())
 {
     ui->setupUi(this);
     initUi();
@@ -121,13 +143,16 @@ void SettingsDialog::initUi() noexcept
     ui->beginSequenceEdit->setMaximumSequenceLength(1);
     ui->endSequenceEdit->setMaximumSequenceLength(1);
 
-    ui->settingsTabWidget->setCurrentIndex(0);
+    ui->settingsTabWidget->setCurrentIndex(::ReplayTab);
+    handleTabChanged(ui->settingsTabWidget->currentIndex());
 }
 
 void SettingsDialog::frenchConnection() noexcept
 {
     connect(this, &SettingsDialog::accepted,
             this, &SettingsDialog::handleAccepted);
+    connect(ui->settingsTabWidget, &QTabWidget::currentChanged,
+            this, &SettingsDialog::handleTabChanged);
 }
 
 // PRIVATE SLOTS
@@ -152,9 +177,46 @@ void SettingsDialog::updateUi() noexcept
         ui->connectionComboBox->setCurrentText(pluginName.value());
     }
 
+    const FlightSimulatorShortcuts &shortcuts = settings.getFlightSimulatorShortcuts();
+    ui->recordSequenceEdit->setKeySequence(shortcuts.record);
+    ui->replaySequenceEdit->setKeySequence(shortcuts.replay);
+    ui->pauseSequenceEdit->setKeySequence(shortcuts.pause);
+    ui->stopSequenceEdit->setKeySequence(shortcuts.stop);
+    ui->backwardSequenceEdit->setKeySequence(shortcuts.backward);
+    ui->forwardSequenceEdit->setKeySequence(shortcuts.forward);
+    ui->beginSequenceEdit->setKeySequence(shortcuts.begin);
+    ui->endSequenceEdit->setKeySequence(shortcuts.end);
+
+    updateConnectionStatus();
+
+    // User interface
+    ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
+    ui->confirmDeleteAircraftCheckBox->setChecked(settings.isDeleteAircraftConfirmationEnabled());
+    ui->confirmDeleteLocationCheckBox->setChecked(settings.isDeleteLocationConfirmationEnabled());
+    ui->confirmResetAllTimeOffsetCheckBox->setChecked(settings.isResetTimeOffsetConfirmationEnabled());
+
+    // Note: from a user's perspective the "hiding aspect" is more important ("which UI elements to I want
+    //       to hide in minimal UI mode" - hence the "hide" in the checkbox names), but from a logic perspective
+    //       it makes more sense to talk about "visibility" (true = visible, false = hidden)
+    ui->hideButtonTextCheckBox->setChecked(!settings.getDefaultMinimalUiButtonTextVisibility());
+    ui->hideNonEssentialButtonsCheckBox->setChecked(!settings.getDefaultMinimalUiNonEssentialButtonVisibility());
+    ui->hideReplaySpeedCheckBox->setChecked(!settings.getDefaultMinimalUiReplaySpeedVisibility());
+}
+
+void SettingsDialog::updateConnectionStatus() noexcept
+{
+    double time;
+
+    ui->connectionStatusLabel->setToolTip(QString());
+
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     switch (skyConnectManager.getState()) {
     case Connect::State::Disconnected:
         ui->connectionStatusLabel->setText(tr("Disconnected"));
+        time = skyConnectManager.getRemainingReconnectTime() / 1000.0;
+        if (time != -1) {
+            ui->connectionStatusLabel->setToolTip(tr("Next reconnect attempt in %1 seconds").arg(std::round(time)));
+        }
         break;
     case Connect::State::Connected:
         ui->connectionStatusLabel->setText(tr("Connected"));
@@ -175,29 +237,6 @@ void SettingsDialog::updateUi() noexcept
         ui->connectionStatusLabel->setText(tr("Disconnected"));
         break;
     }
-
-    const FlightSimulatorShortcuts &shortcuts = settings.getFlightSimulatorShortcuts();
-    ui->recordSequenceEdit->setKeySequence(shortcuts.record);
-    ui->replaySequenceEdit->setKeySequence(shortcuts.replay);
-    ui->pauseSequenceEdit->setKeySequence(shortcuts.pause);
-    ui->stopSequenceEdit->setKeySequence(shortcuts.stop);
-    ui->backwardSequenceEdit->setKeySequence(shortcuts.backward);
-    ui->forwardSequenceEdit->setKeySequence(shortcuts.forward);
-    ui->beginSequenceEdit->setKeySequence(shortcuts.begin);
-    ui->endSequenceEdit->setKeySequence(shortcuts.end);
-
-    // User interface
-    ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
-    ui->confirmDeleteAircraftCheckBox->setChecked(settings.isDeleteAircraftConfirmationEnabled());
-    ui->confirmDeleteLocationCheckBox->setChecked(settings.isDeleteLocationConfirmationEnabled());
-    ui->confirmResetAllTimeOffsetCheckBox->setChecked(settings.isResetTimeOffsetConfirmationEnabled());
-
-    // Note: from a user's perspective the "hiding aspect" is more important ("which UI elements to I want
-    //       to hide in minimal UI mode" - hence the "hide" in the checkbox names), but from a logic perspective
-    //       it makes more sense to talk about "visibility" (true = visible, false = hidden)
-    ui->hideButtonTextCheckBox->setChecked(!settings.getDefaultMinimalUiButtonTextVisibility());
-    ui->hideNonEssentialButtonsCheckBox->setChecked(!settings.getDefaultMinimalUiNonEssentialButtonVisibility());
-    ui->hideReplaySpeedCheckBox->setChecked(!settings.getDefaultMinimalUiReplaySpeedVisibility());
 }
 
 void SettingsDialog::handleAccepted() noexcept
@@ -238,4 +277,27 @@ void SettingsDialog::handleAccepted() noexcept
     settings.setDefaultMinimalUiButtonTextVisibility(!ui->hideButtonTextCheckBox->isChecked());
     settings.setDefaultMinimalUiNonEssentialButtonVisibility(!ui->hideNonEssentialButtonsCheckBox->isChecked());
     settings.setDefaultMinimalUiReplaySpeedVisibility(!ui->hideReplaySpeedCheckBox->isChecked());
+}
+
+void SettingsDialog::handleTabChanged(int index) noexcept
+{
+    switch (index)
+    {
+    case ::FlightSimulatorTab:
+        connect(&d->updateTimer, &QTimer::timeout,
+                this, &SettingsDialog::updateConnectionStatus);
+        d->updateTimer.start(::UpdateIntervalMSec);
+#ifdef DEBUG
+        qDebug() << "SettingsDialog::handleTabChanged: index:" << index << "started update timer";
+#endif
+        break;
+    default:
+        d->updateTimer.stop();
+        disconnect(&d->updateTimer, &QTimer::timeout,
+                   this, &SettingsDialog::updateConnectionStatus);
+#ifdef DEBUG
+        qDebug() << "SettingsDialog::handleTabChanged: index:" << index << "stopped update timer";
+#endif
+        break;
+    }
 }

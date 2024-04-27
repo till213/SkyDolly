@@ -40,7 +40,6 @@
 
 struct CsvExportPluginPrivate
 {
-public:
     CsvExportSettings pluginSettings;
 
     static constexpr const char *FileExtension {"csv"};
