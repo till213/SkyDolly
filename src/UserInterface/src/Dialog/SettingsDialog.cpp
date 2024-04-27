@@ -206,6 +206,9 @@ void SettingsDialog::updateUi() noexcept
 void SettingsDialog::updateConnectionStatus() noexcept
 {
     double time;
+
+    ui->connectionStatusLabel->setToolTip(QString());
+
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     switch (skyConnectManager.getState()) {
     case Connect::State::Disconnected:
