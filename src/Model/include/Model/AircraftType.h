@@ -37,7 +37,7 @@ struct MODEL_API AircraftType final
      * The aircraft type, e.g. "Pitts Special". This is really the SimConnect "container title"
      * which is also used to spawn AI aircraft.
      */
-    QString type;
+    QString type {"-"};
 
     /*!
      * The aircraft category:
