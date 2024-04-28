@@ -24,12 +24,16 @@
  */
 #include <memory>
 
+#include <QDir>
+#include <QMessageBox>
+
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
+#include <Persistence/PersistenceManager.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Module/ModuleBaseSettings.h>
