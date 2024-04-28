@@ -751,21 +751,17 @@ void AbstractSkyConnect::tryFirstConnectAndSetup() noexcept
 bool AbstractSkyConnect::retryWithReconnect(const std::function<bool()> &func)
 {
     int nofAttempts {2};
-    bool ok {true};
-    while (nofAttempts > 0) {
+    bool ok {false};
+    while (!ok && nofAttempts > 0) {
         ok = func();
-        --nofAttempts;
         if (!ok && nofAttempts > 0) {
 #ifdef DEBUG
             qDebug() << "AbstractSkyConnect::retryWithReconnect: previous connection is stale, RETRY with reconnect" << nofAttempts << "more time(s)...";
 #endif
             // Automatically reconnect in case the server crashed
             // previously (without sending a "quit" message)
-            if (!connectWithSim()) {
-                nofAttempts = 0;
-            }
-        } else {
-            nofAttempts = 0;
+            connectWithSim();
+            --nofAttempts;
         }
     }
     return ok;

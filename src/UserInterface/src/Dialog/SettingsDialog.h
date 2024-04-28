@@ -52,7 +52,7 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    enum KeySequence
+    enum struct KeySequence
     {
         Record,
         Replay,

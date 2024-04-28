@@ -829,9 +829,9 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             }
             break;
 
-        case SimConnectEvent::Event::CustomRecording:
+        case SimConnectEvent::Event::CustomRecord:
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomRecording event";
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomRecord event";
 #endif
             emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Record);
             break;

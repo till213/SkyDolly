@@ -139,15 +139,14 @@ struct SettingsPrivate
     static constexpr int DefaultPreviewInfoDialogCount {3};
     static constexpr int PreviewInfoDialogBase {150};
 
-            // TODO Select proper defaults (non-assigned by default in MSFS)
     static inline const QKeySequence DefaultRecordShortcut {"Ctrl+R"};
-    static inline const QKeySequence DefaultReplayShortcut {"Ctrl+E"};
-    static inline const QKeySequence DefaultPauseShortcut {"Ctrl+P"};
+    static inline const QKeySequence DefaultReplayShortcut {"Ctrl+P"};
+    static inline const QKeySequence DefaultPauseShortcut {"Ctrl+Shift+P"};
     static inline const QKeySequence DefaultStopShortcut {"Ctrl+S"};
-    static inline const QKeySequence DefaultBackwardShortcut {"Ctrl+B"};
-    static inline const QKeySequence DefaultForwardShortcut {"Ctrl+F"};
-    static inline const QKeySequence DefaultBeginShortcut {"Ctrl+T"};
-    static inline const QKeySequence DefaultEndShortcut {"Ctrl+Shift+T"};
+    static inline const QKeySequence DefaultBackwardShortcut {"Ctrl+Num++"};
+    static inline const QKeySequence DefaultForwardShortcut {"Ctrl+Num+-"};
+    static inline const QKeySequence DefaultBeginShortcut {"Home"};
+    static inline const QKeySequence DefaultEndShortcut {"End"};
     static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {
         DefaultRecordShortcut,
         DefaultReplayShortcut,

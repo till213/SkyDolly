@@ -27,8 +27,6 @@
 
 #include <cstdint>
 
-#include <QtGlobal>
-#include <QFlags>
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 

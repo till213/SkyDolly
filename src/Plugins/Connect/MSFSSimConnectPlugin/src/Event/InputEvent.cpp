@@ -29,6 +29,7 @@
 
 #include <QByteArray>
 #include <QKeySequence>
+#include <QFlags>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -47,6 +48,21 @@ namespace
     enum struct NotificationGroup: ::SIMCONNECT_NOTIFICATION_GROUP_ID {
         ShortcutsGroup
     };
+
+    enum struct KeySequenceState: std::uint32_t
+    {
+        None = 0x0,
+        Record = 0x1,
+        Replay = 0x2,
+        Pause = 0x4,
+        Stop = 0x8,
+        Forward = 0x8,
+        Backward = 0x10,
+        Begin = 0x20,
+        End = 0x40,
+        All = 0xffffffff
+    };
+    Q_DECLARE_FLAGS(KeySequenceStates, KeySequenceState)
 }
 
 // PRIVATE
@@ -54,18 +70,79 @@ namespace
 struct InputEventPrivate
 {
     bool isInitialised {false};
+    KeySequenceStates keySequenceStates {KeySequenceState::None};
 
-    // https://docs.flightsimulator.com/html/Programming_Tools/SimConnect/API_Reference/Events_And_Data/SimConnect_MapInputEventToClientEvent.htm
-    static const inline std::unordered_map<QString, QByteArray> qtToMSFS {
-        { "Alt", "VK_LMENU" },
-        { "Ctrl", "VK_LCONTROL" },
-        { "Shift", "VK_LSHIFT" },
-        { "Up", "VK_UP" },
-        { "Down", "VK_DOWN" },
-        { "Left", "VK_LEFT" },
-        { "Right", "VK_RIGHT" },
-        { "PgUp", "VK_PRIOR" },
-        { "PgDown", "VK_NEXT" }
+    // https://docs.flightsimulator.com/html/Programming_Tools/SimConnect/API_Reference/InputEvents/SimConnect_MapInputEventToClientEvent_EX1.htm
+    const std::unordered_map<Qt::Key, QByteArray> qtToMSFS {
+        { Qt::Key_Backspace, "Backspace" },
+        { Qt::Key_Tab, "Tab" },
+        // Note: the SimConnect documentation says "VK_Enter", but it is really "Enter"
+        { Qt::Key_Enter, "Enter" },
+        { Qt::Key_Return, "Enter" },
+        { Qt::Key_Pause, "VK_PAUSE" },
+        { Qt::Key_CapsLock, "Caps_Lock" },
+        { Qt::Key_Escape, "Esc" },
+        { Qt::Key_Space, "Space" },
+        { Qt::Key_PageUp, "VK_PRIOR" },
+        { Qt::Key_PageDown, "VK_NEXT" },
+        { Qt::Key_End, "VK_END" },
+        { Qt::Key_Home, "VK_HOME" },
+        { Qt::Key_Left, "VK_LEFT" },
+        { Qt::Key_Up, "VK_UP" },
+        { Qt::Key_Right, "VK_RIGHT" },
+        { Qt::Key_Down, "VK_DOWN" },
+        { Qt::Key_Select, "VK_SELECT" },
+        { Qt::Key_Print, "VK_PRINT" },
+        { Qt::Key_Execute, "VK_EXECUTE" },
+        { Qt::Key_SysReq, "Sys_Req" },
+        { Qt::Key_Insert, "VK_INSERT" },
+        { Qt::Key_Delete, "VK_DELETE" },
+        { Qt::Key_Help, "VK_HELP" },
+        { Qt::Key_Meta, "VK_LWIN" },
+        { Qt::Key_Sleep, "VK_SLEEP" },
+        { Qt::Key_multiply, "VK_MULTIPLY" },
+        { Qt::Key_Asterisk, "VK_MULTIPLY" },
+        { Qt::Key_division, "VK_DIVIDE" },
+        { Qt::Key_Pause, "Pause" },
+        { Qt::Key_ScrollLock, "VK_SCROLL" },
+        { Qt::Key_Shift, "VK_LSHIFT" },
+        { Qt::Key_Control, "VK_LCONTROL" },
+        { Qt::Key_Alt, "VK_LMENU" },
+        { Qt::Key_AltGr, "VK_RMENU" },
+        { Qt::Key_VolumeMute, "VK_VOLUME_MUTE" },
+        { Qt::Key_VolumeDown, "VK_VOLUME_DOWN" },
+        { Qt::Key_VolumeUp, "VK_VOLUME_UP" },
+        { Qt::Key_MediaNext, "VK_MEDIA_NEXT_TRACK" },
+        { Qt::Key_MediaPrevious, "VK_MEDIA_PREV_TRACK" },
+        { Qt::Key_MediaStop, "VK_MEDIA_STOP" },
+        { Qt::Key_MediaTogglePlayPause, "VK_MEDIA_PLAY_PAUSE" },
+        { Qt::Key_Semicolon, "VK_SEMICOLON" },
+        { Qt::Key_Plus, "VK_PLUS" },
+        { Qt::Key_Comma, "VK_COMMA" },
+        { Qt::Key_Minus, "VK_MINUS" },
+        { Qt::Key_Period, "VK_PERIOD" },
+        { Qt::Key_Slash, "VK_SLASH" },
+        { Qt::Key_AsciiTilde, "VK_TILDE" },
+        { Qt::Key_BracketLeft, "VK_LBRACKET" },
+        { Qt::Key_Backslash, "VK_BACKSLASH" },
+        { Qt::Key_BracketRight, "VK_RBRACKET" },
+        { Qt::Key_QuoteDbl, "VK_QUOTE" },
+        { Qt::Key_Play, "VK_PLAY" },
+        { Qt::Key_Zoom, "VK_ZOOM" }
+    };
+
+    const std::unordered_map<Qt::KeyboardModifier, QByteArray> qtModifierToMSFS {
+        { Qt::ShiftModifier, "VK_LSHIFT" },
+        { Qt::ControlModifier, "VK_LCONTROL" },
+        { Qt::AltModifier, "VK_LMENU" },
+        { Qt::MetaModifier, "VK_LWIN" }
+    };
+
+    const std::unordered_map<QByteArray, QByteArray> numpadify {
+        { "VK_PLUS", "VK_ADD" },
+        { "VK_MINUS", "VK_SUBTRACT" },
+        { "VK_PERIOD", "VK_DECIMAL" },
+        { "VK_SLASH", "VK_DIVIDE" }
     };
 };
 
@@ -81,56 +158,81 @@ bool InputEvent::setup(HANDLE simConnectHandle, const FlightSimulatorShortcuts &
 {
     HRESULT result {S_OK};
     if (d->isInitialised) {
-        result = clear(simConnectHandle);
+        result = clear(simConnectHandle) ? S_OK : S_FALSE;
     }
 
+    QByteArray shortcut;
     // Recording
-    QByteArray shortcut = toMSFSShortcut(shortcuts.record);
-    result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomRecording), "Custom.Recording");
-    result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomRecording));
-    result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomRecording));
+    if (shortcuts.record.count() > 0) {
+        shortcut = toMSFSShortcut(shortcuts.record);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomRecord), "Custom.Recording");
+        result |= ::SimConnect_MapInputEventToClientEvent_EX1(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomRecord));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomRecord));
+        d->keySequenceStates.setFlag(::KeySequenceState::Record);
+    }
 
     // Replay
-    shortcut = toMSFSShortcut(shortcuts.replay);
-    result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomReplay), "Custom.Replay");
-    result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomReplay));
-    result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomReplay));
+    if (shortcuts.replay.count() > 0) {
+        shortcut = toMSFSShortcut(shortcuts.replay);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomReplay), "Custom.Replay");
+        result |= ::SimConnect_MapInputEventToClientEvent_EX1(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomReplay));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomReplay));
+        d->keySequenceStates.setFlag(::KeySequenceState::Replay);
+    }
 
     // Pause
-    shortcut = toMSFSShortcut(shortcuts.pause);
-    result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomPause), "Custom.Pause");
-    result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomPause));
-    result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomPause));
+    if (shortcuts.pause.count() > 0) {
+        shortcut = toMSFSShortcut(shortcuts.pause);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomPause), "Custom.Pause");
+        result |= ::SimConnect_MapInputEventToClientEvent_EX1(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomPause));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomPause));
+        d->keySequenceStates.setFlag(::KeySequenceState::Pause);
+    }
 
     // Stop
-    shortcut = toMSFSShortcut(shortcuts.stop);
-    result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomStop), "Custom.Stop");
-    result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomStop));
-    result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomStop));
+    if (shortcuts.stop.count() > 0) {
+        shortcut = toMSFSShortcut(shortcuts.stop);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomStop), "Custom.Stop");
+        result |= ::SimConnect_MapInputEventToClientEvent_EX1(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomStop));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomStop));
+        d->keySequenceStates.setFlag(::KeySequenceState::Stop);
+    }
 
     // Backward
-    shortcut = toMSFSShortcut(shortcuts.backward);
-    result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomBackward), "Custom.Backward");
-    result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomBackward));
-    result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomBackward));
+    if (shortcuts.backward.count() > 0) {
+        shortcut = toMSFSShortcut(shortcuts.backward);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomBackward), "Custom.Backward");
+        result |= ::SimConnect_MapInputEventToClientEvent_EX1(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomBackward));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomBackward));
+        d->keySequenceStates.setFlag(::KeySequenceState::Backward);
+    }
 
     // Forward
-    shortcut = toMSFSShortcut(shortcuts.forward);
-    result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomForward), "Custom.Forward");
-    result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomForward));
-    result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomForward));
+    if (shortcuts.forward.count() > 0) {
+        shortcut = toMSFSShortcut(shortcuts.forward);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomForward), "Custom.Forward");
+        result |= ::SimConnect_MapInputEventToClientEvent_EX1(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomForward));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomForward));
+        d->keySequenceStates.setFlag(::KeySequenceState::Forward);
+    }
 
     // Begin
-    shortcut = toMSFSShortcut(shortcuts.begin);
-    result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomBegin), "Custom.Begin");
-    result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomBegin));
-    result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomBegin));
+    if (shortcuts.begin.count() > 0) {
+        shortcut = toMSFSShortcut(shortcuts.begin);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomBegin), "Custom.Begin");
+        result |= ::SimConnect_MapInputEventToClientEvent_EX1(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomBegin));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomBegin));
+        d->keySequenceStates.setFlag(::KeySequenceState::Begin);
+    }
 
     // End
-    shortcut = toMSFSShortcut(shortcuts.end);
-    result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomEnd), "Custom.End");
-    result |= ::SimConnect_MapInputEventToClientEvent(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomEnd));
-    result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomEnd));
+    if (shortcuts.end.count() > 0) {
+        shortcut = toMSFSShortcut(shortcuts.end);
+        result |= ::SimConnect_MapClientEventToSimEvent(simConnectHandle, Enum::underly(SimConnectEvent::Event::CustomEnd), "Custom.End");
+        result |= ::SimConnect_MapInputEventToClientEvent_EX1(simConnectHandle, Enum::underly(Input::SkyDollyControl), shortcut, Enum::underly(SimConnectEvent::Event::CustomEnd));
+        result |= ::SimConnect_AddClientEventToNotificationGroup(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomEnd));
+        d->keySequenceStates.setFlag(::KeySequenceState::End);
+    }
 
     result |= ::SimConnect_SetNotificationGroupPriority(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), SIMCONNECT_GROUP_PRIORITY_HIGHEST);
     result |= ::SimConnect_SetInputGroupState(simConnectHandle, Enum::underly(Input::SkyDollyControl), SIMCONNECT_STATE_ON);
@@ -144,37 +246,87 @@ bool InputEvent::setup(HANDLE simConnectHandle, const FlightSimulatorShortcuts &
 
 bool InputEvent::clear(HANDLE simConnectHandle) noexcept
 {
-    HRESULT result = ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomRecording));
-    result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomReplay));
-    result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomPause));
-    result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomStop));
-    result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomBackward));
-    result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomForward));
-    result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomBegin));
-    result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomEnd));
+    HRESULT result {S_OK};
+    if (d->keySequenceStates.testFlag(::KeySequenceState::Record))
+    {
+        result = ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomRecord));
+    }
+    if (d->keySequenceStates.testFlag(::KeySequenceState::Replay))
+    {
+        result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomReplay));
+    }
+    if (d->keySequenceStates.testFlag(::KeySequenceState::Pause))
+    {
+        result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomPause));
+    }
+    if (d->keySequenceStates.testFlag(::KeySequenceState::Stop))
+    {
+        result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomStop));
+    }
+    if (d->keySequenceStates.testFlag(::KeySequenceState::Backward))
+    {
+        result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomBackward));
+    }
+    if (d->keySequenceStates.testFlag(::KeySequenceState::Forward))
+    {
+        result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomForward));
+    }
+    if (d->keySequenceStates.testFlag(::KeySequenceState::Begin))
+    {
+        result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomBegin));
+    }
+    if (d->keySequenceStates.testFlag(::KeySequenceState::End))
+    {
+        result |= ::SimConnect_RemoveClientEvent(simConnectHandle, Enum::underly(NotificationGroup::ShortcutsGroup), Enum::underly(SimConnectEvent::Event::CustomEnd));
+    }
+    d->keySequenceStates = ::KeySequenceState::None;
     result |= ::SimConnect_ClearInputGroup(simConnectHandle, Enum::underly(Input::SkyDollyControl));
 
     return result == S_OK;
 }
 
-QByteArray InputEvent::toMSFSShortcut(const QKeySequence &sequence) noexcept {
-    QStringList keys = sequence.toString().split('+');
+QByteArray InputEvent::toMSFSShortcut(const QKeySequence &sequence) const noexcept
+{
     QByteArray shortcut;
-    shortcut.reserve(keys.size() * 6);
-    bool hasKey {false};
-    for (const QString &key: keys) {
-        if (hasKey) {
-            shortcut.append('+');
+
+    const QKeyCombination combination = sequence[0];
+    const auto modifier = combination.keyboardModifiers();
+    bool numpadModifier {false};
+    if (modifier != Qt::NoModifier) {
+        if (modifier.testFlag(Qt::ShiftModifier)) {
+            auto msfsModifier = d->qtModifierToMSFS.at(Qt::ShiftModifier);
+            shortcut.append(msfsModifier).append('+');
         }
-        if (InputEventPrivate::qtToMSFS.contains(key)) {
-            shortcut.append(InputEventPrivate::qtToMSFS.at(key));
-        } else {
-            shortcut.append(key.toLatin1());
+        if (modifier.testFlag(Qt::ControlModifier)) {
+            auto msfsModifier = d->qtModifierToMSFS.at(Qt::ControlModifier);
+            shortcut.append(msfsModifier).append('+');
         }
-        hasKey = true;
+        if (modifier.testFlag(Qt::AltModifier)) {
+            auto msfsModifier = d->qtModifierToMSFS.at(Qt::AltModifier);
+            shortcut.append(msfsModifier).append('+');
+        }
+        if (modifier.testFlag(Qt::MetaModifier)) {
+            auto msfsModifier = d->qtModifierToMSFS.at(Qt::MetaModifier);
+            shortcut.append(msfsModifier).append('+');
+        }
+        if (modifier.testFlag(Qt::KeypadModifier)) {
+            numpadModifier = true;
+        }
+    }
+
+    const auto key = combination.key();
+    if (d->qtToMSFS.contains(key)) {
+        auto msfsKey = d->qtToMSFS.at(key);
+        if (numpadModifier) {
+            msfsKey =  d->numpadify.contains(msfsKey) ? d->numpadify.at(msfsKey) : msfsKey;
+        }
+        shortcut.append(msfsKey);
+    } else {
+        QStringList keys = sequence.toString().split('+');
+        shortcut.append(keys.last().toLatin1());
     }
 #ifdef DEBUG
-    qDebug() << "InputEvent::toMSFSShortcut: Qt:" << sequence.toString() << "MSFS:" << shortcut;
+    qDebug() << "InputEvent::toMSFSShortcut: Qt:" << sequence.toString() << "key:" << key << "MSFS:" << shortcut;
 #endif
     return shortcut;
 }

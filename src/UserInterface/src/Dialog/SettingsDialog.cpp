@@ -104,11 +104,11 @@ void SettingsDialog::initUi() noexcept
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     // Replay
-    ui->seekInSecondsSpinBox->setMinimum(MinSeekSeconds);
-    ui->seekInSecondsSpinBox->setMaximum(MaxSeekSeconds);
+    ui->seekInSecondsSpinBox->setMinimum(::MinSeekSeconds);
+    ui->seekInSecondsSpinBox->setMaximum(::MaxSeekSeconds);
 
-    ui->seekInPercentSpinBox->setMinimum(MinSeekPercent);
-    ui->seekInPercentSpinBox->setMaximum(MaxSeekPercent);
+    ui->seekInPercentSpinBox->setMinimum(::MinSeekPercent);
+    ui->seekInPercentSpinBox->setMaximum(::MaxSeekPercent);
 
     ui->repeatCanopyOpenCheckBox->setToolTip(SimVar::CanopyOpen);
 

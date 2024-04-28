@@ -50,8 +50,8 @@ public:
 private:
     const std::unique_ptr<InputEventPrivate> d;
 
-    static bool clear(HANDLE simConnectHandle) noexcept;
-    static QByteArray toMSFSShortcut(const QKeySequence &sequence) noexcept;
+    bool clear(HANDLE simConnectHandle) noexcept;
+    QByteArray toMSFSShortcut(const QKeySequence &sequence) const noexcept;
 };
 
 #endif // INPUTEVENT_H

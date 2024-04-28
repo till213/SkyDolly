@@ -23,11 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <cstdint>
 
 #include <QFile>
 #include <QFileInfo>
-#include <QFlags>
 
 #include <Kernel/Unit.h>
 #include <Model/Flight.h>

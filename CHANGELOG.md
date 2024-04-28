@@ -10,7 +10,7 @@
   * Skip to begin
   * The shortcuts can be defined in the Sky Dolly application settings
 - Desktop notifications indicate whether recording has started, paused/resumed or stopped
-  * In order to make desktop notifications visible when the flight simulator is in fullscreen enable the overlay in the Windows settings
+  * In order to make desktop notifications visible when the flight simulator is in fullscreen adjust the corresponding notification rules in the Windows settings (-> Notification Assistant) 
 
 ### Improvements
 - The default logbook name is now *Sky Dolly Logbook*

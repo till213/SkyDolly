@@ -31,7 +31,6 @@
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>
-#include <QFlags>
 
 #include <Kernel/Unit.h>
 #include <Model/FlightData.h>
