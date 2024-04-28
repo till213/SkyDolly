@@ -529,7 +529,7 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
 {
     const auto hWnd = reinterpret_cast<HWND>(d->eventWidget->winId());
     const DWORD userEvent = EventWidget::SimConnectUserMessage;
-    const HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, ::SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
+    const HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, 0);
     if (result == S_OK) {
         d->eventStateHandler->setSimConnectHandle(d->simConnectHandle);
         d->simConnectAi = std::make_unique<SimConnectAi>(d->simConnectHandle);
