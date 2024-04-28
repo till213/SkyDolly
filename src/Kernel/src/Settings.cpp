@@ -141,12 +141,13 @@ struct SettingsPrivate
 
     static inline const QKeySequence DefaultRecordShortcut {"Ctrl+R"};
     static inline const QKeySequence DefaultReplayShortcut {"Ctrl+P"};
-    static inline const QKeySequence DefaultPauseShortcut {"Ctrl+Shift+P"};
+    static inline const QKeySequence DefaultPauseShortcut {"Alt+P"};
     static inline const QKeySequence DefaultStopShortcut {"Ctrl+S"};
-    static inline const QKeySequence DefaultBackwardShortcut {"Ctrl+Num++"};
-    static inline const QKeySequence DefaultForwardShortcut {"Ctrl+Num+-"};
-    static inline const QKeySequence DefaultBeginShortcut {"Home"};
-    static inline const QKeySequence DefaultEndShortcut {"End"};
+    static inline const QKeySequence DefaultBackwardShortcut {"Ctrl+,"};
+    static inline const QKeySequence DefaultForwardShortcut {"Ctrl+."};
+    // TODO Find good default keys that are not already taken my the MSFS default keyboard layout
+    static inline const QKeySequence DefaultBeginShortcut {"Ctrl+PgUp"};
+    static inline const QKeySequence DefaultEndShortcut {"Ctrl+PgDown"};
     static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {
         DefaultRecordShortcut,
         DefaultReplayShortcut,

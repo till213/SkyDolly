@@ -4,11 +4,11 @@
 
 ### New Features
 - Keyboard shortcuts can be defined and triggered within the flight simulator, in order to:
-  * Toggle recording / replay
-  * Pause / Stop
-  * Skip forward/backward
-  * Skip to begin
-  * The shortcuts can be defined in the Sky Dolly application settings
+  * Toggle recording (CTRL+R) and replay (CTRL+P) 
+  * Pause (ALT+P) and Stop (CTRL+S)
+  * Skip forward (CTRL+.) and backward (CTRL+,)
+  * Skip to begin (CTRL+PageUp) and end (CTRL+PageDown)
+  * The shortcuts can be defined in the Sky Dolly application settings (no restart required)
 - Desktop notifications indicate whether recording has started, paused/resumed or stopped
   * In order to make desktop notifications visible when the flight simulator is in fullscreen adjust the corresponding notification rules in the Windows settings (-> Notification Assistant) 
 
