@@ -73,7 +73,17 @@ target_include_directories(${MODULE_NAME}
 )
 
 # Copy SimConnect.dll to bin directory
-add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
+add_custom_command(
+    TARGET ${MODULE_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:MSFS::SimConnect>
-        $<TARGET_FILE_DIR:${MODULE_NAME}>/../../)
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)
+
+# Copy example SimConnect.cfg
+add_custom_command(
+    TARGET ${MODULE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/SimConnect.cfg
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)
