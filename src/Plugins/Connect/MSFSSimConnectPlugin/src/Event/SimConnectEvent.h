@@ -89,7 +89,7 @@ namespace SimConnectEvent
         ToggleLogoLights,
         ToggleCabinLights,
         // Custom input events
-        CustomRecording,
+        CustomRecord,
         CustomReplay,
         CustomPause,
         CustomStop,

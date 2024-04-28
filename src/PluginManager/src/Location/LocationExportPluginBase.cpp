@@ -132,7 +132,7 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
             QDesktopServices::openUrl(QUrl(fileUrl));
         }
     } else {
-        QMessageBox::critical(PluginBase::getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(QDir::toNativeSeparators(filePath)));
+        QMessageBox::critical(PluginBase::getParentWidget(), tr("Export Error"), tr("An error occured during export into file %1.").arg(QDir::toNativeSeparators(filePath)));
     }
 
     return ok;

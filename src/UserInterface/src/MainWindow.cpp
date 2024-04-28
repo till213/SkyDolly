@@ -224,7 +224,7 @@ bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
     if (d->connectedWithLogbook) {
         RecentFile::getInstance().addRecentFile(filePath);
     } else {
-        QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
+        QMessageBox::critical(this, tr("Logbook Error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
     }
     return d->connectedWithLogbook;
 }
@@ -1636,7 +1636,7 @@ void MainWindow::createNewLogbook() noexcept
         if (ok) {
             RecentFile::getInstance().addRecentFile(logbookPath);
         } else {
-            QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be created.").arg(QDir::toNativeSeparators(logbookPath)));
+            QMessageBox::critical(this, tr("Logbook Error"), tr("The logbook %1 could not be created.").arg(QDir::toNativeSeparators(logbookPath)));
         }
     }
 }
@@ -1659,7 +1659,7 @@ void MainWindow::onRecentFileSelected(const QString &filePath, SecurityToken *se
     if (ok) {
         ok = connectWithLogbook(filePath);
     } else {
-        QMessageBox::critical(this, tr("Logbook not found"), tr("The logbook %1 does not exist.").arg(QDir::toNativeSeparators(filePath)));
+        QMessageBox::critical(this, tr("Logbook Not Found"), tr("The logbook %1 does not exist.").arg(QDir::toNativeSeparators(filePath)));
     }
     if (!ok) {
         RecentFile::getInstance().removeRecentFile(filePath);
@@ -1706,7 +1706,7 @@ void MainWindow::optimiseLogbook() noexcept
                                            .arg(d->unit.formatMemory(fileInfo.size()), d->unit.formatMemory(oldSize)));
             messageBox->exec();
         } else {
-            QMessageBox::critical(this, tr("Logbook error"), tr("The logbook could not be optimised."));
+            QMessageBox::critical(this, tr("Logbook Error"), tr("The logbook could not be optimised."));
         }
     }
 }

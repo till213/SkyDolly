@@ -33,7 +33,6 @@
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>
-#include <QFlags>
 #include <QWidget>
 
 #include <Flight/Analytics.h>

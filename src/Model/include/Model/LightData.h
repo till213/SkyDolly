@@ -25,9 +25,6 @@
 #ifndef LIGHTDATA_H
 #define LIGHTDATA_H
 
-#include <QtGlobal>
-#include <QFlags>
-
 #include "SimType.h"
 #include "TimeVariableData.h"
 #include "ModelLib.h"

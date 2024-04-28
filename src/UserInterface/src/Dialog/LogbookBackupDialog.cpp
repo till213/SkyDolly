@@ -98,7 +98,7 @@ void LogbookBackupDialog::accept() noexcept
     }
 
     if (!ok) {
-        QMessageBox::critical(this, tr("Logbook error"), tr("The logbook backup could not be created."));
+        QMessageBox::critical(this, tr("Backup Error"), tr("The logbook backup could not be created."));
     }
 }
 

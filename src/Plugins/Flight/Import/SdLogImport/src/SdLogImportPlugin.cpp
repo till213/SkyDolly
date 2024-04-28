@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <vector>
-#include <unordered_set>
 
 #include <QFile>
 #include <QFileInfo>
@@ -34,7 +33,6 @@
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>
-#include <QFlags>
 #include <QWidget>
 
 #include <Kernel/Const.h>

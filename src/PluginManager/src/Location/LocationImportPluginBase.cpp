@@ -92,7 +92,7 @@ bool LocationImportPluginBase::importLocations() noexcept
         qDebug() << QFileInfo(selectedPath).fileName() << "import" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
 #endif
         if (!ok && !baseSettings.isImportDirectoryEnabled()) {
-            QMessageBox::critical(PluginBase::getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
+            QMessageBox::critical(PluginBase::getParentWidget(), tr("Import Error"), tr("The file %1 could not be imported.").arg(selectedPath));
         }
 
     }
@@ -143,7 +143,7 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths) noe
             messageBox->setIcon(QMessageBox::Critical);
             QPushButton *proceedButton = messageBox->addButton(tr("&Proceed"), QMessageBox::AcceptRole);
             QPushButton *ignoreAllButton = messageBox->addButton(tr("&Ignore All Failures"), QMessageBox::YesRole);
-            messageBox->setWindowTitle(tr("Import failure"));
+            messageBox->setWindowTitle(tr("Import Error"));
             messageBox->setText(tr("The file %1 could not be imported. Do you want to proceed with the remaining files in directory %2?").arg(fileInfo.fileName(), fileInfo.dir().dirName()));
             messageBox->setInformativeText(tr("Aborting will keep the already successfully imported flights and aircraft."));
             messageBox->setStandardButtons(QMessageBox::Cancel);

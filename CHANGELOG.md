@@ -4,12 +4,13 @@
 
 ### New Features
 - Keyboard shortcuts can be defined and triggered within the flight simulator, in order to:
-  * Toggle recording / replay
-  * Pause / Stop
-  * Skip forward/backward
-  * Skip to begin
-  * The shortcuts can be defined in the Sky Dolly application settings
-- Desktop notifications indicate whether recording has started, paused/resumed and stopped
+  * Toggle recording (CTRL+R) and replay (CTRL+P) 
+  * Pause (ALT+P) and Stop (CTRL+S)
+  * Skip forward (CTRL+.) and backward (CTRL+,)
+  * Skip to begin (CTRL+PageUp) and end (CTRL+PageDown)
+  * The shortcuts can be defined in the Sky Dolly application settings (no restart required)
+- Desktop notifications indicate whether recording has started, paused/resumed or stopped
+  * In order to make desktop notifications visible when the flight simulator is in fullscreen adjust the corresponding notification rules in the Windows settings (-> Notification Assistant) 
 
 ### Improvements
 - The default logbook name is now *Sky Dolly Logbook*
@@ -28,6 +29,7 @@
   * The default import CSV format is now: *Flightradar24*
   * The default export CSV format is now: *Position and attitude*
   * Use the Sky Dolly logbook import & export instead
+- Dialog titles are now consistently in Title Case and streamlined ("Write Error", "Read Error", ...)
   
 ### Bug Fixes
 - KML export: the _first_ position point is now properly exported as well

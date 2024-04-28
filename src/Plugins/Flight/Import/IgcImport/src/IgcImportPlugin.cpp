@@ -31,7 +31,6 @@
 
 #include <QStringBuilder>
 #include <QIODevice>
-#include <QFlags>
 #include <QByteArray>
 #include <QDate>
 #include <QDateTime>

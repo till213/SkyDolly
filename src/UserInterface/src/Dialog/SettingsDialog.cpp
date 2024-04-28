@@ -104,11 +104,11 @@ void SettingsDialog::initUi() noexcept
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     // Replay
-    ui->seekInSecondsSpinBox->setMinimum(MinSeekSeconds);
-    ui->seekInSecondsSpinBox->setMaximum(MaxSeekSeconds);
+    ui->seekInSecondsSpinBox->setMinimum(::MinSeekSeconds);
+    ui->seekInSecondsSpinBox->setMaximum(::MaxSeekSeconds);
 
-    ui->seekInPercentSpinBox->setMinimum(MinSeekPercent);
-    ui->seekInPercentSpinBox->setMaximum(MaxSeekPercent);
+    ui->seekInPercentSpinBox->setMinimum(::MinSeekPercent);
+    ui->seekInPercentSpinBox->setMaximum(::MaxSeekPercent);
 
     ui->repeatCanopyOpenCheckBox->setToolTip(SimVar::CanopyOpen);
 
@@ -153,6 +153,51 @@ void SettingsDialog::frenchConnection() noexcept
             this, &SettingsDialog::handleAccepted);
     connect(ui->settingsTabWidget, &QTabWidget::currentChanged,
             this, &SettingsDialog::handleTabChanged);
+
+    connect(ui->recordSequenceEdit, &QKeySequenceEdit::editingFinished,
+            this, &SettingsDialog::handleRecordKeySequence);
+    connect(ui->replaySequenceEdit, &QKeySequenceEdit::editingFinished,
+            this, &SettingsDialog::handleReplayKeySequence);
+    connect(ui->pauseSequenceEdit, &QKeySequenceEdit::editingFinished,
+            this, &SettingsDialog::handlePauseKeySequence);
+    connect(ui->stopSequenceEdit, &QKeySequenceEdit::editingFinished,
+            this, &SettingsDialog::handleStopKeySequence);
+    connect(ui->backwardSequenceEdit, &QKeySequenceEdit::editingFinished,
+            this, &SettingsDialog::handleBackwardKeySequence);
+    connect(ui->forwardSequenceEdit, &QKeySequenceEdit::editingFinished,
+            this, &SettingsDialog::handleForwardKeySequence);
+    connect(ui->beginSequenceEdit, &QKeySequenceEdit::editingFinished,
+            this, &SettingsDialog::handleBeginKeySequence);
+    connect(ui->endSequenceEdit, &QKeySequenceEdit::editingFinished,
+            this, &SettingsDialog::handleEndKeySequence);
+}
+
+void SettingsDialog::handleDuplicateKeySequences(QKeySequence keySequence, KeySequence source) const noexcept
+{
+    if (source != KeySequence::Record && ui->recordSequenceEdit->keySequence() == keySequence) {
+        ui->recordSequenceEdit->clear();
+    }
+    if (source != KeySequence::Replay && ui->replaySequenceEdit->keySequence() == keySequence) {
+        ui->replaySequenceEdit->clear();
+    }
+    if (source != KeySequence::Pause && ui->pauseSequenceEdit->keySequence() == keySequence) {
+        ui->pauseSequenceEdit->clear();
+    }
+    if (source != KeySequence::Stop && ui->stopSequenceEdit->keySequence() == keySequence) {
+        ui->stopSequenceEdit->clear();
+    }
+    if (source != KeySequence::Backward && ui->backwardSequenceEdit->keySequence() == keySequence) {
+        ui->backwardSequenceEdit->clear();
+    }
+    if (source != KeySequence::Forward && ui->forwardSequenceEdit->keySequence() == keySequence) {
+        ui->forwardSequenceEdit->clear();
+    }
+    if (source != KeySequence::Begin && ui->beginSequenceEdit->keySequence() == keySequence) {
+        ui->beginSequenceEdit->clear();
+    }
+    if (source != KeySequence::End && ui->endSequenceEdit->keySequence() == keySequence) {
+        ui->endSequenceEdit->clear();
+    }
 }
 
 // PRIVATE SLOTS
@@ -300,4 +345,52 @@ void SettingsDialog::handleTabChanged(int index) noexcept
 #endif
         break;
     }
+}
+
+void SettingsDialog::handleRecordKeySequence() const noexcept
+{
+    auto sequence = ui->recordSequenceEdit->keySequence();
+    handleDuplicateKeySequences(sequence, KeySequence::Record);
+}
+
+void SettingsDialog::handleReplayKeySequence() const noexcept
+{
+    auto sequence = ui->replaySequenceEdit->keySequence();
+    handleDuplicateKeySequences(sequence, KeySequence::Replay);
+}
+
+void SettingsDialog::handlePauseKeySequence() const noexcept
+{
+    auto sequence = ui->pauseSequenceEdit->keySequence();
+    handleDuplicateKeySequences(sequence, KeySequence::Pause);
+}
+
+void SettingsDialog::handleStopKeySequence() const noexcept
+{
+    auto sequence = ui->stopSequenceEdit->keySequence();
+    handleDuplicateKeySequences(sequence, KeySequence::Stop);
+}
+
+void SettingsDialog::handleBackwardKeySequence() const noexcept
+{
+    auto sequence = ui->backwardSequenceEdit->keySequence();
+    handleDuplicateKeySequences(sequence, KeySequence::Backward);
+}
+
+void SettingsDialog::handleForwardKeySequence() const noexcept
+{
+    auto sequence = ui->forwardSequenceEdit->keySequence();
+    handleDuplicateKeySequences(sequence, KeySequence::Forward);
+}
+
+void SettingsDialog::handleBeginKeySequence() const noexcept
+{
+    auto sequence = ui->beginSequenceEdit->keySequence();
+    handleDuplicateKeySequences(sequence, KeySequence::Begin);
+}
+
+void SettingsDialog::handleEndKeySequence() const noexcept
+{
+    auto sequence = ui->endSequenceEdit->keySequence();
+    handleDuplicateKeySequences(sequence, KeySequence::End);
 }

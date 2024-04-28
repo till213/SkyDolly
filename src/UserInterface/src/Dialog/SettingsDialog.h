@@ -28,6 +28,7 @@
 #include <memory>
 
 #include <QDialog>
+#include <QKeySequence>
 
 namespace Ui {
     class SettingsDialog;
@@ -51,17 +52,39 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
+    enum struct KeySequence
+    {
+        Record,
+        Replay,
+        Pause,
+        Stop,
+        Backward,
+        Forward,
+        Begin,
+        End
+    };
+
     std::unique_ptr<Ui::SettingsDialog> ui;
     const std::unique_ptr<SettingsDialogPrivate> d;
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
+    void handleDuplicateKeySequences(QKeySequence keySequence, KeySequence source) const noexcept;
 
 private slots:
     void updateUi() noexcept;
     void updateConnectionStatus() noexcept;
     void handleAccepted() noexcept;
     void handleTabChanged(int index) noexcept;
+
+    void handleRecordKeySequence() const noexcept;
+    void handleReplayKeySequence() const noexcept;
+    void handlePauseKeySequence() const noexcept;
+    void handleStopKeySequence() const noexcept;
+    void handleBackwardKeySequence() const noexcept;
+    void handleForwardKeySequence() const noexcept;
+    void handleBeginKeySequence() const noexcept;
+    void handleEndKeySequence() const noexcept;
 };
 
 #endif // SETTINGSDIALOG_H

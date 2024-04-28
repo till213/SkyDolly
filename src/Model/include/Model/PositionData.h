@@ -25,9 +25,6 @@
 #ifndef POSITIONDATA_H
 #define POSITIONDATA_H
 
-#include <QtGlobal>
-#include <QFlags>
-
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
