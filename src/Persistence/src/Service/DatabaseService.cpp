@@ -328,7 +328,7 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
                 newLogbookPath = logbookDirectoryPath + "/" % fileInfo.fileName() % Const::DotLogbookExtension;
                 retry = false;
             } else {
-                QMessageBox::information(parent, QCoreApplication::translate("DatabaseService", "Database exists"),
+                QMessageBox::information(parent, QCoreApplication::translate("DatabaseService", "Database Exists"),
                                          QCoreApplication::translate("DatabaseService", "The logbook %1 already exists. Please choose another path.").arg(QDir::toNativeSeparators(logbookDirectoryPath)));
             }
         } else {

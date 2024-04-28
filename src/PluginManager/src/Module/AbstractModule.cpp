@@ -144,7 +144,7 @@ void AbstractModule::onRecordingStopped() noexcept
     if (!ok) {
         const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
         const QString logbookPath = QDir::toNativeSeparators(persistenceManager.getLogbookPath());
-        QMessageBox::critical(getWidget(), tr("Flight error"), tr("The flight could not be stored into the logbook %1.").arg(logbookPath));
+        QMessageBox::critical(getWidget(), tr("Write Error"), tr("The flight could not be stored into the logbook %1.").arg(logbookPath));
     }
 }
 

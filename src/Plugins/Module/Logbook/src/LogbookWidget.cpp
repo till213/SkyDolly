@@ -775,7 +775,7 @@ void LogbookWidget::loadFlight() noexcept
         if (selectedFlightId != Const::InvalidId) {
             const bool ok = d->flightService->restoreFlight(selectedFlightId, Logbook::getInstance().getCurrentFlight());
             if (!ok) {
-                QMessageBox::critical(this, tr("Logbook error"), tr("The flight %1 could not be read from the logbook.").arg(selectedFlightId));
+                QMessageBox::critical(this, tr("Read Error"), tr("The flight %1 could not be read from the logbook.").arg(selectedFlightId));
             }
         }
     }

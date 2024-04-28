@@ -133,7 +133,7 @@ void FormationPlugin::onRecordingStopped() noexcept
             flight.removeLastAircraft();
             const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
             const QString logbookPath = QDir::toNativeSeparators(persistenceManager.getLogbookPath());
-            QMessageBox::critical(getWidget(), tr("Aircraft error"), tr("The aircraft could not be stored into the logbook %1.").arg(logbookPath));
+            QMessageBox::critical(getWidget(), tr("Write Error"), tr("The aircraft could not be stored into the logbook %1.").arg(logbookPath));
         }
     } else {
         AbstractModule::onRecordingStopped();

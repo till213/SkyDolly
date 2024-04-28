@@ -28,6 +28,7 @@
   * The default import CSV format is now: *Flightradar24*
   * The default export CSV format is now: *Position and attitude*
   * Use the Sky Dolly logbook import & export instead
+- Dialog titles are now consistently in Title Case and streamlined ("Write Error", "Read Error", ...)
   
 ### Bug Fixes
 - KML export: the _first_ position point is now properly exported as well
