@@ -1,6 +1,8 @@
 set(LIBRARY_NAME "PluginManager")
 
-qt_add_library(${LIBRARY_NAME} SHARED)
+qt_add_library(${LIBRARY_NAME} SHARED
+    include/PluginManager/Connect/ConnectPluginBaseSettings.h
+    src/Connect/ConnectPluginBaseSettings.cpp)
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_compile_definitions(${LIBRARY_NAME}
@@ -21,6 +23,7 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/Connect/Connect.h
         include/PluginManager/Connect/SkyConnectIntf.h
         include/PluginManager/Connect/AbstractSkyConnect.h src/Connect/AbstractSkyConnect.cpp
+        include/PluginManager/Connect/ConnectPluginBaseSettings.h src/Connect/ConnectPluginBaseSettings.cpp
         # Flight import & export plugins
         include/PluginManager/Flight/FlightExportIntf.h
         include/PluginManager/Flight/FlightImportIntf.h
