@@ -112,6 +112,22 @@ bool SkyConnectManager::hasPlugins() const noexcept
     return d->pluginRegistry.size() > 0;
 }
 
+void SkyConnectManager::storeSettings() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().storeSettings(d->currentPluginUuid);
+    }
+}
+
+void SkyConnectManager::restoreSettings() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().restoreSettings(d->currentPluginUuid);
+    }
+}
+
 std::optional<std::reference_wrapper<SkyConnectIntf>> SkyConnectManager::getCurrentSkyConnect() const noexcept
 {
     QObject *plugin = d->pluginLoader->instance();
@@ -375,10 +391,11 @@ bool SkyConnectManager::requestInitialPosition() const noexcept
 bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 {
     bool ok {false};
-    d->currentPluginUuid = QUuid();
-    if (d->pluginRegistry.contains(uuid)) {
+
+    if (d->pluginRegistry.contains(uuid)) {       
         // Unload the previous plugin (if any)
-        d->pluginLoader->unload();
+        unloadCurrentPlugin();
+
         const QString pluginPath = d->pluginRegistry.value(uuid);
         d->pluginLoader->setFileName(pluginPath);
         QObject *plugin = d->pluginLoader->instance();
@@ -417,6 +434,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
             connect(&flight, &Flight::tailNumberChanged,
                     skyPlugin, &SkyConnectIntf::onTailNumberChanged);
             d->currentPluginUuid = uuid;
+            restoreSettings();
 
             FlightSimulatorShortcuts shortcuts {Settings::getInstance().getFlightSimulatorShortcuts()};
             if (shortcuts.hasAny()) {
@@ -476,4 +494,11 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
         }
         d->pluginsDirectory.cdUp();
     }
+}
+
+void SkyConnectManager::unloadCurrentPlugin() noexcept
+{
+    storeSettings();
+    d->pluginLoader->unload();
+    d->currentPluginUuid = QUuid();
 }

@@ -75,6 +75,16 @@ public:
     const std::vector<Handle> &availablePlugins() const noexcept;
     bool hasPlugins() const noexcept;
 
+    /*!
+     * Stores the settings of the currently loaded plugin (if any).
+     */
+    void storeSettings() const noexcept;
+
+    /*!
+     * Restores the settings of the currently loaded plugin (if any).
+     */
+    void restoreSettings() const noexcept;
+
     std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
     std::optional<QString> getCurrentSkyConnectPluginName() const noexcept;
 
@@ -202,6 +212,7 @@ private:
 
     void frenchConnection() noexcept;
     void initialisePlugins(const QString &pluginDirectoryName) noexcept;
+    void unloadCurrentPlugin() noexcept;
 };
 
 #endif // SKYCONNECTMANAGER_H
