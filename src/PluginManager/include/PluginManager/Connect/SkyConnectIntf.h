@@ -35,6 +35,7 @@
 #include <Model/InitialPosition.h>
 #include <Model/Location.h>
 #include "Connect.h"
+#include "../PluginIntf.h"
 #include "../PluginManagerLib.h"
 
 class Flight;
@@ -42,7 +43,7 @@ class Aircraft;
 struct PositionData;
 class MSFSSimConnectPlugin;
 
-class PLUGINMANAGER_API SkyConnectIntf : public QObject
+class PLUGINMANAGER_API SkyConnectIntf : public QObject, public PluginIntf
 {
     Q_OBJECT
 public:

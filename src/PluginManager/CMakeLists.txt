@@ -13,6 +13,7 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/Csv.h
         include/PluginManager/PluginIntf.h
         include/PluginManager/DialogPluginIntf.h
+        include/PluginManager/PluginWithOptionWidgetIntf.h
         include/PluginManager/SkyConnectManager.h src/SkyConnectManager.cpp
         include/PluginManager/PluginManager.h src/PluginManager.cpp
         include/PluginManager/Export.h src/Export.cpp

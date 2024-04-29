@@ -25,8 +25,6 @@
 #ifndef MODULEBASESETTINGS_H
 #define MODULEBASESETTINGS_H
 
-#include <memory>
-
 #include <QObject>
 #include <QString>
 

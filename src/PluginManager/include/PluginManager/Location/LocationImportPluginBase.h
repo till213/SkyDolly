@@ -42,7 +42,7 @@ struct LocationCondition;
 class LocationImportPluginBaseSettings;
 struct LocationImportPluginBasePrivate;
 
-class PLUGINMANAGER_API LocationImportPluginBase : public DialogPluginBase, public LocationImportIntf
+class PLUGINMANAGER_API LocationImportPluginBase : public QObject, public LocationImportIntf, public DialogPluginBase
 {
     Q_OBJECT
     Q_INTERFACES(LocationImportIntf)

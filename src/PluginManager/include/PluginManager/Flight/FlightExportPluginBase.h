@@ -46,7 +46,7 @@ class Aircraft;
 class FlightExportPluginBaseSettings;
 struct FlightExportPluginBasePrivate;
 
-class PLUGINMANAGER_API FlightExportPluginBase : public DialogPluginBase, public FlightExportIntf
+class PLUGINMANAGER_API FlightExportPluginBase : public QObject, public FlightExportIntf, public DialogPluginBase
 {
     Q_OBJECT
     Q_INTERFACES(FlightExportIntf)

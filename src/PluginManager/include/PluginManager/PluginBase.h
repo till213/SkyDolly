@@ -33,9 +33,8 @@ class QUuid;
 #include "PluginIntf.h"
 #include "PluginManagerLib.h"
 
-class PLUGINMANAGER_API PluginBase : public QObject, public PluginIntf
+class PLUGINMANAGER_API PluginBase : public PluginIntf
 {
-    Q_OBJECT
 public:
     PluginBase();
     PluginBase(const PluginBase &rhs) = delete;

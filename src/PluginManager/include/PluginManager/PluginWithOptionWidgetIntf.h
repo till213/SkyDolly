@@ -22,30 +22,24 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QWidget>
+#ifndef PLUGINWITHOPTIONWIDGETINTF_H
+#define PLUGINWITHOPTIONWIDGETINTF_H
 
-#include <Kernel/Settings.h>
-#include "DialogPluginBase.h"
+#include <memory>
 
-struct DialogPluginBasePrivate
+class QWidget;
+
+/*!
+ * This is the interface for plugins that provide a QWidget with plugin-specific options.
+ *
+ * This option widget is typically shown in the application settings dialog.
+ */
+class PluginWithOptionWidgetIntf
 {
-    QWidget *parent {nullptr};
+public:
+    virtual ~PluginWithOptionWidgetIntf() = default;
+
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
 };
 
-// PUBLIC
-
-DialogPluginBase::DialogPluginBase()
-    : d(std::make_unique<DialogPluginBasePrivate>())
-{}
-
-DialogPluginBase::~DialogPluginBase() = default;
-
-QWidget *DialogPluginBase::getParentWidget() const noexcept
-{
-    return d->parent;
-}
-
-void DialogPluginBase::setParentWidget(QWidget *parent) noexcept
-{
-    d->parent = parent;
-}
+#endif // PLUGINWITHOPTIONWIDGETINTF_H

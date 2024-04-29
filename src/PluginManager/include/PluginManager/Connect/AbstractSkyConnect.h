@@ -35,6 +35,7 @@
 #include <Model/InitialPosition.h>
 #include "SkyConnectIntf.h"
 #include "Connect.h"
+#include "../PluginBase.h"
 #include "../PluginManagerLib.h"
 
 class Flight;
@@ -42,7 +43,7 @@ class Aircraft;
 struct FlightSimulatorShortcuts;
 struct AbstractSkyConnectPrivate;
 
-class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf
+class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf, public PluginBase
 {
     Q_OBJECT
 public:
@@ -105,6 +106,16 @@ public:
 
     double calculateRecordedSamplesPerSecond() const noexcept override;
     bool requestLocation() noexcept override;
+
+    void storeSettings(const QUuid &pluginUuid) const noexcept final
+    {
+        PluginBase::storeSettings(pluginUuid);
+    }
+
+    void restoreSettings(const QUuid &pluginUuid) noexcept final
+    {
+        PluginBase::restoreSettings(pluginUuid);
+    }
 
 public slots:
     void addAiObject(const Aircraft &aircraft) noexcept override;

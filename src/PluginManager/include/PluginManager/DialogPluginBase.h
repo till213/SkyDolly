@@ -27,8 +27,6 @@
 
 #include <memory>
 
-#include <QObject>
-
 class QWidget;
 
 #include <Kernel/Settings.h>
@@ -40,7 +38,6 @@ struct DialogPluginBasePrivate;
 
 class PLUGINMANAGER_API DialogPluginBase : public PluginBase, public DialogPluginIntf
 {
-    Q_OBJECT
 public:
     DialogPluginBase();
     DialogPluginBase(const DialogPluginBase &rhs) = delete;

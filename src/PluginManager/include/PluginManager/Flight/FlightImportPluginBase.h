@@ -49,7 +49,7 @@ struct FlightCondition;
 class FlightImportPluginBaseSettings;
 struct FlightImportPluginBasePrivate;
 
-class PLUGINMANAGER_API FlightImportPluginBase : public DialogPluginBase, public FlightImportIntf
+class PLUGINMANAGER_API FlightImportPluginBase : public QObject, public FlightImportIntf, public DialogPluginBase
 {
     Q_OBJECT
     Q_INTERFACES(FlightImportIntf)
