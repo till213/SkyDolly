@@ -68,7 +68,7 @@ public:
     static constexpr ::SIMCONNECT_OBJECT_ID InvalidObjectId = -1;
 
 private:
-    std::unique_ptr<SimConnectAIPrivate> d;
+    const std::unique_ptr<SimConnectAIPrivate> d;
 
     bool hasRequest(::SIMCONNECT_DATA_REQUEST_ID requestId) const noexcept;
 };

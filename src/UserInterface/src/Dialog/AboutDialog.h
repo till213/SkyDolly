@@ -53,7 +53,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) noexcept override;
 
 private:
-    std::unique_ptr<AboutDialogPrivate> d;
+    const std::unique_ptr<AboutDialogPrivate> d;
     const std::unique_ptr<Ui::AboutDialog> ui;
 
     void initUi() noexcept;

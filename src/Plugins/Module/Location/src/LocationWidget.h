@@ -67,7 +67,7 @@ signals:
     void teleportTo(Location location);
 
 private:
-    std::unique_ptr<Ui::LocationWidget> ui;
+    const std::unique_ptr<Ui::LocationWidget> ui;
     const std::unique_ptr<LocationWidgetPrivate> d;
 
     void initUi() noexcept;

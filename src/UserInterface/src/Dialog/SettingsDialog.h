@@ -64,7 +64,7 @@ private:
         End
     };
 
-    std::unique_ptr<Ui::SettingsDialog> ui;
+    const std::unique_ptr<Ui::SettingsDialog> ui;
     const std::unique_ptr<SettingsDialogPrivate> d;
 
     void initUi() noexcept;

@@ -95,7 +95,7 @@ protected slots:
     void recordData() noexcept override;
 
 private:
-    std::unique_ptr<SkyConnectPrivate> d;
+    const std::unique_ptr<SkyConnectPrivate> d;
 
     void frenchConnection() noexcept;
 
