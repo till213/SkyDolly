@@ -22,21 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLUGININTF_H
-#define PLUGININTF_H
+#ifndef DIALOGPLUGINBASE_H
+#define DIALOGPLUGINBASE_H
 
-class QUuid;
+#include <memory>
 
-/*!
- * This is the interface for plugins that support plugin-specific settings.
- */
-class PluginIntf
+#include <QObject>
+
+class QWidget;
+
+#include <Kernel/Settings.h>
+#include "PluginBase.h"
+#include "DialogPluginIntf.h"
+#include "PluginManagerLib.h"
+
+struct DialogPluginBasePrivate;
+
+class PLUGINMANAGER_API DialogPluginBase : public PluginBase, public DialogPluginIntf
 {
+    Q_OBJECT
 public:
-    virtual ~PluginIntf() = default;
+    DialogPluginBase();
+    DialogPluginBase(const DialogPluginBase &rhs) = delete;
+    DialogPluginBase(DialogPluginBase &&rhs) = delete;
+    DialogPluginBase &operator=(const DialogPluginBase &rhs) = delete;
+    DialogPluginBase &operator=(DialogPluginBase &&rhs) = delete;
+    ~DialogPluginBase() override;
 
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept = 0;
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept = 0;
+    QWidget *getParentWidget() const noexcept override;
+    void setParentWidget(QWidget *parent) noexcept override;
+
+private:
+    const std::unique_ptr<DialogPluginBasePrivate> d;
 };
 
-#endif // PLUGININTF_H
+#endif // DIALOGPLUGINBASE_H

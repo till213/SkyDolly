@@ -32,7 +32,7 @@
 #include <QtPlugin>
 
 #include "LocationImportIntf.h"
-#include "../PluginBase.h"
+#include "../DialogPluginBase.h"
 #include "../PluginManagerLib.h"
 
 class Location;
@@ -42,7 +42,7 @@ struct LocationCondition;
 class LocationImportPluginBaseSettings;
 struct LocationImportPluginBasePrivate;
 
-class PLUGINMANAGER_API LocationImportPluginBase : public PluginBase, public LocationImportIntf
+class PLUGINMANAGER_API LocationImportPluginBase : public DialogPluginBase, public LocationImportIntf
 {
     Q_OBJECT
     Q_INTERFACES(LocationImportIntf)
@@ -56,22 +56,22 @@ public:
 
     QWidget *getParentWidget() const noexcept final
     {
-        return PluginBase::getParentWidget();
+        return getParentWidget();
     }
 
     void setParentWidget(QWidget *parent) noexcept final
     {
-        PluginBase::setParentWidget(parent);
+        DialogPluginBase::setParentWidget(parent);
     }
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
-        PluginBase::storeSettings(pluginUuid);
+        DialogPluginBase::storeSettings(pluginUuid);
     }
 
     void restoreSettings(const QUuid &pluginUuid) noexcept final
     {
-        PluginBase::restoreSettings(pluginUuid);
+        DialogPluginBase::restoreSettings(pluginUuid);
     }
 
     bool importLocations() noexcept final;

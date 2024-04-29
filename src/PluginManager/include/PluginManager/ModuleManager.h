@@ -26,7 +26,6 @@
 #define MODULESWITCHER_H
 
 #include <memory>
-#include <vector>
 #include <utility>
 #include <optional>
 #include <functional>

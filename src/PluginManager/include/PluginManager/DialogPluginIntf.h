@@ -27,6 +27,9 @@
 
 class QWidget;
 
+/*!
+ * This is the interface for dialog-based plugins, mostly import- and export plugins.
+ */
 class DialogPluginIntf
 {
 public:

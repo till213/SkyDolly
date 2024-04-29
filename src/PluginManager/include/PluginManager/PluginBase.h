@@ -25,21 +25,15 @@
 #ifndef PLUGINBASE_H
 #define PLUGINBASE_H
 
-#include <memory>
-
 #include <QObject>
 
-class QWidget;
 class QUuid;
 
 #include <Kernel/Settings.h>
 #include "PluginIntf.h"
-#include "DialogPluginIntf.h"
 #include "PluginManagerLib.h"
 
-struct PluginBasePrivate;
-
-class PLUGINMANAGER_API PluginBase : public QObject, public DialogPluginIntf, public PluginIntf
+class PLUGINMANAGER_API PluginBase : public QObject, public PluginIntf
 {
     Q_OBJECT
 public:
@@ -49,9 +43,6 @@ public:
     PluginBase &operator=(const PluginBase &rhs) = delete;
     PluginBase &operator=(PluginBase &&rhs) = delete;
     ~PluginBase() override;
-
-    QWidget *getParentWidget() const noexcept override;
-    void setParentWidget(QWidget *parent) noexcept override;
 
     void storeSettings(const QUuid &pluginUuid) const noexcept override;
     void restoreSettings(const QUuid &pluginUuid) noexcept override;
@@ -80,9 +71,6 @@ protected:
      *        the plugin-specific settings associated with their key
      */
     virtual void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept;
-
-private:
-    const std::unique_ptr<PluginBasePrivate> d;
 };
 
 #endif // PLUGINBASE_H

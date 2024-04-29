@@ -32,7 +32,7 @@
 #include <QtPlugin>
 
 #include "LocationExportIntf.h"
-#include "../PluginBase.h"
+#include "../DialogPluginBase.h"
 #include "../PluginManagerLib.h"
 
 class LocationService;
@@ -43,7 +43,7 @@ struct LocationCondition;
 class LocationExportPluginBaseSettings;
 struct LocationExportPluginBasePrivate;
 
-class PLUGINMANAGER_API LocationExportPluginBase : public PluginBase, public LocationExportIntf
+class PLUGINMANAGER_API LocationExportPluginBase : public DialogPluginBase, public LocationExportIntf
 {
     Q_OBJECT
     Q_INTERFACES(LocationExportIntf)
@@ -57,22 +57,22 @@ public:
 
     QWidget *getParentWidget() const noexcept final
     {
-        return PluginBase::getParentWidget();
+        return getParentWidget();
     }
 
     void setParentWidget(QWidget *parent) noexcept final
     {
-        PluginBase::setParentWidget(parent);
+        DialogPluginBase::setParentWidget(parent);
     }
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
-        PluginBase::storeSettings(pluginUuid);
+        DialogPluginBase::storeSettings(pluginUuid);
     }
 
     void restoreSettings(const QUuid &pluginUuid) noexcept final
     {
-        PluginBase::restoreSettings(pluginUuid);
+        DialogPluginBase::restoreSettings(pluginUuid);
     }
 
     bool exportLocations(const std::vector<Location> &locations) const noexcept final;

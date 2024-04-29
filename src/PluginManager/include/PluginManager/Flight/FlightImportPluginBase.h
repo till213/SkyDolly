@@ -37,7 +37,7 @@ class QIODevice;
 #include <Kernel/Settings.h>
 #include <Flight/FlightAugmentation.h>
 #include "FlightImportIntf.h"
-#include "../PluginBase.h"
+#include "../DialogPluginBase.h"
 #include "../PluginManagerLib.h"
 
 class FlightService;
@@ -49,7 +49,7 @@ struct FlightCondition;
 class FlightImportPluginBaseSettings;
 struct FlightImportPluginBasePrivate;
 
-class PLUGINMANAGER_API FlightImportPluginBase : public PluginBase, public FlightImportIntf
+class PLUGINMANAGER_API FlightImportPluginBase : public DialogPluginBase, public FlightImportIntf
 {
     Q_OBJECT
     Q_INTERFACES(FlightImportIntf)
@@ -63,22 +63,22 @@ public:
 
     QWidget *getParentWidget() const noexcept final
     {
-        return PluginBase::getParentWidget();
+        return getParentWidget();
     }
 
     void setParentWidget(QWidget *parent) noexcept final
     {
-        PluginBase::setParentWidget(parent);
+        DialogPluginBase::setParentWidget(parent);
     }
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
-        PluginBase::storeSettings(pluginUuid);
+        DialogPluginBase::storeSettings(pluginUuid);
     }
 
     void restoreSettings(const QUuid &pluginUuid) noexcept final
     {
-        PluginBase::restoreSettings(pluginUuid);
+        DialogPluginBase::restoreSettings(pluginUuid);
     }
 
     bool importFlights(Flight &flight) noexcept final;

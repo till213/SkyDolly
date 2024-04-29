@@ -22,21 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLUGININTF_H
-#define PLUGININTF_H
+#include <QWidget>
+#include <QUuid>
 
-class QUuid;
+#include <Kernel/Settings.h>
+#include "DialogPluginBase.h"
 
-/*!
- * This is the interface for plugins that support plugin-specific settings.
- */
-class PluginIntf
+struct DialogPluginBasePrivate
 {
-public:
-    virtual ~PluginIntf() = default;
-
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept = 0;
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept = 0;
+    QWidget *parent {nullptr};
 };
 
-#endif // PLUGININTF_H
+// PUBLIC
+
+DialogPluginBase::DialogPluginBase()
+    : d(std::make_unique<DialogPluginBasePrivate>())
+{}
+
+DialogPluginBase::~DialogPluginBase() = default;
+
+QWidget *DialogPluginBase::getParentWidget() const noexcept
+{
+    return d->parent;
+}
+
+void DialogPluginBase::setParentWidget(QWidget *parent) noexcept
+{
+    d->parent = parent;
+}

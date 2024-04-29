@@ -26,7 +26,6 @@
 #define FLIGHTEXPORTPLUGINBASE_H
 
 #include <memory>
-#include <vector>
 
 #include <QObject>
 #include <QtPlugin>
@@ -37,7 +36,7 @@ class QIODevice;
 #include <Flight/FlightAugmentation.h>
 #include <Kernel/Settings.h>
 #include "FlightExportIntf.h"
-#include "../PluginBase.h"
+#include "../DialogPluginBase.h"
 #include "../PluginManagerLib.h"
 
 struct PositionData;
@@ -47,7 +46,7 @@ class Aircraft;
 class FlightExportPluginBaseSettings;
 struct FlightExportPluginBasePrivate;
 
-class PLUGINMANAGER_API FlightExportPluginBase : public PluginBase, public FlightExportIntf
+class PLUGINMANAGER_API FlightExportPluginBase : public DialogPluginBase, public FlightExportIntf
 {
     Q_OBJECT
     Q_INTERFACES(FlightExportIntf)
@@ -61,25 +60,25 @@ public:
 
     QWidget *getParentWidget() const noexcept final
     {
-        return PluginBase::getParentWidget();
+        return getParentWidget();
     }
 
     void setParentWidget(QWidget *parent) noexcept final
     {
-        PluginBase::setParentWidget(parent);
+        DialogPluginBase::setParentWidget(parent);
     }
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
-        PluginBase::storeSettings(pluginUuid);
+        DialogPluginBase::storeSettings(pluginUuid);
     }
 
     void restoreSettings(const QUuid &pluginUuid) noexcept final
     {
-        PluginBase::restoreSettings(pluginUuid);
+        DialogPluginBase::restoreSettings(pluginUuid);
     }
 
-    bool exportFlight(const Flight &flight) const noexcept final;
+    bool exportFlight(const Flight &flight)  const noexcept final;
 
 protected:
     // Re-implement

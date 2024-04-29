@@ -61,7 +61,7 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     LocationExportPluginBaseSettings &baseSettings = getPluginSettings();
-    std::unique_ptr<BasicLocationExportDialog> exportDialog = std::make_unique<BasicLocationExportDialog>(getFileExtension(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
+    std::unique_ptr<BasicLocationExportDialog> exportDialog = std::make_unique<BasicLocationExportDialog>(getFileExtension(), getFileFilter(), baseSettings, getParentWidget());
     // Transfer ownership to exportDialog
     exportDialog->setOptionWidget(optionWidget.release());
     bool ok {true};
@@ -78,7 +78,7 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
             if (exportDialog->isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportLocations(locations, filePath);
             } else {
-                std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
+                std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
                 messageBox->setIcon(QMessageBox::Question);
                 QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
                 messageBox->setWindowTitle(tr("Replace"));
@@ -132,7 +132,7 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
             QDesktopServices::openUrl(QUrl(fileUrl));
         }
     } else {
-        QMessageBox::critical(PluginBase::getParentWidget(), tr("Export Error"), tr("An error occured during export into file %1.").arg(QDir::toNativeSeparators(filePath)));
+        QMessageBox::critical(getParentWidget(), tr("Export Error"), tr("An error occured during export into file %1.").arg(QDir::toNativeSeparators(filePath)));
     }
 
     return ok;
