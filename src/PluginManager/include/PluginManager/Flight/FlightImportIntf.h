@@ -32,12 +32,13 @@
 class QIODevice;
 
 #include "../PluginIntf.h"
+#include "../DialogPluginIntf.h"
 
 class Flight;
 struct FlightData;
 class FlightService;
 
-class FlightImportIntf : public PluginIntf
+class FlightImportIntf : public DialogPluginIntf, public PluginIntf
 {
 public:
     /*!

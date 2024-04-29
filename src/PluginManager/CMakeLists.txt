@@ -2,7 +2,8 @@ set(LIBRARY_NAME "PluginManager")
 
 qt_add_library(${LIBRARY_NAME} SHARED
     include/PluginManager/Connect/ConnectPluginBaseSettings.h
-    src/Connect/ConnectPluginBaseSettings.cpp)
+    src/Connect/ConnectPluginBaseSettings.cpp
+    include/PluginManager/DialogPluginIntf.h)
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_compile_definitions(${LIBRARY_NAME}
@@ -15,6 +16,7 @@ target_sources(${LIBRARY_NAME}
 
         include/PluginManager/Csv.h
         include/PluginManager/PluginIntf.h
+        include/PluginManager/DialogPluginIntf.h
         include/PluginManager/SkyConnectManager.h src/SkyConnectManager.cpp
         include/PluginManager/PluginManager.h src/PluginManager.cpp
         include/PluginManager/Export.h src/Export.cpp

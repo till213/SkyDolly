@@ -28,8 +28,9 @@
 #include <QtPlugin>
 
 #include "../PluginIntf.h"
+#include "../DialogPluginIntf.h"
 
-class LocationImportIntf : public PluginIntf
+class LocationImportIntf : public DialogPluginIntf, public PluginIntf
 {
 public:
     virtual bool importLocations() noexcept = 0;

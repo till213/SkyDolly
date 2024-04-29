@@ -34,11 +34,12 @@ class QUuid;
 
 #include <Kernel/Settings.h>
 #include "PluginIntf.h"
+#include "DialogPluginIntf.h"
 #include "PluginManagerLib.h"
 
 struct PluginBasePrivate;
 
-class PLUGINMANAGER_API PluginBase : public QObject, public PluginIntf
+class PLUGINMANAGER_API PluginBase : public QObject, public DialogPluginIntf, public PluginIntf
 {
     Q_OBJECT
 public:

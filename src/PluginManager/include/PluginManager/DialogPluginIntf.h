@@ -22,16 +22,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLUGININTF_H
-#define PLUGININTF_H
+#ifndef DIALOGPLUGININTF_H
+#define DIALOGPLUGININTF_H
 
-class QUuid;
+class QWidget;
 
-class PluginIntf
+class DialogPluginIntf
 {
 public:
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept = 0;
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept = 0;
+    virtual ~DialogPluginIntf() = default;
+
+    virtual QWidget *getParentWidget() const noexcept = 0;
+    virtual void setParentWidget(QWidget *parent) noexcept = 0;
 };
 
-#endif // PLUGININTF_H
+#endif // DIALOGPLUGININTF_H
