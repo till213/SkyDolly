@@ -26,6 +26,8 @@
 #define SETTINGSCONVERTERV0DOT16_H
 
 #include <QString>
+#include <QStringLiteral>
+#include <QStringBuilder>
 #include <QSettings>
 #include <QByteArray>
 #include <QUuid>
@@ -40,7 +42,7 @@ class SettingsConverterV0dot16
 public:
     static inline void convert(const Version &settingsVersion, QSettings &settings) noexcept
     {
-        if (settingsVersion < Version(QString("0.13.0"))) {
+        if (settingsVersion < Version(QStringLiteral("0.13.0"))) {
             SettingsConverterV0dot13::convert(settingsVersion, settings);
         }
         convertPlugins(settings);
@@ -50,14 +52,14 @@ public:
 private:
     static inline void convertPlugins(QSettings &settings) noexcept
     {
-        static constexpr const char *AddToFlightEnabledKey = "AddToFlightEnabled";
-        static constexpr const char *ImportDirectoryKey = "ImportDirectoryEnabled";
-        static constexpr const char *AircraftImportModeKey = "AircraftImportMode";
+        static const QString AddToFlightEnabledKey {QStringLiteral("AddToFlightEnabled")};
+        static const QString ImportDirectoryKey = {QStringLiteral("ImportDirectoryEnabled")};
+        static const QString AircraftImportModeKey = {QStringLiteral("AircraftImportMode")};
         bool addToFlight {false};
         bool importDirectory {false};
 
         // CSV import
-        settings.beginGroup(QString("Plugins/") + QUuid(Const::CsvImportPluginUuid).toByteArray());
+        settings.beginGroup(QStringLiteral("Plugins/") % QUuid(Const::CsvImportPluginUuid).toByteArray());
         {
             addToFlight = settings.value(AddToFlightEnabledKey).toBool();
             importDirectory = settings.value(ImportDirectoryKey).toBool();
@@ -74,7 +76,7 @@ private:
         settings.endGroup();
 
         // GPX import
-        settings.beginGroup(QString("Plugins/") + QUuid(Const::GpxImportPluginUuid).toByteArray());
+        settings.beginGroup(QStringLiteral("Plugins/") % QUuid(Const::GpxImportPluginUuid).toByteArray());
         {
             addToFlight = settings.value(AddToFlightEnabledKey).toBool();
             importDirectory = settings.value(ImportDirectoryKey).toBool();
@@ -88,7 +90,7 @@ private:
         settings.endGroup();
 
         // IGC import
-        settings.beginGroup(QString("Plugins/") + QUuid(Const::IgcImportPluginUuid).toByteArray());
+        settings.beginGroup(QStringLiteral("Plugins/") % QUuid(Const::IgcImportPluginUuid).toByteArray());
         {
             addToFlight = settings.value(AddToFlightEnabledKey).toBool();
             importDirectory = settings.value(ImportDirectoryKey).toBool();
@@ -102,7 +104,7 @@ private:
         settings.endGroup();
 
         // KML import
-        settings.beginGroup(QString("Plugins/") + QUuid(Const::KmlImportPluginUuid).toByteArray());
+        settings.beginGroup(QStringLiteral("Plugins/") % QUuid(Const::KmlImportPluginUuid).toByteArray());
         {
             addToFlight = settings.value(AddToFlightEnabledKey).toBool();
             importDirectory = settings.value(ImportDirectoryKey).toBool();
@@ -146,14 +148,14 @@ private:
         settings.endGroup();
 
         // Logbook
-        settings.beginGroup(QString("Plugins/Modules/") + QUuid(Const::LogbookModuleUuid).toByteArray());
+        settings.beginGroup(QStringLiteral("Plugins/Modules/") % QUuid(Const::LogbookModuleUuid).toByteArray());
         {
             settings.setValue("LogbookTableState", logbookTableState);
         }
         settings.endGroup();
 
         // Formation
-        settings.beginGroup(QString("Plugins/Modules/") + QUuid(Const::FormationModuleUuid).toByteArray());
+        settings.beginGroup(QStringLiteral("Plugins/Modules/") % QUuid(Const::FormationModuleUuid).toByteArray());
         {
             settings.setValue("RelativePositionPlacement", relativePositionPlacement);
             settings.setValue("FormationAircraftTableState", formationAircraftTableState);
@@ -161,7 +163,7 @@ private:
         settings.endGroup();
 
         // Location
-        settings.beginGroup(QString("Plugins/Modules/") + QUuid(Const::LocationModuleUuid).toByteArray());
+        settings.beginGroup(QStringLiteral("Plugins/Modules/") % QUuid(Const::LocationModuleUuid).toByteArray());
         {
             settings.setValue("LocationTableState", locationTableState);
         }

@@ -106,15 +106,15 @@ void FlightExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues)
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::ResamplingPeriodKey;
+    keyValue.first = QString::fromLatin1(::ResamplingPeriodKey);
     keyValue.second = Enum::underly(d->resamplingPeriod);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::FormationExportKey;
+    keyValue.first = QString::fromLatin1(::FormationExportKey);
     keyValue.second = Enum::underly(d->formationExport);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::OpenExportedFilesEnabledKey;
+    keyValue.first = QString::fromLatin1(::OpenExportedFilesEnabledKey);
     keyValue.second = d->openExportedFilesEnabled;
     keyValues.push_back(keyValue);
 
@@ -125,15 +125,15 @@ void FlightExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::ResamplingPeriodKey;
+    keyValue.first = QString::fromLatin1(::ResamplingPeriodKey);
     keyValue.second = Enum::underly(::DefaultResamplingPeriod);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::FormationExportKey;
+    keyValue.first = QString::fromLatin1(::FormationExportKey);
     keyValue.second = Enum::underly(::DefaultFormationExport);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::OpenExportedFilesEnabledKey;
+    keyValue.first = QString::fromLatin1(::OpenExportedFilesEnabledKey);
     keyValue.second = ::DefaultOpenExportedFilesEnabled;
     keysWithDefaults.push_back(keyValue);
 
@@ -143,19 +143,19 @@ void FlightExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
 void FlightExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    int enumeration = valuesByKey.at(::ResamplingPeriodKey).toInt(&ok);
+    int enumeration = valuesByKey.at(QString::fromLatin1(::ResamplingPeriodKey)).toInt(&ok);
     if (ok) {
         d->resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);
     } else {
         d->resamplingPeriod = ::DefaultResamplingPeriod;
     }
-    enumeration = valuesByKey.at(::FormationExportKey).toInt(&ok);
+    enumeration = valuesByKey.at(QString::fromLatin1(::FormationExportKey)).toInt(&ok);
     if (ok) {
         d->formationExport = static_cast<FormationExport >(enumeration);
     } else {
         d->formationExport = ::DefaultFormationExport;
     }
-    d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
+    d->openExportedFilesEnabled = valuesByKey.at(QString::fromLatin1(::OpenExportedFilesEnabledKey)).toBool();
     restoreSettingsExtn(valuesByKey);
 
     emit changed();

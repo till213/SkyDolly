@@ -24,10 +24,11 @@
  */
 #include <memory>
 #include <cstdint>
-#include <unordered_map>
 
 #include <QIODevice>
 #include <QTextStream>
+#include <QString>
+#include <QStringLiteral>
 #include <QStringConverter>
 
 #include <Kernel/Const.h>
@@ -91,7 +92,7 @@ std::vector<Location> SkyDollyCsvLocationParser::parse(QTextStream &textStream, 
     std::vector<Location> locations;
     CsvParser csvParser;
 
-    CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
+    CsvParser::Rows rows = csvParser.parse(textStream, QString::fromLatin1(::SkyDollyCsvHeader));
     bool success = CsvParser::validate(rows, Enum::underly(::Index::Count));
     if (success) {
         locations.reserve(rows.size());
@@ -186,7 +187,7 @@ Location SkyDollyCsvLocationParser::parseLocation(CsvParser::Row row, bool &ok) 
     if (ok) {
         const QString onGround = row.at(Enum::underly(::Index::OnGround));
         if (ok) {
-            location.onGround = onGround == "true" ? true : false;
+            location.onGround = onGround == QStringLiteral("true") ? true : false;
         }
     }
     if (ok) {

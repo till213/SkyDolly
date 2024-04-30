@@ -120,7 +120,7 @@ MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
         d->eventStateHandler->freezeAircraft(::SIMCONNECT_OBJECT_ID_USER, false);
         d->eventStateHandler->resumePausedSimulation();
     }
-    onDisconnectFromSim();
+    closeConnection();
 }
 
 bool MSFSSimConnectPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
@@ -901,7 +901,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             FlightCondition flightCondition = simConnectFlightInfo->toFlightCondition();
             flight.setFlightCondition(flightCondition);
             if (SUCCEEDED(StringCbLengthA(&(simConnectFlightInfo->atcFlightNumber[0]), sizeof(simConnectFlightInfo->atcFlightNumber), nullptr))) {
-                flight.setFlightNumber((simConnectFlightInfo->atcFlightNumber));
+                flight.setFlightNumber(QString::fromLatin1((simConnectFlightInfo->atcFlightNumber)));
             }
             break;
         }

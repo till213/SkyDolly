@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QString>
 #include <QWidget>
 #include <QLineEdit>
 #include <QPlainTextEdit>
@@ -117,7 +118,7 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
 
 void FlightDescriptionWidget::initUi() noexcept
 {
-    ui->flightNumberLineEdit->setToolTip(SimVar::ATCId);
+    ui->flightNumberLineEdit->setToolTip(QString::fromLatin1(SimVar::ATCId));
 }
 
 void FlightDescriptionWidget::frenchConnection() noexcept

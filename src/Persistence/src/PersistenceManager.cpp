@@ -27,6 +27,7 @@
 #include <mutex>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QFileInfo>
 #include <QDir>
@@ -54,7 +55,7 @@ struct PersistenceManagerPrivate
     bool connected {false};
 
     static inline std::once_flag onceFlag;
-    static inline PersistenceManager *instance;
+    static inline PersistenceManager *instance {nullptr};
 };
 
 // PUBLIC
@@ -121,7 +122,7 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
                 } else {
                     disconnectFromLogbook();
                     std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(parent);
-                    messageBox->setWindowIcon(QIcon(":/img/icons/application-icon.png"));
+                    messageBox->setWindowIcon(QIcon(QStringLiteral(":/img/icons/application-icon.png")));
                     messageBox->setWindowTitle(tr("Newer Version"));
                     messageBox->setText(tr("The logbook %1 has been created with a newer version %2. Do you want to create a new logbook?").arg(QDir::toNativeSeparators(selectedLogbookPath), databaseVersion.toString()));
                     messageBox->setInformativeText(tr("Logbooks created with newer %1 versions cannot be opened.").arg(Version::getApplicationName()));

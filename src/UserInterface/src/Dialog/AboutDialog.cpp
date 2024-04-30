@@ -38,19 +38,22 @@
 #include <QClipboard>
 #include <QTimer>
 
-#include <Kernel/Version.h>
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
+#include <Kernel/Version.h>
+#include <chrono>
+
+using namespace std::chrono_literals;
 
 struct AboutDialogPrivate
 {
     AboutDialogPrivate(QWidget &parent) noexcept
     {
         if (parent.devicePixelRatioF() >= 1.5) {
-            applicationPixmap.load(":/img/icons/application-icon@2x.png");
+            applicationPixmap.load(QStringLiteral(":/img/icons/application-icon@2x.png"));
             applicationPixmap.setDevicePixelRatio(2.0);
         } else {
-            applicationPixmap.load(":/img/icons/application-icon.png");
+            applicationPixmap.load(QStringLiteral(":/img/icons/application-icon.png"));
             applicationPixmap.setDevicePixelRatio(1.0);
         }
         versionInfoTimer.setSingleShot(true);
@@ -97,7 +100,7 @@ void AboutDialog::mouseReleaseEvent(QMouseEvent *event) noexcept
         }
         d->versionInfo = QStringLiteral("\n") % tr("Copied to clipboard") % QStringLiteral("\n");
         updateUi();
-        d->versionInfoTimer.start(1000);
+        d->versionInfoTimer.start(1s);
         QApplication::restoreOverrideCursor();
     }
 }
@@ -111,7 +114,7 @@ void AboutDialog::initUi() noexcept
     ui->applicationIconLabel->setPixmap(d->applicationPixmap);
     d->versionInfo = getVersionInfo();
 
-    QFile file(":text/ThirdParty.md");
+    QFile file(QStringLiteral(":text/ThirdParty.md"));
     if (file.open(QFile::ReadOnly)) {
         file.setTextModeEnabled(true);
         ui->creditsTextEdit->setMarkdown(file.readAll());
@@ -138,12 +141,14 @@ void AboutDialog::frenchConnection() noexcept
 
 QString AboutDialog::getVersionInfo() const noexcept
 {
-    return QString("\"%1\" (%2)\n"
-                   "Version %3 (%4)\n"
-                   "%5")
-          .arg(Version::getCodeName(),Version::getUserVersion(),
-               Version::getApplicationVersion(), Version::getGitHash(),
-               Version::getGitDate().toLocalTime().toString());
+    return QStringLiteral("\"%1\" (%2)\n"
+                          "Version %3 (%4)\n"
+                          "%5")
+           .arg(Version::getCodeName(),
+                Version::getUserVersion(),
+                Version::getApplicationVersion(),
+                Version::getGitHash(),
+                Version::getGitDate().toLocalTime().toString());
 }
 
 // PRIVATE SLOTS

@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <cstdint>
-#include <functional>
 
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -320,13 +319,13 @@ void LocationWidget::initUi() noexcept
 
     ui->pitchSpinBox->setMinimum(::MinimumPitch);
     ui->pitchSpinBox->setMaximum(::MaximumPitch);
-    ui->pitchSpinBox->setSuffix("°");
+    ui->pitchSpinBox->setSuffix(QStringLiteral("°"));
     ui->bankSpinBox->setMinimum(::MinimumBank);
     ui->bankSpinBox->setMaximum(::MaximumBank);
-    ui->bankSpinBox->setSuffix("°");
+    ui->bankSpinBox->setSuffix(QStringLiteral("°"));
     ui->trueHeadingSpinBox->setMinimum(::MinimumHeading);
     ui->trueHeadingSpinBox->setMaximum(::MaximumHeading);
-    ui->trueHeadingSpinBox->setSuffix("°");
+    ui->trueHeadingSpinBox->setSuffix(QStringLiteral("°"));
     ui->indicatedAirspeedSpinBox->setMinimum(Const::MinimumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setSuffix(tr(" knots"));

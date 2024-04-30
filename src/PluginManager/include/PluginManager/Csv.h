@@ -27,27 +27,14 @@
 
 #include <Kernel/CsvParser.h>
 
-namespace Csv {
-
+namespace Csv
+{
     /*! Comma separator character */
     static constexpr char CommaSep = ',';
     /*! Double-quote character */
     static constexpr char DoubleQuote = '\"';
     /*! Newline character */
     static constexpr char Ln = '\n';
-
-    /*! The data type of each Sky Dolly CSV row */
-    enum struct DataType : char {
-        Aircraft = 'a',
-        Engine = 'e',
-        PrimaryFlightControl = 'p',
-        SecondaryFlightControl = 's',
-        AircraftHandle = 'h',
-        Light = 'l'
-    };
-
-    /*! The name of the column defining the DataType */
-    static constexpr const char *TypeColumnName {"Type"};
 };
 
 #endif // CSV_H

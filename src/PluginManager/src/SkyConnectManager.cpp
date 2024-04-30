@@ -31,6 +31,7 @@
 #include <QJsonObject>
 #include <QDir>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringList>
 #include <QUuid>
 #include <QMap>
@@ -98,7 +99,7 @@ void SkyConnectManager::destroyInstance() noexcept
 
 const std::vector<SkyConnectManager::Handle> &SkyConnectManager::initialisePlugins() noexcept
 {
-    initialisePlugins(ConnectPluginDirectoryName);
+    initialisePlugins(QString::fromLatin1(::ConnectPluginDirectoryName));
     return availablePlugins();
 }
 
@@ -116,7 +117,7 @@ std::optional<std::reference_wrapper<SkyConnectIntf>> SkyConnectManager::getCurr
 {
     QObject *plugin = d->pluginLoader->instance();
     if (plugin != nullptr) {
-        return std::optional<std::reference_wrapper<SkyConnectIntf>>{*(dynamic_cast<SkyConnectIntf *>(plugin))};
+        return std::optional<std::reference_wrapper<SkyConnectIntf>>{*(qobject_cast<SkyConnectIntf *>(plugin))};
     } else {
         return {};
     }
@@ -463,10 +464,10 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
-                const QUuid uuid {pluginMetadata.value(PluginUuidKey).toString()};
-                const QString pluginName {pluginMetadata.value(PluginNameKey).toString()};
-                const QString flightSimulatorName {pluginMetadata.value(PluginFlightSimulatorNameKey).toString()};
+                const QJsonObject pluginMetadata{metaData.value(QStringLiteral("MetaData")).toObject()};
+                const QUuid uuid{pluginMetadata.value(QString::fromLatin1(PluginUuidKey)).toString()};
+                const QString pluginName{pluginMetadata.value(QString::fromLatin1(PluginNameKey)).toString()};
+                const QString flightSimulatorName{pluginMetadata.value(QString::fromLatin1(PluginFlightSimulatorNameKey)).toString()};
                 const FlightSimulator::Id flightSimulatorId {FlightSimulator::nameToId(flightSimulatorName)};
                 SkyConnectPlugin plugin {pluginName, flightSimulatorId};
                 const Handle handle {uuid, plugin};

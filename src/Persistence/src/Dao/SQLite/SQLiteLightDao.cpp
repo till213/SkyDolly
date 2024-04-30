@@ -72,7 +72,7 @@ bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData) co
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "insert into light ("
         "  aircraft_id,"
         "  timestamp,"
@@ -82,10 +82,10 @@ bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData) co
         " :timestamp,"
         " :light_states"
         ");"
-    );
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    query.bindValue(":timestamp", QVariant::fromValue(lightData.timestamp));
-    query.bindValue(":light_states", static_cast<int>(lightData.lightStates));
+    ));
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":timestamp"), QVariant::fromValue(lightData.timestamp));
+    query.bindValue(QStringLiteral(":light_states"), static_cast<int>(lightData.lightStates));
 
     const bool ok = query.exec();
 #ifdef DEBUG
@@ -102,14 +102,14 @@ std::vector<LightData> SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, 
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(
+    query.prepare(QStringLiteral(
         "select * "
         "from   light l "
-        "where  l.aircraft_id = :aircraft_id "
-        "order by l.timestamp asc;"
-    );
+         "where  l.aircraft_id = :aircraft_id "
+         "order by l.timestamp asc;"
+    ));
 
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
         const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -120,8 +120,8 @@ std::vector<LightData> SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, 
             lightData.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
-        const int timestampIdx = record.indexOf("timestamp");
-        const int lightStatesIdx = record.indexOf("light_states");
+        const int timestampIdx = record.indexOf(QStringLiteral("timestamp"));
+        const int lightStatesIdx = record.indexOf(QStringLiteral("light_states"));
         while (query.next()) {
             LightData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
@@ -145,15 +145,15 @@ bool SQLiteLightDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "delete "
         "from   light "
         "where  aircraft_id in (select a.id "
         "                       from aircraft a"
         "                       where a.flight_id = :flight_id"
         "                      );"
-    );
-    query.bindValue(":flight_id", QVariant::fromValue(flightId));
+    ));
+    query.bindValue(QStringLiteral(":flight_id"), QVariant::fromValue(flightId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -167,12 +167,12 @@ bool SQLiteLightDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "delete "
         "from   light "
         "where  aircraft_id = :aircraft_id;"
-    );
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    ));
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

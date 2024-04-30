@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <mutex>
+
 #include <QObject>
 #include <QFileInfo>
 #include <QStringList>
@@ -45,20 +47,20 @@ struct RecentFilePrivate {
     QList<QByteArray> securityTokenData; // with the items in securityTokenData
     int maxRecentFiles {0};
 
-    static RecentFile *instance;
+    static inline std::once_flag onceFlag;
+    static inline RecentFile *instance {nullptr};
 };
 
 const int RecentFilePrivate::DefaultMaxRecentFiles = 8;
 const int RecentFilePrivate::MaxRecentFiles = 10; // There are 10 action shortcuts keys: 0...9
-RecentFile *RecentFilePrivate::instance = nullptr;
 
 // public
 
 RecentFile &RecentFile::getInstance()
 {
-    if (RecentFilePrivate::instance == nullptr) {
+    std::call_once(RecentFilePrivate::onceFlag, []() {
         RecentFilePrivate::instance = new RecentFile();
-    }
+    });
     return *RecentFilePrivate::instance;
 }
 
@@ -223,7 +225,7 @@ void RecentFile::restore()
 
 bool RecentFile::prependToRecentFiles(const QString &filePath)
 {
-    bool result;
+    bool result {false};
     if (!d->recentFiles.contains(filePath)) {
         d->recentFiles.prepend(filePath);
         if (d->recentFiles.count() > d->maxRecentFiles) {
@@ -231,8 +233,6 @@ bool RecentFile::prependToRecentFiles(const QString &filePath)
             d->securityTokenData.removeLast();
         }
         result = true;
-    } else {
-        result = false;
     }
     return result;
 }

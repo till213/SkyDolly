@@ -152,27 +152,27 @@ void FormationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &ke
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::BearingKey;
+    keyValue.first = QString::fromLatin1(::BearingKey);
     keyValue.second = Enum::underly(d->bearing);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::HorizontalDistanceKey;
+    keyValue.first = QString::fromLatin1(::HorizontalDistanceKey);
     keyValue.second = Enum::underly(d->horizontalDistance);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::VerticalDistanceKey;
+    keyValue.first = QString::fromLatin1(::VerticalDistanceKey);
     keyValue.second = Enum::underly(d->verticalDistance);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::RelativePositionPlacementKey;
+    keyValue.first = QString::fromLatin1(::RelativePositionPlacementKey);
     keyValue.second = d->relativePositionPlacement;
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::ReplayModeKey;
+    keyValue.first = QString::fromLatin1(::ReplayModeKey);
     keyValue.second = Enum::underly(d->replayMode);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::FormationAircraftTableStateKey;
+    keyValue.first = QString::fromLatin1(::FormationAircraftTableStateKey);
     keyValue.second = d->formationAircraftTableState;
     keyValues.push_back(keyValue);
 }
@@ -181,27 +181,27 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::BearingKey;
+    keyValue.first = QString::fromLatin1(::BearingKey);
     keyValue.second = Enum::underly(::DefaultBearing);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::HorizontalDistanceKey;
+    keyValue.first = QString::fromLatin1(::HorizontalDistanceKey);
     keyValue.second = Enum::underly(::DefaultHorizontalDistance);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::VerticalDistanceKey;
+    keyValue.first = QString::fromLatin1(::VerticalDistanceKey);
     keyValue.second = Enum::underly(::DefaultVerticalDistance);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::RelativePositionPlacementKey;
+    keyValue.first = QString::fromLatin1(::RelativePositionPlacementKey);
     keyValue.second = ::DefaultRelativePositionPlacement;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::ReplayModeKey;
+    keyValue.first = QString::fromLatin1(::ReplayModeKey);
     keyValue.second = Enum::underly(::DefaultReplayMode);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::FormationAircraftTableStateKey;
+    keyValue.first = QString::fromLatin1(::FormationAircraftTableStateKey);
     keyValue.second = QByteArray();
     keysWithDefaults.push_back(keyValue);
 }
@@ -209,24 +209,24 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {false};
-    d->bearing = static_cast<Formation::Bearing>(valuesByKey.at(::BearingKey).toInt(&ok));
+    d->bearing = static_cast<Formation::Bearing>(valuesByKey.at(QString::fromLatin1(::BearingKey)).toInt(&ok));
     if (!ok) {
         d->bearing = ::DefaultBearing;
     }
-    d->horizontalDistance = static_cast<Formation::HorizontalDistance>(valuesByKey.at(::HorizontalDistanceKey).toInt(&ok));
+    d->horizontalDistance = static_cast<Formation::HorizontalDistance>(valuesByKey.at(QString::fromLatin1(::HorizontalDistanceKey)).toInt(&ok));
     if (!ok) {
         d->horizontalDistance = ::DefaultHorizontalDistance;
     }
-    d->verticalDistance = static_cast<Formation::VerticalDistance>(valuesByKey.at(::VerticalDistanceKey).toInt(&ok));
+    d->verticalDistance = static_cast<Formation::VerticalDistance>(valuesByKey.at(QString::fromLatin1(::VerticalDistanceKey)).toInt(&ok));
     if (!ok) {
         d->verticalDistance = ::DefaultVerticalDistance;
     }
-    d->relativePositionPlacement = valuesByKey.at(::RelativePositionPlacementKey).toBool();
-    d->replayMode = static_cast<SkyConnectIntf::ReplayMode>(valuesByKey.at(::ReplayModeKey).toInt(&ok));
+    d->relativePositionPlacement = valuesByKey.at(QString::fromLatin1(::RelativePositionPlacementKey)).toBool();
+    d->replayMode = static_cast<SkyConnectIntf::ReplayMode>(valuesByKey.at(QString::fromLatin1(::ReplayModeKey)).toInt(&ok));
     if (!ok) {
         d->replayMode = ::DefaultReplayMode;
     }
-    d->formationAircraftTableState = valuesByKey.at(::FormationAircraftTableStateKey).toByteArray();
+    d->formationAircraftTableState = valuesByKey.at(QString::fromLatin1(::FormationAircraftTableStateKey)).toByteArray();
 }
 
 void FormationSettings::restoreDefaultsExtn() noexcept

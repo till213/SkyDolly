@@ -66,8 +66,8 @@ void CsvLocationExportOptionWidget::frenchConnection() noexcept
 
 void CsvLocationExportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem("Sky Dolly", Enum::underly(CsvLocationExportSettings::Format::SkyDolly));
-    ui->formatComboBox->addItem("Little Navmap", Enum::underly(CsvLocationExportSettings::Format::LittleNavmap));
+    ui->formatComboBox->addItem(QStringLiteral("Sky Dolly"), Enum::underly(CsvLocationExportSettings::Format::SkyDolly));
+    ui->formatComboBox->addItem(QStringLiteral("Little Navmap"), Enum::underly(CsvLocationExportSettings::Format::LittleNavmap));
 }
 
 // PRIVATE SLOTS

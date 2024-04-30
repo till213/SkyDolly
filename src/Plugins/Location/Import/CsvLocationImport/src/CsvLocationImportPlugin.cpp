@@ -26,6 +26,8 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QString>
+#include <QStringLiteral>
 #include <QStringConverter>
 
 #include <Model/Location.h>
@@ -39,7 +41,7 @@
 struct CsvLocationImportPluginPrivate
 {
     CsvLocationImportSettings pluginSettings;
-    static constexpr const char *FileExtension {"csv"};
+    static inline const QString FileExtension {QStringLiteral("csv")};
 };
 
 // PUBLIC

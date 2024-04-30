@@ -27,6 +27,8 @@
 #include <vector>
 #include <utility>
 
+#include <QString>
+#include <QStringLiteral>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
@@ -71,7 +73,7 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) const noexc
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "insert into aircraft_type (type, category, wing_span, engine_type, nof_engines) "
         "values(:type, :category, :wing_span, :engine_type, :nof_engines) "
         "on conflict(type) "
@@ -80,13 +82,13 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) const noexc
         "    wing_span = excluded.wing_span, "
         "    engine_type = excluded.engine_type, "
         "    nof_engines = excluded.nof_engines;"
-    );
+    ));
 
-    query.bindValue(":type", aircraftType.type);
-    query.bindValue(":category", aircraftType.category);
-    query.bindValue(":wing_span", aircraftType.wingSpan);
-    query.bindValue(":engine_type", Enum::underly(aircraftType.engineType));
-    query.bindValue(":nof_engines", aircraftType.numberOfEngines);
+    query.bindValue(QStringLiteral(":type"), aircraftType.type);
+    query.bindValue(QStringLiteral(":category"), aircraftType.category);
+    query.bindValue(QStringLiteral(":wing_span"), aircraftType.wingSpan);
+    query.bindValue(QStringLiteral(":engine_type"), Enum::underly(aircraftType.engineType));
+    query.bindValue(QStringLiteral(":nof_engines"), aircraftType.numberOfEngines);
 
     const bool ok = query.exec();
 #ifdef DEBUG
@@ -103,23 +105,23 @@ AircraftType SQLiteAircraftTypeDao::getByType(const QString &type, bool *ok) con
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(
+    query.prepare(QStringLiteral(
         "select at.category, at.wing_span, at.engine_type, at.nof_engines "
-        "from   aircraft_type at "
-        "where  at.type = :type;"
-    );
+         "from   aircraft_type at "
+         "where  at.type = :type;"
+    ));
 
-    query.bindValue(":type", type);
+    query.bindValue(QStringLiteral(":type"), type);
     aircraftType.type = type;
     bool success = query.exec();
     if (success) {
         const QSqlRecord record = query.record();
         success = query.next();
         if (success) {
-            const int categoryIdx = record.indexOf("category");
-            const int wingSpanIdx = record.indexOf("wing_span");
-            const int engineTypeIdx = record.indexOf("engine_type");
-            const int nofEnginesIdx = record.indexOf("nof_engines");
+            const int categoryIdx = record.indexOf(QStringLiteral("category"));
+            const int wingSpanIdx = record.indexOf(QStringLiteral("wing_span"));
+            const int engineTypeIdx = record.indexOf(QStringLiteral("engine_type"));
+            const int nofEnginesIdx = record.indexOf(QStringLiteral("nof_engines"));
             aircraftType.category = query.value(categoryIdx).toString();
             aircraftType.wingSpan = query.value(wingSpanIdx).toInt();
             aircraftType.engineType = static_cast<SimType::EngineType>(query.value(engineTypeIdx).toInt());
@@ -143,11 +145,11 @@ std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(
+    query.prepare(QStringLiteral(
         "select * "
         "from   aircraft_type at "
         "order by at.type asc;"
-    );
+    ));
     const bool success = query.exec();
     if (success) {
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
@@ -158,11 +160,11 @@ std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
         }
 
         QSqlRecord record = query.record();
-        const int typeIdx = record.indexOf("type");
-        const int categoryIdx = record.indexOf("category");
-        const int wingSpanIdx = record.indexOf("wing_span");
-        const int engineTypeIdx = record.indexOf("engine_type");
-        const int nofEnginesIdx = record.indexOf("nof_engines");
+        const int typeIdx = record.indexOf(QStringLiteral("type"));
+        const int categoryIdx = record.indexOf(QStringLiteral("category"));
+        const int wingSpanIdx = record.indexOf(QStringLiteral("wing_span"));
+        const int engineTypeIdx = record.indexOf(QStringLiteral("engine_type"));
+        const int nofEnginesIdx = record.indexOf(QStringLiteral("nof_engines"));
         while (query.next()) {
             const QString type = query.value(typeIdx).toString();
             const QString category = query.value(categoryIdx).toString();
@@ -189,14 +191,14 @@ bool SQLiteAircraftTypeDao::exists(const QString &type) const noexcept
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(
+    query.prepare(QStringLiteral(
         "select count(*) "
         "from   aircraft_type at "
         "where  at.type = :type "
         "limit 1;"
-    );
+    ));
 
-    query.bindValue(":type", type);
+    query.bindValue(QStringLiteral(":type"), type);
     const bool ok = query.exec();
     if (ok && query.next()) {
         const int count = query.value(0).toInt();

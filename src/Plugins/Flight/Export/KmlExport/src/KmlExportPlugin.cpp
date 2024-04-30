@@ -26,7 +26,6 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
-#include <cstdint>
 
 #include <QIODevice>
 #include <QStringBuilder>
@@ -70,7 +69,7 @@ struct KmlExportPluginPrivate
     Unit unit;
     std::unordered_map<QString, int> aircraftTypeCount;
 
-    static constexpr const char *FileExtension {"kml"};
+    static inline const QString FileExtension {QStringLiteral("kml")};
 };
 
 // PUBLIC
@@ -205,16 +204,18 @@ bool KmlExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice 
 
 bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inFormation, QIODevice &io) const noexcept
 {
-    const QString lineStringBegin = QString(
+    const QString lineStringBegin = QStringLiteral(
 "        <LineString>\n"
 "          <extrude>1</extrude>\n"
 "          <tessellate>1</tessellate>\n"
 "          <altitudeMode>absolute</altitudeMode>\n"
-"          <coordinates>\n");
-    const QString lineStringEnd = QString(
+"          <coordinates>\n"
+    );
+    const QString lineStringEnd = QStringLiteral(
 "\n"
 "          </coordinates>\n"
-"        </LineString>\n");
+"        </LineString>\n"
+    );
 
     std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
@@ -273,9 +274,10 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
 
         }
         if (ok) {
-            const QString placemarkEnd = QString(
-    "      </MultiGeometry>\n"
-    "    </Placemark>\n");
+            const QString placemarkEnd = QStringLiteral(
+"      </MultiGeometry>\n"
+"    </Placemark>\n"
+            );
             ok = io.write(placemarkEnd.toUtf8());
         }
 
@@ -296,9 +298,10 @@ bool KmlExportPlugin::exportWaypoints(const FlightPlan &flightPlan, QIODevice &i
 
 bool KmlExportPlugin::exportFooter(QIODevice &io) const noexcept
 {
-    const QString footer =
+    const QString footer = QStringLiteral(
 "  </Document>\n"
-"</kml>\n";
+"</kml>\n"
+    );
     return io.write(footer.toUtf8());
 }
 

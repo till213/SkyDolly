@@ -56,7 +56,7 @@ struct SdlogImportPluginPrivate
 
     SdLogImportSettings pluginSettings;
 
-    static constexpr const char *FileExtension {Const::LogbookExtension};
+    static inline const QString FileExtension {Const::LogbookExtension};
 };
 
 // PUBLIC
@@ -82,6 +82,7 @@ std::vector<FlightData> SdlogImportPlugin::importSelectedFlights(QIODevice &io, 
             // is a valid state, so the logbook service would return ok = true)
             ok = flightIds.size() > 0;
             if (ok) {
+                flights.reserve(flightIds.size());
                 for (const std::int64_t flightId : flightIds) {
                     FlightData flightData;
                     ok = d->importFlightService->importFlightData(flightId, flightData);

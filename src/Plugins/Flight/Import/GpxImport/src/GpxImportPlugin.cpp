@@ -29,6 +29,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QXmlStreamReader>
 #include <QDateTime>
@@ -56,7 +57,7 @@ struct GpxImportPluginPrivate
     QXmlStreamReader xml;    
     std::unique_ptr<GpxParser> parser;
 
-    static constexpr const char *FileExtension {"gpx"};
+    static inline const QString FileExtension {QStringLiteral("gpx")};
 };
 
 // PUBLIC

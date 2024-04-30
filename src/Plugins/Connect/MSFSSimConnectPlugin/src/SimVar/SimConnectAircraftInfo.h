@@ -68,20 +68,20 @@ struct SimConnectAircraftInfo
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&title[0], sizeof(title), nullptr))) {
-            aircraftInfo.aircraftType.type = QString(title);
+            aircraftInfo.aircraftType.type = QString::fromLatin1(title);
         }
         aircraftInfo.aircraftType.wingSpan = wingSpan;
         aircraftInfo.aircraftType.engineType = toEngineType(engineType);
         aircraftInfo.aircraftType.numberOfEngines = numberOfEngines;
 
         if (SUCCEEDED(StringCbLengthA(&atcId[0], sizeof(atcId), nullptr))) {
-            aircraftInfo.tailNumber = QString(atcId);
+            aircraftInfo.tailNumber = QString::fromLatin1(atcId);
         }
         if (SUCCEEDED(StringCbLengthA(&atcAirline[0], sizeof(atcAirline), nullptr))) {
-            aircraftInfo.airline = QString(atcAirline);
+            aircraftInfo.airline = QString::fromLatin1(atcAirline);
         }
         if (SUCCEEDED(StringCbLengthA(&category[0], sizeof(category), nullptr))) {
-            aircraftInfo.aircraftType.category = QString(category);
+            aircraftInfo.aircraftType.category = QString::fromLatin1(category);
         }
 
         aircraftInfo.initialAirspeed = airspeedTrue;

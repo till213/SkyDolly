@@ -27,6 +27,7 @@
 
 #include <QtGlobal>
 #include <QString>
+#include <QStringLiteral>
 #include <QDateTime>
 
 #include "TimeVariableData.h"
@@ -50,11 +51,9 @@ struct MODEL_API Waypoint final : public TimeVariableData
      */
     bool isValid() const noexcept;
 
-    // Note: declaring the constant as "inline" (with initialisation in the header)
-    // apparently won't make the Waypoint accessible from outside this library (DLL)
     static const Waypoint NullWaypoint;
-    static constexpr const char *CustomDepartureIdentifier {"CUSTD"};
-    static constexpr const char *CustomArrivalIdentifier {"CUSTA"};
+    static inline const QString CustomDepartureIdentifier {QStringLiteral("CUSTD")};
+    static inline const QString CustomArrivalIdentifier {QStringLiteral("CUSTA")};
 };
 
 #endif // WAYPOINT_H

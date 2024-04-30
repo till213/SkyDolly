@@ -104,21 +104,21 @@ QString KmlStyleExport::getNextEngineTypeStyleMap(SimType::EngineType engineType
         case SimType::EngineType::Jet:
             nofColors = d->jetColorRamp.size();
             if (nofColors > 0) {
-                styleMapId = QString(JetStyleMapId) % "_" % QString::number(d->jetColorRampIndex % nofColors);
+                styleMapId = QString::fromLatin1(::JetStyleMapId) % "_" % QString::number(d->jetColorRampIndex % nofColors);
                 ++d->jetColorRampIndex;
             }
             break;
         case SimType::EngineType::Turboprop:
             nofColors = d->turbopropColorRamp.size();
             if (nofColors > 0) {
-                styleMapId = QString(TurbopropStyleMapId) % "_" % QString::number(d->turbopropColorRampIndex % d->turbopropColorRamp.size());
+                styleMapId = QString::fromLatin1(::TurbopropStyleMapId) % "_" % QString::number(d->turbopropColorRampIndex % d->turbopropColorRamp.size());
                 ++d->turbopropColorRampIndex;
             }
             break;
         case SimType::EngineType::Piston:
             nofColors = d->pistonColorRamp.size();
             if (nofColors > 0) {
-                styleMapId = QString(PistonStyleMapId) % "_" % QString::number(d->pistonColorRampIndex % d->pistonColorRamp.size());
+                styleMapId = QString::fromLatin1(::PistonStyleMapId) % "_" % QString::number(d->pistonColorRampIndex % d->pistonColorRamp.size());
                 ++d->pistonColorRampIndex;
             }
             break;
@@ -133,7 +133,7 @@ QString KmlStyleExport::getNextEngineTypeStyleMap(SimType::EngineType engineType
         case SimType::EngineType::All:
             nofColors = d->allColorRamp.size();
             if (nofColors > 0) {
-                styleMapId = QString(AllStyleMapId) % "_" % QString::number(d->allColorRampIndex % d->allColorRamp.size());
+                styleMapId = QString::fromLatin1(::AllStyleMapId) % "_" % QString::number(d->allColorRampIndex % d->allColorRamp.size());
                 ++d->allColorRampIndex;
             }
             break;
@@ -142,7 +142,7 @@ QString KmlStyleExport::getNextEngineTypeStyleMap(SimType::EngineType engineType
     } else {
         nofColors = d->allColorRamp.size();
         if (nofColors > 0) {
-            styleMapId = QString(AllStyleMapId) % "_" % QString::number(d->allColorRampIndex % d->allColorRamp.size());
+            styleMapId = QString::fromLatin1(::AllStyleMapId) % "_" % QString::number(d->allColorRampIndex % d->allColorRamp.size());
             ++d->allColorRampIndex;
         }
     }
@@ -155,10 +155,10 @@ QString KmlStyleExport::getStyleUrl(Icon icon) noexcept
     QString styleUrl;
     switch (icon) {
     case Icon::Airport:
-        styleUrl = "#sm_airports";
+        styleUrl = QStringLiteral("#sm_airports");
         break;
     case Icon::Flag:
-        styleUrl = "#sm_flag";
+        styleUrl = QStringLiteral("#sm_flag");
         break;
     }
     return styleUrl;
@@ -365,13 +365,13 @@ bool KmlStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType eng
     QString styleId;
     switch (engineType) {
     case SimType::EngineType::Jet:
-        styleId = JetStyleId;
+        styleId = QString::fromLatin1(::JetStyleId);
         break;
     case SimType::EngineType::Turboprop:
-        styleId = TurbopropStyleId;
+        styleId = QString::fromLatin1(::TurbopropStyleId);
         break;
     case SimType::EngineType::Piston:
-        styleId = PistonStyleId;
+        styleId = QString::fromLatin1(::PistonStyleId);
         break;
     case SimType::EngineType::Unknown:
         [[fallthrough]];
@@ -382,7 +382,7 @@ bool KmlStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType eng
     case SimType::EngineType::Unsupported:
         [[fallthrough]];
     case SimType::EngineType::All:
-        styleId = AllStyleId;
+        styleId = QString::fromLatin1(::AllStyleId);
         break;
     }
 

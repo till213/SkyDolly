@@ -25,6 +25,7 @@
 #include <QComboBox>
 #include <QSpinBox>
 #include <QCheckBox>
+#include <QStringLiteral>
 
 #include <Kernel/Enum.h>
 #include <Kernel/Version.h>
@@ -77,7 +78,7 @@ void IgcImportOptionWidget::initUi() noexcept
 
     // Percent [0, 100]
     ui->enlThresholdSpinBox->setRange(0, 100);
-    ui->enlThresholdSpinBox->setSuffix("%");
+    ui->enlThresholdSpinBox->setSuffix(QStringLiteral("%"));
     ui->enlThresholdSpinBox->setSingleStep(5);
 }
 

@@ -23,9 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <vector>
-#include <algorithm>
-#include <cstdint>
 
 #include <QIODevice>
 #include <QFile>
@@ -51,7 +48,7 @@ struct SdLogExportPluginPrivate
     std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>(Const::ExportConnectionName)};
     SdLogExportSettings pluginSettings;
 
-    static constexpr const char *FileExtension {Const::LogbookExtension};
+    static inline const QString FileExtension {Const::LogbookExtension};
 };
 
 // PUBLIC

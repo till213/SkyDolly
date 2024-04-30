@@ -29,6 +29,7 @@
 #include <utility>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
@@ -74,7 +75,7 @@ bool SQLitePrimaryFlightControlDao::add(std::int64_t aircraftId, const PrimaryFl
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "insert into primary_flight_control ("
         "  aircraft_id,"
         "  timestamp,"
@@ -96,17 +97,17 @@ bool SQLitePrimaryFlightControlDao::add(std::int64_t aircraftId, const PrimaryFl
         " :elevator_position,"
         " :aileron_position"
         ");"
-    );
+    ));
 
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    query.bindValue(":timestamp", QVariant::fromValue(primaryFlightControlData.timestamp));
-    query.bindValue(":rudder_deflection", primaryFlightControlData.rudderDeflection);
-    query.bindValue(":elevator_deflection", primaryFlightControlData.elevatorDeflection);
-    query.bindValue(":aileron_left_deflection", primaryFlightControlData.leftAileronDeflection);
-    query.bindValue(":aileron_right_deflection", primaryFlightControlData.rightAileronDeflection);
-    query.bindValue(":rudder_position", primaryFlightControlData.rudderPosition);
-    query.bindValue(":elevator_position", primaryFlightControlData.elevatorPosition);
-    query.bindValue(":aileron_position", primaryFlightControlData.aileronPosition);
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":timestamp"), QVariant::fromValue(primaryFlightControlData.timestamp));
+    query.bindValue(QStringLiteral(":rudder_deflection"), primaryFlightControlData.rudderDeflection);
+    query.bindValue(QStringLiteral(":elevator_deflection"), primaryFlightControlData.elevatorDeflection);
+    query.bindValue(QStringLiteral(":aileron_left_deflection"), primaryFlightControlData.leftAileronDeflection);
+    query.bindValue(QStringLiteral(":aileron_right_deflection"), primaryFlightControlData.rightAileronDeflection);
+    query.bindValue(QStringLiteral(":rudder_position"), primaryFlightControlData.rudderPosition);
+    query.bindValue(QStringLiteral(":elevator_position"), primaryFlightControlData.elevatorPosition);
+    query.bindValue(QStringLiteral(":aileron_position"), primaryFlightControlData.aileronPosition);
 
     const bool ok = query.exec();
 #ifdef DEBUG
@@ -123,14 +124,14 @@ std::vector<PrimaryFlightControlData> SQLitePrimaryFlightControlDao::getByAircra
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(
+    query.prepare(QStringLiteral(
         "select * "
         "from   primary_flight_control pfc "
         "where  pfc.aircraft_id = :aircraft_id "
         "order by pfc.timestamp asc;"
-    );
+    ));
 
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
         const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -141,14 +142,14 @@ std::vector<PrimaryFlightControlData> SQLitePrimaryFlightControlDao::getByAircra
             primaryFlightControlData.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
-        const int timestampIdx = record.indexOf("timestamp");
-        const int rudderDeflectionIdx = record.indexOf("rudder_deflection");
-        const int elevatorDeflectionIdx = record.indexOf("elevator_deflection");
-        const int aileronLeftDeflectionIdx = record.indexOf("aileron_left_deflection");
-        const int aileronRightDeflectionIdx = record.indexOf("aileron_right_deflection");
-        const int rudderPositionIdx = record.indexOf("rudder_position");
-        const int elevatorPositionIdx = record.indexOf("elevator_position");
-        const int aileronPositionIdx = record.indexOf("aileron_position");
+        const int timestampIdx = record.indexOf(QStringLiteral("timestamp"));
+        const int rudderDeflectionIdx = record.indexOf(QStringLiteral("rudder_deflection"));
+        const int elevatorDeflectionIdx = record.indexOf(QStringLiteral("elevator_deflection"));
+        const int aileronLeftDeflectionIdx = record.indexOf(QStringLiteral("aileron_left_deflection"));
+        const int aileronRightDeflectionIdx = record.indexOf(QStringLiteral("aileron_right_deflection"));
+        const int rudderPositionIdx = record.indexOf(QStringLiteral("rudder_position"));
+        const int elevatorPositionIdx = record.indexOf(QStringLiteral("elevator_position"));
+        const int aileronPositionIdx = record.indexOf(QStringLiteral("aileron_position"));
         while (query.next()) {
             PrimaryFlightControlData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
@@ -178,16 +179,16 @@ bool SQLitePrimaryFlightControlDao::deleteByFlightId(std::int64_t flightId) cons
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "delete "
         "from   primary_flight_control "
         "where  aircraft_id in (select a.id "
         "                       from aircraft a"
         "                       where a.flight_id = :flight_id"
         "                      );"
-    );
+    ));
 
-    query.bindValue(":flight_id", QVariant::fromValue(flightId));
+    query.bindValue(QStringLiteral(":flight_id"), QVariant::fromValue(flightId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -201,13 +202,13 @@ bool SQLitePrimaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId) 
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "delete "
         "from   primary_flight_control "
         "where  aircraft_id = :aircraft_id;"
-    );
+    ));
 
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

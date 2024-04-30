@@ -121,19 +121,19 @@ void CsvLocationImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) 
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::FormatKey;
+    keyValue.first = QString::fromLatin1(::FormatKey);
     keyValue.second = Enum::underly(d->format);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::DefaultCountryKey;
+    keyValue.first = QString::fromLatin1(::DefaultCountryKey);
     keyValue.second = QVariant::fromValue(d->defaultCountryId);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::DefaultAltitudeKey;
+    keyValue.first = QString::fromLatin1(::DefaultAltitudeKey);
     keyValue.second = d->defaultAltitude;
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::DefaultIndicatedAirspeedKey;
+    keyValue.first = QString::fromLatin1(::DefaultIndicatedAirspeedKey);
     keyValue.second = d->defaultIndicatedAirspeed;
     keyValues.push_back(keyValue);
 }
@@ -142,19 +142,19 @@ void CsvLocationImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::FormatKey;
+    keyValue.first = QString::fromLatin1(::FormatKey);
     keyValue.second = Enum::underly(::DefaultFormat);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::DefaultCountryKey;
+    keyValue.first = QString::fromLatin1(::DefaultCountryKey);
     keyValue.second = QVariant::fromValue(d->WorldCountryId);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::DefaultAltitudeKey;
+    keyValue.first = QString::fromLatin1(::DefaultAltitudeKey);
     keyValue.second = Const::DefaultAltitude;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::DefaultIndicatedAirspeedKey;
+    keyValue.first = QString::fromLatin1(::DefaultIndicatedAirspeedKey);
     keyValue.second = Const::DefaultIndicatedAirspeed;
     keysWithDefaults.push_back(keyValue);
 }
@@ -162,28 +162,28 @@ void CsvLocationImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
 void CsvLocationImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
+    const int enumeration = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
     if (ok) {
         d->format = static_cast<CsvLocationImportSettings::Format >(enumeration);
     } else {
         d->format = ::DefaultFormat;
     }
 
-    const std::int64_t defaultCountryId = valuesByKey.at(::DefaultCountryKey).toLongLong(&ok);
+    const std::int64_t defaultCountryId = valuesByKey.at(QString::fromLatin1(::DefaultCountryKey)).toLongLong(&ok);
     if (ok) {
         d->defaultCountryId = defaultCountryId;
     } else {
         d->defaultCountryId = d->WorldCountryId;
     }
 
-    const int defaultAltitude = valuesByKey.at(::DefaultAltitudeKey).toInt(&ok);
+    const int defaultAltitude = valuesByKey.at(QString::fromLatin1(::DefaultAltitudeKey)).toInt(&ok);
     if (ok) {
         d->defaultAltitude = defaultAltitude;
     } else {
         d->defaultAltitude = Const::DefaultAltitude;
     }
 
-    const int defaultIndicatedAirspeed = valuesByKey.at(::DefaultIndicatedAirspeedKey).toInt(&ok);
+    const int defaultIndicatedAirspeed = valuesByKey.at(QString::fromLatin1(::DefaultIndicatedAirspeedKey)).toInt(&ok);
     if (ok) {
         d->defaultIndicatedAirspeed = defaultIndicatedAirspeed;
     } else {

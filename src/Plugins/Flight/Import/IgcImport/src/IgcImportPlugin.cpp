@@ -29,6 +29,8 @@
 #include <cstdint>
 #include <exception>
 
+#include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QIODevice>
 #include <QByteArray>
@@ -81,7 +83,7 @@ struct IgcImportPluginPrivate
     IgcImportSettings pluginSettings;
     QEasingCurve throttleResponseCurve {QEasingCurve::OutExpo};
 
-    static constexpr const char *FileExtension {"igc"};
+    static inline const QString FileExtension {QStringLiteral("igc")};
 };
 
 // PUBLIC

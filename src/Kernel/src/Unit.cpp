@@ -32,6 +32,7 @@
 
 #include <QCoreApplication>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QLocale>
 #include <QDateTime>
@@ -77,11 +78,11 @@ QString Unit::formatLatitudeDMS(double latitude) noexcept
     const QString hemisphere = latitude >= 0.0 ? QCoreApplication::translate("Unit", "N") : QCoreApplication::translate("Unit", "S");
     GeographicLib::DMS::Encode(std::abs(latitude), degrees, minutes, seconds);
 
-    return QString("%1° %2' %3\" %4")
-            .arg(static_cast<int>(degrees), 2, 10, UnitPrivate::NumberPadding)
-            .arg(static_cast<int>(minutes), 2, 10, UnitPrivate::NumberPadding)
-            .arg(seconds, 5, 'f', Precision, UnitPrivate::NumberPadding)
-            .arg(hemisphere);
+    return QStringLiteral("%1° %2' %3\" %4")
+           .arg(static_cast<int>(degrees), 2, 10, UnitPrivate::NumberPadding)
+           .arg(static_cast<int>(minutes), 2, 10, UnitPrivate::NumberPadding)
+           .arg(seconds, 5, 'f', Precision, UnitPrivate::NumberPadding)
+           .arg(hemisphere);
 }
 
 QString Unit::formatLongitudeDMS(double longitude) noexcept
@@ -92,11 +93,11 @@ QString Unit::formatLongitudeDMS(double longitude) noexcept
 
     const QString hemisphere = longitude >= 0.0 ? QCoreApplication::translate("Unit", "E") : QCoreApplication::translate("Unit", "W");
     GeographicLib::DMS::Encode(std::abs(longitude), degrees, minutes, seconds);
-    return QString("%1° %2' %3\" %4")
-            .arg(static_cast<int>(degrees), 3, 10, UnitPrivate::NumberPadding)
-            .arg(static_cast<int>(minutes), 2, 10, UnitPrivate::NumberPadding)
-            .arg(seconds, 5, 'f', Precision, UnitPrivate::NumberPadding)
-            .arg(hemisphere);
+    return QStringLiteral("%1° %2' %3\" %4")
+           .arg(static_cast<int>(degrees), 3, 10, UnitPrivate::NumberPadding)
+           .arg(static_cast<int>(minutes), 2, 10, UnitPrivate::NumberPadding)
+           .arg(seconds, 5, 'f', Precision, UnitPrivate::NumberPadding)
+           .arg(hemisphere);
 }
 
 QString Unit::formatLatLongPositionDMS(double latitude, double longitude) noexcept
@@ -106,17 +107,17 @@ QString Unit::formatLatLongPositionDMS(double latitude, double longitude) noexce
 
 QString Unit::formatFeet(double feet) const noexcept
 {
-    return d->locale.toString(feet, 'f', Precision) % " ft";
+    return d->locale.toString(feet, 'f', Precision) % QStringLiteral(" ft");
 }
 
 QString Unit::formatCelcius(double temperature) const noexcept
 {
-    return d->locale.toString(temperature, 'f', Precision) % " °C";
+    return d->locale.toString(temperature, 'f', Precision) % QStringLiteral(" °C");
 }
 
 QString Unit::formatPressureInHPa(double pressure) const noexcept
 {
-    return d->locale.toString(pressure, 'f', Precision) % " hPa";
+    return d->locale.toString(pressure, 'f', Precision) % QStringLiteral(" hPa");
 }
 
 QString Unit::formatVisibility(double meters) const noexcept
@@ -136,18 +137,18 @@ QString Unit::formatVisibility(double meters) const noexcept
 
 QString Unit::formatDegrees(double degrees) const noexcept
 {
-    return d->locale.toString(degrees, 'f', Precision) % "°";
+    return d->locale.toString(degrees, 'f', Precision) % QStringLiteral("°");
 }
 
 QString Unit::formatHz(double hz) const noexcept
 {
     QString hzString;
     if (hz < 1000) {
-        hzString = QString("%1 Hz").arg(QString::number(hz, 'f', 1));
+        hzString = QStringLiteral("%1 Hz").arg(QString::number(hz, 'f', 1));
     }  else if (hz < 1000 * 1000) {
-        hzString = QString("%1 kHz").arg(QString::number(hz / 1000.0, 'f', 1));
+        hzString = QStringLiteral("%1 kHz").arg(QString::number(hz / 1000.0, 'f', 1));
     }  else {
-        hzString = QString("%1 MHz").arg(QString::number(hz / (1000.0 * 1000), 'f', 2));
+        hzString = QStringLiteral("%1 MHz").arg(QString::number(hz / (1000.0 * 1000), 'f', 2));
     }
     return hzString;
 }
@@ -181,15 +182,15 @@ QString Unit::formatMemory(std::size_t memory) const noexcept
 {
     QString size;
     if (memory < 1024) {
-        size = QString("%1 bytes").arg(memory);
+        size = QStringLiteral("%1 bytes").arg(memory);
     } else if (memory < 1024ull * 1024ull) {
-        size = QString("%1 KiB").arg(QString::number(static_cast<double>(memory) / 1024.0, 'f', 1));
+        size = QStringLiteral("%1 KiB").arg(QString::number(static_cast<double>(memory) / 1024.0, 'f', 1));
     } else if (memory < 1024ull * 1024ull * 1024ull) {
-        size = QString("%1 MiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0), 'f', 2));
+        size = QStringLiteral("%1 MiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0), 'f', 2));
     } else if (memory < 1024ull * 1024ull * 1024ull * 1024ull) {
-        size = QString("%1 GiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0), 'f', 2));
+        size = QStringLiteral("%1 GiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0), 'f', 2));
     } else {
-        size = QString("%1 TiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0 * 1024.0), 'f', 2));
+        size = QStringLiteral("%1 TiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0 * 1024.0), 'f', 2));
     }
     return size;
 }
@@ -221,7 +222,7 @@ QString Unit::formatDateTime(const QDateTime &dateTime) const noexcept
 
 QString Unit::formatDuration(const QTime &time) const noexcept
 {
-    return d->locale.toString(time, "HH:mm:ss");
+    return d->locale.toString(time, QStringLiteral("HH:mm:ss"));
 }
 
 QString Unit::formatMonth(int month) const noexcept
@@ -279,7 +280,7 @@ QString Unit::formatHHMMSS(std::int64_t milliSeconds) noexcept
     minutes -= hours;
 
     QTime time(static_cast<int>(hours.count()), static_cast<int>(minutes.count()), static_cast<int>(seconds.count()));
-    return time.toString("hh:mm:ss");
+    return time.toString(QStringLiteral("hh:mm:ss"));
 }
 
 QString Unit::formatBoolean(bool value) noexcept

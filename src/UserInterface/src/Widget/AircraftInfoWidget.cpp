@@ -96,17 +96,17 @@ void AircraftInfoWidget::hideEvent(QHideEvent *event) noexcept
 
 void AircraftInfoWidget::initUi() noexcept
 {
-    ui->nameLineEdit->setToolTip(SimVar::Title);
-    ui->tailNumberLineEdit->setToolTip(SimVar::ATCFlightNumber);
-    ui->airlineLineEdit->setToolTip(SimVar::ATCAirline);
+    ui->nameLineEdit->setToolTip(QString::fromLatin1(SimVar::Title));
+    ui->tailNumberLineEdit->setToolTip(QString::fromLatin1(SimVar::ATCFlightNumber));
+    ui->airlineLineEdit->setToolTip(QString::fromLatin1(SimVar::ATCAirline));
 
-    ui->categoryLineEdit->setToolTip(SimVar::Category);
-    ui->startOnGroundCheckBox->setToolTip(SimVar::SimOnGround);
-    ui->initialAirspeedLineEdit->setToolTip(SimVar::AirspeedTrue);
-    ui->wingSpanLineEdit->setToolTip(SimVar::WingSpan);
-    ui->engineTypeLineEdit->setToolTip(SimVar::EngineType);
-    ui->numberOfEnginesLineEdit->setToolTip(SimVar::NumberOfEngines);
-    ui->aircraftAltitudeAboveGroundLineEdit->setToolTip(SimVar::PlaneAltAboveGround);
+    ui->categoryLineEdit->setToolTip(QString::fromLatin1(SimVar::Category));
+    ui->startOnGroundCheckBox->setToolTip(QString::fromLatin1(SimVar::SimOnGround));
+    ui->initialAirspeedLineEdit->setToolTip(QString::fromLatin1(SimVar::AirspeedTrue));
+    ui->wingSpanLineEdit->setToolTip(QString::fromLatin1(SimVar::WingSpan));
+    ui->engineTypeLineEdit->setToolTip(QString::fromLatin1(SimVar::EngineType));
+    ui->numberOfEnginesLineEdit->setToolTip(QString::fromLatin1(SimVar::NumberOfEngines));
+    ui->aircraftAltitudeAboveGroundLineEdit->setToolTip(QString::fromLatin1(SimVar::PlaneAltAboveGround));
 
     // Make the flight information checkboxes checkable, but not for the user
     ui->startOnGroundCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);

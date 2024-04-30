@@ -73,7 +73,7 @@ Version::~Version() = default;
 
 void Version::fromString(QStringView version) noexcept
 {
-    static QRegularExpression versionRegExp(R"(^(\d+)\.(\d+)\.(\d+)$)");
+    static QRegularExpression versionRegExp(QStringLiteral(R"(^(\d+)\.(\d+)\.(\d+)$)"));
     QRegularExpressionMatch match = versionRegExp.match(version);
     if (match.isValid()) {
         d->major = match.captured(1).toInt();
@@ -99,7 +99,7 @@ int Version::getPatch() const noexcept
 
 QString Version::toString() const noexcept
 {
-    return QString("%1.%2.%3").arg(d->major).arg(d->minor).arg(d->patch);
+    return QStringLiteral("%1.%2.%3").arg(d->major).arg(d->minor).arg(d->patch);
 }
 
 bool Version::isNull() const noexcept
@@ -151,7 +151,7 @@ QString Version::getUserVersion() noexcept
     const QDate gitDate = getGitDate().date();
     const int year = gitDate.year();
     const int month = gitDate.month();
-    userVersion = QString("%1").arg(year) % "." % QString("%1").arg(month, 2, 10, QChar('0'));
+    userVersion = QStringLiteral("%1").arg(year) % "." % QStringLiteral("%1").arg(month, 2, 10, QChar('0'));
     return userVersion;
 }
 
@@ -163,12 +163,12 @@ QString Version::getApplicationVersion() noexcept
 
 QString Version::getOrganisationName() noexcept
 {
-    return VersionConfig::OrganisationName;
+    return QString::fromLatin1(VersionConfig::OrganisationName);
 }
 
 QString Version::getApplicationName() noexcept
 {
-    return VersionConfig::ApplicationName;
+    return QString::fromLatin1(VersionConfig::ApplicationName);
 }
 
 QLatin1String Version::getGitHash() noexcept
@@ -178,5 +178,5 @@ QLatin1String Version::getGitHash() noexcept
 
 QDateTime Version::getGitDate() noexcept
 {
-    return QDateTime::fromString(GitInfo::GitIsoDate, Qt::ISODate);
+    return QDateTime::fromString(QString::fromLatin1(GitInfo::GitIsoDate), Qt::ISODate);
 }

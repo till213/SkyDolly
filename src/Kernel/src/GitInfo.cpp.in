@@ -1,4 +1,4 @@
 #include "GitInfo.h"
 
-const char *GitInfo::GitHash = "@GIT_HASH@";
-const char *GitInfo::GitIsoDate = "@GIT_ISO_DATE@";
+const char *const GitInfo::GitHash = "@GIT_HASH@";
+const char *const GitInfo::GitIsoDate = "@GIT_ISO_DATE@";

@@ -77,7 +77,7 @@ void CsvLocationExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) 
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::FormatKey;
+    keyValue.first = QString::fromLatin1(::FormatKey);
     keyValue.second = Enum::underly(d->format);
     keyValues.push_back(keyValue);
 }
@@ -86,7 +86,7 @@ void CsvLocationExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::FormatKey;
+    keyValue.first = QString::fromLatin1(::FormatKey);
     keyValue.second = Enum::underly(::DefaultFormat);
     keysWithDefaults.push_back(keyValue);
 }
@@ -94,7 +94,7 @@ void CsvLocationExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
 void CsvLocationExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
+    const int enumeration = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
     if (ok) {
         d->format = static_cast<Format >(enumeration);
     } else {
