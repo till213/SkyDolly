@@ -85,11 +85,11 @@ void LocationImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValue
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::ImportDirectoryEnabledKey;
+    keyValue.first = QString::fromLatin1(::ImportDirectoryEnabledKey);
     keyValue.second = d->importDirectoryEnabled;
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::ImportModeKey;
+    keyValue.first = QString::fromLatin1(::ImportModeKey);
     keyValue.second = Enum::underly(d->importMode);
     keyValues.push_back(keyValue);
 
@@ -100,11 +100,11 @@ void LocationImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::ImportDirectoryEnabledKey;
+    keyValue.first = QString::fromLatin1(::ImportDirectoryEnabledKey);
     keyValue.second = ::DefaultImportDirectoryEnabled;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::ImportModeKey;
+    keyValue.first = QString::fromLatin1(::ImportModeKey);
     keyValue.second = Enum::underly(::DefaultImportMode);
     keysWithDefaults.push_back(keyValue);
 
@@ -113,9 +113,9 @@ void LocationImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 
 void LocationImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->importDirectoryEnabled = valuesByKey.at(::ImportDirectoryEnabledKey).toBool();
+    d->importDirectoryEnabled = valuesByKey.at(QString::fromLatin1(::ImportDirectoryEnabledKey)).toBool();
     bool ok {true};
-    int enumeration = valuesByKey.at(::ImportModeKey).toInt(&ok);
+    int enumeration = valuesByKey.at(QString::fromLatin1(::ImportModeKey)).toInt(&ok);
     if (ok) {
         d->importMode = static_cast<LocationService::Mode>(enumeration);
     } else {

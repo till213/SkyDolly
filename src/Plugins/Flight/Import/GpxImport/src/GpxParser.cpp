@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringLiteral>
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>
@@ -345,10 +346,10 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
     if (ok) {
         longitude = attributes.value(Gpx::lon).toDouble(&ok);
         if (!ok) {
-            d->xml.raiseError("Could not parse waypoint longitude value.");
+            d->xml.raiseError(QStringLiteral("Could not parse waypoint longitude value."));
         }
     } else {
-        d->xml.raiseError("Could not parse waypoint latitude value.");
+        d->xml.raiseError(QStringLiteral("Could not parse waypoint latitude value."));
     }
 
     // In meters
@@ -358,7 +359,7 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
             const QString elevationText = d->xml.readElementText();
             altitude = elevationText.toDouble(&ok);
             if (!ok) {
-                d->xml.raiseError("Could not parse waypoint altitude value.");
+                d->xml.raiseError(QStringLiteral("Could not parse waypoint altitude value."));
             }
         } else if (d->xml.name() == Gpx::name) {
             identifier = d->xml.readElementText();
@@ -367,7 +368,7 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
             dateTime = QDateTime::fromString(d->xml.readElementText(), Qt::ISODate);
             ok = dateTime.isValid();
             if (!ok) {
-                d->xml.raiseError("Invalid timestamp.");
+                d->xml.raiseError(QStringLiteral("Invalid timestamp."));
             }
         } else {
             d->xml.skipCurrentElement();

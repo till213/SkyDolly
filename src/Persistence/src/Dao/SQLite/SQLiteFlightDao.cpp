@@ -28,6 +28,8 @@
 #include <utility>
 
 #include <QString>
+#include <QStringLiteral>
+#include <QString>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
@@ -97,42 +99,42 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(
+    query.prepare(QStringLiteral(
         "select * "
         "from flight f "
         "where f.id = :id;"
-    );
+    ));
 
-    query.bindValue(":id", QVariant::fromValue(id));
+    query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
     bool ok = query.exec();
     if (ok) {
         flightData.clear(false, FlightData::CreationTimeMode::Reset);
         QSqlRecord record = query.record();
-        const int idIdx = record.indexOf("id");
-        const int creationTimeIdx = record.indexOf("creation_time");
-        const int userAircraftSequenceNumberIdx = record.indexOf("user_aircraft_seq_nr");
-        const int titleIdx = record.indexOf("title");
-        const int descriptionIdx = record.indexOf("description");
-        const int flightNumberIdx = record.indexOf("flight_number");
-        const int surfaceTypeIdx = record.indexOf("surface_type");
-        const int surfaceConditionIdx = record.indexOf("surface_condition");
-        const int onAnyRunwayIdx = record.indexOf("on_any_runway");
-        const int onParkingSpotIdx = record.indexOf("on_parking_spot");        
-        const int groundAltitudeIdx = record.indexOf("ground_altitude");
-        const int ambientTemperatureIdx = record.indexOf("ambient_temperature");
-        const int totalAirTemperatureIdx = record.indexOf("total_air_temperature");
-        const int windSpeedIdx = record.indexOf("wind_speed");
-        const int windDirectionIdx = record.indexOf("wind_direction");
-        const int visibilityIdx = record.indexOf("visibility");
-        const int seaLevelPressureIdx = record.indexOf("sea_level_pressure");
-        const int pitotIcingIdx = record.indexOf("pitot_icing");
-        const int structuralIcingIdx = record.indexOf("structural_icing");
-        const int precipitationStateIdx = record.indexOf("precipitation_state");
-        const int inCloudsIdx = record.indexOf("in_clouds");
-        const int startLocalSimulationTimeIdx = record.indexOf("start_local_sim_time");
-        const int startZuluSimulationTimeIdx = record.indexOf("start_zulu_sim_time");
-        const int endLocalSimulationTimeIdx = record.indexOf("end_local_sim_time");
-        const int endZuluSimulationTimeIdx = record.indexOf("end_zulu_sim_time");
+        const int idIdx = record.indexOf(QStringLiteral("id"));
+        const int creationTimeIdx = record.indexOf(QStringLiteral("creation_time"));
+        const int userAircraftSequenceNumberIdx = record.indexOf(QStringLiteral("user_aircraft_seq_nr"));
+        const int titleIdx = record.indexOf(QStringLiteral("title"));
+        const int descriptionIdx = record.indexOf(QStringLiteral("description"));
+        const int flightNumberIdx = record.indexOf(QStringLiteral("flight_number"));
+        const int surfaceTypeIdx = record.indexOf(QStringLiteral("surface_type"));
+        const int surfaceConditionIdx = record.indexOf(QStringLiteral("surface_condition"));
+        const int onAnyRunwayIdx = record.indexOf(QStringLiteral("on_any_runway"));
+        const int onParkingSpotIdx = record.indexOf(QStringLiteral("on_parking_spot"));
+        const int groundAltitudeIdx = record.indexOf(QStringLiteral("ground_altitude"));
+        const int ambientTemperatureIdx = record.indexOf(QStringLiteral("ambient_temperature"));
+        const int totalAirTemperatureIdx = record.indexOf(QStringLiteral("total_air_temperature"));
+        const int windSpeedIdx = record.indexOf(QStringLiteral("wind_speed"));
+        const int windDirectionIdx = record.indexOf(QStringLiteral("wind_direction"));
+        const int visibilityIdx = record.indexOf(QStringLiteral("visibility"));
+        const int seaLevelPressureIdx = record.indexOf(QStringLiteral("sea_level_pressure"));
+        const int pitotIcingIdx = record.indexOf(QStringLiteral("pitot_icing"));
+        const int structuralIcingIdx = record.indexOf(QStringLiteral("structural_icing"));
+        const int precipitationStateIdx = record.indexOf(QStringLiteral("precipitation_state"));
+        const int inCloudsIdx = record.indexOf(QStringLiteral("in_clouds"));
+        const int startLocalSimulationTimeIdx = record.indexOf(QStringLiteral("start_local_sim_time"));
+        const int startZuluSimulationTimeIdx = record.indexOf(QStringLiteral("start_zulu_sim_time"));
+        const int endLocalSimulationTimeIdx = record.indexOf(QStringLiteral("end_local_sim_time"));
+        const int endZuluSimulationTimeIdx = record.indexOf(QStringLiteral("end_zulu_sim_time"));
 
         if (query.next()) {
             flightData.id = query.value(idIdx).toLongLong();
@@ -183,15 +185,15 @@ bool SQLiteFlightDao::deleteById(std::int64_t id) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "delete "
         "from flight "
         "where id = :id;"
-    );
+    ));
 
     bool ok = d->aircraftDao->deleteAllByFlightId(id);
     if (ok) {
-        query.bindValue(":id", QVariant::fromValue(id));
+        query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
         ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
@@ -206,14 +208,14 @@ bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) const n
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "update flight "
         "set    title = :title "
         "where id = :id;"
-    );
+    ));
 
-    query.bindValue(":title", title);
-    query.bindValue(":id", QVariant::fromValue(id));
+    query.bindValue(QStringLiteral(":title"), title);
+    query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -227,14 +229,14 @@ bool SQLiteFlightDao::updateFlightNumber(std::int64_t id, const QString &flightN
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "update flight "
         "set    flight_number = :flight_number "
         "where id = :id;"
-        );
+    ));
 
-    query.bindValue(":flight_number", flightNumber);
-    query.bindValue(":id", QVariant::fromValue(id));
+    query.bindValue(QStringLiteral(":flight_number"), flightNumber);
+    query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -248,14 +250,14 @@ bool SQLiteFlightDao::updateDescription(std::int64_t id, const QString &descript
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "update flight "
         "set    description = :description "
         "where id = :id;"
-    );
+    ));
 
-    query.bindValue(":description", description);
-    query.bindValue(":id", QVariant::fromValue(id));
+    query.bindValue(QStringLiteral(":description"), description);
+    query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -269,15 +271,15 @@ bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index) const 
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "update flight "
         "set    user_aircraft_seq_nr = :user_aircraft_seq_nr "
         "where id = :id;"
-    );
+    ));
 
     // Sequence number starts at 1
-    query.bindValue(":user_aircraft_seq_nr", index + 1);
-    query.bindValue(":id", QVariant::fromValue(id));
+    query.bindValue(QStringLiteral(":user_aircraft_seq_nr"), index + 1);
+    query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -293,7 +295,7 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
 
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "insert into flight ("
         "  creation_time,"
         "  user_aircraft_seq_nr,"
@@ -345,38 +347,38 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
         " :end_local_sim_time,"
         " :end_zulu_sim_time"
         ");"
-    );
+    ));
 
     const FlightCondition &flightCondition = flightData.flightCondition;
-    query.bindValue(":creation_time", flightData.creationTime.toUTC());
+    query.bindValue(QStringLiteral(":creation_time"), flightData.creationTime.toUTC());
     // Sequence number starts at 1
-    query.bindValue(":user_aircraft_seq_nr", flightData.userAircraftIndex + 1);
-    query.bindValue(":title", flightData.title);
-    query.bindValue(":description", flightData.description);
-    query.bindValue(":flight_number", flightData.flightNumber);
-    query.bindValue(":surface_type", Enum::underly(flightCondition.surfaceType));
-    query.bindValue(":surface_condition", Enum::underly(flightCondition.surfaceCondition));
-    query.bindValue(":on_any_runway", flightCondition.onAnyRunway);
-    query.bindValue(":on_parking_spot", flightCondition.onParkingSpot);
-    query.bindValue(":ground_altitude", flightCondition.groundAltitude);
-    query.bindValue(":ambient_temperature", flightCondition.ambientTemperature);
-    query.bindValue(":total_air_temperature", flightCondition.totalAirTemperature);
-    query.bindValue(":wind_speed", flightCondition.windSpeed);
-    query.bindValue(":wind_direction", flightCondition.windDirection);
-    query.bindValue(":visibility", flightCondition.visibility);
-    query.bindValue(":sea_level_pressure", flightCondition.seaLevelPressure);
-    query.bindValue(":pitot_icing", flightCondition.pitotIcingPercent);
-    query.bindValue(":structural_icing", flightCondition.structuralIcingPercent);
-    query.bindValue(":precipitation_state", Enum::underly(flightCondition.precipitationState));
-    query.bindValue(":in_clouds", flightCondition.inClouds);
+    query.bindValue(QStringLiteral(":user_aircraft_seq_nr"), flightData.userAircraftIndex + 1);
+    query.bindValue(QStringLiteral(":title"), flightData.title);
+    query.bindValue(QStringLiteral(":description"), flightData.description);
+    query.bindValue(QStringLiteral(":flight_number"), flightData.flightNumber);
+    query.bindValue(QStringLiteral(":surface_type"), Enum::underly(flightCondition.surfaceType));
+    query.bindValue(QStringLiteral(":surface_condition"), Enum::underly(flightCondition.surfaceCondition));
+    query.bindValue(QStringLiteral(":on_any_runway"), flightCondition.onAnyRunway);
+    query.bindValue(QStringLiteral(":on_parking_spot"), flightCondition.onParkingSpot);
+    query.bindValue(QStringLiteral(":ground_altitude"), flightCondition.groundAltitude);
+    query.bindValue(QStringLiteral(":ambient_temperature"), flightCondition.ambientTemperature);
+    query.bindValue(QStringLiteral(":total_air_temperature"), flightCondition.totalAirTemperature);
+    query.bindValue(QStringLiteral(":wind_speed"), flightCondition.windSpeed);
+    query.bindValue(QStringLiteral(":wind_direction"), flightCondition.windDirection);
+    query.bindValue(QStringLiteral(":visibility"), flightCondition.visibility);
+    query.bindValue(QStringLiteral(":sea_level_pressure"), flightCondition.seaLevelPressure);
+    query.bindValue(QStringLiteral(":pitot_icing"), flightCondition.pitotIcingPercent);
+    query.bindValue(QStringLiteral(":structural_icing"), flightCondition.structuralIcingPercent);
+    query.bindValue(QStringLiteral(":precipitation_state"), Enum::underly(flightCondition.precipitationState));
+    query.bindValue(QStringLiteral(":in_clouds"), flightCondition.inClouds);
     // No conversion to UTC
-    query.bindValue(":start_local_sim_time", flightCondition.startLocalTime);
+    query.bindValue(QStringLiteral(":start_local_sim_time"), flightCondition.startLocalTime);
     // Zulu time equals to UTC time
-    query.bindValue(":start_zulu_sim_time", flightCondition.startZuluTime);
+    query.bindValue(QStringLiteral(":start_zulu_sim_time"), flightCondition.startZuluTime);
     // No conversion to UTC
-    query.bindValue(":end_local_sim_time", flightCondition.endLocalTime);
+    query.bindValue(QStringLiteral(":end_local_sim_time"), flightCondition.endLocalTime);
     // Zulu time equals to UTC time
-    query.bindValue(":end_zulu_sim_time", flightCondition.endZuluTime);
+    query.bindValue(QStringLiteral(":end_zulu_sim_time"), flightCondition.endZuluTime);
     bool ok = query.exec();
     if (ok) {
         flightId = query.lastInsertId().toLongLong(&ok);

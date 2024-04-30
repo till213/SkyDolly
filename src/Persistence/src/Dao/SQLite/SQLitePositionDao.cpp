@@ -29,6 +29,7 @@
 #include <utility>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlDatabase>
@@ -74,7 +75,7 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "insert into position ("
         "  aircraft_id,"
         "  timestamp,"
@@ -102,19 +103,19 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
         " :velocity_y,"
         " :velocity_z"
         ");"
-    );
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    query.bindValue(":timestamp", QVariant::fromValue(position.timestamp));
-    query.bindValue(":latitude", position.latitude);
-    query.bindValue(":longitude", position.longitude);
-    query.bindValue(":altitude", position.altitude);
-    query.bindValue(":indicated_altitude", position.indicatedAltitude);
-    query.bindValue(":pitch", position.pitch);
-    query.bindValue(":bank", position.bank);
-    query.bindValue(":true_heading", position.trueHeading);
-    query.bindValue(":velocity_x", position.velocityBodyX);
-    query.bindValue(":velocity_y", position.velocityBodyY);
-    query.bindValue(":velocity_z", position.velocityBodyZ);
+    ));
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":timestamp"), QVariant::fromValue(position.timestamp));
+    query.bindValue(QStringLiteral(":latitude"), position.latitude);
+    query.bindValue(QStringLiteral(":longitude"), position.longitude);
+    query.bindValue(QStringLiteral(":altitude"), position.altitude);
+    query.bindValue(QStringLiteral(":indicated_altitude"), position.indicatedAltitude);
+    query.bindValue(QStringLiteral(":pitch"), position.pitch);
+    query.bindValue(QStringLiteral(":bank"), position.bank);
+    query.bindValue(QStringLiteral(":true_heading"), position.trueHeading);
+    query.bindValue(QStringLiteral(":velocity_x"), position.velocityBodyX);
+    query.bindValue(QStringLiteral(":velocity_y"), position.velocityBodyY);
+    query.bindValue(QStringLiteral(":velocity_z"), position.velocityBodyZ);
 
     const bool ok = query.exec();
 
@@ -132,14 +133,14 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(
+    query.prepare(QStringLiteral(
         "select * "
         "from   position p "
         "where  p.aircraft_id = :aircraft_id "
         "order by p.timestamp asc;"
-    );
+    ));
 
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
         const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -150,17 +151,17 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
             positionData.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
-        const int timestampIdx = record.indexOf("timestamp");
-        const int latitudeIdx = record.indexOf("latitude");
-        const int longitudeIdx = record.indexOf("longitude");
-        const int altitudeIdx = record.indexOf("altitude");
-        const int indicatedAltitudeIdx = record.indexOf("indicated_altitude");
-        const int pitchIdx = record.indexOf("pitch");
-        const int bankIdx = record.indexOf("bank");
-        const int trueHeadingIdx = record.indexOf("true_heading");
-        const int velocitXIdx = record.indexOf("velocity_x");
-        const int velocitYIdx = record.indexOf("velocity_y");
-        const int velocitZIdx = record.indexOf("velocity_z");
+        const int timestampIdx = record.indexOf(QStringLiteral("timestamp"));
+        const int latitudeIdx = record.indexOf(QStringLiteral("latitude"));
+        const int longitudeIdx = record.indexOf(QStringLiteral("longitude"));
+        const int altitudeIdx = record.indexOf(QStringLiteral("altitude"));
+        const int indicatedAltitudeIdx = record.indexOf(QStringLiteral("indicated_altitude"));
+        const int pitchIdx = record.indexOf(QStringLiteral("pitch"));
+        const int bankIdx = record.indexOf(QStringLiteral("bank"));
+        const int trueHeadingIdx = record.indexOf(QStringLiteral("true_heading"));
+        const int velocitXIdx = record.indexOf(QStringLiteral("velocity_x"));
+        const int velocitYIdx = record.indexOf(QStringLiteral("velocity_y"));
+        const int velocitZIdx = record.indexOf(QStringLiteral("velocity_z"));
         while (query.next()) {
             PositionData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
@@ -193,16 +194,16 @@ bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "delete "
         "from   position "
         "where  aircraft_id in (select a.id "
         "                       from aircraft a"
         "                       where a.flight_id = :flight_id"
         "                      );"
-    );
+    ));
 
-    query.bindValue(":flight_id", QVariant::fromValue(flightId));
+    query.bindValue(QStringLiteral(":flight_id"), QVariant::fromValue(flightId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -216,13 +217,13 @@ bool SQLitePositionDao::deleteByAircraftId(std::int64_t aircraftId) const noexce
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "delete "
         "from   position "
         "where  aircraft_id = :aircraft_id;"
-    );
+    ));
 
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

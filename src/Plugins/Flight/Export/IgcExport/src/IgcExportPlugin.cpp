@@ -122,7 +122,7 @@ struct IgcExportPluginPrivate
     static inline const QByteArray KRecord {"K"};
     static inline const QByteArray GRecord {"G"};
 
-    static constexpr const char *FileExtension {"igc"};
+    static inline const QString FileExtension {QStringLiteral("igc")};
 };
 
 // PUBLIC
@@ -329,12 +329,12 @@ inline bool IgcExportPlugin::exportGRecord(QIODevice &io) const noexcept
 
 inline QByteArray IgcExportPlugin::formatDate(const QDateTime &date) const noexcept
 {
-    return date.toString(::DateFormat).toLatin1();
+    return date.toString(QString::fromLatin1(::DateFormat)).toLatin1();
 }
 
 inline QByteArray IgcExportPlugin::formatTime(const QDateTime &time) const noexcept
 {
-    return time.toString(::TimeFormat).toLatin1();
+    return time.toString(QString::fromLatin1(::TimeFormat)).toLatin1();
 }
 
 inline QByteArray IgcExportPlugin::formatDateTime(const QDateTime &dateTime) const noexcept
@@ -354,12 +354,12 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitu
 
     GeographicLib::DMS::Encode(latitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
-    return QString("%1%2%3%4")
-           .arg(static_cast<int>(degrees), 2, 10, QChar('0'))
-           .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
-           .arg(decimals, 3, 10, QChar('0'))
-           .arg(latitude >= 0.0 ? u'N' : u'S')
-           .toLatin1();
+    return QString::fromLatin1("%1%2%3%4")
+        .arg(static_cast<int>(degrees), 2, 10, QChar('0'))
+        .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
+        .arg(decimals, 3, 10, QChar('0'))
+        .arg(latitude >= 0.0 ? u'N' : u'S')
+        .toLatin1();
 }
 
 inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLongitude(double longitude) const noexcept
@@ -369,12 +369,12 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLongitude(double longi
 
     GeographicLib::DMS::Encode(longitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
-    return QString("%1%2%3%4")
-           .arg(static_cast<int>(degrees), 3, 10, QChar('0'))
-           .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
-           .arg(decimals, 3, 10, QChar('0'))
-           .arg(longitude >= 0.0 ? u'E' : u'W')
-           .toLatin1();
+    return QString::fromLatin1("%1%2%3%4")
+        .arg(static_cast<int>(degrees), 3, 10, QChar('0'))
+        .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
+        .arg(decimals, 3, 10, QChar('0'))
+        .arg(longitude >= 0.0 ? u'E' : u'W')
+        .toLatin1();
 }
 
 inline QByteArray IgcExportPlugin::formatPosition(double latitude, double longitude) const noexcept

@@ -25,6 +25,9 @@
 #include <memory>
 #include <utility>
 
+#include <QString>
+#include <QStringLiteral>
+#include <QStringBuilder>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
@@ -70,13 +73,13 @@ Enumeration SQLiteEnumerationDao::get(const QString &name, Enumeration::Order or
     QString orderColumn;
     switch (order) {
     case Enumeration::Order::Id:
-        orderColumn = "id";
+        orderColumn = QStringLiteral("id");
         break;
     case Enumeration::Order::SymId:
-        orderColumn = "sym_id";
+        orderColumn = QStringLiteral("sym_id");
         break;
     case Enumeration::Order::Name:
-        orderColumn = "name";
+        orderColumn = QStringLiteral("name");
         break;
     }
 
@@ -89,9 +92,9 @@ Enumeration SQLiteEnumerationDao::get(const QString &name, Enumeration::Order or
     const bool success = query.exec();
     if (success) {
         QSqlRecord record = query.record();
-        const int idIdx = record.indexOf("id");
-        const int symIdIdx = record.indexOf("sym_id");
-        const int nameIdx = record.indexOf("name");
+        const int idIdx = record.indexOf(QStringLiteral("id"));
+        const int symIdIdx = record.indexOf(QStringLiteral("sym_id"));
+        const int nameIdx = record.indexOf(QStringLiteral("name"));
         while (query.next()) {
             const std::int64_t id = query.value(idIdx).toLongLong();
             const QString symId = query.value(symIdIdx).toString();

@@ -31,6 +31,7 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringView>
 #include <QStringList>
 
@@ -77,15 +78,15 @@ bool FlightSimulator::isRunning(Id id) noexcept
     QString processName;
     switch (id) {
     case Id::FS2020:
-        processName = "FlightSimulator.exe";
+        processName = QStringLiteral("FlightSimulator.exe");
         break;
     case Id::Prepar3Dv5:
-        processName = "Prepar3D.exe";
+        processName = QStringLiteral("Prepar3D.exe");
         break;
     case Id::All:
         [[fallthrough]];
     case Id::None:
-        processName = "";
+        processName = QStringLiteral("");
         break;
     }
 

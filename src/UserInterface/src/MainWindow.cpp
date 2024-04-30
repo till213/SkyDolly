@@ -39,9 +39,11 @@
 #include <QUrl>
 #include <QDir>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QUuid>
 #include <QTime>
+#include <QTimer>
 #include <QTimeEdit>
 #include <QComboBox>
 #include <QSlider>
@@ -59,7 +61,6 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QSpacerItem>
-#include <QTimer>
 #include <QDesktopServices>
 #include <QMimeData>
 #include <QDragEnterEvent>
@@ -451,7 +452,7 @@ void MainWindow::frenchConnection() noexcept
 void MainWindow::initUi() noexcept
 {
     Settings &settings = Settings::getInstance();
-    setWindowIcon(QIcon(":/img/icons/application-icon.png"));
+    setWindowIcon(QIcon(QString::fromLatin1(":/img/icons/application-icon.png")));
 
     // File menu
     d->recentFileMenu = new RecentFileMenu(this);
@@ -486,17 +487,26 @@ void MainWindow::initUi() noexcept
             Settings &settings = Settings::getInstance();
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
-            QMessageBox::information(this, "Preview",
-                                     QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
-                                     "This patch release v%2 \"%3\" introduces customisable shortcuts for MSFS itself. "
-                                     "Dark mode is now also supported.\n\n"
-                                     "Note that the other CSV formats (flightradar24.com for instance) will not go away and remain fully supported, both import and export.\n\n"
-                                     "All import plugins that support real-world timestamps such as the newly introduced Sky Dolly logbook import "
-                                     "now also support automated time offset synchronisation when importing aircraft into a formation flight.\n\n"
-                                     "This dialog will be shown %4 more times.")
-                         .arg(Version::getApplicationName(), Version::getApplicationVersion())
-                         .arg(Version::getCodeName()).arg(currentPreviewInfoCount),
-                         QMessageBox::StandardButton::Ok);
+            QMessageBox::information(
+                this,
+                QString::fromLatin1("Preview"),
+                QString::fromLatin1(
+                    "%1 is in a preview release phase: while it should be stable to use it is not "
+                    "considered feature-complete.\n\n"
+                    "This patch release v%2 \"%3\" introduces customisable shortcuts for MSFS "
+                    "itself. "
+                    "Dark mode is now also supported.\n\n"
+                    "Note that the other CSV formats (flightradar24.com for instance) will not go "
+                    "away and remain fully supported, both import and export.\n\n"
+                    "All import plugins that support real-world timestamps such as the newly "
+                    "introduced Sky Dolly logbook import "
+                    "now also support automated time offset synchronisation when importing "
+                    "aircraft into a formation flight.\n\n"
+                    "This dialog will be shown %4 more times.")
+                    .arg(Version::getApplicationName(), Version::getApplicationVersion())
+                    .arg(Version::getCodeName())
+                    .arg(currentPreviewInfoCount),
+                QMessageBox::StandardButton::Ok);
             settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
         });
     }
@@ -651,7 +661,7 @@ void MainWindow::initViewUi() noexcept
 void MainWindow::initControlUi() noexcept
 {
     ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
-    ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
+    ui->timestampTimeEdit->setDisplayFormat(QString::fromLatin1(TimestampFormat));
 
     // Record/replay control buttons
     ui->recordButton->setAction(ui->recordAction);
@@ -668,18 +678,17 @@ void MainWindow::initControlUi() noexcept
     ui->replayGroupBox->setStyleSheet(Platform::getFlatButtonCss());
 
     // Specific CSS: completely flat button (no border) - on all platforms
-    ui->loopReplayButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px; padding: 6px 12px;}");
+    ui->loopReplayButton->setStyleSheet(QString::fromLatin1(
+        "QPushButton {border-style: outset; border-width: 0px; padding: 6px 12px;}"));
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
 {
     // Actions
-    QList<QAction *> slowActions {
-        new QAction("10 %", this),
-        new QAction("25 %", this),
-        new QAction("50 %", this),
-        new QAction("75 %", this)
-    };
+    QList<QAction *> slowActions{new QAction(QString::fromLatin1("10 %"), this),
+                                 new QAction(QString::fromLatin1("25 %"), this),
+                                 new QAction(QString::fromLatin1("50 %"), this),
+                                 new QAction(QString::fromLatin1("75 %"), this)};
     slowActions.at(0)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
     slowActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow10));
     slowActions.at(1)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_2));
@@ -693,12 +702,10 @@ void MainWindow::initReplaySpeedUi() noexcept
     ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_1));
     ui->normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Normal));
 
-    QList<QAction *> fastActions {
-        new QAction("2x", this),
-        new QAction("4x", this),
-        new QAction("8x", this),
-        new QAction("16x", this)
-    };
+    QList<QAction *> fastActions{new QAction(QString::fromLatin1("2x"), this),
+                                 new QAction(QString::fromLatin1("4x"), this),
+                                 new QAction(QString::fromLatin1("8x"), this),
+                                 new QAction(QString::fromLatin1("16x"), this)};
     fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_2));
     fastActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast2x));
     fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_3));
@@ -825,7 +832,7 @@ void MainWindow::createTrayIcon() noexcept
     d->trayIcon = new QSystemTrayIcon(this);
     d->trayIcon->setContextMenu(d->trayIconMenu);
 
-    d->trayIcon->setIcon(QIcon(":/img/icons/application-icon.png"));
+    d->trayIcon->setIcon(QIcon(QString::fromLatin1(":/img/icons/application-icon.png")));
 }
 
 void MainWindow::initSkyConnectPlugin() noexcept
@@ -1017,7 +1024,7 @@ void MainWindow::updateReplaySpeedUi() noexcept
     } else {
         d->customSpeedLineEdit->setEnabled(false);
         d->customSpeedLineEdit->clear();
-        d->customSpeedLineEdit->setToolTip("");
+        d->customSpeedLineEdit->setToolTip(QStringLiteral(""));
     }
 }
 
@@ -1804,7 +1811,7 @@ void MainWindow::showAboutDialog() noexcept
 
 void MainWindow::showOnlineManual() const noexcept
 {
-    QDesktopServices::openUrl(QUrl("https://till213.github.io/SkyDolly/manual/en/"));
+    QDesktopServices::openUrl(QUrl(QStringLiteral("https://till213.github.io/SkyDolly/manual/en/")));
 }
 
 // Replay

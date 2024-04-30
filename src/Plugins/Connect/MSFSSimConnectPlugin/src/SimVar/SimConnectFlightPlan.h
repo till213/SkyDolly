@@ -58,7 +58,7 @@ struct SimConnectFlightPlan
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&gpsWpNextId[0], sizeof(gpsWpNextId), nullptr))) {
-            waypoint.identifier = QString(gpsWpNextId);
+            waypoint.identifier = QString::fromLatin1(gpsWpNextId);
         }
         waypoint.latitude = gpsWpNextLat;
         waypoint.longitude = gpsWpNextLon;
@@ -73,7 +73,7 @@ struct SimConnectFlightPlan
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&gpsWpPrevId[0], sizeof(gpsWpPrevId), nullptr))) {
-            waypoint.identifier = QString(gpsWpPrevId);
+            waypoint.identifier = QString::fromLatin1(gpsWpPrevId);
         }
         waypoint.latitude = gpsWpPrevLat;
         waypoint.longitude = gpsWpPrevLon;

@@ -67,13 +67,13 @@ struct ModuleManagerPrivate
     {
         pluginsDirectoryPath.cd(File::getPluginDirectoryPath());
         if (recordIcon.isNull()) {
-            recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-            recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-            recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
+            recordIcon.addFile(QStringLiteral(":/img/icons/record-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+            recordIcon.addFile(QStringLiteral(":/img/icons/record-normal-on.png"), QSize(), QIcon::Normal, QIcon::On);
+            recordIcon.addFile(QStringLiteral(":/img/icons/record-active.png"), QSize(), QIcon::Active);
 
-            recordAddIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-            recordAddIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-            recordAddIcon.addFile(":/img/icons/record-add-active.png", QSize(), QIcon::Active);
+            recordAddIcon.addFile(QStringLiteral(":/img/icons/record-add-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+            recordAddIcon.addFile(QStringLiteral(":/img/icons/record-add-normal-on.png"), QSize(), QIcon::Normal, QIcon::On);
+            recordAddIcon.addFile(QStringLiteral(":/img/icons/record-add-active.png"), QSize(), QIcon::Active);
         }
     }
 
@@ -129,7 +129,7 @@ std::optional<std::reference_wrapper<ModuleIntf>> ModuleManager::getActiveModule
 {
     QObject *plugin = d->pluginLoader->instance();
     if (plugin != nullptr) {
-        return std::optional<std::reference_wrapper<ModuleIntf>>{*(dynamic_cast<ModuleIntf *>(plugin))};
+        return std::optional<std::reference_wrapper<ModuleIntf>>{*(qobject_cast<ModuleIntf *>(plugin))};
     } else {
         return {};
     }
@@ -143,7 +143,7 @@ void ModuleManager::activateModule(QUuid uuid) noexcept
             d->pluginLoader->unload();
             d->activeModule = nullptr;
         }
-        QString modulePath = d->moduleRegistry[uuid];
+        const QString modulePath = d->moduleRegistry[uuid];
         d->pluginLoader->setFileName(modulePath);
         QObject *plugin = d->pluginLoader->instance();
         d->activeModule = qobject_cast<ModuleIntf *>(plugin);
@@ -206,8 +206,8 @@ void ModuleManager::initModules() noexcept
     Graph graph;
     std::unordered_map<QUuid, ModuleInfo, QUuidHasher> moduleInfos;
     d->moduleRegistry.clear();
-    if (d->pluginsDirectoryPath.exists(::ModuleDirectoryName)) {
-        d->pluginsDirectoryPath.cd(::ModuleDirectoryName);
+    if (d->pluginsDirectoryPath.exists(QString::fromLatin1(::ModuleDirectoryName))) {
+        d->pluginsDirectoryPath.cd(QString::fromLatin1(::ModuleDirectoryName));
         const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
         for (const QString &fileName : entryList) {
             initModule(fileName, moduleInfos, graph);
@@ -233,12 +233,13 @@ void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid
     d->pluginLoader->setFileName(pluginPath);
     const QJsonObject metaData = d->pluginLoader->metaData();
     if (!metaData.isEmpty()) {
-        const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
-        const QUuid uuid {pluginMetadata.value(::PluginUuidKey).toString()};
-        const QString name {pluginMetadata.value(::PluginNameKey).toString()};
+        const QJsonObject pluginMetadata{metaData.value(QStringLiteral("MetaData")).toObject()};
+        const QUuid uuid{pluginMetadata.value(QString::fromLatin1(::PluginUuidKey)).toString()};
+        const QString name{pluginMetadata.value(QString::fromLatin1(::PluginNameKey)).toString()};
         moduleInfos[uuid] = std::make_pair(name, pluginPath);
 
-        const QJsonArray afterArray = pluginMetadata.value(::PluginAfter).toArray();
+        const QJsonArray afterArray = pluginMetadata.value(QString::fromLatin1(::PluginAfter))
+                                          .toArray();
         std::shared_ptr<Vertex> vertex ;
         const auto it = graph.find(uuid);
         // Vertex already in graph?
@@ -269,10 +270,9 @@ void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid
 
 void ModuleManager::initModuleActions(const std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept
 {
-    std::deque<Vertex *> sortedModules;
     // Reverse sorting, because the "after" edge (directed from A to B: A --- after ---> B) really means that
     // "first B, then A" (= reversed topological sorting)
-    sortedModules = UuidSort::topologicalSort(graph, UuidSort::Sorting::Reverse);
+    const std::deque<Vertex *> sortedModules = UuidSort::topologicalSort(graph, UuidSort::Sorting::Reverse);
     int count {0};
     for (const auto &sortedModule : sortedModules) {
         const QUuid uuid {sortedModule->id};
@@ -293,6 +293,6 @@ void ModuleManager::initModuleActions(const std::unordered_map<QUuid, ModuleInfo
 
 void ModuleManager::handleModuleSelected(QAction *action) noexcept
 {
-    QUuid uuid = action->data().toUuid();
+    const QUuid uuid = action->data().toUuid();
     activateModule(uuid);
 }

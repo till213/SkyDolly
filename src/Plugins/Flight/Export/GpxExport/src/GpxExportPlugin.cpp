@@ -31,6 +31,7 @@
 #include <QIODevice>
 #include <QStringBuilder>
 #include <QString>
+#include <QStringLiteral>
 #include <QDateTime>
 
 #include <Kernel/Version.h>
@@ -60,7 +61,7 @@ struct GpxExportPluginPrivate
     Unit unit;
     Convert convert;
 
-    static constexpr const char *FileExtension {"gpx"};
+    static inline const QString FileExtension {QStringLiteral("gpx")};
 };
 
 // PUBLIC
@@ -205,9 +206,8 @@ bool GpxExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice &
             }
         }
         if (ok) {
-            const QString placemarkEnd = QString(
-    "    </trkseg>\n"
-    "  </trk>\n");
+            const QString placemarkEnd = QString::fromLatin1("    </trkseg>\n"
+                                                             "  </trk>\n");
             ok = io.write(placemarkEnd.toUtf8());
         }
 
@@ -231,8 +231,7 @@ bool GpxExportPlugin::exportWaypoints(const FlightData &flightData, QIODevice &i
 
 bool GpxExportPlugin::exportFooter(QIODevice &io) const noexcept
 {
-    const QString footer =
-"</gpx>\n";
+    const QString footer = QString::fromLatin1("</gpx>\n");
     return io.write(footer.toUtf8());
 }
 

@@ -162,52 +162,52 @@ void KmlExportOptionWidget::updateUi() noexcept
     if (ui->allStartColorToolButton->isEnabled()) {
         css = "background-color: " % d->pluginSettings.getAllStartColor().name() % ";";
     } else {
-        css = QString("background-color: ") % DisabledColor % ";";
+        css = QStringLiteral("background-color: ") % DisabledColor % ";";
     }
     ui->allStartColorToolButton->setStyleSheet(css);
     if (ui->allEndColorToolButton->isEnabled()) {
         css = "background-color: " % d->pluginSettings.getAllEndColor().name() % ";";
     } else {
-        css = QString("background-color: ") % DisabledColor % ";";
+        css = QStringLiteral("background-color: ") % DisabledColor % ";";
     }
     ui->allEndColorToolButton->setStyleSheet(css);
 
     if (ui->jetStartColorToolButton->isEnabled()) {
         css = "background-color: " % d->pluginSettings.getJetStartColor().name() % ";";
     } else {
-        css = QString("background-color: ") % DisabledColor % ";";
+        css = QStringLiteral("background-color: ") % DisabledColor % ";";
     }
     ui->jetStartColorToolButton->setStyleSheet(css);
     if (ui->jetEndColorToolButton->isEnabled()) {
         css = "background-color: " % d->pluginSettings.getJetEndColor().name() % ";";
     } else {
-        css = QString("background-color: ") % DisabledColor % ";";
+        css = QStringLiteral("background-color: ") % DisabledColor % ";";
     }
     ui->jetEndColorToolButton->setStyleSheet(css);
 
     if (ui->turbopropStartColorToolButton->isEnabled()) {
         css = "background-color: " % d->pluginSettings.getTurbopropStartColor().name() % ";";
     } else {
-        css = QString("background-color: ") % DisabledColor % ";";
+        css = QStringLiteral("background-color: ") % DisabledColor % ";";
     }
     ui->turbopropStartColorToolButton->setStyleSheet(css);
     if (ui->turbopropEndColorToolButton->isEnabled()) {
         css = "background-color: " % d->pluginSettings.getTurbopropEndColor().name() % ";";
     } else {
-        css = QString("background-color: ") % DisabledColor % ";";
+        css = QStringLiteral("background-color: ") % DisabledColor % ";";
     }
     ui->turbopropEndColorToolButton->setStyleSheet(css);
 
     if (ui->pistonStartColorToolButton->isEnabled()) {
         css = "background-color: " % d->pluginSettings.getPistonStartColor().name() % ";";
     } else {
-        css = QString("background-color: ") % DisabledColor % ";";
+        css = QStringLiteral("background-color: ") % DisabledColor % ";";
     }
     ui->pistonStartColorToolButton->setStyleSheet(css);
     if (ui->pistonEndColorToolButton->isEnabled()) {
         css = "background-color: " % d->pluginSettings.getPistonEndColor().name() % ";";
     } else {
-        css = QString("background-color: ") % DisabledColor % ";";
+        css = QStringLiteral("background-color: ") % DisabledColor % ";";
     }
     ui->pistonEndColorToolButton->setStyleSheet(css);
 }

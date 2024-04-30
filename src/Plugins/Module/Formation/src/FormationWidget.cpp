@@ -95,19 +95,19 @@ struct FormationWidgetPrivate
         // We always initialise all icons at once, so checking only for
         // normalAircraftIcon is sufficient
         if (normalAircraftIcon.isNull()) {
-            normalAircraftIcon = QIcon(":/img/icons/aircraft-normal.png");
-            recordingAircraftIcon = QIcon(":/img/icons/aircraft-record-normal.png");
-            referenceAircraftIcon = QIcon(":/img/icons/aircraft-reference-normal.png");
+            normalAircraftIcon = QIcon(QStringLiteral(":/img/icons/aircraft-normal.png"));
+            recordingAircraftIcon = QIcon(QStringLiteral(":/img/icons/aircraft-record-normal.png"));
+            referenceAircraftIcon = QIcon(QStringLiteral(":/img/icons/aircraft-reference-normal.png"));
         }
         if (parent.devicePixelRatioF() >= 1.5) {
-            userAircraftPixmap.load(":/img/icons/aircraft-normal@2x.png");
+            userAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-normal@2x.png"));
             userAircraftPixmap.setDevicePixelRatio(2.0);
-            referenceAircraftPixmap.load(":/img/icons/aircraft-reference-normal@2x.png");
+            referenceAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-reference-normal@2x.png"));
             referenceAircraftPixmap.setDevicePixelRatio(2.0);
         } else {
-            userAircraftPixmap.load(":/img/icons/aircraft-normal.png");
+            userAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-normal.png"));
             userAircraftPixmap.setDevicePixelRatio(1.0);
-            referenceAircraftPixmap.load(":/img/icons/aircraft-reference-normal.png");
+            referenceAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-reference-normal.png"));
             referenceAircraftPixmap.setDevicePixelRatio(1.0);
         }
     }
@@ -156,7 +156,7 @@ FormationWidget::FormationWidget(FormationSettings &settings, QWidget *parent) n
 
 FormationWidget::~FormationWidget()
 {
-    const QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
+    ui->aircraftTableWidget->horizontalHeader()->saveState();
 }
 
 Formation::HorizontalDistance FormationWidget::getHorizontalDistance() const noexcept

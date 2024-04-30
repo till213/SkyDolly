@@ -27,6 +27,7 @@
 #include <unordered_map>
 
 #include <QTextStream>
+#include <QStringLiteral>
 
 #include "CsvParser.h"
 
@@ -120,7 +121,7 @@ inline void CsvParser::parseLine(const QString &line) noexcept
         reset();
     } else {
         // In a quotation: add a new line
-        m_currentValue += "\n";
+        m_currentValue += QStringLiteral("\n");
     }
 
     for (const QChar currentChar : line) {

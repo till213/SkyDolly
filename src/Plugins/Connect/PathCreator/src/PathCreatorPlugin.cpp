@@ -99,7 +99,7 @@ PathCreatorPlugin::PathCreatorPlugin(QObject *parent) noexcept
 
 PathCreatorPlugin::~PathCreatorPlugin()
 {
-    onDisconnectFromSim();
+    closeConnection();
 }
 
 bool PathCreatorPlugin::setUserAircraftPosition([[maybe_unused]] const PositionData &positionData) noexcept
@@ -243,7 +243,7 @@ void PathCreatorPlugin::onDisconnectFromSim() noexcept
 #ifdef DEBUG
     qDebug() << "PathCreatorPlugin::onDisconnectFromSim: CALLED";
 #endif
-    d->connected = false;
+    closeConnection();
 }
 
 void PathCreatorPlugin::onAddAiObject([[maybe_unused]] const Aircraft &aircraft) noexcept
@@ -490,41 +490,41 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
 
     switch (d->randomGenerator->bounded(5)) {
     case 0:
-        info.aircraftType.type = "Boeing 787";
+        info.aircraftType.type = QString::fromLatin1("Boeing 787");
         break;
     case 1:
-        info.aircraftType.type = "Cirrus SR22";
+        info.aircraftType.type = QString::fromLatin1("Cirrus SR22");
         break;
     case 2:
-        info.aircraftType.type = "Douglas DC-3";
+        info.aircraftType.type = QString::fromLatin1("Douglas DC-3");
         break;
     case 3:
-        info.aircraftType.type = "Cessna 172";
+        info.aircraftType.type = QString::fromLatin1("Cessna 172");
         break;
     case 4:
-        info.aircraftType.type = "Airbus A320";
+        info.aircraftType.type = QString::fromLatin1("Airbus A320");
         break;
     default:
-        info.aircraftType.type = "Unknown";
+        info.aircraftType.type = QString::fromLatin1("Unknown");
     }
     switch (d->randomGenerator->bounded(5)) {
     case 0:
-        info.aircraftType.category = "Piston";
+        info.aircraftType.category = QString::fromLatin1("Piston");
         break;
     case 1:
-        info.aircraftType.category = "Glider";
+        info.aircraftType.category = QString::fromLatin1("Glider");
         break;
     case 2:
-        info.aircraftType.category = "Rocket";
+        info.aircraftType.category = QString::fromLatin1("Rocket");
         break;
     case 3:
-        info.aircraftType.category = "Jet";
+        info.aircraftType.category = QString::fromLatin1("Jet");
         break;
     case 4:
-        info.aircraftType.category = "Turbo";
+        info.aircraftType.category = QString::fromLatin1("Turbo");
         break;
     default:
-        info.aircraftType.category = "Unknown";
+        info.aircraftType.category = QString::fromLatin1("Unknown");
     }
     info.aircraftType.wingSpan = d->randomGenerator->bounded(200);
     info.aircraftType.engineType = static_cast<SimType::EngineType>(d->randomGenerator->bounded(7));
@@ -537,6 +537,11 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
 
     aircraft.setAircraftInfo(info);
     emit flight.aircraftInfoChanged(aircraft);
+}
+
+void PathCreatorPlugin::closeConnection() noexcept
+{
+    d->connected = false;
 }
 
 void PathCreatorPlugin::replay() noexcept

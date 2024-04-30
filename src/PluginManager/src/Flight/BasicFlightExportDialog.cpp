@@ -133,12 +133,12 @@ void BasicFlightExportDialog::initBasicUi() noexcept
 
     // Resampling
     if (d->pluginSettings.isResamplingSupported()) {
-        ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::underly(SampleRate::ResamplingPeriod::ATenthHz));
-        ui->resamplingComboBox->addItem("1/5 Hz", Enum::underly(SampleRate::ResamplingPeriod::AFifthHz));
-        ui->resamplingComboBox->addItem(QString("1 Hz") % " (" % tr("good accuracy") % ")", Enum::underly(SampleRate::ResamplingPeriod::OneHz));
-        ui->resamplingComboBox->addItem("2 Hz", Enum::underly(SampleRate::ResamplingPeriod::TwoHz));
-        ui->resamplingComboBox->addItem("5 Hz", Enum::underly(SampleRate::ResamplingPeriod::FiveHz));
-        ui->resamplingComboBox->addItem("10 Hz (larger file size, greater accuracy", Enum::underly(SampleRate::ResamplingPeriod::TenHz));
+        ui->resamplingComboBox->addItem(QStringLiteral("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::underly(SampleRate::ResamplingPeriod::ATenthHz));
+        ui->resamplingComboBox->addItem(QStringLiteral("1/5 Hz"), Enum::underly(SampleRate::ResamplingPeriod::AFifthHz));
+        ui->resamplingComboBox->addItem(QStringLiteral("1 Hz") % " (" % tr("good accuracy") % ")", Enum::underly(SampleRate::ResamplingPeriod::OneHz));
+        ui->resamplingComboBox->addItem(QStringLiteral("2 Hz"), Enum::underly(SampleRate::ResamplingPeriod::TwoHz));
+        ui->resamplingComboBox->addItem(QStringLiteral("5 Hz"), Enum::underly(SampleRate::ResamplingPeriod::FiveHz));
+        ui->resamplingComboBox->addItem(QStringLiteral("10 Hz (larger file size, greater accuracy"), Enum::underly(SampleRate::ResamplingPeriod::TenHz));
     }
     ui->resamplingComboBox->addItem(tr("Original data (no resampling)"), Enum::underly(SampleRate::ResamplingPeriod::Original));
 }

@@ -43,8 +43,6 @@ struct DatabaseDaoPrivate;
 class SQLiteDatabaseDao final : public DatabaseDaoIntf
 {
 public:
-
-
     SQLiteDatabaseDao(QString connectionName = Const::DefaultConnectionName) noexcept;
     SQLiteDatabaseDao(const SQLiteDatabaseDao &rhs) = delete;
     SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) noexcept;

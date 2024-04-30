@@ -37,5 +37,5 @@ namespace  {
 
 QString Platform::getFlatButtonCss() noexcept
 {
-    return FlatButtonCss;
+    return QString::fromLatin1(::FlatButtonCss);
 }

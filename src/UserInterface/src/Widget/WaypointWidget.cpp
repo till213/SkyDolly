@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QStringBuilder>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -81,9 +82,9 @@ void WaypointWidget::hideEvent(QHideEvent *event) noexcept
 
 void WaypointWidget::initUi() noexcept
 {
-    ui->latitudeLineEdit->setToolTip(SimVar::GpsWPPrevLat);
-    ui->longitudeLineEdit->setToolTip(SimVar::GpsWPPrevLon);
-    ui->altitudeLineEdit->setToolTip(SimVar::GpsWPPrevAlt);
+    ui->latitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::GpsWPPrevLat));
+    ui->longitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::GpsWPPrevLon));
+    ui->altitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::GpsWPPrevAlt));
 }
 
 // PRIVATE SLOTS
@@ -94,5 +95,5 @@ void WaypointWidget::updateUi() noexcept
     ui->longitudeLineEdit->setText(d->unit.formatLongitudeDMS(d->waypoint.longitude));
     ui->altitudeLineEdit->setText(d->unit.formatFeet(d->waypoint.altitude));
     ui->localSimulationTimeLineEdit->setText(d->unit.formatDateTime(d->waypoint.localTime));
-    ui->localSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(d->waypoint.zuluTime) + Const::ZuluTimeSuffix);
+    ui->localSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(d->waypoint.zuluTime) % Const::ZuluTimeSuffix);
 }

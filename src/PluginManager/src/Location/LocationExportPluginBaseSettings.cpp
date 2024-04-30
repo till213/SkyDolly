@@ -70,7 +70,7 @@ void LocationExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValue
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::OpenExportedFilesEnabledKey;
+    keyValue.first = QString::fromLatin1(::OpenExportedFilesEnabledKey);
     keyValue.second = d->openExportedFilesEnabled;
     keyValues.push_back(keyValue);
 
@@ -81,7 +81,7 @@ void LocationExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::OpenExportedFilesEnabledKey;
+    keyValue.first = QString::fromLatin1(::OpenExportedFilesEnabledKey);
     keyValue.second = ::DefaultOpenExportedFilesEnabled;
     keysWithDefaults.push_back(keyValue);
 
@@ -90,7 +90,7 @@ void LocationExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 
 void LocationExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
+    d->openExportedFilesEnabled = valuesByKey.at(QString::fromLatin1(::OpenExportedFilesEnabledKey)).toBool();
     restoreSettingsExtn(valuesByKey);
 
     emit changed();

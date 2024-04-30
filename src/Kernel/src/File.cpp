@@ -71,6 +71,7 @@ QString File::getSequenceFilePath(const QString &filePath, int n) noexcept
      QDir dir {directoryPath, nameFilter};
 
      const QStringList fileNames = dir.entryList(QDir::Files, QDir::SortFlag::Time);
+     filePaths.reserve(fileNames.count());
      for (const QString &fileName : fileNames) {
          filePaths.append(dir.absoluteFilePath(fileName));
      }
@@ -89,6 +90,6 @@ QString File::getSequenceFilePath(const QString &filePath, int n) noexcept
          pluginsDirectory.cdUp();
      }
 #endif
-     pluginsDirectory.cd(::PluginDirectoryName);
+     pluginsDirectory.cd(QString::fromLatin1(::PluginDirectoryName));
      return pluginsDirectory.absolutePath();
  }

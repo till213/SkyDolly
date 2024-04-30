@@ -26,6 +26,7 @@
 #include <cstdint>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QDialog>
 #include <QColor>
 #include <QPalette>
@@ -91,7 +92,7 @@ void PrimaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableDa
         colorName = d->DisabledTextColor.name();
     }
 
-    const QString css{QString("color: %1;").arg(colorName)};
+    const QString css{QStringLiteral("color: %1;").arg(colorName)};
     ui->rudderDeflectionLineEdit->setStyleSheet(css);
     ui->elevatorDeflectionLineEdit->setStyleSheet(css);
     ui->leftAileronDeflectionLineEdit->setStyleSheet(css);
@@ -105,13 +106,13 @@ void PrimaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableDa
 
 void PrimaryFlightControlWidget::initUi()
 {
-    ui->rudderDeflectionLineEdit->setToolTip(SimVar::RudderDeflection);
-    ui->elevatorDeflectionLineEdit->setToolTip(SimVar::ElevatorDeflection);
-    ui->leftAileronDeflectionLineEdit->setToolTip(SimVar::AileronLeftDeflection);
-    ui->rightAileronDeflectionLineEdit->setToolTip(SimVar::AileronRightDeflection);
-    ui->rudderLineEdit->setToolTip(SimVar::RudderPosition);
-    ui->elevatorLineEdit->setToolTip(SimVar::ElevatorPosition);
-    ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
+    ui->rudderDeflectionLineEdit->setToolTip(QString::fromLatin1(SimVar::RudderDeflection));
+    ui->elevatorDeflectionLineEdit->setToolTip(QString::fromLatin1(SimVar::ElevatorDeflection));
+    ui->leftAileronDeflectionLineEdit->setToolTip(QString::fromLatin1(SimVar::AileronLeftDeflection));
+    ui->rightAileronDeflectionLineEdit->setToolTip(QString::fromLatin1(SimVar::AileronRightDeflection));
+    ui->rudderLineEdit->setToolTip(QString::fromLatin1(SimVar::RudderPosition));
+    ui->elevatorLineEdit->setToolTip(QString::fromLatin1(SimVar::ElevatorPosition));
+    ui->aileronLineEdit->setToolTip(QString::fromLatin1(SimVar::AileronPosition));
 }
 
 PrimaryFlightControlData PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept

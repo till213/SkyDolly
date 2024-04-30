@@ -30,6 +30,7 @@
 #include <QApplication>
 #include <QStringList>
 #include <QString>
+#include <QStringLiteral>
 #include <QStyleFactory>
 #include <QStringBuilder>
 #include <QMessageBox>
@@ -91,11 +92,11 @@ int main(int argc, char **argv) noexcept
         destroySingletons();
     } catch (const std::exception &ex) {
         const QString stackTrace = StackTrace::generate();
-        ExceptionHandler::handleError("Exception", stackTrace, ex);
+        ExceptionHandler::handleError(QStringLiteral("Exception"), stackTrace, ex);
         res = ErrorCodes::StandardException;
     } catch (...) {
         const QString stackTrace = StackTrace::generate();
-        ExceptionHandler::handleError("Exception", stackTrace, "Non std::exception");
+        ExceptionHandler::handleError(QStringLiteral("Exception"), stackTrace, QStringLiteral("Non std::exception"));
         res = ErrorCodes::UnknownException;
     }
 

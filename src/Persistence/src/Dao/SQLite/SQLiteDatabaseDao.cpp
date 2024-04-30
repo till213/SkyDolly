@@ -26,6 +26,8 @@
 #include <cstdint>
 #include <utility>
 
+#include <QString>
+#include <QStringLiteral>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -75,7 +77,7 @@ SQLiteDatabaseDao::~SQLiteDatabaseDao()
 
 bool SQLiteDatabaseDao::connectDb(const QString &logbookPath) noexcept
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase(::DriverName, d->connectionName);
+    QSqlDatabase db = QSqlDatabase::addDatabase(QString::fromLatin1(::DriverName), d->connectionName);
     // For the QSQLITE driver, if the database name specified does not exist,
     // then it will create the file for you unless the QSQLITE_OPEN_READONLY
     // option is set
@@ -102,9 +104,9 @@ bool SQLiteDatabaseDao::optimise() const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    bool ok = query.exec("vacuum;");
+    bool ok = query.exec(QStringLiteral("vacuum;"));
     if (ok) {
-        ok = query.exec("update metadata set last_optim_date = datetime('now') where rowid = 1;");
+        ok = query.exec(QStringLiteral("update metadata set last_optim_date = datetime('now') where rowid = 1;"));
 #ifdef DEBUG
     } else {
         qDebug() << "SQLiteDatabaseDao::optimise(: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
@@ -117,9 +119,10 @@ bool SQLiteDatabaseDao::backup(const QString &backupPath) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    bool ok = query.exec(QString("vacuum into '%1';").arg(backupPath));
+    bool ok = query.exec(QStringLiteral("vacuum into '%1';").arg(backupPath));
     if (ok) {
-        ok = query.exec("update metadata set last_backup_date = datetime('now') where rowid = 1;");
+        ok = query.exec(QStringLiteral(
+            "update metadata set last_backup_date = datetime('now') where rowid = 1;"));
 #ifdef DEBUG
     } else {
         qDebug() << "SQLiteDatabaseDao::backup(: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
@@ -132,12 +135,10 @@ bool SQLiteDatabaseDao::updateBackupPeriod(std::int64_t backupPeriodId) const no
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
-        "update metadata "
-        "set    backup_period_id = :backup_period_id;"
-    );
+    query.prepare(QStringLiteral("update metadata "
+                                      "set    backup_period_id = :backup_period_id;"));
 
-    query.bindValue(":backup_period_id", QVariant::fromValue(backupPeriodId));
+    query.bindValue(QStringLiteral(":backup_period_id"), QVariant::fromValue(backupPeriodId));
     return query.exec();
 }
 
@@ -145,12 +146,12 @@ bool SQLiteDatabaseDao::updateNextBackupDate(const QDateTime &date) const noexce
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "update metadata "
         "set    next_backup_date = :next_backup_date;"
-    );
+    ));
 
-    query.bindValue(":next_backup_date", date.toUTC());
+    query.bindValue(QStringLiteral(":next_backup_date"), date.toUTC());
     return query.exec();
 }
 
@@ -158,12 +159,12 @@ bool SQLiteDatabaseDao::updateBackupDirectoryPath(const QString &backupDirectory
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "update metadata "
         "set    backup_directory_path = :backup_directory_path;"
-    );
+    ));
 
-    query.bindValue(":backup_directory_path", backupDirectoryPath);
+    query.bindValue(QStringLiteral(":backup_directory_path"), backupDirectoryPath);
     return query.exec();
 }
 
@@ -174,7 +175,7 @@ Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
     QSqlQuery query {db};
     query.setForwardOnly(true);
 
-    const bool success = query.exec(
+    const bool success = query.exec(QStringLiteral(
         "select m.creation_date,"
         "       m.app_version,"
         "       m.last_optim_date,"
@@ -183,7 +184,7 @@ Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
         "       m.backup_directory_path,"
         "       m.backup_period_id "
         "from metadata m;"
-    );
+    ));
     if (success && query.next()) {
         QDateTime dateTime = query.value(0).toDateTime();
         dateTime.setTimeZone(QTimeZone::utc());
@@ -223,7 +224,7 @@ Version SQLiteDatabaseDao::getDatabaseVersion(bool *ok) const noexcept
     Version version;
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    const bool success = query.exec("select m.app_version from metadata m;");
+    const bool success = query.exec(QStringLiteral("select m.app_version from metadata m;"));
     if (success && query.next()) {
         QString appVersion = query.value(0).toString();
         version.fromString(appVersion);
@@ -239,7 +240,7 @@ QString SQLiteDatabaseDao::getBackupDirectoryPath(bool *ok) const noexcept
     QString backupDirectoryPath;
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    const bool success = query.exec("select m.backup_directory_path from metadata m;");
+    const bool success = query.exec(QStringLiteral("select m.backup_directory_path from metadata m;"));
     if (success && query.next()) {
         backupDirectoryPath = query.value(0).toString();
     }
@@ -270,7 +271,7 @@ bool SQLiteDatabaseDao::createMigrationTable() const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "create table if not exists migr("
         "id text not null,"
         "step integer not null,"
@@ -278,6 +279,6 @@ bool SQLiteDatabaseDao::createMigrationTable() const noexcept
         "timestamp datetime default current_timestamp,"
         "msg text,"
         "primary key (id, step));"
-    );
+    ));
     return query.exec();
 }

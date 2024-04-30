@@ -29,6 +29,7 @@
 #include <utility>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
@@ -74,7 +75,7 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "insert into secondary_flight_control ("
         "  aircraft_id,"
         "  timestamp,"
@@ -100,19 +101,19 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
         " :spoilers_armed,"
         " :flaps_handle_index"
         ");"
-    );
+    ));
 
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    query.bindValue(":timestamp", QVariant::fromValue(secondaryFlightControlData.timestamp));
-    query.bindValue(":left_leading_edge_flaps_position", secondaryFlightControlData.leftLeadingEdgeFlapsPosition);
-    query.bindValue(":right_leading_edge_flaps_position", secondaryFlightControlData.rightLeadingEdgeFlapsPosition);
-    query.bindValue(":left_trailing_edge_flaps_position", secondaryFlightControlData.leftTrailingEdgeFlapsPosition);
-    query.bindValue(":right_trailing_edge_flaps_position", secondaryFlightControlData.rightTrailingEdgeFlapsPosition);
-    query.bindValue(":left_spoilers_position", secondaryFlightControlData.leftSpoilersPosition);
-    query.bindValue(":right_spoilers_position", secondaryFlightControlData.rightSpoilersPosition);
-    query.bindValue(":spoilers_handle_percent", secondaryFlightControlData.spoilersHandlePercent);
-    query.bindValue(":spoilers_armed", secondaryFlightControlData.spoilersArmed);
-    query.bindValue(":flaps_handle_index", secondaryFlightControlData.flapsHandleIndex);
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":timestamp"), QVariant::fromValue(secondaryFlightControlData.timestamp));
+    query.bindValue(QStringLiteral(":left_leading_edge_flaps_position"), secondaryFlightControlData.leftLeadingEdgeFlapsPosition);
+    query.bindValue(QStringLiteral(":right_leading_edge_flaps_position"), secondaryFlightControlData.rightLeadingEdgeFlapsPosition);
+    query.bindValue(QStringLiteral(":left_trailing_edge_flaps_position"), secondaryFlightControlData.leftTrailingEdgeFlapsPosition);
+    query.bindValue(QStringLiteral(":right_trailing_edge_flaps_position"), secondaryFlightControlData.rightTrailingEdgeFlapsPosition);
+    query.bindValue(QStringLiteral(":left_spoilers_position"), secondaryFlightControlData.leftSpoilersPosition);
+    query.bindValue(QStringLiteral(":right_spoilers_position"), secondaryFlightControlData.rightSpoilersPosition);
+    query.bindValue(QStringLiteral(":spoilers_handle_percent"), secondaryFlightControlData.spoilersHandlePercent);
+    query.bindValue(QStringLiteral(":spoilers_armed"), secondaryFlightControlData.spoilersArmed);
+    query.bindValue(QStringLiteral(":flaps_handle_index"), secondaryFlightControlData.flapsHandleIndex);
 
     const bool ok = query.exec();
 #ifdef DEBUG
@@ -129,14 +130,14 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(
+    query.prepare(QStringLiteral(
         "select * "
         "from   secondary_flight_control sfc "
         "where  sfc.aircraft_id = :aircraft_id "
         "order by sfc.timestamp asc;"
-    );
+    ));
 
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
         const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -147,16 +148,16 @@ std::vector<SecondaryFlightControlData> SQLiteSecondaryFlightControlDao::getByAi
             secondaryFlightControlData.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
-        const int timestampIdx = record.indexOf("timestamp");
-        const int leftLeadingEdgeFlapsPositionIdx = record.indexOf("left_leading_edge_flaps_position");
-        const int rightLeadingEdgeFlapsPositionIdx = record.indexOf("right_leading_edge_flaps_position");
-        const int leftTrailingEdgeFlapsPositionIdx = record.indexOf("left_trailing_edge_flaps_position");
-        const int rightTrailingEdgeFlapsPositionIdx = record.indexOf("right_trailing_edge_flaps_position");
-        const int leftSpoilersPositionIdx = record.indexOf("left_spoilers_position");
-        const int rightSpoilersPositionIdx = record.indexOf("right_spoilers_position");
-        const int spoilersHandlePercentIdx = record.indexOf("spoilers_handle_percent");
-        const int spoilersArmedIdx = record.indexOf("spoilers_armed");
-        const int flapsHandleIndexIdx = record.indexOf("flaps_handle_index");
+        const int timestampIdx = record.indexOf(QStringLiteral("timestamp"));
+        const int leftLeadingEdgeFlapsPositionIdx = record.indexOf(QStringLiteral("left_leading_edge_flaps_position"));
+        const int rightLeadingEdgeFlapsPositionIdx = record.indexOf(QStringLiteral("right_leading_edge_flaps_position"));
+        const int leftTrailingEdgeFlapsPositionIdx = record.indexOf(QStringLiteral("left_trailing_edge_flaps_position"));
+        const int rightTrailingEdgeFlapsPositionIdx = record.indexOf(QStringLiteral("right_trailing_edge_flaps_position"));
+        const int leftSpoilersPositionIdx = record.indexOf(QStringLiteral("left_spoilers_position"));
+        const int rightSpoilersPositionIdx = record.indexOf(QStringLiteral("right_spoilers_position"));
+        const int spoilersHandlePercentIdx = record.indexOf(QStringLiteral("spoilers_handle_percent"));
+        const int spoilersArmedIdx = record.indexOf(QStringLiteral("spoilers_armed"));
+        const int flapsHandleIndexIdx = record.indexOf(QStringLiteral("flaps_handle_index"));
         while (query.next()) {
             SecondaryFlightControlData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
@@ -188,16 +189,16 @@ bool SQLiteSecondaryFlightControlDao::deleteByFlightId(std::int64_t flightId) co
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "delete "
         "from   secondary_flight_control "
         "where  aircraft_id in (select a.id "
         "                       from   aircraft a"
         "                       where  a.flight_id = :flight_id"
         "                      );"
-    );
+    ));
 
-    query.bindValue(":flight_id", QVariant::fromValue(flightId));
+    query.bindValue(QStringLiteral(":flight_id"), QVariant::fromValue(flightId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -211,13 +212,13 @@ bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(
+    query.prepare(QStringLiteral(
         "delete "
         "from   secondary_flight_control "
         "where  aircraft_id = :aircraft_id;"
-    );
+    ));
 
-    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

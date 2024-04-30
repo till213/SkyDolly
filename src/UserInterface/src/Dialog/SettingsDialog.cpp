@@ -110,7 +110,7 @@ void SettingsDialog::initUi() noexcept
     ui->seekInPercentSpinBox->setMinimum(::MinSeekPercent);
     ui->seekInPercentSpinBox->setMaximum(::MaxSeekPercent);
 
-    ui->repeatCanopyOpenCheckBox->setToolTip(SimVar::CanopyOpen);
+    ui->repeatCanopyOpenCheckBox->setToolTip(QString::fromLatin1(SimVar::CanopyOpen));
 
     // Recording
     ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Auto), tr("Auto"));

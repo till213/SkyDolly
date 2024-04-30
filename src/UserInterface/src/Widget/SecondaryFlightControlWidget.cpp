@@ -26,6 +26,7 @@
 #include <cstdint>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QDialog>
 #include <QColor>
 #include <QPalette>
@@ -94,7 +95,7 @@ void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariable
         colorName = d->DisabledTextColor.name();
     }
 
-    const QString css{QString("color: %1;").arg(colorName)};
+    const QString css{QStringLiteral("color: %1;").arg(colorName)};
     ui->flapsHandleIndexLineEdit->setStyleSheet(css);
     ui->leftLeadingEdgeFlapsLineEdit->setStyleSheet(css);
     ui->rightLeadingEdgeFlapsLineEdit->setStyleSheet(css);
@@ -111,16 +112,17 @@ void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariable
 
 void SecondaryFlightControlWidget::initUi() noexcept
 {
-    ui->flapsHandleIndexLineEdit->setToolTip(SimVar::FlapsHandleIndex);
-    ui->leftLeadingEdgeFlapsLineEdit->setToolTip(SimVar::LeadingEdgeFlapsLeftPercent);
-    ui->rightLeadingEdgeFlapsLineEdit->setToolTip(SimVar::LeadingEdgeFlapsRightPercent);
-    ui->leftTrailingEdgeFlapsLineEdit->setToolTip(SimVar::TrailingEdgeFlapsLeftPercent);
-    ui->rightTrailingEdgeFlapsLineEdit->setToolTip(SimVar::TrailingEdgeFlapsRightPercent);
+    ui->flapsHandleIndexLineEdit->setToolTip(QString::fromLatin1(SimVar::FlapsHandleIndex));
+    ui->leftLeadingEdgeFlapsLineEdit->setToolTip(QString::fromLatin1(SimVar::LeadingEdgeFlapsLeftPercent));
+    ui->rightLeadingEdgeFlapsLineEdit->setToolTip(QString::fromLatin1(SimVar::LeadingEdgeFlapsRightPercent));
+    ui->leftTrailingEdgeFlapsLineEdit->setToolTip(
+        QString::fromLatin1(SimVar::TrailingEdgeFlapsLeftPercent));
+    ui->rightTrailingEdgeFlapsLineEdit->setToolTip(QString::fromLatin1(SimVar::TrailingEdgeFlapsRightPercent));
 
-    ui->spoilersHandlePositionLineEdit->setToolTip(SimVar::SpoilersHandlePosition);
-    ui->spoilersArmedLineEdit->setToolTip(SimVar::SpoilersArmed);
-    ui->leftSpoilersPositionLineEdit->setToolTip(SimVar::SpoilersLeftPosition);
-    ui->rightSpoilersPositionLineEdit->setToolTip(SimVar::SpoilersRightPosition);
+    ui->spoilersHandlePositionLineEdit->setToolTip(QString::fromLatin1(SimVar::SpoilersHandlePosition));
+    ui->spoilersArmedLineEdit->setToolTip(QString::fromLatin1(SimVar::SpoilersArmed));
+    ui->leftSpoilersPositionLineEdit->setToolTip(QString::fromLatin1(SimVar::SpoilersLeftPosition));
+    ui->rightSpoilersPositionLineEdit->setToolTip(QString::fromLatin1(SimVar::SpoilersRightPosition));
 }
 
 SecondaryFlightControlData SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept

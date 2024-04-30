@@ -24,9 +24,10 @@
  */
 #include <QWidget>
 #include <QFile>
+#include <QString>
+#include <QStringLiteral>
 // Implements the % operator for string concatenation
 #include <QStringBuilder>
-#include <QString>
 
 #include <Model/Location.h>
 #include <Model/Aircraft.h>
@@ -40,7 +41,7 @@
 struct CsvLocationExportPluginPrivate
 {
     CsvLocationExportSettings pluginSettings;
-    static constexpr const char *FileExtension {"csv"};
+    static inline const QString FileExtension {QStringLiteral("csv")};
 };
 
 // PUBLIC

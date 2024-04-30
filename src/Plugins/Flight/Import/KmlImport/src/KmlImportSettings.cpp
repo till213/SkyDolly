@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QString>
+
 #include <Kernel/Enum.h>
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
@@ -82,7 +84,7 @@ void KmlImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::FormatKey;
+    keyValue.first = QString::fromLatin1(::FormatKey);
     keyValue.second = Enum::underly(d->format);
     keyValues.push_back(keyValue);
 }
@@ -91,7 +93,7 @@ void KmlImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::FormatKey;
+    keyValue.first = QString::fromLatin1(::FormatKey);
     keyValue.second = Enum::underly(::DefaultFormat);
     keysWithDefaults.push_back(keyValue);
 }
@@ -99,7 +101,7 @@ void KmlImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void KmlImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
+    const int enumeration = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
     if (ok) {
         d->format = static_cast<Format >(enumeration);
     } else {

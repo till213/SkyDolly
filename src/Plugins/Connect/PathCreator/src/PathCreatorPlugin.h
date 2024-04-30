@@ -54,7 +54,6 @@ public:
     PathCreatorPlugin &operator=(PathCreatorPlugin &&rhs) = delete;
     ~PathCreatorPlugin() override;
     
-
     bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
 
 protected:
@@ -106,6 +105,7 @@ private:
     void recordFlightInfo() noexcept;
     void recordFlightCondition() noexcept;
     void recordAircraftInfo() noexcept;
+    void closeConnection() noexcept;
 
 private slots:
     void replay() noexcept;

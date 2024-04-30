@@ -22,11 +22,10 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <utility>
-
 #include <QRegularExpression>
 #include <QStringList>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringView>
 #ifdef DEBUG
 #include <QDebug>
@@ -40,8 +39,8 @@ namespace
 {
     QStringList parseComponents(QStringView value) noexcept
     {
-        static QRegularExpression numberRexExp(R"(^([+-]?[0-9]*[.]?[0-9]+)[,]?[\s]*([+-]?[0-9]*[.]?[0-9]+)$)");
-        static QRegularExpression dmsRegExp(R"(^([\d\W]+[N|S|E|W])[,]?([\d\W]+[E|W|N|S])$)");
+        static QRegularExpression numberRexExp(QStringLiteral(R"(^([+-]?[0-9]*[.]?[0-9]+)[,]?[\s]*([+-]?[0-9]*[.]?[0-9]+)$)"));
+        static QRegularExpression dmsRegExp(QStringLiteral(R"(^([\d\W]+[N|S|E|W])[,]?([\d\W]+[E|W|N|S])$)"));
         QStringList values;
 
         QStringView trimmedValue = value.trimmed();
@@ -57,8 +56,8 @@ namespace
             match = dmsRegExp.match(trimmedValue);
             if (match.hasMatch() && match.lastCapturedIndex() == 2) {
                 // GeographicLib DMS does not like whitespace in DMS strings
-                values << match.captured(1).replace(" ","");
-                values << match.captured(2).replace(" ","");
+                values << match.captured(1).replace(QStringLiteral(" "), QStringLiteral(""));
+                values << match.captured(2).replace(QStringLiteral(" "), QStringLiteral(""));
             }
         }
         return values;

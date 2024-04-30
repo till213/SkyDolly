@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <string>
 #include <exception>
 
 #include <QCoreApplication>

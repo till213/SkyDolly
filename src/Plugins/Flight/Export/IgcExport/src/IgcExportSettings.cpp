@@ -116,11 +116,11 @@ void IgcExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::PilotNameKey;
+    keyValue.first = QString::fromLatin1(::PilotNameKey);
     keyValue.second = d->pilotName;
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::CoPilotNameKey;
+    keyValue.first = QString::fromLatin1(::CoPilotNameKey);
     keyValue.second = d->coPilotName;
     keyValues.push_back(keyValue);
 }
@@ -129,19 +129,19 @@ void IgcExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::PilotNameKey;
+    keyValue.first = QString::fromLatin1(::PilotNameKey);
     keyValue.second = IgcExportSettingsPrivate::DefaultPilotName;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::CoPilotNameKey;
+    keyValue.first = QString::fromLatin1(::CoPilotNameKey);
     keyValue.second = IgcExportSettingsPrivate::DefaultCoPilotName;
     keysWithDefaults.push_back(keyValue);
 }
 
 void IgcExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->pilotName = valuesByKey.at(::PilotNameKey).value<QString>();
-    d->coPilotName = valuesByKey.at(::CoPilotNameKey).value<QString>();
+    d->pilotName = valuesByKey.at(QString::fromLatin1(::PilotNameKey)).value<QString>();
+    d->coPilotName = valuesByKey.at(QString::fromLatin1(::CoPilotNameKey)).value<QString>();
 }
 
 void IgcExportSettings::restoreDefaultsExtn() noexcept

@@ -3,6 +3,9 @@
 
 #include <cstdint>
 
+#include <QString>
+#include <QStringLiteral>
+
 /*!
  * Generally useful constants.
  */
@@ -29,33 +32,32 @@ namespace Const {
     /*!
      * The plain logbook file extension (without leading dot).
      */
-    constexpr const char *LogbookExtension {"sdlog"};
+    const inline QString LogbookExtension {QStringLiteral("sdlog")};
 
     /*!
      * The logbook file extension, with a leading dot.
      */
-    constexpr const char *DotLogbookExtension {".sdlog"};
+    const inline QString DotLogbookExtension {QStringLiteral(".sdlog")};
 
     /*!
      * The logbook connection name that is used for the application.
      */
-    constexpr const char *DefaultConnectionName {"SkyDolly"};
+    const inline QString DefaultConnectionName {QStringLiteral("SkyDolly")};
 
     /*!
      * The logbook connection name that is used for import.
      */
-    constexpr const char *ImportConnectionName {"Import"};
+    const inline QString ImportConnectionName {QStringLiteral("Import")};
 
     /*!
      * The logbook connection name that is used for export.
      */
-    constexpr const char *ExportConnectionName {"Export"};
+    const inline QString ExportConnectionName {QStringLiteral("Export")};
 
     /*!
-     * Suffix indicating zulu time including whitespace, ready to be appended to a
-     * formated date/time string.
+     * Suffix indicating zulu time including whitespace, ready to be appended to a formated date/time string.
      */
-    constexpr const char *ZuluTimeSuffix {" Z"};
+    const inline QString ZuluTimeSuffix {QStringLiteral(" Z")};
 
     // Altitude [feet] and speed [knots] minima and maxima
 
@@ -74,20 +76,18 @@ namespace Const {
     // Known plugin UUIDs
 
     // Import
-    constexpr const char *CsvImportPluginUuid {"077448de-4909-4c5e-8957-2347afee6708"};
-    constexpr const char *GpxImportPluginUuid {"13f44df3-1df6-4458-ad29-71f7b185bf3e"};
-    constexpr const char *IgcImportPluginUuid {"a1902cf0-82a8-47ed-86ee-5a15152697c7"};
-    constexpr const char *KmlImportPluginUuid {"5a72c866-310d-4d84-8bd6-1baa720bc64e"};
-    constexpr const char *SdLogImportPluginUuid {"a0b3c866-3000-4026-aeb5-f53ae5451609"};
-
-    // Export
-    constexpr const char *CsvExportPluginUuid {"e718d4d2-da18-422b-921d-625315b75ca8"};
+    const inline QString CsvImportPluginUuid {QStringLiteral("077448de-4909-4c5e-8957-2347afee6708")};
+    const inline QString GpxImportPluginUuid {QStringLiteral("13f44df3-1df6-4458-ad29-71f7b185bf3e")};
+    const inline QString IgcImportPluginUuid {QStringLiteral("a1902cf0-82a8-47ed-86ee-5a15152697c7")};
+    const inline QString KmlImportPluginUuid {QStringLiteral("5a72c866-310d-4d84-8bd6-1baa720bc64e")};
+    const inline QString SdLogImportPluginUuid {QStringLiteral("a0b3c866-3000-4026-aeb5-f53ae5451609")};
+    const inline QString CsvExportPluginUuid {QStringLiteral("e718d4d2-da18-422b-921d-625315b75ca8")};
 
     // Known module UUIDs
 
-    constexpr const char *LogbookModuleUuid {"441c2289-1aab-4724-9651-c74d4961270f"};
-    constexpr const char *FormationModuleUuid {"d1fb9d27-67de-4a03-8333-202f599a0454"};
-    constexpr const char *LocationModuleUuid {"a9fd31c9-0559-4ac3-abeb-a06e29ac7357"};
+    const inline QString LogbookModuleUuid {QStringLiteral("441c2289-1aab-4724-9651-c74d4961270f")};
+    const inline QString FormationModuleUuid {QStringLiteral("d1fb9d27-67de-4a03-8333-202f599a0454")};
+    const inline QString LocationModuleUuid {QStringLiteral("a9fd31c9-0559-4ac3-abeb-a06e29ac7357")};
 }
 
 #endif // CONST_H

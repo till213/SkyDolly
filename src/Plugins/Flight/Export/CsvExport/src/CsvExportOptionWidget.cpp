@@ -24,6 +24,7 @@
  */
 #include <QComboBox>
 #include <QString>
+#include <QStringLiteral>
 
 #include <Kernel/Enum.h>
 #include "CsvExportOptionWidget.h"
@@ -66,8 +67,8 @@ void CsvExportOptionWidget::frenchConnection() noexcept
 
 void CsvExportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem("Flightradar24", Enum::underly(CsvExportSettings::Format::Flightradar24));
-    ui->formatComboBox->addItem("Position and attitude", Enum::underly(CsvExportSettings::Format::PositionAndAttitude));
+    ui->formatComboBox->addItem(QStringLiteral("Flightradar24"), Enum::underly(CsvExportSettings::Format::Flightradar24));
+    ui->formatComboBox->addItem(QStringLiteral("Position and attitude"), Enum::underly(CsvExportSettings::Format::PositionAndAttitude));
 }
 
 // PRIVATE SLOTS

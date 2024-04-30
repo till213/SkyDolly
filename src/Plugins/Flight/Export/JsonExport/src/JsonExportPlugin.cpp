@@ -30,6 +30,7 @@
 #include <QIODevice>
 #include <QStringBuilder>
 #include <QString>
+#include <QStringLiteral>
 #include <QDateTime>
 
 #include <Kernel/Version.h>
@@ -58,7 +59,7 @@ struct JsonExportPluginPrivate
     JsonExportSettings pluginSettings;
     Unit unit;
 
-    static constexpr const char *FileExtension {"json"};
+    static inline const QString FileExtension {QStringLiteral("json")};
 };
 
 // PUBLIC
@@ -131,10 +132,11 @@ bool JsonExportPlugin::exportAircraft(const FlightData &flightData, const Aircra
 
 bool JsonExportPlugin::exportHeader(QIODevice &io) const noexcept
 {
-    const QString header =
+    const QString header = QStringLiteral(
 "{\n"
 "  \"type\": \"FeatureCollection\",\n"
-"  \"features\": [\n";
+"  \"features\": [\n"
+    );
     return io.write(header.toUtf8());
 }
 
@@ -165,12 +167,13 @@ bool JsonExportPlugin::exportSingleAircraft(const FlightData &flightData, const 
 
     const AircraftInfo &info = aircraft.getAircraftInfo();
     const AircraftType &type = info.aircraftType;
-    const QString trackBegin = QString(
+    const QString trackBegin = QStringLiteral(
 "    {\n"
 "      \"type\": \"Feature\",\n"
 "      \"geometry\": {\n"
 "        \"type\": \"LineString\",\n"
-"        \"coordinates\": [\n");
+"        \"coordinates\": [\n"
+    );
     ok = io.write(trackBegin.toUtf8());
     if (ok) {
         std::size_t i = 0;
@@ -229,9 +232,10 @@ bool JsonExportPlugin::exportWaypoints(const FlightData &flightData, QIODevice &
 
 bool JsonExportPlugin::exportFooter(QIODevice &io) const noexcept
 {
-    const QString footer =
+    const QString footer = QStringLiteral(
 "  ]\n"
-"}\n";
+"}\n"
+    );
     return io.write(footer.toUtf8());
 }
 

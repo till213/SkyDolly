@@ -80,22 +80,22 @@ SkyDollyCsvLocationWriter::~SkyDollyCsvLocationWriter() = default;
 
 bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QIODevice &io) noexcept
 {
-    QString csv = QString(::TitleColumn) % Csv::CommaSep %
-                          ::DescriptionColumn % Csv::CommaSep %
-                          ::TypeColumn % Csv::CommaSep %
-                          ::CategoryColumn % Csv::CommaSep %
-                          ::CountryColumn % Csv::CommaSep %
-                          ::AttributesColumn % Csv::CommaSep %
-                          ::IdentifierColumn % Csv::CommaSep %
-                          ::LatitudeColumn % Csv::CommaSep %
-                          ::LongitudeColumn % Csv::CommaSep %
-                          ::AltitudeColumn % Csv::CommaSep %
-                          ::PitchColumn % Csv::CommaSep %
-                          ::BankColumn % Csv::CommaSep %
-                          ::TrueHeadingColumn % Csv::CommaSep %
-                          ::IndicatedAirspeedColumn % Csv::CommaSep %
-                          ::OnGroundColumn % Csv::CommaSep %
-                          ::EngineEventColumn % Csv::Ln;
+    QString csv = QString::fromLatin1(::TitleColumn) % Csv::CommaSep %
+                                      ::DescriptionColumn % Csv::CommaSep %
+                                      ::TypeColumn % Csv::CommaSep %
+                                      ::CategoryColumn % Csv::CommaSep %
+                                      ::CountryColumn % Csv::CommaSep %
+                                      ::AttributesColumn % Csv::CommaSep %
+                                      ::IdentifierColumn % Csv::CommaSep %
+                                      ::LatitudeColumn % Csv::CommaSep %
+                                      ::LongitudeColumn % Csv::CommaSep %
+                                      ::AltitudeColumn % Csv::CommaSep %
+                                      ::PitchColumn % Csv::CommaSep %
+                                      ::BankColumn % Csv::CommaSep %
+                                      ::TrueHeadingColumn % Csv::CommaSep %
+                                      ::IndicatedAirspeedColumn % Csv::CommaSep %
+                                      ::OnGroundColumn % Csv::CommaSep %
+                                      ::EngineEventColumn % Csv::Ln;
 
     bool ok = io.write(csv.toUtf8());
     Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType);
@@ -111,13 +111,15 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
             const QString locationCategorySymId = locationCategoryEnumeration.getItemById(location.categoryId).symId;
             const QString countrySymId = countryEnumeration.getItemById(location.countryId).symId;
             const QString engineEventSymId = engineEventEnumeration.getItemById(location.engineEventId).symId;
-            const QString csv = QString("\"") % title.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
-                                "\"" % description.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
+            const QString csv = QString::fromLatin1("\"") %
+                                title.replace(QString::fromLatin1("\""), QString::fromLatin1("\"\"")) % "\""  %
+                                Csv::CommaSep % "\"" %
+                                description.replace(QString::fromLatin1("\""), QString::fromLatin1("\"\"")) % "\"" % Csv::CommaSep %
                                 locationTypeSymId % Csv::CommaSep %
                                 locationCategorySymId % Csv::CommaSep %
                                 countrySymId % Csv::CommaSep %
                                 QString::number(location.attributes) % Csv::CommaSep %
-                                "\"" % identifier.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
+                                "\"" % identifier.replace(QString::fromLatin1("\""), QString::fromLatin1("\"\"")) % "\"" % Csv::CommaSep %
                                 Export::formatCoordinate(location.latitude) % Csv::CommaSep %
                                 Export::formatCoordinate(location.longitude) % Csv::CommaSep %
                                 Export::formatNumber(location.altitude) % Csv::CommaSep %
@@ -136,5 +138,3 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
     }
     return ok;
 }
-
-// PRIVATE

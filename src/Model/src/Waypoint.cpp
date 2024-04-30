@@ -22,8 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <utility>
-
 #include "Waypoint.h"
 
 // PUBLIC
@@ -40,4 +38,5 @@ bool Waypoint::isValid() const noexcept
     return !identifier.isEmpty();
 }
 
-const Waypoint Waypoint::NullWaypoint = Waypoint();
+const Waypoint Waypoint::NullWaypoint {Waypoint()};
+

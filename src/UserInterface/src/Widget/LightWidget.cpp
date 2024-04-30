@@ -26,6 +26,7 @@
 #include <cstdint>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QDialog>
 #include <QColor>
 #include <QPalette>
@@ -73,7 +74,7 @@ LightWidget::~LightWidget() = default;
 
 void LightWidget::initUi() noexcept
 {
-    ui->lightStateLineEdit->setToolTip(SimVar::LightStates);
+    ui->lightStateLineEdit->setToolTip(QString::fromLatin1(SimVar::LightStates));
 
     // Make the light state checkboxes checkable, but not for the user
     ui->navigationCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -154,7 +155,7 @@ void LightWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access acce
         colorName = d->DisabledTextColor.name();
     }
 
-    const QString css{QString("color: %1;").arg(colorName)};
+    const QString css{QStringLiteral("color: %1;").arg(colorName)};
     ui->lightStateLineEdit->setStyleSheet(css);
     ui->navigationCheckBox->setStyleSheet(css);
     ui->beaconCheckBox->setStyleSheet(css);

@@ -104,20 +104,20 @@ void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrN
 #endif
         if (xmlName == QStringLiteral("coordinates")) {
             const QString coordinatesText = xml->readElementText();
-            const QStringList coordinates = coordinatesText.split(",");
+            const QStringList coordinates = coordinatesText.split(QStringLiteral(","));
             if (coordinates.count() == 3) {
                 Waypoint waypoint;
                 waypoint.longitude = coordinates.at(0).toFloat(&ok);
                 if (!ok) {
-                    xml->raiseError("Invalid longitude number.");
+                    xml->raiseError(QStringLiteral("Invalid longitude number."));
                 }
                 waypoint.latitude = coordinates.at(1).toFloat(&ok);
                 if (!ok) {
-                    xml->raiseError("Invalid latitude number.");
+                    xml->raiseError(QStringLiteral("Invalid latitude number."));
                 }
                 waypoint.altitude = coordinates.at(2).toFloat(&ok);
                 if (!ok) {
-                    xml->raiseError("Invalid altitude number.");
+                    xml->raiseError(QStringLiteral("Invalid altitude number."));
                 }
                 waypoint.identifier = icaoOrName;
                 // The actual timestamps of the waypoints are later updated
@@ -127,7 +127,7 @@ void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrN
 
                 aircraft.getFlightPlan().add(std::move(waypoint));
             } else {
-                xml->raiseError("Invalid GPS coordinate.");
+                xml->raiseError(QStringLiteral("Invalid GPS coordinate."));
             }
         } else {
             xml->skipCurrentElement();

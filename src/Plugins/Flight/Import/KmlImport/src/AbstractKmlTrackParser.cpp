@@ -98,24 +98,24 @@ void AbstractKmlTrackParser::parseTrack(FlightData &flightData) noexcept
                     TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
                     trackData.push_back(std::move(trackItem));
                 } else {
-                    xml->raiseError("Invalid timestamp.");
+                    xml->raiseError(QStringLiteral("Invalid timestamp."));
                 }
             } else if (xmlName == Kml::coord) {
                 const QString coordinatesText = xml->readElementText();
-                const QStringList coordinates = coordinatesText.split(" ");
+                const QStringList coordinates = coordinatesText.split(QStringLiteral(" "));
                 if (coordinates.count() == 3) {
 
                     const double longitude = coordinates.at(0).toDouble(&ok);
                     if (!ok) {
-                        xml->raiseError("Invalid longitude number.");
+                        xml->raiseError(QStringLiteral("Invalid longitude number."));
                     }
                     const double latitude = coordinates.at(1).toDouble(&ok);
                     if (!ok) {
-                        xml->raiseError("Invalid latitude number.");
+                        xml->raiseError(QStringLiteral("Invalid latitude number."));
                     }
                     const double altitude = coordinates.at(2).toDouble(&ok);
                     if (!ok) {
-                        xml->raiseError("Invalid altitude number.");
+                        xml->raiseError(QStringLiteral("Invalid altitude number."));
                     }
                     if (ok) {
                         std::get<1>(trackData[currentTrackDataIndex]) = latitude;
@@ -125,7 +125,7 @@ void AbstractKmlTrackParser::parseTrack(FlightData &flightData) noexcept
                     }
 
                 } else {
-                    xml->raiseError("Invalid GPS coordinate.");
+                    xml->raiseError(QStringLiteral("Invalid GPS coordinate."));
                 }
             } else {
                 xml->skipCurrentElement();

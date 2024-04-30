@@ -26,6 +26,8 @@
 #define SETTINGSCONVERTERV0DOT17_H
 
 #include <QString>
+#include <QStringLiteral>
+#include <QStringBuilder>
 #include <QSettings>
 #include <QByteArray>
 #include <QUuid>
@@ -40,7 +42,7 @@ class SettingsConverterV0dot17
 public:
     static inline void convert(const Version &settingsVersion, QSettings &settings) noexcept
     {
-        if (settingsVersion < Version(QString("0.16.0"))) {
+        if (settingsVersion < Version(QStringLiteral("0.16.0"))) {
             SettingsConverterV0dot16::convert(settingsVersion, settings);
         }
         convertPlugins(settings);
@@ -50,11 +52,11 @@ public:
 private:
     static inline void convertPlugins(QSettings &settings) noexcept
     {
-        static constexpr const char *FormatKey = "Format";
+        static const QString FormatKey {QStringLiteral("Format")};
         int format {0};
 
         // CSV import
-        settings.beginGroup(QString("Plugins/") + QUuid(Const::CsvImportPluginUuid).toByteArray());
+        settings.beginGroup(QStringLiteral("Plugins/") % QUuid(Const::CsvImportPluginUuid).toByteArray());
         {
             bool ok {true};
             format = settings.value(FormatKey).toInt(&ok);
@@ -71,7 +73,7 @@ private:
         settings.endGroup();
 
         // CSV export
-        settings.beginGroup(QString("Plugins/") + QUuid(Const::CsvExportPluginUuid).toByteArray());
+        settings.beginGroup(QStringLiteral("Plugins/") % QUuid(Const::CsvExportPluginUuid).toByteArray());
         {
             bool ok {true};
             format = settings.value(FormatKey).toInt(&ok);
@@ -90,7 +92,7 @@ private:
 
     static inline void convertLogbookTableLayout(QSettings &settings)
     {
-        settings.beginGroup(QString("Plugins/Modules/") + QUuid(Const::LogbookModuleUuid).toByteArray());
+        settings.beginGroup(QStringLiteral("Plugins/Modules/") % QUuid(Const::LogbookModuleUuid).toByteArray());
         {
             settings.setValue("LogbookTableState", QVariant());
         }

@@ -163,15 +163,15 @@ struct IgcParserPrivate
     static const QRegularExpression bRecordRegExp;
 };
 
-const QRegularExpression IgcParserPrivate::hRecordDateRegExp {::HRecordDatePattern};
-const QRegularExpression IgcParserPrivate::hRecordPilotRegExp {::HRecordPilotPattern};
-const QRegularExpression IgcParserPrivate::hRecordCoPilotRegExp {::HRecordCoPilotPattern};
-const QRegularExpression IgcParserPrivate::hRecordGliderTypeRegExp {::HRecordGliderTypePattern};
-const QRegularExpression IgcParserPrivate::hRecordGliderIdRegExp {::HRecordGliderIdPattern};
-const QRegularExpression IgcParserPrivate::iRecordRegExp {::IRecordPattern};
-const QRegularExpression IgcParserPrivate::cRecordTaskDefinitionRegExp {::CRecordTaskDefinitionPattern};
-const QRegularExpression IgcParserPrivate::cRecordTaskRegExp {::CRecordTaskPattern};
-const QRegularExpression IgcParserPrivate::bRecordRegExp {::BRecordPattern};
+const QRegularExpression IgcParserPrivate::hRecordDateRegExp{QString::fromLatin1(::HRecordDatePattern)};
+const QRegularExpression IgcParserPrivate::hRecordPilotRegExp{QString::fromLatin1(::HRecordPilotPattern)};
+const QRegularExpression IgcParserPrivate::hRecordCoPilotRegExp{QString::fromLatin1(::HRecordCoPilotPattern)};
+const QRegularExpression IgcParserPrivate::hRecordGliderTypeRegExp{QString::fromLatin1(::HRecordGliderTypePattern)};
+const QRegularExpression IgcParserPrivate::hRecordGliderIdRegExp{QString::fromLatin1(::HRecordGliderIdPattern)};
+const QRegularExpression IgcParserPrivate::iRecordRegExp{QString::fromLatin1(::IRecordPattern)};
+const QRegularExpression IgcParserPrivate::cRecordTaskDefinitionRegExp{QString::fromLatin1(::CRecordTaskDefinitionPattern)};
+const QRegularExpression IgcParserPrivate::cRecordTaskRegExp{QString::fromLatin1(::CRecordTaskPattern)};
+const QRegularExpression IgcParserPrivate::bRecordRegExp{QString::fromLatin1(::BRecordPattern)};
 
 // PUBLIC
 
@@ -314,7 +314,7 @@ bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
             d->header.flightNumber = match.captured(::HRecordFlightNumberIndex);
         } else {
             // Assume first flight of day
-            d->header.flightNumber = QString("1");
+            d->header.flightNumber = QStringLiteral("1");
         }
 
         ok = true;
@@ -429,7 +429,7 @@ bool IgcParser::parseFix(const QByteArray &line) noexcept
 
         // Timestamp
         const QString timeText = match.captured(::BRecordDateIndex);
-        const QTime currentTime = QTime::fromString(timeText, ::DateFormat);
+        const QTime currentTime = QTime::fromString(timeText, QString::fromLatin1(::DateFormat));
         if (d->fixes.size() > 0) {
             if (currentTime.addSecs(DayChangeThresholdSeconds) < d->previousTime) {
                 // Flight crossed "midnight" (next day)

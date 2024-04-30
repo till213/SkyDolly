@@ -28,6 +28,7 @@
 #include <memory>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QSqlDatabase>
 
 #include <Kernel/Const.h>
@@ -63,9 +64,6 @@ public:
     // Implementation note:
     // Well-known database enumerations: TitleCase name must match with corresponding
     // snake_case name (without the "enum_" prefix) of the corresponding "enumeration table".
-    //
-    // At least with MinGW 8.1 (Windows) using "static constexpr const char *" does not seem
-    // to link "beyond DLL boundaries", so we use QString for now
     static inline const QString BackupPeriod {QStringLiteral("BackupPeriod")};
     static inline const QString LocationType {QStringLiteral("LocationType")};
     static inline const QString LocationCategory {QStringLiteral("LocationCategory")};
@@ -75,29 +73,29 @@ public:
     // Well-known symbolic IDs
 
     // Backup period
-    static constexpr const char *BackupPeriodNeverSymId = "NEVER";
-    static constexpr const char *BackupPeriodNowSymId = "NOW";
-    static constexpr const char *BackupPeriodNextTimeSymId = "NEXT";
-    static constexpr const char *BackupPeriodMonthlySymId = "MONTH";
-    static constexpr const char *BackupPeriodWeeklySymId = "WEEK";
-    static constexpr const char *BackupPeriodDailySymId = "DAY";
-    static constexpr const char *BackupPeriodAlwaysSymId = "ALWAYS";
+    static inline const QString BackupPeriodNeverSymId = {QStringLiteral("NEVER")};
+    static inline const QString BackupPeriodNowSymId {QStringLiteral("NOW")};
+    static inline const QString BackupPeriodNextTimeSymId {QStringLiteral("NEXT")};
+    static inline const QString BackupPeriodMonthlySymId {QStringLiteral("MONTH")};
+    static inline const QString BackupPeriodWeeklySymId {QStringLiteral("WEEK")};
+    static inline const QString BackupPeriodDailySymId {QStringLiteral("DAY")};
+    static inline const QString BackupPeriodAlwaysSymId {QStringLiteral("ALWAYS")};
 
     // Location type
-    static constexpr const char *LocationTypeSystemSymId {"S"};
-    static constexpr const char *LocationTypeImportSymId {"I"};
-    static constexpr const char *LocationTypeUserSymId {"U"};
+    static inline const QString LocationTypeSystemSymId {QStringLiteral("S")};
+    static inline const QString LocationTypeImportSymId {QStringLiteral("I")};
+    static inline const QString LocationTypeUserSymId {QStringLiteral("U")};
 
     // Location category
-    static constexpr const char *LocationCategoryNoneSymId {"00"};
+    static inline const QString LocationCategoryNoneSymId {QStringLiteral("00")};
 
     // Country
-    static constexpr const char *CountryWorldSymId {"00"};
+    static inline const QString CountryWorldSymId {QStringLiteral("00")};
 
     // Engine event
-    static constexpr const char *EngineEventStartSymId {"START"};
-    static constexpr const char *EngineEventStopSymId {"STOP"};
-    static constexpr const char *EngineEventKeepSymId {"KEEP"};
+    static inline const QString EngineEventStartSymId {QStringLiteral("START")};
+    static inline const QString EngineEventStopSymId {QStringLiteral("STOP")};
+    static inline const QString EngineEventKeepSymId {QStringLiteral("KEEP")};
 
 private:
     std::unique_ptr<EnumerationServicePrivate> d;

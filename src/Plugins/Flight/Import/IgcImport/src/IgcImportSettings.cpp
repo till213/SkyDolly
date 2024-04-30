@@ -116,15 +116,15 @@ void IgcImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::AltitudeKey;
+    keyValue.first = QString::fromLatin1(::AltitudeKey);
     keyValue.second = Enum::underly(d->altitudeMode);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::EnlThresholdKey;
+    keyValue.first = QString::fromLatin1(::EnlThresholdKey);
     keyValue.second = d->enlThresholdPercent;
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::ConvertAltitudeKey;
+    keyValue.first = QString::fromLatin1(::ConvertAltitudeKey);
     keyValue.second = d->convertAltitude;
     keyValues.push_back(keyValue);
 }
@@ -133,15 +133,15 @@ void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::AltitudeKey;
+    keyValue.first = QString::fromLatin1(::AltitudeKey);
     keyValue.second = Enum::underly(::DefaultAltitudeMode);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::EnlThresholdKey;
+    keyValue.first = QString::fromLatin1(::EnlThresholdKey);
     keyValue.second = ::DefaultEnlThresholdPercent;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::ConvertAltitudeKey;
+    keyValue.first = QString::fromLatin1(::ConvertAltitudeKey);
     keyValue.second = ::DefaultConvertAltitude;
     keysWithDefaults.push_back(keyValue);
 }
@@ -149,21 +149,21 @@ void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void IgcImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    const int enumeration = valuesByKey.at(::AltitudeKey).toInt(&ok);
+    const int enumeration = valuesByKey.at(QString::fromLatin1(::AltitudeKey)).toInt(&ok);
     if (ok) {
         d->altitudeMode = static_cast<AltitudeMode >(enumeration);
     } else {
         d->altitudeMode = ::DefaultAltitudeMode;
     }
 
-    const int enlThresholdPercent = valuesByKey.at(::EnlThresholdKey).toInt(&ok);
+    const int enlThresholdPercent = valuesByKey.at(QString::fromLatin1(::EnlThresholdKey)).toInt(&ok);
     if (ok) {
         d->enlThresholdPercent = enlThresholdPercent;
     } else {
         d->enlThresholdPercent = ::DefaultEnlThresholdPercent;
     }
 
-    d->convertAltitude = valuesByKey.at(::ConvertAltitudeKey).toBool();
+    d->convertAltitude = valuesByKey.at(QString::fromLatin1(::ConvertAltitudeKey)).toBool();
 }
 
 void IgcImportSettings::restoreDefaultsExtn() noexcept

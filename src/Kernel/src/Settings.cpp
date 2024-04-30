@@ -28,8 +28,8 @@
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
-#include <QLatin1String>
 #include <QUuid>
 #include <QByteArray>
 #include <QVariant>
@@ -65,7 +65,7 @@ struct SettingsPrivate
             const QString defaultLogbookName {Version::getApplicationName() % " " % QObject::tr("Logbook")};
             defaultLogbookPath = standardLocations.first() % "/" % defaultLogbookName % "/" % defaultLogbookName % Const::DotLogbookExtension;
         } else {
-            defaultExportPath = ".";
+            defaultExportPath = QStringLiteral(".");
         }
     }
 
@@ -139,15 +139,15 @@ struct SettingsPrivate
     static constexpr int DefaultPreviewInfoDialogCount {3};
     static constexpr int PreviewInfoDialogBase {150};
 
-    static inline const QKeySequence DefaultRecordShortcut {"Ctrl+R"};
-    static inline const QKeySequence DefaultReplayShortcut {"Ctrl+P"};
-    static inline const QKeySequence DefaultPauseShortcut {"Alt+P"};
-    static inline const QKeySequence DefaultStopShortcut {"Ctrl+S"};
-    static inline const QKeySequence DefaultBackwardShortcut {"Ctrl+,"};
-    static inline const QKeySequence DefaultForwardShortcut {"Ctrl+."};
+    static inline const QKeySequence DefaultRecordShortcut{QString::fromLatin1("Ctrl+R")};
+    static inline const QKeySequence DefaultReplayShortcut{QString::fromLatin1("Ctrl+P")};
+    static inline const QKeySequence DefaultPauseShortcut{QString::fromLatin1("Alt+P")};
+    static inline const QKeySequence DefaultStopShortcut{QString::fromLatin1("Ctrl+S")};
+    static inline const QKeySequence DefaultBackwardShortcut{QString::fromLatin1("Ctrl+,")};
+    static inline const QKeySequence DefaultForwardShortcut{QString::fromLatin1("Ctrl+.")};
     // TODO Find good default keys that are not already taken my the MSFS default keyboard layout
-    static inline const QKeySequence DefaultBeginShortcut {"Ctrl+PgUp"};
-    static inline const QKeySequence DefaultEndShortcut {"Ctrl+PgDown"};
+    static inline const QKeySequence DefaultBeginShortcut{QString::fromLatin1("Ctrl+PgUp")};
+    static inline const QKeySequence DefaultEndShortcut{QString::fromLatin1("Ctrl+PgDown")};
     static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {
         DefaultRecordShortcut,
         DefaultReplayShortcut,
@@ -882,11 +882,12 @@ void Settings::updateEgmFilePath() noexcept
             egmDirectory.cdUp();
         }
 #endif
-    if (egmDirectory.cd(::ResourceDirectoryName)) {
-        if (egmDirectory.cd(::EgmDirectoryName)) {
-            if (egmDirectory.exists(::DefaultEgmFileName)) {
-                d->earthGravityModelFileInfo = QFileInfo(egmDirectory.absoluteFilePath(::DefaultEgmFileName));
+        if (egmDirectory.cd(QString::fromLatin1(::ResourceDirectoryName))) {
+            if (egmDirectory.cd(QString::fromLatin1(::EgmDirectoryName))) {
+                if (egmDirectory.exists(QString::fromLatin1(::DefaultEgmFileName))) {
+                    d->earthGravityModelFileInfo = QFileInfo(
+                        egmDirectory.absoluteFilePath(QString::fromLatin1(::DefaultEgmFileName)));
+                }
             }
         }
-    }
 }

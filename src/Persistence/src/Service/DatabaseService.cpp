@@ -27,6 +27,7 @@
 
 #include <QCoreApplication>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QWidget>
 #include <QFileInfo>
@@ -247,7 +248,7 @@ QString DatabaseService::getBackupDirectoryPath(bool *ok) const noexcept
     if (success && backupDirectoryPath.isNull()) {
         // Default backup location, relative to logbook path
         // (in earlier logbooks the backup path was initially empty in the metadata)
-        backupDirectoryPath = "./Backups";
+        backupDirectoryPath = QStringLiteral("./Backups");
     }
     if (ok != nullptr) {
         *ok = success;
@@ -302,17 +303,17 @@ Version DatabaseService::getDatabaseVersion(bool *ok) const noexcept
 
 QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
 {
-    Settings &settings = Settings::getInstance();
-    QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
-    QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open Logbook"), existingLogbookPath, QString("*") % Const::DotLogbookExtension);
+    const Settings &settings = Settings::getInstance();
+    const QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
+    const QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open Logbook"), existingLogbookPath, QStringLiteral("*") % Const::DotLogbookExtension);
     return logbookPath;
 }
 
 QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
 {
-    Settings &settings = Settings::getInstance();
-    QString existingLogbookPath = settings.getLogbookPath();
-    QFileInfo existingLogbookInfo(existingLogbookPath);
+    const Settings &settings = Settings::getInstance();
+    const QString existingLogbookPath = settings.getLogbookPath();
+    const QFileInfo existingLogbookInfo(existingLogbookPath);
     QDir existingLogbookDirectory(existingLogbookInfo.absolutePath());
     if (existingLogbookDirectory.dirName() == existingLogbookInfo.baseName()) {
         existingLogbookDirectory.cdUp();
@@ -329,7 +330,8 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
                 retry = false;
             } else {
                 QMessageBox::information(parent, QCoreApplication::translate("DatabaseService", "Database Exists"),
-                                         QCoreApplication::translate("DatabaseService", "The logbook %1 already exists. Please choose another path.").arg(QDir::toNativeSeparators(logbookDirectoryPath)));
+                                         QCoreApplication::translate("DatabaseService",
+                                         "The logbook %1 already exists. Please choose another path.").arg(QDir::toNativeSeparators(logbookDirectoryPath)));
             }
         } else {
             retry = false;
@@ -340,22 +342,18 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
 
 QString DatabaseService::getBackupFileName(const QString &logbookPath, const QString &backupDirectoryPath) noexcept
 {
-    QDir backupDir {backupDirectoryPath};
+    const QDir backupDir {backupDirectoryPath};
 
     const QFileInfo logbookInfo = QFileInfo(logbookPath);
     const QString baseName = logbookInfo.completeBaseName();
-    const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
+    const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString(QStringLiteral("yyyy-MM-dd hhmm"));
     QString backupLogbookName = baseBackupLogbookName % Const::DotLogbookExtension;
     int index = 1;
     while (backupDir.exists(backupLogbookName) && index <= ::MaxBackupIndex) {
-        backupLogbookName = baseBackupLogbookName % QString("-%1").arg(index) % Const::DotLogbookExtension;
+        backupLogbookName = baseBackupLogbookName % QStringLiteral("-%1").arg(index) % Const::DotLogbookExtension;
         ++index;
     }
-    if (index <= ::MaxBackupIndex) {
-        return backupLogbookName;
-    } else {
-        return {};
-    }
+    return (index <= ::MaxBackupIndex) ? backupLogbookName : QString();
 }
 
 QString DatabaseService::createBackupPathIfNotExists(const QString &logbookPath, const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
@@ -368,7 +366,7 @@ QString DatabaseService::createBackupPathIfNotExists(const QString &logbookPath,
         existingBackupPath = relativeOrAbsoluteBackupDirectoryPath;
     }
 
-    QDir backupDir(existingBackupPath);
+    const QDir backupDir(existingBackupPath);
     if (!backupDir.exists()) {
          const bool ok = backupDir.mkpath(existingBackupPath);
          if (!ok) {
