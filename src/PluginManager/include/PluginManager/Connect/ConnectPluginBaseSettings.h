@@ -31,6 +31,7 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include "../PluginManagerLib.h"
 
 struct ConnectPluginBaseSettingsPrivate;
@@ -45,6 +46,22 @@ public:
     ConnectPluginBaseSettings &operator=(const ConnectPluginBaseSettings &rhs) = delete;
     ConnectPluginBaseSettings &operator=(ConnectPluginBaseSettings &&rhs) = delete;
     ~ConnectPluginBaseSettings() override;
+
+    /*!
+     * Returns the flight simulator shortcuts that can be triggered in the connected flight simulator.
+     *
+     * \return the flight simulator shortcuts
+     */
+    FlightSimulatorShortcuts getFlightSimulatorShortcuts() const noexcept;
+
+    /*!
+     * Sets the flight simulator shortcuts that can be triggered in the connected flight simulator.
+     *
+     * \param shortcuts
+     *        the client event shortcuts
+     * \sa flightSimulatorShortcutsChanged
+     */
+    void setFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;

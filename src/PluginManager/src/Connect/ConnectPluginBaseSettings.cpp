@@ -26,14 +26,14 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
+#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Connect/ConnectPluginBaseSettings.h>
 
 namespace
 {
     // Keys
-    constexpr const char *ResamplingPeriodKey {"ResamplingPeriod"};
-    constexpr const char *FormationExportKey {"FormationExport"};
-    constexpr const char *OpenExportedFilesEnabledKey {"OpenExportedFilesEnabled"};
+    constexpr const char *RecordShortcutKey {"RecordShortcutKey"};
+    constexpr const char *ReplayShortcutKey {"ReplayShortcutKey"};
 
     // Defaults
     constexpr bool DefaultOpenExportedFilesEnabled {false};
@@ -41,7 +41,27 @@ namespace
 
 struct ConnectPluginBaseSettingsPrivate
 {
-    bool openExportedFilesEnabled {::DefaultOpenExportedFilesEnabled};
+    FlightSimulatorShortcuts flightSimulatorShortcuts {DefaultFlightSimulatorShortcuts};
+
+    static inline const QKeySequence DefaultRecordShortcut{QStringLiteral("Ctrl+R")};
+    static inline const QKeySequence DefaultReplayShortcut{QStringLiteral("Ctrl+P")};
+    static inline const QKeySequence DefaultPauseShortcut{QStringLiteral("Alt+P")};
+    static inline const QKeySequence DefaultStopShortcut{QStringLiteral("Ctrl+S")};
+    static inline const QKeySequence DefaultBackwardShortcut{QStringLiteral("Ctrl+,")};
+    static inline const QKeySequence DefaultForwardShortcut{QStringLiteral("Ctrl+.")};
+    // TODO Find good default keys that are not already taken my the MSFS default keyboard layout
+    static inline const QKeySequence DefaultBeginShortcut{QStringLiteral("Ctrl+PgUp")};
+    static inline const QKeySequence DefaultEndShortcut{QStringLiteral("Ctrl+PgDown")};
+    static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {
+        DefaultRecordShortcut,
+        DefaultReplayShortcut,
+        DefaultPauseShortcut,
+        DefaultStopShortcut,
+        DefaultBackwardShortcut,
+        DefaultForwardShortcut,
+        DefaultBeginShortcut,
+        DefaultEndShortcut
+    };
 };
 
 // PUBLIC
@@ -52,12 +72,25 @@ ConnectPluginBaseSettings::ConnectPluginBaseSettings() noexcept
 
 ConnectPluginBaseSettings::~ConnectPluginBaseSettings() = default;
 
+FlightSimulatorShortcuts ConnectPluginBaseSettings::getFlightSimulatorShortcuts() const noexcept
+{
+    return d->flightSimulatorShortcuts;
+}
+
+void ConnectPluginBaseSettings::setFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept
+{
+    if (d->flightSimulatorShortcuts != shortcuts) {
+        d->flightSimulatorShortcuts = std::move(shortcuts);
+        emit Settings::getInstance().flightSimulatorShortcutsChanged(d->flightSimulatorShortcuts);
+    }
+}
+
 void ConnectPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::OpenExportedFilesEnabledKey;
-    keyValue.second = d->openExportedFilesEnabled;
+    keyValue.first = QString::fromLatin1(::RecordShortcutKey);
+    keyValue.second = d->flightSimulatorShortcuts.record.toString();
     keyValues.push_back(keyValue);
 
     addSettingsExtn(keyValues);
@@ -67,8 +100,8 @@ void ConnectPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::OpenExportedFilesEnabledKey;
-    keyValue.second = ::DefaultOpenExportedFilesEnabled;
+    keyValue.first = QString::fromLatin1(::RecordShortcutKey);
+    keyValue.second = d->DefaultRecordShortcut.toString();
     keysWithDefaults.push_back(keyValue);
 
     addKeysWithDefaultsExtn(keysWithDefaults);
@@ -76,7 +109,7 @@ void ConnectPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &
 
 void ConnectPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
+    d->flightSimulatorShortcuts.record = valuesByKey.at(QString::fromLatin1(::RecordShortcutKey)).toString();
     restoreSettingsExtn(valuesByKey);
 
     emit changed();
@@ -84,7 +117,7 @@ void ConnectPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &val
 
 void ConnectPluginBaseSettings::restoreDefaults() noexcept
 {
-    d->openExportedFilesEnabled = ::DefaultOpenExportedFilesEnabled;
+    d->flightSimulatorShortcuts.record = d->DefaultRecordShortcut;
     restoreDefaultsExtn();
 
     emit changed();

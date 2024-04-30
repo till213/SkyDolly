@@ -56,7 +56,7 @@ public:
 
     QWidget *getParentWidget() const noexcept final
     {
-        return getParentWidget();
+        return DialogPluginBase::getParentWidget();
     }
 
     void setParentWidget(QWidget *parent) noexcept final
