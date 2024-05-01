@@ -26,6 +26,7 @@
 #define FS2020SIMCONNNECTPLUGIN_H
 
 #include <memory>
+#include <optional>
 #include <cstdint>
 
 #include <windows.h>
@@ -42,6 +43,8 @@
 struct PositionData;
 struct EngineData;
 class Aircraft;
+class MSFSSimConnectSettings;
+class OptionWidgetIntf;
 struct SkyConnectPrivate;
 
 class MSFSSimConnectPlugin : public AbstractSkyConnect
@@ -60,9 +63,12 @@ public:
     bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
 
 protected:
+    ConnectPluginBaseSettings &getPluginSettings() const noexcept override;
+    std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept override;
+
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 
-    bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept override;
+    bool onSetupFlightSimulatorShortcuts() noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;
@@ -95,7 +101,7 @@ protected slots:
     void recordData() noexcept override;
 
 private:
-    std::unique_ptr<SkyConnectPrivate> d;
+    const std::unique_ptr<SkyConnectPrivate> d;
 
     void frenchConnection() noexcept;
 
@@ -108,6 +114,9 @@ private:
     void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
     void resetEventStates() noexcept;
+
+    // Returns the configuration index that refers to the Sky Dolly specific client SimConnect.cfg configuration
+    DWORD getConfigurationIndex() const noexcept;
 
     static void CALLBACK dispatch(::SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept;
 

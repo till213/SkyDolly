@@ -32,7 +32,7 @@
 #include <QtPlugin>
 
 #include "LocationExportIntf.h"
-#include "../PluginBase.h"
+#include "../DialogPluginBase.h"
 #include "../PluginManagerLib.h"
 
 class LocationService;
@@ -43,7 +43,7 @@ struct LocationCondition;
 class LocationExportPluginBaseSettings;
 struct LocationExportPluginBasePrivate;
 
-class PLUGINMANAGER_API LocationExportPluginBase : public PluginBase, public LocationExportIntf
+class PLUGINMANAGER_API LocationExportPluginBase : public QObject, public LocationExportIntf, public DialogPluginBase
 {
     Q_OBJECT
     Q_INTERFACES(LocationExportIntf)
@@ -57,22 +57,22 @@ public:
 
     QWidget *getParentWidget() const noexcept final
     {
-        return PluginBase::getParentWidget();
+        return DialogPluginBase::getParentWidget();
     }
 
     void setParentWidget(QWidget *parent) noexcept final
     {
-        PluginBase::setParentWidget(parent);
+        DialogPluginBase::setParentWidget(parent);
     }
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
-        PluginBase::storeSettings(pluginUuid);
+        DialogPluginBase::storeSettings(pluginUuid);
     }
 
     void restoreSettings(const QUuid &pluginUuid) noexcept final
     {
-        PluginBase::restoreSettings(pluginUuid);
+        DialogPluginBase::restoreSettings(pluginUuid);
     }
 
     bool exportLocations(const std::vector<Location> &locations) const noexcept final;
@@ -86,14 +86,14 @@ protected:
 
     virtual bool exportLocations(const std::vector<Location> &locations, QIODevice &io) const noexcept = 0;
 
+    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
+
 private:
     const std::unique_ptr<LocationExportPluginBasePrivate> d;
 
     bool exportLocations(const std::vector<Location> &locations, const QString &filePath) const noexcept;
-
-    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 };
 
 #endif // LOCATIONEXPORTPLUGINBASE_H

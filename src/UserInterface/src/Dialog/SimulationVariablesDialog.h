@@ -57,7 +57,7 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    std::unique_ptr<SimulationVariablesDialogPrivate> d;
+    const std::unique_ptr<SimulationVariablesDialogPrivate> d;
     const std::unique_ptr<Ui::SimulationVariablesDialog> ui;
 
     void initUi() noexcept;

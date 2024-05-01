@@ -113,6 +113,22 @@ bool SkyConnectManager::hasPlugins() const noexcept
     return d->pluginRegistry.size() > 0;
 }
 
+void SkyConnectManager::storeSettings() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().storeSettings(d->currentPluginUuid);
+    }
+}
+
+void SkyConnectManager::restoreSettings() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().restoreSettings(d->currentPluginUuid);
+    }
+}
+
 std::optional<std::reference_wrapper<SkyConnectIntf>> SkyConnectManager::getCurrentSkyConnect() const noexcept
 {
     QObject *plugin = d->pluginLoader->instance();
@@ -135,11 +151,20 @@ std::optional<QString> SkyConnectManager::getCurrentSkyConnectPluginName() const
     return {};
 }
 
-void SkyConnectManager::tryConnectAndSetup(const FlightSimulatorShortcuts &shortcuts) noexcept
+std::optional<std::unique_ptr<OptionWidgetIntf>> SkyConnectManager::createOptionWidget() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
-        skyConnect->get().tryConnectAndSetup(shortcuts);
+        return skyConnect->get().createOptionWidget();
+    }
+    return {};
+}
+
+void SkyConnectManager::tryConnectAndSetup() noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().tryConnectAndSetup();
     }
 }
 
@@ -376,10 +401,13 @@ bool SkyConnectManager::requestInitialPosition() const noexcept
 bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 {
     bool ok {false};
-    d->currentPluginUuid = QUuid();
+
     if (d->pluginRegistry.contains(uuid)) {
-        // Unload the previous plugin (if any)
-        d->pluginLoader->unload();
+
+        if (getCurrentSkyConnect().has_value()) {
+            unloadCurrentPlugin();
+        }
+
         const QString pluginPath = d->pluginRegistry.value(uuid);
         d->pluginLoader->setFileName(pluginPath);
         QObject *plugin = d->pluginLoader->instance();
@@ -418,11 +446,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
             connect(&flight, &Flight::tailNumberChanged,
                     skyPlugin, &SkyConnectIntf::onTailNumberChanged);
             d->currentPluginUuid = uuid;
-
-            FlightSimulatorShortcuts shortcuts {Settings::getInstance().getFlightSimulatorShortcuts()};
-            if (shortcuts.hasAny()) {
-                tryConnectAndSetup(shortcuts);
-            }
+            restoreSettings();
             ok = true;
         } else {
             // Not a valid SkyConnect plugin
@@ -441,7 +465,13 @@ SkyConnectManager::SkyConnectManager() noexcept
     frenchConnection();
 }
 
-SkyConnectManager::~SkyConnectManager() = default;
+SkyConnectManager::~SkyConnectManager()
+{
+    if (getCurrentSkyConnect().has_value()) {
+        // Unload the current plugin
+        unloadCurrentPlugin();
+    }
+}
 
 void SkyConnectManager::frenchConnection() noexcept
 {
@@ -477,4 +507,11 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
         }
         d->pluginsDirectory.cdUp();
     }
+}
+
+void SkyConnectManager::unloadCurrentPlugin() noexcept
+{
+    storeSettings();
+    d->pluginLoader->unload();
+    d->currentPluginUuid = QUuid();
 }

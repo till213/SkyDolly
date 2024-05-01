@@ -10,7 +10,15 @@
   * Skip to begin (CTRL+PageUp) and end (CTRL+PageDown)
   * The shortcuts can be defined in the Sky Dolly application settings (no restart required)
 - Desktop notifications indicate whether recording has started, paused/resumed or stopped
-  * In order to make desktop notifications visible when the flight simulator is in fullscreen adjust the corresponding notification rules in the Windows settings (-> Notification Assistant) 
+  * In order to make desktop notifications visible when the flight simulator is in fullscreen adjust the corresponding notification rules in the Windows settings (-> Notification Assistant)
+- Added SimConnect client configuration support via SimConnect.cfg, with three configurations ready to be adjusted with specific IP addresses
+  * The configuration can easily be selected via File | Settings... | Flight Simulator (no restart required):
+    - Local (pipe)
+    - Network 1 (IPv4)
+    - Network 2 (IPv6)
+  * The sample SimConnect.cfg is located in the Sky Dolly application directory
+    - It should work with the default SimConnect.xml server configuration that is generated automatically by MSFS upon launch
+    - Adjust the server IP address and port as needed
 
 ### Improvements
 - The default logbook name is now *Sky Dolly Logbook*

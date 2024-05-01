@@ -64,7 +64,7 @@ public:
     ~LogbookWidget() override;
 
 private:
-    std::unique_ptr<Ui::LogbookWidget> ui;
+    const std::unique_ptr<Ui::LogbookWidget> ui;
     const std::unique_ptr<LogbookWidgetPrivate> d;
 
     void initUi() noexcept;

@@ -30,10 +30,11 @@
 #include <QtPlugin>
 
 #include "../PluginIntf.h"
+#include "../DialogPluginIntf.h"
 
 class Location;
 
-class LocationExportIntf : public PluginIntf
+class LocationExportIntf : public DialogPluginIntf, public PluginIntf
 {
 public:
     virtual bool exportLocations(const std::vector<Location> &locations) const noexcept = 0;

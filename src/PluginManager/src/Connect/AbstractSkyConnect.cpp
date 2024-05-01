@@ -26,10 +26,13 @@
 #include <cstdint>
 #include <cmath>
 #include <array>
+#include <memory>
+#include <optional>
 
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QDateTime>
+#include <QWidget>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -48,6 +51,8 @@
 #include <Connect/Connect.h>
 #include <Connect/SkyConnectIntf.h>
 #include <Connect/AbstractSkyConnect.h>
+#include <Connect/ConnectPluginBaseSettings.h>
+#include "BasicConnectOptionWidget.h"
 
 namespace
 {
@@ -79,7 +84,6 @@ struct AbstractSkyConnectPrivate
     }
 
     SkyConnectIntf::ReplayMode replayMode {SkyConnectIntf::ReplayMode::Normal};
-    FlightSimulatorShortcuts shortcuts;
     Connect::State state {Connect::State::Disconnected};
     Flight &currentFlight {Logbook::getInstance().getCurrentFlight()};
     // Triggers the recording of sample data (if not event-based recording)
@@ -108,9 +112,8 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 
 AbstractSkyConnect::~AbstractSkyConnect() = default;
 
-void AbstractSkyConnect::tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept
+void AbstractSkyConnect::tryConnectAndSetup() noexcept
 {
-    d->shortcuts = std::move(shortcuts);
     tryFirstConnectAndSetup();
 }
 
@@ -118,7 +121,6 @@ void AbstractSkyConnect::disconnect() noexcept
 {
     onDisconnectFromSim();
     setState(Connect::State::Disconnected);
-    tryFirstConnectAndSetup();
 }
 
 int AbstractSkyConnect::getRemainingReconnectTime() const noexcept
@@ -562,6 +564,17 @@ bool AbstractSkyConnect::requestLocation() noexcept
     return ok;
 }
 
+std::optional<std::unique_ptr<OptionWidgetIntf>> AbstractSkyConnect::createOptionWidget() const noexcept
+{
+    auto optionWidget = std::make_unique<BasicConnectOptionWidget>(getPluginSettings());
+    auto extendedOptionWidget = createExtendedOptionWidget();
+    if (extendedOptionWidget) {
+        // Transfer ownership to optionWidget
+        optionWidget->setExtendedOptionWidget(extendedOptionWidget->release());
+    }
+    return optionWidget;
+}
+
 // PUBLIC SLOTS
 
 void AbstractSkyConnect::addAiObject(const Aircraft &aircraft) noexcept
@@ -630,6 +643,21 @@ void AbstractSkyConnect::onTailNumberChanged(const Aircraft &aircraft) noexcept
 }
 
 // PROTECTED
+
+void AbstractSkyConnect::addSettings(Settings::KeyValues &keyValues) const noexcept
+{
+    getPluginSettings().addSettings(keyValues);
+}
+
+void AbstractSkyConnect::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
+}
+
+void AbstractSkyConnect::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
+{
+    getPluginSettings().restoreSettings(valuesByKey);
+}
 
 void AbstractSkyConnect::setState(Connect::State state) noexcept
 {
@@ -714,6 +742,23 @@ std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
     return d->currentTimestamp;
 }
 
+void AbstractSkyConnect::handlePluginSettingsChanged(Connect::Mode mode) noexcept
+{
+    switch (mode)
+    {
+    case Connect::Mode::Reconnect:
+        d->reconnectAttempt = 0;
+        retryConnectAndSetup(mode);
+        break;
+    case Connect::Mode::SetupOnly:
+        d->reconnectAttempt = 0;
+        retryConnectAndSetup(mode);
+        break;
+    default:
+        break;
+    }
+}
+
 // PRIVATE
 
 void AbstractSkyConnect::frenchConnection() noexcept
@@ -721,12 +766,10 @@ void AbstractSkyConnect::frenchConnection() noexcept
     connect(&(d->recordingTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::recordData);
     connect(&(d->reconnectTimer), &QTimer::timeout,
-            this, &AbstractSkyConnect::retryConnectAndSetup);
+            this, &AbstractSkyConnect::handleReconnectTimer);
     Settings &settings = Settings::getInstance();
     connect(&settings, &Settings::recordingSampleRateChanged,
             this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
-    connect(&settings, &Settings::flightSimulatorShortcutsChanged,
-            this, &AbstractSkyConnect::handleFlightSimulatorShortCutsChanged);
 }
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
@@ -745,7 +788,7 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
 void AbstractSkyConnect::tryFirstConnectAndSetup() noexcept
 {
     d->reconnectAttempt = 0;
-    retryConnectAndSetup();
+    retryConnectAndSetup(Connect::Mode::SetupOnly);
 }
 
 bool AbstractSkyConnect::retryWithReconnect(const std::function<bool()> &func)
@@ -841,23 +884,24 @@ void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate
     }
 }
 
-void AbstractSkyConnect::handleFlightSimulatorShortCutsChanged(const FlightSimulatorShortcuts &shortcuts) noexcept
+void AbstractSkyConnect::handleReconnectTimer() noexcept
 {
-    d->shortcuts = shortcuts;
-    d->reconnectAttempt = 0;
-    retryConnectAndSetup();
+    retryConnectAndSetup(Connect::Mode::SetupOnly);
 }
 
-void AbstractSkyConnect::retryConnectAndSetup() noexcept
+void AbstractSkyConnect::retryConnectAndSetup(Connect::Mode mode) noexcept
 {
     d->reconnectTimer.stop();
+    if (mode == Connect::Mode::Reconnect) {
+        disconnect();
+    }
     if (!isConnectedWithSim()) {
         connectWithSim();
     }
 
     bool ok = isConnectedWithSim();
     if (ok) {
-        ok = retryWithReconnect([this]() -> bool { return onSetupFlightSimulatorShortcuts(d->shortcuts); });
+        ok = retryWithReconnect([this]() -> bool { return onSetupFlightSimulatorShortcuts(); });
         if (ok) {
             setState(Connect::State::Connected);
         }

@@ -26,7 +26,6 @@
 #define MODULESWITCHER_H
 
 #include <memory>
-#include <vector>
 #include <utility>
 #include <optional>
 #include <functional>
@@ -63,9 +62,9 @@ public:
     const ActionRegistry &getActionRegistry() const noexcept;
 
     /*!
-     * Returns the active module, or \c nullptr in case no module exists.
+     * Returns the active module.
      *
-     * \return the active module; may be \c nullptr (no module plugin loaded)
+     * \return the active module; no value if no activel module exists
      */
     std::optional<std::reference_wrapper<ModuleIntf>> getActiveModule() const noexcept;
     void activateModule(QUuid uuid) noexcept;

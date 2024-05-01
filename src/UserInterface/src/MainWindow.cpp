@@ -24,6 +24,7 @@
  */
 #include <algorithm>
 #include <memory>
+#include <optional>
 #include <vector>
 #include <cstdint>
 #include <cmath>

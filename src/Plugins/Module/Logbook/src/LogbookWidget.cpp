@@ -28,6 +28,7 @@
 #include <vector>
 #include <cstdint>
 #include <utility>
+#include <optional>
 
 #include <QByteArray>
 #include <QVariant>

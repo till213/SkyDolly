@@ -75,7 +75,7 @@ protected:
     void restoreDefaultsExtn() noexcept override;
 
 private:
-    std::unique_ptr<IgcImportSettingsPrivate> d;
+    const std::unique_ptr<IgcImportSettingsPrivate> d;
 };
 
 #endif // IGCIMPORTSETTINGS_H

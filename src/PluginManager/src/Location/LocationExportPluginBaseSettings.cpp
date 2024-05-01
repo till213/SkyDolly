@@ -91,6 +91,7 @@ void LocationExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 void LocationExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->openExportedFilesEnabled = valuesByKey.at(QString::fromLatin1(::OpenExportedFilesEnabledKey)).toBool();
+
     restoreSettingsExtn(valuesByKey);
 
     emit changed();
@@ -99,6 +100,7 @@ void LocationExportPluginBaseSettings::restoreSettings(const Settings::ValuesByK
 void LocationExportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->openExportedFilesEnabled = ::DefaultOpenExportedFilesEnabled;
+
     restoreDefaultsExtn();
 
     emit changed();

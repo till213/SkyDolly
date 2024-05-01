@@ -46,11 +46,11 @@ public:
     ~InputEvent();
 
     bool setup(HANDLE simConnectHandle, const FlightSimulatorShortcuts &shortcuts) noexcept;
+    bool clear(HANDLE simConnectHandle) noexcept;
 
 private:
     const std::unique_ptr<InputEventPrivate> d;
 
-    bool clear(HANDLE simConnectHandle) noexcept;
     QByteArray toMSFSShortcut(const QKeySequence &sequence) const noexcept;
 };
 

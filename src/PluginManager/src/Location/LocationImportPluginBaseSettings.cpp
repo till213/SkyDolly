@@ -121,6 +121,7 @@ void LocationImportPluginBaseSettings::restoreSettings(const Settings::ValuesByK
     } else {
         d->importMode = DefaultImportMode;
     }
+
     restoreSettingsExtn(valuesByKey);
 
     emit changed();
@@ -130,6 +131,7 @@ void LocationImportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
     d->importMode = ::DefaultImportMode;
+
     restoreDefaultsExtn();
 
     emit changed();

@@ -28,10 +28,11 @@
 #include <QtPlugin>
 
 #include "../PluginIntf.h"
+#include "../DialogPluginIntf.h"
 
 class Flight;
 
-class FlightExportIntf : public PluginIntf
+class FlightExportIntf : public DialogPluginIntf, public PluginIntf
 {
 public:
     virtual bool exportFlight(const Flight &flight) const noexcept = 0;

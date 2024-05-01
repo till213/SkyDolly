@@ -36,11 +36,13 @@
 class QString;
 class QUuid;
 
+#include <Kernel/Settings.h>
 #include <Kernel/FlightSimulator.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
 #include "Connect/Connect.h"
 #include "Connect/SkyConnectIntf.h"
+#include "OptionWidgetIntf.h"
 #include "PluginManagerLib.h"
 
 struct FlightSimulatorShortcuts;
@@ -75,18 +77,35 @@ public:
     const std::vector<Handle> &availablePlugins() const noexcept;
     bool hasPlugins() const noexcept;
 
+    /*!
+     * Stores the settings of the currently loaded plugin (if any).
+     */
+    void storeSettings() const noexcept;
+
+    /*!
+     * Restores the settings of the currently loaded plugin (if any).
+     */
+    void restoreSettings() const noexcept;
+
     std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
     std::optional<QString> getCurrentSkyConnectPluginName() const noexcept;
 
     /*!
-     * Tries to connect with the flight simulator and to setup the \p shortcuts. If the connection
+     * Creates the option widget (if any).
+     *
+     * \return the optional option widget; no value if no connect plugin is loaded,
+     *         or the connect plugin does not have specific options
+     */
+    std::optional<std::unique_ptr<OptionWidgetIntf>> createOptionWidget() const noexcept;
+
+    /*!
+     * Tries to connect with the flight simulator and to setup the shortcuts. If the connection
      * fails the SkyConnectManager will periodically retry to connect.
      *
-     * This method can be repeatedly called, in order to change the \p shortcuts.
-     * \param shortcuts
-     *        the shortcuts to be setup within the flight simulator, in order to control Sky Dolly
+     * This method can be repeatedly called, in case connect plugin-specific settings such as
+     * shortcuts have changed.
      */
-    void tryConnectAndSetup(const FlightSimulatorShortcuts &shortcuts) noexcept;
+    void tryConnectAndSetup() noexcept;
 
     int getRemainingReconnectTime() const noexcept;
 
@@ -202,6 +221,7 @@ private:
 
     void frenchConnection() noexcept;
     void initialisePlugins(const QString &pluginDirectoryName) noexcept;
+    void unloadCurrentPlugin() noexcept;
 };
 
 #endif // SKYCONNECTMANAGER_H

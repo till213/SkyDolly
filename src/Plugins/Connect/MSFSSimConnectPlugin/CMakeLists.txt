@@ -1,7 +1,6 @@
 set(MODULE_NAME "MSFSSimConnect")
 
-qt_add_library(${MODULE_NAME} MODULE
-    src/Event/InputEvent.cpp)
+qt_add_library(${MODULE_NAME} MODULE)
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 # Don't define MIN, MAX macros (in windows.h)
 add_definitions(-DNOMINMAX)
@@ -54,7 +53,10 @@ target_sources(${MODULE_NAME}
         src/Event/SimulationRate.h
         src/SimConnectAi.h src/SimConnectAi.cpp        
         src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp
+        src/MSFSSimConnectSettings.h src/MSFSSimConnectSettings.cpp
+        src/MSFSSimConnectOptionWidget.h src/MSFSSimConnectOptionWidget.cpp src/MSFSSimConnectOptionWidget.ui
         src/MSFSSimConnectPlugin.json
+        res/SimConnect.cfg
         doc/SimVars.md
 )
 target_link_libraries(${MODULE_NAME}
@@ -73,7 +75,17 @@ target_include_directories(${MODULE_NAME}
 )
 
 # Copy SimConnect.dll to bin directory
-add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
+add_custom_command(
+    TARGET ${MODULE_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:MSFS::SimConnect>
-        $<TARGET_FILE_DIR:${MODULE_NAME}>/../../)
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)
+
+# Copy example SimConnect.cfg
+add_custom_command(
+    TARGET ${MODULE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/SimConnect.cfg
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)

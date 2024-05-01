@@ -83,7 +83,7 @@ bool FlightImportPluginBase::importFlights(Flight &flight) noexcept
     bool ok {false};
     FlightImportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicFlightImportDialog> importDialog = std::make_unique<BasicFlightImportDialog>(flight, getFileFilter(), baseSettings, PluginBase::getParentWidget());
+    std::unique_ptr<BasicFlightImportDialog> importDialog = std::make_unique<BasicFlightImportDialog>(flight, getFileFilter(), baseSettings, getParentWidget());
     // Transfer ownership to importDialog
     importDialog->setOptionWidget(optionWidget.release());
     const int choice = importDialog->exec();
@@ -118,10 +118,10 @@ bool FlightImportPluginBase::importFlights(Flight &flight) noexcept
             qDebug() << QFileInfo(selectedPath).fileName() << "import" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
 #endif
             if (!ok && !baseSettings.isImportDirectoryEnabled()) {
-                QMessageBox::critical(PluginBase::getParentWidget(), tr("Import Error"), tr("The file %1 could not be imported.").arg(selectedPath));
+                QMessageBox::critical(getParentWidget(), tr("Import Error"), tr("The file %1 could not be imported.").arg(selectedPath));
             }
         } else {
-            QMessageBox::critical(PluginBase::getParentWidget(), tr("Import Error"),
+            QMessageBox::critical(getParentWidget(), tr("Import Error"),
                                  tr("The selected aircraft '%1' is not a known aircraft in the logbook. "
                                     "Check for spelling errors or record a flight with this aircraft first.").arg(d->selectedAircraftType.type));
         }
@@ -139,8 +139,6 @@ AircraftType &FlightImportPluginBase::getSelectedAircraftType() const noexcept
     return d->selectedAircraftType;
 }
 
-// PRIVATE
-
 void FlightImportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     getPluginSettings().addSettings(keyValues);
@@ -155,6 +153,8 @@ void FlightImportPluginBase::restoreSettings(const Settings::ValuesByKey &values
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }
+
+// PRIVATE
 
 bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight &currentFlight) noexcept
 {
@@ -397,7 +397,7 @@ void FlightImportPluginBase::confirmImportError(const QString &filePath, bool &i
 {
     QGuiApplication::restoreOverrideCursor();
     const QFileInfo fileInfo {filePath};
-    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
+    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
     messageBox->setIcon(QMessageBox::Critical);
     QPushButton *proceedButton = messageBox->addButton(tr("&Proceed"), QMessageBox::AcceptRole);
     QPushButton *ignoreAllButton = messageBox->addButton(tr("&Ignore All Failures"), QMessageBox::YesRole);
@@ -427,7 +427,7 @@ void FlightImportPluginBase::confirmMultiFlightImport(const QString &sourceFileP
 {
     QGuiApplication::restoreOverrideCursor();
     const QFileInfo fileInfo {sourceFilePath};
-    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
+    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
     messageBox->setIcon(QMessageBox::Warning);
     QPushButton *proceedButton = messageBox->addButton(tr("&Add Aircraft From All Flights"), QMessageBox::AcceptRole);
     QPushButton *skipButton = messageBox->addButton(tr("&Skip This File"), QMessageBox::RejectRole);

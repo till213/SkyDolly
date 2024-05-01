@@ -72,7 +72,7 @@ signals:
     void optionToggled(const QVariant &optionValue, bool enable);
 
 private:
-    std::unique_ptr<LinkedOptionGroupPrivate> d;
+    const std::unique_ptr<LinkedOptionGroupPrivate> d;
 
     void initUi() noexcept;
 

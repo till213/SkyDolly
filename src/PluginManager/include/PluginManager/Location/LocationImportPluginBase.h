@@ -31,8 +31,10 @@
 #include <QObject>
 #include <QtPlugin>
 
+class QWidget;
+
 #include "LocationImportIntf.h"
-#include "../PluginBase.h"
+#include "../DialogPluginBase.h"
 #include "../PluginManagerLib.h"
 
 class Location;
@@ -42,7 +44,7 @@ struct LocationCondition;
 class LocationImportPluginBaseSettings;
 struct LocationImportPluginBasePrivate;
 
-class PLUGINMANAGER_API LocationImportPluginBase : public PluginBase, public LocationImportIntf
+class PLUGINMANAGER_API LocationImportPluginBase : public QObject, public LocationImportIntf, public DialogPluginBase
 {
     Q_OBJECT
     Q_INTERFACES(LocationImportIntf)
@@ -56,22 +58,22 @@ public:
 
     QWidget *getParentWidget() const noexcept final
     {
-        return PluginBase::getParentWidget();
+        return DialogPluginBase::getParentWidget();
     }
 
     void setParentWidget(QWidget *parent) noexcept final
     {
-        PluginBase::setParentWidget(parent);
+        DialogPluginBase::setParentWidget(parent);
     }
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
-        PluginBase::storeSettings(pluginUuid);
+        DialogPluginBase::storeSettings(pluginUuid);
     }
 
     void restoreSettings(const QUuid &pluginUuid) noexcept final
     {
-        PluginBase::restoreSettings(pluginUuid);
+        DialogPluginBase::restoreSettings(pluginUuid);
     }
 
     bool importLocations() noexcept final;
@@ -84,14 +86,15 @@ protected:
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
     virtual std::vector<Location> importLocations(QFile &file, bool *ok = nullptr) noexcept = 0;
 
+    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
+
 private:
     const std::unique_ptr<LocationImportPluginBasePrivate> d;
 
     bool importLocations(const QStringList &filePaths) noexcept;
-    bool storeLocations(std::vector<Location> &locations) const noexcept;
-    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
+    bool storeLocations(std::vector<Location> &locations) const noexcept;    
 };
 
 #endif // LOCATIONIMPORTPLUGINBASE_H

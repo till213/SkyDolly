@@ -64,6 +64,7 @@ struct SettingsDialogPrivate
         updateTimer.setTimerType(Qt::TimerType::PreciseTimer);
     }
     QTimer updateTimer;
+    OptionWidgetIntf *skyConnectOptionWidget {nullptr};
 };
 
 // PUBLIC
@@ -133,15 +134,7 @@ void SettingsDialog::initUi() noexcept
     for (auto &plugin : plugins) {
         ui->connectionComboBox->addItem(plugin.second.name, plugin.first);
     }
-
-    ui->recordSequenceEdit->setMaximumSequenceLength(1);
-    ui->replaySequenceEdit->setMaximumSequenceLength(1);
-    ui->pauseSequenceEdit->setMaximumSequenceLength(1);
-    ui->stopSequenceEdit->setMaximumSequenceLength(1);
-    ui->backwardSequenceEdit->setMaximumSequenceLength(1);
-    ui->forwardSequenceEdit->setMaximumSequenceLength(1);
-    ui->beginSequenceEdit->setMaximumSequenceLength(1);
-    ui->endSequenceEdit->setMaximumSequenceLength(1);
+    initOptionUi();
 
     ui->settingsTabWidget->setCurrentIndex(::ReplayTab);
     handleTabChanged(ui->settingsTabWidget->currentIndex());
@@ -153,51 +146,6 @@ void SettingsDialog::frenchConnection() noexcept
             this, &SettingsDialog::handleAccepted);
     connect(ui->settingsTabWidget, &QTabWidget::currentChanged,
             this, &SettingsDialog::handleTabChanged);
-
-    connect(ui->recordSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &SettingsDialog::handleRecordKeySequence);
-    connect(ui->replaySequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &SettingsDialog::handleReplayKeySequence);
-    connect(ui->pauseSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &SettingsDialog::handlePauseKeySequence);
-    connect(ui->stopSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &SettingsDialog::handleStopKeySequence);
-    connect(ui->backwardSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &SettingsDialog::handleBackwardKeySequence);
-    connect(ui->forwardSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &SettingsDialog::handleForwardKeySequence);
-    connect(ui->beginSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &SettingsDialog::handleBeginKeySequence);
-    connect(ui->endSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &SettingsDialog::handleEndKeySequence);
-}
-
-void SettingsDialog::handleDuplicateKeySequences(QKeySequence keySequence, KeySequence source) const noexcept
-{
-    if (source != KeySequence::Record && ui->recordSequenceEdit->keySequence() == keySequence) {
-        ui->recordSequenceEdit->clear();
-    }
-    if (source != KeySequence::Replay && ui->replaySequenceEdit->keySequence() == keySequence) {
-        ui->replaySequenceEdit->clear();
-    }
-    if (source != KeySequence::Pause && ui->pauseSequenceEdit->keySequence() == keySequence) {
-        ui->pauseSequenceEdit->clear();
-    }
-    if (source != KeySequence::Stop && ui->stopSequenceEdit->keySequence() == keySequence) {
-        ui->stopSequenceEdit->clear();
-    }
-    if (source != KeySequence::Backward && ui->backwardSequenceEdit->keySequence() == keySequence) {
-        ui->backwardSequenceEdit->clear();
-    }
-    if (source != KeySequence::Forward && ui->forwardSequenceEdit->keySequence() == keySequence) {
-        ui->forwardSequenceEdit->clear();
-    }
-    if (source != KeySequence::Begin && ui->beginSequenceEdit->keySequence() == keySequence) {
-        ui->beginSequenceEdit->clear();
-    }
-    if (source != KeySequence::End && ui->endSequenceEdit->keySequence() == keySequence) {
-        ui->endSequenceEdit->clear();
-    }
 }
 
 // PRIVATE SLOTS
@@ -221,17 +169,6 @@ void SettingsDialog::updateUi() noexcept
     if (pluginName) {
         ui->connectionComboBox->setCurrentText(pluginName.value());
     }
-
-    const FlightSimulatorShortcuts &shortcuts = settings.getFlightSimulatorShortcuts();
-    ui->recordSequenceEdit->setKeySequence(shortcuts.record);
-    ui->replaySequenceEdit->setKeySequence(shortcuts.replay);
-    ui->pauseSequenceEdit->setKeySequence(shortcuts.pause);
-    ui->stopSequenceEdit->setKeySequence(shortcuts.stop);
-    ui->backwardSequenceEdit->setKeySequence(shortcuts.backward);
-    ui->forwardSequenceEdit->setKeySequence(shortcuts.forward);
-    ui->beginSequenceEdit->setKeySequence(shortcuts.begin);
-    ui->endSequenceEdit->setKeySequence(shortcuts.end);
-
     updateConnectionStatus();
 
     // User interface
@@ -250,7 +187,7 @@ void SettingsDialog::updateUi() noexcept
 
 void SettingsDialog::updateConnectionStatus() noexcept
 {
-    double time;
+    double time {0.0};
 
     ui->connectionStatusLabel->setToolTip(QString());
 
@@ -301,16 +238,9 @@ void SettingsDialog::handleAccepted() noexcept
     const QUuid uuid = ui->connectionComboBox->currentData().toUuid();
     settings.setSkyConnectPluginUuid(uuid);
 
-    FlightSimulatorShortcuts shortcuts;
-    shortcuts.record = ui->recordSequenceEdit->keySequence();
-    shortcuts.replay = ui->replaySequenceEdit->keySequence();
-    shortcuts.pause = ui->pauseSequenceEdit->keySequence();
-    shortcuts.stop = ui->stopSequenceEdit->keySequence();
-    shortcuts.backward = ui->backwardSequenceEdit->keySequence();
-    shortcuts.forward = ui->forwardSequenceEdit->keySequence();
-    shortcuts.begin = ui->beginSequenceEdit->keySequence();
-    shortcuts.end = ui->endSequenceEdit->keySequence();
-    settings.setFlightSimulatorShortcuts(shortcuts);
+    if (d->skyConnectOptionWidget != nullptr) {
+        d->skyConnectOptionWidget->accept();
+    }
 
     // User interface
     settings.setDeleteFlightConfirmationEnabled(ui->confirmDeleteFlightCheckBox->isChecked());
@@ -347,50 +277,22 @@ void SettingsDialog::handleTabChanged(int index) noexcept
     }
 }
 
-void SettingsDialog::handleRecordKeySequence() const noexcept
+void SettingsDialog::initOptionUi() noexcept
 {
-    auto sequence = ui->recordSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Record);
-}
-
-void SettingsDialog::handleReplayKeySequence() const noexcept
-{
-    auto sequence = ui->replaySequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Replay);
-}
-
-void SettingsDialog::handlePauseKeySequence() const noexcept
-{
-    auto sequence = ui->pauseSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Pause);
-}
-
-void SettingsDialog::handleStopKeySequence() const noexcept
-{
-    auto sequence = ui->stopSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Stop);
-}
-
-void SettingsDialog::handleBackwardKeySequence() const noexcept
-{
-    auto sequence = ui->backwardSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Backward);
-}
-
-void SettingsDialog::handleForwardKeySequence() const noexcept
-{
-    auto sequence = ui->forwardSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Forward);
-}
-
-void SettingsDialog::handleBeginKeySequence() const noexcept
-{
-    auto sequence = ui->beginSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Begin);
-}
-
-void SettingsDialog::handleEndKeySequence() const noexcept
-{
-    auto sequence = ui->endSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::End);
+    const SkyConnectManager &skyConnectManager =SkyConnectManager::getInstance();
+    auto optionWidget = skyConnectManager.createOptionWidget();
+    if (optionWidget) {
+        // Transfer ownership to this settings dialog (the layout manager below specifically)
+        d->skyConnectOptionWidget = optionWidget->release();
+        ui->optionGroupBox->setHidden(false);
+        std::unique_ptr<QLayout> layout {ui->optionGroupBox->layout()};
+        // Any previously existing layout is deleted first, which is what we want
+        layout = std::make_unique<QVBoxLayout>();
+        layout->addWidget(d->skyConnectOptionWidget);
+        // Transfer ownership of the layout to the optionGroupBox
+        ui->optionGroupBox->setLayout(layout.release());
+    } else {
+        d->skyConnectOptionWidget = nullptr;
+        ui->optionGroupBox->setHidden(true);
+    }
 }

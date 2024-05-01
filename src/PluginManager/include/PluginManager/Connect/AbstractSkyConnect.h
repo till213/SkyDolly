@@ -22,27 +22,35 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABSTRACTSKYCONNECTIMPL_H
-#define ABSTRACTSKYCONNECTIMPL_H
+#ifndef ABSTRACTSKYCONNECT_H
+#define ABSTRACTSKYCONNECT_H
 
 #include <memory>
+#include <optional>
 #include <cstdint>
 
 #include <QObject>
 
+class QWidget;
+
 #include <Kernel/SampleRate.h>
+#include <Kernel/Settings.h>
 #include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/InitialPosition.h>
 #include "SkyConnectIntf.h"
+#include "ConnectPluginBaseSettings.h"
 #include "Connect.h"
+#include "../PluginBase.h"
+#include "../OptionWidgetIntf.h"
 #include "../PluginManagerLib.h"
 
 class Flight;
 class Aircraft;
 struct FlightSimulatorShortcuts;
+class ConnectPluginBaseSettings;
 struct AbstractSkyConnectPrivate;
 
-class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf
+class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf, public PluginBase
 {
     Q_OBJECT
 public:
@@ -58,7 +66,7 @@ public:
     AbstractSkyConnect &operator=(AbstractSkyConnect &&rhs) = delete;
     ~AbstractSkyConnect() override;
     
-    void tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept override;
+    void tryConnectAndSetup() noexcept override;
     void disconnect() noexcept override;
     int getRemainingReconnectTime() const noexcept override;
 
@@ -106,6 +114,18 @@ public:
     double calculateRecordedSamplesPerSecond() const noexcept override;
     bool requestLocation() noexcept override;
 
+    void storeSettings(const QUuid &pluginUuid) const noexcept final
+    {
+        PluginBase::storeSettings(pluginUuid);
+    }
+
+    void restoreSettings(const QUuid &pluginUuid) noexcept final
+    {
+        PluginBase::restoreSettings(pluginUuid);
+    }
+
+    std::optional<std::unique_ptr<OptionWidgetIntf>> createOptionWidget() const noexcept final;
+
 public slots:
     void addAiObject(const Aircraft &aircraft) noexcept override;
     void removeAiObjects() noexcept override;
@@ -126,9 +146,11 @@ protected:
 
     void createAiObjects() noexcept;
 
+    // Re-implement
+    virtual ConnectPluginBaseSettings &getPluginSettings() const noexcept = 0;
+    virtual std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept = 0;
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
-    
-    virtual bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept = 0;
+    virtual bool onSetupFlightSimulatorShortcuts() noexcept = 0;
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
     virtual bool onSimulationEvent(SimulationEvent event, float arg1) const noexcept = 0;
@@ -168,8 +190,13 @@ protected:
 
     virtual bool onRequestLocation() noexcept = 0;
 
+    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
+
 protected slots:
     std::int64_t updateCurrentTimestamp() noexcept;
+    void handlePluginSettingsChanged(Connect::Mode mode) noexcept;
     virtual void recordData() noexcept = 0;
 
 private:
@@ -189,8 +216,8 @@ private:
 
 private slots:
     void handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
-    void handleFlightSimulatorShortCutsChanged(const FlightSimulatorShortcuts &shortcuts) noexcept;
-    void retryConnectAndSetup() noexcept;
+    void handleReconnectTimer() noexcept;
+    void retryConnectAndSetup(Connect::Mode mode) noexcept;
 };
 
-#endif // ABSTRACTSKYCONNECTIMPL_H
+#endif // ABSTRACTSKYCONNECT_H

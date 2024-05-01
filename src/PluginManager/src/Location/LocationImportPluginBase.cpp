@@ -42,6 +42,7 @@
 #include <Location/BasicLocationImportDialog.h>
 #include <Location/LocationImportPluginBaseSettings.h>
 #include <Location/LocationImportPluginBase.h>
+#include <DialogPluginBase.h>
 
 struct LocationImportPluginBasePrivate
 {
@@ -63,7 +64,7 @@ bool LocationImportPluginBase::importLocations() noexcept
     bool ok {true};
     LocationImportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicLocationImportDialog> importDialog = std::make_unique<BasicLocationImportDialog>(getFileFilter(), baseSettings, PluginBase::getParentWidget());
+    std::unique_ptr<BasicLocationImportDialog> importDialog = std::make_unique<BasicLocationImportDialog>(getFileFilter(), baseSettings, getParentWidget());
     // Transfer ownership to importDialog
     importDialog->setOptionWidget(optionWidget.release());
     const int choice = importDialog->exec();
@@ -92,16 +93,13 @@ bool LocationImportPluginBase::importLocations() noexcept
         qDebug() << QFileInfo(selectedPath).fileName() << "import" << (ok ? "SUCCESS" : "FAIL") << "in" << timer.elapsed() <<  "ms";
 #endif
         if (!ok && !baseSettings.isImportDirectoryEnabled()) {
-            QMessageBox::critical(PluginBase::getParentWidget(), tr("Import Error"), tr("The file %1 could not be imported.").arg(selectedPath));
+            QMessageBox::critical(getParentWidget(), tr("Import Error"), tr("The file %1 could not be imported.").arg(selectedPath));
         }
 
     }
 
     return ok;
 }
-
-
-// PRIVATE
 
 void LocationImportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
@@ -117,6 +115,8 @@ void LocationImportPluginBase::restoreSettings(const Settings::ValuesByKey &valu
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }
+
+// PRIVATE
 
 bool LocationImportPluginBase::importLocations(const QStringList &filePaths) noexcept
 {
@@ -139,7 +139,7 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths) noe
         if (!ok && importDirectory && !ignoreFailures) {
             QGuiApplication::restoreOverrideCursor();
             const QFileInfo fileInfo {filePath};
-            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
+            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
             messageBox->setIcon(QMessageBox::Critical);
             QPushButton *proceedButton = messageBox->addButton(tr("&Proceed"), QMessageBox::AcceptRole);
             QPushButton *ignoreAllButton = messageBox->addButton(tr("&Ignore All Failures"), QMessageBox::YesRole);

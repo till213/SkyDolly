@@ -25,6 +25,7 @@
 #include <memory>
 #include <cstdint>
 #include <cmath>
+#include <optional>
 
 #include <QTimer>
 #include <QtGlobal>
@@ -62,6 +63,8 @@
 #include <Model/FlightCondition.h>
 #include <Model/SimType.h>
 #include <PluginManager/Connect/AbstractSkyConnect.h>
+#include "PathCreatorSettings.h"
+#include "PathCreatorOptionWidget.h"
 #include "PathCreatorPlugin.h"
 
 namespace {
@@ -78,6 +81,8 @@ struct PathCreatorPluginPrivate
     {
         replayTimer.setTimerType(Qt::TimerType::PreciseTimer);
     }
+
+    PathCreatorSettings pluginSettings;
 
     QTimer replayTimer;
     QRandomGenerator *randomGenerator;
@@ -109,14 +114,25 @@ bool PathCreatorPlugin::setUserAircraftPosition([[maybe_unused]] const PositionD
 
 // PROTECTED
 
+ConnectPluginBaseSettings &PathCreatorPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
+
+std::optional<std::unique_ptr<OptionWidgetIntf>> PathCreatorPlugin::createExtendedOptionWidget() const noexcept
+{
+    return std::make_unique<PathCreatorOptionWidget>(d->pluginSettings);
+}
+
 bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::SampleRate sampleRate) const noexcept
 {
     return true;
 }
 
-bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
+bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts() noexcept
 {
 #ifdef DEBUG
+    const auto shortcuts = getPluginSettings().getFlightSimulatorShortcuts();
     qDebug() << "Recording shortcut:" << shortcuts.record.toString();
     qDebug() << "Replay shortcut:" << shortcuts.replay.toString();
     qDebug() << "Pause shortcut:" << shortcuts.pause.toString();
@@ -310,6 +326,8 @@ void PathCreatorPlugin::frenchConnection() noexcept
 {
     connect(&d->replayTimer, &QTimer::timeout,
             this, &PathCreatorPlugin::replay);
+    connect(&d->pluginSettings, &ConnectPluginBaseSettings::changed,
+            this, &PathCreatorPlugin::handlePluginSettingsChanged);
 }
 
 void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept

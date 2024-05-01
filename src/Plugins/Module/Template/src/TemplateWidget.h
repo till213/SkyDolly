@@ -62,7 +62,7 @@ public:
     ~TemplateWidget() override;
 
 private:
-    std::unique_ptr<Ui::TemplateWidget> ui;
+    const std::unique_ptr<Ui::TemplateWidget> ui;
     const std::unique_ptr<TemplateWidgetPrivate> d;
 
     void initUi() noexcept;

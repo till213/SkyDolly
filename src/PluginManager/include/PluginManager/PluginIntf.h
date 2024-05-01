@@ -25,21 +25,23 @@
 #ifndef PLUGININTF_H
 #define PLUGININTF_H
 
-class QWidget;
 class QUuid;
 
-class PluginIntf
+#include "PluginManagerLib.h"
+
+/*!
+ * This is the interface for plugins that support plugin-specific settings.
+ */
+class PLUGINMANAGER_API PluginIntf
 {
 public:
     PluginIntf() = default;
-    PluginIntf(const PluginIntf &rhs) = delete;
+    PluginIntf(const PluginIntf &rhs) = default;
     PluginIntf(PluginIntf &&rhs) = default;
-    PluginIntf &operator=(const PluginIntf &rhs) = delete;
+    PluginIntf &operator=(const PluginIntf &rhs) = default;
     PluginIntf &operator=(PluginIntf &&rhs) = default;
     virtual ~PluginIntf() = default;
 
-    virtual QWidget *getParentWidget() const noexcept = 0;
-    virtual void setParentWidget(QWidget *parent) noexcept = 0;
     virtual void storeSettings(const QUuid &pluginUuid) const noexcept = 0;
     virtual void restoreSettings(const QUuid &pluginUuid) noexcept = 0;
 };

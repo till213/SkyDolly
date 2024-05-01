@@ -10,17 +10,22 @@ target_compile_definitions(${LIBRARY_NAME}
 target_sources(${LIBRARY_NAME}
     PRIVATE
         include/PluginManager/PluginManagerLib.h
-
         include/PluginManager/Csv.h
         include/PluginManager/PluginIntf.h
+        include/PluginManager/DialogPluginIntf.h
+        include/PluginManager/OptionWidgetIntf.h
+        include/PluginManager/PluginWithOptionWidgetIntf.h
         include/PluginManager/SkyConnectManager.h src/SkyConnectManager.cpp
         include/PluginManager/PluginManager.h src/PluginManager.cpp
         include/PluginManager/Export.h src/Export.cpp
         include/PluginManager/PluginBase.h src/PluginBase.cpp
+        include/PluginManager/DialogPluginBase.h src/DialogPluginBase.cpp
         # SkyConnect pugins
         include/PluginManager/Connect/Connect.h
         include/PluginManager/Connect/SkyConnectIntf.h
         include/PluginManager/Connect/AbstractSkyConnect.h src/Connect/AbstractSkyConnect.cpp
+        include/PluginManager/Connect/ConnectPluginBaseSettings.h src/Connect/ConnectPluginBaseSettings.cpp
+        src/Connect/BasicConnectOptionWidget.h src/Connect/BasicConnectOptionWidget.cpp src/Connect/BasicConnectOptionWidget.ui
         # Flight import & export plugins
         include/PluginManager/Flight/FlightExportIntf.h
         include/PluginManager/Flight/FlightImportIntf.h

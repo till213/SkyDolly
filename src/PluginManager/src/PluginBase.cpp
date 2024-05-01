@@ -22,34 +22,16 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QWidget>
 #include <QUuid>
 
 #include <Kernel/Settings.h>
 #include "PluginBase.h"
 
-struct PluginBasePrivate
-{
-    QWidget *parent {nullptr};
-};
-
 // PUBLIC
 
-PluginBase::PluginBase()
-    : d(std::make_unique<PluginBasePrivate>())
-{}
+PluginBase::PluginBase() = default;
 
 PluginBase::~PluginBase() = default;
-
-QWidget *PluginBase::getParentWidget() const noexcept
-{
-    return d->parent;
-}
-
-void PluginBase::setParentWidget(QWidget *parent) noexcept
-{
-    d->parent = parent;
-}
 
 void PluginBase::storeSettings(const QUuid &pluginUuid) const noexcept
 {

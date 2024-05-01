@@ -50,7 +50,7 @@ public:
 
     FlightData parse(QIODevice &io, bool &ok) noexcept override;
 private:
-    std::unique_ptr<FlightRadar24CsvParserPrivate> d;
+    const std::unique_ptr<FlightRadar24CsvParserPrivate> d;
 
     bool validateHeaders() const noexcept;
     inline PositionData parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) const noexcept;

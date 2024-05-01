@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <cstdint>
+#include <optional>
 
 #include <QObject>
 
@@ -39,6 +40,8 @@ class Flight;
 class Aircraft;
 struct PositionData;
 struct InitialPosition;
+class ConnectPluginBaseSettings;
+class OptionWidgetIntf;
 struct PathCreatorPluginPrivate;
 
 class PathCreatorPlugin : public AbstractSkyConnect
@@ -57,9 +60,12 @@ public:
     bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
 
 protected:
+    ConnectPluginBaseSettings &getPluginSettings() const noexcept override;
+    std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept override;
+
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
     
-    bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept override;
+    bool onSetupFlightSimulatorShortcuts() noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;

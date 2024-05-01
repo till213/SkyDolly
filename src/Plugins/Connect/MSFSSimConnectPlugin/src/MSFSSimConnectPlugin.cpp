@@ -73,6 +73,8 @@
 #include "Event/SimulationRate.h"
 #include "Event/EventWidget.h"
 #include "SimConnectAi.h"
+#include "MSFSSimConnectSettings.h"
+#include "MSFSSimConnectOptionWidget.h"
 #include "MSFSSimConnectPlugin.h"
 
 namespace
@@ -83,6 +85,8 @@ namespace
 
 struct SkyConnectPrivate
 {
+    MSFSSimConnectSettings pluginSettings;
+
     PositionData currentPositionData;
     EngineData currentEngineData;
     PrimaryFlightControlData currentPrimaryFlightControlData;
@@ -134,16 +138,27 @@ bool MSFSSimConnectPlugin::setUserAircraftPosition(const PositionData &positionD
 
 // PROTECTED
 
+ConnectPluginBaseSettings &MSFSSimConnectPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
+
+std::optional<std::unique_ptr<OptionWidgetIntf>> MSFSSimConnectPlugin::createExtendedOptionWidget() const noexcept
+{
+    return std::make_unique<MSFSSimConnectOptionWidget>(d->pluginSettings);
+}
+
 bool MSFSSimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept
 {
     // "Auto" and 1 Hz sample rates are processed event-based
     return sampleRate != SampleRate::SampleRate::Auto && sampleRate != SampleRate::SampleRate::Hz1;
 }
 
-bool MSFSSimConnectPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
+bool MSFSSimConnectPlugin::onSetupFlightSimulatorShortcuts() noexcept
 {
     bool ok {false};
     if (d->simConnectHandle != nullptr) {
+        const auto shortcuts = d->pluginSettings.getFlightSimulatorShortcuts();
         ok = d->inputEvent->setup(d->simConnectHandle, shortcuts);
     }
     return ok;
@@ -529,14 +544,15 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
 {
     const auto hWnd = reinterpret_cast<HWND>(d->eventWidget->winId());
     const DWORD userEvent = EventWidget::SimConnectUserMessage;
-    const HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, ::SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
+    const DWORD configurationIndex = getConfigurationIndex();
+    const HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, configurationIndex);
     if (result == S_OK) {
         d->eventStateHandler->setSimConnectHandle(d->simConnectHandle);
         d->simConnectAi = std::make_unique<SimConnectAi>(d->simConnectHandle);
         setupRequestData();
     }
 #ifdef DEBUG
-    qDebug() << "MSFSSimConnectPlugin::connectWithSim: CONNECT with SIM, handle:" << d->simConnectHandle << "success:" << (result == S_OK);
+    qDebug() << "MSFSSimConnectPlugin::connectWithSim: CONNECT with SIM, configuraiton index:" << configurationIndex << "handle:" << d->simConnectHandle << "success:" << (result == S_OK);
 #endif
     const bool ok = result == S_OK;
     if (ok) {
@@ -631,6 +647,8 @@ void MSFSSimConnectPlugin::frenchConnection() noexcept
 {
     connect(d->eventWidget.get(), &EventWidget::simConnectEvent,
             this, &MSFSSimConnectPlugin::processSimConnectEvent);
+    connect(&d->pluginSettings, &ConnectPluginBaseSettings::changed,
+            this, &MSFSSimConnectPlugin::handlePluginSettingsChanged);
 }
 
 void MSFSSimConnectPlugin::resetCurrentSampleData() noexcept
@@ -658,7 +676,9 @@ bool MSFSSimConnectPlugin::closeConnection() noexcept
     if (d->simConnectAi != nullptr) {
         d->simConnectAi = nullptr;
     }
+
     if (d->simConnectHandle != nullptr) {
+        d->inputEvent->clear(d->simConnectHandle);
         result = ::SimConnect_Close(d->simConnectHandle);
         d->simConnectHandle = nullptr;
     }
@@ -778,6 +798,26 @@ void MSFSSimConnectPlugin::resetEventStates() noexcept
 {
     d->eventStateHandler->reset();
     d->simulationRate->reset();
+}
+
+DWORD MSFSSimConnectPlugin::getConfigurationIndex() const noexcept
+{
+    DWORD configurationIndex;
+    switch (d->pluginSettings.getConnectionType()) {
+    case MSFSSimConnectSettings::ConnectionType::Pipe:
+        configurationIndex = 0;
+        break;
+    case MSFSSimConnectSettings::ConnectionType::IPv4:
+        configurationIndex = 1;
+        break;
+    case MSFSSimConnectSettings::ConnectionType::IPv6:
+        configurationIndex = 2;
+        break;
+    default:
+        configurationIndex = 0;
+        break;
+    }
+    return configurationIndex;
 }
 
 void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[maybe_unused]] DWORD cbData, void *context) noexcept
@@ -1205,7 +1245,10 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 #ifdef DEBUG
         qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_QUIT";
 #endif
+        // Disconnect...
         skyConnect->disconnect();
+        // ... and try to reconnect again
+        skyConnect->tryConnectAndSetup();
         break;
 
     case ::SIMCONNECT_RECV_ID_OPEN:
