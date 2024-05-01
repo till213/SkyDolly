@@ -35,7 +35,7 @@
 #endif
 
 #include <Kernel/Enum.h>
-#include <Kernel/FlightSimulatorShortcuts.h>
+#include <PluginManager/Connect/FlightSimulatorShortcuts.h>
 #include "SimConnectEvent.h"
 #include "InputEvent.h"
 

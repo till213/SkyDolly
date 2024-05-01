@@ -41,7 +41,6 @@
 #include <tsl/ordered_map.h>
 
 #include <Kernel/Const.h>
-#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -64,7 +63,7 @@
 #include <Model/Waypoint.h>
 #include <Model/InitialPosition.h>
 #include <PluginManager/Connect/Connect.h>
-
+#include <PluginManager/Connect/FlightSimulatorShortcuts.h>
 #include "SimVar/SimulationVariables.h"
 #include "SimVar/SimConnectType.h"
 #include "Event/SimConnectEvent.h"

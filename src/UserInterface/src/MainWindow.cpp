@@ -69,7 +69,6 @@
 
 #include <Kernel/Unit.h>
 #include <Kernel/Const.h>
-#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/Replay.h>
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
@@ -94,6 +93,7 @@
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Connect/Connect.h>
+#include <PluginManager/Connect/FlightSimulatorShortcuts.h>
 #include <PluginManager/PluginManager.h>
 #include <PluginManager/Module/ModuleIntf.h>
 #include <PluginManager/ModuleManager.h>

@@ -31,8 +31,8 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
-#include <Kernel/FlightSimulatorShortcuts.h>
 #include "Connect.h"
+#include "FlightSimulatorShortcuts.h"
 #include "../PluginManagerLib.h"
 
 struct ConnectPluginBaseSettingsPrivate;

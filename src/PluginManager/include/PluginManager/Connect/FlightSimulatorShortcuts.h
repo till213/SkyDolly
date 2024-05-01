@@ -27,12 +27,12 @@
 
 #include <QKeySequence>
 
-#include "KernelLib.h"
+#include "../PluginManagerLib.h"
 
 /*!
  * Defines keyboard shortcuts for the connected flight simulator.
  */
-struct KERNEL_API FlightSimulatorShortcuts
+struct PLUGINMANAGER_API FlightSimulatorShortcuts
 {
 public:
     /*!

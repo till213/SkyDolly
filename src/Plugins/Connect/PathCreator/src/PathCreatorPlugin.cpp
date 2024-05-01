@@ -36,7 +36,6 @@
 #include <Kernel/Enum.h>
 #endif
 
-#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include <Model/TimeVariableData.h>
@@ -63,6 +62,7 @@
 #include <Model/FlightCondition.h>
 #include <Model/SimType.h>
 #include <PluginManager/Connect/AbstractSkyConnect.h>
+#include <PluginManager/Connect/FlightSimulatorShortcuts.h>
 #include "PathCreatorSettings.h"
 #include "PathCreatorOptionWidget.h"
 #include "PathCreatorPlugin.h"

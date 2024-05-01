@@ -31,9 +31,9 @@
 
 #include <QObject>
 
-#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/TimeVariableData.h>
 #include <PluginManager/Connect/AbstractSkyConnect.h>
+#include <PluginManager/Connect/FlightSimulatorShortcuts.h>
 #include <PluginManager/Connect/SkyConnectIntf.h>
 
 class Flight;

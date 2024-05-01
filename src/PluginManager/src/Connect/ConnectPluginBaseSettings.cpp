@@ -29,9 +29,9 @@
 #endif
 
 #include <Kernel/Settings.h>
-#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Connect/Connect.h>
 #include <Connect/ConnectPluginBaseSettings.h>
+#include <Connect/FlightSimulatorShortcuts.h>
 
 namespace
 {

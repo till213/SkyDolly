@@ -30,11 +30,11 @@
 #include <QtPlugin>
 
 #include <Kernel/SampleRate.h>
-#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
 #include <Model/Location.h>
 #include "Connect.h"
+#include "FlightSimulatorShortcuts.h"
 #include "../PluginIntf.h"
 #include "../PluginWithOptionWidgetIntf.h"
 #include "../PluginManagerLib.h"

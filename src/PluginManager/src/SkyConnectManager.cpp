@@ -41,10 +41,10 @@
 
 #include <Kernel/File.h>
 #include <Kernel/Settings.h>
-#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Connect/SkyConnectIntf.h>
+#include <Connect/FlightSimulatorShortcuts.h>
 #include <SkyConnectManager.h>
 
 namespace

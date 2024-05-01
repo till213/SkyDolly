@@ -35,11 +35,11 @@ class QWidget;
 
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
-#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/InitialPosition.h>
 #include "SkyConnectIntf.h"
 #include "ConnectPluginBaseSettings.h"
 #include "Connect.h"
+#include "FlightSimulatorShortcuts.h"
 #include "../PluginBase.h"
 #include "../OptionWidgetIntf.h"
 #include "../PluginManagerLib.h"

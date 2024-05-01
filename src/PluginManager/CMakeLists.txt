@@ -22,6 +22,7 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/DialogPluginBase.h src/DialogPluginBase.cpp
         # SkyConnect pugins
         include/PluginManager/Connect/Connect.h
+        include/PluginManager/Connect/FlightSimulatorShortcuts.h
         include/PluginManager/Connect/SkyConnectIntf.h
         include/PluginManager/Connect/AbstractSkyConnect.h src/Connect/AbstractSkyConnect.cpp
         include/PluginManager/Connect/ConnectPluginBaseSettings.h src/Connect/ConnectPluginBaseSettings.cpp

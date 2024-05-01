@@ -34,10 +34,10 @@
 
 #include <QObject>
 
-#include <Kernel/FlightSimulatorShortcuts.h>
 #include <Kernel/SampleRate.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
+#include <PluginManager/Connect/FlightSimulatorShortcuts.h>
 #include <PluginManager/Connect/AbstractSkyConnect.h>
 
 struct PositionData;
