@@ -39,6 +39,7 @@ class Flight;
 class Aircraft;
 struct PositionData;
 struct InitialPosition;
+class ConnectPluginBaseSettings;
 struct PathCreatorPluginPrivate;
 
 class PathCreatorPlugin : public AbstractSkyConnect
@@ -57,6 +58,8 @@ public:
     bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
 
 protected:
+    ConnectPluginBaseSettings &getPluginSettings() const noexcept override;
+
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
     
     bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept override;

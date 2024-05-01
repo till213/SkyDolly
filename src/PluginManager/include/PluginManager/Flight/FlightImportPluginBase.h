@@ -95,12 +95,12 @@ protected:
     virtual FlightAugmentation::Procedures getAugmentationProcedures() const noexcept = 0;
     virtual FlightAugmentation::Aspects getAugmentationAspects() const noexcept = 0;
 
-private:
-    const std::unique_ptr<FlightImportPluginBasePrivate> d;
-
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
+
+private:
+    const std::unique_ptr<FlightImportPluginBasePrivate> d;
 
     bool importFlights(const QStringList &filePaths, Flight &currentFlight) noexcept;
     void enrichFlightData(std::vector<FlightData> &flightData) const noexcept;

@@ -84,14 +84,15 @@ protected:
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
     virtual std::vector<Location> importLocations(QFile &file, bool *ok = nullptr) noexcept = 0;
 
+    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
+
 private:
     const std::unique_ptr<LocationImportPluginBasePrivate> d;
 
     bool importLocations(const QStringList &filePaths) noexcept;
-    bool storeLocations(std::vector<Location> &locations) const noexcept;
-    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
+    bool storeLocations(std::vector<Location> &locations) const noexcept;    
 };
 
 #endif // LOCATIONIMPORTPLUGINBASE_H

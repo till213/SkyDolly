@@ -156,6 +156,7 @@ void FlightExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey
         d->formationExport = ::DefaultFormationExport;
     }
     d->openExportedFilesEnabled = valuesByKey.at(QString::fromLatin1(::OpenExportedFilesEnabledKey)).toBool();
+
     restoreSettingsExtn(valuesByKey);
 
     emit changed();
@@ -166,6 +167,7 @@ void FlightExportPluginBaseSettings::restoreDefaults() noexcept
     d->resamplingPeriod = ::DefaultResamplingPeriod;
     d->formationExport = ::DefaultFormationExport;
     d->openExportedFilesEnabled = ::DefaultOpenExportedFilesEnabled;
+
     restoreDefaultsExtn();
 
     emit changed();

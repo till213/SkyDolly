@@ -139,8 +139,6 @@ AircraftType &FlightImportPluginBase::getSelectedAircraftType() const noexcept
     return d->selectedAircraftType;
 }
 
-// PRIVATE
-
 void FlightImportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     getPluginSettings().addSettings(keyValues);
@@ -155,6 +153,8 @@ void FlightImportPluginBase::restoreSettings(const Settings::ValuesByKey &values
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }
+
+// PRIVATE
 
 bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight &currentFlight) noexcept
 {

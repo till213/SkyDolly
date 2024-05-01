@@ -73,6 +73,7 @@
 #include "Event/SimulationRate.h"
 #include "Event/EventWidget.h"
 #include "SimConnectAi.h"
+#include "MSFSSimConnectSettings.h"
 #include "MSFSSimConnectPlugin.h"
 
 namespace
@@ -83,6 +84,8 @@ namespace
 
 struct SkyConnectPrivate
 {
+    MSFSSimConnectSettings pluginSettings;
+
     PositionData currentPositionData;
     EngineData currentEngineData;
     PrimaryFlightControlData currentPrimaryFlightControlData;
@@ -133,6 +136,11 @@ bool MSFSSimConnectPlugin::setUserAircraftPosition(const PositionData &positionD
 }
 
 // PROTECTED
+
+ConnectPluginBaseSettings &MSFSSimConnectPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
 
 bool MSFSSimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept
 {

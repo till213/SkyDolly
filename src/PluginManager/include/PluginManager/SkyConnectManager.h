@@ -36,6 +36,7 @@
 class QString;
 class QUuid;
 
+#include <Kernel/Settings.h>
 #include <Kernel/FlightSimulator.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>

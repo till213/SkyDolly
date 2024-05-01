@@ -62,6 +62,7 @@
 #include <Model/FlightCondition.h>
 #include <Model/SimType.h>
 #include <PluginManager/Connect/AbstractSkyConnect.h>
+#include "PathCreatorSettings.h"
 #include "PathCreatorPlugin.h"
 
 namespace {
@@ -78,6 +79,8 @@ struct PathCreatorPluginPrivate
     {
         replayTimer.setTimerType(Qt::TimerType::PreciseTimer);
     }
+
+    PathCreatorSettings pluginSettings;
 
     QTimer replayTimer;
     QRandomGenerator *randomGenerator;
@@ -108,6 +111,11 @@ bool PathCreatorPlugin::setUserAircraftPosition([[maybe_unused]] const PositionD
 }
 
 // PROTECTED
+
+ConnectPluginBaseSettings &PathCreatorPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
 
 bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::SampleRate sampleRate) const noexcept
 {

@@ -34,6 +34,12 @@ namespace
     // Keys
     constexpr const char *RecordShortcutKey {"RecordShortcutKey"};
     constexpr const char *ReplayShortcutKey {"ReplayShortcutKey"};
+    constexpr const char *PauseShortcutKey {"PauseShortcutKey"};
+    constexpr const char *StopShortcutKey {"StopShortcutKey"};
+    constexpr const char *BackwardShortcutKey {"BackwardShortcutKey"};
+    constexpr const char *ForwardShortcutKey {"ForwardShortcutKey"};
+    constexpr const char *BeginShortcutKey {"BeginShortcutKey"};
+    constexpr const char *EndShortcutKey {"EndShortcutKey"};
 
     // Defaults
     constexpr bool DefaultOpenExportedFilesEnabled {false};
@@ -93,6 +99,34 @@ void ConnectPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) cons
     keyValue.second = d->flightSimulatorShortcuts.record.toString();
     keyValues.push_back(keyValue);
 
+    keyValue.first = QString::fromLatin1(::ReplayShortcutKey);
+    keyValue.second = d->flightSimulatorShortcuts.replay.toString();
+    keyValues.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::PauseShortcutKey);
+    keyValue.second = d->flightSimulatorShortcuts.pause.toString();
+    keyValues.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::StopShortcutKey);
+    keyValue.second = d->flightSimulatorShortcuts.stop.toString();
+    keyValues.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::BackwardShortcutKey);
+    keyValue.second = d->flightSimulatorShortcuts.backward.toString();
+    keyValues.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::ForwardShortcutKey);
+    keyValue.second = d->flightSimulatorShortcuts.forward.toString();
+    keyValues.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::BeginShortcutKey);
+    keyValue.second = d->flightSimulatorShortcuts.begin.toString();
+    keyValues.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::EndShortcutKey);
+    keyValue.second = d->flightSimulatorShortcuts.end.toString();
+    keyValues.push_back(keyValue);
+
     addSettingsExtn(keyValues);
 }
 
@@ -104,12 +138,48 @@ void ConnectPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &
     keyValue.second = d->DefaultRecordShortcut.toString();
     keysWithDefaults.push_back(keyValue);
 
+    keyValue.first = QString::fromLatin1(::ReplayShortcutKey);
+    keyValue.second = d->DefaultReplayShortcut.toString();
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::PauseShortcutKey);
+    keyValue.second = d->DefaultPauseShortcut.toString();
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::StopShortcutKey);
+    keyValue.second = d->DefaultStopShortcut.toString();
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::BackwardShortcutKey);
+    keyValue.second = d->DefaultBackwardShortcut.toString();
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::ForwardShortcutKey);
+    keyValue.second = d->DefaultForwardShortcut.toString();
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::BeginShortcutKey);
+    keyValue.second = d->DefaultBeginShortcut.toString();
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = QString::fromLatin1(::EndShortcutKey);
+    keyValue.second = d->DefaultEndShortcut.toString();
+    keysWithDefaults.push_back(keyValue);
+
     addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
 void ConnectPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->flightSimulatorShortcuts.record = valuesByKey.at(QString::fromLatin1(::RecordShortcutKey)).toString();
+    d->flightSimulatorShortcuts.replay = valuesByKey.at(QString::fromLatin1(::ReplayShortcutKey)).toString();
+    d->flightSimulatorShortcuts.pause = valuesByKey.at(QString::fromLatin1(::PauseShortcutKey)).toString();
+    d->flightSimulatorShortcuts.stop = valuesByKey.at(QString::fromLatin1(::StopShortcutKey)).toString();
+    d->flightSimulatorShortcuts.backward = valuesByKey.at(QString::fromLatin1(::BackwardShortcutKey)).toString();
+    d->flightSimulatorShortcuts.forward = valuesByKey.at(QString::fromLatin1(::ForwardShortcutKey)).toString();
+    d->flightSimulatorShortcuts.begin = valuesByKey.at(QString::fromLatin1(::BeginShortcutKey)).toString();
+    d->flightSimulatorShortcuts.end = valuesByKey.at(QString::fromLatin1(::EndShortcutKey)).toString();
+
     restoreSettingsExtn(valuesByKey);
 
     emit changed();
@@ -118,6 +188,14 @@ void ConnectPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &val
 void ConnectPluginBaseSettings::restoreDefaults() noexcept
 {
     d->flightSimulatorShortcuts.record = d->DefaultRecordShortcut;
+    d->flightSimulatorShortcuts.replay = d->DefaultReplayShortcut;
+    d->flightSimulatorShortcuts.pause = d->DefaultPauseShortcut;
+    d->flightSimulatorShortcuts.stop = d->DefaultStopShortcut;
+    d->flightSimulatorShortcuts.backward = d->DefaultBackwardShortcut;
+    d->flightSimulatorShortcuts.forward = d->DefaultForwardShortcut;
+    d->flightSimulatorShortcuts.begin = d->DefaultBeginShortcut;
+    d->flightSimulatorShortcuts.end = d->DefaultEndShortcut;
+
     restoreDefaultsExtn();
 
     emit changed();

@@ -103,6 +103,21 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
     return ok;
 }
 
+void LocationExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
+{
+    getPluginSettings().addSettings(keyValues);
+}
+
+void LocationExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
+}
+
+void LocationExportPluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
+{
+    getPluginSettings().restoreSettings(valuesByKey);
+}
+
 // PRIVATE
 
 bool LocationExportPluginBase::exportLocations(const std::vector<Location> &locations, const QString &filePath) const noexcept
@@ -138,19 +153,4 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
     }
 
     return ok;
-}
-
-void LocationExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
-{
-    getPluginSettings().addSettings(keyValues);
-}
-
-void LocationExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{
-    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
-}
-
-void LocationExportPluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    getPluginSettings().restoreSettings(valuesByKey);
 }

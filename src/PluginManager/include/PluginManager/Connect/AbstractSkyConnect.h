@@ -31,6 +31,7 @@
 #include <QObject>
 
 #include <Kernel/SampleRate.h>
+#include <Kernel/Settings.h>
 #include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/InitialPosition.h>
 #include "SkyConnectIntf.h"
@@ -41,6 +42,7 @@
 class Flight;
 class Aircraft;
 struct FlightSimulatorShortcuts;
+class ConnectPluginBaseSettings;
 struct AbstractSkyConnectPrivate;
 
 class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf, public PluginBase
@@ -137,8 +139,9 @@ protected:
 
     void createAiObjects() noexcept;
 
-    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
-    
+    // Re-implement
+    virtual ConnectPluginBaseSettings &getPluginSettings() const noexcept = 0;
+    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;    
     virtual bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept = 0;
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
@@ -178,6 +181,10 @@ protected:
     virtual void onRemoveAllAiObjects() noexcept = 0;
 
     virtual bool onRequestLocation() noexcept = 0;
+
+    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 
 protected slots:
     std::int64_t updateCurrentTimestamp() noexcept;

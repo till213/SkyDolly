@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MSFSSIMCONNECTSETTINGS_H
-#define MSFSSIMCONNECTSETTINGS_H
+#ifndef PATHCREATORSETTINGS_H
+#define PATHCREATORSETTINGS_H
 
 #include <memory>
 
@@ -32,18 +32,18 @@
 #include <Kernel/Settings.h>
 #include <PluginManager/Connect/ConnectPluginBaseSettings.h>
 
-struct MSFSSimConnectSettingsPrivate;
+struct PathCreatorSettingsPrivate;
 
-class MSFSSimConnectSettings : public ConnectPluginBaseSettings
+class PathCreatorSettings : public ConnectPluginBaseSettings
 {
     Q_OBJECT
 public:
-    MSFSSimConnectSettings() noexcept;
-    MSFSSimConnectSettings(const MSFSSimConnectSettings &rhs) = delete;
-    MSFSSimConnectSettings(MSFSSimConnectSettings &&rhs) = delete;
-    MSFSSimConnectSettings &operator=(const MSFSSimConnectSettings &rhs) = delete;
-    MSFSSimConnectSettings &operator=(MSFSSimConnectSettings &&rhs) = delete;
-    ~MSFSSimConnectSettings() override;
+    PathCreatorSettings() noexcept;
+    PathCreatorSettings(const PathCreatorSettings &rhs) = delete;
+    PathCreatorSettings(PathCreatorSettings &&rhs) = delete;
+    PathCreatorSettings &operator=(const PathCreatorSettings &rhs) = delete;
+    PathCreatorSettings &operator=(PathCreatorSettings &&rhs) = delete;
+    ~PathCreatorSettings() override;
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
@@ -52,7 +52,7 @@ protected:
     void restoreDefaultsExtn() noexcept override;
 
 private:
-    const std::unique_ptr<MSFSSimConnectSettingsPrivate> d;
+    const std::unique_ptr<PathCreatorSettingsPrivate> d;
 };
 
-#endif // MSFSSIMCONNECTSETTINGS_H
+#endif // PATHCREATORSETTINGS_H

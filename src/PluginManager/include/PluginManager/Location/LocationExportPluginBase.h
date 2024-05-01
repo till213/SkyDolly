@@ -86,14 +86,14 @@ protected:
 
     virtual bool exportLocations(const std::vector<Location> &locations, QIODevice &io) const noexcept = 0;
 
+    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
+
 private:
     const std::unique_ptr<LocationExportPluginBasePrivate> d;
 
     bool exportLocations(const std::vector<Location> &locations, const QString &filePath) const noexcept;
-
-    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
 };
 
 #endif // LOCATIONEXPORTPLUGINBASE_H

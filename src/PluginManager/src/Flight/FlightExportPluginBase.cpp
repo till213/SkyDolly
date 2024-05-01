@@ -108,6 +108,21 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight) const noexcept
     return ok;
 }
 
+void FlightExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
+{
+    getPluginSettings().addSettings(keyValues);
+}
+
+void FlightExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
+}
+
+void FlightExportPluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
+{
+    getPluginSettings().restoreSettings(valuesByKey);
+}
+
 // PRIVATE
 
 bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &filePath) const noexcept
@@ -208,19 +223,4 @@ bool FlightExportPluginBase::exportAllAircraft(const Flight &flight, const QStri
     } // All aircraft
 
     return ok;
-}
-
-void FlightExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
-{
-    getPluginSettings().addSettings(keyValues);
-}
-
-void FlightExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{
-    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
-}
-
-void FlightExportPluginBase::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    getPluginSettings().restoreSettings(valuesByKey);
 }

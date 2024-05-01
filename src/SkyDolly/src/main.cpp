@@ -50,13 +50,16 @@
 
 static void destroySingletons() noexcept
 {
-    // Destroying the settings singleton also persists the settings
-    Settings::destroyInstance();
     Logbook::destroyInstance();
     PersistenceManager::destroyInstance();
     PluginManager::destroyInstance();
     SkyConnectManager::destroyInstance();
     RecentFile::destroyInstance();
+
+    // Destroying the settings singleton also persists the settings; destory this instance
+    // last, as previous plugin managers such as the SkyConnectManager may still want
+    // to store their plugin settings
+    Settings::destroyInstance();
 }
 
 int main(int argc, char **argv) noexcept

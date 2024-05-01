@@ -90,16 +90,16 @@ protected:
     virtual bool exportFlightData(const FlightData &flightData, QIODevice &io) const noexcept = 0;
     virtual bool exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept = 0;
 
+    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
+
 private:
     const std::unique_ptr<FlightExportPluginBasePrivate> d;
 
     bool exportFlight(const Flight &flight, const QString &filePath) const noexcept;
     // Exports all aircraft into separate files, given the 'baseFilePath'
-    bool exportAllAircraft(const Flight &flight, const QString &baseFilePath) const noexcept;
-
-    void addSettings(Settings::KeyValues &keyValues) const noexcept final;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
-    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
+    bool exportAllAircraft(const Flight &flight, const QString &baseFilePath) const noexcept;    
 };
 
 #endif // FLIGHTEXPORTPLUGINBASE_H

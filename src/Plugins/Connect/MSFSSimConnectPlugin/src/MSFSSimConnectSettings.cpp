@@ -22,3 +22,51 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
+#include <QString>
+#ifdef DEBUG
+#include <QDebug>
+#endif
+
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <PluginManager/Connect/ConnectPluginBaseSettings.h>
+#include "MSFSSimConnectSettings.h"
+
+namespace
+{
+
+}
+
+struct MSFSSimConnectSettingsPrivate
+{
+
+};
+
+// PUBLIC
+
+MSFSSimConnectSettings::MSFSSimConnectSettings() noexcept
+    : ConnectPluginBaseSettings(),
+    d(std::make_unique<MSFSSimConnectSettingsPrivate>())
+{}
+
+MSFSSimConnectSettings::~MSFSSimConnectSettings() = default;
+
+// PROTECTED
+
+void MSFSSimConnectSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
+{
+}
+
+void MSFSSimConnectSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+}
+
+void MSFSSimConnectSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
+{
+}
+
+void MSFSSimConnectSettings::restoreDefaultsExtn() noexcept
+{
+}

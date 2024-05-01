@@ -393,9 +393,11 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 {
     bool ok {false};
 
-    if (d->pluginRegistry.contains(uuid)) {       
-        // Unload the previous plugin (if any)
-        unloadCurrentPlugin();
+    if (d->pluginRegistry.contains(uuid)) {
+
+        if (getCurrentSkyConnect().has_value()) {
+            unloadCurrentPlugin();
+        }
 
         const QString pluginPath = d->pluginRegistry.value(uuid);
         d->pluginLoader->setFileName(pluginPath);
@@ -459,7 +461,13 @@ SkyConnectManager::SkyConnectManager() noexcept
     frenchConnection();
 }
 
-SkyConnectManager::~SkyConnectManager() = default;
+SkyConnectManager::~SkyConnectManager()
+{
+    if (getCurrentSkyConnect().has_value()) {
+        // Unload the current plugin
+        unloadCurrentPlugin();
+    }
+}
 
 void SkyConnectManager::frenchConnection() noexcept
 {

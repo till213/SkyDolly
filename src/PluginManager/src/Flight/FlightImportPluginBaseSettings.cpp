@@ -146,6 +146,7 @@ void FlightImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey
     if (ok) {
         d->timeOffsetSync = static_cast<SkyMath::TimeOffsetSync>(enumeration);
     }
+
     restoreSettingsExtn(valuesByKey);
 
     emit changed();
@@ -156,6 +157,7 @@ void FlightImportPluginBaseSettings::restoreDefaults() noexcept
     d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
     d->aircraftImportMode = ::DefaultAircraftImportMode;
     d->timeOffsetSync = ::DefaultTimeOffsetSync;
+
     restoreDefaultsExtn();
 
     emit changed();

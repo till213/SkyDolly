@@ -47,6 +47,7 @@
 #include <Model/InitialPosition.h>
 #include <Connect/Connect.h>
 #include <Connect/SkyConnectIntf.h>
+#include <Connect/ConnectPluginBaseSettings.h>
 #include <Connect/AbstractSkyConnect.h>
 
 namespace
@@ -630,6 +631,21 @@ void AbstractSkyConnect::onTailNumberChanged(const Aircraft &aircraft) noexcept
 }
 
 // PROTECTED
+
+void AbstractSkyConnect::addSettings(Settings::KeyValues &keyValues) const noexcept
+{
+    getPluginSettings().addSettings(keyValues);
+}
+
+void AbstractSkyConnect::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
+}
+
+void AbstractSkyConnect::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
+{
+    getPluginSettings().restoreSettings(valuesByKey);
+}
 
 void AbstractSkyConnect::setState(Connect::State state) noexcept
 {

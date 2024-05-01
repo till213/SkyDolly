@@ -101,9 +101,6 @@ bool LocationImportPluginBase::importLocations() noexcept
     return ok;
 }
 
-
-// PRIVATE
-
 void LocationImportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     getPluginSettings().addSettings(keyValues);
@@ -118,6 +115,8 @@ void LocationImportPluginBase::restoreSettings(const Settings::ValuesByKey &valu
 {
     getPluginSettings().restoreSettings(valuesByKey);
 }
+
+// PRIVATE
 
 bool LocationImportPluginBase::importLocations(const QStringList &filePaths) noexcept
 {
