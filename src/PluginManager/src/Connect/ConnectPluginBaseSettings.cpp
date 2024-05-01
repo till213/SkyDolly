@@ -24,6 +24,10 @@
  */
 #include <memory>
 
+#ifdef DEBUG
+#include <QDebug>
+#endif
+
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Kernel/FlightSimulatorShortcuts.h>
@@ -76,7 +80,12 @@ ConnectPluginBaseSettings::ConnectPluginBaseSettings() noexcept
     : d(std::make_unique<ConnectPluginBaseSettingsPrivate>())
 {}
 
-ConnectPluginBaseSettings::~ConnectPluginBaseSettings() = default;
+ConnectPluginBaseSettings::~ConnectPluginBaseSettings()
+{
+#ifdef DEBUG
+    qDebug() << "ConnectPluginBaseSettings::~ConnectPluginBaseSettings: DELETED";
+#endif
+}
 
 FlightSimulatorShortcuts ConnectPluginBaseSettings::getFlightSimulatorShortcuts() const noexcept
 {
@@ -87,7 +96,7 @@ void ConnectPluginBaseSettings::setFlightSimulatorShortcuts(FlightSimulatorShort
 {
     if (d->flightSimulatorShortcuts != shortcuts) {
         d->flightSimulatorShortcuts = std::move(shortcuts);
-        emit Settings::getInstance().flightSimulatorShortcutsChanged(d->flightSimulatorShortcuts);
+        emit changed(Reconnect::Required);
     }
 }
 
@@ -182,7 +191,7 @@ void ConnectPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &val
 
     restoreSettingsExtn(valuesByKey);
 
-    emit changed();
+    emit changed(Reconnect::Required);
 }
 
 void ConnectPluginBaseSettings::restoreDefaults() noexcept
@@ -198,5 +207,5 @@ void ConnectPluginBaseSettings::restoreDefaults() noexcept
 
     restoreDefaultsExtn();
 
-    emit changed();
+    emit changed(Reconnect::Required);
 }

@@ -103,7 +103,6 @@ struct SettingsPrivate
 
     QString importAircraftType;
     QFileInfo earthGravityModelFileInfo;
-    FlightSimulatorShortcuts flightSimulatorShortcuts {DefaultFlightSimulatorShortcuts};
 
     int previewInfoDialogCount {DefaultPreviewInfoDialogCount};
 
@@ -138,26 +137,6 @@ struct SettingsPrivate
 
     static constexpr int DefaultPreviewInfoDialogCount {3};
     static constexpr int PreviewInfoDialogBase {150};
-
-    static inline const QKeySequence DefaultRecordShortcut{QString::fromLatin1("Ctrl+R")};
-    static inline const QKeySequence DefaultReplayShortcut{QString::fromLatin1("Ctrl+P")};
-    static inline const QKeySequence DefaultPauseShortcut{QString::fromLatin1("Alt+P")};
-    static inline const QKeySequence DefaultStopShortcut{QString::fromLatin1("Ctrl+S")};
-    static inline const QKeySequence DefaultBackwardShortcut{QString::fromLatin1("Ctrl+,")};
-    static inline const QKeySequence DefaultForwardShortcut{QString::fromLatin1("Ctrl+.")};
-    // TODO Find good default keys that are not already taken my the MSFS default keyboard layout
-    static inline const QKeySequence DefaultBeginShortcut{QString::fromLatin1("Ctrl+PgUp")};
-    static inline const QKeySequence DefaultEndShortcut{QString::fromLatin1("Ctrl+PgDown")};
-    static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {
-        DefaultRecordShortcut,
-        DefaultReplayShortcut,
-        DefaultPauseShortcut,
-        DefaultStopShortcut,
-        DefaultBackwardShortcut,
-        DefaultForwardShortcut,
-        DefaultBeginShortcut,
-        DefaultEndShortcut
-    };
 };
 
 // PUBLIC
@@ -508,19 +487,6 @@ void Settings::setImportAircraftType(const QString &type) noexcept
     }
 }
 
-FlightSimulatorShortcuts Settings::getFlightSimulatorShortcuts() const noexcept
-{
-    return d->flightSimulatorShortcuts;
-}
-
-void Settings::setFlightSimulatorShortcuts(FlightSimulatorShortcuts shortcuts) noexcept
-{
-    if (d->flightSimulatorShortcuts != shortcuts) {
-        d->flightSimulatorShortcuts = std::move(shortcuts);
-        emit flightSimulatorShortcutsChanged(d->flightSimulatorShortcuts);
-    }
-}
-
 QFileInfo Settings::getEarthGravityModelFileInfo() const noexcept
 {
     return d->earthGravityModelFileInfo;
@@ -605,23 +571,6 @@ void Settings::store() const noexcept
         d->settings.setValue("BackupBeforeMigration", d->backupBeforeMigration);
     }
     d->settings.endGroup();
-    d->settings.beginGroup("Plugins");
-    {
-        d->settings.setValue("SkyConnectPluginUuid", d->skyConnectPluginUuid);
-        d->settings.beginGroup("FlightSimulatorShortcuts");
-        {
-            d->settings.setValue("Record", d->flightSimulatorShortcuts.record);
-            d->settings.setValue("Replay", d->flightSimulatorShortcuts.replay);
-            d->settings.setValue("Pause", d->flightSimulatorShortcuts.pause);
-            d->settings.setValue("Stop", d->flightSimulatorShortcuts.stop);
-            d->settings.setValue("Backward", d->flightSimulatorShortcuts.backward);
-            d->settings.setValue("Forward", d->flightSimulatorShortcuts.forward);
-            d->settings.setValue("Begin", d->flightSimulatorShortcuts.begin);
-            d->settings.setValue("End", d->flightSimulatorShortcuts.end);
-        }
-        d->settings.endGroup();
-    }
-    d->settings.endGroup();
     d->settings.beginGroup("Recording");
     {
         d->settings.setValue("RecordingSampleRate", d->recordingSampleRateValue);        
@@ -703,23 +652,6 @@ void Settings::restore() noexcept
     {
         d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
         d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", SettingsPrivate::DefaultBackupBeforeMigration).toBool();
-    }
-    d->settings.endGroup();
-    d->settings.beginGroup("Plugins");
-    {
-        d->skyConnectPluginUuid = d->settings.value("SkyConnectPluginUuid", d->DefaultSkyConnectPluginUuid).toUuid();
-        d->settings.beginGroup("FlightSimulatorShortcuts");
-        {
-            d->flightSimulatorShortcuts.record = d->settings.value("Record", d->DefaultRecordShortcut).toString();
-            d->flightSimulatorShortcuts.replay = d->settings.value("Replay", d->DefaultReplayShortcut).toString();
-            d->flightSimulatorShortcuts.pause = d->settings.value("Pause", d->DefaultPauseShortcut).toString();
-            d->flightSimulatorShortcuts.stop = d->settings.value("Stop", d->DefaultStopShortcut).toString();
-            d->flightSimulatorShortcuts.backward = d->settings.value("Backward", d->DefaultBackwardShortcut).toString();
-            d->flightSimulatorShortcuts.forward = d->settings.value("Forward", d->DefaultForwardShortcut).toString();
-            d->flightSimulatorShortcuts.begin = d->settings.value("Begin", d->DefaultBeginShortcut).toString();
-            d->flightSimulatorShortcuts.end = d->settings.value("End", d->DefaultEndShortcut).toString();
-        }
-        d->settings.endGroup();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -865,8 +797,6 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::defaultMinimalUiNonEssentialButtonVisibilityChanged,
             this, &Settings::changed);
     connect(this, &Settings::defaultMinimalUiReplaySpeedVisibilityChanged,
-            this, &Settings::changed);
-    connect(this, &Settings::flightSimulatorShortcutsChanged,
             this, &Settings::changed);
 }
 

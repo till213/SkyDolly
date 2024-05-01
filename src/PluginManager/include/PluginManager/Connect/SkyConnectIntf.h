@@ -36,6 +36,7 @@
 #include <Model/Location.h>
 #include "Connect.h"
 #include "../PluginIntf.h"
+#include "../PluginWithOptionWidgetIntf.h"
 #include "../PluginManagerLib.h"
 
 class Flight;
@@ -43,7 +44,7 @@ class Aircraft;
 struct PositionData;
 class MSFSSimConnectPlugin;
 
-class PLUGINMANAGER_API SkyConnectIntf : public QObject, public PluginIntf
+class PLUGINMANAGER_API SkyConnectIntf : public QObject, public PluginWithOptionWidgetIntf, public PluginIntf
 {
     Q_OBJECT
 public:
@@ -113,18 +114,16 @@ public:
     
     /*!
      * Try to connect with the flight simulator. If the connection has been
-     * successfully established then also setup the given \p shortcuts in
+     * successfully established then also setup the shortcuts in
      * the flight simulator.
      *
      * Otherwise a timer is started that tries to reconnnect in various
      * intervals with increasing length. Already running reconnect timers
      * are restarted, resetting the reconnect interval as well.
      *
-     * \param shortcuts
-     *        the keyboard shortcuts to setup within the flight simulator
      * \sa stateChanged
      */
-    virtual void tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept = 0;
+    virtual void tryConnectAndSetup() noexcept = 0;
 
     /*!
      * Disconnects from the flight simulator. Also call this method when the disconnect

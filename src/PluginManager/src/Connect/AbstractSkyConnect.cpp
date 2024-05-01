@@ -26,10 +26,12 @@
 #include <cstdint>
 #include <cmath>
 #include <array>
+#include <memory>
 
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QDateTime>
+#include <QWidget>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -47,8 +49,9 @@
 #include <Model/InitialPosition.h>
 #include <Connect/Connect.h>
 #include <Connect/SkyConnectIntf.h>
-#include <Connect/ConnectPluginBaseSettings.h>
 #include <Connect/AbstractSkyConnect.h>
+#include <Connect/ConnectPluginBaseSettings.h>
+#include "BasicConnectOptionWidget.h"
 
 namespace
 {
@@ -109,9 +112,8 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 
 AbstractSkyConnect::~AbstractSkyConnect() = default;
 
-void AbstractSkyConnect::tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept
+void AbstractSkyConnect::tryConnectAndSetup() noexcept
 {
-    d->shortcuts = std::move(shortcuts);
     tryFirstConnectAndSetup();
 }
 
@@ -563,6 +565,11 @@ bool AbstractSkyConnect::requestLocation() noexcept
     return ok;
 }
 
+std::optional<std::unique_ptr<OptionWidgetIntf>> AbstractSkyConnect::createOptionWidget() const noexcept
+{
+    return std::make_unique<BasicConnectOptionWidget>(getPluginSettings());
+}
+
 // PUBLIC SLOTS
 
 void AbstractSkyConnect::addAiObject(const Aircraft &aircraft) noexcept
@@ -741,7 +748,7 @@ void AbstractSkyConnect::frenchConnection() noexcept
     Settings &settings = Settings::getInstance();
     connect(&settings, &Settings::recordingSampleRateChanged,
             this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
-    connect(&settings, &Settings::flightSimulatorShortcutsChanged,
+    connect(&getPluginSettings(), &ConnectPluginBaseSettings::changed,
             this, &AbstractSkyConnect::handleFlightSimulatorShortCutsChanged);
 }
 
@@ -857,9 +864,9 @@ void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate
     }
 }
 
-void AbstractSkyConnect::handleFlightSimulatorShortCutsChanged(const FlightSimulatorShortcuts &shortcuts) noexcept
+void AbstractSkyConnect::handleFlightSimulatorShortCutsChanged(ConnectPluginBaseSettings::Reconnect reconnect) noexcept
 {
-    d->shortcuts = shortcuts;
+    d->shortcuts = getPluginSettings().getFlightSimulatorShortcuts();
     d->reconnectAttempt = 0;
     retryConnectAndSetup();
 }

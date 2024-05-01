@@ -22,21 +22,25 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABSTRACTSKYCONNECTIMPL_H
-#define ABSTRACTSKYCONNECTIMPL_H
+#ifndef ABSTRACTSKYCONNECT_H
+#define ABSTRACTSKYCONNECT_H
 
 #include <memory>
 #include <cstdint>
 
 #include <QObject>
 
+class QWidget;
+
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
 #include <Kernel/FlightSimulatorShortcuts.h>
 #include <Model/InitialPosition.h>
 #include "SkyConnectIntf.h"
+#include "ConnectPluginBaseSettings.h"
 #include "Connect.h"
 #include "../PluginBase.h"
+#include "../OptionWidgetIntf.h"
 #include "../PluginManagerLib.h"
 
 class Flight;
@@ -61,7 +65,7 @@ public:
     AbstractSkyConnect &operator=(AbstractSkyConnect &&rhs) = delete;
     ~AbstractSkyConnect() override;
     
-    void tryConnectAndSetup(FlightSimulatorShortcuts shortcuts) noexcept override;
+    void tryConnectAndSetup() noexcept override;
     void disconnect() noexcept override;
     int getRemainingReconnectTime() const noexcept override;
 
@@ -118,6 +122,8 @@ public:
     {
         PluginBase::restoreSettings(pluginUuid);
     }
+
+    std::optional<std::unique_ptr<OptionWidgetIntf>> createOptionWidget() const noexcept final;
 
 public slots:
     void addAiObject(const Aircraft &aircraft) noexcept override;
@@ -207,8 +213,8 @@ private:
 
 private slots:
     void handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
-    void handleFlightSimulatorShortCutsChanged(const FlightSimulatorShortcuts &shortcuts) noexcept;
+    void handleFlightSimulatorShortCutsChanged(ConnectPluginBaseSettings::Reconnect reconnect) noexcept;
     void retryConnectAndSetup() noexcept;
 };
 
-#endif // ABSTRACTSKYCONNECTIMPL_H
+#endif // ABSTRACTSKYCONNECT_H

@@ -22,29 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLUGINWITHOPTIONWIDGETINTF_H
-#define PLUGINWITHOPTIONWIDGETINTF_H
+#ifndef OPTIONWIDGETINTF_H
+#define OPTIONWIDGETINTF_H
 
-#include <memory>
+#include <QWidget>
 
-#include "OptionWidgetIntf.h"
-
-/*!
- * This is the interface for plugins that provide an option widget with plugin-specific options.
- *
- * This option widget is typically shown in the application settings dialog.
- */
-class PluginWithOptionWidgetIntf
+class OptionWidgetIntf : public QWidget
 {
+    Q_OBJECT
 public:
-    PluginWithOptionWidgetIntf() = default;
-    PluginWithOptionWidgetIntf(const PluginWithOptionWidgetIntf &rhs) = default;
-    PluginWithOptionWidgetIntf(PluginWithOptionWidgetIntf &&rhs) = default;
-    PluginWithOptionWidgetIntf &operator=(const PluginWithOptionWidgetIntf &rhs) = default;
-    PluginWithOptionWidgetIntf &operator=(PluginWithOptionWidgetIntf &&rhs) = default;
-    virtual ~PluginWithOptionWidgetIntf() = default;
+    OptionWidgetIntf(QWidget *parent)
+        : QWidget(parent)
+    {}
 
-    virtual std::optional<std::unique_ptr<OptionWidgetIntf>> createOptionWidget() const noexcept = 0;
+    /*!
+     * Accept the selected options.
+     */
+    virtual void accept() noexcept = 0;
 };
 
-#endif // PLUGINWITHOPTIONWIDGETINTF_H
+#endif // OPTIONWIDGETINTF_H

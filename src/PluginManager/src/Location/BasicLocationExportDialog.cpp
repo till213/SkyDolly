@@ -24,9 +24,6 @@
  */
 #include <memory>
 #include <utility>
-#include <limits>
-#include <cstdint>
-#include <cmath>
 
 #include <QString>
 #include <QStringBuilder>
@@ -127,7 +124,7 @@ void BasicLocationExportDialog::initOptionUi() noexcept
         // Any previously existing layout is deleted first, which is what we want
         layout = std::make_unique<QVBoxLayout>();
         layout->addWidget(d->optionWidget);
-        // Transfer ownership of the layout back to the optionGroupBox
+        // Transfer ownership of the layout to the optionGroupBox
         ui->optionGroupBox->setLayout(layout.release());
     } else {
         ui->optionGroupBox->setHidden(true);

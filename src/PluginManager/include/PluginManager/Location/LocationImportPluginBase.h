@@ -31,6 +31,8 @@
 #include <QObject>
 #include <QtPlugin>
 
+class QWidget;
+
 #include "LocationImportIntf.h"
 #include "../DialogPluginBase.h"
 #include "../PluginManagerLib.h"

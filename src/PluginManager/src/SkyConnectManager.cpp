@@ -151,11 +151,20 @@ std::optional<QString> SkyConnectManager::getCurrentSkyConnectPluginName() const
     return {};
 }
 
-void SkyConnectManager::tryConnectAndSetup(const FlightSimulatorShortcuts &shortcuts) noexcept
+std::optional<std::unique_ptr<OptionWidgetIntf>> SkyConnectManager::createOptionWidget() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
-        skyConnect->get().tryConnectAndSetup(shortcuts);
+        return skyConnect->get().createOptionWidget();
+    }
+    return {};
+}
+
+void SkyConnectManager::tryConnectAndSetup() noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().tryConnectAndSetup();
     }
 }
 
@@ -438,11 +447,6 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     skyPlugin, &SkyConnectIntf::onTailNumberChanged);
             d->currentPluginUuid = uuid;
             restoreSettings();
-
-            FlightSimulatorShortcuts shortcuts {Settings::getInstance().getFlightSimulatorShortcuts()};
-            if (shortcuts.hasAny()) {
-                tryConnectAndSetup(shortcuts);
-            }
             ok = true;
         } else {
             // Not a valid SkyConnect plugin
