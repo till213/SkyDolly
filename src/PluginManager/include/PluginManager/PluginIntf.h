@@ -27,12 +27,19 @@
 
 class QUuid;
 
+#include "PluginManagerLib.h"
+
 /*!
  * This is the interface for plugins that support plugin-specific settings.
  */
-class PluginIntf
+class PLUGINMANAGER_API PluginIntf
 {
 public:
+    PluginIntf() = default;
+    PluginIntf(const PluginIntf &rhs) = default;
+    PluginIntf(PluginIntf &&rhs) = default;
+    PluginIntf &operator=(const PluginIntf &rhs) = default;
+    PluginIntf &operator=(PluginIntf &&rhs) = default;
     virtual ~PluginIntf() = default;
 
     virtual void storeSettings(const QUuid &pluginUuid) const noexcept = 0;

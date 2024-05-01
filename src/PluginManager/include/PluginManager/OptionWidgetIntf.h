@@ -27,7 +27,9 @@
 
 #include <QWidget>
 
-class OptionWidgetIntf : public QWidget
+#include "PluginManagerLib.h"
+
+class PLUGINMANAGER_API OptionWidgetIntf : public QWidget
 {
     Q_OBJECT
 public:

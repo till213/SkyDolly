@@ -41,6 +41,7 @@ class Aircraft;
 struct PositionData;
 struct InitialPosition;
 class ConnectPluginBaseSettings;
+class OptionWidgetIntf;
 struct PathCreatorPluginPrivate;
 
 class PathCreatorPlugin : public AbstractSkyConnect

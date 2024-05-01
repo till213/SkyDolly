@@ -170,7 +170,7 @@ void BasicConnectOptionWidget::handleDuplicateKeySequences(const QKeySequence &k
 
 void BasicConnectOptionWidget::updateUi() noexcept
 {
-    const FlightSimulatorShortcuts &shortcuts = d->pluginSettings.getFlightSimulatorShortcuts();
+    const auto &shortcuts = d->pluginSettings.getFlightSimulatorShortcuts();
     ui->recordSequenceEdit->setKeySequence(shortcuts.record);
     ui->replaySequenceEdit->setKeySequence(shortcuts.replay);
     ui->pauseSequenceEdit->setKeySequence(shortcuts.pause);

@@ -26,6 +26,7 @@
 #define FS2020SIMCONNNECTPLUGIN_H
 
 #include <memory>
+#include <optional>
 #include <cstdint>
 
 #include <windows.h>
@@ -43,6 +44,7 @@ struct PositionData;
 struct EngineData;
 class Aircraft;
 class MSFSSimConnectSettings;
+class OptionWidgetIntf;
 struct SkyConnectPrivate;
 
 class MSFSSimConnectPlugin : public AbstractSkyConnect
@@ -62,10 +64,11 @@ public:
 
 protected:
     ConnectPluginBaseSettings &getPluginSettings() const noexcept override;
+    std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept override;
 
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 
-    bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept override;
+    bool onSetupFlightSimulatorShortcuts() noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;

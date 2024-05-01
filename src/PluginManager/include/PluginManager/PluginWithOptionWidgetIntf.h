@@ -35,7 +35,7 @@
  *
  * This option widget is typically shown in the application settings dialog.
  */
-class PluginWithOptionWidgetIntf
+class PLUGINMANAGER_API PluginWithOptionWidgetIntf
 {
 public:
     PluginWithOptionWidgetIntf() = default;

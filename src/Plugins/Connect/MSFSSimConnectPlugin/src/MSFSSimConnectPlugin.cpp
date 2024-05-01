@@ -142,16 +142,23 @@ ConnectPluginBaseSettings &MSFSSimConnectPlugin::getPluginSettings() const noexc
     return d->pluginSettings;
 }
 
+std::optional<std::unique_ptr<OptionWidgetIntf>> MSFSSimConnectPlugin::createExtendedOptionWidget() const noexcept
+{
+    // TODO IMPLEMENT ME
+    return nullptr;
+}
+
 bool MSFSSimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept
 {
     // "Auto" and 1 Hz sample rates are processed event-based
     return sampleRate != SampleRate::SampleRate::Auto && sampleRate != SampleRate::SampleRate::Hz1;
 }
 
-bool MSFSSimConnectPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
+bool MSFSSimConnectPlugin::onSetupFlightSimulatorShortcuts() noexcept
 {
     bool ok {false};
     if (d->simConnectHandle != nullptr) {
+        const auto shortcuts = d->pluginSettings.getFlightSimulatorShortcuts();
         ok = d->inputEvent->setup(d->simConnectHandle, shortcuts);
     }
     return ok;

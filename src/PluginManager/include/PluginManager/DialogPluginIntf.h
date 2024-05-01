@@ -27,12 +27,19 @@
 
 class QWidget;
 
+#include "PluginManagerLib.h"
+
 /*!
  * This is the interface for dialog-based plugins, mostly import- and export plugins.
  */
-class DialogPluginIntf
+class PLUGINMANAGER_API DialogPluginIntf
 {
 public:
+    DialogPluginIntf() = default;
+    DialogPluginIntf(const DialogPluginIntf &rhs) = default;
+    DialogPluginIntf(DialogPluginIntf &&rhs) = default;
+    DialogPluginIntf &operator=(const DialogPluginIntf &rhs) = default;
+    DialogPluginIntf &operator=(DialogPluginIntf &&rhs) = default;
     virtual ~DialogPluginIntf() = default;
 
     virtual QWidget *getParentWidget() const noexcept = 0;
