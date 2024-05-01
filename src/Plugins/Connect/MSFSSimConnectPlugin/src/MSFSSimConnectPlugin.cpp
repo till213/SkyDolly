@@ -646,6 +646,8 @@ void MSFSSimConnectPlugin::frenchConnection() noexcept
 {
     connect(d->eventWidget.get(), &EventWidget::simConnectEvent,
             this, &MSFSSimConnectPlugin::processSimConnectEvent);
+    connect(&d->pluginSettings, &ConnectPluginBaseSettings::changed,
+            this, &MSFSSimConnectPlugin::handlePluginSettingsChanged);
 }
 
 void MSFSSimConnectPlugin::resetCurrentSampleData() noexcept
