@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <cstdint>
+#include <optional>
 
 #include <QObject>
 
@@ -59,6 +60,7 @@ public:
 
 protected:
     ConnectPluginBaseSettings &getPluginSettings() const noexcept override;
+    std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept override;
 
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
     

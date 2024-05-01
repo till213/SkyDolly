@@ -45,6 +45,16 @@ public:
     PathCreatorSettings &operator=(PathCreatorSettings &&rhs) = delete;
     ~PathCreatorSettings() override;
 
+    enum struct Option
+    {
+        A,
+        B,
+        C
+    };
+
+    Option getOption() const noexcept;
+    void setOption(Option option) noexcept;
+
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;

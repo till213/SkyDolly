@@ -49,6 +49,8 @@ public:
     BasicConnectOptionWidget &operator=(BasicConnectOptionWidget &&rhs) = delete;
     ~BasicConnectOptionWidget() override;
 
+    void setExtendedOptionWidget(OptionWidgetIntf *optionWidget) noexcept;
+
     void accept() noexcept override;
 
 private:
@@ -68,6 +70,7 @@ private:
     std::unique_ptr<BasicConnectOptionWidgetPrivate> d;
 
     void initUi() noexcept;
+    void initExtendedOptionUi() noexcept;
     void frenchConnection() noexcept;
     void handleDuplicateKeySequences(const QKeySequence &keySequence, KeySequence source) const noexcept;
 

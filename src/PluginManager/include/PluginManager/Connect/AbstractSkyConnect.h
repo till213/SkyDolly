@@ -26,6 +26,7 @@
 #define ABSTRACTSKYCONNECT_H
 
 #include <memory>
+#include <optional>
 #include <cstdint>
 
 #include <QObject>
@@ -147,6 +148,7 @@ protected:
 
     // Re-implement
     virtual ConnectPluginBaseSettings &getPluginSettings() const noexcept = 0;
+    virtual std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept = 0;
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
     virtual bool onSetupFlightSimulatorShortcuts() noexcept = 0;
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;

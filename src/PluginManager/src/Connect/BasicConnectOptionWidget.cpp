@@ -39,6 +39,7 @@ struct BasicConnectOptionWidgetPrivate
     {}
 
     ConnectPluginBaseSettings &pluginSettings;
+    OptionWidgetIntf *extendedOptionWidget {nullptr};
 };
 
 // PUBLIC
@@ -62,6 +63,12 @@ BasicConnectOptionWidget::~BasicConnectOptionWidget()
     delete ui;
 }
 
+void BasicConnectOptionWidget::setExtendedOptionWidget(OptionWidgetIntf *optionWidget) noexcept
+{
+    d->extendedOptionWidget = optionWidget;
+    initExtendedOptionUi();
+}
+
 void BasicConnectOptionWidget::accept() noexcept
 {
     FlightSimulatorShortcuts shortcuts;
@@ -74,6 +81,10 @@ void BasicConnectOptionWidget::accept() noexcept
     shortcuts.begin = ui->beginSequenceEdit->keySequence();
     shortcuts.end = ui->endSequenceEdit->keySequence();
     d->pluginSettings.setFlightSimulatorShortcuts(shortcuts);
+
+    if (d->extendedOptionWidget) {
+        d->extendedOptionWidget->accept();
+    }
 }
 
 // PRIVATE
@@ -88,6 +99,23 @@ void BasicConnectOptionWidget::initUi() noexcept
     ui->forwardSequenceEdit->setMaximumSequenceLength(1);
     ui->beginSequenceEdit->setMaximumSequenceLength(1);
     ui->endSequenceEdit->setMaximumSequenceLength(1);
+
+    initExtendedOptionUi();
+}
+
+void BasicConnectOptionWidget::initExtendedOptionUi() noexcept
+{
+    if (d->extendedOptionWidget != nullptr) {
+        ui->extendedOptionGroupBox->setHidden(false);
+        std::unique_ptr<QLayout> layout {ui->extendedOptionGroupBox->layout()};
+        // Any previously existing layout is deleted first, which is what we want
+        layout = std::make_unique<QVBoxLayout>();
+        layout->addWidget(d->extendedOptionWidget);
+        // Transfer ownership of the layout to the extendedOptionGroupBox
+        ui->extendedOptionGroupBox->setLayout(layout.release());
+    } else {
+        ui->extendedOptionGroupBox->setHidden(true);
+    }
 }
 
 void BasicConnectOptionWidget::frenchConnection() noexcept

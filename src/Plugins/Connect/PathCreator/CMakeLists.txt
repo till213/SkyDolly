@@ -7,6 +7,7 @@ target_sources(${MODULE_NAME}
     PRIVATE
         src/PathCreatorPlugin.h src/PathCreatorPlugin.cpp
         src/PathCreatorSettings.h src/PathCreatorSettings.cpp
+        src/PathCreatorOptionWidget.h src/PathCreatorOptionWidget.cpp src/PathCreatorOptionWidget.ui
         src/PathCreatorPlugin.json
 )
 target_link_libraries(${MODULE_NAME}

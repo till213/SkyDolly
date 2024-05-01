@@ -28,7 +28,6 @@
 #include <QDebug>
 #endif
 
-#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Kernel/FlightSimulatorShortcuts.h>
 #include <Connect/ConnectPluginBaseSettings.h>
@@ -44,22 +43,19 @@ namespace
     constexpr const char *ForwardShortcutKey {"ForwardShortcutKey"};
     constexpr const char *BeginShortcutKey {"BeginShortcutKey"};
     constexpr const char *EndShortcutKey {"EndShortcutKey"};
-
-    // Defaults
-    constexpr bool DefaultOpenExportedFilesEnabled {false};
 }
 
 struct ConnectPluginBaseSettingsPrivate
 {
     FlightSimulatorShortcuts flightSimulatorShortcuts {DefaultFlightSimulatorShortcuts};
 
+    // Defaults
     static inline const QKeySequence DefaultRecordShortcut{QStringLiteral("Ctrl+R")};
     static inline const QKeySequence DefaultReplayShortcut{QStringLiteral("Ctrl+P")};
     static inline const QKeySequence DefaultPauseShortcut{QStringLiteral("Alt+P")};
     static inline const QKeySequence DefaultStopShortcut{QStringLiteral("Ctrl+S")};
     static inline const QKeySequence DefaultBackwardShortcut{QStringLiteral("Ctrl+,")};
     static inline const QKeySequence DefaultForwardShortcut{QStringLiteral("Ctrl+.")};
-    // TODO Find good default keys that are not already taken my the MSFS default keyboard layout
     static inline const QKeySequence DefaultBeginShortcut{QStringLiteral("Ctrl+PgUp")};
     static inline const QKeySequence DefaultEndShortcut{QStringLiteral("Ctrl+PgDown")};
     static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {

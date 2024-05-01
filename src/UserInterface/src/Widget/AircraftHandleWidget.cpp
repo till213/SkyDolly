@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
+#include <optional>
 
 #include <QString>
 #include <QStringLiteral>

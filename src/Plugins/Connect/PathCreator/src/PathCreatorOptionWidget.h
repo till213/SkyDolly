@@ -22,30 +22,40 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLUGINWITHOPTIONWIDGETINTF_H
-#define PLUGINWITHOPTIONWIDGETINTF_H
+#ifndef PATHCREATOROPTIONWIDGET_H
+#define PATHCREATOROPTIONWIDGET_H
 
 #include <memory>
-#include <optional>
 
-#include "OptionWidgetIntf.h"
+#include <QWidget>
 
-/*!
- * This is the interface for plugins that provide an option widget with plugin-specific options.
- *
- * This option widget is typically shown in the application settings dialog.
- */
-class PluginWithOptionWidgetIntf
+namespace Ui {
+    class PathCreatorOptionWidget;
+}
+
+#include <PluginManager/OptionWidgetIntf.h>
+
+class PathCreatorSettings;
+struct PathCreatorOptionWidgetPrivate;
+
+class PathCreatorOptionWidget : public OptionWidgetIntf
 {
+    Q_OBJECT
 public:
-    PluginWithOptionWidgetIntf() = default;
-    PluginWithOptionWidgetIntf(const PluginWithOptionWidgetIntf &rhs) = default;
-    PluginWithOptionWidgetIntf(PluginWithOptionWidgetIntf &&rhs) = default;
-    PluginWithOptionWidgetIntf &operator=(const PluginWithOptionWidgetIntf &rhs) = default;
-    PluginWithOptionWidgetIntf &operator=(PluginWithOptionWidgetIntf &&rhs) = default;
-    virtual ~PluginWithOptionWidgetIntf() = default;
+    explicit PathCreatorOptionWidget(PathCreatorSettings &pluginSettings, QWidget *parent = nullptr);
+    PathCreatorOptionWidget(const PathCreatorOptionWidget &rhs) = delete;
+    PathCreatorOptionWidget(PathCreatorOptionWidget &&rhs) = delete;
+    PathCreatorOptionWidget &operator=(const PathCreatorOptionWidget &rhs) = delete;
+    PathCreatorOptionWidget &operator=(PathCreatorOptionWidget &&rhs) = delete;
+    ~PathCreatorOptionWidget() override;
 
-    virtual std::optional<std::unique_ptr<OptionWidgetIntf>> createOptionWidget() const noexcept = 0;
+    void accept() noexcept override;
+
+private:
+    Ui::PathCreatorOptionWidget *ui;
+    std::unique_ptr<PathCreatorOptionWidgetPrivate> d;
+
+    void updateUi() noexcept;
 };
 
-#endif // PLUGINWITHOPTIONWIDGETINTF_H
+#endif // PATHCREATOROPTIONWIDGET_H

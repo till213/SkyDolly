@@ -36,12 +36,16 @@
 
 namespace
 {
+    // Keys
+    constexpr const char *OptionKey {"Option"};
 
+    // Defaults
+    constexpr PathCreatorSettings::Option DefaultOption {PathCreatorSettings::Option::A};
 }
 
 struct PathCreatorSettingsPrivate
 {
-
+    PathCreatorSettings::Option option;
 };
 
 // PUBLIC
@@ -53,18 +57,51 @@ PathCreatorSettings::PathCreatorSettings() noexcept
 
 PathCreatorSettings::~PathCreatorSettings() = default;
 
+PathCreatorSettings::Option PathCreatorSettings::getOption() const noexcept
+{
+    return d->option;
+}
+
+void PathCreatorSettings::setOption(Option option) noexcept
+{
+    if (d->option != option) {
+        d->option = option;
+        emit changed(Reconnect::NotRequired);
+    }
+}
+
 // PROTECTED
 
 void PathCreatorSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
+    Settings::KeyValue keyValue;
+
+    keyValue.first = QString::fromLatin1(::OptionKey);
+    keyValue.second = Enum::underly(d->option);
+    keyValues.push_back(keyValue);
 }
 
 void PathCreatorSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
+    Settings::KeyValue keyValue;
+
+    keyValue.first = QString::fromLatin1(::OptionKey);
+    keyValue.second = Enum::underly(::DefaultOption);
+    keysWithDefaults.push_back(keyValue);
 }
 
 void PathCreatorSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
+    bool ok {false};
+    int optionValue = valuesByKey.at(QString::fromLatin1(::OptionKey)).toInt(&ok);
+    if (ok) {
+        d->option = static_cast<Option>(optionValue);
+    } else {
+#ifdef DEBUG
+        qWarning() << "The option in the settings could not be parsed, so setting value to default value:" << Enum::underly(::DefaultOption);
+#endif
+        d->option  = ::DefaultOption;
+    }
 }
 
 void PathCreatorSettings::restoreDefaultsExtn() noexcept

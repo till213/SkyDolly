@@ -27,6 +27,7 @@
 #include <cmath>
 #include <array>
 #include <memory>
+#include <optional>
 
 #include <QTimer>
 #include <QElapsedTimer>
@@ -566,7 +567,13 @@ bool AbstractSkyConnect::requestLocation() noexcept
 
 std::optional<std::unique_ptr<OptionWidgetIntf>> AbstractSkyConnect::createOptionWidget() const noexcept
 {
-    return std::make_unique<BasicConnectOptionWidget>(getPluginSettings());
+    auto optionWidget = std::make_unique<BasicConnectOptionWidget>(getPluginSettings());
+    auto extendedOptionWidget = createExtendedOptionWidget();
+    if (extendedOptionWidget) {
+        // Transfer ownership to optionWidget
+        optionWidget->setExtendedOptionWidget(extendedOptionWidget->release());
+    }
+    return optionWidget;
 }
 
 // PUBLIC SLOTS

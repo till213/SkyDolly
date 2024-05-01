@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>680</width>
-    <height>207</height>
+    <width>774</width>
+    <height>250</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox_4">
+    <widget class="QGroupBox" name="shortCutsGroupBox">
      <property name="title">
       <string>Shortcuts</string>
      </property>
@@ -152,6 +152,13 @@
        </layout>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="extendedOptionGroupBox">
+     <property name="title">
+      <string>Extended</string>
+     </property>
     </widget>
    </item>
    <item>
