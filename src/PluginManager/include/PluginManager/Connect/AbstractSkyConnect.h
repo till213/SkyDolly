@@ -147,8 +147,8 @@ protected:
 
     // Re-implement
     virtual ConnectPluginBaseSettings &getPluginSettings() const noexcept = 0;
-    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;    
-    virtual bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept = 0;
+    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
+    virtual bool onSetupFlightSimulatorShortcuts() noexcept = 0;
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
     virtual bool onSimulationEvent(SimulationEvent event, float arg1) const noexcept = 0;
@@ -194,6 +194,7 @@ protected:
 
 protected slots:
     std::int64_t updateCurrentTimestamp() noexcept;
+    void handlePluginSettingsChanged(ConnectPluginBaseSettings::Reconnect reconnect) noexcept;
     virtual void recordData() noexcept = 0;
 
 private:
@@ -213,7 +214,6 @@ private:
 
 private slots:
     void handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
-    void handleFlightSimulatorShortCutsChanged(ConnectPluginBaseSettings::Reconnect reconnect) noexcept;
     void retryConnectAndSetup() noexcept;
 };
 

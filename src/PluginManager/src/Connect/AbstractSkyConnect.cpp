@@ -83,7 +83,6 @@ struct AbstractSkyConnectPrivate
     }
 
     SkyConnectIntf::ReplayMode replayMode {SkyConnectIntf::ReplayMode::Normal};
-    FlightSimulatorShortcuts shortcuts;
     Connect::State state {Connect::State::Disconnected};
     Flight &currentFlight {Logbook::getInstance().getCurrentFlight()};
     // Triggers the recording of sample data (if not event-based recording)
@@ -737,6 +736,19 @@ std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
     return d->currentTimestamp;
 }
 
+void AbstractSkyConnect::handlePluginSettingsChanged(ConnectPluginBaseSettings::Reconnect reconnect) noexcept
+{
+    switch (reconnect)
+    {
+    case ConnectPluginBaseSettings::Reconnect::Required:
+        d->reconnectAttempt = 0;
+        retryConnectAndSetup();
+        break;
+    default:
+        break;
+    }
+}
+
 // PRIVATE
 
 void AbstractSkyConnect::frenchConnection() noexcept
@@ -748,8 +760,6 @@ void AbstractSkyConnect::frenchConnection() noexcept
     Settings &settings = Settings::getInstance();
     connect(&settings, &Settings::recordingSampleRateChanged,
             this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
-    connect(&getPluginSettings(), &ConnectPluginBaseSettings::changed,
-            this, &AbstractSkyConnect::handleFlightSimulatorShortCutsChanged);
 }
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
@@ -864,13 +874,6 @@ void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate
     }
 }
 
-void AbstractSkyConnect::handleFlightSimulatorShortCutsChanged(ConnectPluginBaseSettings::Reconnect reconnect) noexcept
-{
-    d->shortcuts = getPluginSettings().getFlightSimulatorShortcuts();
-    d->reconnectAttempt = 0;
-    retryConnectAndSetup();
-}
-
 void AbstractSkyConnect::retryConnectAndSetup() noexcept
 {
     d->reconnectTimer.stop();
@@ -880,7 +883,7 @@ void AbstractSkyConnect::retryConnectAndSetup() noexcept
 
     bool ok = isConnectedWithSim();
     if (ok) {
-        ok = retryWithReconnect([this]() -> bool { return onSetupFlightSimulatorShortcuts(d->shortcuts); });
+        ok = retryWithReconnect([this]() -> bool { return onSetupFlightSimulatorShortcuts(); });
         if (ok) {
             setState(Connect::State::Connected);
         }

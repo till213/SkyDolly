@@ -49,6 +49,9 @@ BasicConnectOptionWidget::BasicConnectOptionWidget(ConnectPluginBaseSettings &pl
       d(std::make_unique<BasicConnectOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
+    initUi();
+    updateUi();
+    frenchConnection();
 }
 
 BasicConnectOptionWidget::~BasicConnectOptionWidget()
@@ -195,6 +198,5 @@ void BasicConnectOptionWidget::handleBeginKeySequence() const noexcept
 void BasicConnectOptionWidget::handleEndKeySequence() const noexcept
 {
     auto sequence = ui->endSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Begin);
+    handleDuplicateKeySequences(sequence, KeySequence::End);
 }
-

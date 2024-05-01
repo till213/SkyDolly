@@ -62,7 +62,7 @@ protected:
 
     bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
     
-    bool onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept override;
+    bool onSetupFlightSimulatorShortcuts() noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
     bool onFreezeUserAircraft(bool enable) const noexcept override;

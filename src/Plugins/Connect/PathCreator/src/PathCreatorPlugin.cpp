@@ -122,9 +122,10 @@ bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::Sampl
     return true;
 }
 
-bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts(const FlightSimulatorShortcuts &shortcuts) noexcept
+bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts() noexcept
 {
 #ifdef DEBUG
+    const auto shortcuts = getPluginSettings().getFlightSimulatorShortcuts();
     qDebug() << "Recording shortcut:" << shortcuts.record.toString();
     qDebug() << "Replay shortcut:" << shortcuts.replay.toString();
     qDebug() << "Pause shortcut:" << shortcuts.pause.toString();
@@ -318,6 +319,8 @@ void PathCreatorPlugin::frenchConnection() noexcept
 {
     connect(&d->replayTimer, &QTimer::timeout,
             this, &PathCreatorPlugin::replay);
+    connect(&d->pluginSettings, &ConnectPluginBaseSettings::changed,
+            this, &PathCreatorPlugin::handlePluginSettingsChanged);
 }
 
 void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
