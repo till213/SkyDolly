@@ -1,10 +1,6 @@
 set(MODULE_NAME "MSFSSimConnect")
 
-qt_add_library(${MODULE_NAME} MODULE
-    src/Event/InputEvent.cpp
-    src/MSFSSimConnectSettings.h
-    src/MSFSSimConnectSettings.cpp
-    src/MSFSSimConnectOptionWidget.h src/MSFSSimConnectOptionWidget.cpp src/MSFSSimConnectOptionWidget.ui)
+qt_add_library(${MODULE_NAME} MODULE)
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 # Don't define MIN, MAX macros (in windows.h)
 add_definitions(-DNOMINMAX)
@@ -60,6 +56,7 @@ target_sources(${MODULE_NAME}
         src/MSFSSimConnectSettings.h src/MSFSSimConnectSettings.cpp
         src/MSFSSimConnectOptionWidget.h src/MSFSSimConnectOptionWidget.cpp src/MSFSSimConnectOptionWidget.ui
         src/MSFSSimConnectPlugin.json
+        res/SimConnect.cfg
         doc/SimVars.md
 )
 target_link_libraries(${MODULE_NAME}

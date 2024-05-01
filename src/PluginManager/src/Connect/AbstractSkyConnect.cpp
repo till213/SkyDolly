@@ -121,7 +121,6 @@ void AbstractSkyConnect::disconnect() noexcept
 {
     onDisconnectFromSim();
     setState(Connect::State::Disconnected);
-    tryFirstConnectAndSetup();
 }
 
 int AbstractSkyConnect::getRemainingReconnectTime() const noexcept
@@ -743,13 +742,17 @@ std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
     return d->currentTimestamp;
 }
 
-void AbstractSkyConnect::handlePluginSettingsChanged(ConnectPluginBaseSettings::Reconnect reconnect) noexcept
+void AbstractSkyConnect::handlePluginSettingsChanged(Connect::Mode mode) noexcept
 {
-    switch (reconnect)
+    switch (mode)
     {
-    case ConnectPluginBaseSettings::Reconnect::Required:
+    case Connect::Mode::Reconnect:
         d->reconnectAttempt = 0;
-        retryConnectAndSetup();
+        retryConnectAndSetup(mode);
+        break;
+    case Connect::Mode::SetupOnly:
+        d->reconnectAttempt = 0;
+        retryConnectAndSetup(mode);
         break;
     default:
         break;
@@ -763,7 +766,7 @@ void AbstractSkyConnect::frenchConnection() noexcept
     connect(&(d->recordingTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::recordData);
     connect(&(d->reconnectTimer), &QTimer::timeout,
-            this, &AbstractSkyConnect::retryConnectAndSetup);
+            this, &AbstractSkyConnect::handleReconnectTimer);
     Settings &settings = Settings::getInstance();
     connect(&settings, &Settings::recordingSampleRateChanged,
             this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
@@ -785,7 +788,7 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
 void AbstractSkyConnect::tryFirstConnectAndSetup() noexcept
 {
     d->reconnectAttempt = 0;
-    retryConnectAndSetup();
+    retryConnectAndSetup(Connect::Mode::SetupOnly);
 }
 
 bool AbstractSkyConnect::retryWithReconnect(const std::function<bool()> &func)
@@ -881,9 +884,17 @@ void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate
     }
 }
 
-void AbstractSkyConnect::retryConnectAndSetup() noexcept
+void AbstractSkyConnect::handleReconnectTimer() noexcept
+{
+    retryConnectAndSetup(Connect::Mode::SetupOnly);
+}
+
+void AbstractSkyConnect::retryConnectAndSetup(Connect::Mode mode) noexcept
 {
     d->reconnectTimer.stop();
+    if (mode == Connect::Mode::Reconnect) {
+        disconnect();
+    }
     if (!isConnectedWithSim()) {
         connectWithSim();
     }

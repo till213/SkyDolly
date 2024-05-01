@@ -196,7 +196,7 @@ protected:
 
 protected slots:
     std::int64_t updateCurrentTimestamp() noexcept;
-    void handlePluginSettingsChanged(ConnectPluginBaseSettings::Reconnect reconnect) noexcept;
+    void handlePluginSettingsChanged(Connect::Mode mode) noexcept;
     virtual void recordData() noexcept = 0;
 
 private:
@@ -216,7 +216,8 @@ private:
 
 private slots:
     void handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
-    void retryConnectAndSetup() noexcept;
+    void handleReconnectTimer() noexcept;
+    void retryConnectAndSetup(Connect::Mode mode) noexcept;
 };
 
 #endif // ABSTRACTSKYCONNECT_H

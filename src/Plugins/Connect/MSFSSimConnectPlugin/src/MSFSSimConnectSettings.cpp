@@ -66,7 +66,7 @@ void MSFSSimConnectSettings::setConnectionType(ConnectionType connectionType) no
 {
     if (d->connectionType != connectionType) {
         d->connectionType = connectionType;
-        emit changed(Reconnect::Required);
+        emit changed(Connect::Mode::Reconnect);
     }
 }
 

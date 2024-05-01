@@ -34,6 +34,31 @@ namespace Connect {
         Replay,
         ReplayPaused
     };
+
+    /*!
+     * A flag that indicates whether a reconnect to the flight simulator is required after
+     * settings have changed.
+     */
+    enum struct Mode
+    {
+        /*!
+         * A complete reconnect is required, that is existing connections are to
+         * to be terminated. This is typically the case when changing connection
+         * options such as the network configuration.
+         */
+        Reconnect,
+        /*!
+         * Only changing the flight simulation connection setup such is required,
+         * taking the new settings such as keyboard shortcuts into account.
+         * However a connection is still to be established if not existing yet.
+         */
+        SetupOnly,
+        /*!
+         * No reconnect required; settings will typically take effect upon the
+         * next recording or replay
+         */
+        NotRequired
+    };
 }
 
 #endif // CONNECT_H

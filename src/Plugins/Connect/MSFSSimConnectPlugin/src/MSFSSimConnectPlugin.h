@@ -115,6 +115,9 @@ private:
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
     void resetEventStates() noexcept;
 
+    // Returns the configuration index that refers to the Sky Dolly specific client SimConnect.cfg configuration
+    DWORD getConfigurationIndex() const noexcept;
+
     static void CALLBACK dispatch(::SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept;
 
 private slots:

@@ -242,8 +242,6 @@ bool InputEvent::setup(HANDLE simConnectHandle, const FlightSimulatorShortcuts &
     return d->isInitialised;
 }
 
-// PRIVATE
-
 bool InputEvent::clear(HANDLE simConnectHandle) noexcept
 {
     HRESULT result {S_OK};
@@ -282,8 +280,12 @@ bool InputEvent::clear(HANDLE simConnectHandle) noexcept
     d->keySequenceStates = ::KeySequenceState::None;
     result |= ::SimConnect_ClearInputGroup(simConnectHandle, Enum::underly(Input::SkyDollyControl));
 
+    d->isInitialised = false;
+
     return result == S_OK;
 }
+
+// PRIVATE
 
 QByteArray InputEvent::toMSFSShortcut(const QKeySequence &sequence) const noexcept
 {

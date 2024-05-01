@@ -30,6 +30,7 @@
 
 #include <Kernel/Settings.h>
 #include <Kernel/FlightSimulatorShortcuts.h>
+#include <Connect/Connect.h>
 #include <Connect/ConnectPluginBaseSettings.h>
 
 namespace
@@ -92,7 +93,7 @@ void ConnectPluginBaseSettings::setFlightSimulatorShortcuts(FlightSimulatorShort
 {
     if (d->flightSimulatorShortcuts != shortcuts) {
         d->flightSimulatorShortcuts = std::move(shortcuts);
-        emit changed(Reconnect::Required);
+        emit changed(Connect::Mode::SetupOnly);
     }
 }
 
@@ -187,7 +188,7 @@ void ConnectPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &val
 
     restoreSettingsExtn(valuesByKey);
 
-    emit changed(Reconnect::Required);
+    emit changed(Connect::Mode::SetupOnly);
 }
 
 void ConnectPluginBaseSettings::restoreDefaults() noexcept
@@ -203,5 +204,5 @@ void ConnectPluginBaseSettings::restoreDefaults() noexcept
 
     restoreDefaultsExtn();
 
-    emit changed(Reconnect::Required);
+    emit changed(Connect::Mode::SetupOnly);
 }

@@ -89,7 +89,7 @@ void MSFSSimConnectOptionWidget::frenchConnection() noexcept
 
 void MSFSSimConnectOptionWidget::initUi() noexcept
 {
-    ui->connectionComboBox->addItem(tr("Local connection (pipe)"));
+    ui->connectionComboBox->addItem(tr("Local (pipe)"));
     ui->connectionComboBox->addItem(tr("Network 1 (IPv4)"));
     ui->connectionComboBox->addItem(tr("Network 2 (IPv6)"));
 }

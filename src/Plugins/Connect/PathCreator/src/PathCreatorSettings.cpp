@@ -66,7 +66,7 @@ void PathCreatorSettings::setOption(Option option) noexcept
 {
     if (d->option != option) {
         d->option = option;
-        emit changed(Reconnect::NotRequired);
+        emit changed(Connect::Mode::NotRequired);
     }
 }
 

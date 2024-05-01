@@ -32,6 +32,7 @@
 
 #include <Kernel/Settings.h>
 #include <Kernel/FlightSimulatorShortcuts.h>
+#include "Connect.h"
 #include "../PluginManagerLib.h"
 
 struct ConnectPluginBaseSettingsPrivate;
@@ -68,23 +69,14 @@ public:
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
-    /*! A flag that indicates whether a reconnect to the flight simulator is required after settings have changed */
-    enum struct Reconnect
-    {
-        /*! A reconnect to the current flight simulator instance is required, taking the new settings into account */
-        Required,
-        /*! No reconnect required; settings will typically take effect upon recording or replay */
-        NotRequired
-    };
-
 signals:
     /*!
      * Emitted whenever the plugin settings (base settings or extended settings) have changed.
      *
-     * \param reconnect
+     * \param mode
      *        indicates whether a reconnect is required or not
      */
-    void changed(Reconnect reconnect);
+    void changed(Connect::Mode mode);
 
 protected:
     virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept = 0;
