@@ -74,6 +74,7 @@
 #include "Event/EventWidget.h"
 #include "SimConnectAi.h"
 #include "MSFSSimConnectSettings.h"
+#include "MSFSSimConnectOptionWidget.h"
 #include "MSFSSimConnectPlugin.h"
 
 namespace
@@ -144,8 +145,7 @@ ConnectPluginBaseSettings &MSFSSimConnectPlugin::getPluginSettings() const noexc
 
 std::optional<std::unique_ptr<OptionWidgetIntf>> MSFSSimConnectPlugin::createExtendedOptionWidget() const noexcept
 {
-    // TODO IMPLEMENT ME
-    return nullptr;
+    return std::make_unique<MSFSSimConnectOptionWidget>(d->pluginSettings);
 }
 
 bool MSFSSimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept

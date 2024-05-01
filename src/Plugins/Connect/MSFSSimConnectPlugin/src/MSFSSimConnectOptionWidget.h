@@ -25,22 +25,41 @@
 #ifndef MSFSSIMCONNECTOPTIONWIDGET_H
 #define MSFSSIMCONNECTOPTIONWIDGET_H
 
+#include <memory>
+
 #include <QWidget>
 
 namespace Ui {
-class MSFSSimConnectOptionWidget;
+    class MSFSSimConnectOptionWidget;
 }
 
-class MSFSSimConnectOptionWidget : public QWidget
+#include <PluginManager/OptionWidgetIntf.h>
+
+class MSFSSimConnectSettings;
+struct MSFSSimConnectOptionWidgetPrivate;
+
+class MSFSSimConnectOptionWidget : public OptionWidgetIntf
 {
     Q_OBJECT
-
 public:
-    explicit MSFSSimConnectOptionWidget(QWidget *parent = nullptr);
-    ~MSFSSimConnectOptionWidget();
+    explicit MSFSSimConnectOptionWidget(MSFSSimConnectSettings &pluginSettings, QWidget *parent = nullptr);
+    MSFSSimConnectOptionWidget(const MSFSSimConnectOptionWidget &rhs) = delete;
+    MSFSSimConnectOptionWidget(MSFSSimConnectOptionWidget &&rhs) = delete;
+    MSFSSimConnectOptionWidget &operator=(const MSFSSimConnectOptionWidget &rhs) = delete;
+    MSFSSimConnectOptionWidget &operator=(MSFSSimConnectOptionWidget &&rhs) = delete;
+    ~MSFSSimConnectOptionWidget() override;
+
+    void accept() noexcept override;
 
 private:
     Ui::MSFSSimConnectOptionWidget *ui;
+    std::unique_ptr<MSFSSimConnectOptionWidgetPrivate> d;
+
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+
+private slots:
+    void updateUi() noexcept;
 };
 
 #endif // MSFSSIMCONNECTOPTIONWIDGET_H

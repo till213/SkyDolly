@@ -45,6 +45,16 @@ public:
     MSFSSimConnectSettings &operator=(MSFSSimConnectSettings &&rhs) = delete;
     ~MSFSSimConnectSettings() override;
 
+    enum struct ConnectionType
+    {
+        Pipe,
+        IPv4,
+        IPv6
+    };
+
+    ConnectionType getConnectionType() const noexcept;
+    void setConnectionType(ConnectionType connectionType) noexcept;
+
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;

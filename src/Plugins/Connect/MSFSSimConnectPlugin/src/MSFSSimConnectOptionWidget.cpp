@@ -22,17 +22,94 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
+#include <QComboBox>
+#ifdef DEBUG
+#include <QDebug>
+#endif
+
+#include <PluginManager/Connect/ConnectPluginBaseSettings.h>
+#include "MSFSSimConnectSettings.h"
 #include "MSFSSimConnectOptionWidget.h"
 #include "ui_MSFSSimConnectOptionWidget.h"
 
-MSFSSimConnectOptionWidget::MSFSSimConnectOptionWidget(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::MSFSSimConnectOptionWidget)
+struct MSFSSimConnectOptionWidgetPrivate
+{
+    MSFSSimConnectOptionWidgetPrivate(MSFSSimConnectSettings &pluginSettings)
+        : pluginSettings(pluginSettings)
+    {}
+
+    MSFSSimConnectSettings &pluginSettings;
+};
+
+// PUBLIC
+
+MSFSSimConnectOptionWidget::MSFSSimConnectOptionWidget(MSFSSimConnectSettings &pluginSettings, QWidget *parent)
+    : OptionWidgetIntf(parent),
+    ui(new Ui::MSFSSimConnectOptionWidget),
+    d(std::make_unique<MSFSSimConnectOptionWidgetPrivate>(pluginSettings))
 {
     ui->setupUi(this);
+    initUi();
+    updateUi();
+    frenchConnection();
 }
 
 MSFSSimConnectOptionWidget::~MSFSSimConnectOptionWidget()
 {
     delete ui;
+}
+
+void MSFSSimConnectOptionWidget::accept() noexcept
+{
+    switch (ui->connectionComboBox->currentIndex())
+    {
+    case 0:
+        d->pluginSettings.setConnectionType(MSFSSimConnectSettings::ConnectionType::Pipe);
+        break;
+    case 1:
+        d->pluginSettings.setConnectionType(MSFSSimConnectSettings::ConnectionType::IPv4);
+        break;
+    case 2:
+        d->pluginSettings.setConnectionType(MSFSSimConnectSettings::ConnectionType::IPv6);
+        break;
+    default:
+        break;
+    }
+}
+
+// PRIVATE
+
+void MSFSSimConnectOptionWidget::frenchConnection() noexcept
+{
+    connect(&d->pluginSettings, &MSFSSimConnectSettings::changed,
+            this, &MSFSSimConnectOptionWidget::updateUi);
+}
+
+void MSFSSimConnectOptionWidget::initUi() noexcept
+{
+    ui->connectionComboBox->addItem(tr("Local connection (pipe)"));
+    ui->connectionComboBox->addItem(tr("Network 1 (IPv4)"));
+    ui->connectionComboBox->addItem(tr("Network 2 (IPv6)"));
+}
+
+// PRIVATE SLOTS
+
+void MSFSSimConnectOptionWidget::updateUi() noexcept
+{
+    switch (d->pluginSettings.getConnectionType())
+    {
+    case MSFSSimConnectSettings::ConnectionType::Pipe:
+        ui->connectionComboBox->setCurrentIndex(0);
+        break;
+    case MSFSSimConnectSettings::ConnectionType::IPv4:
+        ui->connectionComboBox->setCurrentIndex(1);
+        break;
+    case MSFSSimConnectSettings::ConnectionType::IPv6:
+        ui->connectionComboBox->setCurrentIndex(2);
+        break;
+    default:
+        break;
+    }
 }

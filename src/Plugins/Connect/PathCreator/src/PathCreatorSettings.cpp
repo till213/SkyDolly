@@ -40,7 +40,7 @@ namespace
     constexpr const char *OptionKey {"Option"};
 
     // Defaults
-    constexpr PathCreatorSettings::Option DefaultOption {PathCreatorSettings::Option::A};
+    constexpr auto DefaultOption {PathCreatorSettings::Option::A};
 }
 
 struct PathCreatorSettingsPrivate
@@ -106,4 +106,5 @@ void PathCreatorSettings::restoreSettingsExtn(const Settings::ValuesByKey &value
 
 void PathCreatorSettings::restoreDefaultsExtn() noexcept
 {
+    d->option = ::DefaultOption;
 }
