@@ -60,11 +60,13 @@ private:
 
 private slots:
     void updateUi() noexcept;
-    void updateConnectionStatus() noexcept;
+    void updateConnectionStatus() const noexcept;
+    void handleFlightSimulatorConnectionSelectionChanged() const noexcept;
+    void handleSkyConnectPluginChanged() noexcept;
     void handleAccepted() noexcept;
     void handleTabChanged(int index) noexcept;
 
-    void initOptionUi() noexcept;
+    void initFlightSimulatorOptionWidget() noexcept;
 };
 
 #endif // SETTINGSDIALOG_H

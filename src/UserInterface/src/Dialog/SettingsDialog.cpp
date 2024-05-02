@@ -134,7 +134,7 @@ void SettingsDialog::initUi() noexcept
     for (auto &plugin : plugins) {
         ui->connectionComboBox->addItem(plugin.second.name, plugin.first);
     }
-    initOptionUi();
+    initFlightSimulatorOptionWidget();
 
     ui->settingsTabWidget->setCurrentIndex(::ReplayTab);
     handleTabChanged(ui->settingsTabWidget->currentIndex());
@@ -142,17 +142,22 @@ void SettingsDialog::initUi() noexcept
 
 void SettingsDialog::frenchConnection() noexcept
 {
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::connectionChanged,
+            this, &SettingsDialog::handleSkyConnectPluginChanged);
     connect(this, &SettingsDialog::accepted,
             this, &SettingsDialog::handleAccepted);
     connect(ui->settingsTabWidget, &QTabWidget::currentChanged,
             this, &SettingsDialog::handleTabChanged);
+    connect(ui->connectionComboBox, &QComboBox::currentIndexChanged,
+            this, &SettingsDialog::handleFlightSimulatorConnectionSelectionChanged);
 }
 
 // PRIVATE SLOTS
 
 void SettingsDialog::updateUi() noexcept
 {
-    Settings &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
 
     // Replay
     ui->absoluteSeekEnabledCheckBox->setChecked(settings.isAbsoluteSeekEnabled());
@@ -185,7 +190,7 @@ void SettingsDialog::updateUi() noexcept
     ui->hideReplaySpeedCheckBox->setChecked(!settings.getDefaultMinimalUiReplaySpeedVisibility());
 }
 
-void SettingsDialog::updateConnectionStatus() noexcept
+void SettingsDialog::updateConnectionStatus() const noexcept
 {
     double time {0.0};
 
@@ -221,9 +226,25 @@ void SettingsDialog::updateConnectionStatus() noexcept
     }
 }
 
+void SettingsDialog::handleFlightSimulatorConnectionSelectionChanged() const noexcept
+{
+    auto &settings = Settings::getInstance();
+    const auto uuid = ui->connectionComboBox->currentData().toUuid();
+    settings.setSkyConnectPluginUuid(uuid);
+}
+
+void SettingsDialog::handleSkyConnectPluginChanged() noexcept
+{
+    if (d->skyConnectOptionWidget != nullptr) {
+        delete d->skyConnectOptionWidget;
+        d->skyConnectOptionWidget = nullptr;
+    }
+    initFlightSimulatorOptionWidget();
+}
+
 void SettingsDialog::handleAccepted() noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
 
     // Replay
     settings.setAbsoluteSeekEnabled(ui->absoluteSeekEnabledCheckBox->isChecked());
@@ -235,9 +256,6 @@ void SettingsDialog::handleAccepted() noexcept
     settings.setRecordingSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
 
     // Flight simulator
-    const QUuid uuid = ui->connectionComboBox->currentData().toUuid();
-    settings.setSkyConnectPluginUuid(uuid);
-
     if (d->skyConnectOptionWidget != nullptr) {
         d->skyConnectOptionWidget->accept();
     }
@@ -277,9 +295,9 @@ void SettingsDialog::handleTabChanged(int index) noexcept
     }
 }
 
-void SettingsDialog::initOptionUi() noexcept
+void SettingsDialog::initFlightSimulatorOptionWidget() noexcept
 {
-    const SkyConnectManager &skyConnectManager =SkyConnectManager::getInstance();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
     auto optionWidget = skyConnectManager.createOptionWidget();
     if (optionWidget) {
         // Transfer ownership to this settings dialog (the layout manager below specifically)
