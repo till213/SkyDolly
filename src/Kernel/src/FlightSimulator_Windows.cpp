@@ -77,7 +77,7 @@ bool FlightSimulator::isRunning(Id id) noexcept
 
     QString processName;
     switch (id) {
-    case Id::FS2020:
+    case Id::MSFS:
         processName = QStringLiteral("FlightSimulator.exe");
         break;
     case Id::Prepar3Dv5:

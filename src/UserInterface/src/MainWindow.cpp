@@ -841,72 +841,7 @@ void MainWindow::initSkyConnectPlugin() noexcept
     Settings &settings = Settings::getInstance();
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> skyConnectPlugins = skyConnectManager.initialisePlugins();
-
-    QUuid uuid = settings.getSkyConnectPluginUuid();
-    // Try to load plugin as stored in the settings
-    bool ok = !uuid.isNull() && skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
-    if (!ok) {
-        // First attempt or not a valid plugin (anymore), so try the other plugins
-        if (skyConnectPlugins.size() == 1) {
-            // There is only one plugin
-            uuid = skyConnectPlugins.front().first;
-            ok = skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
-        } else if (skyConnectPlugins.size() > 1) {
-            // Check if an actual flight simulator instance is running
-            for (auto &plugin : skyConnectPlugins) {
-                if (FlightSimulator::isRunning(plugin.second.flightSimulatorId)) {
-                    uuid = plugin.first;
-                    ok = skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
-                }
-                if (ok) {
-                    break;
-                }
-            }
-            if (!ok) {
-                // No instance running (or no valid plugin), so try again and
-                // check if the given flight simulator is installed
-                for (auto &plugin : skyConnectPlugins) {
-                    if (FlightSimulator::isInstalled(plugin.second.flightSimulatorId)) {
-                        uuid = plugin.first;
-                        ok = skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
-                    }
-                    if (ok) {
-                        break;
-                    }
-                }
-            }
-            if (!ok) {
-                // Default to the Flight Simulator 2020 plugin
-                for (auto &plugin : skyConnectPlugins) {
-                    if (plugin.second.flightSimulatorId == FlightSimulator::Id::FS2020) {
-                        uuid = plugin.first;
-                        ok = skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
-                    }
-                    if (ok) {
-                        break;
-                    }
-                }
-            }
-            if (!ok) {
-                // Everything failed, so as a last resort try with a generic ("All") plugin
-                for (auto &plugin : skyConnectPlugins) {
-                    if (plugin.second.flightSimulatorId == FlightSimulator::Id::All) {
-                        uuid = plugin.first;
-                        ok = skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
-                    }
-                    if (ok) {
-                        break;
-                    }
-                }
-            }
-        } else {
-            // No plugins found
-            ok = false;
-        }
-    }
-    if (ok) {
-        settings.setSkyConnectPluginUuid(uuid);
-    } else {
+    if (skyConnectPlugins.empty()) {
         QMessageBox::warning(this, tr("No valid connection plugin found"), tr("No valid connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality."));
     }
 }

@@ -314,6 +314,14 @@ public slots:
     virtual void onTailNumberChanged(const Aircraft &aircraft) noexcept = 0;
 
 signals:
+    /*!
+     * Emitted whenever the timestamp has changed.
+     *
+     * \param timestamp
+     *        the current timestamp [millisceonds]
+     * \param access
+     *        the way the current position was accessed
+     */
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
 
     /*!

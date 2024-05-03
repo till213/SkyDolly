@@ -73,6 +73,12 @@ public:
      * The plugin UUID and the plugin name and capabilities (flight simulator).
      */
     using Handle = std::pair<QUuid, SkyConnectPlugin>;
+
+    /*!
+     * \brief initialisePlugins
+     * \return
+     * \sa connectionChanged
+     */
     const std::vector<Handle> &initialisePlugins() noexcept;
     const std::vector<Handle> &availablePlugins() const noexcept;
     bool hasPlugins() const noexcept;
@@ -87,6 +93,12 @@ public:
      */
     void restoreSettings() const noexcept;
 
+    /*!
+     * Returns the current connection.
+     *
+     * \return the current connection, if any plugin is available
+     * \sa tryAndSetCurrentSkyConnect
+     */
     std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
     std::optional<QString> getCurrentSkyConnectPluginName() const noexcept;
 
@@ -164,7 +176,23 @@ public slots:
     bool tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept;
 
 signals:
+    /*!
+     * Emitted whenver the connection plugin has changed.
+     *
+     * \param skyConnect
+     *        the current skyConnect plugin
+     */
     void connectionChanged(SkyConnectIntf *skyConnect);
+
+    /*!
+     * Relay of the SkyConnectIntf#timestampChanged signal.
+     *
+     * \param timestamp
+     *        the current timestamp
+     * \param access
+     *        the way the current timestamp was accessed
+     * \sa SkyConnectIntf#timestampChanged
+     */
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
 
     /*!
@@ -220,7 +248,8 @@ private:
     ~SkyConnectManager() override;
 
     void frenchConnection() noexcept;
-    void initialisePlugins(const QString &pluginDirectoryName) noexcept;
+    void initialisePluginRegistry(const QString &pluginDirectoryName) noexcept;
+    void initialisePlugin() noexcept;
     void unloadCurrentPlugin() noexcept;
 };
 

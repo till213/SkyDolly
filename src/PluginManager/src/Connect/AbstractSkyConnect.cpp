@@ -900,14 +900,12 @@ void AbstractSkyConnect::retryConnectAndSetup(Connect::Mode mode) noexcept
     }
 
     bool ok = isConnectedWithSim();
-    if (ok) {
-        ok = retryWithReconnect([this]() -> bool { return onSetupFlightSimulatorShortcuts(); });
-        if (ok) {
-            setState(Connect::State::Connected);
-        }
+    if (ok && getPluginSettings().getFlightSimulatorShortcuts().hasAny()) {
+        ok = retryWithReconnect([this]() -> bool { return onSetupFlightSimulatorShortcuts(); });   
     }
-
-    if (!ok) {
+    if (ok) {
+        setState(Connect::State::Connected);
+    } else {
         // Try later, with progressively increasing retry periods
         setState(Connect::State::Disconnected);
         const auto attempt = std::min(d->retryConnectPeriods.size() - 1, d->reconnectAttempt);

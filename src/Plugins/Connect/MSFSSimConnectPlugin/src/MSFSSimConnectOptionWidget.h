@@ -60,6 +60,8 @@ private:
 
 private slots:
     void updateUi() noexcept;
+    void updateInfoText() noexcept;
+    void restoreDefaults() noexcept;
 };
 
 #endif // MSFSSIMCONNECTOPTIONWIDGET_H

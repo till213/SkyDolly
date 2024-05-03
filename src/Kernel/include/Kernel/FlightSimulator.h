@@ -36,7 +36,7 @@ public:
     enum struct Id {
         None,
         All,
-        FS2020,
+        MSFS,
         Prepar3Dv5
     };
 
@@ -51,7 +51,7 @@ public:
         if (name == FlightSimulatorNameAll) {
             id = Id::All;
         } else if (name == FlightSimulatorNameMSFS) {
-            id = Id::FS2020;
+            id = Id::MSFS;
         } else if (name == FlightSimulatorNamePrepar3Dv5) {
             id = Id::Prepar3Dv5;
         }
