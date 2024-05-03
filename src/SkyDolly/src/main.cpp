@@ -70,6 +70,9 @@ int main(int argc, char **argv) noexcept
     QCoreApplication::setApplicationName(Version::getApplicationName());
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 
+    // TODO IMPLEMENT ME move to settings, set actual style here
+    const QStringList styles = QStyleFactory::keys();
+
     QApplication application(argc, argv);
     // Signals must be registered after the QApplication instantiation, due
     // to the QSocketNotifier
