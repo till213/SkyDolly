@@ -24,10 +24,10 @@
  */
 #include <memory>
 #include <exception>
-#include <csignal>
 
 #include <QCoreApplication>
 #include <QApplication>
+#include <QStyle>
 #include <QStringList>
 #include <QString>
 #include <QStringLiteral>
@@ -74,6 +74,8 @@ int main(int argc, char **argv) noexcept
     const QStringList styles = QStyleFactory::keys();
 
     QApplication application(argc, argv);
+
+    auto style = QApplication::style()->name();
     // Signals must be registered after the QApplication instantiation, due
     // to the QSocketNotifier
     SignalHandler signalHandler;

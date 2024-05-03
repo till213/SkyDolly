@@ -25,6 +25,8 @@
 #include <mutex>
 
 #include <QCoreApplication>
+#include <QApplication>
+#include <QStyle>
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
@@ -91,6 +93,8 @@ struct SettingsPrivate
     bool replayLoop {DefaultReplayLoop};
     Replay::SpeedUnit replaySpeedUnit {DefaultReplaySpeedUnit};
     bool repeatCanopyOpen {DefaultRepeatCanopyOpen};
+
+    QString styleKey {QApplication::style()->name()};
 
     bool deleteFlightConfirmation {DefaultDeleteFlightConfirmation};
     bool deleteAircraftConfirmation {DefaultDeleteAircraftConfirmation};
@@ -588,6 +592,9 @@ void Settings::store() const noexcept
     d->settings.endGroup();
     d->settings.beginGroup("UI");
     {
+        // UI styles
+        d->settings.setValue("StyleKey", d->styleKey);
+
         // Confirmations
         d->settings.setValue("DeleteFlightConfirmation", d->deleteFlightConfirmation);
         d->settings.setValue("DeleteAircraftConfirmation", d->deleteAircraftConfirmation);
