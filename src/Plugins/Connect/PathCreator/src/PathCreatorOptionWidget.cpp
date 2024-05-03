@@ -56,6 +56,9 @@ PathCreatorOptionWidget::PathCreatorOptionWidget(PathCreatorSettings &pluginSett
 
 PathCreatorOptionWidget::~PathCreatorOptionWidget()
 {
+#ifdef DEBUG
+    qDebug() << "PathCreatorOptionWidget::~PathCreatorOptionWidget: DELETED";
+#endif
     delete ui;
 }
 

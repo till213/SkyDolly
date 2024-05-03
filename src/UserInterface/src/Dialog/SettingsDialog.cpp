@@ -228,9 +228,9 @@ void SettingsDialog::updateConnectionStatus() const noexcept
 
 void SettingsDialog::handleFlightSimulatorConnectionSelectionChanged() const noexcept
 {
-    auto &settings = Settings::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     const auto uuid = ui->connectionComboBox->currentData().toUuid();
-    settings.setSkyConnectPluginUuid(uuid);
+    skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
 }
 
 void SettingsDialog::handleSkyConnectPluginChanged() noexcept

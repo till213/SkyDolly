@@ -58,6 +58,9 @@ MSFSSimConnectOptionWidget::MSFSSimConnectOptionWidget(MSFSSimConnectSettings &p
 
 MSFSSimConnectOptionWidget::~MSFSSimConnectOptionWidget()
 {
+#ifdef DEBUG
+    qDebug() << "MSFSSimConnectOptionWidget::~MSFSSimConnectOptionWidget: DELETED";
+#endif
     delete ui;
 }
 

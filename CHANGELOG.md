@@ -578,7 +578,7 @@ This release introduces a new plugin architecture for import and export plugins.
     - Basic line style settings
     - Plugin settings are persisted in Sky Dolly application settings
   * SkyConnect plugin architecture
-    - SimConnect plugin (currently FS2020 only)
+    - SimConnect plugin (currently Microsoft Flight Simulator (MSFS) only)
     - Auto-detection of installed flight simulator (automatic plugin selection)
     - Plugin changeable at runtime via Settings dialog
   
@@ -609,7 +609,7 @@ This release introduces a new plugin architecture for import and export plugins.
 - Better support for aircraft engine start & shutdown
 - Additional simulation variables
   - Combustion
-  - Smoke enabled/disabled (at the time of this writing not yet supported by FS2020)
+  - Smoke enabled/disabled (at the time of this writing not yet supported by Microsoft Flight Simulator)
 - Database performance improvements:
   * _Forward queries_
   * _Normalisation_ of _aircraft type_ data (new table - less storage space required)

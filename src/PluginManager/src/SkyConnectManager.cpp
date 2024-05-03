@@ -99,7 +99,8 @@ void SkyConnectManager::destroyInstance() noexcept
 
 const std::vector<SkyConnectManager::Handle> &SkyConnectManager::initialisePlugins() noexcept
 {
-    initialisePlugins(QString::fromLatin1(::ConnectPluginDirectoryName));
+    initialisePluginRegistry(QString::fromLatin1(::ConnectPluginDirectoryName));
+    initialisePlugin();
     return availablePlugins();
 }
 
@@ -400,57 +401,65 @@ bool SkyConnectManager::requestInitialPosition() const noexcept
 
 bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 {
-    bool ok {false};
+    bool ok {true};
 
-    if (d->pluginRegistry.contains(uuid)) {
+    if (d->currentPluginUuid != uuid) {
 
-        if (getCurrentSkyConnect().has_value()) {
-            unloadCurrentPlugin();
-        }
+        if (d->pluginRegistry.contains(uuid)) {
 
-        const QString pluginPath = d->pluginRegistry.value(uuid);
-        d->pluginLoader->setFileName(pluginPath);
-        QObject *plugin = d->pluginLoader->instance();
-        SkyConnectIntf *skyPlugin = qobject_cast<SkyConnectIntf *>(plugin);
-        if (skyPlugin != nullptr) {
-            connect(skyPlugin, &SkyConnectIntf::timestampChanged,
-                    this, &SkyConnectManager::timestampChanged);
-            connect(skyPlugin, &SkyConnectIntf::stateChanged,
-                    this, &SkyConnectManager::stateChanged);
-            connect(skyPlugin, &SkyConnectIntf::replayModeChanged,
-                    this, &SkyConnectManager::replayModeChanged);
-            connect(skyPlugin, &SkyConnectIntf::recordingStarted,
-                    this, &SkyConnectManager::recordingStarted);
-            connect(skyPlugin, &SkyConnectIntf::recordingStopped,
-                    this, &SkyConnectManager::recordingStopped);
-            connect(skyPlugin, &SkyConnectIntf::locationReceived,
-                    this, &SkyConnectManager::locationReceived);
-            connect(skyPlugin, &SkyConnectIntf::shortCutActivated,
-                    this, &SkyConnectManager::shortCutActivated);
+            if (getCurrentSkyConnect().has_value()) {
+                unloadCurrentPlugin();
+            }
 
-            // Flight
-            const Logbook &logbook = Logbook::getInstance();
-            const Flight &flight = logbook.getCurrentFlight();
-            connect(&flight, &Flight::flightRestored,
-                    skyPlugin, &SkyConnectIntf::syncAiObjectsWithFlight);
-            connect(&flight, &Flight::cleared,
-                    skyPlugin, &SkyConnectIntf::removeAiObjects);
-            connect(&flight, &Flight::aircraftAdded,
-                    skyPlugin, &SkyConnectIntf::addAiObject);
-            connect(&flight, &Flight::aircraftRemoved,
-                    skyPlugin, &SkyConnectIntf::removeAiObject);
-            connect(&flight, &Flight::userAircraftChanged,
-                    skyPlugin, &SkyConnectIntf::updateUserAircraft);
-            connect(&flight, &Flight::timeOffsetChanged,
-                    skyPlugin, &SkyConnectIntf::onTimeOffsetChanged);
-            connect(&flight, &Flight::tailNumberChanged,
-                    skyPlugin, &SkyConnectIntf::onTailNumberChanged);
-            d->currentPluginUuid = uuid;
-            restoreSettings();
-            ok = true;
+            const QString pluginPath = d->pluginRegistry.value(uuid);
+            d->pluginLoader->setFileName(pluginPath);
+            QObject *plugin = d->pluginLoader->instance();
+            SkyConnectIntf *skyPlugin = qobject_cast<SkyConnectIntf *>(plugin);
+            if (skyPlugin != nullptr) {
+                connect(skyPlugin, &SkyConnectIntf::timestampChanged,
+                        this, &SkyConnectManager::timestampChanged);
+                connect(skyPlugin, &SkyConnectIntf::stateChanged,
+                        this, &SkyConnectManager::stateChanged);
+                connect(skyPlugin, &SkyConnectIntf::replayModeChanged,
+                        this, &SkyConnectManager::replayModeChanged);
+                connect(skyPlugin, &SkyConnectIntf::recordingStarted,
+                        this, &SkyConnectManager::recordingStarted);
+                connect(skyPlugin, &SkyConnectIntf::recordingStopped,
+                        this, &SkyConnectManager::recordingStopped);
+                connect(skyPlugin, &SkyConnectIntf::locationReceived,
+                        this, &SkyConnectManager::locationReceived);
+                connect(skyPlugin, &SkyConnectIntf::shortCutActivated,
+                        this, &SkyConnectManager::shortCutActivated);
+
+                // Flight
+                const Logbook &logbook = Logbook::getInstance();
+                const Flight &flight = logbook.getCurrentFlight();
+                connect(&flight, &Flight::flightRestored,
+                        skyPlugin, &SkyConnectIntf::syncAiObjectsWithFlight);
+                connect(&flight, &Flight::cleared,
+                        skyPlugin, &SkyConnectIntf::removeAiObjects);
+                connect(&flight, &Flight::aircraftAdded,
+                        skyPlugin, &SkyConnectIntf::addAiObject);
+                connect(&flight, &Flight::aircraftRemoved,
+                        skyPlugin, &SkyConnectIntf::removeAiObject);
+                connect(&flight, &Flight::userAircraftChanged,
+                        skyPlugin, &SkyConnectIntf::updateUserAircraft);
+                connect(&flight, &Flight::timeOffsetChanged,
+                        skyPlugin, &SkyConnectIntf::onTimeOffsetChanged);
+                connect(&flight, &Flight::tailNumberChanged,
+                        skyPlugin, &SkyConnectIntf::onTailNumberChanged);
+                d->currentPluginUuid = uuid;
+                restoreSettings();
+                emit connectionChanged(skyPlugin);
+                ok = true;
+            } else {
+                // Not a valid SkyConnect plugin
+                d->pluginLoader->unload();
+                ok = false;
+            }
+            Settings::getInstance().setSkyConnectPluginUuid(d->currentPluginUuid);
         } else {
-            // Not a valid SkyConnect plugin
-            d->pluginLoader->unload();
+            // Invalid uuid: no such plugin in registry
             ok = false;
         }
     }
@@ -481,7 +490,7 @@ void SkyConnectManager::frenchConnection() noexcept
             this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
 }
 
-void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) noexcept
+void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryName) noexcept
 {
     d->pluginRegistry.clear();
     if (d->pluginsDirectory.exists(pluginDirectoryName)) {
@@ -506,6 +515,73 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
             }
         }
         d->pluginsDirectory.cdUp();
+    }
+}
+
+void SkyConnectManager::initialisePlugin() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    QUuid uuid = settings.getSkyConnectPluginUuid();
+    // Try to load plugin as stored in the settings
+    bool ok = !uuid.isNull() && tryAndSetCurrentSkyConnect(uuid);
+    if (!ok) {
+        // First attempt or not a valid plugin (anymore), so try the other plugins
+        if (d->pluginHandles.size() == 1) {
+            // There is only one plugin
+            uuid = d->pluginHandles.front().first;
+            ok = tryAndSetCurrentSkyConnect(uuid);
+        } else if (d->pluginHandles.size() > 1) {
+            // Check if an actual flight simulator instance is running
+            for (auto &plugin : d->pluginHandles) {
+                if (FlightSimulator::isRunning(plugin.second.flightSimulatorId)) {
+                    uuid = plugin.first;
+                    ok = tryAndSetCurrentSkyConnect(uuid);
+                }
+                if (ok) {
+                    break;
+                }
+            }
+            if (!ok) {
+                // No instance running (or no valid plugin), so try again and
+                // check if the given flight simulator is installed
+                for (auto &plugin : d->pluginHandles) {
+                    if (FlightSimulator::isInstalled(plugin.second.flightSimulatorId)) {
+                        uuid = plugin.first;
+                        ok = tryAndSetCurrentSkyConnect(uuid);
+                    }
+                    if (ok) {
+                        break;
+                    }
+                }
+            }
+            if (!ok) {
+                // Default to the Flight Simulator 2020 plugin
+                for (auto &plugin : d->pluginHandles) {
+                    if (plugin.second.flightSimulatorId == FlightSimulator::Id::MSFS) {
+                        uuid = plugin.first;
+                        ok = tryAndSetCurrentSkyConnect(uuid);
+                    }
+                    if (ok) {
+                        break;
+                    }
+                }
+            }
+            if (!ok) {
+                // Everything failed, so as a last resort try with a generic ("All") plugin
+                for (auto &plugin : d->pluginHandles) {
+                    if (plugin.second.flightSimulatorId == FlightSimulator::Id::All) {
+                        uuid = plugin.first;
+                        ok = tryAndSetCurrentSkyConnect(uuid);
+                    }
+                    if (ok) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            // No plugins found
+            ok = false;
+        }
     }
 }
 
