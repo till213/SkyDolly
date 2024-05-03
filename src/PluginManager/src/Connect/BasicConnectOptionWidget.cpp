@@ -120,6 +120,9 @@ void BasicConnectOptionWidget::initExtendedOptionUi() noexcept
 
 void BasicConnectOptionWidget::frenchConnection() noexcept
 {
+    connect(&d->pluginSettings, &ConnectPluginBaseSettings::changed,
+            this, &BasicConnectOptionWidget::updateUi);
+
     connect(ui->recordSequenceEdit, &QKeySequenceEdit::editingFinished,
             this, &BasicConnectOptionWidget::handleRecordKeySequence);
     connect(ui->replaySequenceEdit, &QKeySequenceEdit::editingFinished,
