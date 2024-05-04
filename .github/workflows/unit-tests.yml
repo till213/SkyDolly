@@ -37,7 +37,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
         with:
-          version: '6.7.*'
+          version: '6.7.0'
           setup-python: 'false'
 
       - name: Install Linux Dependencies
