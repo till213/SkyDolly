@@ -61,11 +61,11 @@ private:
 private slots:
     void updateUi() noexcept;
     void updateConnectionStatus() const noexcept;
-    void handleFlightSimulatorConnectionSelectionChanged() const noexcept;
-    void handleStyleChanged() noexcept;
-    void handleSkyConnectPluginChanged() noexcept;
-    void handleAccepted() noexcept;
-    void handleTabChanged(int index) noexcept;
+    void onFlightSimulatorConnectionSelectionChanged() const noexcept;
+    void onStyleChanged() noexcept;
+    void onSkyConnectPluginChanged() noexcept;
+    void onAccepted() noexcept;
+    void onTabChanged(int index) noexcept;
 
     void initFlightSimulatorOptionWidget() noexcept;
 };

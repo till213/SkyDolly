@@ -65,7 +65,7 @@ static void destroySingletons() noexcept
 
 int main(int argc, char **argv) noexcept
 {
-    std::set_terminate(ExceptionHandler::handleTerminate);
+    std::set_terminate(ExceptionHandler::onTerminate);
 
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
@@ -103,11 +103,11 @@ int main(int argc, char **argv) noexcept
         destroySingletons();
     } catch (const std::exception &ex) {
         const QString stackTrace = StackTrace::generate();
-        ExceptionHandler::handleError(QStringLiteral("Exception"), stackTrace, ex);
+        ExceptionHandler::onError(QStringLiteral("Exception"), stackTrace, ex);
         res = ErrorCodes::StandardException;
     } catch (...) {
         const QString stackTrace = StackTrace::generate();
-        ExceptionHandler::handleError(QStringLiteral("Exception"), stackTrace, QStringLiteral("Non std::exception"));
+        ExceptionHandler::onError(QStringLiteral("Exception"), stackTrace, QStringLiteral("Non std::exception"));
         res = ErrorCodes::UnknownException;
     }
 

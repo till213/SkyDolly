@@ -462,7 +462,7 @@ void AbstractSkyConnect::seek(std::int64_t timestamp, SeekMode seekMode) noexcep
     }
 }
 
-void AbstractSkyConnect::handleAtEnd() noexcept
+void AbstractSkyConnect::onEndReached() noexcept
 {
     if (Settings::getInstance().isReplayLoopEnabled()) {
         skipToBegin();
@@ -501,7 +501,7 @@ std::int64_t AbstractSkyConnect::getCurrentTimestamp() const noexcept
     return d->currentTimestamp;
 }
 
-bool AbstractSkyConnect::isAtEnd() const noexcept
+bool AbstractSkyConnect::isEndReached() const noexcept
 {
     return d->currentTimestamp >= d->currentFlight.getTotalDurationMSec();
 }
@@ -742,7 +742,7 @@ std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
     return d->currentTimestamp;
 }
 
-void AbstractSkyConnect::handlePluginSettingsChanged(Connect::Mode mode) noexcept
+void AbstractSkyConnect::onPluginSettingsChanged(Connect::Mode mode) noexcept
 {
     switch (mode)
     {
@@ -766,10 +766,10 @@ void AbstractSkyConnect::frenchConnection() noexcept
     connect(&(d->recordingTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::recordData);
     connect(&(d->reconnectTimer), &QTimer::timeout,
-            this, &AbstractSkyConnect::handleReconnectTimer);
-    Settings &settings = Settings::getInstance();
+            this, &AbstractSkyConnect::onReconnectTimer);
+    auto &settings = Settings::getInstance();
     connect(&settings, &Settings::recordingSampleRateChanged,
-            this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
+            this, &AbstractSkyConnect::onRecordingSampleRateSettingsChanged);
 }
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
@@ -779,7 +779,7 @@ bool AbstractSkyConnect::hasRecordingStarted() const noexcept
 
 std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     return static_cast<std::int64_t>(std::round(settings.isAbsoluteSeekEnabled() ?
                                      settings.getSeekIntervalSeconds() * 1000.0 :
                                      settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
@@ -867,7 +867,7 @@ bool AbstractSkyConnect::updateUserAircraftFreeze() noexcept
 
 // PRIVATE SLOTS
 
-void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
+void AbstractSkyConnect::onRecordingSampleRateSettingsChanged(SampleRate::SampleRate sampleRate) noexcept
 {
     d->recordingSampleRate = SampleRate::toValue(sampleRate);
     d->recordingIntervalMSec = SampleRate::toIntervalMSec(d->recordingSampleRate);
@@ -884,7 +884,7 @@ void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate
     }
 }
 
-void AbstractSkyConnect::handleReconnectTimer() noexcept
+void AbstractSkyConnect::onReconnectTimer() noexcept
 {
     retryConnectAndSetup(Connect::Mode::SetupOnly);
 }

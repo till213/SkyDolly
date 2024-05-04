@@ -81,7 +81,7 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 {
     QDialog::showEvent(event);
     updateUi();
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &SimulationVariablesDialog::updateTitle);
 
@@ -91,7 +91,7 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 {
     QDialog::hideEvent(event);
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
                this, &SimulationVariablesDialog::updateTitle);
 

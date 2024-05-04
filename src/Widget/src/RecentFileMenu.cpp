@@ -141,7 +141,7 @@ void RecentFileMenu::updateNofRecentFileActions(int maxRecentFiles)
     }
 }
 
-void RecentFileMenu::handleRecentFileAction()
+void RecentFileMenu::onRecentFileAction()
 {
     RecentFile &recentFile = RecentFile::getInstance();
 

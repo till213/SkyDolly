@@ -112,7 +112,7 @@ std::vector<FlightData> IgcImportPlugin::importSelectedFlights(QIODevice &io, bo
 
         Convert convert;
         position.reserve(d->igcParser.getFixes().size());
-        for (const IgcParser::Fix &fix : d->igcParser.getFixes()) {
+        for (const auto &fix : d->igcParser.getFixes()) {
             // Import either GNSS or pressure altitude
             double heightAboveGeoid {0.0};
             if (d->pluginSettings.getAltitudeMode() == IgcImportSettings::AltitudeMode::Gnss) {
@@ -380,7 +380,7 @@ void IgcImportPlugin::updateWaypoints(Aircraft &aircraft) const noexcept
     } else {
         // No positions - use timestamps 0, 1, 2, ...
         std::int64_t currentWaypointTimestamp = 0;
-        for (const IgcParser::TaskItem &item : d->igcParser.getTask().tasks) {
+        for (const auto &item : d->igcParser.getTask().tasks) {
             Waypoint waypoint;
             waypoint.latitude = item.latitude;
             waypoint.longitude = item.longitude;

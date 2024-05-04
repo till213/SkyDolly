@@ -78,7 +78,7 @@ QString File::getSequenceFilePath(const QString &filePath, int n) noexcept
 
      const QStringList fileNames = dir.entryList(QDir::Files, QDir::SortFlag::Time);
      filePaths.reserve(fileNames.count());
-     for (const QString &fileName : fileNames) {
+     for (const auto &fileName : fileNames) {
          filePaths.append(dir.absoluteFilePath(fileName));
      }
 

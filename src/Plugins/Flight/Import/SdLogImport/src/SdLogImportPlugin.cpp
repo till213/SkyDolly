@@ -83,7 +83,7 @@ std::vector<FlightData> SdlogImportPlugin::importSelectedFlights(QIODevice &io, 
             ok = flightIds.size() > 0;
             if (ok) {
                 flights.reserve(flightIds.size());
-                for (const std::int64_t flightId : flightIds) {
+                for (const auto flightId : flightIds) {
                     FlightData flightData;
                     ok = d->importFlightService->importFlightData(flightId, flightData);
                     flights.push_back(std::move(flightData));

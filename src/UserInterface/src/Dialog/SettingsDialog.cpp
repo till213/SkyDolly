@@ -144,7 +144,7 @@ void SettingsDialog::initUi() noexcept
     ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz60), tr("60 Hz"));
 
     // Flight simulator
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
     for (const auto &plugin : plugins) {
         ui->connectionComboBox->addItem(plugin.second.name, plugin.first);
@@ -160,22 +160,22 @@ void SettingsDialog::initUi() noexcept
     }
 
     ui->settingsTabWidget->setCurrentIndex(::ReplayTab);
-    handleTabChanged(ui->settingsTabWidget->currentIndex());
+    onTabChanged(ui->settingsTabWidget->currentIndex());
 }
 
 void SettingsDialog::frenchConnection() noexcept
 {
     const auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::connectionChanged,
-            this, &SettingsDialog::handleSkyConnectPluginChanged);
+            this, &SettingsDialog::onSkyConnectPluginChanged);
     connect(this, &SettingsDialog::accepted,
-            this, &SettingsDialog::handleAccepted);
+            this, &SettingsDialog::onAccepted);
     connect(ui->settingsTabWidget, &QTabWidget::currentChanged,
-            this, &SettingsDialog::handleTabChanged);
+            this, &SettingsDialog::onTabChanged);
     connect(ui->connectionComboBox, &QComboBox::currentIndexChanged,
-            this, &SettingsDialog::handleFlightSimulatorConnectionSelectionChanged);
+            this, &SettingsDialog::onFlightSimulatorConnectionSelectionChanged);
     connect(ui->styleComboBox, &QComboBox::currentIndexChanged,
-            this, &SettingsDialog::handleStyleChanged);
+            this, &SettingsDialog::onStyleChanged);
 }
 
 // PRIVATE SLOTS
@@ -194,7 +194,7 @@ void SettingsDialog::updateUi() noexcept
     ui->recordFrequencyComboBox->setCurrentIndex(Enum::underly(settings.getRecordingSampleRate()));
 
     // Flight simulator
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     std::optional<QString> pluginName = skyConnectManager.getCurrentSkyConnectPluginName();
     if (pluginName) {
         ui->connectionComboBox->setCurrentText(pluginName.value());
@@ -223,7 +223,7 @@ void SettingsDialog::updateConnectionStatus() const noexcept
 
     ui->connectionStatusLabel->setToolTip(QString());
 
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     switch (skyConnectManager.getState()) {
     case Connect::State::Disconnected:
         ui->connectionStatusLabel->setText(tr("Disconnected"));
@@ -253,14 +253,14 @@ void SettingsDialog::updateConnectionStatus() const noexcept
     }
 }
 
-void SettingsDialog::handleFlightSimulatorConnectionSelectionChanged() const noexcept
+void SettingsDialog::onFlightSimulatorConnectionSelectionChanged() const noexcept
 {
     auto &skyConnectManager = SkyConnectManager::getInstance();
     const auto uuid = ui->connectionComboBox->currentData().toUuid();
     skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
 }
 
-void SettingsDialog::handleStyleChanged() noexcept
+void SettingsDialog::onStyleChanged() noexcept
 {
     if (ui->styleComboBox->currentData().toString() != Settings::getInstance().getStyleKey()) {
         ui->styleInfoLabel->setText(tr("Restart the application in order for the new style to take effect."));
@@ -269,7 +269,7 @@ void SettingsDialog::handleStyleChanged() noexcept
     }
 }
 
-void SettingsDialog::handleSkyConnectPluginChanged() noexcept
+void SettingsDialog::onSkyConnectPluginChanged() noexcept
 {
     if (d->skyConnectOptionWidget != nullptr) {
         delete d->skyConnectOptionWidget;
@@ -278,7 +278,7 @@ void SettingsDialog::handleSkyConnectPluginChanged() noexcept
     initFlightSimulatorOptionWidget();
 }
 
-void SettingsDialog::handleAccepted() noexcept
+void SettingsDialog::onAccepted() noexcept
 {
     auto &settings = Settings::getInstance();
 
@@ -309,7 +309,7 @@ void SettingsDialog::handleAccepted() noexcept
     settings.setDefaultMinimalUiReplaySpeedVisibility(!ui->hideReplaySpeedCheckBox->isChecked());
 }
 
-void SettingsDialog::handleTabChanged(int index) noexcept
+void SettingsDialog::onTabChanged(int index) noexcept
 {
     switch (index)
     {
@@ -318,7 +318,7 @@ void SettingsDialog::handleTabChanged(int index) noexcept
                 this, &SettingsDialog::updateConnectionStatus);
         d->updateTimer.start(::UpdateIntervalMSec);
 #ifdef DEBUG
-        qDebug() << "SettingsDialog::handleTabChanged: index:" << index << "started update timer";
+        qDebug() << "SettingsDialog::onTabChanged: index:" << index << "started update timer";
 #endif
         break;
     default:
@@ -326,7 +326,7 @@ void SettingsDialog::handleTabChanged(int index) noexcept
         disconnect(&d->updateTimer, &QTimer::timeout,
                    this, &SettingsDialog::updateConnectionStatus);
 #ifdef DEBUG
-        qDebug() << "SettingsDialog::handleTabChanged: index:" << index << "stopped update timer";
+        qDebug() << "SettingsDialog::onTabChanged: index:" << index << "stopped update timer";
 #endif
         break;
     }

@@ -91,7 +91,7 @@ bool PositionAndAttitudeCsvWriter::write(const FlightData &flightData, const Air
     if (ok) {
         const QDateTime startDateTimeUtc = flightData.getAircraftStartZuluTime(aircraft);
         const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
-        for (const PositionData &positionData : interpolatedPositionData) {
+        for (const auto &positionData : interpolatedPositionData) {
             const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
             const QString csv = QString::number(positionData.timestamp) % Csv::CommaSep %
                                 dateTimeUtc.toString(Qt::ISODate) % Csv::CommaSep %

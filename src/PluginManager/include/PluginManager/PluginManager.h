@@ -28,15 +28,16 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <unordered_map>
 
 #include <QObject>
-#include <QMap>
 
 class QIODevice;
 class QUuid;
 class QWidget;
 class QString;
 
+#include <Kernel/QUuidHasher.h>
 #include "PluginManagerLib.h"
 
 class SkyConnectIntf;
@@ -73,13 +74,15 @@ public:
     bool importLocations(const QUuid &pluginUuid) const noexcept;
     bool exportLocations(const QUuid &pluginUuid) const noexcept;
 
+    using PluginRegistry = std::unordered_map<QUuid, QString, QUuidHasher>;
+
 private:
     const std::unique_ptr<PluginManagerPrivate> d;
 
     PluginManager() noexcept;
     ~PluginManager() override;
 
-    std::vector<PluginManager::Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &plugins) noexcept;
+    std::vector<PluginManager::Handle> enumeratePlugins(const QString &pluginDirectoryName, PluginRegistry &pluginRegistry) noexcept;
 };
 
 #endif // PLUGINMANAGER_H

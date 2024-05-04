@@ -173,7 +173,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
 
     std::size_t totalFlightsStored {0};
     std::size_t totalAircraftStored {0};
-    for (const QString &filePath : filePaths) {
+    for (const auto &filePath : filePaths) {
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
         if (ok) {

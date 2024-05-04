@@ -253,7 +253,7 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
         }
     }
 
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     settings.setWindowGeometry(saveGeometry());
     settings.setWindowState(saveState());
 }
@@ -265,7 +265,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event) noexcept
         const QList<QUrl> urlList = mimeData->urls();
         // Accept the proposed drop action if at least one
         // URL looks to be a Sky Dolly logbook (*.sdlog)
-        for (const QUrl &url : urlList) {
+        for (const auto &url : urlList) {
             if (url.isLocalFile() && url.fileName().endsWith(Const::LogbookExtension)) {
                 event->acceptProposedAction();
                 break;
@@ -279,7 +279,7 @@ void MainWindow::dropEvent(QDropEvent *event) noexcept
     QString filePath;
     const QMimeData *mimeData = event->mimeData();
     const QList<QUrl> urlList = mimeData->urls();
-    for (const QUrl &url : urlList) {
+    for (const auto &url : urlList) {
         if (url.isLocalFile() && url.fileName().endsWith(Const::LogbookExtension)) {
             filePath = url.toLocalFile();
             break;
@@ -295,7 +295,7 @@ void MainWindow::dropEvent(QDropEvent *event) noexcept
 void MainWindow::frenchConnection() noexcept
 {
     // Sky Connect
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &MainWindow::onTimestampChanged);
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
@@ -324,7 +324,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::updateUi);
 
     // Settings
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     connect(&settings, &Settings::changed,
             this, &MainWindow::updateMainWindow);
     connect(&settings, &Settings::defaultMinimalUiButtonTextVisibilityChanged,
@@ -452,7 +452,7 @@ void MainWindow::frenchConnection() noexcept
 
 void MainWindow::initUi() noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     setWindowIcon(QIcon(QString::fromLatin1(":/img/icons/application-icon.png")));
 
     // File menu
@@ -485,7 +485,7 @@ void MainWindow::initUi() noexcept
     const int previewInfoCount = settings.getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
         QTimer::singleShot(0, this, [this]() {
-            Settings &settings = Settings::getInstance();
+            auto &settings = Settings::getInstance();
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
             QMessageBox::information(
@@ -525,7 +525,7 @@ void MainWindow::initPlugins() noexcept
     d->locationImportActionGroup = new QActionGroup(this);
     d->locationExportActionGroup = new QActionGroup(this);
 
-    PluginManager &pluginManager = PluginManager::getInstance();
+    auto &pluginManager = PluginManager::getInstance();
     pluginManager.initialise(this);
 
     // Flight import
@@ -533,7 +533,7 @@ void MainWindow::initPlugins() noexcept
     d->hasFlightImportPlugins = flightImportPlugins.size() > 0;
     if (d->hasFlightImportPlugins) {
         ui->flightImportMenu->setEnabled(true);
-        for (const PluginManager::Handle &handle : flightImportPlugins) {
+        for (const auto &handle : flightImportPlugins) {
             auto flightImportAction = new QAction(handle.second, ui->flightImportMenu);
             // First: plugin uuid
             flightImportAction->setData(handle.first);
@@ -549,7 +549,7 @@ void MainWindow::initPlugins() noexcept
     d->hasFlightExportPlugins = flightExportPlugins.size() > 0;
     if (d->hasFlightExportPlugins) {
         ui->flightExportMenu->setEnabled(true);
-        for (const PluginManager::Handle &handle : flightExportPlugins) {
+        for (const auto &handle : flightExportPlugins) {
             auto flightExportAction = new QAction(handle.second, ui->flightExportMenu);
             // First: plugin uuid
             flightExportAction->setData(handle.first);
@@ -565,7 +565,7 @@ void MainWindow::initPlugins() noexcept
     d->hasLocationImportPlugins = locationImportPlugins.size() > 0;
     if (d->hasLocationImportPlugins) {
         ui->locationImportMenu->setEnabled(true);
-        for (const PluginManager::Handle &handle : locationImportPlugins) {
+        for (const auto &handle : locationImportPlugins) {
             auto locationImportAction = new QAction(handle.second, ui->locationImportMenu);
             // First: plugin uuid
             locationImportAction->setData(handle.first);
@@ -581,7 +581,7 @@ void MainWindow::initPlugins() noexcept
     d->hasLocationExportPlugins = locationExportPlugins.size() > 0;
     if (d->hasLocationExportPlugins) {
         ui->locationExportMenu->setEnabled(true);
-        for (const PluginManager::Handle &handle : locationExportPlugins) {
+        for (const auto &handle : locationExportPlugins) {
             auto locationExportAction = new QAction(handle.second, ui->locationExportMenu);
             // First: plugin uuid
             locationExportAction->setData(handle.first);
@@ -650,7 +650,7 @@ void MainWindow::initModuleSelectorUi() noexcept
 
 void MainWindow::initViewUi() noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
 
     const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
     ui->showModulesAction->setChecked(moduleSelectorVisible);
@@ -791,9 +791,9 @@ void MainWindow::initReplaySpeedUi() noexcept
     d->customReplaySpeedPercentValidator->setRange(::ReplaySpeedAbsoluteMin * 100.0, ::ReplaySpeedAbsoluteMax * 100.0, ::ReplaySpeedDecimalPlaces);
 
     // The replay speed factor in SkyConnect is always an absolute factor
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     const double factor = skyConnectManager.getReplaySpeedFactor();
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     if (settings.getReplaySpeeedUnit() == Replay::SpeedUnit::Absolute) {
         d->lastCustomReplaySpeedFactor = factor;
     } else {
@@ -838,8 +838,8 @@ void MainWindow::createTrayIcon() noexcept
 
 void MainWindow::initSkyConnectPlugin() noexcept
 {
-    Settings &settings = Settings::getInstance();
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &settings = Settings::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> skyConnectPlugins = skyConnectManager.initialisePlugins();
     if (skyConnectPlugins.empty()) {
         QMessageBox::warning(this, tr("No valid connection plugin found"), tr("No valid connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality."));
@@ -902,7 +902,7 @@ inline bool MainWindow::hasStatisticsDialog() const noexcept
 
 void MainWindow::updateMinimalUi(bool enable)
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     settings.setMinimalUiEnabled(enable);
     const bool hasModules = d->moduleManager->getActiveModule().has_value();
     ui->showMinimalAction->setEnabled(hasModules);
@@ -933,7 +933,7 @@ void MainWindow::updateMinimalUi(bool enable)
 
 bool MainWindow::isMinimalUiEnabled() const noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     const bool minimalUi = settings.isMinimalUiEnabled();
     const bool hasModules = d->moduleManager->getActiveModule().has_value();
     // Also enable minimal UI mode if no module plugins are available
@@ -1044,7 +1044,7 @@ void MainWindow::updateMinimalUiEssentialButtonVisibility() noexcept
 
 void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     bool replaySpeedVisible {false};
     if (enterMinimalUi) {
         // When switching to minimal UI mode the default replay speed visibility takes precedence
@@ -1062,7 +1062,7 @@ void MainWindow::updatePositionSliderTickInterval() noexcept
     int tickInterval {10};
     if (isMinimalUiEnabled()) {
         if (!ui->showReplaySpeedAction->isChecked()) {
-            Settings &settings = Settings::getInstance();
+            auto &settings = Settings::getInstance();
             if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                 if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                     tickInterval = 10;
@@ -1102,7 +1102,7 @@ double MainWindow::getCustomSpeedFactor() const
 
 void MainWindow::seek(int value, SkyConnectIntf::SeekMode seekMode) const noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     const double factor = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
     const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
     auto timestamp = static_cast<std::int64_t>(std::round(factor * static_cast<double>(totalDuration)));
@@ -1118,7 +1118,7 @@ void MainWindow::seek(int value, SkyConnectIntf::SeekMode seekMode) const noexce
 void MainWindow::onPositionSliderPressed() noexcept
 {
     d->continuousSeek = true;
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     d->previousState = skyConnectManager.getState();
     if (skyConnectManager.isInReplayState()) {
         // Pause the replay while sliding the position slider
@@ -1145,7 +1145,7 @@ void MainWindow::onPositionSliderReleased() noexcept
 
 void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isIdle() || skyConnectManager.getState() == Connect::State::ReplayPaused) {
         std::int64_t timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
         skyConnectManager.seek(timestamp, SkyConnectIntf::SeekMode::Discrete);
@@ -1214,7 +1214,7 @@ void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
         break;
     }
 
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.setReplaySpeedFactor(replaySpeedFactor);
 
     updateReplaySpeedUi();
@@ -1222,7 +1222,7 @@ void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
 
 void MainWindow::onCustomSpeedChanged() noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     const double customReplaySpeedFactor = getCustomSpeedFactor();
     skyConnectManager.setReplaySpeedFactor(customReplaySpeedFactor);
     switch (Settings::getInstance().getReplaySpeeedUnit()) {
@@ -1237,7 +1237,7 @@ void MainWindow::onCustomSpeedChanged() noexcept
 
 void MainWindow::onReplaySpeedUnitSelected(int index) noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     Replay::SpeedUnit replaySpeedUnit = static_cast<Replay::SpeedUnit>(d->replaySpeedUnitComboBox->itemData(index).toInt());
     switch (replaySpeedUnit) {
     case Replay::SpeedUnit::Absolute:
@@ -1274,7 +1274,7 @@ void MainWindow::updateControlUi() noexcept
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const bool hasRecording = aircraft.hasRecording();
 
-    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
     const bool hasSkyConnectPlugins = skyConnectManager.hasPlugins();
     switch (skyConnectManager.getState()) {
     case Connect::State::Disconnected:
@@ -1390,7 +1390,7 @@ void MainWindow::onRecordingStopped() noexcept
 
 void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept
 {
-    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
     QString pushNotification;
     switch (action) {
     case FlightSimulatorShortcuts::Action::Record:
@@ -1466,7 +1466,7 @@ void MainWindow::onRecordingDurationChanged() noexcept
 
 void MainWindow::updateReplayDuration() noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
     const QTime time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(totalDuration));
     ui->timestampTimeEdit->blockSignals(true);
@@ -1519,7 +1519,7 @@ void MainWindow::updateWindowMenu() noexcept
 
 void MainWindow::updateMainWindow() noexcept
 {
-    const Settings &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     const Qt::WindowFlags flags = windowFlags();
     if (settings.isWindowStaysOnTopEnabled() != flags.testFlag(Qt::WindowStaysOnTopHint)) {
         if (Settings::getInstance().isWindowStaysOnTopEnabled()) {
@@ -1619,7 +1619,7 @@ void MainWindow::updateRecentFileMenu() noexcept
 
 void MainWindow::optimiseLogbook() noexcept
 {
-    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const auto &persistenceManager = PersistenceManager::getInstance();
     const QString logbookPath = persistenceManager.getLogbookPath();
     QFileInfo fileInfo = QFileInfo(logbookPath);
 
@@ -1676,14 +1676,14 @@ void MainWindow::quit() noexcept
 
 void MainWindow::onShowModulesChanged(bool enable) noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     settings.setModuleSelectorVisible(enable);
     ui->moduleSelectorWidget->setVisible(enable);
 }
 
 void MainWindow::onShowReplaySpeedChanged(bool enable) noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     settings.setReplaySpeedVisible(enable);
     updateReplaySpeedVisibility(false);
     updatePositionSliderTickInterval();
@@ -1810,7 +1810,7 @@ void MainWindow::clearFlight() noexcept
 void MainWindow::onFlightRestored() noexcept
 {
     updateUi();
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.skipToBegin();
     if (skyConnectManager.isConnected()) {
         // Make sure we are unpaused...
@@ -1830,12 +1830,12 @@ void MainWindow::onLogbookConnectionChanged(bool connected) noexcept
 
 void MainWindow::onFlightImport(QAction *action) noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     const QUuid pluginUuid = action->data().toUuid();
     const bool ok = PluginManager::getInstance().importFlights(pluginUuid, flight);
     if (ok) {
         updateUi();
-        SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+        auto &skyConnectManager = SkyConnectManager::getInstance();
         skyConnectManager.skipToBegin();
         if (skyConnectManager.isConnected()) {
             d->moduleManager->setPlaying(true);
@@ -1847,7 +1847,7 @@ void MainWindow::onFlightImport(QAction *action) noexcept
 void MainWindow::onFlightExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     PluginManager::getInstance().exportFlight(flight, pluginUuid);
 }
 

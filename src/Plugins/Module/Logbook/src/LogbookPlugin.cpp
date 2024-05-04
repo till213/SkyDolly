@@ -89,14 +89,14 @@ ModuleBaseSettings &LogbookPlugin::getModuleSettings() const noexcept
 
 void LogbookPlugin::onRecordingStopped() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::size_t sequenceNumber = flight.count();
     if (sequenceNumber > 1) {
         // Sequence starts at 1
         const bool ok = d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
         if (!ok) {
             flight.removeLastAircraft();
-            const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+            const auto &persistenceManager = PersistenceManager::getInstance();
             const QString logbookPath = QDir::toNativeSeparators(persistenceManager.getLogbookPath());
             QMessageBox::critical(getWidget(), tr("Write Error"), tr("The aircraft could not be stored into the logbook %1.").arg(logbookPath));
         }

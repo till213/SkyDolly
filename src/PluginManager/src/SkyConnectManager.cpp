@@ -34,7 +34,6 @@
 #include <QStringLiteral>
 #include <QStringList>
 #include <QUuid>
-#include <QMap>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -69,8 +68,8 @@ struct SkyConnectManagerPrivate
     }
 
     QDir pluginsDirectory;
-    // Plugin UUID / plugin path
-    QMap<QUuid, QString> pluginRegistry;
+    // Key: uuid - value: plugin path
+    SkyConnectManager::PluginRegistry pluginRegistry;
     std::vector<SkyConnectManager::Handle> pluginHandles;
     QPluginLoader *pluginLoader;
     QUuid currentPluginUuid;
@@ -388,7 +387,7 @@ std::int64_t SkyConnectManager::getCurrentTimestamp() const noexcept
 bool SkyConnectManager::isAtEnd() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().isAtEnd() : false;
+    return skyConnect ? skyConnect->get().isEndReached() : false;
 }
 
 bool SkyConnectManager::requestInitialPosition() const noexcept
@@ -411,7 +410,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                 unloadCurrentPlugin();
             }
 
-            const QString pluginPath = d->pluginRegistry.value(uuid);
+            const QString pluginPath = d->pluginRegistry[uuid];
             d->pluginLoader->setFileName(pluginPath);
             QObject *plugin = d->pluginLoader->instance();
             SkyConnectIntf *skyPlugin = qobject_cast<SkyConnectIntf *>(plugin);
@@ -485,7 +484,7 @@ SkyConnectManager::~SkyConnectManager()
 void SkyConnectManager::frenchConnection() noexcept
 {
     // Settings
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     connect(&settings, &Settings::skyConnectPluginUuidChanged,
             this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
 }
@@ -497,7 +496,7 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
         d->pluginsDirectory.cd(pluginDirectoryName);
         const QStringList entryList = d->pluginsDirectory.entryList(QDir::Files);
         d->pluginHandles.reserve(entryList.count());
-        for (const QString &fileName : entryList) {
+        for (const auto &fileName : entryList) {
             const QString pluginPath = d->pluginsDirectory.absoluteFilePath(fileName);
             QPluginLoader loader(pluginPath);
 
@@ -511,7 +510,7 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
                 SkyConnectPlugin plugin {pluginName, flightSimulatorId};
                 const Handle handle {uuid, plugin};
                 d->pluginHandles.push_back(handle);
-                d->pluginRegistry.insert(uuid, pluginPath);
+                d->pluginRegistry[uuid] =pluginPath;
             }
         }
         d->pluginsDirectory.cdUp();
@@ -520,7 +519,7 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
 
 void SkyConnectManager::initialisePlugin() noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     QUuid uuid = settings.getSkyConnectPluginUuid();
     // Try to load plugin as stored in the settings
     bool ok = !uuid.isNull() && tryAndSetCurrentSkyConnect(uuid);

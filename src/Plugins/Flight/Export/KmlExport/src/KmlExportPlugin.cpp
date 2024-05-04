@@ -289,7 +289,7 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
 bool KmlExportPlugin::exportWaypoints(const FlightPlan &flightPlan, QIODevice &io) const noexcept
 {
     bool ok {true};
-    for (const Waypoint &waypoint : flightPlan) {
+    for (const auto &waypoint : flightPlan) {
         ok = exportPlacemark(io, KmlStyleExport::Icon::Flag, waypoint.identifier, getWaypointDescription(waypoint),
                              waypoint.longitude, waypoint.latitude, waypoint.altitude, HeadingNorth);
     }

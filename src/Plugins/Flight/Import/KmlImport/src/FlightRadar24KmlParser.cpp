@@ -110,7 +110,7 @@ std::vector<FlightData> FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStrea
     flightData.creationTime = d->firstDateTimeUtc;
     // Now "upsert" the position data, taking duplicate timestamps into account
     Position &position = aircraft.getPosition();
-    for (const FlightRadar24KmlParserPrivate::TrackItem &trackItem : d->trackData) {
+    for (const auto &trackItem : d->trackData) {
         PositionData positionData {trackItem.latitude, trackItem.longitude, trackItem.altitude};
         positionData.timestamp = trackItem.timestamp;
         positionData.velocityBodyZ = trackItem.speed;

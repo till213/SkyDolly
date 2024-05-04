@@ -63,7 +63,7 @@ void AircraftInfoWidget::showEvent(QShowEvent *event) noexcept
     QWidget::showEvent(event);
     updateUi();
 
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::aircraftInfoChanged,
             this, &AircraftInfoWidget::updateUi);
     connect(&flight, &Flight::userAircraftChanged,
@@ -79,7 +79,7 @@ void AircraftInfoWidget::showEvent(QShowEvent *event) noexcept
 void AircraftInfoWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::aircraftInfoChanged,
                this, &AircraftInfoWidget::updateUi);
     disconnect(&flight, &Flight::userAircraftChanged,
@@ -117,7 +117,7 @@ void AircraftInfoWidget::initUi() noexcept
 
 void AircraftInfoWidget::updateUi() noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     const Aircraft &aircraft = flight.getUserAircraft();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
 

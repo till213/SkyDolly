@@ -79,7 +79,7 @@ void PersistenceManager::destroyInstance() noexcept
 bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
 {
     bool ok {true};
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     QString selectedLogbookPath = logbookPath;
     bool retry {true};
     while (retry && ok) {
@@ -99,7 +99,7 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
                 const auto & [success, databaseVersion] = d->databaseService->checkDatabaseVersion();
                 ok = success;
                 if (ok) {
-                    Flight &flight = Logbook::getInstance().getCurrentFlight();
+                    auto &flight = Logbook::getInstance().getCurrentFlight();
                     flight.clear(true, FlightData::CreationTimeMode::Reset);
                     // Create a backup before migration of existing logbooks
                     Version appVersion;

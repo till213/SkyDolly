@@ -67,7 +67,7 @@ bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, A
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
     if (ok) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        auto &flight = Logbook::getInstance().getCurrentFlight();
         ok = d->aircraftDao->add(flightId, sequenceNumber, aircraft);
         if (ok) {
             ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
@@ -87,7 +87,7 @@ bool AircraftService::exportAircraft(std::int64_t flightId, std::size_t sequence
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
     if (ok) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        auto &flight = Logbook::getInstance().getCurrentFlight();
         ok = d->aircraftDao->exportAircraft(flightId, sequenceNumber, aircraft);
         if (ok) {
             ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
@@ -104,7 +104,7 @@ bool AircraftService::exportAircraft(std::int64_t flightId, std::size_t sequence
 
 bool AircraftService::deleteByIndex(int index) noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t aircraftId = flight.removeAircraftByIndex(index);
     bool ok {true};
     if (aircraftId != Const::InvalidId) {

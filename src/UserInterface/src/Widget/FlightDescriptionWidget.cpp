@@ -69,7 +69,7 @@ void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
     updateUi();
 
     // Connection
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &FlightDescriptionWidget::updateUi);
 
@@ -95,7 +95,7 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
     QWidget::hideEvent(event);
 
     // Connection
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
                this, &FlightDescriptionWidget::updateUi);
 
@@ -135,7 +135,7 @@ void FlightDescriptionWidget::frenchConnection() noexcept
 
 void FlightDescriptionWidget::updateUi() noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
 
     bool enabled = flight.getId() != Const::InvalidId;
     ui->titleLineEdit->blockSignals(true);
@@ -162,18 +162,18 @@ void FlightDescriptionWidget::updateUi() noexcept
 
 void FlightDescriptionWidget::onTitleEdited() const noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     d->flightService->updateTitle(flight, ui->titleLineEdit->text());
 }
 
 void FlightDescriptionWidget::onFlightNumberEdited() const noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     d->flightService->updateFlightNumber(flight, ui->flightNumberLineEdit->text());
 }
 
 void FlightDescriptionWidget::onDescriptionEdited() const noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     d->flightService->updateDescription(flight, ui->focusPlainTextEdit->toPlainText());
 }

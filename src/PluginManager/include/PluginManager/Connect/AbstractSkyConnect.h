@@ -98,7 +98,7 @@ public:
     void skipForward() noexcept override;
     void skipToEnd() noexcept override;
     void seek(std::int64_t timestamp, SeekMode seekMode) noexcept override;
-    void handleAtEnd() noexcept override;
+    void onEndReached() noexcept override;
 
     Connect::State getState() const noexcept override;
     bool isConnected() const noexcept override;
@@ -106,7 +106,7 @@ public:
     bool isActive() const noexcept override;
 
     std::int64_t getCurrentTimestamp() const noexcept override;
-    bool isAtEnd() const noexcept override;
+    bool isEndReached() const noexcept override;
 
     double getReplaySpeedFactor() const noexcept override;
     void setReplaySpeedFactor(double factor) noexcept override;
@@ -196,7 +196,7 @@ protected:
 
 protected slots:
     std::int64_t updateCurrentTimestamp() noexcept;
-    void handlePluginSettingsChanged(Connect::Mode mode) noexcept;
+    void onPluginSettingsChanged(Connect::Mode mode) noexcept;
     virtual void recordData() noexcept = 0;
 
 private:
@@ -215,8 +215,8 @@ private:
     bool updateUserAircraftFreeze() noexcept;
 
 private slots:
-    void handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
-    void handleReconnectTimer() noexcept;
+    void onRecordingSampleRateSettingsChanged(SampleRate::SampleRate sampleRate) noexcept;
+    void onReconnectTimer() noexcept;
     void retryConnectAndSetup(Connect::Mode mode) noexcept;
 };
 

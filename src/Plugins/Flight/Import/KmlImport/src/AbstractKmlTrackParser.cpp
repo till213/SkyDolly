@@ -133,7 +133,7 @@ void AbstractKmlTrackParser::parseTrack(FlightData &flightData) noexcept
         }
 
         // Now "upsert" the position data, taking possible duplicate timestamps into account
-        for (const TrackItem &trackItem : trackData) {
+        for (const auto &trackItem : trackData) {
             PositionData positionData {std::get<1>(trackItem), std::get<2>(trackItem), std::get<3>(trackItem)};
             positionData.timestamp = std::get<0>(trackItem);
 

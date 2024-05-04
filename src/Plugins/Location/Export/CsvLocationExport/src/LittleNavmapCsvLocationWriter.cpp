@@ -137,7 +137,7 @@ bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations
     Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
     Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country);
     if (ok) {
-        for (const Location &location : locations) {
+        for (const auto &location : locations) {
             QString title = location.title;
             QString description = location.description;
             QString identifier = location.identifier;

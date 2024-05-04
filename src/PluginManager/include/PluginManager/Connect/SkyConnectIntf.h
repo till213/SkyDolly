@@ -281,14 +281,14 @@ public:
     virtual void skipForward() noexcept = 0;
     virtual void skipToEnd() noexcept = 0;
     virtual void seek(std::int64_t timestamp, SeekMode seekMode) noexcept = 0;
-    virtual void handleAtEnd() noexcept = 0;
+    virtual void onEndReached() noexcept = 0;
 
     virtual Connect::State getState() const noexcept = 0;
     virtual bool isConnected() const noexcept = 0;
     virtual bool isIdle() const noexcept = 0;
 
     virtual std::int64_t getCurrentTimestamp() const noexcept = 0;
-    virtual bool isAtEnd() const noexcept = 0;
+    virtual bool isEndReached() const noexcept = 0;
 
     virtual double getReplaySpeedFactor() const noexcept = 0;
     virtual void setReplaySpeedFactor(double factor) noexcept = 0;

@@ -244,7 +244,7 @@ void LogbookWidget::updateTable() noexcept
 {
     if (PersistenceManager::getInstance().isConnected()) {
 
-        const Flight &flight = Logbook::getInstance().getCurrentFlight();
+        const auto &flight = Logbook::getInstance().getCurrentFlight();
         d->flightInMemoryId = flight.getId();
         std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->moduleSettings.getFlightSelector());
 
@@ -260,7 +260,7 @@ void LogbookWidget::updateTable() noexcept
         ui->logTableWidget->setRowCount(static_cast<int>(summaries.size()));
 
         int row {0};
-        for (const FlightSummary &summary : summaries) {
+        for (const auto &summary : summaries) {
             initRow(summary, row);
             ++row;
         }
@@ -509,7 +509,7 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::updateAircraftIcons);
 
     // Connection
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::recordingStarted,
             this, &LogbookWidget::onRecordingStarted);
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
@@ -693,7 +693,7 @@ inline bool LogbookWidget::isMatch(QTableWidgetItem *flightIdItem, std::int64_t 
 void LogbookWidget::onRecordingStarted() noexcept
 {
     if (SkyConnectManager::getInstance().isInRecordingState()) {
-        const Flight &flight = Logbook::getInstance().getCurrentFlight();
+        const auto &flight = Logbook::getInstance().getCurrentFlight();
         FlightSummary summary = flight.getFlightSummary();
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
@@ -714,7 +714,7 @@ void LogbookWidget::updateUi() noexcept
 
 void LogbookWidget::updateAircraftIcons() noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t flightInMemoryId = flight.getId();
 
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
@@ -785,7 +785,7 @@ void LogbookWidget::deleteFlight() noexcept
     const std::int64_t selectedFlightId = getSelectedFlightId();
     if (selectedFlightId != Const::InvalidId) {
 
-        Settings &settings = Settings::getInstance();
+        auto &settings = Settings::getInstance();
         bool doDelete {true};
         if (settings.isDeleteFlightConfirmationEnabled()) {
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
@@ -849,7 +849,7 @@ void LogbookWidget::onCellChanged(int row, int column) noexcept
 {
     QTableWidgetItem *item = ui->logTableWidget->item(row, column);
     const QString value = item->data(Qt::EditRole).toString();
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t selectedFlightId = getSelectedFlightId();
 
     if (column == d->titleColumn) {

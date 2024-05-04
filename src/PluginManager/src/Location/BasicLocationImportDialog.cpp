@@ -106,7 +106,7 @@ void BasicLocationImportDialog::initUi() noexcept
 
 void BasicLocationImportDialog::initBasicUi() noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     ui->pathLineEdit->setText(QDir::toNativeSeparators(settings.getExportPath()));
     ui->importDirectoryCheckBox->setChecked(d->pluginSettings.isImportDirectoryEnabled());
 

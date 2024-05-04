@@ -141,7 +141,7 @@ std::vector<Aircraft> SQLiteAircraftDao::getByFlightId(std::int64_t flightId, bo
     std::vector<AircraftInfo> aircraftInfos = getAircraftInfosByFlightId(flightId, &success);
     if (success) {
         aircraftList.reserve(aircraftInfos.size());
-        for (const AircraftInfo &info: aircraftInfos) {
+        for (const auto &info: aircraftInfos) {
             Aircraft aircraft;
             aircraft.setId(info.aircraftId);
             aircraft.setAircraftInfo(info);
@@ -448,14 +448,14 @@ inline std::int64_t SQLiteAircraftDao::insertAircraft(std::int64_t flightId, std
 inline bool SQLiteAircraftDao::insertAircraftData(std::int64_t aircraftId, const Aircraft &aircraft) const noexcept
 {
     bool ok {true};
-    for (const PositionData &data : aircraft.getPosition()) {
+    for (const auto &data : aircraft.getPosition()) {
         ok = d->positionDao->add(aircraftId, data);
         if (!ok) {
             break;
         }
     }
     if (ok) {
-        for (const EngineData &data : aircraft.getEngine()) {
+        for (const auto &data : aircraft.getEngine()) {
             ok = d->engineDao->add(aircraftId, data);
             if (!ok) {
                 break;
@@ -463,7 +463,7 @@ inline bool SQLiteAircraftDao::insertAircraftData(std::int64_t aircraftId, const
         }
     }
     if (ok) {
-        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControl()) {
+        for (const auto &data : aircraft.getPrimaryFlightControl()) {
             ok = d->primaryFlightControlDao->add(aircraftId, data);
             if (!ok) {
                 break;
@@ -471,7 +471,7 @@ inline bool SQLiteAircraftDao::insertAircraftData(std::int64_t aircraftId, const
         }
     }
     if (ok) {
-        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControl()) {
+        for (const auto &data : aircraft.getSecondaryFlightControl()) {
             ok = d->secondaryFlightControlDao->add(aircraftId, data);
             if (!ok) {
                 break;
@@ -479,7 +479,7 @@ inline bool SQLiteAircraftDao::insertAircraftData(std::int64_t aircraftId, const
         }
     }
     if (ok) {
-        for (const AircraftHandleData &data : aircraft.getAircraftHandle()) {
+        for (const auto &data : aircraft.getAircraftHandle()) {
             ok = d->handleDao->add(aircraftId, data);
             if (!ok) {
                 break;
@@ -487,7 +487,7 @@ inline bool SQLiteAircraftDao::insertAircraftData(std::int64_t aircraftId, const
         }
     }
     if (ok) {
-        for (const LightData &data : aircraft.getLight()) {
+        for (const auto &data : aircraft.getLight()) {
             ok = d->lightDao->add(aircraftId, data);
             if (!ok) {
                 break;

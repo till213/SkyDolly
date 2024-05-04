@@ -346,7 +346,7 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::updateUi);
 
     // Connection
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &LocationWidget::updateEditUi);
 
@@ -367,7 +367,7 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::resetDefaultValues);
 
     // Persistence
-    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const auto &persistenceManager = PersistenceManager::getInstance();
     connect(&persistenceManager, &PersistenceManager::locationsImported,
             this, &LocationWidget::updateUi);
 
@@ -491,7 +491,7 @@ void LocationWidget::updateTable() noexcept
         ui->locationTableWidget->setRowCount(static_cast<int>(locations.size()));
 
         int row {0};
-        for (const Location &location : locations) {
+        for (const auto &location : locations) {
             initRow(location, row);
             ++row;
         }
@@ -840,7 +840,7 @@ void LocationWidget::updateUi() noexcept
 
 void LocationWidget::updateEditUi() noexcept
 {
-    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
     const bool isActive = skyConnectManager.isActive();
     const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
 
@@ -955,7 +955,7 @@ void LocationWidget::onDeleteLocation() noexcept
 {
     const std::int64_t selectedLocationId = getSelectedLocationId();
     if (selectedLocationId != Const::InvalidId) {
-        Settings &settings = Settings::getInstance();
+        auto &settings = Settings::getInstance();
         bool doDelete {true};
         if (settings.isDeleteLocationConfirmationEnabled()) {
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);

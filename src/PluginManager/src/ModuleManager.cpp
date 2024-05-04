@@ -209,7 +209,7 @@ void ModuleManager::initModules() noexcept
     if (d->pluginsDirectoryPath.exists(QString::fromLatin1(::ModuleDirectoryName))) {
         d->pluginsDirectoryPath.cd(QString::fromLatin1(::ModuleDirectoryName));
         const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
-        for (const QString &fileName : entryList) {
+        for (const auto &fileName : entryList) {
             initModule(fileName, moduleInfos, graph);
         }
         initModuleActions(moduleInfos, graph);
@@ -224,7 +224,7 @@ void ModuleManager::initModules() noexcept
 void ModuleManager::frenchConnection() noexcept
 {
     connect(d->moduleActionGroup, &QActionGroup::triggered,
-            this, &ModuleManager::handleModuleSelected);
+            this, &ModuleManager::onModuleSelected);
 }
 
 void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept
@@ -291,7 +291,7 @@ void ModuleManager::initModuleActions(const std::unordered_map<QUuid, ModuleInfo
 
 // PRIVATE SLOTS
 
-void ModuleManager::handleModuleSelected(QAction *action) noexcept
+void ModuleManager::onModuleSelected(QAction *action) noexcept
 {
     const QUuid uuid = action->data().toUuid();
     activateModule(uuid);

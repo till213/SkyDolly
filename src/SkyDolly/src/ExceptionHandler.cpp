@@ -37,11 +37,11 @@
 
 // PUBLIC
 
-void ExceptionHandler::handleError(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept
+void ExceptionHandler::onError(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept
 {
     try {
         const QString exceptionMessage = exceptionToString(ex);
-        handleError(title, stackTrace, exceptionMessage);
+        onError(title, stackTrace, exceptionMessage);
     } catch (const std::exception &ex) {
         qCritical() << "Could not handle the original exception. Another std::exception occurred:" << ex.what();
     } catch (...) {
@@ -49,7 +49,7 @@ void ExceptionHandler::handleError(const QString &title, const QString &stackTra
     }
 }
 
-void ExceptionHandler::handleError(const QString &title, const QString &stackTrace, const QString &reason) noexcept
+void ExceptionHandler::onError(const QString &title, const QString &stackTrace, const QString &reason) noexcept
 {
     try {
         qCritical() << "Exception message:" << reason;
@@ -61,7 +61,7 @@ void ExceptionHandler::handleError(const QString &title, const QString &stackTra
     }
 }
 
-void ExceptionHandler::handleTerminate() noexcept
+void ExceptionHandler::onTerminate() noexcept
 {
     int errorCode {ErrorCodes::Ok};
     // Really make sure that we are not getting into an "endless termination loop"
@@ -74,13 +74,13 @@ void ExceptionHandler::handleTerminate() noexcept
                 std::rethrow_exception(ex);
             } catch (const std::exception &ex) {
                 errorCode = ErrorCodes::StandardException;
-                handleError(QStringLiteral("Terminate"), stackTrace, ex);
+                onError(QStringLiteral("Terminate"), stackTrace, ex);
             } catch(...) {
                 errorCode = ErrorCodes::UnknownException;
-                handleError(QStringLiteral("Terminate"), stackTrace, QStringLiteral("Non std::exception"));
+                onError(QStringLiteral("Terminate"), stackTrace, QStringLiteral("Non std::exception"));
             }
         } else {
-            handleError(QStringLiteral("Unknown Error"), stackTrace, QStringLiteral("An unknown error occurred"));
+            onError(QStringLiteral("Unknown Error"), stackTrace, QStringLiteral("An unknown error occurred"));
             errorCode = ErrorCodes::UnknownError;
         }
     } catch (const std::exception &ex) {

@@ -30,6 +30,7 @@
 #include <utility>
 #include <optional>
 #include <cstdint>
+#include <unordered_map>
 
 #include <QObject>
 
@@ -38,6 +39,7 @@ class QUuid;
 
 #include <Kernel/Settings.h>
 #include <Kernel/FlightSimulator.h>
+#include <Kernel/QUuidHasher.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
 #include "Connect/Connect.h"
@@ -171,6 +173,8 @@ public:
     bool isAtEnd() const noexcept;
 
     bool requestInitialPosition() const noexcept;
+
+    using PluginRegistry = std::unordered_map<QUuid, QString, QUuidHasher>;
 
 public slots:
     bool tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept;

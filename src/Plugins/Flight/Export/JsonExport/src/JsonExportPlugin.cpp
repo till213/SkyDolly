@@ -177,7 +177,7 @@ bool JsonExportPlugin::exportSingleAircraft(const FlightData &flightData, const 
     ok = io.write(trackBegin.toUtf8());
     if (ok) {
         std::size_t i = 0;
-        for (const PositionData &positionData : interpolatedPositionData) {
+        for (const auto &positionData : interpolatedPositionData) {
             ok = exportTrackPoint(positionData, io);
             if (ok) {
                 if (i < interpolatedPositionData.size() - 1) {
