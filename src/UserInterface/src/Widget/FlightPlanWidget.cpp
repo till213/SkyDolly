@@ -109,7 +109,7 @@ void FlightPlanWidget::updateUi() noexcept
     const FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
 
     clear();
-    for (const Waypoint &waypoint : flightPlan) {
+    for (const auto &waypoint : flightPlan) {
         addWaypoint(waypoint);
     }
 }

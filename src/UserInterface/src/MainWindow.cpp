@@ -265,7 +265,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event) noexcept
         const QList<QUrl> urlList = mimeData->urls();
         // Accept the proposed drop action if at least one
         // URL looks to be a Sky Dolly logbook (*.sdlog)
-        for (const QUrl &url : urlList) {
+        for (const auto &url : urlList) {
             if (url.isLocalFile() && url.fileName().endsWith(Const::LogbookExtension)) {
                 event->acceptProposedAction();
                 break;
@@ -279,7 +279,7 @@ void MainWindow::dropEvent(QDropEvent *event) noexcept
     QString filePath;
     const QMimeData *mimeData = event->mimeData();
     const QList<QUrl> urlList = mimeData->urls();
-    for (const QUrl &url : urlList) {
+    for (const auto &url : urlList) {
         if (url.isLocalFile() && url.fileName().endsWith(Const::LogbookExtension)) {
             filePath = url.toLocalFile();
             break;

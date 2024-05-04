@@ -103,7 +103,7 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
     Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country);
     Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent);
     if (ok) {
-        for (const Location &location : locations) {
+        for (const auto &location : locations) {
             QString title = location.title;
             QString description = location.description;
             QString identifier = location.identifier;

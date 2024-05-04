@@ -260,7 +260,7 @@ void LogbookWidget::updateTable() noexcept
         ui->logTableWidget->setRowCount(static_cast<int>(summaries.size()));
 
         int row {0};
-        for (const FlightSummary &summary : summaries) {
+        for (const auto &summary : summaries) {
             initRow(summary, row);
             ++row;
         }

@@ -491,7 +491,7 @@ void LocationWidget::updateTable() noexcept
         ui->locationTableWidget->setRowCount(static_cast<int>(locations.size()));
 
         int row {0};
-        for (const Location &location : locations) {
+        for (const auto &location : locations) {
             initRow(location, row);
             ++row;
         }

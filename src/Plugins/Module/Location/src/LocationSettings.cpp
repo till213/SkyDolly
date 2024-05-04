@@ -315,8 +315,8 @@ void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Valu
     // Filters
     d->locationSelector.typeSelection.clear();
     QList<QVariant> typeList = valuesByKey.at(QString::fromLatin1(::LocationTypeSelectionKey)).toList();
-    for (const QVariant &v : typeList) {
-        d->locationSelector.typeSelection.insert(v.toLongLong());
+    for (const auto &variant : typeList) {
+        d->locationSelector.typeSelection.insert(variant.toLongLong());
     }
     bool ok {false};
     d->locationSelector.categoryId = valuesByKey.at(QString::fromLatin1(::LocationCategorySelectionKey)).toLongLong(&ok);

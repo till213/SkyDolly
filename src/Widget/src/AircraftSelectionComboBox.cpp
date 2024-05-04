@@ -49,7 +49,7 @@ void AircraftSelectionComboBox::initUi() noexcept
 {
     AircraftTypeService aircraftTypeService;
     const std::vector<AircraftType> aircraftTypes = aircraftTypeService.getAll();
-    for (const AircraftType &aircraftType : aircraftTypes) {
+    for (const auto &aircraftType : aircraftTypes) {
         this->addItem(aircraftType.type);
     }
     setEditable(true);

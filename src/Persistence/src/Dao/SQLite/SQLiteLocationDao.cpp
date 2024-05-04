@@ -325,7 +325,7 @@ std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSele
     if (selector.typeSelection.size() > 0) {
         queryString.append(QStringLiteral("  and l.type_id in ("));
         std::size_t i {0};
-        for (const std::int64_t typeId : selector.typeSelection) {
+        for (const auto typeId : selector.typeSelection) {
             queryString.append(QString::number(typeId));
             if (i < selector.typeSelection.size() - 1) {
                 queryString.append(QStringLiteral(","));

@@ -195,7 +195,7 @@ bool GpxExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice &
 
         ok = io.write(trackBegin.toUtf8());
         if (ok) {
-            for (const PositionData &positionData : interpolatedPositionData) {
+            for (const auto &positionData : interpolatedPositionData) {
                 ok = exportTrackPoint(positionData, io);
                 if (!ok) {
                     break;
@@ -217,7 +217,7 @@ bool GpxExportPlugin::exportWaypoints(const FlightData &flightData, QIODevice &i
 {
     bool ok {true};
     const FlightPlan &flightPlan = flightData.getUserAircraftConst().getFlightPlan();
-    for (const Waypoint &waypoint : flightPlan) {
+    for (const auto &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);
         if (!ok) {
             break;

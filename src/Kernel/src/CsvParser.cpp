@@ -87,7 +87,7 @@ const CsvParser::Headers &CsvParser::getHeaders() const noexcept
 inline void CsvParser::parseHeader(const QString &line) noexcept
 {
     m_headers.clear();
-    for (const QChar currentChar : line) {
+    for (const auto currentChar : line) {
         if (currentChar == m_quoteChar) {
             parseQuote(currentChar);
         } else if (currentChar == m_separatorChar && !m_inQuotation) {
@@ -124,7 +124,7 @@ inline void CsvParser::parseLine(const QString &line) noexcept
         m_currentValue += QStringLiteral("\n");
     }
 
-    for (const QChar currentChar : line) {
+    for (const auto currentChar : line) {
 
         if (currentChar == m_quoteChar) {
             parseQuote(currentChar);

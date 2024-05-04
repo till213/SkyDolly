@@ -102,7 +102,7 @@ PositionData Analytics::closestPosition(double latitude, double longitude) const
     double minimumDistance = std::numeric_limits<double>::max();
 
     Position &position = d->aircraft.getPosition();
-    for (const PositionData &pos : position) {
+    for (const auto &pos : position) {
         const double distance = SkyMath::geodesicDistance(SkyMath::Coordinate(latitude, longitude),
                                                           SkyMath::Coordinate(pos.latitude, pos.longitude));
         if (minimumDistance > distance) {

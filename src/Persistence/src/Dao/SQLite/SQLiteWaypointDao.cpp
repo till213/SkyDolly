@@ -90,7 +90,7 @@ bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPla
 
     query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
     bool ok {true};
-    for (const Waypoint &waypoint : flightPlan) {
+    for (const auto &waypoint : flightPlan) {
         query.bindValue(QStringLiteral(":timestamp"), QVariant::fromValue(waypoint.timestamp));
         query.bindValue(QStringLiteral(":ident"), waypoint.identifier);
         query.bindValue(QStringLiteral(":latitude"), waypoint.latitude);

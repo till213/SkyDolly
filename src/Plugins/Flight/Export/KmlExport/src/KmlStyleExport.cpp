@@ -390,7 +390,7 @@ bool KmlStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType eng
     int index = 0;
     const QRgb polygonColorKml = Color::convertRgbToKml(PolygonColor);
 
-    for (const QRgb color : colorRamp) {
+    for (const auto color : colorRamp) {
 
         const QRgb lineColorKml = Color::convertRgbToKml(color);
         const QString style =
