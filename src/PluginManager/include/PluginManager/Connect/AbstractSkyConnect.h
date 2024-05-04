@@ -113,6 +113,7 @@ public:
 
     double calculateRecordedSamplesPerSecond() const noexcept override;
     bool requestLocation() noexcept override;
+    bool requestSimulationRate() noexcept override;
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
@@ -189,6 +190,7 @@ protected:
     virtual void onRemoveAllAiObjects() noexcept = 0;
 
     virtual bool onRequestLocation() noexcept = 0;
+    virtual bool onRequestSimulationRate() noexcept = 0;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;

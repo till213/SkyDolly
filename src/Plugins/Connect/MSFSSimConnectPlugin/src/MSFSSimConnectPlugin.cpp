@@ -595,6 +595,11 @@ bool MSFSSimConnectPlugin::onRequestLocation() noexcept
     return result == S_OK;
 }
 
+bool MSFSSimConnectPlugin::onRequestSimulationRate() noexcept
+{
+    return d->simulationRate->requestSimulationRate(d->simConnectHandle);
+}
+
 // PROTECTED SLOTS
 
 void MSFSSimConnectPlugin::recordData() noexcept
@@ -796,9 +801,7 @@ void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexc
 void MSFSSimConnectPlugin::resetEventStates() noexcept
 {
     d->eventStateHandler->reset();
-    // Do NOT reset the simulation rate, as this keeps the same across the entire replay
-    // and we do not want to interrupt pending simulation rate requests upon looping back
-    // to the beginning
+    d->simulationRate->reset();
 }
 
 DWORD MSFSSimConnectPlugin::getConfigurationIndex() const noexcept
@@ -1199,6 +1202,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
                 const auto simulationRate = reinterpret_cast<const SimConnectVariables::SimulationRate *>(&objectData->dwData);
                 skyConnect->d->simulationRate->setCurrentSimulationRate(skyConnect->d->simConnectHandle, simulationRate->value);
+                emit skyConnect->simulationRateReceived(simulationRate->value);
             }
             break;
         }

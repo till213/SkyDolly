@@ -59,6 +59,14 @@ public:
         m_simulationRateIndex.reset();
     }
 
+    inline bool requestSimulationRate(HANDLE simConnectHandle)
+    {
+        HRESULT result = ::SimConnect_RequestDataOnSimObject(simConnectHandle, Enum::underly(SimConnectType::DataRequest::SimulationRate),
+                                                             Enum::underly(SimConnectType::DataDefinition::SimulationRate),
+                                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_DEFAULT);
+        return result == S_OK;
+    }
+
 private:
     EventState::StatefulSwitch<int> m_simulationRateIndex;
 
@@ -73,8 +81,9 @@ private:
                     result |= ::SimConnect_TransmitClientEvent(simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(event), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
                 }
 #ifdef DEBUG
-                qDebug() << "SimulationRate::sendSimulationRate: incrementally setting simulation rate index to:" << m_simulationRateIndex.requested
-                         << "Previous rate index:" << m_simulationRateIndex.current
+                qDebug() << "SimulationRate::sendSimulationRate: incrementally setting simulation rate"
+                         << "from" << m_simulationRateIndex.current
+                         << "to:" << m_simulationRateIndex.requested
                          << "Steps:" << steps
                          << "Event ID:" << Enum::underly(event)
                          << "Success:" << (result == S_OK);
@@ -85,10 +94,9 @@ private:
                 m_simulationRateIndex.pending = false;
             } else if (!m_simulationRateIndex.pending) {
                 // Request current simulation rate
-                result = ::SimConnect_RequestDataOnSimObject(simConnectHandle, Enum::underly(SimConnectType::DataRequest::SimulationRate),
-                                                             Enum::underly(SimConnectType::DataDefinition::SimulationRate),
-                                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_DEFAULT);
-                if (result == S_OK) {
+                const bool ok = requestSimulationRate(simConnectHandle);
+                result = ok ? S_OK : S_FALSE;
+                if (ok) {
                     m_simulationRateIndex.pending = true;
                 }
             }

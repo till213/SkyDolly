@@ -172,7 +172,8 @@ public:
     std::int64_t getCurrentTimestamp() const noexcept;
     bool isAtEnd() const noexcept;
 
-    bool requestInitialPosition() const noexcept;
+    bool requestLocation() const noexcept;
+    bool requestSimulationRate() const noexcept;
 
     using PluginRegistry = std::unordered_map<QUuid, QString, QUuidHasher>;
 
@@ -237,6 +238,13 @@ signals:
      * \sa SkyConnectIntf#locationReceived
      */
     void locationReceived(Location location);
+
+    /*!
+     * Relay of the SkyConnectIntf#simulationRateReceived signal.
+     *
+     * \sa SkyConnectIntf#simulationRateReceived
+     */
+    void simulationRateReceived(float rate);
 
     /*!
      * Relay of the SkyConnectIntf#shortCutActivated signal.

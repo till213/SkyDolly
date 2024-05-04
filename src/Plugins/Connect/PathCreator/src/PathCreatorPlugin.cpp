@@ -300,6 +300,13 @@ bool PathCreatorPlugin::onRequestLocation() noexcept
     return true;
 }
 
+bool PathCreatorPlugin::onRequestSimulationRate() noexcept
+{
+    emit simulationRateReceived(getReplaySpeedFactor());
+
+    return true;
+}
+
 // PROTECTED SLOTS
 
 void PathCreatorPlugin::recordData() noexcept

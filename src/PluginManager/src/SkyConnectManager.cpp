@@ -390,10 +390,16 @@ bool SkyConnectManager::isAtEnd() const noexcept
     return skyConnect ? skyConnect->get().isEndReached() : false;
 }
 
-bool SkyConnectManager::requestInitialPosition() const noexcept
+bool SkyConnectManager::requestLocation() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().requestLocation() : false;
+}
+
+bool SkyConnectManager::requestSimulationRate() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().requestSimulationRate() : false;
 }
 
 // PUBLIC SLOTS
@@ -427,6 +433,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                         this, &SkyConnectManager::recordingStopped);
                 connect(skyPlugin, &SkyConnectIntf::locationReceived,
                         this, &SkyConnectManager::locationReceived);
+                connect(skyPlugin, &SkyConnectIntf::simulationRateReceived,
+                        this, &SkyConnectManager::simulationRateReceived);
                 connect(skyPlugin, &SkyConnectIntf::shortCutActivated,
                         this, &SkyConnectManager::shortCutActivated);
 

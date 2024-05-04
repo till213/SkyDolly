@@ -296,13 +296,21 @@ public:
     virtual double calculateRecordedSamplesPerSecond() const noexcept = 0;
 
     /*!
-     * Requests the current position of the user aircraft whcich is asynchronously
+     * Requests the current position of the user aircraft which is asynchronously
      * returned as Location.
      *
      * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
      * \sa locationReceived
      */
     virtual bool requestLocation() noexcept = 0;
+
+    /*!
+     * Requests the current simulation rate which is asynchronously returned.
+     *
+     * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
+     * \sa simulationRateReceived
+     */
+    virtual bool requestSimulationRate() noexcept = 0;
 
 public slots:
     virtual void addAiObject(const Aircraft &aircraft) noexcept = 0;
@@ -373,6 +381,15 @@ signals:
      *        the received Location
      */
     void locationReceived(Location location);
+
+    /*!
+     * Emitted whenever the current simulation rate has been received.
+     *
+     * \param rate
+     *        the current simulation rate [0.0625, 0.125, 0.25, 0.5, 1, 2, 4, ... 128]
+     */
+    void simulationRateReceived(float rate);
+
 
     /*!
      * Emitted whenever a keyboard shortcut was triggered for the given \p action.

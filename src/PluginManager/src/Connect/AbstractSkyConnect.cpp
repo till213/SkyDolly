@@ -564,6 +564,19 @@ bool AbstractSkyConnect::requestLocation() noexcept
     return ok;
 }
 
+bool AbstractSkyConnect::requestSimulationRate() noexcept
+{
+    if (!isConnectedWithSim()) {
+        tryFirstConnectAndSetup();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this]() -> bool { return onRequestSimulationRate(); });
+    }
+    return ok;
+}
+
 std::optional<std::unique_ptr<OptionWidgetIntf>> AbstractSkyConnect::createOptionWidget() const noexcept
 {
     auto optionWidget = std::make_unique<BasicConnectOptionWidget>(getPluginSettings());

@@ -93,6 +93,7 @@ protected:
     void onRemoveAllAiObjects() noexcept override;
 
     bool onRequestLocation() noexcept override;
+    bool onRequestSimulationRate() noexcept override;
 
 protected slots:
     void recordData() noexcept override;
