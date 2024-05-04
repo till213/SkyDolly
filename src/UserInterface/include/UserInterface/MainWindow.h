@@ -164,6 +164,8 @@ private slots:
     void updateControlUi() noexcept;
     void updatePlayActionTooltip() noexcept;
     void updateControlIcons() noexcept;
+    void updateSimulationRateLabel() noexcept;
+
     void onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept;
     void onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept;
 

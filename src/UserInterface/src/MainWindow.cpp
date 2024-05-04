@@ -166,6 +166,7 @@ struct MainWindowPrivate
     QComboBox *replaySpeedUnitComboBox {nullptr};
     QDoubleValidator *customReplaySpeedFactorValidator {nullptr};
     QDoubleValidator *customReplaySpeedPercentValidator {nullptr};
+    QLabel *simulationRateLabel {nullptr};
     float simulationRate {1.0f};
 
     // Import / export
@@ -825,6 +826,9 @@ void MainWindow::initReplaySpeedUi() noexcept
     }
 
     replaySpeedLayout->addWidget(d->replaySpeedUnitComboBox);
+
+    d->simulationRateLabel = new QLabel(this);
+    replaySpeedLayout->addWidget(d->simulationRateLabel);
 }
 
 void MainWindow::createTrayIcon() noexcept
@@ -968,6 +972,8 @@ void MainWindow::updateReplaySpeedUi() noexcept
         d->customSpeedLineEdit->clear();
         d->customSpeedLineEdit->setToolTip(QStringLiteral(""));
     }
+
+    updateSimulationRateLabel();
 }
 
 void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
@@ -1061,6 +1067,7 @@ void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
     }
     ui->showReplaySpeedAction->setChecked(replaySpeedVisible);
     ui->replaySpeedGroupBox->setVisible(replaySpeedVisible);
+    d->simulationRateLabel->setHidden(enterMinimalUi);
 }
 
 void MainWindow::updatePositionSliderTickInterval() noexcept
@@ -1382,6 +1389,11 @@ void MainWindow::updateControlIcons() noexcept
     ui->recordAction->setIcon(recordIcon);
 }
 
+void MainWindow::updateSimulationRateLabel() noexcept
+{
+    d->simulationRateLabel->setText(tr("Simulation rate: %1").arg(d->simulationRate));
+}
+
 void MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept
 {
     updateMinimalUiButtonTextVisibility();
@@ -1486,6 +1498,7 @@ void MainWindow::onSimulationRateReceived(float rate) noexcept
 {
     d->simulationRate = rate;
     updatePlayActionTooltip();
+    updateSimulationRateLabel();
 }
 
 void MainWindow::onRecordingDurationChanged() noexcept

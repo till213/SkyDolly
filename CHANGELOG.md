@@ -39,7 +39,8 @@
 - A flight recording in progress is now automatically stopped and the flight stored to the logbook in case the flight simulator is terminated (e.g. also due to a crash)
 - The full range of flight simulator simulation rates 0.0625 up to 128.0 is now supported
   * The Sky Dolly custom replay rate is rounded to the nearest simulation rate, one of 0.0625, 0.125, 0.25, 0.5, 1, 2, 4, ... 128 ("multiples of 2")
-
+  * The flight simulator simulation rate is now shown in the replay speed group
+  
 ### Other
 - Remove import & export CSV Sky Dolly format
   * The default import CSV format is now: *Flightradar24*
