@@ -77,12 +77,12 @@ void RecentFileMenu::initialise()
 void RecentFileMenu::frenchConnections()
 {
     RecentFile &recentFile = RecentFile::getInstance();
-    connect(&recentFile, SIGNAL(recentFilesChanged()),
-            this, SLOT(updateRecentFileActions()));
-    connect(&recentFile, SIGNAL(maxRecentFilesChanged(int)),
-            this, SLOT(updateNofRecentFileActions(int)));
-    connect(d->clearRecentFileAction, SIGNAL(triggered()),
-            this, SLOT(clearRecentFileMenu()));
+    connect(&recentFile, &RecentFile::recentFilesChanged,
+            this, &RecentFileMenu::updateRecentFileActions);
+    connect(&recentFile, &RecentFile::maxRecentFilesChanged,
+            this, &RecentFileMenu::updateNofRecentFileActions);
+    connect(d->clearRecentFileAction, &QAction::triggered,
+            this, &RecentFileMenu::clearRecentFileMenu);
 }
 
 // PRIVATE SLOTS
@@ -113,19 +113,18 @@ void RecentFileMenu::updateRecentFileActions()
 void RecentFileMenu::updateNofRecentFileActions(int maxRecentFiles)
 {
     int nofRecentFilesActions;
-    QList<QAction *> recentFileActions = d->recentFileActionGroup->actions();
-    QAction *action;
-    bool changed;
+    QList<QAction *> recentFileActions {d->recentFileActionGroup->actions()};
+    QAction *action {nullptr};
+    bool changed {false};
 
-    changed = false;
     nofRecentFilesActions = recentFileActions.count() - 2; // two extra actions: separator and "clear" entry
 
     // Add menu entries
     for (int i = nofRecentFilesActions; i < maxRecentFiles; ++i) {
         action = new QAction(d->recentFileActionGroup);
         action->setVisible(false);
-        connect(action, SIGNAL(triggered()),
-                this, SLOT(handleRecentFileAction()));
+        connect(action, &QAction::triggered,
+                this, &RecentFileMenu::onRecentFileAction);
         changed = true;
     }
 
