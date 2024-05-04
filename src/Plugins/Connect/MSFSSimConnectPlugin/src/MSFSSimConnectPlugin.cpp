@@ -796,7 +796,9 @@ void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexc
 void MSFSSimConnectPlugin::resetEventStates() noexcept
 {
     d->eventStateHandler->reset();
-    d->simulationRate->reset();
+    // Do NOT reset the simulation rate, as this keeps the same across the entire replay
+    // and we do not want to interrupt pending simulation rate requests upon looping back
+    // to the beginning
 }
 
 DWORD MSFSSimConnectPlugin::getConfigurationIndex() const noexcept

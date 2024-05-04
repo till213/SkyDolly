@@ -37,6 +37,8 @@
 - The Formation module settings (relative position, replay mode) are now persisted
 - Improved module settings performance: the logbook and location tables are now updated exactly once (and not twice) upon module initialisation
 - A flight recording in progress is now automatically stopped and the flight stored to the logbook in case the flight simulator is terminated (e.g. also due to a crash)
+- The full range of flight simulator simulation rates 0.0625 up to 128.0 is now supported
+  * The Sky Dolly custom replay rate is rounded to the nearest simulation rate, one of 0.0625, 0.125, 0.25, 0.5, 1, 2, 4, ... 128 ("multiples of 2")
 
 ### Other
 - Remove import & export CSV Sky Dolly format
@@ -52,6 +54,7 @@
 - Prevent a crash that would occur when a flight is loaded and the replay mode in the Formation module is changed to "Fly with formation", but no connection with MSFS exists yet
 - Remove last recorded flight or aircraft in case persistence fails (improved error handling)
 - In the Formation module the reference aircraft icon is properly initialised
+- During replay the replay speed is now properly set to the last "custom speed" (e.g. 0.1) when checking the "Custom" radio button (previously the actual replay speed was always wrongly set to 1.0, mismatching with the *displayed* custom speed value, e.g. 0.1)
 
 ### Under the Hood
 - Upgrade GeographicLib to version 2.2 (from version 2.1.2)

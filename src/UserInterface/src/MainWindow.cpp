@@ -1210,7 +1210,7 @@ void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
         replaySpeedFactor = 16.0;
         break;
     case ReplaySpeed::Custom:
-        replaySpeedFactor = getCustomSpeedFactor();
+        replaySpeedFactor = d->lastCustomReplaySpeedFactor;
         break;
     }
 
