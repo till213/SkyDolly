@@ -203,7 +203,19 @@ void SettingsDialog::updateUi() noexcept
 
     // User interface
     const auto styleKey = settings.getStyleKey();
-    ui->styleComboBox->setCurrentText(styleKey);
+    bool found {false};
+    int index = 0;
+    while (!found && index < ui->styleComboBox->count()) {
+        const auto key = ui->styleComboBox->itemData(index);
+        if (key == styleKey) {
+            found = true;
+        } else {
+            ++index;
+        }
+    }
+    if (found) {
+        ui->styleComboBox->setCurrentIndex(index);
+    }
     ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
     ui->confirmDeleteAircraftCheckBox->setChecked(settings.isDeleteAircraftConfirmationEnabled());
     ui->confirmDeleteLocationCheckBox->setChecked(settings.isDeleteLocationConfirmationEnabled());
