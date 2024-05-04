@@ -25,6 +25,7 @@
 #include <memory>
 #include <optional>
 #include <cmath>
+#include <unordered_map>
 
 #include <QDialog>
 #include <QWidget>
@@ -63,9 +64,22 @@ struct SettingsDialogPrivate
     SettingsDialogPrivate()
     {
         updateTimer.setTimerType(Qt::TimerType::PreciseTimer);
+        if (knownStyleNames.empty()) {
+            knownStyleNames = {
+                { Settings::DefaultStyleKey, qApp->translate("SettingsDialogPrivate", "Default") },
+                { QStringLiteral("macos"), QStringLiteral("macOS") },
+                { QStringLiteral("windows"), QStringLiteral("Windows") },
+                { QStringLiteral("windowsvista"), QStringLiteral("Windows Vista") },
+                { QStringLiteral("fusion"), QStringLiteral("Fusion") },
+                { QStringLiteral("windows11"), QStringLiteral("Windows 11") }
+            };
+        }
     }
     QTimer updateTimer;
     OptionWidgetIntf *skyConnectOptionWidget {nullptr};
+
+    // Key: style key, value: style name
+    static inline std::unordered_map<QString, QString> knownStyleNames;
 };
 
 // PUBLIC
@@ -141,7 +155,8 @@ void SettingsDialog::initUi() noexcept
     ui->styleComboBox->addItem(Settings::DefaultStyleKey, Settings::DefaultStyleKey);
     const auto styleKeys = QStyleFactory::keys();
     for (const auto &key : styleKeys) {
-        ui->styleComboBox->addItem(key, key);
+        const auto &styleName = d->knownStyleNames.contains(key) ? d->knownStyleNames[key] : key;
+        ui->styleComboBox->addItem(styleName, key);
     }
 
     ui->settingsTabWidget->setCurrentIndex(::ReplayTab);
@@ -247,7 +262,11 @@ void SettingsDialog::handleFlightSimulatorConnectionSelectionChanged() const noe
 
 void SettingsDialog::handleStyleChanged() noexcept
 {
-    // TODO IMPLEMENT ME Show "restart required" info
+    if (ui->styleComboBox->currentData().toString() != Settings::getInstance().getStyleKey()) {
+        ui->styleInfoLabel->setText(tr("Restart the application in order for the new style to take effect."));
+    } else {
+        ui->styleInfoLabel->clear();
+    }
 }
 
 void SettingsDialog::handleSkyConnectPluginChanged() noexcept

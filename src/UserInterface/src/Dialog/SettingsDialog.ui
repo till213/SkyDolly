@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>820</width>
-    <height>462</height>
+    <height>466</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -269,22 +269,43 @@
       <attribute name="title">
        <string>User Interface</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QGroupBox" name="groupBox_4">
          <property name="title">
           <string>Application</string>
          </property>
-         <layout class="QFormLayout" name="formLayout_8">
+         <layout class="QFormLayout" name="formLayout_9">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>Style:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="styleComboBox"/>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <layout class="QFormLayout" name="formLayout_8">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_7">
+                <property name="text">
+                 <string>Style:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="styleComboBox"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="styleInfoLabel">
+              <property name="minimumSize">
+               <size>
+                <width>400</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
