@@ -68,7 +68,7 @@ void UnixSignalHandler::registerSignals() noexcept
     const std::vector unixSignals {SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV, SIGPIPE, SIGTERM, SIGUSR1, SIGUSR2};
     struct sigaction action;
 
-    action.sa_handler = UnixSignalHandler::handle;
+    action.sa_handler = UnixSignalHandler::on;
     sigemptyset(&action.sa_mask);
     action.sa_flags = 0;
     action.sa_flags |= SA_RESTART;
@@ -134,7 +134,7 @@ QString UnixSignalHandler::signalToString(int signal)
     return message;
 }
 
-void UnixSignalHandler::handle(int signal)
+void UnixSignalHandler::on(int signal)
 {
     // Write is either reentrant or not interruptible by signals and is async-signal safe
     ::write(m_signalSocketPair[0], &signal, sizeof(int));

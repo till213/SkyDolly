@@ -72,19 +72,19 @@ private:
     void initUi() noexcept;
     void initExtendedOptionUi() noexcept;
     void frenchConnection() noexcept;
-    void handleDuplicateKeySequences(const QKeySequence &keySequence, KeySequence source) const noexcept;
+    void detectDuplicateKeySequences(const QKeySequence &keySequence, KeySequence source) const noexcept;
 
 private slots:
     void updateUi() noexcept;
 
-    void handleRecordKeySequence() const noexcept;
-    void handleReplayKeySequence() const noexcept;
-    void handlePauseKeySequence() const noexcept;
-    void handleStopKeySequence() const noexcept;
-    void handleBackwardKeySequence() const noexcept;
-    void handleForwardKeySequence() const noexcept;
-    void handleBeginKeySequence() const noexcept;
-    void handleEndKeySequence() const noexcept;
+    void onRecordKeySequence() const noexcept;
+    void onReplayKeySequence() const noexcept;
+    void onPauseKeySequence() const noexcept;
+    void onStopKeySequence() const noexcept;
+    void onBackwardKeySequence() const noexcept;
+    void onForwardKeySequence() const noexcept;
+    void onBeginKeySequence() const noexcept;
+    void onEndKeySequence() const noexcept;
 };
 
 #endif // BASICCONNECTOPTIONWIDGET_H

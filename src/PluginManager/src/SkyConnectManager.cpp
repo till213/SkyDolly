@@ -70,6 +70,7 @@ struct SkyConnectManagerPrivate
 
     QDir pluginsDirectory;
     // Plugin UUID / plugin path
+    // TODO OKN use unordered_map?
     QMap<QUuid, QString> pluginRegistry;
     std::vector<SkyConnectManager::Handle> pluginHandles;
     QPluginLoader *pluginLoader;
@@ -388,7 +389,7 @@ std::int64_t SkyConnectManager::getCurrentTimestamp() const noexcept
 bool SkyConnectManager::isAtEnd() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().isAtEnd() : false;
+    return skyConnect ? skyConnect->get().isEndReached() : false;
 }
 
 bool SkyConnectManager::requestInitialPosition() const noexcept

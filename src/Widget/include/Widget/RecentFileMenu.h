@@ -65,7 +65,7 @@ private:
 private slots:
     void updateRecentFileActions();
     void updateNofRecentFileActions(int maxRecentFiles);
-    void handleRecentFileAction();
+    void onRecentFileAction();
     void clearRecentFileMenu();
 };
 

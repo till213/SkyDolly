@@ -327,7 +327,7 @@ void PathCreatorPlugin::frenchConnection() noexcept
     connect(&d->replayTimer, &QTimer::timeout,
             this, &PathCreatorPlugin::replay);
     connect(&d->pluginSettings, &ConnectPluginBaseSettings::changed,
-            this, &PathCreatorPlugin::handlePluginSettingsChanged);
+            this, &PathCreatorPlugin::onPluginSettingsChanged);
 }
 
 void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
@@ -566,6 +566,6 @@ void PathCreatorPlugin::replay() noexcept
 {
     const std::int64_t timestamp = updateCurrentTimestamp();
     if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
-        handleAtEnd();
+        onEndReached();
     }
 }

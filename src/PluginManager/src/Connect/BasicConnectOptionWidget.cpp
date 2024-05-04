@@ -124,24 +124,24 @@ void BasicConnectOptionWidget::frenchConnection() noexcept
             this, &BasicConnectOptionWidget::updateUi);
 
     connect(ui->recordSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &BasicConnectOptionWidget::handleRecordKeySequence);
+            this, &BasicConnectOptionWidget::onRecordKeySequence);
     connect(ui->replaySequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &BasicConnectOptionWidget::handleReplayKeySequence);
+            this, &BasicConnectOptionWidget::onReplayKeySequence);
     connect(ui->pauseSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &BasicConnectOptionWidget::handlePauseKeySequence);
+            this, &BasicConnectOptionWidget::onPauseKeySequence);
     connect(ui->stopSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &BasicConnectOptionWidget::handleStopKeySequence);
+            this, &BasicConnectOptionWidget::onStopKeySequence);
     connect(ui->backwardSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &BasicConnectOptionWidget::handleBackwardKeySequence);
+            this, &BasicConnectOptionWidget::onBackwardKeySequence);
     connect(ui->forwardSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &BasicConnectOptionWidget::handleForwardKeySequence);
+            this, &BasicConnectOptionWidget::onForwardKeySequence);
     connect(ui->beginSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &BasicConnectOptionWidget::handleBeginKeySequence);
+            this, &BasicConnectOptionWidget::onBeginKeySequence);
     connect(ui->endSequenceEdit, &QKeySequenceEdit::editingFinished,
-            this, &BasicConnectOptionWidget::handleEndKeySequence);
+            this, &BasicConnectOptionWidget::onEndKeySequence);
 }
 
-void BasicConnectOptionWidget::handleDuplicateKeySequences(const QKeySequence &keySequence, KeySequence source) const noexcept
+void BasicConnectOptionWidget::detectDuplicateKeySequences(const QKeySequence &keySequence, KeySequence source) const noexcept
 {
     if (source != KeySequence::Record && ui->recordSequenceEdit->keySequence() == keySequence) {
         ui->recordSequenceEdit->clear();
@@ -184,50 +184,50 @@ void BasicConnectOptionWidget::updateUi() noexcept
     ui->endSequenceEdit->setKeySequence(shortcuts.end);
 }
 
-void BasicConnectOptionWidget::handleRecordKeySequence() const noexcept
+void BasicConnectOptionWidget::onRecordKeySequence() const noexcept
 {
     auto sequence = ui->recordSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Record);
+    detectDuplicateKeySequences(sequence, KeySequence::Record);
 }
 
-void BasicConnectOptionWidget::handleReplayKeySequence() const noexcept
+void BasicConnectOptionWidget::onReplayKeySequence() const noexcept
 {
     auto sequence = ui->replaySequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Replay);
+    detectDuplicateKeySequences(sequence, KeySequence::Replay);
 }
 
-void BasicConnectOptionWidget::handlePauseKeySequence() const noexcept
+void BasicConnectOptionWidget::onPauseKeySequence() const noexcept
 {
     auto sequence = ui->pauseSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Pause);
+    detectDuplicateKeySequences(sequence, KeySequence::Pause);
 }
 
-void BasicConnectOptionWidget::handleStopKeySequence() const noexcept
+void BasicConnectOptionWidget::onStopKeySequence() const noexcept
 {
     auto sequence = ui->stopSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Stop);
+    detectDuplicateKeySequences(sequence, KeySequence::Stop);
 }
 
-void BasicConnectOptionWidget::handleBackwardKeySequence() const noexcept
+void BasicConnectOptionWidget::onBackwardKeySequence() const noexcept
 {
     auto sequence = ui->backwardSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Backward);
+    detectDuplicateKeySequences(sequence, KeySequence::Backward);
 }
 
-void BasicConnectOptionWidget::handleForwardKeySequence() const noexcept
+void BasicConnectOptionWidget::onForwardKeySequence() const noexcept
 {
     auto sequence = ui->forwardSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Forward);
+    detectDuplicateKeySequences(sequence, KeySequence::Forward);
 }
 
-void BasicConnectOptionWidget::handleBeginKeySequence() const noexcept
+void BasicConnectOptionWidget::onBeginKeySequence() const noexcept
 {
     auto sequence = ui->beginSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::Begin);
+    detectDuplicateKeySequences(sequence, KeySequence::Begin);
 }
 
-void BasicConnectOptionWidget::handleEndKeySequence() const noexcept
+void BasicConnectOptionWidget::onEndKeySequence() const noexcept
 {
     auto sequence = ui->endSequenceEdit->keySequence();
-    handleDuplicateKeySequences(sequence, KeySequence::End);
+    detectDuplicateKeySequences(sequence, KeySequence::End);
 }

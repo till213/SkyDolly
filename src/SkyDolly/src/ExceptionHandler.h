@@ -39,10 +39,10 @@
 class ExceptionHandler
 {
 public:
-    static void handleError(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept;
-    static void handleError(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept;
-    static void handleTerminate() noexcept;
-    static void handleSignal(int signal) noexcept;
+    static void onError(const QString &title, const QString &stackTrace, const std::exception &ex) noexcept;
+    static void onError(const QString &title, const QString &stackTrace, const QString &exceptionMessage) noexcept;
+    static void onTerminate() noexcept;
+    static void onSignal(int signal) noexcept;
 private:
     static QString errorCodeToString(const std::error_code &code);
     static QString exceptionToString(const std::exception &ex);

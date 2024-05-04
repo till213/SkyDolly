@@ -48,7 +48,7 @@ private:
 
     void frenchConnection() noexcept;
     static QString signalToString(int signal);
-    static void handle(int signal);
+    static void on(int signal);
 
 private slots:
     void process();

@@ -98,7 +98,7 @@ private:
     void initModuleActions(const std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept;
 
 private slots:
-    void handleModuleSelected(QAction *action) noexcept;
+    void onModuleSelected(QAction *action) noexcept;
 };
 
 #endif // MODULESWITCHER_H
