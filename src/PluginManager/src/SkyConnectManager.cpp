@@ -34,7 +34,6 @@
 #include <QStringLiteral>
 #include <QStringList>
 #include <QUuid>
-#include <QMap>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -69,9 +68,8 @@ struct SkyConnectManagerPrivate
     }
 
     QDir pluginsDirectory;
-    // Plugin UUID / plugin path
-    // TODO OKN use unordered_map?
-    QMap<QUuid, QString> pluginRegistry;
+    // Key: uuid - value: plugin path
+    SkyConnectManager::PluginRegistry pluginRegistry;
     std::vector<SkyConnectManager::Handle> pluginHandles;
     QPluginLoader *pluginLoader;
     QUuid currentPluginUuid;
@@ -412,7 +410,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                 unloadCurrentPlugin();
             }
 
-            const QString pluginPath = d->pluginRegistry.value(uuid);
+            const QString pluginPath = d->pluginRegistry[uuid];
             d->pluginLoader->setFileName(pluginPath);
             QObject *plugin = d->pluginLoader->instance();
             SkyConnectIntf *skyPlugin = qobject_cast<SkyConnectIntf *>(plugin);
@@ -512,7 +510,7 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
                 SkyConnectPlugin plugin {pluginName, flightSimulatorId};
                 const Handle handle {uuid, plugin};
                 d->pluginHandles.push_back(handle);
-                d->pluginRegistry.insert(uuid, pluginPath);
+                d->pluginRegistry[uuid] =pluginPath;
             }
         }
         d->pluginsDirectory.cdUp();
