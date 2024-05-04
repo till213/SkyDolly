@@ -27,6 +27,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
+#include <Kernel/File.h>
 #include <Kernel/Version.h>
 #include "GpxImportOptionWidget.h"
 #include "GpxImportSettings.h"
@@ -123,7 +124,7 @@ void GpxImportOptionWidget::updateUi() noexcept
     ui->defaultAltitudeSpinBox->setValue(d->pluginSettings.getDefaultAltitude());
     ui->defaultSpeedSpinBox->setValue(d->pluginSettings.getDefaultSpeed());
 
-    if (Settings::getInstance().hasEarthGravityModel()) {
+    if (File::hasEarthGravityModel()) {
         ui->convertAltitudeCheckBox->setEnabled(true);
         ui->convertAltitudeCheckBox->setChecked(d->pluginSettings.isConvertAltitudeEnabled());
         ui->convertAltitudeCheckBox->setToolTip(tr("Converts imported height above WGS84 ellipsoid to height above the EGM2008 geoid."));

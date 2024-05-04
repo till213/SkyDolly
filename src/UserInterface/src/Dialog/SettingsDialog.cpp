@@ -25,12 +25,14 @@
 #include <memory>
 #include <optional>
 #include <cmath>
+#include <unordered_map>
 
 #include <QDialog>
 #include <QWidget>
 #include <QString>
 #include <QDoubleSpinBox>
 #include <QTimer>
+#include <QStyleFactory>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -62,9 +64,22 @@ struct SettingsDialogPrivate
     SettingsDialogPrivate()
     {
         updateTimer.setTimerType(Qt::TimerType::PreciseTimer);
+        if (knownStyleNames.empty()) {
+            knownStyleNames = {
+                { Settings::DefaultStyleKey, qApp->translate("SettingsDialogPrivate", "Default") },
+                { QStringLiteral("macos"), QStringLiteral("macOS") },
+                { QStringLiteral("windows"), QStringLiteral("Windows") },
+                { QStringLiteral("windowsvista"), QStringLiteral("Windows Vista") },
+                { QStringLiteral("fusion"), QStringLiteral("Fusion") },
+                { QStringLiteral("windows11"), QStringLiteral("Windows 11") }
+            };
+        }
     }
     QTimer updateTimer;
     OptionWidgetIntf *skyConnectOptionWidget {nullptr};
+
+    // Key: style key, value: style name
+    static inline std::unordered_map<QString, QString> knownStyleNames;
 };
 
 // PUBLIC
@@ -131,10 +146,18 @@ void SettingsDialog::initUi() noexcept
     // Flight simulator
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
-    for (auto &plugin : plugins) {
+    for (const auto &plugin : plugins) {
         ui->connectionComboBox->addItem(plugin.second.name, plugin.first);
     }
     initFlightSimulatorOptionWidget();
+
+    // User interface
+    ui->styleComboBox->addItem(Settings::DefaultStyleKey, Settings::DefaultStyleKey);
+    const auto styleKeys = QStyleFactory::keys();
+    for (const auto &key : styleKeys) {
+        const auto &styleName = d->knownStyleNames.contains(key) ? d->knownStyleNames[key] : key;
+        ui->styleComboBox->addItem(styleName, key);
+    }
 
     ui->settingsTabWidget->setCurrentIndex(::ReplayTab);
     handleTabChanged(ui->settingsTabWidget->currentIndex());
@@ -151,6 +174,8 @@ void SettingsDialog::frenchConnection() noexcept
             this, &SettingsDialog::handleTabChanged);
     connect(ui->connectionComboBox, &QComboBox::currentIndexChanged,
             this, &SettingsDialog::handleFlightSimulatorConnectionSelectionChanged);
+    connect(ui->styleComboBox, &QComboBox::currentIndexChanged,
+            this, &SettingsDialog::handleStyleChanged);
 }
 
 // PRIVATE SLOTS
@@ -177,6 +202,8 @@ void SettingsDialog::updateUi() noexcept
     updateConnectionStatus();
 
     // User interface
+    const auto styleKey = settings.getStyleKey();
+    ui->styleComboBox->setCurrentText(styleKey);
     ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
     ui->confirmDeleteAircraftCheckBox->setChecked(settings.isDeleteAircraftConfirmationEnabled());
     ui->confirmDeleteLocationCheckBox->setChecked(settings.isDeleteLocationConfirmationEnabled());
@@ -233,6 +260,15 @@ void SettingsDialog::handleFlightSimulatorConnectionSelectionChanged() const noe
     skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
 }
 
+void SettingsDialog::handleStyleChanged() noexcept
+{
+    if (ui->styleComboBox->currentData().toString() != Settings::getInstance().getStyleKey()) {
+        ui->styleInfoLabel->setText(tr("Restart the application in order for the new style to take effect."));
+    } else {
+        ui->styleInfoLabel->clear();
+    }
+}
+
 void SettingsDialog::handleSkyConnectPluginChanged() noexcept
 {
     if (d->skyConnectOptionWidget != nullptr) {
@@ -261,6 +297,7 @@ void SettingsDialog::handleAccepted() noexcept
     }
 
     // User interface
+    settings.setStyleKey(ui->styleComboBox->currentData().toString());
     settings.setDeleteFlightConfirmationEnabled(ui->confirmDeleteFlightCheckBox->isChecked());
     settings.setDeleteAircraftConfirmationEnabled(ui->confirmDeleteAircraftCheckBox->isChecked());
     settings.setDeleteLocationConfirmationEnabled(ui->confirmDeleteLocationCheckBox->isChecked());

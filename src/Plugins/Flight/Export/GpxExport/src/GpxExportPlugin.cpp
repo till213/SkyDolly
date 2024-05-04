@@ -24,9 +24,6 @@
  */
 #include <memory>
 #include <vector>
-#include <algorithm>
-#include <unordered_map>
-#include <cstdint>
 
 #include <QIODevice>
 #include <QStringBuilder>

@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <array>
-#include <unordered_map>
 #include <cstdint>
 
 #include <QByteArray>

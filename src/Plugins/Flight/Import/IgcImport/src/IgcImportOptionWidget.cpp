@@ -29,6 +29,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/Version.h>
+#include <Kernel/File.h>
 #include "IgcImportOptionWidget.h"
 #include "IgcImportSettings.h"
 #include "ui_IgcImportOptionWidget.h"
@@ -96,7 +97,7 @@ void IgcImportOptionWidget::updateUi() noexcept
     ui->enlThresholdSpinBox->setValue(d->pluginSettings.getEnlThresholdPercent());
     switch (altitudeMode) {
     case IgcImportSettings::AltitudeMode::Gnss:
-        if (Settings::getInstance().hasEarthGravityModel()) {
+        if (File::hasEarthGravityModel()) {
             ui->convertAltitudeCheckBox->setEnabled(true);
             ui->convertAltitudeCheckBox->setChecked(d->pluginSettings.isConvertAltitudeEnabled());
             ui->convertAltitudeCheckBox->setToolTip(tr("Converts imported height above WGS84 ellipsoid to height above the EGM2008 geoid."));
