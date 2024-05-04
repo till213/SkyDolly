@@ -144,7 +144,7 @@ void SettingsDialog::initUi() noexcept
     ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz60), tr("60 Hz"));
 
     // Flight simulator
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
     for (const auto &plugin : plugins) {
         ui->connectionComboBox->addItem(plugin.second.name, plugin.first);
@@ -194,7 +194,7 @@ void SettingsDialog::updateUi() noexcept
     ui->recordFrequencyComboBox->setCurrentIndex(Enum::underly(settings.getRecordingSampleRate()));
 
     // Flight simulator
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     std::optional<QString> pluginName = skyConnectManager.getCurrentSkyConnectPluginName();
     if (pluginName) {
         ui->connectionComboBox->setCurrentText(pluginName.value());
@@ -223,7 +223,7 @@ void SettingsDialog::updateConnectionStatus() const noexcept
 
     ui->connectionStatusLabel->setToolTip(QString());
 
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     switch (skyConnectManager.getState()) {
     case Connect::State::Disconnected:
         ui->connectionStatusLabel->setText(tr("Disconnected"));

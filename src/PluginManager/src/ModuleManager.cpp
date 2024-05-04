@@ -209,7 +209,7 @@ void ModuleManager::initModules() noexcept
     if (d->pluginsDirectoryPath.exists(QString::fromLatin1(::ModuleDirectoryName))) {
         d->pluginsDirectoryPath.cd(QString::fromLatin1(::ModuleDirectoryName));
         const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
-        for (const QString &fileName : entryList) {
+        for (const auto &fileName : entryList) {
             initModule(fileName, moduleInfos, graph);
         }
         initModuleActions(moduleInfos, graph);

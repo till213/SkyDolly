@@ -94,7 +94,7 @@ ModuleBaseSettings &LocationPlugin::getModuleSettings() const noexcept
 void LocationPlugin::frenchConnection() noexcept
 {
     // Connection
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::locationReceived,
             this, &LocationPlugin::onLocationReceived);
 
@@ -124,7 +124,7 @@ void LocationPlugin::updateLocation() noexcept
 void LocationPlugin::teleportTo(const Location &location) noexcept
 {
     const InitialPosition initialPosition = location.toInitialPosition();
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.setUserAircraftInitialPosition(initialPosition);
     SkyConnectIntf::SimulationEvent event {SkyConnectIntf::SimulationEvent::None};
 

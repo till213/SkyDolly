@@ -41,7 +41,7 @@ InitialPosition Formation::calculateInitialRelativePositionToUserAircraft(Horizo
     if (!relativePositionData.isNull()) {
         initialPosition.fromPositionData(relativePositionData);
         if (timestamp == 0) {
-            const Flight &flight = Logbook::getInstance().getCurrentFlight();
+            const auto &flight = Logbook::getInstance().getCurrentFlight();
             const Aircraft &userAircraft = flight.getUserAircraft();
             const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfo();
             initialPosition.onGround =  aircraftInfo.startOnGround;
@@ -56,7 +56,7 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
 {
     PositionData initialPosition;
 
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     const Aircraft &userAircraft = flight.getUserAircraft();
     Position &position = userAircraft.getPosition();
     if (position.count() > 0) {

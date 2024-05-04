@@ -90,20 +90,20 @@ ModuleIntf::RecordIconId FormationPlugin::getRecordIconId() const noexcept
 
 void FormationPlugin::onStartRecording() noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     const Formation::HorizontalDistance horizontalDistance {d->formationWidget->getHorizontalDistance()};
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
     const Formation::Bearing relativePosition {d->formationWidget->getRelativePosition()};
     // The initial recording position is calculated for timestamp = 0 ("at the beginning")
     const InitialPosition initialPosition = d->moduleSettings.isRelativePositionPlacementEnabled() ?
-                Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, 0) :
-                InitialPosition();
+        Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, 0) :
+        InitialPosition();
     skyConnectManager.startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
 }
 
 void FormationPlugin::onStartReplay() noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     const bool fromStart = skyConnectManager.isAtEnd();
     const Formation::HorizontalDistance horizontalDistance {d->formationWidget->getHorizontalDistance()};
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
@@ -124,14 +124,14 @@ ModuleBaseSettings &FormationPlugin::getModuleSettings() const noexcept
 
 void FormationPlugin::onRecordingStopped() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const std::size_t sequenceNumber = flight.count();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
+    const auto sequenceNumber = flight.count();
     if (sequenceNumber > 1) {
         // Sequence starts at 1
         const bool ok = d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
         if (!ok) {
             flight.removeLastAircraft();
-            const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+            const auto &persistenceManager = PersistenceManager::getInstance();
             const QString logbookPath = QDir::toNativeSeparators(persistenceManager.getLogbookPath());
             QMessageBox::critical(getWidget(), tr("Write Error"), tr("The aircraft could not be stored into the logbook %1.").arg(logbookPath));
         }

@@ -66,7 +66,7 @@ void FlightConditionWidget::showEvent(QShowEvent *event) noexcept
     updateUi();
 
     // Flight
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::flightConditionChanged,
             this, &FlightConditionWidget::updateUi);
     connect(&flight, &Flight::flightStored,
@@ -82,7 +82,7 @@ void FlightConditionWidget::hideEvent(QHideEvent *event) noexcept
     QWidget::hideEvent(event);
 
     // Flight
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::flightConditionChanged,
                this, &FlightConditionWidget::updateUi);
     disconnect(&flight, &Flight::flightStored,
@@ -123,7 +123,7 @@ void FlightConditionWidget::initUi() noexcept
 
 void FlightConditionWidget::updateUi() noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     const FlightCondition &flightCondition = flight.getFlightCondition();
 
     ui->groundAltitudeLineEdit->setText(d->unit.formatFeet(flightCondition.groundAltitude));

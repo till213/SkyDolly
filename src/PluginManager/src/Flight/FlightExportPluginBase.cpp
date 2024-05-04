@@ -165,7 +165,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &f
 
     if (ok) {
         if (settings.isOpenExportedFilesEnabled()) {
-            for (const QString &exportedFilePath : d->exportedFilePaths) {
+            for (const auto &exportedFilePath : d->exportedFilePaths) {
                 const QString fileUrl = QStringLiteral("file:///") + exportedFilePath;
                 QDesktopServices::openUrl(QUrl(fileUrl));
             }

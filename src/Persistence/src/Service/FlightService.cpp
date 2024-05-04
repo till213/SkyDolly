@@ -143,7 +143,7 @@ bool FlightService::deleteById(std::int64_t id) const noexcept
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
     if (ok) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        auto &flight = Logbook::getInstance().getCurrentFlight();
         if (flight.getId() == id) {
             flight.clear(true, FlightData::CreationTimeMode::Reset);
         }

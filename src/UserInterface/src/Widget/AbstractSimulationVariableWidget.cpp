@@ -47,14 +47,14 @@ void AbstractSimulationVariableWidget::showEvent(QShowEvent *event) noexcept
 {
     QWidget::showEvent(event);
 
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &AbstractSimulationVariableWidget::updateUi);
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
     if (skyConnect) {
         updateUi(skyConnect->get().getCurrentTimestamp(), TimeVariableData::Access::DiscreteSeek);
     }
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &AbstractSimulationVariableWidget::updateUiWithCurrentTime);
 }
@@ -63,10 +63,10 @@ void AbstractSimulationVariableWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
 
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::timestampChanged,
                this, &AbstractSimulationVariableWidget::updateUi);
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::userAircraftChanged,
                this, &AbstractSimulationVariableWidget::updateUiWithCurrentTime);
 }

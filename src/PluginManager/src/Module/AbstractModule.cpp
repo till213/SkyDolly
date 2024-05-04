@@ -60,7 +60,7 @@ ModuleIntf::RecordIconId AbstractModule::getRecordIconId() const noexcept
 
 void AbstractModule::setRecording(bool enable) noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     switch (skyConnectManager.getState()) {
     case Connect::State::Recording:
         if (!enable) {
@@ -88,7 +88,7 @@ void AbstractModule::setPaused(bool enable) noexcept
 
 void AbstractModule::setPlaying(bool enable) noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isPaused() && enable) {
         // The play button also unpauses a paused replay
         setPaused(false);
@@ -132,7 +132,7 @@ void AbstractModule::onPause(bool enable) noexcept
 
 void AbstractModule::onStartReplay() noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.startReplay(skyConnectManager.isAtEnd());
 }
 
@@ -142,7 +142,7 @@ void AbstractModule::onRecordingStopped() noexcept
 {
     const bool ok = d->flightService->storeFlight(Logbook::getInstance().getCurrentFlight());
     if (!ok) {
-        const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+        const auto &persistenceManager = PersistenceManager::getInstance();
         const QString logbookPath = QDir::toNativeSeparators(persistenceManager.getLogbookPath());
         QMessageBox::critical(getWidget(), tr("Write Error"), tr("The flight could not be stored into the logbook %1.").arg(logbookPath));
     }
@@ -167,7 +167,7 @@ void AbstractModule::restoreSettings(const Settings::ValuesByKey &valuesByKey) n
 
 void AbstractModule::frenchConnection() noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
             this, &AbstractModule::onRecordingStopped);
 }

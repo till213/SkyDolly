@@ -86,14 +86,14 @@ void StatisticsDialog::showEvent(QShowEvent *event) noexcept
     updateUi();
 
     // Connection
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &StatisticsDialog::updateRecordUi);
     connect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
             this, &StatisticsDialog::updateRecordingSampleRate);
 
     // Flight
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::cleared,
             this, &StatisticsDialog::updateUi);
 
@@ -105,14 +105,14 @@ void StatisticsDialog::hideEvent(QHideEvent *event) noexcept
     QDialog::hideEvent(event);
 
     // Connection
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::timestampChanged,
                this, &StatisticsDialog::updateRecordUi);
     disconnect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
                this, &StatisticsDialog::updateRecordingSampleRate);
 
     // Flight
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::cleared,
                this, &StatisticsDialog::updateUi);
 
@@ -154,10 +154,10 @@ void StatisticsDialog::updateRecordingSampleRate() noexcept
 
 void StatisticsDialog::updateRecordUi(std::int64_t timestamp) noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
 
     // Samples per second
-    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.getState() == Connect::State::Recording) {
         const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
         if (skyConnect) {

@@ -65,7 +65,7 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
     initUi();
     frenchConnection();
 
-    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const auto &persistenceManager = PersistenceManager::getInstance();
     bool ok {true};
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
@@ -117,7 +117,7 @@ void LogbookSettingsDialog::initUi() noexcept
 
 void LogbookSettingsDialog::updateUi() noexcept
 {
-    const PersistenceManager &persistenceManager = PersistenceManager::getInstance();
+    const auto &persistenceManager = PersistenceManager::getInstance();
     bool ok {true};
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {

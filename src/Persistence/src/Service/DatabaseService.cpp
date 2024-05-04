@@ -96,7 +96,7 @@ bool DatabaseService::connect(const QString &logbookPath) noexcept
 
 bool DatabaseService::connectAndMigrate(const QString &logbookPath) noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     bool ok = connect(logbookPath);
     if (ok) {
         const auto & [success, databaseVersion] = checkDatabaseVersion();
@@ -303,7 +303,7 @@ Version DatabaseService::getDatabaseVersion(bool *ok) const noexcept
 
 QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
 {
-    const Settings &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     const QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
     const QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open Logbook"), existingLogbookPath, QStringLiteral("*") % Const::DotLogbookExtension);
     return logbookPath;
@@ -311,9 +311,9 @@ QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
 
 QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
 {
-    const Settings &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     const QString existingLogbookPath = settings.getLogbookPath();
-    const QFileInfo existingLogbookInfo(existingLogbookPath);
+    const QFileInfo existingLogbookInfo {existingLogbookPath};
     QDir existingLogbookDirectory(existingLogbookInfo.absolutePath());
     if (existingLogbookDirectory.dirName() == existingLogbookInfo.baseName()) {
         existingLogbookDirectory.cdUp();

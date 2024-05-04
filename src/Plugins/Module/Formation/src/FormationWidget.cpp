@@ -273,7 +273,7 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateUi);
 
     // Flight
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::flightRestored,
             this, &FormationWidget::updateUi);
     connect(&flight, &Flight::aircraftStored,
@@ -290,7 +290,7 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateUi);
 
     // Connection
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &FormationWidget::updateUi);
     connect(&skyConnectManager, &SkyConnectManager::replayModeChanged,
@@ -347,7 +347,7 @@ void FormationWidget::frenchConnection() noexcept
 
 void FormationWidget::updateTable() noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
 
     ui->aircraftTableWidget->blockSignals(true);
     ui->aircraftTableWidget->setSortingEnabled(false);
@@ -400,7 +400,7 @@ void FormationWidget::updateAircraftIcons() noexcept
         item->setIcon(QIcon());
     }
     // Update user aircraft icon
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     const int userAircraftIndex = flight.getUserAircraftIndex();
     const int row = getRowByAircraftIndex(userAircraftIndex);
     if (row != ::InvalidRow) {
@@ -412,7 +412,7 @@ void FormationWidget::updateAircraftIcons() noexcept
 
 void FormationWidget::updateReferenceAircraftIcon() noexcept
 {
-    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
     const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
     if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
         ui->referenceAircraftLabel->setPixmap(d->referenceAircraftPixmap);
@@ -465,7 +465,7 @@ void FormationWidget::updateRelativePositionUi() noexcept
 void FormationWidget::updateEditUi() noexcept
 {
     const bool inRecordingState = SkyConnectManager::getInstance().isInRecordingState();
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
     ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Const::InvalidIndex && !inRecordingState && !userAircraftIndex);
     const bool formation = flight.count() > 1;
@@ -484,7 +484,7 @@ void FormationWidget::updateTimeOffsetUi() noexcept
 
     ui->timeOffsetSpinBox->blockSignals(true);
     if (enabled) {
-        const Flight &flight = Logbook::getInstance().getCurrentFlight();
+        const auto &flight = Logbook::getInstance().getCurrentFlight();
         const Aircraft &aircraft = flight[d->selectedAircraftIndex];
         const std::int64_t timeOffset = aircraft.getAircraftInfo().timeOffset;
         const double timeOffsetSec = static_cast<double>(timeOffset) / 1000.0;
@@ -528,7 +528,7 @@ void FormationWidget::updateToolTips() noexcept
 
     // Time offset
     if (d->selectedAircraftIndex != Const::InvalidId) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        auto &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
         const std::int64_t timeOffset = aircraft.getTimeOffset();
@@ -632,7 +632,7 @@ inline const QTableWidgetItem *FormationWidget::initRow(const Aircraft &aircraft
 
 inline void FormationWidget::updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept
 {
-    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
 
     // Sequence number
@@ -640,7 +640,7 @@ inline void FormationWidget::updateRow(const Aircraft &aircraft, int row, int ai
     // Sequence numbers start at 1
     item->setData(Qt::DisplayRole, aircraftIndex + 1);
     // Icon
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     const int userAircraftIndex = flight.getUserAircraftIndex();
     const bool recording = skyConnectManager.isInRecordingState();
     const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
@@ -694,7 +694,7 @@ inline void FormationWidget::updateRow(const Aircraft &aircraft, int row, int ai
 
 void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
 
     switch (skyConnectManager.getReplayMode())
     {
@@ -703,7 +703,7 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
     case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
     {
         if (!skyConnectManager.isInRecordingState()) {
-            Flight &flight = Logbook::getInstance().getCurrentFlight();
+            auto &flight = Logbook::getInstance().getCurrentFlight();
             // Also update the manually flown user aircraft position
             const Aircraft &aircraft = flight.getUserAircraft();
             Position &position = aircraft.getPosition();
@@ -729,14 +729,14 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
 
 void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     if (d->moduleSettings.isRelativePositionPlacementEnabled()) {
         switch(replayMode) {
         case SkyConnectIntf::ReplayMode::Normal:
             break;
         case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
         {
-            Flight &flight = Logbook::getInstance().getCurrentFlight();
+            auto &flight = Logbook::getInstance().getCurrentFlight();
             const Aircraft &aircraft = flight.getUserAircraft();
             Position &position = aircraft.getPosition();
             const PositionData &positionData = position.interpolate(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::DiscreteSeek);
@@ -818,7 +818,7 @@ void FormationWidget::onUserAircraftChanged() noexcept
 
 void FormationWidget::onAircraftAdded(const Aircraft &aircraft) noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     const int aircraftIndex = flight.getAircraftIndex(aircraft);
 
     ui->aircraftTableWidget->blockSignals(true);
@@ -864,7 +864,7 @@ void FormationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexc
 
 void FormationWidget::onCellChanged(int row, int column) noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    auto &flight = Logbook::getInstance().getCurrentFlight();
     Aircraft &aircraft = flight[d->selectedAircraftIndex];
     if (column == FormationWidgetPrivate::tailNumberColumn) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
@@ -905,7 +905,7 @@ void FormationWidget::onInitialPositionPlacementChanged(bool enable) noexcept
 void FormationWidget::updateUserAircraftIndex() noexcept
 {
     if (!SkyConnectManager::getInstance().isInRecordingState()) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        auto &flight = Logbook::getInstance().getCurrentFlight();
         if (d->selectedAircraftIndex != flight.getUserAircraftIndex()) {
             d->flightService->updateUserAircraftIndex(flight, d->selectedAircraftIndex);
         }
@@ -915,7 +915,7 @@ void FormationWidget::updateUserAircraftIndex() noexcept
 void FormationWidget::deleteAircraft() noexcept
 {
     if (d->selectedAircraftIndex != ::Const::InvalidIndex) {
-        Settings &settings = Settings::getInstance();
+        auto &settings = Settings::getInstance();
         bool doDelete {true};
         if (settings.isDeleteAircraftConfirmationEnabled()) {
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
@@ -970,7 +970,7 @@ void FormationWidget::onVerticalDistanceChanged() noexcept
 
 void FormationWidget::onReplayModeSelected() noexcept
 {
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    auto &skyConnectManager = SkyConnectManager::getInstance();
     SkyConnectIntf::ReplayMode replayMode {static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->currentData().toInt())};
     skyConnectManager.setReplayMode(replayMode);
     d->moduleSettings.setReplayMode(replayMode);
@@ -986,7 +986,7 @@ void FormationWidget::onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode)
 void FormationWidget::changeTimeOffset(const std::int64_t timeOffset) noexcept
 {
     if (d->selectedAircraftIndex != Const::InvalidIndex) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        auto &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
         const std::int64_t newTimeOffset = aircraft.getTimeOffset() + timeOffset;
@@ -998,7 +998,7 @@ void FormationWidget::changeTimeOffset(const std::int64_t timeOffset) noexcept
 void FormationWidget::onTimeOffsetValueChanged() noexcept
 {
     if (d->selectedAircraftIndex != Const::InvalidIndex) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        auto &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
         const double timeOffsetSec = ui->timeOffsetSpinBox->value();
@@ -1010,7 +1010,7 @@ void FormationWidget::onTimeOffsetValueChanged() noexcept
 
 void FormationWidget::resetAllTimeOffsets() noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     bool doReset {true};
     if (settings.isResetTimeOffsetConfirmationEnabled()) {
         std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
@@ -1030,7 +1030,7 @@ void FormationWidget::resetAllTimeOffsets() noexcept
         settings.setResetTimeOffsetConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
     }
     if (doReset) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        auto &flight = Logbook::getInstance().getCurrentFlight();
         bool ok {true};
         for (auto &aircraft : flight) {
             ok = d->aircraftService->changeTimeOffset(aircraft, 0);

@@ -125,7 +125,7 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths) noe
 
     bool ok {true};
     bool ignoreFailures {false};
-    for (const QString &filePath : filePaths) {
+    for (const auto &filePath : filePaths) {
         QFile file {filePath};
         ok = file.open(QIODevice::ReadOnly);
         if (ok) {

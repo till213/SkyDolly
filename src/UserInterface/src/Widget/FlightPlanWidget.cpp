@@ -62,7 +62,7 @@ void FlightPlanWidget::showEvent(QShowEvent *event) noexcept
     QWidget::showEvent(event);
     updateUi();
 
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::waypointAdded,
             this, &FlightPlanWidget::addWaypoint);
     connect(&flight, &Flight::waypointUpdated,
@@ -81,7 +81,7 @@ void FlightPlanWidget::showEvent(QShowEvent *event) noexcept
 void FlightPlanWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::waypointAdded,
                this, &FlightPlanWidget::addWaypoint);
     disconnect(&flight, &Flight::waypointUpdated,
@@ -105,7 +105,7 @@ void FlightPlanWidget::initUi() noexcept
 
 void FlightPlanWidget::updateUi() noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
     const FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
 
     clear();

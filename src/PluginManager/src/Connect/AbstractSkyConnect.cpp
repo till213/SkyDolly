@@ -767,7 +767,7 @@ void AbstractSkyConnect::frenchConnection() noexcept
             this, &AbstractSkyConnect::recordData);
     connect(&(d->reconnectTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::onReconnectTimer);
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     connect(&settings, &Settings::recordingSampleRateChanged,
             this, &AbstractSkyConnect::onRecordingSampleRateSettingsChanged);
 }
@@ -779,7 +779,7 @@ bool AbstractSkyConnect::hasRecordingStarted() const noexcept
 
 std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     return static_cast<std::int64_t>(std::round(settings.isAbsoluteSeekEnabled() ?
                                      settings.getSeekIntervalSeconds() * 1000.0 :
                                      settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));

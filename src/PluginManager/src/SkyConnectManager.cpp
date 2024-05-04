@@ -484,7 +484,7 @@ SkyConnectManager::~SkyConnectManager()
 void SkyConnectManager::frenchConnection() noexcept
 {
     // Settings
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     connect(&settings, &Settings::skyConnectPluginUuidChanged,
             this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
 }
@@ -496,7 +496,7 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
         d->pluginsDirectory.cd(pluginDirectoryName);
         const QStringList entryList = d->pluginsDirectory.entryList(QDir::Files);
         d->pluginHandles.reserve(entryList.count());
-        for (const QString &fileName : entryList) {
+        for (const auto &fileName : entryList) {
             const QString pluginPath = d->pluginsDirectory.absoluteFilePath(fileName);
             QPluginLoader loader(pluginPath);
 
@@ -519,7 +519,7 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
 
 void SkyConnectManager::initialisePlugin() noexcept
 {
-    Settings &settings = Settings::getInstance();
+    auto &settings = Settings::getInstance();
     QUuid uuid = settings.getSkyConnectPluginUuid();
     // Try to load plugin as stored in the settings
     bool ok = !uuid.isNull() && tryAndSetCurrentSkyConnect(uuid);
