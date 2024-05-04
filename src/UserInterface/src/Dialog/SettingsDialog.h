@@ -62,6 +62,7 @@ private slots:
     void updateUi() noexcept;
     void updateConnectionStatus() const noexcept;
     void handleFlightSimulatorConnectionSelectionChanged() const noexcept;
+    void handleStyleChanged() noexcept;
     void handleSkyConnectPluginChanged() noexcept;
     void handleAccepted() noexcept;
     void handleTabChanged(int index) noexcept;

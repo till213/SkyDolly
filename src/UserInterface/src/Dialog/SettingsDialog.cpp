@@ -31,6 +31,7 @@
 #include <QString>
 #include <QDoubleSpinBox>
 #include <QTimer>
+#include <QStyleFactory>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -131,10 +132,17 @@ void SettingsDialog::initUi() noexcept
     // Flight simulator
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
-    for (auto &plugin : plugins) {
+    for (const auto &plugin : plugins) {
         ui->connectionComboBox->addItem(plugin.second.name, plugin.first);
     }
     initFlightSimulatorOptionWidget();
+
+    // User interface
+    ui->styleComboBox->addItem(Settings::DefaultStyleKey, Settings::DefaultStyleKey);
+    const auto styleKeys = QStyleFactory::keys();
+    for (const auto &key : styleKeys) {
+        ui->styleComboBox->addItem(key, key);
+    }
 
     ui->settingsTabWidget->setCurrentIndex(::ReplayTab);
     handleTabChanged(ui->settingsTabWidget->currentIndex());
@@ -151,6 +159,8 @@ void SettingsDialog::frenchConnection() noexcept
             this, &SettingsDialog::handleTabChanged);
     connect(ui->connectionComboBox, &QComboBox::currentIndexChanged,
             this, &SettingsDialog::handleFlightSimulatorConnectionSelectionChanged);
+    connect(ui->styleComboBox, &QComboBox::currentIndexChanged,
+            this, &SettingsDialog::handleStyleChanged);
 }
 
 // PRIVATE SLOTS
@@ -177,6 +187,8 @@ void SettingsDialog::updateUi() noexcept
     updateConnectionStatus();
 
     // User interface
+    const auto styleKey = settings.getStyleKey();
+    ui->styleComboBox->setCurrentText(styleKey);
     ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
     ui->confirmDeleteAircraftCheckBox->setChecked(settings.isDeleteAircraftConfirmationEnabled());
     ui->confirmDeleteLocationCheckBox->setChecked(settings.isDeleteLocationConfirmationEnabled());
@@ -233,6 +245,11 @@ void SettingsDialog::handleFlightSimulatorConnectionSelectionChanged() const noe
     skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
 }
 
+void SettingsDialog::handleStyleChanged() noexcept
+{
+    // TODO IMPLEMENT ME Show "restart required" info
+}
+
 void SettingsDialog::handleSkyConnectPluginChanged() noexcept
 {
     if (d->skyConnectOptionWidget != nullptr) {
@@ -261,6 +278,7 @@ void SettingsDialog::handleAccepted() noexcept
     }
 
     // User interface
+    settings.setStyleKey(ui->styleComboBox->currentData().toString());
     settings.setDeleteFlightConfirmationEnabled(ui->confirmDeleteFlightCheckBox->isChecked());
     settings.setDeleteAircraftConfirmationEnabled(ui->confirmDeleteAircraftCheckBox->isChecked());
     settings.setDeleteLocationConfirmationEnabled(ui->confirmDeleteLocationCheckBox->isChecked());

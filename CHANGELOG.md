@@ -19,6 +19,12 @@
   * The sample SimConnect.cfg is located in the Sky Dolly application directory
     - It should work with the default SimConnect.xml server configuration that is generated automatically by MSFS upon launch
     - Adjust the server IP address and port as needed
+- Official "dark theme" support, via selectable user interface styles
+  * The user interface style can now be set in the application settings
+  * Windows 10: the "Fusion" style supports "dark theme"
+    - Note: While the "Windows Vista" style is the default style it does not support "dark theme"
+  * Windows 11: the "Windows 11" style supports "dark theme"
+  * In any case, "dark theme" needs to be enabled in the Windows (operating system) settings, as desired
 
 ### Improvements
 - The default logbook name is now *Sky Dolly Logbook*

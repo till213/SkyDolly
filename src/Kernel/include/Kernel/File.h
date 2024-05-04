@@ -28,6 +28,7 @@
 #include <QString>
 #include <QStringView>
 #include <QStringList>
+#include <QFileInfo>
 
 class QString;
 
@@ -73,6 +74,23 @@ public:
     static QStringList getFilePaths(const QString &directoryPath, QStringView extension) noexcept;
 
     static QString getPluginDirectoryPath() noexcept;
+
+    /*!
+     * Returns the file info of the best available earth gravity model (EGM) data file.
+     *
+     * \return the file info of the earth gravity model data file; check for its existence
+     *         (QFile::exists) before using
+     * \sa hasEarthGravityModel
+     */
+    static QFileInfo getEarthGravityModelFileInfo() noexcept;
+
+    /*!
+     * Returns whether any earth gravity model (EGM) is available.
+     *
+     * \return \c true if an earth gravity model is available; \c false else
+     * \sa getEarthGravityModelFileInfo
+     */
+    static bool hasEarthGravityModel() noexcept;
 };
 
 #endif // FILE_H

@@ -34,6 +34,7 @@
 #include <QSettings>
 #include <QUuid>
 #include <QString>
+#include <QStringLiteral>
 #include <QVariant>
 #include <QFileInfo>
 #include <QByteArray>
@@ -93,7 +94,7 @@ public:
      *        the path of the logbook
      * \sa logbookPathChanged
      */
-    void setLogbookPath(const QString &logbookPath) noexcept;
+    void setLogbookPath(QString logbookPath) noexcept;
 
     /*!
      * Returns whether a backup of the logbook to be migrated should be done
@@ -234,7 +235,7 @@ public:
      * \param geometry
      *        the window geometry encoded in the QByteAarray
      */
-    void setWindowGeometry(const QByteArray &geometry) noexcept;
+    void setWindowGeometry(QByteArray geometry) noexcept;
 
     /*!
      * Returns the saved window state.
@@ -249,7 +250,7 @@ public:
      * \param state
      *        the window state encoded in the QByteAarray
      */
-    void setWindowState(const QByteArray &state) noexcept;
+    void setWindowState(QByteArray state) noexcept;
 
     /*!
      * Returns the path of the directory which was last accessed during export or import.
@@ -265,7 +266,7 @@ public:
      *        the path of the last export / import directory
      * \sa exportPathChanged
      */
-    void setExportPath(const QString &exportPath);
+    void setExportPath(QString exportPath);
 
     /*!
      * Returns whether the fast-forward / backward interval is an absolute value (in milliseconds).
@@ -367,6 +368,23 @@ public:
      * \sa repeatCanopyChanged
      */
     void setRepeatCanopyOpenEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns the user interface style key.
+     *
+     * \return the user interface style key
+     */
+    QString getStyleKey() const noexcept;
+
+    /*!
+     * Sets the user interface style key
+     *
+     * \param styleKey
+     *        the user interface style key
+     * \sa DefaultStyleKey
+     * \sa changed
+     */
+    void setStyleKey(QString styleKey) noexcept;
 
     /*!
      * Returns whether the flight deletion confirmation is enabled or not.
@@ -508,24 +526,7 @@ public:
      *        the (last) selected aircraft type
      * \sa changed
      */
-    void setImportAircraftType(const QString &type) noexcept;
-
-    /*!
-     * Returns the file info of the best available earth gravity model (EGM) data file.
-     *
-     * \return the file info of the earth gravity model data file; check for its existence
-     *         (QFile::exists) before using
-     * \sa hasEarthGravityModel
-     */
-    QFileInfo getEarthGravityModelFileInfo() const noexcept;
-
-    /*!
-     * Returns whether any earth gravity model (EGM) is available.
-     *
-     * \return \c true if an earth gravity model is available; \c false else
-     * \sa getEarthGravityModelFileInfo
-     */
-    bool hasEarthGravityModel() const noexcept;
+    void setImportAircraftType(QString type) noexcept;
 
     /*!
      * Returns the count of how many times the "preview" dialog is still
@@ -556,6 +557,9 @@ public:
     void storeModuleSettings(QUuid moduleUuid, const KeyValues &keyValues) const noexcept;
     ValuesByKey restoreModuleSettings(QUuid moduleUuid, const KeysWithDefaults &keys) noexcept;
 
+    /*! The key for the default user interface style (QApplication picks the most approprate style) */
+    static inline const QString DefaultStyleKey {QStringLiteral("Default")};
+
 public slots:
     /*!
      * Stores these Settings to a user configuration file.
@@ -576,7 +580,7 @@ signals:
      *
      * \sa changed
      */
-    void logbookPathChanged(const QString &logbookPath);
+    void logbookPathChanged(QString logbookPath);
 
     /*!
      * Emitted when the backup before migration option has changed.
@@ -632,7 +636,7 @@ signals:
      *
      * \sa changed
      */
-    void exportPathChanged(const QString &exportPath);
+    void exportPathChanged(QString exportPath);
 
     /*!
      * Emitted when the absolute/relative seek setting has changed.
@@ -677,6 +681,13 @@ signals:
     void repeatCanopyChanged(bool enable);
 
     /*!
+     * Emitted when the user interface style key has changed
+     *
+     * \sa changed
+     */
+    void styleKeyChanged(const QString &key);
+
+    /*!
      * Emitted when the default button text visibility for the minimal UI has changed.
      *
      * \sa changed
@@ -710,9 +721,6 @@ private:
     ~Settings() override;
 
     void frenchConnection() noexcept;
-
-private slots:
-    void updateEgmFilePath() noexcept;
 };
 
 #endif // SETTINGS_H

@@ -39,6 +39,12 @@ namespace
 #else
     constexpr const char *PluginDirectoryName {"Plugins"};
 #endif
+
+    constexpr const char *ResourceDirectoryName {"Resources"};
+    // This happens to be the same directory name as when unzipping the downloaded EGM data
+    // from https://geographiclib.sourceforge.io/html/geoid.html#geoidinst
+    constexpr const char *EgmDirectoryName {"geoids"};
+    constexpr const char *DefaultEgmFileName {"egm2008-5.pgm"};
 }
 
 // PUBLIC
@@ -92,4 +98,30 @@ QString File::getSequenceFilePath(const QString &filePath, int n) noexcept
 #endif
      pluginsDirectory.cd(QString::fromLatin1(::PluginDirectoryName));
      return pluginsDirectory.absolutePath();
+ }
+
+ QFileInfo File::getEarthGravityModelFileInfo() noexcept
+ {
+     QFileInfo egmFileInfo;
+     QDir egmDirectory = QDir(QCoreApplication::applicationDirPath());
+#if defined(Q_OS_MAC)
+     if (egmDirectory.dirName() == "MacOS") {
+         // Navigate up the app bundle structure, into the Contents folder
+         egmDirectory.cdUp();
+     }
+#endif
+     if (egmDirectory.cd(QString::fromLatin1(::ResourceDirectoryName))) {
+         if (egmDirectory.cd(QString::fromLatin1(::EgmDirectoryName))) {
+             if (egmDirectory.exists(QString::fromLatin1(::DefaultEgmFileName))) {
+                 egmFileInfo = QFileInfo(
+                     egmDirectory.absoluteFilePath(QString::fromLatin1(::DefaultEgmFileName)));
+             }
+         }
+     }
+     return egmFileInfo;
+ }
+
+ bool File::hasEarthGravityModel() noexcept
+ {
+     return getEarthGravityModelFileInfo().exists();
  }

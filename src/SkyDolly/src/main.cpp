@@ -28,6 +28,7 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <QStyle>
+#include <QStyleFactory>
 #include <QStringList>
 #include <QString>
 #include <QStringLiteral>
@@ -70,12 +71,14 @@ int main(int argc, char **argv) noexcept
     QCoreApplication::setApplicationName(Version::getApplicationName());
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 
-    // TODO IMPLEMENT ME move to settings, set actual style here
-    const QStringList styles = QStyleFactory::keys();
-
+    // Set the user interface style (if not default)
+    const QString styleKey = Settings::getInstance().getStyleKey();
+    if (styleKey != Settings::DefaultStyleKey) {
+        const auto style = QStyleFactory::create(styleKey);
+        QApplication::setStyle(style);
+    }
     QApplication application(argc, argv);
 
-    auto style = QApplication::style()->name();
     // Signals must be registered after the QApplication instantiation, due
     // to the QSocketNotifier
     SignalHandler signalHandler;

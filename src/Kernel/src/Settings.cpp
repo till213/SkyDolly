@@ -23,10 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <mutex>
+#include <utility>
 
 #include <QCoreApplication>
-#include <QApplication>
-#include <QStyle>
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
@@ -47,15 +46,6 @@
 #include "Version.h"
 #include "SettingsConverter.h"
 #include "Settings.h"
-
-namespace
-{
-    constexpr const char *ResourceDirectoryName {"Resources"};
-    // This happens to be the same directory name as when unzipping the downloaded EGM data
-    // from https://geographiclib.sourceforge.io/html/geoid.html#geoidinst
-    constexpr const char *EgmDirectoryName {"geoids"};
-    constexpr const char *DefaultEgmFileName {"egm2008-5.pgm"};
-}
 
 struct SettingsPrivate
 {
@@ -94,7 +84,7 @@ struct SettingsPrivate
     Replay::SpeedUnit replaySpeedUnit {DefaultReplaySpeedUnit};
     bool repeatCanopyOpen {DefaultRepeatCanopyOpen};
 
-    QString styleKey {QApplication::style()->name()};
+    QString styleKey {Settings::DefaultStyleKey};
 
     bool deleteFlightConfirmation {DefaultDeleteFlightConfirmation};
     bool deleteAircraftConfirmation {DefaultDeleteAircraftConfirmation};
@@ -106,7 +96,6 @@ struct SettingsPrivate
     bool defaultMinimalUiReplaySpeedVisible {DefaultMinimalUiReplaySpeedVisible};
 
     QString importAircraftType;
-    QFileInfo earthGravityModelFileInfo;
 
     int previewInfoDialogCount {DefaultPreviewInfoDialogCount};
 
@@ -125,6 +114,7 @@ struct SettingsPrivate
     static constexpr double DefaultSeekIntervalPercent {0.5};
     static constexpr bool DefaultReplayLoop {false};
     static constexpr Replay::SpeedUnit DefaultReplaySpeedUnit {Replay::SpeedUnit::Absolute};
+
     // For now the default value is true, as no known aircraft exists where the canopy values would not
     // have to be repeated
     static constexpr bool DefaultRepeatCanopyOpen {true};
@@ -171,10 +161,10 @@ QString Settings::getLogbookPath() const noexcept
     return d->logbookPath;
 }
 
-void Settings::setLogbookPath(const QString &logbookPath) noexcept
+void Settings::setLogbookPath(QString logbookPath) noexcept
 {
     if (d->logbookPath != logbookPath) {
-        d->logbookPath = logbookPath;
+        d->logbookPath = std::move(logbookPath);
         emit logbookPathChanged(d->logbookPath);
     }
 }
@@ -200,7 +190,7 @@ QUuid Settings::getSkyConnectPluginUuid() const noexcept
 void Settings::setSkyConnectPluginUuid(QUuid uuid) noexcept
 {
     if (d->skyConnectPluginUuid != uuid) {
-        d->skyConnectPluginUuid = uuid;
+        d->skyConnectPluginUuid = std::move(uuid);
         emit skyConnectPluginUuidChanged(d->skyConnectPluginUuid);
     }
 }
@@ -210,10 +200,10 @@ QString Settings::getExportPath() const noexcept
     return d->exportPath;
 }
 
-void Settings::setExportPath(const QString &exportPath)
+void Settings::setExportPath(QString exportPath)
 {
     if (d->exportPath != exportPath) {
-        d->exportPath = exportPath;
+        d->exportPath = std::move(exportPath);
         emit exportPathChanged(d->exportPath);
     }
 }
@@ -294,9 +284,9 @@ QByteArray Settings::getWindowGeometry() const noexcept
     return d->windowGeometry;
 }
 
-void Settings::setWindowGeometry(const QByteArray &geometry) noexcept
+void Settings::setWindowGeometry(QByteArray geometry) noexcept
 {
-    d->windowGeometry = geometry;
+    d->windowGeometry = std::move(geometry);
 }
 
 QByteArray Settings::getWindowState() const noexcept
@@ -304,9 +294,9 @@ QByteArray Settings::getWindowState() const noexcept
     return d->windowState;
 }
 
-void Settings::setWindowState(const QByteArray &state) noexcept
+void Settings::setWindowState(QByteArray state) noexcept
 {
-    d->windowState = state;
+    d->windowState = std::move(state);
 }
 
 bool Settings::isAbsoluteSeekEnabled() const noexcept
@@ -384,6 +374,19 @@ void Settings::setRepeatCanopyOpenEnabled(bool enable) noexcept
     if (d->repeatCanopyOpen != enable) {
         d->repeatCanopyOpen = enable;
         emit repeatCanopyChanged(d->repeatCanopyOpen);
+    }
+}
+
+QString Settings::getStyleKey() const noexcept
+{
+    return d->styleKey;
+}
+
+void Settings::setStyleKey(QString styleKey) noexcept
+{
+    if (d->styleKey != styleKey) {
+        d->styleKey = std::move(styleKey);
+        emit styleKeyChanged(d->styleKey);
     }
 }
 
@@ -483,22 +486,12 @@ QString Settings::getImportAircraftType() const noexcept
     return d->importAircraftType;
 }
 
-void Settings::setImportAircraftType(const QString &type) noexcept
+void Settings::setImportAircraftType(QString type) noexcept
 {
     if (d->importAircraftType != type) {
-        d->importAircraftType = type;
+        d->importAircraftType = std::move(type);
         emit changed();
     }
-}
-
-QFileInfo Settings::getEarthGravityModelFileInfo() const noexcept
-{
-    return d->earthGravityModelFileInfo;
-}
-
-bool Settings::hasEarthGravityModel() const noexcept
-{
-    return d->earthGravityModelFileInfo.exists();
 }
 
 int Settings::getPreviewInfoDialogCount() const noexcept
@@ -704,6 +697,9 @@ void Settings::restore() noexcept
     d->settings.endGroup();
     d->settings.beginGroup("UI");
     {
+        // UI styles
+        d->styleKey = d->settings.value("StyleKey", DefaultStyleKey).toString();
+
         // Confirmations
         d->deleteFlightConfirmation = d->settings.value("DeleteFlightConfirmation", SettingsPrivate::DefaultDeleteFlightConfirmation).toBool();
         d->deleteAircraftConfirmation = d->settings.value("DeleteAircraftConfirmation", SettingsPrivate::DefaultDeleteAircraftConfirmation).toBool();
@@ -759,7 +755,6 @@ Settings::Settings() noexcept
 {
     restore();
     frenchConnection();
-    updateEgmFilePath();
 }
 
 Settings::~Settings()
@@ -799,32 +794,12 @@ void Settings::frenchConnection() noexcept
             this, &Settings::changed);
     connect(this, &Settings::repeatCanopyChanged,
             this, &Settings::changed);
+    connect(this, &Settings::styleKeyChanged,
+            this, &Settings::changed);
     connect(this, &Settings::defaultMinimalUiButtonTextVisibilityChanged,
             this, &Settings::changed);
     connect(this, &Settings::defaultMinimalUiNonEssentialButtonVisibilityChanged,
             this, &Settings::changed);
     connect(this, &Settings::defaultMinimalUiReplaySpeedVisibilityChanged,
             this, &Settings::changed);
-}
-
-// PRIVATE SLOTS
-
-void Settings::updateEgmFilePath() noexcept
-{
-    d->earthGravityModelFileInfo = QFileInfo();
-    QDir egmDirectory = QDir(QCoreApplication::applicationDirPath());
-#if defined(Q_OS_MAC)
-        if (egmDirectory.dirName() == "MacOS") {
-            // Navigate up the app bundle structure, into the Contents folder
-            egmDirectory.cdUp();
-        }
-#endif
-        if (egmDirectory.cd(QString::fromLatin1(::ResourceDirectoryName))) {
-            if (egmDirectory.cd(QString::fromLatin1(::EgmDirectoryName))) {
-                if (egmDirectory.exists(QString::fromLatin1(::DefaultEgmFileName))) {
-                    d->earthGravityModelFileInfo = QFileInfo(
-                        egmDirectory.absoluteFilePath(QString::fromLatin1(::DefaultEgmFileName)));
-                }
-            }
-        }
 }

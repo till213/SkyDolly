@@ -35,13 +35,14 @@
 #include <GeographicLib/Geoid.hpp>
 
 #include "Settings.h"
+#include "File.h"
 #include "Convert.h"
 
 // PUBLIC
 
 Convert::Convert() noexcept
-{   
-    const QFileInfo earthGravityModelFileInfo = Settings::getInstance().getEarthGravityModelFileInfo();
+{
+    const QFileInfo earthGravityModelFileInfo = File::getEarthGravityModelFileInfo();
     if (earthGravityModelFileInfo.exists()) {
         try {
             const std::string egmName = earthGravityModelFileInfo.baseName().toStdString();
