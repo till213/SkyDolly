@@ -303,7 +303,7 @@ bool PathCreatorPlugin::onRequestLocation() noexcept
 bool PathCreatorPlugin::onRequestSimulationRate() noexcept
 {
     const auto &settings = Settings::getInstance();
-    const float simulationRate = std::min(std::round(getReplaySpeedFactor()), static_cast<float>(settings.getMaximumSimulationRate()));
+    const float simulationRate = std::min(getReplaySpeedFactor(), static_cast<float>(settings.getMaximumSimulationRate()));
     emit simulationRateReceived(simulationRate);
 
     return true;
