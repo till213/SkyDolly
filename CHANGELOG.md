@@ -63,7 +63,7 @@
 - Seeking on the timeline now correctly re-establishes the current flap (and other control element) settings
 
 ### Under the Hood
-- Upgrade GeographicLib to version 2.2 (from version 2.1.2)
+- Upgrade GeographicLib to version 2.3 (from version 2.1.2)
 - Upgrade cpptrace to version 0.5.2 (from 0.1.1)
 
 ## 0.16.3
