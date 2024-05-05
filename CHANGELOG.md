@@ -21,9 +21,11 @@
     - Adjust the server IP address and port as needed
 - Official "dark theme" support, via selectable user interface styles
   * The user interface style can now be set in the application settings
-  * Windows 10: the "Fusion" style supports "dark theme"
-    - Note: While on Windows 10 the "Windows Vista" style is the default it does not support "dark theme"
-  * Windows 11: the "Windows 11" (default) and "Fusion" styles support "dark theme"
+  * Notes for Windows 10
+    - Only the "Fusion" style supports "dark theme"
+      * While "Windows Vista" style is the default it does not support "dark theme"
+    - While the "Windows 11" style is seemingly selectable it does not actually work: "Windows Vista" will be used in this case
+  * Windows 11: the "Windows 11" (default) and "Fusion" styles both support "dark theme"
   * In any case, "dark theme" needs to be enabled in the Windows (operating system) settings, as desired
 
 ### Improvements
@@ -56,6 +58,7 @@
 - Remove last recorded flight or aircraft in case persistence fails (improved error handling)
 - In the Formation module the reference aircraft icon is properly initialised
 - During replay the replay speed is now properly set to the last "custom speed" (e.g. 0.1) when checking the "Custom" radio button (previously the actual replay speed was always wrongly set to 1.0, mismatching with the *displayed* custom speed value, e.g. 0.1)
+- Seeking on the timeline now correctly re-establishes the current flap (and other control element) settings
 
 ### Under the Hood
 - Upgrade GeographicLib to version 2.2 (from version 2.1.2)
