@@ -73,18 +73,18 @@
 - _Import_ a Sky Dolly v0.6 logbook (create a copy first)
 
 ## Take-Off
-- ZIP the package folder (e.g. `SkyDolly-v0.16.0.zip`)
+- ZIP the package folder (e.g. `SkyDolly-v0.17.0.zip`)
 
 ## After Take-Off Check
 - Upload the ZIP archive to [VirusTotal](https://www.virustotal.com/)
 
 ### GitHub
 - Create a new release (https://github.com/till213/SkyDolly/releases/new)
-- Choose a tag, e.g. `v0.16.0`
+- Choose a tag, e.g. `v0.17.0`
 - Ensure that _Target_ is set to `main`
-- Choose a title, e.g. `Sky Dolly 0.16.0`
+- Choose a title, e.g. `Sky Dolly 0.17.0`
 - Provide a description (summary of the changelog)
-- Attach the ZIP archive (e.g. `SkyDolly-v0.16.0.zip`)
+- Attach the ZIP archive (e.g. `SkyDolly-v0.17.0.zip`)
 - Check the _This is a pre-release_ option (as appropriate)
 
 Description template:
