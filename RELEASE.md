@@ -66,8 +66,8 @@
 - Repeat with _Set relative position_ disabled
 - Delete aircraft, change user aircraft in formation, with  _Set relative position_ enabled and disabled
 - Change bearing and distance, with  _Set relative position_ enabled and disabled
-- Export as CSV
-- Import same file as CSV
+- Export as Logbook
+- Import same file as Logbook
 - Enable / disable minimal UI (key **M**)
 - _Open_ a Sky Dolly v0.6 logbook (create a copy first)
 - _Import_ a Sky Dolly v0.6 logbook (create a copy first)
