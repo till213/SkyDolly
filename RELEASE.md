@@ -39,7 +39,7 @@
 - Ensure that the following dependencies are in the package folder:
   * platforms/qwindows.dll
   * sqldrivers/sqlite.dll
-  * styles/qwindowsvistastyle.dll
+  * styles/qmodernwindowsstyle.dll
   * libgcc_s_seh-1.dll, libstdc++-6.dll, libwinpthread-1.dll
   * Qt6Core.dll, Qt6Gui.dll, Qt6Sql.dll, Qt6Widgets.dll 
   * SimConnect.dll

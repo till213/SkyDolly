@@ -65,6 +65,7 @@
 ### Under the Hood
 - Upgrade GeographicLib to version 2.3 (from version 2.1.2)
 - Upgrade cpptrace to version 0.5.2 (from 0.1.1)
+- Upgrade Qt to 6.7.0 (from 6.4)
 
 ## 0.16.3
 
