@@ -30,6 +30,7 @@
 #include <QByteArray>
 #include <QKeySequence>
 #include <QFlags>
+#include <QStringList>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -324,7 +325,7 @@ QByteArray InputEvent::toMSFSShortcut(const QKeySequence &sequence) const noexce
         }
         shortcut.append(msfsKey);
     } else {
-        QStringList keys = sequence.toString().split('+');
+        const auto keys = sequence.toString().split('+');
         shortcut.append(keys.last().toLatin1());
     }
 #ifdef DEBUG
