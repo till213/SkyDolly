@@ -162,12 +162,17 @@ private slots:
 
     void updateUi() noexcept;
     void updateControlUi() noexcept;
+    void updatePlayActionTooltip() noexcept;
     void updateControlIcons() noexcept;
+    void updateSimulationRateLabel() noexcept;
+
     void onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept;
     void onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept;
 
     void onRecordingStopped() noexcept;
     void onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept;
+    void requestSimulationRate() noexcept;
+    void onSimulationRateReceived(float rate) noexcept;
 
     /*
      * Updates the replay duration (maximum time) and then position slider position.

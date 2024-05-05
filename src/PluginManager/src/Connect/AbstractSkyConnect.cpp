@@ -90,13 +90,13 @@ struct AbstractSkyConnectPrivate
     QTimer recordingTimer;
     QTimer reconnectTimer;
     std::size_t reconnectAttempt {0};
-    std::array<int, ::NofRetryConnectPeriods> retryConnectPeriods;
+    std::array<int, ::NofRetryConnectPeriods> retryConnectPeriods {};
     std::int64_t currentTimestamp {0};
     std::int64_t lastNotificationTimestamp {0};
     double recordingSampleRate {Settings::getInstance().getRecordingSampleRateValue()};
     int recordingIntervalMSec {SampleRate::toIntervalMSec(recordingSampleRate)};
     QElapsedTimer elapsedTimer;
-    double replaySpeedFactor {1.0};
+    float replaySpeedFactor {1.0f};
     std::int64_t elapsedTime {0};
     mutable int lastSamplesPerSecondIndex {0};
 };
@@ -299,7 +299,7 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
                 ok = updateUserAircraftFreeze();
             }
             if (ok) {
-                sendSimulationEvent(SimulationEvent::SimulationRate, d->replaySpeedFactor);
+                sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
             }
             if (!ok) {
                 stopReplay();
@@ -506,12 +506,12 @@ bool AbstractSkyConnect::isEndReached() const noexcept
     return d->currentTimestamp >= d->currentFlight.getTotalDurationMSec();
 }
 
-double AbstractSkyConnect::getReplaySpeedFactor() const noexcept
+float AbstractSkyConnect::getReplaySpeedFactor() const noexcept
 {
     return d->replaySpeedFactor;
 }
 
-void AbstractSkyConnect::setReplaySpeedFactor(double factor) noexcept
+void AbstractSkyConnect::setReplaySpeedFactor(float factor) noexcept
 {
     if (!qFuzzyCompare(d->replaySpeedFactor, factor)) {
         // If the elapsed timer is running...
@@ -523,14 +523,14 @@ void AbstractSkyConnect::setReplaySpeedFactor(double factor) noexcept
         }
         d->replaySpeedFactor = factor;
         if (isInReplayState()) {
-            sendSimulationEvent(SimulationEvent::SimulationRate, d->replaySpeedFactor);
+            sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
         }
     }
 }
 
-double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
+float AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 {
-    double samplesPerSecond {0.0};
+    float samplesPerSecond {0.0};
     const Position &position = d->currentFlight.getUserAircraft().getPosition();
     if (position.count() > 0) {
         const std::int64_t startTimestamp = std::min(std::max(d->currentTimestamp - SamplesPerSecondPeriod, std::int64_t(0)), position.getLast().timestamp);
@@ -545,7 +545,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
         const std::size_t nofSamples = lastIndex - index + 1;
         const std::int64_t period = position[lastIndex].timestamp - position[index].timestamp;
         if (period > 0) {
-            samplesPerSecond = static_cast<double>(nofSamples) * 1000.0 / (static_cast<double>(period));
+            samplesPerSecond = static_cast<float>(nofSamples) * 1000.0 / (static_cast<float>(period));
         }
     }
     return samplesPerSecond;
@@ -560,6 +560,19 @@ bool AbstractSkyConnect::requestLocation() noexcept
     bool ok = isConnectedWithSim();
     if (ok) {
         ok = retryWithReconnect([this]() -> bool { return onRequestLocation(); });
+    }
+    return ok;
+}
+
+bool AbstractSkyConnect::requestSimulationRate() noexcept
+{
+    if (!isConnectedWithSim()) {
+        tryFirstConnectAndSetup();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this]() -> bool { return onRequestSimulationRate(); });
     }
     return ok;
 }
@@ -863,6 +876,13 @@ bool AbstractSkyConnect::updateUserAircraftFreeze() noexcept
         break;
     }
     return onFreezeUserAircraft(freeze);
+}
+
+float AbstractSkyConnect::getApplicableSimulationRate()
+{
+    const auto &settings = Settings::getInstance();
+    const auto maximumSimulationRate = static_cast<float>(settings.getMaximumSimulationRate());
+    return std::min(maximumSimulationRate, d->replaySpeedFactor);
 }
 
 // PRIVATE SLOTS

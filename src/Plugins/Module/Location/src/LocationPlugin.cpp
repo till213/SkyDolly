@@ -112,13 +112,13 @@ void LocationPlugin::frenchConnection() noexcept
 void LocationPlugin::captureLocation() noexcept
 {
     d->mode = LocationPluginPrivate::Mode::Add;
-    SkyConnectManager::getInstance().requestInitialPosition();
+    SkyConnectManager::getInstance().requestLocation();
 }
 
 void LocationPlugin::updateLocation() noexcept
 {
     d->mode = LocationPluginPrivate::Mode::Update;
-    SkyConnectManager::getInstance().requestInitialPosition();
+    SkyConnectManager::getInstance().requestLocation();
 }
 
 void LocationPlugin::teleportTo(const Location &location) noexcept

@@ -77,12 +77,15 @@ struct SettingsPrivate
     QString exportPath;
     QString defaultExportPath;
     QString defaultLogbookPath;
+
+    // Replay options
     bool absoluteSeek {false};
     double seekIntervalSeconds {DefaultSeekIntervalSeconds};
     double seekIntervalPercent {DefaultSeekIntervalPercent};
     bool replayLoop {DefaultReplayLoop};
     Replay::SpeedUnit replaySpeedUnit {DefaultReplaySpeedUnit};
     bool repeatCanopyOpen {DefaultRepeatCanopyOpen};
+    int maximumSimulationRate {DefaultMaximumSimulationRate};
 
     QString styleKey {Settings::DefaultStyleKey};
 
@@ -115,9 +118,14 @@ struct SettingsPrivate
     static constexpr bool DefaultReplayLoop {false};
     static constexpr Replay::SpeedUnit DefaultReplaySpeedUnit {Replay::SpeedUnit::Absolute};
 
-    // For now the default value is true, as no known aircraft exists where the canopy values would not
-    // have to be repeated
-    static constexpr bool DefaultRepeatCanopyOpen {true};
+    // The T-45 Goshawk properly reacts to the CANOPY_OPEN simulation variable; so there is at least
+    // one well-behaving aircraft (the Fiat "Gina" G-91 still needs this option set though)
+    static constexpr bool DefaultRepeatCanopyOpen {false};
+    // While technically the maximum simulation rate can be up to 128 (in MSFS) this may
+    // greatly impact CPU performance; a good compromise seems to be a factor of 8
+    // Also refer to: https://docs.flightsimulator.com/html/Programming_Tools/Programming_APIs.htm#SIMULATION%20RATE
+    static constexpr int DefaultMaximumSimulationRate {8};
+
     static constexpr bool DefaultDeleteFlightConfirmation {true};
     static constexpr bool DefaultDeleteAircraftConfirmation {true};
     static constexpr bool DefaultDeleteLocationConfirmation {true};
@@ -190,7 +198,7 @@ QUuid Settings::getSkyConnectPluginUuid() const noexcept
 void Settings::setSkyConnectPluginUuid(QUuid uuid) noexcept
 {
     if (d->skyConnectPluginUuid != uuid) {
-        d->skyConnectPluginUuid = std::move(uuid);
+        d->skyConnectPluginUuid = uuid;
         emit skyConnectPluginUuidChanged(d->skyConnectPluginUuid);
     }
 }
@@ -374,6 +382,19 @@ void Settings::setRepeatCanopyOpenEnabled(bool enable) noexcept
     if (d->repeatCanopyOpen != enable) {
         d->repeatCanopyOpen = enable;
         emit repeatCanopyChanged(d->repeatCanopyOpen);
+    }
+}
+
+int Settings::getMaximumSimulationRate() const noexcept
+{
+    return d->maximumSimulationRate;
+}
+
+void Settings::setMaximumSimulationRate(int rate) noexcept
+{
+    if (d->maximumSimulationRate != rate) {
+        d->maximumSimulationRate = rate;
+        emit maximumSimulationRateChanged(d->maximumSimulationRate);
     }
 }
 
@@ -586,6 +607,7 @@ void Settings::store() const noexcept
         d->settings.setValue("ReplayLoop", d->replayLoop);
         d->settings.setValue("ReplaySpeedUnit", Enum::underly(d->replaySpeedUnit));
         d->settings.setValue("RepeatCanopyOpen", d->repeatCanopyOpen);
+        d->settings.setValue("MaximumSimulationRate", d->maximumSimulationRate);
     }
     d->settings.endGroup();
     d->settings.beginGroup("UI");
@@ -703,6 +725,15 @@ void Settings::restore() noexcept
             d->replaySpeedUnit = SettingsPrivate::DefaultReplaySpeedUnit;
         }
         d->repeatCanopyOpen = d->settings.value("RepeatCanopyOpen", SettingsPrivate::DefaultRepeatCanopyOpen).toBool();
+        int maximumSimulationRateValue = d->settings.value("MaximumSimulationRate", SettingsPrivate::DefaultMaximumSimulationRate).toInt(&ok);
+        if (ok) {
+            d->maximumSimulationRate = maximumSimulationRateValue;
+        } else {
+#ifdef DEBUG
+            qWarning() << "The maximum simulation rate in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultMaximumSimulationRate;
+#endif
+            d->maximumSimulationRate = SettingsPrivate::DefaultMaximumSimulationRate;
+        }
     }
     d->settings.endGroup();
     d->settings.beginGroup("UI");

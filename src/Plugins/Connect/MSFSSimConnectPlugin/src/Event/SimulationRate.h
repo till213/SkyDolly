@@ -59,6 +59,14 @@ public:
         m_simulationRateIndex.reset();
     }
 
+    inline bool requestSimulationRate(HANDLE simConnectHandle)
+    {
+        HRESULT result = ::SimConnect_RequestDataOnSimObject(simConnectHandle, Enum::underly(SimConnectType::DataRequest::SimulationRate),
+                                                             Enum::underly(SimConnectType::DataDefinition::SimulationRate),
+                                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_DEFAULT);
+        return result == S_OK;
+    }
+
 private:
     EventState::StatefulSwitch<int> m_simulationRateIndex;
 
@@ -69,12 +77,13 @@ private:
             if (m_simulationRateIndex.valid) {
                 SimConnectEvent::Event event = m_simulationRateIndex.requested > m_simulationRateIndex.current ? SimConnectEvent::Event::SimRateIncr : SimConnectEvent::Event::SimRateDecr;
                 const int steps = std::abs(m_simulationRateIndex.current - m_simulationRateIndex.requested);
-                for (int step = 0.0; step < steps; ++step) {
+                for (int step = 0; step < steps; ++step) {
                     result |= ::SimConnect_TransmitClientEvent(simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(event), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
                 }
 #ifdef DEBUG
-                qDebug() << "SimulationRate::sendSimulationRate: incrementally setting simulation rate index to:" << m_simulationRateIndex.requested
-                         << "Previous rate index:" << m_simulationRateIndex.current
+                qDebug() << "SimulationRate::sendSimulationRate: incrementally setting simulation rate"
+                         << "from" << m_simulationRateIndex.current
+                         << "to:" << m_simulationRateIndex.requested
                          << "Steps:" << steps
                          << "Event ID:" << Enum::underly(event)
                          << "Success:" << (result == S_OK);
@@ -85,10 +94,9 @@ private:
                 m_simulationRateIndex.pending = false;
             } else if (!m_simulationRateIndex.pending) {
                 // Request current simulation rate
-                result = ::SimConnect_RequestDataOnSimObject(simConnectHandle, Enum::underly(SimConnectType::DataRequest::SimulationRate),
-                                                             Enum::underly(SimConnectType::DataDefinition::SimulationRate),
-                                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_ONCE, ::SIMCONNECT_DATA_REQUEST_FLAG_DEFAULT);
-                if (result == S_OK) {
+                const bool ok = requestSimulationRate(simConnectHandle);
+                result = ok ? S_OK : S_FALSE;
+                if (ok) {
                     m_simulationRateIndex.pending = true;
                 }
             }
@@ -98,28 +106,40 @@ private:
 
     // Returns the simulation rate index according to 'rate' as follows:
     //
-    // Rate:index:
-    // 0.25:0, 0.5:1, 1.0:2, 2.0:3, 4.0:4, 8.0:5, 16.0:6
+    // Index : Standard Rate
+    // 0: 0.0625, 1: 0.125, 2: 0.25, 3: 0.5, 4: 1, 5: 2, 6: 4, 7: 8, 8: 16, 9: 32, 10: 64, 11: 128
     //
-    // The 'rate' is rounded to the next standard rate (0.25, 0.5, 1.0, 2.0, ..., 16.0),
-    // or in other words: index 0 for any rate < 0.375 and index 6 for any rate >= 12.0
+    // The 'rate' is rounded to the next standard rate (0.0625, 0.125, 0.25, 0.5, 1, 2, 4, ... 128),
+    // or in other words: index 0 for any rate < (0.0625f + 0.125f) / 2.0f and index 11 for any rate >= 96.0
+    //
+    // Also refer to: https://docs.flightsimulator.com/html/Programming_Tools/Programming_APIs.htm#SIMULATION%20RATE
     static constexpr inline int rateToIndex(float rate) noexcept
     {
         int index {0};
-        if (rate < 0.375f) {
+        if (rate < (0.0625f + 0.125f) / 2.0f) {
             index = 0;
-        } else if (rate < 0.75f) {
+        } else if (rate < (0.125f + 0.25f) / 2.0f) {
             index = 1;
-        } else if (rate < 1.5f) {
+        } else if (rate < (0.25f + 0.5f) / 2.0f) {
             index = 2;
-        } else if (rate < 3.0f) {
+        } else if (rate < (0.5f + 1.0f) / 2.0f) {
             index = 3;
-        } else if (rate < 6.0f) {
+        } else if (rate < (1.0f + 2.0f) / 2.0f) {
             index = 4;
-        } else if (rate < 12.0f) {
+        } else if (rate < (2.0f + 4.0f) / 2.0f) {
             index = 5;
-        } else {
+        } else if (rate < (4.0f + 8.0f) / 2.0f) {
             index = 6;
+        } else if (rate < (8.0f + 16.0f) / 2.0f) {
+            index = 7;
+        } else if (rate < (16.0f + 32.0f) / 2.0f) {
+            index = 8;
+        } else if (rate < (32.0f + 64.0f) / 2.0f) {
+            index = 9;
+        } else if (rate < (64.0f + 128.0f) / 2.0f) {
+            index = 10;
+        } else {
+            index = 11;
         };
         return index;
     }

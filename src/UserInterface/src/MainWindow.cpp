@@ -106,6 +106,9 @@
 #include "Dialog/LogbookBackupDialog.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
+#include <chrono>
+
+using namespace std::chrono_literals;
 
 namespace
 {
@@ -158,11 +161,13 @@ struct MainWindowPrivate
     // Replay speed
     QActionGroup *replaySpeedActionGroup {nullptr};
     ActionRadioButton *customSpeedRadioButton {nullptr};
-    double lastCustomReplaySpeedFactor {1.0};
+    float lastCustomReplaySpeedFactor {1.0f};
     QLineEdit *customSpeedLineEdit {nullptr};
     QComboBox *replaySpeedUnitComboBox {nullptr};
     QDoubleValidator *customReplaySpeedFactorValidator {nullptr};
     QDoubleValidator *customReplaySpeedPercentValidator {nullptr};
+    QLabel *simulationRateLabel {nullptr};
+    float simulationRate {1.0f};
 
     // Import / export
     QActionGroup *flightImportActionGroup {nullptr};
@@ -304,6 +309,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onRecordingStopped);
     connect(&skyConnectManager, &SkyConnectManager::shortCutActivated,
             this, &MainWindow::onShortcutActivated);
+    connect(&skyConnectManager, &SkyConnectManager::simulationRateReceived,
+            this, &MainWindow::onSimulationRateReceived);
 
     // Replay speed
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
@@ -792,14 +799,14 @@ void MainWindow::initReplaySpeedUi() noexcept
 
     // The replay speed factor in SkyConnect is always an absolute factor
     auto &skyConnectManager = SkyConnectManager::getInstance();
-    const double factor = skyConnectManager.getReplaySpeedFactor();
+    const float factor = skyConnectManager.getReplaySpeedFactor();
     auto &settings = Settings::getInstance();
     if (settings.getReplaySpeeedUnit() == Replay::SpeedUnit::Absolute) {
         d->lastCustomReplaySpeedFactor = factor;
     } else {
-        d->lastCustomReplaySpeedFactor = factor * 100.0;
+        d->lastCustomReplaySpeedFactor = factor * 100.0f;
     }
-    if (qFuzzyCompare(factor, 1.0)) {
+    if (qFuzzyCompare(factor, 1.0f)) {
         normalSpeedRadioButton->setChecked(true);
     } else {
         d->customSpeedRadioButton ->setChecked(true);
@@ -819,6 +826,9 @@ void MainWindow::initReplaySpeedUi() noexcept
     }
 
     replaySpeedLayout->addWidget(d->replaySpeedUnitComboBox);
+
+    d->simulationRateLabel = new QLabel(this);
+    replaySpeedLayout->addWidget(d->simulationRateLabel);
 }
 
 void MainWindow::createTrayIcon() noexcept
@@ -962,6 +972,8 @@ void MainWindow::updateReplaySpeedUi() noexcept
         d->customSpeedLineEdit->clear();
         d->customSpeedLineEdit->setToolTip(QStringLiteral(""));
     }
+
+    updateSimulationRateLabel();
 }
 
 void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
@@ -1055,6 +1067,7 @@ void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
     }
     ui->showReplaySpeedAction->setChecked(replaySpeedVisible);
     ui->replaySpeedGroupBox->setVisible(replaySpeedVisible);
+    d->simulationRateLabel->setHidden(enterMinimalUi);
 }
 
 void MainWindow::updatePositionSliderTickInterval() noexcept
@@ -1180,37 +1193,37 @@ void MainWindow::onTimestampChanged(std::int64_t timestamp) noexcept
 void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
 {
     ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(ReplaySpeedProperty).toInt());
-    double replaySpeedFactor {1.0};
+    float replaySpeedFactor {1.0f};
     switch (replaySpeed) {
     case ReplaySpeed::Slow10:
-        replaySpeedFactor = 0.1;
+        replaySpeedFactor = 0.1f;
         break;
     case ReplaySpeed::Slow25:
-        replaySpeedFactor = 0.25;
+        replaySpeedFactor = 0.25f;
         break;
     case ReplaySpeed::Slow50:
-        replaySpeedFactor = 0.5;
+        replaySpeedFactor = 0.5f;
         break;
     case ReplaySpeed::Slow75:
-        replaySpeedFactor = 0.75;
+        replaySpeedFactor = 0.75f;
         break;
     case ReplaySpeed::Normal:
-        replaySpeedFactor = 1.0;
+        replaySpeedFactor = 1.0f;
         break;
     case ReplaySpeed::Fast2x:
-        replaySpeedFactor = 2.0;
+        replaySpeedFactor = 2.0f;
         break;
     case ReplaySpeed::Fast4x:
-        replaySpeedFactor = 4.0;
+        replaySpeedFactor = 4.0f;
         break;
     case ReplaySpeed::Fast8x:
-        replaySpeedFactor = 8.0;
+        replaySpeedFactor = 8.0f;
         break;
     case ReplaySpeed::Fast16x:
-        replaySpeedFactor = 16.0;
+        replaySpeedFactor = 16.0f;
         break;
     case ReplaySpeed::Custom:
-        replaySpeedFactor = getCustomSpeedFactor();
+        replaySpeedFactor = d->lastCustomReplaySpeedFactor;
         break;
     }
 
@@ -1218,6 +1231,9 @@ void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
     skyConnectManager.setReplaySpeedFactor(replaySpeedFactor);
 
     updateReplaySpeedUi();
+
+    // Give the simulation rate a bit of time to settle in the flight simulator
+    QTimer::singleShot(1s, this, &MainWindow::requestSimulationRate);
 }
 
 void MainWindow::onCustomSpeedChanged() noexcept
@@ -1233,6 +1249,9 @@ void MainWindow::onCustomSpeedChanged() noexcept
         d->lastCustomReplaySpeedFactor = customReplaySpeedFactor * 100.0;
         break;
     }
+
+    // Give the simulation rate a bit of time to settle in the flight simulator
+    QTimer::singleShot(1s, this, &MainWindow::requestSimulationRate);
 }
 
 void MainWindow::onReplaySpeedUnitSelected(int index) noexcept
@@ -1355,12 +1374,24 @@ void MainWindow::updateControlUi() noexcept
 
     const bool loopReplayEnabled = Settings::getInstance().isReplayLoopEnabled();
     ui->loopReplayAction->setChecked(loopReplayEnabled);
+
+    updatePlayActionTooltip();
+}
+
+void MainWindow::updatePlayActionTooltip() noexcept
+{
+    ui->playAction->setToolTip(tr("Simulation rate: %1").arg(d->simulationRate));
 }
 
 void MainWindow::updateControlIcons() noexcept
 {
     const QIcon &recordIcon = d->moduleManager->getRecordIcon();
     ui->recordAction->setIcon(recordIcon);
+}
+
+void MainWindow::updateSimulationRateLabel() noexcept
+{
+    d->simulationRateLabel->setText(tr("Simulation rate: %1").arg(d->simulationRate));
 }
 
 void MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept
@@ -1458,6 +1489,18 @@ void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) no
 #endif
 }
 
+void MainWindow::requestSimulationRate() noexcept
+{
+    SkyConnectManager::getInstance().requestSimulationRate();
+}
+
+void MainWindow::onSimulationRateReceived(float rate) noexcept
+{
+    d->simulationRate = rate;
+    updatePlayActionTooltip();
+    updateSimulationRateLabel();
+}
+
 void MainWindow::onRecordingDurationChanged() noexcept
 {
     updateReplayDuration();
@@ -1520,7 +1563,7 @@ void MainWindow::updateWindowMenu() noexcept
 void MainWindow::updateMainWindow() noexcept
 {
     const auto &settings = Settings::getInstance();
-    const Qt::WindowFlags flags = windowFlags();
+    const auto flags = windowFlags();
     if (settings.isWindowStaysOnTopEnabled() != flags.testFlag(Qt::WindowStaysOnTopHint)) {
         if (Settings::getInstance().isWindowStaysOnTopEnabled()) {
             this->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
@@ -1538,11 +1581,11 @@ void MainWindow::updateMainWindow() noexcept
     }
 
     if (settings.isAbsoluteSeekEnabled()) {
-        double seekIntervalSeconds = settings.getSeekIntervalSeconds();
+        const auto seekIntervalSeconds = settings.getSeekIntervalSeconds();
         ui->forwardAction->setToolTip(tr("Fast forward [%1 sec].").arg(seekIntervalSeconds));
         ui->backwardAction->setToolTip(tr("Rewind [%1 sec].").arg(seekIntervalSeconds));
     } else {
-        double seekIntervalPercent = settings.getSeekIntervalPercent();
+        const auto seekIntervalPercent = settings.getSeekIntervalPercent();
         ui->forwardAction->setToolTip(tr("Fast forward [%1 %].").arg(seekIntervalPercent));
         ui->backwardAction->setToolTip(tr("Rewind [%1 %].").arg(seekIntervalPercent));
     }

@@ -300,6 +300,15 @@ bool PathCreatorPlugin::onRequestLocation() noexcept
     return true;
 }
 
+bool PathCreatorPlugin::onRequestSimulationRate() noexcept
+{
+    const auto &settings = Settings::getInstance();
+    const float simulationRate = std::min(getReplaySpeedFactor(), static_cast<float>(settings.getMaximumSimulationRate()));
+    emit simulationRateReceived(simulationRate);
+
+    return true;
+}
+
 // PROTECTED SLOTS
 
 void PathCreatorPlugin::recordData() noexcept
