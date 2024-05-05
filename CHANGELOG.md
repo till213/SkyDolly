@@ -44,6 +44,7 @@
 - The full range of flight simulator simulation rates 0.0625 up to 128.0 is now supported
   * The Sky Dolly custom replay rate is rounded to the nearest simulation rate, one of 0.0625, 0.125, 0.25, 0.5, 1, 2, 4, ... 128 ("multiples of 2")
   * The flight simulator simulation rate is now shown in the replay speed group
+  * The simulation rate may be limited in the application settings (note that the replay speed may still be higher)
   
 ### Other
 - Remove import & export CSV Sky Dolly format
