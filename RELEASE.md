@@ -4,13 +4,13 @@
 ## Preflight
 ### Version info
 - Ensure that the proper project version has been set in the main [CMakeLists.txt](CMakeLists.txt)
-  * E.g. `VERSION 0.16.0`
+  * E.g. `VERSION 0.17.0`
 - Ensure that either the [logbook migration](src/Persistence/src/Dao/SQLite/migr/LogbookMigration.sql) and/or the [location migration](src/Persistence/src/Dao/SQLite/migr/LocationMigration.sql) updates the database metadata with the current version (with _different_ migration UUIDs)
 - Ensure that the copyright year in [SkyDolly.rc.in](src/SkyDolly/res/SkyDolly.rc.in) and [Info.plist.in](src/SkyDolly/res/Info.plist.in) is up to date
 - Choose and set a suitable "version codename" in [Version.cpp](src/Kernel/src/Version.cpp)
 - Update the "preview dialog" message in [MainWindow.cpp](src/UserInterface/src/MainWindow.cpp)
 - Adjust the `PreviewInfoDialogBase` in [Settings.cpp](src/Kernel/src/Settings.cpp) in order to show the preview dialog three times
-- Adjust the _Latest (pre-)release: Sky Dolly 0.16.0_ in [README.md](README.md)
+- Adjust the _Latest (pre-)release: Sky Dolly 0.17.0_ in [README.md](README.md)
 - Adjust the supported versions in [SECURITY.md](SECURITY.md)
 
 ### Settings
@@ -107,10 +107,10 @@ Description template:
 
 ## Climb
 - Fetch the new tag: `git pull`
-- Create a bug fix branch, e.g.: `git branch 0.16.0`, `git checkout 0.16.0`
+- Create a bug fix branch, e.g.: `git checkout -b 0.17.0`
 - Bump the version to e.g. `0.16.1` in the main [CMakeLists.txt](CMakeLists.txt)
-- Commit, e.g. `git commit -m "Bump version to 0.16.1"`
-- Push, e.g. `git push --set-upstream origin 0.16.0`
+- Commit, e.g. `git commit -m "Bump version to 0.17.1"`
+- Push, e.g. `git push --set-upstream origin 0.17.0`
 - Switch back to _main_: `git checkout main`
 - Update the shasum in [SHASUM256.md](SHASUM256.md)
 
