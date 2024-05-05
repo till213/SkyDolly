@@ -985,3 +985,7 @@ alter table aircraft drop column flight_number;
 @migr(id = "c1c4df3f-a5c7-4fdb-90ad-44010744cc7c", descn = "Update application version to 0.17", step = 1)
 update metadata
 set app_version = '0.17.0';
+
+@migr(id = "80bcc81a-6554-4e05-8631-d17358d9d1dd", descn = "Update application version to 0.18", step = 1)
+update metadata
+set app_version = '0.18.0';
