@@ -332,7 +332,7 @@ bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
             d->subscribedToFrameEvent = true;
         }
     }
-    resetEventStates();
+    resetEventStates(ResetReason::StartReplay);
     return result == S_OK;
 }
 
@@ -350,7 +350,7 @@ void MSFSSimConnectPlugin::onReplayPaused([[maybe_unused]] Initiator initiator, 
                 d->subscribedToFrameEvent = true;
             }
         }
-        resetEventStates();
+        resetEventStates(ResetReason::StartReplay);
     }
 }
 
@@ -364,7 +364,7 @@ void MSFSSimConnectPlugin::onStopReplay() noexcept
 
 void MSFSSimConnectPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp, [[maybe_unused]] SeekMode seekMode) noexcept
 {
-    resetEventStates();
+    resetEventStates(ResetReason::Seek);
 };
 
 void MSFSSimConnectPlugin::onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
@@ -798,15 +798,27 @@ void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexc
     }
 }
 
-void MSFSSimConnectPlugin::resetEventStates() noexcept
+void MSFSSimConnectPlugin::resetEventStates(ResetReason reason) noexcept
 {
     d->eventStateHandler->reset();
-    d->simulationRate->reset();
+    switch (reason)
+    {
+    case ResetReason::StartReplay:
+        d->simulationRate->reset();
+        break;
+    case ResetReason::Seek:
+        // Do not reset (pending) simulation rate requests, as the simulation rate does
+        // not change when seeking
+        break;
+    default:
+        d->simulationRate->reset();
+        break;
+    }
 }
 
 DWORD MSFSSimConnectPlugin::getConfigurationIndex() const noexcept
 {
-    DWORD configurationIndex;
+    DWORD configurationIndex {0};
     switch (d->pluginSettings.getConnectionType()) {
     case MSFSSimConnectSettings::ConnectionType::Pipe:
         configurationIndex = 0;

@@ -102,6 +102,12 @@ protected slots:
     void recordData() noexcept override;
 
 private:
+    enum struct ResetReason
+    {
+        StartReplay,
+        Seek
+    };
+
     const std::unique_ptr<SkyConnectPrivate> d;
 
     void frenchConnection() noexcept;
@@ -114,7 +120,7 @@ private:
     void replay() noexcept;
     void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
-    void resetEventStates() noexcept;
+    void resetEventStates(ResetReason reason) noexcept;
 
     // Returns the configuration index that refers to the Sky Dolly specific client SimConnect.cfg configuration
     DWORD getConfigurationIndex() const noexcept;

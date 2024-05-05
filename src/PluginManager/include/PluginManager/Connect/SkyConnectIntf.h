@@ -78,7 +78,6 @@ public:
         Continuous,
         /*! A single seek operation (to beginning, to end, to selected position) */
         Discrete
-
     };
 
     /*!
