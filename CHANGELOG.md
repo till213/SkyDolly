@@ -2,6 +2,8 @@
 
 ## 0.17.0
 
+**"Humble Hawker"** introduces keyboard shortcuts in order to control basic functionality from within the flight simulator itself, SimConnect network support as well as official dark theme support via selectable styles ("Windows Vista", "Windows 11" and "Fusion").
+
 ### New Features
 - Keyboard shortcuts can be defined and triggered within the flight simulator, in order to:
   * Toggle recording (CTRL+R) and replay (CTRL+P) 
