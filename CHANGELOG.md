@@ -23,6 +23,7 @@
   * The user interface style can now be set in the application settings
   * Windows 10: the "Fusion" style supports "dark theme"
     - Note: While on Windows 10 the "Windows Vista" style is the default it does not support "dark theme"
+    - Note: While on Windows 10 the "Windows 11" style is seemingly selectable it does not actually work: "Windows Vista" will be used in this case
   * Windows 11: the "Windows 11" (default) and "Fusion" styles support "dark theme"
   * In any case, "dark theme" needs to be enabled in the Windows (operating system) settings, as desired
 
