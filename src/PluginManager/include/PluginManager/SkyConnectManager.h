@@ -167,8 +167,8 @@ public:
     virtual bool isConnected() const noexcept;
     virtual bool isIdle() const noexcept;
 
-    double getReplaySpeedFactor() const noexcept;
-    void setReplaySpeedFactor(double factor) noexcept;
+    float getReplaySpeedFactor() const noexcept;
+    void setReplaySpeedFactor(float factor) noexcept;
     std::int64_t getCurrentTimestamp() const noexcept;
     bool isAtEnd() const noexcept;
 

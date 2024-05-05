@@ -370,6 +370,22 @@ public:
     void setRepeatCanopyOpenEnabled(bool enable) noexcept;
 
     /*!
+     * Returns the maximum simulation rate.
+     *
+     * \return \c the maximum simulation rate [1, 128]
+     */
+    int getMaximumSimulationRate() const noexcept;
+
+    /*!
+     * Sets the maximum simulation rate.
+     *
+     * \param rate
+     *        the maximum simulation rate
+     * \sa maximumSimulationRateChanged
+     */
+    void setMaximumSimulationRate(int rate) noexcept;
+
+    /*!
      * Returns the user interface style key.
      *
      * \return the user interface style key
@@ -679,6 +695,13 @@ signals:
      * \sa changed
      */
     void repeatCanopyChanged(bool enable);
+
+    /*!
+     * Emitted when the maximum simulation rate has changed.
+     *
+     * \sa changed
+     */
+    void maximumSimulationRateChanged(int rate);
 
     /*!
      * Emitted when the user interface style key has changed

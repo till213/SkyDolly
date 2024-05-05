@@ -161,7 +161,7 @@ struct MainWindowPrivate
     // Replay speed
     QActionGroup *replaySpeedActionGroup {nullptr};
     ActionRadioButton *customSpeedRadioButton {nullptr};
-    double lastCustomReplaySpeedFactor {1.0};
+    float lastCustomReplaySpeedFactor {1.0f};
     QLineEdit *customSpeedLineEdit {nullptr};
     QComboBox *replaySpeedUnitComboBox {nullptr};
     QDoubleValidator *customReplaySpeedFactorValidator {nullptr};
@@ -799,14 +799,14 @@ void MainWindow::initReplaySpeedUi() noexcept
 
     // The replay speed factor in SkyConnect is always an absolute factor
     auto &skyConnectManager = SkyConnectManager::getInstance();
-    const double factor = skyConnectManager.getReplaySpeedFactor();
+    const float factor = skyConnectManager.getReplaySpeedFactor();
     auto &settings = Settings::getInstance();
     if (settings.getReplaySpeeedUnit() == Replay::SpeedUnit::Absolute) {
         d->lastCustomReplaySpeedFactor = factor;
     } else {
-        d->lastCustomReplaySpeedFactor = factor * 100.0;
+        d->lastCustomReplaySpeedFactor = factor * 100.0f;
     }
-    if (qFuzzyCompare(factor, 1.0)) {
+    if (qFuzzyCompare(factor, 1.0f)) {
         normalSpeedRadioButton->setChecked(true);
     } else {
         d->customSpeedRadioButton ->setChecked(true);
@@ -1193,34 +1193,34 @@ void MainWindow::onTimestampChanged(std::int64_t timestamp) noexcept
 void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
 {
     ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(ReplaySpeedProperty).toInt());
-    double replaySpeedFactor {1.0};
+    float replaySpeedFactor {1.0f};
     switch (replaySpeed) {
     case ReplaySpeed::Slow10:
-        replaySpeedFactor = 0.1;
+        replaySpeedFactor = 0.1f;
         break;
     case ReplaySpeed::Slow25:
-        replaySpeedFactor = 0.25;
+        replaySpeedFactor = 0.25f;
         break;
     case ReplaySpeed::Slow50:
-        replaySpeedFactor = 0.5;
+        replaySpeedFactor = 0.5f;
         break;
     case ReplaySpeed::Slow75:
-        replaySpeedFactor = 0.75;
+        replaySpeedFactor = 0.75f;
         break;
     case ReplaySpeed::Normal:
-        replaySpeedFactor = 1.0;
+        replaySpeedFactor = 1.0f;
         break;
     case ReplaySpeed::Fast2x:
-        replaySpeedFactor = 2.0;
+        replaySpeedFactor = 2.0f;
         break;
     case ReplaySpeed::Fast4x:
-        replaySpeedFactor = 4.0;
+        replaySpeedFactor = 4.0f;
         break;
     case ReplaySpeed::Fast8x:
-        replaySpeedFactor = 8.0;
+        replaySpeedFactor = 8.0f;
         break;
     case ReplaySpeed::Fast16x:
-        replaySpeedFactor = 16.0;
+        replaySpeedFactor = 16.0f;
         break;
     case ReplaySpeed::Custom:
         replaySpeedFactor = d->lastCustomReplaySpeedFactor;

@@ -122,11 +122,12 @@ void SettingsDialog::initUi() noexcept
     // Replay
     ui->seekInSecondsSpinBox->setMinimum(::MinSeekSeconds);
     ui->seekInSecondsSpinBox->setMaximum(::MaxSeekSeconds);
-
     ui->seekInPercentSpinBox->setMinimum(::MinSeekPercent);
     ui->seekInPercentSpinBox->setMaximum(::MaxSeekPercent);
 
-    ui->repeatCanopyOpenCheckBox->setToolTip(QString::fromLatin1(SimVar::CanopyOpen));
+    ui->repeatCanopyOpenCheckBox->setToolTip(tr("When enabled this option will repeatedly send the same value for simulation variable \"%1\", even when its value does not actually change.\n"
+                                                "This may help enforcing a consistent canopy animation with certain aircraft.")
+                                                .arg(QString::fromLatin1(SimVar::CanopyOpen)));
 
     // Recording
     ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Auto), tr("Auto"));
@@ -189,6 +190,7 @@ void SettingsDialog::updateUi() noexcept
     ui->seekInSecondsSpinBox->setValue(settings.getSeekIntervalSeconds());
     ui->seekInPercentSpinBox->setValue(settings.getSeekIntervalPercent());
     ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
+    ui->maximumSimulationRateSpinBox->setValue(settings.getMaximumSimulationRate());
 
     // Recording
     ui->recordFrequencyComboBox->setCurrentIndex(Enum::underly(settings.getRecordingSampleRate()));
@@ -299,6 +301,7 @@ void SettingsDialog::onAccepted() noexcept
     settings.setSeekIntervalSeconds(ui->seekInSecondsSpinBox->value());
     settings.setSeekIntervalPercent(ui->seekInPercentSpinBox->value());
     settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());
+    settings.setMaximumSimulationRate(ui->maximumSimulationRateSpinBox->value());
 
     // Recording
     settings.setRecordingSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));

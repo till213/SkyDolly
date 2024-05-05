@@ -108,10 +108,10 @@ public:
     std::int64_t getCurrentTimestamp() const noexcept override;
     bool isEndReached() const noexcept override;
 
-    double getReplaySpeedFactor() const noexcept override;
-    void setReplaySpeedFactor(double factor) noexcept override;
+    float getReplaySpeedFactor() const noexcept override;
+    void setReplaySpeedFactor(float factor) noexcept override;
 
-    double calculateRecordedSamplesPerSecond() const noexcept override;
+    float calculateRecordedSamplesPerSecond() const noexcept override;
     bool requestLocation() noexcept override;
     bool requestSimulationRate() noexcept override;
 
@@ -189,7 +189,21 @@ protected:
     virtual void onRemoveAiObject(std::int64_t aircraftId) noexcept = 0;
     virtual void onRemoveAllAiObjects() noexcept = 0;
 
+    /*!
+     * Requests the current location. The location is asynchronously returned via signal \c locationReceived.
+     *
+     * \return \c true if the request was successful; \c false else
+     * \sa locationReceived
+     */
     virtual bool onRequestLocation() noexcept = 0;
+
+    /*!
+     * Requests the current simulation rate in the flight simulator. The rate is asynchronously
+     * returned via signal \c simulationRateReceived.
+     *
+     * \return \c true if the request was successful; \c false else
+     * \sa simulationRateReceived
+     */
     virtual bool onRequestSimulationRate() noexcept = 0;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
@@ -215,6 +229,10 @@ private:
     bool setupInitialRecordingPosition(InitialPosition initialPosition) noexcept;
     bool setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept;
     bool updateUserAircraftFreeze() noexcept;
+
+    // Returns the applicable simulation rate, given the current 'replaySpeedFactor'
+    // and the maximum simulation rate, as defined in the application settings
+    float getApplicableSimulationRate();
 
 private slots:
     void onRecordingSampleRateSettingsChanged(SampleRate::SampleRate sampleRate) noexcept;

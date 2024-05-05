@@ -364,13 +364,13 @@ bool SkyConnectManager::isIdle() const noexcept
     return skyConnect ? skyConnect->get().isIdle() : true;
 }
 
-double SkyConnectManager::getReplaySpeedFactor() const noexcept
+float SkyConnectManager::getReplaySpeedFactor() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().getReplaySpeedFactor() : 1.0;
 }
 
-void SkyConnectManager::setReplaySpeedFactor(double factor) noexcept
+void SkyConnectManager::setReplaySpeedFactor(float factor) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {

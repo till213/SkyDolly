@@ -134,6 +134,7 @@ target_sources(${APP_PROJECT_NAME}
         THIRD_PARTY.md
         doc/Design/Architecture.md
         doc/Design/README.md
+        doc/Guidelines/User-Interface-Guidelines.md
         doc/SkyDolly.simvars
         doc/LICENSE
         doc/SQL/Timelapse-Camera-Pan.sql

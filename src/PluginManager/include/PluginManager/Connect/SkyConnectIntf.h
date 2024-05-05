@@ -290,10 +290,22 @@ public:
     virtual std::int64_t getCurrentTimestamp() const noexcept = 0;
     virtual bool isEndReached() const noexcept = 0;
 
-    virtual double getReplaySpeedFactor() const noexcept = 0;
-    virtual void setReplaySpeedFactor(double factor) noexcept = 0;
+    virtual float getReplaySpeedFactor() const noexcept = 0;
 
-    virtual double calculateRecordedSamplesPerSecond() const noexcept = 0;
+    /*!
+     * Sets the replay speed factor. It is at the discretion of the connect plugin
+     * implementation to also set the simulation rate accordingly (if supported by
+     * the flight simulator), however taking into account the maximum simulation
+     * rate as defined in the application settings.
+     *
+     * \param factor
+     *        the replay speed factor; 1.0 for normal replay, < 1.0 for slow motion,
+     *        > 1.0 for timelapse effects
+     * \sa Settings#getMaximumSimulationRate
+     */
+    virtual void setReplaySpeedFactor(float factor) noexcept = 0;
+
+    virtual float calculateRecordedSamplesPerSecond() const noexcept = 0;
 
     /*!
      * Requests the current position of the user aircraft which is asynchronously
