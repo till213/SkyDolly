@@ -444,8 +444,9 @@ private:
                     result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(event), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
                 }
 #ifdef DEBUG
-                qDebug() << "EventStateHandler::sendFlapsHandleIndex: incrementally setting flaps handle index to:" << m_flapsIndex.requested
-                         << "Previous index:" << m_flapsIndex.current
+                qDebug() << "EventStateHandler::sendFlapsHandleIndex: incrementally setting flaps handle index"
+                         << "from" << m_flapsIndex.current
+                         << "to:" << m_flapsIndex.requested
                          << "Steps:" << steps
                          << "Event ID:" << Enum::underly(event)
                          << "Success:" << (result == S_OK);
