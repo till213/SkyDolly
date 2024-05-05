@@ -589,6 +589,11 @@ void Settings::store() const noexcept
         d->settings.setValue("BackupBeforeMigration", d->backupBeforeMigration);
     }
     d->settings.endGroup();
+    d->settings.beginGroup("Plugins");
+    {
+        d->settings.setValue("SkyConnectPluginUuid", d->skyConnectPluginUuid);
+    }
+    d->settings.endGroup();
     d->settings.beginGroup("Recording");
     {
         d->settings.setValue("RecordingSampleRate", d->recordingSampleRateValue);        
@@ -674,6 +679,11 @@ void Settings::restore() noexcept
     {
         d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
         d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", SettingsPrivate::DefaultBackupBeforeMigration).toBool();
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Plugins");
+    {
+        d->skyConnectPluginUuid = d->settings.value("SkyConnectPluginUuid", d->DefaultSkyConnectPluginUuid).toUuid();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
