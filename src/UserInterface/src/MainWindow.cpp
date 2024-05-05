@@ -1147,12 +1147,13 @@ void MainWindow::onPositionSliderValueChanged(int value) noexcept
 
 void MainWindow::onPositionSliderReleased() noexcept
 {
-    seek(ui->positionSlider->value(), SkyConnectIntf::SeekMode::Discrete);
     if (d->previousState == Connect::State::Replay) {
         d->moduleManager->setPaused(false);
     } else if (d->previousState == Connect::State::ReplayPaused) {
         d->moduleManager->setPaused(true);
     }
+    // Unpausing the replay resets event states, so we must seek *after* unpausing
+    seek(ui->positionSlider->value(), SkyConnectIntf::SeekMode::Discrete);
     d->continuousSeek = false;
 }
 

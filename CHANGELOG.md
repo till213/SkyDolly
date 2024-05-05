@@ -58,6 +58,7 @@
 - Remove last recorded flight or aircraft in case persistence fails (improved error handling)
 - In the Formation module the reference aircraft icon is properly initialised
 - During replay the replay speed is now properly set to the last "custom speed" (e.g. 0.1) when checking the "Custom" radio button (previously the actual replay speed was always wrongly set to 1.0, mismatching with the *displayed* custom speed value, e.g. 0.1)
+- Seeking on the timeline now correctly re-establishes the current flap (and other control element) settings
 
 ### Under the Hood
 - Upgrade GeographicLib to version 2.2 (from version 2.1.2)
