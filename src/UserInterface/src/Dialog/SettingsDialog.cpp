@@ -128,6 +128,7 @@ void SettingsDialog::initUi() noexcept
     ui->repeatCanopyOpenCheckBox->setToolTip(tr("When enabled this option will repeatedly send the same value for simulation variable \"%1\", even when its value does not actually change.\n"
                                                 "This may help enforcing a consistent canopy animation with certain aircraft.")
                                                 .arg(QString::fromLatin1(SimVar::CanopyOpen)));
+    ui->maximumSimulationRateSpinBox->setToolTip(tr("This option limits the simulation rate in the flight simulator. Note that the actual replay speed may still be set to higher values."));
 
     // Recording
     ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Auto), tr("Auto"));
