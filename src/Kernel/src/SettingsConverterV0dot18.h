@@ -22,20 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef SETTINGSCONVERTERV0DOT18_H
+#define SETTINGSCONVERTERV0DOT18_H
+
 #include <QSettings>
-#include <QByteArray>
-#include <QUuid>
+#include <QStringLiteral>
 
-#include "Version.h"
-#include "SettingsConverterV0dot18.h"
-#include "SettingsConverter.h"
+#include <Const.h>
+#include <Version.h>
 
-// PUBLIC
+#include "SettingsConverterV0dot17.h"
 
-void SettingsConverter::convertToCurrent(const Version &settingsVersion, QSettings &settings) noexcept
+class SettingsConverterV0dot18
 {
-    const Version currentVersion;
-    if (settingsVersion < currentVersion) {
-        SettingsConverterV0dot18::convert(settingsVersion, settings);
+public:
+    static inline void convert(const Version &settingsVersion, QSettings &settings) noexcept
+    {
+        if (settingsVersion < Version(QStringLiteral("0.17.0"))) {
+            SettingsConverterV0dot17::convert(settingsVersion, settings);
+        }
+        convertPlugins(settings);
+        convertLogbookTableLayout(settings);
     }
-}
+
+private:
+    static inline void convertPlugins(QSettings &settings) noexcept
+    {
+    }
+
+    static inline void convertLogbookTableLayout(QSettings &settings)
+    {
+    }
+};
+
+#endif // SETTINGSCONVERTERV0DOT18_H
