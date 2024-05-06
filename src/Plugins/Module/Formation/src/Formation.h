@@ -37,7 +37,7 @@ namespace Formation
      *
      * Implementation note: those values act as actual IDs that get persisted in the database.
      */
-    enum HorizontalDistance {
+    enum struct HorizontalDistance {
         VeryClose = 0,
         Close,
         Nearby,
@@ -50,7 +50,7 @@ namespace Formation
      *
      * Implementation note: those values act as actual IDs that get persisted in the database.
      */
-    enum VerticalDistance {
+    enum struct VerticalDistance {
         Below = 0,
         JustBelow = 1,
         Level = 2,
@@ -63,7 +63,7 @@ namespace Formation
      *
      * Implementation note: those values act as actual IDs that get persisted in the database.
      */
-    enum Bearing {
+    enum struct Bearing {
         North = 0,
         NorthNorthEast = 1,
         NorthEast = 2,
