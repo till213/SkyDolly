@@ -12,6 +12,11 @@
 - The aircraft type is properly set again when importing a flight (regression from v0.17)
   * The aircraft type selector (combobox) does not show the *unknown* special value "-" anymore
   * The aircraft type is properly set in the imported flight again
+- On Windows 11 the default style is set to "Fusion", as a workaround
+  * The new "Windows 11" style still has a few known visual glitches:
+    - Active toolbar buttons are almost unreadable in dark mode
+    - The time display ("time edit" widget) only shows two digits
+  * However the "Windows 11" style can still be set, under *File | Settings... | User Interface*
 
 ## 0.17.0
 

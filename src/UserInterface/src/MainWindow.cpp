@@ -507,6 +507,12 @@ void MainWindow::initUi() noexcept
                     "Dark mode is now also supported. On Windows 10 with the \"Fusion\" style, "
                     "on Windows 11 with a new \"Windows 11\" style. The application then "
                     "applies dark mode according to the Windows operating system settings.\n\n"
+                    "Note: the new \"Windows 11\" style still has a few visual glitches. As a workaround "
+                    "on Windows 11 the default style will be set to \"Fusion\". However the style can "
+                    "still be set to \"Windows 11\", under File | Settings... | User Interface.\n\n"
+                    "On Windows 10 the default style remains \"Windows Vista\", but that style does not "
+                    "have dark theme support: select the style \"Fusion\" instead. The \"Windows 11\" style "
+                    "does not work on Windows 10 and will fall back to \"Windows Vista\".\n\n"
                     "Sky Dolly now properly supports the SimConnect.cfg configuration file: "
                     "Recording and replay over a network (Windows to Windows only) is now supported.\n\n"
                     "This dialog will be shown %4 more times.")

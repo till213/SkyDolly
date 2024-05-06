@@ -26,6 +26,7 @@
 #include <exception>
 
 #include <QCoreApplication>
+#include <QSysInfo>
 #include <QApplication>
 #include <QStyle>
 #include <QStyleFactory>
@@ -35,6 +36,9 @@
 #include <QStyleFactory>
 #include <QStringBuilder>
 #include <QMessageBox>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Version.h>
 #include <Kernel/StackTrace.h>
@@ -63,6 +67,19 @@ static void destroySingletons() noexcept
     Settings::destroyInstance();
 }
 
+// Refer e.g. to https://bugreports.qt.io/browse/QTBUG-124286 (fix expected latest in Qt 6.8)
+[[deprecated("Do not use once the new Windows 11 style is ready for prime time.")]]
+static void applyWindows11DefaultStyleWorkaround() noexcept
+{
+    if (QSysInfo::productType() == QStringLiteral("windows") && QSysInfo::productVersion() == QStringLiteral("11")) {
+#ifdef DEBUG
+        qDebug() << "main: Windows 11 detected, applying Fusion as default style (workaround).";
+#endif
+        const auto style = QStyleFactory::create(QStringLiteral("Fusion"));
+        QApplication::setStyle(style);
+    }
+}
+
 int main(int argc, char **argv) noexcept
 {
     std::set_terminate(ExceptionHandler::onTerminate);
@@ -76,6 +93,8 @@ int main(int argc, char **argv) noexcept
     if (styleKey != Settings::DefaultStyleKey) {
         const auto style = QStyleFactory::create(styleKey);
         QApplication::setStyle(style);
+    } else {
+        applyWindows11DefaultStyleWorkaround();
     }
     QApplication application(argc, argv);
 
