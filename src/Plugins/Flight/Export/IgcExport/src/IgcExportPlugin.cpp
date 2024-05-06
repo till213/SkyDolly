@@ -182,7 +182,6 @@ bool IgcExportPlugin::exportAircraft(const FlightData &flightData, const Aircraf
         ok = exportGRecord(io);
     }
     return ok;
-
 }
 
 // PRIVATE

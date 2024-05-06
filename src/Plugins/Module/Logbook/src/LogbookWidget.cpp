@@ -374,7 +374,8 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
     // ID
     QTableWidgetItem *item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightIdColumn);
     QVariant flightId = QVariant::fromValue(summary.flightId);
-    if (summary.flightId == d->flightInMemoryId) {item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-normal.png")));
+    if (summary.flightId == d->flightInMemoryId) {
+        item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-normal.png")));
     } else if (summary.flightId == Const::RecordingId) {item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-record-normal.png")));
         // Note: alphabetical characters (a-zA-Z) will be > numerical characters (0-9),
         //       so the flight being recorded will be properly sorted in the table

@@ -33,6 +33,7 @@
 #include <QDir>
 #include <QString>
 #include <QStringList>
+#include <QStringLiteral>
 #include <QUuid>
 #ifdef DEBUG
 #include <QDebug>
