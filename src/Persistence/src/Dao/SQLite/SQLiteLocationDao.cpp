@@ -28,6 +28,7 @@
 #include <utility>
 
 #include <QString>
+#include <QStringBuilder>
 #include <QStringLiteral>
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -351,7 +352,7 @@ std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSele
         );
         const QString LikeOperatorPlaceholder {QStringLiteral("%")};
         // Add like operator placeholders
-        searchKeyword = LikeOperatorPlaceholder  % selector.searchKeyword % LikeOperatorPlaceholder;
+        searchKeyword = LikeOperatorPlaceholder % selector.searchKeyword % LikeOperatorPlaceholder;
     }
     queryString.append(QStringLiteral("order by l.id;"));
     query.prepare(queryString);

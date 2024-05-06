@@ -29,6 +29,7 @@
 #include <utility>
 
 #include <QString>
+#include <QStringBuilder>
 #include <QStringLiteral>
 #include <QSqlQuery>
 #include <QVariant>
@@ -124,7 +125,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     if (!flightSelector.searchKeyword.isEmpty()) {
         const QString LikeOperatorPlaceholder {QStringLiteral("%")};
         // Add like operator placeholders
-        searchKeyword = LikeOperatorPlaceholder  % flightSelector.searchKeyword % LikeOperatorPlaceholder;
+        searchKeyword = LikeOperatorPlaceholder % flightSelector.searchKeyword % LikeOperatorPlaceholder;
     }
 
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
