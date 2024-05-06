@@ -1,16 +1,16 @@
 # Build Instructions
-Sky Dolly is developed against Qt 6.4, which is now the minimum required Qt version.
+Sky Dolly is developed against Qt 6.7.x. The current minimum Qt version is 6.5.x.
 
 ## Windows
 - Install the Microsoft Flight Simulator SDK
   * the SDK download is available with activated developer mode in MSFS
   * default installation location: c:\MSFS SDK\
   * The build system evaluates the environment variable `MSFS_SDK` in order to detect the SDK installation path
-- Install Qt 6.4 for Windows, including Qt Creator
+- Install Qt 6.7 for Windows, including Qt Creator
   * [https://www.qt.io/download](https://www.qt.io/download)
 
 ## macOS
-- Install Qt 6.4 for macOS, including Qt Creator
+- Install Qt 6.7 for macOS, including Qt Creator
   * [https://www.qt.io/download](https://www.qt.io/download)
 
 ## Linux
