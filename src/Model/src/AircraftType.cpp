@@ -39,7 +39,7 @@ void AircraftType::clear() noexcept
     *this = AircraftType();
 }
 
-bool AircraftType::isNull() const noexcept
+bool AircraftType::isDefined() const noexcept
 {
-    return type.isNull();
+    return !type.isNull() && type != Unknown;
 }

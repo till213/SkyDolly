@@ -22,7 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
 #include <vector>
 
 #include <QWidget>
@@ -50,7 +49,9 @@ void AircraftSelectionComboBox::initUi() noexcept
     AircraftTypeService aircraftTypeService;
     const std::vector<AircraftType> aircraftTypes = aircraftTypeService.getAll();
     for (const auto &aircraftType : aircraftTypes) {
-        this->addItem(aircraftType.type);
+        if (aircraftType.isDefined()) {
+            this->addItem(aircraftType.type);
+        }
     }
     setEditable(true);
     setInsertPolicy(QComboBox::NoInsert);
