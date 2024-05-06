@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.17.1
+
+## Improvements
+- Add new aircraft types from simulation update 15, selectable when importing a flight
+  * Ornithopter
+  * A320 V2 (inibuilds)
+  * Note that any *new* aircraft that is recorded will be automatically added to the aircraft type list (existing behaviour)
+
 ## 0.17.0
 
 **"Humble Hawker"** introduces keyboard shortcuts in order to control basic functionality from within the flight simulator itself, SimConnect network support as well as official dark theme support via selectable styles ("Windows Vista", "Windows 11" and "Fusion").
