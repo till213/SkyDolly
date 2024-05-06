@@ -118,8 +118,11 @@ void BasicFlightImportDialog::initBasicUi() noexcept
     ui->pathLineEdit->setText(QDir::toNativeSeparators(settings.getExportPath()));
 
     if (d->pluginSettings.isAircraftSelectionRequired()) {
-        QString type = d->flight.getUserAircraft().getAircraftInfo().aircraftType.type;
-        if (type.isEmpty()) {
+        const auto &aircraftType = d->flight.getUserAircraft().getAircraftInfo().aircraftType;
+        QString type;
+        if (aircraftType.isDefined()) {
+            type = aircraftType.type;
+        } else {
             type = settings.getImportAircraftType();
         }
         if (!type.isEmpty()) {

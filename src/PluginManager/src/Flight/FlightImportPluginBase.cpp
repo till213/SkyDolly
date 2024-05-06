@@ -272,7 +272,7 @@ void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const no
 {
     for (Aircraft &aircraft : flightData) {
         AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
-        if (aircraftInfo.aircraftType.isNull()) {
+        if (!aircraftInfo.aircraftType.isDefined()) {
             aircraftInfo.aircraftType = d->selectedAircraftType;
         }
 

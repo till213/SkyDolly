@@ -35,10 +35,16 @@
 struct MODEL_API AircraftType final
 {
     /*!
-     * The aircraft type, e.g. "Pitts Special". This is really the SimConnect "container title"
-     * which is also used to spawn AI aircraft.
+     * A safeguard value that is used in case the flight simulator is not able to report the aircraft
+     * type on time (which is an asynchronous request), that is before the actual recording stops.
      */
-    QString type {QStringLiteral("-")};
+    static inline const QString Unknown {QStringLiteral("-")};
+
+    /*!
+     * The aircraft type, e.g. "Pitts Special". This is really the SimConnect "container title"
+     * which is also used to spawn AI aircraft. The type may be \c Unknown.
+     */
+    QString type {Unknown};
 
     /*!
      * The aircraft category:
@@ -63,7 +69,14 @@ struct MODEL_API AircraftType final
     ~AircraftType() = default;
 
     void clear() noexcept;
-    bool isNull() const noexcept;
+
+    /*!
+     * Returns whether this aircraft \c type is defined or not.
+     *
+     * \return \c true if this aircraft type is neither \c null nor \c Unknown; \c false else
+     * \sa Unknown
+     */
+    bool isDefined() const noexcept;
 };
 
 inline bool operator==(const AircraftType &lhs, const AircraftType &rhs) {

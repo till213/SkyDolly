@@ -7,6 +7,11 @@
   * Ornithopter
   * A320 V2 (inibuilds)
   * Note that any *new* aircraft that is recorded will be automatically added to the aircraft type list (existing behaviour)
+  
+### Bug Fixes
+- The aircraft type is properly set again when importing a flight (regression from v0.17)
+  * The aircraft type selector (combobox) does not show the *unknown* special value "-" anymore
+  * The aircraft type is properly set in the imported flight again
 
 ## 0.17.0
 
