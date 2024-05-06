@@ -267,12 +267,9 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QJsonObject pluginMetadata{
-                    metaData.value(QString::fromLatin1("MetaData")).toObject()};
-                const QUuid uuid{
-                    pluginMetadata.value(QString::fromLatin1(::PluginUuidKey)).toString()};
-                const QString pluginName{
-                    pluginMetadata.value(QString::fromLatin1(::PluginNameKey)).toString()};
+                const QJsonObject pluginMetadata {metaData.value (QStringLiteral("MetaData")).toObject()};
+                const QUuid uuid {pluginMetadata.value(QString::fromLatin1(::PluginUuidKey)).toString()};
+                const QString pluginName {pluginMetadata.value(QString::fromLatin1(::PluginNameKey)).toString()};
                 const Handle handle {uuid, pluginName};
                 pluginHandles.push_back(handle);
                 pluginRegistry[uuid] = pluginPath;

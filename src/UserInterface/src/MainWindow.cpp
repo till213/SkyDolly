@@ -460,7 +460,7 @@ void MainWindow::frenchConnection() noexcept
 void MainWindow::initUi() noexcept
 {
     auto &settings = Settings::getInstance();
-    setWindowIcon(QIcon(QString::fromLatin1(":/img/icons/application-icon.png")));
+    setWindowIcon(QIcon(QStringLiteral(":/img/icons/application-icon.png")));
 
     // File menu
     d->recentFileMenu = new RecentFileMenu(this);
@@ -497,7 +497,7 @@ void MainWindow::initUi() noexcept
             --currentPreviewInfoCount;
             QMessageBox::information(
                 this,
-                QString::fromLatin1("Preview"),
+                QStringLiteral("Preview"),
                 QString::fromLatin1(
                     "%1 is in a preview release phase: while it should be stable to use it is not "
                     "considered feature-complete.\n\n"
@@ -685,17 +685,16 @@ void MainWindow::initControlUi() noexcept
     ui->replayGroupBox->setStyleSheet(Platform::getFlatButtonCss());
 
     // Specific CSS: completely flat button (no border) - on all platforms
-    ui->loopReplayButton->setStyleSheet(QString::fromLatin1(
-        "QPushButton {border-style: outset; border-width: 0px; padding: 6px 12px;}"));
+    ui->loopReplayButton->setStyleSheet(QStringLiteral("QPushButton {border-style: outset; border-width: 0px; padding: 6px 12px;}"));
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
 {
     // Actions
-    QList<QAction *> slowActions{new QAction(QString::fromLatin1("10 %"), this),
-                                 new QAction(QString::fromLatin1("25 %"), this),
-                                 new QAction(QString::fromLatin1("50 %"), this),
-                                 new QAction(QString::fromLatin1("75 %"), this)};
+    QList<QAction *> slowActions{new QAction(QStringLiteral("10 %"), this),
+                                 new QAction(QStringLiteral("25 %"), this),
+                                 new QAction(QStringLiteral("50 %"), this),
+                                 new QAction(QStringLiteral("75 %"), this)};
     slowActions.at(0)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
     slowActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow10));
     slowActions.at(1)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_2));
@@ -709,10 +708,10 @@ void MainWindow::initReplaySpeedUi() noexcept
     ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_1));
     ui->normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Normal));
 
-    QList<QAction *> fastActions{new QAction(QString::fromLatin1("2x"), this),
-                                 new QAction(QString::fromLatin1("4x"), this),
-                                 new QAction(QString::fromLatin1("8x"), this),
-                                 new QAction(QString::fromLatin1("16x"), this)};
+    QList<QAction *> fastActions{new QAction(QStringLiteral("2x"), this),
+                                 new QAction(QStringLiteral("4x"), this),
+                                 new QAction(QStringLiteral("8x"), this),
+                                 new QAction(QStringLiteral("16x"), this)};
     fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_2));
     fastActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast2x));
     fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_3));
@@ -842,7 +841,7 @@ void MainWindow::createTrayIcon() noexcept
     d->trayIcon = new QSystemTrayIcon(this);
     d->trayIcon->setContextMenu(d->trayIconMenu);
 
-    d->trayIcon->setIcon(QIcon(QString::fromLatin1(":/img/icons/application-icon.png")));
+    d->trayIcon->setIcon(QIcon(QStringLiteral(":/img/icons/application-icon.png")));
 }
 
 void MainWindow::initSkyConnectPlugin() noexcept

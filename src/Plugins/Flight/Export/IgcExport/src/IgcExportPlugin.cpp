@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <algorithm>
-#include <cstdint>
 #include <cmath>
 #include <vector>
 
@@ -32,6 +31,7 @@
 // Implements the % operator for string concatenation
 #include <QStringBuilder>
 #include <QString>
+#include <QStringLiteral>
 #include <QByteArray>
 #include <QSysInfo>
 #include <QDesktopServices>
@@ -354,7 +354,7 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitu
 
     GeographicLib::DMS::Encode(latitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
-    return QString::fromLatin1("%1%2%3%4")
+    return QStringLiteral("%1%2%3%4")
         .arg(static_cast<int>(degrees), 2, 10, QChar('0'))
         .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
         .arg(decimals, 3, 10, QChar('0'))
@@ -369,7 +369,7 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLongitude(double longi
 
     GeographicLib::DMS::Encode(longitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
-    return QString::fromLatin1("%1%2%3%4")
+    return QStringLiteral("%1%2%3%4")
         .arg(static_cast<int>(degrees), 3, 10, QChar('0'))
         .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
         .arg(decimals, 3, 10, QChar('0'))

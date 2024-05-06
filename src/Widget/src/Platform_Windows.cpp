@@ -29,7 +29,6 @@
 #include <QStringLiteral>
 
 #include "Platform.h"
-#include "QtCore/qstringliteral.h"
 
 namespace  {
     constexpr const char *FlatButtonCss {""};

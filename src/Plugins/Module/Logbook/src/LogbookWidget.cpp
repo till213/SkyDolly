@@ -36,6 +36,7 @@
 #include <QTableWidgetItem>
 #include <QTreeWidgetItem>
 #include <QStringList>
+#include <QStringLiteral>
 #include <QItemSelectionModel>
 #include <QModelIndex>
 #include <QDateTime>
@@ -373,10 +374,8 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
     // ID
     QTableWidgetItem *item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightIdColumn);
     QVariant flightId = QVariant::fromValue(summary.flightId);
-    if (summary.flightId == d->flightInMemoryId) {
-        item->setIcon(QIcon(QString::fromLatin1(":/img/icons/aircraft-normal.png")));
-    } else if (summary.flightId == Const::RecordingId) {
-        item->setIcon(QIcon(QString::fromLatin1(":/img/icons/aircraft-record-normal.png")));
+    if (summary.flightId == d->flightInMemoryId) {item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-normal.png")));
+    } else if (summary.flightId == Const::RecordingId) {item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-record-normal.png")));
         // Note: alphabetical characters (a-zA-Z) will be > numerical characters (0-9),
         //       so the flight being recorded will be properly sorted in the table
         flightId = QVariant::fromValue(tr("REC"));
@@ -720,9 +719,9 @@ void LogbookWidget::updateAircraftIcons() noexcept
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightIdColumn);
         if (item->data(Qt::DisplayRole).toLongLong() == flightInMemoryId) {
-            item->setIcon(QIcon(QString::fromLatin1(":/img/icons/aircraft-normal.png")));
+            item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-normal.png")));
         } else if (item->data(Qt::UserRole).toLongLong() == Const::RecordingId) {
-            item->setIcon(QIcon(QString::fromLatin1(":/img/icons/aircraft-record-normal.png")));
+            item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-record-normal.png")));
         } else {
             item->setIcon(QIcon());
         }

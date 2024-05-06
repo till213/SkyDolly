@@ -31,6 +31,7 @@
 #include <QtGlobal>
 #include <QRandomGenerator>
 #include <QStringList>
+#include <QStringLiteral>
 #ifdef DEBUG
 #include <QDebug>
 #include <Kernel/Enum.h>
@@ -517,41 +518,41 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
 
     switch (d->randomGenerator->bounded(5)) {
     case 0:
-        info.aircraftType.type = QString::fromLatin1("Boeing 787");
+        info.aircraftType.type = QStringLiteral("Boeing 787");
         break;
     case 1:
-        info.aircraftType.type = QString::fromLatin1("Cirrus SR22");
+        info.aircraftType.type = QStringLiteral("Cirrus SR22");
         break;
     case 2:
-        info.aircraftType.type = QString::fromLatin1("Douglas DC-3");
+        info.aircraftType.type = QStringLiteral("Douglas DC-3");
         break;
     case 3:
-        info.aircraftType.type = QString::fromLatin1("Cessna 172");
+        info.aircraftType.type = QStringLiteral("Cessna 172");
         break;
     case 4:
-        info.aircraftType.type = QString::fromLatin1("Airbus A320");
+        info.aircraftType.type = QStringLiteral("Airbus A320");
         break;
     default:
-        info.aircraftType.type = QString::fromLatin1("Unknown");
+        info.aircraftType.type = QStringLiteral("Unknown");
     }
     switch (d->randomGenerator->bounded(5)) {
     case 0:
-        info.aircraftType.category = QString::fromLatin1("Piston");
+        info.aircraftType.category = QStringLiteral("Piston");
         break;
     case 1:
-        info.aircraftType.category = QString::fromLatin1("Glider");
+        info.aircraftType.category = QStringLiteral("Glider");
         break;
     case 2:
-        info.aircraftType.category = QString::fromLatin1("Rocket");
+        info.aircraftType.category = QStringLiteral("Rocket");
         break;
     case 3:
-        info.aircraftType.category = QString::fromLatin1("Jet");
+        info.aircraftType.category = QStringLiteral("Jet");
         break;
     case 4:
-        info.aircraftType.category = QString::fromLatin1("Turbo");
+        info.aircraftType.category = QStringLiteral("Turbo");
         break;
     default:
-        info.aircraftType.category = QString::fromLatin1("Unknown");
+        info.aircraftType.category = QStringLiteral("Unknown");
     }
     info.aircraftType.wingSpan = d->randomGenerator->bounded(200);
     info.aircraftType.engineType = static_cast<SimType::EngineType>(d->randomGenerator->bounded(7));

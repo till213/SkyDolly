@@ -203,7 +203,7 @@ bool GpxExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice &
             }
         }
         if (ok) {
-            const QString placemarkEnd = QString::fromLatin1("    </trkseg>\n"
+            const QString placemarkEnd = QStringLiteral("    </trkseg>\n"
                                                              "  </trk>\n");
             ok = io.write(placemarkEnd.toUtf8());
         }
@@ -228,7 +228,7 @@ bool GpxExportPlugin::exportWaypoints(const FlightData &flightData, QIODevice &i
 
 bool GpxExportPlugin::exportFooter(QIODevice &io) const noexcept
 {
-    const QString footer = QString::fromLatin1("</gpx>\n");
+    const QString footer = QStringLiteral("</gpx>\n");
     return io.write(footer.toUtf8());
 }
 

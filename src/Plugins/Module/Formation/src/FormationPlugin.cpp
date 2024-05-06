@@ -67,7 +67,7 @@ FormationPlugin::~FormationPlugin()
 
 QUuid FormationPlugin::getUuid() const noexcept
 {
-    static QUuid uuid {Const::FormationModuleUuid};
+    static const QUuid uuid {Const::FormationModuleUuid};
     return uuid;
 }
 

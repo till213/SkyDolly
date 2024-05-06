@@ -28,6 +28,7 @@
 #include <QIODevice>
 #include <QChar>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
 
 #include <Kernel/Enum.h>
@@ -111,15 +112,15 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
             const QString locationCategorySymId = locationCategoryEnumeration.getItemById(location.categoryId).symId;
             const QString countrySymId = countryEnumeration.getItemById(location.countryId).symId;
             const QString engineEventSymId = engineEventEnumeration.getItemById(location.engineEventId).symId;
-            const QString csv = QString::fromLatin1("\"") %
-                                title.replace(QString::fromLatin1("\""), QString::fromLatin1("\"\"")) % "\""  %
+            const QString csv = QStringLiteral("\"") %
+                                title.replace(QStringLiteral("\""), QStringLiteral("\"\"")) % "\""  %
                                 Csv::CommaSep % "\"" %
-                                description.replace(QString::fromLatin1("\""), QString::fromLatin1("\"\"")) % "\"" % Csv::CommaSep %
+                                description.replace(QStringLiteral("\""), QStringLiteral("\"\"")) % "\"" % Csv::CommaSep %
                                 locationTypeSymId % Csv::CommaSep %
                                 locationCategorySymId % Csv::CommaSep %
                                 countrySymId % Csv::CommaSep %
                                 QString::number(location.attributes) % Csv::CommaSep %
-                                "\"" % identifier.replace(QString::fromLatin1("\""), QString::fromLatin1("\"\"")) % "\"" % Csv::CommaSep %
+                                "\"" % identifier.replace(QStringLiteral("\""), QStringLiteral("\"\"")) % "\"" % Csv::CommaSep %
                                 Export::formatCoordinate(location.latitude) % Csv::CommaSep %
                                 Export::formatCoordinate(location.longitude) % Csv::CommaSep %
                                 Export::formatNumber(location.altitude) % Csv::CommaSep %
