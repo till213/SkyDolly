@@ -22,4 +22,4 @@ Then
   - Export everything
   - Keep old schema
 * Open the exported file (e.g. aircraft_type.sql, with Visual Studio Code) and...
-* ... cop and adapt an existing aircraft type migration in LogbookMigration.sql with the content of aircraft_type.sql
+* ... copy and adapt an existing aircraft type migration in LogbookMigration.sql with the content of aircraft_type.sql

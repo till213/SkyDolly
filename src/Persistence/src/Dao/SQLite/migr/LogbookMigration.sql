@@ -729,7 +729,6 @@ set    backup_period_id = case backup_period_id
                           when 6 then 2
                           end;
 
-
 @migr(id = "26d1892d-7264-4471-804e-2a3282c35b29", descn = "Add additional aircraft types from sim update 11 40th anniversary update", step = 1)
 insert into aircraft_type values
  ('Boeing F/A 18E Super Hornet Mrk Asobo','Airplane',44,2,2),
@@ -981,6 +980,29 @@ where flight.id in (select a.flight_id
 
 @migr(id = "e84ba603-2628-4317-a05f-257cd1686c8a", descn = "Drop column flight_number from aircraft table", step = 3)
 alter table aircraft drop column flight_number;
+
+@migr(id = "c9322b8f-ec99-431b-a861-23c85f9947fa", descn = "Add additional aircraft types from sim update 15", step = 1)
+insert into aircraft_type values
+ ('A320neo White Livery','Airplane',117,2,2),
+ ('A320neo Airbus House Livery','Airplane',117,2,2),
+ ('A320neo Aviators Club Livery','Airplane',117,2,2),
+ ('A320neo Xbox Aviators Club Livery','Airplane',117,2,2),
+ ('A320neo Global Livery','Airplane',117,2,2),
+ ('A320neo Orbit Livery','Airplane',117,2,2),
+ ('A320neo Pacific Livery','Airplane',117,2,2),
+ ('A320neo World Travel Livery','Airplane',117,2,2),
+ ('A320neo EasyJet Livery','Airplane',117,2,2),
+ ('A320neo Wizz Air Livery','Airplane',117,2,2),
+ ('A320neo Air New Zealand Livery','Airplane',117,2,2),
+ ('A320neo Spirit Airlines Livery','Airplane',117,2,2),
+ ('A320neo Iberia Livery','Airplane',117,2,2),
+ ('Ornithopter','Airplane',169,2,1)
+ on conflict(type)
+ do update
+ set category = excluded.category,
+     wing_span = excluded.wing_span,
+     engine_type = excluded.engine_type,
+     nof_engines = excluded.nof_engines;
 
 @migr(id = "c1c4df3f-a5c7-4fdb-90ad-44010744cc7c", descn = "Update application version to 0.17", step = 1)
 update metadata
