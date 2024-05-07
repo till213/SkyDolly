@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <utility>
+#include <algorithm>
 
 #include <QByteArray>
 
@@ -209,10 +210,8 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {false};
-    d->bearing = static_cast<Formation::Bearing>(valuesByKey.at(QString::fromLatin1(::BearingKey)).toInt(&ok));
-    if (!ok) {
-        d->bearing = ::DefaultBearing;
-    }
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::BearingKey)).toInt(&ok);
+    d->bearing = ok && (enumValue == std::clamp(enumValue, Enum::underly(Formation::Bearing::First), Enum::underly(Formation::Bearing::Last))) ? static_cast<Formation::Bearing>(enumValue) : ::DefaultBearing;
     d->horizontalDistance = static_cast<Formation::HorizontalDistance>(valuesByKey.at(QString::fromLatin1(::HorizontalDistanceKey)).toInt(&ok));
     if (!ok) {
         d->horizontalDistance = ::DefaultHorizontalDistance;

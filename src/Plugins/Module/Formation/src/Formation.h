@@ -64,7 +64,8 @@ namespace Formation
      * Implementation note: those values act as actual IDs that get persisted in the database.
      */
     enum struct Bearing {
-        North = 0,
+        First = 0,
+        North = First,
         NorthNorthEast = 1,
         NorthEast = 2,
         EastNorthEast = 3,
@@ -79,7 +80,8 @@ namespace Formation
         West = 12,
         WestNorthWest = 13,
         NorthWest = 14,
-        NorthNorthWest = 15
+        NorthNorthWest = 15,
+        Last = NorthNorthWest
     };
 
     InitialPosition calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing relativePosition, std::int64_t timestamp) noexcept;

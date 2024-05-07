@@ -34,6 +34,8 @@ namespace Enum
 {
     /*!
      * Returns the underlying type for the given enumeration \c e.
+     *
+     * Note: Can be replaced in C++23 with https://en.cppreference.com/w/cpp/utility/to_underlying
      */
     template<typename E>
     constexpr auto underly(E e) noexcept
