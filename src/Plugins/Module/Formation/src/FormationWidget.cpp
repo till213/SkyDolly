@@ -206,22 +206,22 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->aircraftTableWidget->setAlternatingRowColors(true);
 
-    d->positionButtonGroup->addButton(ui->nPositionRadioButton, Formation::Bearing::North);
-    d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Formation::Bearing::NorthNorthEast);
-    d->positionButtonGroup->addButton(ui->nePositionRadioButton, Formation::Bearing::NorthEast);
-    d->positionButtonGroup->addButton(ui->enePositionRadioButton, Formation::Bearing::EastNorthEast);
-    d->positionButtonGroup->addButton(ui->ePositionRadioButton, Formation::Bearing::East);
-    d->positionButtonGroup->addButton(ui->esePositionRadioButton, Formation::Bearing::EastSouthEast);
-    d->positionButtonGroup->addButton(ui->sePositionRadioButton, Formation::Bearing::SouthEast);
-    d->positionButtonGroup->addButton(ui->ssePositionRadioButton, Formation::Bearing::SouthSouthEast);
-    d->positionButtonGroup->addButton(ui->sPositionRadioButton, Formation::Bearing::South);
-    d->positionButtonGroup->addButton(ui->sswPositionRadioButton, Formation::Bearing::SouthSouthWest);
-    d->positionButtonGroup->addButton(ui->swPositionRadioButton, Formation::Bearing::SouthWest);
-    d->positionButtonGroup->addButton(ui->wswPositionRadioButton, Formation::Bearing::WestSouthWest);
-    d->positionButtonGroup->addButton(ui->wPositionRadioButton, Formation::Bearing::West);
-    d->positionButtonGroup->addButton(ui->wnwPositionRadioButton, Formation::Bearing::WestNorthWest);
-    d->positionButtonGroup->addButton(ui->nwPositionRadioButton, Formation::Bearing::NorthWest);
-    d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, Formation::Bearing::NorthNorthWest);
+    d->positionButtonGroup->addButton(ui->nPositionRadioButton, Enum::underly(Formation::Bearing::North));
+    d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Enum::underly(Formation::Bearing::NorthNorthEast));
+    d->positionButtonGroup->addButton(ui->nePositionRadioButton, Enum::underly(Formation::Bearing::NorthEast));
+    d->positionButtonGroup->addButton(ui->enePositionRadioButton, Enum::underly(Formation::Bearing::EastNorthEast));
+    d->positionButtonGroup->addButton(ui->ePositionRadioButton, Enum::underly(Formation::Bearing::East));
+    d->positionButtonGroup->addButton(ui->esePositionRadioButton, Enum::underly(Formation::Bearing::EastSouthEast));
+    d->positionButtonGroup->addButton(ui->sePositionRadioButton, Enum::underly(Formation::Bearing::SouthEast));
+    d->positionButtonGroup->addButton(ui->ssePositionRadioButton, Enum::underly(Formation::Bearing::SouthSouthEast));
+    d->positionButtonGroup->addButton(ui->sPositionRadioButton, Enum::underly(Formation::Bearing::South));
+    d->positionButtonGroup->addButton(ui->sswPositionRadioButton, Enum::underly(Formation::Bearing::SouthSouthWest));
+    d->positionButtonGroup->addButton(ui->swPositionRadioButton, Enum::underly(Formation::Bearing::SouthWest));
+    d->positionButtonGroup->addButton(ui->wswPositionRadioButton, Enum::underly(Formation::Bearing::WestSouthWest));
+    d->positionButtonGroup->addButton(ui->wPositionRadioButton, Enum::underly(Formation::Bearing::West));
+    d->positionButtonGroup->addButton(ui->wnwPositionRadioButton, Enum::underly(Formation::Bearing::WestNorthWest));
+    d->positionButtonGroup->addButton(ui->nwPositionRadioButton, Enum::underly(Formation::Bearing::NorthWest));
+    d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, Enum::underly(Formation::Bearing::NorthNorthWest));
 
     const QString css = QStringLiteral(
 "QRadioButton::indicator:unchecked {"
@@ -423,7 +423,7 @@ void FormationWidget::updateReferenceAircraftIcon() noexcept
 
 void FormationWidget::updateRelativePositionUi() noexcept
 {
-    switch (ui->horizontalDistanceSlider->value()) {
+    switch (static_cast<Formation::HorizontalDistance>(ui->horizontalDistanceSlider->value())) {
     case Formation::HorizontalDistance::VeryClose:
         ui->horizontalDistanceTextLabel->setText(tr("Very close"));
         break;
@@ -441,7 +441,7 @@ void FormationWidget::updateRelativePositionUi() noexcept
         break;
     }
 
-    switch (ui->verticalDistanceSlider->value()) {
+    switch (static_cast<Formation::VerticalDistance>(ui->verticalDistanceSlider->value())) {
     case Formation::VerticalDistance::Below:
         ui->verticalDistanceTextLabel->setText(tr("Below"));
         break;
@@ -1055,11 +1055,11 @@ void FormationWidget::onModuleSettingsChanged() noexcept
     button.blockSignals(false);
 
     ui->horizontalDistanceSlider->blockSignals(true);
-    ui->horizontalDistanceSlider->setValue(d->moduleSettings.getHorizontalDistance());
+    ui->horizontalDistanceSlider->setValue(Enum::underly(d->moduleSettings.getHorizontalDistance()));
     ui->horizontalDistanceSlider->blockSignals(false);
 
     ui->verticalDistanceSlider->blockSignals(true);
-    ui->verticalDistanceSlider->setValue(d->moduleSettings.getVerticalDistance());
+    ui->verticalDistanceSlider->setValue(Enum::underly(d->moduleSettings.getVerticalDistance()));
     ui->verticalDistanceSlider->blockSignals(false);
 
     ui->relativePositionCheckBox->blockSignals(true);

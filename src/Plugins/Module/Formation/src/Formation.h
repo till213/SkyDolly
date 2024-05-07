@@ -39,10 +39,10 @@ namespace Formation
      */
     enum struct HorizontalDistance {
         VeryClose = 0,
-        Close,
-        Nearby,
-        Far,
-        VeryFar
+        Close = 1,
+        Nearby = 2,
+        Far = 3,
+        VeryFar = 4
     };
 
     /*!
