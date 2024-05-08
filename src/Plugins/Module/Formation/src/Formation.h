@@ -38,11 +38,13 @@ namespace Formation
      * Implementation note: those values act as actual IDs that get persisted in the database.
      */
     enum struct HorizontalDistance {
-        VeryClose = 0,
+        First = 0,
+        VeryClose = First,
         Close = 1,
         Nearby = 2,
         Far = 3,
-        VeryFar = 4
+        VeryFar = 4,
+        Last = VeryFar
     };
 
     /*!
@@ -51,11 +53,13 @@ namespace Formation
      * Implementation note: those values act as actual IDs that get persisted in the database.
      */
     enum struct VerticalDistance {
-        Below = 0,
+        First = 0,
+        Below = First,
         JustBelow = 1,
         Level = 2,
         JustAbove = 3,
-        Above = 4
+        Above = 4,
+        Last = Above
     };
 
     /*!

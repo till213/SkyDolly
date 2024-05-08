@@ -64,12 +64,14 @@ public:
      * Implementation note: those values act as actual IDs that get persisted in the database.
      */
     enum struct ReplayMode {
+        First = 0,
         /*! All aircraft are controlled by Sky Dolly. */
-        Normal = 0,
+        Normal = First,
         /*! User takes control of recorded user aircraft. */
         UserAircraftManualControl = 1,
         /*! User flies along with all recorded aircraft. */
-        FlyWithFormation = 2
+        FlyWithFormation = 2,
+        Last = FlyWithFormation
     };
 
     enum struct SeekMode {
