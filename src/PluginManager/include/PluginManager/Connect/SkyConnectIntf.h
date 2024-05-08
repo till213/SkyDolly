@@ -68,14 +68,13 @@ public:
         /*! All aircraft are controlled by Sky Dolly. */
         Normal = First,
         /*! User takes control of recorded user aircraft. */
-        UserAircraftManualControl = 1,
+        UserAircraftManualControl,
         /*! User flies along with all recorded aircraft. */
-        FlyWithFormation = 2,
+        FlyWithFormation,
         Last = FlyWithFormation
     };
 
     enum struct SeekMode {
-
         /*! Continuation of a timeline seek operation ("drag timeline") */
         Continuous,
         /*! A single seek operation (to beginning, to end, to selected position) */

@@ -40,10 +40,10 @@ namespace Formation
     enum struct HorizontalDistance {
         First = 0,
         VeryClose = First,
-        Close = 1,
-        Nearby = 2,
-        Far = 3,
-        VeryFar = 4,
+        Close,
+        Nearby,
+        Far,
+        VeryFar,
         Last = VeryFar
     };
 
@@ -55,10 +55,10 @@ namespace Formation
     enum struct VerticalDistance {
         First = 0,
         Below = First,
-        JustBelow = 1,
-        Level = 2,
-        JustAbove = 3,
-        Above = 4,
+        JustBelow,
+        Level,
+        JustAbove,
+        Above,
         Last = Above
     };
 
@@ -70,21 +70,21 @@ namespace Formation
     enum struct Bearing {
         First = 0,
         North = First,
-        NorthNorthEast = 1,
-        NorthEast = 2,
-        EastNorthEast = 3,
-        East = 4,
-        EastSouthEast = 5,
-        SouthEast = 6,
-        SouthSouthEast = 7,
-        South = 8,
-        SouthSouthWest = 9,
-        SouthWest = 10,
-        WestSouthWest = 11,
-        West = 12,
-        WestNorthWest = 13,
-        NorthWest = 14,
-        NorthNorthWest = 15,
+        NorthNorthEast,
+        NorthEast,
+        EastNorthEast,
+        East,
+        EastSouthEast,
+        SouthEast,
+        SouthSouthEast,
+        South,
+        SouthSouthWest,
+        SouthWest,
+        WestSouthWest,
+        West,
+        WestNorthWest,
+        NorthWest,
+        NorthNorthWest,
         Last = NorthNorthWest
     };
 

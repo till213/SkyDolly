@@ -36,7 +36,7 @@ namespace SimType {
     /*!
      * The state of the aircraft lights.
      *
-     * Implementation note: those values act as actual flag values which get persisted in the database.
+     * Implementation note: those values act as actual flag values that get persisted in the database.
      */
     enum struct LightState {
         None = 0x0000,
@@ -60,7 +60,8 @@ namespace SimType {
      * Implementation note: those values act as actual IDs that get persisted in the database.
      */
     enum struct SurfaceType {
-        Unknown = 0,
+        First = 0,
+        Unknown = First,
         Concrete = 1,
         Grass = 2,
         Water = 3,
@@ -85,7 +86,8 @@ namespace SimType {
         Sand = 22,
         Shale = 23,
         Tarmac = 24,
-        WrightFlyerTrack  = 25
+        WrightFlyerTrack  = 25,
+        Last = WrightFlyerTrack
     };
 
     /*!
@@ -94,40 +96,46 @@ namespace SimType {
      * Implementation note: those values act as actual IDs that get persisted in the database.
      */
     enum struct SurfaceCondition {
-        Unknown = 0,
-        Normal = 1,
-        Wet = 2,
-        Icy = 3,
-        Snow = 4
+        First = 0,
+        Unknown = First,
+        Normal,
+        Wet ,
+        Icy,
+        Snow,
+        Last = Snow
     };
 
     /*!
      * The engine type of the aircraft.
      *
-     * Implementation note: those values act as actual IDs which get persisted in the database.
+     * Implementation note: those values act as actual IDs that get persisted in the database.
      */
     enum struct EngineType {
-        Unknown = 0,
-        Piston = 1,
-        Jet = 2,
-        None = 3,
-        HeloBellTurbine = 4,
-        Unsupported = 5,
-        Turboprop = 6,
+        First = 0,
+        Unknown = First,
+        Piston,
+        Jet,
+        None,
+        HeloBellTurbine,
+        Unsupported,
+        Turboprop,
         // Only used for selection (never assigned/persisted)
-        All
+        All,
+        Last = All
     };
 
     /*!
      * The precipitation state at the beginning of the flight.
      *
-     * Implementation note: those values act as actual IDs which get persisted in the database.
+     * Implementation note: those values act as actual IDs that get persisted in the database.
      */
     enum struct PrecipitationState {
-        Unknown = 0,
-        None = 1,
-        Rain = 2,
-        Snow = 3
+        First = 0,
+        Unknown = First,
+        None,
+        Rain,
+        Snow,
+        Last = Snow
     };
 
     inline QString surfaceTypeToString(SurfaceType surfaceType) noexcept {

@@ -146,8 +146,10 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
             flightData.flightNumber = query.value(flightNumberIdx).toString();
 
             FlightCondition &flightCondition = flightData.flightCondition;
-            flightCondition.surfaceType = static_cast<SimType::SurfaceType>(query.value(surfaceTypeIdx).toInt());
-            flightCondition.surfaceCondition = static_cast<SimType::SurfaceCondition>(query.value(surfaceConditionIdx).toInt());
+            auto enumValue = query.value(surfaceTypeIdx).toInt();
+            flightCondition.surfaceType = Enum::contains<SimType::SurfaceType>(enumValue) ? static_cast<SimType::SurfaceType>(enumValue) : SimType::SurfaceType::First;
+            enumValue = query.value(surfaceConditionIdx).toInt();
+            flightCondition.surfaceCondition = Enum::contains<SimType::SurfaceCondition>(enumValue) ? static_cast<SimType::SurfaceCondition>(enumValue) : SimType::SurfaceCondition::First;
             flightCondition.onAnyRunway = query.value(onAnyRunwayIdx).toBool();
             flightCondition.onParkingSpot = query.value(onParkingSpotIdx).toBool();            
             flightCondition.groundAltitude = query.value(groundAltitudeIdx).toFloat();
@@ -159,7 +161,8 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
             flightCondition.seaLevelPressure = query.value(seaLevelPressureIdx).toFloat();
             flightCondition.pitotIcingPercent = query.value(pitotIcingIdx).toInt();
             flightCondition.structuralIcingPercent = query.value(structuralIcingIdx).toInt();
-            flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(query.value(precipitationStateIdx).toInt());
+            enumValue = query.value(precipitationStateIdx).toInt();
+            flightCondition.precipitationState = Enum::contains<SimType::PrecipitationState>(enumValue) ? static_cast<SimType::PrecipitationState>(enumValue) : SimType::PrecipitationState::First;
             flightCondition.inClouds = query.value(inCloudsIdx).toBool();
             // Persisted times is are already local respectively zulu simulation times
             flightCondition.startLocalTime = query.value(startLocalSimulationTimeIdx).toDateTime();
