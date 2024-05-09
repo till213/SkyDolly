@@ -108,14 +108,27 @@ The workaround for the time being is to place the Sky Dolly sources into a path 
 ## Signed Commits
 The following setups an optional commit signing:
 
+### Local Setup
+
 - Globally set the signing format to SSH (which is the most convenient in case SSH is used to login to github.com anyway):
 ```
 git config --global gpg.format ssh
-git config --global user.signingkey /path/to/public/ssh/key
+git config --global user.signingkey "/path/to/public/ssh/key"
 ```
+
+E.g. on Windows:
+```
+git config --global user.signingkey "%HOME%\.ssh\id_rsa.pub"
+```
+
+Take note of the "quotes" around the path.
 
 - Globally enable signing of each commit
 ```
 git config --global commit.gpgsign true
 ```
 
+### Github Setup
+Github needs to be able to verify the signed commits.
+
+- Add the public ssh key with *New SSH Key* as *Signing Key* to [github.com](https://github.com/settings/keys)
