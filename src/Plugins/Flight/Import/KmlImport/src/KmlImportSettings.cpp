@@ -101,12 +101,8 @@ void KmlImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void KmlImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    const int enumeration = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
-    if (ok) {
-        d->format = static_cast<Format >(enumeration);
-    } else {
-        d->format = ::DefaultFormat;
-    }
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
+    d->format = ok && Enum::contains<Format>(enumValue) ? static_cast<Format>(enumValue) : ::DefaultFormat;
 }
 
 void KmlImportSettings::restoreDefaultsExtn() noexcept

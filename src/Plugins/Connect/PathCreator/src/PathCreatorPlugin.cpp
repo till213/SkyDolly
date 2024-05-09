@@ -39,6 +39,7 @@
 
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
+#include <Kernel/Enum.h>
 #include <Model/TimeVariableData.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -490,13 +491,13 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     FlightCondition flightCondition;
 
     flightCondition.groundAltitude = static_cast<float>(d->randomGenerator->bounded(4000.0));
-    flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->randomGenerator->bounded(26));
-    flightCondition.surfaceCondition = static_cast<SimType::SurfaceCondition>(d->randomGenerator->bounded(5));
+    flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->randomGenerator->bounded(Enum::underly(SimType::SurfaceType::Last) + 1));
+    flightCondition.surfaceCondition = static_cast<SimType::SurfaceCondition>(d->randomGenerator->bounded(Enum::underly(SimType::SurfaceCondition::Last) + 1));
     flightCondition.ambientTemperature = static_cast<float>(d->randomGenerator->bounded(80.0f)) - 40.0f;
     flightCondition.totalAirTemperature = static_cast<float>(d->randomGenerator->bounded(80.0f)) - 40.0f;
     flightCondition.windSpeed = static_cast<float>(d->randomGenerator->bounded(30.0));
     flightCondition.windDirection = static_cast<float>(d->randomGenerator->bounded(360.0));
-    flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(d->randomGenerator->bounded(4));
+    flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(d->randomGenerator->bounded(Enum::underly(SimType::PrecipitationState::Last) + 1));
     flightCondition.visibility = static_cast<float>(d->randomGenerator->bounded(10000.0));
     flightCondition.seaLevelPressure = 950.0f + static_cast<float>(d->randomGenerator->bounded(100.0));
     flightCondition.pitotIcingPercent = d->randomGenerator->bounded(101);

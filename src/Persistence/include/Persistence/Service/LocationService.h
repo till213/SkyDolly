@@ -41,10 +41,17 @@ struct LocationServicePrivate;
 class PERSISTENCE_API LocationService final
 {
 public:
+    /*!
+     * Defines how to deal with duplicate locations upon import.
+     *
+     * Implementation note: these values are peristed in the application settings.
+     */
     enum struct Mode {
-        Ignore,
+        First = 0,
+        Ignore = First,
         Update,
-        Insert
+        Insert,
+        Last = Insert
     };
     LocationService(QString connectionName = Const::DefaultConnectionName) noexcept;
     LocationService(const LocationService &rhs) = delete;

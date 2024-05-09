@@ -75,7 +75,7 @@ QDate LogbookSettings::getFromDate() const noexcept
 void LogbookSettings::setFromDate(QDate from) noexcept
 {
     if (d->flightSelector.fromDate != from) {
-        d->flightSelector.fromDate = std::move(from);
+        d->flightSelector.fromDate = from;
         emit changed();
     }
 }
@@ -88,7 +88,7 @@ QDate LogbookSettings::getToDate() const noexcept
 void LogbookSettings::setToDate(QDate to) noexcept
 {
     if (d->flightSelector.toDate != to) {
-        d->flightSelector.toDate = std::move(to);
+        d->flightSelector.toDate = to;
         emit changed();
     }
 }
@@ -214,10 +214,10 @@ void LogbookSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Value
 {
     bool ok {false};
     d->flightSelector.hasFormation = valuesByKey.at(QString::fromLatin1(::HasFormationKey)).toBool();
-    d->flightSelector.engineType = static_cast<SimType::EngineType>(valuesByKey.at(QString::fromLatin1(::EngineTypeKey)).toInt(&ok));
-    if (!ok) {
-        d->flightSelector.engineType = ::DefaultEngineType;
-    }
+
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::EngineTypeKey)).toInt(&ok);
+    d->flightSelector.engineType = ok && Enum::contains<SimType::EngineType>(enumValue) ? static_cast<SimType::EngineType>(enumValue) : ::DefaultEngineType;
+
     d->flightSelector.mininumDurationMinutes = valuesByKey.at(QString::fromLatin1(::MinimumDurationMinutesKey)).toInt(&ok);
     if (!ok) {
         d->flightSelector.mininumDurationMinutes = ::DefaultMinimumDurationMinutes;

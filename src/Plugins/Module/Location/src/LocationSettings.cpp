@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <unordered_set>
 #include <utility>
 
 #include <QList>
@@ -233,6 +232,7 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
     // Filters
     keyValue.first = QString::fromLatin1(::LocationTypeSelectionKey);
     QList<QVariant> typeList;
+    typeList.reserve(static_cast<qsizetype>(d->locationSelector.typeSelection.size()));
     for (const auto it : d->locationSelector.typeSelection) {
         typeList.append(QVariant::fromValue(it));
     }
@@ -315,6 +315,7 @@ void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Valu
     // Filters
     d->locationSelector.typeSelection.clear();
     QList<QVariant> typeList = valuesByKey.at(QString::fromLatin1(::LocationTypeSelectionKey)).toList();
+    d->locationSelector.typeSelection.reserve(typeList.count());
     for (const auto &variant : typeList) {
         d->locationSelector.typeSelection.insert(variant.toLongLong());
     }

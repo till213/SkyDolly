@@ -45,11 +45,18 @@ public:
     MSFSSimConnectSettings &operator=(MSFSSimConnectSettings &&rhs) = delete;
     ~MSFSSimConnectSettings() override;
 
+    /*!
+     * The SimConnect local or network connection type.
+     *
+     * Implementation note: these values are peristed in the application settings.
+     */
     enum struct ConnectionType
     {
+        First = 0,
         Pipe,
         IPv4,
-        IPv6
+        IPv6,
+        Last = IPv6
     };
 
     ConnectionType getConnectionType() const noexcept;

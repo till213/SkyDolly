@@ -136,16 +136,14 @@ void FlightImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
 
 void FlightImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok {true};
     d->importDirectoryEnabled = valuesByKey.at(QString::fromLatin1(::ImportDirectoryEnabledKey)).toBool();
-    int enumeration = valuesByKey.at(QString::fromLatin1(::AircraftImportModeKey)).toInt(&ok);
-    if (ok) {
-        d->aircraftImportMode = static_cast<FlightImportPluginBaseSettings::AircraftImportMode>(enumeration);
-    }
-    enumeration = valuesByKey.at(QString::fromLatin1(::TimeOffsetSyncKey)).toInt(&ok);
-    if (ok) {
-        d->timeOffsetSync = static_cast<SkyMath::TimeOffsetSync>(enumeration);
-    }
+
+    bool ok {true};
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::AircraftImportModeKey)).toInt(&ok);
+    d->aircraftImportMode = ok && Enum::contains<FlightImportPluginBaseSettings::AircraftImportMode>(enumValue) ? static_cast<FlightImportPluginBaseSettings::AircraftImportMode>(enumValue) : ::DefaultAircraftImportMode;
+
+    enumValue = valuesByKey.at(QString::fromLatin1(::TimeOffsetSyncKey)).toInt(&ok);
+    d->timeOffsetSync = ok && Enum::contains<SkyMath::TimeOffsetSync>(enumValue) ? static_cast<SkyMath::TimeOffsetSync>(enumValue) : ::DefaultTimeOffsetSync;
 
     restoreSettingsExtn(valuesByKey);
 

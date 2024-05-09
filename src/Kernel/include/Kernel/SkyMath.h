@@ -78,13 +78,14 @@ namespace SkyMath
     /*!
      * Defines how the aircraft time offset is to be synchronised.
      *
-     * These values are peristed in the application settings.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct TimeOffsetSync {
+        First = 0,
         /*! No synchronisation to be done. */
-        None = 0,
+        None = First,
         /*! Both date and time of the flight creation time are taken into account */
-        DateAndTime = 1,
+        DateAndTime,
         /*!
          * Only the time is taken into account. For example a flight that was recorded
          * a day before, on the 2023-02-14 10:45:00Z is only considered to be 15 minutes
@@ -92,7 +93,8 @@ namespace SkyMath
          * 15 minutes). This is useful when importing e.g. real-world flights that
          * happened on different days, but should still be synchronised "on the same day".
          */
-        TimeOnly = 2
+        TimeOnly,
+        Last = TimeOnly
     };
 
     /*!

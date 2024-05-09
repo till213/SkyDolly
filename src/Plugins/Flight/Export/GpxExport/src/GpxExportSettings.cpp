@@ -117,12 +117,8 @@ void GpxExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void GpxExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    const int enumeration = valuesByKey.at(QString::fromLatin1(::TimestampModeKey)).toInt(&ok);
-    if (ok) {
-        d->timestampMode = static_cast<GpxExportSettings::TimestampMode >(enumeration);
-    } else {
-        d->timestampMode = ::DefaultTimestampMode;
-    }
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::TimestampModeKey)).toInt(&ok);
+    d->timestampMode = ok && Enum::contains<GpxExportSettings::TimestampMode>(enumValue) ? static_cast<GpxExportSettings::TimestampMode>(enumValue) : ::DefaultTimestampMode;
 }
 
 void GpxExportSettings::restoreDefaultsExtn() noexcept

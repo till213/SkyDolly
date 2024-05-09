@@ -61,19 +61,20 @@ public:
     /*!
      * Defines of which aircraft to take control of during formation replay.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct ReplayMode {
+        First = 0,
         /*! All aircraft are controlled by Sky Dolly. */
-        Normal = 0,
+        Normal = First,
         /*! User takes control of recorded user aircraft. */
-        UserAircraftManualControl = 1,
+        UserAircraftManualControl,
         /*! User flies along with all recorded aircraft. */
-        FlyWithFormation = 2
+        FlyWithFormation,
+        Last = FlyWithFormation
     };
 
     enum struct SeekMode {
-
         /*! Continuation of a timeline seek operation ("drag timeline") */
         Continuous,
         /*! A single seek operation (to beginning, to end, to selected position) */
