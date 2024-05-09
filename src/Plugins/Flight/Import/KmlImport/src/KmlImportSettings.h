@@ -42,7 +42,7 @@ public:
     /*!
      * KML format (flavour).
      *
-     * These values are peristed in the application settings.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct Format {
         FlightAware = 0,

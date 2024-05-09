@@ -36,7 +36,7 @@ namespace SimType {
     /*!
      * The state of the aircraft lights.
      *
-     * Implementation note: those values act as actual flag values that get persisted in the database.
+     * Implementation note: these values act as actual flag values that get persisted in the database.
      */
     enum struct LightState {
         None = 0x0000,
@@ -57,7 +57,7 @@ namespace SimType {
     /*!
      * The surface type describes the surface on (over) which the flight has started.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values act as actual IDs that get persisted in the database.
      */
     enum struct SurfaceType {
         First = 0,
@@ -93,7 +93,7 @@ namespace SimType {
     /*!
      * The surface condition describes the condition of the runway on which the flight has (potentially) started.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values act as actual IDs that get persisted in the database.
      */
     enum struct SurfaceCondition {
         First = 0,
@@ -108,7 +108,7 @@ namespace SimType {
     /*!
      * The engine type of the aircraft.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values act as actual IDs that get persisted in the database.
      */
     enum struct EngineType {
         First = 0,
@@ -127,7 +127,7 @@ namespace SimType {
     /*!
      * The precipitation state at the beginning of the flight.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values act as actual IDs that get persisted in the database.
      */
     enum struct PrecipitationState {
         First = 0,

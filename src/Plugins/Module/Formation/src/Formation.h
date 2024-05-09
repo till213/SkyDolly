@@ -35,7 +35,7 @@ namespace Formation
     /*!
      * The initial horizontal distance of the formation aircraft, relative to the current user aircraft.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct HorizontalDistance {
         First = 0,
@@ -50,7 +50,7 @@ namespace Formation
     /*!
      * The initial vertical distance of the formation aircraft, relative to the current user aircraft.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct VerticalDistance {
         First = 0,
@@ -65,7 +65,7 @@ namespace Formation
     /*!
      * The initial bearing of the formation aircraft, relative to the user aircraft.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct Bearing {
         First = 0,

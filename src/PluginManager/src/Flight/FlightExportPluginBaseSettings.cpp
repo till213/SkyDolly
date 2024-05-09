@@ -143,18 +143,14 @@ void FlightExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
 void FlightExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    int enumeration = valuesByKey.at(QString::fromLatin1(::ResamplingPeriodKey)).toInt(&ok);
-    if (ok) {
-        d->resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);
-    } else {
-        d->resamplingPeriod = ::DefaultResamplingPeriod;
-    }
-    enumeration = valuesByKey.at(QString::fromLatin1(::FormationExportKey)).toInt(&ok);
-    if (ok) {
-        d->formationExport = static_cast<FormationExport >(enumeration);
-    } else {
-        d->formationExport = ::DefaultFormationExport;
-    }
+
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::ResamplingPeriodKey)).toInt(&ok);
+    // No enumeration domain validation: any resampling period (Hz) is valid
+    d->resamplingPeriod = ok ? static_cast<SampleRate::ResamplingPeriod>(enumValue) : ::DefaultResamplingPeriod;
+
+    enumValue = valuesByKey.at(QString::fromLatin1(::FormationExportKey)).toInt(&ok);
+    d->formationExport = ok && Enum::contains<FormationExport>(enumValue) ? static_cast<FormationExport>(enumValue) : ::DefaultFormationExport;
+
     d->openExportedFilesEnabled = valuesByKey.at(QString::fromLatin1(::OpenExportedFilesEnabledKey)).toBool();
 
     restoreSettingsExtn(valuesByKey);

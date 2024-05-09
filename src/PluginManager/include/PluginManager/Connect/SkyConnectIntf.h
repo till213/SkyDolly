@@ -61,7 +61,7 @@ public:
     /*!
      * Defines of which aircraft to take control of during formation replay.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct ReplayMode {
         First = 0,

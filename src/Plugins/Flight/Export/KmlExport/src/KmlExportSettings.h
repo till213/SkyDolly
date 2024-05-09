@@ -42,7 +42,7 @@ public:
     /*!
      * The colour styles of the lines.
      *
-     * These values are peristed in the application settings.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct ColorStyle {
         OneColor = 0,

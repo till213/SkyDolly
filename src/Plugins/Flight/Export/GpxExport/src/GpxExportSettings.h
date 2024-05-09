@@ -41,7 +41,7 @@ public:
     /*!
      * Defines how to calculate the exported timestamps.
      *
-     * These values are peristed in the application settings.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct TimestampMode {
         /*! Timestamps are calculated based on the simulation timestamps. */
