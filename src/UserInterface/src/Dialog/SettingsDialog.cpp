@@ -40,6 +40,7 @@
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
+#include <Kernel/System.h>
 #include <Model/SimVar.h>
 #include <PluginManager/SkyConnectManager.h>
 #include "SettingsDialog.h"
@@ -57,6 +58,12 @@ namespace
 
     constexpr int ReplayTab = 0;
     constexpr int FlightSimulatorTab = 2;
+
+    constexpr const char *WindowsStyleKey {"windows"};
+    constexpr const char *FusionStyleKey {"fusion"};
+    constexpr const char *WindowsVistaStyleKey {"windowsvista"};
+    constexpr const char *Windows11StyleKey {"windows11"};
+    constexpr const char *MacOSStyleKey {"macos"};
 }
 
 struct SettingsDialogPrivate
@@ -66,19 +73,19 @@ struct SettingsDialogPrivate
         updateTimer.setTimerType(Qt::TimerType::PreciseTimer);
         if (knownStyleNames.empty()) {
             knownStyleNames = {
-                { Settings::DefaultStyleKey, qApp->translate("SettingsDialogPrivate", "Default") },
-                { QStringLiteral("macos"), QStringLiteral("macOS") },
-                { QStringLiteral("windows"), QStringLiteral("Windows") },
-                { QStringLiteral("windowsvista"), QStringLiteral("Windows Vista") },
-                { QStringLiteral("fusion"), QStringLiteral("Fusion") },
-                { QStringLiteral("windows11"), QStringLiteral("Windows 11") }
+                { Settings::DefaultStyleKey, QApplication::translate("SettingsDialogPrivate", "Default") },
+                { ::WindowsStyleKey, QStringLiteral("Windows") },
+                { ::FusionStyleKey, QStringLiteral("Fusion") },
+                { ::WindowsVistaStyleKey, QStringLiteral("Windows Vista") },
+                { ::Windows11StyleKey, QStringLiteral("Windows 11") },
+                { ::MacOSStyleKey, QStringLiteral("macOS") }
             };
         }
     }
     QTimer updateTimer;
     OptionWidgetIntf *skyConnectOptionWidget {nullptr};
 
-    // Key: style key, value: style name
+    // Key: style key (all lower case), value: style name
     static inline std::unordered_map<QString, QString> knownStyleNames;
 };
 
@@ -155,10 +162,14 @@ void SettingsDialog::initUi() noexcept
 
     // User interface
     ui->styleComboBox->addItem(Settings::DefaultStyleKey, Settings::DefaultStyleKey);
-    const auto styleKeys = QStyleFactory::keys();
+    auto styleKeys = QStyleFactory::keys();
+    styleKeys.sort();
     for (const auto &key : styleKeys) {
-        const auto &styleName = d->knownStyleNames.contains(key) ? d->knownStyleNames[key] : key;
-        ui->styleComboBox->addItem(styleName, key);
+        const auto lowerKey = key.toLower();
+        const auto &styleName = d->knownStyleNames.contains(lowerKey) ? d->knownStyleNames[lowerKey] : key;
+        if (!(System::isWindows10() && lowerKey == ::Windows11StyleKey) && !(System::isWindows11() && lowerKey == ::Windows11StyleKey)) {
+            ui->styleComboBox->addItem(styleName, lowerKey);
+        }
     }
 
     ui->settingsTabWidget->setCurrentIndex(::ReplayTab);
