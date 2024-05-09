@@ -167,7 +167,7 @@ void SettingsDialog::initUi() noexcept
     for (const auto &key : styleKeys) {
         const auto lowerKey = key.toLower();
         const auto &styleName = d->knownStyleNames.contains(lowerKey) ? d->knownStyleNames[lowerKey] : key;
-        if (!(System::isWindows10() && lowerKey == ::Windows11StyleKey) && !(System::isWindows11() && lowerKey == ::Windows11StyleKey)) {
+        if (!(System::isWindows10() && lowerKey == ::Windows11StyleKey) && !(System::isWindows11() && lowerKey == ::WindowsVistaStyleKey)) {
             ui->styleComboBox->addItem(styleName, lowerKey);
         }
     }
