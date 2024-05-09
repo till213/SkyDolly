@@ -34,11 +34,31 @@ namespace Enum
 {
     /*!
      * Returns the underlying type for the given enumeration \c e.
+     *
+     * Note: Can be replaced in C++23 with https://en.cppreference.com/w/cpp/utility/to_underlying
      */
     template<typename E>
     constexpr auto underly(E e) noexcept
     {
         return static_cast<std::underlying_type_t<E>>(e);
+    }
+
+    /*!
+     * Returns whether the enumeration \c E contains the given underlying \c value.
+     *
+     * Assumptions:
+     * - The enumeration \c E contains the following members: \c First (with lowest value) and \c Last (with highest value)
+     * - The underlying values are without "gaps", that is First = 0, Value1 = First, Value2 = 1, Value3 = 2, ..., ValueN = 10, Last = ValueN
+     *
+     * \param value
+     *        the underlying value to be checked
+     * \return \c true if the \c value is a valid underlying value contained in enumeration of type \c E; \c false else
+     */
+    template<typename E> requires(std::is_enum_v<E>)
+    constexpr auto contains(std::underlying_type_t<E> value)
+    {
+        return value >= static_cast<std::underlying_type_t<E>>(E::First) &&
+               value <= static_cast<std::underlying_type_t<E>>(E::Last);
     }
 }
 

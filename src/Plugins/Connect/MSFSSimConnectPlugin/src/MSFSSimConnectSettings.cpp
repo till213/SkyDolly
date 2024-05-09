@@ -92,16 +92,9 @@ void MSFSSimConnectSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults 
 
 void MSFSSimConnectSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok {false};
-    int connectionTypeValue = valuesByKey.at(QString::fromLatin1(::ConnectionTypeKey)).toInt(&ok);
-    if (ok) {
-        d->connectionType = static_cast<ConnectionType>(connectionTypeValue);
-    } else {
-#ifdef DEBUG
-        qWarning() << "The connectionType in the settings could not be parsed, so setting value to default value:" << Enum::underly(::DefaultConnectionType);
-#endif
-        d->connectionType  = ::DefaultConnectionType;
-    }
+    bool ok {true};
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::ConnectionTypeKey)).toInt(&ok);
+    d->connectionType = ok && Enum::contains<ConnectionType>(enumValue) ? static_cast<ConnectionType>(enumValue) : ::DefaultConnectionType;
 }
 
 void MSFSSimConnectSettings::restoreDefaultsExtn() noexcept

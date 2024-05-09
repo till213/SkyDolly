@@ -41,13 +41,15 @@ public:
     /*!
      * Defines how to calculate the exported timestamps.
      *
-     * These values are peristed in the application settings.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct TimestampMode {
+        First = 0,
         /*! Timestamps are calculated based on the simulation timestamps. */
-        Simulation,
+        Simulation = First,
         /*! Timestamps are calculated based on the real-world recording time. */
-        Recording
+        Recording,
+        Last = Recording
     };
 
     GpxExportSettings() noexcept;

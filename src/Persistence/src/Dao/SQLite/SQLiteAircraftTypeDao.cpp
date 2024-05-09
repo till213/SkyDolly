@@ -124,7 +124,8 @@ AircraftType SQLiteAircraftTypeDao::getByType(const QString &type, bool *ok) con
             const int nofEnginesIdx = record.indexOf(QStringLiteral("nof_engines"));
             aircraftType.category = query.value(categoryIdx).toString();
             aircraftType.wingSpan = query.value(wingSpanIdx).toInt();
-            aircraftType.engineType = static_cast<SimType::EngineType>(query.value(engineTypeIdx).toInt());
+            const auto enumValue = query.value(engineTypeIdx).toInt();
+            aircraftType.engineType = Enum::contains<SimType::EngineType>(enumValue) ? static_cast<SimType::EngineType>(enumValue) : SimType::EngineType::First;
             aircraftType.numberOfEngines = query.value(nofEnginesIdx).toInt();
         }
     }
@@ -168,8 +169,9 @@ std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
         while (query.next()) {
             const QString type = query.value(typeIdx).toString();
             const QString category = query.value(categoryIdx).toString();
-            const int wingSpan = query.value(wingSpanIdx).toInt();
-            const SimType::EngineType engineType = static_cast<SimType::EngineType>(query.value(engineTypeIdx).toInt());
+            const int wingSpan = query.value(wingSpanIdx).toInt();            
+            const auto enumValue = query.value(engineTypeIdx).toInt();
+            const SimType::EngineType engineType = Enum::contains<SimType::EngineType>(enumValue) ? static_cast<SimType::EngineType>(enumValue) : SimType::EngineType::First;
             const int numberOfEngines = query.value(nofEnginesIdx).toInt();
             aircraftTypes.emplace_back(type, category, wingSpan, engineType, numberOfEngines);
         }

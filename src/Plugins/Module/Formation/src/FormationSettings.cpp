@@ -209,23 +209,20 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {false};
-    d->bearing = static_cast<Formation::Bearing>(valuesByKey.at(QString::fromLatin1(::BearingKey)).toInt(&ok));
-    if (!ok) {
-        d->bearing = ::DefaultBearing;
-    }
-    d->horizontalDistance = static_cast<Formation::HorizontalDistance>(valuesByKey.at(QString::fromLatin1(::HorizontalDistanceKey)).toInt(&ok));
-    if (!ok) {
-        d->horizontalDistance = ::DefaultHorizontalDistance;
-    }
-    d->verticalDistance = static_cast<Formation::VerticalDistance>(valuesByKey.at(QString::fromLatin1(::VerticalDistanceKey)).toInt(&ok));
-    if (!ok) {
-        d->verticalDistance = ::DefaultVerticalDistance;
-    }
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::BearingKey)).toInt(&ok);
+    d->bearing = ok && Enum::contains<Formation::Bearing>(enumValue) ? static_cast<Formation::Bearing>(enumValue) : ::DefaultBearing;
+
+    enumValue = valuesByKey.at(QString::fromLatin1(::HorizontalDistanceKey)).toInt(&ok);
+    d->horizontalDistance = ok && Enum::contains<Formation::HorizontalDistance>(enumValue) ? static_cast<Formation::HorizontalDistance>(enumValue) : ::DefaultHorizontalDistance;
+
+    enumValue = valuesByKey.at(QString::fromLatin1(::VerticalDistanceKey)).toInt(&ok);
+    d->verticalDistance = ok && Enum::contains<Formation::VerticalDistance>(enumValue) ? static_cast<Formation::VerticalDistance>(enumValue) : ::DefaultVerticalDistance;
+
     d->relativePositionPlacement = valuesByKey.at(QString::fromLatin1(::RelativePositionPlacementKey)).toBool();
-    d->replayMode = static_cast<SkyConnectIntf::ReplayMode>(valuesByKey.at(QString::fromLatin1(::ReplayModeKey)).toInt(&ok));
-    if (!ok) {
-        d->replayMode = ::DefaultReplayMode;
-    }
+
+    enumValue = valuesByKey.at(QString::fromLatin1(::ReplayModeKey)).toInt(&ok);
+    d->replayMode = ok && Enum::contains<SkyConnectIntf::ReplayMode>(enumValue) ? static_cast<SkyConnectIntf::ReplayMode>(enumValue) : ::DefaultReplayMode;
+
     d->formationAircraftTableState = valuesByKey.at(QString::fromLatin1(::FormationAircraftTableStateKey)).toByteArray();
 }
 

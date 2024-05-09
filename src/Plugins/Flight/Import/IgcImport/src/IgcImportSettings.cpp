@@ -149,19 +149,11 @@ void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void IgcImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    const int enumeration = valuesByKey.at(QString::fromLatin1(::AltitudeKey)).toInt(&ok);
-    if (ok) {
-        d->altitudeMode = static_cast<AltitudeMode >(enumeration);
-    } else {
-        d->altitudeMode = ::DefaultAltitudeMode;
-    }
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::AltitudeKey)).toInt(&ok);
+    d->altitudeMode = ok && Enum::contains<AltitudeMode>(enumValue) ? static_cast<AltitudeMode>(enumValue) : ::DefaultAltitudeMode;
 
     const int enlThresholdPercent = valuesByKey.at(QString::fromLatin1(::EnlThresholdKey)).toInt(&ok);
-    if (ok) {
-        d->enlThresholdPercent = enlThresholdPercent;
-    } else {
-        d->enlThresholdPercent = ::DefaultEnlThresholdPercent;
-    }
+    d->enlThresholdPercent = ok ? enlThresholdPercent :  ::DefaultEnlThresholdPercent;
 
     d->convertAltitude = valuesByKey.at(QString::fromLatin1(::ConvertAltitudeKey)).toBool();
 }

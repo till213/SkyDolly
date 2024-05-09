@@ -193,33 +193,17 @@ void GpxImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void GpxImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    int enumeration = valuesByKey.at(QString::fromLatin1(::WaypointSelectionKey)).toInt(&ok);
-    if (ok) {
-        d->waypointSelection = static_cast<GPXElement>(enumeration);
-    } else {
-        d->waypointSelection = DefaultWaypointSelection;
-    }
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::WaypointSelectionKey)).toInt(&ok);
+    d->waypointSelection = ok && Enum::contains<GPXElement>(enumValue) ? static_cast<GPXElement>(enumValue) : ::DefaultWaypointSelection;
 
-    enumeration = valuesByKey.at(QString::fromLatin1(::PositionSelectionKey)).toInt(&ok);
-    if (ok) {
-        d->positionSelection = static_cast<GPXElement>(enumeration);
-    } else {
-        d->positionSelection = DefaultPositionSelection;
-    }
+    enumValue = valuesByKey.at(QString::fromLatin1(::PositionSelectionKey)).toInt(&ok);
+    d->positionSelection = ok && Enum::contains<GPXElement>(enumValue) ? static_cast<GPXElement>(enumValue) : ::DefaultPositionSelection;
 
     const int altitude = valuesByKey.at(QString::fromLatin1(::DefaultAltitudeKey)).toInt(&ok);
-    if (ok) {
-        d->defaultAltitude = altitude;
-    } else {
-        d->defaultAltitude = DefaultAltitude;
-    }
+    d->defaultAltitude = ok ? altitude : ::DefaultAltitude;
 
     const int speed = valuesByKey.at(QString::fromLatin1(::DefaultSpeedKey)).toInt(&ok);
-    if (ok) {
-        d->defaultSpeed = speed;
-    } else {
-        d->defaultSpeed = DefaultSpeed;
-    }
+    d->defaultSpeed = ok ? speed : ::DefaultSpeed;
 
     d->convertAltitude = valuesByKey.at(QString::fromLatin1(::ConvertAltitudeKey)).toBool();
 }

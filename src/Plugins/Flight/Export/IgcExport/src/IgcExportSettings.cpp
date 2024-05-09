@@ -140,8 +140,8 @@ void IgcExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
 void IgcExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->pilotName = valuesByKey.at(QString::fromLatin1(::PilotNameKey)).value<QString>();
-    d->coPilotName = valuesByKey.at(QString::fromLatin1(::CoPilotNameKey)).value<QString>();
+    d->pilotName = valuesByKey.at(QString::fromLatin1(::PilotNameKey)).toString();
+    d->coPilotName = valuesByKey.at(QString::fromLatin1(::CoPilotNameKey)).toString();
 }
 
 void IgcExportSettings::restoreDefaultsExtn() noexcept

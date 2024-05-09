@@ -35,51 +35,57 @@ namespace Formation
     /*!
      * The initial horizontal distance of the formation aircraft, relative to the current user aircraft.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values are peristed in the application settings.
      */
-    enum HorizontalDistance {
-        VeryClose = 0,
+    enum struct HorizontalDistance {
+        First = 0,
+        VeryClose = First,
         Close,
         Nearby,
         Far,
-        VeryFar
+        VeryFar,
+        Last = VeryFar
     };
 
     /*!
      * The initial vertical distance of the formation aircraft, relative to the current user aircraft.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values are peristed in the application settings.
      */
-    enum VerticalDistance {
-        Below = 0,
-        JustBelow = 1,
-        Level = 2,
-        JustAbove = 3,
-        Above = 4
+    enum struct VerticalDistance {
+        First = 0,
+        Below = First,
+        JustBelow,
+        Level,
+        JustAbove,
+        Above,
+        Last = Above
     };
 
     /*!
      * The initial bearing of the formation aircraft, relative to the user aircraft.
      *
-     * Implementation note: those values act as actual IDs that get persisted in the database.
+     * Implementation note: these values are peristed in the application settings.
      */
-    enum Bearing {
-        North = 0,
-        NorthNorthEast = 1,
-        NorthEast = 2,
-        EastNorthEast = 3,
-        East = 4,
-        EastSouthEast = 5,
-        SouthEast = 6,
-        SouthSouthEast = 7,
-        South = 8,
-        SouthSouthWest = 9,
-        SouthWest = 10,
-        WestSouthWest = 11,
-        West = 12,
-        WestNorthWest = 13,
-        NorthWest = 14,
-        NorthNorthWest = 15
+    enum struct Bearing {
+        First = 0,
+        North = First,
+        NorthNorthEast,
+        NorthEast,
+        EastNorthEast,
+        East,
+        EastSouthEast,
+        SouthEast,
+        SouthSouthEast,
+        South,
+        SouthSouthWest,
+        SouthWest,
+        WestSouthWest,
+        West,
+        WestNorthWest,
+        NorthWest,
+        NorthNorthWest,
+        Last = NorthNorthWest
     };
 
     InitialPosition calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing relativePosition, std::int64_t timestamp) noexcept;

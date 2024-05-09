@@ -206,22 +206,24 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->aircraftTableWidget->setAlternatingRowColors(true);
 
-    d->positionButtonGroup->addButton(ui->nPositionRadioButton, Formation::Bearing::North);
-    d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Formation::Bearing::NorthNorthEast);
-    d->positionButtonGroup->addButton(ui->nePositionRadioButton, Formation::Bearing::NorthEast);
-    d->positionButtonGroup->addButton(ui->enePositionRadioButton, Formation::Bearing::EastNorthEast);
-    d->positionButtonGroup->addButton(ui->ePositionRadioButton, Formation::Bearing::East);
-    d->positionButtonGroup->addButton(ui->esePositionRadioButton, Formation::Bearing::EastSouthEast);
-    d->positionButtonGroup->addButton(ui->sePositionRadioButton, Formation::Bearing::SouthEast);
-    d->positionButtonGroup->addButton(ui->ssePositionRadioButton, Formation::Bearing::SouthSouthEast);
-    d->positionButtonGroup->addButton(ui->sPositionRadioButton, Formation::Bearing::South);
-    d->positionButtonGroup->addButton(ui->sswPositionRadioButton, Formation::Bearing::SouthSouthWest);
-    d->positionButtonGroup->addButton(ui->swPositionRadioButton, Formation::Bearing::SouthWest);
-    d->positionButtonGroup->addButton(ui->wswPositionRadioButton, Formation::Bearing::WestSouthWest);
-    d->positionButtonGroup->addButton(ui->wPositionRadioButton, Formation::Bearing::West);
-    d->positionButtonGroup->addButton(ui->wnwPositionRadioButton, Formation::Bearing::WestNorthWest);
-    d->positionButtonGroup->addButton(ui->nwPositionRadioButton, Formation::Bearing::NorthWest);
-    d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, Formation::Bearing::NorthNorthWest);
+    using enum Formation::Bearing;
+
+    d->positionButtonGroup->addButton(ui->nPositionRadioButton, Enum::underly(North));
+    d->positionButtonGroup->addButton(ui->nnePositionRadioButton, Enum::underly(NorthNorthEast));
+    d->positionButtonGroup->addButton(ui->nePositionRadioButton, Enum::underly(NorthEast));
+    d->positionButtonGroup->addButton(ui->enePositionRadioButton, Enum::underly(EastNorthEast));
+    d->positionButtonGroup->addButton(ui->ePositionRadioButton, Enum::underly(East));
+    d->positionButtonGroup->addButton(ui->esePositionRadioButton, Enum::underly(EastSouthEast));
+    d->positionButtonGroup->addButton(ui->sePositionRadioButton, Enum::underly(SouthEast));
+    d->positionButtonGroup->addButton(ui->ssePositionRadioButton, Enum::underly(SouthSouthEast));
+    d->positionButtonGroup->addButton(ui->sPositionRadioButton, Enum::underly(South));
+    d->positionButtonGroup->addButton(ui->sswPositionRadioButton, Enum::underly(SouthSouthWest));
+    d->positionButtonGroup->addButton(ui->swPositionRadioButton, Enum::underly(SouthWest));
+    d->positionButtonGroup->addButton(ui->wswPositionRadioButton, Enum::underly(WestSouthWest));
+    d->positionButtonGroup->addButton(ui->wPositionRadioButton, Enum::underly(West));
+    d->positionButtonGroup->addButton(ui->wnwPositionRadioButton, Enum::underly(WestNorthWest));
+    d->positionButtonGroup->addButton(ui->nwPositionRadioButton, Enum::underly(NorthWest));
+    d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, Enum::underly(NorthNorthWest));
 
     const QString css = QStringLiteral(
 "QRadioButton::indicator:unchecked {"
@@ -423,7 +425,7 @@ void FormationWidget::updateReferenceAircraftIcon() noexcept
 
 void FormationWidget::updateRelativePositionUi() noexcept
 {
-    switch (ui->horizontalDistanceSlider->value()) {
+    switch (static_cast<Formation::HorizontalDistance>(ui->horizontalDistanceSlider->value())) {
     case Formation::HorizontalDistance::VeryClose:
         ui->horizontalDistanceTextLabel->setText(tr("Very close"));
         break;
@@ -441,7 +443,7 @@ void FormationWidget::updateRelativePositionUi() noexcept
         break;
     }
 
-    switch (ui->verticalDistanceSlider->value()) {
+    switch (static_cast<Formation::VerticalDistance>(ui->verticalDistanceSlider->value())) {
     case Formation::VerticalDistance::Below:
         ui->verticalDistanceTextLabel->setText(tr("Below"));
         break;
@@ -873,9 +875,9 @@ void FormationWidget::onCellChanged(int row, int column) noexcept
     } else if (column == FormationWidgetPrivate::timeOffsetColumn) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         bool ok {false};
-        const double timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
+        const auto timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
         if (ok) {
-            const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
+            const auto timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
             d->aircraftService->changeTimeOffset(aircraft, timeOffset);
         }
     }
@@ -1002,7 +1004,7 @@ void FormationWidget::onTimeOffsetValueChanged() noexcept
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
         const double timeOffsetSec = ui->timeOffsetSpinBox->value();
-        const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
+        auto timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
         d->aircraftService->changeTimeOffset(aircraft, timeOffset);
         updateToolTips();
     }
@@ -1055,11 +1057,11 @@ void FormationWidget::onModuleSettingsChanged() noexcept
     button.blockSignals(false);
 
     ui->horizontalDistanceSlider->blockSignals(true);
-    ui->horizontalDistanceSlider->setValue(d->moduleSettings.getHorizontalDistance());
+    ui->horizontalDistanceSlider->setValue(Enum::underly(d->moduleSettings.getHorizontalDistance()));
     ui->horizontalDistanceSlider->blockSignals(false);
 
     ui->verticalDistanceSlider->blockSignals(true);
-    ui->verticalDistanceSlider->setValue(d->moduleSettings.getVerticalDistance());
+    ui->verticalDistanceSlider->setValue(Enum::underly(d->moduleSettings.getVerticalDistance()));
     ui->verticalDistanceSlider->blockSignals(false);
 
     ui->relativePositionCheckBox->blockSignals(true);
@@ -1074,53 +1076,55 @@ QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
 {
     QRadioButton *button {nullptr};
     const Formation::Bearing bearing = d->moduleSettings.getBearing();
+
+    using enum Formation::Bearing;
     switch (bearing) {
-    case Formation::Bearing::North:
+    case North:
         button = ui->nPositionRadioButton;
         break;
-    case Formation::Bearing::NorthNorthEast:
+    case NorthNorthEast:
         button = ui->nnePositionRadioButton;
         break;
-    case Formation::Bearing::NorthEast:
+    case NorthEast:
         button = ui->nePositionRadioButton;
         break;
-    case Formation::Bearing::EastNorthEast:
+    case EastNorthEast:
         button = ui->enePositionRadioButton;
         break;
-    case Formation::Bearing::East:
+    case East:
         button = ui->ePositionRadioButton;
         break;
-    case Formation::Bearing::EastSouthEast:
+    case EastSouthEast:
         button = ui->esePositionRadioButton;
         break;
-    case Formation::Bearing::SouthEast:
+    case SouthEast:
         button = ui->sePositionRadioButton;
         break;
-    case Formation::Bearing::SouthSouthEast:
+    case SouthSouthEast:
         button = ui->ssePositionRadioButton;
         break;
-    case Formation::Bearing::South:
+    case South:
         button = ui->sPositionRadioButton;
         break;
-    case Formation::Bearing::SouthSouthWest:
+    case SouthSouthWest:
         button = ui->sswPositionRadioButton;
         break;
-    case Formation::Bearing::SouthWest:
+    case SouthWest:
         button = ui->swPositionRadioButton;
         break;
-    case Formation::Bearing::WestSouthWest:
+    case WestSouthWest:
         button = ui->wswPositionRadioButton;
         break;
-    case Formation::Bearing::West:
+    case West:
         button = ui->wPositionRadioButton;
         break;
-    case Formation::Bearing::WestNorthWest:
+    case WestNorthWest:
         button = ui->wnwPositionRadioButton;
         break;
-    case Formation::Bearing::NorthWest:
+    case NorthWest:
         button = ui->nwPositionRadioButton;
         break;
-    case Formation::Bearing::NorthNorthWest:
+    case NorthNorthWest:
         button = ui->nnwPositionRadioButton;
         break;
     }
@@ -1130,39 +1134,41 @@ QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
 Formation::Bearing FormationWidget::bearingFromPositionGroup() const noexcept
 {
     QAbstractButton *button = d->positionButtonGroup->checkedButton();
-    Formation::Bearing bearing;
+
+    using enum Formation::Bearing;
+    Formation::Bearing bearing {North};
     if (button == ui->nPositionRadioButton) {
-        bearing = Formation::Bearing::North;
+        bearing = North;
     } else if (button == ui->nnePositionRadioButton) {
-        bearing = Formation::Bearing::NorthNorthEast;
+        bearing = NorthNorthEast;
     } else if (button == ui->nePositionRadioButton) {
-        bearing = Formation::Bearing::NorthEast;
+        bearing = NorthEast;
     } else if (button == ui->enePositionRadioButton) {
-        bearing = Formation::Bearing::EastNorthEast;
+        bearing = EastNorthEast;
     } else if (button == ui->ePositionRadioButton) {
-        bearing = Formation::Bearing::East;
+        bearing = East;
     } else if (button == ui->esePositionRadioButton) {
-        bearing = Formation::Bearing::EastSouthEast;
+        bearing = EastSouthEast;
     } else if (button == ui->sePositionRadioButton) {
-        bearing = Formation::Bearing::SouthEast;
+        bearing = SouthEast;
     } else if (button == ui->ssePositionRadioButton) {
-        bearing = Formation::Bearing::SouthSouthEast;
+        bearing = SouthSouthEast;
     } else if (button == ui->sPositionRadioButton) {
-        bearing = Formation::Bearing::South;
+        bearing = South;
     } else if (button == ui->sswPositionRadioButton) {
-        bearing = Formation::Bearing::SouthSouthWest;
+        bearing = SouthSouthWest;
     } else if (button == ui->swPositionRadioButton) {
-        bearing = Formation::Bearing::SouthWest;
+        bearing = SouthWest;
     } else if (button == ui->wswPositionRadioButton) {
-        bearing = Formation::Bearing::WestSouthWest;
+        bearing = WestSouthWest;
     } else if (button == ui->wPositionRadioButton) {
-        bearing = Formation::Bearing::West;
+        bearing = West;
     } else if (button == ui->wnwPositionRadioButton) {
-        bearing = Formation::Bearing::WestNorthWest;
+        bearing = WestNorthWest;
     } else if (button == ui->nwPositionRadioButton) {
-        bearing = Formation::Bearing::NorthWest;
+        bearing = NorthWest;
     } else {
-        bearing = Formation::Bearing::NorthNorthWest;
+        bearing = NorthNorthWest;
     }
 
     return bearing;

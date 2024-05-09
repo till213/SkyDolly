@@ -14,9 +14,11 @@
   * The aircraft type is properly set in the imported flight again
 - On Windows 11 the default style is set to "Fusion", as a workaround
   * The new "Windows 11" style still has a few known visual glitches:
-    - Active toolbar buttons are almost unreadable in dark mode
-    - The time display ("time edit" widget) only shows two digits
+    - Active toolbar buttons are almost unreadable in dark mode [[QTBUG-124286](https://bugreports.qt.io/browse/QTBUG-124286)]
+    - The time display ("time edit" widget) only shows two digits [[QTBUG-124150](https://bugreports.qt.io/browse/QTBUG-124150)]
+    - Alternating table rows are not visually distinct [[QTBUG-124564](https://bugreports.qt.io/browse/QTBUG-124564)]
   * However the "Windows 11" style can still be set, under *File | Settings... | User Interface*
+- Properly validate persisted enumeration values when restoring plugin settings
 
 ## 0.17.0
 

@@ -41,11 +41,13 @@ public:
     /*!
      * CSV format (flavour).
      *
-     * These values are peristed in the application settings.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct Format {
-        SkyDolly = 0,
-        LittleNavmap = 1
+        First = 0,
+        SkyDolly = First,
+        LittleNavmap,
+        Last = LittleNavmap
     };
 
     CsvLocationExportSettings() noexcept;

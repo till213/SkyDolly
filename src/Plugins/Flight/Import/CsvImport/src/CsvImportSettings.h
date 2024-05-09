@@ -42,12 +42,14 @@ public:
     /*!
      * CSV format (flavour).
      *
-     * These values are peristed in the application settings.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct Format {
         // Removed: SkyDolly = 0,
-        Flightradar24 = 1,
-        FlightRecorder = 2
+        First = 1,
+        Flightradar24 = First,
+        FlightRecorder = 2,
+        Last = FlightRecorder
     };
 
     CsvImportSettings() noexcept;

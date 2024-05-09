@@ -123,7 +123,7 @@ struct LogbookWidgetPrivate
     static inline int flightIdColumn {::InvalidColumn};
     static inline int titleColumn {::InvalidColumn};
     static inline int flightNumberColumn {::InvalidColumn};
-    static inline int userAircraftColumn {::InvalidColumn};    
+    static inline int userAircraftColumn {::InvalidColumn};
     static inline int aircraftCountColumn {::InvalidColumn};
     static inline int creationDateColumn {::InvalidColumn};
     static inline int startTimeColumn {::InvalidColumn};

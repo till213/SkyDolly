@@ -92,16 +92,9 @@ void PathCreatorSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &ke
 
 void PathCreatorSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    bool ok {false};
-    int optionValue = valuesByKey.at(QString::fromLatin1(::OptionKey)).toInt(&ok);
-    if (ok) {
-        d->option = static_cast<Option>(optionValue);
-    } else {
-#ifdef DEBUG
-        qWarning() << "The option in the settings could not be parsed, so setting value to default value:" << Enum::underly(::DefaultOption);
-#endif
-        d->option  = ::DefaultOption;
-    }
+    bool ok {true};
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::OptionKey)).toInt(&ok);
+    d->option = ok && Enum::contains<Option>(enumValue) ? static_cast<Option>(enumValue) : ::DefaultOption;
 }
 
 void PathCreatorSettings::restoreDefaultsExtn() noexcept
