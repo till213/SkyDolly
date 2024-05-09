@@ -132,3 +132,8 @@ git config --global commit.gpgsign true
 Github needs to be able to verify the signed commits.
 
 - Add the public ssh key with *New SSH Key* as *Signing Key* to [github.com](https://github.com/settings/keys)
+
+### Qt Creator AskPass Setup
+Qt Creator may need to be told where to find `win-ssh-askpass` (specifically on Windows).
+
+- Edit | Settings... | Version Control -> Common 
