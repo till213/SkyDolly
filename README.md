@@ -92,6 +92,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 - https://github.com/ijl20/msfs_logger_replay - IGC logger and replay (for FSX)
 - https://joinfs.net/ - Allows to synchronise multiplayer flights across different flight simulators (MSFS, Prepar3D/FSX, XPlane). Also provides a flight recorder with formation flight recording ("overdub").
 - https://github.com/paulalexandrow/a32nx-webremote - WebRemote for FlyByWire's A32NX: control cockpit functionality of the FBW A320, using FSUIPC7
+- https://flightloganalyzer.com/ - FlightLog Analyer analyses the MSFS logbook and has a CSV export readable by Sky Dolly
 
 ## Other Useful Resources
 
