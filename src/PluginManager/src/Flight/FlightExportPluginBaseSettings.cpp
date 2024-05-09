@@ -143,7 +143,6 @@ void FlightExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
 void FlightExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-
     auto enumValue = valuesByKey.at(QString::fromLatin1(::ResamplingPeriodKey)).toInt(&ok);
     // No enumeration domain validation: any resampling period (Hz) is valid
     d->resamplingPeriod = ok ? static_cast<SampleRate::ResamplingPeriod>(enumValue) : ::DefaultResamplingPeriod;

@@ -162,12 +162,8 @@ void CsvLocationImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
 void CsvLocationImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    const int enumeration = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
-    if (ok) {
-        d->format = static_cast<CsvLocationImportSettings::Format >(enumeration);
-    } else {
-        d->format = ::DefaultFormat;
-    }
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
+    d->format = ok && Enum::contains<CsvLocationImportSettings::Format>(enumValue) ? static_cast<CsvLocationImportSettings::Format>(enumValue) : ::DefaultFormat;
 
     const std::int64_t defaultCountryId = valuesByKey.at(QString::fromLatin1(::DefaultCountryKey)).toLongLong(&ok);
     if (ok) {

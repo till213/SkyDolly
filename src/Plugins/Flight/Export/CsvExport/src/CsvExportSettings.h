@@ -45,8 +45,10 @@ public:
      */
     enum struct Format {
         // Removed: SkyDolly = 0,
-        Flightradar24 = 1,
-        PositionAndAttitude = 2
+        First = 1,
+        Flightradar24 = First,
+        PositionAndAttitude,
+        Last = PositionAndAttitude
     };
 
     CsvExportSettings() noexcept;

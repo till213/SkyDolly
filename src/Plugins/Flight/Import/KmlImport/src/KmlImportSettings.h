@@ -45,9 +45,11 @@ public:
      * Implementation note: these values are peristed in the application settings.
      */
     enum struct Format {
-        FlightAware = 0,
-        FlightRadar24 = 1,
-        Generic = 2
+        First = 0,
+        FlightAware = First,
+        FlightRadar24,
+        Generic,
+        Last = Generic
     };
 
     KmlImportSettings() noexcept;

@@ -45,9 +45,11 @@ public:
      * Implementation note: these values are peristed in the application settings.
      */
     enum struct GPXElement {
-        Waypoint = 0,
-        Route = 1,
-        Track = 2,
+        First = 0,
+        Waypoint = First,
+        Route,
+        Track,
+        Last = Track
     };
 
     GpxImportSettings() noexcept;

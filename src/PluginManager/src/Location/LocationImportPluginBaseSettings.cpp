@@ -114,13 +114,10 @@ void LocationImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 void LocationImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->importDirectoryEnabled = valuesByKey.at(QString::fromLatin1(::ImportDirectoryEnabledKey)).toBool();
+
     bool ok {true};
-    int enumeration = valuesByKey.at(QString::fromLatin1(::ImportModeKey)).toInt(&ok);
-    if (ok) {
-        d->importMode = static_cast<LocationService::Mode>(enumeration);
-    } else {
-        d->importMode = DefaultImportMode;
-    }
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::ImportModeKey)).toInt(&ok);
+    d->importMode = ok && Enum::contains<LocationService::Mode>(enumValue) ? static_cast<LocationService::Mode>(enumValue) : ::DefaultImportMode;
 
     restoreSettingsExtn(valuesByKey);
 

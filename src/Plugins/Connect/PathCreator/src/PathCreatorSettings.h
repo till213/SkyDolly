@@ -45,11 +45,18 @@ public:
     PathCreatorSettings &operator=(PathCreatorSettings &&rhs) = delete;
     ~PathCreatorSettings() override;
 
+    /*!
+     * An example option
+     *
+     * Implementation note: these values are peristed in the application settings.
+     */
     enum struct Option
     {
-        A,
+        First = 0,
+        A = First,
         B,
-        C
+        C,
+        Last = C
     };
 
     Option getOption() const noexcept;

@@ -45,10 +45,12 @@ public:
      * Implementation note: these values are peristed in the application settings.
      */
     enum struct ColorStyle {
-        OneColor = 0,
-        OneColorPerEngineType = 1,
-        ColorRamp = 2,
-        ColorRampPerEngineType = 3
+        First = 0,
+        OneColor = First,
+        OneColorPerEngineType,
+        ColorRamp,
+        ColorRampPerEngineType,
+        Last = ColorRampPerEngineType
     };
 
     KmlExportSettings() noexcept;
