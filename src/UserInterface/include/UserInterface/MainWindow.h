@@ -250,5 +250,6 @@ private slots:
 
     // Settings
     void onReplayLoopChanged() noexcept;
+    void onStyleKeyChanged() noexcept;
 };
 #endif // MAINWINDOW_H
