@@ -76,7 +76,9 @@ static void applyWindows11DefaultStyleWorkaround() noexcept
         qDebug() << "main: Windows 11 detected, applying Fusion as default style (workaround).";
 #endif
         const auto style = QStyleFactory::create(QStringLiteral("Fusion"));
-        QApplication::setStyle(style);
+        if (style != nullptr) {
+            QApplication::setStyle(style);
+        }
     }
 }
 
@@ -92,7 +94,9 @@ int main(int argc, char **argv) noexcept
     const QString styleKey = Settings::getInstance().getStyleKey();
     if (styleKey != Settings::DefaultStyleKey) {
         const auto style = QStyleFactory::create(styleKey);
-        QApplication::setStyle(style);
+        if (style != nullptr) {
+            QApplication::setStyle(style);
+        }
     } else {
         applyWindows11DefaultStyleWorkaround();
     }
