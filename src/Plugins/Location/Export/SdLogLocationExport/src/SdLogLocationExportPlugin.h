@@ -25,10 +25,47 @@
 #ifndef SDLOGLOCATIONEXPORTPLUGIN_H
 #define SDLOGLOCATIONEXPORTPLUGIN_H
 
-class SdLogLocationExportPlugin
+#include <memory>
+
+#include <QObject>
+#include <QtPlugin>
+#include <QWidget>
+
+class QIODevice;
+class QString;
+
+#include <Kernel/Settings.h>
+#include <PluginManager/Location/LocationExportIntf.h>
+#include <PluginManager/Location/LocationExportPluginBase.h>
+
+class Aircraft;
+struct LocationData;
+struct Waypoint;
+class LocationExportPluginBaseSettings;
+struct SdLogLocationExportPluginPrivate;
+
+class SdLogLocationExportPlugin : public LocationExportPluginBase
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID LOCATION_EXPORT_INTERFACE_IID FILE "SdLogLocationExportPlugin.json")
+    Q_INTERFACES(LocationExportIntf)
 public:
-    SdLogLocationExportPlugin();
+    SdLogLocationExportPlugin() noexcept;
+    SdLogLocationExportPlugin(const SdLogLocationExportPlugin &rhs) = delete;
+    SdLogLocationExportPlugin(SdLogLocationExportPlugin &&rhs) = delete;
+    SdLogLocationExportPlugin &operator=(const SdLogLocationExportPlugin &rhs) = delete;
+    SdLogLocationExportPlugin &operator=(SdLogLocationExportPlugin &&rhs) = delete;
+    ~SdLogLocationExportPlugin() override;
+
+protected:
+    LocationExportPluginBaseSettings &getPluginSettings() const noexcept override;
+    QString getFileExtension() const noexcept override;
+    QString getFileFilter() const noexcept override;
+    std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    bool exportLocations(const std::vector<Location> &locations, QIODevice &io) const noexcept override;
+
+private:
+    const std::unique_ptr<SdLogLocationExportPluginPrivate> d;
 };
 
 #endif // SDLOGLOCATIONEXPORTPLUGIN_H

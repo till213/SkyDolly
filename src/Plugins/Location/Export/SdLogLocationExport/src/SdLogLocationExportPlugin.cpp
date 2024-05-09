@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Location Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,6 +22,83 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
+#include <QIODevice>
+#include <QFile>
+#include <QStringBuilder>
+#include <QString>
+#include <QDateTime>
+
+#include <Kernel/Const.h>
+#include <Kernel/Settings.h>
+#include <Model/Location.h>
+#include <Model/Aircraft.h>
+#include <Persistence/Service/DatabaseService.h>
+#include <Persistence/Service/LocationService.h>
+#include <Persistence/Service/AircraftService.h>
+#include <Persistence/Migration.h>
+#include <PluginManager/Export.h>
+#include "SdLogLocationExportSettings.h"
 #include "SdLogLocationExportPlugin.h"
 
-SdLogLocationExportPlugin::SdLogLocationExportPlugin() {}
+struct SdLogLocationExportPluginPrivate
+{
+    std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ExportConnectionName)};
+    //std::unique_ptr<LocationService> LocationService {std::make_unique<LocationService>(Const::ExportConnectionName)};
+    SdLogLocationExportSettings pluginSettings;
+
+    static inline const QString FileExtension {Const::LogbookExtension};
+};
+
+// PUBLIC
+
+SdLogLocationExportPlugin::SdLogLocationExportPlugin() noexcept
+    : d(std::make_unique<SdLogLocationExportPluginPrivate>())
+{}
+
+SdLogLocationExportPlugin::~SdLogLocationExportPlugin() = default;
+
+// PROTECTED
+
+LocationExportPluginBaseSettings &SdLogLocationExportPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
+
+QString SdLogLocationExportPlugin::getFileExtension() const noexcept
+{
+    return SdLogLocationExportPluginPrivate::FileExtension;
+}
+
+QString SdLogLocationExportPlugin::getFileFilter() const noexcept
+{
+    return QObject::tr("Sky Dolly logbook (*.%1)").arg(getFileExtension());
+}
+
+std::unique_ptr<QWidget> SdLogLocationExportPlugin::createOptionWidget() const noexcept
+{
+    // No custom settings yet
+    return nullptr;
+}
+
+bool SdLogLocationExportPlugin::exportLocations(const std::vector<Location> &locations, QIODevice &io) const noexcept
+{
+    bool ok {true};
+    // TODO IMPLEMENT ME!
+    // auto *file = qobject_cast<QFile *>(&io);
+    // if (file != nullptr) {
+    //     const QFileInfo fileInfo {*file};
+    //     ok = d->databaseService->connect(fileInfo.absoluteFilePath());
+    //     if (ok) {
+    //         d->databaseService->migrate(Migration::Milestone::Schema);
+    //     }
+    //     if (ok) {
+    //         ok = d->LocationService->exportLocationData(LocationData);
+    //     }
+    // } else {
+    //     // We only support file-based SQLite databases
+    //     ok = false;
+    // }
+    return ok;
+}

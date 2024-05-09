@@ -25,10 +25,34 @@
 #ifndef SDLOGLOCATIONEXPORTSETTINGS_H
 #define SDLOGLOCATIONEXPORTSETTINGS_H
 
-class SdLogLocationExportSettings
+#include <memory>
+
+#include <QObject>
+
+#include <Kernel/Settings.h>
+#include <PluginManager/Location/LocationExportPluginBaseSettings.h>
+
+struct SdLogLocationExportSettingsPrivate;
+
+class SdLogLocationExportSettings : public LocationExportPluginBaseSettings
 {
+    Q_OBJECT
 public:
-    SdLogLocationExportSettings();
+    SdLogLocationExportSettings() noexcept;
+    SdLogLocationExportSettings(const SdLogLocationExportSettings &rhs) = delete;
+    SdLogLocationExportSettings(SdLogLocationExportSettings &&rhs) = delete;
+    SdLogLocationExportSettings &operator=(const SdLogLocationExportSettings &rhs) = delete;
+    SdLogLocationExportSettings &operator=(SdLogLocationExportSettings &&rhs) = delete;
+    ~SdLogLocationExportSettings() override;
+
+protected:
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
+
+private:
+    const std::unique_ptr<SdLogLocationExportSettingsPrivate> d;
 };
 
 #endif // SDLOGLOCATIONEXPORTSETTINGS_H

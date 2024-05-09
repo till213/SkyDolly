@@ -26,7 +26,6 @@
 #define SDLOGEXPORTPLUGIN_H
 
 #include <memory>
-#include <cstdint>
 
 #include <QObject>
 #include <QtPlugin>
