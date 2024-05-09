@@ -26,13 +26,13 @@
 #define SYSTEM_H
 
 #include <QString>
+#include <QSysInfo>
 
 #include "KernelLib.h"
 
 class KERNEL_API System final
 {
 public:
-
     /*!
      * Returns the name of the currently logged in user.
      *
@@ -42,6 +42,38 @@ public:
      * \return the name of the logged in user; may be an empty string
      */
     static QString getUsername() noexcept;
+
+    /*!
+     * Returns whether the application runs on Windows (e.g. 10 or 11).
+     *
+     * \return \c true if the operating system is Windows; \c false else
+     * \sa isWindows10
+     * \sa isWindows11
+     */
+    static inline bool isWindows()
+    {
+        return QSysInfo::productType() == "windows";
+    }
+
+    /*!
+     * Returns whether the application runs on Windows 10.
+     *
+     * \return \c true if the operating system is Windows 10; \c false else
+     */
+    static inline bool isWindows10()
+    {
+        return isWindows() && QSysInfo::productVersion() == "10";
+    }
+
+    /*!
+     * Returns whether the application runs on Windows 11.
+     *
+     * \return \c true if the operating system is Windows 11; \c false else
+     */
+    static inline bool isWindows11()
+    {
+        return isWindows() && QSysInfo::productVersion() == "11";
+    }
 };
 
 #endif // SYSTEM_H

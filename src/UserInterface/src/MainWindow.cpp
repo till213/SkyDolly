@@ -28,6 +28,7 @@
 #include <vector>
 #include <cstdint>
 #include <cmath>
+#include <chrono>
 
 #include <QApplication>
 #include <QByteArray>
@@ -66,6 +67,7 @@
 #include <QMimeData>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QProcess>
 
 #include <Kernel/Unit.h>
 #include <Kernel/Const.h>
@@ -106,7 +108,6 @@
 #include "Dialog/LogbookBackupDialog.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
-#include <chrono>
 
 using namespace std::chrono_literals;
 
@@ -340,6 +341,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged);
     connect(&settings, &Settings::replayLoopChanged,
             this, &MainWindow::onReplayLoopChanged);
+    connect(&settings, &Settings::styleKeyChanged,
+            this, &MainWindow::onStyleKeyChanged);
 
     // Logbook connection
     connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
@@ -1914,4 +1917,13 @@ void MainWindow::onLocationExport(QAction *action) noexcept
 void MainWindow::onReplayLoopChanged() noexcept
 {
     updateControlUi();
+}
+
+void MainWindow::onStyleKeyChanged() noexcept
+{
+    // TODO IMPLEMENT ME - This does not work reliably just yet (the executable name seems to be passed as 1st argument,
+    // causing Sky Dolly to make an attempt to open itself - also, the settings are sometimes not properly persisted (?)
+    // Settings::getInstance().store();
+    // qApp->quit();
+    // QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
 }

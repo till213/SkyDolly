@@ -15,6 +15,8 @@
   * Ornithopter
   * A320 V2 (inibuilds)
   * Note that any *new* aircraft that is recorded will be automatically added to the aircraft type list (existing behaviour)
+- Platform styles that are not really selectable - such as "Windows Vista" style on Windows 11 and "Windows 11" style on Windows 10 - are not shown anymore in the style selection dropdown list
+  * The selection list is now sorted
   
 ### Bug Fixes
 - The aircraft type is properly set again when importing a flight (regression from v0.17)
@@ -22,9 +24,12 @@
   * The aircraft type is properly set in the imported flight again
 - On Windows 11 the default style is set to "Fusion", as a workaround
   * The new "Windows 11" style still has a few known visual glitches:
-    - Active toolbar buttons are almost unreadable in dark mode
-    - The time display ("time edit" widget) only shows two digits
+    - Active toolbar buttons are almost unreadable in dark mode [[QTBUG-124286](https://bugreports.qt.io/browse/QTBUG-124286)]
+    - The time display ("time edit" widget) only shows two digits [[QTBUG-124150](https://bugreports.qt.io/browse/QTBUG-124150)]
+    - Alternating table rows are not visually distinct [[QTBUG-124564](https://bugreports.qt.io/browse/QTBUG-124564)]
   * However the "Windows 11" style can still be set, under *File | Settings... | User Interface*
+- Properly validate persisted enumeration values when restoring plugin settings
+- The "native styles" ("Windows Vista" on Windows 10 respectively "Windows 11" on Windows 11) are now properly loaded when explicitly set in the application settings
 
 ## 0.17.0
 

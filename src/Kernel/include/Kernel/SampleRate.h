@@ -55,7 +55,7 @@ namespace SampleRate
         Hz30,
         Hz45,
         Hz50,
-        Hz60,
+        Hz60
     };
 
     /*!

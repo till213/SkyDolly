@@ -28,8 +28,6 @@
 #include <QCoreApplication>
 #include <QSysInfo>
 #include <QApplication>
-#include <QStyle>
-#include <QStyleFactory>
 #include <QStringList>
 #include <QString>
 #include <QStringLiteral>
@@ -43,6 +41,7 @@
 #include <Kernel/Version.h>
 #include <Kernel/StackTrace.h>
 #include <Kernel/Settings.h>
+#include <Kernel/System.h>
 #include <Kernel/RecentFile.h>
 #include <Model/Logbook.h>
 #include <PluginManager/SkyConnectManager.h>
@@ -71,13 +70,7 @@ static void destroySingletons() noexcept
 [[deprecated("Do not use once the new Windows 11 style is ready for prime time.")]]
 static void applyWindows11DefaultStyleWorkaround() noexcept
 {
-    if (QSysInfo::productType() == QStringLiteral("windows") && QSysInfo::productVersion() == QStringLiteral("11")) {
-#ifdef DEBUG
-        qDebug() << "main: Windows 11 detected, applying Fusion as default style (workaround).";
-#endif
-        const auto style = QStyleFactory::create(QStringLiteral("Fusion"));
-        QApplication::setStyle(style);
-    }
+    QApplication::setStyle(QString::fromLatin1("Fusion"));
 }
 
 int main(int argc, char **argv) noexcept
@@ -88,15 +81,16 @@ int main(int argc, char **argv) noexcept
     QCoreApplication::setApplicationName(Version::getApplicationName());
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 
+    QApplication application(argc, argv);
+
     // Set the user interface style (if not default)
+    // Implementation note: must be set AFTER QApplication instantiation
     const QString styleKey = Settings::getInstance().getStyleKey();
     if (styleKey != Settings::DefaultStyleKey) {
-        const auto style = QStyleFactory::create(styleKey);
-        QApplication::setStyle(style);
-    } else {
+        QApplication::setStyle(styleKey);
+    } else if (System::isWindows11()) {
         applyWindows11DefaultStyleWorkaround();
     }
-    QApplication application(argc, argv);
 
     // Signals must be registered after the QApplication instantiation, due
     // to the QSocketNotifier

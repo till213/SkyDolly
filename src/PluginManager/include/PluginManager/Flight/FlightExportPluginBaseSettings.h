@@ -43,16 +43,18 @@ public:
     /*!
      * Defines how formation flights should be exported.
      *
-     * These values are peristed in the application settings.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct FormationExport {
+        First = 0,
         /*! Only the user aircraft is to be exported */
-        UserAircraftOnly = 0,
+        UserAircraftOnly = First,
         /*! All aircraft are to be exported, into one file if possible (depending on the actual file format);
             otherwise into separate files */
-        AllAircraftOneFile = 1,
+        AllAircraftOneFile,
         /*! All aircraft are to be exported, into separate files each */
-        AllAircraftSeparateFiles = 2
+        AllAircraftSeparateFiles,
+        Last = AllAircraftSeparateFiles
     };
 
     FlightExportPluginBaseSettings() noexcept;

@@ -104,3 +104,37 @@ When compiling on Windows with MinGW the invoked tool `windres.exe` (which compi
 Also refer e.g. to https://bugreports.qt.io/browse/QTBUG-62918
 
 The workaround for the time being is to place the Sky Dolly sources into a path without spaces. This issue still seems to be present with the MinGW 11 (coming with Qt 6.x) provided windres.exe.
+
+## Signed Commits
+The following setups an optional commit signing:
+
+### Local Setup
+
+- Globally set the signing format to SSH (which is the most convenient in case SSH is used to login to github.com anyway):
+```
+git config --global gpg.format ssh
+git config --global user.signingkey "/path/to/public/ssh/key"
+```
+
+E.g. on Windows:
+```
+git config --global user.signingkey "%HOME%\.ssh\id_rsa.pub"
+```
+
+Take note of the "quotes" around the path.
+
+- Globally enable signing of each commit
+```
+git config --global commit.gpgsign true
+```
+
+### Github Setup
+Github needs to be able to verify the signed commits.
+
+- Add the public ssh key with *New SSH Key* as *Signing Key* to [github.com](https://github.com/settings/keys)
+
+### Qt Creator AskPass Setup
+Qt Creator may need to be told where to find `win-ssh-askpass` (specifically on Windows).
+
+- Edit | Settings... | Version Control -> Common
+- In case Git for Windows is installed the path may be set to `C:\Program Files\Git\mingw64\bin\git-askpass.exe` instead

@@ -381,12 +381,8 @@ void KmlExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void KmlExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    const int enumeration = valuesByKey.at(QString::fromLatin1(::ColorStyleKey)).toInt(&ok);
-    if (ok) {
-        d->colorStyle = static_cast<KmlExportSettings::ColorStyle >(enumeration);
-    } else {
-        d->colorStyle = ::DefaultColorStyle;
-    }
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::ColorStyleKey)).toInt(&ok);
+    d->colorStyle = ok && Enum::contains<KmlExportSettings::ColorStyle>(enumValue) ? static_cast<KmlExportSettings::ColorStyle>(enumValue) : ::DefaultColorStyle;
 
     d->nofColorsPerRamp = valuesByKey.at(QString::fromLatin1(::NofColorsPerRampKey)).toInt(&ok);
     if (!ok) {

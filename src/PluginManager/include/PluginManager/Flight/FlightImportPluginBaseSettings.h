@@ -43,15 +43,17 @@ public:
     /*!
      * Defines how aircraft are to be imported.
      *
-     * These values are peristed in the application settings.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct AircraftImportMode {
+        First = 0,
         /*! All aircraft are added to the existing flight (loaded in memory). */
-        AddToCurrentFlight = 0,
+        AddToCurrentFlight = First,
         /*! A new flight is generated and all aircraft are added to it. */
-        AddToNewFlight = 1,
+        AddToNewFlight,
         /*! For each imported aircraft a new flight is generated. */
-        SeparateFlights  = 2
+        SeparateFlights,
+        Last = SeparateFlights
     };
 
     FlightImportPluginBaseSettings() noexcept;

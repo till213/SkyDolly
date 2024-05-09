@@ -42,11 +42,13 @@ public:
     /*!
      * The way altitude data is to be imported.
      *
-     * These values are peristed in the application settings.
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct AltitudeMode {
-        Gnss = 0,
-        Pressure = 1
+        First = 0,
+        Gnss = First,
+        Pressure,
+        Last = Pressure
     };
 
     IgcImportSettings() noexcept;

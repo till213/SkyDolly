@@ -109,12 +109,8 @@ void CsvImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void CsvImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    const int enumeration = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
-    if (ok) {
-        d->format = static_cast<CsvImportSettings::Format >(enumeration);
-    } else {
-        d->format = ::DefaultFormat;
-    }
+    auto enumValue = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
+    d->format = ok && Enum::contains<CsvImportSettings::Format>(enumValue) ? static_cast<CsvImportSettings::Format>(enumValue) : ::DefaultFormat;
 }
 
 void CsvImportSettings::restoreDefaultsExtn() noexcept
