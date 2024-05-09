@@ -104,3 +104,18 @@ When compiling on Windows with MinGW the invoked tool `windres.exe` (which compi
 Also refer e.g. to https://bugreports.qt.io/browse/QTBUG-62918
 
 The workaround for the time being is to place the Sky Dolly sources into a path without spaces. This issue still seems to be present with the MinGW 11 (coming with Qt 6.x) provided windres.exe.
+
+## Signed Commits
+The following setups an optional commit signing:
+
+- Globally set the signing format to SSH (which is the most convenient in case SSH is used to login to github.com anyway):
+```
+git config --global gpg.format ssh
+git config --global user.signingkey /path/to/public/ssh/key
+```
+
+- Globally enable signing of each commit
+```
+git config --global commit.gpgsign true
+```
+
