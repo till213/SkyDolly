@@ -166,25 +166,13 @@ void CsvLocationImportSettings::restoreSettingsExtn(const Settings::ValuesByKey 
     d->format = ok && Enum::contains<CsvLocationImportSettings::Format>(enumValue) ? static_cast<CsvLocationImportSettings::Format>(enumValue) : ::DefaultFormat;
 
     const std::int64_t defaultCountryId = valuesByKey.at(QString::fromLatin1(::DefaultCountryKey)).toLongLong(&ok);
-    if (ok) {
-        d->defaultCountryId = defaultCountryId;
-    } else {
-        d->defaultCountryId = d->WorldCountryId;
-    }
+    d->defaultCountryId = ok ? defaultCountryId : d->WorldCountryId;
 
     const int defaultAltitude = valuesByKey.at(QString::fromLatin1(::DefaultAltitudeKey)).toInt(&ok);
-    if (ok) {
-        d->defaultAltitude = defaultAltitude;
-    } else {
-        d->defaultAltitude = Const::DefaultAltitude;
-    }
+    d->defaultAltitude = ok ? defaultAltitude : Const::DefaultAltitude;
 
     const int defaultIndicatedAirspeed = valuesByKey.at(QString::fromLatin1(::DefaultIndicatedAirspeedKey)).toInt(&ok);
-    if (ok) {
-        d->defaultIndicatedAirspeed = defaultIndicatedAirspeed;
-    } else {
-        d->defaultIndicatedAirspeed = Const::DefaultIndicatedAirspeed;
-    }
+    d->defaultIndicatedAirspeed = ok ? defaultIndicatedAirspeed : Const::DefaultIndicatedAirspeed;
 }
 
 void CsvLocationImportSettings::restoreDefaultsExtn() noexcept

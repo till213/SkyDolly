@@ -875,9 +875,9 @@ void FormationWidget::onCellChanged(int row, int column) noexcept
     } else if (column == FormationWidgetPrivate::timeOffsetColumn) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         bool ok {false};
-        const double timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
+        const auto timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
         if (ok) {
-            const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
+            const auto timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
             d->aircraftService->changeTimeOffset(aircraft, timeOffset);
         }
     }
