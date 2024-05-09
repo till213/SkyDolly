@@ -136,4 +136,5 @@ Github needs to be able to verify the signed commits.
 ### Qt Creator AskPass Setup
 Qt Creator may need to be told where to find `win-ssh-askpass` (specifically on Windows).
 
-- Edit | Settings... | Version Control -> Common 
+- Edit | Settings... | Version Control -> Common
+- In case Git for Windows is installed the path may be set to `C:\Program Files\Git\mingw64\bin\git-askpass.exe` instead
