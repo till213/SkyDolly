@@ -167,8 +167,10 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths) noe
 
 bool LocationImportPluginBase::storeLocations(std::vector<Location> &locations) const noexcept
 {
-    const LocationService::Mode mode = getPluginSettings().getImportMode();
-    const bool ok = d->locationService->storeAll(locations, mode);
+    const LocationImportPluginBaseSettings &pluginSettings = getPluginSettings();
+    const auto mode = pluginSettings.getImportMode();
+    const auto distanceKm = pluginSettings.getNearestLocationDistanceKm();
+    const bool ok = d->locationService->storeAll(locations, mode, distanceKm);
     if (ok) {
          emit PersistenceManager::getInstance().locationsImported();
     }

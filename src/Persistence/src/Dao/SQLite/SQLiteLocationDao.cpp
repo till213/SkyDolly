@@ -139,27 +139,24 @@ bool SQLiteLocationDao::update(const Location &location) const noexcept
     return ok;
 }
 
-std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double longitude, double distance, bool *ok) const noexcept
+std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double longitude, double distanceKm, bool *ok) const noexcept
 {
     std::vector<Location> locations;
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
 
-    // TODO Implement https://jonisalonen.com/2014/computing-distance-between-coordinates-can-be-simple-and-fast/
-    //      SQlite supports "math functions" from Qt 6.5 onwards:
-    //      - https://bugreports.qt.io/browse/QTBUG-108016
-    //      - https://codereview.qt-project.org/c/qt/qtbase/+/440378
+    // https://jonisalonen.com/2014/computing-distance-between-coordinates-can-be-simple-and-fast/
     query.prepare(
         "select * "
         "from   location l "
-        "where  l.latitude = :latitude "
-        "  and  l.longitude = :longitude "
+        "where  power(latitude - :latitude, 2) + power((longitude - :longitude) * cos(radians(:latitude)), 2) <= power(:distance / 110.25, 2) "
         "order by l.id;"
     );
 
     query.bindValue(":latitude", latitude);
     query.bindValue(":longitude", longitude);
+    query.bindValue(":distance", distanceKm);
 
     const bool success = query.exec();
     if (success) {

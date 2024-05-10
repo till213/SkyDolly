@@ -34,16 +34,20 @@ namespace
     // Keys
     constexpr const char *ImportDirectoryEnabledKey {"ImportDirectoryEnabled"};
     constexpr const char *ImportModeKey {"ImportMode"};
+    constexpr const char *NearestLocationDistanceKey {"NearestLocationDistance"};
 
     // Defaults
     constexpr bool DefaultImportDirectoryEnabled {false};
-    constexpr LocationService::Mode DefaultImportMode {LocationService::Mode::Ignore};
+    constexpr LocationService::Mode DefaultImportMode {LocationService::Mode::Skip};
+    // 250 metres
+    constexpr double DefaultNearestLocationDistanceKm {250.0 / 1000.0};
 }
 
 struct LocationImportPluginBaseSettingsPrivate
 {
     bool importDirectoryEnabled {::DefaultImportDirectoryEnabled};
     LocationService::Mode importMode {::DefaultImportMode};
+    double nearestLocationDistanceKm {::DefaultNearestLocationDistanceKm};
 };
 
 // PUBLIC
@@ -80,6 +84,19 @@ void LocationImportPluginBaseSettings::setImportMode(LocationService::Mode mode)
     }
 }
 
+double LocationImportPluginBaseSettings::getNearestLocationDistanceKm() const noexcept
+{
+    return d->nearestLocationDistanceKm;
+}
+
+void LocationImportPluginBaseSettings::setNearestLocationDistanceKm(double distanceKm) noexcept
+{
+    if (d->nearestLocationDistanceKm != distanceKm) {
+        d->nearestLocationDistanceKm = distanceKm;
+        emit changed();
+    }
+}
+
 void LocationImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
@@ -90,6 +107,10 @@ void LocationImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValue
 
     keyValue.first = ::ImportModeKey;
     keyValue.second = Enum::underly(d->importMode);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::NearestLocationDistanceKey;
+    keyValue.second = d->nearestLocationDistanceKm;
     keyValues.push_back(keyValue);
 
     addSettingsExtn(keyValues);
@@ -107,6 +128,10 @@ void LocationImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
     keyValue.second = Enum::underly(::DefaultImportMode);
     keysWithDefaults.push_back(keyValue);
 
+    keyValue.first = ::NearestLocationDistanceKey;
+    keyValue.second = ::DefaultNearestLocationDistanceKm;
+    keysWithDefaults.push_back(keyValue);
+
     addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
@@ -118,6 +143,11 @@ void LocationImportPluginBaseSettings::restoreSettings(const Settings::ValuesByK
     auto enumValue = valuesByKey.at(::ImportModeKey).toInt(&ok);
     d->importMode = ok && Enum::contains<LocationService::Mode>(enumValue) ? static_cast<LocationService::Mode>(enumValue) : ::DefaultImportMode;
 
+    d->nearestLocationDistanceKm = valuesByKey.at(::NearestLocationDistanceKey).toDouble(&ok);
+    if (!ok) {
+        d->nearestLocationDistanceKm = ::DefaultNearestLocationDistanceKm;
+    }
+
     restoreSettingsExtn(valuesByKey);
 
     emit changed();
@@ -127,6 +157,7 @@ void LocationImportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
     d->importMode = ::DefaultImportMode;
+    d->nearestLocationDistanceKm = ::DefaultNearestLocationDistanceKm;
 
     restoreDefaultsExtn();
 

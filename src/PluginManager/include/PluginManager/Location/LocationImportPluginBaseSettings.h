@@ -53,6 +53,16 @@ public:
     LocationService::Mode getImportMode() const noexcept;
     void setImportMode(LocationService::Mode mode) noexcept;
 
+    /*!
+     * Returns the distance that defines the threshold to look for neighbour locations
+     * when importing new locations.
+     *
+     * \return the distance (threshold) for the nearest locations [kilometers]
+     * \sa LocationService::Mode::Update
+     */
+    double getNearestLocationDistanceKm() const noexcept;
+    void setNearestLocationDistanceKm(double distanceKm) noexcept;
+
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept;
