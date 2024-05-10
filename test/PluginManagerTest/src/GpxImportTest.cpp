@@ -37,9 +37,9 @@ namespace
     constexpr const char *WaypointSelectionKey {"WaypointSelection"};
     constexpr const char *PositionSelectionKey {"PositionSelection"};
 
-    constexpr const int WaypointSelection = 0;
-    constexpr const int RouteSelection = 1;
-    constexpr const int TrackSelection = 2;
+    constexpr const int WaypointSelection {0};
+    constexpr const int RouteSelection {1};
+    constexpr const int TrackSelection {2};
 }
 
 // PRIVATE SLOTS
@@ -53,8 +53,7 @@ void GpxImportTest::onInitTestCase() noexcept
     m_oldPositionSelection = getPluginSetting(pluginUuid, ::PositionSelectionKey, 0).toInt();
     setPluginSetting(pluginUuid, ::PositionSelectionKey, ::TrackSelection);
 
-
-    // Initialis flight import plugins
+    // Initialise flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
     const std::vector<PluginManager::Handle> flightImportPlugins = pluginManager.initialiseFlightImportPlugins();
     QVERIFY(flightImportPlugins.size() > 0);

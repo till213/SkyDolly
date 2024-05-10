@@ -34,8 +34,8 @@
 
 namespace
 {
-    constexpr const char *FormatKey = "Format";
-    constexpr const int FlightRecorderFormat = 2;
+    constexpr const char *FormatKey {"Format"};
+    constexpr const int FlightRecorderFormat {2};
 }
 
 // PRIVATE SLOTS
@@ -47,7 +47,7 @@ void CsvFlightRecorderImportTest::onInitTestCase() noexcept
     m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();
     setPluginSetting(pluginUuid, ::FormatKey, ::FlightRecorderFormat);
 
-    // Initialis flight import plugins
+    // Initialise flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
     const std::vector<PluginManager::Handle> flightImportPlugins = pluginManager.initialiseFlightImportPlugins();
     QVERIFY(flightImportPlugins.size() > 0);
