@@ -46,7 +46,7 @@
      <item>
       <widget class="QPushButton" name="restoreDefaultsPushButton">
        <property name="text">
-        <string>Restore &amp;defaults</string>
+        <string>Restore &amp;Defaults</string>
        </property>
       </widget>
      </item>

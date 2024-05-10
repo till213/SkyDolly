@@ -3,14 +3,14 @@
 ## Case
 
 ### English Sentence Case
-- Buttons
 - Labels
 - Options (checkboxes, radio buttons)
 
-*Example:* "Import all aircraft"
+*Example:* "Import all aircraft" (option)
 
 ### Title Case
+- Buttons
 - Dialog titles
 - Group titles
 
-*Example:* "Import Error"
+*Example:* "Import Error" (dialog title), "Restore Defaults" (button)
