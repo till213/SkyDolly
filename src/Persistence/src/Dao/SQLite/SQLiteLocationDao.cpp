@@ -91,7 +91,7 @@ bool SQLiteLocationDao::update(const Location &location) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(QStringLiteral(
+    query.prepare(
         "update location "
         "set    title = :title,"
         "       description = :description,"
@@ -110,25 +110,25 @@ bool SQLiteLocationDao::update(const Location &location) const noexcept
         "       attributes = :attributes,"
         "       engine_event = :engine_event "
         "where id = :id;"
-    ));
+    );
 
-    query.bindValue(QStringLiteral(":title"), location.title);
-    query.bindValue(QStringLiteral(":description"), location.description);
-    query.bindValue(QStringLiteral(":type_id"), QVariant::fromValue(location.typeId));
-    query.bindValue(QStringLiteral(":category_id"), QVariant::fromValue(location.categoryId));
-    query.bindValue(QStringLiteral(":country_id"), QVariant::fromValue(location.countryId));
-    query.bindValue(QStringLiteral(":identifier"), location.identifier);
-    query.bindValue(QStringLiteral(":latitude"), location.latitude);
-    query.bindValue(QStringLiteral(":longitude"), location.longitude);
-    query.bindValue(QStringLiteral(":altitude"), location.altitude);
-    query.bindValue(QStringLiteral(":pitch"), location.pitch);
-    query.bindValue(QStringLiteral(":bank"), location.bank);
-    query.bindValue(QStringLiteral(":true_heading"), location.trueHeading);
-    query.bindValue(QStringLiteral(":indicated_airspeed"), location.indicatedAirspeed);
-    query.bindValue(QStringLiteral(":on_ground"), location.onGround);
-    query.bindValue(QStringLiteral(":attributes"), QVariant::fromValue(location.attributes));
-    query.bindValue(QStringLiteral(":engine_event"), QVariant::fromValue(location.engineEventId));
-    query.bindValue(QStringLiteral(":id"), QVariant::fromValue(location.id));
+    query.bindValue(":title", location.title);
+    query.bindValue(":description", location.description);
+    query.bindValue(":type_id", QVariant::fromValue(location.typeId));
+    query.bindValue(":category_id", QVariant::fromValue(location.categoryId));
+    query.bindValue(":country_id", QVariant::fromValue(location.countryId));
+    query.bindValue(":identifier", location.identifier);
+    query.bindValue(":latitude", location.latitude);
+    query.bindValue(":longitude", location.longitude);
+    query.bindValue(":altitude", location.altitude);
+    query.bindValue(":pitch", location.pitch);
+    query.bindValue(":bank", location.bank);
+    query.bindValue(":true_heading", location.trueHeading);
+    query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
+    query.bindValue(":on_ground", location.onGround);
+    query.bindValue(":attributes", QVariant::fromValue(location.attributes));
+    query.bindValue(":engine_event", QVariant::fromValue(location.engineEventId));
+    query.bindValue(":id", QVariant::fromValue(location.id));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -150,16 +150,16 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
     //      SQlite supports "math functions" from Qt 6.5 onwards:
     //      - https://bugreports.qt.io/browse/QTBUG-108016
     //      - https://codereview.qt-project.org/c/qt/qtbase/+/440378
-    query.prepare(QStringLiteral(
+    query.prepare(
         "select * "
         "from   location l "
         "where  l.latitude = :latitude "
         "  and  l.longitude = :longitude "
         "order by l.id;"
-    ));
+    );
 
-    query.bindValue(QStringLiteral(":latitude"), latitude);
-    query.bindValue(QStringLiteral(":longitude"), longitude);
+    query.bindValue(":latitude", latitude);
+    query.bindValue(":longitude", longitude);
 
     const bool success = query.exec();
     if (success) {
@@ -171,23 +171,23 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
             locations.reserve(1);
         }
         QSqlRecord record = query.record();
-        const int idIdx = record.indexOf(QStringLiteral("id"));
-        const int titleIdx = record.indexOf(QStringLiteral("title"));
-        const int descriptionIdx = record.indexOf(QStringLiteral("description"));
-        const int typeIdx = record.indexOf(QStringLiteral("type_id"));
-        const int categoryIdx = record.indexOf(QStringLiteral("category_id"));
-        const int countryIdx = record.indexOf(QStringLiteral("country_id"));
-        const int identifierIdx = record.indexOf(QStringLiteral("identifier"));
-        const int latitudeIdx = record.indexOf(QStringLiteral("latitude"));
-        const int longitudeIdx = record.indexOf(QStringLiteral("longitude"));
-        const int altitudeIdx = record.indexOf(QStringLiteral("altitude"));
-        const int pitchIdx = record.indexOf(QStringLiteral("pitch"));
-        const int bankIdx = record.indexOf(QStringLiteral("bank"));
-        const int trueHeadingIdx = record.indexOf(QStringLiteral("true_heading"));
-        const int indicatedAirspeedIdx = record.indexOf(QStringLiteral("indicated_airspeed"));
-        const int onGroundIdx = record.indexOf(QStringLiteral("on_ground"));
-        const int attributesIdx = record.indexOf(QStringLiteral("attributes"));
-        const int engineEventIdx = record.indexOf(QStringLiteral("engine_event"));
+        const int idIdx = record.indexOf("id");
+        const int titleIdx = record.indexOf("title");
+        const int descriptionIdx = record.indexOf("description");
+        const int typeIdx = record.indexOf("type_id");
+        const int categoryIdx = record.indexOf("category_id");
+        const int countryIdx = record.indexOf("country_id");
+        const int identifierIdx = record.indexOf("identifier");
+        const int latitudeIdx = record.indexOf("latitude");
+        const int longitudeIdx = record.indexOf("longitude");
+        const int altitudeIdx = record.indexOf("altitude");
+        const int pitchIdx = record.indexOf("pitch");
+        const int bankIdx = record.indexOf("bank");
+        const int trueHeadingIdx = record.indexOf("true_heading");
+        const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
+        const int onGroundIdx = record.indexOf("on_ground");
+        const int attributesIdx = record.indexOf("attributes");
+        const int engineEventIdx = record.indexOf("engine_event");
 
         while (query.next()) {
             Location location;
@@ -227,12 +227,12 @@ bool SQLiteLocationDao::deleteById(std::int64_t id) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(QStringLiteral(
+    query.prepare(
         "delete "
         "from   location "
         "where  id = :id;"
-    ));
-    query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
+    );
+    query.bindValue(":id", QVariant::fromValue(id));
 
     const bool ok = query.exec();
 #ifdef DEBUG
@@ -248,11 +248,11 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(QStringLiteral(
+    query.prepare(
         "select * "
         "from   location l "
         "order by l.id;"
-    ));
+    );
 
     return executeGetLocationQuery(query, ok);
 }
@@ -264,47 +264,44 @@ std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSele
     query.setForwardOnly(true);
 
     QString searchKeyword;
-    QString queryString = QStringLiteral(
+    QString queryString =
         "select * "
         "from   location l "
-        "where 1 = 1 "
-    );
+        "where 1 = 1 ";
     if (selector.typeSelection.size() > 0) {
-        queryString.append(QStringLiteral("  and l.type_id in ("));
+        queryString.append("  and l.type_id in (");
         std::size_t i {0};
         for (const auto typeId : selector.typeSelection) {
             queryString.append(QString::number(typeId));
             if (i < selector.typeSelection.size() - 1) {
-                queryString.append(QStringLiteral(","));
+                queryString.append(",");
             }
             ++i;
         }
-        queryString.append(QStringLiteral(")"));
+        queryString.append(")");
     }
     if (selector.categoryId != Const::InvalidId) {
-        queryString.append(QStringLiteral("  and l.category_id = :category_id "));
+        queryString.append("  and l.category_id = :category_id ");
     }
     if (selector.countryId != Const::InvalidId) {
-        queryString.append(QStringLiteral("  and l.country_id = :country_id "));
+        queryString.append("  and l.country_id = :country_id ");
     }
     if (!selector.searchKeyword.isEmpty()) {
-        queryString.append(QStringLiteral(
+        queryString.append(
             "  and (   l.title like :search_keyword "
             "       or l.description like :search_keyword "
             "       or l.identifier like :search_keyword "
             "      ) "
-        )
-
         );
-        const QString LikeOperatorPlaceholder {QStringLiteral("%")};
+        const QString LikeOperatorPlaceholder {"%"};
         // Add like operator placeholders
         searchKeyword = LikeOperatorPlaceholder % selector.searchKeyword % LikeOperatorPlaceholder;
     }
-    queryString.append(QStringLiteral("order by l.id;"));
+    queryString.append("order by l.id;");
     query.prepare(queryString);
-    query.bindValue(QStringLiteral(":category_id"), QVariant::fromValue(selector.categoryId));
-    query.bindValue(QStringLiteral(":country_id"), QVariant::fromValue(selector.countryId));
-    query.bindValue(QStringLiteral(":search_keyword"), searchKeyword);
+    query.bindValue(":category_id", QVariant::fromValue(selector.categoryId));
+    query.bindValue(":country_id", QVariant::fromValue(selector.countryId));
+    query.bindValue(":search_keyword", searchKeyword);
 
     return executeGetLocationQuery(query, ok);
 }
@@ -324,23 +321,23 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
             locations.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
-        const int idIdx = record.indexOf(QStringLiteral("id"));
-        const int titleIdx = record.indexOf(QStringLiteral("title"));
-        const int descriptionIdx = record.indexOf(QStringLiteral("description"));
-        const int typeIdx = record.indexOf(QStringLiteral("type_id"));
-        const int categoryIdx = record.indexOf(QStringLiteral("category_id"));
-        const int countryIdx = record.indexOf(QStringLiteral("country_id"));
-        const int identifierIdx = record.indexOf(QStringLiteral("identifier"));
-        const int latitudeIdx = record.indexOf(QStringLiteral("latitude"));
-        const int longitudeIdx = record.indexOf(QStringLiteral("longitude"));
-        const int altitudeIdx = record.indexOf(QStringLiteral("altitude"));
-        const int pitchIdx = record.indexOf(QStringLiteral("pitch"));
-        const int bankIdx = record.indexOf(QStringLiteral("bank"));
-        const int trueHeadingIdx = record.indexOf(QStringLiteral("true_heading"));
-        const int indicatedAirspeedIdx = record.indexOf(QStringLiteral("indicated_airspeed"));
-        const int onGroundIdx = record.indexOf(QStringLiteral("on_ground"));
-        const int attributesIdx = record.indexOf(QStringLiteral("attributes"));
-        const int engineEventIdx = record.indexOf(QStringLiteral("engine_event"));
+        const int idIdx = record.indexOf("id");
+        const int titleIdx = record.indexOf("title");
+        const int descriptionIdx = record.indexOf("description");
+        const int typeIdx = record.indexOf("type_id");
+        const int categoryIdx = record.indexOf("category_id");
+        const int countryIdx = record.indexOf("country_id");
+        const int identifierIdx = record.indexOf("identifier");
+        const int latitudeIdx = record.indexOf("latitude");
+        const int longitudeIdx = record.indexOf("longitude");
+        const int altitudeIdx = record.indexOf("altitude");
+        const int pitchIdx = record.indexOf("pitch");
+        const int bankIdx = record.indexOf("bank");
+        const int trueHeadingIdx = record.indexOf("true_heading");
+        const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
+        const int onGroundIdx = record.indexOf("on_ground");
+        const int attributesIdx = record.indexOf("attributes");
+        const int engineEventIdx = record.indexOf("engine_event");
 
         while (query.next()) {
             Location location;
@@ -381,7 +378,7 @@ std::int64_t SQLiteLocationDao::insert(const Location &location) const noexcept
     auto locationId {Const::InvalidId};
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(QStringLiteral(
+    query.prepare(
         "insert into location ("
         "  title,"
         "  description,"
@@ -417,24 +414,24 @@ std::int64_t SQLiteLocationDao::insert(const Location &location) const noexcept
         "  :attributes,"
         "  :engine_event"
         ");"
-        ));
+        );
 
-    query.bindValue(QStringLiteral(":title"), location.title);
-    query.bindValue(QStringLiteral(":description"), location.description);
-    query.bindValue(QStringLiteral(":type_id"), QVariant::fromValue(location.typeId));
-    query.bindValue(QStringLiteral(":category_id"), QVariant::fromValue(location.categoryId));
-    query.bindValue(QStringLiteral(":country_id"), QVariant::fromValue(location.countryId));
-    query.bindValue(QStringLiteral(":identifier"), location.identifier);
-    query.bindValue(QStringLiteral(":latitude"), location.latitude);
-    query.bindValue(QStringLiteral(":longitude"), location.longitude);
-    query.bindValue(QStringLiteral(":altitude"), location.altitude);
-    query.bindValue(QStringLiteral(":pitch"), location.pitch);
-    query.bindValue(QStringLiteral(":bank"), location.bank);
-    query.bindValue(QStringLiteral(":true_heading"), location.trueHeading);
-    query.bindValue(QStringLiteral(":indicated_airspeed"), location.indicatedAirspeed);
-    query.bindValue(QStringLiteral(":on_ground"), location.onGround);
-    query.bindValue(QStringLiteral(":attributes"), QVariant::fromValue(location.attributes));
-    query.bindValue(QStringLiteral(":engine_event"), QVariant::fromValue(location.engineEventId));
+    query.bindValue(":title", location.title);
+    query.bindValue(":description", location.description);
+    query.bindValue(":type_id", QVariant::fromValue(location.typeId));
+    query.bindValue(":category_id", QVariant::fromValue(location.categoryId));
+    query.bindValue(":country_id", QVariant::fromValue(location.countryId));
+    query.bindValue(":identifier", location.identifier);
+    query.bindValue(":latitude", location.latitude);
+    query.bindValue(":longitude", location.longitude);
+    query.bindValue(":altitude", location.altitude);
+    query.bindValue(":pitch", location.pitch);
+    query.bindValue(":bank", location.bank);
+    query.bindValue(":true_heading", location.trueHeading);
+    query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
+    query.bindValue(":on_ground", location.onGround);
+    query.bindValue(":attributes", QVariant::fromValue(location.attributes));
+    query.bindValue(":engine_event", QVariant::fromValue(location.engineEventId));
 
     const bool ok = query.exec();
     if (ok) {
