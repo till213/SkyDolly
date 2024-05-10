@@ -7,13 +7,18 @@
   * Sky Dolly logbook (*.sdlog) export
 - New location import plugin
   * Sky Dolly logbook (*.sdlog) import
+  * Locations exported from older Sky Dolly releases are migrated upon import to the latest data features
 
 ## Improvements
 - A new *Export system locations* option has been added to the location export
   * When enabled then also the default locations as provided by Sky Dolly (*Sytem* locations) will be exported
   * Otherwise only the *User* and *Import* locations will be exported
 - When importing flights via the Sky Dolly logbook (*.sdlog) format no *system* (default) locations are added (migrated) anymore
-  * The tables (database schema) is still migrated and updated accordingly though
+  * The table schema and data is still migrated and updated accordingly though
+- A distance threshold option has been added to the location import settings
+  * Existing locations within the given distance are either *updated*
+  * Or the location to be imported is *skipped* (not imported)
+  * Loctations may also be unconditionally imported (*insert*)
 
 ## Bug Fixes
 
@@ -22,7 +27,7 @@
 ## Improvements
 - Add new aircraft types from simulation update 15, selectable when importing a flight
   * Ornithopter
-  * A320 V2 (inibuilds)
+  * A320 V2 (iniBuilds)
   * Note that any *new* aircraft that is recorded will be automatically added to the aircraft type list (existing behaviour)
 - Platform styles that are not really selectable - such as "Windows Vista" style on Windows 11 and "Windows 11" style on Windows 10 - are not shown anymore in the style selection dropdown list
   * The selection list is now sorted
