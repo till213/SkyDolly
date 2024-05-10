@@ -49,6 +49,7 @@
 struct LocationExportPluginBasePrivate
 {
     QFile file;
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
 };
 
 // PUBLIC
@@ -59,7 +60,7 @@ LocationExportPluginBase::LocationExportPluginBase() noexcept
 
 LocationExportPluginBase::~LocationExportPluginBase() = default;
 
-bool LocationExportPluginBase::exportLocations(const std::vector<Location> &locations) const noexcept
+bool LocationExportPluginBase::exportLocations() const noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     LocationExportPluginBaseSettings &baseSettings = getPluginSettings();
@@ -76,6 +77,8 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
             const QFileInfo fileInfo {filePath};
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
+
+            const auto locations = d->locationService->getAll(&ok);
 
             if (exportDialog->isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportLocations(locations, filePath);

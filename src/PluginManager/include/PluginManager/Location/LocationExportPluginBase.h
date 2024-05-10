@@ -75,7 +75,7 @@ public:
         DialogPluginBase::restoreSettings(pluginUuid);
     }
 
-    bool exportLocations(const std::vector<Location> &locations) const noexcept final;
+    bool exportLocations() const noexcept final;
 
 protected:
     // Re-implement

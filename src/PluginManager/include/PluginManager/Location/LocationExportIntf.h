@@ -25,8 +25,6 @@
 #ifndef LOCATIONEXPORTINTF_H
 #define LOCATIONEXPORTINTF_H
 
-#include <vector>
-
 #include <QtPlugin>
 
 #include "../PluginIntf.h"
@@ -37,7 +35,12 @@ class Location;
 class LocationExportIntf : public DialogPluginIntf, public PluginIntf
 {
 public:
-    virtual bool exportLocations(const std::vector<Location> &locations) const noexcept = 0;
+    /*!
+     * Exports all or the selected locations, according to the specific plugin location selection criteria.
+     *
+     * \return \c true when successful; \c false else
+     */
+    virtual bool exportLocations() const noexcept = 0;
 };
 
 #define LOCATION_EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationExportInterface/1.0"
