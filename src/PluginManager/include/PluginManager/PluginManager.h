@@ -69,6 +69,23 @@ public:
     std::vector<Handle> initialiseLocationExportPlugins() noexcept;
 
     bool importFlights(const QUuid &pluginUuid, Flight &flight) const noexcept;
+
+    /*!
+     * Imports the flight data with plugin \c pluginUuid from the input device \c io.
+     *
+     * Implementation note: this method (while not necessarily called from the application
+     * code itself) is useful for unit tests. So do not remove.
+     *
+     * \param pluginUuid
+     *        the UUID of the plugin with which to import the flight data
+     * \param io
+     *        the input device; must already be open for reading
+     * \param ok
+     *        set to \c true when successful; \c false else
+     * \return the list of flight data
+     */
+    std::vector<FlightData> importFlightData(const QUuid &pluginUuid, QIODevice &io, bool &ok) const noexcept;
+
     bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;
     bool importLocations(const QUuid &pluginUuid) const noexcept;
     bool exportLocations(const QUuid &pluginUuid) const noexcept;

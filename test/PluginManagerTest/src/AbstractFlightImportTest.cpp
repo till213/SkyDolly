@@ -101,7 +101,7 @@ void AbstractFlightImportTest::importSelectedFlights() noexcept
     // Exercise
     QFile file {filepath};
     bool fileOpenOk = file.open(QIODeviceBase::ReadOnly);
-    const std::vector<FlightData> flights = PluginManager::getInstance().importSelectedFlights(pluginUuid, file, ok);
+    const std::vector<FlightData> flights = PluginManager::getInstance().importFlightData(pluginUuid, file, ok);
     file.close();
 
     // Verify

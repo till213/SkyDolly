@@ -177,7 +177,7 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
         if (ok) {
-            importedFlights = importSelectedFlights(d->file, ok);
+            importedFlights = importFlightData(d->file, ok);
             if (ok) {
                 enrichFlightData(importedFlights);
                 if (getAugmentationAspects() || getAugmentationProcedures()) {

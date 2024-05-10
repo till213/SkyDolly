@@ -68,6 +68,21 @@ GpxImportPlugin::GpxImportPlugin() noexcept
 
 GpxImportPlugin::~GpxImportPlugin() = default;
 
+std::vector<FlightData> GpxImportPlugin::importFlightData(QIODevice &io, bool &ok) noexcept
+{
+    d->xml.setDevice(&io);
+    std::vector<FlightData> flights = parseGPX();
+
+    ok = FlightData::hasAllRecording(flights) && !d->xml.hasError();
+    if (!ok) {
+        flights.clear();
+#ifdef DEBUG
+        qDebug() << "GpxImportPlugin::importSelectedFlights: XML error" << d->xml.errorString();
+#endif
+    }
+    return flights;
+}
+
 // PROTECTED
 
 FlightImportPluginBaseSettings &GpxImportPlugin::getPluginSettings() const noexcept
@@ -88,21 +103,6 @@ QString GpxImportPlugin::getFileFilter() const noexcept
 std::unique_ptr<QWidget> GpxImportPlugin::createOptionWidget() const noexcept
 {
     return std::make_unique<GpxImportOptionWidget>(d->pluginSettings);
-}
-
-std::vector<FlightData> GpxImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
-{
-    d->xml.setDevice(&io);
-    std::vector<FlightData> flights = parseGPX();
-
-    ok = FlightData::hasAllRecording(flights) && !d->xml.hasError();
-    if (!ok) {
-        flights.clear();
-#ifdef DEBUG
-        qDebug() << "GpxImportPlugin::importSelectedFlights: XML error" << d->xml.errorString();
-#endif
-    }
-    return flights;
 }
 
 FlightAugmentation::Procedures GpxImportPlugin::getAugmentationProcedures() const noexcept

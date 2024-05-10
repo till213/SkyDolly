@@ -58,12 +58,14 @@ public:
     IgcImportPlugin &operator=(IgcImportPlugin &&rhs) = delete;
     ~IgcImportPlugin() override;
 
+    std::vector<FlightData> importFlightData(QIODevice &io, bool &ok) noexcept override;
+
 protected:
     FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    std::vector<FlightData> importSelectedFlights(QIODevice &io, bool &ok) noexcept override;
+
     FlightAugmentation::Procedures getAugmentationProcedures() const noexcept override;
     FlightAugmentation::Aspects getAugmentationAspects() const noexcept override;
 

@@ -53,29 +53,7 @@ CsvImportPlugin::CsvImportPlugin() noexcept
 
 CsvImportPlugin::~CsvImportPlugin() = default;
 
-// PROTECTED
-
-FlightImportPluginBaseSettings &CsvImportPlugin::getPluginSettings() const noexcept
-{
-    return d->pluginSettings;
-}
-
-QString CsvImportPlugin::getFileExtension() const noexcept
-{
-    return CsvImportPluginPrivate::FileExtension;
-}
-
-QString CsvImportPlugin::getFileFilter() const noexcept
-{
-    return QObject::tr("Comma-separated values (*.%1)").arg(getFileExtension());
-}
-
-std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
-{
-    return std::make_unique<CsvImportOptionWidget>(d->pluginSettings);
-}
-
-std::vector<FlightData> CsvImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+std::vector<FlightData> CsvImportPlugin::importFlightData(QIODevice &io, bool &ok) noexcept
 {
     std::vector<FlightData> flights;
     std::unique_ptr<CsvParserIntf> parser;
@@ -99,6 +77,28 @@ std::vector<FlightData> CsvImportPlugin::importSelectedFlights(QIODevice &io, bo
         }
     }
     return flights;
+}
+
+// PROTECTED
+
+FlightImportPluginBaseSettings &CsvImportPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
+
+QString CsvImportPlugin::getFileExtension() const noexcept
+{
+    return CsvImportPluginPrivate::FileExtension;
+}
+
+QString CsvImportPlugin::getFileFilter() const noexcept
+{
+    return QObject::tr("Comma-separated values (*.%1)").arg(getFileExtension());
+}
+
+std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
+{
+    return std::make_unique<CsvImportOptionWidget>(d->pluginSettings);
 }
 
 FlightAugmentation::Procedures CsvImportPlugin::getAugmentationProcedures() const noexcept
