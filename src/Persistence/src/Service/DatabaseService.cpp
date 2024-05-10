@@ -94,7 +94,7 @@ bool DatabaseService::connect(const QString &logbookPath) noexcept
     return d->databaseDao->connectDb(logbookPath);
 }
 
-bool DatabaseService::connectAndMigrate(const QString &logbookPath) noexcept
+bool DatabaseService::connectAndMigrate(const QString &logbookPath, Migration::Milestones milestones) noexcept
 {
     auto &settings = Settings::getInstance();
     bool ok = connect(logbookPath);
@@ -117,7 +117,7 @@ bool DatabaseService::connectAndMigrate(const QString &logbookPath) noexcept
                 // We still migrate, even if the above version check indicates that the database is up to date
                 // (to make sure that we really do not miss any migration steps, in case the database version
                 // was "forgotten" to be updated during some prior migration)
-                ok = migrate();
+                ok = migrate(milestones);
             }
         }
     }

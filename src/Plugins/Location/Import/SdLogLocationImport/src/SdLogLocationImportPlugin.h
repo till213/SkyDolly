@@ -22,56 +22,47 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLIMPORTPLUGIN_H
-#define KMLIMPORTPLUGIN_H
+#ifndef SDLOGLOCATIONIMPORTPLUGIN_H
+#define SDLOGLOCATIONIMPORTPLUGIN_H
 
 #include <memory>
 #include <vector>
 
-#include <QObject>
-#include <QDateTime>
+#include <QtPlugin>
 #include <QString>
-#include <QWidget>
 
 class QIODevice;
+class QWidget;
 
-#include <Flight/FlightAugmentation.h>
-#include <PluginManager/Flight/FlightImportIntf.h>
-#include <PluginManager/Flight/FlightImportPluginBase.h>
+#include <PluginManager/Location/LocationImportIntf.h>
+#include <PluginManager/Location/LocationImportPluginBase.h>
 
-struct FlightData;
-struct FlightData;
-struct AircraftInfo;
-struct FlightCondition;
-class FlightImportPluginBaseSettings;
-struct KmlImportPluginPrivate;
+class Location;
+class LocationImportPluginBaseSettings;
+struct SdLogLocationImportPluginPrivate;
 
-class KmlImportPlugin : public FlightImportPluginBase
+class SdLogLocationImportPlugin : public LocationImportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID FLIGHT_IMPORT_INTERFACE_IID FILE "KmlImportPlugin.json")
-    Q_INTERFACES(FlightImportIntf)
+    Q_PLUGIN_METADATA(IID LOCATION_IMPORT_INTERFACE_IID FILE "SdLogLocationImportPlugin.json")
+    Q_INTERFACES(LocationImportIntf)
 public:
-    KmlImportPlugin() noexcept;
-    KmlImportPlugin(const KmlImportPlugin &rhs) = delete;
-    KmlImportPlugin(KmlImportPlugin &&rhs) = delete;
-    KmlImportPlugin &operator=(const KmlImportPlugin &rhs) = delete;
-    KmlImportPlugin &operator=(KmlImportPlugin &&rhs) = delete;
-    ~KmlImportPlugin() override;
+    SdLogLocationImportPlugin() noexcept;
+    SdLogLocationImportPlugin(const SdLogLocationImportPlugin &rhs) = delete;
+    SdLogLocationImportPlugin(SdLogLocationImportPlugin &&rhs) = delete;
+    SdLogLocationImportPlugin &operator=(const SdLogLocationImportPlugin &rhs) = delete;
+    SdLogLocationImportPlugin &operator=(SdLogLocationImportPlugin &&rhs) = delete;
+    ~SdLogLocationImportPlugin() override;
 
 protected:
-    FlightImportPluginBaseSettings &getPluginSettings() const noexcept override;
+    LocationImportPluginBaseSettings &getPluginSettings() const noexcept override;
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    std::vector<FlightData> importSelectedFlights(QIODevice &io, bool &ok) noexcept override;
-    FlightAugmentation::Procedures getAugmentationProcedures() const noexcept override;
-    FlightAugmentation::Aspects getAugmentationAspects() const noexcept override;
+    std::vector<Location> importLocations(QIODevice &io, bool &ok) noexcept override;
 
 private:
-    const std::unique_ptr<KmlImportPluginPrivate> d;
-
-    std::vector<FlightData> parseKML() noexcept;
+    const std::unique_ptr<SdLogLocationImportPluginPrivate> d;
 };
 
-#endif // KMLIMPORTPLUGIN_H
+#endif // SDLOGLOCATIONIMPORTPLUGIN_H

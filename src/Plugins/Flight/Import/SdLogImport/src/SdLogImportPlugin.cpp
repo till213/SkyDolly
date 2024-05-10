@@ -51,8 +51,7 @@ struct SdlogImportPluginPrivate
 {
     std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>(Const::ImportConnectionName)};
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ImportConnectionName)};
-    std::unique_ptr<FlightService> importFlightService {std::make_unique<FlightService>(Const::ImportConnectionName)};
-    std::unique_ptr<FlightService> applicationFlightService {std::make_unique<FlightService>(Const::DefaultConnectionName)};
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>(Const::ImportConnectionName)};
 
     SdLogImportSettings pluginSettings;
 
@@ -66,33 +65,6 @@ SdlogImportPlugin::SdlogImportPlugin() noexcept
 {}
 
 SdlogImportPlugin::~SdlogImportPlugin() = default;
-
-std::vector<FlightData> SdlogImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
-{
-    std::vector<FlightData> flights;
-    ok = false;
-    // Only file-based SQLite databases supported
-    auto *file = qobject_cast<QFile *>(&io);
-    if (file != nullptr) {
-        const QFileInfo fileInfo {*file};
-        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath());
-        if (ok) {
-            const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
-            // We expect at least one flight to be imported (note that zero flights in a logbook
-            // is a valid state, so the logbook service would return ok = true)
-            ok = flightIds.size() > 0;
-            if (ok) {
-                flights.reserve(flightIds.size());
-                for (const auto flightId : flightIds) {
-                    FlightData flightData;
-                    ok = d->importFlightService->importFlightData(flightId, flightData);
-                    flights.push_back(std::move(flightData));
-                }
-            }
-        }
-    }
-    return flights;
-}
 
 // PROTECTED
 
@@ -114,6 +86,33 @@ QString SdlogImportPlugin::getFileFilter() const noexcept
 std::unique_ptr<QWidget> SdlogImportPlugin::createOptionWidget() const noexcept
 {
     return nullptr;
+}
+
+std::vector<FlightData> SdlogImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+{
+    std::vector<FlightData> flights;
+    ok = false;
+    // Only file-based SQLite databases supported
+    auto *file = qobject_cast<QFile *>(&io);
+    if (file != nullptr) {
+        const QFileInfo fileInfo {*file};
+        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath(), Migration::Milestone::Schema);
+        if (ok) {
+            const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
+            // We expect at least one flight to be imported (note that zero flights in a logbook
+            // is a valid state, so the logbook service would return ok = true)
+            ok = flightIds.size() > 0;
+            if (ok) {
+                flights.reserve(flightIds.size());
+                for (const auto flightId : flightIds) {
+                    FlightData flightData;
+                    ok = d->flightService->importFlightData(flightId, flightData);
+                    flights.push_back(std::move(flightData));
+                }
+            }
+        }
+    }
+    return flights;
 }
 
 FlightAugmentation::Procedures SdlogImportPlugin::getAugmentationProcedures() const noexcept

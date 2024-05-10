@@ -129,7 +129,7 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths) noe
         QFile file {filePath};
         ok = file.open(QIODevice::ReadOnly);
         if (ok) {
-            std::vector<Location> locations = importLocations(file, &ok);
+            std::vector<Location> locations = importLocations(file, ok);
             file.close();
             if (ok) {
                 ok = storeLocations(locations);

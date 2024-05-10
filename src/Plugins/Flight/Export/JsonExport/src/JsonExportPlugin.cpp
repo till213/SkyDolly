@@ -24,13 +24,10 @@
  */
 #include <memory>
 #include <vector>
-#include <algorithm>
-#include <cstdint>
 
 #include <QIODevice>
 #include <QStringBuilder>
 #include <QString>
-#include <QStringLiteral>
 #include <QDateTime>
 
 #include <Kernel/Version.h>
@@ -59,7 +56,7 @@ struct JsonExportPluginPrivate
     JsonExportSettings pluginSettings;
     Unit unit;
 
-    static inline const QString FileExtension {QStringLiteral("json")};
+    static inline const QString FileExtension {"json"};
 };
 
 // PUBLIC
@@ -132,11 +129,10 @@ bool JsonExportPlugin::exportAircraft(const FlightData &flightData, const Aircra
 
 bool JsonExportPlugin::exportHeader(QIODevice &io) const noexcept
 {
-    const QString header = QStringLiteral(
+    const QString header =
 "{\n"
 "  \"type\": \"FeatureCollection\",\n"
-"  \"features\": [\n"
-    );
+"  \"features\": [\n";
     return io.write(header.toUtf8());
 }
 
@@ -167,13 +163,12 @@ bool JsonExportPlugin::exportSingleAircraft(const FlightData &flightData, const 
 
     const AircraftInfo &info = aircraft.getAircraftInfo();
     const AircraftType &type = info.aircraftType;
-    const QString trackBegin = QStringLiteral(
+    const QString trackBegin =
 "    {\n"
 "      \"type\": \"Feature\",\n"
 "      \"geometry\": {\n"
 "        \"type\": \"LineString\",\n"
-"        \"coordinates\": [\n"
-    );
+"        \"coordinates\": [\n";
     ok = io.write(trackBegin.toUtf8());
     if (ok) {
         std::size_t i = 0;
@@ -192,7 +187,7 @@ bool JsonExportPlugin::exportSingleAircraft(const FlightData &flightData, const 
         }
     }
     if (ok) {
-        const QString placemarkEnd = QString(
+        const QString placemarkEnd =
 "        ]\n"
 "      },\n"
 "      \"properties\": {\n"
@@ -209,7 +204,7 @@ bool JsonExportPlugin::exportSingleAircraft(const FlightData &flightData, const 
 "        \"stroke\": \"#ff0000\",\n"
 "        \"stroke-width\": \"4\"\n"
 "      }\n"
-"    }");
+"    }";
 
       ok = io.write(placemarkEnd.toUtf8());
     }
@@ -232,10 +227,9 @@ bool JsonExportPlugin::exportWaypoints(const FlightData &flightData, QIODevice &
 
 bool JsonExportPlugin::exportFooter(QIODevice &io) const noexcept
 {
-    const QString footer = QStringLiteral(
+    const QString footer =
 "  ]\n"
-"}\n"
-    );
+"}\n";
     return io.write(footer.toUtf8());
 }
 
@@ -251,7 +245,7 @@ inline bool JsonExportPlugin::exportTrackPoint(const PositionData &positionData,
 
 inline bool JsonExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
 {
-    const QString waypointString = QString(
+    const QString waypointString =
 "    {\n"
 "      \"type\": \"Feature\",\n"
 "      \"geometry\": {\n"
@@ -269,7 +263,7 @@ inline bool JsonExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice
 "        \"marker-color\": \"#008800\",\n"
 "        \"marker-symbol\": \"airport\"\n"
 "      }\n"
-"    },\n");
+"    },\n";
     bool ok = io.write(waypointString.toUtf8());
 
     return ok;

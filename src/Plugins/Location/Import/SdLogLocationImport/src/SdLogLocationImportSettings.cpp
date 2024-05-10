@@ -22,39 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTIMPORTINTF_H
-#define FLIGHTIMPORTINTF_H
 
-#include <vector>
+#include <memory>
 
-#include <QtPlugin>
+#include <QString>
 
-class QIODevice;
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <PluginManager/Location/LocationImportPluginBaseSettings.h>
+#include "SdLogLocationImportSettings.h"
 
-#include "../PluginIntf.h"
-#include "../DialogPluginIntf.h"
+struct SdLogLocationImportSettingsPrivate
+{};
 
-class Flight;
-struct FlightData;
-class FlightService;
+// PUBLIC
 
-class FlightImportIntf : public DialogPluginIntf, public PluginIntf
-{
-public:
-    /*!
-     * Presents the user with a file selection dialog and imports all selected
-     * files, optionally adding the imported aircraft to the \c currentFlight
-     * as well.
-     *
-     * \param currentFlight
-     *        the current flight in memory
-     * \return \c true upon success; \c false else (parsing error, no data
-     *         imported)
-     */
-    virtual bool importFlights(Flight &currentFlight) noexcept = 0;
-};
+SdLogLocationImportSettings::SdLogLocationImportSettings() noexcept
+    : LocationImportPluginBaseSettings(),
+    d(std::make_unique<SdLogLocationImportSettingsPrivate>())
+{}
 
-#define FLIGHT_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightImportInterface/1.0"
-Q_DECLARE_INTERFACE(FlightImportIntf, FLIGHT_IMPORT_INTERFACE_IID)
+SdLogLocationImportSettings::~SdLogLocationImportSettings() = default;
 
-#endif // FLIGHTIMPORTINTF_H
+// PROTECTED
+
+void SdLogLocationImportSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
+{}
+
+void SdLogLocationImportSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{}
+
+void SdLogLocationImportSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
+{}
+
+void SdLogLocationImportSettings::restoreDefaultsExtn() noexcept
+{}

@@ -22,39 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTIMPORTINTF_H
-#define FLIGHTIMPORTINTF_H
+#ifndef SDLOGLOCATIONIMPORTSETTINGS_H
+#define SDLOGLOCATIONIMPORTSETTINGS_H
 
-#include <vector>
+#include <memory>
 
-#include <QtPlugin>
+#include <QObject>
 
-class QIODevice;
+#include <Kernel/Settings.h>
+#include <PluginManager/Location/LocationImportPluginBaseSettings.h>
 
-#include "../PluginIntf.h"
-#include "../DialogPluginIntf.h"
+struct SdLogLocationImportSettingsPrivate;
 
-class Flight;
-struct FlightData;
-class FlightService;
-
-class FlightImportIntf : public DialogPluginIntf, public PluginIntf
+class SdLogLocationImportSettings : public LocationImportPluginBaseSettings
 {
+    Q_OBJECT
 public:
-    /*!
-     * Presents the user with a file selection dialog and imports all selected
-     * files, optionally adding the imported aircraft to the \c currentFlight
-     * as well.
-     *
-     * \param currentFlight
-     *        the current flight in memory
-     * \return \c true upon success; \c false else (parsing error, no data
-     *         imported)
-     */
-    virtual bool importFlights(Flight &currentFlight) noexcept = 0;
+    SdLogLocationImportSettings() noexcept;
+    SdLogLocationImportSettings(const SdLogLocationImportSettings &rhs) = delete;
+    SdLogLocationImportSettings(SdLogLocationImportSettings &&rhs) = delete;
+    SdLogLocationImportSettings &operator=(const SdLogLocationImportSettings &rhs) = delete;
+    SdLogLocationImportSettings &operator=(SdLogLocationImportSettings &&rhs) = delete;
+    ~SdLogLocationImportSettings() override;
+
+protected:
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
+
+private:
+    const std::unique_ptr<SdLogLocationImportSettingsPrivate> d;
 };
 
-#define FLIGHT_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightImportInterface/1.0"
-Q_DECLARE_INTERFACE(FlightImportIntf, FLIGHT_IMPORT_INTERFACE_IID)
-
-#endif // FLIGHTIMPORTINTF_H
+#endif // SDLOGLOCATIONIMPORTSETTINGS_H

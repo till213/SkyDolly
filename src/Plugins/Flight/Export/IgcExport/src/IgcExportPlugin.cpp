@@ -122,7 +122,7 @@ struct IgcExportPluginPrivate
     static inline const QByteArray KRecord {"K"};
     static inline const QByteArray GRecord {"G"};
 
-    static inline const QString FileExtension {QStringLiteral("igc")};
+    static inline const QString FileExtension {"igc"};
 };
 
 // PUBLIC
