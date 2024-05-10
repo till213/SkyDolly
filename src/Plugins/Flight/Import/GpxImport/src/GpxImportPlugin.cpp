@@ -57,7 +57,7 @@ struct GpxImportPluginPrivate
     QXmlStreamReader xml;    
     std::unique_ptr<GpxParser> parser;
 
-    static inline const QString FileExtension {QStringLiteral("gpx")};
+    static inline const QString FileExtension {"gpx"};
 };
 
 // PUBLIC

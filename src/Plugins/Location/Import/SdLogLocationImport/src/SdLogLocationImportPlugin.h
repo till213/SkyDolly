@@ -25,10 +25,44 @@
 #ifndef SDLOGLOCATIONIMPORTPLUGIN_H
 #define SDLOGLOCATIONIMPORTPLUGIN_H
 
-class SdLogLocationImportPlugin
+#include <memory>
+#include <vector>
+
+#include <QtPlugin>
+#include <QString>
+
+class QFile;
+class QWidget;
+
+#include <PluginManager/Location/LocationImportIntf.h>
+#include <PluginManager/Location/LocationImportPluginBase.h>
+
+class Location;
+class LocationImportPluginBaseSettings;
+struct SdLogLocationImportPluginPrivate;
+
+class SdLogLocationImportPlugin : public LocationImportPluginBase
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID LOCATION_IMPORT_INTERFACE_IID FILE "SdLogLocationImportPlugin.json")
+    Q_INTERFACES(LocationImportIntf)
 public:
-    SdLogLocationImportPlugin();
+    SdLogLocationImportPlugin() noexcept;
+    SdLogLocationImportPlugin(const SdLogLocationImportPlugin &rhs) = delete;
+    SdLogLocationImportPlugin(SdLogLocationImportPlugin &&rhs) = delete;
+    SdLogLocationImportPlugin &operator=(const SdLogLocationImportPlugin &rhs) = delete;
+    SdLogLocationImportPlugin &operator=(SdLogLocationImportPlugin &&rhs) = delete;
+    ~SdLogLocationImportPlugin() override;
+
+protected:
+    LocationImportPluginBaseSettings &getPluginSettings() const noexcept override;
+    QString getFileExtension() const noexcept override;
+    QString getFileFilter() const noexcept override;
+    std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    std::vector<Location> importLocations(QFile &file, bool *ok = nullptr) noexcept override;
+
+private:
+    const std::unique_ptr<SdLogLocationImportPluginPrivate> d;
 };
 
 #endif // SDLOGLOCATIONIMPORTPLUGIN_H

@@ -51,7 +51,7 @@ struct KmlImportPluginPrivate
     KmlImportSettings pluginSettings;
     QDateTime firstDateTimeUtc;
 
-    static inline const QString FileExtension {QStringLiteral("kml")};
+    static inline const QString FileExtension {"kml"};
 };
 
 // PUBLIC

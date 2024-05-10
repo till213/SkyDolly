@@ -69,7 +69,7 @@ struct KmlExportPluginPrivate
     Unit unit;
     std::unordered_map<QString, int> aircraftTypeCount;
 
-    static inline const QString FileExtension {QStringLiteral("kml")};
+    static inline const QString FileExtension {"kml"};
 };
 
 // PUBLIC

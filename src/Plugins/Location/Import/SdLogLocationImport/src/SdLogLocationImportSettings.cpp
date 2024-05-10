@@ -22,6 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
+#include <memory>
+
+#include <QString>
+
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <PluginManager/Location/LocationImportPluginBaseSettings.h>
 #include "SdLogLocationImportSettings.h"
 
-SdLogLocationImportSettings::SdLogLocationImportSettings() {}
+struct SdLogLocationImportSettingsPrivate
+{};
+
+// PUBLIC
+
+SdLogLocationImportSettings::SdLogLocationImportSettings() noexcept
+    : LocationImportPluginBaseSettings(),
+    d(std::make_unique<SdLogLocationImportSettingsPrivate>())
+{}
+
+SdLogLocationImportSettings::~SdLogLocationImportSettings() = default;
+
+// PROTECTED
+
+void SdLogLocationImportSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
+{}
+
+void SdLogLocationImportSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{}
+
+void SdLogLocationImportSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
+{}
+
+void SdLogLocationImportSettings::restoreDefaultsExtn() noexcept
+{}

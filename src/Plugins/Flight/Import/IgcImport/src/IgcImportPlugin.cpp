@@ -83,7 +83,7 @@ struct IgcImportPluginPrivate
     IgcImportSettings pluginSettings;
     QEasingCurve throttleResponseCurve {QEasingCurve::OutExpo};
 
-    static inline const QString FileExtension {QStringLiteral("igc")};
+    static inline const QString FileExtension {"igc"};
 };
 
 // PUBLIC

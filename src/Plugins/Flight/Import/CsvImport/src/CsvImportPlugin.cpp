@@ -42,7 +42,7 @@
 struct CsvImportPluginPrivate
 {
     CsvImportSettings pluginSettings;
-    static inline const QString FileExtension {QStringLiteral("csv")};
+    static inline const QString FileExtension {"csv"};
 };
 
 // PUBLIC

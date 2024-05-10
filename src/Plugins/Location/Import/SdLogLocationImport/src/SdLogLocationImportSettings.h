@@ -25,10 +25,34 @@
 #ifndef SDLOGLOCATIONIMPORTSETTINGS_H
 #define SDLOGLOCATIONIMPORTSETTINGS_H
 
-class SdLogLocationImportSettings
+#include <memory>
+
+#include <QObject>
+
+#include <Kernel/Settings.h>
+#include <PluginManager/Location/LocationImportPluginBaseSettings.h>
+
+struct SdLogLocationImportSettingsPrivate;
+
+class SdLogLocationImportSettings : public LocationImportPluginBaseSettings
 {
+    Q_OBJECT
 public:
-    SdLogLocationImportSettings();
+    SdLogLocationImportSettings() noexcept;
+    SdLogLocationImportSettings(const SdLogLocationImportSettings &rhs) = delete;
+    SdLogLocationImportSettings(SdLogLocationImportSettings &&rhs) = delete;
+    SdLogLocationImportSettings &operator=(const SdLogLocationImportSettings &rhs) = delete;
+    SdLogLocationImportSettings &operator=(SdLogLocationImportSettings &&rhs) = delete;
+    ~SdLogLocationImportSettings() override;
+
+protected:
+    void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    void restoreDefaultsExtn() noexcept override;
+
+private:
+    const std::unique_ptr<SdLogLocationImportSettingsPrivate> d;
 };
 
 #endif // SDLOGLOCATIONIMPORTSETTINGS_H
