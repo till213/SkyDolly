@@ -62,7 +62,7 @@ public:
     ~DatabaseService();
 
     bool connect(const QString &logbookPath) noexcept;
-    bool connectAndMigrate(const QString &logbookPath) noexcept;
+    bool connectAndMigrate(const QString &logbookPath, Migration::Milestones milestones = Migration::Milestone::All) noexcept;
     void disconnect(Connection::Default connection) noexcept;
 
     std::pair<bool, Version> checkDatabaseVersion() const noexcept;

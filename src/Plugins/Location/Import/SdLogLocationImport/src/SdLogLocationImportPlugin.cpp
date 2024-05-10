@@ -47,8 +47,7 @@ struct SdLogLocationImportPluginPrivate
 
     std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>(Const::ImportConnectionName)};
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ImportConnectionName)};
-    std::unique_ptr<LocationService> importFlightService {std::make_unique<LocationService>(Const::ImportConnectionName)};
-    std::unique_ptr<LocationService> applicationFlightService {std::make_unique<LocationService>(Const::DefaultConnectionName)};
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>(Const::ImportConnectionName)};
 
     static inline const QString FileExtension {Const::LogbookExtension};
 };
@@ -93,20 +92,9 @@ std::vector<Location> SdLogLocationImportPlugin::importLocations(QIODevice &io, 
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
         const QFileInfo fileInfo {*file};
-        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath());
+        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath(), Migration::Milestone::Schema);
         if (ok) {
-            // const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
-            // // We expect at least one flight to be imported (note that zero flights in a logbook
-            // // is a valid state, so the logbook service would return ok = true)
-            // ok = flightIds.size() > 0;
-            // if (ok) {
-            //     flights.reserve(flightIds.size());
-            //     for (const auto flightId : flightIds) {
-            //         FlightData flightData;
-            //         ok = d->importFlightService->importFlightData(flightId, flightData);
-            //         flights.push_back(std::move(flightData));
-            //     }
-            // }
+            locations = d->locationService->getAll(&ok);
         }
     }
 
