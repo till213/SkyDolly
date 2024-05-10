@@ -141,6 +141,9 @@ void BasicFlightExportDialog::initBasicUi() noexcept
         ui->resamplingComboBox->addItem(QStringLiteral("10 Hz (larger file size, greater accuracy"), Enum::underly(SampleRate::ResamplingPeriod::TenHz));
     }
     ui->resamplingComboBox->addItem(tr("Original data (no resampling)"), Enum::underly(SampleRate::ResamplingPeriod::Original));
+    ui->resamplingComboBox->setToolTip(tr("Defines the rate at which the data will be resampled for the export. The file size is either reduced or increased."));
+
+    ui->openExportCheckBox->setToolTip(tr("Open the exported file with the default application registered with this file type."));
 }
 
 void BasicFlightExportDialog::initOptionUi() noexcept

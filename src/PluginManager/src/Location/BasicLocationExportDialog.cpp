@@ -114,6 +114,8 @@ void BasicLocationExportDialog::initUi() noexcept
 void BasicLocationExportDialog::initBasicUi() noexcept
 {
     ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestLocationFilePath(d->fileExtension)));
+    ui->openExportCheckBox->setToolTip(tr("Open the exported file with the default application registered with this file type."));
+    ui->exportSystemLocationsCheckBox->setToolTip(tr("Also export the system (default) locations."));
 }
 
 void BasicLocationExportDialog::initOptionUi() noexcept
