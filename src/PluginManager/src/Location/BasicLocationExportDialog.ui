@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>553</width>
-    <height>168</height>
+    <width>533</width>
+    <height>179</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -63,11 +63,22 @@
     </spacer>
    </item>
    <item>
-    <widget class="QCheckBox" name="openExportCheckBox">
-     <property name="text">
-      <string>Open exported file(s)</string>
-     </property>
-    </widget>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="exportSystemLocationsCheckBox">
+       <property name="text">
+        <string>Export system locations</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="openExportCheckBox">
+       <property name="text">
+        <string>Open exported file(s)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="defaultButtonBox">

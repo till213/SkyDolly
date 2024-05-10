@@ -26,7 +26,6 @@
 #define PERSISTENCEMANAGER_H
 
 #include <memory>
-#include <utility>
 
 #include <QObject>
 

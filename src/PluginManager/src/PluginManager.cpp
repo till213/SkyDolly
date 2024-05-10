@@ -236,9 +236,7 @@ bool PluginManager::exportLocations(const QUuid &pluginUuid) const noexcept
         if (exportPlugin != nullptr) {
             exportPlugin->setParentWidget(d->parentWidget);
             exportPlugin->restoreSettings(pluginUuid);
-            if (ok) {
-                ok = exportPlugin->exportLocations();
-            }
+            ok = exportPlugin->exportLocations();
             exportPlugin->storeSettings(pluginUuid);
         }
         loader.unload();

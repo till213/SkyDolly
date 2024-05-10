@@ -38,10 +38,21 @@
 struct PERSISTENCE_API LocationSelector
 {
     using TypeSelection = std::unordered_set<std::int64_t>;
-    TypeSelection typeSelection;
+    TypeSelection typeSelection {};
     std::int64_t categoryId {Const::InvalidId};
     std::int64_t countryId {Const::InvalidId};
     QString searchKeyword;
+
+    LocationSelector(TypeSelection selection)
+        : typeSelection(std::move(selection))
+    {}
+
+    LocationSelector() = default;
+    LocationSelector(const LocationSelector &rhs) = delete;
+    LocationSelector(LocationSelector &&rhs) = default;
+    LocationSelector &operator=(const LocationSelector &rhs) = delete;
+    LocationSelector &operator=(LocationSelector &&rhs) = default;
+    ~LocationSelector() = default;
 
     inline bool hasSelectors() const noexcept
     {

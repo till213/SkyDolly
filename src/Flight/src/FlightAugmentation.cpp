@@ -59,8 +59,8 @@ namespace {
 
 struct FlightAugmentationPrivate
 {
-    FlightAugmentationPrivate(FlightAugmentation::Procedures theProcedures, FlightAugmentation::Aspects theAspects)
-        : procedures(theProcedures),
+    FlightAugmentationPrivate(FlightAugmentation::Procedures procedures, FlightAugmentation::Aspects theAspects)
+        : procedures(procedures),
           aspects(theAspects)
     {}
 
