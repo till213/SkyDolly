@@ -33,6 +33,7 @@
 #include <QDir>
 #include <QString>
 #include <QStringList>
+#include <QStringLiteral>
 #include <QUuid>
 #ifdef DEBUG
 #include <QDebug>
@@ -40,8 +41,6 @@
 
 #include <Kernel/File.h>
 #include <Model/Flight.h>
-#include <Persistence/Service/FlightService.h>
-#include <Persistence/Service/LocationService.h>
 #include <Flight/FlightImportIntf.h>
 #include <Flight/FlightExportIntf.h>
 #include <Location/LocationImportIntf.h>
@@ -66,9 +65,12 @@ struct PluginManagerPrivate
     }
 
     ~PluginManagerPrivate() = default;
+    PluginManagerPrivate(const PluginManagerPrivate &rhs) = delete;
+    PluginManagerPrivate(PluginManagerPrivate &&rhs) = delete;
+    PluginManagerPrivate &operator=(const PluginManagerPrivate &rhs) = delete;
+    PluginManagerPrivate &operator=(PluginManagerPrivate &&rhs) = delete;
 
     QWidget *parentWidget {nullptr};
-    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
     QDir pluginsDirectory;
     // Key: uuid - value: plugin path
     PluginManager::PluginRegistry flightImportPluginRegistry;
@@ -234,10 +236,7 @@ bool PluginManager::exportLocations(const QUuid &pluginUuid) const noexcept
         if (exportPlugin != nullptr) {
             exportPlugin->setParentWidget(d->parentWidget);
             exportPlugin->restoreSettings(pluginUuid);
-            std::vector<Location> locations = d->locationService->getAll(&ok);
-            if (ok) {
-                ok = exportPlugin->exportLocations(locations);
-            }
+            ok = exportPlugin->exportLocations();
             exportPlugin->storeSettings(pluginUuid);
         }
         loader.unload();

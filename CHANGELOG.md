@@ -3,8 +3,13 @@
 ## 0.18.0
 
 ## New Features
+- New location export plugin
+  * Sky Dolly logbook (*.sdlog) export
 
 ## Improvements
+- A new *Export system locations* option has been added to the location export
+  * When enabled then also the default locations as provided by Sky Dolly (*Sytem* locations) will be exported
+  * Otherwise only the *User* and *Import* locations will be exported
 
 ## Bug Fixes
 

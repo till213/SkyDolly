@@ -75,6 +75,21 @@ bool LocationService::store(Location &location) noexcept
     return ok;
 }
 
+bool LocationService::exportLocation(const Location &location) noexcept
+{
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
+    if (ok) {
+        ok = d->locationDao->exportLocation(location);
+        if (ok) {
+            ok = db.commit();
+        } else {
+            db.rollback();
+        }
+    }
+    return ok;
+}
+
 bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noexcept
 {
     static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
@@ -97,6 +112,25 @@ bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noex
             // Unconditional insert
             ok = d->locationDao->add(*it);
         }
+        ++it;
+    }
+    if (ok) {
+        ok = db.commit();
+    } else {
+        db.rollback();
+    }
+    return ok;
+}
+
+bool LocationService::exportAll(const std::vector<Location> &locations) noexcept
+{
+    static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
+    auto it = locations.begin();
+    while (it != locations.end() && ok) {
+        // Unconditional insert
+        ok = d->locationDao->exportLocation(*it);
         ++it;
     }
     if (ok) {

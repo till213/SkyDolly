@@ -25,7 +25,6 @@
 #include <memory>
 #include <algorithm>
 #include <cstdint>
-#include <utility>
 
 #include <Kernel/Convert.h>
 #include <Kernel/SkyMath.h>
@@ -60,8 +59,8 @@ namespace {
 
 struct FlightAugmentationPrivate
 {
-    FlightAugmentationPrivate(FlightAugmentation::Procedures theProcedures, FlightAugmentation::Aspects theAspects)
-        : procedures(theProcedures),
+    FlightAugmentationPrivate(FlightAugmentation::Procedures procedures, FlightAugmentation::Aspects theAspects)
+        : procedures(procedures),
           aspects(theAspects)
     {}
 
@@ -124,9 +123,9 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
             PositionData &startPositionData = position[i];
             const PositionData &endPositionData = position[i + 1];
             const SkyMath::Coordinate startPosition(startPositionData.latitude, startPositionData.longitude);
-            const std::int64_t startTimestamp = startPositionData.timestamp;
-            const SkyMath::Coordinate endPosition(endPositionData.latitude, endPositionData.longitude);
-            const std::int64_t endTimestamp = endPositionData.timestamp;
+            const auto startTimestamp = startPositionData.timestamp;
+            const SkyMath::Coordinate endPosition {endPositionData.latitude, endPositionData.longitude};
+            const auto endTimestamp = endPositionData.timestamp;
 
             const auto [distance, speed] = SkyMath::distanceAndSpeed(startPosition, startTimestamp, endPosition, endTimestamp);
             // Velocity
@@ -244,7 +243,7 @@ void FlightAugmentation::augmentProcedures(Aircraft &aircraft) noexcept
 
 void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
 {
-    const std::int64_t lastTimestamp = aircraft.getPosition().getLast().timestamp;
+    const auto lastTimestamp = aircraft.getPosition().getLast().timestamp;
 
     if (d->aspects.testFlag(Aspect::Engine)) {
 
@@ -428,7 +427,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
 void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
 {
     Position &position = aircraft.getPosition();
-    const std::int64_t lastTimestamp = position.getLast().timestamp;
+    const auto lastTimestamp = position.getLast().timestamp;
 
     // Engine
     if (d->aspects.testFlag(Aspect::Engine)) {

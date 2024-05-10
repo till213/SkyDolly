@@ -61,7 +61,20 @@ public:
     ~LocationService();
 
     bool store(Location &location) noexcept;
+    bool exportLocation(const Location &location) noexcept;
     bool storeAll(std::vector<Location> &locations, Mode mode) noexcept;
+
+    /*!
+     * Exports the \c locations, but does not emit any signal. The \c id of the locations is
+     * left unchanged (possibly still Const#InvalidId).
+     *
+     * \param locations
+     *        the locations that will be exported, typically into another logbook
+     * \return \c true upon success; \c false else
+     * \sa storeAll
+     */
+    bool exportAll(const std::vector<Location> &locations) noexcept;
+
     bool update(const Location &location) noexcept;
     bool deleteById(std::int64_t id) noexcept;
     std::vector<Location> getAll(bool *ok = nullptr) const noexcept;

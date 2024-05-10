@@ -48,6 +48,7 @@ public:
     ~SQLiteLocationDao() override;
 
     bool add(Location &location) const noexcept override;
+    bool exportLocation(const Location &location) const noexcept override;
     bool update(const Location &location) const noexcept override;
     std::vector<Location> getByPosition(double latitude, double longitude, double distance = 0.0, bool *ok = nullptr) const noexcept override;
     bool deleteById(std::int64_t id) const noexcept override;
@@ -58,6 +59,7 @@ private:
     std::unique_ptr<SQLiteLocationDaoPrivate> d;
 
     inline std::vector<Location> executeGetLocationQuery(QSqlQuery &query, bool *ok = nullptr) const noexcept;
+    std::int64_t insert(const Location &location) const noexcept;
 };
 
 #endif // SQLITELOCATIONDAO_H

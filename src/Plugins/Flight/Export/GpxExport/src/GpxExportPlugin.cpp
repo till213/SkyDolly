@@ -204,7 +204,7 @@ bool GpxExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice &
         }
         if (ok) {
             const QString placemarkEnd = QStringLiteral("    </trkseg>\n"
-                                                             "  </trk>\n");
+                                                        "  </trk>\n");
             ok = io.write(placemarkEnd.toUtf8());
         }
 

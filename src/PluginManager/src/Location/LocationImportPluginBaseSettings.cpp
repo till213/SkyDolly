@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <string_view>
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -85,11 +84,11 @@ void LocationImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValue
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::ImportDirectoryEnabledKey);
+    keyValue.first = ::ImportDirectoryEnabledKey;
     keyValue.second = d->importDirectoryEnabled;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::ImportModeKey);
+    keyValue.first = ::ImportModeKey;
     keyValue.second = Enum::underly(d->importMode);
     keyValues.push_back(keyValue);
 
@@ -100,11 +99,11 @@ void LocationImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::ImportDirectoryEnabledKey);
+    keyValue.first = ::ImportDirectoryEnabledKey;
     keyValue.second = ::DefaultImportDirectoryEnabled;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::ImportModeKey);
+    keyValue.first = ::ImportModeKey;
     keyValue.second = Enum::underly(::DefaultImportMode);
     keysWithDefaults.push_back(keyValue);
 
@@ -113,10 +112,10 @@ void LocationImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 
 void LocationImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->importDirectoryEnabled = valuesByKey.at(QString::fromLatin1(::ImportDirectoryEnabledKey)).toBool();
+    d->importDirectoryEnabled = valuesByKey.at(::ImportDirectoryEnabledKey).toBool();
 
     bool ok {true};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::ImportModeKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::ImportModeKey).toInt(&ok);
     d->importMode = ok && Enum::contains<LocationService::Mode>(enumValue) ? static_cast<LocationService::Mode>(enumValue) : ::DefaultImportMode;
 
     restoreSettingsExtn(valuesByKey);

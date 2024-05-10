@@ -433,15 +433,13 @@ inline std::int64_t SQLiteAircraftDao::insertAircraft(std::int64_t flightId, std
     }
     if (ok) {
         aircraftId = query.lastInsertId().toLongLong(&ok);
-#ifdef DEBUG
     } else {
+        aircraftId = Const::InvalidId;
+#ifdef DEBUG
         qDebug() << "SQLiteAircraftDao::insertAircraft: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode() << "- flight ID" << flightId << "- sequence number" << sequenceNumber;
 #endif
     }
 
-    if (!ok) {
-        aircraftId = Const::InvalidId;
-    }
     return aircraftId;
 }
 

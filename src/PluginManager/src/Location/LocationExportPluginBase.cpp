@@ -41,7 +41,10 @@
 
 #include <Kernel/File.h>
 #include <Persistence/Service/LocationService.h>
+#include <Persistence/Service/EnumerationService.h>
 #include <Persistence/PersistenceManager.h>
+#include <Persistence/PersistedEnumerationItem.h>
+#include <Persistence/LocationSelector.h>
 #include <Location/BasicLocationExportDialog.h>
 #include <Location/LocationExportPluginBaseSettings.h>
 #include <Location/LocationExportPluginBase.h>
@@ -49,6 +52,10 @@
 struct LocationExportPluginBasePrivate
 {
     QFile file;
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
+
+    const std::int64_t UserLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
+    const std::int64_t ImportLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
 };
 
 // PUBLIC
@@ -59,7 +66,7 @@ LocationExportPluginBase::LocationExportPluginBase() noexcept
 
 LocationExportPluginBase::~LocationExportPluginBase() = default;
 
-bool LocationExportPluginBase::exportLocations(const std::vector<Location> &locations) const noexcept
+bool LocationExportPluginBase::exportLocations() const noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     LocationExportPluginBaseSettings &baseSettings = getPluginSettings();
@@ -76,6 +83,10 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
             const QFileInfo fileInfo {filePath};
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
+
+            const auto locations = baseSettings.isExportSystemLocationsEnabled() ?
+                d->locationService->getAll(&ok) :
+                d->locationService->getSelectedLocations(LocationSelector({d->UserLocationTypeId, d->ImportLocationTypeId}));
 
             if (exportDialog->isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportLocations(locations, filePath);

@@ -22,28 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOCATIONEXPORTINTF_H
-#define LOCATIONEXPORTINTF_H
 
-#include <QtPlugin>
+#include <memory>
 
-#include "../PluginIntf.h"
-#include "../DialogPluginIntf.h"
+#include <QString>
 
-class Location;
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <PluginManager/Location/LocationExportPluginBaseSettings.h>
+#include "SdLogLocationExportSettings.h"
 
-class LocationExportIntf : public DialogPluginIntf, public PluginIntf
-{
-public:
-    /*!
-     * Exports all or the selected locations, according to the specific plugin location selection criteria.
-     *
-     * \return \c true when successful; \c false else
-     */
-    virtual bool exportLocations() const noexcept = 0;
-};
+struct SdLogLocationExportSettingsPrivate
+{};
 
-#define LOCATION_EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationExportInterface/1.0"
-Q_DECLARE_INTERFACE(LocationExportIntf, LOCATION_EXPORT_INTERFACE_IID)
+// PUBLIC
 
-#endif // LOCATIONEXPORTINTF_H
+SdLogLocationExportSettings::SdLogLocationExportSettings() noexcept
+    : LocationExportPluginBaseSettings(),
+    d(std::make_unique<SdLogLocationExportSettingsPrivate>())
+{}
+
+SdLogLocationExportSettings::~SdLogLocationExportSettings() = default;
+
+// PROTECTED
+
+void SdLogLocationExportSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
+{}
+
+void SdLogLocationExportSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{}
+
+void SdLogLocationExportSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
+{}
+
+void SdLogLocationExportSettings::restoreDefaultsExtn() noexcept
+{}
