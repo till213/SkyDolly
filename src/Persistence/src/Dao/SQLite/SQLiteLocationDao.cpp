@@ -72,79 +72,19 @@ SQLiteLocationDao::~SQLiteLocationDao() = default;
 
 bool SQLiteLocationDao::add(Location &location) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
-    QSqlQuery query {db};
-    query.prepare(QStringLiteral(
-        "insert into location ("
-        "  title,"
-        "  description,"
-        "  type_id,"
-        "  category_id,"
-        "  country_id,"
-        "  identifier,"
-        "  latitude,"
-        "  longitude,"
-        "  altitude,"
-        "  pitch,"
-        "  bank,"
-        "  true_heading,"
-        "  indicated_airspeed,"
-        "  on_ground,"
-        "  attributes,"
-        "  engine_event"
-        ") values ("
-        "  :title,"
-        "  :description,"
-        "  :type_id,"
-        "  :category_id,"
-        "  :country_id,"
-        "  :identifier,"
-        "  :latitude,"
-        "  :longitude,"
-        "  :altitude,"
-        "  :pitch,"
-        "  :bank,"
-        "  :true_heading,"
-        "  :indicated_airspeed,"
-        "  :on_ground,"
-        "  :attributes,"
-        "  :engine_event"
-        ");"
-    ));
-
-    query.bindValue(QStringLiteral(":title"), location.title);
-    query.bindValue(QStringLiteral(":description"), location.description);
-    query.bindValue(QStringLiteral(":type_id"), QVariant::fromValue(location.typeId));
-    query.bindValue(QStringLiteral(":category_id"), QVariant::fromValue(location.categoryId));
-    query.bindValue(QStringLiteral(":country_id"), QVariant::fromValue(location.countryId));
-    query.bindValue(QStringLiteral(":identifier"), location.identifier);
-    query.bindValue(QStringLiteral(":latitude"), location.latitude);
-    query.bindValue(QStringLiteral(":longitude"), location.longitude);
-    query.bindValue(QStringLiteral(":altitude"), location.altitude);
-    query.bindValue(QStringLiteral(":pitch"), location.pitch);
-    query.bindValue(QStringLiteral(":bank"), location.bank);
-    query.bindValue(QStringLiteral(":true_heading"), location.trueHeading);
-    query.bindValue(QStringLiteral(":indicated_airspeed"), location.indicatedAirspeed);
-    query.bindValue(QStringLiteral(":on_ground"), location.onGround);
-    query.bindValue(QStringLiteral(":attributes"), QVariant::fromValue(location.attributes));
-    query.bindValue(QStringLiteral(":engine_event"), QVariant::fromValue(location.engineEventId));
-
-    const bool ok = query.exec();
-    if (ok) {
-        location.id = query.lastInsertId().toLongLong();
-#ifdef DEBUG
-    } else {
-        qDebug() << "SQLiteLocationDao::add: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
-#endif
+    bool ok {false};
+    const auto locationId = insert(location);
+    if (locationId != Const::InvalidId) {
+        location.id = locationId;
+        ok = true;
     }
-
     return ok;
 }
 
 bool SQLiteLocationDao::exportLocation(const Location &location) const noexcept
 {
-    // TODO IMPLEMENT ME!!!
-    return true;
+    const auto locationId = insert(location);
+    return locationId != Const::InvalidId;
 }
 
 bool SQLiteLocationDao::update(const Location &location) const noexcept
@@ -434,4 +374,77 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
         *ok = success;
     }
     return locations;
+}
+
+std::int64_t SQLiteLocationDao::insert(const Location &location) const noexcept
+{
+    auto locationId {Const::InvalidId};
+    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    QSqlQuery query {db};
+    query.prepare(QStringLiteral(
+        "insert into location ("
+        "  title,"
+        "  description,"
+        "  type_id,"
+        "  category_id,"
+        "  country_id,"
+        "  identifier,"
+        "  latitude,"
+        "  longitude,"
+        "  altitude,"
+        "  pitch,"
+        "  bank,"
+        "  true_heading,"
+        "  indicated_airspeed,"
+        "  on_ground,"
+        "  attributes,"
+        "  engine_event"
+        ") values ("
+        "  :title,"
+        "  :description,"
+        "  :type_id,"
+        "  :category_id,"
+        "  :country_id,"
+        "  :identifier,"
+        "  :latitude,"
+        "  :longitude,"
+        "  :altitude,"
+        "  :pitch,"
+        "  :bank,"
+        "  :true_heading,"
+        "  :indicated_airspeed,"
+        "  :on_ground,"
+        "  :attributes,"
+        "  :engine_event"
+        ");"
+        ));
+
+    query.bindValue(QStringLiteral(":title"), location.title);
+    query.bindValue(QStringLiteral(":description"), location.description);
+    query.bindValue(QStringLiteral(":type_id"), QVariant::fromValue(location.typeId));
+    query.bindValue(QStringLiteral(":category_id"), QVariant::fromValue(location.categoryId));
+    query.bindValue(QStringLiteral(":country_id"), QVariant::fromValue(location.countryId));
+    query.bindValue(QStringLiteral(":identifier"), location.identifier);
+    query.bindValue(QStringLiteral(":latitude"), location.latitude);
+    query.bindValue(QStringLiteral(":longitude"), location.longitude);
+    query.bindValue(QStringLiteral(":altitude"), location.altitude);
+    query.bindValue(QStringLiteral(":pitch"), location.pitch);
+    query.bindValue(QStringLiteral(":bank"), location.bank);
+    query.bindValue(QStringLiteral(":true_heading"), location.trueHeading);
+    query.bindValue(QStringLiteral(":indicated_airspeed"), location.indicatedAirspeed);
+    query.bindValue(QStringLiteral(":on_ground"), location.onGround);
+    query.bindValue(QStringLiteral(":attributes"), QVariant::fromValue(location.attributes));
+    query.bindValue(QStringLiteral(":engine_event"), QVariant::fromValue(location.engineEventId));
+
+    const bool ok = query.exec();
+    if (ok) {
+        locationId = query.lastInsertId().toLongLong();
+    } else {
+        locationId = Const::InvalidId;
+#ifdef DEBUG
+        qDebug() << "SQLiteLocationDao::insert: SQL error:" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+#endif
+    }
+
+    return locationId;
 }
