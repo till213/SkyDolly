@@ -42,6 +42,7 @@ public:
     virtual ~LocationDaoIntf() = default;
 
     virtual bool add(Location &location) const noexcept = 0;
+    virtual bool exportLocation(const Location &location) const noexcept = 0;
     virtual bool update(const Location &location) const noexcept = 0;
 
     /*!

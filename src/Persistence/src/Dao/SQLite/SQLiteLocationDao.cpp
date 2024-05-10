@@ -141,6 +141,12 @@ bool SQLiteLocationDao::add(Location &location) const noexcept
     return ok;
 }
 
+bool SQLiteLocationDao::exportLocation(const Location &location) const noexcept
+{
+    // TODO IMPLEMENT ME!!!
+    return true;
+}
+
 bool SQLiteLocationDao::update(const Location &location) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};

@@ -45,7 +45,7 @@
 struct SdLogLocationExportPluginPrivate
 {
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ExportConnectionName)};
-    //std::unique_ptr<LocationService> LocationService {std::make_unique<LocationService>(Const::ExportConnectionName)};
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>(Const::ExportConnectionName)};
     SdLogLocationExportSettings pluginSettings;
 
     static inline const QString FileExtension {Const::LogbookExtension};
@@ -85,20 +85,19 @@ std::unique_ptr<QWidget> SdLogLocationExportPlugin::createOptionWidget() const n
 bool SdLogLocationExportPlugin::exportLocations(const std::vector<Location> &locations, QIODevice &io) const noexcept
 {
     bool ok {true};
-    // TODO IMPLEMENT ME!
-    // auto *file = qobject_cast<QFile *>(&io);
-    // if (file != nullptr) {
-    //     const QFileInfo fileInfo {*file};
-    //     ok = d->databaseService->connect(fileInfo.absoluteFilePath());
-    //     if (ok) {
-    //         d->databaseService->migrate(Migration::Milestone::Schema);
-    //     }
-    //     if (ok) {
-    //         ok = d->LocationService->exportLocationData(LocationData);
-    //     }
-    // } else {
-    //     // We only support file-based SQLite databases
-    //     ok = false;
-    // }
+    auto *file = qobject_cast<QFile *>(&io);
+    if (file != nullptr) {
+        const QFileInfo fileInfo {*file};
+        ok = d->databaseService->connect(fileInfo.absoluteFilePath());
+        if (ok) {
+            d->databaseService->migrate(Migration::Milestone::Schema);
+        }
+        if (ok) {
+            ok = d->locationService->exportAll(locations);
+        }
+    } else {
+        // We only support file-based SQLite databases
+        ok = false;
+    }
     return ok;
 }

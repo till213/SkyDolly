@@ -1077,7 +1077,6 @@ QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
     QRadioButton *button {nullptr};
     const Formation::Bearing bearing = d->moduleSettings.getBearing();
 
-    using enum Formation::Bearing;
     switch (bearing) {
     case North:
         button = ui->nPositionRadioButton;
