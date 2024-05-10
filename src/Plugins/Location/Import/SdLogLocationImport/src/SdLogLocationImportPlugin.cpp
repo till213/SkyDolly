@@ -30,15 +30,26 @@
 #include <QStringLiteral>
 #include <QStringConverter>
 #include <QWidget>
+#include <QIODevice>
+#include <QFile>
 
 #include <Kernel/Const.h>
 #include <Model/Location.h>
+#include <Persistence/Service/LogbookService.h>
+#include <Persistence/Service/DatabaseService.h>
+#include <Persistence/Service/LocationService.h>
 #include "SdLogLocationImportSettings.h"
 #include "SdLogLocationImportPlugin.h"
 
 struct SdLogLocationImportPluginPrivate
 {
     SdLogLocationImportSettings pluginSettings;
+
+    std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>(Const::ImportConnectionName)};
+    std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ImportConnectionName)};
+    std::unique_ptr<LocationService> importFlightService {std::make_unique<LocationService>(Const::ImportConnectionName)};
+    std::unique_ptr<LocationService> applicationFlightService {std::make_unique<LocationService>(Const::DefaultConnectionName)};
+
     static inline const QString FileExtension {Const::LogbookExtension};
 };
 
@@ -72,12 +83,32 @@ std::unique_ptr<QWidget> SdLogLocationImportPlugin::createOptionWidget() const n
     return nullptr;
 }
 
-std::vector<Location> SdLogLocationImportPlugin::importLocations(QFile &file, bool *ok) noexcept
+std::vector<Location> SdLogLocationImportPlugin::importLocations(QIODevice &io, bool &ok) noexcept
 {
     std::vector<Location> locations;
     std::unique_ptr<LocationService> locationService;
 
-    // TODO IMPLEMENT ME
+    ok = false;
+    // Only file-based SQLite databases supported
+    auto *file = qobject_cast<QFile *>(&io);
+    if (file != nullptr) {
+        const QFileInfo fileInfo {*file};
+        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath());
+        if (ok) {
+            // const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
+            // // We expect at least one flight to be imported (note that zero flights in a logbook
+            // // is a valid state, so the logbook service would return ok = true)
+            // ok = flightIds.size() > 0;
+            // if (ok) {
+            //     flights.reserve(flightIds.size());
+            //     for (const auto flightId : flightIds) {
+            //         FlightData flightData;
+            //         ok = d->importFlightService->importFlightData(flightId, flightData);
+            //         flights.push_back(std::move(flightData));
+            //     }
+            // }
+        }
+    }
 
     return locations;
 }

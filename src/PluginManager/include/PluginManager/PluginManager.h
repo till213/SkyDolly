@@ -69,7 +69,6 @@ public:
     std::vector<Handle> initialiseLocationExportPlugins() noexcept;
 
     bool importFlights(const QUuid &pluginUuid, Flight &flight) const noexcept;
-    std::vector<FlightData> importSelectedFlights(const QUuid &pluginUuid, QIODevice &io, bool &ok) const noexcept;
     bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;
     bool importLocations(const QUuid &pluginUuid) const noexcept;
     bool exportLocations(const QUuid &pluginUuid) const noexcept;

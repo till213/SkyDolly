@@ -31,7 +31,7 @@
 #include <QtPlugin>
 #include <QString>
 
-class QFile;
+class QIODevice;
 class QWidget;
 
 #include <PluginManager/Location/LocationImportIntf.h>
@@ -59,7 +59,7 @@ protected:
     QString getFileExtension() const noexcept override;
     QString getFileFilter() const noexcept override;
     std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    std::vector<Location> importLocations(QFile &file, bool *ok = nullptr) noexcept override;
+    std::vector<Location> importLocations(QIODevice &io, bool &ok) noexcept override;
 
 private:
     const std::unique_ptr<SdLogLocationImportPluginPrivate> d;

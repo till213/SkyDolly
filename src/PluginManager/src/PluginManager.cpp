@@ -168,25 +168,6 @@ bool PluginManager::importFlights(const QUuid &pluginUuid, Flight &flight) const
     return ok;
 }
 
-std::vector<FlightData> PluginManager::importSelectedFlights(const QUuid &pluginUuid, QIODevice &io, bool &ok) const noexcept
-{
-    std::vector<FlightData> flights;
-    if (d->flightImportPluginRegistry.contains(pluginUuid)) {
-        const QString pluginPath {d->flightImportPluginRegistry[pluginUuid]};
-        QPluginLoader loader {pluginPath};
-        QObject *plugin = loader.instance();
-        auto *importPlugin = qobject_cast<FlightImportIntf *>(plugin);
-        if (importPlugin != nullptr) {
-            importPlugin->setParentWidget(d->parentWidget);
-            importPlugin->restoreSettings(pluginUuid);
-            flights = importPlugin->importSelectedFlights(io, ok);
-            importPlugin->storeSettings(pluginUuid);
-        }
-        loader.unload();
-    }
-    return flights;
-}
-
 bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept
 {
     bool ok {false};
