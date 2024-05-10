@@ -551,7 +551,7 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
         setupRequestData();
     }
 #ifdef DEBUG
-    qDebug() << "MSFSSimConnectPlugin::connectWithSim: CONNECT with SIM, configuraiton index:" << configurationIndex << "handle:" << d->simConnectHandle << "success:" << (result == S_OK);
+    qDebug() << "MSFSSimConnectPlugin::connectWithSim: CONNECT with SIM, configuration index:" << configurationIndex << "handle:" << d->simConnectHandle << "success:" << (result == S_OK);
 #endif
     const bool ok = result == S_OK;
     if (ok) {
