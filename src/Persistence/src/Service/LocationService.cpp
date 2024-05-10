@@ -90,7 +90,7 @@ bool LocationService::exportLocation(const Location &location) noexcept
     return ok;
 }
 
-bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noexcept
+bool LocationService::storeAll(std::vector<Location> &locations, Mode mode, double distanceKm) noexcept
 {
     static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -98,7 +98,7 @@ bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noex
     auto it = locations.begin();
     while (it != locations.end() && ok) {
         if (mode != Mode::Insert) {
-            const std::vector<Location> neighbours = d->locationDao->getByPosition(it->latitude, it->longitude, 0.0, &ok);
+            const std::vector<Location> neighbours = d->locationDao->getByPosition(it->latitude, it->longitude, distanceKm, &ok);
             if (neighbours.size() == 0) {
                 ok = d->locationDao->add(*it);
             } else if (mode == Mode::Update) {                
