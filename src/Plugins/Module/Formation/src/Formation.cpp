@@ -49,7 +49,7 @@ InitialPosition Formation::calculateInitialRelativePositionToUserAircraft(Horizo
 
 std::pair<PositionData, AttitudeData> Formation::calculateRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing bearing, std::int64_t timestamp) noexcept
 {
-    PositionData initialPosition;
+    PositionData initialPositionData;
     AttitudeData attitudeData;
 
     const auto &flight = Logbook::getInstance().getCurrentFlight();
@@ -161,13 +161,15 @@ std::pair<PositionData, AttitudeData> Formation::calculateRelativePositionToUser
         }
         attitudeData = aircraft.getAttitude().interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
         bearingDegrees += attitudeData.trueHeading;
-        SkyMath::Coordinate initial = SkyMath::relativePosition(sourcePosition, bearingDegrees, Convert::feetToMeters(distance));
+        SkyMath::Coordinate coordinate = SkyMath::relativePosition(sourcePosition, bearingDegrees, Convert::feetToMeters(distance));
 
-        initialPosition.latitude = initial.first;
-        initialPosition.longitude = initial.second;
-        initialPosition.altitude = altitude;
+        initialPositionData.timestamp = positionData.timestamp;
+        initialPositionData.latitude = coordinate.first;
+        initialPositionData.longitude = coordinate.second;
+        initialPositionData.altitude = altitude;
+        initialPositionData.indicatedAltitude = altitude;
 
     } // position count > 0
 
-    return std::make_pair(initialPosition, attitudeData);
+    return std::make_pair(initialPositionData, attitudeData);
 }
