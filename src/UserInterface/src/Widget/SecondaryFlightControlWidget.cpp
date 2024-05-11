@@ -128,21 +128,19 @@ void SecondaryFlightControlWidget::initUi() noexcept
 
 SecondaryFlightControlData SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    SecondaryFlightControlData secondaryFlightControlData;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (skyConnect->get().getState() == Connect::State::Recording) {
-            if (aircraft.getSecondaryFlightControl().count() > 0) {
-                secondaryFlightControlData = aircraft.getSecondaryFlightControl().getLast();
-            }
-        } else {
-            if (timestamp != TimeVariableData::InvalidTime) {
-                secondaryFlightControlData = aircraft.getSecondaryFlightControl().interpolate(timestamp, access);
-            } else {
-                secondaryFlightControlData = aircraft.getSecondaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
-            }
-        };
-    }
-    return secondaryFlightControlData;
+    SecondaryFlightControlData data;
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &secondaryFlightControl = aircraft.getSecondaryFlightControl();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+
+    if (skyConnectManager.getState() == Connect::State::Recording) {
+        if (secondaryFlightControl.count() > 0) {
+            data = secondaryFlightControl.getLast();
+        }
+    } else {
+        const auto t = timestamp != TimeVariableData::InvalidTime ? timestamp : skyConnectManager.getCurrentTimestamp();
+        data = secondaryFlightControl.interpolate(t, access);
+    };
+
+    return data;
 }

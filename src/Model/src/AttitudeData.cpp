@@ -22,25 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "Data.h"
-#include "Location.h"
+#include "AttitudeData.h"
 
 // PUBLIC
 
-Location::Location(double latitude, double longitude, double altitude) noexcept
-    : Data(),
-      latitude(latitude),
-      longitude(longitude),
-      altitude(altitude)
-{}
-
-Location::Location(const InitialPosition &initialPosition) noexcept
-    : latitude(initialPosition.latitude),
-      longitude(initialPosition.longitude),
-      altitude(initialPosition.altitude),
-      pitch(initialPosition.pitch),
-      bank(initialPosition.bank),
-      trueHeading(initialPosition.trueHeading),
-      indicatedAirspeed(initialPosition.indicatedAirspeed),
-      onGround(initialPosition.onGround)
+AttitudeData::AttitudeData(double pitch, double bank, double trueHeading) noexcept
+    : TimeVariableData(),
+    pitch(pitch),
+    bank(bank),
+    trueHeading(trueHeading)
 {}

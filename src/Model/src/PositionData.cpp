@@ -22,15 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "SimType.h"
 #include "PositionData.h"
 
 // PUBLIC
 
-PositionData::PositionData(double theLatitude, double theLongitude, double theAltitdue) noexcept
+PositionData::PositionData(double latitude, double longitude, double altitude) noexcept
     : TimeVariableData(),
-      latitude(theLatitude),
-      longitude(theLongitude),
-      altitude(theAltitdue),
-      indicatedAltitude(theAltitdue)
+      latitude(latitude),
+      longitude(longitude),
+      altitude(altitude),
+      indicatedAltitude(altitude)
 {}

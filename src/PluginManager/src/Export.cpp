@@ -61,7 +61,7 @@ QString Export::suggestFlightFilePath(const Flight &flight, QStringView extensio
     const QString &title = flight.getTitle();
     if (title.isNull()) {
         if (flight.count() > 0) {
-            const Aircraft &aircraft = flight.getUserAircraft();
+            const auto &aircraft = flight.getUserAircraft();
             suggestedFileName = aircraft.getAircraftInfo().aircraftType.type;
         } else {
             suggestedFileName = Version::getApplicationName();
@@ -93,7 +93,7 @@ std::vector<PositionData> Export::resamplePositionDataForExport(const Aircraft &
             const std::int64_t deltaTime = Enum::underly(resamplingPeriod);
             std::int64_t timestamp = 0;
             while (timestamp <= duration) {
-                const PositionData &data = position.interpolate(timestamp, TimeVariableData::Access::Export);
+                const PositionData &data = position.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }
@@ -112,14 +112,14 @@ std::vector<EngineData> Export::resampleEngineDataForExport(const Aircraft &airc
 {
     std::vector<EngineData> interpolatedData;
     // Position data
-    Engine &engine = aircraft.getEngine();
+    auto &engine = aircraft.getEngine();
     if (engine.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = engine.getLast().timestamp;
             const std::int64_t deltaTime = Enum::underly(resamplingPeriod);
             std::int64_t timestamp = 0;
             while (timestamp <= duration) {
-                const EngineData &data = engine.interpolate(timestamp, TimeVariableData::Access::Export);
+                const EngineData &data = engine.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }
@@ -138,14 +138,14 @@ std::vector<PrimaryFlightControlData> Export::resamplePrimaryFlightControlDataFo
 {
     std::vector<PrimaryFlightControlData> interpolatedData;
     // Position data
-    PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControl();
+    auto &primaryFlightControl = aircraft.getPrimaryFlightControl();
     if (primaryFlightControl.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = primaryFlightControl.getLast().timestamp;
             const std::int64_t deltaTime = Enum::underly(resamplingPeriod);
             std::int64_t timestamp = 0;
             while (timestamp <= duration) {
-                const PrimaryFlightControlData &data = primaryFlightControl.interpolate(timestamp, TimeVariableData::Access::Export);
+                const PrimaryFlightControlData &data = primaryFlightControl.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }
@@ -164,14 +164,14 @@ std::vector<SecondaryFlightControlData> Export::resampleSecondaryFlightControlDa
 {
     std::vector<SecondaryFlightControlData> interpolatedData;
     // Position data
-    SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControl();
+    auto &secondaryFlightControl = aircraft.getSecondaryFlightControl();
     if (secondaryFlightControl.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = secondaryFlightControl.getLast().timestamp;
             const std::int64_t deltaTime = Enum::underly(resamplingPeriod);
             std::int64_t timestamp = 0;
             while (timestamp <= duration) {
-                const SecondaryFlightControlData &data = secondaryFlightControl.interpolate(timestamp, TimeVariableData::Access::Export);
+                const SecondaryFlightControlData &data = secondaryFlightControl.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }
@@ -190,14 +190,14 @@ std::vector<AircraftHandleData> Export::resampleAircraftHandleDataForExport(cons
 {
     std::vector<AircraftHandleData> interpolatedData;
     // Position data
-    AircraftHandle &aircraftHandle = aircraft.getAircraftHandle();
+    auto &aircraftHandle = aircraft.getAircraftHandle();
     if (aircraftHandle.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = aircraftHandle.getLast().timestamp;
             const std::int64_t deltaTime = Enum::underly(resamplingPeriod);
             std::int64_t timestamp = 0;
             while (timestamp <= duration) {
-                const AircraftHandleData &data = aircraftHandle.interpolate(timestamp, TimeVariableData::Access::Export);
+                const AircraftHandleData &data = aircraftHandle.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }
@@ -216,14 +216,14 @@ std::vector<LightData> Export::resampleLightDataForExport(const Aircraft &aircra
 {
     std::vector<LightData> interpolatedData;
     // Position data
-    Light &light = aircraft.getLight();
+    auto &light = aircraft.getLight();
     if (light.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = light.getLast().timestamp;
             const std::int64_t deltaTime = Enum::underly(resamplingPeriod);
             std::int64_t timestamp = 0;
             while (timestamp <= duration) {
-                const LightData &data = light.interpolate(timestamp, TimeVariableData::Access::Export);
+                const LightData &data = light.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }

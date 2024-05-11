@@ -23,6 +23,7 @@ target_sources(${LIBRARY_NAME}
         src/Dao/AircraftDaoIntf.h
         src/Dao/AircraftTypeDaoIntf.h
         src/Dao/PositionDaoIntf.h
+        src/Dao/AttitudeDaoIntf.h
         src/Dao/EngineDaoIntf.h
         src/Dao/PrimaryFlightControlDaoIntf.h
         src/Dao/SecondaryFlightControlDaoIntf.h
@@ -38,6 +39,7 @@ target_sources(${LIBRARY_NAME}
         src/Dao/SQLite/SQLiteAircraftDao.h src/Dao/SQLite/SQLiteAircraftDao.cpp
         src/Dao/SQLite/SQLiteAircraftTypeDao.h src/Dao/SQLite/SQLiteAircraftTypeDao.cpp
         src/Dao/SQLite/SQLitePositionDao.h src/Dao/SQLite/SQLitePositionDao.cpp
+        src/Dao/SQLite/SQLiteAttitudeDao.h src/Dao/SQLite/SQLiteAttitudeDao.cpp
         src/Dao/SQLite/SQLiteEngineDao.h src/Dao/SQLite/SQLiteEngineDao.cpp
         src/Dao/SQLite/SQLitePrimaryFlightControlDao.h src/Dao/SQLite/SQLitePrimaryFlightControlDao.cpp
         src/Dao/SQLite/SQLiteSecondaryFlightControlDao.h src/Dao/SQLite/SQLiteSecondaryFlightControlDao.cpp

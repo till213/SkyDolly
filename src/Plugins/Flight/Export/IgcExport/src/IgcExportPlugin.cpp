@@ -28,7 +28,6 @@
 
 #include <QtGlobal>
 #include <QIODevice>
-// Implements the % operator for string concatenation
 #include <QStringBuilder>
 #include <QString>
 #include <QStringLiteral>
@@ -50,10 +49,13 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <Model/Engine.h>
 #include <Model/EngineData.h>
 #include <Model/FlightPlan.h>
 #include <Model/Waypoint.h>
+#include <Model/TimeVariableData.h>
 #include <PluginManager/Export.h>
 #include "IgcExportOptionWidget.h"
 #include "IgcExportSettings.h"
@@ -244,13 +246,13 @@ inline bool IgcExportPlugin::exportCRecord(const FlightData &flightData, const A
         while (ok && i < count) {
             const Waypoint &waypoint = flightPlan[i];
             if (i == 0) {
-                const PositionData &positionData = position.getFirst();
+                const auto &positionData = position.getFirst();
                 record = IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
                 record = record % ::TakeoffPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
                 record = record % IgcExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
                 record = record % ::StartPoint % ::LineEnd;
             } else if (i == count - 1) {
-                const PositionData &positionData = position.getLast();
+                const auto &positionData = position.getLast();
                 record = IgcExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
                 record = record % ::FinishPoint % ::LineEnd;
                 record = record % IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
@@ -273,7 +275,7 @@ inline bool IgcExportPlugin::exportFixes(const FlightData &flightData, const Air
     QDateTime lastKFixTime;
 
     Convert convert;
-    Engine &engine = aircraft.getEngine();
+    auto &engine = aircraft.getEngine();
     const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
     for (const auto &positionData : interpolatedPositionData) {
@@ -300,11 +302,13 @@ inline bool IgcExportPlugin::exportFixes(const FlightData &flightData, const Air
         ok = io.write(bRecord);
 
         if (ok && (lastKFixTime.isNull() || lastKFixTime.secsTo(currentTime) >= ::KRecordIntervalSec)) {
-            const double trueAirspeed = Convert::feetPerSecondToKilometersPerHour(positionData.velocityBodyZ);
-            const double indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
+            const auto &attitude = aircraft.getAttitude();
+            const auto &attitudeData = attitude.interpolate(positionData.timestamp, TimeVariableData::Access::NoTimeOffset);
+            const auto trueAirspeed = Convert::feetPerSecondToKilometersPerHour(attitudeData.velocityBodyZ);
+            const auto indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
             const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
                                        formatTime(currentTime) %
-                                       formatNumber(static_cast<int>(std::round(positionData.trueHeading)), 3) %
+                                       formatNumber(static_cast<int>(std::round(attitudeData.trueHeading)), 3) %
                                        // IAS: km/h
                                        formatNumber(static_cast<int>(std::round(indicatedAirspeed)), 3) %
                                        ::LineEnd;

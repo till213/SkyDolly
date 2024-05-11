@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <cstdint>
+#include <utility>
 
 #include <Kernel/Convert.h>
 #include <Kernel/SkyMath.h>
@@ -30,42 +31,34 @@
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
-
+#include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include "Formation.h"
 
-InitialPosition Formation::calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing relativePosition, std::int64_t timestamp) noexcept
+InitialPosition Formation::calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing bearing, std::int64_t timestamp) noexcept
 {
     InitialPosition initialPosition;
 
-    const PositionData &relativePositionData = calculateRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp);
-    if (!relativePositionData.isNull()) {
-        initialPosition.fromPositionData(relativePositionData);
-        if (timestamp == 0) {
-            const auto &flight = Logbook::getInstance().getCurrentFlight();
-            const Aircraft &userAircraft = flight.getUserAircraft();
-            const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfo();
-            initialPosition.onGround =  aircraftInfo.startOnGround;
-        } else {
-            initialPosition.onGround = false;
-        }
+    const auto relativePosition = calculateRelativePositionToUserAircraft(horizontalDistance, verticalDistance, bearing, timestamp);
+    if (!relativePosition.first.isNull()) {
+        initialPosition.fromPositionData(relativePosition.first, relativePosition.second);
     }
     return initialPosition;
 }
 
-PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing relativePosition, std::int64_t timestamp) noexcept
+std::pair<PositionData, AttitudeData> Formation::calculateRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing bearing, std::int64_t timestamp) noexcept
 {
     PositionData initialPosition;
+    AttitudeData attitudeData;
 
     const auto &flight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &userAircraft = flight.getUserAircraft();
-    Position &position = userAircraft.getPosition();
+    const auto &aircraft = flight.getUserAircraft();
+    Position &position = aircraft.getPosition();
     if (position.count() > 0) {
-        const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
-        const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfo();
-        const AircraftType &aircraftType = aircraftInfo.aircraftType;
-
-        // Copy pitch, bank, heading and velocity
-        initialPosition = positionData;
+        const auto &positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+        const auto &aircraftInfo = aircraft.getAircraftInfo();
+        const auto &aircraftType = aircraftInfo.aircraftType;
 
         // Horizontal distance [feet]
         double distance {0.0};
@@ -115,59 +108,60 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
         const double altitude = positionData.altitude + deltaAltitude;
 
         // Degrees
-        double bearing {0.0};
-        switch (relativePosition) {
+        double bearingDegrees {0.0};
+        switch (bearing) {
         case Bearing::North:
-            bearing = 0.0;
+            bearingDegrees = 0.0;
             break;
         case Bearing::NorthNorthEast:
-            bearing = 22.5;
+            bearingDegrees = 22.5;
             break;
         case Bearing::NorthEast:
-            bearing = 45.0;
+            bearingDegrees = 45.0;
             break;
         case Bearing::EastNorthEast:
-            bearing = 67.5;
+            bearingDegrees = 67.5;
             break;
         case Bearing::East:
-            bearing = 90.0;
+            bearingDegrees = 90.0;
             break;
         case Bearing::EastSouthEast:
-            bearing = 112.5;
+            bearingDegrees = 112.5;
             break;
         case Bearing::SouthEast:
-            bearing = 135.0;
+            bearingDegrees = 135.0;
             break;
         case Bearing::SouthSouthEast:
-            bearing = 157.5;
+            bearingDegrees = 157.5;
             break;
         case Bearing::South:
-            bearing = 180.0;
+            bearingDegrees = 180.0;
             break;
         case Bearing::SouthSouthWest:
-            bearing = 202.5;
+            bearingDegrees = 202.5;
             break;
         case Bearing::SouthWest:
-            bearing = 225.0;
+            bearingDegrees = 225.0;
             break;
         case Bearing::WestSouthWest:
-            bearing = 247.5;
+            bearingDegrees = 247.5;
             break;
         case Bearing::West:
-            bearing = 270.0;
+            bearingDegrees = 270.0;
             break;
         case Bearing::WestNorthWest:
-            bearing = 292.5;
+            bearingDegrees = 292.5;
             break;
         case Bearing::NorthWest:
-            bearing = 315.0;
+            bearingDegrees = 315.0;
             break;
         case Bearing::NorthNorthWest:
-            bearing = 337.5;
+            bearingDegrees = 337.5;
             break;
         }
-        bearing += positionData.trueHeading;
-        SkyMath::Coordinate initial = SkyMath::relativePosition(sourcePosition, bearing, Convert::feetToMeters(distance));
+        attitudeData = aircraft.getAttitude().interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+        bearingDegrees += attitudeData.trueHeading;
+        SkyMath::Coordinate initial = SkyMath::relativePosition(sourcePosition, bearingDegrees, Convert::feetToMeters(distance));
 
         initialPosition.latitude = initial.first;
         initialPosition.longitude = initial.second;
@@ -175,5 +169,5 @@ PositionData Formation::calculateRelativePositionToUserAircraft(HorizontalDistan
 
     } // position count > 0
 
-    return initialPosition;
+    return std::make_pair(initialPosition, attitudeData);
 }

@@ -1298,7 +1298,7 @@ void MainWindow::updateUi() noexcept
 
 void MainWindow::updateControlUi() noexcept
 {
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const bool hasRecording = aircraft.hasRecording();
 
     const auto &skyConnectManager = SkyConnectManager::getInstance();
@@ -1527,7 +1527,7 @@ void MainWindow::updateReplayDuration() noexcept
 
 void MainWindow::updateFileMenu() noexcept
 {
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const bool hasRecording = aircraft.hasRecording();
     if (SkyConnectManager::getInstance().isInRecordingState()) {
         ui->newLogbookAction->setEnabled(false);

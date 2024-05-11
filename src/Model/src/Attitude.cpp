@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for Your Flight Recordings
+ * Sky Dolly - The black sheep for your fposition recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -25,52 +25,57 @@
 #include <algorithm>
 #include <cstdint>
 
+#ifdef DEBUG
+#include <QDebug>
+#endif
+
 #include <Kernel/SkyMath.h>
 #include "TimeVariableData.h"
 #include "SkySearch.h"
 #include "AircraftInfo.h"
-#include "LightData.h"
-#include "Light.h"
+#include "AttitudeData.h"
+#include "Attitude.h"
 
+namespace
+{
+constexpr double Tension = 0.0;
+}
 
 // PUBLIC
 
-Light::Light(const AircraftInfo &aircraftInfo) noexcept
+Attitude::Attitude(const AircraftInfo &aircraftInfo) noexcept
     : AbstractComponent(aircraftInfo)
 {}
 
-const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const AttitudeData &Attitude::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    const LightData *p1 {nullptr}, *p2 {nullptr};
+    const AttitudeData *p0 {nullptr}, *p1 {nullptr}, *p2 {nullptr}, *p3 {nullptr};
     const auto timeOffset = access != TimeVariableData::Access::NoTimeOffset ? getAircraftInfo().timeOffset : 0;
     const auto adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
         int currentIndex = getCurrentIndex();
-        switch (access) {
-        case TimeVariableData::Access::Linear:
-            [[fallthrough]];
-        case TimeVariableData::Access::NoTimeOffset:
-            SkySearch::getLinearInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::DefaultInterpolationWindow, currentIndex, &p1, &p2);
-            break;
-        case TimeVariableData::Access::DiscreteSeek:
-            [[fallthrough]];
-        case TimeVariableData::Access::ContinuousSeek:
-            // Get the last sample data just before the seeked position
-            // (that sample point may lie far outside of the "sample window")
-            currentIndex = SkySearch::updateStartIndex(getData(), currentIndex, adjustedTimestamp);
-            if (currentIndex != SkySearch::InvalidIndex) {
-                p1 = &getData().at(currentIndex);
-                p2 = p1;
-            } else {
-                p1 = p2 = nullptr;
-            }
-            break;
+        double tn {0.0};
+        // Attitude data is always interpolated within an "infinite" interpolation window, in order to
+        // take imported "sparse flight plans" into account
+        if (SkySearch::getCubicInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::InfinitetInterpolationWindow, currentIndex, &p0, &p1, &p2, &p3)) {
+            tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
         }
-
         if (p1 != nullptr) {
-            // No interpolation for light states
-            m_currentData.lightStates = p1->lightStates;
+            // Aircraft attitude
+
+            // Pitch: [-90, 90] - no discontinuity at +/- 90
+            m_currentData.pitch = SkyMath::interpolateHermite(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, ::Tension);
+            // Bank: [-180, 180] - discontinuity at +/- 180
+            m_currentData.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, ::Tension);
+            // Heading: [0, 360] - discontinuity at 0/360
+            m_currentData.trueHeading = SkyMath::interpolateHermite360(p0->trueHeading, p1->trueHeading, p2->trueHeading, p3->trueHeading, tn, ::Tension);
+
+            // Velocity
+            m_currentData.velocityBodyX = SkyMath::interpolateLinear(p1->velocityBodyX, p2->velocityBodyX, tn);
+            m_currentData.velocityBodyY = SkyMath::interpolateLinear(p1->velocityBodyY, p2->velocityBodyY, tn);
+            m_currentData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);
+
             m_currentData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded data
@@ -84,4 +89,4 @@ const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Ac
     return m_currentData;
 }
 
-template class AbstractComponent<LightData>;
+template class AbstractComponent<AttitudeData>;

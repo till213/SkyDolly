@@ -140,7 +140,7 @@ void GpxParser::parseWaypoint(FlightData &flightData) noexcept
     double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
-    Aircraft &aircraft = flightData.getUserAircraft();
+    auto &aircraft = flightData.getUserAircraft();
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Waypoint ||
         d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Waypoint) {
@@ -210,7 +210,7 @@ void GpxParser::parseRoutePoint(FlightData &flightData) noexcept
     double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
-    Aircraft &aircraft = flightData.getUserAircraft();
+    auto &aircraft = flightData.getUserAircraft();
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Route ||
         d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Route) {
@@ -288,7 +288,7 @@ inline void GpxParser::parseTrackPoint(FlightData &flightData) noexcept
     double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
-    Aircraft &aircraft = flightData.getUserAircraft();
+    auto &aircraft = flightData.getUserAircraft();
 
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Track ||

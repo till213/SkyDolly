@@ -25,6 +25,7 @@
 #include <memory>
 #include <optional>
 #include <cstdint>
+#include <utility>
 
 #include <QDialog>
 #include <QString>
@@ -38,6 +39,8 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/Connect/SkyConnectIntf.h>
 #include <PluginManager/Connect/Connect.h>
@@ -73,47 +76,59 @@ AircraftWidget::~AircraftWidget() = default;
 
 void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
-    const PositionData &positionData = getCurrentPositionData(timestamp, access);
-    QString colorName;
+    const auto positionAndAttitude = getCurrentPositionData(timestamp, access);
+    QString positionColorName;
+    QString attitudeColorName;
 
-    if (!positionData.isNull()) {
+    const auto &position = positionAndAttitude.first;
+    const auto &attitude = positionAndAttitude.second;
+    if (!position.isNull()) {
         // Position
-        ui->latitudeLineEdit->setText(d->unit.formatCoordinate(positionData.latitude) % " (" % d->unit.formatLatitudeDMS(positionData.latitude) % ")");
-        ui->longitudeLineEdit->setText(d->unit.formatCoordinate(positionData.longitude) % " (" % d->unit.formatLongitudeDMS(positionData.longitude) % ")");
-        ui->altitudeLineEdit->setText(d->unit.formatFeet(positionData.altitude));
-        ui->indicatedAltitudeLineEdit->setText(d->unit.formatFeet(positionData.indicatedAltitude));
-        ui->pitchLineEdit->setText(d->unit.formatDegrees(positionData.pitch));
-        ui->bankLineEdit->setText(d->unit.formatDegrees(positionData.bank));
-        ui->headingLineEdit->setText(d->unit.formatDegrees(positionData.trueHeading));
+        ui->latitudeLineEdit->setText(d->unit.formatCoordinate(position.latitude) % " (" % d->unit.formatLatitudeDMS(position.latitude) % ")");
+        ui->longitudeLineEdit->setText(d->unit.formatCoordinate(position.longitude) % " (" % d->unit.formatLongitudeDMS(position.longitude) % ")");
+        ui->altitudeLineEdit->setText(d->unit.formatFeet(position.altitude));
+        ui->indicatedAltitudeLineEdit->setText(d->unit.formatFeet(position.indicatedAltitude));
+
+        positionColorName = d->ActiveTextColor.name();
+    } else {
+        positionColorName = d->DisabledTextColor.name();
+    }
+
+    if (!attitude.isNull()) {
+        ui->pitchLineEdit->setText(d->unit.formatDegrees(attitude.pitch));
+        ui->bankLineEdit->setText(d->unit.formatDegrees(attitude.bank));
+        ui->headingLineEdit->setText(d->unit.formatDegrees(attitude.trueHeading));
 
         // Velocity
-        double speedFeetPerSec = positionData.velocityBodyX;
+        double speedFeetPerSec = attitude.velocityBodyX;
         double speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
         ui->velocityXLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
-        speedFeetPerSec = positionData.velocityBodyY;
+        speedFeetPerSec = attitude.velocityBodyY;
         speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
         ui->velocityYLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
-        speedFeetPerSec = positionData.velocityBodyZ;
+        speedFeetPerSec = attitude.velocityBodyZ;
         speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
         ui->velocityZLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
 
-        colorName = d->ActiveTextColor.name();
+        attitudeColorName = d->ActiveTextColor.name();
     } else {
-        colorName = d->DisabledTextColor.name();
+        attitudeColorName = d->DisabledTextColor.name();
     }
 
-    const QString css{QStringLiteral("color: %1;").arg(colorName)};
-    ui->latitudeLineEdit->setStyleSheet(css);
-    ui->longitudeLineEdit->setStyleSheet(css);
-    ui->altitudeLineEdit->setStyleSheet(css);
-    ui->indicatedAltitudeLineEdit->setStyleSheet(css);
-    ui->pitchLineEdit->setStyleSheet(css);
-    ui->bankLineEdit->setStyleSheet(css);
-    ui->headingLineEdit->setStyleSheet(css);
-    ui->headingLineEdit->setStyleSheet(css);
-    ui->velocityXLineEdit->setStyleSheet(css);
-    ui->velocityYLineEdit->setStyleSheet(css);
-    ui->velocityZLineEdit->setStyleSheet(css);
+    const QString positionCss {QStringLiteral("color: %1;").arg(positionColorName)};
+    ui->latitudeLineEdit->setStyleSheet(positionCss);
+    ui->longitudeLineEdit->setStyleSheet(positionCss);
+    ui->altitudeLineEdit->setStyleSheet(positionCss);
+    ui->indicatedAltitudeLineEdit->setStyleSheet(positionCss);
+
+    const QString attitudeCss {QStringLiteral("color: %1;").arg(attitudeColorName)};
+    ui->pitchLineEdit->setStyleSheet(attitudeCss);
+    ui->bankLineEdit->setStyleSheet(attitudeCss);
+    ui->headingLineEdit->setStyleSheet(attitudeCss);
+    ui->headingLineEdit->setStyleSheet(attitudeCss);
+    ui->velocityXLineEdit->setStyleSheet(attitudeCss);
+    ui->velocityYLineEdit->setStyleSheet(attitudeCss);
+    ui->velocityZLineEdit->setStyleSheet(attitudeCss);
 }
 
 // PRIVATE
@@ -135,23 +150,34 @@ void AircraftWidget::initUi() noexcept
     ui->velocityZLineEdit->setToolTip(QString::fromLatin1(SimVar::VelocityBodyZ));
 }
 
-PositionData AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+std::pair<PositionData, AttitudeData> AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     PositionData positionData;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (skyConnect->get().getState() == Connect::State::Recording) {
-            if (aircraft.getPosition().count() > 0) {
-                positionData = aircraft.getPosition().getLast();
-            }
-        } else {
-            if (timestamp != TimeVariableData::InvalidTime) {
-                positionData = aircraft.getPosition().interpolate(timestamp, access);
-            } else {
-                positionData = aircraft.getPosition().interpolate(skyConnect->get().getCurrentTimestamp(), access);
-            }
-        };
-    }
-    return positionData;
+    AttitudeData attitudeData;
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &position = aircraft.getPosition();
+    const auto &attitude = aircraft.getAttitude();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+
+    // Position
+    if (skyConnectManager.getState() == Connect::State::Recording) {
+        if (position.count() > 0) {
+            positionData = position.getLast();
+        }
+    } else {
+        const auto t = timestamp != TimeVariableData::InvalidTime ? timestamp : skyConnectManager.getCurrentTimestamp();
+        positionData = position.interpolate(t, access);
+    };
+
+    // Attitude
+    if (skyConnectManager.getState() == Connect::State::Recording) {
+        if (attitude.count() > 0) {
+            attitudeData = attitude.getLast();
+        }
+    } else {
+        const auto t = timestamp != TimeVariableData::InvalidTime ? timestamp : skyConnectManager.getCurrentTimestamp();
+        attitudeData = attitude.interpolate(t, access);
+    };
+
+    return std::make_pair(positionData, attitudeData);
 }

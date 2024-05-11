@@ -126,7 +126,7 @@ MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
     closeConnection();
 }
 
-bool MSFSSimConnectPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
+bool MSFSSimConnectPlugin::setUserAircraftPositionAndAttitude(const PositionData &positionData) noexcept
 {
     SimConnectPositionUser simConnectPositionUser {positionData};
     const HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionUser),
@@ -277,7 +277,7 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
 
     // Update flight plan
     Flight &flight = getCurrentFlight();
-    const Aircraft &userAircraft = flight.getUserAircraft();
+    const auto &aircraft = flight.getUserAircraft();
     FlightPlan &flightPlan = userAircraft.getFlightPlan();
     for (const auto &it : d->flightPlan) {
         flight.addWaypoint(it.second);
@@ -401,7 +401,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
             if (objectId != SimConnectAi::InvalidObjectId) {
 
                 ok = true;
-                const PositionData &positionData = aircraft.getPosition().interpolate(currentTimestamp, access);
+                const auto &positionData = aircraft.getPosition().interpolate(currentTimestamp, access);
                 if (!positionData.isNull()) {
                     SimConnectPositionAll simConnnectPositionAll {positionData};
                     if (isUserAircraft) {

@@ -100,12 +100,12 @@ std::vector<FlightData> IgcImportPlugin::importFlightData(QIODevice &io, bool &o
     ok = d->igcParser.parse(io);
     if (ok) {
         FlightData flightData;
-        Aircraft &aircraft = flightData.addUserAircraft();
+        auto &aircraft = flightData.addUserAircraft();
         // Now "upsert" the position data, taking possible duplicate timestamps into account
         Position &position = aircraft.getPosition();
 
         // Engine
-        Engine &engine = aircraft.getEngine();
+        auto &engine = aircraft.getEngine();
         EngineData engineData;
         IgcImportPluginPrivate::EngineState engineState = IgcImportPluginPrivate::EngineState::Unknown;
         const double enlThresholdNorm = static_cast<double>(d->pluginSettings.getEnlThresholdPercent()) / 100.0;

@@ -22,25 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "Data.h"
-#include "Location.h"
+#ifndef SQLITEATTITUDEDAO_H
+#define SQLITEATTITUDEDAO_H
 
-// PUBLIC
+#include <memory>
+#include <vector>
+#include <cstdint>
 
-Location::Location(double latitude, double longitude, double altitude) noexcept
-    : Data(),
-      latitude(latitude),
-      longitude(longitude),
-      altitude(altitude)
-{}
+class QString;
 
-Location::Location(const InitialPosition &initialPosition) noexcept
-    : latitude(initialPosition.latitude),
-      longitude(initialPosition.longitude),
-      altitude(initialPosition.altitude),
-      pitch(initialPosition.pitch),
-      bank(initialPosition.bank),
-      trueHeading(initialPosition.trueHeading),
-      indicatedAirspeed(initialPosition.indicatedAirspeed),
-      onGround(initialPosition.onGround)
-{}
+#include "../AttitudeDaoIntf.h"
+
+struct AttitudeData;
+struct SQLiteAttitudeDaoPrivate;
+
+class SQLiteAttitudeDao final : public AttitudeDaoIntf
+{
+public:
+    SQLiteAttitudeDao(QString connectionName) noexcept;
+    SQLiteAttitudeDao(const SQLiteAttitudeDao &rhs) = delete;
+    SQLiteAttitudeDao(SQLiteAttitudeDao &&rhs) noexcept;
+    SQLiteAttitudeDao &operator=(const SQLiteAttitudeDao &rhs) = delete;
+    SQLiteAttitudeDao &operator=(SQLiteAttitudeDao &&rhs) noexcept;
+    ~SQLiteAttitudeDao() override;
+
+    bool add(std::int64_t aircraftId, const AttitudeData &data) const noexcept override;
+    std::vector<AttitudeData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
+    bool deleteByFlightId(std::int64_t flightId) const noexcept override;
+    bool deleteByAircraftId(std::int64_t aircraftId) const noexcept override;
+
+private:
+    std::unique_ptr<SQLiteAttitudeDaoPrivate> d;
+};
+
+#endif // SQLITEATTITUDEDAO_H

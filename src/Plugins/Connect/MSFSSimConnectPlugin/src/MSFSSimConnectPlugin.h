@@ -60,7 +60,7 @@ public:
     MSFSSimConnectPlugin &operator=(MSFSSimConnectPlugin &&rhs) = delete;
     ~MSFSSimConnectPlugin() noexcept override;
 
-    bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
+    bool setUserAircraftPositionAndAttitude(const PositionData &positionData) noexcept override;
 
 protected:
     ConnectPluginBaseSettings &getPluginSettings() const noexcept override;

@@ -42,6 +42,7 @@
 class Flight;
 class Aircraft;
 struct PositionData;
+struct AttitudeData;
 class MSFSSimConnectPlugin;
 
 class PLUGINMANAGER_API SkyConnectIntf : public QObject, public PluginWithOptionWidgetIntf, public PluginIntf
@@ -146,7 +147,7 @@ public:
     virtual int getRemainingReconnectTime() const noexcept = 0;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
-    virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
+    virtual bool setUserAircraftPositionAndAttitude(const PositionData &positionData, const AttitudeData &attitudeData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) const noexcept = 0;
     virtual bool sendSimulationEvent(SimulationEvent event, float arg1) noexcept = 0;
 

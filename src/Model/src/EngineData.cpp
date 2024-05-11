@@ -29,10 +29,10 @@
 
 // PUBLIC
 
-EngineData::EngineData(std::int16_t theThrottleLeverPosition1, std::int16_t thePropellerLeverPosition1, std::uint8_t theMixtureLeverPosition1, std::uint8_t theCowlFlapPosition1) noexcept
+EngineData::EngineData(std::int16_t throttleLeverPosition1, std::int16_t propellerLeverPosition1, std::uint8_t mixtureLeverPosition1, std::uint8_t cowlFlapPosition1) noexcept
     : TimeVariableData(),
-      throttleLeverPosition1(theThrottleLeverPosition1),
-      propellerLeverPosition1(thePropellerLeverPosition1),
-      mixtureLeverPosition1(theMixtureLeverPosition1),
-      cowlFlapPosition1(theCowlFlapPosition1)
+      throttleLeverPosition1(throttleLeverPosition1),
+      propellerLeverPosition1(propellerLeverPosition1),
+      mixtureLeverPosition1(mixtureLeverPosition1),
+      cowlFlapPosition1(cowlFlapPosition1)
 {}

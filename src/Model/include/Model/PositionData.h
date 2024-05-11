@@ -37,14 +37,6 @@ struct MODEL_API PositionData final : public TimeVariableData
     double altitude {0.0};
     // Indicated pressure altitude (analytical purposes only)
     double indicatedAltitude {0.0};
-    double pitch {0.0};
-    double bank {0.0};
-    double trueHeading {0.0};
-
-    // Velocity
-    double velocityBodyX {0.0};
-    double velocityBodyY {0.0};
-    double velocityBodyZ {0.0};
 
     explicit PositionData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
 };

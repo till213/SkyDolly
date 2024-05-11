@@ -163,7 +163,7 @@ void Flight::addAircraft(std::vector<Aircraft> &&aircraft) noexcept
 Aircraft &Flight::addUserAircraft(std::int64_t aircraftId) noexcept
 {
     const int previousUserAircraftIndex = d->flightData.userAircraftIndex;
-    Aircraft &aircraft = d->flightData.addUserAircraft(aircraftId);
+    auto &aircraft = d->flightData.addUserAircraft(aircraftId);
     // First emit the aircraft added signal and...
     emit aircraftAdded(d->flightData.aircraft.back());
     // ... then the user aircraft changed signal
@@ -276,7 +276,7 @@ void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
 
 FlightSummary Flight::getFlightSummary() const noexcept
 {
-    const Aircraft &aircraft = getUserAircraft();
+    const auto &aircraft = getUserAircraft();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
 
     FlightSummary summary;

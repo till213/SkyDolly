@@ -42,6 +42,8 @@
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <Model/Flight.h>
+#include <Model/PositionData.h>
+#include <Model/AttitudeData.h>
 #include <Connect/SkyConnectIntf.h>
 #include <Connect/FlightSimulatorShortcuts.h>
 #include <SkyConnectManager.h>
@@ -184,10 +186,10 @@ bool SkyConnectManager::setUserAircraftInitialPosition(const InitialPosition &in
     return skyConnect ? skyConnect->get().setUserAircraftInitialPosition(initialPosition) : false;
 }
 
-bool SkyConnectManager::setUserAircraftPosition(const PositionData & positionData) noexcept
+bool SkyConnectManager::setUserAircraftPositionAndAttitude(const PositionData &positionData, const AttitudeData &attitudeData) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().setUserAircraftPosition(positionData) : false;
+    return skyConnect ? skyConnect->get().setUserAircraftPositionAndAttitude(positionData, attitudeData) : false;
 }
 
 bool SkyConnectManager::freezeUserAircraft(bool enable) noexcept

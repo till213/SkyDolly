@@ -94,7 +94,7 @@ void FlightAwareKmlParser::parsePlacemark(FlightData &flightData) noexcept
 
 void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrName) noexcept
 {
-    Aircraft &aircraft = flightData.getUserAircraft();
+    auto &aircraft = flightData.getUserAircraft();
     QXmlStreamReader *xml = getXmlStreamReader();
     bool ok {true};
     while (xml->readNextStartElement()) {

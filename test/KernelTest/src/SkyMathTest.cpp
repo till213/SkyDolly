@@ -742,7 +742,7 @@ void SkyMathTest::calculateTimeOffset()
     QFETCH(std::int64_t, expectedTimeOffset);
 
     // Exercise
-    const std::int64_t timeOffset = SkyMath::calculateTimeOffset(timeOffsetSync, fromDateTime, toDateTime);
+    const auto timeOffset = SkyMath::calculateTimeOffset(timeOffsetSync, fromDateTime, toDateTime);
 
     // Verify
     QCOMPARE(timeOffset, expectedTimeOffset);
