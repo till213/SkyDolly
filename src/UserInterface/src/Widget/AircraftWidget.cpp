@@ -94,6 +94,7 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
     }
 
     if (!attitude.isNull()) {
+        // Attitude
         ui->pitchLineEdit->setText(d->unit.formatDegrees(attitude.pitch));
         ui->bankLineEdit->setText(d->unit.formatDegrees(attitude.bank));
         ui->headingLineEdit->setText(d->unit.formatDegrees(attitude.trueHeading));
@@ -108,6 +109,8 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
         speedFeetPerSec = attitude.velocityBodyZ;
         speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
         ui->velocityZLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
+
+        ui->onGroundCheckBox->setChecked(attitude.onGround);
 
         attitudeColorName = d->ActiveTextColor.name();
     } else {
@@ -128,6 +131,7 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
     ui->velocityXLineEdit->setStyleSheet(attitudeCss);
     ui->velocityYLineEdit->setStyleSheet(attitudeCss);
     ui->velocityZLineEdit->setStyleSheet(attitudeCss);
+    ui->onGroundCheckBox->setStyleSheet(attitudeCss);
 }
 
 // PRIVATE
@@ -147,6 +151,10 @@ void AircraftWidget::initUi() noexcept
     ui->velocityXLineEdit->setToolTip(QString::fromLatin1(SimVar::VelocityBodyX));
     ui->velocityYLineEdit->setToolTip(QString::fromLatin1(SimVar::VelocityBodyY));
     ui->velocityZLineEdit->setToolTip(QString::fromLatin1(SimVar::VelocityBodyZ));
+
+    ui->onGroundCheckBox->setToolTip(QString::fromLatin1(SimVar::SimOnGround));
+    ui->onGroundCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->onGroundCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
 std::pair<PositionData, AttitudeData> AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept

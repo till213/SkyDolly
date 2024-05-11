@@ -76,6 +76,9 @@ const AttitudeData &Attitude::interpolate(std::int64_t timestamp, TimeVariableDa
             m_currentData.velocityBodyY = SkyMath::interpolateLinear(p1->velocityBodyY, p2->velocityBodyY, tn);
             m_currentData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);
 
+            // On ground
+            m_currentData.onGround = SkyMath::interpolateNearestNeighbour(p1->onGround, p2->onGround, tn);
+
             m_currentData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded data

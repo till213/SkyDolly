@@ -19,6 +19,9 @@
   * Existing locations within the given distance are either *updated*
   * Or the location to be imported is *skipped* (not imported)
   * Loctations may also be unconditionally imported (*insert*)
+- Position- and attitude simulation variables are now sampled separately
+  * Position data (latitude, longitude, altitude) is only sampled at 1Hz: the expectation is that "stutters" during recording should be automatically smoothened out
+  * Boolean simulation variables are now interpolated with nearest neighbour interpolation
 
 ## Bug Fixes
 
