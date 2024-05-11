@@ -44,6 +44,8 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <Model/SimType.h>
 #include <PluginManager/Export.h>
 #include "KmlExportOptionWidget.h"
@@ -178,10 +180,11 @@ bool KmlExportPlugin::exportHeader(const QString &title, QIODevice &io) const no
 bool KmlExportPlugin::exportFlightInfo(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
-    const Aircraft &aircraft = flightData.getUserAircraftConst();
+    const auto &aircraft = flightData.getUserAircraftConst();
     if (aircraft.getPosition().count() > 0) {
-        const PositionData &positionData = aircraft.getPosition().getFirst();
-        ok = exportPlacemark(io, KmlStyleExport::Icon::Airport, flightData.title, getFlightDescription(flightData), positionData);
+        const auto &positionData = aircraft.getPosition().getFirst();
+        const AttitudeData &attitudeData = aircraft.getAttitude().getFirst();
+        ok = exportPlacemark(io, KmlStyleExport::Icon::Airport, flightData.title, getFlightDescription(flightData), positionData, attitudeData);
     } else {
         ok = false;
     }
@@ -345,12 +348,11 @@ QString KmlExportPlugin::getWaypointDescription(const Waypoint &waypoint) const 
            QObject::tr("Altitude") % ": " % d->unit.formatFeet(waypoint.altitude) % "\n";
 }
 
-inline bool KmlExportPlugin::exportPlacemark(QIODevice &io, KmlStyleExport::Icon icon, const QString &name, const QString &description, const PositionData &positionData) const noexcept
+inline bool KmlExportPlugin::exportPlacemark(QIODevice &io, KmlStyleExport::Icon icon, const QString &name, const QString &description, const PositionData &positionData, const AttitudeData &attitudeData) const noexcept
 {
-    bool ok = !positionData.isNull();
+    bool ok {!positionData.isNull() && !attitudeData.isNull()};
     if (ok) {
-        ok = exportPlacemark(io, icon, name, description,
-                             positionData.longitude, positionData.latitude, positionData.altitude, positionData.trueHeading);
+        ok = exportPlacemark(io, icon, name, description, positionData.longitude, positionData.latitude, positionData.altitude, attitudeData.trueHeading);
     }
     return ok;
 }

@@ -1008,6 +1008,41 @@ insert into aircraft_type values
 update metadata
 set app_version = '0.17.0';
 
+@migr(id = "4fda1c12-4c05-4152-af6b-1e495b12492e", descn = "Create attitude table", step_cnt = 4)
+create table attitude (
+    aircraft_id integer not null,
+    timestamp integer not null,
+    pitch real,
+    bank real,
+    true_heading real,
+    velocity_x real,
+    velocity_y real,
+    velocity_z real,
+    on_ground int,
+    primary key(aircraft_id, timestamp),
+    foreign key(aircraft_id) references aircraft(id)
+);
+
+@migr(id = "4fda1c12-4c05-4152-af6b-1e495b12492e", descn = "Migrate data from position to attitute table", step = 2)
+insert into attitude (aircraft_id, timestamp, pitch, bank, true_heading, velocity_x, velocity_y, velocity_z, on_ground)
+select aircraft_id, timestamp, pitch, bank, true_heading, velocity_x, velocity_y, velocity_z, 0
+from position;
+
+@migr(id = "4fda1c12-4c05-4152-af6b-1e495b12492e", descn = "Update the on_ground for the first n attitude with timestamp less than one second, based on the aircraft start_on_ground", step = 3)
+update attitude
+set    on_ground = (select start_on_ground
+                    from   aircraft a
+                    where  a.id = aircraft_id)
+where timestamp < 1000;
+
+@migr(id = "4fda1c12-4c05-4152-af6b-1e495b12492e", descn = "Drop attitude related columns from table position", step = 4)
+alter table position drop column pitch;
+alter table position drop column bank;
+alter table position drop column true_heading;
+alter table position drop column velocity_x;
+alter table position drop column velocity_y;
+alter table position drop column velocity_z;
+
 @migr(id = "80bcc81a-6554-4e05-8631-d17358d9d1dd", descn = "Update application version to 0.18", step = 1)
 update metadata
 set app_version = '0.18.0';

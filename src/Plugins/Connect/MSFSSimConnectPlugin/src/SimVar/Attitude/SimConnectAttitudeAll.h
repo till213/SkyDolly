@@ -22,54 +22,55 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPOSITIONALL_H
-#define SIMCONNECTPOSITIONALL_H
+#ifndef SIMCONNECTATTITUDEALL_H
+#define SIMCONNECTATTITUDEALL_H
 
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Model/PositionData.h>
-#include "SimConnectPositionCommon.h"
-#include "SimConnectPositionInfo.h"
+#include <Model/AttitudeData.h>
+#include "SimConnectAttitudeCommon.h"
+#include "SimConnectAttitudeInfo.h"
 
 /*!
- * All aircraft position simulation variables (reply from the flight simulator).
+ * All aircraft attitude simulation variables (reply from the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPositionAll
+struct SimConnectAttitudeAll
 {
-    SimConnectPositionCommon common;
-    SimConnectPositionInfo info;
+    SimConnectAttitudeCommon common;
+    SimConnectAttitudeInfo info;
 
-    SimConnectPositionAll(const PositionData &positionData) noexcept
-        : SimConnectPositionAll()
+    SimConnectAttitudeAll(const AttitudeData &positionData) noexcept
+        : SimConnectAttitudeAll()
     {
-        fromPositionData(positionData);
+        fromAttitudeData(positionData);
     }
 
-    SimConnectPositionAll() = default;
+    SimConnectAttitudeAll() = default;
 
-    inline void fromPositionData(const PositionData &positionData) noexcept
+    inline void fromAttitudeData(const AttitudeData &data) noexcept
     {
-        common.fromPositionData(positionData);
-        info.fromPositionData(positionData);
+        common.fromAttitudeData(data);
+        info.fromAttitudeData(data);
     }
 
-    inline PositionData toPositionData() const noexcept
+    inline AttitudeData toAttitudeData() const noexcept
     {
-        auto positionData = common.toPositionData();
-        info.toPositionData(positionData);
+        auto positionData = common.toAttitudeData();
+        info.toAttitudeData(positionData);
         return positionData;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        SimConnectPositionCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAll));
-        SimConnectPositionInfo::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAll));
+        SimConnectAttitudeCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AttitudeAll));
+        SimConnectAttitudeInfo::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AttitudeAll));
     }
+
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPOSITIONALL_H
+#endif // SIMCONNECTATTITUDEALL_H

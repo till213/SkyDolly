@@ -45,6 +45,8 @@
 #include <Model/AircraftInfo.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <Model/Engine.h>
 #include <Model/EngineData.h>
 #include <Model/PrimaryFlightControl.h>
@@ -59,6 +61,7 @@
 #include <Model/Waypoint.h>
 #include "../../Dao/AircraftTypeDaoIntf.h"
 #include "../../Dao/PositionDaoIntf.h"
+#include "../../Dao/AttitudeDaoIntf.h"
 #include "../../Dao/EngineDaoIntf.h"
 #include "../../Dao/PrimaryFlightControlDaoIntf.h"
 #include "../../Dao/SecondaryFlightControlDaoIntf.h"
@@ -75,6 +78,7 @@ struct SQLiteAircraftDaoPrivate
           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
           aircraftTypeDao(daoFactory->createAircraftTypeDao()),
           positionDao(daoFactory->createPositionDao()),
+          attitudeDao(daoFactory->createAttitudeDao()),
           engineDao(daoFactory->createEngineDao()),
           primaryFlightControlDao(daoFactory->createPrimaryFlightControlDao()),
           secondaryFlightControlDao(daoFactory->createSecondaryFlightControlDao()),
@@ -87,6 +91,7 @@ struct SQLiteAircraftDaoPrivate
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftTypeDaoIntf> aircraftTypeDao;
     std::unique_ptr<PositionDaoIntf> positionDao;
+    std::unique_ptr<AttitudeDaoIntf> attitudeDao;
     std::unique_ptr<EngineDaoIntf> engineDao;
     std::unique_ptr<PrimaryFlightControlDaoIntf> primaryFlightControlDao;
     std::unique_ptr<SecondaryFlightControlDaoIntf> secondaryFlightControlDao;
@@ -147,6 +152,9 @@ std::vector<Aircraft> SQLiteAircraftDao::getByFlightId(std::int64_t flightId, bo
             aircraft.setAircraftInfo(info);
             aircraft.getPosition().setData(d->positionDao->getByAircraftId(aircraft.getId(), &success));
             if (success) {
+                aircraft.getAttitude().setData(d->attitudeDao->getByAircraftId(aircraft.getId(), &success));
+            }
+            if (success) {
                 aircraft.getEngine().setData(d->engineDao->getByAircraftId(aircraft.getId(), &success));
             }
             if (success) {
@@ -203,6 +211,9 @@ bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) const noexcep
     // Delete "bottom-up" in order not to violate foreign key constraints
     bool ok = d->positionDao->deleteByFlightId(flightId);
     if (ok) {
+        ok = d->attitudeDao->deleteByFlightId(flightId);
+    }
+    if (ok) {
         ok = d->engineDao->deleteByFlightId(flightId);
     }
     if (ok) {
@@ -245,6 +256,9 @@ bool SQLiteAircraftDao::deleteById(std::int64_t id) const noexcept
     // Delete "bottom-up" in order not to violate foreign key constraints
     // Note: aircraft types (table aircraft_type) are not deleted
     bool ok = d->positionDao->deleteByAircraftId(id);
+    if (ok) {
+        ok = d->attitudeDao->deleteByAircraftId(id);
+    }
     if (ok) {
         ok = d->engineDao->deleteByAircraftId(id);
     }
@@ -450,6 +464,14 @@ inline bool SQLiteAircraftDao::insertAircraftData(std::int64_t aircraftId, const
         ok = d->positionDao->add(aircraftId, data);
         if (!ok) {
             break;
+        }
+    }
+    if (ok) {
+        for (const auto &data : aircraft.getAttitude()) {
+            ok = d->attitudeDao->add(aircraftId, data);
+            if (!ok) {
+                break;
+            }
         }
     }
     if (ok) {

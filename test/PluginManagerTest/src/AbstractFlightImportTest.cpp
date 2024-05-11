@@ -120,7 +120,7 @@ void AbstractFlightImportTest::importSelectedFlights() noexcept
         std::size_t nofAircraft = firstFlight.count();
         QCOMPARE_EQ(static_cast<int>(nofAircraft), expectedNofAircraftInFirstFlight);
         if (nofAircraft > 0) {
-            const Aircraft &aircraft = firstFlight.getUserAircraftConst();
+            const auto &aircraft = firstFlight.getUserAircraftConst();
             QCOMPARE_EQ(static_cast<int>(aircraft.getPosition().count()), expectedNofUserAircraftPositionInFirstFlight);
         }
     }

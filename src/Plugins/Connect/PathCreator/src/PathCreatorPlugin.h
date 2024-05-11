@@ -39,6 +39,7 @@
 class Flight;
 class Aircraft;
 struct PositionData;
+struct AttitudeData;
 struct InitialPosition;
 class ConnectPluginBaseSettings;
 class OptionWidgetIntf;
@@ -57,7 +58,7 @@ public:
     PathCreatorPlugin &operator=(PathCreatorPlugin &&rhs) = delete;
     ~PathCreatorPlugin() override;
     
-    bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
+    bool setUserAircraftPositionAndAttitude(const PositionData &positionData, const AttitudeData &attitudeData) noexcept override;
 
 protected:
     ConnectPluginBaseSettings &getPluginSettings() const noexcept override;

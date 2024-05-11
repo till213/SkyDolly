@@ -35,6 +35,7 @@ class QDateTime;
 #include "Engine.h"
 
 class Position;
+class Attitude;
 class PrimaryFlightControl;
 class SecondaryFlightControl;
 class AircraftHandle;
@@ -56,6 +57,7 @@ public:
     void setId(std::int64_t id) noexcept;
 
     Position &getPosition() const noexcept;
+    Attitude &getAttitude() const noexcept;
     Engine &getEngine() const noexcept;
     PrimaryFlightControl &getPrimaryFlightControl() const noexcept;
     SecondaryFlightControl &getSecondaryFlightControl() const noexcept;

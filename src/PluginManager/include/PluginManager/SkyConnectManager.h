@@ -49,6 +49,8 @@ class QUuid;
 
 struct FlightSimulatorShortcuts;
 struct SkyConnectManagerPrivate;
+struct PositionData;
+struct AttitudeData;
 
 /// \todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
 class PLUGINMANAGER_API SkyConnectManager final : public QObject
@@ -124,7 +126,7 @@ public:
     int getRemainingReconnectTime() const noexcept;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
-    bool setUserAircraftPosition(const PositionData & positionData) noexcept;
+    bool setUserAircraftPositionAndAttitude(const PositionData &positionData, const AttitudeData &attitudeData) noexcept;
     bool freezeUserAircraft(bool enable) noexcept;
     bool sendSimulationEvent(SkyConnectIntf::SimulationEvent event, float arg1 = 0.0f) noexcept;
 

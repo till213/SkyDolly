@@ -37,6 +37,8 @@
 #include <Model/FlightPlan.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <Model/Waypoint.h>
 #include "Kml.h"
 #include "FlightRadar24KmlParser.h"
@@ -89,7 +91,7 @@ std::vector<FlightData> FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStrea
 {
     std::vector<FlightData> flights;
     FlightData flightData;
-    Aircraft &aircraft = flightData.addUserAircraft();
+    auto &aircraft = flightData.addUserAircraft();
     d->xml = &xmlStreamReader;
     d->trackData.clear();
 
@@ -109,13 +111,19 @@ std::vector<FlightData> FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStrea
 
     flightData.creationTime = d->firstDateTimeUtc;
     // Now "upsert" the position data, taking duplicate timestamps into account
-    Position &position = aircraft.getPosition();
+    auto &position = aircraft.getPosition();
+    auto &attitude = aircraft.getAttitude();
     for (const auto &trackItem : d->trackData) {
-        PositionData positionData {trackItem.latitude, trackItem.longitude, trackItem.altitude};
+        // Positition
+        PositionData positionData {trackItem.latitude, trackItem.longitude, trackItem.altitude};        
         positionData.timestamp = trackItem.timestamp;
-        positionData.velocityBodyZ = trackItem.speed;
-        positionData.trueHeading = trackItem.heading;
         position.upsertLast(positionData);
+
+        // Attitude
+        AttitudeData attitudeData {0, 0, static_cast<double>(trackItem.heading)};
+        attitudeData.velocityBodyZ = trackItem.speed;
+        attitudeData.timestamp = trackItem.timestamp;
+        attitude.upsertLast(attitudeData);
     }
     flights.push_back(std::move(flightData));
     return flights;

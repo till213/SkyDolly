@@ -22,54 +22,57 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPOSITIONALL_H
-#define SIMCONNECTPOSITIONALL_H
+#ifndef SIMCONNECTATTITUDEINFOH
+#define SIMCONNECTATTITUDEINFOH
 
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Model/PositionData.h>
-#include "SimConnectPositionCommon.h"
-#include "SimConnectPositionInfo.h"
+#include <Model/SimVar.h>
+#include <Model/AttitudeData.h>
+#include "SimConnectType.h"
 
 /*!
- * All aircraft position simulation variables (reply from the flight simulator).
+ * Aircraft attitude simulation variables that are either stored for information purposes only
+ * or that are sent exclusively to the user aircraft as events.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPositionAll
+struct SimConnectAttitudeInfo
 {
-    SimConnectPositionCommon common;
-    SimConnectPositionInfo info;
+    std::int32_t onGround {0};
 
-    SimConnectPositionAll(const PositionData &positionData) noexcept
-        : SimConnectPositionAll()
+    SimConnectAttitudeInfo(const AttitudeData &attitudeData) noexcept
+        : SimConnectAttitudeInfo()
     {
-        fromPositionData(positionData);
+        fromAttitudeData(attitudeData);
     }
 
-    SimConnectPositionAll() = default;
+    SimConnectAttitudeInfo() = default;
 
-    inline void fromPositionData(const PositionData &positionData) noexcept
+    inline void fromAttitudeData(const AttitudeData &data) noexcept
     {
-        common.fromPositionData(positionData);
-        info.fromPositionData(positionData);
+        onGround = data.onGround ? 1 : 0;
     }
 
-    inline PositionData toPositionData() const noexcept
+    inline AttitudeData toAttitudeData() const noexcept
     {
-        auto positionData = common.toPositionData();
-        info.toPositionData(positionData);
-        return positionData;
+        AttitudeData data;
+        toAttitudeData(data);
+        return data;
     }
 
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
+    inline void toAttitudeData(AttitudeData &data) const noexcept
     {
-        SimConnectPositionCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAll));
-        SimConnectPositionInfo::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAll));
+        data.onGround = onGround != 0;
+    }
+
+    static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
+    {
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SimOnGround, "Bool", ::SIMCONNECT_DATATYPE_INT32);
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPOSITIONALL_H
+#endif // SIMCONNECTATTITUDEINFOH

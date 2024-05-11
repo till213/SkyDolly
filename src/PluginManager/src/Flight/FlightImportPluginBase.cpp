@@ -49,6 +49,8 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <Model/FlightPlan.h>
 #include <Model/Waypoint.h>
 #include <Flight/FlightAugmentation.h>
@@ -260,7 +262,7 @@ void FlightImportPluginBase::enrichFlightCondition(FlightData &flightData) const
     }
 
     if (!(flightCondition.endLocalTime.isValid() && flightCondition.endZuluTime.isValid())) {
-        const Aircraft &aircraft = flightData.getUserAircraft();
+        const auto &aircraft = flightData.getUserAircraft();
         const Position &position = aircraft.getPosition();
         const PositionData &lastPositionData = position.getLast();
         flightCondition.endLocalTime =  flightCondition.startLocalTime.addMSecs(lastPositionData.timestamp);
@@ -276,10 +278,12 @@ void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const no
             aircraftInfo.aircraftType = d->selectedAircraftType;
         }
 
-        const Position &position = aircraft.getPosition();
+        const auto &position = aircraft.getPosition();
+        const auto &attitude = aircraft.getAttitude();
         if (position.count() > 0) {
-            const PositionData &firstPositionData = position.getFirst();
-            aircraftInfo.initialAirspeed = static_cast<int>(std::round(Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ)));
+            const auto &firstPositionData = position.getFirst();
+            const auto &firstAttitudeData = attitude.getFirst();
+            aircraftInfo.initialAirspeed = static_cast<int>(std::round(Convert::feetPerSecondToKnots(firstAttitudeData.velocityBodyZ)));
 
             // Add default waypoints (first and last position) in case none are present in the imported data
             FlightPlan &flightPlan = aircraft.getFlightPlan();
@@ -295,7 +299,7 @@ void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const no
                 departure.timestamp = firstPositionData.timestamp;
                 flightPlan.add(std::move(departure));
 
-                const PositionData &lastPositionData = position.getLast();
+                const auto &lastPositionData = position.getLast();
                 Waypoint arrival;
                 arrival.identifier = Waypoint::CustomArrivalIdentifier;
                 arrival.latitude = static_cast<float>(lastPositionData.latitude);
@@ -317,8 +321,8 @@ void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const no
 bool FlightImportPluginBase::augmentFlights(std::vector<FlightData> &flightData) const noexcept
 {
     bool ok {false};
-    for (FlightData &flight : flightData) {
-        for (Aircraft &aircraft : flight) {
+    for (FlightData &data : flightData) {
+        for (Aircraft &aircraft : data) {
             if (aircraft.getPosition().count() > 0) {
                 d->flightAugmentation.setProcedures(getAugmentationProcedures());
                 d->flightAugmentation.setAspects(getAugmentationAspects());
@@ -333,7 +337,7 @@ bool FlightImportPluginBase::addAndStoreAircraftToCurrentFlight(const QString &s
                                                                 std::size_t &totalFlightsStored, std::size_t &totalAircraftStored, bool &continueWithDirectoryImport) noexcept
 {
     bool ok {true};
-    bool newFlight = !currentFlight.hasRecording();
+    bool newFlight {!currentFlight.hasRecording()};
     bool doAdd {true};
     if (importedFlights.size() > 1) {
         confirmMultiFlightImport(sourceFilePath, importedFlights.size(), doAdd, continueWithDirectoryImport);

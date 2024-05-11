@@ -41,6 +41,7 @@
 #include <PluginManager/Connect/AbstractSkyConnect.h>
 
 struct PositionData;
+struct AttitudeData;
 struct EngineData;
 class Aircraft;
 class MSFSSimConnectSettings;
@@ -60,7 +61,7 @@ public:
     MSFSSimConnectPlugin &operator=(MSFSSimConnectPlugin &&rhs) = delete;
     ~MSFSSimConnectPlugin() noexcept override;
 
-    bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
+    bool setUserAircraftPositionAndAttitude(const PositionData &positionData, const AttitudeData &attitudeData) noexcept override;
 
 protected:
     ConnectPluginBaseSettings &getPluginSettings() const noexcept override;

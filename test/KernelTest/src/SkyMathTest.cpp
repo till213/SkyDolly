@@ -315,6 +315,38 @@ void SkyMathTest::interpolateHermite360()
     QCOMPARE(result, expected);
 }
 
+void SkyMathTest::interpolateNearestNeighbour_data()
+{
+    QTest::addColumn<double>("p0");
+    QTest::addColumn<double>("p1");
+    QTest::addColumn<double>("mu");
+    QTest::addColumn<double>("expected");
+
+    QTest::newRow("First") << 1.0 << 2.0 << 0.1 << 1.0;
+    QTest::newRow("Second") << 1.0 << 2.0 << 0.5 << 2.0;
+    QTest::newRow("Negative time") << 1.0 << 2.0 << -1.0 << 1.0;
+    QTest::newRow("Exceeding time") << 1.0 << 2.0 << 2.0 << 2.0;
+    QTest::newRow("First negative") << -1.0 << 2.0 << 0.1 << -1.0;
+    QTest::newRow("Second negative") << 1.0 << -2.0 << 0.5 << -2.0;
+    QTest::newRow("First boundary") << 1.0 << 2.0 << 0.0 << 1.0;
+    QTest::newRow("Second boundary") << 1.0 << 2.0 << 1.0 << 2.0;
+}
+
+void SkyMathTest::interpolateNearestNeighbour()
+{
+    // Setup
+    QFETCH(double, p0);
+    QFETCH(double, p1);
+    QFETCH(double, mu);
+    QFETCH(double, expected);
+
+    // Exercise
+    double result = SkyMath::interpolateNearestNeighbour(p0, p1, mu);
+
+    // Verify
+    QCOMPARE(result, expected);
+}
+
 void SkyMathTest::fromPosition_data()
 {
     QTest::addColumn<double>("p");
@@ -742,7 +774,7 @@ void SkyMathTest::calculateTimeOffset()
     QFETCH(std::int64_t, expectedTimeOffset);
 
     // Exercise
-    const std::int64_t timeOffset = SkyMath::calculateTimeOffset(timeOffsetSync, fromDateTime, toDateTime);
+    const auto timeOffset = SkyMath::calculateTimeOffset(timeOffsetSync, fromDateTime, toDateTime);
 
     // Verify
     QCOMPARE(timeOffset, expectedTimeOffset);

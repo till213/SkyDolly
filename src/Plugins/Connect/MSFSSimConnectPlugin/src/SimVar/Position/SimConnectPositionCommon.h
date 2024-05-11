@@ -25,17 +25,11 @@
 #ifndef SIMCONNECTPOSITIONCOMMON_H
 #define SIMCONNECTPOSITIONCOMMON_H
 
-#include <cstdint>
-
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Kernel/SkyMath.h>
-#include <Kernel/Enum.h>
 #include <Model/SimVar.h>
 #include <Model/PositionData.h>
-#include <Model/InitialPosition.h>
-#include "SimConnectType.h"
 
 /*!
  * Common aircraft position simulation variables that are sent both to the user- and AI aircraft.
@@ -49,14 +43,6 @@ struct SimConnectPositionCommon
     double latitude {0.0};
     double longitude {0.0};
     double altitude {0.0};
-    double pitch {0.0};
-    double bank {0.0};
-    double trueHeading {0.0};
-
-    // Velocity
-    double velocityBodyX {0.0};
-    double velocityBodyY {0.0};
-    double velocityBodyZ {0.0};
 
     // Implementation note:
     // If we would store the "rotation velocity body" (which we currently do not anymore) then
@@ -76,13 +62,6 @@ struct SimConnectPositionCommon
         latitude = positionData.latitude;
         longitude = positionData.longitude;
         altitude = positionData.altitude;
-        pitch = positionData.pitch;
-        bank = positionData.bank;
-        trueHeading = positionData.trueHeading;
-
-        velocityBodyX = positionData.velocityBodyX;
-        velocityBodyY = positionData.velocityBodyY;
-        velocityBodyZ = positionData.velocityBodyZ;
     }
 
     inline PositionData toPositionData() const noexcept
@@ -94,17 +73,9 @@ struct SimConnectPositionCommon
 
     inline void toPositionData(PositionData &positionData) const noexcept
     {
-
         positionData.latitude = latitude;
         positionData.longitude = longitude;
         positionData.altitude = altitude;
-        positionData.pitch = pitch;
-        positionData.bank = bank;
-        positionData.trueHeading = trueHeading;
-
-        positionData.velocityBodyX = velocityBodyX;
-        positionData.velocityBodyY = velocityBodyY;
-        positionData.velocityBodyZ = velocityBodyZ;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
@@ -113,14 +84,6 @@ struct SimConnectPositionCommon
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Latitude, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Longitude, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Altitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Pitch, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Bank, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::TrueHeading, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
-
-        // Velocity
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::VelocityBodyX, "Feet per Second", ::SIMCONNECT_DATATYPE_FLOAT64);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::VelocityBodyY, "Feet per Second",::SIMCONNECT_DATATYPE_FLOAT64);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::VelocityBodyZ, "Feet per Second",::SIMCONNECT_DATATYPE_FLOAT64);
     }
 };
 #pragma pack(pop)

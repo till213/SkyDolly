@@ -22,25 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "Data.h"
-#include "Location.h"
+#ifndef ATTITUDEDATA_H
+#define ATTITUDEDATA_H
 
-// PUBLIC
+#include "TimeVariableData.h"
+#include "ModelLib.h"
 
-Location::Location(double latitude, double longitude, double altitude) noexcept
-    : Data(),
-      latitude(latitude),
-      longitude(longitude),
-      altitude(altitude)
-{}
+struct MODEL_API AttitudeData final : public TimeVariableData
+{
+    // Attitude
+    double pitch {0.0};
+    double bank {0.0};
+    double trueHeading {0.0};
 
-Location::Location(const InitialPosition &initialPosition) noexcept
-    : latitude(initialPosition.latitude),
-      longitude(initialPosition.longitude),
-      altitude(initialPosition.altitude),
-      pitch(initialPosition.pitch),
-      bank(initialPosition.bank),
-      trueHeading(initialPosition.trueHeading),
-      indicatedAirspeed(initialPosition.indicatedAirspeed),
-      onGround(initialPosition.onGround)
-{}
+    // Velocity
+    double velocityBodyX {0.0};
+    double velocityBodyY {0.0};
+    double velocityBodyZ {0.0};
+
+    bool onGround {false};
+
+    explicit AttitudeData(double pitch = 0.0, double bank = 0.0, double trueHeading = 0.0) noexcept;
+};
+
+#endif // ATTITUDEDATA_H

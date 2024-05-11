@@ -209,21 +209,19 @@ void EngineWidget::initUi() noexcept
 
 EngineData EngineWidget::getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    EngineData engineData;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (skyConnect->get().getState() == Connect::State::Recording) {
-            if (aircraft.getEngine().count() > 0) {
-                engineData = aircraft.getEngine().getLast();
-            }
-        } else {
-            if (timestamp != TimeVariableData::InvalidTime) {
-                engineData = aircraft.getEngine().interpolate(timestamp, access);
-            } else {
-                engineData = aircraft.getEngine().interpolate(skyConnect->get().getCurrentTimestamp(), access);
-            }
-        };
-    }
-    return engineData;
+    EngineData data;
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &engine = aircraft.getEngine();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+
+    if (skyConnectManager.getState() == Connect::State::Recording) {
+        if (engine.count() > 0) {
+            data = engine.getLast();
+        }
+    } else {
+        const auto t = timestamp != TimeVariableData::InvalidTime ? timestamp : skyConnectManager.getCurrentTimestamp();
+        data = engine.interpolate(t, access);
+    };
+
+    return data;
 }

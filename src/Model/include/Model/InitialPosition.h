@@ -26,13 +26,14 @@
 #define INITIALPOSITION_H
 
 #include <limits>
-#include <cstdint>
 #include <cmath>
 
 #include <QtGlobal>
 
 #include <Kernel/Convert.h>
 #include "PositionData.h"
+#include "AttitudeData.h"
+#include "AttitudeData.h"
 #include "ModelLib.h"
 
 struct AircraftInfo;
@@ -50,22 +51,22 @@ struct MODEL_API InitialPosition final
     bool onGround {false};
 
     explicit InitialPosition(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
-    InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept;
+    InitialPosition(const PositionData &positionData, const AttitudeData &attitudeData, const AircraftInfo &aircraftInfo) noexcept;
 
     inline bool isNull() const noexcept {
         return (indicatedAirspeed == InvalidIndicatedAirspeed);
     }
 
-    inline void fromPositionData(const PositionData &positionData) {
+    inline void fromPositionData(const PositionData &positionData, const AttitudeData &attitudeData) {
         latitude = positionData.latitude;
         longitude = positionData.longitude;
         altitude = positionData.altitude;
-        pitch = positionData.pitch;
-        bank = positionData.bank;
-        trueHeading = positionData.trueHeading;
-        const double trueAirspeed = Convert::feetPerSecondToKnots(positionData.velocityBodyZ);
+        pitch = attitudeData.pitch;
+        bank = attitudeData.bank;
+        trueHeading = attitudeData.trueHeading;
+        const auto trueAirspeed = Convert::feetPerSecondToKnots(attitudeData.velocityBodyZ);
         indicatedAirspeed = static_cast<int>(std::round(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude)));
-        onGround = false;
+        onGround = attitudeData.onGround;
     }
 
     static constexpr int InvalidIndicatedAirspeed = std::numeric_limits<int>::min();

@@ -22,6 +22,8 @@ target_sources(${LIBRARY_NAME}
         include/Model/TimeVariableData.h
         include/Model/Position.h src/Position.cpp
         include/Model/PositionData.h src/PositionData.cpp
+        include/Model/Attitude.h src/Attitude.cpp
+        include/Model/AttitudeData.h src/AttitudeData.cpp
         include/Model/InitialPosition.h src/InitialPosition.cpp
         include/Model/Engine.h src/Engine.cpp
         include/Model/EngineData.h src/EngineData.cpp
@@ -52,7 +54,6 @@ target_include_directories(${LIBRARY_NAME}
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC
         Qt6::Core
-        Qt6::Sql
     PRIVATE
         Sky::Kernel
 )

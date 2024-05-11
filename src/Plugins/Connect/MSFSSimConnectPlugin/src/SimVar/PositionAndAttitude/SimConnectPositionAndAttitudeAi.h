@@ -22,48 +22,64 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPOSITIONAI_H
-#define SIMCONNECTPOSITIONAI_H
+#ifndef SIMCONNECTPOSITIONANDATTITUDEAI_H
+#define SIMCONNECTPOSITIONANDATTITUDEAI_H
 
 #include <Kernel/Enum.h>
 #include <Model/PositionData.h>
+#include <Model/AttitudeData.h>
 #include "SimConnectType.h"
-#include "SimConnectPositionCommon.h"
+#include "../Position/SimConnectPositionCommon.h"
+#include "../Attitude/SimConnectAttitudeCommon.h"
 
 /*!
- * Position simulation variables that are sent to AI aircraft.
+ * Position and attitude simulation variables that are sent to AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPositionAi
+struct SimConnectPositionAndAttitudeAi
 {
-    SimConnectPositionCommon common;
+    SimConnectPositionCommon positionCommon;
+    SimConnectAttitudeCommon attitudeCommon;
 
-    SimConnectPositionAi(const PositionData &positionData) noexcept
-        : SimConnectPositionAi()
+    SimConnectPositionAndAttitudeAi(const PositionData &positionData, const AttitudeData &attitudeData) noexcept
+        : SimConnectPositionAndAttitudeAi()
     {
         fromPositionData(positionData);
+        fromAttitudeData(attitudeData);
     }
 
-    SimConnectPositionAi() = default;
+    SimConnectPositionAndAttitudeAi() = default;
 
     inline void fromPositionData(const PositionData &positionData)
     {
-        common.fromPositionData(positionData);
+        positionCommon.fromPositionData(positionData);
     }
 
     inline PositionData toPositionData() const noexcept
     {
-        PositionData positionData = common.toPositionData();
+        const auto positionData = positionCommon.toPositionData();
         return positionData;
+    }
+
+    inline void fromAttitudeData(const AttitudeData &attitudeData)
+    {
+        attitudeCommon.fromAttitudeData(attitudeData);
+    }
+
+    inline AttitudeData toAttitudeData() const noexcept
+    {
+        const auto attitudeData = attitudeCommon.toAttitudeData();
+        return attitudeData;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        SimConnectPositionCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAi));
+        SimConnectPositionCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAndAttitudeAi));
+        SimConnectAttitudeCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAndAttitudeAi));
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPOSITIONAI_H
+#endif // SIMCONNECTPOSITIONANDATTITUDEAI_H

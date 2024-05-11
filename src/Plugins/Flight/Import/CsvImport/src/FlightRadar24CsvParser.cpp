@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <cstdint>
+#include <utility>
 
 #include <QByteArray>
 #include <QString>
@@ -40,6 +41,8 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <PluginManager/Csv.h>
 #include "FlightRadar24CsvParser.h"
 
@@ -98,20 +101,22 @@ FlightData FlightRadar24CsvParser::parse(QIODevice &io, bool &ok) noexcept
     CsvParser csvParser;
     QTextStream textStream(&io);
     textStream.setEncoding(QStringConverter::Utf8);
-    CsvParser::Rows rows = csvParser.parse(textStream, QString::fromLatin1(Header::FlightRadar24Csv));
+    CsvParser::Rows rows = csvParser.parse(textStream, Header::FlightRadar24Csv);
     d->headers = csvParser.getHeaders();
     ok = validateHeaders();
     if (ok) {
         ok = CsvParser::validate(rows, d->headers.size());
     }
     if (ok) {
-        Aircraft &aircraft = flightData.addUserAircraft();
-        Position &position = aircraft.getPosition();
+        auto &aircraft = flightData.addUserAircraft();
+        auto &position = aircraft.getPosition();
+        auto &attitude = aircraft.getAttitude();
         position.reserve(rows.size());
         for (const auto &row : rows) {
-            const PositionData positionData = parsePosition(row, firstDateTimeUtc, flightNumber, ok);
+            const auto positionAndAttitude = parsePosition(row, firstDateTimeUtc, flightNumber, ok);
             if (ok) {
-                position.upsertLast(positionData);
+                position.upsertLast(positionAndAttitude.first);
+                attitude.upsertLast(positionAndAttitude.second);
             } else {
                 break;
             }
@@ -133,7 +138,7 @@ bool FlightRadar24CsvParser::validateHeaders() const noexcept
 {
     bool ok {true};
     for (const auto val : d->HeaderNames) {
-        ok = d->headers.contains(QString::fromLatin1(val));
+        ok = d->headers.contains(val);
         if (!ok) {
             break;
         }
@@ -141,22 +146,23 @@ bool FlightRadar24CsvParser::validateHeaders() const noexcept
     return ok;
 }
 
-inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) const noexcept
+inline std::pair<PositionData, AttitudeData> FlightRadar24CsvParser::parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) const noexcept
 {
     PositionData positionData;
+    AttitudeData attitudeData;
     std::int64_t timestamp {0};
     QDateTime currentDateTimeUtc;
     currentDateTimeUtc.setTimeZone(QTimeZone::utc());
 
     ok = true;
     // In seconds after 1970-01-01 UTC
-    const std::int64_t unixTimestamp = row.at(d->headers.at(QString::fromLatin1(Header::Timestamp))).toLongLong(&ok);
+    const std::int64_t unixTimestamp = row.at(d->headers.at(Header::Timestamp)).toLongLong(&ok);
     if (ok) {
         if (firstDateTimeUtc.isNull()) {
             firstDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
             currentDateTimeUtc = firstDateTimeUtc;
             timestamp = 0;
-            flightNumber = row.at(d->headers.at(QString::fromLatin1(Header::Callsign)));
+            flightNumber = row.at(d->headers.at(Header::Callsign));
         } else {
             currentDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
             timestamp = firstDateTimeUtc.msecsTo(currentDateTimeUtc);
@@ -164,7 +170,7 @@ inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &
     }
     if (ok) {
         positionData.timestamp = timestamp;
-        const QString &position = row.at(d->headers.at(QString::fromLatin1(Header::Position)));
+        const QString &position = row.at(d->headers.at(Header::Position));
         const QStringList coordinates = position.split(',');
         if (coordinates.size() == 2) {
             positionData.latitude = coordinates.first().toDouble(&ok);
@@ -176,14 +182,15 @@ inline PositionData FlightRadar24CsvParser::parsePosition(const CsvParser::Row &
         }
     }
     if (ok) {
-        positionData.altitude = row.at(d->headers.at(QString::fromLatin1(Header::Altitude))).toDouble(&ok);
+        positionData.altitude = row.at(d->headers.at(Header::Altitude)).toDouble(&ok);
         positionData.indicatedAltitude = positionData.altitude;
     }
     if (ok) {
-        positionData.velocityBodyZ = row.at(d->headers.at(QString::fromLatin1(Header::Speed))).toDouble(&ok);
+        attitudeData.timestamp = timestamp;
+        attitudeData.velocityBodyZ = row.at(d->headers.at(Header::Speed)).toDouble(&ok);
     }
     if (ok) {
-        positionData.trueHeading = row.at(d->headers.at(QString::fromLatin1(Header::Direction))).toDouble(&ok);
+        attitudeData.trueHeading = row.at(d->headers.at(Header::Direction)).toDouble(&ok);
     }
-    return positionData;
+    return std::make_pair(positionData, attitudeData);
 }

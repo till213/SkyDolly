@@ -22,25 +22,24 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "Data.h"
-#include "Location.h"
+#ifndef ATTITUDE_H
+#define ATTITUDE_H
 
-// PUBLIC
+#include "AttitudeData.h"
+#include "AircraftInfo.h"
+#include "AbstractComponent.h"
+#include "ModelLib.h"
 
-Location::Location(double latitude, double longitude, double altitude) noexcept
-    : Data(),
-      latitude(latitude),
-      longitude(longitude),
-      altitude(altitude)
-{}
+class MODEL_API Attitude final : public AbstractComponent<AttitudeData>
+{
+public:
+    explicit Attitude(const AircraftInfo &aircraftInfo) noexcept;
 
-Location::Location(const InitialPosition &initialPosition) noexcept
-    : latitude(initialPosition.latitude),
-      longitude(initialPosition.longitude),
-      altitude(initialPosition.altitude),
-      pitch(initialPosition.pitch),
-      bank(initialPosition.bank),
-      trueHeading(initialPosition.trueHeading),
-      indicatedAirspeed(initialPosition.indicatedAirspeed),
-      onGround(initialPosition.onGround)
-{}
+    const AttitudeData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept override;
+
+private:
+    mutable AttitudeData m_currentData;
+};
+
+#endif // ATTITUDE_H
+

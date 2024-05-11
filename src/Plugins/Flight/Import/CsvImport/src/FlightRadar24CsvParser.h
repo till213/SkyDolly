@@ -26,6 +26,7 @@
 #define FLIGHTRADAR24CSVPARSER_H
 
 #include <memory.h>
+#include <utility>
 
 class QIODevice;
 class QDateTime;
@@ -33,6 +34,7 @@ class QString;
 
 #include <Kernel/CsvParser.h>
 #include <Model/PositionData.h>
+#include <Model/AttitudeData.h>
 #include "CsvParserIntf.h"
 
 struct FlightData;
@@ -53,7 +55,7 @@ private:
     const std::unique_ptr<FlightRadar24CsvParserPrivate> d;
 
     bool validateHeaders() const noexcept;
-    inline PositionData parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) const noexcept;
+    inline std::pair<PositionData, AttitudeData> parsePosition(const CsvParser::Row &row, QDateTime &firstDateTimeUtc, QString &flightNumber, bool &ok) const noexcept;
 };
 
 #endif // FLIGHTRADAR24CSVPARSER_H

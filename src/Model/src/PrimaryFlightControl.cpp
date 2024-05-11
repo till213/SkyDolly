@@ -42,8 +42,8 @@ PrimaryFlightControl::PrimaryFlightControl(const AircraftInfo &aircraftInfo) noe
 const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const PrimaryFlightControlData *p1 {nullptr}, *p2 {nullptr};
-    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
-    const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
+    const auto timeOffset = access != TimeVariableData::Access::NoTimeOffset ? getAircraftInfo().timeOffset : 0;
+    const auto adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
         int currentIndex = getCurrentIndex();
@@ -51,7 +51,7 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t t
         switch (access) {
         case TimeVariableData::Access::Linear:
             [[fallthrough]];
-        case TimeVariableData::Access::Export:
+        case TimeVariableData::Access::NoTimeOffset:
             if (SkySearch::getLinearInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::DefaultInterpolationWindow, currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }

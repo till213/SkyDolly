@@ -22,25 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "Data.h"
-#include "Location.h"
+#ifndef ATTITUDEDAOINTF_H
+#define ATTITUDEDAOINTF_H
 
-// PUBLIC
+#include <vector>
+#include <cstdint>
 
-Location::Location(double latitude, double longitude, double altitude) noexcept
-    : Data(),
-      latitude(latitude),
-      longitude(longitude),
-      altitude(altitude)
-{}
+struct AttitudeData;
 
-Location::Location(const InitialPosition &initialPosition) noexcept
-    : latitude(initialPosition.latitude),
-      longitude(initialPosition.longitude),
-      altitude(initialPosition.altitude),
-      pitch(initialPosition.pitch),
-      bank(initialPosition.bank),
-      trueHeading(initialPosition.trueHeading),
-      indicatedAirspeed(initialPosition.indicatedAirspeed),
-      onGround(initialPosition.onGround)
-{}
+class AttitudeDaoIntf
+{
+public:
+    AttitudeDaoIntf() = default;
+    AttitudeDaoIntf(const AttitudeDaoIntf &rhs) = delete;
+    AttitudeDaoIntf(AttitudeDaoIntf &&rhs) = default;
+    AttitudeDaoIntf &operator=(const AttitudeDaoIntf &rhs) = delete;
+    AttitudeDaoIntf &operator=(AttitudeDaoIntf &&rhs) = default;
+    virtual ~AttitudeDaoIntf() = default;
+
+    /*!
+     * Persists the \c data.
+     *
+     * \param aircraftId
+     *        the aircraft the \c data belongs to
+     * \param data
+     *        the AttitudeData to be persisted
+     * \return \c true on success; \c false else
+     */
+    virtual bool add(std::int64_t aircraftId, const AttitudeData &data) const noexcept = 0;
+    virtual std::vector<AttitudeData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept = 0;
+    virtual bool deleteByFlightId(std::int64_t flightId) const noexcept = 0;
+    virtual bool deleteByAircraftId(std::int64_t aircraftId) const noexcept = 0;
+};
+
+#endif // ATTITUDEDAOINTF_H

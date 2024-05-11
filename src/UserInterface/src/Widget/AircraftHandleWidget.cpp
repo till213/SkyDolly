@@ -90,23 +90,21 @@ void AircraftHandleWidget::initUi() noexcept
 
 AircraftHandleData AircraftHandleWidget::getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    AircraftHandleData aircraftHandleData;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (skyConnect->get().getState() == Connect::State::Recording) {
-            if (aircraft.getAircraftHandle().count() > 0) {
-                aircraftHandleData = aircraft.getAircraftHandle().getLast();
-            }
-        } else {
-            if (timestamp != TimeVariableData::InvalidTime) {
-                aircraftHandleData = aircraft.getAircraftHandle().interpolate(timestamp, access);
-            } else {
-                aircraftHandleData = aircraft.getAircraftHandle().interpolate(skyConnect->get().getCurrentTimestamp(), access);
-            }
-        };
-    }
-    return aircraftHandleData;
+    AircraftHandleData data;
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &aircraftHandle = aircraft.getAircraftHandle();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+
+    if (skyConnectManager.getState() == Connect::State::Recording) {
+        if (aircraftHandle.count() > 0) {
+            data = aircraftHandle.getLast();
+        }
+    } else {
+        const auto t = timestamp != TimeVariableData::InvalidTime ? timestamp : skyConnectManager.getCurrentTimestamp();
+        data = aircraftHandle.interpolate(t, access);
+    };
+
+    return data;
 }
 
 // PRIVATE SLOTS

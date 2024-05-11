@@ -41,8 +41,8 @@ Engine::Engine(const AircraftInfo &aircraftInfo) noexcept
 const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const EngineData *p1 {nullptr}, *p2 {nullptr};
-    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
-    const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
+    const auto timeOffset = access != TimeVariableData::Access::NoTimeOffset ? getAircraftInfo().timeOffset : 0;
+    const auto adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
         int currentIndex = getCurrentIndex();
@@ -50,7 +50,7 @@ const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::
         switch (access) {
         case TimeVariableData::Access::Linear:
             [[fallthrough]];
-        case TimeVariableData::Access::Export:
+        case TimeVariableData::Access::NoTimeOffset:
             if (SkySearch::getLinearInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::DefaultInterpolationWindow, currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
@@ -89,19 +89,19 @@ const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::
             m_currentData.cowlFlapPosition3 = SkyMath::interpolateLinear(p1->cowlFlapPosition3, p2->cowlFlapPosition3, tn);
             m_currentData.cowlFlapPosition4 = SkyMath::interpolateLinear(p1->cowlFlapPosition4, p2->cowlFlapPosition4, tn);
 
-            // No interpolation for battery and starter/combustion states (boolean)
-            m_currentData.electricalMasterBattery1 = p1->electricalMasterBattery1;
-            m_currentData.electricalMasterBattery2 = p1->electricalMasterBattery2;
-            m_currentData.electricalMasterBattery3 = p1->electricalMasterBattery3;
-            m_currentData.electricalMasterBattery4 = p1->electricalMasterBattery4;
-            m_currentData.generalEngineStarter1 = p1->generalEngineStarter1;
-            m_currentData.generalEngineStarter2 = p1->generalEngineStarter2;
-            m_currentData.generalEngineStarter3 = p1->generalEngineStarter3;
-            m_currentData.generalEngineStarter4 = p1->generalEngineStarter4;
-            m_currentData.generalEngineCombustion1 = p1->generalEngineCombustion1;
-            m_currentData.generalEngineCombustion2 = p1->generalEngineCombustion2;
-            m_currentData.generalEngineCombustion3 = p1->generalEngineCombustion3;
-            m_currentData.generalEngineCombustion4 = p1->generalEngineCombustion4;
+            // Nearest neighbour interpolation for battery and starter/combustion states (boolean)
+            m_currentData.electricalMasterBattery1 = SkyMath::interpolateNearestNeighbour(p1->electricalMasterBattery1, p2->electricalMasterBattery1, tn);
+            m_currentData.electricalMasterBattery2 = SkyMath::interpolateNearestNeighbour(p1->electricalMasterBattery2, p2->electricalMasterBattery2, tn);
+            m_currentData.electricalMasterBattery3 = SkyMath::interpolateNearestNeighbour(p1->electricalMasterBattery3, p2->electricalMasterBattery3, tn);
+            m_currentData.electricalMasterBattery4 = SkyMath::interpolateNearestNeighbour(p1->electricalMasterBattery4, p2->electricalMasterBattery4, tn);
+            m_currentData.generalEngineStarter1 = SkyMath::interpolateNearestNeighbour(p1->generalEngineStarter1, p2->generalEngineStarter1, tn);
+            m_currentData.generalEngineStarter2 = SkyMath::interpolateNearestNeighbour(p1->generalEngineStarter2, p2->generalEngineStarter2, tn);
+            m_currentData.generalEngineStarter3 = SkyMath::interpolateNearestNeighbour(p1->generalEngineStarter3, p2->generalEngineStarter3, tn);
+            m_currentData.generalEngineStarter4 = SkyMath::interpolateNearestNeighbour(p1->generalEngineStarter4, p2->generalEngineStarter4, tn);
+            m_currentData.generalEngineCombustion1 = SkyMath::interpolateNearestNeighbour(p1->generalEngineCombustion1, p2->generalEngineCombustion1, tn);
+            m_currentData.generalEngineCombustion2 = SkyMath::interpolateNearestNeighbour(p1->generalEngineCombustion2, p2->generalEngineCombustion2, tn);
+            m_currentData.generalEngineCombustion3 = SkyMath::interpolateNearestNeighbour(p1->generalEngineCombustion3, p2->generalEngineCombustion3, tn);
+            m_currentData.generalEngineCombustion4 = SkyMath::interpolateNearestNeighbour(p1->generalEngineCombustion4, p2->generalEngineCombustion4, tn);
             m_currentData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded data

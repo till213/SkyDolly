@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include "PositionData.h"
+#include "AttitudeData.h"
 #include "AircraftInfo.h"
 #include "InitialPosition.h"
 
@@ -34,8 +35,8 @@ InitialPosition::InitialPosition(double theLatitude, double theLongitude, double
       altitude(theAltitude)
 {}
 
-InitialPosition::InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept
+InitialPosition::InitialPosition(const PositionData &positionData, const AttitudeData &attitudeData, const AircraftInfo &aircraftInfo) noexcept
     : onGround(aircraftInfo.startOnGround)
 {
-    fromPositionData(positionData);
+    fromPositionData(positionData, attitudeData);
 }

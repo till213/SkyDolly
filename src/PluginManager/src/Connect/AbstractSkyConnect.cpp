@@ -47,6 +47,8 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <Model/InitialPosition.h>
 #include <Connect/Connect.h>
 #include <Connect/SkyConnectIntf.h>
@@ -254,7 +256,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
 void AbstractSkyConnect::stopRecording() noexcept
 {
     onStopRecording();
-    Aircraft &aircraft = d->currentFlight.getUserAircraft();
+    auto &aircraft = d->currentFlight.getUserAircraft();
     aircraft.invalidateDuration();
     d->recordingTimer.stop();
     // Only go into "recording stopped" state once the aircraft duration has been invalidated, in
@@ -625,12 +627,12 @@ void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previo
         // Check if the new user aircraft has just been newly added, which is indicated
         // by an invalid ID (= it has never been persisted). In such a case it does not
         // have an associated AI object either
-        const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
+        const auto &userAircraft = d->currentFlight[newUserAircraftIndex];
         if (userAircraft.getId() != Const::InvalidId) {
             removeAiObject(userAircraft.getId());
         }
         if (previousUserAircraftIndex != Const::InvalidIndex) {
-            const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
+            const auto &aircraft = d->currentFlight[previousUserAircraftIndex];
             addAiObject(aircraft);
         }
         sendAircraftData(d->currentTimestamp, TimeVariableData::Access::DiscreteSeek, AircraftSelection::UserAircraft);
@@ -846,13 +848,14 @@ bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition flyWithForma
         [[fallthrough]];
     case ReplayMode::Normal:
         if (d->currentTimestamp == 0) {
-            const Aircraft &userAircraft = getCurrentFlight().getUserAircraft();
+            const auto &aircraft = getCurrentFlight().getUserAircraft();
             // Make sure recorded position data exists
-            ok = userAircraft.getPosition().count() > 0;
+            ok = aircraft.getPosition().count() > 0;
             if (ok) {
-                const PositionData &positionData = userAircraft.getPosition().getFirst();
-                const AircraftInfo aircraftInfo = userAircraft.getAircraftInfo();
-                const InitialPosition initialPosition = InitialPosition(positionData, aircraftInfo);
+                const auto &positionData = aircraft.getPosition().getFirst();
+                const AttitudeData &attitudeData = aircraft.getAttitude().getFirst();
+                const AircraftInfo aircraftInfo = aircraft.getAircraftInfo();
+                const InitialPosition initialPosition = InitialPosition(positionData, attitudeData, aircraftInfo);
                 ok = onInitialPositionSetup(initialPosition);
             }
         }

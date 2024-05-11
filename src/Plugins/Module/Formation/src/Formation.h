@@ -26,9 +26,11 @@
 #define FORMATION_H
 
 #include <cstdint>
+#include <utility>
 
 #include <Model/InitialPosition.h>
 #include <Model/PositionData.h>
+#include <Model/AttitudeData.h>
 
 namespace Formation
 {
@@ -88,8 +90,8 @@ namespace Formation
         Last = NorthNorthWest
     };
 
-    InitialPosition calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing relativePosition, std::int64_t timestamp) noexcept;
-    PositionData calculateRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing relativePosition, std::int64_t timestamp) noexcept;
+    InitialPosition calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing bearing, std::int64_t timestamp) noexcept;
+    std::pair<PositionData, AttitudeData> calculateRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, Bearing bearing, std::int64_t timestamp) noexcept;
 };
 
 #endif // FORMATION_H

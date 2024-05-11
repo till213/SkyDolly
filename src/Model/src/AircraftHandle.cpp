@@ -42,8 +42,8 @@ AircraftHandle::AircraftHandle(const AircraftInfo &aircraftInfo) noexcept
 const AircraftHandleData &AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const AircraftHandleData *p1 {nullptr}, *p2 {nullptr};
-    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
-    const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
+    const auto timeOffset = access != TimeVariableData::Access::NoTimeOffset ? getAircraftInfo().timeOffset : 0;
+    const auto adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
 
@@ -52,7 +52,7 @@ const AircraftHandleData &AircraftHandle::interpolate(std::int64_t timestamp, Ti
         switch (access) {
         case TimeVariableData::Access::Linear:
             [[fallthrough]];
-        case TimeVariableData::Access::Export:
+        case TimeVariableData::Access::NoTimeOffset:
             if (SkySearch::getLinearInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::DefaultInterpolationWindow, currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
@@ -81,10 +81,10 @@ const AircraftHandleData &AircraftHandle::interpolate(std::int64_t timestamp, Ti
             m_currentData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
             m_currentData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);
             m_currentData.rightWingFolding = SkyMath::interpolateLinear(p1->rightWingFolding, p2->rightWingFolding, tn);
-            m_currentData.gearHandlePosition = p1->gearHandlePosition;
-            m_currentData.tailhookHandlePosition = p1->tailhookHandlePosition;
-            m_currentData.foldingWingHandlePosition = p1->foldingWingHandlePosition;
-            m_currentData.smokeEnabled = p1->smokeEnabled;
+            m_currentData.gearHandlePosition = SkyMath::interpolateNearestNeighbour(p1->gearHandlePosition, p2->gearHandlePosition, tn);
+            m_currentData.tailhookHandlePosition = SkyMath::interpolateNearestNeighbour(p1->tailhookHandlePosition, p2->tailhookHandlePosition, tn);
+            m_currentData.foldingWingHandlePosition = SkyMath::interpolateNearestNeighbour(p1->foldingWingHandlePosition, p2->foldingWingHandlePosition, tn);
+            m_currentData.smokeEnabled = SkyMath::interpolateNearestNeighbour(p1->smokeEnabled, p2->smokeEnabled, tn);
             m_currentData.timestamp = adjustedTimestamp;
         } else {
             // Certain aircraft override the CANOPY OPEN, so values need to be repeatedly set

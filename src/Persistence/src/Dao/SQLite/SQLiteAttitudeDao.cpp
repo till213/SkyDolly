@@ -41,20 +41,20 @@
 #endif
 
 #include <Kernel/Enum.h>
-#include <Model/PositionData.h>
-#include "SQLitePositionDao.h"
+#include <Model/AttitudeData.h>
+#include "SQLiteAttitudeDao.h"
 
 namespace
 {
-    // The initial capacity of the position vector (e.g. SQLite does not support returning
+    // The initial capacity of the attitude vector (e.g. SQLite does not support returning
     // the result count for the given SELECT query)
     // Samples at 30 Hz for an assumed flight duration of 2 * 60 seconds = 2 minutes
     constexpr int DefaultCapacity = 30 * 2 * 60;
 }
 
-struct SQLitePositionDaoPrivate
+struct SQLiteAttitudeDaoPrivate
 {
-    SQLitePositionDaoPrivate(QString connectionName) noexcept
+    SQLiteAttitudeDaoPrivate(QString connectionName) noexcept
         : connectionName(std::move(connectionName))
     {}
 
@@ -63,63 +63,72 @@ struct SQLitePositionDaoPrivate
 
 // PUBLIC
 
-SQLitePositionDao::SQLitePositionDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLitePositionDaoPrivate>(std::move(connectionName)))
+SQLiteAttitudeDao::SQLiteAttitudeDao(QString connectionName) noexcept
+    : d(std::make_unique<SQLiteAttitudeDaoPrivate>(std::move(connectionName)))
 {}
 
-SQLitePositionDao::SQLitePositionDao(SQLitePositionDao &&rhs) noexcept = default;
-SQLitePositionDao &SQLitePositionDao::operator=(SQLitePositionDao &&rhs) noexcept = default;
-SQLitePositionDao::~SQLitePositionDao() = default;
+SQLiteAttitudeDao::SQLiteAttitudeDao(SQLiteAttitudeDao &&rhs) noexcept = default;
+SQLiteAttitudeDao &SQLiteAttitudeDao::operator=(SQLiteAttitudeDao &&rhs) noexcept = default;
+SQLiteAttitudeDao::~SQLiteAttitudeDao() = default;
 
-bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &position) const noexcept
+bool SQLiteAttitudeDao::add(std::int64_t aircraftId, const AttitudeData &attitude) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
-        "insert into position ("
+        "insert into attitude ("
         "  aircraft_id,"
         "  timestamp,"
-        "  latitude,"
-        "  longitude,"
-        "  altitude,"
-        "  indicated_altitude"
+        "  pitch,"
+        "  bank,"
+        "  true_heading,"
+        "  velocity_x,"
+        "  velocity_y,"
+        "  velocity_z,"
+        "  on_ground"
         ") values ("
         " :aircraft_id,"
         " :timestamp,"
-        " :latitude,"
-        " :longitude,"
-        " :altitude,"
-        " :indicated_altitude"
+        " :pitch,"
+        " :bank,"
+        " :true_heading,"
+        " :velocity_x,"
+        " :velocity_y,"
+        " :velocity_z,"
+        " :on_ground"
         ");"
     );
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
-    query.bindValue(":timestamp", QVariant::fromValue(position.timestamp));
-    query.bindValue(":latitude", position.latitude);
-    query.bindValue(":longitude", position.longitude);
-    query.bindValue(":altitude", position.altitude);
-    query.bindValue(":indicated_altitude", position.indicatedAltitude);
+    query.bindValue(":timestamp", QVariant::fromValue(attitude.timestamp));
+    query.bindValue(":pitch", attitude.pitch);
+    query.bindValue(":bank", attitude.bank);
+    query.bindValue(":true_heading", attitude.trueHeading);
+    query.bindValue(":velocity_x", attitude.velocityBodyX);
+    query.bindValue(":velocity_y", attitude.velocityBodyY);
+    query.bindValue(":velocity_z", attitude.velocityBodyZ);
+    query.bindValue(":on_ground", attitude.onGround);
 
     const bool ok = query.exec();
 
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLitePositionDao::add: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAttitudeDao::add: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
 }
 
-std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
+std::vector<AttitudeData> SQLiteAttitudeDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
-    std::vector<PositionData> positionData;
+    std::vector<AttitudeData> attitudeData;
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
         "select * "
-        "from   position p "
-        "where  p.aircraft_id = :aircraft_id "
-        "order by p.timestamp asc;"
+        "from   attitude a "
+        "where  a.aircraft_id = :aircraft_id "
+        "order by a.timestamp asc;"
     );
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
@@ -128,45 +137,51 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
         const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
-            positionData.reserve(query.size());
+            attitudeData.reserve(query.size());
         } else {
-            positionData.reserve(::DefaultCapacity);
+            attitudeData.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
         const auto timestampIdx = record.indexOf("timestamp");
-        const auto latitudeIdx = record.indexOf("latitude");
-        const auto longitudeIdx = record.indexOf("longitude");
-        const auto altitudeIdx = record.indexOf("altitude");
-        const auto indicatedAltitudeIdx = record.indexOf("indicated_altitude");
+        const auto pitchIdx = record.indexOf("pitch");
+        const auto bankIdx = record.indexOf("bank");
+        const auto trueHeadingIdx = record.indexOf("true_heading");
+        const auto velocitXIdx = record.indexOf("velocity_x");
+        const auto velocitYIdx = record.indexOf("velocity_y");
+        const auto velocitZIdx = record.indexOf("velocity_z");
+        const auto onGroundIdx = record.indexOf("on_ground");
         while (query.next()) {
-            PositionData data;
+            AttitudeData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
-            data.latitude = query.value(latitudeIdx).toDouble();
-            data.longitude = query.value(longitudeIdx).toDouble();
-            data.altitude = query.value(altitudeIdx).toDouble();
-            data.indicatedAltitude = query.value(indicatedAltitudeIdx).toDouble();
+            data.pitch = query.value(pitchIdx).toDouble();
+            data.bank = query.value(bankIdx).toDouble();
+            data.trueHeading = query.value(trueHeadingIdx).toDouble();
+            data.velocityBodyX = query.value(velocitXIdx).toDouble();
+            data.velocityBodyY = query.value(velocitYIdx).toDouble();
+            data.velocityBodyZ = query.value(velocitZIdx).toDouble();
+            data.onGround = query.value(onGroundIdx).toBool();
 
-            positionData.push_back(std::move(data));
+            attitudeData.push_back(std::move(data));
         }
 #ifdef DEBUG
     } else {
-        qDebug() << "SQLitePositionDao::getByAircraftId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAttitudeDao::getByAircraftId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
 #endif
     }
 
     if (ok != nullptr) {
         *ok = success;
     }
-    return positionData;
+    return attitudeData;
 }
 
-bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) const noexcept
+bool SQLiteAttitudeDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "
-        "from   position "
+        "from   attitude "
         "where  aircraft_id in (select a.id "
         "                       from aircraft a"
         "                       where a.flight_id = :flight_id"
@@ -177,19 +192,19 @@ bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) const noexcept
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLitePositionDao::deleteByFlightId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAttitudeDao::deleteByFlightId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return ok;
 }
 
-bool SQLitePositionDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
+bool SQLiteAttitudeDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "
-        "from   position "
+        "from   attitude "
         "where  aircraft_id = :aircraft_id;"
     );
 
@@ -197,7 +212,7 @@ bool SQLitePositionDao::deleteByAircraftId(std::int64_t aircraftId) const noexce
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug() << "SQLitePositionDao::deleteByAircraftId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
+        qDebug() << "SQLiteAttitudeDao::deleteByAircraftId: SQL error" << query.lastError().text() << "- error code:" << query.lastError().nativeErrorCode();
     }
 #endif
     return true;

@@ -66,10 +66,10 @@ struct MODEL_API TimeVariableData
          */
         ContinuousSeek,
         /*!
-         * The sampled data is accessed for export (in a linear way), but always starting from the first
+         * The sampled data is accessed for import or export (in a linear way), but always starting from the first
          * sample point (not taking the time offset of the Aircraft into account).
          */
-        Export
+        NoTimeOffset
     };
 
     static inline bool isSeek(Access access) noexcept
