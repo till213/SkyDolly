@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPOSITIONCOMMON_H
-#define SIMCONNECTPOSITIONCOMMON_H
+#ifndef SIMCONNECTATTITUDEINFOH
+#define SIMCONNECTATTITUDEINFOH
 
 #include <windows.h>
 #include <SimConnect.h>
@@ -41,55 +41,40 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPositionCommon
+struct SimConnectAttitudeInfo
 {
-    // Aircraft position
-    double latitude {0.0};
-    double longitude {0.0};
-    double altitude {0.0};
+    std::int32_t onGround {0};
 
-    // Implementation note:
-    // If we would store the "rotation velocity body" (which we currently do not anymore) then
-    // then the unit would be (wrongly) "FEET per second" (and not "RADIANS per second):
-    // https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Misc_Variables.htm#ROTATION_VELOCITY_BODY_X
-
-    SimConnectPositionCommon(const PositionData &positionData) noexcept
-        : SimConnectPositionCommon()
+    SimConnectAttitudeInfo(const AttitudeData &attitudeData) noexcept
+        : SimConnectAttitudeInfo()
     {
-        fromPositionData(positionData);
+        fromAttitudeData(attitudeData);
     }
 
-    SimConnectPositionCommon() = default;
+    SimConnectAttitudeInfo() = default;
 
-    inline void fromPositionData(const PositionData &positionData) noexcept
+    inline void fromAttitudeData(const AttitudeData &data) noexcept
     {
-        latitude = positionData.latitude;
-        longitude = positionData.longitude;
-        altitude = positionData.altitude;
+        onGround = data.onGround ? 1 : 0;
     }
 
-    inline PositionData toPositionData() const noexcept
+    inline AttitudeData toAttitudeData() const noexcept
     {
-        PositionData positionData;
-        toPositionData(positionData);
-        return positionData;
+        AttitudeData data;
+        toAttitudeData(data);
+        return data;
     }
 
-    inline void toPositionData(PositionData &positionData) const noexcept
+    inline void toAttitudeData(AttitudeData &data) const noexcept
     {
-        positionData.latitude = latitude;
-        positionData.longitude = longitude;
-        positionData.altitude = altitude;
+        data.onGround = onGround != 0;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
-        // Aircraft position & attitude
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Latitude, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Longitude, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::Altitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SimOnGround, "Bool", ::SIMCONNECT_DATATYPE_INT32);
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPOSITIONCOMMON_H
+#endif // SIMCONNECTATTITUDEINFOH

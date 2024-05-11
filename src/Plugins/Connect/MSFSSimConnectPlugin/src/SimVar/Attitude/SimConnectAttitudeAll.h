@@ -22,48 +22,55 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPOSITIONUSER_H
-#define SIMCONNECTPOSITIONUSER_H
+#ifndef SIMCONNECTATTITUDEALL_H
+#define SIMCONNECTATTITUDEALL_H
 
-#include <Kernel/Enum.h>
-#include <Model/PositionData.h>
-#include "SimConnectType.h"
-#include "SimConnectPositionCommon.h"
+#include <windows.h>
+#include <SimConnect.h>
+
+#include <Model/AttitudeData.h>
+#include "SimConnectAttitudeCommon.h"
+#include "SimConnectAttitudeInfo.h"
 
 /*!
- * Aircraft position simulation variables that are sent to the user aircraft.
+ * All aircraft position simulation variables (reply from the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPositionUser
+struct SimConnectAttitudeAll
 {
-    SimConnectPositionCommon common;
+    SimConnectAttitudeCommon common;
+    SimConnectAttitudeInfo info;
 
-    SimConnectPositionUser(const PositionData &positionData) noexcept
-        : SimConnectPositionUser()
+    SimConnectAttitudeAll(const AttitudeData &positionData) noexcept
+        : SimConnectAttitudeAll()
     {
-        fromPositionData(positionData);
+        fromAttitudeData(positionData);
     }
 
-    SimConnectPositionUser() = default;
+    SimConnectAttitudeAll() = default;
 
-    inline PositionData toPositionData() const noexcept
+    inline void fromAttitudeData(const AttitudeData &data) noexcept
     {
-        PositionData positionData = common.toPositionData();
+        common.fromAttitudeData(data);
+        info.fromAttitudeData(data);
+    }
+
+    inline AttitudeData toAttitudeData() const noexcept
+    {
+        auto positionData = common.toAttitudeData();
+        info.toAttitudeData(positionData);
         return positionData;
-    }
-
-    inline void fromPositionData(const PositionData &positionData)
-    {
-        common.fromPositionData(positionData);
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        SimConnectPositionCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionUser));
+        SimConnectAttitudeCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AttitudeAll));
+        SimConnectAttitudeInfo::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AttitudeAll));
     }
+
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPOSITIONUSER_H
+#endif // SIMCONNECTATTITUDEALL_H

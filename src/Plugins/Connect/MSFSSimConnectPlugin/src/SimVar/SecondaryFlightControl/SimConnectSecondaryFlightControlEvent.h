@@ -81,7 +81,7 @@ struct SimConnectSecondaryFlightControlEvent
     {
         // Spoilers, also known as "speed brakes"
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SpoilersHandlePosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SpoilersArmed, "Boolean", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SpoilersArmed, "Bool", ::SIMCONNECT_DATATYPE_INT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::FlapsHandleIndex, "Number", ::SIMCONNECT_DATATYPE_INT32);
     }
 };

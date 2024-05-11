@@ -37,8 +37,11 @@
 #include <Model/AircraftType.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include "SimVar/SimConnectType.h"
 #include "SimVar/SimulationVariables.h"
+#include "SimVar/PositionAndAttitude/SimConnectPositionAndAttitudeAll.h"
 #include "SimConnectAi.h"
 
 using RequestByAircraftId = std::unordered_map<std::int64_t, ::SIMCONNECT_DATA_REQUEST_ID>;
@@ -73,9 +76,11 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
     // (otherwise it is the new user aircraft being added for a new recording)
     if (aircraft.getId() != Const::InvalidId) {
         const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
-        Position &position = aircraft.getPosition();
+        const auto &position = aircraft.getPosition();
+        const auto &attitude = aircraft.getAttitude();
         const auto &positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
-        const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionAll::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
+        const auto &attitudeData = attitude.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+        const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionAndAttitudeAll::toInitialPosition(positionData, attitudeData, aircraftInfo.initialAirspeed);
 
         const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::underly(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;
         HRESULT result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);
