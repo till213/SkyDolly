@@ -78,7 +78,7 @@ struct SQLiteAircraftDaoPrivate
           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite, std::move(connectionName))),
           aircraftTypeDao(daoFactory->createAircraftTypeDao()),
           positionDao(daoFactory->createPositionDao()),
-          attitudeDao(daoFactory->createAttitudeDao())),
+          attitudeDao(daoFactory->createAttitudeDao()),
           engineDao(daoFactory->createEngineDao()),
           primaryFlightControlDao(daoFactory->createPrimaryFlightControlDao()),
           secondaryFlightControlDao(daoFactory->createSecondaryFlightControlDao()),
