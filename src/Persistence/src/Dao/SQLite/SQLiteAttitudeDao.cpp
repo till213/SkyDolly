@@ -110,6 +110,7 @@ bool SQLiteAttitudeDao::add(std::int64_t aircraftId, const AttitudeData &attitud
     query.bindValue(":velocity_x", attitude.velocityBodyX);
     query.bindValue(":velocity_y", attitude.velocityBodyY);
     query.bindValue(":velocity_z", attitude.velocityBodyZ);
+    query.bindValue(":on_ground", attitude.onGround);
 
     const bool ok = query.exec();
 

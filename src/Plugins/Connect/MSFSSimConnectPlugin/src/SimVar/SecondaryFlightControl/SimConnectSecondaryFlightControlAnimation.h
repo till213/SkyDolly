@@ -25,8 +25,6 @@
 #ifndef SIMCONNECTSECONDARYFLIGHTCONTROLANIMATION_H
 #define SIMCONNECTSECONDARYFLIGHTCONTROLANIMATION_H
 
-#include <cstdint>
-
 #include <windows.h>
 #include <SimConnect.h>
 
