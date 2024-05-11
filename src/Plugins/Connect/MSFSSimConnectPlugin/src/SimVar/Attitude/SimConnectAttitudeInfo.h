@@ -28,15 +28,13 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Kernel/SkyMath.h>
-#include <Kernel/Enum.h>
 #include <Model/SimVar.h>
-#include <Model/PositionData.h>
-#include <Model/InitialPosition.h>
+#include <Model/AttitudeData.h>
 #include "SimConnectType.h"
 
 /*!
- * Common aircraft position simulation variables that are sent both to the user- and AI aircraft.
+ * Aircraft attitude simulation variables that are either stored for information purposes only
+ * or that are sent exclusively to the user aircraft as events.
  *
  * Implementation note: this struct needs to be packed.
  */

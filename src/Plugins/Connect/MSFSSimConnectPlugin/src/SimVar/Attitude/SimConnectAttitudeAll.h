@@ -33,7 +33,7 @@
 #include "SimConnectAttitudeInfo.h"
 
 /*!
- * All aircraft position simulation variables (reply from the flight simulator).
+ * All aircraft attitude simulation variables (reply from the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */

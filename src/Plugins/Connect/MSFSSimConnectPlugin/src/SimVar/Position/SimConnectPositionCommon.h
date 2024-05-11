@@ -28,12 +28,8 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Kernel/SkyMath.h>
-#include <Kernel/Enum.h>
 #include <Model/SimVar.h>
 #include <Model/PositionData.h>
-#include <Model/InitialPosition.h>
-#include "SimConnectType.h"
 
 /*!
  * Common aircraft position simulation variables that are sent both to the user- and AI aircraft.

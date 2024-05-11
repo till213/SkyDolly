@@ -33,7 +33,7 @@
 #include "../Attitude/SimConnectAttitudeCommon.h"
 
 /*!
- * Position simulation variables that are sent to AI aircraft.
+ * Position and attitude simulation variables that are sent to AI aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */

@@ -28,12 +28,12 @@
 #include <Kernel/Enum.h>
 #include <Model/PositionData.h>
 #include <Model/AttitudeData.h>
-#include "SimConnectType.h"
 #include "../Position/SimConnectPositionCommon.h"
 #include "../Attitude/SimConnectAttitudeCommon.h"
+#include "SimConnectType.h"
 
 /*!
- * Position simulation variables that are sent to AI aircraft.
+ * Position and attitude simulation variables that are sent to the user aircraft.
  *
  * Implementation note: this struct needs to be packed.
  */
