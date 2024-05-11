@@ -352,7 +352,6 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     positionData.longitude = -180.0 + d->randomGenerator->bounded(360.0);
     positionData.altitude = d->randomGenerator->bounded(60000.0);
     positionData.indicatedAltitude = d->randomGenerator->bounded(20000.0);
-
     positionData.timestamp = timestamp;
     aircraft.getPosition().upsertLast(positionData);
 
@@ -365,8 +364,7 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     attitudeData.velocityBodyY = d->randomGenerator->bounded(1.0);
     attitudeData.velocityBodyZ = d->randomGenerator->bounded(1.0);
     attitudeData.onGround = false;
-
-    positionData.timestamp = timestamp;
+    attitudeData.timestamp = timestamp;
     aircraft.getAttitude().upsertLast(attitudeData);
 }
 

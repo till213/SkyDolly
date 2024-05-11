@@ -1008,6 +1008,21 @@ insert into aircraft_type values
 update metadata
 set app_version = '0.17.0';
 
+@migr(id = "4fda1c12-4c05-4152-af6b-1e495b12492e", descn = "Create attitude table", step = 1)
+create table attitude (
+    aircraft_id integer not null,
+    timestamp integer not null,
+    pitch real,
+    bank real,
+    true_heading real,
+    velocity_x real,
+    velocity_y real,
+    velocity_z real,
+    on_ground int,
+    primary key(aircraft_id, timestamp),
+    foreign key(aircraft_id) references aircraft(id)
+);
+
 @migr(id = "80bcc81a-6554-4e05-8631-d17358d9d1dd", descn = "Update application version to 0.18", step = 1)
 update metadata
 set app_version = '0.18.0';

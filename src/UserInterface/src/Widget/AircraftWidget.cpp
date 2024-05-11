@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <optional>
 #include <cstdint>
 #include <utility>
 
