@@ -21,11 +21,17 @@
   * Loctations may also be unconditionally imported (*insert*)
 - Position- and attitude simulation variables are now sampled separately
   * Position data (latitude, longitude, altitude) is only sampled at 1Hz: the expectation is that "stutters" during recording should be automatically smoothened out
-  * Boolean simulation variables are now interpolated with nearest neighbour interpolation
 - The "Sim On Ground" simulation variable is now also recorded (for each aircraft attitude change)
 - The maximum simulation rate spinbox now steps in powers of two (1, 2, 4, 8, ..., 128)
   * The MSFS simulation rate is always a power of two
   * Non-power of two values may still be entered by editing the text
+- The recording sample rate setting has been removed. Reasoning:
+  * The aircraft position is now sampled at a fixed 1 Hz (one sample per second) anyway (see above)
+  * While the aircraft attitude is sampled "as fast as possible" (for each *simulated frame*)...
+  * ... all other data is (only) recorded "as available", that is very infrequently
+  * Few users were probably aware of what this "Recording Frequency" settings was supposed to do and left it at "auto"
+  * Removing the timer-based recording also simplified the code
+- The Statistics dialog now shows separate recording rates, for both positition (always around 1 Hz) and attitude samples (e.g. 30 Hz, that is the *simulation frame* rate)
 
 ## Bug Fixes
 

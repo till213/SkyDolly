@@ -47,14 +47,11 @@ const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Ac
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
         int currentIndex = getCurrentIndex();
-        double tn {0.0};
         switch (access) {
         case TimeVariableData::Access::Linear:
             [[fallthrough]];
         case TimeVariableData::Access::NoTimeOffset:
-            if (SkySearch::getLinearInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::DefaultInterpolationWindow, currentIndex, &p1, &p2)) {
-                tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
-            }
+            SkySearch::getLinearInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::DefaultInterpolationWindow, currentIndex, &p1, &p2);
             break;
         case TimeVariableData::Access::DiscreteSeek:
             [[fallthrough]];
@@ -65,7 +62,6 @@ const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Ac
             if (currentIndex != SkySearch::InvalidIndex) {
                 p1 = &getData().at(currentIndex);
                 p2 = p1;
-                tn = 0.0;
             } else {
                 p1 = p2 = nullptr;
             }
@@ -73,8 +69,8 @@ const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Ac
         }
 
         if (p1 != nullptr) {
-            // Nearest neighbour interpolation for light states (boolean)
-            m_currentData.lightStates = SkyMath::interpolateNearestNeighbour(p1->lightStates, p2->lightStates, tn);
+            // No interpolation for light states
+            m_currentData.lightStates = p1->lightStates;
             m_currentData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded data

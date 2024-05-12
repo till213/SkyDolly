@@ -73,8 +73,10 @@
 
 namespace {
     // Hz
+    constexpr int RecordingRate = 15;
     constexpr int ReplayRate = 60;
     // Implementation note: std:round will become constexpr with C++23
+    const int RecordingPeriod = static_cast<int>(std::round(1000.0 / RecordingRate));
     const int ReplayPeriod = static_cast<int>(std::round(1000.0 / ReplayRate));
 }
 
@@ -83,11 +85,13 @@ struct PathCreatorPluginPrivate
     PathCreatorPluginPrivate() noexcept
         : randomGenerator(QRandomGenerator::global())
     {
+        recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
         replayTimer.setTimerType(Qt::TimerType::PreciseTimer);
     }
 
     PathCreatorSettings pluginSettings;
 
+    QTimer recordingTimer;
     QTimer replayTimer;
     QRandomGenerator *randomGenerator;
     bool connected {false};
@@ -128,11 +132,6 @@ std::optional<std::unique_ptr<OptionWidgetIntf>> PathCreatorPlugin::createExtend
     return std::make_unique<PathCreatorOptionWidget>(d->pluginSettings);
 }
 
-bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::SampleRate sampleRate) const noexcept
-{
-    return true;
-}
-
 bool PathCreatorPlugin::onSetupFlightSimulatorShortcuts() noexcept
 {
 #ifdef DEBUG
@@ -166,6 +165,7 @@ bool PathCreatorPlugin::onSimulationEvent([[maybe_unused]] SimulationEvent event
 
 bool PathCreatorPlugin::onStartFlightRecording() noexcept
 {
+    d->recordingTimer.start(::RecordingPeriod);
     recordFlightInfo();
     recordFlightCondition();
     onStartAircraftRecording();
@@ -174,16 +174,29 @@ bool PathCreatorPlugin::onStartFlightRecording() noexcept
 
 bool PathCreatorPlugin::onStartAircraftRecording() noexcept
 {
+    if (!d->recordingTimer.isActive()) {
+        d->recordingTimer.start(::RecordingPeriod);
+    }
     recordAircraftInfo();
     return true;
 }
 
-void PathCreatorPlugin::onRecordingPaused([[maybe_unused]] Initiator initiator, [[maybe_unused]] bool paused) noexcept
-{}
+void PathCreatorPlugin::onRecordingPaused([[maybe_unused]] Initiator initiator, [[maybe_unused]] bool enable) noexcept
+{
+    if (enable) {
+        d->recordingTimer.stop();
+    } else {
+        d->recordingTimer.start(::RecordingPeriod);
+    }
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::onRecordingPaused: enable:" << enable;
+#endif
+}
 
 void PathCreatorPlugin::onStopRecording() noexcept
 {
-    Flight &flight = getCurrentFlight();
+    d->recordingTimer.stop();
+    auto &flight = getCurrentFlight();
     FlightCondition flightCondition = flight.getFlightCondition();
     flightCondition.endLocalTime = QDateTime::currentDateTime();
     flightCondition.endZuluTime = QDateTime::currentDateTimeUtc();
@@ -201,7 +214,7 @@ void PathCreatorPlugin::onStopRecording() noexcept
 }
 
 bool PathCreatorPlugin::onStartReplay([[maybe_unused]] std::int64_t currentTimestamp) noexcept {
-    d->replayTimer.start(ReplayPeriod);
+    d->replayTimer.start(::ReplayPeriod);
     return true;
 }
 
@@ -210,7 +223,7 @@ void PathCreatorPlugin::onReplayPaused([[maybe_unused]] Initiator initiator, boo
     if (enable) {
          d->replayTimer.stop();
     } else {
-        d->replayTimer.start(ReplayPeriod);
+        d->replayTimer.start(::ReplayPeriod);
     }
 #ifdef DEBUG
     qDebug() << "PathCreatorPlugin::onReplayPaused: enable:" << enable;
@@ -223,9 +236,6 @@ void PathCreatorPlugin::onStopReplay() noexcept
 }
 
 void PathCreatorPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp, [[maybe_unused]] SeekMode seekMode) noexcept
-{}
-
-void PathCreatorPlugin::onRecordingSampleRateChanged([[maybe_unused]] SampleRate::SampleRate sampleRate) noexcept
 {}
 
 bool PathCreatorPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, [[maybe_unused]] AircraftSelection aircraftSelection) noexcept
@@ -313,34 +323,17 @@ bool PathCreatorPlugin::onRequestSimulationRate() noexcept
     return true;
 }
 
-// PROTECTED SLOTS
-
-void PathCreatorPlugin::recordData() noexcept
-{
-    if (!isElapsedTimerRunning()) {
-        // Start the elapsed timer with the arrival of the first sample data
-        setCurrentTimestamp(0);
-        resetElapsedTime(true);
-    }
-
-    const std::int64_t timestamp = updateCurrentTimestamp();
-    recordPositionData(timestamp);
-    recordEngineData(timestamp);
-    recordPrimaryControls(timestamp);
-    recordSecondaryControls(timestamp);
-    recordAircraftHandle(timestamp);
-    recordLights(timestamp);
-    recordWaypoint(timestamp);
-}
-
 // PRIVATE
 
 void PathCreatorPlugin::frenchConnection() noexcept
 {
-    connect(&d->replayTimer, &QTimer::timeout,
-            this, &PathCreatorPlugin::replay);
     connect(&d->pluginSettings, &ConnectPluginBaseSettings::changed,
             this, &PathCreatorPlugin::onPluginSettingsChanged);
+
+    connect(&d->replayTimer, &QTimer::timeout,
+            this, &PathCreatorPlugin::replay);
+    connect(&d->recordingTimer, &QTimer::timeout,
+            this, &PathCreatorPlugin::recordData);
 }
 
 void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
@@ -483,7 +476,7 @@ void PathCreatorPlugin::recordWaypoint(std::int64_t timestamp) noexcept
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
         waypoint.timestamp = timestamp;
 
-        Flight &flight = getCurrentFlight();
+        auto &flight = getCurrentFlight();
         flight.addWaypoint(waypoint);
     }
 }
@@ -520,7 +513,7 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
 
 void PathCreatorPlugin::recordAircraftInfo() noexcept
 {
-    Flight &flight = getCurrentFlight();
+    auto &flight = getCurrentFlight();
     auto &aircraft = flight.getUserAircraft();
     AircraftInfo info(aircraft.getId());
 
@@ -580,6 +573,8 @@ void PathCreatorPlugin::closeConnection() noexcept
     d->connected = false;
 }
 
+// PRIVATE SLOTS
+
 void PathCreatorPlugin::replay() noexcept
 {
     const std::int64_t timestamp = updateCurrentTimestamp();
@@ -587,3 +582,22 @@ void PathCreatorPlugin::replay() noexcept
         onEndReached();
     }
 }
+
+void PathCreatorPlugin::recordData() noexcept
+{
+    if (!isElapsedTimerRunning()) {
+        // Start the elapsed timer with the arrival of the first sample data
+        setCurrentTimestamp(0);
+        resetElapsedTime(true);
+    }
+
+    const std::int64_t timestamp = updateCurrentTimestamp();
+    recordPositionData(timestamp);
+    recordEngineData(timestamp);
+    recordPrimaryControls(timestamp);
+    recordSecondaryControls(timestamp);
+    recordAircraftHandle(timestamp);
+    recordLights(timestamp);
+    recordWaypoint(timestamp);
+}
+

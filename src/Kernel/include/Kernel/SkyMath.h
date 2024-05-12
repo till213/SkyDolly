@@ -285,22 +285,6 @@ namespace SkyMath
     }
 
     /*!
-     * Interpolates between \c p1 and \c p2 using nearest neighbour interpolation.
-     *
-     * \param p1
-     *        the first interpolation point
-     * \param p2
-     *        the second interpolation point
-     * \param mu
-     *        the interpolation factor in [0.0, 1.0]
-     */
-    template <typename T, typename U>
-    inline constexpr T interpolateNearestNeighbour(T p1, T p2, U mu) noexcept
-    {
-        return mu < 0.5 ? p1 : p2;
-    }
-
-    /*!
      * Maps the \c position value to a discrete, signed 16bit value.
      *
      * \param position
@@ -636,6 +620,69 @@ namespace SkyMath
         }
 
         return fibonaccis;
+    }
+
+    /*!
+     * Calculates the next power of two value for the given \n.
+     *
+     * Note: if \c n is already a power of two then \c n is returned.
+     * The lowest integer power of two is 1 (2^0), so n = 0 always returns 1.
+     *
+     * Examples:
+     *
+     * - n = 15 -> 16
+     * - n = 16 -> 16
+     * - n = 17 -> 32
+     *
+     * \param n
+     *        a number for which to calculate the next power of two value
+     * \return the next power of two value, including \c n (if \c n is
+     *         already a power of two)
+     */
+    inline std::uint32_t nextPowerOfTwo(std::uint32_t n) noexcept
+    {
+        if (n != 0) {
+            n--;
+            n |= n >> 1;
+            n |= n >> 2;
+            n |= n >> 4;
+            n |= n >> 8;
+            n |= n >> 16;
+            n++;
+        } else {
+            return 1;
+        }
+        return n;
+    }
+
+    /*!
+     * Calculates the previous power of two value for the given \n.
+     *
+     * Note: if \c n is already a power of two then \c n is returned.
+     * The lowest integer power of two is 1 (2^0), so n = 0 always returns 1.
+     *
+     * Examples:
+     *
+     * - n = 17 -> 16
+     * - n = 16 -> 16
+     * - n = 15 -> 8
+     *
+     * \param n
+     *        a number for which to calculate the previous power of two value
+     * \return the previous power of two value, including \c n (if \c n is
+     *         already a power of two)
+     */
+    inline std::uint32_t previousPowerOfTwo(std::uint32_t n) noexcept
+    {
+        if (n != 0) {
+            n = n | (n >> 1);
+            n = n | (n >> 2);
+            n = n | (n >> 4);
+            n = n | (n >> 8);
+        } else {
+            return 1;
+        }
+        return n - (n >> 1);
     }
 
 } // namespace

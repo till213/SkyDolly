@@ -80,10 +80,9 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64
             m_currentData.leftSpoilersPosition = SkyMath::interpolateLinear(p1->leftSpoilersPosition, p2->leftSpoilersPosition, tn);
             m_currentData.rightSpoilersPosition = SkyMath::interpolateLinear(p1->rightSpoilersPosition, p2->rightSpoilersPosition, tn);
             m_currentData.spoilersHandlePercent = SkyMath::interpolateLinear(p1->spoilersHandlePercent, p2->spoilersHandlePercent, tn);
-
-            // Nearest neighbour interpolation (boolean)
-            m_currentData.flapsHandleIndex = SkyMath::interpolateNearestNeighbour(p1->flapsHandleIndex, p2->flapsHandleIndex, tn);
-            m_currentData.spoilersArmed = SkyMath::interpolateNearestNeighbour(p1->spoilersArmed, p2->spoilersArmed, tn);
+            // No interpolation for boolean values
+            m_currentData.flapsHandleIndex = p1->flapsHandleIndex;
+            m_currentData.spoilersArmed = p1->spoilersArmed;
             m_currentData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data (and no repeat), or the timestamp exceeds the timestamp of the last recorded data

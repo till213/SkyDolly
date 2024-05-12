@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>310</width>
-    <height>239</height>
+    <width>259</width>
+    <height>235</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,19 +24,22 @@
      </property>
      <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_57">
+       <widget class="QLabel" name="label_55">
         <property name="text">
-         <string>Sample rate:</string>
+         <string>Position sample rate:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="recordingSampleRateLineEdit">
+       <widget class="QLineEdit" name="positionSamplesPerSecondLineEdit">
         <property name="minimumSize">
          <size>
           <width>100</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Aircraft position samples per second.</string>
         </property>
         <property name="readOnly">
          <bool>true</bool>
@@ -44,19 +47,22 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_55">
+       <widget class="QLabel" name="label_57">
         <property name="text">
-         <string>Actual sample rate:</string>
+         <string>Attitude sample rate:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="samplesPerSecondLineEdit">
+       <widget class="QLineEdit" name="attitudeSamplesPerSecondLineEdit">
         <property name="minimumSize">
          <size>
           <width>100</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Aircraft attitude samples per second.</string>
         </property>
         <property name="readOnly">
          <bool>true</bool>
@@ -78,6 +84,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Total sample count.</string>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>
@@ -97,6 +106,9 @@
           <width>100</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Flight duration.</string>
         </property>
         <property name="text">
          <string/>
@@ -120,6 +132,9 @@
           <width>100</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Total size of flight recording.</string>
         </property>
         <property name="text">
          <string/>

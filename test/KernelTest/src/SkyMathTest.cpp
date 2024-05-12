@@ -22,8 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <limits>
-#include <utility>
 #include <cstdint>
 #include <cmath>
 #include <array>
@@ -310,38 +308,6 @@ void SkyMathTest::interpolateHermite360()
 
     // Exercise
     double result = SkyMath::interpolateHermite360(p0, p1, p2, p3, mu);
-
-    // Verify
-    QCOMPARE(result, expected);
-}
-
-void SkyMathTest::interpolateNearestNeighbour_data()
-{
-    QTest::addColumn<double>("p0");
-    QTest::addColumn<double>("p1");
-    QTest::addColumn<double>("mu");
-    QTest::addColumn<double>("expected");
-
-    QTest::newRow("First") << 1.0 << 2.0 << 0.1 << 1.0;
-    QTest::newRow("Second") << 1.0 << 2.0 << 0.5 << 2.0;
-    QTest::newRow("Negative time") << 1.0 << 2.0 << -1.0 << 1.0;
-    QTest::newRow("Exceeding time") << 1.0 << 2.0 << 2.0 << 2.0;
-    QTest::newRow("First negative") << -1.0 << 2.0 << 0.1 << -1.0;
-    QTest::newRow("Second negative") << 1.0 << -2.0 << 0.5 << -2.0;
-    QTest::newRow("First boundary") << 1.0 << 2.0 << 0.0 << 1.0;
-    QTest::newRow("Second boundary") << 1.0 << 2.0 << 1.0 << 2.0;
-}
-
-void SkyMathTest::interpolateNearestNeighbour()
-{
-    // Setup
-    QFETCH(double, p0);
-    QFETCH(double, p1);
-    QFETCH(double, mu);
-    QFETCH(double, expected);
-
-    // Exercise
-    double result = SkyMath::interpolateNearestNeighbour(p0, p1, mu);
 
     // Verify
     QCOMPARE(result, expected);
@@ -817,6 +783,62 @@ void SkyMathTest::calculateFibonacci()
 
     // Verify
     QCOMPARE(fibonaccis12.back(), 89);
+}
+
+void SkyMathTest::nextPowerOfTwo_data()
+{
+    QTest::addColumn<std::uint32_t>("n");
+    QTest::addColumn<std::uint32_t>("expected");
+
+    QTest::newRow("Test 0") << 0u << 1u;
+    QTest::newRow("Test 1") << 1u << 1u;
+    QTest::newRow("Test 2") << 2u << 2u;
+    QTest::newRow("Test 3") << 3u << 4u;
+    QTest::newRow("Test 4") << 4u << 4u;
+    QTest::newRow("Test 31") << 31u << 32u;
+    QTest::newRow("Test 32") << 32u << 32u;
+    QTest::newRow("Test 33") << 33u << 64u;
+}
+
+void SkyMathTest::nextPowerOfTwo()
+{
+    // Setup
+    QFETCH(std::uint32_t, n);
+    QFETCH(std::uint32_t, expected);
+
+    // Exercise
+    const auto actual = SkyMath::nextPowerOfTwo(n);
+
+    // Verify
+    QCOMPARE(actual, expected);
+}
+
+void SkyMathTest::previousPowerOfTwo_data()
+{
+    QTest::addColumn<std::uint32_t>("n");
+    QTest::addColumn<std::uint32_t>("expected");
+
+    QTest::newRow("Test 0") << 0u << 1u;
+    QTest::newRow("Test 1") << 1u << 1u;
+    QTest::newRow("Test 2") << 2u << 2u;
+    QTest::newRow("Test 3") << 3u << 2u;
+    QTest::newRow("Test 4") << 4u << 4u;
+    QTest::newRow("Test 31") << 31u << 16u;
+    QTest::newRow("Test 32") << 32u << 32u;
+    QTest::newRow("Test 33") << 33u << 32u;
+}
+
+void SkyMathTest::previousPowerOfTwo()
+{
+    // Setup
+    QFETCH(std::uint32_t, n);
+    QFETCH(std::uint32_t, expected);
+
+    // Exercise
+    const auto actual = SkyMath::previousPowerOfTwo(n);
+
+    // Verify
+    QCOMPARE(actual, expected);
 }
 
 QTEST_MAIN(SkyMathTest)

@@ -41,6 +41,7 @@ public:
         if (settingsVersion < Version(QStringLiteral("0.17.0"))) {
             SettingsConverterV0dot17::convert(settingsVersion, settings);
         }
+        settings.remove("Recording");
         convertPlugins(settings);
         convertLogbookTableLayout(settings);
     }

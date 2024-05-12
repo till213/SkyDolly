@@ -43,9 +43,6 @@ private slots:
     void interpolateHermite360_data();
     void interpolateHermite360();
 
-    void interpolateNearestNeighbour_data();
-    void interpolateNearestNeighbour();
-
     void fromPosition_data();
     void fromPosition();
 
@@ -71,6 +68,12 @@ private slots:
     void calculateTimeOffset();
 
     void calculateFibonacci();
+
+    void nextPowerOfTwo_data();
+    void nextPowerOfTwo();
+
+    void previousPowerOfTwo_data();
+    void previousPowerOfTwo();
 };
 
 #endif // SKYMATHTEST_H
