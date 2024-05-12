@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="settingsTabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -126,7 +126,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSpinBox" name="maximumSimulationRateSpinBox">
+           <widget class="PowerOfTwoSpinBox" name="maximumSimulationRateSpinBox">
             <property name="maximumSize">
              <size>
               <width>80</width>
@@ -434,6 +434,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PowerOfTwoSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header location="global">Widget/PowerOfTwoSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
