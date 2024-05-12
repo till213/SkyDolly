@@ -22,7 +22,9 @@
 - Position- and attitude simulation variables are now sampled separately
   * Position data (latitude, longitude, altitude) is only sampled at 1Hz: the expectation is that "stutters" during recording should be automatically smoothened out
   * Boolean simulation variables are now interpolated with nearest neighbour interpolation
-- The
+- The maximum simulation rate spinbox now steps in powers of two (1, 2, 4, 8, ..., 128)
+  * The MSFS simulation rate is always a power of two
+  * Non-power of two values may still be entered by editing the text
 
 ## Bug Fixes
 
