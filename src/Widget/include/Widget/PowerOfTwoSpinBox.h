@@ -25,12 +25,17 @@
 #ifndef POWEROFTWOSPINBOX_H
 #define POWEROFTWOSPINBOX_H
 
+#include <cstdint>
+
 #include <QSpinBox>
 
 class QWidget;
 
 #include "WidgetLib.h"
 
+/*!
+ * Steps to the next higher (or lower) value that is a power of two (1, 2, 4, 8, 16, 32, ...).
+ */
 class WIDGET_API PowerOfTwoSpinBox : public QSpinBox
 {
 public:
@@ -38,6 +43,10 @@ public:
 
 protected:
     void stepBy(int steps) override;
+
+private:
+    static std::uint32_t nextPowerOfTwo(std::uint32_t n) noexcept;
+    static std::uint32_t nextLowerPowerOfTwo(std::uint32_t n) noexcept;
 };
 
 #endif // POWEROFTWOSPINBOX_H
