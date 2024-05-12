@@ -319,7 +319,7 @@ void MainWindow::frenchConnection() noexcept
 
     // Flight
     const Logbook &logbook = Logbook::getInstance();
-    const Flight &flight = logbook.getCurrentFlight();
+    const auto &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::flightRestored,
             this, &MainWindow::onFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
@@ -1581,11 +1581,10 @@ void MainWindow::updateMainWindow() noexcept
             this->show();
         }
     }
-
-    if (settings.getRecordingSampleRate() != SampleRate::SampleRate::Auto) {
-        ui->recordAction->setToolTip(tr("Record [@%1 Hz].").arg(Settings::getInstance().getRecordingSampleRateValue()));
+    if (ui->recordAction->isChecked()) {
+        ui->recordAction->setToolTip(tr("Stop the recording."));
     } else {
-        ui->recordAction->setToolTip(tr("Record [auto sample rate]."));
+        ui->recordAction->setToolTip(tr("Start a new recording."));
     }
 
     if (settings.isAbsoluteSeekEnabled()) {

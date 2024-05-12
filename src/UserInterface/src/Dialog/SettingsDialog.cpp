@@ -137,21 +137,6 @@ void SettingsDialog::initUi() noexcept
                                                 .arg(QString::fromLatin1(SimVar::CanopyOpen)));
     ui->maximumSimulationRateSpinBox->setToolTip(tr("This option limits the simulation rate in the flight simulator. Note that the actual replay speed may still be set to higher values."));
 
-    // Recording
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Auto), tr("Auto"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz1), tr("1 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz2), tr("2 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz5), tr("5 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz10), tr("10 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz15), tr("15 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz20), tr("20 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz24), tr("24 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz25), tr("25 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz30), tr("30 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz45), tr("45 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz50), tr("50 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz60), tr("60 Hz"));
-
     // Flight simulator
     auto &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
@@ -203,9 +188,6 @@ void SettingsDialog::updateUi() noexcept
     ui->seekInPercentSpinBox->setValue(settings.getSeekIntervalPercent());
     ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
     ui->maximumSimulationRateSpinBox->setValue(settings.getMaximumSimulationRate());
-
-    // Recording
-    ui->recordFrequencyComboBox->setCurrentIndex(Enum::underly(settings.getRecordingSampleRate()));
 
     // Flight simulator
     auto &skyConnectManager = SkyConnectManager::getInstance();
@@ -314,9 +296,6 @@ void SettingsDialog::onAccepted() noexcept
     settings.setSeekIntervalPercent(ui->seekInPercentSpinBox->value());
     settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());
     settings.setMaximumSimulationRate(ui->maximumSimulationRateSpinBox->value());
-
-    // Recording
-    settings.setRecordingSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
 
     // Flight simulator
     if (d->skyConnectOptionWidget != nullptr) {

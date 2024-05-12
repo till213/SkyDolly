@@ -492,7 +492,7 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::updateUi);
 
     // Flight
-    const Flight &flight = logbook.getCurrentFlight();
+    const auto &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::flightStored,
             this, &LogbookWidget::updateUi);
     connect(&flight, &Flight::flightRestored,
