@@ -45,7 +45,7 @@ class ConnectPluginBaseSettings;
 class OptionWidgetIntf;
 struct PathCreatorPluginPrivate;
 
-class PathCreatorPlugin : public AbstractSkyConnect
+class PathCreatorPlugin final : public AbstractSkyConnect
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID SKYCONNECT_INTERFACE_IID FILE "PathCreatorPlugin.json")
@@ -92,6 +92,7 @@ protected:
 
     bool onRequestLocation() noexcept override;
     bool onRequestSimulationRate() noexcept override;
+    bool onSendDateAndTime(int year, int day, int hour, int minute) noexcept override;
 
 private:
     const std::unique_ptr<PathCreatorPluginPrivate> d;

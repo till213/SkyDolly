@@ -323,6 +323,14 @@ bool PathCreatorPlugin::onRequestSimulationRate() noexcept
     return true;
 }
 
+bool PathCreatorPlugin::onSendDateAndTime(int year, int day, int hour, int minute) noexcept
+{
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::onSendDateAndTime: year:" << year << "day:" << day << "hour:" << hour << "minute:" << minute;
+#endif
+    return true;
+}
+
 // PRIVATE
 
 void PathCreatorPlugin::frenchConnection() noexcept

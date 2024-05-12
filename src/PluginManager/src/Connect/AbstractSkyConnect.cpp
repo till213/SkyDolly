@@ -538,6 +538,23 @@ bool AbstractSkyConnect::requestSimulationRate() noexcept
     return ok;
 }
 
+bool AbstractSkyConnect::sendDateAndTime(QDateTime dateTime) noexcept
+{
+    if (!isConnectedWithSim()) {
+        tryFirstConnectAndSetup();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        const auto year = dateTime.date().year();
+        const auto day = dateTime.date().dayOfYear();
+        const auto hour = dateTime.time().hour();
+        const auto minute = dateTime.time().minute();
+        ok = retryWithReconnect([this, year, day, hour, minute]() -> bool { return onSendDateAndTime(year, day, hour, minute); });
+    }
+    return ok;
+}
+
 std::optional<std::unique_ptr<OptionWidgetIntf>> AbstractSkyConnect::createOptionWidget() const noexcept
 {
     auto optionWidget = std::make_unique<BasicConnectOptionWidget>(getPluginSettings());

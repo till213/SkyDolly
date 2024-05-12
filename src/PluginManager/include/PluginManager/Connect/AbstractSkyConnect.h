@@ -30,6 +30,7 @@
 #include <cstdint>
 
 #include <QObject>
+#include <QDateTime>
 
 class QWidget;
 
@@ -39,7 +40,6 @@ class QWidget;
 #include "SkyConnectIntf.h"
 #include "ConnectPluginBaseSettings.h"
 #include "Connect.h"
-#include "FlightSimulatorShortcuts.h"
 #include "../PluginBase.h"
 #include "../OptionWidgetIntf.h"
 #include "../PluginManagerLib.h"
@@ -113,6 +113,7 @@ public:
 
     bool requestLocation() noexcept override;
     bool requestSimulationRate() noexcept override;
+    bool sendDateAndTime(QDateTime dateTime) noexcept override;
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
@@ -202,6 +203,21 @@ protected:
      * \sa simulationRateReceived
      */
     virtual bool onRequestSimulationRate() noexcept = 0;
+
+    /*!
+     * Sends the \c year, \c day, \c hours and \c minutes to be set in the flight simulator.
+     *
+     * \param year
+     *        the year, e.g. 2020
+     * \param day
+     *        the day
+     * \param hour
+     *        the hour [0, 23]
+     * \param minute
+     *        the minute [0, 59]
+     * \return \c true if the request was successful; \c false else
+     */
+    virtual bool onSendDateAndTime(int year, int day, int hour, int minute) noexcept = 0;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;

@@ -55,6 +55,7 @@ target_sources(${MODULE_NAME}
         src/Event/EventStateHandler.h
         src/Event/InputEvent.h src/Event/InputEvent.cpp
         src/Event/SimulationRate.h
+        src/Event/SimulationTime.h
         src/SimConnectAi.h src/SimConnectAi.cpp        
         src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp
         src/MSFSSimConnectSettings.h src/MSFSSimConnectSettings.cpp

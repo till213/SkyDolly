@@ -38,7 +38,7 @@ class SimConnectAIPrivate;
 class SimConnectAi
 {
 public:
-    SimConnectAi(::HANDLE simConnectHandle);
+    SimConnectAi(HANDLE simConnectHandle);
     SimConnectAi(const SimConnectAi &rhs) = delete;
     SimConnectAi(SimConnectAi &&rhs) = delete;
     SimConnectAi &operator=(const SimConnectAi &rhs) = delete;

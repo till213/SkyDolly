@@ -112,7 +112,7 @@ bool FlightSimulator::isRunning(Id id) noexcept
 
 bool FlightSimulator::isInstalled(Id id) noexcept
 {
-    // Search the community folder: if found then we assume that FS2020 is installed, too
+    // Search the community folder: if found then we assume that MSFS is installed, too
     QString appDataPath = QString::fromLocal8Bit(qgetenv("APPDATA"));
 
     // MS Store edition

@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FS2020SIMCONNNECTPLUGIN_H
-#define FS2020SIMCONNNECTPLUGIN_H
+#ifndef MSFSIMCONNNECTPLUGIN_H
+#define MSFSIMCONNNECTPLUGIN_H
 
 #include <memory>
 #include <optional>
@@ -48,7 +48,7 @@ class MSFSSimConnectSettings;
 class OptionWidgetIntf;
 struct SkyConnectPrivate;
 
-class MSFSSimConnectPlugin : public AbstractSkyConnect
+class MSFSSimConnectPlugin final : public AbstractSkyConnect
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID SKYCONNECT_INTERFACE_IID FILE "MSFSSimConnectPlugin.json")
@@ -95,6 +95,7 @@ protected:
 
     bool onRequestLocation() noexcept override;
     bool onRequestSimulationRate() noexcept override;
+    bool onSendDateAndTime(int year, int day, int hour, int minute) noexcept override;
 
 private:
     enum struct ResetReason
@@ -125,4 +126,4 @@ private slots:
     void processSimConnectEvent() noexcept;
 };
 
-#endif // FS2020SIMCONNNECTPLUGIN_H
+#endif // MSFSIMCONNNECTPLUGIN_H

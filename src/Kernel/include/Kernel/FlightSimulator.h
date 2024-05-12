@@ -62,7 +62,7 @@ public:
     static bool isInstalled(Id id) noexcept;
 
 private:
-    static bool isFS2020Installed() noexcept;
+    static bool isMSFSInstalled() noexcept;
 };
 
 #endif // FLIGHTSIMULATOR_H

@@ -323,6 +323,15 @@ public:
      */
     virtual bool requestSimulationRate() noexcept = 0;
 
+    /*!
+     * Sends the \c dateTime to the flight simulator to set.
+     *
+     * \param dateTime
+     *        the date and time to set in the flight simulator
+     * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
+     */
+    virtual bool sendDateAndTime(QDateTime dateTime) noexcept = 0;
+
 public slots:
     virtual void addAiObject(const Aircraft &aircraft) noexcept = 0;
     virtual void removeAiObjects() noexcept = 0;

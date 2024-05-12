@@ -50,11 +50,11 @@ using SimulatedObjectByRequestId = std::unordered_map<::SIMCONNECT_DATA_REQUEST_
 
 struct SimConnectAIPrivate
 {
-    SimConnectAIPrivate(::HANDLE handle) noexcept
+    SimConnectAIPrivate(HANDLE handle) noexcept
         : simConnectHandle(handle)
     {}
 
-    ::HANDLE simConnectHandle;
+    HANDLE simConnectHandle;
     // Key: aircraft ID - value: SimConnect request ID
     RequestByAircraftId requestByAircraftId;
     // Key: SimConnect request ID - value: SimConnect object ID
@@ -64,7 +64,7 @@ struct SimConnectAIPrivate
 
 // PUBLIC
 
-SimConnectAi::SimConnectAi(::HANDLE simConnectHandle)
+SimConnectAi::SimConnectAi(HANDLE simConnectHandle)
     : d(std::make_unique<SimConnectAIPrivate>(simConnectHandle))
 {}
 

@@ -72,6 +72,7 @@
 #include "Event/EventStateHandler.h"
 #include "Event/InputEvent.h"
 #include "Event/SimulationRate.h"
+#include "Event/SimulationTime.h"
 #include "Event/EventWidget.h"
 #include "SimConnectAi.h"
 #include "MSFSSimConnectSettings.h"
@@ -88,9 +89,10 @@ struct SkyConnectPrivate
 {
     MSFSSimConnectSettings pluginSettings;
 
-    ::HANDLE simConnectHandle {nullptr};
+    HANDLE simConnectHandle {nullptr};
     std::unique_ptr<EventStateHandler> eventStateHandler {std::make_unique<EventStateHandler>()};
     std::unique_ptr<SimulationRate> simulationRate {std::make_unique<SimulationRate>()};
+    std::unique_ptr<SimulationTime> simulationTime {std::make_unique<SimulationTime>()};
     std::unique_ptr<SimConnectAi> simConnectAi {nullptr};
     std::unique_ptr<EventWidget> eventWidget {std::make_unique<EventWidget>()};
     std::unique_ptr<InputEvent> inputEvent {std::make_unique<InputEvent>()};
@@ -603,6 +605,11 @@ bool MSFSSimConnectPlugin::onRequestLocation() noexcept
 bool MSFSSimConnectPlugin::onRequestSimulationRate() noexcept
 {
     return d->simulationRate->requestSimulationRate(d->simConnectHandle);
+}
+
+bool MSFSSimConnectPlugin::onSendDateAndTime(int year, int day, int hour, int minute) noexcept
+{
+    return d->simulationTime->sendDateAndTime(d->simConnectHandle, year, day, hour, minute);
 }
 
 // PRIVATE
