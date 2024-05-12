@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="settingsTabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -29,7 +29,7 @@
          <property name="title">
           <string>Seek</string>
          </property>
-         <layout class="QFormLayout" name="formLayout_5">
+         <layout class="QFormLayout" name="formLayout">
           <item row="0" column="1">
            <widget class="QCheckBox" name="absoluteSeekEnabledCheckBox">
             <property name="toolTip">
@@ -55,6 +55,12 @@
               <height>0</height>
              </size>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>Seek in absolute steps [seconds].</string>
             </property>
@@ -76,6 +82,12 @@
              <size>
               <width>120</width>
               <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
              </size>
             </property>
             <property name="toolTip">
@@ -110,8 +122,8 @@
          <property name="title">
           <string>Simulation Variables</string>
          </property>
-         <layout class="QFormLayout" name="formLayout">
-          <item row="0" column="0" colspan="2">
+         <layout class="QFormLayout" name="formLayout_5">
+          <item row="0" column="1">
            <widget class="QCheckBox" name="repeatCanopyOpenCheckBox">
             <property name="text">
              <string>Enforce canopy animation state</string>
@@ -126,10 +138,16 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSpinBox" name="maximumSimulationRateSpinBox">
-            <property name="maximumSize">
+           <widget class="PowerOfTwoSpinBox" name="maximumSimulationRateSpinBox">
+            <property name="minimumSize">
              <size>
               <width>80</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
               <height>16777215</height>
              </size>
             </property>
@@ -141,7 +159,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="2" column="1">
            <spacer name="verticalSpacer_2">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -434,6 +452,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PowerOfTwoSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header location="global">Widget/PowerOfTwoSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
