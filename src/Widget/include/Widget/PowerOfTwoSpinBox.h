@@ -43,10 +43,6 @@ public:
 
 protected:
     void stepBy(int steps) override;
-
-private:
-    static std::uint32_t nextPowerOfTwo(std::uint32_t n) noexcept;
-    static std::uint32_t nextLowerPowerOfTwo(std::uint32_t n) noexcept;
 };
 
 #endif // POWEROFTWOSPINBOX_H

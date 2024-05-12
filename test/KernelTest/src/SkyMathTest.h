@@ -68,6 +68,12 @@ private slots:
     void calculateTimeOffset();
 
     void calculateFibonacci();
+
+    void nextPowerOfTwo_data();
+    void nextPowerOfTwo();
+
+    void previousPowerOfTwo_data();
+    void previousPowerOfTwo();
 };
 
 #endif // SKYMATHTEST_H

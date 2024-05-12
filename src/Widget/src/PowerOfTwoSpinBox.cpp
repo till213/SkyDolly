@@ -22,7 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <cstdint>
 #include <algorithm>
 
 #include <QWidget>
@@ -31,6 +30,7 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/SkyMath.h>
 #include "PowerOfTwoSpinBox.h"
 
 // PUBLIC
@@ -50,13 +50,13 @@ void PowerOfTwoSpinBox::stepBy(int steps)
         if (steps > 1) {
             currentValue <<= 1;
         }
-        newValue = static_cast<int>(nextPowerOfTwo(currentValue));
+        newValue = static_cast<int>(SkyMath::nextPowerOfTwo(currentValue));
     } else if (steps < 0) {
         currentValue -= 1;
         if (steps < -1) {
             currentValue >>= 1;
         }
-        newValue = static_cast<int>(nextLowerPowerOfTwo(currentValue));
+        newValue = static_cast<int>(SkyMath::previousPowerOfTwo(currentValue));
     }
     newValue = std::clamp(newValue, minimum(), maximum());
 
@@ -65,27 +65,4 @@ void PowerOfTwoSpinBox::stepBy(int steps)
              << "Minimum:" << minimum() << "Maximum:" << maximum();
 #endif
     setValue(newValue);
-}
-
-// PRIVATE
-
-std::uint32_t PowerOfTwoSpinBox::nextPowerOfTwo(std::uint32_t n) noexcept
-{
-    n--;
-    n |= n >> 1;
-    n |= n >> 2;
-    n |= n >> 4;
-    n |= n >> 8;
-    n |= n >> 16;
-    n++;
-    return n;
-}
-
-std::uint32_t PowerOfTwoSpinBox::nextLowerPowerOfTwo(std::uint32_t n) noexcept
-{
-    n = n | (n >> 1);
-    n = n | (n >> 2);
-    n = n | (n >> 4);
-    n = n | (n >> 8);
-    return n - (n >> 1);
 }
