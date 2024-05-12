@@ -285,22 +285,6 @@ namespace SkyMath
     }
 
     /*!
-     * Interpolates between \c p1 and \c p2 using nearest neighbour interpolation.
-     *
-     * \param p1
-     *        the first interpolation point
-     * \param p2
-     *        the second interpolation point
-     * \param mu
-     *        the interpolation factor in [0.0, 1.0]
-     */
-    template <typename T, typename U>
-    inline constexpr T interpolateNearestNeighbour(T p1, T p2, U mu) noexcept
-    {
-        return mu < 0.5 ? p1 : p2;
-    }
-
-    /*!
      * Maps the \c position value to a discrete, signed 16bit value.
      *
      * \param position

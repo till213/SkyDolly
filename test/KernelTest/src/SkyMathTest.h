@@ -43,9 +43,6 @@ private slots:
     void interpolateHermite360_data();
     void interpolateHermite360();
 
-    void interpolateNearestNeighbour_data();
-    void interpolateNearestNeighbour();
-
     void fromPosition_data();
     void fromPosition();
 
