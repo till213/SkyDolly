@@ -404,6 +404,12 @@ bool SkyConnectManager::requestSimulationRate() const noexcept
     return skyConnect ? skyConnect->get().requestSimulationRate() : false;
 }
 
+bool SkyConnectManager::sendDateAndTime(QDateTime dateTime) const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().sendDateAndTime(dateTime) : false;
+}
+
 // PUBLIC SLOTS
 
 bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept

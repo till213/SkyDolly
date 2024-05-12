@@ -33,6 +33,7 @@
 #include <unordered_map>
 
 #include <QObject>
+#include <QDateTime>
 
 class QString;
 class QUuid;
@@ -176,6 +177,7 @@ public:
 
     bool requestLocation() const noexcept;
     bool requestSimulationRate() const noexcept;
+    bool sendDateAndTime(QDateTime dateTime) const noexcept;
 
     using PluginRegistry = std::unordered_map<QUuid, QString, QUuidHasher>;
 

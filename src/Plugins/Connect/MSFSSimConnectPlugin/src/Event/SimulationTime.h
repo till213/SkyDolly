@@ -41,8 +41,11 @@
 class SimulationTime final
 {
 public:
-    inline bool sendDateAndTime(HANDLE simConnectHandle, DWORD year, DWORD day, DWORD hours, DWORD minutes) noexcept
+    inline static bool sendDateAndTime(HANDLE simConnectHandle, DWORD year, DWORD day, DWORD hour, DWORD minute) noexcept
     {
+#ifdef DEBUG
+        qDebug() << "SimulationTime::sendDateAndTime: year:" << year << "day:" << day << "hour:" << hour<< "minute:" << minute;
+#endif
         HRESULT result {S_OK};
         result = ::SimConnect_TransmitClientEvent(
             simConnectHandle,
@@ -61,14 +64,14 @@ public:
         result |= ::SimConnect_TransmitClientEvent(
             simConnectHandle,
             ::SIMCONNECT_OBJECT_ID_USER,
-            Enum::underly(SimConnectEvent::Event::ZuluHoursSet), hours,
+            Enum::underly(SimConnectEvent::Event::ZuluHoursSet), hour,
             ::SIMCONNECT_GROUP_PRIORITY_HIGHEST,
             ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY
         );
         result |= ::SimConnect_TransmitClientEvent(
             simConnectHandle,
             ::SIMCONNECT_OBJECT_ID_USER,
-            Enum::underly(SimConnectEvent::Event::ZuluMinutesSet), minutes,
+            Enum::underly(SimConnectEvent::Event::ZuluMinutesSet), minute,
             ::SIMCONNECT_GROUP_PRIORITY_HIGHEST,
             ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY
         );

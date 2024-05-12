@@ -217,7 +217,7 @@ protected:
      *        the minute [0, 59]
      * \return \c true if the request was successful; \c false else
      */
-    virtual bool onSendDateAndTime(int year, int day, int hour, int minute) noexcept = 0;
+    virtual bool onSendDateAndTime(int year, int day, int hour, int minute) const noexcept = 0;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;

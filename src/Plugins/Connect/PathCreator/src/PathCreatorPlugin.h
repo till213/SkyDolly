@@ -92,7 +92,7 @@ protected:
 
     bool onRequestLocation() noexcept override;
     bool onRequestSimulationRate() noexcept override;
-    bool onSendDateAndTime(int year, int day, int hour, int minute) noexcept override;
+    bool onSendDateAndTime(int year, int day, int hour, int minute) const noexcept override;
 
 private:
     const std::unique_ptr<PathCreatorPluginPrivate> d;
