@@ -66,7 +66,6 @@ private:
 
 private slots:
     void updateUi() noexcept;
-    void updateRecordingSampleRate() noexcept;
     void updateRecordUi(std::int64_t timestamp) noexcept;
 };
 

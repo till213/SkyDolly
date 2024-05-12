@@ -67,8 +67,6 @@ protected:
     ConnectPluginBaseSettings &getPluginSettings() const noexcept override;
     std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept override;
 
-    bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
-
     bool onSetupFlightSimulatorShortcuts() noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
@@ -85,7 +83,6 @@ protected:
     void onStopReplay() noexcept override;
 
     void onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept override;
-    void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
     bool isConnectedWithSim() const noexcept override;
@@ -99,9 +96,6 @@ protected:
     bool onRequestLocation() noexcept override;
     bool onRequestSimulationRate() noexcept override;
 
-protected slots:
-    void recordData() noexcept override;
-
 private:
     enum struct ResetReason
     {
@@ -113,13 +107,12 @@ private:
 
     void frenchConnection() noexcept;
 
-    void resetCurrentSampleData() noexcept;
     bool reconnectWithSim() noexcept;
     bool closeConnection() noexcept;
     void setupRequestData() noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
     void replay() noexcept;
-    void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
+    void updateRecordingFrequency() noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
     void resetEventStates(ResetReason reason) noexcept;
 

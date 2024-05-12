@@ -89,8 +89,6 @@ void StatisticsDialog::showEvent(QShowEvent *event) noexcept
     auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &StatisticsDialog::updateRecordUi);
-    connect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
-            this, &StatisticsDialog::updateRecordingSampleRate);
 
     // Flight
     const auto &flight = Logbook::getInstance().getCurrentFlight();
@@ -108,8 +106,6 @@ void StatisticsDialog::hideEvent(QHideEvent *event) noexcept
     auto &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::timestampChanged,
                this, &StatisticsDialog::updateRecordUi);
-    disconnect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
-               this, &StatisticsDialog::updateRecordingSampleRate);
 
     // Flight
     const auto &flight = Logbook::getInstance().getCurrentFlight();
@@ -139,17 +135,7 @@ void StatisticsDialog::frenchConnection() noexcept
 
 void StatisticsDialog::updateUi() noexcept
 {
-    updateRecordingSampleRate();
     updateRecordUi(SkyConnectManager::getInstance().getCurrentTimestamp());
-}
-
-void StatisticsDialog::updateRecordingSampleRate() noexcept
-{
-    if (Settings::getInstance().getRecordingSampleRate() != SampleRate::SampleRate::Auto) {
-        ui->recordingSampleRateLineEdit->setText(d->unit.formatHz(Settings::getInstance().getRecordingSampleRateValue()));
-    } else {
-        ui->recordingSampleRateLineEdit->setText(tr("Auto"));
-    }
 }
 
 void StatisticsDialog::updateRecordUi(std::int64_t timestamp) noexcept

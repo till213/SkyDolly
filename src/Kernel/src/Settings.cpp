@@ -42,7 +42,6 @@
 
 #include "Enum.h"
 #include "Const.h"
-#include "SampleRate.h"
 #include "Version.h"
 #include "SettingsConverter.h"
 #include "Settings.h"
@@ -67,7 +66,6 @@ struct SettingsPrivate
     QString logbookPath;
     bool backupBeforeMigration {DefaultBackupBeforeMigration};
     QUuid skyConnectPluginUuid;
-    double recordingSampleRateValue {DefaultRecordingSampleRate};
     bool windowStayOnTop {DefaultWindowStayOnTop};
     bool minimalUi {DefaultMinimalUi};
     bool moduleSelectorVisible {DefaultModuleSelectorVisible};
@@ -107,7 +105,6 @@ struct SettingsPrivate
 
     static constexpr QUuid DefaultSkyConnectPluginUuid {};
     static constexpr bool DefaultBackupBeforeMigration {true};
-    static constexpr double DefaultRecordingSampleRate {SampleRate::toValue(SampleRate::SampleRate::Auto)};
     static constexpr bool DefaultWindowStayOnTop {false};
     static constexpr bool DefaultMinimalUi {false};
     static constexpr bool DefaultModuleSelectorVisible {true};
@@ -214,25 +211,6 @@ void Settings::setExportPath(QString exportPath)
     if (d->exportPath != exportPath) {
         d->exportPath = std::move(exportPath);
         emit exportPathChanged(d->exportPath);
-    }
-}
-
-SampleRate::SampleRate Settings::getRecordingSampleRate() const noexcept
-{
-    return SampleRate::fromValue(d->recordingSampleRateValue);
-}
-
-double Settings::getRecordingSampleRateValue() const noexcept
-{
-    return d->recordingSampleRateValue;
-}
-
-void Settings::setRecordingSampleRate(SampleRate::SampleRate sampleRate) noexcept
-{
-    double sampleRateValue = SampleRate::toValue(sampleRate);
-    if (d->recordingSampleRateValue != sampleRateValue) {
-        d->recordingSampleRateValue = sampleRateValue;
-        emit recordingSampleRateChanged(sampleRate);
     }
 }
 
@@ -595,11 +573,6 @@ void Settings::store() const noexcept
         d->settings.setValue("SkyConnectPluginUuid", d->skyConnectPluginUuid);
     }
     d->settings.endGroup();
-    d->settings.beginGroup("Recording");
-    {
-        d->settings.setValue("RecordingSampleRate", d->recordingSampleRateValue);        
-    }
-    d->settings.endGroup();
     d->settings.beginGroup("Replay");
     {
         d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
@@ -687,17 +660,6 @@ void Settings::restore() noexcept
         d->skyConnectPluginUuid = d->settings.value("SkyConnectPluginUuid", d->DefaultSkyConnectPluginUuid).toUuid();
     }
     d->settings.endGroup();
-    d->settings.beginGroup("Recording");
-    {
-        d->recordingSampleRateValue = d->settings.value("RecordingSampleRate", SettingsPrivate::DefaultRecordingSampleRate).toDouble(&ok);
-        if (!ok) {
-#ifdef DEBUG
-            qWarning() << "The recording sample rate in the settings could not be parsed, so setting value to default value:" << SettingsPrivate::DefaultRecordingSampleRate;
-#endif
-            d->recordingSampleRateValue = SettingsPrivate::DefaultRecordingSampleRate;
-        }
-    }
-    d->settings.endGroup();    
     d->settings.beginGroup("Replay");
     {
         d->absoluteSeek = d->settings.value("AbsoluteSeek", SettingsPrivate::DefaultAbsoluteSeek).toBool();
@@ -811,8 +773,6 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::backupBeforeMigrationChanged,
             this, &Settings::changed);
     connect(this, &Settings::skyConnectPluginUuidChanged,
-            this, &Settings::changed);
-    connect(this, &Settings::recordingSampleRateChanged,
             this, &Settings::changed);
     connect(this, &Settings::stayOnTopChanged,
             this, &Settings::changed);

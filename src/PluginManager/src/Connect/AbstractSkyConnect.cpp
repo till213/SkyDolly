@@ -77,7 +77,6 @@ struct AbstractSkyConnectPrivate
 {
     AbstractSkyConnectPrivate() noexcept
     {
-        recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
         reconnectTimer.setSingleShot(true);
         retryConnectPeriods = SkyMath::calculateFibonacci<::NofRetryConnectPeriods>(::NofRetryConnectPeriods);
 #ifdef DEBUG
@@ -88,15 +87,12 @@ struct AbstractSkyConnectPrivate
     SkyConnectIntf::ReplayMode replayMode {SkyConnectIntf::ReplayMode::Normal};
     Connect::State state {Connect::State::Disconnected};
     Flight &currentFlight {Logbook::getInstance().getCurrentFlight()};
-    // Triggers the recording of sample data (if not event-based recording)
-    QTimer recordingTimer;
     QTimer reconnectTimer;
     std::size_t reconnectAttempt {0};
     std::array<int, ::NofRetryConnectPeriods> retryConnectPeriods {};
     std::int64_t currentTimestamp {0};
     std::int64_t lastNotificationTimestamp {0};
-    double recordingSampleRate {Settings::getInstance().getRecordingSampleRateValue()};
-    int recordingIntervalMSec {SampleRate::toIntervalMSec(recordingSampleRate)};
+
     QElapsedTimer elapsedTimer;
     float replaySpeedFactor {1.0f};
     std::int64_t elapsedTime {0};
@@ -232,9 +228,6 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         d->currentTimestamp = 0;
         d->lastNotificationTimestamp = d->currentTimestamp;
         d->elapsedTimer.invalidate();
-        if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
-            d->recordingTimer.start(d->recordingIntervalMSec);
-        }
         ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
             switch (recordingMode) {
@@ -258,7 +251,6 @@ void AbstractSkyConnect::stopRecording() noexcept
     onStopRecording();
     auto &aircraft = d->currentFlight.getUserAircraft();
     aircraft.invalidateDuration();
-    d->recordingTimer.stop();
     // Only go into "recording stopped" state once the aircraft duration has been invalidated, in
     // order to properly update the total flight duration
     Connect::State state = isConnected() ? Connect::State::Connected : Connect::State::Disconnected;
@@ -317,7 +309,6 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
 void AbstractSkyConnect::stopReplay() noexcept
 {
     setState(Connect::State::Connected);
-    d->recordingTimer.stop();
     // Remember elapsed time since last replay start, in order to continue from
     // current timestamp
     d->elapsedTime = d->currentTimestamp;
@@ -356,7 +347,6 @@ void AbstractSkyConnect::setPaused(Initiator initiator, bool enable) noexcept
             // Store the elapsed recording time...
             d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed();
             d->elapsedTimer.invalidate();
-            d->recordingTimer.stop();
             onRecordingPaused(initiator, true);
             break;
         case Connect::State::Replay:
@@ -382,9 +372,6 @@ void AbstractSkyConnect::setPaused(Initiator initiator, bool enable) noexcept
             if (hasRecordingStarted()) {
                 // Resume recording (but only if it has already recorded samples before)
                 startElapsedTimer();
-            }
-            if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
-                d->recordingTimer.start(d->recordingIntervalMSec);
             }
             onRecordingPaused(initiator, false);
             break;
@@ -778,13 +765,9 @@ void AbstractSkyConnect::onPluginSettingsChanged(Connect::Mode mode) noexcept
 
 void AbstractSkyConnect::frenchConnection() noexcept
 {
-    connect(&(d->recordingTimer), &QTimer::timeout,
-            this, &AbstractSkyConnect::recordData);
     connect(&(d->reconnectTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::onReconnectTimer);
     auto &settings = Settings::getInstance();
-    connect(&settings, &Settings::recordingSampleRateChanged,
-            this, &AbstractSkyConnect::onRecordingSampleRateSettingsChanged);
 }
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
@@ -889,23 +872,6 @@ float AbstractSkyConnect::getApplicableSimulationRate()
 }
 
 // PRIVATE SLOTS
-
-void AbstractSkyConnect::onRecordingSampleRateSettingsChanged(SampleRate::SampleRate sampleRate) noexcept
-{
-    d->recordingSampleRate = SampleRate::toValue(sampleRate);
-    d->recordingIntervalMSec = SampleRate::toIntervalMSec(d->recordingSampleRate);
-    if (d->state == Connect::State::Recording || d->state == Connect::State::RecordingPaused) {
-        if (isTimerBasedRecording(sampleRate)) {
-            d->recordingTimer.setInterval(d->recordingIntervalMSec);
-            if (!d->recordingTimer.isActive()) {
-                d->recordingTimer.start();
-            }
-        } else {
-            d->recordingTimer.stop();
-        }
-        onRecordingSampleRateChanged(sampleRate);
-    }
-}
 
 void AbstractSkyConnect::onReconnectTimer() noexcept
 {

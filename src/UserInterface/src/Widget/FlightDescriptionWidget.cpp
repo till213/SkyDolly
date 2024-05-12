@@ -75,7 +75,7 @@ void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
 
     // Flight
     const Logbook &logbook = Logbook::getInstance();
-    const Flight &flight = logbook.getCurrentFlight();
+    const auto &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::cleared,
             this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::titleChanged,
@@ -101,7 +101,7 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
 
     // Flight
     const Logbook &logbook = Logbook::getInstance();
-    const Flight &flight = logbook.getCurrentFlight();
+    const auto &flight = logbook.getCurrentFlight();
     disconnect(&flight, &Flight::cleared,
                this, &FlightDescriptionWidget::updateUi);
     disconnect(&flight, &Flight::titleChanged,

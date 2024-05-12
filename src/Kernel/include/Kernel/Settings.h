@@ -133,29 +133,6 @@ public:
     void setSkyConnectPluginUuid(QUuid uuid) noexcept;
 
     /*!
-     * Returns the recording sample rate enumeration value.
-     *
-     * \return the SampleRate#SampleRate enumeration value.
-     */
-    SampleRate::SampleRate getRecordingSampleRate() const noexcept;
-
-    /*!
-     * Returns the recording sample rate in Hz.
-     *
-     * \return the recording sample rate in Hz
-     */
-    double getRecordingSampleRateValue() const noexcept;
-
-    /*!
-     * Sets the recording sample rate.
-     *
-     * \param sampleRate
-     *        the SampleRate#SampleRate enumeration value
-     * \sa recordingSampleRateChanged
-     */
-    void setRecordingSampleRate(SampleRate::SampleRate sampleRate) noexcept;
-
-    /*!
      * Returns whether the  stay on top option is enabled.
      *
      * \return \c true if the application window is kept in the foreground; \c false else
@@ -611,13 +588,6 @@ signals:
      * \sa changed
      */
     void skyConnectPluginUuidChanged(QUuid uuid);
-
-    /*!
-     * Emitted when the record sample rate has changed.
-     *
-     * \sa changed
-     */
-    void recordingSampleRateChanged(SampleRate::SampleRate sampleRate);
 
     /*!
      * Emitted when the stay on top option has changed.

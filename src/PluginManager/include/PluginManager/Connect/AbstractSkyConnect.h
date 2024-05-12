@@ -150,7 +150,6 @@ protected:
     // Re-implement
     virtual ConnectPluginBaseSettings &getPluginSettings() const noexcept = 0;
     virtual std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept = 0;
-    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
     virtual bool onSetupFlightSimulatorShortcuts() noexcept = 0;
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
@@ -170,7 +169,7 @@ protected:
      * \return \c true on success; \c false on error (SimConnect connection error)
      */
     virtual bool onStartAircraftRecording() noexcept = 0;
-    virtual void onRecordingPaused(Initiator initiator, bool paused) noexcept = 0;
+    virtual void onRecordingPaused(Initiator initiator, bool enable) noexcept = 0;
     virtual void onStopRecording() noexcept = 0;
 
     virtual bool onStartReplay(std::int64_t currentTimestamp) noexcept = 0;
@@ -178,7 +177,6 @@ protected:
     virtual void onStopReplay() noexcept = 0;
 
     virtual void onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept = 0;
-    virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept = 0;
 
     virtual bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept = 0;
     virtual bool isConnectedWithSim() const noexcept = 0;
@@ -213,7 +211,6 @@ protected:
 protected slots:
     std::int64_t updateCurrentTimestamp() noexcept;
     void onPluginSettingsChanged(Connect::Mode mode) noexcept;
-    virtual void recordData() noexcept = 0;
 
 private:
     const std::unique_ptr<AbstractSkyConnectPrivate> d;
@@ -235,7 +232,6 @@ private:
     float getApplicableSimulationRate();
 
 private slots:
-    void onRecordingSampleRateSettingsChanged(SampleRate::SampleRate sampleRate) noexcept;
     void onReconnectTimer() noexcept;
     void retryConnectAndSetup(Connect::Mode mode) noexcept;
 };
