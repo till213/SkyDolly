@@ -111,7 +111,6 @@ public:
     float getReplaySpeedFactor() const noexcept override;
     void setReplaySpeedFactor(float factor) noexcept override;
 
-    float calculateRecordedSamplesPerSecond() const noexcept override;
     bool requestLocation() noexcept override;
     bool requestSimulationRate() noexcept override;
 

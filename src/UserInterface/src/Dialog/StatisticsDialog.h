@@ -26,7 +26,7 @@
 #define STATISTICSDIALOG_H
 
 #include <memory>
-#include <cstdint>
+#include <utility>
 
 #include <QDialog>
 
@@ -64,9 +64,12 @@ private:
     void initUi() noexcept;
     void frenchConnection() noexcept;
 
+    std::pair<float, float> calculateRecordedPositionAndAttitudeSamplesPerSecond() const noexcept;
+
 private slots:
     void updateUi() noexcept;
     void updateRecordUi(std::int64_t timestamp) noexcept;
+    void onRecordingStarted() noexcept;
 };
 
 #endif // STATISTICSDIALOG_H

@@ -27,7 +27,6 @@
 #include <utility>
 #include <vector>
 #include <cstdint>
-#include <cinttypes>
 
 #include <QDateTime>
 #include <QString>

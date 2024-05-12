@@ -306,8 +306,6 @@ public:
      */
     virtual void setReplaySpeedFactor(float factor) noexcept = 0;
 
-    virtual float calculateRecordedSamplesPerSecond() const noexcept = 0;
-
     /*!
      * Requests the current position of the user aircraft which is asynchronously
      * returned as Location.

@@ -58,9 +58,6 @@
 
 namespace
 {
-    // Period [ms] over which we count the recorded samples per second
-    constexpr std::int64_t SamplesPerSecondPeriod = 10000;
-
     // The frequency [Hertz] in which timestampChanged signals are emitted
     constexpr std::int64_t NotificationFrequency = 10;
 
@@ -96,7 +93,6 @@ struct AbstractSkyConnectPrivate
     QElapsedTimer elapsedTimer;
     float replaySpeedFactor {1.0f};
     std::int64_t elapsedTime {0};
-    mutable int lastSamplesPerSecondIndex {0};
 };
 
 // PUBLIC
@@ -224,7 +220,6 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
             break;
         }
 
-        d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
         d->lastNotificationTimestamp = d->currentTimestamp;
         d->elapsedTimer.invalidate();
@@ -515,29 +510,6 @@ void AbstractSkyConnect::setReplaySpeedFactor(float factor) noexcept
             sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
         }
     }
-}
-
-float AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
-{
-    float samplesPerSecond {0.0};
-    const Position &position = d->currentFlight.getUserAircraft().getPosition();
-    if (position.count() > 0) {
-        const std::int64_t startTimestamp = std::min(std::max(d->currentTimestamp - SamplesPerSecondPeriod, std::int64_t(0)), position.getLast().timestamp);
-        int index = d->lastSamplesPerSecondIndex;
-
-        while (position[index].timestamp < startTimestamp) {
-            ++index;
-        }
-        d->lastSamplesPerSecondIndex = index;
-
-        const std::size_t lastIndex = position.count() - 1;
-        const std::size_t nofSamples = lastIndex - index + 1;
-        const std::int64_t period = position[lastIndex].timestamp - position[index].timestamp;
-        if (period > 0) {
-            samplesPerSecond = static_cast<float>(nofSamples) * 1000.0 / (static_cast<float>(period));
-        }
-    }
-    return samplesPerSecond;
 }
 
 bool AbstractSkyConnect::requestLocation() noexcept
