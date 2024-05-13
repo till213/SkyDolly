@@ -112,8 +112,8 @@ std::vector<FlightData> GpxParser::parseGPX() noexcept
         }
     }
     flightData.creationTime = d->firstDateTimeUtc;
-    flightData.flightCondition.startZuluTime = d->firstDateTimeUtc;
-    flightData.flightCondition.startLocalTime = d->firstDateTimeUtc.toLocalTime();
+    flightData.flightCondition.startZuluDateTime = d->firstDateTimeUtc;
+    flightData.flightCondition.startLocalDateTime = d->firstDateTimeUtc.toLocalTime();
     flights.push_back(std::move(flightData));
     return flights;
 }

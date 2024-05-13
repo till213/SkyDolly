@@ -1130,9 +1130,6 @@ void MainWindow::seek(int value, SkyConnectIntf::SeekMode seekMode) const noexce
     // Prevent the timestampTimeEdit field to set the replay position as well
     ui->timestampTimeEdit->blockSignals(true);
     skyConnectManager.seek(timestamp, seekMode);
-
-    // TODO IMPLEMENT ME Calculate actual date and time, based on flight info and timestamp!!!
-    skyConnectManager.sendDateAndTime(QDateTime(QDate(2024, 5, 12), QTime(12, 24)));
     ui->timestampTimeEdit->blockSignals(false);
 }
 

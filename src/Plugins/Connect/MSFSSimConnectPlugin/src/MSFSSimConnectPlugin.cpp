@@ -290,8 +290,8 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
         departureWaypoint.latitude = static_cast<float>(firstPosition.latitude);
         departureWaypoint.longitude = static_cast<float>(firstPosition.longitude);
         departureWaypoint.altitude = static_cast<float>(firstPosition.altitude);
-        departureWaypoint.localTime = flight.getFlightCondition().startLocalTime;
-        departureWaypoint.zuluTime = flight.getFlightCondition().startZuluTime;
+        departureWaypoint.localTime = flight.getFlightCondition().startLocalDateTime;
+        departureWaypoint.zuluTime = flight.getFlightCondition().startZuluDateTime;
         departureWaypoint.timestamp = 0;
         flight.addWaypoint(departureWaypoint);
 
@@ -309,8 +309,8 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
 
     // Update end simulation time of flight conditions
     FlightCondition condition = flight.getFlightCondition();
-    condition.endLocalTime = d->currentLocalDateTime;
-    condition.endZuluTime = d->currentZuluDateTime;
+    condition.endLocalDateTime = d->currentLocalDateTime;
+    condition.endZuluDateTime = d->currentZuluDateTime;
     flight.setFlightCondition(condition);
 }
 
@@ -606,7 +606,7 @@ bool MSFSSimConnectPlugin::onRequestSimulationRate() noexcept
     return d->simulationRate->requestSimulationRate(d->simConnectHandle);
 }
 
-bool MSFSSimConnectPlugin::onSendDateAndTime(int year, int day, int hour, int minute) const noexcept
+bool MSFSSimConnectPlugin::onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept
 {
     return SimulationTime::sendDateAndTime(d->simConnectHandle, year, day, hour, minute);
 }

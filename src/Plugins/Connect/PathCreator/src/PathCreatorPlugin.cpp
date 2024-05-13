@@ -198,8 +198,8 @@ void PathCreatorPlugin::onStopRecording() noexcept
     d->recordingTimer.stop();
     auto &flight = getCurrentFlight();
     FlightCondition flightCondition = flight.getFlightCondition();
-    flightCondition.endLocalTime = QDateTime::currentDateTime();
-    flightCondition.endZuluTime = QDateTime::currentDateTimeUtc();
+    flightCondition.endLocalDateTime = QDateTime::currentDateTime();
+    flightCondition.endZuluDateTime = QDateTime::currentDateTimeUtc();
     flight.setFlightCondition(flightCondition);
 
     auto &aircraft = flight.getUserAircraft();
@@ -323,10 +323,10 @@ bool PathCreatorPlugin::onRequestSimulationRate() noexcept
     return true;
 }
 
-bool PathCreatorPlugin::onSendDateAndTime(int year, int day, int hour, int minute) const noexcept
+bool PathCreatorPlugin::onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept
 {
 #ifdef DEBUG
-    qDebug() << "PathCreatorPlugin::onSendDateAndTime: year:" << year << "day:" << day << "hour:" << hour << "minute:" << minute;
+    qDebug() << "PathCreatorPlugin::onSendZuluDateTime: year:" << year << "day:" << day << "hour:" << hour << "minute:" << minute;
 #endif
     return true;
 }
@@ -513,8 +513,8 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.inClouds = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.onAnyRunway = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.onParkingSpot = d->randomGenerator->bounded(2) < 1 ? false : true;
-    flightCondition.startLocalTime = QDateTime::currentDateTime();
-    flightCondition.startZuluTime = QDateTime::currentDateTimeUtc();
+    flightCondition.startLocalDateTime = QDateTime::currentDateTime();
+    flightCondition.startZuluDateTime = QDateTime::currentDateTimeUtc();
 
     getCurrentFlight().setFlightCondition(flightCondition);
 }

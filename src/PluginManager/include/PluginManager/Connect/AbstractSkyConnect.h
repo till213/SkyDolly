@@ -113,7 +113,7 @@ public:
 
     bool requestLocation() noexcept override;
     bool requestSimulationRate() noexcept override;
-    bool sendDateAndTime(QDateTime dateTime) noexcept override;
+    bool sendZuluDateTime(QDateTime dateTime) noexcept override;
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
@@ -205,19 +205,19 @@ protected:
     virtual bool onRequestSimulationRate() noexcept = 0;
 
     /*!
-     * Sends the \c year, \c day, \c hours and \c minutes to be set in the flight simulator.
+     * Sends the \c year, \c day, \c hour (zulu time) and \c minute  to be set in the flight simulator.
      *
      * \param year
      *        the year, e.g. 2020
      * \param day
      *        the day
      * \param hour
-     *        the hour [0, 23]
+     *        the hour [0, 23] (zulu time)
      * \param minute
      *        the minute [0, 59]
      * \return \c true if the request was successful; \c false else
      */
-    virtual bool onSendDateAndTime(int year, int day, int hour, int minute) const noexcept = 0;
+    virtual bool onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept = 0;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
@@ -244,11 +244,16 @@ private:
 
     // Returns the applicable simulation rate, given the current 'replaySpeedFactor'
     // and the maximum simulation rate, as defined in the application settings
-    float getApplicableSimulationRate();
+    float getApplicableSimulationRate() const noexcept;
 
 private slots:
     void onReconnectTimer() noexcept;
     void retryConnectAndSetup(Connect::Mode mode) noexcept;
+
+    // Updates the simulation date and time, based on the start and end flight date and time of the current flight.
+    // Note: the simulation time may run "faster" than the actual real-world recorded time (given by the end timestamp),
+    // so the real-world time is "stretched" to the start- and end simulation time.
+    bool updateSimulationTime() noexcept;
 };
 
 #endif // ABSTRACTSKYCONNECT_H

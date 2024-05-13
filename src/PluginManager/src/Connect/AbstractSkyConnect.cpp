@@ -284,12 +284,9 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
         bool ok = retryWithReconnect([this]() -> bool { return onStartReplay(d->currentTimestamp); });
         if (ok) {
             ok = setupInitialReplayPosition(flyWithFormationPosition);
-            if (ok) {
-                ok = updateUserAircraftFreeze();
-            }
-            if (ok) {
-                sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
-            }
+            ok = ok && updateUserAircraftFreeze();
+            ok = ok && updateSimulationTime();
+            ok = ok && sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
             if (!ok) {
                 stopReplay();
             }
@@ -405,7 +402,7 @@ void AbstractSkyConnect::skipBackward() noexcept
 
 void AbstractSkyConnect::skipForward() noexcept
 {
-    std::int64_t skipMSec = getSkipInterval();
+    const auto skipMSec = getSkipInterval();
     const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
     const std::int64_t newTimeStamp = std::min(d->currentTimestamp + skipMSec, totalDuration);
     seek(newTimeStamp, SeekMode::Discrete);
@@ -413,7 +410,7 @@ void AbstractSkyConnect::skipForward() noexcept
 
 void AbstractSkyConnect::skipToEnd() noexcept
 {
-    const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
+    const auto totalDuration = d->currentFlight.getTotalDurationMSec();
     seek(totalDuration, SeekMode::Discrete);
 }
 
@@ -428,6 +425,7 @@ void AbstractSkyConnect::seek(std::int64_t timestamp, SeekMode seekMode) noexcep
             d->lastNotificationTimestamp = d->currentTimestamp;
             d->elapsedTime = timestamp;
             const TimeVariableData::Access access = seekMode == SeekMode::Continuous ? TimeVariableData::Access::ContinuousSeek : TimeVariableData::Access::DiscreteSeek;
+            updateSimulationTime();
             emit timestampChanged(d->currentTimestamp, access);
             onSeek(d->currentTimestamp, seekMode);
             bool ok = retryWithReconnect([this, access]() -> bool { return sendAircraftData(d->currentTimestamp, access, AircraftSelection::All); });
@@ -538,7 +536,7 @@ bool AbstractSkyConnect::requestSimulationRate() noexcept
     return ok;
 }
 
-bool AbstractSkyConnect::sendDateAndTime(QDateTime dateTime) noexcept
+bool AbstractSkyConnect::sendZuluDateTime(QDateTime dateTime) noexcept
 {
     if (!isConnectedWithSim()) {
         tryFirstConnectAndSetup();
@@ -550,7 +548,7 @@ bool AbstractSkyConnect::sendDateAndTime(QDateTime dateTime) noexcept
         const auto day = dateTime.date().dayOfYear();
         const auto hour = dateTime.time().hour();
         const auto minute = dateTime.time().minute();
-        ok = retryWithReconnect([this, year, day, hour, minute]() -> bool { return onSendDateAndTime(year, day, hour, minute); });
+        ok = retryWithReconnect([this, year, day, hour, minute]() -> bool { return onSendZuluDateTime(year, day, hour, minute); });
     }
     return ok;
 }
@@ -697,7 +695,7 @@ void AbstractSkyConnect::createAiObjects() noexcept
         // When "fly with formation" is enabled we also create an AI aircraft for the user aircraft
         // (the user aircraft of the recorded aircraft in the formation, that is)
         const bool includingUserAircraft = getReplayMode() == ReplayMode::FlyWithFormation;
-        const std::int64_t userAircraftId = d->currentFlight.getUserAircraft().getId();
+        const auto userAircraftId = d->currentFlight.getUserAircraft().getId();
         for (const auto &aircraft : d->currentFlight) {
             if (aircraft.getId() != userAircraftId || includingUserAircraft) {
                 onAddAiObject(aircraft);
@@ -769,7 +767,7 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
     auto &settings = Settings::getInstance();
     return static_cast<std::int64_t>(std::round(settings.isAbsoluteSeekEnabled() ?
                                      settings.getSeekIntervalSeconds() * 1000.0 :
-                                     settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
+                                     settings.getSeekIntervalPercent() * static_cast<double>(d->currentFlight.getTotalDurationMSec()) / 100.0));
 }
 
 void AbstractSkyConnect::tryFirstConnectAndSetup() noexcept
@@ -853,7 +851,7 @@ bool AbstractSkyConnect::updateUserAircraftFreeze() noexcept
     return onFreezeUserAircraft(freeze);
 }
 
-float AbstractSkyConnect::getApplicableSimulationRate()
+float AbstractSkyConnect::getApplicableSimulationRate() const noexcept
 {
     const auto &settings = Settings::getInstance();
     const auto maximumSimulationRate = static_cast<float>(settings.getMaximumSimulationRate());
@@ -887,7 +885,7 @@ void AbstractSkyConnect::retryConnectAndSetup(Connect::Mode mode) noexcept
         // Try later, with progressively increasing retry periods
         setState(Connect::State::Disconnected);
         const auto attempt = std::min(d->retryConnectPeriods.size() - 1, d->reconnectAttempt);
-        const auto period = d->retryConnectPeriods[attempt];
+        const auto period = d->retryConnectPeriods.at(attempt);
 #ifdef DEBUG
         qDebug() << "AbstractSkyConnectPrivate: retryConnectAndSetup: attempt:" << (d->reconnectAttempt + 1)
                  << "failed, trying again in" << period << "seconds";
@@ -895,4 +893,25 @@ void AbstractSkyConnect::retryConnectAndSetup(Connect::Mode mode) noexcept
         d->reconnectAttempt++;
         d->reconnectTimer.start(period * 1000);
     }
+}
+
+bool AbstractSkyConnect::updateSimulationTime() noexcept
+{
+    // TODO IMPLEMENT ME Calculate actual date and time, based on flight info and timestamp!!!
+    const auto startZuluDateTime = d->currentFlight.getFlightCondition().startZuluDateTime;
+    const auto endZuluDateTime = d->currentFlight.getFlightCondition().endZuluDateTime;
+    const auto startLocalDateTime = d->currentFlight.getFlightCondition().startLocalDateTime;
+
+    const auto simulationDuraction = startZuluDateTime.msecsTo(endZuluDateTime);
+    const auto realWorldDuation = d->currentFlight.getTotalDurationMSec();
+    const auto factor = static_cast<double>(simulationDuraction) / static_cast<double>(realWorldDuation);
+
+    const auto simulationTime = static_cast<std::int64_t>(std::round(d->currentTimestamp * factor));
+
+    const auto currentZuluDateTime = startZuluDateTime.addMSecs(simulationTime);
+    const auto currentLocalDateTime = startLocalDateTime.addMSecs(simulationTime);
+
+    emit simulationTimeChaged(currentZuluDateTime, currentLocalDateTime);
+
+    return sendZuluDateTime(currentZuluDateTime);
 }

@@ -165,10 +165,10 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
             flightCondition.precipitationState = Enum::contains<SimType::PrecipitationState>(enumValue) ? static_cast<SimType::PrecipitationState>(enumValue) : SimType::PrecipitationState::First;
             flightCondition.inClouds = query.value(inCloudsIdx).toBool();
             // Persisted times is are already local respectively zulu simulation times
-            flightCondition.startLocalTime = query.value(startLocalSimulationTimeIdx).toDateTime();
-            flightCondition.startZuluTime = query.value(startZuluSimulationTimeIdx).toDateTime();
-            flightCondition.endLocalTime = query.value(endLocalSimulationTimeIdx).toDateTime();
-            flightCondition.endZuluTime = query.value(endZuluSimulationTimeIdx).toDateTime();
+            flightCondition.startLocalDateTime = query.value(startLocalSimulationTimeIdx).toDateTime();
+            flightCondition.startZuluDateTime = query.value(startZuluSimulationTimeIdx).toDateTime();
+            flightCondition.endLocalDateTime = query.value(endLocalSimulationTimeIdx).toDateTime();
+            flightCondition.endZuluDateTime = query.value(endZuluSimulationTimeIdx).toDateTime();
         }
         std::vector<Aircraft> aircraft = d->aircraftDao->getByFlightId(id, &ok);
         flightData.aircraft = std::move(aircraft);
@@ -375,13 +375,13 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
     query.bindValue(QStringLiteral(":precipitation_state"), Enum::underly(flightCondition.precipitationState));
     query.bindValue(QStringLiteral(":in_clouds"), flightCondition.inClouds);
     // No conversion to UTC
-    query.bindValue(QStringLiteral(":start_local_sim_time"), flightCondition.startLocalTime);
+    query.bindValue(QStringLiteral(":start_local_sim_time"), flightCondition.startLocalDateTime);
     // Zulu time equals to UTC time
-    query.bindValue(QStringLiteral(":start_zulu_sim_time"), flightCondition.startZuluTime);
+    query.bindValue(QStringLiteral(":start_zulu_sim_time"), flightCondition.startZuluDateTime);
     // No conversion to UTC
-    query.bindValue(QStringLiteral(":end_local_sim_time"), flightCondition.endLocalTime);
+    query.bindValue(QStringLiteral(":end_local_sim_time"), flightCondition.endLocalDateTime);
     // Zulu time equals to UTC time
-    query.bindValue(QStringLiteral(":end_zulu_sim_time"), flightCondition.endZuluTime);
+    query.bindValue(QStringLiteral(":end_zulu_sim_time"), flightCondition.endZuluDateTime);
     bool ok = query.exec();
     if (ok) {
         flightId = query.lastInsertId().toLongLong(&ok);

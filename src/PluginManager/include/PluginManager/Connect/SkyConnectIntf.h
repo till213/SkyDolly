@@ -27,7 +27,9 @@
 
 #include <cstdint>
 
+#include <QObject>
 #include <QtPlugin>
+#include <QDateTime>
 
 #include <Kernel/SampleRate.h>
 #include <Model/TimeVariableData.h>
@@ -330,7 +332,7 @@ public:
      *        the date and time to set in the flight simulator
      * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
      */
-    virtual bool sendDateAndTime(QDateTime dateTime) noexcept = 0;
+    virtual bool sendZuluDateTime(QDateTime dateTime) noexcept = 0;
 
 public slots:
     virtual void addAiObject(const Aircraft &aircraft) noexcept = 0;
@@ -351,6 +353,16 @@ signals:
      *        the way the current position was accessed
      */
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
+
+    /*!
+     * Emitted whenever the simulation time during replay has changed.
+     *
+     * \param zuluDateTime
+     *        the simulation zulu date and time
+     * \param localDateTime
+     *        the simulation local date and time
+     */
+    void simulationTimeChaged(QDateTime zuluDateTime, QDateTime localDateTime);
 
     /*!
      * Emitted whenver the connection state has changed.

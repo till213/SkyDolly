@@ -36,10 +36,10 @@
 struct MODEL_API FlightCondition final
 {
     // Simulation times (not real-world times)
-    QDateTime startLocalTime;
-    QDateTime startZuluTime;
-    QDateTime endLocalTime;
-    QDateTime endZuluTime;
+    QDateTime startLocalDateTime;
+    QDateTime startZuluDateTime;
+    QDateTime endLocalDateTime;
+    QDateTime endZuluDateTime;
     SimType::SurfaceType surfaceType {SimType::SurfaceType::Unknown};
     SimType::SurfaceCondition surfaceCondition {SimType::SurfaceCondition::Unknown};
     SimType::PrecipitationState precipitationState {SimType::PrecipitationState::None};
