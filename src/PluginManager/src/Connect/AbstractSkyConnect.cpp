@@ -69,7 +69,10 @@ namespace
     // to about 90 seconds longest period (89, to be specific)
     constexpr int NofRetryConnectPeriods = 12;
 
-    constexpr int SimulationTimeUpdatePeriodMSec = 60 * 1000;
+    // The simulation time update base interval with a simulation rate of 1.0
+    constexpr int SimulationTimeUpdateBaseIntervalMSec = 60 * 1000;
+    // Minimum simulation time update interval
+    constexpr int MinimumSimulationTimeUpdateIntervalMSec = 16;
 }
 
 struct AbstractSkyConnectPrivate
@@ -77,7 +80,7 @@ struct AbstractSkyConnectPrivate
     AbstractSkyConnectPrivate() noexcept
     {
         reconnectTimer.setSingleShot(true);
-        simulationTimeUpdateTimer.setInterval(::SimulationTimeUpdatePeriodMSec);
+        updateSimulationTimeUpdateInterval();
         retryConnectPeriods = SkyMath::calculateFibonacci<::NofRetryConnectPeriods>(::NofRetryConnectPeriods);
 #ifdef DEBUG
         qDebug() << "AbstractSkyConnectPrivate: AbstractSkyConnectPrivate: elapsed timer clock type:" << elapsedTimer.clockType();
@@ -97,6 +100,15 @@ struct AbstractSkyConnectPrivate
     QElapsedTimer elapsedTimer;
     float replaySpeedFactor {1.0f};
     std::int64_t elapsedTime {0};
+
+    inline void updateSimulationTimeUpdateInterval() noexcept
+    {
+        // Not less than MinimumSimulationTimeUpdateIntervalMSec msec
+        const auto intervalMSec = replaySpeedFactor > 1.0f ?
+                                      std::max(static_cast<int>(std::round(::SimulationTimeUpdateBaseIntervalMSec / replaySpeedFactor)), ::MinimumSimulationTimeUpdateIntervalMSec) :
+                                      SimulationTimeUpdateBaseIntervalMSec;
+        simulationTimeUpdateTimer.setInterval(intervalMSec);
+    }
 };
 
 // PUBLIC
@@ -316,6 +328,7 @@ void AbstractSkyConnect::stopReplay() noexcept
     updateUserAircraftFreeze();
     // Reset simulation rate
     sendSimulationEvent(SimulationEvent::SimulationRate, 1.0f);
+
 }
 
 bool AbstractSkyConnect::isReplaying() const noexcept
@@ -511,6 +524,7 @@ void AbstractSkyConnect::setReplaySpeedFactor(float factor) noexcept
             startElapsedTimer();
         }
         d->replaySpeedFactor = factor;
+        d->updateSimulationTimeUpdateInterval();
         if (isInReplayState()) {
             sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
         }

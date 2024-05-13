@@ -999,8 +999,8 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
         sliderPosition = ::PositionSliderMax;
         ui->positionSlider->setToolTip(tr("Recording"));
     } else {
-        const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-        const std::int64_t ts = std::min(timestamp, totalDuration);
+        const auto totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+        const auto ts = std::min(timestamp, totalDuration);
         if (ts > 0) {
             sliderPosition = static_cast<int>(std::round(::PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration))));
         }
@@ -1011,6 +1011,7 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
     ui->positionSlider->setValue(sliderPosition);
     ui->positionSlider->blockSignals(false);
 
+    // TODO This does not work if flight is longer than 24 hours!!! We also need the date (probably) and also check the slider position when duration is 1 year
     const QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
     ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setTime(time);
