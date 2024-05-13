@@ -68,6 +68,8 @@ namespace
     // NofRetryConnectPeriods Fibonacci numbers (starting with 0), corresponding
     // to about 90 seconds longest period (89, to be specific)
     constexpr int NofRetryConnectPeriods = 12;
+
+    constexpr int SimulationTimeUpdatePeriodMSec = 60 * 1000;
 }
 
 struct AbstractSkyConnectPrivate
@@ -75,6 +77,7 @@ struct AbstractSkyConnectPrivate
     AbstractSkyConnectPrivate() noexcept
     {
         reconnectTimer.setSingleShot(true);
+        simulationTimeUpdateTimer.setInterval(::SimulationTimeUpdatePeriodMSec);
         retryConnectPeriods = SkyMath::calculateFibonacci<::NofRetryConnectPeriods>(::NofRetryConnectPeriods);
 #ifdef DEBUG
         qDebug() << "AbstractSkyConnectPrivate: AbstractSkyConnectPrivate: elapsed timer clock type:" << elapsedTimer.clockType();
@@ -85,6 +88,7 @@ struct AbstractSkyConnectPrivate
     Connect::State state {Connect::State::Disconnected};
     Flight &currentFlight {Logbook::getInstance().getCurrentFlight()};
     QTimer reconnectTimer;
+    QTimer simulationTimeUpdateTimer;
     std::size_t reconnectAttempt {0};
     std::array<int, ::NofRetryConnectPeriods> retryConnectPeriods {};
     std::int64_t currentTimestamp {0};
@@ -287,7 +291,9 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
             ok = ok && updateUserAircraftFreeze();
             ok = ok && updateSimulationTime();
             ok = ok && sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
-            if (!ok) {
+            if (ok) {
+                d->simulationTimeUpdateTimer.start();
+            } else {
                 stopReplay();
             }
         } else {
@@ -305,6 +311,7 @@ void AbstractSkyConnect::stopReplay() noexcept
     // current timestamp
     d->elapsedTime = d->currentTimestamp;
     d->elapsedTimer.invalidate();
+    d->simulationTimeUpdateTimer.stop();
     onStopReplay();
     updateUserAircraftFreeze();
     // Reset simulation rate
@@ -754,6 +761,8 @@ void AbstractSkyConnect::frenchConnection() noexcept
 {
     connect(&(d->reconnectTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::onReconnectTimer);
+    connect(&(d->simulationTimeUpdateTimer), &QTimer::timeout,
+            this, &AbstractSkyConnect::updateSimulationTime);
     auto &settings = Settings::getInstance();
 }
 
@@ -897,21 +906,42 @@ void AbstractSkyConnect::retryConnectAndSetup(Connect::Mode mode) noexcept
 
 bool AbstractSkyConnect::updateSimulationTime() noexcept
 {
-    // TODO IMPLEMENT ME Calculate actual date and time, based on flight info and timestamp!!!
-    const auto startZuluDateTime = d->currentFlight.getFlightCondition().startZuluDateTime;
-    const auto endZuluDateTime = d->currentFlight.getFlightCondition().endZuluDateTime;
-    const auto startLocalDateTime = d->currentFlight.getFlightCondition().startLocalDateTime;
 
-    const auto simulationDuraction = startZuluDateTime.msecsTo(endZuluDateTime);
+    bool hasSimulationTime {true};
+
     const auto realWorldDuation = d->currentFlight.getTotalDurationMSec();
-    const auto factor = static_cast<double>(simulationDuraction) / static_cast<double>(realWorldDuation);
+    if (realWorldDuation > 0) {
+        auto startZuluDateTime = d->currentFlight.getFlightCondition().startZuluDateTime;
+        auto startLocalDateTime = d->currentFlight.getFlightCondition().startLocalDateTime;
+        if (!(startZuluDateTime.isValid() && startLocalDateTime.isValid())) {
+            // If - for whatever reasons - the flight conditions have not been recorded, fall back
+            // to the current real-world date and time
+            startZuluDateTime = QDateTime::currentDateTimeUtc();
+            startLocalDateTime = QDateTime::currentDateTime();
+            hasSimulationTime = false;
+        }
+        const auto endZuluDateTime = hasSimulationTime ? d->currentFlight.getFlightCondition().endZuluDateTime : startZuluDateTime.addMSecs(realWorldDuation);
+        const auto simulationDuraction = startZuluDateTime.msecsTo(endZuluDateTime);
+        const auto factor = static_cast<double>(simulationDuraction) / static_cast<double>(realWorldDuation);
 
-    const auto simulationTime = static_cast<std::int64_t>(std::round(d->currentTimestamp * factor));
+        const auto simulationTime = static_cast<std::int64_t>(std::round(static_cast<double>(d->currentTimestamp) * factor));
+        const auto currentZuluDateTime = startZuluDateTime.addMSecs(simulationTime);
+        const auto currentLocalDateTime = startLocalDateTime.addMSecs(simulationTime);
 
-    const auto currentZuluDateTime = startZuluDateTime.addMSecs(simulationTime);
-    const auto currentLocalDateTime = startLocalDateTime.addMSecs(simulationTime);
-
-    emit simulationTimeChaged(currentZuluDateTime, currentLocalDateTime);
-
-    return sendZuluDateTime(currentZuluDateTime);
+        emit simulationTimeChaged(currentZuluDateTime, currentLocalDateTime);
+        if (sender() == nullptr) {
+            // Update due to some "seek" operation -> reset timer
+            d->simulationTimeUpdateTimer.start();
+#ifdef DEBUG
+        } else {
+            qDebug() << "AbstractSkyConnect::updateSimulationTime: periodic simulation date and time sync: zulu:"
+                     << currentZuluDateTime.toString() << "local:"
+                     << currentLocalDateTime.toString();
+#endif
+        }
+        return sendZuluDateTime(currentZuluDateTime);
+    } else {
+        // No recording (no samples)
+        return false;
+    }
 }
