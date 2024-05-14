@@ -94,6 +94,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 - https://github.com/paulalexandrow/a32nx-webremote - WebRemote for FlyByWire's A32NX: control cockpit functionality of the FBW A320, using FSUIPC7
 - https://flightloganalyzer.com/ - FlightLog Analyer analyses the MSFS logbook and has a CSV export readable by Sky Dolly
 - https://github.com/BojoteX/FSAutoSave/ - FSAutoSave automatically (or upon request) stores flight plans
+- https://github.com/mracko/MSFS-Landing-Inspector - Analyses your landing performance
 
 ## Other Useful Resources
 
