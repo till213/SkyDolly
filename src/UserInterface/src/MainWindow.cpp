@@ -677,7 +677,7 @@ void MainWindow::initViewUi() noexcept
 void MainWindow::initControlUi() noexcept
 {
     ui->positionSlider->setRange(::PositionSliderMin, ::PositionSliderMax);
-    ui->timestampTimeEdit->setDisplayFormat(QString::fromLatin1(::TimestampFormat));
+    ui->timestampTimeEdit->setDisplayFormat(::TimestampFormat);
 
     // Record/replay control buttons
     ui->recordButton->setAction(ui->recordAction);
@@ -1012,7 +1012,7 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
     ui->positionSlider->blockSignals(false);
 
     // TODO This does not work if flight is longer than 24 hours!!! We also need the date (probably) and also check the slider position when duration is 1 year
-    const QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
+    const auto time = QTime::fromMSecsSinceStartOfDay(timestamp);
     ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setTime(time);
     ui->timestampTimeEdit->blockSignals(false);
@@ -1520,7 +1520,7 @@ void MainWindow::updateReplayDuration() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
-    const QTime time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(totalDuration));
+    const auto time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(totalDuration));
     ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);

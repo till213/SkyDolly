@@ -425,7 +425,7 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
 
     // Duration
     const std::int64_t durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
-    const QTime time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(durationMSec));
+    const auto time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(durationMSec));
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::durationColumn);
     item->setData(Qt::DisplayRole, d->unit.formatDuration(time));
 }
