@@ -152,7 +152,7 @@ private slots:
     void onPositionSliderPressed() noexcept;
     void onPositionSliderValueChanged(int value) noexcept;
     void onPositionSliderReleased() noexcept;
-    void onTimeStampTimeEditChanged(const QTime &time) noexcept;
+    void onTimeEditChanged(const QTime &time) noexcept;
 
     void updateWindowSize() noexcept;
     void onTimestampChanged(std::int64_t timestamp) noexcept;
@@ -162,6 +162,7 @@ private slots:
 
     void updateUi() noexcept;
     void updateControlUi() noexcept;
+    void updateTimeUi() noexcept;
     void updatePlayActionTooltip() noexcept;
     void updateControlIcons() noexcept;
     void updateSimulationRateLabel() noexcept;
