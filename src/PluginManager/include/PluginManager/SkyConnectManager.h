@@ -247,11 +247,11 @@ signals:
     void simulationRateReceived(float rate);
 
     /*!
-     * Relay of the SkyConnectIntf#shortCutActivated signal.
+     * Relay of the SkyConnectIntf#actionActivated signal.
      *
-     * \sa SkyConnectIntf#shortCutActivated
+     * \sa SkyConnectIntf#actionActivated
      */
-    void shortCutActivated(FlightSimulatorShortcuts::Action action);
+    void actionActivated(FlightSimulatorShortcuts::Action action);
 
 private:
     const std::unique_ptr<SkyConnectManagerPrivate> d;

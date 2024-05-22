@@ -31,6 +31,7 @@
 #include <SimConnect.h>
 
 #include <QTimer>
+#include <QElapsedTimer>
 #include <QApplication>
 #include <QWidget>
 #include <QDateTime>
@@ -80,11 +81,17 @@ namespace
 {
     constexpr const char *ConnectionName {"SkyConnect"};
     constexpr DWORD UserAirplaneRadiusMeters {0};
+    // Initial keyboard shortcut / action repeat interval [milliseconds]
+    constexpr int InitialRepeatActionInterval {256};
 }
 
 struct SkyConnectPrivate
 {
     MSFSSimConnectSettings pluginSettings;
+
+    QTimer repeatActionTimer;
+    QElapsedTimer repeatActionElapsedTimer;
+    FlightSimulatorShortcuts::Action activeAction {FlightSimulatorShortcuts::Action::None};
 
     PositionData currentPositionData;
     EngineData currentEngineData;
@@ -653,6 +660,8 @@ void MSFSSimConnectPlugin::frenchConnection() noexcept
             this, &MSFSSimConnectPlugin::processSimConnectEvent);
     connect(&d->pluginSettings, &ConnectPluginBaseSettings::changed,
             this, &MSFSSimConnectPlugin::onPluginSettingsChanged);
+    connect(&d->repeatActionTimer, &QTimer::timeout,
+            this, &MSFSSimConnectPlugin::emitActiveAction);
 }
 
 void MSFSSimConnectPlugin::resetCurrentSampleData() noexcept
@@ -889,56 +898,80 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomRecord event";
 #endif
-            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Record);
+            emit skyConnect->actionActivated(FlightSimulatorShortcuts::Action::Record);
             break;
 
         case SimConnectEvent::Event::CustomReplay:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomReplay event";
 #endif
-            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Replay);
+            emit skyConnect->actionActivated(FlightSimulatorShortcuts::Action::Replay);
             break;
 
         case SimConnectEvent::Event::CustomPause:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomPause event";
 #endif
-            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Pause);
+            emit skyConnect->actionActivated(FlightSimulatorShortcuts::Action::Pause);
             break;
 
         case SimConnectEvent::Event::CustomStop:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomStop event";
 #endif
-            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Stop);
+            emit skyConnect->actionActivated(FlightSimulatorShortcuts::Action::Stop);
             break;
 
-        case SimConnectEvent::Event::CustomBackward:
+        case SimConnectEvent::Event::CustomBackwardDown:
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomBackward event";
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomBackward DOWN event";
 #endif
-            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Backward);
+            skyConnect->d->activeAction = FlightSimulatorShortcuts::Action::Backward;
+            skyConnect->d->repeatActionTimer.setInterval(::InitialRepeatActionInterval);
+            skyConnect->d->repeatActionTimer.start();
+            skyConnect->d->repeatActionElapsedTimer.start();
             break;
 
-        case SimConnectEvent::Event::CustomForward:
+        case SimConnectEvent::Event::CustomBackwardUp:
 #ifdef DEBUG
-            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomForward event";
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomBackward UP event";
 #endif
-            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Forward);
+            skyConnect->d->repeatActionTimer.stop();
+            skyConnect->d->repeatActionElapsedTimer.invalidate();
+            skyConnect->d->activeAction = FlightSimulatorShortcuts::Action::None;
+            break;
+
+        case SimConnectEvent::Event::CustomForwardDown:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomForward DOWN event";
+#endif
+            skyConnect->d->activeAction = FlightSimulatorShortcuts::Action::Forward;
+            skyConnect->d->repeatActionTimer.setInterval(::InitialRepeatActionInterval);
+            skyConnect->d->repeatActionTimer.start();
+            skyConnect->d->repeatActionElapsedTimer.start();
+            break;
+
+        case SimConnectEvent::Event::CustomForwardUp:
+#ifdef DEBUG
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomForward UP event";
+#endif
+            skyConnect->d->repeatActionTimer.stop();
+            skyConnect->d->repeatActionElapsedTimer.invalidate();
+            skyConnect->d->activeAction = FlightSimulatorShortcuts::Action::None;
             break;
             
         case SimConnectEvent::Event::CustomBegin:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomBegin event";
 #endif
-            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::Begin);
+            emit skyConnect->actionActivated(FlightSimulatorShortcuts::Action::Begin);
             break;
 
         case SimConnectEvent::Event::CustomEnd:
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CustomEnd event";
 #endif
-            emit skyConnect->shortCutActivated(FlightSimulatorShortcuts::Action::End);
+            emit skyConnect->actionActivated(FlightSimulatorShortcuts::Action::End);
             break;
 
         default:
@@ -1311,4 +1344,19 @@ void MSFSSimConnectPlugin::processSimConnectEvent() noexcept
     updateCurrentTimestamp();
     // Process system events
     ::SimConnect_CallDispatch(d->simConnectHandle, MSFSSimConnectPlugin::dispatch, this);
+}
+
+void MSFSSimConnectPlugin::emitActiveAction() noexcept
+{
+    auto elapsed = d->repeatActionElapsedTimer.elapsed();
+    if (elapsed < 5 * 1000) {
+        d->repeatActionTimer.setInterval(::InitialRepeatActionInterval >> 1);
+    } else if (elapsed < 10 * 1000) {
+        d->repeatActionTimer.setInterval(::InitialRepeatActionInterval >> 2);
+    } else if (elapsed < 15 * 1000) {
+        d->repeatActionTimer.setInterval(::InitialRepeatActionInterval >> 3);
+    } else if (elapsed < 20 * 1000) {
+        d->repeatActionTimer.setInterval(::InitialRepeatActionInterval >> 4);
+    }
+    emit actionActivated(d->activeAction);
 }

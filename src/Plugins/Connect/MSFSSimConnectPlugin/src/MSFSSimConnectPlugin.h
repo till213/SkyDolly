@@ -129,6 +129,7 @@ private:
 
 private slots:
     void processSimConnectEvent() noexcept;
+    void emitActiveAction() noexcept;
 };
 
 #endif // FS2020SIMCONNNECTPLUGIN_H

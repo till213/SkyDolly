@@ -170,7 +170,7 @@ private slots:
     void onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept;
 
     void onRecordingStopped() noexcept;
-    void onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept;
+    void onActionActivated(FlightSimulatorShortcuts::Action action) noexcept;
     void requestSimulationRate() noexcept;
     void onSimulationRateReceived(float rate) noexcept;
 

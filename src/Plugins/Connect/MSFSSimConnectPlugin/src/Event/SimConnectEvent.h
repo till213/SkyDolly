@@ -93,8 +93,10 @@ namespace SimConnectEvent
         CustomReplay,
         CustomPause,
         CustomStop,
-        CustomForward,
-        CustomBackward,
+        CustomForwardDown,
+        CustomForwardUp,
+        CustomBackwardDown,
+        CustomBackwardUp,
         CustomBegin,
         CustomEnd
     };

@@ -1,10 +1,12 @@
 # Changelog
 
-
 ## 0.17.2
 
+## Improvements
+- Seeking backward and forward via flight simulator keyboard shortcuts (CTRL+, respectively CTRL+.) now repeats the action while keeping the shortcut combination pressed
+
 ### Bug Fixes
-- Fix the example [Flight-Analysis.sql](doc/SQL/Flight-Analysis.sql) script (documentation)
+- Fix the example [Flight-Analysis.sql](doc/SQL/Flight-Analysis.sql) script (documentation) [[Issue #150](https://github.com/till213/SkyDolly/issues/150)]
   * The *flight_number* is now stored on *flight* level (and not per *aircraft* anymore)
 
 ## 0.17.1
