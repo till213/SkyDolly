@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 0.17.2
+
+### Bug Fixes
+- Fix the example [Flight-Analysis.sql](doc/SQL/Flight-Analysis.sql) script (documentation)
+  * The *flight_number* is now stored on *flight* level (and not per *aircraft* anymore)
+
 ## 0.17.1
 
 ## Improvements
