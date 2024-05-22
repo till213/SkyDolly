@@ -124,6 +124,7 @@ private:
 
 private slots:
     void processSimConnectEvent() noexcept;
+    void emitActiveAction() noexcept;
 };
 
 #endif // MSFSIMCONNNECTPLUGIN_H

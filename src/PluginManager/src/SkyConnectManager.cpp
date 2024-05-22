@@ -443,8 +443,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                         this, &SkyConnectManager::locationReceived);
                 connect(skyPlugin, &SkyConnectIntf::simulationRateReceived,
                         this, &SkyConnectManager::simulationRateReceived);
-                connect(skyPlugin, &SkyConnectIntf::shortCutActivated,
-                        this, &SkyConnectManager::shortCutActivated);
+                connect(skyPlugin, &SkyConnectIntf::actionActivated,
+                        this, &SkyConnectManager::actionActivated);
 
                 // Flight
                 const Logbook &logbook = Logbook::getInstance();
