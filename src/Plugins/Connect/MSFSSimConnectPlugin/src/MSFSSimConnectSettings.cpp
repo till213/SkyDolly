@@ -55,7 +55,12 @@ MSFSSimConnectSettings::MSFSSimConnectSettings() noexcept
     d(std::make_unique<MSFSSimConnectSettingsPrivate>())
 {}
 
-MSFSSimConnectSettings::~MSFSSimConnectSettings() = default;
+MSFSSimConnectSettings::~MSFSSimConnectSettings()
+{
+#ifdef DEBUG
+    qDebug() << "MSFSSimConnectSettings::~MSFSSimConnectSettings: DELETED";
+#endif
+}
 
 MSFSSimConnectSettings::ConnectionType MSFSSimConnectSettings::getConnectionType() const noexcept
 {

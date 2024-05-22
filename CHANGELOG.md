@@ -4,6 +4,7 @@
 
 ## Improvements
 - Seeking backward and forward via flight simulator keyboard shortcuts (CTRL+, respectively CTRL+.) now repeats the action while keeping the shortcut combination pressed
+- Application settings: the flight simulator connection plugin and connection type (pipe, IPv4, IPv6) combo boxes are disabled while the connection is active (replay or recording in progress)
 
 ### Bug Fixes
 - Fix the example [Flight-Analysis.sql](doc/SQL/Flight-Analysis.sql) script (documentation) [[Issue #150](https://github.com/till213/SkyDolly/issues/150)]
