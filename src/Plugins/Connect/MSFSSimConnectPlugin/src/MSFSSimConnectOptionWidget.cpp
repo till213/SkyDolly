@@ -35,6 +35,7 @@
 #endif
 
 #include <PluginManager/Connect/ConnectPluginBaseSettings.h>
+#include <PluginManager/SkyConnectManager.h>
 #include "MSFSSimConnectSettings.h"
 #include "MSFSSimConnectOptionWidget.h"
 #include "ui_MSFSSimConnectOptionWidget.h"
@@ -91,12 +92,19 @@ void MSFSSimConnectOptionWidget::accept() noexcept
 
 void MSFSSimConnectOptionWidget::frenchConnection() noexcept
 {
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+    // TODO FIXME: The option widget "survives" the plugin settings for a short moment, when the plugin is unloaded
+    //             the connection then tries to access the settings that have already been deleted
+    //             -> delete this option widget together with the plugin unloading, or get at least notified when the settings are deleted (disconnect this signal then)
+    // connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+    //         this, &MSFSSimConnectOptionWidget::updateUi);
+
     connect(&d->pluginSettings, &MSFSSimConnectSettings::changed,
             this, &MSFSSimConnectOptionWidget::updateUi);
     connect(ui->restoreDefaultsPushButton, &QPushButton::clicked,
             this, &MSFSSimConnectOptionWidget::restoreDefaults);
     connect(ui->connectionComboBox, &QComboBox::currentIndexChanged,
-            this, &MSFSSimConnectOptionWidget::updateInfoText);
+            this, &MSFSSimConnectOptionWidget::updateInfoText);    
 }
 
 void MSFSSimConnectOptionWidget::initUi() noexcept
@@ -128,6 +136,8 @@ void MSFSSimConnectOptionWidget::updateUi() noexcept
     default:
         break;
     }
+    const bool enabled = !SkyConnectManager::getInstance().isActive();
+    ui->connectionComboBox->setEnabled(enabled);
 
     updateInfoText();
 }

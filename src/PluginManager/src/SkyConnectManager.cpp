@@ -277,7 +277,7 @@ bool SkyConnectManager::isInReplayState() const noexcept
 bool SkyConnectManager::isActive() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().isInRecordingState() || skyConnect->get().isInReplayState(): false;
+    return skyConnect ? skyConnect->get().isActive() : false;
 }
 
 void SkyConnectManager::stop() noexcept
