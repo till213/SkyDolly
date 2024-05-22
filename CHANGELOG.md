@@ -35,6 +35,12 @@
 
 ## Bug Fixes
 
+## 0.17.2
+
+### Bug Fixes
+- Fix the example [Flight-Analysis.sql](doc/SQL/Flight-Analysis.sql) script (documentation)
+  * The *flight_number* is now stored on *flight* level (and not per *aircraft* anymore)
+
 ## 0.17.1
 
 ## Improvements
@@ -47,7 +53,7 @@
   
 ### Bug Fixes
 - The aircraft type is properly set again when importing a flight (regression from v0.17)
-  * The aircraft type selector (combobox) does not show the *unknown* special value "-" anymore
+  * The aircraft type selector (combo box) does not show the *unknown* special value "-" anymore
   * The aircraft type is properly set in the imported flight again
 - On Windows 11 the default style is set to "Fusion", as a workaround
   * The new "Windows 11" style still has a few known visual glitches:
@@ -167,11 +173,11 @@
 ### Improvements
 - All export plugins: now only the effectively *supported* resampling and formation export options (as reported by the given plugin) are selectable
 - All import plugins:
-  * The "Add to current flight" checkbox has been replaced by an aircraft import mode combobox:
+  * The "Add to current flight" checkbox has been replaced by an aircraft import mode combo box:
     - **Add to current flight**: all imported aircraft are added to the currently loaded flight
     - **Add to new flight**: all imported aircraft are added to a flight that is newly created
     - **Separate flights**: a new flight is created for each imported file
-  * The aircraft type selection combobox is now disabled for those formats (such as the new Sky Dolly logbook) that already specify the aircraft type
+  * The aircraft type selection combo box is now disabled for those formats (such as the new Sky Dolly logbook) that already specify the aircraft type
   * Depending on whether the given plugin also reports the flight recording time the timestamp offset of newly imported aircraft can now be automatically adjusted:
     - **None**: no timestamp offset is being applied
     - **Date and time**: the timestamp offset is calculated based on the recording date and time difference between the *current* and each newly imported flight
@@ -313,7 +319,7 @@
   * The location count is shown
 - The system locations migration file, located at *[Sky Dolly installation directory]/Resources/migr/Locations.csv*, is now optional and can be deleted
 - A new "Only this time" backup option has been added to the backup dialog: selecting this option will create a backup, but will then set the backup period to "Never" afterwards
-- Added default aircraft types from simulation update 11 ("40th anniversary update"), for aircraft selector combobox (flight import)
+- Added default aircraft types from simulation update 11 ("40th anniversary update"), for aircraft selector combo box (flight import)
 - Position data is now interpolated within an "infinite interpolation window"
   * Imported flight plans (e.g. GPX flight plans from Little Navmap) with "sparse waypoints" are now properly replayed
 - Flight Recorder CSV import now also imports "propeller lever position"
@@ -372,7 +378,7 @@ And
 ### Under The Hood
 - The modules (Logbook, Formation, Location) are now implemented as plugins
 - The modules are [topologically sorted](https://en.wikipedia.org/wiki/Topological_sorting), based on their defined dependencies
-- "Persisted enumerations": dropdown comboboxes are automatically populated based on the persisted enumeration values
+- "Persisted enumerations": dropdown combo boxes are automatically populated based on the persisted enumeration values
 - Sky Dolly now also compiles and links with the Microsoft Visual Studio 2022 C++ compiler (MSVC)
 - The code is now also [analysed](https://github.com/till213/SkyDolly/actions) for programming / security flaws with the [Microsoft C++ Code Analysis Action](https://github.com/marketplace/actions/microsoft-c-code-analysis-action)
 
@@ -541,7 +547,7 @@ This release mostly focuses on "under the hood" improvements, but also improves 
 ### Improvements
 
 - Import
-  * The aircraft selection combobox is now editable, with autocompletion support
+  * The aircraft selection combo box is now editable, with autocompletion support
   * The selected aircraft is now stored in the settings
 - IGC import plugin
   * The initial heading is now calculated on the _first significant movement_, compensating GPS inaccuracies (when the glider is standing still on the ground)

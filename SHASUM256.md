@@ -16,7 +16,7 @@ There are various methods for computing [SHA-2](https://en.wikipedia.org/wiki/SH
 Example:
 
 ```
-PS C:\path\to\download\folder> Get-FileHash .\SkyDolly-v0.17.0.zip
+PS C:\path\to\download\folder> Get-FileHash .\SkyDolly-v0.17.1.zip
 ```
 
 Once the checksum has been calculated compare it with the corresponding checksum published below. If you have the slightest mismatch:
@@ -30,6 +30,7 @@ Once the checksum has been calculated compare it with the corresponding checksum
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
+SHA256    | e077d8c5f1c9e1db507471f74b8002d2eda0d87e6ae69c7cd57c90200e5e4fae | SkyDolly-v0.17.1.zip
 SHA256    | 2e4d8f65dfcb83017b9f562157e6376ee6179e67adee3f2c5f066fbf799bec93 | SkyDolly-v0.17.0.zip
 
 ### v0.16
