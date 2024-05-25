@@ -64,7 +64,7 @@ TerminationDialog::TerminationDialog(
     QString stackTrace,
     QWidget *parent
  ) : QDialog {parent},
-    ui {std::unique_ptr<Ui::TerminationDialog>()},
+    ui {std::make_unique<Ui::TerminationDialog>()},
     m_title {std::move(title)},
     m_reason {std::move(reason)},
     m_stackTrace {std::move(stackTrace)}

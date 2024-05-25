@@ -83,7 +83,7 @@ namespace {
 struct PathCreatorPluginPrivate
 {
     PathCreatorPluginPrivate() noexcept
-        : randomGenerator(QRandomGenerator::global())
+        : randomGenerator {QRandomGenerator::global()}
     {
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
         replayTimer.setTimerType(Qt::TimerType::PreciseTimer);
