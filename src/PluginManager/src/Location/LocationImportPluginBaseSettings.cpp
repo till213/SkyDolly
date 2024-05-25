@@ -53,7 +53,7 @@ struct LocationImportPluginBaseSettingsPrivate
 // PUBLIC
 
 LocationImportPluginBaseSettings::LocationImportPluginBaseSettings() noexcept
-    : d(std::make_unique<LocationImportPluginBaseSettingsPrivate>())
+    : d {std::make_unique<LocationImportPluginBaseSettingsPrivate>()}
 {}
 
 LocationImportPluginBaseSettings::~LocationImportPluginBaseSettings() = default;

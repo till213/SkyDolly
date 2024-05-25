@@ -34,7 +34,6 @@
 
 #include <GeographicLib/Geoid.hpp>
 
-#include "Settings.h"
 #include "File.h"
 #include "Convert.h"
 

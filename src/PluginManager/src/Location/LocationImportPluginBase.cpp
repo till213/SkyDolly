@@ -52,7 +52,7 @@ struct LocationImportPluginBasePrivate
 // PUBLIC
 
 LocationImportPluginBase::LocationImportPluginBase() noexcept
-    : d(std::make_unique<LocationImportPluginBasePrivate>())
+    : d {std::make_unique<LocationImportPluginBasePrivate>()}
 {
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
 }

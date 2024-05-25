@@ -100,7 +100,7 @@ void SkyConnectManager::destroyInstance() noexcept
 
 const std::vector<SkyConnectManager::Handle> &SkyConnectManager::initialisePlugins() noexcept
 {
-    initialisePluginRegistry(QString::fromLatin1(::ConnectPluginDirectoryName));
+    initialisePluginRegistry(::ConnectPluginDirectoryName);
     initialisePlugin();
     return availablePlugins();
 }
@@ -519,9 +519,9 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
                 const QJsonObject pluginMetadata {metaData.value(QStringLiteral("MetaData")).toObject()};
-                const QUuid uuid {pluginMetadata.value(QString::fromLatin1(PluginUuidKey)).toString()};
-                const QString pluginName {pluginMetadata.value(QString::fromLatin1(PluginNameKey)).toString()};
-                const QString flightSimulatorName {pluginMetadata.value(QString::fromLatin1(PluginFlightSimulatorNameKey)).toString()};
+                const QUuid uuid {pluginMetadata.value(PluginUuidKey).toString()};
+                const QString pluginName {pluginMetadata.value(PluginNameKey).toString()};
+                const QString flightSimulatorName {pluginMetadata.value(PluginFlightSimulatorNameKey).toString()};
                 const FlightSimulator::Id flightSimulatorId {FlightSimulator::nameToId(flightSimulatorName)};
                 SkyConnectPlugin plugin {pluginName, flightSimulatorId};
                 const Handle handle {uuid, plugin};

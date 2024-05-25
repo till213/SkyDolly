@@ -50,9 +50,9 @@
 struct BasicLocationExportDialogPrivate
 {
     BasicLocationExportDialogPrivate(QString fileExtension, QString theFileFilter, LocationExportPluginBaseSettings &pluginSettings) noexcept
-        : fileExtension(std::move(fileExtension)),
-          fileFilter(std::move(theFileFilter)),
-          pluginSettings(pluginSettings)
+        : fileExtension {std::move(fileExtension)},
+          fileFilter {std::move(theFileFilter)},
+          pluginSettings {pluginSettings}
     {}
 
     QString fileExtension;

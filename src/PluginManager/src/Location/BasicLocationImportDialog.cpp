@@ -46,8 +46,8 @@
 struct BasicLocationImportDialogPrivate
 {
     BasicLocationImportDialogPrivate(QString fileFilter, LocationImportPluginBaseSettings &pluginSettings) noexcept
-        : fileFilter(std::move(fileFilter)),
-          pluginSettings(pluginSettings)
+        : fileFilter {std::move(fileFilter)},
+          pluginSettings {pluginSettings}
     {}
 
     std::unique_ptr<AircraftTypeService> aircraftTypeService {std::make_unique<AircraftTypeService>()};

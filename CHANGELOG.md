@@ -40,10 +40,16 @@
 ## Improvements
 - Seeking backward and forward via flight simulator keyboard shortcuts (CTRL+, respectively CTRL+.) now repeats the action while keeping the shortcut combination pressed
 - Application settings: the flight simulator connection plugin and connection type (pipe, IPv4, IPv6) combo boxes are disabled while the connection is active (replay or recording in progress)
+- When the *SimConnect.cfg* client configuration that comes with Sky Dolly is removed from the application directory then a local (configuration index *SIMCONNECT_OPEN_CONFIGINDEX_LOCAL*) connection is used (just like in previous Sky Dolly versions)
+  * Also refer to the official documentation of [SimConnect.cfg](https://docs.flightsimulator.com/html/Programming_Tools/SimConnect/SimConnect_CFG_Definition.htm) (client configuration) and [SimConnect.xml](https://docs.flightsimulator.com/html/Programming_Tools/SimConnect/SimConnect_XML_Definition.htm) (server configuration)
 
 ### Bug Fixes
 - Fix the example [Flight-Analysis.sql](doc/SQL/Flight-Analysis.sql) script (documentation) [[Issue #150](https://github.com/till213/SkyDolly/issues/150)]
   * The *flight_number* is now stored on *flight* level (and not per *aircraft* anymore)
+  
+### Under the Hood
+- Upgrade Qt to 6.7.1 (from 6.7.0)
+  * Note: fixes for the new Windows 11 style are expected to be in Qt 6.7.2, scheduled for August 2024
 
 ## 0.17.1
 

@@ -44,6 +44,7 @@
 #include <Kernel/Const.h>
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
+#include <Kernel/File.h>
 #include <Kernel/Settings.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -784,19 +785,24 @@ void MSFSSimConnectPlugin::resetEventStates(ResetReason reason) noexcept
 DWORD MSFSSimConnectPlugin::getConfigurationIndex() const noexcept
 {
     DWORD configurationIndex {0};
-    switch (d->pluginSettings.getConnectionType()) {
-    case MSFSSimConnectSettings::ConnectionType::Pipe:
-        configurationIndex = 0;
-        break;
-    case MSFSSimConnectSettings::ConnectionType::IPv4:
-        configurationIndex = 1;
-        break;
-    case MSFSSimConnectSettings::ConnectionType::IPv6:
-        configurationIndex = 2;
-        break;
-    default:
-        configurationIndex = 0;
-        break;
+    if (File::hasSimConnectConfiguration()) {
+        switch (d->pluginSettings.getConnectionType()) {
+        case MSFSSimConnectSettings::ConnectionType::Pipe:
+            configurationIndex = 0;
+            break;
+        case MSFSSimConnectSettings::ConnectionType::IPv4:
+            configurationIndex = 1;
+            break;
+        case MSFSSimConnectSettings::ConnectionType::IPv6:
+            configurationIndex = 2;
+            break;
+        default:
+            configurationIndex = 0;
+            break;
+        }
+    } else {
+        // No SimConnect.cfg in application directory -> enforce local connection
+        configurationIndex = ::SIMCONNECT_OPEN_CONFIGINDEX_LOCAL;
     }
     return configurationIndex;
 }
