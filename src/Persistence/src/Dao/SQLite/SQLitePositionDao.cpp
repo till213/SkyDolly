@@ -55,7 +55,7 @@ namespace
 struct SQLitePositionDaoPrivate
 {
     SQLitePositionDaoPrivate(QString connectionName) noexcept
-        : connectionName(std::move(connectionName))
+        : connectionName {std::move(connectionName)}
     {}
 
     QString connectionName;

@@ -44,7 +44,7 @@
 struct SqlMigrationStepPrivate
 {
     SqlMigrationStepPrivate(QString connectionName)
-        : connectionName(std::move(connectionName))
+        : connectionName {std::move(connectionName)}
     {}
 
     QString connectionName;
