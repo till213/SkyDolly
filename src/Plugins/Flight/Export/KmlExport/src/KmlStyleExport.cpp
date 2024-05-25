@@ -55,7 +55,7 @@ namespace
 struct KmlStyleExportPrivate
 {
     KmlStyleExportPrivate(const KmlExportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     const KmlExportSettings &pluginSettings;
@@ -73,7 +73,7 @@ struct KmlStyleExportPrivate
 // PUBLIC
 
 KmlStyleExport::KmlStyleExport(const KmlExportSettings &pluginSettings) noexcept
-    : d(std::make_unique<KmlStyleExportPrivate>(pluginSettings))
+    : d {std::make_unique<KmlStyleExportPrivate>(pluginSettings)}
 {}
 
 KmlStyleExport::~KmlStyleExport() = default;

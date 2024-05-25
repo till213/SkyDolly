@@ -85,7 +85,7 @@ struct FlightRadar24CsvParserPrivate
 // PUBLIC
 
 FlightRadar24CsvParser::FlightRadar24CsvParser() noexcept
-    : d(std::make_unique<FlightRadar24CsvParserPrivate>())
+    : d {std::make_unique<FlightRadar24CsvParserPrivate>()}
 {}
 
 FlightRadar24CsvParser::~FlightRadar24CsvParser() = default;

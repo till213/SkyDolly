@@ -25,6 +25,8 @@
 #ifndef TERMINATIONDIALOG_H
 #define TERMINATIONDIALOG_H
 
+#include <memory.h>
+
 #include <QDialog>
 #include <QTimer>
 
@@ -45,7 +47,7 @@ public:
     virtual ~TerminationDialog();
 
 private:
-    Ui::TerminationDialog *ui;
+    std::unique_ptr<Ui::TerminationDialog> ui;
     QString m_title;
     QString m_reason;
     QString m_stackTrace;

@@ -50,7 +50,7 @@ struct CsvExportSettingsPrivate
 
 CsvExportSettings::CsvExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
-      d(std::make_unique<CsvExportSettingsPrivate>())
+      d {std::make_unique<CsvExportSettingsPrivate>()}
 {}
 
 CsvExportSettings::~CsvExportSettings() = default;

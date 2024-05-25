@@ -34,7 +34,7 @@
 struct KmlImportOptionWidgetPrivate
 {
     KmlImportOptionWidgetPrivate(KmlImportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     KmlImportSettings &pluginSettings;
@@ -43,9 +43,9 @@ struct KmlImportOptionWidgetPrivate
 // PUBLIC
 
 KmlImportOptionWidget::KmlImportOptionWidget(KmlImportSettings &pluginSettings, QWidget *parent) noexcept
-   : QWidget(parent),
-     ui(std::make_unique<Ui::KmlImportOptionWidget>()),
-      d(std::make_unique<KmlImportOptionWidgetPrivate>(pluginSettings))
+   : QWidget {parent},
+     ui {std::make_unique<Ui::KmlImportOptionWidget>()},
+     d {std::make_unique<KmlImportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

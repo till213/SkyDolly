@@ -755,7 +755,7 @@ void Settings::restore() noexcept
 // PRIVATE
 
 Settings::Settings() noexcept
-    : d(std::make_unique<SettingsPrivate>())
+    : d {std::make_unique<SettingsPrivate>()}
 {
     restore();
     frenchConnection();

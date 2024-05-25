@@ -144,9 +144,9 @@ struct FormationWidgetPrivate
 // PUBLIC
 
 FormationWidget::FormationWidget(FormationSettings &settings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::FormationWidget>()),
-      d(std::make_unique<FormationWidgetPrivate>(settings, *this))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::FormationWidget>()},
+      d {std::make_unique<FormationWidgetPrivate>(settings, *this)}
 {
     ui->setupUi(this);
     initUi();

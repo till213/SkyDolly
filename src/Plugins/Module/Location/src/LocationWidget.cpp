@@ -144,9 +144,9 @@ struct LocationWidgetPrivate
 // PUBLIC
 
 LocationWidget::LocationWidget(LocationSettings &moduleSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::LocationWidget>()),
-      d(std::make_unique<LocationWidgetPrivate>(moduleSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::LocationWidget>()},
+      d {std::make_unique<LocationWidgetPrivate>(moduleSettings)}
 {
     ui->setupUi(this);
     initUi();

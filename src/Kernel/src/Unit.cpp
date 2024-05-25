@@ -62,7 +62,7 @@ struct UnitPrivate {
 // PUBLIC
 
 Unit::Unit()
-    : d(std::make_unique<UnitPrivate>())
+    : d {std::make_unique<UnitPrivate>()}
 {}
 
 Unit::Unit(Unit &&rhs) noexcept = default;

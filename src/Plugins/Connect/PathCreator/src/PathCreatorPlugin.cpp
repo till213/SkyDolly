@@ -104,8 +104,8 @@ const QStringList PathCreatorPluginPrivate::IcaoList {"LSZH", "LSGG", "LSME", "L
 // PUBLIC
 
 PathCreatorPlugin::PathCreatorPlugin(QObject *parent) noexcept
-    : AbstractSkyConnect(parent),
-      d(std::make_unique<PathCreatorPluginPrivate>())
+    : AbstractSkyConnect {parent},
+      d {std::make_unique<PathCreatorPluginPrivate>()}
 {
     frenchConnection();
 }

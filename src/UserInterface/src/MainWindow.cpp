@@ -188,9 +188,9 @@ struct MainWindowPrivate
 // PUBLIC
 
 MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
-    : QMainWindow(parent),
-      ui(std::make_unique<Ui::MainWindow>()),
-      d(std::make_unique<MainWindowPrivate>())
+    : QMainWindow {parent},
+      ui {std::make_unique<Ui::MainWindow>()},
+      d {std::make_unique<MainWindowPrivate>()}
 {
     ui->setupUi(this);
 
@@ -309,8 +309,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::updateUi);
     connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
             this, &MainWindow::onRecordingStopped);
-    connect(&skyConnectManager, &SkyConnectManager::shortCutActivated,
-            this, &MainWindow::onShortcutActivated);
+    connect(&skyConnectManager, &SkyConnectManager::actionActivated,
+            this, &MainWindow::onActionActivated);
     connect(&skyConnectManager, &SkyConnectManager::simulationRateReceived,
             this, &MainWindow::onSimulationRateReceived);
 
@@ -1490,7 +1490,7 @@ void MainWindow::onRecordingStopped() noexcept
     onRecordingDurationChanged();
 }
 
-void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept
+void MainWindow::onActionActivated(FlightSimulatorShortcuts::Action action) noexcept
 {
     const auto &skyConnectManager = SkyConnectManager::getInstance();
     QString pushNotification;
@@ -1547,6 +1547,8 @@ void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) no
         if (ui->skipToEndAction->isEnabled()) {
             ui->skipToEndAction->trigger();
         }
+        break;
+    case FlightSimulatorShortcuts::Action::None:
         break;
     }
 

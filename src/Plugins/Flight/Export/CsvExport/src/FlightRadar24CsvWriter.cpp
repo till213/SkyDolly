@@ -69,7 +69,7 @@ struct FlightRadar24CsvWriterPrivate
 // PUBLIC
 
 FlightRadar24CsvWriter::FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept
-    : d(std::make_unique<FlightRadar24CsvWriterPrivate>(pluginSettings))
+    : d {std::make_unique<FlightRadar24CsvWriterPrivate>(pluginSettings)}
 {}
 
 FlightRadar24CsvWriter::~FlightRadar24CsvWriter() = default;

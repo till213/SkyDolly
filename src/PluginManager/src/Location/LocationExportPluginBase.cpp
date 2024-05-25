@@ -61,7 +61,7 @@ struct LocationExportPluginBasePrivate
 // PUBLIC
 
 LocationExportPluginBase::LocationExportPluginBase() noexcept
-    : d(std::make_unique<LocationExportPluginBasePrivate>())
+    : d {std::make_unique<LocationExportPluginBasePrivate>()}
 {}
 
 LocationExportPluginBase::~LocationExportPluginBase() = default;

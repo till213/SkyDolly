@@ -31,7 +31,7 @@ struct SdLogImportSettingsPrivate
 // PUBLIC
 
 SdLogImportSettings::SdLogImportSettings() noexcept
-    : d(std::make_unique<SdLogImportSettingsPrivate>())
+    : d {std::make_unique<SdLogImportSettingsPrivate>()}
 {}
 
 SdLogImportSettings::~SdLogImportSettings() = default;

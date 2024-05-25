@@ -65,7 +65,7 @@ struct SimConnectAIPrivate
 // PUBLIC
 
 SimConnectAi::SimConnectAi(HANDLE simConnectHandle)
-    : d(std::make_unique<SimConnectAIPrivate>(simConnectHandle))
+    : d {std::make_unique<SimConnectAIPrivate>(simConnectHandle)}
 {}
 
 SimConnectAi::~SimConnectAi() = default;

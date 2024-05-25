@@ -34,7 +34,7 @@
 struct CsvExportOptionWidgetPrivate
 {
     CsvExportOptionWidgetPrivate(CsvExportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     CsvExportSettings &pluginSettings;
@@ -43,9 +43,9 @@ struct CsvExportOptionWidgetPrivate
 // PUBLIC
 
 CsvExportOptionWidget::CsvExportOptionWidget(CsvExportSettings &pluginSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::CsvExportOptionWidget>()),
-      d(std::make_unique<CsvExportOptionWidgetPrivate>(pluginSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::CsvExportOptionWidget>()},
+      d {std::make_unique<CsvExportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

@@ -103,7 +103,7 @@ struct KmlExportSettingsPrivate
 
 KmlExportSettings::KmlExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
-      d(std::make_unique<KmlExportSettingsPrivate>())
+      d {std::make_unique<KmlExportSettingsPrivate>()}
 {}
 
 KmlExportSettings::~KmlExportSettings() = default;

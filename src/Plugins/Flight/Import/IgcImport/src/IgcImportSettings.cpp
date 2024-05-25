@@ -56,7 +56,7 @@ struct IgcImportSettingsPrivate
 // PUBLIC
 
 IgcImportSettings::IgcImportSettings() noexcept
-    : d(std::make_unique<IgcImportSettingsPrivate>())
+    : d {std::make_unique<IgcImportSettingsPrivate>()}
 {}
 
 IgcImportSettings::~IgcImportSettings() = default;

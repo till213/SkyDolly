@@ -55,7 +55,7 @@ struct AbstractKmlTrackParserPrivate
 
 AbstractKmlTrackParser::AbstractKmlTrackParser() noexcept
     : AbstractKmlParser(),
-      d(std::make_unique<AbstractKmlTrackParserPrivate>())
+      d {std::make_unique<AbstractKmlTrackParserPrivate>()}
 {}
 
 AbstractKmlTrackParser::~AbstractKmlTrackParser() = default;

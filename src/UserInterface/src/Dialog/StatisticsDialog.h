@@ -58,8 +58,8 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    const std::unique_ptr<StatisticsDialogPrivate> d;
     const std::unique_ptr<Ui::StatisticsDialog> ui;
+    const std::unique_ptr<StatisticsDialogPrivate> d;    
 
     void initUi() noexcept;
     void frenchConnection() noexcept;

@@ -55,7 +55,7 @@ namespace
 struct SQLiteAttitudeDaoPrivate
 {
     SQLiteAttitudeDaoPrivate(QString connectionName) noexcept
-        : connectionName(std::move(connectionName))
+        : connectionName {std::move(connectionName)}
     {}
 
     QString connectionName;
@@ -64,7 +64,7 @@ struct SQLiteAttitudeDaoPrivate
 // PUBLIC
 
 SQLiteAttitudeDao::SQLiteAttitudeDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLiteAttitudeDaoPrivate>(std::move(connectionName)))
+    : d {std::make_unique<SQLiteAttitudeDaoPrivate>(std::move(connectionName))}
 {}
 
 SQLiteAttitudeDao::SQLiteAttitudeDao(SQLiteAttitudeDao &&rhs) noexcept = default;

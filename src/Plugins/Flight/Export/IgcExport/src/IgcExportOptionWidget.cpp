@@ -32,7 +32,7 @@
 struct IgcExportOptionWidgetPrivate
 {
     IgcExportOptionWidgetPrivate(IgcExportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     IgcExportSettings &pluginSettings;
@@ -41,9 +41,9 @@ struct IgcExportOptionWidgetPrivate
 // PUBLIC
 
 IgcExportOptionWidget::IgcExportOptionWidget(IgcExportSettings &pluginSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::IgcExportOptionWidget>()),
-      d(std::make_unique<IgcExportOptionWidgetPrivate>(pluginSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::IgcExportOptionWidget>()},
+      d {std::make_unique<IgcExportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

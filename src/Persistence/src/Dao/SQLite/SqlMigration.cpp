@@ -93,7 +93,7 @@ struct SqlMigrationPrivate
 // PUBLIC
 
 SqlMigration::SqlMigration(QString connectionName) noexcept
-    : d(std::make_unique<SqlMigrationPrivate>(std::move(connectionName)))
+    : d {std::make_unique<SqlMigrationPrivate>(std::move(connectionName))}
 {}
 
 SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;

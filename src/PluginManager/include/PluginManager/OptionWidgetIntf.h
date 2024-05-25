@@ -34,7 +34,7 @@ class PLUGINMANAGER_API OptionWidgetIntf : public QWidget
     Q_OBJECT
 public:
     OptionWidgetIntf(QWidget *parent)
-        : QWidget(parent)
+        : QWidget {parent}
     {}
 
     /*!

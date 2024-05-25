@@ -111,7 +111,7 @@ namespace
 // PUBLIC
 
 SQLiteAircraftDao::SQLiteAircraftDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLiteAircraftDaoPrivate>(std::move(connectionName)))
+    : d {std::make_unique<SQLiteAircraftDaoPrivate>(std::move(connectionName))}
 {}
 
 SQLiteAircraftDao::SQLiteAircraftDao(SQLiteAircraftDao &&rhs) noexcept = default;

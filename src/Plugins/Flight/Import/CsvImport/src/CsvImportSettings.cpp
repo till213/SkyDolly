@@ -48,7 +48,7 @@ struct CsvImportSettingsPrivate
 // PUBLIC
 
 CsvImportSettings::CsvImportSettings() noexcept
-    : d(std::make_unique<CsvImportSettingsPrivate>())
+    : d {std::make_unique<CsvImportSettingsPrivate>()}
 {}
 
 CsvImportSettings::~CsvImportSettings() = default;

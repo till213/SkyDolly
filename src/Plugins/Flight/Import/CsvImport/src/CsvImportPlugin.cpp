@@ -48,7 +48,7 @@ struct CsvImportPluginPrivate
 // PUBLIC
 
 CsvImportPlugin::CsvImportPlugin() noexcept
-    : d(std::make_unique<CsvImportPluginPrivate>())
+    : d {std::make_unique<CsvImportPluginPrivate>()}
 {}
 
 CsvImportPlugin::~CsvImportPlugin() = default;

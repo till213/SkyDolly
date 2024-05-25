@@ -55,7 +55,7 @@ namespace
 struct SQLitePrimaryFlightControlDaoPrivate
 {
     SQLitePrimaryFlightControlDaoPrivate(QString connectionName) noexcept
-        : connectionName(std::move(connectionName))
+        : connectionName {std::move(connectionName)}
     {}
 
     QString connectionName;
@@ -64,7 +64,7 @@ struct SQLitePrimaryFlightControlDaoPrivate
 // PUBLIC
 
 SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLitePrimaryFlightControlDaoPrivate>(std::move(connectionName)))
+    : d {std::make_unique<SQLitePrimaryFlightControlDaoPrivate>(std::move(connectionName))}
 {}
 
 SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao(SQLitePrimaryFlightControlDao &&rhs) noexcept = default;

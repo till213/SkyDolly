@@ -53,7 +53,7 @@ struct LocationServicePrivate
 // PUBLIC
 
 LocationService::LocationService(QString connectionName) noexcept
-    : d(std::make_unique<LocationServicePrivate>(std::move(connectionName)))
+    : d {std::make_unique<LocationServicePrivate>(std::move(connectionName))}
 {}
 
 LocationService::LocationService(LocationService &&rhs) noexcept = default;

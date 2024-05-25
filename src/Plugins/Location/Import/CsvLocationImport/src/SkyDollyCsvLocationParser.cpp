@@ -80,7 +80,7 @@ struct SkyDollyCsvLocationParserPrivate
 // PUBLIC
 
 SkyDollyCsvLocationParser::SkyDollyCsvLocationParser() noexcept
-    : d(std::make_unique<SkyDollyCsvLocationParserPrivate>())
+    : d {std::make_unique<SkyDollyCsvLocationParserPrivate>()}
 {}
 
 SkyDollyCsvLocationParser::SkyDollyCsvLocationParser(SkyDollyCsvLocationParser &&rhs) noexcept = default;

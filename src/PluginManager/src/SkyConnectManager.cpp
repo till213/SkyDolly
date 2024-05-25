@@ -59,7 +59,7 @@ namespace
 struct SkyConnectManagerPrivate
 {
     SkyConnectManagerPrivate(QObject *parent) noexcept
-        : pluginLoader(new QPluginLoader(parent))
+        : pluginLoader(new QPluginLoader {parent})
     {
         pluginsDirectory.cd(File::getPluginDirectoryPath());
     }
@@ -100,7 +100,7 @@ void SkyConnectManager::destroyInstance() noexcept
 
 const std::vector<SkyConnectManager::Handle> &SkyConnectManager::initialisePlugins() noexcept
 {
-    initialisePluginRegistry(QString::fromLatin1(::ConnectPluginDirectoryName));
+    initialisePluginRegistry(::ConnectPluginDirectoryName);
     initialisePlugin();
     return availablePlugins();
 }
@@ -277,7 +277,7 @@ bool SkyConnectManager::isInReplayState() const noexcept
 bool SkyConnectManager::isActive() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().isInRecordingState() || skyConnect->get().isInReplayState(): false;
+    return skyConnect ? skyConnect->get().isActive() : false;
 }
 
 void SkyConnectManager::stop() noexcept
@@ -443,8 +443,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                         this, &SkyConnectManager::locationReceived);
                 connect(skyPlugin, &SkyConnectIntf::simulationRateReceived,
                         this, &SkyConnectManager::simulationRateReceived);
-                connect(skyPlugin, &SkyConnectIntf::shortCutActivated,
-                        this, &SkyConnectManager::shortCutActivated);
+                connect(skyPlugin, &SkyConnectIntf::actionActivated,
+                        this, &SkyConnectManager::actionActivated);
 
                 // Flight
                 const Logbook &logbook = Logbook::getInstance();
@@ -484,7 +484,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 // PRIVATE
 
 SkyConnectManager::SkyConnectManager() noexcept
-    : d(std::make_unique<SkyConnectManagerPrivate>(this))
+    : d {std::make_unique<SkyConnectManagerPrivate>(this)}
 {
     frenchConnection();
 }
@@ -519,9 +519,9 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
                 const QJsonObject pluginMetadata {metaData.value(QStringLiteral("MetaData")).toObject()};
-                const QUuid uuid {pluginMetadata.value(QString::fromLatin1(PluginUuidKey)).toString()};
-                const QString pluginName {pluginMetadata.value(QString::fromLatin1(PluginNameKey)).toString()};
-                const QString flightSimulatorName {pluginMetadata.value(QString::fromLatin1(PluginFlightSimulatorNameKey)).toString()};
+                const QUuid uuid {pluginMetadata.value(PluginUuidKey).toString()};
+                const QString pluginName {pluginMetadata.value(PluginNameKey).toString()};
+                const QString flightSimulatorName {pluginMetadata.value(PluginFlightSimulatorNameKey).toString()};
                 const FlightSimulator::Id flightSimulatorId {FlightSimulator::nameToId(flightSimulatorName)};
                 SkyConnectPlugin plugin {pluginName, flightSimulatorId};
                 const Handle handle {uuid, plugin};

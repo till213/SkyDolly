@@ -74,7 +74,7 @@ struct ConnectPluginBaseSettingsPrivate
 // PUBLIC
 
 ConnectPluginBaseSettings::ConnectPluginBaseSettings() noexcept
-    : d(std::make_unique<ConnectPluginBaseSettingsPrivate>())
+    : d {std::make_unique<ConnectPluginBaseSettingsPrivate>()}
 {}
 
 ConnectPluginBaseSettings::~ConnectPluginBaseSettings()

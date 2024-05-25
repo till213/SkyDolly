@@ -57,7 +57,7 @@ struct IgcExportSettingsPrivate
 
 IgcExportSettings::IgcExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
-      d(std::make_unique<IgcExportSettingsPrivate>())
+      d {std::make_unique<IgcExportSettingsPrivate>()}
 {}
 
 IgcExportSettings::~IgcExportSettings() = default;

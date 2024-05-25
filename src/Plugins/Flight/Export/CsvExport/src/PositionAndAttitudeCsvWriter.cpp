@@ -72,7 +72,7 @@ struct PositionAndAttitudeCsvWriterPrivate
 // PUBLIC
 
 PositionAndAttitudeCsvWriter::PositionAndAttitudeCsvWriter(const CsvExportSettings &pluginSettings) noexcept
-    : d(std::make_unique<PositionAndAttitudeCsvWriterPrivate>(pluginSettings))
+    : d {std::make_unique<PositionAndAttitudeCsvWriterPrivate>(pluginSettings)}
 {}
 
 PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() = default;

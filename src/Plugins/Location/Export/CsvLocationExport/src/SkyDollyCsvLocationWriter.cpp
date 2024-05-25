@@ -74,7 +74,7 @@ struct SkyDollyCsvLocationWriterPrivate
 // PUBLIC
 
 SkyDollyCsvLocationWriter::SkyDollyCsvLocationWriter(const CsvLocationExportSettings &pluginSettings) noexcept
-    : d(std::make_unique<SkyDollyCsvLocationWriterPrivate>(pluginSettings))
+    : d {std::make_unique<SkyDollyCsvLocationWriterPrivate>(pluginSettings)}
 {}
 
 SkyDollyCsvLocationWriter::~SkyDollyCsvLocationWriter() = default;

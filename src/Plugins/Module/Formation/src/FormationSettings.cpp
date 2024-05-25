@@ -66,7 +66,7 @@ struct FormationSettingsPrivate
 
 FormationSettings::FormationSettings() noexcept
     : ModuleBaseSettings(),
-      d(std::make_unique<FormationSettingsPrivate>())
+      d {std::make_unique<FormationSettingsPrivate>()}
 {}
 
 FormationSettings::~FormationSettings() = default;

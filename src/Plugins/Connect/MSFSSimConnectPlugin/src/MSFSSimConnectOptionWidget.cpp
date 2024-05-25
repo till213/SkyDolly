@@ -34,7 +34,10 @@
 #include <QDebug>
 #endif
 
+#include <Kernel/File.h>
+#include <Kernel/Version.h>
 #include <PluginManager/Connect/ConnectPluginBaseSettings.h>
+#include <PluginManager/SkyConnectManager.h>
 #include "MSFSSimConnectSettings.h"
 #include "MSFSSimConnectOptionWidget.h"
 #include "ui_MSFSSimConnectOptionWidget.h"
@@ -42,7 +45,7 @@
 struct MSFSSimConnectOptionWidgetPrivate
 {
     MSFSSimConnectOptionWidgetPrivate(MSFSSimConnectSettings &pluginSettings)
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     MSFSSimConnectSettings &pluginSettings;
@@ -51,9 +54,9 @@ struct MSFSSimConnectOptionWidgetPrivate
 // PUBLIC
 
 MSFSSimConnectOptionWidget::MSFSSimConnectOptionWidget(MSFSSimConnectSettings &pluginSettings, QWidget *parent)
-    : OptionWidgetIntf(parent),
-    ui(new Ui::MSFSSimConnectOptionWidget),
-    d(std::make_unique<MSFSSimConnectOptionWidgetPrivate>(pluginSettings))
+    : OptionWidgetIntf {parent},
+    ui {std::make_unique<Ui::MSFSSimConnectOptionWidget>()},
+    d {std::make_unique<MSFSSimConnectOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();
@@ -66,7 +69,6 @@ MSFSSimConnectOptionWidget::~MSFSSimConnectOptionWidget()
 #ifdef DEBUG
     qDebug() << "MSFSSimConnectOptionWidget::~MSFSSimConnectOptionWidget: DELETED";
 #endif
-    delete ui;
 }
 
 void MSFSSimConnectOptionWidget::accept() noexcept
@@ -91,12 +93,19 @@ void MSFSSimConnectOptionWidget::accept() noexcept
 
 void MSFSSimConnectOptionWidget::frenchConnection() noexcept
 {
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+    // TODO FIXME: The option widget "survives" the plugin settings for a short moment, when the plugin is unloaded
+    //             the connection then tries to access the settings that have already been deleted
+    //             -> delete this option widget together with the plugin unloading, or get at least notified when the settings are deleted (disconnect this signal then)
+    // connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+    //         this, &MSFSSimConnectOptionWidget::updateUi);
+
     connect(&d->pluginSettings, &MSFSSimConnectSettings::changed,
             this, &MSFSSimConnectOptionWidget::updateUi);
     connect(ui->restoreDefaultsPushButton, &QPushButton::clicked,
             this, &MSFSSimConnectOptionWidget::restoreDefaults);
     connect(ui->connectionComboBox, &QComboBox::currentIndexChanged,
-            this, &MSFSSimConnectOptionWidget::updateInfoText);
+            this, &MSFSSimConnectOptionWidget::updateInfoText);    
 }
 
 void MSFSSimConnectOptionWidget::initUi() noexcept
@@ -114,32 +123,42 @@ void MSFSSimConnectOptionWidget::initUi() noexcept
 
 void MSFSSimConnectOptionWidget::updateUi() noexcept
 {
+    using enum MSFSSimConnectSettings::ConnectionType;
+
+    const bool simConnectConfiguration = File::hasSimConnectConfiguration();
+    if (!simConnectConfiguration) {
+        d->pluginSettings.setConnectionType(Pipe);
+    }
     switch (d->pluginSettings.getConnectionType())
     {
-    case MSFSSimConnectSettings::ConnectionType::Pipe:
+    case Pipe:
         ui->connectionComboBox->setCurrentIndex(0);
         break;
-    case MSFSSimConnectSettings::ConnectionType::IPv4:
+    case IPv4:
         ui->connectionComboBox->setCurrentIndex(1);
         break;
-    case MSFSSimConnectSettings::ConnectionType::IPv6:
+    case IPv6:
         ui->connectionComboBox->setCurrentIndex(2);
         break;
     default:
         break;
     }
+    const bool enabled = simConnectConfiguration && !SkyConnectManager::getInstance().isActive();
+    ui->connectionComboBox->setEnabled(enabled);
 
     updateInfoText();
 }
 
 void MSFSSimConnectOptionWidget::updateInfoText() noexcept
 {
+    const bool hasConfiguration = File::hasSimConnectConfiguration();
     const bool isNetwork = ui->connectionComboBox->currentIndex() != 0;
     const QString url = QStringLiteral("file:///") % QCoreApplication::applicationDirPath() % "/SimConnect.cfg";
     const QString link = QStringLiteral("<a href=\"") % url % "\">SimConnect.cfg</a>";
-    const QString infoText = isNetwork ?
-                                 tr("Also refer to the %1 configuration file, located in the Sky Dolly application directory.").arg(link) :
-                                 tr("This is the preferred connection type when running Sky Dolly on the same local machine as MSFS.");
+    const QString infoText = hasConfiguration ? isNetwork ?
+                                                    tr("Also refer to the %1 configuration file, located in the %2 application directory.").arg(link, Version::getApplicationName()) :
+                                                    tr("This is the preferred connection type when running %1 on the same local machine as MSFS.").arg(Version::getApplicationName()) :
+                                 tr("No SimConnect.cfg present in the %1 application directory: using local connection.").arg(Version::getApplicationName());
     ui->infoLabel->setText(infoText);
 }
 

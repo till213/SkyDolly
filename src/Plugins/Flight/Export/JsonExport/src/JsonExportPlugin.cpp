@@ -62,7 +62,7 @@ struct JsonExportPluginPrivate
 // PUBLIC
 
 JsonExportPlugin::JsonExportPlugin() noexcept
-    : d(std::make_unique<JsonExportPluginPrivate>())
+    : d {std::make_unique<JsonExportPluginPrivate>()}
 {}
 
 JsonExportPlugin::~JsonExportPlugin() = default;

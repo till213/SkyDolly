@@ -51,8 +51,8 @@ struct LogbookPluginPrivate
 // PUBLIC
 
 LogbookPlugin::LogbookPlugin(QObject *parent) noexcept
-    : AbstractModule(parent),
-      d(std::make_unique<LogbookPluginPrivate>())
+    : AbstractModule {parent},
+      d {std::make_unique<LogbookPluginPrivate>()}
 {
     restoreSettings(QUuid(Const::LogbookModuleUuid));
 }

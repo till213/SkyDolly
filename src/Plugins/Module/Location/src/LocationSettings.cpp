@@ -77,7 +77,7 @@ struct LocationSettingsPrivate
 
 LocationSettings::LocationSettings() noexcept
     : ModuleBaseSettings(),
-      d(std::make_unique<LocationSettingsPrivate>())
+      d {std::make_unique<LocationSettingsPrivate>()}
 {}
 
 LocationSettings::~LocationSettings() = default;

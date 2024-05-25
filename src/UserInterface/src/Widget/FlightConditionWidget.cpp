@@ -48,9 +48,9 @@ struct FlightConditionWidgetPrivate
 // PUBLIC
 
 FlightConditionWidget::FlightConditionWidget(QWidget *parent) noexcept :
-    QWidget(parent),
-    ui(std::make_unique<Ui::FlightConditionWidget>()),
-    d(std::make_unique<FlightConditionWidgetPrivate>())
+    QWidget {parent},
+    ui {std::make_unique<Ui::FlightConditionWidget>()},
+    d {std::make_unique<FlightConditionWidgetPrivate>()}
 {
     ui->setupUi(this);
     initUi();

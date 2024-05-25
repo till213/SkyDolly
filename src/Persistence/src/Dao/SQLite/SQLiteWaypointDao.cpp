@@ -46,7 +46,7 @@
 struct SQLiteWaypointDaoPrivate
 {
     SQLiteWaypointDaoPrivate(QString connectionName) noexcept
-        : connectionName(std::move(connectionName))
+        : connectionName {std::move(connectionName)}
     {}
 
     QString connectionName;
@@ -55,7 +55,7 @@ struct SQLiteWaypointDaoPrivate
 // PUBLIC
 
 SQLiteWaypointDao::SQLiteWaypointDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLiteWaypointDaoPrivate>(std::move(connectionName)))
+    : d {std::make_unique<SQLiteWaypointDaoPrivate>(std::move(connectionName))}
 {}
 
 SQLiteWaypointDao::SQLiteWaypointDao(SQLiteWaypointDao &&rhs) noexcept = default;

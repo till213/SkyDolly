@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <utility>
+#include <memory.h>
 
 #include <QUrl>
 #include <QDirIterator>
@@ -62,21 +63,18 @@ TerminationDialog::TerminationDialog(
     QString reason,
     QString stackTrace,
     QWidget *parent
- ) : QDialog(parent),
-    ui(new Ui::TerminationDialog),
-    m_title(std::move(title)),
-    m_reason(std::move(reason)),
-    m_stackTrace(std::move(stackTrace))
+ ) : QDialog {parent},
+    ui {std::unique_ptr<Ui::TerminationDialog>()},
+    m_title {std::move(title)},
+    m_reason {std::move(reason)},
+    m_stackTrace {std::move(stackTrace)}
 {
     ui->setupUi(this);
     initUi();
     frenchConnection();
 }
 
-TerminationDialog::~TerminationDialog()
-{
-    delete ui;
-}
+TerminationDialog::~TerminationDialog() = default;
 
 // PRIVATE
 

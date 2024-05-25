@@ -55,7 +55,7 @@ namespace
 struct DatabaseDaoPrivate
 {
     DatabaseDaoPrivate(QString connectionName) noexcept
-        : connectionName(std::move(connectionName))
+        : connectionName {std::move(connectionName)}
     {}
 
     QString connectionName;
@@ -64,7 +64,7 @@ struct DatabaseDaoPrivate
 // PUBLIC
 
 SQLiteDatabaseDao::SQLiteDatabaseDao(QString connectionName) noexcept
-    : d(std::make_unique<DatabaseDaoPrivate>(std::move(connectionName)))
+    : d {std::make_unique<DatabaseDaoPrivate>(std::move(connectionName))}
 {}
 
 SQLiteDatabaseDao::SQLiteDatabaseDao(SQLiteDatabaseDao &&rhs) noexcept = default;

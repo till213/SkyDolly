@@ -130,7 +130,7 @@ struct IgcExportPluginPrivate
 // PUBLIC
 
 IgcExportPlugin::IgcExportPlugin() noexcept
-    : d(std::make_unique<IgcExportPluginPrivate>())
+    : d {std::make_unique<IgcExportPluginPrivate>()}
 {}
 
 IgcExportPlugin::~IgcExportPlugin() = default;

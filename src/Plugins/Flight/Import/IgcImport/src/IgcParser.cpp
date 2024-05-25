@@ -176,7 +176,7 @@ const QRegularExpression IgcParserPrivate::bRecordRegExp{QString::fromLatin1(::B
 // PUBLIC
 
 IgcParser::IgcParser() noexcept
-    : d(std::make_unique<IgcParserPrivate>())
+    : d {std::make_unique<IgcParserPrivate>()}
 {}
 
 IgcParser::~IgcParser() = default;

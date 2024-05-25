@@ -46,9 +46,9 @@ struct FlightPlanWidgetPrivate
 // PUBLIC
 
 FlightPlanWidget::FlightPlanWidget(QWidget *parent) noexcept :
-    QWidget(parent),
-    ui(std::make_unique<Ui::FlightPlanWidget>()),
-    d(std::make_unique<FlightPlanWidgetPrivate>())
+    QWidget {parent},
+    ui {std::make_unique<Ui::FlightPlanWidget>()},
+    d {std::make_unique<FlightPlanWidgetPrivate>()}
 {
     ui->setupUi(this);
 }

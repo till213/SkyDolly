@@ -91,6 +91,13 @@ public:
      * \sa getEarthGravityModelFileInfo
      */
     static bool hasEarthGravityModel() noexcept;
+
+    /*!
+     * Returns whether a \e SimConnect.cfg client configuration exists in the application folder.
+     *
+     * \return \c true if a \e SimConnect.cfg is available; \c false else
+     */
+    static bool hasSimConnectConfiguration() noexcept;
 };
 
 #endif // FILE_H

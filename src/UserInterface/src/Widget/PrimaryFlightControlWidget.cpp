@@ -62,9 +62,9 @@ struct PrimaryFlightControlWidgetPrivate
 // PUBLIC
 
 PrimaryFlightControlWidget::PrimaryFlightControlWidget(QWidget *parent) noexcept :
-    AbstractSimulationVariableWidget(parent),
-    ui(std::make_unique<Ui::PrimaryFlightControlWidget>()),
-    d(std::make_unique<PrimaryFlightControlWidgetPrivate>(*this))
+    AbstractSimulationVariableWidget {parent},
+    ui {std::make_unique<Ui::PrimaryFlightControlWidget>()},
+    d {std::make_unique<PrimaryFlightControlWidgetPrivate>(*this)}
 {
     ui->setupUi(this);
     initUi();

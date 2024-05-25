@@ -33,7 +33,7 @@
 
 
 AbstractSimulationVariableWidget  ::AbstractSimulationVariableWidget(QWidget *parent) noexcept
-    : QWidget(parent)
+    : QWidget {parent}
 {}
 
 AbstractSimulationVariableWidget::~AbstractSimulationVariableWidget() = default;

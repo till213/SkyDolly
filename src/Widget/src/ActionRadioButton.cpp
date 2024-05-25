@@ -35,8 +35,8 @@ struct ActionRadioButtonPrivate
 // PUBLIC
 
 ActionRadioButton::ActionRadioButton(QWidget *parent) noexcept
-    : QRadioButton(parent),
-      d(std::make_unique<ActionRadioButtonPrivate>())
+    : QRadioButton {parent},
+      d {std::make_unique<ActionRadioButtonPrivate>()}
 {}
 
 ActionRadioButton::~ActionRadioButton() = default;

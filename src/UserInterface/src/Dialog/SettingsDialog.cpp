@@ -92,9 +92,9 @@ struct SettingsDialogPrivate
 // PUBLIC
 
 SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    ui(std::make_unique<Ui::SettingsDialog>()),
-    d(std::make_unique<SettingsDialogPrivate>())
+    QDialog {parent},
+    ui {std::make_unique<Ui::SettingsDialog>()},
+    d {std::make_unique<SettingsDialogPrivate>()}
 {
     ui->setupUi(this);
     initUi();
@@ -166,6 +166,9 @@ void SettingsDialog::frenchConnection() noexcept
     const auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::connectionChanged,
             this, &SettingsDialog::onSkyConnectPluginChanged);
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+            this, &SettingsDialog::updateUi);
+
     connect(this, &SettingsDialog::accepted,
             this, &SettingsDialog::onAccepted);
     connect(ui->settingsTabWidget, &QTabWidget::currentChanged,
@@ -195,6 +198,8 @@ void SettingsDialog::updateUi() noexcept
     if (pluginName) {
         ui->connectionComboBox->setCurrentText(pluginName.value());
     }
+    const bool enabled = !skyConnectManager.isActive();
+    ui->connectionComboBox->setEnabled(enabled);
     updateConnectionStatus();
 
     // User interface

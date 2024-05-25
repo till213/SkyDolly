@@ -39,6 +39,7 @@ public:
      * The actions that correspond to the keyboard shortcuts.
      */
     enum struct Action {
+        None,
         Record,
         Replay,
         Pause,

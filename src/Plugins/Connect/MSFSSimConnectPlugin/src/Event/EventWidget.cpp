@@ -29,7 +29,7 @@
 // PUBLIC
 
 EventWidget::EventWidget(QWidget *parent) noexcept
-    : QWidget(parent)
+    : QWidget {parent}
 {}
 
 // PROTECTED

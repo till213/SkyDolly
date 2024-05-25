@@ -106,7 +106,7 @@ public:
     };
 
     SkyConnectIntf(QObject *parent = nullptr) noexcept
-        : QObject(parent)
+        : QObject {parent}
     {}
 
     SkyConnectIntf(const SkyConnectIntf &rhs) = delete;
@@ -424,12 +424,12 @@ signals:
 
 
     /*!
-     * Emitted whenever a keyboard shortcut was triggered for the given \p action.
+     * Emitted whenever a keyboard shortcut was triggered for the given \c action.
      *
      * \param action
      *        the action that was triggered in the flight simulator
      */
-    void shortCutActivated(FlightSimulatorShortcuts::Action action);
+    void actionActivated(FlightSimulatorShortcuts::Action action);
 
 protected:
     /*!

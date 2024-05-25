@@ -33,7 +33,7 @@
 struct GpxExportOptionWidgetPrivate
 {
     GpxExportOptionWidgetPrivate(GpxExportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     GpxExportSettings &pluginSettings;
@@ -42,9 +42,9 @@ struct GpxExportOptionWidgetPrivate
 // PUBLIC
 
 GpxExportOptionWidget::GpxExportOptionWidget(GpxExportSettings &pluginSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::GpxExportOptionWidget>()),
-      d(std::make_unique<GpxExportOptionWidgetPrivate>(pluginSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::GpxExportOptionWidget>()},
+      d {std::make_unique<GpxExportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

@@ -58,7 +58,7 @@ struct GpxImportSettingsPrivate
 // PUBLIC
 
 GpxImportSettings::GpxImportSettings() noexcept
-    : d(std::make_unique<GpxImportSettingsPrivate>())
+    : d {std::make_unique<GpxImportSettingsPrivate>()}
 {}
 
 GpxImportSettings::~GpxImportSettings() = default;

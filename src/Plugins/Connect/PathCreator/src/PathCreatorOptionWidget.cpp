@@ -37,7 +37,7 @@
 struct PathCreatorOptionWidgetPrivate
 {
     PathCreatorOptionWidgetPrivate(PathCreatorSettings &pluginSettings)
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     PathCreatorSettings &pluginSettings;
@@ -46,9 +46,9 @@ struct PathCreatorOptionWidgetPrivate
 // PUBLIC
 
 PathCreatorOptionWidget::PathCreatorOptionWidget(PathCreatorSettings &pluginSettings, QWidget *parent)
-    : OptionWidgetIntf(parent),
-      ui(new Ui::PathCreatorOptionWidget),
-      d(std::make_unique<PathCreatorOptionWidgetPrivate>(pluginSettings))
+    : OptionWidgetIntf {parent},
+      ui {std::unique_ptr<Ui::PathCreatorOptionWidget>()},
+      d {std::make_unique<PathCreatorOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     updateUi();
@@ -59,7 +59,6 @@ PathCreatorOptionWidget::~PathCreatorOptionWidget()
 #ifdef DEBUG
     qDebug() << "PathCreatorOptionWidget::~PathCreatorOptionWidget: DELETED";
 #endif
-    delete ui;
 }
 
 void PathCreatorOptionWidget::accept() noexcept

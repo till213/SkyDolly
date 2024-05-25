@@ -65,7 +65,7 @@ Flight &Logbook::getCurrentFlight() const noexcept
 
 Logbook::Logbook() noexcept
     : QObject(),
-      d(std::make_unique<LogbookPrivate>())
+      d {std::make_unique<LogbookPrivate>()}
 {
     // Logbook may support several flights, but for now there will be always
     // exactly one

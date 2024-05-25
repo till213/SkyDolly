@@ -39,7 +39,7 @@ struct SdLogExportSettingsPrivate
 
 SdLogExportSettings::SdLogExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
-      d(std::make_unique<SdLogExportSettingsPrivate>())
+      d {std::make_unique<SdLogExportSettingsPrivate>()}
 {}
 
 SdLogExportSettings::~SdLogExportSettings() = default;

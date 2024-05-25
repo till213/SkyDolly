@@ -45,8 +45,8 @@ struct AbstractModulePrivate
 // PUBLIC
 
 AbstractModule::AbstractModule(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<AbstractModulePrivate>())
+    : QObject {parent},
+      d {std::make_unique<AbstractModulePrivate>()}
 {
     frenchConnection();
 }

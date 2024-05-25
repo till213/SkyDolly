@@ -54,15 +54,15 @@ struct VersionPrivate
 // PUBLIC
 
 Version::Version() noexcept
-    : d(std::make_unique<VersionPrivate>())
+    : d {std::make_unique<VersionPrivate>()}
 {}
 
 Version::Version(int majorNo, int minorNo, int patch) noexcept
-    : d(std::make_unique<VersionPrivate>(majorNo, minorNo, patch))
+    : d {std::make_unique<VersionPrivate>(majorNo, minorNo, patch)}
 {}
 
 Version::Version(QStringView version) noexcept
-    : d(std::make_unique<VersionPrivate>())
+    : d {std::make_unique<VersionPrivate>()}
 {
     fromString(version);
 }
@@ -73,7 +73,7 @@ Version::~Version() = default;
 
 void Version::fromString(QStringView version) noexcept
 {
-    static QRegularExpression versionRegExp(QStringLiteral(R"(^(\d+)\.(\d+)\.(\d+)$)"));
+    static QRegularExpression versionRegExp {R"(^(\d+)\.(\d+)\.(\d+)$)"};
     QRegularExpressionMatch match = versionRegExp.match(version);
     if (match.isValid()) {
         d->major = match.captured(1).toInt();
@@ -163,20 +163,20 @@ QString Version::getApplicationVersion() noexcept
 
 QString Version::getOrganisationName() noexcept
 {
-    return QString::fromLatin1(VersionConfig::OrganisationName);
+    return VersionConfig::OrganisationName;
 }
 
 QString Version::getApplicationName() noexcept
 {
-    return QString::fromLatin1(VersionConfig::ApplicationName);
+    return VersionConfig::ApplicationName;
 }
 
-QLatin1String Version::getGitHash() noexcept
+QString Version::getGitHash() noexcept
 {
-    return QLatin1String(GitInfo::GitHash);
+    return GitInfo::GitHash;
 }
 
 QDateTime Version::getGitDate() noexcept
 {
-    return QDateTime::fromString(QString::fromLatin1(GitInfo::GitIsoDate), Qt::ISODate);
+    return QDateTime::fromString(GitInfo::GitIsoDate, Qt::ISODate);
 }

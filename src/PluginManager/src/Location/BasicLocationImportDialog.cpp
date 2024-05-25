@@ -46,8 +46,8 @@
 struct BasicLocationImportDialogPrivate
 {
     BasicLocationImportDialogPrivate(QString fileFilter, LocationImportPluginBaseSettings &pluginSettings) noexcept
-        : fileFilter(std::move(fileFilter)),
-          pluginSettings(pluginSettings)
+        : fileFilter {std::move(fileFilter)},
+          pluginSettings {pluginSettings}
     {}
 
     std::unique_ptr<AircraftTypeService> aircraftTypeService {std::make_unique<AircraftTypeService>()};
@@ -60,9 +60,9 @@ struct BasicLocationImportDialogPrivate
 // PUBLIC
 
 BasicLocationImportDialog::BasicLocationImportDialog(QString fileFilter, LocationImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
-    : QDialog(parent),
-      ui(std::make_unique<Ui::BasicLocationImportDialog>()),
-      d(std::make_unique<BasicLocationImportDialogPrivate>(std::move(fileFilter), pluginSettings))
+    : QDialog {parent},
+      ui {std::make_unique<Ui::BasicLocationImportDialog>()},
+      d {std::make_unique<BasicLocationImportDialogPrivate>(std::move(fileFilter), pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

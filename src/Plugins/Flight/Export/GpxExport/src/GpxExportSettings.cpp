@@ -54,7 +54,7 @@ struct GpxExportSettingsPrivate
 
 GpxExportSettings::GpxExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
-      d(std::make_unique<GpxExportSettingsPrivate>())
+      d {std::make_unique<GpxExportSettingsPrivate>()}
 {}
 
 GpxExportSettings::~GpxExportSettings() = default;

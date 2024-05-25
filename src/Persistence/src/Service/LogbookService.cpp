@@ -51,7 +51,7 @@ struct LogbookServicePrivate
 // PUBLIC
 
 LogbookService::LogbookService(QString connectionName) noexcept
-    : d(std::make_unique<LogbookServicePrivate>(std::move(connectionName)))
+    : d {std::make_unique<LogbookServicePrivate>(std::move(connectionName))}
 {}
 
 LogbookService::LogbookService(LogbookService &&rhs) noexcept = default;

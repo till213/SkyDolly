@@ -61,7 +61,7 @@ struct SdlogImportPluginPrivate
 // PUBLIC
 
 SdlogImportPlugin::SdlogImportPlugin() noexcept
-    : d(std::make_unique<SdlogImportPluginPrivate>())
+    : d {std::make_unique<SdlogImportPluginPrivate>()}
 {}
 
 SdlogImportPlugin::~SdlogImportPlugin() = default;
@@ -74,7 +74,7 @@ std::vector<FlightData> SdlogImportPlugin::importFlightData(QIODevice &io, bool 
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
         const QFileInfo fileInfo {*file};
-        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath(), Migration::Milestone::Schema);
+        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath(), DatabaseService::ConnectionMode::Import, Migration::Milestone::Schema);
         if (ok) {
             const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
             // We expect at least one flight to be imported (note that zero flights in a logbook

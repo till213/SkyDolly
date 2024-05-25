@@ -35,7 +35,7 @@
 struct CsvImportOptionWidgetPrivate
 {
     CsvImportOptionWidgetPrivate(CsvImportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
      CsvImportSettings &pluginSettings;
@@ -44,9 +44,9 @@ struct CsvImportOptionWidgetPrivate
 // PUBLIC
 
 CsvImportOptionWidget::CsvImportOptionWidget(CsvImportSettings &pluginSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::CsvImportOptionWidget>()),
-      d(std::make_unique<CsvImportOptionWidgetPrivate>(pluginSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::CsvImportOptionWidget>()},
+      d {std::make_unique<CsvImportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();
