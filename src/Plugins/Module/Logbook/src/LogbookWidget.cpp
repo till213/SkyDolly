@@ -926,6 +926,7 @@ void LogbookWidget::filterByDuration([[maybe_unused]] int index) noexcept
 void LogbookWidget::resetFilter() noexcept
 {
     d->moduleSettings.resetFilter();
+    ui->searchLineEdit->clear();
 }
 
 void LogbookWidget::onTableLayoutChanged() noexcept
