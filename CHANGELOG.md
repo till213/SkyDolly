@@ -8,6 +8,7 @@
 - When opening a logbook: retry with a backup directory *relative* to the logbook path (that is, "./Backups") in case a backup directory given with an *absolute path* cannot be created (e.g. because it refers to some non-existing drive letter, or otherwise is not writeable anymore)
 - Do not create the non-existing backup directory when the periodic "Backup" dialog is shown
   * The directory is created as needed when the backup is actually to be made later on
+- When resetting the Logbook filter (pressing the "X" button) then also the search text field is now cleared
 
 ## 0.17.2
 
