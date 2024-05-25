@@ -52,7 +52,7 @@ public:
     void accept() noexcept override;
 
 private:
-    Ui::PathCreatorOptionWidget *ui;
+    std::unique_ptr<Ui::PathCreatorOptionWidget> ui;
     std::unique_ptr<PathCreatorOptionWidgetPrivate> d;
 
     void updateUi() noexcept;

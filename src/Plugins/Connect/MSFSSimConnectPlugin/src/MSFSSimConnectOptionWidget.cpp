@@ -55,7 +55,7 @@ struct MSFSSimConnectOptionWidgetPrivate
 
 MSFSSimConnectOptionWidget::MSFSSimConnectOptionWidget(MSFSSimConnectSettings &pluginSettings, QWidget *parent)
     : OptionWidgetIntf {parent},
-    ui {new Ui::MSFSSimConnectOptionWidget},
+    ui {std::make_unique<Ui::MSFSSimConnectOptionWidget>()},
     d {std::make_unique<MSFSSimConnectOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
@@ -69,7 +69,6 @@ MSFSSimConnectOptionWidget::~MSFSSimConnectOptionWidget()
 #ifdef DEBUG
     qDebug() << "MSFSSimConnectOptionWidget::~MSFSSimConnectOptionWidget: DELETED";
 #endif
-    delete ui;
 }
 
 void MSFSSimConnectOptionWidget::accept() noexcept

@@ -47,16 +47,17 @@ struct LinkedOptionGroupPrivate
 
 // PUBLIC
 
-QPushButton *createButton(QString const& name,
+QPushButton *createButton(QString const &name,
                           bool checked,
-                          QString const& sheet = QString())
+                          QString const &sheet = QString())
 {
-    auto pb = new QPushButton(name);
-    pb->setCheckable(true);
-    pb->setChecked(checked);
-    if (!sheet.isEmpty())
-        pb->setStyleSheet(sheet);
-    return pb;
+    auto pushButton = new QPushButton(name);
+    pushButton->setCheckable(true);
+    pushButton->setChecked(checked);
+    if (!sheet.isEmpty()) {
+        pushButton->setStyleSheet(sheet);
+    }
+    return pushButton;
 }
 
 LinkedOptionGroup::LinkedOptionGroup(QWidget *parent) noexcept
@@ -74,26 +75,26 @@ void LinkedOptionGroup::addOption(const QString &name, const QVariant &optionVal
     static const QLatin1String FirstButtonCss {"QPushButton {border-top-left-radius: 6px; border-bottom-left-radius: 6px;}"};
     static const QLatin1String LastButtonCss {"QPushButton {border-top-right-radius: 6px; border-bottom-right-radius: 6px;}"};
 
-    auto button = new QPushButton(name, this);
-    button->setCheckable(true);
-    button->setProperty(::OptionValue, optionValue);
-    button->setToolTip(toolTip);
-    d->buttons.push_back(button);
+    auto pushButton = new QPushButton(name, this);
+    pushButton->setCheckable(true);
+    pushButton->setProperty(::OptionValue, optionValue);
+    pushButton->setToolTip(toolTip);
+    d->buttons.push_back(pushButton);
     std::size_t buttonCount = d->buttons.size();
     if (buttonCount == 1) {
-        button->setStyleSheet(SingleButtonCss);
+        pushButton->setStyleSheet(SingleButtonCss);
     } else if (buttonCount == 2) {
-        button->setStyleSheet(LastButtonCss);
+        pushButton->setStyleSheet(LastButtonCss);
         // Also update the first button
         d->buttons.front()->setStyleSheet(FirstButtonCss);
     } else {
-        button->setStyleSheet(LastButtonCss);
+        pushButton->setStyleSheet(LastButtonCss);
         // Also update the second to last button
         d->buttons[buttonCount - 2]->setStyleSheet({});
     }
 
-    d->layout->addWidget(button);
-    connect(button, &QPushButton::toggled,
+    d->layout->addWidget(pushButton);
+    connect(pushButton, &QPushButton::toggled,
             this, &LinkedOptionGroup::onButtonToggled);
 }
 
