@@ -49,11 +49,24 @@ struct DatabaseServicePrivate;
 class PERSISTENCE_API DatabaseService final
 {
 public:
+    /*! The logbook backup mode. */
     enum struct BackupMode
     {
+        /*! A logbook backup is to be created due to a migration of an older logbook; the next backup date is not updated. */
         Migration,
+        /*! A periodic back is to be created; after backup the next backup date is updated. */
         Normal
     };
+
+    /*! The logbook connection mode. */
+    enum struct ConnectionMode
+    {
+        /*! The logbook is to be opened; a backup is made in case a migration is required (according to the application \e backup settings). */
+        Open,
+        /*! The logbook is to be imported; no backup is made in case a migration is necessary. */
+        Import
+    };
+
     DatabaseService(QString connectionName = Const::DefaultConnectionName) noexcept;
     DatabaseService(const DatabaseService &rhs) = delete;
     DatabaseService(DatabaseService &&rhs) noexcept;
@@ -62,7 +75,7 @@ public:
     ~DatabaseService();
 
     bool connect(const QString &logbookPath) noexcept;
-    bool connectAndMigrate(const QString &logbookPath) noexcept;
+    bool connectAndMigrate(const QString &logbookPath, ConnectionMode connectionMode) noexcept;
     void disconnect(Connection::Default connection) noexcept;
 
     std::pair<bool, Version> checkDatabaseVersion() const noexcept;

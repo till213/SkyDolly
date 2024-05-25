@@ -57,6 +57,8 @@ namespace
     constexpr int BackupPeriodOneMonth = 1;
     constexpr int BackupPeriodSevenDays = 7;
     constexpr int BackupPeriodOneDay = 1;
+
+    constexpr const char *DefaultBackupDirectory {"./Backups"};
 }
 
 struct DatabaseServicePrivate
@@ -94,7 +96,7 @@ bool DatabaseService::connect(const QString &logbookPath) noexcept
     return d->databaseDao->connectDb(logbookPath);
 }
 
-bool DatabaseService::connectAndMigrate(const QString &logbookPath) noexcept
+bool DatabaseService::connectAndMigrate(const QString &logbookPath, ConnectionMode connectionMode) noexcept
 {
     auto &settings = Settings::getInstance();
     bool ok = connect(logbookPath);
@@ -107,10 +109,10 @@ bool DatabaseService::connectAndMigrate(const QString &logbookPath) noexcept
             // TODO: Check whether there are any migration steps to be executed at all before
             //       creating a backup, instead of comparing database and application versions
             //       (the later requires that the database version is always up to date)
-            // For the time being we only compare major.minur but not major.minor.patch versions;
+            // For the time being we only compare major.minor but not major.minor.patch versions;
             // so we set the patch version always to 0
             Version refVersion {appVersion.getMajor(), appVersion.getMinor(), 0};
-            if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < refVersion) {
+            if (connectionMode == ConnectionMode::Open && settings.isBackupBeforeMigrationEnabled() && !databaseVersion.isNull() && databaseVersion < refVersion) {
                 ok = backup(logbookPath, DatabaseService::BackupMode::Migration);
             }
             if (ok) {
@@ -157,9 +159,16 @@ bool DatabaseService::optimise() const noexcept
 bool DatabaseService::backup(const QString &logbookPath, BackupMode backupMode) noexcept
 {
     bool ok {true};
-    QString backupDirectoryPath = getBackupDirectoryPath(&ok);
+    QString absoluteOrRelativeBackupPath = getBackupDirectoryPath(&ok);
+    QString backupDirectoryPath;
     if (ok) {
-        backupDirectoryPath = createBackupPathIfNotExists(logbookPath, backupDirectoryPath);
+        backupDirectoryPath = createBackupPathIfNotExists(logbookPath, absoluteOrRelativeBackupPath);
+    }
+    ok = !backupDirectoryPath.isNull();
+    if (!ok && QFileInfo(absoluteOrRelativeBackupPath).isAbsolute()) {
+        // Retry with a path relative to the logbook
+        absoluteOrRelativeBackupPath = ::DefaultBackupDirectory;
+        backupDirectoryPath = createBackupPathIfNotExists(logbookPath, absoluteOrRelativeBackupPath);
     }
     ok = !backupDirectoryPath.isNull();
     if (ok) {
@@ -246,9 +255,8 @@ QString DatabaseService::getBackupDirectoryPath(bool *ok) const noexcept
         db.rollback();
     }
     if (success && backupDirectoryPath.isNull()) {
-        // Default backup location, relative to logbook path
-        // (in earlier logbooks the backup path was initially empty in the metadata)
-        backupDirectoryPath = QStringLiteral("./Backups");
+        // Default backup location (in earlier logbooks the backup path was initially empty in the metadata)
+        backupDirectoryPath = ::DefaultBackupDirectory;
     }
     if (ok != nullptr) {
         *ok = success;

@@ -70,7 +70,7 @@ static void destroySingletons() noexcept
 [[deprecated("Do not use once the new Windows 11 style is ready for prime time.")]]
 static void applyWindows11DefaultStyleWorkaround() noexcept
 {
-    QApplication::setStyle(QString::fromLatin1("Fusion"));
+    QApplication::setStyle("Fusion");
 }
 
 int main(int argc, char **argv) noexcept
