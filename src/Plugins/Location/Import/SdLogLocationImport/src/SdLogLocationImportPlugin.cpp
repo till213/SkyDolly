@@ -92,7 +92,7 @@ std::vector<Location> SdLogLocationImportPlugin::importLocations(QIODevice &io, 
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
         const QFileInfo fileInfo {*file};
-        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath(), Migration::Milestone::Schema);
+        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath(), DatabaseService::ConnectionMode::Import, Migration::Milestone::Schema);
         if (ok) {
             locations = d->locationService->getAll(&ok);
         }

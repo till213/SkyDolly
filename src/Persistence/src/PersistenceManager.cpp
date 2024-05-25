@@ -87,7 +87,7 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
         const QFileInfo fileInfo(logbookDirectoryPath);
         ok = fileInfo.exists();
         if (!ok) {
-            QDir dir(logbookDirectoryPath);
+            const QDir dir {logbookDirectoryPath};
             ok = dir.mkpath(logbookDirectoryPath);
         }
         if (ok) {
@@ -106,7 +106,7 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
                     // TODO: Check whether there are any migration steps to be executed at all before
                     //       creating a backup, instead of comparing database and application versions
                     //       (the later requires that the database version is always up to date)
-                    // For the time being we only compare major.minur but not major.minor.patch versions;
+                    // For the time being we only compare major.minor but not major.minor.patch versions;
                     // so we set the patch version always to 0
                     Version refVersion {appVersion.getMajor(), appVersion.getMinor(), 0};
                     if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < refVersion) {
@@ -122,7 +122,7 @@ bool PersistenceManager::connectWithLogbook(const QString &logbookPath, QWidget 
                 } else {
                     disconnectFromLogbook();
                     std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(parent);
-                    messageBox->setWindowIcon(QIcon(QStringLiteral(":/img/icons/application-icon.png")));
+                    messageBox->setWindowIcon(QIcon(":/img/icons/application-icon.png"));
                     messageBox->setWindowTitle(tr("Newer Version"));
                     messageBox->setText(tr("The logbook %1 has been created with a newer version %2. Do you want to create a new logbook?").arg(QDir::toNativeSeparators(selectedLogbookPath), databaseVersion.toString()));
                     messageBox->setInformativeText(tr("Logbooks created with newer %1 versions cannot be opened.").arg(Version::getApplicationName()));
