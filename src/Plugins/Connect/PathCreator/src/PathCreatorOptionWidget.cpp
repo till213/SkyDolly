@@ -47,7 +47,7 @@ struct PathCreatorOptionWidgetPrivate
 
 PathCreatorOptionWidget::PathCreatorOptionWidget(PathCreatorSettings &pluginSettings, QWidget *parent)
     : OptionWidgetIntf {parent},
-      ui {std::unique_ptr<Ui::PathCreatorOptionWidget>()},
+      ui {std::make_unique<Ui::PathCreatorOptionWidget>()},
       d {std::make_unique<PathCreatorOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
