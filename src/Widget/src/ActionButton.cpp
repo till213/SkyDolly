@@ -41,8 +41,8 @@ struct ActionButtonPrivate
 // PUBLIC
 
 ActionButton::ActionButton(QWidget *parent, Capitalisation capitalisation) noexcept
-    : ActiveButton(parent),
-      d(std::make_unique<ActionButtonPrivate>(capitalisation))
+    : ActiveButton {parent},
+      d {std::make_unique<ActionButtonPrivate>(capitalisation)}
 {
     setFocusPolicy(Qt::FocusPolicy::NoFocus);
 }

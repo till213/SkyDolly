@@ -49,8 +49,8 @@ struct TemplatePluginPrivate
 // PUBLIC
 
 TemplatePlugin::TemplatePlugin(QObject *parent) noexcept
-    : AbstractModule(parent),
-      d(std::make_unique<TemplatePluginPrivate>())
+    : AbstractModule {parent},
+      d {std::make_unique<TemplatePluginPrivate>()}
 {
     restoreSettings(QUuid(::TemplateModuleUuid));
 }

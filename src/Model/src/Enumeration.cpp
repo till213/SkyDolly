@@ -55,7 +55,7 @@ Enumeration::Enumeration(QString name) noexcept
 }
 
 Enumeration::Enumeration() noexcept
-    : d(std::make_unique<EnumerationPrivate>())
+    : d {std::make_unique<EnumerationPrivate>()}
 {}
 
 Enumeration::Enumeration(Enumeration &&rhs) noexcept = default;

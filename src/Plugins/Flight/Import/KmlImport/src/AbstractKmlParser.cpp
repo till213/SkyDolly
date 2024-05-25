@@ -47,7 +47,7 @@ struct AbstractKmlParserPrivate
 // PUBLIC
 
 AbstractKmlParser::AbstractKmlParser() noexcept
-    : d(std::make_unique<AbstractKmlParserPrivate>())
+    : d {std::make_unique<AbstractKmlParserPrivate>()}
 {}
 
 AbstractKmlParser::~AbstractKmlParser() = default;

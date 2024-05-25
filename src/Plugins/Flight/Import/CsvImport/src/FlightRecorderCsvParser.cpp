@@ -183,7 +183,7 @@ struct FlightRecorderCsvParserPrivate
 // PUBLIC
 
 FlightRecorderCsvParser::FlightRecorderCsvParser() noexcept
-    : d(std::make_unique<FlightRecorderCsvParserPrivate>())
+    : d {std::make_unique<FlightRecorderCsvParserPrivate>()}
 {}
 
 FlightRecorderCsvParser::~FlightRecorderCsvParser() = default;

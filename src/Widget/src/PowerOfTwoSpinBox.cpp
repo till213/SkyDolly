@@ -36,7 +36,7 @@
 // PUBLIC
 
 PowerOfTwoSpinBox::PowerOfTwoSpinBox(QWidget *parent) noexcept
-    : QSpinBox(parent)
+    : QSpinBox {parent}
 {}
 
 // PROTECTED

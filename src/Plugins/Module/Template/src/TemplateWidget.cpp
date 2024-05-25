@@ -34,9 +34,9 @@ struct TemplateWidgetPrivate
 // PUBLIC
 
 TemplateWidget::TemplateWidget(QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::TemplateWidget>()),
-      d(std::make_unique<TemplateWidgetPrivate>())
+    : QWidget {parent},
+      ui {std::make_unique<Ui::TemplateWidget>()},
+      d {std::make_unique<TemplateWidgetPrivate>()}
 {
     ui->setupUi(this);
     initUi();

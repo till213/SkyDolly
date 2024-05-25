@@ -39,7 +39,7 @@ struct SdLogLocationExportSettingsPrivate
 
 SdLogLocationExportSettings::SdLogLocationExportSettings() noexcept
     : LocationExportPluginBaseSettings(),
-    d(std::make_unique<SdLogLocationExportSettingsPrivate>())
+    d {std::make_unique<SdLogLocationExportSettingsPrivate>()}
 {}
 
 SdLogLocationExportSettings::~SdLogLocationExportSettings() = default;

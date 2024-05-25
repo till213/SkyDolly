@@ -50,7 +50,7 @@ struct KmlImportSettingsPrivate
 // PUBLIC
 
 KmlImportSettings::KmlImportSettings() noexcept
-    : d(std::make_unique<KmlImportSettingsPrivate>())
+    : d {std::make_unique<KmlImportSettingsPrivate>()}
 {}
 
 KmlImportSettings::~KmlImportSettings() = default;

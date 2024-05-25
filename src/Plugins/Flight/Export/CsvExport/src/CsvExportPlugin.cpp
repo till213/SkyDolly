@@ -48,7 +48,7 @@ struct CsvExportPluginPrivate
 // PUBLIC
 
 CsvExportPlugin::CsvExportPlugin() noexcept
-    : d(std::make_unique<CsvExportPluginPrivate>())
+    : d {std::make_unique<CsvExportPluginPrivate>()}
 {}
 
 CsvExportPlugin::~CsvExportPlugin() = default;

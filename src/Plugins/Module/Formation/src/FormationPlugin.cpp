@@ -54,8 +54,8 @@ struct FormationPluginPrivate
 // PUBLIC
 
 FormationPlugin::FormationPlugin(QObject *parent) noexcept
-    : AbstractModule(parent),
-      d(std::make_unique<FormationPluginPrivate>())
+    : AbstractModule {parent},
+      d {std::make_unique<FormationPluginPrivate>()}
 {
     restoreSettings(QUuid(Const::FormationModuleUuid));
 }

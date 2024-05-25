@@ -78,7 +78,7 @@ const QRegularExpression FlightRadar24KmlParserPrivate::headingRegExp {FlightRad
 // PUBLIC
 
 FlightRadar24KmlParser::FlightRadar24KmlParser() noexcept
-    : d(std::make_unique<FlightRadar24KmlParserPrivate>())
+    : d {std::make_unique<FlightRadar24KmlParserPrivate>()}
 {}
 
 FlightRadar24KmlParser::~FlightRadar24KmlParser() = default;

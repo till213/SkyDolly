@@ -33,7 +33,7 @@
 struct CsvLocationExportOptionWidgetPrivate
 {
     CsvLocationExportOptionWidgetPrivate(CsvLocationExportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     CsvLocationExportSettings &pluginSettings;
@@ -42,9 +42,9 @@ struct CsvLocationExportOptionWidgetPrivate
 // PUBLIC
 
 CsvLocationExportOptionWidget::CsvLocationExportOptionWidget(CsvLocationExportSettings &pluginSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::CsvLocationExportOptionWidget>()),
-      d(std::make_unique<CsvLocationExportOptionWidgetPrivate>(pluginSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::CsvLocationExportOptionWidget>()},
+      d {std::make_unique<CsvLocationExportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

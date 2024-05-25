@@ -58,15 +58,15 @@ struct FlightPrivate
 // PUBLIC
 
 Flight::Flight(FlightData flightData, QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<FlightPrivate>())
+    : QObject {parent},
+      d {std::make_unique<FlightPrivate>()}
 {
     d->flightData = std::move(flightData);
 }
 
 Flight::Flight(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<FlightPrivate>())
+    : QObject {parent},
+      d {std::make_unique<FlightPrivate>()}
 {
     // A flight always has at least one (user) aircraft
     addUserAircraft(Const::InvalidId);

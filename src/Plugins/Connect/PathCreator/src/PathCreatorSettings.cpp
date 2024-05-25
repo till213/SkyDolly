@@ -52,7 +52,7 @@ struct PathCreatorSettingsPrivate
 
 PathCreatorSettings::PathCreatorSettings() noexcept
     : ConnectPluginBaseSettings(),
-    d(std::make_unique<PathCreatorSettingsPrivate>())
+      d {std::make_unique<PathCreatorSettingsPrivate>()}
 {}
 
 PathCreatorSettings::~PathCreatorSettings() = default;

@@ -58,18 +58,15 @@ struct LightWidgetPrivate
 // PUBLIC
 
 LightWidget::LightWidget(QWidget *parent) noexcept :
-    AbstractSimulationVariableWidget(parent),
-    ui(std::make_unique<Ui::LightWidget>()),
-    d(std::make_unique<LightWidgetPrivate>(*this))
+    AbstractSimulationVariableWidget {parent},
+    ui {std::make_unique<Ui::LightWidget>()},
+    d {std::make_unique<LightWidgetPrivate>(*this)}
 {
     ui->setupUi(this);
     initUi();
 }
 
 LightWidget::~LightWidget() = default;
-
-// PROTECTED
-
 
 // PRIVATE
 

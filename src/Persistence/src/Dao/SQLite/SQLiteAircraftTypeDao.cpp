@@ -62,7 +62,7 @@ struct SQLiteAircraftTypeDaoPrivate
 // PUBLIC
 
 SQLiteAircraftTypeDao::SQLiteAircraftTypeDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLiteAircraftTypeDaoPrivate>(std::move(connectionName)))
+    : d {std::make_unique<SQLiteAircraftTypeDaoPrivate>(std::move(connectionName))}
 {}
 
 SQLiteAircraftTypeDao::SQLiteAircraftTypeDao(SQLiteAircraftTypeDao &&rhs) noexcept = default;

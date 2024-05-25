@@ -74,7 +74,7 @@ struct FlightAugmentationPrivate
 // PUBLIC
 
 FlightAugmentation::FlightAugmentation(Procedures procedures, Aspects aspects) noexcept
-    : d(std::make_unique<FlightAugmentationPrivate>(procedures, aspects))
+    : d {std::make_unique<FlightAugmentationPrivate>(procedures, aspects)}
 {}
 
 FlightAugmentation::FlightAugmentation(FlightAugmentation &&rhs) noexcept = default;

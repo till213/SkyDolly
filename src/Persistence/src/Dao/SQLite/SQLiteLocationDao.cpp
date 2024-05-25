@@ -63,7 +63,7 @@ struct SQLiteLocationDaoPrivate
 // PUBLIC
 
 SQLiteLocationDao::SQLiteLocationDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLiteLocationDaoPrivate>(std::move(connectionName)))
+    : d {std::make_unique<SQLiteLocationDaoPrivate>(std::move(connectionName))}
 {}
 
 SQLiteLocationDao::SQLiteLocationDao(SQLiteLocationDao &&rhs) noexcept = default;

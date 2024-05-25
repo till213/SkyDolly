@@ -40,7 +40,7 @@ struct DefaultModuleImplPrivate
 // PUBLIC
 
 DefaultModuleImpl::DefaultModuleImpl() noexcept
-    : d(std::make_unique<DefaultModuleImplPrivate>())
+    : d {std::make_unique<DefaultModuleImplPrivate>()}
 {}
 
 DefaultModuleImpl::~DefaultModuleImpl() = default;

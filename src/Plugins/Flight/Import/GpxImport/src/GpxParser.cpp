@@ -54,8 +54,8 @@
 struct GpxParserPrivate
 {
     GpxParserPrivate(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &pluginSettings) noexcept
-        : xml(xmlStreamReader),
-          pluginSettings(pluginSettings)
+        : xml {xmlStreamReader},
+          pluginSettings {pluginSettings}
     {}
 
     QXmlStreamReader &xml;
@@ -67,7 +67,7 @@ struct GpxParserPrivate
 // PUBLIC
 
 GpxParser::GpxParser(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &thePluginSettings) noexcept
-    : d(std::make_unique<GpxParserPrivate>(xmlStreamReader, thePluginSettings))
+    : d {std::make_unique<GpxParserPrivate>(xmlStreamReader, thePluginSettings)}
 {}
 
 GpxParser::~GpxParser() = default;

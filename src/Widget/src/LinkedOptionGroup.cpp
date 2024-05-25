@@ -60,8 +60,8 @@ QPushButton *createButton(QString const& name,
 }
 
 LinkedOptionGroup::LinkedOptionGroup(QWidget *parent) noexcept
-    : QWidget(parent),
-      d(std::make_unique<LinkedOptionGroupPrivate>())
+    : QWidget {parent},
+      d {std::make_unique<LinkedOptionGroupPrivate>()}
 {
     initUi();
 }

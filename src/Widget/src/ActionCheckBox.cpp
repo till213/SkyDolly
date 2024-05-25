@@ -40,8 +40,8 @@ struct ActionCheckBoxPrivate
 // PUBLIC
 
 ActionCheckBox::ActionCheckBox(bool withText, QWidget *parent) noexcept
-    : QCheckBox(parent),
-      d(std::make_unique<ActionCheckBoxPrivate>(withText))
+    : QCheckBox {parent},
+      d {std::make_unique<ActionCheckBoxPrivate>(withText)}
 {}
 
 ActionCheckBox::~ActionCheckBox() = default;

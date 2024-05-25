@@ -64,7 +64,7 @@ struct GpxExportPluginPrivate
 // PUBLIC
 
 GpxExportPlugin::GpxExportPlugin() noexcept
-    : d(std::make_unique<GpxExportPluginPrivate>())
+    : d {std::make_unique<GpxExportPluginPrivate>()}
 {}
 
 GpxExportPlugin::~GpxExportPlugin() = default;

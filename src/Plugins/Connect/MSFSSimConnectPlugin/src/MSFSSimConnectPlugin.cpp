@@ -116,8 +116,8 @@ struct SkyConnectPrivate
 // PUBLIC
 
 MSFSSimConnectPlugin::MSFSSimConnectPlugin(QObject *parent) noexcept
-    : AbstractSkyConnect(parent),
-      d(std::make_unique<SkyConnectPrivate>())
+    : AbstractSkyConnect {parent},
+      d {std::make_unique<SkyConnectPrivate>()}
 {
     frenchConnection();
 }

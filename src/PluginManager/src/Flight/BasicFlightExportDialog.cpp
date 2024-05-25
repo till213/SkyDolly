@@ -72,9 +72,9 @@ struct BasicFlightExportDialogPrivate
 // PUBLIC
 
 BasicFlightExportDialog::BasicFlightExportDialog(const Flight &flight, const QString &fileExtension, const QString &fileFilter, FlightExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
-    : QDialog(parent),
-      ui(std::make_unique<Ui::BasicFlightExportDialog>()),
-      d(std::make_unique<BasicFlightExportDialogPrivate>(flight, fileExtension, fileFilter, pluginSettings))
+    : QDialog {parent},
+      ui {std::make_unique<Ui::BasicFlightExportDialog>()},
+      d {std::make_unique<BasicFlightExportDialogPrivate>(flight, fileExtension, fileFilter, pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

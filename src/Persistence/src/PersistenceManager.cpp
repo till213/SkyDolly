@@ -206,7 +206,7 @@ QString PersistenceManager::getBackupDirectoryPath(bool *ok) const noexcept
 
 PersistenceManager::PersistenceManager() noexcept
     : QObject(),
-      d(std::make_unique<PersistenceManagerPrivate>())
+      d {std::make_unique<PersistenceManagerPrivate>()}
 {}
 
 PersistenceManager::~PersistenceManager()

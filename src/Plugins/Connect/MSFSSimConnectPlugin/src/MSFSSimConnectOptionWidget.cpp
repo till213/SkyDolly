@@ -45,7 +45,7 @@
 struct MSFSSimConnectOptionWidgetPrivate
 {
     MSFSSimConnectOptionWidgetPrivate(MSFSSimConnectSettings &pluginSettings)
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     MSFSSimConnectSettings &pluginSettings;
@@ -54,9 +54,9 @@ struct MSFSSimConnectOptionWidgetPrivate
 // PUBLIC
 
 MSFSSimConnectOptionWidget::MSFSSimConnectOptionWidget(MSFSSimConnectSettings &pluginSettings, QWidget *parent)
-    : OptionWidgetIntf(parent),
-    ui(new Ui::MSFSSimConnectOptionWidget),
-    d(std::make_unique<MSFSSimConnectOptionWidgetPrivate>(pluginSettings))
+    : OptionWidgetIntf {parent},
+    ui {new Ui::MSFSSimConnectOptionWidget},
+    d {std::make_unique<MSFSSimConnectOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

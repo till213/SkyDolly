@@ -62,7 +62,7 @@ struct LogbookSettingsPrivate
 
 LogbookSettings::LogbookSettings() noexcept
     : ModuleBaseSettings(),
-      d(std::make_unique<LogbookSettingsPrivate>())
+      d {std::make_unique<LogbookSettingsPrivate>()}
 {}
 
 LogbookSettings::~LogbookSettings() = default;

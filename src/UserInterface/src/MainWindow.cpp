@@ -187,9 +187,9 @@ struct MainWindowPrivate
 // PUBLIC
 
 MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
-    : QMainWindow(parent),
-      ui(std::make_unique<Ui::MainWindow>()),
-      d(std::make_unique<MainWindowPrivate>())
+    : QMainWindow {parent},
+      ui {std::make_unique<Ui::MainWindow>()},
+      d {std::make_unique<MainWindowPrivate>()}
 {
     ui->setupUi(this);
 

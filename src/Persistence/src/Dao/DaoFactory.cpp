@@ -69,7 +69,7 @@ struct DaoFactoryPrivate
 // PUBLIC
 
 DaoFactory::DaoFactory(DbType dbType, QString connectionName)
-    : d(std::make_unique<DaoFactoryPrivate>(dbType, std::move(connectionName)))
+    : d {std::make_unique<DaoFactoryPrivate>(dbType, std::move(connectionName))}
 {}
 
 DaoFactory::DaoFactory(DaoFactory &&rhs) noexcept = default;

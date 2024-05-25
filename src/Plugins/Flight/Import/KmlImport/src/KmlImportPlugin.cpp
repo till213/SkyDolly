@@ -57,7 +57,7 @@ struct KmlImportPluginPrivate
 // PUBLIC
 
 KmlImportPlugin::KmlImportPlugin() noexcept
-    : d(std::make_unique<KmlImportPluginPrivate>())
+    : d {std::make_unique<KmlImportPluginPrivate>()}
 {}
 
 KmlImportPlugin::~KmlImportPlugin() = default;

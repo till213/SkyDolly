@@ -59,7 +59,7 @@ namespace Header
 struct LittleNavmapCsvParserPrivate
 {
     LittleNavmapCsvParserPrivate(const CsvLocationImportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {
         initTypeToSymIdMap();
     }
@@ -113,7 +113,7 @@ private:
 // PUBLIC
 
 LittleNavmapCsvParser::LittleNavmapCsvParser(const CsvLocationImportSettings &pluginSettings) noexcept
-    : d(std::make_unique<LittleNavmapCsvParserPrivate>(pluginSettings))
+    : d {std::make_unique<LittleNavmapCsvParserPrivate>(pluginSettings)}
 {}
 
 LittleNavmapCsvParser::LittleNavmapCsvParser(LittleNavmapCsvParser &&rhs) noexcept = default;

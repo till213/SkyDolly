@@ -53,7 +53,7 @@ struct CsvLocationExportSettingsPrivate
 
 CsvLocationExportSettings::CsvLocationExportSettings() noexcept
     : LocationExportPluginBaseSettings(),
-      d(std::make_unique<CsvLocationExportSettingsPrivate>())
+      d {std::make_unique<CsvLocationExportSettingsPrivate>()}
 {}
 
 CsvLocationExportSettings::~CsvLocationExportSettings() = default;

@@ -59,7 +59,7 @@ namespace
 struct SkyConnectManagerPrivate
 {
     SkyConnectManagerPrivate(QObject *parent) noexcept
-        : pluginLoader(new QPluginLoader(parent))
+        : pluginLoader(new QPluginLoader {parent})
     {
         pluginsDirectory.cd(File::getPluginDirectoryPath());
     }
@@ -484,7 +484,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 // PRIVATE
 
 SkyConnectManager::SkyConnectManager() noexcept
-    : d(std::make_unique<SkyConnectManagerPrivate>(this))
+    : d {std::make_unique<SkyConnectManagerPrivate>(this)}
 {
     frenchConnection();
 }

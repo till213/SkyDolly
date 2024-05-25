@@ -49,9 +49,9 @@ struct WaypointWidgetPrivate
 // PUBLIC
 
 WaypointWidget::WaypointWidget(Waypoint waypoint, QWidget *parent) noexcept :
-    QWidget(parent),
-    d(std::make_unique<WaypointWidgetPrivate>(std::move(waypoint))),
-    ui(std::make_unique<Ui::WaypointWidget>())
+    QWidget {parent},
+    ui {std::make_unique<Ui::WaypointWidget>()},
+    d {std::make_unique<WaypointWidgetPrivate>(std::move(waypoint))}
 {
     ui->setupUi(this);
     initUi();

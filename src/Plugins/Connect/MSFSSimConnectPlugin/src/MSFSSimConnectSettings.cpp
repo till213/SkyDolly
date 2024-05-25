@@ -57,7 +57,7 @@ struct MSFSSimConnectSettingsPrivate
 
 MSFSSimConnectSettings::MSFSSimConnectSettings() noexcept
     : ConnectPluginBaseSettings(),
-    d(std::make_unique<MSFSSimConnectSettingsPrivate>())
+    d {std::make_unique<MSFSSimConnectSettingsPrivate>()}
 {}
 
 MSFSSimConnectSettings::~MSFSSimConnectSettings()

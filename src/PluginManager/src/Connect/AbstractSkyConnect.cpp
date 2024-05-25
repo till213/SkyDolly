@@ -114,8 +114,8 @@ struct AbstractSkyConnectPrivate
 // PUBLIC
 
 AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
-    : SkyConnectIntf(parent),
-      d(std::make_unique<AbstractSkyConnectPrivate>())
+    : SkyConnectIntf {parent},
+      d {std::make_unique<AbstractSkyConnectPrivate>()}
 {
     frenchConnection();
 }

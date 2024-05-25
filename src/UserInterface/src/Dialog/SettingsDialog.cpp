@@ -92,9 +92,9 @@ struct SettingsDialogPrivate
 // PUBLIC
 
 SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    ui(std::make_unique<Ui::SettingsDialog>()),
-    d(std::make_unique<SettingsDialogPrivate>())
+    QDialog {parent},
+    ui {std::make_unique<Ui::SettingsDialog>()},
+    d {std::make_unique<SettingsDialogPrivate>()}
 {
     ui->setupUi(this);
     initUi();

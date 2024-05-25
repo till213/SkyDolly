@@ -77,9 +77,9 @@ struct StatisticsDialogPrivate
 // PUBLIC
 
 StatisticsDialog::StatisticsDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    d(std::make_unique<StatisticsDialogPrivate>()),
-    ui(std::make_unique<Ui::StatisticsDialog>())
+    QDialog {parent},
+    ui {std::make_unique<Ui::StatisticsDialog>()},
+    d {std::make_unique<StatisticsDialogPrivate>()}
 {
     ui->setupUi(this);
     initUi();

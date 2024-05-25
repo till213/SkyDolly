@@ -150,7 +150,7 @@ struct InputEventPrivate
 // PUBLIC
 
 InputEvent::InputEvent() noexcept
-    : d(std::make_unique<InputEventPrivate>())
+    : d {std::make_unique<InputEventPrivate>()}
 {}
 
 InputEvent::~InputEvent() = default;

@@ -45,7 +45,7 @@ struct EnumerationComboBoxPrivate
 // PUBLIC
 
 EnumerationComboBox::EnumerationComboBox(QString enumerationName, Mode mode, QWidget *parent) noexcept
-    : EnumerationComboBox(parent)
+    : EnumerationComboBox {parent}
 {
     d->enumeration = {std::move(enumerationName)};
     setMode(mode);
@@ -53,8 +53,8 @@ EnumerationComboBox::EnumerationComboBox(QString enumerationName, Mode mode, QWi
 }
 
 EnumerationComboBox::EnumerationComboBox(QWidget *parent) noexcept
-    : QComboBox(parent),
-      d(std::make_unique<EnumerationComboBoxPrivate>())
+    : QComboBox {parent},
+      d {std::make_unique<EnumerationComboBoxPrivate>()}
 {}
 
 EnumerationComboBox::~EnumerationComboBox() = default;

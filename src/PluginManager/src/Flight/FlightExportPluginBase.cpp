@@ -56,7 +56,7 @@ struct FlightExportPluginBasePrivate
 // PUBLIC
 
 FlightExportPluginBase::FlightExportPluginBase() noexcept
-    : d(std::make_unique<FlightExportPluginBasePrivate>())
+    : d {std::make_unique<FlightExportPluginBasePrivate>()}
 {}
 
 FlightExportPluginBase::~FlightExportPluginBase() = default;

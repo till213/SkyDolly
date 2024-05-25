@@ -53,7 +53,7 @@ struct FlightServicePrivate
 // PUBLIC
 
 FlightService::FlightService(QString connectionName) noexcept
-    : d(std::make_unique<FlightServicePrivate>(std::move(connectionName)))
+    : d {std::make_unique<FlightServicePrivate>(std::move(connectionName))}
 {}
 
 FlightService::FlightService(FlightService &&rhs) noexcept = default;

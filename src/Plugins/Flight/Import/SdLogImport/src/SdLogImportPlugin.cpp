@@ -61,7 +61,7 @@ struct SdlogImportPluginPrivate
 // PUBLIC
 
 SdlogImportPlugin::SdlogImportPlugin() noexcept
-    : d(std::make_unique<SdlogImportPluginPrivate>())
+    : d {std::make_unique<SdlogImportPluginPrivate>()}
 {}
 
 SdlogImportPlugin::~SdlogImportPlugin() = default;

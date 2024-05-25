@@ -84,7 +84,7 @@ struct DatabaseServicePrivate
 // PUBLIC
 
 DatabaseService::DatabaseService(QString connectionName) noexcept
-    : d(std::make_unique<DatabaseServicePrivate>(std::move(connectionName)))
+    : d {std::make_unique<DatabaseServicePrivate>(std::move(connectionName))}
 {}
 
 DatabaseService::DatabaseService(DatabaseService &&rhs) noexcept = default;

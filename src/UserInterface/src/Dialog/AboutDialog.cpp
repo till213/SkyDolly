@@ -66,10 +66,10 @@ struct AboutDialogPrivate
 
 // PUBLIC
 
-AboutDialog::AboutDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    d(std::make_unique<AboutDialogPrivate>(*this)),
-    ui(std::make_unique<Ui::AboutDialog>())
+AboutDialog::AboutDialog(QWidget *parent) noexcept
+    : QDialog {parent},
+      d {std::make_unique<AboutDialogPrivate>(*this)},
+      ui {std::make_unique<Ui::AboutDialog>()}
 {
     ui->setupUi(this);
     initUi();

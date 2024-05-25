@@ -53,6 +53,7 @@ namespace
     constexpr const char *LocationDirectoryName {"Location"};
     constexpr const char *ExportDirectoryName {"Export"};
     constexpr const char *ImportDirectoryName {"Import"};
+    constexpr const char *MetaData {"MetaData"};
     constexpr const char *PluginUuidKey {"uuid"};
     constexpr const char *PluginNameKey {"name"};
 }
@@ -247,7 +248,7 @@ bool PluginManager::exportLocations(const QUuid &pluginUuid) const noexcept
 // PRIVATE
 
 PluginManager::PluginManager() noexcept
-    : d(std::make_unique<PluginManagerPrivate>())
+    : d {std::make_unique<PluginManagerPrivate>()}
 {}
 
 PluginManager::~PluginManager() = default;
@@ -266,9 +267,9 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QJsonObject pluginMetadata {metaData.value (QStringLiteral("MetaData")).toObject()};
-                const QUuid uuid {pluginMetadata.value(PluginUuidKey).toString()};
-                const QString pluginName {pluginMetadata.value(PluginNameKey).toString()};
+                const QJsonObject pluginMetadata {metaData.value(::MetaData).toObject()};
+                const QUuid uuid {pluginMetadata.value(::PluginUuidKey).toString()};
+                const QString pluginName {pluginMetadata.value(::PluginNameKey).toString()};
                 const Handle handle {uuid, pluginName};
                 pluginHandles.push_back(handle);
                 pluginRegistry[uuid] = pluginPath;

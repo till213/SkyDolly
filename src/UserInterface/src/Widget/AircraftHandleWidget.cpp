@@ -61,9 +61,9 @@ struct AircraftHandleWidgetPrivate
 // PUBLIC
 
 AircraftHandleWidget::AircraftHandleWidget(QWidget *parent) noexcept :
-    AbstractSimulationVariableWidget(parent),
-    ui(std::make_unique<Ui::AircraftHandleWidget>()),
-    d(std::make_unique<AircraftHandleWidgetPrivate>(*this))
+    AbstractSimulationVariableWidget {parent},
+    ui {std::make_unique<Ui::AircraftHandleWidget>()},
+    d {std::make_unique<AircraftHandleWidgetPrivate>(*this)}
 {
     ui->setupUi(this);
     initUi();

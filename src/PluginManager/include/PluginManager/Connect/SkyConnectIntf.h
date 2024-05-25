@@ -106,7 +106,7 @@ public:
     };
 
     SkyConnectIntf(QObject *parent = nullptr) noexcept
-        : QObject(parent)
+        : QObject {parent}
     {}
 
     SkyConnectIntf(const SkyConnectIntf &rhs) = delete;

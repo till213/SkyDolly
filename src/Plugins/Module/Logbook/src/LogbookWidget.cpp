@@ -137,9 +137,9 @@ struct LogbookWidgetPrivate
 // PUBLIC
 
 LogbookWidget::LogbookWidget(LogbookSettings &moduleSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::LogbookWidget>()),
-      d(std::make_unique<LogbookWidgetPrivate>(moduleSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::LogbookWidget>()},
+      d {std::make_unique<LogbookWidgetPrivate>(moduleSettings)}
 {
     ui->setupUi(this);
     initUi();

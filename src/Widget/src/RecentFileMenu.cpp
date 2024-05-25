@@ -34,7 +34,7 @@
 struct RecentFileMenuPrivate
 {
     RecentFileMenuPrivate(QObject *parent)
-        : recentFileActionGroup(new QActionGroup(parent))
+        : recentFileActionGroup(new QActionGroup {parent})
     {}
 
     QActionGroup *recentFileActionGroup;
@@ -44,7 +44,7 @@ struct RecentFileMenuPrivate
 // PUBLIC
 
 RecentFileMenu::RecentFileMenu(QObject *parent) :
-    QObject(parent)
+    QObject {parent}
 {
     d = new RecentFileMenuPrivate(parent);
     initialise();

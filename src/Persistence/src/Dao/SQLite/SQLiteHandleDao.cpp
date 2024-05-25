@@ -61,7 +61,7 @@ struct SQLiteHandleDaoPrivate
 // PUBLIC
 
 SQLiteHandleDao::SQLiteHandleDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLiteHandleDaoPrivate>(std::move(connectionName)))
+    : d {std::make_unique<SQLiteHandleDaoPrivate>(std::move(connectionName))}
 {}
 
 SQLiteHandleDao::SQLiteHandleDao(SQLiteHandleDao &&rhs) noexcept = default;
@@ -72,7 +72,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(QStringLiteral(
+    query.prepare(
         "insert into handle ("
         "  aircraft_id,"
         "  timestamp,"
@@ -102,21 +102,21 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
         " :folding_wing_handle_position,"
         " :smoke_enable"
         ");"
-    ));
+    );
 
-    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
-    query.bindValue(QStringLiteral(":timestamp"), QVariant::fromValue(aircraftHandleData.timestamp));
-    query.bindValue(QStringLiteral(":brake_left_position"), aircraftHandleData.brakeLeftPosition);
-    query.bindValue(QStringLiteral(":brake_right_position"), aircraftHandleData.brakeRightPosition);
-    query.bindValue(QStringLiteral(":water_rudder_handle_position"), aircraftHandleData.waterRudderHandlePosition);
-    query.bindValue(QStringLiteral(":tailhook_position"), aircraftHandleData.tailhookPosition);
-    query.bindValue(QStringLiteral(":canopy_open"), aircraftHandleData.canopyOpen);
-    query.bindValue(QStringLiteral(":left_wing_folding"), aircraftHandleData.leftWingFolding);
-    query.bindValue(QStringLiteral(":right_wing_folding"), aircraftHandleData.rightWingFolding);
-    query.bindValue(QStringLiteral(":gear_handle_position"), aircraftHandleData.gearHandlePosition ? 1 : 0);
-    query.bindValue(QStringLiteral(":tailhook_handle_position"), aircraftHandleData.tailhookHandlePosition ? 1 : 0);
-    query.bindValue(QStringLiteral(":folding_wing_handle_position"), aircraftHandleData.foldingWingHandlePosition ? 1 : 0);
-    query.bindValue(QStringLiteral(":smoke_enable"), aircraftHandleData.smokeEnabled ? 1 : 0);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(":timestamp", QVariant::fromValue(aircraftHandleData.timestamp));
+    query.bindValue(":brake_left_position", aircraftHandleData.brakeLeftPosition);
+    query.bindValue(":brake_right_position", aircraftHandleData.brakeRightPosition);
+    query.bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition);
+    query.bindValue(":tailhook_position", aircraftHandleData.tailhookPosition);
+    query.bindValue(":canopy_open", aircraftHandleData.canopyOpen);
+    query.bindValue(":left_wing_folding", aircraftHandleData.leftWingFolding);
+    query.bindValue(":right_wing_folding", aircraftHandleData.rightWingFolding);
+    query.bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0);
+    query.bindValue(":tailhook_handle_position", aircraftHandleData.tailhookHandlePosition ? 1 : 0);
+    query.bindValue(":folding_wing_handle_position", aircraftHandleData.foldingWingHandlePosition ? 1 : 0);
+    query.bindValue(":smoke_enable", aircraftHandleData.smokeEnabled ? 1 : 0);
 
     const bool ok = query.exec();
 #ifdef DEBUG
@@ -133,14 +133,14 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(QStringLiteral(
+    query.prepare(
         "select * "
         "from   handle h "
         "where  h.aircraft_id = :aircraft_id "
         "order by h.timestamp asc;"
-    ));
+    );
 
-    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
         const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -151,18 +151,18 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
             aircraftHandleData.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
-        const int timestampIdx = record.indexOf(QStringLiteral("timestamp"));
-        const int brakeLeftPositionIdx = record.indexOf(QStringLiteral("brake_left_position"));
-        const int brakeRightPositionIdx = record.indexOf(QStringLiteral("brake_right_position"));
-        const int waterRudderHandlePositionIdx = record.indexOf(QStringLiteral("water_rudder_handle_position"));
-        const int tailhookPositionIdx = record.indexOf(QStringLiteral("tailhook_position"));
-        const int canopyOpenIdx = record.indexOf(QStringLiteral("canopy_open"));
-        const int leftWingFoldingIdx = record.indexOf(QStringLiteral("left_wing_folding"));
-        const int rightWingFoldingIdx = record.indexOf(QStringLiteral("right_wing_folding"));
-        const int gearHandlePositionIdx = record.indexOf(QStringLiteral("gear_handle_position"));
-        const int tailhookHandlePositionIdx = record.indexOf(QStringLiteral("tailhook_handle_position"));
-        const int foldingWingHandlePositionIdx = record.indexOf(QStringLiteral("folding_wing_handle_position"));
-        const int smokeEnablePositionIdx = record.indexOf(QStringLiteral("smoke_enable"));
+        const int timestampIdx = record.indexOf("timestamp");
+        const int brakeLeftPositionIdx = record.indexOf("brake_left_position");
+        const int brakeRightPositionIdx = record.indexOf("brake_right_position");
+        const int waterRudderHandlePositionIdx = record.indexOf("water_rudder_handle_position");
+        const int tailhookPositionIdx = record.indexOf("tailhook_position");
+        const int canopyOpenIdx = record.indexOf("canopy_open");
+        const int leftWingFoldingIdx = record.indexOf("left_wing_folding");
+        const int rightWingFoldingIdx = record.indexOf("right_wing_folding");
+        const int gearHandlePositionIdx = record.indexOf("gear_handle_position");
+        const int tailhookHandlePositionIdx = record.indexOf("tailhook_handle_position");
+        const int foldingWingHandlePositionIdx = record.indexOf("folding_wing_handle_position");
+        const int smokeEnablePositionIdx = record.indexOf("smoke_enable");
         while (query.next()) {
             AircraftHandleData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
@@ -195,16 +195,16 @@ bool SQLiteHandleDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(QStringLiteral(
+    query.prepare(
         "delete "
         "from   handle "
         "where  aircraft_id in (select a.id "
         "                       from aircraft a"
         "                       where a.flight_id = :flight_id"
         "                      );"
-    ));
+    );
 
-    query.bindValue(QStringLiteral(":flight_id"), QVariant::fromValue(flightId));
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -218,13 +218,13 @@ bool SQLiteHandleDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(QStringLiteral(
+    query.prepare(
         "delete "
         "from   handle "
         "where  aircraft_id = :aircraft_id;"
-    ));
+    );
 
-    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

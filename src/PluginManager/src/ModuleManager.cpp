@@ -103,8 +103,8 @@ QIcon ModuleManagerPrivate::recordAddIcon;
 // PUBLIC
 
 ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<ModuleManagerPrivate>(layout))
+    : QObject {parent},
+      d {std::make_unique<ModuleManagerPrivate>(layout)}
 {
     initModules();
     if (d->moduleRegistry.size() > 0) {

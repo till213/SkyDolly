@@ -35,7 +35,7 @@ struct TemplateSettingsPrivate
 
 TemplateSettings::TemplateSettings() noexcept
     : ModuleBaseSettings(),
-      d(std::make_unique<TemplateSettingsPrivate>())
+      d {std::make_unique<TemplateSettingsPrivate>()}
 {}
 
 TemplateSettings::~TemplateSettings() = default;

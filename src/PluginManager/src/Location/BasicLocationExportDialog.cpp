@@ -67,9 +67,9 @@ struct BasicLocationExportDialogPrivate
 // PUBLIC
 
 BasicLocationExportDialog::BasicLocationExportDialog(QString fileExtension, QString fileFilter, LocationExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
-    : QDialog(parent),
-      ui(std::make_unique<Ui::BasicLocationExportDialog>()),
-      d(std::make_unique<BasicLocationExportDialogPrivate>(std::move(fileExtension), std::move(fileFilter), pluginSettings))
+    : QDialog {parent},
+      ui {std::make_unique<Ui::BasicLocationExportDialog>()},
+      d {std::make_unique<BasicLocationExportDialogPrivate>(std::move(fileExtension), std::move(fileFilter), pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

@@ -46,7 +46,7 @@ struct EnumerationItemDelegatePrivate
 
 EnumerationItemDelegate::EnumerationItemDelegate(QString enumerationName) noexcept
     : QStyledItemDelegate(),
-      d(std::make_unique<EnumerationItemDelegatePrivate>(std::move(enumerationName)))
+      d {std::make_unique<EnumerationItemDelegatePrivate>(std::move(enumerationName))}
 {}
 
 EnumerationItemDelegate::~EnumerationItemDelegate() = default;

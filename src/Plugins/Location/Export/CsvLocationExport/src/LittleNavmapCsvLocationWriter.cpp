@@ -112,7 +112,7 @@ private:
 // PUBLIC
 
 LittleNavmapCsvLocationWriter::LittleNavmapCsvLocationWriter(const CsvLocationExportSettings &pluginSettings) noexcept
-    : d(std::make_unique<LittleNavmapCsvLocationWriterPrivate>(pluginSettings))
+    : d {std::make_unique<LittleNavmapCsvLocationWriterPrivate>(pluginSettings)}
 {}
 
 LittleNavmapCsvLocationWriter::~LittleNavmapCsvLocationWriter() = default;

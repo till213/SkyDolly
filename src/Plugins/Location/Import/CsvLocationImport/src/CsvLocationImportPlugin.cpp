@@ -47,7 +47,7 @@ struct CsvLocationImportPluginPrivate
 // PUBLIC
 
 CsvLocationImportPlugin::CsvLocationImportPlugin() noexcept
-    : d(std::make_unique<CsvLocationImportPluginPrivate>())
+    : d {std::make_unique<CsvLocationImportPluginPrivate>()}
 {}
 
 CsvLocationImportPlugin::~CsvLocationImportPlugin() = default;
