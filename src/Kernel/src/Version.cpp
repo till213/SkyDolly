@@ -163,20 +163,20 @@ QString Version::getApplicationVersion() noexcept
 
 QString Version::getOrganisationName() noexcept
 {
-    return QString::fromLatin1(VersionConfig::OrganisationName);
+    return VersionConfig::OrganisationName;
 }
 
 QString Version::getApplicationName() noexcept
 {
-    return QString::fromLatin1(VersionConfig::ApplicationName);
+    return VersionConfig::ApplicationName;
 }
 
-QLatin1String Version::getGitHash() noexcept
+QString Version::getGitHash() noexcept
 {
-    return QLatin1String(GitInfo::GitHash);
+    return GitInfo::GitHash;
 }
 
 QDateTime Version::getGitDate() noexcept
 {
-    return QDateTime::fromString(QString::fromLatin1(GitInfo::GitIsoDate), Qt::ISODate);
+    return QDateTime::fromString(GitInfo::GitIsoDate, Qt::ISODate);
 }

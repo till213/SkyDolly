@@ -106,9 +106,9 @@ void PluginManager::initialise(QWidget *parentWidget) noexcept
 std::vector<PluginManager::Handle> PluginManager::initialiseFlightImportPlugins() noexcept
 {
     std::vector<PluginManager::Handle> pluginHandles;
-    if (d->pluginsDirectory.exists(QString::fromLatin1(::FlightDirectoryName))) {
-        d->pluginsDirectory.cd(QString::fromLatin1(::FlightDirectoryName));
-        pluginHandles = enumeratePlugins(QString::fromLatin1(::ImportDirectoryName), d->flightImportPluginRegistry);
+    if (d->pluginsDirectory.exists(::FlightDirectoryName)) {
+        d->pluginsDirectory.cd(::FlightDirectoryName);
+        pluginHandles = enumeratePlugins(::ImportDirectoryName, d->flightImportPluginRegistry);
         d->pluginsDirectory.cdUp();
     }
     return pluginHandles;
@@ -117,9 +117,9 @@ std::vector<PluginManager::Handle> PluginManager::initialiseFlightImportPlugins(
 std::vector<PluginManager::Handle> PluginManager::initialiseFlightExportPlugins() noexcept
 {
     std::vector<PluginManager::Handle> pluginHandles;
-    if (d->pluginsDirectory.exists(QString::fromLatin1(::FlightDirectoryName))) {
-        d->pluginsDirectory.cd(QString::fromLatin1(::FlightDirectoryName));
-        pluginHandles = enumeratePlugins(QString::fromLatin1(::ExportDirectoryName), d->flightExportPluginRegistry);
+    if (d->pluginsDirectory.exists(::FlightDirectoryName)) {
+        d->pluginsDirectory.cd(::FlightDirectoryName);
+        pluginHandles = enumeratePlugins(::ExportDirectoryName, d->flightExportPluginRegistry);
         d->pluginsDirectory.cdUp();
     }
     return pluginHandles;
@@ -128,9 +128,9 @@ std::vector<PluginManager::Handle> PluginManager::initialiseFlightExportPlugins(
 std::vector<PluginManager::Handle> PluginManager::initialiseLocationImportPlugins() noexcept
 {
     std::vector<PluginManager::Handle> pluginHandles;
-    if (d->pluginsDirectory.exists(QString::fromLatin1(::LocationDirectoryName))) {
-        d->pluginsDirectory.cd(QString::fromLatin1(::LocationDirectoryName));
-        pluginHandles = enumeratePlugins(QString::fromLatin1(::ImportDirectoryName), d->locationImportPluginRegistry);
+    if (d->pluginsDirectory.exists(::LocationDirectoryName)) {
+        d->pluginsDirectory.cd(::LocationDirectoryName);
+        pluginHandles = enumeratePlugins(::ImportDirectoryName, d->locationImportPluginRegistry);
         d->pluginsDirectory.cdUp();
     }
     return pluginHandles;
@@ -139,9 +139,9 @@ std::vector<PluginManager::Handle> PluginManager::initialiseLocationImportPlugin
 std::vector<PluginManager::Handle> PluginManager::initialiseLocationExportPlugins() noexcept
 {
     std::vector<PluginManager::Handle> pluginHandles;
-    if (d->pluginsDirectory.exists(QString::fromLatin1(::LocationDirectoryName))) {
-        d->pluginsDirectory.cd(QString::fromLatin1(::LocationDirectoryName));
-        pluginHandles = enumeratePlugins(QString::fromLatin1(::ExportDirectoryName), d->locationExportPluginRegistry);
+    if (d->pluginsDirectory.exists(::LocationDirectoryName)) {
+        d->pluginsDirectory.cd(::LocationDirectoryName);
+        pluginHandles = enumeratePlugins(::ExportDirectoryName, d->locationExportPluginRegistry);
         d->pluginsDirectory.cdUp();
     }
     return pluginHandles;
@@ -268,11 +268,11 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
                 const QJsonObject pluginMetadata{
-                    metaData.value(QString::fromLatin1("MetaData")).toObject()};
+                    metaData.value("MetaData").toObject()};
                 const QUuid uuid{
-                    pluginMetadata.value(QString::fromLatin1(::PluginUuidKey)).toString()};
+                    pluginMetadata.value(::PluginUuidKey).toString()};
                 const QString pluginName{
-                    pluginMetadata.value(QString::fromLatin1(::PluginNameKey)).toString()};
+                    pluginMetadata.value(::PluginNameKey).toString()};
                 const Handle handle {uuid, pluginName};
                 pluginHandles.push_back(handle);
                 pluginRegistry[uuid] = pluginPath;

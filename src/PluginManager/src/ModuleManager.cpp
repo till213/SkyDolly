@@ -206,8 +206,8 @@ void ModuleManager::initModules() noexcept
     Graph graph;
     std::unordered_map<QUuid, ModuleInfo, QUuidHasher> moduleInfos;
     d->moduleRegistry.clear();
-    if (d->pluginsDirectoryPath.exists(QString::fromLatin1(::ModuleDirectoryName))) {
-        d->pluginsDirectoryPath.cd(QString::fromLatin1(::ModuleDirectoryName));
+    if (d->pluginsDirectoryPath.exists(::ModuleDirectoryName)) {
+        d->pluginsDirectoryPath.cd(::ModuleDirectoryName);
         const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
         for (const auto &fileName : entryList) {
             initModule(fileName, moduleInfos, graph);

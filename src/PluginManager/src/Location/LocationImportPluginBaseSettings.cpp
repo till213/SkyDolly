@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <string_view>
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
@@ -50,7 +49,7 @@ struct LocationImportPluginBaseSettingsPrivate
 // PUBLIC
 
 LocationImportPluginBaseSettings::LocationImportPluginBaseSettings() noexcept
-    : d(std::make_unique<LocationImportPluginBaseSettingsPrivate>())
+    : d {std::make_unique<LocationImportPluginBaseSettingsPrivate>()}
 {}
 
 LocationImportPluginBaseSettings::~LocationImportPluginBaseSettings() = default;

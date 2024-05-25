@@ -30,6 +30,7 @@
 #endif
 
 #include <Kernel/Enum.h>
+#include <Kernel/File.h>
 #include <Kernel/Settings.h>
 #include <PluginManager/Connect/ConnectPluginBaseSettings.h>
 #include "MSFSSimConnectSettings.h"
@@ -45,7 +46,11 @@ namespace
 
 struct MSFSSimConnectSettingsPrivate
 {
-    MSFSSimConnectSettings::ConnectionType connectionType {::DefaultConnectionType};
+    MSFSSimConnectSettingsPrivate()
+        : connectionType {File::hasSimConnectConfiguration() ? ::DefaultConnectionType : MSFSSimConnectSettings::ConnectionType::Pipe}
+    {}
+
+    MSFSSimConnectSettings::ConnectionType connectionType;
 };
 
 // PUBLIC

@@ -189,7 +189,7 @@ public:
      */
     static QString getApplicationName() noexcept;
 
-    static QLatin1String getGitHash() noexcept;
+    static QString getGitHash() noexcept;
 
     static QDateTime getGitDate() noexcept;
 
