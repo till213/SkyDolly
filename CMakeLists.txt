@@ -14,7 +14,7 @@ set(PROJECT_BUNDLE_IDENTIFIER net.${PROJECT_ORGANISATION_NAME}.${APP_NAME})
 
 project(
     ${APP_NAME}
-    VERSION 0.17.2
+    VERSION 0.17.3
     DESCRIPTION "Sky Dolly - The Black Sheep for Your Flight Recordings"
     HOMEPAGE_URL "https://github.com/till213/SkyDolly"
     LANGUAGES CXX
