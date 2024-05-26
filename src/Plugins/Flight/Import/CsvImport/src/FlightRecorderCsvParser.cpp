@@ -194,7 +194,7 @@ FlightData FlightRecorderCsvParser::parse(QIODevice &io, bool &ok) noexcept
     CsvParser csvParser;
     QTextStream textStream(&io);
     textStream.setEncoding(QStringConverter::Utf8);
-    CsvParser::Rows rows = csvParser.parse(textStream, QString::fromLatin1(Header::FlightRecorderCsv));
+    CsvParser::Rows rows = csvParser.parse(textStream, Header::FlightRecorderCsv);
     d->headers = csvParser.getHeaders();
     ok = validateHeaders();
     if (ok) {
@@ -224,7 +224,7 @@ FlightData FlightRecorderCsvParser::parse(QIODevice &io, bool &ok) noexcept
                 // The first position timestamp must be 0, so shift all timestamps by
                 // the timestamp delta, derived from the first timestamp
                 // (that is usually 0 already)
-                d->timestampDelta = row.at(d->headers.at(QString::fromLatin1(Header::Milliseconds))).toLongLong(&ok);
+                d->timestampDelta = row.at(d->headers.at(Header::Milliseconds)).toLongLong(&ok);
                 firstRow = false;
             }
             if (ok) {
@@ -244,7 +244,7 @@ FlightData FlightRecorderCsvParser::parse(QIODevice &io, bool &ok) noexcept
  {
      bool ok {true};
      for (const auto val : d->HeaderNames) {
-         ok = d->headers.contains(QString::fromLatin1(val));
+         ok = d->headers.contains(val);
          if (!ok) {
              break;
          }
@@ -267,36 +267,36 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &fl
     PositionData positionData;
     AttitudeData attitudeData;
     bool ok {true};
-    const std::int64_t timestamp = row.at(d->headers.at(QString::fromLatin1(Header::Milliseconds))).toLongLong(&ok) - d->timestampDelta;
+    const std::int64_t timestamp = row.at(d->headers.at(Header::Milliseconds)).toLongLong(&ok) - d->timestampDelta;
     if (ok) {
         positionData.timestamp = timestamp;
-        positionData.latitude = row.at(d->headers.at(QString::fromLatin1(Header::Latitude))).toDouble(&ok);
+        positionData.latitude = row.at(d->headers.at(Header::Latitude)).toDouble(&ok);
     }
     if (ok) {
-        positionData.longitude = row.at(d->headers.at(QString::fromLatin1(Header::Longitude))).toDouble(&ok);
+        positionData.longitude = row.at(d->headers.at(Header::Longitude)).toDouble(&ok);
     }
     if (ok) {
-        positionData.altitude = row.at(d->headers.at(QString::fromLatin1(Header::Altitude))).toDouble(&ok);
+        positionData.altitude = row.at(d->headers.at(Header::Altitude)).toDouble(&ok);
         positionData.indicatedAltitude = positionData.altitude;
     }
     if (ok) {
         attitudeData.timestamp = timestamp;
-        attitudeData.pitch = row.at(d->headers.at(QString::fromLatin1(Header::Pitch))).toDouble(&ok);
+        attitudeData.pitch = row.at(d->headers.at(Header::Pitch)).toDouble(&ok);
     }
     if (ok) {
-        attitudeData.bank = row.at(d->headers.at(QString::fromLatin1(Header::Bank))).toDouble(&ok);
+        attitudeData.bank = row.at(d->headers.at(Header::Bank)).toDouble(&ok);
     }
     if (ok) {
-        attitudeData.trueHeading = row.at(d->headers.at(QString::fromLatin1(Header::TrueHeading))).toDouble(&ok);
+        attitudeData.trueHeading = row.at(d->headers.at(Header::TrueHeading)).toDouble(&ok);
     }
     if (ok) {
-        attitudeData.velocityBodyX = row.at(d->headers.at(QString::fromLatin1(Header::VelocityBodyX))).toDouble(&ok);
+        attitudeData.velocityBodyX = row.at(d->headers.at(Header::VelocityBodyX)).toDouble(&ok);
     }
     if (ok) {
-        attitudeData.velocityBodyY = row.at(d->headers.at(QString::fromLatin1(Header::VelocityBodyY))).toDouble(&ok);
+        attitudeData.velocityBodyY = row.at(d->headers.at(Header::VelocityBodyY)).toDouble(&ok);
     }
     if (ok) {
-        attitudeData.velocityBodyZ = row.at(d->headers.at(QString::fromLatin1(Header::VelocityBodyZ))).toDouble(&ok);
+        attitudeData.velocityBodyZ = row.at(d->headers.at(Header::VelocityBodyZ)).toDouble(&ok);
     }
 
     if (ok) {
@@ -312,16 +312,16 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &fl
     double throttleLeverPosition3 {0.0};
     double throttleLeverPosition4 {0.0};
     if (ok) {
-        throttleLeverPosition1 = row.at(d->headers.at(QString::fromLatin1(Header::ThrottleLeverPosition1))).toDouble(&ok);
+        throttleLeverPosition1 = row.at(d->headers.at(Header::ThrottleLeverPosition1)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition2 = row.at(d->headers.at(QString::fromLatin1(Header::ThrottleLeverPosition2))).toDouble(&ok);
+        throttleLeverPosition2 = row.at(d->headers.at(Header::ThrottleLeverPosition2)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition3 = row.at(d->headers.at(QString::fromLatin1(Header::ThrottleLeverPosition3))).toDouble(&ok);
+        throttleLeverPosition3 = row.at(d->headers.at(Header::ThrottleLeverPosition3)).toDouble(&ok);
     }
     if (ok) {
-        throttleLeverPosition4 = row.at(d->headers.at(QString::fromLatin1(Header::ThrottleLeverPosition4))).toDouble(&ok);
+        throttleLeverPosition4 = row.at(d->headers.at(Header::ThrottleLeverPosition4)).toDouble(&ok);
     }
     if (ok) {
         engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(throttleLeverPosition1);
@@ -338,16 +338,16 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &fl
     double propellerLeverPosition3 {0.0};
     double propellerLeverPosition4 {0.0};
     if (ok) {
-        propellerLeverPosition1 = row.at(d->headers.at(QString::fromLatin1(Header::PropellerLeverPosition1))).toDouble(&ok);
+        propellerLeverPosition1 = row.at(d->headers.at(Header::PropellerLeverPosition1)).toDouble(&ok);
     }
     if (ok) {
-        propellerLeverPosition2 = row.at(d->headers.at(QString::fromLatin1(Header::PropellerLeverPosition2))).toDouble(&ok);
+        propellerLeverPosition2 = row.at(d->headers.at(Header::PropellerLeverPosition2)).toDouble(&ok);
     }
     if (ok) {
-        propellerLeverPosition3 = row.at(d->headers.at(QString::fromLatin1(Header::PropellerLeverPosition3))).toDouble(&ok);
+        propellerLeverPosition3 = row.at(d->headers.at(Header::PropellerLeverPosition3)).toDouble(&ok);
     }
     if (ok) {
-        propellerLeverPosition4 = row.at(d->headers.at(QString::fromLatin1(Header::PropellerLeverPosition4))).toDouble(&ok);
+        propellerLeverPosition4 = row.at(d->headers.at(Header::PropellerLeverPosition4)).toDouble(&ok);
     }
     if (ok) {
         engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(propellerLeverPosition1);
@@ -367,13 +367,13 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &fl
     double elevatorPosition {0.0};
     double aileronPosition {0.0};
     if (ok) {
-        rudderPosition = row.at(d->headers.at(QString::fromLatin1(Header::RudderPosition))).toDouble(&ok);
+        rudderPosition = row.at(d->headers.at(Header::RudderPosition)).toDouble(&ok);
     }
     if (ok) {
-        elevatorPosition = row.at(d->headers.at(QString::fromLatin1(Header::ElevatorPosition))).toDouble(&ok);
+        elevatorPosition = row.at(d->headers.at(Header::ElevatorPosition)).toDouble(&ok);
     }
     if (ok) {
-        aileronPosition = row.at(d->headers.at(QString::fromLatin1(Header::AileronPosition))).toDouble(&ok);
+        aileronPosition = row.at(d->headers.at(Header::AileronPosition)).toDouble(&ok);
     }
     if (ok) {
         primaryFlightControlData.rudderPosition = SkyMath::fromNormalisedPosition(rudderPosition);
@@ -392,22 +392,22 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &fl
     double rightTrailingEdgeFlapsPosition {0.0};
     double spoilerHandlePositionPercent {0.0};
     if (ok) {
-        leftLeadingEdgeFlapsPosition = row.at(d->headers.at(QString::fromLatin1(Header::LeadingEdgeFlapsLeftPercent))).toDouble(&ok);
+        leftLeadingEdgeFlapsPosition = row.at(d->headers.at(Header::LeadingEdgeFlapsLeftPercent)).toDouble(&ok);
     }
     if (ok) {
-        rightLeadingEdgeFlapsPosition = row.at(d->headers.at(QString::fromLatin1(Header::LeadingEdgeFlapsRightPercent))).toDouble(&ok);
+        rightLeadingEdgeFlapsPosition = row.at(d->headers.at(Header::LeadingEdgeFlapsRightPercent)).toDouble(&ok);
     }
     if (ok) {
-        leftTrailingEdgeFlapsPosition = row.at(d->headers.at(QString::fromLatin1(Header::TrailingEdgeFlapsLeftPercent))).toDouble(&ok);
+        leftTrailingEdgeFlapsPosition = row.at(d->headers.at(Header::TrailingEdgeFlapsLeftPercent)).toDouble(&ok);
     }
     if (ok) {
-        rightTrailingEdgeFlapsPosition = row.at(d->headers.at(QString::fromLatin1(Header::TrailingEdgeFlapsRightPercent))).toDouble(&ok);
+        rightTrailingEdgeFlapsPosition = row.at(d->headers.at(Header::TrailingEdgeFlapsRightPercent)).toDouble(&ok);
     }
     if (ok) {
-        spoilerHandlePositionPercent = row.at(d->headers.at(QString::fromLatin1(Header::SpoilerHandlePosition))).toDouble(&ok);
+        spoilerHandlePositionPercent = row.at(d->headers.at(Header::SpoilerHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(row.at(d->headers.at(QString::fromLatin1(Header::FlapsHandleIndex))).toInt(&ok));
+        secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(row.at(d->headers.at(Header::FlapsHandleIndex)).toInt(&ok));
     }
     if (ok) {
         secondaryFlightControlData.leftLeadingEdgeFlapsPosition = SkyMath::fromNormalisedPosition(leftLeadingEdgeFlapsPosition);
@@ -426,16 +426,16 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &fl
     double brakeRightPosition {0.0};
     double waterRudderHandlePosition {0.0};
     if (ok) {
-        brakeLeftPosition = row.at(d->headers.at(QString::fromLatin1(Header::BrakeLeftPosition))).toDouble(&ok);
+        brakeLeftPosition = row.at(d->headers.at(Header::BrakeLeftPosition)).toDouble(&ok);
     }
     if (ok) {
-        brakeRightPosition = row.at(d->headers.at(QString::fromLatin1(Header::BrakeRightPosition))).toDouble(&ok);
+        brakeRightPosition = row.at(d->headers.at(Header::BrakeRightPosition)).toDouble(&ok);
     }
     if (ok) {
-        waterRudderHandlePosition = row.at(d->headers.at(QString::fromLatin1(Header::WaterRudderHandlePosition))).toDouble(&ok);
+        waterRudderHandlePosition = row.at(d->headers.at(Header::WaterRudderHandlePosition)).toDouble(&ok);
     }
     if (ok) {
-        aircraftHandleData.gearHandlePosition = row.at(d->headers.at(QString::fromLatin1(Header::GearHandlePosition))).toInt(&ok)!= 0;
+        aircraftHandleData.gearHandlePosition = row.at(d->headers.at(Header::GearHandlePosition)).toInt(&ok)!= 0;
     }
     if (ok) {
         aircraftHandleData.brakeLeftPosition = SkyMath::fromNormalisedPosition(brakeLeftPosition);
@@ -461,31 +461,31 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &fl
     bool lightRecognition {false};
     bool lightCabin {false};
     if (ok) {
-        lightTaxi = row.at(d->headers.at(QString::fromLatin1(Header::LightTaxi))).toInt(&ok) != 0;
+        lightTaxi = row.at(d->headers.at(Header::LightTaxi)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightLanding = row.at(d->headers.at(QString::fromLatin1(Header::LightLanding))).toInt(&ok) != 0;
+        lightLanding = row.at(d->headers.at(Header::LightLanding)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightStrobe = row.at(d->headers.at(QString::fromLatin1(Header::LightStrobe))).toInt(&ok) != 0;
+        lightStrobe = row.at(d->headers.at(Header::LightStrobe)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightBeacon = row.at(d->headers.at(QString::fromLatin1(Header::LightBeacon))).toInt(&ok) != 0;
+        lightBeacon = row.at(d->headers.at(Header::LightBeacon)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightNav = row.at(d->headers.at(QString::fromLatin1(Header::LightNav))).toInt(&ok) != 0;
+        lightNav = row.at(d->headers.at(Header::LightNav)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightWing = row.at(d->headers.at(QString::fromLatin1(Header::LightWing))).toInt(&ok) != 0;
+        lightWing = row.at(d->headers.at(Header::LightWing)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightLogo = row.at(d->headers.at(QString::fromLatin1(Header::LightLogo))).toInt(&ok) != 0;
+        lightLogo = row.at(d->headers.at(Header::LightLogo)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightRecognition = row.at(d->headers.at(QString::fromLatin1(Header::LightRecognition))).toInt(&ok) != 0;
+        lightRecognition = row.at(d->headers.at(Header::LightRecognition)).toInt(&ok) != 0;
     }
     if (ok) {
-        lightCabin = row.at(d->headers.at(QString::fromLatin1(Header::LightCabin))).toInt(&ok) != 0;
+        lightCabin = row.at(d->headers.at(Header::LightCabin)).toInt(&ok) != 0;
     }
     if (ok) {
         lightData.lightStates.setFlag(SimType::LightState::Taxi, lightTaxi);

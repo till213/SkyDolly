@@ -75,7 +75,7 @@ struct LittleNavmapCsvLocationWriterPrivate
 
 private:
     inline void initSymIdToType() {
-        symIdToType[QStringLiteral("00")] = QString::fromLatin1(::OtherType);
+        symIdToType[QStringLiteral("00")] = ::OtherType;
         symIdToType[QStringLiteral("AP")] = QStringLiteral("Airport");
         symIdToType[QStringLiteral("AS")] = QStringLiteral("Airstrip");
         symIdToType[QStringLiteral("BR")] = QStringLiteral("POI");
@@ -83,7 +83,7 @@ private:
         symIdToType[QStringLiteral("CA")] = QStringLiteral("Landform");
         symIdToType[QStringLiteral("CB")] = QStringLiteral("Cabin");
         symIdToType[QStringLiteral("CI")] = QStringLiteral("Settlement");
-        symIdToType[QStringLiteral("CR")] = QString::fromLatin1(::OtherType);
+        symIdToType[QStringLiteral("CR")] = ::OtherType;
         symIdToType[QStringLiteral("DA")] = QStringLiteral("POI");
         symIdToType[QStringLiteral("DE")] = QStringLiteral("Landform");
         symIdToType[QStringLiteral("GL")] = QStringLiteral("Mountain");
@@ -96,7 +96,7 @@ private:
         symIdToType[QStringLiteral("MO")] = QStringLiteral("Mountain");
         symIdToType[QStringLiteral("OB")] = QStringLiteral("Obstacle");
         symIdToType[QStringLiteral("OP")] = QStringLiteral("Oil Platform");
-        symIdToType[QStringLiteral("OT")] = QString::fromLatin1(::OtherType);
+        symIdToType[QStringLiteral("OT")] = ::OtherType;
         symIdToType[QStringLiteral("PA")] = QStringLiteral("Park");
         symIdToType[QStringLiteral("PO")] = QStringLiteral("POI");
         symIdToType[QStringLiteral("SE")] = QStringLiteral("Water");
@@ -169,13 +169,12 @@ bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations
 
 inline QString LittleNavmapCsvLocationWriter::mapCategorySymIdToType(const QString &categorySymId) const noexcept
 {
-    Enumeration locationCategory = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
     QString type;
     const auto it = d->symIdToType.find(categorySymId);
     if (it != d->symIdToType.end()) {
        type = it->second;
     } else {
-        type = QString::fromLatin1(::OtherType);
+        type = ::OtherType;
     }
     return type;
 }

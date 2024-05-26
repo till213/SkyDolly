@@ -118,7 +118,7 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
 
 void FlightDescriptionWidget::initUi() noexcept
 {
-    ui->flightNumberLineEdit->setToolTip(QString::fromLatin1(SimVar::ATCId));
+    ui->flightNumberLineEdit->setToolTip(SimVar::ATCId);
 }
 
 void FlightDescriptionWidget::frenchConnection() noexcept

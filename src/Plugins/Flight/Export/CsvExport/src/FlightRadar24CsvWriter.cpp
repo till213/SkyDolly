@@ -76,7 +76,7 @@ FlightRadar24CsvWriter::~FlightRadar24CsvWriter() = default;
 
 bool FlightRadar24CsvWriter::write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    QString csv = QString::fromLatin1(::TimestampColumn) % Csv::CommaSep % 
+    QString csv = QString::fromLatin1(::TimestampColumn) % Csv::CommaSep %
                   ::UtcColumn % Csv::CommaSep % 
                   ::CallsignColumn % Csv::CommaSep %
                   ::PositionColumn % Csv::CommaSep %

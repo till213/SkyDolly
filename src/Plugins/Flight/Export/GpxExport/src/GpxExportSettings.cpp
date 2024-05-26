@@ -100,7 +100,7 @@ void GpxExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::TimestampModeKey);
+    keyValue.first = ::TimestampModeKey;
     keyValue.second = Enum::underly(d->timestampMode);
     keyValues.push_back(keyValue);
 }
@@ -109,7 +109,7 @@ void GpxExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::TimestampModeKey);
+    keyValue.first = ::TimestampModeKey;
     keyValue.second = Enum::underly(::DefaultTimestampMode);
     keysWithDefaults.push_back(keyValue);
 }
@@ -117,7 +117,7 @@ void GpxExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void GpxExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::TimestampModeKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::TimestampModeKey).toInt(&ok);
     d->timestampMode = ok && Enum::contains<GpxExportSettings::TimestampMode>(enumValue) ? static_cast<GpxExportSettings::TimestampMode>(enumValue) : ::DefaultTimestampMode;
 }
 

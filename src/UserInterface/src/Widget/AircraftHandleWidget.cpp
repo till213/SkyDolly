@@ -75,17 +75,17 @@ AircraftHandleWidget::~AircraftHandleWidget() = default;
 
 void AircraftHandleWidget::initUi() noexcept
 {
-    ui->gearLineEdit->setToolTip(QString::fromLatin1(SimVar::GearHandlePosition));
-    ui->brakeLeftLineEdit->setToolTip(QString::fromLatin1(SimVar::BrakeLeftPosition));
-    ui->brakeRightLineEdit->setToolTip(QString::fromLatin1(SimVar::BrakeRightPosition));
-    ui->waterRudderLineEdit->setToolTip(QString::fromLatin1(SimVar::WaterRudderHandlePosition));
-    ui->smokeEnabledLineEdit->setToolTip(QString::fromLatin1(SimVar::SmokeEnable));
-    ui->canopyOpenLineEdit->setToolTip(QString::fromLatin1(SimVar::CanopyOpen));
-    ui->tailhookHandleLineEdit->setToolTip(QString::fromLatin1(SimVar::TailhookHandle));
-    ui->tailhookPositionLineEdit->setToolTip(QString::fromLatin1(SimVar::TailhookPosition));
-    ui->wingFoldingHandleLineEdit->setToolTip(QString::fromLatin1(SimVar::FoldingWingHandlePosition));
-    ui->leftWingFoldingLineEdit->setToolTip(QString::fromLatin1(SimVar::FoldingWingLeftPercent));
-    ui->rightWingFoldingLineEdit->setToolTip(QString::fromLatin1(SimVar::FoldingWingRightPercent));
+    ui->gearLineEdit->setToolTip(SimVar::GearHandlePosition);
+    ui->brakeLeftLineEdit->setToolTip(SimVar::BrakeLeftPosition);
+    ui->brakeRightLineEdit->setToolTip(SimVar::BrakeRightPosition);
+    ui->waterRudderLineEdit->setToolTip(SimVar::WaterRudderHandlePosition);
+    ui->smokeEnabledLineEdit->setToolTip(SimVar::SmokeEnable);
+    ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
+    ui->tailhookHandleLineEdit->setToolTip(SimVar::TailhookHandle);
+    ui->tailhookPositionLineEdit->setToolTip(SimVar::TailhookPosition);
+    ui->wingFoldingHandleLineEdit->setToolTip(SimVar::FoldingWingHandlePosition);
+    ui->leftWingFoldingLineEdit->setToolTip(SimVar::FoldingWingLeftPercent);
+    ui->rightWingFoldingLineEdit->setToolTip(SimVar::FoldingWingRightPercent);
 }
 
 AircraftHandleData AircraftHandleWidget::getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
@@ -132,7 +132,7 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
         colorName = d->DisabledTextColor.name();
     }
 
-    const QString css{QStringLiteral("color: %1;").arg(colorName)};
+    const auto css{QStringLiteral("color: %1;").arg(colorName)};
     ui->gearLineEdit->setStyleSheet(css);
     ui->brakeLeftLineEdit->setStyleSheet(css);
     ui->brakeRightLineEdit->setStyleSheet(css);

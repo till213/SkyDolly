@@ -80,14 +80,14 @@ PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() = default;
 bool PositionAndAttitudeCsvWriter::write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     QString csv = QString::fromLatin1(::TimestampColumn) % Csv::CommaSep %
-                                      ::UtcColumn % Csv::CommaSep %
-                                      ::Latitude % Csv::CommaSep %
-                                      ::Longitude % Csv::CommaSep %
-                                      ::AltitudeColumn % Csv::CommaSep %
-                                      ::SpeedColumn % Csv::CommaSep %
-                                      ::PitchColumn % Csv::CommaSep %
-                                      ::BankColumn % Csv::CommaSep %
-                                      ::HeadingColumn % Csv::Ln;
+                  ::UtcColumn % Csv::CommaSep %
+                  ::Latitude % Csv::CommaSep %
+                  ::Longitude % Csv::CommaSep %
+                  ::AltitudeColumn % Csv::CommaSep %
+                  ::SpeedColumn % Csv::CommaSep %
+                  ::PitchColumn % Csv::CommaSep %
+                  ::BankColumn % Csv::CommaSep %
+                  ::HeadingColumn % Csv::Ln;
 
     bool ok = io.write(csv.toUtf8());
     if (ok) {

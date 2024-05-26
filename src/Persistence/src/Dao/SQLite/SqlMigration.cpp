@@ -182,7 +182,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) const noexcept
             QTextStream textStream(&migrationFile);
             textStream.setEncoding(QStringConverter::Utf8);
             CsvParser csvParser;
-            CsvParser::Rows rows = csvParser.parse(textStream, QString::fromLatin1(::LocationMigrationHeader), QString::fromLatin1(::AlternateLocationMigrationHeader));
+            CsvParser::Rows rows = csvParser.parse(textStream, ::LocationMigrationHeader, ::AlternateLocationMigrationHeader);
             if (CsvParser::validate(rows, Enum::underly(::Index::Count))) {
                 for (const auto &row : rows) {
                     const QString uuid = row.at(::Index::Uuid);

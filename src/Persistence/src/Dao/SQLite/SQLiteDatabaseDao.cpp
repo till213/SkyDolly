@@ -77,7 +77,7 @@ SQLiteDatabaseDao::~SQLiteDatabaseDao()
 
 bool SQLiteDatabaseDao::connectDb(const QString &logbookPath) noexcept
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase(QString::fromLatin1(::DriverName), d->connectionName);
+    QSqlDatabase db = QSqlDatabase::addDatabase(::DriverName, d->connectionName);
     // For the QSQLITE driver, if the database name specified does not exist,
     // then it will create the file for you unless the QSQLITE_OPEN_READONLY
     // option is set

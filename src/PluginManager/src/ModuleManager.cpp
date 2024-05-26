@@ -234,11 +234,11 @@ void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid
     const QJsonObject metaData = d->pluginLoader->metaData();
     if (!metaData.isEmpty()) {
         const QJsonObject pluginMetadata {metaData.value(QStringLiteral("MetaData")).toObject()};
-        const QUuid uuid {pluginMetadata.value(QString::fromLatin1(::PluginUuidKey)).toString()};
-        const QString name {pluginMetadata.value(QString::fromLatin1(::PluginNameKey)).toString()};
+        const QUuid uuid {pluginMetadata.value(::PluginUuidKey).toString()};
+        const QString name {pluginMetadata.value(::PluginNameKey).toString()};
         moduleInfos[uuid] = std::make_pair(name, pluginPath);
 
-        const QJsonArray afterArray = pluginMetadata.value(QString::fromLatin1(::PluginAfter)).toArray();
+        const QJsonArray afterArray = pluginMetadata.value(::PluginAfter).toArray();
         std::shared_ptr<Vertex> vertex ;
         const auto it = graph.find(uuid);
         // Vertex already in graph?

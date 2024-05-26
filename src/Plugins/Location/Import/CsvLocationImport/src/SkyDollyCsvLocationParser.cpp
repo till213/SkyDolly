@@ -92,7 +92,7 @@ std::vector<Location> SkyDollyCsvLocationParser::parse(QTextStream &textStream, 
     std::vector<Location> locations;
     CsvParser csvParser;
 
-    CsvParser::Rows rows = csvParser.parse(textStream, QString::fromLatin1(::SkyDollyCsvHeader));
+    CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
     bool success = CsvParser::validate(rows, Enum::underly(::Index::Count));
     if (success) {
         locations.reserve(rows.size());

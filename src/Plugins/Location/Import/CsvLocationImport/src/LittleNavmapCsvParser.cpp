@@ -125,7 +125,7 @@ std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool
     std::vector<Location> locations;
     CsvParser csvParser;
 
-    CsvParser::Rows rows = csvParser.parse(textStream, QString::fromLatin1(Header::LittleNavmap));
+    CsvParser::Rows rows = csvParser.parse(textStream, Header::LittleNavmap);
     d->headers = csvParser.getHeaders();
     bool success = validateHeaders();
     if (success) {
@@ -156,7 +156,7 @@ bool LittleNavmapCsvParser::validateHeaders() const noexcept
 {
     bool ok {true};
     for (const auto val : d->HeaderNames) {
-        ok = d->headers.contains(QString::fromLatin1(val));
+        ok = d->headers.contains(val);
         if (!ok) {
             break;
         }
@@ -169,25 +169,25 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
     Location location;
 
     ok = true;
-    location.title = row.at(d->headers.at(QString::fromLatin1(Header::Name)));
+    location.title = row.at(d->headers.at(Header::Name));
     location.countryId = d->pluginSettings.getDefaultCountryId();
     location.typeId = d->ImportTypeId;
     location.engineEventId = d->KeepEngineEventId;
-    const QString type = row.at(d->headers.at(QString::fromLatin1(Header::Type)));
+    const auto type = row.at(d->headers.at(Header::Type));
     location.categoryId = mapTypeToCategoryId(type);
-    location.identifier = row.at(d->headers.at(QString::fromLatin1(Header::Ident)));
-    const double latitude = row.at(d->headers.at(QString::fromLatin1(Header::Latitude))).toDouble(&ok);
+    location.identifier = row.at(d->headers.at(Header::Ident));
+    const auto latitude = row.at(d->headers.at(Header::Latitude)).toDouble(&ok);
     if (ok) {
         location.latitude = latitude;
     }
     if (ok) {
-        const double longitude = row.at(d->headers.at(QString::fromLatin1(Header::Longitude))).toDouble(&ok);
+        const auto longitude = row.at(d->headers.at(Header::Longitude)).toDouble(&ok);
         if (ok) {
             location.longitude = longitude;
         }
     }
     if (ok) {
-        const QVariant data = row.at(d->headers.at(QString::fromLatin1(Header::Elevation)));
+        const QVariant data = row.at(d->headers.at(Header::Elevation));
         if (!data.isNull() && !data.toString().isEmpty()) {
             const double altitude = data.toDouble(&ok);
             if (ok) {
@@ -209,7 +209,7 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
         location.indicatedAirspeed = d->pluginSettings.getDefaultIndicatedAirspeed();
     }
     if (ok) {
-        location.description = row.at(d->headers.at(QString::fromLatin1(Header::Description)));
+        location.description = row.at(d->headers.at(Header::Description));
     }
 
     return location;

@@ -34,7 +34,6 @@
 #include <QSettings>
 #include <QUuid>
 #include <QString>
-#include <QStringLiteral>
 #include <QVariant>
 #include <QFileInfo>
 #include <QByteArray>
@@ -551,7 +550,7 @@ public:
     ValuesByKey restoreModuleSettings(QUuid moduleUuid, const KeysWithDefaults &keys) noexcept;
 
     /*! The key for the default user interface style (QApplication picks the most approprate style) */
-    static inline const QString DefaultStyleKey {QStringLiteral("Default")};
+    static inline const QString DefaultStyleKey {"Default"};
 
 public slots:
     /*!

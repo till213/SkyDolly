@@ -150,7 +150,7 @@ void TerminationDialog::enumeratePluginContent(const QString &pluginDirectoryPat
             out << "\t" << info.fileName() << Qt::endl;
         } else if (info.isDir()) {
             const QString dirName = info.fileName();
-            if (dirName != QString::fromLatin1(currentDir) && dirName != QString::fromLatin1(parentDir)) {
+            if (dirName != currentDir && dirName != parentDir) {
                 out << "Plugin directory: " << info.fileName() << Qt::endl;
             }
         }
@@ -172,6 +172,6 @@ void TerminationDialog::copyReportToClipboard()  noexcept
 
 void TerminationDialog::createIssue() const noexcept
 {
-    QDesktopServices::openUrl(QUrl(QString::fromLatin1(::CreateIssueTemplateUrl)));
+    QDesktopServices::openUrl(QUrl(::CreateIssueTemplateUrl));
     ui->infoLabel->setText(tr("You may now paste the report from the clipboard into the issue. Please provide any other information that you may have."));
 }

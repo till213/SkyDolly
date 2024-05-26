@@ -284,47 +284,47 @@ void KmlExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::ColorStyleKey);
+    keyValue.first = ::ColorStyleKey;
     keyValue.second = Enum::underly(d->colorStyle);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::NofColorsPerRampKey);
+    keyValue.first = ::NofColorsPerRampKey;
     keyValue.second = d->nofColorsPerRamp;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::LineWidthKey);
+    keyValue.first = ::LineWidthKey;
     keyValue.second = d->lineWidth;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::JetStartColorKey);
+    keyValue.first = ::JetStartColorKey;
     keyValue.second = d->jetStartColor;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::JetEndColorKey);
+    keyValue.first = ::JetEndColorKey;
     keyValue.second = d->jetEndColor;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::TurbopropStartColorKey);
+    keyValue.first = ::TurbopropStartColorKey;
     keyValue.second = d->turbopropStartColor;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::TurbopropEndColorKey);
+    keyValue.first = ::TurbopropEndColorKey;
     keyValue.second = d->turbopropEndColor;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::PistonStartColorKey);
+    keyValue.first = ::PistonStartColorKey;
     keyValue.second = d->pistonStartColor;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::PistonEndColorKey);
+    keyValue.first = ::PistonEndColorKey;
     keyValue.second = d->pistonEndColor;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::AllStartColorKey);
+    keyValue.first = ::AllStartColorKey;
     keyValue.second = d->allStartColor;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::AllEndColorKey);
+    keyValue.first = ::AllEndColorKey;
     keyValue.second = d->allEndColor;
     keyValues.push_back(keyValue);
 }
@@ -333,47 +333,47 @@ void KmlExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::ColorStyleKey);
+    keyValue.first = ::ColorStyleKey;
     keyValue.second = Enum::underly(::DefaultColorStyle);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::NofColorsPerRampKey);
+    keyValue.first = ::NofColorsPerRampKey;
     keyValue.second = ::DefaultNofColorsPerRamp;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::LineWidthKey);
+    keyValue.first = ::LineWidthKey;
     keyValue.second = ::DefaultLineWidth;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::JetStartColorKey);
+    keyValue.first = ::JetStartColorKey;
     keyValue.second = QColor(::DefaultJetStartRgba);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::JetEndColorKey);
+    keyValue.first = ::JetEndColorKey;
     keyValue.second = QColor(::DefaultJetEndRgba);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::TurbopropStartColorKey);
+    keyValue.first = ::TurbopropStartColorKey;
     keyValue.second = QColor(::DefaultTurbopropStartRgba);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::TurbopropEndColorKey);
+    keyValue.first = ::TurbopropEndColorKey;
     keyValue.second = QColor(::DefaultTurbopropEndRgba);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::PistonStartColorKey);
+    keyValue.first = ::PistonStartColorKey;
     keyValue.second = QColor(::DefaultPistonStartRgba);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::PistonEndColorKey);
+    keyValue.first = ::PistonEndColorKey;
     keyValue.second = QColor(::DefaultPistonEndRgba);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::AllStartColorKey);
+    keyValue.first = ::AllStartColorKey;
     keyValue.second = QColor(::DefaultAllStartRgba);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::AllEndColorKey);
+    keyValue.first = ::AllEndColorKey;
     keyValue.second = QColor(::DefaultAllEndRgba);
     keysWithDefaults.push_back(keyValue);
 }
@@ -381,27 +381,27 @@ void KmlExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void KmlExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::ColorStyleKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::ColorStyleKey).toInt(&ok);
     d->colorStyle = ok && Enum::contains<KmlExportSettings::ColorStyle>(enumValue) ? static_cast<KmlExportSettings::ColorStyle>(enumValue) : ::DefaultColorStyle;
 
-    d->nofColorsPerRamp = valuesByKey.at(QString::fromLatin1(::NofColorsPerRampKey)).toInt(&ok);
+    d->nofColorsPerRamp = valuesByKey.at(::NofColorsPerRampKey).toInt(&ok);
     if (!ok) {
         d->nofColorsPerRamp = ::DefaultNofColorsPerRamp;
     }
 
-    d->lineWidth = valuesByKey.at(QString::fromLatin1(::LineWidthKey)).toFloat(&ok);
+    d->lineWidth = valuesByKey.at(::LineWidthKey).toFloat(&ok);
     if (!ok) {
         d->lineWidth = ::DefaultLineWidth;
     }
 
-    d->jetStartColor = valuesByKey.at(QString::fromLatin1(::JetStartColorKey)).value<QColor>();
-    d->jetEndColor = valuesByKey.at(QString::fromLatin1(::JetEndColorKey)).value<QColor>();
-    d->turbopropStartColor = valuesByKey.at(QString::fromLatin1(::TurbopropStartColorKey)).value<QColor>();
-    d->turbopropEndColor = valuesByKey.at(QString::fromLatin1(::TurbopropEndColorKey)).value<QColor>();
-    d->pistonStartColor = valuesByKey.at(QString::fromLatin1(::PistonStartColorKey)).value<QColor>();
-    d->pistonEndColor = valuesByKey.at(QString::fromLatin1(::PistonEndColorKey)).value<QColor>();
-    d->allStartColor = valuesByKey.at(QString::fromLatin1(::AllStartColorKey)).value<QColor>();
-    d->allEndColor = valuesByKey.at(QString::fromLatin1(::AllEndColorKey)).value<QColor>();
+    d->jetStartColor = valuesByKey.at(::JetStartColorKey).value<QColor>();
+    d->jetEndColor = valuesByKey.at(::JetEndColorKey).value<QColor>();
+    d->turbopropStartColor = valuesByKey.at(::TurbopropStartColorKey).value<QColor>();
+    d->turbopropEndColor = valuesByKey.at(::TurbopropEndColorKey).value<QColor>();
+    d->pistonStartColor = valuesByKey.at(::PistonStartColorKey).value<QColor>();
+    d->pistonEndColor = valuesByKey.at(::PistonEndColorKey).value<QColor>();
+    d->allStartColor = valuesByKey.at(::AllStartColorKey).value<QColor>();
+    d->allEndColor = valuesByKey.at(::AllEndColorKey).value<QColor>();
 }
 
 void KmlExportSettings::restoreDefaultsExtn() noexcept

@@ -82,9 +82,9 @@ void WaypointWidget::hideEvent(QHideEvent *event) noexcept
 
 void WaypointWidget::initUi() noexcept
 {
-    ui->latitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::GpsWPPrevLat));
-    ui->longitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::GpsWPPrevLon));
-    ui->altitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::GpsWPPrevAlt));
+    ui->latitudeLineEdit->setToolTip(SimVar::GpsWPPrevLat);
+    ui->longitudeLineEdit->setToolTip(SimVar::GpsWPPrevLon);
+    ui->altitudeLineEdit->setToolTip(SimVar::GpsWPPrevAlt);
 }
 
 // PRIVATE SLOTS
