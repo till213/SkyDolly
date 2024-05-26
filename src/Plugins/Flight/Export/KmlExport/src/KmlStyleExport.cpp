@@ -155,10 +155,10 @@ QString KmlStyleExport::getStyleUrl(Icon icon) noexcept
     QString styleUrl;
     switch (icon) {
     case Icon::Airport:
-        styleUrl = QStringLiteral("#sm_airports");
+        styleUrl = "#sm_airports";
         break;
     case Icon::Flag:
-        styleUrl = QStringLiteral("#sm_flag");
+        styleUrl = "#sm_flag";
         break;
     }
     return styleUrl;

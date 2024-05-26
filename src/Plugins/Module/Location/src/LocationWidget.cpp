@@ -319,13 +319,13 @@ void LocationWidget::initUi() noexcept
 
     ui->pitchSpinBox->setMinimum(::MinimumPitch);
     ui->pitchSpinBox->setMaximum(::MaximumPitch);
-    ui->pitchSpinBox->setSuffix(QStringLiteral("°"));
+    ui->pitchSpinBox->setSuffix("°");
     ui->bankSpinBox->setMinimum(::MinimumBank);
     ui->bankSpinBox->setMaximum(::MaximumBank);
-    ui->bankSpinBox->setSuffix(QStringLiteral("°"));
+    ui->bankSpinBox->setSuffix("°");
     ui->trueHeadingSpinBox->setMinimum(::MinimumHeading);
     ui->trueHeadingSpinBox->setMaximum(::MaximumHeading);
-    ui->trueHeadingSpinBox->setSuffix(QStringLiteral("°"));
+    ui->trueHeadingSpinBox->setSuffix("°");
     ui->indicatedAirspeedSpinBox->setMinimum(Const::MinimumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setMaximum(Const::MaximumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setSuffix(tr(" knots"));

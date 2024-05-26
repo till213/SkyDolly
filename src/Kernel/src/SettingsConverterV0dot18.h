@@ -38,7 +38,7 @@ class SettingsConverterV0dot18
 public:
     static inline void convert(const Version &settingsVersion, QSettings &settings) noexcept
     {
-        if (settingsVersion < Version(QStringLiteral("0.17.0"))) {
+        if (settingsVersion < Version("0.17.0")) {
             SettingsConverterV0dot17::convert(settingsVersion, settings);
         }
         settings.remove("Recording");

@@ -28,7 +28,6 @@
 #include <memory>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QSqlDatabase>
 
 #include <Kernel/Const.h>
@@ -64,38 +63,38 @@ public:
     // Implementation note:
     // Well-known database enumerations: TitleCase name must match with corresponding
     // snake_case name (without the "enum_" prefix) of the corresponding "enumeration table".
-    static inline const QString BackupPeriod {QStringLiteral("BackupPeriod")};
-    static inline const QString LocationType {QStringLiteral("LocationType")};
-    static inline const QString LocationCategory {QStringLiteral("LocationCategory")};
-    static inline const QString Country {QStringLiteral("Country")};
-    static inline const QString EngineEvent {QStringLiteral("EngineEvent")};
+    static inline const QString BackupPeriod {"BackupPeriod"};
+    static inline const QString LocationType {"LocationType"};
+    static inline const QString LocationCategory {"LocationCategory"};
+    static inline const QString Country {"Country"};
+    static inline const QString EngineEvent {"EngineEvent"};
 
     // Well-known symbolic IDs
 
     // Backup period
-    static inline const QString BackupPeriodNeverSymId = {QStringLiteral("NEVER")};
-    static inline const QString BackupPeriodNowSymId {QStringLiteral("NOW")};
-    static inline const QString BackupPeriodNextTimeSymId {QStringLiteral("NEXT")};
-    static inline const QString BackupPeriodMonthlySymId {QStringLiteral("MONTH")};
-    static inline const QString BackupPeriodWeeklySymId {QStringLiteral("WEEK")};
-    static inline const QString BackupPeriodDailySymId {QStringLiteral("DAY")};
-    static inline const QString BackupPeriodAlwaysSymId {QStringLiteral("ALWAYS")};
+    static inline const QString BackupPeriodNeverSymId = {"NEVER"};
+    static inline const QString BackupPeriodNowSymId {"NOW"};
+    static inline const QString BackupPeriodNextTimeSymId {"NEXT"};
+    static inline const QString BackupPeriodMonthlySymId {"MONTH"};
+    static inline const QString BackupPeriodWeeklySymId {"WEEK"};
+    static inline const QString BackupPeriodDailySymId {"DAY"};
+    static inline const QString BackupPeriodAlwaysSymId {"ALWAYS"};
 
     // Location type
-    static inline const QString LocationTypeSystemSymId {QStringLiteral("S")};
-    static inline const QString LocationTypeImportSymId {QStringLiteral("I")};
-    static inline const QString LocationTypeUserSymId {QStringLiteral("U")};
+    static inline const QString LocationTypeSystemSymId {"S"};
+    static inline const QString LocationTypeImportSymId {"I"};
+    static inline const QString LocationTypeUserSymId {"U"};
 
     // Location category
-    static inline const QString LocationCategoryNoneSymId {QStringLiteral("00")};
+    static inline const QString LocationCategoryNoneSymId {"00"};
 
     // Country
-    static inline const QString CountryWorldSymId {QStringLiteral("00")};
+    static inline const QString CountryWorldSymId {"00"};
 
     // Engine event
-    static inline const QString EngineEventStartSymId {QStringLiteral("START")};
-    static inline const QString EngineEventStopSymId {QStringLiteral("STOP")};
-    static inline const QString EngineEventKeepSymId {QStringLiteral("KEEP")};
+    static inline const QString EngineEventStartSymId {"START"};
+    static inline const QString EngineEventStopSymId {"STOP"};
+    static inline const QString EngineEventKeepSymId {"KEEP"};
 
 private:
     std::unique_ptr<EnumerationServicePrivate> d;

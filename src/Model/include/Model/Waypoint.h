@@ -52,8 +52,8 @@ struct MODEL_API Waypoint final : public TimeVariableData
     bool isValid() const noexcept;
 
     static const Waypoint NullWaypoint;
-    static inline const QString CustomDepartureIdentifier {QStringLiteral("CUSTD")};
-    static inline const QString CustomArrivalIdentifier {QStringLiteral("CUSTA")};
+    static inline const QString CustomDepartureIdentifier {"CUSTD"};
+    static inline const QString CustomArrivalIdentifier {"CUSTA"};
 };
 
 #endif // WAYPOINT_H

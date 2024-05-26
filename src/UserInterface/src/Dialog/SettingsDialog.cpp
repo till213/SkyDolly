@@ -74,11 +74,11 @@ struct SettingsDialogPrivate
         if (knownStyleNames.empty()) {
             knownStyleNames = {
                 { Settings::DefaultStyleKey, QApplication::translate("SettingsDialogPrivate", "Default") },
-                { ::WindowsStyleKey, QStringLiteral("Windows") },
-                { ::FusionStyleKey, QStringLiteral("Fusion") },
-                { ::WindowsVistaStyleKey, QStringLiteral("Windows Vista") },
-                { ::Windows11StyleKey, QStringLiteral("Windows 11") },
-                { ::MacOSStyleKey, QStringLiteral("macOS") }
+                { ::WindowsStyleKey, "Windows" },
+                { ::FusionStyleKey, "Fusion" },
+                { ::WindowsVistaStyleKey, "Windows Vista" },
+                { ::Windows11StyleKey, "Windows 11" },
+                { ::MacOSStyleKey, "macOS" }
             };
         }
     }

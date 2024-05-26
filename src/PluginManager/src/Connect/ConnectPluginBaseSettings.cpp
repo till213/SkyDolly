@@ -51,14 +51,14 @@ struct ConnectPluginBaseSettingsPrivate
     FlightSimulatorShortcuts flightSimulatorShortcuts {DefaultFlightSimulatorShortcuts};
 
     // Defaults
-    static inline const QKeySequence DefaultRecordShortcut{QStringLiteral("Ctrl+R")};
-    static inline const QKeySequence DefaultReplayShortcut{QStringLiteral("Ctrl+P")};
-    static inline const QKeySequence DefaultPauseShortcut{QStringLiteral("Alt+P")};
-    static inline const QKeySequence DefaultStopShortcut{QStringLiteral("Ctrl+S")};
-    static inline const QKeySequence DefaultBackwardShortcut{QStringLiteral("Ctrl+,")};
-    static inline const QKeySequence DefaultForwardShortcut{QStringLiteral("Ctrl+.")};
-    static inline const QKeySequence DefaultBeginShortcut{QStringLiteral("Ctrl+PgUp")};
-    static inline const QKeySequence DefaultEndShortcut{QStringLiteral("Ctrl+PgDown")};
+    static inline const QKeySequence DefaultRecordShortcut {"Ctrl+R"};
+    static inline const QKeySequence DefaultReplayShortcut {"Ctrl+P"};
+    static inline const QKeySequence DefaultPauseShortcut {"Alt+P"};
+    static inline const QKeySequence DefaultStopShortcut {"Ctrl+S"};
+    static inline const QKeySequence DefaultBackwardShortcut {"Ctrl+,"};
+    static inline const QKeySequence DefaultForwardShortcut {"Ctrl+."};
+    static inline const QKeySequence DefaultBeginShortcut {"Ctrl+PgUp"};
+    static inline const QKeySequence DefaultEndShortcut {"Ctrl+PgDown"};
     static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {
         DefaultRecordShortcut,
         DefaultReplayShortcut,

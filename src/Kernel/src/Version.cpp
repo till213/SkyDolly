@@ -25,7 +25,6 @@
 #include <memory>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QChar>
 #include <QRegularExpression>
@@ -48,7 +47,7 @@ struct VersionPrivate
 
     // https://www.yourdictionary.com/articles/adjectives-that-start-with-h
     // https://en.wikipedia.org/wiki/List_of_aircraft_(H)
-    static inline const QString CodeName {QStringLiteral("Humble Hawker")};
+    static inline const QString CodeName {"Humble Hawker"};
 };
 
 // PUBLIC
@@ -65,6 +64,12 @@ Version::Version(QStringView version) noexcept
     : d {std::make_unique<VersionPrivate>()}
 {
     fromString(version);
+}
+
+Version::Version(const char *version) noexcept
+    : d {std::make_unique<VersionPrivate>()}
+{
+    fromString(QString::fromLatin1(version));
 }
 
 Version::Version(Version &&rhs) noexcept = default;
@@ -151,7 +156,7 @@ QString Version::getUserVersion() noexcept
     const QDate gitDate = getGitDate().date();
     const int year = gitDate.year();
     const int month = gitDate.month();
-    userVersion = QStringLiteral("%1").arg(year) % "." % QStringLiteral("%1").arg(month, 2, 10, QChar('0'));
+    userVersion = QString("%1").arg(year) % "." % QString("%1").arg(month, 2, 10, QChar('0'));
     return userVersion;
 }
 

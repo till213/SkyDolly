@@ -84,25 +84,25 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates(bool *ok) const n
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(QStringLiteral(
+    query.prepare(
         "select strftime('%Y', f.creation_time) as year, strftime('%m', f.creation_time) as month, "
         "strftime('%d', f.creation_time) as day, count(f.id) as nof_flights "
         "from  flight f "
         "group by year, month, day"
-    ));
+    );
 
     const bool success = query.exec();
     if (success) {
         QSqlRecord record = query.record();
-        const int yearIdx = record.indexOf(QStringLiteral("year"));
-        const int monthIdx = record.indexOf(QStringLiteral("month"));
-        const int dayIdx = record.indexOf(QStringLiteral("day"));
-        const int nofFlightIdx = record.indexOf(QStringLiteral("nof_flights"));
+        const auto yearIdx = record.indexOf("year");
+        const auto monthIdx = record.indexOf("month");
+        const auto dayIdx = record.indexOf("day");
+        const auto nofFlightIdx = record.indexOf("nof_flights");
         while (query.next()) {
-            const int year = query.value(yearIdx).toInt();
-            const int month = query.value(monthIdx).toInt();
-            const int day = query.value(dayIdx).toInt();
-            const int nofFlights = query.value(nofFlightIdx).toInt();
+            const auto year = query.value(yearIdx).toInt();
+            const auto month = query.value(monthIdx).toInt();
+            const auto day = query.value(dayIdx).toInt();
+            const auto nofFlights = query.value(nofFlightIdx).toInt();
             flightDates.emplace_front(year, month, day, nofFlights);
         }
 #ifdef DEBUG
@@ -123,7 +123,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
 
     QString searchKeyword;
     if (!flightSelector.searchKeyword.isEmpty()) {
-        const QString LikeOperatorPlaceholder {QStringLiteral("%")};
+        const QString LikeOperatorPlaceholder {"%"};
         // Add like operator placeholders
         searchKeyword = LikeOperatorPlaceholder % flightSelector.searchKeyword % LikeOperatorPlaceholder;
     }
@@ -131,7 +131,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(QStringLiteral(
+    query.prepare(
         "select f.id, f.creation_time, f.title, f.flight_number, a.type,"
         "       (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
         "       f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
@@ -158,16 +158,16 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         "  and (   :duration = 0"
         "       or round((julianday(f.end_zulu_sim_time) - julianday(f.start_zulu_sim_time)) * 1440) >= :duration"
         "      );"
-    ));
+    );
 
-    const int aircraftCount = flightSelector.hasFormation ? 1 : 0;
-    query.bindValue(QStringLiteral(":from_date"), flightSelector.fromDate);
-    query.bindValue(QStringLiteral(":to_date"), flightSelector.toDate);
-    query.bindValue(QStringLiteral(":search_keyword"), searchKeyword);
-    query.bindValue(QStringLiteral(":aircraft_count"), aircraftCount);
+    const auto aircraftCount = flightSelector.hasFormation ? 1 : 0;
+    query.bindValue(":from_date", flightSelector.fromDate);
+    query.bindValue(":to_date", flightSelector.toDate);
+    query.bindValue(":search_keyword", searchKeyword);
+    query.bindValue(":aircraft_count", aircraftCount);
     const QVariant engineTypeVariant = flightSelector.engineType != SimType::EngineType::All ? Enum::underly(flightSelector.engineType) : QVariant();
-    query.bindValue(QStringLiteral(":engine_type"), engineTypeVariant);
-    query.bindValue(QStringLiteral(":duration"), flightSelector.mininumDurationMinutes);
+    query.bindValue(":engine_type", engineTypeVariant);
+    query.bindValue(":duration", flightSelector.mininumDurationMinutes);
     const bool success = query.exec();
     if (success) {
         const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -178,18 +178,18 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
             summaries.reserve(::DefaultFlightCapacity);
         }
         QSqlRecord record = query.record();
-        const int idIdx = record.indexOf(QStringLiteral("id"));
-        const int creationTimeIdx = record.indexOf(QStringLiteral("creation_time"));
-        const int typeIdx = record.indexOf(QStringLiteral("type"));
-        const int flightNumberIdx = record.indexOf(QStringLiteral("flight_number"));
-        const int aircraftCountIdx = record.indexOf(QStringLiteral("aircraft_count"));
-        const int startLocalSimulationTimeIdx = record.indexOf(QStringLiteral("start_local_sim_time"));
-        const int startZuluSimulationTimeIdx = record.indexOf(QStringLiteral("start_zulu_sim_time"));
-        const int startWaypointIdx = record.indexOf(QStringLiteral("start_waypoint"));
-        const int endLocalSimulationTimeIdx = record.indexOf(QStringLiteral("end_local_sim_time"));
-        const int endZuluSimulationTimeIdx = record.indexOf(QStringLiteral("end_zulu_sim_time"));
-        const int endWaypointIdx = record.indexOf(QStringLiteral("end_waypoint"));
-        const int titleIdx = record.indexOf(QStringLiteral("title"));
+        const auto idIdx = record.indexOf("id");
+        const auto creationTimeIdx = record.indexOf("creation_time");
+        const auto typeIdx = record.indexOf("type");
+        const auto flightNumberIdx = record.indexOf("flight_number");
+        const auto aircraftCountIdx = record.indexOf("aircraft_count");
+        const auto startLocalSimulationTimeIdx = record.indexOf("start_local_sim_time");
+        const auto startZuluSimulationTimeIdx = record.indexOf("start_zulu_sim_time");
+        const auto startWaypointIdx = record.indexOf("start_waypoint");
+        const auto endLocalSimulationTimeIdx = record.indexOf("end_local_sim_time");
+        const auto endZuluSimulationTimeIdx = record.indexOf("end_zulu_sim_time");
+        const auto endWaypointIdx = record.indexOf("end_waypoint");
+        const auto titleIdx = record.indexOf("title");
         while (query.next()) {
             FlightSummary summary;
             summary.flightId = query.value(idIdx).toLongLong();
@@ -230,7 +230,7 @@ std::vector<std::int64_t> SQLiteLogbookDao::getFlightIds(const FlightSelector &f
 
     QString searchKeyword;
     if (!flightSelector.searchKeyword.isEmpty()) {
-        const QString LikeOperatorPlaceholder {QStringLiteral("%")};
+        const QString LikeOperatorPlaceholder {"%"};
         // Add like operator placeholders
         searchKeyword = LikeOperatorPlaceholder  % flightSelector.searchKeyword % LikeOperatorPlaceholder;
     }
@@ -238,7 +238,7 @@ std::vector<std::int64_t> SQLiteLogbookDao::getFlightIds(const FlightSelector &f
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(QStringLiteral(
+    query.prepare(
         "select f.id,"
         "       (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
         "       f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
@@ -264,16 +264,16 @@ std::vector<std::int64_t> SQLiteLogbookDao::getFlightIds(const FlightSelector &f
         "  and (   :duration = 0"
         "       or round((julianday(f.end_zulu_sim_time) - julianday(f.start_zulu_sim_time)) * 1440) >= :duration"
         "      );"
-    ));
+    );
 
-    const int aircraftCount = flightSelector.hasFormation ? 1 : 0;
-    query.bindValue(QStringLiteral(":from_date"), flightSelector.fromDate);
-    query.bindValue(QStringLiteral(":to_date"), flightSelector.toDate);
-    query.bindValue(QStringLiteral(":search_keyword"), searchKeyword);
-    query.bindValue(QStringLiteral(":aircraft_count"), aircraftCount);
+    const auto aircraftCount = flightSelector.hasFormation ? 1 : 0;
+    query.bindValue(":from_date", flightSelector.fromDate);
+    query.bindValue(":to_date", flightSelector.toDate);
+    query.bindValue(":search_keyword", searchKeyword);
+    query.bindValue(":aircraft_count", aircraftCount);
     const QVariant engineTypeVariant = flightSelector.engineType != SimType::EngineType::All ? Enum::underly(flightSelector.engineType) : QVariant();
-    query.bindValue(QStringLiteral(":engine_type"), engineTypeVariant);
-    query.bindValue(QStringLiteral(":duration"), flightSelector.mininumDurationMinutes);
+    query.bindValue(":engine_type", engineTypeVariant);
+    query.bindValue(":duration", flightSelector.mininumDurationMinutes);
     const bool success = query.exec();
     if (success) {
         const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -284,7 +284,7 @@ std::vector<std::int64_t> SQLiteLogbookDao::getFlightIds(const FlightSelector &f
             flightIds.reserve(::DefaultFlightCapacity);
         }
         QSqlRecord record = query.record();
-        const int idIdx = record.indexOf(QStringLiteral("id"));
+        const auto idIdx = record.indexOf("id");
         while (query.next()) {
             std::int64_t flightId = query.value(idIdx).toLongLong();
             flightIds.push_back(flightId);

@@ -74,13 +74,13 @@ void ExceptionHandler::onTerminate() noexcept
                 std::rethrow_exception(ex);
             } catch (const std::exception &ex) {
                 errorCode = ErrorCodes::StandardException;
-                onError(QStringLiteral("Terminate"), stackTrace, ex);
+                onError("Terminate", stackTrace, ex);
             } catch(...) {
                 errorCode = ErrorCodes::UnknownException;
-                onError(QStringLiteral("Terminate"), stackTrace, QStringLiteral("Non std::exception"));
+                onError("Terminate", stackTrace, "Non std::exception");
             }
         } else {
-            onError(QStringLiteral("Unknown Error"), stackTrace, QStringLiteral("An unknown error occurred"));
+            onError("Unknown Error", stackTrace, "An unknown error occurred");
             errorCode = ErrorCodes::UnknownError;
         }
     } catch (const std::exception &ex) {

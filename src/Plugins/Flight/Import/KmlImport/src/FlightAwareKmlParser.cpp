@@ -76,7 +76,7 @@ void FlightAwareKmlParser::parsePlacemark(FlightData &flightData) noexcept
 #endif
         if (xmlName == Kml::name) {
             placemarkName = xml->readElementText();
-            if (placemarkName.endsWith(QStringLiteral(" Airport"))) {
+            if (placemarkName.endsWith(" Airport")) {
                 // Extract the 4 letter ICAO code
                 placemarkName = placemarkName.left(4);
             }
@@ -104,20 +104,20 @@ void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrN
 #endif
         if (xmlName == QStringLiteral("coordinates")) {
             const QString coordinatesText = xml->readElementText();
-            const QStringList coordinates = coordinatesText.split(QStringLiteral(","));
+            const QStringList coordinates = coordinatesText.split(",");
             if (coordinates.count() == 3) {
                 Waypoint waypoint;
                 waypoint.longitude = coordinates.at(0).toFloat(&ok);
                 if (!ok) {
-                    xml->raiseError(QStringLiteral("Invalid longitude number."));
+                    xml->raiseError("Invalid longitude number.");
                 }
                 waypoint.latitude = coordinates.at(1).toFloat(&ok);
                 if (!ok) {
-                    xml->raiseError(QStringLiteral("Invalid latitude number."));
+                    xml->raiseError("Invalid latitude number.");
                 }
                 waypoint.altitude = coordinates.at(2).toFloat(&ok);
                 if (!ok) {
-                    xml->raiseError(QStringLiteral("Invalid altitude number."));
+                    xml->raiseError("Invalid altitude number.");
                 }
                 waypoint.identifier = icaoOrName;
                 // The actual timestamps of the waypoints are later updated
@@ -127,7 +127,7 @@ void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrN
 
                 aircraft.getFlightPlan().add(std::move(waypoint));
             } else {
-                xml->raiseError(QStringLiteral("Invalid GPS coordinate."));
+                xml->raiseError("Invalid GPS coordinate.");
             }
         } else {
             xml->skipCurrentElement();

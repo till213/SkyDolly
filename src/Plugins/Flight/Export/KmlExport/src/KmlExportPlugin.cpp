@@ -207,18 +207,16 @@ bool KmlExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice 
 
 bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inFormation, QIODevice &io) const noexcept
 {
-    const QString lineStringBegin = QStringLiteral(
+    const QString lineStringBegin = 
 "        <LineString>\n"
 "          <extrude>1</extrude>\n"
 "          <tessellate>1</tessellate>\n"
 "          <altitudeMode>absolute</altitudeMode>\n"
-"          <coordinates>\n"
-    );
-    const QString lineStringEnd = QStringLiteral(
+"          <coordinates>\n";
+    const QString lineStringEnd = 
 "\n"
 "          </coordinates>\n"
-"        </LineString>\n"
-    );
+"        </LineString>\n";
 
     std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
@@ -277,10 +275,9 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
 
         }
         if (ok) {
-            const QString placemarkEnd = QStringLiteral(
+            const QString placemarkEnd = 
 "      </MultiGeometry>\n"
-"    </Placemark>\n"
-            );
+"    </Placemark>\n";
             ok = io.write(placemarkEnd.toUtf8());
         }
 
@@ -301,10 +298,9 @@ bool KmlExportPlugin::exportWaypoints(const FlightPlan &flightPlan, QIODevice &i
 
 bool KmlExportPlugin::exportFooter(QIODevice &io) const noexcept
 {
-    const QString footer = QStringLiteral(
+    const QString footer = 
 "  </Document>\n"
-"</kml>\n"
-    );
+"</kml>\n";
     return io.write(footer.toUtf8());
 }
 

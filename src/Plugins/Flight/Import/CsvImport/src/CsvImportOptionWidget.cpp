@@ -68,8 +68,8 @@ void CsvImportOptionWidget::frenchConnection() noexcept
 
 void CsvImportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem(QStringLiteral("Flightradar24"), Enum::underly(CsvImportSettings::Format::Flightradar24));
-    ui->formatComboBox->addItem(QStringLiteral("Flight Recorder"), Enum::underly(CsvImportSettings::Format::FlightRecorder));
+    ui->formatComboBox->addItem("Flightradar24", Enum::underly(CsvImportSettings::Format::Flightradar24));
+    ui->formatComboBox->addItem("Flight Recorder", Enum::underly(CsvImportSettings::Format::FlightRecorder));
 }
 
 // PRIVATE SLOTS

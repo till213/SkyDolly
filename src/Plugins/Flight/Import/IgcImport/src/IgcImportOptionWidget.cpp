@@ -79,7 +79,7 @@ void IgcImportOptionWidget::initUi() noexcept
 
     // Percent [0, 100]
     ui->enlThresholdSpinBox->setRange(0, 100);
-    ui->enlThresholdSpinBox->setSuffix(QStringLiteral("%"));
+    ui->enlThresholdSpinBox->setSuffix("%");
     ui->enlThresholdSpinBox->setSingleStep(5);
 }
 

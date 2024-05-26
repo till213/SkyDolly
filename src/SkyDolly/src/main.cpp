@@ -116,11 +116,11 @@ int main(int argc, char **argv) noexcept
         destroySingletons();
     } catch (const std::exception &ex) {
         const QString stackTrace = StackTrace::generate();
-        ExceptionHandler::onError(QStringLiteral("Exception"), stackTrace, ex);
+        ExceptionHandler::onError("Exception", stackTrace, ex);
         res = ErrorCodes::StandardException;
     } catch (...) {
         const QString stackTrace = StackTrace::generate();
-        ExceptionHandler::onError(QStringLiteral("Exception"), stackTrace, QStringLiteral("Non std::exception"));
+        ExceptionHandler::onError("Exception", stackTrace, "Non std::exception");
         res = ErrorCodes::UnknownException;
     }
 

@@ -42,7 +42,7 @@ class SettingsConverterV0dot16
 public:
     static inline void convert(const Version &settingsVersion, QSettings &settings) noexcept
     {
-        if (settingsVersion < Version(QStringLiteral("0.13.0"))) {
+        if (settingsVersion < Version("0.13.0")) {
             SettingsConverterV0dot13::convert(settingsVersion, settings);
         }
         convertPlugins(settings);
@@ -52,9 +52,9 @@ public:
 private:
     static inline void convertPlugins(QSettings &settings) noexcept
     {
-        static const QString AddToFlightEnabledKey {QStringLiteral("AddToFlightEnabled")};
-        static const QString ImportDirectoryKey = {QStringLiteral("ImportDirectoryEnabled")};
-        static const QString AircraftImportModeKey = {QStringLiteral("AircraftImportMode")};
+        static const QString AddToFlightEnabledKey {"AddToFlightEnabled"};
+        static const QString ImportDirectoryKey {"ImportDirectoryEnabled"};
+        static const QString AircraftImportModeKey {"AircraftImportMode"};
         bool addToFlight {false};
         bool importDirectory {false};
 

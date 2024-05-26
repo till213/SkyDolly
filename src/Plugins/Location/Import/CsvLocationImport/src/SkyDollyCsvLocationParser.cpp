@@ -187,7 +187,7 @@ Location SkyDollyCsvLocationParser::parseLocation(CsvParser::Row row, bool &ok) 
     if (ok) {
         const QString onGround = row.at(Enum::underly(::Index::OnGround));
         if (ok) {
-            location.onGround = onGround == QStringLiteral("true") ? true : false;
+            location.onGround = onGround == "true" ? true : false;
         }
     }
     if (ok) {

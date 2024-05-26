@@ -86,27 +86,27 @@ struct LittleNavmapCsvParserPrivate
 
 private:
     inline void initTypeToSymIdMap() {
-        typeToSymId[QStringLiteral("addon")] = QStringLiteral("AP");
-        typeToSymId[QStringLiteral("airport")] = QStringLiteral("AP");
-        typeToSymId[QStringLiteral("airstrip")] = QStringLiteral("AS");
-        typeToSymId[QStringLiteral("building")] = QStringLiteral("BU");
-        typeToSymId[QStringLiteral("cabin")] = QStringLiteral("CB");
-        typeToSymId[QStringLiteral("helipad")] = QStringLiteral("HP");
-        typeToSymId[QStringLiteral("history")] = QStringLiteral("HI");
-        typeToSymId[QStringLiteral("landform")] = QStringLiteral("LM");
-        typeToSymId[QStringLiteral("lighthouse")] = QStringLiteral("LH");
-        typeToSymId[QStringLiteral("location")] = QStringLiteral("PO");
-        typeToSymId[QStringLiteral("marker")] = QStringLiteral("PO");
-        typeToSymId[QStringLiteral("mountain")] = QStringLiteral("MO");
-        typeToSymId[QStringLiteral("obstacle")] = QStringLiteral("OB");
-        typeToSymId[QStringLiteral("other")] = QStringLiteral("OT");
-        typeToSymId[QStringLiteral("oil platform")] = QStringLiteral("OP");
-        typeToSymId[QStringLiteral("park")] = QStringLiteral("PA");
-        typeToSymId[QStringLiteral("pin")] = QStringLiteral("PO");
-        typeToSymId[QStringLiteral("poi")] = QStringLiteral("PO");
-        typeToSymId[QStringLiteral("seaport")] = QStringLiteral("SP");
-        typeToSymId[QStringLiteral("settlement")] = QStringLiteral("ST");
-        typeToSymId[QStringLiteral("water")] = QStringLiteral("LA");
+        typeToSymId["addon"] = "AP";
+        typeToSymId["airport"] = "AP";
+        typeToSymId["airstrip"] = "AS";
+        typeToSymId["building"] = "BU";
+        typeToSymId["cabin"] = "CB";
+        typeToSymId["helipad"] = "HP";
+        typeToSymId["history"] = "HI";
+        typeToSymId["landform"] = "LM";
+        typeToSymId["lighthouse"] = "LH";
+        typeToSymId["location"] = "PO";
+        typeToSymId["marker"] = "PO";
+        typeToSymId["mountain"] = "MO";
+        typeToSymId["obstacle"] = "OB";
+        typeToSymId["other"] = "OT";
+        typeToSymId["oil platform"] = "OP";
+        typeToSymId["park"] = "PA";
+        typeToSymId["pin"] = "PO";
+        typeToSymId["poi"] = "PO";
+        typeToSymId["seaport"] = "SP";
+        typeToSymId["settlement"] = "ST";
+        typeToSymId["water"] = "LA";
     }
 };
 

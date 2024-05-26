@@ -314,7 +314,7 @@ bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
             d->header.flightNumber = match.captured(::HRecordFlightNumberIndex);
         } else {
             // Assume first flight of day
-            d->header.flightNumber = QStringLiteral("1");
+            d->header.flightNumber = "1";
         }
 
         ok = true;

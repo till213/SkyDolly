@@ -82,7 +82,7 @@ std::vector<FlightData> GpxParser::parse() noexcept
         if (d->xml.name() == Gpx::gpx) {
             flights = parseGPX();
         } else {
-            d->xml.raiseError(QStringLiteral("The file is not a GPX file."));
+            d->xml.raiseError("The file is not a GPX file.");
         }
     }
     return flights;
@@ -346,10 +346,10 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
     if (ok) {
         longitude = attributes.value(Gpx::lon).toDouble(&ok);
         if (!ok) {
-            d->xml.raiseError(QStringLiteral("Could not parse waypoint longitude value."));
+            d->xml.raiseError("Could not parse waypoint longitude value.");
         }
     } else {
-        d->xml.raiseError(QStringLiteral("Could not parse waypoint latitude value."));
+        d->xml.raiseError("Could not parse waypoint latitude value.");
     }
 
     // In meters
@@ -359,7 +359,7 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
             const QString elevationText = d->xml.readElementText();
             altitude = elevationText.toDouble(&ok);
             if (!ok) {
-                d->xml.raiseError(QStringLiteral("Could not parse waypoint altitude value."));
+                d->xml.raiseError("Could not parse waypoint altitude value.");
             }
         } else if (d->xml.name() == Gpx::name) {
             identifier = d->xml.readElementText();
@@ -368,7 +368,7 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
             dateTime = QDateTime::fromString(d->xml.readElementText(), Qt::ISODate);
             ok = dateTime.isValid();
             if (!ok) {
-                d->xml.raiseError(QStringLiteral("Invalid timestamp."));
+                d->xml.raiseError("Invalid timestamp.");
             }
         } else {
             d->xml.skipCurrentElement();

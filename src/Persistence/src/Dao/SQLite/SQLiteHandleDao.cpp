@@ -151,18 +151,18 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
             aircraftHandleData.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
-        const int timestampIdx = record.indexOf("timestamp");
-        const int brakeLeftPositionIdx = record.indexOf("brake_left_position");
-        const int brakeRightPositionIdx = record.indexOf("brake_right_position");
-        const int waterRudderHandlePositionIdx = record.indexOf("water_rudder_handle_position");
-        const int tailhookPositionIdx = record.indexOf("tailhook_position");
-        const int canopyOpenIdx = record.indexOf("canopy_open");
-        const int leftWingFoldingIdx = record.indexOf("left_wing_folding");
-        const int rightWingFoldingIdx = record.indexOf("right_wing_folding");
-        const int gearHandlePositionIdx = record.indexOf("gear_handle_position");
-        const int tailhookHandlePositionIdx = record.indexOf("tailhook_handle_position");
-        const int foldingWingHandlePositionIdx = record.indexOf("folding_wing_handle_position");
-        const int smokeEnablePositionIdx = record.indexOf("smoke_enable");
+        const auto timestampIdx = record.indexOf("timestamp");
+        const auto brakeLeftPositionIdx = record.indexOf("brake_left_position");
+        const auto brakeRightPositionIdx = record.indexOf("brake_right_position");
+        const auto waterRudderHandlePositionIdx = record.indexOf("water_rudder_handle_position");
+        const auto tailhookPositionIdx = record.indexOf("tailhook_position");
+        const auto canopyOpenIdx = record.indexOf("canopy_open");
+        const auto leftWingFoldingIdx = record.indexOf("left_wing_folding");
+        const auto rightWingFoldingIdx = record.indexOf("right_wing_folding");
+        const auto gearHandlePositionIdx = record.indexOf("gear_handle_position");
+        const auto tailhookHandlePositionIdx = record.indexOf("tailhook_handle_position");
+        const auto foldingWingHandlePositionIdx = record.indexOf("folding_wing_handle_position");
+        const auto smokeEnablePositionIdx = record.indexOf("smoke_enable");
         while (query.next()) {
             AircraftHandleData data;
             data.timestamp = query.value(timestampIdx).toLongLong();

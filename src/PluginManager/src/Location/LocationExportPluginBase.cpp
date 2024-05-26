@@ -26,6 +26,7 @@
 
 #include <QString>
 #include <QStringLiteral>
+#include <QStringBuilder>
 #include <QWidget>
 #include <QIODevice>
 #include <QFile>
@@ -156,7 +157,7 @@ bool LocationExportPluginBase::exportLocations(const std::vector<Location> &loca
     if (ok) {
         const LocationExportPluginBaseSettings &settings = getPluginSettings();
         if (settings.isOpenExportedFilesEnabled()) {
-            const QString fileUrl = QStringLiteral("file:///") + filePath;
+            const QString fileUrl = QStringLiteral("file:///") % filePath;
             QDesktopServices::openUrl(QUrl(fileUrl));
         }
     } else {

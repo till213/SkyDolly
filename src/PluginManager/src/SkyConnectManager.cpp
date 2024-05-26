@@ -518,7 +518,7 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QJsonObject pluginMetadata {metaData.value(QStringLiteral("MetaData")).toObject()};
+                const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
                 const QUuid uuid {pluginMetadata.value(PluginUuidKey).toString()};
                 const QString pluginName {pluginMetadata.value(PluginNameKey).toString()};
                 const QString flightSimulatorName {pluginMetadata.value(PluginFlightSimulatorNameKey).toString()};
