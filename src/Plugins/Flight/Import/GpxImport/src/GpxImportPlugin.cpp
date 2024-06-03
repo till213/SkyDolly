@@ -57,18 +57,18 @@ struct GpxImportPluginPrivate
     QXmlStreamReader xml;    
     std::unique_ptr<GpxParser> parser;
 
-    static inline const QString FileExtension {QStringLiteral("gpx")};
+    static inline const QString FileExtension {"gpx"};
 };
 
 // PUBLIC
 
 GpxImportPlugin::GpxImportPlugin() noexcept
-    : d(std::make_unique<GpxImportPluginPrivate>())
+    : d {std::make_unique<GpxImportPluginPrivate>()}
 {}
 
 GpxImportPlugin::~GpxImportPlugin() = default;
 
-std::vector<FlightData> GpxImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+std::vector<FlightData> GpxImportPlugin::importFlightData(QIODevice &io, bool &ok) noexcept
 {
     d->xml.setDevice(&io);
     std::vector<FlightData> flights = parseGPX();

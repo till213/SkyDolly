@@ -142,6 +142,11 @@ public:
         m_data.reserve(size);
     }
 
+    void insert(typename Data::size_type count, const T &value)
+    {
+        m_data.insert(m_data.end(), count, value);
+    }
+
     typename Data::size_type capacity() const noexcept
     {
         return m_data.capacity();

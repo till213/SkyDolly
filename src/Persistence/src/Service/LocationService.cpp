@@ -53,7 +53,7 @@ struct LocationServicePrivate
 // PUBLIC
 
 LocationService::LocationService(QString connectionName) noexcept
-    : d(std::make_unique<LocationServicePrivate>(std::move(connectionName)))
+    : d {std::make_unique<LocationServicePrivate>(std::move(connectionName))}
 {}
 
 LocationService::LocationService(LocationService &&rhs) noexcept = default;
@@ -75,7 +75,22 @@ bool LocationService::store(Location &location) noexcept
     return ok;
 }
 
-bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noexcept
+bool LocationService::exportLocation(const Location &location) noexcept
+{
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
+    if (ok) {
+        ok = d->locationDao->exportLocation(location);
+        if (ok) {
+            ok = db.commit();
+        } else {
+            db.rollback();
+        }
+    }
+    return ok;
+}
+
+bool LocationService::storeAll(std::vector<Location> &locations, Mode mode, double distanceKm) noexcept
 {
     static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
@@ -83,7 +98,7 @@ bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noex
     auto it = locations.begin();
     while (it != locations.end() && ok) {
         if (mode != Mode::Insert) {
-            const std::vector<Location> neighbours = d->locationDao->getByPosition(it->latitude, it->longitude, 0.0, &ok);
+            const std::vector<Location> neighbours = d->locationDao->getByPosition(it->latitude, it->longitude, distanceKm, &ok);
             if (neighbours.size() == 0) {
                 ok = d->locationDao->add(*it);
             } else if (mode == Mode::Update) {                
@@ -97,6 +112,25 @@ bool LocationService::storeAll(std::vector<Location> &locations, Mode mode) noex
             // Unconditional insert
             ok = d->locationDao->add(*it);
         }
+        ++it;
+    }
+    if (ok) {
+        ok = db.commit();
+    } else {
+        db.rollback();
+    }
+    return ok;
+}
+
+bool LocationService::exportAll(const std::vector<Location> &locations) noexcept
+{
+    static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
+    QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    bool ok = db.transaction();
+    auto it = locations.begin();
+    while (it != locations.end() && ok) {
+        // Unconditional insert
+        ok = d->locationDao->exportLocation(*it);
         ++it;
     }
     if (ok) {

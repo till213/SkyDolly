@@ -28,9 +28,9 @@
 
 double SkySearch::normaliseTimestamp(const TimeVariableData &p1, const TimeVariableData &p2, std::int64_t timestamp) noexcept
 {
-    std::int64_t t2 = p2.timestamp - p1.timestamp;
+    const auto t2 = p2.timestamp - p1.timestamp;
     if (t2 != 0) {
-        std::int64_t t1 = timestamp - p1.timestamp;
+        const auto t1 = timestamp - p1.timestamp;
         return static_cast<double>(t1) / static_cast<double>(t2);
     } else {
         // p1 and p2 are the same (last sampled) point

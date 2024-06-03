@@ -53,9 +53,9 @@ struct LogbookBackupDialogPrivate
 // PUBLIC
 
 LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
-    : QDialog(parent),
-      ui(std::make_unique<Ui::LogbookBackupDialog>()),
-      d(std::make_unique<LogbookBackupDialogPrivate>())
+    : QDialog {parent},
+      ui {std::make_unique<Ui::LogbookBackupDialog>()},
+      d {std::make_unique<LogbookBackupDialogPrivate>()}
 {
     ui->setupUi(this);
     initUi();
@@ -154,8 +154,7 @@ void LogbookBackupDialog::updateUi() noexcept
     const Metadata metadata = persistenceManager.getMetadata(&ok);
     if (ok) {
         // Backup folder
-        const QString backupDirectoryPath = DatabaseService::createBackupPathIfNotExists(persistenceManager.getLogbookPath(), metadata.backupDirectoryPath);
-        ui->backupDirectoryLineEdit->setText(QDir::toNativeSeparators(backupDirectoryPath));
+        ui->backupDirectoryLineEdit->setText(QDir::toNativeSeparators(metadata.backupDirectoryPath));
         ui->backupPeriodComboBox->setCurrentId(metadata.backupPeriodId);
     }
 }

@@ -74,11 +74,11 @@ struct SettingsDialogPrivate
         if (knownStyleNames.empty()) {
             knownStyleNames = {
                 { Settings::DefaultStyleKey, QApplication::translate("SettingsDialogPrivate", "Default") },
-                { ::WindowsStyleKey, QStringLiteral("Windows") },
-                { ::FusionStyleKey, QStringLiteral("Fusion") },
-                { ::WindowsVistaStyleKey, QStringLiteral("Windows Vista") },
-                { ::Windows11StyleKey, QStringLiteral("Windows 11") },
-                { ::MacOSStyleKey, QStringLiteral("macOS") }
+                { ::WindowsStyleKey, "Windows" },
+                { ::FusionStyleKey, "Fusion" },
+                { ::WindowsVistaStyleKey, "Windows Vista" },
+                { ::Windows11StyleKey, "Windows 11" },
+                { ::MacOSStyleKey, "macOS" }
             };
         }
     }
@@ -92,9 +92,9 @@ struct SettingsDialogPrivate
 // PUBLIC
 
 SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    ui(std::make_unique<Ui::SettingsDialog>()),
-    d(std::make_unique<SettingsDialogPrivate>())
+    QDialog {parent},
+    ui {std::make_unique<Ui::SettingsDialog>()},
+    d {std::make_unique<SettingsDialogPrivate>()}
 {
     ui->setupUi(this);
     initUi();
@@ -134,23 +134,8 @@ void SettingsDialog::initUi() noexcept
 
     ui->repeatCanopyOpenCheckBox->setToolTip(tr("When enabled this option will repeatedly send the same value for simulation variable \"%1\", even when its value does not actually change.\n"
                                                 "This may help enforcing a consistent canopy animation with certain aircraft.")
-                                                .arg(QString::fromLatin1(SimVar::CanopyOpen)));
+                                                .arg(SimVar::CanopyOpen));
     ui->maximumSimulationRateSpinBox->setToolTip(tr("This option limits the simulation rate in the flight simulator. Note that the actual replay speed may still be set to higher values."));
-
-    // Recording
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Auto), tr("Auto"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz1), tr("1 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz2), tr("2 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz5), tr("5 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz10), tr("10 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz15), tr("15 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz20), tr("20 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz24), tr("24 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz25), tr("25 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz30), tr("30 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz45), tr("45 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz50), tr("50 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Enum::underly(SampleRate::SampleRate::Hz60), tr("60 Hz"));
 
     // Flight simulator
     auto &skyConnectManager = SkyConnectManager::getInstance();
@@ -181,6 +166,9 @@ void SettingsDialog::frenchConnection() noexcept
     const auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::connectionChanged,
             this, &SettingsDialog::onSkyConnectPluginChanged);
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+            this, &SettingsDialog::updateUi);
+
     connect(this, &SettingsDialog::accepted,
             this, &SettingsDialog::onAccepted);
     connect(ui->settingsTabWidget, &QTabWidget::currentChanged,
@@ -204,15 +192,14 @@ void SettingsDialog::updateUi() noexcept
     ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
     ui->maximumSimulationRateSpinBox->setValue(settings.getMaximumSimulationRate());
 
-    // Recording
-    ui->recordFrequencyComboBox->setCurrentIndex(Enum::underly(settings.getRecordingSampleRate()));
-
     // Flight simulator
     auto &skyConnectManager = SkyConnectManager::getInstance();
     std::optional<QString> pluginName = skyConnectManager.getCurrentSkyConnectPluginName();
     if (pluginName) {
         ui->connectionComboBox->setCurrentText(pluginName.value());
     }
+    const bool enabled = !skyConnectManager.isActive();
+    ui->connectionComboBox->setEnabled(enabled);
     updateConnectionStatus();
 
     // User interface
@@ -314,9 +301,6 @@ void SettingsDialog::onAccepted() noexcept
     settings.setSeekIntervalPercent(ui->seekInPercentSpinBox->value());
     settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());
     settings.setMaximumSimulationRate(ui->maximumSimulationRateSpinBox->value());
-
-    // Recording
-    settings.setRecordingSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
 
     // Flight simulator
     if (d->skyConnectOptionWidget != nullptr) {

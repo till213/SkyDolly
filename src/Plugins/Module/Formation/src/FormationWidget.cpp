@@ -57,6 +57,8 @@
 #include <Model/AircraftInfo.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <Persistence/PersistenceManager.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
@@ -95,19 +97,19 @@ struct FormationWidgetPrivate
         // We always initialise all icons at once, so checking only for
         // normalAircraftIcon is sufficient
         if (normalAircraftIcon.isNull()) {
-            normalAircraftIcon = QIcon(QStringLiteral(":/img/icons/aircraft-normal.png"));
-            recordingAircraftIcon = QIcon(QStringLiteral(":/img/icons/aircraft-record-normal.png"));
-            referenceAircraftIcon = QIcon(QStringLiteral(":/img/icons/aircraft-reference-normal.png"));
+            normalAircraftIcon = QIcon(":/img/icons/aircraft-normal.png");
+            recordingAircraftIcon = QIcon(":/img/icons/aircraft-record-normal.png");
+            referenceAircraftIcon = QIcon(":/img/icons/aircraft-reference-normal.png");
         }
         if (parent.devicePixelRatioF() >= 1.5) {
-            userAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-normal@2x.png"));
+            userAircraftPixmap.load(":/img/icons/aircraft-normal@2x.png");
             userAircraftPixmap.setDevicePixelRatio(2.0);
-            referenceAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-reference-normal@2x.png"));
+            referenceAircraftPixmap.load(":/img/icons/aircraft-reference-normal@2x.png");
             referenceAircraftPixmap.setDevicePixelRatio(2.0);
         } else {
-            userAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-normal.png"));
+            userAircraftPixmap.load(":/img/icons/aircraft-normal.png");
             userAircraftPixmap.setDevicePixelRatio(1.0);
-            referenceAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-reference-normal.png"));
+            referenceAircraftPixmap.load(":/img/icons/aircraft-reference-normal.png");
             referenceAircraftPixmap.setDevicePixelRatio(1.0);
         }
     }
@@ -142,9 +144,9 @@ struct FormationWidgetPrivate
 // PUBLIC
 
 FormationWidget::FormationWidget(FormationSettings &settings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::FormationWidget>()),
-      d(std::make_unique<FormationWidgetPrivate>(settings, *this))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::FormationWidget>()},
+      d {std::make_unique<FormationWidgetPrivate>(settings, *this)}
 {
     ui->setupUi(this);
     initUi();
@@ -225,13 +227,13 @@ void FormationWidget::initUi() noexcept
     d->positionButtonGroup->addButton(ui->nwPositionRadioButton, Enum::underly(NorthWest));
     d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, Enum::underly(NorthNorthWest));
 
-    const QString css = QStringLiteral(
+    const QString css = 
 "QRadioButton::indicator:unchecked {"
 "    image: url(:/img/icons/aircraft-normal-off.png);"
 "}"
 "QRadioButton::indicator:checked {"
 "    image: url(:/img/icons/aircraft-record-normal.png);"
-"}");
+"}";
     ui->nPositionRadioButton->setStyleSheet(css);
     ui->nnePositionRadioButton->setStyleSheet(css);
     ui->nePositionRadioButton->setStyleSheet(css);
@@ -487,8 +489,8 @@ void FormationWidget::updateTimeOffsetUi() noexcept
     ui->timeOffsetSpinBox->blockSignals(true);
     if (enabled) {
         const auto &flight = Logbook::getInstance().getCurrentFlight();
-        const Aircraft &aircraft = flight[d->selectedAircraftIndex];
-        const std::int64_t timeOffset = aircraft.getAircraftInfo().timeOffset;
+        const auto &aircraft = flight[d->selectedAircraftIndex];
+        const auto timeOffset = aircraft.getAircraftInfo().timeOffset;
         const double timeOffsetSec = static_cast<double>(timeOffset) / 1000.0;
         ui->timeOffsetSpinBox->setValue(timeOffsetSec);
     } else {
@@ -531,9 +533,9 @@ void FormationWidget::updateToolTips() noexcept
     // Time offset
     if (d->selectedAircraftIndex != Const::InvalidId) {
         auto &flight = Logbook::getInstance().getCurrentFlight();
-        Aircraft &aircraft = flight[d->selectedAircraftIndex];
+        auto &aircraft = flight[d->selectedAircraftIndex];
 
-        const std::int64_t timeOffset = aircraft.getTimeOffset();
+        const auto timeOffset = aircraft.getTimeOffset();
         if (timeOffset < 0) {
             ui->timeOffsetSpinBox->setToolTip(tr("The aircraft is %1 behind its recorded schedule.").arg(d->unit.formatElapsedTime(timeOffset)));
         } else if (timeOffset > 0) {
@@ -707,10 +709,13 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
         if (!skyConnectManager.isInRecordingState()) {
             auto &flight = Logbook::getInstance().getCurrentFlight();
             // Also update the manually flown user aircraft position
-            const Aircraft &aircraft = flight.getUserAircraft();
-            Position &position = aircraft.getPosition();
-            const PositionData &positionData = position.interpolate(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::DiscreteSeek);
-            skyConnectManager.setUserAircraftPosition(positionData);
+            const auto &aircraft = flight.getUserAircraft();
+            const auto timestamp = skyConnectManager.getCurrentTimestamp();
+            const auto &position = aircraft.getPosition();
+            const auto &positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+            const auto &attitude = aircraft.getAttitude();
+            const auto &attitudeData = attitude.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+            skyConnectManager.setUserAircraftPositionAndAttitude(positionData, attitudeData);
         }
         break;
     }
@@ -719,11 +724,13 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
             const Formation::HorizontalDistance horizontalDistance {getHorizontalDistance()};
             const Formation::VerticalDistance verticalDistance {getVerticalDistance()};
             const Formation::Bearing relativePosition {getRelativePosition()};
-            const PositionData positionData = Formation::calculateRelativePositionToUserAircraft(horizontalDistance,
-                                                                                                 verticalDistance,
-                                                                                                 relativePosition,
-                                                                                                 skyConnectManager.getCurrentTimestamp());
-            skyConnectManager.setUserAircraftPosition(positionData);
+            const auto positionAndAtitude = Formation::calculateRelativePositionToUserAircraft(
+                horizontalDistance,
+                verticalDistance,
+                relativePosition,
+                skyConnectManager.getCurrentTimestamp()
+            );
+            skyConnectManager.setUserAircraftPositionAndAttitude(positionAndAtitude.first, positionAndAtitude.second);
         }
         break;
     }
@@ -739,21 +746,26 @@ void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode repl
         case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
         {
             auto &flight = Logbook::getInstance().getCurrentFlight();
-            const Aircraft &aircraft = flight.getUserAircraft();
-            Position &position = aircraft.getPosition();
-            const PositionData &positionData = position.interpolate(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::DiscreteSeek);
-            skyConnectManager.setUserAircraftPosition(positionData);
+            const auto &aircraft = flight.getUserAircraft();
+            const auto timestamp = skyConnectManager.getCurrentTimestamp();
+            const auto &position = aircraft.getPosition();
+            const auto &positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+            const auto &attitude = aircraft.getAttitude();
+            const auto &attitudeData = attitude.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+            skyConnectManager.setUserAircraftPositionAndAttitude(positionData, attitudeData);
             break;
         }
         case SkyConnectIntf::ReplayMode::FlyWithFormation:
             const Formation::HorizontalDistance horizontalDistance {getHorizontalDistance()};
             const Formation::VerticalDistance verticalDistance {getVerticalDistance()};
             const Formation::Bearing relativePosition {getRelativePosition()};
-            const PositionData positionData = Formation::calculateRelativePositionToUserAircraft(horizontalDistance,
-                                                                                                 verticalDistance,
-                                                                                                 relativePosition,
-                                                                                                 skyConnectManager.getCurrentTimestamp());
-            skyConnectManager.setUserAircraftPosition(positionData);
+            const auto positionAndAtitude = Formation::calculateRelativePositionToUserAircraft(
+                horizontalDistance,
+                verticalDistance,
+                relativePosition,
+                skyConnectManager.getCurrentTimestamp()
+            );
+            skyConnectManager.setUserAircraftPositionAndAttitude(positionAndAtitude.first, positionAndAtitude.second);
             break;
         }
     }
@@ -867,7 +879,7 @@ void FormationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexc
 void FormationWidget::onCellChanged(int row, int column) noexcept
 {
     auto &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight[d->selectedAircraftIndex];
+    auto &aircraft = flight[d->selectedAircraftIndex];
     if (column == FormationWidgetPrivate::tailNumberColumn) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         const QString tailNumber = item->data(Qt::EditRole).toString();
@@ -989,7 +1001,7 @@ void FormationWidget::changeTimeOffset(const std::int64_t timeOffset) noexcept
 {
     if (d->selectedAircraftIndex != Const::InvalidIndex) {
         auto &flight = Logbook::getInstance().getCurrentFlight();
-        Aircraft &aircraft = flight[d->selectedAircraftIndex];
+        auto &aircraft = flight[d->selectedAircraftIndex];
 
         const std::int64_t newTimeOffset = aircraft.getTimeOffset() + timeOffset;
         d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
@@ -1001,7 +1013,7 @@ void FormationWidget::onTimeOffsetValueChanged() noexcept
 {
     if (d->selectedAircraftIndex != Const::InvalidIndex) {
         auto &flight = Logbook::getInstance().getCurrentFlight();
-        Aircraft &aircraft = flight[d->selectedAircraftIndex];
+        auto &aircraft = flight[d->selectedAircraftIndex];
 
         const double timeOffsetSec = ui->timeOffsetSpinBox->value();
         auto timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
@@ -1077,7 +1089,6 @@ QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
     QRadioButton *button {nullptr};
     const Formation::Bearing bearing = d->moduleSettings.getBearing();
 
-    using enum Formation::Bearing;
     switch (bearing) {
     case North:
         button = ui->nPositionRadioButton;

@@ -55,7 +55,7 @@ namespace
 struct KmlStyleExportPrivate
 {
     KmlStyleExportPrivate(const KmlExportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     const KmlExportSettings &pluginSettings;
@@ -73,7 +73,7 @@ struct KmlStyleExportPrivate
 // PUBLIC
 
 KmlStyleExport::KmlStyleExport(const KmlExportSettings &pluginSettings) noexcept
-    : d(std::make_unique<KmlStyleExportPrivate>(pluginSettings))
+    : d {std::make_unique<KmlStyleExportPrivate>(pluginSettings)}
 {}
 
 KmlStyleExport::~KmlStyleExport() = default;
@@ -155,10 +155,10 @@ QString KmlStyleExport::getStyleUrl(Icon icon) noexcept
     QString styleUrl;
     switch (icon) {
     case Icon::Airport:
-        styleUrl = QStringLiteral("#sm_airports");
+        styleUrl = "#sm_airports";
         break;
     case Icon::Flag:
-        styleUrl = QStringLiteral("#sm_flag");
+        styleUrl = "#sm_flag";
         break;
     }
     return styleUrl;
@@ -236,7 +236,7 @@ bool KmlStyleExport::exportLineStyleMaps(QIODevice &io) const noexcept
     if (d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::OneColorPerEngineType || d->pluginSettings.getColorStyle() == KmlExportSettings::ColorStyle::ColorRampPerEngineType) {
         // Per engine type (one color or ramp)
         for (std::size_t index = 0; ok && index < d->jetColorRamp.size(); ++index) {
-            const QString styleMap =
+            const auto styleMap =
 "    <StyleMap id=\"" % QString(JetStyleMapId) % "_" % QString::number(index) % "\">\n"
 "      <Pair>\n"
 "        <key>normal</key>\n"
@@ -252,11 +252,11 @@ bool KmlStyleExport::exportLineStyleMaps(QIODevice &io) const noexcept
 
         // Turboprop style map
         for (std::size_t index = 0; ok && index < d->turbopropColorRamp.size(); ++index) {
-            const QString styleMap =
-"    <StyleMap id=\"" % QString(TurbopropStyleMapId) % "_" % QString::number(index) % "\">\n"
+            const auto styleMap =
+"    <StyleMap id=\"" % QString::fromLatin1(TurbopropStyleMapId) % "_" % QString::number(index) % "\">\n"
 "      <Pair>\n"
 "        <key>normal</key>\n"
-"        <styleUrl>#" % QString(TurbopropStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
+"        <styleUrl>#" % QString::fromLatin1(TurbopropStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
 "      </Pair>\n"
 "      <Pair>\n"
 "        <key>highlight</key>\n"
@@ -268,11 +268,11 @@ bool KmlStyleExport::exportLineStyleMaps(QIODevice &io) const noexcept
 
         // Piston style map
         for (std::size_t index = 0; ok && index < d->pistonColorRamp.size(); ++index) {
-            const QString styleMap =
-"    <StyleMap id=\"" % QString(PistonStyleMapId) % "_" % QString::number(index) % "\">\n"
+            const auto styleMap =
+"    <StyleMap id=\"" % QString::fromLatin1(PistonStyleMapId) % "_" % QString::number(index) % "\">\n"
 "      <Pair>\n"
 "        <key>normal</key>\n"
-"        <styleUrl>#" % QString(PistonStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
+"        <styleUrl>#" % QString::fromLatin1(PistonStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
 "      </Pair>\n"
 "      <Pair>\n"
 "        <key>highlight</key>\n"
@@ -285,11 +285,11 @@ bool KmlStyleExport::exportLineStyleMaps(QIODevice &io) const noexcept
 
     // All style map
     for (std::size_t index = 0; ok && index < d->allColorRamp.size(); ++index) {
-        const QString styleMap =
-"    <StyleMap id=\"" % QString(AllStyleMapId) % "_" % QString::number(index) % "\">\n"
+        const auto styleMap =
+"    <StyleMap id=\"" % QString::fromLatin1(AllStyleMapId) % "_" % QString::number(index) % "\">\n"
 "      <Pair>\n"
 "        <key>normal</key>\n"
-"        <styleUrl>#" % QString(AllStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
+"        <styleUrl>#" % QString::fromLatin1(AllStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
 "      </Pair>\n"
 "      <Pair>\n"
 "        <key>highlight</key>\n"
@@ -365,13 +365,13 @@ bool KmlStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType eng
     QString styleId;
     switch (engineType) {
     case SimType::EngineType::Jet:
-        styleId = QString::fromLatin1(::JetStyleId);
+        styleId = ::JetStyleId;
         break;
     case SimType::EngineType::Turboprop:
-        styleId = QString::fromLatin1(::TurbopropStyleId);
+        styleId = ::TurbopropStyleId;
         break;
     case SimType::EngineType::Piston:
-        styleId = QString::fromLatin1(::PistonStyleId);
+        styleId = ::PistonStyleId;
         break;
     case SimType::EngineType::Unknown:
         [[fallthrough]];
@@ -382,17 +382,17 @@ bool KmlStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType eng
     case SimType::EngineType::Unsupported:
         [[fallthrough]];
     case SimType::EngineType::All:
-        styleId = QString::fromLatin1(::AllStyleId);
+        styleId = ::AllStyleId;
         break;
     }
 
     bool ok {true};
     int index = 0;
-    const QRgb polygonColorKml = Color::convertRgbToKml(PolygonColor);
+    const auto polygonColorKml = Color::convertRgbToKml(PolygonColor);
 
     for (const auto color : colorRamp) {
 
-        const QRgb lineColorKml = Color::convertRgbToKml(color);
+        const auto lineColorKml = Color::convertRgbToKml(color);
         const QString style =
 "    <Style id=\"" % styleId % "_" % QString::number(index) % "\">\n"
 "      <LineStyle>\n"

@@ -50,10 +50,10 @@ struct AboutDialogPrivate
     AboutDialogPrivate(QWidget &parent) noexcept
     {
         if (parent.devicePixelRatioF() >= 1.5) {
-            applicationPixmap.load(QStringLiteral(":/img/icons/application-icon@2x.png"));
+            applicationPixmap.load(":/img/icons/application-icon@2x.png");
             applicationPixmap.setDevicePixelRatio(2.0);
         } else {
-            applicationPixmap.load(QStringLiteral(":/img/icons/application-icon.png"));
+            applicationPixmap.load(":/img/icons/application-icon.png");
             applicationPixmap.setDevicePixelRatio(1.0);
         }
         versionInfoTimer.setSingleShot(true);
@@ -66,10 +66,10 @@ struct AboutDialogPrivate
 
 // PUBLIC
 
-AboutDialog::AboutDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    d(std::make_unique<AboutDialogPrivate>(*this)),
-    ui(std::make_unique<Ui::AboutDialog>())
+AboutDialog::AboutDialog(QWidget *parent) noexcept
+    : QDialog {parent},
+      d {std::make_unique<AboutDialogPrivate>(*this)},
+      ui {std::make_unique<Ui::AboutDialog>()}
 {
     ui->setupUi(this);
     initUi();
@@ -98,7 +98,7 @@ void AboutDialog::mouseReleaseEvent(QMouseEvent *event) noexcept
         if (clipboard->supportsSelection()) {
             clipboard->setText(d->versionInfo, QClipboard::Selection);
         }
-        d->versionInfo = QStringLiteral("\n") % tr("Copied to clipboard") % QStringLiteral("\n");
+        d->versionInfo = QStringLiteral("\n") % tr("Copied to clipboard") % "\n";
         updateUi();
         d->versionInfoTimer.start(1s);
         QApplication::restoreOverrideCursor();
@@ -114,7 +114,7 @@ void AboutDialog::initUi() noexcept
     ui->applicationIconLabel->setPixmap(d->applicationPixmap);
     d->versionInfo = getVersionInfo();
 
-    QFile file(QStringLiteral(":text/ThirdParty.md"));
+    QFile file(":text/ThirdParty.md");
     if (file.open(QFile::ReadOnly)) {
         file.setTextModeEnabled(true);
         ui->creditsTextEdit->setMarkdown(file.readAll());

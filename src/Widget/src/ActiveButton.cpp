@@ -37,8 +37,8 @@ struct ActiveButtonPrivate
 // PUBLIC
 
 ActiveButton::ActiveButton(QWidget *parent) noexcept
-    : QPushButton(parent),
-      d(std::make_unique<ActiveButtonPrivate>())
+    : QPushButton {parent},
+      d {std::make_unique<ActiveButtonPrivate>()}
 {
     setAutoDefault(false);
 }

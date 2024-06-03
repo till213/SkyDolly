@@ -48,9 +48,9 @@ struct FlightConditionWidgetPrivate
 // PUBLIC
 
 FlightConditionWidget::FlightConditionWidget(QWidget *parent) noexcept :
-    QWidget(parent),
-    ui(std::make_unique<Ui::FlightConditionWidget>()),
-    d(std::make_unique<FlightConditionWidgetPrivate>())
+    QWidget {parent},
+    ui {std::make_unique<Ui::FlightConditionWidget>()},
+    d {std::make_unique<FlightConditionWidgetPrivate>()}
 {
     ui->setupUi(this);
     initUi();
@@ -97,22 +97,22 @@ void FlightConditionWidget::hideEvent(QHideEvent *event) noexcept
 
 void FlightConditionWidget::initUi() noexcept
 {
-    ui->groundAltitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::GroundAltitude));
-    ui->surfaceTypeLineEdit->setToolTip(QString::fromLatin1(SimVar::SurfaceType));
-    ui->surfaceConditionLineEdit->setToolTip(QString::fromLatin1(SimVar::SurfaceCondition));
-    ui->temperatureLineEdit->setToolTip(QString::fromLatin1(SimVar::AmbientTemperature));
-    ui->totalAirTemperatureLineEdit->setToolTip(QString::fromLatin1(SimVar::TotalAirTemperature));
-    ui->windSpeedLineEdit->setToolTip(QString::fromLatin1(SimVar::AmbientWindVelocity));
-    ui->windDirectionLineEdit->setToolTip(QString::fromLatin1(SimVar::AmbientWindDirection));
-    ui->precipitationStateLineEdit->setToolTip(QString::fromLatin1(SimVar::AmbientPrecipState));
+    ui->groundAltitudeLineEdit->setToolTip(SimVar::GroundAltitude);
+    ui->surfaceTypeLineEdit->setToolTip(SimVar::SurfaceType);
+    ui->surfaceConditionLineEdit->setToolTip(SimVar::SurfaceCondition);
+    ui->temperatureLineEdit->setToolTip(SimVar::AmbientTemperature);
+    ui->totalAirTemperatureLineEdit->setToolTip(SimVar::TotalAirTemperature);
+    ui->windSpeedLineEdit->setToolTip(SimVar::AmbientWindVelocity);
+    ui->windDirectionLineEdit->setToolTip(SimVar::AmbientWindDirection);
+    ui->precipitationStateLineEdit->setToolTip(SimVar::AmbientPrecipState);
 
-    ui->onAnyRunwayCheckBox->setToolTip(QString::fromLatin1(SimVar::OnAnyRunway));
-    ui->onParkingSpotCheckBox->setToolTip(QString::fromLatin1(SimVar::AtcOnParkingSpot));
-    ui->inCloudsCheckBox->setToolTip(QString::fromLatin1(SimVar::AmbientInCloud));
-    ui->visibilityLineEdit->setToolTip(QString::fromLatin1(SimVar::AmbientVisibility));
-    ui->seaLevelPressure->setToolTip(QString::fromLatin1(SimVar::SeaLevelPressure));
-    ui->pitotIcingLineEdit->setToolTip(QString::fromLatin1(SimVar::PitotIcePct));
-    ui->structuralIcingLineEdit->setToolTip(QString::fromLatin1(SimVar::StructuralIcePct));
+    ui->onAnyRunwayCheckBox->setToolTip(SimVar::OnAnyRunway);
+    ui->onParkingSpotCheckBox->setToolTip(SimVar::AtcOnParkingSpot);
+    ui->inCloudsCheckBox->setToolTip(SimVar::AmbientInCloud);
+    ui->visibilityLineEdit->setToolTip(SimVar::AmbientVisibility);
+    ui->seaLevelPressure->setToolTip(SimVar::SeaLevelPressure);
+    ui->pitotIcingLineEdit->setToolTip(SimVar::PitotIcePct);
+    ui->structuralIcingLineEdit->setToolTip(SimVar::StructuralIcePct);
 
     // Make the flight information checkboxes checkable, but not for the user
     ui->inCloudsCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -142,9 +142,9 @@ void FlightConditionWidget::updateUi() noexcept
     ui->seaLevelPressure->setText(d->unit.formatPressureInHPa(flightCondition.seaLevelPressure));
     ui->pitotIcingLineEdit->setText(d->unit.formatPercent(flightCondition.pitotIcingPercent));
     ui->structuralIcingLineEdit->setText(d->unit.formatPercent(flightCondition.structuralIcingPercent));
-    ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.startLocalTime));
-    ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.endLocalTime));
+    ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.startLocalDateTime));
+    ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.endLocalDateTime));
     // Zulu time
-    ui->startLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.startZuluTime) % Const::ZuluTimeSuffix);
-    ui->endLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.endZuluTime) % Const::ZuluTimeSuffix);
+    ui->startLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.startZuluDateTime) % Const::ZuluTimeSuffix);
+    ui->endLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.endZuluDateTime) % Const::ZuluTimeSuffix);
 }

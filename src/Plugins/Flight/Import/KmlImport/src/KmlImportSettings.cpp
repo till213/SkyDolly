@@ -50,7 +50,7 @@ struct KmlImportSettingsPrivate
 // PUBLIC
 
 KmlImportSettings::KmlImportSettings() noexcept
-    : d(std::make_unique<KmlImportSettingsPrivate>())
+    : d {std::make_unique<KmlImportSettingsPrivate>()}
 {}
 
 KmlImportSettings::~KmlImportSettings() = default;
@@ -84,7 +84,7 @@ void KmlImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::FormatKey);
+    keyValue.first = ::FormatKey;
     keyValue.second = Enum::underly(d->format);
     keyValues.push_back(keyValue);
 }
@@ -93,7 +93,7 @@ void KmlImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::FormatKey);
+    keyValue.first = ::FormatKey;
     keyValue.second = Enum::underly(::DefaultFormat);
     keysWithDefaults.push_back(keyValue);
 }
@@ -101,7 +101,7 @@ void KmlImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void KmlImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::FormatKey).toInt(&ok);
     d->format = ok && Enum::contains<Format>(enumValue) ? static_cast<Format>(enumValue) : ::DefaultFormat;
 }
 

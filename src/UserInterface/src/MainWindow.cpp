@@ -187,9 +187,9 @@ struct MainWindowPrivate
 // PUBLIC
 
 MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
-    : QMainWindow(parent),
-      ui(std::make_unique<Ui::MainWindow>()),
-      d(std::make_unique<MainWindowPrivate>())
+    : QMainWindow {parent},
+      ui {std::make_unique<Ui::MainWindow>()},
+      d {std::make_unique<MainWindowPrivate>()}
 {
     ui->setupUi(this);
 
@@ -308,8 +308,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::updateUi);
     connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
             this, &MainWindow::onRecordingStopped);
-    connect(&skyConnectManager, &SkyConnectManager::shortCutActivated,
-            this, &MainWindow::onShortcutActivated);
+    connect(&skyConnectManager, &SkyConnectManager::actionActivated,
+            this, &MainWindow::onActionActivated);
     connect(&skyConnectManager, &SkyConnectManager::simulationRateReceived,
             this, &MainWindow::onSimulationRateReceived);
 
@@ -319,7 +319,7 @@ void MainWindow::frenchConnection() noexcept
 
     // Flight
     const Logbook &logbook = Logbook::getInstance();
-    const Flight &flight = logbook.getCurrentFlight();
+    const auto &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::flightRestored,
             this, &MainWindow::onFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
@@ -463,7 +463,7 @@ void MainWindow::frenchConnection() noexcept
 void MainWindow::initUi() noexcept
 {
     auto &settings = Settings::getInstance();
-    setWindowIcon(QIcon(QStringLiteral(":/img/icons/application-icon.png")));
+    setWindowIcon(QIcon(":/img/icons/application-icon.png"));
 
     // File menu
     d->recentFileMenu = new RecentFileMenu(this);
@@ -500,8 +500,8 @@ void MainWindow::initUi() noexcept
             --currentPreviewInfoCount;
             QMessageBox::information(
                 this,
-                QStringLiteral("Preview"),
-                QString::fromLatin1(
+                "Preview",
+                QStringLiteral(
                     "%1 is in a preview release phase: while it should be stable to use it is not "
                     "considered feature-complete.\n\n"
                     "This release v%2 \"%3\" introduces customisable shortcuts for MSFS "
@@ -617,13 +617,13 @@ void MainWindow::initModuleSelectorUi() noexcept
     auto actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
-    const QString css = QStringLiteral(
+    const QString css = 
 "QCheckBox::indicator:unchecked {"
 "    image: url(:/img/icons/checkbox-expand-normal.png);"
 "}"
 "QCheckBox::indicator:checked {"
 "    image: url(:/img/icons/checkbox-collapse-normal.png);"
-"}");
+"}";
     actionCheckBox->setStyleSheet(css);
     actionCheckBox->setContentsMargins(0, 0, 0, 0);
 
@@ -676,8 +676,8 @@ void MainWindow::initViewUi() noexcept
 
 void MainWindow::initControlUi() noexcept
 {
-    ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
-    ui->timestampTimeEdit->setDisplayFormat(QString::fromLatin1(TimestampFormat));
+    ui->positionSlider->setRange(::PositionSliderMin, ::PositionSliderMax);
+    ui->timestampTimeEdit->setDisplayFormat(::TimestampFormat);
 
     // Record/replay control buttons
     ui->recordButton->setAction(ui->recordAction);
@@ -694,45 +694,45 @@ void MainWindow::initControlUi() noexcept
     ui->replayGroupBox->setStyleSheet(Platform::getFlatButtonCss());
 
     // Specific CSS: completely flat button (no border) - on all platforms
-    ui->loopReplayButton->setStyleSheet(QStringLiteral("QPushButton {border-style: outset; border-width: 0px; padding: 6px 12px;}"));
+    ui->loopReplayButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px; padding: 6px 12px;}");
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
 {
     // Actions
-    QList<QAction *> slowActions{new QAction(QStringLiteral("10 %"), this),
-                                 new QAction(QStringLiteral("25 %"), this),
-                                 new QAction(QStringLiteral("50 %"), this),
-                                 new QAction(QStringLiteral("75 %"), this)};
+    QList<QAction *> slowActions{new QAction("10 %", this),
+                                 new QAction("25 %", this),
+                                 new QAction("50 %", this),
+                                 new QAction("75 %", this)};
     slowActions.at(0)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
-    slowActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow10));
+    slowActions.at(0)->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow10));
     slowActions.at(1)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_2));
-    slowActions.at(1)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow25));
+    slowActions.at(1)->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow25));
     slowActions.at(2)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_3));
-    slowActions.at(2)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow50));
+    slowActions.at(2)->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow50));
     slowActions.at(3)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_4));
-    slowActions.at(3)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow75));
+    slowActions.at(3)->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow75));
 
     ui->normalSpeedAction->setCheckable(true);
     ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_1));
-    ui->normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Normal));
+    ui->normalSpeedAction->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Normal));
 
-    QList<QAction *> fastActions{new QAction(QStringLiteral("2x"), this),
-                                 new QAction(QStringLiteral("4x"), this),
-                                 new QAction(QStringLiteral("8x"), this),
-                                 new QAction(QStringLiteral("16x"), this)};
+    QList<QAction *> fastActions{new QAction("2x", this),
+                                 new QAction("4x", this),
+                                 new QAction("8x", this),
+                                 new QAction("16x", this)};
     fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_2));
-    fastActions.at(0)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast2x));
+    fastActions.at(0)->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast2x));
     fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_3));
-    fastActions.at(1)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast4x));
+    fastActions.at(1)->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast4x));
     fastActions.at(2)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_4));
-    fastActions.at(2)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast8x));
+    fastActions.at(2)->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast8x));
     fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_5));
-    fastActions.at(3)->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast16x));
+    fastActions.at(3)->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast16x));
 
     ui->customSpeedAction->setCheckable(true);
     ui->customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_6));
-    ui->customSpeedAction->setProperty(ReplaySpeedProperty, Enum::underly(ReplaySpeed::Custom));
+    ui->customSpeedAction->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Custom));
 
     // Action group
     d->replaySpeedActionGroup = new QActionGroup(this);
@@ -817,7 +817,7 @@ void MainWindow::initReplaySpeedUi() noexcept
         normalSpeedRadioButton->setChecked(true);
     } else {
         d->customSpeedRadioButton ->setChecked(true);
-        d->customSpeedLineEdit->setText(d->unit.formatNumber(d->lastCustomReplaySpeedFactor, ReplaySpeedDecimalPlaces));
+        d->customSpeedLineEdit->setText(d->unit.formatNumber(d->lastCustomReplaySpeedFactor, ::ReplaySpeedDecimalPlaces));
     }
 
     d->replaySpeedUnitComboBox = new QComboBox(this);
@@ -850,7 +850,7 @@ void MainWindow::createTrayIcon() noexcept
     d->trayIcon = new QSystemTrayIcon(this);
     d->trayIcon->setContextMenu(d->trayIconMenu);
 
-    d->trayIcon->setIcon(QIcon(QStringLiteral(":/img/icons/application-icon.png")));
+    d->trayIcon->setIcon(QIcon(":/img/icons/application-icon.png"));
 }
 
 void MainWindow::initSkyConnectPlugin() noexcept
@@ -961,15 +961,15 @@ void MainWindow::updateReplaySpeedUi() noexcept
 {
     if (d->customSpeedRadioButton->isChecked()) {
         d->customSpeedLineEdit->setEnabled(true);
-        d->customSpeedLineEdit->setText(d->unit.formatNumber(d->lastCustomReplaySpeedFactor, ReplaySpeedDecimalPlaces));
+        d->customSpeedLineEdit->setText(d->unit.formatNumber(d->lastCustomReplaySpeedFactor, ::ReplaySpeedDecimalPlaces));
 
         switch (Settings::getInstance().getReplaySpeeedUnit()) {
         case Replay::SpeedUnit::Absolute:
-            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed factor in [%L1, %L2].").arg(ReplaySpeedAbsoluteMin).arg(ReplaySpeedAbsoluteMax));
+            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed factor in [%L1, %L2].").arg(::ReplaySpeedAbsoluteMin).arg(::ReplaySpeedAbsoluteMax));
             d->customSpeedLineEdit->setValidator(d->customReplaySpeedFactorValidator);
             break;
         case Replay::SpeedUnit::Percent:
-            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed % in [%L1%, %L2%].").arg(ReplaySpeedAbsoluteMin * 100.0).arg(ReplaySpeedAbsoluteMax * 100.0));
+            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed % in [%L1%, %L2%].").arg(::ReplaySpeedAbsoluteMin * 100.0).arg(::ReplaySpeedAbsoluteMax * 100.0));
             d->customSpeedLineEdit->setValidator(d->customReplaySpeedPercentValidator);
             break;
         }
@@ -977,7 +977,7 @@ void MainWindow::updateReplaySpeedUi() noexcept
     } else {
         d->customSpeedLineEdit->setEnabled(false);
         d->customSpeedLineEdit->clear();
-        d->customSpeedLineEdit->setToolTip(QStringLiteral(""));
+        d->customSpeedLineEdit->setToolTip("");
     }
 
     updateSimulationRateLabel();
@@ -999,8 +999,8 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
         sliderPosition = ::PositionSliderMax;
         ui->positionSlider->setToolTip(tr("Recording"));
     } else {
-        const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-        const std::int64_t ts = std::min(timestamp, totalDuration);
+        const auto totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+        const auto ts = std::min(timestamp, totalDuration);
         if (ts > 0) {
             sliderPosition = static_cast<int>(std::round(::PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration))));
         }
@@ -1011,7 +1011,8 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
     ui->positionSlider->setValue(sliderPosition);
     ui->positionSlider->blockSignals(false);
 
-    const QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
+    // TODO This does not work if flight is longer than 24 hours!!! We also need the date (probably) and also check the slider position when duration is 1 year
+    const auto time = QTime::fromMSecsSinceStartOfDay(timestamp);
     ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setTime(time);
     ui->timestampTimeEdit->blockSignals(false);
@@ -1123,7 +1124,7 @@ double MainWindow::getCustomSpeedFactor() const
 void MainWindow::seek(int value, SkyConnectIntf::SeekMode seekMode) const noexcept
 {
     auto &skyConnectManager = SkyConnectManager::getInstance();
-    const double factor = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
+    const double factor = static_cast<double>(value) / static_cast<double>(::PositionSliderMax);
     const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
     auto timestamp = static_cast<std::int64_t>(std::round(factor * static_cast<double>(totalDuration)));
 
@@ -1168,7 +1169,7 @@ void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
 {
     auto &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isIdle() || skyConnectManager.getState() == Connect::State::ReplayPaused) {
-        std::int64_t timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
+        std::int64_t timestamp = time.hour() * ::MilliSecondsPerHour + time.minute() * ::MilliSecondsPerMinute + time.second() * ::MilliSecondsPerSecond;
         skyConnectManager.seek(timestamp, SkyConnectIntf::SeekMode::Discrete);
     }
 }
@@ -1200,7 +1201,7 @@ void MainWindow::onTimestampChanged(std::int64_t timestamp) noexcept
 
 void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
 {
-    ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(ReplaySpeedProperty).toInt());
+    ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(::ReplaySpeedProperty).toInt());
     float replaySpeedFactor {1.0f};
     switch (replaySpeed) {
     case ReplaySpeed::Slow10:
@@ -1298,7 +1299,7 @@ void MainWindow::updateUi() noexcept
 
 void MainWindow::updateControlUi() noexcept
 {
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const bool hasRecording = aircraft.hasRecording();
 
     const auto &skyConnectManager = SkyConnectManager::getInstance();
@@ -1344,7 +1345,7 @@ void MainWindow::updateControlUi() noexcept
         ui->skipToEndAction->setEnabled(false);
         // Position
         ui->positionSlider->setEnabled(false);
-        ui->positionSlider->setValue(PositionSliderMax);
+        ui->positionSlider->setValue(::PositionSliderMax);
         ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::State::RecordingPaused:
@@ -1427,7 +1428,7 @@ void MainWindow::onRecordingStopped() noexcept
     onRecordingDurationChanged();
 }
 
-void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) noexcept
+void MainWindow::onActionActivated(FlightSimulatorShortcuts::Action action) noexcept
 {
     const auto &skyConnectManager = SkyConnectManager::getInstance();
     QString pushNotification;
@@ -1485,6 +1486,8 @@ void MainWindow::onShortcutActivated(FlightSimulatorShortcuts::Action action) no
             ui->skipToEndAction->trigger();
         }
         break;
+    case FlightSimulatorShortcuts::Action::None:
+        break;
     }
 
     if (!pushNotification.isEmpty()) {
@@ -1519,7 +1522,7 @@ void MainWindow::updateReplayDuration() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
-    const QTime time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(totalDuration));
+    const auto time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(totalDuration));
     ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);
@@ -1527,7 +1530,7 @@ void MainWindow::updateReplayDuration() noexcept
 
 void MainWindow::updateFileMenu() noexcept
 {
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const bool hasRecording = aircraft.hasRecording();
     if (SkyConnectManager::getInstance().isInRecordingState()) {
         ui->newLogbookAction->setEnabled(false);
@@ -1581,11 +1584,10 @@ void MainWindow::updateMainWindow() noexcept
             this->show();
         }
     }
-
-    if (settings.getRecordingSampleRate() != SampleRate::SampleRate::Auto) {
-        ui->recordAction->setToolTip(tr("Record [@%1 Hz].").arg(Settings::getInstance().getRecordingSampleRateValue()));
+    if (ui->recordAction->isChecked()) {
+        ui->recordAction->setToolTip(tr("Stop the recording."));
     } else {
-        ui->recordAction->setToolTip(tr("Record [auto sample rate]."));
+        ui->recordAction->setToolTip(tr("Start a new recording."));
     }
 
     if (settings.isAbsoluteSeekEnabled()) {
@@ -1798,7 +1800,7 @@ void MainWindow::showAboutDialog() noexcept
 
 void MainWindow::showOnlineManual() const noexcept
 {
-    QDesktopServices::openUrl(QUrl(QStringLiteral("https://till213.github.io/SkyDolly/manual/en/")));
+    QDesktopServices::openUrl(QUrl("https://till213.github.io/SkyDolly/manual/en/"));
 }
 
 // Replay

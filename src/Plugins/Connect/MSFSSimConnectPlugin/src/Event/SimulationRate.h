@@ -70,6 +70,8 @@ public:
 private:
     EventState::StatefulSwitch<int> m_simulationRateIndex;
 
+    // TODO: There is (now?) actually a SIM_RATE_SET event that supposedly takes the desired rate directly - does that work or not? -> Test
+    //       https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Miscellaneous_Events.htm#SIM_RATE_SET
     inline bool sendSimulationRate(HANDLE simConnectHandle) noexcept
     {
         HRESULT result {S_OK};

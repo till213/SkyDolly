@@ -27,6 +27,7 @@
 
 #include <QString>
 #include <QStringLiteral>
+#include <QStringBuilder>
 #include <QWidget>
 #include <QMessageBox>
 #include <QElapsedTimer>
@@ -56,7 +57,7 @@ struct FlightExportPluginBasePrivate
 // PUBLIC
 
 FlightExportPluginBase::FlightExportPluginBase() noexcept
-    : d(std::make_unique<FlightExportPluginBasePrivate>())
+    : d {std::make_unique<FlightExportPluginBasePrivate>()}
 {}
 
 FlightExportPluginBase::~FlightExportPluginBase() = default;
@@ -166,7 +167,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &f
     if (ok) {
         if (settings.isOpenExportedFilesEnabled()) {
             for (const auto &exportedFilePath : d->exportedFilePaths) {
-                const QString fileUrl = QStringLiteral("file:///") + exportedFilePath;
+                const QString fileUrl = QStringLiteral("file:///") % exportedFilePath;
                 QDesktopServices::openUrl(QUrl(fileUrl));
             }
         }

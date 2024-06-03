@@ -46,9 +46,9 @@ struct AircraftInfoWidgetPrivate
 // PUBLIC
 
 AircraftInfoWidget::AircraftInfoWidget(QWidget *parent) noexcept :
-    QWidget(parent),
-    ui(std::make_unique<Ui::AircraftInfoWidget>()),
-    d(std::make_unique<AircraftInfoWidgetPrivate>())
+    QWidget {parent},
+    ui {std::make_unique<Ui::AircraftInfoWidget>()},
+    d {std::make_unique<AircraftInfoWidgetPrivate>()}
 {
     ui->setupUi(this);
     initUi();
@@ -96,17 +96,17 @@ void AircraftInfoWidget::hideEvent(QHideEvent *event) noexcept
 
 void AircraftInfoWidget::initUi() noexcept
 {
-    ui->nameLineEdit->setToolTip(QString::fromLatin1(SimVar::Title));
-    ui->tailNumberLineEdit->setToolTip(QString::fromLatin1(SimVar::ATCFlightNumber));
-    ui->airlineLineEdit->setToolTip(QString::fromLatin1(SimVar::ATCAirline));
+    ui->nameLineEdit->setToolTip(SimVar::Title);
+    ui->tailNumberLineEdit->setToolTip(SimVar::ATCFlightNumber);
+    ui->airlineLineEdit->setToolTip(SimVar::ATCAirline);
 
-    ui->categoryLineEdit->setToolTip(QString::fromLatin1(SimVar::Category));
-    ui->startOnGroundCheckBox->setToolTip(QString::fromLatin1(SimVar::SimOnGround));
-    ui->initialAirspeedLineEdit->setToolTip(QString::fromLatin1(SimVar::AirspeedTrue));
-    ui->wingSpanLineEdit->setToolTip(QString::fromLatin1(SimVar::WingSpan));
-    ui->engineTypeLineEdit->setToolTip(QString::fromLatin1(SimVar::EngineType));
-    ui->numberOfEnginesLineEdit->setToolTip(QString::fromLatin1(SimVar::NumberOfEngines));
-    ui->aircraftAltitudeAboveGroundLineEdit->setToolTip(QString::fromLatin1(SimVar::PlaneAltAboveGround));
+    ui->categoryLineEdit->setToolTip(SimVar::Category);
+    ui->startOnGroundCheckBox->setToolTip(SimVar::SimOnGround);
+    ui->initialAirspeedLineEdit->setToolTip(SimVar::AirspeedTrue);
+    ui->wingSpanLineEdit->setToolTip(SimVar::WingSpan);
+    ui->engineTypeLineEdit->setToolTip(SimVar::EngineType);
+    ui->numberOfEnginesLineEdit->setToolTip(SimVar::NumberOfEngines);
+    ui->aircraftAltitudeAboveGroundLineEdit->setToolTip(SimVar::PlaneAltAboveGround);
 
     // Make the flight information checkboxes checkable, but not for the user
     ui->startOnGroundCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -118,7 +118,7 @@ void AircraftInfoWidget::initUi() noexcept
 void AircraftInfoWidget::updateUi() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &aircraft = flight.getUserAircraft();
+    const auto &aircraft = flight.getUserAircraft();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
 
     ui->nameLineEdit->setText(aircraftInfo.aircraftType.type);

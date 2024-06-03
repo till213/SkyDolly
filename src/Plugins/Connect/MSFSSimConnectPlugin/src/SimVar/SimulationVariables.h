@@ -27,8 +27,11 @@
 
 #include "SimConnectFlightInfo.h" // IWYU pragma: export
 #include "SimConnectAircraftInfo.h" // IWYU pragma: export
-#include "Position/SimConnectPositionUser.h" // IWYU pragma: export
 #include "Position/SimConnectPositionAll.h" // IWYU pragma: export
+#include "Attitude/SimConnectAttitudeAll.h" // IWYU pragma: export
+#include "PositionAndAttitude/SimConnectPositionAndAttitudeAi.h" // IWYU pragma: export
+#include "PositionAndAttitude/SimConnectPositionAndAttitudeUser.h" // IWYU pragma: export
+#include "PositionAndAttitude/SimConnectPositionAndAttitudeAll.h" // IWYU pragma: export
 #include "Engine/SimConnectEngineUser.h" // IWYU pragma: export
 #include "Engine/SimConnectEngineAi.h" // IWYU pragma: export
 #include "Engine/SimConnectEngineAll.h" // IWYU pragma: export

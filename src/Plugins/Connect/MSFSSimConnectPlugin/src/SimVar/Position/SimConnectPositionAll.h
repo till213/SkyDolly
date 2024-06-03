@@ -31,8 +31,6 @@
 #include <Model/PositionData.h>
 #include "SimConnectPositionCommon.h"
 #include "SimConnectPositionInfo.h"
-#include "SimConnectPositionUser.h"
-#include "SimConnectPositionAi.h"
 
 /*!
  * All aircraft position simulation variables (reply from the flight simulator).
@@ -61,55 +59,9 @@ struct SimConnectPositionAll
 
     inline PositionData toPositionData() const noexcept
     {
-        PositionData positionData = common.toPositionData();
+        auto positionData = common.toPositionData();
         info.toPositionData(positionData);
         return positionData;
-    }  
-
-    inline SimConnectPositionUser user() const noexcept
-    {
-        SimConnectPositionUser user;
-        user.common = common;
-        return user;
-    }
-
-    inline SimConnectPositionAi ai() const noexcept
-    {
-        SimConnectPositionAi ai;
-        ai.common = common;
-        return ai;
-    }
-
-    static inline SIMCONNECT_DATA_INITPOSITION toInitialPosition(const PositionData &positionData, bool onGround, int initialAirspeed)
-    {
-        SIMCONNECT_DATA_INITPOSITION initialPosition {};
-
-        initialPosition.Latitude = positionData.latitude;
-        initialPosition.Longitude = positionData.longitude;
-        initialPosition.Altitude = positionData.altitude;
-        initialPosition.Pitch = positionData.pitch;
-        initialPosition.Bank = positionData.bank;
-        initialPosition.Heading = positionData.trueHeading;
-        initialPosition.OnGround = onGround ? 1 : 0;
-        initialPosition.Airspeed = initialAirspeed;
-
-        return initialPosition;
-    }
-
-    static inline SIMCONNECT_DATA_INITPOSITION toInitialPosition(const InitialPosition &initialPosition)
-    {
-        SIMCONNECT_DATA_INITPOSITION initialSimConnnectPosition {};
-
-        initialSimConnnectPosition.Latitude = initialPosition.latitude;
-        initialSimConnnectPosition.Longitude = initialPosition.longitude;
-        initialSimConnnectPosition.Altitude = initialPosition.altitude;
-        initialSimConnnectPosition.Pitch = initialPosition.pitch;
-        initialSimConnnectPosition.Bank = initialPosition.bank;
-        initialSimConnnectPosition.Heading = initialPosition.trueHeading;
-        initialSimConnnectPosition.OnGround = initialPosition.onGround ? 1 : 0;
-        initialSimConnnectPosition.Airspeed = initialPosition.indicatedAirspeed;
-
-        return initialSimConnnectPosition;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
@@ -117,7 +69,6 @@ struct SimConnectPositionAll
         SimConnectPositionCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAll));
         SimConnectPositionInfo::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAll));
     }
-
 };
 #pragma pack(pop)
 

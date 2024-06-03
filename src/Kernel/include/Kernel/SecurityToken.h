@@ -71,7 +71,7 @@ public:
     KERNEL_API static SecurityToken *create(const QByteArray &securityTokenData);
 
     /*!
-     * Creates a security access token data for the given \p filePath in order to access
+     * Creates a security access token data for the given \c filePath in order to access
      * files after the restart of a sandboxed application. The token
      * generation is platform-specific:
      * - On OS X Security-Scoped Bookmarks are generated

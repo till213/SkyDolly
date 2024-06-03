@@ -83,29 +83,29 @@ struct IgcImportPluginPrivate
     IgcImportSettings pluginSettings;
     QEasingCurve throttleResponseCurve {QEasingCurve::OutExpo};
 
-    static inline const QString FileExtension {QStringLiteral("igc")};
+    static inline const QString FileExtension {"igc"};
 };
 
 // PUBLIC
 
 IgcImportPlugin::IgcImportPlugin() noexcept
-    : d(std::make_unique<IgcImportPluginPrivate>())
+    : d {std::make_unique<IgcImportPluginPrivate>()}
 {}
 
 IgcImportPlugin::~IgcImportPlugin() = default;
 
-std::vector<FlightData> IgcImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+std::vector<FlightData> IgcImportPlugin::importFlightData(QIODevice &io, bool &ok) noexcept
 {
     std::vector<FlightData> flights;
     ok = d->igcParser.parse(io);
     if (ok) {
         FlightData flightData;
-        Aircraft &aircraft = flightData.addUserAircraft();
+        auto &aircraft = flightData.addUserAircraft();
         // Now "upsert" the position data, taking possible duplicate timestamps into account
         Position &position = aircraft.getPosition();
 
         // Engine
-        Engine &engine = aircraft.getEngine();
+        auto &engine = aircraft.getEngine();
         EngineData engineData;
         IgcImportPluginPrivate::EngineState engineState = IgcImportPluginPrivate::EngineState::Unknown;
         const double enlThresholdNorm = static_cast<double>(d->pluginSettings.getEnlThresholdPercent()) / 100.0;

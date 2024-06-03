@@ -34,7 +34,7 @@
 struct KmlImportOptionWidgetPrivate
 {
     KmlImportOptionWidgetPrivate(KmlImportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     KmlImportSettings &pluginSettings;
@@ -43,9 +43,9 @@ struct KmlImportOptionWidgetPrivate
 // PUBLIC
 
 KmlImportOptionWidget::KmlImportOptionWidget(KmlImportSettings &pluginSettings, QWidget *parent) noexcept
-   : QWidget(parent),
-     ui(std::make_unique<Ui::KmlImportOptionWidget>()),
-      d(std::make_unique<KmlImportOptionWidgetPrivate>(pluginSettings))
+   : QWidget {parent},
+     ui {std::make_unique<Ui::KmlImportOptionWidget>()},
+     d {std::make_unique<KmlImportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();
@@ -67,8 +67,8 @@ void KmlImportOptionWidget::frenchConnection() noexcept
 
 void KmlImportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem(QStringLiteral("FlightAware"), Enum::underly(KmlImportSettings::Format::FlightAware));
-    ui->formatComboBox->addItem(QStringLiteral("FlightRadar24"), Enum::underly(KmlImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("FlightAware", Enum::underly(KmlImportSettings::Format::FlightAware));
+    ui->formatComboBox->addItem("FlightRadar24", Enum::underly(KmlImportSettings::Format::FlightRadar24));
     ui->formatComboBox->addItem(tr("Generic KML with track data"), Enum::underly(KmlImportSettings::Format::Generic));
 }
 

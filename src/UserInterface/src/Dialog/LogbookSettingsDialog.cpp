@@ -57,9 +57,9 @@ struct LogbookSettingsDialogPrivate
 // PUBLIC
 
 LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    ui(std::make_unique<Ui::LogbookSettingsDialog>()),
-    d(std::make_unique<LogbookSettingsDialogPrivate>())
+    QDialog {parent},
+    ui {std::make_unique<Ui::LogbookSettingsDialog>()},
+    d {std::make_unique<LogbookSettingsDialogPrivate>()}
 {
     ui->setupUi(this);
     initUi();

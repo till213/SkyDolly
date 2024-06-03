@@ -29,7 +29,7 @@
 // PUBLIC
 
 FocusPlainTextEdit::FocusPlainTextEdit(QWidget *parent) noexcept
-    : QPlainTextEdit(parent)
+    : QPlainTextEdit {parent}
 {}
 
 // PROTECTED:

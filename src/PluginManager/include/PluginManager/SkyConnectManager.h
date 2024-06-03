@@ -33,6 +33,7 @@
 #include <unordered_map>
 
 #include <QObject>
+#include <QDateTime>
 
 class QString;
 class QUuid;
@@ -49,6 +50,8 @@ class QUuid;
 
 struct FlightSimulatorShortcuts;
 struct SkyConnectManagerPrivate;
+struct PositionData;
+struct AttitudeData;
 
 /// \todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
 class PLUGINMANAGER_API SkyConnectManager final : public QObject
@@ -124,7 +127,7 @@ public:
     int getRemainingReconnectTime() const noexcept;
 
     bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
-    bool setUserAircraftPosition(const PositionData & positionData) noexcept;
+    bool setUserAircraftPositionAndAttitude(const PositionData &positionData, const AttitudeData &attitudeData) noexcept;
     bool freezeUserAircraft(bool enable) noexcept;
     bool sendSimulationEvent(SkyConnectIntf::SimulationEvent event, float arg1 = 0.0f) noexcept;
 
@@ -174,6 +177,7 @@ public:
 
     bool requestLocation() const noexcept;
     bool requestSimulationRate() const noexcept;
+    bool sendDateAndTime(QDateTime dateTime) const noexcept;
 
     using PluginRegistry = std::unordered_map<QUuid, QString, QUuidHasher>;
 
@@ -247,11 +251,11 @@ signals:
     void simulationRateReceived(float rate);
 
     /*!
-     * Relay of the SkyConnectIntf#shortCutActivated signal.
+     * Relay of the SkyConnectIntf#actionActivated signal.
      *
-     * \sa SkyConnectIntf#shortCutActivated
+     * \sa SkyConnectIntf#actionActivated
      */
-    void shortCutActivated(FlightSimulatorShortcuts::Action action);
+    void actionActivated(FlightSimulatorShortcuts::Action action);
 
 private:
     const std::unique_ptr<SkyConnectManagerPrivate> d;

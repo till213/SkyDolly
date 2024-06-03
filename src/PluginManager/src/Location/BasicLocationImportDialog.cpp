@@ -46,8 +46,8 @@
 struct BasicLocationImportDialogPrivate
 {
     BasicLocationImportDialogPrivate(QString fileFilter, LocationImportPluginBaseSettings &pluginSettings) noexcept
-        : fileFilter(std::move(fileFilter)),
-          pluginSettings(pluginSettings)
+        : fileFilter {std::move(fileFilter)},
+          pluginSettings {pluginSettings}
     {}
 
     std::unique_ptr<AircraftTypeService> aircraftTypeService {std::make_unique<AircraftTypeService>()};
@@ -60,9 +60,9 @@ struct BasicLocationImportDialogPrivate
 // PUBLIC
 
 BasicLocationImportDialog::BasicLocationImportDialog(QString fileFilter, LocationImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
-    : QDialog(parent),
-      ui(std::make_unique<Ui::BasicLocationImportDialog>()),
-      d(std::make_unique<BasicLocationImportDialogPrivate>(std::move(fileFilter), pluginSettings))
+    : QDialog {parent},
+      ui {std::make_unique<Ui::BasicLocationImportDialog>()},
+      d {std::make_unique<BasicLocationImportDialogPrivate>(std::move(fileFilter), pluginSettings)}
 {
     ui->setupUi(this);
     initUi();
@@ -108,9 +108,17 @@ void BasicLocationImportDialog::initBasicUi() noexcept
 {
     auto &settings = Settings::getInstance();
     ui->pathLineEdit->setText(QDir::toNativeSeparators(settings.getExportPath()));
-    ui->importDirectoryCheckBox->setChecked(d->pluginSettings.isImportDirectoryEnabled());
+    ui->importModeComboBox->setToolTip(
+QStringLiteral("<html>") %
+"<head/>" %
+"<body><p>" %
+tr("Defines how existing locations are modified:") % "<br/><br/>" %
+tr("• Skip: existing locations are left unmodified (current location to be imported is skipped)") % "<br/>" %
+tr("• Update: existing locations are modified with the newly imported location") % "<br/>" %
+tr("• Insert: new locations are added (existing locations are left unmodified)") % "</p>"
+"</body></html>");
 
-    ui->importModeComboBox->addItem(tr("Ignore"), Enum::underly(LocationService::Mode::Ignore));
+    ui->importModeComboBox->addItem(tr("Skip"), Enum::underly(LocationService::Mode::Skip));
     ui->importModeComboBox->addItem(tr("Update"), Enum::underly(LocationService::Mode::Update));
     ui->importModeComboBox->addItem(tr("Insert"), Enum::underly(LocationService::Mode::Insert));
 }
@@ -140,6 +148,8 @@ void BasicLocationImportDialog::frenchConnection() noexcept
             this, &BasicLocationImportDialog::onImportDirectoryChanged);
     connect(ui->importModeComboBox, &QComboBox::currentIndexChanged,
             this, &BasicLocationImportDialog::onImportModeChanged);
+    connect(ui->distanceSpinBox, &QDoubleSpinBox::valueChanged,
+            this, &BasicLocationImportDialog::onDistanceValueChanged);
     connect(&d->pluginSettings, &LocationImportPluginBaseSettings::changed,
             this, &BasicLocationImportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
@@ -168,6 +178,8 @@ void BasicLocationImportDialog::updateUi() noexcept
         ++currentIndex;
     }
     ui->importModeComboBox->setCurrentIndex(currentIndex);
+    ui->distanceSpinBox->setValue(d->pluginSettings.getNearestLocationDistanceKm());
+    ui->distanceSpinBox->setEnabled(importMode != LocationService::Mode::Insert);
 
     const bool enabled = fileExists;
     d->importButton->setEnabled(enabled);
@@ -223,8 +235,14 @@ void BasicLocationImportDialog::onImportDirectoryChanged(bool enable) noexcept
 
 void BasicLocationImportDialog::onImportModeChanged() noexcept
 {
-    const LocationService::Mode mode = static_cast<LocationService::Mode>(ui->importModeComboBox->currentData().toInt());
+    const auto mode = static_cast<LocationService::Mode>(ui->importModeComboBox->currentData().toInt());
     d->pluginSettings.setImportMode(mode);
+}
+
+void BasicLocationImportDialog::onDistanceValueChanged() noexcept
+{
+    const auto value = ui->distanceSpinBox->value();
+    d->pluginSettings.setNearestLocationDistanceKm(value);
 }
 
 void BasicLocationImportDialog::onRestoreDefaults() noexcept

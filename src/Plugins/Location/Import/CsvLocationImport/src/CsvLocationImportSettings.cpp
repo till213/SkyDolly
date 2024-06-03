@@ -58,7 +58,7 @@ struct CsvLocationImportSettingsPrivate
 // PUBLIC
 
 CsvLocationImportSettings::CsvLocationImportSettings() noexcept
-    : d(std::make_unique<CsvLocationImportSettingsPrivate>())
+    : d {std::make_unique<CsvLocationImportSettingsPrivate>()}
 {}
 
 CsvLocationImportSettings::~CsvLocationImportSettings() = default;
@@ -121,19 +121,19 @@ void CsvLocationImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) 
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::FormatKey);
+    keyValue.first = ::FormatKey;
     keyValue.second = Enum::underly(d->format);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultCountryKey);
+    keyValue.first = ::DefaultCountryKey;
     keyValue.second = QVariant::fromValue(d->defaultCountryId);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultAltitudeKey);
+    keyValue.first = ::DefaultAltitudeKey;
     keyValue.second = d->defaultAltitude;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultIndicatedAirspeedKey);
+    keyValue.first = ::DefaultIndicatedAirspeedKey;
     keyValue.second = d->defaultIndicatedAirspeed;
     keyValues.push_back(keyValue);
 }
@@ -142,19 +142,19 @@ void CsvLocationImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::FormatKey);
+    keyValue.first = ::FormatKey;
     keyValue.second = Enum::underly(::DefaultFormat);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultCountryKey);
+    keyValue.first = ::DefaultCountryKey;
     keyValue.second = QVariant::fromValue(d->WorldCountryId);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultAltitudeKey);
+    keyValue.first = ::DefaultAltitudeKey;
     keyValue.second = Const::DefaultAltitude;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultIndicatedAirspeedKey);
+    keyValue.first = ::DefaultIndicatedAirspeedKey;
     keyValue.second = Const::DefaultIndicatedAirspeed;
     keysWithDefaults.push_back(keyValue);
 }
@@ -162,16 +162,16 @@ void CsvLocationImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaul
 void CsvLocationImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::FormatKey).toInt(&ok);
     d->format = ok && Enum::contains<CsvLocationImportSettings::Format>(enumValue) ? static_cast<CsvLocationImportSettings::Format>(enumValue) : ::DefaultFormat;
 
-    const std::int64_t defaultCountryId = valuesByKey.at(QString::fromLatin1(::DefaultCountryKey)).toLongLong(&ok);
+    const std::int64_t defaultCountryId = valuesByKey.at(::DefaultCountryKey).toLongLong(&ok);
     d->defaultCountryId = ok ? defaultCountryId : d->WorldCountryId;
 
-    const int defaultAltitude = valuesByKey.at(QString::fromLatin1(::DefaultAltitudeKey)).toInt(&ok);
+    const int defaultAltitude = valuesByKey.at(::DefaultAltitudeKey).toInt(&ok);
     d->defaultAltitude = ok ? defaultAltitude : Const::DefaultAltitude;
 
-    const int defaultIndicatedAirspeed = valuesByKey.at(QString::fromLatin1(::DefaultIndicatedAirspeedKey)).toInt(&ok);
+    const int defaultIndicatedAirspeed = valuesByKey.at(::DefaultIndicatedAirspeedKey).toInt(&ok);
     d->defaultIndicatedAirspeed = ok ? defaultIndicatedAirspeed : Const::DefaultIndicatedAirspeed;
 }
 

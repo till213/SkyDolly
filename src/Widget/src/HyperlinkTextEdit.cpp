@@ -33,7 +33,7 @@
 // PUBLIC
 
 HyperlinkTextEdit::HyperlinkTextEdit(QWidget *parent)
-    : QTextEdit(parent)
+    : QTextEdit {parent}
 {
     setMouseTracking(true);
 }

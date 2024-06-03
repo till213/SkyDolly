@@ -35,7 +35,7 @@
 // PUBLIC
 
 AircraftSelectionComboBox::AircraftSelectionComboBox(QWidget *parent) noexcept
-    : QComboBox(parent)
+    : QComboBox {parent}
 {
     initUi();
 }

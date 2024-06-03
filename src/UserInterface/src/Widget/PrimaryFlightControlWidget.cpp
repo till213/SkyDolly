@@ -62,9 +62,9 @@ struct PrimaryFlightControlWidgetPrivate
 // PUBLIC
 
 PrimaryFlightControlWidget::PrimaryFlightControlWidget(QWidget *parent) noexcept :
-    AbstractSimulationVariableWidget(parent),
-    ui(std::make_unique<Ui::PrimaryFlightControlWidget>()),
-    d(std::make_unique<PrimaryFlightControlWidgetPrivate>(*this))
+    AbstractSimulationVariableWidget {parent},
+    ui {std::make_unique<Ui::PrimaryFlightControlWidget>()},
+    d {std::make_unique<PrimaryFlightControlWidgetPrivate>(*this)}
 {
     ui->setupUi(this);
     initUi();
@@ -107,32 +107,30 @@ void PrimaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableDa
 
 void PrimaryFlightControlWidget::initUi()
 {
-    ui->rudderDeflectionLineEdit->setToolTip(QString::fromLatin1(SimVar::RudderDeflection));
-    ui->elevatorDeflectionLineEdit->setToolTip(QString::fromLatin1(SimVar::ElevatorDeflection));
-    ui->leftAileronDeflectionLineEdit->setToolTip(QString::fromLatin1(SimVar::AileronLeftDeflection));
-    ui->rightAileronDeflectionLineEdit->setToolTip(QString::fromLatin1(SimVar::AileronRightDeflection));
-    ui->rudderLineEdit->setToolTip(QString::fromLatin1(SimVar::RudderPosition));
-    ui->elevatorLineEdit->setToolTip(QString::fromLatin1(SimVar::ElevatorPosition));
-    ui->aileronLineEdit->setToolTip(QString::fromLatin1(SimVar::AileronPosition));
+    ui->rudderDeflectionLineEdit->setToolTip(SimVar::RudderDeflection);
+    ui->elevatorDeflectionLineEdit->setToolTip(SimVar::ElevatorDeflection);
+    ui->leftAileronDeflectionLineEdit->setToolTip(SimVar::AileronLeftDeflection);
+    ui->rightAileronDeflectionLineEdit->setToolTip(SimVar::AileronRightDeflection);
+    ui->rudderLineEdit->setToolTip(SimVar::RudderPosition);
+    ui->elevatorLineEdit->setToolTip(SimVar::ElevatorPosition);
+    ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
 }
 
 PrimaryFlightControlData PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    PrimaryFlightControlData primaryFlightControlData;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (skyConnect->get().getState() == Connect::State::Recording) {
-            if (aircraft.getPrimaryFlightControl().count() > 0) {
-                primaryFlightControlData = aircraft.getPrimaryFlightControl().getLast();
-            }
-        } else {
-            if (timestamp != TimeVariableData::InvalidTime) {
-                primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(timestamp, access);
-            } else {
-                primaryFlightControlData = aircraft.getPrimaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
-            }
-        };
-    }
-    return primaryFlightControlData;
+    PrimaryFlightControlData data;
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &primaryFlightControl = aircraft.getPrimaryFlightControl();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+
+    if (skyConnectManager.getState() == Connect::State::Recording) {
+        if (primaryFlightControl.count() > 0) {
+            data = primaryFlightControl.getLast();
+        }
+    } else {
+        const auto t = timestamp != TimeVariableData::InvalidTime ? timestamp : skyConnectManager.getCurrentTimestamp();
+        data = primaryFlightControl.interpolate(t, access);
+    };
+
+    return data;
 }

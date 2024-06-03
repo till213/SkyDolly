@@ -40,7 +40,7 @@ struct DefaultModuleImplPrivate
 // PUBLIC
 
 DefaultModuleImpl::DefaultModuleImpl() noexcept
-    : d(std::make_unique<DefaultModuleImplPrivate>())
+    : d {std::make_unique<DefaultModuleImplPrivate>()}
 {}
 
 DefaultModuleImpl::~DefaultModuleImpl() = default;
@@ -52,7 +52,7 @@ QUuid DefaultModuleImpl::getUuid() const noexcept
 
 QString DefaultModuleImpl::getModuleName() const noexcept
 {
-    return QStringLiteral("");
+    return "";
 }
 
 QWidget *DefaultModuleImpl::getWidget() const noexcept

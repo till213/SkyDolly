@@ -34,8 +34,8 @@
 
 namespace
 {
-    constexpr const char *FormatKey = "Format";
-    constexpr const int FlightRadar24Format = 1;
+    constexpr const char *FormatKey {"Format"};
+    constexpr const int FlightRadar24Format {1};
 }
 
 // PRIVATE SLOTS
@@ -47,7 +47,7 @@ void CsvFlightRadar24ImportTest::onInitTestCase() noexcept
     m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();
     setPluginSetting(pluginUuid, ::FormatKey, ::FlightRadar24Format);
 
-    // Initialis flight import plugins
+    // Initialise flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
     const std::vector<PluginManager::Handle> flightImportPlugins = pluginManager.initialiseFlightImportPlugins();
     QVERIFY(flightImportPlugins.size() > 0);

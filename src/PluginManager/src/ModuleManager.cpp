@@ -67,13 +67,13 @@ struct ModuleManagerPrivate
     {
         pluginsDirectoryPath.cd(File::getPluginDirectoryPath());
         if (recordIcon.isNull()) {
-            recordIcon.addFile(QStringLiteral(":/img/icons/record-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
-            recordIcon.addFile(QStringLiteral(":/img/icons/record-normal-on.png"), QSize(), QIcon::Normal, QIcon::On);
-            recordIcon.addFile(QStringLiteral(":/img/icons/record-active.png"), QSize(), QIcon::Active);
+            recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
+            recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+            recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
 
-            recordAddIcon.addFile(QStringLiteral(":/img/icons/record-add-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
-            recordAddIcon.addFile(QStringLiteral(":/img/icons/record-add-normal-on.png"), QSize(), QIcon::Normal, QIcon::On);
-            recordAddIcon.addFile(QStringLiteral(":/img/icons/record-add-active.png"), QSize(), QIcon::Active);
+            recordAddIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
+            recordAddIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+            recordAddIcon.addFile(":/img/icons/record-add-active.png", QSize(), QIcon::Active);
         }
     }
 
@@ -103,8 +103,8 @@ QIcon ModuleManagerPrivate::recordAddIcon;
 // PUBLIC
 
 ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<ModuleManagerPrivate>(layout))
+    : QObject {parent},
+      d {std::make_unique<ModuleManagerPrivate>(layout)}
 {
     initModules();
     if (d->moduleRegistry.size() > 0) {
@@ -206,8 +206,8 @@ void ModuleManager::initModules() noexcept
     Graph graph;
     std::unordered_map<QUuid, ModuleInfo, QUuidHasher> moduleInfos;
     d->moduleRegistry.clear();
-    if (d->pluginsDirectoryPath.exists(QString::fromLatin1(::ModuleDirectoryName))) {
-        d->pluginsDirectoryPath.cd(QString::fromLatin1(::ModuleDirectoryName));
+    if (d->pluginsDirectoryPath.exists(::ModuleDirectoryName)) {
+        d->pluginsDirectoryPath.cd(::ModuleDirectoryName);
         const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
         for (const auto &fileName : entryList) {
             initModule(fileName, moduleInfos, graph);
@@ -233,12 +233,12 @@ void ModuleManager::initModule(const QString &fileName, std::unordered_map<QUuid
     d->pluginLoader->setFileName(pluginPath);
     const QJsonObject metaData = d->pluginLoader->metaData();
     if (!metaData.isEmpty()) {
-        const QJsonObject pluginMetadata {metaData.value(QStringLiteral("MetaData")).toObject()};
-        const QUuid uuid {pluginMetadata.value(QString::fromLatin1(::PluginUuidKey)).toString()};
-        const QString name {pluginMetadata.value(QString::fromLatin1(::PluginNameKey)).toString()};
+        const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
+        const QUuid uuid {pluginMetadata.value(::PluginUuidKey).toString()};
+        const QString name {pluginMetadata.value(::PluginNameKey).toString()};
         moduleInfos[uuid] = std::make_pair(name, pluginPath);
 
-        const QJsonArray afterArray = pluginMetadata.value(QString::fromLatin1(::PluginAfter)).toArray();
+        const QJsonArray afterArray = pluginMetadata.value(::PluginAfter).toArray();
         std::shared_ptr<Vertex> vertex ;
         const auto it = graph.find(uuid);
         // Vertex already in graph?

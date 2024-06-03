@@ -47,6 +47,8 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <Model/InitialPosition.h>
 #include <Connect/Connect.h>
 #include <Connect/SkyConnectIntf.h>
@@ -56,9 +58,6 @@
 
 namespace
 {
-    // Period [ms] over which we count the recorded samples per second
-    constexpr std::int64_t SamplesPerSecondPeriod = 10000;
-
     // The frequency [Hertz] in which timestampChanged signals are emitted
     constexpr std::int64_t NotificationFrequency = 10;
 
@@ -69,14 +68,19 @@ namespace
     // NofRetryConnectPeriods Fibonacci numbers (starting with 0), corresponding
     // to about 90 seconds longest period (89, to be specific)
     constexpr int NofRetryConnectPeriods = 12;
+
+    // The simulation time update base interval with a simulation rate of 1.0
+    constexpr int SimulationTimeUpdateBaseIntervalMSec = 60 * 1000;
+    // Minimum simulation time update interval
+    constexpr int MinimumSimulationTimeUpdateIntervalMSec = 16;
 }
 
 struct AbstractSkyConnectPrivate
 {
     AbstractSkyConnectPrivate() noexcept
     {
-        recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
         reconnectTimer.setSingleShot(true);
+        updateSimulationTimeUpdateInterval();
         retryConnectPeriods = SkyMath::calculateFibonacci<::NofRetryConnectPeriods>(::NofRetryConnectPeriods);
 #ifdef DEBUG
         qDebug() << "AbstractSkyConnectPrivate: AbstractSkyConnectPrivate: elapsed timer clock type:" << elapsedTimer.clockType();
@@ -86,26 +90,32 @@ struct AbstractSkyConnectPrivate
     SkyConnectIntf::ReplayMode replayMode {SkyConnectIntf::ReplayMode::Normal};
     Connect::State state {Connect::State::Disconnected};
     Flight &currentFlight {Logbook::getInstance().getCurrentFlight()};
-    // Triggers the recording of sample data (if not event-based recording)
-    QTimer recordingTimer;
     QTimer reconnectTimer;
+    QTimer simulationTimeUpdateTimer;
     std::size_t reconnectAttempt {0};
     std::array<int, ::NofRetryConnectPeriods> retryConnectPeriods {};
     std::int64_t currentTimestamp {0};
     std::int64_t lastNotificationTimestamp {0};
-    double recordingSampleRate {Settings::getInstance().getRecordingSampleRateValue()};
-    int recordingIntervalMSec {SampleRate::toIntervalMSec(recordingSampleRate)};
+
     QElapsedTimer elapsedTimer;
     float replaySpeedFactor {1.0f};
     std::int64_t elapsedTime {0};
-    mutable int lastSamplesPerSecondIndex {0};
+
+    inline void updateSimulationTimeUpdateInterval() noexcept
+    {
+        // Not less than MinimumSimulationTimeUpdateIntervalMSec msec
+        const auto intervalMSec = replaySpeedFactor > 1.0f ?
+                                      std::max(static_cast<int>(std::round(::SimulationTimeUpdateBaseIntervalMSec / replaySpeedFactor)), ::MinimumSimulationTimeUpdateIntervalMSec) :
+                                      SimulationTimeUpdateBaseIntervalMSec;
+        simulationTimeUpdateTimer.setInterval(intervalMSec);
+    }
 };
 
 // PUBLIC
 
 AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
-    : SkyConnectIntf(parent),
-      d(std::make_unique<AbstractSkyConnectPrivate>())
+    : SkyConnectIntf {parent},
+      d {std::make_unique<AbstractSkyConnectPrivate>()}
 {
     frenchConnection();
 }
@@ -226,13 +236,9 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
             break;
         }
 
-        d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
         d->lastNotificationTimestamp = d->currentTimestamp;
         d->elapsedTimer.invalidate();
-        if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
-            d->recordingTimer.start(d->recordingIntervalMSec);
-        }
         ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
             switch (recordingMode) {
@@ -254,9 +260,8 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
 void AbstractSkyConnect::stopRecording() noexcept
 {
     onStopRecording();
-    Aircraft &aircraft = d->currentFlight.getUserAircraft();
+    auto &aircraft = d->currentFlight.getUserAircraft();
     aircraft.invalidateDuration();
-    d->recordingTimer.stop();
     // Only go into "recording stopped" state once the aircraft duration has been invalidated, in
     // order to properly update the total flight duration
     Connect::State state = isConnected() ? Connect::State::Connected : Connect::State::Disconnected;
@@ -295,13 +300,12 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
         bool ok = retryWithReconnect([this]() -> bool { return onStartReplay(d->currentTimestamp); });
         if (ok) {
             ok = setupInitialReplayPosition(flyWithFormationPosition);
+            ok = ok && updateUserAircraftFreeze();
+            ok = ok && updateSimulationTime();
+            ok = ok && sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
             if (ok) {
-                ok = updateUserAircraftFreeze();
-            }
-            if (ok) {
-                sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
-            }
-            if (!ok) {
+                d->simulationTimeUpdateTimer.start();
+            } else {
                 stopReplay();
             }
         } else {
@@ -315,15 +319,16 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
 void AbstractSkyConnect::stopReplay() noexcept
 {
     setState(Connect::State::Connected);
-    d->recordingTimer.stop();
     // Remember elapsed time since last replay start, in order to continue from
     // current timestamp
     d->elapsedTime = d->currentTimestamp;
     d->elapsedTimer.invalidate();
+    d->simulationTimeUpdateTimer.stop();
     onStopReplay();
     updateUserAircraftFreeze();
     // Reset simulation rate
     sendSimulationEvent(SimulationEvent::SimulationRate, 1.0f);
+
 }
 
 bool AbstractSkyConnect::isReplaying() const noexcept
@@ -354,7 +359,6 @@ void AbstractSkyConnect::setPaused(Initiator initiator, bool enable) noexcept
             // Store the elapsed recording time...
             d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed();
             d->elapsedTimer.invalidate();
-            d->recordingTimer.stop();
             onRecordingPaused(initiator, true);
             break;
         case Connect::State::Replay:
@@ -380,9 +384,6 @@ void AbstractSkyConnect::setPaused(Initiator initiator, bool enable) noexcept
             if (hasRecordingStarted()) {
                 // Resume recording (but only if it has already recorded samples before)
                 startElapsedTimer();
-            }
-            if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
-                d->recordingTimer.start(d->recordingIntervalMSec);
             }
             onRecordingPaused(initiator, false);
             break;
@@ -421,7 +422,7 @@ void AbstractSkyConnect::skipBackward() noexcept
 
 void AbstractSkyConnect::skipForward() noexcept
 {
-    std::int64_t skipMSec = getSkipInterval();
+    const auto skipMSec = getSkipInterval();
     const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
     const std::int64_t newTimeStamp = std::min(d->currentTimestamp + skipMSec, totalDuration);
     seek(newTimeStamp, SeekMode::Discrete);
@@ -429,7 +430,7 @@ void AbstractSkyConnect::skipForward() noexcept
 
 void AbstractSkyConnect::skipToEnd() noexcept
 {
-    const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
+    const auto totalDuration = d->currentFlight.getTotalDurationMSec();
     seek(totalDuration, SeekMode::Discrete);
 }
 
@@ -444,6 +445,7 @@ void AbstractSkyConnect::seek(std::int64_t timestamp, SeekMode seekMode) noexcep
             d->lastNotificationTimestamp = d->currentTimestamp;
             d->elapsedTime = timestamp;
             const TimeVariableData::Access access = seekMode == SeekMode::Continuous ? TimeVariableData::Access::ContinuousSeek : TimeVariableData::Access::DiscreteSeek;
+            updateSimulationTime();
             emit timestampChanged(d->currentTimestamp, access);
             onSeek(d->currentTimestamp, seekMode);
             bool ok = retryWithReconnect([this, access]() -> bool { return sendAircraftData(d->currentTimestamp, access, AircraftSelection::All); });
@@ -522,33 +524,11 @@ void AbstractSkyConnect::setReplaySpeedFactor(float factor) noexcept
             startElapsedTimer();
         }
         d->replaySpeedFactor = factor;
+        d->updateSimulationTimeUpdateInterval();
         if (isInReplayState()) {
             sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
         }
     }
-}
-
-float AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
-{
-    float samplesPerSecond {0.0};
-    const Position &position = d->currentFlight.getUserAircraft().getPosition();
-    if (position.count() > 0) {
-        const std::int64_t startTimestamp = std::min(std::max(d->currentTimestamp - SamplesPerSecondPeriod, std::int64_t(0)), position.getLast().timestamp);
-        int index = d->lastSamplesPerSecondIndex;
-
-        while (position[index].timestamp < startTimestamp) {
-            ++index;
-        }
-        d->lastSamplesPerSecondIndex = index;
-
-        const std::size_t lastIndex = position.count() - 1;
-        const std::size_t nofSamples = lastIndex - index + 1;
-        const std::int64_t period = position[lastIndex].timestamp - position[index].timestamp;
-        if (period > 0) {
-            samplesPerSecond = static_cast<float>(nofSamples) * 1000.0 / (static_cast<float>(period));
-        }
-    }
-    return samplesPerSecond;
 }
 
 bool AbstractSkyConnect::requestLocation() noexcept
@@ -573,6 +553,23 @@ bool AbstractSkyConnect::requestSimulationRate() noexcept
     bool ok = isConnectedWithSim();
     if (ok) {
         ok = retryWithReconnect([this]() -> bool { return onRequestSimulationRate(); });
+    }
+    return ok;
+}
+
+bool AbstractSkyConnect::sendZuluDateTime(QDateTime dateTime) noexcept
+{
+    if (!isConnectedWithSim()) {
+        tryFirstConnectAndSetup();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        const auto year = dateTime.date().year();
+        const auto day = dateTime.date().dayOfYear();
+        const auto hour = dateTime.time().hour();
+        const auto minute = dateTime.time().minute();
+        ok = retryWithReconnect([this, year, day, hour, minute]() -> bool { return onSendZuluDateTime(year, day, hour, minute); });
     }
     return ok;
 }
@@ -625,12 +622,12 @@ void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previo
         // Check if the new user aircraft has just been newly added, which is indicated
         // by an invalid ID (= it has never been persisted). In such a case it does not
         // have an associated AI object either
-        const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
+        const auto &userAircraft = d->currentFlight[newUserAircraftIndex];
         if (userAircraft.getId() != Const::InvalidId) {
             removeAiObject(userAircraft.getId());
         }
         if (previousUserAircraftIndex != Const::InvalidIndex) {
-            const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
+            const auto &aircraft = d->currentFlight[previousUserAircraftIndex];
             addAiObject(aircraft);
         }
         sendAircraftData(d->currentTimestamp, TimeVariableData::Access::DiscreteSeek, AircraftSelection::UserAircraft);
@@ -719,7 +716,7 @@ void AbstractSkyConnect::createAiObjects() noexcept
         // When "fly with formation" is enabled we also create an AI aircraft for the user aircraft
         // (the user aircraft of the recorded aircraft in the formation, that is)
         const bool includingUserAircraft = getReplayMode() == ReplayMode::FlyWithFormation;
-        const std::int64_t userAircraftId = d->currentFlight.getUserAircraft().getId();
+        const auto userAircraftId = d->currentFlight.getUserAircraft().getId();
         for (const auto &aircraft : d->currentFlight) {
             if (aircraft.getId() != userAircraftId || includingUserAircraft) {
                 onAddAiObject(aircraft);
@@ -776,13 +773,11 @@ void AbstractSkyConnect::onPluginSettingsChanged(Connect::Mode mode) noexcept
 
 void AbstractSkyConnect::frenchConnection() noexcept
 {
-    connect(&(d->recordingTimer), &QTimer::timeout,
-            this, &AbstractSkyConnect::recordData);
     connect(&(d->reconnectTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::onReconnectTimer);
+    connect(&(d->simulationTimeUpdateTimer), &QTimer::timeout,
+            this, &AbstractSkyConnect::updateSimulationTime);
     auto &settings = Settings::getInstance();
-    connect(&settings, &Settings::recordingSampleRateChanged,
-            this, &AbstractSkyConnect::onRecordingSampleRateSettingsChanged);
 }
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
@@ -795,7 +790,7 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
     auto &settings = Settings::getInstance();
     return static_cast<std::int64_t>(std::round(settings.isAbsoluteSeekEnabled() ?
                                      settings.getSeekIntervalSeconds() * 1000.0 :
-                                     settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
+                                     settings.getSeekIntervalPercent() * static_cast<double>(d->currentFlight.getTotalDurationMSec()) / 100.0));
 }
 
 void AbstractSkyConnect::tryFirstConnectAndSetup() noexcept
@@ -846,13 +841,14 @@ bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition flyWithForma
         [[fallthrough]];
     case ReplayMode::Normal:
         if (d->currentTimestamp == 0) {
-            const Aircraft &userAircraft = getCurrentFlight().getUserAircraft();
+            const auto &aircraft = getCurrentFlight().getUserAircraft();
             // Make sure recorded position data exists
-            ok = userAircraft.getPosition().count() > 0;
+            ok = aircraft.getPosition().count() > 0;
             if (ok) {
-                const PositionData &positionData = userAircraft.getPosition().getFirst();
-                const AircraftInfo aircraftInfo = userAircraft.getAircraftInfo();
-                const InitialPosition initialPosition = InitialPosition(positionData, aircraftInfo);
+                const auto &positionData = aircraft.getPosition().getFirst();
+                const AttitudeData &attitudeData = aircraft.getAttitude().getFirst();
+                const AircraftInfo aircraftInfo = aircraft.getAircraftInfo();
+                const InitialPosition initialPosition = InitialPosition(positionData, attitudeData, aircraftInfo);
                 ok = onInitialPositionSetup(initialPosition);
             }
         }
@@ -878,7 +874,7 @@ bool AbstractSkyConnect::updateUserAircraftFreeze() noexcept
     return onFreezeUserAircraft(freeze);
 }
 
-float AbstractSkyConnect::getApplicableSimulationRate()
+float AbstractSkyConnect::getApplicableSimulationRate() const noexcept
 {
     const auto &settings = Settings::getInstance();
     const auto maximumSimulationRate = static_cast<float>(settings.getMaximumSimulationRate());
@@ -886,23 +882,6 @@ float AbstractSkyConnect::getApplicableSimulationRate()
 }
 
 // PRIVATE SLOTS
-
-void AbstractSkyConnect::onRecordingSampleRateSettingsChanged(SampleRate::SampleRate sampleRate) noexcept
-{
-    d->recordingSampleRate = SampleRate::toValue(sampleRate);
-    d->recordingIntervalMSec = SampleRate::toIntervalMSec(d->recordingSampleRate);
-    if (d->state == Connect::State::Recording || d->state == Connect::State::RecordingPaused) {
-        if (isTimerBasedRecording(sampleRate)) {
-            d->recordingTimer.setInterval(d->recordingIntervalMSec);
-            if (!d->recordingTimer.isActive()) {
-                d->recordingTimer.start();
-            }
-        } else {
-            d->recordingTimer.stop();
-        }
-        onRecordingSampleRateChanged(sampleRate);
-    }
-}
 
 void AbstractSkyConnect::onReconnectTimer() noexcept
 {
@@ -929,12 +908,54 @@ void AbstractSkyConnect::retryConnectAndSetup(Connect::Mode mode) noexcept
         // Try later, with progressively increasing retry periods
         setState(Connect::State::Disconnected);
         const auto attempt = std::min(d->retryConnectPeriods.size() - 1, d->reconnectAttempt);
-        const auto period = d->retryConnectPeriods[attempt];
+        const auto period = d->retryConnectPeriods.at(attempt);
 #ifdef DEBUG
         qDebug() << "AbstractSkyConnectPrivate: retryConnectAndSetup: attempt:" << (d->reconnectAttempt + 1)
                  << "failed, trying again in" << period << "seconds";
 #endif
         d->reconnectAttempt++;
         d->reconnectTimer.start(period * 1000);
+    }
+}
+
+bool AbstractSkyConnect::updateSimulationTime() noexcept
+{
+
+    bool hasSimulationTime {true};
+
+    const auto realWorldDuation = d->currentFlight.getTotalDurationMSec();
+    if (realWorldDuation > 0) {
+        auto startZuluDateTime = d->currentFlight.getFlightCondition().startZuluDateTime;
+        auto startLocalDateTime = d->currentFlight.getFlightCondition().startLocalDateTime;
+        if (!(startZuluDateTime.isValid() && startLocalDateTime.isValid())) {
+            // If - for whatever reasons - the flight conditions have not been recorded, fall back
+            // to the current real-world date and time
+            startZuluDateTime = QDateTime::currentDateTimeUtc();
+            startLocalDateTime = QDateTime::currentDateTime();
+            hasSimulationTime = false;
+        }
+        const auto endZuluDateTime = hasSimulationTime ? d->currentFlight.getFlightCondition().endZuluDateTime : startZuluDateTime.addMSecs(realWorldDuation);
+        const auto simulationDuraction = startZuluDateTime.msecsTo(endZuluDateTime);
+        const auto factor = static_cast<double>(simulationDuraction) / static_cast<double>(realWorldDuation);
+
+        const auto simulationTime = static_cast<std::int64_t>(std::round(static_cast<double>(d->currentTimestamp) * factor));
+        const auto currentZuluDateTime = startZuluDateTime.addMSecs(simulationTime);
+        const auto currentLocalDateTime = startLocalDateTime.addMSecs(simulationTime);
+
+        emit simulationTimeChaged(currentZuluDateTime, currentLocalDateTime);
+        if (sender() == nullptr) {
+            // Update due to some "seek" operation -> reset timer
+            d->simulationTimeUpdateTimer.start();
+#ifdef DEBUG
+        } else {
+            qDebug() << "AbstractSkyConnect::updateSimulationTime: periodic simulation date and time sync: zulu:"
+                     << currentZuluDateTime.toString() << "local:"
+                     << currentLocalDateTime.toString();
+#endif
+        }
+        return sendZuluDateTime(currentZuluDateTime);
+    } else {
+        // No recording (no samples)
+        return false;
     }
 }

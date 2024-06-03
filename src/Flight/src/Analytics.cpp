@@ -65,7 +65,7 @@ struct AnalyticsPrivate
 // PUBLIC
 
 Analytics::Analytics(const Aircraft &aircraft)
-    : d(std::make_unique<AnalyticsPrivate>(aircraft))
+    : d {std::make_unique<AnalyticsPrivate>(aircraft)}
 {}
 
 Analytics::Analytics(Analytics &&rhs) noexcept = default;

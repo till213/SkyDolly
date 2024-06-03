@@ -54,8 +54,8 @@ struct LocationPluginPrivate
 // PUBLIC
 
 LocationPlugin::LocationPlugin(QObject *parent) noexcept
-    : AbstractModule(parent),
-      d(std::make_unique<LocationPluginPrivate>())
+    : AbstractModule {parent},
+      d {std::make_unique<LocationPluginPrivate>()}
 {
     frenchConnection();
     restoreSettings(QUuid(Const::LocationModuleUuid));

@@ -25,13 +25,14 @@
 #include <algorithm>
 #include <memory>
 #include <cstdint>
-#include <cinttypes>
 
 #include <Kernel/Const.h>
 #include "TimeVariableData.h"
 #include "AircraftInfo.h"
 #include "Position.h"
 #include "PositionData.h"
+#include "Attitude.h"
+#include "AttitudeData.h"
 #include "Engine.h"
 #include "EngineData.h"
 #include "PrimaryFlightControl.h"
@@ -48,17 +49,18 @@
 struct AircraftPrivate
 {
     AircraftPrivate(std::int64_t id)
-        : id(id)
+        : id {id}
     {}
 
     std::int64_t id {Const::InvalidId};
     AircraftInfo aircraftInfo {id};
-    Position position{aircraftInfo};
-    Engine engine{aircraftInfo};
-    PrimaryFlightControl primaryFlightControl{aircraftInfo};
-    SecondaryFlightControl secondaryFlightControl{aircraftInfo};
-    AircraftHandle aircraftHandle{aircraftInfo};
-    Light light{aircraftInfo};
+    Position position {aircraftInfo};
+    Attitude attitude {aircraftInfo};
+    Engine engine {aircraftInfo};
+    PrimaryFlightControl primaryFlightControl {aircraftInfo};
+    SecondaryFlightControl secondaryFlightControl {aircraftInfo};
+    AircraftHandle aircraftHandle {aircraftInfo};
+    Light light {aircraftInfo};
     FlightPlan flightPlan;
 
     mutable std::int64_t duration {TimeVariableData::InvalidTime};
@@ -67,7 +69,7 @@ struct AircraftPrivate
 // PUBLIC
 
 Aircraft::Aircraft(std::int64_t id) noexcept
-    : d(std::make_unique<AircraftPrivate>(id))
+    : d {std::make_unique<AircraftPrivate>(id)}
 {}
 
 Aircraft::Aircraft(Aircraft &&rhs) noexcept = default;
@@ -88,6 +90,11 @@ void Aircraft::setId(std::int64_t id) noexcept
 Position &Aircraft::getPosition() const noexcept
 {
     return d->position;
+}
+
+Attitude &Aircraft::getAttitude() const noexcept
+{
+    return d->attitude;
 }
 
 Engine &Aircraft::getEngine() const noexcept
@@ -151,7 +158,7 @@ void Aircraft::addTimeOffset(std::int64_t deltaOffset) noexcept {
 
 std::int64_t Aircraft::getDurationMSec() const noexcept
 {
-    const std::int64_t timeOffset = d->aircraftInfo.timeOffset;
+    const auto timeOffset = d->aircraftInfo.timeOffset;
     if (d->duration == TimeVariableData::InvalidTime) {
         d->duration = 0;
         // The timestamp offset indicates the time difference the given aircraft
@@ -159,6 +166,9 @@ std::int64_t Aircraft::getDurationMSec() const noexcept
         // is, the less the duration -> subtract the offset
         if (d->position.count() > 0) {
             d->duration = std::max(d->position.getLast().timestamp - timeOffset, std::int64_t(0));
+        }
+        if (d->attitude.count() > 0) {
+            d->duration = std::max(d->attitude.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->engine.count() > 0) {
             d->duration = std::max(d->engine.getLast().timestamp - timeOffset, d->duration);
@@ -188,6 +198,7 @@ void Aircraft::clear() noexcept
 {
     d->aircraftInfo.clear();
     d->position.clear();
+    d->attitude.clear();
     d->engine.clear();
     d->primaryFlightControl.clear();
     d->secondaryFlightControl.clear();

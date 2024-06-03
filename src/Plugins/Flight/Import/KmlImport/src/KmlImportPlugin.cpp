@@ -51,18 +51,18 @@ struct KmlImportPluginPrivate
     KmlImportSettings pluginSettings;
     QDateTime firstDateTimeUtc;
 
-    static inline const QString FileExtension {QStringLiteral("kml")};
+    static inline const QString FileExtension {"kml"};
 };
 
 // PUBLIC
 
 KmlImportPlugin::KmlImportPlugin() noexcept
-    : d(std::make_unique<KmlImportPluginPrivate>())
+    : d {std::make_unique<KmlImportPluginPrivate>()}
 {}
 
 KmlImportPlugin::~KmlImportPlugin() = default;
 
-std::vector<FlightData> KmlImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+std::vector<FlightData> KmlImportPlugin::importFlightData(QIODevice &io, bool &ok) noexcept
 {
     std::vector<FlightData> flights;
     d->xml.setDevice(&io);
@@ -73,7 +73,7 @@ std::vector<FlightData> KmlImportPlugin::importSelectedFlights(QIODevice &io, bo
         if (d->xml.name() == QStringLiteral("kml")) {
             flights = parseKML();
         } else {
-            d->xml.raiseError(QStringLiteral("The file is not a KML file."));
+            d->xml.raiseError("The file is not a KML file.");
         }
     }
 

@@ -52,7 +52,7 @@ struct PathCreatorSettingsPrivate
 
 PathCreatorSettings::PathCreatorSettings() noexcept
     : ConnectPluginBaseSettings(),
-    d(std::make_unique<PathCreatorSettingsPrivate>())
+      d {std::make_unique<PathCreatorSettingsPrivate>()}
 {}
 
 PathCreatorSettings::~PathCreatorSettings() = default;
@@ -76,7 +76,7 @@ void PathCreatorSettings::addSettingsExtn(Settings::KeyValues &keyValues) const 
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::OptionKey);
+    keyValue.first = ::OptionKey;
     keyValue.second = Enum::underly(d->option);
     keyValues.push_back(keyValue);
 }
@@ -85,7 +85,7 @@ void PathCreatorSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &ke
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::OptionKey);
+    keyValue.first = ::OptionKey;
     keyValue.second = Enum::underly(::DefaultOption);
     keysWithDefaults.push_back(keyValue);
 }
@@ -93,7 +93,7 @@ void PathCreatorSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &ke
 void PathCreatorSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::OptionKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::OptionKey).toInt(&ok);
     d->option = ok && Enum::contains<Option>(enumValue) ? static_cast<Option>(enumValue) : ::DefaultOption;
 }
 

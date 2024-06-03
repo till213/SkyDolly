@@ -59,7 +59,7 @@ public:
      * no flight data was imported at all (despite the existing file not having
      * any syntax errors).
      *
-     * The datasource \c io must have been properly opened for reading already.
+     * The data source \c io must have been properly opened for reading already.
      *
      * \param io
      *        the IO device to read from; already opened for reading
@@ -68,7 +68,7 @@ public:
      *        or otherwise no data imported)
      * \return the list of imported flight data
      */
-    virtual std::vector<FlightData> importSelectedFlights(QIODevice &io, bool &ok) noexcept = 0;
+    virtual std::vector<FlightData> importFlightData(QIODevice &io, bool &ok) noexcept = 0;
 };
 
 #define FLIGHT_IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.FlightImportInterface/1.0"

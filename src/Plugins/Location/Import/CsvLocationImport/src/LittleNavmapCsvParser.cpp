@@ -59,7 +59,7 @@ namespace Header
 struct LittleNavmapCsvParserPrivate
 {
     LittleNavmapCsvParserPrivate(const CsvLocationImportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {
         initTypeToSymIdMap();
     }
@@ -86,34 +86,34 @@ struct LittleNavmapCsvParserPrivate
 
 private:
     inline void initTypeToSymIdMap() {
-        typeToSymId[QStringLiteral("addon")] = QStringLiteral("AP");
-        typeToSymId[QStringLiteral("airport")] = QStringLiteral("AP");
-        typeToSymId[QStringLiteral("airstrip")] = QStringLiteral("AS");
-        typeToSymId[QStringLiteral("building")] = QStringLiteral("BU");
-        typeToSymId[QStringLiteral("cabin")] = QStringLiteral("CB");
-        typeToSymId[QStringLiteral("helipad")] = QStringLiteral("HP");
-        typeToSymId[QStringLiteral("history")] = QStringLiteral("HI");
-        typeToSymId[QStringLiteral("landform")] = QStringLiteral("LM");
-        typeToSymId[QStringLiteral("lighthouse")] = QStringLiteral("LH");
-        typeToSymId[QStringLiteral("location")] = QStringLiteral("PO");
-        typeToSymId[QStringLiteral("marker")] = QStringLiteral("PO");
-        typeToSymId[QStringLiteral("mountain")] = QStringLiteral("MO");
-        typeToSymId[QStringLiteral("obstacle")] = QStringLiteral("OB");
-        typeToSymId[QStringLiteral("other")] = QStringLiteral("OT");
-        typeToSymId[QStringLiteral("oil platform")] = QStringLiteral("OP");
-        typeToSymId[QStringLiteral("park")] = QStringLiteral("PA");
-        typeToSymId[QStringLiteral("pin")] = QStringLiteral("PO");
-        typeToSymId[QStringLiteral("poi")] = QStringLiteral("PO");
-        typeToSymId[QStringLiteral("seaport")] = QStringLiteral("SP");
-        typeToSymId[QStringLiteral("settlement")] = QStringLiteral("ST");
-        typeToSymId[QStringLiteral("water")] = QStringLiteral("LA");
+        typeToSymId["addon"] = "AP";
+        typeToSymId["airport"] = "AP";
+        typeToSymId["airstrip"] = "AS";
+        typeToSymId["building"] = "BU";
+        typeToSymId["cabin"] = "CB";
+        typeToSymId["helipad"] = "HP";
+        typeToSymId["history"] = "HI";
+        typeToSymId["landform"] = "LM";
+        typeToSymId["lighthouse"] = "LH";
+        typeToSymId["location"] = "PO";
+        typeToSymId["marker"] = "PO";
+        typeToSymId["mountain"] = "MO";
+        typeToSymId["obstacle"] = "OB";
+        typeToSymId["other"] = "OT";
+        typeToSymId["oil platform"] = "OP";
+        typeToSymId["park"] = "PA";
+        typeToSymId["pin"] = "PO";
+        typeToSymId["poi"] = "PO";
+        typeToSymId["seaport"] = "SP";
+        typeToSymId["settlement"] = "ST";
+        typeToSymId["water"] = "LA";
     }
 };
 
 // PUBLIC
 
 LittleNavmapCsvParser::LittleNavmapCsvParser(const CsvLocationImportSettings &pluginSettings) noexcept
-    : d(std::make_unique<LittleNavmapCsvParserPrivate>(pluginSettings))
+    : d {std::make_unique<LittleNavmapCsvParserPrivate>(pluginSettings)}
 {}
 
 LittleNavmapCsvParser::LittleNavmapCsvParser(LittleNavmapCsvParser &&rhs) noexcept = default;
@@ -125,7 +125,7 @@ std::vector<Location> LittleNavmapCsvParser::parse(QTextStream &textStream, bool
     std::vector<Location> locations;
     CsvParser csvParser;
 
-    CsvParser::Rows rows = csvParser.parse(textStream, QString::fromLatin1(Header::LittleNavmap));
+    CsvParser::Rows rows = csvParser.parse(textStream, Header::LittleNavmap);
     d->headers = csvParser.getHeaders();
     bool success = validateHeaders();
     if (success) {
@@ -156,7 +156,7 @@ bool LittleNavmapCsvParser::validateHeaders() const noexcept
 {
     bool ok {true};
     for (const auto val : d->HeaderNames) {
-        ok = d->headers.contains(QString::fromLatin1(val));
+        ok = d->headers.contains(val);
         if (!ok) {
             break;
         }
@@ -169,25 +169,25 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
     Location location;
 
     ok = true;
-    location.title = row.at(d->headers.at(QString::fromLatin1(Header::Name)));
+    location.title = row.at(d->headers.at(Header::Name));
     location.countryId = d->pluginSettings.getDefaultCountryId();
     location.typeId = d->ImportTypeId;
     location.engineEventId = d->KeepEngineEventId;
-    const QString type = row.at(d->headers.at(QString::fromLatin1(Header::Type)));
+    const auto type = row.at(d->headers.at(Header::Type));
     location.categoryId = mapTypeToCategoryId(type);
-    location.identifier = row.at(d->headers.at(QString::fromLatin1(Header::Ident)));
-    const double latitude = row.at(d->headers.at(QString::fromLatin1(Header::Latitude))).toDouble(&ok);
+    location.identifier = row.at(d->headers.at(Header::Ident));
+    const auto latitude = row.at(d->headers.at(Header::Latitude)).toDouble(&ok);
     if (ok) {
         location.latitude = latitude;
     }
     if (ok) {
-        const double longitude = row.at(d->headers.at(QString::fromLatin1(Header::Longitude))).toDouble(&ok);
+        const auto longitude = row.at(d->headers.at(Header::Longitude)).toDouble(&ok);
         if (ok) {
             location.longitude = longitude;
         }
     }
     if (ok) {
-        const QVariant data = row.at(d->headers.at(QString::fromLatin1(Header::Elevation)));
+        const QVariant data = row.at(d->headers.at(Header::Elevation));
         if (!data.isNull() && !data.toString().isEmpty()) {
             const double altitude = data.toDouble(&ok);
             if (ok) {
@@ -209,7 +209,7 @@ Location LittleNavmapCsvParser::parseLocation(CsvParser::Row row, bool &ok) cons
         location.indicatedAirspeed = d->pluginSettings.getDefaultIndicatedAirspeed();
     }
     if (ok) {
-        location.description = row.at(d->headers.at(QString::fromLatin1(Header::Description)));
+        location.description = row.at(d->headers.at(Header::Description));
     }
 
     return location;

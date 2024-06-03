@@ -34,24 +34,40 @@ namespace
     // Keys
     constexpr const char *ResamplingPeriodKey {"ResamplingPeriod"};
     constexpr const char *FormationExportKey {"FormationExport"};
+    constexpr const char *ExportSystemLocationsEnabledKey {"ExportSystemLocationsEnabled"};
     constexpr const char *OpenExportedFilesEnabledKey {"OpenExportedFilesEnabled"};
 
     // Defaults
+    constexpr bool DefaultExportSystemLocationsEnabled {false};
     constexpr bool DefaultOpenExportedFilesEnabled {false};
 }
 
 struct LocationExportPluginBaseSettingsPrivate
 {
+    bool exportSystemLocationsEnabled {::DefaultExportSystemLocationsEnabled};
     bool openExportedFilesEnabled {::DefaultOpenExportedFilesEnabled};
 };
 
 // PUBLIC
 
 LocationExportPluginBaseSettings::LocationExportPluginBaseSettings() noexcept
-    : d(std::make_unique<LocationExportPluginBaseSettingsPrivate>())
+    : d {std::make_unique<LocationExportPluginBaseSettingsPrivate>()}
 {}
 
 LocationExportPluginBaseSettings::~LocationExportPluginBaseSettings() = default;
+
+bool LocationExportPluginBaseSettings::isExportSystemLocationsEnabled() const noexcept
+{
+    return d->exportSystemLocationsEnabled;
+}
+
+void LocationExportPluginBaseSettings::setExportSystemLocationsEnabled(bool enabled) noexcept
+{
+    if (d->exportSystemLocationsEnabled != enabled) {
+        d->exportSystemLocationsEnabled = enabled;
+        emit changed();
+    }
+}
 
 bool LocationExportPluginBaseSettings::isOpenExportedFilesEnabled() const noexcept
 {
@@ -70,7 +86,11 @@ void LocationExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValue
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::OpenExportedFilesEnabledKey);
+    keyValue.first = ::ExportSystemLocationsEnabledKey;
+    keyValue.second = d->exportSystemLocationsEnabled;
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::OpenExportedFilesEnabledKey;
     keyValue.second = d->openExportedFilesEnabled;
     keyValues.push_back(keyValue);
 
@@ -81,7 +101,11 @@ void LocationExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::OpenExportedFilesEnabledKey);
+    keyValue.first = ::ExportSystemLocationsEnabledKey;
+    keyValue.second = ::DefaultExportSystemLocationsEnabled;
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::OpenExportedFilesEnabledKey;
     keyValue.second = ::DefaultOpenExportedFilesEnabled;
     keysWithDefaults.push_back(keyValue);
 
@@ -90,7 +114,8 @@ void LocationExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 
 void LocationExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->openExportedFilesEnabled = valuesByKey.at(QString::fromLatin1(::OpenExportedFilesEnabledKey)).toBool();
+    d->exportSystemLocationsEnabled = valuesByKey.at(::ExportSystemLocationsEnabledKey).toBool();
+    d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
 
     restoreSettingsExtn(valuesByKey);
 
@@ -99,6 +124,7 @@ void LocationExportPluginBaseSettings::restoreSettings(const Settings::ValuesByK
 
 void LocationExportPluginBaseSettings::restoreDefaults() noexcept
 {
+    d->exportSystemLocationsEnabled = ::DefaultExportSystemLocationsEnabled;
     d->openExportedFilesEnabled = ::DefaultOpenExportedFilesEnabled;
 
     restoreDefaultsExtn();

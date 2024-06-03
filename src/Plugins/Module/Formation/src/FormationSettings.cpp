@@ -66,7 +66,7 @@ struct FormationSettingsPrivate
 
 FormationSettings::FormationSettings() noexcept
     : ModuleBaseSettings(),
-      d(std::make_unique<FormationSettingsPrivate>())
+      d {std::make_unique<FormationSettingsPrivate>()}
 {}
 
 FormationSettings::~FormationSettings() = default;
@@ -152,27 +152,27 @@ void FormationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &ke
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::BearingKey);
+    keyValue.first = ::BearingKey;
     keyValue.second = Enum::underly(d->bearing);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::HorizontalDistanceKey);
+    keyValue.first = ::HorizontalDistanceKey;
     keyValue.second = Enum::underly(d->horizontalDistance);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::VerticalDistanceKey);
+    keyValue.first = ::VerticalDistanceKey;
     keyValue.second = Enum::underly(d->verticalDistance);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::RelativePositionPlacementKey);
+    keyValue.first = ::RelativePositionPlacementKey;
     keyValue.second = d->relativePositionPlacement;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::ReplayModeKey);
+    keyValue.first = ::ReplayModeKey;
     keyValue.second = Enum::underly(d->replayMode);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::FormationAircraftTableStateKey);
+    keyValue.first = ::FormationAircraftTableStateKey;
     keyValue.second = d->formationAircraftTableState;
     keyValues.push_back(keyValue);
 }
@@ -181,27 +181,27 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::BearingKey);
+    keyValue.first = ::BearingKey;
     keyValue.second = Enum::underly(::DefaultBearing);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::HorizontalDistanceKey);
+    keyValue.first = ::HorizontalDistanceKey;
     keyValue.second = Enum::underly(::DefaultHorizontalDistance);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::VerticalDistanceKey);
+    keyValue.first = ::VerticalDistanceKey;
     keyValue.second = Enum::underly(::DefaultVerticalDistance);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::RelativePositionPlacementKey);
+    keyValue.first = ::RelativePositionPlacementKey;
     keyValue.second = ::DefaultRelativePositionPlacement;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::ReplayModeKey);
+    keyValue.first = ::ReplayModeKey;
     keyValue.second = Enum::underly(::DefaultReplayMode);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::FormationAircraftTableStateKey);
+    keyValue.first = ::FormationAircraftTableStateKey;
     keyValue.second = QByteArray();
     keysWithDefaults.push_back(keyValue);
 }
@@ -209,21 +209,21 @@ void FormationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysW
 void FormationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {false};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::BearingKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::BearingKey).toInt(&ok);
     d->bearing = ok && Enum::contains<Formation::Bearing>(enumValue) ? static_cast<Formation::Bearing>(enumValue) : ::DefaultBearing;
 
-    enumValue = valuesByKey.at(QString::fromLatin1(::HorizontalDistanceKey)).toInt(&ok);
+    enumValue = valuesByKey.at(::HorizontalDistanceKey).toInt(&ok);
     d->horizontalDistance = ok && Enum::contains<Formation::HorizontalDistance>(enumValue) ? static_cast<Formation::HorizontalDistance>(enumValue) : ::DefaultHorizontalDistance;
 
-    enumValue = valuesByKey.at(QString::fromLatin1(::VerticalDistanceKey)).toInt(&ok);
+    enumValue = valuesByKey.at(::VerticalDistanceKey).toInt(&ok);
     d->verticalDistance = ok && Enum::contains<Formation::VerticalDistance>(enumValue) ? static_cast<Formation::VerticalDistance>(enumValue) : ::DefaultVerticalDistance;
 
-    d->relativePositionPlacement = valuesByKey.at(QString::fromLatin1(::RelativePositionPlacementKey)).toBool();
+    d->relativePositionPlacement = valuesByKey.at(::RelativePositionPlacementKey).toBool();
 
-    enumValue = valuesByKey.at(QString::fromLatin1(::ReplayModeKey)).toInt(&ok);
+    enumValue = valuesByKey.at(::ReplayModeKey).toInt(&ok);
     d->replayMode = ok && Enum::contains<SkyConnectIntf::ReplayMode>(enumValue) ? static_cast<SkyConnectIntf::ReplayMode>(enumValue) : ::DefaultReplayMode;
 
-    d->formationAircraftTableState = valuesByKey.at(QString::fromLatin1(::FormationAircraftTableStateKey)).toByteArray();
+    d->formationAircraftTableState = valuesByKey.at(::FormationAircraftTableStateKey).toByteArray();
 }
 
 void FormationSettings::restoreDefaultsExtn() noexcept

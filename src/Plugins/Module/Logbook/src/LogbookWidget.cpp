@@ -137,9 +137,9 @@ struct LogbookWidgetPrivate
 // PUBLIC
 
 LogbookWidget::LogbookWidget(LogbookSettings &moduleSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::LogbookWidget>()),
-      d(std::make_unique<LogbookWidgetPrivate>(moduleSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::LogbookWidget>()},
+      d {std::make_unique<LogbookWidgetPrivate>(moduleSettings)}
 {
     ui->setupUi(this);
     initUi();
@@ -374,8 +374,9 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
     // ID
     QTableWidgetItem *item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightIdColumn);
     QVariant flightId = QVariant::fromValue(summary.flightId);
-    if (summary.flightId == d->flightInMemoryId) {item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-normal.png")));
-    } else if (summary.flightId == Const::RecordingId) {item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-record-normal.png")));
+    if (summary.flightId == d->flightInMemoryId) {
+        item->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
+    } else if (summary.flightId == Const::RecordingId) {item->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
         // Note: alphabetical characters (a-zA-Z) will be > numerical characters (0-9),
         //       so the flight being recorded will be properly sorted in the table
         flightId = QVariant::fromValue(tr("REC"));
@@ -424,7 +425,7 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
 
     // Duration
     const std::int64_t durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
-    const QTime time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(durationMSec));
+    const auto time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(durationMSec));
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::durationColumn);
     item->setData(Qt::DisplayRole, d->unit.formatDuration(time));
 }
@@ -491,7 +492,7 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::updateUi);
 
     // Flight
-    const Flight &flight = logbook.getCurrentFlight();
+    const auto &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::flightStored,
             this, &LogbookWidget::updateUi);
     connect(&flight, &Flight::flightRestored,
@@ -714,14 +715,14 @@ void LogbookWidget::updateUi() noexcept
 void LogbookWidget::updateAircraftIcons() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
-    const std::int64_t flightInMemoryId = flight.getId();
+    const auto flightInMemoryId = flight.getId();
 
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightIdColumn);
         if (item->data(Qt::DisplayRole).toLongLong() == flightInMemoryId) {
-            item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-normal.png")));
+            item->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
         } else if (item->data(Qt::UserRole).toLongLong() == Const::RecordingId) {
-            item->setIcon(QIcon(QStringLiteral(":/img/icons/aircraft-record-normal.png")));
+            item->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
         } else {
             item->setIcon(QIcon());
         }
@@ -925,6 +926,7 @@ void LogbookWidget::filterByDuration([[maybe_unused]] int index) noexcept
 void LogbookWidget::resetFilter() noexcept
 {
     d->moduleSettings.resetFilter();
+    ui->searchLineEdit->clear();
 }
 
 void LogbookWidget::onTableLayoutChanged() noexcept

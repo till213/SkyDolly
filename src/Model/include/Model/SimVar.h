@@ -35,13 +35,14 @@ namespace SimVar
     constexpr const char *Longitude = "Plane Longitude";
     constexpr const char *Altitude = "Plane Altitude";
     constexpr const char *IndicatedAltitude = "Indicated Altitude";
+
     constexpr const char *Pitch = "Plane Pitch Degrees";
     constexpr const char *Bank = "Plane Bank Degrees";
     constexpr const char *TrueHeading = "Plane Heading Degrees True";
-
     constexpr const char *VelocityBodyX = "Velocity Body X";
     constexpr const char *VelocityBodyY = "Velocity Body Y";
     constexpr const char *VelocityBodyZ = "Velocity Body Z";
+    constexpr const char *SimOnGround = "Sim On Ground";
 
     constexpr const char *AileronLeftDeflection = "Aileron Left Deflection";
     constexpr const char *AileronRightDeflection = "Aileron Right Deflection";
@@ -120,7 +121,6 @@ namespace SimVar
     constexpr const char *ATCFlightNumber = "ATC Flight Number";
     constexpr const char *Category = "Category";
 
-    constexpr const char *SimOnGround = "Sim On Ground";
     constexpr const char *PlaneAltAboveGround = "Plane Alt Above Ground";
     constexpr const char *AirspeedTrue = "Airspeed True";
     constexpr const char *AirspeedIndicated = "Airspeed Indicated";

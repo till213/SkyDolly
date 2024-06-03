@@ -27,7 +27,9 @@
 
 #include <cstdint>
 
+#include <QObject>
 #include <QtPlugin>
+#include <QDateTime>
 
 #include <Kernel/SampleRate.h>
 #include <Model/TimeVariableData.h>
@@ -42,6 +44,7 @@
 class Flight;
 class Aircraft;
 struct PositionData;
+struct AttitudeData;
 class MSFSSimConnectPlugin;
 
 class PLUGINMANAGER_API SkyConnectIntf : public QObject, public PluginWithOptionWidgetIntf, public PluginIntf
@@ -103,7 +106,7 @@ public:
     };
 
     SkyConnectIntf(QObject *parent = nullptr) noexcept
-        : QObject(parent)
+        : QObject {parent}
     {}
 
     SkyConnectIntf(const SkyConnectIntf &rhs) = delete;
@@ -146,7 +149,7 @@ public:
     virtual int getRemainingReconnectTime() const noexcept = 0;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
-    virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
+    virtual bool setUserAircraftPositionAndAttitude(const PositionData &positionData, const AttitudeData &attitudeData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) const noexcept = 0;
     virtual bool sendSimulationEvent(SimulationEvent event, float arg1) noexcept = 0;
 
@@ -305,8 +308,6 @@ public:
      */
     virtual void setReplaySpeedFactor(float factor) noexcept = 0;
 
-    virtual float calculateRecordedSamplesPerSecond() const noexcept = 0;
-
     /*!
      * Requests the current position of the user aircraft which is asynchronously
      * returned as Location.
@@ -323,6 +324,15 @@ public:
      * \sa simulationRateReceived
      */
     virtual bool requestSimulationRate() noexcept = 0;
+
+    /*!
+     * Sends the \c dateTime to the flight simulator to set.
+     *
+     * \param dateTime
+     *        the date and time to set in the flight simulator
+     * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
+     */
+    virtual bool sendZuluDateTime(QDateTime dateTime) noexcept = 0;
 
 public slots:
     virtual void addAiObject(const Aircraft &aircraft) noexcept = 0;
@@ -343,6 +353,16 @@ signals:
      *        the way the current position was accessed
      */
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
+
+    /*!
+     * Emitted whenever the simulation time during replay has changed.
+     *
+     * \param zuluDateTime
+     *        the simulation zulu date and time
+     * \param localDateTime
+     *        the simulation local date and time
+     */
+    void simulationTimeChaged(QDateTime zuluDateTime, QDateTime localDateTime);
 
     /*!
      * Emitted whenver the connection state has changed.
@@ -404,12 +424,12 @@ signals:
 
 
     /*!
-     * Emitted whenever a keyboard shortcut was triggered for the given \p action.
+     * Emitted whenever a keyboard shortcut was triggered for the given \c action.
      *
      * \param action
      *        the action that was triggered in the flight simulator
      */
-    void shortCutActivated(FlightSimulatorShortcuts::Action action);
+    void actionActivated(FlightSimulatorShortcuts::Action action);
 
 protected:
     /*!

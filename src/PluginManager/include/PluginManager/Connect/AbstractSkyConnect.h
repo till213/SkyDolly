@@ -30,6 +30,7 @@
 #include <cstdint>
 
 #include <QObject>
+#include <QDateTime>
 
 class QWidget;
 
@@ -39,7 +40,6 @@ class QWidget;
 #include "SkyConnectIntf.h"
 #include "ConnectPluginBaseSettings.h"
 #include "Connect.h"
-#include "FlightSimulatorShortcuts.h"
 #include "../PluginBase.h"
 #include "../OptionWidgetIntf.h"
 #include "../PluginManagerLib.h"
@@ -111,9 +111,9 @@ public:
     float getReplaySpeedFactor() const noexcept override;
     void setReplaySpeedFactor(float factor) noexcept override;
 
-    float calculateRecordedSamplesPerSecond() const noexcept override;
     bool requestLocation() noexcept override;
     bool requestSimulationRate() noexcept override;
+    bool sendZuluDateTime(QDateTime dateTime) noexcept override;
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
@@ -150,7 +150,6 @@ protected:
     // Re-implement
     virtual ConnectPluginBaseSettings &getPluginSettings() const noexcept = 0;
     virtual std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept = 0;
-    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
     virtual bool onSetupFlightSimulatorShortcuts() noexcept = 0;
     virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool onFreezeUserAircraft(bool enable) const noexcept = 0;
@@ -170,7 +169,7 @@ protected:
      * \return \c true on success; \c false on error (SimConnect connection error)
      */
     virtual bool onStartAircraftRecording() noexcept = 0;
-    virtual void onRecordingPaused(Initiator initiator, bool paused) noexcept = 0;
+    virtual void onRecordingPaused(Initiator initiator, bool enable) noexcept = 0;
     virtual void onStopRecording() noexcept = 0;
 
     virtual bool onStartReplay(std::int64_t currentTimestamp) noexcept = 0;
@@ -178,7 +177,6 @@ protected:
     virtual void onStopReplay() noexcept = 0;
 
     virtual void onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept = 0;
-    virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept = 0;
 
     virtual bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept = 0;
     virtual bool isConnectedWithSim() const noexcept = 0;
@@ -206,6 +204,21 @@ protected:
      */
     virtual bool onRequestSimulationRate() noexcept = 0;
 
+    /*!
+     * Sends the \c year, \c day, \c hour (zulu time) and \c minute  to be set in the flight simulator.
+     *
+     * \param year
+     *        the year, e.g. 2020
+     * \param day
+     *        the day
+     * \param hour
+     *        the hour [0, 23] (zulu time)
+     * \param minute
+     *        the minute [0, 59]
+     * \return \c true if the request was successful; \c false else
+     */
+    virtual bool onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept = 0;
+
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
     void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept final;
@@ -213,7 +226,6 @@ protected:
 protected slots:
     std::int64_t updateCurrentTimestamp() noexcept;
     void onPluginSettingsChanged(Connect::Mode mode) noexcept;
-    virtual void recordData() noexcept = 0;
 
 private:
     const std::unique_ptr<AbstractSkyConnectPrivate> d;
@@ -232,12 +244,16 @@ private:
 
     // Returns the applicable simulation rate, given the current 'replaySpeedFactor'
     // and the maximum simulation rate, as defined in the application settings
-    float getApplicableSimulationRate();
+    float getApplicableSimulationRate() const noexcept;
 
 private slots:
-    void onRecordingSampleRateSettingsChanged(SampleRate::SampleRate sampleRate) noexcept;
     void onReconnectTimer() noexcept;
     void retryConnectAndSetup(Connect::Mode mode) noexcept;
+
+    // Updates the simulation date and time, based on the start and end flight date and time of the current flight.
+    // Note: the simulation time may run "faster" than the actual real-world recorded time (given by the end timestamp),
+    // so the real-world time is "stretched" to the start- and end simulation time.
+    bool updateSimulationTime() noexcept;
 };
 
 #endif // ABSTRACTSKYCONNECT_H

@@ -25,7 +25,6 @@
 #include <memory>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QChar>
 #include <QRegularExpression>
@@ -48,23 +47,29 @@ struct VersionPrivate
 
     // https://www.yourdictionary.com/articles/adjectives-that-start-with-h
     // https://en.wikipedia.org/wiki/List_of_aircraft_(H)
-    static inline const QString CodeName {QStringLiteral("Humble Hawker")};
+    static inline const QString CodeName {"Humble Hawker"};
 };
 
 // PUBLIC
 
 Version::Version() noexcept
-    : d(std::make_unique<VersionPrivate>())
+    : d {std::make_unique<VersionPrivate>()}
 {}
 
 Version::Version(int majorNo, int minorNo, int patch) noexcept
-    : d(std::make_unique<VersionPrivate>(majorNo, minorNo, patch))
+    : d {std::make_unique<VersionPrivate>(majorNo, minorNo, patch)}
 {}
 
 Version::Version(QStringView version) noexcept
-    : d(std::make_unique<VersionPrivate>())
+    : d {std::make_unique<VersionPrivate>()}
 {
     fromString(version);
+}
+
+Version::Version(const char *version) noexcept
+    : d {std::make_unique<VersionPrivate>()}
+{
+    fromString(QString::fromLatin1(version));
 }
 
 Version::Version(Version &&rhs) noexcept = default;
@@ -73,7 +78,7 @@ Version::~Version() = default;
 
 void Version::fromString(QStringView version) noexcept
 {
-    static QRegularExpression versionRegExp(QStringLiteral(R"(^(\d+)\.(\d+)\.(\d+)$)"));
+    static QRegularExpression versionRegExp {R"(^(\d+)\.(\d+)\.(\d+)$)"};
     QRegularExpressionMatch match = versionRegExp.match(version);
     if (match.isValid()) {
         d->major = match.captured(1).toInt();
@@ -151,7 +156,7 @@ QString Version::getUserVersion() noexcept
     const QDate gitDate = getGitDate().date();
     const int year = gitDate.year();
     const int month = gitDate.month();
-    userVersion = QStringLiteral("%1").arg(year) % "." % QStringLiteral("%1").arg(month, 2, 10, QChar('0'));
+    userVersion = QString("%1").arg(year) % "." % QString("%1").arg(month, 2, 10, QChar('0'));
     return userVersion;
 }
 
@@ -163,20 +168,20 @@ QString Version::getApplicationVersion() noexcept
 
 QString Version::getOrganisationName() noexcept
 {
-    return QString::fromLatin1(VersionConfig::OrganisationName);
+    return VersionConfig::OrganisationName;
 }
 
 QString Version::getApplicationName() noexcept
 {
-    return QString::fromLatin1(VersionConfig::ApplicationName);
+    return VersionConfig::ApplicationName;
 }
 
-QLatin1String Version::getGitHash() noexcept
+QString Version::getGitHash() noexcept
 {
-    return QLatin1String(GitInfo::GitHash);
+    return GitInfo::GitHash;
 }
 
 QDateTime Version::getGitDate() noexcept
 {
-    return QDateTime::fromString(QString::fromLatin1(GitInfo::GitIsoDate), Qt::ISODate);
+    return QDateTime::fromString(GitInfo::GitIsoDate, Qt::ISODate);
 }

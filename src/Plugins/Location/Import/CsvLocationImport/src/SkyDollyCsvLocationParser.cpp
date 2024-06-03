@@ -80,7 +80,7 @@ struct SkyDollyCsvLocationParserPrivate
 // PUBLIC
 
 SkyDollyCsvLocationParser::SkyDollyCsvLocationParser() noexcept
-    : d(std::make_unique<SkyDollyCsvLocationParserPrivate>())
+    : d {std::make_unique<SkyDollyCsvLocationParserPrivate>()}
 {}
 
 SkyDollyCsvLocationParser::SkyDollyCsvLocationParser(SkyDollyCsvLocationParser &&rhs) noexcept = default;
@@ -92,7 +92,7 @@ std::vector<Location> SkyDollyCsvLocationParser::parse(QTextStream &textStream, 
     std::vector<Location> locations;
     CsvParser csvParser;
 
-    CsvParser::Rows rows = csvParser.parse(textStream, QString::fromLatin1(::SkyDollyCsvHeader));
+    CsvParser::Rows rows = csvParser.parse(textStream, ::SkyDollyCsvHeader);
     bool success = CsvParser::validate(rows, Enum::underly(::Index::Count));
     if (success) {
         locations.reserve(rows.size());
@@ -187,7 +187,7 @@ Location SkyDollyCsvLocationParser::parseLocation(CsvParser::Row row, bool &ok) 
     if (ok) {
         const QString onGround = row.at(Enum::underly(::Index::OnGround));
         if (ok) {
-            location.onGround = onGround == QStringLiteral("true") ? true : false;
+            location.onGround = onGround == "true" ? true : false;
         }
     }
     if (ok) {

@@ -45,7 +45,7 @@
 struct SQLiteEnumerationDaoPrivate
 {
     SQLiteEnumerationDaoPrivate(QString connectionName) noexcept
-        : connectionName(std::move(connectionName))
+        : connectionName {std::move(connectionName)}
     {}
 
     QString connectionName;
@@ -54,7 +54,7 @@ struct SQLiteEnumerationDaoPrivate
 // PUBLIC
 
 SQLiteEnumerationDao::SQLiteEnumerationDao(QString connectionName) noexcept
-    : d(std::make_unique<SQLiteEnumerationDaoPrivate>(std::move(connectionName)))
+    : d {std::make_unique<SQLiteEnumerationDaoPrivate>(std::move(connectionName))}
 {}
 
 SQLiteEnumerationDao::SQLiteEnumerationDao(SQLiteEnumerationDao &&rhs) noexcept = default;
@@ -73,13 +73,13 @@ Enumeration SQLiteEnumerationDao::get(const QString &name, Enumeration::Order or
     QString orderColumn;
     switch (order) {
     case Enumeration::Order::Id:
-        orderColumn = QStringLiteral("id");
+        orderColumn = "id";
         break;
     case Enumeration::Order::SymId:
-        orderColumn = QStringLiteral("sym_id");
+        orderColumn = "sym_id";
         break;
     case Enumeration::Order::Name:
-        orderColumn = QStringLiteral("name");
+        orderColumn = "name";
         break;
     }
 
@@ -92,13 +92,13 @@ Enumeration SQLiteEnumerationDao::get(const QString &name, Enumeration::Order or
     const bool success = query.exec();
     if (success) {
         QSqlRecord record = query.record();
-        const int idIdx = record.indexOf(QStringLiteral("id"));
-        const int symIdIdx = record.indexOf(QStringLiteral("sym_id"));
-        const int nameIdx = record.indexOf(QStringLiteral("name"));
+        const auto idIdx = record.indexOf("id");
+        const auto symIdIdx = record.indexOf("sym_id");
+        const auto nameIdx = record.indexOf("name");
         while (query.next()) {
-            const std::int64_t id = query.value(idIdx).toLongLong();
-            const QString symId = query.value(symIdIdx).toString();
-            const QString itemName = query.value(nameIdx).toString();
+            const auto id = query.value(idIdx).toLongLong();
+            const auto symId = query.value(symIdIdx).toString();
+            const auto itemName = query.value(nameIdx).toString();
             enumeration.addItem({id, symId, itemName});
         }
 #ifdef DEBUG

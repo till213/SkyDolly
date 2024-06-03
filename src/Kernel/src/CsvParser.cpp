@@ -121,7 +121,7 @@ inline void CsvParser::parseLine(const QString &line) noexcept
         reset();
     } else {
         // In a quotation: add a new line
-        m_currentValue += QStringLiteral("\n");
+        m_currentValue += "\n";
     }
 
     for (const auto currentChar : line) {

@@ -33,6 +33,7 @@
 #include <QDir>
 #include <QString>
 #include <QStringList>
+#include <QStringLiteral>
 #include <QUuid>
 #ifdef DEBUG
 #include <QDebug>
@@ -40,8 +41,6 @@
 
 #include <Kernel/File.h>
 #include <Model/Flight.h>
-#include <Persistence/Service/FlightService.h>
-#include <Persistence/Service/LocationService.h>
 #include <Flight/FlightImportIntf.h>
 #include <Flight/FlightExportIntf.h>
 #include <Location/LocationImportIntf.h>
@@ -54,6 +53,7 @@ namespace
     constexpr const char *LocationDirectoryName {"Location"};
     constexpr const char *ExportDirectoryName {"Export"};
     constexpr const char *ImportDirectoryName {"Import"};
+    constexpr const char *MetaData {"MetaData"};
     constexpr const char *PluginUuidKey {"uuid"};
     constexpr const char *PluginNameKey {"name"};
 }
@@ -66,9 +66,12 @@ struct PluginManagerPrivate
     }
 
     ~PluginManagerPrivate() = default;
+    PluginManagerPrivate(const PluginManagerPrivate &rhs) = delete;
+    PluginManagerPrivate(PluginManagerPrivate &&rhs) = delete;
+    PluginManagerPrivate &operator=(const PluginManagerPrivate &rhs) = delete;
+    PluginManagerPrivate &operator=(PluginManagerPrivate &&rhs) = delete;
 
     QWidget *parentWidget {nullptr};
-    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
     QDir pluginsDirectory;
     // Key: uuid - value: plugin path
     PluginManager::PluginRegistry flightImportPluginRegistry;
@@ -106,9 +109,9 @@ void PluginManager::initialise(QWidget *parentWidget) noexcept
 std::vector<PluginManager::Handle> PluginManager::initialiseFlightImportPlugins() noexcept
 {
     std::vector<PluginManager::Handle> pluginHandles;
-    if (d->pluginsDirectory.exists(QString::fromLatin1(::FlightDirectoryName))) {
-        d->pluginsDirectory.cd(QString::fromLatin1(::FlightDirectoryName));
-        pluginHandles = enumeratePlugins(QString::fromLatin1(::ImportDirectoryName), d->flightImportPluginRegistry);
+    if (d->pluginsDirectory.exists(::FlightDirectoryName)) {
+        d->pluginsDirectory.cd(::FlightDirectoryName);
+        pluginHandles = enumeratePlugins(::ImportDirectoryName, d->flightImportPluginRegistry);
         d->pluginsDirectory.cdUp();
     }
     return pluginHandles;
@@ -117,9 +120,9 @@ std::vector<PluginManager::Handle> PluginManager::initialiseFlightImportPlugins(
 std::vector<PluginManager::Handle> PluginManager::initialiseFlightExportPlugins() noexcept
 {
     std::vector<PluginManager::Handle> pluginHandles;
-    if (d->pluginsDirectory.exists(QString::fromLatin1(::FlightDirectoryName))) {
-        d->pluginsDirectory.cd(QString::fromLatin1(::FlightDirectoryName));
-        pluginHandles = enumeratePlugins(QString::fromLatin1(::ExportDirectoryName), d->flightExportPluginRegistry);
+    if (d->pluginsDirectory.exists(::FlightDirectoryName)) {
+        d->pluginsDirectory.cd(::FlightDirectoryName);
+        pluginHandles = enumeratePlugins(::ExportDirectoryName, d->flightExportPluginRegistry);
         d->pluginsDirectory.cdUp();
     }
     return pluginHandles;
@@ -128,9 +131,9 @@ std::vector<PluginManager::Handle> PluginManager::initialiseFlightExportPlugins(
 std::vector<PluginManager::Handle> PluginManager::initialiseLocationImportPlugins() noexcept
 {
     std::vector<PluginManager::Handle> pluginHandles;
-    if (d->pluginsDirectory.exists(QString::fromLatin1(::LocationDirectoryName))) {
-        d->pluginsDirectory.cd(QString::fromLatin1(::LocationDirectoryName));
-        pluginHandles = enumeratePlugins(QString::fromLatin1(::ImportDirectoryName), d->locationImportPluginRegistry);
+    if (d->pluginsDirectory.exists(::LocationDirectoryName)) {
+        d->pluginsDirectory.cd(::LocationDirectoryName);
+        pluginHandles = enumeratePlugins(::ImportDirectoryName, d->locationImportPluginRegistry);
         d->pluginsDirectory.cdUp();
     }
     return pluginHandles;
@@ -139,9 +142,9 @@ std::vector<PluginManager::Handle> PluginManager::initialiseLocationImportPlugin
 std::vector<PluginManager::Handle> PluginManager::initialiseLocationExportPlugins() noexcept
 {
     std::vector<PluginManager::Handle> pluginHandles;
-    if (d->pluginsDirectory.exists(QString::fromLatin1(::LocationDirectoryName))) {
-        d->pluginsDirectory.cd(QString::fromLatin1(::LocationDirectoryName));
-        pluginHandles = enumeratePlugins(QString::fromLatin1(::ExportDirectoryName), d->locationExportPluginRegistry);
+    if (d->pluginsDirectory.exists(::LocationDirectoryName)) {
+        d->pluginsDirectory.cd(::LocationDirectoryName);
+        pluginHandles = enumeratePlugins(::ExportDirectoryName, d->locationExportPluginRegistry);
         d->pluginsDirectory.cdUp();
     }
     return pluginHandles;
@@ -166,7 +169,7 @@ bool PluginManager::importFlights(const QUuid &pluginUuid, Flight &flight) const
     return ok;
 }
 
-std::vector<FlightData> PluginManager::importSelectedFlights(const QUuid &pluginUuid, QIODevice &io, bool &ok) const noexcept
+std::vector<FlightData> PluginManager::importFlightData(const QUuid &pluginUuid, QIODevice &io, bool &ok) const noexcept
 {
     std::vector<FlightData> flights;
     if (d->flightImportPluginRegistry.contains(pluginUuid)) {
@@ -177,7 +180,7 @@ std::vector<FlightData> PluginManager::importSelectedFlights(const QUuid &plugin
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
             importPlugin->restoreSettings(pluginUuid);
-            flights = importPlugin->importSelectedFlights(io, ok);
+            flights = importPlugin->importFlightData(io, ok);
             importPlugin->storeSettings(pluginUuid);
         }
         loader.unload();
@@ -234,10 +237,7 @@ bool PluginManager::exportLocations(const QUuid &pluginUuid) const noexcept
         if (exportPlugin != nullptr) {
             exportPlugin->setParentWidget(d->parentWidget);
             exportPlugin->restoreSettings(pluginUuid);
-            std::vector<Location> locations = d->locationService->getAll(&ok);
-            if (ok) {
-                ok = exportPlugin->exportLocations(locations);
-            }
+            ok = exportPlugin->exportLocations();
             exportPlugin->storeSettings(pluginUuid);
         }
         loader.unload();
@@ -248,7 +248,7 @@ bool PluginManager::exportLocations(const QUuid &pluginUuid) const noexcept
 // PRIVATE
 
 PluginManager::PluginManager() noexcept
-    : d(std::make_unique<PluginManagerPrivate>())
+    : d {std::make_unique<PluginManagerPrivate>()}
 {}
 
 PluginManager::~PluginManager() = default;
@@ -267,9 +267,9 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QJsonObject pluginMetadata {metaData.value (QStringLiteral("MetaData")).toObject()};
-                const QUuid uuid {pluginMetadata.value(QString::fromLatin1(::PluginUuidKey)).toString()};
-                const QString pluginName {pluginMetadata.value(QString::fromLatin1(::PluginNameKey)).toString()};
+                const QJsonObject pluginMetadata {metaData.value(::MetaData).toObject()};
+                const QUuid uuid {pluginMetadata.value(::PluginUuidKey).toString()};
+                const QString pluginName {pluginMetadata.value(::PluginNameKey).toString()};
                 const Handle handle {uuid, pluginName};
                 pluginHandles.push_back(handle);
                 pluginRegistry[uuid] = pluginPath;

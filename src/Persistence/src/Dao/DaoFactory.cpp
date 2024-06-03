@@ -31,6 +31,7 @@
 #include "SQLite/SQLiteAircraftDao.h"
 #include "SQLite/SQLiteAircraftTypeDao.h"
 #include "SQLite/SQLitePositionDao.h"
+#include "SQLite/SQLiteAttitudeDao.h"
 #include "SQLite/SQLiteEngineDao.h"
 #include "SQLite/SQLitePrimaryFlightControlDao.h"
 #include "SQLite/SQLiteSecondaryFlightControlDao.h"
@@ -43,6 +44,7 @@
 #include "AircraftDaoIntf.h"
 #include "AircraftTypeDaoIntf.h"
 #include "PositionDaoIntf.h"
+#include "AttitudeDaoIntf.h"
 #include "EngineDaoIntf.h"
 #include "PrimaryFlightControlDaoIntf.h"
 #include "SecondaryFlightControlDaoIntf.h"
@@ -67,7 +69,7 @@ struct DaoFactoryPrivate
 // PUBLIC
 
 DaoFactory::DaoFactory(DbType dbType, QString connectionName)
-    : d(std::make_unique<DaoFactoryPrivate>(dbType, std::move(connectionName)))
+    : d {std::make_unique<DaoFactoryPrivate>(dbType, std::move(connectionName))}
 {}
 
 DaoFactory::DaoFactory(DaoFactory &&rhs) noexcept = default;
@@ -135,6 +137,17 @@ std::unique_ptr<PositionDaoIntf> DaoFactory::createPositionDao() noexcept
     switch (d->dbType) {
     case DbType::SQLite:
         dao = std::make_unique<SQLitePositionDao>(d->connectionName);
+        break;
+    }
+    return dao;
+}
+
+std::unique_ptr<AttitudeDaoIntf> DaoFactory::createAttitudeDao() noexcept
+{
+    std::unique_ptr<AttitudeDaoIntf> dao {nullptr};
+    switch (d->dbType) {
+    case DbType::SQLite:
+        dao = std::make_unique<SQLiteAttitudeDao>(d->connectionName);
         break;
     }
     return dao;

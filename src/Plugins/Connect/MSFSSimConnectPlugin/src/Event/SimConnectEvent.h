@@ -40,7 +40,12 @@ namespace SimConnectEvent
         PauseSet,
         SimRateIncr,
         SimRateDecr,
-        // Aircraft
+        // Simulation time (requests)
+        ZuluYearSet,
+        ZuluDaySet,
+        ZuluHoursSet,
+        ZuluMinutesSet,
+        // Aircraft freeze
         FreezeLatituteLongitude,
         FreezeAltitude,
         FreezeAttitude,
@@ -93,8 +98,10 @@ namespace SimConnectEvent
         CustomReplay,
         CustomPause,
         CustomStop,
-        CustomForward,
-        CustomBackward,
+        CustomForwardDown,
+        CustomForwardUp,
+        CustomBackwardDown,
+        CustomBackwardUp,
         CustomBegin,
         CustomEnd
     };

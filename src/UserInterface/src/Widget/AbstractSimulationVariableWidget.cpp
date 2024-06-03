@@ -22,9 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
-#include <optional>
-
 #include <QWidget>
 
 #include <Model/Logbook.h>
@@ -36,7 +33,7 @@
 
 
 AbstractSimulationVariableWidget  ::AbstractSimulationVariableWidget(QWidget *parent) noexcept
-    : QWidget(parent)
+    : QWidget {parent}
 {}
 
 AbstractSimulationVariableWidget::~AbstractSimulationVariableWidget() = default;
@@ -47,13 +44,12 @@ void AbstractSimulationVariableWidget::showEvent(QShowEvent *event) noexcept
 {
     QWidget::showEvent(event);
 
-    auto &skyConnectManager = SkyConnectManager::getInstance();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &AbstractSimulationVariableWidget::updateUi);
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
-    if (skyConnect) {
-        updateUi(skyConnect->get().getCurrentTimestamp(), TimeVariableData::Access::DiscreteSeek);
-    }
+
+    updateUi(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::DiscreteSeek);
+
     auto &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &AbstractSimulationVariableWidget::updateUiWithCurrentTime);
@@ -63,7 +59,7 @@ void AbstractSimulationVariableWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
 
-    auto &skyConnectManager = SkyConnectManager::getInstance();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::timestampChanged,
                this, &AbstractSimulationVariableWidget::updateUi);
     auto &flight = Logbook::getInstance().getCurrentFlight();
@@ -75,8 +71,6 @@ void AbstractSimulationVariableWidget::hideEvent(QHideEvent *event) noexcept
 
 void AbstractSimulationVariableWidget::updateUiWithCurrentTime() noexcept
 {
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        updateUi(skyConnect->get().getCurrentTimestamp(), TimeVariableData::Access::DiscreteSeek);
-    }
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+    updateUi(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::DiscreteSeek);
 }

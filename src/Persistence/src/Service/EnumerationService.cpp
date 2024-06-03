@@ -47,7 +47,7 @@ struct EnumerationServicePrivate
 // PUBLIC
 
 EnumerationService::EnumerationService(QString connectionName) noexcept
-    : d(std::make_unique<EnumerationServicePrivate>(std::move(connectionName)))
+    : d {std::make_unique<EnumerationServicePrivate>(std::move(connectionName))}
 {}
 
 EnumerationService::EnumerationService(EnumerationService &&rhs) noexcept = default;

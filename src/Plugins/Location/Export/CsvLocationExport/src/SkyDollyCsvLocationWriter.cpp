@@ -74,7 +74,7 @@ struct SkyDollyCsvLocationWriterPrivate
 // PUBLIC
 
 SkyDollyCsvLocationWriter::SkyDollyCsvLocationWriter(const CsvLocationExportSettings &pluginSettings) noexcept
-    : d(std::make_unique<SkyDollyCsvLocationWriterPrivate>(pluginSettings))
+    : d {std::make_unique<SkyDollyCsvLocationWriterPrivate>(pluginSettings)}
 {}
 
 SkyDollyCsvLocationWriter::~SkyDollyCsvLocationWriter() = default;
@@ -99,28 +99,28 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                                       ::EngineEventColumn % Csv::Ln;
 
     bool ok = io.write(csv.toUtf8());
-    Enumeration locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType);
-    Enumeration locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
-    Enumeration countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country);
-    Enumeration engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent);
+    auto locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType);
+    auto locationCategoryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
+    auto countryEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::Country);
+    auto engineEventEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::EngineEvent);
     if (ok) {
         for (const auto &location : locations) {
-            QString title = location.title;
-            QString description = location.description;
-            QString identifier = location.identifier;
-            const QString locationTypeSymId = locationTypeEnumeration.getItemById(location.typeId).symId;
-            const QString locationCategorySymId = locationCategoryEnumeration.getItemById(location.categoryId).symId;
-            const QString countrySymId = countryEnumeration.getItemById(location.countryId).symId;
-            const QString engineEventSymId = engineEventEnumeration.getItemById(location.engineEventId).symId;
-            const QString csv = QStringLiteral("\"") %
-                                title.replace(QStringLiteral("\""), QStringLiteral("\"\"")) % "\""  %
+            auto title = location.title;
+            auto description = location.description;
+            auto identifier = location.identifier;
+            const auto locationTypeSymId = locationTypeEnumeration.getItemById(location.typeId).symId;
+            const auto locationCategorySymId = locationCategoryEnumeration.getItemById(location.categoryId).symId;
+            const auto countrySymId = countryEnumeration.getItemById(location.countryId).symId;
+            const auto engineEventSymId = engineEventEnumeration.getItemById(location.engineEventId).symId;
+            const QString csv = QString::fromLatin1("\"") %
+                                title.replace("\"", "\"\"") % "\""  %
                                 Csv::CommaSep % "\"" %
-                                description.replace(QStringLiteral("\""), QStringLiteral("\"\"")) % "\"" % Csv::CommaSep %
+                                description.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
                                 locationTypeSymId % Csv::CommaSep %
                                 locationCategorySymId % Csv::CommaSep %
                                 countrySymId % Csv::CommaSep %
                                 QString::number(location.attributes) % Csv::CommaSep %
-                                "\"" % identifier.replace(QStringLiteral("\""), QStringLiteral("\"\"")) % "\"" % Csv::CommaSep %
+                                "\"" % identifier.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
                                 Export::formatCoordinate(location.latitude) % Csv::CommaSep %
                                 Export::formatCoordinate(location.longitude) % Csv::CommaSep %
                                 Export::formatNumber(location.altitude) % Csv::CommaSep %

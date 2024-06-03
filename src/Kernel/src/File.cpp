@@ -45,6 +45,8 @@ namespace
     // from https://geographiclib.sourceforge.io/html/geoid.html#geoidinst
     constexpr const char *EgmDirectoryName {"geoids"};
     constexpr const char *DefaultEgmFileName {"egm2008-5.pgm"};
+
+    constexpr const char *SimConnectConfigurationFileName {"SimConnect.cfg"};
 }
 
 // PUBLIC
@@ -96,7 +98,7 @@ QString File::getSequenceFilePath(const QString &filePath, int n) noexcept
          pluginsDirectory.cdUp();
      }
 #endif
-     pluginsDirectory.cd(QString::fromLatin1(::PluginDirectoryName));
+     pluginsDirectory.cd(::PluginDirectoryName);
      return pluginsDirectory.absolutePath();
  }
 
@@ -110,11 +112,11 @@ QString File::getSequenceFilePath(const QString &filePath, int n) noexcept
          egmDirectory.cdUp();
      }
 #endif
-     if (egmDirectory.cd(QString::fromLatin1(::ResourceDirectoryName))) {
-         if (egmDirectory.cd(QString::fromLatin1(::EgmDirectoryName))) {
-             if (egmDirectory.exists(QString::fromLatin1(::DefaultEgmFileName))) {
+     if (egmDirectory.cd(::ResourceDirectoryName)) {
+         if (egmDirectory.cd(::EgmDirectoryName)) {
+             if (egmDirectory.exists(::DefaultEgmFileName)) {
                  egmFileInfo = QFileInfo(
-                     egmDirectory.absoluteFilePath(QString::fromLatin1(::DefaultEgmFileName)));
+                     egmDirectory.absoluteFilePath(::DefaultEgmFileName));
              }
          }
      }
@@ -124,4 +126,10 @@ QString File::getSequenceFilePath(const QString &filePath, int n) noexcept
  bool File::hasEarthGravityModel() noexcept
  {
      return getEarthGravityModelFileInfo().exists();
+ }
+
+ bool File::hasSimConnectConfiguration() noexcept
+ {
+     QDir applicationDirectory = QDir(QCoreApplication::applicationDirPath());
+     return applicationDirectory.exists(::SimConnectConfigurationFileName);
  }

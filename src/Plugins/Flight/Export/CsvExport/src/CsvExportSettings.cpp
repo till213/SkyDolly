@@ -50,7 +50,7 @@ struct CsvExportSettingsPrivate
 
 CsvExportSettings::CsvExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
-      d(std::make_unique<CsvExportSettingsPrivate>())
+      d {std::make_unique<CsvExportSettingsPrivate>()}
 {}
 
 CsvExportSettings::~CsvExportSettings() = default;
@@ -96,7 +96,7 @@ void CsvExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::FormatKey);
+    keyValue.first = ::FormatKey;
     keyValue.second = Enum::underly(d->format);
     keyValues.push_back(keyValue);
 }
@@ -105,7 +105,7 @@ void CsvExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::FormatKey);
+    keyValue.first = ::FormatKey;
     keyValue.second = Enum::underly(::DefaultFormat);
     keysWithDefaults.push_back(keyValue);
 }
@@ -113,7 +113,7 @@ void CsvExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void CsvExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::FormatKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::FormatKey).toInt(&ok);
     d->format = ok && Enum::contains<Format>(enumValue) ? static_cast<Format>(enumValue) : ::DefaultFormat;
 }
 

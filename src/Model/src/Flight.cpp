@@ -27,7 +27,6 @@
 #include <utility>
 #include <vector>
 #include <cstdint>
-#include <cinttypes>
 
 #include <QDateTime>
 #include <QString>
@@ -59,15 +58,15 @@ struct FlightPrivate
 // PUBLIC
 
 Flight::Flight(FlightData flightData, QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<FlightPrivate>())
+    : QObject {parent},
+      d {std::make_unique<FlightPrivate>()}
 {
     d->flightData = std::move(flightData);
 }
 
 Flight::Flight(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<FlightPrivate>())
+    : QObject {parent},
+      d {std::make_unique<FlightPrivate>()}
 {
     // A flight always has at least one (user) aircraft
     addUserAircraft(Const::InvalidId);
@@ -163,7 +162,7 @@ void Flight::addAircraft(std::vector<Aircraft> &&aircraft) noexcept
 Aircraft &Flight::addUserAircraft(std::int64_t aircraftId) noexcept
 {
     const int previousUserAircraftIndex = d->flightData.userAircraftIndex;
-    Aircraft &aircraft = d->flightData.addUserAircraft(aircraftId);
+    auto &aircraft = d->flightData.addUserAircraft(aircraftId);
     // First emit the aircraft added signal and...
     emit aircraftAdded(d->flightData.aircraft.back());
     // ... then the user aircraft changed signal
@@ -276,7 +275,7 @@ void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
 
 FlightSummary Flight::getFlightSummary() const noexcept
 {
-    const Aircraft &aircraft = getUserAircraft();
+    const auto &aircraft = getUserAircraft();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
 
     FlightSummary summary;
@@ -284,10 +283,10 @@ FlightSummary Flight::getFlightSummary() const noexcept
     summary.creationDate = d->flightData.creationTime;
     summary.aircraftType = aircraftInfo.aircraftType.type;
     summary.aircraftCount = count();
-    summary.startSimulationLocalTime = d->flightData.flightCondition.startLocalTime;
-    summary.startSimulationZuluTime = d->flightData.flightCondition.startZuluTime;
-    summary.endSimulationLocalTime = d->flightData.flightCondition.endLocalTime;
-    summary.endSimulationZuluTime = d->flightData.flightCondition.endZuluTime;
+    summary.startSimulationLocalTime = d->flightData.flightCondition.startLocalDateTime;
+    summary.startSimulationZuluTime = d->flightData.flightCondition.startZuluDateTime;
+    summary.endSimulationLocalTime = d->flightData.flightCondition.endLocalDateTime;
+    summary.endSimulationZuluTime = d->flightData.flightCondition.endZuluDateTime;
 
     const FlightPlan &flightPlan = aircraft.getFlightPlan();
     if (flightPlan.count() > 0) {

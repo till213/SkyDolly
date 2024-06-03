@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>276</height>
+    <width>923</width>
+    <height>285</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -112,7 +112,20 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_11">
+            <widget class="QDateTimeEdit" name="timeStampDateTimeEdit"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="dateLabel">
+             <property name="text">
+              <string>Date:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDateEdit" name="timestampDateEdit"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="timeLabel">
              <property name="text">
               <string>Time:</string>
              </property>
@@ -347,7 +360,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>516</width>
+     <width>923</width>
      <height>21</height>
     </rect>
    </property>

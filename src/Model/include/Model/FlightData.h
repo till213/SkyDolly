@@ -151,12 +151,12 @@ struct MODEL_API FlightData final
 
     inline QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept
     {
-        return flightCondition.startLocalTime.addMSecs(-aircraft.getTimeOffset());
+        return flightCondition.startLocalDateTime.addMSecs(-aircraft.getTimeOffset());
     }
 
     inline QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept
     {
-        return flightCondition.startZuluTime.addMSecs(-aircraft.getTimeOffset());
+        return flightCondition.startZuluDateTime.addMSecs(-aircraft.getTimeOffset());
     }
 
     inline bool hasRecording() const noexcept

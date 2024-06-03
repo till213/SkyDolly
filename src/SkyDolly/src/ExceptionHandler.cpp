@@ -74,13 +74,13 @@ void ExceptionHandler::onTerminate() noexcept
                 std::rethrow_exception(ex);
             } catch (const std::exception &ex) {
                 errorCode = ErrorCodes::StandardException;
-                onError(QStringLiteral("Terminate"), stackTrace, ex);
+                onError("Terminate", stackTrace, ex);
             } catch(...) {
                 errorCode = ErrorCodes::UnknownException;
-                onError(QStringLiteral("Terminate"), stackTrace, QStringLiteral("Non std::exception"));
+                onError("Terminate", stackTrace, "Non std::exception");
             }
         } else {
-            onError(QStringLiteral("Unknown Error"), stackTrace, QStringLiteral("An unknown error occurred"));
+            onError("Unknown Error", stackTrace, "An unknown error occurred");
             errorCode = ErrorCodes::UnknownError;
         }
     } catch (const std::exception &ex) {
@@ -109,7 +109,7 @@ QString ExceptionHandler::exceptionToString(const std::exception &ex)
     // File system
     auto baex = dynamic_cast<const std::bad_alloc *>(&ex);
     if (baex != nullptr) {
-        message = QStringLiteral("Memory could not be allocated: %1").arg(QString::fromLatin1(baex->what()));
+        message = QStringLiteral("Memory could not be allocated: %1").arg(baex->what());
         return message;
     }
 
@@ -126,7 +126,7 @@ QString ExceptionHandler::exceptionToString(const std::exception &ex)
     // I/O
     auto iosex = dynamic_cast<const std::ios_base::failure *>(&ex);
     if (iosex != nullptr) {
-        message = QStringLiteral("A std::ios_base::failure occurred: %1").arg(QString::fromLatin1(iosex->what()));
+        message = QStringLiteral("A std::ios_base::failure occurred: %1").arg(iosex->what());
         if (iosex->code()) {
             message = message % '\n' % errorCodeToString(iosex->code());
         }
@@ -134,6 +134,6 @@ QString ExceptionHandler::exceptionToString(const std::exception &ex)
     }
 
     // Basic exception message
-    message = QStringLiteral("A std::exception occurred:\n%1").arg(QString::fromLatin1(ex.what()));
+    message = QStringLiteral("A std::exception occurred:\n%1").arg(ex.what());
     return message;
 }

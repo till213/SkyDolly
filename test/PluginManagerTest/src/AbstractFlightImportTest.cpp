@@ -101,7 +101,7 @@ void AbstractFlightImportTest::importSelectedFlights() noexcept
     // Exercise
     QFile file {filepath};
     bool fileOpenOk = file.open(QIODeviceBase::ReadOnly);
-    const std::vector<FlightData> flights = PluginManager::getInstance().importSelectedFlights(pluginUuid, file, ok);
+    const std::vector<FlightData> flights = PluginManager::getInstance().importFlightData(pluginUuid, file, ok);
     file.close();
 
     // Verify
@@ -120,7 +120,7 @@ void AbstractFlightImportTest::importSelectedFlights() noexcept
         std::size_t nofAircraft = firstFlight.count();
         QCOMPARE_EQ(static_cast<int>(nofAircraft), expectedNofAircraftInFirstFlight);
         if (nofAircraft > 0) {
-            const Aircraft &aircraft = firstFlight.getUserAircraftConst();
+            const auto &aircraft = firstFlight.getUserAircraftConst();
             QCOMPARE_EQ(static_cast<int>(aircraft.getPosition().count()), expectedNofUserAircraftPositionInFirstFlight);
         }
     }

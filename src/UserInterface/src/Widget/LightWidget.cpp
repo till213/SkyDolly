@@ -58,9 +58,9 @@ struct LightWidgetPrivate
 // PUBLIC
 
 LightWidget::LightWidget(QWidget *parent) noexcept :
-    AbstractSimulationVariableWidget(parent),
-    ui(std::make_unique<Ui::LightWidget>()),
-    d(std::make_unique<LightWidgetPrivate>(*this))
+    AbstractSimulationVariableWidget {parent},
+    ui {std::make_unique<Ui::LightWidget>()},
+    d {std::make_unique<LightWidgetPrivate>(*this)}
 {
     ui->setupUi(this);
     initUi();
@@ -68,14 +68,11 @@ LightWidget::LightWidget(QWidget *parent) noexcept :
 
 LightWidget::~LightWidget() = default;
 
-// PROTECTED
-
-
 // PRIVATE
 
 void LightWidget::initUi() noexcept
 {
-    ui->lightStateLineEdit->setToolTip(QString::fromLatin1(SimVar::LightStates));
+    ui->lightStateLineEdit->setToolTip(SimVar::LightStates);
 
     // Make the light state checkboxes checkable, but not for the user
     ui->navigationCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -111,23 +108,21 @@ void LightWidget::initUi() noexcept
 
 LightData LightWidget::getCurrentLightData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    LightData lightData;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (skyConnect->get().getState() == Connect::State::Recording) {
-            if (aircraft.getLight().count() > 0) {
-                lightData = aircraft.getLight().getLast();
-            }
-        } else {
-            if (timestamp != TimeVariableData::InvalidTime) {
-                lightData = aircraft.getLight().interpolate(timestamp, access);
-            } else {
-                lightData = aircraft.getLight().interpolate(skyConnect->get().getCurrentTimestamp(), access);
-            }
-        };
-    }
-    return lightData;
+    LightData data;
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &light = aircraft.getLight();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+
+    if (skyConnectManager.getState() == Connect::State::Recording) {
+        if (light.count() > 0) {
+            data = light.getLast();
+        }
+    } else {
+        const auto t = timestamp != TimeVariableData::InvalidTime ? timestamp : skyConnectManager.getCurrentTimestamp();
+        data = light.interpolate(t, access);
+    };
+
+    return data;
 }
 
 // PRIVATE SLOTS

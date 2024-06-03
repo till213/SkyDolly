@@ -26,6 +26,7 @@
 #define AIRCRAFTVARIABLESWIDGET_H
 
 #include <cstdint>
+#include <utility>
 
 #include <QWidget>
 
@@ -37,6 +38,7 @@ class QHideEvent;
 
 class SkyConnectIntf;
 struct PositionData;
+struct AttitudeData;
 struct AircraftWidgetPrivate;
 
 namespace Ui {
@@ -62,7 +64,7 @@ private:
     const std::unique_ptr<AircraftWidgetPrivate> d;
 
     void initUi() noexcept;
-    PositionData getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    std::pair<PositionData, AttitudeData> getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // AIRCRAFTVARIABLESWIDGET_H

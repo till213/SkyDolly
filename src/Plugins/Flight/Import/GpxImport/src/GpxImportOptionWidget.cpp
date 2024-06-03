@@ -42,7 +42,7 @@ namespace
 struct GpxImportOptionWidgetPrivate
 {
     GpxImportOptionWidgetPrivate(GpxImportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
      GpxImportSettings &pluginSettings;
@@ -51,9 +51,9 @@ struct GpxImportOptionWidgetPrivate
 // PUBLIC
 
 GpxImportOptionWidget::GpxImportOptionWidget(GpxImportSettings &pluginSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::GpxImportOptionWidget>()),
-      d(std::make_unique<GpxImportOptionWidgetPrivate>(pluginSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::GpxImportOptionWidget>()},
+      d {std::make_unique<GpxImportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

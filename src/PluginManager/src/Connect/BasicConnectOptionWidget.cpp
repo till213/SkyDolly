@@ -35,7 +35,7 @@
 struct BasicConnectOptionWidgetPrivate
 {
     BasicConnectOptionWidgetPrivate(ConnectPluginBaseSettings &pluginSettings)
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     ConnectPluginBaseSettings &pluginSettings;
@@ -45,9 +45,9 @@ struct BasicConnectOptionWidgetPrivate
 // PUBLIC
 
 BasicConnectOptionWidget::BasicConnectOptionWidget(ConnectPluginBaseSettings &pluginSettings, QWidget *parent)
-    : OptionWidgetIntf(parent),
-      ui(new Ui::BasicConnectOptionWidget),
-      d(std::make_unique<BasicConnectOptionWidgetPrivate>(pluginSettings))
+    : OptionWidgetIntf {parent},
+      ui {std::make_unique<Ui::BasicConnectOptionWidget>()},
+      d {std::make_unique<BasicConnectOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();
@@ -60,7 +60,6 @@ BasicConnectOptionWidget::~BasicConnectOptionWidget()
 #ifdef DEBUG
     qDebug() << "BasicConnectOptionWidget::~BasicConnectOptionWidget: DELETED";
 #endif
-    delete ui;
 }
 
 void BasicConnectOptionWidget::setExtendedOptionWidget(OptionWidgetIntf *optionWidget) noexcept

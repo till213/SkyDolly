@@ -51,16 +51,16 @@
 class EventStateHandler final
 {
 public:
-    EventStateHandler(::HANDLE simConnectHandle = nullptr) noexcept
+    EventStateHandler(HANDLE simConnectHandle = nullptr) noexcept
         : m_simConnectHandle(simConnectHandle)
     {}
 
-    ::HANDLE getSimConnectHandle() const noexcept
+    HANDLE getSimConnectHandle() const noexcept
     {
         return m_simConnectHandle;
     }
 
-    void setSimConnectHandle(::HANDLE simConnectHandle) noexcept
+    void setSimConnectHandle(HANDLE simConnectHandle) noexcept
     {
         m_simConnectHandle = simConnectHandle;
     }
@@ -102,9 +102,16 @@ public:
 
     void setupClientEvents() noexcept
     {
+        // Pause & simulation rate
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::PauseSet), "PAUSE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimRateIncr), "SIM_RATE_INCR");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SimRateDecr), "SIM_RATE_DECR");
+        // Date & time
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ZuluYearSet), "ZULU_YEAR_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ZuluDaySet), "ZULU_DAY_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ZuluHoursSet), "ZULU_HOURS_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ZuluMinutesSet), "ZULU_MINUTES_SET");
+        // Freeze aircraft
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::FreezeLatituteLongitude), "FREEZE_LATITUDE_LONGITUDE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::FreezeAltitude), "FREEZE_ALTITUDE_SET");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
@@ -336,7 +343,7 @@ public:
     }
 
 private:
-    ::HANDLE m_simConnectHandle {nullptr};
+    HANDLE m_simConnectHandle {nullptr};
     EventState::Engine m_engineState {EventState::Engine::Unknown};
 
     EventState::StatefulSwitch<std::int32_t> m_flapsIndex;

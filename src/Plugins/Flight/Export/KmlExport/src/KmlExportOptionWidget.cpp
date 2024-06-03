@@ -53,7 +53,7 @@ struct KmlExportOptionWidgetPrivate
 {
     KmlExportOptionWidgetPrivate(KmlExportSettings &pluginSettings) noexcept
         : colorButtonGroup(std::make_unique<QButtonGroup>()),
-          pluginSettings(pluginSettings)
+          pluginSettings {pluginSettings}
     {}
 
     std::unique_ptr<QButtonGroup> colorButtonGroup;
@@ -63,9 +63,9 @@ struct KmlExportOptionWidgetPrivate
 // PUBLIC
 
 KmlExportOptionWidget::KmlExportOptionWidget(KmlExportSettings &pluginSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::KmlExportOptionWidget>()),
-      d(std::make_unique<KmlExportOptionWidgetPrivate>(pluginSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::KmlExportOptionWidget>()},
+      d {std::make_unique<KmlExportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();

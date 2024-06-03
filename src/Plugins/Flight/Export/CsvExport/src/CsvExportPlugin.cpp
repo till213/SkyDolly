@@ -42,13 +42,13 @@ struct CsvExportPluginPrivate
 {
     CsvExportSettings pluginSettings;
 
-    static inline const QString FileExtension {QStringLiteral("csv")};
+    static inline const QString FileExtension {"csv"};
 };
 
 // PUBLIC
 
 CsvExportPlugin::CsvExportPlugin() noexcept
-    : d(std::make_unique<CsvExportPluginPrivate>())
+    : d {std::make_unique<CsvExportPluginPrivate>()}
 {}
 
 CsvExportPlugin::~CsvExportPlugin() = default;

@@ -42,14 +42,17 @@ class PERSISTENCE_API LocationService final
 {
 public:
     /*!
-     * Defines how to deal with duplicate locations upon import.
+     * Defines how to deal with existing locations upon import.
      *
      * Implementation note: these values are peristed in the application settings.
      */
     enum struct Mode {
         First = 0,
-        Ignore = First,
+        /*! The location to be imported is skipped; the existing position is left unmodified */
+        Skip = First,
+        /*! The existing position is updated with the values from the newly imported location */
         Update,
+        /*! The newly imported location is unconditionally inserted: duplicate positions may result */
         Insert,
         Last = Insert
     };
@@ -61,7 +64,20 @@ public:
     ~LocationService();
 
     bool store(Location &location) noexcept;
-    bool storeAll(std::vector<Location> &locations, Mode mode) noexcept;
+    bool exportLocation(const Location &location) noexcept;
+    bool storeAll(std::vector<Location> &locations, Mode mode, double distanceKm) noexcept;
+
+    /*!
+     * Exports the \c locations, but does not emit any signal. The \c id of the locations is
+     * left unchanged (possibly still Const#InvalidId).
+     *
+     * \param locations
+     *        the locations that will be exported, typically into another logbook
+     * \return \c true upon success; \c false else
+     * \sa storeAll
+     */
+    bool exportAll(const std::vector<Location> &locations) noexcept;
+
     bool update(const Location &location) noexcept;
     bool deleteById(std::int64_t id) noexcept;
     std::vector<Location> getAll(bool *ok = nullptr) const noexcept;

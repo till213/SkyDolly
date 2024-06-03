@@ -25,6 +25,7 @@ target_sources(${LIBRARY_NAME}
         include/Widget/UnitWidgetItem.h src/UnitWidgetItem.cpp
         include/Widget/LinkedOptionGroup.h src/LinkedOptionGroup.cpp
         include/Widget/RecentFileMenu.h src/RecentFileMenu.cpp
+        include/Widget/PowerOfTwoSpinBox.h src/PowerOfTwoSpinBox.cpp
 )
 if(${PLATFORM_IS_WINDOWS})
     target_sources(${LIBRARY_NAME}

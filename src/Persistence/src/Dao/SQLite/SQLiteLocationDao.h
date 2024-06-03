@@ -48,8 +48,29 @@ public:
     ~SQLiteLocationDao() override;
 
     bool add(Location &location) const noexcept override;
+    bool exportLocation(const Location &location) const noexcept override;
     bool update(const Location &location) const noexcept override;
-    std::vector<Location> getByPosition(double latitude, double longitude, double distance = 0.0, bool *ok = nullptr) const noexcept override;
+
+    /*!
+     * Returns all positions that are within \c distanceKm [kilometers] from position
+     * \c latitude and \c longitude away.
+     *
+     * The distance calculation uses a simple but fast formula with an error rate less
+     * than 1% for distances <= 5 kilometers, even at the poles.
+     *
+     * Also refer to: https://jonisalonen.com/2014/computing-distance-between-coordinates-can-be-simple-and-fast/
+     *
+     * \param latitude
+     *        the latitude of the source location [degrees]
+     * \param longitude
+     *        the longitude of the source location [degrees]
+     * \param distanceKm
+     *        the distance [kilometers]
+     * \param ok
+     *        set to \c true when successful; \c false else (database error)
+     * \return the locations that are within the given \c distanceKm from the source location (\c latitude, \c longitude)
+     */
+    std::vector<Location> getByPosition(double latitude, double longitude, double distanceKm = 0.0, bool *ok = nullptr) const noexcept override;
     bool deleteById(std::int64_t id) const noexcept override;
     std::vector<Location> getAll(bool *ok = nullptr) const noexcept override;
     std::vector<Location> getSelectedLocations(const LocationSelector &selector, bool *ok = nullptr) const noexcept override;
@@ -58,6 +79,7 @@ private:
     std::unique_ptr<SQLiteLocationDaoPrivate> d;
 
     inline std::vector<Location> executeGetLocationQuery(QSqlQuery &query, bool *ok = nullptr) const noexcept;
+    std::int64_t insert(const Location &location) const noexcept;
 };
 
 #endif // SQLITELOCATIONDAO_H

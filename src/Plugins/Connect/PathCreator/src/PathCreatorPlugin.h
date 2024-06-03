@@ -39,12 +39,13 @@
 class Flight;
 class Aircraft;
 struct PositionData;
+struct AttitudeData;
 struct InitialPosition;
 class ConnectPluginBaseSettings;
 class OptionWidgetIntf;
 struct PathCreatorPluginPrivate;
 
-class PathCreatorPlugin : public AbstractSkyConnect
+class PathCreatorPlugin final : public AbstractSkyConnect
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID SKYCONNECT_INTERFACE_IID FILE "PathCreatorPlugin.json")
@@ -57,14 +58,12 @@ public:
     PathCreatorPlugin &operator=(PathCreatorPlugin &&rhs) = delete;
     ~PathCreatorPlugin() override;
     
-    bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
+    bool setUserAircraftPositionAndAttitude(const PositionData &positionData, const AttitudeData &attitudeData) noexcept override;
 
 protected:
     ConnectPluginBaseSettings &getPluginSettings() const noexcept override;
     std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept override;
 
-    bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
-    
     bool onSetupFlightSimulatorShortcuts() noexcept override;
 
     bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
@@ -73,7 +72,7 @@ protected:
 
     bool onStartFlightRecording() noexcept override;
     bool onStartAircraftRecording() noexcept override;
-    void onRecordingPaused(Initiator initiator, bool paused) noexcept override;
+    void onRecordingPaused(Initiator initiator, bool enable) noexcept override;
     void onStopRecording() noexcept override;
 
     bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
@@ -81,7 +80,6 @@ protected:
     void onStopReplay() noexcept override;
 
     void onSeek(std::int64_t currentTimestampS, SeekMode seekMode) noexcept override;
-    void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
     bool isConnectedWithSim() const noexcept override;
@@ -94,9 +92,7 @@ protected:
 
     bool onRequestLocation() noexcept override;
     bool onRequestSimulationRate() noexcept override;
-
-protected slots:
-    void recordData() noexcept override;
+    bool onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept override;
 
 private:
     const std::unique_ptr<PathCreatorPluginPrivate> d;
@@ -116,6 +112,7 @@ private:
 
 private slots:
     void replay() noexcept;
+    void recordData() noexcept;
 };
 
 #endif // PATHCREATORPLUGIN_H

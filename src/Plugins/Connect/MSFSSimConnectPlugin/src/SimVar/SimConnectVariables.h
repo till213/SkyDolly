@@ -114,7 +114,6 @@ namespace SimConnectVariables
     struct LogoLight
     {
         std::int32_t value;
-
     };
     #pragma pack(pop)
 

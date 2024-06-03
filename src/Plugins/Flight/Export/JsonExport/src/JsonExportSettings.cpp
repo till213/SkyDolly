@@ -42,7 +42,7 @@ struct JsonExportSettingsPrivate
 
 JsonExportSettings::JsonExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
-      d(std::make_unique<JsonExportSettingsPrivate>())
+      d {std::make_unique<JsonExportSettingsPrivate>()}
 {}
 
 JsonExportSettings::~JsonExportSettings() = default;

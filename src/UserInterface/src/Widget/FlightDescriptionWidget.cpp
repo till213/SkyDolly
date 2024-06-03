@@ -50,9 +50,9 @@ struct FlightDescriptionWidgetPrivate
 // PUBLIC
 
 FlightDescriptionWidget::FlightDescriptionWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(std::make_unique<Ui::FlightDescriptionWidget>()),
-    d(std::make_unique<FlightDescriptionWidgetPrivate>())
+    QWidget {parent},
+    ui {std::make_unique<Ui::FlightDescriptionWidget>()},
+    d {std::make_unique<FlightDescriptionWidgetPrivate>()}
 {
     ui->setupUi(this);
     initUi();
@@ -75,7 +75,7 @@ void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
 
     // Flight
     const Logbook &logbook = Logbook::getInstance();
-    const Flight &flight = logbook.getCurrentFlight();
+    const auto &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::cleared,
             this, &FlightDescriptionWidget::updateUi);
     connect(&flight, &Flight::titleChanged,
@@ -101,7 +101,7 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
 
     // Flight
     const Logbook &logbook = Logbook::getInstance();
-    const Flight &flight = logbook.getCurrentFlight();
+    const auto &flight = logbook.getCurrentFlight();
     disconnect(&flight, &Flight::cleared,
                this, &FlightDescriptionWidget::updateUi);
     disconnect(&flight, &Flight::titleChanged,
@@ -118,7 +118,7 @@ void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
 
 void FlightDescriptionWidget::initUi() noexcept
 {
-    ui->flightNumberLineEdit->setToolTip(QString::fromLatin1(SimVar::ATCId));
+    ui->flightNumberLineEdit->setToolTip(SimVar::ATCId);
 }
 
 void FlightDescriptionWidget::frenchConnection() noexcept

@@ -51,8 +51,7 @@ struct SdlogImportPluginPrivate
 {
     std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>(Const::ImportConnectionName)};
     std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>(Const::ImportConnectionName)};
-    std::unique_ptr<FlightService> importFlightService {std::make_unique<FlightService>(Const::ImportConnectionName)};
-    std::unique_ptr<FlightService> applicationFlightService {std::make_unique<FlightService>(Const::DefaultConnectionName)};
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>(Const::ImportConnectionName)};
 
     SdLogImportSettings pluginSettings;
 
@@ -62,12 +61,12 @@ struct SdlogImportPluginPrivate
 // PUBLIC
 
 SdlogImportPlugin::SdlogImportPlugin() noexcept
-    : d(std::make_unique<SdlogImportPluginPrivate>())
+    : d {std::make_unique<SdlogImportPluginPrivate>()}
 {}
 
 SdlogImportPlugin::~SdlogImportPlugin() = default;
 
-std::vector<FlightData> SdlogImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+std::vector<FlightData> SdlogImportPlugin::importFlightData(QIODevice &io, bool &ok) noexcept
 {
     std::vector<FlightData> flights;
     ok = false;
@@ -75,7 +74,7 @@ std::vector<FlightData> SdlogImportPlugin::importSelectedFlights(QIODevice &io, 
     auto *file = qobject_cast<QFile *>(&io);
     if (file != nullptr) {
         const QFileInfo fileInfo {*file};
-        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath());
+        ok = d->databaseService->connectAndMigrate(fileInfo.absoluteFilePath(), DatabaseService::ConnectionMode::Import, Migration::Milestone::Schema);
         if (ok) {
             const std::vector<std::int64_t> flightIds = d->logbookService->getFlightIds({}, &ok);
             // We expect at least one flight to be imported (note that zero flights in a logbook
@@ -85,7 +84,7 @@ std::vector<FlightData> SdlogImportPlugin::importSelectedFlights(QIODevice &io, 
                 flights.reserve(flightIds.size());
                 for (const auto flightId : flightIds) {
                     FlightData flightData;
-                    ok = d->importFlightService->importFlightData(flightId, flightData);
+                    ok = d->flightService->importFlightData(flightId, flightData);
                     flights.push_back(std::move(flightData));
                 }
             }

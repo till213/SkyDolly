@@ -61,9 +61,9 @@ struct AircraftHandleWidgetPrivate
 // PUBLIC
 
 AircraftHandleWidget::AircraftHandleWidget(QWidget *parent) noexcept :
-    AbstractSimulationVariableWidget(parent),
-    ui(std::make_unique<Ui::AircraftHandleWidget>()),
-    d(std::make_unique<AircraftHandleWidgetPrivate>(*this))
+    AbstractSimulationVariableWidget {parent},
+    ui {std::make_unique<Ui::AircraftHandleWidget>()},
+    d {std::make_unique<AircraftHandleWidgetPrivate>(*this)}
 {
     ui->setupUi(this);
     initUi();
@@ -75,38 +75,36 @@ AircraftHandleWidget::~AircraftHandleWidget() = default;
 
 void AircraftHandleWidget::initUi() noexcept
 {
-    ui->gearLineEdit->setToolTip(QString::fromLatin1(SimVar::GearHandlePosition));
-    ui->brakeLeftLineEdit->setToolTip(QString::fromLatin1(SimVar::BrakeLeftPosition));
-    ui->brakeRightLineEdit->setToolTip(QString::fromLatin1(SimVar::BrakeRightPosition));
-    ui->waterRudderLineEdit->setToolTip(QString::fromLatin1(SimVar::WaterRudderHandlePosition));
-    ui->smokeEnabledLineEdit->setToolTip(QString::fromLatin1(SimVar::SmokeEnable));
-    ui->canopyOpenLineEdit->setToolTip(QString::fromLatin1(SimVar::CanopyOpen));
-    ui->tailhookHandleLineEdit->setToolTip(QString::fromLatin1(SimVar::TailhookHandle));
-    ui->tailhookPositionLineEdit->setToolTip(QString::fromLatin1(SimVar::TailhookPosition));
-    ui->wingFoldingHandleLineEdit->setToolTip(QString::fromLatin1(SimVar::FoldingWingHandlePosition));
-    ui->leftWingFoldingLineEdit->setToolTip(QString::fromLatin1(SimVar::FoldingWingLeftPercent));
-    ui->rightWingFoldingLineEdit->setToolTip(QString::fromLatin1(SimVar::FoldingWingRightPercent));
+    ui->gearLineEdit->setToolTip(SimVar::GearHandlePosition);
+    ui->brakeLeftLineEdit->setToolTip(SimVar::BrakeLeftPosition);
+    ui->brakeRightLineEdit->setToolTip(SimVar::BrakeRightPosition);
+    ui->waterRudderLineEdit->setToolTip(SimVar::WaterRudderHandlePosition);
+    ui->smokeEnabledLineEdit->setToolTip(SimVar::SmokeEnable);
+    ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
+    ui->tailhookHandleLineEdit->setToolTip(SimVar::TailhookHandle);
+    ui->tailhookPositionLineEdit->setToolTip(SimVar::TailhookPosition);
+    ui->wingFoldingHandleLineEdit->setToolTip(SimVar::FoldingWingHandlePosition);
+    ui->leftWingFoldingLineEdit->setToolTip(SimVar::FoldingWingLeftPercent);
+    ui->rightWingFoldingLineEdit->setToolTip(SimVar::FoldingWingRightPercent);
 }
 
 AircraftHandleData AircraftHandleWidget::getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    AircraftHandleData aircraftHandleData;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (skyConnect->get().getState() == Connect::State::Recording) {
-            if (aircraft.getAircraftHandle().count() > 0) {
-                aircraftHandleData = aircraft.getAircraftHandle().getLast();
-            }
-        } else {
-            if (timestamp != TimeVariableData::InvalidTime) {
-                aircraftHandleData = aircraft.getAircraftHandle().interpolate(timestamp, access);
-            } else {
-                aircraftHandleData = aircraft.getAircraftHandle().interpolate(skyConnect->get().getCurrentTimestamp(), access);
-            }
-        };
-    }
-    return aircraftHandleData;
+    AircraftHandleData data;
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &aircraftHandle = aircraft.getAircraftHandle();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+
+    if (skyConnectManager.getState() == Connect::State::Recording) {
+        if (aircraftHandle.count() > 0) {
+            data = aircraftHandle.getLast();
+        }
+    } else {
+        const auto t = timestamp != TimeVariableData::InvalidTime ? timestamp : skyConnectManager.getCurrentTimestamp();
+        data = aircraftHandle.interpolate(t, access);
+    };
+
+    return data;
 }
 
 // PRIVATE SLOTS
@@ -134,7 +132,7 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
         colorName = d->DisabledTextColor.name();
     }
 
-    const QString css{QStringLiteral("color: %1;").arg(colorName)};
+    const auto css{QStringLiteral("color: %1;").arg(colorName)};
     ui->gearLineEdit->setStyleSheet(css);
     ui->brakeLeftLineEdit->setStyleSheet(css);
     ui->brakeRightLineEdit->setStyleSheet(css);

@@ -32,6 +32,7 @@
 #include <QtPlugin>
 
 class QWidget;
+class QIODevice;
 
 #include "LocationImportIntf.h"
 #include "../DialogPluginBase.h"
@@ -84,7 +85,7 @@ protected:
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-    virtual std::vector<Location> importLocations(QFile &file, bool *ok = nullptr) noexcept = 0;
+    virtual std::vector<Location> importLocations(QIODevice &io, bool &ok) noexcept = 0;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;

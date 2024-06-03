@@ -58,7 +58,7 @@ struct GpxImportSettingsPrivate
 // PUBLIC
 
 GpxImportSettings::GpxImportSettings() noexcept
-    : d(std::make_unique<GpxImportSettingsPrivate>())
+    : d {std::make_unique<GpxImportSettingsPrivate>()}
 {}
 
 GpxImportSettings::~GpxImportSettings() = default;
@@ -144,23 +144,23 @@ void GpxImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::WaypointSelectionKey);
+    keyValue.first = ::WaypointSelectionKey;
     keyValue.second = Enum::underly(d->waypointSelection);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::PositionSelectionKey);
+    keyValue.first = ::PositionSelectionKey;
     keyValue.second = Enum::underly(d->positionSelection);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultAltitudeKey);
+    keyValue.first = ::DefaultAltitudeKey;
     keyValue.second = d->defaultAltitude;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultSpeedKey);
+    keyValue.first = ::DefaultSpeedKey;
     keyValue.second = d->defaultSpeed;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::ConvertAltitudeKey);
+    keyValue.first = ::ConvertAltitudeKey;
     keyValue.second = d->convertAltitude;
     keyValues.push_back(keyValue);
 }
@@ -169,23 +169,23 @@ void GpxImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::WaypointSelectionKey);
+    keyValue.first = ::WaypointSelectionKey;
     keyValue.second = Enum::underly(::DefaultWaypointSelection);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::PositionSelectionKey);
+    keyValue.first = ::PositionSelectionKey;
     keyValue.second = Enum::underly(::DefaultPositionSelection);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultAltitudeKey);
+    keyValue.first = ::DefaultAltitudeKey;
     keyValue.second = ::DefaultAltitude;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultSpeedKey);
+    keyValue.first = ::DefaultSpeedKey;
     keyValue.second = ::DefaultSpeed;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::ConvertAltitudeKey);
+    keyValue.first = ::ConvertAltitudeKey;
     keyValue.second = ::DefaultConvertAltitude;
     keysWithDefaults.push_back(keyValue);
 }
@@ -193,19 +193,19 @@ void GpxImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void GpxImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::WaypointSelectionKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::WaypointSelectionKey).toInt(&ok);
     d->waypointSelection = ok && Enum::contains<GPXElement>(enumValue) ? static_cast<GPXElement>(enumValue) : ::DefaultWaypointSelection;
 
-    enumValue = valuesByKey.at(QString::fromLatin1(::PositionSelectionKey)).toInt(&ok);
+    enumValue = valuesByKey.at(::PositionSelectionKey).toInt(&ok);
     d->positionSelection = ok && Enum::contains<GPXElement>(enumValue) ? static_cast<GPXElement>(enumValue) : ::DefaultPositionSelection;
 
-    const int altitude = valuesByKey.at(QString::fromLatin1(::DefaultAltitudeKey)).toInt(&ok);
+    const int altitude = valuesByKey.at(::DefaultAltitudeKey).toInt(&ok);
     d->defaultAltitude = ok ? altitude : ::DefaultAltitude;
 
-    const int speed = valuesByKey.at(QString::fromLatin1(::DefaultSpeedKey)).toInt(&ok);
+    const int speed = valuesByKey.at(::DefaultSpeedKey).toInt(&ok);
     d->defaultSpeed = ok ? speed : ::DefaultSpeed;
 
-    d->convertAltitude = valuesByKey.at(QString::fromLatin1(::ConvertAltitudeKey)).toBool();
+    d->convertAltitude = valuesByKey.at(::ConvertAltitudeKey).toBool();
 }
 
 void GpxImportSettings::restoreDefaultsExtn() noexcept

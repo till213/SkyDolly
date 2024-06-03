@@ -61,9 +61,9 @@ struct SecondaryFlightControlWidgetPrivate
 // PUBLIC
 
 SecondaryFlightControlWidget::SecondaryFlightControlWidget(QWidget *parent) noexcept :
-    AbstractSimulationVariableWidget(parent),
-    ui(std::make_unique<Ui::SecondaryFlightControlWidget>()),
-    d(std::make_unique<SecondaryFlightControlWidgetPrivate>(*this))
+    AbstractSimulationVariableWidget {parent},
+    ui {std::make_unique<Ui::SecondaryFlightControlWidget>()},
+    d {std::make_unique<SecondaryFlightControlWidgetPrivate>(*this)}
 {
     ui->setupUi(this);
     initUi();
@@ -113,36 +113,33 @@ void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariable
 
 void SecondaryFlightControlWidget::initUi() noexcept
 {
-    ui->flapsHandleIndexLineEdit->setToolTip(QString::fromLatin1(SimVar::FlapsHandleIndex));
-    ui->leftLeadingEdgeFlapsLineEdit->setToolTip(QString::fromLatin1(SimVar::LeadingEdgeFlapsLeftPercent));
-    ui->rightLeadingEdgeFlapsLineEdit->setToolTip(QString::fromLatin1(SimVar::LeadingEdgeFlapsRightPercent));
-    ui->leftTrailingEdgeFlapsLineEdit->setToolTip(
-        QString::fromLatin1(SimVar::TrailingEdgeFlapsLeftPercent));
-    ui->rightTrailingEdgeFlapsLineEdit->setToolTip(QString::fromLatin1(SimVar::TrailingEdgeFlapsRightPercent));
+    ui->flapsHandleIndexLineEdit->setToolTip(SimVar::FlapsHandleIndex);
+    ui->leftLeadingEdgeFlapsLineEdit->setToolTip(SimVar::LeadingEdgeFlapsLeftPercent);
+    ui->rightLeadingEdgeFlapsLineEdit->setToolTip(SimVar::LeadingEdgeFlapsRightPercent);
+    ui->leftTrailingEdgeFlapsLineEdit->setToolTip(SimVar::TrailingEdgeFlapsLeftPercent);
+    ui->rightTrailingEdgeFlapsLineEdit->setToolTip(SimVar::TrailingEdgeFlapsRightPercent);
 
-    ui->spoilersHandlePositionLineEdit->setToolTip(QString::fromLatin1(SimVar::SpoilersHandlePosition));
-    ui->spoilersArmedLineEdit->setToolTip(QString::fromLatin1(SimVar::SpoilersArmed));
-    ui->leftSpoilersPositionLineEdit->setToolTip(QString::fromLatin1(SimVar::SpoilersLeftPosition));
-    ui->rightSpoilersPositionLineEdit->setToolTip(QString::fromLatin1(SimVar::SpoilersRightPosition));
+    ui->spoilersHandlePositionLineEdit->setToolTip(SimVar::SpoilersHandlePosition);
+    ui->spoilersArmedLineEdit->setToolTip(SimVar::SpoilersArmed);
+    ui->leftSpoilersPositionLineEdit->setToolTip(SimVar::SpoilersLeftPosition);
+    ui->rightSpoilersPositionLineEdit->setToolTip(SimVar::SpoilersRightPosition);
 }
 
 SecondaryFlightControlData SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    SecondaryFlightControlData secondaryFlightControlData;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (skyConnect->get().getState() == Connect::State::Recording) {
-            if (aircraft.getSecondaryFlightControl().count() > 0) {
-                secondaryFlightControlData = aircraft.getSecondaryFlightControl().getLast();
-            }
-        } else {
-            if (timestamp != TimeVariableData::InvalidTime) {
-                secondaryFlightControlData = aircraft.getSecondaryFlightControl().interpolate(timestamp, access);
-            } else {
-                secondaryFlightControlData = aircraft.getSecondaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
-            }
-        };
-    }
-    return secondaryFlightControlData;
+    SecondaryFlightControlData data;
+    const auto &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const auto &secondaryFlightControl = aircraft.getSecondaryFlightControl();
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+
+    if (skyConnectManager.getState() == Connect::State::Recording) {
+        if (secondaryFlightControl.count() > 0) {
+            data = secondaryFlightControl.getLast();
+        }
+    } else {
+        const auto t = timestamp != TimeVariableData::InvalidTime ? timestamp : skyConnectManager.getCurrentTimestamp();
+        data = secondaryFlightControl.interpolate(t, access);
+    };
+
+    return data;
 }

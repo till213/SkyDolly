@@ -70,6 +70,16 @@ public:
     Version(QStringView version) noexcept;
 
     /*!
+     * Creates this Version by parsing the \p version C string value. This
+     * Version can then be compared against the application version, for example.
+     *
+     * \param version
+     *        a C string containing the version of the expected [major].[minor].[patch]
+     * \sa #operator<()
+     */
+    Version(const char *version) noexcept;
+
+    /*!
      * Creates this Version with the current application version number.
      *
      * \sa VersionConfig
@@ -189,7 +199,7 @@ public:
      */
     static QString getApplicationName() noexcept;
 
-    static QLatin1String getGitHash() noexcept;
+    static QString getGitHash() noexcept;
 
     static QDateTime getGitDate() noexcept;
 

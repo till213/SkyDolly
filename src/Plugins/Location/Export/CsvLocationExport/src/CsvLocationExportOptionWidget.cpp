@@ -33,7 +33,7 @@
 struct CsvLocationExportOptionWidgetPrivate
 {
     CsvLocationExportOptionWidgetPrivate(CsvLocationExportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
     CsvLocationExportSettings &pluginSettings;
@@ -42,9 +42,9 @@ struct CsvLocationExportOptionWidgetPrivate
 // PUBLIC
 
 CsvLocationExportOptionWidget::CsvLocationExportOptionWidget(CsvLocationExportSettings &pluginSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::CsvLocationExportOptionWidget>()),
-      d(std::make_unique<CsvLocationExportOptionWidgetPrivate>(pluginSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::CsvLocationExportOptionWidget>()},
+      d {std::make_unique<CsvLocationExportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();
@@ -66,8 +66,8 @@ void CsvLocationExportOptionWidget::frenchConnection() noexcept
 
 void CsvLocationExportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem(QStringLiteral("Sky Dolly"), Enum::underly(CsvLocationExportSettings::Format::SkyDolly));
-    ui->formatComboBox->addItem(QStringLiteral("Little Navmap"), Enum::underly(CsvLocationExportSettings::Format::LittleNavmap));
+    ui->formatComboBox->addItem("Sky Dolly", Enum::underly(CsvLocationExportSettings::Format::SkyDolly));
+    ui->formatComboBox->addItem("Little Navmap", Enum::underly(CsvLocationExportSettings::Format::LittleNavmap));
 }
 
 // PRIVATE SLOTS

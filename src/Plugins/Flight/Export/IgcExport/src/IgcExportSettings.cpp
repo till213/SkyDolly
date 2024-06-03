@@ -57,7 +57,7 @@ struct IgcExportSettingsPrivate
 
 IgcExportSettings::IgcExportSettings() noexcept
     : FlightExportPluginBaseSettings(),
-      d(std::make_unique<IgcExportSettingsPrivate>())
+      d {std::make_unique<IgcExportSettingsPrivate>()}
 {}
 
 IgcExportSettings::~IgcExportSettings() = default;
@@ -116,11 +116,11 @@ void IgcExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::PilotNameKey);
+    keyValue.first = ::PilotNameKey;
     keyValue.second = d->pilotName;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::CoPilotNameKey);
+    keyValue.first = ::CoPilotNameKey;
     keyValue.second = d->coPilotName;
     keyValues.push_back(keyValue);
 }
@@ -129,19 +129,19 @@ void IgcExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::PilotNameKey);
+    keyValue.first = ::PilotNameKey;
     keyValue.second = IgcExportSettingsPrivate::DefaultPilotName;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::CoPilotNameKey);
+    keyValue.first = ::CoPilotNameKey;
     keyValue.second = IgcExportSettingsPrivate::DefaultCoPilotName;
     keysWithDefaults.push_back(keyValue);
 }
 
 void IgcExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->pilotName = valuesByKey.at(QString::fromLatin1(::PilotNameKey)).toString();
-    d->coPilotName = valuesByKey.at(QString::fromLatin1(::CoPilotNameKey)).toString();
+    d->pilotName = valuesByKey.at(::PilotNameKey).toString();
+    d->coPilotName = valuesByKey.at(::CoPilotNameKey).toString();
 }
 
 void IgcExportSettings::restoreDefaultsExtn() noexcept

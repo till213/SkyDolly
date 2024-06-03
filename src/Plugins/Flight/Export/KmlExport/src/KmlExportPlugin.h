@@ -42,6 +42,7 @@ class QString;
 struct FlightData;
 class Aircraft;
 struct PositionData;
+struct AttitudeData;
 class FlightPlan;
 struct Waypoint;
 class FlightExportPluginBaseSettings;
@@ -83,7 +84,7 @@ private:
     QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
     inline bool exportPlacemark(QIODevice &io, KmlStyleExport::Icon icon, const QString &name, const QString &description,
-                                const PositionData &positionData) const noexcept;
+                                const PositionData &positionData, const AttitudeData &attitudeData) const noexcept;
     inline bool exportPlacemark(QIODevice &io, KmlStyleExport::Icon icon, const QString &name, const QString &description,
                                 double longitude, double latitude, double altitudeInFeet, double heading) const noexcept;
 };

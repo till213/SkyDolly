@@ -27,11 +27,11 @@
 
 // PUBLIC
 
-Location::Location(double theLatitude, double theLongitude, double theAltitude) noexcept
+Location::Location(double latitude, double longitude, double altitude) noexcept
     : Data(),
-      latitude(theLatitude),
-      longitude(theLongitude),
-      altitude(theAltitude)
+      latitude(latitude),
+      longitude(longitude),
+      altitude(altitude)
 {}
 
 Location::Location(const InitialPosition &initialPosition) noexcept

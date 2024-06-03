@@ -66,7 +66,7 @@ private:
         End
     };
 
-    Ui::BasicConnectOptionWidget *ui;
+    std::unique_ptr<Ui::BasicConnectOptionWidget> ui;
     std::unique_ptr<BasicConnectOptionWidgetPrivate> d;
 
     void initUi() noexcept;

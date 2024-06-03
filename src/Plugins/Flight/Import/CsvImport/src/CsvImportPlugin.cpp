@@ -42,18 +42,18 @@
 struct CsvImportPluginPrivate
 {
     CsvImportSettings pluginSettings;
-    static inline const QString FileExtension {QStringLiteral("csv")};
+    static inline const QString FileExtension {"csv"};
 };
 
 // PUBLIC
 
 CsvImportPlugin::CsvImportPlugin() noexcept
-    : d(std::make_unique<CsvImportPluginPrivate>())
+    : d {std::make_unique<CsvImportPluginPrivate>()}
 {}
 
 CsvImportPlugin::~CsvImportPlugin() = default;
 
-std::vector<FlightData> CsvImportPlugin::importSelectedFlights(QIODevice &io, bool &ok) noexcept
+std::vector<FlightData> CsvImportPlugin::importFlightData(QIODevice &io, bool &ok) noexcept
 {
     std::vector<FlightData> flights;
     std::unique_ptr<CsvParserIntf> parser;

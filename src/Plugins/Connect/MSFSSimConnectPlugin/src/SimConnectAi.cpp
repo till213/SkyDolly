@@ -37,8 +37,11 @@
 #include <Model/AircraftType.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include "SimVar/SimConnectType.h"
 #include "SimVar/SimulationVariables.h"
+#include "SimVar/PositionAndAttitude/SimConnectPositionAndAttitudeAll.h"
 #include "SimConnectAi.h"
 
 using RequestByAircraftId = std::unordered_map<std::int64_t, ::SIMCONNECT_DATA_REQUEST_ID>;
@@ -47,11 +50,11 @@ using SimulatedObjectByRequestId = std::unordered_map<::SIMCONNECT_DATA_REQUEST_
 
 struct SimConnectAIPrivate
 {
-    SimConnectAIPrivate(::HANDLE handle) noexcept
+    SimConnectAIPrivate(HANDLE handle) noexcept
         : simConnectHandle(handle)
     {}
 
-    ::HANDLE simConnectHandle;
+    HANDLE simConnectHandle;
     // Key: aircraft ID - value: SimConnect request ID
     RequestByAircraftId requestByAircraftId;
     // Key: SimConnect request ID - value: SimConnect object ID
@@ -61,8 +64,8 @@ struct SimConnectAIPrivate
 
 // PUBLIC
 
-SimConnectAi::SimConnectAi(::HANDLE simConnectHandle)
-    : d(std::make_unique<SimConnectAIPrivate>(simConnectHandle))
+SimConnectAi::SimConnectAi(HANDLE simConnectHandle)
+    : d {std::make_unique<SimConnectAIPrivate>(simConnectHandle)}
 {}
 
 SimConnectAi::~SimConnectAi() = default;
@@ -73,9 +76,11 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
     // (otherwise it is the new user aircraft being added for a new recording)
     if (aircraft.getId() != Const::InvalidId) {
         const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
-        Position &position = aircraft.getPosition();
-        const PositionData &positioNData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
-        const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionAll::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
+        const auto &position = aircraft.getPosition();
+        const auto &attitude = aircraft.getAttitude();
+        const auto &positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+        const auto &attitudeData = attitude.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+        const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionAndAttitudeAll::toInitialPosition(positionData, attitudeData, aircraftInfo.initialAirspeed);
 
         const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::underly(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;
         HRESULT result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);

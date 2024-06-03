@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FS2020SIMCONNNECTPLUGIN_H
-#define FS2020SIMCONNNECTPLUGIN_H
+#ifndef MSFSIMCONNNECTPLUGIN_H
+#define MSFSIMCONNNECTPLUGIN_H
 
 #include <memory>
 #include <optional>
@@ -41,13 +41,14 @@
 #include <PluginManager/Connect/AbstractSkyConnect.h>
 
 struct PositionData;
+struct AttitudeData;
 struct EngineData;
 class Aircraft;
 class MSFSSimConnectSettings;
 class OptionWidgetIntf;
 struct SkyConnectPrivate;
 
-class MSFSSimConnectPlugin : public AbstractSkyConnect
+class MSFSSimConnectPlugin final : public AbstractSkyConnect
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID SKYCONNECT_INTERFACE_IID FILE "MSFSSimConnectPlugin.json")
@@ -60,13 +61,11 @@ public:
     MSFSSimConnectPlugin &operator=(MSFSSimConnectPlugin &&rhs) = delete;
     ~MSFSSimConnectPlugin() noexcept override;
 
-    bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
+    bool setUserAircraftPositionAndAttitude(const PositionData &positionData, const AttitudeData &attitudeData) noexcept override;
 
 protected:
     ConnectPluginBaseSettings &getPluginSettings() const noexcept override;
     std::optional<std::unique_ptr<OptionWidgetIntf>> createExtendedOptionWidget() const noexcept override;
-
-    bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 
     bool onSetupFlightSimulatorShortcuts() noexcept override;
 
@@ -84,7 +83,6 @@ protected:
     void onStopReplay() noexcept override;
 
     void onSeek(std::int64_t currentTimestamp, SeekMode seekMode) noexcept override;
-    void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
     bool isConnectedWithSim() const noexcept override;
@@ -97,9 +95,7 @@ protected:
 
     bool onRequestLocation() noexcept override;
     bool onRequestSimulationRate() noexcept override;
-
-protected slots:
-    void recordData() noexcept override;
+    bool onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept override;
 
 private:
     enum struct ResetReason
@@ -112,13 +108,12 @@ private:
 
     void frenchConnection() noexcept;
 
-    void resetCurrentSampleData() noexcept;
     bool reconnectWithSim() noexcept;
     bool closeConnection() noexcept;
     void setupRequestData() noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
     void replay() noexcept;
-    void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
+    void updateRecordingFrequency() noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
     void resetEventStates(ResetReason reason) noexcept;
 
@@ -129,6 +124,7 @@ private:
 
 private slots:
     void processSimConnectEvent() noexcept;
+    void emitActiveAction() noexcept;
 };
 
-#endif // FS2020SIMCONNNECTPLUGIN_H
+#endif // MSFSIMCONNNECTPLUGIN_H

@@ -19,7 +19,7 @@ target_sources(${TEST_NAME}
         doc/README.md
 )
 
-set(KERNELTEST_LIBS
+set(TEST_LIBS
     Qt6::Test
     Sky::Kernel
     Sky::Model
@@ -28,7 +28,7 @@ set(KERNELTEST_LIBS
 
 target_link_libraries(${TEST_NAME}
     PRIVATE
-        ${KERNELTEST_LIBS}
+        ${TEST_LIBS}
 )
 add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
@@ -43,7 +43,7 @@ target_sources(${TEST_NAME}
         res/PluginManagerTest.qrc
 )
 
-set(KERNELTEST_LIBS
+set(TEST_LIBS
     Qt6::Test
     Sky::Kernel
     Sky::Model
@@ -52,7 +52,7 @@ set(KERNELTEST_LIBS
 
 target_link_libraries(${TEST_NAME}
     PRIVATE
-        ${KERNELTEST_LIBS}
+        ${TEST_LIBS}
 )
 add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
@@ -67,7 +67,7 @@ target_sources(${TEST_NAME}
         res/PluginManagerTest.qrc
 )
 
-set(KERNELTEST_LIBS
+set(TEST_LIBS
     Qt6::Test
     Sky::Kernel
     Sky::Model
@@ -76,6 +76,6 @@ set(KERNELTEST_LIBS
 
 target_link_libraries(${TEST_NAME}
     PRIVATE
-        ${KERNELTEST_LIBS}
+        ${TEST_LIBS}
 )
 add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})

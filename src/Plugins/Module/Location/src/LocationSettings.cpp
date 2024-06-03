@@ -77,7 +77,7 @@ struct LocationSettingsPrivate
 
 LocationSettings::LocationSettings() noexcept
     : ModuleBaseSettings(),
-      d(std::make_unique<LocationSettingsPrivate>())
+      d {std::make_unique<LocationSettingsPrivate>()}
 {}
 
 LocationSettings::~LocationSettings() = default;
@@ -230,7 +230,7 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
     Settings::KeyValue keyValue;
 
     // Filters
-    keyValue.first = QString::fromLatin1(::LocationTypeSelectionKey);
+    keyValue.first = ::LocationTypeSelectionKey;
     QList<QVariant> typeList;
     typeList.reserve(static_cast<qsizetype>(d->locationSelector.typeSelection.size()));
     for (const auto it : d->locationSelector.typeSelection) {
@@ -239,33 +239,33 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
     keyValue.second = QVariant::fromValue(typeList);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::LocationCategorySelectionKey);
+    keyValue.first = ::LocationCategorySelectionKey;
     keyValue.second = QVariant::fromValue(d->locationSelector.categoryId);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::CountrySelectionKey);
+    keyValue.first = ::CountrySelectionKey;
     keyValue.second = QVariant::fromValue(d->locationSelector.countryId);
     keyValues.push_back(keyValue);
 
     // Default values
-    keyValue.first = QString::fromLatin1(::DefaultAltitudeKey);
+    keyValue.first = ::DefaultAltitudeKey;
     keyValue.second = d->altitude;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultIndicatedAirspeedKey);
+    keyValue.first = ::DefaultIndicatedAirspeedKey;
     keyValue.second = d->indicatedAirspeed;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultEngineEventKey);
+    keyValue.first = ::DefaultEngineEventKey;
     keyValue.second = QVariant::fromValue(d->engineEventId);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultOnGroundKey);
+    keyValue.first = ::DefaultOnGroundKey;
     keyValue.second = d->onGround;
     keyValues.push_back(keyValue);
 
     // Table state
-    keyValue.first = QString::fromLatin1(::LocationTableStateKey);
+    keyValue.first = ::LocationTableStateKey;
     keyValue.second = d->locationTableState;
     keyValues.push_back(keyValue);
 }
@@ -275,37 +275,37 @@ void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWi
     Settings::KeyValue keyValue;
 
     // Filters
-    keyValue.first = QString::fromLatin1(::LocationTypeSelectionKey);
+    keyValue.first = ::LocationTypeSelectionKey;
     keyValue.second = QVariant::fromValue(QList<QVariant>());
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::LocationCategorySelectionKey);
+    keyValue.first = ::LocationCategorySelectionKey;
     keyValue.second = QVariant::fromValue(::DefaultCategoryId);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::CountrySelectionKey);
+    keyValue.first = ::CountrySelectionKey;
     keyValue.second = QVariant::fromValue(::DefaultCountryId);
     keysWithDefaults.push_back(keyValue);
 
     // Default values
-    keyValue.first = QString::fromLatin1(::DefaultAltitudeKey);
+    keyValue.first = ::DefaultAltitudeKey;
     keyValue.second = ::DefaultAltitude;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultIndicatedAirspeedKey);
+    keyValue.first = ::DefaultIndicatedAirspeedKey;
     keyValue.second = ::DefaultIndicatedAirspeed;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultEngineEventKey);
+    keyValue.first = ::DefaultEngineEventKey;
     keyValue.second = QVariant::fromValue(d->DefaultEngineEventId);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::DefaultOnGroundKey);
+    keyValue.first = ::DefaultOnGroundKey;
     keyValue.second = ::DefaultOnGround;
     keysWithDefaults.push_back(keyValue);
 
     // Table state
-    keyValue.first = QString::fromLatin1(::LocationTableStateKey);
+    keyValue.first = ::LocationTableStateKey;
     keyValue.second = QByteArray();
     keysWithDefaults.push_back(keyValue);
 }
@@ -314,38 +314,38 @@ void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Valu
 {
     // Filters
     d->locationSelector.typeSelection.clear();
-    QList<QVariant> typeList = valuesByKey.at(QString::fromLatin1(::LocationTypeSelectionKey)).toList();
+    QList<QVariant> typeList = valuesByKey.at(::LocationTypeSelectionKey).toList();
     d->locationSelector.typeSelection.reserve(typeList.count());
     for (const auto &variant : typeList) {
         d->locationSelector.typeSelection.insert(variant.toLongLong());
     }
     bool ok {false};
-    d->locationSelector.categoryId = valuesByKey.at(QString::fromLatin1(::LocationCategorySelectionKey)).toLongLong(&ok);
+    d->locationSelector.categoryId = valuesByKey.at(::LocationCategorySelectionKey).toLongLong(&ok);
     if (!ok) {
         d->locationSelector.categoryId = ::DefaultCategoryId;
     }
-    d->locationSelector.countryId = valuesByKey.at(QString::fromLatin1(::CountrySelectionKey)).toLongLong(&ok);
+    d->locationSelector.countryId = valuesByKey.at(::CountrySelectionKey).toLongLong(&ok);
     if (!ok) {
         d->locationSelector.countryId = ::DefaultCountryId;
     }
 
     // Default values
-    d->altitude = valuesByKey.at(QString::fromLatin1(::DefaultAltitudeKey)).toInt(&ok);
+    d->altitude = valuesByKey.at(::DefaultAltitudeKey).toInt(&ok);
     if (!ok) {
         d->altitude = ::DefaultAltitude;
     }
-    d->indicatedAirspeed = valuesByKey.at(QString::fromLatin1(::DefaultIndicatedAirspeedKey)).toInt(&ok);
+    d->indicatedAirspeed = valuesByKey.at(::DefaultIndicatedAirspeedKey).toInt(&ok);
     if (!ok) {
         d->indicatedAirspeed = ::DefaultIndicatedAirspeed;
     }
-    d->engineEventId = valuesByKey.at(QString::fromLatin1(::DefaultEngineEventKey)).toLongLong(&ok);
+    d->engineEventId = valuesByKey.at(::DefaultEngineEventKey).toLongLong(&ok);
     if (!ok) {
         d->engineEventId = d->DefaultEngineEventId;
     }
-    d->onGround = valuesByKey.at(QString::fromLatin1(::DefaultOnGroundKey)).toBool();
+    d->onGround = valuesByKey.at(::DefaultOnGroundKey).toBool();
 
     // Table state
-    d->locationTableState = valuesByKey.at(QString::fromLatin1(::LocationTableStateKey)).toByteArray();
+    d->locationTableState = valuesByKey.at(::LocationTableStateKey).toByteArray();
 }
 
 void LocationSettings::restoreDefaultsExtn() noexcept

@@ -37,6 +37,8 @@
 #include <Model/FlightPlan.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
 #include <Model/Waypoint.h>
 #include "Kml.h"
 #include "FlightRadar24KmlParser.h"
@@ -66,8 +68,8 @@ struct FlightRadar24KmlParserPrivate
     static const QRegularExpression headingRegExp;
 
 private:
-    static inline const QString SpeedPattern {QStringLiteral(R"(<b>Speed:<\/b><\/span> <span>(\d+) kt<\/span>)")};
-    static inline const QString HeadingPattern {QStringLiteral(R"(<b>Heading:<\/b><\/span> <span>(\d+)&deg;<\/span>)")};
+    static inline const QString SpeedPattern {R"(<b>Speed:<\/b><\/span> <span>(\d+) kt<\/span>)"};
+    static inline const QString HeadingPattern {R"(<b>Heading:<\/b><\/span> <span>(\d+)&deg;<\/span>)"};
 };
 
 const QRegularExpression FlightRadar24KmlParserPrivate::speedRegExp {FlightRadar24KmlParserPrivate::SpeedPattern};
@@ -76,7 +78,7 @@ const QRegularExpression FlightRadar24KmlParserPrivate::headingRegExp {FlightRad
 // PUBLIC
 
 FlightRadar24KmlParser::FlightRadar24KmlParser() noexcept
-    : d(std::make_unique<FlightRadar24KmlParserPrivate>())
+    : d {std::make_unique<FlightRadar24KmlParserPrivate>()}
 {}
 
 FlightRadar24KmlParser::~FlightRadar24KmlParser() = default;
@@ -89,7 +91,7 @@ std::vector<FlightData> FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStrea
 {
     std::vector<FlightData> flights;
     FlightData flightData;
-    Aircraft &aircraft = flightData.addUserAircraft();
+    auto &aircraft = flightData.addUserAircraft();
     d->xml = &xmlStreamReader;
     d->trackData.clear();
 
@@ -101,21 +103,27 @@ std::vector<FlightData> FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStrea
             parseName(flightData);
             parseDocument();
         } else {
-            d->xml->raiseError(QStringLiteral("The file is not a KML document."));
+            d->xml->raiseError("The file is not a KML document.");
         }
     } else {
-        d->xml->raiseError(QStringLiteral("Error reading the XML data."));
+        d->xml->raiseError("Error reading the XML data.");
     }
 
     flightData.creationTime = d->firstDateTimeUtc;
     // Now "upsert" the position data, taking duplicate timestamps into account
-    Position &position = aircraft.getPosition();
+    auto &position = aircraft.getPosition();
+    auto &attitude = aircraft.getAttitude();
     for (const auto &trackItem : d->trackData) {
-        PositionData positionData {trackItem.latitude, trackItem.longitude, trackItem.altitude};
+        // Positition
+        PositionData positionData {trackItem.latitude, trackItem.longitude, trackItem.altitude};        
         positionData.timestamp = trackItem.timestamp;
-        positionData.velocityBodyZ = trackItem.speed;
-        positionData.trueHeading = trackItem.heading;
         position.upsertLast(positionData);
+
+        // Attitude
+        AttitudeData attitudeData {0, 0, static_cast<double>(trackItem.heading)};
+        attitudeData.velocityBodyZ = trackItem.speed;
+        attitudeData.timestamp = trackItem.timestamp;
+        attitude.upsertLast(attitudeData);
     }
     flights.push_back(std::move(flightData));
     return flights;
@@ -132,7 +140,7 @@ void FlightRadar24KmlParser::parseName(FlightData &flightData) noexcept
         if (d->xml->name() == Kml::name) {
             flightData.title = d->xml->readElementText();
         } else {
-            d->xml->raiseError(QStringLiteral("The KML document does not have a name element."));
+            d->xml->raiseError("The KML document does not have a name element.");
         }
     }
 }
@@ -160,7 +168,7 @@ void FlightRadar24KmlParser::parseFolder() noexcept
 #endif
         if (xmlName == Kml::name) {
             name = d->xml->readElementText();
-            if (name == QStringLiteral("Route")) {
+            if (name == "Route") {
                 routePlacemark = true;
             }
         } else if (xmlName == Kml::Placemark && routePlacemark) {
@@ -181,7 +189,7 @@ void FlightRadar24KmlParser::parsePlacemark() noexcept
 #endif
         if (xmlName == Kml::description) {
             if (!parseDescription()) {
-                d->xml->raiseError(QStringLiteral("Could not parse description text."));
+                d->xml->raiseError("Could not parse description text.");
             }
         } else if (xmlName == Kml::TimeStamp) {
             parseTimestamp();
@@ -239,7 +247,7 @@ void FlightRadar24KmlParser::parseTimestamp() noexcept
             if (currentDateTimeUtc.isValid()) {
                 (d->trackData.back()).timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
             } else {
-                d->xml->raiseError(QStringLiteral("Invalid timestamp."));
+                d->xml->raiseError("Invalid timestamp.");
             }
         } else {
             d->xml->skipCurrentElement();
@@ -257,20 +265,20 @@ void FlightRadar24KmlParser::parsePoint() noexcept
 #endif
         if (xmlName == Kml::coordinates) {
             const QString coordinatesText = d->xml->readElementText();
-            const QStringList coordinates = coordinatesText.split(QStringLiteral(","));
+            const QStringList coordinates = coordinatesText.split(",");
             if (coordinates.count() == 3) {
 
                 const double longitude = coordinates.at(0).toDouble(&ok);
                 if (!ok) {
-                    d->xml->raiseError(QStringLiteral("Invalid longitude number."));
+                    d->xml->raiseError("Invalid longitude number.");
                 }
                 const double latitude = coordinates.at(1).toDouble(&ok);
                 if (!ok) {
-                    d->xml->raiseError(QStringLiteral("Invalid latitude number."));
+                    d->xml->raiseError("Invalid latitude number.");
                 }
                 const double altitude = coordinates.at(2).toDouble(&ok);
                 if (!ok) {
-                    d->xml->raiseError(QStringLiteral("Invalid altitude number."));
+                    d->xml->raiseError("Invalid altitude number.");
                 }
                 if (ok) {
                     auto &trackItem = d->trackData.back();
@@ -280,7 +288,7 @@ void FlightRadar24KmlParser::parsePoint() noexcept
                 }
 
             } else {
-                d->xml->raiseError(QStringLiteral("Invalid GPS coordinate."));
+                d->xml->raiseError("Invalid GPS coordinate.");
             }
         } else {
             d->xml->skipCurrentElement();

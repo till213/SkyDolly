@@ -16,6 +16,9 @@
 ### Settings
 - Ensure that settings are converted to latest version in [SettingsConverter.cpp](src/Kernel/src/SettingsConverter.cpp)
 
+### Documentation
+- Ensure that the [example SQL](doc/SQL) still works
+
 ### Git
 - Push all changes
 - Merge all feature / bug fix branches into main (https://github.com/till213/SkyDolly/pulls)

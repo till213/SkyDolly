@@ -39,7 +39,7 @@ struct FlightPlanPrivate
 // PUBLIC
 
 FlightPlan::FlightPlan() noexcept
-    : d(std::make_unique<FlightPlanPrivate>())
+    : d {std::make_unique<FlightPlanPrivate>()}
 {}
 
 FlightPlan::FlightPlan(FlightPlan &&rhs) noexcept = default;

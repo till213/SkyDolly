@@ -22,8 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <limits>
-#include <utility>
 #include <cstdint>
 #include <cmath>
 #include <array>
@@ -742,7 +740,7 @@ void SkyMathTest::calculateTimeOffset()
     QFETCH(std::int64_t, expectedTimeOffset);
 
     // Exercise
-    const std::int64_t timeOffset = SkyMath::calculateTimeOffset(timeOffsetSync, fromDateTime, toDateTime);
+    const auto timeOffset = SkyMath::calculateTimeOffset(timeOffsetSync, fromDateTime, toDateTime);
 
     // Verify
     QCOMPARE(timeOffset, expectedTimeOffset);
@@ -785,6 +783,62 @@ void SkyMathTest::calculateFibonacci()
 
     // Verify
     QCOMPARE(fibonaccis12.back(), 89);
+}
+
+void SkyMathTest::nextPowerOfTwo_data()
+{
+    QTest::addColumn<std::uint32_t>("n");
+    QTest::addColumn<std::uint32_t>("expected");
+
+    QTest::newRow("Test 0") << 0u << 1u;
+    QTest::newRow("Test 1") << 1u << 1u;
+    QTest::newRow("Test 2") << 2u << 2u;
+    QTest::newRow("Test 3") << 3u << 4u;
+    QTest::newRow("Test 4") << 4u << 4u;
+    QTest::newRow("Test 31") << 31u << 32u;
+    QTest::newRow("Test 32") << 32u << 32u;
+    QTest::newRow("Test 33") << 33u << 64u;
+}
+
+void SkyMathTest::nextPowerOfTwo()
+{
+    // Setup
+    QFETCH(std::uint32_t, n);
+    QFETCH(std::uint32_t, expected);
+
+    // Exercise
+    const auto actual = SkyMath::nextPowerOfTwo(n);
+
+    // Verify
+    QCOMPARE(actual, expected);
+}
+
+void SkyMathTest::previousPowerOfTwo_data()
+{
+    QTest::addColumn<std::uint32_t>("n");
+    QTest::addColumn<std::uint32_t>("expected");
+
+    QTest::newRow("Test 0") << 0u << 1u;
+    QTest::newRow("Test 1") << 1u << 1u;
+    QTest::newRow("Test 2") << 2u << 2u;
+    QTest::newRow("Test 3") << 3u << 2u;
+    QTest::newRow("Test 4") << 4u << 4u;
+    QTest::newRow("Test 31") << 31u << 16u;
+    QTest::newRow("Test 32") << 32u << 32u;
+    QTest::newRow("Test 33") << 33u << 32u;
+}
+
+void SkyMathTest::previousPowerOfTwo()
+{
+    // Setup
+    QFETCH(std::uint32_t, n);
+    QFETCH(std::uint32_t, expected);
+
+    // Exercise
+    const auto actual = SkyMath::previousPowerOfTwo(n);
+
+    // Verify
+    QCOMPARE(actual, expected);
 }
 
 QTEST_MAIN(SkyMathTest)

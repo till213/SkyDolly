@@ -42,8 +42,8 @@ SecondaryFlightControl::SecondaryFlightControl(const AircraftInfo &aircraftInfo)
 const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const SecondaryFlightControlData *p1 {nullptr}, *p2 {nullptr};
-    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
-    const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
+    const auto timeOffset = access != TimeVariableData::Access::NoTimeOffset ? getAircraftInfo().timeOffset : 0;
+    const auto adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
         int currentIndex = getCurrentIndex();
@@ -51,7 +51,7 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64
         switch (access) {
         case TimeVariableData::Access::Linear:
             [[fallthrough]];
-        case TimeVariableData::Access::Export:
+        case TimeVariableData::Access::NoTimeOffset:
             if (SkySearch::getLinearInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::DefaultInterpolationWindow, currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
@@ -80,6 +80,7 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64
             m_currentData.leftSpoilersPosition = SkyMath::interpolateLinear(p1->leftSpoilersPosition, p2->leftSpoilersPosition, tn);
             m_currentData.rightSpoilersPosition = SkyMath::interpolateLinear(p1->rightSpoilersPosition, p2->rightSpoilersPosition, tn);
             m_currentData.spoilersHandlePercent = SkyMath::interpolateLinear(p1->spoilersHandlePercent, p2->spoilersHandlePercent, tn);
+            // No interpolation for boolean values
             m_currentData.flapsHandleIndex = p1->flapsHandleIndex;
             m_currentData.spoilersArmed = p1->spoilersArmed;
             m_currentData.timestamp = adjustedTimestamp;

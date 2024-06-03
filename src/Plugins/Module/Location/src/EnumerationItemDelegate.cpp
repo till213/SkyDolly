@@ -46,14 +46,14 @@ struct EnumerationItemDelegatePrivate
 
 EnumerationItemDelegate::EnumerationItemDelegate(QString enumerationName) noexcept
     : QStyledItemDelegate(),
-      d(std::make_unique<EnumerationItemDelegatePrivate>(std::move(enumerationName)))
+      d {std::make_unique<EnumerationItemDelegatePrivate>(std::move(enumerationName))}
 {}
 
 EnumerationItemDelegate::~EnumerationItemDelegate() = default;
 
 QWidget *EnumerationItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QWidget *editor;
+    QWidget *editor {nullptr};
     if (index.data().canConvert<QString>()) {
         auto *enumerationComboBox = new EnumerationComboBox(d->enumerationName, EnumerationComboBox::Mode::Editable, parent);
         connect(enumerationComboBox, &EnumerationComboBox::currentIndexChanged,

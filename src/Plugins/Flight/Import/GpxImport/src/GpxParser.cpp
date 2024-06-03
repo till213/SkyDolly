@@ -54,8 +54,8 @@
 struct GpxParserPrivate
 {
     GpxParserPrivate(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &pluginSettings) noexcept
-        : xml(xmlStreamReader),
-          pluginSettings(pluginSettings)
+        : xml {xmlStreamReader},
+          pluginSettings {pluginSettings}
     {}
 
     QXmlStreamReader &xml;
@@ -67,7 +67,7 @@ struct GpxParserPrivate
 // PUBLIC
 
 GpxParser::GpxParser(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &thePluginSettings) noexcept
-    : d(std::make_unique<GpxParserPrivate>(xmlStreamReader, thePluginSettings))
+    : d {std::make_unique<GpxParserPrivate>(xmlStreamReader, thePluginSettings)}
 {}
 
 GpxParser::~GpxParser() = default;
@@ -82,7 +82,7 @@ std::vector<FlightData> GpxParser::parse() noexcept
         if (d->xml.name() == Gpx::gpx) {
             flights = parseGPX();
         } else {
-            d->xml.raiseError(QStringLiteral("The file is not a GPX file."));
+            d->xml.raiseError("The file is not a GPX file.");
         }
     }
     return flights;
@@ -112,8 +112,8 @@ std::vector<FlightData> GpxParser::parseGPX() noexcept
         }
     }
     flightData.creationTime = d->firstDateTimeUtc;
-    flightData.flightCondition.startZuluTime = d->firstDateTimeUtc;
-    flightData.flightCondition.startLocalTime = d->firstDateTimeUtc.toLocalTime();
+    flightData.flightCondition.startZuluDateTime = d->firstDateTimeUtc;
+    flightData.flightCondition.startLocalDateTime = d->firstDateTimeUtc.toLocalTime();
     flights.push_back(std::move(flightData));
     return flights;
 }
@@ -140,7 +140,7 @@ void GpxParser::parseWaypoint(FlightData &flightData) noexcept
     double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
-    Aircraft &aircraft = flightData.getUserAircraft();
+    auto &aircraft = flightData.getUserAircraft();
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Waypoint ||
         d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Waypoint) {
@@ -210,7 +210,7 @@ void GpxParser::parseRoutePoint(FlightData &flightData) noexcept
     double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
-    Aircraft &aircraft = flightData.getUserAircraft();
+    auto &aircraft = flightData.getUserAircraft();
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Route ||
         d->pluginSettings.getPositionSelection() == GpxImportSettings::GPXElement::Route) {
@@ -288,7 +288,7 @@ inline void GpxParser::parseTrackPoint(FlightData &flightData) noexcept
     double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
-    Aircraft &aircraft = flightData.getUserAircraft();
+    auto &aircraft = flightData.getUserAircraft();
 
 
     if (d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Track ||
@@ -346,10 +346,10 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
     if (ok) {
         longitude = attributes.value(Gpx::lon).toDouble(&ok);
         if (!ok) {
-            d->xml.raiseError(QStringLiteral("Could not parse waypoint longitude value."));
+            d->xml.raiseError("Could not parse waypoint longitude value.");
         }
     } else {
-        d->xml.raiseError(QStringLiteral("Could not parse waypoint latitude value."));
+        d->xml.raiseError("Could not parse waypoint latitude value.");
     }
 
     // In meters
@@ -359,7 +359,7 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
             const QString elevationText = d->xml.readElementText();
             altitude = elevationText.toDouble(&ok);
             if (!ok) {
-                d->xml.raiseError(QStringLiteral("Could not parse waypoint altitude value."));
+                d->xml.raiseError("Could not parse waypoint altitude value.");
             }
         } else if (d->xml.name() == Gpx::name) {
             identifier = d->xml.readElementText();
@@ -368,7 +368,7 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
             dateTime = QDateTime::fromString(d->xml.readElementText(), Qt::ISODate);
             ok = dateTime.isValid();
             if (!ok) {
-                d->xml.raiseError(QStringLiteral("Invalid timestamp."));
+                d->xml.raiseError("Invalid timestamp.");
             }
         } else {
             d->xml.skipCurrentElement();

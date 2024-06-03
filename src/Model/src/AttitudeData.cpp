@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,7 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLUSER_H
-#define SIMCONNECTPRIMARYFLIGHTCONTROLUSER_H
+#include "AttitudeData.h"
 
-#endif // SIMCONNECTPRIMARYFLIGHTCONTROLUSER_H
+// PUBLIC
+
+AttitudeData::AttitudeData(double pitch, double bank, double trueHeading) noexcept
+    : TimeVariableData(),
+    pitch(pitch),
+    bank(bank),
+    trueHeading(trueHeading)
+{}

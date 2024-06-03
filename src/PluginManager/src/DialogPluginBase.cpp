@@ -35,7 +35,7 @@ struct DialogPluginBasePrivate
 // PUBLIC
 
 DialogPluginBase::DialogPluginBase()
-    : d(std::make_unique<DialogPluginBasePrivate>())
+    : d {std::make_unique<DialogPluginBasePrivate>()}
 {}
 
 DialogPluginBase::~DialogPluginBase() = default;

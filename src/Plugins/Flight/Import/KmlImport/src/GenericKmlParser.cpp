@@ -38,7 +38,7 @@ struct GenericKmlParserPrivate
 
 GenericKmlParser::GenericKmlParser() noexcept
     : AbstractKmlTrackParser(),
-      d(std::make_unique<GenericKmlParserPrivate>())
+      d {std::make_unique<GenericKmlParserPrivate>()}
 {}
 
 GenericKmlParser::~GenericKmlParser() = default;

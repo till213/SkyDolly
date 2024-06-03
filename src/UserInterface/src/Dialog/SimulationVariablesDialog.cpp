@@ -64,9 +64,9 @@ struct SimulationVariablesDialogPrivate
 // PUBLIC
 
 SimulationVariablesDialog::SimulationVariablesDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    d(std::make_unique<SimulationVariablesDialogPrivate>()),
-    ui(std::make_unique<Ui::SimulationVariablesDialog>())
+    QDialog {parent},
+    d {std::make_unique<SimulationVariablesDialogPrivate>()},
+    ui {std::make_unique<Ui::SimulationVariablesDialog>()}
 {
     ui->setupUi(this);
     initUi();

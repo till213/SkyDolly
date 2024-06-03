@@ -75,44 +75,44 @@ struct LittleNavmapCsvLocationWriterPrivate
 
 private:
     inline void initSymIdToType() {
-        symIdToType[QStringLiteral("00")] = QString::fromLatin1(::OtherType);
-        symIdToType[QStringLiteral("AP")] = QStringLiteral("Airport");
-        symIdToType[QStringLiteral("AS")] = QStringLiteral("Airstrip");
-        symIdToType[QStringLiteral("BR")] = QStringLiteral("POI");
-        symIdToType[QStringLiteral("BU")] = QStringLiteral("Building");
-        symIdToType[QStringLiteral("CA")] = QStringLiteral("Landform");
-        symIdToType[QStringLiteral("CB")] = QStringLiteral("Cabin");
-        symIdToType[QStringLiteral("CI")] = QStringLiteral("Settlement");
-        symIdToType[QStringLiteral("CR")] = QString::fromLatin1(::OtherType);
-        symIdToType[QStringLiteral("DA")] = QStringLiteral("POI");
-        symIdToType[QStringLiteral("DE")] = QStringLiteral("Landform");
-        symIdToType[QStringLiteral("GL")] = QStringLiteral("Mountain");
-        symIdToType[QStringLiteral("HP")] = QStringLiteral("Helipad");
-        symIdToType[QStringLiteral("IS")] = QStringLiteral("Landform");
-        symIdToType[QStringLiteral("HI")] = QStringLiteral("History");
-        symIdToType[QStringLiteral("LA")] = QStringLiteral("Water");
-        symIdToType[QStringLiteral("LM")] = QStringLiteral("Landform");
-        symIdToType[QStringLiteral("LH")] = QStringLiteral("Lighthouse");
-        symIdToType[QStringLiteral("MO")] = QStringLiteral("Mountain");
-        symIdToType[QStringLiteral("OB")] = QStringLiteral("Obstacle");
-        symIdToType[QStringLiteral("OP")] = QStringLiteral("Oil Platform");
-        symIdToType[QStringLiteral("OT")] = QString::fromLatin1(::OtherType);
-        symIdToType[QStringLiteral("PA")] = QStringLiteral("Park");
-        symIdToType[QStringLiteral("PO")] = QStringLiteral("POI");
-        symIdToType[QStringLiteral("SE")] = QStringLiteral("Water");
-        symIdToType[QStringLiteral("ST")] = QStringLiteral("Settlement");
-        symIdToType[QStringLiteral("SP")] = QStringLiteral("Seaport");
-        symIdToType[QStringLiteral("TO")] = QStringLiteral("Settlement");
-        symIdToType[QStringLiteral("RI")] = QStringLiteral("Water");
-        symIdToType[QStringLiteral("VA")] = QStringLiteral("POI");
-        symIdToType[QStringLiteral("WA")] = QStringLiteral("Water");
+        symIdToType["00"] = ::OtherType;
+        symIdToType["AP"] = "Airport";
+        symIdToType["AS"] = "Airstrip";
+        symIdToType["BR"] = "POI";
+        symIdToType["BU"] = "Building";
+        symIdToType["CA"] = "Landform";
+        symIdToType["CB"] = "Cabin";
+        symIdToType["CI"] = "Settlement";
+        symIdToType["CR"] = ::OtherType;
+        symIdToType["DA"] = "POI";
+        symIdToType["DE"] = "Landform";
+        symIdToType["GL"] = "Mountain";
+        symIdToType["HP"] = "Helipad";
+        symIdToType["IS"] = "Landform";
+        symIdToType["HI"] = "History";
+        symIdToType["LA"] = "Water";
+        symIdToType["LM"] = "Landform";
+        symIdToType["LH"] = "Lighthouse";
+        symIdToType["MO"] = "Mountain";
+        symIdToType["OB"] = "Obstacle";
+        symIdToType["OP"] = "Oil Platform";
+        symIdToType["OT"] = ::OtherType;
+        symIdToType["PA"] = "Park";
+        symIdToType["PO"] = "POI";
+        symIdToType["SE"] = "Water";
+        symIdToType["ST"] = "Settlement";
+        symIdToType["SP"] = "Seaport";
+        symIdToType["TO"] = "Settlement";
+        symIdToType["RI"] = "Water";
+        symIdToType["VA"] = "POI";
+        symIdToType["WA"] = "Water";
     }
 };
 
 // PUBLIC
 
 LittleNavmapCsvLocationWriter::LittleNavmapCsvLocationWriter(const CsvLocationExportSettings &pluginSettings) noexcept
-    : d(std::make_unique<LittleNavmapCsvLocationWriterPrivate>(pluginSettings))
+    : d {std::make_unique<LittleNavmapCsvLocationWriterPrivate>(pluginSettings)}
 {}
 
 LittleNavmapCsvLocationWriter::~LittleNavmapCsvLocationWriter() = default;
@@ -145,14 +145,14 @@ bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations
             const QString type = mapCategorySymIdToType(categorySymId);
             const QString countrySymId = countryEnumeration.getItemById(location.countryId).symId;
             const QString csv = type % Csv::CommaSep % "\""
-                                % title.replace(QStringLiteral("\""), QStringLiteral("\"\"")) % "\"" % Csv::CommaSep % "\""
-                                % identifier.replace(QStringLiteral("\""), QStringLiteral("\"\"")) % "\"" % Csv::CommaSep 
+                                % title.replace("\"", "\"\"") % "\"" % Csv::CommaSep % "\""
+                                % identifier.replace("\"", "\"\"") % "\"" % Csv::CommaSep
                                 % Export::formatCoordinate(location.latitude) % Csv::CommaSep 
                                 % Export::formatCoordinate(location.longitude) % Csv::CommaSep 
                                 % Export::formatNumber(location.altitude) % Csv::CommaSep 
                                 % "" % Csv::CommaSep 
                                 % "" % Csv::CommaSep 
-                                % "\"" % description.replace(QStringLiteral("\""), QStringLiteral("\"\"")) % "\"" % Csv::CommaSep
+                                % "\"" % description.replace("\"", "\"\"") % "\"" % Csv::CommaSep
                                 % countrySymId % Csv::CommaSep % ""
                                 % Csv::CommaSep % "" % Csv::CommaSep
                                 % "" % Csv::Ln;
@@ -169,13 +169,12 @@ bool LittleNavmapCsvLocationWriter::write(const std::vector<Location> &locations
 
 inline QString LittleNavmapCsvLocationWriter::mapCategorySymIdToType(const QString &categorySymId) const noexcept
 {
-    Enumeration locationCategory = d->enumerationService.getEnumerationByName(EnumerationService::LocationCategory);
     QString type;
     const auto it = d->symIdToType.find(categorySymId);
     if (it != d->symIdToType.end()) {
        type = it->second;
     } else {
-        type = QString::fromLatin1(::OtherType);
+        type = ::OtherType;
     }
     return type;
 }

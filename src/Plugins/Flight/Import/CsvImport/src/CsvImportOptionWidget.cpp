@@ -35,7 +35,7 @@
 struct CsvImportOptionWidgetPrivate
 {
     CsvImportOptionWidgetPrivate(CsvImportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
      CsvImportSettings &pluginSettings;
@@ -44,9 +44,9 @@ struct CsvImportOptionWidgetPrivate
 // PUBLIC
 
 CsvImportOptionWidget::CsvImportOptionWidget(CsvImportSettings &pluginSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::CsvImportOptionWidget>()),
-      d(std::make_unique<CsvImportOptionWidgetPrivate>(pluginSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::CsvImportOptionWidget>()},
+      d {std::make_unique<CsvImportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();
@@ -68,8 +68,8 @@ void CsvImportOptionWidget::frenchConnection() noexcept
 
 void CsvImportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem(QStringLiteral("Flightradar24"), Enum::underly(CsvImportSettings::Format::Flightradar24));
-    ui->formatComboBox->addItem(QStringLiteral("Flight Recorder"), Enum::underly(CsvImportSettings::Format::FlightRecorder));
+    ui->formatComboBox->addItem("Flightradar24", Enum::underly(CsvImportSettings::Format::Flightradar24));
+    ui->formatComboBox->addItem("Flight Recorder", Enum::underly(CsvImportSettings::Format::FlightRecorder));
 }
 
 // PRIVATE SLOTS

@@ -93,7 +93,7 @@ struct SqlMigrationPrivate
 // PUBLIC
 
 SqlMigration::SqlMigration(QString connectionName) noexcept
-    : d(std::make_unique<SqlMigrationPrivate>(std::move(connectionName)))
+    : d {std::make_unique<SqlMigrationPrivate>(std::move(connectionName))}
 {}
 
 SqlMigration::SqlMigration(SqlMigration &&rhs) noexcept = default;
@@ -104,9 +104,9 @@ bool SqlMigration::migrate(Migration::Milestones milestones) const noexcept
 {
     bool ok {true};
     if (milestones.testFlag(Migration::Milestone::Schema)) {
-        ok = migrateSql(QStringLiteral(":/dao/sqlite/migr/LogbookMigration.sql"));
+        ok = migrateSql(":/dao/sqlite/migr/LogbookMigration.sql");
         if (ok) {
-            ok = migrateSql(QStringLiteral(":/dao/sqlite/migr/LocationMigration.sql"));
+            ok = migrateSql(":/dao/sqlite/migr/LocationMigration.sql");
         }
     }
     if (ok && milestones.testFlag(Migration::Milestone::Location)) {
@@ -117,7 +117,7 @@ bool SqlMigration::migrate(Migration::Milestones milestones) const noexcept
             migrationDirectory.cdUp();
         }
 #endif
-        const QString locationsFilePath = migrationDirectory.absolutePath().append(QStringLiteral("/Resources/migr/Locations.csv"));
+        const QString locationsFilePath = migrationDirectory.absolutePath().append("/Resources/migr/Locations.csv");
         if (QFileInfo::exists(locationsFilePath)) {
             ok = migrateCsv(locationsFilePath);
         }
@@ -131,9 +131,9 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) const noexcept
 {
     // https://regex101.com/
     // @migr(...)
-    static const QRegularExpression migrRegExp(QStringLiteral(R"(@migr\(([\w="\-,.\s]+)\))"));
+    static const QRegularExpression migrRegExp(R"(@migr\(([\w="\-,.\s]+)\))");
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
-    QSqlQuery query = QSqlQuery(QStringLiteral("PRAGMA foreign_keys=0;"), db);
+    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
@@ -166,14 +166,14 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) const noexcept
             migrationFile.close();
         }
     }
-    query.prepare(QStringLiteral("PRAGMA foreign_keys=1;"));
+    query.prepare("PRAGMA foreign_keys=1;");
     return query.exec() && ok;
 }
 
 bool SqlMigration::migrateCsv(const QString &migrationFilePath) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
-    QSqlQuery query = QSqlQuery(QStringLiteral("PRAGMA foreign_keys=0;"), db);
+    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
@@ -182,7 +182,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) const noexcept
             QTextStream textStream(&migrationFile);
             textStream.setEncoding(QStringConverter::Utf8);
             CsvParser csvParser;
-            CsvParser::Rows rows = csvParser.parse(textStream, QString::fromLatin1(::LocationMigrationHeader), QString::fromLatin1(::AlternateLocationMigrationHeader));
+            CsvParser::Rows rows = csvParser.parse(textStream, ::LocationMigrationHeader, ::AlternateLocationMigrationHeader);
             if (CsvParser::validate(rows, Enum::underly(::Index::Count))) {
                 for (const auto &row : rows) {
                     const QString uuid = row.at(::Index::Uuid);
@@ -205,7 +205,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) const noexcept
             migrationFile.close();
         }
     }
-    query.prepare(QStringLiteral("PRAGMA foreign_keys=1;"));
+    query.prepare("PRAGMA foreign_keys=1;");
     return query.exec() && ok;
 }
 
@@ -215,7 +215,7 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) const noexcept
     Location location;
     location.title = row.at(::Index::Title);
     QString description = row.at(::Index::Description);
-    location.description = description.replace(QStringLiteral("\\n"), QStringLiteral("\n"));
+    location.description = description.replace("\\n", "\n");
     Enumeration locationTypeEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::LocationType, Enumeration::Order::Id, &ok);
     if (ok) {
         location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypeSystemSymId).id;
@@ -258,7 +258,7 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) const noexcept
         location.attributes = row.at(::Index::Attributes).toLongLong(&ok);
     }
     if (ok) {
-        location.onGround = row.at(::Index::OnGround).toLower() == QStringLiteral("true") ? true : false;
+        location.onGround = row.at(::Index::OnGround).toLower() == "true" ? true : false;
     }
     Enumeration engineEventEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::EngineEvent, Enumeration::Order::Id, &ok);
     if (ok) {

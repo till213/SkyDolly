@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,7 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLRESPONSE_H
-#define SIMCONNECTPRIMARYFLIGHTCONTROLRESPONSE_H
+#ifndef SQLITEATTITUDEDAO_H
+#define SQLITEATTITUDEDAO_H
 
-#endif // SIMCONNECTPRIMARYFLIGHTCONTROLRESPONSE_H
+#include <memory>
+#include <vector>
+#include <cstdint>
+
+class QString;
+
+#include "../AttitudeDaoIntf.h"
+
+struct AttitudeData;
+struct SQLiteAttitudeDaoPrivate;
+
+class SQLiteAttitudeDao final : public AttitudeDaoIntf
+{
+public:
+    SQLiteAttitudeDao(QString connectionName) noexcept;
+    SQLiteAttitudeDao(const SQLiteAttitudeDao &rhs) = delete;
+    SQLiteAttitudeDao(SQLiteAttitudeDao &&rhs) noexcept;
+    SQLiteAttitudeDao &operator=(const SQLiteAttitudeDao &rhs) = delete;
+    SQLiteAttitudeDao &operator=(SQLiteAttitudeDao &&rhs) noexcept;
+    ~SQLiteAttitudeDao() override;
+
+    bool add(std::int64_t aircraftId, const AttitudeData &data) const noexcept override;
+    std::vector<AttitudeData> getByAircraftId(std::int64_t aircraftId, bool *ok = nullptr) const noexcept override;
+    bool deleteByFlightId(std::int64_t flightId) const noexcept override;
+    bool deleteByAircraftId(std::int64_t aircraftId) const noexcept override;
+
+private:
+    std::unique_ptr<SQLiteAttitudeDaoPrivate> d;
+};
+
+#endif // SQLITEATTITUDEDAO_H

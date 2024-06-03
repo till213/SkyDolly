@@ -56,7 +56,7 @@ struct IgcImportSettingsPrivate
 // PUBLIC
 
 IgcImportSettings::IgcImportSettings() noexcept
-    : d(std::make_unique<IgcImportSettingsPrivate>())
+    : d {std::make_unique<IgcImportSettingsPrivate>()}
 {}
 
 IgcImportSettings::~IgcImportSettings() = default;
@@ -116,15 +116,15 @@ void IgcImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::AltitudeKey);
+    keyValue.first = ::AltitudeKey;
     keyValue.second = Enum::underly(d->altitudeMode);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::EnlThresholdKey);
+    keyValue.first = ::EnlThresholdKey;
     keyValue.second = d->enlThresholdPercent;
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::ConvertAltitudeKey);
+    keyValue.first = ::ConvertAltitudeKey;
     keyValue.second = d->convertAltitude;
     keyValues.push_back(keyValue);
 }
@@ -133,15 +133,15 @@ void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::AltitudeKey);
+    keyValue.first = ::AltitudeKey;
     keyValue.second = Enum::underly(::DefaultAltitudeMode);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::EnlThresholdKey);
+    keyValue.first = ::EnlThresholdKey;
     keyValue.second = ::DefaultEnlThresholdPercent;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::ConvertAltitudeKey);
+    keyValue.first = ::ConvertAltitudeKey;
     keyValue.second = ::DefaultConvertAltitude;
     keysWithDefaults.push_back(keyValue);
 }
@@ -149,13 +149,13 @@ void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 void IgcImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::AltitudeKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::AltitudeKey).toInt(&ok);
     d->altitudeMode = ok && Enum::contains<AltitudeMode>(enumValue) ? static_cast<AltitudeMode>(enumValue) : ::DefaultAltitudeMode;
 
-    const int enlThresholdPercent = valuesByKey.at(QString::fromLatin1(::EnlThresholdKey)).toInt(&ok);
+    const int enlThresholdPercent = valuesByKey.at(::EnlThresholdKey).toInt(&ok);
     d->enlThresholdPercent = ok ? enlThresholdPercent :  ::DefaultEnlThresholdPercent;
 
-    d->convertAltitude = valuesByKey.at(QString::fromLatin1(::ConvertAltitudeKey)).toBool();
+    d->convertAltitude = valuesByKey.at(::ConvertAltitudeKey).toBool();
 }
 
 void IgcImportSettings::restoreDefaultsExtn() noexcept

@@ -52,7 +52,7 @@ struct LocationImportPluginBasePrivate
 // PUBLIC
 
 LocationImportPluginBase::LocationImportPluginBase() noexcept
-    : d(std::make_unique<LocationImportPluginBasePrivate>())
+    : d {std::make_unique<LocationImportPluginBasePrivate>()}
 {
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
 }
@@ -129,7 +129,7 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths) noe
         QFile file {filePath};
         ok = file.open(QIODevice::ReadOnly);
         if (ok) {
-            std::vector<Location> locations = importLocations(file, &ok);
+            std::vector<Location> locations = importLocations(file, ok);
             file.close();
             if (ok) {
                 ok = storeLocations(locations);
@@ -167,8 +167,10 @@ bool LocationImportPluginBase::importLocations(const QStringList &filePaths) noe
 
 bool LocationImportPluginBase::storeLocations(std::vector<Location> &locations) const noexcept
 {
-    const LocationService::Mode mode = getPluginSettings().getImportMode();
-    const bool ok = d->locationService->storeAll(locations, mode);
+    const LocationImportPluginBaseSettings &pluginSettings = getPluginSettings();
+    const auto mode = pluginSettings.getImportMode();
+    const auto distanceKm = pluginSettings.getNearestLocationDistanceKm();
+    const bool ok = d->locationService->storeAll(locations, mode, distanceKm);
     if (ok) {
          emit PersistenceManager::getInstance().locationsImported();
     }

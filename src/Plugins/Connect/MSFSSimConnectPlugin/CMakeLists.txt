@@ -9,9 +9,13 @@ target_sources(${MODULE_NAME}
     PRIVATE
         src/SimVar/Position/SimConnectPositionCommon.h
         src/SimVar/Position/SimConnectPositionInfo.h
-        src/SimVar/Position/SimConnectPositionUser.h
-        src/SimVar/Position/SimConnectPositionAi.h
         src/SimVar/Position/SimConnectPositionAll.h
+        src/SimVar/Attitude/SimConnectAttitudeCommon.h
+        src/SimVar/Attitude/SimConnectAttitudeInfo.h
+        src/SimVar/Attitude/SimConnectAttitudeAll.h
+        src/SimVar/PositionAndAttitude/SimConnectPositionAndAttitudeUser.h
+        src/SimVar/PositionAndAttitude/SimConnectPositionAndAttitudeAi.h
+        src/SimVar/PositionAndAttitude/SimConnectPositionAndAttitudeAll.h
         src/SimVar/Engine/SimConnectEngineCommon.h
         src/SimVar/Engine/SimConnectEngineCore.h
         src/SimVar/Engine/SimConnectEngineEvent.h
@@ -51,6 +55,7 @@ target_sources(${MODULE_NAME}
         src/Event/EventStateHandler.h
         src/Event/InputEvent.h src/Event/InputEvent.cpp
         src/Event/SimulationRate.h
+        src/Event/SimulationTime.h
         src/SimConnectAi.h src/SimConnectAi.cpp        
         src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp
         src/MSFSSimConnectSettings.h src/MSFSSimConnectSettings.cpp

@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <vector>
-#include <cstdint>
 #include <cmath>
 
 #include <QIODevice>
@@ -39,6 +38,9 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
+#include <Model/Attitude.h>
+#include <Model/AttitudeData.h>
+#include <Model/TimeVariableData.h>
 #include <PluginManager/Csv.h>
 #include <PluginManager/Export.h>
 #include "CsvExportSettings.h"
@@ -67,20 +69,20 @@ struct FlightRadar24CsvWriterPrivate
 // PUBLIC
 
 FlightRadar24CsvWriter::FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept
-    : d(std::make_unique<FlightRadar24CsvWriterPrivate>(pluginSettings))
+    : d {std::make_unique<FlightRadar24CsvWriterPrivate>(pluginSettings)}
 {}
 
 FlightRadar24CsvWriter::~FlightRadar24CsvWriter() = default;
 
 bool FlightRadar24CsvWriter::write(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    QString csv = QString::fromLatin1(::TimestampColumn) % Csv::CommaSep % 
+    QString csv = QString::fromLatin1(::TimestampColumn) % Csv::CommaSep %
                   ::UtcColumn % Csv::CommaSep % 
                   ::CallsignColumn % Csv::CommaSep %
                   ::PositionColumn % Csv::CommaSep %
                   ::AltitudeColumn % Csv::CommaSep %
-                  ::SpeedColumn % Csv::CommaSep
-                  % ::DirectionColumn % Csv::Ln;
+                  ::SpeedColumn % Csv::CommaSep %
+                  ::DirectionColumn % Csv::Ln;
 
     bool ok = io.write(csv.toUtf8());
     if (ok) {
@@ -88,15 +90,16 @@ bool FlightRadar24CsvWriter::write(const FlightData &flightData, const Aircraft 
         const QString callSign = flightData.flightNumber;
         const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
         for (const auto &positionData : interpolatedPositionData) {
-            const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
-            const std::int64_t secsSinceEpoch = dateTimeUtc.toSecsSinceEpoch();
+            const auto &attitudeData = aircraft.getAttitude().interpolate(positionData.timestamp, TimeVariableData::Access::NoTimeOffset);
+            const auto dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
+            const auto secsSinceEpoch = dateTimeUtc.toSecsSinceEpoch();
             const QString csv = QString::number(secsSinceEpoch) % Csv::CommaSep %
                                 dateTimeUtc.toString(Qt::ISODate) % Csv::CommaSep %
                                 callSign % Csv::CommaSep %
                                 formatPosition(positionData) % Csv::CommaSep %
                                 QString::number(static_cast<int>(std::round(positionData.altitude))) % Csv::CommaSep %
-                                QString::number(static_cast<int>(std::round(positionData.velocityBodyZ))) % Csv::CommaSep %
-                                QString::number(static_cast<int>(std::round(positionData.trueHeading))) % Csv::Ln;
+                                QString::number(static_cast<int>(std::round(attitudeData.velocityBodyZ))) % Csv::CommaSep %
+                                QString::number(static_cast<int>(std::round(attitudeData.trueHeading))) % Csv::Ln;
             ok = io.write(csv.toUtf8());
             if (!ok) {
                 break;

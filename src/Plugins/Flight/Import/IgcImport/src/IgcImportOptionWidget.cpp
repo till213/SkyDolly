@@ -37,7 +37,7 @@
 struct IgcImportOptionWidgetPrivate
 {
     IgcImportOptionWidgetPrivate(IgcImportSettings &pluginSettings) noexcept
-        : pluginSettings(pluginSettings)
+        : pluginSettings {pluginSettings}
     {}
 
      IgcImportSettings &pluginSettings;
@@ -46,9 +46,9 @@ struct IgcImportOptionWidgetPrivate
 // PUBLIC
 
 IgcImportOptionWidget::IgcImportOptionWidget(IgcImportSettings &pluginSettings, QWidget *parent) noexcept
-    : QWidget(parent),
-      ui(std::make_unique<Ui::IgcImportOptionWidget>()),
-      d(std::make_unique<IgcImportOptionWidgetPrivate>(pluginSettings))
+    : QWidget {parent},
+      ui {std::make_unique<Ui::IgcImportOptionWidget>()},
+      d {std::make_unique<IgcImportOptionWidgetPrivate>(pluginSettings)}
 {
     ui->setupUi(this);
     initUi();
@@ -79,7 +79,7 @@ void IgcImportOptionWidget::initUi() noexcept
 
     // Percent [0, 100]
     ui->enlThresholdSpinBox->setRange(0, 100);
-    ui->enlThresholdSpinBox->setSuffix(QStringLiteral("%"));
+    ui->enlThresholdSpinBox->setSuffix("%");
     ui->enlThresholdSpinBox->setSingleStep(5);
 }
 

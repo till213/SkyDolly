@@ -26,7 +26,7 @@
 #define STATISTICSDIALOG_H
 
 #include <memory>
-#include <cstdint>
+#include <utility>
 
 #include <QDialog>
 
@@ -58,16 +58,18 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    const std::unique_ptr<StatisticsDialogPrivate> d;
     const std::unique_ptr<Ui::StatisticsDialog> ui;
+    const std::unique_ptr<StatisticsDialogPrivate> d;    
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
 
+    std::pair<float, float> calculateRecordedPositionAndAttitudeSamplesPerSecond() const noexcept;
+
 private slots:
     void updateUi() noexcept;
-    void updateRecordingSampleRate() noexcept;
     void updateRecordUi(std::int64_t timestamp) noexcept;
+    void onRecordingStarted() noexcept;
 };
 
 #endif // STATISTICSDIALOG_H
