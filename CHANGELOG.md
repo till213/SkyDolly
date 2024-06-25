@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.17.4
+This is a pure maintenance release without any Sky Dolly specific fixes: it provides the most recent Qt framework release with several Windows 11 user interface style related fixes.
+
+### Under th Hood
+- Upgrade Qt to 6.7.2 (from 6.7.1)
+
 ## 0.17.3
 
 ### Bug Fixes
