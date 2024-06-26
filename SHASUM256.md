@@ -16,7 +16,7 @@ There are various methods for computing [SHA-2](https://en.wikipedia.org/wiki/SH
 Example:
 
 ```
-PS C:\path\to\download\folder> Get-FileHash .\SkyDolly-v0.17.2.zip
+PS C:\path\to\download\folder> Get-FileHash .\SkyDolly-v0.17.4.zip
 ```
 
 Once the checksum has been calculated compare it with the corresponding checksum published below. If you have the slightest mismatch:
