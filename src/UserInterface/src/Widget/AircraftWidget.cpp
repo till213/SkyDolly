@@ -139,20 +139,20 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
 void AircraftWidget::initUi() noexcept
 {
     // Position
-    ui->latitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::Latitude));
-    ui->longitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::Longitude));
-    ui->altitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::Altitude));
-    ui->indicatedAltitudeLineEdit->setToolTip(QString::fromLatin1(SimVar::IndicatedAltitude));
-    ui->pitchLineEdit->setToolTip(QString::fromLatin1(SimVar::Pitch));
-    ui->bankLineEdit->setToolTip(QString::fromLatin1(SimVar::Bank));
-    ui->headingLineEdit->setToolTip(QString::fromLatin1(SimVar::TrueHeading));
+    ui->latitudeLineEdit->setToolTip(SimVar::Latitude);
+    ui->longitudeLineEdit->setToolTip(SimVar::Longitude);
+    ui->altitudeLineEdit->setToolTip(SimVar::Altitude);
+    ui->indicatedAltitudeLineEdit->setToolTip(SimVar::IndicatedAltitude);
+    ui->pitchLineEdit->setToolTip(SimVar::Pitch);
+    ui->bankLineEdit->setToolTip(SimVar::Bank);
+    ui->headingLineEdit->setToolTip(SimVar::TrueHeading);
 
     // Velocity
-    ui->velocityXLineEdit->setToolTip(QString::fromLatin1(SimVar::VelocityBodyX));
-    ui->velocityYLineEdit->setToolTip(QString::fromLatin1(SimVar::VelocityBodyY));
-    ui->velocityZLineEdit->setToolTip(QString::fromLatin1(SimVar::VelocityBodyZ));
+    ui->velocityXLineEdit->setToolTip(SimVar::VelocityBodyX);
+    ui->velocityYLineEdit->setToolTip(SimVar::VelocityBodyY);
+    ui->velocityZLineEdit->setToolTip(SimVar::VelocityBodyZ);
 
-    ui->onGroundCheckBox->setToolTip(QString::fromLatin1(SimVar::SimOnGround));
+    ui->onGroundCheckBox->setToolTip(SimVar::SimOnGround);
     ui->onGroundCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->onGroundCheckBox->setFocusPolicy(Qt::NoFocus);
 }

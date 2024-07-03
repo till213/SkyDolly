@@ -464,7 +464,7 @@ void MainWindow::frenchConnection() noexcept
 void MainWindow::initUi() noexcept
 {
     auto &settings = Settings::getInstance();
-    setWindowIcon(QIcon(QStringLiteral(":/img/icons/application-icon.png")));
+    setWindowIcon(QIcon(":/img/icons/application-icon.png"));
 
     // File menu
     d->recentFileMenu = new RecentFileMenu(this);
@@ -501,7 +501,7 @@ void MainWindow::initUi() noexcept
             --currentPreviewInfoCount;
             QMessageBox::information(
                 this,
-                QStringLiteral("Preview"),
+                "Preview",
                 QStringLiteral(
                     "%1 is in a preview release phase: while it should be stable to use it is not "
                     "considered feature-complete.\n\n"
@@ -618,13 +618,13 @@ void MainWindow::initModuleSelectorUi() noexcept
     auto actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
-    const QString css = QStringLiteral(
+    const QString css = 
 "QCheckBox::indicator:unchecked {"
 "    image: url(:/img/icons/checkbox-expand-normal.png);"
 "}"
 "QCheckBox::indicator:checked {"
 "    image: url(:/img/icons/checkbox-collapse-normal.png);"
-"}");
+"}";
     actionCheckBox->setStyleSheet(css);
     actionCheckBox->setContentsMargins(0, 0, 0, 0);
 
@@ -695,16 +695,16 @@ void MainWindow::initControlUi() noexcept
     ui->replayGroupBox->setStyleSheet(Platform::getFlatButtonCss());
 
     // Specific CSS: completely flat button (no border) - on all platforms
-    ui->loopReplayButton->setStyleSheet(QStringLiteral("QPushButton {border-style: outset; border-width: 0px; padding: 6px 12px;}"));
+    ui->loopReplayButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px; padding: 6px 12px;}");
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
 {
     // Actions
-    QList<QAction *> slowActions{new QAction(QStringLiteral("10 %"), this),
-                                 new QAction(QStringLiteral("25 %"), this),
-                                 new QAction(QStringLiteral("50 %"), this),
-                                 new QAction(QStringLiteral("75 %"), this)};
+    QList<QAction *> slowActions{new QAction("10 %", this),
+                                 new QAction("25 %", this),
+                                 new QAction("50 %", this),
+                                 new QAction("75 %", this)};
     slowActions.at(0)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
     slowActions.at(0)->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Slow10));
     slowActions.at(1)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_2));
@@ -718,10 +718,10 @@ void MainWindow::initReplaySpeedUi() noexcept
     ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_1));
     ui->normalSpeedAction->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Normal));
 
-    QList<QAction *> fastActions{new QAction(QStringLiteral("2x"), this),
-                                 new QAction(QStringLiteral("4x"), this),
-                                 new QAction(QStringLiteral("8x"), this),
-                                 new QAction(QStringLiteral("16x"), this)};
+    QList<QAction *> fastActions{new QAction("2x", this),
+                                 new QAction("4x", this),
+                                 new QAction("8x", this),
+                                 new QAction("16x", this)};
     fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_2));
     fastActions.at(0)->setProperty(::ReplaySpeedProperty, Enum::underly(ReplaySpeed::Fast2x));
     fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_3));
@@ -851,7 +851,7 @@ void MainWindow::createTrayIcon() noexcept
     d->trayIcon = new QSystemTrayIcon(this);
     d->trayIcon->setContextMenu(d->trayIconMenu);
 
-    d->trayIcon->setIcon(QIcon(QStringLiteral(":/img/icons/application-icon.png")));
+    d->trayIcon->setIcon(QIcon(":/img/icons/application-icon.png"));
 }
 
 void MainWindow::initSkyConnectPlugin() noexcept
@@ -978,7 +978,7 @@ void MainWindow::updateReplaySpeedUi() noexcept
     } else {
         d->customSpeedLineEdit->setEnabled(false);
         d->customSpeedLineEdit->clear();
-        d->customSpeedLineEdit->setToolTip(QStringLiteral(""));
+        d->customSpeedLineEdit->setToolTip("");
     }
 
     updateSimulationRateLabel();
@@ -1862,7 +1862,7 @@ void MainWindow::showAboutDialog() noexcept
 
 void MainWindow::showOnlineManual() const noexcept
 {
-    QDesktopServices::openUrl(QUrl(QStringLiteral("https://till213.github.io/SkyDolly/manual/en/")));
+    QDesktopServices::openUrl(QUrl("https://till213.github.io/SkyDolly/manual/en/"));
 }
 
 // Replay

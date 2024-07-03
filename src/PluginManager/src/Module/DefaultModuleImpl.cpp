@@ -25,7 +25,6 @@
 #include <memory.h>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QUuid>
 
 #include <SkyConnectManager.h>
@@ -52,7 +51,7 @@ QUuid DefaultModuleImpl::getUuid() const noexcept
 
 QString DefaultModuleImpl::getModuleName() const noexcept
 {
-    return QStringLiteral("");
+    return "";
 }
 
 QWidget *DefaultModuleImpl::getWidget() const noexcept

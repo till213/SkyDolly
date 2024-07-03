@@ -61,9 +61,14 @@ public:
      */
     Enumeration getEnumerationByName(const QString &name, Enumeration::Order order = Enumeration::Order::Id, bool *ok = nullptr);
 
-    // Implementation note:
+    // Implementation note 1:
     // Well-known database enumerations: TitleCase name must match with corresponding
     // snake_case name (without the "enum_" prefix) of the corresponding "enumeration table".
+    //
+    // Implementation note 2:
+    // We need to use QStringLiteral here for static inline const QStrings
+    // https://forum.qt.io/topic/102312/very-strange-heap-corruption-exit-code-1073740940-0xc0000374-with-static-inline-const-qstring-release-only
+    // We cannot use "static constexpr const char *" either, as this does not get exported from the DLL
     static inline const QString BackupPeriod {QStringLiteral("BackupPeriod")};
     static inline const QString LocationType {QStringLiteral("LocationType")};
     static inline const QString LocationCategory {QStringLiteral("LocationCategory")};

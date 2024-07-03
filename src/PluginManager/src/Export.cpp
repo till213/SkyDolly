@@ -54,7 +54,7 @@
 QString Export::suggestFlightFilePath(const Flight &flight, QStringView extension) noexcept
 {
     // https://www.codeproject.com/tips/758861/removing-characters-which-are-not-allowed-in-windo
-    static const QRegularExpression illegalInFileName = QRegularExpression(QStringLiteral(R"([\\/:*?""<>|])"));
+    static const QRegularExpression illegalInFileName = QRegularExpression(R"([\\/:*?""<>|])");
     QString suggestedFileName;
     const auto &settings = Settings::getInstance();
 
@@ -70,7 +70,7 @@ QString Export::suggestFlightFilePath(const Flight &flight, QStringView extensio
         suggestedFileName = title;
     }
 
-    suggestedFileName = suggestedFileName.replace(illegalInFileName, QStringLiteral("_"));
+    suggestedFileName = suggestedFileName.replace(illegalInFileName, "_");
     return settings.getExportPath() + "/" + File::ensureExtension(suggestedFileName, extension);
 }
 

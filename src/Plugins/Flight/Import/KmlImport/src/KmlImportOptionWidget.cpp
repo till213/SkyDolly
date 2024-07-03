@@ -24,7 +24,6 @@
  */
 #include <QWidget>
 #include <QComboBox>
-#include <QStringLiteral>
 
 #include <Kernel/Enum.h>
 #include "KmlImportOptionWidget.h"
@@ -67,8 +66,8 @@ void KmlImportOptionWidget::frenchConnection() noexcept
 
 void KmlImportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem(QStringLiteral("FlightAware"), Enum::underly(KmlImportSettings::Format::FlightAware));
-    ui->formatComboBox->addItem(QStringLiteral("FlightRadar24"), Enum::underly(KmlImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("FlightAware", Enum::underly(KmlImportSettings::Format::FlightAware));
+    ui->formatComboBox->addItem("FlightRadar24", Enum::underly(KmlImportSettings::Format::FlightRadar24));
     ui->formatComboBox->addItem(tr("Generic KML with track data"), Enum::underly(KmlImportSettings::Format::Generic));
 }
 

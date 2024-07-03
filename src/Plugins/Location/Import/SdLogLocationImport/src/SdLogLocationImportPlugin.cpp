@@ -27,7 +27,6 @@
 #include <QFile>
 #include <QTextStream>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringConverter>
 #include <QWidget>
 #include <QIODevice>

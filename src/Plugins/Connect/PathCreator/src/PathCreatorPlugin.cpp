@@ -31,7 +31,6 @@
 #include <QtGlobal>
 #include <QRandomGenerator>
 #include <QStringList>
-#include <QStringLiteral>
 #ifdef DEBUG
 #include <QDebug>
 #include <Kernel/Enum.h>
@@ -527,41 +526,41 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
 
     switch (d->randomGenerator->bounded(5)) {
     case 0:
-        info.aircraftType.type = QStringLiteral("Boeing 787");
+        info.aircraftType.type = "Boeing 787";
         break;
     case 1:
-        info.aircraftType.type = QStringLiteral("Cirrus SR22");
+        info.aircraftType.type = "Cirrus SR22";
         break;
     case 2:
-        info.aircraftType.type = QStringLiteral("Douglas DC-3");
+        info.aircraftType.type = "Douglas DC-3";
         break;
     case 3:
-        info.aircraftType.type = QStringLiteral("Cessna 172");
+        info.aircraftType.type = "Cessna 172";
         break;
     case 4:
-        info.aircraftType.type = QStringLiteral("Airbus A320");
+        info.aircraftType.type = "Airbus A320";
         break;
     default:
-        info.aircraftType.type = QStringLiteral("Unknown");
+        info.aircraftType.type = "Unknown";
     }
     switch (d->randomGenerator->bounded(5)) {
     case 0:
-        info.aircraftType.category = QStringLiteral("Piston");
+        info.aircraftType.category = "Piston";
         break;
     case 1:
-        info.aircraftType.category = QStringLiteral("Glider");
+        info.aircraftType.category = "Glider";
         break;
     case 2:
-        info.aircraftType.category = QStringLiteral("Rocket");
+        info.aircraftType.category = "Rocket";
         break;
     case 3:
-        info.aircraftType.category = QStringLiteral("Jet");
+        info.aircraftType.category = "Jet";
         break;
     case 4:
-        info.aircraftType.category = QStringLiteral("Turbo");
+        info.aircraftType.category = "Turbo";
         break;
     default:
-        info.aircraftType.category = QStringLiteral("Unknown");
+        info.aircraftType.category = "Unknown";
     }
     info.aircraftType.wingSpan = d->randomGenerator->bounded(200);
     info.aircraftType.engineType = static_cast<SimType::EngineType>(d->randomGenerator->bounded(7));

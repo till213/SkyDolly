@@ -313,7 +313,10 @@ QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
 {
     const auto &settings = Settings::getInstance();
     const QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
-    const QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open Logbook"), existingLogbookPath, QStringLiteral("*") % Const::DotLogbookExtension);
+    const QString logbookPath = QFileDialog::getOpenFileName(parent,
+                                                             QCoreApplication::translate("DatabaseService", "Open Logbook"),
+                                                             existingLogbookPath,
+                                                             QStringLiteral("*") % Const::DotLogbookExtension);
     return logbookPath;
 }
 
@@ -354,7 +357,7 @@ QString DatabaseService::getBackupFileName(const QString &logbookPath, const QSt
 
     const QFileInfo logbookInfo = QFileInfo(logbookPath);
     const QString baseName = logbookInfo.completeBaseName();
-    const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString(QStringLiteral("yyyy-MM-dd hhmm"));
+    const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
     QString backupLogbookName = baseBackupLogbookName % Const::DotLogbookExtension;
     int index = 1;
     while (backupDir.exists(backupLogbookName) && index <= ::MaxBackupIndex) {

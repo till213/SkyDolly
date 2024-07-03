@@ -72,7 +72,7 @@ LightWidget::~LightWidget() = default;
 
 void LightWidget::initUi() noexcept
 {
-    ui->lightStateLineEdit->setToolTip(QString::fromLatin1(SimVar::LightStates));
+    ui->lightStateLineEdit->setToolTip(SimVar::LightStates);
 
     // Make the light state checkboxes checkable, but not for the user
     ui->navigationCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);

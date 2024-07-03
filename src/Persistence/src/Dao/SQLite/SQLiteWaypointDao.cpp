@@ -27,7 +27,6 @@
 #include <utility>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
@@ -66,7 +65,7 @@ bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPla
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(QStringLiteral(
+    query.prepare(
         "insert into waypoint ("
         "  aircraft_id,"
         "  timestamp,"
@@ -86,20 +85,20 @@ bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPla
         " :local_sim_time,"
         " :zulu_sim_time"
         ");"
-    ));
+    );
 
-    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok {true};
     for (const auto &waypoint : flightPlan) {
-        query.bindValue(QStringLiteral(":timestamp"), QVariant::fromValue(waypoint.timestamp));
-        query.bindValue(QStringLiteral(":ident"), waypoint.identifier);
-        query.bindValue(QStringLiteral(":latitude"), waypoint.latitude);
-        query.bindValue(QStringLiteral(":longitude"), waypoint.longitude);
-        query.bindValue(QStringLiteral(":altitude"), waypoint.altitude);
+        query.bindValue(":timestamp", QVariant::fromValue(waypoint.timestamp));
+        query.bindValue(":ident", waypoint.identifier);
+        query.bindValue(":latitude", waypoint.latitude);
+        query.bindValue(":longitude", waypoint.longitude);
+        query.bindValue(":altitude", waypoint.altitude);
         // No conversion to UTC
-        query.bindValue(QStringLiteral(":local_sim_time"), waypoint.localTime);
+        query.bindValue(":local_sim_time", waypoint.localTime);
         // Zulu time equals to UTC time
-        query.bindValue(QStringLiteral(":zulu_sim_time"), waypoint.zuluTime);
+        query.bindValue(":zulu_sim_time", waypoint.zuluTime);
 
         ok = query.exec();
         if (!ok) {
@@ -117,25 +116,25 @@ bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &fli
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
-    query.prepare(QStringLiteral(
+    query.prepare(
         "select * "
         "from   waypoint w "
         "where  w.aircraft_id = :aircraft_id "
         "order by w.timestamp asc;"
-    ));
+    );
 
-    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool ok = query.exec();
     if (ok) {
         flightPlan.clear();
         QSqlRecord record = query.record();
-        const int timestampIdx = record.indexOf(QStringLiteral("timestamp"));
-        const int identifierIdx = record.indexOf(QStringLiteral("ident"));
-        const int latitudeIdx = record.indexOf(QStringLiteral("latitude"));
-        const int longitudeIdx = record.indexOf(QStringLiteral("longitude"));
-        const int altitudeIdx = record.indexOf(QStringLiteral("altitude"));
-        const int localSimulationTimeIdx = record.indexOf(QStringLiteral("local_sim_time"));
-        const int zuluSimulationTimeIdx = record.indexOf(QStringLiteral("zulu_sim_time"));
+        const auto timestampIdx = record.indexOf("timestamp");
+        const auto identifierIdx = record.indexOf("ident");
+        const auto latitudeIdx = record.indexOf("latitude");
+        const auto longitudeIdx = record.indexOf("longitude");
+        const auto altitudeIdx = record.indexOf("altitude");
+        const auto localSimulationTimeIdx = record.indexOf("local_sim_time");
+        const auto zuluSimulationTimeIdx = record.indexOf("zulu_sim_time");
         while (query.next()) {
             Waypoint data;
             data.timestamp = query.value(timestampIdx).toLongLong();
@@ -162,16 +161,16 @@ bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(QStringLiteral(
+    query.prepare(
         "delete "
         "from   waypoint "
         "where  aircraft_id in (select a.id "
         "                       from aircraft a"
         "                       where a.flight_id = :flight_id"
         "                      );"
-    ));
+    );
 
-    query.bindValue(QStringLiteral(":flight_id"), QVariant::fromValue(flightId));
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -185,13 +184,13 @@ bool SQLiteWaypointDao::deleteByAircraftId(std::int64_t aircraftId) const noexce
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(QStringLiteral(
+    query.prepare(
         "delete "
         "from   waypoint "
         "where  aircraft_id = :aircraft_id;"
-    ));
+    );
 
-    query.bindValue(QStringLiteral(":aircraft_id"), QVariant::fromValue(aircraftId));
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

@@ -29,7 +29,6 @@
 
 #include <QString>
 #include <QStringBuilder>
-#include <QStringLiteral>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
@@ -168,23 +167,23 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
             locations.reserve(1);
         }
         QSqlRecord record = query.record();
-        const int idIdx = record.indexOf("id");
-        const int titleIdx = record.indexOf("title");
-        const int descriptionIdx = record.indexOf("description");
-        const int typeIdx = record.indexOf("type_id");
-        const int categoryIdx = record.indexOf("category_id");
-        const int countryIdx = record.indexOf("country_id");
-        const int identifierIdx = record.indexOf("identifier");
-        const int latitudeIdx = record.indexOf("latitude");
-        const int longitudeIdx = record.indexOf("longitude");
-        const int altitudeIdx = record.indexOf("altitude");
-        const int pitchIdx = record.indexOf("pitch");
-        const int bankIdx = record.indexOf("bank");
-        const int trueHeadingIdx = record.indexOf("true_heading");
-        const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
-        const int onGroundIdx = record.indexOf("on_ground");
-        const int attributesIdx = record.indexOf("attributes");
-        const int engineEventIdx = record.indexOf("engine_event");
+        const auto idIdx = record.indexOf("id");
+        const auto titleIdx = record.indexOf("title");
+        const auto descriptionIdx = record.indexOf("description");
+        const auto typeIdx = record.indexOf("type_id");
+        const auto categoryIdx = record.indexOf("category_id");
+        const auto countryIdx = record.indexOf("country_id");
+        const auto identifierIdx = record.indexOf("identifier");
+        const auto latitudeIdx = record.indexOf("latitude");
+        const auto longitudeIdx = record.indexOf("longitude");
+        const auto altitudeIdx = record.indexOf("altitude");
+        const auto pitchIdx = record.indexOf("pitch");
+        const auto bankIdx = record.indexOf("bank");
+        const auto trueHeadingIdx = record.indexOf("true_heading");
+        const auto indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
+        const auto onGroundIdx = record.indexOf("on_ground");
+        const auto attributesIdx = record.indexOf("attributes");
+        const auto engineEventIdx = record.indexOf("engine_event");
 
         while (query.next()) {
             Location location;
@@ -318,23 +317,23 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
             locations.reserve(::DefaultCapacity);
         }
         QSqlRecord record = query.record();
-        const int idIdx = record.indexOf("id");
-        const int titleIdx = record.indexOf("title");
-        const int descriptionIdx = record.indexOf("description");
-        const int typeIdx = record.indexOf("type_id");
-        const int categoryIdx = record.indexOf("category_id");
-        const int countryIdx = record.indexOf("country_id");
-        const int identifierIdx = record.indexOf("identifier");
-        const int latitudeIdx = record.indexOf("latitude");
-        const int longitudeIdx = record.indexOf("longitude");
-        const int altitudeIdx = record.indexOf("altitude");
-        const int pitchIdx = record.indexOf("pitch");
-        const int bankIdx = record.indexOf("bank");
-        const int trueHeadingIdx = record.indexOf("true_heading");
-        const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
-        const int onGroundIdx = record.indexOf("on_ground");
-        const int attributesIdx = record.indexOf("attributes");
-        const int engineEventIdx = record.indexOf("engine_event");
+        const auto idIdx = record.indexOf("id");
+        const auto titleIdx = record.indexOf("title");
+        const auto descriptionIdx = record.indexOf("description");
+        const auto typeIdx = record.indexOf("type_id");
+        const auto categoryIdx = record.indexOf("category_id");
+        const auto countryIdx = record.indexOf("country_id");
+        const auto identifierIdx = record.indexOf("identifier");
+        const auto latitudeIdx = record.indexOf("latitude");
+        const auto longitudeIdx = record.indexOf("longitude");
+        const auto altitudeIdx = record.indexOf("altitude");
+        const auto pitchIdx = record.indexOf("pitch");
+        const auto bankIdx = record.indexOf("bank");
+        const auto trueHeadingIdx = record.indexOf("true_heading");
+        const auto indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
+        const auto onGroundIdx = record.indexOf("on_ground");
+        const auto attributesIdx = record.indexOf("attributes");
+        const auto engineEventIdx = record.indexOf("engine_event");
 
         while (query.next()) {
             Location location;

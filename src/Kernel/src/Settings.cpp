@@ -29,7 +29,6 @@
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QUuid>
 #include <QByteArray>
@@ -50,13 +49,13 @@ struct SettingsPrivate
 {
     SettingsPrivate() noexcept
     {
-        QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
+        auto standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
         if (standardLocations.count() > 0) {
             defaultExportPath = standardLocations.first();
             const QString defaultLogbookName {Version::getApplicationName() % " " % QObject::tr("Logbook")};
             defaultLogbookPath = standardLocations.first() % "/" % defaultLogbookName % "/" % defaultLogbookName % Const::DotLogbookExtension;
         } else {
-            defaultExportPath = QStringLiteral(".");
+            defaultExportPath = ".";
         }
     }
 

@@ -163,15 +163,15 @@ struct IgcParserPrivate
     static const QRegularExpression bRecordRegExp;
 };
 
-const QRegularExpression IgcParserPrivate::hRecordDateRegExp{QString::fromLatin1(::HRecordDatePattern)};
-const QRegularExpression IgcParserPrivate::hRecordPilotRegExp{QString::fromLatin1(::HRecordPilotPattern)};
-const QRegularExpression IgcParserPrivate::hRecordCoPilotRegExp{QString::fromLatin1(::HRecordCoPilotPattern)};
-const QRegularExpression IgcParserPrivate::hRecordGliderTypeRegExp{QString::fromLatin1(::HRecordGliderTypePattern)};
-const QRegularExpression IgcParserPrivate::hRecordGliderIdRegExp{QString::fromLatin1(::HRecordGliderIdPattern)};
-const QRegularExpression IgcParserPrivate::iRecordRegExp{QString::fromLatin1(::IRecordPattern)};
-const QRegularExpression IgcParserPrivate::cRecordTaskDefinitionRegExp{QString::fromLatin1(::CRecordTaskDefinitionPattern)};
-const QRegularExpression IgcParserPrivate::cRecordTaskRegExp{QString::fromLatin1(::CRecordTaskPattern)};
-const QRegularExpression IgcParserPrivate::bRecordRegExp{QString::fromLatin1(::BRecordPattern)};
+const QRegularExpression IgcParserPrivate::hRecordDateRegExp{::HRecordDatePattern};
+const QRegularExpression IgcParserPrivate::hRecordPilotRegExp{::HRecordPilotPattern};
+const QRegularExpression IgcParserPrivate::hRecordCoPilotRegExp{::HRecordCoPilotPattern};
+const QRegularExpression IgcParserPrivate::hRecordGliderTypeRegExp{::HRecordGliderTypePattern};
+const QRegularExpression IgcParserPrivate::hRecordGliderIdRegExp{::HRecordGliderIdPattern};
+const QRegularExpression IgcParserPrivate::iRecordRegExp{::IRecordPattern};
+const QRegularExpression IgcParserPrivate::cRecordTaskDefinitionRegExp{::CRecordTaskDefinitionPattern};
+const QRegularExpression IgcParserPrivate::cRecordTaskRegExp{::CRecordTaskPattern};
+const QRegularExpression IgcParserPrivate::bRecordRegExp{::BRecordPattern};
 
 // PUBLIC
 
@@ -294,7 +294,7 @@ bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
     QRegularExpressionMatch match = d->hRecordDateRegExp.match(line);
     if (match.hasMatch()) {
         int year {0};
-        const QStringView yearText = match.capturedView(::HRecordYearIndex);
+        const auto yearText = match.capturedView(::HRecordYearIndex);
         if (yearText.at(0) == '8' || yearText.at(0) == '9') {
             // The glorious 80ies and 90ies: two-digit year dates were all the rage!
             // (The IGC format was invented in the 80ies, so any date starting with
@@ -305,8 +305,8 @@ bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
             // Sorry, my future fellows - but not my fault ¯\_(ツ)_/¯
             year = 2000 + yearText.toInt();
         }
-        const int month = match.capturedView(::HRecordMonthIndex).toInt();
-        const int day = match.capturedView(::HRecordDayIndex).toInt();
+        const auto month = match.capturedView(::HRecordMonthIndex).toInt();
+        const auto day = match.capturedView(::HRecordDayIndex).toInt();
         d->header.flightDateTimeUtc.setDate(QDate(year, month, day));
         d->header.flightDateTimeUtc.setTimeZone(QTimeZone::utc());
         // The flight number is optional
@@ -314,7 +314,7 @@ bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
             d->header.flightNumber = match.captured(::HRecordFlightNumberIndex);
         } else {
             // Assume first flight of day
-            d->header.flightNumber = QStringLiteral("1");
+            d->header.flightNumber = "1";
         }
 
         ok = true;
@@ -365,13 +365,13 @@ bool IgcParser::parseFixAdditions(const QByteArray &line) noexcept
     bool ok {false};
     QRegularExpressionMatch match = d->iRecordRegExp.match(line);
     if (match.hasMatch()) {
-        const int nofAdditions = match.capturedView(::IRecordNofAdditionsIndex).toInt();
-        const QStringView definitions = match.capturedView(::IRecordAdditionsDefinitionsIndex);
+        const auto nofAdditions = match.capturedView(::IRecordNofAdditionsIndex).toInt();
+        const auto definitions = match.capturedView(::IRecordAdditionsDefinitionsIndex);
         // Validate the number of bytes: each definition is expected to be
         // of the form SS FF CCC (7 bytes in total)
         if (definitions.length() >= nofAdditions * ::IRecordAdditionDefinitionLength) {
             for (int i = 0; i < nofAdditions; ++i) {
-                const QStringView def = definitions.mid(i * ::IRecordAdditionDefinitionLength, ::IRecordAdditionDefinitionLength);
+                const auto def = definitions.mid(i * ::IRecordAdditionDefinitionLength, ::IRecordAdditionDefinitionLength);
                 // We are only interested in the ENL addition for now
                 if (def.mid(4, 3) == EnvironmentalNoiseLevel) {
                     d->enlAddition = true;
@@ -396,7 +396,7 @@ bool IgcParser::parseTask(const QByteArray &line) noexcept
         match = d->cRecordTaskRegExp.match(line);
         if (match.hasMatch()) {
             // Latitude
-            const QStringView latitudeText = match.capturedView(::CRecordLatitudeDegreesIndex);
+            const auto latitudeText = match.capturedView(::CRecordLatitudeDegreesIndex);
             QStringView minutesBy1000Text = match.capturedView(::CRecordLatitudeMinutesIndex);
             double latitude = parseCoordinate(latitudeText, minutesBy1000Text);
             if (match.capturedView(::CRecordLatitudeDirectionIndex) == ::DirectionTypeSouth) {
@@ -404,7 +404,7 @@ bool IgcParser::parseTask(const QByteArray &line) noexcept
             }
 
             // Longitude
-            const QStringView longitudeText  = match.capturedView(::CRecordLongitudeDegreesIndex);
+            const auto longitudeText  = match.capturedView(::CRecordLongitudeDegreesIndex);
             minutesBy1000Text = match.capturedView(::CRecordLongitudeMinutesIndex);
             double longitude = parseCoordinate(longitudeText, minutesBy1000Text);
             if (match.capturedView(::CRecordLongitudeDirectionIndex) == ::DirectionTypeWest) {
@@ -429,7 +429,7 @@ bool IgcParser::parseFix(const QByteArray &line) noexcept
 
         // Timestamp
         const QString timeText = match.captured(::BRecordDateIndex);
-        const QTime currentTime = QTime::fromString(timeText, QString::fromLatin1(::DateFormat));
+        const QTime currentTime = QTime::fromString(timeText, ::DateFormat);
         if (d->fixes.size() > 0) {
             if (currentTime.addSecs(DayChangeThresholdSeconds) < d->previousTime) {
                 // Flight crossed "midnight" (next day)
@@ -448,33 +448,33 @@ bool IgcParser::parseFix(const QByteArray &line) noexcept
             const std::int64_t timestamp = d->header.flightDateTimeUtc.msecsTo(d->currentDateTimeUtc);
 
             // Latitude
-            const QStringView latitudeText = match.capturedView(::BRecordLatitudeDegreesIndex);
-            const QStringView latitudeMinutesBy1000Text = match.capturedView(::BRecordLatitudeMinutesIndex);
+            const auto latitudeText = match.capturedView(::BRecordLatitudeDegreesIndex);
+            const auto latitudeMinutesBy1000Text = match.capturedView(::BRecordLatitudeMinutesIndex);
             double latitude = parseCoordinate(latitudeText, latitudeMinutesBy1000Text);
             if (match.capturedView(::BRecordLatitudeDirectionIndex) == ::DirectionTypeSouth) {
                 latitude = -latitude;
             }
 
             // Longitude
-            const QStringView longitudeText = match.capturedView(::BRecordLongitudeDegreesIndex);
-            const QStringView longitudeMinutesBy1000Text = match.capturedView(::BRecordLongitudeMinutesIndex);
+            const auto longitudeText = match.capturedView(::BRecordLongitudeDegreesIndex);
+            const auto longitudeMinutesBy1000Text = match.capturedView(::BRecordLongitudeMinutesIndex);
             double longitude = parseCoordinate(longitudeText, longitudeMinutesBy1000Text);
             if (match.capturedView(::BRecordLongitudeDirectionIndex) == ::DirectionTypeWest) {
                 longitude = -longitude;
             }
 
             // Pressure altitude
-            const QStringView pressureAltitudeText = match.capturedView(::BRecordPressureAltitudeIndex);
-            const double pressureAltitude = pressureAltitudeText.toDouble();
+            const auto pressureAltitudeText = match.capturedView(::BRecordPressureAltitudeIndex);
+            const auto pressureAltitude = pressureAltitudeText.toDouble();
 
             // GNSS altitude
-            const QStringView gnssAltitudeText = match.capturedView(::BRecordGNSSAltitudeIndex);
-            const double gnssAltitude = gnssAltitudeText.toDouble();
+            const auto gnssAltitudeText = match.capturedView(::BRecordGNSSAltitudeIndex);
+            const auto gnssAltitude = gnssAltitudeText.toDouble();
             // Optional environmental noise level (ENL) addition
             double enlNorm {0.0};
             if (d->enlAddition) {
                 const QByteArray enlText = line.mid(d->enlStartOffset, d->enlLength);
-                const double enlValue = enlText.toDouble(&ok);
+                const auto enlValue = enlText.toDouble(&ok);
                 if (ok) {
                     enlNorm = enlValue / d->maxEnlValue;
                 }

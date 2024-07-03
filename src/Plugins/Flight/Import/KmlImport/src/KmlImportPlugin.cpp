@@ -73,7 +73,7 @@ std::vector<FlightData> KmlImportPlugin::importFlightData(QIODevice &io, bool &o
         if (d->xml.name() == QStringLiteral("kml")) {
             flights = parseKML();
         } else {
-            d->xml.raiseError(QStringLiteral("The file is not a KML file."));
+            d->xml.raiseError("The file is not a KML file.");
         }
     }
 

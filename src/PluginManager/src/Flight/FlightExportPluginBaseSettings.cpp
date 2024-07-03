@@ -106,15 +106,15 @@ void FlightExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues)
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::ResamplingPeriodKey);
+    keyValue.first = ::ResamplingPeriodKey;
     keyValue.second = Enum::underly(d->resamplingPeriod);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::FormationExportKey);
+    keyValue.first = ::FormationExportKey;
     keyValue.second = Enum::underly(d->formationExport);
     keyValues.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::OpenExportedFilesEnabledKey);
+    keyValue.first = ::OpenExportedFilesEnabledKey;
     keyValue.second = d->openExportedFilesEnabled;
     keyValues.push_back(keyValue);
 
@@ -125,15 +125,15 @@ void FlightExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = QString::fromLatin1(::ResamplingPeriodKey);
+    keyValue.first = ::ResamplingPeriodKey;
     keyValue.second = Enum::underly(::DefaultResamplingPeriod);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::FormationExportKey);
+    keyValue.first = ::FormationExportKey;
     keyValue.second = Enum::underly(::DefaultFormationExport);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = QString::fromLatin1(::OpenExportedFilesEnabledKey);
+    keyValue.first = ::OpenExportedFilesEnabledKey;
     keyValue.second = ::DefaultOpenExportedFilesEnabled;
     keysWithDefaults.push_back(keyValue);
 
@@ -143,14 +143,14 @@ void FlightExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefau
 void FlightExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok {true};
-    auto enumValue = valuesByKey.at(QString::fromLatin1(::ResamplingPeriodKey)).toInt(&ok);
+    auto enumValue = valuesByKey.at(::ResamplingPeriodKey).toInt(&ok);
     // No enumeration domain validation: any resampling period (Hz) is valid
     d->resamplingPeriod = ok ? static_cast<SampleRate::ResamplingPeriod>(enumValue) : ::DefaultResamplingPeriod;
 
-    enumValue = valuesByKey.at(QString::fromLatin1(::FormationExportKey)).toInt(&ok);
+    enumValue = valuesByKey.at(::FormationExportKey).toInt(&ok);
     d->formationExport = ok && Enum::contains<FormationExport>(enumValue) ? static_cast<FormationExport>(enumValue) : ::DefaultFormationExport;
 
-    d->openExportedFilesEnabled = valuesByKey.at(QString::fromLatin1(::OpenExportedFilesEnabledKey)).toBool();
+    d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
 
     restoreSettingsExtn(valuesByKey);
 

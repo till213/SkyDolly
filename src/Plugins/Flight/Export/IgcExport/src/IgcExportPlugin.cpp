@@ -332,12 +332,12 @@ inline bool IgcExportPlugin::exportGRecord(QIODevice &io) const noexcept
 
 inline QByteArray IgcExportPlugin::formatDate(const QDateTime &date) const noexcept
 {
-    return date.toString(QString::fromLatin1(::DateFormat)).toLatin1();
+    return date.toString(::DateFormat).toLatin1();
 }
 
 inline QByteArray IgcExportPlugin::formatTime(const QDateTime &time) const noexcept
 {
-    return time.toString(QString::fromLatin1(::TimeFormat)).toLatin1();
+    return time.toString(::TimeFormat).toLatin1();
 }
 
 inline QByteArray IgcExportPlugin::formatDateTime(const QDateTime &dateTime) const noexcept

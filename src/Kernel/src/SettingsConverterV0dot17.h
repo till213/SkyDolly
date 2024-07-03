@@ -42,7 +42,7 @@ class SettingsConverterV0dot17
 public:
     static inline void convert(const Version &settingsVersion, QSettings &settings) noexcept
     {
-        if (settingsVersion < Version(QStringLiteral("0.16.0"))) {
+        if (settingsVersion < Version("0.16.0")) {
             SettingsConverterV0dot16::convert(settingsVersion, settings);
         }
         convertPlugins(settings);
@@ -52,7 +52,7 @@ public:
 private:
     static inline void convertPlugins(QSettings &settings) noexcept
     {
-        static const QString FormatKey {QStringLiteral("Format")};
+        static const QString FormatKey {"Format"};
         int format {0};
 
         // CSV import

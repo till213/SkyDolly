@@ -107,17 +107,17 @@ QString Unit::formatLatLongPositionDMS(double latitude, double longitude) noexce
 
 QString Unit::formatFeet(double feet) const noexcept
 {
-    return d->locale.toString(feet, 'f', Precision) % QStringLiteral(" ft");
+    return d->locale.toString(feet, 'f', Precision) % " ft";
 }
 
 QString Unit::formatCelcius(double temperature) const noexcept
 {
-    return d->locale.toString(temperature, 'f', Precision) % QStringLiteral(" °C");
+    return d->locale.toString(temperature, 'f', Precision) % " °C";
 }
 
 QString Unit::formatPressureInHPa(double pressure) const noexcept
 {
-    return d->locale.toString(pressure, 'f', Precision) % QStringLiteral(" hPa");
+    return d->locale.toString(pressure, 'f', Precision) % " hPa";
 }
 
 QString Unit::formatVisibility(double meters) const noexcept
@@ -137,7 +137,7 @@ QString Unit::formatVisibility(double meters) const noexcept
 
 QString Unit::formatDegrees(double degrees) const noexcept
 {
-    return d->locale.toString(degrees, 'f', Precision) % QStringLiteral("°");
+    return d->locale.toString(degrees, 'f', Precision) % "°";
 }
 
 QString Unit::formatHz(double hz) const noexcept
@@ -222,7 +222,7 @@ QString Unit::formatDateTime(const QDateTime &dateTime) const noexcept
 
 QString Unit::formatDuration(const QTime &time) const noexcept
 {
-    return d->locale.toString(time, QStringLiteral("HH:mm:ss"));
+    return d->locale.toString(time, "HH:mm:ss");
 }
 
 QString Unit::formatMonth(int month) const noexcept
@@ -280,7 +280,7 @@ QString Unit::formatHHMMSS(std::int64_t milliSeconds) noexcept
     minutes -= hours;
 
     QTime time(static_cast<int>(hours.count()), static_cast<int>(minutes.count()), static_cast<int>(seconds.count()));
-    return time.toString(QStringLiteral("hh:mm:ss"));
+    return time.toString("hh:mm:ss");
 }
 
 QString Unit::formatBoolean(bool value) noexcept

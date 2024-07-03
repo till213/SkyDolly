@@ -26,7 +26,6 @@
 #define GPX_H
 
 #include <QString>
-#include <QStringLiteral>
 
 /*!
  * GPX format element names.
@@ -36,30 +35,29 @@
  */
 namespace Gpx
 {
-    inline const QString gpx = QStringLiteral("gpx");
+    inline const QString gpx = "gpx";
 
     // Metadata
-    inline const QString metadata = QStringLiteral("metadata");
-    inline const QString name = QStringLiteral("name");
-    inline const QString desc = QStringLiteral("desc");
-    inline const QString author = QStringLiteral("author");
+    inline const QString metadata = "metadata";
+    inline const QString name = "name";
+    inline const QString desc = "desc";
+    inline const QString author = "author";
 
     // Waypoints
-    inline const QString wpt = QStringLiteral("wpt");
+    inline const QString wpt = "wpt";
 
     // Routes
-    inline const QString rte = QStringLiteral("rte");
-    inline const QString rtept = QStringLiteral("rtept");
-
+    inline const QString rte = "rte";
+    inline const QString rtept = "rtept";
 
     // Tracks
-    inline const QString trk = QStringLiteral("trk");
-    inline const QString trkseg = QStringLiteral("trkseg");
-    inline const QString trkpt = QStringLiteral("trkpt");
-    inline const QString ele = QStringLiteral("ele");
-    inline const QString time = QStringLiteral("time");
-    inline const QString lat = QStringLiteral("lat");
-    inline const QString lon = QStringLiteral("lon");
+    inline const QString trk = "trk";
+    inline const QString trkseg = "trkseg";
+    inline const QString trkpt = "trkpt";
+    inline const QString ele = "ele";
+    inline const QString time = "time";
+    inline const QString lat = "lat";
+    inline const QString lon = "lon";
 }
 
 #endif // GPX_H

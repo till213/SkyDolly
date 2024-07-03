@@ -27,6 +27,7 @@
 
 #include <QString>
 #include <QStringLiteral>
+#include <QStringBuilder>
 #include <QWidget>
 #include <QMessageBox>
 #include <QElapsedTimer>
@@ -166,7 +167,7 @@ bool FlightExportPluginBase::exportFlight(const Flight &flight, const QString &f
     if (ok) {
         if (settings.isOpenExportedFilesEnabled()) {
             for (const auto &exportedFilePath : d->exportedFilePaths) {
-                const QString fileUrl = QStringLiteral("file:///") + exportedFilePath;
+                const QString fileUrl = QStringLiteral("file:///") % exportedFilePath;
                 QDesktopServices::openUrl(QUrl(fileUrl));
             }
         }

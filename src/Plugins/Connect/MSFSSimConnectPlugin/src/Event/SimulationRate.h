@@ -115,7 +115,7 @@ private:
     // or in other words: index 0 for any rate < (0.0625f + 0.125f) / 2.0f and index 11 for any rate >= 96.0
     //
     // Also refer to: https://docs.flightsimulator.com/html/Programming_Tools/Programming_APIs.htm#SIMULATION%20RATE
-    static constexpr inline int rateToIndex(float rate) noexcept
+    static constexpr int rateToIndex(float rate) noexcept
     {
         int index {0};
         if (rate < (0.0625f + 0.125f) / 2.0f) {

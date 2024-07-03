@@ -97,19 +97,19 @@ struct FormationWidgetPrivate
         // We always initialise all icons at once, so checking only for
         // normalAircraftIcon is sufficient
         if (normalAircraftIcon.isNull()) {
-            normalAircraftIcon = QIcon(QStringLiteral(":/img/icons/aircraft-normal.png"));
-            recordingAircraftIcon = QIcon(QStringLiteral(":/img/icons/aircraft-record-normal.png"));
-            referenceAircraftIcon = QIcon(QStringLiteral(":/img/icons/aircraft-reference-normal.png"));
+            normalAircraftIcon = QIcon(":/img/icons/aircraft-normal.png");
+            recordingAircraftIcon = QIcon(":/img/icons/aircraft-record-normal.png");
+            referenceAircraftIcon = QIcon(":/img/icons/aircraft-reference-normal.png");
         }
         if (parent.devicePixelRatioF() >= 1.5) {
-            userAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-normal@2x.png"));
+            userAircraftPixmap.load(":/img/icons/aircraft-normal@2x.png");
             userAircraftPixmap.setDevicePixelRatio(2.0);
-            referenceAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-reference-normal@2x.png"));
+            referenceAircraftPixmap.load(":/img/icons/aircraft-reference-normal@2x.png");
             referenceAircraftPixmap.setDevicePixelRatio(2.0);
         } else {
-            userAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-normal.png"));
+            userAircraftPixmap.load(":/img/icons/aircraft-normal.png");
             userAircraftPixmap.setDevicePixelRatio(1.0);
-            referenceAircraftPixmap.load(QStringLiteral(":/img/icons/aircraft-reference-normal.png"));
+            referenceAircraftPixmap.load(":/img/icons/aircraft-reference-normal.png");
             referenceAircraftPixmap.setDevicePixelRatio(1.0);
         }
     }
@@ -227,13 +227,13 @@ void FormationWidget::initUi() noexcept
     d->positionButtonGroup->addButton(ui->nwPositionRadioButton, Enum::underly(NorthWest));
     d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, Enum::underly(NorthNorthWest));
 
-    const QString css = QStringLiteral(
+    const QString css = 
 "QRadioButton::indicator:unchecked {"
 "    image: url(:/img/icons/aircraft-normal-off.png);"
 "}"
 "QRadioButton::indicator:checked {"
 "    image: url(:/img/icons/aircraft-record-normal.png);"
-"}");
+"}";
     ui->nPositionRadioButton->setStyleSheet(css);
     ui->nnePositionRadioButton->setStyleSheet(css);
     ui->nePositionRadioButton->setStyleSheet(css);

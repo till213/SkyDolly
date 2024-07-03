@@ -26,7 +26,6 @@
 #define NAME_H
 
 #include <QString>
-#include <QStringLiteral>
 #include <QRegularExpression>
 
 /*!
@@ -45,12 +44,12 @@ namespace Name
      */
     QString fromCamelCase(const QString &camelCase)
     {
-        static QRegularExpression regExp1 {QStringLiteral("(.)([A-Z][a-z]+)")};
-        static QRegularExpression regExp2 {QStringLiteral("([a-z0-9])([A-Z])")};
+        static QRegularExpression regExp1 {"(.)([A-Z][a-z]+)"};
+        static QRegularExpression regExp2 {"([a-z0-9])([A-Z])"};
 
         QString snake_case = camelCase;
-        snake_case.replace(regExp1, QStringLiteral("\\1_\\2"));
-        snake_case.replace(regExp2, QStringLiteral("\\1_\\2"));
+        snake_case.replace(regExp1, "\\1_\\2");
+        snake_case.replace(regExp2, "\\1_\\2");
 
         return snake_case.toLower();
     }

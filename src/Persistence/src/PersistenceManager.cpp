@@ -27,7 +27,6 @@
 #include <mutex>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QFileInfo>
 #include <QDir>

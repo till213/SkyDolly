@@ -149,62 +149,62 @@ void EngineWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access acc
 
 void EngineWidget::initUi() noexcept
 {
-    ui->throttle1LineEdit->setToolTip(QString::fromLatin1(SimVar::ThrottleLeverPosition1));
-    ui->throttle2LineEdit->setToolTip(QString::fromLatin1(SimVar::ThrottleLeverPosition2));
-    ui->throttle3LineEdit->setToolTip(QString::fromLatin1(SimVar::ThrottleLeverPosition3));
-    ui->throttle4LineEdit->setToolTip(QString::fromLatin1(SimVar::ThrottleLeverPosition4));
-    ui->propeller1LineEdit->setToolTip(QString::fromLatin1(SimVar::PropellerLeverPosition1));
-    ui->propeller2LineEdit->setToolTip(QString::fromLatin1(SimVar::PropellerLeverPosition2));
-    ui->propeller3LineEdit->setToolTip(QString::fromLatin1(SimVar::PropellerLeverPosition3));
-    ui->propeller4LineEdit->setToolTip(QString::fromLatin1(SimVar::PropellerLeverPosition4));
-    ui->mixture1LineEdit->setToolTip(QString::fromLatin1(SimVar::MixtureLeverPosition1));
-    ui->mixture2LineEdit->setToolTip(QString::fromLatin1(SimVar::MixtureLeverPosition2));
-    ui->mixture3LineEdit->setToolTip(QString::fromLatin1(SimVar::MixtureLeverPosition3));
-    ui->mixture4LineEdit->setToolTip(QString::fromLatin1(SimVar::MixtureLeverPosition4));
-    ui->cowlFlaps1LineEdit->setToolTip(QString::fromLatin1(SimVar::RecipEngineCowlFlapPosition1));
-    ui->cowlFlaps2LineEdit->setToolTip(QString::fromLatin1(SimVar::RecipEngineCowlFlapPosition2));
-    ui->cowlFlaps3LineEdit->setToolTip(QString::fromLatin1(SimVar::RecipEngineCowlFlapPosition3));
-    ui->cowlFlaps4LineEdit->setToolTip(QString::fromLatin1(SimVar::RecipEngineCowlFlapPosition4));
+    ui->throttle1LineEdit->setToolTip(SimVar::ThrottleLeverPosition1);
+    ui->throttle2LineEdit->setToolTip(SimVar::ThrottleLeverPosition2);
+    ui->throttle3LineEdit->setToolTip(SimVar::ThrottleLeverPosition3);
+    ui->throttle4LineEdit->setToolTip(SimVar::ThrottleLeverPosition4);
+    ui->propeller1LineEdit->setToolTip(SimVar::PropellerLeverPosition1);
+    ui->propeller2LineEdit->setToolTip(SimVar::PropellerLeverPosition2);
+    ui->propeller3LineEdit->setToolTip(SimVar::PropellerLeverPosition3);
+    ui->propeller4LineEdit->setToolTip(SimVar::PropellerLeverPosition4);
+    ui->mixture1LineEdit->setToolTip(SimVar::MixtureLeverPosition1);
+    ui->mixture2LineEdit->setToolTip(SimVar::MixtureLeverPosition2);
+    ui->mixture3LineEdit->setToolTip(SimVar::MixtureLeverPosition3);
+    ui->mixture4LineEdit->setToolTip(SimVar::MixtureLeverPosition4);
+    ui->cowlFlaps1LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition1);
+    ui->cowlFlaps2LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition2);
+    ui->cowlFlaps3LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition3);
+    ui->cowlFlaps4LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition4);
 
     // Make the master battery, starter and combustion checkboxes checkable, but not for the user
     ui->masterBattery1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->masterBattery1CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->masterBattery1CheckBox->setToolTip(QString::fromLatin1(SimVar::ElectricalMasterBattery1));
+    ui->masterBattery1CheckBox->setToolTip(SimVar::ElectricalMasterBattery1);
     ui->masterBattery2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->masterBattery2CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->masterBattery2CheckBox->setToolTip(QString::fromLatin1(SimVar::ElectricalMasterBattery2));
+    ui->masterBattery2CheckBox->setToolTip(SimVar::ElectricalMasterBattery2);
     ui->masterBattery3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->masterBattery3CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->masterBattery3CheckBox->setToolTip(QString::fromLatin1(SimVar::ElectricalMasterBattery3));
+    ui->masterBattery3CheckBox->setToolTip(SimVar::ElectricalMasterBattery3);
     ui->masterBattery4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->masterBattery4CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->masterBattery4CheckBox->setToolTip(QString::fromLatin1(SimVar::ElectricalMasterBattery4));
+    ui->masterBattery4CheckBox->setToolTip(SimVar::ElectricalMasterBattery4);
 
     ui->generalEngineStarter1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineStarter1CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineStarter1CheckBox->setToolTip(QString::fromLatin1(SimVar::GeneralEngineStarter1));
+    ui->generalEngineStarter1CheckBox->setToolTip(SimVar::GeneralEngineStarter1);
     ui->generalEngineStarter2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineStarter2CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineStarter2CheckBox->setToolTip(QString::fromLatin1(SimVar::GeneralEngineStarter2));
+    ui->generalEngineStarter2CheckBox->setToolTip(SimVar::GeneralEngineStarter2);
     ui->generalEngineStarter3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineStarter3CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineStarter3CheckBox->setToolTip(QString::fromLatin1(SimVar::GeneralEngineStarter3));
+    ui->generalEngineStarter3CheckBox->setToolTip(SimVar::GeneralEngineStarter3);
     ui->generalEngineStarter4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineStarter4CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineStarter4CheckBox->setToolTip(QString::fromLatin1(SimVar::GeneralEngineStarter4));
+    ui->generalEngineStarter4CheckBox->setToolTip(SimVar::GeneralEngineStarter4);
 
     ui->generalEngineCombustion1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineCombustion1CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineCombustion1CheckBox->setToolTip(QString::fromLatin1(SimVar::GeneralEngineCombustion1));
+    ui->generalEngineCombustion1CheckBox->setToolTip(SimVar::GeneralEngineCombustion1);
     ui->generalEngineCombustion2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineCombustion2CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineCombustion2CheckBox->setToolTip(QString::fromLatin1(SimVar::GeneralEngineCombustion2));
+    ui->generalEngineCombustion2CheckBox->setToolTip(SimVar::GeneralEngineCombustion2);
     ui->generalEngineCombustion3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineCombustion3CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineCombustion3CheckBox->setToolTip(QString::fromLatin1(SimVar::GeneralEngineCombustion3));
+    ui->generalEngineCombustion3CheckBox->setToolTip(SimVar::GeneralEngineCombustion3);
     ui->generalEngineCombustion4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineCombustion4CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineCombustion4CheckBox->setToolTip(QString::fromLatin1(SimVar::GeneralEngineCombustion4));
+    ui->generalEngineCombustion4CheckBox->setToolTip(SimVar::GeneralEngineCombustion4);
 }
 
 EngineData EngineWidget::getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept

@@ -26,6 +26,7 @@
 #include <utility>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QStringList>
 #include <QStringBuilder>
 #include <QRegularExpression>
@@ -77,21 +78,21 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) const n
 
     // Match the tag's content, e.g. id = 42, descn = "The description", step = 1
     // https://regex101.com/
-    static const QRegularExpression tagRegExp(QStringLiteral(R"(([\w]+)\s*=\s*["]*([\w\s\-]+)["]*)"));
+    static const QRegularExpression tagRegExp(R"(([\w]+)\s*=\s*["]*([\w\s\-]+)["]*)");
 
     QRegularExpressionMatchIterator it = tagRegExp.globalMatch(tag);
     bool ok {true};
     while (ok && it.hasNext()) {
         QRegularExpressionMatch match = it.next();
 
-        if (match.captured(1) == QStringLiteral("id")) {
+        if (match.captured(1) == "id") {
             d->migrationId = match.captured(2);
-        } else if (match.captured(1) == QStringLiteral("descn")) {
+        } else if (match.captured(1) == "descn") {
             d->description = match.captured(2);
-        } else if (match.captured(1) == QStringLiteral("step_cnt")) {
+        } else if (match.captured(1) == "step_cnt") {
             d->stepCount = match.captured(2).toInt(&ok);
             d->step = 1;
-        } else if (match.captured(1) == QStringLiteral("step")) {
+        } else if (match.captured(1) == "step") {
             d->step = match.captured(2).toInt(&ok);
         }
         if (!ok) {
@@ -105,9 +106,9 @@ bool SqlMigrationStep::checkApplied() const noexcept
 {
     const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
-    query.prepare(QStringLiteral("select m.success, m.step, m.msg from migr m where m.id = :id and m.step = :step;"));
-    query.bindValue(QStringLiteral(":id"), d->migrationId);
-    query.bindValue(QStringLiteral(":step"), d->step);
+    query.prepare("select m.success, m.step, m.msg from migr m where m.id = :id and m.step = :step;");
+    query.bindValue(":id", d->migrationId);
+    query.bindValue(":step", d->step);
     query.exec();
 
     bool applied {false};
@@ -126,7 +127,7 @@ bool SqlMigrationStep::execute(QStringView sql) const noexcept
 {
     QString errorMessage;
     // Match SQL statements terminated with a semicolon
-    static const QRegularExpression sqlRegExp(QStringLiteral(R"(([\w|\W]+?);)"));
+    static const QRegularExpression sqlRegExp(R"(([\w|\W]+?);)");
 
     // Note that DDL statements do not require transactions; but for
     // now we execute all queries within a transaction
@@ -162,14 +163,14 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) con
     if (ok) {
         QSqlQuery query {db};
         if (!hasPreviousAttempt()) {
-            query.prepare(QStringLiteral("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);"));
+            query.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
         } else {
-            query.prepare(QStringLiteral("update migr set success = :success, msg = :msg where id = :id and step = :step;"));
+            query.prepare("update migr set success = :success, msg = :msg where id = :id and step = :step;");
         }
-        query.bindValue(QStringLiteral(":id"), d->migrationId);
-        query.bindValue(QStringLiteral(":step"), d->step);
-        query.bindValue(QStringLiteral(":success"), 1);
-        query.bindValue(QStringLiteral(":msg"), QString());
+        query.bindValue(":id", d->migrationId);
+        query.bindValue(":step", d->step);
+        query.bindValue(":success", 1);
+        query.bindValue(":msg", "");
         ok = query.exec();
         if (ok) {
             ok = db.commit();
@@ -187,16 +188,16 @@ void SqlMigrationStep::registerMigration(bool success, QString errorMessage) con
         if (migrQueryOk) {
             QSqlQuery query {db};
             if (!hasPreviousAttempt()) {
-                query.prepare(QStringLiteral("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);"));
+                query.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
             } else {
-                query.prepare(QStringLiteral("update migr set success = :success, msg = :msg where id = :id and step = :step;"));
+                query.prepare("update migr set success = :success, msg = :msg where id = :id and step = :step;");
             }
             d->errorMessage = std::move(errorMessage);
 
-            query.bindValue(QStringLiteral(":id"), d->migrationId);
-            query.bindValue(QStringLiteral(":step"), d->step);
-            query.bindValue(QStringLiteral(":success"), 0);
-            query.bindValue(QStringLiteral(":msg"), d->errorMessage);
+            query.bindValue(":id", d->migrationId);
+            query.bindValue(":step", d->step);
+            query.bindValue(":success", 0);
+            query.bindValue(":msg", d->errorMessage);
             migrQueryOk = query.exec();
             if (migrQueryOk) {
                 db.commit();
