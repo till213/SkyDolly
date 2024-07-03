@@ -146,7 +146,8 @@ void SettingsDialog::initUi() noexcept
     initFlightSimulatorOptionWidget();
 
     // User interface
-    ui->styleComboBox->addItem(Settings::DefaultStyleKey, Settings::DefaultStyleKey);
+    const auto defaultStyleName = d->knownStyleNames[Settings::DefaultStyleKey];
+    ui->styleComboBox->addItem(defaultStyleName, Settings::DefaultStyleKey);
     auto styleKeys = QStyleFactory::keys();
     styleKeys.sort();
     for (const auto &key : styleKeys) {
