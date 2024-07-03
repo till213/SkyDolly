@@ -28,7 +28,6 @@
 #include <QIODevice>
 #include <QChar>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 
 #include <Kernel/Enum.h>

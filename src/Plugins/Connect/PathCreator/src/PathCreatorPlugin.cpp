@@ -31,7 +31,6 @@
 #include <QtGlobal>
 #include <QRandomGenerator>
 #include <QStringList>
-#include <QStringLiteral>
 #ifdef DEBUG
 #include <QDebug>
 #include <Kernel/Enum.h>

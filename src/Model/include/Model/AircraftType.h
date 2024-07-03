@@ -26,7 +26,6 @@
 #define AIRCRAFTTYPE_H
 
 #include <QString>
-#include <QStringLiteral>
 #include <QDateTime>
 
 #include "SimType.h"
@@ -38,7 +37,7 @@ struct MODEL_API AircraftType final
      * A safeguard value that is used in case the flight simulator is not able to report the aircraft
      * type on time (which is an asynchronous request), that is before the actual recording stops.
      */
-    static inline const QString Unknown {"-"};
+    static constexpr const char *Unknown {"-"};
 
     /*!
      * The aircraft type, e.g. "Pitts Special". This is really the SimConnect "container title"

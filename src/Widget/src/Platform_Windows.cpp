@@ -22,11 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QApplication>
-#include <QPalette>
-#include <QColor>
 #include <QString>
-#include <QStringLiteral>
 
 #include "Platform.h"
 
@@ -36,5 +32,5 @@ namespace  {
 
 QString Platform::getFlatButtonCss() noexcept
 {
-    return QString::fromLatin1(::FlatButtonCss);
+    return ::FlatButtonCss;
 }

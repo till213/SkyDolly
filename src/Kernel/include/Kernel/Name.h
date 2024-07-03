@@ -26,7 +26,6 @@
 #define NAME_H
 
 #include <QString>
-#include <QStringLiteral>
 #include <QRegularExpression>
 
 /*!

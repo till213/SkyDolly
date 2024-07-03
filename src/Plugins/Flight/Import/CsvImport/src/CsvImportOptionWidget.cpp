@@ -24,7 +24,6 @@
  */
 #include <QComboBox>
 #include <QString>
-#include <QStringLiteral>
 
 #include <Kernel/Enum.h>
 #include <Kernel/Version.h>

@@ -25,8 +25,6 @@
 #include <QWidget>
 #include <QFile>
 #include <QString>
-#include <QStringLiteral>
-// Implements the % operator for string concatenation
 #include <QStringBuilder>
 
 #include <Model/Location.h>

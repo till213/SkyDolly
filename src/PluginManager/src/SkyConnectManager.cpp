@@ -31,7 +31,6 @@
 #include <QJsonObject>
 #include <QDir>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringList>
 #include <QUuid>
 #ifdef DEBUG

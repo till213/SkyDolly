@@ -28,7 +28,6 @@
 #include <QIODevice>
 #include <QStringBuilder>
 #include <QString>
-#include <QStringLiteral>
 #include <QDateTime>
 
 #include <Kernel/Version.h>

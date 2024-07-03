@@ -26,7 +26,6 @@
 #define SETTINGSCONVERTERV0DOT18_H
 
 #include <QSettings>
-#include <QStringLiteral>
 
 #include <Const.h>
 #include <Version.h>

@@ -34,12 +34,12 @@
 #include <QSettings>
 #include <QUuid>
 #include <QString>
+#include <QStringLiteral>
 #include <QVariant>
 #include <QFileInfo>
 #include <QByteArray>
 
 #include "Replay.h"
-#include "SampleRate.h"
 #include "KernelLib.h"
 
 class Version;
@@ -549,8 +549,11 @@ public:
     void storeModuleSettings(QUuid moduleUuid, const KeyValues &keyValues) const noexcept;
     ValuesByKey restoreModuleSettings(QUuid moduleUuid, const KeysWithDefaults &keys) noexcept;
 
+    // Implementation note: we need to use QStringLiteral here for static inline const QStrings
+    // https://forum.qt.io/topic/102312/very-strange-heap-corruption-exit-code-1073740940-0xc0000374-with-static-inline-const-qstring-release-only
+    // We cannot use "static constexpr const char *" either, as this does not get exported from the DLL
     /*! The key for the default user interface style (QApplication picks the most approprate style) */
-    static inline const QString DefaultStyleKey {"Default"};
+    static inline const QString DefaultStyleKey {QStringLiteral("Default")};
 
 public slots:
     /*!

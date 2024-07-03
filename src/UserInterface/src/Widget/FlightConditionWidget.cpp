@@ -25,7 +25,6 @@
 #include <memory>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QWidget>
 

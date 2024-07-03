@@ -28,7 +28,6 @@
 #include <QIODevice>
 #include <QTextStream>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringConverter>
 
 #include <Kernel/Const.h>

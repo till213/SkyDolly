@@ -36,7 +36,6 @@
 #include <QTableWidgetItem>
 #include <QTreeWidgetItem>
 #include <QStringList>
-#include <QStringLiteral>
 #include <QItemSelectionModel>
 #include <QModelIndex>
 #include <QDateTime>

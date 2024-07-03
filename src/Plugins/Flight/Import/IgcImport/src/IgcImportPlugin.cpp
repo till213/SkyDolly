@@ -27,10 +27,8 @@
 #include <vector>
 #include <unordered_set>
 #include <cstdint>
-#include <exception>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QIODevice>
 #include <QByteArray>

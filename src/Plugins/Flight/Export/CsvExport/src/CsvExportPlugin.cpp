@@ -24,7 +24,6 @@
  */
 #include <QWidget>
 #include <QFile>
-// Implements the % operator for string concatenation
 #include <QStringBuilder>
 #include <QString>
 

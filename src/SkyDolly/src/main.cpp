@@ -30,7 +30,6 @@
 #include <QApplication>
 #include <QStringList>
 #include <QString>
-#include <QStringLiteral>
 #include <QStyleFactory>
 #include <QStringBuilder>
 #include <QMessageBox>

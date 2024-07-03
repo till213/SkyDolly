@@ -22,8 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <cstdio>
-
 #include <windows.h>
 #include <tchar.h>
 #include <psapi.h>
@@ -31,7 +29,6 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringView>
 #include <QStringList>
 
@@ -78,15 +75,15 @@ bool FlightSimulator::isRunning(Id id) noexcept
     QString processName;
     switch (id) {
     case Id::MSFS:
-        processName = QStringLiteral("FlightSimulator.exe");
+        processName = "FlightSimulator.exe";
         break;
     case Id::Prepar3Dv5:
-        processName = QStringLiteral("Prepar3D.exe");
+        processName = "Prepar3D.exe";
         break;
     case Id::All:
         [[fallthrough]];
     case Id::None:
-        processName = QStringLiteral("");
+        processName = "";
         break;
     }
 

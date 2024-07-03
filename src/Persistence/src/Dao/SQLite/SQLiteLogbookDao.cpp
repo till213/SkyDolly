@@ -30,7 +30,6 @@
 
 #include <QString>
 #include <QStringBuilder>
-#include <QStringLiteral>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlDatabase>

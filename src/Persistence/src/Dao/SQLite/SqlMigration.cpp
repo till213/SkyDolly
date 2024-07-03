@@ -29,6 +29,7 @@
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QString>
+#include <QStringLiteral>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QDir>

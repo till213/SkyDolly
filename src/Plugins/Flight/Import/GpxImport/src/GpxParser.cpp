@@ -27,7 +27,6 @@
 
 #include <QObject>
 #include <QString>
-#include <QStringLiteral>
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>

@@ -25,7 +25,6 @@
 #include <memory.h>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QUuid>
 
 #include <SkyConnectManager.h>

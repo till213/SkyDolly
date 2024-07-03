@@ -27,6 +27,7 @@
 
 #include <QDialog>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QFileDialog>
 #include <QWidget>

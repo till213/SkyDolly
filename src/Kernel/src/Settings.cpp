@@ -29,7 +29,6 @@
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QUuid>
 #include <QByteArray>

@@ -24,7 +24,6 @@
  */
 #include <QWidget>
 #include <QComboBox>
-#include <QStringLiteral>
 
 #include <Kernel/Enum.h>
 #include "KmlImportOptionWidget.h"

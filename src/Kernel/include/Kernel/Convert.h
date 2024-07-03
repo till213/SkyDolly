@@ -136,7 +136,7 @@ public:
         return heightAboveEllipsoid;
     }
 
-    static inline constexpr double degreesToRadians(double degree) noexcept {
+    static constexpr double degreesToRadians(double degree) noexcept {
         return degree * M_PI / 180.0;
     };
 
@@ -147,7 +147,7 @@ public:
      *        the radians to convert
      * \return the converted degrees
      */
-    static inline constexpr double radiansToDegrees(double radians) noexcept {
+    static constexpr double radiansToDegrees(double radians) noexcept {
         return radians * 180.0 / M_PI;
     };
 
@@ -157,7 +157,7 @@ public:
      * \return the \c feet converted to meters
      * \sa https://www.convertunits.com/from/feet/to/meter
      */
-    static inline constexpr double feetToMeters(double feet) noexcept
+    static constexpr double feetToMeters(double feet) noexcept
     {
         return feet * 0.3048;
     }
@@ -168,7 +168,7 @@ public:
      * \return the \c meters converted to feet
      * \sa https://www.convertunits.com/from/meter/to/feet
      */
-    static inline constexpr double metersToFeet(double meters) noexcept
+    static constexpr double metersToFeet(double meters) noexcept
     {
         return meters * 3.28083989501312;
     }
@@ -181,7 +181,7 @@ public:
      * \return the converted knots
      * \sa https://www.convertunits.com/from/feet/second/to/knots
      */
-    static inline constexpr double feetPerSecondToKnots(double feetPerSecond) noexcept
+    static constexpr double feetPerSecondToKnots(double feetPerSecond) noexcept
     {
         return feetPerSecond * 0.5924838012959;
     }
@@ -194,7 +194,7 @@ public:
      * \return the converted feet per second
      * \sa https://www.convertunits.com/from/knots/to/feet/second/
      */
-    static inline constexpr double knotsToFeetPerSecond(double knots) noexcept
+    static constexpr double knotsToFeetPerSecond(double knots) noexcept
     {
         return knots * 1.6878098571012;
     }
@@ -207,7 +207,7 @@ public:
      * \return the converted meters per second
      * \sa https://www.convertunits.com/from/knots/to/metre/second/
      */
-    static inline constexpr double knotsToMetersPerSecond(double knots) noexcept
+    static constexpr double knotsToMetersPerSecond(double knots) noexcept
     {
         return knots * 0.51444444444444;
     }
@@ -220,7 +220,7 @@ public:
      * \return the converted knots
      * \sa https://www.convertunits.com/from/knots/to/metre/second/
      */
-    static inline constexpr double metersPerSecondToKnots(double metersPerSecond) noexcept
+    static constexpr double metersPerSecondToKnots(double metersPerSecond) noexcept
     {
         return metersPerSecond * 1.9438444924406;
     }
@@ -233,7 +233,7 @@ public:
      * \return the converted kilometers per hour
      * \sa https://www.convertunits.com/from/knots/to/kilometre/hour/
      */
-    static inline constexpr double feetPerSecondToKilometersPerHour(double feetPerSecond) noexcept
+    static constexpr double feetPerSecondToKilometersPerHour(double feetPerSecond) noexcept
     {
         return feetPerSecond * 1.09728;
     }
@@ -246,7 +246,7 @@ public:
      * \return the converted feet per second
      * \sa https://www.convertunits.com/from/meter/second/to/foot/second
      */
-    static inline constexpr double metersPerSecondToFeetPerSecond(double metersPerSecond) noexcept
+    static constexpr double metersPerSecondToFeetPerSecond(double metersPerSecond) noexcept
     {
         return metersPerSecond * 3.28083989501312;
     }
@@ -264,7 +264,7 @@ public:
      *        the altitude above sea level [feet]
      * \return the estimated indicated airspeed [knots or km/h]
      */
-    static inline constexpr double trueToIndicatedAirspeed(double trueAirspeed, double altitudeAboveSealevel) noexcept
+    static constexpr double trueToIndicatedAirspeed(double trueAirspeed, double altitudeAboveSealevel) noexcept
     {
         const double altitudeFactor = altitudeAboveSealevel / 1000.0;
         return trueAirspeed / (1 + altitudeFactor * 0.02);
