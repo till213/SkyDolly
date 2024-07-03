@@ -97,6 +97,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 - https://flightloganalyzer.com/ - FlightLog Analyer analyses the MSFS logbook and has a CSV export readable by Sky Dolly
 - https://github.com/BojoteX/FSAutoSave/ - FSAutoSave automatically (or upon request) stores flight plans
 - https://github.com/mracko/MSFS-Landing-Inspector - Analyses your landing performance
+- https://github.com/diagonalization-lab/msfs-panel-notepad - Minimal MSFS toolbar / panel example
 
 ## Other Useful Resources
 
