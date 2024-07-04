@@ -15,6 +15,8 @@ Sky Dolly connects to a running Flight Simulator 2020 instance and records vario
 
 The connection is made via SimConnect, a standard API introduced with Flight Simulator X to connect with the flight simulator.
 
+Aso refer to the [ABOUT.md](ABOUT.MD).
+
 ## Features
 - Record / Pause / Play
 - Formation flights (multiple aircraft, replay during recording, "fly with formation", time offset)
@@ -74,7 +76,7 @@ Why don't you try it with one of the guided ["Tell Tours"](https://github.com/ti
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.17.4**
+Latest (pre-)release: **Sky Dolly 0.17.5**
 
 Compute and compare your checksum against the [published SHA-256 checksums](SHASUM256.md), to verify the integrity of your downloaded copy.
 

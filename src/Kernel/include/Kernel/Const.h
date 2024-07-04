@@ -74,6 +74,10 @@ namespace Const
 
     // Known plugin UUIDs
 
+    // Connect
+    const inline QString MsfsSimConnectPluginUuid {"8ef8d50a-42a1-480a-bee6-b741000e86b4"};
+    const inline QString PathCreatorPluginUuid {"90064498-8afc-45c4-9c0f-30f2d113232d"};
+
     // Import
     constexpr inline const char *CsvImportPluginUuid {"077448de-4909-4c5e-8957-2347afee6708"};
     constexpr inline const char *GpxImportPluginUuid {"13f44df3-1df6-4458-ad29-71f7b185bf3e"};

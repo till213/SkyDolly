@@ -35,6 +35,15 @@
 
 ## Bug Fixes
 
+## 0.17.5
+This bug fix release provides an important correction for a regression that would prevent recording (and possibly replay as well), due to wrongly creating an IPv4 network connection instead of a local ("pipe") connection.
+
+### Bug Fixes
+- Ensure that the connection is *local* again ("pipe")
+  * Fix the persisted connection type value 
+  * Migrate existing application settings (fix the "off by one" value)
+  * This is a regression introduced with Sky Dolly v0.17.1
+
 ## 0.17.4
 This is a pure maintenance release without any Sky Dolly specific fixes: it provides the most recent Qt framework release with several Windows 11 user interface style related fixes.
 

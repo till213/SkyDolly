@@ -124,6 +124,7 @@ include(src/Persistence/cmake/Locations.cmake)
 add_custom_target(${APP_PROJECT_NAME})
 target_sources(${APP_PROJECT_NAME}
     PRIVATE
+        ABOUT.md
         BUILD.md
         CHANGELOG.md
         CODE_OF_CONDUCT.md
