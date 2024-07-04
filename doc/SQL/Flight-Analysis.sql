@@ -26,11 +26,13 @@ select f.id as flight_id,
        p.latitude,
        p.longitude,
        p.altitude,
-       p.pitch,
-       p.bank,
-       p.true_heading,
-       p.velocity_z * 0.5924838012959 as speed_in_knots
+       att.pitch,
+       att.bank,
+       att.true_heading,
+       att.velocity_z * 0.5924838012959 as speed_in_knots
 from   position p
+join attitude att
+on att.aircraft_id = a.id
 join   aircraft a
 on     p.aircraft_id = a.id
 join   flight f
@@ -38,9 +40,9 @@ on     a.flight_id = f.id
 and    a.seq_nr = 1
 -- Select the above data from the most recent flight in the logbook
 where  f.id = (select ff.id
-               from flight ff
-               order by creation_time desc
-               limit 1)
+        from flight ff
+        order by creation_time desc
+        limit 1)
 
 -- Select the top 10 aircraft types (number of flights)
 select a.type        as AircraftType,

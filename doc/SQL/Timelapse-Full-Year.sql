@@ -1,5 +1,5 @@
 insert into flight (title, user_aircraft_seq_nr)
-values ('LSZH Camera Pan', 1);
+values ('Full Year Timelapse', 1);
 
 select max(id) from flight;
 
@@ -19,11 +19,11 @@ values ((select max(id) from aircraft), 0, 47.450681, 8.549628, 1417.0 + 150);
 insert into attitude (aircraft_id, timestamp, pitch, bank, true_heading, on_ground)
 values ((select max(id) from aircraft), 0, 0, 0, 340, 0);
 
--- ...  to 47.454667, 8.571006, within 32 * 60 * 1000 [ms] = 32 minutes
+-- ...  to 47.454667, 8.571006, within 365 * 24 * 60 * 60 * 1000 [ms] = 1 year
 insert into position (aircraft_id, timestamp, latitude, longitude, altitude)
-values ((select max(id) from aircraft), 32 * 60 * 1000, 47.454667, 8.571006, 1417.0 + 150);
+values ((select max(id) from aircraft), 365 * 24 * 60 * 60 * 1000, 47.454667, 8.571006, 1417.0 + 150);
 -- Attitude: heading 15
 insert into attitude (aircraft_id, timestamp, pitch, bank, true_heading, on_ground)
-values ((select max(id) from aircraft), 32 * 60 * 1000, 0, 0, 15, 0);
+values ((select max(id) from aircraft), 365 * 24 * 60 * 60 * 1000, 0, 0, 15, 0);
 
 commit;
