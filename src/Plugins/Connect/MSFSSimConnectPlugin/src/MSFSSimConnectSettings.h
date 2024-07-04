@@ -53,7 +53,7 @@ public:
     enum struct ConnectionType
     {
         First = 0,
-        Pipe,
+        Pipe = First,
         IPv4,
         IPv6,
         Last = IPv6
