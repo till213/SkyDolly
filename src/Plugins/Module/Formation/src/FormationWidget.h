@@ -72,7 +72,7 @@ public:
 private:
     using enum Formation::Bearing;
 
-    std::unique_ptr<Ui::FormationWidget> ui;
+    const std::unique_ptr<Ui::FormationWidget> ui;
     const std::unique_ptr<FormationWidgetPrivate> d;
 
     void initUi() noexcept;

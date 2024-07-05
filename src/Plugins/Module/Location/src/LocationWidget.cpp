@@ -33,7 +33,6 @@
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 #include <QCheckBox>
-#include <QHBoxLayout>
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <QKeyEvent>

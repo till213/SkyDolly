@@ -48,7 +48,7 @@ public:
     ~IgcExportOptionWidget() override;
 
 private:
-    std::unique_ptr<Ui::IgcExportOptionWidget> ui;
+    const std::unique_ptr<Ui::IgcExportOptionWidget> ui;
     const std::unique_ptr<IgcExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

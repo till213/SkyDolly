@@ -48,7 +48,7 @@ public:
     ~GpxExportOptionWidget() override;
 
 private:
-    std::unique_ptr<Ui::GpxExportOptionWidget> ui;
+    const std::unique_ptr<Ui::GpxExportOptionWidget> ui;
     const std::unique_ptr<GpxExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

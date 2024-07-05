@@ -43,8 +43,8 @@ class WIDGET_API EnumerationWidgetItem : public QTableWidgetItem
 public:
     explicit EnumerationWidgetItem(const Enumeration &enumeration);
 
-    QVariant data(int role) const override;
-    void setData(int role, const QVariant &value) override;
+    QVariant data(int role) const noexcept override;
+    void setData(int role, const QVariant &value) noexcept override;
 
 private:
     std::int64_t m_id;

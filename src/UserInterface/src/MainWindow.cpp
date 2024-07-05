@@ -28,7 +28,6 @@
 #include <vector>
 #include <cstdint>
 #include <cmath>
-#include <chrono>
 
 #include <QApplication>
 #include <QByteArray>

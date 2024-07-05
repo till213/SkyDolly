@@ -22,49 +22,34 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTVARIABLESWIDGET_H
-#define AIRCRAFTVARIABLESWIDGET_H
-
-#include <cstdint>
-#include <utility>
+#include <memory>
 
 #include <QWidget>
 
-class QShowEvent;
-class QHideEvent;
+#include "DynamicDateTimeEdit.h"
+#include "ui_DynamicDateTimeEdit.h"
 
-#include <Model/TimeVariableData.h>
-#include "AbstractSimulationVariableWidget.h"
-
-class SkyConnectIntf;
-struct PositionData;
-struct AttitudeData;
-struct AircraftWidgetPrivate;
-
-namespace Ui {
-    class AircraftWidget;
-}
-
-class AircraftWidget : public AbstractSimulationVariableWidget
+struct DynamicDateTimeEditPrivate
 {
-    Q_OBJECT
-public:
-    explicit AircraftWidget(QWidget *parent) noexcept;
-    AircraftWidget(const AircraftWidget &rhs) = delete;
-    AircraftWidget(AircraftWidget &&rhs) = delete;
-    AircraftWidget &operator=(const AircraftWidget &rhs) = delete;
-    AircraftWidget &operator=(AircraftWidget &&rhs) = delete;
-    ~AircraftWidget() override;
 
-protected slots:
-    void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
-
-private:
-    const std::unique_ptr<Ui::AircraftWidget> ui;
-    const std::unique_ptr<AircraftWidgetPrivate> d;
-
-    void initUi() noexcept;
-    std::pair<PositionData, AttitudeData> getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
-#endif // AIRCRAFTVARIABLESWIDGET_H
+// PUBLIC
+
+DynamicDateTimeEdit::DynamicDateTimeEdit(QWidget *parent) noexcept
+    : QWidget(parent),
+      ui {std::make_unique<Ui::DynamicDateTimeEdit>()},
+      d {std::make_unique<DynamicDateTimeEditPrivate>()}
+
+{
+    ui->setupUi(this);
+}
+
+DynamicDateTimeEdit::~DynamicDateTimeEdit() = default;
+
+// PRIVATE SLOTS
+
+void DynamicDateTimeEdit::updateUi() noexcept
+{
+
+}

@@ -54,7 +54,7 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    std::unique_ptr<Ui::FlightConditionWidget> ui;
+    const std::unique_ptr<Ui::FlightConditionWidget> ui;
     const std::unique_ptr<FlightConditionWidgetPrivate> d;
 
     void initUi() noexcept;

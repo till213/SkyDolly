@@ -7,7 +7,7 @@
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
- * software and associated documentation ios (the "Software"), to deal in the Software
+ * software and associated documentation files (the "Software"), to deal in the Software
  * without restriction, including without limitation the rights to use, copy, modify, merge,
  * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
  * to whom the Software is furnished to do so, subject to the following conditions:
@@ -22,41 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVLOCATIONEXPORTOPTIONWIDGET_H
-#define CSVLOCATIONEXPORTOPTIONWIDGET_H
+#ifndef DYNAMICDATETIMEEDIT_H
+#define DYNAMICDATETIMEEDIT_H
 
 #include <memory>
 
 #include <QWidget>
 
+#include "WidgetLib.h"
+
+struct DynamicDateTimeEditPrivate;
+
 namespace Ui {
-    class CsvLocationExportOptionWidget;
+    class DynamicDateTimeEdit;
 }
 
-class CsvLocationExportSettings;
-struct CsvLocationExportOptionWidgetPrivate;
-
-class CsvLocationExportOptionWidget : public QWidget
+class WIDGET_API DynamicDateTimeEdit : public QWidget
 {
     Q_OBJECT
 public:
-    explicit CsvLocationExportOptionWidget(CsvLocationExportSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
-    CsvLocationExportOptionWidget(const CsvLocationExportOptionWidget &rhs) = delete;
-    CsvLocationExportOptionWidget(CsvLocationExportOptionWidget &&rhs) = delete;
-    CsvLocationExportOptionWidget &operator=(const CsvLocationExportOptionWidget &rhs) = delete;
-    CsvLocationExportOptionWidget &operator=(CsvLocationExportOptionWidget &&rhs) = delete;
-    ~CsvLocationExportOptionWidget() override;
+    explicit DynamicDateTimeEdit(QWidget *parent = nullptr) noexcept;
+    DynamicDateTimeEdit(const DynamicDateTimeEdit &rhs) = delete;
+    DynamicDateTimeEdit(DynamicDateTimeEdit &&rhs) = delete;
+    DynamicDateTimeEdit &operator=(const DynamicDateTimeEdit &rhs) = delete;
+    DynamicDateTimeEdit &operator=(DynamicDateTimeEdit &&rhs) = delete;
+    ~DynamicDateTimeEdit() override;
 
 private:
-    const std::unique_ptr<Ui::CsvLocationExportOptionWidget> ui;
-    const std::unique_ptr<CsvLocationExportOptionWidgetPrivate> d;
-
-    void frenchConnection() noexcept;
-    void initUi() noexcept;
+    const std::unique_ptr<Ui::DynamicDateTimeEdit> ui;
+    const std::unique_ptr<DynamicDateTimeEditPrivate> d;
 
 private slots:
     void updateUi() noexcept;
-    void onFormatChanged() noexcept;
 };
 
-#endif // CSVLOCATIONEXPORTOPTIONWIDGET_H
+#endif // DYNAMICDATETIMEEDIT_H

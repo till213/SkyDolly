@@ -76,7 +76,7 @@ protected:
     void dropEvent(QDropEvent *event) noexcept override;
 
 private:
-    std::unique_ptr<Ui::MainWindow> ui;
+    const std::unique_ptr<Ui::MainWindow> ui;
     const std::unique_ptr<MainWindowPrivate> d;
 
     void frenchConnection() noexcept;

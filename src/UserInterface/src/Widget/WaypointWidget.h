@@ -58,7 +58,7 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    std::unique_ptr<Ui::WaypointWidget> ui;
+    const std::unique_ptr<Ui::WaypointWidget> ui;
     const std::unique_ptr<WaypointWidgetPrivate> d;
 
     void initUi() noexcept;
