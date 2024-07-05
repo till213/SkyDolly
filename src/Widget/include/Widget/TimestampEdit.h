@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef DYNAMICDATETIMEEDIT_H
-#define DYNAMICDATETIMEEDIT_H
+#ifndef TIMESTAMPEDIT_H
+#define TIMESTAMPEDIT_H
 
 #include <memory>
 #include <cstdint>
@@ -36,26 +36,26 @@ class QDateTime;
 
 #include "WidgetLib.h"
 
-struct DynamicDateTimeEditPrivate;
+struct TimestampEditPrivate;
 
 namespace Ui {
-    class DynamicDateTimeEdit;
+    class TimestampEdit;
 }
 
 /*!
  * Dynamically shows a simple QTimeEdit, an additional QDateEdit or a combined QDateTimeEdit,
  * depending on the maximum time and minimal user interface mode.
  */
-class WIDGET_API DynamicDateTimeEdit : public QWidget
+class WIDGET_API TimestampEdit : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DynamicDateTimeEdit(QWidget *parent = nullptr) noexcept;
-    DynamicDateTimeEdit(const DynamicDateTimeEdit &rhs) = delete;
-    DynamicDateTimeEdit(DynamicDateTimeEdit &&rhs) = delete;
-    DynamicDateTimeEdit &operator=(const DynamicDateTimeEdit &rhs) = delete;
-    DynamicDateTimeEdit &operator=(DynamicDateTimeEdit &&rhs) = delete;
-    ~DynamicDateTimeEdit() override;
+    explicit TimestampEdit(QWidget *parent = nullptr) noexcept;
+    TimestampEdit(const TimestampEdit &rhs) = delete;
+    TimestampEdit(TimestampEdit &&rhs) = delete;
+    TimestampEdit &operator=(const TimestampEdit &rhs) = delete;
+    TimestampEdit &operator=(TimestampEdit &&rhs) = delete;
+    ~TimestampEdit() override;
 
     /*!
      * Returns the current timestamp.
@@ -113,8 +113,8 @@ signals:
     void timestampChanged(std::int64_t time);
 
 private:
-    const std::unique_ptr<Ui::DynamicDateTimeEdit> ui;
-    const std::unique_ptr<DynamicDateTimeEditPrivate> d;
+    const std::unique_ptr<Ui::TimestampEdit> ui;
+    const std::unique_ptr<TimestampEditPrivate> d;
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
@@ -125,4 +125,4 @@ private slots:
     void onTimeEditChanged(QTime time) noexcept;
 };
 
-#endif // DYNAMICDATETIMEEDIT_H
+#endif // TIMESTAMPEDIT_H

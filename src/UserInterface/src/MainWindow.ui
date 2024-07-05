@@ -107,7 +107,7 @@
           </widget>
          </item>
          <item>
-          <widget class="DynamicDateTimeEdit" name="dynamicDateTimeEdit" native="true">
+          <widget class="TimestampEdit" name="timestampEdit" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -757,9 +757,9 @@
    <header location="global">Widget/ActionButton.h</header>
   </customwidget>
   <customwidget>
-   <class>DynamicDateTimeEdit</class>
+   <class>TimestampEdit</class>
    <extends>QWidget</extends>
-   <header>Widget/DynamicDateTimeEdit.h</header>
+   <header>Widget/TimestampEdit.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

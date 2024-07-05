@@ -16,7 +16,7 @@ target_sources(${LIBRARY_NAME}
         include/Widget/ActionCheckBox.h src/ActionCheckBox.cpp
         include/Widget/FocusPlainTextEdit.h src/FocusPlainTextEdit.cpp
         include/Widget/AircraftSelectionComboBox.h src/AircraftSelectionComboBox.cpp
-        include/Widget/DynamicDateTimeEdit.h src/DynamicDateTimeEdit.cpp src/DynamicDateTimeEdit.ui
+        include/Widget/TimestampEdit.h src/TimestampEdit.cpp src/TimestampEdit.ui
         include/Widget/Platform.h src/Platform.cpp
         include/Widget/TableDateItem.h src/TableDateItem.cpp
         include/Widget/TableTimeItem.h src/TableTimeItem.cpp

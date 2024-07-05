@@ -152,7 +152,7 @@ private slots:
     void onPositionSliderPressed() noexcept;
     void onPositionSliderValueChanged(int value) noexcept;
     void onPositionSliderReleased() noexcept;
-    void onDynamicDateTimeEditChanged(std::int64_t timestamp) noexcept;
+    void onTimestampEditChanged(std::int64_t timestamp) noexcept;
 
     void updateWindowSize() noexcept;
     void onTimestampChanged(std::int64_t timestamp) noexcept;

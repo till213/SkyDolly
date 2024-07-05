@@ -30,8 +30,8 @@
 #include <QDateEdit>
 #include <QDateTimeEdit>
 
-#include "DynamicDateTimeEdit.h"
-#include "ui_DynamicDateTimeEdit.h"
+#include "TimestampEdit.h"
+#include "ui_TimestampEdit.h"
 
 namespace
 {
@@ -42,7 +42,7 @@ namespace
     constexpr std::int64_t MilliSecondsPerDay {24 * ::MilliSecondsPerHour};
 }
 
-struct DynamicDateTimeEditPrivate
+struct TimestampEditPrivate
 {
     // The current timestamp [msec]
     std::int64_t timestamp {0};
@@ -53,10 +53,10 @@ struct DynamicDateTimeEditPrivate
 
 // PUBLIC
 
-DynamicDateTimeEdit::DynamicDateTimeEdit(QWidget *parent) noexcept
+TimestampEdit::TimestampEdit(QWidget *parent) noexcept
     : QWidget(parent),
-      ui {std::make_unique<Ui::DynamicDateTimeEdit>()},
-      d {std::make_unique<DynamicDateTimeEditPrivate>()}
+      ui {std::make_unique<Ui::TimestampEdit>()},
+      d {std::make_unique<TimestampEditPrivate>()}
 
 {
     ui->setupUi(this);
@@ -65,14 +65,14 @@ DynamicDateTimeEdit::DynamicDateTimeEdit(QWidget *parent) noexcept
     frenchConnection();
 }
 
-DynamicDateTimeEdit::~DynamicDateTimeEdit() = default;
+TimestampEdit::~TimestampEdit() = default;
 
-std::int64_t DynamicDateTimeEdit::getTimestamp() const noexcept
+std::int64_t TimestampEdit::getTimestamp() const noexcept
 {
     return d->timestamp;
 }
 
-void DynamicDateTimeEdit::setTimestamp(std::int64_t time) noexcept
+void TimestampEdit::setTimestamp(std::int64_t time) noexcept
 {
     if (d->timestamp != time) {
         d->timestamp = time;
@@ -80,12 +80,12 @@ void DynamicDateTimeEdit::setTimestamp(std::int64_t time) noexcept
     }
 }
 
-std::int64_t DynamicDateTimeEdit::getMaximumTimestamp() const noexcept
+std::int64_t TimestampEdit::getMaximumTimestamp() const noexcept
 {
     return d->maximumTimestamp;
 }
 
-void DynamicDateTimeEdit::setMaximumTimestamp(std::int64_t maximumTime) noexcept
+void TimestampEdit::setMaximumTimestamp(std::int64_t maximumTime) noexcept
 {
     if (d->maximumTimestamp != maximumTime) {
         d->maximumTimestamp = maximumTime;
@@ -93,12 +93,12 @@ void DynamicDateTimeEdit::setMaximumTimestamp(std::int64_t maximumTime) noexcept
     }
 }
 
-bool DynamicDateTimeEdit::isMinimalUiEnabled() const noexcept
+bool TimestampEdit::isMinimalUiEnabled() const noexcept
 {
     return d->minimalUiEnabled;
 }
 
-void DynamicDateTimeEdit::setMinimalUiEnabled(bool enable) noexcept
+void TimestampEdit::setMinimalUiEnabled(bool enable) noexcept
 {
     if (d->minimalUiEnabled != enable) {
         d->minimalUiEnabled = enable;
@@ -108,19 +108,19 @@ void DynamicDateTimeEdit::setMinimalUiEnabled(bool enable) noexcept
 
 // PRIVATE
 
-void DynamicDateTimeEdit::initUi() noexcept
+void TimestampEdit::initUi() noexcept
 {
     ui->timeEdit->setDisplayFormat(::TimestampFormat);
 }
 
-void DynamicDateTimeEdit::frenchConnection() noexcept
+void TimestampEdit::frenchConnection() noexcept
 {
 
 }
 
 // PRIVATE SLOTS
 
-void DynamicDateTimeEdit::updateUi() noexcept
+void TimestampEdit::updateUi() noexcept
 {
     if (d->maximumTimestamp < ::MilliSecondsPerDay) {
         ui->timeLabel->setVisible(true);
@@ -145,7 +145,7 @@ void DynamicDateTimeEdit::updateUi() noexcept
     }
 }
 
-void DynamicDateTimeEdit::onTimeEditChanged(QTime time) noexcept
+void TimestampEdit::onTimeEditChanged(QTime time) noexcept
 {
     // TODO Take date edit into account
     std::int64_t timestamp = time.hour() * ::MilliSecondsPerHour + time.minute() * ::MilliSecondsPerMinute + time.second() * ::MilliSecondsPerSecond;

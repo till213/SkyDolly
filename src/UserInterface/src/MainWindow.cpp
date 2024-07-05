@@ -90,7 +90,7 @@
 #include <Widget/ActionButton.h>
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
-#include <Widget/DynamicDateTimeEdit.h>
+#include <Widget/TimestampEdit.h>
 #include <Widget/Platform.h>
 #include <Widget/RecentFileMenu.h>
 #include <PluginManager/SkyConnectManager.h>
@@ -355,8 +355,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onPositionSliderValueChanged);
     connect(ui->positionSlider, &QSlider::sliderReleased,
             this, &MainWindow::onPositionSliderReleased);
-    connect(ui->dynamicDateTimeEdit, &DynamicDateTimeEdit::timestampChanged,
-            this, &MainWindow::onDynamicDateTimeEditChanged);
+    connect(ui->timestampEdit, &TimestampEdit::timestampChanged,
+            this, &MainWindow::onTimestampEditChanged);
 
     // Actions
 
@@ -936,7 +936,7 @@ void MainWindow::updateMinimalUi(bool enable)
     updateReplaySpeedVisibility(minimalUi);
     updatePositionSliderTickInterval();
     ui->moduleGroupBox->setHidden(minimalUi);
-    ui->dynamicDateTimeEdit->setMinimalUiEnabled(enable);
+    ui->timestampEdit->setMinimalUiEnabled(enable);
 
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
@@ -980,10 +980,10 @@ void MainWindow::updateReplaySpeedUi() noexcept
 
 void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
 {
-    ui->dynamicDateTimeEdit->blockSignals(true);
-    ui->dynamicDateTimeEdit->setMaximumTimestamp(timestamp);
-    ui->dynamicDateTimeEdit->setTimestamp(timestamp);
-    ui->dynamicDateTimeEdit->blockSignals(false);
+    ui->timestampEdit->blockSignals(true);
+    ui->timestampEdit->setMaximumTimestamp(timestamp);
+    ui->timestampEdit->setTimestamp(timestamp);
+    ui->timestampEdit->blockSignals(false);
 }
 
 void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
@@ -1006,9 +1006,9 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
     ui->positionSlider->setValue(sliderPosition);
     ui->positionSlider->blockSignals(false);
 
-    ui->dynamicDateTimeEdit->blockSignals(true);
-    ui->dynamicDateTimeEdit->setTimestamp(timestamp);
-    ui->dynamicDateTimeEdit->blockSignals(false);
+    ui->timestampEdit->blockSignals(true);
+    ui->timestampEdit->setTimestamp(timestamp);
+    ui->timestampEdit->blockSignals(false);
 }
 
 void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
@@ -1121,10 +1121,10 @@ void MainWindow::seek(int value, SkyConnectIntf::SeekMode seekMode) const noexce
     const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
     auto timestamp = static_cast<std::int64_t>(std::round(factor * static_cast<double>(totalDuration)));
 
-    // Prevent the dynamicDateTimeEdit field to set the replay position as well
-    ui->dynamicDateTimeEdit->blockSignals(true);
+    // Prevent the timestampEdit field to set the replay position as well
+    ui->timestampEdit->blockSignals(true);
     skyConnectManager.seek(timestamp, seekMode);
-    ui->dynamicDateTimeEdit->blockSignals(false);
+    ui->timestampEdit->blockSignals(false);
 }
 
 // PRIVATE SLOTS
@@ -1158,7 +1158,7 @@ void MainWindow::onPositionSliderReleased() noexcept
     d->continuousSeek = false;
 }
 
-void MainWindow::onDynamicDateTimeEditChanged(std::int64_t timestamp) noexcept
+void MainWindow::onTimestampEditChanged(std::int64_t timestamp) noexcept
 {
     auto &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isIdle() || skyConnectManager.getState() == Connect::State::ReplayPaused) {
@@ -1392,18 +1392,18 @@ void MainWindow::updateTimeUi() noexcept
         [[fallthrough]];
     case Connect::State::Connected:
         enabled = hasRecording && hasSkyConnectPlugins;
-        ui->dynamicDateTimeEdit->setEnabled(enabled);
+        ui->timestampEdit->setEnabled(enabled);
         break;
     case Connect::State::Recording:
-        ui->dynamicDateTimeEdit->setEnabled(false);
+        ui->timestampEdit->setEnabled(false);
         break;
     case Connect::State::RecordingPaused:
         break;
     case Connect::State::Replay:
-        ui->dynamicDateTimeEdit->setEnabled(false);
+        ui->timestampEdit->setEnabled(false);
         break;
     case Connect::State::ReplayPaused:
-        ui->dynamicDateTimeEdit->setEnabled(true);
+        ui->timestampEdit->setEnabled(true);
         break;
     }
 }
@@ -1543,9 +1543,9 @@ void MainWindow::updateRecordingDuration() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
-    ui->dynamicDateTimeEdit->blockSignals(true);
-    ui->dynamicDateTimeEdit->setMaximumTimestamp(totalDuration);
-    ui->dynamicDateTimeEdit->blockSignals(false);
+    ui->timestampEdit->blockSignals(true);
+    ui->timestampEdit->setMaximumTimestamp(totalDuration);
+    ui->timestampEdit->blockSignals(false);
 }
 
 void MainWindow::updateFileMenu() noexcept
