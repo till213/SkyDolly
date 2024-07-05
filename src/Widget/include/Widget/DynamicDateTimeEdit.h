@@ -30,6 +30,7 @@
 
 #include <QWidget>
 #include <QTime>
+#include <QSize>
 
 class QDateTime;
 
@@ -57,34 +58,34 @@ public:
     ~DynamicDateTimeEdit() override;
 
     /*!
-     * Returns the current time.
+     * Returns the current timestamp.
      *
-     * \return the current time [msec|
+     * \return the current timestamp [msec|
      */
-    std::int64_t getTimeMSec() const noexcept;
+    std::int64_t getTimestamp() const noexcept;
 
     /*!
-     * Sets the current time.
+     * Sets the current timestamp.
      *
      * \param time
-     *        the current time [msec]
+     *        the current timestamp [msec]
      */
-    void setTimeMSec(std::int64_t time) noexcept;
+    void setTimestamp(std::int64_t time) noexcept;
 
     /*!
-     * Returns the maximum recorded time.
+     * Returns the maximum recorded timestamp.
      *
-     * \return the maximum recorded time [msec|
+     * \return the maximum recorded timestamp [msec|
      */
-    std::int64_t getMaximumTimeMSec() const noexcept;
+    std::int64_t getMaximumTimestamp() const noexcept;
 
     /*!
-     * Sets the maximum recorded time.
+     * Sets the maximum recorded timestamp.
      *
-     * \param maximumTime
-     *        the maximum recorded time [msec]
+     * \param maximum
+     *        the maximum recorded timestamp [msec]
      */
-    void setMaximumTimeMSec(std::int64_t maximumTime) noexcept;
+    void setMaximumTimestamp(std::int64_t maximum) noexcept;
 
     /*!
      * Returns whether the minimal user interface is enabled.
@@ -104,12 +105,12 @@ public:
 
 signals:
     /*!
-     * Emitted whenever the current time has changed
+     * Emitted whenever the current timestamp has changed
      *
      * \param time
-     *        the current time [msec]
+     *        the current timestamp [msec]
      */
-    void timeChanged(std::int64_t time);
+    void timestampChanged(std::int64_t time);
 
 private:
     const std::unique_ptr<Ui::DynamicDateTimeEdit> ui;

@@ -355,7 +355,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onPositionSliderValueChanged);
     connect(ui->positionSlider, &QSlider::sliderReleased,
             this, &MainWindow::onPositionSliderReleased);
-    connect(ui->dynamicDateTimeEdit, &DynamicDateTimeEdit::timeChanged,
+    connect(ui->dynamicDateTimeEdit, &DynamicDateTimeEdit::timestampChanged,
             this, &MainWindow::onDynamicDateTimeEditChanged);
 
     // Actions
@@ -936,6 +936,7 @@ void MainWindow::updateMinimalUi(bool enable)
     updateReplaySpeedVisibility(minimalUi);
     updatePositionSliderTickInterval();
     ui->moduleGroupBox->setHidden(minimalUi);
+    ui->dynamicDateTimeEdit->setMinimalUiEnabled(enable);
 
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
@@ -980,8 +981,8 @@ void MainWindow::updateReplaySpeedUi() noexcept
 void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
 {
     ui->dynamicDateTimeEdit->blockSignals(true);
-    ui->dynamicDateTimeEdit->setMaximumTimeMSec(timestamp);
-    ui->dynamicDateTimeEdit->setTimeMSec(timestamp);
+    ui->dynamicDateTimeEdit->setMaximumTimestamp(timestamp);
+    ui->dynamicDateTimeEdit->setTimestamp(timestamp);
     ui->dynamicDateTimeEdit->blockSignals(false);
 }
 
@@ -1006,7 +1007,7 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
     ui->positionSlider->blockSignals(false);
 
     ui->dynamicDateTimeEdit->blockSignals(true);
-    ui->dynamicDateTimeEdit->setTimeMSec(timestamp);
+    ui->dynamicDateTimeEdit->setTimestamp(timestamp);
     ui->dynamicDateTimeEdit->blockSignals(false);
 }
 
@@ -1543,7 +1544,7 @@ void MainWindow::updateRecordingDuration() noexcept
     const auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
     ui->dynamicDateTimeEdit->blockSignals(true);
-    ui->dynamicDateTimeEdit->setMaximumTimeMSec(totalDuration);
+    ui->dynamicDateTimeEdit->setMaximumTimestamp(totalDuration);
     ui->dynamicDateTimeEdit->blockSignals(false);
 }
 
