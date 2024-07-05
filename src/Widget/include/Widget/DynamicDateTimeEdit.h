@@ -26,8 +26,12 @@
 #define DYNAMICDATETIMEEDIT_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QWidget>
+#include <QTime>
+
+class QDateTime;
 
 #include "WidgetLib.h"
 
@@ -37,6 +41,10 @@ namespace Ui {
     class DynamicDateTimeEdit;
 }
 
+/*!
+ * Dynamically shows a simple QTimeEdit, an additional QDateEdit or a combined QDateTimeEdit,
+ * depending on the maximum time and minimal user interface mode.
+ */
 class WIDGET_API DynamicDateTimeEdit : public QWidget
 {
     Q_OBJECT
@@ -48,12 +56,72 @@ public:
     DynamicDateTimeEdit &operator=(DynamicDateTimeEdit &&rhs) = delete;
     ~DynamicDateTimeEdit() override;
 
+    /*!
+     * Returns the current time.
+     *
+     * \return the current time [msec|
+     */
+    std::int64_t getTimeMSec() const noexcept;
+
+    /*!
+     * Sets the current time.
+     *
+     * \param time
+     *        the current time [msec]
+     */
+    void setTimeMSec(std::int64_t time) noexcept;
+
+    /*!
+     * Returns the maximum recorded time.
+     *
+     * \return the maximum recorded time [msec|
+     */
+    std::int64_t getMaximumTimeMSec() const noexcept;
+
+    /*!
+     * Sets the maximum recorded time.
+     *
+     * \param maximumTime
+     *        the maximum recorded time [msec]
+     */
+    void setMaximumTimeMSec(std::int64_t maximumTime) noexcept;
+
+    /*!
+     * Returns whether the minimal user interface is enabled.
+     *
+     * \return \c true if the minimal user interface is enabled; \c false else
+     */
+    bool isMinimalUiEnabled() const noexcept;
+
+    /*!
+     * Sets the minimal user interface mode to \c enable.
+     *
+     * \param enable
+     *        set to \c true in order to enable the minimal user interface;
+     *        \c false in order to enable normal user interface mode
+     */
+    void setMinimalUiEnabled(bool enable) noexcept;
+
+signals:
+    /*!
+     * Emitted whenever the current time has changed
+     *
+     * \param time
+     *        the current time [msec]
+     */
+    void timeChanged(std::int64_t time);
+
 private:
     const std::unique_ptr<Ui::DynamicDateTimeEdit> ui;
     const std::unique_ptr<DynamicDateTimeEditPrivate> d;
 
+    void initUi() noexcept;
+    void frenchConnection() noexcept;
+
 private slots:
     void updateUi() noexcept;
+
+    void onTimeEditChanged(QTime time) noexcept;
 };
 
 #endif // DYNAMICDATETIMEEDIT_H

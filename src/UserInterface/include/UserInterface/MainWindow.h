@@ -32,7 +32,7 @@
 #include <QUuid>
 
 class QButtonGroup;
-class QTime;
+class QDateTime;
 class QEvent;
 class QResizeEvent;
 class QCloseEvent;
@@ -152,7 +152,7 @@ private slots:
     void onPositionSliderPressed() noexcept;
     void onPositionSliderValueChanged(int value) noexcept;
     void onPositionSliderReleased() noexcept;
-    void onTimeEditChanged(const QTime &time) noexcept;
+    void onDynamicDateTimeEditChanged(std::int64_t timestamp) noexcept;
 
     void updateWindowSize() noexcept;
     void onTimestampChanged(std::int64_t timestamp) noexcept;
@@ -186,7 +186,7 @@ private slots:
      *
      * Also refer to updateRecordingDuration.
      */
-    void updateReplayDuration() noexcept;
+    void updateRecordingDuration() noexcept;
 
     void updateFileMenu() noexcept;
     void updateModuleActions() noexcept;
