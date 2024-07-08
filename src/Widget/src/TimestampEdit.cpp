@@ -28,6 +28,7 @@
 #include <QSize>
 #include <QTimeEdit>
 #include <QDateEdit>
+#include <QDate>
 #include <QDateTimeEdit>
 
 #include "TimestampEdit.h"
@@ -35,7 +36,8 @@
 
 namespace
 {
-    constexpr const char *TimestampFormat {"hh:mm:ss"};
+    constexpr const char *TimeFormat {"hh:mm:ss"};
+    constexpr const char *DateTimeFormat {"dd:MM:yyyy hh:mm:ss"};
     constexpr std::int64_t MilliSecondsPerSecond {1000};
     constexpr std::int64_t MilliSecondsPerMinute {60 * ::MilliSecondsPerSecond};
     constexpr std::int64_t MilliSecondsPerHour {60 * ::MilliSecondsPerMinute};
@@ -44,6 +46,8 @@ namespace
 
 struct TimestampEditPrivate
 {
+    QDateTime startZuluDateTime;
+    QDateTime startRealWorldLocalDateTime;
     // The current timestamp [msec]
     std::int64_t timestamp {0};
     // The maximum recorded timestamp [msec]
@@ -67,15 +71,30 @@ TimestampEdit::TimestampEdit(QWidget *parent) noexcept
 
 TimestampEdit::~TimestampEdit() = default;
 
+QDateTime TimestampEdit::getStartZuluDateTime() const noexcept
+{
+    return d->startZuluDateTime;
+}
+
+void TimestampEdit::setStartZuluDateTime(QDateTime dateTime) noexcept
+{
+    if (d->startZuluDateTime != dateTime) {
+        d->startZuluDateTime = dateTime;
+        d->startRealWorldLocalDateTime = d->startZuluDateTime.toLocalTime();
+        updateUi();
+    }
+}
+
+
 std::int64_t TimestampEdit::getTimestamp() const noexcept
 {
     return d->timestamp;
 }
 
-void TimestampEdit::setTimestamp(std::int64_t time) noexcept
+void TimestampEdit::setTimestamp(std::int64_t timestamp) noexcept
 {
-    if (d->timestamp != time) {
-        d->timestamp = time;
+    if (d->timestamp != timestamp) {
+        d->timestamp = timestamp;
         updateUi();
     }
 }
@@ -110,12 +129,16 @@ void TimestampEdit::setMinimalUiEnabled(bool enable) noexcept
 
 void TimestampEdit::initUi() noexcept
 {
-    ui->timeEdit->setDisplayFormat(::TimestampFormat);
+    ui->timeEdit->setDisplayFormat(::TimeFormat);
+    ui->dateTimeEdit->setDisplayFormat(::DateTimeFormat);
 }
 
 void TimestampEdit::frenchConnection() noexcept
 {
-
+    connect(ui->timeEdit, &QTimeEdit::timeChanged,
+            this, &TimestampEdit::onTimeEditChanged);
+    connect(ui->dateTimeEdit, &QDateTimeEdit::dateTimeChanged,
+            this, &TimestampEdit::onDateTimeEditChanged);
 }
 
 // PRIVATE SLOTS
@@ -123,31 +146,33 @@ void TimestampEdit::frenchConnection() noexcept
 void TimestampEdit::updateUi() noexcept
 {
     if (d->maximumTimestamp < ::MilliSecondsPerDay) {
+        const QTime time = QTime::fromMSecsSinceStartOfDay(d->timestamp);
+        ui->timeEdit->setTime(time);
         ui->timeLabel->setVisible(true);
         ui->timeEdit->setVisible(true);
-        ui->dateLabel->setVisible(false);
-        ui->dateEdit->setVisible(false);
+        ui->dateTimeLabel->setVisible(false);
         ui->dateTimeEdit->setVisible(false);
     } else {
+        const QDateTime dateTime = d->startRealWorldLocalDateTime.addMSecs(d->timestamp);
+        ui->dateTimeEdit->setDateTime(dateTime);
+        ui->timeLabel->setVisible(false);
+        ui->timeEdit->setVisible(false);
+        ui->dateTimeEdit->setVisible(true);
         if (d->minimalUiEnabled) {
-            ui->timeLabel->setVisible(false);
-            ui->timeEdit->setVisible(false);
-            ui->dateLabel->setVisible(false);
-            ui->dateEdit->setVisible(false);
-            ui->dateTimeEdit->setVisible(true);
+            ui->dateTimeLabel->setVisible(false);
         } else {
-            ui->timeLabel->setVisible(true);
-            ui->timeEdit->setVisible(true);
-            ui->dateLabel->setVisible(true);
-            ui->dateEdit->setVisible(true);
-            ui->dateTimeEdit->setVisible(false);
+            ui->dateTimeLabel->setVisible(true);
         }
     }
 }
 
 void TimestampEdit::onTimeEditChanged(QTime time) noexcept
 {
-    // TODO Take date edit into account
     std::int64_t timestamp = time.hour() * ::MilliSecondsPerHour + time.minute() * ::MilliSecondsPerMinute + time.second() * ::MilliSecondsPerSecond;
     emit timestampChanged(timestamp);
+}
+
+void TimestampEdit::onDateTimeEditChanged(const QDateTime &dateTime) noexcept
+{
+
 }

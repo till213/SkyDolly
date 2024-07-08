@@ -1380,9 +1380,13 @@ void MainWindow::updateTimeUi() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
     const auto &aircraft = flight.getUserAircraft();
-    const bool hasRecording = aircraft.hasRecording();
+
+    // TODO Perhaps add option to switch between simulation and real-world ("creation") time
+    const QDateTime startZuluDateTime = flight.getAircraftStartZuluTime(aircraft);
+    ui->timestampEdit->setStartZuluDateTime(startZuluDateTime);
 
     const auto &skyConnectManager = SkyConnectManager::getInstance();
+    const bool hasRecording = aircraft.hasRecording();
     const bool hasSkyConnectPlugins = skyConnectManager.hasPlugins();
     bool enabled {false};
     switch (skyConnectManager.getState()) {

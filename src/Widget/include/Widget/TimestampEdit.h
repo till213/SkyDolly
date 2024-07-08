@@ -30,9 +30,7 @@
 
 #include <QWidget>
 #include <QTime>
-#include <QSize>
-
-class QDateTime;
+#include <QDateTime>
 
 #include "WidgetLib.h"
 
@@ -56,6 +54,11 @@ public:
     TimestampEdit &operator=(const TimestampEdit &rhs) = delete;
     TimestampEdit &operator=(TimestampEdit &&rhs) = delete;
     ~TimestampEdit() override;
+
+    QDateTime getStartZuluDateTime() const noexcept;
+
+    void setStartZuluDateTime(QDateTime dateTime) noexcept;
+
 
     /*!
      * Returns the current timestamp.
@@ -118,11 +121,13 @@ private:
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
+    QDateTime convertTimestampToDateTime(std::int64_t timestamp);
 
 private slots:
     void updateUi() noexcept;
 
     void onTimeEditChanged(QTime time) noexcept;
+    void onDateTimeEditChanged(const QDateTime &dateTime) noexcept;
 };
 
 #endif // TIMESTAMPEDIT_H
