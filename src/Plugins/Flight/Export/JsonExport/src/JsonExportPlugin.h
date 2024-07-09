@@ -76,7 +76,7 @@ private:
     bool exportFooter(QIODevice &io) const noexcept;
 
     inline bool exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept;
-    inline bool exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept;
+    inline bool exportWaypoint(const auto &waypoint, QIODevice &io) const noexcept;
 };
 
 #endif // JSONEXPORTPLUGIN_H

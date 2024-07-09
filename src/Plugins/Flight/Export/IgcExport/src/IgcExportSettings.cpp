@@ -41,15 +41,10 @@ namespace
 
 struct IgcExportSettingsPrivate
 {
-    IgcExportSettingsPrivate()
-        : pilotName(DefaultPilotName),
-          coPilotName(DefaultCoPilotName)
-    {}
+    QString pilotName {DefaultPilotName};
+    QString coPilotName {DefaultCoPilotName};
 
-    QString pilotName;
-    QString coPilotName;
-
-    static inline const QString DefaultPilotName {System::getUsername()};
+    static inline const QString DefaultPilotName ;
     static inline const QString DefaultCoPilotName {QString()};
 };
 

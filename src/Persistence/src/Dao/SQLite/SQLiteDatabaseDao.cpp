@@ -102,7 +102,7 @@ bool SQLiteDatabaseDao::migrate(Migration::Milestones milestones) const noexcept
 
 bool SQLiteDatabaseDao::optimise() const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     bool ok = query.exec("vacuum;");
     if (ok) {
@@ -117,7 +117,7 @@ bool SQLiteDatabaseDao::optimise() const noexcept
 
 bool SQLiteDatabaseDao::backup(const QString &backupPath) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     bool ok = query.exec(QStringLiteral("vacuum into '%1';").arg(backupPath));
     if (ok) {
@@ -132,7 +132,7 @@ bool SQLiteDatabaseDao::backup(const QString &backupPath) const noexcept
 
 bool SQLiteDatabaseDao::updateBackupPeriod(std::int64_t backupPeriodId) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "update metadata "
@@ -145,7 +145,7 @@ bool SQLiteDatabaseDao::updateBackupPeriod(std::int64_t backupPeriodId) const no
 
 bool SQLiteDatabaseDao::updateNextBackupDate(const QDateTime &date) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "update metadata "
@@ -158,7 +158,7 @@ bool SQLiteDatabaseDao::updateNextBackupDate(const QDateTime &date) const noexce
 
 bool SQLiteDatabaseDao::updateBackupDirectoryPath(const QString &backupDirectoryPath) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "update metadata "
@@ -172,7 +172,7 @@ bool SQLiteDatabaseDao::updateBackupDirectoryPath(const QString &backupDirectory
 Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
 {
     Metadata metadata;
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
 
@@ -223,7 +223,7 @@ Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
 Version SQLiteDatabaseDao::getDatabaseVersion(bool *ok) const noexcept
 {
     Version version;
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     const bool success = query.exec("select m.app_version from metadata m;");
     if (success && query.next()) {
@@ -239,7 +239,7 @@ Version SQLiteDatabaseDao::getDatabaseVersion(bool *ok) const noexcept
 QString SQLiteDatabaseDao::getBackupDirectoryPath(bool *ok) const noexcept
 {
     QString backupDirectoryPath;
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     const bool success = query.exec("select m.backup_directory_path from metadata m;");
     if (success && query.next()) {
@@ -270,7 +270,7 @@ void SQLiteDatabaseDao::disconnectSQLite(Connection::Default connection) const n
 
 bool SQLiteDatabaseDao::createMigrationTable() const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "create table if not exists migr("

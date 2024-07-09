@@ -218,7 +218,7 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
 "          </coordinates>\n"
 "        </LineString>\n";
 
-    std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    const auto interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
     if (interpolatedPositionData.size() > 0) {
 
@@ -286,7 +286,7 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
     return ok;
 }
 
-bool KmlExportPlugin::exportWaypoints(const FlightPlan &flightPlan, QIODevice &io) const noexcept
+bool KmlExportPlugin::exportWaypoints(const auto &flightPlan, QIODevice &io) const noexcept
 {
     bool ok {true};
     for (const auto &waypoint : flightPlan) {
@@ -306,7 +306,7 @@ bool KmlExportPlugin::exportFooter(QIODevice &io) const noexcept
 
 QString KmlExportPlugin::getFlightDescription(const FlightData &flightData) const noexcept
 {
-    const FlightCondition &flightCondition = flightData.flightCondition;
+    const auto &flightCondition = flightData.flightCondition;
     return QObject::tr("Description") % ": " % flightData.description % "\n" %
            "\n" %
            QObject::tr("Creation date") % ": " % d->unit.formatDate(flightData.creationTime) % "\n" %
@@ -324,12 +324,12 @@ QString KmlExportPlugin::getFlightDescription(const FlightData &flightData) cons
 
 QString KmlExportPlugin::getAircraftDescription(const Aircraft &aircraft) const noexcept
 {
-    const AircraftInfo &info = aircraft.getAircraftInfo();
-    const AircraftType &type = info.aircraftType;
-    return QObject::tr("Category") % ": " % type.category % "\n" %
-           QObject::tr("Engine type") % ": " % SimType::engineTypeToString(type.engineType) % "\n" %
-           QObject::tr("Number of engines") % ": " % d->unit.formatNumber(type.numberOfEngines, 0) % "\n" %
-           QObject::tr("Wingspan") % ": " % d->unit.formatFeet(type.wingSpan) % "\n"
+    const auto &info = aircraft.getAircraftInfo();
+    const auto &aircraftType = info.aircraftType;
+    return QObject::tr("Category") % ": " % aircraftType.category % "\n" %
+           QObject::tr("Engine type") % ": " % SimType::engineTypeToString(aircraftType.engineType) % "\n" %
+           QObject::tr("Number of engines") % ": " % d->unit.formatNumber(aircraftType.numberOfEngines, 0) % "\n" %
+           QObject::tr("Wingspan") % ": " % d->unit.formatFeet(aircraftType.wingSpan) % "\n"
            "\n" %
            QObject::tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
            QObject::tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %
@@ -337,7 +337,7 @@ QString KmlExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
            QObject::tr("Tail number") % ": " % info.tailNumber % "\n";
 }
 
-QString KmlExportPlugin::getWaypointDescription(const Waypoint &waypoint) const noexcept
+QString KmlExportPlugin::getWaypointDescription(const auto &waypoint) const noexcept
 {
     return QObject::tr("Arrival time (local)") % ": " % d->unit.formatTime(waypoint.localTime) % "\n" %
            QObject::tr("Arrival time (zulu)") % ": " % d->unit.formatTime(waypoint.zuluTime) % "\n" %

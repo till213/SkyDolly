@@ -119,7 +119,7 @@ void AircraftInfoWidget::updateUi() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
     const auto &aircraft = flight.getUserAircraft();
-    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+    const auto &aircraftInfo = aircraft.getAircraftInfo();
 
     ui->nameLineEdit->setText(aircraftInfo.aircraftType.type);
     ui->tailNumberLineEdit->setText(aircraftInfo.tailNumber);

@@ -70,7 +70,7 @@ SQLiteAircraftTypeDao::~SQLiteAircraftTypeDao() = default;
 
 bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "insert into aircraft_type (type, category, wing_span, engine_type, nof_engines) "
@@ -101,7 +101,7 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType) const noexc
 AircraftType SQLiteAircraftTypeDao::getByType(const QString &type, bool *ok) const noexcept
 {
     AircraftType aircraftType;
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -142,7 +142,7 @@ AircraftType SQLiteAircraftTypeDao::getByType(const QString &type, bool *ok) con
 std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
 {
     std::vector<AircraftType> aircraftTypes;
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -189,7 +189,7 @@ std::vector<AircraftType> SQLiteAircraftTypeDao::getAll(bool *ok) const noexcept
 bool SQLiteAircraftTypeDao::exists(const QString &type) const noexcept
 {
     bool exists {false};
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(

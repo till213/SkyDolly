@@ -53,7 +53,7 @@ void FlightPlan::add(Waypoint waypoint) noexcept
 
 void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
 {
-    Waypoint currentWaypoint = d->waypoints.at(index);
+    auto currentWaypoint = d->waypoints.at(index);
     bool changed = false;
     if (index >= 0 && index < static_cast<int>(d->waypoints.size())) {
         if (currentWaypoint.timestamp != waypoint.timestamp) {

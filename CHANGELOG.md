@@ -32,8 +32,12 @@
   * Few users were probably aware of what this "Recording Frequency" settings was supposed to do and left it at "auto"
   * Removing the timer-based recording also simplified the code
 - The Statistics dialog now shows separate recording rates, for both positition (always around 1 Hz) and attitude samples (e.g. 30 Hz, that is the *simulation frame* rate)
+- GPX export: the geoid height (&lt;geoidheight&gt;) can now also optionally be exported
 
 ## Bug Fixes
+- GPX export
+  * The elevation (&lt;ele&gt;) values are now properly exported as "above mean sea level" (and not "above WGS84 reference ellipsoid" anymore)
+  * The trackpoint timestamps are properly calculated and exported when exporting the entire flight (and not just the user aircraft); the proper timezone suffix (Z) is appended, too (ISO 8601 format)
 
 ## 0.17.5
 This bug fix release provides an important correction for a regression that would prevent recording (and possibly replay as well), due to wrongly creating an IPv4 network connection instead of a local ("pipe") connection.

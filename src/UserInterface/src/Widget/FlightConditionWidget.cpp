@@ -123,7 +123,7 @@ void FlightConditionWidget::initUi() noexcept
 void FlightConditionWidget::updateUi() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
-    const FlightCondition &flightCondition = flight.getFlightCondition();
+    const auto &flightCondition = flight.getFlightCondition();
 
     ui->groundAltitudeLineEdit->setText(d->unit.formatFeet(flightCondition.groundAltitude));
     ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightCondition.surfaceType));

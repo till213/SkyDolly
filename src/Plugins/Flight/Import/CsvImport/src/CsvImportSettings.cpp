@@ -38,11 +38,7 @@ namespace
 
 struct CsvImportSettingsPrivate
 {
-    CsvImportSettingsPrivate()
-        : format(::DefaultFormat)
-    {}
-
-    CsvImportSettings::Format format;
+    CsvImportSettings::Format format {::DefaultFormat};
 };
 
 // PUBLIC
