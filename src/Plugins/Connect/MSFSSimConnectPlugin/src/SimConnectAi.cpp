@@ -75,7 +75,7 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
     // Check if the newly added aircraft has any recording yet
     // (otherwise it is the new user aircraft being added for a new recording)
     if (aircraft.getId() != Const::InvalidId) {
-        const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+        const auto &aircraftInfo = aircraft.getAircraftInfo();
         const auto &position = aircraft.getPosition();
         const auto &attitude = aircraft.getAttitude();
         const auto &positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);

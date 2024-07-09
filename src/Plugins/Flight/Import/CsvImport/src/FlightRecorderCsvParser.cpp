@@ -126,7 +126,7 @@ struct FlightRecorderCsvParserPrivate
 {
     FlightRecorderCsvParserPrivate()
     {
-        firstDateTimeUtc.setTimeZone(QTimeZone::utc());
+        firstDateTimeUtc.setTimeZone(QTimeZone::UTC);
     }
 
     QDateTime firstDateTimeUtc;

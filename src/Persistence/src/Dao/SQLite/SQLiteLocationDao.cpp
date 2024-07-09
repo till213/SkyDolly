@@ -88,7 +88,7 @@ bool SQLiteLocationDao::exportLocation(const Location &location) const noexcept
 
 bool SQLiteLocationDao::update(const Location &location) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "update location "
@@ -141,7 +141,7 @@ bool SQLiteLocationDao::update(const Location &location) const noexcept
 std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double longitude, double distanceKm, bool *ok) const noexcept
 {
     std::vector<Location> locations;
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
 
@@ -159,7 +159,7 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
 
     const bool success = query.exec();
     if (success) {
-        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const auto db {QSqlDatabase::database(d->connectionName)};
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             locations.reserve(query.size());
@@ -221,7 +221,7 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
 
 bool SQLiteLocationDao::deleteById(std::int64_t id) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "
@@ -241,7 +241,7 @@ bool SQLiteLocationDao::deleteById(std::int64_t id) const noexcept
 
 std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -255,7 +255,7 @@ std::vector<Location> SQLiteLocationDao::getAll(bool *ok) const noexcept
 
 std::vector<Location> SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, bool *ok) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
 
@@ -309,7 +309,7 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
     std::vector<Location> locations;
     const bool success = query.exec();
     if (success) {
-        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const auto db {QSqlDatabase::database(d->connectionName)};
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             locations.reserve(query.size());
@@ -372,7 +372,7 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
 std::int64_t SQLiteLocationDao::insert(const Location &location) const noexcept
 {
     auto locationId {Const::InvalidId};
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "insert into location ("

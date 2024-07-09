@@ -308,7 +308,7 @@ bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
         const auto month = match.capturedView(::HRecordMonthIndex).toInt();
         const auto day = match.capturedView(::HRecordDayIndex).toInt();
         d->header.flightDateTimeUtc.setDate(QDate(year, month, day));
-        d->header.flightDateTimeUtc.setTimeZone(QTimeZone::utc());
+        d->header.flightDateTimeUtc.setTimeZone(QTimeZone::UTC);
         // The flight number is optional
         if (::HRecordFlightNumberIndex == match.lastCapturedIndex()) {
             d->header.flightNumber = match.captured(::HRecordFlightNumberIndex);

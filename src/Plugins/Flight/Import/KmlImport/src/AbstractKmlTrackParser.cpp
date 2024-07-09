@@ -44,7 +44,7 @@ struct AbstractKmlTrackParserPrivate
 {
     AbstractKmlTrackParserPrivate() noexcept
     {
-        firstDateTimeUtc.setTimeZone(QTimeZone::utc());
+        firstDateTimeUtc.setTimeZone(QTimeZone::UTC);
     }
 
     QDateTime firstDateTimeUtc;
@@ -75,7 +75,7 @@ void AbstractKmlTrackParser::parseTrack(FlightData &flightData) noexcept
         // also taking care of possible duplicate timestamps (-> "upsert")
         std::vector<TrackItem> trackData;
         QDateTime currentDateTimeUtc;
-        currentDateTimeUtc.setTimeZone(QTimeZone::utc());
+        currentDateTimeUtc.setTimeZone(QTimeZone::UTC);
 
         bool ok {true};
         int currentTrackDataIndex = 0;

@@ -637,7 +637,7 @@ inline const QTableWidgetItem *FormationWidget::initRow(const Aircraft &aircraft
 inline void FormationWidget::updateRow(const Aircraft &aircraft, int row, int aircraftIndex) noexcept
 {
     const auto &skyConnectManager = SkyConnectManager::getInstance();
-    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+    const auto &aircraftInfo = aircraft.getAircraftInfo();
 
     // Sequence number
     QTableWidgetItem *item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::sequenceNumberColumn);

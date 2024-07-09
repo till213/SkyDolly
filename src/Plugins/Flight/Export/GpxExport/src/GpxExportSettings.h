@@ -62,6 +62,9 @@ public:
     TimestampMode getTimestampMode() const noexcept;
     void setTimestampMode(TimestampMode timestampMode) noexcept;
 
+    bool isGeoidHeightExportEnabled() const noexcept;
+    void setGeoidHeightExportEnabled(bool enable) noexcept;
+
     bool isResamplingSupported() const noexcept override;
     bool isFormationExportSupported(FormationExport formationExport) const noexcept override;
 

@@ -133,7 +133,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) const noexcept
     // https://regex101.com/
     // @migr(...)
     static const QRegularExpression migrRegExp(R"(@migr\(([\w="\-,.\s]+)\))");
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {
@@ -173,7 +173,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) const noexcept
 
 bool SqlMigration::migrateCsv(const QString &migrationFilePath) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {

@@ -23,9 +23,11 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <QComboBox>
+#include <QCheckBox>
 #include <QString>
 
 #include <Kernel/Enum.h>
+#include <Kernel/File.h>
 #include "GpxExportOptionWidget.h"
 #include "GpxExportSettings.h"
 #include "ui_GpxExportOptionWidget.h"
@@ -60,6 +62,8 @@ void GpxExportOptionWidget::frenchConnection() noexcept
 {
     connect(ui->timestampModeComboBox, &QComboBox::currentIndexChanged,
             this, &GpxExportOptionWidget::onTimestampModeChanged);
+    connect(ui->exportGeoidHeightCheckBox, &QCheckBox::toggled,
+            this, &GpxExportOptionWidget::onExportGeoidHeightChanged);
     connect(&d->pluginSettings, &GpxExportSettings::changed,
             this, &GpxExportOptionWidget::updateUi);
 }
@@ -74,26 +78,45 @@ void GpxExportOptionWidget::initUi() noexcept
 
 void GpxExportOptionWidget::updateUi() noexcept
 {
-    const GpxExportSettings::TimestampMode timestampMode = d->pluginSettings.getTimestampMode();
+    const auto timestampMode = d->pluginSettings.getTimestampMode();
     int currentIndex = 0;
     while (currentIndex < ui->timestampModeComboBox->count() &&
            static_cast<GpxExportSettings::TimestampMode>(ui->timestampModeComboBox->itemData(currentIndex).toInt()) != timestampMode) {
         ++currentIndex;
     }
-
     ui->timestampModeComboBox->setCurrentIndex(currentIndex);
     switch (timestampMode) {
     case GpxExportSettings::TimestampMode::Simulation:
-        ui->timestampModeComboBox->setToolTip(tr("Timestamps are based on the time set in the flight simulator."));
+        ui->timestampModeComboBox->setToolTip(tr("Timestamps are based on the flight simulator time."));
         break;
     case GpxExportSettings::TimestampMode::Recording:
-        ui->timestampModeComboBox->setToolTip(tr("Timestamps are based on the (real world) recording time. This may be useful for GPS-tagging screenshots taken during flight recording."));
+        ui->timestampModeComboBox->setToolTip(tr("Timestamps are based on the real world recording time. This may be useful for GPS-tagging screenshots taken during flight recording."));
         break;
+    }
+
+    if (File::hasEarthGravityModel()) {
+        const auto enable = d->pluginSettings.isGeoidHeightExportEnabled();
+        ui->exportGeoidHeightCheckBox->setChecked(enable);
+        ui->exportGeoidHeightCheckBox->setEnabled(true);
+        if (enable) {
+            ui->exportGeoidHeightCheckBox->setToolTip(tr("Elevation data (tag <ele>) and the geoid height (tag <geoidheight>) are exported."));
+        } else {
+            ui->exportGeoidHeightCheckBox->setToolTip(tr("Only elevation data (tag <ele>) is exported."));
+        }
+    } else {
+        ui->exportGeoidHeightCheckBox->setChecked(false);
+        ui->exportGeoidHeightCheckBox->setEnabled(false);
+        ui->exportGeoidHeightCheckBox->setToolTip(tr("No earth gravity model (EGM) is available."));
     }
 }
 
 void GpxExportOptionWidget::onTimestampModeChanged() noexcept
 {
-    const GpxExportSettings::TimestampMode timestampMode = static_cast<GpxExportSettings::TimestampMode>(ui->timestampModeComboBox->currentData().toInt());
+    const auto timestampMode = static_cast<GpxExportSettings::TimestampMode>(ui->timestampModeComboBox->currentData().toInt());
     d->pluginSettings.setTimestampMode(timestampMode);
+}
+
+void GpxExportOptionWidget::onExportGeoidHeightChanged(bool enable) noexcept
+{
+    d->pluginSettings.setGeoidHeightExportEnabled(enable);
 }

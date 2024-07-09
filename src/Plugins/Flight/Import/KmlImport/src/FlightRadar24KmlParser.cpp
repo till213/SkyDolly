@@ -46,7 +46,7 @@ struct FlightRadar24KmlParserPrivate
 {
     FlightRadar24KmlParserPrivate() noexcept
     {
-        firstDateTimeUtc.setTimeZone(QTimeZone::utc());
+        firstDateTimeUtc.setTimeZone(QTimeZone::UTC);
     }
 
     QDateTime firstDateTimeUtc;
@@ -228,7 +228,7 @@ bool FlightRadar24KmlParser::parseDescription() noexcept
 void FlightRadar24KmlParser::parseTimestamp() noexcept
 {
     QDateTime currentDateTimeUtc;
-    currentDateTimeUtc.setTimeZone(QTimeZone::utc());
+    currentDateTimeUtc.setTimeZone(QTimeZone::UTC);
 
     while (d->xml->readNextStartElement()) {
         const QStringView xmlName = d->xml->name();
