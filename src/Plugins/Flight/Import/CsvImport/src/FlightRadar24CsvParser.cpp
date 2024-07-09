@@ -64,7 +64,7 @@ struct FlightRadar24CsvParserPrivate
 {
     FlightRadar24CsvParserPrivate()
     {
-        firstDateTimeUtc.setTimeZone(QTimeZone::utc());
+        firstDateTimeUtc.setTimeZone(QTimeZone::UTC);
     }
 
     QDateTime firstDateTimeUtc;
@@ -96,7 +96,7 @@ FlightData FlightRadar24CsvParser::parse(QIODevice &io, bool &ok) noexcept
     QDateTime firstDateTimeUtc;
     QString flightNumber;
 
-    firstDateTimeUtc.setTimeZone(QTimeZone::utc());
+    firstDateTimeUtc.setTimeZone(QTimeZone::UTC);
 
     CsvParser csvParser;
     QTextStream textStream(&io);
@@ -152,7 +152,7 @@ inline std::pair<PositionData, AttitudeData> FlightRadar24CsvParser::parsePositi
     AttitudeData attitudeData;
     std::int64_t timestamp {0};
     QDateTime currentDateTimeUtc;
-    currentDateTimeUtc.setTimeZone(QTimeZone::utc());
+    currentDateTimeUtc.setTimeZone(QTimeZone::UTC);
 
     ok = true;
     // In seconds after 1970-01-01 UTC

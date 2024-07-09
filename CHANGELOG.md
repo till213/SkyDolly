@@ -33,6 +33,8 @@
   * Removing the timer-based recording also simplified the code
 - The Statistics dialog now shows separate recording rates, for both positition (always around 1 Hz) and attitude samples (e.g. 30 Hz, that is the *simulation frame* rate)
 - GPX export: the geoid height (&lt;geoidheight&gt;) can now also optionally be exported
+  * This may be useful to calculate the ellipsoidial height *h* ([WGS84 reference ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS_84)) as follows: h = H + N = &lt;ele&gt; + &lt;geoidheight&gt;
+  * Also refer to [Find Ellipsoidal Height from Orthometric Height](https://www.mathworks.com/help/map/ellipsoid-geoid-and-orthometric-height.html)
 
 ## Bug Fixes
 - GPX export

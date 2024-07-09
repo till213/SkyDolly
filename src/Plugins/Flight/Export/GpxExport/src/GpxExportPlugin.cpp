@@ -52,11 +52,6 @@
 
 struct GpxExportPluginPrivate
 {
-    GpxExportPluginPrivate()
-    {
-        startDateTimeUtc.setTimeZone(QTimeZone::utc());
-    }
-
     GpxExportSettings pluginSettings;
     QDateTime startDateTimeUtc;
     Unit unit;
@@ -146,6 +141,7 @@ void GpxExportPlugin::updateStartDateTimeUtc(const FlightData &flightData, const
         d->startDateTimeUtc = flightData.getAircraftCreationTime(aircraft).toUTC();
         break;
     }
+    d->startDateTimeUtc.setTimeZone(QTimeZone::UTC);
 }
 
 bool GpxExportPlugin::exportHeader(QIODevice &io) const noexcept

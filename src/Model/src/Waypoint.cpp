@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QDateTime>
+#include <QTimeZone>
+
 #include "Waypoint.h"
 
 // PUBLIC
@@ -31,7 +34,9 @@ Waypoint::Waypoint(float latitude, float longitude, float altitude) noexcept
       latitude(latitude),
       longitude(longitude),
       altitude(altitude)
-{}
+{
+    zuluTime.setTimeZone(QTimeZone::UTC);
+}
 
 bool Waypoint::isValid() const noexcept
 {

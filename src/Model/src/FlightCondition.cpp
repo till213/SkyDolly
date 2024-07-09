@@ -22,9 +22,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QDateTime>
+#include <QTimeZone>
+
 #include "FlightCondition.h"
 
 // PUBLIC
+
+FlightCondition::FlightCondition() noexcept
+{
+    startZuluDateTime.setTimeZone(QTimeZone::UTC);
+    endZuluDateTime.setTimeZone(QTimeZone::UTC);
+}
 
 void FlightCondition::clear() noexcept
 {

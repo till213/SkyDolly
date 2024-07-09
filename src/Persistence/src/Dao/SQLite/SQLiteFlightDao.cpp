@@ -137,9 +137,9 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
 
         if (query.next()) {
             flightData.id = query.value(idIdx).toLongLong();
-            QDateTime dateTime = query.value(creationTimeIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            flightData.creationTime = dateTime.toLocalTime();
+            auto creationDateTime = query.value(creationTimeIdx).toDateTime();
+            creationDateTime.setTimeZone(QTimeZone::UTC);
+            flightData.creationTime = creationDateTime.toLocalTime();
             flightData.title = query.value(titleIdx).toString();
             flightData.description = query.value(descriptionIdx).toString();
             flightData.flightNumber = query.value(flightNumberIdx).toString();
@@ -166,8 +166,10 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
             // Persisted times is are already local respectively zulu simulation times
             flightCondition.startLocalDateTime = query.value(startLocalSimulationTimeIdx).toDateTime();
             flightCondition.startZuluDateTime = query.value(startZuluSimulationTimeIdx).toDateTime();
+            flightCondition.startZuluDateTime.setTimeZone(QTimeZone::UTC);
             flightCondition.endLocalDateTime = query.value(endLocalSimulationTimeIdx).toDateTime();
             flightCondition.endZuluDateTime = query.value(endZuluSimulationTimeIdx).toDateTime();
+            flightCondition.endZuluDateTime.setTimeZone(QTimeZone::UTC);
         }
         std::vector<Aircraft> aircraft = d->aircraftDao->getByFlightId(id, &ok);
         flightData.aircraft = std::move(aircraft);

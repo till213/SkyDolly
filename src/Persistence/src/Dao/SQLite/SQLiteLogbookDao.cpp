@@ -194,7 +194,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
             summary.flightId = query.value(idIdx).toLongLong();
 
             QDateTime dateTime = query.value(creationTimeIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
+            dateTime.setTimeZone(QTimeZone::UTC);
             summary.creationDate = dateTime.toLocalTime();
             summary.aircraftType = query.value(typeIdx).toString();
             summary.flightNumber = query.value(flightNumberIdx).toString();
@@ -202,10 +202,12 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
             // Persisted times is are already local respectively zulu simulation times
             summary.startSimulationLocalTime = query.value(startLocalSimulationTimeIdx).toDateTime();
             summary.startSimulationZuluTime = query.value(startZuluSimulationTimeIdx).toDateTime();
+            summary.startSimulationZuluTime.setTimeZone(QTimeZone::UTC);
             summary.startLocation = query.value(startWaypointIdx).toString();
             // Persisted times is are already local respectively zulu simulation times
             summary.endSimulationLocalTime = query.value(endLocalSimulationTimeIdx).toDateTime();
             summary.endSimulationZuluTime = query.value(endZuluSimulationTimeIdx).toDateTime();
+            summary.endSimulationZuluTime.setTimeZone(QTimeZone::UTC);
             summary.endLocation = query.value(endWaypointIdx).toString();
             summary.title = query.value(titleIdx).toString();
 

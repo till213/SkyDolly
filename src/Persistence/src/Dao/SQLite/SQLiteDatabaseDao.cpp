@@ -188,22 +188,22 @@ Metadata SQLiteDatabaseDao::getMetadata(bool *ok) const noexcept
     );
     if (success && query.next()) {
         QDateTime dateTime = query.value(0).toDateTime();
-        dateTime.setTimeZone(QTimeZone::utc());
+        dateTime.setTimeZone(QTimeZone::UTC);
         metadata.creationDate = dateTime.toLocalTime();
 
         QString appVersion = query.value(1).toString();
         metadata.appVersion.fromString(appVersion);
 
         dateTime = query.value(2).toDateTime();
-        dateTime.setTimeZone(QTimeZone::utc());
+        dateTime.setTimeZone(QTimeZone::UTC);
         metadata.lastOptimisationDate = dateTime.toLocalTime();
 
         dateTime = query.value(3).toDateTime();
-        dateTime.setTimeZone(QTimeZone::utc());
+        dateTime.setTimeZone(QTimeZone::UTC);
         metadata.lastBackupDate = dateTime.toLocalTime();
 
         dateTime = query.value(4).toDateTime();
-        dateTime.setTimeZone(QTimeZone::utc());
+        dateTime.setTimeZone(QTimeZone::UTC);
         metadata.nextBackupDate = dateTime.toLocalTime();
 
         metadata.backupDirectoryPath = query.value(5).toString();
