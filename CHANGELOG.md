@@ -43,6 +43,11 @@
   * This allows for exact day of time reproductions, useful e.g. for video editing when video-recording (via separate screen capture solutions) the same flight multiple times from different camera angles
 - The replay time widget now properly displays replay times longer than a day (for instance one year or longer), by including also the actual start date
 
+### Simulation Variables
+- Removed `SMOKE_ENABLE` support
+  * Reasoning: from the [official documenation](https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_System_Variables.htm#SMOKESYSTEM_AVAILABLE): "There is no default 'smoke system' that this SimVar works on and this is a legacy variable that is available for use should you wish to use it but it affects nothing by default."
+  * Some aircraft seem to (re-)use this simulation variable for other purposes, with unexpected visual results
+
 ## Bug Fixes
 - GPX export
   * The elevation (&lt;ele&gt;) values are now properly exported as "above mean sea level" (and not "above WGS84 reference ellipsoid" anymore)

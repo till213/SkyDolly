@@ -218,9 +218,6 @@ public:
             sendTailhookHandlePosition(aircraftHandle.info.tailhookHandle);
         }
         if (ok) {
-            sendSmokeEnabled(aircraftHandle.event.smokeEnable);
-        }
-        if (ok) {
             sendWingFold(aircraftHandle.info.foldingWingHandlePosition);
         }
         return ok;

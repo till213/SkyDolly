@@ -85,8 +85,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
         "  right_wing_folding,"
         "  gear_handle_position,"
         "  tailhook_handle_position,"
-        "  folding_wing_handle_position,"
-        "  smoke_enable"
+        "  folding_wing_handle_position"
         ") values ("
         " :aircraft_id,"
         " :timestamp,"
@@ -99,8 +98,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
         " :right_wing_folding,"
         " :gear_handle_position,"
         " :tailhook_handle_position,"
-        " :folding_wing_handle_position,"
-        " :smoke_enable"
+        " :folding_wing_handle_position"
         ");"
     );
 
@@ -116,7 +114,6 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
     query.bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0);
     query.bindValue(":tailhook_handle_position", aircraftHandleData.tailhookHandlePosition ? 1 : 0);
     query.bindValue(":folding_wing_handle_position", aircraftHandleData.foldingWingHandlePosition ? 1 : 0);
-    query.bindValue(":smoke_enable", aircraftHandleData.smokeEnabled ? 1 : 0);
 
     const bool ok = query.exec();
 #ifdef DEBUG
@@ -162,7 +159,6 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
         const auto gearHandlePositionIdx = record.indexOf("gear_handle_position");
         const auto tailhookHandlePositionIdx = record.indexOf("tailhook_handle_position");
         const auto foldingWingHandlePositionIdx = record.indexOf("folding_wing_handle_position");
-        const auto smokeEnablePositionIdx = record.indexOf("smoke_enable");
         while (query.next()) {
             AircraftHandleData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
@@ -176,7 +172,6 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
             data.gearHandlePosition = query.value(gearHandlePositionIdx).toBool();
             data.tailhookHandlePosition = query.value(tailhookHandlePositionIdx).toBool();
             data.foldingWingHandlePosition = query.value(foldingWingHandlePositionIdx).toBool();
-            data.smokeEnabled = query.value(smokeEnablePositionIdx).toBool();
 
             aircraftHandleData.push_back(std::move(data));
         }

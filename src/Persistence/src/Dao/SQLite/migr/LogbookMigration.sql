@@ -1088,6 +1088,9 @@ from flight;
 drop table flight;
 alter table flight_new rename to flight;
 
+@migr(id = "42305488-5c04-4a96-b09a-a599c5b72e44", descn = "Remove smoke enable column", step = 1)
+alter table handle drop column smoke_enable;
+
 @migr(id = "80bcc81a-6554-4e05-8631-d17358d9d1dd", descn = "Update application version to 0.18", step = 1)
 update metadata
 set app_version = '0.18.0';

@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <cstdint>
-#include <optional>
 
 #include <QString>
 #include <QStringLiteral>
@@ -79,7 +78,6 @@ void AircraftHandleWidget::initUi() noexcept
     ui->brakeLeftLineEdit->setToolTip(SimVar::BrakeLeftPosition);
     ui->brakeRightLineEdit->setToolTip(SimVar::BrakeRightPosition);
     ui->waterRudderLineEdit->setToolTip(SimVar::WaterRudderHandlePosition);
-    ui->smokeEnabledLineEdit->setToolTip(SimVar::SmokeEnable);
     ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
     ui->tailhookHandleLineEdit->setToolTip(SimVar::TailhookHandle);
     ui->tailhookPositionLineEdit->setToolTip(SimVar::TailhookPosition);
@@ -119,7 +117,6 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
         ui->brakeLeftLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeLeftPosition));
         ui->brakeRightLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeRightPosition));
         ui->waterRudderLineEdit->setText(d->unit.formatPosition(aircraftHandleData.waterRudderHandlePosition));
-        aircraftHandleData.smokeEnabled ? ui->smokeEnabledLineEdit->setText(tr("On")) : ui->smokeEnabledLineEdit->setText(tr("Off"));
         ui->canopyOpenLineEdit->setText(d->unit.formatPercent(aircraftHandleData.canopyOpen));
         aircraftHandleData.tailhookHandlePosition ? ui->tailhookHandleLineEdit->setText(tr("Extended")) : ui->tailhookHandleLineEdit->setText(tr("Retracted"));
         ui->tailhookPositionLineEdit->setText(d->unit.formatPercent(aircraftHandleData.tailhookPosition));
@@ -137,7 +134,6 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
     ui->brakeLeftLineEdit->setStyleSheet(css);
     ui->brakeRightLineEdit->setStyleSheet(css);
     ui->waterRudderLineEdit->setStyleSheet(css);
-    ui->smokeEnabledLineEdit->setStyleSheet(css);
     ui->canopyOpenLineEdit->setStyleSheet(css);
     ui->tailhookHandleLineEdit->setStyleSheet(css);
     ui->tailhookPositionLineEdit->setStyleSheet(css);

@@ -98,7 +98,6 @@ namespace SimVar
     constexpr const char *TailhookPosition = "Tailhook Position";
     constexpr const char *CanopyOpen = "Canopy Open";
     constexpr const char *GearHandlePosition = "Gear Handle Position";
-    constexpr const char *SmokeEnable = "Smoke Enable";
     constexpr const char *FoldingWingHandlePosition = "Folding Wing Handle Position";
     constexpr const char *FoldingWingLeftPercent = "Folding Wing Left Percent";
     constexpr const char *FoldingWingRightPercent = "Folding Wing Right Percent";

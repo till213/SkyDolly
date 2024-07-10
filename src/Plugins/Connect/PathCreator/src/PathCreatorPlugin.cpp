@@ -451,7 +451,6 @@ void PathCreatorPlugin::recordAircraftHandle(std::int64_t timestamp) noexcept
     aircraftHandleData.gearHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
     aircraftHandleData.tailhookHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
     aircraftHandleData.foldingWingHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
-    aircraftHandleData.smokeEnabled = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     aircraftHandleData.timestamp = timestamp;
     auto &aircraft = getCurrentFlight().getUserAircraft();
