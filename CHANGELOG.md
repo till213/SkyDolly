@@ -25,6 +25,8 @@
 - The maximum simulation rate spinbox now steps in powers of two (1, 2, 4, 8, ..., 128)
   * The MSFS simulation rate is always a power of two
   * Non-power of two values may still be entered by editing the text
+- The maximum custom replay speed factor has been increased from 200 to 99999
+  * This allows for "timelapse replays" with one second per day (factor of 24 * 60 * 60 = 86400)
 - The recording sample rate setting has been removed. Reasoning:
   * The aircraft position is now sampled at a fixed 1 Hz (one sample per second) anyway (see above)
   * While the aircraft attitude is sampled "as fast as possible" (for each *simulated frame*)...
@@ -35,11 +37,19 @@
 - GPX export: the geoid height (&lt;geoidheight&gt;) can now also optionally be exported
   * This may be useful to calculate the ellipsoidial height *h* ([WGS84 reference ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS_84)) as follows: h = H + N = &lt;ele&gt; + &lt;geoidheight&gt;
   * Also refer to [Find Ellipsoidal Height from Orthometric Height](https://www.mathworks.com/help/map/ellipsoid-geoid-and-orthometric-height.html)
+- The simulation time is now updated in the flight simulator during replay
+  * According to the recorded simulation start and end times
+  * Note that the simulation time is not always in sync with real-world time: this is taken into account when interpolating between the simulation start- and end times
+  * This allows for exact day of time reproductions, useful e.g. for video editing when video-recording (via separate screen capture solutions) the same flight multiple times from different camera angles
+- The replay time widget now properly displays replay times longer than a day (for instance one year or longer), by including also the actual start date
 
 ## Bug Fixes
 - GPX export
   * The elevation (&lt;ele&gt;) values are now properly exported as "above mean sea level" (and not "above WGS84 reference ellipsoid" anymore)
   * The trackpoint timestamps are properly calculated and exported when exporting the entire flight (and not just the user aircraft); the proper timezone suffix (Z) is appended, too (ISO 8601 format)
+  
+## Under the Hood
+- Added new [One Year in New York](doc/SQL/Timelapse-One-Year-in-New-York.sql) example SQL ("1 year timelapse")
 
 ## 0.17.5
 This bug fix release provides an important correction for a regression that would prevent recording (and possibly replay as well), due to wrongly creating an IPv4 network connection instead of a local ("pipe") connection.

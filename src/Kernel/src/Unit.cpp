@@ -47,10 +47,6 @@ namespace {
     constexpr int Fog = 1000; // In meters
     constexpr int Mist = 2000; // In meters
     constexpr int Haze = 5000; // In meters
-
-    constexpr std::int64_t MillisecondsPerSecond = 1000;
-    constexpr std::int64_t SecondsPerMinute = 60;
-    constexpr std::int64_t MinutesPerHour = 60;
 }
 
 struct UnitPrivate {
@@ -253,16 +249,16 @@ QString Unit::formatTimestamp(std::int64_t milliseconds) const noexcept
 QString Unit::formatElapsedTime(std::int64_t milliSeconds) const noexcept
 {
     QString elapsedTime;
-    if (qAbs(milliSeconds) < ::MillisecondsPerSecond) {
+    if (qAbs(milliSeconds) < MillisecondsPerSecond) {
         elapsedTime = QCoreApplication::translate("Unit", "%1 milliseconds", nullptr, static_cast<int>(milliSeconds)).arg(milliSeconds);
-    } else if (qAbs(milliSeconds) < ::MillisecondsPerSecond * ::SecondsPerMinute) {
-        const double seconds = static_cast<double>(milliSeconds) / static_cast<double>(::MillisecondsPerSecond);
+    } else if (qAbs(milliSeconds) < MillisecondsPerSecond * SecondsPerMinute) {
+        const double seconds = static_cast<double>(milliSeconds) / static_cast<double>(MillisecondsPerSecond);
         elapsedTime = QCoreApplication::translate("Unit", "%1 seconds", nullptr, static_cast<int>(seconds)).arg(QString::number(seconds, 'f', 1));
-    } else if (qAbs(milliSeconds) < ::MillisecondsPerSecond * ::SecondsPerMinute * ::MinutesPerHour) {
-        const double minutes = static_cast<double>(milliSeconds) / static_cast<double>(::MillisecondsPerSecond * ::SecondsPerMinute);
+    } else if (qAbs(milliSeconds) < MillisecondsPerSecond * SecondsPerMinute * MinutesPerHour) {
+        const double minutes = static_cast<double>(milliSeconds) / static_cast<double>(MillisecondsPerSecond * SecondsPerMinute);
         elapsedTime = QCoreApplication::translate("Unit", "%1 minutes", nullptr, static_cast<int>(minutes)).arg(QString::number(minutes, 'f', 1));
     } else {
-        const double hours = static_cast<double>(milliSeconds) / static_cast<double>(::MillisecondsPerSecond * ::SecondsPerMinute * ::MinutesPerHour);
+        const double hours = static_cast<double>(milliSeconds) / static_cast<double>(MillisecondsPerSecond * SecondsPerMinute * MinutesPerHour);
         elapsedTime = QCoreApplication::translate("Unit", "%1 hours", nullptr, static_cast<int>(hours)).arg(QString::number(hours, 'f', 1));
     }
 

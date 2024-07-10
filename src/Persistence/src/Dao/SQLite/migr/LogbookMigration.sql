@@ -1043,6 +1043,51 @@ alter table position drop column velocity_x;
 alter table position drop column velocity_y;
 alter table position drop column velocity_z;
 
+@migr(id = "a428f6b8-c045-4161-8d6b-f498e940f484", descn = "Add NOT NULL date constraints to table flight, default ISO 8601 with timezone format", step_cnt = 3)
+create table flight_new (
+    id integer primary key,
+    creation_time datetime not null default (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+    user_aircraft_seq_nr integer not null,
+    title text,
+    description text,
+    flight_number text,
+    surface_type integer,
+    surface_condition integer,
+    on_any_runway integer,
+    on_parking_spot integer,
+    ground_altitude real,
+    ambient_temperature real,
+    total_air_temperature real,
+    wind_speed real,
+    wind_direction real,
+    visibility real,
+    sea_level_pressure real,
+    pitot_icing real,
+    structural_icing real,
+    precipitation_state integer,
+    in_clouds integer,
+    start_local_sim_time datetime not null default (strftime('%Y-%m-%dT%H:%M:%S', 'now', 'localtime')),
+    start_zulu_sim_time datetime not null default (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+    end_local_sim_time datetime not null default (strftime('%Y-%m-%dT%H:%M:%S', 'now', 'localtime')),
+    end_zulu_sim_time datetime not null default (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
+);
+
+@migr(id = "a428f6b8-c045-4161-8d6b-f498e940f484", descn = "Migrate data from old to new flight table", step = 2)
+insert into flight_new (id, creation_time, user_aircraft_seq_nr, title, description, flight_number,
+                        surface_type, surface_condition, on_any_runway, on_parking_spot, ground_altitude, ambient_temperature,
+                        total_air_temperature, wind_speed, wind_direction, visibility, sea_level_pressure, pitot_icing, structural_icing, precipitation_state, in_clouds,
+                        start_local_sim_time, start_zulu_sim_time, end_local_sim_time, end_zulu_sim_time)
+select id, creation_time, coalesce(user_aircraft_seq_nr, 1), title, description, flight_number,
+       surface_type, surface_condition, on_any_runway, on_parking_spot, ground_altitude, ambient_temperature,
+       total_air_temperature, wind_speed, wind_direction, visibility, sea_level_pressure, pitot_icing, structural_icing, precipitation_state, in_clouds,
+       coalesce(start_local_sim_time, strftime('%Y-%m-%dT%H:%M:%S', 'now', 'localtime')), coalesce(start_zulu_sim_time, strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+       coalesce(end_local_sim_time, strftime('%Y-%m-%dT%H:%M:%S', 'now', 'localtime')), coalesce(end_zulu_sim_time, strftime('%Y-%m-%dT%H:%M:%S', 'now'))
+from flight;
+
+@migr(id = "a428f6b8-c045-4161-8d6b-f498e940f484", descn = "Rename flight_new to flight", step = 3)
+drop table flight;
+alter table flight_new rename to flight;
+
 @migr(id = "80bcc81a-6554-4e05-8631-d17358d9d1dd", descn = "Update application version to 0.18", step = 1)
 update metadata
 set app_version = '0.18.0';

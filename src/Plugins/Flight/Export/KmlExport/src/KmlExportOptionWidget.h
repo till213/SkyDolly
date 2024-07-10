@@ -48,7 +48,7 @@ public:
     ~KmlExportOptionWidget() override;
 
 private:
-    std::unique_ptr<Ui::KmlExportOptionWidget> ui;
+    const std::unique_ptr<Ui::KmlExportOptionWidget> ui;
     const std::unique_ptr<KmlExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

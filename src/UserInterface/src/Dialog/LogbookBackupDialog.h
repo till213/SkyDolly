@@ -57,7 +57,7 @@ protected:
     void showEvent(QShowEvent *event) noexcept override;
 
 private:
-    std::unique_ptr<Ui::LogbookBackupDialog> ui;
+    const std::unique_ptr<Ui::LogbookBackupDialog> ui;
     const std::unique_ptr<LogbookBackupDialogPrivate> d;
 
     void initUi() noexcept;

@@ -32,7 +32,7 @@
 #include <QUuid>
 
 class QButtonGroup;
-class QTime;
+class QDateTime;
 class QEvent;
 class QResizeEvent;
 class QCloseEvent;
@@ -76,7 +76,7 @@ protected:
     void dropEvent(QDropEvent *event) noexcept override;
 
 private:
-    std::unique_ptr<Ui::MainWindow> ui;
+    const std::unique_ptr<Ui::MainWindow> ui;
     const std::unique_ptr<MainWindowPrivate> d;
 
     void frenchConnection() noexcept;
@@ -152,7 +152,7 @@ private slots:
     void onPositionSliderPressed() noexcept;
     void onPositionSliderValueChanged(int value) noexcept;
     void onPositionSliderReleased() noexcept;
-    void onTimeStampTimeEditChanged(const QTime &time) noexcept;
+    void onTimestampEditChanged(std::int64_t timestamp) noexcept;
 
     void updateWindowSize() noexcept;
     void onTimestampChanged(std::int64_t timestamp) noexcept;
@@ -162,6 +162,7 @@ private slots:
 
     void updateUi() noexcept;
     void updateControlUi() noexcept;
+    void updateTimeUi() noexcept;
     void updatePlayActionTooltip() noexcept;
     void updateControlIcons() noexcept;
     void updateSimulationRateLabel() noexcept;
@@ -185,7 +186,7 @@ private slots:
      *
      * Also refer to updateRecordingDuration.
      */
-    void updateReplayDuration() noexcept;
+    void updateRecordingDuration() noexcept;
 
     void updateFileMenu() noexcept;
     void updateModuleActions() noexcept;

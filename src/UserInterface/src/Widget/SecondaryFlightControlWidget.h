@@ -58,7 +58,7 @@ protected slots:
     void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    std::unique_ptr<Ui::SecondaryFlightControlWidget> ui;
+    const std::unique_ptr<Ui::SecondaryFlightControlWidget> ui;
     const std::unique_ptr<SecondaryFlightControlWidgetPrivate> d;
 
     void initUi() noexcept;    

@@ -245,8 +245,35 @@ public:
      *         the user aircraft
      */
     std::int64_t getTotalDurationMSec(bool ofUserAircraft = false) const noexcept;
+
+    /*!
+     * Returns the real-world local creation time for the given \p aircraft, taking its
+     * time offset into account.
+     *
+     * \param aircraft
+     *        the aircraft for which to return its creation time
+     * \return the aircraft creation time, in real-world local time
+     */
     QDateTime getAircraftCreationTime(const Aircraft &aircraft) const noexcept;
+
+    /*!
+     * Returns the simulation local start time for the given \p aircraft, taking its
+     * time offset into account.
+     *
+     * \param aircraft
+     *        the aircraft for which to return its simulation start time
+     * \return the aircraft simulation start time, in simulation local time
+     */
     QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept;
+
+    /*!
+     * Returns the simulation zulu start time for the given \p aircraft, taking its
+     * time offset into account.
+     *
+     * \param aircraft
+     *        the aircraft for which to return its simulation start time
+     * \return the aircraft simulation start time, in simulation zulu time
+     */
     QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept;
 
     void clear(bool withOneAircraft, FlightData::CreationTimeMode creationTimeMode) noexcept;

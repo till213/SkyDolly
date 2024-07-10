@@ -52,8 +52,8 @@ public:
     void accept() noexcept override;
 
 private:
-    std::unique_ptr<Ui::MSFSSimConnectOptionWidget> ui;
-    std::unique_ptr<MSFSSimConnectOptionWidgetPrivate> d;
+    const std::unique_ptr<Ui::MSFSSimConnectOptionWidget> ui;
+    const std::unique_ptr<MSFSSimConnectOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;

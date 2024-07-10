@@ -56,7 +56,7 @@ protected slots:
     void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    std::unique_ptr<Ui::EngineWidget> ui;
+    const std::unique_ptr<Ui::EngineWidget> ui;
     const std::unique_ptr<EngineWidgetPrivate> d;
 
     void initUi() noexcept;

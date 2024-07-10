@@ -48,7 +48,7 @@ public:
     ~CsvExportOptionWidget() override;
 
 private:
-    std::unique_ptr<Ui::CsvExportOptionWidget> ui;
+    const std::unique_ptr<Ui::CsvExportOptionWidget> ui;
     const std::unique_ptr<CsvExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

@@ -267,7 +267,7 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &fl
     PositionData positionData;
     AttitudeData attitudeData;
     bool ok {true};
-    const std::int64_t timestamp = row.at(d->headers.at(Header::Milliseconds)).toLongLong(&ok) - d->timestampDelta;
+    const auto timestamp = row.at(d->headers.at(Header::Milliseconds)).toLongLong(&ok) - d->timestampDelta;
     if (ok) {
         positionData.timestamp = timestamp;
         positionData.latitude = row.at(d->headers.at(Header::Latitude)).toDouble(&ok);

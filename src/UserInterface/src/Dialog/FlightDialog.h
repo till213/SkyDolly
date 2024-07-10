@@ -57,8 +57,8 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    std::unique_ptr<FlightDialogPrivate> d;
     const std::unique_ptr<Ui::FlightDialog> ui;
+    const std::unique_ptr<FlightDialogPrivate> d;
 
     void initUi() noexcept;
     void updateUi() noexcept;

@@ -54,6 +54,13 @@ struct UnitPrivate;
 class KERNEL_API Unit final
 {
 public:
+    static constexpr std::int64_t MillisecondsPerSecond = 1000;
+    static constexpr std::int64_t SecondsPerMinute = 60;
+    static constexpr std::int64_t MinutesPerHour = 60;
+
+    static constexpr std::int64_t MillisecondsPerMinute {60 * MillisecondsPerSecond};
+    static constexpr std::int64_t MillisecondsPerHour {60 * MillisecondsPerMinute};
+    static constexpr std::int64_t MillisecondsPerDay {24 * MillisecondsPerHour};
 
     // Precision of exported double GNSS coordinate values
     // https://rapidlasso.com/2019/05/06/how-many-decimal-digits-for-storing-longitude-latitude/

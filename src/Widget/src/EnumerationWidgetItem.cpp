@@ -39,7 +39,7 @@ EnumerationWidgetItem::EnumerationWidgetItem(const Enumeration &enumeration)
       m_enumeration(enumeration)
 {}
 
-QVariant EnumerationWidgetItem::data(int role) const
+QVariant EnumerationWidgetItem::data(int role) const noexcept
 {
     switch (role) {
     case Qt::DisplayRole:
@@ -57,7 +57,7 @@ QVariant EnumerationWidgetItem::data(int role) const
     return {};
 }
 
-void EnumerationWidgetItem::setData(int role, const QVariant &value)
+void EnumerationWidgetItem::setData(int role, const QVariant &value) noexcept
 {
     switch (role) {
     case Qt::DisplayRole:
