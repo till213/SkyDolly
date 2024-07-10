@@ -355,16 +355,6 @@ signals:
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
 
     /*!
-     * Emitted whenever the simulation time during replay has changed.
-     *
-     * \param zuluDateTime
-     *        the simulation zulu date and time
-     * \param localDateTime
-     *        the simulation local date and time
-     */
-    void simulationTimeChaged(QDateTime zuluDateTime, QDateTime localDateTime);
-
-    /*!
      * Emitted whenver the connection state has changed.
      *
      * Also refer to #recordingStopped.

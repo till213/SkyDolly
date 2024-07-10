@@ -68,27 +68,27 @@ public:
     std::int64_t getTimestamp() const noexcept;
 
     /*!
-     * Sets the current timestamp.
+     * Sets the current timestamp to \p timestamp.
      *
-     * \param time
+     * \param timestamp
      *        the current timestamp [msec]
      */
-    void setTimestamp(std::int64_t time) noexcept;
+    void setTimestamp(std::int64_t timestamp) noexcept;
 
     /*!
-     * Returns the maximum recorded timestamp.
+     * Returns the end (maximum recorded) timestamp.
      *
-     * \return the maximum recorded timestamp [msec|
+     * \return the end timestamp [msec|
      */
-    std::int64_t getMaximumTimestamp() const noexcept;
+    std::int64_t getEndTimestamp() const noexcept;
 
     /*!
-     * Sets the maximum recorded timestamp.
+     * Sets the end (maximum recorded) timestamp to \p endTimestamp.
      *
-     * \param maximum
-     *        the maximum recorded timestamp [msec]
+     * \param end
+     *        the end timestamp [msec]
      */
-    void setMaximumTimestamp(std::int64_t maximum) noexcept;
+    void setEndTimestamp(std::int64_t endTimestamp) noexcept;
 
     /*!
      * Returns whether the minimal user interface is enabled.
@@ -121,7 +121,8 @@ private:
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
-    QDateTime convertTimestampToDateTime(std::int64_t timestamp);
+    void updateTimestamp() noexcept;
+    inline QDateTime getStartDateTime() const noexcept;
 
 private slots:
     void updateUi() noexcept;

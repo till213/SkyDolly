@@ -925,12 +925,10 @@ bool AbstractSkyConnect::updateSimulationTime() noexcept
     const auto realWorldDuation = d->currentFlight.getTotalDurationMSec();
     if (realWorldDuation > 0) {
         auto startZuluDateTime = d->currentFlight.getFlightCondition().startZuluDateTime;
-        auto startLocalDateTime = d->currentFlight.getFlightCondition().startLocalDateTime;
-        if (!(startZuluDateTime.isValid() && startLocalDateTime.isValid())) {
+        if (!(startZuluDateTime.isValid())) {
             // If - for whatever reasons - the flight conditions have not been recorded, fall back
             // to the current real-world date and time
             startZuluDateTime = QDateTime::currentDateTimeUtc();
-            startLocalDateTime = QDateTime::currentDateTime();
             hasSimulationTime = false;
         }
         const auto endZuluDateTime = hasSimulationTime ? d->currentFlight.getFlightCondition().endZuluDateTime : startZuluDateTime.addMSecs(realWorldDuation);
@@ -939,17 +937,13 @@ bool AbstractSkyConnect::updateSimulationTime() noexcept
 
         const auto simulationTime = static_cast<std::int64_t>(std::round(static_cast<double>(d->currentTimestamp) * factor));
         const auto currentZuluDateTime = startZuluDateTime.addMSecs(simulationTime);
-        const auto currentLocalDateTime = startLocalDateTime.addMSecs(simulationTime);
 
-        emit simulationTimeChaged(currentZuluDateTime, currentLocalDateTime);
         if (sender() == nullptr) {
             // Update due to some "seek" operation -> reset timer
             d->simulationTimeUpdateTimer.start();
 #ifdef DEBUG
         } else {
-            qDebug() << "AbstractSkyConnect::updateSimulationTime: periodic simulation date and time sync: zulu:"
-                     << currentZuluDateTime.toString() << "local:"
-                     << currentLocalDateTime.toString();
+            qDebug() << "AbstractSkyConnect::updateSimulationTime: periodic simulation date and time sync: zulu:" << currentZuluDateTime.toString();
 #endif
         }
         return sendZuluDateTime(currentZuluDateTime);

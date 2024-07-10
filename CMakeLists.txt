@@ -139,7 +139,7 @@ target_sources(${APP_PROJECT_NAME}
         doc/SkyDolly.simvars
         doc/LICENSE
         doc/SQL/Timelapse-Camera-Pan.sql
-        doc/SQL/Timelapse-Full-Year.sql
+        doc/SQL/Timelapse-One-Year-in-New-York.sql
         doc/SQL/Flight-Analysis.sql
 )
 

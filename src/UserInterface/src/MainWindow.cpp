@@ -117,8 +117,9 @@ namespace
     constexpr int PositionSliderMin {0};
     constexpr int PositionSliderMax {1000};
     constexpr double ReplaySpeedAbsoluteMin {0.01};
-    // A replay speed with factor 200 should be fast enough
-    constexpr double ReplaySpeedAbsoluteMax {200.0};
+    // A replay speed with factor 99999 should be fast enough (one day has 86400 seconds: this allows
+    // for a speed-up of one second per day)
+    constexpr double ReplaySpeedAbsoluteMax {99999.0};
     constexpr double ReplaySpeedDecimalPlaces {2};
 
     constexpr int CustomSpeedLineEditMinimumWidth {40};
@@ -613,7 +614,7 @@ void MainWindow::initModuleSelectorUi() noexcept
     auto actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
-    const QString css = 
+    const QString css =
 "QCheckBox::indicator:unchecked {"
 "    image: url(:/img/icons/checkbox-expand-normal.png);"
 "}"
@@ -923,7 +924,7 @@ void MainWindow::updateMinimalUi(bool enable)
         ui->moduleVisibilityWidget->setHidden(true);
         ui->moduleSelectorWidget->setHidden(true);
         ui->showModulesAction->setChecked(false);
-        ui->showModulesAction->setEnabled(false);  
+        ui->showModulesAction->setEnabled(false);
     } else {
         const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
         ui->moduleVisibilityWidget->setVisible(true);
@@ -981,7 +982,7 @@ void MainWindow::updateReplaySpeedUi() noexcept
 void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
 {
     ui->timestampEdit->blockSignals(true);
-    ui->timestampEdit->setMaximumTimestamp(timestamp);
+    ui->timestampEdit->setEndTimestamp(timestamp);
     ui->timestampEdit->setTimestamp(timestamp);
     ui->timestampEdit->blockSignals(false);
 }
@@ -1548,7 +1549,7 @@ void MainWindow::updateRecordingDuration() noexcept
     const auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
     ui->timestampEdit->blockSignals(true);
-    ui->timestampEdit->setMaximumTimestamp(totalDuration);
+    ui->timestampEdit->setEndTimestamp(totalDuration);
     ui->timestampEdit->blockSignals(false);
 }
 

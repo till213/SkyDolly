@@ -48,7 +48,7 @@ struct TimestampEditPrivate
     // The current timestamp [msec]
     std::int64_t timestamp {0};
     // The maximum recorded timestamp [msec]
-    std::int64_t maximumTimestamp {0};
+    std::int64_t endTimestamp {0};
     bool minimalUiEnabled {false};
 };
 
@@ -91,19 +91,19 @@ void TimestampEdit::setTimestamp(std::int64_t timestamp) noexcept
 {
     if (d->timestamp != timestamp) {
         d->timestamp = timestamp;
-        updateUi();
+        updateTimestamp();
     }
 }
 
-std::int64_t TimestampEdit::getMaximumTimestamp() const noexcept
+std::int64_t TimestampEdit::getEndTimestamp() const noexcept
 {
-    return d->maximumTimestamp;
+    return d->endTimestamp;
 }
 
-void TimestampEdit::setMaximumTimestamp(std::int64_t maximumTime) noexcept
+void TimestampEdit::setEndTimestamp(std::int64_t endTimestamp) noexcept
 {
-    if (d->maximumTimestamp != maximumTime) {
-        d->maximumTimestamp = maximumTime;
+    if (d->endTimestamp != endTimestamp) {
+        d->endTimestamp = endTimestamp;
         updateUi();
     }
 }
@@ -137,20 +137,35 @@ void TimestampEdit::frenchConnection() noexcept
             this, &TimestampEdit::onDateTimeEditChanged);
 }
 
+void TimestampEdit::updateTimestamp() noexcept
+{
+    if (d->endTimestamp < Unit::MillisecondsPerDay) {
+        const auto time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(d->timestamp));
+        ui->timeEdit->setTime(time);
+    } else {
+        const auto dateTime = getStartDateTime().addMSecs(d->timestamp);
+        ui->dateTimeEdit->setDateTime(dateTime);
+    }
+}
+
+inline QDateTime TimestampEdit::getStartDateTime() const noexcept
+{
+    // TODO Add option to toggle displayed time: zulu, simulation local, real-world local, relative vs absolute
+    return d->startRealWorldLocalDateTime;
+}
+
 // PRIVATE SLOTS
 
 void TimestampEdit::updateUi() noexcept
 {
-    if (d->maximumTimestamp < Unit::MillisecondsPerDay) {
-        const QTime time = QTime::fromMSecsSinceStartOfDay(d->timestamp);
-        ui->timeEdit->setTime(time);
+    if (d->endTimestamp < Unit::MillisecondsPerDay) {
         ui->timeLabel->setVisible(true);
         ui->timeEdit->setVisible(true);
         ui->dateTimeLabel->setVisible(false);
         ui->dateTimeEdit->setVisible(false);
-    } else {
-        const QDateTime dateTime = d->startRealWorldLocalDateTime.addMSecs(d->timestamp);
-        ui->dateTimeEdit->setDateTime(dateTime);
+        const QTime time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(d->endTimestamp));
+        ui->timeEdit->setMaximumTime(time);
+    } else {        
         ui->timeLabel->setVisible(false);
         ui->timeEdit->setVisible(false);
         ui->dateTimeEdit->setVisible(true);
@@ -159,16 +174,24 @@ void TimestampEdit::updateUi() noexcept
         } else {
             ui->dateTimeLabel->setVisible(true);
         }
+        const auto startDateTime = getStartDateTime();
+        const auto endDateTime = startDateTime.addMSecs(d->endTimestamp);
+        ui->dateTimeEdit->setMinimumDateTime(startDateTime);
+        ui->dateTimeEdit->setMaximumDateTime(endDateTime);
     }
+    updateTimestamp();
 }
 
 void TimestampEdit::onTimeEditChanged(QTime time) noexcept
 {
-    std::int64_t timestamp = time.hour() * Unit::MillisecondsPerHour + time.minute() * Unit::MillisecondsPerMinute + time.second() * Unit::MillisecondsPerSecond;
+    const auto timestamp = time.hour() * Unit::MillisecondsPerHour + time.minute() * Unit::MillisecondsPerMinute + time.second() * Unit::MillisecondsPerSecond;
     emit timestampChanged(timestamp);
 }
 
 void TimestampEdit::onDateTimeEditChanged(const QDateTime &dateTime) noexcept
 {
-
+    const auto currentDateTime = ui->dateTimeEdit->dateTime();
+    const auto seconds = getStartDateTime().secsTo(currentDateTime);
+    const auto timestamp = seconds * Unit::MillisecondsPerSecond;
+    emit timestampChanged(timestamp);
 }

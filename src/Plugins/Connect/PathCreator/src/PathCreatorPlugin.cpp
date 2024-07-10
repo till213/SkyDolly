@@ -584,7 +584,7 @@ void PathCreatorPlugin::closeConnection() noexcept
 
 void PathCreatorPlugin::replay() noexcept
 {
-    const std::int64_t timestamp = updateCurrentTimestamp();
+    const auto timestamp = updateCurrentTimestamp();
     if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
         onEndReached();
     }
@@ -598,7 +598,7 @@ void PathCreatorPlugin::recordData() noexcept
         resetElapsedTime(true);
     }
 
-    const std::int64_t timestamp = updateCurrentTimestamp();
+    const auto timestamp = updateCurrentTimestamp();
     recordPositionData(timestamp);
     recordEngineData(timestamp);
     recordPrimaryControls(timestamp);
