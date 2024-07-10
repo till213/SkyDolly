@@ -681,8 +681,9 @@ inline void FormationWidget::updateRow(const Aircraft &aircraft, int row, int ai
     item->setData(Qt::DisplayRole, d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
 
     // Duration
+    const auto startDate = flight.getAircraftStartLocalTime(aircraft);
     item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::durationColumn);
-    item->setData(Qt::DisplayRole, Unit::formatHHMMSS(aircraft.getDurationMSec()));
+    item->setData(Qt::DisplayRole, d->unit.formatTimestamp(aircraft.getDurationMSec(), startDate));
 
     // Tail number 
     item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::tailNumberColumn);

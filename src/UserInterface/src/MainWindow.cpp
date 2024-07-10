@@ -999,8 +999,10 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
         if (ts > 0) {
             sliderPosition = static_cast<int>(std::round(::PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration))));
         }
-        // TODO Also take recordings > 1 day (or even > 1 year) into account
-        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
+        const auto &flight = Logbook::getInstance().getCurrentFlight();
+        const auto &aircraft = flight.getUserAircraft();
+        const auto startDate = flight.getAircraftStartLocalTime(aircraft);
+        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp), d->unit.formatTimestamp(timestamp, startDate)));
     }
 
     ui->positionSlider->blockSignals(true);

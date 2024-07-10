@@ -226,6 +226,11 @@ QString Unit::formatMonth(int month) const noexcept
     return d->locale.monthName(month);
 }
 
+QString Unit::formatNumber(std::int64_t number) const noexcept
+{
+    return d->locale.toString(number);
+}
+
 QString Unit::formatNumber(double number, int precision) const noexcept
 {
     return d->locale.toString(number, 'f', precision);
@@ -241,41 +246,45 @@ QString Unit::formatSeconds(double seconds) const noexcept
     return QCoreApplication::translate("Unit", "%1 seconds", nullptr, static_cast<int>(seconds)).arg(formatNumber(seconds, 2));
 }
 
-QString Unit::formatTimestamp(std::int64_t milliseconds) const noexcept
+QString Unit::formatTimestamp(std::int64_t timestamp, const QDateTime &startDateTime) const noexcept
 {
-    return d->locale.toString(milliseconds);
+    QString formattedTimestamp;
+    if (timestamp < MillisecondsPerDay) {
+        formattedTimestamp = formatHHMMSS(timestamp);
+    } else {
+        const auto dateTime = startDateTime.addMSecs(timestamp);
+        formattedTimestamp = QString("%1 %2").arg(formatDate(dateTime.date()), formatHHMMSS(dateTime.time()));
+    }
+    return formattedTimestamp;
 }
 
-QString Unit::formatElapsedTime(std::int64_t milliSeconds) const noexcept
+QString Unit::formatElapsedTime(std::int64_t milliseconds) const noexcept
 {
     QString elapsedTime;
-    if (qAbs(milliSeconds) < MillisecondsPerSecond) {
-        elapsedTime = QCoreApplication::translate("Unit", "%1 milliseconds", nullptr, static_cast<int>(milliSeconds)).arg(milliSeconds);
-    } else if (qAbs(milliSeconds) < MillisecondsPerSecond * SecondsPerMinute) {
-        const double seconds = static_cast<double>(milliSeconds) / static_cast<double>(MillisecondsPerSecond);
+    if (qAbs(milliseconds) < MillisecondsPerSecond) {
+        elapsedTime = QCoreApplication::translate("Unit", "%1 milliseconds", nullptr, static_cast<int>(milliseconds)).arg(milliseconds);
+    } else if (qAbs(milliseconds) < MillisecondsPerMinute) {
+        const double seconds = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerSecond);
         elapsedTime = QCoreApplication::translate("Unit", "%1 seconds", nullptr, static_cast<int>(seconds)).arg(QString::number(seconds, 'f', 1));
-    } else if (qAbs(milliSeconds) < MillisecondsPerSecond * SecondsPerMinute * MinutesPerHour) {
-        const double minutes = static_cast<double>(milliSeconds) / static_cast<double>(MillisecondsPerSecond * SecondsPerMinute);
+    } else if (qAbs(milliseconds) < MillisecondsPerHour) {
+        const double minutes = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerSecond * SecondsPerMinute);
         elapsedTime = QCoreApplication::translate("Unit", "%1 minutes", nullptr, static_cast<int>(minutes)).arg(QString::number(minutes, 'f', 1));
     } else {
-        const double hours = static_cast<double>(milliSeconds) / static_cast<double>(MillisecondsPerSecond * SecondsPerMinute * MinutesPerHour);
+        const double hours = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerSecond * SecondsPerMinute * MinutesPerHour);
         elapsedTime = QCoreApplication::translate("Unit", "%1 hours", nullptr, static_cast<int>(hours)).arg(QString::number(hours, 'f', 1));
     }
 
     return elapsedTime;
 }
 
-QString Unit::formatHHMMSS(std::int64_t milliSeconds) noexcept
-{
-    std::chrono::milliseconds msecs {milliSeconds};
-    std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(msecs);
-    msecs -= seconds;
-    std::chrono::minutes minutes = std::chrono::duration_cast<std::chrono::minutes>(seconds);
-    seconds -= minutes;
-    std::chrono::hours hours = std::chrono::duration_cast<std::chrono::hours>(minutes);
-    minutes -= hours;
+QString Unit::formatHHMMSS(std::int64_t milliseconds) noexcept
+{    
+    QTime time = QTime::fromMSecsSinceStartOfDay(milliseconds);
+    return formatHHMMSS(time);
+}
 
-    QTime time(static_cast<int>(hours.count()), static_cast<int>(minutes.count()), static_cast<int>(seconds.count()));
+QString Unit::formatHHMMSS(QTime time) noexcept
+{
     return time.toString("hh:mm:ss");
 }
 

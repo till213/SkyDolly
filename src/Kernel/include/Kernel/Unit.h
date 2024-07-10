@@ -57,10 +57,11 @@ public:
     static constexpr std::int64_t MillisecondsPerSecond = 1000;
     static constexpr std::int64_t SecondsPerMinute = 60;
     static constexpr std::int64_t MinutesPerHour = 60;
+    static constexpr std::int64_t HoursPerDay = 24;
 
-    static constexpr std::int64_t MillisecondsPerMinute {60 * MillisecondsPerSecond};
-    static constexpr std::int64_t MillisecondsPerHour {60 * MillisecondsPerMinute};
-    static constexpr std::int64_t MillisecondsPerDay {24 * MillisecondsPerHour};
+    static constexpr std::int64_t MillisecondsPerMinute {SecondsPerMinute * MillisecondsPerSecond};
+    static constexpr std::int64_t MillisecondsPerHour {MinutesPerHour * MillisecondsPerMinute};
+    static constexpr std::int64_t MillisecondsPerDay {HoursPerDay * MillisecondsPerHour};
 
     // Precision of exported double GNSS coordinate values
     // https://rapidlasso.com/2019/05/06/how-many-decimal-digits-for-storing-longitude-latitude/
@@ -82,33 +83,33 @@ public:
     ~Unit();
 
     /*!
-     * Formats the \c latitude into degrees, minutes and seconds (DMS).
+     * Formats the \p latitude into degrees, minutes and seconds (DMS).
      *
      * \param latitude
      *        the latitude to be converted
-     * \return the \c latitude in DMS format
+     * \return the \p latitude in DMS format
      * \sa formatCoordinate
      */
     static QString formatLatitudeDMS(double latitude) noexcept;
 
     /*!
-     * Formats the \c longitude into degrees, minutes and seconds (DMS).
+     * Formats the \p longitude into degrees, minutes and seconds (DMS).
      *
      * \param longitude
      *        the longitude to be converted
-     * \return the \c longitude in DMS format
+     * \return the \p longitude in DMS format
      * \sa formatCoordinate
      */
     static QString formatLongitudeDMS(double longitude) noexcept;
 
     /*!
-     * Formats the \c latitude and \c longitude into degrees, minutes and seconds (DMS).
+     * Formats the \p latitude and \p longitude into degrees, minutes and seconds (DMS).
      *
      * \param latitude
      *        the latitude to be converted
      * \param longitude
      *        the longitude to be converted
-     * \return the \c latitude and \c longitude in DMS format
+     * \return the \p latitude and \p longitude in DMS format
      * \sa formatCoordinates
      */
     static QString formatLatLongPositionDMS(double latitude, double longitude) noexcept;
@@ -119,9 +120,9 @@ public:
     QString formatVisibility(double meters) const noexcept;
 
     /*!
-     * Returns a formatted string for \c degrees [0, 360].
+     * Returns a formatted string for \p degrees [0, 360].
      *
-     * \return a formatted string for \c degrees, including unit (°)
+     * \return a formatted string for \p degrees, including unit (°)
      */
     QString formatDegrees(double degrees) const noexcept;
     QString formatHz(double hz) const noexcept;
@@ -144,7 +145,7 @@ public:
     QString formatDuration(const QTime &time) const noexcept;
 
     /*!
-     * Returns the name of the month.
+     * Returns the name of the \p month.
      *
      * \param month
      *        the month of year [1, 12]
@@ -152,11 +153,34 @@ public:
      */
     QString formatMonth(int month) const noexcept;
 
+    /*!
+     * Formats the \p number in a locale-specific way.
+     *
+     * Example: 6'543.21
+     *
+     * \param number
+     *        the number to be formatted
+     * \param precision
+     *        the number of digits to conisder
+     * \return the formatted number, with locale-specific delimiters
+     */
     QString formatNumber(double number, int precision) const noexcept;
+
+    /*!
+     * Formats the \p number in a locale-specific way.
+     *
+     * Example: 6'543
+     *
+     * \param number
+     *        the number to be formatted
+     * \return the formatted number, with locale-specific delimiters
+     */
+    QString formatNumber(std::int64_t number) const noexcept;
+
     double toNumber(const QString &value, bool *ok = nullptr) const noexcept;
 
     /*!
-     * Formats the \c second, with local thousands separator and unit.
+     * Formats the \p seconds, with local thousands separator and unit.
      *
      * \param seconds
      *        the seconds to format
@@ -165,50 +189,59 @@ public:
     QString formatSeconds(double seconds) const noexcept;
 
     /*!
-     * Formats the \c milliseconds as number, with local thousands separators.
-     *
-     * Example: 5'432
+     * Formats the \p milliseconds (timestamp).
      *
      * \param milliseconds
-     *        the timestamp [milliseconds]
-     * \return the number formatted \c milliseconds timestamp
+     *        the milliseconds [milliseconds]
+     * \param startDate
+     *        the start date and time of the recording
+     * \return the number formatted \p milliseconds timestamp
      */
-    QString formatTimestamp(std::int64_t milliseconds) const noexcept;
+    QString formatTimestamp(std::int64_t milliseconds, const QDateTime &startDate) const noexcept;
 
     /*!
-     * Formats the elapsed \c milliseconds (timestamp) as either (fractional) milliseconds, seconds,
+     * Formats the elapsed \p milliseconds (timestamp) as either (fractional) milliseconds, seconds,
      * minutes or hours.
      *
      * Example: 5.43 minutes
      *
      * \param milliseconds
      *        the ellapsed time [milliseconds]
-     * \return the elapsed time formatted \c milliseconds
+     * \return the elapsed time formatted \p milliseconds
      */
     QString formatElapsedTime(std::int64_t milliseconds) const noexcept;
 
     /*!
-     * Formats the \c milliseconds as hh:mm:ss timestamp.
+     * Formats the \p milliseconds as hh:mm:ss timestamp.
+     * \param milliseconds
+     *        the timestamp [milliseconds]
+     * \return the hh:mm:ss formatted \p milliseconds timestamp
+     * \sa formatTime
+     */
+    static QString formatHHMMSS(std::int64_t milliseconds) noexcept;
+
+    /*!
+     * Formats the \p time as hh:mm:ss timestamp.
      *
      * Example: 05:43:21
      *
-     * \param milliseconds
-     *        the timestamp [milliseconds]
-     * \return the hh:mm:ss formatted \c milliseconds timestamp
+     * \param time
+     *        the time
+     * \return the hh:mm:ss formatted \p time timestamp
      */
-    static QString formatHHMMSS(std::int64_t milliseconds) noexcept;
+    static QString formatHHMMSS(QTime time) noexcept;
 
     static QString formatBoolean(bool value) noexcept;
 
     /*!
-     * Formats the GNSS \c coordinate (latitude or longitude) with the appropriate decimal point precision.
+     * Formats the GNSS \p coordinate (latitude or longitude) with the appropriate decimal point precision.
      *
      * Note: the coordinate is always formatted with a decimal point, in order to fasciliate exchange
      * with other applications / websites.
      *
      * \param coordinate
      *        the coordinate to be formatted
-     * \return the text representation of \c coordinate; always using a decimal point ('.')
+     * \return the text representation of \p coordinate; always using a decimal point ('.')
      * \sa formatLatitudeDMS
      * \sa formatLongitudeDMS
      */
@@ -218,7 +251,7 @@ public:
     }
 
     /*!
-     * Formats the GNSS \c latitude and \c longitude with the appropriate decimal point precision.
+     * Formats the GNSS \p latitude and \p longitude with the appropriate decimal point precision.
      *
      * \param latitude
      *        the latitude to be formatted
