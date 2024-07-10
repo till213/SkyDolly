@@ -207,7 +207,18 @@ public:
      */
     virtual bool isInRecordingState() const noexcept = 0;
 
-    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept = 0;
+    /*!
+     * Starts (or resumes) the replay, by placing the user aircraft to the \p initialPosition (if given).
+     * Otherwise the initial position is calculated from the first recorded positin data of the user aircraft.
+     *
+     * \param skipToStart
+     *        start replay from the beginning (e.g. when the end of the replay has been reached)
+     * \param initialPosition
+     *        the optional initial position of the user aircraft; useful when replay mode "fly with formation" has
+     *        been selected
+     * \sa ReplayMode
+     */
+    virtual void startReplay(bool skipToStart, const InitialPosition &initialPosition = InitialPosition()) noexcept = 0;
     virtual void stopReplay() noexcept = 0;
 
     /*!

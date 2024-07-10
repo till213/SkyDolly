@@ -139,7 +139,7 @@ public:
     bool isRecording() const noexcept;
     bool isInRecordingState() const noexcept;
 
-    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept;
+    void startReplay(bool skipToStart, const InitialPosition &initialPosition = InitialPosition()) noexcept;
     void stopReplay() noexcept;
     bool isReplaying() const noexcept;
     bool isInReplayState() const noexcept;

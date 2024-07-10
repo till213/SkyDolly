@@ -1888,16 +1888,13 @@ void MainWindow::clearFlight() noexcept
 void MainWindow::onFlightRestored() noexcept
 {
     updateUi();
-    auto &skyConnectManager = SkyConnectManager::getInstance();
-    skyConnectManager.skipToBegin();
-    if (skyConnectManager.isConnected()) {
-        // Make sure we are unpaused...
-        d->moduleManager->setPaused(false);
-        // ... play the first frame (which will "move" to the new location)...
-        d->moduleManager->setPlaying(true);
-        // ... and pause again (such that the new scenery can be loaded)
-        d->moduleManager->setPaused(true);
-    }
+
+    // Make sure we are unpaused...
+    d->moduleManager->setPaused(false);
+    // ... play the first frame (which will "move" to the new location)...
+    d->moduleManager->setPlaying(true);
+    // ... and pause again (such that the new scenery can be loaded)
+    d->moduleManager->setPaused(true);
 }
 
 void MainWindow::onLogbookConnectionChanged(bool connected) noexcept

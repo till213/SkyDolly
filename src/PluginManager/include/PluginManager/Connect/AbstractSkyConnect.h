@@ -82,7 +82,7 @@ public:
     bool isRecording() const noexcept override;
     bool isInRecordingState() const noexcept override;
 
-    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept override;
+    void startReplay(bool skipToStart, const InitialPosition &initialPosition = InitialPosition()) noexcept override;
     void stopReplay() noexcept override;
     bool isReplaying() const noexcept override;
     bool isInReplayState() const noexcept override;
@@ -239,7 +239,7 @@ private:
     inline bool retryWithReconnect(const std::function<bool()> &func);
 
     bool setupInitialRecordingPosition(InitialPosition initialPosition) noexcept;
-    bool setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept;
+    bool setupInitialReplayPosition(InitialPosition initialPosition) noexcept;
     bool updateUserAircraftFreeze() noexcept;
 
     // Returns the applicable simulation rate, given the current 'replaySpeedFactor'

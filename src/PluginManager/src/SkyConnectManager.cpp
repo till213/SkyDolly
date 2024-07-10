@@ -245,11 +245,11 @@ bool SkyConnectManager::isInRecordingState() const noexcept
     return skyConnect ? skyConnect->get().isInRecordingState() : false;
 }
 
-void SkyConnectManager::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
+void SkyConnectManager::startReplay(bool skipToStart, const InitialPosition &initialPosition) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
-        skyConnect->get().startReplay(fromStart, flyWithFormationPosition);
+        skyConnect->get().startReplay(skipToStart, initialPosition);
     }
 }
 

@@ -283,14 +283,14 @@ bool AbstractSkyConnect::isInRecordingState() const noexcept
     return isRecording() || d->state == Connect::State::RecordingPaused;
 }
 
-void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
+void AbstractSkyConnect::startReplay(bool skipToStart, const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
         tryFirstConnectAndSetup();
     }
     if (isConnectedWithSim()) {
         setState(Connect::State::Replay);
-        if (fromStart) {
+        if (skipToStart) {
             d->elapsedTime = 0;
             d->currentTimestamp = 0;   
         }
@@ -299,7 +299,7 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
         d->elapsedTimer.invalidate();
         bool ok = retryWithReconnect([this]() -> bool { return onStartReplay(d->currentTimestamp); });
         if (ok) {
-            ok = setupInitialReplayPosition(flyWithFormationPosition);
+            ok = setupInitialReplayPosition(initialPosition);
             ok = ok && updateUserAircraftFreeze();
             ok = ok && updateSimulationTime();
             ok = ok && sendSimulationEvent(SimulationEvent::SimulationRate, getApplicableSimulationRate());
@@ -828,13 +828,13 @@ bool AbstractSkyConnect::setupInitialRecordingPosition(InitialPosition initialPo
     return ok;
 }
 
-bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept
+bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition initialPosition) noexcept
 {
     bool ok {true};
     switch (d->replayMode) {
     case ReplayMode::FlyWithFormation:
-        if (!flyWithFormationPosition.isNull()) {
-            ok = onInitialPositionSetup(flyWithFormationPosition);
+        if (!initialPosition.isNull()) {
+            ok = onInitialPositionSetup(initialPosition);
         }
         break;
     case ReplayMode::UserAircraftManualControl:
@@ -847,8 +847,7 @@ bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition flyWithForma
             if (ok) {
                 const auto &positionData = aircraft.getPosition().getFirst();
                 const AttitudeData &attitudeData = aircraft.getAttitude().getFirst();
-                const AircraftInfo aircraftInfo = aircraft.getAircraftInfo();
-                const InitialPosition initialPosition = InitialPosition(positionData, attitudeData, aircraftInfo);
+                const InitialPosition initialPosition = InitialPosition(positionData, attitudeData);
                 ok = onInitialPositionSetup(initialPosition);
             }
         }
