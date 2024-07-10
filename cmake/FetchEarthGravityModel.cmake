@@ -9,6 +9,7 @@ if(SKY_FETCH_EGM)
         URL https://downloads.sourceforge.net/project/geographiclib/geoids-distrib/egm2008-5.tar.bz2?use_mirror=autoselect
         URL_HASH SHA256=9A57C14330AC609132D324906822A9DA9DE265AD9B9087779793EB7080852970
         DOWNLOAD_NO_EXTRACT false
+        DOWNLOAD_EXTRACT_TIMESTAMP true
     )
     FetchContent_MakeAvailable(egm)
 endif()
