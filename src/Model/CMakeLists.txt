@@ -15,7 +15,7 @@ target_sources(${LIBRARY_NAME}
         include/Model/AbstractComponent.h
         include/Model/Flight.h src/Flight.cpp
         include/Model/FlightData.h 
-        include/Model/FlightSummary.h
+        include/Model/FlightSummary.h src/FlightSummary.cpp
         include/Model/FlightDate.h src/FlightDate.cpp
         include/Model/FlightCondition.h src/FlightCondition.cpp
         include/Model/Aircraft.h src/Aircraft.cpp

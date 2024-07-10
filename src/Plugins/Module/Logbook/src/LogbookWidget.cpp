@@ -758,7 +758,7 @@ void LogbookWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
         QTableWidgetItem *flightIdItem = ui->logTableWidget->item(row, d->flightIdColumn);
         if (isMatch(flightIdItem, flightId)) {
-            const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+            const auto &aircraftInfo = aircraft.getAircraftInfo();
             QTableWidgetItem *userAircraftItem = ui->logTableWidget->item(row, d->userAircraftColumn);
             userAircraftItem->setData(Qt::DisplayRole, aircraftInfo.aircraftType.type);
             break;

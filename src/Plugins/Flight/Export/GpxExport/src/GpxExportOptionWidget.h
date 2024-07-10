@@ -57,6 +57,7 @@ private:
 private slots:
     void updateUi() noexcept;
     void onTimestampModeChanged() noexcept;
+    void onExportGeoidHeightChanged(bool enable) noexcept;
 };
 
 #endif // GPXEXPORTOPTIONWIDGET_H

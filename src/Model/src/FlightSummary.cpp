@@ -22,43 +22,15 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITION_H
-#define FLIGHTCONDITION_H
-
-#include <cstdint>
-
-#include <QtGlobal>
 #include <QDateTime>
+#include <QTimeZone>
 
-#include "SimType.h"
-#include "ModelLib.h"
+#include "FlightSummary.h"
 
-struct MODEL_API FlightCondition final
+// PUBLIC
+
+FlightSummary::FlightSummary() noexcept
 {
-    // Simulation times (not real-world times)
-    QDateTime startLocalDateTime;
-    QDateTime startZuluDateTime;
-    QDateTime endLocalDateTime;
-    QDateTime endZuluDateTime;
-    SimType::SurfaceType surfaceType {SimType::SurfaceType::Unknown};
-    SimType::SurfaceCondition surfaceCondition {SimType::SurfaceCondition::Unknown};
-    SimType::PrecipitationState precipitationState {SimType::PrecipitationState::None};
-    float groundAltitude {0.0f};
-    float ambientTemperature {0.0f};
-    float totalAirTemperature {0.0f};
-    float windSpeed {0.0f};
-    float windDirection {0.0f};    
-    float visibility {0.0f};
-    float seaLevelPressure {0.0f};
-    std::uint8_t pitotIcingPercent {0};
-    std::uint8_t structuralIcingPercent {0};
-    bool inClouds {false};
-    bool onAnyRunway {false};
-    bool onParkingSpot {false};
-
-    FlightCondition() noexcept;
-
-    void clear() noexcept;
-};
-
-#endif // FLIGHTCONDITION_H
+    startSimulationZuluTime.setTimeZone(QTimeZone::UTC);
+    endSimulationZuluTime.setTimeZone(QTimeZone::UTC);
+}

@@ -116,7 +116,7 @@ std::vector<FlightData> IgcImportPlugin::importFlightData(QIODevice &io, bool &o
             if (d->pluginSettings.getAltitudeMode() == IgcImportSettings::AltitudeMode::Gnss) {
                 if (d->pluginSettings.isConvertAltitudeEnabled()) {
                     // Convert height above WGS84 ellipsoid (HAE) to height above EGM geoid [meters]
-                    heightAboveGeoid = convert.wgs84ToEgmGeoid(fix.gnssAltitude, fix.latitude, fix.longitude);
+                    heightAboveGeoid = convert.ellipsoidToGeoidHeight(fix.gnssAltitude, fix.latitude, fix.longitude);
                 } else {
                     heightAboveGeoid = fix.gnssAltitude;
                 }

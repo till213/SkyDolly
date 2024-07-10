@@ -95,7 +95,7 @@ bool SQLiteFlightDao::exportFlightData(const FlightData &flightData) const noexc
 
 bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -137,9 +137,9 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
 
         if (query.next()) {
             flightData.id = query.value(idIdx).toLongLong();
-            QDateTime dateTime = query.value(creationTimeIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            flightData.creationTime = dateTime.toLocalTime();
+            auto creationDateTime = query.value(creationTimeIdx).toDateTime();
+            creationDateTime.setTimeZone(QTimeZone::UTC);
+            flightData.creationTime = creationDateTime.toLocalTime();
             flightData.title = query.value(titleIdx).toString();
             flightData.description = query.value(descriptionIdx).toString();
             flightData.flightNumber = query.value(flightNumberIdx).toString();
@@ -166,8 +166,10 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
             // Persisted times is are already local respectively zulu simulation times
             flightCondition.startLocalDateTime = query.value(startLocalSimulationTimeIdx).toDateTime();
             flightCondition.startZuluDateTime = query.value(startZuluSimulationTimeIdx).toDateTime();
+            flightCondition.startZuluDateTime.setTimeZone(QTimeZone::UTC);
             flightCondition.endLocalDateTime = query.value(endLocalSimulationTimeIdx).toDateTime();
             flightCondition.endZuluDateTime = query.value(endZuluSimulationTimeIdx).toDateTime();
+            flightCondition.endZuluDateTime.setTimeZone(QTimeZone::UTC);
         }
         std::vector<Aircraft> aircraft = d->aircraftDao->getByFlightId(id, &ok);
         flightData.aircraft = std::move(aircraft);
@@ -185,7 +187,7 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
 
 bool SQLiteFlightDao::deleteById(std::int64_t id) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "
@@ -208,7 +210,7 @@ bool SQLiteFlightDao::deleteById(std::int64_t id) const noexcept
 
 bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "update flight "
@@ -229,7 +231,7 @@ bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) const n
 
 bool SQLiteFlightDao::updateFlightNumber(std::int64_t id, const QString &flightNumber) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "update flight "
@@ -250,7 +252,7 @@ bool SQLiteFlightDao::updateFlightNumber(std::int64_t id, const QString &flightN
 
 bool SQLiteFlightDao::updateDescription(std::int64_t id, const QString &description) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "update flight "
@@ -271,7 +273,7 @@ bool SQLiteFlightDao::updateDescription(std::int64_t id, const QString &descript
 
 bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "update flight "
@@ -295,7 +297,7 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
 {
     std::int64_t flightId {Const::InvalidId};
 
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "insert into flight ("
@@ -351,7 +353,7 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
         ");"
     );
 
-    const FlightCondition &flightCondition = flightData.flightCondition;
+    const auto &flightCondition = flightData.flightCondition;
     query.bindValue(":creation_time", flightData.creationTime.toUTC());
     // Sequence number starts at 1
     query.bindValue(":user_aircraft_seq_nr", flightData.userAircraftIndex + 1);

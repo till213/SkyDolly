@@ -48,6 +48,8 @@ struct MODEL_API FlightSummary final
     QString startLocation;
     QString endLocation;
     QString title;
+
+    FlightSummary() noexcept;
 };
 
 #endif // FLIGHTSUMMARY_H

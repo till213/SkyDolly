@@ -276,7 +276,7 @@ void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
 FlightSummary Flight::getFlightSummary() const noexcept
 {
     const auto &aircraft = getUserAircraft();
-    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+    const auto &aircraftInfo = aircraft.getAircraftInfo();
 
     FlightSummary summary;
     summary.flightId = d->flightData.id;
@@ -288,7 +288,7 @@ FlightSummary Flight::getFlightSummary() const noexcept
     summary.endSimulationLocalTime = d->flightData.flightCondition.endLocalDateTime;
     summary.endSimulationZuluTime = d->flightData.flightCondition.endZuluDateTime;
 
-    const FlightPlan &flightPlan = aircraft.getFlightPlan();
+    const auto &flightPlan = aircraft.getFlightPlan();
     if (flightPlan.count() > 0) {
         summary.startLocation = flightPlan[0].identifier;
     }

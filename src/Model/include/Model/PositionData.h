@@ -33,7 +33,7 @@ struct MODEL_API PositionData final : public TimeVariableData
     // Position
     double latitude {0.0};
     double longitude {0.0};
-    // GPS altitude
+    // Above mean sea level (MSL) altitude ("true altitude")
     double altitude {0.0};
     // Indicated pressure altitude (analytical purposes only)
     double indicatedAltitude {0.0};

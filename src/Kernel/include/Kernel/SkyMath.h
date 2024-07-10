@@ -581,7 +581,7 @@ namespace SkyMath
             // Same date
             fromDateTimeUtc.setDate(toDateTimeUtc.date());
             fromDateTimeUtc.setTime(fromDateTime.toUTC().time());
-            fromDateTimeUtc.setTimeZone(QTimeZone::utc());
+            fromDateTimeUtc.setTimeZone(QTimeZone::UTC);
             break;
         case TimeOffsetSync::None:
             fromDateTimeUtc = toDateTimeUtc;

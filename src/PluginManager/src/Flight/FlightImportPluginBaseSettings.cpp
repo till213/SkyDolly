@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <string_view>
 
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>

@@ -42,15 +42,9 @@ namespace
 
 struct IgcImportSettingsPrivate
 {
-    IgcImportSettingsPrivate()
-        : altitudeMode(::DefaultAltitudeMode),
-          enlThresholdPercent(::DefaultEnlThresholdPercent),
-          convertAltitude(::DefaultConvertAltitude)
-    {}
-
-    IgcImportSettings::AltitudeMode altitudeMode;
-    int enlThresholdPercent;
-    bool convertAltitude;
+    IgcImportSettings::AltitudeMode altitudeMode {::DefaultAltitudeMode};
+    int enlThresholdPercent {::DefaultEnlThresholdPercent};
+    bool convertAltitude {::DefaultConvertAltitude};
 };
 
 // PUBLIC
