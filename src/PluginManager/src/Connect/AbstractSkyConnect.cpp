@@ -920,7 +920,6 @@ void AbstractSkyConnect::retryConnectAndSetup(Connect::Mode mode) noexcept
 
 bool AbstractSkyConnect::updateSimulationTime() noexcept
 {
-
     bool hasSimulationTime {true};
 
     const auto realWorldDuation = d->currentFlight.getTotalDurationMSec();

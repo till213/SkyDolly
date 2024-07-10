@@ -31,6 +31,7 @@
 #include <QDate>
 #include <QDateTimeEdit>
 
+#include <Kernel/Unit.h>
 #include "TimestampEdit.h"
 #include "ui_TimestampEdit.h"
 
@@ -38,10 +39,6 @@ namespace
 {
     constexpr const char *TimeFormat {"hh:mm:ss"};
     constexpr const char *DateTimeFormat {"dd:MM:yyyy hh:mm:ss"};
-    constexpr std::int64_t MilliSecondsPerSecond {1000};
-    constexpr std::int64_t MilliSecondsPerMinute {60 * ::MilliSecondsPerSecond};
-    constexpr std::int64_t MilliSecondsPerHour {60 * ::MilliSecondsPerMinute};
-    constexpr std::int64_t MilliSecondsPerDay {24 * ::MilliSecondsPerHour};
 }
 
 struct TimestampEditPrivate
@@ -79,12 +76,11 @@ QDateTime TimestampEdit::getStartZuluDateTime() const noexcept
 void TimestampEdit::setStartZuluDateTime(QDateTime dateTime) noexcept
 {
     if (d->startZuluDateTime != dateTime) {
-        d->startZuluDateTime = dateTime;
+        d->startZuluDateTime = std::move(dateTime);
         d->startRealWorldLocalDateTime = d->startZuluDateTime.toLocalTime();
         updateUi();
     }
 }
-
 
 std::int64_t TimestampEdit::getTimestamp() const noexcept
 {
@@ -145,7 +141,7 @@ void TimestampEdit::frenchConnection() noexcept
 
 void TimestampEdit::updateUi() noexcept
 {
-    if (d->maximumTimestamp < ::MilliSecondsPerDay) {
+    if (d->maximumTimestamp < Unit::MillisecondsPerDay) {
         const QTime time = QTime::fromMSecsSinceStartOfDay(d->timestamp);
         ui->timeEdit->setTime(time);
         ui->timeLabel->setVisible(true);
@@ -168,7 +164,7 @@ void TimestampEdit::updateUi() noexcept
 
 void TimestampEdit::onTimeEditChanged(QTime time) noexcept
 {
-    std::int64_t timestamp = time.hour() * ::MilliSecondsPerHour + time.minute() * ::MilliSecondsPerMinute + time.second() * ::MilliSecondsPerSecond;
+    std::int64_t timestamp = time.hour() * Unit::MillisecondsPerHour + time.minute() * Unit::MillisecondsPerMinute + time.second() * Unit::MillisecondsPerSecond;
     emit timestampChanged(timestamp);
 }
 
