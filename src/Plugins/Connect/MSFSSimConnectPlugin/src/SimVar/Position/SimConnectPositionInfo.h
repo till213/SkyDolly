@@ -25,14 +25,11 @@
 #ifndef SIMCONNECTPOSITIONINFO_H
 #define SIMCONNECTPOSITIONINFO_H
 
-#include <cstdint>
-
 #include <windows.h>
 #include <SimConnect.h>
 
 #include <Model/SimVar.h>
 #include <Model/PositionData.h>
-#include "SimConnectType.h"
 
 /*!
  * Aircraft position simulation variables that are either stored for information purposes only
@@ -44,6 +41,8 @@
 struct SimConnectPositionInfo
 {
     double indicatedAltitude {0.0};
+    double calibratedIndicatedAltitude {0.0};
+    double pressureAltitude {0.0};
 
     SimConnectPositionInfo(const PositionData &positionData) noexcept
         : SimConnectPositionInfo()
@@ -56,6 +55,8 @@ struct SimConnectPositionInfo
     inline void fromPositionData(const PositionData &positionData) noexcept
     {
         indicatedAltitude = positionData.indicatedAltitude;
+        calibratedIndicatedAltitude = positionData.calibratedIndicatedAltitude;
+        pressureAltitude = positionData.pressureAltitude;
     }
 
     inline PositionData toPositionData() const noexcept
@@ -68,11 +69,15 @@ struct SimConnectPositionInfo
     inline void toPositionData(PositionData &positionData) const noexcept
     {
         positionData.indicatedAltitude = indicatedAltitude;
+        positionData.calibratedIndicatedAltitude = calibratedIndicatedAltitude;
+        positionData.pressureAltitude = pressureAltitude;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::IndicatedAltitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::CalibratedIndicatedAltitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PressureAltitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
     }
 };
 #pragma pack(pop)

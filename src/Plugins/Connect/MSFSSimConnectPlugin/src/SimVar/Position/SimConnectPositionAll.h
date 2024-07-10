@@ -28,8 +28,10 @@
 #include <windows.h>
 #include <SimConnect.h>
 
+#include <Kernel/Enum.h>
 #include <Model/PositionData.h>
 #include "SimConnectPositionCommon.h"
+#include "SimConnectType.h"
 #include "SimConnectPositionInfo.h"
 
 /*!

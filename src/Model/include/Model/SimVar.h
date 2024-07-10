@@ -35,6 +35,8 @@ namespace SimVar
     constexpr const char *Longitude = "Plane Longitude";
     constexpr const char *Altitude = "Plane Altitude";
     constexpr const char *IndicatedAltitude = "Indicated Altitude";
+    constexpr const char *CalibratedIndicatedAltitude = "Indicated Altitude Calibrated";
+    constexpr const char *PressureAltitude = "Pressure Altitude";
 
     constexpr const char *Pitch = "Plane Pitch Degrees";
     constexpr const char *Bank = "Plane Bank Degrees";

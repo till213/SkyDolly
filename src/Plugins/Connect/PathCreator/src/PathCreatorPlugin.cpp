@@ -351,7 +351,9 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     positionData.latitude = -90.0 + d->randomGenerator->bounded(180);
     positionData.longitude = -180.0 + d->randomGenerator->bounded(360.0);
     positionData.altitude = d->randomGenerator->bounded(60000.0);
-    positionData.indicatedAltitude = d->randomGenerator->bounded(20000.0);
+    positionData.indicatedAltitude = std::max(positionData.altitude - 1000.0, 0.0) + d->randomGenerator->bounded(1000.0);
+    positionData.calibratedIndicatedAltitude = std::max(positionData.altitude - 1000.0, 0.0) + d->randomGenerator->bounded(1000.0);
+    positionData.pressureAltitude = std::max(positionData.altitude - 1000.0, 0.0) + d->randomGenerator->bounded(1000.0);
     positionData.timestamp = timestamp;
     aircraft.getPosition().upsertLast(positionData);
 

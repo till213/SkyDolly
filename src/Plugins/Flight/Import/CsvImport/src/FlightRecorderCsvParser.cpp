@@ -276,8 +276,10 @@ bool FlightRecorderCsvParser::parseRow(const CsvParser::Row &row, FlightData &fl
         positionData.longitude = row.at(d->headers.at(Header::Longitude)).toDouble(&ok);
     }
     if (ok) {
-        positionData.altitude = row.at(d->headers.at(Header::Altitude)).toDouble(&ok);
-        positionData.indicatedAltitude = positionData.altitude;
+        const auto altitude = row.at(d->headers.at(Header::Altitude)).toDouble(&ok);
+        if (ok) {
+            positionData.initialiseCommonAltitude(altitude);
+        }
     }
     if (ok) {
         attitudeData.timestamp = timestamp;

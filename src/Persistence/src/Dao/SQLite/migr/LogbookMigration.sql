@@ -1091,6 +1091,15 @@ alter table flight_new rename to flight;
 @migr(id = "42305488-5c04-4a96-b09a-a599c5b72e44", descn = "Remove smoke enable column", step = 1)
 alter table handle drop column smoke_enable;
 
+@migr(id = "e9086fca-d959-4748-9389-a3f22ed26bf5", descn = "Add user aircraft column", step_cnt = 2)
+alter table position add column calibrated_indicated_altitude real;
+alter table position add column pressure_altitude real;
+
+@migr(id = "e9086fca-d959-4748-9389-a3f22ed26bf5", descn = "Initialise indicated altitude", step = 2)
+update position
+set    calibrated_indicated_altitude = indicated_altitude,
+       pressure_altitude = indicated_altitude;
+
 @migr(id = "80bcc81a-6554-4e05-8631-d17358d9d1dd", descn = "Update application version to 0.18", step = 1)
 update metadata
 set app_version = '0.18.0';

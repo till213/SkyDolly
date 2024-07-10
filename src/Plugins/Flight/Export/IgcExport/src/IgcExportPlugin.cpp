@@ -284,7 +284,7 @@ inline bool IgcExportPlugin::exportFixes(const FlightData &flightData, const Air
 
         const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
         const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
-        const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.indicatedAltitude)));
+        const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.pressureAltitude)));
         const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
         const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
         const int noise = estimateEnvironmentalNoise(engineData);

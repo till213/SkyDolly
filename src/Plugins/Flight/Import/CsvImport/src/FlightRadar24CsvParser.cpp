@@ -182,8 +182,10 @@ inline std::pair<PositionData, AttitudeData> FlightRadar24CsvParser::parsePositi
         }
     }
     if (ok) {
-        positionData.altitude = row.at(d->headers.at(Header::Altitude)).toDouble(&ok);
-        positionData.indicatedAltitude = positionData.altitude;
+        const auto altitude = row.at(d->headers.at(Header::Altitude)).toDouble(&ok);
+        if (ok) {
+            positionData.initialiseCommonAltitude(altitude);
+        }
     }
     if (ok) {
         attitudeData.timestamp = timestamp;

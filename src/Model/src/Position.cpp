@@ -70,9 +70,11 @@ const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableDa
             m_currentData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn);
             // Altitude [open range]
             m_currentData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn);
-            // The indicated altitude is not used for replay - only for display and analytical purposes,
+            // The following altitudes are not used for replay - only for display and analytical purposes,
             // so linear interpolation is sufficient
             m_currentData.indicatedAltitude  = SkyMath::interpolateLinear(p1->indicatedAltitude, p2->indicatedAltitude, tn);
+            m_currentData.calibratedIndicatedAltitude  = SkyMath::interpolateLinear(p1->calibratedIndicatedAltitude, p2->calibratedIndicatedAltitude, tn);
+            m_currentData.pressureAltitude  = SkyMath::interpolateLinear(p1->pressureAltitude, p2->pressureAltitude, tn);
 
             m_currentData.timestamp = adjustedTimestamp;
         } else {

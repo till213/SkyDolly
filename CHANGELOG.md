@@ -10,18 +10,8 @@
   * Locations exported from older Sky Dolly releases are migrated upon import to the latest data features
 
 ## Improvements
-- A new *Export system locations* option has been added to the location export
-  * When enabled then also the default locations as provided by Sky Dolly (*Sytem* locations) will be exported
-  * Otherwise only the *User* and *Import* locations will be exported
-- When importing flights via the Sky Dolly logbook (*.sdlog) format no *system* (default) locations are added (migrated) anymore
-  * The table schema and data is still migrated and updated accordingly though
-- A distance threshold option has been added to the location import settings
-  * Existing locations within the given distance are either *updated*
-  * Or the location to be imported is *skipped* (not imported)
-  * Loctations may also be unconditionally imported (*insert*)
-- Position- and attitude simulation variables are now sampled separately
-  * Position data (latitude, longitude, altitude) is only sampled at 1Hz: the expectation is that "stutters" during recording should be automatically smoothened out
-- The "Sim On Ground" simulation variable is now also recorded (for each aircraft attitude change)
+
+### Recording & Replay
 - The maximum simulation rate spinbox now steps in powers of two (1, 2, 4, 8, ..., 128)
   * The MSFS simulation rate is always a power of two
   * Non-power of two values may still be entered by editing the text
@@ -34,27 +24,46 @@
   * Few users were probably aware of what this "Recording Frequency" settings was supposed to do and left it at "auto"
   * Removing the timer-based recording also simplified the code
 - The Statistics dialog now shows separate recording rates, for both positition (always around 1 Hz) and attitude samples (e.g. 30 Hz, that is the *simulation frame* rate)
-- GPX export: the geoid height (&lt;geoidheight&gt;) can now also optionally be exported
-  * This may be useful to calculate the ellipsoidial height *h* ([WGS84 reference ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS_84)) as follows: h = H + N = &lt;ele&gt; + &lt;geoidheight&gt;
-  * Also refer to [Find Ellipsoidal Height from Orthometric Height](https://www.mathworks.com/help/map/ellipsoid-geoid-and-orthometric-height.html)
 - The simulation time is now updated in the flight simulator during replay
   * According to the recorded simulation start and end times
   * Note that the simulation time is not always in sync with real-world time: this is taken into account when interpolating between the simulation start- and end times
   * This allows for exact day of time reproductions, useful e.g. for video editing when video-recording (via separate screen capture solutions) the same flight multiple times from different camera angles
 - The replay time widget now properly displays replay times longer than a day (for instance one year or longer), by including also the actual start date
 
+### Import & Export
+- A new *Export system locations* option has been added to the location export
+  * When enabled then also the default locations as provided by Sky Dolly (*Sytem* locations) will be exported
+  * Otherwise only the *User* and *Import* locations will be exported
+- When importing flights via the Sky Dolly logbook (*.sdlog) format no *system* (default) locations are added (migrated) anymore
+  * The table schema and data is still migrated and updated accordingly though
+- A distance threshold option has been added to the location import settings
+  * Existing locations within the given distance are either *updated*
+  * Or the location to be imported is *skipped* (not imported)
+  * Loctations may also be unconditionally imported (*insert*)
+- GPX export: the geoid height (&lt;geoidheight&gt;) can now also optionally be exported
+  * This may be useful to calculate the ellipsoidial height *h* ([WGS84 reference ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS_84)) as follows: h = H + N = &lt;ele&gt; + &lt;geoidheight&gt;
+  * Also refer to [Find Ellipsoidal Height from Orthometric Height](https://www.mathworks.com/help/map/ellipsoid-geoid-and-orthometric-height.html)
+- IGC export: the proper standard pressure altitude (at a 1013.25 hPa (1 atmosphere) setting) instead of the indicated altitude is now exported
+
 ### Simulation Variables
+- Position- and attitude simulation variables are now sampled separately
+  * Position data (latitude, longitude, altitude) is only sampled at 1Hz: the expectation is that "stutters" during recording should be automatically smoothened out
+- The `SIM_ON_GROUND` simulation variable is now also recorded (for each aircraft attitude change)
 - Removed `SMOKE_ENABLE` support
   * Reasoning: from the [official documenation](https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_System_Variables.htm#SMOKESYSTEM_AVAILABLE): "There is no default 'smoke system' that this SimVar works on and this is a legacy variable that is available for use should you wish to use it but it affects nothing by default."
   * Some aircraft seem to (re-)use this simulation variable for other purposes, with unexpected visual results
+- Record the following new simulation variables, for analytical purposes
+  * `INDICATED_ALTITUDE_CALIBRATED`
+  * `PRESSURE_ALTITUDE`
 
 ## Bug Fixes
 - GPX export
   * The elevation (&lt;ele&gt;) values are now properly exported as "above mean sea level" (and not "above WGS84 reference ellipsoid" anymore)
   * The trackpoint timestamps are properly calculated and exported when exporting the entire flight (and not just the user aircraft); the proper timezone suffix (Z) is appended, too (ISO 8601 format)
   
-## Under the Hood
+## Documentation
 - Added new [One Year in New York](doc/SQL/Timelapse-One-Year-in-New-York.sql) example SQL ("1 year timelapse")
+- Added new [pressure altitude](doc/SQL/Flight-Analysis.sql) analytical SQL script
 
 ## 0.17.5
 This bug fix release provides an important correction for a regression that would prevent recording (and possibly replay as well), due to wrongly creating an IPv4 network connection instead of a local ("pipe") connection.
@@ -126,10 +135,10 @@ This is a pure maintenance release without any Sky Dolly specific fixes: it prov
 
 ### New Features
 - Keyboard shortcuts can be defined and triggered within the flight simulator, in order to:
-  * Toggle recording (CTRL+R) and replay (CTRL+P) 
-  * Pause (ALT+P) and Stop (CTRL+S)
-  * Skip forward (CTRL+.) and backward (CTRL+,)
-  * Skip to begin (CTRL+PageUp) and end (CTRL+PageDown)
+  * Toggle recording (**CTRL+R**) and replay (**CTRL+P**) 
+  * Pause (**ALT+P**) and Stop (**CTRL+S**)
+  * Skip forward (**CTRL+.**) and backward (**CTRL+,**)
+  * Skip to begin (**CTRL+PageUp**) and end (**CTRL+PageDown**)
   * The shortcuts can be defined in the Sky Dolly application settings (no restart required)
 - Desktop notifications indicate whether recording has started, paused/resumed or stopped
   * In order to make desktop notifications visible when the flight simulator is in fullscreen adjust the corresponding notification rules in the Windows settings (-> Notification Assistant)

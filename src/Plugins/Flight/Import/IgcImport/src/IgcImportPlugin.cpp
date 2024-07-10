@@ -126,7 +126,10 @@ std::vector<FlightData> IgcImportPlugin::importFlightData(QIODevice &io, bool &o
 
             PositionData positionData {fix.latitude, fix.longitude, Convert::metersToFeet(heightAboveGeoid)};
             positionData.timestamp = fix.timestamp;
-            positionData.indicatedAltitude = Convert::metersToFeet(fix.pressureAltitude);
+            const auto pressureAltitude = Convert::metersToFeet(fix.pressureAltitude);
+            positionData.indicatedAltitude = pressureAltitude;
+            positionData.calibratedIndicatedAltitude = pressureAltitude;
+            positionData.pressureAltitude = pressureAltitude;
             position.upsertLast(positionData);
 
             if (d->igcParser.hasEnvironmentalNoiseLevel()) {

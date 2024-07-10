@@ -13,10 +13,10 @@ limit 1
 -- Get most recent flight of the logbook
 select f.id, f.creation_time, f.title
 from flight f
-order by f.creation_time desc
+order by f.id desc
 limit 1
 
--- Select specific values from tables position, aircraft and flight
+-- Select specific values from tables position, attitude, aircraft and flight
 select f.id as flight_id,
        f.start_zulu_sim_time,
        f.end_zulu_sim_time,
@@ -41,7 +41,30 @@ and    a.seq_nr = 1
 -- Select the above data from the most recent flight in the logbook
 where  f.id = (select ff.id
         from flight ff
-        order by creation_time desc
+        order by ff.id desc
+        limit 1)
+
+-- Select the various pressure altitudes from tables position, aircraft and flight
+select f.id as flight_id,
+       f.start_zulu_sim_time,
+       f.end_zulu_sim_time,
+       f.flight_number,
+       a.type,
+       p.timestamp,
+       p.altitude,
+       p.indicated_altitude,
+       p.calibrated_indicated_altitude,
+       p.pressure_altitude
+from   position p
+join   aircraft a
+on     p.aircraft_id = a.id
+join   flight f
+on     a.flight_id = f.id
+and    a.seq_nr = 1
+-- Select the above data from the most recent flight in the logbook
+where  f.id = (select ff.id
+        from flight ff
+        order by ff.id desc
         limit 1)
 
 -- Select the top 10 aircraft types (number of flights)

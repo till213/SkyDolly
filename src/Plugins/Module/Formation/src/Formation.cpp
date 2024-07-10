@@ -166,8 +166,7 @@ std::pair<PositionData, AttitudeData> Formation::calculateRelativePositionToUser
         initialPositionData.timestamp = positionData.timestamp;
         initialPositionData.latitude = coordinate.first;
         initialPositionData.longitude = coordinate.second;
-        initialPositionData.altitude = altitude;
-        initialPositionData.indicatedAltitude = altitude;
+        initialPositionData.initialiseCommonAltitude(altitude);
 
     } // position count > 0
 
