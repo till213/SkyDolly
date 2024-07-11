@@ -58,10 +58,17 @@ public:
     static constexpr std::int64_t SecondsPerMinute = 60;
     static constexpr std::int64_t MinutesPerHour = 60;
     static constexpr std::int64_t HoursPerDay = 24;
+    // Approximation
+    static constexpr std::int64_t DaysPerMonth = 30;
+    static constexpr std::int64_t DaysPerYear = 365;
+    static constexpr std::int64_t MonthPerYear = 12;
 
     static constexpr std::int64_t MillisecondsPerMinute {SecondsPerMinute * MillisecondsPerSecond};
     static constexpr std::int64_t MillisecondsPerHour {MinutesPerHour * MillisecondsPerMinute};
     static constexpr std::int64_t MillisecondsPerDay {HoursPerDay * MillisecondsPerHour};
+    static constexpr std::int64_t MillisecondsPerMonth {DaysPerMonth * MillisecondsPerDay};
+    static constexpr std::int64_t MillisecondsPerYear {DaysPerYear * MillisecondsPerDay};
+
 
     // Precision of exported double GNSS coordinate values
     // https://rapidlasso.com/2019/05/06/how-many-decimal-digits-for-storing-longitude-latitude/
@@ -142,7 +149,7 @@ public:
     QString formatTime(const QTime &time) const noexcept;
     QString formatTime(const QDateTime &dateTime) const noexcept;
     QString formatDateTime(const QDateTime &dateTime) const noexcept;
-    QString formatDuration(const QTime &time) const noexcept;
+    QString formatDuration(std::int64_t milliseconds) const noexcept;
 
     /*!
      * Returns the name of the \p month.

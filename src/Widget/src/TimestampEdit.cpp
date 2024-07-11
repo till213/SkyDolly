@@ -190,8 +190,7 @@ void TimestampEdit::onTimeEditChanged(QTime time) noexcept
 
 void TimestampEdit::onDateTimeEditChanged(const QDateTime &dateTime) noexcept
 {
-    const auto currentDateTime = ui->dateTimeEdit->dateTime();
-    const auto seconds = getStartDateTime().secsTo(currentDateTime);
+    const auto seconds = getStartDateTime().secsTo(dateTime);
     const auto timestamp = seconds * Unit::MillisecondsPerSecond;
     emit timestampChanged(timestamp);
 }

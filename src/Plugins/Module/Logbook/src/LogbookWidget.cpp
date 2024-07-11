@@ -424,10 +424,8 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
 
     // Duration
     const std::int64_t durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
-    // TODO FIXME Take durations longer than a day into account!
-    const auto time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(durationMSec));
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::durationColumn);
-    item->setData(Qt::DisplayRole, d->unit.formatDuration(time));
+    item->setData(Qt::DisplayRole, d->unit.formatDuration(durationMSec));
 }
 
 void LogbookWidget::updateDateSelectorUi() noexcept
