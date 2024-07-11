@@ -22,33 +22,39 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QDate>
+#ifndef TABLEDURATIONITEM_H
+#define TABLEDURATIONITEM_H
+
+#include <cstdint>
+
+#include <QString>
+#include <QTableWidgetItem>
 
 #include <Kernel/Unit.h>
-#include "TableDateItem.h"
+#include "WidgetLib.h"
 
-// PUBLIC
-
-TableDateItem::TableDateItem(QDate date) noexcept
-    : QTableWidgetItem()
+/*!
+ * Sortable QTableWidgetItem displaying duration.
+ *
+ * https://linux.m2osw.com/sorting-any-numeric-column-qtablewidget
+ */
+class WIDGET_API TableDurationItem final : public QTableWidgetItem
 {
-    setDate(date);
-}
+public:
+    explicit TableDurationItem(std::int64_t duration = 0) noexcept;
+    TableDurationItem(const TableDurationItem &rhs) = delete;
+    TableDurationItem(TableDurationItem &&rhs) = delete;
+    TableDurationItem &operator=(const TableDurationItem &rhs) = delete;
+    TableDurationItem &operator=(TableDurationItem &&rhs) = delete;
+    ~TableDurationItem() override = default;
 
-QDate TableDateItem::getDate() const noexcept
-{
-    return data(Qt::UserRole).toDate();
-}
+    std::int64_t getDuration() const noexcept;
+    void setDuration(std::int64_t duration) noexcept;
 
-void TableDateItem::setDate(QDate date) noexcept
-{
-    setData(Qt::DisplayRole, m_unit.formatDate(date));
-    setData(Qt::UserRole, date);
-}
+    bool operator<(const QTableWidgetItem &rhs) const noexcept override;
 
-bool TableDateItem::operator<(const QTableWidgetItem &rhs) const noexcept
-{
-    const QDate date1 = getDate();
-    const QDate date2 = static_cast<const TableDateItem &>(rhs).getDate();
-    return date1 < date2;
-}
+private:
+    Unit m_unit;
+};
+
+#endif // TABLEDURATIONITEM_H

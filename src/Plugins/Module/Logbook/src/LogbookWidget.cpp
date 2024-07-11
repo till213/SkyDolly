@@ -68,6 +68,7 @@
 #include <Widget/Platform.h>
 #include <Widget/TableDateItem.h>
 #include <Widget/TableTimeItem.h>
+#include <Widget/TableDurationItem.h>
 #include "LogbookSettings.h"
 #include "LogbookWidget.h"
 #include "ui_LogbookWidget.h"
@@ -246,7 +247,7 @@ void LogbookWidget::updateTable() noexcept
 
         const auto &flight = Logbook::getInstance().getCurrentFlight();
         d->flightInMemoryId = flight.getId();
-        std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->moduleSettings.getFlightSelector());
+        auto summaries = d->logbookService->getFlightSummaries(d->moduleSettings.getFlightSelector());
 
         const bool recording = SkyConnectManager::getInstance().isInRecordingState();
         if (recording) {
@@ -359,8 +360,8 @@ inline void LogbookWidget::initRow(const FlightSummary &summary, int row) noexce
     ++column;
 
     // Duration
-    newItem = std::make_unique<QTableWidgetItem>();
-    newItem->setToolTip(tr("Simulation duration."));
+    newItem = std::make_unique<TableDurationItem>();
+    newItem->setToolTip(tr("Duration measured in simulation time."));
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->logTableWidget->setItem(row, column, newItem.release());
     ++column;
@@ -425,7 +426,7 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
     // Duration
     const std::int64_t durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::durationColumn);
-    item->setData(Qt::DisplayRole, d->unit.formatDuration(durationMSec));
+    dynamic_cast<TableDurationItem *>(item)->setDuration(durationMSec);
 }
 
 void LogbookWidget::updateDateSelectorUi() noexcept

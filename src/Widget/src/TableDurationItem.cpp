@@ -22,33 +22,35 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QDate>
+#include <cstdint>
+
+#include <QVariant>
 
 #include <Kernel/Unit.h>
-#include "TableDateItem.h"
+#include "TableDurationItem.h"
 
 // PUBLIC
 
-TableDateItem::TableDateItem(QDate date) noexcept
+TableDurationItem::TableDurationItem(std::int64_t duration) noexcept
     : QTableWidgetItem()
 {
-    setDate(date);
+    setDuration(duration);
 }
 
-QDate TableDateItem::getDate() const noexcept
+std::int64_t TableDurationItem::getDuration() const noexcept
 {
-    return data(Qt::UserRole).toDate();
+    return data(Qt::UserRole).toLongLong();
 }
 
-void TableDateItem::setDate(QDate date) noexcept
+void TableDurationItem::setDuration(std::int64_t duration) noexcept
 {
-    setData(Qt::DisplayRole, m_unit.formatDate(date));
-    setData(Qt::UserRole, date);
+    setData(Qt::DisplayRole, m_unit.formatDuration(duration));
+    setData(Qt::UserRole, duration);
 }
 
-bool TableDateItem::operator<(const QTableWidgetItem &rhs) const noexcept
+bool TableDurationItem::operator<(const QTableWidgetItem &rhs) const noexcept
 {
-    const QDate date1 = getDate();
-    const QDate date2 = static_cast<const TableDateItem &>(rhs).getDate();
-    return date1 < date2;
+    const std::int64_t duration1 = getDuration();
+    const std::int64_t duration2 = static_cast<const TableDurationItem &>(rhs).getDuration();
+    return duration1 < duration2;
 }
