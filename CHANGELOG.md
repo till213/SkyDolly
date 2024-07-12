@@ -55,6 +55,12 @@
 - Record the following new simulation variables, for analytical purposes
   * `INDICATED_ALTITUDE_CALIBRATED`
   * `PRESSURE_ALTITUDE`
+  
+### Logbook
+- Rename column *Date* to *Recording Date*
+  * This is the real-world date and time when the flight has been recorded
+- Also show the simulation departure- and arrival dates in the tooltip
+- The *Total Time of Flight* column now supports durations measured in days, weeks, months and even years
 
 ## Bug Fixes
 - GPX export

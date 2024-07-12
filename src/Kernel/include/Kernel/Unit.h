@@ -58,6 +58,7 @@ public:
     static constexpr std::int64_t SecondsPerMinute = 60;
     static constexpr std::int64_t MinutesPerHour = 60;
     static constexpr std::int64_t HoursPerDay = 24;
+    static constexpr std::int64_t DaysPerWeek = 7;
     // Approximation
     static constexpr std::int64_t DaysPerMonth = 30;
     static constexpr std::int64_t DaysPerYear = 365;
@@ -66,6 +67,7 @@ public:
     static constexpr std::int64_t MillisecondsPerMinute {SecondsPerMinute * MillisecondsPerSecond};
     static constexpr std::int64_t MillisecondsPerHour {MinutesPerHour * MillisecondsPerMinute};
     static constexpr std::int64_t MillisecondsPerDay {HoursPerDay * MillisecondsPerHour};
+    static constexpr std::int64_t MillisecondsPerWeek {DaysPerWeek * MillisecondsPerDay};
     static constexpr std::int64_t MillisecondsPerMonth {DaysPerMonth * MillisecondsPerDay};
     static constexpr std::int64_t MillisecondsPerYear {DaysPerYear * MillisecondsPerDay};
 

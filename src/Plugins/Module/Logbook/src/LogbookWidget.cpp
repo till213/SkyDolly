@@ -126,7 +126,7 @@ struct LogbookWidgetPrivate
     static inline int flightNumberColumn {::InvalidColumn};
     static inline int userAircraftColumn {::InvalidColumn};
     static inline int aircraftCountColumn {::InvalidColumn};
-    static inline int creationDateColumn {::InvalidColumn};
+    static inline int recordingDateColumn {::InvalidColumn};
     static inline int startTimeColumn {::InvalidColumn};
     static inline int startLocationColumn {::InvalidColumn};
     static inline int endTimeColumn {::InvalidColumn};
@@ -173,7 +173,7 @@ void LogbookWidget::initUi() noexcept
         tr("Flight Number"),
         tr("User Aircraft"),        
         tr("Number of Aircraft"),
-        tr("Date"),
+        tr("Recording Date"),
         tr("Departure Time"),
         tr("Departure"),
         tr("Arrival Time"),
@@ -185,7 +185,7 @@ void LogbookWidget::initUi() noexcept
     LogbookWidgetPrivate::flightNumberColumn = headers.indexOf(tr("Flight Number"));
     LogbookWidgetPrivate::userAircraftColumn = headers.indexOf(tr("User Aircraft"));    
     LogbookWidgetPrivate::aircraftCountColumn = headers.indexOf(tr("Number of Aircraft"));
-    LogbookWidgetPrivate::creationDateColumn = headers.indexOf(tr("Date"));
+    LogbookWidgetPrivate::recordingDateColumn = headers.indexOf(tr("Recording Date"));
     LogbookWidgetPrivate::startTimeColumn = headers.indexOf(tr("Departure Time"));
     LogbookWidgetPrivate::startLocationColumn = headers.indexOf(tr("Departure"));
     LogbookWidgetPrivate::endTimeColumn = headers.indexOf(tr("Arrival Time"));
@@ -401,13 +401,13 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
     item->setData(Qt::DisplayRole, summary.flightNumber);
 
     // Creation date
-    item = ui->logTableWidget->item(row, LogbookWidgetPrivate::creationDateColumn);
-    item->setToolTip(tr("Recording time: %1.").arg(d->unit.formatTime(summary.creationDate)));
+    item = ui->logTableWidget->item(row, LogbookWidgetPrivate::recordingDateColumn);
+    item->setToolTip(tr("Recording time: %1").arg(d->unit.formatTime(summary.creationDate)));
     dynamic_cast<TableDateItem *>(item)->setDate(summary.creationDate.date());
 
     // Start time
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::startTimeColumn);
-    item->setToolTip(tr("Simulation time (%1Z).").arg(d->unit.formatTime(summary.startSimulationZuluTime)));
+    item->setToolTip(tr("Simulation time %1 (%2Z)").arg(d->unit.formatDateTime(summary.startSimulationLocalTime),  d->unit.formatDateTime(summary.startSimulationZuluTime)));
     dynamic_cast<TableTimeItem *>(item)->setTime(summary.startSimulationLocalTime.time());
 
     // Start location
@@ -416,7 +416,7 @@ inline void LogbookWidget::updateRow(const FlightSummary &summary, int row) noex
 
     // End time
     item = ui->logTableWidget->item(row, LogbookWidgetPrivate::endTimeColumn);
-    item->setToolTip(tr("Simulation time (%1Z).").arg(d->unit.formatTime(summary.endSimulationZuluTime)));
+    item->setToolTip(tr("Simulation time %1 (%2Z)").arg(d->unit.formatDateTime(summary.endSimulationLocalTime), d->unit.formatDateTime(summary.endSimulationZuluTime)));
     dynamic_cast<TableTimeItem *>(item)->setTime(summary.endSimulationLocalTime.time());
 
     // End location

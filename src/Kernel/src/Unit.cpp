@@ -31,7 +31,6 @@
 
 #include <QCoreApplication>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QLocale>
 #include <QDateTime>
@@ -73,7 +72,7 @@ QString Unit::formatLatitudeDMS(double latitude) noexcept
     const QString hemisphere = latitude >= 0.0 ? QCoreApplication::translate("Unit", "N") : QCoreApplication::translate("Unit", "S");
     GeographicLib::DMS::Encode(std::abs(latitude), degrees, minutes, seconds);
 
-    return QStringLiteral("%1° %2' %3\" %4")
+    return QString("%1° %2' %3\" %4")
            .arg(static_cast<int>(degrees), 2, 10, UnitPrivate::NumberPadding)
            .arg(static_cast<int>(minutes), 2, 10, UnitPrivate::NumberPadding)
            .arg(seconds, 5, 'f', Precision, UnitPrivate::NumberPadding)
@@ -88,7 +87,7 @@ QString Unit::formatLongitudeDMS(double longitude) noexcept
 
     const QString hemisphere = longitude >= 0.0 ? QCoreApplication::translate("Unit", "E") : QCoreApplication::translate("Unit", "W");
     GeographicLib::DMS::Encode(std::abs(longitude), degrees, minutes, seconds);
-    return QStringLiteral("%1° %2' %3\" %4")
+    return QString("%1° %2' %3\" %4")
            .arg(static_cast<int>(degrees), 3, 10, UnitPrivate::NumberPadding)
            .arg(static_cast<int>(minutes), 2, 10, UnitPrivate::NumberPadding)
            .arg(seconds, 5, 'f', Precision, UnitPrivate::NumberPadding)
@@ -139,11 +138,11 @@ QString Unit::formatHz(double hz) const noexcept
 {
     QString hzString;
     if (hz < 1000) {
-        hzString = QStringLiteral("%1 Hz").arg(QString::number(hz, 'f', 1));
+        hzString = QString("%1 Hz").arg(QString::number(hz, 'f', 1));
     }  else if (hz < 1000 * 1000) {
-        hzString = QStringLiteral("%1 kHz").arg(QString::number(hz / 1000.0, 'f', 1));
+        hzString = QString("%1 kHz").arg(QString::number(hz / 1000.0, 'f', 1));
     }  else {
-        hzString = QStringLiteral("%1 MHz").arg(QString::number(hz / (1000.0 * 1000), 'f', 2));
+        hzString = QString("%1 MHz").arg(QString::number(hz / (1000.0 * 1000), 'f', 2));
     }
     return hzString;
 }
@@ -177,15 +176,15 @@ QString Unit::formatMemory(std::size_t memory) const noexcept
 {
     QString size;
     if (memory < 1024) {
-        size = QStringLiteral("%1 bytes").arg(memory);
+        size = QString("%1 bytes").arg(memory);
     } else if (memory < 1024ull * 1024ull) {
-        size = QStringLiteral("%1 KiB").arg(QString::number(static_cast<double>(memory) / 1024.0, 'f', 1));
+        size = QString("%1 KiB").arg(QString::number(static_cast<double>(memory) / 1024.0, 'f', 1));
     } else if (memory < 1024ull * 1024ull * 1024ull) {
-        size = QStringLiteral("%1 MiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0), 'f', 2));
+        size = QString("%1 MiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0), 'f', 2));
     } else if (memory < 1024ull * 1024ull * 1024ull * 1024ull) {
-        size = QStringLiteral("%1 GiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0), 'f', 2));
+        size = QString("%1 GiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0), 'f', 2));
     } else {
-        size = QStringLiteral("%1 TiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0 * 1024.0), 'f', 2));
+        size = QString("%1 TiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0 * 1024.0), 'f', 2));
     }
     return size;
 }
@@ -269,22 +268,25 @@ QString Unit::formatElapsedTime(std::int64_t milliseconds) const noexcept
     if (qAbs(milliseconds) < MillisecondsPerSecond) {
         elapsedTime = QCoreApplication::translate("Unit", "%1 milliseconds", nullptr, static_cast<int>(milliseconds)).arg(milliseconds);
     } else if (qAbs(milliseconds) < MillisecondsPerMinute) {
-        const double seconds = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerSecond);
+        const auto seconds = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerSecond);
         elapsedTime = QCoreApplication::translate("Unit", "%1 seconds", nullptr, static_cast<int>(seconds)).arg(QString::number(seconds, 'f', 1));
     } else if (qAbs(milliseconds) < MillisecondsPerHour) {
-        const double minutes = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerMinute);
+        const auto minutes = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerMinute);
         elapsedTime = QCoreApplication::translate("Unit", "%1 minutes", nullptr, static_cast<int>(minutes)).arg(QString::number(minutes, 'f', 1));
     } else if (qAbs(milliseconds) < MillisecondsPerDay) {
-        const double hours = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerHour);
+        const auto hours = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerHour);
         elapsedTime = QCoreApplication::translate("Unit", "%1 hours", nullptr, static_cast<int>(hours)).arg(QString::number(hours, 'f', 1));
-    } else if (qAbs(milliseconds) < MillisecondsPerMonth) {
-        const double days = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerDay);
+    } else if (qAbs(milliseconds) < MillisecondsPerWeek) {
+        const auto days = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerDay);
         elapsedTime = QCoreApplication::translate("Unit", "%1 days", nullptr, static_cast<int>(days)).arg(QString::number(days, 'f', 1));
+    } else if (qAbs(milliseconds) < MillisecondsPerMonth) {
+        const auto weeks = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerWeek);
+        elapsedTime = QCoreApplication::translate("Unit", "%1 weeks", nullptr, static_cast<int>(weeks)).arg(QString::number(weeks, 'f', 1));
     } else if (qAbs(milliseconds) < MillisecondsPerYear) {
-        const double months = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerMonth);
+        const auto months = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerMonth);
         elapsedTime = QCoreApplication::translate("Unit", "%1 months", nullptr, static_cast<int>(months)).arg(QString::number(months, 'f', 1));
     } else {
-        const double years = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerYear);
+        const auto years = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerYear);
         elapsedTime = QCoreApplication::translate("Unit", "%1 years", nullptr, static_cast<int>(years)).arg(QString::number(years, 'f', 1));
     }
 
@@ -293,7 +295,7 @@ QString Unit::formatElapsedTime(std::int64_t milliseconds) const noexcept
 
 QString Unit::formatHHMMSS(std::int64_t milliseconds) noexcept
 {    
-    QTime time = QTime::fromMSecsSinceStartOfDay(milliseconds);
+    auto time = QTime::fromMSecsSinceStartOfDay(milliseconds);
     return formatHHMMSS(time);
 }
 
