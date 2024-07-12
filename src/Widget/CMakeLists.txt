@@ -20,6 +20,7 @@ target_sources(${LIBRARY_NAME}
         include/Widget/Platform.h src/Platform.cpp
         include/Widget/TableDateItem.h src/TableDateItem.cpp
         include/Widget/TableTimeItem.h src/TableTimeItem.cpp
+        include/Widget/TableDurationItem.h src/TableDurationItem.cpp
         include/Widget/HyperlinkTextEdit.h src/HyperlinkTextEdit.cpp
         include/Widget/EnumerationComboBox.h src/EnumerationComboBox.cpp
         include/Widget/EnumerationWidgetItem.h src/EnumerationWidgetItem.cpp

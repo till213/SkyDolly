@@ -25,8 +25,6 @@
 #ifndef TABLETIMEITEM_H
 #define TABLETIMEITEM_H
 
-#include <memory>
-
 #include <QString>
 #include <QTime>
 #include <QTableWidgetItem>
@@ -42,7 +40,7 @@
 class WIDGET_API TableTimeItem final : public QTableWidgetItem
 {
 public:
-    TableTimeItem(QTime time = QTime()) noexcept;
+    explicit TableTimeItem(QTime time = QTime()) noexcept;
     TableTimeItem(const TableTimeItem &rhs) = delete;
     TableTimeItem(TableTimeItem &&rhs) = delete;
     TableTimeItem &operator=(const TableTimeItem &rhs) = delete;

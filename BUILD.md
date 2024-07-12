@@ -121,6 +121,11 @@ E.g. on Windows:
 git config --global user.signingkey "%HOME%\.ssh\id_rsa.pub"
 ```
 
+Or on Mac/Linux:
+```
+git config --global user.signingkey "~/.ssh/id_rsa.pub"
+```
+
 Take note of the "quotes" around the path.
 
 - Globally enable signing of each commit
