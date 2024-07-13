@@ -46,9 +46,9 @@ struct VersionPrivate
     int minor {VersionConfig::Minor};
     int patch {VersionConfig::Patch};
 
-    // https://www.yourdictionary.com/articles/adjectives-that-start-with-h
-    // https://en.wikipedia.org/wiki/List_of_aircraft_(H)
-    static inline const QString CodeName {"Humble Hawker"};
+    // https://www.yourdictionary.com/articles/adjectives-that-start-with-i
+    // https://en.wikipedia.org/wiki/List_of_aircraft_(I)
+    static inline const QString CodeName {"Illustrious Ikarus"};
 };
 
 // PUBLIC
