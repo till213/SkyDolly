@@ -217,8 +217,19 @@ bool GpxExportPlugin::exportWaypoints(const FlightData &flightData, QIODevice &i
 {
     bool ok {true};
     const auto &flightPlan = flightData.getUserAircraftConst().getFlightPlan();
+    int count {0};
+    const auto last = flightPlan.count() - 1;
     for (const auto &waypoint : flightPlan) {
-        ok = exportWaypoint(waypoint, io);
+        QString description;
+        if (count == 0) {
+            description = tr("Departure");
+        } else if (count < last) {
+            description = tr("Waypoint");
+        } else {
+            description = tr("Arrival");
+        }
+        ++count;
+        ok = exportWaypoint(waypoint, description, io);
         if (!ok) {
             break;
         }
@@ -286,7 +297,7 @@ inline bool GpxExportPlugin::exportTrackPoint(const PositionData &positionData, 
     return io.write(trackPoint.toUtf8());
 }
 
-inline bool GpxExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
+inline bool GpxExportPlugin::exportWaypoint(const Waypoint &waypoint, const QString &description, QIODevice &io) const noexcept
 {
     // Elevation above mean sea level (MSL)
     const auto elevation = Convert::feetToMeters(waypoint.altitude);
@@ -302,6 +313,7 @@ inline bool GpxExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice 
     }
     waypointString = waypointString %
 "    <name>" % waypoint.identifier % "</name>\n"
+"    <desc>" % description % "</desc>\n"
 "  </wpt>\n";
 
     return io.write(waypointString.toUtf8());
