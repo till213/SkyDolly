@@ -131,118 +131,9 @@ public:
      */
     void setSkyConnectPluginUuid(QUuid uuid) noexcept;
 
-    /*!
-     * Returns whether the  stay on top option is enabled.
-     *
-     * \return \c true if the application window is kept in the foreground; \c false else
-     */
-    bool isWindowStaysOnTopEnabled() const noexcept;
-
-    /*!
-     * Sets the  stay on top option.
-     *
-     * \param enable
-     *        \c true in order to keep the application windoww in the foreground; \c false to
-     *        enable default window behaviour
-     * \sa stayOnTopChanged
-     */
-    void setWindowStaysOnTopEnabled(bool enable) noexcept;
-
-    /*!
-     * Returns whether the minimal user interface option is enabled.
-     *
-     * \return \c true if the minimal UI is shown; \c false else
-     */
-    bool isMinimalUiEnabled() const noexcept;
-
-    /*!
-     * Sets the minimal user interface option.
-     *
-     * \param enable
-     *        \c true in order to show the minimal UI; \c false in order to show the normal UI;
-     * \sa minimalUiChanged
-     */
-    void setMinimalUiEnabled(bool enable) noexcept;
-
-    /*!
-     * Returns whether the \e module selector is visible.
-     *
-     * \return \c true if the module selector is shown; \c false else
-     */
-    bool isModuleSelectorVisible() const noexcept;
-
-    /*!
-     * Sets the \e module selector visible according to \c visible.
-     *
-     * \param visible
-     *        \c true in order to show the module selector; \c false in order to hide the module selector
-     * \sa moduleSelectorVisibilityChanged
-     */
-    void setModuleSelectorVisible(bool visible) noexcept;
-
-    /*!
-     * Returns whether the \e replay speed group box is visible.
-     *
-     * \return \c true if the replay speed group box is shown
-     *         \c false else
-     */
-    bool isReplaySpeedVisible() const noexcept;
-
-    /*!
-     * Sets the \e replay speed group box visible according to \c visible.
-     *
-     * \param visible
-     *        \c true in order to show the replay speed
-     *        \c false in order to hide the replay speed
-     * \sa replaySpeedVisibilityChanged
-     */
-    void setReplaySpeedVisible(bool visible) noexcept;
-
-    /*!
-     * Returns the saved window geometry.
-     *
-     * \return the window geometry; a \e null QByteArray if not saved before
-     */
-    QByteArray getWindowGeometry() const noexcept;
-
-    /*!
-     * Stores the window geometry.
-     *
-     * \param geometry
-     *        the window geometry encoded in the QByteAarray
-     */
-    void setWindowGeometry(QByteArray geometry) noexcept;
-
-    /*!
-     * Returns the saved window state.
-     *
-     * \return the window state; a \e null QByteArray if not saved before
-     */
-    QByteArray getWindowState() const noexcept;
-
-    /*!
-     * Stores the window state.
-     *
-     * \param state
-     *        the window state encoded in the QByteAarray
-     */
-    void setWindowState(QByteArray state) noexcept;
-
-    /*!
-     * Returns the path of the directory which was last accessed during export or import.
-     *
-     * \return the path of the last export / import directory
-     */
-    QString getExportPath() const noexcept;
-
-    /*!
-     * Sets the path of the directory which was last accessed during export or import.
-     *
-     * \param exportPath
-     *        the path of the last export / import directory
-     * \sa exportPathChanged
-     */
-    void setExportPath(QString exportPath);
+    // **********************
+    // Common Replay Settings
+    // **********************
 
     /*!
      * Returns whether the fast-forward / backward interval is an absolute value (in milliseconds).
@@ -360,6 +251,107 @@ public:
      * \sa maximumSimulationRateChanged
      */
     void setMaximumSimulationRate(int rate) noexcept;
+
+    // ***********************
+    // User Interface Settings
+    // ***********************
+
+    /*!
+     * Returns whether the  stay on top option is enabled.
+     *
+     * \return \c true if the application window is kept in the foreground; \c false else
+     */
+    bool isWindowStaysOnTopEnabled() const noexcept;
+
+    /*!
+     * Sets the  stay on top option.
+     *
+     * \param enable
+     *        \c true in order to keep the application windoww in the foreground; \c false to
+     *        enable default window behaviour
+     * \sa stayOnTopChanged
+     */
+    void setWindowStaysOnTopEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns whether the minimal user interface option is enabled.
+     *
+     * \return \c true if the minimal UI is shown; \c false else
+     */
+    bool isMinimalUiEnabled() const noexcept;
+
+    /*!
+     * Sets the minimal user interface option.
+     *
+     * \param enable
+     *        \c true in order to show the minimal UI; \c false in order to show the normal UI;
+     * \sa minimalUiChanged
+     */
+    void setMinimalUiEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns whether the \e module selector is visible.
+     *
+     * \return \c true if the module selector is shown; \c false else
+     */
+    bool isModuleSelectorVisible() const noexcept;
+
+    /*!
+     * Sets the \e module selector visible according to \c visible.
+     *
+     * \param visible
+     *        \c true in order to show the module selector; \c false in order to hide the module selector
+     * \sa moduleSelectorVisibilityChanged
+     */
+    void setModuleSelectorVisible(bool visible) noexcept;
+
+    /*!
+     * Returns whether the \e replay speed group box is visible.
+     *
+     * \return \c true if the replay speed group box is shown
+     *         \c false else
+     */
+    bool isReplaySpeedVisible() const noexcept;
+
+    /*!
+     * Sets the \e replay speed group box visible according to \c visible.
+     *
+     * \param visible
+     *        \c true in order to show the replay speed
+     *        \c false in order to hide the replay speed
+     * \sa replaySpeedVisibilityChanged
+     */
+    void setReplaySpeedVisible(bool visible) noexcept;
+
+    /*!
+     * Returns the saved window geometry.
+     *
+     * \return the window geometry; a \e null QByteArray if not saved before
+     */
+    QByteArray getWindowGeometry() const noexcept;
+
+    /*!
+     * Stores the window geometry.
+     *
+     * \param geometry
+     *        the window geometry encoded in the QByteAarray
+     */
+    void setWindowGeometry(QByteArray geometry) noexcept;
+
+    /*!
+     * Returns the saved window state.
+     *
+     * \return the window state; a \e null QByteArray if not saved before
+     */
+    QByteArray getWindowState() const noexcept;
+
+    /*!
+     * Stores the window state.
+     *
+     * \param state
+     *        the window state encoded in the QByteAarray
+     */
+    void setWindowState(QByteArray state) noexcept;
 
     /*!
      * Returns the user interface style key.
@@ -504,6 +496,10 @@ public:
      */
     void setDefaultMinimalUiReplaySpeedVisibility(bool visible) noexcept;
 
+    // ******************************
+    // Common Import / Export Setings
+    // ******************************
+
     /*!
      * Returns the aircraft type (name) for import.
      *
@@ -519,6 +515,22 @@ public:
      * \sa changed
      */
     void setImportAircraftType(QString type) noexcept;
+
+    /*!
+     * Returns the path of the directory which was last accessed during export or import.
+     *
+     * \return the path of the last export / import directory
+     */
+    QString getExportPath() const noexcept;
+
+    /*!
+     * Sets the path of the directory which was last accessed during export or import.
+     *
+     * \param exportPath
+     *        the path of the last export / import directory
+     * \sa exportPathChanged
+     */
+    void setExportPath(QString exportPath);
 
     /*!
      * Returns the count of how many times the "preview" dialog is still

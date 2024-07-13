@@ -200,91 +200,6 @@ void Settings::setSkyConnectPluginUuid(QUuid uuid) noexcept
     }
 }
 
-QString Settings::getExportPath() const noexcept
-{
-    return d->exportPath;
-}
-
-void Settings::setExportPath(QString exportPath)
-{
-    if (d->exportPath != exportPath) {
-        d->exportPath = std::move(exportPath);
-        emit exportPathChanged(d->exportPath);
-    }
-}
-
-bool Settings::isWindowStaysOnTopEnabled() const noexcept
-{
-    return d->windowStayOnTop;
-}
-
-void Settings::setWindowStaysOnTopEnabled(bool enable) noexcept
-{
-    if (d->windowStayOnTop != enable) {
-        d->windowStayOnTop = enable;
-        emit stayOnTopChanged(enable);
-    }
-}
-
-bool Settings::isMinimalUiEnabled() const noexcept
-{
-    return d->minimalUi;
-}
-
-void Settings::setMinimalUiEnabled(bool enable) noexcept
-{
-    if (d->minimalUi != enable) {
-        d->minimalUi = enable;
-        emit minimalUiChanged(enable);
-    }
-}
-
-bool Settings::isModuleSelectorVisible() const noexcept
-{
-    return d->moduleSelectorVisible;
-}
-
-void Settings::setModuleSelectorVisible(bool visible) noexcept
-{
-    if (d->moduleSelectorVisible != visible) {
-        d->moduleSelectorVisible = visible;
-        emit moduleSelectorVisibilityChanged(visible);
-    }
-}
-
-bool Settings::isReplaySpeedVisible() const noexcept
-{
-    return d->replaySpeedVisible;
-}
-
-void Settings::setReplaySpeedVisible(bool visible) noexcept
-{
-    if (d->replaySpeedVisible != visible) {
-        d->replaySpeedVisible = visible;
-        emit replaySpeedVisibilityChanged(visible);
-    }
-}
-
-QByteArray Settings::getWindowGeometry() const noexcept
-{
-    return d->windowGeometry;
-}
-
-void Settings::setWindowGeometry(QByteArray geometry) noexcept
-{
-    d->windowGeometry = std::move(geometry);
-}
-
-QByteArray Settings::getWindowState() const noexcept
-{
-    return d->windowState;
-}
-
-void Settings::setWindowState(QByteArray state) noexcept
-{
-    d->windowState = std::move(state);
-}
-
 bool Settings::isAbsoluteSeekEnabled() const noexcept
 {
     return d->absoluteSeek;
@@ -374,6 +289,78 @@ void Settings::setMaximumSimulationRate(int rate) noexcept
         d->maximumSimulationRate = rate;
         emit maximumSimulationRateChanged(d->maximumSimulationRate);
     }
+}
+
+bool Settings::isWindowStaysOnTopEnabled() const noexcept
+{
+    return d->windowStayOnTop;
+}
+
+void Settings::setWindowStaysOnTopEnabled(bool enable) noexcept
+{
+    if (d->windowStayOnTop != enable) {
+        d->windowStayOnTop = enable;
+        emit stayOnTopChanged(enable);
+    }
+}
+
+bool Settings::isMinimalUiEnabled() const noexcept
+{
+    return d->minimalUi;
+}
+
+void Settings::setMinimalUiEnabled(bool enable) noexcept
+{
+    if (d->minimalUi != enable) {
+        d->minimalUi = enable;
+        emit minimalUiChanged(enable);
+    }
+}
+
+bool Settings::isModuleSelectorVisible() const noexcept
+{
+    return d->moduleSelectorVisible;
+}
+
+void Settings::setModuleSelectorVisible(bool visible) noexcept
+{
+    if (d->moduleSelectorVisible != visible) {
+        d->moduleSelectorVisible = visible;
+        emit moduleSelectorVisibilityChanged(visible);
+    }
+}
+
+bool Settings::isReplaySpeedVisible() const noexcept
+{
+    return d->replaySpeedVisible;
+}
+
+void Settings::setReplaySpeedVisible(bool visible) noexcept
+{
+    if (d->replaySpeedVisible != visible) {
+        d->replaySpeedVisible = visible;
+        emit replaySpeedVisibilityChanged(visible);
+    }
+}
+
+QByteArray Settings::getWindowGeometry() const noexcept
+{
+    return d->windowGeometry;
+}
+
+void Settings::setWindowGeometry(QByteArray geometry) noexcept
+{
+    d->windowGeometry = std::move(geometry);
+}
+
+QByteArray Settings::getWindowState() const noexcept
+{
+    return d->windowState;
+}
+
+void Settings::setWindowState(QByteArray state) noexcept
+{
+    d->windowState = std::move(state);
 }
 
 QString Settings::getStyleKey() const noexcept
@@ -490,6 +477,19 @@ void Settings::setImportAircraftType(QString type) noexcept
     if (d->importAircraftType != type) {
         d->importAircraftType = std::move(type);
         emit changed();
+    }
+}
+
+QString Settings::getExportPath() const noexcept
+{
+    return d->exportPath;
+}
+
+void Settings::setExportPath(QString exportPath)
+{
+    if (d->exportPath != exportPath) {
+        d->exportPath = std::move(exportPath);
+        emit exportPathChanged(d->exportPath);
     }
 }
 
