@@ -243,7 +243,7 @@ inline bool JsonExportPlugin::exportTrackPoint(const PositionData &positionData,
     return io.write(trackPoint.toUtf8());
 }
 
-inline bool JsonExportPlugin::exportWaypoint(const auto &waypoint, QIODevice &io) const noexcept
+inline bool JsonExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
 {
     const QString waypointString =
 "    {\n"

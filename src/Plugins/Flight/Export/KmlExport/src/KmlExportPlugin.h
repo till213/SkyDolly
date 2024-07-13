@@ -76,12 +76,12 @@ private:
     bool exportFlightInfo(const FlightData &flightData, QIODevice &io) const noexcept;
     bool exportAllAircraft(const FlightData &flightData, QIODevice &io) const noexcept;
     bool exportSingleAircraft(const Aircraft &aircraft, bool inFormation, QIODevice &io) const noexcept;
-    bool exportWaypoints(const auto &flightPlan, QIODevice &io) const noexcept;
+    bool exportWaypoints(const FlightPlan &flightPlan, QIODevice &io) const noexcept;
     bool exportFooter(QIODevice &io) const noexcept;
 
     QString getFlightDescription(const FlightData &flightData) const noexcept;
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
-    QString getWaypointDescription(const auto &waypoint) const noexcept;
+    QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
     inline bool exportPlacemark(QIODevice &io, KmlStyleExport::Icon icon, const QString &name, const QString &description,
                                 const PositionData &positionData, const AttitudeData &attitudeData) const noexcept;

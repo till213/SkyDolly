@@ -286,7 +286,7 @@ inline bool GpxExportPlugin::exportTrackPoint(const PositionData &positionData, 
     return io.write(trackPoint.toUtf8());
 }
 
-inline bool GpxExportPlugin::exportWaypoint(const auto &waypoint, QIODevice &io) const noexcept
+inline bool GpxExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
 {
     // Elevation above mean sea level (MSL)
     const auto elevation = Convert::feetToMeters(waypoint.altitude);

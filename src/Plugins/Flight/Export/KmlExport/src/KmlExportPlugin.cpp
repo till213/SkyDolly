@@ -286,7 +286,7 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
     return ok;
 }
 
-bool KmlExportPlugin::exportWaypoints(const auto &flightPlan, QIODevice &io) const noexcept
+bool KmlExportPlugin::exportWaypoints(const FlightPlan &flightPlan, QIODevice &io) const noexcept
 {
     bool ok {true};
     for (const auto &waypoint : flightPlan) {
@@ -337,7 +337,7 @@ QString KmlExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
            QObject::tr("Tail number") % ": " % info.tailNumber % "\n";
 }
 
-QString KmlExportPlugin::getWaypointDescription(const auto &waypoint) const noexcept
+QString KmlExportPlugin::getWaypointDescription(const Waypoint &waypoint) const noexcept
 {
     return QObject::tr("Arrival time (local)") % ": " % d->unit.formatTime(waypoint.localTime) % "\n" %
            QObject::tr("Arrival time (zulu)") % ": " % d->unit.formatTime(waypoint.zuluTime) % "\n" %
