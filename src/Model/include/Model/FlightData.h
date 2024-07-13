@@ -160,9 +160,9 @@ struct MODEL_API FlightData final
     }
 
     /*!
-     * Returns \c true if at least one aircraft in this flight has recorded position data.
+     * Returns \c true if at least \e one aircraft in this flight has recorded position data.
      *
-     * \return \c true if at least one aircraft has recorded position data; \c false else
+     * \return \c true if at least \e one aircraft has recorded position data; \c false else
      */
     inline bool hasRecording() const noexcept
     {
@@ -171,7 +171,7 @@ struct MODEL_API FlightData final
     }
 
     /*!
-     * Returns \c true if all \p flights have recorded data, or in other words:
+     * Returns \c true if \e all \p flights have recorded data, or in other words:
      * if at least one flight does \e not have recorded data then \c false is
      * returned.
      *
@@ -180,7 +180,7 @@ struct MODEL_API FlightData final
     static bool hasAllRecording(const std::vector<FlightData> &flights) noexcept
     {
         auto noRecording = [](const FlightData &f){ return !f.hasRecording(); };
-        return std::find_if(flights.begin(), flights.end(), noRecording) != flights.end();
+        return std::find_if(flights.begin(), flights.end(), noRecording) == flights.end();
     }
 
     using SizeType = std::vector<Aircraft>::size_type;
