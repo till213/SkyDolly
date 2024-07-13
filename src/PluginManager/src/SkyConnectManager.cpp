@@ -499,7 +499,7 @@ SkyConnectManager::~SkyConnectManager()
 void SkyConnectManager::frenchConnection() noexcept
 {
     // Settings
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     connect(&settings, &Settings::skyConnectPluginUuidChanged,
             this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
 }
@@ -534,7 +534,7 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
 
 void SkyConnectManager::initialisePlugin() noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     QUuid uuid = settings.getSkyConnectPluginUuid();
     // Try to load plugin as stored in the settings
     bool ok = !uuid.isNull() && tryAndSetCurrentSkyConnect(uuid);

@@ -107,7 +107,7 @@ void BasicLocationImportDialog::initUi() noexcept
 
 void BasicLocationImportDialog::initBasicUi() noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     ui->pathLineEdit->setText(QDir::toNativeSeparators(settings.getExportPath()));
     ui->importModeComboBox->setToolTip(
 QStringLiteral("<html>") %

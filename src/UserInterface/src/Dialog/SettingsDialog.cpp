@@ -57,7 +57,7 @@ namespace
     constexpr int UpdateIntervalMSec = 1000;
 
     constexpr int ReplayTab = 0;
-    constexpr int FlightSimulatorTab = 2;
+    constexpr int FlightSimulatorTab = 1;
 
     constexpr const char *WindowsStyleKey {"windows"};
     constexpr const char *FusionStyleKey {"fusion"};
@@ -83,7 +83,7 @@ struct SettingsDialogPrivate
         }
     }
     QTimer updateTimer;
-    OptionWidgetIntf *skyConnectOptionWidget {nullptr};
+    std::unique_ptr<OptionWidgetIntf> skyConnectOptionWidget {nullptr};
 
     // Key: style key (all lower case), value: style name
     static inline std::unordered_map<QString, QString> knownStyleNames;
@@ -137,6 +137,10 @@ void SettingsDialog::initUi() noexcept
                                                 .arg(SimVar::CanopyOpen));
     ui->maximumSimulationRateSpinBox->setToolTip(tr("This option limits the simulation rate in the flight simulator. Note that the actual replay speed may still be set to higher values."));
 
+    // TODO For now we only support "none" and "simulation time"
+    ui->timeModeComboBox->addItem(tr("None"), Enum::underly(Replay::TimeMode::None));
+    ui->timeModeComboBox->addItem(tr("Simulation time"), Enum::underly(Replay::TimeMode::SimulationTime));
+
     // Flight simulator
     auto &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
@@ -180,9 +184,7 @@ void SettingsDialog::frenchConnection() noexcept
             this, &SettingsDialog::onStyleChanged);
 }
 
-// PRIVATE SLOTS
-
-void SettingsDialog::updateUi() noexcept
+void SettingsDialog::updateReplayTab() noexcept
 {
     const auto &settings = Settings::getInstance();
 
@@ -193,7 +195,26 @@ void SettingsDialog::updateUi() noexcept
     ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
     ui->maximumSimulationRateSpinBox->setValue(settings.getMaximumSimulationRate());
 
-    // Flight simulator
+    const auto replayTimeMode = settings.getReplayTimeMode();
+    int currentIndex {0};
+    auto indexCount = ui->timeModeComboBox->count();
+    while (currentIndex < indexCount &&
+           static_cast<Replay::TimeMode>(ui->timeModeComboBox->itemData(currentIndex).toInt()) != replayTimeMode) {
+        ++currentIndex;
+    }
+    if (currentIndex < indexCount) {
+        ui->timeModeComboBox->setCurrentIndex(currentIndex);
+    } else if (indexCount > 0) {
+        // Option not supported -> select the first available option
+        ui->timeModeComboBox->setCurrentIndex(0);
+    }
+    ui->timeModeComboBox->setToolTip(tr("Defines how the time in the flight simulator is synchronised during replay."));
+}
+
+void SettingsDialog::updateFlightSimulatorTab() noexcept
+{
+    const auto &settings = Settings::getInstance();
+
     auto &skyConnectManager = SkyConnectManager::getInstance();
     std::optional<QString> pluginName = skyConnectManager.getCurrentSkyConnectPluginName();
     if (pluginName) {
@@ -202,8 +223,12 @@ void SettingsDialog::updateUi() noexcept
     const bool enabled = !skyConnectManager.isActive();
     ui->connectionComboBox->setEnabled(enabled);
     updateConnectionStatus();
+}
 
-    // User interface
+void SettingsDialog::updateUserInterfaceTab() noexcept
+{
+    const auto &settings = Settings::getInstance();
+
     const auto styleKey = settings.getStyleKey();
     bool found {false};
     int index = 0;
@@ -231,11 +256,20 @@ void SettingsDialog::updateUi() noexcept
     ui->hideReplaySpeedCheckBox->setChecked(!settings.getDefaultMinimalUiReplaySpeedVisibility());
 }
 
+// PRIVATE SLOTS
+
+void SettingsDialog::updateUi() noexcept
+{
+    updateReplayTab();
+    updateFlightSimulatorTab();
+    updateUserInterfaceTab();
+}
+
 void SettingsDialog::updateConnectionStatus() const noexcept
 {
     double time {0.0};
 
-    ui->connectionStatusLabel->setToolTip(QString());
+    ui->connectionStatusLabel->setToolTip("");
 
     auto &skyConnectManager = SkyConnectManager::getInstance();
     switch (skyConnectManager.getState()) {
@@ -286,8 +320,7 @@ void SettingsDialog::onStyleChanged() noexcept
 void SettingsDialog::onSkyConnectPluginChanged() noexcept
 {
     if (d->skyConnectOptionWidget != nullptr) {
-        delete d->skyConnectOptionWidget;
-        d->skyConnectOptionWidget = nullptr;
+        d->skyConnectOptionWidget.reset();
     }
     initFlightSimulatorOptionWidget();
 }
@@ -302,6 +335,7 @@ void SettingsDialog::onAccepted() noexcept
     settings.setSeekIntervalPercent(ui->seekInPercentSpinBox->value());
     settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());
     settings.setMaximumSimulationRate(ui->maximumSimulationRateSpinBox->value());
+    settings.setReplayTimeMode(static_cast<Replay::TimeMode>(ui->timeModeComboBox->currentData().toInt()));
 
     // Flight simulator
     if (d->skyConnectOptionWidget != nullptr) {
@@ -350,16 +384,16 @@ void SettingsDialog::initFlightSimulatorOptionWidget() noexcept
     auto optionWidget = skyConnectManager.createOptionWidget();
     if (optionWidget) {
         // Transfer ownership to this settings dialog (the layout manager below specifically)
-        d->skyConnectOptionWidget = optionWidget->release();
+        d->skyConnectOptionWidget = std::move(optionWidget.value());
         ui->optionGroupBox->setHidden(false);
         std::unique_ptr<QLayout> layout {ui->optionGroupBox->layout()};
         // Any previously existing layout is deleted first, which is what we want
         layout = std::make_unique<QVBoxLayout>();
-        layout->addWidget(d->skyConnectOptionWidget);
+        layout->addWidget(d->skyConnectOptionWidget.get());
         // Transfer ownership of the layout to the optionGroupBox
         ui->optionGroupBox->setLayout(layout.release());
     } else {
-        d->skyConnectOptionWidget = nullptr;
+        d->skyConnectOptionWidget.reset();
         ui->optionGroupBox->setHidden(true);
     }
 }

@@ -26,8 +26,9 @@
 - The Statistics dialog now shows separate recording rates, for both positition (always around 1 Hz) and attitude samples (e.g. 30 Hz, that is the *simulation frame* rate)
 - The simulation time is now updated in the flight simulator during replay
   * According to the recorded simulation start and end times
-  * Note that the simulation time is not always in sync with real-world time: this is taken into account when interpolating between the simulation start- and end times
+  * Note that the simulation time is not always in sync with real-world time (the simulation- and real-world durations may be different): this is taken into account when interpolating between the simulation start- and end times
   * This allows for exact day of time reproductions, useful e.g. for video editing when video-recording (via separate screen capture solutions) the same flight multiple times from different camera angles
+  * The time synchroniation can be enabled and disabled in the application settings, under *Replay* (default: *simulation time*)
 - The replay time widget now properly displays replay times longer than a day (for instance one year or longer), by including also the actual start date
 
 ### Import & Export
@@ -43,6 +44,7 @@
 - GPX export: the geoid height (&lt;geoidheight&gt;) can now also optionally be exported
   * This may be useful to calculate the ellipsoidial height *h* ([WGS84 reference ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS_84)) as follows: h = H + N = &lt;ele&gt; + &lt;geoidheight&gt;
   * Also refer to [Find Ellipsoidal Height from Orthometric Height](https://www.mathworks.com/help/map/ellipsoid-geoid-and-orthometric-height.html)
+  * The exported waypoints now have a description (&lt;desc&gt;) element: *Departure*, *Waypoint* and *Arrival*
 - IGC export: the proper standard pressure altitude (at a 1013.25 hPa (1 atmosphere) setting) instead of the indicated altitude is now exported
 
 ### Simulation Variables
