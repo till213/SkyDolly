@@ -83,6 +83,7 @@ struct SettingsPrivate
     Replay::SpeedUnit replaySpeedUnit {DefaultReplaySpeedUnit};
     bool repeatCanopyOpen {DefaultRepeatCanopyOpen};
     int maximumSimulationRate {DefaultMaximumSimulationRate};
+    Replay::TimeMode replayTimeMode {DefaultReplayTimeMode};
 
     QString styleKey {Settings::DefaultStyleKey};
 
@@ -113,6 +114,7 @@ struct SettingsPrivate
     static constexpr double DefaultSeekIntervalPercent {0.5};
     static constexpr bool DefaultReplayLoop {false};
     static constexpr Replay::SpeedUnit DefaultReplaySpeedUnit {Replay::SpeedUnit::Absolute};
+    static constexpr Replay::TimeMode DefaultReplayTimeMode {Replay::TimeMode::SimulationLocalTime};
 
     // The T-45 Goshawk properly reacts to the CANOPY_OPEN simulation variable; so there is at least
     // one well-behaving aircraft (the Fiat "Gina" G-91 still needs this option set though)
@@ -120,7 +122,7 @@ struct SettingsPrivate
     // While technically the maximum simulation rate can be up to 128 (in MSFS) this may
     // greatly impact CPU performance; a good compromise seems to be a factor of 8
     // Also refer to: https://docs.flightsimulator.com/html/Programming_Tools/Programming_APIs.htm#SIMULATION%20RATE
-    static constexpr int DefaultMaximumSimulationRate {8};
+    static constexpr int DefaultMaximumSimulationRate {8};    
 
     static constexpr bool DefaultDeleteFlightConfirmation {true};
     static constexpr bool DefaultDeleteAircraftConfirmation {true};
@@ -155,6 +157,10 @@ void Settings::destroyInstance() noexcept
         SettingsPrivate::instance = nullptr;
     }
 }
+
+// ********************
+// Application Settings
+// ********************
 
 const Version &Settings::getVersion() const noexcept
 {
@@ -199,6 +205,10 @@ void Settings::setSkyConnectPluginUuid(QUuid uuid) noexcept
         emit skyConnectPluginUuidChanged(d->skyConnectPluginUuid);
     }
 }
+
+// **********************
+// Common Replay Settings
+// **********************
 
 bool Settings::isAbsoluteSeekEnabled() const noexcept
 {
@@ -265,6 +275,19 @@ void Settings::setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept
     }
 }
 
+Replay::TimeMode Settings::getReplayTimeMode() const noexcept
+{
+    return d->replayTimeMode;
+}
+
+void Settings::setReplayTimeMode(Replay::TimeMode timeMode) noexcept
+{
+    if (d->replayTimeMode != timeMode) {
+        d->replayTimeMode = timeMode;
+        emit replayTimeModeChanged(d->replayTimeMode);
+    }
+}
+
 bool Settings::isRepeatCanopyOpenEnabled() const noexcept
 {
     return d->repeatCanopyOpen;
@@ -290,6 +313,10 @@ void Settings::setMaximumSimulationRate(int rate) noexcept
         emit maximumSimulationRateChanged(d->maximumSimulationRate);
     }
 }
+
+// ***********************
+// User Interface Settings
+// ***********************
 
 bool Settings::isWindowStaysOnTopEnabled() const noexcept
 {
@@ -581,6 +608,7 @@ void Settings::store() const noexcept
         d->settings.setValue("ReplaySpeedUnit", Enum::underly(d->replaySpeedUnit));
         d->settings.setValue("RepeatCanopyOpen", d->repeatCanopyOpen);
         d->settings.setValue("MaximumSimulationRate", d->maximumSimulationRate);
+        d->settings.setValue("ReplayTimeMode", Enum::underly(d->replayTimeMode));
     }
     d->settings.endGroup();
     d->settings.beginGroup("UI");
@@ -677,15 +705,10 @@ void Settings::restore() noexcept
             d->seekIntervalPercent = SettingsPrivate::DefaultSeekIntervalPercent;
         }
         d->replayLoop = d->settings.value("ReplayLoop", SettingsPrivate::DefaultReplayLoop).toBool();
-        int replaySpeedUnitValue = d->settings.value("ReplaySpeedUnit", Enum::underly(SettingsPrivate::DefaultReplaySpeedUnit)).toInt(&ok);
-        if (ok) {
-            d->replaySpeedUnit = static_cast<Replay::SpeedUnit>(replaySpeedUnitValue);
-        } else {
-#ifdef DEBUG
-            qWarning() << "The replay speed unit in the settings could not be parsed, so setting value to default value:" << Enum::underly(SettingsPrivate::DefaultReplaySpeedUnit);
-#endif
-            d->replaySpeedUnit = SettingsPrivate::DefaultReplaySpeedUnit;
-        }
+        auto enumValue = d->settings.value("ReplaySpeedUnit", Enum::underly(SettingsPrivate::DefaultReplaySpeedUnit)).toInt(&ok);
+        d->replaySpeedUnit = ok && Enum::contains<Replay::SpeedUnit>(enumValue) ? static_cast<Replay::SpeedUnit>(enumValue) : SettingsPrivate::DefaultReplaySpeedUnit;
+        enumValue = d->settings.value("ReplayTimeMode", Enum::underly(SettingsPrivate::DefaultReplayTimeMode)).toInt(&ok);
+        d->replayTimeMode = ok && Enum::contains<Replay::TimeMode>(enumValue) ? static_cast<Replay::TimeMode>(enumValue) : SettingsPrivate::DefaultReplayTimeMode;
         d->repeatCanopyOpen = d->settings.value("RepeatCanopyOpen", SettingsPrivate::DefaultRepeatCanopyOpen).toBool();
         int maximumSimulationRateValue = d->settings.value("MaximumSimulationRate", SettingsPrivate::DefaultMaximumSimulationRate).toInt(&ok);
         if (ok) {
@@ -791,9 +814,13 @@ void Settings::frenchConnection() noexcept
             this, &Settings::changed);
     connect(this, &Settings::replayLoopChanged,
             this, &Settings::changed);
-    connect(this, &Settings::replaySpeedUnitChanged,
+    connect(this, &Settings::replaySpeedUnitChanged,    
+            this, &Settings::changed);
+    connect(this, &Settings::replayTimeModeChanged,
             this, &Settings::changed);
     connect(this, &Settings::repeatCanopyChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::maximumSimulationRateChanged,
             this, &Settings::changed);
     connect(this, &Settings::styleKeyChanged,
             this, &Settings::changed);

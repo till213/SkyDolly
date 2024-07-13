@@ -32,10 +32,33 @@ namespace Replay
 {
     /*!
      * The replay speed factor: absolute or percent.
+     *
+     * Implementation note: these values are peristed in the application settings.
      */
     enum struct SpeedUnit: int {
-        Absolute = 0,
-        Percent
+        First = 0,
+        Absolute = First,
+        Percent,
+        Last = Percent
+    };
+
+    /*!
+     * Defines how the time is to be synchronised during replay.
+     *
+     * Implementation note: these values are peristed in the application settings.
+     */
+    enum struct TimeMode
+    {
+        First = 0,
+        /*! No time synchronisation is done: the current simulation time is kept */
+        None = First,
+        /*! The simulation local time is synchronised. */
+        SimulationZuluTime,
+        /*! The simulation zulu time is synchronised, starting from the user aircraft simulation zulu start date/time */
+        SimulationLocalTime,
+        /*! The real-world local time is synchronised, starting from the flight recording date/time. */
+        CreationRealWorldTime,
+        Last =  SimulationLocalTime
     };
 }
 

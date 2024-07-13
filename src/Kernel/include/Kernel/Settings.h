@@ -72,6 +72,10 @@ public:
      */
     static void destroyInstance() noexcept;
 
+    // ********************
+    // Application Settings
+    // ********************
+
     /*!
      * Returns the version of the application (Sky Dolly) that wrote these settings last.
      *
@@ -212,8 +216,25 @@ public:
      *
      * \param replaySpeedUnit
      *        the replay speed unit
+     * \sa replaySpeedUnitChanged
      */
     void setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept;
+
+    /*!
+     * Returns the time mode.
+     *
+     * \return the replay time mode
+     */
+    Replay::TimeMode getReplayTimeMode() const noexcept;
+
+    /*!
+     * Sets the replay time mode.
+     *
+     * \param timeMode
+     *        the replay time mode
+     * \sa replayTimeModeChanged
+     */
+    void setReplayTimeMode(Replay::TimeMode timeMode) noexcept;
 
     /*!
      * Returns whether the CANOPY OPEN simulation variable
@@ -672,6 +693,13 @@ signals:
      * \sa changed
      */
     void replaySpeedUnitChanged(Replay::SpeedUnit replaySpeedUnit);
+
+    /*!
+     * Emitted when the replay time mode has changed.
+     *
+     * \sa changed
+     */
+    void replayTimeModeChanged(Replay::TimeMode replayTimeMode);
 
     /*!
      * Emitted when the repeat canopy has changed.
