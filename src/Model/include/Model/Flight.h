@@ -196,7 +196,7 @@ public:
     std::size_t count() const noexcept;
 
     /*!
-     * Adds the \c waypoint to the flight plan of the user aircraft.
+     * Adds the \p waypoint to the flight plan of the user aircraft.
      *
      * \param waypoint
      *        the waypoint to be added to the flight plan of the user aircraft
@@ -205,7 +205,7 @@ public:
     void addWaypoint(const Waypoint &waypoint) noexcept;
 
     /*!
-     * Updates the waypoint at \c index with the given \c waypoint.
+     * Updates the waypoint at \c index with the given \p waypoint.
      *
      * \param index
      *        the index of the waypoint to be updated
@@ -375,7 +375,7 @@ signals:
     void aircraftRemoved(std::int64_t aircraftId);
 
     /*!
-     * Emitted whenever a new \c waypoint has been added to the user aircraft.
+     * Emitted whenever a new \p waypoint has been added to the user aircraft.
      *
      * \param waypoint
      *        the newly added waypoint
@@ -383,7 +383,7 @@ signals:
     void waypointAdded(const Waypoint &waypoint);
 
     /*!
-     * Emitted whenever the \c waypoint of the user aircraft at \c index has been udpated.
+     * Emitted whenever the \p waypoint of the user aircraft at \c index has been udpated.
      *
      * \param index
      *        the index of the updated waypoint
@@ -398,8 +398,8 @@ signals:
     void waypointsCleared();
 
     /*!
-     * Emitted whenever the user aircraft index is changed to \c newUserAircraftIndex. In case a previous user aircraft
-     * existed the \c previousUserAircraftIndex is set accordingly, otherwise it is set to Const::InvalidIndex.
+     * Emitted whenever the user aircraft index is changed to \p newUserAircraftIndex. In case a previous user aircraft
+     * existed the \p previousUserAircraftIndex is set accordingly, otherwise it is set to Const::InvalidIndex.
      *
      * \param newUserAircraftIndex
      *        the index of the new user aircraft

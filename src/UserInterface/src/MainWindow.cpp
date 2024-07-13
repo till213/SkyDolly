@@ -329,7 +329,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::updateUi);
 
     // Settings
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     connect(&settings, &Settings::changed,
             this, &MainWindow::updateMainWindow);
     connect(&settings, &Settings::defaultMinimalUiButtonTextVisibilityChanged,
@@ -459,7 +459,7 @@ void MainWindow::frenchConnection() noexcept
 
 void MainWindow::initUi() noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
 
     // File menu
@@ -662,7 +662,7 @@ void MainWindow::initModuleSelectorUi() noexcept
 
 void MainWindow::initViewUi() noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
 
     const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
     ui->showModulesAction->setChecked(moduleSelectorVisible);
@@ -803,7 +803,7 @@ void MainWindow::initReplaySpeedUi() noexcept
     // The replay speed factor in SkyConnect is always an absolute factor
     auto &skyConnectManager = SkyConnectManager::getInstance();
     const float factor = skyConnectManager.getReplaySpeedFactor();
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     if (settings.getReplaySpeeedUnit() == Replay::SpeedUnit::Absolute) {
         d->lastCustomReplaySpeedFactor = factor;
     } else {
@@ -946,7 +946,7 @@ void MainWindow::updateMinimalUi(bool enable)
 
 bool MainWindow::isMinimalUiEnabled() const noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     const bool minimalUi = settings.isMinimalUiEnabled();
     const bool hasModules = d->moduleManager->getActiveModule().has_value();
     // Also enable minimal UI mode if no module plugins are available
@@ -1060,7 +1060,7 @@ void MainWindow::updateMinimalUiEssentialButtonVisibility() noexcept
 
 void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     bool replaySpeedVisible {false};
     if (enterMinimalUi) {
         // When switching to minimal UI mode the default replay speed visibility takes precedence
@@ -1079,7 +1079,7 @@ void MainWindow::updatePositionSliderTickInterval() noexcept
     int tickInterval {10};
     if (isMinimalUiEnabled()) {
         if (!ui->showReplaySpeedAction->isChecked()) {
-            auto &settings = Settings::getInstance();
+            const auto &settings = Settings::getInstance();
             if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                 if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                     tickInterval = 10;

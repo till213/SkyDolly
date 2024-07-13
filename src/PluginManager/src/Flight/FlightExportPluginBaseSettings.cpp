@@ -144,8 +144,7 @@ void FlightExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey
 {
     bool ok {true};
     auto enumValue = valuesByKey.at(::ResamplingPeriodKey).toInt(&ok);
-    // No enumeration domain validation: any resampling period (Hz) is valid
-    d->resamplingPeriod = ok ? static_cast<SampleRate::ResamplingPeriod>(enumValue) : ::DefaultResamplingPeriod;
+    d->resamplingPeriod = ok && Enum::contains<SampleRate::ResamplingPeriod>(enumValue) ? static_cast<SampleRate::ResamplingPeriod>(enumValue) : ::DefaultResamplingPeriod;
 
     enumValue = valuesByKey.at(::FormationExportKey).toInt(&ok);
     d->formationExport = ok && Enum::contains<FormationExport>(enumValue) ? static_cast<FormationExport>(enumValue) : ::DefaultFormationExport;

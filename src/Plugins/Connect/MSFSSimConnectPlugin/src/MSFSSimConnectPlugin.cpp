@@ -198,7 +198,7 @@ bool MSFSSimConnectPlugin::onSimulationEvent(SimulationEvent event, float arg1) 
                                                   ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         break;
     case SimulationEvent::SimulationRate:
-        d->simulationRate->sendSimulationRate(d->simConnectHandle, arg1);
+        result = d->simulationRate->sendSimulationRate(d->simConnectHandle, arg1) ? S_OK : S_FALSE;
         break;
     case SimulationEvent::None:
         // Nothing to do

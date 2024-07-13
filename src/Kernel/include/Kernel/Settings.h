@@ -72,6 +72,10 @@ public:
      */
     static void destroyInstance() noexcept;
 
+    // ********************
+    // Application Settings
+    // ********************
+
     /*!
      * Returns the version of the application (Sky Dolly) that wrote these settings last.
      *
@@ -130,6 +134,157 @@ public:
      * \sa skyConnectPluginUuidChanged
      */
     void setSkyConnectPluginUuid(QUuid uuid) noexcept;
+
+    // **********************
+    // Common Replay Settings
+    // **********************
+
+    /*!
+     * Returns whether the fast-forward / backward interval is an absolute value (in milliseconds).
+     * \return \c true if the seek interval is an absolute value; \c false if the interval is
+     *         relative (in percent of the duration)
+     */
+    bool isAbsoluteSeekEnabled() const noexcept;
+
+    /*!
+     * Sets whether the fast-forward / backward interval is an absolute value (in milliseconds).
+     *
+     * \param enable
+     *        set to \c true in order to set the seek interval as an absolute value; \c false to
+     *        set the seek interval as relative value (in percent of the duration)
+     * \sa absoluteSeekEnabledChanged
+     */
+    void setAbsoluteSeekEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns the absolute seek interval.
+     *
+     * \return the absolute seek interval in seconds
+     */
+    double getSeekIntervalSeconds() const noexcept;
+
+    /*!
+     * Sets the absolute seek interval.
+     *
+     * \param seconds
+     *        the absolute seek interval in seconds
+     * \sa seekIntervalSecondsChanged
+     */
+    void setSeekIntervalSeconds(double seconds) noexcept;
+
+    /*!
+     * Returns the relative seek interval.
+     *
+     * \return the relative seek interval in percent of the duration
+     */
+    double getSeekIntervalPercent() const noexcept;
+
+    /*!
+     * Sets the relative seek interval in percent.
+     *
+     * \param percent
+     *        the seek interval in percent of the duration
+     * \sa seekIntervalPercentChanged
+     */
+    void setSeekIntervalPercent(double percent) noexcept;
+
+    /*!
+     * Returns whether the replay loop is enabled or not
+     *
+     * \return \c true if repeated replay is enabled; \c false else
+     */
+    bool isReplayLoopEnabled() const noexcept;
+
+    /*!
+     * Enables the replay loop according to \c enable.
+     *
+     * \param enable
+     *        set to \c true in order to enable repeated replay; \c false else
+     * \sa replayLoopChanged
+     */
+    void setLoopReplayEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns the replay speed unit: absolute or percent.
+     *
+     * \return the replay speed unit
+     */
+    Replay::SpeedUnit getReplaySpeeedUnit() const noexcept;
+
+    /*!
+     * Sets the replay speed unit.
+     *
+     * \param replaySpeedUnit
+     *        the replay speed unit
+     * \sa replaySpeedUnitChanged
+     */
+    void setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept;
+
+    /*!
+     * Returns the time mode.
+     *
+     * \return the replay time mode
+     */
+    Replay::TimeMode getReplayTimeMode() const noexcept;
+
+    /*!
+     * Returns whether the simulation time should be synchronised during replay.
+     *
+     * \return \c true if the simulation time should be synchronised during replay;
+     *         \c false else (\c Replay::TimeMode::None)
+     * \sa Replay::TimeMode
+     */
+    bool isReplayTimeModeEnabled() const noexcept;
+
+    /*!
+     * Sets the replay time mode.
+     *
+     * \param timeMode
+     *        the replay time mode
+     * \sa replayTimeModeChanged
+     */
+    void setReplayTimeMode(Replay::TimeMode timeMode) noexcept;
+
+    /*!
+     * Returns whether the CANOPY OPEN simulation variable
+     * is repeatedly sent or not.
+     *
+     * \return \c true if the CANOPY OPEN value is repeatedly
+     *         sent when its value is greater zero; \c false if
+     *         the value is only to be sent when changed
+     */
+    bool isRepeatCanopyOpenEnabled() const noexcept;
+
+    /*!
+     * Enables the value repeat for the CANOPY OPEN simulation
+     * variable.
+     *
+     * \param enable
+     *        set to \c true in order to enable value repeat;
+     *        \c false else
+     * \sa repeatCanopyChanged
+     */
+    void setRepeatCanopyOpenEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns the maximum simulation rate.
+     *
+     * \return \c the maximum simulation rate [1, 128]
+     */
+    int getMaximumSimulationRate() const noexcept;
+
+    /*!
+     * Sets the maximum simulation rate.
+     *
+     * \param rate
+     *        the maximum simulation rate
+     * \sa maximumSimulationRateChanged
+     */
+    void setMaximumSimulationRate(int rate) noexcept;
+
+    // ***********************
+    // User Interface Settings
+    // ***********************
 
     /*!
      * Returns whether the  stay on top option is enabled.
@@ -227,139 +382,6 @@ public:
      *        the window state encoded in the QByteAarray
      */
     void setWindowState(QByteArray state) noexcept;
-
-    /*!
-     * Returns the path of the directory which was last accessed during export or import.
-     *
-     * \return the path of the last export / import directory
-     */
-    QString getExportPath() const noexcept;
-
-    /*!
-     * Sets the path of the directory which was last accessed during export or import.
-     *
-     * \param exportPath
-     *        the path of the last export / import directory
-     * \sa exportPathChanged
-     */
-    void setExportPath(QString exportPath);
-
-    /*!
-     * Returns whether the fast-forward / backward interval is an absolute value (in milliseconds).
-     * \return \c true if the seek interval is an absolute value; \c false if the interval is
-     *         relative (in percent of the duration)
-     */
-    bool isAbsoluteSeekEnabled() const noexcept;
-
-    /*!
-     * Sets whether the fast-forward / backward interval is an absolute value (in milliseconds).
-     *
-     * \param enable
-     *        set to \c true in order to set the seek interval as an absolute value; \c false to
-     *        set the seek interval as relative value (in percent of the duration)
-     * \sa absoluteSeekEnabledChanged
-     */
-    void setAbsoluteSeekEnabled(bool enable) noexcept;
-
-    /*!
-     * Returns the absolute seek interval.
-     *
-     * \return the absolute seek interval in seconds
-     */
-    double getSeekIntervalSeconds() const noexcept;
-
-    /*!
-     * Sets the absolute seek interval.
-     *
-     * \param seconds
-     *        the absolute seek interval in seconds
-     * \sa seekIntervalSecondsChanged
-     */
-    void setSeekIntervalSeconds(double seconds) noexcept;
-
-    /*!
-     * Returns the relative seek interval.
-     *
-     * \return the relative seek interval in percent of the duration
-     */
-    double getSeekIntervalPercent() const noexcept;
-
-    /*!
-     * Sets the relative seek interval in percent.
-     *
-     * \param percent
-     *        the seek interval in percent of the duration
-     * \sa seekIntervalPercentChanged
-     */
-    void setSeekIntervalPercent(double percent) noexcept;
-
-    /*!
-     * Returns whether the replay loop is enabled or not
-     *
-     * \return \c true if repeated replay is enabled; \c false else
-     */
-    bool isReplayLoopEnabled() const noexcept;
-
-    /*!
-     * Enables the replay loop according to \c enable.
-     *
-     * \param enable
-     *        set to \c true in order to enable repeated replay; \c false else
-     * \sa replayLoopChanged
-     */
-    void setLoopReplayEnabled(bool enable) noexcept;
-
-    /*!
-     * Returns the replay speed unit: absolute or percent.
-     *
-     * \return the replay speed unit
-     */
-    Replay::SpeedUnit getReplaySpeeedUnit() const noexcept;
-
-    /*!
-     * Sets the replay speed unit.
-     *
-     * \param replaySpeedUnit
-     *        the replay speed unit
-     */
-    void setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept;
-
-    /*!
-     * Returns whether the CANOPY OPEN simulation variable
-     * is repeatedly sent or not.
-     *
-     * \return \c true if the CANOPY OPEN value is repeatedly
-     *         sent when its value is greater zero; \c false if
-     *         the value is only to be sent when changed
-     */
-    bool isRepeatCanopyOpenEnabled() const noexcept;
-
-    /*!
-     * Enables the value repeat for the CANOPY OPEN simulation
-     * variable.
-     *
-     * \param enable
-     *        set to \c true in order to enable value repeat;
-     *        \c false else
-     * \sa repeatCanopyChanged
-     */
-    void setRepeatCanopyOpenEnabled(bool enable) noexcept;
-
-    /*!
-     * Returns the maximum simulation rate.
-     *
-     * \return \c the maximum simulation rate [1, 128]
-     */
-    int getMaximumSimulationRate() const noexcept;
-
-    /*!
-     * Sets the maximum simulation rate.
-     *
-     * \param rate
-     *        the maximum simulation rate
-     * \sa maximumSimulationRateChanged
-     */
-    void setMaximumSimulationRate(int rate) noexcept;
 
     /*!
      * Returns the user interface style key.
@@ -504,6 +526,10 @@ public:
      */
     void setDefaultMinimalUiReplaySpeedVisibility(bool visible) noexcept;
 
+    // ******************************
+    // Common Import / Export Setings
+    // ******************************
+
     /*!
      * Returns the aircraft type (name) for import.
      *
@@ -519,6 +545,22 @@ public:
      * \sa changed
      */
     void setImportAircraftType(QString type) noexcept;
+
+    /*!
+     * Returns the path of the directory which was last accessed during export or import.
+     *
+     * \return the path of the last export / import directory
+     */
+    QString getExportPath() const noexcept;
+
+    /*!
+     * Sets the path of the directory which was last accessed during export or import.
+     *
+     * \param exportPath
+     *        the path of the last export / import directory
+     * \sa exportPathChanged
+     */
+    void setExportPath(QString exportPath);
 
     /*!
      * Returns the count of how many times the "preview" dialog is still
@@ -660,6 +702,13 @@ signals:
      * \sa changed
      */
     void replaySpeedUnitChanged(Replay::SpeedUnit replaySpeedUnit);
+
+    /*!
+     * Emitted when the replay time mode has changed.
+     *
+     * \sa changed
+     */
+    void replayTimeModeChanged(Replay::TimeMode replayTimeMode);
 
     /*!
      * Emitted when the repeat canopy has changed.

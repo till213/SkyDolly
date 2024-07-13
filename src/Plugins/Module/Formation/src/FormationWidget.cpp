@@ -400,7 +400,7 @@ void FormationWidget::updateAircraftIcons() noexcept
 
     // Reset all icons
     for (int row = 0; row < ui->aircraftTableWidget->rowCount(); ++row) {
-        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::sequenceNumberColumn);
+        const auto item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::sequenceNumberColumn);
         item->setIcon(QIcon());
     }
     // Update user aircraft icon
@@ -640,7 +640,7 @@ inline void FormationWidget::updateRow(const Aircraft &aircraft, int row, int ai
     const auto &aircraftInfo = aircraft.getAircraftInfo();
 
     // Sequence number
-    QTableWidgetItem *item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::sequenceNumberColumn);
+    auto item = ui->aircraftTableWidget->item(row, FormationWidgetPrivate::sequenceNumberColumn);
     // Sequence numbers start at 1
     item->setData(Qt::DisplayRole, aircraftIndex + 1);
     // Icon
@@ -775,8 +775,8 @@ void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode repl
 int FormationWidget::getSelectedRow() const noexcept
 {
     int selectedRow {::InvalidRow};
-    const QItemSelectionModel *select = ui->aircraftTableWidget->selectionModel();
-    const QModelIndexList modelIndices = select->selectedRows(FormationWidgetPrivate::sequenceNumberColumn);
+    const auto select = ui->aircraftTableWidget->selectionModel();
+    const auto modelIndices = select->selectedRows(FormationWidgetPrivate::sequenceNumberColumn);
     if (modelIndices.count() > 0) {
         QModelIndex modelIndex = modelIndices.at(0);
         selectedRow = modelIndex.row();
@@ -789,7 +789,7 @@ int FormationWidget::getRowBySequenceNumber(int sequence) const noexcept
     int row {::InvalidRow};
     int currentRow {0};
     while (row == ::InvalidRow && currentRow < ui->aircraftTableWidget->rowCount()) {
-        const QTableWidgetItem *item = ui->aircraftTableWidget->item(currentRow, FormationWidgetPrivate::sequenceNumberColumn);
+        const auto item = ui->aircraftTableWidget->item(currentRow, FormationWidgetPrivate::sequenceNumberColumn);
         if (sequence == item->data(Qt::EditRole).toInt()) {
             row = currentRow;
         } else {
@@ -870,7 +870,7 @@ void FormationWidget::onAircraftInfoChanged(const Aircraft &aircraft) noexcept
 void FormationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
 {
     if (column == FormationWidgetPrivate::tailNumberColumn || column == FormationWidgetPrivate::timeOffsetColumn) {
-        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
+        const auto item = ui->aircraftTableWidget->item(row, column);
         ui->aircraftTableWidget->editItem(item);
     } else {
         updateUserAircraftIndex();
@@ -882,11 +882,11 @@ void FormationWidget::onCellChanged(int row, int column) noexcept
     auto &flight = Logbook::getInstance().getCurrentFlight();
     auto &aircraft = flight[d->selectedAircraftIndex];
     if (column == FormationWidgetPrivate::tailNumberColumn) {
-        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
+        const auto item = ui->aircraftTableWidget->item(row, column);
         const QString tailNumber = item->data(Qt::EditRole).toString();
         d->aircraftService->changeTailNumber(aircraft, tailNumber);
     } else if (column == FormationWidgetPrivate::timeOffsetColumn) {
-        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
+        const auto item = ui->aircraftTableWidget->item(row, column);
         bool ok {false};
         const auto timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
         if (ok) {
@@ -952,9 +952,9 @@ void FormationWidget::deleteAircraft() noexcept
         }
 
         if (doDelete) {
-            const int lastSelectedRow = getSelectedRow();
+            const auto lastSelectedRow = getSelectedRow();
             d->aircraftService->deleteByIndex(d->selectedAircraftIndex);
-            const int selectedRow = std::min(lastSelectedRow, ui->aircraftTableWidget->rowCount() - 1);
+            const auto selectedRow = std::min(lastSelectedRow, ui->aircraftTableWidget->rowCount() - 1);
             ui->aircraftTableWidget->selectRow(selectedRow);
             ui->aircraftTableWidget->setFocus(Qt::NoFocusReason);
         }

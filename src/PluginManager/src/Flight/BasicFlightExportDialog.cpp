@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <utility>
-#include <limits>
 #include <cstdint>
 #include <cmath>
 
@@ -241,7 +240,7 @@ void BasicFlightExportDialog::updateUi() noexcept
     const QFile file(fileInfo.absolutePath());
     d->exportButton->setEnabled(file.exists());
 
-    const SampleRate::ResamplingPeriod resamplingPeriod = d->pluginSettings.getResamplingPeriod();
+    const auto resamplingPeriod = d->pluginSettings.getResamplingPeriod();
     int currentIndex {0};
     int indexCount = ui->resamplingComboBox->count();
     while (currentIndex < indexCount &&
@@ -311,8 +310,6 @@ void BasicFlightExportDialog::onFormationExportChanged() noexcept
 
 void BasicFlightExportDialog::onResamplingOptionChanged() noexcept
 {
-    // TODO REMOVE ME
-    qDebug() << "BasicFlightExportDialog::onResamplingOptionChanged:" << ui->resamplingComboBox->currentData().toInt();
     d->pluginSettings.setResamplingPeriod(static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt()));
 }
 
