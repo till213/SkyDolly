@@ -284,9 +284,9 @@ FlightSummary Flight::getFlightSummary() const noexcept
     summary.aircraftType = aircraftInfo.aircraftType.type;
     summary.aircraftCount = count();
     summary.startSimulationLocalTime = d->flightData.flightCondition.startLocalDateTime;
-    summary.startSimulationZuluTime = d->flightData.flightCondition.startZuluDateTime;
+    summary.startSimulationZuluTime = d->flightData.flightCondition.getStartZuluDateTime();
     summary.endSimulationLocalTime = d->flightData.flightCondition.endLocalDateTime;
-    summary.endSimulationZuluTime = d->flightData.flightCondition.endZuluDateTime;
+    summary.endSimulationZuluTime = d->flightData.flightCondition.getEndZuluDateTime();
 
     const auto &flightPlan = aircraft.getFlightPlan();
     if (flightPlan.count() > 0) {

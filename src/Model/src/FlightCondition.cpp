@@ -31,8 +31,8 @@
 
 FlightCondition::FlightCondition() noexcept
 {
-    startZuluDateTime.setTimeZone(QTimeZone::UTC);
-    endZuluDateTime.setTimeZone(QTimeZone::UTC);
+    m_startZuluDateTime.setTimeZone(QTimeZone::UTC);
+    m_endZuluDateTime.setTimeZone(QTimeZone::UTC);
 }
 
 void FlightCondition::clear() noexcept

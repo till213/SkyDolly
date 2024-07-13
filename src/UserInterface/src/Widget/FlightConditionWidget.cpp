@@ -144,6 +144,6 @@ void FlightConditionWidget::updateUi() noexcept
     ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.startLocalDateTime));
     ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.endLocalDateTime));
     // Zulu time
-    ui->startLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.startZuluDateTime) % Const::ZuluTimeSuffix);
-    ui->endLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.endZuluDateTime) % Const::ZuluTimeSuffix);
+    ui->startLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.getStartZuluDateTime()) % Const::ZuluTimeSuffix);
+    ui->endLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.getEndZuluDateTime()) % Const::ZuluTimeSuffix);
 }

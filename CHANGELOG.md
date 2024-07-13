@@ -74,6 +74,8 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
 - GPX export
   * The elevation (&lt;ele&gt;) values are now properly exported as "above mean sea level" (and not "above WGS84 reference ellipsoid" anymore)
   * The trackpoint timestamps are properly calculated and exported when exporting the entire flight (and not just the user aircraft); the proper timezone suffix (Z) is appended, too (ISO 8601 format)
+- Formation recording
+  * Record the flight conditions - specifically the flight start date/time - when the *first* aircraft is recorded (directly from within the Formation module)
   
 ## Documentation
 - Added new [One Year in New York](doc/SQL/Timelapse-One-Year-in-New-York.sql) example SQL ("1 year timelapse")

@@ -926,8 +926,8 @@ bool AbstractSkyConnect::updateSimulationTime() noexcept
     {
         const auto realWorldDuation = d->currentFlight.getTotalDurationMSec();
         if (realWorldDuation > 0) {
-            const auto startZuluDateTime = d->currentFlight.getFlightCondition().startZuluDateTime;
-            const auto endZuluDateTime = d->currentFlight.getFlightCondition().endZuluDateTime;
+            const auto startZuluDateTime = d->currentFlight.getFlightCondition().getStartZuluDateTime();
+            const auto endZuluDateTime = d->currentFlight.getFlightCondition().getEndZuluDateTime();
             const auto simulationDuraction = startZuluDateTime.msecsTo(endZuluDateTime);
             const auto factor = static_cast<double>(simulationDuraction) / static_cast<double>(realWorldDuation);
 

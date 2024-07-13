@@ -197,7 +197,7 @@ inline bool IgcExportPlugin::exportARecord(QIODevice &io) const noexcept
 inline bool IgcExportPlugin::exportHRecord(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const QByteArray record =
-        IgcExportPluginPrivate::HRecord % ::Date % formatDate(flightData.flightCondition.startZuluDateTime) % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::Date % formatDate(flightData.flightCondition.getStartZuluDateTime()) % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::Pilot % d->pluginSettings.getPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::CoPilot % d->pluginSettings.getCoPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfo().aircraftType.type.toLatin1() % ::LineEnd %

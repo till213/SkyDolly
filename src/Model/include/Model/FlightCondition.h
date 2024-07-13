@@ -26,9 +26,11 @@
 #define FLIGHTCONDITION_H
 
 #include <cstdint>
+#include <utility>
 
 #include <QtGlobal>
 #include <QDateTime>
+#include <QTimeZone>
 
 #include "SimType.h"
 #include "ModelLib.h"
@@ -37,9 +39,9 @@ struct MODEL_API FlightCondition final
 {
     // Simulation times (not real-world times)
     QDateTime startLocalDateTime;
-    QDateTime startZuluDateTime;
+
     QDateTime endLocalDateTime;
-    QDateTime endZuluDateTime;
+
     SimType::SurfaceType surfaceType {SimType::SurfaceType::Unknown};
     SimType::SurfaceCondition surfaceCondition {SimType::SurfaceCondition::Unknown};
     SimType::PrecipitationState precipitationState {SimType::PrecipitationState::None};
@@ -59,6 +61,32 @@ struct MODEL_API FlightCondition final
     FlightCondition() noexcept;
 
     void clear() noexcept;
+
+    inline QDateTime getStartZuluDateTime() const noexcept
+    {
+        return m_startZuluDateTime;
+    };
+
+    inline void setStartZuluDateTime(QDateTime startTime) noexcept
+    {
+        m_startZuluDateTime = std::move(startTime);
+        m_startZuluDateTime.setTimeZone(QTimeZone::UTC);
+    }
+
+    inline QDateTime getEndZuluDateTime() const noexcept
+    {
+        return m_endZuluDateTime;
+    };
+
+    inline void setEndZuluDateTime(QDateTime endTime) noexcept
+    {
+        m_endZuluDateTime = std::move(endTime);
+        m_endZuluDateTime.setTimeZone(QTimeZone::UTC);
+    }
+
+private:
+    QDateTime m_startZuluDateTime;
+    QDateTime m_endZuluDateTime;
 };
 
 #endif // FLIGHTCONDITION_H

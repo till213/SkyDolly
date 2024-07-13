@@ -165,11 +165,9 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
             flightCondition.inClouds = query.value(inCloudsIdx).toBool();
             // Persisted times is are already local respectively zulu simulation times
             flightCondition.startLocalDateTime = query.value(startLocalSimulationTimeIdx).toDateTime();
-            flightCondition.startZuluDateTime = query.value(startZuluSimulationTimeIdx).toDateTime();
-            flightCondition.startZuluDateTime.setTimeZone(QTimeZone::UTC);
+            flightCondition.setStartZuluDateTime(query.value(startZuluSimulationTimeIdx).toDateTime());
             flightCondition.endLocalDateTime = query.value(endLocalSimulationTimeIdx).toDateTime();
-            flightCondition.endZuluDateTime = query.value(endZuluSimulationTimeIdx).toDateTime();
-            flightCondition.endZuluDateTime.setTimeZone(QTimeZone::UTC);
+            flightCondition.setEndZuluDateTime(query.value(endZuluSimulationTimeIdx).toDateTime());
         }
         std::vector<Aircraft> aircraft = d->aircraftDao->getByFlightId(id, &ok);
         flightData.aircraft = std::move(aircraft);
@@ -378,11 +376,11 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
     // No conversion to UTC
     query.bindValue(":start_local_sim_time", flightCondition.startLocalDateTime);
     // Zulu time equals to UTC time
-    query.bindValue(":start_zulu_sim_time", flightCondition.startZuluDateTime);
+    query.bindValue(":start_zulu_sim_time", flightCondition.getStartZuluDateTime());
     // No conversion to UTC
     query.bindValue(":end_local_sim_time", flightCondition.endLocalDateTime);
     // Zulu time equals to UTC time
-    query.bindValue(":end_zulu_sim_time", flightCondition.endZuluDateTime);
+    query.bindValue(":end_zulu_sim_time", flightCondition.getEndZuluDateTime());
     bool ok = query.exec();
     if (ok) {
         flightId = query.lastInsertId().toLongLong(&ok);

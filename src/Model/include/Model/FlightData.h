@@ -156,19 +156,31 @@ struct MODEL_API FlightData final
 
     inline QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept
     {
-        return flightCondition.startZuluDateTime.addMSecs(-aircraft.getTimeOffset());
+        return flightCondition.getStartZuluDateTime().addMSecs(-aircraft.getTimeOffset());
     }
 
+    /*!
+     * Returns \c true if at least one aircraft in this flight has recorded position data.
+     *
+     * \return \c true if at least one aircraft has recorded position data; \c false else
+     */
     inline bool hasRecording() const noexcept
     {
-        auto noRecording = [](const Aircraft &a){ return !a.hasRecording(); };
-        return std::find_if(begin(), end(), noRecording) == end();
+        auto recording = [](const Aircraft &a){ return a.hasRecording(); };
+        return std::find_if(begin(), end(), recording) != end();
     }
 
+    /*!
+     * Returns \c true if all \p flights have recorded data, or in other words:
+     * if at least one flight does \e not have recorded data then \c false is
+     * returned.
+     *
+     * \return \c true if \e all \p flights have recorded data; \c false else
+     */
     static bool hasAllRecording(const std::vector<FlightData> &flights) noexcept
     {
         auto noRecording = [](const FlightData &f){ return !f.hasRecording(); };
-        return std::find_if(flights.begin(), flights.end(), noRecording) == flights.end();
+        return std::find_if(flights.begin(), flights.end(), noRecording) != flights.end();
     }
 
     using SizeType = std::vector<Aircraft>::size_type;

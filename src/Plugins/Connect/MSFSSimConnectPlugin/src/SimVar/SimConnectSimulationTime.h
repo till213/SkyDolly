@@ -34,6 +34,7 @@
 #include <QDateTime>
 #include <QDate>
 #include <QTime>
+#include <QTimeZone>
 
 /*!
  * Simulation date and time (local and zulu).
@@ -70,6 +71,7 @@ struct SimConnectSimulationTime
         dateTime.setTime(time);
         const QDate date = QDate(zuluYear, zuluMonth, zuluDay);
         dateTime.setDate(date);
+        dateTime.setTimeZone(QTimeZone::UTC);
 
         return dateTime;
     }

@@ -91,6 +91,11 @@ namespace
 
 struct SkyConnectPrivate
 {
+    SkyConnectPrivate() noexcept
+    {
+        currentZuluDateTime.setTimeZone(QTimeZone::UTC);
+    }
+
     MSFSSimConnectSettings pluginSettings;
 
     HANDLE simConnectHandle {nullptr};
@@ -214,12 +219,12 @@ bool MSFSSimConnectPlugin::onStartFlightRecording() noexcept
     // Initialise flight plan
     d->flightPlan.clear();
 
-    // Get flight information
+    // Get aircraft information
     HRESULT result = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle,
                                                              Enum::underly(SimConnectType::DataRequest::AircraftInfo),
                                                              Enum::underly(SimConnectType::DataDefinition::AircraftInfo),
                                                              ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
-    // Get aircraft information
+    // Get flight information
     if (result == S_OK) {
         result = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle,
                                                          Enum::underly(SimConnectType::DataRequest::FlightInfo),
@@ -238,10 +243,19 @@ bool MSFSSimConnectPlugin::onStartAircraftRecording() noexcept
                                                              Enum::underly(SimConnectType::DataRequest::AircraftInfo),
                                                              Enum::underly(SimConnectType::DataDefinition::AircraftInfo),
                                                              ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
+    // Get flight information in case the is the first recorded aircraft (formation recording)
+    const auto &flight = getCurrentFlight();
+    const bool hasRecording = flight.hasRecording();
+    if (!hasRecording && result == S_OK) {
+        result = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle,
+                                                         Enum::underly(SimConnectType::DataRequest::FlightInfo),
+                                                         Enum::underly(SimConnectType::DataDefinition::FlightInfo),
+                                                         ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
+    }
     bool ok = result == S_OK;
 
     // For formation flights (count > 1) send AI aircraft positions every visual frame
-    if (ok && getCurrentFlight().count() > 1 && !d->subscribedToSimulatedFrameEvent) {
+    if (ok && flight.count() > 1 && !d->subscribedToSimulatedFrameEvent) {
         result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame), "Frame");
         if (result == S_OK) {
             d->subscribedToSimulatedFrameEvent = true;
@@ -300,7 +314,7 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
         departureWaypoint.longitude = static_cast<float>(firstPosition.longitude);
         departureWaypoint.altitude = static_cast<float>(firstPosition.altitude);
         departureWaypoint.localTime = flight.getFlightCondition().startLocalDateTime;
-        departureWaypoint.zuluTime = flight.getFlightCondition().startZuluDateTime;
+        departureWaypoint.zuluTime = flight.getFlightCondition().getStartZuluDateTime();
         departureWaypoint.timestamp = 0;
         flight.addWaypoint(departureWaypoint);
 
@@ -319,7 +333,7 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
     // Update end simulation time of flight conditions
     FlightCondition condition = flight.getFlightCondition();
     condition.endLocalDateTime = d->currentLocalDateTime;
-    condition.endZuluDateTime = d->currentZuluDateTime;
+    condition.setEndZuluDateTime(d->currentZuluDateTime);
     flight.setFlightCondition(condition);
 }
 

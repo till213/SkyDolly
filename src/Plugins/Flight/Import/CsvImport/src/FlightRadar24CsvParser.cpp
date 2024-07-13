@@ -125,7 +125,7 @@ FlightData FlightRadar24CsvParser::parse(QIODevice &io, bool &ok) noexcept
             flightData.creationTime = firstDateTimeUtc;
             flightData.flightNumber = flightNumber;
             FlightCondition &flightCondition = flightData.flightCondition;
-            flightCondition.startZuluDateTime = firstDateTimeUtc;
+            flightCondition.setStartZuluDateTime(firstDateTimeUtc);
             flightCondition.startLocalDateTime = firstDateTimeUtc.toLocalTime();
         }
     }

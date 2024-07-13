@@ -197,8 +197,8 @@ void PathCreatorPlugin::onStopRecording() noexcept
     d->recordingTimer.stop();
     auto &flight = getCurrentFlight();
     FlightCondition flightCondition = flight.getFlightCondition();
-    flightCondition.endLocalDateTime = QDateTime::currentDateTime();
-    flightCondition.endZuluDateTime = QDateTime::currentDateTimeUtc();
+    flightCondition.setEndZuluDateTime(QDateTime::currentDateTimeUtc());
+    flightCondition.endLocalDateTime = flightCondition.getEndZuluDateTime().toLocalTime();
     flight.setFlightCondition(flightCondition);
 
     auto &aircraft = flight.getUserAircraft();
@@ -206,8 +206,9 @@ void PathCreatorPlugin::onStopRecording() noexcept
     int waypointCount = static_cast<int>(flightPlan.count());
     if (waypointCount > 1) {
         Waypoint waypoint = flightPlan[waypointCount - 1];
-        waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
+        waypoint.localTime = waypoint.zuluTime.toLocalTime();
+
         flight.updateWaypoint(waypointCount - 1, waypoint);
     }
 }
@@ -480,8 +481,8 @@ void PathCreatorPlugin::recordWaypoint(std::int64_t timestamp) noexcept
         waypoint.latitude = -90.0f + static_cast<float>(d->randomGenerator->bounded(180.0));
         waypoint.longitude = -180.0f + static_cast<float>(d->randomGenerator->bounded(90.0));
         waypoint.altitude = static_cast<float>(d->randomGenerator->bounded(3000.0));
-        waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
+        waypoint.localTime = waypoint.zuluTime.toLocalTime();
         waypoint.timestamp = timestamp;
 
         auto &flight = getCurrentFlight();
@@ -513,8 +514,8 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.inClouds = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.onAnyRunway = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.onParkingSpot = d->randomGenerator->bounded(2) < 1 ? false : true;
-    flightCondition.startLocalDateTime = QDateTime::currentDateTime();
-    flightCondition.startZuluDateTime = QDateTime::currentDateTimeUtc();
+    flightCondition.setStartZuluDateTime(QDateTime::currentDateTimeUtc());
+    flightCondition.startLocalDateTime = flightCondition.getStartZuluDateTime().toLocalTime();
 
     getCurrentFlight().setFlightCondition(flightCondition);
 }
