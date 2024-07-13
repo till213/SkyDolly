@@ -137,9 +137,9 @@ void SettingsDialog::initUi() noexcept
                                                 .arg(SimVar::CanopyOpen));
     ui->maximumSimulationRateSpinBox->setToolTip(tr("This option limits the simulation rate in the flight simulator. Note that the actual replay speed may still be set to higher values."));
 
-    // TODO For now we only support "none" and "simulation local time"
+    // TODO For now we only support "none" and "simulation time"
     ui->timeModeComboBox->addItem(tr("None"), Enum::underly(Replay::TimeMode::None));
-    ui->timeModeComboBox->addItem(tr("Simulation local time"), Enum::underly(Replay::TimeMode::SimulationLocalTime));
+    ui->timeModeComboBox->addItem(tr("Simulation time"), Enum::underly(Replay::TimeMode::SimulationTime));
 
     // Flight simulator
     auto &skyConnectManager = SkyConnectManager::getInstance();

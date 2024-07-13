@@ -113,7 +113,7 @@ QString TerminationDialog::createReport() const noexcept
     QTextStream out(&report, QIODeviceBase::WriteOnly);
     const QString pluginDirectoryPath = File::getPluginDirectoryPath() ;
 
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     out << "Issue: " << this->windowTitle() << Qt::endl << Qt::endl
         << "Reason:" << Qt::endl << Qt::endl
         << ui->reasonTextEdit->toPlainText() << Qt::endl << Qt::endl

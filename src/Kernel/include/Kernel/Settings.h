@@ -228,6 +228,15 @@ public:
     Replay::TimeMode getReplayTimeMode() const noexcept;
 
     /*!
+     * Returns whether the simulation time should be synchronised during replay.
+     *
+     * \return \c true if the simulation time should be synchronised during replay;
+     *         \c false else (\c Replay::TimeMode::None)
+     * \sa Replay::TimeMode
+     */
+    bool isReplayTimeModeEnabled() const noexcept;
+
+    /*!
      * Sets the replay time mode.
      *
      * \param timeMode

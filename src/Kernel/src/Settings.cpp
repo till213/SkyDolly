@@ -114,7 +114,7 @@ struct SettingsPrivate
     static constexpr double DefaultSeekIntervalPercent {0.5};
     static constexpr bool DefaultReplayLoop {false};
     static constexpr Replay::SpeedUnit DefaultReplaySpeedUnit {Replay::SpeedUnit::Absolute};
-    static constexpr Replay::TimeMode DefaultReplayTimeMode {Replay::TimeMode::SimulationLocalTime};
+    static constexpr Replay::TimeMode DefaultReplayTimeMode {Replay::TimeMode::SimulationTime};
 
     // The T-45 Goshawk properly reacts to the CANOPY_OPEN simulation variable; so there is at least
     // one well-behaving aircraft (the Fiat "Gina" G-91 still needs this option set though)
@@ -278,6 +278,11 @@ void Settings::setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept
 Replay::TimeMode Settings::getReplayTimeMode() const noexcept
 {
     return d->replayTimeMode;
+}
+
+bool Settings::isReplayTimeModeEnabled() const noexcept
+{
+    return getReplayTimeMode() != Replay::TimeMode::None;
 }
 
 void Settings::setReplayTimeMode(Replay::TimeMode timeMode) noexcept

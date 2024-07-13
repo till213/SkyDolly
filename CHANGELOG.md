@@ -26,8 +26,9 @@
 - The Statistics dialog now shows separate recording rates, for both positition (always around 1 Hz) and attitude samples (e.g. 30 Hz, that is the *simulation frame* rate)
 - The simulation time is now updated in the flight simulator during replay
   * According to the recorded simulation start and end times
-  * Note that the simulation time is not always in sync with real-world time: this is taken into account when interpolating between the simulation start- and end times
+  * Note that the simulation time is not always in sync with real-world time (the simulation- and real-world durations may be different): this is taken into account when interpolating between the simulation start- and end times
   * This allows for exact day of time reproductions, useful e.g. for video editing when video-recording (via separate screen capture solutions) the same flight multiple times from different camera angles
+  * The time synchroniation can be enabled and disabled in the application settings, under *Replay* (default: *simulation time*)
 - The replay time widget now properly displays replay times longer than a day (for instance one year or longer), by including also the actual start date
 
 ### Import & Export
