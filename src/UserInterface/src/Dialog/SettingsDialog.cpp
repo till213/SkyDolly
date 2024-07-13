@@ -57,7 +57,7 @@ namespace
     constexpr int UpdateIntervalMSec = 1000;
 
     constexpr int ReplayTab = 0;
-    constexpr int FlightSimulatorTab = 2;
+    constexpr int FlightSimulatorTab = 1;
 
     constexpr const char *WindowsStyleKey {"windows"};
     constexpr const char *FusionStyleKey {"fusion"};
