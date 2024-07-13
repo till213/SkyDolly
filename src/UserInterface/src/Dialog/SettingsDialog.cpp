@@ -83,7 +83,7 @@ struct SettingsDialogPrivate
         }
     }
     QTimer updateTimer;
-    OptionWidgetIntf *skyConnectOptionWidget {nullptr};
+    std::unique_ptr<OptionWidgetIntf> skyConnectOptionWidget {nullptr};
 
     // Key: style key (all lower case), value: style name
     static inline std::unordered_map<QString, QString> knownStyleNames;
@@ -320,8 +320,7 @@ void SettingsDialog::onStyleChanged() noexcept
 void SettingsDialog::onSkyConnectPluginChanged() noexcept
 {
     if (d->skyConnectOptionWidget != nullptr) {
-        delete d->skyConnectOptionWidget;
-        d->skyConnectOptionWidget = nullptr;
+        d->skyConnectOptionWidget.reset();
     }
     initFlightSimulatorOptionWidget();
 }
@@ -385,16 +384,16 @@ void SettingsDialog::initFlightSimulatorOptionWidget() noexcept
     auto optionWidget = skyConnectManager.createOptionWidget();
     if (optionWidget) {
         // Transfer ownership to this settings dialog (the layout manager below specifically)
-        d->skyConnectOptionWidget = optionWidget->release();
+        d->skyConnectOptionWidget = std::move(optionWidget.value());
         ui->optionGroupBox->setHidden(false);
         std::unique_ptr<QLayout> layout {ui->optionGroupBox->layout()};
         // Any previously existing layout is deleted first, which is what we want
         layout = std::make_unique<QVBoxLayout>();
-        layout->addWidget(d->skyConnectOptionWidget);
+        layout->addWidget(d->skyConnectOptionWidget.get());
         // Transfer ownership of the layout to the optionGroupBox
         ui->optionGroupBox->setLayout(layout.release());
     } else {
-        d->skyConnectOptionWidget = nullptr;
+        d->skyConnectOptionWidget.reset();
         ui->optionGroupBox->setHidden(true);
     }
 }
