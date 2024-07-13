@@ -243,7 +243,7 @@ bool MSFSSimConnectPlugin::onStartAircraftRecording() noexcept
                                                              Enum::underly(SimConnectType::DataRequest::AircraftInfo),
                                                              Enum::underly(SimConnectType::DataDefinition::AircraftInfo),
                                                              ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
-    // Get flight information in case the is the first recorded aircraft (formation recording)
+    // Get flight information in case that this is the first recorded aircraft (formation recording)
     const auto &flight = getCurrentFlight();
     const bool hasRecording = flight.hasRecording();
     if (!hasRecording && result == S_OK) {
