@@ -18,9 +18,11 @@ All recorded flights are automatically persisted in a database, called the _logb
 Data is read and written via data access objects (DAO), which on their turn are used by _services_: the services take care of transaction management and provide the data to the application.
 
 ## Sampling
-Sky Dolly does not rely on a _fixed_ interval sampling: instead it uses a dynamic event-based sampling, or in other words: "as data _changes_ become available". However the _recording_ sample rate _can_ be set to a fixed sample interval like 60, 30, 20 or even lower values like 1 Hz. But this is merely to reduce the number of sample points. For instance an airliner (flying mostly "a straight line") may require much less sample points than an "acrobatic aircraft" flying tight and rapid turns.
+Sky Dolly does not rely on a _fixed_ interval sampling: instead it uses a dynamic event-based sampling, or in other words: "as data _changes_ become available".
 
-The _replay_ sample rate on the other hand is always event-based ("per simulated frame"), so it is essentially the flight simulator that controls the sample rate.
+Position data (latitude, longitude and altitude, that is) is sampled at 1 Hz only: this low sampling rate acts as a low pass filter and is expected to smoothen out any frame drops ("stutter") that may have occurred during recording. All other simulation variables are sampled at each rendered visual frame ("as data becomes available"), as indicated by the simulator via event.
+
+The _replay_ sample rate on the other hand is always event-based ("per rendered frame"), so it is essentially the flight simulator that controls the sample rate.
 
 In any case the data is interpolated during replay. Depending on the use case various interpolation methods are applied, ranging from simple _nearest neighbour_, _linear_ to a bit more sophisticated _cubic spline_ interpolation. For instance a lever in the cockpit is expected to be moved in a "linear fashion", while the flight position may be more erratic, so cubic spline interpolation is applied for aircraft position and attitude.
 
