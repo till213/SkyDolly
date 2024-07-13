@@ -2,6 +2,12 @@
 
 ## 0.18.0
 
+In **"Illustrious Ikarus"** flights with a recording duration over a day are now properly displayed. For instance the flight duration in the logbook is now shown as timestamp (hh:mm:ss format), in days, weeks, months and so on, depending on the actual duration. The time edit widget next to the timeline automatically also shows the date once the recording time exceeds 24 hours.
+
+New location import and export plugins are also introduced, allowing to exchange locations in the Sky Dolly logbook format which is also automatically converted to the latest format when importing.
+
+Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209 years - a *long* time) have always been supported. That is the maximum timestamp in milliseconds (a signed 64 bit number).
+
 ## New Features
 - New location export plugin
   * Sky Dolly logbook (*.sdlog) export

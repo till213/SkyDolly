@@ -143,7 +143,7 @@ private:
     void updateReplaySpeedVisibility(bool enterMinimalUi) noexcept;
     void updatePositionSliderTickInterval() noexcept;
 
-    double getCustomSpeedFactor() const;
+    float getCustomSpeedFactor() const;
 
     void seek(int value, SkyConnectIntf::SeekMode seekMode) const noexcept;
     

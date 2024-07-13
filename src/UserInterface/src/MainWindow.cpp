@@ -501,20 +501,15 @@ void MainWindow::initUi() noexcept
                 QStringLiteral(
                     "%1 is in a preview release phase: while it should be stable to use it is not "
                     "considered feature-complete.\n\n"
-                    "This release v%2 \"%3\" introduces customisable shortcuts for MSFS "
-                    "to start recording (CTRL + R), replay (CTRL + P) and other shortcuts. "
-                    "Refer to the application setting where the shortcuts can be re-assigned.\n\n"
-                    "Dark mode is now also supported. On Windows 10 with the \"Fusion\" style, "
-                    "on Windows 11 with a new \"Windows 11\" style. The application then "
-                    "applies dark mode according to the Windows operating system settings.\n\n"
-                    "Note: the new \"Windows 11\" style still has a few visual glitches. As a workaround "
-                    "on Windows 11 the default style will be set to \"Fusion\". However the style can "
-                    "still be set to \"Windows 11\", under File | Settings... | User Interface.\n\n"
-                    "On Windows 10 the default style remains \"Windows Vista\", but that style does not "
-                    "have dark theme support: select the style \"Fusion\" instead. The \"Windows 11\" style "
-                    "does not work on Windows 10 and will fall back to \"Windows Vista\".\n\n"
-                    "Sky Dolly now properly supports the SimConnect.cfg configuration file: "
-                    "Recording and replay over a network (Windows to Windows only) is now supported.\n\n"
+                    "This release v%2 \"%3\" properly handles flights with a recording duration over a day:\n\n"
+                    "· The flight duration in the logbook is shown as either hh:mm:ss or in days, weeks, months, years\n"
+                    "· The time edit widget automatically also shows the flight date when the duration exceeds one day\n"
+                    "· The timeline bar properly seeks the position with the desired timestamp\n\n"
+                    "The simulation time is now also synchronised during replay, allowing for exact time of day reproductions. "
+                    "This option can be disabled in the application settings, in the Replay section.\n\n"
+                    "New location import- and export plugins are also provided. Existing locations can now be updated or "
+                    "kept as-is when importing locations in close vicinity: the threshold can be newly defined in the location "
+                    "import settings.\n\n"
                     "This dialog will be shown %4 more times.")
                     .arg(Version::getApplicationName(), Version::getApplicationVersion())
                     .arg(Version::getCodeName())
@@ -1100,9 +1095,9 @@ void MainWindow::updatePositionSliderTickInterval() noexcept
     ui->positionSlider->setTickInterval(tickInterval);
 }
 
-double MainWindow::getCustomSpeedFactor() const
+float MainWindow::getCustomSpeedFactor() const
 {
-    double customSpeedFactor {1.0};
+    float customSpeedFactor {1.0};
     const QString text = d->customSpeedLineEdit->text();
     if (!text.isEmpty()) {
         switch (Settings::getInstance().getReplaySpeeedUnit()) {
@@ -1110,7 +1105,7 @@ double MainWindow::getCustomSpeedFactor() const
             customSpeedFactor = d->unit.toNumber(text);
             break;
         case Replay::SpeedUnit::Percent:
-            customSpeedFactor = d->unit.toNumber(text) / 100.0;
+            customSpeedFactor = d->unit.toNumber(text) / 100.0f;
             break;
         }
     }
@@ -1250,7 +1245,7 @@ void MainWindow::onCustomSpeedChanged() noexcept
         d->lastCustomReplaySpeedFactor = customReplaySpeedFactor;
         break;
     case Replay::SpeedUnit::Percent:
-        d->lastCustomReplaySpeedFactor = customReplaySpeedFactor * 100.0;
+        d->lastCustomReplaySpeedFactor = customReplaySpeedFactor * 100.0f;
         break;
     }
 
