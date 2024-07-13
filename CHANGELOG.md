@@ -43,6 +43,7 @@
 - GPX export: the geoid height (&lt;geoidheight&gt;) can now also optionally be exported
   * This may be useful to calculate the ellipsoidial height *h* ([WGS84 reference ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS_84)) as follows: h = H + N = &lt;ele&gt; + &lt;geoidheight&gt;
   * Also refer to [Find Ellipsoidal Height from Orthometric Height](https://www.mathworks.com/help/map/ellipsoid-geoid-and-orthometric-height.html)
+  * The exported waypoints now have a description (&lt;desc&gt;) element: *Departure*, *Waypoint* and *Arrival*
 - IGC export: the proper standard pressure altitude (at a 1013.25 hPa (1 atmosphere) setting) instead of the indicated altitude is now exported
 
 ### Simulation Variables

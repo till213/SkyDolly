@@ -83,7 +83,7 @@ private:
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
 
     inline bool exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept;
-    inline bool exportWaypoint(const auto &waypoint, QIODevice &io) const noexcept;
+    inline bool exportWaypoint(const Waypoint &waypoint, const QString &description, QIODevice &io) const noexcept;
 };
 
 #endif // GPXEXPORTPLUGIN_H
