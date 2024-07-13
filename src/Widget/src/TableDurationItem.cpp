@@ -45,7 +45,7 @@ std::int64_t TableDurationItem::getDuration() const noexcept
 void TableDurationItem::setDuration(std::int64_t duration) noexcept
 {
     setData(Qt::DisplayRole, m_unit.formatDuration(duration));
-    setData(Qt::UserRole, duration);
+    setData(Qt::UserRole, QVariant::fromValue(duration));
 }
 
 bool TableDurationItem::operator<(const QTableWidgetItem &rhs) const noexcept
