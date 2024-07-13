@@ -52,10 +52,10 @@ namespace Replay
         First = 0,
         /*! No time synchronisation is done: the current simulation time is kept */
         None = First,
-        /*! The simulation local time is synchronised. */
-        SimulationZuluTime,
-        /*! The simulation zulu time is synchronised, starting from the user aircraft simulation zulu start date/time */
+        /*! The simulation local time is synchronised, starting from the user aircraft simulation local start date/time. */
         SimulationLocalTime,
+        /*! The simulation zulu time is synchronised, starting from the user aircraft simulation zulu start date/time */
+        SimulationZuluTime,
         /*! The real-world local time is synchronised, starting from the flight recording date/time. */
         CreationRealWorldTime,
         Last =  SimulationLocalTime

@@ -137,6 +137,10 @@ void SettingsDialog::initUi() noexcept
                                                 .arg(SimVar::CanopyOpen));
     ui->maximumSimulationRateSpinBox->setToolTip(tr("This option limits the simulation rate in the flight simulator. Note that the actual replay speed may still be set to higher values."));
 
+    // TODO For now we only support "none" and "simulation local time"
+    ui->timeModeComboBox->addItem(tr("None"), Enum::underly(Replay::TimeMode::None));
+    ui->timeModeComboBox->addItem(tr("Simulation local time"), Enum::underly(Replay::TimeMode::SimulationLocalTime));
+
     // Flight simulator
     auto &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
@@ -180,9 +184,7 @@ void SettingsDialog::frenchConnection() noexcept
             this, &SettingsDialog::onStyleChanged);
 }
 
-// PRIVATE SLOTS
-
-void SettingsDialog::updateUi() noexcept
+void SettingsDialog::updateReplayTab() noexcept
 {
     const auto &settings = Settings::getInstance();
 
@@ -193,7 +195,26 @@ void SettingsDialog::updateUi() noexcept
     ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
     ui->maximumSimulationRateSpinBox->setValue(settings.getMaximumSimulationRate());
 
-    // Flight simulator
+    const auto replayTimeMode = settings.getReplayTimeMode();
+    int currentIndex {0};
+    auto indexCount = ui->timeModeComboBox->count();
+    while (currentIndex < indexCount &&
+           static_cast<Replay::TimeMode>(ui->timeModeComboBox->itemData(currentIndex).toInt()) != replayTimeMode) {
+        ++currentIndex;
+    }
+    if (currentIndex < indexCount) {
+        ui->timeModeComboBox->setCurrentIndex(currentIndex);
+    } else if (indexCount > 0) {
+        // Option not supported -> select the first available option
+        ui->timeModeComboBox->setCurrentIndex(0);
+    }
+    ui->timeModeComboBox->setToolTip(tr("Defines how the time in the flight simulator is synchronised during replay."));
+}
+
+void SettingsDialog::updateFlightSimulatorTab() noexcept
+{
+    const auto &settings = Settings::getInstance();
+
     auto &skyConnectManager = SkyConnectManager::getInstance();
     std::optional<QString> pluginName = skyConnectManager.getCurrentSkyConnectPluginName();
     if (pluginName) {
@@ -202,8 +223,12 @@ void SettingsDialog::updateUi() noexcept
     const bool enabled = !skyConnectManager.isActive();
     ui->connectionComboBox->setEnabled(enabled);
     updateConnectionStatus();
+}
 
-    // User interface
+void SettingsDialog::updateUserInterfaceTab() noexcept
+{
+    const auto &settings = Settings::getInstance();
+
     const auto styleKey = settings.getStyleKey();
     bool found {false};
     int index = 0;
@@ -231,11 +256,20 @@ void SettingsDialog::updateUi() noexcept
     ui->hideReplaySpeedCheckBox->setChecked(!settings.getDefaultMinimalUiReplaySpeedVisibility());
 }
 
+// PRIVATE SLOTS
+
+void SettingsDialog::updateUi() noexcept
+{
+    updateReplayTab();
+    updateFlightSimulatorTab();
+    updateUserInterfaceTab();
+}
+
 void SettingsDialog::updateConnectionStatus() const noexcept
 {
     double time {0.0};
 
-    ui->connectionStatusLabel->setToolTip(QString());
+    ui->connectionStatusLabel->setToolTip("");
 
     auto &skyConnectManager = SkyConnectManager::getInstance();
     switch (skyConnectManager.getState()) {
@@ -302,6 +336,7 @@ void SettingsDialog::onAccepted() noexcept
     settings.setSeekIntervalPercent(ui->seekInPercentSpinBox->value());
     settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());
     settings.setMaximumSimulationRate(ui->maximumSimulationRateSpinBox->value());
+    settings.setReplayTimeMode(static_cast<Replay::TimeMode>(ui->timeModeComboBox->currentData().toInt()));
 
     // Flight simulator
     if (d->skyConnectOptionWidget != nullptr) {
