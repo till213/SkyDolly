@@ -328,7 +328,7 @@ void MainWindow::frenchConnection() noexcept
     connect(&flight, &Flight::cleared,
             this, &MainWindow::updateUi);
     connect(&flight, &Flight::flightConditionChanged,
-            this, &MainWindow::updateUi);
+            this, &MainWindow::updateTimeUi);
 
     // Settings
     const auto &settings = Settings::getInstance();
@@ -1383,7 +1383,7 @@ void MainWindow::updateTimeUi() noexcept
 
     // TODO Perhaps add option to switch between simulation and real-world ("creation") time
     const auto startZuluDateTime = flight.getAircraftStartZuluTime(aircraft);
-    ui->timestampEdit->setStartZuluDateTime(startZuluDateTime);
+    ui->timestampEdit->setStartDateTime(startZuluDateTime);
 
     const auto &skyConnectManager = SkyConnectManager::getInstance();
     const bool hasRecording = aircraft.hasRecording();

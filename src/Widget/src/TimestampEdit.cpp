@@ -43,8 +43,7 @@ namespace
 
 struct TimestampEditPrivate
 {
-    QDateTime startZuluDateTime;
-    QDateTime startRealWorldLocalDateTime;
+    QDateTime startDateTime;
     // The current timestamp [msec]
     std::int64_t timestamp {0};
     // The maximum recorded timestamp [msec]
@@ -68,16 +67,15 @@ TimestampEdit::TimestampEdit(QWidget *parent) noexcept
 
 TimestampEdit::~TimestampEdit() = default;
 
-QDateTime TimestampEdit::getStartZuluDateTime() const noexcept
+QDateTime TimestampEdit::getStartDateTime() const noexcept
 {
-    return d->startZuluDateTime;
+    return d->startDateTime;
 }
 
-void TimestampEdit::setStartZuluDateTime(QDateTime dateTime) noexcept
+void TimestampEdit::setStartDateTime(QDateTime dateTime) noexcept
 {
-    if (d->startZuluDateTime != dateTime) {
-        d->startZuluDateTime = std::move(dateTime);
-        d->startRealWorldLocalDateTime = d->startZuluDateTime.toLocalTime();
+    if (d->startDateTime != dateTime) {
+        d->startDateTime = std::move(dateTime);
         updateUi();
     }
 }
@@ -143,15 +141,9 @@ void TimestampEdit::updateTimestamp() noexcept
         const auto time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(d->timestamp));
         ui->timeEdit->setTime(time);
     } else {
-        const auto dateTime = getStartDateTime().addMSecs(d->timestamp);
+        const auto dateTime = d->startDateTime.addMSecs(d->timestamp);
         ui->dateTimeEdit->setDateTime(dateTime);
     }
-}
-
-inline QDateTime TimestampEdit::getStartDateTime() const noexcept
-{
-    // TODO Add option to toggle displayed time: zulu, simulation local, real-world local, relative vs absolute
-    return d->startRealWorldLocalDateTime;
 }
 
 // PRIVATE SLOTS
