@@ -256,16 +256,16 @@ void FlightImportPluginBase::enrichFlightCondition(FlightData &flightData) const
 {
     FlightCondition &flightCondition = flightData.flightCondition;
 
-    if (!(flightCondition.startLocalDateTime.isValid() && flightCondition.getStartZuluDateTime().isValid())) {
+    if (!(flightCondition.getStartLocalDateTime().isValid() && flightCondition.getStartZuluDateTime().isValid())) {
         flightCondition.setStartZuluDateTime(QDateTime::currentDateTimeUtc());
-        flightCondition.startLocalDateTime = flightCondition.getStartZuluDateTime().toLocalTime();
+        flightCondition.setStartLocalDateTime(flightCondition.getStartZuluDateTime().toLocalTime());
     }
 
-    if (!(flightCondition.endLocalDateTime.isValid() && flightCondition.getEndZuluDateTime().isValid())) {
+    if (!(flightCondition.getEndLocalDateTime().isValid() && flightCondition.getEndZuluDateTime().isValid())) {
         const auto &aircraft = flightData.getUserAircraft();
         const Position &position = aircraft.getPosition();
         const PositionData &lastPositionData = position.getLast();
-        flightCondition.endLocalDateTime =  flightCondition.startLocalDateTime.addMSecs(lastPositionData.timestamp);
+        flightCondition.setEndLocalDateTime(flightCondition.getStartLocalDateTime().addMSecs(lastPositionData.timestamp));
         flightCondition.setEndZuluDateTime(flightCondition.getStartZuluDateTime().addMSecs(lastPositionData.timestamp));
     }
 }
@@ -286,7 +286,7 @@ void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const no
             aircraftInfo.initialAirspeed = static_cast<int>(std::round(Convert::feetPerSecondToKnots(firstAttitudeData.velocityBodyZ)));
 
             // Add default waypoints (first and last position) in case none are present in the imported data
-            FlightPlan &flightPlan = aircraft.getFlightPlan();
+            auto &flightPlan = aircraft.getFlightPlan();
             std::size_t waypointCount = flightPlan.count();
             if (waypointCount == 0) {
                 Waypoint departure;
@@ -294,7 +294,7 @@ void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const no
                 departure.latitude = static_cast<float>(firstPositionData.latitude);
                 departure.longitude = static_cast<float>(firstPositionData.longitude);
                 departure.altitude = static_cast<float>(firstPositionData.altitude);
-                departure.localTime = flightData.flightCondition.startLocalDateTime;
+                departure.localTime = flightData.flightCondition.getStartLocalDateTime();
                 departure.zuluTime = flightData.flightCondition.getStartZuluDateTime();
                 departure.timestamp = firstPositionData.timestamp;
                 flightPlan.add(std::move(departure));
@@ -305,7 +305,7 @@ void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const no
                 arrival.latitude = static_cast<float>(lastPositionData.latitude);
                 arrival.longitude = static_cast<float>(lastPositionData.longitude);
                 arrival.altitude = static_cast<float>(lastPositionData.altitude);
-                arrival.localTime = flightData.flightCondition.endLocalDateTime;
+                arrival.localTime = flightData.flightCondition.getEndLocalDateTime();
                 arrival.zuluTime = flightData.flightCondition.getEndZuluDateTime();
                 // Make sure that waypoints have distinct timestamps, especially in the case when
                 // the aircraft has only one sampled position ("remains parked")

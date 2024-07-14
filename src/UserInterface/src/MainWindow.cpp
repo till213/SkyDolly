@@ -327,6 +327,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onRecordingDurationChanged);
     connect(&flight, &Flight::cleared,
             this, &MainWindow::updateUi);
+    connect(&flight, &Flight::flightConditionChanged,
+            this, &MainWindow::updateUi);
 
     // Settings
     const auto &settings = Settings::getInstance();

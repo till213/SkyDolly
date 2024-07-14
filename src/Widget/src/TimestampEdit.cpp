@@ -89,8 +89,8 @@ std::int64_t TimestampEdit::getTimestamp() const noexcept
 
 void TimestampEdit::setTimestamp(std::int64_t timestamp) noexcept
 {
-    if (d->timestamp != timestamp) {
-        d->timestamp = timestamp;
+    if (d->timestamp != timestamp) { // TODO REMOVE THIS
+        d->timestamp = timestamp  + 23 * 60 * 60 * 1000 + 59 * 60 * 1000;;
         updateTimestamp();
     }
 }
@@ -102,8 +102,8 @@ std::int64_t TimestampEdit::getEndTimestamp() const noexcept
 
 void TimestampEdit::setEndTimestamp(std::int64_t endTimestamp) noexcept
 {
-    if (d->endTimestamp != endTimestamp) {
-        d->endTimestamp = endTimestamp;
+    if (d->endTimestamp != endTimestamp) {  // TODO REMOVE THIS
+        d->endTimestamp = endTimestamp      + 23 * 60 * 60 * 1000 + 59 * 60 * 1000;
         updateUi();
     }
 }

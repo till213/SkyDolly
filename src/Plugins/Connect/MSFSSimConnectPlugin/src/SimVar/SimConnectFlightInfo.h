@@ -107,10 +107,12 @@ struct SimConnectFlightInfo
         flightCondition.inClouds = (ambientInCloud != 0);
 
         // Local start time
+        QDateTime startLocalDateTime;
         QTime time = QTime::fromMSecsSinceStartOfDay(localTime * 1000);
-        flightCondition.startLocalDateTime.setTime(time);
+        startLocalDateTime.setTime(time);
         QDate date = QDate(localYear, localMonth, localDay);
-        flightCondition.startLocalDateTime.setDate(date);
+        startLocalDateTime.setDate(date);
+        flightCondition.setStartLocalDateTime(startLocalDateTime);
 
         // Zulu start time
         QDateTime startZuluDateTime;

@@ -293,13 +293,13 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
     // Update flight plan
     auto &flight = getCurrentFlight();
     const auto &aircraft = flight.getUserAircraft();
-    FlightPlan &flightPlan = aircraft.getFlightPlan();
+    auto &flightPlan = aircraft.getFlightPlan();
     for (const auto &it : d->flightPlan) {
         flight.addWaypoint(it.second);
     }
 
     // Update timestamp and simulation time of last waypoint
-    int waypointCount = static_cast<int>(flightPlan.count());
+    auto waypointCount = static_cast<int>(flightPlan.count());
     if (waypointCount > 1) {
         Waypoint waypoint = flightPlan[waypointCount - 1];
         waypoint.localTime = d->currentLocalDateTime;
@@ -313,7 +313,7 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
         departureWaypoint.latitude = static_cast<float>(firstPosition.latitude);
         departureWaypoint.longitude = static_cast<float>(firstPosition.longitude);
         departureWaypoint.altitude = static_cast<float>(firstPosition.altitude);
-        departureWaypoint.localTime = flight.getFlightCondition().startLocalDateTime;
+        departureWaypoint.localTime = flight.getFlightCondition().getStartLocalDateTime();
         departureWaypoint.zuluTime = flight.getFlightCondition().getStartZuluDateTime();
         departureWaypoint.timestamp = 0;
         flight.addWaypoint(departureWaypoint);
@@ -331,8 +331,8 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
     }
 
     // Update end simulation time of flight conditions
-    FlightCondition condition = flight.getFlightCondition();
-    condition.endLocalDateTime = d->currentLocalDateTime;
+    auto condition = flight.getFlightCondition();
+    condition.setEndLocalDateTime(d->currentLocalDateTime);
     condition.setEndZuluDateTime(d->currentZuluDateTime);
     flight.setFlightCondition(condition);
 }
