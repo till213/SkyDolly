@@ -57,7 +57,7 @@ public:
     ~Flight() override;
 
     /*!
-     * Restores this Flight from the given \c flightData.
+     * Restores this Flight from the given \p flightData.
      *
      * \param flightData
      *        the FlightData to set
@@ -97,7 +97,7 @@ public:
     void setFlightNumber(QString flightNumber) noexcept;
 
     /*!
-     * Adds all \c aircraft to the existing Aircraft of this Flight.
+     * Adds all \p aircraft to the existing Aircraft of this Flight.
      * For each aircraft the signal aircraftAdded is emitted.
      *
      * \param aircraft
@@ -116,9 +116,9 @@ public:
     Aircraft &getUserAircraft() const noexcept;
 
     /*!
-     * Returns the index of the \c aircraft.
+     * Returns the index of the \p aircraft.
      *
-     * \return the index of the \c aircraft; indexing starts at 0
+     * \return the index of the \p aircraft; indexing starts at 0
      */
     int getAircraftIndex(const Aircraft &aircraft) const noexcept;
 
@@ -130,11 +130,11 @@ public:
     int getUserAircraftIndex() const noexcept;
 
     /*!
-     * Sets the user aircraft index to \c index and emits the signal #userAircraftChanged, but the
-     * second signal parameter (\c previousUserAircraftIndex) is set to \c Const#InvalidIndex.
+     * Sets the user aircraft index to \p index and emits the signal #userAircraftChanged, but the
+     * second signal parameter (\c previousUserAircraftIndex) is set to \p Const#InvalidIndex.
      *
      * This implies that while the previous AI object for the new user aircraft (identified by the
-     * new \c index) is deleted no new AI object for the previous user aircraft is created. This
+     * new \p index) is deleted no new AI object for the previous user aircraft is created. This
      * is useful when deleting the current user aircraft itself.
      *
      * In effect, one AI object is deleted and none created.
@@ -147,12 +147,12 @@ public:
     void setUserAircraftIndex(int index) noexcept;
 
     /*!
-     * Sets the user aircraft index to \c index and emits the signal #userAircraftChanged. In contrast
+     * Sets the user aircraft index to \p index and emits the signal #userAircraftChanged. In contrast
      * to #setUserAircraftIndex however the second signal parameter (\c previousUserAircraftIndex) is set
      * to the previous user aircraft index.
      *
      * This implies that the previous AI object for the new user aircraft (identified by the
-     * new \c index) is deleted and a new AI object for the previous user aircraft is created. Or in
+     * new \p index) is deleted and a new AI object for the previous user aircraft is created. Or in
      * other words, the user aircraft is switched to the position of another AI object.
      *
      * * In effect, one AI object is deleted and another one is created.
@@ -164,7 +164,7 @@ public:
     void switchUserAircraftIndex(int index) noexcept;
 
     /*!
-     * Removes the aircraft identified by its \c index.
+     * Removes the aircraft identified by its \p index.
      *
      * \param index
      *        the index of the aircraft to be removed
@@ -205,7 +205,7 @@ public:
     void addWaypoint(const Waypoint &waypoint) noexcept;
 
     /*!
-     * Updates the waypoint at \c index with the given \p waypoint.
+     * Updates the waypoint at \p index with the given \p waypoint.
      *
      * \param index
      *        the index of the waypoint to be updated
@@ -230,7 +230,7 @@ public:
     /*!
      * Returns the total duration of the flight [in milliseconds], that is it returns
      * the longest replay time of all aircraft, taking their time offsets into account.
-     * Unless \c ofUserAircraft is set to \c true, in which case the replay time of the
+     * Unless \p ofUserAircraft is set to \c true, in which case the replay time of the
      * \e user aircraft is returned.
      *
      * Note that the total duration is cached and not updated during recording. Use
@@ -287,8 +287,8 @@ public:
     bool hasRecording() const noexcept;
 
     /*!
-     * Synchronises the time offsets of each aircraft in the \c flightsToBeSynchronised according
-     * to the creation time of this \e current Flight and the creation time of each \c flightsToBeSynchronised.
+     * Synchronises the time offsets of each aircraft in the \p flightsToBeSynchronised according
+     * to the creation time of this \e current Flight and the creation time of each \p flightsToBeSynchronised.
      *
      * \param timeOffsetSync
      *        defines how to synchronise the time offsets
@@ -299,12 +299,12 @@ public:
     void syncAircraftTimeOffset(SkyMath::TimeOffsetSync timeOffsetSync, std::vector<FlightData> &flightsToBeSynchronised) const noexcept;
 
     /*!
-     * Returns whether the given \c id is a valid id, that is whether the flight
+     * Returns whether the given \p id is a valid id, that is whether the flight
      * has been successfully persisted or not.
      *
      * \param id
      *        the id to be validated
-     * \return \c true if the \c id is valid; \c false else (Const#InvalidId, Const#RecordingId)
+     * \return \c true if the \p id is valid; \c false else (Const#InvalidId, Const#RecordingId)
      */
     static bool isValidId(std::int64_t id) noexcept;
 
@@ -341,7 +341,7 @@ signals:
     void aircraftStored(bool success);
 
     /*!
-     * Emitted whenever the Flight given by its \c id has been restored from the logbook.
+     * Emitted whenever the Flight given by its \p id has been restored from the logbook.
      *
      * \param id
      *        the id of the restored Flight
@@ -359,7 +359,7 @@ signals:
     void flightConditionChanged();
 
     /*!
-     * Emitted whenever an \c aircraft has been added to this Flight. This is
+     * Emitted whenever an \p aircraft has been added to this Flight. This is
      * typically called before creating a new formation flight and allows to
      * update existing "AI aircraft" models.
      *
@@ -369,7 +369,7 @@ signals:
     void aircraftAdded(const Aircraft &aircraft);
 
     /*!
-     * Emitted whenever an \c aircraft has been removed from this Flight. This is
+     * Emitted whenever an \p aircraft has been removed from this Flight. This is
      * typically called from the formation module and allows to update existing
      * "AI aircraft" models.
      *
@@ -387,7 +387,7 @@ signals:
     void waypointAdded(const Waypoint &waypoint);
 
     /*!
-     * Emitted whenever the \p waypoint of the user aircraft at \c index has been udpated.
+     * Emitted whenever the \p waypoint of the user aircraft at \p index has been udpated.
      *
      * \param index
      *        the index of the updated waypoint
@@ -424,7 +424,7 @@ signals:
     void aircraftInfoChanged(const Aircraft &aircraft);
 
     /*!
-     * Emitted whenever the tail number of the \c aircraft of the \e current Flight has changed has changed.
+     * Emitted whenever the tail number of the \p aircraft of the \e current Flight has changed has changed.
      *
      * \param aircraft
      *        the aircraft whose tail number has changed
@@ -432,7 +432,7 @@ signals:
     void tailNumberChanged(const Aircraft &aircraft);
 
     /*!
-     * Emitted whenever the time offset of the \c aircraft of the \e current Flight has changed has changed.
+     * Emitted whenever the time offset of the \p aircraft of the \e current Flight has changed has changed.
      *
      * \param aircraft
      *        the aircraft whose time offset has changed
@@ -445,7 +445,7 @@ private:
     void frenchConnection();
 
     /*
-     * Re-assigns the user aircraft \c index, but without emitting the \c userAircraftChanged signal.
+     * Re-assigns the user aircraft \p index, but without emitting the \p userAircraftChanged signal.
      * This is useful in case an aircraft with an index lower (<) than the current user aircraft
      * is deleted and hence the user aircraft index must be re-assigned, but without actually
      * switching the user aircraft to a previous AI object.

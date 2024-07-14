@@ -188,7 +188,7 @@ protected:
     virtual void onRemoveAllAiObjects() noexcept = 0;
 
     /*!
-     * Requests the current location. The location is asynchronously returned via signal \c locationReceived.
+     * Requests the current location. The location is asynchronously returned via signal \p locationReceived.
      *
      * \return \c true if the request was successful; \c false else
      * \sa locationReceived
@@ -197,7 +197,7 @@ protected:
 
     /*!
      * Requests the current simulation rate in the flight simulator. The rate is asynchronously
-     * returned via signal \c simulationRateReceived.
+     * returned via signal \p simulationRateReceived.
      *
      * \return \c true if the request was successful; \c false else
      * \sa simulationRateReceived
@@ -205,7 +205,7 @@ protected:
     virtual bool onRequestSimulationRate() noexcept = 0;
 
     /*!
-     * Sends the \c year, \c day, \c hour (zulu time) and \c minute  to be set in the flight simulator.
+     * Sends the \p year, \p day, \p hour (zulu time) and \p minute  to be set in the flight simulator.
      *
      * \param year
      *        the year, e.g. 2020

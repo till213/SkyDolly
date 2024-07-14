@@ -73,7 +73,7 @@ namespace SkySearch {
      *        the lower starting index >= 0 and <= highIndex
      * \param highIndex
      *        the higher starting index <= lastIndex and >= lowIndex
-     * \return the lower index i of the interval [i, j], or \c InvalidIndex if not found
+     * \return the lower index i of the interval [i, j], or \p InvalidIndex if not found
      */
     template <typename T>
     int binaryIntervalSearch(const std::vector<T> &data, std::int64_t timestamp, int lowIndex, int highIndex) noexcept
@@ -144,7 +144,7 @@ namespace SkySearch {
     }
 
     /*!
-     *  Updates the \c startIndex with the last index having a timestamp <= the given \c timestamp.
+     *  Updates the \p startIndex with the last index having a timestamp <= the given \p timestamp.
      */
     template <typename T>
     int updateStartIndex(const std::vector<T> &data, int startIndex, std::int64_t timestamp) noexcept

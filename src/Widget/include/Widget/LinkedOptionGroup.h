@@ -58,12 +58,12 @@ public:
     void clearOptions() noexcept;
 
     /*!
-     * Sets the option identified by \c optionValue to \c enable.
+     * Sets the option identified by \p optionValue to \p enable.
      *
      * \param optionValue
      *        the option value to enable or disable
      * \param enable
-     *        set to \c true in order to enable the \c optionValue; \c false else
+     *        set to \c true in order to enable the \p optionValue; \c false else
      * \sa optionToggled
      */
     void setOptionEnabled(const QVariant &optionValue, bool enable) noexcept;

@@ -52,7 +52,7 @@ public:
     void removeByObjectId(::SIMCONNECT_OBJECT_ID objectId) noexcept;
 
     /*!
-     * Registers the \c objectId, as returned by the server via SimConnect, with the given \c requestId
+     * Registers the \p objectId, as returned by the server via SimConnect, with the given \p requestId
      * as key. The registration succeeds if the request to create the given simulated object is still active.
      *
      * \param requestId

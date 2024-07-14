@@ -47,10 +47,10 @@ public:
     virtual ~AircraftDaoIntf() = default;
 
     /*!
-     * Persists the \c aircraft. The \c id in \c aircraft is updated.
+     * Persists the \p aircraft. The \p id in \p aircraft is updated.
      *
      * \param flightId
-     *        the flight the \c aircraft belongs to
+     *        the flight the \p aircraft belongs to
      * \param sequenceNumber
      *        the sequence number of the aircraft
      * \param aircraft
@@ -60,11 +60,11 @@ public:
     virtual bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) const noexcept = 0;
 
     /*!
-     * Exports the \c aircraft. While a new \c id for the exported Aircraft
-     * is generated the \c id of the given \c aircraft (to be exported) is not updated.
+     * Exports the \p aircraft. While a new \p id for the exported Aircraft
+     * is generated the \p id of the given \p aircraft (to be exported) is not updated.
      *
      * \param flightId
-     *        the flight the \c aircraft belongs to
+     *        the flight the \p aircraft belongs to
      * \param sequenceNumber
      *        the sequence number of the aircraft
      * \param aircraft

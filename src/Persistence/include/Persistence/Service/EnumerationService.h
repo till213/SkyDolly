@@ -48,7 +48,7 @@ public:
     ~EnumerationService();
 
     /*!
-     * Gets the persisted Enumeration by its enumeration \c name.
+     * Gets the persisted Enumeration by its enumeration \p name.
      *
      * \param name
      *        the name of the enumeration
@@ -57,7 +57,7 @@ public:
      *        by ID (default), by symbolic ID or name
      * \param ok
      *        if set, \c true if successful; \c false else (unknown Enumeration name, no database connection)
-     * \return the persisted Enumeration identified by the \c name
+     * \return the persisted Enumeration identified by the \p name
      */
     Enumeration getEnumerationByName(const QString &name, Enumeration::Order order = Enumeration::Order::Id, bool *ok = nullptr);
 

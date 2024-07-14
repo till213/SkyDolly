@@ -58,8 +58,8 @@ public:
     void removeRecentFile(const QString &filePath);
 
     /*!
-     * Moves the \em existing \c filePath to the most recent file position.
-     * The \c filePath is not added in case it does not already exist in the
+     * Moves the \em existing \p filePath to the most recent file position.
+     * The \p filePath is not added in case it does not already exist in the
      * recent files list.
      *
      * \sa #recentFilesChanged()
@@ -85,7 +85,7 @@ public:
     void setMaxRecentFiles(int maxRecentFile);
 
     /*!
-     * This will select \c filePath for opening. The \c filePath is moved to front
+     * This will select \p filePath for opening. The \p filePath is moved to front
      * of the recent file list and the signal #recentFileSelected is emitted.
      *
      * \param filePath
@@ -97,24 +97,24 @@ public:
 signals:
     /*!
      * Emitted whenever a file from the recent file list has
-     * been selected. The \c securityToken gives access to the \c filePath for
-     * as long as the \c SecurityToken exists.
+     * been selected. The \p securityToken gives access to the \p filePath for
+     * as long as the \p SecurityToken exists.
      *
-     * If the \c filePath is to be read only within the scope of the corresponding
+     * If the \p filePath is to be read only within the scope of the corresponding
      * slot and no further processing with that file is planned then no further ado
      * is necessary.
      *
      * If on the other hand the file is to be saved later on under the same
-     * \c filePath then SecurityToken#retain must be called
-     * and the reference to the \c securityToken must be stored somewhere. As soon
-     * as the file is closed the \c securityToken must then be released with
+     * \p filePath then SecurityToken#retain must be called
+     * and the reference to the \p securityToken must be stored somewhere. As soon
+     * as the file is closed the \p securityToken must then be released with
      * SecurityToken#release. Otherwise not only memory but also system kernel
      * resources will be leaked.
      *
      * \param filePath
      *        the file path selected from the recent file times
      * \param securityToken
-     *        the security token which gives access to the \c filePath for as long
+     *        the security token which gives access to the \p filePath for as long
      *        as the security token exists; call SecurityToken#retain
      *        for further file access and and SecurityToken#release once no more
      *        file access is needed

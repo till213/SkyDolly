@@ -98,7 +98,7 @@ public:
     bool isMinimalUiEnabled() const noexcept;
 
     /*!
-     * Sets the minimal user interface mode to \c enable.
+     * Sets the minimal user interface mode to \p enable.
      *
      * \param enable
      *        set to \c true in order to enable the minimal user interface;

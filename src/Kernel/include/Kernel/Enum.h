@@ -33,7 +33,7 @@
 namespace Enum
 {
     /*!
-     * Returns the underlying type for the given enumeration \c e.
+     * Returns the underlying type for the given enumeration \p e.
      *
      * Note: Can be replaced in C++23 with https://en.cppreference.com/w/cpp/utility/to_underlying
      */
@@ -44,15 +44,15 @@ namespace Enum
     }
 
     /*!
-     * Returns whether the enumeration \c E contains the given underlying \c value.
+     * Returns whether the enumeration \p E contains the given underlying \p value.
      *
      * Assumptions:
-     * - The enumeration \c E contains the following members: \c First (with lowest value) and \c Last (with highest value)
+     * - The enumeration \p E contains the following members: \p First (with lowest value) and \p Last (with highest value)
      * - The underlying values are without "gaps", that is First = 0, Value1 = First, Value2 = 1, Value3 = 2, ..., ValueN = 10, Last = ValueN
      *
      * \param value
      *        the underlying value to be checked
-     * \return \c true if the \c value is a valid underlying value contained in enumeration of type \c E; \c false else
+     * \return \c true if the \p value is a valid underlying value contained in enumeration of type \p E; \c false else
      */
     template<typename E> requires(std::is_enum_v<E>)
     constexpr auto contains(std::underlying_type_t<E> value)

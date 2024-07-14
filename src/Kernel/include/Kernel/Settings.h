@@ -196,7 +196,7 @@ public:
     bool isReplayLoopEnabled() const noexcept;
 
     /*!
-     * Enables the replay loop according to \c enable.
+     * Enables the replay loop according to \p enable.
      *
      * \param enable
      *        set to \c true in order to enable repeated replay; \c false else
@@ -269,7 +269,7 @@ public:
     /*!
      * Returns the maximum simulation rate.
      *
-     * \return \c the maximum simulation rate [1, 128]
+     * \return the maximum simulation rate [1, 128]
      */
     int getMaximumSimulationRate() const noexcept;
 
@@ -327,7 +327,7 @@ public:
     bool isModuleSelectorVisible() const noexcept;
 
     /*!
-     * Sets the \e module selector visible according to \c visible.
+     * Sets the \e module selector visible according to \p visible.
      *
      * \param visible
      *        \c true in order to show the module selector; \c false in order to hide the module selector
@@ -344,7 +344,7 @@ public:
     bool isReplaySpeedVisible() const noexcept;
 
     /*!
-     * Sets the \e replay speed group box visible according to \c visible.
+     * Sets the \e replay speed group box visible according to \p visible.
      *
      * \param visible
      *        \c true in order to show the replay speed
@@ -477,7 +477,7 @@ public:
     bool getDefaultMinimalUiButtonTextVisibility() const noexcept;
 
     /*!
-     * Sets the default visibility of button text in minimal UI mode to \c visible.
+     * Sets the default visibility of button text in minimal UI mode to \p visible.
      *
      * \param visible
      *        set to \c true in order to show button texts by default
@@ -495,7 +495,7 @@ public:
     bool getDefaultMinimalUiNonEssentialButtonVisibility() const noexcept;
 
     /*!
-     * Sets the default visibility of non-essential buttons in minimal UI mode to \c visible.
+     * Sets the default visibility of non-essential buttons in minimal UI mode to \p visible.
      *
      * \param visible
      *        set to \c true in order to show non-essential buttons by default
@@ -513,7 +513,7 @@ public:
     bool getDefaultMinimalUiReplaySpeedVisibility() const noexcept;
 
     /*!
-     * Sets the default visibility of the replay speed group in minimal UI mode to \c visible.
+     * Sets the default visibility of the replay speed group in minimal UI mode to \p visible.
      *
      * Note that the replay speed group visibility can be separately toggled by the user
      * via the View menu.

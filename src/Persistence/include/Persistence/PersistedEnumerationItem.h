@@ -39,8 +39,8 @@ class PERSISTENCE_API PersistedEnumerationItem
 {
 public:
     /*!
-     * Creates this PersistedEnumerationItem, initialising its value with the \c symId
-     * of the persisted enumeration \c enumerationName of the \e application database
+     * Creates this PersistedEnumerationItem, initialising its value with the \p symId
+     * of the persisted enumeration \p enumerationName of the \e application database
      * (default connection).
      *
      * \param enumerationName
