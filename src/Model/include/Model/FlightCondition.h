@@ -66,7 +66,6 @@ public:
     inline void setStartLocalDateTime(QDateTime startTime) noexcept
     {
         m_startLocalDateTime = std::move(startTime);
-        m_startLocalDateTime.setTimeZone(QTimeZone::UTC);
     }
 
     inline QDateTime getEndLocalDateTime() const noexcept
@@ -77,7 +76,6 @@ public:
     inline void setEndLocalDateTime(QDateTime endTime) noexcept
     {
         m_endLocalDateTime = std::move(endTime);
-        m_endLocalDateTime.setTimeZone(QTimeZone::UTC);
     }
 
     inline QDateTime getStartZuluDateTime() const noexcept

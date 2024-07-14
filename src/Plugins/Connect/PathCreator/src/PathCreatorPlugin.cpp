@@ -198,7 +198,7 @@ void PathCreatorPlugin::onStopRecording() noexcept
     auto &flight = getCurrentFlight();
     FlightCondition flightCondition = flight.getFlightCondition();
     flightCondition.setEndZuluDateTime(QDateTime::currentDateTimeUtc());
-    flightCondition.setEndZuluDateTime(flightCondition.getEndZuluDateTime().toLocalTime());
+    flightCondition.setEndLocalDateTime(flightCondition.getEndZuluDateTime().toLocalTime());
     flight.setFlightCondition(flightCondition);
 
     auto &aircraft = flight.getUserAircraft();
@@ -515,7 +515,7 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.onAnyRunway = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.onParkingSpot = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.setStartZuluDateTime(QDateTime::currentDateTimeUtc());
-    flightCondition.setStartZuluDateTime(flightCondition.getStartZuluDateTime().toLocalTime());
+    flightCondition.setStartLocalDateTime(flightCondition.getStartZuluDateTime().toLocalTime());
 
     getCurrentFlight().setFlightCondition(flightCondition);
 }
@@ -609,4 +609,3 @@ void PathCreatorPlugin::recordData() noexcept
     recordLights(timestamp);
     recordWaypoint(timestamp);
 }
-
