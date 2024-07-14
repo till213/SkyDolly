@@ -1043,6 +1043,26 @@ alter table position drop column velocity_x;
 alter table position drop column velocity_y;
 alter table position drop column velocity_z;
 
+@migr(id = "7cf33baa-5fc0-4547-b98b-c744fb74ac04", descn = "Ensure valid start- and end dates", step_cnt = 4)
+update flight
+set start_zulu_sim_time = creation_time
+where start_zulu_sim_time is null;
+
+@migr(id = "7cf33baa-5fc0-4547-b98b-c744fb74ac04", descn = "Ensure valid start- and end dates", step = 2)
+update flight
+set start_local_sim_time = creation_time
+where start_local_sim_time is null;
+
+@migr(id = "7cf33baa-5fc0-4547-b98b-c744fb74ac04", descn = "Ensure valid start- and end dates", step = 3)
+update flight
+set end_zulu_sim_time = start_zulu_sim_time
+where end_zulu_sim_time is null;
+
+@migr(id = "7cf33baa-5fc0-4547-b98b-c744fb74ac04", descn = "Ensure valid start- and end dates", step = 4)
+update flight
+set end_local_sim_time = start_local_sim_time
+where end_local_sim_time is null;
+
 @migr(id = "a428f6b8-c045-4161-8d6b-f498e940f484", descn = "Add NOT NULL date constraints to table flight, default ISO 8601 with timezone format", step_cnt = 3)
 create table flight_new (
     id integer primary key,
