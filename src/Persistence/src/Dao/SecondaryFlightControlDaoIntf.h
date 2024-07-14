@@ -41,10 +41,10 @@ public:
     virtual ~SecondaryFlightControlDaoIntf() = default;
 
     /*!
-     * Persists the \c data.
+     * Persists the \p data.
      *
      * \param aircraftId
-     *        the aircraft the \c data belongs to
+     *        the aircraft the \p data belongs to
      * \param data
      *        the SecondaryFlightControlData to be persisted
      * \return \c true on success; \c false else

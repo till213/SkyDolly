@@ -46,8 +46,8 @@ public:
     virtual bool update(const Location &location) const noexcept = 0;
 
     /*!
-     * Gets the locations that are approximately within the given \c distance from the position
-     * given by its \c latitude and \c longitude.
+     * Gets the locations that are approximately within the given \p distance from the position
+     * given by its \p latitude and \p longitude.
      *
      * \param latitude
      *        the latitude of the desired Location [degrees]
@@ -57,7 +57,7 @@ public:
      *        the search distance from the given position [meters]
      * \param ok
      *        \c true if the query was successful; \c false else (an error occurred)
-     * \return the locations that are within the given \c distance of the given \c latitude and \c longitude
+     * \return the locations that are within the given \p distance of the given \p latitude and \p longitude
      */
     virtual std::vector<Location> getByPosition(double latitude, double longitude, double distance = 0.0, bool *ok = nullptr) const noexcept = 0;
     virtual bool deleteById(std::int64_t id) const noexcept = 0;

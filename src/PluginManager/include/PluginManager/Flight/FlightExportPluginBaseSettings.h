@@ -67,18 +67,18 @@ public:
     /*!
      * Returns whether the plugin supports resampling of the (position) data to be exported
      *
-     * \return \c true if the \c plugin supports position data resampling: \c false else
+     * \return \c true if the \p plugin supports position data resampling: \c false else
      */
     virtual bool isResamplingSupported() const noexcept = 0;
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 
     /*!
-     * Returns whether the plugin supports the given \c formationExport option.
+     * Returns whether the plugin supports the given \p formationExport option.
      *
      * \param formationExport
      *        the formation export option to test
-     * \return \c true if the \c formationExport option is supported by this plugin; \c false else
+     * \return \c true if the \p formationExport option is supported by this plugin; \c false else
      */
     virtual bool isFormationExportSupported(FormationExport formationExport) const noexcept = 0;
     FormationExport getFormationExport() const noexcept;

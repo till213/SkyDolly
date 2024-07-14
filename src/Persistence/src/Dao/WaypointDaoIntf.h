@@ -41,10 +41,10 @@ public:
     virtual ~WaypointDaoIntf() = default;
 
     /*!
-     * Persists the \c flightPlan.
+     * Persists the \p flightPlan.
      *
      * \param aircraftId
-     *        the aircraft the \c flightPlan belongs to
+     *        the aircraft the \p flightPlan belongs to
      * \param flightPlan
      *        the FlightPlan data to be persisted
      * \return \c true on success; \c false else

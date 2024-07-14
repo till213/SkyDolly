@@ -38,7 +38,7 @@ public:
     static std::vector<QRgb> createColorRamp(QRgb start, QRgb end, int nofTotalColors) noexcept;
 
     /*!
-     * Converts the \c color from format AARRGGBB to the KML format AABBGGRR.
+     * Converts the \p color from format AARRGGBB to the KML format AABBGGRR.
      *
      * \param color
      *        the color in format AARRGGBB to be converted

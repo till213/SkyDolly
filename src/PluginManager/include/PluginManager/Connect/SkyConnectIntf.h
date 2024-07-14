@@ -170,9 +170,9 @@ public:
     virtual void setReplayMode(ReplayMode replayMode) noexcept = 0;
 
     /*!
-     * Starts recording the flight. Depending on the \c recordingMode already recorded formation aircraft
-     * are replayed during recording. If the \c initialPosition is given (\c isNull() returns false) then
-     * the user aircraft is placed at the given \c initialPosition before recording. This position is
+     * Starts recording the flight. Depending on the \p recordingMode already recorded formation aircraft
+     * are replayed during recording. If the \p initialPosition is given (\c isNull() returns false) then
+     * the user aircraft is placed at the given \p initialPosition before recording. This position is
      * typically calculated to be relative of the previous user aircraft in the formation.
      *
      * \param recordingMode
@@ -337,7 +337,7 @@ public:
     virtual bool requestSimulationRate() noexcept = 0;
 
     /*!
-     * Sends the \c dateTime to the flight simulator to set.
+     * Sends the \p dateTime to the flight simulator to set.
      *
      * \param dateTime
      *        the date and time to set in the flight simulator
@@ -425,7 +425,7 @@ signals:
 
 
     /*!
-     * Emitted whenever a keyboard shortcut was triggered for the given \c action.
+     * Emitted whenever a keyboard shortcut was triggered for the given \p action.
      *
      * \param action
      *        the action that was triggered in the flight simulator
@@ -434,7 +434,7 @@ signals:
 
 protected:
     /*!
-     * Sets the new connection \c state. This method will also emit the
+     * Sets the new connection \p state. This method will also emit the
      * signal #recordingStarted and #recordingStopped when the state changes
      * to/from \e Recording.
      *

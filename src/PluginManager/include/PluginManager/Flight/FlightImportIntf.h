@@ -43,7 +43,7 @@ class FlightImportIntf : public DialogPluginIntf, public PluginIntf
 public:
     /*!
      * Presents the user with a file selection dialog and imports all selected
-     * files, optionally adding the imported aircraft to the \c currentFlight
+     * files, optionally adding the imported aircraft to the \p currentFlight
      * as well.
      *
      * \param currentFlight
@@ -54,12 +54,12 @@ public:
     virtual bool importFlights(Flight &currentFlight) noexcept = 0;
 
     /*!
-     * Imports the flight data from the given \c io data source and returns the list
-     * of imported FlightData. Note that \c ok is also set to \c false in case
+     * Imports the flight data from the given \p io data source and returns the list
+     * of imported FlightData. Note that \p ok is also set to \c false in case
      * no flight data was imported at all (despite the existing file not having
      * any syntax errors).
      *
-     * The data source \c io must have been properly opened for reading already.
+     * The data source \p io must have been properly opened for reading already.
      *
      * \param io
      *        the IO device to read from; already opened for reading

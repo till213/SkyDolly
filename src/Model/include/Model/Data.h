@@ -30,7 +30,7 @@
 #include <Kernel/Const.h>
 /*!
  * The base data object for all non-time variant data objects which are persisted,
- * identified by their \c id.
+ * identified by their \p id.
  *
  * \sa TimeVariableData
  */

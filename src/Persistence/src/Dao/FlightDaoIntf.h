@@ -43,7 +43,7 @@ public:
     virtual ~FlightDaoIntf() = default;
 
     /*!
-     * Persists the \c flight. The \c id in \c flight is updated.
+     * Persists the \p flight. The \p id in \p flight is updated.
      *
      * \param flightData
      *        the FlightData to be persisted
@@ -52,8 +52,8 @@ public:
     virtual bool add(FlightData &flightData) const noexcept = 0;
 
     /*!
-     * Exports the \c flight. While a new \c id for the exported Flight
-     * is generated the \c id of the given \c flight (to be exported) is not updated.
+     * Exports the \p flight. While a new \p id for the exported Flight
+     * is generated the \p id of the given \p flight (to be exported) is not updated.
      *
      * \param flightData
      *        the FlightData to be exported (persisted)

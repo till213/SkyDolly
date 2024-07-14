@@ -45,7 +45,7 @@ public:
     virtual ~EnumerationDaoIntf() = default;
 
     /*!
-     * Returns the enumeration given by its \c name. The name is to be given in camelCase,
+     * Returns the enumeration given by its \p name. The name is to be given in camelCase,
      * without the "enum_" prefix.
      *
      * Examples:
