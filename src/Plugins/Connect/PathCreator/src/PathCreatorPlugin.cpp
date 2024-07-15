@@ -198,12 +198,12 @@ void PathCreatorPlugin::onStopRecording() noexcept
     auto &flight = getCurrentFlight();
     FlightCondition flightCondition = flight.getFlightCondition();
     flightCondition.setEndZuluDateTime(QDateTime::currentDateTimeUtc());
-    flightCondition.endLocalDateTime = flightCondition.getEndZuluDateTime().toLocalTime();
+    flightCondition.setEndLocalDateTime(flightCondition.getEndZuluDateTime().toLocalTime());
     flight.setFlightCondition(flightCondition);
 
     auto &aircraft = flight.getUserAircraft();
-    FlightPlan &flightPlan = aircraft.getFlightPlan();
-    int waypointCount = static_cast<int>(flightPlan.count());
+    auto &flightPlan = aircraft.getFlightPlan();
+    auto waypointCount = static_cast<int>(flightPlan.count());
     if (waypointCount > 1) {
         Waypoint waypoint = flightPlan[waypointCount - 1];
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
@@ -515,7 +515,7 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.onAnyRunway = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.onParkingSpot = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.setStartZuluDateTime(QDateTime::currentDateTimeUtc());
-    flightCondition.startLocalDateTime = flightCondition.getStartZuluDateTime().toLocalTime();
+    flightCondition.setStartLocalDateTime(flightCondition.getStartZuluDateTime().toLocalTime());
 
     getCurrentFlight().setFlightCondition(flightCondition);
 }
@@ -609,4 +609,3 @@ void PathCreatorPlugin::recordData() noexcept
     recordLights(timestamp);
     recordWaypoint(timestamp);
 }
-

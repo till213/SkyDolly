@@ -327,6 +327,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onRecordingDurationChanged);
     connect(&flight, &Flight::cleared,
             this, &MainWindow::updateUi);
+    connect(&flight, &Flight::flightConditionChanged,
+            this, &MainWindow::updateTimeUi);
 
     // Settings
     const auto &settings = Settings::getInstance();
@@ -1285,7 +1287,9 @@ void MainWindow::updateUi() noexcept
     updateModuleActions();
     updateWindowMenu();
     updateMainWindow();
-    onRecordingDurationChanged();
+    if (!SkyConnectManager::getInstance().isInRecordingState()) {
+        onRecordingDurationChanged();
+    }
 }
 
 void MainWindow::updateControlUi() noexcept
@@ -1381,7 +1385,7 @@ void MainWindow::updateTimeUi() noexcept
 
     // TODO Perhaps add option to switch between simulation and real-world ("creation") time
     const auto startZuluDateTime = flight.getAircraftStartZuluTime(aircraft);
-    ui->timestampEdit->setStartZuluDateTime(startZuluDateTime);
+    ui->timestampEdit->setStartDateTime(startZuluDateTime);
 
     const auto &skyConnectManager = SkyConnectManager::getInstance();
     const bool hasRecording = aircraft.hasRecording();

@@ -352,6 +352,10 @@ signals:
     void titleChanged(std::int64_t flightId, const QString &title);
     void descriptionChanged(std::int64_t flightId, const QString &description);
     void flightNumberChanged(std::int64_t flightId, const QString &flightNumber);
+
+    /*!
+     * Emitted whenever the flight condition has changed.
+     */
     void flightConditionChanged();
 
     /*!

@@ -76,10 +76,14 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
   * The trackpoint timestamps are properly calculated and exported when exporting the entire flight (and not just the user aircraft); the proper timezone suffix (Z) is appended, too (ISO 8601 format)
 - Formation recording
   * Record the flight conditions - specifically the flight start date/time - when the *first* aircraft is recorded (directly from within the Formation module)
-  
+- Do not reset the time edit widget when the recording is paused (keep the current recorded time)
+
 ## Documentation
 - Added new [One Year in New York](doc/SQL/Timelapse-One-Year-in-New-York.sql) example SQL ("1 year timelapse")
 - Added new [pressure altitude](doc/SQL/Flight-Analysis.sql) analytical SQL script
+
+## Under the Hood
+- Ensure common creation- and start/end date (local and zulu) date & time formats on database level, add "not null" constraint for data conistency
 
 ## 0.17.5
 This bug fix release provides an important correction for a regression that would prevent recording (and possibly replay as well), due to wrongly creating an IPv4 network connection instead of a local ("pipe") connection.

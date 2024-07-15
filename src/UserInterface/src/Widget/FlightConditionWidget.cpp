@@ -141,8 +141,8 @@ void FlightConditionWidget::updateUi() noexcept
     ui->seaLevelPressure->setText(d->unit.formatPressureInHPa(flightCondition.seaLevelPressure));
     ui->pitotIcingLineEdit->setText(d->unit.formatPercent(flightCondition.pitotIcingPercent));
     ui->structuralIcingLineEdit->setText(d->unit.formatPercent(flightCondition.structuralIcingPercent));
-    ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.startLocalDateTime));
-    ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.endLocalDateTime));
+    ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.getStartLocalDateTime()));
+    ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.getEndLocalDateTime()));
     // Zulu time
     ui->startLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.getStartZuluDateTime()) % Const::ZuluTimeSuffix);
     ui->endLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.getEndZuluDateTime()) % Const::ZuluTimeSuffix);

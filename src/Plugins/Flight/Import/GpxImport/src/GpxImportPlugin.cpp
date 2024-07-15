@@ -147,7 +147,7 @@ void GpxImportPlugin::updateAircraftWaypoints(Aircraft &aircraft, const QDateTim
         // Assign timestamps according to the closest flown position
         std::unordered_set<std::int64_t> timestamps;
         std::int64_t uniqueTimestamp {0};
-        FlightPlan &flightPlan = aircraft.getFlightPlan();
+        auto &flightPlan = aircraft.getFlightPlan();
         const std::size_t count = flightPlan.count();
         for (std::size_t i = 0; i < count; ++i) {
             Waypoint &waypoint = flightPlan[i];

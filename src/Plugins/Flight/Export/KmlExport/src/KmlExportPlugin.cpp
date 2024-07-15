@@ -311,8 +311,8 @@ QString KmlExportPlugin::getFlightDescription(const FlightData &flightData) cons
            "\n" %
            QObject::tr("Creation date") % ": " % d->unit.formatDate(flightData.creationTime) % "\n" %
            QObject::tr("Flight number") % ": " % flightData.flightNumber % "\n" %
-           QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalDateTime) % "\n" %
-           QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalDateTime) % "\n" %
+           QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.getStartLocalDateTime()) % "\n" %
+           QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.getEndLocalDateTime()) % "\n" %
            QObject::tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
            QObject::tr("Total air temperature") % ": " % d->unit.formatCelcius(flightCondition.totalAirTemperature) % "\n" %
            QObject::tr("Precipitation") % ": " % SimType::precipitationStateToString(flightCondition.precipitationState) % "\n" %

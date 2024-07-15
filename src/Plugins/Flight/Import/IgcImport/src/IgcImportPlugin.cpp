@@ -267,7 +267,7 @@ void IgcImportPlugin::updateWaypoints(Aircraft &aircraft) const noexcept
 {
     Position &position = aircraft.getPosition();
 
-    FlightPlan &flightPlan = aircraft.getFlightPlan();
+    auto &flightPlan = aircraft.getFlightPlan();
     if (position.count() > 0) {
         Analytics analytics(aircraft);
         const QDateTime startDateTimeUtc = d->igcParser.getHeader().flightDateTimeUtc;
