@@ -33,7 +33,7 @@ Various file formats can be imported and exported:
 
 ## Locations:
 
-- **SDLOG** - import & export in Sky Dolly logbook format (since Sky Dolly v0.18)
+- **SDLOG** - import & export in Sky Dolly logbook format
 - **CSV** - import & export, including Sky Dolly and [Little Navmap](https://albar965.github.io/littlenavmap.html) formats
 
 For instance you can literally import all world update POIs and airports and more from e.g. here: [Little Navmap - MSFS POI Database](https://flightsim.to/file/17193/little-navmap-msfs-poi-database) (made available by Rysatko).
