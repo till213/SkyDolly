@@ -1287,7 +1287,9 @@ void MainWindow::updateUi() noexcept
     updateModuleActions();
     updateWindowMenu();
     updateMainWindow();
-    onRecordingDurationChanged();
+    if (!SkyConnectManager::getInstance().isInRecordingState()) {
+        onRecordingDurationChanged();
+    }
 }
 
 void MainWindow::updateControlUi() noexcept
