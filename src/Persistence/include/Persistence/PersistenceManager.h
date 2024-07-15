@@ -54,14 +54,14 @@ public:
     static void destroyInstance() noexcept;
 
     /*!
-     * Connects with the database given by \c logbookPath
+     * Connects with the database given by \p logbookPath
      * and initialises the database by applying the required migrations.
      *
      * If a problem with opening the database occurs (e.g. a version
      * mismatch) then a dialog asks the user for alternative logbook
      * paths (or to quit the application altogether).
      *
-     * The actual logbook path (which is usually the given \c logbookPath)
+     * The actual logbook path (which is usually the given \p logbookPath)
      * is stored in the PersistenceManager.
      *
      * \param logbookPath

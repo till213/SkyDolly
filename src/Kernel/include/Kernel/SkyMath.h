@@ -98,9 +98,9 @@ namespace SkyMath
     };
 
     /*!
-     * Returns the sign of \c val.
+     * Returns the sign of \p val.
      *
-     * \return -1 if \c val is a negative value; 0 for \c val
+     * \return -1 if \p val is a negative value; 0 for \p val
      *         0; +1 else
      */
     template <typename T>
@@ -110,19 +110,19 @@ namespace SkyMath
     }
 
     /*!
-     * Normalises the value \c y1 by comparing its sign with
-     * the \e previous value \c y0, which come from a
+     * Normalises the value \p y1 by comparing its sign with
+     * the \e previous value \p y0, which come from a
      * "+/- modulo 180" domain (value in [-180, 180[).
      *
-     * - if \c y0 and \c y1 have the same sign then the normalised
-     *   value is simply \c y1
-     * - if the sign is different then the difference between \c y1 and \c y0
+     * - if \p y0 and \p y1 have the same sign then the normalised
+     *   value is simply \p y1
+     * - if the sign is different then the difference between \p y1 and \p y0
      *   is taken into account:
      *     - if the difference is smaller or equal to 180 the the normalised
-     *       value is still \c y1
-     *     - if the difference is larger than 180 then \c y1 is "wrapped across
+     *       value is still \p y1
+     *     - if the difference is larger than 180 then \p y1 is "wrapped across
      *       the modulo boundary", by subtracting it from 360 and assigning
-     *       the same sign as \c y0
+     *       the same sign as \p y0
      *
      * Examples:
      * y  | a) | b)  | c)  | d)  | e)
@@ -156,8 +156,8 @@ namespace SkyMath
     }
 
     /*!
-     * Interpolates between \c y1 and \c y2 and the support values \c y0 and
-     * \c y3 using Hermite (cubic) interpolation.
+     * Interpolates between \p y1 and \p y2 and the support values \p y0 and
+     * \p y3 using Hermite (cubic) interpolation.
      *
      * Also refer to: http://paulbourke.net/miscellaneous/interpolation/
      *
@@ -265,7 +265,7 @@ namespace SkyMath
     }
 
     /*!
-     * Interpolates between \c p1 and \c p2 using linear interpolation.
+     * Interpolates between \p p1 and \p p2 using linear interpolation.
      *
      * \param p1
      *        the first interpolation point
@@ -285,7 +285,7 @@ namespace SkyMath
     }
 
     /*!
-     * Maps the \c position value to a discrete, signed 16bit value.
+     * Maps the \p position value to a discrete, signed 16bit value.
      *
      * \param position
      *        the normalised position value in the range [-1.0, 1.0]; the range is enforced (clamp)
@@ -297,7 +297,7 @@ namespace SkyMath
     }
 
     /*!
-     * Maps the \c position16 value to a normalised double value.
+     * Maps the \p position16 value to a normalised double value.
      *
      * \param position16
      *        the discrete signed 16bit position value in the range [PositionMin16, PositionMax16] (note: symmetric range)
@@ -309,7 +309,7 @@ namespace SkyMath
     }
 
     /*!
-     * Maps the \c percent value to a discrete, unsigned 8bit value.
+     * Maps the \p percent value to a discrete, unsigned 8bit value.
      *
      * \param percent
      *        the percent value in the range [0.0, 100.0]; the range is enforced (clamp)
@@ -321,7 +321,7 @@ namespace SkyMath
     }
 
     /*!
-     * Maps the \c percent8 value to a double value.
+     * Maps the \p percent8 value to a double value.
      *
      * \param percent8
      *        the discrete unsigned 8bit percent value in the range [0, PercentMax8]
@@ -357,9 +357,9 @@ namespace SkyMath
     }
 
     /*!
-     * Calculates the geodesic distance between the \c startPoint and the \c endPoint and the
-     * speed [meters per second] it takes to travel that distance, taking the timestamps \c startTimestamp
-     * and \c endTimestamp into account.
+     * Calculates the geodesic distance between the \p startPoint and the \p endPoint and the
+     * speed [meters per second] it takes to travel that distance, taking the timestamps \p startTimestamp
+     * and \p endTimestamp into account.
      *
      * \param startPosition
      *        the Coordinate of the start position [degrees]
@@ -382,8 +382,8 @@ namespace SkyMath
     }
 
     /*!
-     * Calculates the initial bearing required to get from \c startPosition
-     * to \c endPosition.
+     * Calculates the initial bearing required to get from \p startPosition
+     * to \p endPosition.
      *
      * \param startPosition
      *        the Coordinate of the start position [degrees]
@@ -411,14 +411,14 @@ namespace SkyMath
 
     /*!
      * Approximates the pitch angle [degrees] by assuming a straight distance line
-     * and delta altitude, that is a triangle defined by \c sphericalDistance
-     * and orthogonal \c deltaAltitude (both in [meters]). The estimated elevation
+     * and delta altitude, that is a triangle defined by \p sphericalDistance
+     * and orthogonal \p deltaAltitude (both in [meters]). The estimated elevation
      * (pitch) angle should be exact enough for short distances.
      *
      * Note that we assume that the aircraft is not flying "upside down", so the
      * maximum estimated pitch angles are in [-90, 90] degrees. Also, we also assume
      * that the aircraft is never "perfectly flying straight up" (or down), or in
-     * other words: if the \c sphericalDistance is 0.0 then the resulting pitch angle
+     * other words: if the \p sphericalDistance is 0.0 then the resulting pitch angle
      * will also be 0.0. While this is mathematically not quite correct (the pitch
      * angle would either be a perfect +90 or -90 degrees) it better reflects reality
      * when an aircraft is stationary on the ground, but the measured altitude values
@@ -448,11 +448,11 @@ namespace SkyMath
     }
 
     /*!
-     * Calculates the shortest heading change to get from the \c currentHeading to
-     * the \c targetHeading. All headings are in degrees.
+     * Calculates the shortest heading change to get from the \p currentHeading to
+     * the \p targetHeading. All headings are in degrees.
      *
      * The following convention is applied when turning exaclty 180 degrees:
-     * - If the \c currentHeading is < \c targetHeading then a right turn (-180.0)
+     * - If the \p currentHeading is < \p targetHeading then a right turn (-180.0)
      *   is done
      * - Otherwise a left turn (180.0) is done
      *
@@ -491,16 +491,16 @@ namespace SkyMath
     }
 
     /*!
-     * Approximates the required bank angle required for the given \c headingChange.
-     * The maximum bank angle is limited by \c maxBankAngle and required for turns
-     * of \c maxBankAngleForHeadingChange degrees.
+     * Approximates the required bank angle required for the given \p headingChange.
+     * The maximum bank angle is limited by \p maxBankAngle and required for turns
+     * of \p maxBankAngleForHeadingChange degrees.
      *
      * \param headingChange
      *        the desired heading change [-180, 180] [degrees]; negative values
      *         correspond to clockwise ("right") turn; positive values
      *         correspond to anti-clockwise ("left") turn
      * \param maxBankAngleForHeadingChange
-     *        the heading change (absolute value: [0, 180]) [degrees] for which the \c maxBankAngle
+     *        the heading change (absolute value: [0, 180]) [degrees] for which the \p maxBankAngle
      *        is required
      * \param maxBankAngle
      *        the maximum bank angle (absolute value: [0, 90]) the aircraft typically can do
@@ -515,8 +515,8 @@ namespace SkyMath
     }
 
     /*!
-     * Returns the relative position from the starting \c position,
-     * given the \c bearing and geodesic \c distance.
+     * Returns the relative position from the starting \p position,
+     * given the \p bearing and geodesic \p distance.
      *
      * sinphi2    = sinphi1⋅cosδ + cosphi1⋅sinδ⋅costheta
      * tanΔlambda = sintheta⋅sinδ⋅cosphi1 / cosδ−sinphi1⋅sinphi2
@@ -553,7 +553,7 @@ namespace SkyMath
 
     /*!
      * Calculates the time difference (in milliseconds) between the given
-     * \c fromDateTime to \c toDateTime (being possibly in different
+     * \p fromDateTime to \p toDateTime (being possibly in different
      * time zones).
      *
      * - The time difference from the imported creation time to the creation
@@ -591,9 +591,9 @@ namespace SkyMath
     }
 
     /*!
-     * Calculates the first \c n-th Fibonacci numbers, starting with 0 for \c n = 1.
+     * Calculates the first \p n-th Fibonacci numbers, starting with 0 for \p n = 1.
      *
-     * Note that the value of \c c must be equal to the value of \c N.
+     * Note that the value of \p c must be equal to the value of \p N.
      *
      * \param n
      *        the number of Fibonacci numbers to calculate: n must be >= 1
@@ -625,7 +625,7 @@ namespace SkyMath
     /*!
      * Calculates the next power of two value for the given \n.
      *
-     * Note: if \c n is already a power of two then \c n is returned.
+     * Note: if \p n is already a power of two then \p n is returned.
      * The lowest integer power of two is 1 (2^0), so n = 0 always returns 1.
      *
      * Examples:
@@ -636,7 +636,7 @@ namespace SkyMath
      *
      * \param n
      *        a number for which to calculate the next power of two value
-     * \return the next power of two value, including \c n (if \c n is
+     * \return the next power of two value, including \p n (if \p n is
      *         already a power of two)
      */
     inline std::uint32_t nextPowerOfTwo(std::uint32_t n) noexcept
@@ -658,7 +658,7 @@ namespace SkyMath
     /*!
      * Calculates the previous power of two value for the given \n.
      *
-     * Note: if \c n is already a power of two then \c n is returned.
+     * Note: if \p n is already a power of two then \p n is returned.
      * The lowest integer power of two is 1 (2^0), so n = 0 always returns 1.
      *
      * Examples:
@@ -669,7 +669,7 @@ namespace SkyMath
      *
      * \param n
      *        a number for which to calculate the previous power of two value
-     * \return the previous power of two value, including \c n (if \c n is
+     * \return the previous power of two value, including \p n (if \p n is
      *         already a power of two)
      */
     inline std::uint32_t previousPowerOfTwo(std::uint32_t n) noexcept

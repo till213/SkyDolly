@@ -69,7 +69,7 @@ public:
     static constexpr std::int16_t Max16KPosition {16384};
 
     /*!
-     * Converts the normalised \c value to an \e event (position) value.
+     * Converts the normalised \p value to an \e event (position) value.
      *
      * @param value
      *        the normalised value to be converted [-1.0, 1.0]
@@ -81,7 +81,7 @@ public:
     }
 
     /*!
-     * Converts the \c percent to an \e event (position) value.
+     * Converts the \p percent to an \e event (position) value.
      *
      * @param percent
      *        the percent value to be converted [0, 100]

@@ -37,11 +37,7 @@
 
 struct MODEL_API FlightCondition final
 {
-    // Simulation times (not real-world times)
-    QDateTime startLocalDateTime;
-
-    QDateTime endLocalDateTime;
-
+public:
     SimType::SurfaceType surfaceType {SimType::SurfaceType::Unknown};
     SimType::SurfaceCondition surfaceCondition {SimType::SurfaceCondition::Unknown};
     SimType::PrecipitationState precipitationState {SimType::PrecipitationState::None};
@@ -61,6 +57,26 @@ struct MODEL_API FlightCondition final
     FlightCondition() noexcept;
 
     void clear() noexcept;
+
+    inline QDateTime getStartLocalDateTime() const noexcept
+    {
+        return m_startLocalDateTime;
+    };
+
+    inline void setStartLocalDateTime(QDateTime startTime) noexcept
+    {
+        m_startLocalDateTime = std::move(startTime);
+    }
+
+    inline QDateTime getEndLocalDateTime() const noexcept
+    {
+        return m_endLocalDateTime;
+    };
+
+    inline void setEndLocalDateTime(QDateTime endTime) noexcept
+    {
+        m_endLocalDateTime = std::move(endTime);
+    }
 
     inline QDateTime getStartZuluDateTime() const noexcept
     {
@@ -85,6 +101,9 @@ struct MODEL_API FlightCondition final
     }
 
 private:
+    // Simulation times (not real-world times)
+    QDateTime m_startLocalDateTime;
+    QDateTime m_endLocalDateTime;
     QDateTime m_startZuluDateTime;
     QDateTime m_endZuluDateTime;
 };

@@ -196,7 +196,7 @@ public:
     bool isReplayLoopEnabled() const noexcept;
 
     /*!
-     * Enables the replay loop according to \c enable.
+     * Enables the replay loop according to \p enable.
      *
      * \param enable
      *        set to \c true in order to enable repeated replay; \c false else
@@ -269,7 +269,7 @@ public:
     /*!
      * Returns the maximum simulation rate.
      *
-     * \return \c the maximum simulation rate [1, 128]
+     * \return the maximum simulation rate [1, 128]
      */
     int getMaximumSimulationRate() const noexcept;
 
@@ -327,7 +327,7 @@ public:
     bool isModuleSelectorVisible() const noexcept;
 
     /*!
-     * Sets the \e module selector visible according to \c visible.
+     * Sets the \e module selector visible according to \p visible.
      *
      * \param visible
      *        \c true in order to show the module selector; \c false in order to hide the module selector
@@ -344,7 +344,7 @@ public:
     bool isReplaySpeedVisible() const noexcept;
 
     /*!
-     * Sets the \e replay speed group box visible according to \c visible.
+     * Sets the \e replay speed group box visible according to \p visible.
      *
      * \param visible
      *        \c true in order to show the replay speed
@@ -477,7 +477,7 @@ public:
     bool getDefaultMinimalUiButtonTextVisibility() const noexcept;
 
     /*!
-     * Sets the default visibility of button text in minimal UI mode to \c visible.
+     * Sets the default visibility of button text in minimal UI mode to \p visible.
      *
      * \param visible
      *        set to \c true in order to show button texts by default
@@ -495,7 +495,7 @@ public:
     bool getDefaultMinimalUiNonEssentialButtonVisibility() const noexcept;
 
     /*!
-     * Sets the default visibility of non-essential buttons in minimal UI mode to \c visible.
+     * Sets the default visibility of non-essential buttons in minimal UI mode to \p visible.
      *
      * \param visible
      *        set to \c true in order to show non-essential buttons by default
@@ -513,7 +513,7 @@ public:
     bool getDefaultMinimalUiReplaySpeedVisibility() const noexcept;
 
     /*!
-     * Sets the default visibility of the replay speed group in minimal UI mode to \c visible.
+     * Sets the default visibility of the replay speed group in minimal UI mode to \p visible.
      *
      * Note that the replay speed group visibility can be separately toggled by the user
      * via the View menu.
@@ -613,140 +613,140 @@ public slots:
 
 signals:
     /*!
-     * Emitted when the logbook directory path has changed.
+     * Emitted wheneverthe logbook directory path has changed.
      *
      * \sa changed
      */
     void logbookPathChanged(QString logbookPath);
 
     /*!
-     * Emitted when the backup before migration option has changed.
+     * Emitted wheneverthe backup before migration option has changed.
      *
      * \sa changed
      */
     void backupBeforeMigrationChanged(bool enable);
 
     /*!
-     * Emitted when the SkyConnect plugin UUID has changed.
+     * Emitted wheneverthe SkyConnect plugin UUID has changed.
      *
      * \sa changed
      */
     void skyConnectPluginUuidChanged(QUuid uuid);
 
     /*!
-     * Emitted when the stay on top option has changed.
+     * Emitted wheneverthe stay on top option has changed.
      *
      * \sa changed
      */
     void stayOnTopChanged(bool enable);
 
     /*!
-     * Emitted when the minimal user interface option has changed.
+     * Emitted wheneverthe minimal user interface option has changed.
      *
      * \sa changed
      */
     void minimalUiChanged(bool enable);
 
     /*!
-     * Emitted when the module selector visibility has changed.
+     * Emitted wheneverthe module selector visibility has changed.
      *
      * \sa changed
      */
     void moduleSelectorVisibilityChanged(bool enable);
 
     /*!
-     * Emitted when the replay speed visibility has changed.
+     * Emitted wheneverthe replay speed visibility has changed.
      *
      * \sa changed
      */
     void replaySpeedVisibilityChanged(bool enable);
 
     /*!
-     * Emitted when the export path has changed.
+     * Emitted wheneverthe export path has changed.
      *
      * \sa changed
      */
     void exportPathChanged(QString exportPath);
 
     /*!
-     * Emitted when the absolute/relative seek setting has changed.
+     * Emitted wheneverthe absolute/relative seek setting has changed.
      *
      * \sa changed
      */
     void absoluteSeekEnabledChanged(bool enabled);
 
     /*!
-     * Emitted when the seek interval in secondshas changed.
+     * Emitted wheneverthe seek interval in secondshas changed.
      *
      * \sa changed
      */
     void seekIntervalSecondsChanged(double seconds);
 
     /*!
-     * Emitted when the seek interval in percent has changed.
+     * Emitted wheneverthe seek interval in percent has changed.
      *
      * \sa changed
      */
     void seekIntervalPercentChanged(double percent);
 
     /*!
-     * Emitted when the repeat replay has changed.
+     * Emitted wheneverthe repeat replay has changed.
      *
      * \sa changed
      */
     void replayLoopChanged(bool enable);
 
     /*!
-     * Emitted when the replay speed unit has changed.
+     * Emitted wheneverthe replay speed unit has changed.
      *
      * \sa changed
      */
     void replaySpeedUnitChanged(Replay::SpeedUnit replaySpeedUnit);
 
     /*!
-     * Emitted when the replay time mode has changed.
+     * Emitted wheneverthe replay time mode has changed.
      *
      * \sa changed
      */
     void replayTimeModeChanged(Replay::TimeMode replayTimeMode);
 
     /*!
-     * Emitted when the repeat canopy has changed.
+     * Emitted wheneverthe repeat canopy has changed.
      *
      * \sa changed
      */
     void repeatCanopyChanged(bool enable);
 
     /*!
-     * Emitted when the maximum simulation rate has changed.
+     * Emitted wheneverthe maximum simulation rate has changed.
      *
      * \sa changed
      */
     void maximumSimulationRateChanged(int rate);
 
     /*!
-     * Emitted when the user interface style key has changed
+     * Emitted wheneverthe user interface style key has changed
      *
      * \sa changed
      */
     void styleKeyChanged(const QString &key);
 
     /*!
-     * Emitted when the default button text visibility for the minimal UI has changed.
+     * Emitted wheneverthe default button text visibility for the minimal UI has changed.
      *
      * \sa changed
      */
     void defaultMinimalUiButtonTextVisibilityChanged(bool hidden);
 
     /*!
-     * Emitted when the default non-essential button visibility for the minimal UI has changed.
+     * Emitted wheneverthe default non-essential button visibility for the minimal UI has changed.
      *
      * \sa changed
      */
     void defaultMinimalUiNonEssentialButtonVisibilityChanged(bool hidden);
 
     /*!
-     * Emitted when the default replay speed visibility for the minimal UI has changed.
+     * Emitted wheneverthe default replay speed visibility for the minimal UI has changed.
      *
      * \sa replaySpeedVisibilityChanged
      * \sa changed
@@ -754,7 +754,7 @@ signals:
     void defaultMinimalUiReplaySpeedVisibilityChanged(bool hidden);
 
     /*!
-     * Emitted when any setting has changed.
+     * Emitted wheneverany setting has changed.
      */
     void changed();
 

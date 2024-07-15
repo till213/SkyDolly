@@ -55,10 +55,22 @@ public:
     TimestampEdit &operator=(TimestampEdit &&rhs) = delete;
     ~TimestampEdit() override;
 
-    QDateTime getStartZuluDateTime() const noexcept;
+    /*!
+     * Returns the start date and time.
+     *
+     * \return the start date and time
+     */
+    QDateTime getStartDateTime() const noexcept;
 
-    void setStartZuluDateTime(QDateTime dateTime) noexcept;
-
+    /*!
+     * Sets the start \p dateTime. The start date and time is used
+     * to show absoute time (including date, if the duration is longer
+     * than a day).
+     *
+     * \param dateTime
+     *        the start date and time
+     */
+    void setStartDateTime(QDateTime dateTime) noexcept;
 
     /*!
      * Returns the current timestamp.
@@ -98,7 +110,7 @@ public:
     bool isMinimalUiEnabled() const noexcept;
 
     /*!
-     * Sets the minimal user interface mode to \c enable.
+     * Sets the minimal user interface mode to \p enable.
      *
      * \param enable
      *        set to \c true in order to enable the minimal user interface;
@@ -122,7 +134,6 @@ private:
     void initUi() noexcept;
     void frenchConnection() noexcept;
     void updateTimestamp() noexcept;
-    inline QDateTime getStartDateTime() const noexcept;
 
 private slots:
     void updateUi() noexcept;

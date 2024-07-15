@@ -52,7 +52,7 @@ public:
 
     /*!
      * Decreases the reference counter by 1. If the reference counter reaches 0 then
-     * \em this instance is \c deleted. This instance is then invalid and no
+     * \em this instance is \p deleted. This instance is then invalid and no
      * further instance methods must be called after a release.
      */
     KERNEL_API void release();
@@ -61,7 +61,7 @@ public:
 
     /*!
      * Creates an instance of the SecurityToken. The reference count will be 1. In
-     * order to \c delete the object call #release.
+     * order to \p delete the object call #release.
      *
      * \param securityTokenData
      *        the security token data which has been created with createSecurityTokenData()
@@ -71,7 +71,7 @@ public:
     KERNEL_API static SecurityToken *create(const QByteArray &securityTokenData);
 
     /*!
-     * Creates a security access token data for the given \c filePath in order to access
+     * Creates a security access token data for the given \p filePath in order to access
      * files after the restart of a sandboxed application. The token
      * generation is platform-specific:
      * - On OS X Security-Scoped Bookmarks are generated

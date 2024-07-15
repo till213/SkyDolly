@@ -164,9 +164,9 @@ bool SQLiteFlightDao::get(std::int64_t id, FlightData &flightData) const noexcep
             flightCondition.precipitationState = Enum::contains<SimType::PrecipitationState>(enumValue) ? static_cast<SimType::PrecipitationState>(enumValue) : SimType::PrecipitationState::First;
             flightCondition.inClouds = query.value(inCloudsIdx).toBool();
             // Persisted times is are already local respectively zulu simulation times
-            flightCondition.startLocalDateTime = query.value(startLocalSimulationTimeIdx).toDateTime();
+            flightCondition.setStartLocalDateTime(query.value(startLocalSimulationTimeIdx).toDateTime());
             flightCondition.setStartZuluDateTime(query.value(startZuluSimulationTimeIdx).toDateTime());
-            flightCondition.endLocalDateTime = query.value(endLocalSimulationTimeIdx).toDateTime();
+            flightCondition.setEndLocalDateTime(query.value(endLocalSimulationTimeIdx).toDateTime());
             flightCondition.setEndZuluDateTime(query.value(endZuluSimulationTimeIdx).toDateTime());
         }
         std::vector<Aircraft> aircraft = d->aircraftDao->getByFlightId(id, &ok);
@@ -374,11 +374,11 @@ inline std::int64_t SQLiteFlightDao::insertFlight(const FlightData &flightData) 
     query.bindValue(":precipitation_state", Enum::underly(flightCondition.precipitationState));
     query.bindValue(":in_clouds", flightCondition.inClouds);
     // No conversion to UTC
-    query.bindValue(":start_local_sim_time", flightCondition.startLocalDateTime);
+    query.bindValue(":start_local_sim_time", flightCondition.getStartLocalDateTime());
     // Zulu time equals to UTC time
     query.bindValue(":start_zulu_sim_time", flightCondition.getStartZuluDateTime());
     // No conversion to UTC
-    query.bindValue(":end_local_sim_time", flightCondition.endLocalDateTime);
+    query.bindValue(":end_local_sim_time", flightCondition.getEndLocalDateTime());
     // Zulu time equals to UTC time
     query.bindValue(":end_zulu_sim_time", flightCondition.getEndZuluDateTime());
     bool ok = query.exec();

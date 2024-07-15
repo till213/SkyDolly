@@ -82,7 +82,7 @@ namespace SampleRate
     static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
 
     /*!
-     * Converts the given \c sampleRate enumeration value to the corresponding value in Hz.
+     * Converts the given \p sampleRate enumeration value to the corresponding value in Hz.
      *
      * \param sampleRate
      *        the sample rate enumeration to convert
@@ -121,11 +121,11 @@ namespace SampleRate
     }
 
     /*!
-     * Converts the given \c sampleRate in Hz to the corresponding enumeration value.
+     * Converts the given \p sampleRate in Hz to the corresponding enumeration value.
      *
      * \param sampleRate
      *        the sample rate in Hz to convert
-     * \return the sample rate enumeration value; default: \c Auto
+     * \return the sample rate enumeration value; default: \p Auto
      */
     constexpr SampleRate fromValue(double sampleRate) noexcept {
         if (sampleRate <= 1.0) {
@@ -158,7 +158,7 @@ namespace SampleRate
     }
 
     /*!
-     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRateValue [Hz].
+     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \p sampleRateValue [Hz].
      *
      * \param sampleRateValue
      *        the sample rate value to convert to the corresponding interval
@@ -173,7 +173,7 @@ namespace SampleRate
     }
 
     /*!
-     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRate [Hz].
+     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \p sampleRate [Hz].
      * \param sampleRate
      *        the sample rate to convert to the corresponding interval
      * \return the interval in milliseconds

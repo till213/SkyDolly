@@ -58,8 +58,8 @@ public:
     ~CsvParser() = default;
 
     /*!
-     * Parses the \c textStream as comma-separated values (CSV). The first row is ignored
-     * if it begins with either \c header or \c alternateHeader.
+     * Parses the \p textStream as comma-separated values (CSV). The first row is ignored
+     * if it begins with either \p header or \p alternateHeader.
      *
      * \param textStream
      *        the CSV to be parsed
@@ -84,14 +84,14 @@ public:
     const Headers &getHeaders() const noexcept;
 
     /*!
-     * Validates that there exists at least one Row in \c rows and that each Row has
-     * at least the \c expectedColumnCount.
+     * Validates that there exists at least one Row in \p rows and that each Row has
+     * at least the \p expectedColumnCount.
      *
      * \param rows
      *        the previously parsed CSV rows
      * \param expectedMinimumColumnCount
      *        the expected minimum column count of each row
-     * \return \c true if each row in Rows has \c expectedColumnCount items; \c false else
+     * \return \c true if each row in Rows has \p expectedColumnCount items; \c false else
      */
     static inline bool validate(const Rows &rows, std::size_t expectedMinimumColumnCount) noexcept
     {

@@ -93,7 +93,7 @@ struct MODEL_API FlightData final
     /*!
      * Returns the total duration of the flight [in milliseconds], that is it returns
      * the longest replay time of all aircraft, taking their time offsets into account.
-     * Unless \c ofUserAircraft is set to \c true, in which case the replay time of the
+     * Unless \p ofUserAircraft is set to \c true, in which case the replay time of the
      * \e user aircraft is returned.
      *
      * Note that the total duration is cached and not updated during recording. Use
@@ -151,7 +151,7 @@ struct MODEL_API FlightData final
 
     inline QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept
     {
-        return flightCondition.startLocalDateTime.addMSecs(-aircraft.getTimeOffset());
+        return flightCondition.getStartLocalDateTime().addMSecs(-aircraft.getTimeOffset());
     }
 
     inline QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept

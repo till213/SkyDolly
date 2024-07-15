@@ -52,8 +52,8 @@ public:
     bool update(const Location &location) const noexcept override;
 
     /*!
-     * Returns all positions that are within \c distanceKm [kilometers] from position
-     * \c latitude and \c longitude away.
+     * Returns all positions that are within \p distanceKm [kilometers] from position
+     * \p latitude and \p longitude away.
      *
      * The distance calculation uses a simple but fast formula with an error rate less
      * than 1% for distances <= 5 kilometers, even at the poles.
@@ -68,7 +68,7 @@ public:
      *        the distance [kilometers]
      * \param ok
      *        set to \c true when successful; \c false else (database error)
-     * \return the locations that are within the given \c distanceKm from the source location (\c latitude, \c longitude)
+     * \return the locations that are within the given \p distanceKm from the source location (\c latitude, \p longitude)
      */
     std::vector<Location> getByPosition(double latitude, double longitude, double distanceKm = 0.0, bool *ok = nullptr) const noexcept override;
     bool deleteById(std::int64_t id) const noexcept override;

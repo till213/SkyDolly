@@ -39,18 +39,18 @@ class KERNEL_API File final
 public:
 
     /*!
-     * Ensures that the given \c filePath has the extension \c extension, which is case-insensitive.
+     * Ensures that the given \p filePath has the extension \p extension, which is case-insensitive.
      *
      * \param filePath
-     *        the file path to be checked for extension \c extension
+     *        the file path to be checked for extension \p extension
      * \param extension
      *        the case-insensitive file extension
-     * \return the \c filePath with guaranteed extension \c extension
+     * \return the \p filePath with guaranteed extension \p extension
      */
     static QString ensureExtension(QStringView filePath, QStringView extension) noexcept;
 
     /*!
-     * Returns the \c filePath with a sequence number \c n appended to it (before the extension).
+     * Returns the \p filePath with a sequence number \p n appended to it (before the extension).
      *
      * Examples:
      *
@@ -67,7 +67,7 @@ public:
      * \param n
      *        the sequence number; while also negative values are acceptable meaningful sequence
      *        numbers should start with 1 and increase
-     * \return the \c filePath with a sequence number
+     * \return the \p filePath with a sequence number
      */
     static QString getSequenceFilePath(const QString &filePath, int n) noexcept;
 
