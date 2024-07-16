@@ -29,7 +29,7 @@
 #include <cstdint>
 #include <cmath>
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QByteArray>
 #include <QList>
 #include <QFileDialog>
@@ -1173,7 +1173,7 @@ void MainWindow::updateWindowSize() noexcept
         setMinimumSize(0, 0);
         // Let the layout manager realise that a widget has been hidden, which is an
         // asynchronous process
-        QApplication::processEvents();
+        QCoreApplication::processEvents();
         resize(0, 0);
         setFixedSize(minimumSize());
     } else {
@@ -1949,6 +1949,18 @@ void MainWindow::onStyleKeyChanged() noexcept
 #ifdef DEBUG
     qDebug() << "Style key changed (reboot).";
 #endif
-    qApp->quit();
-    QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
+    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
+    messageBox->setIcon(QMessageBox::Question);
+    QPushButton *laterButton = messageBox->addButton(tr("&Later"), QMessageBox::RejectRole);
+    QPushButton *restartButton = messageBox->addButton(tr("&Restart"), QMessageBox::AcceptRole);
+    messageBox->setWindowTitle(tr("Restart Required"));
+    messageBox->setText(tr("The changed style becomes visible after a restart."));
+    messageBox->setDefaultButton(laterButton);
+
+    messageBox->exec();
+    const QAbstractButton *clickedButton = messageBox->clickedButton();
+    if (clickedButton == restartButton) {
+        QCoreApplication::quit();
+        QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
+    }
 }
