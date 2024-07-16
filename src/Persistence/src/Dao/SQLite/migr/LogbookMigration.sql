@@ -1043,7 +1043,17 @@ alter table position drop column velocity_x;
 alter table position drop column velocity_y;
 alter table position drop column velocity_z;
 
-@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure consistent date time format", step_cnt = 5)
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - remove inconsistent local end simulation times", step_cnt = 7)
+update flight
+set end_local_sim_time = null
+where start_local_sim_time > end_local_sim_time;
+
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - remove inconsistent zulu end simulation times", step = 2)
+update flight
+set end_zulu_sim_time = null
+where start_zulu_sim_time > end_local_sim_time;
+
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure consistent date time format", step = 3)
 update flight
 set creation_time = strftime('%Y-%m-%dT%H:%M:%fZ', creation_time),
     start_zulu_sim_time = strftime('%Y-%m-%dT%H:%M:%fZ', start_zulu_sim_time),
@@ -1051,17 +1061,17 @@ set creation_time = strftime('%Y-%m-%dT%H:%M:%fZ', creation_time),
     end_zulu_sim_time = strftime('%Y-%m-%dT%H:%M:%fZ', end_zulu_sim_time),
     end_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', end_local_sim_time);
 
-@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid start zulu simulation time", step = 2)
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid start zulu simulation time", step = 4)
 update flight
 set start_zulu_sim_time = creation_time
 where start_zulu_sim_time is null;
 
-@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid start local simulation time", step = 3)
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid start local simulation time", step = 5)
 update flight
 set start_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', start_zulu_sim_time, 'localtime')
 where start_local_sim_time is null;
 
-@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid end zulu simulation time", step = 4)
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid end zulu simulation time", step = 6)
 update flight
 set end_zulu_sim_time = (select strftime('%Y-%m-%dT%H:%M:%fZ', start_zulu_sim_time, '+'
                                           || (select max(p.timestamp) / 1000
@@ -1077,7 +1087,7 @@ set end_zulu_sim_time = (select strftime('%Y-%m-%dT%H:%M:%fZ', start_zulu_sim_ti
                          )
 where end_zulu_sim_time is null;
 
-@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid end local simulation time", step = 5)
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid end local simulation time", step = 7)
 update flight
 set end_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', end_zulu_sim_time, 'localtime')
 where end_local_sim_time is null;
