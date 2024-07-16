@@ -1043,9 +1043,13 @@ alter table position drop column velocity_x;
 alter table position drop column velocity_y;
 alter table position drop column velocity_z;
 
-@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure proper creation time format", step_cnt = 5)
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure consistent date time format", step_cnt = 5)
 update flight
-set creation_time = strftime('%Y-%m-%dT%H:%M:%fZ', creation_time);
+set creation_time = strftime('%Y-%m-%dT%H:%M:%fZ', creation_time),
+    start_zulu_sim_time = strftime('%Y-%m-%dT%H:%M:%fZ', start_zulu_sim_time),
+    start_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', start_local_sim_time),
+    end_zulu_sim_time = strftime('%Y-%m-%dT%H:%M:%fZ', end_zulu_sim_time),
+    end_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', end_local_sim_time);
 
 @migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid start zulu simulation time", step = 2)
 update flight
@@ -1054,7 +1058,7 @@ where start_zulu_sim_time is null;
 
 @migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid start local simulation time", step = 3)
 update flight
-set start_local_sim_time = datetime(start_zulu_sim_time, 'localtime')
+set start_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', start_zulu_sim_time, 'localtime')
 where start_local_sim_time is null;
 
 @migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid end zulu simulation time", step = 4)
@@ -1075,7 +1079,7 @@ where end_zulu_sim_time is null;
 
 @migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid end local simulation time", step = 5)
 update flight
-set end_local_sim_time = datetime(end_zulu_sim_time, 'localtime')
+set end_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', end_zulu_sim_time, 'localtime')
 where end_local_sim_time is null;
 
 @migr(id = "8f2e6950-e3df-4f74-8237-1c76a09a8c40", descn = "Add NOT NULL date constraints to table flight, default ISO 8601 with timezone format", step_cnt = 3)

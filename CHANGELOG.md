@@ -70,6 +70,9 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
 - Also show the simulation departure- and arrival dates in the tooltip
 - The *Total Time of Flight* column now supports durations measured in days, weeks, months and even years
 
+### Application Settings
+- The application may now be automatically restarted after changing the user interface style ("Windows Vista", "Windows 11", "Fusion", ...)
+
 ## Bug Fixes
 - GPX export
   * The elevation (&lt;ele&gt;) values are now properly exported as "above mean sea level" (and not "above WGS84 reference ellipsoid" anymore)

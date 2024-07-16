@@ -311,7 +311,7 @@ void SettingsDialog::onFlightSimulatorConnectionSelectionChanged() const noexcep
 void SettingsDialog::onStyleChanged() noexcept
 {
     if (ui->styleComboBox->currentData().toString() != Settings::getInstance().getStyleKey()) {
-        ui->styleInfoLabel->setText(tr("Restart the application in order for the new style to take effect."));
+        ui->styleInfoLabel->setText(tr("Restart required."));
     } else {
         ui->styleInfoLabel->clear();
     }
