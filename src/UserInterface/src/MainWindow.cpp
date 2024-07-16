@@ -1946,9 +1946,9 @@ void MainWindow::onReplayLoopChanged() noexcept
 
 void MainWindow::onStyleKeyChanged() noexcept
 {
-    // TODO IMPLEMENT ME - This does not work reliably just yet (the executable name seems to be passed as 1st argument,
-    // causing Sky Dolly to make an attempt to open itself - also, the settings are sometimes not properly persisted (?)
-    // Settings::getInstance().store();
-    // qApp->quit();
-    // QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
+#ifdef DEBUG
+    qDebug() << "Style key changed (reboot).";
+#endif
+    qApp->quit();
+    QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
 }
