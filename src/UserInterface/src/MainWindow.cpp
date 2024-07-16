@@ -1947,10 +1947,10 @@ void MainWindow::onReplayLoopChanged() noexcept
 void MainWindow::onStyleKeyChanged() noexcept
 {
 #ifdef DEBUG
-    qDebug() << "Style key changed (reboot).";
+    qDebug() << "MainWindow::onStyleKeyChanged: Application style changed (restart).";
 #endif
     std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
-    messageBox->setIcon(QMessageBox::Question);
+    messageBox->setIcon(QMessageBox::Information);
     QPushButton *laterButton = messageBox->addButton(tr("&Later"), QMessageBox::RejectRole);
     QPushButton *restartButton = messageBox->addButton(tr("&Restart"), QMessageBox::AcceptRole);
     messageBox->setWindowTitle(tr("Restart Required"));
