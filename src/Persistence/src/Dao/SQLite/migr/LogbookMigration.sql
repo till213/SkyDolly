@@ -1071,72 +1071,24 @@ update flight
 set end_local_sim_time = null
 where start_local_sim_time > end_local_sim_time;
 
-
-// TODO FIXME
-
-select *
-from flight
-where end_local_sim_time < start_local_sim_time
-
-select *
-from flight
-where end_zulu_sim_time is null;
-
-select id, title, start_zulu_sim_time
-from flight
-where id in (350);
-
-update flight
-set end_zulu_sim_time = (select strftime('%Y-%m-%dT%H:%M:%fZ', start_zulu_sim_time, '+'
-                                          || (select max(p.timestamp) / 1000
-                                              from position p
-                                              join aircraft a
-                                              on p.aircraft_id = a.id
-                                              join flight f
-                                              on a.flight_id = f.id)
-                                          || ' seconds'
-                                         )
-                          from flight f
-                          where f.id = id
-                         )
-where end_zulu_sim_time is null;
-
-select *
-from flight
-where end_local_sim_time > datetime('2022-05-11T18:59:40');
-
-
--- 2023-05-27T21:20:30.000Z
-select strftime('%Y-%m-%dT%H:%M:%fZ', ff.start_zulu_sim_time, '+'
-                                          || (select max(p.timestamp) / 1000
-                                              from position p
-                                              join aircraft a
-                                              on p.aircraft_id = a.id
-                                              where a.flight_id = ff.id)
-                                          || ' seconds'
-                                         ) as time
-                          from flight ff
-                          where ff.id = 350;
-
 @migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid end zulu simulation time", step = 6)
 update flight
 set end_zulu_sim_time = (select strftime('%Y-%m-%dT%H:%M:%fZ', start_zulu_sim_time, '+'
                                           || (select max(p.timestamp) / 1000
-                                              from position p
-                                              join aircraft a
-                                              on p.aircraft_id = a.id
-                                              join flight f
-                                              on a.flight_id = f.id)
+                                              from  position p
+                                              join  aircraft a
+                                              on    p.aircraft_id = a.id
+                                              where a.flight_id = id
+                                                and a.seq_nr = 1
+                                             )
                                           || ' seconds'
-                                         )
-                          from flight f
-                          where f.id = id
-                         )
+                                        )
+                        )
 where end_zulu_sim_time is null;
 
 @migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid end local simulation time", step = 7)
 update flight
-set end_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', end_zulu_sim_time, 'localtime')
+set end_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', '-' // TODO subtract actual time different between zulu and local start times (NOT "localtime"))
 where end_local_sim_time is null;
 
 @migr(id = "8f2e6950-e3df-4f74-8237-1c76a09a8c40", descn = "Add NOT NULL date constraints to table flight, default ISO 8601 with timezone format", step_cnt = 3)
