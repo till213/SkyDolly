@@ -88,6 +88,7 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
 
 ## Under the Hood
 - Ensure common creation- and start/end date (local and zulu) date & time formats on database level, add "not null" constraint for data conistency
+- Upgrade GeographicLib to version 2.4 (from version 2.3)
 
 ## 0.17.5
 This bug fix release provides an important correction for a regression that would prevent recording (and possibly replay as well), due to wrongly creating an IPv4 network connection instead of a local ("pipe") connection.
