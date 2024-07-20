@@ -50,18 +50,6 @@ namespace SimConnectEvent
         FreezeAltitude,
         FreezeAttitude,
         // Engine
-        AxisThrottle1Set,
-        AxisThrottle2Set,
-        AxisThrottle3Set,
-        AxisThrottle4Set,
-        AxisPropeller1Set,
-        AxisPropeller2Set,
-        AxisPropeller3Set,
-        AxisPropeller4Set,
-        CowlFlap1Set,
-        CowlFlap2Set,
-        CowlFlap3Set,
-        CowlFlap4Set,
         EngineAutoStart,
         EngineAutoShutdown,
         // Primary flight controls
