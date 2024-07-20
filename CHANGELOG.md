@@ -59,12 +59,12 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
 ### Simulation Variables
 - Position- and attitude simulation variables are now sampled separately
   * Position data (latitude, longitude, altitude) is only sampled at 1Hz: the expectation is that "stutters" during recording should be automatically smoothened out
-- The following simulation variables are newly recorded:
-  * `SIM_ON_GROUND` (for each aircraft attitude change)
-  * `STEER_INPUT_CONTROL` (nose wheel steering)
 - Removed `SMOKE_ENABLE` support
   * Reasoning: from the [official documenation](https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_System_Variables.htm#SMOKESYSTEM_AVAILABLE): "There is no default 'smoke system' that this SimVar works on and this is a legacy variable that is available for use should you wish to use it but it affects nothing by default."
   * Some aircraft seem to (re-)use this simulation variable for other purposes, with unexpected visual results
+- The following simulation variables are newly recorded and replayed:
+  * `SIM_ON_GROUND` (for each aircraft attitude change)
+  * `STEER_INPUT_CONTROL` (nose wheel steering)
 - Record the following new simulation variables, for analytical purposes
   * `INDICATED_ALTITUDE_CALIBRATED`
   * `PRESSURE_ALTITUDE`
