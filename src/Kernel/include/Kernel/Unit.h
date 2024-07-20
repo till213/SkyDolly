@@ -240,6 +240,13 @@ public:
      */
     static QString formatHHMMSS(QTime time) noexcept;
 
+    /*!
+     * Formats the boolean \p value as \e true or \e false string.
+     *
+     * \param value
+     *        the boolean value to be formatted
+     * \return the boolean formatted string
+     */
     static QString formatBoolean(bool value) noexcept;
 
     /*!

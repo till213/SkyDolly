@@ -26,6 +26,7 @@
 #define EVENTSTATEHANDLER_H
 
 #include <cstdint>
+#include <cstdlib>
 #include <algorithm>
 
 #include <windows.h>

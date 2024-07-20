@@ -25,12 +25,14 @@
 #ifndef SIMULATIONRATE_H
 #define SIMULATIONRATE_H
 
-#ifdef DEBUG
-#include <QDebug>
-#endif
+#include <cstdlib>
 
 #include <windows.h>
 #include <SimConnect.h>
+
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include "EventState.h"
