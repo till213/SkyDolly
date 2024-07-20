@@ -346,7 +346,7 @@ create index location_idx6 on location(on_ground);
 
 @migr(id = "c94c121e-3d93-44e4-a747-6db2b5e3b45b", descn = "Update application version to 0.12", step = 1)
 update metadata
-set app_version = '0.12.0';
+set    app_version = '0.12.0';
 
 @migr(id = "eeed782c-d594-4635-88d7-15b8d4ab7edc", descn = "Create engine event enumeration table", step_cnt = 2)
 create table enum_engine_event(
@@ -393,7 +393,7 @@ where  sym_id = 'QA';
 
 @migr(id = "55a04d46-fc38-445a-8967-f84c96aa41bb", descn = "Update application version to 0.13", step = 1)
 update metadata
-set app_version = '0.13.0';
+set    app_version = '0.13.0';
 
 @migr(id = "7620ca47-cbd3-4718-9ea9-0d701236aa58", descn = "Add new location categories", step = 1)
 insert into enum_location_category(sym_id, name, desc)
@@ -407,20 +407,20 @@ values
 
 @migr(id = "b7c620c9-5ffe-4fdc-a120-cba323e327d0", descn = "Update application version to 0.14", step = 1)
 update metadata
-set app_version = '0.14.0';
+set    app_version = '0.14.0';
 
 @migr(id = "6a3f5879-8974-4685-9285-ec1f174fdacb", descn = "Update application version to 0.15", step = 1)
 update metadata
-set app_version = '0.15.0';
+set    app_version = '0.15.0';
 
 @migr(id = "24916944-050e-4569-8352-1446fe3137d2", descn = "Update application version to 0.16", step = 1)
 update metadata
-set app_version = '0.16.0';
+set    app_version = '0.16.0';
 
 @migr(id = "54eddc7a-1a89-40ae-af73-0c6ae74e6a2d", descn = "Update application version to 0.17", step = 1)
 update metadata
-set app_version = '0.17.0';
+set    app_version = '0.17.0';
 
 @migr(id = "36bb8b21-76c4-4f71-9644-b78abaefdb64", descn = "Update application version to 0.18", step = 1)
 update metadata
-set app_version = '0.18.0';
+set    app_version = '0.18.0';
