@@ -9,8 +9,6 @@
 - Choose and set a suitable "version codename" in [Version.cpp](src/Kernel/src/Version.cpp)
 - Update the "preview dialog" message in [MainWindow.cpp](src/UserInterface/src/MainWindow.cpp)
 - Adjust the `PreviewInfoDialogBase` in [Settings.cpp](src/Kernel/src/Settings.cpp) in order to show the preview dialog three times
-- Adjust the _Latest (pre-)release: Sky Dolly 0.18.0_ in [README.md](README.md)
-- Adjust the supported versions in [SECURITY.md](SECURITY.md)
 
 ### Settings
 - Ensure that settings are converted to latest version in [SettingsConverter.cpp](src/Kernel/src/SettingsConverter.cpp)
@@ -122,6 +120,8 @@ This release provides feature X.
 ### Flightsim.to
 - Publish the release on: https://flightsim.to/file/9067/sky-dolly
 - Update screenshots
+- Adjust the _Latest (pre-)release: Sky Dolly 0.18.0_ in [README.md](README.md)
+- Adjust the supported versions in [SECURITY.md](SECURITY.md)
 
 ## Landing
 
