@@ -1154,3 +1154,7 @@ set    steer_input_control = 0;
 @migr(id = "80bcc81a-6554-4e05-8631-d17358d9d1dd", descn = "Update application version to 0.18", step = 1)
 update metadata
 set    app_version = '0.18.0';
+
+@migr(id = "e90abf13-a938-4833-ba10-afc43bbb4132", descn = "Update application version to 0.19", step = 1)
+update metadata
+set    app_version = '0.19.0';
