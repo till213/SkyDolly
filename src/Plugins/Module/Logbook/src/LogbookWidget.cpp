@@ -180,19 +180,19 @@ void LogbookWidget::initUi() noexcept
         tr("Arrival"),
         tr("Total Time of Flight")
     };
-    LogbookWidgetPrivate::flightIdColumn = headers.indexOf(tr("Flight"));
-    LogbookWidgetPrivate::titleColumn = headers.indexOf(tr("Title"));
-    LogbookWidgetPrivate::flightNumberColumn = headers.indexOf(tr("Flight Number"));
-    LogbookWidgetPrivate::userAircraftColumn = headers.indexOf(tr("User Aircraft"));    
-    LogbookWidgetPrivate::aircraftCountColumn = headers.indexOf(tr("Number of Aircraft"));
-    LogbookWidgetPrivate::recordingDateColumn = headers.indexOf(tr("Recording Date"));
-    LogbookWidgetPrivate::startTimeColumn = headers.indexOf(tr("Departure Time"));
-    LogbookWidgetPrivate::startLocationColumn = headers.indexOf(tr("Departure"));
-    LogbookWidgetPrivate::endTimeColumn = headers.indexOf(tr("Arrival Time"));
-    LogbookWidgetPrivate::endLocationColumn = headers.indexOf(tr("Arrival"));
-    LogbookWidgetPrivate::durationColumn = headers.indexOf(tr("Total Time of Flight"));
+    LogbookWidgetPrivate::flightIdColumn = static_cast<int>(headers.indexOf(tr("Flight")));
+    LogbookWidgetPrivate::titleColumn = static_cast<int>(headers.indexOf(tr("Title")));
+    LogbookWidgetPrivate::flightNumberColumn = static_cast<int>(headers.indexOf(tr("Flight Number")));
+    LogbookWidgetPrivate::userAircraftColumn = static_cast<int>(headers.indexOf(tr("User Aircraft")));
+    LogbookWidgetPrivate::aircraftCountColumn = static_cast<int>(headers.indexOf(tr("Number of Aircraft")));
+    LogbookWidgetPrivate::recordingDateColumn = static_cast<int>(headers.indexOf(tr("Recording Date")));
+    LogbookWidgetPrivate::startTimeColumn = static_cast<int>(headers.indexOf(tr("Departure Time")));
+    LogbookWidgetPrivate::startLocationColumn = static_cast<int>(headers.indexOf(tr("Departure")));
+    LogbookWidgetPrivate::endTimeColumn = static_cast<int>(headers.indexOf(tr("Arrival Time")));
+    LogbookWidgetPrivate::endLocationColumn = static_cast<int>(headers.indexOf(tr("Arrival")));
+    LogbookWidgetPrivate::durationColumn = static_cast<int>(headers.indexOf(tr("Total Time of Flight")));
 
-    ui->logTableWidget->setColumnCount(headers.count());
+    ui->logTableWidget->setColumnCount(static_cast<int>(headers.count()));
     ui->logTableWidget->setHorizontalHeaderLabels(headers);
     ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->logTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);

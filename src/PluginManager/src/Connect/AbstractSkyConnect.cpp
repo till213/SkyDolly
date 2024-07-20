@@ -833,12 +833,7 @@ bool AbstractSkyConnect::setupInitialRecordingPosition(InitialPosition initialPo
 bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition initialPosition) noexcept
 {
     bool ok {true};
-    switch (d->replayMode) {
-    case ReplayMode::FlyWithFormation:
-        if (!initialPosition.isNull()) {
-            ok = onInitialPositionSetup(initialPosition);
-        }
-        break;
+    switch (d->replayMode) {    
     case ReplayMode::UserAircraftManualControl:
         [[fallthrough]];
     case ReplayMode::Normal:
@@ -852,6 +847,11 @@ bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition initialPosit
                 const InitialPosition initialPosition = InitialPosition(positionData, attitudeData);
                 ok = onInitialPositionSetup(initialPosition);
             }
+        }
+        break;
+    case ReplayMode::FlyWithFormation:
+        if (!initialPosition.isNull()) {
+            ok = onInitialPositionSetup(initialPosition);
         }
         break;
     }

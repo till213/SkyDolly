@@ -67,7 +67,9 @@ struct FormationSettingsPrivate
 FormationSettings::FormationSettings() noexcept
     : ModuleBaseSettings(),
       d {std::make_unique<FormationSettingsPrivate>()}
-{}
+{
+    frenchConnection();
+}
 
 FormationSettings::~FormationSettings() = default;
 
@@ -132,7 +134,7 @@ void FormationSettings::setReplayMode(SkyConnectIntf::ReplayMode replayMode) noe
 {
     if (d->replayMode != replayMode) {
         d->replayMode = replayMode;
-        emit changed();
+        emit replayModeChanged(d->replayMode);
     }
 }
 
@@ -234,4 +236,12 @@ void FormationSettings::restoreDefaultsExtn() noexcept
     d->relativePositionPlacement = ::DefaultRelativePositionPlacement;
     d->replayMode = ::DefaultReplayMode;
     d->formationAircraftTableState = {};
+}
+
+// PRIVATE
+
+void FormationSettings::frenchConnection() noexcept
+{
+    connect(this, &FormationSettings::replayModeChanged,
+            this, &ModuleBaseSettings::changed);
 }

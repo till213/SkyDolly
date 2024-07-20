@@ -74,11 +74,12 @@ AircraftHandleWidget::~AircraftHandleWidget() = default;
 
 void AircraftHandleWidget::initUi() noexcept
 {
+    ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
     ui->gearLineEdit->setToolTip(SimVar::GearHandlePosition);
     ui->brakeLeftLineEdit->setToolTip(SimVar::BrakeLeftPosition);
     ui->brakeRightLineEdit->setToolTip(SimVar::BrakeRightPosition);
-    ui->waterRudderLineEdit->setToolTip(SimVar::WaterRudderHandlePosition);
-    ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
+    ui->steerInputControlLineEdit->setToolTip(SimVar::SteerInputControl);
+    ui->waterRudderLineEdit->setToolTip(SimVar::WaterRudderHandlePosition);    
     ui->tailhookHandleLineEdit->setToolTip(SimVar::TailhookHandle);
     ui->tailhookPositionLineEdit->setToolTip(SimVar::TailhookPosition);
     ui->wingFoldingHandleLineEdit->setToolTip(SimVar::FoldingWingHandlePosition);
@@ -113,11 +114,12 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
     QString colorName;
 
     if (!aircraftHandleData.isNull()) {
+        ui->canopyOpenLineEdit->setText(d->unit.formatPercent(aircraftHandleData.canopyOpen));
         aircraftHandleData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));
         ui->brakeLeftLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeLeftPosition));
         ui->brakeRightLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeRightPosition));
-        ui->waterRudderLineEdit->setText(d->unit.formatPosition(aircraftHandleData.waterRudderHandlePosition));
-        ui->canopyOpenLineEdit->setText(d->unit.formatPercent(aircraftHandleData.canopyOpen));
+        ui->steerInputControlLineEdit->setText(d->unit.formatPosition(aircraftHandleData.steerInputControl));
+        ui->waterRudderLineEdit->setText(d->unit.formatPosition(aircraftHandleData.waterRudderHandlePosition));        
         aircraftHandleData.tailhookHandlePosition ? ui->tailhookHandleLineEdit->setText(tr("Extended")) : ui->tailhookHandleLineEdit->setText(tr("Retracted"));
         ui->tailhookPositionLineEdit->setText(d->unit.formatPercent(aircraftHandleData.tailhookPosition));
         aircraftHandleData.foldingWingHandlePosition ? ui->wingFoldingHandleLineEdit->setText(tr("Retracted")) : ui->wingFoldingHandleLineEdit->setText(tr("Extended"));
@@ -130,11 +132,12 @@ void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Ac
     }
 
     const auto css{QStringLiteral("color: %1;").arg(colorName)};
+    ui->canopyOpenLineEdit->setStyleSheet(css);
     ui->gearLineEdit->setStyleSheet(css);
     ui->brakeLeftLineEdit->setStyleSheet(css);
     ui->brakeRightLineEdit->setStyleSheet(css);
-    ui->waterRudderLineEdit->setStyleSheet(css);
-    ui->canopyOpenLineEdit->setStyleSheet(css);
+    ui->steerInputControlLineEdit->setStyleSheet(css);
+    ui->waterRudderLineEdit->setStyleSheet(css);    
     ui->tailhookHandleLineEdit->setStyleSheet(css);
     ui->tailhookPositionLineEdit->setStyleSheet(css);
     ui->wingFoldingHandleLineEdit->setStyleSheet(css);

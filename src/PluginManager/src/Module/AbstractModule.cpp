@@ -58,6 +58,19 @@ ModuleIntf::RecordIconId AbstractModule::getRecordIconId() const noexcept
     return ModuleIntf::RecordIconId::Normal;
 }
 
+void AbstractModule::setupInitialPosition() noexcept
+{
+    auto &skyConnectManager = SkyConnectManager::getInstance();
+    // Ensure that the user aircraft is relocated, by setting the replay mode to "normal"
+    skyConnectManager.setReplayMode(SkyConnectIntf::ReplayMode::Normal);
+    // Make sure we are unpaused...
+    setPaused(false);
+    // ... play the first frame (which will "move" to the new location)...
+    setPlaying(true);
+    // ... and pause again (such that the new scenery can be loaded)
+    setPaused(true);
+}
+
 void AbstractModule::setRecording(bool enable) noexcept
 {
     auto &skyConnectManager = SkyConnectManager::getInstance();

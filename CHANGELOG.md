@@ -36,6 +36,9 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
   * This allows for exact day of time reproductions, useful e.g. for video editing when video-recording (via separate screen capture solutions) the same flight multiple times from different camera angles
   * The time synchroniation can be enabled and disabled in the application settings, under *Replay* (default: *simulation time*)
 - The replay time widget now properly displays replay times longer than a day (for instance one year or longer), by including also the actual start date
+- When loading a flight from the logbook the replay mode is automatically reset to *Normal*
+  * This ensures that the user aircraft is placed at its initial replay position (instead of being left at its current position in case *Fly With Formation* was previously active)
+  * Switching to the Formation module will then restore the last selected replay mode again (*Formation (Normal)*, *Take control of recorded user aircraft*, *Fly with formation*), according to the persisted module settings
 
 ### Import & Export
 - A new *Export system locations* option has been added to the location export
@@ -56,7 +59,9 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
 ### Simulation Variables
 - Position- and attitude simulation variables are now sampled separately
   * Position data (latitude, longitude, altitude) is only sampled at 1Hz: the expectation is that "stutters" during recording should be automatically smoothened out
-- The `SIM_ON_GROUND` simulation variable is now also recorded (for each aircraft attitude change)
+- The following simulation variables are newly recorded:
+  * `SIM_ON_GROUND` (for each aircraft attitude change)
+  * `STEER_INPUT_CONTROL` (nose wheel steering)
 - Removed `SMOKE_ENABLE` support
   * Reasoning: from the [official documenation](https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_System_Variables.htm#SMOKESYSTEM_AVAILABLE): "There is no default 'smoke system' that this SimVar works on and this is a legacy variable that is available for use should you wish to use it but it affects nothing by default."
   * Some aircraft seem to (re-)use this simulation variable for other purposes, with unexpected visual results
@@ -77,8 +82,9 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
 - GPX export
   * The elevation (&lt;ele&gt;) values are now properly exported as "above mean sea level" (and not "above WGS84 reference ellipsoid" anymore)
   * The trackpoint timestamps are properly calculated and exported when exporting the entire flight (and not just the user aircraft); the proper timezone suffix (Z) is appended, too (ISO 8601 format)
-- Formation recording
+- Formation module
   * Record the flight conditions - specifically the flight start date/time - when the *first* aircraft is recorded (directly from within the Formation module)
+  * Prevent teleporation to the equator (0° latitude, 0° longitude) when no flight is currently loaded and *Fly with formation* is selected
 - Do not reset the time edit widget when the recording is paused (keep the current recorded time)
 - Migrate (update) missing logbook start- and end simulation times (local and zulu) based on the actual recorded positions (timestamps) amd/or the recording creation date/time
 
@@ -88,6 +94,8 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
 
 ## Under the Hood
 - Ensure common creation- and start/end date (local and zulu) date & time formats on database level, add "not null" constraint for data conistency
+- Upgrade GeographicLib to version 2.4 (from version 2.3)
+- Upgrade cpptrace to version 0.6.3 (from 0.5.2)
 
 ## 0.17.5
 This bug fix release provides an important correction for a regression that would prevent recording (and possibly replay as well), due to wrongly creating an IPv4 network connection instead of a local ("pipe") connection.

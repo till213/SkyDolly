@@ -347,6 +347,8 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::onTableLayoutChanged);
     connect(&d->moduleSettings, &ModuleBaseSettings::changed,
             this, &FormationWidget::onModuleSettingsChanged);
+    connect(&d->moduleSettings, &FormationSettings::replayModeChanged,
+            this, &FormationWidget::onModuleSettingsReplayModeChanged);
 }
 
 void FormationWidget::updateTable() noexcept
@@ -739,35 +741,38 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
 
 void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept
 {
-    auto &skyConnectManager = SkyConnectManager::getInstance();
-    if (d->moduleSettings.isRelativePositionPlacementEnabled()) {
-        switch(replayMode) {
-        case SkyConnectIntf::ReplayMode::Normal:
-            break;
-        case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
-        {
-            auto &flight = Logbook::getInstance().getCurrentFlight();
-            const auto &aircraft = flight.getUserAircraft();
-            const auto timestamp = skyConnectManager.getCurrentTimestamp();
-            const auto &position = aircraft.getPosition();
-            const auto &positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
-            const auto &attitude = aircraft.getAttitude();
-            const auto &attitudeData = attitude.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
-            skyConnectManager.setUserAircraftPositionAndAttitude(positionData, attitudeData);
-            break;
-        }
-        case SkyConnectIntf::ReplayMode::FlyWithFormation:
-            const Formation::HorizontalDistance horizontalDistance {getHorizontalDistance()};
-            const Formation::VerticalDistance verticalDistance {getVerticalDistance()};
-            const Formation::Bearing relativePosition {getRelativePosition()};
-            const auto positionAndAtitude = Formation::calculateRelativePositionToUserAircraft(
-                horizontalDistance,
-                verticalDistance,
-                relativePosition,
-                skyConnectManager.getCurrentTimestamp()
-            );
-            skyConnectManager.setUserAircraftPositionAndAttitude(positionAndAtitude.first, positionAndAtitude.second);
-            break;
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
+    if (flight.hasRecording()) {
+        auto &skyConnectManager = SkyConnectManager::getInstance();
+        if (d->moduleSettings.isRelativePositionPlacementEnabled()) {
+            switch(replayMode) {
+            case SkyConnectIntf::ReplayMode::Normal:
+                break;
+            case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
+            {
+                auto &flight = Logbook::getInstance().getCurrentFlight();
+                const auto &aircraft = flight.getUserAircraft();
+                const auto timestamp = skyConnectManager.getCurrentTimestamp();
+                const auto &position = aircraft.getPosition();
+                const auto &positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+                const auto &attitude = aircraft.getAttitude();
+                const auto &attitudeData = attitude.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+                skyConnectManager.setUserAircraftPositionAndAttitude(positionData, attitudeData);
+                break;
+            }
+            case SkyConnectIntf::ReplayMode::FlyWithFormation:
+                const Formation::HorizontalDistance horizontalDistance {getHorizontalDistance()};
+                const Formation::VerticalDistance verticalDistance {getVerticalDistance()};
+                const Formation::Bearing relativePosition {getRelativePosition()};
+                const auto positionAndAtitude = Formation::calculateRelativePositionToUserAircraft(
+                    horizontalDistance,
+                    verticalDistance,
+                    relativePosition,
+                    skyConnectManager.getCurrentTimestamp()
+                );
+                skyConnectManager.setUserAircraftPositionAndAttitude(positionAndAtitude.first, positionAndAtitude.second);
+                break;
+            }
         }
     }
 }
@@ -985,11 +990,8 @@ void FormationWidget::onVerticalDistanceChanged() noexcept
 
 void FormationWidget::onReplayModeSelected() noexcept
 {
-    auto &skyConnectManager = SkyConnectManager::getInstance();
     SkyConnectIntf::ReplayMode replayMode {static_cast<SkyConnectIntf::ReplayMode>(ui->replayModeComboBox->currentData().toInt())};
-    skyConnectManager.setReplayMode(replayMode);
     d->moduleSettings.setReplayMode(replayMode);
-    updateUi();
 }
 
 void FormationWidget::onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode)
@@ -1083,6 +1085,11 @@ void FormationWidget::onModuleSettingsChanged() noexcept
 
     updateTable();
     updateReplayModeUi(d->moduleSettings.getReplayMode());
+}
+
+void FormationWidget::onModuleSettingsReplayModeChanged(SkyConnectIntf::ReplayMode mode) noexcept
+{
+    SkyConnectManager::getInstance().setReplayMode(mode);
 }
 
 QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept

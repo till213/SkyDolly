@@ -53,6 +53,7 @@ public:
     ~AbstractModule() override;
 
     ModuleIntf::RecordIconId getRecordIconId() const noexcept override;
+    void setupInitialPosition() noexcept override;
     void setRecording(bool enable) noexcept override;
     void setPaused(bool enable) noexcept override;
     void setPlaying(bool enable) noexcept override;

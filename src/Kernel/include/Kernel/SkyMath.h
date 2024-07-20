@@ -29,6 +29,7 @@
 #include <limits>
 #include <utility>
 #include <cstdint>
+#include <cstdlib>
 #include <exception>
 #include <cassert>
 
@@ -142,9 +143,9 @@ namespace SkyMath
         T y1n;
         T s0 = sgn(y0);
         if (sgn(y1) != s0) {
-            T diff = qAbs(y1 - y0);
+            T diff = std::abs(y1 - y0);
             if (diff > T(180)) {
-                y1n = s0 * (T(360) - qAbs(y1));
+                y1n = s0 * (T(360) - std::abs(y1));
             } else {
                 y1n = y1;
             }

@@ -81,7 +81,7 @@ namespace SimConnectEvent
         GearUp,
         SetTailHookHandle,
         SetWingFold,
-        SmokeSet,
+        AxisSteeringSet,
         // Light
         ToggleNavLights,
         ToggleBeaconLights,

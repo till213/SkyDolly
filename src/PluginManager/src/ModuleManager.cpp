@@ -172,6 +172,15 @@ const QIcon &ModuleManager::getRecordIcon() const noexcept
     return d->recordIcon;
 }
 
+void ModuleManager::setupInitialPosition() noexcept
+{
+    if (d->activeModule != nullptr) {
+        d->activeModule->setupInitialPosition();
+    } else {
+        d->defaultModuleImpl->setupInitialPosition();
+    }
+}
+
 void ModuleManager::setRecording(bool enable) noexcept
 {
     if (d->activeModule != nullptr) {

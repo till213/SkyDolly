@@ -26,6 +26,7 @@
 #include <cmath>
 #include <limits>
 #include <cstdint>
+#include <cstdlib>
 
 #include <GeographicLib/DMS.hpp>
 
@@ -265,24 +266,25 @@ QString Unit::formatTimestamp(std::int64_t timestamp, const QDateTime &startDate
 QString Unit::formatElapsedTime(std::int64_t milliseconds) const noexcept
 {
     QString elapsedTime;
-    if (qAbs(milliseconds) < MillisecondsPerSecond) {
+    const auto duration = std::abs(milliseconds);
+    if (duration < MillisecondsPerSecond) {
         elapsedTime = QCoreApplication::translate("Unit", "%1 milliseconds", nullptr, static_cast<int>(milliseconds)).arg(milliseconds);
-    } else if (qAbs(milliseconds) < MillisecondsPerMinute) {
+    } else if (duration < MillisecondsPerMinute) {
         const auto seconds = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerSecond);
         elapsedTime = QCoreApplication::translate("Unit", "%1 seconds", nullptr, static_cast<int>(seconds)).arg(QString::number(seconds, 'f', 1));
-    } else if (qAbs(milliseconds) < MillisecondsPerHour) {
+    } else if (duration < MillisecondsPerHour) {
         const auto minutes = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerMinute);
         elapsedTime = QCoreApplication::translate("Unit", "%1 minutes", nullptr, static_cast<int>(minutes)).arg(QString::number(minutes, 'f', 1));
-    } else if (qAbs(milliseconds) < MillisecondsPerDay) {
+    } else if (duration < MillisecondsPerDay) {
         const auto hours = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerHour);
         elapsedTime = QCoreApplication::translate("Unit", "%1 hours", nullptr, static_cast<int>(hours)).arg(QString::number(hours, 'f', 1));
-    } else if (qAbs(milliseconds) < MillisecondsPerWeek) {
+    } else if (duration < MillisecondsPerWeek) {
         const auto days = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerDay);
         elapsedTime = QCoreApplication::translate("Unit", "%1 days", nullptr, static_cast<int>(days)).arg(QString::number(days, 'f', 1));
-    } else if (qAbs(milliseconds) < MillisecondsPerMonth) {
+    } else if (duration < MillisecondsPerMonth) {
         const auto weeks = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerWeek);
         elapsedTime = QCoreApplication::translate("Unit", "%1 weeks", nullptr, static_cast<int>(weeks)).arg(QString::number(weeks, 'f', 1));
-    } else if (qAbs(milliseconds) < MillisecondsPerYear) {
+    } else if (duration < MillisecondsPerYear) {
         const auto months = static_cast<double>(milliseconds) / static_cast<double>(MillisecondsPerMonth);
         elapsedTime = QCoreApplication::translate("Unit", "%1 months", nullptr, static_cast<int>(months)).arg(QString::number(months, 'f', 1));
     } else {

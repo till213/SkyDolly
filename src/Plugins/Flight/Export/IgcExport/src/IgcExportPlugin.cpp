@@ -24,7 +24,7 @@
  */
 #include <algorithm>
 #include <cmath>
-#include <vector>
+#include <cstdlib>
 
 #include <QtGlobal>
 #include <QIODevice>
@@ -389,7 +389,7 @@ inline int IgcExportPlugin::estimateEnvironmentalNoise(const EngineData &engineD
 {
     int noise {0};
     if (engineData.hasCombustion()) {
-        noise = static_cast<int>(static_cast<double>(qAbs(engineData.propellerLeverPosition1)) / SkyMath::PositionMax16 * 999.0);
+        noise = static_cast<int>(static_cast<double>(std::abs(engineData.propellerLeverPosition1)) / SkyMath::PositionMax16 * 999.0);
         noise = std::min(noise, 999);
     } else {
         noise = 0;
