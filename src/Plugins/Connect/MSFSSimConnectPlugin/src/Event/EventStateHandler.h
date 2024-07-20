@@ -189,7 +189,7 @@ public:
 
     inline bool sendPrimaryFlightControl(const SimConnectPrimaryFlightControlEvent &event) noexcept
     {
-        // The recorded control surface values have opposite sign than the event values to be sent
+        // The recorded simulation variables have the opposite sign than the event values to be sent
         HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisRudderSet), -positionTo16K(event.rudderPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisAileronsSet), -positionTo16K(event.aileronPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisElevatorSet), -positionTo16K(event.elevatorPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
@@ -222,11 +222,7 @@ public:
             sendWingFold(aircraftHandle.info.foldingWingHandlePosition);
         }
         if (ok) {
-            const auto position = SkyMath::fromNormalisedPosition(aircraftHandle.event.steerInputControl) / 2;
-#ifdef DEBUG
-            qDebug() << "sendAircraftHandle: Set nose wheel:" << position;
-#endif
-            sendSteeringAxis(position);
+            sendSteeringAxis(aircraftHandle.event.steerInputControl);
         }
         return ok;
     }
@@ -524,9 +520,10 @@ private:
         return result == S_OK;
     }
 
-    inline bool sendSteeringAxis(std::int32_t position) noexcept
+    inline bool sendSteeringAxis(float position) noexcept
     {
-        const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisSteeringSet), position, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        // The recorded simulation variable has the opposite sign than the event values to be sent
+        const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisSteeringSet), -positionTo16K(position), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
