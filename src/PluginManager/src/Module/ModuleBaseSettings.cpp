@@ -22,11 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
-
-#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include <Kernel/SampleRate.h>
 #include <Module/ModuleBaseSettings.h>
 
 

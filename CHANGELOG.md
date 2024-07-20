@@ -36,6 +36,9 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
   * This allows for exact day of time reproductions, useful e.g. for video editing when video-recording (via separate screen capture solutions) the same flight multiple times from different camera angles
   * The time synchroniation can be enabled and disabled in the application settings, under *Replay* (default: *simulation time*)
 - The replay time widget now properly displays replay times longer than a day (for instance one year or longer), by including also the actual start date
+- When loading a flight from the logbook the replay mode is automatically reset to *Normal*
+  * This ensures that the user aircraft is placed at its initial replay position (instead of being left at its current position in case *Fly With Formation* was previously active)
+  * Switching to the Formation module will then restore the last selected replay mode again (*Formation (Normal)*, *Take control of recorded user aircraft*, *Fly with formation*), according to the persisted module settings
 
 ### Import & Export
 - A new *Export system locations* option has been added to the location export
@@ -77,8 +80,9 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
 - GPX export
   * The elevation (&lt;ele&gt;) values are now properly exported as "above mean sea level" (and not "above WGS84 reference ellipsoid" anymore)
   * The trackpoint timestamps are properly calculated and exported when exporting the entire flight (and not just the user aircraft); the proper timezone suffix (Z) is appended, too (ISO 8601 format)
-- Formation recording
+- Formation module
   * Record the flight conditions - specifically the flight start date/time - when the *first* aircraft is recorded (directly from within the Formation module)
+  * Prevent teleporation to the equator (0° latitude, 0° longitude) when no flight is currently loaded and *Fly with formation* is selected
 - Do not reset the time edit widget when the recording is paused (keep the current recorded time)
 - Migrate (update) missing logbook start- and end simulation times (local and zulu) based on the actual recorded positions (timestamps) amd/or the recording creation date/time
 

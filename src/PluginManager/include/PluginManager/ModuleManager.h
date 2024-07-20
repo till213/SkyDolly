@@ -76,6 +76,10 @@ public:
      */
     const QIcon &getRecordIcon() const noexcept;
 
+    /*!
+     * Setups the initial aircraft position, typically after a flight has been loaded.
+     */
+    void setupInitialPosition() noexcept;
     void setRecording(bool enable) noexcept;
     void setPlaying(bool enable) noexcept;
     void setPaused(bool enable) noexcept;

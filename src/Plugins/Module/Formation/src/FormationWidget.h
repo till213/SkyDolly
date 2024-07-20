@@ -132,6 +132,7 @@ private slots:
     // Settings
     void onTableLayoutChanged() noexcept;
     void onModuleSettingsChanged() noexcept;
+    void onModuleSettingsReplayModeChanged(SkyConnectIntf::ReplayMode mode) noexcept;
     QRadioButton &getPositionButtonFromSettings() const noexcept;
     Formation::Bearing bearingFromPositionGroup() const noexcept;
     void restoreDefaultSettings() noexcept;

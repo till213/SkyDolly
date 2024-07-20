@@ -52,6 +52,7 @@ public:
     virtual QWidget *getWidget() const noexcept = 0;
     virtual RecordIconId getRecordIconId() const noexcept = 0;
 
+    virtual void setupInitialPosition() noexcept = 0;
     virtual void setRecording(bool enable) noexcept = 0;
     virtual void setPaused(bool enable) noexcept = 0;
     virtual void setPlaying(bool enable) noexcept = 0;

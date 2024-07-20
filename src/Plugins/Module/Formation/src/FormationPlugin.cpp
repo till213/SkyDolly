@@ -58,6 +58,9 @@ FormationPlugin::FormationPlugin(QObject *parent) noexcept
       d {std::make_unique<FormationPluginPrivate>()}
 {
     restoreSettings(QUuid(Const::FormationModuleUuid));
+    // Explicitly emit replay mode changed signal, in order to do an initial aircraft positioning,
+    // depending on the replay mode stored in the formation module settings
+    emit d->moduleSettings.replayModeChanged(d->moduleSettings.getReplayMode());
 }
 
 FormationPlugin::~FormationPlugin()
