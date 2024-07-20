@@ -1144,6 +1144,13 @@ update position
 set    calibrated_indicated_altitude = indicated_altitude,
        pressure_altitude             = indicated_altitude;
 
+@migr(id = "8ef452ec-758a-48bf-b298-7832f0478302", descn = "Add steer input control column", step_cnt = 2)
+alter table handle add column steer_input_control real;
+
+@migr(id = "8ef452ec-758a-48bf-b298-7832f0478302", descn = "Initialise steer input control", step = 2)
+update handle
+set    steer_input_control = 0;
+
 @migr(id = "80bcc81a-6554-4e05-8631-d17358d9d1dd", descn = "Update application version to 0.18", step = 1)
 update metadata
 set    app_version = '0.18.0';

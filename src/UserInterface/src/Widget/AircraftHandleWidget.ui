@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>568</width>
-    <height>207</height>
+    <height>237</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -112,13 +112,23 @@
          </widget>
         </item>
         <item row="4" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Nose wheel:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="steerInputControlLineEdit"/>
+        </item>
+        <item row="5" column="0">
          <widget class="QLabel" name="label_44">
           <property name="text">
            <string>Water rudder:</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="5" column="1">
          <widget class="QLineEdit" name="waterRudderLineEdit">
           <property name="minimumSize">
            <size>

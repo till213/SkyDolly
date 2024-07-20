@@ -136,7 +136,7 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::GearDown), "GEAR_DOWN");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SetTailHookHandle), "SET_TAIL_HOOK_HANDLE");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SetWingFold), "SET_WING_FOLD");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SmokeSet), "SMOKE_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::AxisSteeringSet), "AXIS_STEERING_SET");
         // Lights
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ToggleNavLights), "TOGGLE_NAV_LIGHTS");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ToggleBeaconLights), "TOGGLE_BEACON_LIGHTS");
@@ -220,6 +220,13 @@ public:
         }
         if (ok) {
             sendWingFold(aircraftHandle.info.foldingWingHandlePosition);
+        }
+        if (ok) {
+            const auto position = SkyMath::fromNormalisedPosition(aircraftHandle.event.steerInputControl) / 2;
+#ifdef DEBUG
+            qDebug() << "sendAircraftHandle: Set nose wheel:" << position;
+#endif
+            sendSteeringAxis(position);
         }
         return ok;
     }
@@ -511,15 +518,15 @@ private:
         return result == S_OK;
     }
 
-    inline bool sendSmokeEnabled(std::int32_t enable) noexcept
-    {
-        const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SmokeSet), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        return result == S_OK;
-    }
-
     inline bool sendWingFold(std::int32_t enable) noexcept
     {
         const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SetWingFold), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        return result == S_OK;
+    }
+
+    inline bool sendSteeringAxis(std::int32_t position) noexcept
+    {
+        const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisSteeringSet), position, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 
