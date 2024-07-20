@@ -80,6 +80,7 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
 - Formation recording
   * Record the flight conditions - specifically the flight start date/time - when the *first* aircraft is recorded (directly from within the Formation module)
 - Do not reset the time edit widget when the recording is paused (keep the current recorded time)
+- Migrate (update) missing logbook start- and end simulation times (local and zulu) based on the actual recorded positions (timestamps) amd/or the recording creation date/time
 
 ## Documentation
 - Added new [One Year in New York](doc/SQL/Timelapse-One-Year-in-New-York.sql) example SQL ("1 year timelapse")
