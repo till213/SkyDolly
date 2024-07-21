@@ -45,7 +45,6 @@ namespace SimVar
     constexpr const char *VelocityBodyY = "Velocity Body Y";
     constexpr const char *VelocityBodyZ = "Velocity Body Z";
     constexpr const char *SimOnGround = "Sim On Ground";
-    constexpr const char *SimShouldSetOnGround = "Sim Should Set On Ground";
     constexpr const char *PlaneAltAboveGroundMinusCG = "Plane Alt Above Ground Minus CG";
 
     constexpr const char *AileronLeftDeflection = "Aileron Left Deflection";

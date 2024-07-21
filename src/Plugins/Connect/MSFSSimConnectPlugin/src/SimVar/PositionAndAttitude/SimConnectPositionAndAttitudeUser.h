@@ -42,8 +42,6 @@ struct SimConnectPositionAndAttitudeUser
 {
     SimConnectPositionCommon positionCommon;
     SimConnectAttitudeCommon attitudeCommon;
-    // Only sent to the flight simulator (not received), calculated based on the recorded "on ground" simulation variable
-    std::int32_t shouldSetOnGround {0};
 
     SimConnectPositionAndAttitudeUser(const PositionData &positionData, const AttitudeData &attitudeData) noexcept
         : SimConnectPositionAndAttitudeUser()
@@ -59,29 +57,15 @@ struct SimConnectPositionAndAttitudeUser
         positionCommon.fromPositionData(positionData);
     }
 
-    inline PositionData toPositionData() const noexcept
-    {
-        const auto positionData = positionCommon.toPositionData();
-        return positionData;
-    }
-
     inline void fromAttitudeData(const AttitudeData &attitudeData)
     {
         attitudeCommon.fromAttitudeData(attitudeData);
-        shouldSetOnGround = attitudeData.onGround ? 1 : 0;
-    }
-
-    inline AttitudeData toAttitudeData() const noexcept
-    {
-        const auto attitudeData = attitudeCommon.toAttitudeData();
-        return attitudeData;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
         SimConnectPositionCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAndAttitudeUser));
         SimConnectAttitudeCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAndAttitudeUser));
-        ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAndAttitudeUser), SimVar::SimShouldSetOnGround, "Bool", ::SIMCONNECT_DATATYPE_INT32);
     }
 };
 #pragma pack(pop)

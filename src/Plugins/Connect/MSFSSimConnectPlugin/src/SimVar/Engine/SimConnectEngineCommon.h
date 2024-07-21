@@ -30,7 +30,6 @@
 
 #include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
-#include "SimConnectType.h"
 #include <Model/EngineData.h>
 
 /*!
