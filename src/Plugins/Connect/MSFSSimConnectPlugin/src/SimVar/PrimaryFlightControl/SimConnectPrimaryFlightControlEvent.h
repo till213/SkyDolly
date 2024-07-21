@@ -31,7 +31,6 @@
 #include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
 #include <Model/PrimaryFlightControlData.h>
-#include "SimConnectType.h"
 
 /*!
  * Primary flight control simulation variables that are sent as event to the user aircraft
@@ -47,33 +46,33 @@ struct SimConnectPrimaryFlightControlEvent
     float elevatorPosition {0.0f};
     float aileronPosition {0.0f};
 
-    SimConnectPrimaryFlightControlEvent(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+    SimConnectPrimaryFlightControlEvent(const PrimaryFlightControlData &data) noexcept
         : SimConnectPrimaryFlightControlEvent()
     {
-        fromPrimaryFlightControlData(primaryFlightControlData);
+        fromPrimaryFlightControlData(data);
     }
 
     SimConnectPrimaryFlightControlEvent() = default;
 
-    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &data) noexcept
     {
-        rudderPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.rudderPosition));
-        elevatorPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.elevatorPosition));
-        aileronPosition = static_cast<float>(SkyMath::toNormalisedPosition(primaryFlightControlData.aileronPosition));
+        rudderPosition = static_cast<float>(SkyMath::toNormalisedPosition(data.rudderPosition));
+        elevatorPosition = static_cast<float>(SkyMath::toNormalisedPosition(data.elevatorPosition));
+        aileronPosition = static_cast<float>(SkyMath::toNormalisedPosition(data.aileronPosition));
     }
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {
-        PrimaryFlightControlData primaryFlightControlData;
-        toPrimaryFlightControlData(primaryFlightControlData);
-        return primaryFlightControlData;
+        PrimaryFlightControlData data;
+        toPrimaryFlightControlData(data);
+        return data;
     }
 
-    inline void toPrimaryFlightControlData(PrimaryFlightControlData &primaryFlightControlData) const noexcept
+    inline void toPrimaryFlightControlData(PrimaryFlightControlData &data) const noexcept
     {
-        primaryFlightControlData.rudderPosition = SkyMath::fromNormalisedPosition(rudderPosition);
-        primaryFlightControlData.elevatorPosition = SkyMath::fromNormalisedPosition(elevatorPosition);
-        primaryFlightControlData.aileronPosition = SkyMath::fromNormalisedPosition(aileronPosition);
+        data.rudderPosition = SkyMath::fromNormalisedPosition(rudderPosition);
+        data.elevatorPosition = SkyMath::fromNormalisedPosition(elevatorPosition);
+        data.aileronPosition = SkyMath::fromNormalisedPosition(aileronPosition);
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

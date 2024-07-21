@@ -40,23 +40,23 @@ struct SimConnectSecondaryFlightControlAi
 {
     SimConnectSecondaryFlightControlAnimation animation;
 
-    SimConnectSecondaryFlightControlAi(const SecondaryFlightControlData &secondaryflightcontrolData) noexcept
+    SimConnectSecondaryFlightControlAi(const SecondaryFlightControlData &data) noexcept
         : SimConnectSecondaryFlightControlAi()
     {
-        fromSecondaryFlightControlData(secondaryflightcontrolData);
+        fromSecondaryFlightControlData(data);
     }
 
     SimConnectSecondaryFlightControlAi() = default;
 
-    inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &secondaryflightcontrolData)
+    inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &data)
     {
-        animation.fromSecondaryFlightControlData(secondaryflightcontrolData);
+        animation.fromSecondaryFlightControlData(data);
     }
 
     inline SecondaryFlightControlData toSecondaryFlightControlData() const noexcept
     {
-        SecondaryFlightControlData secondaryflightcontrolData = animation.toSecondaryFlightControlData();
-        return secondaryflightcontrolData;
+        SecondaryFlightControlData data = animation.toSecondaryFlightControlData();
+        return data;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept

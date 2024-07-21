@@ -22,58 +22,54 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTATTITUDEINFOH
-#define SIMCONNECTATTITUDEINFOH
-
-#include <cstdint>
+#ifndef SIMCONNECTALTITUDESENSOR
+#define SIMCONNECTALTITUDESENSOR
 
 #include <windows.h>
 #include <SimConnect.h>
 
 #include <Model/SimVar.h>
-#include <Model/AttitudeData.h>
+#include <Model/AltitudeSensorData.h>
 
 /*!
- * Aircraft attitude simulation variables that are either stored for information purposes only
- * or that are sent exclusively to the user aircraft as events.
+ * The altitude sensor continuously measures altitudes above ground, also while replaying.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectAttitudeInfo
+struct SimConnectAltitudeSensor
 {
-    std::int32_t onGround {0};
+    double planeAltitudeAboveGroundMinusCenterGravity {0};
 
-    SimConnectAttitudeInfo(const AttitudeData &data) noexcept
-        : SimConnectAttitudeInfo()
+    SimConnectAltitudeSensor(const AltitudeSensorData &attitudeData) noexcept
     {
-        fromAttitudeData(data);
+        fromAltitudeSensorData(attitudeData);
     }
 
-    SimConnectAttitudeInfo() = default;
+    SimConnectAltitudeSensor() = default;
 
-    inline void fromAttitudeData(const AttitudeData &data) noexcept
+    inline void fromAltitudeSensorData(const AltitudeSensorData &data) noexcept
     {
-        onGround = data.onGround ? 1 : 0;
+        planeAltitudeAboveGroundMinusCenterGravity = data.altitudeAboveGroundMinusCenterGravity;
     }
 
-    inline AttitudeData toAttitudeData() const noexcept
+    inline AltitudeSensorData toAltitudeSensorData() const noexcept
     {
-        AttitudeData data;
-        toAttitudeData(data);
+        AltitudeSensorData data;
+        toAltitudeSensorData(data);
         return data;
     }
 
-    inline void toAttitudeData(AttitudeData &data) const noexcept
+    inline void toAltitudeSensorData(AltitudeSensorData &data) const noexcept
     {
-        data.onGround = onGround != 0;
+        data.altitudeAboveGroundMinusCenterGravity = planeAltitudeAboveGroundMinusCenterGravity;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SimOnGround, "Bool", ::SIMCONNECT_DATATYPE_INT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PlaneAltAboveGroundMinusCG, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTATTITUDEINFOH
+#endif // SIMCONNECTALTITUDESENSOR

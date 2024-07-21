@@ -49,33 +49,33 @@ struct SimConnectPositionCommon
     // then the unit would be (wrongly) "FEET per second" (and not "RADIANS per second):
     // https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Misc_Variables.htm#ROTATION_VELOCITY_BODY_X
 
-    SimConnectPositionCommon(const PositionData &positionData) noexcept
+    SimConnectPositionCommon(const PositionData &data) noexcept
         : SimConnectPositionCommon()
     {
-        fromPositionData(positionData);
+        fromPositionData(data);
     }
 
     SimConnectPositionCommon() = default;
 
-    inline void fromPositionData(const PositionData &positionData) noexcept
+    inline void fromPositionData(const PositionData &data) noexcept
     {
-        latitude = positionData.latitude;
-        longitude = positionData.longitude;
-        altitude = positionData.altitude;
+        latitude = data.latitude;
+        longitude = data.longitude;
+        altitude = data.altitude;
     }
 
     inline PositionData toPositionData() const noexcept
     {
-        PositionData positionData;
-        toPositionData(positionData);
-        return positionData;
+        PositionData data;
+        toPositionData(data);
+        return data;
     }
 
-    inline void toPositionData(PositionData &positionData) const noexcept
+    inline void toPositionData(PositionData &data) const noexcept
     {
-        positionData.latitude = latitude;
-        positionData.longitude = longitude;
-        positionData.altitude = altitude;
+        data.latitude = latitude;
+        data.longitude = longitude;
+        data.altitude = altitude;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

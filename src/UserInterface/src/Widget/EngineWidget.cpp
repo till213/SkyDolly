@@ -75,7 +75,7 @@ EngineWidget::~EngineWidget() = default;
 
 void EngineWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
-    const EngineData &engineData = getCurrentEngineData(timestamp, access);
+    const auto &engineData = getCurrentEngineData(timestamp, access);
     QString colorName;
 
     if (!engineData.isNull()) {

@@ -488,7 +488,7 @@ void LogbookWidget::updateEditUi() noexcept
 void LogbookWidget::frenchConnection() noexcept
 {
     // Logbook
-    const Logbook &logbook = Logbook::getInstance();
+    const auto &logbook = Logbook::getInstance();
     connect(&PersistenceManager::getInstance(), &PersistenceManager::connectionChanged,
             this, &LogbookWidget::updateUi);
 

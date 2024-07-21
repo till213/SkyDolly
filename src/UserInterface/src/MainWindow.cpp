@@ -315,7 +315,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onReplaySpeedSelected);
 
     // Flight
-    const Logbook &logbook = Logbook::getInstance();
+    const auto &logbook = Logbook::getInstance();
     const auto &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::flightRestored,
             this, &MainWindow::onFlightRestored);

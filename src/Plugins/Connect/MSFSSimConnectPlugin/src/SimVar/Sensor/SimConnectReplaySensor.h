@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,58 +22,51 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTATTITUDEINFOH
-#define SIMCONNECTATTITUDEINFOH
-
-#include <cstdint>
+#ifndef SIMCONNECTREPLAYSENSOR_H
+#define SIMCONNECTREPLAYSENSOR_H
 
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Model/SimVar.h>
-#include <Model/AttitudeData.h>
+#include <Kernel/Enum.h>
+#include <Model/AltitudeSensorData.h>
+#include "SimConnectType.h"
+#include "SimConnectAltitudeSensor.h"
 
 /*!
- * Aircraft attitude simulation variables that are either stored for information purposes only
- * or that are sent exclusively to the user aircraft as events.
+ * All active sensor during replay.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectAttitudeInfo
+struct SimConnectReplaySensor
 {
-    std::int32_t onGround {0};
+    SimConnectAltitudeSensor altitudeSensor;
 
-    SimConnectAttitudeInfo(const AttitudeData &data) noexcept
-        : SimConnectAttitudeInfo()
+    SimConnectReplaySensor(const AltitudeSensorData &data) noexcept
     {
-        fromAttitudeData(data);
+        fromSimConnectAltitudeSensor(data);
     }
 
-    SimConnectAttitudeInfo() = default;
+    SimConnectReplaySensor() = default;
 
-    inline void fromAttitudeData(const AttitudeData &data) noexcept
+    inline void fromSimConnectAltitudeSensor(const AltitudeSensorData &data) noexcept
     {
-        onGround = data.onGround ? 1 : 0;
+        altitudeSensor.fromAltitudeSensorData(data);
     }
 
-    inline AttitudeData toAttitudeData() const noexcept
+    inline AltitudeSensorData toAttitudeData() const noexcept
     {
-        AttitudeData data;
-        toAttitudeData(data);
+        auto data = altitudeSensor.toAltitudeSensorData();
         return data;
     }
 
-    inline void toAttitudeData(AttitudeData &data) const noexcept
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        data.onGround = onGround != 0;
+        SimConnectAltitudeSensor::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::ReplaySensor));
     }
 
-    static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
-    {
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SimOnGround, "Bool", ::SIMCONNECT_DATATYPE_INT32);
-    }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTATTITUDEINFOH
+#endif // SIMCONNECTREPLAYSENSOR_H

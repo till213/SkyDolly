@@ -129,7 +129,7 @@ LightData LightWidget::getCurrentLightData(std::int64_t timestamp, TimeVariableD
 
 void LightWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
-    const LightData &lightData = getCurrentLightData(timestamp, access);
+    const auto &lightData = getCurrentLightData(timestamp, access);
     QString colorName;
 
     if (!lightData.isNull()) {
