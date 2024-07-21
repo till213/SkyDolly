@@ -44,33 +44,33 @@ struct SimConnectPositionInfo
     double calibratedIndicatedAltitude {0.0};
     double pressureAltitude {0.0};
 
-    SimConnectPositionInfo(const PositionData &positionData) noexcept
+    SimConnectPositionInfo(const PositionData &data) noexcept
         : SimConnectPositionInfo()
     {
-        fromPositionData(positionData);
+        fromPositionData(data);
     }
 
     SimConnectPositionInfo() = default;
 
-    inline void fromPositionData(const PositionData &positionData) noexcept
+    inline void fromPositionData(const PositionData &data) noexcept
     {
-        indicatedAltitude = positionData.indicatedAltitude;
-        calibratedIndicatedAltitude = positionData.calibratedIndicatedAltitude;
-        pressureAltitude = positionData.pressureAltitude;
+        indicatedAltitude = data.indicatedAltitude;
+        calibratedIndicatedAltitude = data.calibratedIndicatedAltitude;
+        pressureAltitude = data.pressureAltitude;
     }
 
     inline PositionData toPositionData() const noexcept
     {
-        PositionData positionData;
-        toPositionData(positionData);
-        return positionData;
+        PositionData data;
+        toPositionData(data);
+        return data;
     }
 
-    inline void toPositionData(PositionData &positionData) const noexcept
+    inline void toPositionData(PositionData &data) const noexcept
     {
-        positionData.indicatedAltitude = indicatedAltitude;
-        positionData.calibratedIndicatedAltitude = calibratedIndicatedAltitude;
-        positionData.pressureAltitude = pressureAltitude;
+        data.indicatedAltitude = indicatedAltitude;
+        data.calibratedIndicatedAltitude = calibratedIndicatedAltitude;
+        data.pressureAltitude = pressureAltitude;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

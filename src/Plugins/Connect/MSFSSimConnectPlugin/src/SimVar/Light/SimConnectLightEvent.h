@@ -25,6 +25,8 @@
 #ifndef SIMCONNECTLIGHTEVENT_H
 #define SIMCONNECTLIGHTEVENT_H
 
+#include <cstdint>
+
 #include <windows.h>
 #include <SimConnect.h>
 
@@ -54,42 +56,42 @@ struct SimConnectLightEvent
     std::int32_t logo;
     std::int32_t cabin;
 
-    SimConnectLightEvent(const LightData &lightData) noexcept
+    SimConnectLightEvent(const LightData &data) noexcept
         : SimConnectLightEvent()
     {
-        fromLightData(lightData);
+        fromLightData(data);
     }
 
     SimConnectLightEvent() = default;
 
-    inline void fromLightData(const LightData &lightData) noexcept
+    inline void fromLightData(const LightData &data) noexcept
     {
-        navigation = lightData.lightStates.testFlag(SimType::LightState::Navigation) ? 1 : 0;
-        beacon = lightData.lightStates.testFlag(SimType::LightState::Beacon) ? 1 : 0;
-        landing = lightData.lightStates.testFlag(SimType::LightState::Landing) ? 1 : 0;
-        taxi = lightData.lightStates.testFlag(SimType::LightState::Taxi) ? 1 : 0;
-        strobe = lightData.lightStates.testFlag(SimType::LightState::Strobe) ? 1 : 0;
-        panel = lightData.lightStates.testFlag(SimType::LightState::Panel) ? 1 : 0;
-        recognition = lightData.lightStates.testFlag(SimType::LightState::Recognition) ? 1 : 0;
-        wing = lightData.lightStates.testFlag(SimType::LightState::Wing) ? 1 : 0;
-        logo = lightData.lightStates.testFlag(SimType::LightState::Logo) ? 1 : 0;
-        cabin = lightData.lightStates.testFlag(SimType::LightState::Cabin) ? 1 : 0;
+        navigation = data.lightStates.testFlag(SimType::LightState::Navigation) ? 1 : 0;
+        beacon = data.lightStates.testFlag(SimType::LightState::Beacon) ? 1 : 0;
+        landing = data.lightStates.testFlag(SimType::LightState::Landing) ? 1 : 0;
+        taxi = data.lightStates.testFlag(SimType::LightState::Taxi) ? 1 : 0;
+        strobe = data.lightStates.testFlag(SimType::LightState::Strobe) ? 1 : 0;
+        panel = data.lightStates.testFlag(SimType::LightState::Panel) ? 1 : 0;
+        recognition = data.lightStates.testFlag(SimType::LightState::Recognition) ? 1 : 0;
+        wing = data.lightStates.testFlag(SimType::LightState::Wing) ? 1 : 0;
+        logo = data.lightStates.testFlag(SimType::LightState::Logo) ? 1 : 0;
+        cabin = data.lightStates.testFlag(SimType::LightState::Cabin) ? 1 : 0;
     }
 
     inline LightData toLightData() const noexcept
     {
-        LightData lightData;
-        lightData.lightStates.setFlag(SimType::LightState::Navigation, navigation != 0);
-        lightData.lightStates.setFlag(SimType::LightState::Beacon, beacon != 0);
-        lightData.lightStates.setFlag(SimType::LightState::Landing, landing != 0);
-        lightData.lightStates.setFlag(SimType::LightState::Taxi, taxi != 0);
-        lightData.lightStates.setFlag(SimType::LightState::Strobe, strobe != 0);
-        lightData.lightStates.setFlag(SimType::LightState::Panel, panel != 0);
-        lightData.lightStates.setFlag(SimType::LightState::Recognition, recognition != 0);
-        lightData.lightStates.setFlag(SimType::LightState::Wing, wing != 0);
-        lightData.lightStates.setFlag(SimType::LightState::Logo, logo != 0);
-        lightData.lightStates.setFlag(SimType::LightState::Cabin, cabin != 0);
-        return lightData;
+        LightData data;
+        data.lightStates.setFlag(SimType::LightState::Navigation, navigation != 0);
+        data.lightStates.setFlag(SimType::LightState::Beacon, beacon != 0);
+        data.lightStates.setFlag(SimType::LightState::Landing, landing != 0);
+        data.lightStates.setFlag(SimType::LightState::Taxi, taxi != 0);
+        data.lightStates.setFlag(SimType::LightState::Strobe, strobe != 0);
+        data.lightStates.setFlag(SimType::LightState::Panel, panel != 0);
+        data.lightStates.setFlag(SimType::LightState::Recognition, recognition != 0);
+        data.lightStates.setFlag(SimType::LightState::Wing, wing != 0);
+        data.lightStates.setFlag(SimType::LightState::Logo, logo != 0);
+        data.lightStates.setFlag(SimType::LightState::Cabin, cabin != 0);
+        return data;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

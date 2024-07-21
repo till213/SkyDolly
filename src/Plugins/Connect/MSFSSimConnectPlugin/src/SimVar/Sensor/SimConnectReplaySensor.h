@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,48 +22,54 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLAI_H
-#define SIMCONNECTPRIMARYFLIGHTCONTROLAI_H
+#ifndef SIMCONNECTREPLAYSENSOR_H
+#define SIMCONNECTREPLAYSENSOR_H
 
-#include <Kernel/Enum.h>
-#include <Model/PrimaryFlightControlData.h>
-#include "SimConnectType.h"
-#include "SimConnectPrimaryFlightControlAnimation.h"
+#include <windows.h>
+#include <SimConnect.h>
+
+#include <Model/AttitudeData.h>
+#include "SimConnectAttitudeCommon.h"
+#include "SimConnectAttitudeInfo.h"
 
 /*!
- * Primary flight control simulation variables that are sent to AI aircraft.
+ * All active sensor during replay.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPrimaryFlightControlAi
+struct SimConnectReplaySensor
 {
-    SimConnectPrimaryFlightControlAnimation animation;
+    SimConnectAltitudeSensor altitudeSensor;
 
-    SimConnectPrimaryFlightControlAi(const PrimaryFlightControlData &data) noexcept
-        : SimConnectPrimaryFlightControlAi()
+    SimConnectReplaySensor(const SimConnectAltitudeSensor &data) noexcept
+        : SimConnectReplaySensor()
     {
-        fromPrimaryFlightControlData(data);
+        fromAttitudeData(positionData);
     }
 
-    SimConnectPrimaryFlightControlAi() = default;
+    SimConnectReplaySensor() = default;
 
-    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &data)
+    inline void fromASimConnectAltitudeSensor(const SimConnectAltitudeSensor &data) noexcept
     {
-        animation.fromPrimaryFlightControlData(data);
+        common.fromAttitudeData(data);
+        info.fromAttitudeData(data);
     }
 
-    inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
+    inline AttitudeData toAttitudeData() const noexcept
     {
-        PrimaryFlightControlData data = animation.toPrimaryFlightControlData();
-        return data;
+        auto positionData = common.toAttitudeData();
+        info.toAttitudeData(positionData);
+        return positionData;
     }
 
-    static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        SimConnectPrimaryFlightControlAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAi));
+        SimConnectAttitudeCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AttitudeAll));
+        SimConnectAttitudeInfo::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AttitudeAll));
     }
+
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPRIMARYFLIGHTCONTROLAI_H
+#endif // SIMCONNECTREPLAYSENSOR_H

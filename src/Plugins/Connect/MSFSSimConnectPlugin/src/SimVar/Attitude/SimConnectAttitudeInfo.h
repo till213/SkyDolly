@@ -25,6 +25,8 @@
 #ifndef SIMCONNECTATTITUDEINFOH
 #define SIMCONNECTATTITUDEINFOH
 
+#include <cstdint>
+
 #include <windows.h>
 #include <SimConnect.h>
 
@@ -43,10 +45,10 @@ struct SimConnectAttitudeInfo
 {
     std::int32_t onGround {0};
 
-    SimConnectAttitudeInfo(const AttitudeData &attitudeData) noexcept
+    SimConnectAttitudeInfo(const AttitudeData &data) noexcept
         : SimConnectAttitudeInfo()
     {
-        fromAttitudeData(attitudeData);
+        fromAttitudeData(data);
     }
 
     SimConnectAttitudeInfo() = default;

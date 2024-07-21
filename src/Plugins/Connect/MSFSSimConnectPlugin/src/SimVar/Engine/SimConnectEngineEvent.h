@@ -48,35 +48,35 @@ struct SimConnectEngineEvent
     std::int32_t generalEngineCombustion3 {0};
     std::int32_t generalEngineCombustion4 {0};
 
-    SimConnectEngineEvent(const EngineData &engineData) noexcept
+    SimConnectEngineEvent(const EngineData &data) noexcept
         : SimConnectEngineEvent()
     {
-        fromEngineData(engineData);
+        fromEngineData(data);
     }
 
     SimConnectEngineEvent() = default;
 
-    inline void fromEngineData(const EngineData &engineData) noexcept
+    inline void fromEngineData(const EngineData &data) noexcept
     {
-        generalEngineCombustion1 = engineData.generalEngineCombustion1 ? 1 : 0;
-        generalEngineCombustion2 = engineData.generalEngineCombustion2 ? 1 : 0;
-        generalEngineCombustion3 = engineData.generalEngineCombustion3 ? 1 : 0;
-        generalEngineCombustion4 = engineData.generalEngineCombustion4 ? 1 : 0;
+        generalEngineCombustion1 = data.generalEngineCombustion1 ? 1 : 0;
+        generalEngineCombustion2 = data.generalEngineCombustion2 ? 1 : 0;
+        generalEngineCombustion3 = data.generalEngineCombustion3 ? 1 : 0;
+        generalEngineCombustion4 = data.generalEngineCombustion4 ? 1 : 0;
     }
 
     inline EngineData toEngineData() const noexcept
     {
-        EngineData engineData;
-        toEngineData(engineData);
-        return engineData;
+        EngineData data;
+        toEngineData(data);
+        return data;
     }
 
-    inline void toEngineData(EngineData &engineData) const noexcept
+    inline void toEngineData(EngineData &data) const noexcept
     {
-        engineData.generalEngineCombustion1 = (generalEngineCombustion1 != 0);
-        engineData.generalEngineCombustion2 = (generalEngineCombustion2 != 0);
-        engineData.generalEngineCombustion3 = (generalEngineCombustion3 != 0);
-        engineData.generalEngineCombustion4 = (generalEngineCombustion4 != 0);
+        data.generalEngineCombustion1 = (generalEngineCombustion1 != 0);
+        data.generalEngineCombustion2 = (generalEngineCombustion2 != 0);
+        data.generalEngineCombustion3 = (generalEngineCombustion3 != 0);
+        data.generalEngineCombustion4 = (generalEngineCombustion4 != 0);
     }
 
     inline bool hasCombustion() const noexcept

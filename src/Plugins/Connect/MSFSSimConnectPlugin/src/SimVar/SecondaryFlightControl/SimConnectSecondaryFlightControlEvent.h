@@ -48,33 +48,33 @@ struct SimConnectSecondaryFlightControlEvent
     std::int32_t spoilersArmed {0};
     std::int32_t flapsHandleIndex {0};
 
-    SimConnectSecondaryFlightControlEvent(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
+    SimConnectSecondaryFlightControlEvent(const SecondaryFlightControlData &data) noexcept
         : SimConnectSecondaryFlightControlEvent()
     {
-        fromSecondaryFlightControlData(secondaryFlightControlData);
+        fromSecondaryFlightControlData(data);
     }
 
     SimConnectSecondaryFlightControlEvent() = default;
 
-    inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
+    inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &data) noexcept
     {
-        spoilersHandlePosition = static_cast<float>(SkyMath::toPercent(secondaryFlightControlData.spoilersHandlePercent));
-        spoilersArmed = secondaryFlightControlData.spoilersArmed ? 1 : 0;
-        flapsHandleIndex = secondaryFlightControlData.flapsHandleIndex;
+        spoilersHandlePosition = static_cast<float>(SkyMath::toPercent(data.spoilersHandlePercent));
+        spoilersArmed = data.spoilersArmed ? 1 : 0;
+        flapsHandleIndex = data.flapsHandleIndex;
     }
 
     inline SecondaryFlightControlData toSecondaryFlightControlData() const noexcept
     {
-        SecondaryFlightControlData secondaryFlightControlData;
-        toSecondaryFlightControlData(secondaryFlightControlData);
-        return secondaryFlightControlData;
+        SecondaryFlightControlData data;
+        toSecondaryFlightControlData(data);
+        return data;
     }
 
-    inline void toSecondaryFlightControlData(SecondaryFlightControlData &secondaryFlightControlData) const noexcept
+    inline void toSecondaryFlightControlData(SecondaryFlightControlData &data) const noexcept
     {
-        secondaryFlightControlData.spoilersHandlePercent = SkyMath::fromPercent(spoilersHandlePosition);
-        secondaryFlightControlData.spoilersArmed = spoilersArmed != 0;
-        secondaryFlightControlData.flapsHandleIndex = static_cast<std::int8_t>(flapsHandleIndex);
+        data.spoilersHandlePercent = SkyMath::fromPercent(spoilersHandlePosition);
+        data.spoilersArmed = spoilersArmed != 0;
+        data.flapsHandleIndex = static_cast<std::int8_t>(flapsHandleIndex);
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

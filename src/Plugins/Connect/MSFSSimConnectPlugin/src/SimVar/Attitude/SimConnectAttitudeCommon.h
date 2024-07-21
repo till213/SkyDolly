@@ -58,10 +58,10 @@ struct SimConnectAttitudeCommon
     // then the unit would be (wrongly) "FEET per second" (and not "RADIANS per second):
     // https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Misc_Variables.htm#ROTATION_VELOCITY_BODY_X
 
-    SimConnectAttitudeCommon(const AttitudeData &attitudeData) noexcept
+    SimConnectAttitudeCommon(const AttitudeData &data) noexcept
         : SimConnectAttitudeCommon()
     {
-        fromAttitudeData(attitudeData);
+        fromAttitudeData(data);
     }
 
     SimConnectAttitudeCommon() = default;

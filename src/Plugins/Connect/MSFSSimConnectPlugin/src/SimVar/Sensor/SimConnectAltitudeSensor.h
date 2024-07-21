@@ -22,48 +22,55 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLAI_H
-#define SIMCONNECTPRIMARYFLIGHTCONTROLAI_H
+#ifndef SIMCONNECTALTITUDESENSOR
+#define SIMCONNECTALTITUDESENSOR
 
-#include <Kernel/Enum.h>
-#include <Model/PrimaryFlightControlData.h>
+#include <windows.h>
+#include <SimConnect.h>
+
+#include <Model/SimVar.h>
+#include <Model/AltitudeSensorData.h>
 #include "SimConnectType.h"
-#include "SimConnectPrimaryFlightControlAnimation.h"
 
 /*!
- * Primary flight control simulation variables that are sent to AI aircraft.
+ * The altitude sensor continuously measures altitudes above ground, also while replaying.
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPrimaryFlightControlAi
+struct SimConnectAltitudeSensor
 {
-    SimConnectPrimaryFlightControlAnimation animation;
+    double planeAltitudeAboveGroundMinusCenterGravity {0};
 
-    SimConnectPrimaryFlightControlAi(const PrimaryFlightControlData &data) noexcept
-        : SimConnectPrimaryFlightControlAi()
+    SimConnectAltitudeSensor(const AltitudeSensorData &attitudeData) noexcept
     {
-        fromPrimaryFlightControlData(data);
+        fromAltitudeSensorData(attitudeData);
     }
 
-    SimConnectPrimaryFlightControlAi() = default;
+    SimConnectAltitudeSensor() = default;
 
-    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &data)
+    inline void fromAltitudeSensorData(const AltitudeSensorData &data) noexcept
     {
-        animation.fromPrimaryFlightControlData(data);
+        planeAltitudeAboveGroundMinusCenterGravity = data.altitudeAboveGroundMinusCenterGravity;
     }
 
-    inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
+    inline AltitudeSensorData toAltitudeSensorData() const noexcept
     {
-        PrimaryFlightControlData data = animation.toPrimaryFlightControlData();
+        AltitudeSensorData data;
+        toAltitudeSensorData(data);
         return data;
     }
 
-    static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
+    inline void toAltitudeSensorData(AltitudeSensorData &data) const noexcept
     {
-        SimConnectPrimaryFlightControlAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAi));
+        data.altitudeAboveGroundMinusCenterGravity = planeAltitudeAboveGroundMinusCenterGravity;
+    }
+
+    static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
+    {
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PlaneAltitudeAboveGroundMinusCenterGravity, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPRIMARYFLIGHTCONTROLAI_H
+#endif // SIMCONNECTALTITUDESENSOR

@@ -446,7 +446,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                         this, &SkyConnectManager::actionActivated);
 
                 // Flight
-                const Logbook &logbook = Logbook::getInstance();
+                const auto &logbook = Logbook::getInstance();
                 const auto &flight = logbook.getCurrentFlight();
                 connect(&flight, &Flight::flightRestored,
                         skyPlugin, &SkyConnectIntf::syncAiObjectsWithFlight);

@@ -46,20 +46,20 @@ struct SimConnectPrimaryFlightControlAnimation
     float aileronLeftDeflection {0.0f};
     float aileronRightDeflection {0.0f};
 
-    SimConnectPrimaryFlightControlAnimation(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+    SimConnectPrimaryFlightControlAnimation(const PrimaryFlightControlData &data) noexcept
         : SimConnectPrimaryFlightControlAnimation()
     {
-        fromPrimaryFlightControlData(primaryFlightControlData);
+        fromPrimaryFlightControlData(data);
     }
 
     SimConnectPrimaryFlightControlAnimation() = default;
 
-    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &data) noexcept
     {
-        rudderDeflection = primaryFlightControlData.rudderDeflection;
-        elevatorDeflection = primaryFlightControlData.elevatorDeflection;
-        aileronLeftDeflection = primaryFlightControlData.leftAileronDeflection;
-        aileronRightDeflection = primaryFlightControlData.rightAileronDeflection;
+        rudderDeflection = data.rudderDeflection;
+        elevatorDeflection = data.elevatorDeflection;
+        aileronLeftDeflection = data.leftAileronDeflection;
+        aileronRightDeflection = data.rightAileronDeflection;
     }
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
@@ -69,12 +69,12 @@ struct SimConnectPrimaryFlightControlAnimation
         return primaryFlightControlData;
     }
 
-    inline void toPrimaryFlightControlData(PrimaryFlightControlData &primaryFlightControlData) const noexcept
+    inline void toPrimaryFlightControlData(PrimaryFlightControlData &data) const noexcept
     {
-        primaryFlightControlData.rudderDeflection = rudderDeflection;
-        primaryFlightControlData.elevatorDeflection = elevatorDeflection;
-        primaryFlightControlData.leftAileronDeflection = aileronLeftDeflection;
-        primaryFlightControlData.rightAileronDeflection = aileronRightDeflection;
+        data.rudderDeflection = rudderDeflection;
+        data.elevatorDeflection = elevatorDeflection;
+        data.leftAileronDeflection = aileronLeftDeflection;
+        data.rightAileronDeflection = aileronRightDeflection;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

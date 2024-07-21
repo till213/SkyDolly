@@ -22,6 +22,7 @@ target_sources(${LIBRARY_NAME}
         include/Model/TimeVariableData.h
         include/Model/Position.h src/Position.cpp
         include/Model/PositionData.h src/PositionData.cpp
+        include/Model/AltitudeSensorData.h
         include/Model/Attitude.h src/Attitude.cpp
         include/Model/AttitudeData.h src/AttitudeData.cpp
         include/Model/InitialPosition.h src/InitialPosition.cpp
@@ -43,7 +44,7 @@ target_sources(${LIBRARY_NAME}
         include/Model/SimVar.h
         include/Model/SkySearch.h src/SkySearch.cpp
         include/Model/Location.h src/Location.cpp
-        include/Model/Enumeration.h src/Enumeration.cpp
+        include/Model/Enumeration.h src/Enumeration.cpp        
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE

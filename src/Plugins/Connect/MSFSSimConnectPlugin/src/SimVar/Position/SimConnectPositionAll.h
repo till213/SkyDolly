@@ -45,25 +45,25 @@ struct SimConnectPositionAll
     SimConnectPositionCommon common;
     SimConnectPositionInfo info;
 
-    SimConnectPositionAll(const PositionData &positionData) noexcept
+    SimConnectPositionAll(const PositionData &data) noexcept
         : SimConnectPositionAll()
     {
-        fromPositionData(positionData);
+        fromPositionData(data);
     }
 
     SimConnectPositionAll() = default;
 
-    inline void fromPositionData(const PositionData &positionData) noexcept
+    inline void fromPositionData(const PositionData &data) noexcept
     {
-        common.fromPositionData(positionData);
-        info.fromPositionData(positionData);
+        common.fromPositionData(data);
+        info.fromPositionData(data);
     }
 
     inline PositionData toPositionData() const noexcept
     {
-        auto positionData = common.toPositionData();
-        info.toPositionData(positionData);
-        return positionData;
+        auto data = common.toPositionData();
+        info.toPositionData(data);
+        return data;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept

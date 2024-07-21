@@ -43,10 +43,10 @@ struct SimConnectAttitudeAll
     SimConnectAttitudeCommon common;
     SimConnectAttitudeInfo info;
 
-    SimConnectAttitudeAll(const AttitudeData &positionData) noexcept
+    SimConnectAttitudeAll(const AttitudeData &data) noexcept
         : SimConnectAttitudeAll()
     {
-        fromAttitudeData(positionData);
+        fromAttitudeData(data);
     }
 
     SimConnectAttitudeAll() = default;
@@ -59,9 +59,9 @@ struct SimConnectAttitudeAll
 
     inline AttitudeData toAttitudeData() const noexcept
     {
-        auto positionData = common.toAttitudeData();
-        info.toAttitudeData(positionData);
-        return positionData;
+        auto attitudeData = common.toAttitudeData();
+        info.toAttitudeData(attitudeData);
+        return attitudeData;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept

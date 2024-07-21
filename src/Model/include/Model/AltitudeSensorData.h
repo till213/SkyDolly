@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,48 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTLIGHTEVENTAI_H
-#define SIMCONNECTLIGHTEVENTAI_H
+#ifndef ALTITUDESENSORDATA_H
+#define ALTITUDESENSORDATA_H
 
-#include <Kernel/Enum.h>
-#include <Model/LightData.h>
-#include "SimConnectType.h"
-#include "SimConnectLightEvent.h"
+#include "ModelLib.h"
 
-/*!
- * Light simulation variables that are sent to AI aircraft.
- *
- * Implementation note: this struct needs to be packed.
- */
-#pragma pack(push, 1)
-struct SimConnectLightAi
+struct MODEL_API AltitudeSensorData final
 {
-    SimConnectLightEvent event;
-
-    SimConnectLightAi(const LightData &data) noexcept
-        : SimConnectLightAi()
-    {
-        fromLightData(data);
-    }
-
-    SimConnectLightAi() = default;
-
-    inline void fromLightData(const LightData &data)
-    {
-        event.fromLightData(data);
-    }
-
-    inline LightData toLightData() const noexcept
-    {
-        LightData data = event.toLightData();
-        return data;
-    }
-
-    static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept
-    {
-        SimConnectLightEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::LightAi));
-    }
+    double altitudeAboveGroundMinusCenterGravity {0.0};
 };
-#pragma pack(pop)
 
-#endif // SIMCONNECTLIGHTEVENTAI_H
+#endif // ALTITUDESENSORDATA_H
