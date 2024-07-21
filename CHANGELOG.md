@@ -5,6 +5,7 @@
 ## New Features
 
 ## Improvements
+- The nose wheel animation now also supports the Fenix A320
 
 ## 0.18.0
 
