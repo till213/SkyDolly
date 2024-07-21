@@ -1165,6 +1165,67 @@ set    gear_steer_position = steer_input_control;
 @migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Initialise steer input control", step = 3)
 alter table handle drop column steer_input_control;
 
+@migr(id = "3d44e7c3-50e5-44b9-84f0-4aadf95414f3", descn = "Adjust engine table column types", step_cnt = 2)
+create table engine_new (
+    aircraft_id integer not null,
+    timestamp integer not null,
+    throttle_lever_position1 integer,
+    throttle_lever_position2 integer,
+    throttle_lever_position3 integer,
+    throttle_lever_position4 integer,
+    propeller_lever_position1 integer,
+    propeller_lever_position2 integer,
+    propeller_lever_position3 integer,
+    propeller_lever_position4 integer,
+    mixture_lever_position1 integer,
+    mixture_lever_position2 integer,
+    mixture_lever_position3 integer,
+    mixture_lever_position4 integer,
+    cowl_flap_position1 integer,
+    cowl_flap_position2 integer,
+    cowl_flap_position3 integer,
+    cowl_flap_position4 integer,
+    electrical_master_battery1 integer,
+    electrical_master_battery2 integer,
+    electrical_master_battery3 integer,
+    electrical_master_battery4 integer,
+    general_engine_starter1 integer,
+    general_engine_starter2 integer,
+    general_engine_starter3 integer,
+    general_engine_starter4 integer,
+    general_engine_combustion1 integer,
+    general_engine_combustion2 integer,
+    general_engine_combustion3 integer,
+    general_engine_combustion4 integer,
+    primary key(aircraft_id, timestamp),
+    foreign key(aircraft_id) references aircraft(id)
+);
+
+@migr(id = "3d44e7c3-50e5-44b9-84f0-4aadf95414f3", descn = "Migrate engine data, drop old table", step = 2)
+insert into engine_new select * from engine;
+drop table engine;
+alter table engine_new rename to engine;
+
+@migr(id = "d2b501f0-de0a-4127-8c38-bc7aa51132bb", descn = "Adjust attitude table column types", step_cnt = 2)
+create table attitude_new (
+    aircraft_id integer not null,
+    timestamp integer not null,
+    pitch real,
+    bank real,
+    true_heading real,
+    velocity_x real,
+    velocity_y real,
+    velocity_z real,
+    on_ground integer,
+    primary key(aircraft_id, timestamp),
+    foreign key(aircraft_id) references aircraft(id)
+);
+
+@migr(id = "d2b501f0-de0a-4127-8c38-bc7aa51132bb", descn = "Migrate attitude data, drop old table", step = 2)
+insert into attitude_new select * from attitude;
+drop table attitude;
+alter table attitude_new rename to attitude;
+
 @migr(id = "e90abf13-a938-4833-ba10-afc43bbb4132", descn = "Update application version to 0.19", step = 1)
 update metadata
 set    app_version = '0.19.0';

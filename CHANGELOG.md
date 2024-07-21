@@ -7,6 +7,9 @@
 ## Improvements
 - The nose wheel animation now also supports the Fenix A320
 
+## Under the Hood
+- Optimised logbook table column types
+
 ## 0.18.0
 
 In **"Illustrious Ikarus"** flights with a recording duration over a day are now properly displayed. For instance the flight duration in the logbook is now shown as timestamp (hh:mm:ss format), in days, weeks, months and so on, depending on the actual duration. The time edit widget next to the timeline automatically also shows the date once the recording time exceeds 24 hours.
