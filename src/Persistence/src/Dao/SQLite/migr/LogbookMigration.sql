@@ -1155,6 +1155,16 @@ set    steer_input_control = 0;
 update metadata
 set    app_version = '0.18.0';
 
+@migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Add gear_steer_position column", step_cnt = 3)
+alter table handle add column gear_steer_position integer;
+
+@migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Initialise steer input control", step = 2)
+update handle
+set    gear_steer_position = steer_input_control;
+
+@migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Initialise steer input control", step = 3)
+alter table handle drop column steer_input_control;
+
 @migr(id = "e90abf13-a938-4833-ba10-afc43bbb4132", descn = "Update application version to 0.19", step = 1)
 update metadata
 set    app_version = '0.19.0';

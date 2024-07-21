@@ -44,7 +44,7 @@
 struct SimConnectAircraftHandleEvent
 {
     float tailhookPosition {0.0f};
-    float steerInputControl {0.0f};
+    float gearSteerPosition {0.0f};
     std::int32_t gearHandlePosition {0};
 
     SimConnectAircraftHandleEvent(const AircraftHandleData &aircraftHandleData) noexcept
@@ -58,7 +58,7 @@ struct SimConnectAircraftHandleEvent
     inline void fromAircraftHandleData(const AircraftHandleData &aircraftHandleData) noexcept
     {
         tailhookPosition = static_cast<float>(SkyMath::toPercent(aircraftHandleData.tailhookPosition));
-        steerInputControl = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.steerInputControl));
+        gearSteerPosition = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.gearSteerPosition));
         gearHandlePosition = aircraftHandleData.gearHandlePosition ? 1 : 0;
     }
 
@@ -72,14 +72,14 @@ struct SimConnectAircraftHandleEvent
     inline void toAircraftHandleData(AircraftHandleData &aircraftHandleData) const noexcept
     {
         aircraftHandleData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
-        aircraftHandleData.steerInputControl = SkyMath::fromNormalisedPosition(steerInputControl);
+        aircraftHandleData.gearSteerPosition = SkyMath::fromNormalisedPosition(gearSteerPosition);
         aircraftHandleData.gearHandlePosition = gearHandlePosition != 0;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::TailhookPosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SteerInputControl, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GearSteerAnglePercent, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GearHandlePosition, "Bool", ::SIMCONNECT_DATATYPE_INT32);
     }
 };

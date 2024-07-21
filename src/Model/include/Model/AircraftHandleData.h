@@ -34,7 +34,7 @@ struct MODEL_API AircraftHandleData final : public TimeVariableData
 {
     std::int16_t brakeLeftPosition {0};
     std::int16_t brakeRightPosition {0};
-    std::int16_t steerInputControl {0};
+    std::int16_t gearSteerPosition {0};
     // Implementation note: the water rudder can also have negative (-100.0) values,
     // hence hence the type std::int16_t (position) which also supports negative values
     std::int16_t waterRudderHandlePosition {0};

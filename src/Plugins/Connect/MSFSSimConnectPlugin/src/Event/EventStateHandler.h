@@ -222,7 +222,7 @@ public:
             sendWingFold(aircraftHandle.info.foldingWingHandlePosition);
         }
         if (ok) {
-            sendSteeringAxis(aircraftHandle.event.steerInputControl);
+            sendSteeringAxis(aircraftHandle.event.gearSteerPosition);
         }
         return ok;
     }
