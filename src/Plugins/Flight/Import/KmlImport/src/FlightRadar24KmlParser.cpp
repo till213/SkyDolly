@@ -113,13 +113,16 @@ std::vector<FlightData> FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStrea
     auto &attitude = aircraft.getAttitude();
     for (const auto &trackItem : d->trackData) {
         // Positition
-        PositionData positionData {trackItem.latitude, trackItem.longitude, trackItem.altitude};        
+        PositionData positionData {trackItem.latitude, trackItem.longitude};
+        positionData.initialiseCommonAltitude(trackItem.altitude);
         positionData.timestamp = trackItem.timestamp;
         position.upsertLast(positionData);
 
         // Attitude
         AttitudeData attitudeData {0, 0, static_cast<double>(trackItem.heading)};
         attitudeData.velocityBodyZ = trackItem.speed;
+        // FlightRadar24 encodes "on ground" with an altitude of exactly 0.0
+        attitudeData.onGround = positionData.altitude == 0.0 ? true : false;
         attitudeData.timestamp = trackItem.timestamp;
         attitude.upsertLast(attitudeData);
     }

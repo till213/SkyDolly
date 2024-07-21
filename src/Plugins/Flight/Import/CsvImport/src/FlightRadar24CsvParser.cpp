@@ -184,8 +184,8 @@ inline std::pair<PositionData, AttitudeData> FlightRadar24CsvParser::parsePositi
         const auto altitude = row.at(d->headers.at(Header::Altitude)).toDouble(&ok);
         if (ok) {
             positionData.initialiseCommonAltitude(altitude);
-            // FlightRadar24 encodes "on ground" with an altitude of 0
-            attitudeData.onGround = altitude == 0 ? true : false;
+            // FlightRadar24 encodes "on ground" with an altitude of exactly 0.0
+            attitudeData.onGround = altitude == 0.0 ? true : false;
         }
     }
     if (ok) {
