@@ -31,7 +31,6 @@
 #include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
 #include <Model/PrimaryFlightControlData.h>
-#include "SimConnectType.h"
 
 /*!
  * Primary flight control simulation variables that are sent as event to the user aircraft

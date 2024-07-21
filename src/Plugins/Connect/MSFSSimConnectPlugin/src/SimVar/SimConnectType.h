@@ -67,7 +67,9 @@ namespace SimConnectType
         WingLight,
         LogoLight,
         CabinLight,
-        SimulationRate
+        SimulationRate,
+        // Sensors
+        ReplaySensor
     };
 
     enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {

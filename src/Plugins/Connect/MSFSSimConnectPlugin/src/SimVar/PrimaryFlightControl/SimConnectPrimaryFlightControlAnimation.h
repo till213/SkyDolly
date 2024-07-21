@@ -30,7 +30,6 @@
 
 #include <Model/SimVar.h>
 #include <Model/PrimaryFlightControlData.h>
-#include "SimConnectType.h"
 
 /*!
  * Primary flight control simulation variables that are sent exclusively to AI aircraft for animation.

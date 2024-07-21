@@ -31,7 +31,6 @@
 #include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
 #include <Model/SecondaryFlightControlData.h>
-#include "SimConnectType.h"
 
 /*!
  * Secondary flightr control simulation variables that are sent exclusively to AI aircraft for animation.

@@ -28,7 +28,9 @@
 #include <windows.h>
 #include <SimConnect.h>
 
+#include <Kernel/Enum.h>
 #include <Model/AttitudeData.h>
+#include "SimConnectType.h"
 #include "SimConnectAttitudeCommon.h"
 #include "SimConnectAttitudeInfo.h"
 

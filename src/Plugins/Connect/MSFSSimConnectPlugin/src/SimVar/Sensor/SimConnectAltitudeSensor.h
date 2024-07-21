@@ -30,7 +30,6 @@
 
 #include <Model/SimVar.h>
 #include <Model/AltitudeSensorData.h>
-#include "SimConnectType.h"
 
 /*!
  * The altitude sensor continuously measures altitudes above ground, also while replaying.
@@ -68,7 +67,7 @@ struct SimConnectAltitudeSensor
 
     static inline void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PlaneAltitudeAboveGroundMinusCenterGravity, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
+        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::PlaneAltAboveGroundMinusCG, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
     }
 };
 #pragma pack(pop)

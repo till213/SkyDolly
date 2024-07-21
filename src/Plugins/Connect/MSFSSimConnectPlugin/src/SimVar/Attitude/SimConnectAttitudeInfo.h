@@ -32,7 +32,6 @@
 
 #include <Model/SimVar.h>
 #include <Model/AttitudeData.h>
-#include "SimConnectType.h"
 
 /*!
  * Aircraft attitude simulation variables that are either stored for information purposes only

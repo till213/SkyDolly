@@ -61,7 +61,7 @@ struct SimConnectPositionCommon
     {
         latitude = data.latitude;
         longitude = data.longitude;
-        altitude = data.altitude- 0.689; // TODO REMOVE ME!!!!
+        altitude = data.altitude;
     }
 
     inline PositionData toPositionData() const noexcept

@@ -28,9 +28,10 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Model/AttitudeData.h>
-#include "SimConnectAttitudeCommon.h"
-#include "SimConnectAttitudeInfo.h"
+#include <Kernel/Enum.h>
+#include <Model/AltitudeSensorData.h>
+#include "SimConnectType.h"
+#include "SimConnectAltitudeSensor.h"
 
 /*!
  * All active sensor during replay.
@@ -42,31 +43,27 @@ struct SimConnectReplaySensor
 {
     SimConnectAltitudeSensor altitudeSensor;
 
-    SimConnectReplaySensor(const SimConnectAltitudeSensor &data) noexcept
-        : SimConnectReplaySensor()
+    SimConnectReplaySensor(const AltitudeSensorData &data) noexcept
     {
-        fromAttitudeData(positionData);
+        fromSimConnectAltitudeSensor(data);
     }
 
     SimConnectReplaySensor() = default;
 
-    inline void fromASimConnectAltitudeSensor(const SimConnectAltitudeSensor &data) noexcept
+    inline void fromSimConnectAltitudeSensor(const AltitudeSensorData &data) noexcept
     {
-        common.fromAttitudeData(data);
-        info.fromAttitudeData(data);
+        altitudeSensor.fromAltitudeSensorData(data);
     }
 
-    inline AttitudeData toAttitudeData() const noexcept
+    inline AltitudeSensorData toAttitudeData() const noexcept
     {
-        auto positionData = common.toAttitudeData();
-        info.toAttitudeData(positionData);
-        return positionData;
+        auto data = altitudeSensor.toAltitudeSensorData();
+        return data;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
     {
-        SimConnectAttitudeCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AttitudeAll));
-        SimConnectAttitudeInfo::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AttitudeAll));
+        SimConnectAltitudeSensor::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::ReplaySensor));
     }
 
 };

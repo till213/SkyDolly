@@ -30,6 +30,7 @@
 
 #include <Model/PositionData.h>
 #include <Model/AttitudeData.h>
+#include <Model/InitialPosition.h>
 #include "../Position/SimConnectPositionCommon.h"
 #include "../Attitude/SimConnectAttitudeCommon.h"
 #include "SimConnectPositionAndAttitudeUser.h"

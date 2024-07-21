@@ -30,8 +30,8 @@
 
 #include <Kernel/Enum.h>
 #include <Model/PositionData.h>
-#include "SimConnectPositionCommon.h"
 #include "SimConnectType.h"
+#include "SimConnectPositionCommon.h"
 #include "SimConnectPositionInfo.h"
 
 /*!
