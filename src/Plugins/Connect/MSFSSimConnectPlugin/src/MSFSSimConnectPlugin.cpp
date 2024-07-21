@@ -117,6 +117,10 @@ struct SkyConnectPrivate
     tsl::ordered_map<QString, Waypoint> flightPlan;    
     bool pendingWaypointTime {false};
     bool subscribedToSimulatedFrameEvent {false};
+    // ASRA - Active Sending Runway Alignment
+    double currentAltitudeAboveGroundMinusCenterGravity {0.0};
+    double currentAltitudeOffset {currentAltitudeAboveGroundMinusCenterGravity};
+    bool altitudeAboveGroundSensorEnabled {false};
 };
 
 // PUBLIC
@@ -420,7 +424,17 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                 if (!positionData.isNull()) {
                     SimConnectPositionAndAttitudeAll simConnnectPositionAndAttitudeAll {positionData, attitudeData};
                     if (isUserAircraft) {
+                        d->altitudeAboveGroundSensorEnabled = attitudeData.onGround;
                         SimConnectPositionAndAttitudeUser simConnectPositionAndAttitudeUser {simConnnectPositionAndAttitudeAll.user()};
+                        // Adjust altitude (ASRA)
+#ifdef DEBUG
+                        qDebug() << "ASRA: Adjusting altitude by:" << d->currentAltitudeOffset << "from:" << simConnectPositionAndAttitudeUser.positionCommon.altitude;
+#endif
+                        simConnectPositionAndAttitudeUser.positionCommon.altitude += d->currentAltitudeOffset;
+#ifdef DEBUG
+                        qDebug() << "ASRA: Adjusting altitude to:"  << simConnectPositionAndAttitudeUser.positionCommon.altitude;
+#endif
+
                         const HRESULT res = ::SimConnect_SetDataOnSimObject(
                             d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAndAttitudeUser),
                             objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
@@ -1240,9 +1254,15 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         {
             if (!skyConnect->isInRecordingState()) {
                 const auto replaySensor = reinterpret_cast<const SimConnectReplaySensor *>(&objectData->dwData);
+                if (skyConnect->d->altitudeAboveGroundSensorEnabled) {
+                    skyConnect->d->currentAltitudeAboveGroundMinusCenterGravity = replaySensor->altitudeSensor.planeAltitudeAboveGroundMinusCenterGravity;
+                    skyConnect->d->currentAltitudeOffset -= skyConnect->d->currentAltitudeAboveGroundMinusCenterGravity;
 #ifdef DEBUG
-                qDebug() << "Replay sensor: altitude:" << replaySensor->altitudeSensor.planeAltitudeAboveGroundMinusCenterGravity;
+                    qDebug() << "ASRA enabled: altitude above ground:" << replaySensor->altitudeSensor.planeAltitudeAboveGroundMinusCenterGravity
+                             << "current altitude offset: " << skyConnect->d->currentAltitudeOffset
+                             << "----------------------------------------";
 #endif
+                }
              }
             break;
         }
