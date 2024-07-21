@@ -115,6 +115,8 @@ private:
     void replay() noexcept;
     void updateRecordingFrequency() noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
+    void updateReplaySensorFrequency() noexcept;
+    void updateReplaySensorPeriod(::SIMCONNECT_PERIOD period) noexcept;
     void resetEventStates(ResetReason reason) noexcept;
 
     // Returns the configuration index that refers to the Sky Dolly specific client SimConnect.cfg configuration

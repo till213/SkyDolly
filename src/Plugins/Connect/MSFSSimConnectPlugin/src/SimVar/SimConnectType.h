@@ -99,6 +99,8 @@ namespace SimConnectType
         LogoLight,
         CabinLight,
         SimulationRate,
+        // Sensors
+        ReplaySensor,
         // AI objects
         AiRemoveObject,
         AiReleaseControl,

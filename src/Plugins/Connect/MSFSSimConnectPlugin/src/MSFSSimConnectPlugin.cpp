@@ -110,6 +110,7 @@ struct SkyConnectPrivate
     std::unique_ptr<EventWidget> eventWidget {std::make_unique<EventWidget>()};
     std::unique_ptr<InputEvent> inputEvent {std::make_unique<InputEvent>()};
     ::SIMCONNECT_PERIOD currentRequestPeriod {::SIMCONNECT_PERIOD_NEVER};
+    ::SIMCONNECT_PERIOD currentSensorPeriod {::SIMCONNECT_PERIOD_NEVER};
     QDateTime currentLocalDateTime;
     QDateTime currentZuluDateTime;
     // Insert order is order of flight plan
@@ -339,6 +340,7 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
 
 bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
 {
+    updateReplaySensorFrequency();
     HRESULT result {S_OK};
     // Send aircraft position every visual frame
     if (!d->subscribedToSimulatedFrameEvent) {
@@ -353,6 +355,7 @@ bool MSFSSimConnectPlugin::onStartReplay(std::int64_t currentTimestamp) noexcept
 
 void MSFSSimConnectPlugin::onReplayPaused([[maybe_unused]] Initiator initiator, bool enable) noexcept
 {
+    updateReplaySensorFrequency();
     if (enable) {
         if (d->subscribedToSimulatedFrameEvent) {
             ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
@@ -371,6 +374,7 @@ void MSFSSimConnectPlugin::onReplayPaused([[maybe_unused]] Initiator initiator, 
 
 void MSFSSimConnectPlugin::onStopReplay() noexcept
 {
+    updateReplaySensorFrequency();
     if (d->subscribedToSimulatedFrameEvent) {
         ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::underly(SimConnectEvent::Event::Frame));
         d->subscribedToSimulatedFrameEvent = false;
@@ -692,10 +696,12 @@ void MSFSSimConnectPlugin::setupRequestData() noexcept
     SimConnectLightAi::addToDataDefinition(d->simConnectHandle);
     SimConnectLightAll::addToDataDefinition(d->simConnectHandle);
     SimConnectFlightPlan::addToDataDefinition(d->simConnectHandle);
-    SimConnectSimulationTime::addToDataDefinition(d->simConnectHandle);
+    SimConnectSimulationTime::addToDataDefinition(d->simConnectHandle);    
     SimConnectLocation::addToDataDefinition(d->simConnectHandle);
     // Simulation variables
     SimConnectVariables::addToDataDefinition(d->simConnectHandle);
+    // Sensors
+    SimConnectReplaySensor::addToDataDefinition(d->simConnectHandle);
 
     ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::InitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
@@ -775,6 +781,24 @@ void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexc
             ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
         );
         d->currentRequestPeriod = period;
+    }
+}
+
+void MSFSSimConnectPlugin::updateReplaySensorFrequency() noexcept
+{
+    const auto sensorPeriod = getState() == Connect::State::Replay ? ::SIMCONNECT_PERIOD_SIM_FRAME : ::SIMCONNECT_PERIOD_NEVER;
+    updateReplaySensorPeriod(sensorPeriod);
+}
+
+void MSFSSimConnectPlugin::updateReplaySensorPeriod(::SIMCONNECT_PERIOD period) noexcept
+{
+    if (d->currentSensorPeriod != period) {
+        ::SimConnect_RequestDataOnSimObject(
+            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::ReplaySensor),
+            Enum::underly(SimConnectType::DataDefinition::ReplaySensor),
+            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
+        );
+        d->currentSensorPeriod = period;
     }
 }
 
@@ -992,7 +1016,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         switch (static_cast<SimConnectType::DataRequest>(objectData->dwRequestID)) {
         case SimConnectType::DataRequest::PositionAll:
         {
-            if (skyConnect->getState() == Connect::State::Recording) {
+            if (skyConnect->isRecording()) {
                 auto simConnectPositionAll = reinterpret_cast<const SimConnectPositionAll *>(&objectData->dwData);
                 PositionData positionData = simConnectPositionAll->toPositionData();
                 positionData.timestamp = skyConnect->getCurrentTimestamp();
@@ -1003,7 +1027,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::AttitudeAll:
         {
-            if (skyConnect->getState() == Connect::State::Recording) {
+            if (skyConnect->isRecording()) {
                 auto simConnectAttitudeAll = reinterpret_cast<const SimConnectAttitudeAll *>(&objectData->dwData);
                 AttitudeData attitudeData = simConnectAttitudeAll->toAttitudeData();
                 attitudeData.timestamp = skyConnect->getCurrentTimestamp();
@@ -1014,7 +1038,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::EngineAll:
         {
-            if (skyConnect->getState() == Connect::State::Recording) {
+            if (skyConnect->isRecording()) {
                 auto simConnectEngineAll = reinterpret_cast<const SimConnectEngineAll *>(&objectData->dwData);
                 EngineData engineData = simConnectEngineAll->toEngineData();
                 engineData.timestamp = skyConnect->getCurrentTimestamp();
@@ -1025,7 +1049,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::PrimaryFlightControlAll:
         {
-            if (skyConnect->getState() == Connect::State::Recording) {
+            if (skyConnect->isRecording()) {
                 auto simConnectPrimaryFlightControlAll = reinterpret_cast<const SimConnectPrimaryFlightControlAll *>(&objectData->dwData);
                 PrimaryFlightControlData primaryFlightControlData = simConnectPrimaryFlightControlAll->toPrimaryFlightControlData();
                 primaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
@@ -1036,7 +1060,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::SecondaryFlightControlAll:
         {
-            if (skyConnect->getState() == Connect::State::Recording) {
+            if (skyConnect->isRecording()) {
                 auto simConnectSecondaryFlightControlAll = reinterpret_cast<const SimConnectSecondaryFlightControlAll *>(&objectData->dwData);
                 SecondaryFlightControlData secondaryFlightControlData = simConnectSecondaryFlightControlAll->toSecondaryFlightControlData();
                 secondaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
@@ -1047,7 +1071,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::AircraftHandleAll:
         {
-            if (skyConnect->getState() == Connect::State::Recording) {
+            if (skyConnect->isRecording()) {
                 auto simConnectAircraftHandleAll = reinterpret_cast<const SimConnectAircraftHandleAll *>(&objectData->dwData);
                 AircraftHandleData aircraftHandleData = simConnectAircraftHandleAll->toAircraftHandleData();
                 aircraftHandleData.timestamp = skyConnect->getCurrentTimestamp();
@@ -1058,7 +1082,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::LightAll:
         {
-            if (skyConnect->getState() == Connect::State::Recording) {
+            if (skyConnect->isRecording()) {
                 auto simConnectLightAll = reinterpret_cast<const SimConnectLightAll *>(&objectData->dwData);
                 LightData lightData = simConnectLightAll->toLightData();
                 lightData.timestamp = skyConnect->getCurrentTimestamp();
@@ -1069,7 +1093,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::FlightPlan:
         {
-            if (skyConnect->getState() == Connect::State::Recording) {
+            if (skyConnect->isRecording()) {
                 auto simConnectFlightPlan = reinterpret_cast<const SimConnectFlightPlan *>(&objectData->dwData);
                 Waypoint waypoint = simConnectFlightPlan->toPreviousWaypoint();
                 if (waypoint.isValid()) {
@@ -1094,7 +1118,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::SimulationTime:
         {
-            if (skyConnect->getState() == Connect::State::Recording) {
+            if (skyConnect->isRecording()) {
                 const auto simConnectSimulationTime = reinterpret_cast<const SimConnectSimulationTime *>(&objectData->dwData);
                 skyConnect->d->currentLocalDateTime = simConnectSimulationTime->toLocalDateTime();
                 skyConnect->d->currentZuluDateTime = simConnectSimulationTime->toZuluDateTime();
@@ -1117,7 +1141,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::FlapsHandleIndex:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto flapsHandleIndex = reinterpret_cast<const SimConnectVariables::FlapsHandleIndex *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setCurrentFlapsHandleIndex(flapsHandleIndex->value);
             }
@@ -1125,7 +1149,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::NavigationLight:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto navigationLight = reinterpret_cast<const SimConnectVariables::NavigationLight *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setNavigationLight(navigationLight->value);
             }
@@ -1133,7 +1157,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::BeaconLight:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto beaconLight = reinterpret_cast<const SimConnectVariables::BeaconLight *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setBeaconLight(beaconLight->value);
             }
@@ -1141,7 +1165,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::LandingLight:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto landingLight = reinterpret_cast<const SimConnectVariables::LandingLight *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setLandingLight(landingLight->value);
             }
@@ -1149,7 +1173,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::TaxiLight:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto taxiLight = reinterpret_cast<const SimConnectVariables::TaxiLight *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setTaxiLight(taxiLight->value);
             }
@@ -1157,7 +1181,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::StrobeLight:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto strobeLight = reinterpret_cast<const SimConnectVariables::StrobeLight *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setStrobeLight(strobeLight->value);
             }
@@ -1165,7 +1189,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::PanelLight:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto panelLight = reinterpret_cast<const SimConnectVariables::PanelLight *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setPanelLight(panelLight->value);
             }
@@ -1173,7 +1197,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::RecognitionLight:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto recognitionLight = reinterpret_cast<const SimConnectVariables::RecognitionLight *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setRecognitionLight(recognitionLight->value);
             }
@@ -1181,7 +1205,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::WingLight:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto wingLight = reinterpret_cast<const SimConnectVariables::WingLight *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setWingLight(wingLight->value);
             }
@@ -1189,7 +1213,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::LogoLight:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto logoLight = reinterpret_cast<const SimConnectVariables::LogoLight *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setLogoLight(logoLight->value);
             }
@@ -1197,7 +1221,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::CabinLight:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto cabinLight = reinterpret_cast<const SimConnectVariables::CabinLight *>(&objectData->dwData);
                 skyConnect->d->eventStateHandler->setCabinLight(cabinLight->value);
             }
@@ -1205,11 +1229,21 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         }
         case SimConnectType::DataRequest::SimulationRate:
         {
-            if (skyConnect->getState() != Connect::State::Recording && skyConnect->getState() != Connect::State::RecordingPaused) {
+            if (!skyConnect->isInRecordingState()) {
                 const auto simulationRate = reinterpret_cast<const SimConnectVariables::SimulationRate *>(&objectData->dwData);
                 skyConnect->d->simulationRate->setCurrentSimulationRate(skyConnect->d->simConnectHandle, simulationRate->value);
                 emit skyConnect->simulationRateReceived(simulationRate->value);
             }
+            break;
+        }
+        case SimConnectType::DataRequest::ReplaySensor:
+        {
+            if (!skyConnect->isInRecordingState()) {
+                const auto replaySensor = reinterpret_cast<const SimConnectReplaySensor *>(&objectData->dwData);
+#ifdef DEBUG
+                qDebug() << "Replay sensor: altitude:" << replaySensor->altitudeSensor.planeAltitudeAboveGroundMinusCenterGravity;
+#endif
+             }
             break;
         }
         default:
