@@ -14,8 +14,9 @@ The simulation variables are organised into records, covering the following topi
 Each topic X is furthermore split into sub-records:
 
 - XAnimation: animation simulation variables that are exclusively sent to AI aircraft, for animation purposes (but no effect on user aircraft, e.g. "rudder deflection" et al.)
-- XCommon: common simulation variables that are sent to both user- and AI aircraft
-- XCore: core simulation variables might be sent as either simulation variables or events to the user aircraft
+- XCommon: common simulation variables that are sent to both user- and AI aircraft as simulation variables
+- XCore: core simulation variables might be sent as either simulation variables or events exclusively to the user aircraft (not to AI aircraft)
+- XCoreEvent: core events are sent exclusively to the user aircraft (not to AI aircraft), e.g. "gear stear angle pct"
 - XEvent: event variables are sent as event to the user aircraft and (possibly) as simulation variables to AI aircraft
 - XInfo: simulation variables that are only stored for information purposes or that are sent exclusively to the user aircraft as events
 
@@ -28,6 +29,3 @@ The following "cumulative records" are actually registered with SimConnect as da
 ### Request (Replay)
 - XUser: the combination of XCommon and possibly XCore; data sent as simulation variables to the user aircraft
 - XAi: the combination of XCommon and possibly XEvent; data sent as simulation variables to AI aircraft
-
-## Events
-All other simulation variables, specifically those in XCore and XEvent, are sent as events to the user aircraft (only)

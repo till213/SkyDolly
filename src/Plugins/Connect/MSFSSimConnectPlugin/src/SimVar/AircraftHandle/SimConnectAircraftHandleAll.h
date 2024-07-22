@@ -30,6 +30,7 @@
 #include "SimConnectType.h"
 #include "SimConnectAircraftHandleCommon.h"
 #include "SimConnectAircraftHandleCore.h"
+#include "SimConnectAircraftHandleCoreEvent.h"
 #include "SimConnectAircraftHandleEvent.h"
 #include "SimConnectAircraftHandleAnimation.h"
 #include "SimConnectAircraftHandleInfo.h"
@@ -45,10 +46,11 @@
 struct SimConnectAircraftHandleAll
 {
     SimConnectAircraftHandleCommon common;
-    SimConnectAircraftHandleCore core;
-    SimConnectAircraftHandleInfo info;
+    SimConnectAircraftHandleCore core;    
+    SimConnectAircraftHandleCoreEvent coreEvent;
     SimConnectAircraftHandleEvent event;
     SimConnectAircraftHandleAnimation animation;
+    SimConnectAircraftHandleInfo info;
 
     SimConnectAircraftHandleAll(const AircraftHandleData &aircraftHandle) noexcept
         : SimConnectAircraftHandleAll()
@@ -62,18 +64,20 @@ struct SimConnectAircraftHandleAll
     {
         common.fromAircraftHandleData(aircraftHandle);
         core.fromAircraftHandleData(aircraftHandle);
-        info.fromAircraftHandleData(aircraftHandle);
+        coreEvent.fromAircraftHandleData(aircraftHandle);
         event.fromAircraftHandleData(aircraftHandle);
         animation.fromAircraftHandleData(aircraftHandle);
+        info.fromAircraftHandleData(aircraftHandle);
     }
 
     inline AircraftHandleData toAircraftHandleData() const noexcept
     {
         AircraftHandleData aircraftHandle = common.toAircraftHandleData();
         core.toAircraftHandleData(aircraftHandle);
+        coreEvent.toAircraftHandleData(aircraftHandle);
         event.toAircraftHandleData(aircraftHandle);
-        info.toAircraftHandleData(aircraftHandle);
         animation.toAircraftHandleData(aircraftHandle);
+        info.toAircraftHandleData(aircraftHandle);
         return aircraftHandle;
     }
 
@@ -98,9 +102,10 @@ struct SimConnectAircraftHandleAll
     {
         SimConnectAircraftHandleCommon::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
         SimConnectAircraftHandleCore::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
-        SimConnectAircraftHandleInfo::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
+        SimConnectAircraftHandleCoreEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
         SimConnectAircraftHandleEvent::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
         SimConnectAircraftHandleAnimation::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
+        SimConnectAircraftHandleInfo::addToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll));
     }
 };
 #pragma pack(pop)

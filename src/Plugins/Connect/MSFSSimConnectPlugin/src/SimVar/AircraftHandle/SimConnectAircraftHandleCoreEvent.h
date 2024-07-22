@@ -22,10 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTAIRCRAFTHANDLEEVENT_H
-#define SIMCONNECTAIRCRAFTHANDLEEVENT_H
-
-#include <cstdint>
+#ifndef SIMCONNECTAIRCRAFTHANDLECOREEVENT_H
+#define SIMCONNECTAIRCRAFTHANDLECOREEVENT_H
 
 #include <windows.h>
 #include <SimConnect.h>
@@ -35,29 +33,25 @@
 #include <Model/AircraftHandleData.h>
 
 /*!
- * Aircraft handle simulation variables that are sent as event to the user aircraft
- * (and possibly as simulation variables to AI aircraft).
+ * Core event aircraft handle simulation variables that are only sent to the user aircraft (as event).
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectAircraftHandleEvent
+struct SimConnectAircraftHandleCoreEvent
 {
-    float tailhookPosition {0.0f};
-    std::int32_t gearHandlePosition {0};
+     float steerInputControl {0.0f};
 
-    SimConnectAircraftHandleEvent(const AircraftHandleData &aircraftHandleData) noexcept
-        : SimConnectAircraftHandleEvent()
+    SimConnectAircraftHandleCoreEvent(const AircraftHandleData &aircraftHandleData) noexcept
+        : SimConnectAircraftHandleCoreEvent()
     {
         fromAircraftHandleData(aircraftHandleData);
     }
-
-    SimConnectAircraftHandleEvent() = default;
+    SimConnectAircraftHandleCoreEvent() = default;
 
     inline void fromAircraftHandleData(const AircraftHandleData &aircraftHandleData) noexcept
     {
-        tailhookPosition = static_cast<float>(SkyMath::toPercent(aircraftHandleData.tailhookPosition));
-        gearHandlePosition = aircraftHandleData.gearHandlePosition ? 1 : 0;
+        steerInputControl = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.steerInputControl));
     }
 
     inline AircraftHandleData toAircraftHandleData() const noexcept
@@ -69,16 +63,14 @@ struct SimConnectAircraftHandleEvent
 
     inline void toAircraftHandleData(AircraftHandleData &aircraftHandleData) const noexcept
     {
-        aircraftHandleData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
-        aircraftHandleData.gearHandlePosition = gearHandlePosition != 0;
+        aircraftHandleData.steerInputControl = SkyMath::fromNormalisedPosition(steerInputControl);
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::TailhookPosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GearHandlePosition, "Bool", ::SIMCONNECT_DATATYPE_INT32);
+          ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SteerInputControl, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
     }
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTAIRCRAFTHANDLEEVENT_H
+#endif // SIMCONNECTAIRCRAFTHANDLECOREEVENT_H
