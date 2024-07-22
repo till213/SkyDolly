@@ -143,11 +143,10 @@ MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
 bool MSFSSimConnectPlugin::setUserAircraftPositionAndAttitude(const PositionData &positionData, const AttitudeData &attitudeData) noexcept
 {
     SimConnectPositionAndAttitudeUser simConnectPositionAndAttitudeUser {positionData, attitudeData};
-    const HRESULT result = ::SimConnect_SetDataOnSimObject(
-        d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAndAttitudeUser),
-        ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-        sizeof(SimConnectPositionAndAttitudeUser), &simConnectPositionAndAttitudeUser
-    );
+    const HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::PositionAndAttitudeUser),
+                                                           ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                           sizeof(SimConnectPositionAndAttitudeUser), &simConnectPositionAndAttitudeUser
+                                                           );
     return result == S_OK;
 }
 
@@ -176,11 +175,9 @@ bool MSFSSimConnectPlugin::onSetupFlightSimulatorShortcuts() noexcept
 bool MSFSSimConnectPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
 {
     SIMCONNECT_DATA_INITPOSITION initialSimConnectPosition = SimConnectPositionAndAttitudeAll::toInitialPosition(initialPosition);
-    HRESULT result = ::SimConnect_SetDataOnSimObject(
-        d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::InitialPosition),
-        ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-        sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialSimConnectPosition
-    );
+    HRESULT result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataDefinition::InitialPosition),
+                                                     ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                     sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialSimConnectPosition);
     return result == S_OK;
 }
 
@@ -733,51 +730,33 @@ void MSFSSimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexc
         // We sample the position data only at 1 Hz, in order to "smoothen" the curve
         // The flight plan and simulation time is also updated only every second
         ::SIMCONNECT_PERIOD oneSecondPeriod = period != ::SIMCONNECT_PERIOD_NEVER ? ::SIMCONNECT_PERIOD_SECOND : ::SIMCONNECT_PERIOD_NEVER;
-        ::SimConnect_RequestDataOnSimObject(
-            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::PositionAll),
-            Enum::underly(SimConnectType::DataDefinition::PositionAll),
-            ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
-        );
-        ::SimConnect_RequestDataOnSimObject(
-            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AttitudeAll),
-            Enum::underly(SimConnectType::DataDefinition::AttitudeAll),
-            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
-        );
-        ::SimConnect_RequestDataOnSimObject(
-            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::EngineAll),
-            Enum::underly(SimConnectType::DataDefinition::EngineAll),
-            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
-        );
-        ::SimConnect_RequestDataOnSimObject(
-            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::PrimaryFlightControlAll),
-            Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAll),
-            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
-        );
-        ::SimConnect_RequestDataOnSimObject(
-            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::SecondaryFlightControlAll),
-            Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControlAll),
-            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
-        );
-        ::SimConnect_RequestDataOnSimObject(
-            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftHandleAll),
-            Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll),
-            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
-        );
-        ::SimConnect_RequestDataOnSimObject(
-            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::LightAll),
-            Enum::underly(SimConnectType::DataDefinition::LightAll),
-            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
-        );
-        ::SimConnect_RequestDataOnSimObject(
-            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::FlightPlan),
-            Enum::underly(SimConnectType::DataDefinition::FlightPlan),
-            ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
-        );
-        ::SimConnect_RequestDataOnSimObject(
-            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::SimulationTime),
-            Enum::underly(SimConnectType::DataDefinition::SimulationTime),
-            ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
-        );
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::PositionAll),
+                                            Enum::underly(SimConnectType::DataDefinition::PositionAll),
+                                            ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AttitudeAll),
+                                            Enum::underly(SimConnectType::DataDefinition::AttitudeAll),
+                                            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::EngineAll),
+                                            Enum::underly(SimConnectType::DataDefinition::EngineAll),
+                                            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::PrimaryFlightControlAll),
+                                            Enum::underly(SimConnectType::DataDefinition::PrimaryFlightControlAll),
+                                            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::SecondaryFlightControlAll),
+                                            Enum::underly(SimConnectType::DataDefinition::SecondaryFlightControlAll),
+                                            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::AircraftHandleAll),
+                                            Enum::underly(SimConnectType::DataDefinition::AircraftHandleAll),
+                                            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::LightAll),
+                                            Enum::underly(SimConnectType::DataDefinition::LightAll),
+                                            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::FlightPlan),
+                                            Enum::underly(SimConnectType::DataDefinition::FlightPlan),
+                                            ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::SimulationTime),
+                                            Enum::underly(SimConnectType::DataDefinition::SimulationTime),
+                                            ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         d->currentRequestPeriod = period;
     }
 }
@@ -791,11 +770,24 @@ void MSFSSimConnectPlugin::updateReplaySensorFrequency() noexcept
 void MSFSSimConnectPlugin::updateReplaySensorPeriod(::SIMCONNECT_PERIOD period) noexcept
 {
     if (d->currentSensorPeriod != period) {
-        ::SimConnect_RequestDataOnSimObject(
-            d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::ReplaySensor),
-            Enum::underly(SimConnectType::DataDefinition::ReplaySensor),
-            ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED
-        );
+        ::SIMCONNECT_PERIOD oneSecondPeriod = period != ::SIMCONNECT_PERIOD_NEVER ? ::SIMCONNECT_PERIOD_SECOND : ::SIMCONNECT_PERIOD_NEVER;
+
+        const auto &flight = getCurrentFlight();
+        for (const auto &aircraft : flight) {
+            const auto objectId = d->simConnectAi->getSimulatedObjectIdByAircraftId(aircraft.getId());
+            if (objectId != SimConnectAi::InvalidObjectId) {
+                // AI aircraft are sensed every second (only)
+                ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::ReplaySensor),
+                                                    Enum::underly(SimConnectType::DataDefinition::ReplaySensor),
+                                                    objectId, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+            } else {
+                // The user aircraft is sensed every simulated frame
+                ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::underly(SimConnectType::DataRequest::ReplaySensor),
+                                                    Enum::underly(SimConnectType::DataDefinition::ReplaySensor),
+                                                    ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+            }
+        }
+
         d->currentSensorPeriod = period;
     }
 }
