@@ -850,7 +850,7 @@ bool AbstractSkyConnect::setupInitialReplayPosition(InitialPosition initialPosit
         [[fallthrough]];
     case ReplayMode::Normal:
         if (d->currentTimestamp == 0) {
-            const auto &aircraft = getCurrentFlight().getUserAircraft();
+            const auto &aircraft = d->currentFlight.getUserAircraft();
             // Make sure recorded position data exists
             ok = aircraft.getPosition().count() > 0;
             if (ok) {
