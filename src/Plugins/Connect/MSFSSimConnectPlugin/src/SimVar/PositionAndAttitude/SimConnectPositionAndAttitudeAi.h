@@ -56,21 +56,9 @@ struct SimConnectPositionAndAttitudeAi
         positionCommon.fromPositionData(positionData);
     }
 
-    inline PositionData toPositionData() const noexcept
-    {
-        const auto positionData = positionCommon.toPositionData();
-        return positionData;
-    }
-
     inline void fromAttitudeData(const AttitudeData &attitudeData)
     {
         attitudeCommon.fromAttitudeData(attitudeData);
-    }
-
-    inline AttitudeData toAttitudeData() const noexcept
-    {
-        const auto attitudeData = attitudeCommon.toAttitudeData();
-        return attitudeData;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept
