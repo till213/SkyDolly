@@ -37,18 +37,17 @@ class SimConnectAIPrivate;
 class SimConnectAi
 {
 public:
-    SimConnectAi(HANDLE simConnectHandle);
+    SimConnectAi();
     SimConnectAi(const SimConnectAi &rhs) = delete;
     SimConnectAi(SimConnectAi &&rhs) = delete;
     SimConnectAi &operator=(const SimConnectAi &rhs) = delete;
     SimConnectAi &operator=(SimConnectAi &&rhs) = delete;
     ~SimConnectAi();
 
-    void addObject(const Aircraft &aircraft, std::int64_t timestamp) noexcept;
-    void removeByAircraftId(std::int64_t aircraftId) noexcept;
-    void removeAllObjects() noexcept;
-
-    void removeByObjectId(::SIMCONNECT_OBJECT_ID objectId) noexcept;
+    void addObject(HANDLE simConnectHandle, const Aircraft &aircraft, std::int64_t timestamp) noexcept;
+    void removeByAircraftId(HANDLE simConnectHandle, std::int64_t aircraftId) noexcept;
+    void removeAllObjects(HANDLE simConnectHandle) noexcept;
+    void removeByObjectId(HANDLE simConnectHandle, ::SIMCONNECT_OBJECT_ID objectId) noexcept;
 
     /*!
      * Registers the \p objectId, as returned by the server via SimConnect, with the given \p requestId
@@ -62,7 +61,7 @@ public:
      *         request has already been removed
      */
     bool registerObjectId(::SIMCONNECT_DATA_REQUEST_ID requestId, ::SIMCONNECT_OBJECT_ID objectId) noexcept;
-    ::SIMCONNECT_OBJECT_ID getSimulatedObjectByAircraftId(std::int64_t aircraftId) const noexcept;
+    ::SIMCONNECT_OBJECT_ID getSimulatedObjectIdByAircraftId(std::int64_t aircraftId) const noexcept;
 
     static constexpr ::SIMCONNECT_OBJECT_ID InvalidObjectId = -1;
 
