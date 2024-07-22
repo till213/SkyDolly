@@ -516,7 +516,6 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                             if (ok) {
                                 ok = d->eventStateHandler->sendAircraftHandle(simConnectAircraftHandleAll);
                             }
-
                         } else {
                             SimConnectAircraftHandleAi simConnectAircraftHandleAi {simConnectAircraftHandleAll.ai()};
                             const HRESULT res = ::SimConnect_SetDataOnSimObject(
@@ -526,7 +525,6 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                             );
                             ok = res == S_OK;
                         }
-
                     }
                 }
 

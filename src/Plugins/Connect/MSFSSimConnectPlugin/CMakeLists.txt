@@ -33,6 +33,7 @@ target_sources(${MODULE_NAME}
         src/SimVar/AircraftHandle/SimConnectAircraftHandleAnimation.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleCommon.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleCore.h
+        src/SimVar/AircraftHandle/SimConnectAircraftHandleCoreEvent.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleEvent.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleInfo.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleAll.h
