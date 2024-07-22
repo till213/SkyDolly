@@ -446,7 +446,7 @@ void PathCreatorPlugin::recordAircraftHandle(std::int64_t timestamp) noexcept
     AircraftHandleData aircraftHandleData;
     aircraftHandleData.brakeLeftPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
     aircraftHandleData.brakeRightPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
-    aircraftHandleData.gearSteerPosition = SkyMath::fromNormalisedPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    aircraftHandleData.steerInputControl = SkyMath::fromNormalisedPosition(-1.0 + d->randomGenerator->bounded(2.0));
     aircraftHandleData.waterRudderHandlePosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
     aircraftHandleData.tailhookPosition = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     aircraftHandleData.canopyOpen = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));

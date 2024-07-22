@@ -78,7 +78,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
         "  timestamp,"
         "  brake_left_position,"
         "  brake_right_position,"
-        "  gear_steer_position,"
+        "  steer_input_control,"
         "  water_rudder_handle_position,"
         "  tailhook_position,"
         "  canopy_open,"
@@ -92,7 +92,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
         " :timestamp,"
         " :brake_left_position,"
         " :brake_right_position,"
-        " :gear_steer_position,"
+        " :steer_input_control,"
         " :water_rudder_handle_position,"
         " :tailhook_position,"
         " :canopy_open,"
@@ -108,7 +108,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
     query.bindValue(":timestamp", QVariant::fromValue(aircraftHandleData.timestamp));
     query.bindValue(":brake_left_position", aircraftHandleData.brakeLeftPosition);
     query.bindValue(":brake_right_position", aircraftHandleData.brakeRightPosition);
-    query.bindValue(":gear_steer_position", aircraftHandleData.gearSteerPosition);
+    query.bindValue(":steer_input_control", aircraftHandleData.steerInputControl);
     query.bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition);
     query.bindValue(":tailhook_position", aircraftHandleData.tailhookPosition);
     query.bindValue(":canopy_open", aircraftHandleData.canopyOpen);
@@ -154,7 +154,7 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
         const auto timestampIdx = record.indexOf("timestamp");
         const auto brakeLeftPositionIdx = record.indexOf("brake_left_position");
         const auto brakeRightPositionIdx = record.indexOf("brake_right_position");
-        const auto gearSteerPositionIdx = record.indexOf("gear_steer_position");
+        const auto steerInputControlIdx = record.indexOf("steer_input_control");
         const auto waterRudderHandlePositionIdx = record.indexOf("water_rudder_handle_position");
         const auto tailhookPositionIdx = record.indexOf("tailhook_position");
         const auto canopyOpenIdx = record.indexOf("canopy_open");
@@ -168,7 +168,7 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.brakeLeftPosition = static_cast<std::int16_t>(query.value(brakeLeftPositionIdx).toInt());
             data.brakeRightPosition = static_cast<std::int16_t>(query.value(brakeRightPositionIdx).toInt());
-            data.gearSteerPosition = static_cast<std::int16_t>(query.value(gearSteerPositionIdx).toInt());
+            data.steerInputControl = static_cast<std::int16_t>(query.value(steerInputControlIdx).toInt());
             data.waterRudderHandlePosition = static_cast<std::int16_t>(query.value(waterRudderHandlePositionIdx).toInt());
             data.tailhookPosition = query.value(tailhookPositionIdx).toInt();
             data.canopyOpen = query.value(canopyOpenIdx).toInt();

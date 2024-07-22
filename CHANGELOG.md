@@ -5,7 +5,6 @@
 ## New Features
 
 ## Improvements
-- The nose wheel animation now also supports the Fenix A320
 
 ## Under the Hood
 - Optimised logbook table column types

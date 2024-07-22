@@ -76,7 +76,7 @@ const AircraftHandleData &AircraftHandle::interpolate(std::int64_t timestamp, Ti
         if (p1 != nullptr) {
             m_currentData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
             m_currentData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
-            m_currentData.gearSteerPosition = SkyMath::interpolateLinear(p1->gearSteerPosition, p2->gearSteerPosition, tn);
+            m_currentData.steerInputControl = SkyMath::interpolateLinear(p1->steerInputControl, p2->steerInputControl, tn);
             m_currentData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
             m_currentData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
             m_currentData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);

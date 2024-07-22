@@ -1155,16 +1155,6 @@ set    steer_input_control = 0;
 update metadata
 set    app_version = '0.18.0';
 
-@migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Add gear_steer_position column", step_cnt = 3)
-alter table handle add column gear_steer_position integer;
-
-@migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Initialise steer input control", step = 2)
-update handle
-set    gear_steer_position = steer_input_control;
-
-@migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Initialise steer input control", step = 3)
-alter table handle drop column steer_input_control;
-
 @migr(id = "3d44e7c3-50e5-44b9-84f0-4aadf95414f3", descn = "Adjust engine table column types", step_cnt = 2)
 create table engine_new (
     aircraft_id integer not null,
