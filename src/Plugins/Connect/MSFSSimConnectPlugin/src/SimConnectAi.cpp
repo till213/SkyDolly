@@ -49,11 +49,6 @@ using SimulatedObjectByRequestId = std::unordered_map<::SIMCONNECT_DATA_REQUEST_
 
 struct SimConnectAIPrivate
 {
-    SimConnectAIPrivate(HANDLE handle) noexcept
-        : simConnectHandle(handle)
-    {}
-
-    HANDLE simConnectHandle;
     // Key: aircraft ID - value: SimConnect request ID
     RequestByAircraftId requestByAircraftId;
     // Key: SimConnect request ID - value: SimConnect object ID
@@ -63,13 +58,13 @@ struct SimConnectAIPrivate
 
 // PUBLIC
 
-SimConnectAi::SimConnectAi(HANDLE simConnectHandle)
-    : d {std::make_unique<SimConnectAIPrivate>(simConnectHandle)}
+SimConnectAi::SimConnectAi()
+    : d {std::make_unique<SimConnectAIPrivate>()}
 {}
 
 SimConnectAi::~SimConnectAi() = default;
 
-void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) noexcept
+void SimConnectAi::addObject(HANDLE simConnectHandle, const Aircraft &aircraft, std::int64_t timestamp) noexcept
 {
     // Check if the newly added aircraft has any recording yet
     // (otherwise it is the new user aircraft being added for a new recording)
@@ -82,23 +77,23 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
         const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionAndAttitudeAll::toInitialPosition(positionData, attitudeData, aircraftInfo.initialAirspeed);
 
         const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::underly(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;
-        HRESULT result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);
+        HRESULT result = ::SimConnect_AICreateNonATCAircraft(simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);
         if (result == S_OK) {
             d->requestByAircraftId[aircraft.getId()] = requestId;
             ++d->lastAiCreateRequestId;
 #ifdef DEBUG
-        qDebug() << "SimConnectAi::addObject: pending CreateNonATCAircraft request:" << requestId << "for aircraft ID:" << aircraft.getId();
+            qDebug() << "SimConnectAi::addObject: pending CreateNonATCAircraft request:" << requestId << "for aircraft ID:" << aircraft.getId() << "SimConnect handle:" << simConnectHandle;
 #endif
         }
     }
 #ifdef DEBUG
     else {
-        qDebug() << "SimConnectAi::addObject: ignoring user aircraft, ID:" << aircraft.getId();
+        qDebug() << "SimConnectAi::addObject: ignoring user aircraft, ID:" << aircraft.getId() << "SimConnect handle:" << simConnectHandle;
     }
 #endif
 }
 
-void SimConnectAi::removeByAircraftId(std::int64_t aircraftId) noexcept
+void SimConnectAi::removeByAircraftId(HANDLE simConnectHandle, std::int64_t aircraftId) noexcept
 {
     const auto it = d->requestByAircraftId.find(aircraftId);
     if (it != d->requestByAircraftId.end()) {
@@ -109,31 +104,30 @@ void SimConnectAi::removeByAircraftId(std::int64_t aircraftId) noexcept
         // ... and also the AI aircraft, IFF already generated at this point
         if (it2 != d->simulatedObjectByRequestId.end()) {
             const ::SIMCONNECT_OBJECT_ID objectId = it2->second;
-            removeByObjectId(objectId);
+            removeByObjectId(simConnectHandle, objectId);
 #ifdef DEBUG
-        qDebug() << "SimConnectAi::removeByAircraftId: removing simulation object:" << objectId << "for aircraft ID:" << aircraftId;
+        qDebug() << "SimConnectAi::removeByAircraftId: removing simulation object:" << objectId << "for aircraft ID:" << aircraftId  << "SimConnect handle:" << simConnectHandle;
 #endif
             d->simulatedObjectByRequestId.erase(it2);
-
         }
     }
 }
 
-void SimConnectAi::removeAllObjects() noexcept {
+void SimConnectAi::removeAllObjects(HANDLE simConnectHandle) noexcept {
     for (const auto it : d->simulatedObjectByRequestId) {
         const ::SIMCONNECT_OBJECT_ID objectId = it.second;
-        removeByObjectId(objectId);
+        removeByObjectId(simConnectHandle, objectId);
 #ifdef DEBUG
-        qDebug() << "SimConnectAi::removeAllObjects: removing simulation object:" << objectId << "(all objects)";
+        qDebug() << "SimConnectAi::removeAllObjects: removing simulation object:" << objectId << "(all objects)" << "SimConnect handle:" << simConnectHandle;
 #endif
     }
     d->simulatedObjectByRequestId.clear();
     d->requestByAircraftId.clear();
 }
 
-void SimConnectAi::removeByObjectId(::SIMCONNECT_OBJECT_ID objectId) noexcept
+void SimConnectAi::removeByObjectId(HANDLE simConnectHandle, ::SIMCONNECT_OBJECT_ID objectId) noexcept
 {
-    ::SimConnect_AIRemoveObject(d->simConnectHandle, objectId, Enum::underly(SimConnectType::DataRequest::AiRemoveObject));
+    ::SimConnect_AIRemoveObject(simConnectHandle, objectId, Enum::underly(SimConnectType::DataRequest::AiRemoveObject));
 }
 
 bool SimConnectAi::registerObjectId(::SIMCONNECT_DATA_REQUEST_ID requestId, ::SIMCONNECT_OBJECT_ID objectId) noexcept
@@ -154,7 +148,7 @@ bool SimConnectAi::registerObjectId(::SIMCONNECT_DATA_REQUEST_ID requestId, ::SI
     return ok;
 }
 
-::SIMCONNECT_OBJECT_ID SimConnectAi::getSimulatedObjectByAircraftId(std::int64_t aircraftId) const noexcept
+::SIMCONNECT_OBJECT_ID SimConnectAi::getSimulatedObjectIdByAircraftId(std::int64_t aircraftId) const noexcept
 {
     ::SIMCONNECT_OBJECT_ID objectId {InvalidObjectId};
     const auto it =  d->requestByAircraftId.find(aircraftId);

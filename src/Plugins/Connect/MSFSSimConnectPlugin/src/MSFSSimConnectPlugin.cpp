@@ -105,7 +105,7 @@ struct SkyConnectPrivate
 
     std::unique_ptr<EventStateHandler> eventStateHandler {std::make_unique<EventStateHandler>()};
     std::unique_ptr<SimulationRate> simulationRate {std::make_unique<SimulationRate>()};
-    std::unique_ptr<SimConnectAi> simConnectAi {nullptr};
+    std::unique_ptr<SimConnectAi> simConnectAi {std::make_unique<SimConnectAi>()};
     std::unique_ptr<EventWidget> eventWidget {std::make_unique<EventWidget>()};
     std::unique_ptr<InputEvent> inputEvent {std::make_unique<InputEvent>()};
     ::SIMCONNECT_PERIOD currentRequestPeriod {::SIMCONNECT_PERIOD_NEVER};
@@ -395,7 +395,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
     // In case of "fly with formation" always send all formation aircraft (as AI aircraft): we simply do this
     // by setting the userAircraftId to an invalid ID, so no aircraft in the Flight is considered the "user aircraft"
     // (which is really being controlled by the user as an "additional aircraft", next to the formation)
-    const std::int64_t userAircraftId = getReplayMode() != ReplayMode::FlyWithFormation ?  flight.getUserAircraft().getId() : Const::InvalidId;
+    const auto userAircraftId = getReplayMode() != ReplayMode::FlyWithFormation ?  flight.getUserAircraft().getId() : Const::InvalidId;
     bool ok {true};
     for (const auto &aircraft : flight) {
 
@@ -414,7 +414,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
         // When recording (a formation flight) we send the already recorded aircraft, except the
         // user aircraft (which is currently being recorded)
         if (isConnectedWithSim() && (getState() != Connect::State::Recording || !isUserAircraft)) {
-            const std::int64_t objectId = isUserAircraft ? ::SIMCONNECT_OBJECT_ID_USER : d->simConnectAi->getSimulatedObjectByAircraftId(aircraft.getId());
+            const auto objectId = isUserAircraft ? ::SIMCONNECT_OBJECT_ID_USER : d->simConnectAi->getSimulatedObjectIdByAircraftId(aircraft.getId());
             if (objectId != SimConnectAi::InvalidObjectId) {
 
                 ok = true;
@@ -573,7 +573,6 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
     const HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, configurationIndex);
     if (result == S_OK) {
         d->eventStateHandler->setSimConnectHandle(d->simConnectHandle);
-        d->simConnectAi = std::make_unique<SimConnectAi>(d->simConnectHandle);
         setupRequestData();
     }
 #ifdef DEBUG
@@ -595,21 +594,21 @@ void MSFSSimConnectPlugin::onAddAiObject(const Aircraft &aircraft) noexcept
 {
     // Check if initialised (only when connected with MSFS)
     if (d->simConnectAi != nullptr) {
-        d->simConnectAi->addObject(aircraft, getCurrentTimestamp());
+        d->simConnectAi->addObject(d->simConnectHandle, aircraft, getCurrentTimestamp());
     }
 }
 
 void MSFSSimConnectPlugin::onRemoveAiObject(std::int64_t aircraftId) noexcept
 {
     if (d->simConnectAi != nullptr) {
-        d->simConnectAi->removeByAircraftId(aircraftId);
+        d->simConnectAi->removeByAircraftId(d->simConnectHandle, aircraftId);
     }
 }
 
 void MSFSSimConnectPlugin::onRemoveAllAiObjects() noexcept
 {
     if (d->simConnectAi != nullptr) {
-        d->simConnectAi->removeAllObjects();
+        d->simConnectAi->removeAllObjects(d->simConnectHandle);
     }
 }
 
@@ -847,6 +846,7 @@ DWORD MSFSSimConnectPlugin::getConfigurationIndex() const noexcept
 void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[maybe_unused]] DWORD cbData, void *context) noexcept
 {
     const auto skyConnect = static_cast<MSFSSimConnectPlugin *>(context);
+    const auto simConnectHandle = skyConnect->d->simConnectHandle;
     auto &flight = skyConnect->getCurrentFlight();
     Aircraft &userAircraft = flight.getUserAircraft();
     ::SIMCONNECT_RECV_SIMOBJECT_DATA *objectData {nullptr};
@@ -1240,7 +1240,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         {
             if (!skyConnect->isInRecordingState()) {
                 const auto simulationRate = reinterpret_cast<const SimConnectVariables::SimulationRate *>(&objectData->dwData);
-                skyConnect->d->simulationRate->setCurrentSimulationRate(skyConnect->d->simConnectHandle, simulationRate->value);
+                skyConnect->d->simulationRate->setCurrentSimulationRate(simConnectHandle, simulationRate->value);
                 emit skyConnect->simulationRateReceived(simulationRate->value);
             }
             break;
@@ -1254,7 +1254,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
                     skyConnect->d->currentAltitudeOffset -= skyConnect->d->currentAltitudeAboveGroundMinusCenterGravity;
 #ifdef DEBUG
                     qDebug() << "ASRA enabled: altitude above ground:" << replaySensor->altitudeSensor.planeAltitudeAboveGroundMinusCenterGravity
-                             << "current altitude offset: " << skyConnect->d->currentAltitudeOffset
+                             << "current altitude offset: " << skyConnect->d->currentAltitudeOffset << "object ID:" << objectData->dwObjectID
                              << "----------------------------------------";
 #endif
                 }
@@ -1287,12 +1287,12 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         const auto objectData = static_cast<SIMCONNECT_RECV_ASSIGNED_OBJECT_ID *>(receivedData);
         std::int64_t simulationObjectId = objectData->dwObjectID;
         if (skyConnect->d->simConnectAi->registerObjectId(objectData->dwRequestID, simulationObjectId)) {
-            ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, simulationObjectId, Enum::underly(SimConnectType::DataRequest::AiReleaseControl));
+            ::SimConnect_AIReleaseControl(simConnectHandle, simulationObjectId, Enum::underly(SimConnectType::DataRequest::AiReleaseControl));
             skyConnect->d->eventStateHandler->freezeAircraft(objectData->dwObjectID, true);
         } else {
             // No pending request (request has already been removed), so destroy the
             // just generated AI object again
-            skyConnect->d->simConnectAi->removeByObjectId(objectData->dwObjectID);
+            skyConnect->d->simConnectAi->removeByObjectId(simConnectHandle, objectData->dwObjectID);
 #ifdef DEBUG
             qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: orphaned AI object response for original request:" <<  objectData->dwRequestID
                      << "DESTROYING AI Object again:" << objectData->dwObjectID;
