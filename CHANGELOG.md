@@ -4,6 +4,7 @@
 
 ### Bug Fixes
 - Ensure that the `STEER_INPUT_CONTROL` simulation variable is *not* sent to AI aircraft (formation flight) which would cause an "exception 20" (SimConnect data error)
+- Support for the Fenix A320 nose wheel steering added
 
 ## 0.18.0
 
