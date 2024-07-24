@@ -96,7 +96,7 @@ namespace SimVar
 
     constexpr const char *BrakeLeftPosition = "Brake Left Position";
     constexpr const char *BrakeRightPosition = "Brake Right Position";
-    constexpr const char *SteerInputControl = "Steer Input Control";
+    constexpr const char *SteerInputControl = "Gear Steer Angle Pct";
     constexpr const char *WaterRudderHandlePosition = "Water Rudder Handle Position";
     constexpr const char *TailhookHandle = "Tailhook Handle";
     constexpr const char *TailhookPosition = "Tailhook Position";
