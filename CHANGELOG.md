@@ -49,7 +49,7 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
   * According to the recorded simulation start and end times
   * Note that the simulation time is not always in sync with real-world time (the simulation- and real-world durations may be different): this is taken into account when interpolating between the simulation start- and end times
   * This allows for exact day of time reproductions, useful e.g. for video editing when video-recording (via separate screen capture solutions) the same flight multiple times from different camera angles
-  * The time synchroniation can be enabled and disabled in the application settings, under *Replay* (default: *simulation time*)
+  * The time synchronisation can be enabled and disabled in the application settings, under *Replay* (default: *simulation time*)
 - The replay time widget now properly displays replay times longer than a day (for instance one year or longer), by including also the actual start date
 - When loading a flight from the logbook the replay mode is automatically reset to *Normal*
   * This ensures that the user aircraft is placed at its initial replay position (instead of being left at its current position in case *Fly With Formation* was previously active)
