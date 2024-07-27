@@ -40,7 +40,7 @@
 #pragma pack(push, 1)
 struct SimConnectAircraftHandleCoreEvent
 {
-     float steerInputControl {0.0f};
+    float gearSteerPosition {0.0f};
 
     SimConnectAircraftHandleCoreEvent(const AircraftHandleData &aircraftHandleData) noexcept
         : SimConnectAircraftHandleCoreEvent()
@@ -51,7 +51,7 @@ struct SimConnectAircraftHandleCoreEvent
 
     inline void fromAircraftHandleData(const AircraftHandleData &aircraftHandleData) noexcept
     {
-        steerInputControl = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.steerInputControl));
+        gearSteerPosition = static_cast<float>(SkyMath::toNormalisedPosition(aircraftHandleData.gearSteerPosition));
     }
 
     inline AircraftHandleData toAircraftHandleData() const noexcept
@@ -63,12 +63,12 @@ struct SimConnectAircraftHandleCoreEvent
 
     inline void toAircraftHandleData(AircraftHandleData &aircraftHandleData) const noexcept
     {
-        aircraftHandleData.steerInputControl = SkyMath::fromNormalisedPosition(steerInputControl);
+        aircraftHandleData.gearSteerPosition = SkyMath::fromNormalisedPosition(gearSteerPosition);
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
-          ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SteerInputControl, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
+          ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GearSteerAnglePercent, "Position", ::SIMCONNECT_DATATYPE_FLOAT32);
     }
 };
 #pragma pack(pop)
