@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.19.0
+
+## Improvements
+
+### Location
+- Added Kosovo to list of countries
+- Add *Beach* to location types
+
 ## 0.18.1
 
 ### Bug Fixes
