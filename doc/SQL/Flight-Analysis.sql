@@ -17,6 +17,7 @@ order by f.id desc
 limit 1
 
 -- Select specific values from tables position, attitude, aircraft and flight
+-- (WIP, TODO: select matching attitude entries according to timestamp)
 select f.id as flight_id,
        f.start_zulu_sim_time,
        f.end_zulu_sim_time,
@@ -31,8 +32,9 @@ select f.id as flight_id,
        att.true_heading,
        att.velocity_z * 0.5924838012959 as speed_in_knots
 from   position p
-join attitude att
-on att.aircraft_id = a.id
+left join attitude att
+on     att.aircraft_id = p.aircraft_id
+and    att.timestamp = p.timestamp
 join   aircraft a
 on     p.aircraft_id = a.id
 join   flight f
@@ -96,4 +98,14 @@ from (select aa.type, max(pp.timestamp) / 1000 / 60 as minutes
 group by a.type
 order by total_minutes desc
 limit 10
+
+-- Select position and attitude (WIP, TODO: select matching attitude entries according to timestamp)
+select p.timestamp, p.latitude, p.longitude, p.altitude, att.pitch, att.bank, att.true_heading, att.on_ground
+from position p
+left join attitude att
+on     att.aircraft_id = p.aircraft_id
+   and att.timestamp = p.timestamp
+join aircraft a
+on p.aircraft_id = a.id
+where a.flight_id = 738
 
