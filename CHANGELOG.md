@@ -6,7 +6,8 @@
 
 ### Location
 - Added Kosovo to list of countries
-- Add *Beach* to location types
+- Added *Beach* and *Castle* to location types
+- The location description field now stretches vertically
 
 ## 0.18.1
 
