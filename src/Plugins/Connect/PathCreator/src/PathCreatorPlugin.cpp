@@ -176,6 +176,13 @@ bool PathCreatorPlugin::onStartAircraftRecording() noexcept
     if (!d->recordingTimer.isActive()) {
         d->recordingTimer.start(::RecordingPeriod);
     }
+    // Get flight information in case that this is the first recorded aircraft (formation recording)
+    const auto &flight = getCurrentFlight();
+    const bool hasRecording = flight.hasRecording();
+    if (!hasRecording) {
+        recordFlightInfo();
+        recordFlightCondition();
+    }
     recordAircraftInfo();
     return true;
 }
