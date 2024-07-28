@@ -51,7 +51,7 @@ class PLUGINMANAGER_API SkyConnectIntf : public QObject, public PluginWithOption
 {
     Q_OBJECT
 public:
-    enum struct RecordingMode {
+    enum struct RecordingMode: std::uint8_t {
         /*! A (new) flight with a single aircrat is to be recorded. */
         SingleAircraft,
         /*!
@@ -66,7 +66,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct ReplayMode {
+    enum struct ReplayMode: std::uint8_t {
         First = 0,
         /*! All aircraft are controlled by Sky Dolly. */
         Normal = First,
@@ -77,7 +77,7 @@ public:
         Last = FlyWithFormation
     };
 
-    enum struct SeekMode {
+    enum struct SeekMode: std::uint8_t {
         /*! Continuation of a timeline seek operation ("drag timeline") */
         Continuous,
         /*! A single seek operation (to beginning, to end, to selected position) */
@@ -87,7 +87,7 @@ public:
     /*!
      * Simulation events that can explicitly be triggered (requested) by the application.
      */
-    enum struct SimulationEvent {
+    enum struct SimulationEvent: std::uint8_t {
         None,
         EngineStart,
         EngineStop,
@@ -98,7 +98,7 @@ public:
     /*!
      * Indicates who initiated an event such as a pause event.
      */
-    enum struct Initiator {
+    enum struct Initiator: std::uint8_t {
         /*! The application initiated the event */
         App,
         /*! The flight simulator initiated the event */

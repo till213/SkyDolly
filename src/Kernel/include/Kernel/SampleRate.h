@@ -25,6 +25,8 @@
 #ifndef SAMPLERATE_H
 #define SAMPLERATE_H
 
+#include <cstdint>
+
 #include <QtGlobal>
 
 /*!
@@ -44,7 +46,7 @@ namespace SampleRate
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct SampleRate: int {
+    enum struct SampleRate: std::uint8_t {
         First = 0,
         Auto = First,
         Hz1,
@@ -67,7 +69,7 @@ namespace SampleRate
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct ResamplingPeriod {
+    enum struct ResamplingPeriod: std::uint16_t {
         First = 0,
         Original = First,
         TenHz = 100,

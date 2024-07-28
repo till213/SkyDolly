@@ -46,7 +46,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct Mode {
+    enum struct Mode: std::uint8_t {
         First = 0,
         /*! The location to be imported is skipped; the existing position is left unmodified */
         Skip = First,

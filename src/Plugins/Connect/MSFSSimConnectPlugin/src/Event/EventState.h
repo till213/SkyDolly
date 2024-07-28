@@ -26,13 +26,14 @@
 #define EVENTSTATE_H
 
 #include <type_traits>
+#include <cstdint>
 
 #include "SimConnectType.h"
 #include "SimConnectEvent.h"
 
 namespace EventState
 {
-    enum struct Engine: int {
+    enum struct Engine: std::uint8_t {
         Unknown,
         Starting,
         Started,

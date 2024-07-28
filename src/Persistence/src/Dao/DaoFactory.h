@@ -26,6 +26,7 @@
 #define DAOFACTORY_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QString>
 
@@ -53,7 +54,7 @@ class DaoFactory
 {
 public:
 
-    enum struct DbType
+    enum struct DbType: std::uint8_t
     {
         SQLite = 0
     };

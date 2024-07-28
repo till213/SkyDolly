@@ -81,7 +81,7 @@ namespace SkyMath
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct TimeOffsetSync {
+    enum struct TimeOffsetSync: std::uint8_t {
         First = 0,
         /*! No synchronisation to be done. */
         None = First,

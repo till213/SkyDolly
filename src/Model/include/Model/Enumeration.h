@@ -28,6 +28,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <cstdint>
 
 #include <QString>
 
@@ -54,7 +55,7 @@ public:
     Enumeration &operator=(Enumeration &&rhs) noexcept;
     ~Enumeration();
 
-    enum struct Order {
+    enum struct Order: std::uint8_t {
         Id,
         SymId,
         Name

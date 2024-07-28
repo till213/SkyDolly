@@ -47,7 +47,7 @@ struct MODEL_API TimeVariableData
      * - continuous: a continuous seek operation is in progress ("dragging the time position slider");
      *   certain event data is dererred until the end of the seek operation
      */
-    enum struct Access
+    enum struct Access: std::uint8_t
     {
         /*!
          * The sampled data is accessed in a linear way, taking the time offset of the Aircraft into account,

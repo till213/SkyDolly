@@ -54,7 +54,7 @@ class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf, public Plugi
 {
     Q_OBJECT
 public:
-    enum struct AircraftSelection {
+    enum struct AircraftSelection: std::uint8_t {
         All,
         UserAircraft
     };

@@ -41,7 +41,7 @@
 
 namespace
 {
-    enum struct Index
+    enum struct Index: std::uint8_t
     {
         Title = 0,
         Description,

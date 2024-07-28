@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <cstdint>
+
 #include <QComboBox>
 #include <QButtonGroup>
 #include <QString>
@@ -35,7 +37,7 @@
 
 namespace
 {
-    enum struct ColorButton {
+    enum struct ColorButton: std::uint8_t {
         JetStartColor,
         JetEndColor,
         TurbopropStartColor,

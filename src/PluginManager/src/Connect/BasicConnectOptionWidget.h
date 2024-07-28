@@ -26,6 +26,7 @@
 #define BASICCONNECTOPTIONWIDGET_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QKeySequence>
 
@@ -54,7 +55,7 @@ public:
     void accept() noexcept override;
 
 private:
-    enum struct KeySequence
+    enum struct KeySequence: std::uint8_t
     {
         Record,
         Replay,

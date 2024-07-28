@@ -126,7 +126,7 @@ namespace
 
     constexpr const char *ReplaySpeedProperty {"ReplaySpeed"};
 
-    enum struct ReplaySpeed {
+    enum struct ReplaySpeed: std::uint8_t {
         Slow10,
         Slow25,
         Slow50,

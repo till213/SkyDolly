@@ -25,6 +25,8 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include <cstdint>
+
 /*!
  * Database connection related data structures.
  */
@@ -33,7 +35,7 @@ namespace Connection
     /*!
      * Options to either keep or remove the default database connection.
      */
-    enum struct Default
+    enum struct Default: std::uint8_t
     {
         Keep,
         Remove

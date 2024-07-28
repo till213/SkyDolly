@@ -25,6 +25,8 @@
 #ifndef MODULEINTF_H
 #define MODULEINTF_H
 
+#include <cstdint>
+
 #include <QtPlugin>
 #include <QString>
 
@@ -34,7 +36,7 @@ class QUuid;
 class ModuleIntf
 {
 public:
-    enum struct RecordIconId
+    enum struct RecordIconId: std::uint8_t
     {
         Normal,
         Add

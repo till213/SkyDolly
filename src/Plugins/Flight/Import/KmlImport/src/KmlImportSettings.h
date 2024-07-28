@@ -26,6 +26,7 @@
 #define KMLIMPORTSETTINGS_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 #include <QString>
@@ -44,7 +45,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct Format {
+    enum struct Format: std::uint8_t {
         First = 0,
         FlightAware = First,
         FlightRadar24,

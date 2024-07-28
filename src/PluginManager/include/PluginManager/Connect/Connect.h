@@ -25,8 +25,10 @@
 #ifndef CONNECT_H
 #define CONNECT_H
 
+#include <cstdint>
+
 namespace Connect {
-    enum struct State {
+    enum struct State: std::uint8_t {
         Disconnected,
         Connected,
         Recording,
@@ -39,7 +41,7 @@ namespace Connect {
      * A flag that indicates whether a reconnect to the flight simulator is required after
      * settings have changed.
      */
-    enum struct Mode
+    enum struct Mode: std::uint8_t
     {
         /*!
          * A complete reconnect is required, that is existing connections are to
