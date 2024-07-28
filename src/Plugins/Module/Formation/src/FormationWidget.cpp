@@ -346,6 +346,8 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::onTableLayoutChanged);
     connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
             this, &FormationWidget::onTableLayoutChanged);
+    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
+            this, &FormationWidget::onTableLayoutChanged);
     connect(&d->moduleSettings, &ModuleBaseSettings::changed,
             this, &FormationWidget::onModuleSettingsChanged);
     connect(&d->moduleSettings, &FormationSettings::replayModeChanged,
