@@ -40,6 +40,7 @@
 #include <QDoubleSpinBox>
 #include <QPushButton>
 #include <QComboBox>
+#include <QTimer>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -843,10 +844,12 @@ void FormationWidget::onAircraftAdded(const Aircraft &aircraft) noexcept
 
     ui->aircraftTableWidget->blockSignals(true);
     ui->aircraftTableWidget->setSortingEnabled(false);
-    const QTableWidgetItem *firstItem = createRow(aircraft, aircraftIndex);
+    const QTableWidgetItem *item = createRow(aircraft, aircraftIndex);
     ui->aircraftTableWidget->blockSignals(false);
     ui->aircraftTableWidget->setSortingEnabled(true);
-    ui->aircraftTableWidget->scrollToItem(firstItem);
+    // Give the repaint event a chance to get processed before scrolling
+    // to make the item visible
+    QTimer::singleShot(0, this, [this, item]() {ui->aircraftTableWidget->scrollToItem(item);});
     updateTimeOffsetUi();
     updateAircraftCount();
 }
@@ -961,7 +964,7 @@ void FormationWidget::deleteAircraft() noexcept
             d->aircraftService->deleteByIndex(d->selectedAircraftIndex);
             const auto selectedRow = std::min(lastSelectedRow, ui->aircraftTableWidget->rowCount() - 1);
             ui->aircraftTableWidget->selectRow(selectedRow);
-            ui->aircraftTableWidget->setFocus(Qt::NoFocusReason);
+            ui->aircraftTableWidget->setFocus();
         }
     }
 }
