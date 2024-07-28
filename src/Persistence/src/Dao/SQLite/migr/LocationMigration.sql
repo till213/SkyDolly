@@ -429,6 +429,20 @@ set    app_version = '0.18.0';
 insert into enum_country(sym_id, name)
 values ('RS-KM', 'Kosovo');
 
+@migr(id = "34200839-ddc4-4390-be0a-417ccd6aef2a", descn = "Adjust country names", step = 1)
+update enum_country
+set name = 'British Virgin Islands'
+whre sym_id = 'VG';
+update enum_country
+set name = 'Brunei'
+whre sym_id = 'BN';
+update enum_country
+set name = 'Cape Verde'
+whre sym_id = 'CV';
+update enum_country
+set name = 'Colombia'
+whre sym_id = 'CO';
+
 @migr(id = "1b1fe05f-6b17-451e-9764-906baed01a98", descn = "Add beach to location categories", step = 1)
 insert into enum_location_category(sym_id, name, desc)
 values ('BE', 'Beach', 'Beach'),
