@@ -186,19 +186,19 @@ void LocationWidget::addLocation(Location newLocation)
         location.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
     }    
     if (d->locationService->store(location)) {
-        // Make sure that user locations are visible
+        // Make sure that user locations are visible - this will also update
+        // the table rows (stored location will already be added)
         resetFilter();
-        ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
 
-        ui->locationTableWidget->setSortingEnabled(false);
-        ui->locationTableWidget->blockSignals(true);
-        const QTableWidgetItem *firstItem = createRow(location);
-        ui->locationTableWidget->blockSignals(false);
-        // Automatically select newly inserted item (make sure that signals are emitted
-        // again)
-        ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
-        ui->locationTableWidget->setSortingEnabled(true);
-        ui->locationTableWidget->scrollToItem(firstItem); 
+        const int row = getRowById(location.id);
+        if (row != ::InvalidRow) {
+            ui->locationTableWidget->setFocus();
+            ui->locationTableWidget->selectRow(row);
+            const auto item = ui->locationTableWidget->item(row, LocationWidgetPrivate::idColumn);
+            // Give the repaint event a chance to get processed before scrolling
+            // to make the item visible
+            QTimer::singleShot(0, this, [this, item]() {ui->locationTableWidget->scrollToItem(item);});
+        }
     }
 }
 
@@ -268,24 +268,24 @@ void LocationWidget::initUi() noexcept
         tr("Pitch"), tr("Bank"), tr("True Heading"), tr("Indicated Airspeed"),
         tr("On Ground"), tr("Attributes"), tr("Engine")
     };
-    LocationWidgetPrivate::idColumn = headers.indexOf(tr("ID"));
-    LocationWidgetPrivate::titleColumn = headers.indexOf(tr("Title"));
-    LocationWidgetPrivate::descriptionColumn = headers.indexOf(tr("Description"));
-    LocationWidgetPrivate::typeColumn = headers.indexOf(tr("Type"));
-    LocationWidgetPrivate::categoryColumn = headers.indexOf(tr("Category"));
-    LocationWidgetPrivate::countryColumn = headers.indexOf(tr("Country"));
-    LocationWidgetPrivate::identifierColumn = headers.indexOf(tr("Identifer"));
-    LocationWidgetPrivate::positionColumn = headers.indexOf(tr("Position"));
-    LocationWidgetPrivate::altitudeColumn = headers.indexOf(tr("Altitude"));
-    LocationWidgetPrivate::pitchColumn = headers.indexOf(tr("Pitch"));
-    LocationWidgetPrivate::bankColumn = headers.indexOf(tr("Bank"));
-    LocationWidgetPrivate::trueHeadingColumn = headers.indexOf(tr("True Heading"));
-    LocationWidgetPrivate::indicatedAirspeedColumn = headers.indexOf(tr("Indicated Airspeed"));
-    LocationWidgetPrivate::onGroundColumn = headers.indexOf(tr("On Ground"));
-    LocationWidgetPrivate::attributesColumn = headers.indexOf(tr("Attributes"));
-    LocationWidgetPrivate::engineColumn = headers.indexOf(tr("Engine"));
+    LocationWidgetPrivate::idColumn = static_cast<int>(headers.indexOf(tr("ID")));
+    LocationWidgetPrivate::titleColumn = static_cast<int>(headers.indexOf(tr("Title")));
+    LocationWidgetPrivate::descriptionColumn = static_cast<int>(headers.indexOf(tr("Description")));
+    LocationWidgetPrivate::typeColumn = static_cast<int>(headers.indexOf(tr("Type")));
+    LocationWidgetPrivate::categoryColumn = static_cast<int>(headers.indexOf(tr("Category")));
+    LocationWidgetPrivate::countryColumn = static_cast<int>(headers.indexOf(tr("Country")));
+    LocationWidgetPrivate::identifierColumn = static_cast<int>(headers.indexOf(tr("Identifer")));
+    LocationWidgetPrivate::positionColumn = static_cast<int>(headers.indexOf(tr("Position")));
+    LocationWidgetPrivate::altitudeColumn = static_cast<int>(headers.indexOf(tr("Altitude")));
+    LocationWidgetPrivate::pitchColumn = static_cast<int>(headers.indexOf(tr("Pitch")));
+    LocationWidgetPrivate::bankColumn = static_cast<int>(headers.indexOf(tr("Bank")));
+    LocationWidgetPrivate::trueHeadingColumn = static_cast<int>(headers.indexOf(tr("True Heading")));
+    LocationWidgetPrivate::indicatedAirspeedColumn = static_cast<int>(headers.indexOf(tr("Indicated Airspeed")));
+    LocationWidgetPrivate::onGroundColumn = static_cast<int>(headers.indexOf(tr("On Ground")));
+    LocationWidgetPrivate::attributesColumn = static_cast<int>(headers.indexOf(tr("Attributes")));
+    LocationWidgetPrivate::engineColumn = static_cast<int>(headers.indexOf(tr("Engine")));
 
-    ui->locationTableWidget->setColumnCount(headers.count());
+    ui->locationTableWidget->setColumnCount(static_cast<int>(headers.count()));
     ui->locationTableWidget->setHorizontalHeaderLabels(headers);
     ui->locationTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->locationTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -482,9 +482,8 @@ void LocationWidget::updateTable() noexcept
                     d->locationService->getSelectedLocations(d->moduleSettings.getLocationSelector()) :
                     d->locationService->getAll();
 
-        ui->locationTableWidget->blockSignals(true);
         // Prevent table state changes notify the module settings
-
+        ui->locationTableWidget->blockSignals(true);
         ui->locationTableWidget->setSortingEnabled(false);           
         ui->locationTableWidget->clearContents();
         ui->locationTableWidget->setRowCount(static_cast<int>(locations.size()));
@@ -656,6 +655,22 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
     updateRow(location, row);
 
     return firstItem;
+}
+
+int LocationWidget::getRowById(std::int64_t id) const noexcept
+{
+    int row {::InvalidRow};
+    const auto rowCount =ui->locationTableWidget->rowCount();
+    int currentRow {rowCount - 1};
+    while (row == ::InvalidRow && currentRow > 0) {
+        const auto *currentItem = ui->locationTableWidget->item(currentRow, LocationWidgetPrivate::idColumn);
+        if (currentItem->data(Qt::DisplayRole).toLongLong() == id) {
+            row = currentRow;
+        } else {
+            --currentRow;
+        }
+    }
+    return row;
 }
 
 inline void LocationWidget::updateRow(const Location &location, int row) noexcept
