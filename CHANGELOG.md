@@ -20,6 +20,7 @@
 ## Bug Fixes
 - The location table (Location module) does not show duplicate entries anymore when adding new user locations (the newly added user location was correctly only stored once though)
 - Properly store (and restore) the aircraft table layout (Formation module) when changing the column to be sorted
+- Properly restore table widget sort column and sort items accordingly when switching between Logbook, Formation and Location modules
 
 ## 0.18.1
 

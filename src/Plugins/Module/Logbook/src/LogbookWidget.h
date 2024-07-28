@@ -30,16 +30,11 @@
 #include <cstdint>
 
 #include <QWidget>
-#include <QStringView>
 
 class QShowEvent;
-class QHideEvent;
-class QAction;
 class QTreeWidgetItem;
 class QTableWidgetItem;
-class QString;
 
-#include <PluginManager/Module/ModuleIntf.h>
 #include <PluginManager/Module/AbstractModule.h>
 
 struct FlightDate;
@@ -62,6 +57,9 @@ public:
     LogbookWidget &operator=(const LogbookWidget &rhs) = delete;
     LogbookWidget &operator=(LogbookWidget &&rhs) = delete;
     ~LogbookWidget() override;
+
+protected:
+    void showEvent(QShowEvent *event) noexcept override;
 
 private:
     const std::unique_ptr<Ui::LogbookWidget> ui;

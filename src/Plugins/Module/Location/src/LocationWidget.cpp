@@ -59,8 +59,6 @@
 #include <Widget/UnitWidgetItem.h>
 #include <Widget/LinkedOptionGroup.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/Connect/SkyConnectIntf.h>
-#include <PluginManager/Module/AbstractModule.h>
 #include "LocationWidget.h"
 #include "EnumerationItemDelegate.h"
 #include "PositionWidgetItem.h"
@@ -229,6 +227,28 @@ void LocationWidget::updateLocation(const Location &location)
 }
 
 // PROTECTED
+
+void LocationWidget::showEvent(QShowEvent *event) noexcept
+{
+    QByteArray tableState = d->moduleSettings.getLocationTableState();
+    if (!tableState.isEmpty()) {
+        ui->locationTableWidget->horizontalHeader()->blockSignals(true);
+        ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
+        ui->locationTableWidget->horizontalHeader()->blockSignals(false);
+    } else {
+        ui->locationTableWidget->resizeColumnsToContents();
+    }
+    // Sort with the current sort section and order
+    ui->locationTableWidget->setSortingEnabled(true);
+
+    // Wait until table widget columns (e.g. visibility) have been fully initialised
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
+            this, &LocationWidget::onTableLayoutChanged);
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
+            this, &LocationWidget::onTableLayoutChanged);
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
+            this, &LocationWidget::onTableLayoutChanged);
+}
 
 void LocationWidget::keyPressEvent(QKeyEvent *event) noexcept
 {
@@ -412,14 +432,7 @@ void LocationWidget::frenchConnection() noexcept
     connect(ui->defaultOnGroundCheckBox, &QCheckBox::toggled,
             this, &LocationWidget::onDefaultOnGroundChanged);
 
-
     // Module settings
-    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
-            this, &LocationWidget::onTableLayoutChanged);
-    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
-            this, &LocationWidget::onTableLayoutChanged);
-    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
-            this, &LocationWidget::onTableLayoutChanged);
     connect(&d->moduleSettings, &ModuleBaseSettings::changed,
             this, &LocationWidget::onModuleSettingsChanged);
 }
@@ -494,14 +507,6 @@ void LocationWidget::updateTable() noexcept
             ++row;
         }
 
-        QByteArray tableState = d->moduleSettings.getLocationTableState();
-        if (!tableState.isEmpty()) {
-            ui->locationTableWidget->horizontalHeader()->blockSignals(true);
-            ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
-            ui->locationTableWidget->horizontalHeader()->blockSignals(false);
-        } else {
-            ui->locationTableWidget->resizeColumnsToContents();
-        }
         ui->locationTableWidget->setSortingEnabled(true);        
         ui->locationTableWidget->blockSignals(false);
 
