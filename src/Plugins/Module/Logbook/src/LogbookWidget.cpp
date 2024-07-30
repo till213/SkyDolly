@@ -29,6 +29,7 @@
 #include <cstdint>
 #include <utility>
 #include <optional>
+#include <cstdint>
 
 #include <QByteArray>
 #include <QVariant>
@@ -86,7 +87,7 @@ namespace
     constexpr int NofFlightsColumn {1};
     constexpr int NofFlightsColumnWidth {40};
 
-    enum struct Duration {
+    enum struct Duration: std::uint8_t {
         All = 0,
         TwoMinutes = 2,
         FiveMinutes = 5,
@@ -701,6 +702,10 @@ void LogbookWidget::onRecordingStarted() noexcept
         const int row = ui->logTableWidget->rowCount();
         ui->logTableWidget->insertRow(row);
         initRow(summary, row);
+        const auto item = ui->logTableWidget->item(row, LogbookWidgetPrivate::flightIdColumn);
+        // Give the repaint event a chance to get processed before scrolling
+        // to make the item visible
+        QTimer::singleShot(0, this, [this, item]() {ui->logTableWidget->scrollToItem(item);});
         updateAircraftIcons();
         ui->logTableWidget->setSortingEnabled(true);
         ui->logTableWidget->blockSignals(false);
@@ -812,7 +817,7 @@ void LogbookWidget::deleteFlight() noexcept
             updateUi();
             const auto selectedRow = std::min(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
             ui->logTableWidget->selectRow(selectedRow);
-            ui->logTableWidget->setFocus(Qt::NoFocusReason);
+            ui->logTableWidget->setFocus();
         }
     }
 }

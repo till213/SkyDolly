@@ -13,11 +13,17 @@
 
 ## Improvements
 
+### Logbook
+- The logbook table now properly scrolls to the row being recorded, to ensure its visibility
+
+### Formation
+- The aircraft table now properly scrolls to the row being recorded, to ensure its visibility
+
 ### Location
 - Added Kosovo to list of countries
 - Added *Beach* and *Castle* to location types
 - The location description field now stretches vertically
-- The location table now properly scrolls to newly added user locations
+- The location table now properly scrolls to the newly added location, to ensure its visibility
 - After adding new user locations the location table receives the focus again, to make the selected row (the newly added location) better visible (as selected row)
 
 ## Bug Fixes
