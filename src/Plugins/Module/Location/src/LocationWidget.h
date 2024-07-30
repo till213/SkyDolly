@@ -77,6 +77,7 @@ private:
     void updateTable() noexcept;
     inline const QTableWidgetItem *createRow(const Location &location) noexcept;
     inline const QTableWidgetItem *initRow(const Location &location, int row) noexcept;
+    int getRowById(std::int64_t id) const noexcept;
     inline void updateRow(const Location &location, int row) noexcept;
     inline void updateLocationCount() const noexcept;
 

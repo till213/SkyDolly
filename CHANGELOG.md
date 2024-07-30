@@ -17,6 +17,11 @@
 - Added Kosovo to list of countries
 - Added *Beach* and *Castle* to location types
 - The location description field now stretches vertically
+- The location table now properly scrolls to newly added user locations
+- After adding new user locations the location table receives the focus again, to make the selected row (the newly added location) better visible (as selected row)
+
+## Bug Fixes
+- The location table does not show duplicate entries when adding new user locations (the newly added user location was correctly only stored once though)
 
 ## 0.18.1
 
