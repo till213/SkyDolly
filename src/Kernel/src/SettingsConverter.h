@@ -31,6 +31,14 @@ class Version;
 
 namespace SettingsConverter
 {
+    /*!
+     * Converts the application \c settings of version \c settingsVersion to the current
+     * application version
+     * \param settingsVersion
+     *        the version of the settings
+     * \param settings
+     *        the application settings to be converted
+     */
     void convertToCurrent(const Version &settingsVersion, QSettings &settings) noexcept;
 };
 
