@@ -25,6 +25,7 @@
 - The location description field now stretches vertically
 - The location table now properly scrolls to the newly added location, to ensure its visibility
 - After adding new user locations the location table receives the focus again, to make the selected row (the newly added location) better visible (as selected row)
+- The "On Ground" column is now sortable, too
 
 ## Bug Fixes
 - The location table (Location module) does not show duplicate entries anymore when adding new user locations (the newly added user location was correctly only stored once though)

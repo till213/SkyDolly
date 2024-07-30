@@ -18,6 +18,7 @@ target_sources(${LIBRARY_NAME}
         include/Widget/AircraftSelectionComboBox.h src/AircraftSelectionComboBox.cpp
         include/Widget/TimestampEdit.h src/TimestampEdit.cpp src/TimestampEdit.ui
         include/Widget/Platform.h src/Platform.cpp
+        include/Widget/TableCheckableItem.h src/TableCheckableItem.cpp
         include/Widget/TableDateItem.h src/TableDateItem.cpp
         include/Widget/TableTimeItem.h src/TableTimeItem.cpp
         include/Widget/TableDurationItem.h src/TableDurationItem.cpp

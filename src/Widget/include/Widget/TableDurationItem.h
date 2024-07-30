@@ -27,7 +27,6 @@
 
 #include <cstdint>
 
-#include <QString>
 #include <QTableWidgetItem>
 
 #include <Kernel/Unit.h>

@@ -58,6 +58,7 @@
 #include <Widget/EnumerationWidgetItem.h>
 #include <Widget/UnitWidgetItem.h>
 #include <Widget/LinkedOptionGroup.h>
+#include <Widget/TableCheckableItem.h>
 #include <PluginManager/SkyConnectManager.h>
 #include "LocationWidget.h"
 #include "EnumerationItemDelegate.h"
@@ -637,7 +638,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
     ++column;
 
     // On ground
-    newItem = std::make_unique<QTableWidgetItem>();
+    newItem = std::make_unique<TableCheckableItem>();
     if (isSystemLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsUserCheckable);
     } else {

@@ -22,10 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef TABLEDATEITEM_H
-#define TABLEDATEITEM_H
+#ifndef TABLEBOOLEANITEM_H
+#define TABLEBOOLEANITEM_H
 
-#include <QDate>
 #include <QTableWidgetItem>
 
 #include <Kernel/Unit.h>
@@ -36,23 +35,20 @@
  *
  * https://linux.m2osw.com/sorting-any-numeric-column-qtablewidget
  */
-class WIDGET_API TableDateItem final : public QTableWidgetItem
+class WIDGET_API TableCheckableItem final : public QTableWidgetItem
 {
 public:
-    explicit TableDateItem(QDate date = QDate()) noexcept;
-    TableDateItem(const TableDateItem &rhs) = delete;
-    TableDateItem(TableDateItem &&rhs) = delete;
-    TableDateItem &operator=(const TableDateItem &rhs) = delete;
-    TableDateItem &operator=(TableDateItem &&rhs) = delete;
-    ~TableDateItem() override = default;
+    explicit TableCheckableItem(bool enable = false) noexcept;
+    TableCheckableItem(const TableCheckableItem &rhs) = delete;
+    TableCheckableItem(TableCheckableItem &&rhs) = delete;
+    TableCheckableItem &operator=(const TableCheckableItem &rhs) = delete;
+    TableCheckableItem &operator=(TableCheckableItem &&rhs) = delete;
+    ~TableCheckableItem() override = default;
 
-    QDate getDate() const noexcept;
-    void setDate(QDate date) noexcept;
+    bool isChecked() const noexcept;
+    void setChecked(bool enable) noexcept;
 
     bool operator<(const QTableWidgetItem &rhs) const noexcept override;
-
-private:
-    Unit m_unit;
 };
 
-#endif // TABLEDATEITEM_H
+#endif // TABLEBOOLEANITEM_H

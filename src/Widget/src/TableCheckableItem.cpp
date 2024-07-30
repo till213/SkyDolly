@@ -22,37 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef TABLEDATEITEM_H
-#define TABLEDATEITEM_H
-
-#include <QDate>
-#include <QTableWidgetItem>
-
 #include <Kernel/Unit.h>
-#include "WidgetLib.h"
+#include "TableCheckableItem.h"
 
-/*!
- * Sortable QTableWidgetItem displaying a QDate.
- *
- * https://linux.m2osw.com/sorting-any-numeric-column-qtablewidget
- */
-class WIDGET_API TableDateItem final : public QTableWidgetItem
+// PUBLIC
+
+TableCheckableItem::TableCheckableItem(bool enable) noexcept
+    : QTableWidgetItem()
 {
-public:
-    explicit TableDateItem(QDate date = QDate()) noexcept;
-    TableDateItem(const TableDateItem &rhs) = delete;
-    TableDateItem(TableDateItem &&rhs) = delete;
-    TableDateItem &operator=(const TableDateItem &rhs) = delete;
-    TableDateItem &operator=(TableDateItem &&rhs) = delete;
-    ~TableDateItem() override = default;
+    setChecked(enable);
+}
 
-    QDate getDate() const noexcept;
-    void setDate(QDate date) noexcept;
+bool TableCheckableItem::isChecked() const noexcept
+{
+    return checkState() == Qt::CheckState::Checked ? true : false;
+}
 
-    bool operator<(const QTableWidgetItem &rhs) const noexcept override;
+void TableCheckableItem::setChecked(bool enable) noexcept
+{
+    const auto checked = enable ? Qt::CheckState::Checked : Qt::CheckState::Unchecked;
+    setCheckState(checked);
+}
 
-private:
-    Unit m_unit;
-};
-
-#endif // TABLEDATEITEM_H
+bool TableCheckableItem::operator<(const QTableWidgetItem &rhs) const noexcept
+{
+    const bool checked1 = isChecked();
+    const bool checked2 = static_cast<const TableCheckableItem &>(rhs).isChecked();
+    return checked1 < checked2;
+}
