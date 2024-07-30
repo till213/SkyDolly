@@ -1155,7 +1155,10 @@ set    steer_input_control = 0;
 update metadata
 set    app_version = '0.18.0';
 
-<<<<<<< HEAD
+@migr(id = "f09894df-e28e-4680-829a-e231b9e410fe", descn = "Update application version to 0.19", step = 1)
+update metadata
+set    app_version = '0.19.0';
+
 @migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Add gear_steer_position column", step_cnt = 3)
 alter table handle add column gear_steer_position integer;
 
@@ -1227,9 +1230,8 @@ insert into attitude_new select * from attitude;
 drop table attitude;
 alter table attitude_new rename to attitude;
 
-@migr(id = "e90abf13-a938-4833-ba10-afc43bbb4132", descn = "Update application version to 0.19", step = 1)
-=======
-@migr(id = "f09894df-e28e-4680-829a-e231b9e410fe", descn = "Update application version to 0.19", step = 1)
->>>>>>> 65869885 (Add Kosovo to list of countries, beach to location types)
+@migr(id = "ff40fe63-20ec-4e3e-b988-280da18bcd03", descn = "Update application version to 0.20", step = 1)
 update metadata
-set    app_version = '0.19.0';
+set    app_version = '0.20.0';
+
+

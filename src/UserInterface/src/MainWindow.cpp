@@ -503,15 +503,13 @@ void MainWindow::initUi() noexcept
                 QStringLiteral(
                     "%1 is in a preview release phase: while it should be stable to use it is not "
                     "considered feature-complete.\n\n"
-                    "This release v%2 \"%3\" properly handles flights with a recording duration longer than a day:\n\n"
-                    "· The flight duration in the logbook is shown as either hh:mm:ss or in days, weeks, months or years\n"
-                    "· The time edit widget automatically shows the flight date when the recording duration exceeds one day\n"
-                    "· The timeline properly seeks to the position with the desired timestamp\n\n"
-                    "The simulation time is now also synchronised during replay, allowing for an exact time of day reproduction. "
-                    "This option can be disabled in the application settings, in the Replay section.\n\n"
-                    "New location import- and export plugins are also provided. Existing locations can now be updated or "
-                    "kept as-is when importing locations in close vicinity: the update distance threshold can now be defined "
-                    "in the location import settings.\n\n"
+                    "This release v%2 \"%3\" does not provide many new features. Instead it intends to spread "
+                    "the Olympic spirit by providing over 200 hand-selected locations of each "
+                    "country being represented by their Olympic athletes in the Olympic games in France 2024.\n\n"
+                    "While under a tight time budget I tried to find visually attractive places in each "
+                    "country, taking into consideration the actual representation in MS Flight Simulator itself. I am "
+                    "open to suggestions and improvements.\n\n"
+                    "Sky Dolly invites everyone to take a moment and marvel at the diversity and beauty of our planet - happy flying!\n\n"
                     "This dialog will be shown %4 more times.")
                     .arg(Version::getApplicationName(), Version::getApplicationVersion())
                     .arg(Version::getCodeName())
