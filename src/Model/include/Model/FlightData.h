@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <cstdint>
 
 #include <QString>
 #include <QDateTime>
@@ -39,7 +40,7 @@
 struct MODEL_API FlightData final
 {
     /*! Defines how the flight creation time is to be reset upon clearing the flight. */
-    enum struct CreationTimeMode
+    enum struct CreationTimeMode: std::uint8_t
     {
         /*! Update the creation time to the current date & time */
         Update,

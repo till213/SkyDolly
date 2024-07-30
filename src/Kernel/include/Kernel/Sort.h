@@ -29,6 +29,7 @@
 #include <deque>
 #include <functional>
 #include <memory>
+#include <cstdint>
 
 #include <tsl/ordered_map.h>
 
@@ -41,13 +42,13 @@
 template <typename T, typename H = std::hash<T>> class Sort
 {
 public:
-    enum struct State
+    enum struct State: std::uint8_t
     {
         NotVisited,
         Visiting,
         Done
     };
-    enum struct Sorting
+    enum struct Sorting: std::uint8_t
     {
         Normal,
         Reverse,

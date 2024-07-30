@@ -28,6 +28,7 @@
 #include <memory>
 #include <cstdint>
 #include <utility>
+#include <cstdint>
 
 #include <QObject>
 #include <QSqlDatabase>
@@ -50,7 +51,7 @@ class PERSISTENCE_API DatabaseService final
 {
 public:
     /*! The logbook backup mode. */
-    enum struct BackupMode
+    enum struct BackupMode: std::uint8_t
     {
         /*! A logbook backup is to be created due to a migration of an older logbook; the next backup date is not updated. */
         Migration,
@@ -59,7 +60,7 @@ public:
     };
 
     /*! The logbook connection mode. */
-    enum struct ConnectionMode
+    enum struct ConnectionMode: std::uint8_t
     {
         /*! The logbook is to be opened; a backup is made in case a migration is required (according to the application \e backup settings). */
         Open,

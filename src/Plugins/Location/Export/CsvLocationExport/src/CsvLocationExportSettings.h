@@ -26,6 +26,7 @@
 #define CSVLOCATIONEXPORTSETTINGS_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 
@@ -43,7 +44,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct Format {
+    enum struct Format: std::uint8_t {
         First = 0,
         SkyDolly = First,
         LittleNavmap,

@@ -25,6 +25,8 @@
 #ifndef FLIGHTSIMULATOR_H
 #define FLIGHTSIMULATOR_H
 
+#include <cstdint>
+
 #include <QString>
 
 #include "KernelLib.h"
@@ -32,7 +34,7 @@
 class KERNEL_API FlightSimulator final
 {
 public:
-    enum struct Id {
+    enum struct Id: std::uint8_t {
         None,
         All,
         MSFS,

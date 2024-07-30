@@ -71,7 +71,7 @@ namespace
 
 struct IgcImportPluginPrivate
 {
-    enum struct EngineState {
+    enum struct EngineState: std::uint8_t {
         Unknown,
         Running,
         Shutdown

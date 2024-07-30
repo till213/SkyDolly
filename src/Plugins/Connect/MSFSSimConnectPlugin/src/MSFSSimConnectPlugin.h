@@ -98,7 +98,7 @@ protected:
     bool onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept override;
 
 private:
-    enum struct ResetReason
+    enum struct ResetReason: std::uint8_t
     {
         StartReplay,
         Seek

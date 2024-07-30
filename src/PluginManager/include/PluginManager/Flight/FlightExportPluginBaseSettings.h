@@ -26,6 +26,7 @@
 #define FLIGHTEXPORTPLUGINBASESETTINGS_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 #include <QString>
@@ -45,7 +46,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct FormationExport {
+    enum struct FormationExport: std::uint8_t {
         First = 0,
         /*! Only the user aircraft is to be exported */
         UserAircraftOnly = First,

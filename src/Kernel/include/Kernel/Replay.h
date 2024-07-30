@@ -25,6 +25,8 @@
 #ifndef REPLAY_H
 #define REPLAY_H
 
+#include <cstdint>
+
 /*!
  * Replay related data structures.
  */
@@ -35,7 +37,7 @@ namespace Replay
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct SpeedUnit: int {
+    enum struct SpeedUnit: std::uint8_t {
         First = 0,
         Absolute = First,
         Percent,
@@ -47,7 +49,7 @@ namespace Replay
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct TimeMode
+    enum struct TimeMode: std::uint8_t
     {
         First = 0,
         /*! No time synchronisation is done: the current simulation time is kept */

@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 #include <QCoreApplication>
@@ -38,7 +39,7 @@
 
 struct LocationPluginPrivate
 {
-    enum struct Mode
+    enum struct Mode: std::uint8_t
     {
         Add,
         Update

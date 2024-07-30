@@ -31,6 +31,9 @@
 - Properly store (and restore) the aircraft table layout (Formation module) when changing the column to be sorted
 - Properly restore table widget sort column and sort items accordingly when switching between Logbook, Formation and Location modules
 
+## Under The Hood
+- Small memory optimisations
+
 ## 0.18.1
 
 ### Bug Fixes

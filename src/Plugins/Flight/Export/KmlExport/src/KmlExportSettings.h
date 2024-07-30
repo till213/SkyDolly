@@ -26,6 +26,7 @@
 #define KMLEXPORTSETTINGS_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 #include <QColor>
@@ -44,7 +45,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct ColorStyle {
+    enum struct ColorStyle: std::uint8_t {
         First = 0,
         OneColor = First,
         OneColorPerEngineType,

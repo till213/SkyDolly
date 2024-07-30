@@ -44,7 +44,7 @@ class WIDGET_API EnumerationComboBox : public QComboBox
 public:
     using IgnoredIds = std::unordered_set<std::int64_t>;
 
-    enum struct Mode {
+    enum struct Mode: std::uint8_t {
         Editable,
         NonEditable
     };

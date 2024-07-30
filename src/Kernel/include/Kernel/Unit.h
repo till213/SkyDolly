@@ -77,7 +77,7 @@ public:
     // https://xkcd.com/2170/
     static constexpr int CoordinatePrecision = 6;
 
-    enum struct Name
+    enum struct Name: std::uint8_t
     {
         Second,
         Feet,

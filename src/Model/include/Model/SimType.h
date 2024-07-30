@@ -25,6 +25,8 @@
 #ifndef SIMTYPE_H
 #define SIMTYPE_H
 
+#include <cstdint>
+
 #include <QCoreApplication>
 #include <QString>
 
@@ -38,7 +40,7 @@ namespace SimType {
      *
      * Implementation note: these values act as actual flag values that get persisted in the database.
      */
-    enum struct LightState {
+    enum struct LightState: std::uint16_t {
         None = 0x0000,
         Navigation = 0x0001,
         Beacon = 0x0002,
@@ -59,7 +61,7 @@ namespace SimType {
      *
      * Implementation note: these values act as actual IDs that get persisted in the database.
      */
-    enum struct SurfaceType {
+    enum struct SurfaceType: std::uint8_t {
         First = 0,
         Unknown = First,
         Concrete = 1,
@@ -95,7 +97,7 @@ namespace SimType {
      *
      * Implementation note: these values act as actual IDs that get persisted in the database.
      */
-    enum struct SurfaceCondition {
+    enum struct SurfaceCondition: std::uint8_t {
         First = 0,
         Unknown = First,
         Normal,
@@ -110,7 +112,7 @@ namespace SimType {
      *
      * Implementation note: these values act as actual IDs that get persisted in the database.
      */
-    enum struct EngineType {
+    enum struct EngineType: std::uint8_t {
         First = 0,
         Unknown = First,
         Piston,
@@ -129,7 +131,7 @@ namespace SimType {
      *
      * Implementation note: these values act as actual IDs that get persisted in the database.
      */
-    enum struct PrecipitationState {
+    enum struct PrecipitationState: std::uint8_t {
         First = 0,
         Unknown = First,
         None,
