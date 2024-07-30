@@ -27,7 +27,8 @@
 - After adding new user locations the location table receives the focus again, to make the selected row (the newly added location) better visible (as selected row)
 
 ## Bug Fixes
-- The location table does not show duplicate entries when adding new user locations (the newly added user location was correctly only stored once though)
+- The location table (Location module) does not show duplicate entries anymore when adding new user locations (the newly added user location was correctly only stored once though)
+- Properly store (and restore) the aircraft table layout (Formation module) when changing the column to be sorted
 
 ## 0.18.1
 

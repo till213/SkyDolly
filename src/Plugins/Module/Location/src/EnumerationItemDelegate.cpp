@@ -35,8 +35,8 @@
 
 struct EnumerationItemDelegatePrivate
 {
-    EnumerationItemDelegatePrivate(QString theEnumerationName)
-        : enumerationName(std::move(theEnumerationName))
+    EnumerationItemDelegatePrivate(QString enumerationName)
+        : enumerationName(std::move(enumerationName))
     {}
 
     QString enumerationName;
