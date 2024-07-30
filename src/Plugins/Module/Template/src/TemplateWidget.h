@@ -26,24 +26,14 @@
 #define LOCATIONWIDGET_H
 
 #include <memory>
-#include <forward_list>
-#include <cstdint>
 
 #include <QWidget>
 
-class QShowEvent;
-class QHideEvent;
-class QAction;
 class QTreeWidgetItem;
 class QString;
 
-#include <PluginManager/Module/ModuleIntf.h>
 #include <PluginManager/Module/AbstractModule.h>
 
-class DatabaseService;
-class FlightService;
-struct FlightDate;
-struct FlightSummary;
 struct TemplateWidgetPrivate;
 
 namespace Ui {

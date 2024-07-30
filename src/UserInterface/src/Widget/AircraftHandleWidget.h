@@ -29,9 +29,6 @@
 
 #include <QWidget>
 
-class QShowEvent;
-class QHideEvent;
-
 #include <Model/TimeVariableData.h>
 #include "AbstractSimulationVariableWidget.h"
 

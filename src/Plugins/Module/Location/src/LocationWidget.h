@@ -26,7 +26,6 @@
 #define LOCATIONWIDGET_H
 
 #include <memory>
-#include <forward_list>
 #include <cstdint>
 
 #include <QWidget>
@@ -34,6 +33,7 @@
 
 class QTableWidgetItem;
 class QKeyEvent;
+class QShowEvent;
 
 #include <Model/Location.h>
 
@@ -59,12 +59,14 @@ public:
     void addLocation(Location location);
     void updateLocation(const Location &location);
 
-    void keyPressEvent(QKeyEvent *event) noexcept override;
-
 signals:
     void doUpdateLocation();
     void doCaptureLocation();
     void teleportTo(Location location);
+
+protected:
+    void showEvent(QShowEvent *event) noexcept override;
+    void keyPressEvent(QKeyEvent *event) noexcept override;
 
 private:
     const std::unique_ptr<Ui::LocationWidget> ui;

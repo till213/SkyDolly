@@ -152,6 +152,33 @@ LogbookWidget::LogbookWidget(LogbookSettings &moduleSettings, QWidget *parent) n
 
 LogbookWidget::~LogbookWidget() = default;
 
+// PROTECTED
+
+void LogbookWidget::showEvent(QShowEvent *event) noexcept
+{
+    QByteArray tableState = d->moduleSettings.getLogbookTableState();
+    if (!tableState.isEmpty()) {
+        ui->logTableWidget->horizontalHeader()->blockSignals(true);
+        ui->logTableWidget->horizontalHeader()->restoreState(tableState);
+        ui->logTableWidget->horizontalHeader()->blockSignals(false);
+    } else {
+        ui->logTableWidget->resizeColumnsToContents();
+        // Reserve some space for the aircraft icon
+        const int idColumnWidth = static_cast<int>(std::round(1.25 * ui->logTableWidget->columnWidth(LogbookWidgetPrivate::flightIdColumn)));
+        ui->logTableWidget->setColumnWidth(LogbookWidgetPrivate::flightIdColumn, idColumnWidth);
+    }
+    // Sort with the current sort section and order
+    ui->logTableWidget->setSortingEnabled(true);
+
+    // Wait until table widget columns (e.g. visibility) have been fully initialised
+    connect(ui->logTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
+            this, &LogbookWidget::onTableLayoutChanged);
+    connect(ui->logTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
+            this, &LogbookWidget::onTableLayoutChanged);
+    connect(ui->logTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
+            this, &LogbookWidget::onTableLayoutChanged);
+}
+
 // PRIVATE
 
 void LogbookWidget::initUi() noexcept
@@ -268,18 +295,6 @@ void LogbookWidget::updateTable() noexcept
         }
 
         ui->logTableWidget->setSortingEnabled(true);
-
-        QByteArray tableState = d->moduleSettings.getLogbookTableState();
-        if (!tableState.isEmpty()) {
-            ui->logTableWidget->horizontalHeader()->blockSignals(true);
-            ui->logTableWidget->horizontalHeader()->restoreState(tableState);
-            ui->logTableWidget->horizontalHeader()->blockSignals(false);
-        } else {
-            ui->logTableWidget->resizeColumnsToContents();
-            // Reserve some space for the aircraft icon
-            const int idColumnWidth = static_cast<int>(std::round(1.25 * ui->logTableWidget->columnWidth(LogbookWidgetPrivate::flightIdColumn)));
-            ui->logTableWidget->setColumnWidth(LogbookWidgetPrivate::flightIdColumn, idColumnWidth);
-        }
         ui->logTableWidget->blockSignals(false);
 
     } else {
@@ -550,12 +565,6 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::onDateItemClicked);
 
     // Module settings
-    connect(ui->logTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
-            this, &LogbookWidget::onTableLayoutChanged);
-    connect(ui->logTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
-            this, &LogbookWidget::onTableLayoutChanged);
-    connect(ui->logTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
-            this, &LogbookWidget::onTableLayoutChanged);
     connect(&d->moduleSettings, &ModuleBaseSettings::changed,
             this, &LogbookWidget::onModuleSettingsChanged);
 }

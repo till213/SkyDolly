@@ -157,10 +157,7 @@ FormationWidget::FormationWidget(FormationSettings &settings, QWidget *parent) n
     frenchConnection();
 }
 
-FormationWidget::~FormationWidget()
-{
-    ui->aircraftTableWidget->horizontalHeader()->saveState();
-}
+FormationWidget::~FormationWidget() = default;
 
 Formation::HorizontalDistance FormationWidget::getHorizontalDistance() const noexcept
 {
@@ -175,6 +172,30 @@ Formation::VerticalDistance FormationWidget::getVerticalDistance() const noexcep
 Formation::Bearing FormationWidget::getRelativePosition() const noexcept
 {
     return static_cast<Formation::Bearing>(d->positionButtonGroup->checkedId());
+}
+
+// PROTECTED
+
+void FormationWidget::showEvent(QShowEvent *event) noexcept
+{
+    QByteArray tableState = d->moduleSettings.getFormationAircraftTableState();
+    if (!tableState.isEmpty()) {
+        ui->aircraftTableWidget->horizontalHeader()->blockSignals(true);
+        ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
+        ui->aircraftTableWidget->horizontalHeader()->blockSignals(false);
+    } else {
+        ui->aircraftTableWidget->resizeColumnsToContents();
+    }
+    // Sort with the current sort section and order
+    ui->aircraftTableWidget->setSortingEnabled(true);
+
+    // Wait until table widget columns (e.g. visibility) have been fully initialised
+    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
+            this, &FormationWidget::onTableLayoutChanged);
+    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
+            this, &FormationWidget::onTableLayoutChanged);
+    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
+            this, &FormationWidget::onTableLayoutChanged);
 }
 
 // PRIVATE
@@ -342,12 +363,6 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::resetAllTimeOffsets);
 
     // Module settings
-    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
-            this, &FormationWidget::onTableLayoutChanged);
-    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
-            this, &FormationWidget::onTableLayoutChanged);
-    connect(ui->aircraftTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
-            this, &FormationWidget::onTableLayoutChanged);
     connect(&d->moduleSettings, &ModuleBaseSettings::changed,
             this, &FormationWidget::onModuleSettingsChanged);
     connect(&d->moduleSettings, &FormationSettings::replayModeChanged,
@@ -372,15 +387,6 @@ void FormationWidget::updateTable() noexcept
     }
 
     ui->aircraftTableWidget->setSortingEnabled(true);
-
-    QByteArray tableState = d->moduleSettings.getFormationAircraftTableState();
-    if (!tableState.isEmpty()) {
-        ui->aircraftTableWidget->horizontalHeader()->blockSignals(true);
-        ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
-        ui->aircraftTableWidget->horizontalHeader()->blockSignals(false);
-    } else {
-        ui->aircraftTableWidget->resizeColumnsToContents();
-    }
     d->selectedAircraftIndex = Const::InvalidIndex;
     ui->aircraftTableWidget->blockSignals(false);
 

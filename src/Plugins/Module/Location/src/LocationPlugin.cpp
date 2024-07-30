@@ -57,8 +57,8 @@ LocationPlugin::LocationPlugin(QObject *parent) noexcept
     : AbstractModule {parent},
       d {std::make_unique<LocationPluginPrivate>()}
 {
-    frenchConnection();
     restoreSettings(QUuid(Const::LocationModuleUuid));
+    frenchConnection();
 }
 
 LocationPlugin::~LocationPlugin()
