@@ -10,16 +10,17 @@
 - Optimised logbook table column types
 
 ## 0.19.0
+Sky Dolly **"Jaunty Jodel"** carries the Olympic spirit into the world: over 200 new locations - each country taking part in the Olympic Games in Paris 2024 - have been added as location presets. Please enjoy the diversity and beauty of our little planet - happy flying!
 
 ## Improvements
 
-### Logbook
+### Logbook Module
 - The logbook table now properly scrolls to the row being recorded, to ensure its visibility
 
-### Formation
+### Formation Module
 - The aircraft table now properly scrolls to the row being recorded, to ensure its visibility
 
-### Location
+### Location Module
 - Added Kosovo to list of countries
 - Added *Beach* and *Castle* to location types
 - The location description field now stretches vertically
