@@ -507,8 +507,7 @@ void MainWindow::initUi() noexcept
                     "the Olympic spirit by providing over 200 hand-selected locations of each "
                     "country being represented by their Olympic athletes in the Olympic games in France 2024.\n\n"
                     "While under a tight time budget I tried to find visually attractive places in each "
-                    "country, taking into consideration the actual representation in MS Flight Simulator itself. I am "
-                    "open to suggestions and improvements.\n\n"
+                    "country, taking into consideration the actual representation in MS Flight Simulator itself.\n\n"
                     "Sky Dolly invites everyone to take a moment and marvel at the diversity and beauty of our planet - happy flying!\n\n"
                     "This dialog will be shown %4 more times.")
                     .arg(Version::getApplicationName(), Version::getApplicationVersion())
