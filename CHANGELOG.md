@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.19.0
+## 0.20.0
 
 ## New Features
 
@@ -8,6 +8,14 @@
 
 ## Under the Hood
 - Optimised logbook table column types
+
+## 0.19.0
+
+## Improvements
+
+### Location
+- Added Kosovo to list of countries
+- Add *Beach* to location types
 
 ## 0.18.1
 

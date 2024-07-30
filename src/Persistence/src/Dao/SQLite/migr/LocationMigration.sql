@@ -425,6 +425,18 @@ set    app_version = '0.17.0';
 update metadata
 set    app_version = '0.18.0';
 
+<<<<<<< HEAD
 @migr(id = "87d5a82f-f591-4e07-bc57-fc037b5f309a", descn = "Update application version to 0.19", step = 1)
+=======
+@migr(id = "b8eb79c7-476d-4ad4-9b6e-88698e03deaf", descn = "Add Kosovo to countries", step = 1)
+insert into enum_country(sym_id, name)
+values ('RS-KM', 'Kosovo');
+
+@migr(id = "1b1fe05f-6b17-451e-9764-906baed01a98", descn = "Add beach to location categories", step = 1)
+insert into enum_location_category(sym_id, name, desc)
+values ('BE', 'Beach', 'Beach');
+
+@migr(id = "37e34152-4f60-4f28-8c9a-7b2311b6819c", descn = "Update application version to 0.19", step = 1)
+>>>>>>> 65869885 (Add Kosovo to list of countries, beach to location types)
 update metadata
 set    app_version = '0.19.0';
