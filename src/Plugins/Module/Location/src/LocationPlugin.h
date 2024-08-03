@@ -31,6 +31,7 @@
 class QWidget;
 
 #include <Model/Location.h>
+#include <Model/TimeZoneInfo.h>
 #include <PluginManager/Module/AbstractModule.h>
 
 struct InitialPosition;
@@ -67,7 +68,7 @@ private slots:
     void updateLocation() noexcept;
     void teleportTo(const Location &location) noexcept;
     void onLocationReceived(Location location) noexcept;
-    void onTimeZoneInfoReceived(int offsetSeconds) const noexcept;
+    void onTimeZoneInfoReceived(TimeZoneInfo timeZoneInfo) const noexcept;
 };
 
 #endif // LOCATIONPLUGIN_H

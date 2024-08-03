@@ -1145,7 +1145,8 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 #ifdef DEBUG
             qDebug() << "Received time zone info, offset:" << simConnectTimeZoneInfo->timeZoneOffset;
 #endif
-            emit skyConnect->timeZoneInfoReceived(simConnectTimeZoneInfo->timeZoneOffset);
+            const auto timeZoneInfo = simConnectTimeZoneInfo->toTimeZoneInfo();
+            emit skyConnect->timeZoneInfoReceived(timeZoneInfo);
             break;
         }
         case SimConnectType::DataRequest::FlapsHandleIndex:

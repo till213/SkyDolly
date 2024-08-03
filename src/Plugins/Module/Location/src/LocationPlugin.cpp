@@ -28,6 +28,8 @@
 #include <QObject>
 #include <QCoreApplication>
 
+#include <Model/Location.h>
+#include <Model/TimeZoneInfo.h>
 #include <Persistence/PersistedEnumerationItem.h>
 #include <Persistence/Service/EnumerationService.h>
 #include <PluginManager/Connect/SkyConnectIntf.h>
@@ -140,6 +142,8 @@ void LocationPlugin::teleportTo(const Location &location) noexcept
     if (event != SkyConnectIntf::SimulationEvent::None) {
         skyConnectManager.sendSimulationEvent(event);
     }
+    const auto winterDate = QDate::fromString("2023-12-12", Qt::DateFormat::ISODate);
+    skyConnectManager.sendZuluDateTime(QDateTime(winterDate, QTime()));
     skyConnectManager.requestTimeZoneInfo();
 }
 
@@ -156,9 +160,11 @@ void LocationPlugin::onLocationReceived(Location location) noexcept
     }
 }
 
-void LocationPlugin::onTimeZoneInfoReceived(int offsetSeconds) const noexcept
+void LocationPlugin::onTimeZoneInfoReceived(TimeZoneInfo timeZoneInfo) const noexcept
 {
-    auto zuluDateTime = QDateTime::currentDateTime().addSecs(offsetSeconds);
+    const auto winterDate = QDate::fromString("2023-12-12", Qt::DateFormat::ISODate);
+    const auto zuluSunrise = QTime::fromMSecsSinceStartOfDay(timeZoneInfo.zuluSunriseTimeSeconds * 1000);
+    const auto zuluDateTime = QDateTime::currentDateTime().addSecs(timeZoneInfo.timeZoneOffsetSeconds);
     auto &skyConnectManager = SkyConnectManager::getInstance();
-    skyConnectManager.sendZuluDateTime(zuluDateTime);
+    skyConnectManager.sendZuluDateTime(QDateTime(winterDate, zuluSunrise));
 }

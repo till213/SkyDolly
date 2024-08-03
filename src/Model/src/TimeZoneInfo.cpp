@@ -22,20 +22,3 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <windows.h>
-
-#include <SimConnect.h>
-
-#include <Kernel/Enum.h>
-#include <Model/SimVar.h>
-#include "SimConnectType.h"
-#include "SimConnectTimeZoneInfo.h"
-
-// PUBLIC
-
-void SimConnectTimeZoneInfo::addToDataDefinition(HANDLE simConnectHandle) noexcept
-{
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::TimeZoneInfo), SimVar::TimeZoneOffset, "Seconds", SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::TimeZoneInfo), SimVar::ZuluSunriseTime, "Seconds", SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::TimeZoneInfo), SimVar::ZuluSunsetTime, "Seconds", SIMCONNECT_DATATYPE_INT32);
-}

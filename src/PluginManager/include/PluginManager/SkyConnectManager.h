@@ -43,6 +43,8 @@ class QUuid;
 #include <Kernel/QUuidHasher.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
+#include <Model/Location.h>
+#include <Model/TimeZoneInfo.h>
 #include "Connect/Connect.h"
 #include "Connect/SkyConnectIntf.h"
 #include "OptionWidgetIntf.h"
@@ -249,7 +251,7 @@ signals:
      *
      * \sa SkyConnectIntf#timeZoneInfoReceived
      */
-    void timeZoneInfoReceived(int offsetSeconds);
+    void timeZoneInfoReceived(TimeZoneInfo timeZoneInfo);
 
     /*!
      * Relay of the SkyConnectIntf#simulationRateReceived signal.

@@ -35,6 +35,8 @@
 #include <QTime>
 #include <QTimeZone>
 
+#include <Model/TimeZoneInfo.h>
+
 /*!
  * Simulation date and time (local and zulu).
  *
@@ -44,6 +46,17 @@
 struct SimConnectTimeZoneInfo
 {
     std::int32_t timeZoneOffset {0};
+    std::int32_t zuluSunriseTime {0};
+    std::int32_t zuluSunsetTime {0};
+
+    inline TimeZoneInfo toTimeZoneInfo() const noexcept
+    {
+        TimeZoneInfo info;
+        info.timeZoneOffsetSeconds = timeZoneOffset;
+        info.zuluSunriseTimeSeconds = zuluSunriseTime;
+        info.zuluSunsetTimeSeconds = zuluSunsetTime;
+        return info;
+    }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 };

@@ -35,6 +35,7 @@
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
 #include <Model/Location.h>
+#include <Model/TimeZoneInfo.h>
 #include "Connect.h"
 #include "FlightSimulatorShortcuts.h"
 #include "../PluginIntf.h"
@@ -434,10 +435,10 @@ signals:
     /*!
      * Emitted whenever the requested time zone information has been received.
      *
-     * \param offset
-     *        the current time zone offset [seconds]
+     * \param timeZoneInfo
+     *        the current time zone information
      */
-    void timeZoneInfoReceived(int offsetSeconds);
+    void timeZoneInfoReceived(TimeZoneInfo timeZoneInfo);
 
     /*!
      * Emitted whenever a keyboard shortcut was triggered for the given \p action.

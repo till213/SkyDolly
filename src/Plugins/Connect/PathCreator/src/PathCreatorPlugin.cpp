@@ -50,6 +50,7 @@
 #include <Model/Attitude.h>
 #include <Model/AttitudeData.h>
 #include <Model/Location.h>
+#include <Model/TimeZoneInfo.h>
 #include <Model/InitialPosition.h>
 #include <Model/Engine.h>
 #include <Model/EngineData.h>
@@ -333,7 +334,11 @@ bool PathCreatorPlugin::onRequestSimulationRate() noexcept
 
 bool PathCreatorPlugin::onRequestTimeZoneInfo() noexcept
 {
-    emit timeZoneInfoReceived((-12 * d->randomGenerator->bounded(13)) * Unit::SecondsPerMinute * Unit::MinutesPerHour);
+    TimeZoneInfo timeZoneInfo;
+    timeZoneInfo.timeZoneOffsetSeconds = static_cast<int>((-12 * d->randomGenerator->bounded(13)) * Unit::SecondsPerMinute * Unit::MinutesPerHour);
+    timeZoneInfo.zuluSunriseTimeSeconds = static_cast<int>((4 + d->randomGenerator->bounded(5)) * Unit::SecondsPerMinute * Unit::MinutesPerHour);
+    timeZoneInfo.zuluSunsetTimeSeconds = static_cast<int>((16 + d->randomGenerator->bounded(5)) * Unit::SecondsPerMinute * Unit::MinutesPerHour);
+    emit timeZoneInfoReceived(timeZoneInfo);
     return true;
 }
 

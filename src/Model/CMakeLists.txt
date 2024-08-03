@@ -1,6 +1,7 @@
 set(LIBRARY_NAME "Model")
 
-qt_add_library(${LIBRARY_NAME} SHARED)
+qt_add_library(${LIBRARY_NAME} SHARED
+    src/TimeZoneInfo.cpp)
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_compile_definitions(${LIBRARY_NAME}
@@ -44,6 +45,7 @@ target_sources(${LIBRARY_NAME}
         include/Model/SimVar.h
         include/Model/SkySearch.h src/SkySearch.cpp
         include/Model/Location.h src/Location.cpp
+        include/Model/TimeZoneInfo.h src/TimeZoneInfo.cpp
         include/Model/Enumeration.h src/Enumeration.cpp        
 )
 target_include_directories(${LIBRARY_NAME}

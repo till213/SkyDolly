@@ -22,20 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <windows.h>
+#ifndef TIMEZONEINFO_H
+#define TIMEZONEINFO_H
 
-#include <SimConnect.h>
+#include "ModelLib.h"
 
-#include <Kernel/Enum.h>
-#include <Model/SimVar.h>
-#include "SimConnectType.h"
-#include "SimConnectTimeZoneInfo.h"
-
-// PUBLIC
-
-void SimConnectTimeZoneInfo::addToDataDefinition(HANDLE simConnectHandle) noexcept
+struct MODEL_API TimeZoneInfo final
 {
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::TimeZoneInfo), SimVar::TimeZoneOffset, "Seconds", SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::TimeZoneInfo), SimVar::ZuluSunriseTime, "Seconds", SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::TimeZoneInfo), SimVar::ZuluSunsetTime, "Seconds", SIMCONNECT_DATATYPE_INT32);
-}
+    /*!
+     * The time zone offset to UTC (zulu), such that:
+     *
+     * localTime + timeZoneOffset = zuluTime
+     */
+    int timeZoneOffsetSeconds;
+
+    /*!
+     * Seconds since midnight until the sunrise based on zulu time.
+     */
+    int zuluSunriseTimeSeconds;
+
+    /*!
+     * Seconds since midnight until the sunset based on zulu time.
+     */
+    int zuluSunsetTimeSeconds;
+};
+
+#endif // TIMEZONEINFO_H
