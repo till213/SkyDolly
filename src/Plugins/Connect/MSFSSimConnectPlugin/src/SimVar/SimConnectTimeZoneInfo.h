@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The Black Sheep for your Flight Recordings
+ * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTSIMULATIONTIME_H
-#define SIMCONNECTSIMULATIONTIME_H
+#ifndef SIMCONNECTTIMEZONEINFO_H
+#define SIMCONNECTTIMEZONEINFO_H
 
 #include <cstdint>
 
@@ -41,42 +41,12 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectSimulationTime
+struct SimConnectTimeZoneInfo
 {
-    std::int32_t localTime {0};
-    std::int32_t localYear {0};
-    std::int32_t localMonth {0};
-    std::int32_t localDay {0};
-    std::int32_t zuluTime {0};
-    std::int32_t zuluYear {0};
-    std::int32_t zuluMonth {0};
-    std::int32_t zuluDay {0};
-
-    inline QDateTime toLocalDateTime() const noexcept
-    {
-        QDateTime dateTime;
-        const auto time = QTime::fromMSecsSinceStartOfDay(localTime * 1000);
-        dateTime.setTime(time);
-        const QDate date = QDate(localYear, localMonth, localDay);
-        dateTime.setDate(date);
-
-        return dateTime;
-    }
-
-    inline QDateTime toZuluDateTime() const noexcept
-    {
-        QDateTime dateTime;
-        const auto time = QTime::fromMSecsSinceStartOfDay(zuluTime * 1000);
-        dateTime.setTime(time);
-        const QDate date = QDate(zuluYear, zuluMonth, zuluDay);
-        dateTime.setDate(date);
-        dateTime.setTimeZone(QTimeZone::UTC);
-
-        return dateTime;
-    }
+    std::int32_t timeZoneOffset {0};
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTSIMULATIONTIME_H
+#endif // SIMCONNECTTIMEZONEINFO_H

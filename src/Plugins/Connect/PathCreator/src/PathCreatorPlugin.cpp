@@ -338,6 +338,19 @@ bool PathCreatorPlugin::onSendZuluDateTime(int year, int day, int hour, int minu
     return true;
 }
 
+bool PathCreatorPlugin::onSendLocalDateTime(int year, int day, int hour, int minute) const noexcept
+{
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::onSendLocalDateTime: year:" << year << "day:" << day << "hour:" << hour << "minute:" << minute;
+#endif
+    return true;
+}
+
+bool PathCreatorPlugin::onRequestTimeZoneInfo() noexcept
+{
+    emit timeZoneInfoReceived(42);
+}
+
 // PRIVATE
 
 void PathCreatorPlugin::frenchConnection() noexcept

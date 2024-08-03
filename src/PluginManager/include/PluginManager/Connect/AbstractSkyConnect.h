@@ -114,6 +114,7 @@ public:
     bool requestLocation() noexcept override;
     bool requestSimulationRate() noexcept override;
     bool sendZuluDateTime(QDateTime dateTime) noexcept override;
+    bool sendSimulationLocalDateTime(QDateTime dateTime) noexcept override;
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
@@ -205,19 +206,45 @@ protected:
     virtual bool onRequestSimulationRate() noexcept = 0;
 
     /*!
-     * Sends the \p year, \p day, \p hour (zulu time) and \p minute  to be set in the flight simulator.
+     * Sends the \p year, \p day, \p hour and \p minute  to be set in the flight simulator
+     * as zulu date and time.
      *
      * \param year
      *        the year, e.g. 2020
      * \param day
      *        the day
      * \param hour
-     *        the hour [0, 23] (zulu time)
+     *        the hour [0, 23]
      * \param minute
      *        the minute [0, 59]
      * \return \c true if the request was successful; \c false else
      */
     virtual bool onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept = 0;
+
+    /*!
+     * Sends the \p year, \p day, \p hour and \p minute to be set in the flight simulator
+     * as simulation local date and time. The timezone ("local") depends on where the
+     * user aircraft is currently located.
+     *
+     * \param year
+     *        the year, e.g. 2020
+     * \param day
+     *        the day
+     * \param hour
+     *        the hour [0, 23]
+     * \param minute
+     *        the minute [0, 59]
+     * \return \c true if the request was successful; \c false else
+     */
+    virtual bool onSendLocalDateTime(int year, int day, int hour, int minute) const noexcept = 0;
+
+    /*!
+     * \brief Requests information about the current simulation time zone.
+     *
+     * \return \c true if the request was successful; \c false else
+     * \sa timeZoneInfoReceived
+     */
+    virtual bool onRequestTimeZoneInfo() noexcept = 0;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;

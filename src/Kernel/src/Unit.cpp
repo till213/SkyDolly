@@ -296,8 +296,8 @@ QString Unit::formatElapsedTime(std::int64_t milliseconds) const noexcept
 }
 
 QString Unit::formatHHMMSS(std::int64_t milliseconds) noexcept
-{    
-    auto time = QTime::fromMSecsSinceStartOfDay(milliseconds);
+{
+    auto time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(milliseconds));
     return formatHHMMSS(time);
 }
 

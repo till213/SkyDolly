@@ -166,9 +166,9 @@ namespace SimVar
     constexpr const char *ZuluYear = "Zulu Year";
     constexpr const char *ZuluMonthOfYear = "Zulu Month of Year";
     constexpr const char *ZuluDayOfMonth = "Zulu Day of Month";
+    constexpr const char *TimeZoneOffset = "Time Zone Offset";
 
-    constexpr const char *Timestamp = "Timestamp";
-    constexpr const char *SimulationRate = "Simulation Rate";
+    constexpr const char *SimulationRate = "Simulation Rate";    
 }
 
 #endif // SIMVAR_H

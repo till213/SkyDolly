@@ -337,13 +337,22 @@ public:
     virtual bool requestSimulationRate() noexcept = 0;
 
     /*!
-     * Sends the \p dateTime to the flight simulator to set.
+     * Sends the zulu \p dateTime to the flight simulator to set.
      *
      * \param dateTime
-     *        the date and time to set in the flight simulator
+     *        the date and time to set in the flight simulator [zulu time]
      * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
      */
     virtual bool sendZuluDateTime(QDateTime dateTime) noexcept = 0;
+
+    /*!
+     * Sends the simulation local \p dateTime to the flight simulator to set.
+     *
+     * \param dateTime
+     *        the date and time to set in the flight simulator [simulation local timezone]
+     * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
+     */
+    virtual bool sendSimulationLocalDateTime(QDateTime dateTime) noexcept = 0;
 
 public slots:
     virtual void addAiObject(const Aircraft &aircraft) noexcept = 0;
@@ -408,21 +417,28 @@ signals:
     void recordingStopped();
 
     /*!
-     * Emitted whenever the response to the Location request has been received.
+     * Emitted whenever the requested location has been received.
      *
      * \param location
-     *        the received Location
+     *        the received location
      */
     void locationReceived(Location location);
 
     /*!
-     * Emitted whenever the current simulation rate has been received.
+     * Emitted whenever the requested current simulation rate has been received.
      *
      * \param rate
      *        the current simulation rate [0.0625, 0.125, 0.25, 0.5, 1, 2, 4, ... 128]
      */
     void simulationRateReceived(float rate);
 
+    /*!
+     * Emitted whenever the requested time zone information has been received.
+     *
+     * \param offset
+     *        the current time zone offset [+/- 12]
+     */
+    void timeZoneInfoReceived(int offset);
 
     /*!
      * Emitted whenever a keyboard shortcut was triggered for the given \p action.

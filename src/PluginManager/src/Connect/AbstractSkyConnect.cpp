@@ -577,6 +577,19 @@ bool AbstractSkyConnect::sendZuluDateTime(QDateTime dateTime) noexcept
     return ok;
 }
 
+bool AbstractSkyConnect::sendSimulationLocalDateTime(QDateTime dateTime) noexcept
+{
+    if (!isConnectedWithSim()) {
+        tryFirstConnectAndSetup();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this]() -> bool { return onRequestTimeZoneInfo(); });
+    }
+    return ok;
+}
+
 std::optional<std::unique_ptr<OptionWidgetIntf>> AbstractSkyConnect::createOptionWidget() const noexcept
 {
     auto optionWidget = std::make_unique<BasicConnectOptionWidget>(getPluginSettings());
