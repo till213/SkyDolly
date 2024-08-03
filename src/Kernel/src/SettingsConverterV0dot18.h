@@ -41,12 +41,6 @@ public:
             SettingsConverterV0dot17dot5::convert(settingsVersion, settings);
         }
         settings.remove("Recording");
-        convertPlugins(settings);
-    }
-
-private:
-    static inline void convertPlugins(QSettings &settings) noexcept
-    {
     }
 };
 

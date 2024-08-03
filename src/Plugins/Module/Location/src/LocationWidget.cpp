@@ -133,6 +133,7 @@ struct LocationWidgetPrivate
     static inline int bankColumn {InvalidColumn};
     static inline int trueHeadingColumn {InvalidColumn};
     static inline int indicatedAirspeedColumn {InvalidColumn};
+    static inline int dateTimeColumn {InvalidColumn};
     static inline int onGroundColumn {InvalidColumn};
     static inline int attributesColumn {InvalidColumn};
     static inline int engineColumn {InvalidColumn};
@@ -290,7 +291,7 @@ void LocationWidget::initUi() noexcept
         tr("ID"), tr("Title"), tr("Description"), tr("Type"), tr("Category"),
         tr("Country"), tr("Identifer"), tr("Position"), tr("Altitude"),
         tr("Pitch"), tr("Bank"), tr("True Heading"), tr("Indicated Airspeed"),
-        tr("On Ground"), tr("Attributes"), tr("Engine")
+        tr("Date & Time"), tr("On Ground"), tr("Attributes"), tr("Engine")
     };
     LocationWidgetPrivate::idColumn = static_cast<int>(headers.indexOf(tr("ID")));
     LocationWidgetPrivate::titleColumn = static_cast<int>(headers.indexOf(tr("Title")));
@@ -305,6 +306,7 @@ void LocationWidget::initUi() noexcept
     LocationWidgetPrivate::bankColumn = static_cast<int>(headers.indexOf(tr("Bank")));
     LocationWidgetPrivate::trueHeadingColumn = static_cast<int>(headers.indexOf(tr("True Heading")));
     LocationWidgetPrivate::indicatedAirspeedColumn = static_cast<int>(headers.indexOf(tr("Indicated Airspeed")));
+    LocationWidgetPrivate::dateTimeColumn = static_cast<int>(headers.indexOf(tr("Date & Time")));
     LocationWidgetPrivate::onGroundColumn = static_cast<int>(headers.indexOf(tr("On Ground")));
     LocationWidgetPrivate::attributesColumn = static_cast<int>(headers.indexOf(tr("Attributes")));
     LocationWidgetPrivate::engineColumn = static_cast<int>(headers.indexOf(tr("Engine")));
@@ -660,6 +662,16 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Indicated airspeed
     newItem = std::make_unique<QTableWidgetItem>();
+    ui->locationTableWidget->setItem(row, column, newItem.release());
+    ++column;
+
+    // Date & time
+    newItem = std::make_unique<QTableWidgetItem>();
+    if (presetLocation) {
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+    } else {
+        newItem->setToolTip(tr("Double-click to edit date & time."));
+    }
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 

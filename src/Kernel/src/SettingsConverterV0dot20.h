@@ -41,16 +41,24 @@ public:
 private:
     static inline void convertPlugins(QSettings &settings) noexcept
     {
-        static constexpr const char *ExpportSystemLocationsEnabledKey {"ExportSystemLocationsEnabled"};
-        static constexpr const char *ExportPresetLocationsEnabledKey {"ExportPresetLocationsEnabled"};
-        int format {0};
+        static constexpr const char *ExportSystemLocationsEnabledKey {"ExportSystemLocationsEnabled"};
 
         // CSV location export
-        settings.beginGroup(QStringLiteral("Plugins/") % QUuid(Const::CsvLocationExportPluginUuid).toByteArray());
+        settings.beginGroup("Plugins/");
         {
-            const bool enabled = settings.value(ExpportSystemLocationsEnabledKey).toBool();
-            settings.setValue(ExportPresetLocationsEnabledKey, enabled);
-            settings.remove(ExpportSystemLocationsEnabledKey);
+            settings.beginGroup(QUuid(Const::CsvLocationExportPluginUuid).toByteArray());
+            {
+                const bool enabled = settings.value(ExportSystemLocationsEnabledKey).toBool();
+                settings.setValue("ExportPresetLocationsEnabledKey", enabled);
+                settings.remove(ExportSystemLocationsEnabledKey);
+            }
+            settings.endGroup();
+
+            settings.beginGroup(QStringLiteral("Modules/") % QUuid(Const::LocationModuleUuid).toByteArray());
+            {
+                settings.setValue("LocationTableState", QVariant());
+            }
+            settings.endGroup();
         }
         settings.endGroup();
     }
