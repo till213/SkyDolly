@@ -219,7 +219,7 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) const noexcept
     location.description = description.replace("\\n", "\n");
     Enumeration locationTypeEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::LocationType, Enumeration::Order::Id, &ok);
     if (ok) {
-        location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypeSystemSymId).id;
+        location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypePresetSymId).id;
     }
     Enumeration locationCategoryEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::LocationCategory, Enumeration::Order::Id, &ok);
     if (ok) {

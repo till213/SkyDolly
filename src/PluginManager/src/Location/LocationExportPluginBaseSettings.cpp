@@ -34,17 +34,17 @@ namespace
     // Keys
     constexpr const char *ResamplingPeriodKey {"ResamplingPeriod"};
     constexpr const char *FormationExportKey {"FormationExport"};
-    constexpr const char *ExportSystemLocationsEnabledKey {"ExportSystemLocationsEnabled"};
+    constexpr const char *ExportPresetLocationsEnabledKey {"ExportPresetLocationsEnabled"};
     constexpr const char *OpenExportedFilesEnabledKey {"OpenExportedFilesEnabled"};
 
     // Defaults
-    constexpr bool DefaultExportSystemLocationsEnabled {false};
+    constexpr bool DefaultExportPresetLocationsEnabled {false};
     constexpr bool DefaultOpenExportedFilesEnabled {false};
 }
 
 struct LocationExportPluginBaseSettingsPrivate
 {
-    bool exportSystemLocationsEnabled {::DefaultExportSystemLocationsEnabled};
+    bool exportPresetLocationsEnabled {::DefaultExportPresetLocationsEnabled};
     bool openExportedFilesEnabled {::DefaultOpenExportedFilesEnabled};
 };
 
@@ -56,15 +56,15 @@ LocationExportPluginBaseSettings::LocationExportPluginBaseSettings() noexcept
 
 LocationExportPluginBaseSettings::~LocationExportPluginBaseSettings() = default;
 
-bool LocationExportPluginBaseSettings::isExportSystemLocationsEnabled() const noexcept
+bool LocationExportPluginBaseSettings::isExportPresetLocationsEnabled() const noexcept
 {
-    return d->exportSystemLocationsEnabled;
+    return d->exportPresetLocationsEnabled;
 }
 
-void LocationExportPluginBaseSettings::setExportSystemLocationsEnabled(bool enabled) noexcept
+void LocationExportPluginBaseSettings::setExportPresetLocationsEnabled(bool enabled) noexcept
 {
-    if (d->exportSystemLocationsEnabled != enabled) {
-        d->exportSystemLocationsEnabled = enabled;
+    if (d->exportPresetLocationsEnabled != enabled) {
+        d->exportPresetLocationsEnabled = enabled;
         emit changed();
     }
 }
@@ -86,8 +86,8 @@ void LocationExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValue
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::ExportSystemLocationsEnabledKey;
-    keyValue.second = d->exportSystemLocationsEnabled;
+    keyValue.first = ::ExportPresetLocationsEnabledKey;
+    keyValue.second = d->exportPresetLocationsEnabled;
     keyValues.push_back(keyValue);
 
     keyValue.first = ::OpenExportedFilesEnabledKey;
@@ -101,8 +101,8 @@ void LocationExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::ExportSystemLocationsEnabledKey;
-    keyValue.second = ::DefaultExportSystemLocationsEnabled;
+    keyValue.first = ::ExportPresetLocationsEnabledKey;
+    keyValue.second = ::DefaultExportPresetLocationsEnabled;
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::OpenExportedFilesEnabledKey;
@@ -114,7 +114,7 @@ void LocationExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDef
 
 void LocationExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->exportSystemLocationsEnabled = valuesByKey.at(::ExportSystemLocationsEnabledKey).toBool();
+    d->exportPresetLocationsEnabled = valuesByKey.at(::ExportPresetLocationsEnabledKey).toBool();
     d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
 
     restoreSettingsExtn(valuesByKey);
@@ -124,7 +124,7 @@ void LocationExportPluginBaseSettings::restoreSettings(const Settings::ValuesByK
 
 void LocationExportPluginBaseSettings::restoreDefaults() noexcept
 {
-    d->exportSystemLocationsEnabled = ::DefaultExportSystemLocationsEnabled;
+    d->exportPresetLocationsEnabled = ::DefaultExportPresetLocationsEnabled;
     d->openExportedFilesEnabled = ::DefaultOpenExportedFilesEnabled;
 
     restoreDefaultsExtn();

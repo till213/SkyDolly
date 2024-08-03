@@ -52,7 +52,7 @@ public:
 private:
     static inline void convertPlugins(QSettings &settings) noexcept
     {
-        static const QString FormatKey {"Format"};
+        static constexpr const char *FormatKey {"Format"};
         int format {0};
 
         // CSV import

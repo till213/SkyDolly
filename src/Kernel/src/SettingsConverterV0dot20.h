@@ -22,20 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QSettings>
-#include <QByteArray>
-#include <QUuid>
+#ifndef SETTINGSCONVERTERV0DOT20_H
+#define SETTINGSCONVERTERV0DOT20_H
 
-#include "Version.h"
-#include "SettingsConverterV0dot20.h"
-#include "SettingsConverter.h"
+#include "SettingsConverterV0dot18.h"
 
-// PUBLIC
-
-void SettingsConverter::convertToCurrent(const Version &settingsVersion, QSettings &settings) noexcept
+class SettingsConverterV0dot20
 {
-    const Version currentVersion;
-    if (settingsVersion < currentVersion) {
-        SettingsConverterV0dot20::convert(settingsVersion, settings);
+public:
+    static inline void convert(const Version &settingsVersion, QSettings &settings) noexcept
+    {
+        if (settingsVersion < Version("0.18.0")) {
+            SettingsConverterV0dot18::convert(settingsVersion, settings);
+        }
+        convertPlugins(settings);
     }
-}
+
+private:
+    static inline void convertPlugins(QSettings &settings) noexcept
+    {
+        static constexpr const char *ExpportSystemLocationsEnabledKey {"ExportSystemLocationsEnabled"};
+        static constexpr const char *ExportPresetLocationsEnabledKey {"ExportPresetLocationsEnabled"};
+        int format {0};
+
+        // CSV location export
+        settings.beginGroup(QStringLiteral("Plugins/") % QUuid(Const::CsvLocationExportPluginUuid).toByteArray());
+        {
+            const bool enabled = settings.value(ExpportSystemLocationsEnabledKey).toBool();
+            settings.setValue(ExportPresetLocationsEnabledKey, enabled);
+            settings.remove(ExpportSystemLocationsEnabledKey);
+        }
+        settings.endGroup();
+    }
+};
+
+#endif // SETTINGSCONVERTERV0DOT20_H

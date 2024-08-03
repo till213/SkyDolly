@@ -87,7 +87,7 @@ public:
     static inline const QString BackupPeriodAlwaysSymId {QStringLiteral("ALWAYS")};
 
     // Location type
-    static inline const QString LocationTypeSystemSymId {QStringLiteral("S")};
+    static inline const QString LocationTypePresetSymId {QStringLiteral("P")};
     static inline const QString LocationTypeImportSymId {QStringLiteral("I")};
     static inline const QString LocationTypeUserSymId {QStringLiteral("U")};
 

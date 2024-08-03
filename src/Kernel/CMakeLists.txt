@@ -44,6 +44,7 @@ target_sources(${LIBRARY_NAME}
         src/SettingsConverterV0dot17.h
         src/SettingsConverterV0dot17dot5.h
         src/SettingsConverterV0dot18.h
+        src/SettingsConverterV0dot20.h
         src/SettingsConverter.h src/SettingsConverter.cpp
         src/VersionConfig.h.in
         src/GitInfo.h src/GitInfo.cpp.in

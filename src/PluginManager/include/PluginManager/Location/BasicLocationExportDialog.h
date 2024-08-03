@@ -84,7 +84,7 @@ private slots:
 
     void onFileSelectionButtonClicked() noexcept;
     void onFilePathChanged();
-    void onDoExportSystemLocationsChanged(bool enable) noexcept;
+    void onDoExportPresetLocationsChanged(bool enable) noexcept;
     void onDoOpenExportedFilesChanged(bool enable) noexcept;
     void onRestoreDefaults() noexcept;
 };

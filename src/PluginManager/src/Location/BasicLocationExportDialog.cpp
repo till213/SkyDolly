@@ -115,7 +115,7 @@ void BasicLocationExportDialog::initBasicUi() noexcept
 {
     ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestLocationFilePath(d->fileExtension)));
     ui->openExportCheckBox->setToolTip(tr("Open the exported file with the default application registered with this file type."));
-    ui->exportSystemLocationsCheckBox->setToolTip(tr("Also export the system (default) locations."));
+    ui->exportPresetLocationsCheckBox->setToolTip(tr("Also export the preset (default) locations."));
 }
 
 void BasicLocationExportDialog::initOptionUi() noexcept
@@ -139,8 +139,8 @@ void BasicLocationExportDialog::frenchConnection() noexcept
             this, &BasicLocationExportDialog::onFileSelectionButtonClicked);
     connect(ui->filePathLineEdit, &QLineEdit::textChanged,
             this, &BasicLocationExportDialog::onFilePathChanged);
-    connect(ui->exportSystemLocationsCheckBox, &QCheckBox::toggled,
-            this, &BasicLocationExportDialog::onDoExportSystemLocationsChanged);
+    connect(ui->exportPresetLocationsCheckBox, &QCheckBox::toggled,
+            this, &BasicLocationExportDialog::onDoExportPresetLocationsChanged);
     connect(ui->openExportCheckBox, &QCheckBox::toggled,
             this, &BasicLocationExportDialog::onDoOpenExportedFilesChanged);
     connect(&d->pluginSettings, &LocationExportPluginBaseSettings::changed,
@@ -158,7 +158,7 @@ void BasicLocationExportDialog::updateUi() noexcept
     const QFileInfo fileInfo {filePath};
     const QFile file {fileInfo.absolutePath()};
     d->exportButton->setEnabled(file.exists());
-    ui->exportSystemLocationsCheckBox->setChecked(d->pluginSettings.isExportSystemLocationsEnabled());
+    ui->exportPresetLocationsCheckBox->setChecked(d->pluginSettings.isExportPresetLocationsEnabled());
     ui->openExportCheckBox->setChecked(d->pluginSettings.isOpenExportedFilesEnabled());
 }
 
@@ -178,9 +178,9 @@ void BasicLocationExportDialog::onFilePathChanged()
     updateUi();
 }
 
-void BasicLocationExportDialog::onDoExportSystemLocationsChanged(bool enable) noexcept
+void BasicLocationExportDialog::onDoExportPresetLocationsChanged(bool enable) noexcept
 {
-    d->pluginSettings.setExportSystemLocationsEnabled(enable);
+    d->pluginSettings.setExportPresetLocationsEnabled(enable);
 }
 
 void BasicLocationExportDialog::onDoOpenExportedFilesChanged(bool enable) noexcept

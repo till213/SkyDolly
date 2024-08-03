@@ -7,6 +7,8 @@
 ## Improvements
 
 ### Location Module
+- *System* locations have been renamed to *Preset* locations
+  * Those are the locations that come "out of the box" with Sky Dolly
 - Double-clicking on any column of a *preset* location will now teleport to that location (previously only the ID column was double-clickable for *preset* locations)
   * Double-clicking a column other than ID on a *user* or *imported* location will still edit that column, as before
 

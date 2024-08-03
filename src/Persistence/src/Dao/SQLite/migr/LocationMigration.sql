@@ -491,6 +491,13 @@ values ('BE', 'Beach', 'Beach'),
 update metadata
 set    app_version = '0.19.0';
 
+@migr(id = "5c3b0c18-6970-4477-a3b3-7c7b6d95d459", descn = "Rename system location type to preset", step = 2)
+update enum_location_type
+set sym_id = 'P',
+    name = 'Preset',
+    desc = 'Preset locations provided by Sky Dolly'
+where sym_id = 'S';
+
 @migr(id = "6b37e83f-db5b-4761-bd21-4a5510f9fecc", descn = "Update application version to 0.20", step = 1)
 update metadata
 set    app_version = '0.20.0';
