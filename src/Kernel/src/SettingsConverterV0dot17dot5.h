@@ -54,7 +54,7 @@ public:
 private:
     static inline void convertMsfsSimConnectPlugin(QSettings &settings) noexcept
     {
-        static const QString ConnectionTypeKey {"ConnectionType"};
+        static constexpr const char *ConnectionTypeKey {"ConnectionType"};
         int connectionType {0};
 
         // MSFS SimConnect

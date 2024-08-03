@@ -78,7 +78,7 @@ public:
     // Well-known symbolic IDs
 
     // Backup period
-    static inline const QString BackupPeriodNeverSymId = {QStringLiteral("NEVER")};
+    static inline const QString BackupPeriodNeverSymId {QStringLiteral("NEVER")};
     static inline const QString BackupPeriodNowSymId {QStringLiteral("NOW")};
     static inline const QString BackupPeriodNextTimeSymId {QStringLiteral("NEXT")};
     static inline const QString BackupPeriodMonthlySymId {QStringLiteral("MONTH")};
@@ -87,7 +87,7 @@ public:
     static inline const QString BackupPeriodAlwaysSymId {QStringLiteral("ALWAYS")};
 
     // Location type
-    static inline const QString LocationTypeSystemSymId {QStringLiteral("S")};
+    static inline const QString LocationTypePresetSymId {QStringLiteral("P")};
     static inline const QString LocationTypeImportSymId {QStringLiteral("I")};
     static inline const QString LocationTypeUserSymId {QStringLiteral("U")};
 

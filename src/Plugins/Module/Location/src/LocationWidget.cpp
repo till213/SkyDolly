@@ -109,7 +109,7 @@ struct LocationWidgetPrivate
     std::unique_ptr<EnumerationItemDelegate> locationCategoryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
     std::unique_ptr<EnumerationItemDelegate> countryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::Country)};
 
-    const std::int64_t SystemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
+    const std::int64_t PresetLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypePresetSymId).id()};
     const std::int64_t UserLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
     const std::int64_t ImportLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
     const std::int64_t NoneLocationCategoryId {PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id()};
@@ -278,7 +278,7 @@ void LocationWidget::initUi() noexcept
     ui->searchLineEdit->setClearButtonEnabled(true);
 
     // Type
-    ui->typeOptionGroup->addOption(tr("System"), QVariant::fromValue(d->SystemLocationTypeId), tr("Show system locations."));
+    ui->typeOptionGroup->addOption(tr("Preset"), QVariant::fromValue(d->PresetLocationTypeId), tr("Show preset locations."));
     ui->typeOptionGroup->addOption(tr("User"), QVariant::fromValue(d->UserLocationTypeId), tr("Show user locations."));
     ui->typeOptionGroup->addOption(tr("Import"), QVariant::fromValue(d->ImportLocationTypeId), tr("Show imported locations."));
 
@@ -452,7 +452,7 @@ void LocationWidget::updateInfoUi() noexcept
     if (hasSelection) {
         const auto selectedRow = getSelectedRow();
         auto item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::typeColumn);
-        readOnly = item->data(Qt::EditRole).toLongLong() == d->SystemLocationTypeId;
+        readOnly = item->data(Qt::EditRole).toLongLong() == d->PresetLocationTypeId;
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::descriptionColumn);
         ui->descriptionPlainTextEdit->setPlainText(item->text());
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::pitchColumn);
@@ -528,7 +528,7 @@ inline const QTableWidgetItem *LocationWidget::createRow(const Location &locatio
 
 inline const QTableWidgetItem *LocationWidget::initRow(const Location &location, int row) noexcept
 {
-    const bool isSystemLocation {location.typeId == d->SystemLocationTypeId};
+    const bool presetLocation {location.typeId == d->PresetLocationTypeId};
     int column {0};
 
     // ID
@@ -543,7 +543,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Title
     newItem = std::make_unique<QTableWidgetItem>();
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit title."));
@@ -553,7 +553,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Description
     newItem = std::make_unique<QTableWidgetItem>();
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit description."));
@@ -568,7 +568,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Category
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::categoryEnumeration);
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit category."));
@@ -578,7 +578,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Country
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::countryEnumeration);
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit country."));
@@ -588,7 +588,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Identifier
     newItem = std::make_unique<QTableWidgetItem>();
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit identifier."));
@@ -598,7 +598,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Position
     newItem = std::make_unique<PositionWidgetItem>();
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit position."));
@@ -609,7 +609,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
     // Altitude
     newItem = std::make_unique<UnitWidgetItem>(d->unit, Unit::Name::Feet);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit altitude."));
@@ -639,7 +639,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // On ground
     newItem = std::make_unique<TableCheckableItem>();
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsUserCheckable);
     } else {
         newItem->setToolTip(tr("Click to toggle on ground."));
@@ -869,7 +869,7 @@ void LocationWidget::updateEditUi() noexcept
     if (hasSelection) {
         const auto selectedRow = getSelectedRow();
         Location location =  getLocationByRow(selectedRow);
-        editableRow = location.typeId != d->SystemLocationTypeId;
+        editableRow = location.typeId != d->PresetLocationTypeId;
     }
     ui->updatePushButton->setEnabled(editableRow);
     ui->deletePushButton->setEnabled(editableRow);
@@ -928,7 +928,7 @@ void LocationWidget::resetDefaultValues() noexcept
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
 {
     const auto item = ui->locationTableWidget->item(row, column);
-    if (column != LocationWidgetPrivate::idColumn) {
+    if (column != LocationWidgetPrivate::idColumn && (item->flags() & Qt::ItemIsEditable)) {
         ui->locationTableWidget->editItem(item);
     } else {
         teleportToLocation(row);

@@ -85,7 +85,7 @@ bool LocationExportPluginBase::exportLocations() const noexcept
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
 
-            const auto locations = baseSettings.isExportSystemLocationsEnabled() ?
+            const auto locations = baseSettings.isExportPresetLocationsEnabled() ?
                 d->locationService->getAll(&ok) :
                 d->locationService->getSelectedLocations(LocationSelector({d->UserLocationTypeId, d->ImportLocationTypeId}));
 
