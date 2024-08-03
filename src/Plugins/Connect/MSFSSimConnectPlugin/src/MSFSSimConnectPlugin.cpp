@@ -627,19 +627,14 @@ bool MSFSSimConnectPlugin::onRequestSimulationRate() noexcept
     return d->simulationRate->requestSimulationRate(d->simConnectHandle);
 }
 
-bool MSFSSimConnectPlugin::onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept
-{
-    return SimulationTime::sendZuluDateTime(d->simConnectHandle, year, day, hour, minute);
-}
-
-bool MSFSSimConnectPlugin::onSendLocalDateTime(int year, int day, int hour, int minute) const noexcept
-{
-    return SimulationTime::sendLocalDateTime(d->simConnectHandle, year, day, hour, minute);
-}
-
 bool MSFSSimConnectPlugin::onRequestTimeZoneInfo() noexcept
 {
     return SimulationTime::requestTimeZoneInfo(d->simConnectHandle);
+}
+
+bool MSFSSimConnectPlugin::onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept
+{
+    return SimulationTime::sendZuluDateTime(d->simConnectHandle, year, day, hour, minute);
 }
 
 // PRIVATE

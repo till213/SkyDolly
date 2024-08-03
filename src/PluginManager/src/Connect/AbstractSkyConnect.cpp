@@ -560,6 +560,19 @@ bool AbstractSkyConnect::requestSimulationRate() noexcept
     return ok;
 }
 
+bool AbstractSkyConnect::requestTimeZoneInfo() noexcept
+{
+    if (!isConnectedWithSim()) {
+        tryFirstConnectAndSetup();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this]() -> bool { return onRequestTimeZoneInfo(); });
+    }
+    return ok;
+}
+
 bool AbstractSkyConnect::sendZuluDateTime(QDateTime dateTime) noexcept
 {
     if (!isConnectedWithSim()) {
@@ -573,19 +586,6 @@ bool AbstractSkyConnect::sendZuluDateTime(QDateTime dateTime) noexcept
         const auto hour = dateTime.time().hour();
         const auto minute = dateTime.time().minute();
         ok = retryWithReconnect([this, year, day, hour, minute]() -> bool { return onSendZuluDateTime(year, day, hour, minute); });
-    }
-    return ok;
-}
-
-bool AbstractSkyConnect::sendSimulationLocalDateTime(QDateTime dateTime) noexcept
-{
-    if (!isConnectedWithSim()) {
-        tryFirstConnectAndSetup();
-    }
-
-    bool ok = isConnectedWithSim();
-    if (ok) {
-        ok = retryWithReconnect([this]() -> bool { return onRequestTimeZoneInfo(); });
     }
     return ok;
 }

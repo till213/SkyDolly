@@ -95,9 +95,8 @@ protected:
 
     bool onRequestLocation() noexcept override;
     bool onRequestSimulationRate() noexcept override;
-    bool onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept override;
-    bool onSendLocalDateTime(int year, int day, int hour, int minute) const noexcept override;
     bool onRequestTimeZoneInfo() noexcept override;
+    bool onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept override;
 
 private:
     enum struct ResetReason: std::uint8_t

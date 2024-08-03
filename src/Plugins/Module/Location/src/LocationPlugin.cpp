@@ -138,6 +138,7 @@ void LocationPlugin::teleportTo(const Location &location) noexcept
     if (event != SkyConnectIntf::SimulationEvent::None) {
         skyConnectManager.sendSimulationEvent(event);
     }
+    skyConnectManager.requestTimeZoneInfo();
 }
 
 void LocationPlugin::onLocationReceived(Location location) noexcept

@@ -403,16 +403,16 @@ bool SkyConnectManager::requestSimulationRate() const noexcept
     return skyConnect ? skyConnect->get().requestSimulationRate() : false;
 }
 
+bool SkyConnectManager::requestTimeZoneInfo() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().requestTimeZoneInfo() : false;
+}
+
 bool SkyConnectManager::sendZuluDateTime(QDateTime dateTime) const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     return skyConnect ? skyConnect->get().sendZuluDateTime(std::move(dateTime)) : false;
-}
-
-bool SkyConnectManager::sendSimulationLocalDateTime(QDateTime dateTime) const noexcept
-{
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().sendSimulationLocalDateTime(std::move(dateTime)) : false;
 }
 
 // PUBLIC SLOTS

@@ -25,9 +25,7 @@
 #ifndef ABSTRACTCOMPONENT_H
 #define ABSTRACTCOMPONENT_H
 
-#include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 #include <type_traits>
 

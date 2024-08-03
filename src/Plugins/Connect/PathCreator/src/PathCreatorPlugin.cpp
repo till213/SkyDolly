@@ -39,6 +39,7 @@
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include <Kernel/Enum.h>
+#include <Kernel/Unit.h>
 #include <Model/TimeVariableData.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -330,25 +331,18 @@ bool PathCreatorPlugin::onRequestSimulationRate() noexcept
     return true;
 }
 
+bool PathCreatorPlugin::onRequestTimeZoneInfo() noexcept
+{
+    emit timeZoneInfoReceived((-12 * d->randomGenerator->bounded(13)) * Unit::SecondsPerMinute * Unit::MinutesPerHour);
+    return true;
+}
+
 bool PathCreatorPlugin::onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept
 {
 #ifdef DEBUG
     qDebug() << "PathCreatorPlugin::onSendZuluDateTime: year:" << year << "day:" << day << "hour:" << hour << "minute:" << minute;
 #endif
     return true;
-}
-
-bool PathCreatorPlugin::onSendLocalDateTime(int year, int day, int hour, int minute) const noexcept
-{
-#ifdef DEBUG
-    qDebug() << "PathCreatorPlugin::onSendLocalDateTime: year:" << year << "day:" << day << "hour:" << hour << "minute:" << minute;
-#endif
-    return true;
-}
-
-bool PathCreatorPlugin::onRequestTimeZoneInfo() noexcept
-{
-    emit timeZoneInfoReceived(42);
 }
 
 // PRIVATE

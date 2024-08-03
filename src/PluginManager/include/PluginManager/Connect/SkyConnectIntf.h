@@ -337,6 +337,14 @@ public:
     virtual bool requestSimulationRate() noexcept = 0;
 
     /*!
+     * Requests information about the current simulation time zone.
+     *
+     * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
+     * \sa timeZoneInfoReceived
+     */
+    virtual bool requestTimeZoneInfo() noexcept = 0;
+
+    /*!
      * Sends the zulu \p dateTime to the flight simulator to set.
      *
      * \param dateTime
@@ -344,15 +352,6 @@ public:
      * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
      */
     virtual bool sendZuluDateTime(QDateTime dateTime) noexcept = 0;
-
-    /*!
-     * Sends the simulation local \p dateTime to the flight simulator to set.
-     *
-     * \param dateTime
-     *        the date and time to set in the flight simulator [simulation local timezone]
-     * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
-     */
-    virtual bool sendSimulationLocalDateTime(QDateTime dateTime) noexcept = 0;
 
 public slots:
     virtual void addAiObject(const Aircraft &aircraft) noexcept = 0;
@@ -436,9 +435,9 @@ signals:
      * Emitted whenever the requested time zone information has been received.
      *
      * \param offset
-     *        the current time zone offset [+/- 12]
+     *        the current time zone offset [seconds]
      */
-    void timeZoneInfoReceived(int offset);
+    void timeZoneInfoReceived(int offsetSeconds);
 
     /*!
      * Emitted whenever a keyboard shortcut was triggered for the given \p action.
