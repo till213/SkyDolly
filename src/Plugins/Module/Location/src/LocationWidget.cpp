@@ -331,7 +331,7 @@ void LocationWidget::initUi() noexcept
     // Date and time
     ui->dateComboBox->addItem(tr("Today"), Enum::underly(LocationSettings::DateSelection::Today));
     ui->dateComboBox->addItem(tr("Date"), Enum::underly(LocationSettings::DateSelection::Date));
-    ui->dateComboBox->addItem(tr("Location"), Enum::underly(LocationSettings::DateSelection::DateTime));
+    ui->dateComboBox->addItem(tr("Location date & time"), Enum::underly(LocationSettings::DateSelection::DateTime));
 
     ui->timeComboBox->addItem(tr("Now"), Enum::underly(LocationSettings::TimeSelection::Now));
     ui->timeComboBox->addItem(tr("Morning"), Enum::underly(LocationSettings::TimeSelection::Morning));

@@ -100,11 +100,11 @@ public:
     int getDefaultIndicatedAirspeed() const noexcept;
     void setDefaultIndicatedAirspeed(int airspeed);
 
-    bool isDefaultOnGround() const noexcept;
-    void setDefaultOnGround(bool enable) noexcept;
-
     const std::int64_t getDefaultEngineEventId() const noexcept;
     void setDefaultEngineEventId(std::int64_t eventId) noexcept;
+
+    bool isDefaultOnGround() const noexcept;
+    void setDefaultOnGround(bool enable) noexcept;
 
     const DateSelection getDateSelection() const noexcept;
     void setDateSelection(DateSelection dateSelection) noexcept;
