@@ -65,6 +65,7 @@
 #include <PluginManager/SkyConnectManager.h>
 #include "LocationWidget.h"
 #include "EnumerationItemDelegate.h"
+#include "DateTimeItemDelegate.h"
 #include "PositionWidgetItem.h"
 #include "LocationSettings.h"
 #include "ui_LocationWidget.h"
@@ -111,6 +112,7 @@ struct LocationWidgetPrivate
     std::unique_ptr<EnumerationService> enumerationService {std::make_unique<EnumerationService>()};
     std::unique_ptr<EnumerationItemDelegate> locationCategoryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
     std::unique_ptr<EnumerationItemDelegate> countryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::Country)};
+    std::unique_ptr<DateTimeItemDelegate> dateTimeItemDelegate {std::make_unique<DateTimeItemDelegate>()};
 
     const std::int64_t PresetLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypePresetSymId).id()};
     const std::int64_t UserLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
@@ -330,6 +332,7 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::engineColumn, true);
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::categoryColumn, d->locationCategoryDelegate.get());
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::countryColumn, d->countryDelegate.get());
+    ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::dateTimeColumn, d->dateTimeItemDelegate.get());
 
     // Date and time
     ui->dateComboBox->addItem(tr("Today"), Enum::underly(LocationSettings::DateSelection::Today));

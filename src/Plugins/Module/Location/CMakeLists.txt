@@ -10,6 +10,7 @@ target_sources(${MODULE_NAME}
         src/LocationWidget.h src/LocationWidget.cpp src/LocationWidget.ui
         src/PositionWidgetItem.h src/PositionWidgetItem.cpp
         src/EnumerationItemDelegate.h src/EnumerationItemDelegate.cpp
+        src/DateTimeItemDelegate.h src/DateTimeItemDelegate.cpp
         src/LocationPlugin.json
 )
 target_link_libraries(${MODULE_NAME}
