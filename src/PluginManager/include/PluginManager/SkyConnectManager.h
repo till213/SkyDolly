@@ -245,6 +245,13 @@ signals:
     void locationReceived(Location location);
 
     /*!
+     * Relay of the SkyConnectIntf#timeZoneInfoReceived signal.
+     *
+     * \sa SkyConnectIntf#timeZoneInfoReceived
+     */
+    void timeZoneInfoReceived(int offsetSeconds);
+
+    /*!
      * Relay of the SkyConnectIntf#simulationRateReceived signal.
      *
      * \sa SkyConnectIntf#simulationRateReceived

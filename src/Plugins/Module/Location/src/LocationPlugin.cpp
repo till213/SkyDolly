@@ -98,6 +98,8 @@ void LocationPlugin::frenchConnection() noexcept
     auto &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::locationReceived,
             this, &LocationPlugin::onLocationReceived);
+    connect(&skyConnectManager, &SkyConnectManager::timeZoneInfoReceived,
+            this, &LocationPlugin::onTimeZoneInfoReceived);
 
     // Location widget
     connect(d->locationWidget.get(), &LocationWidget::doCaptureLocation,
@@ -152,4 +154,11 @@ void LocationPlugin::onLocationReceived(Location location) noexcept
         d->locationWidget->updateLocation(location);
         break;
     }
+}
+
+void LocationPlugin::onTimeZoneInfoReceived(int offsetSeconds) const noexcept
+{
+    auto zuluDateTime = QDateTime::currentDateTime().addSecs(offsetSeconds);
+    auto &skyConnectManager = SkyConnectManager::getInstance();
+    skyConnectManager.sendZuluDateTime(zuluDateTime);
 }

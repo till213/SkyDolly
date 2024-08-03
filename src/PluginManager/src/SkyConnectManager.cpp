@@ -446,6 +446,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                         this, &SkyConnectManager::recordingStopped);
                 connect(skyPlugin, &SkyConnectIntf::locationReceived,
                         this, &SkyConnectManager::locationReceived);
+                connect(skyPlugin, &SkyConnectIntf::timeZoneInfoReceived,
+                        this, &SkyConnectManager::timeZoneInfoReceived);
                 connect(skyPlugin, &SkyConnectIntf::simulationRateReceived,
                         this, &SkyConnectManager::simulationRateReceived);
                 connect(skyPlugin, &SkyConnectIntf::actionActivated,

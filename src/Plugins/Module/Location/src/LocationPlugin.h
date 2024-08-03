@@ -67,6 +67,7 @@ private slots:
     void updateLocation() noexcept;
     void teleportTo(const Location &location) noexcept;
     void onLocationReceived(Location location) noexcept;
+    void onTimeZoneInfoReceived(int offsetSeconds) const noexcept;
 };
 
 #endif // LOCATIONPLUGIN_H
