@@ -928,7 +928,7 @@ void LocationWidget::resetDefaultValues() noexcept
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
 {
     const auto item = ui->locationTableWidget->item(row, column);
-    if (column != LocationWidgetPrivate::idColumn) {
+    if (column != LocationWidgetPrivate::idColumn && (item->flags() & Qt::ItemIsEditable)) {
         ui->locationTableWidget->editItem(item);
     } else {
         teleportToLocation(row);

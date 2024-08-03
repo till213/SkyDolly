@@ -6,6 +6,10 @@
 
 ## Improvements
 
+### Location Module
+- Double-clicking on any column of a *preset* location will now teleport to that location (previously only the ID column was double-clickable for *preset* locations)
+  * Double-clicking a column other than ID on a *user* or *imported* location will still edit that column, as before
+
 ## Under the Hood
 - Optimised logbook table column types
 

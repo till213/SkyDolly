@@ -78,7 +78,7 @@ public:
     // Well-known symbolic IDs
 
     // Backup period
-    static inline const QString BackupPeriodNeverSymId = {QStringLiteral("NEVER")};
+    static inline const QString BackupPeriodNeverSymId {QStringLiteral("NEVER")};
     static inline const QString BackupPeriodNowSymId {QStringLiteral("NOW")};
     static inline const QString BackupPeriodNextTimeSymId {QStringLiteral("NEXT")};
     static inline const QString BackupPeriodMonthlySymId {QStringLiteral("MONTH")};
