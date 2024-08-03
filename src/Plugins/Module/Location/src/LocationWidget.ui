@@ -357,6 +357,9 @@
       <widget class="QComboBox" name="dateComboBox"/>
      </item>
      <item>
+      <widget class="QDateEdit" name="dateEdit"/>
+     </item>
+     <item>
       <widget class="QLabel" name="label_14">
        <property name="text">
         <string>Time:</string>

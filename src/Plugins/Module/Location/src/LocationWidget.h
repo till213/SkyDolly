@@ -31,6 +31,7 @@
 #include <QWidget>
 #include <QStringList>
 #include <QDateTime>
+#include <QDate>
 
 class QTableWidgetItem;
 class QKeyEvent;
@@ -121,11 +122,12 @@ private slots:
     void onBankChanged(double value) noexcept;
     void onHeadingChanged(double value) noexcept;
     void onIndicatedAirspeedChanged(int value) noexcept;
-    void onEngineEventChanged(int index) noexcept;
+    void onEngineEventChanged() noexcept;
 
     // Date and time
-    void onDateSelected(int index) noexcept;
-    void onTimeSelected(int index) noexcept;
+    void onDateSelected() noexcept;
+    void onDateChanged(QDate date) noexcept;
+    void onTimeSelected() noexcept;
 
     // Default values
     void onDefaultAltitudeChanged(int value) noexcept;

@@ -42,6 +42,7 @@
 #include <QRegularExpression>
 #include <QApplication>
 #include <QTimer>
+#include <QDate>
 
 #include <GeographicLib/DMS.hpp>
 
@@ -443,6 +444,8 @@ void LocationWidget::frenchConnection() noexcept
     // Date and time
     connect(ui->dateComboBox, &QComboBox::currentIndexChanged,
             this, &LocationWidget::onDateSelected);
+    connect(ui->dateEdit, &QDateEdit::userDateChanged,
+            this, &LocationWidget::onDateChanged);
     connect(ui->timeComboBox, &QComboBox::currentIndexChanged,
             this, &LocationWidget::onTimeSelected);
 
@@ -779,8 +782,8 @@ void LocationWidget::teleportToLocation(int row) noexcept
 {
     if (!SkyConnectManager::getInstance().isActive()) {
         Location location = getLocationByRow(row);
-        // TODO IMPLEMENT ME select custom date time
-        emit teleportTo(location, QDateTime());
+        const QDateTime dateTime = d->moduleSettings.getDateSelection() == LocationSettings::DateSelection::DateTime ? QDateTime() : ui->dateEdit->dateTime();
+        emit teleportTo(location, dateTime);
     }
 }
 
@@ -905,6 +908,10 @@ void LocationWidget::updateEditUi() noexcept
     ui->engineEventComboBox->setEnabled(editableRow);
 
     const auto dateSelection = static_cast<LocationSettings::DateSelection>(ui->dateComboBox->currentData().toInt());
+    ui->dateEdit->setEnabled(dateSelection == LocationSettings::DateSelection::Date);
+    if (dateSelection != LocationSettings::DateSelection::Date || !ui->dateEdit->date().isValid()) {
+        ui->dateEdit->setDate(QDate::currentDate());
+    }
     ui->timeComboBox->setEnabled(dateSelection != LocationSettings::DateSelection::DateTime);
 }
 
@@ -1115,7 +1122,7 @@ void LocationWidget::onIndicatedAirspeedChanged(int value) noexcept
     }
 }
 
-void LocationWidget::onEngineEventChanged([[maybe_unused]]int index) noexcept
+void LocationWidget::onEngineEventChanged() noexcept
 {
     const auto selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
@@ -1130,13 +1137,18 @@ void LocationWidget::onEngineEventChanged([[maybe_unused]]int index) noexcept
     }
 }
 
-void LocationWidget::onDateSelected([[maybe_unused]]int index) noexcept
+void LocationWidget::onDateSelected() noexcept
 {
     const auto dateSelection = static_cast<LocationSettings::DateSelection>(ui->dateComboBox->currentData().toInt());
     d->moduleSettings.setDateSelection(dateSelection);
 }
 
-void LocationWidget::onTimeSelected([[maybe_unused]]int index) noexcept
+void LocationWidget::onDateChanged(QDate date) noexcept
+{
+    d->moduleSettings.setDate(date);
+}
+
+void LocationWidget::onTimeSelected() noexcept
 {
     const auto timeSelection = static_cast<LocationSettings::TimeSelection>(ui->timeComboBox->currentData().toInt());
     d->moduleSettings.setTimeSelection(timeSelection);
@@ -1225,6 +1237,10 @@ void LocationWidget::onModuleSettingsChanged() noexcept
     ui->dateComboBox->blockSignals(true);
     ui->dateComboBox->setCurrentIndex(currentIndex);
     ui->dateComboBox->blockSignals(false);
+
+    ui->dateEdit->blockSignals(true);
+    ui->dateEdit->setDate(d->moduleSettings.getDate());
+    ui->dateEdit->blockSignals(false);
 
     const auto timeSelection = d->moduleSettings.getTimeSelection();
     currentIndex = 0;

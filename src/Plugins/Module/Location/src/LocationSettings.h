@@ -109,6 +109,9 @@ public:
     const DateSelection getDateSelection() const noexcept;
     void setDateSelection(DateSelection dateSelection) noexcept;
 
+    const QDate getDate() const noexcept;
+    void setDate(QDate date) noexcept;
+
     const TimeSelection getTimeSelection() const noexcept;
     void setTimeSelection(TimeSelection timeSelection) noexcept;
 

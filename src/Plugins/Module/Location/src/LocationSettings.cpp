@@ -50,6 +50,7 @@ namespace
     constexpr const char *DefaultOnGroundKey {"DefaultOnGround"};
 
     constexpr const char *DateSelectionKey {"DateSelection"};
+    constexpr const char *DateKey {"Date"};
     constexpr const char *TimeSelectionKey {"TimeSelection"};
 
     constexpr const char *LocationTableStateKey {"LocationTableState"};
@@ -76,11 +77,13 @@ struct LocationSettingsPrivate
     bool onGround {::DefaultOnGround};
 
     LocationSettings::DateSelection dateSelection {::DefaultDateSelection};
+    QDate date {DefaultDate};
     LocationSettings::TimeSelection timeSelection {::DefaultTimeSelection};
 
     QByteArray locationTableState;
 
     const std::int64_t DefaultEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
+    static inline const QDate DefaultDate {QDate::currentDate()};
 };
 
 // PUBLIC
@@ -224,6 +227,19 @@ void LocationSettings::setDateSelection(DateSelection dateSelection) noexcept
     }
 }
 
+const QDate LocationSettings::getDate() const noexcept
+{
+    return d->date;
+}
+
+void LocationSettings::setDate(QDate date) noexcept
+{
+    if (d->date != date) {
+        d->date = date;
+        emit changed();
+    }
+}
+
 const LocationSettings::TimeSelection LocationSettings::getTimeSelection() const noexcept
 {
     return d->timeSelection;
@@ -288,6 +304,10 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
     keyValue.second = Enum::underly(d->dateSelection);
     keyValues.push_back(keyValue);
 
+    keyValue.first = ::DateKey;
+    keyValue.second = QVariant::fromValue(d->date);
+    keyValues.push_back(keyValue);
+
     keyValue.first = ::TimeSelectionKey;
     keyValue.second = Enum::underly(d->timeSelection);
     keyValues.push_back(keyValue);
@@ -335,6 +355,10 @@ void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWi
     // Date and time
     keyValue.first = ::DateSelectionKey;
     keyValue.second = Enum::underly(::DefaultDateSelection);
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::DateKey;
+    keyValue.second = QVariant::fromValue(LocationSettingsPrivate::DefaultDate);
     keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::TimeSelectionKey;
@@ -387,6 +411,11 @@ void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Valu
     ok = true;
     auto enumValue = valuesByKey.at(::DateSelectionKey).toInt(&ok);
     d->dateSelection = ok && Enum::contains<DateSelection>(enumValue) ? static_cast<DateSelection>(enumValue) : ::DefaultDateSelection;
+
+    d->date = valuesByKey.at(::DateKey).toDate();
+    if (!d->date.isValid()) {
+        d->date = LocationSettingsPrivate::DefaultDate;
+    }
 
     enumValue = valuesByKey.at(::TimeSelectionKey).toInt(&ok);
     d->timeSelection = ok && Enum::contains<TimeSelection>(enumValue) ? static_cast<TimeSelection>(enumValue) : ::DefaultTimeSelection;
