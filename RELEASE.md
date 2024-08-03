@@ -36,13 +36,13 @@ Description template:
 
 ```text
 This release provides feature X.
-## New features
+## New Features
 - A new feature Y
 - Another feature Z
 ## Improvements
 - Improvement 1
 - Improvement 2
-## Bug fixes
+## Bug Fixes
 - Bug fix A
 - Bug fix B
 ```
