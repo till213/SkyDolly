@@ -27,7 +27,11 @@
 
 #include <QObject>
 #include <QCoreApplication>
+#include <QDateTime>
+#include <QDate>
+#include <QTime>
 
+#include <Kernel/Unit.h>
 #include <Model/Location.h>
 #include <Model/TimeZoneInfo.h>
 #include <Persistence/PersistedEnumerationItem.h>
@@ -38,6 +42,16 @@
 #include "LocationWidget.h"
 #include "LocationSettings.h"
 #include "LocationPlugin.h"
+
+namespace
+{
+    constexpr int MorningMSecsSinceMidnight = 8 * Unit::MillisecondsPerMinute * Unit::MinutesPerHour;
+    constexpr int NoonMSecsSinceMidnight = 12 * Unit::MillisecondsPerMinute * Unit::MinutesPerHour;
+    constexpr int AfternoonMSecsSinceMidnight = 16 * Unit::MillisecondsPerMinute * Unit::MinutesPerHour;
+    constexpr int EveningMSecsSinceMidnight = 18 * Unit::MillisecondsPerMinute * Unit::MinutesPerHour;
+    constexpr int NightMSecsSinceMidnight = 21 * Unit::MillisecondsPerMinute * Unit::MinutesPerHour;
+    constexpr int MidnightMSecsSinceMidnight = 0 * Unit::MillisecondsPerMinute * Unit::MinutesPerHour;
+}
 
 struct LocationPluginPrivate
 {
@@ -52,6 +66,7 @@ struct LocationPluginPrivate
     const std::int64_t EngineEventStartId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStartSymId).id()};
     const std::int64_t EngineEventStopId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventStopSymId).id()};
     Mode mode {Mode::Add};
+    QDateTime selectedDateTime;
 };
 
 // PUBLIC
@@ -112,6 +127,72 @@ void LocationPlugin::frenchConnection() noexcept
             this, &LocationPlugin::teleportTo);
 }
 
+QDateTime LocationPlugin::getSelectedDateTime(const QDateTime &dateTime) const noexcept
+{
+    QDate date;
+    QTime time;
+    switch (d->moduleSettings.getDateSelection())
+    {
+    case LocationSettings::DateSelection::Today:
+        date = QDate::currentDate();
+        break;
+    case LocationSettings::DateSelection::Date:
+        date = dateTime.date();
+        break;
+    case LocationSettings::DateSelection::DateTime:
+        date = dateTime.date();
+        time = dateTime.time();
+        break;
+    }
+
+    if (d->moduleSettings.getDateSelection() != LocationSettings::DateSelection::DateTime) {
+        if (d->moduleSettings.getTimeSelection() == LocationSettings::TimeSelection::Now) {
+            time = QTime::currentTime();
+        }
+    }
+    return {date, time};
+}
+
+QDateTime LocationPlugin::getSelectedDateTime(const TimeZoneInfo &timeZoneInfo) const noexcept
+{
+    QDateTime dateTime;
+    QTime time;
+    if (d->moduleSettings.getDateSelection() != LocationSettings::DateSelection::DateTime) {
+        switch (d->moduleSettings.getTimeSelection()) {
+        case LocationSettings::TimeSelection::Now:
+            dateTime = d->selectedDateTime.addSecs(timeZoneInfo.timeZoneOffsetSeconds);
+            break;
+        case LocationSettings::TimeSelection::Morning:
+            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::MorningMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            break;
+        case LocationSettings::TimeSelection::Noon:
+            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::NoonMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            break;
+        case LocationSettings::TimeSelection::Afternoon:
+            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::AfternoonMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            break;
+        case LocationSettings::TimeSelection::Evening:
+            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::EveningMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            break;
+        case LocationSettings::TimeSelection::Night:
+            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::NightMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            break;
+        case LocationSettings::TimeSelection::Midnight:
+            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::MidnightMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            break;
+        case LocationSettings::TimeSelection::Sunrise:
+            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(static_cast<int>(timeZoneInfo.zuluSunriseTimeSeconds * Unit::MillisecondsPerSecond)));
+            break;
+        case LocationSettings::TimeSelection::Sunset:
+            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(static_cast<int>(timeZoneInfo.zuluSunsetTimeSeconds * Unit::MillisecondsPerSecond)));
+            break;
+        }
+    } else {
+        dateTime = d->selectedDateTime.addSecs(timeZoneInfo.timeZoneOffsetSeconds);
+    }
+    return dateTime;
+}
+
 // PRIVATE SLOTS
 
 void LocationPlugin::captureLocation() noexcept
@@ -126,7 +207,7 @@ void LocationPlugin::updateLocation() noexcept
     SkyConnectManager::getInstance().requestLocation();
 }
 
-void LocationPlugin::teleportTo(const Location &location) noexcept
+void LocationPlugin::teleportTo(const Location &location, const QDateTime &dateTime) noexcept
 {
     const InitialPosition initialPosition = location.toInitialPosition();
     auto &skyConnectManager = SkyConnectManager::getInstance();
@@ -142,8 +223,11 @@ void LocationPlugin::teleportTo(const Location &location) noexcept
     if (event != SkyConnectIntf::SimulationEvent::None) {
         skyConnectManager.sendSimulationEvent(event);
     }
-    const auto winterDate = QDate::fromString("2023-12-12", Qt::DateFormat::ISODate);
-    skyConnectManager.sendZuluDateTime(QDateTime(winterDate, QTime()));
+    d->selectedDateTime = getSelectedDateTime(dateTime);
+    // Set the date before requesting sunset/sunrise/time offset times
+    if (d->selectedDateTime.isValid()) {
+        skyConnectManager.sendZuluDateTime(d->selectedDateTime);
+    }
     skyConnectManager.requestTimeZoneInfo();
 }
 
@@ -162,9 +246,9 @@ void LocationPlugin::onLocationReceived(Location location) noexcept
 
 void LocationPlugin::onTimeZoneInfoReceived(TimeZoneInfo timeZoneInfo) const noexcept
 {
-    const auto winterDate = QDate::fromString("2023-12-12", Qt::DateFormat::ISODate);
-    const auto zuluSunrise = QTime::fromMSecsSinceStartOfDay(timeZoneInfo.zuluSunriseTimeSeconds * 1000);
-    const auto zuluDateTime = QDateTime::currentDateTime().addSecs(timeZoneInfo.timeZoneOffsetSeconds);
-    auto &skyConnectManager = SkyConnectManager::getInstance();
-    skyConnectManager.sendZuluDateTime(QDateTime(winterDate, zuluSunrise));
+    QDateTime dateTime = getSelectedDateTime(timeZoneInfo);
+    if (dateTime.isValid()) {
+        auto &skyConnectManager = SkyConnectManager::getInstance();
+        skyConnectManager.sendZuluDateTime(dateTime);
+    }
 }

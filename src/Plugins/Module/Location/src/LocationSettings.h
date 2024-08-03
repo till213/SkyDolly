@@ -39,6 +39,38 @@ class LocationSettings : public ModuleBaseSettings
 {
     Q_OBJECT
 public:
+    /*!
+     * The date selection.
+     *
+     * Implementation note: these values are peristed in the application settings.
+     */
+    enum struct DateSelection: std::uint8_t {
+        First = 0,
+        Today = First,
+        Date,
+        DateTime,
+        Last = DateTime
+    };
+
+    /*!
+     * The time selection.
+     *
+     * Implementation note: these values are peristed in the application settings.
+     */
+    enum struct TimeSelection: std::uint8_t {
+        First = 0,
+        Now = First,
+        Morning,
+        Noon,
+        Afternoon,
+        Evening,
+        Night,
+        Midnight,
+        Sunrise,
+        Sunset,
+        Last = Sunset
+    };
+
     LocationSettings() noexcept;
     LocationSettings(const LocationSettings &rhs) = delete;
     LocationSettings(LocationSettings &&rhs) = delete;
@@ -73,6 +105,12 @@ public:
 
     const std::int64_t getDefaultEngineEventId() const noexcept;
     void setDefaultEngineEventId(std::int64_t eventId) noexcept;
+
+    const DateSelection getDateSelection() const noexcept;
+    void setDateSelection(DateSelection dateSelection) noexcept;
+
+    const TimeSelection getTimeSelection() const noexcept;
+    void setTimeSelection(TimeSelection timeSelection) noexcept;
 
     /*!
      * Returns the saved location table state.

@@ -11,6 +11,10 @@
   * Those are the locations that come "out of the box" with Sky Dolly
 - Double-clicking on any column of a *preset* location will now teleport to that location (previously only the ID column was double-clickable for *preset* locations)
   * Double-clicking a column other than ID on a *user* or *imported* location will still edit that column, as before
+  
+## Bug Fixes
+- Set correct country for city Hong Kong (preset locations)
+- Properly enable/disable pitch, bank, true heading and indicated airspeed spinboxes based on location selection
 
 ## Under the Hood
 - Optimised logbook table column types

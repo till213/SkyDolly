@@ -48,6 +48,9 @@ namespace
     constexpr const char *DefaultEngineEventKey {"DefaultEngineEvent"};
     constexpr const char *DefaultOnGroundKey {"DefaultOnGround"};
 
+    constexpr const char *DateSelectionKey {"DateSelection"};
+    constexpr const char *TimeSelectionKey {"TimeSelection"};
+
     constexpr const char *LocationTableStateKey {"LocationTableState"};
 
     // Defaults
@@ -57,6 +60,9 @@ namespace
     constexpr int DefaultAltitude {Const::DefaultAltitude};
     constexpr int DefaultIndicatedAirspeed {Const::DefaultIndicatedAirspeed};
     constexpr bool DefaultOnGround {false};
+
+    constexpr LocationSettings::DateSelection DefaultDateSelection {LocationSettings::DateSelection::Today};
+    constexpr LocationSettings::TimeSelection DefaultTimeSelection {LocationSettings::TimeSelection::Now};
 }
 
 struct LocationSettingsPrivate
@@ -67,6 +73,9 @@ struct LocationSettingsPrivate
     int indicatedAirspeed {::DefaultIndicatedAirspeed};
     bool onGround {::DefaultOnGround};
     std::int64_t engineEventId {Const::InvalidId};
+
+    LocationSettings::DateSelection dateSelection {::DefaultDateSelection};
+    LocationSettings::TimeSelection timeSelection {::DefaultTimeSelection};
 
     QByteArray locationTableState;
 
@@ -197,6 +206,32 @@ void LocationSettings::setDefaultEngineEventId(std::int64_t eventId) noexcept
 {
     if (d->engineEventId != eventId) {
         d->engineEventId = eventId;
+        emit changed();
+    }
+}
+
+const LocationSettings::DateSelection LocationSettings::getDateSelection() const noexcept
+{
+    return d->dateSelection;
+}
+
+void LocationSettings::setDateSelection(DateSelection dateSelection) noexcept
+{
+    if (d->dateSelection != dateSelection) {
+        d->dateSelection = dateSelection;
+        emit changed();
+    }
+}
+
+const LocationSettings::TimeSelection LocationSettings::getTimeSelection() const noexcept
+{
+    return d->timeSelection;
+}
+
+void LocationSettings::setTimeSelection(TimeSelection timeSelection) noexcept
+{
+    if (d->timeSelection != timeSelection) {
+        d->timeSelection = timeSelection;
         emit changed();
     }
 }

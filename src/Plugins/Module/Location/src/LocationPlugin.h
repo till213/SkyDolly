@@ -33,6 +33,7 @@ class QWidget;
 #include <Model/Location.h>
 #include <Model/TimeZoneInfo.h>
 #include <PluginManager/Module/AbstractModule.h>
+#include "LocationSettings.h"
 
 struct InitialPosition;
 class ModuleBaseSettings;
@@ -62,11 +63,13 @@ private:
     const std::unique_ptr<LocationPluginPrivate> d;
 
     void frenchConnection() noexcept;
+    QDateTime getSelectedDateTime(const QDateTime &dateTime) const noexcept;
+    QDateTime getSelectedDateTime(const TimeZoneInfo &timeZoneInfo) const noexcept;
 
 private slots:
     void captureLocation() noexcept;
     void updateLocation() noexcept;
-    void teleportTo(const Location &location) noexcept;
+    void teleportTo(const Location &location, const QDateTime &dateTime) noexcept;
     void onLocationReceived(Location location) noexcept;
     void onTimeZoneInfoReceived(TimeZoneInfo timeZoneInfo) const noexcept;
 };

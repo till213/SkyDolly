@@ -30,12 +30,14 @@
 
 #include <QWidget>
 #include <QStringList>
+#include <QDateTime>
 
 class QTableWidgetItem;
 class QKeyEvent;
 class QShowEvent;
 
 #include <Model/Location.h>
+#include "LocationSettings.h"
 
 class LocationSettings;
 struct LocationWidgetPrivate;
@@ -62,7 +64,7 @@ public:
 signals:
     void doUpdateLocation();
     void doCaptureLocation();
-    void teleportTo(Location location);
+    void teleportTo(Location location, QDateTime dateTime);
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
@@ -120,6 +122,10 @@ private slots:
     void onHeadingChanged(double value) noexcept;
     void onIndicatedAirspeedChanged(int value) noexcept;
     void onEngineEventChanged(int index) noexcept;
+
+    // Date and time
+    void onDateSelected(int index) noexcept;
+    void onTimeSelected(int index) noexcept;
 
     // Default values
     void onDefaultAltitudeChanged(int value) noexcept;

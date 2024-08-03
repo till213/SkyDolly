@@ -33,6 +33,7 @@
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <QKeyEvent>
@@ -45,6 +46,7 @@
 #include <GeographicLib/DMS.hpp>
 
 #include <Kernel/Const.h>
+#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Kernel/Unit.h>
 #include <Kernel/PositionParser.h>
@@ -326,6 +328,21 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::categoryColumn, d->locationCategoryDelegate.get());
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::countryColumn, d->countryDelegate.get());
 
+    // Date and time
+    ui->dateComboBox->addItem(tr("Today"), Enum::underly(LocationSettings::DateSelection::Today));
+    ui->dateComboBox->addItem(tr("Date"), Enum::underly(LocationSettings::DateSelection::Date));
+    ui->dateComboBox->addItem(tr("Location"), Enum::underly(LocationSettings::DateSelection::DateTime));
+
+    ui->timeComboBox->addItem(tr("Now"), Enum::underly(LocationSettings::TimeSelection::Now));
+    ui->timeComboBox->addItem(tr("Morning"), Enum::underly(LocationSettings::TimeSelection::Morning));
+    ui->timeComboBox->addItem(tr("Noon"), Enum::underly(LocationSettings::TimeSelection::Noon));
+    ui->timeComboBox->addItem(tr("Afternoon"), Enum::underly(LocationSettings::TimeSelection::Afternoon));
+    ui->timeComboBox->addItem(tr("Evening"), Enum::underly(LocationSettings::TimeSelection::Evening));
+    ui->timeComboBox->addItem(tr("Night"), Enum::underly(LocationSettings::TimeSelection::Night));
+    ui->timeComboBox->addItem(tr("Midnight"), Enum::underly(LocationSettings::TimeSelection::Midnight));
+    ui->timeComboBox->addItem(tr("Sunrise"), Enum::underly(LocationSettings::TimeSelection::Sunrise));
+    ui->timeComboBox->addItem(tr("Sunset"), Enum::underly(LocationSettings::TimeSelection::Sunset));
+
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
 
@@ -422,6 +439,12 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::onIndicatedAirspeedChanged);
     connect(ui->engineEventComboBox, &EnumerationComboBox::currentIndexChanged,
             this, &LocationWidget::onEngineEventChanged);
+
+    // Date and time
+    connect(ui->dateComboBox, &QComboBox::currentIndexChanged,
+            this, &LocationWidget::onDateSelected);
+    connect(ui->timeComboBox, &QComboBox::currentIndexChanged,
+            this, &LocationWidget::onTimeSelected);
 
     // Default values group
     connect(ui->defaultAltitudeSpinBox, &QSpinBox::valueChanged,
@@ -756,7 +779,8 @@ void LocationWidget::teleportToLocation(int row) noexcept
 {
     if (!SkyConnectManager::getInstance().isActive()) {
         Location location = getLocationByRow(row);
-        emit teleportTo(location);
+        // TODO IMPLEMENT ME select custom date time
+        emit teleportTo(location, QDateTime());
     }
 }
 
@@ -873,6 +897,15 @@ void LocationWidget::updateEditUi() noexcept
     }
     ui->updatePushButton->setEnabled(editableRow);
     ui->deletePushButton->setEnabled(editableRow);
+
+    ui->pitchSpinBox->setEnabled(editableRow);
+    ui->bankSpinBox->setEnabled(editableRow);
+    ui->trueHeadingSpinBox->setEnabled(editableRow);
+    ui->indicatedAirspeedSpinBox->setEnabled(editableRow);
+    ui->engineEventComboBox->setEnabled(editableRow);
+
+    const auto dateSelection = static_cast<LocationSettings::DateSelection>(ui->dateComboBox->currentData().toInt());
+    ui->timeComboBox->setEnabled(dateSelection != LocationSettings::DateSelection::DateTime);
 }
 
 void LocationWidget::onCategoryChanged() noexcept
@@ -964,9 +997,9 @@ void LocationWidget::onUpdateLocation() noexcept
 
 void LocationWidget::onTeleportToSelectedLocation() noexcept
 {
-    QList<QTableWidgetItem *> selectedItems = ui->locationTableWidget->selectedItems();
+    const auto selectedItems = ui->locationTableWidget->selectionModel()->selectedRows();
     if (selectedItems.count() > 0) {
-        const int row = selectedItems.last()->row();
+        const int row = selectedItems.last().row();
         teleportToLocation(row);
     }
 }
@@ -1097,6 +1130,18 @@ void LocationWidget::onEngineEventChanged([[maybe_unused]]int index) noexcept
     }
 }
 
+void LocationWidget::onDateSelected([[maybe_unused]]int index) noexcept
+{
+    const auto dateSelection = static_cast<LocationSettings::DateSelection>(ui->dateComboBox->currentData().toInt());
+    d->moduleSettings.setDateSelection(dateSelection);
+}
+
+void LocationWidget::onTimeSelected([[maybe_unused]]int index) noexcept
+{
+    const auto timeSelection = static_cast<LocationSettings::TimeSelection>(ui->timeComboBox->currentData().toInt());
+    d->moduleSettings.setTimeSelection(timeSelection);
+}
+
 void LocationWidget::onDefaultAltitudeChanged(int value) noexcept
 {
     d->moduleSettings.setDefaultAltitude(value);
@@ -1170,5 +1215,27 @@ void LocationWidget::onModuleSettingsChanged() noexcept
     ui->defaultOnGroundCheckBox->setChecked(d->moduleSettings.isDefaultOnGround());
     ui->defaultOnGroundCheckBox->blockSignals(false);
 
+    // Date and time
+    const auto dateSelection = d->moduleSettings.getDateSelection();
+    int currentIndex {0};
+    while (currentIndex < ui->dateComboBox->count() &&
+           static_cast<LocationSettings::DateSelection>(ui->dateComboBox->itemData(currentIndex).toInt()) != dateSelection) {
+        ++currentIndex;
+    }
+    ui->dateComboBox->blockSignals(true);
+    ui->dateComboBox->setCurrentIndex(currentIndex);
+    ui->dateComboBox->blockSignals(false);
+
+    const auto timeSelection = d->moduleSettings.getTimeSelection();
+    currentIndex = 0;
+    while (currentIndex < ui->timeComboBox->count() &&
+           static_cast<LocationSettings::TimeSelection>(ui->timeComboBox->itemData(currentIndex).toInt()) != timeSelection) {
+        ++currentIndex;
+    }
+    ui->timeComboBox->blockSignals(true);
+    ui->timeComboBox->setCurrentIndex(currentIndex);
+    ui->timeComboBox->blockSignals(false);
+
     updateTable();
+    updateEditUi();
 }
