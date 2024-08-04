@@ -24,8 +24,8 @@
  */
 #include <QStyledItemDelegate>
 #include <QModelIndex>
-#include <QDateTimeEdit>
 
+#include <Widget/FocusDateTimeEdit.h>
 #include "DateTimeItemDelegate.h"
 
 // PUBLIC
@@ -36,10 +36,10 @@ DateTimeItemDelegate::DateTimeItemDelegate() noexcept
 
 DateTimeItemDelegate::~DateTimeItemDelegate() = default;
 
-QWidget *DateTimeItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *DateTimeItemDelegate::createEditor(QWidget *parent, [[maybe_unused]] const QStyleOptionViewItem &option, [[maybe_unused]] const QModelIndex &index) const
 {
-    auto *dateTimeEdit = new QDateTimeEdit(parent);
-    connect(dateTimeEdit, &QDateTimeEdit::dateTimeChanged,
+    auto *dateTimeEdit = new FocusDateTimeEdit(parent);
+    connect(dateTimeEdit, &FocusDateTimeEdit::focusLost,
             this, &DateTimeItemDelegate::commitAndCloseEditor);
     return dateTimeEdit;
 }
@@ -47,15 +47,18 @@ QWidget *DateTimeItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
 void DateTimeItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const noexcept
 {
     const QVariant data = index.data(Qt::EditRole);
+    QDateTime dateTime;
     if (data.canConvert<QDateTime>()) {
-         const auto dateTime = qvariant_cast<QDateTime>(data);
-         auto *dateTimeEditor = qobject_cast<QDateTimeEdit *>(editor);
-         dateTimeEditor->blockSignals(true);
-         dateTimeEditor->setDateTime(dateTime);
-         dateTimeEditor->blockSignals(false);
-     } else {
-         QStyledItemDelegate::setEditorData(editor, index);
-     }
+         dateTime = qvariant_cast<QDateTime>(data);
+    }
+    if (!dateTime.isValid()) {
+        dateTime = QDateTime::currentDateTime();
+    }
+
+    auto *dateTimeEditor = qobject_cast<FocusDateTimeEdit *>(editor);
+    dateTimeEditor->blockSignals(true);
+    dateTimeEditor->setDateTime(dateTime);
+    dateTimeEditor->blockSignals(false);
 }
 
 void DateTimeItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const noexcept
