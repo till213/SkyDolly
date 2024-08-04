@@ -48,6 +48,7 @@ target_sources(${MODULE_NAME}
         src/SimVar/SimConnectFlightInfo.h src/SimVar/SimConnectFlightInfo.cpp
         src/SimVar/SimConnectFlightPlan.h src/SimVar/SimConnectFlightPlan.cpp
         src/SimVar/SimConnectSimulationTime.h src/SimVar/SimConnectSimulationTime.cpp
+        src/SimVar/SimConnectTimeZoneInfo.h src/SimVar/SimConnectTimeZoneInfo.cpp
         src/SimVar/SimConnectLocation.h src/SimVar/SimConnectLocation.cpp
         src/SimVar/SimConnectVariables.h src/SimVar/SimConnectVariables.cpp
         src/SimVar/SimulationVariables.h

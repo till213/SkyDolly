@@ -560,6 +560,19 @@ bool AbstractSkyConnect::requestSimulationRate() noexcept
     return ok;
 }
 
+bool AbstractSkyConnect::requestTimeZoneInfo() noexcept
+{
+    if (!isConnectedWithSim()) {
+        tryFirstConnectAndSetup();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this]() -> bool { return onRequestTimeZoneInfo(); });
+    }
+    return ok;
+}
+
 bool AbstractSkyConnect::sendZuluDateTime(QDateTime dateTime) noexcept
 {
     if (!isConnectedWithSim()) {

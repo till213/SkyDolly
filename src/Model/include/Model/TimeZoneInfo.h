@@ -22,20 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QPlainTextEdit>
+#ifndef TIMEZONEINFO_H
+#define TIMEZONEINFO_H
 
-#include "FocusPlainTextEdit.h"
+#include "ModelLib.h"
 
-// PUBLIC
-
-FocusPlainTextEdit::FocusPlainTextEdit(QWidget *parent) noexcept
-    : QPlainTextEdit {parent}
-{}
-
-// PROTECTED
-
-void FocusPlainTextEdit::focusOutEvent(QFocusEvent *event) noexcept
+struct MODEL_API TimeZoneInfo final
 {
-    QPlainTextEdit::focusOutEvent(event);
-    emit focusLost();
-}
+    /*!
+     * The time zone offset to UTC (zulu), such that:
+     *
+     * localTime + timeZoneOffset = zuluTime
+     */
+    int timeZoneOffsetSeconds;
+
+    /*!
+     * Seconds since midnight until the sunrise based on zulu time.
+     */
+    int zuluSunriseTimeSeconds;
+
+    /*!
+     * Seconds since midnight until the sunset based on zulu time.
+     */
+    int zuluSunsetTimeSeconds;
+};
+
+#endif // TIMEZONEINFO_H

@@ -22,20 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QPlainTextEdit>
+#ifndef TIMEITEMDELEGATE_H
+#define TIMEITEMDELEGATE_H
 
-#include "FocusPlainTextEdit.h"
+#include <QStyledItemDelegate>
+#include <QModelIndex>
 
-// PUBLIC
+class QWidget;
 
-FocusPlainTextEdit::FocusPlainTextEdit(QWidget *parent) noexcept
-    : QPlainTextEdit {parent}
-{}
-
-// PROTECTED
-
-void FocusPlainTextEdit::focusOutEvent(QFocusEvent *event) noexcept
+class TimeItemDelegate : public QStyledItemDelegate
 {
-    QPlainTextEdit::focusOutEvent(event);
-    emit focusLost();
-}
+    Q_OBJECT
+public:
+    TimeItemDelegate() noexcept;
+    TimeItemDelegate(const TimeItemDelegate &rhs) = delete;
+    TimeItemDelegate(TimeItemDelegate &&rhs) = delete;
+    TimeItemDelegate &operator=(const TimeItemDelegate &rhs) = delete;
+    TimeItemDelegate &operator=(TimeItemDelegate &&rhs) = delete;
+    ~TimeItemDelegate() override;
+
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const noexcept override;
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const noexcept override;
+
+private slots:
+    void commitAndCloseEditor() noexcept;
+};
+
+#endif // TIMEITEMDELEGATE_H

@@ -35,6 +35,7 @@
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
 #include <Model/Location.h>
+#include <Model/TimeZoneInfo.h>
 #include "Connect.h"
 #include "FlightSimulatorShortcuts.h"
 #include "../PluginIntf.h"
@@ -337,10 +338,18 @@ public:
     virtual bool requestSimulationRate() noexcept = 0;
 
     /*!
-     * Sends the \p dateTime to the flight simulator to set.
+     * Requests information about the current simulation time zone.
+     *
+     * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
+     * \sa timeZoneInfoReceived
+     */
+    virtual bool requestTimeZoneInfo() noexcept = 0;
+
+    /*!
+     * Sends the zulu \p dateTime to the flight simulator to set.
      *
      * \param dateTime
-     *        the date and time to set in the flight simulator
+     *        the date and time to set in the flight simulator [zulu time]
      * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
      */
     virtual bool sendZuluDateTime(QDateTime dateTime) noexcept = 0;
@@ -408,21 +417,28 @@ signals:
     void recordingStopped();
 
     /*!
-     * Emitted whenever the response to the Location request has been received.
+     * Emitted whenever the requested location has been received.
      *
      * \param location
-     *        the received Location
+     *        the received location
      */
     void locationReceived(Location location);
 
     /*!
-     * Emitted whenever the current simulation rate has been received.
+     * Emitted whenever the requested current simulation rate has been received.
      *
      * \param rate
      *        the current simulation rate [0.0625, 0.125, 0.25, 0.5, 1, 2, 4, ... 128]
      */
     void simulationRateReceived(float rate);
 
+    /*!
+     * Emitted whenever the requested time zone information has been received.
+     *
+     * \param timeZoneInfo
+     *        the current time zone information
+     */
+    void timeZoneInfoReceived(TimeZoneInfo timeZoneInfo);
 
     /*!
      * Emitted whenever a keyboard shortcut was triggered for the given \p action.

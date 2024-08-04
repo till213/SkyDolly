@@ -30,7 +30,6 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <QtGlobal>
 #include <QDateTime>
 #include <QDate>
 #include <QTime>

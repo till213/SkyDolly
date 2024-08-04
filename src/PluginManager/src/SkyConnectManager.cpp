@@ -368,7 +368,7 @@ bool SkyConnectManager::isIdle() const noexcept
 float SkyConnectManager::getReplaySpeedFactor() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().getReplaySpeedFactor() : 1.0;
+    return skyConnect ? skyConnect->get().getReplaySpeedFactor() : 1.0f;
 }
 
 void SkyConnectManager::setReplaySpeedFactor(float factor) noexcept
@@ -403,10 +403,16 @@ bool SkyConnectManager::requestSimulationRate() const noexcept
     return skyConnect ? skyConnect->get().requestSimulationRate() : false;
 }
 
-bool SkyConnectManager::sendDateAndTime(QDateTime dateTime) const noexcept
+bool SkyConnectManager::requestTimeZoneInfo() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().sendZuluDateTime(dateTime) : false;
+    return skyConnect ? skyConnect->get().requestTimeZoneInfo() : false;
+}
+
+bool SkyConnectManager::sendZuluDateTime(QDateTime dateTime) const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().sendZuluDateTime(std::move(dateTime)) : false;
 }
 
 // PUBLIC SLOTS
@@ -440,6 +446,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                         this, &SkyConnectManager::recordingStopped);
                 connect(skyPlugin, &SkyConnectIntf::locationReceived,
                         this, &SkyConnectManager::locationReceived);
+                connect(skyPlugin, &SkyConnectIntf::timeZoneInfoReceived,
+                        this, &SkyConnectManager::timeZoneInfoReceived);
                 connect(skyPlugin, &SkyConnectIntf::simulationRateReceived,
                         this, &SkyConnectManager::simulationRateReceived);
                 connect(skyPlugin, &SkyConnectIntf::actionActivated,

@@ -47,7 +47,7 @@ namespace
 {
     // The initial capacity of the location vector (e.g. SQLite does not support returning
     // the result count for the given SELECT query)
-    constexpr int DefaultCapacity = 25;
+    constexpr int DefaultCapacity = 200;
 }
 
 struct SQLiteLocationDaoPrivate
@@ -94,6 +94,8 @@ bool SQLiteLocationDao::update(const Location &location) const noexcept
         "update location "
         "set    title = :title,"
         "       description = :description,"
+        "       local_sim_date = :local_sim_date,"
+        "       local_sim_time = :local_sim_time,"
         "       type_id = :type_id,"
         "       category_id = :category_id,"
         "       country_id = :country_id,"
@@ -106,13 +108,14 @@ bool SQLiteLocationDao::update(const Location &location) const noexcept
         "       true_heading = :true_heading,"
         "       indicated_airspeed = :indicated_airspeed,"
         "       on_ground = :on_ground,"
-        "       attributes = :attributes,"
         "       engine_event = :engine_event "
         "where id = :id;"
     );
 
     query.bindValue(":title", location.title);
     query.bindValue(":description", location.description);
+    query.bindValue(":local_sim_date", location.localSimulationDate);
+    query.bindValue(":local_sim_time", location.localSimulationTime);
     query.bindValue(":type_id", QVariant::fromValue(location.typeId));
     query.bindValue(":category_id", QVariant::fromValue(location.categoryId));
     query.bindValue(":country_id", QVariant::fromValue(location.countryId));
@@ -125,7 +128,6 @@ bool SQLiteLocationDao::update(const Location &location) const noexcept
     query.bindValue(":true_heading", location.trueHeading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
-    query.bindValue(":attributes", QVariant::fromValue(location.attributes));
     query.bindValue(":engine_event", QVariant::fromValue(location.engineEventId));
     query.bindValue(":id", QVariant::fromValue(location.id));
     const bool ok = query.exec();
@@ -170,6 +172,8 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
         const auto idIdx = record.indexOf("id");
         const auto titleIdx = record.indexOf("title");
         const auto descriptionIdx = record.indexOf("description");
+        const auto localSimulationDateIdx = record.indexOf("local_sim_date");
+        const auto localSimulationTimeIdx = record.indexOf("local_sim_time");
         const auto typeIdx = record.indexOf("type_id");
         const auto categoryIdx = record.indexOf("category_id");
         const auto countryIdx = record.indexOf("country_id");
@@ -182,7 +186,6 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
         const auto trueHeadingIdx = record.indexOf("true_heading");
         const auto indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
         const auto onGroundIdx = record.indexOf("on_ground");
-        const auto attributesIdx = record.indexOf("attributes");
         const auto engineEventIdx = record.indexOf("engine_event");
 
         while (query.next()) {
@@ -190,6 +193,9 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
             location.id = query.value(idIdx).toLongLong();
             location.title = query.value(titleIdx).toString();
             location.description = query.value(descriptionIdx).toString();
+            // Persisted date & time are already local simulation date & time
+            location.localSimulationDate = query.value(localSimulationDateIdx).toDate();
+            location.localSimulationTime = query.value(localSimulationTimeIdx).toTime();
             location.typeId = query.value(typeIdx).toLongLong();
             location.categoryId = query.value(categoryIdx).toLongLong();
             location.countryId = query.value(countryIdx).toLongLong();
@@ -202,7 +208,6 @@ std::vector<Location> SQLiteLocationDao::getByPosition(double latitude, double l
             location.trueHeading = query.value(trueHeadingIdx).toDouble();
             location.indicatedAirspeed = query.value(indicatedAirspeedIdx).toInt();
             location.onGround = query.value(onGroundIdx).toBool();
-            location.attributes = query.value(attributesIdx).toLongLong();
             location.engineEventId = query.value(engineEventIdx).toLongLong();
 
             locations.push_back(std::move(location));
@@ -320,6 +325,8 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
         const auto idIdx = record.indexOf("id");
         const auto titleIdx = record.indexOf("title");
         const auto descriptionIdx = record.indexOf("description");
+        const auto localSimulationDateIdx = record.indexOf("local_sim_date");
+        const auto localSimulationTimeIdx = record.indexOf("local_sim_time");
         const auto typeIdx = record.indexOf("type_id");
         const auto categoryIdx = record.indexOf("category_id");
         const auto countryIdx = record.indexOf("country_id");
@@ -332,7 +339,6 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
         const auto trueHeadingIdx = record.indexOf("true_heading");
         const auto indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
         const auto onGroundIdx = record.indexOf("on_ground");
-        const auto attributesIdx = record.indexOf("attributes");
         const auto engineEventIdx = record.indexOf("engine_event");
 
         while (query.next()) {
@@ -340,6 +346,8 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
             location.id = query.value(idIdx).toLongLong();
             location.title = query.value(titleIdx).toString();
             location.description = query.value(descriptionIdx).toString();
+            location.localSimulationDate= query.value(localSimulationDateIdx).toDate();
+            location.localSimulationTime = query.value(localSimulationTimeIdx).toTime();
             location.typeId = query.value(typeIdx).toLongLong();
             location.categoryId = query.value(categoryIdx).toLongLong();
             location.countryId = query.value(countryIdx).toLongLong();
@@ -352,7 +360,6 @@ inline std::vector<Location> SQLiteLocationDao::executeGetLocationQuery(QSqlQuer
             location.trueHeading = query.value(trueHeadingIdx).toDouble();
             location.indicatedAirspeed = query.value(indicatedAirspeedIdx).toInt();
             location.onGround = query.value(onGroundIdx).toBool();
-            location.attributes = query.value(attributesIdx).toLongLong();
             location.engineEventId = query.value(engineEventIdx).toLongLong();
 
             locations.push_back(std::move(location));
@@ -378,6 +385,8 @@ std::int64_t SQLiteLocationDao::insert(const Location &location) const noexcept
         "insert into location ("
         "  title,"
         "  description,"
+        "  local_sim_date,"
+        "  local_sim_time,"
         "  type_id,"
         "  category_id,"
         "  country_id,"
@@ -390,11 +399,12 @@ std::int64_t SQLiteLocationDao::insert(const Location &location) const noexcept
         "  true_heading,"
         "  indicated_airspeed,"
         "  on_ground,"
-        "  attributes,"
         "  engine_event"
         ") values ("
         "  :title,"
         "  :description,"
+        "  :local_sim_date,"
+        "  :local_sim_time,"
         "  :type_id,"
         "  :category_id,"
         "  :country_id,"
@@ -407,13 +417,14 @@ std::int64_t SQLiteLocationDao::insert(const Location &location) const noexcept
         "  :true_heading,"
         "  :indicated_airspeed,"
         "  :on_ground,"
-        "  :attributes,"
         "  :engine_event"
         ");"
         );
 
     query.bindValue(":title", location.title);
     query.bindValue(":description", location.description);
+    query.bindValue(":local_sim_date", location.localSimulationDate);
+    query.bindValue(":local_sim_time", location.localSimulationTime);
     query.bindValue(":type_id", QVariant::fromValue(location.typeId));
     query.bindValue(":category_id", QVariant::fromValue(location.categoryId));
     query.bindValue(":country_id", QVariant::fromValue(location.countryId));
@@ -426,7 +437,6 @@ std::int64_t SQLiteLocationDao::insert(const Location &location) const noexcept
     query.bindValue(":true_heading", location.trueHeading);
     query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
-    query.bindValue(":attributes", QVariant::fromValue(location.attributes));
     query.bindValue(":engine_event", QVariant::fromValue(location.engineEventId));
 
     const bool ok = query.exec();

@@ -28,9 +28,10 @@
 #include <cstdint>
 
 #include <Kernel/Const.h>
+
 /*!
  * The base data object for all non-time variant data objects which are persisted,
- * identified by their \p id.
+ * identified by their \c id.
  *
  * \sa TimeVariableData
  */

@@ -22,20 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QPlainTextEdit>
+#include <windows.h>
 
-#include "FocusPlainTextEdit.h"
+#include <SimConnect.h>
+
+#include <Kernel/Enum.h>
+#include <Model/SimVar.h>
+#include "SimConnectType.h"
+#include "SimConnectTimeZoneInfo.h"
 
 // PUBLIC
 
-FocusPlainTextEdit::FocusPlainTextEdit(QWidget *parent) noexcept
-    : QPlainTextEdit {parent}
-{}
-
-// PROTECTED
-
-void FocusPlainTextEdit::focusOutEvent(QFocusEvent *event) noexcept
+void SimConnectTimeZoneInfo::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    QPlainTextEdit::focusOutEvent(event);
-    emit focusLost();
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::TimeZoneInfo), SimVar::TimeZoneOffset, "Seconds", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::TimeZoneInfo), SimVar::ZuluSunriseTime, "Seconds", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::underly(SimConnectType::DataDefinition::TimeZoneInfo), SimVar::ZuluSunsetTime, "Seconds", SIMCONNECT_DATATYPE_INT32);
 }

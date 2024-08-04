@@ -491,12 +491,29 @@ values ('BE', 'Beach', 'Beach'),
 update metadata
 set    app_version = '0.19.0';
 
-@migr(id = "5c3b0c18-6970-4477-a3b3-7c7b6d95d459", descn = "Rename system location type to preset", step = 2)
+@migr(id = "5c3b0c18-6970-4477-a3b3-7c7b6d95d459", descn = "Rename system location type to preset", step = 1)
 update enum_location_type
 set sym_id = 'P',
     name = 'Preset',
     desc = 'Preset locations provided by Sky Dolly'
 where sym_id = 'S';
+
+@migr(id = "bba4121b-8d18-44c6-9ba2-c0687731f2e3", descn = "Set country of city Hong Kong to Hong Kong", step = 2)
+update location
+set country_id = (select id
+                  from   enum_country ec
+                  where  ec.sym_id = 'HK')
+where title = 'Hong Kong'
+  and type_id = (select id
+                 from   enum_location_type elt
+                 where  elt.sym_id = 'P');
+
+@migr(id = "e5288e8b-8d88-4dd7-b06c-1bf3609b8199", descn = "Add local simulation date and time columns to location", step = 1)
+alter table location add column local_sim_date date;
+alter table location add column local_sim_time time;
+
+@migr(id = "f332611d-3253-4620-a2df-f9eb387a4bfc", descn = "Drop column attributes from location", step = 1)
+alter table location drop column attributes;
 
 @migr(id = "6b37e83f-db5b-4761-bd21-4a5510f9fecc", descn = "Update application version to 0.20", step = 1)
 update metadata

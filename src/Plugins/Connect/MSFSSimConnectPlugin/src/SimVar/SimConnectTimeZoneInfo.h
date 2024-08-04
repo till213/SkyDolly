@@ -22,20 +22,44 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QPlainTextEdit>
+#ifndef SIMCONNECTTIMEZONEINFO_H
+#define SIMCONNECTTIMEZONEINFO_H
 
-#include "FocusPlainTextEdit.h"
+#include <cstdint>
 
-// PUBLIC
+#include <windows.h>
+#include <SimConnect.h>
 
-FocusPlainTextEdit::FocusPlainTextEdit(QWidget *parent) noexcept
-    : QPlainTextEdit {parent}
-{}
+#include <QDateTime>
+#include <QDate>
+#include <QTime>
+#include <QTimeZone>
 
-// PROTECTED
+#include <Model/TimeZoneInfo.h>
 
-void FocusPlainTextEdit::focusOutEvent(QFocusEvent *event) noexcept
+/*!
+ * Simulation date and time (local and zulu).
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(push, 1)
+struct SimConnectTimeZoneInfo
 {
-    QPlainTextEdit::focusOutEvent(event);
-    emit focusLost();
-}
+    std::int32_t timeZoneOffset {0};
+    std::int32_t zuluSunriseTime {0};
+    std::int32_t zuluSunsetTime {0};
+
+    inline TimeZoneInfo toTimeZoneInfo() const noexcept
+    {
+        TimeZoneInfo info;
+        info.timeZoneOffsetSeconds = timeZoneOffset;
+        info.zuluSunriseTimeSeconds = zuluSunriseTime;
+        info.zuluSunsetTimeSeconds = zuluSunsetTime;
+        return info;
+    }
+
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+};
+#pragma pack(pop)
+
+#endif // SIMCONNECTTIMEZONEINFO_H

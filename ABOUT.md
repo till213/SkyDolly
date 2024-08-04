@@ -42,13 +42,7 @@ For instance you can literally import all world update POIs and airports and mor
 
 Note that this is an early pre-release version. While it should run stable and all its present features should work as intended it is far from feature complete.
 
-⚠️⚠️⚠️ **IMPORTANT PATCH RELEASE: 0.17.5** ⚠️⚠️⚠️
-
-Sky Dolly **v0.17.1** introduced a regression that would attempt to connect via network (IPv4) with Microsoft Flight Simulator, preventing the recording of new flights in certain cases.
-
-This has been *fixed* with the **0.17.5** patch relase that also corrects existing "off by one" application settings, ensuring that a local ("pipe") connection is made again. Unless explicitly set in the Sky Dolly application settings to one of the two network connection types (either IPv4 or IPv6).
-
-## Earlier Releases
+### Earlier Releases
 
 In case you want to still use the previous **Sky Dolly** versions you may download all previous releases from the [github release page](https://github.com/till213/SkyDolly/releases) (the ZIP archives are identical to the latest one available on [flightsim.to](https://flightsim.to/file/9067/sky-dolly)).
 

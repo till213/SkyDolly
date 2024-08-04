@@ -43,6 +43,8 @@ class QUuid;
 #include <Kernel/QUuidHasher.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
+#include <Model/Location.h>
+#include <Model/TimeZoneInfo.h>
 #include "Connect/Connect.h"
 #include "Connect/SkyConnectIntf.h"
 #include "OptionWidgetIntf.h"
@@ -145,7 +147,7 @@ public:
     bool isInReplayState() const noexcept;
 
     /*!
-     * Returns \c true in case the SkyConnect connection is \eactive, that is either
+     * Returns \c true in case the SkyConnect connection is \e active, that is either
      * a replay or recording (including paused states) is taking place.
      *
      * \return \c true if the SkyConnect connection is \e active; \c false else
@@ -177,7 +179,8 @@ public:
 
     bool requestLocation() const noexcept;
     bool requestSimulationRate() const noexcept;
-    bool sendDateAndTime(QDateTime dateTime) const noexcept;
+    bool requestTimeZoneInfo() const noexcept;
+    bool sendZuluDateTime(QDateTime dateTime) const noexcept;
 
     using PluginRegistry = std::unordered_map<QUuid, QString, QUuidHasher>;
 
@@ -242,6 +245,13 @@ signals:
      * \sa SkyConnectIntf#locationReceived
      */
     void locationReceived(Location location);
+
+    /*!
+     * Relay of the SkyConnectIntf#timeZoneInfoReceived signal.
+     *
+     * \sa SkyConnectIntf#timeZoneInfoReceived
+     */
+    void timeZoneInfoReceived(TimeZoneInfo timeZoneInfo);
 
     /*!
      * Relay of the SkyConnectIntf#simulationRateReceived signal.

@@ -22,20 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QPlainTextEdit>
+#include <QTimeEdit>
 
-#include "FocusPlainTextEdit.h"
+#include "FocusTimeEdit.h"
 
 // PUBLIC
 
-FocusPlainTextEdit::FocusPlainTextEdit(QWidget *parent) noexcept
-    : QPlainTextEdit {parent}
+FocusTimeEdit::FocusTimeEdit(QWidget *parent) noexcept
+    : QTimeEdit {parent}
 {}
 
 // PROTECTED
 
-void FocusPlainTextEdit::focusOutEvent(QFocusEvent *event) noexcept
+void FocusTimeEdit::focusOutEvent(QFocusEvent *event) noexcept
 {
-    QPlainTextEdit::focusOutEvent(event);
+    QTimeEdit::focusOutEvent(event);
     emit focusLost();
 }

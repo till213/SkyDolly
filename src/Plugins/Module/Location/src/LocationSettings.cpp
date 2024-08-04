@@ -29,6 +29,7 @@
 #include <QVariant>
 
 #include <Kernel/Const.h>
+#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Persistence/LocationSelector.h>
 #include <Persistence/PersistedEnumerationItem.h>
@@ -48,6 +49,10 @@ namespace
     constexpr const char *DefaultEngineEventKey {"DefaultEngineEvent"};
     constexpr const char *DefaultOnGroundKey {"DefaultOnGround"};
 
+    constexpr const char *DateSelectionKey {"DateSelection"};
+    constexpr const char *DateKey {"Date"};
+    constexpr const char *TimeSelectionKey {"TimeSelection"};
+
     constexpr const char *LocationTableStateKey {"LocationTableState"};
 
     // Defaults
@@ -57,6 +62,9 @@ namespace
     constexpr int DefaultAltitude {Const::DefaultAltitude};
     constexpr int DefaultIndicatedAirspeed {Const::DefaultIndicatedAirspeed};
     constexpr bool DefaultOnGround {false};
+
+    constexpr LocationSettings::DateSelection DefaultDateSelection {LocationSettings::DateSelection::Today};
+    constexpr LocationSettings::TimeSelection DefaultTimeSelection {LocationSettings::TimeSelection::Now};
 }
 
 struct LocationSettingsPrivate
@@ -65,12 +73,17 @@ struct LocationSettingsPrivate
     LocationSelector locationSelector;
     int altitude {::DefaultAltitude};
     int indicatedAirspeed {::DefaultIndicatedAirspeed};
-    bool onGround {::DefaultOnGround};
     std::int64_t engineEventId {Const::InvalidId};
+    bool onGround {::DefaultOnGround};
+
+    LocationSettings::DateSelection dateSelection {::DefaultDateSelection};
+    QDate date {DefaultDate};
+    LocationSettings::TimeSelection timeSelection {::DefaultTimeSelection};
 
     QByteArray locationTableState;
 
     const std::int64_t DefaultEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
+    static inline const QDate DefaultDate {QDate::currentDate()};
 };
 
 // PUBLIC
@@ -175,6 +188,19 @@ void LocationSettings::setDefaultIndicatedAirspeed(int airspeed)
     }
 }
 
+const std::int64_t LocationSettings::getDefaultEngineEventId() const noexcept
+{
+    return d->engineEventId;
+}
+
+void LocationSettings::setDefaultEngineEventId(std::int64_t eventId) noexcept
+{
+    if (d->engineEventId != eventId) {
+        d->engineEventId = eventId;
+        emit changed();
+    }
+}
+
 bool LocationSettings::isDefaultOnGround() const noexcept
 {
     return d->onGround;
@@ -188,15 +214,41 @@ void LocationSettings::setDefaultOnGround(bool enable) noexcept
     }
 }
 
-const std::int64_t LocationSettings::getDefaultEngineEventId() const noexcept
+const LocationSettings::DateSelection LocationSettings::getDateSelection() const noexcept
 {
-    return d->engineEventId;
+    return d->dateSelection;
 }
 
-void LocationSettings::setDefaultEngineEventId(std::int64_t eventId) noexcept
+void LocationSettings::setDateSelection(DateSelection dateSelection) noexcept
 {
-    if (d->engineEventId != eventId) {
-        d->engineEventId = eventId;
+    if (d->dateSelection != dateSelection) {
+        d->dateSelection = dateSelection;
+        emit changed();
+    }
+}
+
+const QDate LocationSettings::getDate() const noexcept
+{
+    return d->date;
+}
+
+void LocationSettings::setDate(QDate date) noexcept
+{
+    if (d->date != date) {
+        d->date = date;
+        emit changed();
+    }
+}
+
+const LocationSettings::TimeSelection LocationSettings::getTimeSelection() const noexcept
+{
+    return d->timeSelection;
+}
+
+void LocationSettings::setTimeSelection(TimeSelection timeSelection) noexcept
+{
+    if (d->timeSelection != timeSelection) {
+        d->timeSelection = timeSelection;
         emit changed();
     }
 }
@@ -247,6 +299,19 @@ void LocationSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &key
     keyValue.second = QVariant::fromValue(d->locationSelector.countryId);
     keyValues.push_back(keyValue);
 
+    // Date and time
+    keyValue.first = ::DateSelectionKey;
+    keyValue.second = Enum::underly(d->dateSelection);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::DateKey;
+    keyValue.second = QVariant::fromValue(d->date);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::TimeSelectionKey;
+    keyValue.second = Enum::underly(d->timeSelection);
+    keyValues.push_back(keyValue);
+
     // Default values
     keyValue.first = ::DefaultAltitudeKey;
     keyValue.second = d->altitude;
@@ -285,6 +350,19 @@ void LocationSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWi
 
     keyValue.first = ::CountrySelectionKey;
     keyValue.second = QVariant::fromValue(::DefaultCountryId);
+    keysWithDefaults.push_back(keyValue);
+
+    // Date and time
+    keyValue.first = ::DateSelectionKey;
+    keyValue.second = Enum::underly(::DefaultDateSelection);
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::DateKey;
+    keyValue.second = QVariant::fromValue(LocationSettingsPrivate::DefaultDate);
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::TimeSelectionKey;
+    keyValue.second = Enum::underly(::DefaultTimeSelection);
     keysWithDefaults.push_back(keyValue);
 
     // Default values
@@ -329,6 +407,19 @@ void LocationSettings::restoreSettingsExtn([[maybe_unused]] const Settings::Valu
         d->locationSelector.countryId = ::DefaultCountryId;
     }
 
+    // Date and time
+    ok = true;
+    auto enumValue = valuesByKey.at(::DateSelectionKey).toInt(&ok);
+    d->dateSelection = ok && Enum::contains<DateSelection>(enumValue) ? static_cast<DateSelection>(enumValue) : ::DefaultDateSelection;
+
+    d->date = valuesByKey.at(::DateKey).toDate();
+    if (!d->date.isValid()) {
+        d->date = LocationSettingsPrivate::DefaultDate;
+    }
+
+    enumValue = valuesByKey.at(::TimeSelectionKey).toInt(&ok);
+    d->timeSelection = ok && Enum::contains<TimeSelection>(enumValue) ? static_cast<TimeSelection>(enumValue) : ::DefaultTimeSelection;
+
     // Default values
     d->altitude = valuesByKey.at(::DefaultAltitudeKey).toInt(&ok);
     if (!ok) {
@@ -368,4 +459,6 @@ void LocationSettings::restoreDefaultValues() noexcept
     d->indicatedAirspeed = ::DefaultIndicatedAirspeed;
     d->engineEventId = d->DefaultEngineEventId;
     d->onGround = ::DefaultOnGround;
+    d->dateSelection = ::DefaultDateSelection;
+    d->timeSelection = ::DefaultTimeSelection;
 }
