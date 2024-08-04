@@ -50,6 +50,7 @@
 - Do not reset backup period to "Never" when setting the backup path fails
 - Correctly name the file selection filter of the Sky Dolly logbook location import plugin
 - Properly enable/disable pitch, bank, true heading and indicated airspeed spinboxes based on location selection
+- Ensure visibility of newly inserted user locations, specifically when locations are sorted in descending order
 
 ### Under the Hood
 - Upgrade Qt to 6.7.3 (from 6.7.2)
