@@ -196,15 +196,10 @@ void LocationWidget::addLocation(Location newLocation)
         // the table rows (stored location will already be added)
         d->moduleSettings.ensureFilterUserVisibility();
 
-        const int row = getRowById(location.id);
-        if (row != ::InvalidRow) {
-            ui->locationTableWidget->setFocus();
-            ui->locationTableWidget->selectRow(row);
-            const auto item = ui->locationTableWidget->item(row, LocationWidgetPrivate::idColumn);
-            // Give the repaint event a chance to get processed before scrolling
-            // to make the item visible
-            QTimer::singleShot(0, this, [this, item]() {ui->locationTableWidget->scrollToItem(item);});
-        }
+        const auto id = location.id;
+        // Give the repaint event a chance to get processed before scrolling
+        // to make the row visible
+        QTimer::singleShot(0, this, [this, id]() {this->scrollToAndSelectRow(id);});
     }
 }
 
@@ -523,7 +518,7 @@ void LocationWidget::updateInfoUi() noexcept
 
 void LocationWidget::updateTable() noexcept
 {
-    if (PersistenceManager::getInstance().isConnected()) {
+if (PersistenceManager::getInstance().isConnected()) {
 
         std::vector<Location> locations = d->moduleSettings.hasSelectors() ?
                                               d->locationService->getSelectedLocations(d->moduleSettings.getLocationSelector()) :
@@ -911,6 +906,17 @@ std::int64_t LocationWidget::getSelectedLocationId() const noexcept
         selectedLocationId = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::idColumn)->data(Qt::EditRole).toLongLong();
     }
     return selectedLocationId;
+}
+
+void LocationWidget::scrollToAndSelectRow(std::int64_t id) noexcept
+{
+    const int row = getRowById(id);
+    if (row != ::InvalidRow) {
+        ui->locationTableWidget->setFocus();
+        const auto item = ui->locationTableWidget->item(row, LocationWidgetPrivate::idColumn);
+        ui->locationTableWidget->scrollToItem(item);
+        ui->locationTableWidget->selectRow(row);
+    }
 }
 
 // PRIVATE SLOTS
