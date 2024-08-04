@@ -61,10 +61,14 @@ struct PERSISTENCE_API LocationSelector
                !searchKeyword.isEmpty();
     }
 
-    inline bool showUserLocations() const noexcept
+    inline void ensureUserLocationVisibility() noexcept
     {
-        static const std::int64_t userLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
-        return typeSelection.empty() || typeSelection.contains(userLocationTypeId);
+        if (!hasTypeSelectionUserLocations()) {
+            typeSelection.clear();
+        }
+        categoryId = Const::InvalidId;
+        countryId = Const::InvalidId;
+        searchKeyword.clear();
     }
 
     inline void clear() noexcept
@@ -73,6 +77,13 @@ struct PERSISTENCE_API LocationSelector
         categoryId = Const::InvalidId;
         countryId = Const::InvalidId;
         searchKeyword.clear();
+    }
+
+private:
+    inline bool hasTypeSelectionUserLocations() const noexcept
+    {
+        static const std::int64_t userLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
+        return typeSelection.empty() || typeSelection.contains(userLocationTypeId);
     }
 };
 
