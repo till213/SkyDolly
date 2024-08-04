@@ -194,7 +194,7 @@ void LocationWidget::addLocation(Location newLocation)
     if (d->locationService->store(location)) {
         // Make sure that user locations are visible - this will also update
         // the table rows (stored location will already be added)
-        resetFilter();
+        d->moduleSettings.ensureFilterUserVisibility();
 
         const int row = getRowById(location.id);
         if (row != ::InvalidRow) {

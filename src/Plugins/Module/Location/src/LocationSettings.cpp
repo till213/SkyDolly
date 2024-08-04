@@ -146,11 +146,6 @@ void LocationSettings::setSearchKeyword(QString keyword) noexcept
     }
 }
 
-bool LocationSettings::showUserLocations() const noexcept
-{
-    return d->locationSelector.showUserLocations();
-}
-
 bool LocationSettings::hasSelectors() const noexcept
 {
     return d->locationSelector.hasSelectors();
@@ -265,6 +260,12 @@ void LocationSettings::setLocationTableState(QByteArray state) noexcept
 void LocationSettings::resetFilter() noexcept
 {
     restoreFilter();
+    emit changed();
+}
+
+void LocationSettings::ensureFilterUserVisibility() noexcept
+{
+    d->locationSelector.ensureUserLocationVisibility();
     emit changed();
 }
 
