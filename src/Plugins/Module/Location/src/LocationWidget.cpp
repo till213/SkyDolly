@@ -807,8 +807,16 @@ void LocationWidget::teleportToLocation(int row) noexcept
 {
     if (!SkyConnectManager::getInstance().isActive()) {
         Location location = getLocationByRow(row);
-        const QDateTime localSimulationTime = d->moduleSettings.getDateSelection() == LocationSettings::DateSelection::LocationDateTime ? QDateTime() : ui->dateEdit->dateTime();
-        emit teleportTo(location, localSimulationTime);
+
+        QDate localSimulationDate;
+        QTime localSimulationTime;
+        if (d->moduleSettings.getDateSelection() == LocationSettings::DateSelection::LocationDateTime) {
+            localSimulationDate = location.localSimulationDate.isValid() ? location.localSimulationDate : ui->dateEdit->date();
+            localSimulationTime = location.localSimulationTime;
+        } else {
+            localSimulationDate = ui->dateEdit->date();
+        }
+        emit teleportTo(location, localSimulationDate, localSimulationTime);
     }
 }
 
@@ -936,11 +944,10 @@ void LocationWidget::updateEditUi() noexcept
     ui->engineEventComboBox->setEnabled(editableRow);
 
     const auto dateSelection = static_cast<LocationSettings::DateSelection>(ui->dateComboBox->currentData().toInt());
-    ui->dateEdit->setEnabled(dateSelection == LocationSettings::DateSelection::Date);
-    if (dateSelection != LocationSettings::DateSelection::Date || !ui->dateEdit->date().isValid()) {
+    ui->dateEdit->setEnabled(dateSelection != LocationSettings::DateSelection::Today);
+    if (dateSelection == LocationSettings::DateSelection::Today || !ui->dateEdit->date().isValid()) {
         ui->dateEdit->setDate(QDate::currentDate());
     }
-    ui->timeComboBox->setEnabled(dateSelection != LocationSettings::DateSelection::LocationDateTime);
 }
 
 void LocationWidget::onCategoryChanged() noexcept
