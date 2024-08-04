@@ -29,6 +29,8 @@
 #include <QChar>
 #include <QString>
 #include <QStringBuilder>
+#include <QDate>
+#include <QTime>
 
 #include <Kernel/Enum.h>
 #include <Kernel/Unit.h>
@@ -57,6 +59,8 @@ namespace
     constexpr const char *IndicatedAirspeedColumn {"Indicated Airspeed"};
     constexpr const char *OnGroundColumn {"On Ground"};
     constexpr const char *EngineEventColumn {"Engine Event"};
+    constexpr const char *LocalSimulationDateColumn {"Local Simulation Date"};
+    constexpr const char *LocalSimulationTimeColumn {"Local Simulation Time"};
 }
 
 struct SkyDollyCsvLocationWriterPrivate
@@ -93,7 +97,9 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                                       ::TrueHeadingColumn % Csv::CommaSep %
                                       ::IndicatedAirspeedColumn % Csv::CommaSep %
                                       ::OnGroundColumn % Csv::CommaSep %
-                                      ::EngineEventColumn % Csv::Ln;
+                                      ::EngineEventColumn % Csv::CommaSep %
+                                      ::LocalSimulationDateColumn % Csv::CommaSep %
+                                      ::LocalSimulationTimeColumn % Csv::Ln;
 
     bool ok = io.write(csv.toUtf8());
     auto locationTypeEnumeration = d->enumerationService.getEnumerationByName(EnumerationService::LocationType);
@@ -125,7 +131,9 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                                 Export::formatNumber(location.trueHeading) % Csv::CommaSep %
                                 QString::number(location.indicatedAirspeed) % Csv::CommaSep %
                                 (location.onGround ? "true" : "false") % Csv::CommaSep %
-                                engineEventSymId % Csv::Ln;
+                                engineEventSymId % Csv::CommaSep %
+                                location.localSimulationDate.toString(Qt::DateFormat::ISODate) % Csv::CommaSep %
+                                location.localSimulationTime.toString(Qt::DateFormat::ISODate) % Csv::Ln;
             ok = io.write(csv.toUtf8());
 
             if (!ok) {

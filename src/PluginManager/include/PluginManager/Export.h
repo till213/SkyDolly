@@ -109,7 +109,6 @@ public:
     static std::vector<SecondaryFlightControlData> resampleSecondaryFlightControlDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
     static std::vector<AircraftHandleData> resampleAircraftHandleDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
     static std::vector<LightData> resampleLightDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
-
 };
 
 #endif // EXPORT_H

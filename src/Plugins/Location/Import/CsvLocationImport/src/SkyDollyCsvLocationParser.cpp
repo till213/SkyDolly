@@ -29,6 +29,8 @@
 #include <QTextStream>
 #include <QString>
 #include <QStringConverter>
+#include <QDate>
+#include <QTime>
 
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
@@ -58,6 +60,8 @@ namespace
         IndicatedAirspeed,
         OnGround,
         EngineEvent,
+        LocalSimulationDate,
+        LocalSimulationTime,
         // Last index
         Count
     };
@@ -122,12 +126,12 @@ Location SkyDollyCsvLocationParser::parseLocation(CsvParser::Row row, bool &ok) 
     location.typeId = d->importTypeId;
     ok = location.typeId != Const::InvalidId;
     if (ok) {
-        const QString categorySymId = row.at(Enum::underly(::Index::Category));
+        const auto categorySymId = row.at(Enum::underly(::Index::Category));
         location.categoryId = d->categoryEnumeration.getItemBySymId(categorySymId).id;
         ok = location.categoryId != Const::InvalidId;
     }
     if (ok) {
-        const QString countrySymId = row.at(Enum::underly(::Index::Country));
+        const auto countrySymId = row.at(Enum::underly(::Index::Country));
         location.countryId = d->countryEnumeration.getItemBySymId(countrySymId).id;
         ok = location.countryId != Const::InvalidId;
     }
@@ -135,57 +139,77 @@ Location SkyDollyCsvLocationParser::parseLocation(CsvParser::Row row, bool &ok) 
         location.identifier = row.at(Enum::underly(::Index::Identifier));
     }
     if (ok) {
-        const double latitude = row.at(Enum::underly(::Index::Latitude)).toDouble(&ok);
+        const auto latitude = row.at(Enum::underly(::Index::Latitude)).toDouble(&ok);
         if (ok) {
             location.latitude = latitude;
         }
     }
     if (ok) {
-        const double longitude = row.at(Enum::underly(::Index::Longitude)).toDouble(&ok);
+        const auto longitude = row.at(Enum::underly(::Index::Longitude)).toDouble(&ok);
         if (ok) {
             location.longitude = longitude;
         }
     }
     if (ok) {
-        const double altitude = row.at(Enum::underly(::Index::Altitude)).toDouble(&ok);
+        const auto altitude = row.at(Enum::underly(::Index::Altitude)).toDouble(&ok);
         if (ok) {
             location.altitude = altitude;
         }
     }
     if (ok) {
-        const double pitch = row.at(Enum::underly(::Index::Pitch)).toDouble(&ok);
+        const auto pitch = row.at(Enum::underly(::Index::Pitch)).toDouble(&ok);
         if (ok) {
             location.pitch = pitch;
         }
     }
     if (ok) {
-        const double bank = row.at(Enum::underly(::Index::Bank)).toDouble(&ok);
+        const auto bank = row.at(Enum::underly(::Index::Bank)).toDouble(&ok);
         if (ok) {
             location.bank = bank;
         }
     }
     if (ok) {
-        const double trueHeading = row.at(Enum::underly(::Index::TrueHeading)).toDouble(&ok);
+        const auto trueHeading = row.at(Enum::underly(::Index::TrueHeading)).toDouble(&ok);
         if (ok) {
             location.trueHeading = trueHeading;
         }
     }
     if (ok) {
-        const int indicatedAirspeed = row.at(Enum::underly(::Index::IndicatedAirspeed)).toInt(&ok);
+        const auto indicatedAirspeed = row.at(Enum::underly(::Index::IndicatedAirspeed)).toInt(&ok);
         if (ok) {
             location.indicatedAirspeed = indicatedAirspeed;
         }
     }
     if (ok) {
-        const QString onGround = row.at(Enum::underly(::Index::OnGround));
+        const auto onGround = row.at(Enum::underly(::Index::OnGround));
         if (ok) {
             location.onGround = onGround == "true" ? true : false;
         }
     }
     if (ok) {
-        const QString engineEventSymId = row.at(Enum::underly(::Index::EngineEvent));
+        const auto engineEventSymId = row.at(Enum::underly(::Index::EngineEvent));
         location.engineEventId = d->engineEventEnumeration.getItemBySymId(engineEventSymId).id;
         ok = location.engineEventId != Const::InvalidId;
+    }
+    if (ok) {
+        const auto localSimulationDateValue = row.at(Enum::underly(::Index::LocalSimulationDate));
+        if (!localSimulationDateValue.isEmpty()) {
+            const auto localSimulationDate = QDate::fromString(localSimulationDateValue, Qt::DateFormat::ISODate);
+            ok = localSimulationDate.isValid();
+            if (ok) {
+                location.localSimulationDate = localSimulationDate;
+            }
+        }
+    }
+    if (ok) {
+        const auto localSimulationTimeValue = row.at(Enum::underly(::Index::LocalSimulationTime));
+        if (!localSimulationTimeValue.isEmpty()) {
+            const auto localSimulationTime = QTime::fromString(localSimulationTimeValue, Qt::DateFormat::ISODate);
+            ok = localSimulationTime.isValid();
+            if (ok) {
+                location.localSimulationTime = localSimulationTime;
+            }
+        }
     }
 
     return location;
