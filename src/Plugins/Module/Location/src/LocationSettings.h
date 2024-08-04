@@ -89,7 +89,6 @@ public:
     const QString &getSearchKeyword() const noexcept;
     void setSearchKeyword(QString keyword) noexcept;
 
-    bool showUserLocations() const noexcept;
     bool hasSelectors() const noexcept;
     const LocationSelector &getLocationSelector() const noexcept;
 
@@ -129,7 +128,19 @@ public:
      */
     void setLocationTableState(QByteArray state) noexcept;
 
+    /*!
+     * Resets the location selection filter.
+     */
     void resetFilter() noexcept;
+
+    /*!
+     * Adjusts the location selection filter such that user locations are visible.
+     */
+    void ensureFilterUserVisibility() noexcept;
+
+    /*!
+     * Resets all settings to their default values.
+     */
     void resetDefaultValues() noexcept;
 
 protected:
