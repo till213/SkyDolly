@@ -71,7 +71,7 @@ public:
     bool importFlights(const QUuid &pluginUuid, Flight &flight) const noexcept;
 
     /*!
-     * Imports the flight data with plugin \c pluginUuid from the input device \c io.
+     * Imports the flight data with plugin \p pluginUuid from the input device \p io.
      *
      * Implementation note: this method (while not necessarily called from the application
      * code itself) is useful for unit tests. So do not remove.

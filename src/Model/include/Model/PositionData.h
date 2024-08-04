@@ -33,12 +33,44 @@ struct MODEL_API PositionData final : public TimeVariableData
     // Position
     double latitude {0.0};
     double longitude {0.0};
-    // GPS altitude
+    // Above mean sea level (MSL) altitude ("true altitude")
     double altitude {0.0};
     // Indicated pressure altitude (analytical purposes only)
     double indicatedAltitude {0.0};
+    // Indicated altitude with the altimeter calibrated to current sea level pressure (analytical purposes only)
+    double calibratedIndicatedAltitude {0.0};
+    // Standard pressure altitude, that is at a 1013.25 hPa (1 atmosphere) setting (analytical purposes only)
+    double pressureAltitude {0.0};
 
+    /*!
+     * Initialises the \p latitude, \p longitude and \p altitude, but not the pressure related altitudes
+     * (that remain at 0.0).
+     *
+     * \param latitude
+     *        the latitude [degrees]
+     * \param longitude
+     *        the longitude [degrees]
+     * \param altitude
+     *        the altitude [feet]
+     */
     explicit PositionData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
+
+    /*!
+     * Initialises all altitude values (true, indicated, pressure) to \p altitude.
+     *
+     * This is not quite correct, but useful for import formats that only provide one given
+     * altitude value, as an approximation.
+     *
+     * \param altitude
+     *        the common altitude value for initialisation of true, indicated and pressure altitudes [feet]
+     */
+    inline void initialiseCommonAltitude(double altitude)
+    {
+        this->altitude = altitude;
+        indicatedAltitude = altitude;
+        calibratedIndicatedAltitude = altitude;
+        pressureAltitude = altitude;
+    }
 };
 
 #endif // POSITIONDATA_H

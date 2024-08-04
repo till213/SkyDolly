@@ -32,7 +32,6 @@
 
 #include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
-#include "SimConnectType.h"
 #include <Model/AircraftHandleData.h>
 
 /*!
@@ -46,7 +45,6 @@ struct SimConnectAircraftHandleEvent
 {
     float tailhookPosition {0.0f};
     std::int32_t gearHandlePosition {0};
-    std::int32_t smokeEnable {0};
 
     SimConnectAircraftHandleEvent(const AircraftHandleData &aircraftHandleData) noexcept
         : SimConnectAircraftHandleEvent()
@@ -60,7 +58,6 @@ struct SimConnectAircraftHandleEvent
     {
         tailhookPosition = static_cast<float>(SkyMath::toPercent(aircraftHandleData.tailhookPosition));
         gearHandlePosition = aircraftHandleData.gearHandlePosition ? 1 : 0;
-        smokeEnable = aircraftHandleData.smokeEnabled ? 1 : 0;
     }
 
     inline AircraftHandleData toAircraftHandleData() const noexcept
@@ -74,14 +71,12 @@ struct SimConnectAircraftHandleEvent
     {
         aircraftHandleData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
         aircraftHandleData.gearHandlePosition = gearHandlePosition != 0;
-        aircraftHandleData.smokeEnabled = smokeEnable != 0;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept
     {
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::TailhookPosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT32);
         ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::GearHandlePosition, "Bool", ::SIMCONNECT_DATATYPE_INT32);
-        ::SimConnect_AddToDataDefinition(simConnectHandle, dataDefinitionId, SimVar::SmokeEnable, "Bool", ::SIMCONNECT_DATATYPE_INT32);
     }
 };
 #pragma pack(pop)

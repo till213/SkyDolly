@@ -34,7 +34,7 @@
 #include "StackTrace.h"
 
 namespace {
-    inline constexpr unsigned n_digits(unsigned value) {
+    constexpr unsigned n_digits(unsigned value) {
         return value < 10 ? 1 : 1 + n_digits(value / 10);
     }
 

@@ -27,7 +27,6 @@
 
 #include <QObject>
 #include <QString>
-#include <QStringLiteral>
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>
@@ -112,8 +111,8 @@ std::vector<FlightData> GpxParser::parseGPX() noexcept
         }
     }
     flightData.creationTime = d->firstDateTimeUtc;
-    flightData.flightCondition.startZuluDateTime = d->firstDateTimeUtc;
-    flightData.flightCondition.startLocalDateTime = d->firstDateTimeUtc.toLocalTime();
+    flightData.flightCondition.setStartZuluDateTime(d->firstDateTimeUtc);
+    flightData.flightCondition.setStartZuluDateTime(d->firstDateTimeUtc.toLocalTime());
     flights.push_back(std::move(flightData));
     return flights;
 }
@@ -150,7 +149,7 @@ void GpxParser::parseWaypoint(FlightData &flightData) noexcept
     }
 
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Waypoint) {
-        FlightPlan &flightPlan = aircraft.getFlightPlan();
+        auto &flightPlan = aircraft.getFlightPlan();
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = !identifier.isEmpty() ? identifier : QObject::tr("Waypoint %1").arg(flightPlan.count() + 1);
         flightPlan.add(waypoint);
@@ -220,7 +219,7 @@ void GpxParser::parseRoutePoint(FlightData &flightData) noexcept
     }
 
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Route) {
-        FlightPlan &flightPlan = aircraft.getFlightPlan();
+        auto &flightPlan = aircraft.getFlightPlan();
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = !identifier.isEmpty() ? identifier : QObject::tr("Waypoint %1").arg(flightPlan.count() + 1);
         flightPlan.add(waypoint);
@@ -299,7 +298,7 @@ inline void GpxParser::parseTrackPoint(FlightData &flightData) noexcept
     }
 
     if (ok && d->pluginSettings.getWaypointSelection() == GpxImportSettings::GPXElement::Track) {
-        FlightPlan &flightPlan = aircraft.getFlightPlan();
+        auto &flightPlan = aircraft.getFlightPlan();
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = !identifier.isEmpty() ? identifier : QObject::tr("Waypoint %1").arg(flightPlan.count() + 1);
         flightPlan.add(waypoint);
@@ -377,7 +376,7 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
 
     if (d->pluginSettings.isConvertAltitudeEnabled()) {
         // Convert height above WGS84 ellipsoid (HAE) to height above EGM geoid [meters]
-        altitude = d->convert.wgs84ToEgmGeoid(altitude, latitude, longitude);
+        altitude = d->convert.ellipsoidToGeoidHeight(altitude, latitude, longitude);
     }
     altitude = Convert::metersToFeet(altitude);
 

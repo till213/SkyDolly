@@ -114,7 +114,7 @@ void BasicFlightImportDialog::initUi() noexcept
 
 void BasicFlightImportDialog::initBasicUi() noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     ui->pathLineEdit->setText(QDir::toNativeSeparators(settings.getExportPath()));
 
     if (d->pluginSettings.isAircraftSelectionRequired()) {

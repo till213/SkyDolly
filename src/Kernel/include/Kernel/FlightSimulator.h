@@ -25,28 +25,27 @@
 #ifndef FLIGHTSIMULATOR_H
 #define FLIGHTSIMULATOR_H
 
+#include <cstdint>
+
 #include <QString>
-#include <QStringView>
 
 #include "KernelLib.h"
 
 class KERNEL_API FlightSimulator final
 {
 public:
-    enum struct Id {
+    enum struct Id: std::uint8_t {
         None,
         All,
         MSFS,
         Prepar3Dv5
     };
 
-    // Implementation note: we need to use QStringLiteral here for static inline const QStrings
-    // https://forum.qt.io/topic/102312/very-strange-heap-corruption-exit-code-1073740940-0xc0000374-with-static-inline-const-qstring-release-only
-    static inline const QString FlightSimulatorNameAll {"All"};
-    static inline const QString FlightSimulatorNameMSFS {"MSFS"};
-    static inline const QString FlightSimulatorNamePrepar3Dv5 {"Prepar3Dv5"};
+    static constexpr const char *FlightSimulatorNameAll {"All"};
+    static constexpr const char *FlightSimulatorNameMSFS {"MSFS"};
+    static constexpr const char *FlightSimulatorNamePrepar3Dv5 {"Prepar3Dv5"};
 
-    static inline Id nameToId(QStringView name) noexcept {
+    static inline Id nameToId(const QString &name) noexcept {
         Id id {Id::None};
         if (name == FlightSimulatorNameAll) {
             id = Id::All;

@@ -25,9 +25,7 @@
 #ifndef ABSTRACTCOMPONENT_H
 #define ABSTRACTCOMPONENT_H
 
-#include <memory>
 #include <vector>
-#include <iterator>
 #include <cstdint>
 #include <type_traits>
 
@@ -67,7 +65,7 @@ public:
     }
 
     /*!
-     * Inserts \c data at the end, or updates the \e last element (only) if
+     * Inserts \p data at the end, or updates the \e last element (only) if
      * the data items have the same timestamp.
      *
      * Use case: recorded data items are inserted chronologically, but some recorded items
@@ -88,11 +86,11 @@ public:
     }
 
     /*!
-     * Inserts \c data at the end, or updates the element having the same
+     * Inserts \p data at the end, or updates the element having the same
      * timestamp. That is, the entire collection is being searched first.
      *
      * Use case: data items are inserted in random order ("flight augmentation");
-     * use \c upsertLast in case items are to be inserted sequentially in order
+     * use \p upsertLast in case items are to be inserted sequentially in order
      *
      * \param data
      *        the data to be upserted

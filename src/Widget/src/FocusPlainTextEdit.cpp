@@ -32,7 +32,7 @@ FocusPlainTextEdit::FocusPlainTextEdit(QWidget *parent) noexcept
     : QPlainTextEdit {parent}
 {}
 
-// PROTECTED:
+// PROTECTED
 
 void FocusPlainTextEdit::focusOutEvent(QFocusEvent *event) noexcept
 {

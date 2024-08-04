@@ -30,7 +30,6 @@
 
 #include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
-#include "SimConnectType.h"
 #include <Model/EngineData.h>
 
 /*!
@@ -56,50 +55,50 @@ struct SimConnectEngineCommon
     float recipEngineCowlFlapPosition3 {0.0f};
     float recipEngineCowlFlapPosition4 {0.0f};
 
-    SimConnectEngineCommon(const EngineData &engineData) noexcept
+    SimConnectEngineCommon(const EngineData &data) noexcept
         : SimConnectEngineCommon()
     {
-        fromEngineData(engineData);
+        fromEngineData(data);
     }
 
     SimConnectEngineCommon() = default;
 
-    inline void fromEngineData(const EngineData &engineData) noexcept
+    inline void fromEngineData(const EngineData &data) noexcept
     {
-        throttleLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition1));
-        throttleLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition2));
-        throttleLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition3));
-        throttleLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.throttleLeverPosition4));
-        propellerLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition1));
-        propellerLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition2));
-        propellerLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition3));
-        propellerLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(engineData.propellerLeverPosition4));
-        recipEngineCowlFlapPosition1 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition1));
-        recipEngineCowlFlapPosition2 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition2));
-        recipEngineCowlFlapPosition3 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition3));
-        recipEngineCowlFlapPosition4 = static_cast<float>(SkyMath::toPercent(engineData.cowlFlapPosition4));
+        throttleLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(data.throttleLeverPosition1));
+        throttleLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(data.throttleLeverPosition2));
+        throttleLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(data.throttleLeverPosition3));
+        throttleLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(data.throttleLeverPosition4));
+        propellerLeverPosition1 = static_cast<float>(SkyMath::toNormalisedPosition(data.propellerLeverPosition1));
+        propellerLeverPosition2 = static_cast<float>(SkyMath::toNormalisedPosition(data.propellerLeverPosition2));
+        propellerLeverPosition3 = static_cast<float>(SkyMath::toNormalisedPosition(data.propellerLeverPosition3));
+        propellerLeverPosition4 = static_cast<float>(SkyMath::toNormalisedPosition(data.propellerLeverPosition4));
+        recipEngineCowlFlapPosition1 = static_cast<float>(SkyMath::toPercent(data.cowlFlapPosition1));
+        recipEngineCowlFlapPosition2 = static_cast<float>(SkyMath::toPercent(data.cowlFlapPosition2));
+        recipEngineCowlFlapPosition3 = static_cast<float>(SkyMath::toPercent(data.cowlFlapPosition3));
+        recipEngineCowlFlapPosition4 = static_cast<float>(SkyMath::toPercent(data.cowlFlapPosition4));
     }
 
     inline EngineData toEngineData() const noexcept
     {
-        EngineData engineData;
+        EngineData data;
 
         // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
         //       position (std::int16_t) which supports negative values as well
-        engineData.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(throttleLeverPosition1);
-        engineData.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(throttleLeverPosition2);
-        engineData.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(throttleLeverPosition3);
-        engineData.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(throttleLeverPosition4);
-        engineData.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(propellerLeverPosition1);
-        engineData.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(propellerLeverPosition2);
-        engineData.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(propellerLeverPosition3);
-        engineData.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(propellerLeverPosition4);
-        engineData.cowlFlapPosition1 = SkyMath::fromPercent(recipEngineCowlFlapPosition1);
-        engineData.cowlFlapPosition2 = SkyMath::fromPercent(recipEngineCowlFlapPosition2);
-        engineData.cowlFlapPosition3 = SkyMath::fromPercent(recipEngineCowlFlapPosition3);
-        engineData.cowlFlapPosition4 = SkyMath::fromPercent(recipEngineCowlFlapPosition4);
+        data.throttleLeverPosition1 = SkyMath::fromNormalisedPosition(throttleLeverPosition1);
+        data.throttleLeverPosition2 = SkyMath::fromNormalisedPosition(throttleLeverPosition2);
+        data.throttleLeverPosition3 = SkyMath::fromNormalisedPosition(throttleLeverPosition3);
+        data.throttleLeverPosition4 = SkyMath::fromNormalisedPosition(throttleLeverPosition4);
+        data.propellerLeverPosition1 = SkyMath::fromNormalisedPosition(propellerLeverPosition1);
+        data.propellerLeverPosition2 = SkyMath::fromNormalisedPosition(propellerLeverPosition2);
+        data.propellerLeverPosition3 = SkyMath::fromNormalisedPosition(propellerLeverPosition3);
+        data.propellerLeverPosition4 = SkyMath::fromNormalisedPosition(propellerLeverPosition4);
+        data.cowlFlapPosition1 = SkyMath::fromPercent(recipEngineCowlFlapPosition1);
+        data.cowlFlapPosition2 = SkyMath::fromPercent(recipEngineCowlFlapPosition2);
+        data.cowlFlapPosition3 = SkyMath::fromPercent(recipEngineCowlFlapPosition3);
+        data.cowlFlapPosition4 = SkyMath::fromPercent(recipEngineCowlFlapPosition4);
 
-        return engineData;
+        return data;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept

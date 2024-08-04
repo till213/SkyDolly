@@ -40,11 +40,7 @@ namespace
 
 struct KmlImportSettingsPrivate
 {
-    KmlImportSettingsPrivate()
-        : format(::DefaultFormat)
-    {}
-
-    KmlImportSettings::Format format;
+    KmlImportSettings::Format format {::DefaultFormat};
 };
 
 // PUBLIC

@@ -29,7 +29,6 @@
 #include <utility>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlDatabase>
@@ -73,7 +72,7 @@ SQLitePositionDao::~SQLitePositionDao() = default;
 
 bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &position) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "insert into position ("
@@ -82,14 +81,18 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
         "  latitude,"
         "  longitude,"
         "  altitude,"
-        "  indicated_altitude"
+        "  indicated_altitude,"
+        "  calibrated_indicated_altitude,"
+        "  pressure_altitude"
         ") values ("
         " :aircraft_id,"
         " :timestamp,"
         " :latitude,"
         " :longitude,"
         " :altitude,"
-        " :indicated_altitude"
+        " :indicated_altitude,"
+        " :calibrated_indicated_altitude,"
+        " :pressure_altitude"
         ");"
     );
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
@@ -98,6 +101,8 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
     query.bindValue(":longitude", position.longitude);
     query.bindValue(":altitude", position.altitude);
     query.bindValue(":indicated_altitude", position.indicatedAltitude);
+    query.bindValue(":calibrated_indicated_altitude", position.calibratedIndicatedAltitude);
+    query.bindValue(":pressure_altitude", position.pressureAltitude);
 
     const bool ok = query.exec();
 
@@ -112,7 +117,7 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
 std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<PositionData> positionData;
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -125,7 +130,7 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const auto db {QSqlDatabase::database(d->connectionName)};
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             positionData.reserve(query.size());
@@ -138,6 +143,8 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
         const auto longitudeIdx = record.indexOf("longitude");
         const auto altitudeIdx = record.indexOf("altitude");
         const auto indicatedAltitudeIdx = record.indexOf("indicated_altitude");
+        const auto calibratedIndicatedAltitudeIdx = record.indexOf("calibrated_indicated_altitude");
+        const auto pressureAltitudeIdx = record.indexOf("pressure_altitude");
         while (query.next()) {
             PositionData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
@@ -145,6 +152,8 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
             data.longitude = query.value(longitudeIdx).toDouble();
             data.altitude = query.value(altitudeIdx).toDouble();
             data.indicatedAltitude = query.value(indicatedAltitudeIdx).toDouble();
+            data.calibratedIndicatedAltitude = query.value(calibratedIndicatedAltitudeIdx).toDouble();
+            data.pressureAltitude = query.value(pressureAltitudeIdx).toDouble();
 
             positionData.push_back(std::move(data));
         }
@@ -162,7 +171,7 @@ std::vector<PositionData> SQLitePositionDao::getByAircraftId(std::int64_t aircra
 
 bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "
@@ -185,7 +194,7 @@ bool SQLitePositionDao::deleteByFlightId(std::int64_t flightId) const noexcept
 
 bool SQLitePositionDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "

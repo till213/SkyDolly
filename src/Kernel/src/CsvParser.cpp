@@ -23,11 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <memory>
 #include <unordered_map>
 
 #include <QTextStream>
-#include <QStringLiteral>
 
 #include "CsvParser.h"
 

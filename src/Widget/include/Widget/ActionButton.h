@@ -26,6 +26,7 @@
 #define ACTIONBUTTON_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 #include <QPushButton>
@@ -54,7 +55,7 @@ class WIDGET_API ActionButton : public ActiveButton
 {
     Q_OBJECT
 public:
-    enum struct Capitalisation{
+    enum struct Capitalisation: std::uint8_t {
         Normal,
         AllCaps
     };

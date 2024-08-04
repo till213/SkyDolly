@@ -25,6 +25,8 @@
 #ifndef SAMPLERATE_H
 #define SAMPLERATE_H
 
+#include <cstdint>
+
 #include <QtGlobal>
 
 /*!
@@ -41,9 +43,12 @@ namespace SampleRate
 
     /*!
      * The SampleRate defines various recording sample rates.
+     *
+     * Implementation note: these values are peristed in the application settings.
      */
-    enum struct SampleRate: int {
-        Auto = 0,
+    enum struct SampleRate: std::uint8_t {
+        First = 0,
+        Auto = First,
         Hz1,
         Hz2,
         Hz5,
@@ -55,26 +60,31 @@ namespace SampleRate
         Hz30,
         Hz45,
         Hz50,
-        Hz60
+        Hz60,
+        Last = Hz60
     };
 
     /*!
      * Resampling period [millisecons], useful for resampling during data export.
+     *
+     * Implementation note: these values are peristed in the application settings.
      */
-    enum struct ResamplingPeriod {
-        Original = 0,
+    enum struct ResamplingPeriod: std::uint16_t {
+        First = 0,
+        Original = First,
         TenHz = 100,
         FiveHz = 200,
         TwoHz = 500,
         OneHz = 1000,
         AFifthHz = 5000,
-        ATenthHz = 10000
+        ATenthHz = 10000,
+        Last = ATenthHz
     };
 
     static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
 
     /*!
-     * Converts the given \c sampleRate enumeration value to the corresponding value in Hz.
+     * Converts the given \p sampleRate enumeration value to the corresponding value in Hz.
      *
      * \param sampleRate
      *        the sample rate enumeration to convert
@@ -113,43 +123,44 @@ namespace SampleRate
     }
 
     /*!
-     * Converts the given \c sampleRate in Hz to the corresponding enumeration value.
+     * Converts the given \p sampleRate in Hz to the corresponding enumeration value.
      *
      * \param sampleRate
      *        the sample rate in Hz to convert
-     * \return the sample rate enumeration value; default: \c Auto
+     * \return the sample rate enumeration value; default: \p Auto
      */
     constexpr SampleRate fromValue(double sampleRate) noexcept {
-        if (sampleRate <= 1.0)
+        if (sampleRate <= 1.0) {
             return SampleRate::Hz1;
-        else if (sampleRate <= 2.0)
+        } else if (sampleRate <= 2.0) {
             return SampleRate::Hz2;
-        else if (sampleRate <= 5.0)
+        } else if (sampleRate <= 5.0) {
             return SampleRate::Hz5;
-        else if (sampleRate <= 10.0)
+        } else if (sampleRate <= 10.0) {
             return SampleRate::Hz10;
-        else if (sampleRate <= 15.0)
+        } else if (sampleRate <= 15.0) {
             return SampleRate::Hz15;
-        else if (sampleRate <= 20.0)
+        } else if (sampleRate <= 20.0) {
             return SampleRate::Hz20;
-        else if (sampleRate <= 24.0)
+        } else if (sampleRate <= 24.0) {
             return SampleRate::Hz24;
-        else if (sampleRate <= 25.0)
+        } else if (sampleRate <= 25.0) {
             return SampleRate::Hz25;
-        else if (sampleRate <= 30.0)
+        } else if (sampleRate <= 30.0) {
             return SampleRate::Hz30;
-        else if (sampleRate <= 45.0)
+        } else if (sampleRate <= 45.0) {
             return SampleRate::Hz45;
-        else if (sampleRate <= 50.0)
+        } else if (sampleRate <= 50.0) {
             return SampleRate::Hz50;
-        else if (sampleRate <= 60.0)
+        } else if (sampleRate <= 60.0) {
             return SampleRate::Hz60;
-        else
+        } else {
             return SampleRate::Auto;
+        }
     }
 
     /*!
-     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRateValue [Hz].
+     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \p sampleRateValue [Hz].
      *
      * \param sampleRateValue
      *        the sample rate value to convert to the corresponding interval
@@ -164,7 +175,7 @@ namespace SampleRate
     }
 
     /*!
-     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRate [Hz].
+     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \p sampleRate [Hz].
      * \param sampleRate
      *        the sample rate to convert to the corresponding interval
      * \return the interval in milliseconds

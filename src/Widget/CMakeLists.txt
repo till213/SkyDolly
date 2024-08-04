@@ -14,11 +14,16 @@ target_sources(${LIBRARY_NAME}
         include/Widget/ActionButton.h src/ActionButton.cpp
         include/Widget/ActionRadioButton.h src/ActionRadioButton.cpp
         include/Widget/ActionCheckBox.h src/ActionCheckBox.cpp
+        include/Widget/FocusDateEdit.h src/FocusDateEdit.cpp
+        include/Widget/FocusTimeEdit.h src/FocusTimeEdit.cpp
         include/Widget/FocusPlainTextEdit.h src/FocusPlainTextEdit.cpp
         include/Widget/AircraftSelectionComboBox.h src/AircraftSelectionComboBox.cpp
+        include/Widget/TimestampEdit.h src/TimestampEdit.cpp src/TimestampEdit.ui
         include/Widget/Platform.h src/Platform.cpp
+        include/Widget/TableCheckableItem.h src/TableCheckableItem.cpp
         include/Widget/TableDateItem.h src/TableDateItem.cpp
         include/Widget/TableTimeItem.h src/TableTimeItem.cpp
+        include/Widget/TableDurationItem.h src/TableDurationItem.cpp
         include/Widget/HyperlinkTextEdit.h src/HyperlinkTextEdit.cpp
         include/Widget/EnumerationComboBox.h src/EnumerationComboBox.cpp
         include/Widget/EnumerationWidgetItem.h src/EnumerationWidgetItem.cpp

@@ -346,7 +346,7 @@ create index location_idx6 on location(on_ground);
 
 @migr(id = "c94c121e-3d93-44e4-a747-6db2b5e3b45b", descn = "Update application version to 0.12", step = 1)
 update metadata
-set app_version = '0.12.0';
+set    app_version = '0.12.0';
 
 @migr(id = "eeed782c-d594-4635-88d7-15b8d4ab7edc", descn = "Create engine event enumeration table", step_cnt = 2)
 create table enum_engine_event(
@@ -393,7 +393,7 @@ where  sym_id = 'QA';
 
 @migr(id = "55a04d46-fc38-445a-8967-f84c96aa41bb", descn = "Update application version to 0.13", step = 1)
 update metadata
-set app_version = '0.13.0';
+set    app_version = '0.13.0';
 
 @migr(id = "7620ca47-cbd3-4718-9ea9-0d701236aa58", descn = "Add new location categories", step = 1)
 insert into enum_location_category(sym_id, name, desc)
@@ -407,20 +407,114 @@ values
 
 @migr(id = "b7c620c9-5ffe-4fdc-a120-cba323e327d0", descn = "Update application version to 0.14", step = 1)
 update metadata
-set app_version = '0.14.0';
+set    app_version = '0.14.0';
 
 @migr(id = "6a3f5879-8974-4685-9285-ec1f174fdacb", descn = "Update application version to 0.15", step = 1)
 update metadata
-set app_version = '0.15.0';
+set    app_version = '0.15.0';
 
 @migr(id = "24916944-050e-4569-8352-1446fe3137d2", descn = "Update application version to 0.16", step = 1)
 update metadata
-set app_version = '0.16.0';
+set    app_version = '0.16.0';
 
 @migr(id = "54eddc7a-1a89-40ae-af73-0c6ae74e6a2d", descn = "Update application version to 0.17", step = 1)
 update metadata
-set app_version = '0.17.0';
+set    app_version = '0.17.0';
 
 @migr(id = "36bb8b21-76c4-4f71-9644-b78abaefdb64", descn = "Update application version to 0.18", step = 1)
 update metadata
-set app_version = '0.18.0';
+set    app_version = '0.18.0';
+
+@migr(id = "b8eb79c7-476d-4ad4-9b6e-88698e03deaf", descn = "Add Kosovo to countries", step = 1)
+insert into enum_country(sym_id, name)
+values ('RS-KM', 'Kosovo');
+
+@migr(id = "19a11d50-0357-4e90-b747-e3ea340f3224", descn = "Adjust country names to commonly used English names", step = 1)
+update enum_country
+set name = 'British Virgin Islands'
+where sym_id = 'VG';
+update enum_country
+set name = 'Brunei'
+where sym_id = 'BN';
+update enum_country
+set name = 'Cape Verde'
+where sym_id = 'CV';
+update enum_country
+set name = 'Colombia'
+where sym_id = 'CO';
+update enum_country
+set name = 'Democratic Republic of the Congo'
+where sym_id = 'CD';
+update enum_country
+set name = 'Republic of the Congo'
+where sym_id = 'CG';
+update enum_country
+set name = 'Ivory Coast'
+where sym_id = 'CI';
+update enum_country
+set name = 'Czech Republic'
+where sym_id = 'CZ';
+update enum_country
+set name = 'North Korea'
+where sym_id = 'KP';
+update enum_country
+set name = 'South Korea'
+where sym_id = 'KR';
+update enum_country
+set name = 'Federated States of Micronesia'
+where sym_id = 'FM';
+update enum_country
+set name = 'Great Britain'
+where sym_id = 'GB';
+update enum_country
+set name = 'Laos'
+where sym_id = 'LA';
+update enum_country
+set name = 'Syria'
+where sym_id = 'SY';
+update enum_country
+set name = 'Turkey'
+where sym_id = 'TR';
+update enum_country
+set name = 'Vietnam'
+where sym_id = 'VN';
+update enum_country
+set name = 'Virgin Islands'
+where sym_id = 'VI';
+
+@migr(id = "1b1fe05f-6b17-451e-9764-906baed01a98", descn = "Add beach to location categories", step = 1)
+insert into enum_location_category(sym_id, name, desc)
+values ('BE', 'Beach', 'Beach'),
+       ('CS', 'Castle', 'Castle');
+
+@migr(id = "37e34152-4f60-4f28-8c9a-7b2311b6819c", descn = "Update application version to 0.19", step = 1)
+update metadata
+set    app_version = '0.19.0';
+
+@migr(id = "5c3b0c18-6970-4477-a3b3-7c7b6d95d459", descn = "Rename system location type to preset", step = 1)
+update enum_location_type
+set sym_id = 'P',
+    name = 'Preset',
+    desc = 'Preset locations provided by Sky Dolly'
+where sym_id = 'S';
+
+@migr(id = "bba4121b-8d18-44c6-9ba2-c0687731f2e3", descn = "Set country of city Hong Kong to Hong Kong", step = 2)
+update location
+set country_id = (select id
+                  from   enum_country ec
+                  where  ec.sym_id = 'HK')
+where title = 'Hong Kong'
+  and type_id = (select id
+                 from   enum_location_type elt
+                 where  elt.sym_id = 'P');
+
+@migr(id = "e5288e8b-8d88-4dd7-b06c-1bf3609b8199", descn = "Add local simulation date and time columns to location", step = 1)
+alter table location add column local_sim_date date;
+alter table location add column local_sim_time time;
+
+@migr(id = "f332611d-3253-4620-a2df-f9eb387a4bfc", descn = "Drop column attributes from location", step = 1)
+alter table location drop column attributes;
+
+@migr(id = "6b37e83f-db5b-4761-bd21-4a5510f9fecc", descn = "Update application version to 0.20", step = 1)
+update metadata
+set    app_version = '0.20.0';

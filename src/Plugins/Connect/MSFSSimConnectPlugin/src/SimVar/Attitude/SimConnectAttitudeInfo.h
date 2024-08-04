@@ -25,12 +25,13 @@
 #ifndef SIMCONNECTATTITUDEINFOH
 #define SIMCONNECTATTITUDEINFOH
 
+#include <cstdint>
+
 #include <windows.h>
 #include <SimConnect.h>
 
 #include <Model/SimVar.h>
 #include <Model/AttitudeData.h>
-#include "SimConnectType.h"
 
 /*!
  * Aircraft attitude simulation variables that are either stored for information purposes only
@@ -43,10 +44,10 @@ struct SimConnectAttitudeInfo
 {
     std::int32_t onGround {0};
 
-    SimConnectAttitudeInfo(const AttitudeData &attitudeData) noexcept
+    SimConnectAttitudeInfo(const AttitudeData &data) noexcept
         : SimConnectAttitudeInfo()
     {
-        fromAttitudeData(attitudeData);
+        fromAttitudeData(data);
     }
 
     SimConnectAttitudeInfo() = default;

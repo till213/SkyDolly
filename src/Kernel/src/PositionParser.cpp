@@ -25,7 +25,6 @@
 #include <QRegularExpression>
 #include <QStringList>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringView>
 #ifdef DEBUG
 #include <QDebug>

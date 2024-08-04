@@ -218,7 +218,7 @@ bool KmlExportPlugin::exportSingleAircraft(const Aircraft &aircraft, bool inForm
 "          </coordinates>\n"
 "        </LineString>\n";
 
-    std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    const auto interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
     if (interpolatedPositionData.size() > 0) {
 
@@ -306,13 +306,13 @@ bool KmlExportPlugin::exportFooter(QIODevice &io) const noexcept
 
 QString KmlExportPlugin::getFlightDescription(const FlightData &flightData) const noexcept
 {
-    const FlightCondition &flightCondition = flightData.flightCondition;
+    const auto &flightCondition = flightData.flightCondition;
     return QObject::tr("Description") % ": " % flightData.description % "\n" %
            "\n" %
            QObject::tr("Creation date") % ": " % d->unit.formatDate(flightData.creationTime) % "\n" %
            QObject::tr("Flight number") % ": " % flightData.flightNumber % "\n" %
-           QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalDateTime) % "\n" %
-           QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalDateTime) % "\n" %
+           QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.getStartLocalDateTime()) % "\n" %
+           QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.getEndLocalDateTime()) % "\n" %
            QObject::tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
            QObject::tr("Total air temperature") % ": " % d->unit.formatCelcius(flightCondition.totalAirTemperature) % "\n" %
            QObject::tr("Precipitation") % ": " % SimType::precipitationStateToString(flightCondition.precipitationState) % "\n" %
@@ -324,12 +324,12 @@ QString KmlExportPlugin::getFlightDescription(const FlightData &flightData) cons
 
 QString KmlExportPlugin::getAircraftDescription(const Aircraft &aircraft) const noexcept
 {
-    const AircraftInfo &info = aircraft.getAircraftInfo();
-    const AircraftType &type = info.aircraftType;
-    return QObject::tr("Category") % ": " % type.category % "\n" %
-           QObject::tr("Engine type") % ": " % SimType::engineTypeToString(type.engineType) % "\n" %
-           QObject::tr("Number of engines") % ": " % d->unit.formatNumber(type.numberOfEngines, 0) % "\n" %
-           QObject::tr("Wingspan") % ": " % d->unit.formatFeet(type.wingSpan) % "\n"
+    const auto &info = aircraft.getAircraftInfo();
+    const auto &aircraftType = info.aircraftType;
+    return QObject::tr("Category") % ": " % aircraftType.category % "\n" %
+           QObject::tr("Engine type") % ": " % SimType::engineTypeToString(aircraftType.engineType) % "\n" %
+           QObject::tr("Number of engines") % ": " % d->unit.formatNumber(aircraftType.numberOfEngines, 0) % "\n" %
+           QObject::tr("Wingspan") % ": " % d->unit.formatFeet(aircraftType.wingSpan) % "\n"
            "\n" %
            QObject::tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
            QObject::tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %

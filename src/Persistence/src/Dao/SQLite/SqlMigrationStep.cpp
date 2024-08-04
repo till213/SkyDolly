@@ -26,6 +26,7 @@
 #include <utility>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QStringList>
 #include <QStringBuilder>
 #include <QRegularExpression>
@@ -103,7 +104,7 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) const n
 
 bool SqlMigrationStep::checkApplied() const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare("select m.success, m.step, m.msg from migr m where m.id = :id and m.step = :step;");
     query.bindValue(":id", d->migrationId);

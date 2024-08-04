@@ -26,8 +26,7 @@
 #define KMLSTYLEEXPORT_H
 
 #include <memory>
-#include <unordered_map>
-#include <utility>
+#include <cstdint>
 
 class QIODevice;
 
@@ -39,7 +38,7 @@ struct KmlStyleExportPrivate;
 class KmlStyleExport
 {
 public:
-    enum struct Icon {
+    enum struct Icon: std::uint8_t {
         Airport,
         Flag
     };

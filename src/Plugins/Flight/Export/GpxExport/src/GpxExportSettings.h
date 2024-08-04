@@ -26,6 +26,7 @@
 #define GPXEXPORTSETTINGS_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 
@@ -43,7 +44,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct TimestampMode {
+    enum struct TimestampMode: std::uint8_t {
         First = 0,
         /*! Timestamps are calculated based on the simulation timestamps. */
         Simulation = First,
@@ -61,6 +62,9 @@ public:
 
     TimestampMode getTimestampMode() const noexcept;
     void setTimestampMode(TimestampMode timestampMode) noexcept;
+
+    bool isGeoidHeightExportEnabled() const noexcept;
+    void setGeoidHeightExportEnabled(bool enable) noexcept;
 
     bool isResamplingSupported() const noexcept override;
     bool isFormationExportSupported(FormationExport formationExport) const noexcept override;

@@ -54,7 +54,7 @@ std::pair<PositionData, AttitudeData> Formation::calculateRelativePositionToUser
 
     const auto &flight = Logbook::getInstance().getCurrentFlight();
     const auto &aircraft = flight.getUserAircraft();
-    Position &position = aircraft.getPosition();
+    const auto &position = aircraft.getPosition();
     if (position.count() > 0) {
         const auto &positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
         const auto &aircraftInfo = aircraft.getAircraftInfo();
@@ -166,8 +166,7 @@ std::pair<PositionData, AttitudeData> Formation::calculateRelativePositionToUser
         initialPositionData.timestamp = positionData.timestamp;
         initialPositionData.latitude = coordinate.first;
         initialPositionData.longitude = coordinate.second;
-        initialPositionData.altitude = altitude;
-        initialPositionData.indicatedAltitude = altitude;
+        initialPositionData.initialiseCommonAltitude(altitude);
 
     } // position count > 0
 

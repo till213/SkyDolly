@@ -28,7 +28,6 @@
 #include <QIODevice>
 #include <QStringBuilder>
 #include <QString>
-#include <QStringLiteral>
 #include <QDateTime>
 
 #include <Kernel/Version.h>
@@ -112,7 +111,6 @@ bool GpxExportPlugin::exportFlightData(const FlightData &flightData, QIODevice &
 
 bool GpxExportPlugin::exportAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    updateStartDateTimeUtc(flightData, aircraft);
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
     if (ok) {
@@ -122,7 +120,7 @@ bool GpxExportPlugin::exportAircraft(const FlightData &flightData, const Aircraf
         ok = exportWaypoints(flightData, io);
     }
     if (ok) {
-        ok = exportSingleAircraft(aircraft, io);
+        ok = exportSingleAircraft(flightData, aircraft, io);
     }    
     if (ok) {
         ok = exportFooter(io);
@@ -143,6 +141,7 @@ void GpxExportPlugin::updateStartDateTimeUtc(const FlightData &flightData, const
         d->startDateTimeUtc = flightData.getAircraftCreationTime(aircraft).toUTC();
         break;
     }
+    d->startDateTimeUtc.setTimeZone(QTimeZone::UTC);
 }
 
 bool GpxExportPlugin::exportHeader(QIODevice &io) const noexcept
@@ -171,7 +170,7 @@ bool GpxExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice 
 {
     bool ok {true};
     for (const auto &aircraft : flightData.aircraft) {
-        ok = exportSingleAircraft(aircraft, io);
+        ok = exportSingleAircraft(flightData, aircraft, io);
         if (!ok) {
             break;
         }
@@ -179,13 +178,14 @@ bool GpxExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice 
     return ok;
 }
 
-bool GpxExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool GpxExportPlugin::exportSingleAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    updateStartDateTimeUtc(flightData, aircraft);
+    const auto interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
     if (interpolatedPositionData.size() > 0) {
 
-        const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+        const auto &aircraftInfo = aircraft.getAircraftInfo();
         const QString trackBegin =
 "  <trk>\n"
 "    <name><![CDATA[" % aircraftInfo.aircraftType.type % "]]></name>\n"
@@ -216,9 +216,20 @@ bool GpxExportPlugin::exportSingleAircraft(const Aircraft &aircraft, QIODevice &
 bool GpxExportPlugin::exportWaypoints(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
-    const FlightPlan &flightPlan = flightData.getUserAircraftConst().getFlightPlan();
+    const auto &flightPlan = flightData.getUserAircraftConst().getFlightPlan();
+    int count {0};
+    const auto last = flightPlan.count() - 1;
     for (const auto &waypoint : flightPlan) {
-        ok = exportWaypoint(waypoint, io);
+        QString description;
+        if (count == 0) {
+            description = tr("Departure");
+        } else if (count < last) {
+            description = tr("Waypoint");
+        } else {
+            description = tr("Arrival");
+        }
+        ++count;
+        ok = exportWaypoint(waypoint, description, io);
         if (!ok) {
             break;
         }
@@ -234,13 +245,13 @@ bool GpxExportPlugin::exportFooter(QIODevice &io) const noexcept
 
 QString GpxExportPlugin::getFlightDescription(const FlightData &flightData) const noexcept
 {
-    const FlightCondition &flightCondition = flightData.flightCondition;
+    const auto &flightCondition = flightData.flightCondition;
     return flightData.description % "\n" %
            "\n" %
            QObject::tr("Creation date") % ": " % d->unit.formatDate(flightData.creationTime) % "\n" %
            QObject::tr("Flight number") % ": " % flightData.flightNumber % "\n" %
-           QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalDateTime) % "\n" %
-           QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalDateTime) % "\n" %
+           QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.getStartLocalDateTime()) % "\n" %
+           QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.getEndLocalDateTime()) % "\n" %
            QObject::tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
            QObject::tr("Total air temperature") % ": " % d->unit.formatCelcius(flightCondition.totalAirTemperature) % "\n" %
            QObject::tr("Precipitation") % ": " % SimType::precipitationStateToString(flightCondition.precipitationState) % "\n" %
@@ -252,12 +263,12 @@ QString GpxExportPlugin::getFlightDescription(const FlightData &flightData) cons
 
 QString GpxExportPlugin::getAircraftDescription(const Aircraft &aircraft) const noexcept
 {
-    const AircraftInfo &info = aircraft.getAircraftInfo();
-    const AircraftType &type = info.aircraftType;
-    return QObject::tr("Category") % ": " % type.category % "\n" %
-           QObject::tr("Engine type") % ": " % SimType::engineTypeToString(type.engineType) % "\n" %
-           QObject::tr("Number of engines") % ": " % d->unit.formatNumber(type.numberOfEngines, 0) % "\n" %
-           QObject::tr("Wingspan") % ": " % d->unit.formatFeet(type.wingSpan) % "\n"
+    const auto &info = aircraft.getAircraftInfo();
+    const auto &aircraftType = info.aircraftType;
+    return QObject::tr("Category") % ": " % aircraftType.category % "\n" %
+           QObject::tr("Engine type") % ": " % SimType::engineTypeToString(aircraftType.engineType) % "\n" %
+           QObject::tr("Number of engines") % ": " % d->unit.formatNumber(aircraftType.numberOfEngines, 0) % "\n" %
+           QObject::tr("Wingspan") % ": " % d->unit.formatFeet(aircraftType.wingSpan) % "\n"
            "\n" %
            QObject::tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
            QObject::tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %
@@ -267,28 +278,42 @@ QString GpxExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
 
 inline bool GpxExportPlugin::exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept
 {
-    const QDateTime dateTimeUtc = d->startDateTimeUtc.addMSecs(positionData.timestamp);
-    // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
-    const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
-
-    const QString trackPoint =
+    // Elevation above mean sea level (MSL)
+    const auto elevation = Convert::feetToMeters(positionData.altitude);
+    const auto dateTimeUtc = d->startDateTimeUtc.addMSecs(positionData.timestamp);
+    QString trackPoint =
 "      <trkpt lat=\"" % Export::formatCoordinate(positionData.latitude) % "\" lon=\"" % Export::formatCoordinate(positionData.longitude) % "\">\n"
-"        <ele>" % Export::formatNumber(heightAboveEllipsoid).toUtf8() % "</ele>\n"
-"        <time>" % dateTimeUtc.toString(Qt::ISODate) % "</time>\n"
+"        <ele>" % Export::formatNumber(elevation).toUtf8() % "</ele>\n"
+"        <time>" % dateTimeUtc.toString(Qt::ISODateWithMs) % "</time>\n";
+    if (d->pluginSettings.isGeoidHeightExportEnabled()) {
+        // Calculate the geoid height
+        const auto geoidHeight = d->convert.geoidToEllipsoidHeight(0, positionData.latitude, positionData.longitude);
+        trackPoint = trackPoint %
+"        <geoidheight>" % Export::formatNumber(geoidHeight).toUtf8() % "</geoidheight>\n";
+    }
+    trackPoint = trackPoint %
 "      </trkpt>\n";
 
     return io.write(trackPoint.toUtf8());
 }
 
-inline bool GpxExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
+inline bool GpxExportPlugin::exportWaypoint(const Waypoint &waypoint, const QString &description, QIODevice &io) const noexcept
 {
-    // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
-    const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(Convert::feetToMeters(waypoint.altitude), waypoint.latitude, waypoint.longitude);
-    const QString waypointString =
+    // Elevation above mean sea level (MSL)
+    const auto elevation = Convert::feetToMeters(waypoint.altitude);
+    QString waypointString =
 "  <wpt lat=\"" % Export::formatCoordinate(waypoint.latitude) % "\" lon=\"" % Export::formatCoordinate(waypoint.longitude) % "\">\n"
-"    <ele>" % Export::formatNumber(heightAboveEllipsoid).toUtf8() % "</ele>\n"
-"    <time>" % waypoint.zuluTime.toString(Qt::ISODate) % "</time>\n"
+"    <ele>" % Export::formatNumber(elevation).toUtf8() % "</ele>\n"
+"    <time>" % waypoint.zuluTime.toString(Qt::ISODateWithMs) % "</time>\n";
+    if (d->pluginSettings.isGeoidHeightExportEnabled()) {
+        // Calculate the geoid height
+        const auto geoidHeight = d->convert.geoidToEllipsoidHeight(0, waypoint.latitude, waypoint.longitude);
+        waypointString = waypointString %
+"    <geoidheight>" % Export::formatNumber(geoidHeight).toUtf8() % "</geoidheight>\n";
+    }
+    waypointString = waypointString %
 "    <name>" % waypoint.identifier % "</name>\n"
+"    <desc>" % description % "</desc>\n"
 "  </wpt>\n";
 
     return io.write(waypointString.toUtf8());

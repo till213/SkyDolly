@@ -26,7 +26,6 @@
 #define GPX_H
 
 #include <QString>
-#include <QStringLiteral>
 
 /*!
  * GPX format element names.

@@ -29,7 +29,6 @@
 #include <utility>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlDatabase>
@@ -73,7 +72,7 @@ SQLiteAttitudeDao::~SQLiteAttitudeDao() = default;
 
 bool SQLiteAttitudeDao::add(std::int64_t aircraftId, const AttitudeData &attitude) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "insert into attitude ("
@@ -121,7 +120,7 @@ bool SQLiteAttitudeDao::add(std::int64_t aircraftId, const AttitudeData &attitud
 std::vector<AttitudeData> SQLiteAttitudeDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<AttitudeData> attitudeData;
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -134,7 +133,7 @@ std::vector<AttitudeData> SQLiteAttitudeDao::getByAircraftId(std::int64_t aircra
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const auto db {QSqlDatabase::database(d->connectionName)};
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             attitudeData.reserve(query.size());
@@ -177,7 +176,7 @@ std::vector<AttitudeData> SQLiteAttitudeDao::getByAircraftId(std::int64_t aircra
 
 bool SQLiteAttitudeDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "
@@ -200,7 +199,7 @@ bool SQLiteAttitudeDao::deleteByFlightId(std::int64_t flightId) const noexcept
 
 bool SQLiteAttitudeDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "

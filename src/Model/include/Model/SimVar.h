@@ -35,6 +35,8 @@ namespace SimVar
     constexpr const char *Longitude = "Plane Longitude";
     constexpr const char *Altitude = "Plane Altitude";
     constexpr const char *IndicatedAltitude = "Indicated Altitude";
+    constexpr const char *CalibratedIndicatedAltitude = "Indicated Altitude Calibrated";
+    constexpr const char *PressureAltitude = "Pressure Altitude";
 
     constexpr const char *Pitch = "Plane Pitch Degrees";
     constexpr const char *Bank = "Plane Bank Degrees";
@@ -43,6 +45,7 @@ namespace SimVar
     constexpr const char *VelocityBodyY = "Velocity Body Y";
     constexpr const char *VelocityBodyZ = "Velocity Body Z";
     constexpr const char *SimOnGround = "Sim On Ground";
+    constexpr const char *PlaneAltAboveGroundMinusCG = "Plane Alt Above Ground Minus CG";
 
     constexpr const char *AileronLeftDeflection = "Aileron Left Deflection";
     constexpr const char *AileronRightDeflection = "Aileron Right Deflection";
@@ -93,12 +96,12 @@ namespace SimVar
 
     constexpr const char *BrakeLeftPosition = "Brake Left Position";
     constexpr const char *BrakeRightPosition = "Brake Right Position";
+    constexpr const char *GearSteerAnglePercent = "Gear Steer Angle Pct";
     constexpr const char *WaterRudderHandlePosition = "Water Rudder Handle Position";
     constexpr const char *TailhookHandle = "Tailhook Handle";
     constexpr const char *TailhookPosition = "Tailhook Position";
     constexpr const char *CanopyOpen = "Canopy Open";
     constexpr const char *GearHandlePosition = "Gear Handle Position";
-    constexpr const char *SmokeEnable = "Smoke Enable";
     constexpr const char *FoldingWingHandlePosition = "Folding Wing Handle Position";
     constexpr const char *FoldingWingLeftPercent = "Folding Wing Left Percent";
     constexpr const char *FoldingWingRightPercent = "Folding Wing Right Percent";
@@ -163,9 +166,11 @@ namespace SimVar
     constexpr const char *ZuluYear = "Zulu Year";
     constexpr const char *ZuluMonthOfYear = "Zulu Month of Year";
     constexpr const char *ZuluDayOfMonth = "Zulu Day of Month";
+    constexpr const char *TimeZoneOffset = "Time Zone Offset";
+    constexpr const char *ZuluSunriseTime = "Zulu Sunrise Time";
+    constexpr const char *ZuluSunsetTime = "Zulu Sunset Time";
 
-    constexpr const char *Timestamp = "Timestamp";
-    constexpr const char *SimulationRate = "Simulation Rate";
+    constexpr const char *SimulationRate = "Simulation Rate";    
 }
 
 #endif // SIMVAR_H

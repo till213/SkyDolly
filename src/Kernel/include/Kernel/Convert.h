@@ -57,15 +57,16 @@ public:
     ~Convert();
 
     /*!
-     * Converts the \c height height above WGS84 reference ellipsoid to height above the earth
+     * Converts the \p height above WGS84 reference ellipsoid to height above the earth
      * gravity model (EGM) geoid according to the installed EGM data file. The conversion is
-     * essentially evaluating the so-called undulation at position \c latitude, \c longitude
-     * and adjusting the given \c height accordingly.
+     * essentially evaluating the so-called undulation at position \p latitude, \p longitude
+     * and adjusting the given \p height accordingly.
      *
      * If no EGM data file is available (not installed, not readable) then simply
-     * \c meters is returned.
+     * \p meters is returned.
      *
-     * Also refer to https://gisgeography.com/geoid-mean-sea-level/
+     * Also refer to https://gisgeography.com/geoid-mean-sea-level/ and
+     * https://www.mathworks.com/help/map/ellipsoid-geoid-and-orthometric-height.html
      *
      * \param height
      *        the altitude to convert [meters]
@@ -73,10 +74,10 @@ public:
      *        the latitude of the position
      * \param longitude
      *        the longitude of the position
-     * \return the converted altitude in meters above the EGM geoid; or \c height if no EGM data
+     * \return the converted altitude in meters above the EGM geoid; or \p height if no EGM data
      *         file could be read
      */
-    inline double wgs84ToEgmGeoid(double height, double latitude, double longitude) noexcept
+    inline double ellipsoidToGeoidHeight(double height, double latitude, double longitude) noexcept
     {
         // In meters
         double heightAboveGeoid {0.0};
@@ -98,15 +99,18 @@ public:
     }
 
     /*!
-     * Converts the \c height height above the EGM geoid to height above the WGS84 reference
+     * Converts the \p height above the EGM geoid to height above the WGS84 reference
      * ellipsoid according to the installed EGM data file. The conversion is
-     * essentially evaluating the so-called undulation at position \c latitude, \c longitude
-     * and adjusting the given \c height accordingly.
+     * essentially evaluating the so-called undulation at position \p latitude, \p longitude
+     * and adjusting the given \p height accordingly.
+     *
+     * When setting the \p height to 0 the so-called geoid height is returned.
      *
      * If no EGM data file is available (not installed, not readable) then simply
-     * \c meters is returned.
+     * \p height is returned.
      *
-     * Also refer to https://gisgeography.com/wgs84-world-geodetic-system/
+     * Also refer to https://gisgeography.com/wgs84-world-geodetic-system/ and
+     * https://www.mathworks.com/help/map/ellipsoid-geoid-and-orthometric-height.html
      *
      * \param height
      *        the altitude to convert [meters]
@@ -114,10 +118,10 @@ public:
      *        the latitude of the position
      * \param longitude
      *        the longitude of the position
-     * \return the converted altitude in meters above the WGS84 reference ellipsoid; or \c height
+     * \return the converted altitude in meters above the WGS84 reference ellipsoid; or \p height
      *         if no EGM data file could be read
      */
-    inline double egmToWgs84Ellipsoid(double height, double latitude, double longitude) noexcept
+    inline double geoidToEllipsoidHeight(double height, double latitude, double longitude) noexcept
     {
         // In meters
         double heightAboveEllipsoid {height};
@@ -136,117 +140,117 @@ public:
         return heightAboveEllipsoid;
     }
 
-    static inline constexpr double degreesToRadians(double degree) noexcept {
+    static constexpr double degreesToRadians(double degree) noexcept {
         return degree * M_PI / 180.0;
     };
 
     /*!
-     * Converts the \c radians to degrees.
+     * Converts the \p radians to degrees.
      *
      * \param radians
      *        the radians to convert
      * \return the converted degrees
      */
-    static inline constexpr double radiansToDegrees(double radians) noexcept {
+    static constexpr double radiansToDegrees(double radians) noexcept {
         return radians * 180.0 / M_PI;
     };
 
     /*!
-     * Converts the \c feet to meters.
+     * Converts the \p feet to meters.
      *
-     * \return the \c feet converted to meters
+     * \return the \p feet converted to meters
      * \sa https://www.convertunits.com/from/feet/to/meter
      */
-    static inline constexpr double feetToMeters(double feet) noexcept
+    static constexpr double feetToMeters(double feet) noexcept
     {
         return feet * 0.3048;
     }
 
     /*!
-     * Converts the \c meters to feet.
+     * Converts the \p meters to feet.
      *
-     * \return the \c meters converted to feet
+     * \return the \p meters converted to feet
      * \sa https://www.convertunits.com/from/meter/to/feet
      */
-    static inline constexpr double metersToFeet(double meters) noexcept
+    static constexpr double metersToFeet(double meters) noexcept
     {
         return meters * 3.28083989501312;
     }
 
     /*!
-     * Converts the \c feetPerSecond to knots.
+     * Converts the \p feetPerSecond to knots.
      *
      * \param feetPerSecond
      *        the feet per second to convert
      * \return the converted knots
      * \sa https://www.convertunits.com/from/feet/second/to/knots
      */
-    static inline constexpr double feetPerSecondToKnots(double feetPerSecond) noexcept
+    static constexpr double feetPerSecondToKnots(double feetPerSecond) noexcept
     {
         return feetPerSecond * 0.5924838012959;
     }
 
     /*!
-     * Converts \c knots to feet per second.
+     * Converts \p knots to feet per second.
      *
      * \param knots
      *        the knots to convert
      * \return the converted feet per second
      * \sa https://www.convertunits.com/from/knots/to/feet/second/
      */
-    static inline constexpr double knotsToFeetPerSecond(double knots) noexcept
+    static constexpr double knotsToFeetPerSecond(double knots) noexcept
     {
         return knots * 1.6878098571012;
     }
 
     /*!
-     * Converts the \c knots to meters per second.
+     * Converts the \p knots to meters per second.
      *
      * \param knots
      *        the knots to convert
      * \return the converted meters per second
      * \sa https://www.convertunits.com/from/knots/to/metre/second/
      */
-    static inline constexpr double knotsToMetersPerSecond(double knots) noexcept
+    static constexpr double knotsToMetersPerSecond(double knots) noexcept
     {
         return knots * 0.51444444444444;
     }
 
     /*!
-     * Converts the \c metersPerSecond to knots.
+     * Converts the \p metersPerSecond to knots.
      *
      * \param metersPerSecond
      *        the meters per second to convert
      * \return the converted knots
      * \sa https://www.convertunits.com/from/knots/to/metre/second/
      */
-    static inline constexpr double metersPerSecondToKnots(double metersPerSecond) noexcept
+    static constexpr double metersPerSecondToKnots(double metersPerSecond) noexcept
     {
         return metersPerSecond * 1.9438444924406;
     }
 
     /*!
-     * Converts the \c feetPerSecond to km/h.
+     * Converts the \p feetPerSecond to km/h.
      *
      * \param feetPerSecond
      *        the feet per second to convert
      * \return the converted kilometers per hour
      * \sa https://www.convertunits.com/from/knots/to/kilometre/hour/
      */
-    static inline constexpr double feetPerSecondToKilometersPerHour(double feetPerSecond) noexcept
+    static constexpr double feetPerSecondToKilometersPerHour(double feetPerSecond) noexcept
     {
         return feetPerSecond * 1.09728;
     }
 
     /*!
-     * Converts the \c metersPerSecond to feet/s.
+     * Converts the \p metersPerSecond to feet/s.
      *
      * \param metersPerSecond
      *        the meters per second to convert
      * \return the converted feet per second
      * \sa https://www.convertunits.com/from/meter/second/to/foot/second
      */
-    static inline constexpr double metersPerSecondToFeetPerSecond(double metersPerSecond) noexcept
+    static constexpr double metersPerSecondToFeetPerSecond(double metersPerSecond) noexcept
     {
         return metersPerSecond * 3.28083989501312;
     }
@@ -264,7 +268,7 @@ public:
      *        the altitude above sea level [feet]
      * \return the estimated indicated airspeed [knots or km/h]
      */
-    static inline constexpr double trueToIndicatedAirspeed(double trueAirspeed, double altitudeAboveSealevel) noexcept
+    static constexpr double trueToIndicatedAirspeed(double trueAirspeed, double altitudeAboveSealevel) noexcept
     {
         const double altitudeFactor = altitudeAboveSealevel / 1000.0;
         return trueAirspeed / (1 + altitudeFactor * 0.02);

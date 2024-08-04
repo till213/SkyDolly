@@ -26,6 +26,7 @@
 #define FLIGHTIMPORTPLUGINBASESETTINGS_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 #include <QString>
@@ -45,7 +46,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct AircraftImportMode {
+    enum struct AircraftImportMode: std::uint8_t {
         First = 0,
         /*! All aircraft are added to the existing flight (loaded in memory). */
         AddToCurrentFlight = First,
@@ -67,7 +68,7 @@ public:
      * Returns whether the plugin requires the selection of the aircraft type to be
      * imported, that is the import format itself does not specify an aircraft type.
      *
-     * \return \c true if the \c plugin requires aircraft selection; \c false else
+     * \return \c true if the \p plugin requires aircraft selection; \c false else
      *         (the format itself specifies the aircraft type)
      */
     virtual bool isAircraftSelectionRequired() const noexcept = 0;
@@ -83,7 +84,7 @@ public:
      * - FlightRadar24 CSV: \e does support time offset synchronisation (has UTC timestamps)
      * - FlightRecorder CSV: does \e not support time offset synchronisation (only relative timestamps)
      *
-     * \return \c true if the \c plugin supports timestamp offset synchronisation;
+     * \return \c true if the \p plugin supports timestamp offset synchronisation;
      *         \c false else (the format itself does not have real-world timestamps)
      */
     virtual bool isTimeOffsetSyncSupported() const noexcept = 0;

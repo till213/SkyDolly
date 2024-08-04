@@ -24,7 +24,7 @@
  */
 #include <algorithm>
 #include <cmath>
-#include <vector>
+#include <cstdlib>
 
 #include <QtGlobal>
 #include <QIODevice>
@@ -197,7 +197,7 @@ inline bool IgcExportPlugin::exportARecord(QIODevice &io) const noexcept
 inline bool IgcExportPlugin::exportHRecord(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const QByteArray record =
-        IgcExportPluginPrivate::HRecord % ::Date % formatDate(flightData.flightCondition.startZuluDateTime) % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::Date % formatDate(flightData.flightCondition.getStartZuluDateTime()) % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::Pilot % d->pluginSettings.getPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::CoPilot % d->pluginSettings.getCoPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfo().aircraftType.type.toLatin1() % ::LineEnd %
@@ -230,7 +230,7 @@ inline bool IgcExportPlugin::exportJRecord(QIODevice &io) const noexcept
 
 inline bool IgcExportPlugin::exportCRecord(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    const FlightPlan &flightPlan = aircraft.getFlightPlan();
+    const auto &flightPlan = aircraft.getFlightPlan();
     const Position &position = aircraft.getPosition();
     bool ok {false};
     if (position.count() > 0) {
@@ -244,7 +244,7 @@ inline bool IgcExportPlugin::exportCRecord(const FlightData &flightData, const A
         const std::size_t count = flightPlan.count();
         std::size_t i = 0;
         while (ok && i < count) {
-            const Waypoint &waypoint = flightPlan[i];
+            const auto &waypoint = flightPlan[i];
             if (i == 0) {
                 const auto &positionData = position.getFirst();
                 record = IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
@@ -276,17 +276,17 @@ inline bool IgcExportPlugin::exportFixes(const FlightData &flightData, const Air
 
     Convert convert;
     auto &engine = aircraft.getEngine();
-    const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    const auto interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
     for (const auto &positionData : interpolatedPositionData) {
         // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
-        const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
+        const double heightAboveEllipsoid = convert.geoidToEllipsoidHeight(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
 
         const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
         const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
-        const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.indicatedAltitude)));
+        const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.pressureAltitude)));
         const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
-        const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
+        const auto &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
         const int noise = estimateEnvironmentalNoise(engineData);
         const QDateTime currentTime = startTime.addMSecs(positionData.timestamp);
         const QByteArray bRecord = IgcExportPluginPrivate::BRecord %
@@ -389,7 +389,7 @@ inline int IgcExportPlugin::estimateEnvironmentalNoise(const EngineData &engineD
 {
     int noise {0};
     if (engineData.hasCombustion()) {
-        noise = static_cast<int>(static_cast<double>(qAbs(engineData.propellerLeverPosition1)) / SkyMath::PositionMax16 * 999.0);
+        noise = static_cast<int>(static_cast<double>(std::abs(engineData.propellerLeverPosition1)) / SkyMath::PositionMax16 * 999.0);
         noise = std::min(noise, 999);
     } else {
         noise = 0;

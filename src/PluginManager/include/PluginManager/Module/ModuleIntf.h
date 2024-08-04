@@ -25,6 +25,8 @@
 #ifndef MODULEINTF_H
 #define MODULEINTF_H
 
+#include <cstdint>
+
 #include <QtPlugin>
 #include <QString>
 
@@ -34,7 +36,7 @@ class QUuid;
 class ModuleIntf
 {
 public:
-    enum struct RecordIconId
+    enum struct RecordIconId: std::uint8_t
     {
         Normal,
         Add
@@ -52,6 +54,7 @@ public:
     virtual QWidget *getWidget() const noexcept = 0;
     virtual RecordIconId getRecordIconId() const noexcept = 0;
 
+    virtual void setupInitialPosition() noexcept = 0;
     virtual void setRecording(bool enable) noexcept = 0;
     virtual void setPaused(bool enable) noexcept = 0;
     virtual void setPlaying(bool enable) noexcept = 0;

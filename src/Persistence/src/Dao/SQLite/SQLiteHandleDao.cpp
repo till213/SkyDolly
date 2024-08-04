@@ -70,7 +70,7 @@ SQLiteHandleDao::~SQLiteHandleDao() = default;
 
 bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &aircraftHandleData) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "insert into handle ("
@@ -78,6 +78,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
         "  timestamp,"
         "  brake_left_position,"
         "  brake_right_position,"
+        "  gear_steer_position,"
         "  water_rudder_handle_position,"
         "  tailhook_position,"
         "  canopy_open,"
@@ -85,13 +86,13 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
         "  right_wing_folding,"
         "  gear_handle_position,"
         "  tailhook_handle_position,"
-        "  folding_wing_handle_position,"
-        "  smoke_enable"
+        "  folding_wing_handle_position"
         ") values ("
         " :aircraft_id,"
         " :timestamp,"
         " :brake_left_position,"
         " :brake_right_position,"
+        " :gear_steer_position,"
         " :water_rudder_handle_position,"
         " :tailhook_position,"
         " :canopy_open,"
@@ -99,8 +100,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
         " :right_wing_folding,"
         " :gear_handle_position,"
         " :tailhook_handle_position,"
-        " :folding_wing_handle_position,"
-        " :smoke_enable"
+        " :folding_wing_handle_position"
         ");"
     );
 
@@ -108,6 +108,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
     query.bindValue(":timestamp", QVariant::fromValue(aircraftHandleData.timestamp));
     query.bindValue(":brake_left_position", aircraftHandleData.brakeLeftPosition);
     query.bindValue(":brake_right_position", aircraftHandleData.brakeRightPosition);
+    query.bindValue(":gear_steer_position", aircraftHandleData.gearSteerPosition);
     query.bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition);
     query.bindValue(":tailhook_position", aircraftHandleData.tailhookPosition);
     query.bindValue(":canopy_open", aircraftHandleData.canopyOpen);
@@ -116,7 +117,6 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
     query.bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0);
     query.bindValue(":tailhook_handle_position", aircraftHandleData.tailhookHandlePosition ? 1 : 0);
     query.bindValue(":folding_wing_handle_position", aircraftHandleData.foldingWingHandlePosition ? 1 : 0);
-    query.bindValue(":smoke_enable", aircraftHandleData.smokeEnabled ? 1 : 0);
 
     const bool ok = query.exec();
 #ifdef DEBUG
@@ -130,7 +130,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
 std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<AircraftHandleData> aircraftHandleData;
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -143,7 +143,7 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const auto db {QSqlDatabase::database(d->connectionName)};
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             aircraftHandleData.reserve(query.size());
@@ -154,6 +154,7 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
         const auto timestampIdx = record.indexOf("timestamp");
         const auto brakeLeftPositionIdx = record.indexOf("brake_left_position");
         const auto brakeRightPositionIdx = record.indexOf("brake_right_position");
+        const auto gearSteerPositionIdx = record.indexOf("gear_steer_position");
         const auto waterRudderHandlePositionIdx = record.indexOf("water_rudder_handle_position");
         const auto tailhookPositionIdx = record.indexOf("tailhook_position");
         const auto canopyOpenIdx = record.indexOf("canopy_open");
@@ -162,12 +163,12 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
         const auto gearHandlePositionIdx = record.indexOf("gear_handle_position");
         const auto tailhookHandlePositionIdx = record.indexOf("tailhook_handle_position");
         const auto foldingWingHandlePositionIdx = record.indexOf("folding_wing_handle_position");
-        const auto smokeEnablePositionIdx = record.indexOf("smoke_enable");
         while (query.next()) {
             AircraftHandleData data;
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.brakeLeftPosition = static_cast<std::int16_t>(query.value(brakeLeftPositionIdx).toInt());
             data.brakeRightPosition = static_cast<std::int16_t>(query.value(brakeRightPositionIdx).toInt());
+            data.gearSteerPosition = static_cast<std::int16_t>(query.value(gearSteerPositionIdx).toInt());
             data.waterRudderHandlePosition = static_cast<std::int16_t>(query.value(waterRudderHandlePositionIdx).toInt());
             data.tailhookPosition = query.value(tailhookPositionIdx).toInt();
             data.canopyOpen = query.value(canopyOpenIdx).toInt();
@@ -176,7 +177,6 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
             data.gearHandlePosition = query.value(gearHandlePositionIdx).toBool();
             data.tailhookHandlePosition = query.value(tailhookHandlePositionIdx).toBool();
             data.foldingWingHandlePosition = query.value(foldingWingHandlePositionIdx).toBool();
-            data.smokeEnabled = query.value(smokeEnablePositionIdx).toBool();
 
             aircraftHandleData.push_back(std::move(data));
         }
@@ -193,7 +193,7 @@ std::vector<AircraftHandleData> SQLiteHandleDao::getByAircraftId(std::int64_t ai
 
 bool SQLiteHandleDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "
@@ -216,7 +216,7 @@ bool SQLiteHandleDao::deleteByFlightId(std::int64_t flightId) const noexcept
 
 bool SQLiteHandleDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "

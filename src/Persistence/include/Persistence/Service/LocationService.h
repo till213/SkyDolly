@@ -46,7 +46,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct Mode {
+    enum struct Mode: std::uint8_t {
         First = 0,
         /*! The location to be imported is skipped; the existing position is left unmodified */
         Skip = First,
@@ -68,7 +68,7 @@ public:
     bool storeAll(std::vector<Location> &locations, Mode mode, double distanceKm) noexcept;
 
     /*!
-     * Exports the \c locations, but does not emit any signal. The \c id of the locations is
+     * Exports the \p locations, but does not emit any signal. The \p id of the locations is
      * left unchanged (possibly still Const#InvalidId).
      *
      * \param locations

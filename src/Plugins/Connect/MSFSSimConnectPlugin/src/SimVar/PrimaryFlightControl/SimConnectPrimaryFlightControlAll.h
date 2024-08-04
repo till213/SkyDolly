@@ -45,25 +45,25 @@ struct SimConnectPrimaryFlightControlAll
     SimConnectPrimaryFlightControlEvent event;
     SimConnectPrimaryFlightControlAnimation animation;
 
-    SimConnectPrimaryFlightControlAll(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+    SimConnectPrimaryFlightControlAll(const PrimaryFlightControlData &data) noexcept
         : SimConnectPrimaryFlightControlAll()
     {
-        fromPrimaryFlightControlData(primaryFlightControlData);
+        fromPrimaryFlightControlData(data);
     }
 
     SimConnectPrimaryFlightControlAll() = default;
 
-    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &data) noexcept
     {
-        event.fromPrimaryFlightControlData(primaryFlightControlData);
-        animation.fromPrimaryFlightControlData(primaryFlightControlData);
+        event.fromPrimaryFlightControlData(data);
+        animation.fromPrimaryFlightControlData(data);
     }
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {
-        PrimaryFlightControlData primaryFlightControlData = event.toPrimaryFlightControlData();
-        animation.toPrimaryFlightControlData(primaryFlightControlData);
-        return primaryFlightControlData;
+        PrimaryFlightControlData data = event.toPrimaryFlightControlData();
+        animation.toPrimaryFlightControlData(data);
+        return data;
     }
 
     inline SimConnectPrimaryFlightControlAi ai() const noexcept

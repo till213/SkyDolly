@@ -92,7 +92,7 @@ bool LocationService::exportLocation(const Location &location) noexcept
 
 bool LocationService::storeAll(std::vector<Location> &locations, Mode mode, double distanceKm) noexcept
 {
-    static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
+    static const auto presetLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypePresetSymId).id()};
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
     auto it = locations.begin();
@@ -102,8 +102,8 @@ bool LocationService::storeAll(std::vector<Location> &locations, Mode mode, doub
             if (neighbours.size() == 0) {
                 ok = d->locationDao->add(*it);
             } else if (mode == Mode::Update) {                
-                // System locations are never updated
-                if (neighbours.cbegin()->typeId != systemLocationTypeId) {
+                // Preset locations are never updated
+                if (neighbours.cbegin()->typeId != presetLocationTypeId) {
                     it->id = neighbours.cbegin()->id;
                     d->locationDao->update(*it);
                 }
@@ -124,7 +124,7 @@ bool LocationService::storeAll(std::vector<Location> &locations, Mode mode, doub
 
 bool LocationService::exportAll(const std::vector<Location> &locations) noexcept
 {
-    static const std::int64_t systemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
+    static const std::int64_t presetLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypePresetSymId).id()};
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
     auto it = locations.begin();

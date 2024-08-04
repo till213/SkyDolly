@@ -25,6 +25,7 @@
 #include <memory>
 
 #include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QChar>
 #include <QRegularExpression>
@@ -45,9 +46,9 @@ struct VersionPrivate
     int minor {VersionConfig::Minor};
     int patch {VersionConfig::Patch};
 
-    // https://www.yourdictionary.com/articles/adjectives-that-start-with-h
-    // https://en.wikipedia.org/wiki/List_of_aircraft_(H)
-    static inline const QString CodeName {"Humble Hawker"};
+    // https://www.yourdictionary.com/articles/adjectives-that-start-with-j
+    // https://en.wikipedia.org/wiki/List_of_aircraft_(J)
+    static inline const QString CodeName {"Jaunty Jodel"};
 };
 
 // PUBLIC

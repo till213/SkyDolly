@@ -35,8 +35,8 @@ InitialPosition::InitialPosition(double theLatitude, double theLongitude, double
       altitude(theAltitude)
 {}
 
-InitialPosition::InitialPosition(const PositionData &positionData, const AttitudeData &attitudeData, const AircraftInfo &aircraftInfo) noexcept
-    : onGround(aircraftInfo.startOnGround)
+InitialPosition::InitialPosition(const PositionData &positionData, const AttitudeData &attitudeData) noexcept
+    : onGround(attitudeData.onGround)
 {
     fromPositionData(positionData, attitudeData);
 }

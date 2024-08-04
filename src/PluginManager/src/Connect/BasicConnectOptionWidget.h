@@ -26,6 +26,7 @@
 #define BASICCONNECTOPTIONWIDGET_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QKeySequence>
 
@@ -54,7 +55,7 @@ public:
     void accept() noexcept override;
 
 private:
-    enum struct KeySequence
+    enum struct KeySequence: std::uint8_t
     {
         Record,
         Replay,
@@ -66,8 +67,8 @@ private:
         End
     };
 
-    std::unique_ptr<Ui::BasicConnectOptionWidget> ui;
-    std::unique_ptr<BasicConnectOptionWidgetPrivate> d;
+    const std::unique_ptr<Ui::BasicConnectOptionWidget> ui;
+    const std::unique_ptr<BasicConnectOptionWidgetPrivate> d;
 
     void initUi() noexcept;
     void initExtendedOptionUi() noexcept;

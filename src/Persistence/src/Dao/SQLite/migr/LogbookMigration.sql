@@ -33,7 +33,7 @@ values (datetime('now'), 3);
 
 @migr(id = "6afa06c3-3a6c-4a27-a3df-58be6bbe0893", descn = "Update application version to 0.6", step = 1)
 update metadata
-set app_version = '0.6.0';
+set    app_version = '0.6.0';
 
 @migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create flight table", step = 1)
 create table flight (
@@ -206,7 +206,7 @@ set    user_aircraft_seq_nr = 1;
 
 @migr(id = "804503b9-61a3-40e9-b06e-9a9e3d5b4740", descn = "Update application version to 0.7", step = 1)
 update metadata
-set app_version = '0.7.0';
+set    app_version = '0.7.0';
 
 @migr(id = "91c45e15-a72d-499e-8b85-eebe6a86da32", descn = "Adjust engine table column types", step_cnt = 2)
 create table engine_new (
@@ -550,7 +550,7 @@ set smoke_enable = 0;
 
 @migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
 update metadata
-set app_version = '0.8.0';
+set    app_version = '0.8.0';
 
 @migr(id = "133820ce-d5e0-4563-8458-aed6604c3f64", descn = "Migrate flaps position from percent to position value", step = 1)
 update secondary_flight_control
@@ -568,7 +568,7 @@ set    indicated_altitude = altitude;
 
 @migr(id = "58835694-4d47-42cd-8c9c-1b9e164e21b8", descn = "Update application version to 0.9", step = 1)
 update metadata
-set app_version = '0.9.0';
+set    app_version = '0.9.0';
 
 @migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Drop columns start_date, end_date from aircraft table", step_cnt = 6)
 create table aircraft_new (
@@ -646,7 +646,7 @@ insert into aircraft_type values
 
 @migr(id = "90f34b67-5fb8-4c52-ab61-d704297bd7e2", descn = "Update application version to 0.10", step = 1)
 update metadata
-set app_version = '0.10.0';
+set    app_version = '0.10.0';
 
 @migr(id = "53b3542b-0fc6-4dae-9500-6167a306f250", descn = "Add additional aircraft types from the Top Gun DLC", step = 1)
 insert into aircraft_type values
@@ -661,7 +661,7 @@ insert into aircraft_type values
 
 @migr(id = "d794cc76-3bae-41d6-8219-64f405379c45", descn = "Update application version to 0.11", step = 1)
 update metadata
-set app_version = '0.11.0';
+set    app_version = '0.11.0';
 
 @migr(id = "00c67a6f-b124-4147-8c97-6f99d814e3cc", descn = "Rename column flight.wind_velocity to wind_speed", step = 1)
 alter table flight rename column wind_velocity to wind_speed;
@@ -674,7 +674,7 @@ alter table position rename heading to true_heading;
 
 @migr(id = "c94c121e-3d93-44e4-a747-6db2b5e3b45b", descn = "Update application version to 0.12", step = 1)
 update metadata
-set app_version = '0.12.0';
+set    app_version = '0.12.0';
 
 @migr(id = "b0b79e7e-9086-42bc-b9ee-45e1e729309a", descn = "Insert next time into backup period", step_cnt = 2)
 insert into enum_backup_period (sym_id, name, desc)
@@ -808,14 +808,14 @@ insert into aircraft_type values
  ('Bell 407 Red-Yellow','Helicopter',0,4,1)
  on conflict(type)
  do update
- set category = excluded.category,
-     wing_span = excluded.wing_span,
+ set category    = excluded.category,
+     wing_span   = excluded.wing_span,
      engine_type = excluded.engine_type,
      nof_engines = excluded.nof_engines;
 
 @migr(id = "0ec16dd8-c7b2-47fc-8d1f-bf80fb8dfb9e", descn = "Update application version to 0.13", step = 1)
 update metadata
-set app_version = '0.13.0';
+set    app_version = '0.13.0';
 
 @migr(id = "9c9c0be5-4868-4299-9504-8b3a1861094f", descn = "Add primary control deflection animation columns", step_cnt = 2)
 alter table primary_flight_control add column rudder_deflection real;
@@ -912,11 +912,11 @@ set    on_any_runway = 0,
 
 @migr(id = "663032d8-c8a4-43ff-b126-0d964d73bf23", descn = "Update application version to 0.14", step = 1)
 update metadata
-set app_version = '0.14.0';
+set    app_version = '0.14.0';
 
 @migr(id = "fbfeec8f-0e50-4efc-956d-391e40563b28", descn = "Update application version to 0.15", step = 1)
 update metadata
-set app_version = '0.15.0';
+set    app_version = '0.15.0';
 
 @migr(id = "a77e5e8b-acd5-4141-964b-ba358216b42e", descn = "Add NOT NULL constraints to table flight", step_cnt = 3)
 create table flight_new (
@@ -961,7 +961,7 @@ alter table flight_new rename to flight;
 
 @migr(id = "48e2f465-6fc7-41e8-b32d-07ad1a8d2f06", descn = "Update application version to 0.16", step = 1)
 update metadata
-set app_version = '0.16.0';
+set    app_version = '0.16.0';
 
 @migr(id = "e84ba603-2628-4317-a05f-257cd1686c8a", descn = "Add flight number column to flight table", step_cnt = 3)
 alter table flight add column flight_number text;
@@ -1006,7 +1006,7 @@ insert into aircraft_type values
 
 @migr(id = "c1c4df3f-a5c7-4fdb-90ad-44010744cc7c", descn = "Update application version to 0.17", step = 1)
 update metadata
-set app_version = '0.17.0';
+set    app_version = '0.17.0';
 
 @migr(id = "4fda1c12-4c05-4152-af6b-1e495b12492e", descn = "Create attitude table", step_cnt = 4)
 create table attitude (
@@ -1026,7 +1026,7 @@ create table attitude (
 @migr(id = "4fda1c12-4c05-4152-af6b-1e495b12492e", descn = "Migrate data from position to attitute table", step = 2)
 insert into attitude (aircraft_id, timestamp, pitch, bank, true_heading, velocity_x, velocity_y, velocity_z, on_ground)
 select aircraft_id, timestamp, pitch, bank, true_heading, velocity_x, velocity_y, velocity_z, 0
-from position;
+from   position;
 
 @migr(id = "4fda1c12-4c05-4152-af6b-1e495b12492e", descn = "Update the on_ground for the first n attitude with timestamp less than one second, based on the aircraft start_on_ground", step = 3)
 update attitude
@@ -1043,6 +1043,195 @@ alter table position drop column velocity_x;
 alter table position drop column velocity_y;
 alter table position drop column velocity_z;
 
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure consistent date time format", step_cnt = 6)
+update flight
+set creation_time        = strftime('%Y-%m-%dT%H:%M:%fZ', creation_time),
+    start_zulu_sim_time  = strftime('%Y-%m-%dT%H:%M:%fZ', start_zulu_sim_time),
+    start_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f',  start_local_sim_time),
+    end_zulu_sim_time    = strftime('%Y-%m-%dT%H:%M:%fZ', end_zulu_sim_time),
+    end_local_sim_time   = strftime('%Y-%m-%dT%H:%M:%f',  end_local_sim_time);
+
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid start zulu simulation time", step = 2)
+update flight
+set    start_zulu_sim_time = creation_time
+where  start_zulu_sim_time is null;
+
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid start local simulation time", step = 3)
+update flight
+set    start_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', start_zulu_sim_time, 'localtime')
+where  start_local_sim_time is null;
+
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - remove inconsistent zulu end simulation times", step = 4)
+update flight
+set    end_zulu_sim_time  = null,
+       end_local_sim_time = null
+where  start_zulu_sim_time  > end_zulu_sim_time
+   or  start_local_sim_time > end_local_sim_time;
+
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid end zulu simulation time", step = 5)
+update flight
+set end_zulu_sim_time = (select strftime('%Y-%m-%dT%H:%M:%fZ', start_zulu_sim_time, '+'
+                                          || (select max(p.timestamp) / 1000
+                                              from  position p
+                                              join  aircraft a
+                                              on    p.aircraft_id = a.id
+                                              where a.flight_id = id
+                                                and a.seq_nr = 1
+                                             )
+                                          || ' seconds'
+                                        )
+                        )
+where end_zulu_sim_time is null;
+
+@migr(id = "286b9b25-8bfa-431d-9904-93d2b94f19ad", descn = "Valid dates - ensure valid end local simulation time", step = 6)
+update flight
+set end_local_sim_time = strftime('%Y-%m-%dT%H:%M:%f', start_local_sim_time, timediff(end_zulu_sim_time, start_zulu_sim_time))
+where end_local_sim_time is null;
+
+@migr(id = "8f2e6950-e3df-4f74-8237-1c76a09a8c40", descn = "Add NOT NULL date constraints to table flight, default ISO 8601 with timezone format", step_cnt = 3)
+create table flight_new (
+    id integer primary key,
+    creation_time datetime not null default (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    user_aircraft_seq_nr integer not null,
+    title text,
+    description text,
+    flight_number text,
+    surface_type integer,
+    surface_condition integer,
+    on_any_runway integer,
+    on_parking_spot integer,
+    ground_altitude real,
+    ambient_temperature real,
+    total_air_temperature real,
+    wind_speed real,
+    wind_direction real,
+    visibility real,
+    sea_level_pressure real,
+    pitot_icing real,
+    structural_icing real,
+    precipitation_state integer,
+    in_clouds integer,
+    start_local_sim_time datetime not null default (strftime('%Y-%m-%dT%H:%M:%f', 'now', 'localtime')),
+    start_zulu_sim_time datetime not null default (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    end_local_sim_time datetime not null default (strftime('%Y-%m-%dT%H:%M:%f', 'now', 'localtime')),
+    end_zulu_sim_time datetime not null default (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+
+@migr(id = "8f2e6950-e3df-4f74-8237-1c76a09a8c40", descn = "Migrate data from old to new flight table", step = 2)
+insert into flight_new (id, creation_time, user_aircraft_seq_nr, title, description, flight_number,
+                        surface_type, surface_condition, on_any_runway, on_parking_spot, ground_altitude, ambient_temperature,
+                        total_air_temperature, wind_speed, wind_direction, visibility, sea_level_pressure, pitot_icing, structural_icing, precipitation_state, in_clouds,
+                        start_local_sim_time, start_zulu_sim_time, end_local_sim_time, end_zulu_sim_time)
+select id, creation_time, user_aircraft_seq_nr, title, description, flight_number,
+       surface_type, surface_condition, on_any_runway, on_parking_spot, ground_altitude, ambient_temperature,
+       total_air_temperature, wind_speed, wind_direction, visibility, sea_level_pressure, pitot_icing, structural_icing, precipitation_state, in_clouds,
+       start_local_sim_time, start_zulu_sim_time, end_local_sim_time, end_zulu_sim_time
+from flight;
+
+@migr(id = "8f2e6950-e3df-4f74-8237-1c76a09a8c40", descn = "Rename flight_new to flight", step = 3)
+drop table flight;
+alter table flight_new rename to flight;
+
+@migr(id = "42305488-5c04-4a96-b09a-a599c5b72e44", descn = "Remove smoke enable column", step = 1)
+alter table handle drop column smoke_enable;
+
+@migr(id = "e9086fca-d959-4748-9389-a3f22ed26bf5", descn = "Add user aircraft column", step_cnt = 2)
+alter table position add column calibrated_indicated_altitude real;
+alter table position add column pressure_altitude real;
+
+@migr(id = "e9086fca-d959-4748-9389-a3f22ed26bf5", descn = "Initialise indicated altitude", step = 2)
+update position
+set    calibrated_indicated_altitude = indicated_altitude,
+       pressure_altitude             = indicated_altitude;
+
+@migr(id = "8ef452ec-758a-48bf-b298-7832f0478302", descn = "Add steer input control column", step_cnt = 2)
+alter table handle add column steer_input_control real;
+
+@migr(id = "8ef452ec-758a-48bf-b298-7832f0478302", descn = "Initialise steer input control", step = 2)
+update handle
+set    steer_input_control = 0;
+
 @migr(id = "80bcc81a-6554-4e05-8631-d17358d9d1dd", descn = "Update application version to 0.18", step = 1)
 update metadata
-set app_version = '0.18.0';
+set    app_version = '0.18.0';
+
+@migr(id = "f09894df-e28e-4680-829a-e231b9e410fe", descn = "Update application version to 0.19", step = 1)
+update metadata
+set    app_version = '0.19.0';
+
+@migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Add gear_steer_position column", step_cnt = 3)
+alter table handle add column gear_steer_position integer;
+
+@migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Initialise steer input control", step = 2)
+update handle
+set    gear_steer_position = steer_input_control;
+
+@migr(id = "516a1ccf-23dd-4da8-9fe7-65ec75f41479", descn = "Initialise steer input control", step = 3)
+alter table handle drop column steer_input_control;
+
+@migr(id = "3d44e7c3-50e5-44b9-84f0-4aadf95414f3", descn = "Adjust engine table column types", step_cnt = 2)
+create table engine_new (
+    aircraft_id integer not null,
+    timestamp integer not null,
+    throttle_lever_position1 integer,
+    throttle_lever_position2 integer,
+    throttle_lever_position3 integer,
+    throttle_lever_position4 integer,
+    propeller_lever_position1 integer,
+    propeller_lever_position2 integer,
+    propeller_lever_position3 integer,
+    propeller_lever_position4 integer,
+    mixture_lever_position1 integer,
+    mixture_lever_position2 integer,
+    mixture_lever_position3 integer,
+    mixture_lever_position4 integer,
+    cowl_flap_position1 integer,
+    cowl_flap_position2 integer,
+    cowl_flap_position3 integer,
+    cowl_flap_position4 integer,
+    electrical_master_battery1 integer,
+    electrical_master_battery2 integer,
+    electrical_master_battery3 integer,
+    electrical_master_battery4 integer,
+    general_engine_starter1 integer,
+    general_engine_starter2 integer,
+    general_engine_starter3 integer,
+    general_engine_starter4 integer,
+    general_engine_combustion1 integer,
+    general_engine_combustion2 integer,
+    general_engine_combustion3 integer,
+    general_engine_combustion4 integer,
+    primary key(aircraft_id, timestamp),
+    foreign key(aircraft_id) references aircraft(id)
+);
+
+@migr(id = "3d44e7c3-50e5-44b9-84f0-4aadf95414f3", descn = "Migrate engine data, drop old table", step = 2)
+insert into engine_new select * from engine;
+drop table engine;
+alter table engine_new rename to engine;
+
+@migr(id = "d2b501f0-de0a-4127-8c38-bc7aa51132bb", descn = "Adjust attitude table column types", step_cnt = 2)
+create table attitude_new (
+    aircraft_id integer not null,
+    timestamp integer not null,
+    pitch real,
+    bank real,
+    true_heading real,
+    velocity_x real,
+    velocity_y real,
+    velocity_z real,
+    on_ground integer,
+    primary key(aircraft_id, timestamp),
+    foreign key(aircraft_id) references aircraft(id)
+);
+
+@migr(id = "d2b501f0-de0a-4127-8c38-bc7aa51132bb", descn = "Migrate attitude data, drop old table", step = 2)
+insert into attitude_new select * from attitude;
+drop table attitude;
+alter table attitude_new rename to attitude;
+
+@migr(id = "ff40fe63-20ec-4e3e-b988-280da18bcd03", descn = "Update application version to 0.20", step = 1)
+update metadata
+set    app_version = '0.20.0';
+
+

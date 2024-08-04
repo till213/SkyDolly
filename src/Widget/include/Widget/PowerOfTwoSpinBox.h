@@ -25,8 +25,6 @@
 #ifndef POWEROFTWOSPINBOX_H
 #define POWEROFTWOSPINBOX_H
 
-#include <cstdint>
-
 #include <QSpinBox>
 
 class QWidget;

@@ -131,31 +131,31 @@ public:
     bool isNull() const noexcept;
 
     /*!
-     * Compares this Version against \c rhs for equality.
+     * Compares this Version against \p rhs for equality.
      *
      * \param rhs
      *        the other Version to compare with
-     * \return \c true if this Version is equal with the \c rhs version;
+     * \return \c true if this Version is equal with the \p rhs version;
      *         \c false else
      */
     bool operator==(const Version &rhs) const noexcept;
 
     /*!
-     * Compares this Version against \c rhs for greater or equal.
+     * Compares this Version against \p rhs for greater or equal.
      *
      * \param rhs
      *        the other Version to compare with
-     * \return \c true if this Version is equal or greater than the \c rhs version;
+     * \return \c true if this Version is equal or greater than the \p rhs version;
      *         \c false else
      */
     bool operator>=(const Version &rhs) const noexcept;
 
     /*!
-     * Compares this Version against \c rhs for smaller.
+     * Compares this Version against \p rhs for smaller.
      *
      * \param rhs
      *        the other Version to compare with
-     * \return \c true if this Version is smaller than the \c rhs version;
+     * \return \c true if this Version is smaller than the \p rhs version;
      *         \c false else
      */
     bool operator<(const Version &rhs) const noexcept;

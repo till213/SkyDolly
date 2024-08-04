@@ -26,16 +26,19 @@
 #define LOCATIONWIDGET_H
 
 #include <memory>
-#include <forward_list>
 #include <cstdint>
 
 #include <QWidget>
 #include <QStringList>
+#include <QDateTime>
+#include <QDate>
 
 class QTableWidgetItem;
 class QKeyEvent;
+class QShowEvent;
 
 #include <Model/Location.h>
+#include "LocationSettings.h"
 
 class LocationSettings;
 struct LocationWidgetPrivate;
@@ -59,12 +62,14 @@ public:
     void addLocation(Location location);
     void updateLocation(const Location &location);
 
-    void keyPressEvent(QKeyEvent *event) noexcept override;
-
 signals:
     void doUpdateLocation();
     void doCaptureLocation();
-    void teleportTo(Location location);
+    void teleportTo(Location location, QDate localSimulationDate, QTime localSimulationTime);
+
+protected:
+    void showEvent(QShowEvent *event) noexcept override;
+    void keyPressEvent(QKeyEvent *event) noexcept override;
 
 private:
     const std::unique_ptr<Ui::LocationWidget> ui;
@@ -77,6 +82,7 @@ private:
     void updateTable() noexcept;
     inline const QTableWidgetItem *createRow(const Location &location) noexcept;
     inline const QTableWidgetItem *initRow(const Location &location, int row) noexcept;
+    int getRowById(std::int64_t id) const noexcept;
     inline void updateRow(const Location &location, int row) noexcept;
     inline void updateLocationCount() const noexcept;
 
@@ -116,7 +122,12 @@ private slots:
     void onBankChanged(double value) noexcept;
     void onHeadingChanged(double value) noexcept;
     void onIndicatedAirspeedChanged(int value) noexcept;
-    void onEngineEventChanged(int index) noexcept;
+    void onEngineEventChanged() noexcept;
+
+    // Date and time
+    void onDateSelected() noexcept;
+    void onDateChanged(QDate date) noexcept;
+    void onTimeSelected() noexcept;
 
     // Default values
     void onDefaultAltitudeChanged(int value) noexcept;

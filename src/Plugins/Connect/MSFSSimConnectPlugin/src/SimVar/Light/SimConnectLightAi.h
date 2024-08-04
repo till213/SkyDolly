@@ -40,23 +40,23 @@ struct SimConnectLightAi
 {
     SimConnectLightEvent event;
 
-    SimConnectLightAi(const LightData &lightData) noexcept
+    SimConnectLightAi(const LightData &data) noexcept
         : SimConnectLightAi()
     {
-        fromLightData(lightData);
+        fromLightData(data);
     }
 
     SimConnectLightAi() = default;
 
-    inline void fromLightData(const LightData &lightData)
+    inline void fromLightData(const LightData &data)
     {
-        event.fromLightData(lightData);
+        event.fromLightData(data);
     }
 
     inline LightData toLightData() const noexcept
     {
-        LightData lightData = event.toLightData();
-        return lightData;
+        LightData data = event.toLightData();
+        return data;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept

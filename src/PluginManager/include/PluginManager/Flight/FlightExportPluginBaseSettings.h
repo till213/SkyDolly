@@ -26,6 +26,7 @@
 #define FLIGHTEXPORTPLUGINBASESETTINGS_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 #include <QString>
@@ -45,7 +46,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct FormationExport {
+    enum struct FormationExport: std::uint8_t {
         First = 0,
         /*! Only the user aircraft is to be exported */
         UserAircraftOnly = First,
@@ -67,18 +68,18 @@ public:
     /*!
      * Returns whether the plugin supports resampling of the (position) data to be exported
      *
-     * \return \c true if the \c plugin supports position data resampling: \c false else
+     * \return \c true if the \p plugin supports position data resampling: \c false else
      */
     virtual bool isResamplingSupported() const noexcept = 0;
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 
     /*!
-     * Returns whether the plugin supports the given \c formationExport option.
+     * Returns whether the plugin supports the given \p formationExport option.
      *
      * \param formationExport
      *        the formation export option to test
-     * \return \c true if the \c formationExport option is supported by this plugin; \c false else
+     * \return \c true if the \p formationExport option is supported by this plugin; \c false else
      */
     virtual bool isFormationExportSupported(FormationExport formationExport) const noexcept = 0;
     FormationExport getFormationExport() const noexcept;

@@ -51,8 +51,8 @@ public:
     ~FlightService();
 
     /*!
-     * Stores the FlightData of the given \c flight and emits the Flight#flightStored signal
-     * upon success. The \c id of the Flight is updated accordingly.
+     * Stores the FlightData of the given \p flight and emits the Flight#flightStored signal
+     * upon success. The \p id of the Flight is updated accordingly.
      *
      * \param flight
      *        the flight that will be stored; typically the \e current flight of the Logbook
@@ -63,7 +63,7 @@ public:
     bool storeFlight(Flight &flight) noexcept;
 
     /*!
-     * Stores the \c flightData, but does not emit any signal. The \c id of the FlightData is
+     * Stores the \p flightData, but does not emit any signal. The \p id of the FlightData is
      * updated accordingly.
      *
      * \param flightData
@@ -76,7 +76,7 @@ public:
     bool storeFlightData(FlightData &flightData) noexcept;
 
     /*!
-     * Exports the \c flightData, but does not emit any signal. The \c id of the FlightData is
+     * Exports the \p flightData, but does not emit any signal. The \p id of the FlightData is
      * left unchanged (possibly still Const#InvalidId).
      *
      * \param flightData
@@ -87,7 +87,7 @@ public:
     bool exportFlightData(const FlightData &flightData) noexcept;
 
     /*!
-     * Restores the Flight identified by \c id into \c flight and emits the Flight#flightRestored
+     * Restores the Flight identified by \p id into \p flight and emits the Flight#flightRestored
      * signal upon success.
      *
      * \param id
@@ -102,7 +102,7 @@ public:
     bool restoreFlight(std::int64_t id, Flight &flight) noexcept;
 
     /*!
-     * Imports the FlightData identified by \c id into \c flightData, but does not emit any signal.
+     * Imports the FlightData identified by \p id into \p flightData, but does not emit any signal.
      *
      * \param flightData
      *        the flight data that will be imported, typically from another logbook

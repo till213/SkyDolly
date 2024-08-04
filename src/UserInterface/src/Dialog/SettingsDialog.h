@@ -57,6 +57,9 @@ private:
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
+    void updateReplayTab() noexcept;
+    void updateFlightSimulatorTab() noexcept;
+    void updateUserInterfaceTab() noexcept;
 
 private slots:
     void updateUi() noexcept;

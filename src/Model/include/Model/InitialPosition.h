@@ -51,7 +51,7 @@ struct MODEL_API InitialPosition final
     bool onGround {false};
 
     explicit InitialPosition(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
-    InitialPosition(const PositionData &positionData, const AttitudeData &attitudeData, const AircraftInfo &aircraftInfo) noexcept;
+    InitialPosition(const PositionData &positionData, const AttitudeData &attitudeData) noexcept;
 
     inline bool isNull() const noexcept {
         return (indicatedAirspeed == InvalidIndicatedAirspeed);

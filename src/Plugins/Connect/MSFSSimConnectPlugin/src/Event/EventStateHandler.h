@@ -26,6 +26,7 @@
 #define EVENTSTATEHANDLER_H
 
 #include <cstdint>
+#include <cstdlib>
 #include <algorithm>
 
 #include <windows.h>
@@ -69,7 +70,7 @@ public:
     static constexpr std::int16_t Max16KPosition {16384};
 
     /*!
-     * Converts the normalised \c value to an \e event (position) value.
+     * Converts the normalised \p value to an \e event (position) value.
      *
      * @param value
      *        the normalised value to be converted [-1.0, 1.0]
@@ -81,7 +82,7 @@ public:
     }
 
     /*!
-     * Converts the \c percent to an \e event (position) value.
+     * Converts the \p percent to an \e event (position) value.
      *
      * @param percent
      *        the percent value to be converted [0, 100]
@@ -135,7 +136,7 @@ public:
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::GearDown), "GEAR_DOWN");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SetTailHookHandle), "SET_TAIL_HOOK_HANDLE");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SetWingFold), "SET_WING_FOLD");
-        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::SmokeSet), "SMOKE_SET");
+        ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::AxisSteeringSet), "AXIS_STEERING_SET");
         // Lights
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ToggleNavLights), "TOGGLE_NAV_LIGHTS");
         ::SimConnect_MapClientEventToSimEvent(m_simConnectHandle, Enum::underly(SimConnectEvent::Event::ToggleBeaconLights), "TOGGLE_BEACON_LIGHTS");
@@ -188,7 +189,7 @@ public:
 
     inline bool sendPrimaryFlightControl(const SimConnectPrimaryFlightControlEvent &event) noexcept
     {
-        // The recorded control surface values have opposite sign than the event values to be sent
+        // The recorded simulation variables have the opposite sign than the event values to be sent
         HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisRudderSet), -positionTo16K(event.rudderPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisAileronsSet), -positionTo16K(event.aileronPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         result |= ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisElevatorSet), -positionTo16K(event.elevatorPosition), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
@@ -218,10 +219,10 @@ public:
             sendTailhookHandlePosition(aircraftHandle.info.tailhookHandle);
         }
         if (ok) {
-            sendSmokeEnabled(aircraftHandle.event.smokeEnable);
+            sendWingFold(aircraftHandle.info.foldingWingHandlePosition);
         }
         if (ok) {
-            sendWingFold(aircraftHandle.info.foldingWingHandlePosition);
+            sendSteeringAxis(aircraftHandle.coreEvent.gearSteerPosition);
         }
         return ok;
     }
@@ -513,15 +514,16 @@ private:
         return result == S_OK;
     }
 
-    inline bool sendSmokeEnabled(std::int32_t enable) noexcept
-    {
-        const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SmokeSet), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-        return result == S_OK;
-    }
-
     inline bool sendWingFold(std::int32_t enable) noexcept
     {
         const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::SetWingFold), enable, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+        return result == S_OK;
+    }
+
+    inline bool sendSteeringAxis(float position) noexcept
+    {
+        // The recorded simulation variable has the opposite sign than the event values to be sent
+        const HRESULT result = ::SimConnect_TransmitClientEvent(m_simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::underly(SimConnectEvent::Event::AxisSteeringSet), -positionTo16K(position), ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
         return result == S_OK;
     }
 

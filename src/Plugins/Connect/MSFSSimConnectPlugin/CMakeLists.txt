@@ -33,6 +33,7 @@ target_sources(${MODULE_NAME}
         src/SimVar/AircraftHandle/SimConnectAircraftHandleAnimation.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleCommon.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleCore.h
+        src/SimVar/AircraftHandle/SimConnectAircraftHandleCoreEvent.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleEvent.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleInfo.h
         src/SimVar/AircraftHandle/SimConnectAircraftHandleAll.h
@@ -41,10 +42,13 @@ target_sources(${MODULE_NAME}
         src/SimVar/Light/SimConnectLightEvent.h
         src/SimVar/Light/SimConnectLightAll.h
         src/SimVar/Light/SimConnectLightAi.h
+        src/SimVar/Sensor/SimConnectAltitudeSensor.h
+        src/SimVar/Sensor/SimConnectReplaySensor.h
         src/SimVar/SimConnectAircraftInfo.h src/SimVar/SimConnectAircraftInfo.cpp
         src/SimVar/SimConnectFlightInfo.h src/SimVar/SimConnectFlightInfo.cpp
         src/SimVar/SimConnectFlightPlan.h src/SimVar/SimConnectFlightPlan.cpp
         src/SimVar/SimConnectSimulationTime.h src/SimVar/SimConnectSimulationTime.cpp
+        src/SimVar/SimConnectTimeZoneInfo.h src/SimVar/SimConnectTimeZoneInfo.cpp
         src/SimVar/SimConnectLocation.h src/SimVar/SimConnectLocation.cpp
         src/SimVar/SimConnectVariables.h src/SimVar/SimConnectVariables.cpp
         src/SimVar/SimulationVariables.h

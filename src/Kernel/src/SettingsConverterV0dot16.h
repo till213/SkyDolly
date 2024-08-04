@@ -52,9 +52,10 @@ public:
 private:
     static inline void convertPlugins(QSettings &settings) noexcept
     {
-        static const QString AddToFlightEnabledKey {"AddToFlightEnabled"};
-        static const QString ImportDirectoryKey {"ImportDirectoryEnabled"};
-        static const QString AircraftImportModeKey {"AircraftImportMode"};
+        static constexpr const char *AddToFlightEnabledKey {"AddToFlightEnabled"};
+        static constexpr const char *ImportDirectoryKey {"ImportDirectoryEnabled"};
+        static constexpr const char *AircraftImportModeKey {"AircraftImportMode"};
+
         bool addToFlight {false};
         bool importDirectory {false};
 

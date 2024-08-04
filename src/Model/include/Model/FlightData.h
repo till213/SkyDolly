@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <cstdint>
 
 #include <QString>
 #include <QDateTime>
@@ -39,7 +40,7 @@
 struct MODEL_API FlightData final
 {
     /*! Defines how the flight creation time is to be reset upon clearing the flight. */
-    enum struct CreationTimeMode
+    enum struct CreationTimeMode: std::uint8_t
     {
         /*! Update the creation time to the current date & time */
         Update,
@@ -93,7 +94,7 @@ struct MODEL_API FlightData final
     /*!
      * Returns the total duration of the flight [in milliseconds], that is it returns
      * the longest replay time of all aircraft, taking their time offsets into account.
-     * Unless \c ofUserAircraft is set to \c true, in which case the replay time of the
+     * Unless \p ofUserAircraft is set to \c true, in which case the replay time of the
      * \e user aircraft is returned.
      *
      * Note that the total duration is cached and not updated during recording. Use
@@ -151,20 +152,32 @@ struct MODEL_API FlightData final
 
     inline QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept
     {
-        return flightCondition.startLocalDateTime.addMSecs(-aircraft.getTimeOffset());
+        return flightCondition.getStartLocalDateTime().addMSecs(-aircraft.getTimeOffset());
     }
 
     inline QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept
     {
-        return flightCondition.startZuluDateTime.addMSecs(-aircraft.getTimeOffset());
+        return flightCondition.getStartZuluDateTime().addMSecs(-aircraft.getTimeOffset());
     }
 
+    /*!
+     * Returns \c true if at least \e one aircraft in this flight has recorded position data.
+     *
+     * \return \c true if at least \e one aircraft has recorded position data; \c false else
+     */
     inline bool hasRecording() const noexcept
     {
-        auto noRecording = [](const Aircraft &a){ return !a.hasRecording(); };
-        return std::find_if(begin(), end(), noRecording) == end();
+        auto recording = [](const Aircraft &a){ return a.hasRecording(); };
+        return std::find_if(begin(), end(), recording) != end();
     }
 
+    /*!
+     * Returns \c true if \e all \p flights have recorded data, or in other words:
+     * if at least one flight does \e not have recorded data then \c false is
+     * returned.
+     *
+     * \return \c true if \e all \p flights have recorded data; \c false else
+     */
     static bool hasAllRecording(const std::vector<FlightData> &flights) noexcept
     {
         auto noRecording = [](const FlightData &f){ return !f.hasRecording(); };

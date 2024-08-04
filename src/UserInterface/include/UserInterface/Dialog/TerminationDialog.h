@@ -47,7 +47,7 @@ public:
     virtual ~TerminationDialog();
 
 private:
-    std::unique_ptr<Ui::TerminationDialog> ui;
+    const std::unique_ptr<Ui::TerminationDialog> ui;
     QString m_title;
     QString m_reason;
     QString m_stackTrace;

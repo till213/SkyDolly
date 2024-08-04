@@ -76,7 +76,7 @@ PrimaryFlightControlWidget::~PrimaryFlightControlWidget() = default;
 
 void PrimaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
-    const PrimaryFlightControlData &primaryFlightControlData = getCurrentPrimaryFlightControlData(timestamp, access);
+    const auto &primaryFlightControlData = getCurrentPrimaryFlightControlData(timestamp, access);
     QString colorName;
 
     if (!primaryFlightControlData.isNull()) {

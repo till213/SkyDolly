@@ -87,6 +87,8 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
         ui->longitudeLineEdit->setText(d->unit.formatCoordinate(position.longitude) % " (" % d->unit.formatLongitudeDMS(position.longitude) % ")");
         ui->altitudeLineEdit->setText(d->unit.formatFeet(position.altitude));
         ui->indicatedAltitudeLineEdit->setText(d->unit.formatFeet(position.indicatedAltitude));
+        ui->calibratedIndicatedAltitudeLineEdit->setText(d->unit.formatFeet(position.calibratedIndicatedAltitude));
+        ui->pressureAltitudeLineEdit->setText(d->unit.formatFeet(position.pressureAltitude));
 
         positionColorName = d->ActiveTextColor.name();
     } else {
@@ -98,6 +100,7 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
         ui->pitchLineEdit->setText(d->unit.formatDegrees(attitude.pitch));
         ui->bankLineEdit->setText(d->unit.formatDegrees(attitude.bank));
         ui->headingLineEdit->setText(d->unit.formatDegrees(attitude.trueHeading));
+        ui->onGroundCheckBox->setChecked(attitude.onGround);
 
         // Velocity
         double speedFeetPerSec = attitude.velocityBodyX;
@@ -110,8 +113,6 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
         speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
         ui->velocityZLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
 
-        ui->onGroundCheckBox->setChecked(attitude.onGround);
-
         attitudeColorName = d->ActiveTextColor.name();
     } else {
         attitudeColorName = d->DisabledTextColor.name();
@@ -122,16 +123,19 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
     ui->longitudeLineEdit->setStyleSheet(positionCss);
     ui->altitudeLineEdit->setStyleSheet(positionCss);
     ui->indicatedAltitudeLineEdit->setStyleSheet(positionCss);
+    ui->calibratedIndicatedAltitudeLineEdit->setStyleSheet(positionCss);
+    ui->pressureAltitudeLineEdit->setStyleSheet(positionCss);
 
     const QString attitudeCss {QStringLiteral("color: %1;").arg(attitudeColorName)};
     ui->pitchLineEdit->setStyleSheet(attitudeCss);
     ui->bankLineEdit->setStyleSheet(attitudeCss);
     ui->headingLineEdit->setStyleSheet(attitudeCss);
     ui->headingLineEdit->setStyleSheet(attitudeCss);
+    ui->onGroundCheckBox->setStyleSheet(attitudeCss);
+
     ui->velocityXLineEdit->setStyleSheet(attitudeCss);
     ui->velocityYLineEdit->setStyleSheet(attitudeCss);
     ui->velocityZLineEdit->setStyleSheet(attitudeCss);
-    ui->onGroundCheckBox->setStyleSheet(attitudeCss);
 }
 
 // PRIVATE
@@ -143,18 +147,23 @@ void AircraftWidget::initUi() noexcept
     ui->longitudeLineEdit->setToolTip(SimVar::Longitude);
     ui->altitudeLineEdit->setToolTip(SimVar::Altitude);
     ui->indicatedAltitudeLineEdit->setToolTip(SimVar::IndicatedAltitude);
+    ui->calibratedIndicatedAltitudeLineEdit->setToolTip(SimVar::CalibratedIndicatedAltitude);
+    ui->pressureAltitudeLineEdit->setToolTip(SimVar::PressureAltitude);
+
+    // Attitude
     ui->pitchLineEdit->setToolTip(SimVar::Pitch);
     ui->bankLineEdit->setToolTip(SimVar::Bank);
     ui->headingLineEdit->setToolTip(SimVar::TrueHeading);
 
-    // Velocity
-    ui->velocityXLineEdit->setToolTip(SimVar::VelocityBodyX);
-    ui->velocityYLineEdit->setToolTip(SimVar::VelocityBodyY);
-    ui->velocityZLineEdit->setToolTip(SimVar::VelocityBodyZ);
-
     ui->onGroundCheckBox->setToolTip(SimVar::SimOnGround);
     ui->onGroundCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->onGroundCheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->onGroundCheckBox->setToolTip(SimVar::SimOnGround);
+
+    // Velocity
+    ui->velocityXLineEdit->setToolTip(SimVar::VelocityBodyX);
+    ui->velocityYLineEdit->setToolTip(SimVar::VelocityBodyY);
+    ui->velocityZLineEdit->setToolTip(SimVar::VelocityBodyZ);    
 }
 
 std::pair<PositionData, AttitudeData> AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept

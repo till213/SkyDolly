@@ -54,18 +54,18 @@ public:
     static constexpr int NumberPrecision = 2;
 
     /*!
-     * Returns a file path based on the title of the \c flight with the suggested file name having the given \c extension.
+     * Returns a file path based on the title of the \p flight with the suggested file name having the given \p extension.
      *
      * \param flight
      *        the Flight from which the suggested file path is derived
      * \param extension
      *        the desired file extension (e.g. \e kml or \e csv)
-     * \return the file path having a suggested file name based on the given \c flight
+     * \return the file path having a suggested file name based on the given \p flight
      */
     static QString suggestFlightFilePath(const Flight &flight, QStringView extension) noexcept;
 
     /*!
-     * Returns a file path for location export with the suggested file name having the given \c extension.
+     * Returns a file path for location export with the suggested file name having the given \p extension.
      *
      * \param extension
      *        the desired file extension (e.g. \e kml or \e csv)
@@ -74,11 +74,11 @@ public:
     static QString suggestLocationFilePath(QStringView extension) noexcept;
 
     /*!
-     * Formats the GNSS \c coordinate (latitude or longitude) with the appropriate decimal point precision.
+     * Formats the GNSS \p coordinate (latitude or longitude) with the appropriate decimal point precision.
      *
      * \param coordinate
      *        the coordinate to be formatted
-     * \return the text representation of \c coordinate
+     * \return the text representation of \p coordinate
      * \sa formatLatitude
      * \sa formatLongitude
      */
@@ -89,14 +89,14 @@ public:
     }
 
     /*!
-     * Formats the general \c number (e.g. altitude or heading) with the appropriate decimal point precision.
+     * Formats the general \p number (e.g. altitude or heading) with the appropriate decimal point precision.
      *
-     * Note that in case the \c number should be displayed as text to a user, according to local settings, then
+     * Note that in case the \p number should be displayed as text to a user, according to local settings, then
      * Unit::formatNumber should be used instead.
      *
      * \param number
      *        the number to be formatted as QString
-     * \return the text representation of \c number
+     * \return the text representation of \p number
      */
     static inline QString formatNumber(double number) noexcept
     {
@@ -109,7 +109,6 @@ public:
     static std::vector<SecondaryFlightControlData> resampleSecondaryFlightControlDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
     static std::vector<AircraftHandleData> resampleAircraftHandleDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
     static std::vector<LightData> resampleLightDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
-
 };
 
 #endif // EXPORT_H

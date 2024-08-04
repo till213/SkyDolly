@@ -26,7 +26,6 @@
 #define KML_H
 
 #include <QString>
-#include <QStringLiteral>
 
 /*!
  * KML format element names.

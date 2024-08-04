@@ -37,18 +37,18 @@ TableDateItem::TableDateItem(QDate date) noexcept
 
 QDate TableDateItem::getDate() const noexcept
 {
-    return data(Qt::EditRole).toDate();
+    return data(Qt::UserRole).toDate();
 }
 
 void TableDateItem::setDate(QDate date) noexcept
 {
     setData(Qt::DisplayRole, m_unit.formatDate(date));
-    setData(Qt::EditRole, date);
+    setData(Qt::UserRole, date);
 }
 
 bool TableDateItem::operator<(const QTableWidgetItem &rhs) const noexcept
 {
-    const QDate date1 = data(Qt::EditRole).toDate();
-    const QDate date2 = rhs.data(Qt::EditRole).toDate();
+    const QDate date1 = getDate();
+    const QDate date2 = static_cast<const TableDateItem &>(rhs).getDate();
     return date1 < date2;
 }

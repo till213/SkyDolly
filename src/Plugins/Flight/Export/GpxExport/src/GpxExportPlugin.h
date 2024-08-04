@@ -75,7 +75,7 @@ private:
     bool exportHeader(QIODevice &io) const noexcept;
     bool exportFlightInfo(const FlightData &flightData, QIODevice &io) const noexcept;
     bool exportAllAircraft(const FlightData &flightData, QIODevice &io) const noexcept;
-    bool exportSingleAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportSingleAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept;
     bool exportWaypoints(const FlightData &flightData, QIODevice &io) const noexcept;
     bool exportFooter(QIODevice &io) const noexcept;
 
@@ -83,7 +83,7 @@ private:
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
 
     inline bool exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept;
-    inline bool exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept;
+    inline bool exportWaypoint(const Waypoint &waypoint, const QString &description, QIODevice &io) const noexcept;
 };
 
 #endif // GPXEXPORTPLUGIN_H

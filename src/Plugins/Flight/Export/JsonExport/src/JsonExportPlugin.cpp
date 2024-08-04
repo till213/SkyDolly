@@ -158,11 +158,11 @@ bool JsonExportPlugin::exportAllAircraft(const FlightData &flightData, QIODevice
 
 bool JsonExportPlugin::exportSingleAircraft(const FlightData &flightData, const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    const std::vector<PositionData> interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
+    const auto interpolatedPositionData = Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod());
     bool ok {true};
 
-    const AircraftInfo &info = aircraft.getAircraftInfo();
-    const AircraftType &type = info.aircraftType;
+    const auto &info = aircraft.getAircraftInfo();
+    const auto &aircraftType = info.aircraftType;
     const QString trackBegin =
 "    {\n"
 "      \"type\": \"Feature\",\n"
@@ -191,11 +191,11 @@ bool JsonExportPlugin::exportSingleAircraft(const FlightData &flightData, const 
 "        ]\n"
 "      },\n"
 "      \"properties\": {\n"
-"        \"type\": \"" % type.type % "\",\n"
-"        \"category\": \"" % type.category % "\",\n"
-"        \"engineType\": \"" % SimType::engineTypeToString(type.engineType) % "\",\n"
-"        \"engineCount\": " % QString::number(type.numberOfEngines) % ",\n"
-"        \"wingspanFeet\": " % QString::number(type.wingSpan) % ",\n"
+"        \"type\": \"" % aircraftType.type % "\",\n"
+"        \"category\": \"" % aircraftType.category % "\",\n"
+"        \"engineType\": \"" % SimType::engineTypeToString(aircraftType.engineType) % "\",\n"
+"        \"engineCount\": " % QString::number(aircraftType.numberOfEngines) % ",\n"
+"        \"wingspanFeet\": " % QString::number(aircraftType.wingSpan) % ",\n"
 "        \"initialAltitudeAboveGroundFeet\": " % Export::formatNumber(info.altitudeAboveGround) % ",\n"
 "        \"initialAirspeedKnots\": " % QString::number(info.initialAirspeed) % ",\n"
 "        \"airline\": \"" % info.airline % "\",\n"
@@ -215,8 +215,8 @@ bool JsonExportPlugin::exportSingleAircraft(const FlightData &flightData, const 
 bool JsonExportPlugin::exportWaypoints(const FlightData &flightData, QIODevice &io) const noexcept
 {
     bool ok {true};
-    const FlightPlan &flightPlan = flightData.getUserAircraftConst().getFlightPlan();
-    for (const Waypoint &waypoint : flightPlan) {
+    const auto &flightPlan = flightData.getUserAircraftConst().getFlightPlan();
+    for (const auto &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);
         if (!ok) {
             break;

@@ -25,9 +25,6 @@
 #ifndef TABLEDATEITEM_H
 #define TABLEDATEITEM_H
 
-#include <memory>
-
-#include <QString>
 #include <QDate>
 #include <QTableWidgetItem>
 

@@ -29,6 +29,7 @@
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QString>
+#include <QStringLiteral>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QDir>
@@ -56,7 +57,6 @@ namespace
         Description,
         Category,
         Country,
-        Attributes,
         Identifier,
         Latitude,
         Longitude,
@@ -67,14 +67,16 @@ namespace
         IndicatedAirspeed,
         OnGround,        
         EngineEvent,
+        LocalSimulationDate,
+        LocalSimulationTime,
         // Last index
         Count
     };
 
     // Depending on the CSV generating application (e.g. Excel or LibreOffice) the column titles may
     // or may not have "quotes"
-    constexpr const char *LocationMigrationHeader {R"("MigrationId","Title","Description","Category")"};
-    constexpr const char *AlternateLocationMigrationHeader {R"(MigrationId,Title,Description,Category)"};
+    constexpr const char *LocationMigrationHeader {R"("MigrationId","Title","Description","Category","Country","Identifier","Latitude","Longitude")"};
+    constexpr const char *AlternateLocationMigrationHeader {R"(MigrationId,Title,Description,Category,Country,Identifier,Latitude,Longitude)"};
 }
 
 struct SqlMigrationPrivate
@@ -132,8 +134,8 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) const noexcept
     // https://regex101.com/
     // @migr(...)
     static const QRegularExpression migrRegExp(R"(@migr\(([\w="\-,.\s]+)\))");
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
-    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
+    const auto db {QSqlDatabase::database(d->connectionName)};
+    auto query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
@@ -172,7 +174,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) const noexcept
 
 bool SqlMigration::migrateCsv(const QString &migrationFilePath) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {
@@ -218,7 +220,7 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) const noexcept
     location.description = description.replace("\\n", "\n");
     Enumeration locationTypeEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::LocationType, Enumeration::Order::Id, &ok);
     if (ok) {
-        location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypeSystemSymId).id;
+        location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypePresetSymId).id;
     }
     Enumeration locationCategoryEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::LocationCategory, Enumeration::Order::Id, &ok);
     if (ok) {
@@ -255,15 +257,24 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) const noexcept
         location.indicatedAirspeed = row.at(::Index::IndicatedAirspeed).toInt(&ok);
     }
     if (ok) {
-        location.attributes = row.at(::Index::Attributes).toLongLong(&ok);
-    }
-    if (ok) {
         location.onGround = row.at(::Index::OnGround).toLower() == "true" ? true : false;
     }
     Enumeration engineEventEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::EngineEvent, Enumeration::Order::Id, &ok);
     if (ok) {
         const QString &engineEventSymId = row.at(::Index::EngineEvent);
         location.engineEventId = engineEventEnumeration.getItemBySymId(engineEventSymId).id;
+    }
+    const auto dateValue = row.at(::Index::LocalSimulationDate);
+    if (!dateValue.isEmpty()) {
+        location.localSimulationDate = QDate::fromString(dateValue, Qt::DateFormat::ISODate);
+        ok = location.localSimulationDate.isValid();
+    }
+    if (ok) {
+        const auto timeValue = row.at(::Index::LocalSimulationTime);
+        if (!timeValue.isEmpty()) {
+            location.localSimulationTime = QTime::fromString(timeValue, Qt::DateFormat::ISODate);
+            ok = location.localSimulationTime.isValid();
+        }
     }
     if (ok) {
         ok = d->locationDao->add(location);

@@ -1,6 +1,68 @@
 # Changelog
 
+## 0.20.0
+
+## New Features
+
+## Improvements
+
+### Location Module
+- When teleporting to a location the selected local simulation date and time will now also be set
+  * The time can be selected relative (sunset, sunrise, morning, noon, afternoon, ...) or absolute
+- Date and time can also be specified per location
+  * Either both date and time or either one: the missing value will be chosen according to the date/time selection (today, selected date, morning, afternoon, evening, ...)
+- *System* locations have been renamed to *Preset* locations
+  * Those are the locations that come "out of the box" with Sky Dolly
+- Double-clicking on any column of a *preset* location will now teleport to that location (previously only the ID column was double-clickable for *preset* locations)
+  * Double-clicking a column other than ID on a *user* or *imported* location will still edit that column, as before
+  
+## Bug Fixes
+- Set correct country for city Hong Kong (preset locations)
+- Properly enable/disable pitch, bank, true heading and indicated airspeed spinboxes based on location selection
+
+## Under the Hood
+- Optimised logbook table column types
+
+## 0.19.0
+Sky Dolly **"Jaunty Jodel"** carries the Olympic spirit into the world: over 200 new locations - each country taking part in the Olympic Games in Paris 2024 - have been added as location presets. Please enjoy the diversity and beauty of our little planet - happy flying!
+
+## Improvements
+
+### Logbook Module
+- The logbook table now properly scrolls to the row being recorded, to ensure its visibility
+
+### Formation Module
+- The aircraft table now properly scrolls to the row being recorded, to ensure its visibility
+
+### Location Module
+- Added Kosovo to list of countries
+- Added *Beach* and *Castle* to location types
+- The location description field now stretches vertically
+- The location table now properly scrolls to the newly added location, to ensure its visibility
+- After adding new user locations the location table receives the focus again, to make the selected row (the newly added location) better visible (as selected row)
+- The "On Ground" column is now sortable, too
+
+## Bug Fixes
+- The location table (Location module) does not show duplicate entries anymore when adding new user locations (the newly added user location was correctly only stored once though)
+- Properly store (and restore) the aircraft table layout (Formation module) when changing the column to be sorted
+- Properly restore table widget sort column and sort items accordingly when switching between Logbook, Formation and Location modules
+
+## Under The Hood
+- Small memory optimisations
+
+## 0.18.1
+
+### Bug Fixes
+- Ensure that the front wheel steering simulation variable is *not* sent to AI aircraft (formation flight) which would cause an "exception 20" (SimConnect data error)
+- Support for the Fenix A320 nose wheel steering added
+
 ## 0.18.0
+
+In **"Illustrious Ikarus"** flights with a recording duration over a day are now properly displayed. For instance the flight duration in the logbook is now shown as timestamp (hh:mm:ss format), in days, weeks, months and so on, depending on the actual duration. The time edit widget next to the timeline automatically also shows the date once the recording time exceeds 24 hours.
+
+New location import and export plugins are also introduced, allowing to exchange locations in the Sky Dolly logbook format which is also automatically converted to the latest format when importing.
+
+Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209 years - a *long* time) have always been supported. That is the maximum timestamp in milliseconds (a signed 64 bit number).
 
 ## New Features
 - New location export plugin
@@ -10,6 +72,31 @@
   * Locations exported from older Sky Dolly releases are migrated upon import to the latest data features
 
 ## Improvements
+
+### Recording & Replay
+- The maximum simulation rate spinbox now steps in powers of two (1, 2, 4, 8, ..., 128)
+  * The MSFS simulation rate is always a power of two
+  * Non-power of two values may still be entered by editing the text
+- The maximum custom replay speed factor has been increased from 200 to 99999
+  * This allows for "timelapse replays" with one second per day (factor of 24 * 60 * 60 = 86400)
+- The recording sample rate setting has been removed. Reasoning:
+  * The aircraft position is now sampled at a fixed 1 Hz (one sample per second) anyway (see above)
+  * While the aircraft attitude is sampled "as fast as possible" (for each *simulated frame*)...
+  * ... all other data is (only) recorded "as available", that is very infrequently
+  * Few users were probably aware of what this "Recording Frequency" settings was supposed to do and left it at "auto"
+  * Removing the timer-based recording also simplified the code
+- The Statistics dialog now shows separate recording rates, for both positition (always around 1 Hz) and attitude samples (e.g. 30 Hz, that is the *simulation frame* rate)
+- The simulation time is now updated in the flight simulator during replay
+  * According to the recorded simulation start and end times
+  * Note that the simulation time is not always in sync with real-world time (the simulation- and real-world durations may be different): this is taken into account when interpolating between the simulation start- and end times
+  * This allows for exact day of time reproductions, useful e.g. for video editing when video-recording (via separate screen capture solutions) the same flight multiple times from different camera angles
+  * The time synchronisation can be enabled and disabled in the application settings, under *Replay* (default: *simulation time*)
+- The replay time widget now properly displays replay times longer than a day (for instance one year or longer), by including also the actual start date
+- When loading a flight from the logbook the replay mode is automatically reset to *Normal*
+  * This ensures that the user aircraft is placed at its initial replay position (instead of being left at its current position in case *Fly With Formation* was previously active)
+  * Switching to the Formation module will then restore the last selected replay mode again (*Formation (Normal)*, *Take control of recorded user aircraft*, *Fly with formation*), according to the persisted module settings
+
+### Import & Export
 - A new *Export system locations* option has been added to the location export
   * When enabled then also the default locations as provided by Sky Dolly (*Sytem* locations) will be exported
   * Otherwise only the *User* and *Import* locations will be exported
@@ -19,21 +106,61 @@
   * Existing locations within the given distance are either *updated*
   * Or the location to be imported is *skipped* (not imported)
   * Loctations may also be unconditionally imported (*insert*)
+- GPX export: the geoid height (&lt;geoidheight&gt;) can now also optionally be exported
+  * This may be useful to calculate the ellipsoidial height *h* ([WGS84 reference ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS_84)) as follows: h = H + N = &lt;ele&gt; + &lt;geoidheight&gt;
+  * Also refer to [Find Ellipsoidal Height from Orthometric Height](https://www.mathworks.com/help/map/ellipsoid-geoid-and-orthometric-height.html)
+  * The exported waypoints now have a description (&lt;desc&gt;) element: *Departure*, *Waypoint* and *Arrival*
+- IGC export: the proper standard pressure altitude (at a 1013.25 hPa (1 atmosphere) setting) instead of the indicated altitude is now exported
+
+### Simulation Variables
 - Position- and attitude simulation variables are now sampled separately
   * Position data (latitude, longitude, altitude) is only sampled at 1Hz: the expectation is that "stutters" during recording should be automatically smoothened out
-- The "Sim On Ground" simulation variable is now also recorded (for each aircraft attitude change)
-- The maximum simulation rate spinbox now steps in powers of two (1, 2, 4, 8, ..., 128)
-  * The MSFS simulation rate is always a power of two
-  * Non-power of two values may still be entered by editing the text
-- The recording sample rate setting has been removed. Reasoning:
-  * The aircraft position is now sampled at a fixed 1 Hz (one sample per second) anyway (see above)
-  * While the aircraft attitude is sampled "as fast as possible" (for each *simulated frame*)...
-  * ... all other data is (only) recorded "as available", that is very infrequently
-  * Few users were probably aware of what this "Recording Frequency" settings was supposed to do and left it at "auto"
-  * Removing the timer-based recording also simplified the code
-- The Statistics dialog now shows separate recording rates, for both positition (always around 1 Hz) and attitude samples (e.g. 30 Hz, that is the *simulation frame* rate)
+- Removed `SMOKE_ENABLE` support
+  * Reasoning: from the [official documenation](https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_System_Variables.htm#SMOKESYSTEM_AVAILABLE): "There is no default 'smoke system' that this SimVar works on and this is a legacy variable that is available for use should you wish to use it but it affects nothing by default."
+  * Some aircraft seem to (re-)use this simulation variable for other purposes, with unexpected visual results
+- The following simulation variables are newly recorded and replayed:
+  * `SIM_ON_GROUND` (for each aircraft attitude change)
+  * `STEER_INPUT_CONTROL` (nose wheel steering)
+- Record the following new simulation variables, for analytical purposes
+  * `INDICATED_ALTITUDE_CALIBRATED`
+  * `PRESSURE_ALTITUDE`
+  
+### Logbook
+- Rename column *Date* to *Recording Date*
+  * This is the real-world date and time when the flight has been recorded
+- Also show the simulation departure- and arrival dates in the tooltip
+- The *Total Time of Flight* column now supports durations measured in days, weeks, months and even years
+
+### Application Settings
+- The application may now be automatically restarted after changing the user interface style ("Windows Vista", "Windows 11", "Fusion", ...)
 
 ## Bug Fixes
+- GPX export
+  * The elevation (&lt;ele&gt;) values are now properly exported as "above mean sea level" (and not "above WGS84 reference ellipsoid" anymore)
+  * The trackpoint timestamps are properly calculated and exported when exporting the entire flight (and not just the user aircraft); the proper timezone suffix (Z) is appended, too (ISO 8601 format)
+- Formation module
+  * Record the flight conditions - specifically the flight start date/time - when the *first* aircraft is recorded (directly from within the Formation module)
+  * Prevent teleporation to the equator (0° latitude, 0° longitude) when no flight is currently loaded and *Fly with formation* is selected
+- Do not reset the time edit widget when the recording is paused (keep the current recorded time)
+- Migrate (update) missing logbook start- and end simulation times (local and zulu) based on the actual recorded positions (timestamps) amd/or the recording creation date/time
+
+## Documentation
+- Added new [One Year in New York](doc/SQL/Timelapse-One-Year-in-New-York.sql) example SQL ("1 year timelapse")
+- Added new [pressure altitude](doc/SQL/Flight-Analysis.sql) analytical SQL script
+
+## Under the Hood
+- Ensure common creation- and start/end date (local and zulu) date & time formats on database level, add "not null" constraint for data conistency
+- Upgrade GeographicLib to version 2.4 (from version 2.3)
+- Upgrade cpptrace to version 0.6.3 (from 0.5.2)
+
+## 0.17.5
+This bug fix release provides an important correction for a regression that would prevent recording (and possibly replay as well), due to wrongly creating an IPv4 network connection instead of a local ("pipe") connection.
+
+### Bug Fixes
+- Ensure that the connection is *local* again ("pipe")
+  * Fix the persisted connection type value 
+  * Migrate existing application settings (fix the "off by one" value)
+  * This is a regression introduced with Sky Dolly v0.17.1
 
 ## 0.17.4
 This is a pure maintenance release without any Sky Dolly specific fixes: it provides the most recent Qt framework release with several Windows 11 user interface style related fixes.
@@ -96,10 +223,10 @@ This is a pure maintenance release without any Sky Dolly specific fixes: it prov
 
 ### New Features
 - Keyboard shortcuts can be defined and triggered within the flight simulator, in order to:
-  * Toggle recording (CTRL+R) and replay (CTRL+P) 
-  * Pause (ALT+P) and Stop (CTRL+S)
-  * Skip forward (CTRL+.) and backward (CTRL+,)
-  * Skip to begin (CTRL+PageUp) and end (CTRL+PageDown)
+  * Toggle recording (**CTRL+R**) and replay (**CTRL+P**) 
+  * Pause (**ALT+P**) and Stop (**CTRL+S**)
+  * Skip forward (**CTRL+.**) and backward (**CTRL+,**)
+  * Skip to begin (**CTRL+PageUp**) and end (**CTRL+PageDown**)
   * The shortcuts can be defined in the Sky Dolly application settings (no restart required)
 - Desktop notifications indicate whether recording has started, paused/resumed or stopped
   * In order to make desktop notifications visible when the flight simulator is in fullscreen adjust the corresponding notification rules in the Windows settings (-> Notification Assistant)

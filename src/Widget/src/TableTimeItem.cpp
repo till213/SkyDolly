@@ -37,18 +37,18 @@ TableTimeItem::TableTimeItem(QTime time) noexcept
 
 QTime TableTimeItem::getTime() const noexcept
 {
-    return data(Qt::EditRole).toTime();
+    return data(Qt::UserRole).toTime();
 }
 
 void TableTimeItem::setTime(QTime time) noexcept
 {
     setData(Qt::DisplayRole, m_unit.formatTime(time));
-    setData(Qt::EditRole, time);
+    setData(Qt::UserRole, time);
 }
 
 bool TableTimeItem::operator<(const QTableWidgetItem &rhs) const noexcept
 {
-    const QTime time1 = data(Qt::EditRole).toTime();
-    const QTime time2 = rhs.data(Qt::EditRole).toTime();
+    const QTime time1 = getTime();
+    const QTime time2 = static_cast<const TableTimeItem &>(rhs).getTime();
     return time1 < time2;
 }

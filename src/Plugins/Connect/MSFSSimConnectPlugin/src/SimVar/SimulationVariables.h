@@ -43,8 +43,10 @@
 #include "AircraftHandle/SimConnectAircraftHandleAi.h" // IWYU pragma: export
 #include "Light/SimConnectLightAll.h" // IWYU pragma: export
 #include "Light/SimConnectLightAi.h" // IWYU pragma: export
+#include "Sensor/SimConnectReplaySensor.h" // IWYU pragma: export
 #include "SimConnectFlightPlan.h" // IWYU pragma: export
 #include "SimConnectSimulationTime.h" // IWYU pragma: export
+#include "SimConnectTimeZoneInfo.h" // IWYU pragma: export
 #include "SimConnectLocation.h" // IWYU pragma: export
 #include "SimConnectVariables.h" // IWYU pragma: export
 

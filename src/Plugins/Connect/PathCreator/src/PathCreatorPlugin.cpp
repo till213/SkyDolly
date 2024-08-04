@@ -31,7 +31,6 @@
 #include <QtGlobal>
 #include <QRandomGenerator>
 #include <QStringList>
-#include <QStringLiteral>
 #ifdef DEBUG
 #include <QDebug>
 #include <Kernel/Enum.h>
@@ -40,6 +39,7 @@
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include <Kernel/Enum.h>
+#include <Kernel/Unit.h>
 #include <Model/TimeVariableData.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
@@ -50,6 +50,7 @@
 #include <Model/Attitude.h>
 #include <Model/AttitudeData.h>
 #include <Model/Location.h>
+#include <Model/TimeZoneInfo.h>
 #include <Model/InitialPosition.h>
 #include <Model/Engine.h>
 #include <Model/EngineData.h>
@@ -177,6 +178,13 @@ bool PathCreatorPlugin::onStartAircraftRecording() noexcept
     if (!d->recordingTimer.isActive()) {
         d->recordingTimer.start(::RecordingPeriod);
     }
+    // Get flight information in case that this is the first recorded aircraft (formation recording)
+    const auto &flight = getCurrentFlight();
+    const bool hasRecording = flight.hasRecording();
+    if (!hasRecording) {
+        recordFlightInfo();
+        recordFlightCondition();
+    }
     recordAircraftInfo();
     return true;
 }
@@ -198,17 +206,18 @@ void PathCreatorPlugin::onStopRecording() noexcept
     d->recordingTimer.stop();
     auto &flight = getCurrentFlight();
     FlightCondition flightCondition = flight.getFlightCondition();
-    flightCondition.endLocalDateTime = QDateTime::currentDateTime();
-    flightCondition.endZuluDateTime = QDateTime::currentDateTimeUtc();
+    flightCondition.setEndZuluDateTime(QDateTime::currentDateTimeUtc());
+    flightCondition.setEndLocalDateTime(flightCondition.getEndZuluDateTime().toLocalTime());
     flight.setFlightCondition(flightCondition);
 
     auto &aircraft = flight.getUserAircraft();
-    FlightPlan &flightPlan = aircraft.getFlightPlan();
-    int waypointCount = static_cast<int>(flightPlan.count());
+    auto &flightPlan = aircraft.getFlightPlan();
+    auto waypointCount = static_cast<int>(flightPlan.count());
     if (waypointCount > 1) {
         Waypoint waypoint = flightPlan[waypointCount - 1];
-        waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
+        waypoint.localTime = waypoint.zuluTime.toLocalTime();
+
         flight.updateWaypoint(waypointCount - 1, waypoint);
     }
 }
@@ -323,6 +332,16 @@ bool PathCreatorPlugin::onRequestSimulationRate() noexcept
     return true;
 }
 
+bool PathCreatorPlugin::onRequestTimeZoneInfo() noexcept
+{
+    TimeZoneInfo timeZoneInfo;
+    timeZoneInfo.timeZoneOffsetSeconds = static_cast<int>((-12 * d->randomGenerator->bounded(13)) * Unit::SecondsPerMinute * Unit::MinutesPerHour);
+    timeZoneInfo.zuluSunriseTimeSeconds = static_cast<int>((4 + d->randomGenerator->bounded(5)) * Unit::SecondsPerMinute * Unit::MinutesPerHour);
+    timeZoneInfo.zuluSunsetTimeSeconds = static_cast<int>((16 + d->randomGenerator->bounded(5)) * Unit::SecondsPerMinute * Unit::MinutesPerHour);
+    emit timeZoneInfoReceived(timeZoneInfo);
+    return true;
+}
+
 bool PathCreatorPlugin::onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept
 {
 #ifdef DEBUG
@@ -352,7 +371,9 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     positionData.latitude = -90.0 + d->randomGenerator->bounded(180);
     positionData.longitude = -180.0 + d->randomGenerator->bounded(360.0);
     positionData.altitude = d->randomGenerator->bounded(60000.0);
-    positionData.indicatedAltitude = d->randomGenerator->bounded(20000.0);
+    positionData.indicatedAltitude = std::max(positionData.altitude - 1000.0, 0.0) + d->randomGenerator->bounded(1000.0);
+    positionData.calibratedIndicatedAltitude = std::max(positionData.altitude - 1000.0, 0.0) + d->randomGenerator->bounded(1000.0);
+    positionData.pressureAltitude = std::max(positionData.altitude - 1000.0, 0.0) + d->randomGenerator->bounded(1000.0);
     positionData.timestamp = timestamp;
     aircraft.getPosition().upsertLast(positionData);
 
@@ -444,6 +465,7 @@ void PathCreatorPlugin::recordAircraftHandle(std::int64_t timestamp) noexcept
     AircraftHandleData aircraftHandleData;
     aircraftHandleData.brakeLeftPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
     aircraftHandleData.brakeRightPosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
+    aircraftHandleData.gearSteerPosition = SkyMath::fromNormalisedPosition(-1.0 + d->randomGenerator->bounded(2.0));
     aircraftHandleData.waterRudderHandlePosition = SkyMath::fromNormalisedPosition(d->randomGenerator->bounded(1.0));
     aircraftHandleData.tailhookPosition = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     aircraftHandleData.canopyOpen = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
@@ -452,7 +474,6 @@ void PathCreatorPlugin::recordAircraftHandle(std::int64_t timestamp) noexcept
     aircraftHandleData.gearHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
     aircraftHandleData.tailhookHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
     aircraftHandleData.foldingWingHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
-    aircraftHandleData.smokeEnabled = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     aircraftHandleData.timestamp = timestamp;
     auto &aircraft = getCurrentFlight().getUserAircraft();
@@ -480,8 +501,8 @@ void PathCreatorPlugin::recordWaypoint(std::int64_t timestamp) noexcept
         waypoint.latitude = -90.0f + static_cast<float>(d->randomGenerator->bounded(180.0));
         waypoint.longitude = -180.0f + static_cast<float>(d->randomGenerator->bounded(90.0));
         waypoint.altitude = static_cast<float>(d->randomGenerator->bounded(3000.0));
-        waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
+        waypoint.localTime = waypoint.zuluTime.toLocalTime();
         waypoint.timestamp = timestamp;
 
         auto &flight = getCurrentFlight();
@@ -513,8 +534,8 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.inClouds = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.onAnyRunway = d->randomGenerator->bounded(2) < 1 ? false : true;
     flightCondition.onParkingSpot = d->randomGenerator->bounded(2) < 1 ? false : true;
-    flightCondition.startLocalDateTime = QDateTime::currentDateTime();
-    flightCondition.startZuluDateTime = QDateTime::currentDateTimeUtc();
+    flightCondition.setStartZuluDateTime(QDateTime::currentDateTimeUtc());
+    flightCondition.setStartLocalDateTime(flightCondition.getStartZuluDateTime().toLocalTime());
 
     getCurrentFlight().setFlightCondition(flightCondition);
 }
@@ -585,7 +606,7 @@ void PathCreatorPlugin::closeConnection() noexcept
 
 void PathCreatorPlugin::replay() noexcept
 {
-    const std::int64_t timestamp = updateCurrentTimestamp();
+    const auto timestamp = updateCurrentTimestamp();
     if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
         onEndReached();
     }
@@ -599,7 +620,7 @@ void PathCreatorPlugin::recordData() noexcept
         resetElapsedTime(true);
     }
 
-    const std::int64_t timestamp = updateCurrentTimestamp();
+    const auto timestamp = updateCurrentTimestamp();
     recordPositionData(timestamp);
     recordEngineData(timestamp);
     recordPrimaryControls(timestamp);
@@ -608,4 +629,3 @@ void PathCreatorPlugin::recordData() noexcept
     recordLights(timestamp);
     recordWaypoint(timestamp);
 }
-

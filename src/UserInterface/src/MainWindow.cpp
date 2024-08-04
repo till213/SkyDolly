@@ -28,9 +28,8 @@
 #include <vector>
 #include <cstdint>
 #include <cmath>
-#include <chrono>
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QByteArray>
 #include <QList>
 #include <QFileDialog>
@@ -44,7 +43,7 @@
 #include <QStringLiteral>
 #include <QStringBuilder>
 #include <QUuid>
-#include <QTime>
+#include <QDateTime>
 #include <QTimer>
 #include <QTimeEdit>
 #include <QComboBox>
@@ -55,6 +54,7 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 #include <QRadioButton>
+#include <QLabel>
 #include <QDoubleValidator>
 #include <QIcon>
 #include <QEvent>
@@ -90,6 +90,7 @@
 #include <Widget/ActionButton.h>
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
+#include <Widget/TimestampEdit.h>
 #include <Widget/Platform.h>
 #include <Widget/RecentFileMenu.h>
 #include <PluginManager/SkyConnectManager.h>
@@ -116,20 +117,16 @@ namespace
     constexpr int PositionSliderMin {0};
     constexpr int PositionSliderMax {1000};
     constexpr double ReplaySpeedAbsoluteMin {0.01};
-    // A replay speed with factor 200 should be fast enough
-    constexpr double ReplaySpeedAbsoluteMax {200.0};
+    // A replay speed with factor 99999 should be fast enough (one day has 86400 seconds: this allows
+    // for a speed-up of one second per day)
+    constexpr double ReplaySpeedAbsoluteMax {99999.0};
     constexpr double ReplaySpeedDecimalPlaces {2};
 
     constexpr int CustomSpeedLineEditMinimumWidth {40};
 
-    constexpr const char *TimestampFormat {"hh:mm:ss"};
-    constexpr std::int64_t MilliSecondsPerSecond {1000};
-    constexpr std::int64_t MilliSecondsPerMinute {60 * MilliSecondsPerSecond};
-    constexpr std::int64_t MilliSecondsPerHour {60 * MilliSecondsPerMinute};
-
     constexpr const char *ReplaySpeedProperty {"ReplaySpeed"};
 
-    enum struct ReplaySpeed {
+    enum struct ReplaySpeed: std::uint8_t {
         Slow10,
         Slow25,
         Slow50,
@@ -318,7 +315,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onReplaySpeedSelected);
 
     // Flight
-    const Logbook &logbook = Logbook::getInstance();
+    const auto &logbook = Logbook::getInstance();
     const auto &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::flightRestored,
             this, &MainWindow::onFlightRestored);
@@ -330,9 +327,11 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onRecordingDurationChanged);
     connect(&flight, &Flight::cleared,
             this, &MainWindow::updateUi);
+    connect(&flight, &Flight::flightConditionChanged,
+            this, &MainWindow::updateTimeUi);
 
     // Settings
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     connect(&settings, &Settings::changed,
             this, &MainWindow::updateMainWindow);
     connect(&settings, &Settings::defaultMinimalUiButtonTextVisibilityChanged,
@@ -359,8 +358,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onPositionSliderValueChanged);
     connect(ui->positionSlider, &QSlider::sliderReleased,
             this, &MainWindow::onPositionSliderReleased);
-    connect(ui->timestampTimeEdit, &QTimeEdit::timeChanged,
-            this, &MainWindow::onTimeStampTimeEditChanged);
+    connect(ui->timestampEdit, &TimestampEdit::timestampChanged,
+            this, &MainWindow::onTimestampEditChanged);
 
     // Actions
 
@@ -462,7 +461,7 @@ void MainWindow::frenchConnection() noexcept
 
 void MainWindow::initUi() noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
 
     // File menu
@@ -504,20 +503,12 @@ void MainWindow::initUi() noexcept
                 QStringLiteral(
                     "%1 is in a preview release phase: while it should be stable to use it is not "
                     "considered feature-complete.\n\n"
-                    "This release v%2 \"%3\" introduces customisable shortcuts for MSFS "
-                    "to start recording (CTRL + R), replay (CTRL + P) and other shortcuts. "
-                    "Refer to the application setting where the shortcuts can be re-assigned.\n\n"
-                    "Dark mode is now also supported. On Windows 10 with the \"Fusion\" style, "
-                    "on Windows 11 with a new \"Windows 11\" style. The application then "
-                    "applies dark mode according to the Windows operating system settings.\n\n"
-                    "Note: the new \"Windows 11\" style still has a few visual glitches. As a workaround "
-                    "on Windows 11 the default style will be set to \"Fusion\". However the style can "
-                    "still be set to \"Windows 11\", under File | Settings... | User Interface.\n\n"
-                    "On Windows 10 the default style remains \"Windows Vista\", but that style does not "
-                    "have dark theme support: select the style \"Fusion\" instead. The \"Windows 11\" style "
-                    "does not work on Windows 10 and will fall back to \"Windows Vista\".\n\n"
-                    "Sky Dolly now properly supports the SimConnect.cfg configuration file: "
-                    "Recording and replay over a network (Windows to Windows only) is now supported.\n\n"
+                    "This release v%2 \"%3\" does not provide many new features. Instead it intends to spread "
+                    "the Olympic spirit by providing over 200 hand-selected locations of each "
+                    "country being represented by their Olympic athletes in the Olympic games in France 2024.\n\n"
+                    "While under a tight time budget I tried to find visually attractive places in each "
+                    "country, taking into consideration the actual representation in MS Flight Simulator itself.\n\n"
+                    "Sky Dolly invites everyone to take a moment and marvel at the diversity and beauty of our planet - happy flying!\n\n"
                     "This dialog will be shown %4 more times.")
                     .arg(Version::getApplicationName(), Version::getApplicationVersion())
                     .arg(Version::getCodeName())
@@ -617,7 +608,7 @@ void MainWindow::initModuleSelectorUi() noexcept
     auto actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
-    const QString css = 
+    const QString css =
 "QCheckBox::indicator:unchecked {"
 "    image: url(:/img/icons/checkbox-expand-normal.png);"
 "}"
@@ -665,7 +656,7 @@ void MainWindow::initModuleSelectorUi() noexcept
 
 void MainWindow::initViewUi() noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
 
     const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
     ui->showModulesAction->setChecked(moduleSelectorVisible);
@@ -677,7 +668,6 @@ void MainWindow::initViewUi() noexcept
 void MainWindow::initControlUi() noexcept
 {
     ui->positionSlider->setRange(::PositionSliderMin, ::PositionSliderMax);
-    ui->timestampTimeEdit->setDisplayFormat(::TimestampFormat);
 
     // Record/replay control buttons
     ui->recordButton->setAction(ui->recordAction);
@@ -807,7 +797,7 @@ void MainWindow::initReplaySpeedUi() noexcept
     // The replay speed factor in SkyConnect is always an absolute factor
     auto &skyConnectManager = SkyConnectManager::getInstance();
     const float factor = skyConnectManager.getReplaySpeedFactor();
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     if (settings.getReplaySpeeedUnit() == Replay::SpeedUnit::Absolute) {
         d->lastCustomReplaySpeedFactor = factor;
     } else {
@@ -855,7 +845,6 @@ void MainWindow::createTrayIcon() noexcept
 
 void MainWindow::initSkyConnectPlugin() noexcept
 {
-    auto &settings = Settings::getInstance();
     auto &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> skyConnectPlugins = skyConnectManager.initialisePlugins();
     if (skyConnectPlugins.empty()) {
@@ -929,7 +918,7 @@ void MainWindow::updateMinimalUi(bool enable)
         ui->moduleVisibilityWidget->setHidden(true);
         ui->moduleSelectorWidget->setHidden(true);
         ui->showModulesAction->setChecked(false);
-        ui->showModulesAction->setEnabled(false);  
+        ui->showModulesAction->setEnabled(false);
     } else {
         const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
         ui->moduleVisibilityWidget->setVisible(true);
@@ -942,6 +931,7 @@ void MainWindow::updateMinimalUi(bool enable)
     updateReplaySpeedVisibility(minimalUi);
     updatePositionSliderTickInterval();
     ui->moduleGroupBox->setHidden(minimalUi);
+    ui->timestampEdit->setMinimalUiEnabled(enable);
 
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
@@ -950,7 +940,7 @@ void MainWindow::updateMinimalUi(bool enable)
 
 bool MainWindow::isMinimalUiEnabled() const noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     const bool minimalUi = settings.isMinimalUiEnabled();
     const bool hasModules = d->moduleManager->getActiveModule().has_value();
     // Also enable minimal UI mode if no module plugins are available
@@ -985,11 +975,10 @@ void MainWindow::updateReplaySpeedUi() noexcept
 
 void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
 {
-    ui->timestampTimeEdit->blockSignals(true);
-    QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
-    ui->timestampTimeEdit->setMaximumTime(time);
-    ui->timestampTimeEdit->setTime(time);
-    ui->timestampTimeEdit->blockSignals(false);
+    ui->timestampEdit->blockSignals(true);
+    ui->timestampEdit->setEndTimestamp(timestamp);
+    ui->timestampEdit->setTimestamp(timestamp);
+    ui->timestampEdit->blockSignals(false);
 }
 
 void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
@@ -1004,18 +993,19 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
         if (ts > 0) {
             sliderPosition = static_cast<int>(std::round(::PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration))));
         }
-        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
+        const auto &flight = Logbook::getInstance().getCurrentFlight();
+        const auto &aircraft = flight.getUserAircraft();
+        const auto startDate = flight.getAircraftStartLocalTime(aircraft);
+        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp), d->unit.formatTimestamp(timestamp, startDate)));
     }
 
     ui->positionSlider->blockSignals(true);
     ui->positionSlider->setValue(sliderPosition);
     ui->positionSlider->blockSignals(false);
 
-    // TODO This does not work if flight is longer than 24 hours!!! We also need the date (probably) and also check the slider position when duration is 1 year
-    const auto time = QTime::fromMSecsSinceStartOfDay(timestamp);
-    ui->timestampTimeEdit->blockSignals(true);
-    ui->timestampTimeEdit->setTime(time);
-    ui->timestampTimeEdit->blockSignals(false);
+    ui->timestampEdit->blockSignals(true);
+    ui->timestampEdit->setTimestamp(timestamp);
+    ui->timestampEdit->blockSignals(false);
 }
 
 void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
@@ -1064,7 +1054,7 @@ void MainWindow::updateMinimalUiEssentialButtonVisibility() noexcept
 
 void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     bool replaySpeedVisible {false};
     if (enterMinimalUi) {
         // When switching to minimal UI mode the default replay speed visibility takes precedence
@@ -1083,7 +1073,7 @@ void MainWindow::updatePositionSliderTickInterval() noexcept
     int tickInterval {10};
     if (isMinimalUiEnabled()) {
         if (!ui->showReplaySpeedAction->isChecked()) {
-            auto &settings = Settings::getInstance();
+            const auto &settings = Settings::getInstance();
             if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                 if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                     tickInterval = 10;
@@ -1104,9 +1094,9 @@ void MainWindow::updatePositionSliderTickInterval() noexcept
     ui->positionSlider->setTickInterval(tickInterval);
 }
 
-double MainWindow::getCustomSpeedFactor() const
+float MainWindow::getCustomSpeedFactor() const
 {
-    double customSpeedFactor {1.0};
+    float customSpeedFactor {1.0};
     const QString text = d->customSpeedLineEdit->text();
     if (!text.isEmpty()) {
         switch (Settings::getInstance().getReplaySpeeedUnit()) {
@@ -1114,7 +1104,7 @@ double MainWindow::getCustomSpeedFactor() const
             customSpeedFactor = d->unit.toNumber(text);
             break;
         case Replay::SpeedUnit::Percent:
-            customSpeedFactor = d->unit.toNumber(text) / 100.0;
+            customSpeedFactor = d->unit.toNumber(text) / 100.0f;
             break;
         }
     }
@@ -1128,10 +1118,10 @@ void MainWindow::seek(int value, SkyConnectIntf::SeekMode seekMode) const noexce
     const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
     auto timestamp = static_cast<std::int64_t>(std::round(factor * static_cast<double>(totalDuration)));
 
-    // Prevent the timestampTimeEdit field to set the replay position as well
-    ui->timestampTimeEdit->blockSignals(true);
+    // Prevent the timestampEdit field to set the replay position as well
+    ui->timestampEdit->blockSignals(true);
     skyConnectManager.seek(timestamp, seekMode);
-    ui->timestampTimeEdit->blockSignals(false);
+    ui->timestampEdit->blockSignals(false);
 }
 
 // PRIVATE SLOTS
@@ -1165,11 +1155,10 @@ void MainWindow::onPositionSliderReleased() noexcept
     d->continuousSeek = false;
 }
 
-void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
+void MainWindow::onTimestampEditChanged(std::int64_t timestamp) noexcept
 {
     auto &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isIdle() || skyConnectManager.getState() == Connect::State::ReplayPaused) {
-        std::int64_t timestamp = time.hour() * ::MilliSecondsPerHour + time.minute() * ::MilliSecondsPerMinute + time.second() * ::MilliSecondsPerSecond;
         skyConnectManager.seek(timestamp, SkyConnectIntf::SeekMode::Discrete);
     }
 }
@@ -1181,7 +1170,7 @@ void MainWindow::updateWindowSize() noexcept
         setMinimumSize(0, 0);
         // Let the layout manager realise that a widget has been hidden, which is an
         // asynchronous process
-        QApplication::processEvents();
+        QCoreApplication::processEvents();
         resize(0, 0);
         setFixedSize(minimumSize());
     } else {
@@ -1255,7 +1244,7 @@ void MainWindow::onCustomSpeedChanged() noexcept
         d->lastCustomReplaySpeedFactor = customReplaySpeedFactor;
         break;
     case Replay::SpeedUnit::Percent:
-        d->lastCustomReplaySpeedFactor = customReplaySpeedFactor * 100.0;
+        d->lastCustomReplaySpeedFactor = customReplaySpeedFactor * 100.0f;
         break;
     }
 
@@ -1288,13 +1277,16 @@ void MainWindow::onReplaySpeedUnitSelected(int index) noexcept
 void MainWindow::updateUi() noexcept
 {
     updateControlUi();
+    updateTimeUi();
     updateControlIcons();
     updateReplaySpeedUi();
     updateFileMenu();
     updateModuleActions();
     updateWindowMenu();
     updateMainWindow();
-    onRecordingDurationChanged();
+    if (!SkyConnectManager::getInstance().isInRecordingState()) {
+        onRecordingDurationChanged();
+    }
 }
 
 void MainWindow::updateControlUi() noexcept
@@ -1326,7 +1318,6 @@ void MainWindow::updateControlUi() noexcept
         ui->skipToEndAction->setEnabled(hasRecording && hasSkyConnectPlugins);
         // Position
         ui->positionSlider->setEnabled(hasRecording && hasSkyConnectPlugins);
-        ui->timestampTimeEdit->setEnabled(hasRecording && hasSkyConnectPlugins);
         break;
     case Connect::State::Recording:
         // Actions
@@ -1346,7 +1337,6 @@ void MainWindow::updateControlUi() noexcept
         // Position
         ui->positionSlider->setEnabled(false);
         ui->positionSlider->setValue(::PositionSliderMax);
-        ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::State::RecordingPaused:
         // Actions
@@ -1371,13 +1361,11 @@ void MainWindow::updateControlUi() noexcept
         ui->skipToEndAction->setEnabled(true);
         // Position
         ui->positionSlider->setEnabled(true);
-        ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::State::ReplayPaused:
         // Actions
         ui->pauseAction->setChecked(true);
         ui->playAction->setChecked(false);
-        ui->timestampTimeEdit->setEnabled(true);
         break;
     }
 
@@ -1385,6 +1373,42 @@ void MainWindow::updateControlUi() noexcept
     ui->loopReplayAction->setChecked(loopReplayEnabled);
 
     updatePlayActionTooltip();
+}
+
+void MainWindow::updateTimeUi() noexcept
+{
+    const auto &flight = Logbook::getInstance().getCurrentFlight();
+    const auto &aircraft = flight.getUserAircraft();
+
+    // TODO Perhaps add option to switch between simulation and real-world ("creation") time
+    const auto startZuluDateTime = flight.getAircraftStartZuluTime(aircraft);
+    ui->timestampEdit->setStartDateTime(startZuluDateTime);
+
+    const auto &skyConnectManager = SkyConnectManager::getInstance();
+    const bool hasRecording = aircraft.hasRecording();
+    const bool hasSkyConnectPlugins = skyConnectManager.hasPlugins();
+    bool enabled {false};
+    switch (skyConnectManager.getState()) {
+    case Connect::State::Disconnected:
+        // Fall-thru intended: each time a control element is triggered a connection
+        // attempt is made, so we enable the same elements as in connected state
+        [[fallthrough]];
+    case Connect::State::Connected:
+        enabled = hasRecording && hasSkyConnectPlugins;
+        ui->timestampEdit->setEnabled(enabled);
+        break;
+    case Connect::State::Recording:
+        ui->timestampEdit->setEnabled(false);
+        break;
+    case Connect::State::RecordingPaused:
+        break;
+    case Connect::State::Replay:
+        ui->timestampEdit->setEnabled(false);
+        break;
+    case Connect::State::ReplayPaused:
+        ui->timestampEdit->setEnabled(true);
+        break;
+    }
 }
 
 void MainWindow::updatePlayActionTooltip() noexcept
@@ -1514,18 +1538,17 @@ void MainWindow::onSimulationRateReceived(float rate) noexcept
 
 void MainWindow::onRecordingDurationChanged() noexcept
 {
-    updateReplayDuration();
+    updateRecordingDuration();
     updatePositionSlider(SkyConnectManager::getInstance().getCurrentTimestamp());
 }
 
-void MainWindow::updateReplayDuration() noexcept
+void MainWindow::updateRecordingDuration() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
-    const auto time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(totalDuration));
-    ui->timestampTimeEdit->blockSignals(true);
-    ui->timestampTimeEdit->setMaximumTime(time);
-    ui->timestampTimeEdit->blockSignals(false);
+    ui->timestampEdit->blockSignals(true);
+    ui->timestampEdit->setEndTimestamp(totalDuration);
+    ui->timestampEdit->blockSignals(false);
 }
 
 void MainWindow::updateFileMenu() noexcept
@@ -1863,16 +1886,7 @@ void MainWindow::clearFlight() noexcept
 void MainWindow::onFlightRestored() noexcept
 {
     updateUi();
-    auto &skyConnectManager = SkyConnectManager::getInstance();
-    skyConnectManager.skipToBegin();
-    if (skyConnectManager.isConnected()) {
-        // Make sure we are unpaused...
-        d->moduleManager->setPaused(false);
-        // ... play the first frame (which will "move" to the new location)...
-        d->moduleManager->setPlaying(true);
-        // ... and pause again (such that the new scenery can be loaded)
-        d->moduleManager->setPaused(true);
-    }
+    d->moduleManager->setupInitialPosition();
 }
 
 void MainWindow::onLogbookConnectionChanged(bool connected) noexcept
@@ -1923,9 +1937,21 @@ void MainWindow::onReplayLoopChanged() noexcept
 
 void MainWindow::onStyleKeyChanged() noexcept
 {
-    // TODO IMPLEMENT ME - This does not work reliably just yet (the executable name seems to be passed as 1st argument,
-    // causing Sky Dolly to make an attempt to open itself - also, the settings are sometimes not properly persisted (?)
-    // Settings::getInstance().store();
-    // qApp->quit();
-    // QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
+#ifdef DEBUG
+    qDebug() << "MainWindow::onStyleKeyChanged: Application style changed (restart).";
+#endif
+    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
+    messageBox->setIcon(QMessageBox::Information);
+    QPushButton *laterButton = messageBox->addButton(tr("&Later"), QMessageBox::RejectRole);
+    QPushButton *restartButton = messageBox->addButton(tr("&Restart"), QMessageBox::AcceptRole);
+    messageBox->setWindowTitle(tr("Restart Required"));
+    messageBox->setText(tr("The changed style becomes visible after a restart."));
+    messageBox->setDefaultButton(laterButton);
+
+    messageBox->exec();
+    const QAbstractButton *clickedButton = messageBox->clickedButton();
+    if (clickedButton == restartButton) {
+        QCoreApplication::quit();
+        QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
+    }
 }

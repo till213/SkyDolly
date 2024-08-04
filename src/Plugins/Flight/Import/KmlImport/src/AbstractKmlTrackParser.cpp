@@ -27,7 +27,6 @@
 #include <cstdint>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QTimeZone>
 #include <QDateTime>
 #include <QXmlStreamReader>
@@ -45,7 +44,7 @@ struct AbstractKmlTrackParserPrivate
 {
     AbstractKmlTrackParserPrivate() noexcept
     {
-        firstDateTimeUtc.setTimeZone(QTimeZone::utc());
+        firstDateTimeUtc.setTimeZone(QTimeZone::UTC);
     }
 
     QDateTime firstDateTimeUtc;
@@ -76,7 +75,7 @@ void AbstractKmlTrackParser::parseTrack(FlightData &flightData) noexcept
         // also taking care of possible duplicate timestamps (-> "upsert")
         std::vector<TrackItem> trackData;
         QDateTime currentDateTimeUtc;
-        currentDateTimeUtc.setTimeZone(QTimeZone::utc());
+        currentDateTimeUtc.setTimeZone(QTimeZone::UTC);
 
         bool ok {true};
         int currentTrackDataIndex = 0;
@@ -94,7 +93,7 @@ void AbstractKmlTrackParser::parseTrack(FlightData &flightData) noexcept
                     currentDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
                 }
                 if (currentDateTimeUtc.isValid()) {
-                    const std::int64_t timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
+                    const auto timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
                     TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
                     trackData.push_back(std::move(trackItem));
                 } else {

@@ -27,10 +27,8 @@
 #include <vector>
 #include <unordered_set>
 #include <cstdint>
-#include <exception>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QIODevice>
 #include <QByteArray>
@@ -73,7 +71,7 @@ namespace
 
 struct IgcImportPluginPrivate
 {
-    enum struct EngineState {
+    enum struct EngineState: std::uint8_t {
         Unknown,
         Running,
         Shutdown
@@ -118,7 +116,7 @@ std::vector<FlightData> IgcImportPlugin::importFlightData(QIODevice &io, bool &o
             if (d->pluginSettings.getAltitudeMode() == IgcImportSettings::AltitudeMode::Gnss) {
                 if (d->pluginSettings.isConvertAltitudeEnabled()) {
                     // Convert height above WGS84 ellipsoid (HAE) to height above EGM geoid [meters]
-                    heightAboveGeoid = convert.wgs84ToEgmGeoid(fix.gnssAltitude, fix.latitude, fix.longitude);
+                    heightAboveGeoid = convert.ellipsoidToGeoidHeight(fix.gnssAltitude, fix.latitude, fix.longitude);
                 } else {
                     heightAboveGeoid = fix.gnssAltitude;
                 }
@@ -128,7 +126,10 @@ std::vector<FlightData> IgcImportPlugin::importFlightData(QIODevice &io, bool &o
 
             PositionData positionData {fix.latitude, fix.longitude, Convert::metersToFeet(heightAboveGeoid)};
             positionData.timestamp = fix.timestamp;
-            positionData.indicatedAltitude = Convert::metersToFeet(fix.pressureAltitude);
+            const auto pressureAltitude = Convert::metersToFeet(fix.pressureAltitude);
+            positionData.indicatedAltitude = pressureAltitude;
+            positionData.calibratedIndicatedAltitude = pressureAltitude;
+            positionData.pressureAltitude = pressureAltitude;
             position.upsertLast(positionData);
 
             if (d->igcParser.hasEnvironmentalNoiseLevel()) {
@@ -266,7 +267,7 @@ void IgcImportPlugin::updateWaypoints(Aircraft &aircraft) const noexcept
 {
     Position &position = aircraft.getPosition();
 
-    FlightPlan &flightPlan = aircraft.getFlightPlan();
+    auto &flightPlan = aircraft.getFlightPlan();
     if (position.count() > 0) {
         Analytics analytics(aircraft);
         const QDateTime startDateTimeUtc = d->igcParser.getHeader().flightDateTimeUtc;

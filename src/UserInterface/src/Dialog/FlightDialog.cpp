@@ -61,8 +61,8 @@ struct FlightDialogPrivate
 
 FlightDialog::FlightDialog(QWidget *parent) noexcept
     : QDialog {parent},
-      d {std::make_unique<FlightDialogPrivate>()},
-      ui {std::make_unique<Ui::FlightDialog>()}
+      ui {std::make_unique<Ui::FlightDialog>()},
+      d {std::make_unique<FlightDialogPrivate>()}
 {
     ui->setupUi(this);
     initUi();

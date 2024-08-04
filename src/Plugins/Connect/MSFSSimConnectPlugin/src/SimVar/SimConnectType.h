@@ -36,6 +36,7 @@ namespace SimConnectType
         AircraftInfo,
         FlightPlan,
         SimulationTime,
+        TimeZoneInfo,
         InitialPosition,
         Location,
         PositionAll,
@@ -67,7 +68,9 @@ namespace SimConnectType
         WingLight,
         LogoLight,
         CabinLight,
-        SimulationRate
+        SimulationRate,
+        // Sensors
+        ReplaySensor
     };
 
     enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
@@ -77,6 +80,7 @@ namespace SimConnectType
         InitialPosition,
         Location,
         SimulationTime,
+        TimeZoneInfo,
         PositionAll,
         AttitudeAll,
         EngineAll,
@@ -97,6 +101,8 @@ namespace SimConnectType
         LogoLight,
         CabinLight,
         SimulationRate,
+        // Sensors
+        ReplaySensor,
         // AI objects
         AiRemoveObject,
         AiReleaseControl,

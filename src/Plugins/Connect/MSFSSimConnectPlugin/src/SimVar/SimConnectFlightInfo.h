@@ -106,15 +106,21 @@ struct SimConnectFlightInfo
         flightCondition.precipitationState = toPrecipitationState(ambientPrecipState);
         flightCondition.inClouds = (ambientInCloud != 0);
 
+        // Local start time
+        QDateTime startLocalDateTime;
         QTime time = QTime::fromMSecsSinceStartOfDay(localTime * 1000);
-        flightCondition.startLocalDateTime.setTime(time);
+        startLocalDateTime.setTime(time);
         QDate date = QDate(localYear, localMonth, localDay);
-        flightCondition.startLocalDateTime.setDate(date);
+        startLocalDateTime.setDate(date);
+        flightCondition.setStartLocalDateTime(startLocalDateTime);
 
+        // Zulu start time
+        QDateTime startZuluDateTime;
         time = QTime::fromMSecsSinceStartOfDay(zuluTime * 1000);
-        flightCondition.startZuluDateTime.setTime(time);
+        startZuluDateTime.setTime(time);
         date = QDate(zuluYear, zuluMonth, zuluDay);
-        flightCondition.startZuluDateTime.setDate(date);
+        startZuluDateTime.setDate(date);
+        flightCondition.setStartZuluDateTime(startZuluDateTime);
 
         return flightCondition;
     }

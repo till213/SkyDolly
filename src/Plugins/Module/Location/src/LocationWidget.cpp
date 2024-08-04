@@ -33,7 +33,7 @@
 #include <QDoubleSpinBox>
 #include <QSpinBox>
 #include <QCheckBox>
-#include <QHBoxLayout>
+#include <QComboBox>
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <QKeyEvent>
@@ -42,10 +42,13 @@
 #include <QRegularExpression>
 #include <QApplication>
 #include <QTimer>
+#include <QDate>
+#include <QTime>
 
 #include <GeographicLib/DMS.hpp>
 
 #include <Kernel/Const.h>
+#include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Kernel/Unit.h>
 #include <Kernel/PositionParser.h>
@@ -59,11 +62,12 @@
 #include <Widget/EnumerationWidgetItem.h>
 #include <Widget/UnitWidgetItem.h>
 #include <Widget/LinkedOptionGroup.h>
+#include <Widget/TableCheckableItem.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/Connect/SkyConnectIntf.h>
-#include <PluginManager/Module/AbstractModule.h>
 #include "LocationWidget.h"
 #include "EnumerationItemDelegate.h"
+#include "DateItemDelegate.h"
+#include "TimeItemDelegate.h"
 #include "PositionWidgetItem.h"
 #include "LocationSettings.h"
 #include "ui_LocationWidget.h"
@@ -110,8 +114,10 @@ struct LocationWidgetPrivate
     std::unique_ptr<EnumerationService> enumerationService {std::make_unique<EnumerationService>()};
     std::unique_ptr<EnumerationItemDelegate> locationCategoryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::LocationCategory)};
     std::unique_ptr<EnumerationItemDelegate> countryDelegate {std::make_unique<EnumerationItemDelegate>(EnumerationService::Country)};
+    std::unique_ptr<DateItemDelegate> dateItemDelegate {std::make_unique<DateItemDelegate>()};
+    std::unique_ptr<TimeItemDelegate> timeItemDelegate {std::make_unique<TimeItemDelegate>()};
 
-    const std::int64_t SystemLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeSystemSymId).id()};
+    const std::int64_t PresetLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypePresetSymId).id()};
     const std::int64_t UserLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeUserSymId).id()};
     const std::int64_t ImportLocationTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
     const std::int64_t NoneLocationCategoryId {PersistedEnumerationItem(EnumerationService::LocationCategory, EnumerationService::LocationCategoryNoneSymId).id()};
@@ -122,6 +128,8 @@ struct LocationWidgetPrivate
     static inline int idColumn {InvalidColumn};
     static inline int titleColumn {InvalidColumn};
     static inline int descriptionColumn {InvalidColumn};
+    static inline int localSimulationDateColumn {InvalidColumn};
+    static inline int localSimulationTimeColumn {InvalidColumn};
     static inline int typeColumn {InvalidColumn};
     static inline int categoryColumn {InvalidColumn};
     static inline int countryColumn {InvalidColumn};
@@ -133,7 +141,6 @@ struct LocationWidgetPrivate
     static inline int trueHeadingColumn {InvalidColumn};
     static inline int indicatedAirspeedColumn {InvalidColumn};
     static inline int onGroundColumn {InvalidColumn};
-    static inline int attributesColumn {InvalidColumn};
     static inline int engineColumn {InvalidColumn};
 
     static inline Enumeration typeEnumeration;
@@ -150,8 +157,7 @@ LocationWidget::LocationWidget(LocationSettings &moduleSettings, QWidget *parent
 {
     ui->setupUi(this);
     initUi();
-    // The location table is updated once the plugin settings are restored (initiated
-    // by LocationPlugin)
+    // The location table is updated once the plugin settings are restored (initiated by LocationPlugin)
     updateEditUi();
     updateInfoUi();
     frenchConnection();
@@ -187,25 +193,25 @@ void LocationWidget::addLocation(Location newLocation)
         location.engineEventId = ui->defaultEngineEventComboBox->getCurrentId();
     }    
     if (d->locationService->store(location)) {
-        // Make sure that user locations are visible
+        // Make sure that user locations are visible - this will also update
+        // the table rows (stored location will already be added)
         resetFilter();
-        ui->typeOptionGroup->setOptionEnabled(QVariant::fromValue(d->UserLocationTypeId), true);
 
-        ui->locationTableWidget->setSortingEnabled(false);
-        ui->locationTableWidget->blockSignals(true);
-        const QTableWidgetItem *firstItem = createRow(location);
-        ui->locationTableWidget->blockSignals(false);
-        // Automatically select newly inserted item (make sure that signals are emitted
-        // again)
-        ui->locationTableWidget->selectRow(ui->locationTableWidget->rowCount() - 1);
-        ui->locationTableWidget->setSortingEnabled(true);
-        ui->locationTableWidget->scrollToItem(firstItem); 
+        const int row = getRowById(location.id);
+        if (row != ::InvalidRow) {
+            ui->locationTableWidget->setFocus();
+            ui->locationTableWidget->selectRow(row);
+            const auto item = ui->locationTableWidget->item(row, LocationWidgetPrivate::idColumn);
+            // Give the repaint event a chance to get processed before scrolling
+            // to make the item visible
+            QTimer::singleShot(0, this, [this, item]() {ui->locationTableWidget->scrollToItem(item);});
+        }
     }
 }
 
 void LocationWidget::updateLocation(const Location &location)
 {
-    const int selectedRow = getSelectedRow();
+    const auto selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         Location selectedLocation = getLocationByRow(selectedRow);
 
@@ -230,6 +236,28 @@ void LocationWidget::updateLocation(const Location &location)
 }
 
 // PROTECTED
+
+void LocationWidget::showEvent([[maybe_unused]] QShowEvent *event) noexcept
+{
+    QByteArray tableState = d->moduleSettings.getLocationTableState();
+    if (!tableState.isEmpty()) {
+        ui->locationTableWidget->horizontalHeader()->blockSignals(true);
+        ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
+        ui->locationTableWidget->horizontalHeader()->blockSignals(false);
+    } else {
+        ui->locationTableWidget->resizeColumnsToContents();
+    }
+    // Sort with the current sort section and order
+    ui->locationTableWidget->setSortingEnabled(true);
+
+    // Wait until table widget columns (e.g. visibility) have been fully initialised
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
+            this, &LocationWidget::onTableLayoutChanged);
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
+            this, &LocationWidget::onTableLayoutChanged);
+    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
+            this, &LocationWidget::onTableLayoutChanged);
+}
 
 void LocationWidget::keyPressEvent(QKeyEvent *event) noexcept
 {
@@ -258,35 +286,35 @@ void LocationWidget::initUi() noexcept
     ui->searchLineEdit->setClearButtonEnabled(true);
 
     // Type
-    ui->typeOptionGroup->addOption(tr("System"), QVariant::fromValue(d->SystemLocationTypeId), tr("Show system locations."));
+    ui->typeOptionGroup->addOption(tr("Preset"), QVariant::fromValue(d->PresetLocationTypeId), tr("Show preset locations."));
     ui->typeOptionGroup->addOption(tr("User"), QVariant::fromValue(d->UserLocationTypeId), tr("Show user locations."));
     ui->typeOptionGroup->addOption(tr("Import"), QVariant::fromValue(d->ImportLocationTypeId), tr("Show imported locations."));
 
     // Table
     const QStringList headers {
-        tr("ID"), tr("Title"), tr("Description"), tr("Type"), tr("Category"),
-        tr("Country"), tr("Identifer"), tr("Position"), tr("Altitude"),
-        tr("Pitch"), tr("Bank"), tr("True Heading"), tr("Indicated Airspeed"),
-        tr("On Ground"), tr("Attributes"), tr("Engine")
+        tr("ID"), tr("Title"), tr("Description"), tr("Type"), tr("Category"), tr("Country"), tr("Identifer"),
+        tr("Position"), tr("Altitude"), tr("Pitch"), tr("Bank"), tr("True Heading"), tr("Indicated Airspeed"),
+        tr("Local Date"), tr("Local Time"), tr("On Ground"), tr("Engine")
     };
-    LocationWidgetPrivate::idColumn = headers.indexOf(tr("ID"));
-    LocationWidgetPrivate::titleColumn = headers.indexOf(tr("Title"));
-    LocationWidgetPrivate::descriptionColumn = headers.indexOf(tr("Description"));
-    LocationWidgetPrivate::typeColumn = headers.indexOf(tr("Type"));
-    LocationWidgetPrivate::categoryColumn = headers.indexOf(tr("Category"));
-    LocationWidgetPrivate::countryColumn = headers.indexOf(tr("Country"));
-    LocationWidgetPrivate::identifierColumn = headers.indexOf(tr("Identifer"));
-    LocationWidgetPrivate::positionColumn = headers.indexOf(tr("Position"));
-    LocationWidgetPrivate::altitudeColumn = headers.indexOf(tr("Altitude"));
-    LocationWidgetPrivate::pitchColumn = headers.indexOf(tr("Pitch"));
-    LocationWidgetPrivate::bankColumn = headers.indexOf(tr("Bank"));
-    LocationWidgetPrivate::trueHeadingColumn = headers.indexOf(tr("True Heading"));
-    LocationWidgetPrivate::indicatedAirspeedColumn = headers.indexOf(tr("Indicated Airspeed"));
-    LocationWidgetPrivate::onGroundColumn = headers.indexOf(tr("On Ground"));
-    LocationWidgetPrivate::attributesColumn = headers.indexOf(tr("Attributes"));
-    LocationWidgetPrivate::engineColumn = headers.indexOf(tr("Engine"));
+    LocationWidgetPrivate::idColumn = static_cast<int>(headers.indexOf(tr("ID")));
+    LocationWidgetPrivate::titleColumn = static_cast<int>(headers.indexOf(tr("Title")));
+    LocationWidgetPrivate::descriptionColumn = static_cast<int>(headers.indexOf(tr("Description")));
+    LocationWidgetPrivate::typeColumn = static_cast<int>(headers.indexOf(tr("Type")));
+    LocationWidgetPrivate::categoryColumn = static_cast<int>(headers.indexOf(tr("Category")));
+    LocationWidgetPrivate::countryColumn = static_cast<int>(headers.indexOf(tr("Country")));
+    LocationWidgetPrivate::identifierColumn = static_cast<int>(headers.indexOf(tr("Identifer")));
+    LocationWidgetPrivate::positionColumn = static_cast<int>(headers.indexOf(tr("Position")));
+    LocationWidgetPrivate::altitudeColumn = static_cast<int>(headers.indexOf(tr("Altitude")));
+    LocationWidgetPrivate::pitchColumn = static_cast<int>(headers.indexOf(tr("Pitch")));
+    LocationWidgetPrivate::bankColumn = static_cast<int>(headers.indexOf(tr("Bank")));
+    LocationWidgetPrivate::trueHeadingColumn = static_cast<int>(headers.indexOf(tr("True Heading")));
+    LocationWidgetPrivate::indicatedAirspeedColumn = static_cast<int>(headers.indexOf(tr("Indicated Airspeed")));
+    LocationWidgetPrivate::localSimulationDateColumn = static_cast<int>(headers.indexOf(tr("Local Date")));
+    LocationWidgetPrivate::localSimulationTimeColumn = static_cast<int>(headers.indexOf(tr("Local Time")));
+    LocationWidgetPrivate::onGroundColumn = static_cast<int>(headers.indexOf(tr("On Ground")));
+    LocationWidgetPrivate::engineColumn = static_cast<int>(headers.indexOf(tr("Engine")));
 
-    ui->locationTableWidget->setColumnCount(headers.count());
+    ui->locationTableWidget->setColumnCount(static_cast<int>(headers.count()));
     ui->locationTableWidget->setHorizontalHeaderLabels(headers);
     ui->locationTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->locationTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -301,10 +329,26 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::bankColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::trueHeadingColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::indicatedAirspeedColumn, true);
-    ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::attributesColumn, true);
     ui->locationTableWidget->setColumnHidden(LocationWidgetPrivate::engineColumn, true);
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::categoryColumn, d->locationCategoryDelegate.get());
     ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::countryColumn, d->countryDelegate.get());
+    ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::localSimulationDateColumn, d->dateItemDelegate.get());
+    ui->locationTableWidget->setItemDelegateForColumn(LocationWidgetPrivate::localSimulationTimeColumn, d->timeItemDelegate.get());
+
+    // Date and time
+    ui->dateComboBox->addItem(tr("Today"), Enum::underly(LocationSettings::DateSelection::Today));
+    ui->dateComboBox->addItem(tr("Date"), Enum::underly(LocationSettings::DateSelection::Date));
+    ui->dateComboBox->addItem(tr("Location date & time"), Enum::underly(LocationSettings::DateSelection::LocationDateTime));
+
+    ui->timeComboBox->addItem(tr("Now"), Enum::underly(LocationSettings::TimeSelection::Now));
+    ui->timeComboBox->addItem(tr("Morning"), Enum::underly(LocationSettings::TimeSelection::Morning));
+    ui->timeComboBox->addItem(tr("Noon"), Enum::underly(LocationSettings::TimeSelection::Noon));
+    ui->timeComboBox->addItem(tr("Afternoon"), Enum::underly(LocationSettings::TimeSelection::Afternoon));
+    ui->timeComboBox->addItem(tr("Evening"), Enum::underly(LocationSettings::TimeSelection::Evening));
+    ui->timeComboBox->addItem(tr("Night"), Enum::underly(LocationSettings::TimeSelection::Night));
+    ui->timeComboBox->addItem(tr("Midnight"), Enum::underly(LocationSettings::TimeSelection::Midnight));
+    ui->timeComboBox->addItem(tr("Sunrise"), Enum::underly(LocationSettings::TimeSelection::Sunrise));
+    ui->timeComboBox->addItem(tr("Sunset"), Enum::underly(LocationSettings::TimeSelection::Sunset));
 
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
@@ -403,6 +447,14 @@ void LocationWidget::frenchConnection() noexcept
     connect(ui->engineEventComboBox, &EnumerationComboBox::currentIndexChanged,
             this, &LocationWidget::onEngineEventChanged);
 
+    // Date and time
+    connect(ui->dateComboBox, &QComboBox::currentIndexChanged,
+            this, &LocationWidget::onDateSelected);
+    connect(ui->dateEdit, &QDateEdit::userDateChanged,
+            this, &LocationWidget::onDateChanged);
+    connect(ui->timeComboBox, &QComboBox::currentIndexChanged,
+            this, &LocationWidget::onTimeSelected);
+
     // Default values group
     connect(ui->defaultAltitudeSpinBox, &QSpinBox::valueChanged,
             this, &LocationWidget::onDefaultAltitudeChanged);
@@ -413,14 +465,7 @@ void LocationWidget::frenchConnection() noexcept
     connect(ui->defaultOnGroundCheckBox, &QCheckBox::toggled,
             this, &LocationWidget::onDefaultOnGroundChanged);
 
-
     // Module settings
-    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionMoved,
-            this, &LocationWidget::onTableLayoutChanged);
-    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sectionResized,
-            this, &LocationWidget::onTableLayoutChanged);
-    connect(ui->locationTableWidget->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
-            this, &LocationWidget::onTableLayoutChanged);
     connect(&d->moduleSettings, &ModuleBaseSettings::changed,
             this, &LocationWidget::onModuleSettingsChanged);
 }
@@ -437,9 +482,9 @@ void LocationWidget::updateInfoUi() noexcept
     const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
     bool readOnly {true};
     if (hasSelection) {
-        const int selectedRow = getSelectedRow();
-        QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::typeColumn);
-        readOnly = item->data(Qt::EditRole).toLongLong() == d->SystemLocationTypeId;
+        const auto selectedRow = getSelectedRow();
+        auto item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::typeColumn);
+        readOnly = item->data(Qt::EditRole).toLongLong() == d->PresetLocationTypeId;
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::descriptionColumn);
         ui->descriptionPlainTextEdit->setPlainText(item->text());
         item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::pitchColumn);
@@ -483,9 +528,8 @@ void LocationWidget::updateTable() noexcept
                     d->locationService->getSelectedLocations(d->moduleSettings.getLocationSelector()) :
                     d->locationService->getAll();
 
-        ui->locationTableWidget->blockSignals(true);
         // Prevent table state changes notify the module settings
-
+        ui->locationTableWidget->blockSignals(true);
         ui->locationTableWidget->setSortingEnabled(false);           
         ui->locationTableWidget->clearContents();
         ui->locationTableWidget->setRowCount(static_cast<int>(locations.size()));
@@ -496,14 +540,6 @@ void LocationWidget::updateTable() noexcept
             ++row;
         }
 
-        QByteArray tableState = d->moduleSettings.getLocationTableState();
-        if (!tableState.isEmpty()) {
-            ui->locationTableWidget->horizontalHeader()->blockSignals(true);
-            ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
-            ui->locationTableWidget->horizontalHeader()->blockSignals(false);
-        } else {
-            ui->locationTableWidget->resizeColumnsToContents();
-        }
         ui->locationTableWidget->setSortingEnabled(true);        
         ui->locationTableWidget->blockSignals(false);
 
@@ -524,7 +560,7 @@ inline const QTableWidgetItem *LocationWidget::createRow(const Location &locatio
 
 inline const QTableWidgetItem *LocationWidget::initRow(const Location &location, int row) noexcept
 {
-    const bool isSystemLocation {location.typeId == d->SystemLocationTypeId};
+    const bool presetLocation {location.typeId == d->PresetLocationTypeId};
     int column {0};
 
     // ID
@@ -539,7 +575,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Title
     newItem = std::make_unique<QTableWidgetItem>();
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit title."));
@@ -549,7 +585,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Description
     newItem = std::make_unique<QTableWidgetItem>();
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit description."));
@@ -564,7 +600,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Category
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::categoryEnumeration);
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit category."));
@@ -574,7 +610,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Country
     newItem = std::make_unique<EnumerationWidgetItem>(LocationWidgetPrivate::countryEnumeration);
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit country."));
@@ -584,7 +620,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Identifier
     newItem = std::make_unique<QTableWidgetItem>();
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit identifier."));
@@ -594,7 +630,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
 
     // Position
     newItem = std::make_unique<PositionWidgetItem>();
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit position."));
@@ -605,7 +641,7 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
     // Altitude
     newItem = std::make_unique<UnitWidgetItem>(d->unit, Unit::Name::Feet);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    if (isSystemLocation) {
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     } else {
         newItem->setToolTip(tr("Double-click to edit altitude."));
@@ -633,19 +669,34 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
-    // On ground
+    // Local date
     newItem = std::make_unique<QTableWidgetItem>();
-    if (isSystemLocation) {
+    if (presetLocation) {
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+    } else {
+        newItem->setToolTip(tr("Double-click to edit the local simulation date."));
+    }
+    ui->locationTableWidget->setItem(row, column, newItem.release());
+    ++column;
+
+    // Local time
+    newItem = std::make_unique<QTableWidgetItem>();
+    if (presetLocation) {
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+    } else {
+        newItem->setToolTip(tr("Double-click to edit the local simulation time."));
+    }
+    ui->locationTableWidget->setItem(row, column, newItem.release());
+    ++column;
+
+    // On ground
+    newItem = std::make_unique<TableCheckableItem>();
+    if (presetLocation) {
         newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsUserCheckable);
     } else {
         newItem->setToolTip(tr("Click to toggle on ground."));
         newItem->setFlags((newItem->flags() | Qt::ItemIsUserCheckable) & ~Qt::ItemIsEditable);
     }
-    ui->locationTableWidget->setItem(row, column, newItem.release());
-    ++column;
-
-    // Attributes
-    newItem = std::make_unique<QTableWidgetItem>();
     ui->locationTableWidget->setItem(row, column, newItem.release());
     ++column;
 
@@ -659,10 +710,26 @@ inline const QTableWidgetItem *LocationWidget::initRow(const Location &location,
     return firstItem;
 }
 
+int LocationWidget::getRowById(std::int64_t id) const noexcept
+{
+    int row {::InvalidRow};
+    const auto rowCount =ui->locationTableWidget->rowCount();
+    int currentRow {rowCount - 1};
+    while (row == ::InvalidRow && currentRow > 0) {
+        const auto *currentItem = ui->locationTableWidget->item(currentRow, LocationWidgetPrivate::idColumn);
+        if (currentItem->data(Qt::DisplayRole).toLongLong() == id) {
+            row = currentRow;
+        } else {
+            --currentRow;
+        }
+    }
+    return row;
+}
+
 inline void LocationWidget::updateRow(const Location &location, int row) noexcept
 {
     // ID
-    QTableWidgetItem *item = ui->locationTableWidget->item(row, LocationWidgetPrivate::idColumn);
+    auto item = ui->locationTableWidget->item(row, LocationWidgetPrivate::idColumn);
     item->setData(Qt::DisplayRole, QVariant::fromValue(location.id));
 
     // Title
@@ -713,13 +780,17 @@ inline void LocationWidget::updateRow(const Location &location, int row) noexcep
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::indicatedAirspeedColumn);
     item->setData(Qt::EditRole, location.indicatedAirspeed);
 
+    // Local simulation date
+    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::localSimulationDateColumn);
+    item->setData(Qt::DisplayRole, location.localSimulationDate);
+
+    // Local simulation time
+    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::localSimulationTimeColumn);
+    item->setData(Qt::DisplayRole, location.localSimulationTime);
+
     // On ground
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::onGroundColumn);
     item->setCheckState(location.onGround ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
-
-    // Attributes
-    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::attributesColumn);
-    item->setData(Qt::EditRole, QVariant::fromValue(location.attributes));
 
     // Engine event
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::engineColumn);
@@ -736,7 +807,16 @@ void LocationWidget::teleportToLocation(int row) noexcept
 {
     if (!SkyConnectManager::getInstance().isActive()) {
         Location location = getLocationByRow(row);
-        emit teleportTo(location);
+
+        QDate localSimulationDate;
+        QTime localSimulationTime;
+        if (d->moduleSettings.getDateSelection() == LocationSettings::DateSelection::LocationDateTime) {
+            localSimulationDate = location.localSimulationDate.isValid() ? location.localSimulationDate : ui->dateEdit->date();
+            localSimulationTime = location.localSimulationTime;
+        } else {
+            localSimulationDate = ui->dateEdit->date();
+        }
+        emit teleportTo(location, localSimulationDate, localSimulationTime);
     }
 }
 
@@ -744,7 +824,7 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
 {
     Location location;
 
-    QTableWidgetItem *item = ui->locationTableWidget->item(row, LocationWidgetPrivate::idColumn);
+    auto item = ui->locationTableWidget->item(row, LocationWidgetPrivate::idColumn);
     location.id = item->data(Qt::EditRole).toLongLong();
 
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::titleColumn);
@@ -766,7 +846,7 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
     location.identifier = item->data(Qt::EditRole).toString();
 
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::positionColumn);
-    const QStringList coordinates = item->data(Qt::EditRole).toString().split(',');
+    const auto coordinates = item->data(Qt::EditRole).toString().split(',');
     location.latitude = coordinates.first().toDouble();
     location.longitude = coordinates.last().toDouble();
 
@@ -785,11 +865,14 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::indicatedAirspeedColumn);
     location.indicatedAirspeed = item->data(Qt::EditRole).toInt();
 
+    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::localSimulationDateColumn);
+    location.localSimulationDate = item->data(Qt::EditRole).toDate();
+
+    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::localSimulationTimeColumn);
+    location.localSimulationTime = item->data(Qt::EditRole).toTime();
+
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::onGroundColumn);
     location.onGround = item->checkState() == Qt::CheckState::Checked;
-
-    item = ui->locationTableWidget->item(row, LocationWidgetPrivate::attributesColumn);
-    location.attributes = item->data(Qt::EditRole).toLongLong();
 
     item = ui->locationTableWidget->item(row, LocationWidgetPrivate::engineColumn);
     location.engineEventId = item->data(Qt::EditRole).toLongLong();
@@ -799,7 +882,7 @@ Location LocationWidget::getLocationByRow(int row) const noexcept
 
 void LocationWidget::tryPasteLocation() noexcept
 {
-    const QString text = QApplication::clipboard()->text();
+    const auto text = QApplication::clipboard()->text();
     bool ok {false};
     PositionParser::Coordinate coordinate = PositionParser::parse(text, &ok);
     if (ok) {
@@ -810,8 +893,8 @@ void LocationWidget::tryPasteLocation() noexcept
 int LocationWidget::getSelectedRow() const noexcept
 {
     int selectedRow {::InvalidRow};
-    const QItemSelectionModel *select = ui->locationTableWidget->selectionModel();
-    const QModelIndexList modelIndices = select->selectedRows(LocationWidgetPrivate::idColumn);
+    const auto select = ui->locationTableWidget->selectionModel();
+    const auto modelIndices = select->selectedRows(LocationWidgetPrivate::idColumn);
     if (modelIndices.count() > 0) {
         QModelIndex modelIndex = modelIndices.at(0);
         selectedRow = modelIndex.row();
@@ -822,7 +905,7 @@ int LocationWidget::getSelectedRow() const noexcept
 std::int64_t LocationWidget::getSelectedLocationId() const noexcept
 {
     std::int64_t selectedLocationId {Const::InvalidId};
-    const int selectedRow = getSelectedRow();
+    const auto selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         selectedLocationId = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::idColumn)->data(Qt::EditRole).toLongLong();
     }
@@ -847,17 +930,29 @@ void LocationWidget::updateEditUi() noexcept
     ui->teleportPushButton->setEnabled(hasSelection && !isActive);
     bool editableRow {false};
     if (hasSelection) {
-        const int selectedRow = getSelectedRow();
+        const auto selectedRow = getSelectedRow();
         Location location =  getLocationByRow(selectedRow);
-        editableRow = location.typeId != d->SystemLocationTypeId;
+        editableRow = location.typeId != d->PresetLocationTypeId;
     }
     ui->updatePushButton->setEnabled(editableRow);
     ui->deletePushButton->setEnabled(editableRow);
+
+    ui->pitchSpinBox->setEnabled(editableRow);
+    ui->bankSpinBox->setEnabled(editableRow);
+    ui->trueHeadingSpinBox->setEnabled(editableRow);
+    ui->indicatedAirspeedSpinBox->setEnabled(editableRow);
+    ui->engineEventComboBox->setEnabled(editableRow);
+
+    const auto dateSelection = static_cast<LocationSettings::DateSelection>(ui->dateComboBox->currentData().toInt());
+    ui->dateEdit->setEnabled(dateSelection != LocationSettings::DateSelection::Today);
+    if (dateSelection == LocationSettings::DateSelection::Today || !ui->dateEdit->date().isValid()) {
+        ui->dateEdit->setDate(QDate::currentDate());
+    }
 }
 
 void LocationWidget::onCategoryChanged() noexcept
 {
-    std:int64_t categoryId = ui->categoryComboBox->getCurrentId();
+    auto categoryId = ui->categoryComboBox->getCurrentId();
     if (categoryId == d->NoneLocationCategoryId) {
         categoryId = Const::InvalidId;
     }
@@ -866,7 +961,7 @@ void LocationWidget::onCategoryChanged() noexcept
 
 void LocationWidget::onCountryChanged() noexcept
 {
-    std::int64_t countryId = ui->countryComboBox->getCurrentId();
+    auto countryId = ui->countryComboBox->getCurrentId();
     if (countryId == d->WorldCountryId) {
         countryId = Const::InvalidId;
     }
@@ -885,8 +980,8 @@ void LocationWidget::searchText() noexcept
 
 void LocationWidget::onTypeOptionToggled(const QVariant &optionValue, bool enable) noexcept
 {
-    LocationSelector::TypeSelection typeSelection = d->moduleSettings.getTypeSelection();
-    std::int64_t typeId = optionValue.toLongLong();
+    auto typeSelection = d->moduleSettings.getTypeSelection();
+    auto typeId = optionValue.toLongLong();
     if (enable) {
         typeSelection.insert(typeId);
     } else {
@@ -907,8 +1002,8 @@ void LocationWidget::resetDefaultValues() noexcept
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
 {
-    QTableWidgetItem *item = ui->locationTableWidget->item(row, column);
-    if (column != LocationWidgetPrivate::idColumn) {
+    const auto item = ui->locationTableWidget->item(row, column);
+    if (column != LocationWidgetPrivate::idColumn && (item->flags() & Qt::ItemIsEditable)) {
         ui->locationTableWidget->editItem(item);
     } else {
         teleportToLocation(row);
@@ -917,7 +1012,7 @@ void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexce
 
 void LocationWidget::onCellChanged(int row, [[maybe_unused]]int column) noexcept
 {
-    Location location = getLocationByRow(row);
+    const auto location = getLocationByRow(row);
     d->locationService->update(location);
 }
 
@@ -944,16 +1039,16 @@ void LocationWidget::onUpdateLocation() noexcept
 
 void LocationWidget::onTeleportToSelectedLocation() noexcept
 {
-    QList<QTableWidgetItem *> selectedItems = ui->locationTableWidget->selectedItems();
+    const auto selectedItems = ui->locationTableWidget->selectionModel()->selectedRows();
     if (selectedItems.count() > 0) {
-        const int row = selectedItems.last()->row();
+        const int row = selectedItems.last().row();
         teleportToLocation(row);
     }
 }
 
 void LocationWidget::onDeleteLocation() noexcept
 {
-    const std::int64_t selectedLocationId = getSelectedLocationId();
+    const auto selectedLocationId = getSelectedLocationId();
     if (selectedLocationId != Const::InvalidId) {
         auto &settings = Settings::getInstance();
         bool doDelete {true};
@@ -977,10 +1072,10 @@ void LocationWidget::onDeleteLocation() noexcept
         }
 
         if (doDelete) {
-            const int lastSelectedRow = getSelectedRow();
+            const auto lastSelectedRow = getSelectedRow();
             d->locationService->deleteById(selectedLocationId);
             updateUi();
-            const int selectedRow = std::min(lastSelectedRow, ui->locationTableWidget->rowCount() - 1);
+            const auto selectedRow = std::min(lastSelectedRow, ui->locationTableWidget->rowCount() - 1);
             ui->locationTableWidget->selectRow(selectedRow);
             ui->locationTableWidget->setFocus(Qt::NoFocusReason);
         }
@@ -989,13 +1084,13 @@ void LocationWidget::onDeleteLocation() noexcept
 
 void LocationWidget::onDescriptionChanged() noexcept
 {
-    const int selectedRow = getSelectedRow();
+    const auto selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         Location location = getLocationByRow(selectedRow);
         location.description = ui->descriptionPlainTextEdit->toPlainText();
         if (d->locationService->update(location)) {
             ui->locationTableWidget->blockSignals(true);
-            QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::descriptionColumn);
+            const auto item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::descriptionColumn);
             item->setData(Qt::EditRole, location.description);
             ui->locationTableWidget->blockSignals(false);
         }
@@ -1004,13 +1099,13 @@ void LocationWidget::onDescriptionChanged() noexcept
 
 void LocationWidget::onPitchChanged(double value) noexcept
 {
-    const int selectedRow = getSelectedRow();
+    const auto selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         Location location = getLocationByRow(selectedRow);
         location.pitch = value;
         if (d->locationService->update(location)) {
             ui->locationTableWidget->blockSignals(true);
-            QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::pitchColumn);
+            const auto item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::pitchColumn);
             item->setData(Qt::EditRole, location.pitch);
             ui->locationTableWidget->blockSignals(false);
         }
@@ -1019,13 +1114,13 @@ void LocationWidget::onPitchChanged(double value) noexcept
 
 void LocationWidget::onBankChanged(double value) noexcept
 {
-    const int selectedRow = getSelectedRow();
+    const auto selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         Location location = getLocationByRow(selectedRow);
         location.bank = value;
         if (d->locationService->update(location)) {
             ui->locationTableWidget->blockSignals(true);
-            QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::bankColumn);
+            const auto item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::bankColumn);
             item->setData(Qt::EditRole, location.bank);
             ui->locationTableWidget->blockSignals(false);
         }
@@ -1034,13 +1129,13 @@ void LocationWidget::onBankChanged(double value) noexcept
 
 void LocationWidget::onHeadingChanged(double value) noexcept
 {
-    const int selectedRow = getSelectedRow();
+    const auto selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         Location location = getLocationByRow(selectedRow);
         location.trueHeading = value;
         if (d->locationService->update(location)) {
             ui->locationTableWidget->blockSignals(true);
-            QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::trueHeadingColumn);
+            const auto item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::trueHeadingColumn);
             item->setData(Qt::EditRole, location.trueHeading);
             ui->locationTableWidget->blockSignals(false);
         }
@@ -1049,32 +1144,49 @@ void LocationWidget::onHeadingChanged(double value) noexcept
 
 void LocationWidget::onIndicatedAirspeedChanged(int value) noexcept
 {
-    const int selectedRow = getSelectedRow();
+    const auto selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         Location location = getLocationByRow(selectedRow);
         location.indicatedAirspeed = value;
         if (d->locationService->update(location)) {
             ui->locationTableWidget->blockSignals(true);
-            QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::indicatedAirspeedColumn);
+            const auto item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::indicatedAirspeedColumn);
             item->setData(Qt::EditRole, location.indicatedAirspeed);
             ui->locationTableWidget->blockSignals(false);
         }
     }
 }
 
-void LocationWidget::onEngineEventChanged([[maybe_unused]]int index) noexcept
+void LocationWidget::onEngineEventChanged() noexcept
 {
-    const int selectedRow = getSelectedRow();
+    const auto selectedRow = getSelectedRow();
     if (selectedRow != ::InvalidRow) {
         Location location = getLocationByRow(selectedRow);
         location.engineEventId = ui->engineEventComboBox->getCurrentId();
         if (d->locationService->update(location)) {
             ui->locationTableWidget->blockSignals(true);
-            QTableWidgetItem *item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::engineColumn);
+            const auto item = ui->locationTableWidget->item(selectedRow, LocationWidgetPrivate::engineColumn);
             item->setData(Qt::EditRole, QVariant::fromValue(location.engineEventId));
             ui->locationTableWidget->blockSignals(false);
         }
     }
+}
+
+void LocationWidget::onDateSelected() noexcept
+{
+    const auto dateSelection = static_cast<LocationSettings::DateSelection>(ui->dateComboBox->currentData().toInt());
+    d->moduleSettings.setDateSelection(dateSelection);
+}
+
+void LocationWidget::onDateChanged(QDate date) noexcept
+{
+    d->moduleSettings.setDate(date);
+}
+
+void LocationWidget::onTimeSelected() noexcept
+{
+    const auto timeSelection = static_cast<LocationSettings::TimeSelection>(ui->timeComboBox->currentData().toInt());
+    d->moduleSettings.setTimeSelection(timeSelection);
 }
 
 void LocationWidget::onDefaultAltitudeChanged(int value) noexcept
@@ -1150,5 +1262,31 @@ void LocationWidget::onModuleSettingsChanged() noexcept
     ui->defaultOnGroundCheckBox->setChecked(d->moduleSettings.isDefaultOnGround());
     ui->defaultOnGroundCheckBox->blockSignals(false);
 
+    // Date and time
+    const auto dateSelection = d->moduleSettings.getDateSelection();
+    int currentIndex {0};
+    while (currentIndex < ui->dateComboBox->count() &&
+           static_cast<LocationSettings::DateSelection>(ui->dateComboBox->itemData(currentIndex).toInt()) != dateSelection) {
+        ++currentIndex;
+    }
+    ui->dateComboBox->blockSignals(true);
+    ui->dateComboBox->setCurrentIndex(currentIndex);
+    ui->dateComboBox->blockSignals(false);
+
+    ui->dateEdit->blockSignals(true);
+    ui->dateEdit->setDate(d->moduleSettings.getDate());
+    ui->dateEdit->blockSignals(false);
+
+    const auto timeSelection = d->moduleSettings.getTimeSelection();
+    currentIndex = 0;
+    while (currentIndex < ui->timeComboBox->count() &&
+           static_cast<LocationSettings::TimeSelection>(ui->timeComboBox->itemData(currentIndex).toInt()) != timeSelection) {
+        ++currentIndex;
+    }
+    ui->timeComboBox->blockSignals(true);
+    ui->timeComboBox->setCurrentIndex(currentIndex);
+    ui->timeComboBox->blockSignals(false);
+
     updateTable();
+    updateEditUi();
 }

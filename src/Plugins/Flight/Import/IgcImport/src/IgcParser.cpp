@@ -308,7 +308,7 @@ bool IgcParser::parseHeaderDate(const QByteArray &line) noexcept
         const auto month = match.capturedView(::HRecordMonthIndex).toInt();
         const auto day = match.capturedView(::HRecordDayIndex).toInt();
         d->header.flightDateTimeUtc.setDate(QDate(year, month, day));
-        d->header.flightDateTimeUtc.setTimeZone(QTimeZone::utc());
+        d->header.flightDateTimeUtc.setTimeZone(QTimeZone::UTC);
         // The flight number is optional
         if (::HRecordFlightNumberIndex == match.lastCapturedIndex()) {
             d->header.flightNumber = match.captured(::HRecordFlightNumberIndex);
@@ -445,7 +445,7 @@ bool IgcParser::parseFix(const QByteArray &line) noexcept
 
         if (d->currentDateTimeUtc.isValid()) {
 
-            const std::int64_t timestamp = d->header.flightDateTimeUtc.msecsTo(d->currentDateTimeUtc);
+            const auto timestamp = d->header.flightDateTimeUtc.msecsTo(d->currentDateTimeUtc);
 
             // Latitude
             const auto latitudeText = match.capturedView(::BRecordLatitudeDegreesIndex);

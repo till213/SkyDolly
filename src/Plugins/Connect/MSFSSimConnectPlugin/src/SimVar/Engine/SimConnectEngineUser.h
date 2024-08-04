@@ -42,25 +42,25 @@ struct SimConnectEngineUser
     SimConnectEngineCommon common;
     SimConnectEngineCore core;
 
-    SimConnectEngineUser(const EngineData &engineData) noexcept
+    SimConnectEngineUser(const EngineData &data) noexcept
         : SimConnectEngineUser()
     {
-        fromEngineData(engineData);
+        fromEngineData(data);
     }
 
     SimConnectEngineUser() = default;
 
-    inline void fromEngineData(const EngineData &engineData)
+    inline void fromEngineData(const EngineData &data)
     {
-        common.fromEngineData(engineData);
-        core.fromEngineData(engineData);
+        common.fromEngineData(data);
+        core.fromEngineData(data);
     }
 
     inline EngineData toEngineData() const noexcept
     {
-        EngineData engineData = common.toEngineData();
-        core.toEngineData(engineData);
-        return engineData;
+        EngineData data = common.toEngineData();
+        core.toEngineData(data);
+        return data;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept

@@ -32,7 +32,6 @@
 
 #include <Kernel/SkyMath.h>
 #include <Model/SimVar.h>
-#include "SimConnectType.h"
 #include <Model/EngineData.h>
 
 /*!
@@ -56,53 +55,53 @@ struct SimConnectEngineCore
     std::int32_t generalEngineStarter3 {0};
     std::int32_t generalEngineStarter4 {0};
 
-    SimConnectEngineCore(const EngineData &engineData) noexcept
+    SimConnectEngineCore(const EngineData &data) noexcept
         : SimConnectEngineCore()
     {
-        fromEngineData(engineData);
+        fromEngineData(data);
     }
 
     SimConnectEngineCore() = default;
 
-    inline void fromEngineData(const EngineData &engineData) noexcept
+    inline void fromEngineData(const EngineData &data) noexcept
     {
-        mixtureLeverPosition1 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition1));
-        mixtureLeverPosition2 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition2));
-        mixtureLeverPosition3 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition3));
-        mixtureLeverPosition4 = static_cast<float>(SkyMath::toPercent(engineData.mixtureLeverPosition4));
-        electricalMasterBattery1 = engineData.electricalMasterBattery1 ? 1 : 0;
-        electricalMasterBattery2 = engineData.electricalMasterBattery2 ? 1 : 0;
-        electricalMasterBattery3 = engineData.electricalMasterBattery3 ? 1 : 0;
-        electricalMasterBattery4 = engineData.electricalMasterBattery4 ? 1 : 0;
-        generalEngineStarter1 = engineData.generalEngineStarter1 ? 1 : 0;
-        generalEngineStarter2 = engineData.generalEngineStarter2 ? 1 : 0;
-        generalEngineStarter3 = engineData.generalEngineStarter3 ? 1 : 0;
-        generalEngineStarter4 = engineData.generalEngineStarter4 ? 1 : 0;
+        mixtureLeverPosition1 = static_cast<float>(SkyMath::toPercent(data.mixtureLeverPosition1));
+        mixtureLeverPosition2 = static_cast<float>(SkyMath::toPercent(data.mixtureLeverPosition2));
+        mixtureLeverPosition3 = static_cast<float>(SkyMath::toPercent(data.mixtureLeverPosition3));
+        mixtureLeverPosition4 = static_cast<float>(SkyMath::toPercent(data.mixtureLeverPosition4));
+        electricalMasterBattery1 = data.electricalMasterBattery1 ? 1 : 0;
+        electricalMasterBattery2 = data.electricalMasterBattery2 ? 1 : 0;
+        electricalMasterBattery3 = data.electricalMasterBattery3 ? 1 : 0;
+        electricalMasterBattery4 = data.electricalMasterBattery4 ? 1 : 0;
+        generalEngineStarter1 = data.generalEngineStarter1 ? 1 : 0;
+        generalEngineStarter2 = data.generalEngineStarter2 ? 1 : 0;
+        generalEngineStarter3 = data.generalEngineStarter3 ? 1 : 0;
+        generalEngineStarter4 = data.generalEngineStarter4 ? 1 : 0;
     }
 
     inline EngineData toEngineData() const noexcept
     {
-        EngineData engineData;
-        toEngineData(engineData);
-        return engineData;
+        EngineData data;
+        toEngineData(data);
+        return data;
     }
 
-    inline void toEngineData(EngineData &engineData) const noexcept
+    inline void toEngineData(EngineData &data) const noexcept
     {
         // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
         //       position (std::int16_t) which supports negative values as well
-        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(mixtureLeverPosition1);
-        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(mixtureLeverPosition2);
-        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(mixtureLeverPosition3);
-        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(mixtureLeverPosition4);
-        engineData.electricalMasterBattery1 = (electricalMasterBattery1 != 0);
-        engineData.electricalMasterBattery2 = (electricalMasterBattery2 != 0);
-        engineData.electricalMasterBattery3 = (electricalMasterBattery3 != 0);
-        engineData.electricalMasterBattery4 = (electricalMasterBattery4 != 0);
-        engineData.generalEngineStarter1 = (generalEngineStarter1 != 0);
-        engineData.generalEngineStarter2 = (generalEngineStarter2 != 0);
-        engineData.generalEngineStarter3 = (generalEngineStarter3 != 0);
-        engineData.generalEngineStarter4 = (generalEngineStarter4 != 0);
+        data.mixtureLeverPosition1 = SkyMath::fromPercent(mixtureLeverPosition1);
+        data.mixtureLeverPosition2 = SkyMath::fromPercent(mixtureLeverPosition2);
+        data.mixtureLeverPosition3 = SkyMath::fromPercent(mixtureLeverPosition3);
+        data.mixtureLeverPosition4 = SkyMath::fromPercent(mixtureLeverPosition4);
+        data.electricalMasterBattery1 = (electricalMasterBattery1 != 0);
+        data.electricalMasterBattery2 = (electricalMasterBattery2 != 0);
+        data.electricalMasterBattery3 = (electricalMasterBattery3 != 0);
+        data.electricalMasterBattery4 = (electricalMasterBattery4 != 0);
+        data.generalEngineStarter1 = (generalEngineStarter1 != 0);
+        data.generalEngineStarter2 = (generalEngineStarter2 != 0);
+        data.generalEngineStarter3 = (generalEngineStarter3 != 0);
+        data.generalEngineStarter4 = (generalEngineStarter4 != 0);
     }
 
     inline bool hasEngineStarterEnabled() const noexcept

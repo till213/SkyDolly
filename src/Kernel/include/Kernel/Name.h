@@ -26,7 +26,6 @@
 #define NAME_H
 
 #include <QString>
-#include <QStringLiteral>
 #include <QRegularExpression>
 
 /*!
@@ -37,11 +36,11 @@
 namespace Name
 {
     /*!
-     * Converts the string \c camelCase from camelCase to snake_case.
+     * Converts the string \p camelCase from camelCase to snake_case.
      *
      * \param camelCase
      *        the string to be converted to snake_case
-     * \return the string \c s in snake_case
+     * \return the string \p s in snake_case
      */
     QString fromCamelCase(const QString &camelCase)
     {

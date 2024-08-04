@@ -106,7 +106,7 @@ void FlightPlanWidget::initUi() noexcept
 void FlightPlanWidget::updateUi() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
-    const FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
+    const auto &flightPlan = flight.getUserAircraft().getFlightPlan();
 
     clear();
     for (const auto &waypoint : flightPlan) {

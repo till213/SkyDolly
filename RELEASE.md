@@ -1,17 +1,14 @@
-
 # Release Checklist
 
 ## Preflight
 ### Version info
 - Ensure that the proper project version has been set in the main [CMakeLists.txt](CMakeLists.txt)
-  * E.g. `VERSION 0.17.0`
+  * E.g. `VERSION 0.19.0`
 - Ensure that either the [logbook migration](src/Persistence/src/Dao/SQLite/migr/LogbookMigration.sql) and/or the [location migration](src/Persistence/src/Dao/SQLite/migr/LocationMigration.sql) updates the database metadata with the current version (with _different_ migration UUIDs)
 - Ensure that the copyright year in [SkyDolly.rc.in](src/SkyDolly/res/SkyDolly.rc.in) and [Info.plist.in](src/SkyDolly/res/Info.plist.in) is up to date
 - Choose and set a suitable "version codename" in [Version.cpp](src/Kernel/src/Version.cpp)
 - Update the "preview dialog" message in [MainWindow.cpp](src/UserInterface/src/MainWindow.cpp)
 - Adjust the `PreviewInfoDialogBase` in [Settings.cpp](src/Kernel/src/Settings.cpp) in order to show the preview dialog three times
-- Adjust the _Latest (pre-)release: Sky Dolly 0.17.0_ in [README.md](README.md)
-- Adjust the supported versions in [SECURITY.md](SECURITY.md)
 
 ### Settings
 - Ensure that settings are converted to latest version in [SettingsConverter.cpp](src/Kernel/src/SettingsConverter.cpp)
@@ -26,8 +23,35 @@
 - Switch to main branch
 - Check integration actions (https://github.com/till213/SkyDolly/actions)
 
+Then:
+
+- Create a new release (https://github.com/till213/SkyDolly/releases/new)
+- Choose a tag, e.g. `v0.19.0`
+- Ensure that _Target_ is set to `main`
+- Choose a title, e.g. `Sky Dolly v0.19.0`
+- Provide a description (summary of the changelog)
+- Check the _This is a pre-release_ option (as appropriate)
+
+Description template:
+
+```text
+This release provides feature X.
+## New Features
+- A new feature Y
+- Another feature Z
+## Improvements
+- Improvement 1
+- Improvement 2
+## Bug Fixes
+- Bug fix A
+- Bug fix B
+```
+
+- Publish
+
 ## Taxiing
 ### Build
+- Fetch the release with `git pull --all` (including the newly created label)
 - Select "Release"
 - Ensure that the CMake option `SKY_TESTS` is enabled
 - Ensure that the CMake option `SKY_FETCH_EGM` is enabled
@@ -77,52 +101,27 @@
 - _Import_ a Sky Dolly v0.6 logbook (create a copy first)
 
 ## Take-Off
-- ZIP the package folder (e.g. `SkyDolly-v0.17.0.zip`)
+- ZIP the package folder (e.g. `SkyDolly-v0.19.0.zip`)
 
 ## After Take-Off Check
 - Upload the ZIP archive to [VirusTotal](https://www.virustotal.com/)
-
-### GitHub
-- Create a new release (https://github.com/till213/SkyDolly/releases/new)
-- Choose a tag, e.g. `v0.17.0`
-- Ensure that _Target_ is set to `main`
-- Choose a title, e.g. `Sky Dolly 0.17.0`
-- Provide a description (summary of the changelog)
-- Attach the ZIP archive (e.g. `SkyDolly-v0.17.0.zip`)
-- Check the _This is a pre-release_ option (as appropriate)
-
-Description template:
-
-> This release provides feature X.
-
-> New features:
-> - A new feature Y
-> - Another feature Z
->
-> Improvements:
-> - Improvement 1
-> - Improvement 2
->
-> Bug fixes:
-> - Bug fix A
-> - Bug fix B
-
-- Publish
+- Add the ZIP archive (e.g. `SkyDolly-v0.19.0.zip`) to the published github.com release
 
 ## Climb
-- Fetch the new tag: `git pull`
-- Create a bug fix branch, e.g.: `git checkout -b 0.17.0`
-- Bump the version to e.g. `0.16.1` in the main [CMakeLists.txt](CMakeLists.txt)
-- Commit, e.g. `git commit -m "Bump version to 0.17.1"`
-- Push, e.g. `git push --set-upstream origin 0.17.0`
+- Create a bug fix branch, e.g.: `git checkout -b 0.19.0`
+- Bump the version to e.g. `0.19.1` in the main [CMakeLists.txt](CMakeLists.txt)
+- Commit, e.g. `git commit -m "Bump version to 0.19.1"`
+- Push, e.g. `git push --set-upstream origin 0.19.0`
 - Switch back to _main_: `git checkout main`
-- Update the shasum in [SHASUM256.md](SHASUM256.md)
+- Update the SHASUM-256 checksum in [SHASUM256.md](SHASUM256.md)
 
 ## Cruise
 
 ### Flightsim.to
 - Publish the release on: https://flightsim.to/file/9067/sky-dolly
 - Update screenshots
+- Adjust the _Latest (pre-)release: Sky Dolly 0.19.0_ in [README.md](README.md)
+- Adjust the supported versions in [SECURITY.md](SECURITY.md)
 
 ## Landing
 

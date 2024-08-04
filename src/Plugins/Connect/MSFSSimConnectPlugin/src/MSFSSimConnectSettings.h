@@ -26,6 +26,7 @@
 #define MSFSSIMCONNECTSETTINGS_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 
@@ -50,10 +51,10 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct ConnectionType
+    enum struct ConnectionType: std::uint8_t
     {
         First = 0,
-        Pipe,
+        Pipe = First,
         IPv4,
         IPv6,
         Last = IPv6

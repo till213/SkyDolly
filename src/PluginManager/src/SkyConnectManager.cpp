@@ -31,7 +31,6 @@
 #include <QJsonObject>
 #include <QDir>
 #include <QString>
-#include <QStringLiteral>
 #include <QStringList>
 #include <QUuid>
 #ifdef DEBUG
@@ -246,11 +245,11 @@ bool SkyConnectManager::isInRecordingState() const noexcept
     return skyConnect ? skyConnect->get().isInRecordingState() : false;
 }
 
-void SkyConnectManager::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
+void SkyConnectManager::startReplay(bool skipToStart, const InitialPosition &initialPosition) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
     if (skyConnect) {
-        skyConnect->get().startReplay(fromStart, flyWithFormationPosition);
+        skyConnect->get().startReplay(skipToStart, initialPosition);
     }
 }
 
@@ -369,7 +368,7 @@ bool SkyConnectManager::isIdle() const noexcept
 float SkyConnectManager::getReplaySpeedFactor() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().getReplaySpeedFactor() : 1.0;
+    return skyConnect ? skyConnect->get().getReplaySpeedFactor() : 1.0f;
 }
 
 void SkyConnectManager::setReplaySpeedFactor(float factor) noexcept
@@ -404,10 +403,16 @@ bool SkyConnectManager::requestSimulationRate() const noexcept
     return skyConnect ? skyConnect->get().requestSimulationRate() : false;
 }
 
-bool SkyConnectManager::sendDateAndTime(QDateTime dateTime) const noexcept
+bool SkyConnectManager::requestTimeZoneInfo() const noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
-    return skyConnect ? skyConnect->get().sendZuluDateTime(dateTime) : false;
+    return skyConnect ? skyConnect->get().requestTimeZoneInfo() : false;
+}
+
+bool SkyConnectManager::sendZuluDateTime(QDateTime dateTime) const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().sendZuluDateTime(std::move(dateTime)) : false;
 }
 
 // PUBLIC SLOTS
@@ -441,13 +446,15 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                         this, &SkyConnectManager::recordingStopped);
                 connect(skyPlugin, &SkyConnectIntf::locationReceived,
                         this, &SkyConnectManager::locationReceived);
+                connect(skyPlugin, &SkyConnectIntf::timeZoneInfoReceived,
+                        this, &SkyConnectManager::timeZoneInfoReceived);
                 connect(skyPlugin, &SkyConnectIntf::simulationRateReceived,
                         this, &SkyConnectManager::simulationRateReceived);
                 connect(skyPlugin, &SkyConnectIntf::actionActivated,
                         this, &SkyConnectManager::actionActivated);
 
                 // Flight
-                const Logbook &logbook = Logbook::getInstance();
+                const auto &logbook = Logbook::getInstance();
                 const auto &flight = logbook.getCurrentFlight();
                 connect(&flight, &Flight::flightRestored,
                         skyPlugin, &SkyConnectIntf::syncAiObjectsWithFlight);
@@ -500,7 +507,7 @@ SkyConnectManager::~SkyConnectManager()
 void SkyConnectManager::frenchConnection() noexcept
 {
     // Settings
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     connect(&settings, &Settings::skyConnectPluginUuidChanged,
             this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
 }
@@ -535,7 +542,7 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
 
 void SkyConnectManager::initialisePlugin() noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     QUuid uuid = settings.getSkyConnectPluginUuid();
     // Try to load plugin as stored in the settings
     bool ok = !uuid.isNull() && tryAndSetCurrentSkyConnect(uuid);

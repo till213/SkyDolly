@@ -79,7 +79,26 @@ public:
      */
     void setRelativePositionPlacementEnabled(bool enable) noexcept;
 
+    /*!
+     * Returns the replay mode.
+     *
+     * \return the replay mode
+     * \sa SkyConnectIntf::ReplayMode
+     */
     SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
+
+    /*!
+     * Sets the replay mode.
+     *
+     * Note that both \c replayModeChanged and \c changed signals are emitted.
+     * The former signal allows to explicitly set the replay mode in the SkyConnectManger
+     *
+     * \param replayMode
+     *        the replay mode to set
+     * \sa replayModeChanged
+     * \sa ModuleBaseSettings::changed
+     * \sa SkyConnectManager::setReplayMode
+     */
     void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;
 
     /*!
@@ -97,6 +116,15 @@ public:
      */
     void setFormationAircraftTableState(QByteArray state) noexcept;
 
+signals:
+    /*!
+     * Emitted whenever the replay mode has changed.
+     *
+     * \param mode
+     *        the new replay mode
+     */
+    void replayModeChanged(SkyConnectIntf::ReplayMode mode);
+
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
@@ -105,6 +133,8 @@ protected:
 
 private:
     const std::unique_ptr<FormationSettingsPrivate> d;
+
+    void frenchConnection() noexcept;
 };
 
 #endif // FORMATIONSETTINGS_H

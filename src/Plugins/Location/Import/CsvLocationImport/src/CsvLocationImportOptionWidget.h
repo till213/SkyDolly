@@ -48,7 +48,7 @@ public:
     ~CsvLocationImportOptionWidget() override;
 
 private:
-    std::unique_ptr<Ui::CsvLocationImportOptionWidget> ui;
+    const std::unique_ptr<Ui::CsvLocationImportOptionWidget> ui;
     const std::unique_ptr<CsvLocationImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

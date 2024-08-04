@@ -30,6 +30,5 @@ PositionData::PositionData(double latitude, double longitude, double altitude) n
     : TimeVariableData(),
       latitude(latitude),
       longitude(longitude),
-      altitude(altitude),
-      indicatedAltitude(altitude)
+      altitude(altitude)
 {}

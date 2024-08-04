@@ -25,6 +25,8 @@
 #ifndef FLIGHTSIMULATORHORTCUTS_H
 #define FLIGHTSIMULATORHORTCUTS_H
 
+#include <cstdint>
+
 #include <QKeySequence>
 
 #include "../PluginManagerLib.h"
@@ -38,7 +40,7 @@ public:
     /*!
      * The actions that correspond to the keyboard shortcuts.
      */
-    enum struct Action {
+    enum struct Action: std::uint8_t {
         None,
         Record,
         Replay,

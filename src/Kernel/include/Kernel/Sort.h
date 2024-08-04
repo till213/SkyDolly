@@ -29,11 +29,12 @@
 #include <deque>
 #include <functional>
 #include <memory>
+#include <cstdint>
 
 #include <tsl/ordered_map.h>
 
 /*!
- * Sorts elements (vertices) in topological order, depending on their \c edges which define the
+ * Sorts elements (vertices) in topological order, depending on their \p edges which define the
  * dependencies. In case no edges exist the order is the reverse order in which the elements (vertices)
  * have been added to the Graph with Sorting = Normal (due to the depth first visit pattern) respectively
  * the same order of insertion with Sorting = Reverse.
@@ -41,13 +42,13 @@
 template <typename T, typename H = std::hash<T>> class Sort
 {
 public:
-    enum struct State
+    enum struct State: std::uint8_t
     {
         NotVisited,
         Visiting,
         Done
     };
-    enum struct Sorting
+    enum struct Sorting: std::uint8_t
     {
         Normal,
         Reverse,
@@ -81,10 +82,10 @@ public:
     using Graph = tsl::ordered_map<T, std::shared_ptr<Vertex>, H>;
 
     /*!
-     * Sorts the vertices in the \c graph in topological order. A topological sort or topological
+     * Sorts the vertices in the \p graph in topological order. A topological sort or topological
      * ordering of a directed graph is a linear ordering of its vertices such that for every
      * directed edge uv from vertex u to vertex v, u comes before v in the ordering, unless
-     * \c reverse is set to \c true in which case a directed edge from vertex u to v means "u depends
+     * \p reverse is set to \c true in which case a directed edge from vertex u to v means "u depends
      * on v" (or "u comes after v").
      *
      * \param graph
@@ -92,7 +93,7 @@ public:
      * \param sorting
      *        the Sorting to be applied
      * \return the nodes sorted in topological order, with the first node at beginning of the deque;
-     *         an empty deque if the \c graph is either empty or not a directed acyclic graph (DAG)
+     *         an empty deque if the \p graph is either empty or not a directed acyclic graph (DAG)
      */
     static std::deque<Vertex *> topologicalSort(Graph &graph, Sorting sorting = Sorting::Normal) noexcept
     {

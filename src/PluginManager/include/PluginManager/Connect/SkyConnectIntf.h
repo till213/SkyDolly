@@ -35,6 +35,7 @@
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
 #include <Model/Location.h>
+#include <Model/TimeZoneInfo.h>
 #include "Connect.h"
 #include "FlightSimulatorShortcuts.h"
 #include "../PluginIntf.h"
@@ -51,7 +52,7 @@ class PLUGINMANAGER_API SkyConnectIntf : public QObject, public PluginWithOption
 {
     Q_OBJECT
 public:
-    enum struct RecordingMode {
+    enum struct RecordingMode: std::uint8_t {
         /*! A (new) flight with a single aircrat is to be recorded. */
         SingleAircraft,
         /*!
@@ -66,7 +67,7 @@ public:
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct ReplayMode {
+    enum struct ReplayMode: std::uint8_t {
         First = 0,
         /*! All aircraft are controlled by Sky Dolly. */
         Normal = First,
@@ -77,7 +78,7 @@ public:
         Last = FlyWithFormation
     };
 
-    enum struct SeekMode {
+    enum struct SeekMode: std::uint8_t {
         /*! Continuation of a timeline seek operation ("drag timeline") */
         Continuous,
         /*! A single seek operation (to beginning, to end, to selected position) */
@@ -87,7 +88,7 @@ public:
     /*!
      * Simulation events that can explicitly be triggered (requested) by the application.
      */
-    enum struct SimulationEvent {
+    enum struct SimulationEvent: std::uint8_t {
         None,
         EngineStart,
         EngineStop,
@@ -98,7 +99,7 @@ public:
     /*!
      * Indicates who initiated an event such as a pause event.
      */
-    enum struct Initiator {
+    enum struct Initiator: std::uint8_t {
         /*! The application initiated the event */
         App,
         /*! The flight simulator initiated the event */
@@ -170,9 +171,9 @@ public:
     virtual void setReplayMode(ReplayMode replayMode) noexcept = 0;
 
     /*!
-     * Starts recording the flight. Depending on the \c recordingMode already recorded formation aircraft
-     * are replayed during recording. If the \c initialPosition is given (\c isNull() returns false) then
-     * the user aircraft is placed at the given \c initialPosition before recording. This position is
+     * Starts recording the flight. Depending on the \p recordingMode already recorded formation aircraft
+     * are replayed during recording. If the \p initialPosition is given (\c isNull() returns false) then
+     * the user aircraft is placed at the given \p initialPosition before recording. This position is
      * typically calculated to be relative of the previous user aircraft in the formation.
      *
      * \param recordingMode
@@ -207,7 +208,18 @@ public:
      */
     virtual bool isInRecordingState() const noexcept = 0;
 
-    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept = 0;
+    /*!
+     * Starts (or resumes) the replay, by placing the user aircraft to the \p initialPosition (if given).
+     * Otherwise the initial position is calculated from the first recorded positin data of the user aircraft.
+     *
+     * \param skipToStart
+     *        start replay from the beginning (e.g. when the end of the replay has been reached)
+     * \param initialPosition
+     *        the optional initial position of the user aircraft; useful when replay mode "fly with formation" has
+     *        been selected
+     * \sa ReplayMode
+     */
+    virtual void startReplay(bool skipToStart, const InitialPosition &initialPosition = InitialPosition()) noexcept = 0;
     virtual void stopReplay() noexcept = 0;
 
     /*!
@@ -326,10 +338,18 @@ public:
     virtual bool requestSimulationRate() noexcept = 0;
 
     /*!
-     * Sends the \c dateTime to the flight simulator to set.
+     * Requests information about the current simulation time zone.
+     *
+     * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
+     * \sa timeZoneInfoReceived
+     */
+    virtual bool requestTimeZoneInfo() noexcept = 0;
+
+    /*!
+     * Sends the zulu \p dateTime to the flight simulator to set.
      *
      * \param dateTime
-     *        the date and time to set in the flight simulator
+     *        the date and time to set in the flight simulator [zulu time]
      * \return \c true if the request was sent successfully; \c false else (e.g. no connection)
      */
     virtual bool sendZuluDateTime(QDateTime dateTime) noexcept = 0;
@@ -353,16 +373,6 @@ signals:
      *        the way the current position was accessed
      */
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
-
-    /*!
-     * Emitted whenever the simulation time during replay has changed.
-     *
-     * \param zuluDateTime
-     *        the simulation zulu date and time
-     * \param localDateTime
-     *        the simulation local date and time
-     */
-    void simulationTimeChaged(QDateTime zuluDateTime, QDateTime localDateTime);
 
     /*!
      * Emitted whenver the connection state has changed.
@@ -407,24 +417,31 @@ signals:
     void recordingStopped();
 
     /*!
-     * Emitted whenever the response to the Location request has been received.
+     * Emitted whenever the requested location has been received.
      *
      * \param location
-     *        the received Location
+     *        the received location
      */
     void locationReceived(Location location);
 
     /*!
-     * Emitted whenever the current simulation rate has been received.
+     * Emitted whenever the requested current simulation rate has been received.
      *
      * \param rate
      *        the current simulation rate [0.0625, 0.125, 0.25, 0.5, 1, 2, 4, ... 128]
      */
     void simulationRateReceived(float rate);
 
+    /*!
+     * Emitted whenever the requested time zone information has been received.
+     *
+     * \param timeZoneInfo
+     *        the current time zone information
+     */
+    void timeZoneInfoReceived(TimeZoneInfo timeZoneInfo);
 
     /*!
-     * Emitted whenever a keyboard shortcut was triggered for the given \c action.
+     * Emitted whenever a keyboard shortcut was triggered for the given \p action.
      *
      * \param action
      *        the action that was triggered in the flight simulator
@@ -433,7 +450,7 @@ signals:
 
 protected:
     /*!
-     * Sets the new connection \c state. This method will also emit the
+     * Sets the new connection \p state. This method will also emit the
      * signal #recordingStarted and #recordingStopped when the state changes
      * to/from \e Recording.
      *

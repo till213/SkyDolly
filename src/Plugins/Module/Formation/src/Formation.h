@@ -39,7 +39,7 @@ namespace Formation
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct HorizontalDistance {
+    enum struct HorizontalDistance: std::uint8_t {
         First = 0,
         VeryClose = First,
         Close,
@@ -54,7 +54,7 @@ namespace Formation
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct VerticalDistance {
+    enum struct VerticalDistance: std::uint8_t {
         First = 0,
         Below = First,
         JustBelow,
@@ -69,7 +69,7 @@ namespace Formation
      *
      * Implementation note: these values are peristed in the application settings.
      */
-    enum struct Bearing {
+    enum struct Bearing: std::uint8_t {
         First = 0,
         North = First,
         NorthNorthEast,

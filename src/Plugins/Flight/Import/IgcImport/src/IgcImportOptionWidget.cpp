@@ -25,7 +25,6 @@
 #include <QComboBox>
 #include <QSpinBox>
 #include <QCheckBox>
-#include <QStringLiteral>
 
 #include <Kernel/Enum.h>
 #include <Kernel/Version.h>

@@ -31,22 +31,13 @@
 #include <QWidget>
 
 class QShowEvent;
-class QHideEvent;
-class QAction;
 class QTableWidgetItem;
 class QRadioButton;
-class QAbstractButton;
 
 #include <PluginManager/Connect/SkyConnectIntf.h>
-#include <PluginManager/Module/ModuleIntf.h>
-#include <PluginManager/Module/AbstractModule.h>
-#include "FormationSettings.h"
 #include "Formation.h"
 
 class Aircraft;
-struct PositionData;
-class FlightService;
-class AircraftService;
 class FormationSettings;
 struct FormationWidgetPrivate;
 
@@ -69,10 +60,13 @@ public:
     Formation::VerticalDistance getVerticalDistance() const noexcept;
     Formation::Bearing getRelativePosition() const noexcept;
 
+protected:
+    void showEvent(QShowEvent *event) noexcept override;
+
 private:
     using enum Formation::Bearing;
 
-    std::unique_ptr<Ui::FormationWidget> ui;
+    const std::unique_ptr<Ui::FormationWidget> ui;
     const std::unique_ptr<FormationWidgetPrivate> d;
 
     void initUi() noexcept;
@@ -132,6 +126,7 @@ private slots:
     // Settings
     void onTableLayoutChanged() noexcept;
     void onModuleSettingsChanged() noexcept;
+    void onModuleSettingsReplayModeChanged(SkyConnectIntf::ReplayMode mode) noexcept;
     QRadioButton &getPositionButtonFromSettings() const noexcept;
     Formation::Bearing bearingFromPositionGroup() const noexcept;
     void restoreDefaultSettings() noexcept;

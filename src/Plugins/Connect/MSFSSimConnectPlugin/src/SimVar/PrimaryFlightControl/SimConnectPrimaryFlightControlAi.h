@@ -40,23 +40,23 @@ struct SimConnectPrimaryFlightControlAi
 {
     SimConnectPrimaryFlightControlAnimation animation;
 
-    SimConnectPrimaryFlightControlAi(const PrimaryFlightControlData &primaryflightcontrolData) noexcept
+    SimConnectPrimaryFlightControlAi(const PrimaryFlightControlData &data) noexcept
         : SimConnectPrimaryFlightControlAi()
     {
-        fromPrimaryFlightControlData(primaryflightcontrolData);
+        fromPrimaryFlightControlData(data);
     }
 
     SimConnectPrimaryFlightControlAi() = default;
 
-    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryflightcontrolData)
+    inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &data)
     {
-        animation.fromPrimaryFlightControlData(primaryflightcontrolData);
+        animation.fromPrimaryFlightControlData(data);
     }
 
     inline PrimaryFlightControlData toPrimaryFlightControlData() const noexcept
     {
-        PrimaryFlightControlData primaryflightcontrolData = animation.toPrimaryFlightControlData();
-        return primaryflightcontrolData;
+        PrimaryFlightControlData data = animation.toPrimaryFlightControlData();
+        return data;
     }
 
     static inline void addToDataDefinition(HANDLE simConnectHandle) noexcept

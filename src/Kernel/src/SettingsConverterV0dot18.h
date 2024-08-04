@@ -26,33 +26,21 @@
 #define SETTINGSCONVERTERV0DOT18_H
 
 #include <QSettings>
-#include <QStringLiteral>
 
 #include <Const.h>
 #include <Version.h>
 
-#include "SettingsConverterV0dot17.h"
+#include "SettingsConverterV0dot17dot5.h"
 
 class SettingsConverterV0dot18
 {
 public:
     static inline void convert(const Version &settingsVersion, QSettings &settings) noexcept
     {
-        if (settingsVersion < Version("0.17.0")) {
-            SettingsConverterV0dot17::convert(settingsVersion, settings);
+        if (settingsVersion < Version("0.17.5")) {
+            SettingsConverterV0dot17dot5::convert(settingsVersion, settings);
         }
         settings.remove("Recording");
-        convertPlugins(settings);
-        convertLogbookTableLayout(settings);
-    }
-
-private:
-    static inline void convertPlugins(QSettings &settings) noexcept
-    {
-    }
-
-    static inline void convertLogbookTableLayout(QSettings &settings)
-    {
     }
 };
 

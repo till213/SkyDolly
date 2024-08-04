@@ -25,7 +25,6 @@
 #include <memory>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QWidget>
 
@@ -124,7 +123,7 @@ void FlightConditionWidget::initUi() noexcept
 void FlightConditionWidget::updateUi() noexcept
 {
     const auto &flight = Logbook::getInstance().getCurrentFlight();
-    const FlightCondition &flightCondition = flight.getFlightCondition();
+    const auto &flightCondition = flight.getFlightCondition();
 
     ui->groundAltitudeLineEdit->setText(d->unit.formatFeet(flightCondition.groundAltitude));
     ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightCondition.surfaceType));
@@ -142,9 +141,9 @@ void FlightConditionWidget::updateUi() noexcept
     ui->seaLevelPressure->setText(d->unit.formatPressureInHPa(flightCondition.seaLevelPressure));
     ui->pitotIcingLineEdit->setText(d->unit.formatPercent(flightCondition.pitotIcingPercent));
     ui->structuralIcingLineEdit->setText(d->unit.formatPercent(flightCondition.structuralIcingPercent));
-    ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.startLocalDateTime));
-    ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.endLocalDateTime));
+    ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.getStartLocalDateTime()));
+    ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.getEndLocalDateTime()));
     // Zulu time
-    ui->startLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.startZuluDateTime) % Const::ZuluTimeSuffix);
-    ui->endLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.endZuluDateTime) % Const::ZuluTimeSuffix);
+    ui->startLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.getStartZuluDateTime()) % Const::ZuluTimeSuffix);
+    ui->endLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.getEndZuluDateTime()) % Const::ZuluTimeSuffix);
 }

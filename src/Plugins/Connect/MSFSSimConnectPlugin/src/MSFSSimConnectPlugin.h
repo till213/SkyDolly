@@ -95,10 +95,11 @@ protected:
 
     bool onRequestLocation() noexcept override;
     bool onRequestSimulationRate() noexcept override;
+    bool onRequestTimeZoneInfo() noexcept override;
     bool onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept override;
 
 private:
-    enum struct ResetReason
+    enum struct ResetReason: std::uint8_t
     {
         StartReplay,
         Seek
@@ -115,6 +116,8 @@ private:
     void replay() noexcept;
     void updateRecordingFrequency() noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
+    void updateReplaySensorFrequency() noexcept;
+    void updateReplaySensorPeriod(::SIMCONNECT_PERIOD period) noexcept;
     void resetEventStates(ResetReason reason) noexcept;
 
     // Returns the configuration index that refers to the Sky Dolly specific client SimConnect.cfg configuration

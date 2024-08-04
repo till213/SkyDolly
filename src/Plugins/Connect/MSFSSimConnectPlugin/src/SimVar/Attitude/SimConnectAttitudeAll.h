@@ -28,7 +28,9 @@
 #include <windows.h>
 #include <SimConnect.h>
 
+#include <Kernel/Enum.h>
 #include <Model/AttitudeData.h>
+#include "SimConnectType.h"
 #include "SimConnectAttitudeCommon.h"
 #include "SimConnectAttitudeInfo.h"
 
@@ -43,10 +45,10 @@ struct SimConnectAttitudeAll
     SimConnectAttitudeCommon common;
     SimConnectAttitudeInfo info;
 
-    SimConnectAttitudeAll(const AttitudeData &positionData) noexcept
+    SimConnectAttitudeAll(const AttitudeData &data) noexcept
         : SimConnectAttitudeAll()
     {
-        fromAttitudeData(positionData);
+        fromAttitudeData(data);
     }
 
     SimConnectAttitudeAll() = default;
@@ -59,9 +61,9 @@ struct SimConnectAttitudeAll
 
     inline AttitudeData toAttitudeData() const noexcept
     {
-        auto positionData = common.toAttitudeData();
-        info.toAttitudeData(positionData);
-        return positionData;
+        auto attitudeData = common.toAttitudeData();
+        info.toAttitudeData(attitudeData);
+        return attitudeData;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept

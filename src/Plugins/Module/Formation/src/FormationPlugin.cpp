@@ -58,6 +58,9 @@ FormationPlugin::FormationPlugin(QObject *parent) noexcept
       d {std::make_unique<FormationPluginPrivate>()}
 {
     restoreSettings(QUuid(Const::FormationModuleUuid));
+    // Explicitly emit replay mode changed signal, in order to do an initial aircraft positioning,
+    // depending on the replay mode stored in the formation module settings
+    emit d->moduleSettings.replayModeChanged(d->moduleSettings.getReplayMode());
 }
 
 FormationPlugin::~FormationPlugin()
@@ -108,7 +111,7 @@ void FormationPlugin::onStartReplay() noexcept
     const Formation::HorizontalDistance horizontalDistance {d->formationWidget->getHorizontalDistance()};
     const Formation::VerticalDistance verticalDistance {d->formationWidget->getVerticalDistance()};
     const Formation::Bearing relativePosition {d->formationWidget->getRelativePosition()};
-    const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
+    const auto timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
     const InitialPosition initialPosition = d->moduleSettings.isRelativePositionPlacementEnabled() ?
         Formation::calculateInitialRelativePositionToUserAircraft(horizontalDistance, verticalDistance, relativePosition, timestamp) :
         InitialPosition();

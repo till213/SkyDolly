@@ -28,12 +28,8 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include <Kernel/SkyMath.h>
-#include <Kernel/Enum.h>
 #include <Model/SimVar.h>
-#include <Model/PositionData.h>
-#include <Model/InitialPosition.h>
-#include "SimConnectType.h"
+#include <Model/AttitudeData.h>
 
 /*!
  * Common aircraft attitude simulation variables that are sent both to the user- and AI aircraft.
@@ -58,10 +54,10 @@ struct SimConnectAttitudeCommon
     // then the unit would be (wrongly) "FEET per second" (and not "RADIANS per second):
     // https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Misc_Variables.htm#ROTATION_VELOCITY_BODY_X
 
-    SimConnectAttitudeCommon(const AttitudeData &attitudeData) noexcept
+    SimConnectAttitudeCommon(const AttitudeData &data) noexcept
         : SimConnectAttitudeCommon()
     {
-        fromAttitudeData(attitudeData);
+        fromAttitudeData(data);
     }
 
     SimConnectAttitudeCommon() = default;

@@ -75,7 +75,7 @@ SecondaryFlightControlWidget::~SecondaryFlightControlWidget() = default;
 
 void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
-    const SecondaryFlightControlData &secondaryFlightControlData = getCurrentSecondaryFlightControlData(timestamp, access);
+    const auto &secondaryFlightControlData = getCurrentSecondaryFlightControlData(timestamp, access);
     QString colorName;
 
     if (!secondaryFlightControlData.isNull()) {

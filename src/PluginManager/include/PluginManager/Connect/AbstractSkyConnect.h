@@ -54,7 +54,7 @@ class PLUGINMANAGER_API AbstractSkyConnect : public SkyConnectIntf, public Plugi
 {
     Q_OBJECT
 public:
-    enum struct AircraftSelection {
+    enum struct AircraftSelection: std::uint8_t {
         All,
         UserAircraft
     };
@@ -82,7 +82,7 @@ public:
     bool isRecording() const noexcept override;
     bool isInRecordingState() const noexcept override;
 
-    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept override;
+    void startReplay(bool skipToStart, const InitialPosition &initialPosition = InitialPosition()) noexcept override;
     void stopReplay() noexcept override;
     bool isReplaying() const noexcept override;
     bool isInReplayState() const noexcept override;
@@ -113,6 +113,7 @@ public:
 
     bool requestLocation() noexcept override;
     bool requestSimulationRate() noexcept override;
+    bool requestTimeZoneInfo() noexcept override;
     bool sendZuluDateTime(QDateTime dateTime) noexcept override;
 
     void storeSettings(const QUuid &pluginUuid) const noexcept final
@@ -188,7 +189,7 @@ protected:
     virtual void onRemoveAllAiObjects() noexcept = 0;
 
     /*!
-     * Requests the current location. The location is asynchronously returned via signal \c locationReceived.
+     * Requests the current location. The location is asynchronously returned via signal \p locationReceived.
      *
      * \return \c true if the request was successful; \c false else
      * \sa locationReceived
@@ -197,7 +198,7 @@ protected:
 
     /*!
      * Requests the current simulation rate in the flight simulator. The rate is asynchronously
-     * returned via signal \c simulationRateReceived.
+     * returned via signal \p simulationRateReceived.
      *
      * \return \c true if the request was successful; \c false else
      * \sa simulationRateReceived
@@ -205,19 +206,28 @@ protected:
     virtual bool onRequestSimulationRate() noexcept = 0;
 
     /*!
-     * Sends the \c year, \c day, \c hour (zulu time) and \c minute  to be set in the flight simulator.
+     * Sends the \p year, \p day, \p hour and \p minute  to be set in the flight simulator
+     * as zulu date and time.
      *
      * \param year
      *        the year, e.g. 2020
      * \param day
      *        the day
      * \param hour
-     *        the hour [0, 23] (zulu time)
+     *        the hour [0, 23]
      * \param minute
      *        the minute [0, 59]
      * \return \c true if the request was successful; \c false else
      */
     virtual bool onSendZuluDateTime(int year, int day, int hour, int minute) const noexcept = 0;
+
+    /*!
+     * \brief Requests information about the current simulation time zone.
+     *
+     * \return \c true if the request was successful; \c false else
+     * \sa timeZoneInfoReceived
+     */
+    virtual bool onRequestTimeZoneInfo() noexcept = 0;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept final;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
@@ -239,7 +249,7 @@ private:
     inline bool retryWithReconnect(const std::function<bool()> &func);
 
     bool setupInitialRecordingPosition(InitialPosition initialPosition) noexcept;
-    bool setupInitialReplayPosition(InitialPosition flyWithFormationPosition) noexcept;
+    bool setupInitialReplayPosition(InitialPosition initialPosition) noexcept;
     bool updateUserAircraftFreeze() noexcept;
 
     // Returns the applicable simulation rate, given the current 'replaySpeedFactor'

@@ -26,13 +26,14 @@
 #define EVENTSTATE_H
 
 #include <type_traits>
+#include <cstdint>
 
 #include "SimConnectType.h"
 #include "SimConnectEvent.h"
 
 namespace EventState
 {
-    enum struct Engine: int {
+    enum struct Engine: std::uint8_t {
         Unknown,
         Starting,
         Started,
@@ -68,7 +69,7 @@ namespace EventState
         }
 
         /*!
-         * Returns whether an update needs to be sent, as the \c requested value differs from the \c current
+         * Returns whether an update needs to be sent, as the \c requested value differs from the \p current
          * value.
          *
          * \param current
@@ -117,10 +118,10 @@ namespace EventState
         }
 
         /*!
-         * Returns whether an update needs to be sent, as the \c requested value differs from the \c current
+         * Returns whether an update needs to be sent, as the \c requested value differs from the \p current
          * value.
          *
-         * \return \c true if the \c current value is different from the \c requested value, or the \c current
+         * \return \c true if the \c current value is different from the \c requested value, or the \p current
          *         value is not \c valid; \c false else
          */
         bool needsUpdate() const noexcept
@@ -147,7 +148,7 @@ namespace EventState
 
     /*!
      * A stateless boolean switch represening "on" and "off" states (only).
-     * It stores the \c toggleEvent to toggle beweteen those two states.
+     * It stores the \p toggleEvent to toggle beweteen those two states.
      *
      * The remote state needs to be tested each time a value is requested.
      */
@@ -169,7 +170,7 @@ namespace EventState
 
     /*!
      * A stateful boolean switch represening "on" and "off" states (only).
-     * It stores the \c toggleEvent to toggle beweteen those two states.
+     * It stores the \p toggleEvent to toggle beweteen those two states.
      *
      * The remote state is expected to be in sync with the state of this toggle.
      */

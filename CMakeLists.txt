@@ -14,7 +14,7 @@ set(PROJECT_BUNDLE_IDENTIFIER net.${PROJECT_ORGANISATION_NAME}.${APP_NAME})
 
 project(
     ${APP_NAME}
-    VERSION 0.18.0
+    VERSION 0.20.0
     DESCRIPTION "Sky Dolly - The Black Sheep for Your Flight Recordings"
     HOMEPAGE_URL "https://github.com/till213/SkyDolly"
     LANGUAGES CXX
@@ -124,6 +124,7 @@ include(src/Persistence/cmake/Locations.cmake)
 add_custom_target(${APP_PROJECT_NAME})
 target_sources(${APP_PROJECT_NAME}
     PRIVATE
+        ABOUT.md
         BUILD.md
         CHANGELOG.md
         CODE_OF_CONDUCT.md
@@ -138,6 +139,7 @@ target_sources(${APP_PROJECT_NAME}
         doc/SkyDolly.simvars
         doc/LICENSE
         doc/SQL/Timelapse-Camera-Pan.sql
+        doc/SQL/Timelapse-One-Year-in-New-York.sql
         doc/SQL/Flight-Analysis.sql
 )
 

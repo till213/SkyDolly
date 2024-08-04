@@ -28,7 +28,6 @@
 #include <utility>
 
 #include <QString>
-#include <QStringLiteral>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QVariant>
@@ -70,7 +69,7 @@ SQLiteEngineDao::~SQLiteEngineDao() = default;
 
 bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "insert into engine ("
@@ -181,7 +180,7 @@ bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data) const
 std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId, bool *ok) const noexcept
 {
     std::vector<EngineData> engineData;
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.setForwardOnly(true);
     query.prepare(
@@ -194,7 +193,7 @@ std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     const bool success = query.exec();
     if (success) {
-        const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+        const auto db {QSqlDatabase::database(d->connectionName)};
         const bool querySizeFeature = db.driver()->hasFeature(QSqlDriver::QuerySize);
         if (querySizeFeature) {
             engineData.reserve(query.size());
@@ -279,7 +278,7 @@ std::vector<EngineData> SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId
 
 bool SQLiteEngineDao::deleteByFlightId(std::int64_t flightId) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "
@@ -302,7 +301,7 @@ bool SQLiteEngineDao::deleteByFlightId(std::int64_t flightId) const noexcept
 
 bool SQLiteEngineDao::deleteByAircraftId(std::int64_t aircraftId) const noexcept
 {
-    const QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
+    const auto db {QSqlDatabase::database(d->connectionName)};
     QSqlQuery query {db};
     query.prepare(
         "delete "

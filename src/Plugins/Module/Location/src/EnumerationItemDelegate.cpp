@@ -35,8 +35,8 @@
 
 struct EnumerationItemDelegatePrivate
 {
-    EnumerationItemDelegatePrivate(QString theEnumerationName)
-        : enumerationName(std::move(theEnumerationName))
+    EnumerationItemDelegatePrivate(QString enumerationName)
+        : enumerationName(std::move(enumerationName))
     {}
 
     QString enumerationName;
@@ -69,7 +69,7 @@ void EnumerationItemDelegate::setEditorData(QWidget *editor, const QModelIndex &
 {
     const QVariant data = index.data(Qt::EditRole);
     if (data.canConvert<std::int64_t>()) {
-         auto id = qvariant_cast<std::int64_t>(data);
+         const auto id = qvariant_cast<std::int64_t>(data);
          auto *enumerationEditor = qobject_cast<EnumerationComboBox *>(editor);
          enumerationEditor->blockSignals(true);
          enumerationEditor->setCurrentId(id);
@@ -82,7 +82,7 @@ void EnumerationItemDelegate::setEditorData(QWidget *editor, const QModelIndex &
 void EnumerationItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const noexcept
 {
     if (index.data().canConvert<std::int64_t>()) {
-         auto enumerationEditor = qobject_cast<EnumerationComboBox *>(editor);
+         const auto enumerationEditor = qobject_cast<EnumerationComboBox *>(editor);
          model->setData(index, QVariant::fromValue(enumerationEditor->getCurrentId()));
      } else {
          QStyledItemDelegate::setModelData(editor, model, index);

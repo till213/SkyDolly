@@ -98,7 +98,7 @@ bool DatabaseService::connect(const QString &logbookPath) noexcept
 
 bool DatabaseService::connectAndMigrate(const QString &logbookPath, ConnectionMode connectionMode, Migration::Milestones milestones) noexcept
 {
-    auto &settings = Settings::getInstance();
+    const auto &settings = Settings::getInstance();
     bool ok = connect(logbookPath);
     if (ok) {
         const auto & [success, databaseVersion] = checkDatabaseVersion();
