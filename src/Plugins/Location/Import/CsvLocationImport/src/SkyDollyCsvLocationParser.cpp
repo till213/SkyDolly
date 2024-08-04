@@ -66,7 +66,7 @@ namespace
         Count
     };
 
-    constexpr const char *SkyDollyCsvHeader {"Title,Description,Type,Category,Country"};
+    constexpr const char *SkyDollyCsvHeader {"Title,Description,Type,Category,Country,Identifier"};
 }
 
 struct SkyDollyCsvLocationParserPrivate

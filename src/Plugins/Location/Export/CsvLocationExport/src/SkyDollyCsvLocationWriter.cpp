@@ -109,20 +109,21 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
     if (ok) {
         for (const auto &location : locations) {
             auto title = location.title;
+            title.replace("\"", "\"\"");
             auto description = location.description;
+            description.replace("\"", "\"\"");
             auto identifier = location.identifier;
+            identifier.replace("\"", "\"\"");
             const auto locationTypeSymId = locationTypeEnumeration.getItemById(location.typeId).symId;
             const auto locationCategorySymId = locationCategoryEnumeration.getItemById(location.categoryId).symId;
             const auto countrySymId = countryEnumeration.getItemById(location.countryId).symId;
             const auto engineEventSymId = engineEventEnumeration.getItemById(location.engineEventId).symId;
-            const QString csv = QString::fromLatin1("\"") %
-                                title.replace("\"", "\"\"") % "\""  %
-                                Csv::CommaSep % "\"" %
-                                description.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
+            const QString csv = QString::fromLatin1("\"") % title % "\""  % Csv::CommaSep %
+                                "\"" % description % "\"" % Csv::CommaSep %
                                 locationTypeSymId % Csv::CommaSep %
                                 locationCategorySymId % Csv::CommaSep %
                                 countrySymId % Csv::CommaSep %
-                                "\"" % identifier.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
+                                "\"" % identifier % "\"" % Csv::CommaSep %
                                 Export::formatCoordinate(location.latitude) % Csv::CommaSep %
                                 Export::formatCoordinate(location.longitude) % Csv::CommaSep %
                                 Export::formatNumber(location.altitude) % Csv::CommaSep %
