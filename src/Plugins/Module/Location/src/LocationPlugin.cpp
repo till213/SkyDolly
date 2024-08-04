@@ -127,7 +127,7 @@ void LocationPlugin::frenchConnection() noexcept
             this, &LocationPlugin::teleportTo);
 }
 
-QDateTime LocationPlugin::getSelectedDateTime(const QDateTime &dateTime) const noexcept
+QDateTime LocationPlugin::getSelectedDateTime(const QDateTime &localSimulationTime) const noexcept
 {
     QDate date;
     QTime time;
@@ -137,15 +137,15 @@ QDateTime LocationPlugin::getSelectedDateTime(const QDateTime &dateTime) const n
         date = QDate::currentDate();
         break;
     case LocationSettings::DateSelection::Date:
-        date = dateTime.date();
+        date = localSimulationTime.date();
         break;
-    case LocationSettings::DateSelection::DateTime:
-        date = dateTime.date();
-        time = dateTime.time();
+    case LocationSettings::DateSelection::LocationDateTime:
+        date = localSimulationTime.date();
+        time = localSimulationTime.time();
         break;
     }
 
-    if (d->moduleSettings.getDateSelection() != LocationSettings::DateSelection::DateTime) {
+    if (d->moduleSettings.getDateSelection() != LocationSettings::DateSelection::LocationDateTime) {
         if (d->moduleSettings.getTimeSelection() == LocationSettings::TimeSelection::Now) {
             time = QTime::currentTime();
         }
@@ -153,44 +153,43 @@ QDateTime LocationPlugin::getSelectedDateTime(const QDateTime &dateTime) const n
     return {date, time};
 }
 
-QDateTime LocationPlugin::getSelectedDateTime(const TimeZoneInfo &timeZoneInfo) const noexcept
+QDateTime LocationPlugin::calculateZuluSimulationTime(const TimeZoneInfo &timeZoneInfo) const noexcept
 {
-    QDateTime dateTime;
-    QTime time;
-    if (d->moduleSettings.getDateSelection() != LocationSettings::DateSelection::DateTime) {
+    QDateTime zuluSimulationTime;
+    if (d->moduleSettings.getDateSelection() != LocationSettings::DateSelection::LocationDateTime) {
         switch (d->moduleSettings.getTimeSelection()) {
         case LocationSettings::TimeSelection::Now:
-            dateTime = d->selectedDateTime.addSecs(timeZoneInfo.timeZoneOffsetSeconds);
+            zuluSimulationTime = d->selectedDateTime.addSecs(timeZoneInfo.timeZoneOffsetSeconds);
             break;
         case LocationSettings::TimeSelection::Morning:
-            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::MorningMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            zuluSimulationTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::MorningMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
             break;
         case LocationSettings::TimeSelection::Noon:
-            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::NoonMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            zuluSimulationTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::NoonMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
             break;
         case LocationSettings::TimeSelection::Afternoon:
-            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::AfternoonMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            zuluSimulationTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::AfternoonMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
             break;
         case LocationSettings::TimeSelection::Evening:
-            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::EveningMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            zuluSimulationTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::EveningMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
             break;
         case LocationSettings::TimeSelection::Night:
-            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::NightMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            zuluSimulationTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::NightMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
             break;
         case LocationSettings::TimeSelection::Midnight:
-            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::MidnightMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
+            zuluSimulationTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(::MidnightMSecsSinceMidnight).addMSecs(static_cast<int>(timeZoneInfo.timeZoneOffsetSeconds * Unit::MillisecondsPerSecond)));
             break;
         case LocationSettings::TimeSelection::Sunrise:
-            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(static_cast<int>(timeZoneInfo.zuluSunriseTimeSeconds * Unit::MillisecondsPerSecond)));
+            zuluSimulationTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(static_cast<int>(timeZoneInfo.zuluSunriseTimeSeconds * Unit::MillisecondsPerSecond)));
             break;
         case LocationSettings::TimeSelection::Sunset:
-            dateTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(static_cast<int>(timeZoneInfo.zuluSunsetTimeSeconds * Unit::MillisecondsPerSecond)));
+            zuluSimulationTime = QDateTime(d->selectedDateTime.date(), QTime::fromMSecsSinceStartOfDay(static_cast<int>(timeZoneInfo.zuluSunsetTimeSeconds * Unit::MillisecondsPerSecond)));
             break;
         }
     } else {
-        dateTime = d->selectedDateTime.addSecs(timeZoneInfo.timeZoneOffsetSeconds);
+        zuluSimulationTime = d->selectedDateTime.addSecs(timeZoneInfo.timeZoneOffsetSeconds);
     }
-    return dateTime;
+    return zuluSimulationTime;
 }
 
 // PRIVATE SLOTS
@@ -207,7 +206,7 @@ void LocationPlugin::updateLocation() noexcept
     SkyConnectManager::getInstance().requestLocation();
 }
 
-void LocationPlugin::teleportTo(const Location &location, const QDateTime &dateTime) noexcept
+void LocationPlugin::teleportTo(const Location &location, const QDateTime &localSimulationTime) noexcept
 {
     const InitialPosition initialPosition = location.toInitialPosition();
     auto &skyConnectManager = SkyConnectManager::getInstance();
@@ -223,7 +222,7 @@ void LocationPlugin::teleportTo(const Location &location, const QDateTime &dateT
     if (event != SkyConnectIntf::SimulationEvent::None) {
         skyConnectManager.sendSimulationEvent(event);
     }
-    d->selectedDateTime = getSelectedDateTime(dateTime);
+    d->selectedDateTime = getSelectedDateTime(localSimulationTime);
     // Set the date before requesting sunset/sunrise/time offset times
     if (d->selectedDateTime.isValid()) {
         skyConnectManager.sendZuluDateTime(d->selectedDateTime);
@@ -246,7 +245,7 @@ void LocationPlugin::onLocationReceived(Location location) noexcept
 
 void LocationPlugin::onTimeZoneInfoReceived(TimeZoneInfo timeZoneInfo) const noexcept
 {
-    QDateTime dateTime = getSelectedDateTime(timeZoneInfo);
+    QDateTime dateTime = calculateZuluSimulationTime(timeZoneInfo);
     if (dateTime.isValid()) {
         auto &skyConnectManager = SkyConnectManager::getInstance();
         skyConnectManager.sendZuluDateTime(dateTime);

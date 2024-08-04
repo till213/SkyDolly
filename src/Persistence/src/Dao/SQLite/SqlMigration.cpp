@@ -55,9 +55,10 @@ namespace
         Uuid = 0,
         Title,
         Description,
+        LocalSimulationDate,
+        LocalSimulationTime,
         Category,
         Country,
-        Attributes,
         Identifier,
         Latitude,
         Longitude,
@@ -74,8 +75,8 @@ namespace
 
     // Depending on the CSV generating application (e.g. Excel or LibreOffice) the column titles may
     // or may not have "quotes"
-    constexpr const char *LocationMigrationHeader {R"("MigrationId","Title","Description","Category")"};
-    constexpr const char *AlternateLocationMigrationHeader {R"(MigrationId,Title,Description,Category)"};
+    constexpr const char *LocationMigrationHeader {R"("MigrationId","Title","Description","LocalSimulationDate","LocalSimulationTime")"};
+    constexpr const char *AlternateLocationMigrationHeader {R"(MigrationId,Title,Description,LocalSimulationDate,LocalSimulationTime)"};
 }
 
 struct SqlMigrationPrivate
@@ -134,7 +135,7 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) const noexcept
     // @migr(...)
     static const QRegularExpression migrRegExp(R"(@migr\(([\w="\-,.\s]+)\))");
     const auto db {QSqlDatabase::database(d->connectionName)};
-    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;", db);
+    auto query = QSqlQuery("PRAGMA foreign_keys=0;", db);
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
@@ -217,6 +218,18 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) const noexcept
     location.title = row.at(::Index::Title);
     QString description = row.at(::Index::Description);
     location.description = description.replace("\\n", "\n");
+    const auto dateValue = row.at(::Index::LocalSimulationDate);
+    if (!dateValue.isEmpty()) {
+        location.localSimulationDate = QDate::fromString(dateValue, Qt::DateFormat::ISODate);
+        ok = location.localSimulationDate.isValid();
+    }
+    if (ok) {
+        const auto timeValue = row.at(::Index::LocalSimulationTime);
+        if (!timeValue.isEmpty()) {
+            location.localSimulationTime = QTime::fromString(timeValue, Qt::DateFormat::ISODate);
+            ok = location.localSimulationTime.isValid();
+        }
+    }
     Enumeration locationTypeEnumeration = d->enumerationService->getEnumerationByName(EnumerationService::LocationType, Enumeration::Order::Id, &ok);
     if (ok) {
         location.typeId = locationTypeEnumeration.getItemBySymId(EnumerationService::LocationTypePresetSymId).id;
@@ -254,9 +267,6 @@ bool SqlMigration::migrateLocation(const CsvParser::Row &row) const noexcept
     }
     if (ok) {
         location.indicatedAirspeed = row.at(::Index::IndicatedAirspeed).toInt(&ok);
-    }
-    if (ok) {
-        location.attributes = row.at(::Index::Attributes).toLongLong(&ok);
     }
     if (ok) {
         location.onGround = row.at(::Index::OnGround).toLower() == "true" ? true : false;

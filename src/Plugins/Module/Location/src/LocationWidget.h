@@ -65,7 +65,7 @@ public:
 signals:
     void doUpdateLocation();
     void doCaptureLocation();
-    void teleportTo(Location location, QDateTime dateTime);
+    void teleportTo(Location location, QDateTime localSimulationTime);
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;

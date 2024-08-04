@@ -48,8 +48,8 @@ public:
         First = 0,
         Today = First,
         Date,
-        DateTime,
-        Last = DateTime
+        LocationDateTime,
+        Last = LocationDateTime
     };
 
     /*!

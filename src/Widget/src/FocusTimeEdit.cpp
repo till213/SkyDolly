@@ -22,26 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FOCUSDATETIMEEDIT_H
-#define FOCUSDATETIMEEDIT_H
+#include <QTimeEdit>
 
-#include <QDateTimeEdit>
+#include "FocusTimeEdit.h"
 
-class QFocusEvent;
+// PUBLIC
 
-#include "WidgetLib.h"
+FocusTimeEdit::FocusTimeEdit(QWidget *parent) noexcept
+    : QTimeEdit {parent}
+{}
 
-class WIDGET_API FocusDateTimeEdit : public QDateTimeEdit
+// PROTECTED
+
+void FocusTimeEdit::focusOutEvent(QFocusEvent *event) noexcept
 {
-    Q_OBJECT
-public:
-    explicit FocusDateTimeEdit(QWidget *parent = nullptr) noexcept;
-
-protected:
-    void focusOutEvent(QFocusEvent *event) noexcept override;
-
-signals:
-    void focusLost();
-};
-
-#endif // FOCUSDATETIMEEDIT_H
+    QTimeEdit::focusOutEvent(event);
+    emit focusLost();
+}

@@ -47,7 +47,6 @@ namespace
     constexpr const char *TypeColumn {"Type"};
     constexpr const char *CategoryColumn {"Category"};
     constexpr const char *CountryColumn {"Country"};
-    constexpr const char *AttributesColumn {"Attributes"};
     constexpr const char *IdentifierColumn {"Identifier"};
     constexpr const char *LatitudeColumn {"Latitude"};
     constexpr const char *LongitudeColumn {"Longitude"};
@@ -85,7 +84,6 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                                       ::TypeColumn % Csv::CommaSep %
                                       ::CategoryColumn % Csv::CommaSep %
                                       ::CountryColumn % Csv::CommaSep %
-                                      ::AttributesColumn % Csv::CommaSep %
                                       ::IdentifierColumn % Csv::CommaSep %
                                       ::LatitudeColumn % Csv::CommaSep %
                                       ::LongitudeColumn % Csv::CommaSep %
@@ -118,7 +116,6 @@ bool SkyDollyCsvLocationWriter::write(const std::vector<Location> &locations, QI
                                 locationTypeSymId % Csv::CommaSep %
                                 locationCategorySymId % Csv::CommaSep %
                                 countrySymId % Csv::CommaSep %
-                                QString::number(location.attributes) % Csv::CommaSep %
                                 "\"" % identifier.replace("\"", "\"\"") % "\"" % Csv::CommaSep %
                                 Export::formatCoordinate(location.latitude) % Csv::CommaSep %
                                 Export::formatCoordinate(location.longitude) % Csv::CommaSep %

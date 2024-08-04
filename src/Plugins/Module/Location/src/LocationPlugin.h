@@ -64,7 +64,7 @@ private:
 
     void frenchConnection() noexcept;
     QDateTime getSelectedDateTime(const QDateTime &dateTime) const noexcept;
-    QDateTime getSelectedDateTime(const TimeZoneInfo &timeZoneInfo) const noexcept;
+    QDateTime calculateZuluSimulationTime(const TimeZoneInfo &timeZoneInfo) const noexcept;
 
 private slots:
     void captureLocation() noexcept;

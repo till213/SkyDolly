@@ -28,6 +28,7 @@
 #include <cstdint>
 
 #include <QString>
+#include <QDateTime>
 
 #include <Kernel/Const.h>
 #include "InitialPosition.h"
@@ -38,11 +39,11 @@ struct MODEL_API Location final : public Data
 {
     QString title;
     QString description;
+    QDate localSimulationDate;
+    QTime localSimulationTime;
     std::int64_t typeId {Const::InvalidId};
     std::int64_t categoryId {Const::InvalidId};
     std::int64_t countryId {Const::InvalidId};
-    /// \todo Use QFlags
-    std::int64_t attributes {0};
     std::int64_t engineEventId {Const::InvalidId};
     QString identifier;
     double latitude {0.0};

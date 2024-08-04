@@ -48,7 +48,6 @@ namespace
         Type,
         Category,
         Country,
-        Attributes,
         Identifier,
         Latitude,
         Longitude,
@@ -63,7 +62,7 @@ namespace
         Count
     };
 
-    constexpr const char *SkyDollyCsvHeader {"Title,Description,Type,Category,Country,Attributes"};
+    constexpr const char *SkyDollyCsvHeader {"Title,Description,Type,Category,Country"};
 }
 
 struct SkyDollyCsvLocationParserPrivate
@@ -131,12 +130,6 @@ Location SkyDollyCsvLocationParser::parseLocation(CsvParser::Row row, bool &ok) 
         const QString countrySymId = row.at(Enum::underly(::Index::Country));
         location.countryId = d->countryEnumeration.getItemBySymId(countrySymId).id;
         ok = location.countryId != Const::InvalidId;
-    }
-    if (ok) {
-        const std::int64_t attributes = row.at(Enum::underly(::Index::Attributes)).toLongLong(&ok);
-        if (ok) {
-            location.attributes = attributes;
-        }
     }
     if (ok) {
         location.identifier = row.at(Enum::underly(::Index::Identifier));

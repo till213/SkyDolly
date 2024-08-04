@@ -14,7 +14,8 @@ target_sources(${LIBRARY_NAME}
         include/Widget/ActionButton.h src/ActionButton.cpp
         include/Widget/ActionRadioButton.h src/ActionRadioButton.cpp
         include/Widget/ActionCheckBox.h src/ActionCheckBox.cpp
-        include/Widget/FocusDateTimeEdit.h src/FocusDateTimeEdit.cpp
+        include/Widget/FocusDateEdit.h src/FocusDateEdit.cpp
+        include/Widget/FocusTimeEdit.h src/FocusTimeEdit.cpp
         include/Widget/FocusPlainTextEdit.h src/FocusPlainTextEdit.cpp
         include/Widget/AircraftSelectionComboBox.h src/AircraftSelectionComboBox.cpp
         include/Widget/TimestampEdit.h src/TimestampEdit.cpp src/TimestampEdit.ui

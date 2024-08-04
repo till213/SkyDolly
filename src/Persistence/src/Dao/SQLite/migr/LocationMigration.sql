@@ -508,6 +508,13 @@ where title = 'Hong Kong'
                  from   enum_location_type elt
                  where  elt.sym_id = 'P');
 
+@migr(id = "e5288e8b-8d88-4dd7-b06c-1bf3609b8199", descn = "Add local simulation date and time columns to location", step = 1)
+alter table location add column local_sim_date date;
+alter table location add column local_sim_time time;
+
+@migr(id = "f332611d-3253-4620-a2df-f9eb387a4bfc", descn = "Drop column attributes from location", step = 1)
+alter table location drop column attributes;
+
 @migr(id = "6b37e83f-db5b-4761-bd21-4a5510f9fecc", descn = "Update application version to 0.20", step = 1)
 update metadata
 set    app_version = '0.20.0';

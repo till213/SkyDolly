@@ -22,28 +22,24 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef DATETIMEITEMDELEGATE_H
-#define DATETIMEITEMDELEGATE_H
-
-#include <memory>
+#ifndef TIMEITEMDELEGATE_H
+#define TIMEITEMDELEGATE_H
 
 #include <QStyledItemDelegate>
 #include <QModelIndex>
 
 class QWidget;
 
-struct DateTimeItemDelegatePrivate;
-
-class DateTimeItemDelegate : public QStyledItemDelegate
+class TimeItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    DateTimeItemDelegate() noexcept;
-    DateTimeItemDelegate(const DateTimeItemDelegate &rhs) = delete;
-    DateTimeItemDelegate(DateTimeItemDelegate &&rhs) = delete;
-    DateTimeItemDelegate &operator=(const DateTimeItemDelegate &rhs) = delete;
-    DateTimeItemDelegate &operator=(DateTimeItemDelegate &&rhs) = delete;
-    ~DateTimeItemDelegate() override;
+    TimeItemDelegate() noexcept;
+    TimeItemDelegate(const TimeItemDelegate &rhs) = delete;
+    TimeItemDelegate(TimeItemDelegate &&rhs) = delete;
+    TimeItemDelegate &operator=(const TimeItemDelegate &rhs) = delete;
+    TimeItemDelegate &operator=(TimeItemDelegate &&rhs) = delete;
+    ~TimeItemDelegate() override;
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void setEditorData(QWidget *editor, const QModelIndex &index) const noexcept override;
@@ -53,4 +49,4 @@ private slots:
     void commitAndCloseEditor() noexcept;
 };
 
-#endif // DATETIMEITEMDELEGATE_H
+#endif // TIMEITEMDELEGATE_H

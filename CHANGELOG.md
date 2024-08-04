@@ -7,6 +7,9 @@
 ## Improvements
 
 ### Location Module
+- When teleporting to a location the newly added date and time values will also set the simulation local date & time
+  * Times are relative (sunset, sunrise, morning, noon, afternoon, ...) or absolute
+  * Dates and times can also be specified per location
 - *System* locations have been renamed to *Preset* locations
   * Those are the locations that come "out of the box" with Sky Dolly
 - Double-clicking on any column of a *preset* location will now teleport to that location (previously only the ID column was double-clickable for *preset* locations)

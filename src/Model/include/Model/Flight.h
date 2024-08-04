@@ -257,22 +257,22 @@ public:
     QDateTime getAircraftCreationTime(const Aircraft &aircraft) const noexcept;
 
     /*!
-     * Returns the simulation local start time for the given \p aircraft, taking its
+     * Returns the local simulation start time for the given \p aircraft, taking its
      * time offset into account.
      *
      * \param aircraft
      *        the aircraft for which to return its simulation start time
-     * \return the aircraft simulation start time, in simulation local time
+     * \return the aircraft simulation start time, in local simulation time
      */
     QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept;
 
     /*!
-     * Returns the simulation zulu start time for the given \p aircraft, taking its
+     * Returns the zulu simulation start time for the given \p aircraft, taking its
      * time offset into account.
      *
      * \param aircraft
      *        the aircraft for which to return its simulation start time
-     * \return the aircraft simulation start time, in simulation zulu time
+     * \return the aircraft start simulation time, in zulu simulation time
      */
     QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept;
 
