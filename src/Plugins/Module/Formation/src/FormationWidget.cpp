@@ -831,6 +831,107 @@ void FormationWidget::updateRelativePosition()
     updateAndSendUserAircraftPosition();
 }
 
+QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
+{
+    QRadioButton *button {nullptr};
+    const Formation::Bearing bearing = d->moduleSettings.getBearing();
+
+    switch (bearing) {
+    case North:
+        button = ui->nPositionRadioButton;
+        break;
+    case NorthNorthEast:
+        button = ui->nnePositionRadioButton;
+        break;
+    case NorthEast:
+        button = ui->nePositionRadioButton;
+        break;
+    case EastNorthEast:
+        button = ui->enePositionRadioButton;
+        break;
+    case East:
+        button = ui->ePositionRadioButton;
+        break;
+    case EastSouthEast:
+        button = ui->esePositionRadioButton;
+        break;
+    case SouthEast:
+        button = ui->sePositionRadioButton;
+        break;
+    case SouthSouthEast:
+        button = ui->ssePositionRadioButton;
+        break;
+    case South:
+        button = ui->sPositionRadioButton;
+        break;
+    case SouthSouthWest:
+        button = ui->sswPositionRadioButton;
+        break;
+    case SouthWest:
+        button = ui->swPositionRadioButton;
+        break;
+    case WestSouthWest:
+        button = ui->wswPositionRadioButton;
+        break;
+    case West:
+        button = ui->wPositionRadioButton;
+        break;
+    case WestNorthWest:
+        button = ui->wnwPositionRadioButton;
+        break;
+    case NorthWest:
+        button = ui->nwPositionRadioButton;
+        break;
+    case NorthNorthWest:
+        button = ui->nnwPositionRadioButton;
+        break;
+    }
+    return *button;
+}
+
+Formation::Bearing FormationWidget::bearingFromPositionGroup() const noexcept
+{
+    QAbstractButton *button = d->positionButtonGroup->checkedButton();
+
+    using enum Formation::Bearing;
+    Formation::Bearing bearing {North};
+    if (button == ui->nPositionRadioButton) {
+        bearing = North;
+    } else if (button == ui->nnePositionRadioButton) {
+        bearing = NorthNorthEast;
+    } else if (button == ui->nePositionRadioButton) {
+        bearing = NorthEast;
+    } else if (button == ui->enePositionRadioButton) {
+        bearing = EastNorthEast;
+    } else if (button == ui->ePositionRadioButton) {
+        bearing = East;
+    } else if (button == ui->esePositionRadioButton) {
+        bearing = EastSouthEast;
+    } else if (button == ui->sePositionRadioButton) {
+        bearing = SouthEast;
+    } else if (button == ui->ssePositionRadioButton) {
+        bearing = SouthSouthEast;
+    } else if (button == ui->sPositionRadioButton) {
+        bearing = South;
+    } else if (button == ui->sswPositionRadioButton) {
+        bearing = SouthSouthWest;
+    } else if (button == ui->swPositionRadioButton) {
+        bearing = SouthWest;
+    } else if (button == ui->wswPositionRadioButton) {
+        bearing = WestSouthWest;
+    } else if (button == ui->wPositionRadioButton) {
+        bearing = West;
+    } else if (button == ui->wnwPositionRadioButton) {
+        bearing = WestNorthWest;
+    } else if (button == ui->nwPositionRadioButton) {
+        bearing = NorthWest;
+    } else {
+        bearing = NorthNorthWest;
+    }
+
+    return bearing;
+}
+
 // PRIVATE SLOTS
 
 void FormationWidget::updateUi() noexcept
@@ -1102,107 +1203,6 @@ void FormationWidget::onModuleSettingsChanged() noexcept
 void FormationWidget::onModuleSettingsReplayModeChanged(SkyConnectIntf::ReplayMode mode) noexcept
 {
     SkyConnectManager::getInstance().setReplayMode(mode);
-}
-
-QRadioButton &FormationWidget::getPositionButtonFromSettings() const noexcept
-{
-    QRadioButton *button {nullptr};
-    const Formation::Bearing bearing = d->moduleSettings.getBearing();
-
-    switch (bearing) {
-    case North:
-        button = ui->nPositionRadioButton;
-        break;
-    case NorthNorthEast:
-        button = ui->nnePositionRadioButton;
-        break;
-    case NorthEast:
-        button = ui->nePositionRadioButton;
-        break;
-    case EastNorthEast:
-        button = ui->enePositionRadioButton;
-        break;
-    case East:
-        button = ui->ePositionRadioButton;
-        break;
-    case EastSouthEast:
-        button = ui->esePositionRadioButton;
-        break;
-    case SouthEast:
-        button = ui->sePositionRadioButton;
-        break;
-    case SouthSouthEast:
-        button = ui->ssePositionRadioButton;
-        break;
-    case South:
-        button = ui->sPositionRadioButton;
-        break;
-    case SouthSouthWest:
-        button = ui->sswPositionRadioButton;
-        break;
-    case SouthWest:
-        button = ui->swPositionRadioButton;
-        break;
-    case WestSouthWest:
-        button = ui->wswPositionRadioButton;
-        break;
-    case West:
-        button = ui->wPositionRadioButton;
-        break;
-    case WestNorthWest:
-        button = ui->wnwPositionRadioButton;
-        break;
-    case NorthWest:
-        button = ui->nwPositionRadioButton;
-        break;
-    case NorthNorthWest:
-        button = ui->nnwPositionRadioButton;
-        break;
-    }
-    return *button;
-}
-
-Formation::Bearing FormationWidget::bearingFromPositionGroup() const noexcept
-{
-    QAbstractButton *button = d->positionButtonGroup->checkedButton();
-
-    using enum Formation::Bearing;
-    Formation::Bearing bearing {North};
-    if (button == ui->nPositionRadioButton) {
-        bearing = North;
-    } else if (button == ui->nnePositionRadioButton) {
-        bearing = NorthNorthEast;
-    } else if (button == ui->nePositionRadioButton) {
-        bearing = NorthEast;
-    } else if (button == ui->enePositionRadioButton) {
-        bearing = EastNorthEast;
-    } else if (button == ui->ePositionRadioButton) {
-        bearing = East;
-    } else if (button == ui->esePositionRadioButton) {
-        bearing = EastSouthEast;
-    } else if (button == ui->sePositionRadioButton) {
-        bearing = SouthEast;
-    } else if (button == ui->ssePositionRadioButton) {
-        bearing = SouthSouthEast;
-    } else if (button == ui->sPositionRadioButton) {
-        bearing = South;
-    } else if (button == ui->sswPositionRadioButton) {
-        bearing = SouthSouthWest;
-    } else if (button == ui->swPositionRadioButton) {
-        bearing = SouthWest;
-    } else if (button == ui->wswPositionRadioButton) {
-        bearing = WestSouthWest;
-    } else if (button == ui->wPositionRadioButton) {
-        bearing = West;
-    } else if (button == ui->wnwPositionRadioButton) {
-        bearing = WestNorthWest;
-    } else if (button == ui->nwPositionRadioButton) {
-        bearing = NorthWest;
-    } else {
-        bearing = NorthNorthWest;
-    }
-
-    return bearing;
 }
 
 void FormationWidget::restoreDefaultSettings() noexcept {
