@@ -231,6 +231,8 @@ void LocationWidget::updateLocation(const Location &location)
 
 void LocationWidget::showEvent(QShowEvent *event) noexcept
 {
+    QWidget::showEvent(event);
+
     QByteArray tableState = d->moduleSettings.getLocationTableState();
     if (!tableState.isEmpty()) {
         ui->locationTableWidget->horizontalHeader()->blockSignals(true);
