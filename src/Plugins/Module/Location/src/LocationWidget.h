@@ -93,8 +93,6 @@ private:
     int getSelectedRow() const noexcept;
     std::int64_t getSelectedLocationId() const noexcept;
 
-    void scrollToAndSelectRow(std::int64_t id) noexcept;
-
 private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;
