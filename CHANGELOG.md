@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.19.1
+
+## Bug Fixes
+- Properly make newly inserted location visible (scroll to row), specifically when location table is sorted by ID in descending order
+
 ## 0.19.0
 Sky Dolly **"Jaunty Jodel"** carries the Olympic spirit into the world: over 200 new locations - each country taking part in the Olympic Games in Paris 2024 - have been added as location presets. Please enjoy the diversity and beauty of our little planet - happy flying!
 

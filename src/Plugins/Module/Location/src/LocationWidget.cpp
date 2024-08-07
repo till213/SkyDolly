@@ -670,7 +670,7 @@ int LocationWidget::getRowById(std::int64_t id) const noexcept
     int row {::InvalidRow};
     const auto rowCount =ui->locationTableWidget->rowCount();
     int currentRow {rowCount - 1};
-    while (row == ::InvalidRow && currentRow > 0) {
+    while (row == ::InvalidRow && currentRow >= 0) {
         const auto *currentItem = ui->locationTableWidget->item(currentRow, LocationWidgetPrivate::idColumn);
         if (currentItem->data(Qt::DisplayRole).toLongLong() == id) {
             row = currentRow;
