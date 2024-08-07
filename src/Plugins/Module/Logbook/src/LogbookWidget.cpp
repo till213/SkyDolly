@@ -156,6 +156,8 @@ LogbookWidget::~LogbookWidget() = default;
 
 void LogbookWidget::showEvent(QShowEvent *event) noexcept
 {
+    QWidget::showEvent(event);
+
     QByteArray tableState = d->moduleSettings.getLogbookTableState();
     if (!tableState.isEmpty()) {
         ui->logTableWidget->horizontalHeader()->blockSignals(true);

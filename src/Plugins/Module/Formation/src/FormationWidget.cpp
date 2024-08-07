@@ -178,6 +178,8 @@ Formation::Bearing FormationWidget::getRelativePosition() const noexcept
 
 void FormationWidget::showEvent(QShowEvent *event) noexcept
 {
+    QWidget::showEvent(event);
+
     QByteArray tableState = d->moduleSettings.getFormationAircraftTableState();
     if (!tableState.isEmpty()) {
         ui->aircraftTableWidget->horizontalHeader()->blockSignals(true);
