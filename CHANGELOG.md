@@ -20,6 +20,7 @@
 - Set correct country for city Hong Kong (preset locations)
 - Properly enable/disable pitch, bank, true heading and indicated airspeed spinboxes based on location selection
 - Do not reset backup period to "Never" when setting the backup path fails
+- Correctly name the file selection filter of the Sky Dolly logbook location import plugin
 
 ## Documentation
 - Updated the "Flight Analysis" SQL to properly match the closest timestamps in tables *position* and *attitude*
