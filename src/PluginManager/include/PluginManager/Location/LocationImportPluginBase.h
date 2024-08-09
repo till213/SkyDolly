@@ -38,7 +38,7 @@ class QIODevice;
 #include "../DialogPluginBase.h"
 #include "../PluginManagerLib.h"
 
-class Location;
+struct Location;
 struct AircraftType;
 struct AircraftInfo;
 struct LocationCondition;

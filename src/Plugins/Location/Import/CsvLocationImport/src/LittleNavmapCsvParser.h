@@ -34,7 +34,7 @@ class QRegularExpressionMatch;
 #include <Kernel/CsvParser.h>
 #include "CsvLocationParserIntf.h"
 
-class Location;
+struct Location;
 class CsvLocationImportSettings;
 struct LittleNavmapCsvParserPrivate;
 

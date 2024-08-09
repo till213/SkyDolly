@@ -32,7 +32,7 @@ class QIODevice;
 
 #include "CsvLocationWriterIntf.h"
 
-class Location;
+struct Location;
 class CsvLocationExportSettings;
 struct SkyDollyCsvLocationWriterPrivate;
 

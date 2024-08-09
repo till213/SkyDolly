@@ -7,6 +7,9 @@ target_sources(${MODULE_NAME}
     PRIVATE
         src/KmlLocationImportPlugin.h src/KmlLocationImportPlugin.cpp
         src/KmlLocationImportSettings.h src/KmlLocationImportSettings.cpp
+        src/KmlPlacemarkParser.h src/KmlPlacemarkParser.cpp
+        src/KmlParserIntf.h
+        src/Kml.h
         src/KmlLocationImportPlugin.json
 )
 target_link_libraries(${MODULE_NAME}

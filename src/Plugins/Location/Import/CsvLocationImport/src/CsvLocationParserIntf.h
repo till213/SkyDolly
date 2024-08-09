@@ -30,7 +30,7 @@
 
 class QTextStream;
 
-class Location;
+struct Location;
 
 class CsvLocationParserIntf
 {

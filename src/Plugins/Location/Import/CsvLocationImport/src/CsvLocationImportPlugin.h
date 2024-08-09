@@ -37,7 +37,7 @@ class QWidget;
 #include <PluginManager/Location/LocationImportIntf.h>
 #include <PluginManager/Location/LocationImportPluginBase.h>
 
-class Location;
+struct Location;
 class LocationImportPluginBaseSettings;
 struct CsvLocationImportPluginPrivate;
 

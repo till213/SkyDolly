@@ -22,28 +22,21 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOCATIONEXPORTINTF_H
-#define LOCATIONEXPORTINTF_H
+#ifndef KMLPARSERINTF_H
+#define KMLPARSERINTF_H
 
-#include <QtPlugin>
+#include <vector>
 
-#include "../PluginIntf.h"
-#include "../DialogPluginIntf.h"
+class QXmlStreamReader;
 
 struct Location;
 
-class LocationExportIntf : public DialogPluginIntf, public PluginIntf
+class KmlParserIntf
 {
 public:
-    /*!
-     * Exports all or the selected locations, according to the specific plugin location selection criteria.
-     *
-     * \return \c true when successful; \c false else
-     */
-    virtual bool exportLocations() const noexcept = 0;
+    virtual ~KmlParserIntf() = default;
+
+    virtual std::vector<Location> parse(QXmlStreamReader &xmlStreamReader) noexcept = 0;
 };
 
-#define LOCATION_EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationExportInterface/1.0"
-Q_DECLARE_INTERFACE(LocationExportIntf, LOCATION_EXPORT_INTERFACE_IID)
-
-#endif // LOCATIONEXPORTINTF_H
+#endif // KMLPARSERINTF_H

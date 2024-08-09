@@ -37,7 +37,7 @@ class QWidget;
 #include <PluginManager/Location/LocationImportIntf.h>
 #include <PluginManager/Location/LocationImportPluginBase.h>
 
-class Location;
+struct Location;
 class LocationImportPluginBaseSettings;
 struct KmlLocationImportPluginPrivate;
 
@@ -63,6 +63,8 @@ protected:
 
 private:
     const std::unique_ptr<KmlLocationImportPluginPrivate> d;
+
+    std::vector<Location> parseKML() noexcept;
 };
 
 #endif // KMLLOCATIONIMPORTPLUGIN_H

@@ -22,28 +22,42 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOCATIONEXPORTINTF_H
-#define LOCATIONEXPORTINTF_H
+#ifndef KMLPLACEMARKPARSER_H
+#define KMLPLACEMARKPARSER_H
 
-#include <QtPlugin>
+#include <memory>
+#include <vector>
 
-#include "../PluginIntf.h"
-#include "../DialogPluginIntf.h"
+#include <QDateTime>
+#include <QString>
+
+class QXmlStreamReader;
+
+#include "KmlParserIntf.h"
 
 struct Location;
+struct KmlPlacemarkParserPrivate;
 
-class LocationExportIntf : public DialogPluginIntf, public PluginIntf
+class KmlPlacemarkParser : public KmlParserIntf
 {
 public:
-    /*!
-     * Exports all or the selected locations, according to the specific plugin location selection criteria.
-     *
-     * \return \c true when successful; \c false else
-     */
-    virtual bool exportLocations() const noexcept = 0;
+    KmlPlacemarkParser() noexcept;
+    KmlPlacemarkParser(const KmlPlacemarkParser &rhs) = delete;
+    KmlPlacemarkParser(KmlPlacemarkParser &&rhs) = delete;
+    KmlPlacemarkParser &operator=(const KmlPlacemarkParser &rhs) = delete;
+    KmlPlacemarkParser &operator=(KmlPlacemarkParser &&rhs) = delete;
+    ~KmlPlacemarkParser() override;
+
+    std::vector<Location> parse(QXmlStreamReader &xmlStreamReader) noexcept override;
+
+private:
+    const std::unique_ptr<KmlPlacemarkParserPrivate> d;
+
+    virtual std::vector<Location> parseKML() noexcept;
+    virtual void parseDocument(Location &location) noexcept;
+    virtual void parseFolder(Location &location) noexcept;
+    virtual void parsePlacemark(Location &location) noexcept;
+    virtual void parseDocumentName(Location &location) noexcept;
 };
 
-#define LOCATION_EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationExportInterface/1.0"
-Q_DECLARE_INTERFACE(LocationExportIntf, LOCATION_EXPORT_INTERFACE_IID)
-
-#endif // LOCATIONEXPORTINTF_H
+#endif // KMLPLACEMARKPARSER_H

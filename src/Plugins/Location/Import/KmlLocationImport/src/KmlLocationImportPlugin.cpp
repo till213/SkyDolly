@@ -27,7 +27,8 @@
 #include <QFile>
 #include <QTextStream>
 #include <QString>
-#include <QStringConverter>
+#include <QStringLiteral>
+#include <QXmlStreamReader>
 #include <QWidget>
 #include <QIODevice>
 #include <QFile>
@@ -38,10 +39,13 @@
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/LocationService.h>
 #include "KmlLocationImportSettings.h"
+#include "KmlParserIntf.h"
+#include "KmlPlacemarkParser.h"
 #include "KmlLocationImportPlugin.h"
 
 struct KmlLocationImportPluginPrivate
 {
+    QXmlStreamReader xml;
     KmlLocationImportSettings pluginSettings;
 
     static inline const QString FileExtension {"kml"};
@@ -81,5 +85,38 @@ std::vector<Location> KmlLocationImportPlugin::importLocations(QIODevice &io, bo
 {
     std::vector<Location> locations;
 
+    d->xml.setDevice(&io);
+    if (d->xml.readNextStartElement()) {
+#ifdef DEBUG
+        qDebug() << "KmlImportPlugin::importSelectedFlights: XML start element:" << d->xml.name().toString();
+#endif
+        if (d->xml.name() == QStringLiteral("kml")) {
+            locations = parseKML();
+        } else {
+            d->xml.raiseError("The file is not a KML file.");
+        }
+    }
+
+    ok = !d->xml.hasError();
+    if (!ok) {
+#ifdef DEBUG
+        qDebug() << "KmlImportPlugin::importLocations: XML error:" << d->xml.errorString();
+#endif
+    }
+
     return locations;
 }
+
+// PRIVATE
+
+std::vector<Location> KmlLocationImportPlugin::parseKML() noexcept
+{
+    std::vector<Location> locations;
+    std::unique_ptr<KmlParserIntf> parser;
+
+    parser = std::make_unique<KmlPlacemarkParser>();
+    locations = parser->parse(d->xml);
+
+    return locations;
+}
+
