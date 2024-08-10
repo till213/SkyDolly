@@ -22,45 +22,44 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLACEMARKKMLPARSER_H
-#define PLACEMARKKMLPARSER_H
+#ifndef KMLLOCATIONIMPORTOPTIONWIDGET_H
+#define KMLLOCATIONIMPORTOPTIONWIDGET_H
 
-#include <vector>
+#include <memory>
 
-#include <QDateTime>
-#include <QString>
+#include <QWidget>
 
-class QXmlStreamReader;
+namespace Ui {
+class KmlLocationImportOptionWidget;
+}
 
-#include "AbstractKmlParser.h"
-
-struct Location;
 class KmlLocationImportSettings;
-struct PlacemarkKmlParserPrivate;
+struct KmlLocationImportOptionWidgetPrivate;
 
-class PlacemarkKmlParser final : public AbstractKmlParser
+class KmlLocationImportOptionWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    explicit PlacemarkKmlParser(const KmlLocationImportSettings &pluginSettings) noexcept;
-    PlacemarkKmlParser(const PlacemarkKmlParser &rhs) = delete;
-    PlacemarkKmlParser(PlacemarkKmlParser &&rhs) = delete;
-    PlacemarkKmlParser &operator=(const PlacemarkKmlParser &rhs) = delete;
-    PlacemarkKmlParser &operator=(PlacemarkKmlParser &&rhs) = delete;
-    ~PlacemarkKmlParser() override;
-
-    std::vector<Location> parse(QXmlStreamReader &xmlStreamReader) noexcept override;
-
-protected:
-    void parseFolderName(const QString &folderName) noexcept override;
-    void parsePlacemark(std::vector<Location> &locations) noexcept override;
+    explicit KmlLocationImportOptionWidget(KmlLocationImportSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    KmlLocationImportOptionWidget(const KmlLocationImportOptionWidget &rhs) = delete;
+    KmlLocationImportOptionWidget(KmlLocationImportOptionWidget &&rhs) = delete;
+    KmlLocationImportOptionWidget &operator=(const KmlLocationImportOptionWidget &rhs) = delete;
+    KmlLocationImportOptionWidget &operator=(KmlLocationImportOptionWidget &&rhs) = delete;
+    ~KmlLocationImportOptionWidget() override;
 
 private:
-    std::unique_ptr<PlacemarkKmlParserPrivate> d;
+    const std::unique_ptr<Ui::KmlLocationImportOptionWidget> ui;
+    const std::unique_ptr<KmlLocationImportOptionWidgetPrivate> d;
 
-    void parsePoint(Location &location) noexcept;
-    void guesstimateCurrentCategoryId(const QString &folderName) noexcept;
-    static void unHtmlify(QString &description) noexcept;
-    static QString extractIcao(const QString &description);
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+
+private slots:
+    void updateUi() noexcept;
+    void onDefaultCountryChanged(int index) noexcept;
+    void onDefaultAltitudeChanged(int value) noexcept;
+    void onDefaultIndicatedAirspeedChanged(int value) noexcept;
 };
 
-#endif // PLACEMARKKMLPARSER_H
+#endif // KMLLOCATIONIMPORTOPTIONWIDGET_H
+

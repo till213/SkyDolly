@@ -41,6 +41,7 @@
 #include "KmlLocationImportSettings.h"
 #include "KmlParserIntf.h"
 #include "PlacemarkKmlParser.h"
+#include "KmlLocationImportOptionWidget.h"
 #include "KmlLocationImportPlugin.h"
 
 struct KmlLocationImportPluginPrivate
@@ -78,7 +79,7 @@ QString KmlLocationImportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> KmlLocationImportPlugin::createOptionWidget() const noexcept
 {
-    return nullptr;
+    return std::make_unique<KmlLocationImportOptionWidget>(d->pluginSettings);
 }
 
 std::vector<Location> KmlLocationImportPlugin::importLocations(QIODevice &io, bool &ok) noexcept
@@ -114,7 +115,7 @@ std::vector<Location> KmlLocationImportPlugin::parseKML() noexcept
     std::vector<Location> locations;
     std::unique_ptr<KmlParserIntf> parser;
 
-    parser = std::make_unique<PlacemarkKmlParser>();
+    parser = std::make_unique<PlacemarkKmlParser>(d->pluginSettings);
     locations = parser->parse(d->xml);
 
     return locations;

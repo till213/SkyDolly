@@ -26,6 +26,7 @@
 #define KMLLOCATIONIMPORTSETTINGS_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 
@@ -44,6 +45,15 @@ public:
     KmlLocationImportSettings &operator=(const KmlLocationImportSettings &rhs) = delete;
     KmlLocationImportSettings &operator=(KmlLocationImportSettings &&rhs) = delete;
     ~KmlLocationImportSettings() override;
+
+    std::int64_t getDefaultCountryId() const noexcept;
+    void setDefaultCountryId(std::int64_t countryId) noexcept;
+
+    int getDefaultAltitude() const noexcept;
+    void setDefaultAltitude(int altitude) noexcept;
+
+    int getDefaultIndicatedAirspeed() const noexcept;
+    void setDefaultIndicatedAirspeed(int indicatedAirspeed) noexcept;
 
 protected:
     void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

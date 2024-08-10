@@ -38,14 +38,19 @@
 #include <Persistence/Service/EnumerationService.h>
 #include <Persistence/PersistedEnumerationItem.h>
 #include "Kml.h"
+#include "KmlLocationImportSettings.h"
 #include "KmlParserIntf.h"
 #include "PlacemarkKmlParser.h"
 
 struct PlacemarkKmlParserPrivate
 {
+    PlacemarkKmlParserPrivate(const KmlLocationImportSettings &pluginSettings)
+        : pluginSettings {pluginSettings}
+    {}
+
     EnumerationService enumerationService;
     Enumeration categoryEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationCategory)};
-
+    const KmlLocationImportSettings &pluginSettings;
 
     const std::int64_t ImportTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
     const std::int64_t KeepEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
@@ -60,9 +65,9 @@ struct PlacemarkKmlParserPrivate
 
 // PUBLIC
 
-PlacemarkKmlParser::PlacemarkKmlParser() noexcept
+PlacemarkKmlParser::PlacemarkKmlParser(const KmlLocationImportSettings &pluginSettings) noexcept
     : AbstractKmlParser(),
-      d {std::make_unique<PlacemarkKmlParserPrivate>()}
+      d {std::make_unique<PlacemarkKmlParserPrivate>(pluginSettings)}
 {}
 
 PlacemarkKmlParser::~PlacemarkKmlParser() = default;
@@ -88,9 +93,8 @@ void PlacemarkKmlParser::parsePlacemark(std::vector<Location> &locations) noexce
     Location location;
     location.typeId = d->ImportTypeId;
     location.engineEventId = d->KeepEngineEventId;
-    location.countryId = d->WorldId;
-    // TODO Apply settings
-    location.indicatedAirspeed = 120;
+    location.countryId = d->pluginSettings.getDefaultCountryId();
+    location.indicatedAirspeed = d->pluginSettings.getDefaultIndicatedAirspeed();
     location.categoryId = d->currentCategoryId;
 
     while (xml->readNextStartElement()) {
@@ -149,7 +153,15 @@ void PlacemarkKmlParser::parsePoint(Location &location) noexcept
                 if (ok) {
                     location.latitude = latitude;
                     location.longitude = longitude;
-                    location.altitude = Convert::metersToFeet(altitude);
+                    if (!qFuzzyIsNull(altitude)) {
+                        location.altitude = Convert::metersToFeet(altitude);
+                    } else {
+                        // TODO Provide an option to:
+                        // - place aircraft on ground
+                        // - use default altitude
+                        // - import "as is" (0.0 feet)
+                        location.altitude = d->pluginSettings.getDefaultAltitude();
+                    }
                 }
 
             } else {
