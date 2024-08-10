@@ -137,14 +137,13 @@ signals:
      */
     void maxRecentFilesChanged(int maxRecentFiles);
 
-protected:
-    ~RecentFile() override;
-
 private:
     Q_DISABLE_COPY(RecentFile)
-    RecentFilePrivate *d;
+    std::unique_ptr<RecentFilePrivate> d;
 
     RecentFile();
+    friend std::unique_ptr<RecentFile>::deleter_type;
+    ~RecentFile() override;
 
     void initialise();
     void frenchConnection();

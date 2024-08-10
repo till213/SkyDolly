@@ -271,6 +271,7 @@ private:
     const std::unique_ptr<SkyConnectManagerPrivate> d;
 
     SkyConnectManager() noexcept;
+    friend std::unique_ptr<SkyConnectManager>::deleter_type;
     ~SkyConnectManager() override;
 
     void frenchConnection() noexcept;

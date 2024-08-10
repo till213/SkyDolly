@@ -52,6 +52,7 @@ private:
     const std::unique_ptr<LogbookPrivate> d;
 
     Logbook() noexcept;
+    friend std::unique_ptr<Logbook>::deleter_type;
     ~Logbook() override;
 };
 

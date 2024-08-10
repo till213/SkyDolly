@@ -762,6 +762,7 @@ private:
     const std::unique_ptr<SettingsPrivate> d;
 
     Settings() noexcept;
+    friend std::unique_ptr<Settings>::deleter_type;
     ~Settings() override;
 
     void frenchConnection() noexcept;

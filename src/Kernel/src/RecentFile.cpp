@@ -23,12 +23,16 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <mutex>
+#include <memory>
 
 #include <QObject>
 #include <QFileInfo>
 #include <QStringList>
 #include <QList>
 #include <QSettings>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include "SecurityToken.h"
 #include "RecentFile.h"
@@ -48,18 +52,18 @@ struct RecentFilePrivate {
     int maxRecentFiles {0};
 
     static inline std::once_flag onceFlag;
-    static inline RecentFile *instance {nullptr};
+    static inline std::unique_ptr<RecentFile> instance;
 };
 
 const int RecentFilePrivate::DefaultMaxRecentFiles = 8;
 const int RecentFilePrivate::MaxRecentFiles = 10; // There are 10 action shortcuts keys: 0...9
 
-// public
+// PUBLIC
 
 RecentFile &RecentFile::getInstance()
 {
     std::call_once(RecentFilePrivate::onceFlag, []() {
-        RecentFilePrivate::instance = new RecentFile();
+        RecentFilePrivate::instance = std::unique_ptr<RecentFile>(new RecentFile());
     });
     return *RecentFilePrivate::instance;
 }
@@ -67,8 +71,7 @@ RecentFile &RecentFile::getInstance()
 void RecentFile::destroyInstance()
 {
     if (RecentFilePrivate::instance != nullptr) {
-        delete RecentFilePrivate::instance;
-        RecentFilePrivate::instance = nullptr;
+        RecentFilePrivate::instance.reset();
     }
 }
 
@@ -155,20 +158,20 @@ void RecentFile::selectRecentFile(const QString &filePath)
     securityToken = nullptr;
 }
 
-// protected
+// PRIVATE
+
+RecentFile::RecentFile()
+    : d(std::make_unique<RecentFilePrivate>())
+{
+    restore();
+}
 
 RecentFile::~RecentFile()
 {
+#ifdef DEBUG
+    qDebug() << "RecentFile::~RecentFile: DELETED";
+#endif
     store();
-    delete d;
-}
-
-// private
-
-RecentFile::RecentFile()
-{
-    d = new RecentFilePrivate();
-    restore();
 }
 
 void RecentFile::store()

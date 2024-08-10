@@ -96,8 +96,10 @@ private:
     const std::unique_ptr<PluginManagerPrivate> d;
 
     PluginManager() noexcept;
+    friend std::unique_ptr<PluginManager>::deleter_type;
     ~PluginManager() override;
 
+    //void deleter(SingletonFactory *d) { d->~SingletonFactory(); free(d); }
     std::vector<PluginManager::Handle> enumeratePlugins(const QString &pluginDirectoryName, PluginRegistry &pluginRegistry) noexcept;
 };
 

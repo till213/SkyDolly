@@ -54,7 +54,7 @@ struct PersistenceManagerPrivate
     bool connected {false};
 
     static inline std::once_flag onceFlag;
-    static inline PersistenceManager *instance {nullptr};
+    static inline std::unique_ptr<PersistenceManager> instance;
 };
 
 // PUBLIC
@@ -62,7 +62,7 @@ struct PersistenceManagerPrivate
 PersistenceManager &PersistenceManager::getInstance() noexcept
 {
     std::call_once(PersistenceManagerPrivate::onceFlag, []() {
-        PersistenceManagerPrivate::instance = new PersistenceManager();
+        PersistenceManagerPrivate::instance = std::unique_ptr<PersistenceManager>(new PersistenceManager());
     });
     return *PersistenceManagerPrivate::instance;
 }
@@ -70,8 +70,7 @@ PersistenceManager &PersistenceManager::getInstance() noexcept
 void PersistenceManager::destroyInstance() noexcept
 {
     if (PersistenceManagerPrivate::instance != nullptr) {
-        delete PersistenceManagerPrivate::instance;
-        PersistenceManagerPrivate::instance = nullptr;
+        PersistenceManagerPrivate::instance.reset();
     }
 }
 
@@ -210,5 +209,8 @@ PersistenceManager::PersistenceManager() noexcept
 
 PersistenceManager::~PersistenceManager()
 {
+#ifdef DEBUG
+    qDebug() << "PersistenceManager::~PersistenceManager: DELETED";
+#endif
     disconnectFromLogbook();
 }

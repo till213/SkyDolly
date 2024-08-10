@@ -35,7 +35,7 @@ struct LogbookPrivate
     std::vector<std::unique_ptr<Flight>> flights;
 
     static inline std::once_flag onceFlag;
-    static inline Logbook *instance;
+    static inline std::unique_ptr<Logbook> instance;
 };
 
 // PUBLIC
@@ -43,7 +43,7 @@ struct LogbookPrivate
 Logbook &Logbook::getInstance() noexcept
 {
     std::call_once(LogbookPrivate::onceFlag, []() {
-        LogbookPrivate::instance = new Logbook();
+        LogbookPrivate::instance = std::unique_ptr<Logbook>(new Logbook());
     });
     return *LogbookPrivate::instance;
 }
@@ -51,8 +51,7 @@ Logbook &Logbook::getInstance() noexcept
 void Logbook::destroyInstance() noexcept
 {
     if (LogbookPrivate::instance != nullptr) {
-        delete LogbookPrivate::instance;
-        LogbookPrivate::instance = nullptr;
+        LogbookPrivate::instance.reset();
     }
 }
 

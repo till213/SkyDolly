@@ -57,8 +57,7 @@ namespace
 
 struct SkyConnectManagerPrivate
 {
-    SkyConnectManagerPrivate(QObject *parent) noexcept
-        : pluginLoader(new QPluginLoader {parent})
+    SkyConnectManagerPrivate() noexcept
     {
         pluginsDirectory.cd(File::getPluginDirectoryPath());
     }
@@ -72,11 +71,11 @@ struct SkyConnectManagerPrivate
     // Key: uuid - value: plugin path
     SkyConnectManager::PluginRegistry pluginRegistry;
     std::vector<SkyConnectManager::Handle> pluginHandles;
-    QPluginLoader *pluginLoader;
+    std::unique_ptr<QPluginLoader> pluginLoader {std::make_unique<QPluginLoader>()};
     QUuid currentPluginUuid;
 
     static inline std::once_flag onceFlag;
-    static inline SkyConnectManager *instance;
+    static inline std::unique_ptr<SkyConnectManager> instance;
 };
 
 // PUBLIC
@@ -84,7 +83,7 @@ struct SkyConnectManagerPrivate
 SkyConnectManager &SkyConnectManager::getInstance() noexcept
 {
     std::call_once(SkyConnectManagerPrivate::onceFlag, []() {
-        SkyConnectManagerPrivate::instance = new SkyConnectManager();
+        SkyConnectManagerPrivate::instance = std::unique_ptr<SkyConnectManager>(new SkyConnectManager());
     });
     return *SkyConnectManagerPrivate::instance;
 }
@@ -92,8 +91,7 @@ SkyConnectManager &SkyConnectManager::getInstance() noexcept
 void SkyConnectManager::destroyInstance() noexcept
 {
     if (SkyConnectManagerPrivate::instance != nullptr) {
-        delete SkyConnectManagerPrivate::instance;
-        SkyConnectManagerPrivate::instance = nullptr;
+        SkyConnectManagerPrivate::instance.reset();
     }
 }
 
@@ -491,13 +489,16 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 // PRIVATE
 
 SkyConnectManager::SkyConnectManager() noexcept
-    : d {std::make_unique<SkyConnectManagerPrivate>(this)}
+    : d {std::make_unique<SkyConnectManagerPrivate>()}
 {
     frenchConnection();
 }
 
 SkyConnectManager::~SkyConnectManager()
 {
+#ifdef DEBUG
+    qDebug() << "SkyConnectManager::~SkyConnectManager: DELETED";
+#endif
     if (getCurrentSkyConnect().has_value()) {
         // Unload the current plugin
         unloadCurrentPlugin();
@@ -521,9 +522,9 @@ void SkyConnectManager::initialisePluginRegistry(const QString &pluginDirectoryN
         d->pluginHandles.reserve(entryList.count());
         for (const auto &fileName : entryList) {
             const QString pluginPath = d->pluginsDirectory.absoluteFilePath(fileName);
-            QPluginLoader loader(pluginPath);
+            d->pluginLoader->setFileName(pluginPath);
 
-            const QJsonObject metaData = loader.metaData();
+            const QJsonObject metaData = d->pluginLoader->metaData();
             if (!metaData.isEmpty()) {
                 const QJsonObject pluginMetadata {metaData.value("MetaData").toObject()};
                 const QUuid uuid {pluginMetadata.value(PluginUuidKey).toString()};
@@ -551,7 +552,7 @@ void SkyConnectManager::initialisePlugin() noexcept
         if (d->pluginHandles.size() == 1) {
             // There is only one plugin
             uuid = d->pluginHandles.front().first;
-            ok = tryAndSetCurrentSkyConnect(uuid);
+            tryAndSetCurrentSkyConnect(uuid);
         } else if (d->pluginHandles.size() > 1) {
             // Check if an actual flight simulator instance is running
             for (auto &plugin : d->pluginHandles) {
@@ -600,9 +601,6 @@ void SkyConnectManager::initialisePlugin() noexcept
                     }
                 }
             }
-        } else {
-            // No plugins found
-            ok = false;
         }
     }
 }

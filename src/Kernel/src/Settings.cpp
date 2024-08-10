@@ -101,7 +101,7 @@ struct SettingsPrivate
     int previewInfoDialogCount {DefaultPreviewInfoDialogCount};
 
     static inline std::once_flag onceFlag;
-    static inline Settings *instance {nullptr};
+    static inline std::unique_ptr<Settings> instance;
 
     static constexpr QUuid DefaultSkyConnectPluginUuid {};
     static constexpr bool DefaultBackupBeforeMigration {true};
@@ -145,7 +145,7 @@ struct SettingsPrivate
 Settings &Settings::getInstance() noexcept
 {
     std::call_once(SettingsPrivate::onceFlag, []() {
-        SettingsPrivate::instance = new Settings();
+        SettingsPrivate::instance = std::unique_ptr<Settings>(new Settings());
     });
     return *SettingsPrivate::instance;
 }
@@ -153,8 +153,7 @@ Settings &Settings::getInstance() noexcept
 void Settings::destroyInstance() noexcept
 {
     if (SettingsPrivate::instance != nullptr) {
-        delete SettingsPrivate::instance;
-        SettingsPrivate::instance = nullptr;
+        SettingsPrivate::instance.reset();
     }
 }
 
@@ -790,6 +789,9 @@ Settings::Settings() noexcept
 
 Settings::~Settings()
 {
+#ifdef DEBUG
+    qDebug() << "Settings::~Settings: DELETED";
+#endif
     store();
 }
 

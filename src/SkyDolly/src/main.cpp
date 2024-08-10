@@ -59,7 +59,7 @@ static void destroySingletons() noexcept
     SkyConnectManager::destroyInstance();
     RecentFile::destroyInstance();
 
-    // Destroying the settings singleton also persists the settings; destory this instance
+    // Destroying the settings singleton also persists the settings; destroy this instance
     // last, as previous plugin managers such as the SkyConnectManager may still want
     // to store their plugin settings
     Settings::destroyInstance();

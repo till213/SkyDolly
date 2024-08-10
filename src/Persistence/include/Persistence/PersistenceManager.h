@@ -105,6 +105,7 @@ private:
     const std::unique_ptr<PersistenceManagerPrivate> d;
 
     PersistenceManager() noexcept;
+    friend std::unique_ptr<PersistenceManager>::deleter_type;
     ~PersistenceManager() override;
 };
 
