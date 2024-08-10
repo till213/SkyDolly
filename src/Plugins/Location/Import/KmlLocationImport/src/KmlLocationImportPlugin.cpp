@@ -119,4 +119,3 @@ std::vector<Location> KmlLocationImportPlugin::parseKML() noexcept
 
     return locations;
 }
-

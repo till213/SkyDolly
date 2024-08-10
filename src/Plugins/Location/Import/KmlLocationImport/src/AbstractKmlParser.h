@@ -51,10 +51,10 @@ protected:
     QXmlStreamReader *getXmlStreamReader() const noexcept;
 
     virtual std::vector<Location> parseKML() noexcept;
-    virtual void parseDocument(Location &location) noexcept;
-    virtual void parseFolder(Location &location) noexcept;
+    virtual void parseDocument(std::vector<Location> &locations) noexcept;
+    virtual void parseFolder(std::vector<Location> &locations) noexcept;
 
-    virtual void parsePlacemark(Location &location) noexcept = 0;
+    virtual void parsePlacemark(std::vector<Location> &locations) noexcept = 0;
 
 private:
     const std::unique_ptr<AbstractKmlParserPrivate> d;

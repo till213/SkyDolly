@@ -96,7 +96,7 @@ std::vector<FlightData> FlightRadar24KmlParser::parse(QXmlStreamReader &xmlStrea
 
     if (d->xml->readNextStartElement()) {
 #ifdef DEBUG
-        qDebug() << "FlightRadar24KmlParser::readKML: XML start element:" << d->xml->name().toString();
+        qDebug() << "FlightRadar24KmlParser::parse: XML start element:" << d->xml->name().toString();
 #endif
         if (d->xml->name() == Kml::Document) {
             parseName(flightData);
@@ -134,7 +134,7 @@ void FlightRadar24KmlParser::parseName(FlightData &flightData) noexcept
 {
     if (d->xml->readNextStartElement()) {
 #ifdef DEBUG
-        qDebug() << "FlightAwareKmlParser::readDocument: XML start element:" << d->xml->name().toString();
+        qDebug() << "FlightAwareKmlParser::parseName: XML start element:" << d->xml->name().toString();
 #endif
         if (d->xml->name() == Kml::name) {
             flightData.title = d->xml->readElementText();
@@ -163,7 +163,7 @@ void FlightRadar24KmlParser::parseFolder() noexcept
     while (d->xml->readNextStartElement()) {
         const QStringView xmlName = d->xml->name();
 #ifdef DEBUG
-        qDebug() << "FlightRadar24KmlParser::readDocument: XML start element:" << xmlName.toString();
+        qDebug() << "FlightRadar24KmlParser::parseFolder: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::name) {
             name = d->xml->readElementText();
@@ -184,7 +184,7 @@ void FlightRadar24KmlParser::parsePlacemark() noexcept
     while (d->xml->readNextStartElement()) {
         const QStringView xmlName = d->xml->name();
 #ifdef DEBUG
-        qDebug() << "FlightRadar24KmlParser::readDocument: XML start element:" << xmlName.toString();
+        qDebug() << "FlightRadar24KmlParser::parsePlacemark: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::description) {
             if (!parseDescription()) {

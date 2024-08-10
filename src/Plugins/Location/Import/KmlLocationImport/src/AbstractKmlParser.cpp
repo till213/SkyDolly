@@ -62,24 +62,22 @@ QXmlStreamReader *AbstractKmlParser::getXmlStreamReader() const noexcept
 std::vector<Location> AbstractKmlParser::parseKML() noexcept
 {
     std::vector<Location> locations;
-    Location location;
     while (d->xml->readNextStartElement()) {
         const QStringView xmlName = d->xml->name();
         if (xmlName == Kml::Document) {
-            parseDocument(location);
+            parseDocument(locations);
         }  else if (xmlName == Kml::Folder) {
-            parseFolder(location);
+            parseFolder(locations);
         } else if (xmlName == Kml::Placemark) {
-            parsePlacemark(location);
+            parsePlacemark(locations);
         } else {
             d->xml->skipCurrentElement();
         }
     }
-    locations.push_back(std::move(location));
     return locations;
 }
 
-void AbstractKmlParser::parseDocument(Location &location) noexcept
+void AbstractKmlParser::parseDocument(std::vector<Location> &locations) noexcept
 {
     while (d->xml->readNextStartElement()) {
         const QStringView xmlName = d->xml->name();
@@ -87,16 +85,16 @@ void AbstractKmlParser::parseDocument(Location &location) noexcept
         qDebug() << "AbstractKmlParser::parseDocument: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::Placemark) {
-            parsePlacemark(location);
+            parsePlacemark(locations);
         } else if (xmlName == Kml::Folder) {
-            parseFolder(location);
+            parseFolder(locations);
         } else {
             d->xml->skipCurrentElement();
         }
     }
 }
 
-void AbstractKmlParser::parseFolder(Location &location) noexcept
+void AbstractKmlParser::parseFolder(std::vector<Location> &locations) noexcept
 {
     while (d->xml->readNextStartElement()) {
         const QStringView xmlName = d->xml->name();
@@ -104,9 +102,9 @@ void AbstractKmlParser::parseFolder(Location &location) noexcept
         qDebug() << "AbstractKmlParser::parseFolder: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == Kml::Placemark) {
-            parsePlacemark(location);
+            parsePlacemark(locations);
         } else if (xmlName == Kml::Folder) {
-            parseFolder(location);
+            parseFolder(locations);
         } else {
             d->xml->skipCurrentElement();
         }

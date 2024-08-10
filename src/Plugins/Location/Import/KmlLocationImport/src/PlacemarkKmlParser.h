@@ -25,7 +25,6 @@
 #ifndef PLACEMARKKMLPARSER_H
 #define PLACEMARKKMLPARSER_H
 
-#include <memory>
 #include <vector>
 
 #include <QDateTime>
@@ -51,10 +50,10 @@ public:
     std::vector<Location> parse(QXmlStreamReader &xmlStreamReader) noexcept override;
 
 protected:
-    virtual void parsePlacemark(Location &location) noexcept override;
+    virtual void parsePlacemark(std::vector<Location> &locations) noexcept override;
 
 private:
-    const std::unique_ptr<PlacemarkKmlParserPrivate> d;
+    void parsePoint(Location &location) noexcept;
 };
 
 #endif // PLACEMARKKMLPARSER_H

@@ -44,10 +44,8 @@ namespace Kml
     inline const QString Point {"Point"};
 
     inline const QString name {"name"};
-    inline const QString when {"when"};
-    inline const QString coord {"coord"};
-    inline const QString coordinates {"coordinates"};
     inline const QString description {"description"};
+    inline const QString coordinates {"coordinates"};
 }
 
 #endif // KML_H

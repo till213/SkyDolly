@@ -22,9 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
-#include <cstdint>
-
 #include <QString>
 #include <QStringLiteral>
 #include <QXmlStreamReader>
@@ -42,11 +39,6 @@
 #include "Kml.h"
 #include "KmlParserIntf.h"
 #include "PlacemarkKmlParser.h"
-
-struct PlacemarkKmlParserPrivate
-{
-
-};
 
 // PUBLIC
 
@@ -66,19 +58,67 @@ std::vector<Location> PlacemarkKmlParser::parse(QXmlStreamReader &xmlStreamReade
 
 // PROTECTED
 
-void PlacemarkKmlParser::parsePlacemark(Location &location) noexcept
+void PlacemarkKmlParser::parsePlacemark(std::vector<Location> &locations) noexcept
 {
     auto *xml = getXmlStreamReader();
+    Location location;
     while (xml->readNextStartElement()) {
         const QStringView xmlName = xml->name();
 #ifdef DEBUG
         qDebug() << "PlacemarkKmlParser::parsePlacemark: XML start element:" << xmlName.toString();
-#endif
-        // TODO IMPLEMENT ME!!!
-        //if (xmlName == Kml::Track) {
-            //parseTrack(location);
-        //} else {
+#endif        
+        if (xmlName == Kml::name) {
+            location.title = xml->readElementText();
+        } else if (xmlName == Kml::description) {
+            location.description = xml->readElementText();
+        } else if (xmlName == Kml::Point) {
+            parsePoint(location);
+        } else {
             xml->skipCurrentElement();
-        //}
+        }
+    }
+    locations.push_back(std::move(location));
+}
+
+// PRIVATE
+
+void PlacemarkKmlParser::parsePoint(Location &location) noexcept
+{
+    bool ok {true};
+    auto *xml = getXmlStreamReader();
+    while (xml->readNextStartElement()) {
+        const QStringView xmlName = xml->name();
+#ifdef DEBUG
+        qDebug() << "PlacemarkKmlParser::parsePoint: XML start element:" << xmlName.toString();
+#endif
+        if (xmlName == Kml::coordinates) {
+            const QString coordinatesText = xml->readElementText();
+            const QStringList coordinates = coordinatesText.split(",");
+            if (coordinates.count() == 3) {
+
+                const double longitude = coordinates.at(0).toDouble(&ok);
+                if (!ok) {
+                    xml->raiseError("Invalid longitude number.");
+                }
+                const double latitude = coordinates.at(1).toDouble(&ok);
+                if (!ok) {
+                    xml->raiseError("Invalid latitude number.");
+                }
+                const double altitude = coordinates.at(2).toDouble(&ok);
+                if (!ok) {
+                    xml->raiseError("Invalid altitude number.");
+                }
+                if (ok) {
+                    location.latitude = latitude;
+                    location.longitude = longitude;
+                    location.altitude = Convert::metersToFeet(altitude);
+                }
+
+            } else {
+                xml->raiseError("Invalid GPS coordinate.");
+            }
+        } else {
+            xml->skipCurrentElement();
+        }
     }
 }
