@@ -22,32 +22,39 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KML_H
-#define KML_H
+#ifndef PLACEMARKKMLPARSER_H
+#define PLACEMARKKMLPARSER_H
 
+#include <memory>
+#include <vector>
+
+#include <QDateTime>
 #include <QString>
 
-/*!
- * KML format element names.
- *
- * From https://developers.google.com/kml/documentation/kml_element_hierarchy:
- * "In KML, simple element names begin with a lowercase letter. Simple elements can contain a value, but they do not contain other elements.
- * Complex element names being with an uppercase letter. Complex elements can contain other elements (referred to as their children)."
- *
- * We adhere to this naming convention for the constants defined in this namespace.
- */
-namespace Kml
+class QXmlStreamReader;
+
+#include "AbstractKmlParser.h"
+
+struct Location;
+struct PlacemarkKmlParserPrivate;
+
+class PlacemarkKmlParser final : public AbstractKmlParser
 {
-    inline const QString Document {"Document"};
-    inline const QString Folder {"Folder"};
-    inline const QString Placemark {"Placemark"};
-    inline const QString Point {"Point"};
+public:
+    PlacemarkKmlParser() noexcept;
+    PlacemarkKmlParser(const PlacemarkKmlParser &rhs) = delete;
+    PlacemarkKmlParser(PlacemarkKmlParser &&rhs) = delete;
+    PlacemarkKmlParser &operator=(const PlacemarkKmlParser &rhs) = delete;
+    PlacemarkKmlParser &operator=(PlacemarkKmlParser &&rhs) = delete;
+    ~PlacemarkKmlParser() override;
 
-    inline const QString name {"name"};
-    inline const QString when {"when"};
-    inline const QString coord {"coord"};
-    inline const QString coordinates {"coordinates"};
-    inline const QString description {"description"};
-}
+    std::vector<Location> parse(QXmlStreamReader &xmlStreamReader) noexcept override;
 
-#endif // KML_H
+protected:
+    virtual void parsePlacemark(Location &location) noexcept override;
+
+private:
+    const std::unique_ptr<PlacemarkKmlParserPrivate> d;
+};
+
+#endif // PLACEMARKKMLPARSER_H

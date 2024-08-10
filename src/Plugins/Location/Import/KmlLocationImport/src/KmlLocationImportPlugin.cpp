@@ -40,7 +40,7 @@
 #include <Persistence/Service/LocationService.h>
 #include "KmlLocationImportSettings.h"
 #include "KmlParserIntf.h"
-#include "KmlPlacemarkParser.h"
+#include "PlacemarkKmlParser.h"
 #include "KmlLocationImportPlugin.h"
 
 struct KmlLocationImportPluginPrivate
@@ -114,7 +114,7 @@ std::vector<Location> KmlLocationImportPlugin::parseKML() noexcept
     std::vector<Location> locations;
     std::unique_ptr<KmlParserIntf> parser;
 
-    parser = std::make_unique<KmlPlacemarkParser>();
+    parser = std::make_unique<PlacemarkKmlParser>();
     locations = parser->parse(d->xml);
 
     return locations;

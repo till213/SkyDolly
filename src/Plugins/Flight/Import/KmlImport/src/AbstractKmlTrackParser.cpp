@@ -63,7 +63,7 @@ AbstractKmlTrackParser::~AbstractKmlTrackParser() = default;
 
 void AbstractKmlTrackParser::parseTrack(FlightData &flightData) noexcept
 {
-    QXmlStreamReader *xml = getXmlStreamReader();
+    auto *xml = getXmlStreamReader();
     Position &position = flightData.getUserAircraft().getPosition();
     if (position.count() == 0) {
 

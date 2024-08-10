@@ -22,32 +22,42 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KML_H
-#define KML_H
+#ifndef ABSTRACTKMLPARSER_H
+#define ABSTRACTKMLPARSER_H
+
+#include <memory>
 
 #include <QString>
 
-/*!
- * KML format element names.
- *
- * From https://developers.google.com/kml/documentation/kml_element_hierarchy:
- * "In KML, simple element names begin with a lowercase letter. Simple elements can contain a value, but they do not contain other elements.
- * Complex element names being with an uppercase letter. Complex elements can contain other elements (referred to as their children)."
- *
- * We adhere to this naming convention for the constants defined in this namespace.
- */
-namespace Kml
+class QXmlStreamReader;
+
+#include "KmlParserIntf.h"
+
+struct Location;
+struct AbstractKmlParserPrivate;
+
+class AbstractKmlParser : public KmlParserIntf
 {
-    inline const QString Document {"Document"};
-    inline const QString Folder {"Folder"};
-    inline const QString Placemark {"Placemark"};
-    inline const QString Point {"Point"};
+public:
+    AbstractKmlParser() noexcept;
+    AbstractKmlParser(const AbstractKmlParser &rhs) = delete;
+    AbstractKmlParser(AbstractKmlParser &&rhs) = delete;
+    AbstractKmlParser &operator=(const AbstractKmlParser &rhs) = delete;
+    AbstractKmlParser &operator=(AbstractKmlParser &&rhs) = delete;
+    ~AbstractKmlParser() override;
 
-    inline const QString name {"name"};
-    inline const QString when {"when"};
-    inline const QString coord {"coord"};
-    inline const QString coordinates {"coordinates"};
-    inline const QString description {"description"};
-}
+protected:
+    void initialise(QXmlStreamReader *xml) noexcept;
+    QXmlStreamReader *getXmlStreamReader() const noexcept;
 
-#endif // KML_H
+    virtual std::vector<Location> parseKML() noexcept;
+    virtual void parseDocument(Location &location) noexcept;
+    virtual void parseFolder(Location &location) noexcept;
+
+    virtual void parsePlacemark(Location &location) noexcept = 0;
+
+private:
+    const std::unique_ptr<AbstractKmlParserPrivate> d;
+};
+
+#endif // ABSTRACTKMLPARSER_H
