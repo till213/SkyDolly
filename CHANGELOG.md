@@ -4,6 +4,9 @@
 
 ## New Features
 
+## New Features
+- KML placemark location import plugin
+
 ## Improvements
 
 ### Location Module
