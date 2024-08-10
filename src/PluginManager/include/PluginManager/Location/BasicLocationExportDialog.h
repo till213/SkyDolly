@@ -26,14 +26,13 @@
 #define BASICLOCATIONEXPORTDIALOG_H
 
 #include <memory>
-#include <cstdint>
 
 #include <QDialog>
 
 #include <Kernel/SampleRate.h>
 #include "../PluginManagerLib.h"
 
-class Location;
+struct Location;
 class LocationExportPluginBaseSettings;
 struct BasicLocationExportDialogPrivate;
 

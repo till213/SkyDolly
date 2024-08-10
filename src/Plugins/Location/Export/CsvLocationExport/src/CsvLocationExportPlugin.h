@@ -61,7 +61,7 @@ class QWidget;
 #include <PluginManager/Location/LocationExportIntf.h>
 #include <PluginManager/Location/LocationExportPluginBase.h>
 
-class Location;
+struct Location;
 class LocationExportPluginBaseSettings;
 struct CsvLocationExportPluginPrivate;
 

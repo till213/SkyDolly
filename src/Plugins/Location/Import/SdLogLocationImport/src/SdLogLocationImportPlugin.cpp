@@ -73,7 +73,7 @@ QString SdLogLocationImportPlugin::getFileExtension() const noexcept
 
 QString SdLogLocationImportPlugin::getFileFilter() const noexcept
 {
-    return QObject::tr("Comma-separated values (*.%1)").arg(getFileExtension());
+    return QObject::tr("Sky Dolly logbook (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> SdLogLocationImportPlugin::createOptionWidget() const noexcept

@@ -22,28 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOCATIONEXPORTINTF_H
-#define LOCATIONEXPORTINTF_H
+#ifndef KML_H
+#define KML_H
 
-#include <QtPlugin>
+#include <QString>
 
-#include "../PluginIntf.h"
-#include "../DialogPluginIntf.h"
-
-struct Location;
-
-class LocationExportIntf : public DialogPluginIntf, public PluginIntf
+/*!
+ * KML format element names.
+ *
+ * From https://developers.google.com/kml/documentation/kml_element_hierarchy:
+ * "In KML, simple element names begin with a lowercase letter. Simple elements can contain a value, but they do not contain other elements.
+ * Complex element names being with an uppercase letter. Complex elements can contain other elements (referred to as their children)."
+ *
+ * We adhere to this naming convention for the constants defined in this namespace.
+ */
+namespace Kml
 {
-public:
-    /*!
-     * Exports all or the selected locations, according to the specific plugin location selection criteria.
-     *
-     * \return \c true when successful; \c false else
-     */
-    virtual bool exportLocations() const noexcept = 0;
-};
+    inline const QString Document {"Document"};
+    inline const QString Folder {"Folder"};
+    inline const QString Placemark {"Placemark"};
+    inline const QString Point {"Point"};
 
-#define LOCATION_EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.LocationExportInterface/1.0"
-Q_DECLARE_INTERFACE(LocationExportIntf, LOCATION_EXPORT_INTERFACE_IID)
+    inline const QString name {"name"};
+    inline const QString description {"description"};
+    inline const QString coordinates {"coordinates"};
+}
 
-#endif // LOCATIONEXPORTINTF_H
+#endif // KML_H

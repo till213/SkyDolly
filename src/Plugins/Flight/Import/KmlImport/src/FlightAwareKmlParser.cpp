@@ -67,10 +67,10 @@ std::vector<FlightData> FlightAwareKmlParser::parse(QXmlStreamReader &xmlStreamR
 
 void FlightAwareKmlParser::parsePlacemark(FlightData &flightData) noexcept
 {
-    QXmlStreamReader *xml = getXmlStreamReader();
+    auto *xml = getXmlStreamReader();
     QString placemarkName;
     while (xml->readNextStartElement()) {
-        const QStringView xmlName = xml->name();
+        const auto xmlName = xml->name();
 #ifdef DEBUG
         qDebug() << "FlightAwareKmlParser::parsePlacemark: XML start element:" << xmlName.toString();
 #endif
@@ -95,7 +95,7 @@ void FlightAwareKmlParser::parsePlacemark(FlightData &flightData) noexcept
 void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrName) noexcept
 {
     auto &aircraft = flightData.getUserAircraft();
-    QXmlStreamReader *xml = getXmlStreamReader();
+    auto *xml = getXmlStreamReader();
     bool ok {true};
     while (xml->readNextStartElement()) {
         const QStringView xmlName = xml->name();
@@ -103,8 +103,8 @@ void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrN
         qDebug() << "FlightAwareKmlParser::parseWaypoint: XML start element:" << xmlName.toString();
 #endif
         if (xmlName == QStringLiteral("coordinates")) {
-            const QString coordinatesText = xml->readElementText();
-            const QStringList coordinates = coordinatesText.split(",");
+            const auto coordinatesText = xml->readElementText();
+            const auto coordinates = coordinatesText.split(",");
             if (coordinates.count() == 3) {
                 Waypoint waypoint;
                 waypoint.longitude = coordinates.at(0).toFloat(&ok);
@@ -137,9 +137,9 @@ void FlightAwareKmlParser::parseWaypoint(FlightData &flightData, QString icaoOrN
 
 void FlightAwareKmlParser::enrichFlightData(std::vector<FlightData> &flights) noexcept
 {
-    for (FlightData &flightData : flights) {
+    for (auto &flightData : flights) {
         flightData.creationTime = getFirstDateTimeUtc();
-        for (Aircraft &aircraft : flightData) {
+        for (auto &aircraft : flightData) {
             updateAircraftWaypoints(aircraft);
         }
     }
@@ -152,13 +152,13 @@ void FlightAwareKmlParser::updateAircraftWaypoints(Aircraft &aircraft) noexcept
         std::size_t waypointCount = aircraft.getFlightPlan().count();
         if (waypointCount > 0) {
 
-            const Position &position = aircraft.getPosition();
-            const PositionData &firstPositionData = position.getFirst();
-            const PositionData &lastPositionData = position.getLast();
-            const QDateTime startDateTimeUtc = getFirstDateTimeUtc();
-            const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
+            const auto &position = aircraft.getPosition();
+            const auto &firstPositionData = position.getFirst();
+            const auto &lastPositionData = position.getLast();
+            const auto startDateTimeUtc = getFirstDateTimeUtc();
+            const auto endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
 
-            Waypoint &departure = aircraft.getFlightPlan()[0];
+            auto &departure = aircraft.getFlightPlan()[0];
             departure.timestamp = firstPositionData.timestamp;
             departure.altitude = static_cast<float>(firstPositionData.altitude);
             departure.localTime = getFirstDateTimeUtc().toLocalTime();
@@ -175,7 +175,7 @@ void FlightAwareKmlParser::updateAircraftWaypoints(Aircraft &aircraft) noexcept
         }
     } else {
         // No positions - use timestamps 0, 1, 2, ...
-        std::int64_t currentWaypointTimestamp = 0;
+        std::int64_t currentWaypointTimestamp {0};
         for (Waypoint &waypoint : aircraft.getFlightPlan()) {
             waypoint.timestamp = currentWaypointTimestamp;
             ++currentWaypointTimestamp;

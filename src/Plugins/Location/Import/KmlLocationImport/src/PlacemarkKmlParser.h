@@ -22,22 +22,45 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVLOCATIONPARSERINTF_H
-#define CSVLOCATIONPARSERINTF_H
+#ifndef PLACEMARKKMLPARSER_H
+#define PLACEMARKKMLPARSER_H
 
-#include <memory>
 #include <vector>
 
-class QTextStream;
+#include <QDateTime>
+#include <QString>
+
+class QXmlStreamReader;
+
+#include "AbstractKmlParser.h"
 
 struct Location;
+class KmlLocationImportSettings;
+struct PlacemarkKmlParserPrivate;
 
-class CsvLocationParserIntf
+class PlacemarkKmlParser final : public AbstractKmlParser
 {
 public:
-    virtual ~CsvLocationParserIntf() = default;
+    explicit PlacemarkKmlParser(const KmlLocationImportSettings &pluginSettings) noexcept;
+    PlacemarkKmlParser(const PlacemarkKmlParser &rhs) = delete;
+    PlacemarkKmlParser(PlacemarkKmlParser &&rhs) = delete;
+    PlacemarkKmlParser &operator=(const PlacemarkKmlParser &rhs) = delete;
+    PlacemarkKmlParser &operator=(PlacemarkKmlParser &&rhs) = delete;
+    ~PlacemarkKmlParser() override;
 
-    virtual std::vector<Location> parse(QTextStream &textStream, bool *ok = nullptr) noexcept = 0;
+    std::vector<Location> parse(QXmlStreamReader &xmlStreamReader) noexcept override;
+
+protected:
+    void parseFolderName(const QString &folderName) noexcept override;
+    void parsePlacemark(std::vector<Location> &locations) noexcept override;
+
+private:
+    std::unique_ptr<PlacemarkKmlParserPrivate> d;
+
+    void parsePoint(Location &location) noexcept;
+    void guesstimateCurrentCategoryId(const QString &folderName) noexcept;
+    static void unHtmlify(QString &description) noexcept;
+    static QString extractIcao(const QString &description);
 };
 
-#endif // CSVLOCATIONPARSERINTF_H
+#endif // PLACEMARKKMLPARSER_H

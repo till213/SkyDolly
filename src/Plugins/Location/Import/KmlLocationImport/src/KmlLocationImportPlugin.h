@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SDLOGLOCATIONIMPORTPLUGIN_H
-#define SDLOGLOCATIONIMPORTPLUGIN_H
+#ifndef KMLLOCATIONIMPORTPLUGIN_H
+#define KMLLOCATIONIMPORTPLUGIN_H
 
 #include <memory>
 #include <vector>
@@ -39,20 +39,20 @@ class QWidget;
 
 struct Location;
 class LocationImportPluginBaseSettings;
-struct SdLogLocationImportPluginPrivate;
+struct KmlLocationImportPluginPrivate;
 
-class SdLogLocationImportPlugin : public LocationImportPluginBase
+class KmlLocationImportPlugin : public LocationImportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID LOCATION_IMPORT_INTERFACE_IID FILE "SdLogLocationImportPlugin.json")
+    Q_PLUGIN_METADATA(IID LOCATION_IMPORT_INTERFACE_IID FILE "KmlLocationImportPlugin.json")
     Q_INTERFACES(LocationImportIntf)
 public:
-    SdLogLocationImportPlugin() noexcept;
-    SdLogLocationImportPlugin(const SdLogLocationImportPlugin &rhs) = delete;
-    SdLogLocationImportPlugin(SdLogLocationImportPlugin &&rhs) = delete;
-    SdLogLocationImportPlugin &operator=(const SdLogLocationImportPlugin &rhs) = delete;
-    SdLogLocationImportPlugin &operator=(SdLogLocationImportPlugin &&rhs) = delete;
-    ~SdLogLocationImportPlugin() override;
+    KmlLocationImportPlugin() noexcept;
+    KmlLocationImportPlugin(const KmlLocationImportPlugin &rhs) = delete;
+    KmlLocationImportPlugin(KmlLocationImportPlugin &&rhs) = delete;
+    KmlLocationImportPlugin &operator=(const KmlLocationImportPlugin &rhs) = delete;
+    KmlLocationImportPlugin &operator=(KmlLocationImportPlugin &&rhs) = delete;
+    ~KmlLocationImportPlugin() override;
 
 protected:
     LocationImportPluginBaseSettings &getPluginSettings() const noexcept override;
@@ -62,7 +62,9 @@ protected:
     std::vector<Location> importLocations(QIODevice &io, bool &ok) noexcept override;
 
 private:
-    const std::unique_ptr<SdLogLocationImportPluginPrivate> d;
+    const std::unique_ptr<KmlLocationImportPluginPrivate> d;
+
+    std::vector<Location> parseKML() noexcept;
 };
 
-#endif // SDLOGLOCATIONIMPORTPLUGIN_H
+#endif // KMLLOCATIONIMPORTPLUGIN_H

@@ -38,18 +38,18 @@
  */
 namespace Kml
 {
-    inline const QString Document = "Document";
-    inline const QString Folder = "Folder";
-    inline const QString Placemark = "Placemark";
-    inline const QString Point = "Point";
-    inline const QString Track = "Track";
-    inline const QString TimeStamp = "TimeStamp";
+    inline const QString Document {"Document"};
+    inline const QString Folder {"Folder"};
+    inline const QString Placemark {"Placemark"};
+    inline const QString Point {"Point"};
+    inline const QString Track {"Track"};
+    inline const QString TimeStamp {"TimeStamp"};
 
-    inline const QString name = "name";
-    inline const QString when = "when";
-    inline const QString coord = "coord";
-    inline const QString coordinates = "coordinates";
-    inline const QString description = "description";
+    inline const QString name {"name"};
+    inline const QString when {"when"};
+    inline const QString coord {"coord"};
+    inline const QString coordinates {"coordinates"};
+    inline const QString description {"description"};
 }
 
 #endif // KML_H

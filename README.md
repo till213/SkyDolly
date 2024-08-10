@@ -97,6 +97,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 - https://flightloganalyzer.com/ - FlightLog Analyer analyses the MSFS logbook and has a CSV export readable by Sky Dolly
 - https://github.com/BojoteX/FSAutoSave/ - FSAutoSave automatically (or upon request) stores flight plans
 - https://github.com/mracko/MSFS-Landing-Inspector - Analyses your landing performance
+- [Points of Interest (Google Maps)](https://www.google.com/maps/d/viewer?mid=1KUg5jwyT_9k2A9n5IZ99UChlhfVUfO5S&ll=-3.81666561775622e-14%2C-23.028915134521867&z=1) - Points of Interest, Airports and 3D cities in Microsoft Flight Simulator.
 
 ## Other Useful Resources
 

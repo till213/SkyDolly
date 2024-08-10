@@ -36,7 +36,7 @@
 #include "../PluginManagerLib.h"
 
 class LocationService;
-class Location;
+struct Location;
 struct AircraftType;
 struct AircraftInfo;
 struct LocationCondition;
