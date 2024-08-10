@@ -61,6 +61,10 @@ struct SkyConnectManagerPrivate
     {
         pluginsDirectory.cd(File::getPluginDirectoryPath());
     }
+    SkyConnectManagerPrivate(const SkyConnectManagerPrivate &rhs) = delete;
+    SkyConnectManagerPrivate(SkyConnectManagerPrivate &&rhs) = delete;
+    SkyConnectManagerPrivate &operator=(const SkyConnectManagerPrivate &rhs) = delete;
+    SkyConnectManagerPrivate &operator=(SkyConnectManagerPrivate &&rhs) = delete;
 
     ~SkyConnectManagerPrivate() noexcept
     {

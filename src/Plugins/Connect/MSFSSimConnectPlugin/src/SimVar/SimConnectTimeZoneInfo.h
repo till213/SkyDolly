@@ -51,7 +51,7 @@ struct SimConnectTimeZoneInfo
 
     inline TimeZoneInfo toTimeZoneInfo() const noexcept
     {
-        TimeZoneInfo info;
+        TimeZoneInfo info {};
         info.timeZoneOffsetSeconds = timeZoneOffset;
         info.zuluSunriseTimeSeconds = zuluSunriseTime;
         info.zuluSunsetTimeSeconds = zuluSunsetTime;

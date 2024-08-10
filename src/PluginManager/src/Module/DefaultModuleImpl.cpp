@@ -46,7 +46,7 @@ DefaultModuleImpl::~DefaultModuleImpl() = default;
 
 QUuid DefaultModuleImpl::getUuid() const noexcept
 {
-    return QUuid();
+    return {};
 }
 
 QString DefaultModuleImpl::getModuleName() const noexcept

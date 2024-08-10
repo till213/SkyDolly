@@ -172,10 +172,10 @@ void BasicFlightExportDialog::updateDataGroupBox() noexcept
     std::size_t samplePoints = estimateNofSamplePoints();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
         infoText.append(" " % tr("The position data will be resampled every %1 milliseconds, resulting in %Ln exported positions.",
-                                 nullptr, samplePoints)
+                                 nullptr, static_cast<int>(samplePoints))
                                  .arg(d->unit.formatNumber(Enum::underly(resamplingPeriod), 0)));
     } else {
-        infoText.append(" " % tr("The original recorded data will be exported, resulting in total %Ln exported positions.", nullptr, samplePoints));
+        infoText.append(" " % tr("The original recorded data will be exported, resulting in total %Ln exported positions.", nullptr, static_cast<int>(samplePoints)));
     }
     ui->infoLabel->setText(infoText);
 }
