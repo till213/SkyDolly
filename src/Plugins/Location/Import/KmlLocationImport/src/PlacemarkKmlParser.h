@@ -53,6 +53,8 @@ protected:
     virtual void parsePlacemark(std::vector<Location> &locations) noexcept override;
 
 private:
+    std::unique_ptr<PlacemarkKmlParserPrivate> d;
+
     void parsePoint(Location &location) noexcept;
 };
 

@@ -31,19 +31,30 @@
 
 #include <Kernel/Convert.h>
 #include <Model/Location.h>
-#include <Model/Aircraft.h>
-#include <Model/FlightPlan.h>
-#include <Model/Position.h>
-#include <Model/PositionData.h>
-#include <Model/Waypoint.h>
+#include <Model/Enumeration.h>
+#include <Persistence/Service/EnumerationService.h>
+#include <Persistence/PersistedEnumerationItem.h>
 #include "Kml.h"
 #include "KmlParserIntf.h"
 #include "PlacemarkKmlParser.h"
 
+struct PlacemarkKmlParserPrivate
+{
+    EnumerationService enumerationService;
+    Enumeration typeEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationType)};
+    Enumeration categoryEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationCategory)};
+    Enumeration countryEnumeration {enumerationService.getEnumerationByName(EnumerationService::Country)};
+
+    const std::int64_t ImportTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
+    const std::int64_t KeepEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
+    const std::int64_t WorldId {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
+};
+
 // PUBLIC
 
 PlacemarkKmlParser::PlacemarkKmlParser() noexcept
-    : AbstractKmlParser()
+    : AbstractKmlParser(),
+      d {std::make_unique<PlacemarkKmlParserPrivate>()}
 {}
 
 PlacemarkKmlParser::~PlacemarkKmlParser() = default;
@@ -62,6 +73,14 @@ void PlacemarkKmlParser::parsePlacemark(std::vector<Location> &locations) noexce
 {
     auto *xml = getXmlStreamReader();
     Location location;
+    location.typeId = d->ImportTypeId;
+    location.engineEventId = d->KeepEngineEventId;
+    location.countryId = d->WorldId;
+    // TODO Apply settings
+    location.indicatedAirspeed = 120;
+
+    // TODO Derive proper category based on folder name (heuristic); for now we choose "point of interest"
+    location.categoryId = d->categoryEnumeration.getItemBySymId("PO").id;
     while (xml->readNextStartElement()) {
         const QStringView xmlName = xml->name();
 #ifdef DEBUG
