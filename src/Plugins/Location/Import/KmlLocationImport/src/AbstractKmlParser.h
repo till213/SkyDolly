@@ -54,6 +54,7 @@ protected:
     virtual void parseDocument(std::vector<Location> &locations) noexcept;
     virtual void parseFolder(std::vector<Location> &locations) noexcept;
 
+    virtual void parseFolderName(const QString &folderName) noexcept = 0;
     virtual void parsePlacemark(std::vector<Location> &locations) noexcept = 0;
 
 private:

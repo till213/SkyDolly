@@ -25,10 +25,13 @@
 #include <QString>
 #include <QStringLiteral>
 #include <QXmlStreamReader>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 #ifdef DEBUG
 #include <QDebug>
 #endif
 
+#include <Kernel/Const.h>
 #include <Kernel/Convert.h>
 #include <Model/Location.h>
 #include <Model/Enumeration.h>
@@ -41,13 +44,18 @@
 struct PlacemarkKmlParserPrivate
 {
     EnumerationService enumerationService;
-    Enumeration typeEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationType)};
     Enumeration categoryEnumeration {enumerationService.getEnumerationByName(EnumerationService::LocationCategory)};
-    Enumeration countryEnumeration {enumerationService.getEnumerationByName(EnumerationService::Country)};
+
 
     const std::int64_t ImportTypeId {PersistedEnumerationItem(EnumerationService::LocationType, EnumerationService::LocationTypeImportSymId).id()};
     const std::int64_t KeepEngineEventId {PersistedEnumerationItem(EnumerationService::EngineEvent, EnumerationService::EngineEventKeepSymId).id()};
     const std::int64_t WorldId {PersistedEnumerationItem(EnumerationService::Country, EnumerationService::CountryWorldSymId).id()};
+    const std::int64_t OtherCategoryId {PersistedEnumerationItem(EnumerationService::LocationCategory, "OT").id()};
+    const std::int64_t AirportCategoryId {PersistedEnumerationItem(EnumerationService::LocationCategory, "AP").id()};
+    const std::int64_t CityCategoryId {PersistedEnumerationItem(EnumerationService::LocationCategory, "CI").id()};
+    const std::int64_t PointOfInterestCategoryId {PersistedEnumerationItem(EnumerationService::LocationCategory, "PO").id()};
+
+    std::int64_t currentCategoryId {OtherCategoryId};
 };
 
 // PUBLIC
@@ -69,6 +77,11 @@ std::vector<Location> PlacemarkKmlParser::parse(QXmlStreamReader &xmlStreamReade
 
 // PROTECTED
 
+void PlacemarkKmlParser::parseFolderName(const QString &folderName) noexcept
+{
+    guesstimateCurrentCategoryId(folderName);
+}
+
 void PlacemarkKmlParser::parsePlacemark(std::vector<Location> &locations) noexcept
 {
     auto *xml = getXmlStreamReader();
@@ -78,9 +91,8 @@ void PlacemarkKmlParser::parsePlacemark(std::vector<Location> &locations) noexce
     location.countryId = d->WorldId;
     // TODO Apply settings
     location.indicatedAirspeed = 120;
+    location.categoryId = d->currentCategoryId;
 
-    // TODO Derive proper category based on folder name (heuristic); for now we choose "point of interest"
-    location.categoryId = d->categoryEnumeration.getItemBySymId("PO").id;
     while (xml->readNextStartElement()) {
         const QStringView xmlName = xml->name();
 #ifdef DEBUG
@@ -90,12 +102,19 @@ void PlacemarkKmlParser::parsePlacemark(std::vector<Location> &locations) noexce
             location.title = xml->readElementText();
         } else if (xmlName == Kml::description) {
             location.description = xml->readElementText();
+            unHtmlify(location.description);
         } else if (xmlName == Kml::Point) {
             parsePoint(location);
         } else {
             xml->skipCurrentElement();
         }
     }
+
+    if (location.categoryId == d->AirportCategoryId) {
+        const auto icao = extractIcao(location.description);
+        location.identifier = icao;
+    }
+
     locations.push_back(std::move(location));
 }
 
@@ -140,4 +159,40 @@ void PlacemarkKmlParser::parsePoint(Location &location) noexcept
             xml->skipCurrentElement();
         }
     }
+}
+
+void PlacemarkKmlParser::guesstimateCurrentCategoryId(const QString &folderName) noexcept
+{
+    const auto lower = folderName.toLower();
+    if (lower.contains("airport")) {
+        d->currentCategoryId = d->AirportCategoryId;
+    } else if (lower.contains("points of interest") || lower.contains("poi")) {
+        d->currentCategoryId = d->PointOfInterestCategoryId;
+    } else if (lower.contains("cities") || lower.contains("city")) {
+        d->currentCategoryId = d->CityCategoryId;
+    } else {
+        d->currentCategoryId = d->OtherCategoryId;
+    }
+}
+
+void PlacemarkKmlParser::unHtmlify(QString &description) noexcept
+{
+    static const QRegularExpression imageRegExp {R"(<img([\w\W]+?)\/>)"};
+    description.replace("<br>", "\n");
+    description.replace("<b>", "").replace("</b>", "");
+    description.replace("<i>", "").replace("</i>", "");
+    description.replace(imageRegExp, "");
+    description = description.trimmed();
+}
+
+QString PlacemarkKmlParser::extractIcao(const QString &description)
+{
+    static const QRegularExpression icaoRegExp {R"(([A-Z]{4}))"};
+    QString icao {description};
+    icao.replace("ICAO:", "");
+    auto match = icaoRegExp.match(icao);
+    if (match.hasMatch()) {
+        icao = match.captured(1);
+    }
+    return icao;
 }

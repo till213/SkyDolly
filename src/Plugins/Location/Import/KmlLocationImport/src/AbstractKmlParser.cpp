@@ -105,6 +105,9 @@ void AbstractKmlParser::parseFolder(std::vector<Location> &locations) noexcept
             parsePlacemark(locations);
         } else if (xmlName == Kml::Folder) {
             parseFolder(locations);
+        } else if (xmlName == Kml::name) {
+            const auto folderName = d->xml->readElementText();
+            parseFolderName(folderName);
         } else {
             d->xml->skipCurrentElement();
         }

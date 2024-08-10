@@ -50,12 +50,16 @@ public:
     std::vector<Location> parse(QXmlStreamReader &xmlStreamReader) noexcept override;
 
 protected:
+    virtual void parseFolderName(const QString &folderName) noexcept override;
     virtual void parsePlacemark(std::vector<Location> &locations) noexcept override;
 
 private:
     std::unique_ptr<PlacemarkKmlParserPrivate> d;
 
     void parsePoint(Location &location) noexcept;
+    void guesstimateCurrentCategoryId(const QString &folderName) noexcept;
+    static void unHtmlify(QString &description) noexcept;
+    static QString extractIcao(const QString &description);
 };
 
 #endif // PLACEMARKKMLPARSER_H
