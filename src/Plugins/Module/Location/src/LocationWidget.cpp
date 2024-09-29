@@ -881,6 +881,12 @@ void LocationWidget::updateEditUi() noexcept
     }
     ui->updatePushButton->setEnabled(editableRow);
     ui->deletePushButton->setEnabled(editableRow);
+
+    ui->pitchSpinBox->setEnabled(editableRow);
+    ui->bankSpinBox->setEnabled(editableRow);
+    ui->trueHeadingSpinBox->setEnabled(editableRow);
+    ui->indicatedAirspeedSpinBox->setEnabled(editableRow);
+    ui->engineEventComboBox->setEnabled(editableRow);
 }
 
 void LocationWidget::onCategoryChanged() noexcept
