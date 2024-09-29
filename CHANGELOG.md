@@ -8,6 +8,10 @@
 - Correctly name the file selection filter of the Sky Dolly logbook location import plugin
 - Properly enable/disable pitch, bank, true heading and indicated airspeed spinboxes based on location selection
 
+### Under the Hood
+- Upgrade Qt to 6.7.3 (from 6.7.2)
+  * This brings some improvements for the "Windows 11" style ("Fusion" style is still the default style though)
+
 ## 0.19.0
 Sky Dolly **"Jaunty Jodel"** carries the Olympic spirit into the world: over 200 new locations - each country taking part in the Olympic Games in Paris 2024 - have been added as location presets. Please enjoy the diversity and beauty of our little planet - happy flying!
 
