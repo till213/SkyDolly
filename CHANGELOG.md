@@ -19,7 +19,6 @@
 ## Bug Fixes
 - Set correct country for city Hong Kong (preset locations)
 - Properly enable/disable pitch, bank, true heading and indicated airspeed spinboxes based on location selection
-- Do not reset backup period to "Never" when setting the backup path fails
 
 ## Documentation
 - Updated the "Flight Analysis" SQL to properly match the closest timestamps in tables *position* and *attitude*
@@ -33,6 +32,7 @@
 
 ## Bug Fixes
 - Properly make newly inserted location visible (scroll to row), specifically when location table is sorted by ID in descending order
+- Do not reset backup period to "Never" when setting the backup path fails
 
 ## 0.19.0
 Sky Dolly **"Jaunty Jodel"** carries the Olympic spirit into the world: over 200 new locations - each country taking part in the Olympic Games in Paris 2024 - have been added as location presets. Please enjoy the diversity and beauty of our little planet - happy flying!
