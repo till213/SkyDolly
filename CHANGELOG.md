@@ -8,7 +8,7 @@
 - Correctly name the file selection filter of the Sky Dolly logbook location import plugin
 - Properly enable/disable pitch, bank, true heading and indicated airspeed spinboxes based on location selection
 
-### Under the Hood
+## Under the Hood
 - Upgrade Qt to 6.7.3 (from 6.7.2)
   * This brings some improvements for the "Windows 11" style ("Fusion" style is still the default style though)
 
