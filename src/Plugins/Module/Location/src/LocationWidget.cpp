@@ -527,8 +527,8 @@ void LocationWidget::updateTable() noexcept
     if (PersistenceManager::getInstance().isConnected()) {
 
         std::vector<Location> locations = d->moduleSettings.hasSelectors() ?
-                    d->locationService->getSelectedLocations(d->moduleSettings.getLocationSelector()) :
-                    d->locationService->getAll();
+                                              d->locationService->getSelectedLocations(d->moduleSettings.getLocationSelector()) :
+                                              d->locationService->getAll();
 
         // Prevent table state changes notify the module settings
         ui->locationTableWidget->blockSignals(true);
