@@ -83,12 +83,14 @@ void LogbookBackupDialog::accept() noexcept
     bool ok = d->databaseService->setBackupDirectoryPath(ui->backupDirectoryLineEdit->text());
 
     // First update the backup period, as this influences...
-    const std::int64_t backupPeriodId = ui->backupPeriodComboBox->getCurrentId();
-    if (ok && backupPeriodId != d->BackupPeriodNowId) {
-        ok = d->databaseService->setBackupPeriod(backupPeriodId);
-    } else {
-        // Only do the backup now, but afterwards never
-        d->databaseService->setBackupPeriod(d->BackupPeriodNeverId);
+    if (ok) {
+        const auto backupPeriodId = ui->backupPeriodComboBox->getCurrentId();
+        if (backupPeriodId != d->BackupPeriodNowId) {
+            ok = d->databaseService->setBackupPeriod(backupPeriodId);
+        } else {
+            // Only do the backup now, but afterwards never
+           ok = d->databaseService->setBackupPeriod(d->BackupPeriodNeverId);
+        }
     }
 
     // ... the next backup date which is set upon successful backup
@@ -107,7 +109,7 @@ void LogbookBackupDialog::reject() noexcept
    QDialog::reject();
 
    // First update the backup period in case it has been changed...
-   const std::int64_t backupPeriodId = ui->backupPeriodComboBox->getCurrentId();
+   const auto backupPeriodId = ui->backupPeriodComboBox->getCurrentId();
    if (backupPeriodId != d->originalBackupPeriodId) {
        // ... as this influences...
        if (backupPeriodId != d->BackupPeriodNowId) {
