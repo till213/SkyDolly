@@ -1,33 +1,5 @@
 # Changelog
 
-## 0.20.0
-
-## New Features
-
-## Improvements
-
-### Location Module
-- When teleporting to a location the selected local simulation date and time will now also be set
-  * The time can be selected relative (sunset, sunrise, morning, noon, afternoon, ...) or absolute
-- Date and time can also be specified per location
-  * Either both date and time or either one: the missing value will be chosen according to the date/time selection (today, selected date, morning, afternoon, evening, ...)
-- *System* locations have been renamed to *Preset* locations
-  * Those are the locations that come "out of the box" with Sky Dolly
-- Double-clicking on any column of a *preset* location will now teleport to that location (previously only the ID column was double-clickable for *preset* locations)
-  * Double-clicking a column other than ID on a *user* or *imported* location will still edit that column, as before
-  
-## Bug Fixes
-- Set correct country for city Hong Kong (preset locations)
-- Properly enable/disable pitch, bank, true heading and indicated airspeed spinboxes based on location selection
-
-## Documentation
-- Updated the "Flight Analysis" SQL to properly match the closest timestamps in tables *position* and *attitude*
-  * Note that since Sky Dolly v0.18 the position and attitude is sampled at different intervals; timestamps may or may not match exaclty (in most cases they do not)
-  * Also refer to: [SQL Query for Finding Closest Timestamps](https://zzzcode.ai/answer-question?id=307fbcc3-77bb-4553-91d0-461edb1da0e6)
-  
-## Under the Hood
-- Optimised logbook SQL table column types
-
 ## 0.19.1
 
 ## Bug Fixes
