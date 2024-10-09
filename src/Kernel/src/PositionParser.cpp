@@ -44,14 +44,14 @@ namespace
         QStringView trimmedValue = value.trimmed();
         // First try to match (possibly comma-separated) floating point numbers
         // (e.g. 46.94697890467696, 7.444134280004356)
-        QRegularExpressionMatch match = numberRexExp.match(trimmedValue);
+        QRegularExpressionMatch match = numberRexExp.matchView(trimmedValue);
         if (match.hasMatch() && match.lastCapturedIndex() == 2) {
             values << match.captured(1).trimmed();
             values << match.captured(2).trimmed();
         } else {
             // Try parsing latitude/longitude DMS values
             // (e.g. 46° 56' 52.519" N 7° 26' 40.589" E or 7° 26' 40.589" E, 46° 56' 52.519" N)
-            match = dmsRegExp.match(trimmedValue);
+            match = dmsRegExp.matchView(trimmedValue);
             if (match.hasMatch() && match.lastCapturedIndex() == 2) {
                 // GeographicLib DMS does not like whitespace in DMS strings
                 values << match.captured(1).replace(" ", "");

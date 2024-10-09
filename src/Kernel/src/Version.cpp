@@ -79,7 +79,7 @@ Version::~Version() = default;
 void Version::fromString(QStringView version) noexcept
 {
     static QRegularExpression versionRegExp {R"(^(\d+)\.(\d+)\.(\d+)$)"};
-    QRegularExpressionMatch match = versionRegExp.match(version);
+    QRegularExpressionMatch match = versionRegExp.matchView(version);
     if (match.isValid()) {
         d->major = match.captured(1).toInt();
         d->minor = match.captured(2).toInt();
