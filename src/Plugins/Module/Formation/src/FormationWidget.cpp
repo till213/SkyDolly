@@ -1032,7 +1032,8 @@ void FormationWidget::onSelectionChanged() noexcept
 
 void FormationWidget::onInitialPositionPlacementChanged(Qt::CheckState state) noexcept
 {
-    d->moduleSettings.setRelativePositionPlacementEnabled(state == Qt::CheckState::Checked);
+    const auto enable = state == Qt::CheckState::Checked;
+    d->moduleSettings.setRelativePositionPlacementEnabled(enable);
 }
 
 void FormationWidget::updateUserAircraftIndex() noexcept
