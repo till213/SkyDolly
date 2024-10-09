@@ -75,7 +75,7 @@ void GpxImportOptionWidget::frenchConnection() noexcept
             this, &GpxImportOptionWidget::onDefaultAltitudeChanged);
     connect(ui->defaultSpeedSpinBox, &QSpinBox::valueChanged,
             this, &GpxImportOptionWidget::onDefaultSpeedChanged);
-    connect(ui->convertAltitudeCheckBox, &QCheckBox::stateChanged,
+    connect(ui->convertAltitudeCheckBox, &QCheckBox::checkStateChanged,
             this, &GpxImportOptionWidget::onConvertAltitudeChanged);
     connect(&d->pluginSettings, &GpxImportSettings::changed,
             this, &GpxImportOptionWidget::updateUi);
@@ -157,7 +157,7 @@ void GpxImportOptionWidget::onDefaultSpeedChanged(int value) noexcept
     d->pluginSettings.setDefaultSpeed(value);
 }
 
-void GpxImportOptionWidget::onConvertAltitudeChanged(int state) noexcept
+void GpxImportOptionWidget::onConvertAltitudeChanged(Qt::CheckState state) noexcept
 {
     d->pluginSettings.setConvertAltitudeEnabled(state == Qt::Checked);
 }
