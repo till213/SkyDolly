@@ -62,7 +62,29 @@ KmlImportPlugin::KmlImportPlugin() noexcept
 
 KmlImportPlugin::~KmlImportPlugin() = default;
 
-std::vector<FlightData> KmlImportPlugin::importFlightData(QIODevice &io, bool &ok) noexcept
+// PROTECTED
+
+FlightImportPluginBaseSettings &KmlImportPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
+
+QString KmlImportPlugin::getFileExtension() const noexcept
+{
+    return KmlImportPluginPrivate::FileExtension;
+}
+
+QString KmlImportPlugin::getFileFilter() const noexcept
+{
+    return QObject::tr("Keyhole markup language (*.%1)").arg(getFileExtension());
+}
+
+std::unique_ptr<QWidget> KmlImportPlugin::createOptionWidget() const noexcept
+{
+    return std::make_unique<KmlImportOptionWidget>(d->pluginSettings);
+}
+
+std::vector<FlightData> KmlImportPlugin::onImportFlightData(QIODevice &io, bool &ok) noexcept
 {
     std::vector<FlightData> flights;
     d->xml.setDevice(&io);
@@ -86,28 +108,6 @@ std::vector<FlightData> KmlImportPlugin::importFlightData(QIODevice &io, bool &o
     }
 
     return flights;
-}
-
-// PROTECTED
-
-FlightImportPluginBaseSettings &KmlImportPlugin::getPluginSettings() const noexcept
-{
-    return d->pluginSettings;
-}
-
-QString KmlImportPlugin::getFileExtension() const noexcept
-{
-    return KmlImportPluginPrivate::FileExtension;
-}
-
-QString KmlImportPlugin::getFileFilter() const noexcept
-{
-    return QObject::tr("Keyhole markup language (*.%1)").arg(getFileExtension());
-}
-
-std::unique_ptr<QWidget> KmlImportPlugin::createOptionWidget() const noexcept
-{
-    return std::make_unique<KmlImportOptionWidget>(d->pluginSettings);
 }
 
 FlightAugmentation::Procedures KmlImportPlugin::getAugmentationProcedures() const noexcept

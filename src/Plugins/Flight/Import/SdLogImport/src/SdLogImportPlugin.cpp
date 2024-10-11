@@ -65,7 +65,29 @@ SdlogImportPlugin::SdlogImportPlugin() noexcept
 
 SdlogImportPlugin::~SdlogImportPlugin() = default;
 
-std::vector<FlightData> SdlogImportPlugin::importFlightData(QIODevice &io, bool &ok) noexcept
+// PROTECTED
+
+FlightImportPluginBaseSettings &SdlogImportPlugin::getPluginSettings() const noexcept
+{
+    return d->pluginSettings;
+}
+
+QString SdlogImportPlugin::getFileExtension() const noexcept
+{
+    return SdlogImportPluginPrivate::FileExtension;
+}
+
+QString SdlogImportPlugin::getFileFilter() const noexcept
+{
+    return QObject::tr("Sky Dolly logbook (*.%1)").arg(getFileExtension());
+}
+
+std::unique_ptr<QWidget> SdlogImportPlugin::createOptionWidget() const noexcept
+{
+    return nullptr;
+}
+
+std::vector<FlightData> SdlogImportPlugin::onImportFlightData(QIODevice &io, bool &ok) noexcept
 {
     std::vector<FlightData> flights;
     ok = false;
@@ -90,28 +112,6 @@ std::vector<FlightData> SdlogImportPlugin::importFlightData(QIODevice &io, bool 
         }
     }
     return flights;
-}
-
-// PROTECTED
-
-FlightImportPluginBaseSettings &SdlogImportPlugin::getPluginSettings() const noexcept
-{
-    return d->pluginSettings;
-}
-
-QString SdlogImportPlugin::getFileExtension() const noexcept
-{
-    return SdlogImportPluginPrivate::FileExtension;
-}
-
-QString SdlogImportPlugin::getFileFilter() const noexcept
-{
-    return QObject::tr("Sky Dolly logbook (*.%1)").arg(getFileExtension());
-}
-
-std::unique_ptr<QWidget> SdlogImportPlugin::createOptionWidget() const noexcept
-{
-    return nullptr;
 }
 
 FlightAugmentation::Procedures SdlogImportPlugin::getAugmentationProcedures() const noexcept
