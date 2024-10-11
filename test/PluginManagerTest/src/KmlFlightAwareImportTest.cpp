@@ -22,34 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <vector>
+
 #include <QtTest>
 #include <QUuid>
 #include <QDateTime>
 
-#include <Kernel//Const.h>
+#include <Kernel/Const.h>
 #include <PluginManager/PluginManager.h>
-#include "GpxImportTest.h"
+#include "KmlFlightAwareImportTest.h"
 
 namespace
 {
-    constexpr const char *WaypointSelectionKey {"WaypointSelection"};
-    constexpr const char *PositionSelectionKey {"PositionSelection"};
-
-    constexpr const int WaypointSelection {0};
-    constexpr const int RouteSelection {1};
-    constexpr const int TrackSelection {2};
+    constexpr const char *FormatKey {"Format"};
+    constexpr const int FlightAwareFormat {0};
 }
 
 // PRIVATE SLOTS
 
-void GpxImportTest::onInitTestCase() noexcept
+void KmlFlightAwareImportTest::onInitTestCase() noexcept
 {
-    // Select the "FlightRecorder" format
-    QUuid pluginUuid {Const::GpxImportPluginUuid};
-    m_oldWaypointSelection = getPluginSetting(pluginUuid, ::WaypointSelectionKey, 0).toInt();
-    setPluginSetting(pluginUuid, ::WaypointSelectionKey, ::WaypointSelection);
-    m_oldPositionSelection = getPluginSetting(pluginUuid, ::PositionSelectionKey, 0).toInt();
-    setPluginSetting(pluginUuid, ::PositionSelectionKey, ::TrackSelection);
+    // Select the "FlightAware" format
+    QUuid pluginUuid {Const::KmlImportPluginUuid};
+    m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();
+    setPluginSetting(pluginUuid, ::FormatKey, ::FlightAwareFormat);
 
     // Initialise flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
@@ -57,21 +53,21 @@ void GpxImportTest::onInitTestCase() noexcept
     QVERIFY(flightImportPlugins.size() > 0);
 }
 
-void GpxImportTest::onCleanupTestCase() noexcept
+void KmlFlightAwareImportTest::onCleanupTestCase() noexcept
 {
-    QUuid pluginUuid {Const::GpxImportPluginUuid};
-    setPluginSetting(pluginUuid, ::WaypointSelectionKey, m_oldWaypointSelection);
-    setPluginSetting(pluginUuid, ::PositionSelectionKey, m_oldPositionSelection);
+    QUuid pluginUuid {Const::CsvImportPluginUuid};
+    setPluginSetting(pluginUuid, ::FormatKey, m_oldPluginFormat);
 }
 
-void GpxImportTest::initTestCase_data() noexcept
+void KmlFlightAwareImportTest::initTestCase_data() noexcept
 {
-    QUuid pluginUuid {Const::GpxImportPluginUuid};
+    QUuid pluginUuid {Const::KmlImportPluginUuid};
+
     QTest::addColumn<QUuid>("pluginUuid");
     QTest::newRow("pluginUuid") << pluginUuid;
 }
 
-void GpxImportTest::importSelectedFlights_data() noexcept
+void KmlFlightAwareImportTest::importSelectedFlights_data() noexcept
 {
     QTest::addColumn<QString>("filepath");
     QTest::addColumn<bool>("expectedOk");
@@ -82,13 +78,9 @@ void GpxImportTest::importSelectedFlights_data() noexcept
     QTest::addColumn<int>("expectedNofAircraftInFirstFlight");
     QTest::addColumn<int>("expectedNofUserAircraftPositionInFirstFlight");
 
-    const QDateTime validDateTime {QDateTime::fromString("2023-02-18T16:10:06Z", Qt::ISODate)};
+    const QDateTime validDateTime {QDateTime::fromString("2024-10-11T20:20:00Z", Qt::ISODate)};
     const QDateTime invalidDateTime;
-    QTest::newRow("Valid-1.gpx")   << ":/test/gpx/Valid-1.gpx"   << true  << true  << 1 << validDateTime   << 0 << 1 << 3;
-    QTest::newRow("Empty.gpx")     << ":/test/gpx/Empty.gpx"     << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("Invalid-1.gpx") << ":/test/gpx/Invalid-1.gpx" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("Invalid-2.gpx") << ":/test/gpx/Invalid-2.gpx" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("Invalid-3.gpx") << ":/test/gpx/Invalid-3.gpx" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("FlightAware-valid-1.kml")   << ":/test/kml/FlightAware-valid-1.kml"   << true  << true  << 1 << validDateTime << 0 << 1 << 3;
 }
 
-QTEST_MAIN(GpxImportTest)
+QTEST_MAIN(KmlFlightAwareImportTest)

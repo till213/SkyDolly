@@ -14,5 +14,6 @@
         <file>test/gpx/Invalid-2.gpx</file>
         <file>test/gpx/Invalid-3.gpx</file>
         <file>test/gpx/Valid-1.gpx</file>
+        <file>test/kml/FlightAware-valid-1.kml</file>
     </qresource>
 </RCC>
