@@ -78,8 +78,8 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
         const auto &aircraftInfo = aircraft.getAircraftInfo();
         const auto &position = aircraft.getPosition();
         const auto &attitude = aircraft.getAttitude();
-        const auto &positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
-        const auto &attitudeData = attitude.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+        const auto positionData = position.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
+        const auto attitudeData = attitude.interpolate(timestamp, TimeVariableData::Access::DiscreteSeek);
         const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionAndAttitudeAll::toInitialPosition(positionData, attitudeData, aircraftInfo.initialAirspeed);
 
         const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::underly(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;

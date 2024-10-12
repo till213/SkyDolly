@@ -252,7 +252,7 @@ bool PathCreatorPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVari
     bool dataAvailable {false};
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
         dataAvailable = true;
-        const PositionData &currentPositionData = getCurrentFlight().getUserAircraft().getPosition().interpolate(getCurrentTimestamp(), access);
+        const PositionData currentPositionData = getCurrentFlight().getUserAircraft().getPosition().interpolate(getCurrentTimestamp(), access);
         if (!currentPositionData.isNull()) {
             // Start the elapsed timer after sending the first sample data
             if (!isElapsedTimerRunning()) {

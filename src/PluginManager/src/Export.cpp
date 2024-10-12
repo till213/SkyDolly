@@ -90,10 +90,17 @@ std::vector<PositionData> Export::resamplePositionDataForExport(const Aircraft &
     if (position.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const auto duration = position.getLast().timestamp;
+<<<<<<< HEAD
             const auto deltaTime {Enum::underly(resamplingPeriod)};
             std::int64_t timestamp {0};
             while (timestamp <= duration) {
                 const auto &data = position.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+=======
+            const auto deltaTime = Enum::underly(resamplingPeriod);
+            std::int64_t timestamp {0};
+            while (timestamp <= duration) {
+                const auto data = position.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+>>>>>>> d400a219 (FIX: Do not store references to interpolated data)
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }
@@ -116,10 +123,17 @@ std::vector<EngineData> Export::resampleEngineDataForExport(const Aircraft &airc
     if (engine.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const auto duration = engine.getLast().timestamp;
+<<<<<<< HEAD
             const auto deltaTime {Enum::underly(resamplingPeriod)};
             std::int64_t timestamp {0};
             while (timestamp <= duration) {
                 const auto &data = engine.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+=======
+            const auto deltaTime = Enum::underly(resamplingPeriod);
+            std::int64_t timestamp {0};
+            while (timestamp <= duration) {
+                const auto data = engine.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+>>>>>>> d400a219 (FIX: Do not store references to interpolated data)
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }
@@ -142,10 +156,17 @@ std::vector<PrimaryFlightControlData> Export::resamplePrimaryFlightControlDataFo
     if (primaryFlightControl.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const auto duration = primaryFlightControl.getLast().timestamp;
+<<<<<<< HEAD
             const auto deltaTime {Enum::underly(resamplingPeriod)};
             std::int64_t timestamp {0};
             while (timestamp <= duration) {
                 const auto &data = primaryFlightControl.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+=======
+            const auto deltaTime = Enum::underly(resamplingPeriod);
+            std::int64_t timestamp {0};
+            while (timestamp <= duration) {
+                const auto data = primaryFlightControl.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+>>>>>>> d400a219 (FIX: Do not store references to interpolated data)
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }
@@ -168,10 +189,17 @@ std::vector<SecondaryFlightControlData> Export::resampleSecondaryFlightControlDa
     if (secondaryFlightControl.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const auto duration = secondaryFlightControl.getLast().timestamp;
+<<<<<<< HEAD
             const auto deltaTime {Enum::underly(resamplingPeriod)};
             std::int64_t timestamp {0};
             while (timestamp <= duration) {
                 const auto &data = secondaryFlightControl.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+=======
+            const auto deltaTime = Enum::underly(resamplingPeriod);
+            std::int64_t timestamp {0};
+            while (timestamp <= duration) {
+                const auto data = secondaryFlightControl.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+>>>>>>> d400a219 (FIX: Do not store references to interpolated data)
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }
@@ -194,10 +222,17 @@ std::vector<AircraftHandleData> Export::resampleAircraftHandleDataForExport(cons
     if (aircraftHandle.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const auto duration = aircraftHandle.getLast().timestamp;
+<<<<<<< HEAD
             const auto deltaTime {Enum::underly(resamplingPeriod)};
             std::int64_t timestamp {0};
             while (timestamp <= duration) {
                 const auto &data = aircraftHandle.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+=======
+            const auto deltaTime = Enum::underly(resamplingPeriod);
+            std::int64_t timestamp {0};
+            while (timestamp <= duration) {
+                const auto data = aircraftHandle.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+>>>>>>> d400a219 (FIX: Do not store references to interpolated data)
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }
@@ -220,10 +255,17 @@ std::vector<LightData> Export::resampleLightDataForExport(const Aircraft &aircra
     if (light.count() > 0) {
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const auto duration = light.getLast().timestamp;
+<<<<<<< HEAD
             const auto deltaTime {Enum::underly(resamplingPeriod)};
             std::int64_t timestamp {0};
             while (timestamp <= duration) {
                 const auto &data = light.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+=======
+            const auto deltaTime = Enum::underly(resamplingPeriod);
+            std::int64_t timestamp {0};
+            while (timestamp <= duration) {
+                const auto data = light.interpolate(timestamp, TimeVariableData::Access::NoTimeOffset);
+>>>>>>> d400a219 (FIX: Do not store references to interpolated data)
                 if (!data.isNull()) {
                     interpolatedData.push_back(data);
                 }

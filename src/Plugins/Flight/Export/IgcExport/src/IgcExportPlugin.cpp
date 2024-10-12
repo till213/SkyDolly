@@ -285,12 +285,17 @@ inline bool IgcExportPlugin::exportFixes(const FlightData &flightData, const Air
         const double heightAboveEllipsoid = convert.geoidToEllipsoidHeight(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
 
         const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
-        const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
+        const auto gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
         const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.pressureAltitude)));
+<<<<<<< HEAD
         const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
         const auto &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
+=======
+        const auto pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
+        const auto engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
+>>>>>>> d400a219 (FIX: Do not store references to interpolated data)
         const int noise = estimateEnvironmentalNoise(engineData);
-        const QDateTime currentTime = startTime.addMSecs(positionData.timestamp);
+        const auto currentTime = startTime.addMSecs(positionData.timestamp);
         const QByteArray bRecord = IgcExportPluginPrivate::BRecord %
                                    formatTime(currentTime) %
                                    formatPosition(positionData.latitude, positionData.longitude) %
@@ -305,7 +310,7 @@ inline bool IgcExportPlugin::exportFixes(const FlightData &flightData, const Air
 
         if (ok && (lastKFixTime.isNull() || lastKFixTime.secsTo(currentTime) >= ::KRecordIntervalSec)) {
             const auto &attitude = aircraft.getAttitude();
-            const auto &attitudeData = attitude.interpolate(positionData.timestamp, TimeVariableData::Access::NoTimeOffset);
+            const auto attitudeData = attitude.interpolate(positionData.timestamp, TimeVariableData::Access::NoTimeOffset);
             const auto trueAirspeed = Convert::feetPerSecondToKilometersPerHour(attitudeData.velocityBodyZ);
             const auto indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
             const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
