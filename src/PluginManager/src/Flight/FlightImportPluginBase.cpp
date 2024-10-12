@@ -280,17 +280,9 @@ void FlightImportPluginBase::enrichFlightCondition(FlightData &flightData) const
 void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const noexcept
 {
     for (Aircraft &aircraft : flightData) {
-        AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
-        if (!aircraftInfo.aircraftType.isDefined()) {
-            aircraftInfo.aircraftType = d->selectedAircraftType;
-        }
-
-        const auto &position = aircraft.getPosition();
-        const auto &attitude = aircraft.getAttitude();
+        const auto &position = aircraft.getPosition();        
         if (position.count() > 0) {
             const auto &firstPositionData = position.getFirst();
-            const auto &firstAttitudeData = attitude.getFirst();
-            aircraftInfo.initialAirspeed = static_cast<int>(std::round(Convert::feetPerSecondToKnots(firstAttitudeData.velocityBodyZ)));
 
             // Add default waypoints (first and last position) in case none are present in the imported data
             auto &flightPlan = aircraft.getFlightPlan();
@@ -319,6 +311,15 @@ void FlightImportPluginBase::enrichAircraftInfo(FlightData &flightData) const no
                 arrival.timestamp = firstPositionData.timestamp != lastPositionData.timestamp ? lastPositionData.timestamp : lastPositionData.timestamp + 1;
                 flightPlan.add(std::move(arrival));
             }
+        }
+        AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+        if (!aircraftInfo.aircraftType.isDefined()) {
+            aircraftInfo.aircraftType = d->selectedAircraftType;
+        }
+        const auto &attitude = aircraft.getAttitude();
+        if (attitude.count() > 0) {
+            const auto &firstAttitudeData = attitude.getFirst();
+            aircraftInfo.initialAirspeed = static_cast<int>(std::round(Convert::feetPerSecondToKnots(firstAttitudeData.velocityBodyZ)));
         } else {
             aircraftInfo.initialAirspeed = 0.0;
         }
