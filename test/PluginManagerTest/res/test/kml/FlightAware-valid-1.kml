@@ -26,7 +26,7 @@
             <when>2024-10-11T20:20:00Z</when>
             <when>2024-10-11T20:25:00Z</when>
             <when>2024-10-11T20:30:00Z</when>
-            
+
             <gx:coord>9.07141 52.27700 146</gx:coord>
             <gx:coord>9.06262 52.27560 184</gx:coord>
             <gx:coord>9.05106 52.27382 245</gx:coord>
@@ -42,8 +42,5 @@
         <size x="0" y="0" xunits="fraction" yunits="fraction"/>
     </ScreenOverlay>
 </Document>
-<<<<<<< HEAD
-=======
 
->>>>>>> 67630eb7 (Add KML FlightAware import unit test)
 </kml>
