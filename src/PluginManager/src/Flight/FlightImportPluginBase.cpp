@@ -134,6 +134,18 @@ bool FlightImportPluginBase::importFlights(Flight &flight) noexcept
     return ok;
 }
 
+std::vector<FlightData> FlightImportPluginBase::importFlightData(QIODevice &io, bool &ok) noexcept
+{
+    auto importedFlights = onImportFlightData(io, ok);
+    if (ok) {
+        enrichFlightData(importedFlights);
+        if (getAugmentationAspects() || getAugmentationProcedures()) {
+            augmentFlights(importedFlights);
+        }
+    }
+    return importedFlights;
+}
+
 // PROTECTED
 
 AircraftType &FlightImportPluginBase::getSelectedAircraftType() const noexcept
@@ -181,11 +193,6 @@ bool FlightImportPluginBase::importFlights(const QStringList &filePaths, Flight 
         if (ok) {
             importedFlights = importFlightData(d->file, ok);
             if (ok) {
-                enrichFlightData(importedFlights);
-                if (getAugmentationAspects() || getAugmentationProcedures()) {
-                    augmentFlights(importedFlights);
-                }
-
                 switch (aircraftImportMode) {
                 case FlightImportPluginBaseSettings::AircraftImportMode::AddToNewFlight:
                     [[fallthrough]];

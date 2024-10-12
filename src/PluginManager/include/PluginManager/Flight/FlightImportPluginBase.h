@@ -83,6 +83,8 @@ public:
 
     bool importFlights(Flight &flight) noexcept final;
 
+    std::vector<FlightData> importFlightData(QIODevice &io, bool &ok) noexcept final;
+
 protected:
     AircraftType &getSelectedAircraftType() const noexcept;
 
@@ -91,6 +93,7 @@ protected:
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
+    virtual std::vector<FlightData> onImportFlightData(QIODevice &io, bool &ok) noexcept = 0;
 
     virtual FlightAugmentation::Procedures getAugmentationProcedures() const noexcept = 0;
     virtual FlightAugmentation::Aspects getAugmentationAspects() const noexcept = 0;
