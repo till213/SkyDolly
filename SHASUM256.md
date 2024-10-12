@@ -30,6 +30,7 @@ Once the checksum has been calculated compare it with the corresponding checksum
 
 Algorithm | Hash                                                             | File
 ----------|------------------------------------------------------------------|---------------------
+SHA256    | 99c72c82803cce56112635d9bc675b6c13bdb142d35dc33f7abe8f1c48256b4a | SkyDolly-v0.19.1.zip
 SHA256    | 9fce3aff0f697747d27dd915d8634b76b2d68b97490c3e04cb41da368e08edf5 | SkyDolly-v0.19.1.zip
 SHA256    | 381930239aed5cd7e7f7acb0cae045f2ab8bf77c12be4dae85f4527672d44cc3 | SkyDolly-v0.19.0.zip
 
