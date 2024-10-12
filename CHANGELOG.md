@@ -41,7 +41,7 @@
   * In analogy for the FINISH (last waypoint coordinate) and LANDING (last recorded position)
 - The velocity, pitch bank and heading is calculated correctly again when *augmenting* imported flight data
   
-# Under the Hood
+## Under the Hood
 - Added more flight import unit tests, covering now also the "flight augmentation" code
 
 ## 0.19.1
