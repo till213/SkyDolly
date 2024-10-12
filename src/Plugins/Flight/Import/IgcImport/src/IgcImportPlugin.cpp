@@ -92,8 +92,6 @@ IgcImportPlugin::IgcImportPlugin() noexcept
 
 IgcImportPlugin::~IgcImportPlugin() = default;
 
-
-
 // PROTECTED
 
 FlightImportPluginBaseSettings &IgcImportPlugin::getPluginSettings() const noexcept
@@ -243,8 +241,13 @@ std::vector<FlightData> IgcImportPlugin::onImportFlightData(QIODevice &io, bool 
             }
         }
 
-        enrichFlightData(flightData);
-        flights.push_back(std::move(flightData));
+        if (ok) {
+            ok = flightData.hasRecording();
+        }
+        if (ok) {
+            enrichFlightData(flightData);
+            flights.push_back(std::move(flightData));
+        }
     }
     return flights;
 }

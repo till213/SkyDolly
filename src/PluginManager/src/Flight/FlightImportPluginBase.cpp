@@ -271,9 +271,11 @@ void FlightImportPluginBase::enrichFlightCondition(FlightData &flightData) const
     if (!(flightCondition.getEndLocalDateTime().isValid() && flightCondition.getEndZuluDateTime().isValid())) {
         const auto &aircraft = flightData.getUserAircraft();
         const Position &position = aircraft.getPosition();
-        const PositionData &lastPositionData = position.getLast();
-        flightCondition.setEndLocalDateTime(flightCondition.getStartLocalDateTime().addMSecs(lastPositionData.timestamp));
-        flightCondition.setEndZuluDateTime(flightCondition.getStartZuluDateTime().addMSecs(lastPositionData.timestamp));
+        if (position.count() > 0) {
+            const PositionData &lastPositionData = position.getLast();
+            flightCondition.setEndLocalDateTime(flightCondition.getStartLocalDateTime().addMSecs(lastPositionData.timestamp));
+            flightCondition.setEndZuluDateTime(flightCondition.getStartZuluDateTime().addMSecs(lastPositionData.timestamp));
+        }
     }
 }
 

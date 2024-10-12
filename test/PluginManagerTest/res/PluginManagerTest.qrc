@@ -15,5 +15,18 @@
         <file>test/gpx/Invalid-3.gpx</file>
         <file>test/gpx/Valid-1.gpx</file>
         <file>test/kml/FlightAware-valid-1.kml</file>
+        <file>test/kml/Empty.kml</file>
+        <file>test/kml/FlightAware-invalid-1.kml</file>
+        <file>test/kml/FlightAware-invalid-2.kml</file>
+        <file>test/kml/FlightAware-invalid-3.kml</file>
+        <file>test/kml/FlightRadar24-valid-1.kml</file>
+        <file>test/kml/FlightRadar24-invalid-1.kml</file>
+        <file>test/kml/FlightRadar24-invalid-2.kml</file>
+        <file>test/kml/FlightRadar24-invalid-3.kml</file>
+        <file>test/igc/Valid-1.igc</file>
+        <file>test/igc/Empty.igc</file>
+        <file>test/igc/Invalid-1.igc</file>
+        <file>test/igc/Invalid-2.igc</file>
+        <file>test/igc/Invalid-3.igc</file>
     </qresource>
 </RCC>

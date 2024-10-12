@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+<Document>
+    <name>FlightAware ✈ Valid file</name>
+    <Placemark>
+        <name>ETHB Airport</name>
+        <description><![CDATA[The description with <i>html-formated</i> text]]></description>
+        <Point>
+            <coordinates>9.082167,52.2785,0</coordinates>
+        </Point>
+    </Placemark>
+    <Placemark>
+        <name>ETHB Airport</name>
+        <description><![CDATA[The description with <i>html-formated</i> text]]></description>
+        <Point>
+            <coordinates>9.082167,52.2785,0</coordinates>
+        </Point>
+    </Placemark>
+    <Placemark>
+        <name>HELI88J</name>
+        <description>ETHB - ETHB</description>
+        <gx:Track>
+            <extrude>1</extrude>
+            <tessellate>1</tessellate>
+            <altitudeMode>absolute</altitudeMode>
+            <when>2024-10-11T20:20:00Z</when>
+            <when>2024-10-11T20:25:00Z</when>
+            <when>2024-10-11T20:30:00Z</when>
+            
+            <gx:coord>9.07141 52.27700 146</gx:coord>
+            <gx:coord>9.06262 52.27560 184</gx:coord>
+            <gx:coord>invalid gps data</gx:coord>
+        </gx:Track>
+    </Placemark>
+    <ScreenOverlay>
+        <name>FlightAware</name>
+        <Icon>
+            <href>https://www.flightaware.com/images/logo_ge.png</href>
+        </Icon>
+        <overlayXY x="1" y="-1" xunits="fraction" yunits="fraction"/>
+        <screenXY x="1" y="0" xunits="fraction" yunits="fraction"/>
+        <size x="0" y="0" xunits="fraction" yunits="fraction"/>
+    </ScreenOverlay>
+</Document>
+
+</kml>
