@@ -284,17 +284,12 @@ inline bool IgcExportPlugin::exportFixes(const FlightData &flightData, const Air
         // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
         const double heightAboveEllipsoid = convert.geoidToEllipsoidHeight(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
 
-        const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
+        const auto gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
         const auto gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
-        const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.pressureAltitude)));
-<<<<<<< HEAD
-        const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
-        const auto &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
-=======
+        const auto pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.pressureAltitude)));
         const auto pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
         const auto engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
->>>>>>> d400a219 (FIX: Do not store references to interpolated data)
-        const int noise = estimateEnvironmentalNoise(engineData);
+        const auto noise = estimateEnvironmentalNoise(engineData);
         const auto currentTime = startTime.addMSecs(positionData.timestamp);
         const QByteArray bRecord = IgcExportPluginPrivate::BRecord %
                                    formatTime(currentTime) %
