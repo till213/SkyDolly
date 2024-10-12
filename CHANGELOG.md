@@ -9,6 +9,7 @@
   * The (obsolete) task number has now the correct 4 (instead of 6) digits
   * The TAKEOFF declaration is now the actual first recorded position and the START declaration is now the coordinate of the first waypoint (previously it was the other way around)
   * In analogy for the FINISH (last waypoint coordinate) and LANDING (last recorded position)
+- The velocity, pitch bank and heading is calculated correctly again when *augmenting* imported flight data
   
 # Under the Hood
 - Added more flight import unit tests, covering now also the "flight augmentation" code
