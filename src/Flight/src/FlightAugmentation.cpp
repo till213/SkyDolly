@@ -119,7 +119,7 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
     Position &position = aircraft.getPosition();
     Attitude &attitude = aircraft.getAttitude();
     const auto positionCount = position.count();
-    const auto attitudeCount = attitude.count();
+    auto attitudeCount = attitude.count();
 
     Analytics analytics(aircraft);
     const auto [firstMovementTimestamp, firstMovementHeading] = analytics.firstMovementHeading();
@@ -128,12 +128,13 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
     if (attitudeCount == 0 && (d->aspects & Aspect::AttitudeAndVelocity)) {
         AttitudeData item;
         attitude.insert(positionCount, item);
-        for (int i = 0; i < positionCount; ++i) {
+        for (std::size_t i = 0; i < positionCount; ++i) {
             attitude[i].timestamp = position[i].timestamp;
         }
+        attitudeCount = attitude.count();
     }
 
-    for (int i = 0; i < attitudeCount; ++i) {
+    for (std::size_t i = 0; i < attitudeCount; ++i) {
 
         if (i < attitudeCount - 1) {
             AttitudeData currentAttitudeData = attitude[i];
@@ -144,7 +145,6 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
             const PositionData &nextPositionData = position.interpolate(nextTimeStamp, NoTimeOffset);
             const SkyMath::Coordinate currentPosition {currentPositionData.latitude, currentPositionData.longitude};
             const SkyMath::Coordinate nextPosition {nextPositionData.latitude, nextPositionData.longitude};
-
 
             const auto [distance, speed] = SkyMath::distanceAndSpeed(currentPosition, currentTimestamp, nextPosition, nextTimeStamp);
             // Velocity
@@ -240,7 +240,7 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
                 }
             }
         }
-    } // For all positions
+    } // For all attitudes
 }
 
 void FlightAugmentation::augmentProcedures(Aircraft &aircraft) noexcept
@@ -672,19 +672,21 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     // https://forum.aerosoft.com/index.php?/topic/123864-a320-pitch-angle-during-landing/
     if (d->aspects.testFlag(Aspect::Pitch)) {
         Attitude &attitude = aircraft.getAttitude();
-        auto index = attitude.count() - 1;
-        if (index >= 0) {
+        const auto attitudeCount = attitude.count();
+        if (attitudeCount > 0) {
+            auto index = attitudeCount - 1;
             // Last sample: flare with nose up 6 degrees
             AttitudeData &attitudeData = attitude[index];
             attitudeData.pitch = -6.0;
 
-            if (index > 0) {
-                // Second to last sample -> adjust pitch to 3 degrees nose up
+            // Previous attitude samples (within timestamp threshold) -> adjust pitch to 3 degrees nose up
+            bool timeStampOk {true};
+            while (index > 0 && timeStampOk) {
                 --index;
-                while (index >= 0 && attitude[index].timestamp >= std::max(lastTimestamp - std::int64_t(3 * 60 * 1000), std::int64_t(0))) {
+                timeStampOk = attitude[index].timestamp >= std::max(lastTimestamp - std::int64_t(3 * 60 * 1000), std::int64_t(0));
+                if (timeStampOk) {
                     // Nose up 3 degrees
                     attitude[index].pitch = -3.0;
-                    --index;
                 }
             }
         }

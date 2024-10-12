@@ -80,7 +80,7 @@ void CsvFlightRadar24ImportTest::importSelectedFlights_data() noexcept
 
     const QDateTime validDateTime {QDateTime::fromString("2021-10-29T04:26:16Z", Qt::ISODate)};
     const QDateTime invalidDateTime;
-    QTest::newRow("FlightRadar24-valid-1.csv")   << ":/test/csv/FlightRadar24-valid-1.csv"   << true  << true  << 1 << validDateTime << 0 << 1 << 2;
+    QTest::newRow("FlightRadar24-valid-1.csv")   << ":/test/csv/FlightRadar24-valid-1.csv"   << true  << true  << 1 << validDateTime   << 0 << 1 << 2;
     QTest::newRow("Empty.csv")                   << ":/test/csv/Empty.csv"                   << false << false << 0 << invalidDateTime << 0 << 0 << 0;
     QTest::newRow("FlightRadar24-invalid-1.csv") << ":/test/csv/FlightRadar24-invalid-1.csv" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
     QTest::newRow("FlightRadar24-invalid-2.csv") << ":/test/csv/FlightRadar24-invalid-2.csv" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
