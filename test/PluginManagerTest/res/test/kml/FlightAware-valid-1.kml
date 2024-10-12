@@ -42,4 +42,8 @@
         <size x="0" y="0" xunits="fraction" yunits="fraction"/>
     </ScreenOverlay>
 </Document>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 67630eb7 (Add KML FlightAware import unit test)
 </kml>
