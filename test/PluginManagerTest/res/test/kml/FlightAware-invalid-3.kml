@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+<Document>
+    <name>FlightAware ✈ Valid file</name>
+    <Placemark>
+        <name>ETHB Airport</name>
+        <description><![CDATA[The description with <i>html-formated</i> text]]></description>
+        <Point>
+            <coordinates>9.082167,52.2785,0</coordinates>
+        </Point>
+    </Placemark>
+    <Placemark>
+        <name>ETHB Airport</name>
+        <description><![CDATA[The description with <i>html-formated</i> text]]></description>
+        <Point>
+            <coordinates>9.082167,52.2785,0</coordinates>
+        </Point>
+    </Placemark>
+    <Placemark>
+        <name>HELI88J</name>
+        <description>No track data</description>
+    </Placemark>
+    <ScreenOverlay>
+        <name>FlightAware</name>
+        <Icon>
+            <href>https://www.flightaware.com/images/logo_ge.png</href>
+        </Icon>
+        <overlayXY x="1" y="-1" xunits="fraction" yunits="fraction"/>
+        <screenXY x="1" y="0" xunits="fraction" yunits="fraction"/>
+        <size x="0" y="0" xunits="fraction" yunits="fraction"/>
+    </ScreenOverlay>
+</Document>
+
+</kml>

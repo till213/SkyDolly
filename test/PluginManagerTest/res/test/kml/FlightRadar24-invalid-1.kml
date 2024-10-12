@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>AM215/AMX215</name>
+    <description><![CDATA[<div>The <b>html formatted</b> description</div>]]></description>
+    <Folder>
+      <name>Route</name>
+      <Placemark>
+        <name>First</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>0 kt</span></div>
+<div><span><b>Heading:</b></span> <span>16&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2024-10-11T20:20:00+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>16</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>invalid coordinates</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Second</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>2 kt</span></div>
+<div><span><b>Heading:</b></span> <span>16&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2024-10-11T20:25:00+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>16</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>-103.298729,20.523434,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Third</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>2 kt</span></div>
+<div><span><b>Heading:</b></span> <span>2&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2024-10-11T20:20:30+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>2</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>-103.29879,20.52323,0</coordinates>
+        </Point>
+      </Placemark>      
+    </Folder>
+    <Folder>
+      <name>Trail</name>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>-103.298645,20.52364,0 -103.298729,20.523434,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-1</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>0 kt - 2 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2024-10-11 20:20:00 UTC<br/>2024-10-11 20:20:00 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>-103.298729,20.523434,0 -103.29879,20.52323,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-2</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>2 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2024-10-11 20:25:00 UTC<br/>2024-10-11 20:25:00 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>-103.29879,20.52323,0 -103.298798,20.52302,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-3</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>2 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2024-10-11 20:30:00 UTC<br/>2024-10-11 20:30:00 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

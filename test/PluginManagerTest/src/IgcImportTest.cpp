@@ -22,30 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <vector>
-
 #include <QtTest>
 #include <QUuid>
 #include <QDateTime>
 
-#include <Kernel/Const.h>
+#include <Kernel//Const.h>
 #include <PluginManager/PluginManager.h>
-#include "KmlFlightAwareImportTest.h"
+#include "IgcImportTest.h"
 
 namespace
-{
-    constexpr const char *FormatKey {"Format"};
-    constexpr const int FlightAwareFormat {0};
+{    
+    constexpr const char *AltitudeKey {"Altitude"};
+    constexpr const char *EnlThresholdKey {"EnlThreshold"};
+
+    constexpr const int AltitudeSelection {0};
+    constexpr const int EnlSelection {40};
 }
 
 // PRIVATE SLOTS
 
-void KmlFlightAwareImportTest::onInitTestCase() noexcept
+void IgcImportTest::onInitTestCase() noexcept
 {
-    // Select the "FlightAware" format
-    QUuid pluginUuid {Const::KmlImportPluginUuid};
-    m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();
-    setPluginSetting(pluginUuid, ::FormatKey, ::FlightAwareFormat);
+    // Select the "FlightRecorder" format
+    QUuid pluginUuid {Const::IgcImportPluginUuid};
+    m_oldAltitudeSelection = getPluginSetting(pluginUuid, ::AltitudeKey, 0).toInt();
+    setPluginSetting(pluginUuid, ::AltitudeKey, ::AltitudeSelection);
+    m_oldEnlSelection = getPluginSetting(pluginUuid, ::EnlThresholdKey, 0).toInt();
+    setPluginSetting(pluginUuid, ::EnlThresholdKey, ::EnlSelection);
 
     // Initialise flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
@@ -53,21 +56,21 @@ void KmlFlightAwareImportTest::onInitTestCase() noexcept
     QVERIFY(flightImportPlugins.size() > 0);
 }
 
-void KmlFlightAwareImportTest::onCleanupTestCase() noexcept
+void IgcImportTest::onCleanupTestCase() noexcept
 {
-    QUuid pluginUuid {Const::CsvImportPluginUuid};
-    setPluginSetting(pluginUuid, ::FormatKey, m_oldPluginFormat);
+    QUuid pluginUuid {Const::IgcImportPluginUuid};
+    setPluginSetting(pluginUuid, ::AltitudeKey, m_oldAltitudeSelection);
+    setPluginSetting(pluginUuid, ::EnlThresholdKey, m_oldEnlSelection);
 }
 
-void KmlFlightAwareImportTest::initTestCase_data() noexcept
+void IgcImportTest::initTestCase_data() noexcept
 {
-    QUuid pluginUuid {Const::KmlImportPluginUuid};
-
+    QUuid pluginUuid {Const::IgcImportPluginUuid};
     QTest::addColumn<QUuid>("pluginUuid");
     QTest::newRow("pluginUuid") << pluginUuid;
 }
 
-void KmlFlightAwareImportTest::importSelectedFlights_data() noexcept
+void IgcImportTest::importSelectedFlights_data() noexcept
 {
     QTest::addColumn<QString>("filepath");
     QTest::addColumn<bool>("expectedOk");
@@ -78,13 +81,14 @@ void KmlFlightAwareImportTest::importSelectedFlights_data() noexcept
     QTest::addColumn<int>("expectedNofAircraftInFirstFlight");
     QTest::addColumn<int>("expectedNofUserAircraftPositionInFirstFlight");
 
-    const QDateTime validDateTime {QDateTime::fromString("2024-10-11T20:20:00Z", Qt::ISODate)};
+    const QDateTime validDateTime {QDateTime::fromString("2024-10-12T11:05:25Z", Qt::ISODate)};
     const QDateTime invalidDateTime;
-    QTest::newRow("FlightAware-valid-1.kml")   << ":/test/kml/FlightAware-valid-1.kml"   << true  << true  << 1 << validDateTime   << 0 << 1 << 3;
-    QTest::newRow("Empty.kml")                 << ":/test/kml/Empty.kml"                 << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("FlightAware-invalid-1.kml") << ":/test/kml/FlightAware-invalid-1.kml" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("FlightAware-invalid-2.kml") << ":/test/kml/FlightAware-invalid-2.kml" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("FlightAware-invalid-3.kml") << ":/test/kml/FlightAware-invalid-3.kml" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("Valid-1.igc")   << ":/test/igc/Valid-1.igc"   << true  << true  << 1 << validDateTime   << 0 << 1 << 3;
+    QTest::newRow("Empty.igc")     << ":/test/igc/Empty.igc"     << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("Invalid-1.igc") << ":/test/igc/Invalid-1.igc" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("Invalid-2.igc") << ":/test/igc/Invalid-2.igc" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("Invalid-3.igc") << ":/test/igc/Invalid-3.igc" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+
 }
 
-QTEST_MAIN(KmlFlightAwareImportTest)
+QTEST_MAIN(IgcImportTest)

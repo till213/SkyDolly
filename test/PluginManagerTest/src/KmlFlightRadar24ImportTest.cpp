@@ -30,22 +30,22 @@
 
 #include <Kernel/Const.h>
 #include <PluginManager/PluginManager.h>
-#include "KmlFlightAwareImportTest.h"
+#include "KmlFlightRadar24ImportTest.h"
 
 namespace
 {
     constexpr const char *FormatKey {"Format"};
-    constexpr const int FlightAwareFormat {0};
+    constexpr const int FlightRadar24Format {1};
 }
 
 // PRIVATE SLOTS
 
-void KmlFlightAwareImportTest::onInitTestCase() noexcept
+void KmlFlightRadar24ImportTest::onInitTestCase() noexcept
 {
-    // Select the "FlightAware" format
+    // Select the "FlightRadar24" format
     QUuid pluginUuid {Const::KmlImportPluginUuid};
     m_oldPluginFormat = getPluginSetting(pluginUuid, ::FormatKey, 0).toInt();
-    setPluginSetting(pluginUuid, ::FormatKey, ::FlightAwareFormat);
+    setPluginSetting(pluginUuid, ::FormatKey, ::FlightRadar24Format);
 
     // Initialise flight import plugins
     PluginManager &pluginManager = PluginManager::getInstance();
@@ -53,13 +53,13 @@ void KmlFlightAwareImportTest::onInitTestCase() noexcept
     QVERIFY(flightImportPlugins.size() > 0);
 }
 
-void KmlFlightAwareImportTest::onCleanupTestCase() noexcept
+void KmlFlightRadar24ImportTest::onCleanupTestCase() noexcept
 {
     QUuid pluginUuid {Const::CsvImportPluginUuid};
     setPluginSetting(pluginUuid, ::FormatKey, m_oldPluginFormat);
 }
 
-void KmlFlightAwareImportTest::initTestCase_data() noexcept
+void KmlFlightRadar24ImportTest::initTestCase_data() noexcept
 {
     QUuid pluginUuid {Const::KmlImportPluginUuid};
 
@@ -67,7 +67,7 @@ void KmlFlightAwareImportTest::initTestCase_data() noexcept
     QTest::newRow("pluginUuid") << pluginUuid;
 }
 
-void KmlFlightAwareImportTest::importSelectedFlights_data() noexcept
+void KmlFlightRadar24ImportTest::importSelectedFlights_data() noexcept
 {
     QTest::addColumn<QString>("filepath");
     QTest::addColumn<bool>("expectedOk");
@@ -80,11 +80,11 @@ void KmlFlightAwareImportTest::importSelectedFlights_data() noexcept
 
     const QDateTime validDateTime {QDateTime::fromString("2024-10-11T20:20:00Z", Qt::ISODate)};
     const QDateTime invalidDateTime;
-    QTest::newRow("FlightAware-valid-1.kml")   << ":/test/kml/FlightAware-valid-1.kml"   << true  << true  << 1 << validDateTime   << 0 << 1 << 3;
-    QTest::newRow("Empty.kml")                 << ":/test/kml/Empty.kml"                 << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("FlightAware-invalid-1.kml") << ":/test/kml/FlightAware-invalid-1.kml" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("FlightAware-invalid-2.kml") << ":/test/kml/FlightAware-invalid-2.kml" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
-    QTest::newRow("FlightAware-invalid-3.kml") << ":/test/kml/FlightAware-invalid-3.kml" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("FlightRadar24-valid-1.kml")   << ":/test/kml/FlightRadar24-valid-1.kml"   << true  << true  << 1 << validDateTime   << 0 << 1 << 3;
+    QTest::newRow("Empty.kml")                   << ":/test/kml/Empty.kml"                   << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("FlightRadar24-invalid-1.kml") << ":/test/kml/FlightRadar24-invalid-1.kml" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("FlightRadar24-invalid-2.kml") << ":/test/kml/FlightRadar24-invalid-2.kml" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
+    QTest::newRow("FlightRadar24-invalid-3.kml") << ":/test/kml/FlightRadar24-invalid-3.kml" << false << false << 0 << invalidDateTime << 0 << 0 << 0;
 }
 
-QTEST_MAIN(KmlFlightAwareImportTest)
+QTEST_MAIN(KmlFlightRadar24ImportTest)

@@ -30,6 +30,19 @@
 ## Under the Hood
 - Optimised logbook SQL table column types
 
+## 0.19.2
+
+## Bug Fixes
+- An illegal data access ("crash") has been fixed that affected various flight import plugins, among them the KML FlightAware import [[Issue #179](https://github.com/till213/SkyDolly/issues/179)]
+- The IGC flight export plugin now properly exports coordinates in the western and southern hemisphere (no negative values, but a proper 'W' respectively 'S' character)
+- The IGC flight export now properly exports the pre-flight declaration section ("C records")
+  * The (obsolete) task number has now the correct 4 (instead of 6) digits
+  * The TAKEOFF declaration is now the actual first recorded position and the START declaration is now the coordinate of the first waypoint (previously it was the other way around)
+  * In analogy for the FINISH (last waypoint coordinate) and LANDING (last recorded position)
+  
+# Under the Hood
+- Added more flight import unit tests, covering now also the "flight augmentation" code
+
 ## 0.19.1
 
 ## Bug Fixes

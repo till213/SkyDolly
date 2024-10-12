@@ -95,7 +95,7 @@ namespace
 
     // C record
     constexpr const char *ObsoleteFlightDate {"000000"};
-    constexpr const char *ObsoleteTaskNumber {"000000"};
+    constexpr const char *ObsoleteTaskNumber {"0000"};
     constexpr const char *TakeoffPoint {"TAKEOFF"};
     constexpr const char *StartPoint {"START"};
     constexpr const char *TurnPoint {"TURN"};
@@ -234,28 +234,30 @@ inline bool IgcExportPlugin::exportCRecord(const FlightData &flightData, const A
     const Position &position = aircraft.getPosition();
     bool ok {false};
     if (position.count() > 0) {
-        const int nofTurnPoints = static_cast<int>(flightPlan.count()) - 2;
+        const auto waypointCount = flightPlan.count();
+        const int nofTurnPoints = std::max(static_cast<int>(waypointCount) - 2, 0);
+        // Task declaration header
         QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(flightData.getAircraftStartZuluTime(aircraft)) %
                             ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
                             // Number of turn points, excluding start and end wapoints
-                            formatNumber(std::min(nofTurnPoints, 0), 2) %
+                            formatNumber(nofTurnPoints, 2) %
                             flightData.title.toLatin1() % ::LineEnd;
         ok = io.write(record);
-        const std::size_t count = flightPlan.count();
-        std::size_t i = 0;
-        while (ok && i < count) {
+        std::size_t i {0};
+        // Turn points
+        while (ok && i < waypointCount) {
             const auto &waypoint = flightPlan[i];
             if (i == 0) {
                 const auto &positionData = position.getFirst();
-                record = IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
-                record = record % ::TakeoffPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
-                record = record % IgcExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
-                record = record % ::StartPoint % ::LineEnd;
-            } else if (i == count - 1) {
-                const auto &positionData = position.getLast();
                 record = IgcExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
-                record = record % ::FinishPoint % ::LineEnd;
+                record = record % ::TakeoffPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
                 record = record % IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
+                record = record % ::StartPoint % ::LineEnd;
+            } else if (i == waypointCount - 1) {
+                const auto &positionData = position.getLast();
+                record = IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
+                record = record % ::FinishPoint % ::LineEnd;
+                record = record % IgcExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
                 record = record % ::LandingPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
             } else {
                 record = IgcExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
@@ -357,12 +359,13 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitu
 
     GeographicLib::DMS::Encode(latitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
-    return QStringLiteral("%1%2%3%4")
-        .arg(static_cast<int>(degrees), 2, 10, QChar('0'))
-        .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
-        .arg(decimals, 3, 10, QChar('0'))
-        .arg(latitude >= 0.0 ? u'N' : u'S')
-        .toLatin1();
+    const auto value = QStringLiteral("%1%2%3%4")
+                           .arg(static_cast<int>(std::abs(degrees)), 2, 10, QChar('0'))
+                           .arg(static_cast<int>(std::abs(minutes)), 2, 10, QChar('0'))
+                           .arg(std::abs(decimals), 3, 10, QChar('0'))
+                           .arg(latitude >= 0.0 ? 'N' : 'S')
+                           .toLatin1();
+    return value;
 }
 
 inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLongitude(double longitude) const noexcept
@@ -372,12 +375,13 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLongitude(double longi
 
     GeographicLib::DMS::Encode(longitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
-    return QStringLiteral("%1%2%3%4")
-        .arg(static_cast<int>(degrees), 3, 10, QChar('0'))
-        .arg(static_cast<int>(minutes), 2, 10, QChar('0'))
-        .arg(decimals, 3, 10, QChar('0'))
-        .arg(longitude >= 0.0 ? u'E' : u'W')
-        .toLatin1();
+    const auto value = QStringLiteral("%1%2%3%4")
+                           .arg(static_cast<int>(std::abs(degrees)), 3, 10, QChar('0'))
+                           .arg(static_cast<int>(std::abs(minutes)), 2, 10, QChar('0'))
+                           .arg(std::abs(decimals), 3, 10, QChar('0'))
+                           .arg(longitude >= 0.0 ? 'E' : 'W')
+                           .toLatin1();
+    return value;
 }
 
 inline QByteArray IgcExportPlugin::formatPosition(double latitude, double longitude) const noexcept
