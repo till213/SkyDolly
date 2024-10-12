@@ -2,14 +2,12 @@
 
 ## 0.20.0
 
-## New Features
-
-## New Features
+### New Features
 - KML placemark location import plugin
 
-## Improvements
+### Improvements
 
-### Location Module
+#### Location Module
 - When teleporting to a location the selected local simulation date and time will now also be set
   * The time can be selected relative (sunset, sunrise, morning, noon, afternoon, ...) or absolute
 - Date and time can also be specified per location
@@ -19,20 +17,20 @@
 - Double-clicking on any column of a *preset* location will now teleport to that location (previously only the ID column was double-clickable for *preset* locations)
   * Double-clicking a column other than ID on a *user* or *imported* location will still edit that column, as before
   
-## Bug Fixes
+### Bug Fixes
 - Set correct country for city Hong Kong (preset locations)
 
-## Documentation
+### Documentation
 - Updated the "Flight Analysis" SQL to properly match the closest timestamps in tables *position* and *attitude*
   * Note that since Sky Dolly v0.18 the position and attitude is sampled at different intervals; timestamps may or may not match exaclty (in most cases they do not)
   * Also refer to: [SQL Query for Finding Closest Timestamps](https://zzzcode.ai/answer-question?id=307fbcc3-77bb-4553-91d0-461edb1da0e6)
   
-## Under the Hood
+### Under the Hood
 - Optimised logbook SQL table column types
 
 ## 0.19.2
 
-## Bug Fixes
+### Bug Fixes
 - An illegal data access ("crash") has been fixed that affected various flight import plugins, among them the KML FlightAware import [[Issue #179](https://github.com/till213/SkyDolly/issues/179)]
 - The IGC flight export plugin now properly exports coordinates in the western and southern hemisphere (no negative values, but a proper 'W' respectively 'S' character)
 - The IGC flight export now properly exports the pre-flight declaration section ("C records")
@@ -41,33 +39,33 @@
   * In analogy for the FINISH (last waypoint coordinate) and LANDING (last recorded position)
 - The velocity, pitch bank and heading is calculated correctly again when *augmenting* imported flight data
   
-## Under the Hood
+### Under the Hood
 - Added more flight import unit tests, covering now also the "flight augmentation" code
 
 ## 0.19.1
 
-## Bug Fixes
+### Bug Fixes
 - Properly make newly inserted location visible (scroll to row), specifically when location table is sorted by ID in descending order
 - Do not reset backup period to "Never" when setting the backup path fails
 - Correctly name the file selection filter of the Sky Dolly logbook location import plugin
 - Properly enable/disable pitch, bank, true heading and indicated airspeed spinboxes based on location selection
 
-## Under the Hood
+### Under the Hood
 - Upgrade Qt to 6.7.3 (from 6.7.2)
   * This brings some improvements for the "Windows 11" style ("Fusion" style is still the default style though)
 
 ## 0.19.0
 Sky Dolly **"Jaunty Jodel"** carries the Olympic spirit into the world: over 200 new locations - each country taking part in the Olympic Games in Paris 2024 - have been added as location presets. Please enjoy the diversity and beauty of our little planet - happy flying!
 
-## Improvements
+### Improvements
 
-### Logbook Module
+#### Logbook Module
 - The logbook table now properly scrolls to the row being recorded, to ensure its visibility
 
-### Formation Module
+#### Formation Module
 - The aircraft table now properly scrolls to the row being recorded, to ensure its visibility
 
-### Location Module
+#### Location Module
 - Added Kosovo to list of countries
 - Added *Beach* and *Castle* to location types
 - The location description field now stretches vertically
@@ -75,12 +73,12 @@ Sky Dolly **"Jaunty Jodel"** carries the Olympic spirit into the world: over 200
 - After adding new user locations the location table receives the focus again, to make the selected row (the newly added location) better visible (as selected row)
 - The "On Ground" column is now sortable, too
 
-## Bug Fixes
+### Bug Fixes
 - The location table (Location module) does not show duplicate entries anymore when adding new user locations (the newly added user location was correctly only stored once though)
 - Properly store (and restore) the aircraft table layout (Formation module) when changing the column to be sorted
 - Properly restore table widget sort column and sort items accordingly when switching between Logbook, Formation and Location modules
 
-## Under The Hood
+### Under The Hood
 - Small memory optimisations
 
 ## 0.18.1
@@ -97,16 +95,16 @@ New location import and export plugins are also introduced, allowing to exchange
 
 Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209 years - a *long* time) have always been supported. That is the maximum timestamp in milliseconds (a signed 64 bit number).
 
-## New Features
+### New Features
 - New location export plugin
   * Sky Dolly logbook (*.sdlog) export
 - New location import plugin
   * Sky Dolly logbook (*.sdlog) import
   * Locations exported from older Sky Dolly releases are migrated upon import to the latest data features
 
-## Improvements
+### Improvements
 
-### Recording & Replay
+#### Recording & Replay
 - The maximum simulation rate spinbox now steps in powers of two (1, 2, 4, 8, ..., 128)
   * The MSFS simulation rate is always a power of two
   * Non-power of two values may still be entered by editing the text
@@ -129,7 +127,7 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
   * This ensures that the user aircraft is placed at its initial replay position (instead of being left at its current position in case *Fly With Formation* was previously active)
   * Switching to the Formation module will then restore the last selected replay mode again (*Formation (Normal)*, *Take control of recorded user aircraft*, *Fly with formation*), according to the persisted module settings
 
-### Import & Export
+#### Import & Export
 - A new *Export system locations* option has been added to the location export
   * When enabled then also the default locations as provided by Sky Dolly (*Sytem* locations) will be exported
   * Otherwise only the *User* and *Import* locations will be exported
@@ -145,7 +143,7 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
   * The exported waypoints now have a description (&lt;desc&gt;) element: *Departure*, *Waypoint* and *Arrival*
 - IGC export: the proper standard pressure altitude (at a 1013.25 hPa (1 atmosphere) setting) instead of the indicated altitude is now exported
 
-### Simulation Variables
+#### Simulation Variables
 - Position- and attitude simulation variables are now sampled separately
   * Position data (latitude, longitude, altitude) is only sampled at 1Hz: the expectation is that "stutters" during recording should be automatically smoothened out
 - Removed `SMOKE_ENABLE` support
@@ -158,16 +156,16 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
   * `INDICATED_ALTITUDE_CALIBRATED`
   * `PRESSURE_ALTITUDE`
   
-### Logbook
+#### Logbook
 - Rename column *Date* to *Recording Date*
   * This is the real-world date and time when the flight has been recorded
 - Also show the simulation departure- and arrival dates in the tooltip
 - The *Total Time of Flight* column now supports durations measured in days, weeks, months and even years
 
-### Application Settings
+#### Application Settings
 - The application may now be automatically restarted after changing the user interface style ("Windows Vista", "Windows 11", "Fusion", ...)
 
-## Bug Fixes
+### Bug Fixes
 - GPX export
   * The elevation (&lt;ele&gt;) values are now properly exported as "above mean sea level" (and not "above WGS84 reference ellipsoid" anymore)
   * The trackpoint timestamps are properly calculated and exported when exporting the entire flight (and not just the user aircraft); the proper timezone suffix (Z) is appended, too (ISO 8601 format)
@@ -177,11 +175,11 @@ Note that recording times up to 2<sup>63</sup> milliseconds (that is 292,471,209
 - Do not reset the time edit widget when the recording is paused (keep the current recorded time)
 - Migrate (update) missing logbook start- and end simulation times (local and zulu) based on the actual recorded positions (timestamps) amd/or the recording creation date/time
 
-## Documentation
+### Documentation
 - Added new [One Year in New York](doc/SQL/Timelapse-One-Year-in-New-York.sql) example SQL ("1 year timelapse")
 - Added new [pressure altitude](doc/SQL/Flight-Analysis.sql) analytical SQL script
 
-## Under the Hood
+### Under the Hood
 - Ensure common creation- and start/end date (local and zulu) date & time formats on database level, add "not null" constraint for data conistency
 - Upgrade GeographicLib to version 2.4 (from version 2.3)
 - Upgrade cpptrace to version 0.6.3 (from 0.5.2)
@@ -213,7 +211,7 @@ This is a pure maintenance release without any Sky Dolly specific fixes: it prov
 
 ## 0.17.2
 
-## Improvements
+### Improvements
 - Seeking backward and forward via flight simulator keyboard shortcuts (CTRL+, respectively CTRL+.) now repeats the action while keeping the shortcut combination pressed
 - Application settings: the flight simulator connection plugin and connection type (pipe, IPv4, IPv6) combo boxes are disabled while the connection is active (replay or recording in progress)
 - When the *SimConnect.cfg* client configuration that comes with Sky Dolly is removed from the application directory then a local (configuration index *SIMCONNECT_OPEN_CONFIGINDEX_LOCAL*) connection is used (just like in previous Sky Dolly versions)
@@ -229,7 +227,7 @@ This is a pure maintenance release without any Sky Dolly specific fixes: it prov
 
 ## 0.17.1
 
-## Improvements
+### Improvements
 - Add new aircraft types from simulation update 15, selectable when importing a flight
   * Ornithopter
   * A320 V2 (iniBuilds)
