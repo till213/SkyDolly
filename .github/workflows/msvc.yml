@@ -45,7 +45,8 @@ jobs:
         with:
           version: '6.8.0'
           setup-python: 'false'
-
+          arch: win64_msvc2022_64
+          
       - name: Configure CMake
         run: cmake -B ${{ env.build }}
 
