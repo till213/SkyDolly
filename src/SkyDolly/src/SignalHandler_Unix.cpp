@@ -44,4 +44,3 @@ void SignalHandler::registerSignals() noexcept
 {
     d->handler.registerSignals();
 }
-
