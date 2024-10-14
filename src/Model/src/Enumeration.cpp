@@ -2,7 +2,6 @@
  * Sky Dolly - The Black Sheep for your Enumeration Recordings
  *
  * Copyright (c) 2020 - 2024 Oliver Knoll
- * All rights reserved.
  *
  * MIT License
  *

@@ -2,7 +2,6 @@
  * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) 2020 - 2024 Oliver Knoll
- * All rights reserved.
  *
  * MIT License
  *
@@ -27,7 +26,6 @@
  * Sky Dolly - The Black Sheep for Your Flight Recordings
  *
  * Copyright (c) 2020 - 2024 Oliver Knoll
- * All rights reserved.
  *
  * MIT License
  *
