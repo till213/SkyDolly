@@ -1,7 +1,7 @@
 /**
  * Sky Dolly - The black sheep for your fposition recordings
  *
- * Copyright (c) Oliver Knoll
+ * Copyright (c) 2020 - 2024 Oliver Knoll
  * All rights reserved.
  *
  * MIT License

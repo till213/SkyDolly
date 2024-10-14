@@ -1,7 +1,7 @@
 /**
  * Sky Dolly - The Black Sheep for your Location Recordings
  *
- * Copyright (c) Oliver Knoll
+ * Copyright (c) 2020 - 2024 Oliver Knoll
  * All rights reserved.
  *
  * MIT License

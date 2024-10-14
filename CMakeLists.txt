@@ -128,6 +128,7 @@ target_sources(${APP_PROJECT_NAME}
         BUILD.md
         CHANGELOG.md
         CODE_OF_CONDUCT.md
+        LICENSE
         README.md
         RELEASE.md
         SECURITY.md
