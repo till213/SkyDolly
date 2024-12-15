@@ -108,7 +108,7 @@ private slots:
     void onCellChanged(int row, int column) noexcept;
     void onSelectionChanged() noexcept;
 
-    void onInitialPositionPlacementChanged(bool enable) noexcept;
+    void onInitialPositionPlacementChanged(Qt::CheckState state) noexcept;
     void updateUserAircraftIndex() noexcept;
     void deleteAircraft() noexcept;
 

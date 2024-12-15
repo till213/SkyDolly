@@ -342,7 +342,7 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::onVerticalDistanceChanged);
     connect(d->positionButtonGroup, &QButtonGroup::idClicked,
             this, &FormationWidget::onRelativePositionChanged);
-    connect(ui->relativePositionCheckBox, &QCheckBox::stateChanged,
+    connect(ui->relativePositionCheckBox, &QCheckBox::checkStateChanged,
             this, &FormationWidget::onInitialPositionPlacementChanged);
     connect(ui->replayModeComboBox, &QComboBox::activated,
             this, &FormationWidget::onReplayModeSelected);
@@ -929,9 +929,9 @@ void FormationWidget::onSelectionChanged() noexcept
     updateToolTips();
 }
 
-void FormationWidget::onInitialPositionPlacementChanged(bool enable) noexcept
+void FormationWidget::onInitialPositionPlacementChanged(Qt::CheckState state) noexcept
 {
-    d->moduleSettings.setRelativePositionPlacementEnabled(enable);
+    d->moduleSettings.setRelativePositionPlacementEnabled(state == Qt::CheckState::Checked);
 }
 
 void FormationWidget::updateUserAircraftIndex() noexcept
