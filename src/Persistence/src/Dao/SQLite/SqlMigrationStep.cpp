@@ -133,7 +133,7 @@ bool SqlMigrationStep::execute(QStringView sql) const noexcept
     QSqlDatabase db {QSqlDatabase::database(d->connectionName)};
     bool ok = db.transaction();
 
-    QRegularExpressionMatchIterator it = sqlRegExp.globalMatch(sql);
+    QRegularExpressionMatchIterator it = sqlRegExp.globalMatchView(sql);
     while (ok && it.hasNext()) {
 
         QRegularExpressionMatch match = it.next();
