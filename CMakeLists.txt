@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16...3.23)
+cmake_minimum_required(VERSION 3.16...3.29)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
@@ -51,8 +51,8 @@ endif()
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     add_compile_definitions(DEBUG)
 endif()
-# No use of deprecated Qt functionality before Qt 6.7
-add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060700)
+# No use of deprecated Qt functionality before Qt 6.8
+add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060800)
  
 # Qt
 find_package(Qt6 REQUIRED COMPONENTS Widgets Sql LinguistTools)
