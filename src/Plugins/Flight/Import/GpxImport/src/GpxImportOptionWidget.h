@@ -59,7 +59,7 @@ private slots:
     void onPositionSelelectionChanged() noexcept;
     void onDefaultAltitudeChanged(int index) noexcept;
     void onDefaultSpeedChanged(int value) noexcept;
-    void onConvertAltitudeChanged(int state) noexcept;
+    void onConvertAltitudeChanged(Qt::CheckState state) noexcept;
 };
 
 #endif // GPXIMPORTOPTIONWIDGET_H
