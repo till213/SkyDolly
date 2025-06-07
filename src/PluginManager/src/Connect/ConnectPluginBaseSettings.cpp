@@ -45,8 +45,8 @@ namespace
     constexpr const char *EndShortcutKey {"EndShortcutKey"};
 }
 
-struct ConnectPluginBaseSettingsPrivate
-{
+struct ConnectPluginBaseSettingsPrivate  
+{  
     FlightSimulatorShortcuts flightSimulatorShortcuts {DefaultFlightSimulatorShortcuts};
 
     // Defaults
@@ -59,7 +59,6 @@ struct ConnectPluginBaseSettingsPrivate
     static inline const QKeySequence DefaultBeginShortcut {"Ctrl+PgUp"};
     static inline const QKeySequence DefaultEndShortcut {"Ctrl+PgDown"};
     static inline const FlightSimulatorShortcuts DefaultFlightSimulatorShortcuts {
-        DefaultRecordShortcut,
         DefaultReplayShortcut,
         DefaultPauseShortcut,
         DefaultStopShortcut,
