@@ -44,18 +44,7 @@ public:
     static constexpr const char *FlightSimulatorNameMSFS {"MSFS"};
     static constexpr const char *FlightSimulatorNamePrepar3Dv5 {"Prepar3Dv5"};
 
-    static inline Id nameToId(const QString &name) noexcept {
-        Id id {Id::None};
-        if (name == FlightSimulatorNameAll) {
-            id = Id::All;
-        } else if (name == FlightSimulatorNameMSFS) {
-            id = Id::MSFS;
-        } else if (name == FlightSimulatorNamePrepar3Dv5) {
-            id = Id::Prepar3Dv5;
-        }
-        return id;
-    }
-
+    static Id nameToId(const QString &name) noexcept;
     static bool isRunning(Id id) noexcept;
     static bool isInstalled(Id id) noexcept;
 
