@@ -1,6 +1,7 @@
 # SimConnect
 # Checks the environment variable MSFS_SDK for the SDK location.
 # Defines the variable MSFS_SDK_INSTALLED in case the MSFS SDK is installed, based on the existence of the MSFS_SDK directory
+if (NOT TARGET SimConnect)
 add_library(SimConnect SHARED IMPORTED)
 add_library(MSFS::SimConnect ALIAS SimConnect)
 
@@ -23,4 +24,5 @@ if(EXISTS "${MSFS_SDK_PATH}")
     message(STATUS "MSFS SDK installed at ${MSFS_SDK_PATH}")
 else()
     message(WARNING "MSFS SDK is not installed")
+endif()
 endif()
