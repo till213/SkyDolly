@@ -1,7 +1,7 @@
 /**
  * Sky Dolly - The black sheep for your fFlightPlan recordings
  *
- * Copyright (c) 2020 - 2024 Oliver Knoll
+ * Copyright (c) 2020 - 2025 Oliver Knoll
  *
  * MIT License
  *
