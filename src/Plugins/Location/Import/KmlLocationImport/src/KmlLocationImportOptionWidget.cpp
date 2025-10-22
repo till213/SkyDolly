@@ -94,7 +94,7 @@ void KmlLocationImportOptionWidget::updateUi() noexcept
     ui->defaultIndicatedAirspeedSpinBox->setValue(d->pluginSettings.getDefaultIndicatedAirspeed());
 }
 
-void KmlLocationImportOptionWidget::onDefaultCountryChanged([[maybe_unused]]int index) noexcept
+void KmlLocationImportOptionWidget::onDefaultCountryChanged([[maybe_unused]] int index) noexcept
 {
     d->pluginSettings.setDefaultCountryId(ui->defaultCountryComboBox->getCurrentId());
 }

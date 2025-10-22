@@ -21,67 +21,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "SecurityToken.h"
-
-struct SecurityTokenPrivate
-{
-    SecurityTokenPrivate()
-        : refCount(1)
-    {}
-
-    int refCount;
-};
+#include "FlightSimulator.h"
 
 // PUBLIC
 
-void SecurityToken::retain()
-{
-    ++d->refCount;
-}
-
-void SecurityToken::release()
-{
-    --d->refCount;
-    if (d->refCount == 0) {
-        delete this;
+FlightSimulator::Id FlightSimulator::nameToId(const QString &name) noexcept {
+    Id id {Id::None};
+    if (name == FlightSimulatorNameAll) {
+        id = Id::All;
+    } else if (name == FlightSimulatorNameMSFS) {
+        id = Id::MSFS;
+    } else if (name == FlightSimulatorNamePrepar3Dv5) {
+        id = Id::Prepar3Dv5;
     }
-}
-
-bool SecurityToken::isValid() const
-{
-    return true;
-}
-
-SecurityToken *SecurityToken::create(const QByteArray &securityTokenData)
-{
-    SecurityToken *result = new SecurityToken(securityTokenData);
-    return result;
-}
-
-QByteArray SecurityToken::createSecurityTokenData(const QString &filePath)
-{
-    Q_UNUSED(filePath);
-    QByteArray result;
-    return result;
-}
-
-#ifdef DEBUG
-void SecurityToken::debugTokenToFilePath(const QByteArray &securityTokenData)
-{
-    Q_UNUSED(securityTokenData)
-}
-#endif
-
-// PROTECTED
-
-SecurityToken::SecurityToken(const QByteArray &securityTokenData)
-{
-    Q_UNUSED(securityTokenData)
-
-    d = new SecurityTokenPrivate();
-}
-
-SecurityToken::~SecurityToken()
-{
-    delete d;
+    return id;
 }

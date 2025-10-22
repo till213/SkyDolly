@@ -1011,7 +1011,7 @@ void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexce
     }
 }
 
-void LocationWidget::onCellChanged(int row, [[maybe_unused]]int column) noexcept
+void LocationWidget::onCellChanged(int row, [[maybe_unused]] int column) noexcept
 {
     const auto location = getLocationByRow(row);
     d->locationService->update(location);

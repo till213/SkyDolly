@@ -83,7 +83,7 @@ void CsvImportOptionWidget::updateUi() noexcept
     ui->formatComboBox->setCurrentIndex(currentIndex);
 }
 
-void CsvImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
+void CsvImportOptionWidget::onFormatChanged([[maybe_unused]] int index) noexcept
 {
     const CsvImportSettings::Format format = static_cast<CsvImportSettings::Format>(ui->formatComboBox->currentData().toInt());
     d->pluginSettings.setFormat(format);

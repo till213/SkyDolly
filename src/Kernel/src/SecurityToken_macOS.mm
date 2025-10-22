@@ -98,7 +98,7 @@ public:
     bool valid;
 };
 
-// public
+// PUBLIC
 
 void SecurityToken::retain()
 {
@@ -174,7 +174,7 @@ void SecurityToken::debugTokenToFilePath(const QByteArray &securityTokenData)
 }
 #endif
 
-// protected
+// PROTECTED
 
 SecurityToken::SecurityToken(const QByteArray &securityTokenData)
 {

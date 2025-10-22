@@ -24,6 +24,8 @@
 
 #include "FlightSimulator.h"
 
+// PUBLIC
+
 bool FlightSimulator::isRunning(Id id) noexcept
 {
     return false;

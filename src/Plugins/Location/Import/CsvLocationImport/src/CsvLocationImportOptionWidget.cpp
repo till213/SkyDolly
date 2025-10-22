@@ -112,13 +112,13 @@ void CsvLocationImportOptionWidget::updateUi() noexcept
     ui->defaultIndicatedAirspeedSpinBox->setEnabled(enableDefaults);
 }
 
-void CsvLocationImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
+void CsvLocationImportOptionWidget::onFormatChanged([[maybe_unused]] int index) noexcept
 {
     const CsvLocationImportSettings::Format format = static_cast<CsvLocationImportSettings::Format>(ui->formatComboBox->currentData().toInt());
     d->pluginSettings.setFormat(format);
 }
 
-void CsvLocationImportOptionWidget::onDefaultCountryChanged([[maybe_unused]]int index) noexcept
+void CsvLocationImportOptionWidget::onDefaultCountryChanged([[maybe_unused]] int index) noexcept
 {
     d->pluginSettings.setDefaultCountryId(ui->defaultCountryComboBox->getCurrentId());
 }

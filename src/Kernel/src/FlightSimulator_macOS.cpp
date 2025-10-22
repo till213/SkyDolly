@@ -24,12 +24,14 @@
 
 #include "FlightSimulator.h"
 
-bool FlightSimulator::isRunning(Id id) noexcept
+// PUBLIC
+
+bool FlightSimulator::isRunning([[maybe_unused]] Id id) noexcept
 {
     return false;
 }
 
-bool FlightSimulator::isInstalled(Id id) noexcept
+bool FlightSimulator::isInstalled([[maybe_unused]] Id id) noexcept
 {
     return false;
 }
