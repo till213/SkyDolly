@@ -28,6 +28,7 @@
       </div>
     </div>
   </details>
+
 </div>
 
 [![Pre-Release](https://img.shields.io/github/v/tag/till213/skydolly?include_prereleases&label=Pre-Release)](https://github.com/till213/skydolly/releases)
@@ -47,7 +48,7 @@ Sky Dolly connects to a running Flight Simulator 2020 instance and records vario
 
 The connection is made via SimConnect, a standard API introduced with Flight Simulator X to connect with the flight simulator.
 
-Aso refer to the [ABOUT.md](ABOUT.MD).
+Aso refer to the [ABOUT.md](ABOUT.md).
 
 ## Features
 - Record / Pause / Play
