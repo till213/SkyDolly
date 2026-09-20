@@ -6,7 +6,10 @@ add_library(SimConnect SHARED IMPORTED)
 add_library(MSFS::SimConnect ALIAS SimConnect)
 
 if(DEFINED ENV{MSFS_SDK})
-    set(MSFS_SDK_PATH $ENV{MSFS_SDK} )
+    set(MSFS_SDK_PATH $ENV{MSFS_SDK})
+    # Convert backslashes to cmake platform-independent path
+    cmake_path(SET MSFS_SDK_PATH "${MSFS_SDK_PATH}")
+    cmake_path(CONVERT "${MSFS_SDK_PATH}" TO_CMAKE_PATH_LIST MSFS_SDK_PATH)
     message(STATUS "MSFS_SDK environment variable set: ${MSFS_SDK_PATH}")
 else()
     set(MSFS_SDK_PATH "c:/MSFS SDK/")
